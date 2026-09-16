@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { LAYOUT_SCHEMA_VERSION } from "../constants";
+import {
+  DASHBOARD_LAYOUT_SCOPE,
+  DOCUMENTS_BLOCK_ID,
+  DOCUMENTS_DEFAULT_ROWS,
+  LAYOUT_SCHEMA_VERSION,
+} from "../constants";
 import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "./document";
+import { documentsBlock } from "./documents-block";
+import { getBlockRegistry, registerBlock } from "./registry";
 import type {
   SalesRepLayoutRegionType,
   SalesRepBlockType,
@@ -310,5 +317,48 @@ describe("echoMatchesSentBlocks", () => {
     };
 
     expect(echoMatchesSentBlocks(shuffled, sent)).toBe(true);
+  });
+});
+
+// Against the REAL dashboard registry with the documents widget registered the way init() registers it
+// (VCST-5730) — the synthetic registry above cannot catch the runtime-registered block drifting out of
+// the persistence contract (id/type, region membership, settings vocabulary).
+describe("documents block persistence", () => {
+  registerBlock(DASHBOARD_LAYOUT_SCOPE, documentsBlock);
+  const dashboardRegistry = getBlockRegistry(DASHBOARD_LAYOUT_SCOPE);
+
+  it("reconciles into the visible half of mainRight by default", () => {
+    const state = reconcileLayout(null, dashboardRegistry);
+
+    expect(state.regions.mainRight.visible).toContain(DOCUMENTS_BLOCK_ID);
+    expect(state.regions.mainRight.hidden).not.toContain(DOCUMENTS_BLOCK_ID);
+  });
+
+  it("serializes a hidden documents block into the save payload, row cap included", () => {
+    const state = reconcileLayout(null, dashboardRegistry);
+    // What setHidden does when the rep clicks the widget's ✕.
+    state.regions.mainRight.visible = state.regions.mainRight.visible.filter((id) => id !== DOCUMENTS_BLOCK_ID);
+    state.regions.mainRight.hidden.push(DOCUMENTS_BLOCK_ID);
+
+    const payload = serializeLayout(state, "dashboard", dashboardRegistry, "B2B-store");
+    const mainRight = payload.regions.find((region) => region.id === "mainRight");
+
+    expect(mainRight?.blocks).toContainEqual({
+      id: DOCUMENTS_BLOCK_ID,
+      type: DOCUMENTS_BLOCK_ID,
+      hidden: true,
+      settings: [{ key: "maxRows", value: DOCUMENTS_DEFAULT_ROWS }],
+    });
+  });
+
+  it("round-trips the hidden state through reconcileLayout", () => {
+    const state = reconcileLayout(null, dashboardRegistry);
+    state.regions.mainRight.visible = state.regions.mainRight.visible.filter((id) => id !== DOCUMENTS_BLOCK_ID);
+    state.regions.mainRight.hidden.push(DOCUMENTS_BLOCK_ID);
+
+    const readBack = reconcileLayout(serializeLayout(state, "dashboard", dashboardRegistry), dashboardRegistry);
+
+    expect(readBack.regions.mainRight.hidden).toContain(DOCUMENTS_BLOCK_ID);
+    expect(readBack.regions.mainRight.visible).not.toContain(DOCUMENTS_BLOCK_ID);
   });
 });

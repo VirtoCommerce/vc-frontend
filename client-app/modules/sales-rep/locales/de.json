@@ -29,7 +29,7 @@
         "last_order": "Meine letzte Bestellung",
         "ytd": "Jahresumsatz",
         "last_year": "Letztes Jahr",
-        "orders_count": "{count} Bestellungen",
+        "orders_count": "{count} Bestellung | {count} Bestellungen",
         "all_customers": "Alle",
         "actions": "Aktionen",
         "search_placeholder": "Suche nach Name",
@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Bestellungen im Status „New“",
           "active_carts": "Aktive Warenkörbe",
-          "active_cart": "Aktiver Warenkorb",
           "orders_placed_week": "Bestellungen diese Woche",
           "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
           "purchased_mtd": "Umsatz seit Monatsbeginn",
@@ -65,9 +64,11 @@
           "vs_last_month": "{delta} ggü. Vormonat",
           "vs_last_year": "{delta} ggü. Vorjahr",
           "ordered_this_month": "{count} in diesem Monat bestellt",
-          "new_customers": "{count} neue Kunden",
+          "new_customers": "{count} neuer Kunde | {count} neue Kunden",
           "of_recent_orders": "von {count} aus den letzten 7 Tagen",
-          "new_this_week": "{count} neu diese Woche",
+          "items_unit": "Artikel",
+          "not_for_checkout": "{count} nicht zur Kasse",
+          "items_this_week": "{count} Artikel diese Woche",
           "mtd_of_ytd": "{percent}% des Jahres",
           "load_failed": "Laden fehlgeschlagen"
         }
@@ -107,6 +108,7 @@
     "customer_profile": {
       "loading": "Wird geladen…",
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "load_failed": "Dieser Kunde konnte nicht geladen werden. Bitte die Seite neu laden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
         "avg_order_value": "Durchschn. Bestellwert"
@@ -121,6 +123,38 @@
         "phone": "Telefon",
         "account_type": "Kontotyp",
         "ship_to": "Lieferadresse"
+      }
+    },
+    "customer_orders": {
+      "page": {
+        "title": "Bestellungen von {customer}",
+        "all_title": "Kundenbestellungen",
+        "title_fallback": "Bestellungen"
+      },
+      "breadcrumb": "Bestellungen",
+      "back_to_customer": "Zurück zum Kunden",
+      "back_to_orders": "Zurück zu den Bestellungen",
+      "order_not_found": "Bestellung nicht gefunden",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Nach Nummer, Name oder anderen Daten",
+      "search_aria": "Bestellungen durchsuchen",
+      "reset_search": "Suche zurücksetzen",
+      "filters": {
+        "button": "Filter",
+        "title": "Filter",
+        "created_date": "Erstellungsdatum",
+        "start_date": "Startdatum",
+        "end_date": "Enddatum",
+        "invalid_range": "Ungültiger Datumsbereich.",
+        "order_status": "@:common.labels.status",
+        "customer": "Kunde auswählen",
+        "reset": "Zurücksetzen",
+        "apply": "Anwenden",
+        "custom_date": "Benutzerdefiniertes Datum",
+        "last_day": "Letzter Tag",
+        "last_week": "Letzte Woche",
+        "last_month": "Letzter Monat",
+        "last_year": "Letztes Jahr"
       }
     },
     "communication": {
@@ -155,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Aktuelle Bestellungen",
+      "title": "Meine aktuellen Bestellungen",
       "view_all": "Alle Bestellungen",
       "empty": "Noch keine Bestellungen",
       "no_results": "Keine Bestellungen entsprechen diesem Filter",
@@ -179,7 +213,38 @@
       "all_categories": "Alle Kategorien",
       "load_failed": "Topseller konnten nicht geladen werden"
     },
+    "documents": {
+      "title": "Dokumentbibliothek",
+      "browse_all": "Alle anzeigen",
+      "open": "Öffnen",
+      "empty": "Noch keine Dokumente",
+      "load_failed": "Dokumente konnten nicht geladen werden",
+      "page": {
+        "subtitle": "Kataloge, Lookbooks, Preislisten und Vertriebsleitfäden — öffnen oder laden Sie die neueste Veröffentlichung herunter.",
+        "search_placeholder": "Suche nach Name",
+        "search_aria": "Dokumente suchen",
+        "all_tab": "Alle",
+        "empty": "Noch keine Dokumente",
+        "no_results": "Keine Dokumente entsprechen Ihrer Suche",
+        "reset_search": "Suche zurücksetzen",
+        "load_failed": "Dokumente konnten nicht geladen werden"
+      },
+      "details": {
+        "pages_count": "{count} Seite | {count} Seiten",
+        "open": "Öffnen",
+        "download": "Herunterladen",
+        "close": "Details schließen",
+        "not_found": "Dieses Dokument ist nicht mehr verfügbar.",
+        "latest_publication": "Neueste Veröffentlichung"
+      },
+      "published": "Veröffentlicht {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Die Filter konnten nicht geladen werden, daher wird die vollständige Liste angezeigt. Bitte die Seite neu laden.",
+        "sort": "Die Sortieroptionen konnten nicht geladen werden, daher wird die Standardsortierung verwendet. Bitte die Seite neu laden.",
+        "both": "Die Filter und Sortieroptionen konnten nicht geladen werden, daher wird die vollständige Liste in der Standardsortierung angezeigt. Bitte die Seite neu laden."
+      },
       "customer": {
         "filter": {
           "All": "Alle"
@@ -193,9 +258,6 @@
       "share_replace_hint": "Der zuvor ausgewählte Kunde verliert den Zugriff auf diese Liste.",
       "share_message_label": "Nachricht",
       "share_message_placeholder": "Optionale Nachricht hinzufügen",
-      "share_channels_label": "Senden über",
-      "share_email_label": "E-Mail",
-      "share_push_label": "Push-Benachrichtigung",
       "share_default_title": "Eine neue Liste von Ihrem Vertriebsmitarbeiter",
       "share_default_message": "Hallo! Ich habe die Liste „{listName}“ gerade für Ihre Organisation freigegeben. Schauen Sie sie sich an:",
       "share_success": "Liste für den Kunden freigegeben.",

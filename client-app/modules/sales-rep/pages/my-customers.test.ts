@@ -11,6 +11,8 @@ const state = await vi.hoisted(async () => {
     error: ref<Error | null>(null),
     keyword: ref(""),
     filter: ref<string | undefined>(undefined),
+    filterRulesFailed: ref(false),
+    sortRulesFailed: ref(false),
   };
 });
 
@@ -32,7 +34,13 @@ vi.mock("../composables/useSalesRepCustomers", async () => {
 });
 vi.mock("../composables/useSalesRepRules", async () => {
   const { ref } = await import("vue");
-  return { useSalesRepRules: () => ({ rules: ref([]) }) };
+  return {
+    useSalesRepRules: (_domain: string, kind: string) => ({
+      rules: ref([]),
+      loading: ref(false),
+      failed: kind === "filter" ? state.filterRulesFailed : state.sortRulesFailed,
+    }),
+  };
 });
 vi.mock("../composables/useSalesRepColumnSort", async () => {
   const { ref } = await import("vue");
@@ -57,6 +65,8 @@ const createWrapper = createWrapperFactory(mount, MyCustomers, {
       VcButton: true,
       VcIcon: true,
       VcLink: true,
+      // Rendered rather than stubbed away: the assertion is about which message the alert carries.
+      VcAlert: { template: '<div class="vc-alert"><slot /></div>' },
       SalesRepRuleChips: true,
       CustomerCommunicationModal: true,
     },
@@ -71,6 +81,25 @@ beforeEach(() => {
   state.error.value = null;
   state.keyword.value = "";
   state.filter.value = undefined;
+  state.filterRulesFailed.value = false;
+  state.sortRulesFailed.value = false;
+});
+
+// The segment chips and the sortable headers vanish without their rules, with nothing saying why (VCST-5682).
+describe("MyCustomers degraded controls", () => {
+  it("says the segment filters could not be loaded", () => {
+    state.filterRulesFailed.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".vc-alert").text()).toContain("sales_rep.rules.load_failed.filter");
+  });
+
+  it("keeps quiet while the rules load", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".vc-alert").exists()).toBe(false);
+  });
 });
 
 describe("MyCustomers states", () => {

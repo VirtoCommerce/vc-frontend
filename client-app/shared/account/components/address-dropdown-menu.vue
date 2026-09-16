@@ -3,12 +3,14 @@
     <template #trigger="{ triggerProps }">
       <VcButton
         :aria-label="$t('common.labels.actions')"
-        icon="cog"
+        icon
         color="secondary"
         variant="outline"
         size="xs"
         v-bind="triggerProps"
-      />
+      >
+        <VcIcon name="cog" variant="solid" />
+      </VcButton>
     </template>
 
     <template #content>

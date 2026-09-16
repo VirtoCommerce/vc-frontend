@@ -657,18 +657,21 @@ watch(
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode.value),
             getFilterExpressionForInStockVariations(true),
           ]);
-      const data = await fetchCategory({
-        categoryId,
-        maxLevel: 1,
-        onlyActive: true,
-        productFilter,
-      });
+      let data;
+      try {
+        data = await fetchCategory({
+          categoryId,
+          maxLevel: 1,
+          onlyActive: true,
+          productFilter,
+        });
+      } finally {
+        preparingScope.value = false;
+      }
 
       if (!props.isRoot) {
         isCategoryNotFound.value = !data;
       }
-
-      preparingScope.value = false;
 
       updateLocalizedUrl(data?.category?.slug);
     }

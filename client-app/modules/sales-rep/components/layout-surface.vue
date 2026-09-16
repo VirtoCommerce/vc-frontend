@@ -206,7 +206,7 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), organizationId: props.orga
   }
 
   &__aside {
-    @apply min-w-0 xl:w-80 xl:shrink-0;
+    @apply min-w-0 xl:w-96 xl:shrink-0;
   }
 
   // Visually hidden, but announced. Keyboard sorting is silent without it.

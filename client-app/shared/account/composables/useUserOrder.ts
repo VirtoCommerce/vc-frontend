@@ -1,7 +1,7 @@
 import { computed, ref, shallowRef } from "vue";
 import { addOrUpdateOrderPayment, getShortOrder, getFullOrder } from "@/core/api/graphql";
-import { ProductType } from "@/core/enums";
-import { groupByVendor, splitLineItemsByCurrency, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
+import { useOrderView } from "./useOrderView";
 import type {
   GetFullOrderQueryVariables,
   GetShortOrderQueryVariables,
@@ -12,25 +12,7 @@ import type {
 const loading = ref(false);
 const order = shallowRef<CustomerOrderType>();
 
-const giftItems = computed(() => (order.value?.items || []).filter((item) => item.isGift));
-const orderItems = computed(() => (order.value?.items || []).filter((item) => !item.isGift));
-
-// Vendor grouping and the main products list only cover items in the order's main currency.
-// Items priced in other currencies are listed separately, grouped by their currency.
-const lineItemsByCurrency = computed(() => splitLineItemsByCurrency(orderItems.value, order.value?.currency?.code));
-const mainCurrencyOrderItems = computed(() => lineItemsByCurrency.value.mainCurrencyItems);
-const otherCurrencyOrderItemGroups = computed(() => lineItemsByCurrency.value.otherCurrencyGroups);
-const orderItemsGroupedByVendor = computed(() => groupByVendor(mainCurrencyOrderItems.value));
-
-const allItemsAreDigital = computed(
-  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
-);
-const shipment = computed(() => order.value?.shipments?.[0]);
-const payment = computed(() => order.value?.inPayments?.[0]);
-const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
-const pickupLocation = computed(() => shipment.value?.pickupLocation);
-
-const billingAddress = computed(() => payment.value?.billingAddress);
+const view = useOrderView(order);
 
 export function useUserOrder() {
   async function fetchShortOrder(payload: GetShortOrderQueryVariables) {
@@ -83,17 +65,7 @@ export function useUserOrder() {
   return {
     loading: computed(() => loading.value),
     order: computed(() => order.value),
-    allItemsAreDigital,
-    giftItems,
-    orderItems,
-    mainCurrencyOrderItems,
-    otherCurrencyOrderItemGroups,
-    orderItemsGroupedByVendor,
-    deliveryAddress,
-    pickupLocation,
-    billingAddress,
-    shipment,
-    payment,
+    ...view,
     fetchShortOrder,
     fetchFullOrder,
     clearOrder,

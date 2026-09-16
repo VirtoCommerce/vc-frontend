@@ -29,6 +29,26 @@ export const CUSTOMER_SHARING_SCOPE = "Customer";
 // under "Company" (the "Sales Rep hub" title comes from the left-rail section, not a URL segment).
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
 export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:organizationId`;
+
+export const CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepCustomerOrders";
+export const CUSTOMER_ORDERS_ROUTE_SEGMENT = `${CUSTOMER_PROFILE_ROUTE_SEGMENT}/orders`;
+export const CUSTOMER_ORDER_ROUTE_NAME = "SalesRepCustomerOrder";
+export const CUSTOMER_ORDER_ROUTE_SEGMENT = `${CUSTOMER_ORDERS_ROUTE_SEGMENT}/:orderId`;
+
+// The storefront's own order page: an order the rep placed opens there, where their buyer actions still
+// work. The hub's page is read-only for everyone.
+export const BUYER_ORDER_ROUTE_NAME = "OrderDetails";
+
+// A sibling of My customers rather than a child, since "my-customers/orders" would match the
+// :organizationId segment.
+export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";
+export const ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT = "customer-orders";
+
+// The organization an order belongs to — not core's CUSTOMER_NAME_FACET_NAME, which is the buyer who placed it.
+export const ORDER_CUSTOMER_FACET = "organizationname";
+export const CUSTOMER_ORDERS_SORT_FIELDS = { date: "createdDate", total: "total" } as const;
+export const CUSTOMER_ORDERS_SORT_DIRECTION = "desc" as const;
+
 // Default page size for the shared Orders widget; callers may override via the `limit` prop.
 export const ORDERS_DEFAULT_LIMIT = 7;
 
@@ -37,6 +57,20 @@ export const ORDERS_DEFAULT_LIMIT = 7;
 export const DASHBOARD_ROUTE_NAME = "SalesRepDashboard";
 export const DASHBOARD_ROUTE_SEGMENT = "dashboard";
 export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
+
+// Document library (VCST-5730). Read permission gates the widget, the page and the nav link;
+// write implies read and administrators pass — both are resolved server-side, the client only
+// checks for the read permission itself (an admin/writer also carries it through checkPermissions'
+// isAdministrator shortcut or the role that grants access).
+export const SALES_REP_DOCUMENTS_READ_PERMISSION = "sales-rep-documents:read";
+// Layout block id — persisted as block.type in saved layouts, so it is load-bearing (see LAYOUT_SCOPE notes).
+export const DOCUMENTS_BLOCK_ID = "documents";
+export const DOCUMENTS_ROUTE_NAME = "SalesRepDocuments";
+export const DOCUMENTS_ROUTE_SEGMENT = "documents";
+export const DOCUMENTS_NAV_LINK_ID = "sales-rep-documents";
+// Page size for the browse-all documents page (offset-as-cursor, like useSalesRepCustomers).
+// 15 = three full rows of the grid's 5-card cap, so the pager appears only past three rows.
+export const DOCUMENTS_PAGE_SIZE = 15;
 
 // Backs the "New orders" card; order filter rules are raw order statuses, so this uses the "New"
 // status (an unrecognized name fails closed — keep it aligned with a real status). The card's label
@@ -82,4 +116,7 @@ export const ORDERS_MAX_ROWS = 20;
 export const TOP_SELLERS_DEFAULT_ROWS = 5;
 // The salesRepTopSellers API caps `take` at 10, so the input must not offer more.
 export const TOP_SELLERS_MAX_ROWS = 10;
+// Documents widget row cap (VCST-5730) — follows top-sellers: default 5, max 10.
+export const DOCUMENTS_DEFAULT_ROWS = 5;
+export const DOCUMENTS_MAX_ROWS = 10;
 export const MIN_ROWS = 1;

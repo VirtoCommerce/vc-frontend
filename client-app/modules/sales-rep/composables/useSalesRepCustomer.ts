@@ -1,4 +1,4 @@
-import { computed, toValue } from "vue";
+import { computed, ref, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
@@ -7,18 +7,36 @@ import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
-export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
+type OptionsType = {
+  enabled?: MaybeRefOrGetter<boolean>;
+};
+
+export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, options: OptionsType = {}) {
+  const enabled = computed(() => toValue(options.enabled) ?? true);
   const variables = computed(() => ({ organizationId: toValue(organizationId) }));
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
-  const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
+  const { result, loading, error, onError, onResult } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    enabled,
   });
 
-  onError((error) => {
-    // No toast; the page falls back to the not-found view.
-    Logger.error("[sales-rep] salesRepCustomer failed:", error);
+  // Apollo defers a start caused by `enabled` flipping to the next tick, so `loading` is briefly false with
+  // nothing in flight. Answering "not found" from that window flashes the 404 while a page is only switching
+  // customers, so the answer waits for a read that actually settled on the id being asked about.
+  const answeredFor = ref<string | undefined>(undefined);
+
+  onResult((queryResult) => {
+    if (!queryResult.loading) {
+      answeredFor.value = toValue(organizationId);
+    }
+  });
+
+  onError((queryError) => {
+    answeredFor.value = toValue(organizationId);
+    // No toast; the page names the failure itself.
+    Logger.error("[sales-rep] salesRepCustomer failed:", queryError);
   });
 
   const customer = computed<SalesRepCustomerProfileType | undefined>(() => {
@@ -36,8 +54,18 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
       : undefined;
   });
 
-  // Not served / unknown / errored all settle to the same not-found view once loading finishes.
-  const notFound = computed(() => !loading.value && !customer.value);
+  // A failed read says nothing about whether the rep serves this customer, so the page words it differently.
+  const failed = computed(() => Boolean(error.value));
 
-  return { customer, loading, notFound };
+  // Not served / unknown settle to the not-found view once loading finishes.
+  const notFound = computed(
+    () =>
+      enabled.value &&
+      !loading.value &&
+      !failed.value &&
+      !customer.value &&
+      answeredFor.value === toValue(organizationId),
+  );
+
+  return { customer, loading, failed, notFound };
 }

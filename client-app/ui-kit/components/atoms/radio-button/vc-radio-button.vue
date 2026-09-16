@@ -11,10 +11,16 @@
       },
     ]"
   >
-    <component :is="containerTag" :for="isInsideInteractive ? undefined : inputId" class="vc-radio-button__container">
+    <component
+      :is="containerTag"
+      :for="isInsideInteractive ? undefined : inputId"
+      class="vc-radio-button__container"
+      @click="onContainerClick"
+    >
       <input
         v-if="!isInsideInteractive"
         :id="inputId"
+        ref="inputRef"
         v-model="model"
         class="vc-radio-button__input"
         type="radio"
@@ -90,6 +96,10 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["value"]>();
 
+const inputRef = ref<HTMLInputElement | null>(null);
+
+let forwardExpected = false;
+
 const isInsideInteractive = inject(INTERACTIVE_PARENT_KEY, ref(false));
 
 const slots = useSlots();
@@ -109,9 +119,39 @@ const detailsId = `${componentId}-details`;
 const checked = computed(() => model.value === props.value);
 const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
 const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label"));
+
+// <label> activation forwards a second, identical click to the input, so one pointer press would
+// otherwise reach consumers twice. Drop that duplicate and nothing else: keyboard activation and a
+// click aimed at the input itself must still pass, and a click on slot content is not ours to eat.
+// The flag is cleared on the next task because the forwarded click, when it comes, is dispatched
+// synchronously within this one.
+function onContainerClick(event: MouseEvent) {
+  if (isInsideInteractive.value) {
+    return;
+  }
+
+  // A disabled control surfaces nothing, as its full-bleed input used to guarantee.
+  if (props.disabled) {
+    event.stopPropagation();
+    return;
+  }
+
+  if (event.target !== inputRef.value) {
+    forwardExpected = true;
+    setTimeout(() => (forwardExpected = false));
+    return;
+  }
+
+  if (forwardExpected) {
+    forwardExpected = false;
+    event.stopPropagation();
+  }
+}
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-radio-button {
   $self: &;
   $checked: "";
@@ -124,7 +164,6 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   --props-word-break: v-bind(props.wordBreak);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
   --max-lines: var(--props-max-lines, var(--vc-radio-button-max-lines, initial));
   --word-break: var(--props-word-break, var(--vc-radio-button-word-break, initial));
 
@@ -184,11 +223,8 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   }
 
   &__input {
-    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-[1];
-
-    #{$disabled} & {
-      @apply cursor-not-allowed;
-    }
+    // Hidden, never stretched: an overlay over the container swallows clicks meant for label content.
+    @apply sr-only;
   }
 
   &__indicator {
@@ -198,8 +234,8 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
       @apply hidden;
     }
 
-    input:focus + & {
-      @apply outline-none ring ring-[--focus-color];
+    input:focus-visible + & {
+      @include focus-ring;
     }
 
     #{$checked} & {

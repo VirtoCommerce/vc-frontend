@@ -29,7 +29,7 @@
         "last_order": "Il mio ultimo ordine",
         "ytd": "Acquisti dell'anno",
         "last_year": "Anno scorso",
-        "orders_count": "{count} ordini",
+        "orders_count": "{count} ordine | {count} ordini",
         "all_customers": "Tutti",
         "actions": "Azioni",
         "search_placeholder": "Cerca per nome",
@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Ordini in stato «New»",
           "active_carts": "Carrelli attivi",
-          "active_cart": "Carrello attivo",
           "orders_placed_week": "Ordini di questa settimana",
           "orders_placed_mtd": "Ordini dall’inizio del mese",
           "purchased_mtd": "Acquisti dall’inizio del mese",
@@ -64,10 +63,12 @@
           "vs_last_week": "{delta} vs settimana scorsa",
           "vs_last_month": "{delta} vs mese scorso",
           "vs_last_year": "{delta} vs anno scorso",
-          "ordered_this_month": "{count} hanno ordinato questo mese",
-          "new_customers": "{count} nuovi clienti",
-          "of_recent_orders": "su {count} creati negli ultimi 7 giorni",
-          "new_this_week": "{count} nuovi questa settimana",
+          "ordered_this_month": "{count} ha ordinato questo mese | {count} hanno ordinato questo mese",
+          "new_customers": "{count} nuovo cliente | {count} nuovi clienti",
+          "of_recent_orders": "su {count} creato negli ultimi 7 giorni | su {count} creati negli ultimi 7 giorni",
+          "items_unit": "articolo | articoli",
+          "not_for_checkout": "{count} fuori dal checkout",
+          "items_this_week": "{count} articolo questa settimana | {count} articoli questa settimana",
           "mtd_of_ytd": "{percent}% dell'anno",
           "load_failed": "Caricamento non riuscito"
         }
@@ -107,6 +108,7 @@
     "customer_profile": {
       "loading": "Caricamento…",
       "not_found": "Cliente non trovato o non presente tra i tuoi clienti.",
+      "load_failed": "Non è stato possibile caricare questo cliente. Aggiorna la pagina.",
       "back_to_customers": "Torna ai miei clienti",
       "widgets": {
         "avg_order_value": "Valore medio ordine"
@@ -121,6 +123,38 @@
         "phone": "Telefono",
         "account_type": "Tipo di account",
         "ship_to": "Indirizzo di spedizione"
+      }
+    },
+    "customer_orders": {
+      "page": {
+        "title": "Ordini di {customer}",
+        "all_title": "Ordini dei clienti",
+        "title_fallback": "Ordini"
+      },
+      "breadcrumb": "Ordini",
+      "back_to_customer": "Torna al cliente",
+      "back_to_orders": "Torna agli ordini",
+      "order_not_found": "Ordine non trovato",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Cerca per numero, nome o altri dati",
+      "search_aria": "Cerca ordini",
+      "reset_search": "Reimposta ricerca",
+      "filters": {
+        "button": "Filtri",
+        "title": "Filtri",
+        "created_date": "Data di creazione",
+        "start_date": "Data di inizio",
+        "end_date": "Data di fine",
+        "invalid_range": "Intervallo di date non valido.",
+        "order_status": "@:common.labels.status",
+        "customer": "Seleziona cliente",
+        "reset": "Reimposta",
+        "apply": "Applica",
+        "custom_date": "Data personalizzata",
+        "last_day": "Ultimo giorno",
+        "last_week": "Ultima settimana",
+        "last_month": "Ultimo mese",
+        "last_year": "Ultimo anno"
       }
     },
     "communication": {
@@ -155,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Ordini recenti",
+      "title": "I miei ordini recenti",
       "view_all": "Tutti gli ordini",
       "empty": "Ancora nessun ordine",
       "no_results": "Nessun ordine corrisponde a questo filtro",
@@ -179,7 +213,38 @@
       "all_categories": "Tutte le categorie",
       "load_failed": "Impossibile caricare i più venduti"
     },
+    "documents": {
+      "title": "Libreria documenti",
+      "browse_all": "Sfoglia tutti",
+      "open": "Apri",
+      "empty": "Ancora nessun documento",
+      "load_failed": "Impossibile caricare i documenti",
+      "page": {
+        "subtitle": "Cataloghi, lookbook, listini prezzi e guide alle vendite — apri o scarica l'ultima pubblicazione.",
+        "search_placeholder": "Cerca per nome",
+        "search_aria": "Cerca documenti",
+        "all_tab": "Tutti",
+        "empty": "Ancora nessun documento",
+        "no_results": "Nessun documento corrisponde alla tua ricerca",
+        "reset_search": "Reimposta ricerca",
+        "load_failed": "Impossibile caricare i documenti"
+      },
+      "details": {
+        "pages_count": "{count} pagina | {count} pagine",
+        "open": "Apri",
+        "download": "Scarica",
+        "close": "Chiudi dettagli",
+        "not_found": "Questo documento non è più disponibile.",
+        "latest_publication": "Ultima pubblicazione"
+      },
+      "published": "Pubblicato {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Non è stato possibile caricare i filtri, quindi viene mostrato l'elenco completo. Aggiorna la pagina.",
+        "sort": "Non è stato possibile caricare le opzioni di ordinamento, quindi viene usato l'ordine predefinito. Aggiorna la pagina.",
+        "both": "Non è stato possibile caricare i filtri e le opzioni di ordinamento, quindi l'elenco completo viene mostrato nell'ordine predefinito. Aggiorna la pagina."
+      },
       "customer": {
         "filter": {
           "All": "Tutti"
@@ -193,9 +258,6 @@
       "share_replace_hint": "Il cliente selezionato in precedenza perderà l'accesso a questa lista.",
       "share_message_label": "Messaggio",
       "share_message_placeholder": "Messaggio facoltativo da includere",
-      "share_channels_label": "Invia tramite",
-      "share_email_label": "Email",
-      "share_push_label": "Notifica push",
       "share_default_title": "Una nuova lista dal tuo rappresentante commerciale",
       "share_default_message": "Ciao! Ho appena condiviso la lista \"{listName}\" con la tua organizzazione. Dai un'occhiata:",
       "share_success": "Lista condivisa con il cliente.",

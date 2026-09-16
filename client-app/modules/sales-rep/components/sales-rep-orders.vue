@@ -1,7 +1,7 @@
 <template>
   <LayoutWidget :title="title" size="md" class="sales-rep-orders">
     <template #append>
-      <VcLink :to="{ name: 'Orders' }" class="sales-rep-orders__all-link" target="_blank" rel="noopener noreferrer">
+      <VcLink :to="allOrdersRoute" class="sales-rep-orders__all-link">
         {{ t("sales_rep.orders.view_all") }}
 
         <VcIcon name="arrow-right" size="xs" />
@@ -11,6 +11,13 @@
     <!-- VcWidget has no padding prop; #default-container is our seam for the inset, not .vc-widget__slot. -->
     <template #default-container>
       <div class="sales-rep-orders__body">
+        <!-- Without it the tab row and the sortable headers just aren't there, with nothing saying why. -->
+        <SalesRepRuleAlert
+          class="sales-rep-orders__notice"
+          :filter-failed="filterable && filterRulesFailed"
+          :sort-failed="sortRulesFailed"
+        />
+
         <!-- In edit mode the tab strip becomes its own configuration: checked = offered as a tab.
              Replacing rather than adding, because ten statuses do not fit anywhere else. -->
         <div v-if="filterable && hasFilterOptions" class="sales-rep-orders__filter">
@@ -57,7 +64,7 @@
                 <div class="sales-rep-orders__mobile-row">
                   <VcLink
                     class="sales-rep-orders__order-link"
-                    :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                    :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -82,7 +89,7 @@
             <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
               <VcLink
                 class="sales-rep-orders__order-link"
-                :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -141,10 +148,16 @@ import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
-import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import {
+  ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  BUYER_ORDER_ROUTE_NAME,
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  ORDERS_DEFAULT_LIMIT,
+} from "../constants";
 import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
+import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import SalesRepRuleToggles from "./sales-rep-rule-toggles.vue";
 import OrderStatus from "@/shared/account/components/order-status.vue";
@@ -169,18 +182,28 @@ const { t } = useI18n();
 
 const isCrossCustomer = computed(() => !props.organizationId);
 
+const allOrdersRoute = computed(() =>
+  props.organizationId
+    ? { name: CUSTOMER_ORDERS_ROUTE_NAME, params: { organizationId: props.organizationId } }
+    : { name: ALL_CUSTOMER_ORDERS_ROUTE_NAME },
+);
+
 // Selected named rules; undefined → the server default (baseline filter / "recent" sort).
 const filter = ref<string | undefined>(undefined);
 const sort = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
 // The status chips are read from the orders in view — same customer, same period — so a chip always has orders behind it.
-const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("order", "filter", {
+const {
+  rules: filterRules,
+  loading: filterRulesLoading,
+  failed: filterRulesFailed,
+} = useSalesRepRules("order", "filter", {
   organizationId: () => props.organizationId,
   periodFrom,
   periodTo,
 });
-const { rules: sortRules } = useSalesRepRules("order", "sort");
+const { rules: sortRules, failed: sortRulesFailed } = useSalesRepRules("order", "sort");
 
 // Absent when this widget renders outside a layout, which then configures nothing.
 const chrome = useBlockChrome();
@@ -253,6 +276,10 @@ const failed = computed(() => Boolean(error.value));
 .sales-rep-orders {
   &__body {
     @apply flex flex-col;
+  }
+
+  &__notice {
+    @apply mx-6 mt-3;
   }
 
   // px-6 aligns the tabs with the widget header title.

@@ -27,11 +27,21 @@
       :key="item.id"
       v-model="contactOrganizationId"
       :value="item.id"
+      :disabled="item.isLockedForCurrentUser"
       class="multi-organization-menu__radio"
       @change="selectOrganization"
     >
-      <span class="multi-organization-menu__radio-label">
-        {{ item.name }}
+      <span
+        class="multi-organization-menu__radio-label flex min-w-0 items-center gap-2"
+        :title="
+          item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
+        "
+      >
+        <span class="min-w-0 truncate">
+          {{ item.name }}
+        </span>
+
+        <VcIcon v-if="item.isLockedForCurrentUser" name="lock-closed" size="xs" class="shrink-0" />
       </span>
     </VcRadioButton>
 
@@ -49,10 +59,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef, computed } from "vue";
+import { onMounted, ref, useTemplateRef, computed } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 
-const { organizations, hasNextPage, loading, pagesCount, currentPage, loadOrganizations } = useUserOrganizations();
+const { organizations, hasNextPage, loading, pagesCount, currentPage, loadOrganizations, search } =
+  useUserOrganizations();
 const { user, isMultiOrganization, organization } = useUser();
 const { switchError, trySwitch } = useOrganizationSwitcher();
 
@@ -63,8 +74,20 @@ const organizationsWithoutCurrent = computed(() =>
   organizations.value.filter((item) => item.id !== organization.value?.id),
 );
 
+// useUserOrganizations fetches only once per session, so a lock applied while this menu was
+// closed would otherwise leave a stale, clickable row. Refresh on every mount to catch that.
+onMounted(() => {
+  void search();
+});
+
 async function selectOrganization(): Promise<void> {
   if (!contactOrganizationId.value) {
+    return;
+  }
+
+  const target = organizationsWithoutCurrent.value.find((item) => item.id === contactOrganizationId.value);
+  if (target?.isLockedForCurrentUser) {
+    contactOrganizationId.value = user.value?.contact?.organizationId;
     return;
   }
 

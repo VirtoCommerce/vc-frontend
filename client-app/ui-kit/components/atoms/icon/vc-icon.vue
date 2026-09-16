@@ -41,9 +41,7 @@ const style = computed(() => {
   const result: Record<string, string> = {};
 
   if (props.size !== undefined && props.size !== "" && !isPreset.value) {
-    const value = typeof props.size === "number" ? `${props.size}px` : props.size;
-    result.width = value;
-    result.height = value;
+    result["--size"] = typeof props.size === "number" ? `${props.size}px` : props.size;
   }
 
   if (props.strokeWidth !== undefined) {
@@ -103,66 +101,111 @@ watch(
 
     container-type: inline-size;
 
+    // Outline icons all share a 24-unit viewBox, so the screen-px stroke values below are
+    // converted to user units by hand — vector-effect: non-scaling-stroke, which did this,
+    // is drawn at half width by Chrome 151.
+    $view-box: 24;
+
     svg :where(path, line, circle, rect, polyline, polygon, ellipse) {
       stroke: currentColor;
-      stroke-width: var(--vc-icon-stroke, var(--stroke-bucket, 1.5));
+      stroke-width: calc(
+        var(--vc-icon-stroke, var(--stroke-bucket, 1.5)) * #{$view-box} / var(--size-anchor, #{$view-box})
+      );
       stroke-linecap: round;
       stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
     }
 
     // fixed stroke grid keyed to real rendered px
     @container (width <= 10px) {
       svg {
         --stroke-bucket: 1;
+        --size-anchor: 10;
       }
     }
 
     @container (10px < width <= 12px) {
       svg {
         --stroke-bucket: 1.1;
+        --size-anchor: 12;
       }
     }
 
     @container (12px < width <= 14px) {
       svg {
         --stroke-bucket: 1.3;
+        --size-anchor: 14;
       }
     }
 
     @container (14px < width <= 16px) {
       svg {
         --stroke-bucket: 1.5;
+        --size-anchor: 16;
       }
     }
 
     @container (16px < width <= 20px) {
       svg {
         --stroke-bucket: 1.6;
+        --size-anchor: 20;
       }
     }
 
     @container (20px < width <= 24px) {
       svg {
         --stroke-bucket: 1.75;
+        --size-anchor: 24;
       }
     }
 
     @container (24px < width <= 28px) {
       svg {
         --stroke-bucket: 1.8;
+        --size-anchor: 28;
       }
     }
 
     @container (28px < width <= 36px) {
       svg {
         --stroke-bucket: 2;
+        --size-anchor: 32;
       }
     }
 
-    @container (width > 36px) {
+    @container (36px < width <= 44px) {
       svg {
         --stroke-bucket: 2.7;
+        --size-anchor: 40;
+      }
+    }
+
+    @container (44px < width <= 56px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 48;
+      }
+    }
+
+    @container (56px < width <= 72px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 64;
+      }
+    }
+
+    @container (72px < width <= 96px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 86;
+      }
+    }
+
+    // Past the ladder the stroke grows with the icon instead of staying pinned: no size this
+    // large occurs here, and a hairline on a huge glyph reads anemic.
+    @container (width > 96px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 96;
       }
     }
 
@@ -219,29 +262,29 @@ watch(
 
   &--size {
     &--xxs {
-      @apply size-2.5;
+      --size: 0.625rem;
     }
 
     &--xs {
-      @apply size-3.5;
+      --size: 0.875rem;
     }
 
     &--sm {
-      @apply size-5;
+      --size: 1.25rem;
     }
 
     // md: no rule — themeable default via --vc-icon-size
 
     &--lg {
-      @apply size-10;
+      --size: 2.5rem;
     }
 
     &--xl {
-      @apply size-12;
+      --size: 3rem;
     }
 
     &--xxl {
-      @apply size-16;
+      --size: 4rem;
     }
   }
 
@@ -263,6 +306,12 @@ watch(
     }
 
     &__slot {
+      // An icon taller than the text line grows the line box and pushes the label off-centre.
+      // Shrink its margin box back to the line-height so the label stays centred.
+      & > #{$self} {
+        margin-block: calc((var(--line-height) - var(--size)) / 2);
+      }
+
       #{$icon} & {
         & > #{$self} {
           @apply mx-0 #{!important};

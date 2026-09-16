@@ -1,7 +1,17 @@
+import { ContentType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import type { MoneyType } from "./api/graphql/types";
-import type { SalesRepRuleType } from "./types";
+import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
+import type { MoneyType, SalesRepCustomerOrdersQuery, SalesRepOrdersQuery } from "./api/graphql/types";
+import type {
+  SalesRepCustomerOrderRowType,
+  SalesRepDocumentType,
+  SalesRepOrderRowType,
+  SalesRepFacetOptionType,
+  SalesRepRuleType,
+} from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
+import type { ComposerTranslation } from "vue-i18n";
+import type { RouteLocationRaw } from "vue-router";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
 export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
@@ -28,33 +38,33 @@ export function formatCustomerLocation(address: LocationPartsType, options?: { w
   return [code, address?.city, address?.regionName].filter(Boolean).join(" · ");
 }
 
-// ISO date windows shared by the statistics ops: current bounds end at NOW (not calendar end);
-// previous-period windows are elapsed-matched for a fair "vs last X" delta.
+// ISO date windows shared by the statistics ops: current bounds end at the END of the user's current day
+// (see `nowIso`), previous-period windows at the same calendar position one period back (see `matched`).
 //
 // Day/week/month/year boundaries are the USER'S calendar, not UTC's. The widgets have to agree with the
 // order lists next to them, and those render `createdDate` through `$d()` — i.e. in the browser's zone. On
-// UTC boundaries an order placed at 23:00 UTC is "tomorrow" for a UTC+3 rep, so it fell outside the
-// "created today" badge while still showing in the list and in the unbounded counter.
+// UTC boundaries an order placed at 23:00 UTC is "tomorrow" for a UTC+3 rep, so it fell outside the window
+// the badge counted while still showing in the list and in the unbounded counter.
 export type StatisticsWindowsType = {
-  // Month-to-date and the elapsed-matched slice of the previous month.
+  // Month-to-date and the calendar-matched slice of the previous month.
   mtdFrom: string;
   mtdTo: string;
   prevFrom: string;
   prevTo: string;
-  // Year-to-date and the elapsed-matched slice of the previous year.
+  // Year-to-date and the calendar-matched slice of the previous year.
   ytdFrom: string;
   ytdTo: string;
   lastYearFrom: string;
   lastYearTo: string;
-  // Week-to-date (Monday-start) and the elapsed-matched slice of the previous week.
+  // Week-to-date (Monday-start) and the calendar-matched slice of the previous week.
   weekFrom: string;
   weekTo: string;
   prevWeekFrom: string;
   prevWeekTo: string;
-  // Rolling 7 days of the user's calendar — bounds the `new_orders` card. Rolling rather than
-  // week-to-date, because a Monday-start window reads ~0 first thing Monday, when the actionable
-  // backlog is at its largest. The locale strings spell the span out ("of {count} created in the
-  // last 7 days"), so changing it means retranslating them.
+  // Rolling 7 days — bounds the `new_orders` card. Rolling rather than week-to-date, because a
+  // Monday-start window reads ~0 first thing Monday, when the actionable backlog is at its largest.
+  // The locale strings spell the span out ("of {count} created in the last 7 days"), so changing it
+  // means retranslating them.
   recentFrom: string;
   recentTo: string;
 };
@@ -149,6 +159,60 @@ export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | nul
   return new Intl.NumberFormat(globals.cultureName, { style: "currency", currency }).format(0);
 }
 
+// Document library display helpers.
+
+// File-type badge: the extension is the most precise source (tells DOCX from DOC), so it wins over content-type.
+const CONTENT_TYPE_BADGES: Record<string, string> = {
+  "application/pdf": "PDF",
+  "application/msword": "DOC",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
+  "application/vnd.ms-excel": "XLS",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "XLSX",
+  "application/vnd.ms-powerpoint": "PPT",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": "PPTX",
+  "application/zip": "ZIP",
+  "image/jpeg": "JPG",
+  "image/png": "PNG",
+  "text/plain": "TXT",
+  "text/csv": "CSV",
+};
+
+const FILE_EXTENSION_RE = /\.([a-z\d]+)$/i;
+
+export function documentTypeLabel(name: string, contentType?: string | null): string {
+  const extension = FILE_EXTENSION_RE.exec(name)?.[1];
+  if (extension) {
+    return extension.toUpperCase();
+  }
+
+  const type = contentType?.toLowerCase() ?? "";
+  return CONTENT_TYPE_BADGES[type] ?? type.split("/")[1]?.toUpperCase() ?? "";
+}
+
+// Mirrors VcFile's icon mapping (ui-kit vc-file.vue); unknown types get the generic file icon.
+const CONTENT_TYPE_KEYS = new Set<string>(Object.keys(ContentType));
+
+export function documentIcon(contentType?: string | null): string {
+  const known = CONTENT_TYPE_KEYS.has(contentType as ContentType) ? ContentType[contentType as ContentType] : undefined;
+  return `file-${known ? known.replace("/", "-") : "file"}.svg`;
+}
+
+// "Published May 22 · 96 pages" (date only when no page count).
+export function documentMeta(
+  document: SalesRepDocumentType,
+  t: ComposerTranslation,
+  d: (value: number | Date | string, format: string) => string,
+): string {
+  return [
+    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
+    document.pageCount
+      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state
 // tone: up = green, down = red/orange, unchanged = neutral.
 export type SignedPercentType = { text: string; tone: StatWidgetToneType; icon: string };
@@ -167,4 +231,78 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
     return { text: `${rounded}%`, tone: "negative", icon: "chevron-down" };
   }
   return { text: "0%", tone: "neutral", icon: "minus" };
+}
+
+// Connection items → table rows, shared by the orders widget and the customer orders page.
+type OrderNodeType = NonNullable<NonNullable<SalesRepOrdersQuery["salesRepOrders"]>["items"]>[number];
+
+type OrderRowSourceType = {
+  id: string;
+  number?: string;
+  organizationId?: string;
+  organizationName?: string;
+  createdDate: string;
+  status?: string;
+  statusDisplayValue?: string;
+  total?: Pick<MoneyType, "formattedAmount"> | null;
+};
+
+function toOrderRowBase(order: OrderRowSourceType) {
+  return {
+    id: order.id,
+    number: order.number ?? "",
+    organizationId: order.organizationId ?? "",
+    organizationName: order.organizationName ?? "",
+    createdDate: order.createdDate,
+    status: order.status ?? "",
+    statusDisplayValue: order.statusDisplayValue ?? "",
+    total: formatStatMoney(order.total),
+  };
+}
+
+function presentOrders<T>(items?: (T | null)[]): NonNullable<T>[] {
+  return (items ?? []).filter((order): order is NonNullable<T> => order != null);
+}
+
+export function toSalesRepOrderRows(items?: OrderNodeType[]): SalesRepOrderRowType[] {
+  return presentOrders(items).map((order) => ({
+    ...toOrderRowBase(order),
+    itemsCount: formatStatCount(order.itemsCount),
+  }));
+}
+
+type CustomerOrderNodeType = NonNullable<
+  NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["items"]
+>[number];
+
+export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): SalesRepCustomerOrderRowType[] {
+  return presentOrders(items).map((order) => ({
+    ...toOrderRowBase(order),
+    // A rep-placed order records the rep as its customer — the field the backend scopes own-orders by.
+    isOwn: Boolean(globals.userId) && order.customerId === globals.userId,
+  }));
+}
+
+export function toFacetOptions(
+  facets: NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["term_facets"] | undefined,
+  facetName: string,
+): SalesRepFacetOptionType[] {
+  return (facets ?? [])
+    .filter((facet) => facet?.name === facetName)
+    .flatMap((facet) => facet.terms ?? [])
+    .filter((term) => term != null)
+    .map((term) => ({ name: term.term, label: term.label || term.term, count: term.count }));
+}
+
+// An order the rep placed opens on the buyer-facing page, where they can still act on it; everyone else's
+// opens read-only in the hub.
+export function salesRepOrderRoute(order: SalesRepCustomerOrderRowType, organizationId?: string): RouteLocationRaw {
+  if (order.isOwn) {
+    return { name: BUYER_ORDER_ROUTE_NAME, params: { orderId: order.id } };
+  }
+
+  return {
+    name: CUSTOMER_ORDER_ROUTE_NAME,
+    params: { organizationId: organizationId ?? order.organizationId, orderId: order.id },
+  };
 }

@@ -204,11 +204,20 @@ watch(value, () => {
   applyStepperPreValidationModifiers();
 });
 
+// Re-emitting on every reactive flush (even with an unchanged payload) round-trips through the
+// parent's validation state back into this row's props, which re-triggers this watchEffect again —
+// an echo loop that hits Vue's "Maximum recursive updates exceeded" on rows with a non-zero initial
+// quantity. Only emit when the validation outcome actually changed to break the echo.
+let lastEmittedValidation: string | undefined;
 watchEffect(() => {
-  if (isValid.value) {
-    emit("update:validation", { isValid: true });
-  } else {
-    emit("update:validation", { isValid: false, errorMessage: errorMessage.value ?? "" });
+  const validation = isValid.value
+    ? ({ isValid: true } as const)
+    : ({ isValid: false, errorMessage: errorMessage.value ?? "" } as const);
+  const key = JSON.stringify(validation);
+  if (key === lastEmittedValidation) {
+    return;
   }
+  lastEmittedValidation = key;
+  emit("update:validation", validation);
 });
 </script>

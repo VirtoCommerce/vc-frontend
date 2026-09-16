@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   CUSTOMER_PROFILE_LAYOUT_SCOPE,
   DASHBOARD_LAYOUT_SCOPE,
+  DOCUMENTS_BLOCK_ID,
+  DOCUMENTS_DEFAULT_ROWS,
+  DOCUMENTS_MAX_ROWS,
   LAYOUT_REGION_IDS,
   LAYOUT_SCHEMA_VERSION,
 } from "../constants";
+import { documentsBlock } from "./documents-block";
 import { getBlock, getBlockRegistry, registerBlock } from "./registry";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 
@@ -62,5 +66,27 @@ describe("block registry", () => {
 
     registerBlock("dashboard", { ...block, titleKey: "changed" });
     expect(getBlock("dashboard", "test-only-block")?.titleKey).toBe("x");
+  });
+});
+
+// Not in the registry defaults: init registers it only for reps carrying documents:read (VCST-5730),
+// so the shape is pinned on the exported definition and the registration exercised here.
+describe("documents block", () => {
+  it("targets the dashboard right rail with a component and the 5/10 row cap", () => {
+    expect(documentsBlock.id).toBe(DOCUMENTS_BLOCK_ID);
+    expect(documentsBlock.region).toBe("mainRight");
+    expect("component" in documentsBlock && Boolean(documentsBlock.component)).toBe(true);
+    expect("settings" in documentsBlock && documentsBlock.settings).toEqual([
+      { kind: "maxRows", default: DOCUMENTS_DEFAULT_ROWS, min: 1, max: DOCUMENTS_MAX_ROWS },
+    ]);
+  });
+
+  // Mutates module state on purpose (like the late-shipped block above).
+  it("registers into the dashboard without colliding with an existing id", () => {
+    registerBlock("dashboard", documentsBlock);
+
+    const ids = getBlockRegistry("dashboard").map((block) => block.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(getBlock("dashboard", DOCUMENTS_BLOCK_ID)?.region).toBe("mainRight");
   });
 });

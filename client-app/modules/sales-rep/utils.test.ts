@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildStatisticsWindows, formatStatCount, formatStatMoney } from "./utils";
+import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
+import { buildStatisticsWindows, formatStatCount, formatStatMoney, salesRepOrderRoute } from "./utils";
+import type { SalesRepCustomerOrderRowType } from "./types";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
 vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US", currencyCode: "USD" } }));
@@ -103,8 +105,8 @@ describe("buildStatisticsWindows", () => {
 
   it("puts the day boundary at the user's midnight, not UTC's", () => {
     // The reported defect: on UTC boundaries an order placed at 23:00 UTC is already "tomorrow" for a
-    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the widget disagreed
-    // with the order list beside it, which renders createdDate in the browser's zone.
+    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the recent-orders badge
+    // disagreed with the order list beside it, which renders createdDate in the browser's zone.
     const now = new Date(2026, 6, 31, 10, 0, 0);
     const w = buildStatisticsWindows(now);
 
@@ -117,13 +119,13 @@ describe("buildStatisticsWindows", () => {
     expect(from.getDate()).toBe(25);
     expect(to.getDate()).toBe(31);
 
-    // An order the rep sees stamped inside the window is inside it at both ends…
-    const justAfterMidnight = new Date(2026, 6, 25, 0, 30, 0).getTime();
-    const lateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
-    expect(justAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
-    expect(lateEvening).toBeLessThanOrEqual(to.getTime());
+    // An order the rep sees stamped inside the window stays inside it at both ends of the span…
+    const firstDayJustAfterMidnight = new Date(2026, 6, 25, 0, 30, 0).getTime();
+    const lastDayLateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
+    expect(firstDayJustAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
+    expect(lastDayLateEvening).toBeLessThanOrEqual(to.getTime());
 
-    // …and the late evening before the window stays out of it.
+    // …and the late-evening order from the day before the window stays out of it.
     expect(new Date(2026, 6, 24, 23, 30, 0).getTime()).toBeLessThan(from.getTime());
   });
 
@@ -175,5 +177,40 @@ describe("formatStatMoney", () => {
 
     vi.doUnmock("@/core/globals");
     vi.resetModules();
+  });
+});
+
+describe("salesRepOrderRoute", () => {
+  const row = (isOwn: boolean): SalesRepCustomerOrderRowType => ({
+    id: "o-1",
+    number: "CO260821-00001",
+    organizationId: "org-of-the-order",
+    organizationName: "Contoso Bank",
+    createdDate: "2026-08-21T00:00:00Z",
+    status: "New",
+    statusDisplayValue: "New",
+    total: "$10.00",
+    isOwn,
+  });
+
+  it("sends an order the rep placed to the buyer-facing page", () => {
+    expect(salesRepOrderRoute(row(true), "org-in-the-url")).toEqual({
+      name: BUYER_ORDER_ROUTE_NAME,
+      params: { orderId: "o-1" },
+    });
+  });
+
+  it("sends someone else's order to the read-only hub page", () => {
+    expect(salesRepOrderRoute(row(false), "org-in-the-url")).toEqual({
+      name: CUSTOMER_ORDER_ROUTE_NAME,
+      params: { organizationId: "org-in-the-url", orderId: "o-1" },
+    });
+  });
+
+  it("falls back to the order's own customer when the page has none", () => {
+    expect(salesRepOrderRoute(row(false))).toEqual({
+      name: CUSTOMER_ORDER_ROUTE_NAME,
+      params: { organizationId: "org-of-the-order", orderId: "o-1" },
+    });
   });
 });

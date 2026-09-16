@@ -29,7 +29,7 @@
         "last_order": "Moje ostatnie zamówienie",
         "ytd": "Zakupy w tym roku",
         "last_year": "W zeszłym roku",
-        "orders_count": "{count} zamówień",
+        "orders_count": "{count} zamówień | {count} zamówienie | {count} zamówienia | {count} zamówień",
         "all_customers": "Wszyscy",
         "actions": "Akcje",
         "search_placeholder": "Szukaj według nazwy",
@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Zamówienia w statusie „New”",
           "active_carts": "Aktywne koszyki",
-          "active_cart": "Aktywny koszyk",
           "orders_placed_week": "Zamówienia w tym tygodniu",
           "orders_placed_mtd": "Zamówienia od początku miesiąca",
           "purchased_mtd": "Zakupy od początku miesiąca",
@@ -64,10 +63,12 @@
           "vs_last_week": "{delta} vs poprzedni tydzień",
           "vs_last_month": "{delta} vs poprzedni miesiąc",
           "vs_last_year": "{delta} vs poprzedni rok",
-          "ordered_this_month": "{count} zamówiło w tym miesiącu",
-          "new_customers": "{count} nowych klientów",
-          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni",
-          "new_this_week": "{count} nowych w tym tygodniu",
+          "ordered_this_month": "{count} zamówiło w tym miesiącu | {count} zamówił w tym miesiącu | {count} zamówili w tym miesiącu | {count} zamówiło w tym miesiącu",
+          "new_customers": "{count} nowych klientów | {count} nowy klient | {count} nowi klienci | {count} nowych klientów",
+          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni | z {count} utworzonego w ciągu ostatnich 7 dni | z {count} utworzonych w ciągu ostatnich 7 dni | z {count} utworzonych w ciągu ostatnich 7 dni",
+          "items_unit": "pozycji | pozycja | pozycje | pozycji",
+          "not_for_checkout": "{count} nie do kasy",
+          "items_this_week": "{count} pozycji w tym tygodniu | {count} pozycja w tym tygodniu | {count} pozycje w tym tygodniu | {count} pozycji w tym tygodniu",
           "mtd_of_ytd": "{percent}% roku",
           "load_failed": "Nie udało się wczytać"
         }
@@ -107,6 +108,7 @@
     "customer_profile": {
       "loading": "Ładowanie…",
       "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
+      "load_failed": "Nie udało się wczytać tego klienta. Odśwież stronę.",
       "back_to_customers": "Powrót do moich klientów",
       "widgets": {
         "avg_order_value": "Średnia wartość zamówienia"
@@ -121,6 +123,38 @@
         "phone": "Telefon",
         "account_type": "Typ konta",
         "ship_to": "Adres dostawy"
+      }
+    },
+    "customer_orders": {
+      "page": {
+        "title": "Zamówienia klienta {customer}",
+        "all_title": "Zamówienia klientów",
+        "title_fallback": "Zamówienia"
+      },
+      "breadcrumb": "Zamówienia",
+      "back_to_customer": "Powrót do klienta",
+      "back_to_orders": "Powrót do zamówień",
+      "order_not_found": "Nie znaleziono zamówienia",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Szukaj po numerze, nazwisku lub innych danych",
+      "search_aria": "Szukaj zamówień",
+      "reset_search": "Resetuj wyszukiwanie",
+      "filters": {
+        "button": "Filtry",
+        "title": "Filtry",
+        "created_date": "Data utworzenia",
+        "start_date": "Data rozpoczęcia",
+        "end_date": "Data zakończenia",
+        "invalid_range": "Nieprawidłowy zakres dat.",
+        "order_status": "@:common.labels.status",
+        "customer": "Wybierz klienta",
+        "reset": "Resetuj",
+        "apply": "Zastosuj",
+        "custom_date": "Data niestandardowa",
+        "last_day": "Ostatni dzień",
+        "last_week": "Ostatni tydzień",
+        "last_month": "Ostatni miesiąc",
+        "last_year": "Ostatni rok"
       }
     },
     "communication": {
@@ -155,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Ostatnie zamówienia",
+      "title": "Moje ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
       "no_results": "Żadne zamówienie nie pasuje do tego filtra",
@@ -179,7 +213,38 @@
       "all_categories": "Wszystkie kategorie",
       "load_failed": "Nie udało się wczytać bestsellerów"
     },
+    "documents": {
+      "title": "Biblioteka dokumentów",
+      "browse_all": "Przeglądaj wszystkie",
+      "open": "Otwórz",
+      "empty": "Brak dokumentów",
+      "load_failed": "Nie udało się wczytać dokumentów",
+      "page": {
+        "subtitle": "Katalogi, lookbooki, cenniki i przewodniki sprzedażowe — otwieraj lub pobieraj najnowszą publikację.",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj dokumentów",
+        "all_tab": "Wszystkie",
+        "empty": "Brak dokumentów",
+        "no_results": "Żaden dokument nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać dokumentów"
+      },
+      "details": {
+        "pages_count": "{count} stron | {count} strona | {count} strony | {count} stron",
+        "open": "Otwórz",
+        "download": "Pobierz",
+        "close": "Zamknij szczegóły",
+        "not_found": "Ten dokument nie jest już dostępny.",
+        "latest_publication": "Najnowsza publikacja"
+      },
+      "published": "Opublikowano {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Nie udało się wczytać filtrów, więc wyświetlana jest pełna lista. Odśwież stronę.",
+        "sort": "Nie udało się wczytać opcji sortowania, więc używana jest kolejność domyślna. Odśwież stronę.",
+        "both": "Nie udało się wczytać filtrów ani opcji sortowania, więc pełna lista jest wyświetlana w kolejności domyślnej. Odśwież stronę."
+      },
       "customer": {
         "filter": {
           "All": "Wszyscy"
@@ -193,9 +258,6 @@
       "share_replace_hint": "Wcześniej wybrany klient utraci dostęp do tej listy.",
       "share_message_label": "Wiadomość",
       "share_message_placeholder": "Opcjonalna wiadomość",
-      "share_channels_label": "Wyślij przez",
-      "share_email_label": "E-mail",
-      "share_push_label": "Powiadomienie push",
       "share_default_title": "Nowa lista od Twojego przedstawiciela handlowego",
       "share_default_message": "Cześć! Lista „{listName}” jest już dostępna dla Twojej organizacji. Sprawdź ją:",
       "share_success": "Lista została udostępniona klientowi.",
