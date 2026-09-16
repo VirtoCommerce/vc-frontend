@@ -119,34 +119,34 @@ function promptPassword(question) {
   });
 }
 
-// Check if hostname is localhost or local IP address
+// Check if hostname is localhost or a private/loopback IPv4 address.
+// Matches the hostname against the full IPv4 literal shape first, so a
+// hostname like "10.evil.example.com" (which merely starts with "10.") is
+// never misclassified as local the way an unanchored startsWith() would.
 function isLocalHost(hostname) {
   if (!hostname) {
     return false;
   }
   const lowerHostname = hostname.toLowerCase();
+  if (lowerHostname === "localhost" || lowerHostname === "::1") {
+    return true;
+  }
+
+  const ipv4Match = lowerHostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!ipv4Match) {
+    return false;
+  }
+  const octets = ipv4Match.slice(1).map(Number);
+  if (octets.some((octet) => octet > 255)) {
+    return false;
+  }
+
+  const [firstOctet, secondOctet] = octets;
   return (
-    lowerHostname === "localhost" ||
-    lowerHostname === "127.0.0.1" ||
-    lowerHostname === "::1" ||
-    lowerHostname.startsWith("192.168.") ||
-    lowerHostname.startsWith("10.") ||
-    lowerHostname.startsWith("172.16.") ||
-    lowerHostname.startsWith("172.17.") ||
-    lowerHostname.startsWith("172.18.") ||
-    lowerHostname.startsWith("172.19.") ||
-    lowerHostname.startsWith("172.20.") ||
-    lowerHostname.startsWith("172.21.") ||
-    lowerHostname.startsWith("172.22.") ||
-    lowerHostname.startsWith("172.23.") ||
-    lowerHostname.startsWith("172.24.") ||
-    lowerHostname.startsWith("172.25.") ||
-    lowerHostname.startsWith("172.26.") ||
-    lowerHostname.startsWith("172.27.") ||
-    lowerHostname.startsWith("172.28.") ||
-    lowerHostname.startsWith("172.29.") ||
-    lowerHostname.startsWith("172.30.") ||
-    lowerHostname.startsWith("172.31.")
+    firstOctet === 127 ||
+    firstOctet === 10 ||
+    (firstOctet === 172 && secondOctet >= 16 && secondOctet <= 31) ||
+    (firstOctet === 192 && secondOctet === 168)
   );
 }
 
