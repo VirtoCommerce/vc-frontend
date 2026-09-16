@@ -209,7 +209,9 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  it("closes the popover and returns focus to the start segment when the calendar footer clears the range", async () => {
+  // Clearing is not picking: the calendar stays open so the next range is one click away, and so
+  // Escape still has a mounted calendar to revert on.
+  it("keeps the popover open and the focus inside it when the calendar footer clears the range", async () => {
     const wrapper = mountPicker(
       { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true },
       { attachTo: document.body },
@@ -218,25 +220,43 @@ describe("VcDateRangePicker", () => {
     await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
     expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
 
+    const focusBefore = document.activeElement;
     await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
 
     expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
-    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
 
-    const [startInput] = wrapper.findAllComponents({ name: "VcDateInput" });
-    expect(document.activeElement).toBe(startInput.find("input").element);
+    // All-negative ("not the input") would also pass with focus stranded on <body>. The contract is
+    // that Clear does not MOVE focus at all, so compare it against where it sat before the click.
+    expect(document.activeElement).toBe(focusBefore);
 
     wrapper.unmount();
   });
 
-  it("closes the popover when the footer clears an already-empty range", async () => {
+  it("keeps the popover open when the footer clears an already-empty range", async () => {
     const wrapper = mountPicker({ showFooter: true }, { attachTo: document.body });
 
     await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
     await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
 
-    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
     expect(wrapper.emitted("clear")).toHaveLength(1);
+
+    wrapper.unmount();
+  });
+
+  it("still closes on a completed range pick, so closeOnSelect keeps its meaning", async () => {
+    const wrapper = mountPicker({ showFooter: true }, { attachTo: document.body });
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
+
+    wrapper
+      .findComponent({ name: "VcRangeCalendar" })
+      .vm.$emit("update:modelValue", { start: "2026-10-08", end: "2026-10-14" });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
 
     wrapper.unmount();
   });
@@ -1338,5 +1358,45 @@ describe("VcDateRangePicker — split layout", () => {
       expect(fields.map((field) => field.props("name"))).toEqual([undefined, undefined]);
       expect(fields.map((field) => field.props("dataTestId"))).toEqual([undefined, undefined]);
     });
+  });
+});
+
+// Same contract as VcDatePicker's cross: clearing the field is one action, not a popover gesture.
+describe("VcDateRangePicker — the field clear cross touches only the value", () => {
+  it("leaves a closed calendar closed", async () => {
+    const wrapper = mountPicker(
+      { modelValue: { start: "2026-10-08", end: "2026-10-14" }, clearable: true },
+      { attachTo: document.body },
+    );
+
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+
+    await wrapper.find(".vc-date-range-input__clear").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+    expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+
+    wrapper.unmount();
+  });
+
+  it("leaves an open calendar open", async () => {
+    const wrapper = mountPicker(
+      { modelValue: { start: "2026-10-08", end: "2026-10-14" }, clearable: true },
+      { attachTo: document.body },
+    );
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
+
+    await wrapper.find(".vc-date-range-input__clear").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+    expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
+
+    wrapper.unmount();
   });
 });

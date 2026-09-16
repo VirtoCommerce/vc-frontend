@@ -363,7 +363,8 @@ export const WithFooter: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "`showFooter: true` exposes Today / Clear buttons inside the calendar.",
+        story:
+          "`showFooter: true` exposes Today / Clear buttons inside the calendar. Clear empties the field but does NOT close the popover — `closeOnSelect` governs picking a date, not clearing one, so the next date stays one click away and Escape still has a calendar to act on. Today picks, so it closes like any other pick.",
       },
       source: {
         code: `<VcDatePicker v-model="value" label="Date" :first-day-of-week="1" show-footer />`,

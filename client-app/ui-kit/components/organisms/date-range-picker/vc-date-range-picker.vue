@@ -141,7 +141,7 @@
         :readonly="readonly"
         @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
-        @clear="onCalendarClear(close)"
+        @clear="onCalendarClear"
       />
     </template>
   </VcPopover>
@@ -203,7 +203,8 @@ interface IProps {
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
-  /** Close on calendar pick. Default true; "combined" waits for BOTH endpoints. */
+  /** Close on calendar PICK. Default true; "combined" waits for BOTH endpoints. Emptying the range
+   * never closes it, whichever route did it: the footer Clear or the field cross. */
   closeOnSelect?: boolean;
   /** Default "bottom-end". In "split" a top/bottom placement is start-aligned for the start field. */
   placement?: VcPopoverPlacementType;
@@ -359,7 +360,7 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
     // A clear, not a pick. Resyncing would read a model an uncontrolled parent never wrote back and
     // paint the cleared dates straight in, undoing onCalendarClear.
     rangeInputRef.value?.clearSegments();
-    // Closing belongs to onCalendarClear.
+    // A clear never closes; see onCalendarClear.
     return;
   }
   // A segment resyncs only from its own half, so rejected text would outlive a range the calendar
@@ -373,17 +374,13 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
 }
 
 // The model update can't drive this: clearing an already-empty range emits nothing. Gated as above.
-function onCalendarClear(close: () => void): void {
+function onCalendarClear(): void {
   if (props.disabled || props.readonly) {
     return;
   }
   emit("clear");
   // Combined only; the split fields clear their own segments.
   rangeInputRef.value?.clearSegments();
-  if (props.closeOnSelect) {
-    close();
-    focusField();
-  }
 }
 </script>
 

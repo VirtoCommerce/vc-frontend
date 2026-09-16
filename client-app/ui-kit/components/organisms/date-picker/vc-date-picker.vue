@@ -73,7 +73,7 @@
         :prevent-deselect="preventDeselect"
         @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
-        @clear="onCalendarClear(close)"
+        @clear="onCalendarClear"
       />
     </template>
   </VcPopover>
@@ -132,7 +132,8 @@ interface IProps {
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
-  /** Close the popover when a date is selected via calendar. Default true. */
+  /** Close the popover when a date is PICKED in the calendar. Default true. Emptying the value never
+   * closes it, whichever route did it: the footer Clear, the field cross, or a deselect. */
   closeOnSelect?: boolean;
   /** Popover placement relative to the input. Default "bottom-end". */
   placement?: VcPopoverPlacementType;
@@ -218,17 +219,13 @@ function onInputClear(): void {
 }
 
 // The model round trip can't drive this: clearing an already-empty date emits nothing.
-function onCalendarClear(close: () => void): void {
+function onCalendarClear(): void {
   if (props.disabled || props.readonly) {
     return;
   }
   emit("clear");
   // A CLEAR empties the text: an uncontrolled parent never writes back, so reset() would repaint it.
   dateInputRef.value?.clearText();
-  if (props.closeOnSelect) {
-    close();
-    focusField();
-  }
 }
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
@@ -240,13 +237,16 @@ function onCalendarUpdate(close: () => void, value: string | undefined): void {
     // A clear, not a pick. Resyncing would read a model an uncontrolled parent never wrote back and
     // paint the cleared date straight in, undoing onCalendarClear.
     dateInputRef.value?.clearText();
-  } else {
-    // The field resyncs only from a model CHANGE, so re-picking the committed date would leave stale
-    // text reporting invalid for good. nextTick so the reset reads the applied model.
-    void nextTick(() => {
-      dateInputRef.value?.reset();
-    });
+    // An empty result never closes, whichever route produced it — the footer Clear, or a deselect with
+    // `preventDeselect: false`, which lands here with no `clear` emit. The next date stays one click
+    // away, and Escape still has a calendar to act on.
+    return;
   }
+  // The field resyncs only from a model CHANGE, so re-picking the committed date would leave stale
+  // text reporting invalid for good. nextTick so the reset reads the applied model.
+  void nextTick(() => {
+    dateInputRef.value?.reset();
+  });
   if (props.closeOnSelect) {
     close();
     focusField();

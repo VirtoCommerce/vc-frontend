@@ -295,7 +295,8 @@ export const WithFooter: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "`showFooter: true` exposes a Clear button inside the calendar.",
+        story:
+          "`showFooter: true` exposes a Clear button inside the calendar. Clear empties both endpoints but does NOT close the popover — `closeOnSelect` governs completing a range, not clearing one, so a fresh range stays one click away and Escape still has a calendar to act on.",
       },
       source: {
         code: `<VcDateRangePicker v-model="value" label="Date range" :first-day-of-week="1" show-footer />`,
