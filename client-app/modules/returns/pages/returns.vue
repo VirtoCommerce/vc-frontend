@@ -3,26 +3,28 @@
     <VcTypography tag="h1">{{ $t("returns.title") }}</VcTypography>
 
     <div class="returns-list__toolbar">
-      <VcInput
-        v-model="localKeyword"
-        maxlength="64"
-        class="returns-list__search"
-        :disabled="loading"
-        :placeholder="$t('returns.search_placeholder')"
-        clearable
-        @keydown.enter="applyKeyword(localKeyword)"
-        @clear="applyKeyword('')"
-      >
-        <template #append>
-          <VcButton
-            :aria-label="$t('returns.search_aria')"
-            :disabled="loading"
-            icon="search"
-            icon-size="1.25rem"
-            @click="applyKeyword(localKeyword)"
-          />
-        </template>
-      </VcInput>
+      <div class="returns-list__search-wrapper">
+        <VcInput
+          v-model="localKeyword"
+          maxlength="64"
+          class="returns-list__search"
+          :disabled="loading"
+          :placeholder="$t('returns.search_placeholder')"
+          clearable
+          @keydown.enter="applyKeyword(localKeyword)"
+          @clear="applyKeyword('')"
+        >
+          <template #append>
+            <VcButton
+              :aria-label="$t('returns.search_aria')"
+              :disabled="loading"
+              icon="search"
+              icon-size="1.25rem"
+              @click="applyKeyword(localKeyword)"
+            />
+          </template>
+        </VcInput>
+      </div>
 
       <ReturnsFilters :statuses="statuses" :applied="filter" :disabled="loading" @change="applyFilter" />
     </div>
@@ -249,8 +251,12 @@ watch(keyword, (value) => {
     }
   }
 
+  &__search-wrapper {
+    @apply flex grow;
+  }
+
   &__search {
-    @apply w-full grow;
+    @apply w-full;
   }
 
   &__chips {
