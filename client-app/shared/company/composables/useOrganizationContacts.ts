@@ -12,6 +12,7 @@ import {
 } from "@/core/api/graphql";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { convertToExtendedContact } from "../utils";
 import type {
@@ -153,7 +154,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     loading.value = true;
 
     try {
-      return await changeOrganizationContactRole(payload);
+      return await changeOrganizationContactRole({ storeId: globals.storeId, ...payload });
     } catch (e) {
       Logger.error(`${useOrganizationContacts.name}.${changeContactOrganizationRole.name}`, e);
       throw e;

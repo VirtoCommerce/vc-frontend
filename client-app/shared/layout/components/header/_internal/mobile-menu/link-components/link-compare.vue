@@ -1,5 +1,5 @@
 <template>
-  <MobileMenuLink :link="item" :count="productsIds.length" class="py-1 text-2xl font-bold" @close="$emit('close')">
+  <MobileMenuLink :link="item" :count="products.length" class="py-1 text-2xl font-bold" @close="$emit('close')">
     {{ item.title }}
   </MobileMenuLink>
 </template>
@@ -20,5 +20,5 @@ interface IEmits {
 defineEmits<IEmits>();
 defineProps<IProps>();
 
-const { productsIds } = useCompareProducts();
+const { products } = useCompareProducts();
 </script>

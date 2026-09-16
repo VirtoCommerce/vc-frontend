@@ -125,6 +125,38 @@
         "ship_to": "配送先"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "{customer} の注文",
+        "all_title": "顧客の注文",
+        "title_fallback": "注文"
+      },
+      "breadcrumb": "注文",
+      "back_to_customer": "顧客に戻る",
+      "back_to_orders": "注文一覧に戻る",
+      "order_not_found": "注文が見つかりません",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "番号、名前、その他で検索",
+      "search_aria": "注文検索",
+      "reset_search": "検索をリセット",
+      "filters": {
+        "button": "フィルター",
+        "title": "フィルター",
+        "created_date": "作成日",
+        "start_date": "開始日",
+        "end_date": "終了日",
+        "invalid_range": "無効な日付範囲です。",
+        "order_status": "@:common.labels.status",
+        "customer": "顧客を選択",
+        "reset": "リセット",
+        "apply": "適用",
+        "custom_date": "日付指定",
+        "last_day": "昨日",
+        "last_week": "先週",
+        "last_month": "先月",
+        "last_year": "昨年"
+      }
+    },
     "communication": {
       "action": "メールを送信",
       "title": "メッセージを送信",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "最近の注文",
+      "title": "自分の最近の注文",
       "view_all": "すべての注文",
       "empty": "注文はまだありません",
       "no_results": "このフィルターに一致する注文はありません",

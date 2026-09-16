@@ -125,6 +125,38 @@
         "ship_to": "Leveringsadresse"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Bestillinger for {customer}",
+        "all_title": "Kundeordrer",
+        "title_fallback": "Bestillinger"
+      },
+      "breadcrumb": "Bestillinger",
+      "back_to_customer": "Tilbake til kunden",
+      "back_to_orders": "Tilbake til ordrer",
+      "order_not_found": "Ordren ble ikke funnet",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Søk etter nummer, navn eller andre data",
+      "search_aria": "Søk i bestillinger",
+      "reset_search": "Tilbakestill søk",
+      "filters": {
+        "button": "Filtre",
+        "title": "Filtre",
+        "created_date": "Opprettelsesdato",
+        "start_date": "Startdato",
+        "end_date": "Sluttdato",
+        "invalid_range": "Ugyldig datoområde.",
+        "order_status": "Velg bestillingsstatus",
+        "customer": "Velg kunde",
+        "reset": "Tilbakestill",
+        "apply": "Bruk",
+        "custom_date": "Tilpasset dato",
+        "last_day": "Siste dag",
+        "last_week": "Siste uke",
+        "last_month": "Siste måned",
+        "last_year": "Siste år"
+      }
+    },
     "communication": {
       "action": "Send e-post",
       "title": "Send en melding",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Nylige ordrer",
+      "title": "Mine nylige ordrer",
       "view_all": "Alle bestillinger",
       "empty": "Ingen bestillinger ennå",
       "no_results": "Ingen bestillinger samsvarer med dette filteret",

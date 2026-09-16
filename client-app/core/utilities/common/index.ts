@@ -3,19 +3,28 @@ import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNorm
 
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
-export function isSafeRelativeUrl(url: string): boolean {
-  // Mirrors the browser's tab/newline stripping + backslash normalization, or a hidden "//" could slip past.
-  const normalized = url.replaceAll(/[\t\n\r]/g, "").replaceAll("\\", "/");
-  return normalized.startsWith("/") && !normalized.startsWith("//");
+/** `null` rather than a throw, so a URL that does not parse is treated like one that is absent. */
+function parseUrl(url: string, base: string): URL | null {
+  try {
+    return new URL(url, base);
+  } catch {
+    return null;
+  }
 }
 
-export function getReturnUrlValue(): string | null {
-  const { searchParams } = new URL(location.href);
+export function getReturnUrlValue(url?: string): string | null {
+  const { href } = location;
+  const { origin, hostname } = new URL(href);
+  const source = url === undefined ? new URL(href) : parseUrl(url, href);
+
+  if (!source) {
+    return null;
+  }
 
   // Try each return URL key until we find one
   for (const key of RETURN_URL_KEYS) {
-    const returnUrl = searchParams.get(key);
-    if (returnUrl && isSafeRelativeUrl(returnUrl)) {
+    const returnUrl = source.searchParams.get(key);
+    if (returnUrl && parseUrl(returnUrl, origin)?.hostname === hostname) {
       return returnUrl;
     }
   }
