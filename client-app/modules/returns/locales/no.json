@@ -29,6 +29,7 @@
       "Approved": "Godkjent",
       "Rejected": "Avvist",
       "Cancelled": "Kansellert",
+      "Canceled": "Kansellert",
       "New": "Ny",
       "Processing": "Behandles",
       "Completed": "Fullført"

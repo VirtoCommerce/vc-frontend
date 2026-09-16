@@ -29,6 +29,7 @@
       "Approved": "Одобрен",
       "Rejected": "Отклонён",
       "Cancelled": "Отменён",
+      "Canceled": "Отменён",
       "New": "Новый",
       "Processing": "В обработке",
       "Completed": "Завершён"

@@ -29,6 +29,7 @@
       "Approved": "Hyväksytty",
       "Rejected": "Hylätty",
       "Cancelled": "Peruutettu",
+      "Canceled": "Peruutettu",
       "New": "Uusi",
       "Processing": "Käsittelyssä",
       "Completed": "Valmis"

@@ -29,6 +29,7 @@
       "Approved": "Godkänd",
       "Rejected": "Avvisad",
       "Cancelled": "Avbruten",
+      "Canceled": "Avbruten",
       "New": "Ny",
       "Processing": "Behandlas",
       "Completed": "Slutförd"

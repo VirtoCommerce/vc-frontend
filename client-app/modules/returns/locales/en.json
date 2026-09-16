@@ -29,6 +29,7 @@
       "Approved": "Approved",
       "Rejected": "Rejected",
       "Cancelled": "Cancelled",
+      "Canceled": "Cancelled",
       "New": "New",
       "Processing": "Processing",
       "Completed": "Completed"

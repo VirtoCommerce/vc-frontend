@@ -29,6 +29,7 @@
       "Approved": "承認済み",
       "Rejected": "却下",
       "Cancelled": "キャンセル済み",
+      "Canceled": "キャンセル済み",
       "New": "新規",
       "Processing": "処理中",
       "Completed": "完了"

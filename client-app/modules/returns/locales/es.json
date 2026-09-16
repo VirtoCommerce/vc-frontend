@@ -29,6 +29,7 @@
       "Approved": "Aprobada",
       "Rejected": "Rechazada",
       "Cancelled": "Cancelada",
+      "Canceled": "Cancelada",
       "New": "Nueva",
       "Processing": "En proceso",
       "Completed": "Completada"

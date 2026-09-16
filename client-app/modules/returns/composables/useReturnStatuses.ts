@@ -7,13 +7,21 @@ export function useReturnStatuses() {
   const { result, loading } = useGetReturnStatusesQuery();
   const { statusLabel } = useReturnStatusLabel();
 
-  const statuses = computed<ReturnStatusOptionType[]>(
-    () =>
-      result.value?.returnStatuses?.items?.map((item) => ({
-        code: item.key,
-        label: statusLabel(item.key, item.value),
-      })) ?? [],
-  );
+  // The dictionary carries both spellings of cancelled, which would read as the same option
+  // listed twice. Whichever code survives still matches both rows: the server expands synonyms.
+  const statuses = computed<ReturnStatusOptionType[]>(() => {
+    const byLabel = new Map<string, ReturnStatusOptionType>();
+
+    for (const item of result.value?.returnStatuses?.items ?? []) {
+      const label = statusLabel(item.key, item.value);
+
+      if (!byLabel.has(label)) {
+        byLabel.set(label, { code: item.key, label });
+      }
+    }
+
+    return [...byLabel.values()];
+  });
 
   return {
     loading,

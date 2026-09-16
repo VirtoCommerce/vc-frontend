@@ -29,6 +29,7 @@
       "Approved": "Genehmigt",
       "Rejected": "Abgelehnt",
       "Cancelled": "Storniert",
+      "Canceled": "Storniert",
       "New": "Neu",
       "Processing": "In Bearbeitung",
       "Completed": "Abgeschlossen"

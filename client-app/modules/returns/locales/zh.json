@@ -29,6 +29,7 @@
       "Approved": "已批准",
       "Rejected": "已拒绝",
       "Cancelled": "已取消",
+      "Canceled": "已取消",
       "New": "新建",
       "Processing": "处理中",
       "Completed": "已完成"
