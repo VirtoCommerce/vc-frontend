@@ -188,7 +188,7 @@ const chips = computed<ChipType[]>(() => {
   if (filter.value.startDate) {
     result.push({
       id: "startDate",
-      label: t("common.labels.starts_from", [d(new Date(filter.value.startDate))]),
+      label: t("common.labels.starts_from", [d(toLocalDate(filter.value.startDate))]),
       field: "startDate",
     });
   }
@@ -196,13 +196,19 @@ const chips = computed<ChipType[]>(() => {
   if (filter.value.endDate) {
     result.push({
       id: "endDate",
-      label: t("common.labels.ends_to", [d(new Date(filter.value.endDate))]),
+      label: t("common.labels.ends_to", [d(toLocalDate(filter.value.endDate))]),
       field: "endDate",
     });
   }
 
   return result;
 });
+
+// new Date("2026-06-15") is UTC midnight, which formats as the day before west of Greenwich.
+// The filter stores local calendar days, so they have to be read back as local midnight.
+function toLocalDate(dateOnly: string): Date {
+  return new Date(`${dateOnly}T00:00:00`);
+}
 
 function removeChip(chip: ChipType): void {
   applyFilter({
