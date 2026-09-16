@@ -159,7 +159,12 @@ const triggerListeners = computed(() => ({
       return;
     }
 
-    e.stopPropagation();
+    // A hover panel is open merely because the trigger has focus, so swallowing the key would take
+    // Escape away from whatever the user actually meant to dismiss. Closing it is still right.
+    if (!props.hover) {
+      e.stopPropagation();
+    }
+
     close();
   },
 }));

@@ -322,6 +322,28 @@ describe("VcPopover", () => {
       expect(isPanelOpen(wrapper, "Outer")).toBe(true);
     });
 
+    // A tooltip opens on focus alone, so its trigger must not eat an Escape the page is listening for.
+    it("closes a hover popover on Escape without taking the key from the page", async () => {
+      const wrapper = mount(NestedHost, { attachTo: document.body, props: { hover: true } });
+      const seen: string[] = [];
+      const record = (event: KeyboardEvent) => seen.push(event.key);
+
+      document.addEventListener("keydown", record);
+
+      await wrapper.get("button.trigger").trigger("focusin");
+      await nextTick();
+
+      expect(isPanelOpen(wrapper, "Outer")).toBe(true);
+
+      await wrapper.get("button.trigger").trigger("keydown", { key: "Escape" });
+      await nextTick();
+
+      document.removeEventListener("keydown", record);
+
+      expect(isPanelOpen(wrapper, "Outer")).toBe(false);
+      expect(seen).toEqual(["Escape"]);
+    });
+
     it("does not pull focus into a hover popover, which would fight its own focusout", async () => {
       const wrapper = mount(NestedHost, { attachTo: document.body, props: { hover: true } });
 
