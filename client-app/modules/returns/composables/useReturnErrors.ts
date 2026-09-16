@@ -5,20 +5,20 @@ import type { ApolloError } from "@apollo/client/core";
 
 const FALLBACK = "UNHANDLED";
 
+// The flow service ships the line and the number it could actually allow, and that is exactly
+// what a buyer needs to fix the draft. Reading only the code throws it away.
+export function getReturnErrorDetails(error: unknown): ReturnErrorDetailsType {
+  const extensions = (error as ApolloError | undefined)?.graphQLErrors?.[0]?.extensions ?? {};
+
+  return {
+    orderLineItemId: typeof extensions.orderLineItemId === "string" ? extensions.orderLineItemId : undefined,
+    availableQuantity: typeof extensions.availableQuantity === "number" ? extensions.availableQuantity : undefined,
+  };
+}
+
 export function useReturnErrors() {
   const { t, te } = useI18n();
   const notifications = useNotifications();
-
-  // The flow service ships the line and the number it could actually allow, and that is exactly
-  // what a buyer needs to fix the draft. Reading only the code throws it away.
-  function getDetails(error: unknown): ReturnErrorDetailsType {
-    const extensions = (error as ApolloError | undefined)?.graphQLErrors?.[0]?.extensions ?? {};
-
-    return {
-      orderLineItemId: typeof extensions.orderLineItemId === "string" ? extensions.orderLineItemId : undefined,
-      availableQuantity: typeof extensions.availableQuantity === "number" ? extensions.availableQuantity : undefined,
-    };
-  }
 
   function getCode(error: unknown): string {
     const graphQLErrors = (error as ApolloError | undefined)?.graphQLErrors;
@@ -42,5 +42,5 @@ export function useReturnErrors() {
     notifications.error({ text: t(`returns.errors.${getCode(error)}`), duration: 15000 });
   }
 
-  return { getCode, getDetails, codeText, report };
+  return { getCode, codeText, report };
 }

@@ -135,7 +135,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, reactive, ref, toRef } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
@@ -187,10 +187,19 @@ const {
 const bulkReason = ref("");
 
 // Keyed by line: the uploader lives per line and only it knows whether its files have settled.
-const uploadState = reactive<Record<string, { settled: boolean; failed: boolean }>>({});
+// The router reuses this component between drafts, so a stale "still uploading" flag from the
+// previous one would keep Submit disabled on the next.
+const uploadState = ref<Record<string, { settled: boolean; failed: boolean }>>({});
 
-const uploadsPending = computed(() => Object.values(uploadState).some((state) => !state.settled));
-const uploadsFailed = computed(() => Object.values(uploadState).some((state) => state.failed));
+watch(
+  () => props.returnId,
+  () => {
+    uploadState.value = {};
+  },
+);
+
+const uploadsPending = computed(() => Object.values(uploadState.value).some((state) => !state.settled));
+const uploadsFailed = computed(() => Object.values(uploadState.value).some((state) => state.failed));
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
@@ -201,7 +210,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 const isMobile = breakpoints.smaller("lg");
 
 function setUploadState(line: ReturnDraftLineType, key: "settled" | "failed", value: boolean): void {
-  const state = (uploadState[line.orderLineItemId] ??= { settled: true, failed: false });
+  const state = (uploadState.value[line.orderLineItemId] ??= { settled: true, failed: false });
   state[key] = value;
 }
 

@@ -7,7 +7,7 @@ import { useUpdateReturnMutation } from "@/modules/returns/api/graphql/mutations
 import { useGetReturnQuery } from "@/modules/returns/api/graphql/queries/getReturn";
 import { useGetReturnableItemsQuery } from "@/modules/returns/api/graphql/queries/getReturnableItems";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
-import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
+import { getReturnErrorDetails, useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
 import { ATTACHMENTS_REQUIRED_KEY, FILE_UPLOAD_SCOPE, MODULE_ID } from "@/modules/returns/constants";
 import type { ReturnDraftLineType } from "@/modules/returns/types";
@@ -18,7 +18,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { mutate: updateReturn, loading: saving } = useUpdateReturnMutation();
   const { mutate: submitReturn, loading: submitting } = useSubmitReturnMutation();
   const { requiresComment } = useReturnReasons();
-  const { report, getDetails } = useReturnErrors();
+  const { report } = useReturnErrors();
   const { getSettingValue } = useModuleSettings(MODULE_ID);
 
   const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) !== false);
@@ -44,6 +44,10 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
   // Set when the server refuses a submit for a specific line, so the page can point at it.
   const unavailableLineId = ref("");
+
+  // Flips synchronously on click, unlike the mutation's own loading flag, which only turns true
+  // after the pre-submit save has settled.
+  const submitInProgress = ref(false);
 
   const { canEdit, canSubmit: submitAllowed } = useReturnActions(orderReturn);
 
@@ -166,11 +170,27 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   }
 
   async function submit(): Promise<boolean> {
-    // An edit still sitting in the queue would otherwise land after the submit, against a return
-    // that is no longer a draft.
+    if (submitInProgress.value) {
+      return false;
+    }
+
+    submitInProgress.value = true;
+
+    try {
+      return await submitInternal();
+    } finally {
+      submitInProgress.value = false;
+    }
+  }
+
+  async function submitInternal(): Promise<boolean> {
+    // Enqueue what is on screen and drain the queue at once. Awaiting the debounce instead would
+    // leave Submit clickable for another second, and an edit still queued would otherwise land
+    // against a return that is no longer a draft.
+    const saved = save();
     flushAutosave();
 
-    if (!(await save())) {
+    if (!(await saved)) {
       return false;
     }
 
@@ -184,7 +204,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
       return submitted?.data?.submitReturn?.status === "Requested";
     } catch (error) {
-      unavailableLineId.value = getDetails(error).orderLineItemId ?? "";
+      unavailableLineId.value = getReturnErrorDetails(error).orderLineItemId ?? "";
       // The ceiling the buyer sees was read before a colleague spent it, so it has to be re-read
       // before they can pick a number the server will accept.
       await refetchReturnable();
@@ -197,7 +217,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   return {
     loading,
     saving,
-    submitting,
+    submitting: computed(() => submitting.value || submitInProgress.value),
     orderReturn,
     canEdit,
     customerReference,
