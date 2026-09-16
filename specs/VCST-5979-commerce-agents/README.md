@@ -18,7 +18,8 @@ Third-party commentary is marked as such.
 | [08-value-proposition.md](08-value-proposition.md) | Value for buyers, merchants and partners; how to demo it; what not to claim |
 | [09-risks-and-nuances.md](09-risks-and-nuances.md) | Risks ordered by decision impact, and the details easy to miss |
 | [10-open-questions.md](10-open-questions.md) | What is unverified, what needs deciding, what happens next |
-| [11-webinar-slides.md](11-webinar-slides.md) | The three ways to build agentic commerce, and the ownership boundary — framing not in the blogs |
+| [11-webinar-slides.md](11-webinar-slides.md) | The three ways to build agentic commerce, the ownership boundary, the anatomy sequence, the proactive roadmap |
+| [12-anatomy-in-code.md](12-anatomy-in-code.md) | What a commerce agent actually is: the parts, one turn end to end, and the three pieces we would write |
 
 ## One paragraph
 

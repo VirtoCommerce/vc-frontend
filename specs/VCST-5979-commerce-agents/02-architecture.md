@@ -32,8 +32,11 @@ data platform), where the fan-out pays.
 
 The webinar slide states the request order more precisely — `tools · system prompt` →
 `user · skills · history` → `new` → `page · time` ([11-webinar-slides.md](11-webinar-slides.md)).
-Skills sit in the session segment, not the global one, so editing a skill invalidates less
-than editing the system prompt does.
+Skills land in the session segment rather than the global one because **only the skill index
+is in the prompt**; a skill's body is paged in on demand through the `load_skill` tool and
+arrives as a tool result in the history ([12-anatomy-in-code.md](12-anatomy-in-code.md)).
+That is why ten skills cost almost nothing, and why adding one invalidates far less than
+editing the system prompt.
 
 Reported result: 90–99% cache hit rate in production; cached reads cost ~10% of fresh
 tokens and give 1.5–2× speed at ~100k-token scale. The repo's own verification advice: read
