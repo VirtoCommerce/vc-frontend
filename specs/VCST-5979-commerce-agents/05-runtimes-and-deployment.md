@@ -101,17 +101,75 @@ dateless `anthropic.` ids while the Invoke API takes inference-profile ids; Foun
 deployment name. All three model fields go through one client, so all three must exist on
 the platform you target.
 
-## Cost sketch for a pilot
+## What this actually costs
 
-Nothing measured yet — this is arithmetic to be replaced by a real trace, and it is
-deliberately rough.
+"It is open source, so we only pay for the API" is the right instinct and an incomplete
+bill. The licence is genuinely free; there are four cost lines behind it, and only the
+first is a vendor invoice.
 
-A shopping turn on Sonnet 5 with a cached ~30k-token prefix and a few hundred fresh tokens
-lands in the fractions-of-a-cent range for input, with output the larger half. The design
-levers are the ones the blueprint already pulls: keep the prefix byte-stable so the cache
-holds, shape tool results so they are small, and keep the loop short with
-`max_tool_iterations`. The merchant agent is the expensive one (Opus, analysis delegate)
-and it is also the one with the fewest concurrent users — that asymmetry is deliberate.
+### 1. The licence: free, and permissive
 
-**Measure before quoting anything to a customer**: `cache_read_input_tokens` on
-`turn_complete`, and cost per completed task rather than per request.
+Apache-2.0. We may fork it, modify it, ship it inside a closed commercial product, and
+charge for that product. The obligations are to keep the licence text and the NOTICE file
+and to state changes; there is no copyleft and no per-seat fee. The licence covers the
+code — model usage is governed separately by Anthropic's commercial terms and usage policy.
+
+### 2. Claude tokens — the only vendor line
+
+Per conversation, at the rates in the table above. Order of magnitude, **arithmetic rather
+than a measurement**, on the repo's Sonnet 5 default with a cached ~30k-token prefix:
+
+| | Tokens | Rate | Cost |
+|---|---|---|---|
+| Cached prefix read | ~30k | ~$0.20/MTok (10% of input) | ~$0.006 |
+| Fresh input (message + tool results) | ~3k | $2/MTok | ~$0.006 |
+| Output | ~800 | $10/MTok | ~$0.008 |
+| **One shopping turn** | | | **~$0.02** |
+
+A ten-turn conversation lands around **$0.15–0.30**. The first turn costs more because a
+cache write is billed at ~1.25×; memory extraction on Haiku is rounding error.
+
+The merchant agent costs several times more per turn (Opus, plus the analysis delegate) and
+has orders of magnitude fewer concurrent users. That asymmetry is the whole reason the
+repo defaults differ per role.
+
+Levers, in the order they pay: keep the prefix byte-stable so the cache holds, shape tool
+results so they are small, cap the loop with `max_tool_iterations`. **Measure before
+quoting anything to a customer** — `cache_read_input_tokens` on `turn_complete`, and cost
+per completed task rather than per request.
+
+### 3. Running it — ours
+
+The blueprint is code that has to live somewhere: the Python service, a session store, a
+memory store, and whatever scaling a public storefront needs. Our compute, our DevOps.
+Managed Agents would absorb this for $0.08/session-hour, but it also drops every grounding
+rule, which is why we are not choosing it.
+
+### 4. Maintaining the fork — ours, and the largest line
+
+Not an invoice, but the biggest real cost. No upstream, no security patches, no dependency
+bumps, and 35 open PRs including real bug fixes that nobody will merge
+([09-risks-and-nuances.md](09-risks-and-nuances.md)).
+
+### And if the customer insists on their own cloud
+
+Bedrock and Vertex AI are partner-operated with their own pricing, not Anthropic's rate
+card. Foundry bills through the Microsoft Marketplace at standard API rates.
+
+## Open product question: whose key
+
+This follows directly from the cost model and should be decided early, because it changes
+the architecture of the service.
+
+| | Merchant brings their own key | We resell tokens |
+|---|---|---|
+| Our COGS | Zero | Per conversation, per merchant |
+| Abuse exposure | Theirs | **Ours** — a public storefront is an unauthenticated surface where every conversation costs money |
+| Onboarding | Worse: they need an Anthropic account and a key | Better: it just works |
+| Margin | None | Real |
+| Rate limiting, budgets, quotas | Their problem | Must exist before launch |
+
+Bring-your-own-key is the safe default for a first release and the one that lets a pilot
+ship without a billing story. Reselling is the better product and needs per-session budgets,
+rate limiting and abuse handling designed in, not added later. This is a product decision,
+not a technical one.

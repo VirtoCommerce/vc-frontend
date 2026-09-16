@@ -29,6 +29,9 @@ specifically would change if a demo run contradicted them:
   surface that does not exist. Worth confirming with whoever owns the platform roadmap.
 - **Is this productised or a reference?** A shipped module our merchants enable, versus a
   blueprint partners fork. That choice changes almost everything downstream.
+- **Whose API key** — merchant brings their own, or we resell tokens. Decides whether abuse
+  handling, per-session budgets and rate limiting are ours to build before launch. Cost
+  model and trade-off table in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md).
 
 ## Next steps for this spike
 
