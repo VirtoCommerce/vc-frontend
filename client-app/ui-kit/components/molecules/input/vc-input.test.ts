@@ -113,8 +113,8 @@ describe("VcInput", () => {
       expect(wrapper.get("input").attributes("aria-invalid")).toBe(token);
     });
 
-    // An unrecognised token means "true" per ARIA, and axe rejects it as aria-valid-attr-value.
-    it.each([0, 1, "", "yes"])("collapses the unusable consumer value %j to true", (value) => {
+    // An unrecognised token means "true" per ARIA, and axe flags it as aria-valid-attr-value.
+    it.each([0, 1, "yes"])("collapses the unusable consumer value %j to true", (value) => {
       const wrapper = createWrapper({ props: { aria: { "aria-invalid": value } } });
 
       expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
@@ -126,6 +126,12 @@ describe("VcInput", () => {
       });
 
       expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
+    });
+
+    it("treats an empty consumer value as unset, which ARIA reads as not invalid", () => {
+      const wrapper = createWrapper({ props: { aria: { "aria-invalid": "" } } });
+
+      expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
     });
 
     it("stays absent when neither the error state nor the consumer asks for it", () => {

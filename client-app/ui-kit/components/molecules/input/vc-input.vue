@@ -189,11 +189,12 @@ const describedBy = computed(() => {
   return ids || undefined;
 });
 
-// An unrecognised aria-invalid token means "true" per ARIA, and axe rejects it outright.
+// Per ARIA an empty aria-invalid means NOT invalid, so treat it as no override; any other
+// unrecognised token means "true".
 const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
   const override = props.aria?.["aria-invalid"];
 
-  if (override == null) {
+  if (override == null || override === "") {
     return props.error ? "true" : undefined;
   }
 
