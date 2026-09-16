@@ -267,7 +267,7 @@ describe("VcSelect inside a dialog popover", () => {
     expect(wrapper.get(".vc-select").classes()).not.toContain("vc-select--opened");
   });
 
-  it("opens the slotted trigger's dropdown on ArrowDown", async () => {
+  it("opens the slotted trigger's dropdown on ArrowDown and moves focus to the first option", async () => {
     const wrapper = createSlottedWrapper();
 
     await wrapper.get("button.trigger").trigger("click");
@@ -277,6 +277,41 @@ describe("VcSelect inside a dialog popover", () => {
     await nextTick();
     await nextTick();
 
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+    expect(wrapper.get(".vc-menu-item").element.contains(document.activeElement)).toBe(true);
+  });
+
+  // The other half for the slotted trigger: the list is open and focus is still on the trigger,
+  // because a click opened it.
+  it("moves focus into the already open list on ArrowDown from the slotted trigger", async () => {
+    const wrapper = createSlottedWrapper();
+
+    await wrapper.get("button.trigger").trigger("click");
+    await nextTick();
+    await wrapper.get(".vc-select__button").trigger("click");
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+
+    await wrapper.get(".vc-select__button").trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    expect(wrapper.get(".vc-menu-item").element.contains(document.activeElement)).toBe(true);
+  });
+
+  // An open list has no option to accept from the trigger, so Enter stays the page's: a select in a
+  // form must still submit it.
+  it("leaves Enter alone while its list is open", async () => {
+    const wrapper = createWrapper();
+    await openDialogAndSelect(wrapper);
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+
+    const event = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    wrapper.get(".vc-select input").element.dispatchEvent(event);
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(false);
     expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
   });
 
