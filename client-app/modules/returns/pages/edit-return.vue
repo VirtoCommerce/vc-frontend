@@ -38,9 +38,33 @@
 
       <VcWidget v-for="line in lines" :key="line.orderLineItemId" :title="line.name ?? ''" size="lg" class="mt-5">
         <p class="mb-4 text-sm text-neutral-400">
-          {{ [line.sku, line.measureUnit].filter(Boolean).join(" · ") }} ·
-          {{ $t("return_edit.returning", { quantity: line.quantity }) }}
+          {{ [line.sku, line.measureUnit].filter(Boolean).join(" · ") }}
         </p>
+
+        <div class="mb-4 flex flex-wrap items-center gap-3">
+          <ReturnQuantityInput
+            :model-value="line.quantity"
+            :max="maxQuantity(line)"
+            :label="$t('return_edit.quantity_for', { name: line.name })"
+            @update:model-value="onQuantityChanged(line, $event)"
+          />
+
+          <span class="text-sm text-neutral-400">
+            {{ $t("return_edit.available", { quantity: maxQuantity(line) }) }}
+          </span>
+        </div>
+
+        <!-- The one failure a correctly filled draft can still hit, and the only place it can be fixed. -->
+        <VcAlert
+          v-if="unavailableLineId === line.orderLineItemId"
+          color="danger"
+          variant="soft"
+          size="sm"
+          class="mb-4"
+          icon
+        >
+          {{ $t("returns.errors.RETURN_QUANTITY_UNAVAILABLE") }}
+        </VcAlert>
 
         <div class="grid gap-5 lg:grid-cols-2">
           <VcSelect
@@ -121,6 +145,7 @@ import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons
 import { BackButtonInHeader } from "@/shared/layout";
 import type { ReturnDraftLineType } from "@/modules/returns/types";
 import ReturnLineAttachments from "@/modules/returns/components/return-line-attachments.vue";
+import ReturnQuantityInput from "@/modules/returns/components/return-quantity-input.vue";
 
 interface IProps {
   returnId: string;
@@ -149,6 +174,8 @@ const {
   lines,
   incompleteCounts,
   canSubmit,
+  maxQuantity,
+  unavailableLineId,
   attachmentsRequired,
   fileUploadScope,
   requiresComment,
@@ -176,6 +203,12 @@ const isMobile = breakpoints.smaller("lg");
 function setUploadState(line: ReturnDraftLineType, key: "settled" | "failed", value: boolean): void {
   const state = (uploadState[line.orderLineItemId] ??= { settled: true, failed: false });
   state[key] = value;
+}
+
+function onQuantityChanged(line: ReturnDraftLineType, quantity: number): void {
+  line.quantity = quantity;
+  unavailableLineId.value = "";
+  void autosave();
 }
 
 function onAttachmentsChanged(line: ReturnDraftLineType, urls: string[]): void {

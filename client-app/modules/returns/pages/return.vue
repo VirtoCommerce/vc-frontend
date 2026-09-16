@@ -69,45 +69,51 @@
 
       <VcWidget :title="$t('return_details.items_section')" size="lg" class="mt-5">
         <template #default-container>
-          <table class="w-full">
-            <thead>
-              <tr class="border-b border-neutral-200 text-sm text-neutral-400">
-                <th class="p-5 text-left font-normal">{{ $t("returns.select_items.columns.item") }}</th>
+          <VcTable
+            :items="items"
+            :description="$t('return_details.table_description')"
+            hide-default-footer
+            mobile-breakpoint="lg"
+          >
+            <template #mobile-item="{ item }">
+              <div class="return-details__card">
+                <ReturnItemSummary :item="item" @download="onDownload" />
 
-                <th class="p-5 text-right font-normal">{{ $t("return_details.columns.requested") }}</th>
+                <div class="return-details__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("return_details.columns.requested") }}</span>
 
-                <th class="p-5 text-right font-normal">{{ $t("return_details.columns.approved") }}</th>
-              </tr>
-            </thead>
+                  <span>{{ item.quantity }}</span>
+                </div>
 
-            <tbody>
-              <tr v-for="item in items" :key="item.id" class="border-b border-neutral-200">
-                <td class="p-5">
-                  <div>{{ item.name }}</div>
+                <div class="return-details__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("return_details.columns.approved") }}</span>
 
-                  <div class="text-sm text-neutral-400">
-                    {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
-                  </div>
-
-                  <div v-if="item.reasonComment" class="text-sm text-neutral-400">{{ item.reasonComment }}</div>
-
-                  <ul v-if="item.files.length" class="mt-2 space-y-1">
-                    <li v-for="file in item.files" :key="file.url">
-                      <VcFile :file="file" @download="onDownload" />
-                    </li>
-                  </ul>
-                </td>
-
-                <td class="p-5 text-right">{{ item.quantity }}</td>
-
-                <td class="p-5 text-right">
                   <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
 
                   <span v-else>{{ item.approvedQuantity }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+              </div>
+            </template>
+
+            <VcTableColumn id="item" v-slot="{ item }" :title="$t('returns.select_items.columns.item')">
+              <ReturnItemSummary :item="item" @download="onDownload" />
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="requested"
+              v-slot="{ item }"
+              :title="$t('return_details.columns.requested')"
+              align="right"
+            >
+              {{ item.quantity }}
+            </VcTableColumn>
+
+            <VcTableColumn id="approved" v-slot="{ item }" :title="$t('return_details.columns.approved')" align="right">
+              <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
+
+              <span v-else>{{ item.approvedQuantity }}</span>
+            </VcTableColumn>
+          </VcTable>
         </template>
       </VcWidget>
     </template>
@@ -129,6 +135,7 @@ import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import CancelReturnModal from "@/modules/returns/components/cancel-return-modal.vue";
+import ReturnItemSummary from "@/modules/returns/components/return-item-summary.vue";
 
 interface IProps {
   returnId: string;
@@ -193,3 +200,15 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 const isMobile = breakpoints.smaller("lg");
 </script>
+
+<style lang="scss">
+.return-details {
+  &__card {
+    @apply flex flex-col gap-1 border-b border-neutral-200 p-6;
+  }
+
+  &__card-row {
+    @apply mt-2 flex items-center justify-between gap-3;
+  }
+}
+</style>

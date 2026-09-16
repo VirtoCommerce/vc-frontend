@@ -106,7 +106,8 @@
     "columns": {
       "requested": "Richiesto",
       "approved": "Approvato"
-    }
+    },
+    "table_description": "articoli resi"
   },
   "return_cancel": {
     "title": "Annulla reso",
@@ -122,7 +123,6 @@
     "bulk_section": "Applica a tutte le righe",
     "apply_to_all": "Applica un motivo a tutte le {count} righe",
     "apply": "Applica",
-    "returning": "reso di {quantity}",
     "reason": "Motivo",
     "serial_number": "Numero di serie",
     "reason_comment": "Qual è il problema?",
@@ -137,6 +137,8 @@
       "attachment": "{count} riga/righe richiedono ancora una foto"
     },
     "uploads_pending": "In attesa del completamento del caricamento dei file",
-    "uploads_failed": "Alcuni file non sono stati caricati. Rimuovili o riprova prima di inviare."
+    "uploads_failed": "Alcuni file non sono stati caricati. Rimuovili o riprova prima di inviare.",
+    "quantity_for": "Quantità da rendere per {name}",
+    "available": "su {quantity} disponibili"
   }
 }

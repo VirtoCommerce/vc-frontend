@@ -5,6 +5,7 @@ import { globals } from "@/core/globals";
 import { useSubmitReturnMutation } from "@/modules/returns/api/graphql/mutations/submitReturn";
 import { useUpdateReturnMutation } from "@/modules/returns/api/graphql/mutations/updateReturn";
 import { useGetReturnQuery } from "@/modules/returns/api/graphql/queries/getReturn";
+import { useGetReturnableItemsQuery } from "@/modules/returns/api/graphql/queries/getReturnableItems";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
 import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
@@ -17,12 +18,32 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { mutate: updateReturn, loading: saving } = useUpdateReturnMutation();
   const { mutate: submitReturn, loading: submitting } = useSubmitReturnMutation();
   const { requiresComment } = useReturnReasons();
-  const { report } = useReturnErrors();
+  const { report, getDetails } = useReturnErrors();
   const { getSettingValue } = useModuleSettings(MODULE_ID);
 
   const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) !== false);
 
   const orderReturn = computed(() => result.value?.return);
+
+  // A draft holds no quantity, so what the server reports as returnable already includes what this
+  // draft asks for - it is the ceiling the buyer may raise a line to.
+  const { result: returnableResult, refetch: refetchReturnable } = useGetReturnableItemsQuery(
+    computed(() => ({ orderId: orderReturn.value?.orderId ?? "" })),
+    computed(() => !!orderReturn.value?.orderId),
+  );
+
+  const maxQuantities = computed(() =>
+    Object.fromEntries(
+      (returnableResult.value?.returnableItems ?? []).map((item) => [item.orderLineItemId, item.returnableQuantity]),
+    ),
+  );
+
+  function maxQuantity(line: ReturnDraftLineType): number {
+    return maxQuantities.value[line.orderLineItemId] ?? line.quantity;
+  }
+
+  // Set when the server refuses a submit for a specific line, so the page can point at it.
+  const unavailableLineId = ref("");
 
   const { canEdit, canSubmit: submitAllowed } = useReturnActions(orderReturn);
 
@@ -154,6 +175,8 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     }
 
     try {
+      unavailableLineId.value = "";
+
       const submitted = await submitReturn({
         command: { returnId: toValue(returnId) },
         cultureName: globals.cultureName,
@@ -161,6 +184,10 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
       return submitted?.data?.submitReturn?.status === "Requested";
     } catch (error) {
+      unavailableLineId.value = getDetails(error).orderLineItemId ?? "";
+      // The ceiling the buyer sees was read before a colleague spent it, so it has to be re-read
+      // before they can pick a number the server will accept.
+      await refetchReturnable();
       report(error);
 
       return false;
@@ -179,6 +206,8 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     incompleteLines,
     incompleteCounts,
     canSubmit,
+    maxQuantity,
+    unavailableLineId,
     attachmentsRequired,
     fileUploadScope: FILE_UPLOAD_SCOPE,
     requiresComment,

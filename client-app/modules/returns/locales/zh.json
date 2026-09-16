@@ -106,7 +106,8 @@
     "columns": {
       "requested": "申请数量",
       "approved": "批准数量"
-    }
+    },
+    "table_description": "退货商品"
   },
   "return_cancel": {
     "title": "取消退货",
@@ -122,7 +123,6 @@
     "bulk_section": "应用到所有行",
     "apply_to_all": "将一个原因应用到全部 {count} 行",
     "apply": "应用",
-    "returning": "退货 {quantity}",
     "reason": "原因",
     "serial_number": "序列号",
     "reason_comment": "有什么问题？",
@@ -137,6 +137,8 @@
       "attachment": "还有 {count} 条明细需要上传照片"
     },
     "uploads_pending": "正在等待文件上传完成",
-    "uploads_failed": "部分文件上传失败。请在提交前删除或重试。"
+    "uploads_failed": "部分文件上传失败。请在提交前删除或重试。",
+    "quantity_for": "{name} 的退货数量",
+    "available": "共 {quantity} 件可退"
   }
 }

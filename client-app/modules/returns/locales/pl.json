@@ -106,7 +106,8 @@
     "columns": {
       "requested": "Zgłoszono",
       "approved": "Zatwierdzono"
-    }
+    },
+    "table_description": "zwracane produkty"
   },
   "return_cancel": {
     "title": "Anuluj zwrot",
@@ -122,7 +123,6 @@
     "bulk_section": "Zastosuj do wszystkich pozycji",
     "apply_to_all": "Zastosuj jeden powód do wszystkich {count} pozycji",
     "apply": "Zastosuj",
-    "returning": "zwrot: {quantity}",
     "reason": "Powód",
     "serial_number": "Numer seryjny",
     "reason_comment": "Co jest nie tak?",
@@ -137,6 +137,8 @@
       "attachment": "{count} pozycja(e) nadal wymaga(ją) zdjęcia"
     },
     "uploads_pending": "Trwa przesyłanie plików",
-    "uploads_failed": "Niektórych plików nie udało się przesłać. Usuń je lub spróbuj ponownie przed wysłaniem."
+    "uploads_failed": "Niektórych plików nie udało się przesłać. Usuń je lub spróbuj ponownie przed wysłaniem.",
+    "quantity_for": "Ilość do zwrotu dla {name}",
+    "available": "z {quantity} dostępnych"
   }
 }

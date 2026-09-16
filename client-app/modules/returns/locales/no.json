@@ -106,7 +106,8 @@
     "columns": {
       "requested": "Forespurt",
       "approved": "Godkjent"
-    }
+    },
+    "table_description": "returnerte varer"
   },
   "return_cancel": {
     "title": "Avbryt retur",
@@ -122,7 +123,6 @@
     "bulk_section": "Bruk på alle linjer",
     "apply_to_all": "Bruk én årsak på alle {count} linjene",
     "apply": "Bruk",
-    "returning": "returnerer {quantity}",
     "reason": "Årsak",
     "serial_number": "Serienummer",
     "reason_comment": "Hva er galt med den?",
@@ -137,6 +137,8 @@
       "attachment": "{count} linje(r) mangler fortsatt et bilde"
     },
     "uploads_pending": "Venter på at filene skal lastes opp",
-    "uploads_failed": "Noen filer kunne ikke lastes opp. Fjern dem eller prøv igjen før du sender."
+    "uploads_failed": "Noen filer kunne ikke lastes opp. Fjern dem eller prøv igjen før du sender.",
+    "quantity_for": "Antall som returneres for {name}",
+    "available": "av {quantity} tilgjengelig"
   }
 }

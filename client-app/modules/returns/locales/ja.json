@@ -106,7 +106,8 @@
     "columns": {
       "requested": "申請数",
       "approved": "承認数"
-    }
+    },
+    "table_description": "返品する商品"
   },
   "return_cancel": {
     "title": "返品をキャンセル",
@@ -122,7 +123,6 @@
     "bulk_section": "すべての明細に適用",
     "apply_to_all": "{count} 件すべてに同じ理由を適用",
     "apply": "適用",
-    "returning": "返品数 {quantity}",
     "reason": "理由",
     "serial_number": "シリアル番号",
     "reason_comment": "どのような不具合ですか？",
@@ -137,6 +137,8 @@
       "attachment": "{count} 件の明細に写真が必要です"
     },
     "uploads_pending": "ファイルのアップロード完了を待っています",
-    "uploads_failed": "一部のファイルをアップロードできませんでした。送信前に削除または再試行してください。"
+    "uploads_failed": "一部のファイルをアップロードできませんでした。送信前に削除または再試行してください。",
+    "quantity_for": "{name} の返品数量",
+    "available": "（利用可能 {quantity}）"
   }
 }

@@ -28,3 +28,8 @@ export type ReturnStatusOptionType = {
   code: string;
   label: string;
 };
+
+export type ReturnErrorDetailsType = {
+  orderLineItemId?: string;
+  availableQuantity?: number;
+};

@@ -106,7 +106,8 @@
     "columns": {
       "requested": "Pyydetty",
       "approved": "Hyväksytty"
-    }
+    },
+    "table_description": "palautetut tuotteet"
   },
   "return_cancel": {
     "title": "Peruuta palautus",
@@ -122,7 +123,6 @@
     "bulk_section": "Käytä kaikkiin riveihin",
     "apply_to_all": "Käytä yhtä syytä kaikkiin {count} riviin",
     "apply": "Käytä",
-    "returning": "palautetaan {quantity}",
     "reason": "Syy",
     "serial_number": "Sarjanumero",
     "reason_comment": "Mikä siinä on vikana?",
@@ -137,6 +137,8 @@
       "attachment": "{count} riviä tarvitsee vielä valokuvan"
     },
     "uploads_pending": "Odotetaan tiedostojen latauksen valmistumista",
-    "uploads_failed": "Joidenkin tiedostojen lataus epäonnistui. Poista ne tai yritä uudelleen ennen lähettämistä."
+    "uploads_failed": "Joidenkin tiedostojen lataus epäonnistui. Poista ne tai yritä uudelleen ennen lähettämistä.",
+    "quantity_for": "Palautettava määrä tuotteelle {name}",
+    "available": "/ {quantity} saatavilla"
   }
 }

@@ -106,7 +106,8 @@
     "columns": {
       "requested": "Begärt",
       "approved": "Godkänt"
-    }
+    },
+    "table_description": "returnerade varor"
   },
   "return_cancel": {
     "title": "Avbryt retur",
@@ -122,7 +123,6 @@
     "bulk_section": "Tillämpa på alla rader",
     "apply_to_all": "Tillämpa en orsak på alla {count} rader",
     "apply": "Tillämpa",
-    "returning": "returnerar {quantity}",
     "reason": "Orsak",
     "serial_number": "Serienummer",
     "reason_comment": "Vad är fel på den?",
@@ -137,6 +137,8 @@
       "attachment": "{count} rad(er) saknar fortfarande ett foto"
     },
     "uploads_pending": "Väntar på att filerna ska laddas upp",
-    "uploads_failed": "Vissa filer kunde inte laddas upp. Ta bort dem eller försök igen innan du skickar."
+    "uploads_failed": "Vissa filer kunde inte laddas upp. Ta bort dem eller försök igen innan du skickar.",
+    "quantity_for": "Antal att returnera för {name}",
+    "available": "av {quantity} tillgängliga"
   }
 }

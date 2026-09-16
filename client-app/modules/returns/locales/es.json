@@ -106,7 +106,8 @@
     "columns": {
       "requested": "Solicitado",
       "approved": "Aprobado"
-    }
+    },
+    "table_description": "artículos devueltos"
   },
   "return_cancel": {
     "title": "Cancelar devolución",
@@ -122,7 +123,6 @@
     "bulk_section": "Aplicar a todas las líneas",
     "apply_to_all": "Aplicar un motivo a las {count} líneas",
     "apply": "Aplicar",
-    "returning": "devolviendo {quantity}",
     "reason": "Motivo",
     "serial_number": "Número de serie",
     "reason_comment": "¿Qué problema tiene?",
@@ -137,6 +137,8 @@
       "attachment": "{count} línea(s) aún necesitan una foto"
     },
     "uploads_pending": "Esperando a que terminen de subirse los archivos",
-    "uploads_failed": "Algunos archivos no se pudieron subir. Elimínelos o reinéntelo antes de enviar."
+    "uploads_failed": "Algunos archivos no se pudieron subir. Elimínelos o reinéntelo antes de enviar.",
+    "quantity_for": "Cantidad a devolver de {name}",
+    "available": "de {quantity} disponibles"
   }
 }

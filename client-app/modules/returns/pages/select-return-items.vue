@@ -29,55 +29,96 @@
             </span>
           </div>
 
-          <table class="w-full">
-            <thead>
-              <tr class="border-b border-neutral-200 text-sm text-neutral-400">
-                <th class="p-5 text-left font-normal">{{ $t("returns.select_items.columns.item") }}</th>
+          <VcTable
+            :items="items"
+            :description="$t('returns.select_items.table_description')"
+            hide-default-footer
+            mobile-breakpoint="lg"
+          >
+            <template #mobile-item="{ item }">
+              <div class="select-return-items__card">
+                <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
 
-                <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.ordered") }}</th>
+                <div class="text-sm text-neutral-400">
+                  {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
+                </div>
 
-                <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.returnable") }}</th>
+                <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
+                  {{ codeText("ineligibility", item.ineligibilityReason) }}
+                </div>
 
-                <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.quantity") }}</th>
-              </tr>
-            </thead>
+                <div class="select-return-items__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("returns.select_items.columns.ordered") }}</span>
 
-            <tbody>
-              <tr v-for="item in items" :key="item.orderLineItemId" class="border-b border-neutral-200">
-                <td class="p-5">
-                  <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
+                  <span>{{ item.orderedQuantity }}</span>
+                </div>
 
-                  <div class="text-sm text-neutral-400">
-                    {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
-                  </div>
+                <div class="select-return-items__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("returns.select_items.columns.returnable") }}</span>
 
-                  <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
-                    {{ codeText("ineligibility", item.ineligibilityReason) }}
-                  </div>
-                </td>
+                  <span>{{ item.returnableQuantity }}</span>
+                </div>
 
-                <td class="p-5 text-right" :class="{ 'text-neutral-400': !item.isReturnable }">
-                  {{ item.orderedQuantity }}
-                </td>
+                <div v-if="item.isReturnable" class="select-return-items__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("returns.select_items.columns.quantity") }}</span>
 
-                <td class="p-5 text-right" :class="{ 'text-neutral-400': !item.isReturnable }">
-                  {{ item.returnableQuantity }}
-                </td>
-
-                <td class="p-5 text-right">
                   <ReturnQuantityInput
-                    v-if="item.isReturnable"
                     :model-value="quantities[item.orderLineItemId] ?? 0"
                     :max="item.returnableQuantity"
                     :label="$t('returns.select_items.quantity_for', { name: item.name })"
                     @update:model-value="setQuantity(item, $event)"
                   />
+                </div>
+              </div>
+            </template>
 
-                  <span v-else class="text-neutral-400">&mdash;</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            <VcTableColumn id="item" v-slot="{ item }" :title="$t('returns.select_items.columns.item')">
+              <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
+
+              <div class="text-sm text-neutral-400">
+                {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
+              </div>
+
+              <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
+                {{ codeText("ineligibility", item.ineligibilityReason) }}
+              </div>
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="ordered"
+              v-slot="{ item }"
+              :title="$t('returns.select_items.columns.ordered')"
+              align="right"
+            >
+              <span :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.orderedQuantity }}</span>
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="returnable"
+              v-slot="{ item }"
+              :title="$t('returns.select_items.columns.returnable')"
+              align="right"
+            >
+              <span :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.returnableQuantity }}</span>
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="quantity"
+              v-slot="{ item }"
+              :title="$t('returns.select_items.columns.quantity')"
+              align="right"
+            >
+              <ReturnQuantityInput
+                v-if="item.isReturnable"
+                :model-value="quantities[item.orderLineItemId] ?? 0"
+                :max="item.returnableQuantity"
+                :label="$t('returns.select_items.quantity_for', { name: item.name })"
+                @update:model-value="setQuantity(item, $event)"
+              />
+
+              <span v-else class="text-neutral-400">&mdash;</span>
+            </VcTableColumn>
+          </VcTable>
 
           <div class="flex items-center justify-between p-5">
             <span class="text-sm text-neutral-400">
@@ -162,3 +203,15 @@ async function onContinue(): Promise<void> {
   }
 }
 </script>
+
+<style lang="scss">
+.select-return-items {
+  &__card {
+    @apply flex flex-col gap-1 border-b border-neutral-200 p-6;
+  }
+
+  &__card-row {
+    @apply mt-2 flex items-center justify-between gap-3;
+  }
+}
+</style>
