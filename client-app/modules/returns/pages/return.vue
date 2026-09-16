@@ -90,6 +90,12 @@
                   </div>
 
                   <div v-if="item.reasonComment" class="text-sm text-neutral-400">{{ item.reasonComment }}</div>
+
+                  <ul v-if="item.attachments?.length" class="mt-2 space-y-1">
+                    <li v-for="attachment in item.attachments" :key="attachment.url">
+                      <VcFile :file="toAttachedFile(attachment)" @download="onDownload" />
+                    </li>
+                  </ul>
                 </td>
 
                 <td class="p-5 text-right">{{ item.quantity }}</td>
@@ -117,8 +123,10 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { useReturn } from "@/modules/returns/composables/useReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
+import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
+import type { ReturnAttachmentFragmentType } from "@/modules/returns/composables/useReturnDraft";
 import CancelReturnModal from "@/modules/returns/components/cancel-return-modal.vue";
 
 interface IProps {
@@ -135,6 +143,16 @@ const { openModal } = useModal();
 const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
 
 const { cancelAction } = useReturnActions(orderReturn);
+
+function toAttachedFile(attachment: ReturnAttachmentFragmentType): IAttachedFile {
+  return { ...attachment, contentType: attachment.mimeType ?? undefined, status: "attached" };
+}
+
+function onDownload(file: FileType): void {
+  if (file.url) {
+    void downloadFile(file.url, file.name);
+  }
+}
 
 // 0 is how the schema spells a rejected line, so an undecided one must not show a number.
 function isDecided(itemState: string | undefined): boolean {
