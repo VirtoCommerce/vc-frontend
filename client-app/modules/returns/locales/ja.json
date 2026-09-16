@@ -82,6 +82,8 @@
       "NO_ITEMS": "A return needs at least one item.",
       "INVALID_QUANTITY": "Enter a quantity of at least one.",
       "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "ファイルの一つを添付できませんでした。削除して再度アップロードしてください。",
+      "INVALID_REQUEST": "入力内容の一部が受け付けられません。理由とコメントを確認してください。",
       "UNHANDLED": "Something went wrong. Please try again."
     },
     "list": {

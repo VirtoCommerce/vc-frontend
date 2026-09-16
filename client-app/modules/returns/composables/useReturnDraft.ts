@@ -21,7 +21,9 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { report } = useReturnErrors();
   const { getSettingValue } = useModuleSettings(MODULE_ID);
 
-  const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) !== false);
+  // Matches the module's own default: off unless a store turned it on. Requiring a photo before
+  // the platform has a FileUpload scope configured makes submit impossible.
+  const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) === true);
 
   const orderReturn = computed(() => result.value?.return);
 

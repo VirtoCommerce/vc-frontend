@@ -82,6 +82,8 @@
       "NO_ITEMS": "A return needs at least one item.",
       "INVALID_QUANTITY": "Enter a quantity of at least one.",
       "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "其中一个文件无法附加。请删除后重新上传。",
+      "INVALID_REQUEST": "部分内容未被接受。请检查退货原因和备注后重试。",
       "UNHANDLED": "Something went wrong. Please try again."
     },
     "list": {

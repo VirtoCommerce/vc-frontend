@@ -82,6 +82,8 @@
       "NO_ITEMS": "A return needs at least one item.",
       "INVALID_QUANTITY": "Enter a quantity of at least one.",
       "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "Não foi possível anexar um dos ficheiros. Remova-o e carregue novamente.",
+      "INVALID_REQUEST": "Alguns dados não foram aceites. Verifique os motivos e comentários e tente novamente.",
       "UNHANDLED": "Something went wrong. Please try again."
     },
     "list": {
