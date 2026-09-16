@@ -46,6 +46,20 @@ describe("useListboxNavigation", () => {
     document.body.innerHTML = "";
   });
 
+  // `home` ставил нулевой индекс без оглядки на длину: в пустом списке
+  // `aria-activedescendant` указывал на опцию, которой нет.
+  it.each(["home", "end", "down", "up"] as const)("has nowhere to go on an empty list: %s", (key) => {
+    const { navigate, highlightedIndex, activeDescendantId } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref([]),
+    });
+
+    navigate(key);
+
+    expect(highlightedIndex.value).toBe(-1);
+    expect(activeDescendantId.value).toBeUndefined();
+  });
+
   it("scrolls the region the list sits in, not the list itself", async () => {
     const { region, list } = buildList(10);
     const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });

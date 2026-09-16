@@ -159,6 +159,47 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
+  // Упавший запрос ничего не приносит: строки и hasNextPage те же, а исчезнувший спиннер — это
+  // очередное изменение содержимого. Раньше на нём вопрос задавался заново, и так без конца.
+  it("does not ask again for a page that came back with nothing", async () => {
+    const { state, onLoadMore, region } = mountList();
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    await afterContentSettles();
+
+    state.loading = false;
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
+  // Размер — счётчик, а не отпечаток: заново собранный список может совпасть по нему со старым,
+  // и тогда его первая страница не была бы запрошена никогда.
+  it("counts from scratch once the list has run out", async () => {
+    const { state, onLoadMore, region } = mountList();
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.hasNextPage = false;
+    await afterContentSettles();
+
+    // Новый список ровно того же размера, на котором спрашивали старый. Измерение надо
+    // спровоцировать: сам по себе флаг ничего в регионе не меняет.
+    state.hasNextPage = true;
+    region.firstElementChild?.setAttribute("role", "none");
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
   // А вот край, до которого действительно доехали заново, пока запрос ещё в пути, — это тот
   // самый случай, который держит `loading`, и единственный, который он держит.
   it("asks for nothing more while the page it asked for is still on its way", async () => {

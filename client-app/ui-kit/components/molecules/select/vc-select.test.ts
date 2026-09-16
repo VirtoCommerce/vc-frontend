@@ -312,6 +312,24 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3");
     });
 
+    // Чекбокс обязан говорить то же, что счётчик рядом: "30 of 3000" — это не «выбрано всё».
+    // Отмеченным он уводил клик в ветку снятия и сбрасывал загруженную страницу.
+    it("stays partial while a fully selected page is only part of the set", () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 3000");
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+    });
+
+    it("keeps the loaded page selected when it is clicked with pages still to come", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
+
+      await wrapper.get(".vc-select__select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]]]);
+      expect(wrapper.emitted("selectAll")).toHaveLength(1);
+    });
+
     // Фильтр сужает набор: выбирается видимое, а отфильтрованный выбор сохраняется.
     it("acts on the filtered subset only", async () => {
       const wrapper = createWrapper({ ...selectAllProps, autocomplete: true, modelValue: ["China"] });
@@ -623,6 +641,26 @@ describe("VcSelect", () => {
       }
     });
 
+    // Очистка уходит немедленно и не отменяет уже запланированный запрос. Без проверки
+    // отменённый "bel" прилетал следом и снова сужал только что восстановленный полный список.
+    it("drops a query that was cleared before it went out", async () => {
+      vi.useFakeTimers();
+
+      try {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+
+        await wrapper.get("input").trigger("focus");
+        await wrapper.get("input").setValue("bel");
+        await vi.advanceTimersByTimeAsync(200);
+        await wrapper.get("input").setValue("");
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.emitted("search")).toEqual([[""]]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it("stays silent when filtering locally", async () => {
       const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
 
@@ -634,6 +672,24 @@ describe("VcSelect", () => {
   });
 
   describe("keyboard and ARIA", () => {
+    // Открытие стрелкой ставило подсветку на индекс 0 безусловно: в пустом списке
+    // `aria-activedescendant` указывал в пустоту.
+    it("publishes no active option while the list has none", async () => {
+      const wrapper = createWrapper({ items: [] });
+      const input = wrapper.get("input");
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
+
+      await input.trigger("keydown", { key: "Home" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
+    });
+
     // Фокус остаётся на триггере: список ведётся через aria-activedescendant, а не переносом
     // фокуса. Иначе в autocomplete после первой же стрелки нельзя было бы печатать.
     it("keeps DOM focus on the trigger while arrowing through options", async () => {

@@ -406,6 +406,10 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
 
     // The list may not be rendered yet on the very first open (lazy popover).
     void nextTick(() => {
+      if (!filteredItems.value.length) {
+        return;
+      }
+
       // APG: Down/Home open on the first option, Up/End on the last. Opening upwards onto the
       // first option would send the very next ArrowUp wrapping to the bottom.
       const toLast = key === "end" || key === "up";
@@ -519,7 +523,15 @@ function focusTrigger() {
 // Server-side search: the consumer owns filtering, so the typed text is forwarded instead of
 // being applied locally. Clearing is sent immediately — waiting to restore a full list feels broken.
 const SEARCH_DEBOUNCE_MS = 300;
-const emitSearchDebounced = useDebounceFn((value: string) => emit("search", value), SEARCH_DEBOUNCE_MS);
+
+// The query it was scheduled with has to still be the query: clearing emits straight away and
+// cannot cancel this call, so without the check a search typed a moment earlier lands afterwards
+// and narrows the full list that was just restored.
+const emitSearchDebounced = useDebounceFn((value: string) => {
+  if (filterValue.value === value) {
+    emit("search", value);
+  }
+}, SEARCH_DEBOUNCE_MS);
 
 watch(filterValue, (value) => {
   if (!props.serverFilter) {
@@ -557,12 +569,6 @@ const selectedVisibleCount = computed(
     selectableValues.value.filter((value) => selectedValues.value.some((current) => isEqual(current, value))).length,
 );
 
-const isAllSelected = computed(
-  () => selectableValues.value.length > 0 && selectedVisibleCount.value === selectableValues.value.length,
-);
-
-const isSomeSelected = computed(() => selectedVisibleCount.value > 0 && !isAllSelected.value);
-
 /**
  * The counter must describe the same set the checkbox beside it reports on, and Select all acts
  * on what the user can see. While a local filter is narrowing the list, `total` cannot know about
@@ -577,6 +583,21 @@ const totalCount = computed(() =>
 );
 
 const selectedCount = computed(() => (localFilter.value ? selectedVisibleCount.value : selectedValues.value.length));
+
+/**
+ * Checked is what the counter beside it says: `n of n`. Every loaded option being selected is not
+ * enough on a paged list — the box read as fully checked next to `30 of 3000`, and clicking it
+ * took the clearing branch and dropped the thirty. Short of the total it is indeterminate, and a
+ * click adds the loaded page and leaves the rest to the `selectAll` listener.
+ */
+const isAllSelected = computed(
+  () =>
+    selectableValues.value.length > 0 &&
+    selectedVisibleCount.value === selectableValues.value.length &&
+    selectedCount.value >= totalCount.value,
+);
+
+const isSomeSelected = computed(() => selectedVisibleCount.value > 0 && !isAllSelected.value);
 
 const selectedOfTotal = computed(() =>
   t("ui_kit.select.selected_of_total", { selected: selectedCount.value, total: totalCount.value }),

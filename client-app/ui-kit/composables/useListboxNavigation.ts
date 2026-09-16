@@ -71,6 +71,12 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   }
 
   function navigate(key: ListboxNavigationKeyType): void {
+    // An empty list has no position to move to, and index 0 of it would publish an
+    // `aria-activedescendant` pointing at an option that is not there.
+    if (!count.value) {
+      return;
+    }
+
     if (key === "home") {
       highlightedIndex.value = 0;
     } else if (key === "end") {

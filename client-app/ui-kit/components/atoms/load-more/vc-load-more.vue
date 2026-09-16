@@ -37,7 +37,7 @@ interface IProps {
   hasNextPage?: boolean;
   /**
    * A page is on its way. It is what keeps one request from becoming many — see the note on
-   * `shouldRequest` — and it is what the spinner reports, so a paged list has to bind it.
+   * `reconsider` — and it is what the spinner reports, so a paged list has to bind it.
    */
   loading?: boolean;
   /**
@@ -92,30 +92,55 @@ const showSpinner = computed(() => props.loading && props.hasNextPage);
 
 const showEnd = computed(() => props.showEndOfList && !props.hasNextPage && !props.loading);
 
-/** A request is outstanding: asked for, and nothing has happened since that would change it. */
-const asked = ref(false);
+/**
+ * How much the region holds, as a plain node count.
+ *
+ * Only ever read at rest — nothing is asked for while `loading` — so a spinner or a placeholder
+ * row drawn in reply to the last request is absent from both readings, and the number moves only
+ * for content that stayed.
+ */
+function readContentSize(): number {
+  return scrollbar?.el.value?.getElementsByTagName("*").length ?? 0;
+}
+
+/** What the region held when the last page was asked for; null until something has been asked. */
+const askedAt = ref<number | null>(null);
 
 /**
- * Decided on a reading of the box, never on a prop transition, and asked at most once per answer.
+ * Decided on a reading of the box, never on a prop transition, and asked again only once the last
+ * request has been answered with something.
  *
- * A measurement that does not want more re-arms: that is the page landing and pushing the bottom
- * away, or `loading` going up. So a list that still fits its viewport is asked about again — the
- * page that landed is itself a content change, and every content change ends in a measurement —
- * while a consumer that does not answer at all is not asked twice.
+ * A list that still fits its viewport has to be asked about again — nothing will ever scroll it —
+ * and the page that landed is what re-opens the question. A request that brings nothing back does
+ * not: a failed fetch, or a backend still claiming a next page it will not serve, leaves the
+ * region exactly as it was and is not repeated. Neither is recoverable from in here, so the
+ * consumer owns saying so; asking again forever is not saying it.
  */
 function reconsider(): void {
   if (!wantsMore.value) {
-    asked.value = false;
     return;
   }
 
-  if (asked.value) {
+  const size = readContentSize();
+
+  if (size === askedAt.value) {
     return;
   }
 
-  asked.value = true;
+  askedAt.value = size;
   emit("loadMore");
 }
+
+// A list that ran out and was rebuilt — a new search, a reopened popup — counts from scratch, or
+// its first page would be skipped whenever the old list happened to end at the same size.
+watch(
+  () => props.hasNextPage,
+  (hasNextPage) => {
+    if (!hasNextPage) {
+      askedAt.value = null;
+    }
+  },
+);
 
 watch(() => scrollbar?.measuredAt.value, reconsider);
 
