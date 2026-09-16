@@ -448,13 +448,16 @@ function onTriggerEnter(event: KeyboardEvent, open: () => void) {
   openByKeyboard(event, open, false);
 }
 
-// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog.
+// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog. Focus is
+// pulled back to the trigger first: the clear button unmounts when closing empties the filter, and
+// focusing before `close()` keeps the trigger's own `@focus="open"` from resurrecting the list.
 function onTriggerEscape(event: KeyboardEvent, close: () => void) {
   if (!isShown.value) {
     return;
   }
 
   event.stopPropagation();
+  focusTrigger();
   close();
 }
 

@@ -219,15 +219,17 @@ describe("VcPopover", () => {
       expect(document.activeElement).toBe(wrapper.get("button.claimed").element);
     });
 
-    it("gives alertdialog the same contract as dialog", async () => {
+    // APG's alert dialog is modal, and this panel is dismissed by any outside click, so the role
+    // stays out of the contract until a consumer needs it.
+    it("keeps alertdialog out of the dialog contract", async () => {
       const wrapper = createWrapper({ props: { role: "alertdialog" } });
       await open(wrapper);
 
-      expect(wrapper.get(".vc-popover__body").attributes("tabindex")).toBe("-1");
+      expect(wrapper.get(".vc-popover__body").attributes("tabindex")).toBeUndefined();
 
       await wrapper.get("button.inside").trigger("keydown", { key: "Escape" });
 
-      expect(wrapper.findComponent(VcPopover).emitted("toggle")?.at(-1)).toEqual([false]);
+      expect(wrapper.findComponent(VcPopover).emitted("toggle")?.at(-1)).toEqual([true]);
     });
 
     it("leaves a role-less popover out of the tab order", async () => {
@@ -304,6 +306,22 @@ describe("VcPopover", () => {
       expect(isPanelOpen(wrapper, "Outer")).toBe(true);
     });
 
+    // The inner trigger sits inside the outer panel, so the outer's own keydown listener sees the key
+    // first unless the trigger consumes it.
+    it("closes only the inner level when Escape is pressed on its trigger", async () => {
+      const wrapper = mount(NestedHost, { attachTo: document.body });
+      await openBothLevels(wrapper);
+
+      const innerTrigger = wrapper.get("button.inner-trigger");
+      (innerTrigger.element as HTMLElement).focus();
+
+      await innerTrigger.trigger("keydown", { key: "Escape" });
+      await nextTick();
+
+      expect(isPanelOpen(wrapper, "Inner")).toBe(false);
+      expect(isPanelOpen(wrapper, "Outer")).toBe(true);
+    });
+
     it("does not pull focus into a hover popover, which would fight its own focusout", async () => {
       const wrapper = mount(NestedHost, { attachTo: document.body, props: { hover: true } });
 
@@ -319,7 +337,6 @@ describe("VcPopover", () => {
   describe("aria-haspopup on the trigger", () => {
     it.each([
       ["dialog", "dialog"],
-      ["alertdialog", "dialog"],
       ["menu", "menu"],
       ["listbox", "listbox"],
     ])("announces role %s as %s", async (role, haspopup) => {
@@ -329,6 +346,14 @@ describe("VcPopover", () => {
       expect(wrapper.get("button.trigger").attributes("aria-haspopup")).toBe(haspopup);
     });
 
+    // Not a token of the attribute, so it falls through to the historical default.
+    it("announces a dialog for alertdialog, which the attribute has no token for", async () => {
+      const wrapper = createWrapper({ props: { role: "alertdialog" } });
+      await open(wrapper);
+
+      expect(wrapper.get("button.trigger").attributes("aria-haspopup")).toBe("dialog");
+    });
+
     it("announces no popup kind for a tooltip, which has no token", async () => {
       const wrapper = createWrapper({ props: { role: "tooltip" } });
       await open(wrapper);
@@ -336,9 +361,10 @@ describe("VcPopover", () => {
       expect(wrapper.get("button.trigger").attributes("aria-haspopup")).toBeUndefined();
     });
 
-    // Silencing these triggers would lose an announcement they have always made; the fix for the
-    // remaining mismatch is a real role on those panels, tracked separately.
-    it("keeps the historical dialog default for a panel that declares no role", async () => {
+    // Pins a known defect, not the intended rule: a role-less panel is not a dialog, and every
+    // VcDropdownMenu panel still has its trigger announce one. Silencing them here would drop an
+    // announcement they have always made, so the fix is a real role on those panels — a follow-up.
+    it("pins the historical dialog default that a role-less panel still announces", async () => {
       const wrapper = createWrapper();
       await open(wrapper);
 

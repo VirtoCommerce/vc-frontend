@@ -28,7 +28,7 @@ const meta: Meta<typeof VcPopover> = {
     disabled: {
       control: "boolean",
       description:
-        "Prevents the popover from opening. It also closes an open popover and, once it clears, hands focus back to the trigger it was taken from.",
+        "Prevents the popover from opening, and closes an open one. For a `dialog` panel it also hands focus back to the trigger once it clears, but only when disabling left focus on the document body.",
     },
     hover: {
       control: "boolean",
@@ -167,6 +167,9 @@ export const Dialog: StoryType = {
   args: {
     role: "dialog",
     ariaLabel: "Filters",
+    // Both shipping drawers offset the panel; flush against the trigger the focus ring's top band is
+    // painted on the trigger itself, which is what this story exists to show.
+    offsetOptions: 8,
   },
   render: (args) => ({
     setup: () => ({ args }),

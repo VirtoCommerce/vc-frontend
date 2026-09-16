@@ -254,6 +254,27 @@ describe("VcSelect inside a dialog popover", () => {
     expect(wrapper.get(".vc-select").classes().includes("vc-select--opened")).toBe(consumed);
   });
 
+  // Closing empties the filter, which unmounts the very button the key was pressed on — focus has to
+  // be handed back before that happens, or it lands on <body>.
+  it("keeps focus on the trigger when Escape unmounts the clear button", async () => {
+    const wrapper = createWrapper({ props: { autocomplete: true, clearable: true } });
+    await openDialogAndSelect(wrapper);
+
+    const input = wrapper.get(".vc-select input");
+    await input.setValue("Cust");
+    await nextTick();
+
+    const clear = wrapper.get(".vc-select__clear");
+    (clear.element as HTMLElement).focus();
+
+    await clear.trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).not.toContain("vc-select--opened");
+    expect(wrapper.find(".vc-select__clear").exists()).toBe(false);
+    expect(document.activeElement).toBe(input.element);
+  });
+
   // A readonly select has no list to open, so the key belongs to whatever encloses it.
   it("leaves Enter alone when the select is readonly", async () => {
     const wrapper = createWrapper({ props: { readonly: true } });

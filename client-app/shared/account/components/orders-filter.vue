@@ -1,7 +1,7 @@
 <template>
   <div class="orders-filter">
-    <!-- The popover owns initial focus: it names the panel, and VcDialog's autofocus only ever
-         ran on the first open (the content stays mounted afterwards). -->
+    <!-- The popover owns initial focus: it names the panel, while VcDialog autofocuses on mount
+         and this panel remounts on every disabled cycle. -->
     <VcDialog dividers size="xs" :auto-focus="false">
       <VcDialogHeader @close="$emit('close')">
         {{ $t("shared.account.orders_filter.title") }}
