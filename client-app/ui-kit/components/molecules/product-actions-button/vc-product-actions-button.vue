@@ -68,11 +68,6 @@ const onClick = () => {
   // Ensure minimum 24x24px touch target (p-1.5 = 6px each side, with icon gives ~24px)
   @apply relative flex justify-center items-center p-1.5 min-w-6 min-h-6 rounded;
 
-  // Focus-visible styles with sufficient contrast
-  &:focus-visible {
-    @apply outline outline-2 outline-offset-2 outline-[--focus-color];
-  }
-
   &:disabled,
   &--disabled {
     $disabled: &;
@@ -96,8 +91,6 @@ const onClick = () => {
 
   @each $color in $colors {
     &--color--#{$color} {
-      --focus-color: var(--color-#{$color}-500);
-
       color: var(--color-#{$color}-500);
 
       #{$loaderIcon} {
@@ -108,8 +101,6 @@ const onClick = () => {
   }
 
   &:not(#{$active}) {
-    --focus-color: var(--color-neutral-500);
-
     @apply text-neutral-500;
 
     &:hover:not(#{$disabled}) {

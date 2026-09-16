@@ -23,6 +23,21 @@ export function toEndDateFilterValue(dateOnly?: string): string | undefined {
   }
 }
 
+/**
+ * Formats a Date as ISO 8601 date-only (YYYY-MM-DD) in the LOCAL calendar day.
+ * `toISOString()` cannot be used for this: it converts to UTC first, so a local midnight
+ * east of Greenwich formats as the previous day. Inverse of the local-midnight parsing
+ * `toStartDateFilterValue` / `toEndDateFilterValue` already do.
+ * @param date date to format
+ * @returns ISO 8601 date without time (YYYY-MM-DD)
+ */
+export function toLocalDateOnly(date: Date): string {
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 export function toDateISOString(isoDate: string): string {
   return isoDate.split("T")[0];
 }

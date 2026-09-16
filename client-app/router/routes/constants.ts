@@ -42,4 +42,14 @@ export const ROUTES = {
     NAME: "PromotionCoupons",
     PATH: "coupons",
   },
+  // Parent routes that modules (and out-of-repo plugins) mount their own routes under, so the
+  // name is a contract: `router.addRoute(parentName, ...)` throws when it no longer resolves.
+  ACCOUNT: {
+    NAME: "Account",
+    PATH: "/account",
+  },
+  COMPANY: {
+    NAME: "Company",
+    PATH: "/company",
+  },
 } as const;

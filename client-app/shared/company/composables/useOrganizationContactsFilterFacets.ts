@@ -1,46 +1,72 @@
 import { cloneDeep, isEqual } from "lodash-es";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import {
-  ORGANIZATION_EMPLOYEE,
-  ORGANIZATION_MAINTAINER,
-  PURCHASING_AGENT,
-  STORE_ADMINISTRATOR,
-  STORE_MANAGER,
-} from "@/core/constants";
 import { ContactStatus } from "@/shared/company";
+import { translateRoleName } from "@/shared/company/composables/useCompanyMemberRoles";
+import { useOrganizationContactRoles } from "@/shared/company/composables/useOrganizationContactRoles";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
-export function useOrganizationContactsFilterFacets() {
-  const { t } = useI18n();
+function mergeFacetValue(currentFacet: FacetItemType, updatedValue: FacetValueItemType): FacetValueItemType {
+  const currentValue = currentFacet.values.find((value) => value.value === updatedValue.value);
+  return currentValue ? { ...updatedValue, selected: currentValue.selected } : cloneDeep(updatedValue);
+}
 
-  const initialFacets: FacetItemType[] = [
-    {
-      label: t("pages.company.members.labels.role"),
-      paramName: "roleId",
-      type: "terms",
-      values: [
-        { label: t("common.roles." + ORGANIZATION_MAINTAINER.id), value: ORGANIZATION_MAINTAINER.id, selected: false },
-        { label: t("common.roles." + ORGANIZATION_EMPLOYEE.id), value: ORGANIZATION_EMPLOYEE.id, selected: false },
-        { label: t("common.roles." + PURCHASING_AGENT.id), value: PURCHASING_AGENT.id, selected: false },
-        { label: t("common.roles." + STORE_ADMINISTRATOR.id), value: STORE_ADMINISTRATOR.id, selected: false },
-        { label: t("common.roles." + STORE_MANAGER.id), value: STORE_MANAGER.id, selected: false },
-      ],
-    },
-    {
-      label: t("pages.company.members.labels.status"),
-      paramName: "status",
-      type: "terms",
-      values: [
-        { label: t("pages.company.members.statuses.active"), value: ContactStatus.Approved, selected: false },
-        { label: t("pages.company.members.statuses.invited"), value: ContactStatus.Invited, selected: false },
-        { label: t("pages.company.members.statuses.blocked"), value: ContactStatus.Locked, selected: false },
-      ],
-    },
-  ];
+function mergeFacet(current: FacetItemType[], updatedFacet: FacetItemType): FacetItemType {
+  const currentFacet = current.find((facet) => facet.paramName === updatedFacet.paramName);
+  if (!currentFacet) {
+    return cloneDeep(updatedFacet);
+  }
 
-  const appliedFacets = ref<FacetItemType[]>(cloneDeep(initialFacets));
-  const selectableFacets = ref<FacetItemType[]>(cloneDeep(initialFacets));
+  return {
+    ...updatedFacet,
+    values: updatedFacet.values.map((updatedValue) => mergeFacetValue(currentFacet, updatedValue)),
+  };
+}
+
+function mergeFacetList(current: FacetItemType[], updated: FacetItemType[]): FacetItemType[] {
+  return updated.map((updatedFacet) => mergeFacet(current, updatedFacet));
+}
+
+export function useOrganizationContactsFilterFacets(organizationId: string) {
+  const { t, te } = useI18n();
+  const { contactRoles } = useOrganizationContactRoles(organizationId);
+
+  const initialFacets = computed<FacetItemType[]>(() => {
+    const facets: FacetItemType[] = [
+      {
+        label: t("pages.company.members.labels.role"),
+        paramName: "roleId",
+        type: "terms",
+        values: contactRoles.value.map((role) => ({
+          label: translateRoleName(t, te, role),
+          value: role.id,
+          selected: false,
+        })),
+      },
+      {
+        label: t("pages.company.members.labels.status"),
+        paramName: "status",
+        type: "terms",
+        values: [
+          { label: t("pages.company.members.statuses.active"), value: ContactStatus.Approved, selected: false },
+          { label: t("pages.company.members.statuses.invited"), value: ContactStatus.Invited, selected: false },
+          { label: t("pages.company.members.statuses.blocked"), value: ContactStatus.Locked, selected: false },
+        ],
+      },
+    ];
+
+    return facets.filter((facet) => facet.values.length > 0);
+  });
+
+  const appliedFacets = ref<FacetItemType[]>(cloneDeep(initialFacets.value));
+  const selectableFacets = ref<FacetItemType[]>(cloneDeep(initialFacets.value));
+
+  watch(contactRoles, mergeFacetsWithLatest, { once: true });
+
+  function mergeFacetsWithLatest() {
+    appliedFacets.value = mergeFacetList(appliedFacets.value, initialFacets.value);
+    selectableFacets.value = mergeFacetList(selectableFacets.value, initialFacets.value);
+  }
 
   const isFacetsDirty = computed<boolean>(() => {
     return !isEqual(appliedFacets.value, selectableFacets.value);
@@ -59,8 +85,8 @@ export function useOrganizationContactsFilterFacets() {
   }
 
   function resetFacets() {
-    appliedFacets.value = cloneDeep(initialFacets);
-    selectableFacets.value = cloneDeep(initialFacets);
+    appliedFacets.value = cloneDeep(initialFacets.value);
+    selectableFacets.value = cloneDeep(initialFacets.value);
   }
 
   function resetSelectableToAppliedFacets() {

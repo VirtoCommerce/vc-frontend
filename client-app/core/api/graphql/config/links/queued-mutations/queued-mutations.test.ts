@@ -6,6 +6,7 @@ import {
   createQueuedMutationsLink,
   createQueuedMutationsController,
   createQueueTarget,
+  removeCartItemsConfig,
   DEFAULT_DEBOUNCE_MS,
 } from "./queued-mutations";
 import type { IQueueTargetConfig } from "./types";
@@ -800,5 +801,74 @@ describe("createQueuedMutationsLink", () => {
       const fwd = forward as unknown as ReturnType<typeof vi.fn>;
       expect(fwd.mock.calls[0][0].variables).toEqual({ v: 1 });
     });
+  });
+});
+
+// Exercises the actual shipped removeCartItemsConfig (not a synthetic stand-in), through
+// a fresh controller per test so state never leaks across cases - unlike the exported
+// queuedMutationsController singleton, which is shared with the running app.
+describe("removeCartItemsConfig (real target)", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function removeItemsVariables(lineItemIds: string[], cartId?: string) {
+    return {
+      command: { lineItemIds, cartId, storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", userId: "u1" },
+      skipQuery: false,
+    };
+  }
+
+  it("should merge and dedupe lineItemIds from calls on the same cart into one request", async () => {
+    const link = createQueuedMutationsLink({ targets: [createQueueTarget("RemoveCartItems", removeCartItemsConfig)] });
+    const forward = createForward();
+
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"]));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["B"]));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"])); // duplicate click on an already-queued id
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+    expect(forward).toHaveBeenCalledTimes(1);
+    const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+    const sentVariables = fwd.mock.calls[0][0].variables as ReturnType<typeof removeItemsVariables>;
+    expect(sentVariables.command.lineItemIds).toEqual(["A", "B"]);
+  });
+
+  it("should never merge removals from two different carts into one request", async () => {
+    const link = createQueuedMutationsLink({ targets: [createQueueTarget("RemoveCartItems", removeCartItemsConfig)] });
+    const forward = createForward();
+
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"], "cart-1"));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["B"], "cart-2"));
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+    expect(forward).toHaveBeenCalledTimes(2);
+    const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+    const sentIdSets = fwd.mock.calls.map(
+      (c: unknown[]) => (c[0] as { variables: ReturnType<typeof removeItemsVariables> }).variables.command.lineItemIds,
+    );
+    expect(sentIdSets).toContainEqual(["A"]);
+    expect(sentIdSets).toContainEqual(["B"]);
+  });
+
+  it("should route the user's own cart (no cartId) to the same default queue regardless of call order", async () => {
+    const link = createQueuedMutationsLink({ targets: [createQueueTarget("RemoveCartItems", removeCartItemsConfig)] });
+    const forward = createForward();
+
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"]));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["B"]));
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+    expect(forward).toHaveBeenCalledTimes(1);
+    const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+    const sentVariables = fwd.mock.calls[0][0].variables as ReturnType<typeof removeItemsVariables>;
+    expect(sentVariables.command.lineItemIds).toEqual(["A", "B"]);
   });
 });
