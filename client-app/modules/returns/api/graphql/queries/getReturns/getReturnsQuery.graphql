@@ -8,6 +8,11 @@ query GetReturns($first: Int, $after: String, $sort: String, $keyword: String) {
       createdDate
       orderId
       itemsQuantity
+      availableActions {
+        name
+        isAvailable
+        unavailableReason
+      }
     }
   }
 }

@@ -3,5 +3,10 @@ mutation SubmitReturn($command: SubmitReturnCommandType!) {
     id
     number
     status
+    availableActions {
+      name
+      isAvailable
+      unavailableReason
+    }
   }
 }

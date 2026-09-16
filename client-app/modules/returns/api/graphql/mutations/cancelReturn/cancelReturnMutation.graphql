@@ -3,6 +3,11 @@ mutation CancelReturn($command: CancelReturnCommandType!) {
     id
     number
     status
+    availableActions {
+      name
+      isAvailable
+      unavailableReason
+    }
     cancelReason
   }
 }

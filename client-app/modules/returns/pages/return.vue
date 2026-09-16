@@ -95,7 +95,7 @@
                 <td class="p-5 text-right">{{ item.quantity }}</td>
 
                 <td class="p-5 text-right">
-                  <span v-if="item.itemState === 'Requested'" class="text-neutral-400">&mdash;</span>
+                  <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
 
                   <span v-else>{{ item.approvedQuantity }}</span>
                 </td>
@@ -137,6 +137,16 @@ const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
 // Straight from the server's transition table. An action that exists but is not available shows as
 // a disabled button saying why, rather than vanishing and leaving the buyer to guess.
 const { cancelAction } = useReturnActions(orderReturn);
+
+/**
+ * Whether an agent has ruled on the line yet.
+ *
+ * Only then does approvedQuantity mean anything: on a line nobody has looked at it is 0, and 0 is
+ * how the schema spells "rejected". A draft would otherwise read as refused in full.
+ */
+function isDecided(itemState: string | undefined): boolean {
+  return itemState === "Approved" || itemState === "Rejected";
+}
 
 function openCancelModal(): void {
   openModal({

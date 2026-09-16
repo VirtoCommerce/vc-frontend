@@ -86,6 +86,7 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { Sort } from "@/core/types";
 import { useReturns } from "@/modules/returns/composables/useReturns";
+import { RETURN_ACTION } from "@/modules/returns/constants";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
@@ -109,8 +110,25 @@ function applySorting(sortInfo: ISortInfo): void {
   page.value = 1;
 }
 
-function goToReturn(payload: { id: string }): void {
-  void router.push({ name: "Return", params: { returnId: payload.id } });
+type ReturnListItemType = {
+  id: string;
+  availableActions?: { name: string; isAvailable: boolean }[];
+};
+
+/**
+ * A draft goes back to where it was left off, anything else to the read-only page.
+ *
+ * Which one it is comes from the server's own list of actions rather than from the status, so the
+ * rule stays in the module's transition table.
+ */
+function goToReturn(payload: ReturnListItemType): void {
+  const editable = payload.availableActions?.some((action) => action.name === RETURN_ACTION.EDIT && action.isAvailable);
+
+  void router.push(
+    editable
+      ? { name: "EditReturn", params: { returnId: payload.id } }
+      : { name: "Return", params: { returnId: payload.id } },
+  );
 }
 
 function changePage(newPage: number): void {
