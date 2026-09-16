@@ -11,7 +11,8 @@
       "amount": "Belopp",
       "redeemed": "Inlösta",
       "earned": "Intjänade",
-      "registration": "Registrering"
+      "registration": "Registrering",
+      "mission": "Uppdragsbelöning"
     },
     "list_details": {
       "empty_list": "Din lista är tom"

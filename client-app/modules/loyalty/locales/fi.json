@@ -11,7 +11,8 @@
       "amount": "Määrä",
       "redeemed": "Lunastettu",
       "earned": "Ansaittu",
-      "registration": "Rekisteröityminen"
+      "registration": "Rekisteröityminen",
+      "mission": "Tehtäväpalkkio"
     },
     "list_details": {
       "empty_list": "Listasi on tyhjä"

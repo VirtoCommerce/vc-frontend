@@ -11,7 +11,8 @@
       "amount": "Сумма",
       "redeemed": "Потрачено",
       "earned": "Заработано",
-      "registration": "Регистрация"
+      "registration": "Регистрация",
+      "mission": "Награда за миссию"
     },
     "list_details": {
       "empty_list": "Ваш список пуст"

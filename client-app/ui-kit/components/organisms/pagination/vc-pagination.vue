@@ -198,8 +198,7 @@ const setPage = (page: number) => {
       @apply bg-additional-50 text-neutral-950;
     }
 
-    &:focus-visible,
-    &:focus {
+    &:focus-visible {
       position: relative;
       z-index: 1;
     }
