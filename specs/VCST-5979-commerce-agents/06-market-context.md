@@ -93,3 +93,9 @@ competing options for us** — they answer different questions:
 A complete Virto position probably needs both: be discoverable through the gateways *and*
 ship a first-party agent. They should be written up together, and Shopify sitting on both
 sides (UCP co-author, Claude flagship customer) is the proof that this is not an either/or.
+
+Anthropic's own webinar makes the same split explicit — its "three ways to build agentic
+commerce" puts the connector play and the first-party agent in different boxes, and its
+architecture slide ends the agent's work at *"your checkout · any partner or protocol"*.
+The two tracks meet at the checkout boundary instead of competing for it. See
+[11-webinar-slides.md](11-webinar-slides.md).
