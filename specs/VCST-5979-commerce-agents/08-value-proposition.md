@@ -53,6 +53,12 @@ their job better than it fits a consumer's:
   complete a purchase are Anthropic's claims, not ours ([06-market-context.md](06-market-context.md)).
   Use them as market evidence with the source named, and commit only to what a pilot
   measures.
+- **The scheduled agent, later.** Anthropic's own roadmap moves the merchant agent from
+  answering questions to running on a cadence — continuous pricing, live inventory
+  reaction, receivables chased ([11-webinar-slides.md](11-webinar-slides.md)). None of it
+  ships today, but it is where the staged-change design pays off, and B2B finance ops is a
+  gap in their blueprint that we are better placed to fill than they are: a recovered
+  invoice is cash, which is a far easier number to defend than conversion lift.
 
 ## For partners and implementers
 

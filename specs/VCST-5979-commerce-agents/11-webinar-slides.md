@@ -217,3 +217,60 @@ nothing.
 
 The deck closes on a QR to <https://claude.com/blog/the-anatomy-of-effective-commerce-agents>
 — already covered in [02-architecture.md](02-architecture.md).
+
+---
+
+# Reactive today, proactive next
+
+The roadmap slide. Today an agent waits to be asked; next it runs on its own.
+
+| | Today | Next |
+|---|---|---|
+| Selling | Serves your shopper | **Serves shoppers' agents** |
+| Pricing & campaigns | A weekly calendar | Runs continuously |
+| Supply chain | Found after the fact | Acted on live |
+| Finance ops | Written off | Every invoice chased |
+
+Read it carefully, because three separate things are packed into one table.
+
+**Row 1 is the taxonomy collapsing.** "Serves shoppers' agents" is box 01 of the three-ways
+slide becoming the default rather than an option. Anthropic's own roadmap says the
+storefront's job shifts from serving people to serving other agents — which is the
+connector/UCP track, and it is the strongest argument yet that
+[VCST-5201](https://virtocommerce.atlassian.net/browse/VCST-5201) and this spike are one
+programme rather than two candidates.
+
+**Rows 2-4 are all the merchant agent on a schedule.** Continuous pricing, live supply-chain
+reaction, invoice chasing — none of that is a conversation. It is a session that fires on a
+cadence, reads the state, and proposes. The runtime for it already exists: Managed Agents
+ships scheduled deployments that fire sessions on a cron with per-firing run records
+([05-runtimes-and-deployment.md](05-runtimes-and-deployment.md)), and the repo already
+carries a scheduled digest under `merchant-agent/managed-agents/`.
+
+**And the staging gate is what makes proactive tolerable at all.** An agent that runs
+continuously and *acts* is an unbounded liability. An agent that runs continuously and
+*proposes*, with every write staged for a person and guardrails checked twice, is a queue of
+suggestions. The whole design in [03-safety.md](03-safety.md) is what unlocks this column —
+it is not a separate feature.
+
+## What is actually shipped here
+
+Nothing in the "Next" column is implemented. The repo has ten skills and none of them is
+finance ops or supply chain; the merchant skills are insights, inventory, campaigns,
+listings and pricing. Treat this slide as direction, not capability.
+
+## Where B2B is stronger than the slide
+
+Row 4 is the interesting one for us, and it is the row the blueprint does not cover.
+
+"Written off → every invoice chased" is a B2C framing of a B2B problem. Net terms, credit
+limits, partial payments, disputed lines, dunning sequences and collections are core B2B
+commerce, they are painful, and they are measurable in a way conversion lift is not — a
+recovered invoice is cash. Virto has orders and payments; a finance-ops agent that drafts
+chase messages, flags aging receivables and proposes payment plans, all staged for a human,
+is a credible product that is **not** in the blueprint and would be ours to design.
+
+Two cautions before anyone gets excited: automated collections touch consumer- and
+commercial-debt regulation that varies by jurisdiction, and an AI chasing a customer for
+money is a relationship risk that a wrong tone makes worse. "Drafts, a person sends" is the
+only defensible shape here, and it happens to be exactly the shape the harness enforces.
