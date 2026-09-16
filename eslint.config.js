@@ -226,6 +226,10 @@ export default defineConfigWithVueTs(
           message: "VcLineItemProperty is deprecated. Use VcProperty or VcProductProperties instead.",
         },
         {
+          element: "VcInfinityScrollLoader",
+          message: "VcInfinityScrollLoader is deprecated. Use VcLoadMore inside a VcScrollbar instead.",
+        },
+        {
           element: "VcPriceDisplayCatalog",
           message: "VcPriceDisplayCatalog is deprecated. Use VcPriceDisplay or VcProductPrice instead.",
         },

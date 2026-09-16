@@ -21,6 +21,7 @@
         `vc-menu-item__inner--color--${color}`,
         {
           'vc-menu-item__inner--active': active,
+          'vc-menu-item__inner--highlighted': highlighted,
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
@@ -72,6 +73,17 @@ interface IProps {
   role?: string;
   ariaSelected?: boolean;
   optionId?: string;
+  /**
+   * Keyboard-highlighted state for `aria-activedescendant` lists, where DOM focus stays on
+   * the combobox and cannot provide the usual focus ring.
+   */
+  highlighted?: boolean;
+  /**
+   * Tab-order position of the inner element. Defaults to 0. Pass -1 for options inside a
+   * listbox driven by `aria-activedescendant`, where focus stays on the combobox and the
+   * options must not be reachable with Tab.
+   */
+  tabindex?: number;
 }
 
 defineOptions({
@@ -84,6 +96,7 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
+  tabindex: 0,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -130,15 +143,15 @@ provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target, tabindex: 0 };
+    return { to: props.to, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target, tabindex: 0 };
+    return { href: props.externalLink, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "button") {
-    return { type: "button", tabindex: 0 };
+    return { type: "button", tabindex: props.tabindex };
   }
 
   return {};
@@ -189,6 +202,7 @@ onMounted(() => {
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
+  $highlighted: "";
   $truncate: "";
   $maxLines: "";
 
@@ -207,6 +221,12 @@ onMounted(() => {
       $active: &;
 
       @apply font-bold;
+    }
+
+    &--highlighted {
+      $highlighted: &;
+
+      @apply outline-none;
     }
 
     &--truncate {
@@ -251,14 +271,29 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
-        &:hover {
+        &:hover,
+        &#{$highlighted} {
           @apply bg-[--color-#{$color}-50];
         }
 
         &#{$active} {
           @apply bg-[--color-#{$color}-100];
         }
+
+        // The keyboard position needs an indicator of its own. The background step above is
+        // 1.11-1.33:1 against the list surface across red/coffee light and dark — far under the
+        // 3:1 WCAG 1.4.11 asks of the visual information identifying a component's state — and on
+        // a selected option `--active` overrides it outright, at equal specificity and later in
+        // the file, so there is nothing left to see. An outline collides with neither.
+        &#{$highlighted} {
+          @include focus-ring($inset: true);
+        }
       }
+    }
+
+    &:hover,
+    &:focus {
+      @apply outline-none ring-0;
     }
 
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the

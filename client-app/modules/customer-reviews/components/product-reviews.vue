@@ -262,7 +262,11 @@ function openImagesModal(review: CustomerReview, index: number): void {
   });
 }
 
-async function changeSortByDate(value: string): Promise<void> {
+async function changeSortByDate(value?: string): Promise<void> {
+  if (!value) {
+    return;
+  }
+
   productReviewsPayload.value.page = 1;
   productReviewsPayload.value.sort = value;
 

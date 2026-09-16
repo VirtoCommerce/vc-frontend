@@ -99,7 +99,10 @@
       "items_selected": "{0} выбранных элементов",
       "results_available": "{0} результатов доступно",
       "no_results_found": "Результатов не найдено",
-      "no_options": "Нет доступных вариантов"
+      "no_options": "Нет доступных вариантов",
+      "select_all": "Выбрать все",
+      "deselect_all": "Снять выбор со всех",
+      "selected_of_total": "{selected} из {total}"
     },
     "file": {
       "progress": "{percent} выполнено",

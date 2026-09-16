@@ -99,7 +99,10 @@
       "items_selected": "{0} articles sélectionnés",
       "results_available": "{0} résultats disponibles",
       "no_results_found": "Aucun résultat trouvé",
-      "no_options": "Aucune option disponible"
+      "no_options": "Aucune option disponible",
+      "select_all": "Tout sélectionner",
+      "deselect_all": "Tout désélectionner",
+      "selected_of_total": "{selected} sur {total}"
     },
     "file": {
       "progress": "{percent} terminé",
