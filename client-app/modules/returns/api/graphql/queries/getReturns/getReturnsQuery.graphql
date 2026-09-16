@@ -4,9 +4,21 @@ query GetReturns(
   $after: String
   $sort: String
   $keyword: String
+  $statuses: [String]
+  $startDate: DateTime
+  $endDate: DateTime
   $cultureName: String
 ) {
-  returns(storeId: $storeId, first: $first, after: $after, sort: $sort, keyword: $keyword) {
+  returns(
+    storeId: $storeId
+    first: $first
+    after: $after
+    sort: $sort
+    keyword: $keyword
+    statuses: $statuses
+    startDate: $startDate
+    endDate: $endDate
+  ) {
     totalCount
     items {
       id

@@ -6,6 +6,22 @@
     },
     "title": "Retours",
     "no_returns_message": "Il n'y a pas encore de retours",
+    "no_results_message": "Aucun retour ne correspond à votre recherche",
+    "search_placeholder": "Rechercher par RMA, commande, référence ou produit",
+    "search_aria": "Rechercher des retours",
+    "filters": {
+      "title": "Filtres",
+      "created_date": "Date de création",
+      "start_date": "Date de début",
+      "end_date": "Date de fin",
+      "invalid_range": "Plage de dates non valide.",
+      "custom_date": "Date personnalisée",
+      "last_day": "Dernier jour",
+      "last_week": "Dernière semaine",
+      "last_month": "Dernier mois",
+      "last_year": "Dernière année",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Demander un retour",
     "menu": {
       "link": {

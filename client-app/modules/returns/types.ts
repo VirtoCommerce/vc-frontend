@@ -17,3 +17,14 @@ export type ReturnDraftLineType = {
   attachments: ReturnAttachmentFragmentType[];
   attachmentUrls: string[];
 };
+
+export type ReturnsFilterDataType = {
+  statuses: string[];
+  startDate?: string;
+  endDate?: string;
+};
+
+export type ReturnStatusOptionType = {
+  code: string;
+  label: string;
+};

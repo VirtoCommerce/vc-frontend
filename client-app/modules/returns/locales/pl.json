@@ -6,6 +6,22 @@
     },
     "title": "Zwroty",
     "no_returns_message": "Nie ma jeszcze żadnych zwrotów",
+    "no_results_message": "Żadne zwroty nie pasują do wyszukiwania",
+    "search_placeholder": "Szukaj według RMA, zamówienia, referencji lub produktu",
+    "search_aria": "Szukaj zwrotów",
+    "filters": {
+      "title": "Filtry",
+      "created_date": "Data utworzenia",
+      "start_date": "Data rozpoczęcia",
+      "end_date": "Data zakończenia",
+      "invalid_range": "Nieprawidłowy zakres dat.",
+      "custom_date": "Data niestandardowa",
+      "last_day": "Ostatni dzień",
+      "last_week": "Ostatni tydzień",
+      "last_month": "Ostatni miesiąc",
+      "last_year": "Ostatni rok",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Zgłoś zwrot",
     "menu": {
       "link": {

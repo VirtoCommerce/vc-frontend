@@ -6,6 +6,22 @@
     },
     "title": "Rücksendungen",
     "no_returns_message": "Es liegen noch keine Rücksendungen vor",
+    "no_results_message": "Keine Rücksendungen entsprechen Ihrer Suche",
+    "search_placeholder": "Suche nach RMA, Bestellung, Referenz oder Artikel",
+    "search_aria": "Rücksendungen suchen",
+    "filters": {
+      "title": "Filter",
+      "created_date": "Erstellungsdatum",
+      "start_date": "Startdatum",
+      "end_date": "Enddatum",
+      "invalid_range": "Ungültiger Datumsbereich.",
+      "custom_date": "Benutzerdefiniertes Datum",
+      "last_day": "Letzter Tag",
+      "last_week": "Letzte Woche",
+      "last_month": "Letzter Monat",
+      "last_year": "Letztes Jahr",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Rücksendung anfordern",
     "menu": {
       "link": {

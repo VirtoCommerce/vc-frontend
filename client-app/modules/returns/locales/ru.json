@@ -6,6 +6,22 @@
     },
     "title": "Возвраты",
     "no_returns_message": "Возвратов пока нет",
+    "no_results_message": "По запросу ничего не найдено",
+    "search_placeholder": "Поиск по RMA, заказу, ссылке или товару",
+    "search_aria": "Поиск возвратов",
+    "filters": {
+      "title": "Фильтры",
+      "created_date": "Дата создания",
+      "start_date": "Дата начала",
+      "end_date": "Дата окончания",
+      "invalid_range": "Некорректный диапазон дат.",
+      "custom_date": "Произвольная дата",
+      "last_day": "Последний день",
+      "last_week": "Последняя неделя",
+      "last_month": "Последний месяц",
+      "last_year": "Последний год",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Оформить возврат",
     "menu": {
       "link": {

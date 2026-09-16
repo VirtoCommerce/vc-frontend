@@ -6,6 +6,22 @@
     },
     "title": "返品",
     "no_returns_message": "返品はまだありません",
+    "no_results_message": "検索条件に一致する返品はありません",
+    "search_placeholder": "RMA・注文・参照番号・商品で検索",
+    "search_aria": "返品を検索",
+    "filters": {
+      "title": "フィルター",
+      "created_date": "作成日",
+      "start_date": "開始日",
+      "end_date": "終了日",
+      "invalid_range": "無効な日付範囲です。",
+      "custom_date": "日付指定",
+      "last_day": "昨日",
+      "last_week": "先週",
+      "last_month": "先月",
+      "last_year": "昨年",
+      "status": "@:common.labels.status"
+    },
     "request_button": "返品を依頼",
     "menu": {
       "link": {

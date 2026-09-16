@@ -6,6 +6,22 @@
     },
     "title": "Returer",
     "no_returns_message": "Det finnes ingen returer ennå",
+    "no_results_message": "Ingen returer samsvarer med søket",
+    "search_placeholder": "Søk etter RMA, ordre, referanse eller produkt",
+    "search_aria": "Søk i returer",
+    "filters": {
+      "title": "Filtre",
+      "created_date": "Opprettelsesdato",
+      "start_date": "Startdato",
+      "end_date": "Sluttdato",
+      "invalid_range": "Ugyldig datoområde.",
+      "custom_date": "Tilpasset dato",
+      "last_day": "Siste dag",
+      "last_week": "Siste uke",
+      "last_month": "Siste måned",
+      "last_year": "Siste år",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Be om retur",
     "menu": {
       "link": {

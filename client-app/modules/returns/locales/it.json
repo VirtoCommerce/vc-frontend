@@ -6,6 +6,22 @@
     },
     "title": "Resi",
     "no_returns_message": "Non ci sono ancora resi",
+    "no_results_message": "Nessun reso corrisponde alla ricerca",
+    "search_placeholder": "Cerca per RMA, ordine, riferimento o prodotto",
+    "search_aria": "Cerca resi",
+    "filters": {
+      "title": "Filtri",
+      "created_date": "Data di creazione",
+      "start_date": "Data di inizio",
+      "end_date": "Data di fine",
+      "invalid_range": "Intervallo di date non valido.",
+      "custom_date": "Data personalizzata",
+      "last_day": "Ultimo giorno",
+      "last_week": "Ultima settimana",
+      "last_month": "Ultimo mese",
+      "last_year": "Ultimo anno",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Richiedi un reso",
     "menu": {
       "link": {

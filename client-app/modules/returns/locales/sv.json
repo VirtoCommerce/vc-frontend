@@ -6,6 +6,22 @@
     },
     "title": "Returer",
     "no_returns_message": "Det finns inga returer ännu",
+    "no_results_message": "Inga returer matchar din sökning",
+    "search_placeholder": "Sök på RMA, order, referens eller produkt",
+    "search_aria": "Sök returer",
+    "filters": {
+      "title": "Filter",
+      "created_date": "Skapat datum",
+      "start_date": "Startdatum",
+      "end_date": "Slutdatum",
+      "invalid_range": "Ogiltigt datumintervall.",
+      "custom_date": "Anpassat datum",
+      "last_day": "Sista dagen",
+      "last_week": "Förra veckan",
+      "last_month": "Förra månaden",
+      "last_year": "Förra året",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Begär retur",
     "menu": {
       "link": {

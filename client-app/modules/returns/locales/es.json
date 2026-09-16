@@ -6,6 +6,22 @@
     },
     "title": "Devoluciones",
     "no_returns_message": "Aún no hay devoluciones",
+    "no_results_message": "Ninguna devolución coincide con su búsqueda",
+    "search_placeholder": "Buscar por RMA, pedido, referencia o producto",
+    "search_aria": "Buscar devoluciones",
+    "filters": {
+      "title": "Filtros",
+      "created_date": "Fecha de creación",
+      "start_date": "Fecha de inicio",
+      "end_date": "Fecha de finalización",
+      "invalid_range": "Rango de fechas no válido.",
+      "custom_date": "Fecha personalizada",
+      "last_day": "Último día",
+      "last_week": "Última semana",
+      "last_month": "Último mes",
+      "last_year": "Último año",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Solicitar devolución",
     "menu": {
       "link": {

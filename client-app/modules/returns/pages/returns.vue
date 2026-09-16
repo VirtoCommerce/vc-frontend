@@ -1,80 +1,124 @@
 <template>
-  <div>
-    <!-- Title block -->
+  <div class="returns-list">
     <VcTypography tag="h1">{{ $t("returns.title") }}</VcTypography>
 
-    <!-- Empty view -->
-    <VcEmptyView v-if="!loading && !returns.length" :text="$t('returns.no_returns_message')" icon="outline-order" />
+    <div class="returns-list__toolbar">
+      <VcInput
+        v-model="localKeyword"
+        maxlength="64"
+        class="returns-list__search"
+        :disabled="loading"
+        :placeholder="$t('returns.search_placeholder')"
+        clearable
+        @keydown.enter="applyKeyword(localKeyword)"
+        @clear="applyKeyword('')"
+      >
+        <template #append>
+          <VcButton
+            :aria-label="$t('returns.search_aria')"
+            :disabled="loading"
+            icon="search"
+            icon-size="1.25rem"
+            @click="applyKeyword(localKeyword)"
+          />
+        </template>
+      </VcInput>
 
-    <!-- Content block -->
+      <ReturnsFilters :statuses="statuses" :applied="filter" :disabled="loading" @change="applyFilter" />
+    </div>
+
+    <div v-if="chips.length" class="returns-list__chips">
+      <VcChip v-for="chip in chips" :key="chip.id" color="secondary" closable @close="removeChip(chip)">
+        {{ chip.label }}
+      </VcChip>
+
+      <VcChip color="secondary" variant="outline" clickable @click="resetAll">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+        <VcIcon name="reset" />
+      </VcChip>
+    </div>
+
+    <VcEmptyView
+      v-if="!loading && !returns.length"
+      :text="isSearching ? $t('returns.no_results_message') : $t('returns.no_returns_message')"
+      :variant="isSearching ? 'search' : 'empty'"
+      icon="outline-order"
+    >
+      <template v-if="isSearching" #button>
+        <VcButton prepend-icon="reset" @click="resetAll">
+          {{ $t("common.buttons.reset_filters") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
+
     <VcWidget v-else size="lg">
       <template #default-container>
         <VcTable
           :loading="loading"
-          :columns="columns"
           :sort="sort"
           :items="returns"
           :pages="pages"
           :page="page"
+          :skeleton-rows="itemsPerPage"
           :description="$t('returns.meta.table_description')"
-          @item-click="goToReturn"
+          @row-click="goToReturn"
           @header-click="applySorting"
           @page-changed="changePage"
         >
-          <template #mobile-item="itemData">
+          <template #mobile-item="{ item }">
             <button
               type="button"
-              class="grid w-full cursor-pointer appearance-none grid-cols-2 gap-y-4 border-b border-neutral-200 p-6 text-left"
-              tabindex="0"
-              @click="goToReturn(itemData.item)"
-              @keyup.enter="goToReturn(itemData.item)"
+              class="returns-list__mobile-item"
+              @click="goToReturn(item)"
+              @keyup.enter="goToReturn(item)"
             >
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.number") }}</span>
+              <div class="returns-list__mobile-cell">
+                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.number") }}</span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">{{ itemData.item.number }}</span>
+                <span class="returns-list__mobile-value font-black">{{ item.number }}</span>
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.date") }}</span>
+              <div class="returns-list__mobile-cell">
+                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.date") }}</span>
 
-                <span class="overflow-hidden text-ellipsis">{{ $d(new Date(itemData.item.createdDate)) }}</span>
+                <span class="returns-list__mobile-value">{{ $d(new Date(item.createdDate)) }}</span>
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.status") }}</span>
+              <div class="returns-list__mobile-cell">
+                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.status") }}</span>
 
-                <span class="overflow-hidden text-ellipsis">{{
-                  itemData.item.statusDisplayValue ?? itemData.item.status
-                }}</span>
+                <span class="returns-list__mobile-value">{{ item.statusDisplayValue ?? item.status }}</span>
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.quantity") }}</span>
+              <div class="returns-list__mobile-cell">
+                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.quantity") }}</span>
 
-                <span class="overflow-hidden text-ellipsis">{{ itemData.item.itemsQuantity }}</span>
+                <span class="returns-list__mobile-value">{{ item.itemsQuantity }}</span>
               </div>
             </button>
           </template>
 
-          <template #desktop-body>
-            <tr
-              v-for="item in returns"
-              :key="item.id"
-              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-              tabindex="0"
-              @click="goToReturn(item)"
-              @keyup.enter="goToReturn(item)"
-            >
-              <td class="overflow-hidden text-ellipsis p-5">{{ item.number }}</td>
+          <VcTableColumn id="number" v-slot="{ item }" :title="$t('returns.list.columns.number')" sortable>
+            {{ item.number }}
+          </VcTableColumn>
 
-              <td class="overflow-hidden text-ellipsis p-5">{{ $d(new Date(item.createdDate)) }}</td>
+          <VcTableColumn id="createdDate" v-slot="{ item }" :title="$t('returns.list.columns.date')" sortable>
+            {{ $d(new Date(item.createdDate)) }}
+          </VcTableColumn>
 
-              <td class="overflow-hidden text-ellipsis p-5">{{ item.statusDisplayValue ?? item.status }}</td>
+          <VcTableColumn id="status" v-slot="{ item }" :title="$t('returns.list.columns.status')" sortable>
+            {{ item.statusDisplayValue ?? item.status }}
+          </VcTableColumn>
 
-              <td class="overflow-hidden text-ellipsis p-5 text-right">{{ item.itemsQuantity }}</td>
-            </tr>
-          </template>
+          <VcTableColumn
+            id="itemsQuantity"
+            v-slot="{ item }"
+            :title="$t('returns.list.columns.quantity')"
+            align="right"
+          >
+            {{ item.itemsQuantity }}
+          </VcTableColumn>
         </VcTable>
       </template>
     </VcWidget>
@@ -82,40 +126,99 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { Sort } from "@/core/types";
+import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatuses";
 import { useReturns } from "@/modules/returns/composables/useReturns";
 import { RETURN_ACTION } from "@/modules/returns/constants";
-import type { ISortInfo } from "@/core/types";
+import type { ReturnsFilterDataType } from "@/modules/returns/types";
+import ReturnsFilters from "@/modules/returns/components/returns-filters.vue";
 
-const { t } = useI18n();
+type ChipType = { id: string; label: string; field: keyof ReturnsFilterDataType; value?: string };
+
+type ReturnListItemType = {
+  id: string;
+  availableActions?: { name: string; isAvailable: boolean }[];
+};
+
+const { t, d } = useI18n();
 const router = useRouter();
 
 usePageHead({
   title: t("returns.meta.title"),
 });
 
-const { loading, returns, pages, page, sort } = useReturns();
+const {
+  loading,
+  returns,
+  pages,
+  page,
+  sort,
+  keyword,
+  filter,
+  isFilterEmpty,
+  itemsPerPage,
+  applyKeyword,
+  applyFilter,
+  applySorting,
+  changePage: setPage,
+  resetFilters,
+} = useReturns();
 
-const columns = ref<VcTableColumnType[]>([
-  { id: "number", title: t("returns.list.columns.number"), sortable: true },
-  { id: "createdDate", title: t("returns.list.columns.date"), sortable: true },
-  { id: "status", title: t("returns.list.columns.status"), sortable: true },
-  { id: "itemsQuantity", title: t("returns.list.columns.quantity"), align: "right" },
-]);
+const { statuses } = useReturnStatuses();
 
-function applySorting(sortInfo: ISortInfo): void {
-  sort.value = new Sort(sortInfo.column, sortInfo.direction);
-  page.value = 1;
+const localKeyword = ref(keyword.value);
+
+const isSearching = computed(() => Boolean(keyword.value) || !isFilterEmpty.value);
+
+const chips = computed<ChipType[]>(() => {
+  const result: ChipType[] = filter.value.statuses.map((code) => ({
+    id: `status:${code}`,
+    label: statuses.value.find((status) => status.code === code)?.label ?? code,
+    field: "statuses",
+    value: code,
+  }));
+
+  if (filter.value.startDate) {
+    result.push({
+      id: "startDate",
+      label: t("common.labels.starts_from", [d(new Date(filter.value.startDate))]),
+      field: "startDate",
+    });
+  }
+
+  if (filter.value.endDate) {
+    result.push({
+      id: "endDate",
+      label: t("common.labels.ends_to", [d(new Date(filter.value.endDate))]),
+      field: "endDate",
+    });
+  }
+
+  return result;
+});
+
+function removeChip(chip: ChipType): void {
+  applyFilter({
+    ...filter.value,
+    statuses:
+      chip.field === "statuses" ? filter.value.statuses.filter((code) => code !== chip.value) : filter.value.statuses,
+    startDate: chip.field === "startDate" ? undefined : filter.value.startDate,
+    endDate: chip.field === "endDate" ? undefined : filter.value.endDate,
+  });
 }
 
-type ReturnListItemType = {
-  id: string;
-  availableActions?: { name: string; isAvailable: boolean }[];
-};
+function resetAll(): void {
+  localKeyword.value = "";
+  resetFilters();
+}
+
+function changePage(newPage: number): void {
+  setPage(newPage);
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 
 // Routed by the server's own action list, so the transition table stays in the module.
 function goToReturn(payload: ReturnListItemType): void {
@@ -128,8 +231,40 @@ function goToReturn(payload: ReturnListItemType): void {
   );
 }
 
-function changePage(newPage: number): void {
-  page.value = newPage;
-  window.scroll({ top: 0, behavior: "smooth" });
-}
+// The keyword also arrives from the URL, on a shared link or the back button.
+watch(keyword, (value) => {
+  localKeyword.value = value;
+});
 </script>
+
+<style lang="scss">
+.returns-list {
+  &__toolbar {
+    @apply mt-5 flex flex-wrap items-start gap-3;
+  }
+
+  &__search {
+    @apply w-full max-w-xl grow;
+  }
+
+  &__chips {
+    @apply mt-3 flex flex-wrap gap-2;
+  }
+
+  &__mobile-item {
+    @apply grid w-full cursor-pointer appearance-none grid-cols-2 gap-y-4 border-b border-neutral-200 p-6 text-left;
+  }
+
+  &__mobile-cell {
+    @apply flex flex-col;
+  }
+
+  &__mobile-label {
+    @apply text-sm text-neutral-400;
+  }
+
+  &__mobile-value {
+    @apply overflow-hidden text-ellipsis pr-4;
+  }
+}
+</style>

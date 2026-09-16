@@ -6,6 +6,22 @@
     },
     "title": "Palautukset",
     "no_returns_message": "Palautuksia ei ole vielä",
+    "no_results_message": "Hakuasi vastaavia palautuksia ei löytynyt",
+    "search_placeholder": "Hae RMA:n, tilauksen, viitteen tai tuotteen mukaan",
+    "search_aria": "Hae palautuksia",
+    "filters": {
+      "title": "Suodattimet",
+      "created_date": "Luontipäivämäärä",
+      "start_date": "Aloituspäivämäärä",
+      "end_date": "Lopetuspäivämäärä",
+      "invalid_range": "Virheellinen päivämääräväli.",
+      "custom_date": "Mukautettu päivämäärä",
+      "last_day": "Viimeinen päivä",
+      "last_week": "Viime viikko",
+      "last_month": "Viime kuukausi",
+      "last_year": "Viime vuosi",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Pyydä palautusta",
     "menu": {
       "link": {

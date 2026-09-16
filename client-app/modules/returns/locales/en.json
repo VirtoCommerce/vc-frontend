@@ -6,6 +6,22 @@
     },
     "title": "Returns",
     "no_returns_message": "There are no returns yet",
+    "no_results_message": "No returns match your search",
+    "search_placeholder": "Search by RMA, order, reference or product",
+    "search_aria": "Search returns",
+    "filters": {
+      "title": "Filters",
+      "created_date": "Created date",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "invalid_range": "Invalid date range.",
+      "custom_date": "Custom date",
+      "last_day": "Last day",
+      "last_week": "Last week",
+      "last_month": "Last month",
+      "last_year": "Last year",
+      "status": "@:common.labels.status"
+    },
     "request_button": "Request return",
     "menu": {
       "link": {
