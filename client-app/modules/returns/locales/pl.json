@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Ta pozycja została anulowana",
       "NOT_DELIVERED": "Jeszcze nie dostarczono",
       "OUTSIDE_RETURN_WINDOW": "Poza okresem zwrotu",
-      "NOTHING_LEFT_TO_RETURN": "Już w całości zgłoszone"
+      "NOTHING_LEFT_TO_RETURN": "Już w całości zgłoszone",
+      "UNHANDLED": "Tego produktu nie można zwrócić"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Ten zwrot nie jest już na etapie, na którym jest to możliwe"
+      "WRONG_STATUS": "Ten zwrot nie jest już na etapie, na którym jest to możliwe",
+      "UNHANDLED": "Ta akcja jest obecnie niedostępna"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Zapisywanie…",
     "saved_automatically": "Zapisano automatycznie",
     "submit": "Wyślij zwrot",
-    "incomplete_hint": "W {count} pozycji brakuje powodu",
     "files": "Zdjęcia lub dokumenty",
-    "files_required": "Zdjęcia lub dokumenty (wymagane)"
+    "files_required": "Zdjęcia lub dokumenty (wymagane)",
+    "incomplete": {
+      "reason": "W {count} pozycji brakuje powodu",
+      "comment": "{count} pozycja(e) nadal wymaga(ją) komentarza",
+      "attachment": "{count} pozycja(e) nadal wymaga(ją) zdjęcia"
+    }
   }
 }

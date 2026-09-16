@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Questa riga è stata annullata",
       "NOT_DELIVERED": "Non ancora consegnato",
       "OUTSIDE_RETURN_WINDOW": "Fuori dal periodo di reso",
-      "NOTHING_LEFT_TO_RETURN": "Già richiesto per intero"
+      "NOTHING_LEFT_TO_RETURN": "Già richiesto per intero",
+      "UNHANDLED": "Questo articolo non può essere reso"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Questo reso non è più in una fase in cui ciò sia possibile"
+      "WRONG_STATUS": "Questo reso non è più in una fase in cui ciò sia possibile",
+      "UNHANDLED": "Questa azione non è al momento disponibile"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Salvataggio…",
     "saved_automatically": "Salvato automaticamente",
     "submit": "Invia il reso",
-    "incomplete_hint": "{count} riga/righe senza motivo",
     "files": "Foto o documenti",
-    "files_required": "Foto o documenti (obbligatorio)"
+    "files_required": "Foto o documenti (obbligatorio)",
+    "incomplete": {
+      "reason": "{count} riga/righe senza motivo",
+      "comment": "{count} riga/righe richiedono ancora un commento",
+      "attachment": "{count} riga/righe richiedono ancora una foto"
+    }
   }
 }

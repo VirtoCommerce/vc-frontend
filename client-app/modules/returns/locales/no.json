@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Denne linjen ble kansellert",
       "NOT_DELIVERED": "Ikke levert ennå",
       "OUTSIDE_RETURN_WINDOW": "Utenfor returfristen",
-      "NOTHING_LEFT_TO_RETURN": "Allerede fullstendig forespurt"
+      "NOTHING_LEFT_TO_RETURN": "Allerede fullstendig forespurt",
+      "UNHANDLED": "Denne varen kan ikke returneres"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Denne returen er ikke lenger på et stadium der det er mulig"
+      "WRONG_STATUS": "Denne returen er ikke lenger på et stadium der det er mulig",
+      "UNHANDLED": "Denne handlingen er ikke tilgjengelig akkurat nå"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Lagrer…",
     "saved_automatically": "Lagret automatisk",
     "submit": "Send inn retur",
-    "incomplete_hint": "{count} linje(r) mangler årsak",
     "files": "Bilder eller dokumenter",
-    "files_required": "Bilder eller dokumenter (påkrevd)"
+    "files_required": "Bilder eller dokumenter (påkrevd)",
+    "incomplete": {
+      "reason": "{count} linje(r) mangler årsak",
+      "comment": "{count} linje(r) mangler fortsatt en kommentar",
+      "attachment": "{count} linje(r) mangler fortsatt et bilde"
+    }
   }
 }

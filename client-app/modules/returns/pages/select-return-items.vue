@@ -52,7 +52,7 @@
                   </div>
 
                   <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
-                    {{ $t(`returns.ineligibility.${item.ineligibilityReason}`) }}
+                    {{ codeText("ineligibility", item.ineligibilityReason) }}
                   </div>
                 </td>
 
@@ -108,6 +108,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageHead } from "@/core/composables/usePageHead";
+import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnPolicy } from "@/modules/returns/composables/useReturnPolicy";
 import { useReturnableItems } from "@/modules/returns/composables/useReturnableItems";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -142,6 +143,8 @@ const {
 } = useReturnableItems(toRef(props, "orderId"));
 
 const { windowDays } = useReturnPolicy();
+
+const { codeText } = useReturnErrors();
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },

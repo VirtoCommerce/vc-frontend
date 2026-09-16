@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Esta línea fue cancelada",
       "NOT_DELIVERED": "Aún no entregado",
       "OUTSIDE_RETURN_WINDOW": "Fuera del plazo de devolución",
-      "NOTHING_LEFT_TO_RETURN": "Ya solicitado por completo"
+      "NOTHING_LEFT_TO_RETURN": "Ya solicitado por completo",
+      "UNHANDLED": "Este artículo no se puede devolver"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Esta devolución ya no está en una fase en la que eso sea posible"
+      "WRONG_STATUS": "Esta devolución ya no está en una fase en la que eso sea posible",
+      "UNHANDLED": "Esta acción no está disponible ahora mismo"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Guardando…",
     "saved_automatically": "Guardado automáticamente",
     "submit": "Enviar devolución",
-    "incomplete_hint": "Faltan motivos en {count} línea(s)",
     "files": "Fotos o documentos",
-    "files_required": "Fotos o documentos (obligatorio)"
+    "files_required": "Fotos o documentos (obligatorio)",
+    "incomplete": {
+      "reason": "Faltan motivos en {count} línea(s)",
+      "comment": "{count} línea(s) aún necesitan un comentario",
+      "attachment": "{count} línea(s) aún necesitan una foto"
+    }
   }
 }

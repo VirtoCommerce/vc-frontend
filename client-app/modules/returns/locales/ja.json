@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "この明細はキャンセルされました",
       "NOT_DELIVERED": "未配送",
       "OUTSIDE_RETURN_WINDOW": "返品期間を過ぎています",
-      "NOTHING_LEFT_TO_RETURN": "すでに全数申請済みです"
+      "NOTHING_LEFT_TO_RETURN": "すでに全数申請済みです",
+      "UNHANDLED": "この商品は返品できません"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "この返品はそれができる段階を過ぎています"
+      "WRONG_STATUS": "この返品はそれができる段階を過ぎています",
+      "UNHANDLED": "この操作は現在ご利用いただけません"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "保存中…",
     "saved_automatically": "自動保存されました",
     "submit": "返品を申請",
-    "incomplete_hint": "{count} 件の明細に理由が必要です",
     "files": "写真または書類",
-    "files_required": "写真または書類（必須）"
+    "files_required": "写真または書類（必須）",
+    "incomplete": {
+      "reason": "{count} 件の明細に理由が必要です",
+      "comment": "{count} 件の明細にコメントが必要です",
+      "attachment": "{count} 件の明細に写真が必要です"
+    }
   }
 }

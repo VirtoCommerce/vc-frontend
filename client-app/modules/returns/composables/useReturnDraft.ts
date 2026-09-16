@@ -69,14 +69,27 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     { immediate: true },
   );
 
-  const incompleteLines = computed(() =>
-    lines.value.filter(
-      (line) =>
-        !line.reasonCode ||
-        (requiresComment(line.reasonCode) && !line.reasonComment.trim()) ||
-        (attachmentsRequired.value && line.attachmentUrls.length === 0),
-    ),
+  const missingReason = computed(() => lines.value.filter((line) => !line.reasonCode));
+
+  const missingComment = computed(() =>
+    lines.value.filter((line) => requiresComment(line.reasonCode) && !line.reasonComment.trim()),
   );
+
+  const missingAttachment = computed(() =>
+    lines.value.filter((line) => attachmentsRequired.value && line.attachmentUrls.length === 0),
+  );
+
+  // Counted per cause, not just in total: a hint that always names the reason sends the buyer to a
+  // field they have already filled when what is actually missing is a comment or a photo.
+  const incompleteCounts = computed(() => ({
+    reason: missingReason.value.length,
+    comment: missingComment.value.length,
+    attachment: missingAttachment.value.length,
+  }));
+
+  const incompleteLines = computed(() => [
+    ...new Set([...missingReason.value, ...missingComment.value, ...missingAttachment.value]),
+  ]);
 
   const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);
 
@@ -167,6 +180,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     customerComment,
     lines,
     incompleteLines,
+    incompleteCounts,
     canSubmit,
     attachmentsRequired,
     fileUploadScope: FILE_UPLOAD_SCOPE,

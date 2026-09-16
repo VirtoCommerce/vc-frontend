@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Diese Position wurde storniert",
       "NOT_DELIVERED": "Noch nicht geliefert",
       "OUTSIDE_RETURN_WINDOW": "Außerhalb des Rücksendezeitraums",
-      "NOTHING_LEFT_TO_RETURN": "Bereits vollständig angefragt"
+      "NOTHING_LEFT_TO_RETURN": "Bereits vollständig angefragt",
+      "UNHANDLED": "Dieser Artikel kann nicht zurückgesendet werden"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Diese Rücksendung befindet sich nicht mehr in einem Stadium, in dem das möglich ist"
+      "WRONG_STATUS": "Diese Rücksendung befindet sich nicht mehr in einem Stadium, in dem das möglich ist",
+      "UNHANDLED": "Diese Aktion ist derzeit nicht verfügbar"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Wird gespeichert…",
     "saved_automatically": "Automatisch gespeichert",
     "submit": "Rücksendung einreichen",
-    "incomplete_hint": "Für {count} Position(en) fehlt noch ein Grund",
     "files": "Fotos oder Dokumente",
-    "files_required": "Fotos oder Dokumente (erforderlich)"
+    "files_required": "Fotos oder Dokumente (erforderlich)",
+    "incomplete": {
+      "reason": "Für {count} Position(en) fehlt noch ein Grund",
+      "comment": "{count} Position(en) benötigen noch einen Kommentar",
+      "attachment": "{count} Position(en) benötigen noch ein Foto"
+    }
   }
 }

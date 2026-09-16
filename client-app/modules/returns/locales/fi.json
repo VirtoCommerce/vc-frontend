@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Tämä rivi on peruutettu",
       "NOT_DELIVERED": "Ei vielä toimitettu",
       "OUTSIDE_RETURN_WINDOW": "Palautusajan ulkopuolella",
-      "NOTHING_LEFT_TO_RETURN": "Jo kokonaan pyydetty"
+      "NOTHING_LEFT_TO_RETURN": "Jo kokonaan pyydetty",
+      "UNHANDLED": "Tätä tuotetta ei voi palauttaa"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Tämä palautus ei enää ole vaiheessa, jossa se olisi mahdollista"
+      "WRONG_STATUS": "Tämä palautus ei enää ole vaiheessa, jossa se olisi mahdollista",
+      "UNHANDLED": "Tämä toiminto ei ole nyt käytettävissä"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Tallennetaan…",
     "saved_automatically": "Tallennettu automaattisesti",
     "submit": "Lähetä palautus",
-    "incomplete_hint": "{count} riviltä puuttuu syy",
     "files": "Valokuvat tai asiakirjat",
-    "files_required": "Valokuvat tai asiakirjat (pakollinen)"
+    "files_required": "Valokuvat tai asiakirjat (pakollinen)",
+    "incomplete": {
+      "reason": "{count} riviltä puuttuu syy",
+      "comment": "{count} riviä tarvitsee vielä kommentin",
+      "attachment": "{count} riviä tarvitsee vielä valokuvan"
+    }
   }
 }

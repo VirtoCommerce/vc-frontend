@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "此行已取消",
       "NOT_DELIVERED": "尚未送达",
       "OUTSIDE_RETURN_WINDOW": "已超出退货期限",
-      "NOTHING_LEFT_TO_RETURN": "已全部申请"
+      "NOTHING_LEFT_TO_RETURN": "已全部申请",
+      "UNHANDLED": "此商品不可退货"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "此退货已不处于可以执行该操作的阶段"
+      "WRONG_STATUS": "此退货已不处于可以执行该操作的阶段",
+      "UNHANDLED": "当前无法执行此操作"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "正在保存…",
     "saved_automatically": "已自动保存",
     "submit": "提交退货",
-    "incomplete_hint": "还有 {count} 行未填写原因",
     "files": "照片或文件",
-    "files_required": "照片或文件（必填）"
+    "files_required": "照片或文件（必填）",
+    "incomplete": {
+      "reason": "还有 {count} 行未填写原因",
+      "comment": "还有 {count} 条明细需要填写备注",
+      "attachment": "还有 {count} 条明细需要上传照片"
+    }
   }
 }

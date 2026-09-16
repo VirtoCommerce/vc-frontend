@@ -64,10 +64,12 @@
       "LINE_CANCELLED": "Denna rad har annullerats",
       "NOT_DELIVERED": "Inte levererad ännu",
       "OUTSIDE_RETURN_WINDOW": "Utanför returperioden",
-      "NOTHING_LEFT_TO_RETURN": "Redan begärd i sin helhet"
+      "NOTHING_LEFT_TO_RETURN": "Redan begärd i sin helhet",
+      "UNHANDLED": "Den här varan kan inte returneras"
     },
     "action_unavailable": {
-      "WRONG_STATUS": "Den här returen är inte längre i ett skede där det är möjligt"
+      "WRONG_STATUS": "Den här returen är inte längre i ett skede där det är möjligt",
+      "UNHANDLED": "Den här åtgärden är inte tillgänglig just nu"
     },
     "errors": {
       "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
@@ -127,8 +129,12 @@
     "saving": "Sparar…",
     "saved_automatically": "Sparas automatiskt",
     "submit": "Skicka in retur",
-    "incomplete_hint": "{count} rad(er) saknar orsak",
     "files": "Foton eller dokument",
-    "files_required": "Foton eller dokument (obligatoriskt)"
+    "files_required": "Foton eller dokument (obligatoriskt)",
+    "incomplete": {
+      "reason": "{count} rad(er) saknar orsak",
+      "comment": "{count} rad(er) saknar fortfarande en kommentar",
+      "attachment": "{count} rad(er) saknar fortfarande ett foto"
+    }
   }
 }

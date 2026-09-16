@@ -57,7 +57,7 @@
             </template>
 
             <template #content>
-              {{ $t(`returns.action_unavailable.${cancelAction.unavailableReason}`) }}
+              {{ codeText("action_unavailable", cancelAction.unavailableReason) }}
             </template>
           </VcTooltip>
 
@@ -123,6 +123,7 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { useReturn } from "@/modules/returns/composables/useReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
+import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -140,11 +141,13 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const { openModal } = useModal();
 
-const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
+const { loading, orderReturn } = useReturn(toRef(props, "returnId"));
 
 const { cancelAction } = useReturnActions(orderReturn);
 
 const { statusLabel } = useReturnStatusLabel();
+
+const { codeText } = useReturnErrors();
 
 // Mapped once per result rather than per render, and field by field: spreading the fragment would
 // leave its mimeType sitting next to the contentType the uploader actually reads.
@@ -178,10 +181,6 @@ function openCancelModal(): void {
     props: {
       returnId: props.returnId,
       returnNumber: orderReturn.value?.number ?? "",
-
-      async onResult(): Promise<void> {
-        await refetch();
-      },
     },
   });
 }

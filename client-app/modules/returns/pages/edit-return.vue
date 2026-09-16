@@ -88,9 +88,11 @@
         </VcButton>
       </div>
 
-      <p v-if="incompleteLines.length" class="mt-2 text-right text-sm text-warning-700">
-        {{ $t("return_edit.incomplete_hint", { count: incompleteLines.length }) }}
-      </p>
+      <template v-for="(count, cause) in incompleteCounts" :key="cause">
+        <p v-if="count" class="mt-2 text-right text-sm text-warning-700">
+          {{ $t(`return_edit.incomplete.${cause}`, { count }) }}
+        </p>
+      </template>
     </template>
 
     <VcLoaderOverlay :visible="loading" fixed-spinning />
@@ -135,7 +137,7 @@ const {
   customerReference,
   customerComment,
   lines,
-  incompleteLines,
+  incompleteCounts,
   canSubmit,
   attachmentsRequired,
   fileUploadScope,
