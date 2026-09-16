@@ -322,6 +322,26 @@ describe("VcPopover", () => {
       expect(isPanelOpen(wrapper, "Outer")).toBe(true);
     });
 
+    // The trigger only consumes Escape for a panel that is actually open; a closed one must let the
+    // key reach the dialog around it.
+    it("lets Escape through the closed inner trigger to the dialog around it", async () => {
+      const wrapper = mount(NestedHost, { attachTo: document.body });
+
+      await wrapper.get("button.trigger").trigger("click");
+      await nextTick();
+
+      expect(isPanelOpen(wrapper, "Outer")).toBe(true);
+      expect(isPanelOpen(wrapper, "Inner")).toBe(false);
+
+      const innerTrigger = wrapper.get("button.inner-trigger");
+      (innerTrigger.element as HTMLElement).focus();
+
+      await innerTrigger.trigger("keydown", { key: "Escape" });
+      await nextTick();
+
+      expect(isPanelOpen(wrapper, "Outer")).toBe(false);
+    });
+
     // A tooltip opens on focus alone, so its trigger must not eat an Escape the page is listening for.
     it("closes a hover popover on Escape without taking the key from the page", async () => {
       const wrapper = mount(NestedHost, { attachTo: document.body, props: { hover: true } });

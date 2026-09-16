@@ -193,7 +193,7 @@ export const Dialog: StoryType = {
       },
       source: {
         code: `
-          <VcPopover role="dialog" aria-label="Filters">
+          <VcPopover role="dialog" aria-label="Filters" :offset-options="8">
             <template #trigger="{ triggerProps }">
               <VcButton v-bind="triggerProps">Open filters</VcButton>
             </template>
