@@ -17,6 +17,7 @@ const Host = defineComponent({
   props: {
     autocomplete: { type: Boolean, default: false },
     clearable: { type: Boolean, default: false },
+    readonly: { type: Boolean, default: false },
     selected: { type: String, default: undefined },
   },
 
@@ -36,6 +37,7 @@ const Host = defineComponent({
           label="Created date"
           :autocomplete="autocomplete"
           :clearable="clearable"
+          :readonly="readonly"
           :model-value="selected"
         />
       </template>
@@ -250,6 +252,19 @@ describe("VcSelect inside a dialog popover", () => {
 
     expect(event.defaultPrevented).toBe(consumed);
     expect(wrapper.get(".vc-select").classes().includes("vc-select--opened")).toBe(consumed);
+  });
+
+  // A readonly select has no list to open, so the key belongs to whatever encloses it.
+  it("leaves Enter alone when the select is readonly", async () => {
+    const wrapper = createWrapper({ props: { readonly: true } });
+    await openDialogAndSelect(wrapper);
+
+    const event = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    wrapper.get(".vc-select input").element.dispatchEvent(event);
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(wrapper.get(".vc-select").classes()).not.toContain("vc-select--opened");
   });
 
   it("opens the slotted trigger's dropdown on ArrowDown", async () => {

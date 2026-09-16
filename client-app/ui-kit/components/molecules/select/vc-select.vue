@@ -425,7 +425,12 @@ function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOptio
     return;
   }
 
-  // Consumed here, so Enter does not also submit an enclosing form.
+  // Nothing to open, so the key stays the page's: a readonly select would otherwise swallow Enter.
+  if (!enabled.value) {
+    return;
+  }
+
+  // Consumed only because it opens the list; Enter on an already open one still reaches the form.
   event.preventDefault();
   open();
 
