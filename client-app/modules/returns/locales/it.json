@@ -22,6 +22,17 @@
       "last_year": "Ultimo anno",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Bozza",
+      "Requested": "Richiesto",
+      "PartiallyApproved": "Approvato parzialmente",
+      "Approved": "Approvato",
+      "Rejected": "Rifiutato",
+      "Cancelled": "Annullato",
+      "New": "Nuovo",
+      "Processing": "In elaborazione",
+      "Completed": "Completato"
+    },
     "request_button": "Richiedi un reso",
     "menu": {
       "link": {

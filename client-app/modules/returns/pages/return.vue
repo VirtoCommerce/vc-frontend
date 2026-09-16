@@ -14,7 +14,7 @@
           <div class="flex flex-col">
             <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.status") }}</span>
 
-            <span>{{ orderReturn.statusDisplayValue ?? orderReturn.status }}</span>
+            <span>{{ statusLabel(orderReturn.status, orderReturn.statusDisplayValue) }}</span>
           </div>
 
           <div class="flex flex-col">
@@ -123,6 +123,7 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { useReturn } from "@/modules/returns/composables/useReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
+import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -142,6 +143,8 @@ const { openModal } = useModal();
 const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
 
 const { cancelAction } = useReturnActions(orderReturn);
+
+const { statusLabel } = useReturnStatusLabel();
 
 // Mapped once per result rather than per render, and field by field: spreading the fragment would
 // leave its mimeType sitting next to the contentType the uploader actually reads.

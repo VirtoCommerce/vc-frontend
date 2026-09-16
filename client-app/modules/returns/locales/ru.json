@@ -22,6 +22,17 @@
       "last_year": "Последний год",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Черновик",
+      "Requested": "Запрошен",
+      "PartiallyApproved": "Частично одобрен",
+      "Approved": "Одобрен",
+      "Rejected": "Отклонён",
+      "Cancelled": "Отменён",
+      "New": "Новый",
+      "Processing": "В обработке",
+      "Completed": "Завершён"
+    },
     "request_button": "Оформить возврат",
     "menu": {
       "link": {

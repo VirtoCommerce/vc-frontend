@@ -22,6 +22,17 @@
       "last_year": "Viime vuosi",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Luonnos",
+      "Requested": "Pyydetty",
+      "PartiallyApproved": "Osittain hyväksytty",
+      "Approved": "Hyväksytty",
+      "Rejected": "Hylätty",
+      "Cancelled": "Peruutettu",
+      "New": "Uusi",
+      "Processing": "Käsittelyssä",
+      "Completed": "Valmis"
+    },
     "request_button": "Pyydä palautusta",
     "menu": {
       "link": {

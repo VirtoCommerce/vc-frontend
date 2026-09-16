@@ -88,7 +88,7 @@
               <div class="returns-list__mobile-cell">
                 <span class="returns-list__mobile-label">{{ $t("returns.list.columns.status") }}</span>
 
-                <span class="returns-list__mobile-value">{{ item.statusDisplayValue ?? item.status }}</span>
+                <span class="returns-list__mobile-value">{{ statusLabel(item.status, item.statusDisplayValue) }}</span>
               </div>
 
               <div class="returns-list__mobile-cell">
@@ -108,7 +108,7 @@
           </VcTableColumn>
 
           <VcTableColumn id="status" v-slot="{ item }" :title="$t('returns.list.columns.status')" sortable>
-            {{ item.statusDisplayValue ?? item.status }}
+            {{ statusLabel(item.status, item.statusDisplayValue) }}
           </VcTableColumn>
 
           <VcTableColumn
@@ -130,6 +130,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
+import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatuses";
 import { useReturns } from "@/modules/returns/composables/useReturns";
 import { RETURN_ACTION } from "@/modules/returns/constants";
@@ -168,6 +169,7 @@ const {
 } = useReturns();
 
 const { statuses } = useReturnStatuses();
+const { statusLabel } = useReturnStatusLabel();
 
 const localKeyword = ref(keyword.value);
 
@@ -240,11 +242,15 @@ watch(keyword, (value) => {
 <style lang="scss">
 .returns-list {
   &__toolbar {
-    @apply mt-5 flex flex-wrap items-start gap-3;
+    @apply mb-4 mt-5 flex flex-col gap-3;
+
+    @media (width >= theme("screens.lg")) {
+      @apply flex-row items-center;
+    }
   }
 
   &__search {
-    @apply w-full max-w-xl grow;
+    @apply w-full grow;
   }
 
   &__chips {

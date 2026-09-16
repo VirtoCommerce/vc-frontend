@@ -22,6 +22,17 @@
       "last_year": "Dernière année",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Brouillon",
+      "Requested": "Demandé",
+      "PartiallyApproved": "Partiellement approuvé",
+      "Approved": "Approuvé",
+      "Rejected": "Refusé",
+      "Cancelled": "Annulé",
+      "New": "Nouveau",
+      "Processing": "En cours",
+      "Completed": "Terminé"
+    },
     "request_button": "Demander un retour",
     "menu": {
       "link": {

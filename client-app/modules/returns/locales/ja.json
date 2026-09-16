@@ -22,6 +22,17 @@
       "last_year": "昨年",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "下書き",
+      "Requested": "申請済み",
+      "PartiallyApproved": "一部承認",
+      "Approved": "承認済み",
+      "Rejected": "却下",
+      "Cancelled": "キャンセル済み",
+      "New": "新規",
+      "Processing": "処理中",
+      "Completed": "完了"
+    },
     "request_button": "返品を依頼",
     "menu": {
       "link": {

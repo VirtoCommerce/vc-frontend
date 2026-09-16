@@ -22,6 +22,17 @@
       "last_year": "Último ano",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Rascunho",
+      "Requested": "Solicitada",
+      "PartiallyApproved": "Parcialmente aprovada",
+      "Approved": "Aprovada",
+      "Rejected": "Rejeitada",
+      "Cancelled": "Cancelada",
+      "New": "Nova",
+      "Processing": "Em processamento",
+      "Completed": "Concluída"
+    },
     "request_button": "Solicitar devolução",
     "menu": {
       "link": {

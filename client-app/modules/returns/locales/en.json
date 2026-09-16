@@ -22,6 +22,17 @@
       "last_year": "Last year",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Draft",
+      "Requested": "Requested",
+      "PartiallyApproved": "Partially approved",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Cancelled": "Cancelled",
+      "New": "New",
+      "Processing": "Processing",
+      "Completed": "Completed"
+    },
     "request_button": "Request return",
     "menu": {
       "link": {

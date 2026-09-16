@@ -22,6 +22,17 @@
       "last_year": "Förra året",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Utkast",
+      "Requested": "Begärd",
+      "PartiallyApproved": "Delvis godkänd",
+      "Approved": "Godkänd",
+      "Rejected": "Avvisad",
+      "Cancelled": "Avbruten",
+      "New": "Ny",
+      "Processing": "Behandlas",
+      "Completed": "Slutförd"
+    },
     "request_button": "Begär retur",
     "menu": {
       "link": {

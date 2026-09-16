@@ -22,6 +22,17 @@
       "last_year": "Ostatni rok",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Wersja robocza",
+      "Requested": "Zgłoszony",
+      "PartiallyApproved": "Częściowo zatwierdzony",
+      "Approved": "Zatwierdzony",
+      "Rejected": "Odrzucony",
+      "Cancelled": "Anulowany",
+      "New": "Nowy",
+      "Processing": "W trakcie",
+      "Completed": "Zakończony"
+    },
     "request_button": "Zgłoś zwrot",
     "menu": {
       "link": {

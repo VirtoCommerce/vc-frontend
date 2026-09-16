@@ -22,6 +22,17 @@
       "last_year": "Siste år",
       "status": "@:common.labels.status"
     },
+    "statuses": {
+      "Draft": "Utkast",
+      "Requested": "Forespørt",
+      "PartiallyApproved": "Delvis godkjent",
+      "Approved": "Godkjent",
+      "Rejected": "Avvist",
+      "Cancelled": "Kansellert",
+      "New": "Ny",
+      "Processing": "Behandles",
+      "Completed": "Fullført"
+    },
     "request_button": "Be om retur",
     "menu": {
       "link": {
