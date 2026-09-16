@@ -87,7 +87,7 @@
           truncate
           disable-autocomplete
           @keydown.down.prevent="openByKeyboard($event, open, true)"
-          @keydown.enter="openByKeyboard($event, open, false)"
+          @keydown.enter="onTriggerEnter($event, open)"
           @focus="open"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
           @keydown.esc="onTriggerEscape($event, close)"
@@ -432,6 +432,15 @@ function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOptio
   if (moveToFirstOption) {
     void nextTick(() => next(-1));
   }
+}
+
+// An editable combobox leaves Enter to its form; a select-only one consumes it to open the list (APG).
+function onTriggerEnter(event: KeyboardEvent, open: () => void) {
+  if (props.autocomplete) {
+    return;
+  }
+
+  openByKeyboard(event, open, false);
 }
 
 // Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog.

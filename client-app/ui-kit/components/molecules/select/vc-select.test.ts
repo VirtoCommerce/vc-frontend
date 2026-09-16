@@ -15,6 +15,7 @@ const Host = defineComponent({
   components: { VcPopover, VcSelect },
 
   props: {
+    autocomplete: { type: Boolean, default: false },
     clearable: { type: Boolean, default: false },
     selected: { type: String, default: undefined },
   },
@@ -30,7 +31,13 @@ const Host = defineComponent({
       </template>
 
       <template #content>
-        <VcSelect :items="items" label="Created date" :clearable="clearable" :model-value="selected" />
+        <VcSelect
+          :items="items"
+          label="Created date"
+          :autocomplete="autocomplete"
+          :clearable="clearable"
+          :model-value="selected"
+        />
       </template>
     </VcPopover>
   `,
@@ -223,6 +230,26 @@ describe("VcSelect inside a dialog popover", () => {
     await nextTick();
 
     expect(wrapper.get(".vc-menu-item").element.contains(document.activeElement)).toBe(true);
+  });
+
+  // Enter is consumed only where it cannot mean anything else: address-form.vue puts autocomplete
+  // selects in a form that saves on Enter.
+  it.each([
+    [false, true],
+    [true, false],
+  ])("with autocomplete=%s, Enter on the closed trigger is consumed: %s", async (autocomplete, consumed) => {
+    const wrapper = createWrapper({ props: { autocomplete } });
+    await openDialogAndSelect(wrapper);
+
+    await wrapper.get(".vc-select input").trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    const event = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    wrapper.get(".vc-select input").element.dispatchEvent(event);
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(consumed);
+    expect(wrapper.get(".vc-select").classes().includes("vc-select--opened")).toBe(consumed);
   });
 
   it("opens the slotted trigger's dropdown on ArrowDown", async () => {
