@@ -8,29 +8,10 @@ import { useReturnActions } from "@/modules/returns/composables/useReturnActions
 import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
 import { ATTACHMENTS_REQUIRED_KEY, FILE_UPLOAD_SCOPE, MODULE_ID } from "@/modules/returns/constants";
+import type { ReturnDraftLineType } from "@/modules/returns/types";
 import type { MaybeRefOrGetter } from "vue";
 
 const AUTOSAVE_DELAY = 800;
-
-export type ReturnAttachmentFragmentType = {
-  name: string;
-  url: string;
-  size: number;
-  mimeType?: string;
-};
-
-export type ReturnDraftLineType = {
-  orderLineItemId: string;
-  name?: string;
-  sku?: string;
-  measureUnit?: string;
-  quantity: number;
-  reasonCode: string;
-  reasonComment: string;
-  serialNumber: string;
-  attachments: ReturnAttachmentFragmentType[];
-  attachmentUrls: string[];
-};
 
 export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { result, loading, refetch } = useGetReturnQuery(computed(() => ({ id: toValue(returnId) })));

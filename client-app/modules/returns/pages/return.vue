@@ -81,7 +81,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="item in orderReturn.items" :key="item.id" class="border-b border-neutral-200">
+              <tr v-for="item in items" :key="item.id" class="border-b border-neutral-200">
                 <td class="p-5">
                   <div>{{ item.name }}</div>
 
@@ -91,9 +91,9 @@
 
                   <div v-if="item.reasonComment" class="text-sm text-neutral-400">{{ item.reasonComment }}</div>
 
-                  <ul v-if="item.attachments?.length" class="mt-2 space-y-1">
-                    <li v-for="attachment in item.attachments" :key="attachment.url">
-                      <VcFile :file="toAttachedFile(attachment)" @download="onDownload" />
+                  <ul v-if="item.files.length" class="mt-2 space-y-1">
+                    <li v-for="file in item.files" :key="file.url">
+                      <VcFile :file="file" @download="onDownload" />
                     </li>
                   </ul>
                 </td>
@@ -118,7 +118,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { useReturn } from "@/modules/returns/composables/useReturn";
@@ -126,7 +126,6 @@ import { useReturnActions } from "@/modules/returns/composables/useReturnActions
 import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
-import type { ReturnAttachmentFragmentType } from "@/modules/returns/composables/useReturnDraft";
 import CancelReturnModal from "@/modules/returns/components/cancel-return-modal.vue";
 
 interface IProps {
@@ -144,9 +143,20 @@ const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
 
 const { cancelAction } = useReturnActions(orderReturn);
 
-function toAttachedFile(attachment: ReturnAttachmentFragmentType): IAttachedFile {
-  return { ...attachment, contentType: attachment.mimeType ?? undefined, status: "attached" };
-}
+// Mapped once per result rather than per render, and field by field: spreading the fragment would
+// leave its mimeType sitting next to the contentType the uploader actually reads.
+const items = computed(() =>
+  (orderReturn.value?.items ?? []).map((item) => ({
+    ...item,
+    files: (item.attachments ?? []).map<IAttachedFile>((attachment) => ({
+      name: attachment.name,
+      url: attachment.url,
+      size: attachment.size,
+      contentType: attachment.mimeType ?? undefined,
+      status: "attached",
+    })),
+  })),
+);
 
 function onDownload(file: FileType): void {
   if (file.url) {

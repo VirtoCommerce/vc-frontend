@@ -107,7 +107,7 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturnDraft } from "@/modules/returns/composables/useReturnDraft";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
 import { BackButtonInHeader } from "@/shared/layout";
-import type { ReturnDraftLineType } from "@/modules/returns/composables/useReturnDraft";
+import type { ReturnDraftLineType } from "@/modules/returns/types";
 import ReturnLineAttachments from "@/modules/returns/components/return-line-attachments.vue";
 
 interface IProps {

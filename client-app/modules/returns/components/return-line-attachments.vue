@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
 import { downloadFile, useFiles } from "@/shared/files";
-import type { ReturnAttachmentFragmentType } from "@/modules/returns/composables/useReturnDraft";
+import type { ReturnAttachmentFragmentType } from "@/modules/returns/types";
 
 interface IProps {
   attachments: ReturnAttachmentFragmentType[];
