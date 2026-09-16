@@ -832,9 +832,27 @@ describe("ShareWishlistModal", () => {
       expect(mocks.notifications.error.mock.calls[0][0]).toMatchObject({ text: `${KEY}.save_error` });
     });
 
-    it("still runs when refreshing the lists afterwards fails", async () => {
+    it("goes out alongside the refresh rather than ahead of it", async () => {
       controls.canSave.value = true;
-      // Already persisted at this point, so a refresh hiccup must not cost the customer their notification.
+
+      let releaseOnSaved: () => void = () => {};
+      controls.onSaved.mockImplementation(() => new Promise<void>((resolve) => (releaseOnSaved = resolve)));
+
+      renderModal(privateList());
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      // The refresh is already out while the notification is still in flight; sequenced, it could not be.
+      await vi.waitFor(() => expect(mocks.fetchWishlists).toHaveBeenCalledOnce());
+      expect(controls.onSaved).toHaveBeenCalledOnce();
+
+      releaseOnSaved();
+    });
+
+    it("still runs when refreshing the lists fails", async () => {
+      controls.canSave.value = true;
+      // The two go out together, and the list is already persisted — a refresh hiccup must not cost the customer
+      // their notification, nor report the save as failed.
       mocks.fetchWishlists.mockRejectedValue(new Error("refetch failed"));
 
       renderModal(privateList());
@@ -853,9 +871,9 @@ describe("ShareWishlistModal", () => {
       await selectScope(TARGETED_SCOPE);
       await fireEvent.click(saveButton());
 
+      await vi.waitFor(() => expect(mocks.logger.error).toHaveBeenCalledOnce());
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
       expect(mocks.notifications.error).not.toHaveBeenCalled();
-      expect(mocks.logger.error).toHaveBeenCalledOnce();
     });
   });
 
@@ -872,6 +890,12 @@ describe("ShareWishlistModal", () => {
       renderModal(privateList());
 
       expect(component.queryByText(`${KEY}.sharing_link_label`)).toBeNull();
+    });
+
+    it("names its copy button for assistive tech", () => {
+      renderModal(targetedList("org-1"));
+
+      expect(component.getByTestId("wishlist-sharing-copy-link-button")).toHaveAccessibleName("ui_kit.buttons.copy");
     });
 
     it("copies the link and confirms it", async () => {

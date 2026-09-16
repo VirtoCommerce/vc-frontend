@@ -42,6 +42,7 @@
           <VcButton
             v-if="isClipboardSupported"
             data-test-id="wishlist-sharing-copy-link-button"
+            :aria-label="$t('ui_kit.buttons.copy')"
             color="secondary"
             variant="soft"
             icon="document-duplicate"
@@ -256,20 +257,23 @@ async function save(closeHandle: () => void): Promise<void> {
     sharingKey.value = saved?.sharingSetting?.id ?? sharingKey.value;
 
     // Saved from here on, so neither step may surface as a save error; both are awaited to keep the loader up.
-    try {
-      await scopeControls.value?.onSaved?.({
+    // Independent of each other — the notification reads the mutation's own result — so they go out together and
+    // the dialog stays open for one round trip rather than two.
+    const [notified, refreshed] = await Promise.allSettled([
+      scopeControls.value?.onSaved?.({
         listName: props.list.name,
         sharingLink: sharingLink.value,
         targets: saved?.sharingSetting?.targets ?? [],
-      });
-    } catch (e) {
-      Logger.error("ShareWishlistModal: sharing scope onSaved failed", e);
+      }),
+      fetchWishlists(),
+    ]);
+
+    if (notified.status === "rejected") {
+      Logger.error("ShareWishlistModal: sharing scope onSaved failed", notified.reason);
     }
 
-    try {
-      await fetchWishlists();
-    } catch (e) {
-      Logger.error("ShareWishlistModal: refreshing the lists after save failed", e);
+    if (refreshed.status === "rejected") {
+      Logger.error("ShareWishlistModal: refreshing the lists after save failed", refreshed.reason);
     }
 
     closeHandle();
