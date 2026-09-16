@@ -8,6 +8,7 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForInStockVariations,
   getFilterExpressionForAvailableIn,
+  getFilterExpressionForBrand,
   getFilterExpressionFromFacets,
   generateFilterExpressionFromFilters,
   escapeFilterSyntaxValue,
@@ -123,6 +124,28 @@ describe("getFilterExpressionForAvailableIn", () => {
   `("with branches: $branches -> $expected", ({ branches, expected }) => {
     const result = getFilterExpressionForAvailableIn(ref(branches));
     expect(result).toBe(expected);
+  });
+
+  it("escapes quotes and backslashes in branch ids", () => {
+    const result = getFilterExpressionForAvailableIn(ref(['branch"1', "branch\\2"]));
+    expect(result).toBe('available_in:"branch\\"1","branch\\\\2"');
+  });
+});
+
+describe("getFilterExpressionForBrand", () => {
+  it.each`
+    brandName    | expected
+    ${undefined} | ${""}
+    ${""}        | ${""}
+    ${"Acme"}    | ${'"BRAND":"Acme"'}
+  `("with brandName: $brandName -> $expected", ({ brandName, expected }) => {
+    const result = getFilterExpressionForBrand(brandName === undefined ? undefined : ref(brandName));
+    expect(result).toBe(expected);
+  });
+
+  it("escapes quotes and backslashes in the brand name", () => {
+    const result = getFilterExpressionForBrand(ref('Acme "Pro"\\'));
+    expect(result).toBe('"BRAND":"Acme \\"Pro\\"\\\\"');
   });
 });
 

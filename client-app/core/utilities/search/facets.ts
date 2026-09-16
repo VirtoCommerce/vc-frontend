@@ -76,7 +76,7 @@ export function getFilterExpressionForPurchasedBefore(value: MaybeRef<boolean>):
  */
 export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): string {
   const branches = unref(value);
-  return branches.length ? `available_in:"${branches.join('","')}"` : "";
+  return branches.length ? `available_in:"${branches.map(escapeFilterSyntaxValue).join('","')}"` : "";
 }
 
 /**
@@ -85,7 +85,8 @@ export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): st
  * @returns A string representing the brand filter expression
  */
 export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): string {
-  return unref(brandName) ? `"BRAND":"${unref(brandName)}"` : "";
+  const brand = unref(brandName);
+  return brand ? `"BRAND":"${escapeFilterSyntaxValue(brand)}"` : "";
 }
 
 /**
