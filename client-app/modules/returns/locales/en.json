@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Outside the return window",
       "NOTHING_LEFT_TO_RETURN": "Already fully requested"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible"
+    },
     "list": {
       "columns": {
         "number": "RMA",

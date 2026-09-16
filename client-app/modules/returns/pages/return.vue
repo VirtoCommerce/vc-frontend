@@ -48,8 +48,20 @@
           <span>{{ orderReturn.cancelReason }}</span>
         </div>
 
-        <template v-if="isCancellable" #footer>
-          <VcButton color="danger" variant="outline" size="sm" @click="openCancelModal">
+        <template v-if="cancelAction" #footer>
+          <VcTooltip v-if="!cancelAction.isAvailable" placement="top">
+            <template #trigger>
+              <VcButton color="danger" variant="outline" size="sm" disabled>
+                {{ $t("return_details.cancel_button") }}
+              </VcButton>
+            </template>
+
+            <template #content>
+              {{ $t(`returns.action_unavailable.${cancelAction.unavailableReason}`) }}
+            </template>
+          </VcTooltip>
+
+          <VcButton v-else color="danger" variant="outline" size="sm" @click="openCancelModal">
             {{ $t("return_details.cancel_button") }}
           </VcButton>
         </template>
@@ -100,11 +112,11 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, toRef } from "vue";
+import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { useReturn } from "@/modules/returns/composables/useReturn";
-import { CANCELLABLE_STATUSES } from "@/modules/returns/constants";
+import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import CancelReturnModal from "@/modules/returns/components/cancel-return-modal.vue";
@@ -122,9 +134,9 @@ const { openModal } = useModal();
 
 const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
 
-// Mirrors CancellableStatuses on the server. The button is a shortcut, not the rule — the mutation
-// refuses anything else regardless of what the page decided to show.
-const isCancellable = computed(() => CANCELLABLE_STATUSES.includes(orderReturn.value?.status ?? ""));
+// Straight from the server's transition table. An action that exists but is not available shows as
+// a disabled button saying why, rather than vanishing and leaving the buyer to guess.
+const { cancelAction } = useReturnActions(orderReturn);
 
 function openCancelModal(): void {
   openModal({

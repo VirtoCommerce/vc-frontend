@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Fora do prazo de devolução",
       "NOTHING_LEFT_TO_RETURN": "Já solicitado integralmente"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Esta devolução já não está numa fase em que isso seja possível"
+    },
     "list": {
       "columns": {
         "number": "RMA",

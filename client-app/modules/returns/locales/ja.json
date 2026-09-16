@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "返品期間を過ぎています",
       "NOTHING_LEFT_TO_RETURN": "すでに全数申請済みです"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "この返品はそれができる段階を過ぎています"
+    },
     "list": {
       "columns": {
         "number": "RMA番号",

@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Utenfor returfristen",
       "NOTHING_LEFT_TO_RETURN": "Allerede fullstendig forespurt"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Denne returen er ikke lenger på et stadium der det er mulig"
+    },
     "list": {
       "columns": {
         "number": "RMA",

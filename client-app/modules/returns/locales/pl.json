@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Poza okresem zwrotu",
       "NOTHING_LEFT_TO_RETURN": "Już w całości zgłoszone"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Ten zwrot nie jest już na etapie, na którym jest to możliwe"
+    },
     "list": {
       "columns": {
         "number": "RMA",

@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Außerhalb des Rücksendezeitraums",
       "NOTHING_LEFT_TO_RETURN": "Bereits vollständig angefragt"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Diese Rücksendung befindet sich nicht mehr in einem Stadium, in dem das möglich ist"
+    },
     "list": {
       "columns": {
         "number": "RMA",

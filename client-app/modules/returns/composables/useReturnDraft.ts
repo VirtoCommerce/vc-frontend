@@ -4,6 +4,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useSubmitReturnMutation } from "@/modules/returns/api/graphql/mutations/submitReturn";
 import { useUpdateReturnMutation } from "@/modules/returns/api/graphql/mutations/updateReturn";
 import { useGetReturnQuery } from "@/modules/returns/api/graphql/queries/getReturn";
+import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
 import {
   ATTACHMENTS_REQUIRED_KEY,
@@ -52,7 +53,10 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const fileUploadScope = computed(() => String(getSettingValue(FILE_UPLOAD_SCOPE_KEY) ?? DEFAULT_FILE_UPLOAD_SCOPE));
 
   const orderReturn = computed(() => result.value?.return);
-  const isDraft = computed(() => orderReturn.value?.status === "Draft");
+
+  // Editability and submittability are the server's call, taken from availableActions rather than
+  // re-derived from the status here — the transition table has one home, and it is not this file.
+  const { canEdit, canSubmit: submitAllowed } = useReturnActions(orderReturn);
 
   const customerReference = ref("");
   const customerComment = ref("");
@@ -99,11 +103,11 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     ),
   );
 
-  const canSubmit = computed(() => isDraft.value && lines.value.length > 0 && incompleteLines.value.length === 0);
+  const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);
 
   /** Returns whether the draft now matches what the buyer typed. */
   async function save(): Promise<boolean> {
-    if (!isDraft.value) {
+    if (!canEdit.value) {
       return false;
     }
 
@@ -167,7 +171,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     saving,
     submitting,
     orderReturn,
-    isDraft,
+    canEdit,
     customerReference,
     customerComment,
     lines,

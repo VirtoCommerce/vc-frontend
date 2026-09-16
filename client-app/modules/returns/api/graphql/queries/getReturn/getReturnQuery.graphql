@@ -11,6 +11,11 @@ query GetReturn($id: String!) {
     rejectReason
     cancelReason
     itemsQuantity
+    availableActions {
+      name
+      isAvailable
+      unavailableReason
+    }
     items {
       id
       orderLineItemId

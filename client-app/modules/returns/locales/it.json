@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Fuori dal periodo di reso",
       "NOTHING_LEFT_TO_RETURN": "Già richiesto per intero"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Questo reso non è più in una fase in cui ciò sia possibile"
+    },
     "list": {
       "columns": {
         "number": "RMA",

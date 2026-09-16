@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Hors du délai de retour",
       "NOTHING_LEFT_TO_RETURN": "Déjà entièrement demandé"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Ce retour n'est plus à une étape où cela est possible"
+    },
     "list": {
       "columns": {
         "number": "RMA",

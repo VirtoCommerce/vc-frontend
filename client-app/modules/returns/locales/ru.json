@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Срок возврата истёк",
       "NOTHING_LEFT_TO_RETURN": "Уже заявлено полностью"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Возврат уже не на той стадии, на которой это возможно"
+    },
     "list": {
       "columns": {
         "number": "Номер",

@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "已超出退货期限",
       "NOTHING_LEFT_TO_RETURN": "已全部申请"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "此退货已不处于可以执行该操作的阶段"
+    },
     "list": {
       "columns": {
         "number": "RMA编号",

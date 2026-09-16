@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Palautusajan ulkopuolella",
       "NOTHING_LEFT_TO_RETURN": "Jo kokonaan pyydetty"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Tämä palautus ei enää ole vaiheessa, jossa se olisi mahdollista"
+    },
     "list": {
       "columns": {
         "number": "RMA",

@@ -36,6 +36,9 @@
       "OUTSIDE_RETURN_WINDOW": "Utanför returperioden",
       "NOTHING_LEFT_TO_RETURN": "Redan begärd i sin helhet"
     },
+    "action_unavailable": {
+      "WRONG_STATUS": "Den här returen är inte längre i ett skede där det är möjligt"
+    },
     "list": {
       "columns": {
         "number": "RMA",
