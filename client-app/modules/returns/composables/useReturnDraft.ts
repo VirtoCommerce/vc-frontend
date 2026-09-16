@@ -1,10 +1,11 @@
-import { useDebounceFn } from "@vueuse/core";
 import { computed, ref, toValue, watch } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { globals } from "@/core/globals";
 import { useSubmitReturnMutation } from "@/modules/returns/api/graphql/mutations/submitReturn";
 import { useUpdateReturnMutation } from "@/modules/returns/api/graphql/mutations/updateReturn";
 import { useGetReturnQuery } from "@/modules/returns/api/graphql/queries/getReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
+import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
 import { ATTACHMENTS_REQUIRED_KEY, FILE_UPLOAD_SCOPE, MODULE_ID } from "@/modules/returns/constants";
 import type { MaybeRefOrGetter } from "vue";
@@ -36,6 +37,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { mutate: updateReturn, loading: saving } = useUpdateReturnMutation();
   const { mutate: submitReturn, loading: submitting } = useSubmitReturnMutation();
   const { requiresComment } = useReturnReasons();
+  const { report } = useReturnErrors();
   const { getSettingValue } = useModuleSettings(MODULE_ID);
 
   const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) !== false);
@@ -114,13 +116,25 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
       });
 
       return true;
-    } catch {
+    } catch (error) {
       // Autosave runs unattended on every keystroke, so a rejection must not go unhandled.
+      report(error);
+
       return false;
     }
   }
 
-  const autosave = useDebounceFn(save, AUTOSAVE_DELAY);
+  let autosaveTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function cancelAutosave(): void {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = undefined;
+  }
+
+  function autosave(): void {
+    cancelAutosave();
+    autosaveTimer = setTimeout(() => void save(), AUTOSAVE_DELAY);
+  }
 
   function applyReasonToAll(reasonCode: string): void {
     lines.value.forEach((line) => {
@@ -131,15 +145,23 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   }
 
   async function submit(): Promise<boolean> {
+    // A keystroke still waiting on the timer would fire against an already submitted return.
+    cancelAutosave();
+
     if (!(await save())) {
       return false;
     }
 
     try {
-      const submitted = await submitReturn({ command: { returnId: toValue(returnId) } });
+      const submitted = await submitReturn({
+        command: { returnId: toValue(returnId) },
+        cultureName: globals.cultureName,
+      });
 
       return submitted?.data?.submitReturn?.status === "Requested";
-    } catch {
+    } catch (error) {
+      report(error);
+
       return false;
     }
   }

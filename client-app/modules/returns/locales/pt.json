@@ -41,6 +41,19 @@
     "action_unavailable": {
       "WRONG_STATUS": "Esta devolução já não está numa fase em que isso seja possível"
     },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
     "list": {
       "columns": {
         "number": "RMA",

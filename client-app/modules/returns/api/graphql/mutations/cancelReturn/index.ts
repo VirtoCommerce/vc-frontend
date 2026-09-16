@@ -3,6 +3,10 @@ import { CancelReturnDocument, OperationNames } from "@/modules/returns/api/grap
 
 export function useCancelReturnMutation() {
   return useMutation(CancelReturnDocument, {
-    refetchQueries: [OperationNames.Query.GetReturns, OperationNames.Query.GetReturn],
+    refetchQueries: [
+      OperationNames.Query.GetReturns,
+      OperationNames.Query.GetReturn,
+      OperationNames.Query.GetReturnableItems,
+    ],
   });
 }

@@ -3,6 +3,6 @@ import { CreateReturnDocument, OperationNames } from "@/modules/returns/api/grap
 
 export function useCreateReturnMutation() {
   return useMutation(CreateReturnDocument, {
-    refetchQueries: [OperationNames.Query.GetReturns],
+    refetchQueries: [OperationNames.Query.GetReturns, OperationNames.Query.GetReturnableItems],
   });
 }
