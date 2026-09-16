@@ -135,6 +135,8 @@
       "reason": "Faltan motivos en {count} línea(s)",
       "comment": "{count} línea(s) aún necesitan un comentario",
       "attachment": "{count} línea(s) aún necesitan una foto"
-    }
+    },
+    "uploads_pending": "Esperando a que terminen de subirse los archivos",
+    "uploads_failed": "Algunos archivos no se pudieron subir. Elimínelos o reinéntelo antes de enviar."
   }
 }

@@ -135,6 +135,8 @@
       "reason": "{count} riviltä puuttuu syy",
       "comment": "{count} riviä tarvitsee vielä kommentin",
       "attachment": "{count} riviä tarvitsee vielä valokuvan"
-    }
+    },
+    "uploads_pending": "Odotetaan tiedostojen latauksen valmistumista",
+    "uploads_failed": "Joidenkin tiedostojen lataus epäonnistui. Poista ne tai yritä uudelleen ennen lähettämistä."
   }
 }

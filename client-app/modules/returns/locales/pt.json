@@ -135,6 +135,8 @@
       "reason": "{count} linha(s) ainda sem motivo",
       "comment": "{count} linha(s) ainda precisam de um comentário",
       "attachment": "{count} linha(s) ainda precisam de uma foto"
-    }
+    },
+    "uploads_pending": "A aguardar a conclusão do carregamento dos ficheiros",
+    "uploads_failed": "Alguns ficheiros não foram carregados. Remova-os ou tente novamente antes de enviar."
   }
 }

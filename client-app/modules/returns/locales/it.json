@@ -135,6 +135,8 @@
       "reason": "{count} riga/righe senza motivo",
       "comment": "{count} riga/righe richiedono ancora un commento",
       "attachment": "{count} riga/righe richiedono ancora una foto"
-    }
+    },
+    "uploads_pending": "In attesa del completamento del caricamento dei file",
+    "uploads_failed": "Alcuni file non sono stati caricati. Rimuovili o riprova prima di inviare."
   }
 }

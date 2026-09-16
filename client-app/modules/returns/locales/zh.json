@@ -135,6 +135,8 @@
       "reason": "还有 {count} 行未填写原因",
       "comment": "还有 {count} 条明细需要填写备注",
       "attachment": "还有 {count} 条明细需要上传照片"
-    }
+    },
+    "uploads_pending": "正在等待文件上传完成",
+    "uploads_failed": "部分文件上传失败。请在提交前删除或重试。"
   }
 }

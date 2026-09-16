@@ -135,6 +135,8 @@
       "reason": "{count} rad(er) saknar orsak",
       "comment": "{count} rad(er) saknar fortfarande en kommentar",
       "attachment": "{count} rad(er) saknar fortfarande ett foto"
-    }
+    },
+    "uploads_pending": "Väntar på att filerna ska laddas upp",
+    "uploads_failed": "Vissa filer kunde inte laddas upp. Ta bort dem eller försök igen innan du skickar."
   }
 }

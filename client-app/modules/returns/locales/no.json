@@ -135,6 +135,8 @@
       "reason": "{count} linje(r) mangler årsak",
       "comment": "{count} linje(r) mangler fortsatt en kommentar",
       "attachment": "{count} linje(r) mangler fortsatt et bilde"
-    }
+    },
+    "uploads_pending": "Venter på at filene skal lastes opp",
+    "uploads_failed": "Noen filer kunne ikke lastes opp. Fjern dem eller prøv igjen før du sender."
   }
 }

@@ -74,6 +74,8 @@
             :attachments="line.attachments"
             :scope="fileUploadScope"
             @update:urls="onAttachmentsChanged(line, $event)"
+            @update:settled="setUploadState(line, 'settled', $event)"
+            @update:failed="setUploadState(line, 'failed', $event)"
           />
         </div>
       </VcWidget>
@@ -83,10 +85,18 @@
           {{ saving ? $t("return_edit.saving") : $t("return_edit.saved_automatically") }}
         </span>
 
-        <VcButton :disabled="!canSubmit" :loading="submitting" @click="onSubmit">
+        <VcButton :disabled="!canSubmit || uploadsPending" :loading="submitting" @click="onSubmit">
           {{ $t("return_edit.submit") }}
         </VcButton>
       </div>
+
+      <p v-if="uploadsPending" class="mt-2 text-right text-sm text-warning-700">
+        {{ $t("return_edit.uploads_pending") }}
+      </p>
+
+      <p v-if="uploadsFailed" class="mt-2 text-right text-sm text-danger-700">
+        {{ $t("return_edit.uploads_failed") }}
+      </p>
 
       <template v-for="(count, cause) in incompleteCounts" :key="cause">
         <p v-if="count" class="mt-2 text-right text-sm text-warning-700">
@@ -101,7 +111,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { ref, toRef } from "vue";
+import { computed, reactive, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
@@ -149,6 +159,12 @@ const {
 
 const bulkReason = ref("");
 
+// Keyed by line: the uploader lives per line and only it knows whether its files have settled.
+const uploadState = reactive<Record<string, { settled: boolean; failed: boolean }>>({});
+
+const uploadsPending = computed(() => Object.values(uploadState).some((state) => !state.settled));
+const uploadsFailed = computed(() => Object.values(uploadState).some((state) => state.failed));
+
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("returns.menu.link.title"), route: { name: "Returns" } },
@@ -156,6 +172,11 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const isMobile = breakpoints.smaller("lg");
+
+function setUploadState(line: ReturnDraftLineType, key: "settled" | "failed", value: boolean): void {
+  const state = (uploadState[line.orderLineItemId] ??= { settled: true, failed: false });
+  state[key] = value;
+}
 
 function onAttachmentsChanged(line: ReturnDraftLineType, urls: string[]): void {
   line.attachmentUrls = urls;

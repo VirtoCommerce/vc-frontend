@@ -135,6 +135,8 @@
       "reason": "{count} line(s) still need a reason",
       "comment": "{count} line(s) still need a comment",
       "attachment": "{count} line(s) still need a photo"
-    }
+    },
+    "uploads_pending": "Waiting for the files to finish uploading",
+    "uploads_failed": "Some files failed to upload. Remove or retry them before submitting."
   }
 }

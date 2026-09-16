@@ -318,10 +318,18 @@ export function createQueueTarget<TVars extends Record<string, unknown>>(
   return { name, config: config as IQueueTargetConfig };
 }
 
+// A return draft is saved whole on every edit, so the last payload wins outright and the default
+// merge is right. Typed structurally to keep core independent of the returns module.
+export const updateReturnConfig: IQueueTargetConfig<{ command?: { returnId?: string } }> = {
+  debounceMs: 800,
+  getPartitionKey: (vars) => vars.command?.returnId ?? "",
+};
+
 export const queuedMutationsController = createQueuedMutationsController({
   targets: [
     createQueueTarget("UpdateShortCartItemQuantity", updateShortCartItemQuantityConfig),
     createQueueTarget("RemoveCartItems", removeCartItemsConfig),
+    createQueueTarget("UpdateReturn", updateReturnConfig),
   ],
 });
 

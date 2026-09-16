@@ -1,4 +1,5 @@
 import { computed, onScopeDispose, ref, toValue, watch } from "vue";
+import { queuedMutationsController } from "@/core/api/graphql/config/links/queued-mutations/queued-mutations";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { useSubmitReturnMutation } from "@/modules/returns/api/graphql/mutations/submitReturn";
@@ -10,8 +11,6 @@ import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons
 import { ATTACHMENTS_REQUIRED_KEY, FILE_UPLOAD_SCOPE, MODULE_ID } from "@/modules/returns/constants";
 import type { ReturnDraftLineType } from "@/modules/returns/types";
 import type { MaybeRefOrGetter } from "vue";
-
-const AUTOSAVE_DELAY = 800;
 
 export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { result, loading, refetch } = useGetReturnQuery(computed(() => ({ id: toValue(returnId) })));
@@ -124,21 +123,18 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     }
   }
 
-  let autosaveTimer: ReturnType<typeof setTimeout> | undefined;
-
-  function cancelAutosave(): void {
-    clearTimeout(autosaveTimer);
-    autosaveTimer = undefined;
-  }
-
+  // UpdateReturn is a queued-mutations target, so the link debounces it, merges what piled up and
+  // never runs two in parallel for one return. A hand-rolled timer did none of that: the last
+  // response won rather than the last edit, and leaving the page dropped whatever was pending.
   function autosave(): void {
-    cancelAutosave();
-    autosaveTimer = setTimeout(() => void save(), AUTOSAVE_DELAY);
+    void save();
   }
 
-  // Leaving the page within the debounce window would otherwise run save - and report its error -
-  // against a scope that no longer exists.
-  onScopeDispose(cancelAutosave);
+  function flushAutosave(): void {
+    queuedMutationsController.flushNow("UpdateReturn", toValue(returnId));
+  }
+
+  onScopeDispose(flushAutosave);
 
   function applyReasonToAll(reasonCode: string): void {
     lines.value.forEach((line) => {
@@ -149,8 +145,9 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   }
 
   async function submit(): Promise<boolean> {
-    // A keystroke still waiting on the timer would fire against an already submitted return.
-    cancelAutosave();
+    // An edit still sitting in the queue would otherwise land after the submit, against a return
+    // that is no longer a draft.
+    flushAutosave();
 
     if (!(await save())) {
       return false;
@@ -186,6 +183,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     fileUploadScope: FILE_UPLOAD_SCOPE,
     requiresComment,
     autosave,
+    flushAutosave,
     save,
     applyReasonToAll,
     submit,

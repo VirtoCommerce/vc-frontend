@@ -135,6 +135,8 @@
       "reason": "{count} ligne(s) sans motif",
       "comment": "{count} ligne(s) nécessitent encore un commentaire",
       "attachment": "{count} ligne(s) nécessitent encore une photo"
-    }
+    },
+    "uploads_pending": "En attente de la fin du téléversement des fichiers",
+    "uploads_failed": "Certains fichiers n’ont pas pu être téléversés. Supprimez-les ou réessayez avant d’envoyer."
   }
 }

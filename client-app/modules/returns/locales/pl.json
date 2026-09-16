@@ -135,6 +135,8 @@
       "reason": "W {count} pozycji brakuje powodu",
       "comment": "{count} pozycja(e) nadal wymaga(ją) komentarza",
       "attachment": "{count} pozycja(e) nadal wymaga(ją) zdjęcia"
-    }
+    },
+    "uploads_pending": "Trwa przesyłanie plików",
+    "uploads_failed": "Niektórych plików nie udało się przesłać. Usuń je lub spróbuj ponownie przed wysłaniem."
   }
 }

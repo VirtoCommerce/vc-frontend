@@ -135,6 +135,8 @@
       "reason": "Für {count} Position(en) fehlt noch ein Grund",
       "comment": "{count} Position(en) benötigen noch einen Kommentar",
       "attachment": "{count} Position(en) benötigen noch ein Foto"
-    }
+    },
+    "uploads_pending": "Warten auf den Abschluss des Datei-Uploads",
+    "uploads_failed": "Einige Dateien konnten nicht hochgeladen werden. Entfernen oder wiederholen Sie sie vor dem Absenden."
   }
 }

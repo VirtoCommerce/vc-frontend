@@ -21,6 +21,8 @@ interface IProps {
 
 interface IEmits {
   (event: "update:urls", urls: string[]): void;
+  (event: "update:settled", settled: boolean): void;
+  (event: "update:failed", failed: boolean): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -35,11 +37,21 @@ const attachedFiles = computed<IAttachedFile[]>(() =>
   })),
 );
 
-const { files, options, attachedAndUploadedFiles, addFiles, validateFiles, uploadFiles, removeFiles, fetchOptions } =
-  useFiles(
-    computed(() => props.scope),
-    attachedFiles,
-  );
+const {
+  files,
+  options,
+  attachedAndUploadedFiles,
+  allFilesAttachedOrUploaded,
+  hasFailedFiles,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+  fetchOptions,
+} = useFiles(
+  computed(() => props.scope),
+  attachedFiles,
+);
 
 // Only a finished upload carries a URL, and only a URL can be attached — one still in flight
 // would be claimed as an empty reference.
@@ -49,6 +61,12 @@ watch(attachedAndUploadedFiles, (value) => {
     value.map((file) => file.url).filter((url): url is string => !!url),
   );
 });
+
+// The parent commits only settled URLs, so without this it cannot tell an upload still in flight
+// from a line with no files at all, and Submit would leave the file attached to nothing.
+watch(allFilesAttachedOrUploaded, (value) => emit("update:settled", value), { immediate: true });
+
+watch(hasFailedFiles, (value) => emit("update:failed", value), { immediate: true });
 
 function onAddFiles(items: INewFile[]): void {
   addFiles(items);
