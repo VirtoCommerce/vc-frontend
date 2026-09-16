@@ -1,4 +1,4 @@
-import { computed, ref, toValue, watch } from "vue";
+import { computed, onScopeDispose, ref, toValue, watch } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { useSubmitReturnMutation } from "@/modules/returns/api/graphql/mutations/submitReturn";
@@ -141,6 +141,10 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     cancelAutosave();
     autosaveTimer = setTimeout(() => void save(), AUTOSAVE_DELAY);
   }
+
+  // Leaving the page within the debounce window would otherwise run save - and report its error -
+  // against a scope that no longer exists.
+  onScopeDispose(cancelAutosave);
 
   function applyReasonToAll(reasonCode: string): void {
     lines.value.forEach((line) => {

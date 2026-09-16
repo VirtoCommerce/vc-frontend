@@ -46,11 +46,18 @@ function clamp(): number {
   return raw === "" || !Number.isFinite(parsed) ? 0 : Math.min(Math.max(parsed, 0), props.max);
 }
 
-// Emitted while typing, without touching what is on screen: the Continue button is disabled until
-// a quantity is selected, and a disabled button takes no focus, so waiting for blur would trap the
-// buyer with a number they can see and cannot use.
+// Committed while typing, because the Continue button is disabled until a quantity is selected and
+// a disabled button takes no focus - waiting for blur would trap the buyer with a number they can
+// see and cannot use. Typing above the maximum corrects the field on the spot rather than silently
+// sending something else: the story asks for a field that will not accept more than is available.
 function onInput(): void {
-  emit("update:modelValue", clamp());
+  const value = clamp();
+
+  if (Number(draft.value) > value) {
+    draft.value = value || undefined;
+  }
+
+  emit("update:modelValue", value);
 }
 
 function commit(): void {
