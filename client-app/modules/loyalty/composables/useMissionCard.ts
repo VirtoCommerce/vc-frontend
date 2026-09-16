@@ -131,11 +131,13 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
 
     const daysLeft = data.daysRemaining ?? null;
 
-    let dateLabel = "";
+    let dateLabel: string;
     if (isCompleted(data)) {
       dateLabel = t(`${CARD_I18N}.mission_completed`);
     } else if (daysLeft !== null) {
       dateLabel = t(`${CARD_I18N}.days_left`, daysLeft);
+    } else {
+      dateLabel = t(`${CARD_I18N}.no_deadline`);
     }
 
     return {
