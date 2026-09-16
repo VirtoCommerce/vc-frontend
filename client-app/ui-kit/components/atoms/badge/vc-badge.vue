@@ -5,6 +5,7 @@
       `vc-badge--size--${size}${$slots.default ? '' : '--dot'}`,
       `vc-badge--${canonicalVariant}--${color}`,
       {
+        'vc-badge--dot': !$slots.default,
         'vc-badge--rounded': rounded,
         'vc-badge--truncate': truncate,
         'vc-badge--nowrap': nowrap,
@@ -48,6 +49,7 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
 
   $truncate: "";
   $square: "";
+  $dot: "";
 
   --props-max-width: v-bind(maxWidth);
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
@@ -123,6 +125,10 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
     @apply p-0;
   }
 
+  &--dot {
+    $dot: &;
+  }
+
   $variants: solid, soft, outline, surface, ghost, tonal;
 
   @each $variant in $variants {
@@ -132,6 +138,14 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
         --border-color: var(--vc-badge-#{$variant}-#{$color}-border);
         --text-color: var(--vc-badge-#{$variant}-#{$color}-text);
         --vc-icon-color: var(--vc-badge-#{$variant}-#{$color}-icon);
+
+        // A dot has no text, so its fill alone carries the status and owes 3:1 (WCAG 1.4.11).
+        @if $variant == solid {
+          &#{$dot} {
+            --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-700));
+            --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-700));
+          }
+        }
       }
     }
   }
