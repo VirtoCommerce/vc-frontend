@@ -27,8 +27,13 @@ data platform), where the fan-out pays.
 | Tier | Contents | Property |
 |---|---|---|
 | Global | System prompt, tool definitions | Byte-identical across sessions, cached |
-| Session | Per-customer facts, conversation history | Per session |
+| Session | Per-customer facts, **skills**, conversation history | Per session, still cached |
 | Volatile | Current time, current page | Placed **last**, after the cache breakpoint |
+
+The webinar slide states the request order more precisely — `tools · system prompt` →
+`user · skills · history` → `new` → `page · time` ([11-webinar-slides.md](11-webinar-slides.md)).
+Skills sit in the session segment, not the global one, so editing a skill invalidates less
+than editing the system prompt does.
 
 Reported result: 90–99% cache hit rate in production; cached reads cost ~10% of fresh
 tokens and give 1.5–2× speed at ~100k-token scale. The repo's own verification advice: read
@@ -46,7 +51,9 @@ Three rules they state:
 1. **Build on what exists.** Tools call the production search, cart and inventory services,
    not reimplementations.
 2. **Return shaped context.** Drop fields the model does not need; reshape a result so it
-   carries the actionable next step.
+   carries the actionable next step. This includes failures: an error comes back as a
+   sentence with the recovery in it — `404 → "No size 10. In stock: 8, 9, 11."` — and the
+   model recovers within the same turn instead of apologising or retrying blindly.
 3. **UI components are tools.** A product carousel, an itinerary, a seat map — each is a
    typed tool call with a validated schema, not markup parsed out of the model's prose.
 
@@ -78,6 +85,13 @@ response. They recommend 50–100 cases per user flow, covering:
 
 Simulated-user conversations are explicitly not the recommended shape — they are slow,
 noisy and grade the simulator as much as the agent.
+
+Three practices the webinar spells out and the blog leaves implicit
+([11-webinar-slides.md](11-webinar-slides.md)): **evals before prompts** — write the case
+first, tune the prompt against it; **twin cases** — pair every case that should succeed with
+a neighbouring one that must be refused ("raise it to $58" / "raise it 400%"); and **two
+graders per case** — a deterministic code check over the final state, plus an LLM judge over
+the reply text, because an agent can do the right thing and describe it wrongly.
 
 ## Memory is extracted, not saved by a tool
 

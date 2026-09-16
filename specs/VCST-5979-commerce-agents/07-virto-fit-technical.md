@@ -72,6 +72,20 @@ CMS content in x-api (bigger, and useful beyond this). Start curated.
 **`get_disclosure`.** Server-authored disclosure rows are a telecom/ticketing concern (fee
 disclosures). Leave the switch off; revisit only for a regulated vertical.
 
+### Error paths are part of the mapping, not an afterthought
+
+The blueprint treats a backend failure as an instruction: `404 → "No size 10. In stock: 8,
+9, 11."`, and the model recovers in the same turn
+([11-webinar-slides.md](11-webinar-slides.md)). x-api gives us GraphQL errors and validation
+payloads, which are the opposite shape — codes and field paths.
+
+So every error the agent can hit needs a deliberate translation into a sentence that carries
+the recovery: out of stock, quantity below the line minimum, product not orderable for this
+organisation, contract price missing, cart currency mismatch, coupon not applicable. Small,
+well-defined work with an outsized effect on how the agent feels, and it belongs in the
+backend implementation rather than the prompt. `NotOffered` and `Unavailable` cover only the
+two cases the blueprint names; the rest are ours to enumerate.
+
 ### Product shapes
 
 Their three shapes (plain / family / variant) map onto our catalogue, but with one open
