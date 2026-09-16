@@ -6,6 +6,7 @@
     },
     "title": "返品",
     "no_returns_message": "返品はまだありません",
+    "request_button": "返品を依頼",
     "menu": {
       "link": {
         "title": "返品"
@@ -52,10 +53,19 @@
     "order_number": "注文番号",
     "customer_reference": "発注参照番号",
     "customer_comment": "コメント",
+    "cancel_reason": "キャンセル理由",
+    "cancel_button": "返品をキャンセル",
     "columns": {
       "requested": "申請数",
       "approved": "承認数"
     }
+  },
+  "return_cancel": {
+    "title": "返品をキャンセル",
+    "text": "返品 {0} は取り消され、商品は再び返品できるようになります。",
+    "reason_label": "理由（任意）",
+    "keep_button": "返品を維持",
+    "confirm_button": "返品をキャンセル"
   },
   "return_edit": {
     "title": "返品内容の入力",

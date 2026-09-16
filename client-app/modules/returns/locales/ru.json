@@ -6,6 +6,7 @@
     },
     "title": "Возвраты",
     "no_returns_message": "Возвратов пока нет",
+    "request_button": "Оформить возврат",
     "menu": {
       "link": {
         "title": "Возвраты"
@@ -52,10 +53,19 @@
     "order_number": "Номер заказа",
     "customer_reference": "Ваш номер заказа",
     "customer_comment": "Комментарий",
+    "cancel_reason": "Причина отмены",
+    "cancel_button": "Отменить возврат",
     "columns": {
       "requested": "Запрошено",
       "approved": "Одобрено"
     }
+  },
+  "return_cancel": {
+    "title": "Отмена возврата",
+    "text": "Возврат {0} будет отозван, а его товары снова станут доступны для возврата.",
+    "reason_label": "Причина (необязательно)",
+    "keep_button": "Оставить возврат",
+    "confirm_button": "Отменить возврат"
   },
   "return_edit": {
     "title": "Детали возврата",

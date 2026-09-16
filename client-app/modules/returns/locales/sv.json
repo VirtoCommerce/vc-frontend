@@ -6,6 +6,7 @@
     },
     "title": "Returer",
     "no_returns_message": "Det finns inga returer ännu",
+    "request_button": "Begär retur",
     "menu": {
       "link": {
         "title": "Returer"
@@ -52,10 +53,19 @@
     "order_number": "Ordernummer",
     "customer_reference": "Din inköpsorderreferens",
     "customer_comment": "Kommentar",
+    "cancel_reason": "Orsak till avbokning",
+    "cancel_button": "Avbryt retur",
     "columns": {
       "requested": "Begärt",
       "approved": "Godkänt"
     }
+  },
+  "return_cancel": {
+    "title": "Avbryt retur",
+    "text": "Retur {0} dras tillbaka och dess artiklar blir tillgängliga för retur igen.",
+    "reason_label": "Orsak (valfritt)",
+    "keep_button": "Behåll retur",
+    "confirm_button": "Avbryt retur"
   },
   "return_edit": {
     "title": "Lägg till returuppgifter",

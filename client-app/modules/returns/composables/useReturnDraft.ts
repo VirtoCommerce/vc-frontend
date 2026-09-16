@@ -101,26 +101,36 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
   const canSubmit = computed(() => isDraft.value && lines.value.length > 0 && incompleteLines.value.length === 0);
 
-  async function save(): Promise<void> {
+  /** Returns whether the draft now matches what the buyer typed. */
+  async function save(): Promise<boolean> {
     if (!isDraft.value) {
-      return;
+      return false;
     }
 
-    await updateReturn({
-      command: {
-        returnId: toValue(returnId),
-        customerReference: customerReference.value,
-        customerComment: customerComment.value,
-        items: lines.value.map((line) => ({
-          orderLineItemId: line.orderLineItemId,
-          quantity: line.quantity,
-          reasonCode: line.reasonCode || undefined,
-          reasonComment: line.reasonComment || undefined,
-          serialNumber: line.serialNumber || undefined,
-          attachmentUrls: line.attachmentUrls,
-        })),
-      },
-    });
+    try {
+      await updateReturn({
+        command: {
+          returnId: toValue(returnId),
+          customerReference: customerReference.value,
+          customerComment: customerComment.value,
+          items: lines.value.map((line) => ({
+            orderLineItemId: line.orderLineItemId,
+            quantity: line.quantity,
+            reasonCode: line.reasonCode || undefined,
+            reasonComment: line.reasonComment || undefined,
+            serialNumber: line.serialNumber || undefined,
+            attachmentUrls: line.attachmentUrls,
+          })),
+        },
+      });
+
+      return true;
+    } catch {
+      // Autosave runs unattended on every keystroke, so a failed one must not reject into nowhere.
+      // The global error link has already shown what went wrong; the buyer keeps typing and the
+      // next autosave retries the whole draft anyway.
+      return false;
+    }
   }
 
   const autosave = useDebounceFn(save, AUTOSAVE_DELAY);
@@ -136,10 +146,20 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
   /** Saves first: the draft must carry what the buyer typed before it is handed over. */
   async function submit(): Promise<boolean> {
-    await save();
-    const submitted = await submitReturn({ command: { returnId: toValue(returnId) } });
+    if (!(await save())) {
+      // Submitting now would hand over a draft missing whatever the failed save was carrying.
+      return false;
+    }
 
-    return submitted?.data?.submitReturn?.status === "Requested";
+    try {
+      const submitted = await submitReturn({ command: { returnId: toValue(returnId) } });
+
+      return submitted?.data?.submitReturn?.status === "Requested";
+    } catch {
+      // RETURN_QUANTITY_UNAVAILABLE and ATTACHMENTS_REQUIRED land here. The draft is untouched and
+      // the error link has already said what to fix, so the buyer stays on the page and adjusts.
+      return false;
+    }
   }
 
   return {

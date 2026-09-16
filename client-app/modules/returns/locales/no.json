@@ -6,6 +6,7 @@
     },
     "title": "Returer",
     "no_returns_message": "Det finnes ingen returer ennå",
+    "request_button": "Be om retur",
     "menu": {
       "link": {
         "title": "Returer"
@@ -52,10 +53,19 @@
     "order_number": "Ordrenummer",
     "customer_reference": "Din bestillingsreferanse",
     "customer_comment": "Kommentar",
+    "cancel_reason": "Årsak til kansellering",
+    "cancel_button": "Avbryt retur",
     "columns": {
       "requested": "Forespurt",
       "approved": "Godkjent"
     }
+  },
+  "return_cancel": {
+    "title": "Avbryt retur",
+    "text": "Retur {0} trekkes tilbake, og varene blir tilgjengelige for retur igjen.",
+    "reason_label": "Årsak (valgfritt)",
+    "keep_button": "Behold retur",
+    "confirm_button": "Avbryt retur"
   },
   "return_edit": {
     "title": "Legg til returdetaljer",

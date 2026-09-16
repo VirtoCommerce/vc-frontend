@@ -6,6 +6,7 @@
     },
     "title": "Returns",
     "no_returns_message": "There are no returns yet",
+    "request_button": "Request return",
     "menu": {
       "link": {
         "title": "Returns"
@@ -52,10 +53,19 @@
     "order_number": "Order number",
     "customer_reference": "Your purchase order reference",
     "customer_comment": "Comment",
+    "cancel_reason": "Cancellation reason",
+    "cancel_button": "Cancel return",
     "columns": {
       "requested": "Requested",
       "approved": "Approved"
     }
+  },
+  "return_cancel": {
+    "title": "Cancel return",
+    "text": "Return {0} will be withdrawn and its items will become available to return again.",
+    "reason_label": "Reason (optional)",
+    "keep_button": "Keep return",
+    "confirm_button": "Cancel return"
   },
   "return_edit": {
     "title": "Add return details",

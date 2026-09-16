@@ -6,6 +6,7 @@
     },
     "title": "Zwroty",
     "no_returns_message": "Nie ma jeszcze żadnych zwrotów",
+    "request_button": "Zgłoś zwrot",
     "menu": {
       "link": {
         "title": "Zwroty"
@@ -52,10 +53,19 @@
     "order_number": "Numer zamówienia",
     "customer_reference": "Twój numer zamówienia",
     "customer_comment": "Komentarz",
+    "cancel_reason": "Powód anulowania",
+    "cancel_button": "Anuluj zwrot",
     "columns": {
       "requested": "Zgłoszono",
       "approved": "Zatwierdzono"
     }
+  },
+  "return_cancel": {
+    "title": "Anuluj zwrot",
+    "text": "Zwrot {0} zostanie wycofany, a jego produkty będą ponownie dostępne do zwrotu.",
+    "reason_label": "Powód (opcjonalnie)",
+    "keep_button": "Zachowaj zwrot",
+    "confirm_button": "Anuluj zwrot"
   },
   "return_edit": {
     "title": "Dodaj szczegóły zwrotu",

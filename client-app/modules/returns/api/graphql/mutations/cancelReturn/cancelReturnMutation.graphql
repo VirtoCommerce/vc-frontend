@@ -1,0 +1,8 @@
+mutation CancelReturn($command: CancelReturnCommandType!) {
+  cancelReturn(command: $command) {
+    id
+    number
+    status
+    cancelReason
+  }
+}

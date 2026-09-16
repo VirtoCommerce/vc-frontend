@@ -6,6 +6,7 @@
     },
     "title": "Retours",
     "no_returns_message": "Il n'y a pas encore de retours",
+    "request_button": "Demander un retour",
     "menu": {
       "link": {
         "title": "Retours"
@@ -52,10 +53,19 @@
     "order_number": "Numéro de commande",
     "customer_reference": "Votre référence de commande",
     "customer_comment": "Commentaire",
+    "cancel_reason": "Motif d'annulation",
+    "cancel_button": "Annuler le retour",
     "columns": {
       "requested": "Demandé",
       "approved": "Approuvé"
     }
+  },
+  "return_cancel": {
+    "title": "Annuler le retour",
+    "text": "Le retour {0} sera retiré et ses articles pourront de nouveau être retournés.",
+    "reason_label": "Motif (facultatif)",
+    "keep_button": "Conserver le retour",
+    "confirm_button": "Annuler le retour"
   },
   "return_edit": {
     "title": "Ajouter les détails du retour",

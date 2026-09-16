@@ -6,6 +6,7 @@
     },
     "title": "Rücksendungen",
     "no_returns_message": "Es liegen noch keine Rücksendungen vor",
+    "request_button": "Rücksendung anfordern",
     "menu": {
       "link": {
         "title": "Rücksendungen"
@@ -52,10 +53,19 @@
     "order_number": "Bestellnummer",
     "customer_reference": "Ihre Bestellreferenz",
     "customer_comment": "Kommentar",
+    "cancel_reason": "Stornierungsgrund",
+    "cancel_button": "Rücksendung stornieren",
     "columns": {
       "requested": "Angefragt",
       "approved": "Genehmigt"
     }
+  },
+  "return_cancel": {
+    "title": "Rücksendung stornieren",
+    "text": "Rücksendung {0} wird zurückgezogen und ihre Artikel können erneut zurückgesendet werden.",
+    "reason_label": "Grund (optional)",
+    "keep_button": "Rücksendung behalten",
+    "confirm_button": "Rücksendung stornieren"
   },
   "return_edit": {
     "title": "Rücksendedetails hinzufügen",

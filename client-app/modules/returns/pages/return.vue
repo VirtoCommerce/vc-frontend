@@ -41,6 +41,18 @@
 
           <span>{{ orderReturn.customerComment }}</span>
         </div>
+
+        <div v-if="orderReturn.cancelReason" class="mt-5 flex flex-col">
+          <span class="text-sm text-neutral-400">{{ $t("return_details.cancel_reason") }}</span>
+
+          <span>{{ orderReturn.cancelReason }}</span>
+        </div>
+
+        <template v-if="isCancellable" #footer>
+          <VcButton color="danger" variant="outline" size="sm" @click="openCancelModal">
+            {{ $t("return_details.cancel_button") }}
+          </VcButton>
+        </template>
       </VcWidget>
 
       <VcWidget :title="$t('return_details.items_section')" size="lg" class="mt-5">
@@ -88,11 +100,14 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { useReturn } from "@/modules/returns/composables/useReturn";
+import { CANCELLABLE_STATUSES } from "@/modules/returns/constants";
 import { BackButtonInHeader } from "@/shared/layout";
+import { useModal } from "@/shared/modal";
+import CancelReturnModal from "@/modules/returns/components/cancel-return-modal.vue";
 
 interface IProps {
   returnId: string;
@@ -103,7 +118,27 @@ const props = defineProps<IProps>();
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const { loading, orderReturn } = useReturn(toRef(props, "returnId"));
+const { openModal } = useModal();
+
+const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
+
+// Mirrors CancellableStatuses on the server. The button is a shortcut, not the rule — the mutation
+// refuses anything else regardless of what the page decided to show.
+const isCancellable = computed(() => CANCELLABLE_STATUSES.includes(orderReturn.value?.status ?? ""));
+
+function openCancelModal(): void {
+  openModal({
+    component: CancelReturnModal,
+    props: {
+      returnId: props.returnId,
+      returnNumber: orderReturn.value?.number ?? "",
+
+      async onResult(): Promise<void> {
+        await refetch();
+      },
+    },
+  });
+}
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },

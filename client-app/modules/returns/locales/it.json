@@ -6,6 +6,7 @@
     },
     "title": "Resi",
     "no_returns_message": "Non ci sono ancora resi",
+    "request_button": "Richiedi un reso",
     "menu": {
       "link": {
         "title": "Resi"
@@ -52,10 +53,19 @@
     "order_number": "Numero d'ordine",
     "customer_reference": "Il tuo riferimento d'ordine",
     "customer_comment": "Commento",
+    "cancel_reason": "Motivo dell'annullamento",
+    "cancel_button": "Annulla reso",
     "columns": {
       "requested": "Richiesto",
       "approved": "Approvato"
     }
+  },
+  "return_cancel": {
+    "title": "Annulla reso",
+    "text": "Il reso {0} verrà ritirato e i suoi articoli torneranno disponibili per il reso.",
+    "reason_label": "Motivo (facoltativo)",
+    "keep_button": "Mantieni il reso",
+    "confirm_button": "Annulla reso"
   },
   "return_edit": {
     "title": "Aggiungi i dettagli del reso",

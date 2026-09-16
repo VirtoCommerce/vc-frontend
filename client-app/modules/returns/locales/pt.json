@@ -6,6 +6,7 @@
     },
     "title": "Devoluções",
     "no_returns_message": "Ainda não há devoluções",
+    "request_button": "Solicitar devolução",
     "menu": {
       "link": {
         "title": "Devoluções"
@@ -52,10 +53,19 @@
     "order_number": "Número do pedido",
     "customer_reference": "Sua referência de pedido",
     "customer_comment": "Comentário",
+    "cancel_reason": "Motivo do cancelamento",
+    "cancel_button": "Cancelar devolução",
     "columns": {
       "requested": "Solicitado",
       "approved": "Aprovado"
     }
+  },
+  "return_cancel": {
+    "title": "Cancelar devolução",
+    "text": "A devolução {0} será retirada e os seus artigos ficarão novamente disponíveis para devolução.",
+    "reason_label": "Motivo (opcional)",
+    "keep_button": "Manter devolução",
+    "confirm_button": "Cancelar devolução"
   },
   "return_edit": {
     "title": "Adicionar detalhes da devolução",

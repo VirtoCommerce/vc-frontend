@@ -6,6 +6,7 @@
     },
     "title": "Palautukset",
     "no_returns_message": "Palautuksia ei ole vielä",
+    "request_button": "Pyydä palautusta",
     "menu": {
       "link": {
         "title": "Palautukset"
@@ -52,10 +53,19 @@
     "order_number": "Tilausnumero",
     "customer_reference": "Oma tilausviitteesi",
     "customer_comment": "Kommentti",
+    "cancel_reason": "Peruutuksen syy",
+    "cancel_button": "Peruuta palautus",
     "columns": {
       "requested": "Pyydetty",
       "approved": "Hyväksytty"
     }
+  },
+  "return_cancel": {
+    "title": "Peruuta palautus",
+    "text": "Palautus {0} perutaan ja sen tuotteet voi palauttaa uudelleen.",
+    "reason_label": "Syy (valinnainen)",
+    "keep_button": "Säilytä palautus",
+    "confirm_button": "Peruuta palautus"
   },
   "return_edit": {
     "title": "Lisää palautuksen tiedot",

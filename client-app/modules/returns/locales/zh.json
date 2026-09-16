@@ -6,6 +6,7 @@
     },
     "title": "退货",
     "no_returns_message": "暂无退货",
+    "request_button": "申请退货",
     "menu": {
       "link": {
         "title": "退货"
@@ -52,10 +53,19 @@
     "order_number": "订单编号",
     "customer_reference": "您的采购单号",
     "customer_comment": "备注",
+    "cancel_reason": "取消原因",
+    "cancel_button": "取消退货",
     "columns": {
       "requested": "申请数量",
       "approved": "批准数量"
     }
+  },
+  "return_cancel": {
+    "title": "取消退货",
+    "text": "退货 {0} 将被撤回，其商品将重新可供退货。",
+    "reason_label": "原因（可选）",
+    "keep_button": "保留退货",
+    "confirm_button": "取消退货"
   },
   "return_edit": {
     "title": "填写退货详情",
