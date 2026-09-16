@@ -117,7 +117,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
   const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);
 
-  async function save(): Promise<boolean> {
+  async function save(fromSubmit = false): Promise<boolean> {
     if (!canEdit.value) {
       return false;
     }
@@ -141,8 +141,12 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
       return true;
     } catch (error) {
-      // Autosave runs unattended on every keystroke, so a rejection must not go unhandled.
-      report(error);
+      // Autosave runs unattended on every keystroke, so a rejection must not go unhandled. But the
+      // queue merges a pending autosave with the submit's own save into one request and rejects
+      // both promises from it, and one failure deserves one message.
+      if (fromSubmit || !submitInProgress.value) {
+        report(error);
+      }
 
       return false;
     }
@@ -187,7 +191,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     // Enqueue what is on screen and drain the queue at once. Awaiting the debounce instead would
     // leave Submit clickable for another second, and an edit still queued would otherwise land
     // against a return that is no longer a draft.
-    const saved = save();
+    const saved = save(true);
     flushAutosave();
 
     if (!(await saved)) {
