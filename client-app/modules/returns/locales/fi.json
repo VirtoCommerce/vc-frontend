@@ -19,6 +19,7 @@
       "select_all": "Valitse kaikki kelpoiset rivit",
       "eligible_count": "{eligible} / {total} riviä kelpaa",
       "nothing_returnable": "Tästä tilauksesta ei voi palauttaa mitään",
+      "window_hint": "Tuotteet voi palauttaa {days} päivän kuluessa toimituksesta",
       "selected_summary": "{lines} valittu · {quantity} kpl",
       "columns": {
         "item": "Tuote",
@@ -30,6 +31,7 @@
       "continue": "Jatka"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Palautukset on poistettu käytöstä tässä kaupassa",
       "ORDER_STATUS_NOT_ALLOWED": "Palautukset eivät ole sallittuja tämän tilauksen tilasta",
       "LINE_CANCELLED": "Tämä rivi on peruutettu",
       "NOT_DELIVERED": "Ei vielä toimitettu",

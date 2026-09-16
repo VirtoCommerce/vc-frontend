@@ -19,6 +19,7 @@
       "select_all": "Sélectionner toutes les lignes éligibles",
       "eligible_count": "{eligible} lignes éligibles sur {total}",
       "nothing_returnable": "Rien ne peut être retourné dans cette commande",
+      "window_hint": "Les articles peuvent être retournés dans les {days} jours suivant la livraison",
       "selected_summary": "{lines} sélectionnées · {quantity} articles",
       "columns": {
         "item": "Article",
@@ -30,6 +31,7 @@
       "continue": "Continuer"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Les retours sont désactivés pour cette boutique",
       "ORDER_STATUS_NOT_ALLOWED": "Les retours ne sont pas autorisés depuis le statut de cette commande",
       "LINE_CANCELLED": "Cette ligne a été annulée",
       "NOT_DELIVERED": "Pas encore livré",

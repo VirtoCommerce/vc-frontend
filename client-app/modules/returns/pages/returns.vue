@@ -44,7 +44,9 @@
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.status") }}</span>
 
-                <span class="overflow-hidden text-ellipsis">{{ itemData.item.status }}</span>
+                <span class="overflow-hidden text-ellipsis">{{
+                  itemData.item.statusDisplayValue ?? itemData.item.status
+                }}</span>
               </div>
 
               <div class="flex flex-col">
@@ -68,7 +70,7 @@
 
               <td class="overflow-hidden text-ellipsis p-5">{{ $d(new Date(item.createdDate)) }}</td>
 
-              <td class="overflow-hidden text-ellipsis p-5">{{ item.status }}</td>
+              <td class="overflow-hidden text-ellipsis p-5">{{ item.statusDisplayValue ?? item.status }}</td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">{{ item.itemsQuantity }}</td>
             </tr>

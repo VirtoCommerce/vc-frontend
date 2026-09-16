@@ -19,6 +19,7 @@
       "select_all": "Select all eligible lines",
       "eligible_count": "{eligible} of {total} lines eligible",
       "nothing_returnable": "Nothing in this order can be returned",
+      "window_hint": "Items can be returned within {days} days of delivery",
       "selected_summary": "{lines} selected · {quantity} items",
       "columns": {
         "item": "Item",
@@ -30,6 +31,7 @@
       "continue": "Continue"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Returns are switched off for this store",
       "ORDER_STATUS_NOT_ALLOWED": "Returns are not allowed from this order's status",
       "LINE_CANCELLED": "This line was cancelled",
       "NOT_DELIVERED": "Not delivered yet",

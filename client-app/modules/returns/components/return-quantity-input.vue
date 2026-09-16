@@ -8,6 +8,7 @@
     :disabled="disabled"
     :aria-label="label"
     @blur="commit"
+    @keyup.enter="commit"
   />
 </template>
 

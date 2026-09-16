@@ -19,6 +19,7 @@
       "select_all": "Seleziona tutte le righe idonee",
       "eligible_count": "{eligible} righe idonee su {total}",
       "nothing_returnable": "Nulla di questo ordine può essere restituito",
+      "window_hint": "Gli articoli possono essere resi entro {days} giorni dalla consegna",
       "selected_summary": "{lines} selezionate · {quantity} articoli",
       "columns": {
         "item": "Articolo",
@@ -30,6 +31,7 @@
       "continue": "Continua"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "I resi sono disattivati per questo negozio",
       "ORDER_STATUS_NOT_ALLOWED": "I resi non sono consentiti dallo stato di questo ordine",
       "LINE_CANCELLED": "Questa riga è stata annullata",
       "NOT_DELIVERED": "Non ancora consegnato",

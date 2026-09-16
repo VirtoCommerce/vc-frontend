@@ -12,84 +12,90 @@
       icon="outline-order"
     />
 
-    <VcWidget v-else size="lg">
-      <template #default-container>
-        <div class="flex items-center justify-between border-b border-neutral-200 p-5">
-          <VcCheckbox :model-value="allSelected" :disabled="!returnableItems.length" @change="toggleAll">
-            {{ $t("returns.select_items.select_all") }}
-          </VcCheckbox>
+    <template v-else>
+      <VcAlert v-if="windowDays" color="info" variant="soft" size="sm" class="mb-5" icon>
+        {{ $t("returns.select_items.window_hint", { days: windowDays }) }}
+      </VcAlert>
 
-          <span class="text-sm text-neutral-400">
-            {{ $t("returns.select_items.eligible_count", { eligible: returnableItems.length, total: items.length }) }}
-          </span>
-        </div>
+      <VcWidget size="lg">
+        <template #default-container>
+          <div class="flex items-center justify-between border-b border-neutral-200 p-5">
+            <VcCheckbox :model-value="allSelected" :disabled="!returnableItems.length" @change="toggleAll">
+              {{ $t("returns.select_items.select_all") }}
+            </VcCheckbox>
 
-        <table class="w-full">
-          <thead>
-            <tr class="border-b border-neutral-200 text-sm text-neutral-400">
-              <th class="p-5 text-left font-normal">{{ $t("returns.select_items.columns.item") }}</th>
+            <span class="text-sm text-neutral-400">
+              {{ $t("returns.select_items.eligible_count", { eligible: returnableItems.length, total: items.length }) }}
+            </span>
+          </div>
 
-              <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.ordered") }}</th>
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-neutral-200 text-sm text-neutral-400">
+                <th class="p-5 text-left font-normal">{{ $t("returns.select_items.columns.item") }}</th>
 
-              <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.returnable") }}</th>
+                <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.ordered") }}</th>
 
-              <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.quantity") }}</th>
-            </tr>
-          </thead>
+                <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.returnable") }}</th>
 
-          <tbody>
-            <tr v-for="item in items" :key="item.orderLineItemId" class="border-b border-neutral-200">
-              <td class="p-5">
-                <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
+                <th class="p-5 text-right font-normal">{{ $t("returns.select_items.columns.quantity") }}</th>
+              </tr>
+            </thead>
 
-                <div class="text-sm text-neutral-400">
-                  {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
-                </div>
+            <tbody>
+              <tr v-for="item in items" :key="item.orderLineItemId" class="border-b border-neutral-200">
+                <td class="p-5">
+                  <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
 
-                <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
-                  {{ $t(`returns.ineligibility.${item.ineligibilityReason}`) }}
-                </div>
-              </td>
+                  <div class="text-sm text-neutral-400">
+                    {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
+                  </div>
 
-              <td class="p-5 text-right" :class="{ 'text-neutral-400': !item.isReturnable }">
-                {{ item.orderedQuantity }}
-              </td>
+                  <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
+                    {{ $t(`returns.ineligibility.${item.ineligibilityReason}`) }}
+                  </div>
+                </td>
 
-              <td class="p-5 text-right" :class="{ 'text-neutral-400': !item.isReturnable }">
-                {{ item.returnableQuantity }}
-              </td>
+                <td class="p-5 text-right" :class="{ 'text-neutral-400': !item.isReturnable }">
+                  {{ item.orderedQuantity }}
+                </td>
 
-              <td class="p-5 text-right">
-                <ReturnQuantityInput
-                  v-if="item.isReturnable"
-                  :model-value="quantities[item.orderLineItemId] ?? 0"
-                  :max="item.returnableQuantity"
-                  :label="$t('returns.select_items.quantity_for', { name: item.name })"
-                  @update:model-value="setQuantity(item, $event)"
-                />
+                <td class="p-5 text-right" :class="{ 'text-neutral-400': !item.isReturnable }">
+                  {{ item.returnableQuantity }}
+                </td>
 
-                <span v-else class="text-neutral-400">&mdash;</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td class="p-5 text-right">
+                  <ReturnQuantityInput
+                    v-if="item.isReturnable"
+                    :model-value="quantities[item.orderLineItemId] ?? 0"
+                    :max="item.returnableQuantity"
+                    :label="$t('returns.select_items.quantity_for', { name: item.name })"
+                    @update:model-value="setQuantity(item, $event)"
+                  />
 
-        <div class="flex items-center justify-between p-5">
-          <span class="text-sm text-neutral-400">
-            {{
-              $t("returns.select_items.selected_summary", {
-                lines: selectedItems.length,
-                quantity: selectedQuantity,
-              })
-            }}
-          </span>
+                  <span v-else class="text-neutral-400">&mdash;</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-          <VcButton :disabled="!selectedItems.length" :loading="creating" @click="onContinue">
-            {{ $t("returns.select_items.continue") }}
-          </VcButton>
-        </div>
-      </template>
-    </VcWidget>
+          <div class="flex items-center justify-between p-5">
+            <span class="text-sm text-neutral-400">
+              {{
+                $t("returns.select_items.selected_summary", {
+                  lines: selectedItems.length,
+                  quantity: selectedQuantity,
+                })
+              }}
+            </span>
+
+            <VcButton :disabled="!selectedItems.length" :loading="creating" @click="onContinue">
+              {{ $t("returns.select_items.continue") }}
+            </VcButton>
+          </div>
+        </template>
+      </VcWidget>
+    </template>
 
     <VcLoaderOverlay :visible="loading" fixed-spinning />
   </div>
@@ -102,6 +108,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageHead } from "@/core/composables/usePageHead";
+import { useReturnPolicy } from "@/modules/returns/composables/useReturnPolicy";
 import { useReturnableItems } from "@/modules/returns/composables/useReturnableItems";
 import { BackButtonInHeader } from "@/shared/layout";
 import ReturnQuantityInput from "@/modules/returns/components/return-quantity-input.vue";
@@ -133,6 +140,8 @@ const {
   toggleAll,
   createDraft,
 } = useReturnableItems(toRef(props, "orderId"));
+
+const { windowDays } = useReturnPolicy();
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },

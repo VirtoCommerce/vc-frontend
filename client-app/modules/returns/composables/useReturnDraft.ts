@@ -6,12 +6,7 @@ import { useUpdateReturnMutation } from "@/modules/returns/api/graphql/mutations
 import { useGetReturnQuery } from "@/modules/returns/api/graphql/queries/getReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
-import {
-  ATTACHMENTS_REQUIRED_KEY,
-  DEFAULT_FILE_UPLOAD_SCOPE,
-  FILE_UPLOAD_SCOPE_KEY,
-  MODULE_ID,
-} from "@/modules/returns/constants";
+import { ATTACHMENTS_REQUIRED_KEY, FILE_UPLOAD_SCOPE, MODULE_ID } from "@/modules/returns/constants";
 import type { MaybeRefOrGetter } from "vue";
 
 const AUTOSAVE_DELAY = 800;
@@ -44,7 +39,6 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { getSettingValue } = useModuleSettings(MODULE_ID);
 
   const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) !== false);
-  const fileUploadScope = computed(() => String(getSettingValue(FILE_UPLOAD_SCOPE_KEY) ?? DEFAULT_FILE_UPLOAD_SCOPE));
 
   const orderReturn = computed(() => result.value?.return);
 
@@ -54,13 +48,17 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const customerComment = ref("");
   const lines = ref<ReturnDraftLineType[]>([]);
 
-  // Seeded once, not kept in sync: the buyer is typing into these and an autosave response must
-  // not overwrite a field mid-keystroke.
-  watch(orderReturn, (value, previous) => {
-    if (!value || previous) {
+  // Seeded once per return, not kept in sync: the buyer is typing into these and an autosave
+  // response must not overwrite a field mid-keystroke. The router reuses this component between
+  // two drafts, so the seed has to reopen when the id changes or the previous draft stays on screen.
+  let seededReturnId = "";
+
+  watch(orderReturn, (value) => {
+    if (!value || value.id === seededReturnId) {
       return;
     }
 
+    seededReturnId = value.id;
     customerReference.value = value.customerReference ?? "";
     customerComment.value = value.customerComment ?? "";
     lines.value = (value.items ?? []).map((item) => ({
@@ -158,7 +156,7 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     incompleteLines,
     canSubmit,
     attachmentsRequired,
-    fileUploadScope,
+    fileUploadScope: FILE_UPLOAD_SCOPE,
     requiresComment,
     autosave,
     save,

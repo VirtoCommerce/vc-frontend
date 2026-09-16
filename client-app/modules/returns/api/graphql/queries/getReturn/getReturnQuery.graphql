@@ -1,8 +1,9 @@
-query GetReturn($id: String!) {
+query GetReturn($id: String!, $cultureName: String) {
   return(id: $id) {
     id
     number
     status
+    statusDisplayValue(cultureName: $cultureName)
     createdDate
     orderId
     orderNumber

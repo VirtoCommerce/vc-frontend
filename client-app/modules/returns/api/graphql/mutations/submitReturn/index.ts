@@ -3,6 +3,6 @@ import { OperationNames, SubmitReturnDocument } from "@/modules/returns/api/grap
 
 export function useSubmitReturnMutation() {
   return useMutation(SubmitReturnDocument, {
-    refetchQueries: [OperationNames.Query.GetReturns],
+    refetchQueries: [OperationNames.Query.GetReturns, OperationNames.Query.GetReturn],
   });
 }

@@ -19,6 +19,7 @@
       "select_all": "Velg alle kvalifiserte linjer",
       "eligible_count": "{eligible} av {total} linjer kvalifisert",
       "nothing_returnable": "Ingenting i denne ordren kan returneres",
+      "window_hint": "Varer kan returneres innen {days} dager etter levering",
       "selected_summary": "{lines} valgt · {quantity} varer",
       "columns": {
         "item": "Vare",
@@ -30,6 +31,7 @@
       "continue": "Fortsett"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Returer er slått av for denne butikken",
       "ORDER_STATUS_NOT_ALLOWED": "Returer er ikke tillatt fra denne ordrens status",
       "LINE_CANCELLED": "Denne linjen ble kansellert",
       "NOT_DELIVERED": "Ikke levert ennå",

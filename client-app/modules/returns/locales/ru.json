@@ -19,6 +19,7 @@
       "select_all": "Выбрать все доступные позиции",
       "eligible_count": "Доступно позиций: {eligible} из {total}",
       "nothing_returnable": "Из этого заказа ничего нельзя вернуть",
+      "window_hint": "Товары можно вернуть в течение {days} дней после доставки",
       "selected_summary": "Выбрано: {lines} · {quantity} шт.",
       "columns": {
         "item": "Позиция",
@@ -30,6 +31,7 @@
       "continue": "Продолжить"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Возвраты отключены для этого магазина",
       "ORDER_STATUS_NOT_ALLOWED": "Из заказа в таком статусе возврат не оформить",
       "LINE_CANCELLED": "Позиция отменена",
       "NOT_DELIVERED": "Ещё не доставлено",

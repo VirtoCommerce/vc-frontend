@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { DEFAULT_SORT } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { useGetReturnsQuery } from "@/modules/returns/api/graphql/queries/getReturns";
 import type { Sort } from "@/core/types";
 import type { Ref } from "vue";
@@ -13,6 +14,8 @@ export function useReturns() {
 
   const { loading, result, refetch } = useGetReturnsQuery(
     computed(() => ({
+      storeId: globals.storeId,
+      cultureName: globals.cultureName,
       first: itemsPerPage.value,
       after: String((page.value - 1) * itemsPerPage.value),
       sort: sort.value.toString(),

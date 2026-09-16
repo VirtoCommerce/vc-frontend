@@ -14,7 +14,7 @@
           <div class="flex flex-col">
             <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.status") }}</span>
 
-            <span>{{ orderReturn.status }}</span>
+            <span>{{ orderReturn.statusDisplayValue ?? orderReturn.status }}</span>
           </div>
 
           <div class="flex flex-col">

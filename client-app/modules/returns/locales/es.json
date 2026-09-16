@@ -19,6 +19,7 @@
       "select_all": "Seleccionar todas las líneas elegibles",
       "eligible_count": "{eligible} de {total} líneas elegibles",
       "nothing_returnable": "No se puede devolver nada de este pedido",
+      "window_hint": "Los artículos pueden devolverse en un plazo de {days} días desde la entrega",
       "selected_summary": "{lines} seleccionadas · {quantity} artículos",
       "columns": {
         "item": "Artículo",
@@ -30,6 +31,7 @@
       "continue": "Continuar"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Las devoluciones están desactivadas en esta tienda",
       "ORDER_STATUS_NOT_ALLOWED": "No se permiten devoluciones desde el estado de este pedido",
       "LINE_CANCELLED": "Esta línea fue cancelada",
       "NOT_DELIVERED": "Aún no entregado",

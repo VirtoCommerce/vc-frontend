@@ -19,6 +19,7 @@
       "select_all": "Alle zulässigen Positionen wählen",
       "eligible_count": "{eligible} von {total} Positionen zulässig",
       "nothing_returnable": "Aus dieser Bestellung kann nichts retourniert werden",
+      "window_hint": "Artikel können innerhalb von {days} Tagen nach Lieferung zurückgesendet werden",
       "selected_summary": "{lines} gewählt · {quantity} Artikel",
       "columns": {
         "item": "Artikel",
@@ -30,6 +31,7 @@
       "continue": "Weiter"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Rücksendungen sind für diesen Shop deaktiviert",
       "ORDER_STATUS_NOT_ALLOWED": "Aus dem Status dieser Bestellung sind keine Rücksendungen möglich",
       "LINE_CANCELLED": "Diese Position wurde storniert",
       "NOT_DELIVERED": "Noch nicht geliefert",

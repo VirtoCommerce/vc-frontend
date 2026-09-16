@@ -19,6 +19,7 @@
       "select_all": "対象の明細をすべて選択",
       "eligible_count": "{total} 件中 {eligible} 件が対象",
       "nothing_returnable": "この注文から返品できる商品はありません",
+      "window_hint": "商品はお届け後 {days} 日以内に返品できます",
       "selected_summary": "{lines} 件選択 · {quantity} 点",
       "columns": {
         "item": "商品",
@@ -30,6 +31,7 @@
       "continue": "次へ"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "このストアでは返品が無効です",
       "ORDER_STATUS_NOT_ALLOWED": "この注文のステータスでは返品できません",
       "LINE_CANCELLED": "この明細はキャンセルされました",
       "NOT_DELIVERED": "未配送",

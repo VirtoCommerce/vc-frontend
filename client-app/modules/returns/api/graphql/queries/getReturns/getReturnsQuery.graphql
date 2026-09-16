@@ -1,10 +1,18 @@
-query GetReturns($first: Int, $after: String, $sort: String, $keyword: String) {
-  returns(first: $first, after: $after, sort: $sort, keyword: $keyword) {
+query GetReturns(
+  $storeId: String!
+  $first: Int
+  $after: String
+  $sort: String
+  $keyword: String
+  $cultureName: String
+) {
+  returns(storeId: $storeId, first: $first, after: $after, sort: $sort, keyword: $keyword) {
     totalCount
     items {
       id
       number
       status
+      statusDisplayValue(cultureName: $cultureName)
       createdDate
       orderId
       itemsQuantity

@@ -19,6 +19,7 @@
       "select_all": "Välj alla kvalificerade rader",
       "eligible_count": "{eligible} av {total} rader kvalificerade",
       "nothing_returnable": "Inget i denna order kan returneras",
+      "window_hint": "Varor kan returneras inom {days} dagar efter leverans",
       "selected_summary": "{lines} valda · {quantity} artiklar",
       "columns": {
         "item": "Artikel",
@@ -30,6 +31,7 @@
       "continue": "Fortsätt"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Returer är avstängda för den här butiken",
       "ORDER_STATUS_NOT_ALLOWED": "Returer tillåts inte från denna orders status",
       "LINE_CANCELLED": "Denna rad har annullerats",
       "NOT_DELIVERED": "Inte levererad ännu",

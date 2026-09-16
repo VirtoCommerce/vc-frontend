@@ -19,6 +19,7 @@
       "select_all": "选择所有符合条件的行",
       "eligible_count": "{total} 行中有 {eligible} 行符合条件",
       "nothing_returnable": "此订单中没有可退货的商品",
+      "window_hint": "商品可在送达后 {days} 天内退货",
       "selected_summary": "已选 {lines} 行 · {quantity} 件",
       "columns": {
         "item": "商品",
@@ -30,6 +31,7 @@
       "continue": "继续"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "此店铺已关闭退货功能",
       "ORDER_STATUS_NOT_ALLOWED": "该订单状态不允许退货",
       "LINE_CANCELLED": "此行已取消",
       "NOT_DELIVERED": "尚未送达",

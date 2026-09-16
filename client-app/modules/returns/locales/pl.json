@@ -19,6 +19,7 @@
       "select_all": "Zaznacz wszystkie kwalifikujące się pozycje",
       "eligible_count": "{eligible} z {total} pozycji kwalifikuje się",
       "nothing_returnable": "Nic z tego zamówienia nie może zostać zwrócone",
+      "window_hint": "Produkty można zwrócić w ciągu {days} dni od dostawy",
       "selected_summary": "Wybrano: {lines} · {quantity} szt.",
       "columns": {
         "item": "Produkt",
@@ -30,6 +31,7 @@
       "continue": "Kontynuuj"
     },
     "ineligibility": {
+      "RETURNS_DISABLED": "Zwroty są wyłączone dla tego sklepu",
       "ORDER_STATUS_NOT_ALLOWED": "Zwroty nie są dozwolone przy tym statusie zamówienia",
       "LINE_CANCELLED": "Ta pozycja została anulowana",
       "NOT_DELIVERED": "Jeszcze nie dostarczono",
