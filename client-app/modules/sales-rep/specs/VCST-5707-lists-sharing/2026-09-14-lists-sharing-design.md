@@ -92,6 +92,10 @@ screenshot.
 - `Mutations.changeWishlist` is `Maybe<WishlistType>` in the schema while `changeWishlist()` returns
   it as non-null, so reads through the mutation result must be optional or a persisted list reports
   itself as a failed save.
+- `t(key, { count })` pluralizes on the named `count` alone — measured against this repo's own
+  `createIntlPluralRule`, it picks the same form as `t(key, { count }, count)` for every n, the
+  4-form ru rule included. The third argument is redundant wherever the named count is already
+  there; it is `t(key)` with no named arguments that silently renders the singular.
 - `VcConfirmationModal` hardcodes its confirm button to "OK" with no way past it.
 - HeadlessUI recognises a nested dialog through provide/inject, while `ModalHost` renders the modal
   stack as siblings. A confirmation opened through `openModal` therefore reaches the share dialog as
@@ -117,8 +121,10 @@ save replaces it with the key the server actually stored.
 ### 2. The scope registry (`shared/wishlists/composables/useWishlistSharingScopes.ts`)
 
 Core owns Private, My organization and Anyone with link; the sales-rep module contributes Specific
-customers through `registerSharingScope`. The registration gained `icon` and `order` — the registry
-appends contributions after core's scopes, which put Specific customers last.
+customers through `registerSharingScope`. The registration gained `icon` and `order`, and the
+registry sorts core's scopes and the contributed ones together on that number — 10, 20, 30, 40 —
+so Specific customers seats itself third rather than landing wherever registration happened to run.
+A scope declaring no `order` comes last.
 
 `VcTabSwitch` replaces the select: four tabs, each under its provider's glyph. A scope the list
 already carries stays listed even when it is not on offer, or saving would silently rewrite it; it
@@ -145,7 +151,11 @@ sharing link and **the audience the server persisted**, so a scope reports what 
 than its own draft. It must handle its own failures — the list is already persisted by then.
 
 All four types are published through `@vc-frontend/core`, since the sales-rep module is being
-prepared to ship as a federated plugin.
+prepared to ship as a federated plugin. The facade ships as **0.2.0**: `payload` changed shape and
+the scope element's props were renamed, and on a 0.x line that is the minor bump the README asks
+for. The auto-bump only compares exported names, so it saw a patch. The version is what makes both
+gates — the manifest's `requiredHostVersion` and the shared singleton range — refuse a plugin built
+against 0.1.x instead of loading it and feeding it props that no longer arrive.
 
 The selected scope's controls are wrapped in `<KeepAlive>` so a look at another tab does not throw
 away the recipients the rep picked. The cache dies with the dialog, so the next open re-reads the
@@ -167,8 +177,12 @@ and recipient rows are two-line — avatar, organization, city — and carry the
 with initials standing in.
 
 `Clear all` and the field's own clear both route through `clearSelection`, which keeps the rows in
-hand and offers them back; any other change retires the offer. Per-row remove moves focus to the row
-that takes the deleted one's place.
+hand and offers them back; picking in the field again retires the offer. Per-row remove leaves it
+alone — rows render only while something is selected, so the buffer cannot be holding anything.
+
+Every control that unmounts itself hands the focus on: per-row remove to the row that takes the
+deleted one's place, `Clear all` to the Undo that replaces it, Undo back to `Clear all`. Emptying
+the list from the field is the one gap — the block unmounts and `VcSelect` exposes no focus method.
 
 ### 5. Notification (`useSalesRepCommunication`)
 
@@ -177,7 +191,10 @@ default naming the list, with the sharing link appended. Delivery problems are a
 list is already saved — and repeated warning codes are collapsed, since the backend repeats them
 once per organization and the copy names none of them.
 
-A save that only removed a recipient or reworded the note notifies nobody and says so.
+A save that only removed a recipient or reworded the note notifies nobody, and takes its own copy
+for it: "List saved. Now shared with N customers", not the "List shared with N customers" that
+follows an actual send. Both count the audience the server persisted, so the toast agrees with the
+card behind the dialog.
 
 ### 6. The confirmation (`stop-sharing-confirmation-modal.vue`)
 
@@ -208,6 +225,7 @@ navigation, so the plain check leaves the previous list's frame up while the nex
 | `wishlist-customer-sharing.test.ts`       | the picker, the recipients list and its undo, the message, the exposed contract, the notification and its counts                                              |
 | `wishlist-sharing-recipients.test.ts`     | rows, collapse/expand, focus after remove, the list's accessible name, the avatar's fallbacks                                                                 |
 | `stop-sharing-confirmation-modal.test.ts` | both copy pairs and both outcomes                                                                                                                             |
+| `useWishlistSharingScopes.test.ts`        | registration, the `order` seating, and both duplicate-id refusals                                                                                             |
 | `useWishlists.test.ts`                    | the saved list reaching the cards without blanking them, and not reaching another page's list                                                                 |
 | `wishlist-status.test.ts`                 | the recipient count, including zero                                                                                                                           |
 
