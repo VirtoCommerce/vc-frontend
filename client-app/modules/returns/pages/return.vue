@@ -134,16 +134,9 @@ const { openModal } = useModal();
 
 const { loading, orderReturn, refetch } = useReturn(toRef(props, "returnId"));
 
-// Straight from the server's transition table. An action that exists but is not available shows as
-// a disabled button saying why, rather than vanishing and leaving the buyer to guess.
 const { cancelAction } = useReturnActions(orderReturn);
 
-/**
- * Whether an agent has ruled on the line yet.
- *
- * Only then does approvedQuantity mean anything: on a line nobody has looked at it is 0, and 0 is
- * how the schema spells "rejected". A draft would otherwise read as refused in full.
- */
+// 0 is how the schema spells a rejected line, so an undecided one must not show a number.
 function isDecided(itemState: string | undefined): boolean {
   return itemState === "Approved" || itemState === "Rejected";
 }

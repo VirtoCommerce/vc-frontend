@@ -2,10 +2,8 @@ import { computed, toValue } from "vue";
 import { RETURN_ACTION } from "@/modules/returns/constants";
 import type { MaybeRefOrGetter } from "vue";
 
-/**
- * Structural rather than the generated type: the shape is what matters, and every query that asks
- * for availableActions produces its own inline type for it.
- */
+// Structural rather than the generated type: every query asking for availableActions produces its
+// own inline type for it.
 type ReturnActionLikeType = {
   name: string;
   isAvailable: boolean;
@@ -16,12 +14,6 @@ type ReturnWithActionsType = {
   availableActions: ReturnActionLikeType[];
 };
 
-/**
- * What the buyer may do with a return, as the server decides it.
- *
- * The transition table lives in the module's IReturnStateProvider; asking the server keeps the
- * storefront from carrying a second copy of it that quietly drifts.
- */
 export function useReturnActions(orderReturn: MaybeRefOrGetter<ReturnWithActionsType | undefined>) {
   const actions = computed(() => toValue(orderReturn)?.availableActions ?? []);
 

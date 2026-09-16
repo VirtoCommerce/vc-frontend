@@ -17,7 +17,6 @@ import { ref, watch } from "vue";
 interface IProps {
   modelValue: number;
   max: number;
-  /** Names the field for screen readers — several identical inputs share one column header. */
   label: string;
   disabled?: boolean;
 }
@@ -28,8 +27,6 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-// A local draft, not the bound number: emptying the field to retype is a legitimate intermediate
-// state, and clamping on every keystroke would rewrite "1" before the second digit arrives.
 const draft = ref<string | number | undefined>();
 
 watch(

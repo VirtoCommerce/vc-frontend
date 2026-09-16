@@ -13,7 +13,6 @@ export const menuItems: DeepPartial<MenuType> = {
             },
             title: "returns.menu.link.title",
             icon: "receipt-refund",
-            // Right after "Orders" (20): a return always originates from an order.
             priority: 25,
           },
         ],

@@ -54,7 +54,6 @@ const reason = ref("");
 
 async function onConfirm(): Promise<void> {
   if (!(await cancelReturn(props.returnId, reason.value.trim()))) {
-    // The return is still open — leave the modal up so the buyer sees the error against it.
     return;
   }
 

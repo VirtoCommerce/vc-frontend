@@ -115,12 +115,7 @@ type ReturnListItemType = {
   availableActions?: { name: string; isAvailable: boolean }[];
 };
 
-/**
- * A draft goes back to where it was left off, anything else to the read-only page.
- *
- * Which one it is comes from the server's own list of actions rather than from the status, so the
- * rule stays in the module's transition table.
- */
+// Routed by the server's own action list, so the transition table stays in the module.
 function goToReturn(payload: ReturnListItemType): void {
   const editable = payload.availableActions?.some((action) => action.name === RETURN_ACTION.EDIT && action.isAvailable);
 

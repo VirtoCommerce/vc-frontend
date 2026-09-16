@@ -9,7 +9,6 @@ const DEFAULT_ITEMS_PER_PAGE = 10;
 export function useReturns() {
   const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
   const page: Ref<number> = ref(1);
-  // createdDate descending — a buyer looks for what they raised most recently.
   const sort: Ref<Sort> = ref(DEFAULT_SORT);
 
   const { loading, result, refetch } = useGetReturnsQuery(

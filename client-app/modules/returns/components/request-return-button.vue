@@ -17,9 +17,7 @@ const props = defineProps<IProps>();
 
 const router = useRouter();
 
-// The same query the wizard opens with, so asking it here costs the wizard nothing later — and it
-// is the only thing that knows whether this order has anything left to return. A button that leads
-// to "nothing can be returned" is worse than no button.
+// The same query the wizard opens with, so asking here costs the wizard nothing later.
 const { result } = useGetReturnableItemsQuery(computed(() => ({ orderId: props.orderId })));
 
 const hasReturnableItems = computed(() => !!result.value?.returnableItems?.some((item) => item.isReturnable));

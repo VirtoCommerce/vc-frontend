@@ -3,7 +3,6 @@ import { OperationNames, SubmitReturnDocument } from "@/modules/returns/api/grap
 
 export function useSubmitReturnMutation() {
   return useMutation(SubmitReturnDocument, {
-    // The status changes, so the list the buyer returns to must not show a stale "Draft".
     refetchQueries: [OperationNames.Query.GetReturns],
   });
 }

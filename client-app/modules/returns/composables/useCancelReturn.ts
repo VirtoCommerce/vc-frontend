@@ -9,9 +9,6 @@ export function useCancelReturn() {
 
       return result?.data?.cancelReturn?.status === "Cancelled";
     } catch {
-      // WRONG_STATUS arrives here when an agent moved the return on while the buyer was deciding.
-      // The global error link has already shown what happened, so the caller only needs to know
-      // the return is still open and keep the page as it is.
       return false;
     }
   }

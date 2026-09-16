@@ -6,10 +6,6 @@ export function useReturnReasons() {
 
   const reasons = computed(() => result.value?.returnReasons ?? []);
 
-  /**
-   * Whether picking this reason obliges the buyer to explain. Driven by the store's own
-   * dictionary, so an unknown code simply does not demand anything.
-   */
   function requiresComment(code: string): boolean {
     return reasons.value.find((reason) => reason.code === code)?.requiresComment ?? false;
   }

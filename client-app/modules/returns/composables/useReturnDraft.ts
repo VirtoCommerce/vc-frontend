@@ -32,16 +32,10 @@ export type ReturnDraftLineType = {
   reasonCode: string;
   reasonComment: string;
   serialNumber: string;
-  /** As the server knows them; the uploader owns the live list. */
   attachments: ReturnAttachmentFragmentType[];
-  /** What the next save should make the line's files be. */
   attachmentUrls: string[];
 };
 
-/**
- * Drives the "add return details" step: reasons, comments and serial numbers on a draft, then
- * handing it to the returns agent.
- */
 export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const { result, loading, refetch } = useGetReturnQuery(computed(() => ({ id: toValue(returnId) })));
   const { mutate: updateReturn, loading: saving } = useUpdateReturnMutation();
@@ -54,16 +48,14 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
   const orderReturn = computed(() => result.value?.return);
 
-  // Editability and submittability are the server's call, taken from availableActions rather than
-  // re-derived from the status here — the transition table has one home, and it is not this file.
   const { canEdit, canSubmit: submitAllowed } = useReturnActions(orderReturn);
 
   const customerReference = ref("");
   const customerComment = ref("");
   const lines = ref<ReturnDraftLineType[]>([]);
 
-  // Seeded from the server rather than kept in sync with it: the buyer is typing into these, and
-  // an autosave response overwriting the field mid-keystroke is exactly what must not happen.
+  // Seeded once, not kept in sync: the buyer is typing into these and an autosave response must
+  // not overwrite a field mid-keystroke.
   watch(orderReturn, (value, previous) => {
     if (!value || previous) {
       return;
@@ -90,10 +82,6 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     }));
   });
 
-  /**
-   * Lines the buyer still has to complete. Mirrors what submitReturn enforces, so the button is
-   * disabled instead of the server rejecting the attempt.
-   */
   const incompleteLines = computed(() =>
     lines.value.filter(
       (line) =>
@@ -105,7 +93,6 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
   const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);
 
-  /** Returns whether the draft now matches what the buyer typed. */
   async function save(): Promise<boolean> {
     if (!canEdit.value) {
       return false;
@@ -130,16 +117,13 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
       return true;
     } catch {
-      // Autosave runs unattended on every keystroke, so a failed one must not reject into nowhere.
-      // The global error link has already shown what went wrong; the buyer keeps typing and the
-      // next autosave retries the whole draft anyway.
+      // Autosave runs unattended on every keystroke, so a rejection must not go unhandled.
       return false;
     }
   }
 
   const autosave = useDebounceFn(save, AUTOSAVE_DELAY);
 
-  /** Applies one reason to every line, the bulk action a long B2B return needs. */
   function applyReasonToAll(reasonCode: string): void {
     lines.value.forEach((line) => {
       line.reasonCode = reasonCode;
@@ -148,10 +132,8 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     void autosave();
   }
 
-  /** Saves first: the draft must carry what the buyer typed before it is handed over. */
   async function submit(): Promise<boolean> {
     if (!(await save())) {
-      // Submitting now would hand over a draft missing whatever the failed save was carrying.
       return false;
     }
 
@@ -160,8 +142,6 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
 
       return submitted?.data?.submitReturn?.status === "Requested";
     } catch {
-      // RETURN_QUANTITY_UNAVAILABLE and ATTACHMENTS_REQUIRED land here. The draft is untouched and
-      // the error link has already said what to fix, so the buyer stays on the page and adjusts.
       return false;
     }
   }

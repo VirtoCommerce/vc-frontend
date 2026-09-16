@@ -15,7 +15,6 @@ import { downloadFile, useFiles } from "@/shared/files";
 import type { ReturnAttachmentFragmentType } from "@/modules/returns/composables/useReturnDraft";
 
 interface IProps {
-  /** Files the line already carries, as the server knows them. */
   attachments: ReturnAttachmentFragmentType[];
   scope: string;
 }
@@ -26,7 +25,6 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-// The uploader speaks its own file shape; the server speaks ours.
 const attachedFiles = computed<IAttachedFile[]>(() =>
   props.attachments.map((attachment) => ({
     status: "attached",
@@ -43,8 +41,8 @@ const { files, options, attachedAndUploadedFiles, addFiles, validateFiles, uploa
     attachedFiles,
   );
 
-// Only files that finished uploading carry a URL, and only a URL can be attached to the return —
-// one still in flight would be claimed as an empty reference.
+// Only a finished upload carries a URL, and only a URL can be attached — one still in flight
+// would be claimed as an empty reference.
 watch(attachedAndUploadedFiles, (value) => {
   emit(
     "update:urls",
@@ -69,7 +67,6 @@ function onDownload(file: FileType): void {
 }
 
 onMounted(async () => {
-  // Limits come from the scope configuration, so the storefront enforces exactly what the server will.
   await fetchOptions();
 });
 </script>
