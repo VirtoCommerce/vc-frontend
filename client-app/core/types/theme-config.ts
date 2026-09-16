@@ -107,6 +107,8 @@ export interface IThemeConfigPreset {
   color_additional_50: string;
   color_additional_950: string;
 
+  color_vc_focus_ring?: string;
+
   color_vc_background_solid_primary?: string;
   color_vc_background_solid_secondary?: string;
   color_vc_background_solid_accent?: string;

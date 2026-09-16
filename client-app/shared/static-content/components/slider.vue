@@ -67,8 +67,8 @@ type SlideType = {
   title?: string;
   url?: string;
 };
+
 interface IProps {
-  id?: string;
   height?: SlideHeightType;
   background?: string;
   slides?: SlideType[];

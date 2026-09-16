@@ -5029,6 +5029,30 @@ __metadata:
 "@vc-frontend/core@portal:./client-app/core-api::locator=vc-theme-b2b-vue%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@vc-frontend/core@portal:./client-app/core-api::locator=vc-theme-b2b-vue%40workspace%3A."
+  peerDependencies:
+    "@apollo/client": ^3.14.0
+    "@floating-ui/vue": ^2.0.1
+    "@intlify/core-base": ^11.4.6
+    "@tailwindcss/container-queries": ^0.1.1
+    "@vue/shared": ^3.5.40
+    "@vue/test-utils": ^2.4.11
+    "@vueuse/core": ^14.3.0
+    lodash-es: ^4.18.1
+    maska: ^3.2.0
+    tw-elements: ^1.1.0
+    utility-types: ^3.11.0
+    vue: ^3.5.0
+    vue-i18n: ^11.4.0
+    vue-router: ^4.6.0
+  peerDependenciesMeta:
+    "@tailwindcss/container-queries":
+      optional: true
+    "@vue/test-utils":
+      optional: true
+    lodash-es:
+      optional: true
+    tw-elements:
+      optional: true
   languageName: node
   linkType: soft
 

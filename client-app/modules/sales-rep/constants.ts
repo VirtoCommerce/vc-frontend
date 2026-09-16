@@ -29,6 +29,26 @@ export const CUSTOMER_SHARING_SCOPE = "Customer";
 // under "Company" (the "Sales Rep hub" title comes from the left-rail section, not a URL segment).
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
 export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:organizationId`;
+
+export const CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepCustomerOrders";
+export const CUSTOMER_ORDERS_ROUTE_SEGMENT = `${CUSTOMER_PROFILE_ROUTE_SEGMENT}/orders`;
+export const CUSTOMER_ORDER_ROUTE_NAME = "SalesRepCustomerOrder";
+export const CUSTOMER_ORDER_ROUTE_SEGMENT = `${CUSTOMER_ORDERS_ROUTE_SEGMENT}/:orderId`;
+
+// The storefront's own order page: an order the rep placed opens there, where their buyer actions still
+// work. The hub's page is read-only for everyone.
+export const BUYER_ORDER_ROUTE_NAME = "OrderDetails";
+
+// A sibling of My customers rather than a child, since "my-customers/orders" would match the
+// :organizationId segment.
+export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";
+export const ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT = "customer-orders";
+
+// The organization an order belongs to — not core's CUSTOMER_NAME_FACET_NAME, which is the buyer who placed it.
+export const ORDER_CUSTOMER_FACET = "organizationname";
+export const CUSTOMER_ORDERS_SORT_FIELDS = { date: "createdDate", total: "total" } as const;
+export const CUSTOMER_ORDERS_SORT_DIRECTION = "desc" as const;
+
 // Default page size for the shared Orders widget; callers may override via the `limit` prop.
 export const ORDERS_DEFAULT_LIMIT = 7;
 
