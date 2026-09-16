@@ -17,10 +17,10 @@ describe("useSalesRepTaskMutations", () => {
     mutate.mockClear();
   });
 
-  // updateSalesRepTask replaces rather than patches: description, type and priority are non-null in the schema,
-  // so an omitted one is rejected outright. Left to the spread, a form that clears a field would send nothing
-  // for it - Apollo drops undefined from the variables - and every such save would fail.
-  it("sends every editable field on update, even the ones the caller left out", async () => {
+  // updateSalesRepTask replaces rather than patches, and its input mirrors what the read returns - so the record
+  // goes back exactly as given. A field the caller left out is omitted, which the server reads as "cleared"; it no
+  // longer has to be spelled as "" to get past a non-null schema.
+  it("sends the record as given, without inventing values for the fields the caller left out", async () => {
     const { update } = useSalesRepTaskMutations();
 
     await update("task-1", { name: "Renamed", dueDate: "2026-09-04T09:00:00Z" });
@@ -30,9 +30,6 @@ describe("useSalesRepTaskMutations", () => {
         id: "task-1",
         name: "Renamed",
         dueDate: "2026-09-04T09:00:00Z",
-        description: "",
-        type: "",
-        priority: "",
       },
     });
   });

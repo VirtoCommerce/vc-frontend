@@ -37,21 +37,9 @@ export function useSalesRepTaskMutations() {
   }
 
   function update(id: string, input: SalesRepTaskInputType): Promise<boolean> {
-    // updateSalesRepTask REPLACES the task: description, type and priority are non-null, so an omitted one is a
-    // schema error rather than "leave it alone". Spread out the optionals explicitly - "" clears a field, and an
-    // empty priority means Normal. The shared input type stays optional-shaped because create still accepts that.
-    return run("updateSalesRepTask", () =>
-      updateTask({
-        command: {
-          id,
-          name: input.name,
-          dueDate: input.dueDate,
-          description: input.description ?? "",
-          type: input.type ?? "",
-          priority: input.priority ?? "",
-        },
-      }),
-    );
+    // updateSalesRepTask REPLACES the task, and its input mirrors what salesRepTask returns - so the whole record
+    // goes back as read, undefined included. An omitted or null field clears it, which is what replace means.
+    return run("updateSalesRepTask", () => updateTask({ command: { id, ...input } }));
   }
 
   function setCompleted(id: string, completed: boolean): Promise<boolean> {

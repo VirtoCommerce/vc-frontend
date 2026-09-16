@@ -133,11 +133,23 @@ const priorityItems = computed(() =>
  * A deliberate snapshot, read inside a function rather than at root scope: useForm seeds the fields once, and a
  * modal instance is constructed per open with fixed props, so there is no later prop change to track.
  */
+/**
+ * The picker speaks local "YYYY-MM-DD"; the API speaks instants (see tasks.ts). Editing shows the task's own date
+ * or nothing - a task with no due date arrives from the admin UI, and seeding "today" here would hand it one it
+ * never had. Only a NEW task falls back to the selected day.
+ */
+function initialDueDate(): string {
+  if (props.task) {
+    return props.task.dueDate ? localDayKey(props.task.dueDate) : "";
+  }
+
+  return props.defaultDay ?? localDayKey(new Date());
+}
+
 function buildInitialValues() {
   return {
     name: props.task?.name ?? "",
-    // The picker speaks local "YYYY-MM-DD"; the API speaks instants (see tasks.ts).
-    dueDate: props.task?.dueDate ? localDayKey(props.task.dueDate) : (props.defaultDay ?? localDayKey(new Date())),
+    dueDate: initialDueDate(),
     priority: props.task?.priority || "Normal",
     type: props.task?.type ?? "",
     description: props.task?.description ?? "",

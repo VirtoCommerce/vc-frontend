@@ -631,15 +631,15 @@ export type InputChangeSalesRepTaskStatus = {
 };
 
 export type InputCreateSalesRepTask = {
-  /** Free-text notes. */
+  /** Free-text notes. Null or empty clears it. */
   description?: InputMaybe<Scalars['String']['input']>;
-  /** When the task is due. */
-  dueDate: Scalars['DateTime']['input'];
-  /** Task title. */
+  /** When the task is due. Required on create; null on update clears it. */
+  dueDate?: InputMaybe<Scalars['DateTime']['input']>;
+  /** Task title (required, max 256 chars). */
   name: Scalars['String']['input'];
-  /** Lowest, Low, Normal, High or Highest. Defaults to Normal. */
+  /** Lowest, Low, Normal, High or Highest. Null or empty means Normal. */
   priority?: InputMaybe<Scalars['String']['input']>;
-  /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. */
+  /** Free text, max 128 chars, typically one of the values salesRepTaskTypes offers - not enforced. Null or empty clears it. */
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -702,18 +702,18 @@ export type InputSendCustomerCommunicationType = {
 };
 
 export type InputUpdateSalesRepTask = {
-  /** Free-text notes. Send the stored value back unchanged to keep it; empty string clears it. */
-  description: Scalars['String']['input'];
-  /** When the task is due. */
-  dueDate: Scalars['DateTime']['input'];
+  /** Free-text notes. Null or empty clears it. */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** When the task is due. Required on create; null on update clears it. */
+  dueDate?: InputMaybe<Scalars['DateTime']['input']>;
   /** Id of the task to change. Must be a task the caller owns. */
   id: Scalars['String']['input'];
-  /** Task title. */
+  /** Task title (required, max 256 chars). */
   name: Scalars['String']['input'];
-  /** Lowest, Low, Normal, High or Highest. Empty string means Normal. */
-  priority: Scalars['String']['input'];
-  /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. Empty string clears it. */
-  type: Scalars['String']['input'];
+  /** Lowest, Low, Normal, High or Highest. Null or empty means Normal. */
+  priority?: InputMaybe<Scalars['String']['input']>;
+  /** Free text, max 128 chars, typically one of the values salesRepTaskTypes offers - not enforced. Null or empty clears it. */
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InventoryInfo = {
