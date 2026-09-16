@@ -178,6 +178,66 @@ describe("VcSelect inside a dialog popover", () => {
     expect(wrapper.get(".vc-select input").element).toBe(document.activeElement);
   });
 
+  // The trigger now keeps focus when its list closes, so the keyboard has to be able to open it again:
+  // the input's `@focus` handler cannot fire for focus it never lost.
+  it("reopens its dropdown on Enter after Escape handed focus back to the trigger", async () => {
+    const wrapper = createWrapper();
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get(".vc-menu-item");
+    (option.element as HTMLElement).focus();
+    await option.trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    await wrapper.get(".vc-select input").trigger("keydown", { key: "Enter" });
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+    expect(dialogIsOpen(wrapper)).toBe(true);
+  });
+
+  it("opens its dropdown on ArrowDown and moves focus to the first option", async () => {
+    const wrapper = createWrapper();
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get(".vc-menu-item");
+    (option.element as HTMLElement).focus();
+    await option.trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    await wrapper.get(".vc-select input").trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+    expect(wrapper.get(".vc-menu-item").element.contains(document.activeElement)).toBe(true);
+  });
+
+  // The other half of the same handler: the list is already open (focus opened it), so ArrowDown has
+  // to step into it rather than re-open it.
+  it("moves focus into the open list on ArrowDown from the trigger", async () => {
+    const wrapper = createWrapper();
+    await openDialogAndSelect(wrapper);
+
+    await wrapper.get(".vc-select input").trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    expect(wrapper.get(".vc-menu-item").element.contains(document.activeElement)).toBe(true);
+  });
+
+  it("opens the slotted trigger's dropdown on ArrowDown", async () => {
+    const wrapper = createSlottedWrapper();
+
+    await wrapper.get("button.trigger").trigger("click");
+    await nextTick();
+
+    await wrapper.get(".vc-select__button").trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+  });
+
   it("consumes Escape from the slotted trigger while its dropdown is open", async () => {
     const wrapper = createSlottedWrapper();
 

@@ -49,7 +49,7 @@
           @click="toggle"
           @keydown.enter="toggle"
           @keydown.esc="onTriggerEscape($event, close)"
-          @keydown.down.prevent="next(-1)"
+          @keydown.down.prevent="openByKeyboard($event, open, true)"
         >
           <div class="vc-select__button-content">
             <slot v-if="selected" name="selected" v-bind="{ item: selected, error }" />
@@ -86,7 +86,8 @@
           :error="error"
           truncate
           disable-autocomplete
-          @keydown.down.prevent="next(-1)"
+          @keydown.down.prevent="openByKeyboard($event, open, true)"
+          @keydown.enter="openByKeyboard($event, open, false)"
           @focus="open"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
           @keydown.esc="onTriggerEscape($event, close)"
@@ -174,7 +175,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { isEqual, union } from "lodash-es";
-import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
@@ -410,6 +411,26 @@ function prev(index: number) {
     if (prevElement instanceof HTMLElement) {
       prevElement.focus();
     }
+  }
+}
+
+// The trigger keeps focus after the list closes and only opens on focus, so the keyboard had no way
+// back in: Enter had no handler, and ArrowDown looks for options the closed list does not render.
+function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOption: boolean) {
+  if (isShown.value) {
+    if (moveToFirstOption) {
+      next(-1);
+    }
+
+    return;
+  }
+
+  // Consumed here, so Enter does not also submit an enclosing form.
+  event.preventDefault();
+  open();
+
+  if (moveToFirstOption) {
+    void nextTick(() => next(-1));
   }
 }
 
