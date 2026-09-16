@@ -22,9 +22,9 @@
           @page-changed="changePage"
         >
           <template #mobile-item="itemData">
-            <div
-              class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-              role="button"
+            <button
+              type="button"
+              class="grid w-full cursor-pointer appearance-none grid-cols-2 gap-y-4 border-b border-neutral-200 p-6 text-left"
               tabindex="0"
               @click="goToReturn(itemData.item)"
               @keyup.enter="goToReturn(itemData.item)"
@@ -52,7 +52,7 @@
 
                 <span class="overflow-hidden text-ellipsis">{{ itemData.item.itemsQuantity }}</span>
               </div>
-            </div>
+            </button>
           </template>
 
           <template #desktop-body>
@@ -60,7 +60,9 @@
               v-for="item in returns"
               :key="item.id"
               class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+              tabindex="0"
               @click="goToReturn(item)"
+              @keyup.enter="goToReturn(item)"
             >
               <td class="overflow-hidden text-ellipsis p-5">{{ item.number }}</td>
 
