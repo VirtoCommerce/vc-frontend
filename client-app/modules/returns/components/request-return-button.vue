@@ -18,10 +18,10 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useGetReturnableItemsQuery } from "@/modules/returns/api/graphql/queries/getReturnableItems";
 import { useReturnPolicy } from "@/modules/returns/composables/useReturnPolicy";
+import type { CustomerOrderType } from "@/core/api/graphql/types";
 
 interface IProps {
-  orderId: string;
-  orderStatus?: string;
+  order?: CustomerOrderType;
 }
 
 const props = defineProps<IProps>();
@@ -33,17 +33,17 @@ const { allowsOrderStatus } = useReturnPolicy();
 // Asked on every order page otherwise, and the answer is almost always "nothing returnable".
 // The store decides which statuses a return may come from, so the gate reads that rather than
 // hardcoding one.
-const eligible = computed(() => allowsOrderStatus(props.orderStatus));
+const eligible = computed(() => allowsOrderStatus(props.order?.status));
 
 // The same query the wizard opens with, so asking here costs the wizard nothing later.
 const { result, loading } = useGetReturnableItemsQuery(
-  computed(() => ({ orderId: props.orderId })),
-  eligible,
+  computed(() => ({ orderId: props.order?.id ?? "" })),
+  computed(() => eligible.value && !!props.order?.id),
 );
 
 const hasReturnableItems = computed(() => !!result.value?.returnableItems?.some((item) => item.isReturnable));
 
 function goToWizard(): void {
-  void router.push({ name: "SelectReturnItems", params: { orderId: props.orderId } });
+  void router.push({ name: "SelectReturnItems", params: { orderId: props.order?.id } });
 }
 </script>

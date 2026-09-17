@@ -76,6 +76,8 @@ export type ExtensionCategoryMapType = {
     never,
     ({ paymentTypeName }: { paymentTypeName: string }) => boolean
   >;
+  /** The order details page. A provider decides from the order whether it has anything to offer. */
+  orderDetails: ExtensionEntryType<{ order?: CustomerOrderType }, never, (order?: CustomerOrderType) => boolean>;
   /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
   sharedList: ExtensionEntryType<
     { sharingSetting?: SharingSettingType },

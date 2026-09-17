@@ -15,7 +15,12 @@
           {{ $t("common.buttons.print_order") }}
         </VcButton>
 
-        <RequestReturnButton v-if="returnsEnabled && order" :order-id="order.id" :order-status="order.status" />
+        <ExtensionPoint
+          v-if="$canRenderExtensionPoint('orderDetails', EXTENSION_NAMES.orderDetails.actions, order)"
+          :name="EXTENSION_NAMES.orderDetails.actions"
+          category="orderDetails"
+          :order="order"
+        />
 
         <VcButton
           v-if="showReorderButton"
@@ -183,17 +188,15 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { OrderStatusCode } from "@/core/constants/order-status.ts";
-import { MODULE_ID as RETURNS_MODULE_ID, ENABLED_KEY as RETURNS_ENABLED_KEY } from "@/modules/returns/constants";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis.ts";
 import { AddressInfo, VendorName } from "@/shared/common";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
-import RequestReturnButton from "@/modules/returns/components/request-return-button.vue";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 import AddressInfoModal from "@/shared/common/components/address-info-modal.vue";
 
@@ -247,9 +250,6 @@ const showPaymentButton = computed<boolean>(
   () => !!order.value && (order.value.status === "New" || order.value.status === "Payment required"),
 );
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
-
-const { isEnabled } = useModuleSettings(RETURNS_MODULE_ID);
-const returnsEnabled = isEnabled(RETURNS_ENABLED_KEY);
 
 const shipmentMethodName = computed<string>(() =>
   t(`common.methods.delivery_by_id.${shipment.value?.shipmentMethodCode}_${shipment.value?.shipmentMethodOption}`),
