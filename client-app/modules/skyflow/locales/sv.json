@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "Sparade kreditkort",
+      "no_cards": "Du har inte sparat några kreditkort ännu",
+      "delete_credit_card_modal": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill ta bort kreditkortet?"
+      }
+    }
+  }
+}

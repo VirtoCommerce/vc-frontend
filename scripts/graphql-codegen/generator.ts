@@ -101,6 +101,11 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/returns/api/graphql",
     schemaPath: `${backendUrl}/graphql/return`,
   },
+  {
+    name: "Skyflow",
+    apiPath: "client-app/modules/skyflow/api/graphql",
+    schemaPath: `${backendUrl}/graphql/skyflow`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",

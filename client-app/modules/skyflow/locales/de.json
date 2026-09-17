@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "Gespeicherte Kreditkarten",
+      "no_cards": "Sie haben noch keine Kreditkarten gespeichert",
+      "delete_credit_card_modal": {
+        "title": "Löschen bestätigen",
+        "message": "Sind Sie sicher, dass Sie die Kreditkarte entfernen möchten?"
+      }
+    }
+  }
+}
