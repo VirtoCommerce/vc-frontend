@@ -1,0 +1,244 @@
+/* The ui-kit stubs below are minimal test doubles, not shippable components. */
+/* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
+import { render, fireEvent, cleanup, configure } from "@testing-library/vue";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h } from "vue";
+import WishlistSharingRecipients from "./wishlist-sharing-recipients.vue";
+import type { WishlistSharingRecipientType } from "../types";
+import type { RenderResult } from "@testing-library/vue";
+import "@testing-library/jest-dom/vitest";
+
+configure({ testIdAttribute: "data-test-id" });
+
+// `t` echoes the key so assertions read as the copy contract; the spy keeps the interpolation values reachable.
+const t = vi.hoisted(() => vi.fn<(key: string, values?: Record<string, unknown>) => string>((key) => key));
+
+vi.mock("vue-i18n", () => ({ useI18n: () => ({ t }) }));
+
+const KEY = "sales_rep.list_sharing";
+
+const VcButton = defineComponent({
+  props: {
+    disabled: { type: Boolean, default: false },
+    ariaLabel: { type: String, default: "" },
+    appendIcon: { type: String, default: "" },
+    size: { type: String, default: "" },
+  },
+  emits: ["click"],
+  setup(props, { slots, emit }) {
+    return () =>
+      h(
+        "button",
+        {
+          disabled: props.disabled,
+          "aria-label": props.ariaLabel,
+          "data-append-icon": props.appendIcon,
+          "data-size": props.size,
+          onClick: () => emit("click"),
+        },
+        slots.default?.(),
+      );
+  },
+});
+
+const VcImage = defineComponent({
+  props: { src: { type: String, default: "" }, alt: { type: String, default: "" } },
+  setup(props) {
+    return () => h("img", { src: props.src, alt: props.alt });
+  },
+});
+
+let component: RenderResult;
+
+function interpolationsFor(key: string): unknown[] {
+  return t.mock.calls.filter(([called]) => called === key).map(([, values]) => values);
+}
+
+function customers(count: number): WishlistSharingRecipientType[] {
+  return Array.from({ length: count }, (_, index) => ({
+    organizationId: `org-${index + 1}`,
+    organizationName: `Customer ${index + 1}`,
+    location: index % 2 ? "" : "Richmond, Virginia",
+    imageUrl: "",
+  }));
+}
+
+function renderRecipients(recipients: WishlistSharingRecipientType[], props: Record<string, unknown> = {}) {
+  component = render(WishlistSharingRecipients, {
+    props: { recipients, ...props },
+    global: {
+      components: { VcButton, VcImage },
+      stubs: { VcIcon: true },
+    },
+  });
+
+  return component;
+}
+
+function rows() {
+  return component.container.querySelectorAll(".wishlist-sharing-recipients__row");
+}
+
+function toggle() {
+  return component.queryByTestId("wishlist-sharing-toggle-recipients-button");
+}
+
+afterEach(() => {
+  cleanup();
+  t.mockClear();
+});
+
+describe("WishlistSharingRecipients", () => {
+  it("lists every recipient it is given", () => {
+    renderRecipients(customers(2));
+
+    expect(rows()).toHaveLength(2);
+    expect(component.getByText("Customer 1")).toBeInTheDocument();
+    expect(component.getByText("Richmond, Virginia")).toBeInTheDocument();
+  });
+
+  it("leaves out the second line for a customer whose address never loaded", () => {
+    renderRecipients([{ organizationId: "org-1", organizationName: "Acme", location: "", imageUrl: "" }]);
+
+    expect(component.container.querySelector(".wishlist-sharing-recipients__location")).toBeNull();
+  });
+
+  it("initials a recipient from the first two words of their name", () => {
+    renderRecipients([
+      { organizationId: "org-1", organizationName: "acme trading company", location: "", imageUrl: "" },
+    ]);
+
+    expect(component.getByText("AT")).toBeInTheDocument();
+  });
+
+  it("shows the organization's own logo instead of its initials", () => {
+    renderRecipients([
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "",
+        imageUrl: "https://cdn.example/acme.png",
+      },
+    ]);
+
+    expect(component.container.querySelector("img")).toHaveAttribute("src", "https://cdn.example/acme.png");
+    expect(component.queryByText("AI")).toBeNull();
+  });
+
+  it("names the whole list, not only the rows currently on screen", () => {
+    renderRecipients(customers(30));
+
+    // The heading says 30; a list whose accessible name says 3 tells a screen-reader user the rest is not there.
+    expect(interpolationsFor(`${KEY}.recipients_title`)).toContainEqual({ count: 30 });
+    expect(interpolationsFor(`${KEY}.recipients_title`)).not.toContainEqual({ count: 3 });
+  });
+
+  it("initials a name that starts outside the basic plane without splitting it", () => {
+    renderRecipients([{ organizationId: "org-1", organizationName: "\u{1F3ED} Acme", location: "", imageUrl: "" }]);
+
+    expect(component.getByText("\u{1F3ED}A")).toBeInTheDocument();
+  });
+
+  it("falls back to initials when the logo fails to load", async () => {
+    renderRecipients([
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "",
+        imageUrl: "https://cdn.example/acme.png",
+      },
+    ]);
+
+    // The kit swaps a failed source for its own generic glyph, which is not what this badge wants.
+    await fireEvent.error(component.container.querySelector("img")!);
+
+    expect(component.container.querySelector("img")).toBeNull();
+    expect(component.getByText("AI")).toBeInTheDocument();
+  });
+
+  it("asks to remove the recipient behind the button that was pressed", async () => {
+    renderRecipients(customers(2));
+
+    await fireEvent.click(component.getByTestId("wishlist-sharing-remove-recipient-org-2").closest("button")!);
+
+    expect(component.emitted("remove")).toEqual([["org-2"]]);
+  });
+
+  it("labels each remove button with the customer it removes", () => {
+    renderRecipients(customers(1));
+
+    expect(component.getByTestId("wishlist-sharing-remove-recipient-org-1").closest("button")).toHaveAttribute(
+      "aria-label",
+      `${KEY}.remove_recipient_button`,
+    );
+  });
+
+  it("locks the rows while a save is in flight", () => {
+    renderRecipients(customers(1), { disabled: true });
+
+    expect(component.getByTestId("wishlist-sharing-remove-recipient-org-1").closest("button")).toBeDisabled();
+  });
+
+  describe("a list short enough to read at a glance", () => {
+    it("still offers Clear all, and no expand toggle", () => {
+      renderRecipients(customers(3));
+
+      // Bulk-clear belongs to having recipients at all; only the toggle is about having more than fit.
+      expect(component.getByTestId("wishlist-sharing-clear-recipients-button")).toBeInTheDocument();
+      expect(toggle()).toBeNull();
+    });
+  });
+
+  describe("a list longer than it shows", () => {
+    it("shows only the first rows, and offers the rest", () => {
+      renderRecipients(customers(30));
+
+      expect(rows()).toHaveLength(3);
+      expect(toggle()).toHaveTextContent(`${KEY}.show_all_recipients_button`);
+    });
+
+    it("shows every row once expanded, and offers the way back", async () => {
+      renderRecipients(customers(30));
+
+      await fireEvent.click(toggle()!.closest("button")!);
+
+      expect(rows()).toHaveLength(30);
+      expect(toggle()).toHaveTextContent(`${KEY}.show_less_recipients_button`);
+    });
+
+    it("turns the chevron over when expanded", async () => {
+      renderRecipients(customers(30));
+
+      expect(toggle()!.closest("button")).toHaveAttribute("data-append-icon", "chevron-down");
+
+      await fireEvent.click(toggle()!.closest("button")!);
+
+      expect(toggle()!.closest("button")).toHaveAttribute("data-append-icon", "chevron-up");
+    });
+
+    it("offers to clear the whole list", async () => {
+      renderRecipients(customers(30));
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button").closest("button")!);
+
+      expect(component.emitted("clear")).toHaveLength(1);
+    });
+
+    it("honours a caller that wants a different number of rows shown", () => {
+      renderRecipients(customers(30), { collapsedRows: 5 });
+
+      expect(rows()).toHaveLength(5);
+    });
+
+    it("collapses again when the list shrinks below the cut", async () => {
+      renderRecipients(customers(30));
+      await fireEvent.click(toggle()!.closest("button")!);
+
+      // Left expanded, a list that later fits would render its toggle-less state with no way to reset it.
+      await component.rerender({ recipients: customers(2) });
+      await component.rerender({ recipients: customers(30) });
+
+      expect(rows()).toHaveLength(3);
+    });
+  });
+});

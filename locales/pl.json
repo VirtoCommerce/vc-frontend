@@ -962,15 +962,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Ilość produktów",
-        "list_edit_button": "Edytuj",
-        "remove_list_button": "Usuń",
+        "rename_list_button": "Zmień nazwę",
+        "remove_list_button": "Usuń listę",
         "make_private_button": "Uczyń prywatną",
         "share_button": "Udostępnij",
         "last_modified_label": "Ostatnia modyfikacja: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Dodaj wszystko do koszyka",
-        "list_settings_button": "Ustawienia listy",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Twoja lista jest pusta",
         "empty_list_button": "Kontynuuj przeglądanie",
         "list_icon": "Ikona listy"
@@ -994,11 +994,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nowa lista",
-        "edit_mode_title": "Ustawienia listy",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nazwa listy",
         "list_name_placeholder": "Proszę wpisać nazwę",
-        "sharing_scope_label": "Opcje udostępniania",
-        "sharing_scope_placeholder": "Wybierz jedną opcję",
         "sharing_link_label": "Link",
         "create_button": "Utwórz listę",
         "save_button": "@:common.buttons.save",
@@ -1007,11 +1005,25 @@
         "make_shared": "Uczyń współdzieloną",
         "sharing_scope": {
           "Private": "Prywatne",
-          "Organization": "Organizacja",
-          "AnyoneAnonymous": "Każdy (tylko do odczytu)"
+          "Organization": "Moja organizacja",
+          "AnyoneAnonymous": "Każdy z linkiem"
         },
         "clipboard_success": "Link skopiowany",
         "save_error": "Nie udało się zapisać listy. Spróbuj ponownie."
+      },
+      "share_wishlist_modal": {
+        "title": "Udostępnij „{listName}”",
+        "who_can_access_label": "Kto ma dostęp",
+        "scope_selected": "{label}, wybrano"
+      },
+      "stop_sharing_modal": {
+        "title": "Zatrzymać udostępnianie tej listy?",
+        "message": "Wszyscy, którym udostępniono listę, utracą dostęp. Możesz udostępnić ją ponownie w dowolnym momencie.",
+        "confirm_button": "Zatrzymaj udostępnianie",
+        "change_title": "Zmienić, kto ma dostęp?",
+        "change_message": "Wszyscy, którym obecnie udostępniono listę, utracą dostęp.",
+        "change_confirm_button": "Zmień dostęp",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Potwierdź usunięcie",

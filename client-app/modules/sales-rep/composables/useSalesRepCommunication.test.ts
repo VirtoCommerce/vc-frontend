@@ -25,7 +25,7 @@ describe("useSalesRepCommunication", () => {
 
     const { sendCommunication } = useSalesRepCommunication();
     const result = await sendCommunication({
-      organizationId: "org-1",
+      organizationIds: ["org-1"],
       sendEmail: true,
       sendPush: false,
       title: "New releases",
@@ -35,7 +35,7 @@ describe("useSalesRepCommunication", () => {
     expect(result).toEqual(payload);
     expect(mutationMock.mutate).toHaveBeenCalledWith({
       command: {
-        organizationId: "org-1",
+        organizationIds: ["org-1"],
         sendEmail: true,
         sendPush: false,
         title: "New releases",
@@ -52,7 +52,7 @@ describe("useSalesRepCommunication", () => {
 
     const { sendCommunication } = useSalesRepCommunication();
     expect(
-      await sendCommunication({ organizationId: "org-1", sendEmail: true, sendPush: true, message: "Hi" }),
+      await sendCommunication({ organizationIds: ["org-1"], sendEmail: true, sendPush: true, message: "Hi" }),
     ).toEqual(payload);
   });
 
@@ -62,12 +62,12 @@ describe("useSalesRepCommunication", () => {
     mutationMock.mutate.mockResolvedValue({ data: null });
     const { sendCommunication } = useSalesRepCommunication();
     expect(
-      await sendCommunication({ organizationId: "org-1", sendEmail: false, sendPush: true, message: "Hi" }),
+      await sendCommunication({ organizationIds: ["org-1"], sendEmail: false, sendPush: true, message: "Hi" }),
     ).toEqual(failed);
 
     mutationMock.mutate.mockResolvedValue(null);
     expect(
-      await sendCommunication({ organizationId: "org-1", sendEmail: false, sendPush: true, message: "Hi" }),
+      await sendCommunication({ organizationIds: ["org-1"], sendEmail: false, sendPush: true, message: "Hi" }),
     ).toEqual(failed);
   });
 
@@ -76,7 +76,7 @@ describe("useSalesRepCommunication", () => {
 
     const { sendCommunication } = useSalesRepCommunication();
     await expect(
-      sendCommunication({ organizationId: "org-1", sendEmail: true, sendPush: false, message: "Hi" }),
+      sendCommunication({ organizationIds: ["org-1"], sendEmail: true, sendPush: false, message: "Hi" }),
     ).resolves.toEqual({ succeeded: false, pushSent: false, emailSent: false, warnings: [] });
   });
 

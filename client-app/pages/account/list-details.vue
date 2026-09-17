@@ -59,15 +59,28 @@
           >
             {{ $t("shared.wishlists.list_details.list_settings_button") }}
           </VcButton>
+
+          <VcButton
+            v-if="canShare"
+            :disabled="loading"
+            size="sm"
+            variant="outline"
+            prepend-icon="users"
+            class="grow"
+            @click="openShareListModal"
+          >
+            {{ $t("shared.wishlists.list_card.share_button") }}
+          </VcButton>
         </div>
       </div>
 
       <div ref="listElement" class="mt-5 w-full">
-        <!-- Skeletons -->
-        <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
+        <!-- Skeletons: keyed off this page's own fetch, not the shared `listLoading`, which every `useWishlists`
+             caller raises — a save from the Rename or Share dialog would otherwise swap the whole table for one. -->
+        <WishlistProductsSkeleton v-if="listFetching" :itemsCount="actualPageRowsCount" />
 
         <!-- List details -->
-        <template v-else-if="!listLoading && !!list?.items?.length">
+        <template v-else-if="!!list?.items?.length">
           <VcWidget size="lg">
             <div class="flex flex-col gap-6">
               <WishlistLineItems
@@ -94,7 +107,7 @@
 
         <!-- Empty list -->
         <VcEmptyView
-          v-else-if="!listLoading && list?.items?.length === 0"
+          v-else-if="list?.items?.length === 0"
           :text="$t('shared.wishlists.list_details.empty_list')"
           icon="outline-lists"
         >
@@ -121,6 +134,7 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
+import { WishlistAccessType } from "@/core/api/graphql/types";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -128,6 +142,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import { useUser } from "@/shared/account/composables";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { SaveChangesModal } from "@/shared/common";
@@ -137,6 +152,7 @@ import {
   useWishlists,
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
+  ShareWishlistModal,
   WishlistLineItems,
   WishlistProductsSkeleton,
 } from "@/shared/wishlists";
@@ -166,6 +182,7 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
+const { isCorporateMember } = useUser();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
@@ -193,6 +210,9 @@ const { continue_shopping_link } = getModuleSettings({
 
 const itemsPerPage = ref(6);
 const page = ref(1);
+// `list` is module-scoped and survives navigation, so re-entering a list leaves last visit's data in place while
+// this page's own buffer is still empty. Its own flag is the only thing that knows the difference.
+const listFetching = ref(true);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
 const pendingItems = ref<Record<string, boolean>>({});
@@ -223,9 +243,27 @@ const actualListName = computed(() => props.listName ?? list.value?.name);
 
 const isMobile = breakpoints.smaller("lg");
 
+// `isOwner` as well as write access: the two are independent, and changing the scope revokes an audience a
+// non-owner cannot even see — the backend resolves `targets` for the owner only.
+const canShare = computed(
+  () =>
+    isCorporateMember.value &&
+    !!list.value?.sharingSetting?.isOwner &&
+    list.value?.sharingSetting?.access === WishlistAccessType.Write,
+);
+
 function openListSettingsModal(): void {
   openModal({
     component: AddOrUpdateWishlistModal,
+    props: {
+      list: list.value,
+    },
+  });
+}
+
+function openShareListModal(): void {
+  openModal({
+    component: ShareWishlistModal,
     props: {
       list: list.value,
     },
@@ -401,21 +439,32 @@ onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
-  await fetchWishList(props.listId);
-  page.value = 1;
-  wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+  listFetching.value = true;
+
+  try {
+    await fetchWishList(props.listId);
+    page.value = 1;
+    wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+  } finally {
+    listFetching.value = false;
+  }
 });
 
 /**
  * Send Google Analytics event for related products.
  */
+// Reported once per list: saving from the Rename or Share dialog reassigns `list`, which would otherwise send a
+// second impression for the same items with no navigation in between.
+let reportedListId: string | undefined;
+
 watchEffect(() => {
   const items = list.value?.items
     ?.map((item) => item.product!)
     // filtering of deleted products
     .filter(Boolean);
 
-  if (items?.length) {
+  if (items?.length && list.value?.id !== reportedListId) {
+    reportedListId = list.value?.id;
     analytics("viewItemList", items, wishlistListProperties.value);
   }
 });
