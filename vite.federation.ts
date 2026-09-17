@@ -16,6 +16,7 @@ import type { PluginOption } from "vite";
  */
 
 const require = createRequire(import.meta.url);
+const FACADE_PACKAGE = "@vc-frontend/core";
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
 const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", import.meta.url));
 /** The theme's switch; the runtime reads the same key in client-app/modules/federated/enabled.ts. */
@@ -29,7 +30,7 @@ const themeEnablesFederation =
  * root is deliberately types-only, so package resolution must never be used for runtime.
  */
 export function federatedAlias(rootDir: string): Record<string, string> {
-  return { "@vc-frontend/core": path.resolve(rootDir, "client-app/core-api/index.ts") };
+  return { [FACADE_PACKAGE]: path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
 /** MF host plugin(s) — empty when the theme sets `module_federation_enabled: false`. Spread into vite `plugins`. */
@@ -51,7 +52,31 @@ export function federatedHostPlugin(): PluginOption[] {
       // shared providers via Node resolution from the project root - Vite aliases do
       // NOT apply. Without the explicit `import` path the host would register an
       // EMPTY module as the facade provider; `version` is explicit for the same reason.
-      shared: createHostShared({ "@vc-frontend/core": { version: coreApiVersion, import: coreApiEntry } }),
+      shared: createHostShared({ [FACADE_PACKAGE]: { version: coreApiVersion, import: coreApiEntry } }),
     }) as PluginOption,
+    keepFacadeOutOfOptimizeDeps(),
   ];
+}
+
+/**
+ * On `serve`, @module-federation/vite force-includes every shared key in `optimizeDeps`, and its own
+ * normalizer then drops from `exclude` whatever `include` holds — so a plain `optimizeDeps.exclude`
+ * cannot opt out. The facade is not an installed package (it resolves to project source), so esbuild
+ * would prebundle `core-api/index.ts` and everything it imports outside Vite's plugin pipeline:
+ * `@rollup/plugin-graphql` never runs there and every `.graphql` import fails to load.
+ * `enforce: "post"` puts this after their normalizer, which is where both lists can be put right.
+ */
+function keepFacadeOutOfOptimizeDeps(): PluginOption {
+  return {
+    name: "vc-frontend:facade-out-of-optimize-deps",
+    apply: "serve",
+    enforce: "post",
+    configResolved(config) {
+      const include = config.optimizeDeps.include ?? [];
+      config.optimizeDeps.include = include.filter((dep) => dep !== FACADE_PACKAGE);
+
+      const exclude = config.optimizeDeps.exclude ?? [];
+      config.optimizeDeps.exclude = [...exclude.filter((dep) => dep !== FACADE_PACKAGE), FACADE_PACKAGE];
+    },
+  };
 }
