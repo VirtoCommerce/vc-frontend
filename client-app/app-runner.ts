@@ -29,6 +29,7 @@ import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
+import { init as initCommerceAgent } from "@/modules/commerce-agent";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { startFederatedModules } from "@/modules/federated/bootstrap";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
@@ -280,6 +281,7 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
+  void initCommerceAgent(router, i18n);
 
   // Plugins
   app.use(head);

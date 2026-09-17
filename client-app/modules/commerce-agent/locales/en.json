@@ -1,0 +1,22 @@
+{
+  "commerce_agent": {
+    "navigation": {
+      "route_name": "Assistant"
+    },
+    "pages": {
+      "assistant": {
+        "title": "Shopping assistant"
+      }
+    },
+    "labels": {
+      "ask": "Ask the assistant",
+      "send": "Send"
+    },
+    "messages": {
+      "sign_in_first": "Sign in to use the shopping assistant.",
+      "service_unavailable": "The shopping assistant is unavailable right now.",
+      "turn_failed": "Something went wrong answering that. Please try again.",
+      "component_not_rendered": "This answer includes a {component} card that is not built yet."
+    }
+  }
+}

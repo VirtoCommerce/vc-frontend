@@ -47,6 +47,16 @@ function getBackendProxy(): Record<string, ProxyOptions> {
     // Federated plugin artifacts, so the platform discovery path is exercisable locally. Scoped to
     // the plugin folder rather than all of /modules, which serves every module's static files.
     "^/modules/.*/plugins/vc-frontend/": getProxy(process.env.APP_BACKEND_URL),
+    // The commerce agent runs as its own service beside x-api; proxying it keeps the
+    // browser on one origin, so the session header needs no CORS negotiation.
+    ...(process.env.APP_AGENT_URL
+      ? {
+          "^/agent-api": {
+            ...getProxy(process.env.APP_AGENT_URL),
+            rewrite: (url: string) => url.replace(/^\/agent-api/, ""),
+          },
+        }
+      : {}),
     "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
     "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
     "^/signin-google": getProxy(process.env.APP_BACKEND_URL),

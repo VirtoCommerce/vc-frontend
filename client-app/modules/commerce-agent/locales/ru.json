@@ -1,0 +1,22 @@
+{
+  "commerce_agent": {
+    "navigation": {
+      "route_name": "Ассистент"
+    },
+    "pages": {
+      "assistant": {
+        "title": "Помощник по закупкам"
+      }
+    },
+    "labels": {
+      "ask": "Спросите ассистента",
+      "send": "Отправить"
+    },
+    "messages": {
+      "sign_in_first": "Войдите, чтобы пользоваться ассистентом.",
+      "service_unavailable": "Ассистент сейчас недоступен.",
+      "turn_failed": "Не удалось ответить. Попробуйте ещё раз.",
+      "component_not_rendered": "В ответе есть карточка «{component}», которая ещё не реализована."
+    }
+  }
+}
