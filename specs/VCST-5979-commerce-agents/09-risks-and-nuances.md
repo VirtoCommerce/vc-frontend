@@ -79,6 +79,30 @@ Anthropic's measurement on their traffic, with no published benchmark. It is cre
 well-argued for conversational commerce, and the L'Oréal case in their own PDF shows the
 opposite shape winning for analytics fan-out. Take it as a strong default, not a law.
 
+## Found by building it, not by reading
+
+Three things the notes above could not have predicted, all now fixed in
+`commerce-agent/` and recorded with their measurements in its `CLAUDE.md`.
+
+**A refused write can answer 200.** x-api declines an `addItem` by returning the mutation's
+normal payload with the reason in `validationErrors` — and that entry is **not** on a later
+`cart` read. A document that does not select it cannot tell a refusal from a success, and
+ours did not: the agent reported "added 3 packs" for a line that was never created. This is
+the general lesson, not a Virto quirk: for every write path, find the refusal channel and
+prove it, rather than assuming failure arrives as an error.
+
+**The search index is weaker than any design assumes.** No stemming, no synonyms, and
+category names are not indexed at all: `"soft drinks"` as query text returns 0 while the
+category of that name holds 17. It took three live failures to get right, and the fix that
+mattered was giving the model the catalogue's own vocabulary when it guesses a category
+name that does not exist — nothing in the store maps one word onto another, so no
+near-match list can bridge a synonym gap. Whether the index is simply under-configured is
+worth asking the platform team; the fixes are independent of the answer.
+
+**A blueprint field you need may not be serialized.** `Product.category` exists in the
+contract and `compact_product` drops it from search results, so the model could not learn a
+single real category name. Read the serializer, not only the type.
+
 ## Commercial
 
 **The marketing numbers are not ours.** 35% larger carts and 60% completion lift have no

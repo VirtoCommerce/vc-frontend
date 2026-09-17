@@ -16,14 +16,15 @@ already done, which makes the agreements worth as much as the gaps.
 > "Retailers running shopping agents on Claude have seen carts **up to 35% larger** and
 > shoppers **60% more likely to complete a purchase**."
 
-These are the only public figures Anthropic gives for business effect, and
-[09-recommendation.md](09-recommendation.md) has none. Treat them as vendor-reported and
-unaudited; they still belong in the case, attributed.
+These are the only public figures Anthropic gives for business effect.
+[09-risks-and-nuances.md](09-risks-and-nuances.md) already carries them with the right
+caveat — no published methodology, cite with attribution, never forecast with them — so
+what the announcement adds is the source, not the numbers.
 
 Named in the same post: Shopify, Priceline, Intuit, Klaviyo, Wix, Zomato, Fetch, Square as
 customers, and Accenture, Mastercard and Visa as ecosystem partners. Deployment is offered
 on Bedrock, Microsoft Foundry and Vertex as well as the Anthropic API — which bears on the
-open "whose key" question in [04-cost-model.md](04-cost-model.md): a customer's own cloud
+open "whose key" question in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md): a customer's own cloud
 account is a fourth answer we had not listed.
 
 **To verify, not to copy:** `commerce-agent/CLAUDE.md` records the repository as

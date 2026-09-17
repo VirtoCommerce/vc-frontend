@@ -55,19 +55,30 @@ Roughly ten of thirteen methods are a thin wrapper over an operation we already 
 is the headline finding: **the shopping agent is mostly plumbing against x-api, not new
 backend work.**
 
+> **Since verified by implementing it.** All thirteen methods now run over x-api in
+> `commerce-agent/virto_agent/backend.py`. The mapping below held: ten are thin wrappers,
+> the filter grammar works as written, and the gaps named here are exactly the two stubs
+> that remain. What the mapping did *not* predict is in
+> [09-risks-and-nuances.md](09-risks-and-nuances.md) under "Found by building it".
+
 ### The three gaps
 
 **`get_preferences`.** There is no `UserPreferences` object in x-api. Options, cheapest
 first: return an empty object and let the blueprint's own memory extraction carry
 preferences (it is designed to); or synthesise from wishlists, recently-browsed and the
 organisation's defaults; or add a real preferences store later. Start with the first —
-memory is the feature that actually fills this in.
+memory is the feature that actually fills this in. **Taken: the first.** The stub returns
+the bare principal and memory carries preferences; it works, and a remembered material
+preference survives a new session.
 
 **`search_policies`.** We have CMS pages but no full-text search across them. A returns or
 shipping question is exactly the query the blueprint forces a grounding read for, so
 stubbing it degrades a flow the agent is expected to be good at. Options: index a curated
 set of policy pages into a small local index in the agent service; or expose search over
-CMS content in x-api (bigger, and useful beyond this). Start curated.
+CMS content in x-api (bigger, and useful beyond this). Start curated. **Still a stub**, and
+it shows: `enable_policies` stays on deliberately, so a terms question forces the read, the
+tool answers "unavailable" and the agent says so rather than inventing a return window.
+Honest, and visibly thin — costed in [15-poc-estimate.md](15-poc-estimate.md).
 
 **`get_disclosure`.** Server-authored disclosure rows are a telecom/ticketing concern (fee
 disclosures). Leave the switch off; revisit only for a regulated vertical.
@@ -85,6 +96,14 @@ organisation, contract price missing, cart currency mismatch, coupon not applica
 well-defined work with an outsized effect on how the agent feels, and it belongs in the
 backend implementation rather than the prompt. `NotOffered` and `Unavailable` cover only the
 two cases the blueprint names; the rest are ours to enumerate.
+
+This turned out to be the most valuable paragraph in these notes, and understated. The
+real error surface was worse than "codes and field paths": x-api declines a cart write
+with **HTTP 200 and an empty cart**, the reason reachable only on the mutation payload.
+`virto_agent/cart_errors.py` is the translation layer this paragraph called for, and
+`VirtoShoppingExecutor.domain_error` maps the exceptions the blueprint does not know —
+including a category name the catalogue has no word for, which now returns the catalogue's
+own vocabulary instead of silence.
 
 ### Product shapes
 

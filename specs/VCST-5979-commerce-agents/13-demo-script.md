@@ -209,4 +209,11 @@ Turns 2, 4, 5 and 6 are proven **at the API level but not yet through a full con
 
 Two known roughnesses: a plural search that comes back empty is retried once with fuzzy
 matching, which adds a second or two; and the agent may take three tool rounds before it
-answers.
+answers. Both are now visible rather than silent — each tool call renders its own
+plain-language line while it runs, so a long turn shows what it is doing.
+
+Turn 1 was rebuilt on 2026-09-17. It failed live three times before the catalogue's search
+behaviour was understood: the agent guessed category names the store does not use and
+concluded it sold no drinks. Fixed in the backend and the prompt, with the measurements in
+`commerce-agent/CLAUDE.md`. Worth knowing before demoing, because the fix is itself a good
+story about what a deployment owns.

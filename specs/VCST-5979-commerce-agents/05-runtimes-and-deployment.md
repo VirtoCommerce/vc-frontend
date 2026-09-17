@@ -116,8 +116,9 @@ code — model usage is governed separately by Anthropic's commercial terms and 
 
 ### 2. Claude tokens — the only vendor line
 
-Per conversation, at the rates in the table above. Order of magnitude, **arithmetic rather
-than a measurement**, on the repo's Sonnet 5 default with a cached ~30k-token prefix:
+Per conversation, at the rates in the table above, on the repo's Sonnet 5 default with a
+cached ~30k-token prefix. The sketch below was arithmetic; it has since been **measured**,
+and the measurement follows it:
 
 | | Tokens | Rate | Cost |
 |---|---|---|---|
@@ -128,6 +129,19 @@ than a measurement**, on the repo's Sonnet 5 default with a cached ~30k-token pr
 
 A ten-turn conversation lands around **$0.15–0.30**. The first turn costs more because a
 cache write is billed at ~1.25×; memory extraction on Haiku is rounding error.
+
+**Measured, 2026-09-16**, on our own agent against the QA storefront: a six-case eval run
+cost **$0.0735** — about **1.5¢ per case** — reading 145k cached input tokens against 2.1k
+fresh, a cache hit rate near **98.5%**. The same run without prompt caching would be about
+4.6× more. A ten-turn conversation works out at roughly **$0.12**, so the arithmetic above
+was the right order and slightly pessimistic.
+
+Two things the measurement does not cover, both from
+[14-what-the-blog-says.md](14-what-the-blog-says.md). The prompt cache's default TTL is
+**five minutes**, and a buyer who pauses to think between turns pays a fresh cache write —
+so $0.12 is a floor, not an average, and a one-hour TTL (2× on write against 1.25×) is a
+measurement someone should make. And Anthropic's guidance is to choose model *and* effort
+by sweeping a whole eval suite; ours has six cases, which cannot decide it.
 
 The merchant agent costs several times more per turn (Opus, plus the analysis delegate) and
 has orders of magnitude fewer concurrent users. That asymmetry is the whole reason the

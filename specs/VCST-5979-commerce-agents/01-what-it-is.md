@@ -75,7 +75,10 @@ python scripts/run_demo.py retail     # API :8000 + storefront :3000
 ```
 
 `pip install` succeeded and `import shopping_agent, merchant_agent, commerce_common`
-works. Notable pins: `anthropic==0.122.0`, `claude-agent-sdk==0.2.139`, `mcp==1.29.0`,
+works. **The two Node lines above have not been run**: `npm ci` in `examples/` was blocked
+by the local permission classifier early in the spike and never revisited, so Anthropic's
+own demo apps have not been seen running. Worth doing — each app also serves `/showcase`,
+which renders every presentation component from fixtures with no backend and no API key. Notable pins: `anthropic==0.122.0`, `claude-agent-sdk==0.2.139`, `mcp==1.29.0`,
 `fastapi`, `uvicorn`, `pydantic`. The seven repo packages are deliberately unregistered on
 PyPI and install only from their directories — CI asserts that.
 
@@ -92,6 +95,10 @@ claude plugin install commerce-builder@claude-commerce-agents
 
 Also `/add-commerce-flow`, `/author-commerce-evals`, `/review-commerce-agent`. The plugin
 reads the cloned repo as its reference, so the clone has to stay on disk.
+
+Used in this spike: `/scaffold-commerce-agent` produced `commerce-agent/`, and
+`/author-commerce-evals` its `evals/`. `/review-commerce-agent` has not been tried, and is
+the obvious next use now that there is something to review.
 
 ## `.env` and keys
 

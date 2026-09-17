@@ -87,10 +87,20 @@ Merchant agent, 23 tools: the eight reads, five `stage_*` writes, `apply_change`
 
 ## What this means for us, concretely
 
-Three pieces of work, in dependency order:
+Three pieces of work, in dependency order. **All three were since written** — the estimates
+in each are left as they were, because comparing them with what it actually took is the
+useful part.
+
+> Built: `commerce-agent/virto_agent/` (1 and 2) and
+> `client-app/modules/commerce-agent/` (3), on branch
+> `spike/VCST-5979-commerce-agents`. Piece 1 was indeed the bulk and indeed ordinary
+> API-client work — until the error translations, which were larger and more important than
+> "plus" suggests ([09-risks-and-nuances.md](09-risks-and-nuances.md)). Piece 3 is two of
+> eight components so far; the claim that they are ordinary components fed ordinary props
+> held exactly.
 
 **1. A backend class.** `VirtoStorefrontBackend(StorefrontBackend)` — roughly thirteen
-methods over x-api ([07-virto-fit-technical.md](07-virto-fit-technical.md)), plus the error
+methods over x-api (it was exactly thirteen) ([07-virto-fit-technical.md](07-virto-fit-technical.md)), plus the error
 translations. This is the bulk of the integration and it is ordinary API-client work. Where
 our existing MCP server already exposes catalog, cart or checkout, a backend method can call
 it server-side instead of x-api directly, with the gates still in front

@@ -1,55 +1,89 @@
 # Open questions and next steps
 
-## Not verified yet
+Updated 2026-09-17, after the spike stopped reading and started building. What follows is
+the current state, not the original one: the section that used to say "nothing here comes
+from running the agent" is gone because that is no longer true.
 
-Everything in these notes comes from reading source, not from running the agent. These
-specifically would change if a demo run contradicted them:
+## Settled by building
 
-- **No live conversation has been run.** No `ANTHROPIC_API_KEY` in the environment, so
-  latency, cache behaviour and answer quality are all unobserved.
-- **The demo web apps are not installed.** `npm ci` in `examples/` was blocked by the local
-  permission classifier; the eight apps and the presentation components have not been seen
-  running.
-- **x-api field shapes.** Operation names were read from the theme's GraphQL folders. The
-  filter grammar of `searchProducts` versus the blueprint's `SearchFilters`, and whether
-  facets line up, are unchecked.
-- **Configurable products.** Whether a configuration id satisfies the cart provenance gate
-  is an open design question, not a known answer.
-- **Cost.** The sketch in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md) is
-  arithmetic, not a measurement.
+A working shopping agent now runs against the QA storefront — `commerce-agent/` (the
+service) and `client-app/modules/commerce-agent/` (the assistant page), about 9,500 lines
+on branch `spike/VCST-5979-commerce-agents`, draft PR
+[#2490](https://github.com/VirtoCommerce/vc-frontend/pull/2490). That answered five things
+reading could not:
 
-## Decisions that are not ours alone
+- **The contract holds.** All thirteen `StorefrontBackend` methods are implemented over
+  x-api; ten are thin wrappers, as [07-virto-fit-technical.md](07-virto-fit-technical.md)
+  predicted. Catalog, cart, orders, account and fulfillment are live; `get_preferences` and
+  `search_policies` are the two stubs, exactly the gaps that file named.
+- **The filter grammar works as written**: `price.usd:(10 TO 100)`, `category.subtree:`,
+  `productfamilyid:… is:product,variation`, sort ids. `SearchFilters` maps onto it without a
+  new backend method.
+- **Cost is measured, not arithmetic.** $0.0735 for a six-case eval run, ~1.5¢ a case, 145k
+  cached input reads against 2.1k fresh — about 98.5% cache hit. A ten-turn conversation is
+  roughly $0.12. Numbers and the caveat are in
+  [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md).
+- **The error surface is worse than a spec would suggest.** x-api declines a cart write with
+  **HTTP 200 and an empty cart**, the reason living only on the mutation payload. That is
+  the single most important implementation finding and it generalizes: every write path
+  needs its refusal channel checked, not assumed.
+- **Search needed real design work.** The store's text index has no stemming, no synonyms
+  and does not index category names, so "soft drinks" as text returns 0 against 17 in the
+  category of that name. Three live failures and three fixes, all recorded with their
+  measurements in `commerce-agent/CLAUDE.md`. Whether the QA index is simply
+  under-configured is a fair question for the platform team; the fixes do not depend on it.
 
-- **Python service vs. .NET port vs. patterns-only.** Platform architecture, not frontend.
-  Needs an owner.
-- **Whose track is this?** Frontend, platform, or a joint one — and how it sits alongside
-  the UCP epic (VCST-5201). Both answers are defensible; drifting between them is not.
-- **Shopping agent first, merchant agent later** — proposed here on the grounds that the
-  shopping agent is plumbing over existing x-api while the merchant agent needs an analytics
-  surface that does not exist. Worth confirming with whoever owns the platform roadmap.
-- **Is this productised or a reference?** A shipped module our merchants enable, versus a
-  blueprint partners fork. That choice changes almost everything downstream.
-- **Whose API key** — merchant brings their own, or we resell tokens. Decides whether abuse
-  handling, per-session budgets and rate limiting are ours to build before launch. Cost
-  model and trade-off table in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md).
+## Still not verified
 
-## Next steps for this spike
+- **The demo verticals have never been run.** `npm ci` in `examples/` was blocked early and
+  never revisited, so Anthropic's own storefront and merchant portal have not been seen
+  running. Cheap and still worth doing: each app serves `/showcase`, which renders every
+  presentation component from fixtures with no backend and no API key.
+- **`/review-commerce-agent`** — the plugin command that audits an existing agent — has not
+  been tried against what we built. It is the obvious next use of the plugin now that there
+  is something to review.
+- **`MerchantBackend` was never mapped.** The ticket asked for a lighter read-only pass and
+  the spike deferred it whole. The reasoning (no analytics source in the storefront API)
+  is in [07-virto-fit-technical.md](07-virto-fit-technical.md), but it is an argument, not a
+  method-by-method check.
+- **Answer quality is anecdotal.** Six eval cases against Anthropic's own suggestion of
+  50–100 per flow ([14-what-the-blog-says.md](14-what-the-blog-says.md)). Three search
+  failures were found by a person using it, not by the suite — which is the definition of
+  insufficient coverage.
+- **Configurable products.** Whether a configuration id can satisfy the cart provenance
+  gate is still an open design question; no configurable product appeared in the QA data
+  sampled.
+- **The demo script's own turns 2, 4, 5 and 6** are proven at API level only; the model has
+  not been in the loop for them ([13-demo-script.md](13-demo-script.md)).
 
-1. Install `examples/` and run `retail` and `travel` end to end; capture what the
-   presentation components actually look like and how a turn feels.
-2. Run the merchant portal: stage a price change, approve it, and confirm that an approval
-   typed in chat does nothing.
-3. Write a throwaway `StorefrontBackend` against the QA backend covering the four methods
-   that carry a demo — `search_products`, `get_product_details`, `get_cart`, `add_to_cart` —
-   and drive it from `smoke_chat.py`. This is the cheapest possible proof and it settles the
-   filter-grammar question.
-4. Try `/scaffold-commerce-agent` against our stack and see what it produces.
-5. Take the B2B bulk-reorder demo from [08-value-proposition.md](08-value-proposition.md) as
-   far as it will go; that is the artefact worth showing.
-6. Write up the effort estimate for a POC and bring the Python-vs-.NET decision to whoever
-   owns it.
+## Decisions that need an owner
 
-## Blocked on
+None of these are the frontend's to make alone, and all four are still open. They are the
+reason this spike is not closed.
 
-- `ANTHROPIC_API_KEY` for any live turn.
-- Permission to run `npm ci` in `examples/` (external code with install scripts).
+1. **Python service, .NET port, or patterns only.** The blueprint is Python and Virto is
+   .NET. Called out from the start as the real obstacle — not the contract — and still
+   unowned. Everything below depends on it.
+2. **Whose track**: frontend, platform, or joint, and how it sits beside the UCP epic
+   (VCST-5201). Both answers are defensible; drifting between them is not.
+3. **Product or reference**: a module our merchants enable, versus a blueprint partners
+   fork. Changes almost everything downstream, including whether the code in PR #2490 is
+   worth reviewing properly or is scaffolding to throw away.
+4. **Whose API key**: merchant brings their own, or we resell tokens. Decides whether
+   per-session budgets, abuse handling and rate limiting are ours to build before launch.
+   Trade-offs in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md); note that
+   Bedrock, Vertex and Foundry make "the customer's own cloud account" a fourth answer.
+
+**Shopping agent first, merchant agent second** is proposed here rather than decided — on
+the grounds that the shopping agent is plumbing over x-api we already ship while the
+merchant agent needs an analytics surface that does not exist. Worth confirming with
+whoever owns the platform roadmap.
+
+## What a decision needs next
+
+1. Take [15-poc-estimate.md](15-poc-estimate.md) to the four decisions above. It is the
+   deliverable the ticket asked for and the spike had not produced.
+2. Run Anthropic's `retail` demo and its `/showcase` page, then `/review-commerce-agent`
+   against ours. Half a day, closes the two cheap gaps above.
+3. Widen the eval suite before trusting any quality claim — the current six prove the
+   harness, not the agent.

@@ -19,9 +19,10 @@ Third-party commentary is marked as such.
 | [09-risks-and-nuances.md](09-risks-and-nuances.md) | Risks ordered by decision impact, and the details easy to miss |
 | [10-open-questions.md](10-open-questions.md) | What is unverified, what needs deciding, what happens next |
 | [11-webinar-slides.md](11-webinar-slides.md) | The three ways to build agentic commerce, the ownership boundary, the anatomy sequence, the proactive roadmap |
-| [12-anatomy-in-code.md](12-anatomy-in-code.md) | What a commerce agent actually is: the parts, one turn end to end, and the three pieces we would write |
+| [12-anatomy-in-code.md](12-anatomy-in-code.md) | What a commerce agent actually is: the parts, one turn end to end, and the three pieces we wrote |
 | [13-demo-script.md](13-demo-script.md) | The demo of what is built: the turns to type, what each proves, and what not to show |
 | [14-what-the-blog-says.md](14-what-the-blog-says.md) | Anthropic's three blog posts against what we built: what they confirm, what we are missing, what it costs |
+| [15-poc-estimate.md](15-poc-estimate.md) | What a POC would cost: what the spike already paid for, what remains, and what .NET would add |
 
 ## One paragraph
 
@@ -46,7 +47,17 @@ The genuine obstacle is not the contract, it is that the blueprint is Python and
 
 ## Status
 
-Cloned to `~/vc/commerce-agents`, Python side installed and importing. The demo web apps
-are not installed (`npm ci` pending) and no live conversation has been run (no
-`ANTHROPIC_API_KEY`). Nothing here depends on running the demos; what would change is
-listed in [10-open-questions.md](10-open-questions.md).
+Updated 2026-09-17. The spike went past reading: a shopping agent now runs against the QA
+storefront, in this repo, from the theme's own assistant page — `commerce-agent/` and
+`client-app/modules/commerce-agent/`, about 9,500 lines on branch
+`spike/VCST-5979-commerce-agents`, draft PR
+[#2490](https://github.com/VirtoCommerce/vc-frontend/pull/2490). All thirteen backend
+methods are live over x-api, cost is measured rather than modelled, and the design record
+with every measurement behind it is `commerce-agent/CLAUDE.md`.
+
+What that settled, what it did not, and the four decisions still without an owner are in
+[10-open-questions.md](10-open-questions.md); what a POC would cost is in
+[15-poc-estimate.md](15-poc-estimate.md).
+
+Still unrun: Anthropic's own demo verticals (`npm ci` in `examples/` was blocked early and
+never revisited) and `/review-commerce-agent` against what we built.
