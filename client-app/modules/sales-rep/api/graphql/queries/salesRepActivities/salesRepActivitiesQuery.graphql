@@ -18,6 +18,7 @@ query SalesRepActivities(
     take: $take
     skip: $skip
   ) {
+    isAnalyticsAvailable
     totalCount
     categoryCounts @include(if: $withCategoryCounts) {
       category

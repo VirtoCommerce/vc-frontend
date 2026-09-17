@@ -40,8 +40,9 @@ function activityEvent(overrides: Partial<ActivityEventType> = {}): ActivityEven
 function connection(
   items: ActivityEventType[],
   categoryCounts: { category: string; count: number }[] = [],
+  isAnalyticsAvailable = true,
 ): SalesRepActivitiesQuery {
-  return { salesRepActivities: { totalCount: items.length, categoryCounts, items } };
+  return { salesRepActivities: { isAnalyticsAvailable, totalCount: items.length, categoryCounts, items } };
 }
 
 describe("useSalesRepActivities", () => {
@@ -93,6 +94,7 @@ describe("useSalesRepActivities", () => {
   it("exposes categoryCounts and totalCount for the tabs", () => {
     queryMock.result.value = {
       salesRepActivities: {
+        isAnalyticsAvailable: true,
         totalCount: 7,
         categoryCounts: [
           { category: "orders", count: 7 },
@@ -109,6 +111,20 @@ describe("useSalesRepActivities", () => {
       { category: "orders", count: 7 },
       { category: "logins", count: 0 },
     ]);
+  });
+
+  // Only an explicit false counts. A response that has not arrived, and a null field, must not report
+  // "unavailable" — the surfaces render a different empty state on it, and a wrong one is the same
+  // confident claim in reverse.
+  it("reports analytics unavailable only on an explicit false", () => {
+    queryMock.result.value = undefined;
+    expect(useSalesRepActivities().analyticsUnavailable.value).toBe(false);
+
+    queryMock.result.value = connection([], [], false);
+    expect(useSalesRepActivities().analyticsUnavailable.value).toBe(true);
+
+    queryMock.result.value = connection([activityEvent()]);
+    expect(useSalesRepActivities().analyticsUnavailable.value).toBe(false);
   });
 
   // A null field (unauthorized org / analytics off) settles to empty data, never a crash or an error state.

@@ -24,6 +24,7 @@ const state = await vi.hoisted(async () => {
     items: ref<Partial<SalesRepActivityItemType>[]>([]),
     categoryCounts: ref<SalesRepActivityCategoryCountType[]>([]),
     totalCount: ref(0),
+    analyticsUnavailable: ref(false),
     loading: ref(false),
     error: ref<Error | null>(null),
   };
@@ -57,6 +58,8 @@ const counts = await vi.hoisted(async () => {
     // Category-unfiltered, so this IS the "All" figure — kept apart from the rows request's own
     // totalCount, which is category-scoped once a tab filters it.
     totalCount: ref(0),
+    // The badges read this one: the two requests can disagree, and the tab row follows the counts.
+    analyticsUnavailable: ref(false),
     loading: ref(false),
   };
 });
@@ -77,6 +80,7 @@ vi.mock("../composables/useSalesRepActivities", () => ({
           items: state.items,
           categoryCounts: state.categoryCounts,
           totalCount: state.totalCount,
+          analyticsUnavailable: state.analyticsUnavailable,
           loading: state.loading,
           error: state.error,
         }
@@ -84,6 +88,7 @@ vi.mock("../composables/useSalesRepActivities", () => ({
           items: state.items,
           categoryCounts: counts.categoryCounts,
           totalCount: counts.totalCount,
+          analyticsUnavailable: counts.analyticsUnavailable,
           loading: counts.loading,
           error: state.error,
         };
@@ -256,8 +261,10 @@ beforeEach(() => {
   state.items.value = [];
   state.categoryCounts.value = [];
   state.totalCount.value = 0;
+  state.analyticsUnavailable.value = false;
   counts.categoryCounts.value = [];
   counts.totalCount.value = 0;
+  counts.analyticsUnavailable.value = false;
   counts.loading.value = false;
   customerState.loading.value = true;
   customerState.failed.value = false;
@@ -444,6 +451,49 @@ describe("Activities page", () => {
     const rules = findChips(wrapper)[0].props("rules") as SalesRepRuleType[];
     expect(rules[0].label).toContain("(7)");
     expect(findChips(wrapper)[0].props("allLabel")).toContain("(7)");
+  });
+
+  // Defect 8: the feed never selected isAnalyticsAvailable, so a source that did not answer produced the
+  // same wording as a genuinely quiet period — a confident "nothing happened" over an absence of
+  // measurement. Top mode had the state all along; the feed did not.
+  it("names the unavailable state on the feed, not a quiet period", async () => {
+    const wrapper = createWrapper();
+
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty_period");
+
+    state.analyticsUnavailable.value = true;
+    await nextTick();
+
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.customer_insights.analytics_unavailable");
+  });
+
+  // Orders come from the database, so an unreadable analytics source says nothing about an empty orders
+  // tab — blaming analytics there would be the same error in the other direction.
+  it("leaves the database tabs' own empty wording alone when analytics is unavailable", async () => {
+    state.analyticsUnavailable.value = true;
+
+    const wrapper = createWrapper();
+    await openTab(wrapper, "orders");
+
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.no_results");
+  });
+
+  // The badges sit in the tab row, away from the empty view, so a literal "(0)" on a tracked tab is read
+  // as a measured zero by a rep looking at another tab.
+  it("drops the figure from tracked badges when analytics is unavailable", () => {
+    counts.categoryCounts.value = [
+      { category: "orders", count: 7 },
+      { category: "searches", count: 0 },
+    ];
+    counts.analyticsUnavailable.value = true;
+
+    const wrapper = createWrapper();
+    const rules = findChips(wrapper)[0].props("rules") as SalesRepRuleType[];
+
+    expect(rules[0].label).toContain("(7)"); // orders — database-sourced, still a measurement
+    expect(rules[2].label).toContain("(–)"); // searches
+    expect(rules[3].label).toContain("(–)"); // productViews
+    expect(rules[4].label).toContain("(–)"); // logins
   });
 
   // A period-scoped feed names the tracked window; clearing the chip widens it back to lifetime,

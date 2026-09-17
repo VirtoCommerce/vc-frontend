@@ -14,12 +14,9 @@
              rows on a failed refetch, which would otherwise read as current activity (VCST-5586). -->
         <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.activity.load_failed')" variant="error" />
 
-        <!-- Analytics absence is zero rows by contract, not an error — same view as "quiet week". -->
-        <VcEmptyView
-          v-else-if="!items.length && !loading"
-          :text="t('sales_rep.activity.empty_period')"
-          icon="activity"
-        />
+        <!-- Analytics absence is zero rows by contract, not an error. The feed here is mixed, so an empty
+             one on a store whose analytics did not answer is not a quiet week — the flag says which. -->
+        <VcEmptyView v-else-if="!items.length && !loading" :text="emptyText" icon="activity" />
 
         <!-- Same first-load skeleton as the insights widgets — the GA-backed query can run for seconds. -->
         <div v-else-if="loading && !items.length" class="my-activity__skeletons" aria-hidden="true">
@@ -47,7 +44,16 @@ const { t } = useI18n();
 // Latest few events across ALL assigned accounts — deliberately no organizationId, even on a scoped
 // surface; the full feed lives on the Activities page.
 // No badges here, so none are selected — the widget waits for its own rows and nothing else.
-const { items, loading, error } = useSalesRepActivities({ take: MY_ACTIVITY_TAKE, withCategoryCounts: false });
+const { items, loading, error, analyticsUnavailable } = useSalesRepActivities({
+  take: MY_ACTIVITY_TAKE,
+  withCategoryCounts: false,
+});
+
+const emptyText = computed(() =>
+  analyticsUnavailable.value
+    ? t("sales_rep.customer_insights.analytics_unavailable")
+    : t("sales_rep.activity.empty_period"),
+);
 
 // As many skeleton rows as the widget will show, so the height holds when data arrives.
 const skeletonRows = MY_ACTIVITY_TAKE;

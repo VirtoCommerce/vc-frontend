@@ -8,13 +8,19 @@ const state = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return {
     items: ref<Partial<SalesRepActivityItemType>[]>([]),
+    analyticsUnavailable: ref(false),
     loading: ref(false),
     error: ref<Error | null>(null),
   };
 });
 
 vi.mock("../composables/useSalesRepActivities", () => ({
-  useSalesRepActivities: () => ({ items: state.items, loading: state.loading, error: state.error }),
+  useSalesRepActivities: () => ({
+    items: state.items,
+    analyticsUnavailable: state.analyticsUnavailable,
+    loading: state.loading,
+    error: state.error,
+  }),
 }));
 
 const createWrapper = createWrapperFactory(mount, MyActivity, {
@@ -35,6 +41,7 @@ const emptyViews = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAl
 
 beforeEach(() => {
   state.items.value = [];
+  state.analyticsUnavailable.value = false;
   state.loading.value = false;
   state.error.value = null;
 });
@@ -50,6 +57,19 @@ describe("MyActivity states", () => {
     expect(views[0].attributes("text")).toBe("sales_rep.activity.empty_period");
     // The all-activity link stays alongside the empty state.
     expect(wrapper.find("vc-link-stub").exists()).toBe(true);
+  });
+
+  // Defect 8: the widget's feed is mixed, so an empty one on a store whose analytics did not answer is
+  // not a quiet week — it is a week with the tracked half missing.
+  it("names the unavailable state rather than a quiet period", () => {
+    state.analyticsUnavailable.value = true;
+
+    const wrapper = createWrapper();
+    const views = emptyViews(wrapper);
+
+    expect(views).toHaveLength(1);
+    expect(views[0].attributes("variant")).toBeUndefined(); // still not an error
+    expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.analytics_unavailable");
   });
 
   // The GA-backed query can run for seconds on a cold read — a blank card reads as broken.

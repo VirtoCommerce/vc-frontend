@@ -229,7 +229,7 @@ watch(category, () => {
 
 // The rows of the selected tab, and nothing else: without categoryCounts selected the backend reads
 // only the category being shown, so a database-backed tab (Orders, Customers) never waits on Google.
-const { items, totalCount, loading, error } = useSalesRepActivities({
+const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepActivities({
   organizationId: () => props.organizationId,
   categories: () => (category.value ? [category.value] : undefined),
   periodFrom,
@@ -246,6 +246,7 @@ const {
   categoryCounts,
   totalCount: countsTotal,
   loading: countsLoading,
+  analyticsUnavailable: countsAnalyticsUnavailable,
 } = useSalesRepActivities({
   organizationId: () => props.organizationId,
   periodFrom,
@@ -268,12 +269,22 @@ const allCount = computed(() => countsTotal.value);
 // then jumps.
 const countsPending = computed(() => countsLoading.value && !categoryCounts.value.length);
 
+// A tracked tab carries an en dash rather than a figure when analytics did not answer: the badges sit in
+// the tab row, away from the empty view's wording, so a literal “(0)” there is read as “they searched
+// nothing” by a rep who is looking at another tab. Orders and Customers come from the database and keep
+// their counts. “All” keeps its figure too — it still holds real rows, though it undercounts.
+const UNMEASURED_BADGE = "–";
+const badgeFor = (name: string) =>
+  countsAnalyticsUnavailable.value && TRACKED_ACTIVITY_CATEGORIES.has(name)
+    ? UNMEASURED_BADGE
+    : formatStatCount(countOf(name));
+
 // Fixed vocabulary + counts. Zero-count categories keep their tab by design — a rep must see that a
 // category exists and is quiet, not wonder where it went.
 const categoryRules = computed<SalesRepRuleType[]>(() =>
   ACTIVITY_CATEGORIES.map((name) => {
     const label = t(`sales_rep.activity.tabs.${name}`);
-    return { name, label: countsPending.value ? label : `${label} (${formatStatCount(countOf(name))})` };
+    return { name, label: countsPending.value ? label : `${label} (${badgeFor(name)})` };
   }),
 );
 
@@ -345,6 +356,9 @@ const failedText = computed(() => {
     : t("sales_rep.customer_insights.browse_history.load_failed");
 });
 
+// The caveat concerns tracked (GA-sourced) rows, so it shows for those tabs and for the mixed "All" view.
+const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES.has(category.value));
+
 // A category tab narrows the wording; the tracked-period phrasing covers the period-scoped feed.
 // Top mode reuses the customer panels' "No tracked …" family, plus their unavailable state — which the
 // backend now reports through isAnalyticsAvailable rather than by nulling the payload.
@@ -356,6 +370,12 @@ const emptyText = computed(() => {
     return onSearchesTab.value
       ? t("sales_rep.customer_insights.search_history.empty")
       : t("sales_rep.customer_insights.browse_history.empty");
+  }
+  // The feed mode reaches the same two causes as Top: an empty tracked tab is either a quiet period or a
+  // source that never answered, and only the flag separates them. showCaveat is the same GA-sourced scope,
+  // so the Orders and Customers tabs keep their own wording.
+  if (analyticsUnavailable.value && showCaveat.value) {
+    return t("sales_rep.customer_insights.analytics_unavailable");
   }
   if (category.value) {
     return t("sales_rep.activity.no_results");
@@ -380,9 +400,6 @@ watch(pages, (total) => {
     page.value = total;
   }
 });
-
-// The caveat concerns tracked (GA-sourced) rows, so it shows for those tabs and for the mixed "All" view.
-const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES.has(category.value));
 
 // The scoped customer's name — resolved only when the query param narrows the feed.
 const {

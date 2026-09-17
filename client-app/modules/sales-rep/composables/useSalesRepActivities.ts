@@ -81,5 +81,9 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
 
   const totalCount = computed(() => result.value?.salesRepActivities?.totalCount ?? 0);
 
-  return { items, categoryCounts, totalCount, loading, error };
+  // Costs no extra work to select: it describes the sources that ran, it does not make any run. Only an
+  // explicit false counts, so nothing claims “unavailable” before the first response lands.
+  const analyticsUnavailable = computed(() => result.value?.salesRepActivities?.isAnalyticsAvailable === false);
+
+  return { items, categoryCounts, totalCount, analyticsUnavailable, loading, error };
 }
