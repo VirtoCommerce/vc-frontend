@@ -1,6 +1,6 @@
 import { mount, shallowMount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { h, nextTick } from "vue";
+import { h, nextTick, ref } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import VcTableColumn from "./vc-table-column.vue";
@@ -745,10 +745,20 @@ async function mountSelectable(options: {
   desktopItemSlot?: boolean;
   mobileItemSlot?: boolean;
   desktopBodySlot?: boolean;
+  headerSlot?: "with-selection" | "without-selection" | "no-cells";
+  fixedStartColumn?: boolean;
+  stickyHeader?: boolean;
+  maxHeight?: string;
   loading?: boolean;
   error?: boolean;
 }) {
   const props: Record<string, unknown> = { items: options.items ?? items };
+  if (options.stickyHeader !== undefined) {
+    props.stickyHeader = options.stickyHeader;
+  }
+  if (options.maxHeight !== undefined) {
+    props.maxHeight = options.maxHeight;
+  }
   if (options.selectionMode !== undefined) {
     props.selectionMode = options.selectionMode;
   }
@@ -771,7 +781,7 @@ async function mountSelectable(options: {
     default: () =>
       h(
         VcTableColumn,
-        { id: "name", title: "Name" },
+        { id: "name", title: "Name", fixed: options.fixedStartColumn ? "start" : undefined },
         options.desktopItemSlot || options.desktopBodySlot
           ? {}
           : { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
@@ -794,6 +804,44 @@ async function mountSelectable(options: {
           String(scope.item.name ?? ""),
         ),
       ]);
+  }
+
+  // Custom header, with or without the leading selection cell the body still renders.
+  if (options.headerSlot) {
+    const keepsSelectionCell = options.headerSlot === "with-selection";
+
+    slots.header = (scope: VcTableHeaderSlotScopeType) => {
+      const headAttrs = { ...scope.headAttrs, class: [scope.headAttrs.class, "custom-head"] };
+
+      if (options.headerSlot === "no-cells") {
+        return h("thead", headAttrs);
+      }
+
+      return h("thead", headAttrs, [
+        h("tr", [
+          ...(keepsSelectionCell && scope.showSelectionColumn
+            ? [
+                h("th", { scope: "col", ...scope.selectionColumnAttrs }, [
+                  // The built-in header shows a select-all only in `multiple`; mirror that,
+                  // sr-only label included — an empty cell has no accessible name.
+                  ...(scope.selectionMode === "multiple"
+                    ? [
+                        h("button", {
+                          class: "custom-select-all",
+                          "data-checked": String(scope.isAllSelected),
+                          "data-indeterminate": String(scope.isSomeSelected),
+                          "data-disabled": String(!scope.canSelectAll),
+                          onClick: () => scope.toggleSelectAll(),
+                        }),
+                      ]
+                    : [h("span", { class: "sr-only" }, "Row selection")]),
+                ]),
+              ]
+            : []),
+          h("th", { class: "custom-head__title" }, "Name"),
+        ]),
+      ]);
+    };
   }
 
   if (options.mobileItemSlot) {
@@ -1900,6 +1948,973 @@ describe("selection column gating — DEV warning", () => {
     await mountSelectable({ selectionMode: "multiple", selection: [] });
 
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("#header slot — selection scope", () => {
+  it("keeps header and body aligned when the custom header renders the selection cell", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+    });
+
+    expect(wrapper.findAll("thead th")).toHaveLength(2);
+    wrapper.findAll("tbody .vc-table__row").forEach((row) => {
+      expect(row.findAll("td")).toHaveLength(2);
+    });
+  });
+
+  it("gives the custom selection cell the same class and width as the built-in one", async () => {
+    const custom = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+    });
+    const builtIn = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const customCell = custom.find("thead th.vc-table__selection-cell");
+    const builtInCell = builtIn.find("thead th.vc-table__selection-cell");
+
+    expect(customCell.exists()).toBe(true);
+    expect(builtInCell.exists()).toBe(true);
+    expect(customCell.classes()).toContain("vc-table__title");
+    expect(customCell.attributes("style")).toContain("width: 3rem");
+    expect(new Set(customCell.classes())).toEqual(new Set(builtInCell.classes()));
+    expect(customCell.attributes("style")).toBe(builtInCell.attributes("style"));
+  });
+
+  it("reports select-all state through the scope", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: ["1"],
+      headerSlot: "with-selection",
+    });
+
+    const selectAll = wrapper.find(".custom-select-all");
+    expect(selectAll.attributes("data-checked")).toBe("false");
+    expect(selectAll.attributes("data-indeterminate")).toBe("true");
+
+    await wrapper.setProps({ selection: ["1", "2", "3"] });
+
+    expect(wrapper.find(".custom-select-all").attributes("data-checked")).toBe("true");
+    expect(wrapper.find(".custom-select-all").attributes("data-indeterminate")).toBe("false");
+  });
+
+  it("selects every selectable row through the scope's toggleSelectAll", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+    });
+
+    await wrapper.find(".custom-select-all").trigger("click");
+
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1", "2", "3"]);
+    expect(wrapper.emitted("selectionChange")?.[0][2]).toEqual({ action: "select-all" });
+  });
+
+  it("reports canSelectAll as false when no row is selectable", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      isRowSelectable: () => false,
+      headerSlot: "with-selection",
+    });
+
+    expect(wrapper.find(".custom-select-all").attributes("data-disabled")).toBe("true");
+  });
+
+  it("passes the sticky selection-cell attributes through the scope, like the default header", async () => {
+    const custom = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+      fixedStartColumn: true,
+    });
+    const builtIn = await mountSelectable({ selectionMode: "multiple", selection: [], fixedStartColumn: true });
+
+    const customCell = custom.find("thead th.vc-table__selection-cell");
+    const builtInCell = builtIn.find("thead th.vc-table__selection-cell");
+
+    expect(customCell.classes()).toContain("vc-table__title--fixed");
+    expect(customCell.attributes("style")).toContain("position: sticky");
+    expect(new Set(customCell.classes())).toEqual(new Set(builtInCell.classes()));
+    expect(customCell.attributes("style")).toBe(builtInCell.attributes("style"));
+  });
+
+  it("passes the sticky head classes through the scope, like the default thead", async () => {
+    const custom = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+      stickyHeader: true,
+    });
+    const builtIn = await mountSelectable({ selectionMode: "multiple", selection: [], stickyHeader: true });
+
+    const customHead = custom.find("thead.custom-head");
+    const builtInHead = builtIn.find("thead.vc-table__head");
+
+    expect(customHead.classes()).toContain("vc-table__head--sticky");
+    expect(new Set(customHead.classes().filter((name) => name !== "custom-head"))).toEqual(
+      new Set(builtInHead.classes()),
+    );
+  });
+
+  it("turns the sticky head modifier on for maxHeight alone, without stickyHeader", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+      maxHeight: "200px",
+    });
+
+    expect(wrapper.find("thead.custom-head").classes()).toContain("vc-table__head--sticky");
+  });
+
+  it("leaves the sticky head modifier off when the table is not sticky", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+    });
+
+    const head = wrapper.find("thead.custom-head");
+
+    expect(head.classes()).toContain("vc-table__head");
+    expect(head.classes()).not.toContain("vc-table__head--sticky");
+  });
+
+  it("reports showSelectionColumn as false when selection is off", async () => {
+    const wrapper = await mountSelectable({ headerSlot: "with-selection" });
+
+    expect(wrapper.find(".custom-select-all").exists()).toBe(false);
+    expect(wrapper.findAll("thead th")).toHaveLength(1);
+    wrapper.findAll("tbody .vc-table__row").forEach((row) => {
+      expect(row.findAll("td")).toHaveLength(1);
+    });
+  });
+
+  it("keeps the selection cell in single mode, where there is no select-all", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "single",
+      selection: [],
+      headerSlot: "with-selection",
+    });
+
+    const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
+
+    expect(selectionCell.exists()).toBe(true);
+    expect(wrapper.find(".custom-select-all").exists()).toBe(false);
+    expect(wrapper.findAll("thead th")).toHaveLength(2);
+    wrapper.findAll("tbody .vc-table__row").forEach((row) => {
+      expect(row.findAll("td")).toHaveLength(2);
+    });
+  });
+});
+
+describe("built-in header — sticky modifier", () => {
+  it.each([
+    [{}, false],
+    [{ stickyHeader: true }, true],
+    [{ maxHeight: "220px" }, true],
+    [{ stickyHeader: true, maxHeight: "220px" }, true],
+  ])("renders the modifier %o -> %s", async (props, expected) => {
+    const wrapper = await mountSelectable(props);
+
+    expect(wrapper.find("thead.vc-table__head").classes().includes("vc-table__head--sticky")).toBe(expected);
+  });
+});
+
+describe("built-in header — selection cell accessible name", () => {
+  it("labels the single-mode selection cell, where there is no select-all checkbox", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: [] });
+
+    const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
+
+    expect(selectionCell.find(".checkbox-stub").exists()).toBe(false);
+    // The docs tell consumers to mirror this, so an empty cell here would make them wrong.
+    expect(selectionCell.find(".sr-only").text()).toBe("ui_kit.table.selection_column");
+  });
+
+  it("labels the multiple-mode selection cell through the checkbox instead", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
+
+    expect(selectionCell.find(".sr-only").exists()).toBe(false);
+    expect(selectionCell.find(".checkbox-stub").attributes("aria-label")).toBe("ui_kit.table.select_all");
+  });
+});
+
+// Mount with a header slot that just captures the scope, so the exposed `toggleSelectAll`
+// can be called directly in modes that render no control.
+async function mountCapturingHeaderScope(
+  selectionMode?: VcTableSelectionModeType,
+  extraProps?: Record<string, unknown>,
+) {
+  let scope: VcTableHeaderSlotScopeType | undefined;
+  const props: Record<string, unknown> = { items, selection: [], ...extraProps };
+
+  if (selectionMode !== undefined) {
+    props.selectionMode = selectionMode;
+  }
+
+  const wrapper = mount(VcTable, {
+    props,
+    slots: {
+      default: () =>
+        h(
+          VcTableColumn,
+          { id: "name", title: "Name" },
+          { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+        ),
+      header: (headerScope: VcTableHeaderSlotScopeType) => {
+        scope = headerScope;
+        return h("thead", [h("tr", [h("th"), h("th")])]);
+      },
+    },
+    global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+  });
+
+  await nextTick();
+  await nextTick();
+
+  // Throwing beats optional chaining: a scope that was never captured would otherwise
+  // turn every assertion below into a silent pass.
+  return {
+    wrapper,
+    getScope: () => {
+      if (!scope) {
+        throw new Error("#header slot scope was not captured");
+      }
+      return scope;
+    },
+  };
+}
+
+describe("toggleSelectAll — mode guard", () => {
+  it("is a no-op in single mode, so a custom header cannot bulk-select", async () => {
+    const { wrapper, getScope } = await mountCapturingHeaderScope("single");
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+    expect(wrapper.emitted("selectionChange")).toBeUndefined();
+  });
+
+  it("is a no-op when selection is disabled", async () => {
+    const { wrapper, getScope } = await mountCapturingHeaderScope();
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+  });
+
+  it("still selects every selectable row in multiple mode", async () => {
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple");
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1", "2", "3"]);
+  });
+});
+
+describe("toggleSelectAll — commit gating", () => {
+  it("emits nothing when no row on the page is selectable, however often it is called", async () => {
+    // Stuck keys stay in `selection` (deselect must never be trapped) and `isAllSelected`
+    // is false, so every call used to re-emit an unchanged `select-all` carrying those rows.
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple", {
+      selection: ["1", "2"],
+      isRowSelectable: () => false,
+    });
+
+    getScope().toggleSelectAll();
+    getScope().toggleSelectAll();
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+    expect(wrapper.emitted("selectionChange")).toBeUndefined();
+  });
+
+  it("still commits when at least one selectable row is missing from the selection", async () => {
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple", { selection: ["1"] });
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1", "2", "3"]);
+  });
+
+  it("does not repeat a key when two rows carry the same id", async () => {
+    // Duplicate ids are the collision `getItemKey` cannot resolve, so the Set still earns its
+    // keep: a repeated key would cost an extra click (toggleRow splices one occurrence).
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple", {
+      items: [
+        { id: "1", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+    });
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1"]);
+  });
+
+  it("keys a row without an id apart from a real id that matches its index", async () => {
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple", {
+      items: [{ id: "1", name: "Alice" }, { name: "Bob" }],
+    });
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1", "__row_1"]);
+  });
+});
+
+describe("row selection — id-less rows", () => {
+  // `getItemKey` used to fall back to the bare index, so `{ id: "1" }` and an id-less sibling
+  // at index 1 shared the key "1" and selected each other on a plain click.
+  const collidingItems: VcTableItemType[] = [{ id: "1", name: "Alice" }, { name: "Bob" }];
+
+  it("selects only the clicked row, not the one whose id matches its index", async () => {
+    const wrapper = await mountSelectable({ items: collidingItems, selectionMode: "multiple", selection: [] });
+
+    const rowCheckboxes = wrapper.findAll("tbody .checkbox-stub");
+    await rowCheckboxes[1].trigger("click");
+
+    const emittedKeys = wrapper.emitted("update:selection")?.[0][0] as string[];
+    expect(emittedKeys).toEqual(["__row_1"]);
+
+    await wrapper.setProps({ selection: emittedKeys });
+    await nextTick();
+
+    const selectedFlags = wrapper
+      .findAll(".vc-table__row")
+      .map((row) => row.classes().includes("vc-table__row--selected"));
+    expect(selectedFlags).toEqual([false, true]);
+  });
+});
+
+describe("#header slot — scope object shape", () => {
+  it("exposes both class fields as strings, so a render-function merge concatenates cleanly", async () => {
+    let scope: VcTableHeaderSlotScopeType | undefined;
+
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [], stickyHeader: true },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: (headerScope: VcTableHeaderSlotScopeType) => {
+          scope = headerScope;
+          return h("thead", { class: `${headerScope.headAttrs.class} custom-head` }, [
+            h("tr", [
+              h("th", {
+                ...headerScope.selectionColumnAttrs,
+                class: `${headerScope.selectionColumnAttrs.class} custom-selection`,
+              }),
+              h("th", "Name"),
+            ]),
+          ]);
+        },
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(typeof scope?.headAttrs.class).toBe("string");
+    expect(typeof scope?.selectionColumnAttrs.class).toBe("string");
+
+    // An array class would land here as "…,[object Object]" instead of the two class names.
+    expect(new Set(wrapper.find("thead").classes())).toEqual(
+      new Set(["custom-head", "vc-table__head", "vc-table__head--sticky"]),
+    );
+    expect(new Set(wrapper.find("thead th").classes())).toEqual(
+      new Set(["custom-selection", "vc-table__selection-cell", "vc-table__title"]),
+    );
+  });
+
+  it("hands out a copy of the selection-cell style, so mutating it cannot restyle the body", async () => {
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple");
+
+    const bodyCellStyle = () => wrapper.find("tbody td.vc-table__selection-cell").attributes("style");
+
+    expect(bodyCellStyle()).toContain("width: 3rem");
+
+    Object.assign(getScope().selectionColumnAttrs.style, { width: "9rem" });
+    await wrapper.setProps({ selection: ["1"] });
+
+    expect(bodyCellStyle()).toContain("width: 3rem");
+    expect(bodyCellStyle()).not.toContain("9rem");
+  });
+});
+
+describe("#header slot — DEV warning", () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    vi.stubEnv("DEV", true);
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+    vi.unstubAllEnvs();
+  });
+
+  it("warns when the custom header drops the selection cell the body keeps", async () => {
+    await mountSelectable({ selectionMode: "multiple", selection: [], headerSlot: "without-selection" });
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("does not warn when the custom header renders the selection cell", async () => {
+    await mountSelectable({ selectionMode: "multiple", selection: [], headerSlot: "with-selection" });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not warn for a custom header without selection", async () => {
+    await mountSelectable({ headerSlot: "without-selection" });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("warns when the custom header renders bare rows without a <thead>", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        // These land as direct `<table>` children; no `<thead>` is created for them.
+        header: () => h("tr", [h("th", "Name")]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/<thead>/);
+
+    wrapper.unmount();
+  });
+
+  it("falls back to the built-in thead when the header slot renders nothing", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => null,
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    // Not the guard: an empty slot renders the default `<thead>`, so there is nothing to warn about.
+    expect(wrapper.find("table.vc-table__desktop > thead.vc-table__head").exists()).toBe(true);
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+
+  it("warns for a header that renders a non-row element instead of a thead", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => h("div", "Name"),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/<thead>/);
+
+    wrapper.unmount();
+  });
+
+  it("does not warn when the table renders neither a thead nor a bare row", async () => {
+    // No column slots, so the empty header slot has no default `<thead>` to fall back to and the
+    // table comes out childless — the only shape that actually reaches the bare-row guard.
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: { header: () => null },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    const table = wrapper.find("table.vc-table__desktop").element;
+    expect(table.querySelector(":scope > thead")).toBeNull();
+    expect(table.querySelector(":scope > tr")).toBeNull();
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+
+  it("warns once about a missing thead, however many times the table re-renders", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => h("tr", [h("th", "Name")]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    await wrapper.setProps({ bordered: true });
+    await nextTick();
+    await wrapper.setProps({ bordered: false });
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    wrapper.unmount();
+  });
+
+  it("does not warn for a header that renders no cells at all", async () => {
+    await mountSelectable({ selectionMode: "multiple", selection: [], headerSlot: "no-cells" });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not warn for a hand-written selection cell that keeps the counts aligned", async () => {
+    mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        // No `selectionColumnAttrs` spread — alignment is judged by cell count, not by a marker.
+        header: () => h("thead", [h("tr", [h("th", { class: "hand-written-selection" }), h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not warn for a grouped header whose selection cell spans both rows", async () => {
+    mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () =>
+          h("thead", [
+            h("tr", [h("th", { rowspan: 2, class: "grouped-selection" }), h("th", "Group")]),
+            h("tr", [h("th", "Name")]),
+          ]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("warns for a grouped header that drops the selection cell", async () => {
+    mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => h("thead", [h("tr", [h("th", "Group")]), h("tr", [h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("does not warn for #desktop-item rows, which carry no injected selection cell", async () => {
+    await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      desktopItemSlot: true,
+      headerSlot: "without-selection",
+    });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("warns when selection is enabled after mount", async () => {
+    const wrapper = await mountSelectable({ selection: [], headerSlot: "without-selection" });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    await wrapper.setProps({ selectionMode: "multiple" });
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("warns only once across re-renders", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "without-selection",
+    });
+
+    // `loading` is a watch source, so these re-run the check rather than skipping it.
+    await wrapper.setProps({ loading: true });
+    await wrapper.setProps({ loading: false });
+    await wrapper.setProps({ selection: ["1"] });
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("warns when a column is added after mount, leaving the header one cell short", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, columns: [{ id: "name", title: "Name" }], selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        // Hand-written selection cell: aligned against one column + selection, one short
+        // once a second column registers.
+        header: () => h("thead", [h("tr", [h("th", { class: "hand-written-selection" }), h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    await wrapper.setProps({
+      columns: [
+        { id: "name", title: "Name" },
+        { id: "extra", title: "Extra" },
+      ],
+    });
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("warns for a one-cell shortfall even when the header kept its selection cell", async () => {
+    mount(VcTable, {
+      props: {
+        items,
+        columns: [
+          { id: "name", title: "Name" },
+          { id: "extra", title: "Extra" },
+        ],
+        selectionMode: "multiple",
+        selection: [],
+        loading: true,
+      },
+      slots: {
+        // Selection cell present, one data column missing — still a misalignment, so the
+        // message names both causes instead of the check going silent.
+        header: () => h("thead", [h("tr", [h("th", { class: "vc-table__selection-cell" }), h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/data column has no header cell/);
+  });
+
+  it("warns when a renamed column changes the merged count but not the prop count", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, columns: [{ id: "name", title: "Name" }], selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => h("thead", [h("tr", [h("th"), h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    // The child column overrides the prop column of the same id: 1 column + selection = 2,
+    // matching the header's two cells.
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    // Same number of prop columns, different id — nothing merges now, so the table has 2
+    // columns and the header is one cell short. Counts cannot see this; id lists can.
+    await wrapper.setProps({ columns: [{ id: "other", title: "Other" }] });
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("warns after a mobile → desktop flip, when the desktop table did not exist at mount", async () => {
+    // The flip is driven through `mobileBreakpoint` rather than a real media-query change: the
+    // suite's `useBreakpoints` mock is not reactive, while the prop `isMobile` reads is.
+    breakpointState.isMobile = true;
+
+    const wrapper = mount(VcTable, {
+      props: {
+        items,
+        columns: [{ id: "name", title: "Name" }],
+        selectionMode: "multiple",
+        selection: [],
+        loading: true,
+      },
+      slots: {
+        header: () => h("thead", [h("tr", [h("th", "Name")])]),
+        "mobile-item": () => h("div", { class: "mobile-item" }, "row"),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    // No desktop <table> yet, so the check bails without spending the latch.
+    expect(wrapper.find("table").exists()).toBe(false);
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    await wrapper.setProps({ mobileBreakpoint: "none" });
+    await nextTick();
+
+    expect(wrapper.find("table").exists()).toBe(true);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("warns when a VcTableColumn child registers after mount, leaving the header one cell short", async () => {
+    const showSecond = ref(false);
+
+    mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () => [
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+          showSecond.value
+            ? h(VcTableColumn, { id: "extra", title: "Extra" }, { default: () => h("span", "extra") })
+            : null,
+        ],
+        header: () => h("thead", [h("tr", [h("th", { class: "hand-written-selection" }), h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    showSecond.value = true;
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("counts only the table's own header cells, not those of a nested table", async () => {
+    mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            {
+              default: () =>
+                h(
+                  VcTable,
+                  { items, columns: [{ id: "a" }, { id: "b" }, { id: "c" }, { id: "d" }] },
+                  {
+                    "desktop-item": () => h("tr", [h("td", "nested")]),
+                  },
+                ),
+            },
+          ),
+        // One cell against columns + selection: misaligned, and the nested table's four
+        // header cells must not mask it.
+        header: () => h("thead", [h("tr", [h("th", "Name")])]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("stays silent in production builds", async () => {
+    vi.stubEnv("DEV", false);
+
+    await mountSelectable({ selectionMode: "multiple", selection: [], headerSlot: "without-selection" });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("warns while the default skeleton renders selection cells the header lacks", async () => {
+    mount(VcTable, {
+      props: {
+        items,
+        columns: [{ id: "name", title: "Name" }],
+        selectionMode: "multiple",
+        selection: [],
+        loading: true,
+      },
+      slots: { header: () => h("thead", [h("tr", [h("th", "Name")])]) },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
+  });
+
+  it("does not warn while a custom #desktop-skeleton owns the loading rows", async () => {
+    mount(VcTable, {
+      props: {
+        items,
+        columns: [{ id: "name", title: "Name" }],
+        selectionMode: "multiple",
+        selection: [],
+        loading: true,
+      },
+      slots: {
+        header: () => h("thead", [h("tr", [h("th", "Name")])]),
+        "desktop-skeleton": () => h("tr", [h("td", "…")]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("warns only about #desktop-body, not header misalignment, when both apply", async () => {
+    await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      desktopBodySlot: true,
+      headerSlot: "without-selection",
+    });
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/desktop-body/);
+  });
+});
+
+describe("hideDefaultHeader with selection", () => {
+  it("drops the header and its select-all, keeping the selection cell on every row", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [], hideDefaultHeader: true },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.find("thead").exists()).toBe(false);
+    wrapper.findAll("tbody .vc-table__row").forEach((row) => {
+      expect(row.findAll("td")).toHaveLength(2);
+      expect(row.find("td.vc-table__selection-cell").exists()).toBe(true);
+    });
   });
 });
 
