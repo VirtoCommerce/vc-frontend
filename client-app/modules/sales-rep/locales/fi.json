@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Suosituimmat",
       "recent": "Viimeisimmät",
-      "analytics_unavailable": "Analytiikkaa ei ole yhdistetty tähän kauppaan",
+      "analytics_unavailable": "Verkkotoiminta ei ole juuri nyt saatavilla tälle kaupalle",
       "tracked_caveat": "Perustuu vain seurattuun toimintaan",
       "data_as_of": "Tiedot: {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Käynnit",
         "last_search_term": "Viimeisin hakusana",
         "last_viewed_product": "Viimeksi katseltu tuote",
-        "analytics_unavailable": "Verkkotoimintaa ei vielä seurata — analytiikkaa ei ole määritetty tälle kaupalle.",
+        "analytics_unavailable": "Verkkotoiminta ei ole juuri nyt saatavilla — seurantaa ei ole yhdistetty tähän kauppaan tai tietoja ei voitu lukea.",
         "empty": "Ei aktiviteettitietoja",
         "load_failed": "Asiakkaan aktiviteettia ei voitu ladata"
       }

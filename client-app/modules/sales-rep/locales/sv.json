@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Topp",
       "recent": "Senaste",
-      "analytics_unavailable": "Analys är inte ansluten för den här butiken",
+      "analytics_unavailable": "Webbaktivitet är inte tillgänglig för den här butiken just nu",
       "tracked_caveat": "Baserat endast på spårad aktivitet",
       "data_as_of": "Data per {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Besök",
         "last_search_term": "Senaste sökterm",
         "last_viewed_product": "Senast visade produkt",
-        "analytics_unavailable": "Webbaktivitet spåras inte ännu — analys är inte konfigurerad för denna butik.",
+        "analytics_unavailable": "Webbaktivitet är inte tillgänglig just nu — spårning är inte ansluten för den här butiken, eller så kunde data inte läsas.",
         "empty": "Inga aktivitetsdata",
         "load_failed": "Kunde inte ladda kundaktivitet"
       }

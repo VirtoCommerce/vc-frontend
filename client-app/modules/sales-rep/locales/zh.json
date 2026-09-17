@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "热门",
       "recent": "最近",
-      "analytics_unavailable": "此商店未连接分析服务",
+      "analytics_unavailable": "此商店的网站活动当前不可用",
       "tracked_caveat": "仅基于已跟踪的活动",
       "data_as_of": "数据截至 {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "访问次数",
         "last_search_term": "最近搜索词",
         "last_viewed_product": "最近浏览的商品",
-        "analytics_unavailable": "尚未跟踪网站活动 — 此商店未配置分析。",
+        "analytics_unavailable": "网站活动当前不可用 — 此商店未连接跟踪，或数据无法读取。",
         "empty": "暂无活动数据",
         "load_failed": "无法加载客户活动"
       }

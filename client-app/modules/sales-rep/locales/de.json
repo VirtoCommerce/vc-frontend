@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Top",
       "recent": "Zuletzt",
-      "analytics_unavailable": "Analytics ist für diesen Shop nicht verbunden",
+      "analytics_unavailable": "Web-Aktivität ist für diesen Shop derzeit nicht verfügbar",
       "tracked_caveat": "Nur auf Basis erfasster Aktivitäten",
       "data_as_of": "Datenstand: {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Besuche",
         "last_search_term": "Letzter Suchbegriff",
         "last_viewed_product": "Zuletzt angesehenes Produkt",
-        "analytics_unavailable": "Web-Aktivität wird noch nicht erfasst — Analytics ist für diesen Store nicht konfiguriert.",
+        "analytics_unavailable": "Web-Aktivität ist derzeit nicht verfügbar — für diesen Shop ist kein Tracking verbunden, oder die Daten konnten nicht gelesen werden.",
         "empty": "Keine Aktivitätsdaten",
         "load_failed": "Kundenaktivität konnte nicht geladen werden"
       }

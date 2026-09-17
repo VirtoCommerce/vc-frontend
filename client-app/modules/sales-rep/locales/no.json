@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Topp",
       "recent": "Nylige",
-      "analytics_unavailable": "Analyse er ikke koblet til for denne butikken",
+      "analytics_unavailable": "Nettaktivitet er ikke tilgjengelig for denne butikken akkurat nå",
       "tracked_caveat": "Basert kun på sporet aktivitet",
       "data_as_of": "Data per {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Besøk",
         "last_search_term": "Siste søkeord",
         "last_viewed_product": "Sist viste produkt",
-        "analytics_unavailable": "Nettaktivitet spores ikke ennå — analyse er ikke konfigurert for denne butikken.",
+        "analytics_unavailable": "Nettaktivitet er ikke tilgjengelig akkurat nå — sporing er ikke koblet til for denne butikken, eller dataene kunne ikke leses.",
         "empty": "Ingen aktivitetsdata",
         "load_failed": "Kunne ikke laste kundeaktivitet"
       }

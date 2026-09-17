@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Top",
       "recent": "Recentes",
-      "analytics_unavailable": "O Analytics não está conectado para esta loja",
+      "analytics_unavailable": "A atividade na web não está disponível para esta loja no momento",
       "tracked_caveat": "Com base apenas na atividade rastreada",
       "data_as_of": "Dados de {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Visitas",
         "last_search_term": "Último termo pesquisado",
         "last_viewed_product": "Último produto visualizado",
-        "analytics_unavailable": "A atividade na web ainda não é monitorada — o analytics não está configurado para esta loja.",
+        "analytics_unavailable": "A atividade na web não está disponível no momento — o rastreamento não está conectado para esta loja ou não foi possível ler os dados.",
         "empty": "Sem dados de atividade",
         "load_failed": "Não foi possível carregar a atividade do cliente"
       }
