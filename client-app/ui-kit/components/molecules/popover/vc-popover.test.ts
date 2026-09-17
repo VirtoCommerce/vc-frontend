@@ -165,6 +165,23 @@ const NestedHost = defineComponent({
   `,
 });
 
+// The shipping shape of a nested calendar: the panel is teleported out of the trigger's subtree.
+const TeleportedHost = defineComponent({
+  components: { VcPopover },
+
+  template: `
+    <VcPopover role="dialog" aria-label="Teleported" enable-teleport>
+      <template #default="{ triggerProps }">
+        <button class="trigger" v-bind="triggerProps">Open</button>
+      </template>
+
+      <template #content>
+        <button class="inside">Inside</button>
+      </template>
+    </VcPopover>
+  `,
+});
+
 // What VcTooltip renders, inside a drawer: a hover panel whose trigger is focusable.
 const TooltipInDialogHost = defineComponent({
   components: { VcPopover },
@@ -419,6 +436,41 @@ describe("VcPopover", () => {
 
       expect(isPanelOpen(wrapper, "Outer")).toBe(true);
       expect(document.activeElement).not.toBe(panelByName(wrapper, "Outer")?.element);
+    });
+  });
+
+  // Teleported content leaves the trigger's DOM subtree, which is where both the focus contract and
+  // the Escape listener live.
+  describe("teleported into #popover-host", () => {
+    it("takes focus on open and hands it back on Escape", async () => {
+      // The target must exist before the mount: Vue resolves it once, and never from inside the tree.
+      const teleportHost = document.createElement("div");
+      teleportHost.id = "popover-host";
+      document.body.appendChild(teleportHost);
+
+      const wrapper = mount(TeleportedHost, { attachTo: document.body });
+
+      await wrapper.get("button.trigger").trigger("click");
+      await nextTick();
+      await nextTick();
+
+      const panel = document.querySelector("#popover-host .vc-popover__body");
+
+      expect(panel).not.toBeNull();
+      expect(document.activeElement).toBe(panel);
+
+      // The content lives outside the wrapper now, so the key is dispatched on the real node.
+      document
+        .querySelector("#popover-host button.inside")
+        ?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      await nextTick();
+      await nextTick();
+
+      expect((panel as HTMLElement).style.display).toBe("none");
+      expect(document.activeElement).toBe(wrapper.get("button.trigger").element);
+
+      wrapper.unmount();
+      teleportHost.remove();
     });
   });
 
