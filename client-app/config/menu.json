@@ -138,15 +138,6 @@
             "title": "shared.account.navigation.links.change_password",
             "icon": "pass",
             "priority": 30
-          },
-          {
-            "id": "savedCreditCards",
-            "route": {
-              "name": "SavedCreditCards"
-            },
-            "title": "shared.account.navigation.links.saved_credit_cards",
-            "icon": "credit-card",
-            "priority": 40
           }
         ],
         "priority": 40
@@ -300,14 +291,6 @@
             "title": "shared.layout.header.mobile.account_menu.change_password",
             "icon": "pass",
             "priority": 30
-          },
-          {
-            "route": {
-              "name": "SavedCreditCards"
-            },
-            "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
-            "icon": "credit-card",
-            "priority": 40
           }
         ]
       },
