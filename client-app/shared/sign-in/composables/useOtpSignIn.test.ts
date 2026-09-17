@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 
 vi.mock("@/core/composables", () => {
-  const nativeSignIn = vi.fn<(provider: string, params: Record<string, string>) => Promise<void>>();
+  const nativeSignIn = vi.fn<(params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
   const analytics = vi.fn();
 
@@ -216,7 +216,7 @@ describe("useOtpSignIn", () => {
     expect(postedBody).toEqual({ storeId: "store-1", email: "buyer@acme.com", code: "123456" });
     expect(result).toEqual({ outcome: "Success" });
     expect(auth.nativeSignIn).toHaveBeenCalledTimes(1);
-    expect(auth.nativeSignIn).toHaveBeenCalledWith("OTP", {
+    expect(auth.nativeSignIn).toHaveBeenCalledWith({
       storeId: "store-1",
       email: "buyer@acme.com",
       code: "123456",

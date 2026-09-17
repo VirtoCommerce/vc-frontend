@@ -20,7 +20,6 @@ export interface IOtpVerifyResponse {
 }
 
 const ANALYTICS_LOGIN_METHOD = "otp";
-const NATIVE_SIGN_IN_PROVIDER = "OTP";
 
 export function useOtpSignIn() {
   const loading = ref(false);
@@ -64,7 +63,7 @@ export function useOtpSignIn() {
 
   async function completeSignIn(email: string, code: string): Promise<void> {
     try {
-      await nativeSignIn(NATIVE_SIGN_IN_PROVIDER, { storeId: globals.storeId, email, code });
+      await nativeSignIn({ storeId: globals.storeId, email, code });
       await signIn();
     } catch (e) {
       const error = e instanceof Error ? e : new Error(String(e));
