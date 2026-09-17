@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "保存済カード",
+      "no_cards": "保存されているクレジットカードがありません",
+      "delete_credit_card_modal": {
+        "title": "削除の確認",
+        "message": "このクレジットカードを削除してもよろしいですか？"
+      }
+    }
+  }
+}
