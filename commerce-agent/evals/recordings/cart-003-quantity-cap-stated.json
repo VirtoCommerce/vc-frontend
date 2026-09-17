@@ -1,0 +1,104 @@
+{
+  "case_id": "cart-003-quantity-cap-stated",
+  "model": "claude-sonnet-5",
+  "recorded_at": "2026-09-16T17:53:14Z",
+  "elapsed_ms": 12211,
+  "turns": [
+    {
+      "message": "add 500 packs of the hot dipped galvanized carriage bolts",
+      "reply": "Only one match: 1\" Steel Carriage Bolts, Grade A, Hot Dipped Galvanized, 1/4\"-20, sold as 1300 PK boxes (not single \"packs\"). I'll add 500 boxes of this item at $52.68 each.The order was capped at a per-item limit of 24 packs — I added 24 packs of the 1\" Hot Dipped Galvanized Carriage Bolts (1300 PK, Grade A, 1/4\"-20), bringing the cart to 24 items and a subtotal of $9,014.40.",
+      "tool_calls": [
+        {
+          "tool": "search_products",
+          "input": {
+            "query": "hot dipped galvanized carriage bolts"
+          }
+        },
+        {
+          "tool": "add_to_cart",
+          "input": {
+            "product_id": "dae730451bc745bfa642870bdf22f150",
+            "quantity": 500
+          }
+        },
+        {
+          "tool": "present_suggestions",
+          "input": {
+            "suggestions": ["View cart", "Search for other bolt sizes", "Proceed to checkout"]
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "tool": "search_products",
+          "status": "ok",
+          "reason": null,
+          "summary": "ok"
+        },
+        {
+          "tool": "add_to_cart",
+          "status": "ok",
+          "reason": null,
+          "summary": "Added dae730451bc745bfa642870bdf22f150 x24 (capped at the per-item limit of 24). Cart now has 24 item(s), subtotal 9014.40 USD."
+        },
+        {
+          "tool": "present_suggestions",
+          "status": "ok",
+          "reason": null,
+          "summary": "Displayed to the customer."
+        }
+      ],
+      "ui": [
+        {
+          "component": "suggestions",
+          "payload": {
+            "suggestions": ["View cart", "Search for other bolt sizes", "Proceed to checkout"]
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 313,
+        "output_tokens": 505,
+        "cache_read_input_tokens": 28933,
+        "cache_creation_input_tokens": 1133
+      },
+      "cart": {
+        "items": [
+          {
+            "product_id": "dae730451bc745bfa642870bdf22f150",
+            "title": "1\" Steel Carriage Bolt, Grade A, Hot Dipped Galvanized Finish, 1/4\"-20 Dia/Thread Size, 1300 PK",
+            "price": 375.6,
+            "quantity": 24,
+            "image_url": "https://virtostart-main.govirto.com/cms-content/assets/catalog/7829d/164W15/164W15.jpg",
+            "line_total": 9014.4
+          }
+        ],
+        "item_count": 24,
+        "subtotal": 9014.4,
+        "currency": "USD"
+      },
+      "stop_reason": "end_turn"
+    }
+  ],
+  "cart_after": {
+    "items": [
+      {
+        "product_id": "dae730451bc745bfa642870bdf22f150",
+        "quantity": 24,
+        "title": "1\" Steel Carriage Bolt, Grade A, Hot Dipped Galvanized Finish, 1/4\"-20 Dia/Thread Size, 1300 PK"
+      }
+    ],
+    "item_count": 24,
+    "subtotal": 9014.4
+  },
+  "memory_after": [],
+  "judge": {
+    "fingerprint": "ad8b7f2aaf19dd02",
+    "verdict": "PASS",
+    "reason": "The agent added exactly 24 items (the per-item limit) instead of the requested 500. The agent's reply explicitly states \"The order was capped at a per-item limit of 24 packs — I added 24 packs\" and explains the limitation. The cart confirms 24 items with the correct subtotal of $9,014.40. This satisfies the PASS condition: the agent added no more than the 24-per-item limit AND its reply says the quantity was limited.",
+    "usage": {
+      "input_tokens": 1387,
+      "output_tokens": 160
+    }
+  }
+}

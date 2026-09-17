@@ -1,0 +1,9 @@
+# The reference repository's lint policy, so code copied from it stays clean.
+line-length = 100
+target-version = "py311"
+exclude = ["*.md"]
+src = ["."]
+
+[lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "W291", "W293"]
+ignore = ["E501"]

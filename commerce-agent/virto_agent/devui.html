@@ -1,0 +1,239 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Commerce agent — dev viewer</title>
+<!--
+  A debug harness, not the product UI. It renders the event stream well enough to see a turn
+  work; the real cards belong in the theme, over examples/web-shared/protocol.ts.
+  Served only when AGENT_DEV_UI=1.
+-->
+<style>
+  :root { color-scheme: light dark; --line: #d8d8d6; --muted: #6b6b68; --bg: #fbfbf9; --card: #fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --line: #33332f; --muted: #9a9a94; --bg: #17171a; --card: #202024; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); font: 14px/1.5 ui-sans-serif, system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 140px; }
+  h1 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; font-size: 13px; }
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 0 0 20px; }
+  legend { font-size: 12px; color: var(--muted); padding: 0 6px; }
+  input, textarea, button { font: inherit; }
+  input, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--card); color: inherit; }
+  button { padding: 8px 14px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--card); color: inherit; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--muted); }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .turn { border-top: 1px solid var(--line); padding: 18px 0; }
+  .you { font-weight: 600; }
+  .say { white-space: pre-wrap; margin: 10px 0; }
+  .tool { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted);
+    padding: 2px 0; }
+  .tool b { font-weight: 600; color: inherit; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .card { border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+    padding: 10px; }
+  .card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff;
+    border-radius: 4px; }
+  .card .t { font-weight: 600; margin: 8px 0 2px; font-size: 13px; }
+  .card .p { font-variant-numeric: tabular-nums; }
+  .card .r { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+  .chips button { border-radius: 999px; font-size: 13px; }
+  .comp { font-size: 12px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .04em; margin: 16px 0 6px; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px; overflow-x: auto; font-size: 12px; margin: 0; }
+  .err { color: #b3261e; }
+  form.ask { position: fixed; inset: auto 0 0 0; background: var(--bg);
+    border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  form.ask > div { max-width: 760px; margin: 0 auto; display: flex; gap: 8px; }
+</style>
+
+<main>
+  <h1>Commerce agent — dev viewer</h1>
+  <p class="sub">A debug harness for the event stream. Not the product UI: the real cards belong in the theme.</p>
+
+  <fieldset>
+    <legend>Session</legend>
+    <input id="token" type="password" placeholder="x-api access token (POST /connect/token)" autocomplete="off" />
+    <div class="row">
+      <button id="start">Start session</button>
+      <span id="who" class="sub" style="margin:0"></span>
+    </div>
+  </fieldset>
+
+  <div id="log"></div>
+</main>
+
+<form class="ask" id="ask">
+  <div>
+    <input id="message" placeholder="Ask the agent…" autocomplete="off" disabled />
+    <button id="send" disabled>Send</button>
+  </div>
+</form>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const log = $("log");
+  let sessionId = null;
+  // Kept in memory for the life of the tab: every request carries it, as the theme does.
+  let authorization = null;
+
+  const el = (tag, cls, text) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+
+  $("start").addEventListener("click", async () => {
+    const token = $("token").value.trim();
+    if (!token) return;
+    $("start").disabled = true;
+    try {
+      const response = await fetch("/api/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.detail || "session refused");
+      sessionId = body.session_id;
+      authorization = `Bearer ${token}`;
+      $("who").textContent = `${body.name ?? "signed in"}${body.organization ? " · " + body.organization : ""}`;
+      $("token").value = "";
+      $("message").disabled = $("send").disabled = false;
+      $("message").focus();
+    } catch (error) {
+      $("who").innerHTML = "";
+      $("who").append(el("span", "err", String(error.message || error)));
+    } finally {
+      $("start").disabled = false;
+    }
+  });
+
+  $("ask").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const message = $("message").value.trim();
+    if (message) send(message);
+  });
+
+  async function send(message) {
+    $("message").value = "";
+    $("message").disabled = $("send").disabled = true;
+
+    const turn = el("div", "turn");
+    turn.append(el("div", "you", message));
+    log.append(turn);
+    const say = el("div", "say");
+    turn.append(say);
+    window.scrollTo(0, document.body.scrollHeight);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-Id": sessionId,
+          Authorization: authorization,
+        },
+        body: JSON.stringify({ message }),
+      });
+      if (!response.ok) throw new Error(`chat failed (${response.status})`);
+      await readEvents(response.body, (type, data) => render(turn, say, type, data));
+    } catch (error) {
+      turn.append(el("div", "err", String(error.message || error)));
+    } finally {
+      $("message").disabled = $("send").disabled = false;
+      $("message").focus();
+    }
+  }
+
+  // Server-Sent Events, as commerce_common.streaming.to_sse writes them.
+  async function readEvents(stream, onEvent) {
+    const reader = stream.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let split;
+      while ((split = buffer.indexOf("\n\n")) !== -1) {
+        const frame = buffer.slice(0, split);
+        buffer = buffer.slice(split + 2);
+        let type = null;
+        let data = null;
+        for (const line of frame.split("\n")) {
+          if (line.startsWith("event: ")) type = line.slice(7);
+          else if (line.startsWith("data: ")) data = line.slice(6);
+        }
+        if (type && data) onEvent(type, JSON.parse(data));
+      }
+    }
+  }
+
+  function render(turn, say, type, data) {
+    if (type === "text_delta") {
+      say.textContent += data.text;
+    } else if (type === "tool_call") {
+      const line = el("div", "tool");
+      line.append(el("b", null, data.tool));
+      if (data.label) line.append(document.createTextNode(` — ${data.label}`));
+      turn.append(line);
+    } else if (type === "ui") {
+      turn.append(component(data.component, data.payload));
+    } else if (type === "error") {
+      turn.append(el("div", "err", data.message));
+    } else if (type === "turn_complete") {
+      const usage = data.usage || {};
+      turn.append(el("div", "tool",
+        `${data.elapsed_ms} ms · in ${usage.input_tokens} · out ${usage.output_tokens} · cache read ${usage.cache_read_input_tokens}`));
+    }
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  // Two components get a real rendering; the rest show their payload, which is the point of
+  // a debug viewer — you can see exactly what the theme will have to render.
+  function component(name, payload) {
+    const box = document.createElement("div");
+    box.append(el("div", "comp", name));
+    if (name === "suggestions") {
+      const chips = el("div", "chips");
+      for (const suggestion of payload.suggestions || []) {
+        const chip = el("button", null, suggestion);
+        chip.addEventListener("click", () => send(suggestion));
+        chips.append(chip);
+      }
+      box.append(chips);
+      return box;
+    }
+    if (name === "products") {
+      if (payload.title) box.append(el("div", "you", payload.title));
+      const grid = el("div", "grid");
+      for (const item of payload.items || []) {
+        const product = item.product || item;
+        const card = el("div", "card");
+        if (product.image_url) {
+          const img = el("img");
+          img.src = product.image_url;
+          img.alt = "";
+          img.loading = "lazy";
+          card.append(img);
+        }
+        card.append(el("div", "t", product.title));
+        card.append(el("div", "p", `${product.price} ${product.currency || ""}`.trim()));
+        if (item.reason) card.append(el("div", "r", item.reason));
+        grid.append(card);
+      }
+      box.append(grid);
+      return box;
+    }
+    box.append(el("pre", null, JSON.stringify(payload, null, 2)));
+    return box;
+  }
+</script>

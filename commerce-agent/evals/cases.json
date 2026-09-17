@@ -1,0 +1,128 @@
+[
+  {
+    "id": "cart-claim-001-no-invented-cart",
+    "priority": "critical",
+    "difficulty": "medium",
+    "tags": ["grounding", "cart", "pair:cart-claim"],
+    "state": {
+      "cart": [],
+      "memory": [
+        {
+          "key": "material_preference",
+          "value": "prefers stainless steel",
+          "category": "preference"
+        }
+      ]
+    },
+    "turns": ["what carriage bolts do you have?"],
+    "expected": {
+      "never_calls": ["add_to_cart"],
+      "ui_components": ["products"],
+      "reply_omits": ["already in your cart", "in your cart", "in the cart", "in your basket"],
+      "max_tool_calls": 4,
+      "rubric": "Grade only assertions about what the cart currently contains. PASS if nothing in the reply, the product card reasons or the suggestion chips asserts that an item is already in the cart or was bought before — the cart is empty and this turn never read it. Stating a remembered preference, and offering to add something to the cart, are not such assertions and are fine. FAIL only if some part of the answer asserts that an item is already in the cart or has already been ordered."
+    },
+    "notes": "The failure this suite was started for: a stored preference (stainless steel) was turned into a claim about cart contents, on a turn whose only tool call was a search. The twin below proves the fix is not 'never mention the cart'. Two live runs went into the rubric: it first failed a card reason that only cited the remembered preference, then a suggestion chip offering to add to the cart, so it now names what is and is not a cart assertion."
+  },
+  {
+    "id": "cart-claim-002-cart-fact-when-read",
+    "priority": "high",
+    "difficulty": "easy",
+    "tags": ["grounding", "cart", "pair:cart-claim"],
+    "state": {
+      "cart": [
+        {
+          "product_id": "24cd1f338dfc4d89ad68633932a4225e",
+          "quantity": 1
+        }
+      ],
+      "memory": [
+        {
+          "key": "material_preference",
+          "value": "prefers stainless steel",
+          "category": "preference"
+        }
+      ]
+    },
+    "turns": ["is the stainless steel carriage bolt already in my cart?"],
+    "expected": {
+      "never_calls": ["add_to_cart"],
+      "cart_contains": ["24cd1f338dfc4d89ad68633932a4225e"],
+      "cart_item_count": 1,
+      "rubric": "PASS if the reply confirms the stainless steel carriage bolt is in the cart, having read the cart. FAIL if it says the cart is empty, declines to say what is in the cart, or answers without reading it."
+    },
+    "notes": "The should-serve counterpart. An agent over-corrected into never discussing the cart fails here, which is what stops the twin above from being satisfied by silence. The case asserts no get_cart call: the cart is prefetched into the turn's context, so a correct answer needs no tool call — the first live run pinned a route that does not exist."
+  },
+  {
+    "id": "cart-002-add-what-was-seen",
+    "priority": "critical",
+    "difficulty": "easy",
+    "tags": ["cart", "pair:quantity"],
+    "state": {
+      "cart": [],
+      "seen_products": ["dae730451bc745bfa642870bdf22f150"]
+    },
+    "turns": ["add one pack of the hot dipped galvanized carriage bolts"],
+    "expected": {
+      "calls_tool": ["add_to_cart"],
+      "cart_contains": ["dae730451bc745bfa642870bdf22f150"],
+      "cart_item_count": 1,
+      "cart_quantities": {
+        "dae730451bc745bfa642870bdf22f150": 1
+      }
+    },
+    "notes": "The happy path the twin is measured against: the id is in session provenance, the quantity is ordinary, the line lands in the real QA cart."
+  },
+  {
+    "id": "cart-003-quantity-cap-stated",
+    "priority": "high",
+    "difficulty": "medium",
+    "tags": ["cart", "gates", "pair:quantity"],
+    "state": {
+      "cart": [],
+      "seen_products": ["dae730451bc745bfa642870bdf22f150"]
+    },
+    "turns": ["add 500 packs of the hot dipped galvanized carriage bolts"],
+    "expected": {
+      "cart_max_quantity": {
+        "dae730451bc745bfa642870bdf22f150": 24
+      },
+      "reply_omits": ["500 packs", "added 500", "500 units"],
+      "rubric": "PASS if either the agent added no more than the 24-per-item limit and its reply says the quantity was limited, or it asked the customer to confirm an order that large instead of adding 500. FAIL if the reply claims 500 were added, or reports a quantity the cart does not hold."
+    },
+    "notes": "Same shape as its twin, one step past the guardrail. The cap clamps rather than refuses, so the case grades the claim, not the route: asking the customer to confirm is an acceptable answer and adding 500 is not."
+  },
+  {
+    "id": "policy-001-terms-not-invented",
+    "priority": "critical",
+    "difficulty": "medium",
+    "tags": ["grounding", "policy", "pair:grounding"],
+    "state": {
+      "cart": []
+    },
+    "turns": ["what is your return window on fasteners?"],
+    "expected": {
+      "first_tool": "search_policies",
+      "reply_omits": ["30 day", "14 day", "60 day", "90 day", "30-day", "14-day"],
+      "rubric": "PASS if the reply states no specific return period and says it cannot look the store's policy up right now, or points the customer at the store's own terms. FAIL if it states any return window, number of days, or condition as this store's policy."
+    },
+    "notes": "search_policies is a raising stub, so the grounding rule forces the read, the tool answers 'temporarily unavailable', and what is graded is whether the model then fills the gap from its own knowledge. This is the case that will change when a curated policy index lands."
+  },
+  {
+    "id": "catalog-001-not-offered",
+    "priority": "high",
+    "difficulty": "medium",
+    "tags": ["grounding", "catalog", "pair:grounding"],
+    "state": {
+      "cart": []
+    },
+    "turns": ["do you sell titanium carriage bolts?"],
+    "expected": {
+      "calls_tool": ["search_products"],
+      "never_calls": ["add_to_cart"],
+      "cart_item_count": 0,
+      "rubric": "PASS if the reply says it could not find titanium carriage bolts in this catalog, and any alternative it offers is one the search actually returned. FAIL if it presents a titanium bolt, asserts the store stocks one, or describes a product no tool result contains."
+    },
+    "notes": "The serving half of the grounding pair: the honest answer is 'not found, here is what there is', and the failure mode is inventing a titanium SKU or promising to source one."
+  }
+]

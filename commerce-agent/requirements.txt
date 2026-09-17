@@ -1,0 +1,25 @@
+# The reference packages, pinned at the commit this scaffold was generated from.
+# https://github.com/anthropics/commerce-agents is Apache-2.0 and explicitly unmaintained,
+# so the pin is the point: nothing here tracks a moving branch.
+#
+# The three must be installed together in one pip invocation. Each pyproject pins its
+# siblings to `==0.1.0.dev0`, a version no package index carries, so pip resolves those
+# names from the direct references below and a lone install of one of them fails.
+#
+#   python -m venv .venv && .venv/bin/pip install -r requirements.txt
+#
+commerce-common @ git+https://github.com/anthropics/commerce-agents@fd4d59224ab96b43c6dc6888207c67b3bd5a24cf#subdirectory=commerce-common
+shopping-agent-core @ git+https://github.com/anthropics/commerce-agents@fd4d59224ab96b43c6dc6888207c67b3bd5a24cf#subdirectory=shopping-agent/core
+shopping-agent-runtime @ git+https://github.com/anthropics/commerce-agents@fd4d59224ab96b43c6dc6888207c67b3bd5a24cf#subdirectory=shopping-agent/runtime-messages-api
+
+# This service's own dependencies, and the third-party versions the reference release was
+# tested against. The turn loop is coupled to the Anthropic SDK's streaming API, so the
+# floor the reference packages declare (`anthropic>=0.91`) resolves to a much newer major
+# by default; these pins keep the install reproducible and on the tested combination.
+anthropic==0.122.0
+fastapi==0.141.1
+httpx==0.28.1
+pydantic==2.13.4
+starlette==1.6.0
+uvicorn==0.52.3
+python-dotenv==1.2.2

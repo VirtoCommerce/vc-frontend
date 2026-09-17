@@ -1,0 +1,200 @@
+{
+  "case_id": "catalog-001-not-offered",
+  "model": "claude-sonnet-5",
+  "recorded_at": "2026-09-16T14:37:17Z",
+  "elapsed_ms": 28677,
+  "turns": [
+    {
+      "message": "do you sell titanium carriage bolts?",
+      "reply": "We don't carry titanium carriage bolts — the catalog only has steel and stainless steel carriage bolts (in various grades and finishes).",
+      "tool_calls": [
+        {
+          "tool": "search_products",
+          "input": {
+            "query": "titanium carriage bolts"
+          }
+        },
+        {
+          "tool": "search_products",
+          "input": {
+            "query": "carriage bolts"
+          }
+        },
+        {
+          "tool": "present_products",
+          "input": {
+            "title": "Carriage bolts available (steel/stainless, not titanium)",
+            "picks": [
+              {
+                "product_id": "24cd1f338dfc4d89ad68633932a4225e",
+                "reason": "Closest in corrosion resistance to titanium, being stainless steel A2"
+              },
+              {
+                "product_id": "c827222f6d87496183728413e7203256",
+                "reason": "High-strength Grade 8 steel option at low cost"
+              },
+              {
+                "product_id": "dae730451bc745bfa642870bdf22f150",
+                "reason": "Galvanized finish for outdoor corrosion resistance"
+              }
+            ],
+            "layout": "grid"
+          }
+        },
+        {
+          "tool": "present_suggestions",
+          "input": {
+            "suggestions": [
+              "Show stainless steel options only",
+              "Filter by size or thread",
+              "Add stainless carriage bolts to cart"
+            ]
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "tool": "search_products",
+          "status": "ok",
+          "reason": null,
+          "summary": "ok"
+        },
+        {
+          "tool": "search_products",
+          "status": "ok",
+          "reason": null,
+          "summary": "ok"
+        },
+        {
+          "tool": "present_products",
+          "status": "ok",
+          "reason": null,
+          "summary": "Displayed to the customer."
+        },
+        {
+          "tool": "present_suggestions",
+          "status": "ok",
+          "reason": null,
+          "summary": "Displayed to the customer."
+        }
+      ],
+      "ui": [
+        {
+          "component": "products",
+          "payload": {
+            "title": "Carriage bolts available (steel/stainless, not titanium)",
+            "layout": "grid",
+            "items": [
+              {
+                "product": {
+                  "product_id": "24cd1f338dfc4d89ad68633932a4225e",
+                  "title": "16mm Stainless Steel Carriage Bolt, A2, Plain Finish, M5-0.80 Dia/Thread Size, 100 PK",
+                  "price": 10.0,
+                  "currency": "USD",
+                  "image_url": "https://virtostart-main.govirto.com/cms-content/assets/catalog/7829d/54FT59/164W33.jpg",
+                  "category": "Carriage Bolts",
+                  "labels": [],
+                  "attributes": {
+                    "sku": "54FT59",
+                    "price_context": "contract price for the signed-in organization",
+                    "BASIC_MATERIAL": "Stainless Steel",
+                    "FASTENER_FINISH": "Plain",
+                    "FASTENER_LENGTH": "16mm",
+                    "MATERIAL_GRADE": "A2",
+                    "NECK_TYPE": "Square",
+                    "SYSTEM_OF_MEASUREMENT": "Metric",
+                    "THREAD_SIZE": "M5-0.80"
+                  },
+                  "in_stock": true,
+                  "options": {},
+                  "option_values": {}
+                },
+                "reason": "Closest in corrosion resistance to titanium, being stainless steel A2"
+              },
+              {
+                "product": {
+                  "product_id": "c827222f6d87496183728413e7203256",
+                  "title": "2\" Steel Carriage Bolt, Grade 8, Plain Finish, 5/8-11 Dia/Thread Size, 25 PK",
+                  "price": 5.0,
+                  "currency": "USD",
+                  "image_url": "https://virtostart-main.govirto.com/cms-content/assets/catalog/7829d/21A915/21A915.jpg",
+                  "category": "Carriage Bolts",
+                  "labels": [],
+                  "attributes": {
+                    "sku": "21A915",
+                    "price_context": "contract price for the signed-in organization",
+                    "BASIC_MATERIAL": "Steel",
+                    "FASTENER_FINISH": "Plain",
+                    "FASTENER_LENGTH": "2''",
+                    "MATERIAL_GRADE": "8",
+                    "NECK_TYPE": "Square",
+                    "SYSTEM_OF_MEASUREMENT": "Inch",
+                    "THREAD_SIZE": "05.08.2011"
+                  },
+                  "in_stock": true,
+                  "options": {},
+                  "option_values": {}
+                },
+                "reason": "High-strength Grade 8 steel option at low cost"
+              },
+              {
+                "product": {
+                  "product_id": "dae730451bc745bfa642870bdf22f150",
+                  "title": "1\" Steel Carriage Bolt, Grade A, Hot Dipped Galvanized Finish, 1/4\"-20 Dia/Thread Size, 1300 PK",
+                  "price": 52.68,
+                  "currency": "USD",
+                  "image_url": "https://virtostart-main.govirto.com/cms-content/assets/catalog/7829d/164W15/164W15.jpg",
+                  "category": "Carriage Bolts",
+                  "labels": [],
+                  "attributes": {
+                    "sku": "164W15",
+                    "price_context": "contract price for the signed-in organization",
+                    "BASIC_MATERIAL": "Steel",
+                    "FASTENER_FINISH": "Hot Dipped Galvanized",
+                    "FASTENER_LENGTH": "1\"",
+                    "MATERIAL_GRADE": "5",
+                    "NECK_TYPE": "Square",
+                    "SYSTEM_OF_MEASUREMENT": "Inch",
+                    "THREAD_SIZE": "1/4\"-20"
+                  },
+                  "in_stock": true,
+                  "options": {},
+                  "option_values": {}
+                },
+                "reason": "Galvanized finish for outdoor corrosion resistance"
+              }
+            ]
+          }
+        },
+        {
+          "component": "suggestions",
+          "payload": {
+            "suggestions": [
+              "Show stainless steel options only",
+              "Filter by size or thread",
+              "Add stainless carriage bolts to cart"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 306,
+        "output_tokens": 591,
+        "cache_read_input_tokens": 40365,
+        "cache_creation_input_tokens": 2733
+      },
+      "stop_reason": "end_turn"
+    }
+  ],
+  "cart_after": {
+    "items": [],
+    "item_count": 0,
+    "subtotal": 0
+  },
+  "memory_after": [],
+  "judge": {
+    "fingerprint": "0e19cd6b766dea27",
+    "verdict": "PASS",
+    "reason": "The agent correctly stated it could not find titanium carriage bolts in the catalog. The alternatives offered (steel and stainless steel carriage bolts in various grades and finishes) match what the search actually returned - the tool results show stainless steel A2 carriage bolts, Grade 8 steel, an"
+  }
+}

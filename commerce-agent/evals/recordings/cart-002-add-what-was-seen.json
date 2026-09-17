@@ -1,0 +1,94 @@
+{
+  "case_id": "cart-002-add-what-was-seen",
+  "model": "claude-sonnet-5",
+  "recorded_at": "2026-09-16T17:53:00Z",
+  "elapsed_ms": 11641,
+  "turns": [
+    {
+      "message": "add one pack of the hot dipped galvanized carriage bolts",
+      "reply": "Added the 1\" Steel Carriage Bolt, Grade A, Hot Dipped Galvanized Finish (1/4\"-20, 1300 PK) — cart subtotal is now $375.60.",
+      "tool_calls": [
+        {
+          "tool": "search_products",
+          "input": {
+            "query": "hot dipped galvanized carriage bolts"
+          }
+        },
+        {
+          "tool": "add_to_cart",
+          "input": {
+            "product_id": "dae730451bc745bfa642870bdf22f150"
+          }
+        },
+        {
+          "tool": "present_suggestions",
+          "input": {
+            "suggestions": ["View cart", "Add matching nuts", "Add matching washers", "Checkout"]
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "tool": "search_products",
+          "status": "ok",
+          "reason": null,
+          "summary": "ok"
+        },
+        {
+          "tool": "add_to_cart",
+          "status": "ok",
+          "reason": null,
+          "summary": "Added dae730451bc745bfa642870bdf22f150 x1. Cart now has 1 item(s), subtotal 375.60 USD."
+        },
+        {
+          "tool": "present_suggestions",
+          "status": "ok",
+          "reason": null,
+          "summary": "Displayed to the customer."
+        }
+      ],
+      "ui": [
+        {
+          "component": "suggestions",
+          "payload": {
+            "suggestions": ["View cart", "Add matching nuts", "Add matching washers", "Checkout"]
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 311,
+        "output_tokens": 360,
+        "cache_read_input_tokens": 28925,
+        "cache_creation_input_tokens": 999
+      },
+      "cart": {
+        "items": [
+          {
+            "product_id": "dae730451bc745bfa642870bdf22f150",
+            "title": "1\" Steel Carriage Bolt, Grade A, Hot Dipped Galvanized Finish, 1/4\"-20 Dia/Thread Size, 1300 PK",
+            "price": 375.6,
+            "quantity": 1,
+            "image_url": "https://virtostart-main.govirto.com/cms-content/assets/catalog/7829d/164W15/164W15.jpg",
+            "line_total": 375.6
+          }
+        ],
+        "item_count": 1,
+        "subtotal": 375.6,
+        "currency": "USD"
+      },
+      "stop_reason": "end_turn"
+    }
+  ],
+  "cart_after": {
+    "items": [
+      {
+        "product_id": "dae730451bc745bfa642870bdf22f150",
+        "quantity": 1,
+        "title": "1\" Steel Carriage Bolt, Grade A, Hot Dipped Galvanized Finish, 1/4\"-20 Dia/Thread Size, 1300 PK"
+      }
+    ],
+    "item_count": 1,
+    "subtotal": 375.6
+  },
+  "memory_after": []
+}
