@@ -80,6 +80,32 @@ describe("useCommerceAgent", () => {
     expect(rendered.at(-1)).toBe("Here are the bolts");
   });
 
+  it("shows what the agent is doing while it does it, and marks each step settled", async () => {
+    const { ask, turns } = useCommerceAgent();
+    answerWith(
+      { type: "tool_call", data: { tool: "search_products", id: "t1", label: "Looking for canned drinks" } },
+      { type: "tool_result", data: { tool: "search_products", id: "t1", is_error: false } },
+      { type: "tool_call", data: { tool: "search_products", id: "t2", label: "Broadening the search" } },
+      { type: "tool_result", data: { tool: "search_products", id: "t2", is_error: true } },
+    );
+
+    await ask("we need canned drinks for the office");
+
+    expect(turns.value.at(-1)?.steps).toEqual([
+      { id: "t1", label: "Looking for canned drinks", done: true, failed: false },
+      { id: "t2", label: "Broadening the search", done: true, failed: true },
+    ]);
+  });
+
+  it("never shows a tool call the model gave no words for", async () => {
+    const { ask, turns } = useCommerceAgent();
+    answerWith({ type: "tool_call", data: { tool: "get_cart", id: "t1", input: { cart_id: "c-1" } } });
+
+    await ask("what is in my cart?");
+
+    expect(turns.value.at(-1)?.steps).toEqual([]);
+  });
+
   it("keeps rendering a turn whose stream carries an event it does not know", async () => {
     const { ask, turns } = useCommerceAgent();
     answerWith({ type: "progress", data: { label: "searching" } }, { type: "text_delta", data: { text: "done" } });

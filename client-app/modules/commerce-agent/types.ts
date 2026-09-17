@@ -56,10 +56,24 @@ export interface IAgentComponent {
   payload: Record<string, unknown>;
 }
 
+/**
+ * One tool call as it happens, so the wait has something in it. `label` is the model's own
+ * one-line description of what it is about to do, written into every tool call's `status`
+ * argument and sanitized server-side; it is the only part shown. The tool's name and its
+ * arguments stay out of the UI — they are internals, and the arguments can carry ids.
+ */
+export interface IAgentStep {
+  id: string;
+  label: string;
+  done: boolean;
+  failed?: boolean;
+}
+
 export interface IAgentTurn {
   role: "user" | "assistant";
   text: string;
   components: IAgentComponent[];
+  steps: IAgentStep[];
   /** Set when the turn ended badly; the text is safe to show. */
   error?: string;
 }

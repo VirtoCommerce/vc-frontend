@@ -21,6 +21,7 @@ Third-party commentary is marked as such.
 | [11-webinar-slides.md](11-webinar-slides.md) | The three ways to build agentic commerce, the ownership boundary, the anatomy sequence, the proactive roadmap |
 | [12-anatomy-in-code.md](12-anatomy-in-code.md) | What a commerce agent actually is: the parts, one turn end to end, and the three pieces we would write |
 | [13-demo-script.md](13-demo-script.md) | The demo of what is built: the turns to type, what each proves, and what not to show |
+| [14-what-the-blog-says.md](14-what-the-blog-says.md) | Anthropic's three blog posts against what we built: what they confirm, what we are missing, what it costs |
 
 ## One paragraph
 

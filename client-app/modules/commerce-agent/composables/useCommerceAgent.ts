@@ -57,8 +57,8 @@ function _useCommerceAgent() {
       return;
     }
 
-    turns.value.push({ role: "user", text: trimmed, components: [] });
-    turns.value.push({ role: "assistant", text: "", components: [] });
+    turns.value.push({ role: "user", text: trimmed, components: [], steps: [] });
+    turns.value.push({ role: "assistant", text: "", components: [], steps: [] });
 
     // The reactive proxy the array handed back, not the object literal pushed into it:
     // mutating the raw object skips the proxy, so nothing re-renders until the turn ends
@@ -96,6 +96,23 @@ function _useCommerceAgent() {
       case "ui":
         reply.components.push(event.data as unknown as IAgentComponent);
         break;
+
+      case "tool_call": {
+        const label = String(event.data.label ?? "").trim();
+        if (label) {
+          reply.steps.push({ id: String(event.data.id ?? label), label, done: false });
+        }
+        break;
+      }
+
+      case "tool_result": {
+        const step = reply.steps.find((candidate) => candidate.id === String(event.data.id));
+        if (step) {
+          step.done = true;
+          step.failed = Boolean(event.data.is_error);
+        }
+        break;
+      }
 
       case "cart_update":
         // The agent writes to the cart itself, so the storefront's own cart state is stale

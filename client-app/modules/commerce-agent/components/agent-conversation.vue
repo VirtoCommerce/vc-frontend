@@ -5,6 +5,21 @@
         <p v-if="turn.role === 'user'" class="agent-conversation__asked">{{ turn.text }}</p>
 
         <template v-else>
+          <!-- What the agent is doing, while it does it: a turn can take half a minute. -->
+          <ol v-if="turn.steps.length" class="agent-conversation__steps">
+            <li
+              v-for="step in turn.steps"
+              :key="step.id"
+              class="agent-conversation__step"
+              :class="{
+                'agent-conversation__step--done': step.done,
+                'agent-conversation__step--failed': step.failed,
+              }"
+            >
+              {{ step.label }}
+            </li>
+          </ol>
+
           <p v-if="turn.text" class="agent-conversation__said">{{ turn.text }}</p>
 
           <template v-for="(component, position) in turn.components" :key="position">
@@ -107,6 +122,26 @@ async function send() {
 
   &__said {
     @apply whitespace-pre-wrap;
+  }
+
+  &__steps {
+    @apply flex flex-col gap-1 text-xs text-neutral-500;
+  }
+
+  &__step {
+    @apply flex items-center gap-1.5;
+
+    &::before {
+      @apply size-1.5 shrink-0 animate-pulse rounded-full bg-neutral-400 content-[""];
+    }
+
+    &--done::before {
+      @apply animate-none bg-success-500;
+    }
+
+    &--failed::before {
+      @apply animate-none bg-danger-500;
+    }
   }
 
   &__composer {
