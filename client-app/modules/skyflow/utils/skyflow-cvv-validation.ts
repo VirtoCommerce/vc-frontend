@@ -15,9 +15,9 @@
 //     (e.g. "AMERICAN EXPRESS"), whereas the SDK enum uses "AMEX", so matching is normalized
 //     inside the shared core.
 
-import { getCvvLength } from "./cvv-validation";
+import { getCvvLength } from "@/shared/payment/utils/cvv-validation";
 
-export { getCardSchemeFromNumber } from "./cvv-validation";
+export { getCardSchemeFromNumber } from "@/shared/payment/utils/cvv-validation";
 
 export type SkyflowCvvValidationType = {
   /** Anchored regex passed to Skyflow's REGEX_MATCH_RULE. */

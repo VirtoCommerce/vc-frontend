@@ -1,5 +1,6 @@
 import type { CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
 /** The plugin renders its own markup in place of the host's. */
@@ -68,6 +69,12 @@ export type ExtensionCategoryMapType = {
     { order: CustomerOrderType; paymentTypeName: string },
     never,
     ({ order, paymentTypeName }: { order: CustomerOrderType; paymentTypeName: string }) => boolean
+  >;
+  /** The cart-stage payment step (`shared/payment/components/payment.vue`). */
+  cartPayment: ExtensionEntryType<
+    IPaymentMethodParameters,
+    never,
+    ({ paymentTypeName }: { paymentTypeName: string }) => boolean
   >;
   /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
   sharedList: ExtensionEntryType<
