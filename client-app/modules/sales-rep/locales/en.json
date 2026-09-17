@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Top",
       "recent": "Recent",
-      "not_configured": "Analytics is not connected for this store",
+      "analytics_unavailable": "Web activity isn't available for this store right now",
       "tracked_caveat": "Based on tracked activity only",
       "data_as_of": "Data as of {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Visits",
         "last_search_term": "Last search term",
         "last_viewed_product": "Last viewed product",
-        "not_configured": "Web activity isn't tracked yet — analytics is not configured for this store.",
+        "analytics_unavailable": "Web activity isn't available right now — tracking isn't connected for this store, or the data couldn't be read.",
         "empty": "No activity data",
         "load_failed": "Couldn't load customer activity"
       }

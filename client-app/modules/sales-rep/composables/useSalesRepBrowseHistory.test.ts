@@ -28,6 +28,7 @@ describe("useSalesRepBrowseHistory", () => {
   it("maps rows, blanking absent display fields and flagging the unresolved code", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
+        isAnalyticsAvailable: true,
         dataAsOf: "2026-08-20T00:00:00Z",
         browsedProducts: [
           { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "img", viewCount: 4 },
@@ -61,16 +62,26 @@ describe("useSalesRepBrowseHistory", () => {
     ]);
   });
 
-  it("flags not-configured on a null payload, but never before a result arrives", () => {
-    const { notConfigured } = useSalesRepBrowseHistory({ organizationId: "org-1" });
+  it("flags unavailable from the backend flag, but never before a result arrives", () => {
+    const { unavailable } = useSalesRepBrowseHistory({ organizationId: "org-1" });
 
-    expect(notConfigured.value).toBe(false);
+    expect(unavailable.value).toBe(false);
 
-    // The backend answers null for "no insights provider"; codegen's Maybe<T> = T mapping erases
-    // the null, so the fixture casts to what actually arrives on the wire.
+    // One flag covers analytics absent, unconfigured, and a read that failed.
+    queryMock.result.value = {
+      salesRepCustomerInsights: { isAnalyticsAvailable: false, browsedProducts: [] },
+    };
+
+    expect(unavailable.value).toBe(true);
+  });
+
+  // A null payload means only that the caller may not see this customer.
+  it("does not flag unavailable on a null payload", () => {
+    const { unavailable } = useSalesRepBrowseHistory({ organizationId: "org-1" });
+
     queryMock.result.value = { salesRepCustomerInsights: null } as unknown as SalesRepCustomerBrowsedProductsQuery;
 
-    expect(notConfigured.value).toBe(true);
+    expect(unavailable.value).toBe(false);
   });
 
   // Same reason as in useSalesRepSearchHistory: the two insights ops share one normalized cache entry,
@@ -79,6 +90,7 @@ describe("useSalesRepBrowseHistory", () => {
   it("dates the list from its own rows, not from the shared payload field", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
+        isAnalyticsAvailable: true,
         dataAsOf: "2026-08-31T00:00:00Z",
         browsedProducts: [
           { productId: "p1", sku: "SKU-1", viewCount: 4, lastViewedDate: "2026-08-19T10:00:00Z" },

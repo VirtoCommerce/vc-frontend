@@ -19,8 +19,8 @@
       />
 
       <VcEmptyView
-        v-else-if="notConfigured && !loading"
-        :text="t('sales_rep.customer_insights.not_configured')"
+        v-else-if="unavailable && !loading"
+        :text="t('sales_rep.customer_insights.analytics_unavailable')"
         icon="eye"
       />
 
@@ -119,7 +119,7 @@ const isVisible = computed(() => props.active !== false);
 
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
-const { items, notConfigured, dataAsOf, loading, error } = useSalesRepBrowseHistory({
+const { items, unavailable, dataAsOf, loading, error } = useSalesRepBrowseHistory({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   periodFrom,

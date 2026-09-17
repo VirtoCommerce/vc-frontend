@@ -15,8 +15,9 @@ type UseSalesRepCustomerActivitySummaryOptionsType = {
 };
 
 // Owns the salesRepCustomerActivitySummary op. A foreign/unauthorized organizationId nulls the whole
-// field (like the statistics queries); analytics absence is `isAnalyticsConfigured: false` with the
-// GA-sourced fields null/0 while `createdOn` still comes from the DB — never an error.
+// field (like the statistics queries); analytics being unavailable — absent, unconfigured or unreadable
+// — is `isAnalyticsAvailable: false` with the GA-sourced fields null/0 while `createdOn` still comes
+// from the DB — never an error.
 export function useSalesRepCustomerActivitySummary(
   organizationId: MaybeRefOrGetter<string>,
   options: UseSalesRepCustomerActivitySummaryOptionsType = {},
@@ -55,7 +56,7 @@ export function useSalesRepCustomerActivitySummary(
                 imageUrl: node.lastViewedProduct.imageUrl ?? "",
               }
             : undefined,
-          isAnalyticsConfigured: node.isAnalyticsConfigured,
+          isAnalyticsAvailable: node.isAnalyticsAvailable,
         }
       : undefined;
   });

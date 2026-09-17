@@ -8,7 +8,7 @@ const state = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return {
     items: ref<Record<string, unknown>[]>([]),
-    notConfigured: ref(false),
+    unavailable: ref(false),
     dataAsOf: ref<string | undefined>(undefined),
     loading: ref(false),
     error: ref<Error | null>(null),
@@ -47,7 +47,7 @@ const rows = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".cu
 
 beforeEach(() => {
   state.items.value = [];
-  state.notConfigured.value = false;
+  state.unavailable.value = false;
   state.dataAsOf.value = undefined;
   state.loading.value = false;
   state.error.value = null;
@@ -63,12 +63,12 @@ describe("CustomerBrowseHistory states", () => {
   });
 
   it("names the not-configured state distinctly from the empty one", () => {
-    state.notConfigured.value = true;
+    state.unavailable.value = true;
 
     const views = emptyViews(createWrapper());
 
     expect(views).toHaveLength(1);
-    expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.not_configured");
+    expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.analytics_unavailable");
   });
 
   it("replaces the list with the failure view when the query failed but stale rows remain", () => {

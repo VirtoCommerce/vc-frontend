@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Najczęstsze",
       "recent": "Ostatnie",
-      "not_configured": "Analityka nie jest połączona z tym sklepem",
+      "analytics_unavailable": "Analityka nie jest połączona z tym sklepem",
       "tracked_caveat": "Wyłącznie na podstawie śledzonej aktywności",
       "data_as_of": "Dane na dzień {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Wizyty",
         "last_search_term": "Ostatnie wyszukiwane hasło",
         "last_viewed_product": "Ostatnio oglądany produkt",
-        "not_configured": "Aktywność w sieci nie jest jeszcze śledzona — analityka nie jest skonfigurowana dla tego sklepu.",
+        "analytics_unavailable": "Aktywność w sieci nie jest jeszcze śledzona — analityka nie jest skonfigurowana dla tego sklepu.",
         "empty": "Brak danych o aktywności",
         "load_failed": "Nie udało się załadować aktywności klienta"
       }

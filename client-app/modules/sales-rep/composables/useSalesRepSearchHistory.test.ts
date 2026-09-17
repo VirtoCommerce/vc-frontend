@@ -26,15 +26,16 @@ describe("useSalesRepSearchHistory", () => {
   it("maps the payload rows and keeps counts numeric for plural selection", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
+        isAnalyticsAvailable: true,
         dataAsOf: "2026-08-20T00:00:00Z",
         searchTerms: [{ term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" }],
       },
     } satisfies SalesRepCustomerSearchTermsQuery;
 
-    const { items, notConfigured } = useSalesRepSearchHistory({ organizationId: "org-1" });
+    const { items, unavailable } = useSalesRepSearchHistory({ organizationId: "org-1" });
 
     expect(items.value).toEqual([{ term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" }]);
-    expect(notConfigured.value).toBe(false);
+    expect(unavailable.value).toBe(false);
   });
 
   // The payload's own dataAsOf is deliberately NOT read: both insights ops select the same root field
@@ -44,6 +45,7 @@ describe("useSalesRepSearchHistory", () => {
   it("dates the list from its own rows, not from the shared payload field", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
+        isAnalyticsAvailable: true,
         dataAsOf: "2026-08-31T00:00:00Z",
         searchTerms: [
           { term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" },
@@ -62,6 +64,7 @@ describe("useSalesRepSearchHistory", () => {
   it("reports no date when the rows carry none", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
+        isAnalyticsAvailable: true,
         dataAsOf: "2026-08-31T00:00:00Z",
         searchTerms: [{ term: "gloves", count: 12 }],
       },
@@ -72,17 +75,28 @@ describe("useSalesRepSearchHistory", () => {
     expect(dataAsOf.value).toBeUndefined();
   });
 
-  it("flags not-configured on a null payload, but never before a result arrives", () => {
-    const { notConfigured } = useSalesRepSearchHistory({ organizationId: "org-1" });
+  it("flags unavailable from the backend flag, but never before a result arrives", () => {
+    const { unavailable } = useSalesRepSearchHistory({ organizationId: "org-1" });
 
-    // No result yet (loading or failed) must not read as "not configured".
-    expect(notConfigured.value).toBe(false);
+    // No result yet (loading or failed) must not read as unavailable.
+    expect(unavailable.value).toBe(false);
 
-    // The backend answers null for "no insights provider"; codegen's Maybe<T> = T mapping erases
-    // the null, so the fixture casts to what actually arrives on the wire.
+    // One flag covers analytics absent, unconfigured, and a read that failed.
+    queryMock.result.value = {
+      salesRepCustomerInsights: { isAnalyticsAvailable: false, searchTerms: [] },
+    };
+
+    expect(unavailable.value).toBe(true);
+  });
+
+  // A null payload now means only that the caller may not see this customer — not that analytics is
+  // unavailable. Reading it as unavailable would put the wrong message on a rep with no organizations.
+  it("does not flag unavailable on a null payload", () => {
+    const { unavailable } = useSalesRepSearchHistory({ organizationId: "org-1" });
+
     queryMock.result.value = { salesRepCustomerInsights: null } as unknown as SalesRepCustomerSearchTermsQuery;
 
-    expect(notConfigured.value).toBe(true);
+    expect(unavailable.value).toBe(false);
   });
 
   it("surfaces the query error so the widget can show a failure state", () => {

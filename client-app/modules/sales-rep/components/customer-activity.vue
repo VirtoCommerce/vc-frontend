@@ -39,11 +39,12 @@
             <dd class="customer-activity__value">{{ $d(new Date(summary.createdOn)) }}</dd>
           </div>
 
-          <!-- Distinct not-configured state for the GA-sourced rows: absent tracking must not read as
-               "this customer never logs in / searches". Created on still shows — it comes from the DB. -->
-          <div v-if="!summary.isAnalyticsConfigured" class="customer-activity__note">
+          <!-- Distinct unavailable state for the GA-sourced rows: untracked or unreadable activity must
+               not read as "this customer never logs in / searches". Created on still shows — it comes
+               from the DB, so it survives a reporting outage. -->
+          <div v-if="!summary.isAnalyticsAvailable" class="customer-activity__note">
             <VcIcon class="customer-activity__icon" name="circle-alert" :size="15" />
-            {{ t("sales_rep.activity.customer.not_configured") }}
+            {{ t("sales_rep.activity.customer.analytics_unavailable") }}
           </div>
 
           <template v-else>

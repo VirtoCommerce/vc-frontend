@@ -293,7 +293,7 @@ const topViewsEnabled = computed(() => topMode.value && category.value === "prod
 
 const {
   items: topSearchItems,
-  notConfigured: topSearchesNotConfigured,
+  unavailable: topSearchesUnavailable,
   loading: topSearchesLoading,
   error: topSearchesError,
 } = useSalesRepSearchHistory({
@@ -307,7 +307,7 @@ const {
 
 const {
   items: topViewItems,
-  notConfigured: topViewsNotConfigured,
+  unavailable: topViewsUnavailable,
   loading: topViewsLoading,
   error: topViewsError,
 } = useSalesRepBrowseHistory({
@@ -324,13 +324,11 @@ const onSearchesTab = computed(() => category.value === "searches");
 const topRowCount = computed(() => (onSearchesTab.value ? topSearchItems.value.length : topViewItems.value.length));
 const topLoading = computed(() => (onSearchesTab.value ? topSearchesLoading.value : topViewsLoading.value));
 const topFailed = computed(() => Boolean(onSearchesTab.value ? topSearchesError.value : topViewsError.value));
-const topNotConfigured = computed(() =>
-  onSearchesTab.value ? topSearchesNotConfigured.value : topViewsNotConfigured.value,
-);
+const topUnavailable = computed(() => (onSearchesTab.value ? topSearchesUnavailable.value : topViewsUnavailable.value));
 
 const viewLoading = computed(() => (topMode.value ? topLoading.value : loading.value));
 const viewFailed = computed(() => (topMode.value ? topFailed.value : failed.value));
-const viewEmpty = computed(() => (topMode.value ? topNotConfigured.value || !topRowCount.value : !items.value.length));
+const viewEmpty = computed(() => (topMode.value ? topUnavailable.value || !topRowCount.value : !items.value.length));
 
 // Match the rows being replaced so the page height holds during a refetch; a handful on first load.
 const FIRST_LOAD_SKELETON_ROWS = 5;
@@ -348,12 +346,12 @@ const failedText = computed(() => {
 });
 
 // A category tab narrows the wording; the tracked-period phrasing covers the period-scoped feed.
-// Top mode reuses the customer panels' "No tracked …" family (and their not-configured state — a
-// null insights payload also covers a rep with no assigned organizations).
+// Top mode reuses the customer panels' "No tracked …" family, plus their unavailable state — which the
+// backend now reports through isAnalyticsAvailable rather than by nulling the payload.
 const emptyText = computed(() => {
   if (topMode.value) {
-    if (topNotConfigured.value) {
-      return t("sales_rep.customer_insights.not_configured");
+    if (topUnavailable.value) {
+      return t("sales_rep.customer_insights.analytics_unavailable");
     }
     return onSearchesTab.value
       ? t("sales_rep.customer_insights.search_history.empty")

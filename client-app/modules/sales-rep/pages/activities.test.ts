@@ -35,12 +35,12 @@ const insights = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return {
     searchItems: ref<Record<string, unknown>[]>([]),
-    searchNotConfigured: ref(false),
+    searchUnavailable: ref(false),
     searchLoading: ref(false),
     searchError: ref<Error | null>(null),
     searchOptions: undefined as InsightsOptionsType | undefined,
     browseItems: ref<Record<string, unknown>[]>([]),
-    browseNotConfigured: ref(false),
+    browseUnavailable: ref(false),
     browseLoading: ref(false),
     browseError: ref<Error | null>(null),
     browseOptions: undefined as InsightsOptionsType | undefined,
@@ -96,7 +96,7 @@ vi.mock("../composables/useSalesRepSearchHistory", async () => {
       insights.searchOptions = options;
       return {
         items: insights.searchItems,
-        notConfigured: insights.searchNotConfigured,
+        unavailable: insights.searchUnavailable,
         dataAsOf: ref(undefined),
         loading: insights.searchLoading,
         error: insights.searchError,
@@ -111,7 +111,7 @@ vi.mock("../composables/useSalesRepBrowseHistory", async () => {
       insights.browseOptions = options;
       return {
         items: insights.browseItems,
-        notConfigured: insights.browseNotConfigured,
+        unavailable: insights.browseUnavailable,
         dataAsOf: ref(undefined),
         loading: insights.browseLoading,
         error: insights.browseError,
@@ -264,12 +264,12 @@ beforeEach(() => {
   state.loading.value = false;
   state.error.value = null;
   insights.searchItems.value = [];
-  insights.searchNotConfigured.value = false;
+  insights.searchUnavailable.value = false;
   insights.searchLoading.value = false;
   insights.searchError.value = null;
   insights.searchOptions = undefined;
   insights.browseItems.value = [];
-  insights.browseNotConfigured.value = false;
+  insights.browseUnavailable.value = false;
   insights.browseLoading.value = false;
   insights.browseError.value = null;
   insights.browseOptions = undefined;
@@ -605,10 +605,10 @@ describe("Activities page — Top|Recent mode", () => {
 
     expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.customer_insights.search_history.empty");
 
-    insights.searchNotConfigured.value = true;
+    insights.searchUnavailable.value = true;
     await nextTick();
 
-    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.customer_insights.not_configured");
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.customer_insights.analytics_unavailable");
   });
 
   it("replaces the ranked list with the failure view when the insights query failed", async () => {

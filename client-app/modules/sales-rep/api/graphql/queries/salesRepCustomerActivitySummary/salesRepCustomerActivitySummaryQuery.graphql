@@ -15,7 +15,7 @@ query SalesRepCustomerActivitySummary(
     lastWebLogin
     visitsCount
     lastSearchTerm
-    isAnalyticsConfigured
+    isAnalyticsAvailable
     lastViewedProduct {
       code
       productId

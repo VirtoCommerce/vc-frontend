@@ -44,8 +44,9 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
 
   const payload = computed(() => result.value?.salesRepCustomerInsights);
 
-  // Null payload = no insights provider for the store — an expected state, not an error.
-  const notConfigured = computed(() => Boolean(result.value) && !payload.value);
+  // The backend reports every unavailable case through one flag — analytics absent, unconfigured, or a
+  // read that failed. A null payload now means only that the caller may not see this customer.
+  const unavailable = computed(() => Boolean(result.value) && payload.value?.isAnalyticsAvailable === false);
 
   const items = computed<SalesRepSearchTermRowType[]>(() =>
     (payload.value?.searchTerms ?? []).map((row) => ({
@@ -63,5 +64,5 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
   // the SELECTED collections, so for a single-collection op this is that same value, computed apart.
   const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastSearchedDate)));
 
-  return { items, notConfigured, dataAsOf, loading, error };
+  return { items, unavailable, dataAsOf, loading, error };
 }

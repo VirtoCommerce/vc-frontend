@@ -46,7 +46,7 @@ function summaryFixture(
     visitsCount: 12,
     lastSearchTerm: "gloves",
     lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "" },
-    isAnalyticsConfigured: true,
+    isAnalyticsAvailable: true,
     ...overrides,
   };
 }
@@ -133,7 +133,7 @@ describe("CustomerActivity summary states", () => {
   // give way to the note while Created on (a DB fact) keeps rendering.
   it("shows created-on plus the not-configured note when analytics is off", () => {
     state.summary.value = summaryFixture({
-      isAnalyticsConfigured: false,
+      isAnalyticsAvailable: false,
       lastWebLogin: undefined,
       visitsCount: 0,
       lastSearchTerm: "",

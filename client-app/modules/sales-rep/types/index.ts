@@ -100,7 +100,8 @@ export type SalesRepActivityItemType = {
 export type SalesRepActivityCategoryCountType = { category: string; count: number };
 
 // Per-customer activity summary (VCST-5337). GA-sourced fields are null/0 with
-// `isAnalyticsConfigured: false` when analytics is absent; `createdOn` still comes from the DB.
+// `isAnalyticsAvailable: false` when analytics is absent, unconfigured OR could not be read;
+// `createdOn` still comes from the DB and survives all three.
 export type SalesRepActivityProductType = {
   code: string;
   // Empty when the tracked code matched no product; gates the deep link.
@@ -114,7 +115,7 @@ export type SalesRepCustomerActivitySummaryType = {
   visitsCount: number;
   lastSearchTerm: string;
   lastViewedProduct?: SalesRepActivityProductType;
-  isAnalyticsConfigured: boolean;
+  isAnalyticsAvailable: boolean;
 };
 
 // View model for a shared library document (VCST-5730); mapped from the GraphQL SalesRepDocument.

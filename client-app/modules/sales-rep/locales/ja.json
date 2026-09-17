@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "上位",
       "recent": "最近",
-      "not_configured": "このストアではアナリティクスが接続されていません",
+      "analytics_unavailable": "このストアではアナリティクスが接続されていません",
       "tracked_caveat": "トラッキングされたアクティビティのみに基づいています",
       "data_as_of": "{date} 時点のデータ",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "訪問数",
         "last_search_term": "最後の検索キーワード",
         "last_viewed_product": "最後に閲覧した商品",
-        "not_configured": "ウェブ活動はまだトラッキングされていません — このストアにはアナリティクスが設定されていません。",
+        "analytics_unavailable": "ウェブ活動はまだトラッキングされていません — このストアにはアナリティクスが設定されていません。",
         "empty": "アクティビティデータがありません",
         "load_failed": "顧客アクティビティを読み込めませんでした"
       }

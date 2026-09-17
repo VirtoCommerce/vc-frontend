@@ -13,6 +13,7 @@ query SalesRepCustomerBrowsedProducts(
     cultureName: $cultureName
     period: { from: $periodFrom, to: $periodTo }
   ) {
+    isAnalyticsAvailable
     dataAsOf
     browsedProducts(take: $take, sort: $sort) {
       productId

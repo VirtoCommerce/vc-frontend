@@ -216,7 +216,7 @@
     "customer_insights": {
       "top": "Top",
       "recent": "Recenti",
-      "not_configured": "Analytics non è collegato per questo negozio",
+      "analytics_unavailable": "Analytics non è collegato per questo negozio",
       "tracked_caveat": "Basato solo sull'attività tracciata",
       "data_as_of": "Dati al {date}",
       "search_history": {
@@ -288,7 +288,7 @@
         "visits": "Visite",
         "last_search_term": "Ultimo termine di ricerca",
         "last_viewed_product": "Ultimo prodotto visualizzato",
-        "not_configured": "L'attività web non è ancora tracciata — l'analisi non è configurata per questo negozio.",
+        "analytics_unavailable": "L'attività web non è ancora tracciata — l'analisi non è configurata per questo negozio.",
         "empty": "Nessun dato di attività",
         "load_failed": "Impossibile caricare l'attività del cliente"
       }

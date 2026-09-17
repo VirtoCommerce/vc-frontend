@@ -24,7 +24,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
         lastWebLogin: "2026-08-20T10:00:00Z",
         visitsCount: 12,
         lastSearchTerm: "gloves",
-        isAnalyticsConfigured: true,
+        isAnalyticsAvailable: true,
         lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
       },
     } satisfies SalesRepCustomerActivitySummaryQuery;
@@ -36,7 +36,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
       lastWebLogin: "2026-08-20T10:00:00Z",
       visitsCount: 12,
       lastSearchTerm: "gloves",
-      isAnalyticsConfigured: true,
+      isAnalyticsAvailable: true,
       lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
     });
   });
@@ -48,7 +48,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
       salesRepCustomerActivitySummary: {
         createdOn: "2024-01-05T00:00:00Z",
         visitsCount: 0,
-        isAnalyticsConfigured: false,
+        isAnalyticsAvailable: false,
       },
     } satisfies SalesRepCustomerActivitySummaryQuery;
 
@@ -56,7 +56,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
 
     expect(summary.value).toMatchObject({
       createdOn: "2024-01-05T00:00:00Z",
-      isAnalyticsConfigured: false,
+      isAnalyticsAvailable: false,
       visitsCount: 0,
       lastSearchTerm: "",
       lastViewedProduct: undefined,
