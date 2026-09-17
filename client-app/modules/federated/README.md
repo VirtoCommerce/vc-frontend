@@ -266,7 +266,10 @@ Three design points worth calling out:
 
 - **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
   `init()` is registered _before_ the initial navigation resolves — deep links to
-  plugin routes work on first paint.
+  plugin routes work on first paint. It is also why the budgets below are blank-screen time for
+  the **whole storefront**, not just for a plugin's own page. VCST-5761 removes that wait: a plugin
+  declares its routes in `plugin.json`, the host registers a placeholder and mounts immediately, so
+  only a visitor opening a plugin page waits — and sees a loader instead of a blank page.
 - **Started only after every host plugin has installed.** The route guard covers the whole
   load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
   remove-then-add would be refused. Outside preview mode nothing between costs boot time.
@@ -486,7 +489,9 @@ already read makes validated bytes == executed bytes **and** removes the extra r
 
 - **One switch, on by default.** `module_federation_enabled: false` in
   `client-app/config/settings_data.json` ⇒ no MF host build, no plugin-list query, and the loader
-  isn't even imported — zero cost. A missing key counts as `true`.
+  isn't even imported — zero cost. A missing key counts as `true`. Left on, the harness itself
+  costs **+67 KB gzip on the initial payload and +159 KB gzip across the whole build (+9 %)**,
+  measured federation on vs off at the same commit — before any plugin is installed.
 - **Isolation is total**, malformed descriptors included. Every descriptor field is read through
   a string guard and the list itself is checked for arrayness, because the projection is a
   hand-written structural type and nothing else guards its shape — a non-string `permission` or
