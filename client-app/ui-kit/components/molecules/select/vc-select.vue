@@ -416,7 +416,8 @@ function prev(index: number) {
 }
 
 // The trigger keeps focus after the list closes and only opens on focus, so the keyboard had no way
-// back in: Enter had no handler, and ArrowDown looks for options the closed list does not render.
+// back in: Enter had no handler, and ArrowDown called next(-1), whose focus() is a no-op on options
+// inside a display:none list.
 function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOption: boolean) {
   if (isShown.value) {
     if (moveToFirstOption) {
@@ -426,7 +427,7 @@ function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOptio
     return;
   }
 
-  // Nothing to open, so the key stays the page's: a readonly select would otherwise swallow Enter.
+  // Nothing to open, so Enter stays the page's. ArrowDown is prevented by its own binding either way.
   if (!enabled.value) {
     return;
   }

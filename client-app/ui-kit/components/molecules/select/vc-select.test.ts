@@ -234,8 +234,9 @@ describe("VcSelect inside a dialog popover", () => {
     expect(wrapper.get(".vc-menu-item").element.contains(document.activeElement)).toBe(true);
   });
 
-  // Enter is consumed only where it cannot mean anything else: address-form.vue puts autocomplete
-  // selects in a form that saves on Enter.
+  // Enter is consumed only by a select-only combobox (APG). An editable one keeps it for its form —
+  // address-form.vue. A select-only one in a form (profile.vue) trades submit-on-Enter for opening the
+  // list, and only in the state a previous Escape left behind.
   it.each([
     [false, true],
     [true, false],

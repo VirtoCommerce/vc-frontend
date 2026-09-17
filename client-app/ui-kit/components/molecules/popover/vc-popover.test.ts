@@ -449,9 +449,9 @@ describe("VcPopover", () => {
       expect(wrapper.get("button.trigger").attributes("aria-haspopup")).toBeUndefined();
     });
 
-    // Pins a known defect, not the intended rule: a role-less panel is not a dialog, and every
-    // VcDropdownMenu panel still has its trigger announce one. Silencing them here would drop an
-    // announcement they have always made, so the fix is a real role on those panels — a follow-up.
+    // Pins a known defect, not the intended rule: a role-less panel is not a dialog, and every panel
+    // VcDropdownMenu renders is one, because it passes no role on. Silencing the triggers here would
+    // drop an announcement they have always made, so the fix is a real role on those panels.
     it("pins the historical dialog default that a role-less panel still announces", async () => {
       const wrapper = createWrapper();
       await open(wrapper);
