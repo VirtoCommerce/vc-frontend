@@ -85,8 +85,9 @@ interface IProps {
    * ARIA role of the content panel, and the source of the trigger's `aria-haspopup`: a popup kind
    * (`menu`, `listbox`, `tree`, `grid`, `dialog`) is announced as itself, `tooltip` not at all, and
    * any other role — including none — keeps the historical `dialog`. `VcDropdownMenu` passes no role
-   * on, so its panels are the known holdouts: their triggers announce a dialog over a role-less list.
-   * Giving those panels a role is a separate change.
+   * on, so its panels are the known holdouts: their triggers announce a dialog over a list that is
+   * role-less unless the consumer names it itself, as `VcSelect` does. Giving those panels a role
+   * here is a separate change.
    *
    * `dialog` additionally enables the non-modal dialog keyboard contract (WAI-ARIA APG): Escape
    * closes the panel from anywhere in its DOM subtree — teleported content sits outside it and must
@@ -122,10 +123,15 @@ const props = withDefaults(defineProps<IProps>(), {
 // A tooltip is the one role VcPopover knows that the attribute has no token for.
 type HaspopupTokenType = Exclude<VcPopoverRoleType, "tooltip">;
 
-const HASPOPUP_TOKENS: readonly HaspopupTokenType[] = ["menu", "listbox", "tree", "grid", "dialog"];
+// `satisfies Record<…>` so a role added to the union has to be answered here: a missing key is a
+// compile error, not a panel silently announced as a dialog.
+const HASPOPUP_TOKENS = { menu: true, listbox: true, tree: true, grid: true, dialog: true } satisfies Record<
+  HaspopupTokenType,
+  true
+>;
 
 function isHaspopupToken(value: string | undefined): value is HaspopupTokenType {
-  return HASPOPUP_TOKENS.includes(value as HaspopupTokenType);
+  return value !== undefined && Object.hasOwn(HASPOPUP_TOKENS, value);
 }
 
 const popoverContext = inject(vcPopoverKey, null);
