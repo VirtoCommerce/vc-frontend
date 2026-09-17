@@ -37,6 +37,7 @@ Files in this folder:
 | `contract/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
 | `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. Its `types` condition points at the hand-written `tailwind-preset.d.cts` — without one a plugin whose `tailwind.config.ts` is TypeScript fails with TS7016, which `skipLibCheck` does not suppress. |
 | `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
+| `codegen.mjs`              | graphql-codegen scalars + plugins (`@vc-frontend/core/codegen`), shared by the host's generator and by a plugin that types its own xAPI scope; types in `codegen.d.mts`. |
 | `bump-version.mjs`         | `yarn bump:core <level>` — manual bump for a BREAKING change (`minor` on 0.x, `major` from 1.0.0); additive bumps are automatic. |
 | `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
 | `build-types.mjs`          | The generator (below) — emits both the type contract and the tailwind preset snapshot.                            |
@@ -62,6 +63,20 @@ Files in this folder:
                 ▼
         contract/index.d.ts  (self-contained, ~1500 lines, committed)
 ```
+
+Step ② also appends a `declare module "vue"` augmentation of `GlobalComponents` covering the
+ui-kit components the facade re-exports. `app.use(uiKit)` registers them globally, so a plugin
+template writes `<VcButton>` with no import — and without the augmentation TypeScript sees nothing
+there: vue-tsc accepts an unknown component silently, so no prop is checked and a misspelled tag
+only fails at runtime. It is generated from the facade's own `@/ui-kit/components` re-exports
+rather than from the host's hand-written augmentations, which rollup-plugin-dts cannot inline and
+which are already missing components (`VcLink`, `VcTableColumn`).
+
+The generated contract is excluded from the host's own tsconfig projects
+(`client-app/core-api/contract`). It used to be compiled along with the rest of `client-app/**`,
+and once it carries that augmentation the merge makes host templates resolve ui-kit props through
+the contract's rolled-up copies instead of the ui-kit's own types — 48 spurious errors. Nothing in
+the host imports `@vc-frontend/core`; if something ever does, those errors come back.
 
 Guards that run with it (any failure = non-zero exit):
 

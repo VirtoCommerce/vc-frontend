@@ -146,14 +146,21 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`,
   `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT`
 - Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
-  `usePageHead`, `useWishlistSharingScopes`
+  `usePageHead`, `useWishlistSharingScopes`, `useRouteQueryParam`, `useFetch` (the host's fetch
+  with its auth interceptors, so a plugin can read a protected file URL as the signed-in user)
+- Order rendering: `useOrderView` (the host's order view-model — gift vs regular items,
+  per-currency groups, BOPIS) and the components its details page composes: `OrderLineItems`,
+  `OrderSummary`, `OrderCommentSection`, `AcceptedGifts`, `AddressInfo`, `VendorName`
+- Order filtering: `getFilterExpression`, `STATUS_ORDERS_FACET_NAME`, `OrdersFilterDataType` —
+  the filter grammar a plugin listing orders has to speak
+- Files: `downloadFile`, `getFileSize`, `ContentType`
 - Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`,
-  `toStartDateFilterValue`, `toEndDateFilterValue`, `registerLocaleLoader`, `ROUTES` (the host
-  route names a plugin mounts under or links to)
+  `toStartDateFilterValue`, `toEndDateFilterValue`, `toLocalDateOnly`, `registerLocaleLoader`,
+  `ROUTES` (the host route names a plugin mounts under or links to)
 - Meta: `CORE_VERSION`, and the types `I18n`, `ILanguage`, `LocaleLoaderType`, `MenuType`,
   `ExtendedMenuLinkType`, `IWishlistSharingScopeControlsType`,
   `WishlistSharingScopeSavedContextType`
-- Separate subpaths: `@vc-frontend/core/federation`, `/tailwind-preset`, `/testing`
+- Separate subpaths: `@vc-frontend/core/federation`, `/tailwind-preset`, `/testing`, `/codegen`
 
 > **Rule of thumb:** keep the facade **small and additive**. The level depends on the
 > release line: on 0.x a new export ⇒ **patch** and removing/renaming ⇒ **minor**; from
