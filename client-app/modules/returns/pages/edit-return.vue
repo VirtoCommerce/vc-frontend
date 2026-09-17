@@ -36,7 +36,17 @@
         </div>
       </VcWidget>
 
-      <VcWidget v-for="line in lines" :key="line.orderLineItemId" :title="line.name ?? ''" size="lg" class="mt-5">
+      <!-- Keyed by draft as well as line: the route reuses this page between drafts, and two drafts
+           of one order share line ids. On a bare line key Vue would keep the uploader instance, whose
+           file list is seeded once and never replaced, so the previous draft's photos would stay on
+           screen and ride the next autosave. -->
+      <VcWidget
+        v-for="line in lines"
+        :key="`${returnId}:${line.orderLineItemId}`"
+        :title="line.name ?? ''"
+        size="lg"
+        class="mt-5"
+      >
         <p class="mb-4 text-sm text-neutral-400">
           {{ [line.sku, line.measureUnit].filter(Boolean).join(" · ") }}
         </p>
@@ -187,8 +197,9 @@ const {
 const bulkReason = ref("");
 
 // Keyed by line: the uploader lives per line and only it knows whether its files have settled.
-// The router reuses this component between drafts, so a stale "still uploading" flag from the
-// previous one would keep Submit disabled on the next.
+// The router reuses this component between drafts, so a line the next draft does not carry would
+// leave a stale flag behind. Lines it does carry re-report themselves, since the widget key
+// includes the draft.
 const uploadState = ref<Record<string, { settled: boolean; failed: boolean }>>({});
 
 watch(
