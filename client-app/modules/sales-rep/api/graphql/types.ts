@@ -1732,7 +1732,7 @@ export type SalesRepActivityCategoryCount = {
 export type SalesRepActivityConnection = {
   /** Per-category totals for the applied filters (zero counts included). */
   categoryCounts: Array<SalesRepActivityCategoryCount>;
-  /** Whether tracked storefront activity is measured for this store right now. False means the searches, product views and sign-in counts are zero because nothing is being measured — analytics is absent, unconfigured, or could not be read — not because the customer was inactive. It carries no detail about which: the server log and the diagnostics endpoint do. */
+  /** Whether tracked storefront activity is measured for this store right now. False means the searches, product views and sign-in counts are zero because nothing is being measured, not because the customer was inactive. */
   isAnalyticsAvailable: Scalars['Boolean']['output'];
   /** The requested activity page, newest first. */
   items: Array<SalesRepActivityEvent>;
@@ -1938,7 +1938,7 @@ export type SalesRepCustomerOrderStatisticsArgs = {
 export type SalesRepCustomerActivitySummary = {
   /** When the organization was created (from the database, not analytics). */
   createdOn?: Maybe<Scalars['DateTime']['output']>;
-  /** Whether the analytics figures beside this are measurements. False when analytics is absent, unconfigured, or could not be read — the figures are then zero/null for want of a source, not for want of activity. Non-analytics fields such as createdOn are unaffected. */
+  /** Whether the analytics figures beside this are measurements. False means zero/null for want of a source, not for want of activity; createdOn is unaffected. */
   isAnalyticsAvailable: Scalars['Boolean']['output'];
   /** Most recently searched phrase (null when analytics is not configured or has no data). */
   lastSearchTerm?: Maybe<Scalars['String']['output']>;
@@ -2040,7 +2040,7 @@ export type SalesRepCustomerInsights = {
   browsedProducts: Array<SalesRepBrowsedProduct>;
   /** Latest event hour (UTC) observed across the selected collections; null when they carry no data or only 'count'-sorted collections are selected (their aggregate rows carry no dates). */
   dataAsOf?: Maybe<Scalars['DateTime']['output']>;
-  /** Whether the collections beside this are measurements. False when analytics is absent, unconfigured, or could not be read — the lists are then empty for want of a source, not for want of activity. It carries no detail about which. */
+  /** Whether the collections beside this are measurements. False means the lists are empty for want of a source, not for want of activity. */
   isAnalyticsAvailable: Scalars['Boolean']['output'];
   /** Search phrases the customer's users looked for. Counts only the 'search' event ('view_search_results' describes the same action and would double-count it). Sort 'date' aggregates a bounded page of the newest 200 hour buckets — older activity is not counted. */
   searchTerms: Array<SalesRepSearchTerm>;
