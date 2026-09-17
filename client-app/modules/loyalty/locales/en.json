@@ -11,7 +11,8 @@
       "amount": "Amount",
       "redeemed": "Redeemed",
       "earned": "Earned",
-      "registration": "Registration"
+      "registration": "Registration",
+      "mission": "Mission reward"
     },
     "list_details": {
       "empty_list": "Your list is empty"
@@ -67,12 +68,13 @@
           "type_orders": "Order count",
           "points": "points",
           "days_left": "{count} day left | {count} days left",
+          "no_deadline": "No deadline",
           "mission_completed": "Mission completed",
           "completed": "Completed",
           "open_mission": "Open mission",
           "progress_skus": "{current} of {target} SKUs",
           "progress_any_sku": "at least 1 of {target} SKUs",
-          "progress_spend": "{sum} spent",
+          "progress_spend": "{sum} of {target} spent",
           "progress_orders": "{current} of {target} orders"
         },
         "sku_modal": {

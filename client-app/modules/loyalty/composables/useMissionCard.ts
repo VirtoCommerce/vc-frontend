@@ -72,20 +72,23 @@ function presentPerSkuAny(mission: MissionDataType): ReturnType<MissionPresenter
 }
 
 function presentOrderValue(mission: MissionDataType): ReturnType<MissionPresenterType> {
-  const sum = mission.currentMoneyValue?.formattedAmount ?? "";
+  const target = mission.targetMoneyValue?.formattedAmount ?? "";
+  const sum = (mission.percentage ?? 0) >= 100 ? target : (mission.currentMoneyValue?.formattedAmount ?? "");
 
   return {
     typeLabelKey: `${CARD_I18N}.type_order_value`,
     progressLabelKey: `${CARD_I18N}.progress_spend`,
-    progressParams: { sum },
+    progressParams: { sum, target },
   };
 }
 
 function presentOrderCount(mission: MissionDataType): ReturnType<MissionPresenterType> {
+  const target = mission.targetValue ?? 0;
+
   return {
     typeLabelKey: `${CARD_I18N}.type_orders`,
     progressLabelKey: `${CARD_I18N}.progress_orders`,
-    progressParams: { current: mission.currentValue ?? 0, target: mission.targetValue ?? 0 },
+    progressParams: { current: Math.min(mission.currentValue ?? 0, target), target },
   };
 }
 
@@ -128,11 +131,13 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
 
     const daysLeft = data.daysRemaining ?? null;
 
-    let dateLabel = "";
+    let dateLabel: string;
     if (isCompleted(data)) {
       dateLabel = t(`${CARD_I18N}.mission_completed`);
     } else if (daysLeft !== null) {
       dateLabel = t(`${CARD_I18N}.days_left`, daysLeft);
+    } else {
+      dateLabel = t(`${CARD_I18N}.no_deadline`);
     }
 
     return {
@@ -140,7 +145,7 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
       title: data.localizedName ?? data.name ?? "",
       bannerUrl: data.bannerUrl ?? "",
       rewardPoints: data.rewardPoints?.amount ?? 0,
-      percent: Math.round((data.percentage ?? 0) * 10) / 10,
+      percent: Math.min(Math.round((data.percentage ?? 0) * 10) / 10, 100),
       progressLabel: progressLabelKey ? t(progressLabelKey, progressParams) : "",
       dateLabel,
       dateSeverity: resolveDateSeverity(data, daysLeft),

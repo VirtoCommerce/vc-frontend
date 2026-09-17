@@ -9,6 +9,7 @@ export { default as VcCollapsibleContent } from "./collapsible-content/vc-collap
 export { default as VcCompositeShape } from "./composite-shape/vc-composite-shape.vue";
 export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
 export { default as VcDateInput } from "./date-input/vc-date-input.vue";
+export { default as VcDateRangeInput } from "./date-range-input/vc-date-range-input.vue";
 /** @deprecated Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only. */
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
 export { default as VcDialog } from "./dialog/vc-dialog.vue";
@@ -44,6 +45,7 @@ export { default as VcProductTitle } from "./product-title/vc-product-title.vue"
 export { default as VcProductTotal } from "./product-total/vc-product-total.vue";
 export { default as VcProductVendor } from "./product-vendor/vc-product-vendor.vue";
 export { default as VcProductsGrid } from "./products-grid/vc-products-grid.vue";
+export { default as VcRangeCalendar } from "./calendar/vc-range-calendar.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcShape } from "./shape/vc-shape.vue";

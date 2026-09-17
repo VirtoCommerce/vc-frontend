@@ -2,8 +2,15 @@
 
 **Status:** decided 2026-07-06. The **facade-distribution part is implemented** (see
 [`2026-07-06-facade-distribution-design.md`](./2026-07-06-facade-distribution-design.md)
-and the delivery status below); the **settings-driven runtime part is designed but not
-built** — it stays **provisional for the prod end-state** until it exists end to end.
+and the delivery status below).
+
+> **The discovery half is SUPERSEDED (2026-08).** The platform shipped module-served discovery
+> (x-api 3.1016.0 / x-frontend 3.1005.0) and the loader consumes it — so the central
+> `ModuleFederation.Remotes` store setting decided below, its dedicated platform module, and the
+> "`AppManifestService` only later, as an additional source" call were all dropped. Current state:
+> [`../TODO.md`](../TODO.md) #2. Everything below is kept for the *why* and for review
+> traceability; read it as history, not as the plan.
+
 Open work items live in [`../TODO.md`](../TODO.md); this file is the *why and what was
 decided*, kept for context and review traceability.
 
@@ -205,7 +212,9 @@ gaps it found are tracked in `TODO.md`):
 - **Precedence is underspecified.** Define one canonical `resolveRemotes()` resolution + a
   truth table over {theme switch × store `Enabled` × store list × `APP_MODULES_FEDERATION_REMOTES`}:
   present-vs-empty, replace-vs-merge, and **name-collision dedup**
-  (`registerRemotes({force:true})` silently overrides a duplicate). **Decided:** local
+  (`registerRemotes({force:true})` silently overrides a duplicate — since corrected: `force` is no
+  longer passed, because without it a known name is a no-op while `force` tears the remote down and
+  re-runs its `init()`). **Decided:** local
   `APP_MODULES_FEDERATION_REMOTES` **overrides** the runtime setting (true dev/local override).
 - **Say "provider/hosting-agnostic," not "host-agnostic."** Authoring is coupled to this
   host's `@vc-frontend/core` + `./plugin` + `requiredHostVersion`; external authorship

@@ -11,7 +11,8 @@
       "amount": "Сумма",
       "redeemed": "Потрачено",
       "earned": "Заработано",
-      "registration": "Регистрация"
+      "registration": "Регистрация",
+      "mission": "Награда за миссию"
     },
     "list_details": {
       "empty_list": "Ваш список пуст"
@@ -67,12 +68,13 @@
           "type_orders": "Количество заказов",
           "points": "баллы",
           "days_left": "{count} день остался | {count} дня осталось",
+          "no_deadline": "Без срока",
           "mission_completed": "Миссия выполнена",
           "completed": "Выполнено",
           "open_mission": "Открыть миссию",
           "progress_skus": "от {current} до {target} товаров",
           "progress_any_sku": "хотя бы 1 из {target} товаров",
-          "progress_spend": "потрачено {sum}",
+          "progress_spend": "{sum} из {target} потрачено",
           "progress_orders": "от {current} до {target} заказов"
         },
         "sku_modal": {
