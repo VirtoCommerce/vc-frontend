@@ -96,6 +96,11 @@ const independentModules: ModuleType[] = [
       `${core.fragmentsPath}/orderLineItemFields.graphql`,
     ],
   },
+  {
+    name: "Skyflow",
+    apiPath: "client-app/modules/skyflow/api/graphql",
+    schemaPath: `${backendUrl}/graphql/skyflow`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",
