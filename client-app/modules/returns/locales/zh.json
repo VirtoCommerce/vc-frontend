@@ -134,6 +134,7 @@
     "files": "照片或文件",
     "files_required": "照片或文件（必填）",
     "incomplete": {
+      "quantity": "还有 {count} 条明细需要填写数量",
       "reason": "还有 {count} 行未填写原因",
       "comment": "还有 {count} 条明细需要填写备注",
       "attachment": "还有 {count} 条明细需要上传照片"

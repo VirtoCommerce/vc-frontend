@@ -59,6 +59,9 @@ export function useReturnableItems(orderId: MaybeRefOrGetter<string>) {
     try {
       return await createDraftInternal();
     } catch (error) {
+      // The ceilings on screen were read before whatever consumed the quantity, so they have to be
+      // re-read before the buyer can pick a number that will be accepted.
+      await refetch();
       report(error);
 
       return undefined;

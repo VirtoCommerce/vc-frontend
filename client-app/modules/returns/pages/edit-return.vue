@@ -109,7 +109,7 @@
           {{ saving ? $t("return_edit.saving") : $t("return_edit.saved_automatically") }}
         </span>
 
-        <VcButton :disabled="!canSubmit || uploadsPending" :loading="submitting" @click="onSubmit">
+        <VcButton :disabled="!canSubmit || uploadsPending || uploadsFailed" :loading="submitting" @click="onSubmit">
           {{ $t("return_edit.submit") }}
         </VcButton>
       </div>
@@ -198,7 +198,12 @@ watch(
   },
 );
 
-const uploadsPending = computed(() => Object.values(uploadState.value).some((state) => !state.settled));
+// A failed file is neither attached nor uploaded, so it reads as unsettled too. Without excluding
+// it the buyer gets both warnings at once and the one that says "still uploading" is a lie.
+const uploadsPending = computed(() =>
+  Object.values(uploadState.value).some((state) => !state.settled && !state.failed),
+);
+
 const uploadsFailed = computed(() => Object.values(uploadState.value).some((state) => state.failed));
 
 const breadcrumbs = useBreadcrumbs(() => [

@@ -95,6 +95,10 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
     { immediate: true },
   );
 
+  // The quantity field commits 0 while a buyer clears it to retype, and that 0 autosaves; without
+  // this the draft reads as ready and the server refuses it at submit.
+  const missingQuantity = computed(() => lines.value.filter((line) => line.quantity < 1));
+
   const missingReason = computed(() => lines.value.filter((line) => !line.reasonCode));
 
   const missingComment = computed(() =>
@@ -108,13 +112,14 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   // Counted per cause, not just in total: a hint that always names the reason sends the buyer to a
   // field they have already filled when what is actually missing is a comment or a photo.
   const incompleteCounts = computed(() => ({
+    quantity: missingQuantity.value.length,
     reason: missingReason.value.length,
     comment: missingComment.value.length,
     attachment: missingAttachment.value.length,
   }));
 
   const incompleteLines = computed(() => [
-    ...new Set([...missingReason.value, ...missingComment.value, ...missingAttachment.value]),
+    ...new Set([...missingQuantity.value, ...missingReason.value, ...missingComment.value, ...missingAttachment.value]),
   ]);
 
   const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);

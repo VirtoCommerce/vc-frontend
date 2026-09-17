@@ -134,6 +134,7 @@
     "files": "写真または書類",
     "files_required": "写真または書類（必須）",
     "incomplete": {
+      "quantity": "{count} 件の明細に数量が必要です",
       "reason": "{count} 件の明細に理由が必要です",
       "comment": "{count} 件の明細にコメントが必要です",
       "attachment": "{count} 件の明細に写真が必要です"

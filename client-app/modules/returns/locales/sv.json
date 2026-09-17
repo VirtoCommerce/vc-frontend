@@ -134,6 +134,7 @@
     "files": "Foton eller dokument",
     "files_required": "Foton eller dokument (obligatoriskt)",
     "incomplete": {
+      "quantity": "{count} rad(er) saknar fortfarande ett antal",
       "reason": "{count} rad(er) saknar orsak",
       "comment": "{count} rad(er) saknar fortfarande en kommentar",
       "attachment": "{count} rad(er) saknar fortfarande ett foto"

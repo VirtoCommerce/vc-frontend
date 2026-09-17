@@ -134,6 +134,7 @@
     "files": "Valokuvat tai asiakirjat",
     "files_required": "Valokuvat tai asiakirjat (pakollinen)",
     "incomplete": {
+      "quantity": "{count} riviä tarvitsee vielä määrän",
       "reason": "{count} riviltä puuttuu syy",
       "comment": "{count} riviä tarvitsee vielä kommentin",
       "attachment": "{count} riviä tarvitsee vielä valokuvan"

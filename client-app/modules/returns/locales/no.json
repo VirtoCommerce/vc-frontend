@@ -134,6 +134,7 @@
     "files": "Bilder eller dokumenter",
     "files_required": "Bilder eller dokumenter (påkrevd)",
     "incomplete": {
+      "quantity": "{count} linje(r) mangler fortsatt et antall",
       "reason": "{count} linje(r) mangler årsak",
       "comment": "{count} linje(r) mangler fortsatt en kommentar",
       "attachment": "{count} linje(r) mangler fortsatt et bilde"

@@ -134,6 +134,7 @@
     "files": "Fotos ou documentos",
     "files_required": "Fotos ou documentos (obrigatório)",
     "incomplete": {
+      "quantity": "{count} linha(s) ainda precisam de uma quantidade",
       "reason": "{count} linha(s) ainda sem motivo",
       "comment": "{count} linha(s) ainda precisam de um comentário",
       "attachment": "{count} linha(s) ainda precisam de uma foto"
