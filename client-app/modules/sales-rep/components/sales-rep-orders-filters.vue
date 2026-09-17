@@ -30,7 +30,6 @@
                 <div class="sales-rep-orders-filters__range">
                   <VcDatePicker
                     v-model="draft.startDate"
-                    clearable
                     class="sales-rep-orders-filters__date"
                     :label="t('sales_rep.customer_orders.filters.start_date')"
                     :error="showRangeError"
@@ -43,7 +42,6 @@
 
                   <VcDatePicker
                     v-model="draft.endDate"
-                    clearable
                     class="sales-rep-orders-filters__date"
                     :label="t('sales_rep.customer_orders.filters.end_date')"
                     :error="showRangeError"

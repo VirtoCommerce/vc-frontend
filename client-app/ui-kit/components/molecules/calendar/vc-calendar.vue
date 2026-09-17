@@ -147,9 +147,10 @@ interface IProps {
    */
   disabledDate?: VcCalendarDisabledDateType;
   /**
-   * Keep a re-click on the selected day from clearing it. Default true: for a range endpoint, and for
-   * any field the user did not mean to empty, that click is data loss. An OPTIONAL single-date field
-   * with no `clearable` and no `showFooter` has no other pointer way to clear — set false there.
+   * Keep a re-click on the selected day from clearing it. Default false: in a single-date FIELD
+   * (VcDatePicker) with no `clearable` and no `showFooter` that click is the only pointer route back
+   * to empty — and only while the selected day is selectable, since a disabled or unavailable one
+   * ignores it. Set true where emptying would be data loss, such as a range endpoint.
    */
   preventDeselect?: boolean;
   showFooter?: boolean;
@@ -175,7 +176,7 @@ const props = withDefaults(defineProps<IProps>(), {
   softMin: undefined,
   softMax: undefined,
   disabledDate: undefined,
-  preventDeselect: true,
+  preventDeselect: false,
   showFooter: false,
   locale: undefined,
   firstDayOfWeek: undefined,

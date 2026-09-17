@@ -76,19 +76,48 @@ describe("VcCalendar — keyboard navigation and focus entry", () => {
 });
 
 describe("VcCalendar — re-picking the selected date", () => {
-  it("keeps the date instead of clearing it", async () => {
+  // An optional field with no clear button and no footer needs the re-click as its only pointer route.
+  it("clears the date by default", async () => {
     const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15" });
+    await inViewCell(wrapper, "2020-06-10").trigger("click");
+    await flushPromises();
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
+  });
+
+  it("keeps the date when preventDeselect is on", async () => {
+    const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15", preventDeselect: true });
     await inViewCell(wrapper, "2020-06-10").trigger("click");
     await flushPromises();
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2020-06-10"]);
   });
 
-  // An optional field with no clear button and no footer needs the re-click as its only pointer route.
-  it("clears the date when preventDeselect is off", async () => {
-    const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15", preventDeselect: false });
-    await inViewCell(wrapper, "2020-06-10").trigger("click");
+  // The keyboard activates the same cell, so it clears on the same terms the pointer does. reka
+  // switches on `code`; `key` rides along only to match the event a browser really sends.
+  it.each([
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("clears the date on %s too", async (code, key) => {
+    const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15" }, { attachTo: document.body });
+    await flushPromises();
+    pressKey(inViewCell(wrapper, "2020-06-10").element, key, { code });
     await flushPromises();
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
+    wrapper.unmount();
+  });
+
+  it.each([
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("keeps the date on %s when preventDeselect is on", async (code, key) => {
+    const wrapper = mountCal(
+      { modelValue: "2020-06-10", max: "2020-06-15", preventDeselect: true },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    pressKey(inViewCell(wrapper, "2020-06-10").element, key, { code });
+    await flushPromises();
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2020-06-10"]);
+    wrapper.unmount();
   });
 });
 

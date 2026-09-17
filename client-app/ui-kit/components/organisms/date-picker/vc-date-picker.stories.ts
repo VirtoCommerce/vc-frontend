@@ -100,6 +100,11 @@ const meta: Meta<typeof VcDatePicker> = {
     error: { control: "boolean" },
     mask: { control: "boolean" },
     showFooter: { control: "boolean" },
+    preventDeselect: {
+      control: "boolean",
+      description:
+        "Keep a re-click on the selected day from clearing it. Default false, so a field with no `clearable` and no `showFooter` still has one pointer route to empty.",
+    },
     closeOnSelect: { control: "boolean" },
     enableTeleport: { control: "boolean" },
     hideDetails: {

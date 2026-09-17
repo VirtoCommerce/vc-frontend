@@ -29,9 +29,18 @@ function selectedDay(wrapper: ReturnType<typeof mountPicker>, iso: string) {
 }
 
 describe("VcDatePicker — preventDeselect", () => {
-  // A pass-through to VcCalendar that nothing in the app sets, so the false branch lives only here.
-  it("keeps the value when the selected day is re-clicked", async () => {
+  // A lone field carries no clear control of its own, so the re-click is the only pointer route out.
+  it("clears the value on a re-click by default", async () => {
     const wrapper = mountPicker();
+
+    await selectedDay(wrapper, "2026-10-08").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
+  });
+
+  it("keeps the value when preventDeselect is true", async () => {
+    const wrapper = mountPicker({ preventDeselect: true });
 
     await selectedDay(wrapper, "2026-10-08").trigger("click");
     await flushPromises();
@@ -40,18 +49,9 @@ describe("VcDatePicker — preventDeselect", () => {
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2026-10-08"]);
   });
 
-  it("clears the value on a re-click when preventDeselect is false", async () => {
-    const wrapper = mountPicker({ preventDeselect: false });
-
-    await selectedDay(wrapper, "2026-10-08").trigger("click");
-    await flushPromises();
-
-    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
-  });
-
   it("forwards the flag to the calendar rather than acting on it itself", () => {
-    expect(mountPicker().findComponent(VcCalendar).props("preventDeselect")).toBe(true);
-    expect(mountPicker({ preventDeselect: false }).findComponent(VcCalendar).props("preventDeselect")).toBe(false);
+    expect(mountPicker().findComponent(VcCalendar).props("preventDeselect")).toBe(false);
+    expect(mountPicker({ preventDeselect: true }).findComponent(VcCalendar).props("preventDeselect")).toBe(true);
   });
 });
 

@@ -122,11 +122,12 @@ interface IProps {
   updateOn?: VcDateFieldUpdateOnType;
   /** Apply a locale-aware input mask on the text input. See VcDateInput for semantics. */
   mask?: boolean;
-  /** Show a clear button in the field. Default false — the field then has no pointer way to clear. */
+  /** Show a clear button in the field. Default false — the field then falls back to the footer Clear
+   * (`showFooter`) or a calendar re-click, with the caveats on `preventDeselect`. */
   clearable?: boolean;
   /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
-  /** Keep a re-click on the selected day from clearing it. Default true. See VcCalendar. */
+  /** Keep a re-click on the selected day from clearing it. Default false. See VcCalendar. */
   preventDeselect?: boolean;
   /** Show the calendar footer (Today / Clear buttons). */
   showFooter?: boolean;
@@ -167,7 +168,7 @@ const props = withDefaults(defineProps<IProps>(), {
   // Declared, not left undefined: these three decide whether the field has any pointer way to clear.
   clearable: false,
   showFooter: false,
-  preventDeselect: true,
+  preventDeselect: false,
 });
 
 const { t } = useI18n();

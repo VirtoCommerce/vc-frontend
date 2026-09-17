@@ -339,6 +339,8 @@ const sharedFieldProps = computed(() => ({
   clearable: props.clearable,
   enableTeleport: props.enableTeleport,
   showFooter: props.showFooter,
+  // This picker's endpoints keep their value on a re-click, as "combined" does via VcRangeCalendar.
+  preventDeselect: true,
   firstDayOfWeek: props.firstDayOfWeek,
   weekdayFormat: props.weekdayFormat,
   closeOnSelect: props.closeOnSelect,

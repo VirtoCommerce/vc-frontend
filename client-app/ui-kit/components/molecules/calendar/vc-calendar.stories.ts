@@ -50,6 +50,10 @@ const meta: Meta<typeof VcCalendar> = {
     showFooter: {
       control: "boolean",
     },
+    preventDeselect: {
+      control: "boolean",
+      description: "Keep a re-click on the selected day from clearing it. Default false",
+    },
     locale: {
       control: "text",
     },

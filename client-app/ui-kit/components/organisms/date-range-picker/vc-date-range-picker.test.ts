@@ -827,6 +827,13 @@ describe("VcDateRangePicker — split layout", () => {
     expect(wrapper.findComponent({ name: "VcDateRangeInput" }).exists()).toBe(false);
   });
 
+  // The field defaults to deselect-on-re-click; an endpoint must not inherit that, the way "combined"
+  // does not — VcRangeCalendar hardcodes it there.
+  it("pins preventDeselect on both endpoint fields", () => {
+    const fields = mountSplit().findAllComponents({ name: "VcDatePicker" });
+    expect(fields.map((field) => field.props("preventDeselect"))).toEqual([true, true]);
+  });
+
   it("turns startLabel/endLabel into visible labels bound to their own input", () => {
     const wrapper = mountSplit();
     const labels = wrapper.findAll("label");
