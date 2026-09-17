@@ -165,6 +165,29 @@ const NestedHost = defineComponent({
   `,
 });
 
+// What VcTooltip renders, inside a drawer: a hover panel whose trigger is focusable.
+const TooltipInDialogHost = defineComponent({
+  components: { VcPopover },
+
+  template: `
+    <VcPopover role="dialog" aria-label="Drawer">
+      <template #default="{ triggerProps }">
+        <button class="trigger" v-bind="triggerProps">Open drawer</button>
+      </template>
+
+      <template #content>
+        <VcPopover role="tooltip" aria-label="Tip" hover>
+          <template #trigger>
+            <button class="tip-trigger">What is this?</button>
+          </template>
+
+          <template #content>Explanation</template>
+        </VcPopover>
+      </template>
+    </VcPopover>
+  `,
+});
+
 function panelByName(wrapper: VueWrapper, name: string) {
   return wrapper.findAll(".vc-popover__body").find((panel) => panel.attributes("aria-label") === name);
 }
@@ -340,6 +363,29 @@ describe("VcPopover", () => {
       await nextTick();
 
       expect(isPanelOpen(wrapper, "Outer")).toBe(false);
+    });
+
+    // Deliberate, and the one place the "one level per Escape" rule does not apply: a hover panel is
+    // not a level the user navigated into, it opened itself under the focus that was passing through.
+    // Escape therefore dismisses it and still means what it meant for the page behind it.
+    it("closes a focus-opened tooltip and the dialog around it on one Escape", async () => {
+      const wrapper = mount(TooltipInDialogHost, { attachTo: document.body });
+
+      await wrapper.get("button.trigger").trigger("click");
+      await nextTick();
+
+      const tipTrigger = wrapper.get("button.tip-trigger");
+      (tipTrigger.element as HTMLElement).focus();
+      await tipTrigger.trigger("focusin");
+      await nextTick();
+
+      expect(isPanelOpen(wrapper, "Tip")).toBe(true);
+
+      await tipTrigger.trigger("keydown", { key: "Escape" });
+      await nextTick();
+
+      expect(isPanelOpen(wrapper, "Tip")).toBe(false);
+      expect(isPanelOpen(wrapper, "Drawer")).toBe(false);
     });
 
     // A tooltip opens on focus alone, so its trigger must not eat an Escape the page is listening for.
