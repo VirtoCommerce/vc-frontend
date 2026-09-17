@@ -38,6 +38,7 @@ import { initialize as initializePurchaseRequests } from "@/modules/purchase-req
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { init as initSalesRep } from "@/modules/sales-rep";
+import { init as initSkyflow } from "@/modules/skyflow";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
@@ -280,6 +281,7 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
+  void initSkyflow(router, i18n);
 
   // Plugins
   app.use(head);

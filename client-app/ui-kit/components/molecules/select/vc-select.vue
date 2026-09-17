@@ -102,7 +102,7 @@
               color="neutral"
               variant="ghost"
               class="vc-select__clear"
-              :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+              :icon-size="getInputClearIconSize(size)"
               @keydown.esc="onTriggerEscape($event, close)"
               @keydown.enter.stop.prevent
               @keyup.enter.stop.prevent="clear"
@@ -179,6 +179,7 @@ import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
 
 interface IProps {
   modelValue?: object | string | Array<object | string>;
