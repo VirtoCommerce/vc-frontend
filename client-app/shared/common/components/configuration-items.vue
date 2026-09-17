@@ -59,13 +59,20 @@
                 </template>
               </td>
 
-              <td class="configuration-items__value" :title="getText(configurationItem)">
+              <td
+                class="configuration-items__value"
+                :class="{
+                  'configuration-items__value--files': configurationItem.type === CONFIGURABLE_SECTION_TYPES.file,
+                }"
+                :title="getText(configurationItem)"
+              >
                 <template v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file">
                   <button
                     v-for="file in getFiles(configurationItem)"
                     :key="file.name"
                     type="button"
                     class="configuration-items__file"
+                    :title="file.name"
                     :disabled="!file.url"
                     @click="downloadFile(file.url!, file.name)"
                   >
@@ -311,19 +318,21 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     @container (max-width: theme("containers.xs")) {
       @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
     }
+
+    &--files {
+      @apply flex flex-col items-start gap-1 overflow-visible whitespace-normal;
+    }
   }
 
   &__file {
+    @apply max-w-full truncate text-start;
+
     &:not(:disabled) {
       color: var(--link-color);
 
       &:hover {
         color: var(--link-hover-color);
       }
-    }
-
-    &:not(:last-child)::after {
-      content: ", ";
     }
   }
 
