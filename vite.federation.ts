@@ -59,12 +59,9 @@ export function federatedHostPlugin(): PluginOption[] {
 }
 
 /**
- * On `serve`, @module-federation/vite force-includes every shared key in `optimizeDeps`, and its own
- * normalizer then drops from `exclude` whatever `include` holds — so a plain `optimizeDeps.exclude`
- * cannot opt out. The facade is not an installed package (it resolves to project source), so esbuild
- * would prebundle `core-api/index.ts` and everything it imports outside Vite's plugin pipeline:
- * `@rollup/plugin-graphql` never runs there and every `.graphql` import fails to load.
- * `enforce: "post"` puts this after their normalizer, which is where both lists can be put right.
+ * @module-federation/vite force-includes every shared key in `optimizeDeps` on serve, then strips from
+ * `exclude` whatever `include` holds. The facade resolves to project source, so esbuild would prebundle
+ * it with no Vite plugins: `@rollup/plugin-graphql` never runs and its `.graphql` imports fail to load.
  */
 function keepFacadeOutOfOptimizeDeps(): PluginOption {
   return {
