@@ -22,7 +22,7 @@ Third-party commentary is marked as such.
 | [12-anatomy-in-code.md](12-anatomy-in-code.md) | What a commerce agent actually is: the parts, one turn end to end, and the three pieces we wrote |
 | [13-demo-script.md](13-demo-script.md) | The demo of what is built: the turns to type, what each proves, and what not to show |
 | [14-what-the-blog-says.md](14-what-the-blog-says.md) | Anthropic's three blog posts against what we built: what they confirm, what we are missing, what it costs |
-| [15-poc-estimate.md](15-poc-estimate.md) | What a POC would cost: what the spike already paid for, what remains, and what .NET would add |
+| [15-poc-estimate.md](15-poc-estimate.md) | What a POC would cost, in supervised AI-development hours: this spike as the calibration, what remains, and what does not compress |
 
 ## One paragraph
 
