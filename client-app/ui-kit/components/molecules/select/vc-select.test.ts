@@ -17,6 +17,7 @@ const Host = defineComponent({
   props: {
     autocomplete: { type: Boolean, default: false },
     clearable: { type: Boolean, default: false },
+    multiple: { type: Boolean, default: false },
     readonly: { type: Boolean, default: false },
     selected: { type: String, default: undefined },
   },
@@ -37,6 +38,7 @@ const Host = defineComponent({
           label="Created date"
           :autocomplete="autocomplete"
           :clearable="clearable"
+          :multiple="multiple"
           :readonly="readonly"
           :model-value="selected"
         />
@@ -253,6 +255,56 @@ describe("VcSelect inside a dialog popover", () => {
 
     expect(event.defaultPrevented).toBe(consumed);
     expect(wrapper.get(".vc-select").classes().includes("vc-select--opened")).toBe(consumed);
+  });
+
+  // Picking hides the list with the chosen option still focused inside it, so focus has to be handed
+  // back — the most common action in the drawer must not strand the keyboard on <body>.
+  it("returns focus to the trigger when picking an option closes the list", async () => {
+    const wrapper = createWrapper();
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get(".vc-menu-item__inner");
+    (option.element as HTMLElement).focus();
+
+    await option.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).not.toContain("vc-select--opened");
+    expect(document.activeElement).toBe(wrapper.get(".vc-select input").element);
+  });
+
+  // The mouse twin of the keyboard case: the trigger kept focus, so no focus event fires and only the
+  // click can reopen the list.
+  it("reopens the list on a click after a pick left the trigger focused", async () => {
+    const wrapper = createWrapper();
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get(".vc-menu-item__inner");
+    (option.element as HTMLElement).focus();
+    await option.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).not.toContain("vc-select--opened");
+
+    await wrapper.get(".vc-select input").trigger("click");
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+  });
+
+  // A multiple select keeps its list open for the next pick, so focus stays on the option.
+  it("leaves focus on the option when picking does not close the list", async () => {
+    const wrapper = createWrapper({ props: { multiple: true } });
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get(".vc-menu-item__inner");
+    (option.element as HTMLElement).focus();
+
+    await option.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get(".vc-select").classes()).toContain("vc-select--opened");
+    expect(document.activeElement).toBe(option.element);
   });
 
   // Closing empties the filter, which unmounts the very button the key was pressed on — focus has to

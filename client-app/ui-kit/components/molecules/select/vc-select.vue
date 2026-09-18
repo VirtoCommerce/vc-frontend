@@ -89,7 +89,7 @@
           @keydown.down.prevent="openByKeyboard($event, open, true)"
           @keydown.enter="onTriggerEnter($event, open)"
           @focus="open"
-          @click="(autocomplete && open) || (!autocomplete && toggle)"
+          @click="open"
           @keydown.esc="onTriggerEscape($event, close)"
         >
           <template #append>
@@ -135,10 +135,7 @@
           :aria-selected="isActiveItem(item)"
           role="option"
           :size="itemSize"
-          @click="
-            select(item);
-            !multiple && close();
-          "
+          @click="onItemClick(item, close)"
           @keydown.esc="onItemEscape($event, close)"
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
@@ -459,6 +456,19 @@ function onTriggerEscape(event: KeyboardEvent, close: () => void) {
   }
 
   event.stopPropagation();
+  focusTrigger();
+  close();
+}
+
+// Closing hides the panel with the focused option still inside it, so focus goes back to the trigger
+// first — the order the Escape paths already use, which also swallows the trigger's reopen on focus.
+function onItemClick(item: any, close: () => void) {
+  select(item);
+
+  if (props.multiple) {
+    return;
+  }
+
   focusTrigger();
   close();
 }
