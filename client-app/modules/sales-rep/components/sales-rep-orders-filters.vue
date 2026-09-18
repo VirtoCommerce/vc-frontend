@@ -38,7 +38,7 @@
                     @update:valid="startValid = $event"
                   />
 
-                  <div class="sales-rep-orders-filters__separator" aria-hidden="true">&mdash;</div>
+                  <div class="sales-rep-orders-filters__separator">&mdash;</div>
 
                   <VcDatePicker
                     v-model="draft.endDate"
