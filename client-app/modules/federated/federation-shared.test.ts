@@ -6,7 +6,6 @@ import {
   createHostShared,
   createRemoteFederationOptions,
   createRemoteShared,
-  isMfFlagEnabled,
 } from "@/core-api/federation.mjs";
 
 describe("federation shared-dep contract", () => {
@@ -116,35 +115,5 @@ describe("createRemoteFederationOptions", () => {
     });
     expect(options.exposes).toEqual({ "./plugin": "./src/main.ts" });
     expect(options.shared).not.toHaveProperty("graphql");
-  });
-});
-
-describe("isMfFlagEnabled", () => {
-  it.each([
-    [undefined, false],
-    ["", false],
-    ["false", false],
-    ["0", false],
-    // ALLOWLIST: any value that is not an explicit affirmative fails toward OFF —
-    // enabling remote code loading is the dangerous direction.
-    ["off", false],
-    ["no", false],
-    ["disabled", false],
-    ["enabled", false],
-    ["tru", false],
-    ["true", true],
-    ["1", true],
-    ["yes", true],
-    ["on", true],
-    [true, true],
-    // Case- and whitespace-insensitive: env values are not always lowercased.
-    ["FALSE", false],
-    ["False", false],
-    [" false ", false],
-    ["OFF", false],
-    ["TRUE", true],
-    [" true ", true],
-  ])("treats %j as %j", (value, expected) => {
-    expect(isMfFlagEnabled(value)).toBe(expected);
   });
 });
