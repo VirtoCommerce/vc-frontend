@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, nextTick, ref } from "vue";
 import { BrowserTargetType } from "@/core/enums";
 import Quotes from "./quotes.vue";
 import type { VueWrapper } from "@vue/test-utils";
@@ -89,12 +89,26 @@ function secondRow(wrapper: VueWrapper) {
   return wrapper.findAll("tbody tr")[1];
 }
 
+async function pressKey(wrapper: VueWrapper, key: string): Promise<KeyboardEvent> {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+
+  secondRow(wrapper).element.dispatchEvent(event);
+  await nextTick();
+
+  return event;
+}
+
 describe("Quotes", () => {
   beforeEach(() => {
+    openedWindow.focus.mockClear();
     vi.stubGlobal(
       "open",
       vi.fn(() => openedWindow),
     );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("opens a quote when its row is clicked", async () => {
@@ -102,18 +116,29 @@ describe("Quotes", () => {
 
     await secondRow(wrapper).trigger("click");
 
+    expect(window.open).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalledWith("/ViewQuote/quote-2", "_blank");
   });
 
   it.each([
-    ["Enter", { key: "Enter" }],
-    ["Space", { key: " " }],
-  ])("opens a quote when %s is pressed on its focused row", async (_label, event) => {
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("opens a quote exactly once when %s is pressed on its focused row", async (_label, key) => {
     const wrapper = createComponent();
 
-    await secondRow(wrapper).trigger("keydown", event);
+    await pressKey(wrapper, key);
 
+    expect(window.open).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalledWith("/ViewQuote/quote-2", "_blank");
+  });
+
+  it.each([
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("stops the browser acting on %s itself", async (_label, key) => {
+    const event = await pressKey(createComponent(), key);
+
+    expect(event.defaultPrevented).toBe(true);
   });
 
   it("exposes every row to keyboard users", () => {

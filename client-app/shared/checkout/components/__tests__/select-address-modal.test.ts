@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, h } from "vue";
+import { defineComponent, h, nextTick } from "vue";
 import SelectAddressModal from "../select-address-modal.vue";
 import type { AnyAddressType } from "@/core/types";
 import type { VueWrapper } from "@vue/test-utils";
@@ -100,6 +100,15 @@ function confirmButton(wrapper: VueWrapper) {
   return wrapper.get('[data-test-id="confirm-button"]');
 }
 
+async function pressKey(wrapper: VueWrapper, id: string, key: string): Promise<KeyboardEvent> {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+
+  rowFor(wrapper, id).element.dispatchEvent(event);
+  await nextTick();
+
+  return event;
+}
+
 describe("SelectAddressModal", () => {
   it("selects an address when its row is clicked", async () => {
     const wrapper = createComponent();
@@ -114,15 +123,25 @@ describe("SelectAddressModal", () => {
   });
 
   it.each([
-    ["Enter", { key: "Enter" }],
-    ["Space", { key: " " }],
-  ])("selects an address when %s is pressed on its focused row", async (_label, event) => {
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("selects an address when %s is pressed on its focused row", async (_label, key) => {
     const wrapper = createComponent();
 
-    await rowFor(wrapper, "addr-2").trigger("keydown", event);
+    await pressKey(wrapper, "addr-2", key);
     await confirmButton(wrapper).trigger("click");
 
+    expect(wrapper.emitted("result")).toHaveLength(1);
     expect(wrapper.emitted("result")?.[0]).toEqual([ADDRESSES[1]]);
+  });
+
+  it.each([
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("stops the browser acting on %s itself", async (_label, key) => {
+    const event = await pressKey(createComponent(), "addr-2", key);
+
+    expect(event.defaultPrevented).toBe(true);
   });
 
   it("exposes every row to keyboard users", () => {

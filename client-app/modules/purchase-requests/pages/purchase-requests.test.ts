@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { defineComponent, h, nextTick, ref } from "vue";
 import PurchaseRequests from "./purchase-requests.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
@@ -70,6 +70,15 @@ function secondRow(wrapper: VueWrapper) {
   return wrapper.findAll("tbody tr")[1];
 }
 
+async function pressKey(wrapper: VueWrapper, key: string): Promise<KeyboardEvent> {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+
+  secondRow(wrapper).element.dispatchEvent(event);
+  await nextTick();
+
+  return event;
+}
+
 describe("PurchaseRequests", () => {
   beforeEach(() => {
     routerPush.mockClear();
@@ -80,18 +89,29 @@ describe("PurchaseRequests", () => {
 
     await secondRow(wrapper).trigger("click");
 
+    expect(routerPush).toHaveBeenCalledTimes(1);
     expect(routerPush).toHaveBeenCalledWith({ name: "PurchaseRequest", params: { purchaseRequestId: "pr-2" } });
   });
 
   it.each([
-    ["Enter", { key: "Enter" }],
-    ["Space", { key: " " }],
-  ])("opens a purchase request when %s is pressed on its focused row", async (_label, event) => {
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("opens a purchase request exactly once when %s is pressed on its focused row", async (key) => {
     const wrapper = createComponent();
 
-    await secondRow(wrapper).trigger("keydown", event);
+    await pressKey(wrapper, key);
 
+    expect(routerPush).toHaveBeenCalledTimes(1);
     expect(routerPush).toHaveBeenCalledWith({ name: "PurchaseRequest", params: { purchaseRequestId: "pr-2" } });
+  });
+
+  it.each([
+    ["Enter", "Enter"],
+    ["Space", " "],
+  ])("stops the browser acting on %s itself", async (_label, key) => {
+    const event = await pressKey(createComponent(), key);
+
+    expect(event.defaultPrevented).toBe(true);
   });
 
   it("exposes every row to keyboard users", () => {
