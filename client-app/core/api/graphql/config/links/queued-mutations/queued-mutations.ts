@@ -1,6 +1,7 @@
 import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
+import { Logger } from "@/core/utilities/logger";
 import { isMutation, defaultMergeVariables } from "../utils";
 import type {
   IQueueConfig,
@@ -9,6 +10,8 @@ import type {
   IOperationState,
   IObserver,
   IQueuedMutationsController,
+  IQueueTargetOwner,
+  IQueueTargetsDebug,
 } from "./types";
 import type {
   RemoveCartItemsMutationVariables,
@@ -38,6 +41,11 @@ function makeStateKey(opName: string, partitionKey?: string): string {
  * original behavior.
  * @param config @link{IQueueConfig} - The configuration for the queued mutations link.
  */
+const HOST_OWNER = "host";
+/** The host outranks every plugin: its queues are the ones the storefront itself depends on. */
+const HOST_PRIORITY = 100;
+const MAX_PLUGIN_PRIORITY = HOST_PRIORITY - 1;
+
 export function createQueuedMutationsController(config: IQueueConfig): IQueuedMutationsController {
   type TVarsType = Record<string, unknown>;
   const targets = new Set<string>(Array.from(config.targets.map((t) => t.name)));
@@ -46,16 +54,46 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
     string,
     Required<Omit<IQueueTargetConfig<TVarsType>, "getPartitionKey">> &
       Pick<IQueueTargetConfig<TVarsType>, "getPartitionKey">
-  >(
-    config.targets.map((target) => [
-      target.name,
-      {
-        debounceMs: target.config?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
-        mergeQueued: target.config?.mergeQueued ?? ((a, b) => defaultMergeVariables(a, b)),
-        getPartitionKey: target.config?.getPartitionKey,
-      },
-    ]),
-  );
+  >();
+
+  const debug: IQueueTargetsDebug = { owners: new Map(), rejected: [] };
+
+  function applyTarget(target: IQueueTarget): void {
+    targets.add(target.name);
+    targetConfigMap.set(target.name, {
+      debounceMs: target.config?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
+      mergeQueued: target.config?.mergeQueued ?? ((a, b) => defaultMergeVariables(a, b)),
+      getPartitionKey: target.config?.getPartitionKey,
+    });
+  }
+
+  // The host's own targets outrank any later claim, the way the cache type policies do.
+  config.targets.forEach((target) => {
+    applyTarget(target);
+    debug.owners.set(target.name, { owner: HOST_OWNER, priority: HOST_PRIORITY });
+  });
+
+  function registerTarget(target: IQueueTarget, owner: IQueueTargetOwner): boolean {
+    const claim: IQueueTargetOwner = {
+      owner: owner.owner,
+      priority: Math.min(owner.priority ?? 0, MAX_PLUGIN_PRIORITY),
+    };
+    const heldBy = debug.owners.get(target.name);
+
+    if (heldBy && (heldBy.priority ?? 0) >= (claim.priority ?? 0)) {
+      debug.rejected.push({ ...claim, operationName: target.name, heldBy });
+      Logger.warn(
+        `queuedMutations: '${owner.owner}' cannot queue '${target.name}', already owned by '${heldBy.owner}'.`,
+      );
+
+      return false;
+    }
+
+    applyTarget(target);
+    debug.owners.set(target.name, claim);
+
+    return true;
+  }
 
   // State is keyed by "opName" or, when the target declares getPartitionKey, by
   // "opName:partition" so each partition keeps an independent queue.
@@ -267,7 +305,7 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
     flush(stateKey);
   }
 
-  return { link, flushNow };
+  return { link, flushNow, registerTarget, debug };
 }
 
 /**

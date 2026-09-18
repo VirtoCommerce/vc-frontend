@@ -1,0 +1,147 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Devoluções",
+      "table_description": "lista de devoluções"
+    },
+    "title": "Devoluções",
+    "no_returns_message": "Ainda não há devoluções",
+    "no_results_message": "Nenhuma devolução corresponde à sua pesquisa",
+    "search_placeholder": "Pesquisar por RMA, encomenda, referência ou produto",
+    "search_aria": "Pesquisar devoluções",
+    "filters": {
+      "title": "Filtros",
+      "created_date": "Data de criação",
+      "start_date": "Data de início",
+      "end_date": "Data de término",
+      "invalid_range": "Intervalo de datas inválido.",
+      "custom_date": "Data personalizada",
+      "last_day": "Último dia",
+      "last_week": "Última semana",
+      "last_month": "Último mês",
+      "last_year": "Último ano",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Rascunho",
+      "Requested": "Solicitada",
+      "PartiallyApproved": "Parcialmente aprovada",
+      "Approved": "Aprovada",
+      "Rejected": "Rejeitada",
+      "Cancelled": "Cancelada",
+      "Canceled": "Cancelada",
+      "New": "Nova",
+      "Processing": "Em processamento",
+      "Completed": "Concluída"
+    },
+    "request_button": "Solicitar devolução",
+    "menu": {
+      "link": {
+        "title": "Devoluções"
+      }
+    },
+    "select_items": {
+      "title": "Selecionar itens para devolução",
+      "meta_title": "Selecionar itens para devolução",
+      "table_description": "linhas do pedido disponíveis para devolução",
+      "select_all": "Selecionar todas as linhas elegíveis",
+      "eligible_count": "{eligible} de {total} linhas elegíveis",
+      "nothing_returnable": "Nada neste pedido pode ser devolvido",
+      "window_hint": "Os artigos podem ser devolvidos no prazo de {days} dias após a entrega",
+      "selected_summary": "{lines} selecionadas · {quantity} itens",
+      "columns": {
+        "item": "Item",
+        "ordered": "Pedido",
+        "returnable": "Devolvível",
+        "quantity": "Quantidade"
+      },
+      "quantity_for": "Quantidade a devolver de {name}",
+      "continue": "Continuar"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "As devoluções estão desativadas nesta loja",
+      "ORDER_STATUS_NOT_ALLOWED": "Devoluções não são permitidas a partir do status deste pedido",
+      "LINE_CANCELLED": "Esta linha foi cancelada",
+      "NOT_DELIVERED": "Ainda não entregue",
+      "OUTSIDE_RETURN_WINDOW": "Fora do prazo de devolução",
+      "NOTHING_LEFT_TO_RETURN": "Já solicitado integralmente",
+      "UNHANDLED": "Este artigo não pode ser devolvido"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Esta devolução já não está numa fase em que isso seja possível",
+      "UNHANDLED": "Esta ação não está disponível neste momento"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "Não foi possível anexar um dos ficheiros. Remova-o e carregue novamente.",
+      "INVALID_REQUEST": "Alguns dados não foram aceites. Verifique os motivos e comentários e tente novamente.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Data",
+        "status": "Estado",
+        "quantity": "Qtd."
+      }
+    }
+  },
+  "return_details": {
+    "title": "Devolução {0}",
+    "not_found_message": "Esta devolução não foi encontrada",
+    "summary_section": "Resumo",
+    "items_section": "Itens",
+    "order_number": "Número do pedido",
+    "customer_reference": "Sua referência de pedido",
+    "customer_comment": "Comentário",
+    "cancel_reason": "Motivo do cancelamento",
+    "cancel_button": "Cancelar devolução",
+    "columns": {
+      "requested": "Solicitado",
+      "approved": "Aprovado"
+    },
+    "table_description": "artigos devolvidos"
+  },
+  "return_cancel": {
+    "title": "Cancelar devolução",
+    "text": "A devolução {0} será retirada e os seus artigos ficarão novamente disponíveis para devolução.",
+    "reason_label": "Motivo (opcional)",
+    "keep_button": "Manter devolução",
+    "confirm_button": "Cancelar devolução"
+  },
+  "return_edit": {
+    "title": "Adicionar detalhes da devolução",
+    "not_editable_message": "Esta devolução já foi enviada",
+    "details_section": "Detalhes",
+    "bulk_section": "Aplicar a todas as linhas",
+    "apply_to_all": "Aplicar um motivo às {count} linhas",
+    "apply": "Aplicar",
+    "reason": "Motivo",
+    "serial_number": "Número de série",
+    "reason_comment": "Qual é o problema?",
+    "saving": "Salvando…",
+    "saved_automatically": "Salvo automaticamente",
+    "submit": "Enviar devolução",
+    "files": "Fotos ou documentos",
+    "files_required": "Fotos ou documentos (obrigatório)",
+    "incomplete": {
+      "quantity": "{count} linha(s) ainda precisam de uma quantidade",
+      "reason": "{count} linha(s) ainda sem motivo",
+      "comment": "{count} linha(s) ainda precisam de um comentário",
+      "attachment": "{count} linha(s) ainda precisam de uma foto"
+    },
+    "uploads_pending": "A aguardar a conclusão do carregamento dos ficheiros",
+    "uploads_failed": "Alguns ficheiros não foram carregados. Remova-os ou tente novamente antes de enviar.",
+    "quantity_for": "Quantidade a devolver de {name}",
+    "available": "de {quantity} disponíveis"
+  }
+}

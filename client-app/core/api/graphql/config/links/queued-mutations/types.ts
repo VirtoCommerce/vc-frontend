@@ -18,6 +18,34 @@ export interface IQueuedMutationsController {
    * in-flight one.
    */
   flushNow: (opName: string, partitionKey?: string) => void;
+  /**
+   * Claim an operation name for queueing, from outside core. A module calls this in its `init()`
+   * so core never has to name the module's mutations; the link resolves targets per request, so a
+   * registration made at boot is in force long before the first mutation can be sent.
+   *
+   * Returns false when another owner already holds the name and outranks this claim, in which case
+   * the existing config stays. The refusal is logged rather than thrown: a losing plugin should
+   * degrade to unqueued mutations, not fail to boot.
+   */
+  registerTarget: (target: IQueueTarget, owner: IQueueTargetOwner) => boolean;
+  /** Who holds each operation name, and every claim that was refused. For debugging. */
+  debug: IQueueTargetsDebug;
+}
+
+export interface IQueueTargetOwner {
+  owner: string;
+  /** Higher wins a collision. Defaults to 0, so first claim holds unless a later one outranks it. */
+  priority?: number;
+}
+
+export interface IQueueTargetRejection extends IQueueTargetOwner {
+  operationName: string;
+  heldBy: IQueueTargetOwner;
+}
+
+export interface IQueueTargetsDebug {
+  owners: Map<string, IQueueTargetOwner>;
+  rejected: IQueueTargetRejection[];
 }
 
 type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;

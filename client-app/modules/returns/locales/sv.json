@@ -1,0 +1,147 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Returer",
+      "table_description": "lista över returer"
+    },
+    "title": "Returer",
+    "no_returns_message": "Det finns inga returer ännu",
+    "no_results_message": "Inga returer matchar din sökning",
+    "search_placeholder": "Sök på RMA, order, referens eller produkt",
+    "search_aria": "Sök returer",
+    "filters": {
+      "title": "Filter",
+      "created_date": "Skapat datum",
+      "start_date": "Startdatum",
+      "end_date": "Slutdatum",
+      "invalid_range": "Ogiltigt datumintervall.",
+      "custom_date": "Anpassat datum",
+      "last_day": "Sista dagen",
+      "last_week": "Förra veckan",
+      "last_month": "Förra månaden",
+      "last_year": "Förra året",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Utkast",
+      "Requested": "Begärd",
+      "PartiallyApproved": "Delvis godkänd",
+      "Approved": "Godkänd",
+      "Rejected": "Avvisad",
+      "Cancelled": "Avbruten",
+      "Canceled": "Avbruten",
+      "New": "Ny",
+      "Processing": "Behandlas",
+      "Completed": "Slutförd"
+    },
+    "request_button": "Begär retur",
+    "menu": {
+      "link": {
+        "title": "Returer"
+      }
+    },
+    "select_items": {
+      "title": "Välj artiklar att returnera",
+      "meta_title": "Välj artiklar att returnera",
+      "table_description": "orderrader tillgängliga för retur",
+      "select_all": "Välj alla kvalificerade rader",
+      "eligible_count": "{eligible} av {total} rader kvalificerade",
+      "nothing_returnable": "Inget i denna order kan returneras",
+      "window_hint": "Varor kan returneras inom {days} dagar efter leverans",
+      "selected_summary": "{lines} valda · {quantity} artiklar",
+      "columns": {
+        "item": "Artikel",
+        "ordered": "Beställt",
+        "returnable": "Returnerbar",
+        "quantity": "Antal"
+      },
+      "quantity_for": "Returantal för {name}",
+      "continue": "Fortsätt"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Returer är avstängda för den här butiken",
+      "ORDER_STATUS_NOT_ALLOWED": "Returer tillåts inte från denna orders status",
+      "LINE_CANCELLED": "Denna rad har annullerats",
+      "NOT_DELIVERED": "Inte levererad ännu",
+      "OUTSIDE_RETURN_WINDOW": "Utanför returperioden",
+      "NOTHING_LEFT_TO_RETURN": "Redan begärd i sin helhet",
+      "UNHANDLED": "Den här varan kan inte returneras"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Den här returen är inte längre i ett skede där det är möjligt",
+      "UNHANDLED": "Den här åtgärden är inte tillgänglig just nu"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "En av filerna kunde inte bifogas. Ta bort den och ladda upp igen.",
+      "INVALID_REQUEST": "Vissa uppgifter godtas inte. Kontrollera orsaker och kommentarer och försök igen.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Datum",
+        "status": "Status",
+        "quantity": "Antal"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Retur {0}",
+    "not_found_message": "Denna retur hittades inte",
+    "summary_section": "Sammanfattning",
+    "items_section": "Artiklar",
+    "order_number": "Ordernummer",
+    "customer_reference": "Din inköpsorderreferens",
+    "customer_comment": "Kommentar",
+    "cancel_reason": "Orsak till avbokning",
+    "cancel_button": "Avbryt retur",
+    "columns": {
+      "requested": "Begärt",
+      "approved": "Godkänt"
+    },
+    "table_description": "returnerade varor"
+  },
+  "return_cancel": {
+    "title": "Avbryt retur",
+    "text": "Retur {0} dras tillbaka och dess artiklar blir tillgängliga för retur igen.",
+    "reason_label": "Orsak (valfritt)",
+    "keep_button": "Behåll retur",
+    "confirm_button": "Avbryt retur"
+  },
+  "return_edit": {
+    "title": "Lägg till returuppgifter",
+    "not_editable_message": "Denna retur har redan skickats in",
+    "details_section": "Detaljer",
+    "bulk_section": "Tillämpa på alla rader",
+    "apply_to_all": "Tillämpa en orsak på alla {count} rader",
+    "apply": "Tillämpa",
+    "reason": "Orsak",
+    "serial_number": "Serienummer",
+    "reason_comment": "Vad är fel på den?",
+    "saving": "Sparar…",
+    "saved_automatically": "Sparas automatiskt",
+    "submit": "Skicka in retur",
+    "files": "Foton eller dokument",
+    "files_required": "Foton eller dokument (obligatoriskt)",
+    "incomplete": {
+      "quantity": "{count} rad(er) saknar fortfarande ett antal",
+      "reason": "{count} rad(er) saknar orsak",
+      "comment": "{count} rad(er) saknar fortfarande en kommentar",
+      "attachment": "{count} rad(er) saknar fortfarande ett foto"
+    },
+    "uploads_pending": "Väntar på att filerna ska laddas upp",
+    "uploads_failed": "Vissa filer kunde inte laddas upp. Ta bort dem eller försök igen innan du skickar.",
+    "quantity_for": "Antal att returnera för {name}",
+    "available": "av {quantity} tillgängliga"
+  }
+}

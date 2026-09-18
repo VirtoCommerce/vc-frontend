@@ -1,0 +1,147 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Возвраты",
+      "table_description": "список возвратов"
+    },
+    "title": "Возвраты",
+    "no_returns_message": "Возвратов пока нет",
+    "no_results_message": "По запросу ничего не найдено",
+    "search_placeholder": "Поиск по RMA, заказу, ссылке или товару",
+    "search_aria": "Поиск возвратов",
+    "filters": {
+      "title": "Фильтры",
+      "created_date": "Дата создания",
+      "start_date": "Дата начала",
+      "end_date": "Дата окончания",
+      "invalid_range": "Некорректный диапазон дат.",
+      "custom_date": "Произвольная дата",
+      "last_day": "Последний день",
+      "last_week": "Последняя неделя",
+      "last_month": "Последний месяц",
+      "last_year": "Последний год",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Черновик",
+      "Requested": "Запрошен",
+      "PartiallyApproved": "Частично одобрен",
+      "Approved": "Одобрен",
+      "Rejected": "Отклонён",
+      "Cancelled": "Отменён",
+      "Canceled": "Отменён",
+      "New": "Новый",
+      "Processing": "В обработке",
+      "Completed": "Завершён"
+    },
+    "request_button": "Оформить возврат",
+    "menu": {
+      "link": {
+        "title": "Возвраты"
+      }
+    },
+    "select_items": {
+      "title": "Выберите позиции для возврата",
+      "meta_title": "Выберите позиции для возврата",
+      "table_description": "позиции заказа, доступные к возврату",
+      "select_all": "Выбрать все доступные позиции",
+      "eligible_count": "Доступно позиций: {eligible} из {total}",
+      "nothing_returnable": "Из этого заказа ничего нельзя вернуть",
+      "window_hint": "Товары можно вернуть в течение {days} дней после доставки",
+      "selected_summary": "Выбрано: {lines} · {quantity} шт.",
+      "columns": {
+        "item": "Позиция",
+        "ordered": "Заказано",
+        "returnable": "Можно вернуть",
+        "quantity": "Количество"
+      },
+      "quantity_for": "Количество к возврату для «{name}»",
+      "continue": "Продолжить"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Возвраты отключены для этого магазина",
+      "ORDER_STATUS_NOT_ALLOWED": "Из заказа в таком статусе возврат не оформить",
+      "LINE_CANCELLED": "Позиция отменена",
+      "NOT_DELIVERED": "Ещё не доставлено",
+      "OUTSIDE_RETURN_WINDOW": "Срок возврата истёк",
+      "NOTHING_LEFT_TO_RETURN": "Уже заявлено полностью",
+      "UNHANDLED": "Этот товар нельзя вернуть"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Возврат уже не на той стадии, на которой это возможно",
+      "UNHANDLED": "Сейчас это действие недоступно"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Некоторых товаров уже нельзя вернуть в запрошенном количестве. Измените количество и повторите.",
+      "LINE_NOT_RETURNABLE": "Одну из позиций возврата больше нельзя вернуть. Удалите её и повторите.",
+      "ATTACHMENTS_REQUIRED": "К каждой позиции нужен хотя бы один файл.",
+      "WRONG_STATUS": "Возврат уже не на той стадии, на которой это возможно.",
+      "ORDER_NOT_ELIGIBLE": "Для этого заказа возвраты недоступны.",
+      "ORDER_NOT_FOUND": "Заказ не найден.",
+      "RETURN_NOT_FOUND": "Возврат не найден.",
+      "NO_ITEMS": "В возврате должна быть хотя бы одна позиция.",
+      "INVALID_QUANTITY": "Укажите количество не меньше одного.",
+      "LINE_ITEM_NOT_FOUND": "Одной из позиций возврата больше нет в заказе.",
+      "ATTACHMENT_NOT_AVAILABLE": "Один из файлов не удалось прикрепить. Удалите его и загрузите заново.",
+      "INVALID_REQUEST": "Часть данных не принята. Проверьте причины и комментарии и повторите.",
+      "UNHANDLED": "Что-то пошло не так. Попробуйте ещё раз."
+    },
+    "list": {
+      "columns": {
+        "number": "Номер",
+        "date": "Дата",
+        "status": "Статус",
+        "quantity": "Кол-во"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Возврат {0}",
+    "not_found_message": "Этот возврат не найден",
+    "summary_section": "Сводка",
+    "items_section": "Позиции",
+    "order_number": "Номер заказа",
+    "customer_reference": "Ваш номер заказа",
+    "customer_comment": "Комментарий",
+    "cancel_reason": "Причина отмены",
+    "cancel_button": "Отменить возврат",
+    "columns": {
+      "requested": "Запрошено",
+      "approved": "Одобрено"
+    },
+    "table_description": "возвращаемые товары"
+  },
+  "return_cancel": {
+    "title": "Отмена возврата",
+    "text": "Возврат {0} будет отозван, а его товары снова станут доступны для возврата.",
+    "reason_label": "Причина (необязательно)",
+    "keep_button": "Оставить возврат",
+    "confirm_button": "Отменить возврат"
+  },
+  "return_edit": {
+    "title": "Детали возврата",
+    "not_editable_message": "Этот возврат уже отправлен",
+    "details_section": "Детали",
+    "bulk_section": "Применить ко всем позициям",
+    "apply_to_all": "Применить одну причину ко всем позициям ({count})",
+    "apply": "Применить",
+    "reason": "Причина",
+    "serial_number": "Серийный номер",
+    "reason_comment": "Что с ним не так?",
+    "saving": "Сохраняем…",
+    "saved_automatically": "Сохраняется автоматически",
+    "submit": "Отправить возврат",
+    "files": "Фото или документы",
+    "files_required": "Фото или документы (обязательно)",
+    "incomplete": {
+      "quantity": "Для {count} строк нужно количество",
+      "reason": "Не указана причина: позиций {count}",
+      "comment": "Для {count} строк нужен комментарий",
+      "attachment": "Для {count} строк нужно фото"
+    },
+    "uploads_pending": "Дожидаемся завершения загрузки файлов",
+    "uploads_failed": "Некоторые файлы не загрузились. Удалите их или повторите загрузку перед отправкой.",
+    "quantity_for": "Количество к возврату для {name}",
+    "available": "из {quantity} доступных"
+  }
+}

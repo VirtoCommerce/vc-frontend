@@ -1,0 +1,147 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Palautukset",
+      "table_description": "palautusten luettelo"
+    },
+    "title": "Palautukset",
+    "no_returns_message": "Palautuksia ei ole vielä",
+    "no_results_message": "Hakuasi vastaavia palautuksia ei löytynyt",
+    "search_placeholder": "Hae RMA:n, tilauksen, viitteen tai tuotteen mukaan",
+    "search_aria": "Hae palautuksia",
+    "filters": {
+      "title": "Suodattimet",
+      "created_date": "Luontipäivämäärä",
+      "start_date": "Aloituspäivämäärä",
+      "end_date": "Lopetuspäivämäärä",
+      "invalid_range": "Virheellinen päivämääräväli.",
+      "custom_date": "Mukautettu päivämäärä",
+      "last_day": "Viimeinen päivä",
+      "last_week": "Viime viikko",
+      "last_month": "Viime kuukausi",
+      "last_year": "Viime vuosi",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Luonnos",
+      "Requested": "Pyydetty",
+      "PartiallyApproved": "Osittain hyväksytty",
+      "Approved": "Hyväksytty",
+      "Rejected": "Hylätty",
+      "Cancelled": "Peruutettu",
+      "Canceled": "Peruutettu",
+      "New": "Uusi",
+      "Processing": "Käsittelyssä",
+      "Completed": "Valmis"
+    },
+    "request_button": "Pyydä palautusta",
+    "menu": {
+      "link": {
+        "title": "Palautukset"
+      }
+    },
+    "select_items": {
+      "title": "Valitse palautettavat tuotteet",
+      "meta_title": "Valitse palautettavat tuotteet",
+      "table_description": "palautettavissa olevat tilausrivit",
+      "select_all": "Valitse kaikki kelpoiset rivit",
+      "eligible_count": "{eligible} / {total} riviä kelpaa",
+      "nothing_returnable": "Tästä tilauksesta ei voi palauttaa mitään",
+      "window_hint": "Tuotteet voi palauttaa {days} päivän kuluessa toimituksesta",
+      "selected_summary": "{lines} valittu · {quantity} kpl",
+      "columns": {
+        "item": "Tuote",
+        "ordered": "Tilattu",
+        "returnable": "Palautettavissa",
+        "quantity": "Määrä"
+      },
+      "quantity_for": "Palautusmäärä tuotteelle {name}",
+      "continue": "Jatka"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Palautukset on poistettu käytöstä tässä kaupassa",
+      "ORDER_STATUS_NOT_ALLOWED": "Palautukset eivät ole sallittuja tämän tilauksen tilasta",
+      "LINE_CANCELLED": "Tämä rivi on peruutettu",
+      "NOT_DELIVERED": "Ei vielä toimitettu",
+      "OUTSIDE_RETURN_WINDOW": "Palautusajan ulkopuolella",
+      "NOTHING_LEFT_TO_RETURN": "Jo kokonaan pyydetty",
+      "UNHANDLED": "Tätä tuotetta ei voi palauttaa"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Tämä palautus ei enää ole vaiheessa, jossa se olisi mahdollista",
+      "UNHANDLED": "Tämä toiminto ei ole nyt käytettävissä"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "Yhtä tiedostoa ei voitu liittää. Poista se ja lataa uudelleen.",
+      "INVALID_REQUEST": "Joitakin tietoja ei hyväksytty. Tarkista syyt ja kommentit ja yritä uudelleen.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Päivämäärä",
+        "status": "Tila",
+        "quantity": "Määrä"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Palautus {0}",
+    "not_found_message": "Tätä palautusta ei löytynyt",
+    "summary_section": "Yhteenveto",
+    "items_section": "Tuotteet",
+    "order_number": "Tilausnumero",
+    "customer_reference": "Oma tilausviitteesi",
+    "customer_comment": "Kommentti",
+    "cancel_reason": "Peruutuksen syy",
+    "cancel_button": "Peruuta palautus",
+    "columns": {
+      "requested": "Pyydetty",
+      "approved": "Hyväksytty"
+    },
+    "table_description": "palautetut tuotteet"
+  },
+  "return_cancel": {
+    "title": "Peruuta palautus",
+    "text": "Palautus {0} perutaan ja sen tuotteet voi palauttaa uudelleen.",
+    "reason_label": "Syy (valinnainen)",
+    "keep_button": "Säilytä palautus",
+    "confirm_button": "Peruuta palautus"
+  },
+  "return_edit": {
+    "title": "Lisää palautuksen tiedot",
+    "not_editable_message": "Tämä palautus on jo lähetetty",
+    "details_section": "Tiedot",
+    "bulk_section": "Käytä kaikkiin riveihin",
+    "apply_to_all": "Käytä yhtä syytä kaikkiin {count} riviin",
+    "apply": "Käytä",
+    "reason": "Syy",
+    "serial_number": "Sarjanumero",
+    "reason_comment": "Mikä siinä on vikana?",
+    "saving": "Tallennetaan…",
+    "saved_automatically": "Tallennettu automaattisesti",
+    "submit": "Lähetä palautus",
+    "files": "Valokuvat tai asiakirjat",
+    "files_required": "Valokuvat tai asiakirjat (pakollinen)",
+    "incomplete": {
+      "quantity": "{count} riviä tarvitsee vielä määrän",
+      "reason": "{count} riviltä puuttuu syy",
+      "comment": "{count} riviä tarvitsee vielä kommentin",
+      "attachment": "{count} riviä tarvitsee vielä valokuvan"
+    },
+    "uploads_pending": "Odotetaan tiedostojen latauksen valmistumista",
+    "uploads_failed": "Joidenkin tiedostojen lataus epäonnistui. Poista ne tai yritä uudelleen ennen lähettämistä.",
+    "quantity_for": "Palautettava määrä tuotteelle {name}",
+    "available": "/ {quantity} saatavilla"
+  }
+}

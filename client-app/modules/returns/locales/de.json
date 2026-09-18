@@ -1,0 +1,147 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Rücksendungen",
+      "table_description": "Liste der Rücksendungen"
+    },
+    "title": "Rücksendungen",
+    "no_returns_message": "Es liegen noch keine Rücksendungen vor",
+    "no_results_message": "Keine Rücksendungen entsprechen Ihrer Suche",
+    "search_placeholder": "Suche nach RMA, Bestellung, Referenz oder Artikel",
+    "search_aria": "Rücksendungen suchen",
+    "filters": {
+      "title": "Filter",
+      "created_date": "Erstellungsdatum",
+      "start_date": "Startdatum",
+      "end_date": "Enddatum",
+      "invalid_range": "Ungültiger Datumsbereich.",
+      "custom_date": "Benutzerdefiniertes Datum",
+      "last_day": "Letzter Tag",
+      "last_week": "Letzte Woche",
+      "last_month": "Letzter Monat",
+      "last_year": "Letztes Jahr",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Entwurf",
+      "Requested": "Angefragt",
+      "PartiallyApproved": "Teilweise genehmigt",
+      "Approved": "Genehmigt",
+      "Rejected": "Abgelehnt",
+      "Cancelled": "Storniert",
+      "Canceled": "Storniert",
+      "New": "Neu",
+      "Processing": "In Bearbeitung",
+      "Completed": "Abgeschlossen"
+    },
+    "request_button": "Rücksendung anfordern",
+    "menu": {
+      "link": {
+        "title": "Rücksendungen"
+      }
+    },
+    "select_items": {
+      "title": "Zu retournierende Artikel wählen",
+      "meta_title": "Zu retournierende Artikel wählen",
+      "table_description": "für Rücksendung verfügbare Bestellpositionen",
+      "select_all": "Alle zulässigen Positionen wählen",
+      "eligible_count": "{eligible} von {total} Positionen zulässig",
+      "nothing_returnable": "Aus dieser Bestellung kann nichts retourniert werden",
+      "window_hint": "Artikel können innerhalb von {days} Tagen nach Lieferung zurückgesendet werden",
+      "selected_summary": "{lines} gewählt · {quantity} Artikel",
+      "columns": {
+        "item": "Artikel",
+        "ordered": "Bestellt",
+        "returnable": "Retournierbar",
+        "quantity": "Menge"
+      },
+      "quantity_for": "Rücksendemenge für {name}",
+      "continue": "Weiter"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Rücksendungen sind für diesen Shop deaktiviert",
+      "ORDER_STATUS_NOT_ALLOWED": "Aus dem Status dieser Bestellung sind keine Rücksendungen möglich",
+      "LINE_CANCELLED": "Diese Position wurde storniert",
+      "NOT_DELIVERED": "Noch nicht geliefert",
+      "OUTSIDE_RETURN_WINDOW": "Außerhalb des Rücksendezeitraums",
+      "NOTHING_LEFT_TO_RETURN": "Bereits vollständig angefragt",
+      "UNHANDLED": "Dieser Artikel kann nicht zurückgesendet werden"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Diese Rücksendung befindet sich nicht mehr in einem Stadium, in dem das möglich ist",
+      "UNHANDLED": "Diese Aktion ist derzeit nicht verfügbar"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "Eine der Dateien konnte nicht angehängt werden. Entfernen Sie sie und laden Sie sie erneut hoch.",
+      "INVALID_REQUEST": "Einige Angaben werden nicht akzeptiert. Prüfen Sie Gründe und Kommentare und versuchen Sie es erneut.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Datum",
+        "status": "Status",
+        "quantity": "Menge"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Rücksendung {0}",
+    "not_found_message": "Diese Rücksendung wurde nicht gefunden",
+    "summary_section": "Übersicht",
+    "items_section": "Artikel",
+    "order_number": "Bestellnummer",
+    "customer_reference": "Ihre Bestellreferenz",
+    "customer_comment": "Kommentar",
+    "cancel_reason": "Stornierungsgrund",
+    "cancel_button": "Rücksendung stornieren",
+    "columns": {
+      "requested": "Angefragt",
+      "approved": "Genehmigt"
+    },
+    "table_description": "zurückgesendete Artikel"
+  },
+  "return_cancel": {
+    "title": "Rücksendung stornieren",
+    "text": "Rücksendung {0} wird zurückgezogen und ihre Artikel können erneut zurückgesendet werden.",
+    "reason_label": "Grund (optional)",
+    "keep_button": "Rücksendung behalten",
+    "confirm_button": "Rücksendung stornieren"
+  },
+  "return_edit": {
+    "title": "Rücksendedetails hinzufügen",
+    "not_editable_message": "Diese Rücksendung wurde bereits eingereicht",
+    "details_section": "Details",
+    "bulk_section": "Auf alle Positionen anwenden",
+    "apply_to_all": "Einen Grund auf alle {count} Positionen anwenden",
+    "apply": "Anwenden",
+    "reason": "Grund",
+    "serial_number": "Seriennummer",
+    "reason_comment": "Was ist damit nicht in Ordnung?",
+    "saving": "Wird gespeichert…",
+    "saved_automatically": "Automatisch gespeichert",
+    "submit": "Rücksendung einreichen",
+    "files": "Fotos oder Dokumente",
+    "files_required": "Fotos oder Dokumente (erforderlich)",
+    "incomplete": {
+      "quantity": "{count} Position(en) benötigen noch eine Menge",
+      "reason": "Für {count} Position(en) fehlt noch ein Grund",
+      "comment": "{count} Position(en) benötigen noch einen Kommentar",
+      "attachment": "{count} Position(en) benötigen noch ein Foto"
+    },
+    "uploads_pending": "Warten auf den Abschluss des Datei-Uploads",
+    "uploads_failed": "Einige Dateien konnten nicht hochgeladen werden. Entfernen oder wiederholen Sie sie vor dem Absenden.",
+    "quantity_for": "Zurückzusendende Menge für {name}",
+    "available": "von {quantity} verfügbar"
+  }
+}
