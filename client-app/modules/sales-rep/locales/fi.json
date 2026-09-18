@@ -214,11 +214,10 @@
       "load_failed": "Tehtäviä ei voitu ladata",
       "day_task_count": "{count} tehtävä | {count} tehtävää",
       "overdue_total": "{count} myöhässä oleva tehtävä | {count} myöhässä olevaa tehtävää",
-      "day_of_total": "{shown}/{total} tehtävästä",
-      "day_markers": "Merkitty: {kinds}",
+      "day_task_count_capped": "{total} tehtävää ({shown} näytetään)",
+      "day_markers": "{count} tehtävä. Merkitty: {kinds} | {count} tehtävää. Merkitty: {kinds}",
       "page": {
-        "subtitle": "Tehtäväsi, seurannat ja eräpäivät kaikilta asiakastileiltä — päiväkohtaisesti jaoteltuna.",
-        "all_tab": "Kaikki"
+        "subtitle": "Tehtäväsi, seurannat ja eräpäivät kaikilta asiakastileiltä — päiväkohtaisesti jaoteltuna."
       },
       "table": {
         "task": "Tehtävä",

@@ -214,11 +214,10 @@
       "load_failed": "タスクを読み込めませんでした",
       "day_task_count": "{count} 件のタスク",
       "overdue_total": "期限切れのタスク {count} 件",
-      "day_of_total": "{total} 件中 {shown} 件のタスク",
-      "day_markers": "マーク: {kinds}",
+      "day_task_count_capped": "{total} 件のタスク（{shown} 件を表示）",
+      "day_markers": "{count} 件のタスク。マーク: {kinds}",
       "page": {
-        "subtitle": "すべての取引先のタスク、フォローアップ、期限を日付ごとに一覧表示します。",
-        "all_tab": "すべて"
+        "subtitle": "すべての取引先のタスク、フォローアップ、期限を日付ごとに一覧表示します。"
       },
       "table": {
         "task": "タスク",

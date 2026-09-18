@@ -19,6 +19,7 @@ const state = await vi.hoisted(async () => {
     counts: ref({ day: 0, upcoming: 0, overdue: 0, completed: 0 }),
     countsDayWindow: undefined as { value: { from: string; to: string } } | undefined,
     rules: ref<{ name: string; label: string }[]>([]),
+    filterParam: ref(""),
     rulesFailed: ref(false),
     month: ref("2026-10-01"),
     useSalesRepTasks: vi.fn(),
@@ -31,6 +32,8 @@ const state = await vi.hoisted(async () => {
   };
 });
 
+// The ?filter= deep link; a plain ref stands in for the route-backed writable computed.
+vi.mock("@/core/composables/useRouteQueryParam", () => ({ useRouteQueryParam: () => state.filterParam }));
 vi.mock("../composables/useSalesRepTasks", () => ({ useSalesRepTasks: state.useSalesRepTasks }));
 vi.mock("../composables/useSalesRepTaskCounts", async () => {
   const { ref } = await import("vue");
@@ -178,6 +181,7 @@ beforeEach(() => {
   state.loading.value = false;
   state.error.value = null;
   state.filter.value = undefined;
+  state.filterParam.value = "";
   state.page.value = 1;
   state.pages.value = 1;
   state.totalCount.value = 0;
@@ -224,15 +228,47 @@ describe("Calendar tabs", () => {
     ]);
   });
 
-  // "All" lists the selected day, so its badge is that day's total — not every task the rep ever had, which
-  // would promise a hundred rows over a list of two while the status badges match their lists exactly.
-  it("badges All with the selected day's total, and hands the counts query that day", () => {
+  // The baseline chip lists the selected day, so its badge is that day's total — not every task the rep ever
+  // had, which would promise a hundred rows over a list of two while the status badges match theirs exactly.
+  it("badges the baseline chip with the selected day's total, and hands the counts query that day", () => {
     state.counts.value = { day: 2, upcoming: 7, overdue: 3, completed: 2 };
 
     const wrapper = createWrapper();
 
     expect(wrapper.getComponent(ChipsStub).props("allCount")).toBe(2);
     expect(state.countsDayWindow?.value).toEqual(localDayWindow(localDayKey(new Date())));
+  });
+
+  // Labelled with the day it lists rather than "All": the status chips span every date from today, so the
+  // baseline is a different scope, not a superset of them (VCST-5732 QA A-2, A-5).
+  it('labels the baseline chip with the day on screen, not "All"', () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.getComponent(ChipsStub).props("allLabel")).toBe("Oct 15, 2026");
+  });
+
+  // The dashboard's overdue notice arrives as ?filter=overdue, so the page must open on that tab rather
+  // than on the day — the day it would open on is precisely the one that holds no overdue work (M-3).
+  it("opens on the tab the URL asked for", () => {
+    state.filterParam.value = "overdue";
+    state.rules.value = [{ name: "overdue", label: "Overdue" }];
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.getComponent(ChipsStub).props("modelValue")).toBe("overdue");
+    // A tab spans every date, so the day window is dropped — same as picking the tab by hand.
+    expect(state.useSalesRepTasks.mock.calls.at(-1)?.[0].period.value).toBeUndefined();
+  });
+
+  // Two-way: the URL keeps up with the chips, so a refresh lands back on the same view.
+  it("writes the chosen tab to the URL, and clears it when the rep returns to a day", async () => {
+    const wrapper = createWrapper();
+
+    await pickTab(wrapper, "completed");
+    expect(state.filterParam.value).toBe("completed");
+
+    await wrapper.getComponent(CalendarStub).vm.$emit("update:modelValue", "2026-10-20");
+    expect(state.filterParam.value).toBe("");
   });
 
   it("offers no tabs at all when the rules could not be loaded", () => {
@@ -334,8 +370,10 @@ describe("Calendar states", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.getComponent(ListStub).props("tasks")).toHaveLength(1);
-    // The header counts the whole day, not the page.
-    expect(wrapper.find(".sales-rep-calendar__day-count").text()).toContain('"total":4');
+    // The header counts the whole day, not the page the pager is on.
+    const count = wrapper.find(".sales-rep-calendar__day-count").text();
+    expect(count).toContain("sales_rep.tasks.day_task_count");
+    expect(count).toContain('"count":4');
   });
 
   it("shows the empty-day view when nothing is due", () => {

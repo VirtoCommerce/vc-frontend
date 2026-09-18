@@ -214,11 +214,10 @@
       "load_failed": "无法加载任务",
       "day_task_count": "{count} 项任务",
       "overdue_total": "{count} 项逾期任务",
-      "day_of_total": "共 {total} 项任务，显示 {shown} 项",
-      "day_markers": "标记：{kinds}",
+      "day_task_count_capped": "共 {total} 项任务（显示 {shown} 项）",
+      "day_markers": "{count} 项任务。标记：{kinds}",
       "page": {
-        "subtitle": "您在所有客户下的任务、跟进事项和截止日期 — 按日期排列。",
-        "all_tab": "全部"
+        "subtitle": "您在所有客户下的任务、跟进事项和截止日期 — 按日期排列。"
       },
       "table": {
         "task": "任务",

@@ -8,13 +8,13 @@ import type { SalesRepTaskCountsType } from "../types/tasks";
 import type { Ref } from "vue";
 
 /**
- * Badges for the All / Upcoming / Overdue / Completed chips, in ONE round trip: the query aliases
+ * Badges for the day / Upcoming / Overdue / Completed chips, in ONE round trip: the query aliases
  * salesRepTasks four times with first: 0, so each alias returns only a totalCount. There is deliberately no
  * backend counts query — aliasing already gives a single request, and a bespoke field would have to
  * re-derive the same rules.
  *
- * `day` is the "All" badge: on the calendar page a status tab spans every date but "All" shows the selected day,
- * so its badge takes that day's window — the whole book would promise a hundred rows over a list of two.
+ * `day` is the baseline chip's badge: a status tab spans every date from today, while the baseline shows the
+ * selected day — so its badge takes that day's window, and the chip is labelled with the date to say so.
  */
 export function useSalesRepTaskCounts(dayWindow: Ref<{ from: string; to: string }>) {
   const today = startOfLocalDayIso();

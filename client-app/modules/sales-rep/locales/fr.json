@@ -214,11 +214,10 @@
       "load_failed": "Impossible de charger les tâches",
       "day_task_count": "{count} tâche | {count} tâche | {count} tâches",
       "overdue_total": "{count} tâche en retard | {count} tâches en retard",
-      "day_of_total": "{shown} tâches sur {total}",
-      "day_markers": "Marqué : {kinds}",
+      "day_task_count_capped": "{total} tâches ({shown} affichées)",
+      "day_markers": "{count} tâche. Marqué : {kinds} | {count} tâche. Marqué : {kinds} | {count} tâches. Marqué : {kinds}",
       "page": {
-        "subtitle": "Vos tâches, relances et échéances pour tous les comptes — organisées par jour.",
-        "all_tab": "Toutes"
+        "subtitle": "Vos tâches, relances et échéances pour tous les comptes — organisées par jour."
       },
       "table": {
         "task": "Tâche",

@@ -214,11 +214,10 @@
       "load_failed": "Nie udało się wczytać zadań",
       "day_task_count": "{count} zadań | {count} zadanie | {count} zadania | {count} zadań",
       "overdue_total": "{count} zaległych zadań | {count} zaległe zadanie | {count} zaległe zadania | {count} zaległych zadań",
-      "day_of_total": "{shown} z {total} zadań",
-      "day_markers": "Oznaczono: {kinds}",
+      "day_task_count_capped": "{total} zadań (wyświetlono {shown})",
+      "day_markers": "{count} zadań. Oznaczono: {kinds} | {count} zadanie. Oznaczono: {kinds} | {count} zadania. Oznaczono: {kinds} | {count} zadań. Oznaczono: {kinds}",
       "page": {
-        "subtitle": "Twoje zadania, działania następcze i terminy ze wszystkich kont — w układzie dziennym.",
-        "all_tab": "Wszystkie"
+        "subtitle": "Twoje zadania, działania następcze i terminy ze wszystkich kont — w układzie dziennym."
       },
       "table": {
         "task": "Zadanie",

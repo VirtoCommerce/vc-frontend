@@ -214,11 +214,10 @@
       "load_failed": "Falha ao carregar as tarefas",
       "day_task_count": "{count} tarefas | {count} tarefa | {count} tarefas",
       "overdue_total": "{count} tarefa atrasada | {count} tarefas atrasadas",
-      "day_of_total": "{shown} de {total} tarefas",
-      "day_markers": "Marcado: {kinds}",
+      "day_task_count_capped": "{total} tarefas ({shown} exibidas)",
+      "day_markers": "{count} tarefas. Marcado: {kinds} | {count} tarefa. Marcado: {kinds} | {count} tarefas. Marcado: {kinds}",
       "page": {
-        "subtitle": "Suas tarefas, acompanhamentos e prazos de todas as contas — organizados por dia.",
-        "all_tab": "Todas"
+        "subtitle": "Suas tarefas, acompanhamentos e prazos de todas as contas — organizados por dia."
       },
       "table": {
         "task": "Tarefa",

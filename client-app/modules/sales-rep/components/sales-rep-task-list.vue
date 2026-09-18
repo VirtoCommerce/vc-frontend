@@ -108,7 +108,13 @@ function completionLabel(task: SalesRepTaskType): string {
 
 // Overdue rows carry a left accent, matching the mockup's red/blue/green bars.
 function rowClass(item: SalesRepTaskType, index: number): string {
-  return [`sales-rep-task-list__row--${item.status}`, index % 2 === 1 ? "bg-neutral-50" : ""].filter(Boolean).join(" ");
+  return [
+    "sales-rep-task-list__row",
+    `sales-rep-task-list__row--${item.status}`,
+    index % 2 === 1 ? "bg-neutral-50" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 </script>
 
@@ -125,7 +131,12 @@ function rowClass(item: SalesRepTaskType, index: number): string {
 
   &__title-button {
     // A title that opens the editor: a real button, so it is reachable and announced as an action.
-    @apply block max-w-full truncate text-start text-sm font-bold text-[--link-color] hover:text-[--link-hover-color];
+    //
+    // Clamped rather than truncated: VcTable's desktop table is `w-full` with table-layout AUTO, so a long
+    // title grows its own column and `max-w-full` then resolves against a cell that has already stretched —
+    // truncate never engaged and the table overflowed the page instead (QA M-1). Wrapping text has a
+    // min-content width of its longest word, which the column can shrink to; the clamp caps the height.
+    @apply line-clamp-2 max-w-full text-start text-sm font-bold text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__name {
@@ -148,17 +159,28 @@ function rowClass(item: SalesRepTaskType, index: number): string {
     @apply flex min-w-0 grow flex-col items-start gap-1.5;
   }
 
-  // Logical border so the accent flips in RTL.
-  &__row--overdue td:first-child {
-    border-inline-start: 3px solid var(--color-danger-500);
+  // A mark per row, not a rail: a full-height border butts against the next row's, so the accents merge into
+  // one unbroken line down the table. Inset into the first cell instead, and logical so it flips in RTL.
+  &__row td:first-child {
+    @apply relative;
+
+    &::before {
+      @apply absolute inset-y-2 start-0 w-[3px] rounded-full;
+
+      content: "";
+    }
   }
 
-  &__row--upcoming td:first-child {
-    border-inline-start: 3px solid var(--color-info-500);
+  &__row--overdue td:first-child::before {
+    background-color: var(--color-danger-500);
   }
 
-  &__row--completed td:first-child {
-    border-inline-start: 3px solid var(--color-success-500);
+  &__row--upcoming td:first-child::before {
+    background-color: var(--color-info-500);
+  }
+
+  &__row--completed td:first-child::before {
+    background-color: var(--color-success-500);
   }
 }
 </style>

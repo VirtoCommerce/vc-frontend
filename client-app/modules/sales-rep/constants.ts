@@ -89,6 +89,10 @@ export const TASKS_MAX_ROWS = 10;
 // fails closed — keep it aligned with a real rule); no surface offers a sort control, so the rule list itself is
 // not fetched.
 export const TASKS_SORT_RULE = "due-date";
+// The filter rule the dashboard's overdue notice deep-links to. Same string the counts query aliases in
+// salesRepTaskCountsQuery.graphql; a name the project does not offer falls back to the day view, because
+// the chips drop a selection no rule matches.
+export const TASKS_OVERDUE_RULE = "overdue";
 // Upper bound on the month query behind the calendar dots. A rep's month is tens of tasks; the cap only
 // stops a pathological book of business from pulling an unbounded page for three dots a day.
 export const TASKS_CALENDAR_MAX = 200;

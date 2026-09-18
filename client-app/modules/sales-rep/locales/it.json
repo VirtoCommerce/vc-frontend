@@ -214,11 +214,10 @@
       "load_failed": "Impossibile caricare le attività",
       "day_task_count": "{count} attività | {count} attività",
       "overdue_total": "{count} attività scaduta | {count} attività scadute",
-      "day_of_total": "{shown} di {total} attività",
-      "day_markers": "Contrassegnato: {kinds}",
+      "day_task_count_capped": "{total} attività ({shown} mostrate)",
+      "day_markers": "{count} attività. Contrassegnato: {kinds} | {count} attività. Contrassegnato: {kinds}",
       "page": {
-        "subtitle": "Le tue attività, i follow-up e le scadenze di tutti gli account — organizzati per giorno.",
-        "all_tab": "Tutte"
+        "subtitle": "Le tue attività, i follow-up e le scadenze di tutti gli account — organizzati per giorno."
       },
       "table": {
         "task": "Attività",

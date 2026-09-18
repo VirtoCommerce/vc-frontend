@@ -20,7 +20,11 @@
 
         <!-- The one thing on this widget that is not about the day on screen: overdue work is due in the past,
              so without this the dashboard shows a rep nothing at all about it. -->
-        <VcLink v-if="overdueCount" :to="{ name: CALENDAR_ROUTE_NAME }" class="sales-rep-tasks__overdue">
+        <VcLink
+          v-if="overdueCount"
+          :to="{ name: CALENDAR_ROUTE_NAME, query: { filter: TASKS_OVERDUE_RULE } }"
+          class="sales-rep-tasks__overdue"
+        >
           <VcIcon name="clock-alert" size="xs" />
 
           {{ t("sales_rep.tasks.overdue_total", { count: overdueCount }, overdueCount) }}
@@ -29,9 +33,7 @@
         <div class="sales-rep-tasks__day">
           <span class="sales-rep-tasks__day-label">{{ selectedDayLabel }}</span>
 
-          <span class="sales-rep-tasks__day-count">{{
-            t("sales_rep.tasks.day_task_count", { count: totalCount }, totalCount)
-          }}</span>
+          <span class="sales-rep-tasks__day-count">{{ dayCountLabel }}</span>
         </div>
 
         <!-- A failure replaces the rows: apollo keeps the previous rows on a failed refetch. -->
@@ -72,7 +74,7 @@ import { useBlockChrome } from "../composables/useBlockChrome";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
 import { useSalesRepOverdueTaskCount } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
-import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS, TASKS_SORT_RULE } from "../constants";
+import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS, TASKS_OVERDUE_RULE, TASKS_SORT_RULE } from "../constants";
 import { localDayKey, localDayKeyToDate, localDayWindow, taskSubline } from "../tasks";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepTaskCalendar from "./sales-rep-task-calendar.vue";
@@ -120,6 +122,15 @@ const failed = computed(() => Boolean(error.value));
 
 const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
 
+// The row cap is by design; the count disagreeing with the rows was not (VCST-5732 QA A-4). Said only when
+// the cap actually bites: an unconditional "(5 shown)" would read as oddly on an ordinary day as the
+// calendar page's old "7 of 7" did.
+const dayCountLabel = computed(() =>
+  tasks.value.length < totalCount.value
+    ? t("sales_rep.tasks.day_task_count_capped", { total: totalCount.value, shown: tasks.value.length })
+    : t("sales_rep.tasks.day_task_count", { count: totalCount.value }, totalCount.value),
+);
+
 // Resolved once per row rather than per template read: each one formats a date through Intl.
 const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, taskSubline(task, t, d)])));
 </script>
@@ -129,6 +140,13 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
 .sales-rep-tasks {
   &__body {
     @apply flex flex-col px-6 py-2;
+
+    // .vc-calendar is inline-flex over a grid of fixed --cell-size columns, so as a stretched flex item it
+    // gets a box wider than its own grid and the days bunch against one edge (QA M-10). Shrink-wrap and
+    // centre it instead; `mx-auto` would not do it, an inline-level box ignores auto margins.
+    .vc-calendar {
+      @apply self-center;
+    }
   }
 
   &__all-link {
@@ -152,26 +170,38 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
   }
 
   &__list {
-    @apply m-0 flex list-none flex-col divide-y divide-neutral-100 p-0;
+    @apply m-0 flex list-none flex-col p-0;
   }
 
   &__row {
-    @apply flex items-center gap-3 py-3;
+    @apply relative flex items-center gap-3 py-3 ps-3;
 
-    // Logical border so the accent flips in RTL; mirrors the table's row accents.
-    border-inline-start: 3px solid transparent;
-    @apply ps-2;
+    // A mark per row, not a rail: a full-height border butts against its neighbour's, so the accents merge
+    // into one unbroken line down the list. Inset into the row instead, and logical so it flips in RTL.
+    &::before {
+      @apply absolute inset-y-2 start-0 w-[3px] rounded-full;
 
-    &--overdue {
-      border-inline-start-color: var(--color-danger-500);
+      content: "";
     }
 
-    &--upcoming {
-      border-inline-start-color: var(--color-info-500);
+    // Explicit rather than `divide-y divide-neutral-100` on the list: Tailwind's divide-COLOUR emits the
+    // `border-color` SHORTHAND on every child but the first, which is what wiped the accent off every row
+    // but the first (QA M-5) while it was still drawn as a border.
+    & + & {
+      border-block-start: 1px solid var(--color-neutral-100);
     }
 
-    &--completed {
-      border-inline-start-color: var(--color-success-500);
+    // A canceled task earns no mark, like its calendar day: the bar stays transparent.
+    &--overdue::before {
+      background-color: var(--color-danger-500);
+    }
+
+    &--upcoming::before {
+      background-color: var(--color-info-500);
+    }
+
+    &--completed::before {
+      background-color: var(--color-success-500);
     }
   }
 

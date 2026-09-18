@@ -86,6 +86,29 @@ export function localDayKeyToIso(dayKey: string): string {
   return toStartDateFilterValue(dayKey)!;
 }
 
+/**
+ * The instant to write back for the day the rep picked. The form is date-only by design, but the stored value
+ * is an instant that something else may have put a real time on (the admin task UI), and updateSalesRepTask
+ * REPLACES the task — so writing local midnight every time meant a title-only edit silently moved the deadline.
+ * Same day ⇒ the original instant, byte for byte; another day ⇒ that day at the original time, so a task due at
+ * 9:00 is still due at 9:00 after it is moved. Creating has no earlier instant to keep, so it starts the day.
+ */
+export function dueDateForDay(dayKey: string, original?: string): string {
+  if (!original) {
+    return localDayKeyToIso(dayKey);
+  }
+
+  if (localDayKey(original) === dayKey) {
+    return original;
+  }
+
+  const previous = new Date(original);
+  const moved = localDayKeyToDate(dayKey);
+  moved.setHours(previous.getHours(), previous.getMinutes(), previous.getSeconds(), previous.getMilliseconds());
+
+  return moved.toISOString();
+}
+
 type TaskStateType = {
   isActive: boolean;
   completed?: boolean | null;
@@ -113,14 +136,15 @@ export function taskStatus(task: TaskStateType, dayStart: Date): SalesRepTaskSta
 }
 
 /**
- * Which conditions each day carries, for the calendar dots. A day with ten overdue tasks yields ONE "overdue"
- * entry — a dot means "there is at least one of these here", never one dot per task.
+ * What each day carries, for the calendar. A day with ten overdue tasks yields ONE "overdue" kind — a dot
+ * means "there is at least one of these here", never one dot per task — while `count` keeps the real total,
+ * which the day's description reads out: there is no room to draw it, and no shortage of room to say it.
  */
 export function buildDayMarkers(
   tasks: readonly { dueDate?: string | null; status: SalesRepTaskStatusType }[],
   order: readonly SalesRepTaskStatusType[] = TASK_MARKER_KINDS,
 ): SalesRepTaskDayMarkersType {
-  const byDay = new Map<string, Set<SalesRepTaskStatusType>>();
+  const byDay = new Map<string, { kinds: Set<SalesRepTaskStatusType>; count: number }>();
 
   for (const task of tasks) {
     if (!task.dueDate) {
@@ -128,15 +152,16 @@ export function buildDayMarkers(
     }
 
     const key = localDayKey(task.dueDate);
-    const kinds = byDay.get(key) ?? new Set<SalesRepTaskStatusType>();
-    kinds.add(task.status);
-    byDay.set(key, kinds);
+    const day = byDay.get(key) ?? { kinds: new Set<SalesRepTaskStatusType>(), count: 0 };
+    day.kinds.add(task.status);
+    day.count += 1;
+    byDay.set(key, day);
   }
 
   const result: SalesRepTaskDayMarkersType = {};
-  for (const [key, kinds] of byDay) {
+  for (const [key, day] of byDay) {
     // Stable order so a day's dots don't reshuffle between renders.
-    result[key] = order.filter((kind) => kinds.has(kind));
+    result[key] = { kinds: order.filter((kind) => day.kinds.has(kind)), count: day.count };
   }
 
   return result;

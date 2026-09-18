@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildDayMarkers,
+  dueDateForDay,
   localCalendarWindow,
   localDayKey,
   localDayKeyToIso,
@@ -88,7 +89,7 @@ describe("buildDayMarkers", () => {
       { dueDate: isoAt(2026, 5, 28, 17), status: "overdue" },
     ]);
 
-    expect(markers["2026-05-28"]).toEqual(["overdue"]);
+    expect(markers["2026-05-28"]).toEqual({ kinds: ["overdue"], count: 3 });
   });
 
   it("keeps one marker per distinct kind, in a stable order", () => {
@@ -100,7 +101,7 @@ describe("buildDayMarkers", () => {
     ]);
 
     // Declaration order, not arrival order, so the dots do not reshuffle between renders.
-    expect(markers["2026-05-28"]).toEqual(["upcoming", "overdue", "completed"]);
+    expect(markers["2026-05-28"].kinds).toEqual(["upcoming", "overdue", "completed"]);
   });
 
   it("buckets by the viewer's day and skips tasks with no due date", () => {
@@ -125,7 +126,29 @@ describe("buildDayMarkers", () => {
       order,
     );
 
-    expect(markers["2026-05-28"]).toEqual(["overdue", "upcoming"]);
+    expect(markers["2026-05-28"].kinds).toEqual(["overdue", "upcoming"]);
+  });
+
+  // The dots collapse a day to one mark per condition; the count is what survives that collapse, and the
+  // only thing a screen reader can be told about how much is actually there.
+  it("counts every task due on the day, however few dots it earns", () => {
+    const markers = buildDayMarkers([
+      { dueDate: isoAt(2026, 5, 28, 8), status: "overdue" },
+      { dueDate: isoAt(2026, 5, 28, 12), status: "overdue" },
+      { dueDate: isoAt(2026, 5, 28, 17), status: "upcoming" },
+    ]);
+
+    expect(markers["2026-05-28"]).toEqual({ kinds: ["upcoming", "overdue"], count: 3 });
+  });
+
+  // A canceled task earns no dot but is still due that day, and still shows up in the day's list.
+  it("counts a task whose kind draws nothing", () => {
+    const markers = buildDayMarkers([
+      { dueDate: isoAt(2026, 5, 28, 8), status: "upcoming" },
+      { dueDate: isoAt(2026, 5, 28, 9), status: "canceled" },
+    ]);
+
+    expect(markers["2026-05-28"]).toEqual({ kinds: ["upcoming"], count: 2 });
   });
 });
 
@@ -177,5 +200,37 @@ describe("localDayKeyToIso", () => {
 
   it("lands on local midnight, so the picked day is the day the calendar shows it on", () => {
     expect(new Date(localDayKeyToIso("2026-05-28")).getTime()).toBe(new Date(2026, 4, 28).getTime());
+  });
+});
+
+describe("dueDateForDay", () => {
+  // Built from a local Date, so the fixture sits on the same local day whatever timezone the suite runs in.
+  const TIMED = new Date(2026, 4, 28, 7, 15, 30, 250).toISOString();
+
+  // Creating: nothing earlier to preserve, so the task starts at the beginning of the chosen day.
+  it("starts a new task at the beginning of the chosen day", () => {
+    expect(dueDateForDay("2026-05-28")).toBe(localDayKeyToIso("2026-05-28"));
+  });
+
+  // The point of the whole function: update REPLACES the task, so an untouched date has to round-trip byte
+  // for byte, or editing the title alone moves the deadline to midnight (VCST-5732 QA A-1).
+  it("returns the original instant untouched when the day did not change", () => {
+    expect(dueDateForDay("2026-05-28", TIMED)).toBe(TIMED);
+  });
+
+  it("carries the time of day over when the task moves to another day", () => {
+    const moved = new Date(dueDateForDay("2026-05-29", TIMED));
+
+    expect(localDayKey(moved)).toBe("2026-05-29");
+    expect([moved.getHours(), moved.getMinutes(), moved.getSeconds(), moved.getMilliseconds()]).toEqual([
+      7, 15, 30, 250,
+    ]);
+  });
+
+  // A task the rep created here has no time to keep; it must not gain one on the way out either.
+  it("keeps a midnight task at midnight when it moves", () => {
+    const moved = dueDateForDay("2026-05-29", localDayKeyToIso("2026-05-28"));
+
+    expect(moved).toBe(localDayKeyToIso("2026-05-29"));
   });
 });

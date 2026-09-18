@@ -40,14 +40,16 @@
         enable-teleport
       />
 
-      <!-- Absent when nobody has configured the TaskManagement.TaskTypes dictionary; the field is optional. -->
+      <!-- Absent when nobody has configured the TaskManagement.TaskTypes dictionary; the field is optional.
+           `clearable` is bound rather than bare: VcSelect counts "" as a selection, so it would offer a Clear
+           on an empty Type (QA M-2), and "" is this form's own convention for an unset field. -->
       <VcSelect
         v-if="types.length"
         v-model="type"
         :label="t('sales_rep.tasks.form.type_label')"
         :items="types"
         :disabled="loading"
-        clearable
+        :clearable="!!type"
         enable-teleport
       />
 
@@ -56,7 +58,9 @@
         :label="t('sales_rep.tasks.form.description_label')"
         :placeholder="t('common.placeholders.enter_value')"
         :disabled="loading"
+        :max-length="MAX_DESCRIPTION_LENGTH"
         rows="4"
+        counter
       />
     </form>
 
@@ -94,7 +98,7 @@ import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { useSalesRepTaskMutations } from "../composables/useSalesRepTaskMutations";
 import { useSalesRepTaskTypes } from "../composables/useSalesRepTaskTypes";
-import { localDayKey, localDayKeyToIso } from "../tasks";
+import { dueDateForDay, localDayKey } from "../tasks";
 import type { SalesRepTaskType } from "../types/tasks";
 
 interface IProps {
@@ -114,6 +118,13 @@ const props = defineProps<IProps>();
 // Mirrors the WorkTask.Name column width. Nothing server-side rejects a longer value today, so this input cap
 // is what actually keeps a name inside the column.
 const MAX_NAME_LENGTH = 256;
+
+// Notes live in a `text` column, so this is a layout guard rather than a storage limit; 1000 matches the
+// storefront's other free-text areas (order comment, invite message) rather than the 250 of a one-line list
+// description. Deliberately NOT mirrored in the yup schema: `maxlength` stops the rep typing past it, while a
+// validation rule would also invalidate a longer description written in the admin task UI and lock the rep
+// out of editing that task at all.
+const MAX_DESCRIPTION_LENGTH = 1000;
 
 const PRIORITIES = ["Lowest", "Low", "Normal", "High", "Highest"] as const;
 
@@ -167,7 +178,8 @@ const { value: description } = useField<string>("description");
 const save = handleSubmit(async (data) => {
   const input = {
     name: data.name.trim(),
-    dueDate: localDayKeyToIso(data.dueDate),
+    // The picked day, but not at midnight unless it already was: see dueDateForDay.
+    dueDate: dueDateForDay(data.dueDate, props.task?.dueDate),
     priority: data.priority || undefined,
     type: data.type || undefined,
     description: data.description?.trim() || undefined,

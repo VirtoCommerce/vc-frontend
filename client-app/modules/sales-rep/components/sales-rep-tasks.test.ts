@@ -64,7 +64,10 @@ function createWrapper() {
         SalesRepTaskCalendar: true,
         // Kept real so the status pill's own mapping is exercised; only its chip is stubbed.
         VcChip: { props: ["color", "variant"], template: '<span class="chip" :data-color="color"><slot /></span>' },
-        VcLink: { props: ["to"], template: '<a :data-route="to.name"><slot /></a>' },
+        VcLink: {
+          props: ["to"],
+          template: '<a :data-route="to.name" :data-filter="to.query?.filter"><slot /></a>',
+        },
         VcEmptyView: true,
         VcIcon: true,
         VcButton: true,
@@ -124,14 +127,32 @@ describe("SalesRepTasks rows", () => {
     expect(meta[3]).toBe("Finance");
   });
 
-  // The header counts everything due that day, not just the rows the cap let through.
-  it("counts the whole day, not the page", () => {
+  // The header counts everything due that day, not just the rows the cap let through — and says so, rather
+  // than promising nine rows over a list of one (VCST-5732 QA A-4).
+  it("counts the whole day and owns up to the rows it hid", () => {
     state.items.value = [makeTask()];
     state.totalCount.value = 9;
 
     const wrapper = createWrapper();
 
-    expect(wrapper.find(".sales-rep-tasks__day-count").text()).toContain('"count":9');
+    const count = wrapper.find(".sales-rep-tasks__day-count").text();
+    expect(count).toContain("sales_rep.tasks.day_task_count_capped");
+    expect(count).toContain('"total":9');
+    expect(count).toContain('"shown":1');
+  });
+
+  // Nothing hidden, nothing to explain: "5 tasks (5 shown)" on every ordinary day is the noise the
+  // calendar page's old "7 of 7 tasks" was.
+  it("says the count plainly when the cap hid nothing", () => {
+    state.items.value = [makeTask(), makeTask({ id: "task-2" })];
+    state.totalCount.value = 2;
+
+    const wrapper = createWrapper();
+
+    const count = wrapper.find(".sales-rep-tasks__day-count").text();
+    expect(count).toContain("sales_rep.tasks.day_task_count");
+    expect(count).not.toContain("capped");
+    expect(count).toContain('"count":2');
   });
 });
 
@@ -190,6 +211,8 @@ describe("SalesRepTasks wiring", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.get(".sales-rep-tasks__all-link").attributes("data-route")).toBe(CALENDAR_ROUTE_NAME);
+    // Unfiltered: this one is the general way in, not the overdue shortcut.
+    expect(wrapper.get(".sales-rep-tasks__all-link").attributes("data-filter")).toBeUndefined();
   });
 });
 
@@ -203,6 +226,9 @@ describe("SalesRepTasks overdue notice", () => {
 
     expect(notice.text()).toContain('"count":3');
     expect(notice.attributes("data-route")).toBe(CALENDAR_ROUTE_NAME);
+    // Deep-links to the Overdue tab: the calendar opens on the day, which by definition holds none of it.
+    // The literal, not the constant — this has to stay the rule name the server actually offers.
+    expect(notice.attributes("data-filter")).toBe("overdue");
   });
 
   it("stays out of the way when nothing is overdue", () => {

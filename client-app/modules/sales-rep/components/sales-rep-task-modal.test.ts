@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { localDayKeyToIso } from "../tasks";
+import { localDayKey, localDayKeyToIso } from "../tasks";
 import SalesRepTaskModal from "./sales-rep-task-modal.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
@@ -45,12 +45,16 @@ const VcModalStub = {
 
 // One stub for every field: they differ only in which value they carry, and the label identifies them.
 const FieldStub = {
-  props: ["modelValue", "label", "items"],
+  props: ["modelValue", "label", "items", "clearable", "maxLength"],
   emits: ["update:modelValue"],
   template:
     '<input class="field" :data-label="label" :value="modelValue"' +
+    ' :data-clearable="String(!!clearable)" :data-max-length="maxLength"' +
     " @input=\"$emit('update:modelValue', $event.target.value)\" />",
 };
+
+// 9:30 on the rep's own clock, so the fixture lands on the same local day whatever timezone the suite runs in.
+const TIMED_DUE_DATE = new Date(2026, 9, 15, 9, 30).toISOString();
 
 function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
   return {
@@ -232,6 +236,28 @@ describe("SalesRepTaskModal edit", () => {
     expect(mutations.update).toHaveBeenCalledWith("task-1", expect.objectContaining({ name: "Call ACME back" }));
   });
 
+  // A task can carry a real time of day — the admin task UI sets one — while this form is date-only and
+  // updateSalesRepTask REPLACES the task. Editing the title must not reset the deadline (VCST-5732 QA A-1).
+  it("leaves the deadline exactly as it found it when only the title changed", async () => {
+    const wrapper = createWrapper({ task: makeTask({ dueDate: TIMED_DUE_DATE }) });
+    await field(wrapper, "name_label").setValue("Call ACME back");
+
+    await save(wrapper);
+
+    expect(mutations.update.mock.calls[0][1].dueDate).toBe(TIMED_DUE_DATE);
+  });
+
+  it("keeps the hour it was scheduled for when the rep moves it to another day", async () => {
+    const wrapper = createWrapper({ task: makeTask({ dueDate: TIMED_DUE_DATE }) });
+    await field(wrapper, "due_date_label").setValue("2026-11-02");
+
+    await save(wrapper);
+
+    const sent = new Date(mutations.update.mock.calls[0][1].dueDate as string);
+    expect(localDayKey(sent)).toBe("2026-11-02");
+    expect([sent.getHours(), sent.getMinutes()]).toEqual([9, 30]);
+  });
+
   // Deleting is not undoable and the button shares a row with Save, so the click alone must not do it.
   it("asks before deleting anything", async () => {
     const wrapper = createWrapper({ task: makeTask() });
@@ -267,6 +293,27 @@ describe("SalesRepTaskModal edit", () => {
   });
 });
 
+describe("SalesRepTaskModal length limits", () => {
+  // Unbounded Notes was half of QA M-1. `text` column, so this is a layout guard, not a storage limit.
+  it("caps what the rep can type into Notes, and shows how much is left", () => {
+    const wrapper = createWrapper({ defaultDay: "2026-10-15" });
+
+    expect(field(wrapper, "description_label").attributes("data-max-length")).toBe("1000");
+  });
+
+  // Deliberately NOT a yup rule: a description written in the admin task UI can be longer, and validating it
+  // here would disable Save and lock the rep out of editing that task at all — the A-1 mistake, again.
+  it("still saves a task whose description already exceeds the cap", async () => {
+    const overlong = "x".repeat(1500);
+    const wrapper = createWrapper({ task: makeTask({ description: overlong }) });
+    await field(wrapper, "name_label").setValue("Call ACME back");
+
+    await save(wrapper);
+
+    expect(mutations.update).toHaveBeenCalledWith("task-1", expect.objectContaining({ description: overlong }));
+  });
+});
+
 describe("SalesRepTaskModal type vocabulary", () => {
   // The shipped TaskManagement.TaskTypes defaults are back-office flavoured, so a deployment that never
   // configured them should not show a select with nothing worth choosing.
@@ -285,5 +332,26 @@ describe("SalesRepTaskModal type vocabulary", () => {
     await save(wrapper);
 
     expect(mutations.create).toHaveBeenCalledWith(expect.objectContaining({ type: "Follow-up" }));
+  });
+
+  // VcSelect reads any non-nullish model as a selection, and this form seeds "" — so a bare `clearable`
+  // offered a Clear button on a Type that had nothing to clear (QA M-2).
+  it("offers Clear only once a type has been picked", async () => {
+    state.types.value = ["Finance", "Follow-up"];
+    const wrapper = createWrapper({ defaultDay: "2026-10-15" });
+
+    expect(field(wrapper, "type_label").attributes("data-clearable")).toBe("false");
+
+    await field(wrapper, "type_label").setValue("Follow-up");
+
+    expect(field(wrapper, "type_label").attributes("data-clearable")).toBe("true");
+  });
+
+  // Editing a task that already carries one: the button has to be there from the first render.
+  it("offers Clear straight away on a task that already has a type", () => {
+    state.types.value = ["Finance", "Follow-up"];
+    const wrapper = createWrapper({ task: makeTask() });
+
+    expect(field(wrapper, "type_label").attributes("data-clearable")).toBe("true");
   });
 });

@@ -214,11 +214,10 @@
       "load_failed": "Aufgaben konnten nicht geladen werden",
       "day_task_count": "{count} Aufgabe | {count} Aufgaben",
       "overdue_total": "{count} überfällige Aufgabe | {count} überfällige Aufgaben",
-      "day_of_total": "{shown} von {total} Aufgaben",
-      "day_markers": "Markiert: {kinds}",
+      "day_task_count_capped": "{total} Aufgaben ({shown} angezeigt)",
+      "day_markers": "{count} Aufgabe. Markiert: {kinds} | {count} Aufgaben. Markiert: {kinds}",
       "page": {
-        "subtitle": "Ihre Aufgaben, Follow-ups und Fälligkeiten über alle Konten hinweg — nach Tagen aufgeschlüsselt.",
-        "all_tab": "Alle"
+        "subtitle": "Ihre Aufgaben, Follow-ups und Fälligkeiten über alle Konten hinweg — nach Tagen aufgeschlüsselt."
       },
       "table": {
         "task": "Aufgabe",

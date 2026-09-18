@@ -214,11 +214,10 @@
       "load_failed": "Kunne ikke laste oppgavene",
       "day_task_count": "{count} oppgave | {count} oppgaver",
       "overdue_total": "{count} forfalt oppgave | {count} forfalte oppgaver",
-      "day_of_total": "{shown} av {total} oppgaver",
-      "day_markers": "Merket: {kinds}",
+      "day_task_count_capped": "{total} oppgaver ({shown} vist)",
+      "day_markers": "{count} oppgave. Merket: {kinds} | {count} oppgaver. Merket: {kinds}",
       "page": {
-        "subtitle": "Oppgavene, oppfølgingene og fristene dine på tvers av alle kontoer — fordelt på dager.",
-        "all_tab": "Alle"
+        "subtitle": "Oppgavene, oppfølgingene og fristene dine på tvers av alle kontoer — fordelt på dager."
       },
       "table": {
         "task": "Oppgave",

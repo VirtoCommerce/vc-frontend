@@ -214,11 +214,10 @@
       "load_failed": "Couldn't load tasks",
       "day_task_count": "{count} task | {count} tasks",
       "overdue_total": "{count} overdue task | {count} overdue tasks",
-      "day_of_total": "{shown} of {total} tasks",
-      "day_markers": "Marked: {kinds}",
+      "day_task_count_capped": "{total} tasks ({shown} shown)",
+      "day_markers": "{count} task. Marked: {kinds} | {count} tasks. Marked: {kinds}",
       "page": {
-        "subtitle": "Your tasks, follow-ups and due dates across all accounts — laid out by day.",
-        "all_tab": "All"
+        "subtitle": "Your tasks, follow-ups and due dates across all accounts — laid out by day."
       },
       "table": {
         "task": "Task",

@@ -5,7 +5,7 @@ import { VcCalendar } from "@/ui-kit/components/molecules";
 import uiKitMessages from "@/ui-kit/locales/en.json";
 import salesRepMessages from "../locales/en.json";
 import SalesRepTaskCalendar from "./sales-rep-task-calendar.vue";
-import type { SalesRepTaskDayMarkersType } from "../types/tasks";
+import type { SalesRepTaskDayMarkersType, SalesRepTaskDayType, SalesRepTaskStatusType } from "../types/tasks";
 import type { VueWrapper } from "@vue/test-utils";
 
 // Real VcCalendar, not a stub: the point of these tests is that the dots land in the right CELLS and that the
@@ -22,6 +22,12 @@ const i18n = createI18n({
 const MONTH = "2026-10-01";
 const SELECTED = "2026-10-15";
 const PADDING_DAY = "2026-09-30";
+
+// A day's markers, with the count defaulting to one task per kind — the tests that care about the two
+// diverging (one dot standing for several tasks) pass it explicitly.
+function marked(kinds: SalesRepTaskStatusType[], count = kinds.length): SalesRepTaskDayType {
+  return { kinds, count };
+}
 
 function createWrapper(dayMarkers: SalesRepTaskDayMarkersType = {}) {
   return mount(SalesRepTaskCalendar, {
@@ -45,19 +51,19 @@ describe("SalesRepTaskCalendar dots", () => {
   // The rule the team set for this widget: a dot means "there is at least one of these here", never one dot
   // per task. Ten overdue tasks on a day are still one red dot.
   it("draws one dot per condition present, not one per task", () => {
-    const wrapper = createWrapper({ [SELECTED]: ["overdue", "overdue", "overdue"] });
+    const wrapper = createWrapper({ [SELECTED]: marked(["overdue", "overdue", "overdue"]) });
 
     expect(dotsOn(wrapper, SELECTED)).toEqual(["overdue"]);
   });
 
   it("keeps a fixed dot order however the day's conditions arrive", () => {
-    const wrapper = createWrapper({ [SELECTED]: ["completed", "overdue", "upcoming"] });
+    const wrapper = createWrapper({ [SELECTED]: marked(["completed", "overdue", "upcoming"]) });
 
     expect(dotsOn(wrapper, SELECTED)).toEqual(["upcoming", "overdue", "completed"]);
   });
 
   it("leaves an unmarked day bare", () => {
-    const wrapper = createWrapper({ [SELECTED]: ["upcoming"] });
+    const wrapper = createWrapper({ [SELECTED]: marked(["upcoming"]) });
 
     expect(dotsOn(wrapper, "2026-10-16")).toEqual([]);
     expect(getDay(wrapper, "2026-10-16").find(".sales-rep-task-calendar__dots").exists()).toBe(false);
@@ -65,7 +71,7 @@ describe("SalesRepTaskCalendar dots", () => {
 
   // Canceled is a real task state but not one of the three tabs, and the legend explains only three colours.
   it("gives a canceled task no dot at all", () => {
-    const wrapper = createWrapper({ [SELECTED]: ["canceled"] });
+    const wrapper = createWrapper({ [SELECTED]: marked(["canceled"]) });
 
     expect(dotsOn(wrapper, SELECTED)).toEqual([]);
   });
@@ -73,7 +79,7 @@ describe("SalesRepTaskCalendar dots", () => {
   // The grid is fixed-weeks, so it always shows some adjacent-month days. They carry tasks like any other day,
   // which is why the month query is padded a week either side.
   it("marks adjacent-month padding cells too", () => {
-    const wrapper = createWrapper({ [PADDING_DAY]: ["overdue"] });
+    const wrapper = createWrapper({ [PADDING_DAY]: marked(["overdue"]) });
 
     expect(dotsOn(wrapper, PADDING_DAY)).toEqual(["overdue"]);
   });
@@ -83,24 +89,40 @@ describe("SalesRepTaskCalendar accessibility", () => {
   // The dots are decoration; the announcement rides on dayDescriptions because reka puts an explicit
   // aria-label (the full date) on the cell trigger, which excludes any slot content from the accessible name.
   it("hides the dots from assistive tech and describes the day in words instead", () => {
-    const wrapper = createWrapper({ [SELECTED]: ["upcoming", "overdue"] });
+    const wrapper = createWrapper({ [SELECTED]: marked(["upcoming", "overdue"]) });
 
     const day = getDay(wrapper, SELECTED);
     expect(day.get(".sales-rep-task-calendar__dots").attributes("aria-hidden")).toBe("true");
 
     const describedBy = day.attributes("aria-describedby");
     expect(describedBy).toBeTruthy();
-    expect(wrapper.get(`[id="${describedBy}"]`).text()).toBe("Marked: Upcoming, Overdue");
+    expect(wrapper.get(`[id="${describedBy}"]`).text()).toBe("2 tasks. Marked: Upcoming, Overdue");
     // The date label itself stays a date — the marker text is additional, not folded into the name.
     expect(day.attributes("aria-label")).not.toContain("Marked");
   });
 
   it("describes only the days that carry a dot", () => {
-    const wrapper = createWrapper({ [SELECTED]: ["completed"], "2026-10-20": ["canceled"] });
+    const wrapper = createWrapper({ [SELECTED]: marked(["completed"]), "2026-10-20": marked(["canceled"]) });
 
     expect(getDay(wrapper, SELECTED).attributes("aria-describedby")).toBeTruthy();
     // Canceled draws nothing, so there is nothing to announce either.
     expect(getDay(wrapper, "2026-10-20").attributes("aria-describedby")).toBeUndefined();
+  });
+
+  // The dots cannot say how many: five tasks of one kind are one dot. The description is where the count
+  // lives, so a busy day and a quiet one stop announcing identically (VCST-5732 QA A-10).
+  it("announces how many tasks the day holds, which the dots cannot show", () => {
+    const wrapper = createWrapper({ [SELECTED]: marked(["overdue"], 5) });
+
+    const describedBy = getDay(wrapper, SELECTED).attributes("aria-describedby");
+    expect(wrapper.get(`[id="${describedBy}"]`).text()).toBe("5 tasks. Marked: Overdue");
+  });
+
+  it("says it in the singular for a day holding one", () => {
+    const wrapper = createWrapper({ [SELECTED]: marked(["upcoming"]) });
+
+    const describedBy = getDay(wrapper, SELECTED).attributes("aria-describedby");
+    expect(wrapper.get(`[id="${describedBy}"]`).text()).toBe("1 task. Marked: Upcoming");
   });
 });
 

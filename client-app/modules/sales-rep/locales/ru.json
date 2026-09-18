@@ -214,11 +214,10 @@
       "load_failed": "Не удалось загрузить задачи",
       "day_task_count": "{count} задач | {count} задача | {count} задачи | {count} задач",
       "overdue_total": "{count} просроченных задач | {count} просроченная задача | {count} просроченные задачи | {count} просроченных задач",
-      "day_of_total": "{shown} из {total} задач",
-      "day_markers": "Отмечено: {kinds}",
+      "day_task_count_capped": "{total} задач (показано {shown})",
+      "day_markers": "{count} задач. Отмечено: {kinds} | {count} задача. Отмечено: {kinds} | {count} задачи. Отмечено: {kinds} | {count} задач. Отмечено: {kinds}",
       "page": {
-        "subtitle": "Ваши задачи, напоминания и сроки по всем клиентам — в разбивке по дням.",
-        "all_tab": "Все"
+        "subtitle": "Ваши задачи, напоминания и сроки по всем клиентам — в разбивке по дням."
       },
       "table": {
         "task": "Задача",

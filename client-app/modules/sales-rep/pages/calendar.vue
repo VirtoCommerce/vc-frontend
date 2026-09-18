@@ -22,10 +22,13 @@
 
     <SalesRepRuleAlert :filter-failed="filterRulesFailed" />
 
+    <!-- The baseline chip is labelled with the day it lists, not "All": the status chips are anchored to
+         today and span every date, so a chip reading "All" claimed a scope it never had, and nothing showed
+         which day one of them had taken over from (VCST-5732 QA A-2, A-5). -->
     <SalesRepRuleChips
       v-model="filter"
       :rules="tabRules"
-      :all-label="t('sales_rep.tasks.page.all_tab')"
+      :all-label="selectedDayLabel"
       :all-count="counts.day"
       :loading="filterRulesLoading"
     />
@@ -38,7 +41,7 @@
               <VcTypography tag="h2" class="sales-rep-calendar__day-title">{{ panelTitle }}</VcTypography>
 
               <span class="sales-rep-calendar__day-count">
-                {{ t("sales_rep.tasks.day_of_total", { shown: tasks.length, total: totalCount }) }}
+                {{ t("sales_rep.tasks.day_task_count", { count: totalCount }, totalCount) }}
               </span>
             </div>
 
@@ -81,13 +84,18 @@
           <!-- No selection while a tab is active: the list is not day-scoped then, so highlighting a day would
                misdescribe it - and reka emits nothing when the clicked day is already the selected one, which
                made that cell a dead click. With no selection, any day is a change and clears the tab. -->
-          <SalesRepTaskCalendar
-            :model-value="filter ? undefined : selectedDay"
-            :month="month"
-            :day-markers="dayMarkers"
-            @update:model-value="selectDay"
-            @update:month="setMonth"
-          />
+          <!-- .vc-calendar is inline-flex over fixed-width columns, so on its own it hugs the inline start of
+               the rail and leaves all the slack on one side (QA M-10). Centring belongs on the container: an
+               inline-level box ignores auto margins. -->
+          <div class="sales-rep-calendar__month">
+            <SalesRepTaskCalendar
+              :model-value="filter ? undefined : selectedDay"
+              :month="month"
+              :day-markers="dayMarkers"
+              @update:model-value="selectDay"
+              @update:month="setMonth"
+            />
+          </div>
 
           <ul class="sales-rep-calendar__legend">
             <li v-for="kind in TASK_MARKER_KINDS" :key="kind" class="sales-rep-calendar__legend-item">
@@ -104,6 +112,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 import { useModal } from "@/shared/modal";
 import SalesRepRuleAlert from "../components/sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
@@ -131,8 +140,19 @@ const { month, setMonth, goToToday: monthToday } = useMonthAnchor();
  * date (overdue work is never due today, so intersecting it with a day would show nothing), and picking a date
  * goes back to that day's full list. Anding them is what made an active "Completed 3" sit over an empty list —
  * the badges count the whole set, so a tab must show the whole set too.
+ *
+ * Held in the URL, so the dashboard's overdue notice can deep-link to `?filter=overdue` and the view survives
+ * a refresh. `replace`, not `push`: stepping through the chips must not turn Back into an undo button. The
+ * baseline writes an empty string, which useRouteQueryParam drops from the query, so the day view stays on a
+ * clean URL — and the day itself is not in there, because it defaults to today and a bookmarked date goes stale.
  */
-const filter = ref<string | undefined>(undefined);
+const filterParam = useRouteQueryParam<string>("filter", { updateMethod: "replace" });
+const filter = computed<string | undefined>({
+  get: () => filterParam.value || undefined,
+  set: (value) => {
+    filterParam.value = value ?? "";
+  },
+});
 
 const dayWindow = computed(() => localDayWindow(selectedDay.value));
 const period = computed(() => (filter.value ? undefined : dayWindow.value));
@@ -151,7 +171,7 @@ const {
   sort: TASKS_SORT_RULE,
 });
 
-// The "All" badge follows the day, not the tab: it is what clicking All lists.
+// The baseline badge follows the day, not the tab: it is what clicking that chip lists.
 const { counts, refetch: refetchCounts } = useSalesRepTaskCounts(dayWindow);
 const { dayMarkers, refetch: refetchMarkers } = useSalesRepTaskCalendar(month);
 const { setCompleted, loading: saving } = useSalesRepTaskMutations();
@@ -280,11 +300,16 @@ function openTaskModal(task?: SalesRepTaskType): void {
   }
 
   &__day-count {
-    @apply mt-0.5 block text-xs text-neutral-500;
+    // Enough of a gap to read as a second line rather than as part of the heading above it (QA M-6).
+    @apply mt-2 block text-xs text-neutral-500;
   }
 
   &__aside {
     @apply min-w-0 xl:w-96 xl:shrink-0;
+  }
+
+  &__month {
+    @apply flex justify-center;
   }
 
   &__legend {

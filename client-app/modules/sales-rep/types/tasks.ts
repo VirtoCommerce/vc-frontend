@@ -14,11 +14,18 @@ export type SalesRepTaskType = {
   status: SalesRepTaskStatusType;
 };
 
-/** What a single calendar day carries, for the dots: presence of each condition, never a count. */
-export type SalesRepTaskDayMarkersType = Record<string, SalesRepTaskStatusType[]>;
+/** What a calendar day carries: which conditions to dot, and how many tasks are due on it. */
+export type SalesRepTaskDayType = {
+  /** Presence of each condition, never a count — ten overdue tasks on a day carry one "overdue". */
+  kinds: SalesRepTaskStatusType[];
+  /** Announced, not drawn: there is no room for a dot per task, but plenty in the description. */
+  count: number;
+};
+
+export type SalesRepTaskDayMarkersType = Record<string, SalesRepTaskDayType>;
 
 export type SalesRepTaskCountsType = {
-  /** Tasks due on the selected day — what the "All" tab lists, unlike the status tabs which span every date. */
+  /** Tasks due on the selected day — what the baseline chip lists, unlike the status tabs spanning every date. */
   day: number;
   upcoming: number;
   overdue: number;

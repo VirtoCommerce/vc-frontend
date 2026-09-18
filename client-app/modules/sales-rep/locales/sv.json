@@ -214,11 +214,10 @@
       "load_failed": "Kunde inte läsa in uppgifterna",
       "day_task_count": "{count} uppgift | {count} uppgifter",
       "overdue_total": "{count} försenad uppgift | {count} försenade uppgifter",
-      "day_of_total": "{shown} av {total} uppgifter",
-      "day_markers": "Markerad: {kinds}",
+      "day_task_count_capped": "{total} uppgifter ({shown} visas)",
+      "day_markers": "{count} uppgift. Markerad: {kinds} | {count} uppgifter. Markerad: {kinds}",
       "page": {
-        "subtitle": "Dina uppgifter, uppföljningar och förfallodatum för alla konton — dag för dag.",
-        "all_tab": "Alla"
+        "subtitle": "Dina uppgifter, uppföljningar och förfallodatum för alla konton — dag för dag."
       },
       "table": {
         "task": "Uppgift",
