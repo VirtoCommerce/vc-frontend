@@ -71,6 +71,12 @@ describe("SalesRepOrdersFilters", () => {
     expect(applyButton(wrapper).attributes("disabled")).toBeUndefined();
   });
 
+  it("hides the decorative range separator from assistive technology", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".sales-rep-orders-filters__separator").attributes("aria-hidden")).toBe("true");
+  });
+
   it("emits the drafted selection only on Apply", async () => {
     const wrapper = createWrapper();
 

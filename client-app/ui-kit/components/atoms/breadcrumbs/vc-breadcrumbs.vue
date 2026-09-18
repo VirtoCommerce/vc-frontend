@@ -4,13 +4,16 @@
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">
           <li class="vc-breadcrumbs__item">
-            <component :is="item.route ? 'router-link' : 'span'" :to="item.route" class="vc-breadcrumbs__link">
+            <router-link v-if="item.route" :to="item.route" class="vc-breadcrumbs__link">
               {{ item.title }}
-            </component>
+            </router-link>
+
+            <template v-else>{{ item.title }}</template>
           </li>
 
-          <li class="vc-breadcrumbs__item">
-            <span class="vc-breadcrumbs__slash" aria-hidden="true">/</span>
+          <!-- Hidden on the item: hiding only the glyph leaves a blank list entry -->
+          <li class="vc-breadcrumbs__item" aria-hidden="true">
+            <span class="vc-breadcrumbs__slash">/</span>
           </li>
         </template>
 
@@ -48,7 +51,7 @@ defineProps<IProps>();
   }
 
   &__slash {
-    @apply mx-2 text-neutral-400;
+    @apply mx-2 select-none text-neutral-400;
   }
 }
 </style>
