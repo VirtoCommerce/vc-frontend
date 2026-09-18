@@ -102,6 +102,16 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
+  async function nativeSignIn(params: Record<string, string>): Promise<void> {
+    getTokenParams.value = new URLSearchParams({
+      grant_type: "email_otp_sign_in",
+      scope: "offline_access",
+      ...params,
+    });
+
+    await (getTokenRequest = getToken(true));
+  }
+
   async function refresh(organizationId?: string) {
     const params = new URLSearchParams({
       grant_type: "refresh_token",
@@ -163,6 +173,7 @@ function _useAuth() {
     isAuthorizing,
     authorize,
     externalSignInCallback,
+    nativeSignIn,
     refresh,
     unauthorize,
 
