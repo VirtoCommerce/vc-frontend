@@ -7,6 +7,7 @@ Third-party commentary is marked as such.
 
 | File | Covers |
 |---|---|
+| **[RESULT.md](RESULT.md)** | **The spike result — verdict, what was built, what it costs, the four decisions that need an owner. Start here** |
 | [00-links.md](00-links.md) | Every source, marked by whether it was read |
 | [01-what-it-is.md](01-what-it-is.md) | The release, repo layout, licence and maintenance status, verified install |
 | [02-architecture.md](02-architecture.md) | The engineering argument: one agent + skills, context tiers, caching, UI as tools, evals, memory |
