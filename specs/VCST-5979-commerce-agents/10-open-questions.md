@@ -82,9 +82,9 @@ whoever owns the platform roadmap.
 ## What a decision needs next
 
 1. Take [15-poc-estimate.md](15-poc-estimate.md) to the four decisions above. It is the
-   deliverable the ticket asked for, costed in supervised AI-development hours against this
-   spike's own measured rate — 5.2 active hours for ~5,500 lines of tested code — rather
-   than in developer-days.
+   deliverable the ticket asked for, stated as an inventory of changes — every component,
+   stub, mutation and hardening area named — so it can be re-costed by whoever ends up
+   owning the work.
 2. Run Anthropic's `retail` demo and its `/showcase` page, then `/review-commerce-agent`
    against ours. Half a day, closes the two cheap gaps above.
 3. Widen the eval suite before trusting any quality claim — the current six prove the

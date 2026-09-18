@@ -33,7 +33,7 @@ estimated below is void if it goes the other way.
 | A working local install with notes on what it takes | [01-what-it-is.md](01-what-it-is.md). Python 3.11+/Node 22, `pip install -r requirements.txt`, one `ANTHROPIC_API_KEY`. Anthropic's own demo apps were **not** run — `npm ci` was blocked early and never revisited |
 | A mapping table `StorefrontBackend` ↔ x-api with the gaps | Below, and [07-virto-fit-technical.md](07-virto-fit-technical.md). Not a table any more — working code |
 | A verdict | Above |
-| A high-level plan and a rough POC estimate | [15-poc-estimate.md](15-poc-estimate.md) — 18–27 h to a demonstrable POC, 10–16 h before a customer can switch it on, in supervised AI-development hours |
+| A high-level plan and a rough POC estimate | [15-poc-estimate.md](15-poc-estimate.md) — the scope as an inventory: 5 presentation components plus 1 rebuilt, `search_policies` unstubbed, the cart→quote ending, history across a reload, the suite to ~50 cases; then six hardening areas before a customer can switch it on |
 | Deployment notes: API key vs Bedrock / Vertex / Foundry | [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md). Platform choice is one client argument; Managed Agents is the one path to avoid, because none of the grounding rules run there |
 | *(added)* `MerchantBackend`, read-only pass | **Not done.** Deferred whole, with an argument rather than a method-by-method check |
 
