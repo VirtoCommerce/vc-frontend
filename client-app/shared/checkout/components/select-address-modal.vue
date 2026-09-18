@@ -171,7 +171,10 @@
         <tr
           :data-test-id="`customer-address-${item.id}`"
           :class="['group border-b last:border-none hover:bg-secondary-50', { 'cursor-pointer': !isSelected(item) }]"
+          tabindex="0"
           @click="setAddress(item)"
+          @keydown.enter.prevent="setAddress(item)"
+          @keydown.space.prevent="setAddress(item)"
         >
           <td class="px-4 py-3.5">
             <span class="line-clamp-2">
