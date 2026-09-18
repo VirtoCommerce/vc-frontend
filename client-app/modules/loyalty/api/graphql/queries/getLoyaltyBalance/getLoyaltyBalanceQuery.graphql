@@ -1,5 +1,5 @@
-query GetLoyaltyBalance($userId: String, $orderId: String) {
-  loyaltyBalance(userId: $userId, orderId: $orderId) {
+query GetLoyaltyBalance($userId: String, $orderId: String, $storeId: String!) {
+  loyaltyBalance(userId: $userId, orderId: $orderId, storeId: $storeId) {
     currentBalance
     resultBalance
   }
