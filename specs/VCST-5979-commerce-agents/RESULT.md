@@ -28,6 +28,12 @@ estimated below is void if it goes the other way.
 
 ## What the ticket asked for, and what it got
 
+A caveat on this table: the ticket's scope and its "As a result of Spike" list were written
+at the start of this same spike, by the person doing it, and the Acceptance field is empty.
+Nobody else set these expectations, so the row below is a record of intent kept rather than
+a requirement met by an outside party. The one line it is still worth reading strictly is
+the `MerchantBackend` row, because that is scope dropped rather than scope delivered.
+
 | Asked | Delivered |
 |---|---|
 | A working local install with notes on what it takes | [01-what-it-is.md](01-what-it-is.md). Python 3.11+/Node 22, `pip install -r requirements.txt`, one `ANTHROPIC_API_KEY`. Anthropic's own demo apps were **not** run — `npm ci` was blocked early and never revisited |
