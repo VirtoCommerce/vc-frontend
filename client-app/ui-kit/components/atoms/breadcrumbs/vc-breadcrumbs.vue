@@ -51,7 +51,7 @@ defineProps<IProps>();
   }
 
   &__slash {
-    @apply mx-2 select-none text-neutral-400;
+    @apply mx-2 select-none text-neutral-500;
   }
 }
 </style>
