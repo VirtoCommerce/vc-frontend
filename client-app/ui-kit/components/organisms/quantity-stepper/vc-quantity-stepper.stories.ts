@@ -48,6 +48,15 @@ export const MinMax: StoryType = {
   },
 };
 
+export const AllowZeroBelowMin: StoryType = {
+  args: {
+    min: 3,
+    max: 10,
+    value: 0,
+    allowZero: true,
+  },
+};
+
 export const Disabled: StoryType = {
   args: {
     disabled: true,
