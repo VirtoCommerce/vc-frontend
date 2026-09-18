@@ -1,5 +1,7 @@
 <template>
   <div class="sales-rep-calendar">
+    <VcBreadcrumbs :items="breadcrumbs" />
+
     <div class="sales-rep-calendar__head">
       <div class="sales-rep-calendar__heading">
         <VcTypography class="sales-rep-calendar__title" tag="h1">
@@ -41,7 +43,11 @@
                  replaces the list under it without a word (QA A-9). Announcing the heading covers both,
                  and atomically so the date and the count are read as one. -->
             <div aria-live="polite" aria-atomic="true">
-              <VcTypography tag="h2" class="sales-rep-calendar__day-title">{{ panelTitle }}</VcTypography>
+              <!-- The h2 variant uppercases by default, which turned the date into SEP 18, 2026 — the only
+                   shouted text on the page (QA A-22). The prop is the component's own opt-out. -->
+              <VcTypography tag="h2" text-transform="none" class="sales-rep-calendar__day-title">
+                {{ panelTitle }}
+              </VcTypography>
 
               <span class="sales-rep-calendar__day-count">
                 {{ t("sales_rep.tasks.day_task_count", { count: totalCount }, totalCount) }}
@@ -98,14 +104,14 @@
               @update:model-value="selectDay"
               @update:month="setMonth"
             />
-          </div>
 
-          <ul class="sales-rep-calendar__legend">
-            <li v-for="kind in TASK_MARKER_KINDS" :key="kind" class="sales-rep-calendar__legend-item">
-              <span :class="`sales-rep-calendar__legend-dot sales-rep-calendar__legend-dot--${kind}`" />
-              {{ t(`sales_rep.tasks.legend.${kind}`) }}
-            </li>
-          </ul>
+            <ul class="sales-rep-calendar__legend">
+              <li v-for="kind in TASK_MARKER_KINDS" :key="kind" class="sales-rep-calendar__legend-item">
+                <span :class="`sales-rep-calendar__legend-dot sales-rep-calendar__legend-dot--${kind}`" />
+                {{ t(`sales_rep.tasks.legend.${kind}`) }}
+              </li>
+            </ul>
+          </div>
         </VcWidget>
       </aside>
     </div>
@@ -115,6 +121,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 import { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 import { useModal } from "@/shared/modal";
 import SalesRepRuleAlert from "../components/sales-rep-rule-alert.vue";
@@ -133,6 +140,13 @@ import type { SalesRepTaskType } from "../types/tasks";
 
 const { t, d } = useI18n();
 const { openModal } = useModal();
+
+// Home is prepended by the composable. Same trail the customer pages carry, without their customer legs.
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("sales_rep.hub.title") },
+  { title: t("sales_rep.tasks.title") },
+]);
 
 const selectedDay = ref(localDayKey(new Date()));
 // Drives the dots query. The calendar owns which month is on screen and reports it back.
@@ -311,8 +325,10 @@ function openTaskModal(task?: SalesRepTaskType): void {
     @apply min-w-0 xl:w-96 xl:shrink-0;
   }
 
+  // Shrink-wrapped and centred, with the legend inside it: the calendar is narrower than the rail (M-10),
+  // so a legend that filled the rail started further out than the grid's own left edge.
   &__month {
-    @apply flex justify-center;
+    @apply mx-auto w-fit;
   }
 
   &__legend {

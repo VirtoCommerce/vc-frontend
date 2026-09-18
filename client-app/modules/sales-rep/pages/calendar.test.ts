@@ -32,6 +32,12 @@ const state = await vi.hoisted(async () => {
   };
 });
 
+// useBreadcrumbs reads the current path to decide whether to prepend a catalog root; the page needs
+// nothing else from the router.
+vi.mock("vue-router", async () => {
+  const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
+  return { ...actual, useRoute: () => ({ path: "/company/calendar" }) };
+});
 // The ?filter= deep link; a plain ref stands in for the route-backed writable computed.
 vi.mock("@/core/composables/useRouteQueryParam", () => ({ useRouteQueryParam: () => state.filterParam }));
 vi.mock("../composables/useSalesRepTasks", () => ({ useSalesRepTasks: state.useSalesRepTasks }));
@@ -104,6 +110,12 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
 }
 
 // Named stubs, so the tests can read what the page handed each child and emit back through it.
+const BreadcrumbsStub = {
+  name: "VcBreadcrumbs",
+  props: ["items"],
+  template: '<nav class="crumbs" />',
+};
+
 const ChipsStub = {
   name: "SalesRepRuleChips",
   props: ["modelValue", "rules", "allLabel", "allCount", "loading"],
@@ -136,6 +148,7 @@ function createWrapper() {
           template: '<div><slot name="header-container" /><slot name="default-container" /><slot /></div>',
         },
         VcTypography: { template: "<div><slot /></div>" },
+        VcBreadcrumbs: BreadcrumbsStub,
         SalesRepRuleAlert: true,
         SalesRepRuleChips: ChipsStub,
         SalesRepTaskList: ListStub,
@@ -281,6 +294,22 @@ describe("Calendar tabs", () => {
 });
 
 describe("Calendar day scope", () => {
+  // The page sat at the top of the hub with no trail back (QA A-20). Home is the composable's own.
+  it("places itself in the account trail", () => {
+    const wrapper = createWrapper();
+
+    const titles = (wrapper.getComponent(BreadcrumbsStub).props("items") as { title: string }[]).map(
+      (crumb) => crumb.title,
+    );
+
+    expect(titles).toEqual([
+      "common.links.home",
+      "common.links.account",
+      "sales_rep.hub.title",
+      "sales_rep.tasks.title",
+    ]);
+  });
+
   it("opens on today", () => {
     createWrapper();
 
