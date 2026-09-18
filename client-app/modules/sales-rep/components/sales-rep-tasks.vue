@@ -214,7 +214,8 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
   }
 
   &__meta {
-    @apply mt-0.5 truncate text-xs text-neutral-500;
+    // -600, not -500: on a hovered row the lighter step falls to 3.76:1 (QA A-12).
+    @apply mt-0.5 truncate text-xs text-neutral-600;
   }
 
   &__skeleton {

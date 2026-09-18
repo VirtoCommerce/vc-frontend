@@ -16,6 +16,7 @@
         :maxlength="MAX_NAME_LENGTH"
         :message="errors.name"
         :error="!!errors.name"
+        :aria="REQUIRED_ARIA"
         required
       />
 
@@ -26,6 +27,7 @@
         :disabled="loading"
         :message="errors.dueDate"
         :error="!!errors.dueDate"
+        :aria="REQUIRED_ARIA"
         enable-teleport
         required
       />
@@ -80,7 +82,10 @@
         {{ t("sales_rep.tasks.form.cancel_button") }}
       </VcButton>
 
-      <VcButton :disabled="!meta.valid" :loading="loading" @click="save">
+      <!-- Not disabled on an invalid form: a disabled control is out of the tab order, so it can state
+           neither that it is unavailable nor why (QA A-18). handleSubmit blocks the write and surfaces the
+           field's own error instead. -->
+      <VcButton :loading="loading" @click="save">
         {{ t("sales_rep.tasks.form.save_button") }}
       </VcButton>
     </template>
@@ -126,6 +131,11 @@ const MAX_NAME_LENGTH = 256;
 // out of editing that task at all.
 const MAX_DESCRIPTION_LENGTH = 1000;
 
+// `required` only draws VcLabel's asterisk; it reaches neither the control nor assistive tech, so the
+// requirement was exposed by no route at all (QA A-7). Both VcInput and VcDatePicker merge an `aria` map
+// onto the control they render, so this is fixable here without touching the ui-kit.
+const REQUIRED_ARIA = { "aria-required": "true" };
+
 const PRIORITIES = ["Lowest", "Low", "Normal", "High", "Highest"] as const;
 
 const { t } = useI18n();
@@ -167,7 +177,7 @@ function buildInitialValues() {
   };
 }
 
-const { errors, meta, handleSubmit } = useForm({ initialValues: buildInitialValues() });
+const { errors, handleSubmit } = useForm({ initialValues: buildInitialValues() });
 
 const { value: name } = useField<string>("name", toTypedSchema(string().trim().required().max(MAX_NAME_LENGTH)));
 const { value: dueDate } = useField<string>("dueDate", toTypedSchema(string().required()));

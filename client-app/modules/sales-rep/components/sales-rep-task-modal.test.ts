@@ -45,11 +45,18 @@ const VcModalStub = {
 
 // One stub for every field: they differ only in which value they carry, and the label identifies them.
 const FieldStub = {
-  props: ["modelValue", "label", "items", "clearable", "maxLength"],
+  props: ["modelValue", "label", "items", "clearable", "maxLength", "aria"],
   emits: ["update:modelValue"],
+  computed: {
+    // Read through a computed so the template needs no nested quotes.
+    ariaRequired(): unknown {
+      return (this as unknown as { aria?: Record<string, unknown> }).aria?.["aria-required"];
+    },
+  },
   template:
     '<input class="field" :data-label="label" :value="modelValue"' +
     ' :data-clearable="String(!!clearable)" :data-max-length="maxLength"' +
+    ' :data-aria-required="ariaRequired"' +
     " @input=\"$emit('update:modelValue', $event.target.value)\" />",
 };
 
@@ -289,6 +296,30 @@ describe("SalesRepTaskModal edit", () => {
     await confirmDelete(wrapper);
 
     expect(modal.closeConfirmation).not.toHaveBeenCalled();
+    expect(closeMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("SalesRepTaskModal accessibility", () => {
+  // `required` only draws VcLabel's asterisk — it reaches neither the control nor assistive tech, so the
+  // requirement was exposed by no route at all (QA A-7).
+  it("marks the required controls as required, not just with an asterisk", () => {
+    const wrapper = createWrapper({ defaultDay: "2026-10-15" });
+
+    expect(field(wrapper, "name_label").attributes("data-aria-required")).toBe("true");
+    expect(field(wrapper, "due_date_label").attributes("data-aria-required")).toBe("true");
+  });
+
+  // A disabled control is out of the tab order, so it can state neither that it is unavailable nor why
+  // (QA A-18). Save stays reachable; the submit blocks the write and the field carries the reason.
+  it("keeps Save reachable on an invalid form, and still writes nothing", async () => {
+    const wrapper = createWrapper({ defaultDay: "2026-10-15" });
+
+    expect(button(wrapper, "form.save_button").attributes("disabled")).toBeUndefined();
+
+    await save(wrapper);
+
+    expect(mutations.create).not.toHaveBeenCalled();
     expect(closeMock).not.toHaveBeenCalled();
   });
 });

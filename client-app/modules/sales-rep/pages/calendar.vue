@@ -37,7 +37,10 @@
       <VcWidget size="md" class="sales-rep-calendar__day">
         <template #header-container>
           <div class="sales-rep-calendar__day-head">
-            <div>
+            <!-- The heading is the only thing that names the current scope, and picking a day or a tab
+                 replaces the list under it without a word (QA A-9). Announcing the heading covers both,
+                 and atomically so the date and the count are read as one. -->
+            <div aria-live="polite" aria-atomic="true">
               <VcTypography tag="h2" class="sales-rep-calendar__day-title">{{ panelTitle }}</VcTypography>
 
               <span class="sales-rep-calendar__day-count">
@@ -331,9 +334,10 @@ function openTaskModal(task?: SalesRepTaskType): void {
       background-color: var(--color-danger-500);
     }
 
-    // -400, matching the calendar dots: at -500 the green and the blue share a luminance and blur together.
+    // -600, matching the calendar dots: -500 shares a luminance with the blue, and -400 scored 2.69:1 on
+    // white — under the 3:1 a meaningful graphic needs (QA A-11). Darker separates it on lightness too.
     &--completed {
-      background-color: var(--color-success-400);
+      background-color: var(--color-success-600);
     }
   }
 }

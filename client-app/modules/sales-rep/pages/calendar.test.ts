@@ -297,6 +297,17 @@ describe("Calendar day scope", () => {
   });
 
   // "long" appends a time to the named format; this heading names a DAY.
+  // Picking a day or a tab replaces the list with no announcement at all (QA A-9); the heading names the
+  // scope, so it is the thing to announce, atomically so the date and the count are read as one.
+  it("announces the scope when it changes", () => {
+    const wrapper = createWrapper();
+
+    const live = wrapper.find('[aria-live="polite"]');
+    expect(live.exists()).toBe(true);
+    expect(live.attributes("aria-atomic")).toBe("true");
+    expect(live.find(".sales-rep-calendar__day-count").exists()).toBe(true);
+  });
+
   it("heads the list with the day in the short format", () => {
     createWrapper();
 

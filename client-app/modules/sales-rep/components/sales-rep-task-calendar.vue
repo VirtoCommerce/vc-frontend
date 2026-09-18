@@ -1,5 +1,6 @@
 <template>
   <VcCalendar
+    class="sales-rep-task-calendar"
     :model-value="modelValue"
     :month="month"
     :size="size"
@@ -101,6 +102,15 @@ function onSelect(day: string | undefined): void {
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-calendar {
+  // The selected day takes the same orange as the primary button, so the one highlighted cell on the page
+  // reads as the same brand accent as New task rather than a darker relative of it.
+  //
+  // This is the `--color-vc-*-solid-primary` pair vc-calendar deliberately does NOT use: its own note
+  // records white ink on primary-500 at 2.11:1 in the default preset, against primary-700 clearing AA in
+  // all 14. A deliberate call — the date on the selected tile is the one thing it costs, and the storefront
+  // already ships that pairing on every solid primary button.
+  --vc-calendar-selected-bg: var(--color-vc-background-solid-primary, var(--color-primary-500));
+
   &__dots {
     // .vc-calendar__day is position:relative, so the row sits under the number without shifting the grid.
     @apply pointer-events-none absolute inset-x-0 bottom-1 flex justify-center gap-0.5;
@@ -111,12 +121,11 @@ function onSelect(day: string | undefined): void {
   &__dot {
     @apply size-1 rounded-full;
 
-    // Shades chosen for DISCRIMINATION, and kept in lockstep with the page legend.
-    // The ramps come from the store's theme settings; the darker steps desaturate towards a common grey
-    // (info-700 #325c76 vs success-700 #316144), so -700 was unusable. But -500 was not enough either:
-    // info-500 and success-500 land on the SAME luminance (4.51:1 on white each), leaving hue as the only
-    // cue — which is precisely what made the blue and green dots hard to tell apart. Green therefore drops a
-    // step to -400 (#5bae7e), separating it on lightness and saturation as well as hue.
+    // Shades chosen for DISCRIMINATION, and kept in lockstep with the page legend. The ramps come from the
+    // store's theme settings and step lightness independently of hue, so info-500 and success-500 land on the
+    // SAME luminance (4.51:1 on white each), leaving hue as the only cue — which is what made the blue and the
+    // green hard to tell apart. Green therefore moves a step, and -600 rather than -400: the lighter step
+    // separated them but scored 2.69:1 on white, under the 3:1 a meaningful graphic needs (QA A-11).
     &--upcoming {
       background-color: var(--color-info-500);
     }
@@ -125,16 +134,18 @@ function onSelect(day: string | undefined): void {
       background-color: var(--color-danger-500);
     }
 
-    // -400 sits below the 3:1 guideline for a meaningful graphic (2.69:1). Acceptable here because the dots are
-    // aria-hidden decoration with a full text equivalent on the cell (dayDescriptions -> aria-describedby), so
-    // the colour is never the sole carrier of the information.
+    // -600, not -400: the lighter step scored 2.69:1 on white, under the 3:1 a meaningful graphic needs (QA
+    // A-11). A text equivalent on the cell does not exempt it — 1.4.11 is about seeing the mark. The ramps
+    // step lightness independently of hue, so -500 would put the green at exactly the blue's luminance, which
+    // is what sent it to -400 in the first place; darker answers both at once.
     &--completed {
-      background-color: var(--color-success-400);
+      background-color: var(--color-success-600);
     }
 
-    // The selected day fills with solid primary, against which the dots all but vanish (green scores 1.27:1 on
-    // it). A hairline ring in the surface colour restores the edge, so each dot still reads as a distinct mark
-    // without giving up its hue.
+    // The selected day fills with solid primary, against which every dot drops under 3:1 — the blue to
+    // 1.60:1 (QA A-11). A hairline ring in the surface colour restores the edge so each dot still reads as
+    // a distinct mark without giving up its hue. A full light plate behind the row would carry the ratio
+    // properly, but it reads as a white blob on a 2rem cell; that half of A-11 is knowingly left open.
     [data-selected] & {
       box-shadow: 0 0 0 1px var(--color-additional-50);
     }

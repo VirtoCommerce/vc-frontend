@@ -18,7 +18,14 @@
         />
 
         <div class="sales-rep-task-list__mobile-body">
-          <button type="button" class="sales-rep-task-list__title-button" @click="$emit('edit', item)">
+          <!-- Same label the desktop control carries: without it the only accessible name is the task title,
+               which names the row but not what activating it does (QA A-17). -->
+          <button
+            type="button"
+            class="sales-rep-task-list__title-button"
+            :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
+            @click="$emit('edit', item)"
+          >
             <span class="sales-rep-task-list__name">{{ item.name }}</span>
           </button>
 
@@ -32,6 +39,12 @@
     </template>
 
     <VcTableColumn id="done" class="sales-rep-task-list__done-col">
+      <!-- The column still has to name itself for assistive tech; an empty <th> is what Lighthouse reports
+           as td-has-header (QA A-15). Hidden rather than titled, so it spends no column width. -->
+      <template #header>
+        <span class="sr-only">{{ t("sales_rep.tasks.status.completed") }}</span>
+      </template>
+
       <template #default="{ item }">
         <VcCheckbox
           :model-value="item.status === 'completed'"
@@ -144,7 +157,9 @@ function rowClass(item: SalesRepTaskType, index: number): string {
   }
 
   &__meta {
-    @apply mt-0.5 block text-xs text-neutral-500;
+    // -600, not -500: on a hovered row the lighter step falls to 3.76:1, and it only cleared 4.5:1 at rest
+    // by 1% anyway (QA A-12).
+    @apply mt-0.5 block text-xs text-neutral-600;
   }
 
   &__notes {
