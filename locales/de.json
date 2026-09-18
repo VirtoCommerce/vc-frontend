@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Dieser Checkout gehört zu einem anderen Konto oder einer anderen Organisation. Melden Sie sich mit dem Konto an, das Sie in Ihrem Einkaufsassistenten verwenden, und versuchen Sie es erneut.",
+      "expired": "Dieser Checkout-Link ist abgelaufen, wurde bereits verwendet oder ist in diesem Tab nicht verfügbar. Fordern Sie bei Ihrem Einkaufsassistenten einen neuen Checkout-Link an.",
+      "restore_failed": "Ihr Checkout konnte nicht geöffnet werden. Bitte versuchen Sie den Link in einem Moment erneut.",
+      "authorization_failed": "Die Anmeldung konnte nicht fortgesetzt werden",
+      "authorization_retry": "Bitte starten Sie die Verbindung über Ihren Einkaufsassistenten neu. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihren Shop-Administrator."
+    },
     "buttons": {
       "home": "Startseite",
       "ok": "OK",

@@ -55,6 +55,12 @@ function isLoyaltyCatalogAvailable(): boolean {
 }
 
 export const mainRoutes: RouteRecordRaw[] = [
+  {
+    path: "/oauth/authorize",
+    name: "OAuthAuthorize",
+    component: () => import("@/pages/auth/authorize.vue"),
+    meta: { requiresAuth: true },
+  },
   { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true, redirectable: false } },
   { path: "/400", name: "BadRequest", component: Error400, meta: { public: true, redirectable: false } },
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true, redirectable: false } },
