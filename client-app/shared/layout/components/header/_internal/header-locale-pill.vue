@@ -191,7 +191,10 @@ const {
   }
 
   &__symbol {
-    @apply w-4 flex-none text-center;
+    // The column is fixed so the codes line up down the list, and 2rem is what the widest
+    // symbol the store can serve needs — QA's GH₵ measures 31px. `truncate` is the backstop:
+    // a longer one clips instead of sliding out of the box and over the code next to it.
+    @apply w-8 flex-none truncate text-center;
 
     color: color-mix(in srgb, var(--ink) 55%, transparent);
   }
@@ -207,7 +210,15 @@ const {
   }
 
   &__modes {
-    @apply grid grid-cols-3 gap-1 px-2;
+    // The design puts the three modes on one segmented rail (VcTabSwitchGroup --filled):
+    // the rail sits a step below the panel and the checked switch rides on it as the lighter
+    // surface — which is why the rail is neutral-50 and not neutral-100, the step the checked
+    // switch itself paints in dark. The kit has no group component, so the rail is built from
+    // the switch's own tokens: no per-switch border, and the pill radius stepped down inside.
+    @apply grid grid-cols-3 gap-1 rounded-[--vc-radius] border border-neutral-200 bg-neutral-50 p-1;
+
+    --vc-tab-switch-radius: calc(var(--vc-radius) - 2px);
+    --vc-tab-switch-border-color: transparent;
   }
 
   &__flag {
