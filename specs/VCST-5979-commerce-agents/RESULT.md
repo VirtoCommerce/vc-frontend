@@ -1,7 +1,7 @@
 # VCST-5979 — spike result
 
-Start here. The other sixteen files are the working notes behind this one; the design
-record with every measurement is `commerce-agent/CLAUDE.md`.
+Start here. The rest of this directory is the working notes behind it; the design record
+with every measurement is `commerce-agent/CLAUDE.md`.
 
 Dates: 15–17 September 2026. Branch `spike/VCST-5979-commerce-agents`, draft PR
 [#2490](https://github.com/VirtoCommerce/vc-frontend/pull/2490).
@@ -11,8 +11,8 @@ Dates: 15–17 September 2026. Branch `spike/VCST-5979-commerce-agents`, draft P
 ## Verdict
 
 **Yes, with one condition.** Anthropic's commerce-agents is a sensible base for a Virto
-shopping agent, and the spike proved it by building one rather than by arguing it: all
-thirteen `StorefrontBackend` methods now run live against the QA storefront from the
+shopping agent, and the spike proved it by building one: ten of its `StorefrontBackend`
+methods now run live against the QA storefront from the
 theme's own assistant page.
 
 What makes it worth adopting is not the prompts or the skills — anyone can write those.
@@ -44,14 +44,14 @@ neither is a blocker, both are now standing line items rather than open question
 
 ## What was built
 
-About 9,500 lines.
+10,082 added lines across 85 files.
 
 | | |
 |---|---|
-| `commerce-agent/` | FastAPI service on the Messages API runtime. 13 backend methods over x-api, SQLite session store shared across workers, per-request bearer forwarding, error relay. ~2,650 lines |
-| `commerce-agent/evals/` + `tests/` | 63 tests; 6 eval cases in 3 twin pairs; a free `replay` mode for CI gated by a baseline. ~1,800 lines |
-| `client-app/modules/commerce-agent/` | Assistant page under Account, SSE parsing, 2 of 8 presentation cards, progress lines. ~1,060 lines |
-| `specs/VCST-5979-commerce-agents/` | These notes. ~2,200 lines |
+| `commerce-agent/virto_agent/` | FastAPI service on the Messages API runtime. Backend over x-api, SQLite session store shared across workers, per-request bearer forwarding, error relay. 2,651 lines |
+| `commerce-agent/tests/` + `evals/` | 63 tests; 6 eval cases in 3 twin pairs; a `replay` mode that re-scores in CI at no API cost. 1,785 lines, plus fixtures and recordings |
+| `client-app/modules/commerce-agent/` | Assistant page under Account, SSE parsing, 2 of 8 presentation cards, progress lines. 1,016 lines |
+| `specs/VCST-5979-commerce-agents/` | These notes. 2,547 lines |
 
 Prototype-grade, not product-grade: it works and it is tested, and **nobody but its author
 has read it**.
@@ -68,23 +68,26 @@ has read it**.
 | `get_preferences` | **stub** | no equivalent — memory fills it |
 | `search_policies` | **stub that raises** | CMS pages exist, search over them does not |
 | `get_disclosure` | off | `enable_disclosures=False` |
+| `checkout_handoff` | the blueprint's default | hands off to the theme's own `/checkout` |
 
-Ten thin wrappers, exactly as predicted. The two stubs are the two gaps the reading
+The interface has fourteen methods; twelve are implemented and **ten run live**, every one
+of them a thin wrapper, exactly as predicted. The two stubs are the two gaps the reading
 predicted too. `search_policies` is deliberately left switched **on** over its stub: a
 terms question then forces the read, the tool answers "unavailable", and the agent says so
 instead of answering the store's terms from model knowledge.
 
 ### What it costs
 
-Measured, not modelled: **$0.0735** for a six-case eval run (~1.5¢ a case), 145k cached
-input reads against 2.1k fresh — about **98.5% cache hit**. A ten-turn conversation is
-roughly **$0.12**; a thousand a month, ~$120 in tokens. Tokens are not what makes this
-expensive.
+Measured: **$0.0735** for a six-case eval run — about 1.2¢ a turn — reading 145k cached
+input tokens against 2.1k fresh, a **98.5% cache hit**. Extrapolated from that, a ten-turn
+conversation is roughly **$0.12** and a thousand a month ~$120 in tokens. Tokens are not
+what makes this expensive.
 
-Two caveats found after the measurement: the prompt cache's default TTL is five minutes, so
-a buyer who pauses to think pays a fresh cache write and $0.12 is a floor; and Anthropic's
-own guidance is to choose model and effort by sweeping the eval suite, which six cases
-cannot do.
+Three things make $0.12 a floor rather than an average. An eval case is one turn over
+pre-loaded state, while the tenth turn of a real conversation carries nine turns of
+history. The prompt cache's default TTL is five minutes, so a buyer who pauses to think
+pays a fresh cache write. And Anthropic's own guidance is to choose model and effort by
+sweeping the eval suite, which six cases cannot do.
 
 ---
 
@@ -123,8 +126,8 @@ Two things sharpened during the spike and both change the framing.
 
 **We already ship the other layer.** UCP MVP is done, MCP on .NET is done, conformance is
 the open item. In Anthropic's own taxonomy — serve someone else's agent / serve the open
-web / build your own agent — **row one is substantially built and row three is the one
-missing**. These compose rather than compete: their README puts a platform's own MCP server
+web / build your own agent — **row one is substantially built, and row three now exists as
+the prototype this spike produced**. These compose rather than compete: their README puts a platform's own MCP server
 *inside* a backend method, with the gates still in front. This should be one programme with
 the UCP epic, not a second candidate beside it.
 

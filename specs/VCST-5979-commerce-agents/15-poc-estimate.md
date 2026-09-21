@@ -19,7 +19,7 @@ Counted on branch `spike/VCST-5979-commerce-agents`, draft PR
 
 | Module | Lines | Holds |
 |---|---|---|
-| `backend.py` | 732 | `VirtoStorefrontBackend` — all 13 `StorefrontBackend` methods |
+| `backend.py` | 732 | `VirtoStorefrontBackend` — 12 of the interface's 14 methods, 10 live over x-api |
 | `xapi.py` | 403 | GraphQL client, documents, read-only retry, connection pooling |
 | `mapping.py` | 403 | x-api → blueprint types; family/variant; visible attributes; order status |
 | `service.py` | 234 | FastAPI app, session start, principal resolution, 403 on token mismatch |
@@ -198,7 +198,7 @@ language-independent.
 
 ## Not scope, but on the schedule
 
-- **Review.** 9,500 lines nobody but the author has read. This is the largest single item
+- **Review.** 10,082 added lines nobody but the author has read. This is the largest single item
   on any follow-up and it does not shrink because the code appeared quickly.
 - **The three open decisions** in [10-open-questions.md](10-open-questions.md). Other
   people's calendar weeks. None blocks starting, but whose key shapes the hardening list.

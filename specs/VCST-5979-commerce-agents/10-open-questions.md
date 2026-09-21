@@ -7,19 +7,21 @@ from running the agent" is gone because that is no longer true.
 ## Settled by building
 
 A working shopping agent now runs against the QA storefront — `commerce-agent/` (the
-service) and `client-app/modules/commerce-agent/` (the assistant page), about 9,500 lines
+service) and `client-app/modules/commerce-agent/` (the assistant page), 10,082 added lines
 on branch `spike/VCST-5979-commerce-agents`, draft PR
 [#2490](https://github.com/VirtoCommerce/vc-frontend/pull/2490). That answered five things
 reading could not:
 
-- **The contract holds.** All thirteen `StorefrontBackend` methods are implemented over
-  x-api; ten are thin wrappers, as [07-virto-fit-technical.md](07-virto-fit-technical.md)
-  predicted. Catalog, cart, orders, account and fulfillment are live; `get_preferences` and
-  `search_policies` are the two stubs, exactly the gaps that file named.
+- **The contract holds.** Twelve of the interface's fourteen methods are implemented, and
+  **ten run live against x-api** — all ten thin wrappers, as
+  [07-virto-fit-technical.md](07-virto-fit-technical.md) predicted. Catalog, cart, orders,
+  account and fulfillment are live. `get_preferences` and `search_policies` are deliberate
+  stubs, exactly the gaps that file named; `checkout_handoff` uses the blueprint's default
+  and `get_disclosure` is switched off.
 - **The filter grammar works as written**: `price.usd:(10 TO 100)`, `category.subtree:`,
   `productfamilyid:… is:product,variation`, sort ids. `SearchFilters` maps onto it without a
   new backend method.
-- **Cost is measured, not arithmetic.** $0.0735 for a six-case eval run, ~1.5¢ a case, 145k
+- **Cost is measured, not arithmetic.** $0.0735 for a six-case eval run, ~1.2¢ a case, 145k
   cached input reads against 2.1k fresh — about 98.5% cache hit. A ten-turn conversation is
   roughly $0.12. Numbers and the caveat are in
   [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md).

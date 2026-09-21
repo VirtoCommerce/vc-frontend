@@ -46,7 +46,7 @@ Shopping agent, 22 tools, in three groups that matter:
 
 **Reads and writes** — `search_products`, `get_product_details`, `get_cart`, `add_to_cart`,
 `update_cart_item`, `remove_from_cart`, `get_preferences`, `get_orders`, `get_order_status`,
-`search_policies`, `get_fulfillment_options`. Each one is a method on our backend.
+`search_policies`, `get_fulfillment_options`. Each is served by a method on our backend.
 
 **Memory** — `save_memory`, `recall_memories`.
 
@@ -99,8 +99,8 @@ useful part.
 > eight components so far; the claim that they are ordinary components fed ordinary props
 > held exactly.
 
-**1. A backend class.** `VirtoStorefrontBackend(StorefrontBackend)` — roughly thirteen
-methods over x-api (it was exactly thirteen) ([07-virto-fit-technical.md](07-virto-fit-technical.md)), plus the error
+**1. A backend class.** `VirtoStorefrontBackend(StorefrontBackend)` — a dozen methods over
+x-api, ten of them live ([07-virto-fit-technical.md](07-virto-fit-technical.md)), plus the error
 translations. This is the bulk of the integration and it is ordinary API-client work. Where
 our existing MCP server already exposes catalog, cart or checkout, a backend method can call
 it server-side instead of x-api directly, with the gates still in front

@@ -37,7 +37,7 @@ interfaces over its own catalog, cart, order, analytics and pricing systems.
 
 ## Current reading
 
-Ten of the shopping agent's thirteen backend methods are a thin wrapper over an x-api
+Ten of the shopping agent's backend methods are a thin wrapper over an x-api
 operation we already ship, and the B2B endings the blueprint treats as edge cases — hand the
 cart to a quote or a purchase order, quote the session account's contract price — are
 first-class for us. That makes a shopping-agent pilot mostly plumbing. The merchant agent is
@@ -51,11 +51,11 @@ than ported.
 
 Updated 2026-09-17. The spike went past reading: a shopping agent now runs against the QA
 storefront, in this repo, from the theme's own assistant page — `commerce-agent/` and
-`client-app/modules/commerce-agent/`, about 9,500 lines on branch
+`client-app/modules/commerce-agent/`, 10,082 added lines across 85 files on branch
 `spike/VCST-5979-commerce-agents`, draft PR
-[#2490](https://github.com/VirtoCommerce/vc-frontend/pull/2490). All thirteen backend
-methods are live over x-api, cost is measured rather than modelled, and the design record
-with every measurement behind it is `commerce-agent/CLAUDE.md`.
+[#2490](https://github.com/VirtoCommerce/vc-frontend/pull/2490). Ten backend methods run
+live over x-api, cost is measured rather than modelled, and the design record with every
+measurement behind it is `commerce-agent/CLAUDE.md`.
 
 What that settled, what it did not, and the three decisions still without an owner are in
 [10-open-questions.md](10-open-questions.md); what a POC would cost is in

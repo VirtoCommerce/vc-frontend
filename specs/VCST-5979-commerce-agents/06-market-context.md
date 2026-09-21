@@ -114,7 +114,7 @@ through the backend interfaces"* — and the README says what to do with a platf
 server: it *"is called from a backend method server-side; on Managed Agents the manifest
 mounts it beside the role's server, and the provenance gates stay in front of every write."*
 Our MCP server therefore becomes an implementation detail **inside** `StorefrontBackend`,
-which cuts real work off the thirteen methods in
+which cuts real work off the backend methods in
 [07-virto-fit-technical.md](07-virto-fit-technical.md) rather than duplicating them.
 
 A complete Virto position probably needs both: be discoverable through the gateways *and*

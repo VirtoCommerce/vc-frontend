@@ -51,14 +51,15 @@ Three consequences worth stating up front:
 | `search_policies` | `getPage` / `getPageDocument` | Partial — pages exist, search over them does not |
 | `get_disclosure` | **no equivalent** | Switch off (`enable_disclosures` is off by default) |
 
-Roughly ten of thirteen methods are a thin wrapper over an operation we already ship. That
-is the headline finding: **the shopping agent is mostly plumbing against x-api, not new
-backend work.**
+Most of the interface is a thin wrapper over an operation we already ship. That is the
+headline finding: **the shopping agent is mostly plumbing against x-api, not new backend
+work.**
 
-> **Since verified by implementing it.** All thirteen methods now run over x-api in
-> `commerce-agent/virto_agent/backend.py`. The mapping below held: ten are thin wrappers,
-> the filter grammar works as written, and the gaps named here are exactly the two stubs
-> that remain. What the mapping did *not* predict is in
+> **Since verified by implementing it.** `commerce-agent/virto_agent/backend.py` implements
+> twelve of the interface's fourteen methods, of which **ten run live against x-api** and
+> all ten are thin wrappers. The mapping below held: the filter grammar works as written,
+> and the gaps named here are exactly the two stubs that remain — `checkout_handoff` keeps
+> the blueprint's default and `get_disclosure` stays off. What the mapping did *not* predict is in
 > [09-risks-and-nuances.md](09-risks-and-nuances.md) under "Found by building it".
 
 ### The three gaps

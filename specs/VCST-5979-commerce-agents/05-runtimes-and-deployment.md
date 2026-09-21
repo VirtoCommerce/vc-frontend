@@ -131,12 +131,14 @@ A ten-turn conversation lands around **$0.15–0.30**. The first turn costs more
 cache write is billed at ~1.25×; memory extraction on Haiku is rounding error.
 
 **Measured, 2026-09-16**, on our own agent against the QA storefront: a six-case eval run
-cost **$0.0735** — about **1.5¢ per case** — reading 145k cached input tokens against 2.1k
+cost **$0.0735** — about **1.2¢ per case** — reading 145k cached input tokens against 2.1k
 fresh, a cache hit rate near **98.5%**. The same run without prompt caching would be about
 4.6× more. A ten-turn conversation works out at roughly **$0.12**, so the arithmetic above
 was the right order and slightly pessimistic.
 
-Two things the measurement does not cover, both from
+Three things the measurement does not cover. An eval case is a single turn over pre-loaded
+state, while the tenth turn of a real conversation carries nine turns of history, so
+multiplying a case by ten understates it. The other two are from
 [14-what-the-blog-says.md](14-what-the-blog-says.md). The prompt cache's default TTL is
 **five minutes**, and a buyer who pauses to think between turns pays a fresh cache write —
 so $0.12 is a floor, not an average, and a one-hour TTL (2× on write against 1.25×) is a
