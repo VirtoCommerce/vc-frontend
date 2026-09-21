@@ -60,7 +60,36 @@ Parked in `skills/_staged/`: `purchase-research`, `customer-care` — both open 
 
 ## What the POC adds
 
-One B2B buyer flow end to end, shown to customers, not opened to the public.
+One B2B buyer flow end to end, shown to customers, not opened to the public. Grouped into
+the four streams the ticket summary uses, because each becomes its own piece of work:
+
+| Stream | Sections below |
+|---|---|
+| Platform — run the service where the platform runs | A |
+| Storefront UI | 0, 1, 4 |
+| Admin UI | B |
+| Agent capability | 2, 3, 5 |
+
+### A. Platform — run the service where the platform runs
+
+Absent from this document until now, and the stream with the most unknowns.
+
+- **Packaging.** A deployment has to ship the Python service. Inside a BE module or as a
+  sidecar beside one — that choice comes first and is not the frontend's to make.
+- **CI.** No workflow references `commerce-agent/`; `pytest`, `ruff` and `python -m evals
+  replay` are run by hand. The theme module's own tests already run in the `client-app` job.
+- **Settings from the platform, not `.env`.** Today `settings.py` reads `ANTHROPIC_API_KEY`,
+  `XAPI_ENDPOINT`, `XAPI_STORE_ID`, currency, culture, allowed hosts and origins from the
+  environment. A module reads brand, voice, the `enable_*` switches, model ids and caps from
+  platform settings so an operator can change them without a redeploy.
+- **Deployment shape.** A session store beyond SQLite (the six `SessionStore` methods moved
+  onto Redis or Postgres), health and monitoring.
+
+### B. Admin UI
+
+- The settings screens behind stream A.
+- Later, with the merchant agent: its own four cards — `present_metrics`, `present_digest`,
+  `present_change_preview`, its own suggestions. None designed, none counted anywhere.
 
 ### 0. Design, which everything visual waits on
 
@@ -159,7 +188,8 @@ live API calls against QA, which do not compress.
 
 ## Before a customer can switch it on
 
-Not in the POC, not optional if it faces real buyers.
+Not in the POC, not optional if it faces real buyers. Packaging, CI and the session store
+are in stream A above; these are the rest.
 
 | Area | Change |
 |---|---|
@@ -167,7 +197,6 @@ Not in the POC, not optional if it faces real buyers.
 | Data lifecycle | Retention and deletion for `data/sessions.sqlite3` and `data/.memory-store.json`; deletion on account close; the memory store is file-backed today |
 | Audit | Log hygiene (no bearer, no PII in logs); an audit trail for every cart write the agent makes |
 | Accessibility | Screen-reader announcements for streamed output, keyboard navigation through result cards, focus management. WCAG is a procurement gate for enterprise and public-sector buyers |
-| Deployment | Packaging the Python service; monitoring; a real session store if SQLite is not it — that is the six `SessionStore` methods in `session_store.py` moved onto Redis or Postgres, nothing above the subclass changes |
 | Guests | Refused at session start today. A guest principal is a decision plus a code path |
 
 ---
