@@ -337,7 +337,7 @@ records each outcome; `replay` re-scores the recordings with no API access and i
 mode, gated by `baseline.json`. A stored judge verdict is keyed by a fingerprint of the
 judge model plus the rubric text, so replay is free until either moves.
 
-First full run, 2026-09-16: 6/6 pass, **$0.0735** for the run (~1.5¢ a case), 145k cached
+First full run, 2026-09-16: 6/6 pass, **$0.0735** for the run (~1.2¢ a case), 145k cached
 input reads against 2.1k fresh — the same run without prompt caching would be about
 $0.34. Two cases were wrong on their first pass and both were the case's fault, recorded
 in `evals/README.md`: one pinned a `get_cart` call the prefetch makes unnecessary, and one
