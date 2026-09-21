@@ -53,7 +53,7 @@ export function isBuilderMessage(value: unknown): value is TransferDataType {
     case "settings":
       return isRecord(value.settings);
     case "auth":
-      return isAuthToken(value.token) && (value.userId === null || typeof value.userId === "string");
+      return isAuthToken(value.token) && (value.userId === null || isOptionalString(value.userId));
     default:
       return false;
   }
