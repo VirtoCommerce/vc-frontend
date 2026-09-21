@@ -77,6 +77,9 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
 const ASK_PLATFORM_FOR_PLUGINS =
   isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED) && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
 
+/** VCST-6030 demo branch: the conference theme, pinned regardless of the store setting. */
+const DEMO_THEME_PRESET = "terra";
+
 /** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {
   ignoreChunkLoadFailure(error);
@@ -132,7 +135,7 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
-  const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
+  const { setWhiteLabelingSettings } = useWhiteLabeling();
   const { setActivePreset } = useDarkMode();
   const { setModules, outdatedModules } = useModules();
   const notifications = useNotifications();
@@ -261,8 +264,10 @@ export default async () => {
    */
 
   setWhiteLabelingSettings(whiteLabelingSetting);
-  await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
-  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  // VCST-6030 demo branch: the conference theme is pinned here so it does not depend on
+  // the store's preset setting. Drop this constant to restore backend-driven presets.
+  await addPresetToThemeContext(DEMO_THEME_PRESET);
+  setActivePreset(DEMO_THEME_PRESET);
 
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");

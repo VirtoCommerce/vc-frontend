@@ -157,7 +157,9 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
-  @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
+  // A plate under the header pill, not a full-bleed band: .app-header__shell already
+  // supplies the page inset both of them share.
+  @apply flex items-center h-11 bg-[--header-bottom-bg-color] px-5 rounded-[--vc-radius] shadow-sm;
 
   &__popover {
     @apply flex items-stretch;
