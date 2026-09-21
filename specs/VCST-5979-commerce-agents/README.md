@@ -57,7 +57,7 @@ storefront, in this repo, from the theme's own assistant page — `commerce-agen
 live over x-api, cost is measured rather than modelled, and the design record with every
 measurement behind it is `commerce-agent/CLAUDE.md`.
 
-What that settled, what it did not, and the three decisions still without an owner are in
+What that settled, what it did not, and the two decisions still without an owner are in
 [10-open-questions.md](10-open-questions.md); what a POC would cost is in
 [15-poc-estimate.md](15-poc-estimate.md).
 

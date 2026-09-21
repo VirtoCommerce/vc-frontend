@@ -86,7 +86,7 @@ whoever owns the platform roadmap.
 
 ## What a decision needs next
 
-1. Take [15-poc-estimate.md](15-poc-estimate.md) to the three decisions above. It is the
+1. Take [15-poc-estimate.md](15-poc-estimate.md) to the two decisions above. It is the
    deliverable the ticket asked for, stated as an inventory of changes — every component,
    stub, mutation and hardening area named — so it can be re-costed by whoever ends up
    owning the work.

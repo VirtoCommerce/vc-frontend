@@ -213,10 +213,10 @@ language-independent.
 
 ## Not scope, but on the schedule
 
-- **Review.** 10,082 added lines nobody but the author has read. This is the largest single item
-  on any follow-up and it does not shrink because the code appeared quickly.
-- **The three open decisions** in [10-open-questions.md](10-open-questions.md). Other
-  people's calendar weeks. None blocks starting, but whose key shapes the hardening list.
+- **Review.** 10,082 added lines nobody but the author has read. A proof of concept earns
+  that; a module we ship does not, and closing the gap is the largest single item here.
+- **The two open decisions** in [10-open-questions.md](10-open-questions.md). Other
+  people's calendar weeks. Neither blocks starting, but whose key shapes the hardening list.
 - **Backend work.** Everything above is service-and-frontend except the quote ending, which
   touches x-api mutations this service has never called.
 - **Design.** A human designer's iterations on the cards; the brief and references are

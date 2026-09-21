@@ -187,10 +187,10 @@ close — are in [15-poc-estimate.md](15-poc-estimate.md); implementation has no
 
 ## Recommended next step
 
-With the language settled, take the three remaining decisions to their owners with
-[15-poc-estimate.md](15-poc-estimate.md) in hand. None of them blocks starting the POC
-scope; the one that comes closest is whose key, because it decides whether budgets and
-rate limiting are built alongside the flow or bolted on after.
+Get the design moving on the shopping cards — everything visual waits on it — and take the
+two remaining decisions to their owners with [15-poc-estimate.md](15-poc-estimate.md) in
+hand. Neither blocks starting; whose key comes closest, because it decides whether budgets
+and rate limiting are built alongside the flow or bolted on after.
 
 In parallel, half a day closes the two cheap gaps: run Anthropic's `retail` demo and its
 `/showcase` page, then `/review-commerce-agent` against ours. And before anyone quotes a
