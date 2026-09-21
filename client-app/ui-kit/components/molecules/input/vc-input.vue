@@ -43,6 +43,7 @@
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
         :aria-describedby="describedById"
+        :aria-invalid="invalid"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -107,6 +108,7 @@ import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 import { getInputClearIconSize } from "@/ui-kit/utilities";
 import type { MaskOptions } from "maska";
+import type { AriaAttributes } from "vue";
 
 export interface IProps {
   modelModifiers?: Record<string, boolean>;
@@ -120,6 +122,7 @@ export interface IProps {
   placeholder?: string;
   message?: string;
   singleLineMessage?: boolean;
+  /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
   error?: boolean;
   noBorder?: boolean;
   seamless?: boolean;
@@ -190,6 +193,18 @@ const describedById = computed<string | undefined>(() => {
   const forwardedId = typeof forwarded === "string" ? forwarded : undefined;
   const ownId = !props.hideDetails && (props.counter || props.message) ? detailsId : undefined;
   return [ownId, forwardedId].filter(Boolean).join(" ") || undefined;
+});
+
+// Per ARIA an empty aria-invalid means NOT invalid, so treat it as no override; any other
+// unrecognised token means "true".
+const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
+  const override = props.aria?.["aria-invalid"];
+
+  if (override == null || override === "") {
+    return props.error ? "true" : undefined;
+  }
+
+  return override === "false" || override === "grammar" || override === "spelling" ? override : "true";
 });
 
 const computedAutocomplete = computed(() => {
