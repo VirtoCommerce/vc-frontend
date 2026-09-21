@@ -127,14 +127,13 @@ Two things sharpened during the spike and both change the framing.
 **We already ship the other layer.** UCP MVP is done, MCP on .NET is done, conformance is
 the open item. In Anthropic's own taxonomy — serve someone else's agent / serve the open
 web / build your own agent — **row one is substantially built, and row three now exists as
-the prototype this spike produced**. These compose rather than compete: their README puts a platform's own MCP server
-*inside* a backend method, with the gates still in front. This should be one programme with
+the prototype this spike produced**. These compose rather than compete: their README puts a platform's own
+MCP server *inside* a backend method, with the gates still in front. This should be one programme with
 the UCP epic, not a second candidate beside it.
 
 **B2B is a better fit than the blueprint's own demos.** The endings it treats as edge cases
 — hand the cart to a quote or a purchase order, quote the session account's contract price
-— are first-class for us. Bulk reorder from a sentence is a stronger demo than anything in
-the retail vertical. Details in [08-value-proposition.md](08-value-proposition.md).
+— are first-class for us. Details in [08-value-proposition.md](08-value-proposition.md).
 
 ---
 
@@ -150,9 +149,9 @@ Three remain open. None is the frontend's to make alone.
 
 1. **Whose track** — frontend, platform, or joint — and how it sits beside the UCP epic
    (VCST-5201).
-2. **Product or reference** — a module our merchants enable, or a blueprint partners fork.
+2. **Product or reference** — a module our customers enable, or a blueprint partners fork.
    This decides whether PR #2490 is worth reviewing properly or is scaffolding to discard.
-3. **Whose API key** — the merchant brings one, we resell tokens, or the customer's own
+3. **Whose API key** — the customer brings one, we resell tokens, or it runs in their own
    cloud account via Bedrock/Vertex/Foundry. Decides whether budgets, rate limiting and
    abuse handling are ours to build before launch.
 
@@ -177,8 +176,9 @@ Stated plainly, because the estimate depends on it.
   flow, and the three search failures were found by a person using it, not by the suite.
 - **Six of eight presentation cards** are not built; `agent-products.vue` is a hand-rolled
   grid that should sit on `VcProductCard`.
-- **Cart, orders and fulfillment have never been exercised through a model turn** — only at
-  API level.
+- **Orders and fulfillment have never run inside a model turn** — only at API level. Cart
+  writes have: two recorded eval cases call `add_to_cart` live, and `get_cart` runs as a
+  grounding prefetch rather than a call the model chooses.
 - **Configurable products** have no answer: whether a configuration id can satisfy the cart
   provenance gate is still open, and none appeared in the QA data sampled.
 - **Nobody has reviewed the code.** Budget review as the largest single line item on any

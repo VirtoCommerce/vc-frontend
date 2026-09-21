@@ -20,7 +20,7 @@ This is the taxonomy the whole release sits inside, and it is worth adopting bec
 separates three things that get argued about as if they were one choice.
 
 **What it means for Virto.** These are not competing options for a platform vendor — they
-are three surfaces our merchants need, and a platform can serve all three where an
+are three surfaces our customers need, and a platform can serve all three where an
 individual merchant can usually only afford one. That is the differentiator:
 
 - **01** is the UCP / connector track, epic [VCST-5201](https://virtocommerce.atlassian.net/browse/VCST-5201).

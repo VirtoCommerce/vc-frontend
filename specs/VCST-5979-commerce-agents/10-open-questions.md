@@ -70,7 +70,7 @@ Three remain open, none of them the frontend's to make alone.
 
 1. **Whose track**: frontend, platform, or joint, and how it sits beside the UCP epic
    (VCST-5201). Both answers are defensible; drifting between them is not.
-2. **Product or reference**: a module our merchants enable, versus a blueprint partners
+2. **Product or reference**: a module our customers enable, versus a blueprint partners
    fork. Changes almost everything downstream, including whether the code in PR #2490 is
    worth reviewing properly or is scaffolding to throw away.
 3. **Whose API key**: merchant brings their own, or we resell tokens. Decides whether

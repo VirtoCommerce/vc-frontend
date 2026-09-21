@@ -134,10 +134,10 @@ the price quoted is the session account's."* Our prices are resolved for the aut
 organisation anyway, so the agent quotes the right number with no extra work — and the
 provenance gate means it cannot quote a different one.
 
-**Bulk is a native agent affordance.** `addBulkItemsCart` plus a list of SKUs is precisely
-the kind of request that is miserable in a UI and natural in a conversation: "add the
-standard monthly order for site B, but double the gloves." This is a stronger demo than
-anything in the retail vertical.
+**Bulk is a native agent affordance.** A list of SKUs with a change to one of them is
+precisely the kind of request that is miserable in a UI and natural in a conversation: "add
+the standard monthly order for site B, but double the gloves." `addBulkItemsCart` is the
+operation for it — **not wired yet**; the agent adds line by line.
 
 **Organisations, roles and lists.** `getOrganizations`, org member roles, wishlists and
 shared lists all feed `get_account_context`. The agent must respect role permissions — and

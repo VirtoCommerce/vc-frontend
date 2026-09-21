@@ -250,8 +250,9 @@ bearer there, so search and details were exercised end to end before any token e
 
 Authenticated paths since: `me` resolves the principal on every session start and on every
 turn (`principal_for`), and a full turn — search, then the presentation calls — renders in
-the theme under two workers. **Still unexercised: cart, orders, fulfillment** (no turn has
-yet called them) and the property-term filter `"<name>":"<value>"`.
+the theme under two workers. **Still unexercised in a turn: orders and fulfillment**; cart writes are covered by the
+`cart-002` and `cart-003` recordings, and `get_cart` arrives as a prefetch rather than a
+model call and the property-term filter `"<name>":"<value>"`.
 
 **One grounding failure observed, 2026-09-16.** Asked "what carriage bolts do you have?",
 the agent answered "…the stainless steel one, already in your cart" and repeated it in the
