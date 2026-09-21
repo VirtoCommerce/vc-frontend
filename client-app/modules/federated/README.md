@@ -11,9 +11,10 @@ without touching or rebuilding this repo.
 
 > Jira: **VCST-5159**. Everything here hangs on one switch, `module_federation_enabled` in
 > `client-app/config/settings_data.json`, and is a **no-op when it is `false`** — the harness ships with
-> **zero built-in remotes**. The stock theme ships it `true`, so a stock build is a federation host that
-> loads whatever the platform advertises; a theme that wants no plugins (and no MF runtime in its bundle)
-> sets it to `false`, next to its other feature toggles.
+> **zero built-in remotes**. The stock theme ships it **`false`**: until a plugin is actually released
+> there is nothing to load, and an MF host costs bundle size and a boot round trip either way. Set it to
+> `true`, next to the theme's other feature toggles, and rebuild to load whatever the platform advertises.
+> A theme that predates the key (a fork) counts as `true`, so it keeps loading plugins.
 
 > **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
 > [`HOWTO.md`](./HOWTO.md). This file is the reference for how the host side works.
@@ -24,6 +25,8 @@ without touching or rebuilding this repo.
 
 ```bash
 # Serve the host WITH federation enabled, pointing at one or more remotes.
+# `module_federation_enabled` ships `false`, so flip it in client-app/config/settings_data.json
+# first — otherwise no MF host is built and the override below is read by nothing.
 # build + preview is the canonical run (matches CI/prod); `yarn dev` also works and adds
 # HMR (verified even for @apollo/client-sharing plugins) — use it as the iteration loop
 # (HOWTO.md "The dev inner loop"). Use `--mode=development` locally so the store resolves
@@ -36,7 +39,7 @@ yarn build-only --mode=development && yarn preview
 - `module_federation_enabled` in `client-app/config/settings_data.json` → the host switch. `vite.federation.ts`
   reads it to decide whether the MF host plugin (and so the MF runtime, `remoteEntry-<hash>.js`, `mf-manifest.json`)
   is built at all; `enabled.ts` reads it at runtime to decide whether to ask the platform for plugins and
-  start the loader. `false` ⇒ neither; a missing key counts as `true`.
+  start the loader. `false` ⇒ neither, and that is what the stock theme ships; a missing key counts as `true`.
 - `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
   override**. URLs must be **https** (http is allowed for localhost only). When set it replaces
   the platform list entirely, so a local remote is never mixed with the deployed ones.
@@ -487,9 +490,10 @@ already read makes validated bytes == executed bytes **and** removes the extra r
 
 ## Gotchas & guarantees
 
-- **One switch, on by default.** `module_federation_enabled: false` in
+- **One switch, shipped off.** `module_federation_enabled: false` in
   `client-app/config/settings_data.json` ⇒ no MF host build, no plugin-list query, and the loader
-  isn't even imported — zero cost. A missing key counts as `true`. Left on, the harness itself
+  isn't even imported — zero cost, which is what the stock theme ships. A missing key counts as
+  `true`, so a fork that predates the key is unaffected. Turned on, the harness itself
   costs **+67 KB gzip on the initial payload and +159 KB gzip across the whole build (+9 %)**,
   measured federation on vs off at the same commit — before any plugin is installed.
 - **Isolation is total**, malformed descriptors included. Every descriptor field is read through

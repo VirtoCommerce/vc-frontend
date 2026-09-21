@@ -271,12 +271,18 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 
 # terminal 2 - the host, pointed at your plugin
 cd vc-frontend
+# once: the stock theme ships the switch off, so nothing would be built or loaded
+sed -i 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
 APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```
 
 Notes on the host side:
 
+- **Turn the host switch on first.** `module_federation_enabled` in
+  `client-app/config/settings_data.json` ships `false`, and with it off `vite.federation.ts` builds no
+  MF host at all — the remotes override is read by a runtime that is not in the bundle, so you get a
+  storefront with no plugin and no error. Don't commit that flip with your plugin work.
 - **build + preview is the canonical run** — it matches what CI/prod produce, so it is the
   default for _running_ the host. (`yarn dev` also works and additionally gives HMR — see
   [**The dev inner loop**](#the-dev-inner-loop) below — reach for it as the iteration loop.)
@@ -325,10 +331,14 @@ Once the two servers are up, how you iterate depends on which side you're changi
   run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
   injected into the host page, so edits hot-update live across the MF boundary. Verified on
   this harness for route / UI-kit / `useModuleSettings` plugins **and** for a plugin that
-  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client
-  (an older note warned the dev server couldn't prebundle the shared GraphQL facade — that no
-  longer reproduces). `build`+`preview` is still the canonical run because it matches
-  CI/prod; use `yarn dev` when you want the HMR loop.
+  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client.
+  `build`+`preview` is still the canonical run because it matches CI/prod; use `yarn dev`
+  when you want the HMR loop.
+
+  > `yarn dev` only starts because `vite.federation.ts` keeps `@vc-frontend/core` out of
+  > `optimizeDeps`: the MF plugin force-includes every shared key, and prebundling the facade
+  > with esbuild runs no Vite plugins, so its `.graphql` imports have no loader. Remove that
+  > guard and dev dies with `No loader is configured for ".graphql" files`.
 
 **Changing the host** — you only rebuild the host when the **remote list/name** in the env override
 changes (it is inlined at build time) or host source changes; plain plugin edits never need a host

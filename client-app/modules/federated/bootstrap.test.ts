@@ -19,6 +19,9 @@ describe("startFederatedModules", () => {
     vi.resetModules();
     vi.clearAllMocks();
     vi.doMock("./index", () => ({ initFederatedModules: initFederatedModulesMock }));
+    // The stock theme ships the switch OFF, so every case below that exercises the loader has to
+    // turn it on; the two cases that read the shipped config say so in their own names.
+    stubThemeSettings({ module_federation_enabled: true });
   });
 
   afterEach(() => {
@@ -30,7 +33,7 @@ describe("startFederatedModules", () => {
     vi.doMock("@/config/settings_data.json", () => ({ default: { current: "default", settings } }));
   }
 
-  it("runs the loader with the stock theme config", async () => {
+  it("runs the loader when the theme enables federation", async () => {
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const { startFederatedModules } = await loadBootstrap();
 
@@ -41,6 +44,20 @@ describe("startFederatedModules", () => {
 
   it("is a no-op when the theme sets module_federation_enabled to false", async () => {
     stubThemeSettings({ module_federation_enabled: false });
+    const fetchPlugins = vi.fn();
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins });
+
+    expect(initFederatedModulesMock).not.toHaveBeenCalled();
+    expect(fetchPlugins).not.toHaveBeenCalled();
+  });
+
+  // Reads client-app/config/settings_data.json itself: the shipped theme must stay a no-op until
+  // the Sales Rep Hub plugin is released, so nobody pays the MF runtime for a plugin nobody serves.
+  it("is a no-op with the theme config as shipped", async () => {
+    vi.doUnmock("@/config/settings_data.json");
+    vi.resetModules();
     const fetchPlugins = vi.fn();
     const { startFederatedModules } = await loadBootstrap();
 

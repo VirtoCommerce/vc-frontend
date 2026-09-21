@@ -18,26 +18,32 @@ file are cross-referenced, not repeated.
 
 **Before the theme release**
 
-- [ ] **Switch the storefront over to the plugin.** Cut out of #2481 so that PR lands the MF host
-      harness with nothing changing at runtime — the in-repo `client-app/modules/sales-rep` still
-      initializes and still serves the hub. Two edits, both here, once the items below are done on
-      the target environment:
-      1. `client-app/app-runner.ts` — comment out the `@/modules/sales-rep` import and the
-         `void initSalesRep(router, i18n)` call (leave the module in the tree; its specs keep running);
-      2. `client-app/modules/federated/boot-order.test.ts` — drop the then-unused
+- [ ] **Switch the storefront over to the plugin.** Cut out of #2481, so that PR lands the MF host
+      harness and changes nothing at runtime: `module_federation_enabled` ships `false` and the
+      in-repo `client-app/modules/sales-rep` still initializes and still serves the hub. Three edits,
+      all here, once the items below are done on the target environment:
+      1. `client-app/config/settings_data.json` — `module_federation_enabled: true`. Two specs read
+         the shipped file on purpose (`bootstrap.test.ts` "is a no-op with the theme config as
+         shipped", `boot-order.test.ts` "issues nothing with the theme config as shipped") and will
+         go red; rewrite them to pin the new shipped value rather than deleting them.
+      2. `client-app/app-runner.ts` — comment out the `@/modules/sales-rep` import and the
+         `void initSalesRep(router, i18n)` call (leave the module in the tree; its specs keep running).
+      3. `client-app/modules/federated/boot-order.test.ts` — drop the then-unused
          `vi.mock("@/modules/sales-rep", …)`.
 
-      **Until that flip, the in-repo module and the plugin would both register.** An environment that
-      installs `VirtoCommerce.SalesRep` ≥ 3.1009.0 gets Sales Rep Hub routes and menu entries twice —
-      `vcptcore-qa1` is the only one that can today (it is the only one with the `/modules` route).
-      Either leave the plugin uninstalled there, or build that environment with
-      `module_federation_enabled: false` in `client-app/config/settings_data.json`.
+      **Edits 1 and 2 must ship together.** With the switch on and `initSalesRep` still running, an
+      environment that installs `VirtoCommerce.SalesRep` ≥ 3.1009.0 registers Sales Rep Hub routes
+      and menu entries twice — once from the in-repo module, once from the plugin.
 
       **Do not flip before the plugin reaches parity with the in-repo module.** #2439 (documents
       library), #2444 (all customer orders), #2468 (focus-ring a11y) and #2474 (rule chips on
       `VcTabSwitch`) all landed after the plugin's port base — about 7.5 k lines across 70 files,
       13 locale files included. Switching today is a feature regression on top of the availability
       risk. See the port item further down.
+
+      Turning the switch on also costs **+159 KB gzip across the build (+9 %), ≈ +67 KB gzip of it on
+      the initial payload**, plus one `store.plugins` query awaited during boot — which is why it
+      ships `false` until there is a plugin to load.
 - [ ] **`/modules → platform` route on every environment that runs the theme.** Only `vcptcore-qa1`
       has it; `vcst-qa`, `vcst-dev`, `vcptcore-dev`, `vcptcore-qa` do not (checked 2026-09-11) —
       there the manifest 404s and Sales Rep Hub is silently absent. One `<TICKETS>-<env>-deployment`
