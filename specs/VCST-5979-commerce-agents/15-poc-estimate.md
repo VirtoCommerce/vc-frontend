@@ -78,10 +78,10 @@ Absent from this document until now, and the stream with the most unknowns.
   sidecar beside one — that choice comes first and is not the frontend's to make.
 - **CI.** No workflow references `commerce-agent/`; `pytest`, `ruff` and `python -m evals
   replay` are run by hand. The theme module's own tests already run in the `client-app` job.
-- **Settings from the platform, not `.env`.** Today `settings.py` reads `ANTHROPIC_API_KEY`,
-  `XAPI_ENDPOINT`, `XAPI_STORE_ID`, currency, culture, allowed hosts and origins from the
-  environment. A module reads brand, voice, the `enable_*` switches, model ids and caps from
-  platform settings so an operator can change them without a redeploy.
+- **Agent configuration as module settings.** Brand, voice, the `enable_*` switches, model
+  ids and caps belong to an operator, editable without a redeploy. Store connection —
+  endpoint, store id, currency, culture — belongs to the deployment. (For whoever picks this
+  up: `settings.py` currently reads all of it from the environment.)
 - **Deployment shape.** A session store beyond SQLite (the six `SessionStore` methods moved
   onto Redis or Postgres), health and monitoring.
 
