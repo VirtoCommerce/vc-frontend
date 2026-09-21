@@ -78,7 +78,7 @@ const ASK_PLATFORM_FOR_PLUGINS =
   isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED) && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
 
 /** VCST-6030 demo branch: the conference theme, pinned regardless of the store setting. */
-const DEMO_THEME_PRESET = "terra";
+const DEMO_THEME_PRESET = "paprika";
 
 /** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {

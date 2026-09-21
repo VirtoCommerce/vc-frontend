@@ -1,6 +1,6 @@
-// Terra theme foundation (VCST-6030): geometry and typography.
+// Paprika theme foundation (VCST-6030): geometry and typography.
 // Only existing tokens are retuned here — no new variables. Colour arrives through
-// the Terra preset JSON and _colors.scss.
+// the Paprika preset JSON and _colors.scss.
 
 :root {
   // The design's surface radius: 12 for cards and panels, pill for every control.
@@ -20,7 +20,7 @@
 
 @media (width >= theme("screens.lg")) {
   :root {
-    // VcContainer's own 2xl step widens the gutter to 48px; Terra holds it at 32.
+    // VcContainer's own 2xl step widens the gutter to 48px; Paprika holds it at 32.
     --vc-container-px: 2rem;
   }
 }
