@@ -100,8 +100,10 @@ Unblocks the two parked skills: moving `purchase-research` and `customer-care` o
 
 ### 3. B2B ending — cart to quote or purchase request
 
-The close that makes this B2B rather than a retail toy. New backend surface plus a
-component.
+**Checkout is not in this item.** `checkout_handoff` keeps the blueprint's default, which
+links to the theme's own `/checkout`, so that close needs no backend work at all — only its
+card, which is one of the five above. The quote and purchase-request close is the one that
+needs new backend surface, and it is what makes this B2B rather than a retail toy.
 
 - `backend.py` — `checkout_handoff` returns the quote route instead of `[]`, or a new
   domain tool stages the quote
