@@ -2368,6 +2368,7 @@ interface IProps$g {
     placeholder?: string;
     message?: string;
     singleLineMessage?: boolean;
+    /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
     error?: boolean;
     noBorder?: boolean;
     seamless?: boolean;
@@ -2804,6 +2805,7 @@ declare const __VLS_export$a: <T extends VcTableItemType>(__VLS_props: NonNullab
         page?: number;
         loading?: boolean;
         error?: boolean;
+        /** Hides the built-in header row; body rows keep their selection cell, but the select-all goes with the header. */
         hideDefaultHeader?: boolean;
         hideDefaultFooter?: boolean;
         description?: string;
@@ -2848,6 +2850,7 @@ declare const __VLS_export$a: <T extends VcTableItemType>(__VLS_props: NonNullab
          * Selected row keys (v-model:selection). Parent-owned, so selection persists across
          * `items`/page/sort/filter changes. Accepts `string | number` keys but compares them
          * as strings (matching `getItemKey`), so numeric `[1, 2]` still matches `id: 1` / `id: 2`.
+         * Rows without an `id` are keyed `__row_<index>` — give items an `id` for stable selection.
          */
         selection?: VcTableSelectionKeyType[];
         /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
@@ -2884,7 +2887,16 @@ declare const __VLS_export$a: <T extends VcTableItemType>(__VLS_props: NonNullab
             index: number;
         }) => any;
     } & {
-        header?: (props: {}) => any;
+        header?: (props: {
+            showSelectionColumn: boolean;
+            selectionMode?: VcTableSelectionModeType;
+            isAllSelected: boolean;
+            isSomeSelected: boolean;
+            canSelectAll: boolean;
+            toggleSelectAll: () => void;
+            selectionColumnAttrs: VcTableSelectionColumnAttrsType;
+            headAttrs: VcTableHeadAttrsType;
+        }) => any;
     } & {
         'desktop-skeleton'?: (props: {}) => any;
     } & {
@@ -3093,6 +3105,14 @@ declare const __VLS_export$6: vue.DefineComponent<IProps$6, {}, {}, {}, {}, vue.
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$6: typeof __VLS_export$6;
 
+interface IPaymentMethodParameters {
+    hidePaymentButton?: boolean;
+    payment?: PaymentType;
+    disabled?: boolean;
+    cart?: CartType;
+    order?: CustomerOrderType;
+}
+
 /** The plugin renders its own markup in place of the host's. */
 type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boolean = never> = {
     component: Component;
@@ -3152,6 +3172,10 @@ type ExtensionCategoryMapType = {
         paymentTypeName: string;
     }, never, ({ order, paymentTypeName }: {
         order: CustomerOrderType;
+        paymentTypeName: string;
+    }) => boolean>;
+    /** The cart-stage payment step (`shared/payment/components/payment.vue`). */
+    cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
         paymentTypeName: string;
     }) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
@@ -4161,6 +4185,13 @@ type VcTableSelectionKeyType = string | number;
 type VcTableSelectionMetaType<T = unknown> = {
     action: "select" | "deselect" | "select-all" | "deselect-all";
     row?: T;
+  };
+type VcTableSelectionColumnAttrsType = {
+    class: string;
+    style: Record<string, string>;
+  };
+type VcTableHeadAttrsType = {
+    class: string;
   };
 interface IBreadcrumb {
     title: string;
