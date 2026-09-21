@@ -53,7 +53,7 @@
             v-else-if="item.hasVariations"
             :to="navigatable ? item.route : undefined"
             :target="browserTarget"
-            :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
+            :button-text="$t('pages.catalog.variations_button', [variationsCount(item)], variationsCount(item))"
           />
 
           <VcAddToCart
@@ -157,6 +157,11 @@ const itemDefaultSlotWidth = computed<string>(() => {
   const maxSlotWidth = Math.max(...(itemDefaultSlot.value?.map((el) => el.clientWidth) || [0]));
   return maxSlotWidth ? `${maxSlotWidth}px` : "";
 });
+
+// The product itself counts as one of its variations.
+function variationsCount(item: PreparedLineItemType): number {
+  return (item.variations?.length || 0) + 1;
+}
 
 function addToCartDisabled(item: PreparedLineItemType) {
   if (item.actualPrice?.amount === 0 || item.listPrice?.amount === 0) {

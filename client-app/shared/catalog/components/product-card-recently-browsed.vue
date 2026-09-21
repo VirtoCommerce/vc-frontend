@@ -32,7 +32,7 @@
       v-else-if="product.hasVariations"
       :to="link"
       :target="browserTarget"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      :button-text="$t('pages.catalog.variations_button', [variationsCount], variationsCount)"
     />
 
     <QuantityControl
@@ -95,6 +95,8 @@ const product = toRef(props, "product");
 
 const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
 const link = computed(() => getProductRoute(product.value.id, product.value.slug));
+// The product itself counts as one of its variations.
+const variationsCount = computed(() => (product.value.variations?.length || 0) + 1);
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed(() => cartLineItem.value?.quantity || 0);
 const isQuantityLoading = computed(() => {

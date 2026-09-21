@@ -89,7 +89,7 @@
         :data-test-id="`variations-${product.code}-button`"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
-        :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+        :button-text="$t('pages.catalog.variations_button', [variationsCount], variationsCount)"
         :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
         :loading="fetchingVariations"
         @link-click="handleVariationsClick"
@@ -101,7 +101,7 @@
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
-        :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+        :button-text="$t('pages.catalog.variations_button', [variationsCount], variationsCount)"
         :target="browserTarget || browserTargetFromSetting"
         @link-click="$emit('linkClick', product, $event)"
       />

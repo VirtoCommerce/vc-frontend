@@ -41,7 +41,7 @@
       :to="link"
       :target="browserTarget"
       variant="outline"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      :button-text="$t('pages.catalog.variations_button', [variationsCount], variationsCount)"
     />
 
     <AddToCartSimple v-else :product="product" reserved-space />
@@ -73,6 +73,9 @@ const props = defineProps<IProps>();
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+
+// The product itself counts as one of its variations.
+const variationsCount = computed(() => (props.product.variations?.length || 0) + 1);
 
 const { browserTarget } = useBrowserTarget();
 </script>

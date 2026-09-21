@@ -107,10 +107,10 @@
                     size="sm"
                     :to="getProductRoute(item.product.id, item.product.slug)"
                     :target="browserTarget"
-                    :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                    :aria-label="getVariationsLabel(item.product)"
                   >
                     <span>
-                      {{ t("pages.catalog.variations_button", [(item.product.variations?.length || 0) + 1]) }}
+                      {{ getVariationsLabel(item.product) }}
                     </span>
                   </VcButton>
 
@@ -169,7 +169,7 @@
                       size="sm"
                       :to="getProductRoute(item.product.id, item.product.slug)"
                       :target="browserTarget"
-                      :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                      :aria-label="getVariationsLabel(item.product)"
                     />
 
                     <VcButton
@@ -401,6 +401,12 @@ async function onRemoveProduct(item: ICompareDisplayProduct) {
 
   await nextTick();
   headerRowRef.value?.focus();
+}
+
+// The product itself counts as one of its variations.
+function getVariationsLabel(product: Product): string {
+  const count = (product.variations?.length || 0) + 1;
+  return t("pages.catalog.variations_button", [count], count);
 }
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
