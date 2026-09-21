@@ -98,6 +98,16 @@ file are cross-referenced, not repeated.
       `my-customers.vue` calls `$d(item.lastOrder.createdDate)` with a string where vue-i18n wants
       `number | Date` (that one only became visible once the contract started typing slot props).
       Fix the three in vc-module-sales-rep#13 and add the step to `module-ci`.
+- [ ] **The version guard only watches `contract/index.d.ts` and `contract/tailwind-preset.cjs`.**
+      `build-types.mjs` diffs those two against the base ref to decide the bump and to refuse an
+      auto-bump on a removed export; the other published entry points — `federation.d.mts`,
+      `testing.d.mts`, `tailwind-preset.d.cts` and (after #2480) `codegen.d.mts`, all listed in
+      `package.json` `files` — are not read at all.
+      So an export can be deleted from `@vc-frontend/core/federation` with the version untouched,
+      and `^0.1.x` plugins keep resolving a package that no longer has it. That is exactly what
+      #2481 does to `isMfFlagEnabled` (harmless in fact: nothing imports it and only `core-v0.1.0`
+      is released). Fold the subpath `.d.mts` files into `extractExportNames`' input so a removal
+      there demands the same pre-1.0 MINOR as a removal from the main contract.
 
 **Soon after**
 
