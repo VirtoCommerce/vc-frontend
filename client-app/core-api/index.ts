@@ -21,11 +21,19 @@ export { VcWidget } from "@/ui-kit/components";
 export {
   VcAlert,
   VcButton,
+  VcChip,
+  VcDialog,
+  VcDialogContent,
+  VcDialogFooter,
+  VcDialogHeader,
   VcEmptyView,
   VcInput,
   VcLoaderOverlay,
   VcMenuItem,
+  VcPopover,
+  VcRating,
   VcSelect,
+  VcTabSwitch,
   VcTextarea,
   VcTypography,
 } from "@/ui-kit/components/molecules";
@@ -37,13 +45,23 @@ export {
   VcBadge,
   VcBreadcrumbs,
   VcCheckbox,
+  VcCheckboxGroup,
   VcIcon,
   VcImage,
+  VcInputDetails,
   VcLabel,
   VcLink,
   VcMarkdownRender,
 } from "@/ui-kit/components/atoms";
-export { VcModal, VcTable, VcTableColumn, VcWidgetSkeleton } from "@/ui-kit/components/organisms";
+export {
+  VcDatePicker,
+  VcModal,
+  VcPagination,
+  VcTable,
+  VcTableColumn,
+  VcWidgetSkeleton,
+} from "@/ui-kit/components/organisms";
+export { VcLayout } from "@/ui-kit/components/templates";
 
 /**
  * Themed order-status chip. Its status -> colour/icon mapping comes from the THEME's
@@ -137,6 +155,10 @@ export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
 export type { ILanguage } from "@/core/types";
 export type { ExtendedMenuLinkType, MenuType } from "@/core/types";
+// Already load-bearing in the contract: useOrderView, OrderLineItems and OrderSummary all
+// take one, and rollup names it only internally — so a plugin could pass an order but not
+// declare the variable it passed.
+export type { CustomerOrderType } from "@/core/api/graphql/types";
 
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
