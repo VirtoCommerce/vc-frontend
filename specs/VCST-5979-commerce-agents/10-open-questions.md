@@ -56,20 +56,22 @@ reading could not:
 - **The demo script's own turns 2, 4, 5 and 6** are proven at API level only; the model has
   not been in the loop for them ([13-demo-script.md](13-demo-script.md)).
 
-## Decisions that need an owner
+## Decisions
 
-None of these are the frontend's to make alone, and all four are still open. They are the
-reason this spike is not closed.
+**Settled: the Python service is kept.** Called out from the start as the real obstacle —
+not the contract — and it was the one that gated the rest. The blueprint's packages are
+imported, not ported. Carried forward as standing costs rather than open questions: a
+Python runtime inside a .NET product line, and a permanent fork of an unmaintained
+upstream whose 35 open PRs include real bug fixes to cherry-pick and then own.
 
-1. **Python service, .NET port, or patterns only.** The blueprint is Python and Virto is
-   .NET. Called out from the start as the real obstacle — not the contract — and still
-   unowned. Everything below depends on it.
-2. **Whose track**: frontend, platform, or joint, and how it sits beside the UCP epic
+Three remain open, none of them the frontend's to make alone.
+
+1. **Whose track**: frontend, platform, or joint, and how it sits beside the UCP epic
    (VCST-5201). Both answers are defensible; drifting between them is not.
-3. **Product or reference**: a module our merchants enable, versus a blueprint partners
+2. **Product or reference**: a module our merchants enable, versus a blueprint partners
    fork. Changes almost everything downstream, including whether the code in PR #2490 is
    worth reviewing properly or is scaffolding to throw away.
-4. **Whose API key**: merchant brings their own, or we resell tokens. Decides whether
+3. **Whose API key**: merchant brings their own, or we resell tokens. Decides whether
    per-session budgets, abuse handling and rate limiting are ours to build before launch.
    Trade-offs in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md); note that
    Bedrock, Vertex and Foundry make "the customer's own cloud account" a fourth answer.
@@ -81,7 +83,7 @@ whoever owns the platform roadmap.
 
 ## What a decision needs next
 
-1. Take [15-poc-estimate.md](15-poc-estimate.md) to the four decisions above. It is the
+1. Take [15-poc-estimate.md](15-poc-estimate.md) to the three decisions above. It is the
    deliverable the ticket asked for, stated as an inventory of changes — every component,
    stub, mutation and hardening area named — so it can be re-costed by whoever ends up
    owning the work.

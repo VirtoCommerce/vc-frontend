@@ -7,7 +7,7 @@ Third-party commentary is marked as such.
 
 | File | Covers |
 |---|---|
-| **[RESULT.md](RESULT.md)** | **The spike result — verdict, what was built, what it costs, the four decisions that need an owner. Start here** |
+| **[RESULT.md](RESULT.md)** | **The spike result — verdict, what was built, what it costs, the decisions taken and the three still open. Start here** |
 | [00-links.md](00-links.md) | Every source, marked by whether it was read |
 | [01-what-it-is.md](01-what-it-is.md) | The release, repo layout, licence and maintenance status, verified install |
 | [02-architecture.md](02-architecture.md) | The engineering argument: one agent + skills, context tiers, caching, UI as tools, evals, memory |
@@ -43,8 +43,9 @@ cart to a quote or a purchase order, quote the session account's contract price 
 first-class for us. That makes a shopping-agent pilot mostly plumbing. The merchant agent is
 a second phase: its analytics methods have no source in the storefront API today.
 
-The genuine obstacle is not the contract, it is that the blueprint is Python and Virto is
-.NET. Free to ignore for a spike, expensive to decide by accident for a product.
+The one real obstacle was never the contract but the language — the blueprint is Python and
+Virto is .NET. That is settled: the Python service is kept, the packages are imported rather
+than ported.
 
 ## Status
 
@@ -56,7 +57,7 @@ storefront, in this repo, from the theme's own assistant page — `commerce-agen
 methods are live over x-api, cost is measured rather than modelled, and the design record
 with every measurement behind it is `commerce-agent/CLAUDE.md`.
 
-What that settled, what it did not, and the four decisions still without an owner are in
+What that settled, what it did not, and the three decisions still without an owner are in
 [10-open-questions.md](10-open-questions.md); what a POC would cost is in
 [15-poc-estimate.md](15-poc-estimate.md).
 

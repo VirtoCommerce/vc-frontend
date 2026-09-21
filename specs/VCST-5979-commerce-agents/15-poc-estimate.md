@@ -5,9 +5,8 @@ The deliverable VCST-5979 asked for, written against working code rather than a 
 creates or touches, so the size can be read off the list and re-costed by whoever owns the
 work.
 
-**Everything below assumes the Python service is kept.** A .NET port is a different
-exercise, listed at the end; that decision comes first
-([10-open-questions.md](10-open-questions.md)).
+**The Python service is kept** — settled, so everything below stands on its own rather than
+on an assumption. The blueprint's packages are imported, not ported.
 
 ---
 
@@ -185,18 +184,15 @@ six cases cannot do.
 
 ---
 
-## If the answer is .NET
+## The .NET road
 
-Everything above is void until this is decided, and a port precedes all of it.
-
-Port `commerce-common` plus the shopping agent's core and its Messages-API runtime —
-prompt assembly, tool registry, fencing, grounding gates, presentation enrichment,
-executor, streaming, memory. The reference carries its own tests to port alongside. What
-survives unchanged is the design: the backend mapping, the search findings, the error
-relay, the component list — all of `commerce-agent/CLAUDE.md`.
-
-Patterns-only is the third road: keep no code, reuse the design. The spike notes and that
-decision record already are that deliverable, at no further cost.
+Not taken. Recorded because the reasoning stays relevant if the runtime is ever
+reconsidered: a port means `commerce-common` plus the shopping agent's core and its
+Messages-API runtime — prompt assembly, tool registry, fencing, grounding gates,
+presentation enrichment, executor, streaming, memory — before any of the scope above
+starts. The design survives a port unchanged: the backend mapping, the search findings, the
+error relay and the component list are all in `commerce-agent/CLAUDE.md` and are
+language-independent.
 
 ---
 
@@ -204,8 +200,8 @@ decision record already are that deliverable, at no further cost.
 
 - **Review.** 9,500 lines nobody but the author has read. This is the largest single item
   on any follow-up and it does not shrink because the code appeared quickly.
-- **The four decisions** in [10-open-questions.md](10-open-questions.md). Other people's
-  calendar weeks, and the first one voids the rest.
+- **The three open decisions** in [10-open-questions.md](10-open-questions.md). Other
+  people's calendar weeks. None blocks starting, but whose key shapes the hardening list.
 - **Backend work.** Everything above is service-and-frontend except the quote ending, which
   touches x-api mutations this service has never called.
 - **Design.** A human designer's iterations on the cards; the brief and references are

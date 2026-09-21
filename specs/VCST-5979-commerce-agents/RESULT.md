@@ -20,9 +20,12 @@ It is the harness: provenance gates, server-side enrichment of every rendered va
 grounding reads, the cache-stable request assembly. Those hold **on any model**, which is
 what turns a demo into something a security review can pass.
 
-The condition is that **the blueprint is Python and Virto is .NET**, and nobody owns that
-decision yet. It was named as the real obstacle on day one and it still is. Every hour
-estimated below is void if it goes the other way.
+The condition was the language: the blueprint is Python and Virto is .NET. **Settled — the
+Python service is kept.** That was the gating decision, and it removes the one thing that
+could have voided the scope below. It buys the harness intact: no port, no reimplementation
+of the gates, the enrichment, the grounding rules or the turn loop. It costs a Python
+runtime inside a .NET product line and a permanent fork of an unmaintained upstream —
+neither is a blocker, both are now standing line items rather than open questions.
 
 ---
 
@@ -132,20 +135,21 @@ the retail vertical. Details in [08-value-proposition.md](08-value-proposition.m
 
 ---
 
-## Four decisions that need an owner
+## Decisions
 
-This is the ask. None of these is the frontend's to make, all four are open, and the first
-gates the rest.
+**Settled: the Python service is kept.** The blueprint's packages are imported, not ported;
+`commerce-agent/` stays the shape it is. Two consequences to carry: a Python runtime now
+belongs to a .NET product line, and the fork is permanent — the upstream is explicitly
+unmaintained, with 35 open PRs including real bug fixes that will never merge, so those are
+ours to cherry-pick and then own.
 
-1. **Python service, .NET port, or patterns only.** A port is ~40–60 h of the same
-   supervised work before anything else starts, and it is a fork with no upstream either
-   way — the repository is explicitly unmaintained, with 35 open PRs including real bug
-   fixes that will never merge.
-2. **Whose track** — frontend, platform, or joint — and how it sits beside the UCP epic
+Three remain open. None is the frontend's to make alone.
+
+1. **Whose track** — frontend, platform, or joint — and how it sits beside the UCP epic
    (VCST-5201).
-3. **Product or reference** — a module our merchants enable, or a blueprint partners fork.
+2. **Product or reference** — a module our merchants enable, or a blueprint partners fork.
    This decides whether PR #2490 is worth reviewing properly or is scaffolding to discard.
-4. **Whose API key** — the merchant brings one, we resell tokens, or the customer's own
+3. **Whose API key** — the merchant brings one, we resell tokens, or the customer's own
    cloud account via Bedrock/Vertex/Foundry. Decides whether budgets, rate limiting and
    abuse handling are ours to build before launch.
 
@@ -181,8 +185,10 @@ Stated plainly, because the estimate depends on it.
 
 ## Recommended next step
 
-Take the four decisions to their owners with [15-poc-estimate.md](15-poc-estimate.md) in
-hand. Decision 1 first — everything else is void without it.
+With the language settled, take the three remaining decisions to their owners with
+[15-poc-estimate.md](15-poc-estimate.md) in hand. None of them blocks starting the POC
+scope; the one that comes closest is whose key, because it decides whether budgets and
+rate limiting are built alongside the flow or bolted on after.
 
 In parallel, half a day closes the two cheap gaps: run Anthropic's `retail` demo and its
 `/showcase` page, then `/review-commerce-agent` against ours. And before anyone quotes a
