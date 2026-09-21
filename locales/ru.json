@@ -347,6 +347,17 @@
           "catalog_menu_button": "Каталог",
           "main_menu": "Основное меню"
         },
+        "locale_pill": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Вход",
         "link_register_now": "Регистрация",
         "link_logout": "Выход",

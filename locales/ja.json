@@ -347,6 +347,17 @@
           "catalog_menu_button": "カタログ",
           "main_menu": "メインメニュー"
         },
+        "locale_pill": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "ログイン",
         "link_register_now": "今すぐ登録",
         "link_logout": "ログアウト",

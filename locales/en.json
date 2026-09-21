@@ -347,6 +347,17 @@
           "catalog_menu_button": "Catalog",
           "main_menu": "Main menu"
         },
+        "locale_pill": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
         "link_logout": "Logout",

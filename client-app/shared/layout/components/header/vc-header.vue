@@ -6,9 +6,10 @@
   <template v-else>
     <div ref="stickyHeader" class="app-header">
       <div class="app-header__shell">
-        <HeaderPill :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
-
-        <MegaMenu v-if="isMegamenuShown" />
+        <HeaderPlate
+          :is-catalog-button-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen"
+          :is-mega-menu-shown="isMegaMenuShown"
+        />
       </div>
     </div>
 
@@ -28,11 +29,17 @@ import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import Created from "../print/created.vue";
-import HeaderPill from "./_internal/header-pill.vue";
-import MegaMenu from "./_internal/mega-menu.vue";
+import HeaderPlate from "./_internal/header-plate.vue";
 import MobileHeader from "./_internal/mobile-header.vue";
 
 const OFFSET_TOP = 20;
+
+/**
+ * VCST-6030 demo branch: set to false to drop the category row from the header plate
+ * entirely, leaving the single-row header. The store's `desktop_menu_mode` still decides
+ * between the mega menu and the catalog button when this is on.
+ */
+const MEGA_MENU_ENABLED = true;
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { logoUrl } = useWhiteLabeling();
@@ -65,8 +72,9 @@ watch([headerHeight, isMobile], ([value, mobile]) => {
 
 const { isAuthenticated } = useUser();
 
-const isMegamenuShown = computed(() => {
+const isMegaMenuShown = computed(() => {
   return (
+    MEGA_MENU_ENABLED &&
     desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
     (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
   );
@@ -75,16 +83,21 @@ const isMegamenuShown = computed(() => {
 
 <style lang="scss">
 .app-header {
-  @apply sticky top-0 z-20;
+  // Sticky lives on the OUTER element: a sticky box can only travel inside its parent,
+  // and the shell is exactly as tall as the header. The negative offset equals the
+  // shell's top padding, so the plate itself lands flush at viewport 0 when pinned —
+  // which is also what header-plate reads to decide it is stuck.
+  @apply sticky z-20;
+
+  top: -0.625rem;
 
   @media print {
     @apply hidden;
   }
 
-  // One shared page inset for the floating pill and the mega menu below it, so the two
-  // read as one group. Mirrors VcContainer's gutter steps.
+  // The page inset the header plate shares with the page's own plates.
   &__shell {
-    @apply relative mx-auto flex flex-col gap-2 pb-2 pt-2.5;
+    @apply relative mx-auto pb-2 pt-2.5;
 
     --gutter: theme("padding.6");
 

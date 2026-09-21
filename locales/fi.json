@@ -347,6 +347,17 @@
           "catalog_menu_button": "Luettelo",
           "main_menu": "Päävalikko"
         },
+        "locale_pill": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Kirjaudu sisään",
         "link_register_now": "Rekisteröidy nyt",
         "link_logout": "Kirjaudu ulos",

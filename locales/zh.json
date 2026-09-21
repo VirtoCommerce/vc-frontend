@@ -347,6 +347,17 @@
           "catalog_menu_button": "目录",
           "main_menu": "主菜单"
         },
+        "locale_pill": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "登录",
         "link_register_now": "立即注册",
         "link_logout": "登出",

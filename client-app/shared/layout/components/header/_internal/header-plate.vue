@@ -1,17 +1,16 @@
 <template>
-  <div class="header-pill">
-    <header ref="bar" class="header-pill__bar">
-      <router-link class="header-pill__brand" :to="$context.settings.default_return_url ?? '/'">
-        <VcImage :src="logoUrl" :alt="$context.storeName" class="header-pill__logo" lazy />
-      </router-link>
+  <div :class="['header-plate', { 'header-plate--stuck': stuck }]">
+    <div ref="plate" class="header-plate__surface">
+      <nav class="header-plate__row" :aria-label="$t('shared.layout.header.bottom_header.main_menu')">
+        <router-link class="header-plate__brand" :to="$context.settings.default_return_url ?? '/'">
+          <VcImage :src="logoUrl" :alt="$context.storeName" class="header-plate__logo" lazy />
+        </router-link>
 
-      <nav class="header-pill__nav" :aria-label="$t('shared.layout.header.bottom_header.main_menu')">
         <a
-          v-if="isMenuShown"
+          v-if="isCatalogButtonShown"
           ref="catalogButton"
-          class="header-pill__nav-item"
+          class="header-plate__catalog"
           :href="catalogLink"
-          :aria-label="$t('shared.layout.header.bottom_header.catalog_menu_button')"
           aria-haspopup="menu"
           :aria-expanded="catalogMenuVisible"
           @click="toggleCatalogDropdown"
@@ -23,43 +22,39 @@
 
           <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xxs" />
         </a>
+
+        <SearchBar class="header-plate__search" />
+
+        <ul class="header-plate__links">
+          <li v-for="item in desktopMainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
+            <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
+              <LinkDefault :item="item" />
+            </ExtensionPoint>
+          </li>
+        </ul>
+
+        <div class="header-plate__end">
+          <HeaderLocalePill />
+
+          <HeaderAccountMenu v-if="isAuthenticated" />
+
+          <VcButton v-else :to="ROUTES.SIGN_IN.PATH" size="sm" data-test-id="sign-in-link">
+            {{ $t("shared.layout.header.link_sign_in") }}
+          </VcButton>
+        </div>
       </nav>
 
-      <SearchBar class="header-pill__search" />
-
-      <div class="header-pill__utils">
-        <ShipToSelector />
-
-        <CurrencySelector
-          v-if="!isLoyaltyCatalogRoute && $context.availableCurrencies && $context.availableCurrencies.length > 1"
-        />
-
-        <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
-
-        <DarkModeToggle v-if="isDarkModeAvailable" tooltip test-id="dark-mode-toggle" icon-size="sm" />
-      </div>
-
-      <ul class="header-pill__pods">
-        <li v-for="item in desktopMainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
-          <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
-            <LinkDefault :item="item" />
-          </ExtensionPoint>
-        </li>
-      </ul>
-
-      <HeaderAccountMenu v-if="isAuthenticated" />
-
-      <VcButton v-else :to="ROUTES.SIGN_IN.PATH" size="sm" data-test-id="sign-in-link">
-        {{ $t("shared.layout.header.link_sign_in") }}
-      </VcButton>
-    </header>
+      <!-- Second row of the same plate. It collapses to zero height once the plate sticks,
+           so a scrolled page keeps a single-row header. -->
+      <MegaMenu v-if="isMegaMenuShown" class="header-plate__mega" />
+    </div>
 
     <transition
-      v-if="isMenuShown && catalogMenuItems.length"
-      enter-from-class="header-pill__dropdown--hidden"
-      leave-to-class="header-pill__dropdown--hidden"
+      v-if="isCatalogButtonShown && catalogMenuItems.length"
+      enter-from-class="header-plate__dropdown--hidden"
+      leave-to-class="header-plate__dropdown--hidden"
     >
-      <div v-if="catalogMenuVisible" ref="catalogMenuElement" class="header-pill__dropdown" :style="dropdownStyle">
+      <div v-if="catalogMenuVisible" ref="catalogMenuElement" class="header-plate__dropdown" :style="dropdownStyle">
         <CatalogMenu
           :items="catalogMenuItems"
           @focusout="focusoutDropdown"
@@ -72,24 +67,23 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
+import { onClickOutside, syncRefs, useElementBounding, useEventListener, useScrollLock } from "@vueuse/core";
 import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useDarkMode, useNavigations, useWhiteLabeling } from "@/core/composables";
+import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
-import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
-import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
-import { ShipToSelector } from "@/shared/ship-to-location";
 import CatalogMenu from "./catalog-menu.vue";
-import DarkModeToggle from "./dark-mode-toggle.vue";
 import HeaderAccountMenu from "./header-account-menu.vue";
+import HeaderLocalePill from "./header-locale-pill.vue";
 import LinkDefault from "./link-components/link-default.vue";
+import MegaMenu from "./mega-menu.vue";
 import SearchBar from "./search-bar/search-bar.vue";
 import type { StyleValue } from "vue";
 
 interface IProps {
-  isMenuShown?: boolean;
+  isCatalogButtonShown?: boolean;
+  isMegaMenuShown?: boolean;
 }
 
 defineProps<IProps>();
@@ -98,23 +92,37 @@ const router = useRouter();
 const route = useRoute();
 const { isAuthenticated } = useUser();
 const { logoUrl } = useWhiteLabeling();
-const { isDarkModeAvailable } = useDarkMode();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 
-const bar = ref<HTMLElement | null>(null);
+const plate = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
 const catalogButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
+const stuck = ref(false);
 
-const { bottom } = useElementBounding(bar);
+const { bottom } = useElementBounding(plate);
 
-const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === ROUTES.LOYALTY_CATALOG.PATH);
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const dropdownStyle = computed<StyleValue | undefined>(() =>
   bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined,
 );
 
 const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
+
+// Read from geometry rather than scrollY: that stays correct through anchor jumps,
+// resizes, and pages that do not start at zero. Capture phase, because the scroll
+// may happen on an inner container rather than on window.
+function updateStuck() {
+  const element = plate.value;
+
+  if (element) {
+    stuck.value = element.getBoundingClientRect().top <= 0.5;
+  }
+}
+
+useEventListener("scroll", updateStuck, { passive: true, capture: true });
+useEventListener("resize", updateStuck);
+watch(plate, updateStuck, { flush: "post" });
 
 onClickOutside(
   catalogMenuElement,
@@ -158,20 +166,23 @@ watch(route, () => {
 </script>
 
 <style lang="scss">
-.header-pill {
+.header-plate {
+  $stuck: "";
+
   --glass: var(--header-bottom-bg-color);
 
-  // Stickiness and the page inset belong to .app-header, which also owns the height vars.
-  // The stacking context is ours though: the search suggestions overlay has to paint
-  // above the mega menu plate that follows us in the shell.
+  // .app-header owns stickiness, the page inset and the height vars.
   @apply relative z-[2];
 
-  &__bar {
-    @apply flex items-center gap-3.5 rounded-full border;
+  &--stuck {
+    $stuck: &;
+  }
 
-    padding: 0.625rem 0.625rem 0.625rem 1.25rem;
+  &__surface {
+    @apply overflow-hidden rounded-[1.75rem] border;
+
     border-color: color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
-    // The one glass surface in the theme: a vertical wash over a blurred backdrop.
+    // The one glass surface of the shell: a vertical wash over a blurred backdrop.
     background: linear-gradient(
       180deg,
       color-mix(in srgb, var(--glass) 94%, transparent),
@@ -183,6 +194,16 @@ watch(route, () => {
       inset 0 1px 0 color-mix(in srgb, var(--glass) 85%, transparent),
       0 10px 34px color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
     color: var(--header-bottom-text-color);
+    transition: border-radius var(--transition-duration) ease;
+
+    // Flush against the window edge the top corners have nothing to round against.
+    #{$stuck} & {
+      @apply rounded-t-none;
+    }
+  }
+
+  &__row {
+    @apply flex items-center gap-3.5 px-5 py-2.5;
   }
 
   &__brand {
@@ -199,12 +220,8 @@ watch(route, () => {
     @apply h-8;
   }
 
-  &__nav {
-    @apply flex flex-none gap-0.5;
-  }
-
-  &__nav-item {
-    @apply flex select-none items-center gap-2 rounded-full px-3.5 py-2 text-sm;
+  &__catalog {
+    @apply flex flex-none select-none items-center gap-2 rounded-full px-3.5 py-2 text-sm font-bold uppercase tracking-wide;
 
     color: var(--header-bottom-link-color);
     transition:
@@ -221,20 +238,20 @@ watch(route, () => {
     @apply min-w-0 flex-1;
   }
 
-  &__utils {
-    @apply flex flex-none items-center gap-3;
-
-    // Ship-to, currency and language were built for the dark top strip and paint
-    // themselves with --header-top-*. Inside the light pill they have to read against
-    // the bottom-header surface, so remap the four keys locally.
-    --header-top-text-color: var(--header-bottom-text-color);
-    --header-top-link-color: var(--header-bottom-link-color);
-    --header-top-link-hover-color: var(--header-bottom-link-hover-color);
-    --header-top-link-active-color: var(--header-bottom-link-active-color);
+  &__links {
+    @apply -mx-2 flex flex-none items-center;
   }
 
-  &__pods {
-    @apply flex flex-none items-center gap-1.5;
+  &__end {
+    @apply flex flex-none items-center gap-2;
+  }
+
+  &__mega {
+    @apply overflow-hidden transition-[height] duration-200;
+
+    #{$stuck} & {
+      @apply h-0;
+    }
   }
 
   &__dropdown {

@@ -347,6 +347,17 @@
           "catalog_menu_button": "Katalog",
           "main_menu": "Hovedmeny"
         },
+        "locale_pill": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Logg inn",
         "link_register_now": "Registrer deg nå",
         "link_logout": "Logg ut",
