@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { nextTick, ref } from "vue";
 import VPPageBuilder from "./vp-page-builder.vue";
 
 const routePath = ref("/page-a");
@@ -17,8 +17,13 @@ vi.mock("vue-router", () => ({
   }),
 }));
 
-vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => ref([]) }));
-vi.mock("@/plugins/builder-preview/block-mapping", () => ({ getBlockType: () => "TextBlock" }));
+vi.mock("@/core/composables", () => ({
+  useBreadcrumbs: () => [],
+}));
+
+vi.mock("@/plugins/builder-preview/block-mapping", () => ({
+  getBlockType: () => "section",
+}));
 
 const { scrollToAnchor } = vi.hoisted(() => ({ scrollToAnchor: vi.fn(() => Promise.resolve(true)) }));
 
@@ -37,16 +42,11 @@ vi.mock("@/shared/static-content", async () => {
   return { ...anchors, useAnchorScroll };
 });
 
-function page(id: string, name = "page-a") {
-  return JSON.stringify({ settings: { name }, content: [{ id, type: "text-block" }] });
-}
+const mountedWrappers: Array<{ unmount: () => void }> = [];
 
-function render() {
-  return mount(VPPageBuilder, {
-    props: { content: page("text2") },
-    global: { stubs: { VcBreadcrumbs: true, VcTypography: true, TextBlock: true } },
-  });
-}
+afterEach(() => {
+  mountedWrappers.splice(0).forEach((wrapper) => wrapper.unmount());
+});
 
 describe("VPPageBuilder", () => {
   beforeEach(() => {
@@ -56,16 +56,16 @@ describe("VPPageBuilder", () => {
   });
 
   it("re-parses the content it is handed on a client-side navigation", async () => {
-    const wrapper = render();
+    const wrapper = mountPageBuilder(pageContent("text2"));
 
-    await wrapper.setProps({ content: page("text9") });
+    await wrapper.setProps({ content: pageContent("text9") });
 
     expect(wrapper.find("#text9").exists()).toBe(true);
     expect(wrapper.find("#text2").exists()).toBe(false);
   });
 
   it("scrolls to the hash once the content of the new page is in", async () => {
-    const wrapper = render();
+    const wrapper = mountPageBuilder(pageContent("text2"));
     scrollToAnchor.mockClear();
 
     routePath.value = "/page-b";
@@ -73,8 +73,78 @@ describe("VPPageBuilder", () => {
 
     expect(scrollToAnchor).not.toHaveBeenCalled();
 
-    await wrapper.setProps({ content: page("text2", "page-b") });
+    await wrapper.setProps({ content: pageContent("text2", { name: "page-b" }) });
 
     expect(scrollToAnchor).toHaveBeenCalledWith("#text2");
   });
+
+  it("renders the authored anchor after replacing the page content", async () => {
+    const wrapper = mountPageBuilder(pageContent("cached"));
+
+    await wrapper.setProps({
+      content: JSON.stringify({
+        settings: { hideBreadcrumbs: true },
+        content: [{ id: "network", type: "test-block", anchor: "Product Details" }],
+      }),
+    });
+
+    expect(wrapper.find("#cached").exists()).toBe(false);
+    expect(wrapper.find("#product-details").exists()).toBe(true);
+    expect(wrapper.find("#network").exists()).toBe(false);
+  });
+
+  it("replaces cached content when the network document arrives", async () => {
+    const wrapper = mountPageBuilder(pageContent("cached"));
+
+    expect(wrapper.find("#cached").exists()).toBe(true);
+
+    await wrapper.setProps({ content: pageContent("network") });
+
+    expect(wrapper.find("#cached").exists()).toBe(false);
+    expect(wrapper.find("#network").exists()).toBe(true);
+  });
+
+  it.each([undefined, "", "{", "{}", JSON.stringify({ settings: {}, content: {} })])(
+    "clears stale content when the latest payload is %s",
+    async (content) => {
+      const wrapper = mountPageBuilder(pageContent("stale"));
+      expect(wrapper.find("#stale").exists()).toBe(true);
+
+      await wrapper.setProps({ content });
+
+      expect(wrapper.find("#stale").exists()).toBe(false);
+      expect(wrapper.html()).not.toContain("section");
+    },
+  );
+
+  it("recovers when a valid document follows an invalid update", async () => {
+    const wrapper = mountPageBuilder("invalid-json");
+    expect(wrapper.html()).not.toContain("section");
+
+    await wrapper.setProps({ content: pageContent("recovered") });
+    await nextTick();
+
+    expect(wrapper.find("#recovered").exists()).toBe(true);
+  });
 });
+
+function mountPageBuilder(content?: string) {
+  const wrapper = mount(VPPageBuilder, {
+    props: { content },
+    global: {
+      stubs: {
+        VcBreadcrumbs: true,
+        VcTypography: true,
+      },
+    },
+  });
+  mountedWrappers.push(wrapper);
+  return wrapper;
+}
+
+function pageContent(id: string, settings: Record<string, unknown> = {}): string {
+  return JSON.stringify({
+    settings: { hideBreadcrumbs: true, ...settings },
+    content: [{ id, type: "test-block" }],
+  });
+}
