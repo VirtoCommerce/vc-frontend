@@ -85,11 +85,21 @@ Absent from this document until now, and the stream with the most unknowns.
 - **Deployment shape.** A session store beyond SQLite (the six `SessionStore` methods moved
   onto Redis or Postgres), health and monitoring.
 
-### B. Admin UI
+### B. Admin UI — a different frontend from the theme
 
-- The settings screens behind stream A.
-- Later, with the merchant agent: its own four cards — `present_metrics`, `present_digest`,
-  `present_change_preview`, its own suggestions. None designed, none counted anywhere.
+vc-shell, not `client-app`, so nothing from the storefront module is reused directly.
+
+- **Settings screens** behind stream A.
+- **The merchant agent is a conversation too**, and needs the same three things the
+  storefront needed: a chat shell, its four cards (`present_metrics`, `present_digest`,
+  `present_change_preview`, its own suggestions), and — new — an **approval surface**.
+  `apply_change` succeeds only for ids the host has marked approved; a preview card approves
+  nothing and an approval typed in chat sets nothing. That makes the staged-changes queue a
+  screen, not a card.
+- **vc-shell already has an AI panel** (VCST-5673, VCST-5746, and the embedded-mode service
+  in VCST-5794). The first question for this stream is whether the merchant agent plugs into
+  it rather than getting a second surface — worth asking before any of the above is designed.
+- None of it designed, none counted anywhere.
 
 ### 0. Design, which everything visual waits on
 
