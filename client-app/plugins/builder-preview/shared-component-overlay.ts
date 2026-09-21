@@ -128,8 +128,8 @@ export class SharedComponentOverlay {
   }
 
   scrollToPlacement(placementId: string): boolean {
-    this.pendingScrollPlacementId = placementId;
     const boundaryExists = this.boundaries.some((boundary) => boundary.placementId === placementId);
+    this.pendingScrollPlacementId = boundaryExists ? placementId : null;
     if (!boundaryExists) {
       return false;
     }

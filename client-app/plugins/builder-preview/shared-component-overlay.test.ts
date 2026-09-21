@@ -191,9 +191,41 @@ describe("shared component preview overlay", () => {
     expect(onHover).toHaveBeenCalledTimes(2);
   });
 
-  it("keeps an early selection pending and scrolls to the first child after DOM render", () => {
+  it("does not queue a rejected selection even if that boundary appears later", () => {
     const { overlay } = createOverlay();
     expect(overlay.scrollToPlacement("componentRef1")).toBe(false);
+
+    appendAnchor("first", 420);
+    appendAnchor("after", 620);
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    flushAnimationFrames();
+    window.dispatchEvent(new Event("resize"));
+    resizeObserver.callback([], resizeObserver);
+    flushAnimationFrames();
+
+    expect(window.scroll).not.toHaveBeenCalled();
+  });
+
+  it("cancels a pending component scroll when a newer selection belongs to an ordinary section", () => {
+    const { overlay } = createOverlay();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    expect(overlay.scrollToPlacement("componentRef1")).toBe(true);
+    expect(overlay.scrollToPlacement("before")).toBe(false);
+
+    appendAnchor("first", 420);
+    appendAnchor("after", 620);
+    flushAnimationFrames();
+
+    expect(window.scroll).not.toHaveBeenCalled();
+  });
+
+  it("keeps a known boundary selection pending and scrolls once after DOM render", () => {
+    const { overlay } = createOverlay();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    flushAnimationFrames();
+    expect(overlay.scrollToPlacement("componentRef1")).toBe(true);
+    flushAnimationFrames();
+    expect(window.scroll).not.toHaveBeenCalled();
 
     appendAnchor("first", 420);
     appendAnchor("after", 620);
@@ -203,6 +235,10 @@ describe("shared component preview overlay", () => {
     flushAnimationFrames();
 
     expect(window.scroll).toHaveBeenCalledWith({ top: 430, behavior: "smooth" });
+    window.dispatchEvent(new Event("resize"));
+    resizeObserver.callback([], resizeObserver);
+    flushAnimationFrames();
+    expect(window.scroll).toHaveBeenCalledOnce();
   });
 
   it("rerenders on resize and removes observers and event listeners on dispose", () => {

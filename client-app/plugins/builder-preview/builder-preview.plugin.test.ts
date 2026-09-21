@@ -90,6 +90,8 @@ describe("Page Builder preview message protocol", () => {
     { source: "builder", type: "settings", settings: { color_success_600: "#008000" } },
     { source: "builder", type: "auth", token: null, userId: null },
     { source: "builder", type: "auth", token: { access_token: "token" }, userId: "user-1" },
+    { source: "builder", type: "auth", token: { access_token: "token" } },
+    { source: "builder", type: "auth", token: null },
   ])("accepts a valid non-template message: $type", (message) => {
     expect(isBuilderMessage(message)).toBe(true);
   });
@@ -112,7 +114,7 @@ describe("Page Builder preview message protocol", () => {
     { source: "builder", type: "settings", settings: [] },
     { source: "builder", type: "auth", token: 42, userId: "user-1" },
     { source: "builder", type: "auth", token: { access_token: 42 }, userId: "user-1" },
-    { source: "builder", type: "auth", token: null },
+    { source: "builder", type: "auth", token: null, userId: 42 },
   ])("rejects malformed input %#", (message) => {
     expect(isBuilderMessage(message)).toBe(false);
   });
@@ -156,6 +158,17 @@ describe("Page Builder preview message protocol", () => {
     expect(onMessage).toHaveBeenCalledOnce();
     expect(onMessage).toHaveBeenCalledWith(message);
     dispose();
+  });
+
+  it.each([{ access_token: "new-token" }, null])("delivers auth without the optional userId: %j", (token) => {
+    const onMessage = vi.fn();
+    messageDisposers.push(addBuilderMessageListener(window, "https://builder.example", window, onMessage));
+    const message = { source: "builder", type: "auth", token };
+
+    dispatchMessage("https://builder.example", window, message);
+
+    expect(onMessage).toHaveBeenCalledOnce();
+    expect(onMessage).toHaveBeenCalledWith(message);
   });
 
   it("announces readiness after schemas load and again when the builder reconnects", () => {
