@@ -2207,6 +2207,7 @@ type GetMeQuery = {
             organization?: {
                 id: string;
                 name?: string;
+                isLockedForCurrentUser?: boolean;
             };
         };
         operator?: {
@@ -2369,8 +2370,10 @@ interface IProps$g {
     singleLineMessage?: boolean;
     error?: boolean;
     noBorder?: boolean;
+    seamless?: boolean;
     hidePasswordSwitcher?: boolean;
     showEmptyDetails?: boolean;
+    hideDetails?: boolean;
     counter?: boolean;
     min?: string | number;
     max?: string | number;
@@ -3401,6 +3404,7 @@ declare function _useUser(): {
     organization: vue.ComputedRef<{
         id: string;
         name?: string;
+        isLockedForCurrentUser?: boolean;
     } | null>;
     operator: vue.ComputedRef<{
         userName: string;
@@ -3459,6 +3463,7 @@ declare function _useUser(): {
             organization?: {
                 id: string;
                 name?: string;
+                isLockedForCurrentUser?: boolean;
             };
         };
         operator?: {
@@ -3500,6 +3505,7 @@ declare function _useUser(): {
             organization?: {
                 id: string;
                 name?: string;
+                isLockedForCurrentUser?: boolean;
             };
         };
         operator?: {

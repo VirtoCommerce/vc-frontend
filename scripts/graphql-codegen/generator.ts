@@ -38,6 +38,7 @@ if (
   backendUrl.startsWith("https://localhost") &&
   process.env.LOCAL_DEV_ALLOW_INSECURE_TLS === "true"
 ) {
+  // codeql[js/disabling-certificate-validation]: gated above to dev + https://localhost + an explicit opt-in env var, never reachable in CI/prod
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
@@ -96,6 +97,11 @@ const independentModules: ModuleType[] = [
       `${core.fragmentsPath}/orderAddressFields.graphql`,
       `${core.fragmentsPath}/orderLineItemFields.graphql`,
     ],
+  },
+  {
+    name: "Skyflow",
+    apiPath: "client-app/modules/skyflow/api/graphql",
+    schemaPath: `${backendUrl}/graphql/skyflow`,
   },
   /* EXPERIMENTAL FEATURE
   {

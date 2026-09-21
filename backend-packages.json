@@ -17,7 +17,7 @@
       "Modules": [
         {
           "Id": "VirtoCommerce.Loyalty",
-          "Version": "3.1006.0"
+          "Version": "3.1008.0"
         },
         {
           "Id": "VirtoCommerce.ElasticSearch",
@@ -325,11 +325,11 @@
         },
         {
           "Id": "VirtoCommerce.Customer",
-          "Version": "3.1023.0"
+          "Version": "3.1024.0"
         },
         {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",
-          "Version": "3.1017.0"
+          "Version": "3.1018.0"
         },
         {
           "Id": "VirtoCommerce.Xapi",
