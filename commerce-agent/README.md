@@ -3,8 +3,8 @@
 A shopping agent for a Virto storefront, built on the
 [anthropics/commerce-agents](https://github.com/anthropics/commerce-agents) reference
 packages, pinned at `fd4d592`. The reference supplies the prompt, tool contracts, gates,
-grounding, presentation, memory and the turn loop; this module supplies the four things a
-deployment owns:
+grounding, presentation, memory and the turn loop; this module supplies what a deployment
+owns:
 
 | File | What it owns |
 |---|---|
@@ -14,20 +14,24 @@ deployment owns:
 | `virto_agent/executor.py` | this platform's own failures, mapped to conversation |
 | `virto_agent/service.py` | the FastAPI service the theme calls |
 
-The decision record — role, systems, identity, posture, flows, gates — is in the
-repository's `CLAUDE.md` under **Commerce agent decision record**.
+The decision record — role, systems, identity, posture, flows, gates — is
+`commerce-agent/CLAUDE.md`, under **Commerce agent decision record**.
 
 ## Run it
 
 ```bash
 python -m venv .venv
 .venv/bin/pip install -r requirements-dev.txt
-cp .env.example .env            # ANTHROPIC_API_KEY, XAPI_ENDPOINT, XAPI_STORE_ID
-.venv/bin/python -m uvicorn virto_agent.service:app --port 8080 --workers 1
+cp .env.example .env            # ANTHROPIC_API_KEY has no default; so do EVAL_USERNAME/PASSWORD
+.venv/bin/python -m uvicorn virto_agent.service:app --port 8080 --workers 2
 ```
 
-**One worker.** The session store, the token store and the provenance state are in this
-process's memory; a second worker splits sessions between processes with no error.
+**Workers share sessions.** `session_store.py` keeps them in SQLite under WAL
+(`data/sessions.sqlite3`), writing state back under a compare-and-set on its version, so
+provenance survives a request landing on a different worker — verified with `--workers 2`.
+No credential is stored at all: the bearer arrives on every request and is re-resolved
+against `me`. Swapping SQLite for Redis or Postgres is the six storage methods of that
+subclass and nothing above it.
 
 ```bash
 .venv/bin/ruff check .

@@ -17,7 +17,7 @@ python -m evals report       # tokens, latency and cost per case
 
 Six cases, three twin pairs, one trial each. This is a spike: the suite exists to show the
 harness works and to price it, not to cover the agent. Every live run is metered and the
-total is printed, so adding a case is a decision with a number attached — about 1.5¢ each at
+total is printed, so adding a case is a decision with a number attached — about 1.2¢ each at
 today's shape.
 
 | Pair | Serves | Refuses / limits |
