@@ -8,9 +8,11 @@ type NullableBuilderMessageFieldsType = {
   userId: string | null;
 };
 
+type PreviewModelType = Partial<IPageContent> & Pick<IPageContent, "type">;
+
 export type TransferDataType = {
   template?: IPageTemplate;
-  model?: IPageContent;
+  model?: PreviewModelType;
   templateKey?: string;
   source: "builder";
   type: string;
@@ -31,7 +33,7 @@ export function isBuilderMessage(value: unknown): value is TransferDataType {
   if (PREVIEW_UPDATE_TYPES.has(value.type)) {
     return (
       isPageTemplate(value.template) &&
-      (value.model === undefined || isPageContent(value.model)) &&
+      (value.model === undefined || isPreviewModel(value.model)) &&
       isOptionalString(value.templateKey) &&
       isOptionalString(value.cultureName) &&
       isOptionalSelection(value.sectionId) &&
@@ -111,6 +113,10 @@ function isPageTemplate(value: unknown): value is IPageTemplate {
 
 function isPageContent(value: unknown): value is IPageContent {
   return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.type);
+}
+
+function isPreviewModel(value: unknown): value is PreviewModelType {
+  return isRecord(value) && isNonEmptyString(value.type) && (value.id === undefined || isNonEmptyString(value.id));
 }
 
 function isOptionalString(value: unknown): boolean {

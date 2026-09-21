@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { useGlobalInterceptors } from "@/core/api/common";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals, setGlobals } from "@/core/globals";
@@ -70,7 +71,11 @@ async function updatePreview(
     return;
   }
 
-  const content = data.model ? [...template.content, data.model] : template.content;
+  // Add-block models have no persisted id yet. Give only the preview copy an id for rendering and anchors.
+  const model: IPageContent | undefined = data.model
+    ? { ...data.model, id: data.model.id ?? `__preview__${uuidv4()}` }
+    : undefined;
+  const content = model ? [...template.content, model] : template.content;
   const newTemplate = { ...template, content: <IPageContent[]>[] };
 
   content.forEach((block: IPageContent) => {

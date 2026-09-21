@@ -43,6 +43,45 @@ describe("Page Builder preview message protocol", () => {
   });
 
   it.each([
+    { type: "text", text: "Hello, markdown!", heading: "h2" },
+    { id: "existing-preview", type: "text", text: "Hello, markdown!" },
+  ])("delivers an Add-block preview model %#", (model) => {
+    const onMessage = vi.fn();
+    messageDisposers.push(addBuilderMessageListener(window, "https://builder.example", window, onMessage));
+    const message = { source: "builder", type: "preview", template: validTemplate, model };
+
+    dispatchMessage("https://builder.example", window, message);
+
+    expect(onMessage).toHaveBeenCalledWith(message);
+  });
+
+  it.each([
+    null,
+    [],
+    {},
+    { type: "" },
+    { type: "  " },
+    { type: 42 },
+    { type: "text", id: 42 },
+    { type: "text", id: null },
+    { type: "text", id: "" },
+    { type: "text", id: "  " },
+  ])("rejects an invalid preview model %#", (model) => {
+    expect(isBuilderMessage({ source: "builder", type: "preview", template: validTemplate, model })).toBe(false);
+  });
+
+  it("still rejects saved template blocks without an id", () => {
+    expect(
+      isBuilderMessage({
+        source: "builder",
+        type: "preview",
+        template: { settings: {}, content: [{ type: "text" }] },
+        model: { type: "text" },
+      }),
+    ).toBe(false);
+  });
+
+  it.each([
     { source: "builder", type: "connect" },
     { source: "builder", type: "hover", sectionId: null },
     { source: "builder", type: "hover", sectionId: "placement-1" },
