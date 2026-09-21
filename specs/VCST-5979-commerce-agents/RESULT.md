@@ -164,30 +164,24 @@ that does not exist.
 
 ---
 
-## What is not done
+## What the spike did not answer
+
+These bound how far its conclusions reach. Implementation gaps — cards, CI, the quote
+close — are in [15-poc-estimate.md](15-poc-estimate.md); implementation has not started.
 
 - **`MerchantBackend` was never mapped.** The ticket asked for a read-only pass; the spike
-  deferred it whole.
-- **Anthropic's demo verticals were never run.** Each also serves `/showcase`, which renders
-  every presentation component from fixtures with no backend and no key. Cheap, still worth
-  doing.
-- **`/review-commerce-agent` has not been tried** against what we built — the obvious next
-  use of the plugin.
-- **Answer quality is anecdotal.** Six eval cases against Anthropic's suggested 50–100 per
+  deferred it whole, on the argument that x-api has no analytics surface. An argument, not a
+  method-by-method check.
+- **Answer quality is unmeasured.** Six eval cases against Anthropic's suggested 50–100 per
   flow, and the three search failures were found by a person using it, not by the suite.
-- **Six of eight presentation cards** are not built; `agent-products.vue` is a hand-rolled
-  grid that should sit on `VcProductCard`.
+  Feasibility is settled; whether it answers well is not.
 - **Orders and fulfillment have never run inside a model turn** — only at API level. Cart
-  writes have: two recorded eval cases call `add_to_cart` live, and `get_cart` runs as a
+  writes have: two recorded eval cases call `add_to_cart` live, and `get_cart` arrives as a
   grounding prefetch rather than a call the model chooses.
-- **Configurable products** have no answer: whether a configuration id can satisfy the cart
+- **Configurable products have no answer.** Whether a configuration id can satisfy the cart
   provenance gate is still open, and none appeared in the QA data sampled.
-- **Nobody has reviewed the code.** It is a proof of concept, so that is expected — but a
-  module we ship is held to a different bar than a spike, and the gap between the two is
-  real work.
-- **The Python side runs in no pipeline.** `pytest`, `ruff` and the eval replay are run by
-  hand; no workflow references `commerce-agent/`. The theme module's own tests do run, in
-  the existing `client-app` job.
+- **Anthropic's own demo verticals were never run**, and `/review-commerce-agent` was never
+  tried against what we built. Both cheap, both would have sharpened this.
 
 ---
 
