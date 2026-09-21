@@ -1,9 +1,9 @@
 <template>
-  <form class="email-otp-verify-form" @submit.prevent="onSubmit">
+  <form class="otp-email-verify-form" @submit.prevent="onSubmit">
     <VcAlert
       v-for="error in signInErrors"
       :key="error.code"
-      class="email-otp-verify-form__error"
+      class="otp-email-verify-form__error"
       color="danger"
       size="sm"
       variant="outline-dark"
@@ -19,46 +19,46 @@
       </span>
     </VcAlert>
 
-    <p class="email-otp-verify-form__subtitle">
-      {{ $t("shared.sign_in.email_otp_sign_in_form.verify.subtitle", { email: props.maskedEmail }) }}
+    <p class="otp-email-verify-form__subtitle">
+      {{ $t("shared.sign_in.otp_email_sign_in_form.verify.subtitle", { email: props.maskedEmail }) }}
     </p>
 
-    <label class="email-otp-verify-form__label" for="email-otp-code">
-      {{ $t("shared.sign_in.email_otp_sign_in_form.verify.code_label") }}
+    <label class="otp-email-verify-form__label" for="otp-email-code">
+      {{ $t("shared.sign_in.otp_email_sign_in_form.verify.code_label") }}
     </label>
 
     <div
-      class="email-otp-verify-form__field"
+      class="otp-email-verify-form__field"
       :class="{
-        'email-otp-verify-form__field--focused': isFocused,
-        'email-otp-verify-form__field--error': !!errorMessage,
-        'email-otp-verify-form__field--busy': loading,
+        'otp-email-verify-form__field--focused': isFocused,
+        'otp-email-verify-form__field--error': !!errorMessage,
+        'otp-email-verify-form__field--busy': loading,
       }"
     >
       <input
-        id="email-otp-code"
+        id="otp-email-code"
         ref="codeInputRef"
         v-model="code"
-        class="email-otp-verify-form__input"
+        class="otp-email-verify-form__input"
         type="text"
         inputmode="numeric"
         autocomplete="one-time-code"
         pattern="[0-9]*"
         :aria-invalid="!!errorMessage"
-        aria-describedby="email-otp-hint email-otp-message"
-        data-test-id="email-otp-code-input"
+        aria-describedby="otp-email-hint otp-email-message"
+        data-test-id="otp-email-code-input"
         @input="onInput"
         @focus="isFocused = true"
         @blur="isFocused = false"
       />
 
-      <div class="email-otp-verify-form__cells" aria-hidden="true">
+      <div class="otp-email-verify-form__cells" aria-hidden="true">
         <div
           v-for="index in CODE_LENGTH"
           :key="index"
-          class="email-otp-verify-form__cell"
+          class="otp-email-verify-form__cell"
           :class="{
-            'email-otp-verify-form__cell--active': isFocused && index - 1 === code.length && code.length < CODE_LENGTH,
+            'otp-email-verify-form__cell--active': isFocused && index - 1 === code.length && code.length < CODE_LENGTH,
           }"
         >
           {{ code[index - 1] }}
@@ -66,38 +66,38 @@
       </div>
     </div>
 
-    <div v-if="errorMessage" id="email-otp-message" class="email-otp-verify-form__message" role="alert">
+    <div v-if="errorMessage" id="otp-email-message" class="otp-email-verify-form__message" role="alert">
       {{ errorMessage }}
     </div>
 
-    <p id="email-otp-hint" class="email-otp-verify-form__hint">
-      {{ $t("shared.sign_in.email_otp_sign_in_form.verify.paste_hint") }}
+    <p id="otp-email-hint" class="otp-email-verify-form__hint">
+      {{ $t("shared.sign_in.otp_email_sign_in_form.verify.paste_hint") }}
     </p>
 
     <VcButton
       :loading="loading"
       :disabled="!isCodeComplete"
       type="submit"
-      class="email-otp-verify-form__submit"
+      class="otp-email-verify-form__submit"
       full-width
-      data-test-id="email-otp-sign-in-button"
+      data-test-id="otp-email-sign-in-button"
     >
-      {{ $t("shared.sign_in.email_otp_sign_in_form.verify.submit_button") }}
+      {{ $t("shared.sign_in.otp_email_sign_in_form.verify.submit_button") }}
     </VcButton>
 
-    <div class="email-otp-verify-form__footer">
+    <div class="otp-email-verify-form__footer">
       <button
         type="button"
-        class="email-otp-verify-form__link"
+        class="otp-email-verify-form__link"
         :disabled="loading"
-        data-test-id="email-otp-resend-button"
+        data-test-id="otp-email-resend-button"
         @click="onResend"
       >
-        {{ $t("shared.sign_in.email_otp_sign_in_form.verify.resend_button") }}
+        {{ $t("shared.sign_in.otp_email_sign_in_form.verify.resend_button") }}
       </button>
 
-      <button type="button" class="email-otp-verify-form__link" @click="emit('useDifferentEmail')">
-        {{ $t("shared.sign_in.email_otp_sign_in_form.verify.use_different_email_link") }}
+      <button type="button" class="otp-email-verify-form__link" @click="emit('useDifferentEmail')">
+        {{ $t("shared.sign_in.otp_email_sign_in_form.verify.use_different_email_link") }}
       </button>
     </div>
 
@@ -167,8 +167,8 @@ async function onSubmit() {
     const result = await verifyCode(props.email, code.value);
     await handleOutcome(result);
   } catch (err) {
-    Logger.error("EmailOtpVerifyForm", err);
-    errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.generic");
+    Logger.error("OtpEmailVerifyForm", err);
+    errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
   }
 }
 
@@ -183,13 +183,13 @@ async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<vo
       emit("locked", result.lockoutSecondsRemaining);
       return;
     case "InvalidCode":
-      errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.invalid_code");
+      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.invalid_code");
       await nextTick();
       codeInputRef.value?.focus();
       codeInputRef.value?.select();
       return;
     default:
-      errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.generic");
+      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
   }
 }
 
@@ -205,25 +205,25 @@ async function onResend() {
     }
 
     if (result?.outcome !== "CodeSent") {
-      errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.generic");
+      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
       return;
     }
 
     code.value = "";
     liveMessage.value = "";
     await nextTick();
-    liveMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.live_resent");
+    liveMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.live_resent");
     await nextTick();
     codeInputRef.value?.focus();
   } catch (err) {
-    Logger.error("EmailOtpVerifyForm.onResend", err);
-    errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.generic");
+    Logger.error("OtpEmailVerifyForm.onResend", err);
+    errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
   }
 }
 </script>
 
 <style lang="scss">
-.email-otp-verify-form {
+.otp-email-verify-form {
   @apply text-start;
 
   &__error {

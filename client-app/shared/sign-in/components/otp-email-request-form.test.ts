@@ -1,7 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref } from "vue";
-import EmailOtpRequestForm from "./email-otp-request-form.vue";
+import OtpEmailRequestForm from "./otp-email-request-form.vue";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
 const loading = ref(false);
@@ -41,7 +41,7 @@ const stubs = {
 };
 
 function mountForm() {
-  return mount(EmailOtpRequestForm, {
+  return mount(OtpEmailRequestForm, {
     global: {
       mocks: { $t: (key: string) => key },
       stubs,
@@ -64,13 +64,13 @@ async function submitForm(wrapper: ReturnType<typeof mountForm>) {
 
 async function fillEmailAndSubmit(email: string) {
   const wrapper = mountForm();
-  await wrapper.find('[data-test-id="email-otp-email-input"]').setValue(email);
+  await wrapper.find('[data-test-id="otp-email-email-input"]').setValue(email);
   await submitForm(wrapper);
 
   return wrapper;
 }
 
-describe("EmailOtpRequestForm", () => {
+describe("OtpEmailRequestForm", () => {
   beforeEach(() => {
     loading.value = false;
     requestCode.mockReset();
@@ -89,7 +89,7 @@ describe("EmailOtpRequestForm", () => {
 
   it("does not request a code for an invalid email", async () => {
     const wrapper = mountForm();
-    await wrapper.find('[data-test-id="email-otp-email-input"]').setValue("not-an-email");
+    await wrapper.find('[data-test-id="otp-email-email-input"]').setValue("not-an-email");
     await wrapper.find("form").trigger("submit");
     await flushPromises();
     await flushPromises();
@@ -113,7 +113,7 @@ describe("EmailOtpRequestForm", () => {
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 
-    expect(wrapper.find('[role="alert"]').text()).toBe("shared.sign_in.email_otp_sign_in_form.request.errors.generic");
+    expect(wrapper.find('[role="alert"]').text()).toBe("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
     expect(wrapper.emitted("succeeded")).toBeFalsy();
     expect(wrapper.emitted("disabled")).toBeFalsy();
   });
@@ -123,6 +123,6 @@ describe("EmailOtpRequestForm", () => {
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 
-    expect(wrapper.find('[role="alert"]').text()).toBe("shared.sign_in.email_otp_sign_in_form.request.errors.generic");
+    expect(wrapper.find('[role="alert"]').text()).toBe("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
   });
 });

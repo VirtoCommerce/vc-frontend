@@ -1,8 +1,8 @@
 <template>
-  <div class="email-otp-sign-in-form">
-    <EmailOtpRequestForm v-if="step === 'request'" @succeeded="onRequested" @disabled="step = 'generic'" />
+  <div class="otp-email-sign-in-form">
+    <OtpEmailRequestForm v-if="step === 'request'" @succeeded="onRequested" @disabled="step = 'generic'" />
 
-    <EmailOtpVerifyForm
+    <OtpEmailVerifyForm
       v-else-if="step === 'verify' && pending"
       :email="pending.email"
       :masked-email="pending.maskedEmail"
@@ -11,22 +11,22 @@
       @locked="onLocked"
     />
 
-    <div v-else-if="step === 'locked'" class="email-otp-sign-in-form__terminal">
-      <h2 ref="terminalHeadingRef" tabindex="-1" class="email-otp-sign-in-form__terminal-title">
-        {{ $t("shared.sign_in.email_otp_sign_in_form.locked.title") }}
+    <div v-else-if="step === 'locked'" class="otp-email-sign-in-form__terminal">
+      <h2 ref="terminalHeadingRef" tabindex="-1" class="otp-email-sign-in-form__terminal-title">
+        {{ $t("shared.sign_in.otp_email_sign_in_form.locked.title") }}
       </h2>
 
-      <p v-if="isIndefiniteLockout" class="email-otp-sign-in-form__terminal-text">
+      <p v-if="isIndefiniteLockout" class="otp-email-sign-in-form__terminal-text">
         {{ $t("common.messages.blocked") }} <ContactAdministratorLink />.
       </p>
 
-      <p v-else class="email-otp-sign-in-form__terminal-text">
+      <p v-else class="otp-email-sign-in-form__terminal-text">
         {{
           lockoutCountdown.secondsLeft.value > 0
-            ? $t("shared.sign_in.email_otp_sign_in_form.locked.text_countdown", {
+            ? $t("shared.sign_in.otp_email_sign_in_form.locked.text_countdown", {
                 time: lockoutCountdown.formatted.value,
               })
-            : $t("shared.sign_in.email_otp_sign_in_form.locked.text_ready")
+            : $t("shared.sign_in.otp_email_sign_in_form.locked.text_ready")
         }}
       </p>
 
@@ -36,42 +36,42 @@
         :disabled="lockoutCountdown.secondsLeft.value > 0"
         @click="resetToRequest"
       >
-        {{ $t("shared.sign_in.email_otp_sign_in_form.locked.start_over_button") }}
+        {{ $t("shared.sign_in.otp_email_sign_in_form.locked.start_over_button") }}
       </VcButton>
 
-      <div v-if="hasPasswordAuthentication" class="email-otp-sign-in-form__terminal-footer">
+      <div v-if="hasPasswordAuthentication" class="otp-email-sign-in-form__terminal-footer">
         <button
           type="button"
-          class="email-otp-sign-in-form__link"
-          data-test-id="email-otp-switch-to-password-link"
+          class="otp-email-sign-in-form__link"
+          data-test-id="otp-email-switch-to-password-link"
           @click="emit('switchToPassword')"
         >
-          {{ $t("shared.sign_in.email_otp_sign_in_form.request.switch_to_password_link") }}
+          {{ $t("shared.sign_in.otp_email_sign_in_form.request.switch_to_password_link") }}
         </button>
       </div>
     </div>
 
-    <div v-else-if="step === 'generic'" class="email-otp-sign-in-form__terminal">
-      <h2 ref="terminalHeadingRef" tabindex="-1" class="email-otp-sign-in-form__terminal-title">
-        {{ $t("shared.sign_in.email_otp_sign_in_form.generic.title") }}
+    <div v-else-if="step === 'generic'" class="otp-email-sign-in-form__terminal">
+      <h2 ref="terminalHeadingRef" tabindex="-1" class="otp-email-sign-in-form__terminal-title">
+        {{ $t("shared.sign_in.otp_email_sign_in_form.generic.title") }}
       </h2>
 
-      <p class="email-otp-sign-in-form__terminal-text">
-        {{ $t("shared.sign_in.email_otp_sign_in_form.generic.text") }}
+      <p class="otp-email-sign-in-form__terminal-text">
+        {{ $t("shared.sign_in.otp_email_sign_in_form.generic.text") }}
       </p>
 
       <VcButton
         v-if="hasPasswordAuthentication"
         full-width
-        data-test-id="email-otp-switch-to-password-button"
+        data-test-id="otp-email-switch-to-password-button"
         @click="emit('switchToPassword')"
       >
-        {{ $t("shared.sign_in.email_otp_sign_in_form.generic.password_button") }}
+        {{ $t("shared.sign_in.otp_email_sign_in_form.generic.password_button") }}
       </VcButton>
 
-      <div class="email-otp-sign-in-form__terminal-footer">
-        <button type="button" class="email-otp-sign-in-form__link" @click="resetToRequest">
-          {{ $t("shared.sign_in.email_otp_sign_in_form.generic.back_link") }}
+      <div class="otp-email-sign-in-form__terminal-footer">
+        <button type="button" class="otp-email-sign-in-form__link" @click="resetToRequest">
+          {{ $t("shared.sign_in.otp_email_sign_in_form.generic.back_link") }}
         </button>
       </div>
     </div>
@@ -79,11 +79,11 @@
     <button
       v-if="step === 'request' && hasPasswordAuthentication"
       type="button"
-      class="email-otp-sign-in-form__link email-otp-sign-in-form__switch-link"
-      data-test-id="email-otp-switch-to-password-link"
+      class="otp-email-sign-in-form__link otp-email-sign-in-form__switch-link"
+      data-test-id="otp-email-switch-to-password-link"
       @click="emit('switchToPassword')"
     >
-      {{ $t("shared.sign_in.email_otp_sign_in_form.request.switch_to_password_link") }}
+      {{ $t("shared.sign_in.otp_email_sign_in_form.request.switch_to_password_link") }}
     </button>
   </div>
 </template>
@@ -91,8 +91,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { ContactAdministratorLink } from "@/shared/common";
-import EmailOtpRequestForm from "./email-otp-request-form.vue";
-import EmailOtpVerifyForm from "./email-otp-verify-form.vue";
+import OtpEmailRequestForm from "./otp-email-request-form.vue";
+import OtpEmailVerifyForm from "./otp-email-verify-form.vue";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 import type { OtpStepType } from "@/shared/sign-in/composables/useOtpSignInMode";
 
@@ -198,7 +198,7 @@ function resetToRequest() {
 </script>
 
 <style lang="scss">
-.email-otp-sign-in-form {
+.otp-email-sign-in-form {
   @apply text-start;
 
   &__switch-link {

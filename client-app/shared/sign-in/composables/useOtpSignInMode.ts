@@ -3,9 +3,9 @@ import type { ComputedRef, Ref } from "vue";
 
 export type OtpStepType = "request" | "verify" | "locked" | "generic";
 
-export function useOtpSignInMode(hasEmailOtpAuthentication: Ref<boolean> | ComputedRef<boolean>) {
-  const signInMode = ref<"password" | "otp">(hasEmailOtpAuthentication.value ? "otp" : "password");
-  const showEmailOtpForm = computed(() => hasEmailOtpAuthentication.value && signInMode.value === "otp");
+export function useOtpSignInMode(hasOtpEmailAuthentication: Ref<boolean> | ComputedRef<boolean>) {
+  const signInMode = ref<"password" | "otp">(hasOtpEmailAuthentication.value ? "otp" : "password");
+  const showOtpEmailForm = computed(() => hasOtpEmailAuthentication.value && signInMode.value === "otp");
 
   const otpStep = ref<OtpStepType>("request");
 
@@ -21,7 +21,7 @@ export function useOtpSignInMode(hasEmailOtpAuthentication: Ref<boolean> | Compu
 
   return {
     signInMode,
-    showEmailOtpForm,
+    showOtpEmailForm,
     otpStep,
     switchToOtp,
     switchToPassword,

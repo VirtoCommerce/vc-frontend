@@ -608,7 +608,7 @@
       }
     },
     "sign_in": {
-      "email_otp_sign_in_form": {
+      "otp_email_sign_in_form": {
         "switch_to_otp_link": "Zaloguj się kodem jednorazowym",
         "request": {
           "subtitle": "Wyślemy Ci kod e-mailem. Hasło nie jest potrzebne.",

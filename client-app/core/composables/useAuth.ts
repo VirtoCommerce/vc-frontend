@@ -104,7 +104,7 @@ function _useAuth() {
 
   async function nativeSignIn(params: Record<string, string>): Promise<void> {
     getTokenParams.value = new URLSearchParams({
-      grant_type: "email_otp_sign_in",
+      grant_type: "otp_email",
       scope: "offline_access",
       ...params,
     });

@@ -1,8 +1,8 @@
 <template>
-  <form class="email-otp-request-form" @submit="onSubmit">
+  <form class="otp-email-request-form" @submit="onSubmit">
     <VcAlert
       v-if="errorMessage"
-      class="email-otp-request-form__error"
+      class="otp-email-request-form__error"
       color="danger"
       size="sm"
       variant="outline-dark"
@@ -11,33 +11,33 @@
       {{ errorMessage }}
     </VcAlert>
 
-    <p class="email-otp-request-form__subtitle">
-      {{ $t("shared.sign_in.email_otp_sign_in_form.request.subtitle") }}
+    <p class="otp-email-request-form__subtitle">
+      {{ $t("shared.sign_in.otp_email_sign_in_form.request.subtitle") }}
     </p>
 
     <VcInput
       v-model.trim="email"
       name="email"
       type="email"
-      class="email-otp-request-form__input"
-      :label="$t('shared.sign_in.email_otp_sign_in_form.request.email_label')"
+      class="otp-email-request-form__input"
+      :label="$t('shared.sign_in.otp_email_sign_in_form.request.email_label')"
       :placeholder="$t('common.placeholders.email')"
       :disabled="loading"
       required
       :message="validationErrors.email"
       :error="!!validationErrors.email"
       autocomplete="email"
-      test-id-input="email-otp-email-input"
+      test-id-input="otp-email-email-input"
     />
 
     <VcButton
       :loading="loading"
       type="submit"
-      class="email-otp-request-form__submit"
+      class="otp-email-request-form__submit"
       full-width
-      data-test-id="email-otp-continue-button"
+      data-test-id="otp-email-continue-button"
     >
-      {{ $t("shared.sign_in.email_otp_sign_in_form.request.continue_button") }}
+      {{ $t("shared.sign_in.otp_email_sign_in_form.request.continue_button") }}
     </VcButton>
   </form>
 </template>
@@ -78,7 +78,7 @@ const onSubmit = handleSubmit(async () => {
     const result = await requestCode(email.value);
 
     if (!result) {
-      errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.request.errors.generic");
+      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
       return;
     }
 
@@ -89,14 +89,14 @@ const onSubmit = handleSubmit(async () => {
 
     emit("succeeded", { email: email.value, result });
   } catch (err) {
-    Logger.error("EmailOtpRequestForm", err);
-    errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.request.errors.generic");
+    Logger.error("OtpEmailRequestForm", err);
+    errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
   }
 });
 </script>
 
 <style lang="scss">
-.email-otp-request-form {
+.otp-email-request-form {
   @apply text-start;
 
   &__error {

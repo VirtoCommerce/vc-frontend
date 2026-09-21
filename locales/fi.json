@@ -608,7 +608,7 @@
       }
     },
     "sign_in": {
-      "email_otp_sign_in_form": {
+      "otp_email_sign_in_form": {
         "switch_to_otp_link": "Kirjaudu kertakoodilla",
         "request": {
           "subtitle": "Lähetämme sinulle koodin sähköpostitse. Salasanaa ei tarvita.",

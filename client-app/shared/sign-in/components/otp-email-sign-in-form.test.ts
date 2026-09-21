@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import EmailOtpSignInForm from "./email-otp-sign-in-form.vue";
+import OtpEmailSignInForm from "./otp-email-sign-in-form.vue";
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key }),
@@ -13,17 +13,17 @@ vi.mock("@/shared/common", () => ({
   },
 }));
 
-vi.mock("./email-otp-request-form.vue", () => ({
+vi.mock("./otp-email-request-form.vue", () => ({
   default: {
-    name: "EmailOtpRequestForm",
+    name: "OtpEmailRequestForm",
     emits: ["succeeded", "disabled"],
     template: `<div class="stub-request-form" />`,
   },
 }));
 
-vi.mock("./email-otp-verify-form.vue", () => ({
+vi.mock("./otp-email-verify-form.vue", () => ({
   default: {
-    name: "EmailOtpVerifyForm",
+    name: "OtpEmailVerifyForm",
     props: ["email", "maskedEmail"],
     emits: ["useDifferentEmail", "disabled", "locked"],
     template: `<div class="stub-verify-form" />`,
@@ -46,7 +46,7 @@ function translate(key: string, params?: Record<string, unknown>) {
 }
 
 function mountForm(hasPasswordAuthentication = true) {
-  return mount(EmailOtpSignInForm, {
+  return mount(OtpEmailSignInForm, {
     props: { hasPasswordAuthentication },
     attachTo: document.body,
     global: {
@@ -57,14 +57,14 @@ function mountForm(hasPasswordAuthentication = true) {
 }
 
 function requestForm(wrapper: ReturnType<typeof mountForm>) {
-  return wrapper.findComponent({ name: "EmailOtpRequestForm" });
+  return wrapper.findComponent({ name: "OtpEmailRequestForm" });
 }
 
 function verifyForm(wrapper: ReturnType<typeof mountForm>) {
-  return wrapper.findComponent({ name: "EmailOtpVerifyForm" });
+  return wrapper.findComponent({ name: "OtpEmailVerifyForm" });
 }
 
-describe("EmailOtpSignInForm", () => {
+describe("OtpEmailSignInForm", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -122,17 +122,17 @@ describe("EmailOtpSignInForm", () => {
     await requestForm(wrapper).vm.$emit("disabled");
     await flushPromises();
 
-    expect(wrapper.find(".email-otp-sign-in-form__terminal-title").text()).toBe(
-      "shared.sign_in.email_otp_sign_in_form.generic.title",
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-title").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.generic.title",
     );
-    expect(document.activeElement).toBe(wrapper.find(".email-otp-sign-in-form__terminal-title").element);
+    expect(document.activeElement).toBe(wrapper.find(".otp-email-sign-in-form__terminal-title").element);
   });
 
   it("returns from the generic terminal to the request step", async () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("disabled");
 
-    await wrapper.find(".email-otp-sign-in-form__terminal-footer button").trigger("click");
+    await wrapper.find(".otp-email-sign-in-form__terminal-footer button").trigger("click");
 
     expect(requestForm(wrapper).exists()).toBe(true);
   });
@@ -143,13 +143,13 @@ describe("EmailOtpSignInForm", () => {
 
     await verifyForm(wrapper).vm.$emit("locked", 5);
 
-    expect(wrapper.find(".email-otp-sign-in-form__terminal-text").text()).toContain("0:05");
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("0:05");
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(true);
 
     await vi.advanceTimersByTimeAsync(5000);
 
-    expect(wrapper.find(".email-otp-sign-in-form__terminal-text").text()).toBe(
-      "shared.sign_in.email_otp_sign_in_form.locked.text_ready",
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.locked.text_ready",
     );
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
   });
@@ -161,7 +161,7 @@ describe("EmailOtpSignInForm", () => {
     // Well beyond any real lockout window — e.g. an admin-imposed or sentinel value.
     await verifyForm(wrapper).vm.$emit("locked", 30 * 24 * 60 * 60);
 
-    expect(wrapper.find(".email-otp-sign-in-form__terminal-text").text()).toContain("common.messages.blocked");
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("common.messages.blocked");
     expect(wrapper.findComponent({ name: "ContactAdministratorLink" }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: "VcButton" }).exists()).toBe(false);
   });
@@ -169,7 +169,7 @@ describe("EmailOtpSignInForm", () => {
   it("hides the password switch link and buttons when the store has no password authentication", async () => {
     const wrapper = mountForm(false);
 
-    expect(wrapper.find(".email-otp-sign-in-form__switch-link").exists()).toBe(false);
+    expect(wrapper.find(".otp-email-sign-in-form__switch-link").exists()).toBe(false);
 
     await requestForm(wrapper).vm.$emit("disabled");
 
@@ -179,7 +179,7 @@ describe("EmailOtpSignInForm", () => {
   it("emits switchToPassword when the password link is used", async () => {
     const wrapper = mountForm();
 
-    await wrapper.find(".email-otp-sign-in-form__switch-link").trigger("click");
+    await wrapper.find(".otp-email-sign-in-form__switch-link").trigger("click");
 
     expect(wrapper.emitted("switchToPassword")).toBeTruthy();
   });

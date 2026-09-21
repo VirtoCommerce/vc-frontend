@@ -5,8 +5,8 @@
         {{ pageTitle }}
       </VcTypography>
 
-      <EmailOtpSignInForm
-        v-if="showEmailOtpForm"
+      <OtpEmailSignInForm
+        v-if="showOtpEmailForm"
         :has-password-authentication="hasPasswordAuthentication"
         @switch-to-password="switchToPassword"
         @step-changed="otpStep = $event"
@@ -16,13 +16,13 @@
         <SignInForm v-if="hasPasswordAuthentication" />
 
         <button
-          v-if="hasEmailOtpAuthentication"
+          v-if="hasOtpEmailAuthentication"
           type="button"
           class="sign-in__switch-link"
-          data-test-id="email-otp-switch-to-otp-link"
+          data-test-id="otp-email-switch-to-otp-link"
           @click="switchToOtp"
         >
-          {{ $t("shared.sign_in.email_otp_sign_in_form.switch_to_otp_link") }}
+          {{ $t("shared.sign_in.otp_email_sign_in_form.switch_to_otp_link") }}
         </button>
       </template>
     </div>
@@ -50,10 +50,10 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead, useReturnUrl } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
-import { useEmailOtpAuthentication } from "@/shared/sign-in/composables/useEmailOtpAuthentication";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
-import EmailOtpSignInForm from "@/shared/sign-in/components/email-otp-sign-in-form.vue";
+import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
@@ -65,16 +65,16 @@ const route = useRoute();
 
 const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
 
-const { hasEmailOtpAuthentication } = useEmailOtpAuthentication();
-const { showEmailOtpForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasEmailOtpAuthentication);
+const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
+const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
 
 // hasOnlyIdentityProviders (from useIdentityProviders) doesn't know about OTP, so it can't
 // tell "only providers" from "providers + OTP" — this page derives its own, OTP-aware version.
-const hasSignInForm = computed(() => hasPasswordAuthentication.value || hasEmailOtpAuthentication.value);
+const hasSignInForm = computed(() => hasPasswordAuthentication.value || hasOtpEmailAuthentication.value);
 
 const pageTitle = computed(() =>
-  showEmailOtpForm.value && otpStep.value === "verify"
-    ? t("shared.sign_in.email_otp_sign_in_form.verify.header")
+  showOtpEmailForm.value && otpStep.value === "verify"
+    ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
     : t("pages.sign_in.header"),
 );
 

@@ -6,8 +6,8 @@
           {{ sectionTitle }}
         </VcTypography>
 
-        <EmailOtpSignInForm
-          v-if="showEmailOtpForm"
+        <OtpEmailSignInForm
+          v-if="showOtpEmailForm"
           :has-password-authentication="hasPasswordAuthentication"
           @switch-to-password="switchToPassword"
           @step-changed="otpStep = $event"
@@ -17,13 +17,13 @@
           <SignInForm grow-buttons />
 
           <button
-            v-if="hasEmailOtpAuthentication"
+            v-if="hasOtpEmailAuthentication"
             type="button"
             class="mt-4 block text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
-            data-test-id="email-otp-switch-to-otp-link"
+            data-test-id="otp-email-switch-to-otp-link"
             @click="switchToOtp"
           >
-            {{ $t("shared.sign_in.email_otp_sign_in_form.switch_to_otp_link") }}
+            {{ $t("shared.sign_in.otp_email_sign_in_form.switch_to_otp_link") }}
           </button>
         </template>
       </div>
@@ -66,18 +66,18 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useThemeContext } from "@/core/composables";
 import { SignInForm, useUser } from "@/shared/account";
-import { useEmailOtpAuthentication } from "@/shared/sign-in/composables/useEmailOtpAuthentication";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
 import { getImageUrl } from "@/ui-kit/utilities";
-import EmailOtpSignInForm from "@/shared/sign-in/components/email-otp-sign-in-form.vue";
+import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
 const { hasPasswordAuthentication } = useIdentityProviders();
-const { hasEmailOtpAuthentication } = useEmailOtpAuthentication();
-const { showEmailOtpForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasEmailOtpAuthentication);
+const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
+const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
 
 const bgImage = computed(() =>
   themeContext.value.settings.homepage_background_image
@@ -86,8 +86,8 @@ const bgImage = computed(() =>
 );
 
 const sectionTitle = computed(() =>
-  showEmailOtpForm.value && otpStep.value === "verify"
-    ? t("shared.sign_in.email_otp_sign_in_form.verify.header")
+  showOtpEmailForm.value && otpStep.value === "verify"
+    ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
     : t("pages.home.sign_in_form_title"),
 );
 </script>

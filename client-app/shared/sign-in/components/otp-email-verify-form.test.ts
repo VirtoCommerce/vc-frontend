@@ -1,7 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref } from "vue";
-import EmailOtpVerifyForm from "./email-otp-verify-form.vue";
+import OtpEmailVerifyForm from "./otp-email-verify-form.vue";
 import type { IOtpRequestResponse, IOtpVerifyResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
 const loading = ref(false);
@@ -50,7 +50,7 @@ const stubs = {
 };
 
 function mountForm() {
-  return mount(EmailOtpVerifyForm, {
+  return mount(OtpEmailVerifyForm, {
     props: { email: "buyer@acme.com", maskedEmail: "b***r@acme.com" },
     global: {
       mocks: { $t: (key: string) => key },
@@ -60,7 +60,7 @@ function mountForm() {
 }
 
 function codeInput(wrapper: ReturnType<typeof mountForm>) {
-  return wrapper.find('[data-test-id="email-otp-code-input"]');
+  return wrapper.find('[data-test-id="otp-email-code-input"]');
 }
 
 async function typeCode(wrapper: ReturnType<typeof mountForm>, code: string) {
@@ -74,7 +74,7 @@ async function typeCode(wrapper: ReturnType<typeof mountForm>, code: string) {
   await flushPromises();
 }
 
-describe("EmailOtpVerifyForm", () => {
+describe("OtpEmailVerifyForm", () => {
   beforeEach(() => {
     loading.value = false;
     verifyCode.mockReset();
@@ -108,8 +108,8 @@ describe("EmailOtpVerifyForm", () => {
     const wrapper = mountForm();
     await typeCode(wrapper, "000000");
 
-    expect(wrapper.find("#email-otp-message").text()).toBe(
-      "shared.sign_in.email_otp_sign_in_form.verify.errors.invalid_code",
+    expect(wrapper.find("#otp-email-message").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.verify.errors.invalid_code",
     );
   });
 
@@ -137,8 +137,8 @@ describe("EmailOtpVerifyForm", () => {
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
 
-    expect(wrapper.find("#email-otp-message").text()).toBe(
-      "shared.sign_in.email_otp_sign_in_form.verify.errors.generic",
+    expect(wrapper.find("#otp-email-message").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.verify.errors.generic",
     );
   });
 
@@ -168,12 +168,12 @@ describe("EmailOtpVerifyForm", () => {
     const wrapper = mountForm();
     await codeInput(wrapper).setValue("11111");
 
-    await wrapper.find('[data-test-id="email-otp-resend-button"]').trigger("click");
+    await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
     await flushPromises();
 
     expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("");
     expect(wrapper.find("[aria-live='polite']").text()).toBe(
-      "shared.sign_in.email_otp_sign_in_form.verify.live_resent",
+      "shared.sign_in.otp_email_sign_in_form.verify.live_resent",
     );
   });
 
@@ -185,13 +185,13 @@ describe("EmailOtpVerifyForm", () => {
     const wrapper = mountForm();
     await codeInput(wrapper).setValue("11111");
 
-    await wrapper.find('[data-test-id="email-otp-resend-button"]').trigger("click");
+    await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
     await flushPromises();
 
     expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("11111");
     expect(wrapper.find("[aria-live='polite']").text()).toBe("");
-    expect(wrapper.find("#email-otp-message").text()).toBe(
-      "shared.sign_in.email_otp_sign_in_form.verify.errors.generic",
+    expect(wrapper.find("#otp-email-message").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.verify.errors.generic",
     );
   });
 
@@ -199,7 +199,7 @@ describe("EmailOtpVerifyForm", () => {
     requestCode.mockResolvedValue({ outcome: "OtpDisabled" });
 
     const wrapper = mountForm();
-    await wrapper.find('[data-test-id="email-otp-resend-button"]').trigger("click");
+    await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
     await flushPromises();
 
     expect(wrapper.emitted("disabled")).toBeTruthy();
@@ -209,7 +209,7 @@ describe("EmailOtpVerifyForm", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);
 
-    const wrapper = mount(EmailOtpVerifyForm, {
+    const wrapper = mount(OtpEmailVerifyForm, {
       attachTo: container,
       props: { email: "buyer@acme.com", maskedEmail: "b***r@acme.com" },
       global: {
