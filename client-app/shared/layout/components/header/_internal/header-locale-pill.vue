@@ -123,6 +123,10 @@ const {
   // theme keys the plate uses rather than inheriting anything.
   --ink: var(--header-bottom-text-color);
 
+  // The panel's own surface, so a selected row can invert straight onto it.
+  --surface: var(--header-bottom-bg-color);
+  --line: color-mix(in srgb, var(--ink) 12%, transparent);
+
   &__pill {
     @apply flex flex-none cursor-pointer items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-2 text-sm;
 
@@ -151,7 +155,7 @@ const {
   }
 
   &__panel {
-    @apply flex gap-6 p-3;
+    @apply flex gap-4 p-4;
 
     // The store decides how many currencies and languages there are — QA serves 9 and 15,
     // which is a panel taller than the window. Each column carries its own scroll.
@@ -164,7 +168,11 @@ const {
   }
 
   &__group {
-    @apply flex flex-col gap-0.5;
+    // Each setting is its own outlined card, as the design draws it, instead of three
+    // lists running together down one surface with only their titles to separate them.
+    @apply flex flex-col gap-0.5 rounded-[--vc-radius] p-2;
+
+    border: 1px solid var(--line);
   }
 
   &__title {
@@ -174,10 +182,13 @@ const {
   }
 
   &__item {
-    @apply flex w-full cursor-pointer items-center gap-2.5 rounded-[--vc-radius] border-0 bg-transparent px-2 py-1.5 text-start text-sm leading-tight;
+    @apply flex w-full cursor-pointer items-center gap-2 border-0 bg-transparent p-2 text-start text-sm leading-tight;
 
+    border-radius: calc(var(--vc-radius) - 2px);
     color: inherit;
-    transition: background var(--transition-duration) ease;
+    transition:
+      background var(--transition-duration) ease,
+      color var(--transition-duration) ease;
 
     // A tint of the ink, not a palette step: it lands right in both themes, where a fixed
     // light grey would darken the dark panel instead of lifting it.
@@ -185,8 +196,11 @@ const {
       background: color-mix(in srgb, var(--ink) 8%, transparent);
     }
 
+    // The design fills the selected row with the ink and flips its text back to the
+    // panel's surface. Naming both ends keeps it correct in dark, where the two swap.
     &[aria-current="true"] {
-      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      background: var(--ink);
+      color: var(--surface);
     }
   }
 
@@ -196,7 +210,9 @@ const {
     // a longer one clips instead of sliding out of the box and over the code next to it.
     @apply w-8 flex-none truncate text-center;
 
-    color: color-mix(in srgb, var(--ink) 55%, transparent);
+    // Muted against whatever the row is painted with, so the selected row mutes against
+    // its own light text rather than disappearing into the ink behind it.
+    color: color-mix(in srgb, currentColor 55%, transparent);
   }
 
   &__code {
@@ -204,21 +220,30 @@ const {
   }
 
   &__name {
-    @apply truncate;
+    // The design sets the English name against the far edge of the card, which is what
+    // gives the list its column; `ps-6` is the smallest gap the longest code may keep.
+    @apply ms-auto truncate ps-6;
 
-    color: color-mix(in srgb, var(--ink) 55%, transparent);
+    color: color-mix(in srgb, currentColor 55%, transparent);
   }
 
   &__modes {
-    // The design puts the three modes on one segmented rail (VcTabSwitchGroup --filled):
-    // the rail sits a step below the panel and the checked switch rides on it as the lighter
-    // surface — which is why the rail is neutral-50 and not neutral-100, the step the checked
-    // switch itself paints in dark. The kit has no group component, so the rail is built from
-    // the switch's own tokens: no per-switch border, and the pill radius stepped down inside.
-    @apply grid grid-cols-3 gap-1 rounded-[--vc-radius] border border-neutral-200 bg-neutral-50 p-1;
+    // The design puts the three modes on one segmented rail (VcTabSwitchGroup): the rail is
+    // a step off the card and carries no border of its own, and the checked switch rides on
+    // it as the lighter surface. The kit has no group component, so the rail is built from
+    // the switch's own tokens — no per-switch border, pill radius stepped down inside, and
+    // the icons kept in the brand colour the design gives all three of them.
+    @apply grid grid-cols-3 gap-1 rounded-[--vc-radius] p-1;
+
+    // The rail is the step below the surface the checked switch paints for itself
+    // (additional-50). Plain neutral-100 is that step in light but equals additional-50 in
+    // dark, where it would swallow the selection; mixing the two neutral steps lands one
+    // notch below the checked pill in both themes.
+    background: color-mix(in srgb, theme("colors.neutral.100") 60%, theme("colors.neutral.50"));
 
     --vc-tab-switch-radius: calc(var(--vc-radius) - 2px);
     --vc-tab-switch-border-color: transparent;
+    --vc-icon-color: theme("colors.primary.500");
   }
 
   &__flag {
