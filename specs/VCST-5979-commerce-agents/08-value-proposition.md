@@ -1,4 +1,4 @@
-# Value: for our merchants, their buyers, and our partners
+# Value: for our customers, their buyers, and our partners
 
 The technical fit is in [07-virto-fit-technical.md](07-virto-fit-technical.md). This file is
 the "why would anyone pay for it" half.
@@ -19,27 +19,46 @@ This also sets the honest limit on the pitch: we are not selling AI, we are sell
 integration and the guardrails. That is a more defensible thing to sell and a much easier
 one to support.
 
-## For the buyer on a B2B storefront
+## Who the customer is
 
-The demos ship B2C retail flows. Our buyers do something different, and conversation fits
-their job better than it fits a consumer's:
+Worth fixing before the rest of this file, because it is easy to write as though every
+Virto customer were one store with one owner. They are not. A customer may be a single
+brand, a distributor, a wholesaler, or a **marketplace operator whose own customers are
+sellers** — in which case the people this agent serves are two levels down. The blueprint
+covers that shape explicitly: on a marketplace the seller is one more search dimension, and
+the merchant agent acts for the operator the session names.
+
+So the general statement of value is the one that holds across all of them: **a
+conversational buying surface over the customer's own catalogue, prices and rules, that
+they own and we maintain once.** Everything below is that statement made specific — and no
+single specific below is the reason.
+
+## For the buyer
+
+Conversation fits a professional buyer's job better than it fits a consumer's:
 
 - **Reorder and bulk.** "Add the standard monthly order for site B, but double the gloves."
-  Today that is a list page, a spreadsheet, or a call to a rep. With `addBulkItemsCart`
-  behind the agent it is one sentence. This is the demo to lead with — it is unarguable and
-  it does not exist in the ACME verticals.
-- **Find the right SKU in a catalogue built for specialists.** Industrial catalogues are
-  full of near-identical variants distinguished by attributes only an expert reads. The
-  agent's comparison and option-filter behaviour is aimed exactly here.
-- **"Where is my order and why is it late."** `getOrders` plus order issues — the single
-  highest-volume support question, answered without a ticket, with provenance gates
-  ensuring the status is read from the order and not invented.
+  Today that is a list page, a spreadsheet, or a call to a rep; in a conversation it is one
+  sentence. The agent adds line by line today — `addBulkItemsCart` is not wired.
+- **Find the right thing in a catalogue built for specialists.** Large catalogues are full
+  of near-identical variants separated by attributes only an expert reads, and they are
+  organised the way the business files them, not the way a buyer asks. The agent's
+  comparison and option-filter behaviour is aimed exactly here. (One measured example of
+  the vocabulary gap is in [09-risks-and-nuances.md](09-risks-and-nuances.md) — treat it as
+  an illustration, not as the argument: how much of it is index configuration is a separate
+  question for the platform team.)
+- **"Where is my order and why is it late."** Over `getOrders` / `getOrder` — the single
+  highest-volume support question, answered without a ticket, and the status is read from
+  the order rather than recalled.
 - **Close into a quote, not a card.** The natural B2B ending is a quote or a purchase
-  request, both of which we already have. The agent builds the basket; a human closes.
-- **Policies and terms, answered from the contract.** Grounded in the CMS pages, with the
-  blueprint forcing a read before the model answers — no invented return windows.
+  request. The platform has both mutations; the agent does not call them yet. The agent
+  builds the basket, a human closes.
+- **Policies and terms, answered from the source.** The blueprint forces a read before the
+  model answers, so no return window is invented. Today that read hits a stub and the agent
+  says the lookup is unavailable, which is the honest half of the behaviour already
+  working.
 
-## For the merchant running the storefront
+## For the business running the storefront
 
 - **A sales-rep copilot.** The merchant agent's read half maps onto the Sales Rep Hub; the
   staging half suits somebody who proposes rather than commits. This is the Virto-shaped
