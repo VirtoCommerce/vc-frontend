@@ -178,6 +178,7 @@ watch(route, () => {
     $stuck: &;
 
     --mega-menu-height: 0px;
+    --mega-menu-border-color: transparent;
   }
 
   &__surface {

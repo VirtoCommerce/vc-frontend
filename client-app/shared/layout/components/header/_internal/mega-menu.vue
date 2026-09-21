@@ -161,11 +161,13 @@ onMounted(() => {
   // and the horizontal padding, and a hairline separates the two rows.
   @apply flex items-center px-5 border-t;
 
-  // Height is a variable, not a fixed utility: the sticky header collapses this row by
-  // setting it from the outside. A rule in the parent component cannot win here on
-  // specificity alone, so the value has to travel by inheritance.
+  // Height and hairline are variables, not fixed utilities: the sticky header collapses this
+  // row from the outside, and a rule in the parent component cannot win here on specificity
+  // alone. The hairline has to go with the height — a border does not collapse with its box,
+  // and would stay as a straight line across the plate's rounded bottom corners.
   height: var(--mega-menu-height, 2.5rem);
-  border-color: color-mix(in srgb, var(--header-bottom-text-color) 8%, transparent);
+  border-color: var(--mega-menu-border-color, color-mix(in srgb, var(--header-bottom-text-color) 8%, transparent));
+  transition: border-color var(--transition-duration) ease;
 
   &__popover {
     @apply flex items-stretch;

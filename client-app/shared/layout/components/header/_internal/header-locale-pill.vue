@@ -5,6 +5,7 @@
     :offset-options="10"
     role="dialog"
     :aria-label="$t('shared.layout.header.locale_pill.aria_label')"
+    bg-color="--header-bottom-bg-color"
     shadow
   >
     <template #trigger="{ opened, triggerProps }">
@@ -37,23 +38,30 @@
             >
               <span class="header-locale__symbol">{{ currency.symbol }}</span>
 
-              <b>{{ currency.code }}</b>
+              <b class="header-locale__code">{{ currency.code }}</b>
+
+              <span class="header-locale__name">{{ currency.englishName }}</span>
             </button>
           </section>
 
           <section v-if="isDarkModeAvailable" class="header-locale__group">
             <h3 class="header-locale__title">{{ $t("shared.layout.header.locale_pill.appearance") }}</h3>
 
-            <VcTabSwitch
-              v-for="mode in COLOR_MODES"
-              :key="mode.value"
-              v-model="colorMode"
-              name="header-color-mode"
-              :value="mode.value"
-              :icon="mode.icon"
-              :label="$t(`shared.layout.header.locale_pill.theme.${mode.value}`)"
-              size="sm"
-            />
+            <div class="header-locale__modes">
+              <!-- VcTabSwitch does not write to its model — v-model only feeds `checked`, and the
+                   consumer commits the new value from @change (see view-mode.vue). -->
+              <VcTabSwitch
+                v-for="mode in COLOR_MODES"
+                :key="mode.value"
+                v-model="colorMode"
+                name="header-color-mode"
+                :value="mode.value"
+                :icon="mode.icon"
+                :label="$t(`shared.layout.header.locale_pill.theme.${mode.value}`)"
+                size="sm"
+                @change="colorMode = $event"
+              />
+            </div>
           </section>
         </div>
 
@@ -111,36 +119,48 @@ const {
 
 <style lang="scss">
 .header-locale {
-  &__pill {
-    @apply flex flex-none cursor-pointer items-center gap-2 whitespace-nowrap rounded-full border-0 px-3.5 py-2 text-sm;
+  // The panel may be teleported out of the header, so it paints from the same global
+  // theme keys the plate uses rather than inheriting anything.
+  --ink: var(--header-bottom-text-color);
 
+  &__pill {
+    @apply flex flex-none cursor-pointer items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-2 text-sm;
+
+    border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
     background: transparent;
     color: var(--header-bottom-link-color);
     transition:
       background var(--transition-duration) ease,
-      color var(--transition-duration) ease;
+      border-color var(--transition-duration) ease;
 
     b {
       @apply font-semibold;
 
-      color: var(--header-bottom-text-color);
+      color: var(--ink);
     }
 
     &:hover {
-      background: color-mix(in srgb, var(--header-bottom-text-color) 6%, transparent);
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      border-color: color-mix(in srgb, var(--ink) 26%, transparent);
     }
 
     &--opened {
-      background: color-mix(in srgb, var(--header-bottom-text-color) 8%, transparent);
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
+      border-color: color-mix(in srgb, var(--ink) 26%, transparent);
     }
   }
 
   &__panel {
     @apply flex gap-6 p-3;
+
+    // The store decides how many currencies and languages there are — QA serves 9 and 15,
+    // which is a panel taller than the window. Each column carries its own scroll.
+    max-height: calc(100vh - 7rem);
+    color: var(--ink);
   }
 
   &__column {
-    @apply flex min-w-40 flex-col gap-4;
+    @apply flex min-h-0 flex-col gap-4 overflow-y-auto;
   }
 
   &__group {
@@ -148,23 +168,46 @@ const {
   }
 
   &__title {
-    @apply mb-1 px-2 text-xs font-bold uppercase tracking-wide text-neutral-500;
+    @apply mb-1 px-2 text-xs font-bold uppercase tracking-wide;
+
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
   }
 
   &__item {
     @apply flex w-full cursor-pointer items-center gap-2.5 rounded-[--vc-radius] border-0 bg-transparent px-2 py-1.5 text-start text-sm leading-tight;
 
+    color: inherit;
+    transition: background var(--transition-duration) ease;
+
+    // A tint of the ink, not a palette step: it lands right in both themes, where a fixed
+    // light grey would darken the dark panel instead of lifting it.
     &:hover {
-      @apply bg-neutral-100;
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
     }
 
     &[aria-current="true"] {
-      @apply font-bold;
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
     }
   }
 
   &__symbol {
-    @apply w-4 text-center text-neutral-500;
+    @apply w-4 flex-none text-center;
+
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+
+  &__code {
+    @apply flex-none font-bold;
+  }
+
+  &__name {
+    @apply truncate;
+
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+
+  &__modes {
+    @apply grid grid-cols-3 gap-1 px-2;
   }
 
   &__flag {
