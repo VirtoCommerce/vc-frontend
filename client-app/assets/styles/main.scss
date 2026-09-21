@@ -17,6 +17,7 @@ html {
 
 @include meta.load-css("print");
 @include meta.load-css("dark");
+@include meta.load-css("terra");
 
 /* Use for custom themes only */
 @include meta.load-css("custom");

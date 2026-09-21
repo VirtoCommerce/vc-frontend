@@ -1,0 +1,36 @@
+// Terra theme foundation (VCST-6030): geometry and typography.
+// Only existing tokens are retuned here — no new variables. Colour arrives through
+// the Terra preset JSON and _colors.scss.
+
+:root {
+  // The design's surface radius: 12 for cards and panels, pill for every control.
+  --vc-radius: 0.75rem;
+
+  --vc-button-radius: 9999px;
+  --vc-badge-radius: 9999px;
+  --vc-chip-radius: 9999px;
+  --vc-tab-switch-radius: 9999px;
+  --vc-input-radius: 9999px;
+  --vc-product-image-radius: 0.625rem;
+  // No --vc-select-radius: it also drives the dropdown PANEL, so a pill there rounds
+  // the whole option list away. It falls through to --vc-radius instead.
+
+  --vc-container-max-width: 90.625rem;
+}
+
+@media (width >= theme("screens.lg")) {
+  :root {
+    // VcContainer's own 2xl step widens the gutter to 48px; Terra holds it at 32.
+    --vc-container-px: 2rem;
+  }
+}
+
+// preflight.scss pins `font-lato` on the same selectors from @layer base, which any
+// unlayered rule outranks. :host keeps federated modules (shadow DOM) in step.
+html,
+:host {
+  @apply font-inter;
+
+  // CJK has no italic and the browser would fake the slant.
+  font-synthesis: none;
+}
