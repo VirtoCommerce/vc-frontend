@@ -62,6 +62,18 @@ Parked in `skills/_staged/`: `purchase-research`, `customer-care` — both open 
 
 One B2B buyer flow end to end, shown to customers, not opened to the public.
 
+### 0. Design, which everything visual waits on
+
+The agent answers in cards and we supply them: seven for the shopping agent plus the chat
+shell around them. The brief, the React reference per card, the UI Kit components to reuse
+and the list of fields our platform cannot fill are in the design-references comment on
+[VCST-5979](https://virtocommerce.atlassian.net/browse/VCST-5979). A designer works in
+parallel; every engineering row below assumes a design exists for the card being built.
+
+**The merchant agent brings four more** — `present_metrics`, `present_digest`,
+`present_change_preview` and its own suggestions. None is counted below, none is designed,
+and they belong to the phase that is out of scope.
+
 ### 1. Presentation components — 5 new, 1 rebuilt
 
 Eight components exist in the blueprint. Two are built, one is off, five are missing. Each
@@ -162,8 +174,9 @@ Not in the POC, not optional if it faces real buyers.
 
 ## Explicitly out of scope
 
-- **The merchant agent.** `MerchantBackend` was never mapped. Its read half needs an
-  analytics surface x-api does not have.
+- **The merchant agent**, and with it its own four presentation components.
+  `MerchantBackend` was never mapped; its read half needs an analytics surface x-api does
+  not have.
 - **Configurable products.** `NeedsConfiguration` refuses the add and points at the product
   page. Whether a configuration id can satisfy the cart provenance gate is unresolved, and
   no configurable product appeared in the QA data sampled.

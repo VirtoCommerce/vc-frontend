@@ -24,8 +24,9 @@ The condition was the language: the blueprint is Python and Virto is .NET. **Set
 Python service is kept.** That was the gating decision, and it removes the one thing that
 could have voided the scope below. It buys the harness intact: no port, no reimplementation
 of the gates, the enrichment, the grounding rules or the turn loop. It costs a Python
-runtime inside a .NET product line and a permanent fork of an unmaintained upstream —
-neither is a blocker, both are now standing line items rather than open questions.
+runtime inside a .NET product line and an upstream that will send us nothing — the packages
+are pinned and unmodified, so updates are cheap to take and there are none to take. Neither
+is a blocker; both are standing line items now rather than open questions.
 
 ---
 
@@ -139,19 +140,21 @@ the UCP epic, not a second candidate beside it.
 
 ## Decisions
 
-**Settled: the Python service is kept.** The blueprint's packages are imported, not ported;
-`commerce-agent/` stays the shape it is. Two consequences to carry: a Python runtime now
-belongs to a .NET product line, and the fork is permanent — the upstream is explicitly
-unmaintained, with 35 open PRs including real bug fixes that will never merge, so those are
-ours to cherry-pick and then own.
+**Settled: the Python service is kept.** The blueprint's packages are imported and pinned
+to a commit, not ported and not vendored, so an upstream change would be a SHA bump. The
+standing cost is that none will come: `main` has not moved since the release, 35 open PRs
+with real bug fixes sit unmerged, and the first one we need is ours to carry. The other
+standing cost is a Python runtime inside a .NET product line.
 
-Three remain open. None is the frontend's to make alone.
+**Settled: it is a module we ship**, not a blueprint partners fork. That raises the bar on
+PR #2490 rather than lowering it — the search tuning there is fitted to the QA catalogue
+and has to become configuration before it runs on a catalogue we have never seen.
+
+Two remain open. Neither is the frontend's to make alone.
 
 1. **Whose track** — frontend, platform, or joint — and how it sits beside the UCP epic
    (VCST-5201).
-2. **Product or reference** — a module our customers enable, or a blueprint partners fork.
-   This decides whether PR #2490 is worth reviewing properly or is scaffolding to discard.
-3. **Whose API key** — the customer brings one, we resell tokens, or it runs in their own
+2. **Whose API key** — the customer brings one, we resell tokens, or it runs in their own
    cloud account via Bedrock/Vertex/Foundry. Decides whether budgets, rate limiting and
    abuse handling are ours to build before launch.
 
@@ -181,8 +184,9 @@ Stated plainly, because the estimate depends on it.
   grounding prefetch rather than a call the model chooses.
 - **Configurable products** have no answer: whether a configuration id can satisfy the cart
   provenance gate is still open, and none appeared in the QA data sampled.
-- **Nobody has reviewed the code.** Budget review as the largest single line item on any
-  follow-up; it does not get cheaper because the code appeared quickly.
+- **Nobody has reviewed the code.** It is a proof of concept, so that is expected — but a
+  module we ship is held to a different bar than a spike, and the gap between the two is
+  real work.
 
 ---
 

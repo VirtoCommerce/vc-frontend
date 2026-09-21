@@ -4,11 +4,15 @@ Ordered by how much they should change a decision.
 
 ## Structural
 
-**The upstream does not exist.** Apache-2.0, "not maintained, does not accept
-contributions", 35 open issues and PRs unmerged including real bug fixes. Whatever we adopt
-is a hard fork from day one — no security patches, no dependency bumps, no upstream fixes
-for the bugs strangers have already found. Budget for maintenance from the start, and
-cherry-pick the open PRs during the fork rather than inheriting known bugs.
+**The upstream is inert.** Apache-2.0, "not maintained, does not accept contributions",
+35 open issues and PRs unmerged including real bug fixes, and `main` unchanged since the
+release — our pin is its tip.
+
+We are not forked: the packages install from that commit unmodified, so an update would be
+a SHA bump. The risk is the absence of updates, not the difficulty of taking them. No
+security patch is going to arrive, our fixes cannot be upstreamed, and the first fix we
+need — one of those 35, or a CVE in a dependency — is the point at which we start carrying
+patches and it becomes a fork in earnest. Budget maintenance from the start.
 
 **Python in a .NET product line — accepted, not avoided.** This was the single biggest
 architectural decision ([07-virto-fit-technical.md](07-virto-fit-technical.md)) and it is

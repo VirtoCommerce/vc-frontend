@@ -62,18 +62,19 @@ reading could not:
 
 **Settled: the Python service is kept.** Called out from the start as the real obstacle —
 not the contract — and it was the one that gated the rest. The blueprint's packages are
-imported, not ported. Carried forward as standing costs rather than open questions: a
-Python runtime inside a .NET product line, and a permanent fork of an unmaintained
-upstream whose 35 open PRs include real bug fixes to cherry-pick and then own.
+imported and pinned, not ported or vendored, so updates are a SHA bump; the standing cost
+is that none will come, and every fix we need is ours. The other standing cost is a Python
+runtime inside a .NET product line.
 
-Three remain open, none of them the frontend's to make alone.
+**Settled: it is a module we ship**, not a blueprint partners fork. That raises the bar on
+PR #2490 rather than lowering it: the search tuning there is fitted to the QA catalogue and
+has to become configuration before it runs on a catalogue we have never seen.
+
+Two remain open, neither of them the frontend's to make alone.
 
 1. **Whose track**: frontend, platform, or joint, and how it sits beside the UCP epic
    (VCST-5201). Both answers are defensible; drifting between them is not.
-2. **Product or reference**: a module our customers enable, versus a blueprint partners
-   fork. Changes almost everything downstream, including whether the code in PR #2490 is
-   worth reviewing properly or is scaffolding to throw away.
-3. **Whose API key**: merchant brings their own, or we resell tokens. Decides whether
+2. **Whose API key**: the customer brings their own, or we resell tokens. Decides whether
    per-session budgets, abuse handling and rate limiting are ours to build before launch.
    Trade-offs in [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md); note that
    Bedrock, Vertex and Foundry make "the customer's own cloud account" a fourth answer.

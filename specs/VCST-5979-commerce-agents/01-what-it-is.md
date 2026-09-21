@@ -44,8 +44,13 @@ Measured 2026-09-16 via the GitHub API:
 
 The open PRs include real bug fixes (`consider every occurrence when finding the longest
 product token`, `parse skill frontmatter using complete fence lines`, `isolate in-memory
-facts from caller mutations`) and dependency bumps. They are not being merged. **Plan for a
-hard fork**: whatever we take, we own, including those fixes.
+facts from caller mutations`) and dependency bumps. They are not being merged, and `main`
+has not moved since the release.
+
+**This is a pinned dependency, not a fork.** `requirements.txt` installs the three packages
+from a commit and nothing is vendored or patched, so taking an upstream change would be a
+SHA bump and a test run. The problem is not that we cannot take updates — it is that there
+are none, and any fix we need is ours to write. That is when a fork begins.
 
 ## Layout
 

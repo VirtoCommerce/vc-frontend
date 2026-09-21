@@ -191,7 +191,7 @@ The blueprint is Python. Virto is .NET plus TypeScript. Three ways out:
 | **Take only the patterns**, build our own in .NET or TypeScript | Medium, and we lose the parts we do not think to copy | Full control, no fork to maintain |
 
 Option 1 was taken for the product, not only for the demo. What it buys is the harness
-intact; what it costs is a Python runtime inside a .NET product line, and — since the
-repository is unmaintained ([01-what-it-is.md](01-what-it-is.md)) — a permanent fork,
-including the open bug fixes nobody will merge. Both are standing costs now, not open
-questions.
+intact. What it costs is a Python runtime inside a .NET product line, and an upstream that
+will send us nothing ([01-what-it-is.md](01-what-it-is.md)) — the packages are pinned and
+unmodified, so updates are cheap to take and there are none to take. Both are standing
+costs now, not open questions.
