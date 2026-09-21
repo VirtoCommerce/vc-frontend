@@ -159,8 +159,12 @@ onMounted(() => {
 .mega-menu {
   // A row of the header plate, not a band of its own: the plate supplies the surface
   // and the horizontal padding, and a hairline separates the two rows.
-  @apply flex items-center h-10 px-5 border-t;
+  @apply flex items-center px-5 border-t;
 
+  // Height is a variable, not a fixed utility: the sticky header collapses this row by
+  // setting it from the outside. A rule in the parent component cannot win here on
+  // specificity alone, so the value has to travel by inheritance.
+  height: var(--mega-menu-height, 2.5rem);
   border-color: color-mix(in srgb, var(--header-bottom-text-color) 8%, transparent);
 
   &__popover {

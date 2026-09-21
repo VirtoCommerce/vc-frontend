@@ -176,10 +176,15 @@ watch(route, () => {
 
   &--stuck {
     $stuck: &;
+
+    --mega-menu-height: 0px;
   }
 
   &__surface {
-    @apply overflow-hidden rounded-[1.75rem] border;
+    // No overflow clipping here: the dropdowns (search suggestions, locale pill, account
+    // menu) render inside the plate and would be cut off. The collapsing mega row does its
+    // own clipping, and every child is transparent, so the rounded corners need none.
+    @apply rounded-[1.75rem] border;
 
     border-color: color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
     // The one glass surface of the shell: a vertical wash over a blurred backdrop.
@@ -248,10 +253,6 @@ watch(route, () => {
 
   &__mega {
     @apply overflow-hidden transition-[height] duration-200;
-
-    #{$stuck} & {
-      @apply h-0;
-    }
   }
 
   &__dropdown {
