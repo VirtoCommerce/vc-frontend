@@ -21,17 +21,15 @@ one to support.
 
 ## Who the customer is
 
-Worth fixing before the rest of this file, because it is easy to write as though every
-Virto customer were one store with one owner. They are not. A customer may be a single
-brand, a distributor, a wholesaler, or a **marketplace operator whose own customers are
-sellers** — in which case the people this agent serves are two levels down. The blueprint
+A Virto customer is not necessarily one store with one owner. It may be a single brand, a
+distributor, a wholesaler, or a **marketplace operator whose own customers are sellers** —
+in which case the people this agent serves are two levels down. The blueprint
 covers that shape explicitly: on a marketplace the seller is one more search dimension, and
 the merchant agent acts for the operator the session names.
 
-So the general statement of value is the one that holds across all of them: **a
-conversational buying surface over the customer's own catalogue, prices and rules, that
-they own and we maintain once.** Everything below is that statement made specific — and no
-single specific below is the reason.
+The statement that holds across all of them: **a conversational buying surface over the
+customer's own catalogue, prices and rules, that they own and we maintain once.** The
+sections below are that made specific.
 
 ## For the buyer
 

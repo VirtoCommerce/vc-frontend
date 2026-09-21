@@ -4,8 +4,8 @@ Source: `docs/safety.md` in the repository, which lists each rule with the modul
 enforces it.
 
 The split that matters: some rules hold **on any model**, because they run inside the tool
-call; others are asked of the model in the prompt and fail as a misstatement. Their framing
-of the second category is worth quoting, because it is the honest version:
+call; others are asked of the model in the prompt and fail as a misstatement. On the second
+category:
 
 > When the model breaks one of these, the error is confined to its text. Every write,
 > figure, and disclosure behind that text still passed the checks in the table above, so the

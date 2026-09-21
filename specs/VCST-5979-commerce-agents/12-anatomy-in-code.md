@@ -125,8 +125,7 @@ the Python service was kept.
 
 ## One deployment's dial set
 
-Worth stating separately, because it is how this becomes a product rather than a bespoke
-build. Everything below is configuration, changing no code:
+Everything below is configuration, changing no code:
 
 - `brand_name`, `assistant_name`, `brand_voice` — identity and tone
 - `enable_*` — which systems exist; switching one off removes its tools, prompt lines and

@@ -69,8 +69,9 @@ the change broke the behaviour or the case encoded a stale one, and the commit s
 
 ## CI
 
-`replay` is the CI mode: it re-scores the stored recordings against `baseline.json`, a map
-of `case-id → [known failing scorers]`. A new failure fails the build; a baselined one does
+`replay` is the mode built for CI — **not yet wired into one**; no workflow references this
+directory. It re-scores the stored recordings against `baseline.json`, a map of
+`case-id → [known failing scorers]`. A new failure fails the build; a baselined one does
 not. A case with no recording is *pending*, never passing. Re-record and refresh the baseline
 in the same change as any prompt, skill or runtime change.
 

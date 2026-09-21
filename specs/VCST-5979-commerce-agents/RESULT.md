@@ -50,7 +50,7 @@ is a blocker; both are standing line items now rather than open questions.
 | | |
 |---|---|
 | `commerce-agent/virto_agent/` | FastAPI service on the Messages API runtime. Backend over x-api, SQLite session store shared across workers, per-request bearer forwarding, error relay. 2,651 lines |
-| `commerce-agent/tests/` + `evals/` | 63 tests; 6 eval cases in 3 twin pairs; a `replay` mode that re-scores in CI at no API cost. 1,785 lines, plus fixtures and recordings |
+| `commerce-agent/tests/` + `evals/` | 63 tests; 6 eval cases in 3 twin pairs; a `replay` mode that re-scores the recordings with no API calls. 1,785 lines, plus fixtures and recordings. **Not wired into CI** — no workflow touches `commerce-agent/` |
 | `client-app/modules/commerce-agent/` | Assistant page under Account, SSE parsing, 2 of 8 presentation cards, progress lines. 1,016 lines |
 | `specs/VCST-5979-commerce-agents/` | These notes. 2,547 lines |
 
@@ -166,8 +166,6 @@ that does not exist.
 
 ## What is not done
 
-Stated plainly, because the estimate depends on it.
-
 - **`MerchantBackend` was never mapped.** The ticket asked for a read-only pass; the spike
   deferred it whole.
 - **Anthropic's demo verticals were never run.** Each also serves `/showcase`, which renders
@@ -187,6 +185,9 @@ Stated plainly, because the estimate depends on it.
 - **Nobody has reviewed the code.** It is a proof of concept, so that is expected — but a
   module we ship is held to a different bar than a spike, and the gap between the two is
   real work.
+- **The Python side runs in no pipeline.** `pytest`, `ruff` and the eval replay are run by
+  hand; no workflow references `commerce-agent/`. The theme module's own tests do run, in
+  the existing `client-app` job.
 
 ---
 
