@@ -4,7 +4,14 @@
       <!-- Top plate -->
       <div v-if="!compact" class="app-footer__top">
         <div class="app-footer__brand">
-          <VcImage :src="secondaryLogoUrl" :alt="$context.storeName" class="app-footer__logo" lazy />
+          <VcImage :src="logoUrl" :alt="$context.storeName" class="app-footer__logo app-footer__logo--light" lazy />
+
+          <VcImage
+            :src="secondaryLogoUrl"
+            :alt="$context.storeName"
+            class="app-footer__logo app-footer__logo--inverted"
+            lazy
+          />
         </div>
 
         <nav class="app-footer__links">
@@ -53,7 +60,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
+const { logoUrl, secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 const { footerLinks, fetchFooterLinks } = useNavigations();
 
 const { version } = pkg;
@@ -69,9 +76,10 @@ onMounted(() => {
 .app-footer {
   $compact: "";
 
-  // Two plates rather than one band: the links surface and the legal bar are separate
-  // paints, so each gets its own rounded plate on the page background. A preset that gives
-  // both rows the same colour (black-gold.dark, coffee.dark) reads as one band with a seam.
+  // Two plates rather than one band, as the design draws them: a light links surface and a
+  // dark legal bar, each rounded on the page background with a 24px gap between. A preset
+  // that paints both rows the same (black-gold.dark, coffee.dark) reads as one band with a
+  // seam — the plates are the shape, the paint is the preset's.
 
   // The secure layout (cart, checkout, order payment) still carries its legacy full-bleed
   // header, and a floating plate under it would be the only rounded thing on the page.
@@ -81,7 +89,7 @@ onMounted(() => {
   }
 
   &__shell {
-    @apply mx-auto flex flex-col gap-2 pb-6;
+    @apply mx-auto flex flex-col gap-6 pb-6;
 
     // The page inset the header plate shares with the page's own plates.
     --gutter: theme("padding.6");
@@ -105,9 +113,10 @@ onMounted(() => {
   }
 
   &__top {
-    // px-5 is the header plate's row padding, so the footer logo sits under the header one
-    // (1px apart — the header plate also has a border).
-    @apply px-5 pb-7 pt-8;
+    // Measured off the design's rendered footer at 1512: the logo and the legal line both
+    // start 32px inside the plate, and the plate is 270px tall, which puts 36px above the
+    // column titles and below the last link.
+    @apply px-8 py-9 shadow-xl;
 
     background: var(--footer-top-bg-color);
     // The fallback keeps the plates round for a fork that drops the demo theme file.
@@ -133,6 +142,18 @@ onMounted(() => {
 
   &__logo {
     @apply h-11;
+
+    // Which logo of the pair shows is the plate's paint, and only the theme knows it: every
+    // preset but paprika still paints the top row dark, so the default keeps the inverted
+    // logo the dark band has always needed. A theme with a light plate flips both knobs.
+    // The hidden one is display:none and lazy, so it is never fetched.
+    &--light {
+      display: var(--footer-logo-light-display, none);
+    }
+
+    &--inverted {
+      display: var(--footer-logo-inverted-display, block);
+    }
   }
 
   &__links {
@@ -160,7 +181,7 @@ onMounted(() => {
   }
 
   &__bottom {
-    @apply flex flex-col items-center justify-between gap-1 px-5 py-4 text-center text-sm;
+    @apply flex flex-col items-center justify-between gap-1 px-8 py-4 text-center text-sm shadow-xl;
 
     background: var(--footer-bottom-bg-color);
     border-radius: var(--plate-radius, 1.75rem);
@@ -171,11 +192,11 @@ onMounted(() => {
     }
 
     @media print {
-      @apply flex-row rounded-none bg-additional-50 px-0 text-additional-950;
+      @apply flex-row rounded-none bg-additional-50 px-0 text-additional-950 shadow-none;
     }
 
     #{$compact} & {
-      @apply rounded-none px-4;
+      @apply rounded-none px-4 shadow-none;
 
       @media (min-width: theme("screens.md")) {
         @apply px-6;

@@ -53,8 +53,14 @@ const isMobile = breakpoints.smaller("sm");
 .footer-links {
   --vc-widget-bg-color: transparent;
   --vc-widget-divide-color: var(--footer-top-link-color);
-  --vc-widget-title-color: theme("colors.additional.50");
+  --vc-widget-title-color: var(--footer-top-text-color);
   --vc-icon-color: var(--footer-top-link-color);
+
+  // The design draws no rule under a column title. Below sm the block is an accordion and
+  // the rule is the only thing separating a collapsed header from the next one, so it stays.
+  @media (min-width: theme("screens.sm")) {
+    --vc-widget-divide-color: transparent;
+  }
 
   &__header {
     @apply flex items-center py-1 pe-3 min-h-10;

@@ -22,6 +22,17 @@
   // the whole option list away. It falls through to --vc-radius instead.
 
   --vc-container-max-width: 90.625rem;
+
+  // The footer's top plate is white here, so it takes the header's logo, not the inverted
+  // one every other preset's dark band needs. The dark variant below takes it back.
+  --footer-logo-light-display: block;
+  --footer-logo-inverted-display: none;
+}
+
+// _dark.scss loads before this file, so these win for the paprika dark variant.
+html.dark {
+  --footer-logo-light-display: none;
+  --footer-logo-inverted-display: block;
 }
 
 @media (width >= theme("screens.lg")) {
