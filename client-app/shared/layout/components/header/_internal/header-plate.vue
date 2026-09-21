@@ -185,8 +185,9 @@ watch(route, () => {
     // No overflow clipping here: the dropdowns (search suggestions, locale pill, account
     // menu) render inside the plate and would be cut off. The collapsing mega row does its
     // own clipping, and every child is transparent, so the rounded corners need none.
-    @apply rounded-[1.75rem] border;
+    @apply border;
 
+    border-radius: var(--vc-radius-plate, 1.75rem);
     border-color: color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
     // The one glass surface of the shell: a vertical wash over a blurred backdrop.
     background: linear-gradient(

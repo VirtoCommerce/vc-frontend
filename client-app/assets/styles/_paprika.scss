@@ -1,10 +1,14 @@
-// Paprika theme foundation (VCST-6030): geometry and typography.
-// Only existing tokens are retuned here — no new variables. Colour arrives through
-// the Paprika preset JSON and _colors.scss.
+// Paprika theme foundation (VCST-6030): geometry and typography. Colour arrives
+// through the Paprika preset JSON and _colors.scss.
 
 :root {
   // The design's surface radius: 12 for cards and panels, pill for every control.
   --vc-radius: 0.75rem;
+
+  // The next rung up the design's radius ladder, under the design's own name: --vc-radius
+  // is the card/panel step (12), the plate step (28) is the shell — the header and footer
+  // plates. Consumers carry the same fallback, so dropping this file squares them.
+  --vc-radius-plate: 1.75rem;
 
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
