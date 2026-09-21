@@ -41,8 +41,12 @@
           <div class="sales-rep-calendar__day-head">
             <!-- The heading is the only thing that names the current scope, and picking a day or a tab
                  replaces the list under it without a word (QA A-9). Announcing the heading covers both,
-                 and atomically so the date and the count are read as one. -->
-            <div aria-live="polite" aria-atomic="true">
+                 and atomically so the date and the count are read as one.
+
+                 role="status" as well as the attributes: a bare div carrying only aria-live is exposed as a
+                 generic node, which is why QA could not find the live region in the accessibility tree. The role
+                 implies polite+atomic, but the explicit pair is what older AT reads. -->
+            <div role="status" aria-live="polite" aria-atomic="true">
               <!-- The h2 variant uppercases by default, which turned the date into SEP 18, 2026 — the only
                    shouted text on the page (QA A-22). The prop is the component's own opt-out. -->
               <VcTypography tag="h2" text-transform="none" class="sales-rep-calendar__day-title">
@@ -254,24 +258,25 @@ async function toggleCompletion(task: SalesRepTaskType): Promise<void> {
 // that no longer contains it, leaving "Task saved" over a list where it is nowhere to be seen. A delete reports
 // nothing — there is no row left to go to.
 async function onTaskSaved(dayKey?: string): Promise<void> {
-  const rescopesDay = !!dayKey && dayKey !== selectedDay.value;
-  const rescopesList = rescopesDay || (!!dayKey && filter.value !== undefined);
-  const rescopesGrid = !!dayKey && toMonthKey(dayKey) !== month.value;
+  // Follow the task only in the DAY view, and only when it actually moved. A status tab spans every date,
+  // so a task that changed date is in or out of that tab on its own merits — jumping to its day would throw
+  // away the tab the rep chose, and the `?filter=` in the URL with it.
+  const movedTo = dayKey && !filter.value && dayKey !== selectedDay.value ? dayKey : undefined;
+  const rescopesGrid = !!movedTo && toMonthKey(movedTo) !== month.value;
 
-  if (dayKey) {
-    selectDay(dayKey);
-    setMonth(dayKey);
+  if (movedTo) {
+    selectDay(movedTo);
+    setMonth(movedTo);
   }
 
   /**
    * Only the surfaces the move did NOT rescope get an explicit refetch. Apollo restarts a query whose variables
    * changed on its own, and its `restart` is deferred to `nextTick` while `refetch()` runs synchronously — so
    * refetching a rescoped query here fires a second, redundant request carrying the pre-move variables.
-   * The counts carry the day (for the All badge), so a move to another day rescopes them too.
+   * The list and the counts both key off the selected day, so they rescope together or not at all.
    */
   await Promise.allSettled([
-    ...(rescopesDay ? [] : [refetchCounts()]),
-    ...(rescopesList ? [] : [refetch()]),
+    ...(movedTo ? [] : [refetchCounts(), refetch()]),
     ...(rescopesGrid ? [] : [refetchMarkers()]),
   ]);
 }

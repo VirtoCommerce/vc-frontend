@@ -310,17 +310,19 @@ describe("SalesRepTaskModal accessibility", () => {
     expect(field(wrapper, "due_date_label").attributes("data-aria-required")).toBe("true");
   });
 
-  // A disabled control is out of the tab order, so it can state neither that it is unavailable nor why
-  // (QA A-18). Save stays reachable; the submit blocks the write and the field carries the reason.
-  it("keeps Save reachable on an invalid form, and still writes nothing", async () => {
+  // Product decision over QA A-18 (advisory): Save is disabled until the form is valid. The requirement is
+  // still conveyed by Title's `required` and `aria-required`, which is the part that was a real failure.
+  it("disables Save until the form is valid", async () => {
     const wrapper = createWrapper({ defaultDay: "2026-10-15" });
+    // validateOnMount settles a tick after mount; without this the flag is still at its optimistic default.
+    await flushPromises();
+
+    expect(button(wrapper, "form.save_button").attributes("disabled")).toBeDefined();
+
+    await field(wrapper, "name_label").setValue("Call ACME");
+    await flushPromises();
 
     expect(button(wrapper, "form.save_button").attributes("disabled")).toBeUndefined();
-
-    await save(wrapper);
-
-    expect(mutations.create).not.toHaveBeenCalled();
-    expect(closeMock).not.toHaveBeenCalled();
   });
 });
 

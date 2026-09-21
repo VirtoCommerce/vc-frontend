@@ -526,7 +526,6 @@ describe("Calendar writes", () => {
   // Otherwise "Task saved" lands over a list the task is not in, and it looks like the save was lost.
   it("follows a task saved onto another day", async () => {
     const wrapper = createWrapper();
-    await pickTab(wrapper, "completed");
 
     await button(wrapper, "tasks.new_task").trigger("click");
     const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
@@ -534,8 +533,24 @@ describe("Calendar writes", () => {
     await call.props.onSaved("2026-11-02");
 
     expect(taskOptions().period.value).toEqual(localDayWindow("2026-11-02"));
-    // The tab goes with it: a status view would hide the task again.
-    expect(taskOptions().filter.value).toBeUndefined();
+  });
+
+  // A status tab spans every date, so a task that moved is in or out of it on its own merits. Following the
+  // day would throw away the tab the rep chose — and the `?filter=` in the URL with it.
+  it("keeps an active tab across a save, rather than jumping to the task's day", async () => {
+    const wrapper = createWrapper();
+    await pickTab(wrapper, "completed");
+
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
+
+    await call.props.onSaved("2026-11-02");
+
+    expect(taskOptions().filter.value).toBe("completed");
+    expect(state.filterParam.value).toBe("completed");
+    // Nothing rescoped, so apollo restarts nothing and every surface still needs telling.
+    expect(state.refetch).toHaveBeenCalled();
+    expect(state.refetchCounts).toHaveBeenCalled();
   });
 
   /**

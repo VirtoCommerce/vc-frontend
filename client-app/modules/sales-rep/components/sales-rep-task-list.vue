@@ -1,5 +1,6 @@
 <template>
   <VcTable
+    class="sales-rep-task-list"
     :loading="loading"
     :items="tasks"
     :pages="pages"
@@ -23,6 +24,7 @@
           <button
             type="button"
             class="sales-rep-task-list__title-button"
+            :title="item.name"
             :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
             @click="$emit('edit', item)"
           >
@@ -33,7 +35,9 @@
 
           <SalesRepTaskStatus :status="item.status" />
 
-          <p v-if="item.description" class="sales-rep-task-list__notes">{{ item.description }}</p>
+          <p v-if="item.description" :title="item.description" class="sales-rep-task-list__notes">
+            {{ item.description }}
+          </p>
         </div>
       </div>
     </template>
@@ -57,9 +61,12 @@
 
     <VcTableColumn id="task" :title="t('sales_rep.tasks.table.task')">
       <template #default="{ item }">
+        <!-- The clamp hides the rest of a long title, so the full text has to stay reachable somehow; the
+             dashboard widget does the same on its own titles. -->
         <button
           type="button"
           class="sales-rep-task-list__title-button"
+          :title="item.name"
           :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
           @click="$emit('edit', item)"
         >
@@ -78,7 +85,7 @@
 
     <VcTableColumn id="notes" :title="t('sales_rep.tasks.table.notes')">
       <template #default="{ item }">
-        <span class="sales-rep-task-list__notes">{{ item.description }}</span>
+        <span :title="item.description" class="sales-rep-task-list__notes">{{ item.description }}</span>
       </template>
     </VcTableColumn>
   </VcTable>
@@ -134,6 +141,13 @@ function rowClass(item: SalesRepTaskType, index: number): string {
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-list {
+  // Fixed layout, so a long note can no longer size its own column and squeeze the task title beside it.
+  // Only the two content-shaped columns are measured — a checkbox and a chip — and the remainder is split
+  // equally between Task and Notes, which is what fixed layout does with columns that declare no width.
+  .vc-table__desktop {
+    @apply table-fixed;
+  }
+
   &__done-col {
     @apply w-10;
   }
@@ -163,7 +177,9 @@ function rowClass(item: SalesRepTaskType, index: number): string {
   }
 
   &__notes {
-    @apply text-sm text-neutral-600 [word-break:break-word];
+    // Clamped like the title: notes are free text up to 1000 characters, and one long note otherwise sets
+    // the height of its whole row. The full text stays in the title attribute.
+    @apply line-clamp-2 text-sm text-neutral-600 [word-break:break-word];
   }
 
   &__mobile-item {

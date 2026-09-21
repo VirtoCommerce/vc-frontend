@@ -14,8 +14,8 @@
         :placeholder="t('common.placeholders.enter_value')"
         :disabled="loading"
         :maxlength="MAX_NAME_LENGTH"
-        :message="errors.name"
-        :error="!!errors.name"
+        :message="meta.dirty ? errors.name : undefined"
+        :error="!!errors.name && meta.dirty"
         :aria="REQUIRED_ARIA"
         required
       />
@@ -25,8 +25,8 @@
         v-model="dueDate"
         :label="t('sales_rep.tasks.form.due_date_label')"
         :disabled="loading"
-        :message="errors.dueDate"
-        :error="!!errors.dueDate"
+        :message="meta.dirty ? errors.dueDate : undefined"
+        :error="!!errors.dueDate && meta.dirty"
         :aria="REQUIRED_ARIA"
         enable-teleport
         required
@@ -82,10 +82,10 @@
         {{ t("sales_rep.tasks.form.cancel_button") }}
       </VcButton>
 
-      <!-- Not disabled on an invalid form: a disabled control is out of the tab order, so it can state
-           neither that it is unavailable nor why (QA A-18). handleSubmit blocks the write and surfaces the
-           field's own error instead. -->
-      <VcButton :loading="loading" @click="save">
+      <!-- Disabled while the form is invalid, by product decision. That is QA A-18 (advisory, not an AA
+           failure): a disabled control leaves the tab order and cannot say why it is unavailable. The
+           requirement itself is still conveyed - Title carries `required` and `aria-required`. -->
+      <VcButton :disabled="!meta.valid" :loading="loading" @click="save">
         {{ t("sales_rep.tasks.form.save_button") }}
       </VcButton>
     </template>
@@ -177,7 +177,13 @@ function buildInitialValues() {
   };
 }
 
-const { errors, handleSubmit } = useForm({ initialValues: buildInitialValues() });
+// validateOnMount so `meta.valid` is honest before the rep touches anything - Save is disabled on an empty
+// title from the outset, rather than only after the field has been visited. The error TEXT is held back
+// until the form is dirty, or a new task would open with a complaint already on it.
+const { errors, meta, handleSubmit } = useForm({
+  initialValues: buildInitialValues(),
+  validateOnMount: true,
+});
 
 const { value: name } = useField<string>("name", toTypedSchema(string().trim().required().max(MAX_NAME_LENGTH)));
 const { value: dueDate } = useField<string>("dueDate", toTypedSchema(string().required()));
