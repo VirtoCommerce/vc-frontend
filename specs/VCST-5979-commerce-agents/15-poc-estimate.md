@@ -78,6 +78,10 @@ Absent from this document until now, and the stream with the most unknowns.
   sidecar beside one — that choice comes first and is not the frontend's to make.
 - **CI.** No workflow references `commerce-agent/`; `pytest`, `ruff` and `python -m evals
   replay` are run by hand. The theme module's own tests already run in the `client-app` job.
+  The eval modes split: `replay` is a per-PR check — no key, no network, gated by
+  `baseline.json` — while `python -m evals run` costs money, needs the QA account's
+  credentials and **rewrites that account's cart**, so it belongs on manual dispatch or a
+  schedule with one run at a time, never on a PR.
 - **Agent configuration as module settings.** Brand, voice, the `enable_*` switches, model
   ids and caps belong to an operator, editable without a redeploy. Store connection —
   endpoint, store id, currency, culture — belongs to the deployment. (For whoever picks this

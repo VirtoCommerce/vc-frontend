@@ -69,8 +69,15 @@ the change broke the behaviour or the case encoded a stale one, and the commit s
 
 ## CI
 
-`replay` is the mode built for CI — **not yet wired into one**; no workflow references this
-directory. It re-scores the stored recordings against `baseline.json`, a map of
+The two modes cannot be scheduled the same way, and that decides the shape of the pipeline
+nobody has built yet — no workflow references this directory.
+
+| Mode | Where it belongs | Why |
+|---|---|---|
+| `replay` | A check on every PR | No API key, no network, deterministic, gated by `baseline.json` |
+| `run` | Manual dispatch or a schedule, one at a time | Costs money, needs `ANTHROPIC_API_KEY` and the QA account's credentials, and **rewrites that account's cart** — two runs at once collide |
+
+`replay` is the mode built for CI. It re-scores the stored recordings against `baseline.json`, a map of
 `case-id → [known failing scorers]`. A new failure fails the build; a baselined one does
 not. A case with no recording is *pending*, never passing. Re-record and refresh the baseline
 in the same change as any prompt, skill or runtime change.
