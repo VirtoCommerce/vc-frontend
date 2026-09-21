@@ -111,7 +111,7 @@ onMounted(() => {
 
     background: var(--footer-top-bg-color);
     // The fallback keeps the plates round for a fork that drops the demo theme file.
-    border-radius: var(--vc-radius-plate, 1.75rem);
+    border-radius: var(--plate-radius, 1.75rem);
     color: var(--footer-top-text-color);
 
     @media (min-width: theme("screens.sm")) {
@@ -163,7 +163,7 @@ onMounted(() => {
     @apply flex flex-col items-center justify-between gap-1 px-5 py-4 text-center text-sm;
 
     background: var(--footer-bottom-bg-color);
-    border-radius: var(--vc-radius-plate, 1.75rem);
+    border-radius: var(--plate-radius, 1.75rem);
     color: var(--footer-bottom-text-color);
 
     @media (min-width: theme("screens.md")) {

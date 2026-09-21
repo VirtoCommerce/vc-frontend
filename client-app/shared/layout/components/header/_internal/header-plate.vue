@@ -187,7 +187,7 @@ watch(route, () => {
     // own clipping, and every child is transparent, so the rounded corners need none.
     @apply border;
 
-    border-radius: var(--vc-radius-plate, 1.75rem);
+    border-radius: var(--plate-radius, 1.75rem);
     border-color: color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
     // The one glass surface of the shell: a vertical wash over a blurred backdrop.
     background: linear-gradient(

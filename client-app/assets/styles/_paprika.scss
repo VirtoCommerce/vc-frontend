@@ -5,10 +5,12 @@
   // The design's surface radius: 12 for cards and panels, pill for every control.
   --vc-radius: 0.75rem;
 
-  // The next rung up the design's radius ladder, under the design's own name: --vc-radius
-  // is the card/panel step (12), the plate step (28) is the shell — the header and footer
-  // plates. Consumers carry the same fallback, so dropping this file squares them.
-  --vc-radius-plate: 1.75rem;
+  // The next rung up the design's radius ladder: --vc-radius is the card/panel step (12),
+  // the plate step (28) is the shell — the header and footer plates. Unprefixed, like the
+  // shell's other app-layer vars (--glass, --header-*, --footer-*): no ui-kit component
+  // reads it, and --vc-* is the kit's own consumable namespace. This file owns the value;
+  // each consumer repeats it as a fallback so a fork that drops the file keeps round plates.
+  --plate-radius: 1.75rem;
 
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
