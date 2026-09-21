@@ -18,6 +18,26 @@ file are cross-referenced, not repeated.
 
 **Before the theme release**
 
+- [ ] **Switch the storefront over to the plugin.** Cut out of #2481 so that PR lands the MF host
+      harness with nothing changing at runtime — the in-repo `client-app/modules/sales-rep` still
+      initializes and still serves the hub. Two edits, both here, once the items below are done on
+      the target environment:
+      1. `client-app/app-runner.ts` — comment out the `@/modules/sales-rep` import and the
+         `void initSalesRep(router, i18n)` call (leave the module in the tree; its specs keep running);
+      2. `client-app/modules/federated/boot-order.test.ts` — drop the then-unused
+         `vi.mock("@/modules/sales-rep", …)`.
+
+      **Until that flip, the in-repo module and the plugin would both register.** An environment that
+      installs `VirtoCommerce.SalesRep` ≥ 3.1009.0 gets Sales Rep Hub routes and menu entries twice —
+      `vcptcore-qa1` is the only one that can today (it is the only one with the `/modules` route).
+      Either leave the plugin uninstalled there, or build that environment with
+      `module_federation_enabled: false` in `client-app/config/settings_data.json`.
+
+      **Do not flip before the plugin reaches parity with the in-repo module.** #2439 (documents
+      library), #2444 (all customer orders), #2468 (focus-ring a11y) and #2474 (rule chips on
+      `VcTabSwitch`) all landed after the plugin's port base — about 7.5 k lines across 70 files,
+      13 locale files included. Switching today is a feature regression on top of the availability
+      risk. See the port item further down.
 - [ ] **`/modules → platform` route on every environment that runs the theme.** Only `vcptcore-qa1`
       has it; `vcst-qa`, `vcst-dev`, `vcptcore-dev`, `vcptcore-qa` do not (checked 2026-09-11) —
       there the manifest 404s and Sales Rep Hub is silently absent. One `<TICKETS>-<env>-deployment`
@@ -86,14 +106,15 @@ file are cross-referenced, not repeated.
       (#1) and the fetch-hook seeding (#3).
       For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
       (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
-- [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off — the copy
-      is dead code with double maintenance (`initSalesRep` is commented out in `app-runner.ts`; the
-      bundle contains none of it). Take `PORT_TO_MF.md`, the `independentModules` entry in
+- [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off and the
+      switch above is flipped — until then it is the live implementation, not dead code, so this is
+      strictly the step after it. Take `PORT_TO_MF.md`, the `independentModules` entry in
       `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
 - [ ] **E2E**: vc-testing-module has no Sales Rep Hub coverage at all — add a smoke (plugin loaded,
       hub menu visible for a rep) so the plugin path is not manual-only.
-- [ ] **Port #2439 / #2444 into the plugin** once facade `0.1.1` (#2480) is released;
-      `requiredHostVersion: "^0.1.1"`.
+- [ ] **Port #2439 / #2444 into the plugin** once facade `0.1.2` (#2480) is released;
+      `requiredHostVersion: "^0.1.2"`. Also #2468 and #2474, which need no new facade export.
+      This is the parity gate for the switch-over item at the top.
 - [ ] **Module (backend owners)**: any SalesRep version crashes a platform running
       `ASPNETCORE_ENVIRONMENT=Development` — `ValidateOnBuild` rejects the scoped
       `SalesRepRoleResolver` consumed from XCart's singleton `CanAccessCartAuthorizationHandler`.
