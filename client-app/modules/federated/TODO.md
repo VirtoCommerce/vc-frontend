@@ -98,6 +98,26 @@ file are cross-referenced, not repeated.
       `my-customers.vue` calls `$d(item.lastOrder.createdDate)` with a string where vue-i18n wants
       `number | Date` (that one only became visible once the contract started typing slot props).
       Fix the three in vc-module-sales-rep#13 and add the step to `module-ci`.
+- [ ] **Publish the whole ui-kit barrel from the facade, not a hand-picked subset.** `app.use(uiKit)`
+      registers **93** components globally, so a plugin template can write any of them unimported;
+      only the ones `core-api/index.ts` re-exports reach the contract's `GlobalComponents`
+      augmentation. #2480 takes that from 22 to 35 — the ones the sales-rep module actually uses —
+      but the list is maintained by hand next to a list it has to equal, which is why it has now
+      drifted three times (the host's own augmentations were missing `VcLink` and `VcTableColumn`;
+      the facade's 22 were missing 13). The decided direction is to export the barrel wholesale.
+      Measured 2026-09-21 by actually adding `export * from "@/ui-kit/components"` and running
+      `yarn build:core-types` — three things block it, none of them the contract's size:
+      1. `swiper` becomes a type peer (host is on 12.1.2), and the rolled contract then fails
+         `TS2614: Module '"swiper"' has no exported member 'SwiperOptions'` — swiper keeps that type
+         in a subpath, and rollup-plugin-dts writes a bare `from "swiper"`.
+      2. `TS2430` twice in the file-uploader types: `IUploadingFile` extends `INewFile` and
+         `IUploadedFile` extends `IUploadingFile` with an incompatible `status` discriminant. The
+         host never sees it; the contract's isolation type-check does. Fixing it means editing
+         ui-kit.
+      3. `export *` has no export clause, so `uiKitComponentExports()` (build-types.mjs, it reads
+         `ts.isNamedExports`) returns nothing and the augmentation comes out empty — the probe still
+         reported `declared 22 global component(s)`. The generator has to resolve the barrel.
+      Until all three are done, a component added to ui-kit is silently untyped for every plugin.
 - [ ] **The version guard only watches `contract/index.d.ts` and `contract/tailwind-preset.cjs`.**
       `build-types.mjs` diffs those two against the base ref to decide the bump and to refuse an
       auto-bump on a removed export; the other published entry points — `federation.d.mts`,
