@@ -15,7 +15,7 @@ Third-party commentary is marked as such.
 | [04-backend-contract.md](04-backend-contract.md) | `StorefrontBackend` / `MerchantBackend` and the five mapping decisions |
 | [05-runtimes-and-deployment.md](05-runtimes-and-deployment.md) | Messages API vs Agent SDK vs Managed Agents, platform matrix, model ids, cost |
 | [06-market-context.md](06-market-context.md) | Solutions page, the retail PDF, third-party reading, and how this relates to UCP |
-| [07-virto-fit-technical.md](07-virto-fit-technical.md) | x-api mapping, the three gaps, B2B specifics, where it would live, the Python problem |
+| [07-virto-fit-technical.md](07-virto-fit-technical.md) | x-api mapping, the three gaps, B2B specifics, where it lives, and the language decision with the reasoning behind it |
 | [08-value-proposition.md](08-value-proposition.md) | Value for buyers, merchants and partners; how to demo it; what not to claim |
 | [09-risks-and-nuances.md](09-risks-and-nuances.md) | Risks ordered by decision impact, and the details easy to miss |
 | [10-open-questions.md](10-open-questions.md) | What is unverified, what needs deciding, what happens next |

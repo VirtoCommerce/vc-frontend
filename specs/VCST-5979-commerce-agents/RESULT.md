@@ -44,7 +44,7 @@ neither is a blocker, both are now standing line items rather than open question
 
 ## What was built
 
-About 9,500 lines, in 5.2 active hours of one supervised Claude Code session.
+About 9,500 lines.
 
 | | |
 |---|---|

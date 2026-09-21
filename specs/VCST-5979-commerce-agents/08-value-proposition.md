@@ -88,19 +88,18 @@ under-appreciated internally.
 
 ## How to demo it
 
-In order, because the order is the argument:
+**The script for what actually runs is [13-demo-script.md](13-demo-script.md)** — a drinks
+reorder against the QA store, nine turns, with what each one proves and what not to show.
+Use that one.
 
-1. **Bulk reorder from a conversation.** Ends with a filled cart of real SKUs at the
-   organisation's contract prices.
-2. **Ask for something we do not sell.** The agent says so (`NotOffered`) instead of
-   inventing it. Then ask for a price it has not read — it refuses to state one.
-3. **Turn the cart into a quote.** The B2B ending, one sentence.
-4. **Order status and a returns question**, answered from the order and the policy page.
-5. **Merchant side**: stage a price change, then show the approve button living in the
-   portal — and that saying "yes, approve it" in the chat does nothing.
+The argument it makes, in order: the agent finds the right thing in a catalogue whose
+search does not reward plain language; a refused write is reported as a refusal rather than
+as a success; it declines to invent a product, a price or a return window; and it remembers
+a preference across a reload. The second and third of those are what sell to an enterprise.
 
-Step 2 and step 5 are the ones that sell to an enterprise. The pretty part is step 1; the
-part that survives a security review is the rest.
+Three demo beats named here before the build do **not** exist yet and belong to the POC
+scope ([15-poc-estimate.md](15-poc-estimate.md)): turning the cart into a quote, answering
+from a real policy page, and anything on the merchant side.
 
 ## What we should not claim
 

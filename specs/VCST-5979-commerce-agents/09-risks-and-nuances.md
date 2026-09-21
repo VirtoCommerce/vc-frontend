@@ -10,12 +10,11 @@ is a hard fork from day one — no security patches, no dependency bumps, no ups
 for the bugs strangers have already found. Budget for maintenance from the start, and
 cherry-pick the open PRs during the fork rather than inheriting known bugs.
 
-**Python in a .NET product line.** The single biggest architectural decision
-([07-virto-fit-technical.md](07-virto-fit-technical.md)). Running the Python service is
-free for a spike and expensive as a product: packaging, deployment, on-call, and a skills
-gap on the team. Porting the harness to .NET is a real project — the interfaces are small,
-the harness is not. Decide this deliberately, at platform level, before a demo becomes a
-commitment by accident.
+**Python in a .NET product line — accepted, not avoided.** This was the single biggest
+architectural decision ([07-virto-fit-technical.md](07-virto-fit-technical.md)) and it is
+settled: the Python service is kept. The risk did not go away with the decision, it became
+a standing cost — packaging, deployment, on-call and a skills gap on a team whose product
+line is .NET. Plan for it rather than rediscovering it at deployment time.
 
 **The merchant agent has no data source today.** `get_business_snapshot` and
 `query_metrics` have no counterpart in the storefront API, and the sales-rep order scope is

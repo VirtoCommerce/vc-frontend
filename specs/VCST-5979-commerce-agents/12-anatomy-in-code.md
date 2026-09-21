@@ -119,8 +119,9 @@ schemas stay.
 
 What we do *not* write: the prompt, the skills, the gates, the enrichment, the turn loop,
 the memory pipeline. That is the part worth having, and it is also the part that makes the
-Python-versus-.NET question expensive ([09-risks-and-nuances.md](09-risks-and-nuances.md)) —
-porting the backend is a week, porting the harness is the project.
+language decision the expensive one ([09-risks-and-nuances.md](09-risks-and-nuances.md)) —
+porting the backend would have been small, porting the harness the whole project. It is why
+the Python service was kept.
 
 ## One deployment's dial set
 

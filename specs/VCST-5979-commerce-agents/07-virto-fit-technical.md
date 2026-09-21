@@ -172,10 +172,14 @@ Frontend pieces, in the theme:
   navigation through results, and focus management belong in the first version, not a
   follow-up.
 
-## The language problem
+## The language problem — decided
 
-This is the one genuine architectural obstacle, and it deserves a decision rather than a
-drift.
+The one genuine architectural obstacle, and the one that gated everything else.
+**Settled: option 1, the Python service is kept.** The blueprint's packages are imported,
+not ported.
+
+The three roads are kept below as the reasoning behind that, and because they are what to
+re-read if the runtime is ever reconsidered.
 
 The blueprint is Python. Virto is .NET plus TypeScript. Three ways out:
 
@@ -185,9 +189,8 @@ The blueprint is Python. Virto is .NET plus TypeScript. Three ways out:
 | **Port the harness to .NET** (Anthropic ships a C# SDK) | Large. The interfaces are ~20 methods, but the value is the harness — fencing, provenance gates, presentation validation, grounding, memory — and that is thousands of lines to reimplement and then keep correct | Fits the product line; one deployment story |
 | **Take only the patterns**, build our own in .NET or TypeScript | Medium, and we lose the parts we do not think to copy | Full control, no fork to maintain |
 
-For a **spike and a demo**, option 1 is obviously right and costs nothing to try. For a
-**product**, the choice is between 2 and 3 and it is a platform-architecture decision, not
-a frontend one. Do not let the spike's convenience decide it silently.
-
-Note also that the repository is unmaintained ([01-what-it-is.md](01-what-it-is.md)): option
-1 still means owning a fork, including the open bug fixes nobody will merge.
+Option 1 was taken for the product, not only for the demo. What it buys is the harness
+intact; what it costs is a Python runtime inside a .NET product line, and — since the
+repository is unmaintained ([01-what-it-is.md](01-what-it-is.md)) — a permanent fork,
+including the open bug fixes nobody will merge. Both are standing costs now, not open
+questions.

@@ -92,9 +92,10 @@ This is the part to get right before anyone frames this as a choice. Checked in 
 | | [VCST-4753](https://virtocommerce.atlassian.net/browse/VCST-4753) vc onX MCP adapter | Done |
 
 So in the webinar's taxonomy ([11-webinar-slides.md](11-webinar-slides.md)) **row 01 —
-serving somebody else's agent — is substantially built. Row 03, our own agent, is the one
-that does not exist.** The epic [VCST-5201](https://virtocommerce.atlassian.net/browse/VCST-5201)
-still reads Draft, which understates how far the work has gone.
+serving somebody else's agent — is substantially built, and row 03, our own agent, now
+exists as a working prototype** rather than as a gap. The epic
+[VCST-5201](https://virtocommerce.atlassian.net/browse/VCST-5201) still reads Draft, which
+understates how far the work has gone on both.
 
 These are **not competing options** — they answer different questions:
 
