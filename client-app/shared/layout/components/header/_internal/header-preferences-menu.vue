@@ -160,12 +160,26 @@ const {
   }
 
   &__panel {
-    @apply flex gap-4 p-4;
+    @apply grid gap-4 p-4;
+
+    // The design pins the panel at 620 rather than letting the two lists size it, and that is
+    // not a detail: a panel whose width follows its content keeps growing for a few frames after
+    // it opens — flags decode, fonts settle — and because it is aligned to the trigger's right
+    // edge, the growth drags its left edge across the screen. Measured on the first open: the
+    // panel arrived at left 926px and walked to 761.5px. Fixed width, nothing to walk.
+    inline-size: 38.75rem;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
 
     // The store decides how many currencies and languages there are — QA serves 9 and 15,
     // which is a panel taller than the window. Each column carries its own scroll.
     max-height: calc(100vh - 7rem);
     color: var(--ink);
+
+    @media (width < theme("screens.md")) {
+      @apply grid-cols-1;
+
+      inline-size: min(23.25rem, calc(100vw - 2rem));
+    }
   }
 
   &__column {

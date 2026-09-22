@@ -148,10 +148,29 @@ const emitTriggerProps = computed(() => ({
 
 const display = computed(() => (opened.value ? "block" : "none"));
 
-// Floating UI needs the element in the document before it can measure it, so the first frame after
-// opening paints at the unpositioned coordinates and the second one jumps to the real place — read
-// as the panel sliding in from the side. The entrance is therefore held until the position exists.
-const positioned = computed(() => opened.value && isPositioned.value);
+// A closed panel is display:none, so Floating UI measures it as zero and the position it holds
+// while closed is stale — measured on the header's preferences menu: left 1374px against the 955px
+// it belongs at. Reopening paints that stale place for one frame before autoUpdate corrects it,
+// which is the panel "sliding in from the right". isPositioned cannot gate this, because after the
+// first open it is already true; so the panel stays transparent until a position has been written
+// for THIS opening. Two frames: autoUpdate measures and writes on the first one.
+const repositioned = ref(false);
+
+watch(opened, (isOpen) => {
+  repositioned.value = false;
+
+  if (!isOpen || typeof requestAnimationFrame !== "function") {
+    return;
+  }
+
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      repositioned.value = opened.value;
+    }),
+  );
+});
+
+const positioned = computed(() => opened.value && isPositioned.value && repositioned.value);
 
 // Grow out of the trigger rather than out of nowhere: the origin is the edge that faces it.
 const SIDE_ORIGINS: Record<string, string> = { top: "bottom", bottom: "top", left: "right", right: "left" };
