@@ -41,7 +41,7 @@
       :to="link"
       :target="browserTarget"
       variant="outline"
-      :button-text="$t('pages.catalog.variations_button', [variationsCount], variationsCount)"
+      :button-text="$t('pages.catalog.variations_button', variationsCount)"
     />
 
     <AddToCartSimple v-else :product="product" reserved-space />
@@ -52,6 +52,7 @@
 import { computed } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
@@ -74,8 +75,7 @@ const price = computed(() => (props.product.hasVariations ? props.product.minVar
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 
-// The product itself counts as one of its variations.
-const variationsCount = computed(() => (props.product.variations?.length || 0) + 1);
+const variationsCount = computed(() => getVariationsCount(props.product));
 
 const { browserTarget } = useBrowserTarget();
 </script>

@@ -53,7 +53,7 @@
             v-else-if="item.hasVariations"
             :to="navigatable ? item.route : undefined"
             :target="browserTarget"
-            :button-text="$t('pages.catalog.variations_button', [variationsCount(item)], variationsCount(item))"
+            :button-text="$t('pages.catalog.variations_button', getVariationsCount(item))"
           />
 
           <VcAddToCart
@@ -120,6 +120,7 @@
 import { computed, ref } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
@@ -157,11 +158,6 @@ const itemDefaultSlotWidth = computed<string>(() => {
   const maxSlotWidth = Math.max(...(itemDefaultSlot.value?.map((el) => el.clientWidth) || [0]));
   return maxSlotWidth ? `${maxSlotWidth}px` : "";
 });
-
-// The product itself counts as one of its variations.
-function variationsCount(item: PreparedLineItemType): number {
-  return (item.variations?.length || 0) + 1;
-}
 
 function addToCartDisabled(item: PreparedLineItemType) {
   if (item.actualPrice?.amount === 0 || item.listPrice?.amount === 0) {

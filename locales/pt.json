@@ -1526,7 +1526,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Adicionar à lista",
       "in_the_list_tooltip": "Na lista",
-      "variations_button": "Variações {0}",
+      "variations_button": "Sem variações | {count} variação | {count} variações",
       "customize_button": "Personalizar",
       "show_on_a_separate_page": "Mostrar em uma página separada",
       "no_products_message": "Não há produtos nesta categoria",

@@ -32,7 +32,7 @@
       v-else-if="product.hasVariations"
       :to="link"
       :target="browserTarget"
-      :button-text="$t('pages.catalog.variations_button', [variationsCount], variationsCount)"
+      :button-text="$t('pages.catalog.variations_button', variationsCount)"
     />
 
     <QuantityControl
@@ -66,6 +66,7 @@ import { useHistoricalEvents, useThemeContext, useBrowserTarget } from "@/core/c
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import type { Product } from "@/core/api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
@@ -95,8 +96,7 @@ const product = toRef(props, "product");
 
 const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
 const link = computed(() => getProductRoute(product.value.id, product.value.slug));
-// The product itself counts as one of its variations.
-const variationsCount = computed(() => (product.value.variations?.length || 0) + 1);
+const variationsCount = computed(() => getVariationsCount(product.value));
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed(() => cartLineItem.value?.quantity || 0);
 const isQuantityLoading = computed(() => {

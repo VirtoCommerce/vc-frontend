@@ -1,15 +1,17 @@
 import { shallowMount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
-import { computed, ref } from "vue";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { computed, defineComponent, h, ref } from "vue";
 import { createI18n } from "@/i18n";
 import { uiKit } from "@/ui-kit";
-import deMessages from "../../../../locales/de.json";
 import enMessages from "../../../../locales/en.json";
 import ProductCard from "./product-card.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { VueWrapper } from "@vue/test-utils";
 
-vi.mock("@/core/composables", () => ({
+const catalogFilters = vi.hoisted(() => ({ inStock: false }));
+
+vi.mock("@/core/composables", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/core/composables")>()),
   useBrowserTarget: () => ({ browserTarget: ref("_self") }),
 }));
 
@@ -25,7 +27,7 @@ vi.mock("@/shared/catalog/composables/useProducts", () => ({
   useProducts: () => ({
     products: ref([]),
     pagesCount: computed(() => 1),
-    productsFilters: ref({ inStock: false }),
+    productsFilters: { value: catalogFilters },
     fetchingProducts: ref(false),
     fetchProducts: vi.fn(),
   }),
@@ -38,17 +40,28 @@ vi.mock("@/shared/catalog/composables/useProductVariations", () => ({
   }),
 }));
 
-function createI18nWithRealMessages() {
-  const i18n = createI18n("en", "USD");
-  i18n.global.setLocaleMessage("en", enMessages);
-  return i18n;
+/**
+ * `shallowMount` renders default slots only, but the variations panel lives in a named one, so the
+ * card shell is replaced by a stub that renders both.
+ */
+const ProductCardShellStub = defineComponent({
+  name: "VcProductCard",
+
+  setup(_props, { slots }) {
+    return () => h("div", [slots.default?.(), slots["expanded-content"]?.()]);
+  },
+});
+
+function availability(purchasable: boolean) {
+  return { isInStock: purchasable, isBuyable: purchasable };
 }
 
 /**
- * `variationsCount` counts the product itself as one of its variations, so a product that shows
- * "1 variation" is seeded with an empty `variations` array.
+ * `siblings` is the length of the `variations` array; the product itself is counted on top of it.
  */
-function createProduct(variationsCount: number): Product {
+function createProduct(options: { siblings: number; purchasable?: boolean; purchasableSiblings?: number }): Product {
+  const { siblings, purchasable = true, purchasableSiblings = siblings } = options;
+
   return {
     id: "product-id",
     code: "TEST-CODE",
@@ -59,70 +72,82 @@ function createProduct(variationsCount: number): Product {
     images: [],
     properties: [],
     price: { actual: { amount: 10 }, list: { amount: 10 } },
-    variations: Array.from({ length: Math.max(variationsCount - 1, 0) }, () => ({})),
+    availabilityData: availability(purchasable),
+    variations: Array.from({ length: siblings }, (_, index) => ({
+      availabilityData: availability(index < purchasableSiblings),
+    })),
   } as unknown as Product;
 }
 
-function mountCard(variationsCount: number) {
+function mountCard(options: Parameters<typeof createProduct>[0]) {
+  const i18n = createI18n("en", "USD");
+  i18n.global.setLocaleMessage("en", enMessages);
+
   return shallowMount(ProductCard, {
-    props: { product: createProduct(variationsCount), viewMode: "list" as const },
+    props: { product: createProduct(options), viewMode: "list" as const },
     global: {
-      // The UI kit is registered globally in the app, so the card's children resolve here the
-      // same way; `shallowMount` then stubs them, keeping the resolved label inspectable.
-      plugins: [createI18nWithRealMessages(), uiKit],
+      plugins: [i18n, uiKit],
       mocks: {
         $cfg: {},
         $canRenderExtensionPoint: () => false,
       },
-      // Registered by the app, not by the UI kit.
-      stubs: { ExtensionPoint: true },
+      stubs: { VcProductCard: ProductCardShellStub, ExtensionPoint: true },
       renderStubDefaultSlot: true,
     },
   });
 }
 
-function renderedLabel(wrapper: VueWrapper): string | undefined {
-  const button = wrapper
+/** Both the expandable button and the link-only one, which carry the same label. */
+function buttonLabels(wrapper: VueWrapper): string[] {
+  return wrapper
     .findAllComponents({ name: "VcProductButton" })
-    .find((candidate) => candidate.classes("product-card__variations-button"));
-
-  return button?.props("buttonText") as string | undefined;
+    .filter(
+      (button) =>
+        button.classes("product-card__variations-button") || button.classes("product-card__variations-link-button"),
+    )
+    .map((button) => button.props("buttonText") as string);
 }
 
-describe("product card variations button label (VCST-6046)", () => {
-  it("renders a singular label for a product with one variation", () => {
-    expect(renderedLabel(mountCard(1))).toBe("1 variation");
+function panelHeading(wrapper: VueWrapper): string {
+  return wrapper.get(".product-card__variants-title").text();
+}
+
+beforeEach(() => {
+  catalogFilters.inStock = false;
+});
+
+describe("product card variations button label", () => {
+  it("renders a singular label for a product with no sibling variations", () => {
+    expect(buttonLabels(mountCard({ siblings: 0 }))).toEqual(["1 variation", "1 variation"]);
   });
 
-  it("renders a plural label for a product with several variations", () => {
-    expect(renderedLabel(mountCard(3))).toBe("3 variations");
+  it("renders a plural label for a product with sibling variations", () => {
+    expect(buttonLabels(mountCard({ siblings: 2 }))).toEqual(["3 variations", "3 variations"]);
   });
 
   it("agrees with the expanded panel heading on the count word", () => {
-    // The panel heading has always been pluralized; the button used to disagree with it.
-    const i18n = createI18nWithRealMessages();
+    const wrapper = mountCard({ siblings: 0 });
 
-    expect(i18n.global.t("pages.catalog.available_variations", 1)).toBe("1 available variation");
-    expect(renderedLabel(mountCard(1))).toBe("1 variation");
+    expect(buttonLabels(wrapper)).toEqual(["1 variation", "1 variation"]);
+    expect(panelHeading(wrapper)).toBe("1 available variation");
   });
 });
 
-describe("variations_button message resolution (VCST-6046)", () => {
-  it("pluralizes the English message by count", () => {
-    const i18n = createI18nWithRealMessages();
-
-    expect(i18n.global.t("pages.catalog.variations_button", [1], 1)).toBe("1 variation");
-    expect(i18n.global.t("pages.catalog.variations_button", [2], 2)).toBe("2 variations");
+describe("product card variations button label with the in-stock filter on", () => {
+  beforeEach(() => {
+    catalogFilters.inStock = true;
   });
 
-  it("still interpolates a locale whose message has no plural forms", () => {
-    // de/ru/ja/... are translated separately and keep a single un-piped form; passing a plural
-    // argument must not break their `{0}` interpolation.
-    const i18n = createI18n("de", "EUR");
-    i18n.global.setLocaleMessage("de", deMessages);
-    i18n.global.locale.value = "de";
+  it("counts only entries a shopper can buy", () => {
+    const wrapper = mountCard({ siblings: 3, purchasable: true, purchasableSiblings: 1 });
 
-    expect(i18n.global.t("pages.catalog.variations_button", [1], 1)).toBe("1 Variationen");
-    expect(i18n.global.t("pages.catalog.variations_button", [5], 5)).toBe("5 Variationen");
+    expect(buttonLabels(wrapper)).toEqual(["2 variations", "2 variations"]);
+  });
+
+  it("agrees with the expanded panel heading when nothing is purchasable", () => {
+    const wrapper = mountCard({ siblings: 2, purchasable: false, purchasableSiblings: 0 });
+
+    expect(buttonLabels(wrapper)).toEqual(["No variations", "No variations"]);
+    expect(panelHeading(wrapper)).toBe("No available variations");
   });
 });

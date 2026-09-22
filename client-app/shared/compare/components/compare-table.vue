@@ -313,6 +313,7 @@ import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import { useHorizontalScrollSync } from "@/ui-kit/composables";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useCompareAddToCart, useCompareTableRowPins } from "../composables";
@@ -403,10 +404,8 @@ async function onRemoveProduct(item: ICompareDisplayProduct) {
   headerRowRef.value?.focus();
 }
 
-// The product itself counts as one of its variations.
 function getVariationsLabel(product: Product): string {
-  const count = (product.variations?.length || 0) + 1;
-  return t("pages.catalog.variations_button", [count], count);
+  return t("pages.catalog.variations_button", getVariationsCount(product));
 }
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
