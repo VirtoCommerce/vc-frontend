@@ -124,6 +124,14 @@ interface IProps {
 .category-controls {
   @apply flex items-center gap-4 justify-end;
 
+  // The tooltip wraps each switch in two blocks, and the inner one is a 24px line box with the
+  // inline-flex switch sitting on its baseline — 18px of switch at the top of 24px of line. That put
+  // every switch 3px above the rails beside it.
+  > .vc-tooltip,
+  > .vc-tooltip > .vc-popover__trigger {
+    @apply flex items-center;
+  }
+
   @media (min-width: theme("screens.xl")) {
     @apply gap-6;
   }

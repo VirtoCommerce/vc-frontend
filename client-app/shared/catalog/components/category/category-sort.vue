@@ -1,7 +1,7 @@
 <template>
   <VcTabSwitchGroup variant="seg" class="category-sort" :aria-label="$t('shared.sorting.aria_label')">
     <VcTabSwitch
-      v-for="option in options"
+      v-for="option in visibleOptions"
       :key="option.id"
       :model-value="pressed"
       :value="option.id"
@@ -42,6 +42,19 @@ const modelValue = defineModel<string | undefined>();
 const pending = ref<string | undefined>();
 
 const pressed = computed(() => pending.value ?? modelValue.value);
+
+/**
+ * The rail carries the sortings people actually reach for and leaves the rest to the URL: seven tabs
+ * do not fit one toolbar row beside the layout rail and the switches, and alphabetical order and
+ * oldest-first are the ones a buyer scanning a catalog does not sort by. A hidden sorting that is
+ * the one applied — arriving by a link, say — still gets its tab, so the rail never shows nothing
+ * selected for a choice that was made.
+ */
+const RAIL_HIDDEN = new Set(["name-ascending", "name-descending", "createddate-ascending"]);
+
+const visibleOptions = computed(() =>
+  props.options.filter((option) => !RAIL_HIDDEN.has(option.id) || option.id === pressed.value),
+);
 
 // The backend is authoritative again the moment it has answered — including when it answers with a
 // sorting other than the one pressed, which is the case a permanently held guess would hide.

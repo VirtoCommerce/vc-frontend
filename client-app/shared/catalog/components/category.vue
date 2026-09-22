@@ -69,20 +69,6 @@
               <span v-else>
                 {{ currentCategory?.name }}
               </span>
-
-              <sup v-if="showProductsCount" class="category__products-count">
-                <b class="me-1" data-test-id="products-count-label">
-                  {{ $n(totalProductsCount, "decimal") }}
-                </b>
-
-                <template v-if="currentCategory && searchQueryParam">
-                  {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
-                </template>
-
-                <template v-else>
-                  {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
-                </template>
-              </sup>
             </VcTypography>
           </div>
 
@@ -443,9 +429,6 @@ const hideAllControls = computed(() => {
 
 const isSidebarVisible = computed(() => {
   return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
-});
-const showProductsCount = computed(() => {
-  return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
 
 const activeControls = computed(() => {
