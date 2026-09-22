@@ -48,7 +48,8 @@
           class="vc-select__button"
           @click="toggle"
           @keydown.enter="toggle"
-          @keydown.down.prevent="next(-1)"
+          @keydown.esc="onTriggerEscape($event, close)"
+          @keydown.down.prevent="openByKeyboard($event, open, true)"
         >
           <div class="vc-select__button-content">
             <slot v-if="selected" name="selected" v-bind="{ item: selected, error }" />
@@ -85,10 +86,11 @@
           :error="error"
           truncate
           disable-autocomplete
-          @keydown.down.prevent="next(-1)"
+          @keydown.down.prevent="openByKeyboard($event, open, true)"
+          @keydown.enter="onTriggerEnter($event, open)"
           @focus="open"
-          @click="(autocomplete && open) || (!autocomplete && toggle)"
-          @keydown.esc="close()"
+          @click="open"
+          @keydown.esc="onTriggerEscape($event, close)"
         >
           <template #append>
             <VcButton
@@ -101,6 +103,7 @@
               variant="ghost"
               class="vc-select__clear"
               :icon-size="getInputClearIconSize(size)"
+              @keydown.esc="onTriggerEscape($event, close)"
               @keydown.enter.stop.prevent
               @keyup.enter.stop.prevent="clear"
               @click.stop="clear"
@@ -115,6 +118,7 @@
               variant="ghost"
               tabindex="-1"
               class="vc-select__arrow"
+              @keydown.esc="onTriggerEscape($event, close)"
               @click="handleArrowClick($event, toggle)"
             />
           </template>
@@ -131,14 +135,8 @@
           :aria-selected="isActiveItem(item)"
           role="option"
           :size="itemSize"
-          @click="
-            select(item);
-            !multiple && close();
-          "
-          @keyup.esc.prevent="
-            focusTrigger();
-            close();
-          "
+          @click="onItemClick(item, close)"
+          @keydown.esc="onItemEscape($event, close)"
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
           @keydown.tab.prevent="handleTab($event, index)"
@@ -174,7 +172,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { isEqual, union } from "lodash-es";
-import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
@@ -412,6 +410,74 @@ function prev(index: number) {
       prevElement.focus();
     }
   }
+}
+
+// The trigger keeps focus after the list closes and only opens on focus, so the keyboard had no way
+// back in: Enter had no handler, and ArrowDown called next(-1), whose focus() is a no-op on options
+// inside a display:none list.
+function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOption: boolean) {
+  if (isShown.value) {
+    if (moveToFirstOption) {
+      next(-1);
+    }
+
+    return;
+  }
+
+  // Nothing to open, so Enter stays the page's. ArrowDown is prevented by its own binding either way.
+  if (!enabled.value) {
+    return;
+  }
+
+  // Consumed only because it opens the list; Enter on an already open one still reaches the form.
+  event.preventDefault();
+  open();
+
+  if (moveToFirstOption) {
+    void nextTick(() => next(-1));
+  }
+}
+
+// An editable combobox leaves Enter to its form; a select-only one consumes it to open the list (APG).
+function onTriggerEnter(event: KeyboardEvent, open: () => void) {
+  if (props.autocomplete) {
+    return;
+  }
+
+  openByKeyboard(event, open, false);
+}
+
+// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog. Focus is
+// pulled back to the trigger first: the clear button unmounts when closing empties the filter, and
+// focusing before `close()` keeps the trigger's own `@focus="open"` from resurrecting the list.
+function onTriggerEscape(event: KeyboardEvent, close: () => void) {
+  if (!isShown.value) {
+    return;
+  }
+
+  event.stopPropagation();
+  focusTrigger();
+  close();
+}
+
+// Closing hides the panel with the focused option still inside it, so focus goes back to the trigger
+// first — the order the Escape paths already use, which also swallows the trigger's reopen on focus.
+function onItemClick(item: any, close: () => void) {
+  select(item);
+
+  if (props.multiple) {
+    return;
+  }
+
+  focusTrigger();
+  close();
+}
+
+// From an option the dropdown is always open, and focus lives inside the list — hand it back.
+function onItemEscape(event: KeyboardEvent, close: () => void) {
+  event.stopPropagation();
+  focusTrigger();
+  close();
 }
 
 function toggled(value: boolean) {
