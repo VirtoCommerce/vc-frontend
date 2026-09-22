@@ -1577,6 +1577,8 @@
       "title": "Cerca",
       "header": "La tua ricerca per {keyword} ha restituito i seguenti risultati",
       "header_empty": "Siamo spiacenti, la ricerca di \"{keyword}\" non ha prodotto risultati",
+      "header_barcode": "La tua ricerca per il codice a barre {barcode} ha restituito i seguenti risultati",
+      "header_barcode_empty": "Nessun prodotto trovato per il codice a barre {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "La tua ricerca <strong>{0}</strong> non ha prodotto risultati",
