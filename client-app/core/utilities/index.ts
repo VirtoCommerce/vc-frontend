@@ -3,6 +3,7 @@ export * from "./brands";
 export * from "./breadcrumbs";
 export * from "./categories";
 export * from "./checkModulesVersions";
+export * from "./color-mode-switch";
 export * from "./common";
 export * from "./composables";
 export * from "./date";
