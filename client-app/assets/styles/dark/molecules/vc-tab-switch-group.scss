@@ -1,0 +1,22 @@
+.vc-tab-switch-group {
+  // The rail's light track is ink at 5%, which on a dark panel is a lightening film — the
+  // track would sit ABOVE the surface it is meant to be cut into. Dark cuts it the other way:
+  // near-black at 60%, so the groove reads as depth in both themes.
+  &--seg {
+    --track-color: var(--vc-tab-switch-group-track-color, color-mix(in srgb, var(--color-additional-950) 60%, transparent));
+  }
+
+  // The indicator cannot stay additional-50 here: in dark that step IS the panel colour, and the
+  // selected segment measured 1.24:1 against its own track where 3:1 is required (WCAG 1.4.11).
+  // It moves to secondary-400, one step down from 600 — in the dark ramp 500 is nearly as light
+  // as 600, so 400 is the real step down — which also puts the selection in the same family as
+  // the current row of the category menu. The fill alone only reaches 2.40:1, so the state is
+  // carried by the pair of inset rings as well; the label on it reads 7.21:1.
+  &--seg &__pill {
+    background: var(--vc-tab-switch-group-pill-color, color-mix(in srgb, var(--color-secondary-400) 72%, transparent));
+    backdrop-filter: blur(10px) saturate(140%);
+    box-shadow: var(--vc-tab-switch-group-pill-shadow, theme("boxShadow.md")),
+      inset 0 0 0 1px color-mix(in srgb, var(--color-secondary-700) 20%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--color-secondary-800) 26%, transparent);
+  }
+}

@@ -1,0 +1,208 @@
+<template>
+  <div
+    ref="box"
+    :class="[
+      'vc-tab-switch-group',
+      `vc-tab-switch-group--${variant}`,
+      {
+        'vc-tab-switch-group--fill': fill,
+      },
+    ]"
+    role="group"
+    :aria-label="ariaLabel"
+  >
+    <!-- Before the switches, so it paints under them: both are positioned, and DOM order decides. -->
+    <span ref="pill" class="vc-tab-switch-group__pill" aria-hidden="true" />
+
+    <slot />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useMediaQuery, useMutationObserver, useResizeObserver } from "@vueuse/core";
+import { onMounted, shallowRef } from "vue";
+
+interface IProps {
+  variant?: "plain" | "filled" | "filled-strong" | "seg";
+  fill?: boolean;
+  ariaLabel?: string;
+}
+
+withDefaults(defineProps<IProps>(), {
+  variant: "plain",
+});
+
+// The indicator does not jump: it stretches across both positions and gathers on the new one, so
+// the eye follows WHERE the choice went instead of watching one fill die and another light up.
+const SPREAD_OFFSET = 0.42;
+const DURATION = 520;
+const EASING = "cubic-bezier(0.34, 0.86, 0.22, 1)";
+
+const box = shallowRef<HTMLElement | null>(null);
+const pill = shallowRef<HTMLElement | null>(null);
+const previous = shallowRef<{ left: number; width: number } | null>(null);
+
+const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
+// Read from the DOM rather than from a model: the group wraps whatever switches the consumer lays
+// out, and the checked one is the only thing it needs to know.
+function movePill() {
+  const boxElement = box.value;
+  const pillElement = pill.value;
+
+  if (!boxElement || !pillElement) {
+    return;
+  }
+
+  const active = boxElement.querySelector(".vc-tab-switch--checked");
+
+  if (!active) {
+    pillElement.style.opacity = "0";
+    previous.value = null;
+    return;
+  }
+
+  const boxRect = boxElement.getBoundingClientRect();
+
+  // Not laid out yet — a measurement now would place the indicator at zero and animate from there.
+  if (!boxRect.width) {
+    return;
+  }
+
+  const activeRect = active.getBoundingClientRect();
+  // Physical offsets on purpose: these are measured geometry, not authored direction, and the
+  // measurement already accounts for RTL.
+  const left = Math.round(activeRect.left - boxRect.left);
+  const width = Math.round(activeRect.width);
+  const from = previous.value;
+
+  // A redraw that was not about the tabs.
+  if (from && from.left === left && from.width === width) {
+    return;
+  }
+
+  previous.value = { left, width };
+  pillElement.style.opacity = "1";
+  pillElement.style.left = `${left}px`;
+  pillElement.style.width = `${width}px`;
+
+  // First paint has nowhere to travel from; jsdom and older browsers have no Web Animations.
+  if (!from || reducedMotion.value || typeof pillElement.animate !== "function") {
+    return;
+  }
+
+  const nearEdge = Math.min(from.left, left);
+  const farEdge = Math.max(from.left + from.width, left + width);
+
+  pillElement.animate(
+    [
+      { left: `${from.left}px`, width: `${from.width}px` },
+      { left: `${nearEdge}px`, width: `${farEdge - nearEdge}px`, offset: SPREAD_OFFSET },
+      { left: `${left}px`, width: `${width}px` },
+    ],
+    { duration: DURATION, easing: EASING },
+  );
+}
+
+onMounted(movePill);
+
+// The switches own the state, so the class landing on one of them is the signal.
+useMutationObserver(box, movePill, { attributes: true, attributeFilter: ["class"], subtree: true });
+// A group inside a popover is mounted long before anyone sees it and measures zero then; the box it
+// gains when the panel stops being display:none is a resize, and that is what places the indicator
+// the first time. Measured: with this observer alone the first open lands correctly.
+useResizeObserver(box, movePill);
+</script>
+
+<style lang="scss">
+.vc-tab-switch-group {
+  $seg: "";
+
+  // Every variant redeclares the internals it needs with its own default, and each default still
+  // reads the public knob first — so a consumer can retune a variant without fighting it.
+  --gap: var(--vc-tab-switch-group-gap, theme("padding.1"));
+  --padding: var(--vc-tab-switch-group-padding, 0px);
+  --radius: var(--vc-tab-switch-group-radius, var(--vc-radius, 0.5rem));
+  --track-color: var(--vc-tab-switch-group-track-color, transparent);
+  --track-border-color: var(--vc-tab-switch-group-track-border-color, transparent);
+  --pill-color: var(--vc-tab-switch-group-pill-color, theme("colors.additional.50"));
+  --pill-shadow: var(--vc-tab-switch-group-pill-shadow, theme("boxShadow.md"));
+
+  @apply relative flex flex-wrap items-stretch;
+
+  gap: var(--gap);
+  padding: var(--padding);
+  border: 1px solid var(--track-border-color);
+  border-radius: var(--radius);
+  background: var(--track-color);
+
+  // Equal columns: a five-tab sort row should not shuffle its widths as the labels change.
+  &--fill {
+    @apply grid w-full auto-cols-fr grid-flow-col;
+  }
+
+  &--filled,
+  &--filled-strong {
+    --padding: var(--vc-tab-switch-group-padding, theme("padding.1"));
+    --vc-tab-switch-radius: calc(var(--radius) - var(--padding));
+    --vc-tab-switch-border-color: transparent;
+    --vc-tab-switch-checked-border-color: transparent;
+  }
+
+  &--filled {
+    --track-color: var(--vc-tab-switch-group-track-color, theme("colors.neutral.50"));
+    --track-border-color: var(--vc-tab-switch-group-track-border-color, theme("colors.neutral.200"));
+  }
+
+  &--filled-strong {
+    --track-color: var(--vc-tab-switch-group-track-color, theme("colors.neutral.100"));
+  }
+
+  // The segmented rail: one indicator slides between the options, so the checked switch keeps its
+  // ink and its shadow and hands the fill over to the indicator.
+  &--seg {
+    $seg: &;
+
+    --gap: var(--vc-tab-switch-group-gap, 0px);
+    --padding: var(--vc-tab-switch-group-padding, 3px);
+    --radius: var(--vc-tab-switch-group-radius, theme("borderRadius.full"));
+    --track-color: var(
+      --vc-tab-switch-group-track-color,
+      color-mix(in srgb, theme("colors.neutral.950") 5%, transparent)
+    );
+
+    --vc-tab-switch-radius: theme("borderRadius.full");
+    --vc-tab-switch-padding-x: theme("padding[3.5]");
+    --vc-tab-switch-border-color: transparent;
+    --vc-tab-switch-checked-border-color: transparent;
+    // The fill belongs to the indicator. Left on the switch it would light a second plate at the
+    // far end of the travel, and the movement would be lost between the two.
+    --vc-tab-switch-checked-bg-color: transparent;
+    --vc-tab-switch-text-color: theme("colors.neutral.600");
+    --vc-tab-switch-font-weight: theme("fontWeight.normal");
+    --vc-tab-switch-checked-font-weight: theme("fontWeight.semibold");
+    --vc-tab-switch-hover-color: theme("colors.neutral.950");
+    // The checked segment's icon is not an accent here — the text leads.
+    --vc-tab-switch-color: currentColor;
+
+    @apply max-w-full flex-nowrap;
+  }
+
+  &__pill {
+    // Only the segmented rail has an indicator; elsewhere the switch shows its own state.
+    @apply hidden;
+
+    #{$seg} & {
+      @apply pointer-events-none absolute z-0 block opacity-0;
+
+      inset-block: var(--padding);
+      // Physical, because JS writes measured geometry here — the measurement is already RTL-aware.
+      left: 0;
+      width: 0;
+      border-radius: var(--vc-tab-switch-group-pill-radius, theme("borderRadius.full"));
+      background: var(--pill-color);
+      box-shadow: var(--pill-shadow);
+    }
+  }
+}
+</style>

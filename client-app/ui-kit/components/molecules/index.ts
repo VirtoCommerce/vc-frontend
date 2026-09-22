@@ -52,6 +52,7 @@ export { default as VcShape } from "./shape/vc-shape.vue";
 export { default as VcSlider } from "./slider/vc-slider.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTabSwitch } from "./tab-switch/vc-tab-switch.vue";
+export { default as VcTabSwitchGroup } from "./tab-switch-group/vc-tab-switch-group.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";

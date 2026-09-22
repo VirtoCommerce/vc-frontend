@@ -47,7 +47,12 @@
           <section v-if="isDarkModeAvailable" class="header-preferences-menu__group">
             <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.appearance") }}</h3>
 
-            <div class="header-preferences-menu__modes">
+            <VcTabSwitchGroup
+              class="header-preferences-menu__modes"
+              variant="seg"
+              fill
+              :aria-label="$t('shared.layout.header.preferences_menu.appearance')"
+            >
               <!-- VcTabSwitch does not write to its model — v-model only feeds `checked`, and the
                    consumer commits the new value from @change (see view-mode.vue). -->
               <VcTabSwitch
@@ -61,7 +66,7 @@
                 size="sm"
                 @change="colorMode = $event"
               />
-            </div>
+            </VcTabSwitchGroup>
           </section>
         </div>
 
@@ -228,22 +233,13 @@ const {
   }
 
   &__modes {
-    // The design puts the three modes on one segmented rail (VcTabSwitchGroup): the rail is
-    // a step off the card and carries no border of its own, and the checked switch rides on
-    // it as the lighter surface. The kit has no group component, so the rail is built from
-    // the switch's own tokens — no per-switch border, pill radius stepped down inside, and
-    // the icons kept in the brand colour the design gives all three of them.
-    @apply grid grid-cols-3 gap-1 rounded-[--vc-radius] p-1;
-
-    // The rail is the step below the surface the checked switch paints for itself
-    // (additional-50). Plain neutral-100 is that step in light but equals additional-50 in
-    // dark, where it would swallow the selection; mixing the two neutral steps lands one
-    // notch below the checked pill in both themes.
-    background: color-mix(in srgb, theme("colors.neutral.100") 60%, theme("colors.neutral.50"));
-
-    --vc-tab-switch-radius: calc(var(--vc-radius) - 2px);
-    --vc-tab-switch-border-color: transparent;
+    // The rail itself is VcTabSwitchGroup's seg variant. Only one thing differs from the
+    // catalog's rails: here the glyphs stay in the brand colour in every state, selected or
+    // not — the design's single exception, because in the catalog the accent is already
+    // spoken for by the sort switcher.
     --vc-icon-color: theme("colors.primary.500");
+    --vc-tab-switch-color: theme("colors.primary.500");
+    --vc-tab-switch-hover-icon-color: theme("colors.primary.500");
   }
 
   &__flag {

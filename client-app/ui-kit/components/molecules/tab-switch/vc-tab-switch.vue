@@ -105,7 +105,20 @@ function onInput() {
   --radius: var(--vc-tab-switch-radius, var(--vc-radius, 0.5rem));
   --border-color: var(--vc-tab-switch-border-color, theme("colors.neutral.200"));
 
-  @apply inline-block text-neutral;
+  // Everything a track wrapper needs to repaint a segment. A group cannot reach into
+  // this block's elements from its own file, so the seams it pulls on are declared here,
+  // each falling back to what the switch rendered before they existed.
+  --px: var(--vc-tab-switch-padding-x, var(--p));
+  --weight: var(--vc-tab-switch-font-weight, theme("fontWeight.bold"));
+  --checked-weight: var(--vc-tab-switch-checked-font-weight, var(--weight));
+  --checked-bg-color: var(--vc-tab-switch-checked-bg-color, theme("colors.additional.50"));
+  --checked-shadow: var(--vc-tab-switch-checked-shadow, theme("boxShadow.md"));
+
+  // Positioned, so that a track wrapper's sliding indicator — which precedes the switches in
+  // the DOM — paints under them and the label never blinks with the fill behind it.
+  @apply relative inline-block;
+
+  color: var(--vc-tab-switch-text-color, theme("colors.neutral.DEFAULT"));
 
   &--size {
     &--sm {
@@ -144,16 +157,24 @@ function onInput() {
   }
 
   &__button {
-    @apply flex items-center justify-center gap-1.5 w-full rounded-[--radius] border border-[--border-color] p-[--p] font-bold cursor-pointer select-none;
+    @apply flex w-full cursor-pointer select-none items-center justify-center gap-1.5 rounded-[--radius] border border-[--border-color];
+
+    padding: var(--p) var(--px);
+    font-weight: var(--weight);
 
     input:checked ~ & {
-      @apply shadow-md text-neutral-950 bg-additional-50;
+      @apply text-neutral-950;
 
       border-color: var(--vc-tab-switch-checked-border-color, var(--border-color));
+      background: var(--checked-bg-color);
+      box-shadow: var(--checked-shadow);
+      font-weight: var(--checked-weight);
     }
 
     &:hover {
-      --vc-icon-color: var(--hover-color);
+      // Separately settable, for the rails that keep the glyph in one colour while the label
+      // reacts to the pointer.
+      --vc-icon-color: var(--vc-tab-switch-hover-icon-color, var(--hover-color));
 
       @apply text-[--hover-color];
     }
