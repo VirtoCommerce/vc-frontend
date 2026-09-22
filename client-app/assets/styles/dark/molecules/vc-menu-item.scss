@@ -11,14 +11,16 @@
       @apply bg-[inherit];
     }
 
+    // Same two knobs as the light rules, so an element-scoped override reaches both
+    // themes; only the dark default differs.
     @each $color in $colors {
       &--color--#{$color} {
         &:hover {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--vc-menu-item-hover-bg, var(--color-#{$color}-100));
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--vc-menu-item-active-bg, var(--color-#{$color}-100));
         }
       }
     }
