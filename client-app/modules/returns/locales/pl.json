@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Dodaj szczegóły zwrotu",
-    "not_editable_message": "Ten zwrot został już zgłoszony",
     "details_section": "Szczegóły",
     "bulk_section": "Zastosuj do wszystkich pozycji",
     "apply_to_all": "Zastosuj jeden powód do wszystkich {count} pozycji",

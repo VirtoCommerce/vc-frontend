@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Lägg till returuppgifter",
-    "not_editable_message": "Denna retur har redan skickats in",
     "details_section": "Detaljer",
     "bulk_section": "Tillämpa på alla rader",
     "apply_to_all": "Tillämpa en orsak på alla {count} rader",

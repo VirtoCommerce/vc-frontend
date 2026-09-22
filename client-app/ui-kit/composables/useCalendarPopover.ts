@@ -46,7 +46,7 @@ export function useCalendarPopover(opts: IUseCalendarPopoverOptions) {
       }
       return;
     }
-    // VcPopover doesn't focus its content, and it stays display:none until the open flush.
+    // VcPopover would focus the dialog panel root; claim focus for the grid, once it is not display:none.
     void nextTick(() => {
       opts.getCalendar()?.focusActiveCell();
     });

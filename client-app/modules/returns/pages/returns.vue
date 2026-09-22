@@ -150,7 +150,7 @@ const { t, d } = useI18n();
 const router = useRouter();
 
 usePageHead({
-  title: t("returns.meta.title"),
+  title: computed(() => t("returns.meta.title")),
 });
 
 const {

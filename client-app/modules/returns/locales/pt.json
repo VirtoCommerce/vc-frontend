@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Adicionar detalhes da devolução",
-    "not_editable_message": "Esta devolução já foi enviada",
     "details_section": "Detalhes",
     "bulk_section": "Aplicar a todas as linhas",
     "apply_to_all": "Aplicar um motivo às {count} linhas",

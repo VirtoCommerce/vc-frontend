@@ -121,7 +121,8 @@
   },
   "return_edit": {
     "title": "Add return details",
-    "not_editable_message": "This return has already been submitted",
+    "not_editable_message": "This return can no longer be changed",
+    "not_editable_message_with_status": "This return can no longer be changed — its status is {status}",
     "details_section": "Details",
     "bulk_section": "Apply to all lines",
     "apply_to_all": "Apply one reason to all {count} lines",

@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Детали возврата",
-    "not_editable_message": "Этот возврат уже отправлен",
     "details_section": "Детали",
     "bulk_section": "Применить ко всем позициям",
     "apply_to_all": "Применить одну причину ко всем позициям ({count})",

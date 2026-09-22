@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Rücksendedetails hinzufügen",
-    "not_editable_message": "Diese Rücksendung wurde bereits eingereicht",
     "details_section": "Details",
     "bulk_section": "Auf alle Positionen anwenden",
     "apply_to_all": "Einen Grund auf alle {count} Positionen anwenden",

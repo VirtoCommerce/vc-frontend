@@ -4,11 +4,11 @@
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
-    <VcTypography tag="h1">{{ $t("return_edit.title") }}</VcTypography>
+    <VcTypography tag="h1">{{ pageTitle }}</VcTypography>
 
     <VcEmptyView v-if="!loading && !orderReturn" :text="$t('return_details.not_found_message')" icon="outline-order" />
 
-    <VcEmptyView v-else-if="!loading && !canEdit" :text="$t('return_edit.not_editable_message')" icon="outline-order" />
+    <VcEmptyView v-else-if="!loading && !canEdit" :text="notEditableMessage" icon="outline-order" />
 
     <template v-else-if="orderReturn">
       <VcWidget :title="$t('return_edit.details_section')" size="lg">
@@ -152,6 +152,7 @@ import { useBreadcrumbs } from "@/core/composables";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturnDraft } from "@/modules/returns/composables/useReturnDraft";
 import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
+import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { BackButtonInHeader } from "@/shared/layout";
 import type { ReturnDraftLineType } from "@/modules/returns/types";
 import ReturnLineAttachments from "@/modules/returns/components/return-line-attachments.vue";
@@ -167,11 +168,9 @@ const { t } = useI18n();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-usePageHead({
-  title: t("return_edit.title"),
-});
-
 const { reasons } = useReturnReasons();
+
+const { statusLabel } = useReturnStatusLabel();
 
 const {
   loading,
@@ -217,10 +216,28 @@ const uploadsPending = computed(() =>
 
 const uploadsFailed = computed(() => Object.values(uploadState.value).some((state) => state.failed));
 
+// The draft already has its RMA number, and a buyer who has two open drafts cannot tell them
+// apart without it. Falls back to the bare action while the draft is still loading.
+const pageTitle = computed(() =>
+  orderReturn.value?.number
+    ? t("return_edit.title_with_number", { number: orderReturn.value.number })
+    : t("return_edit.title"),
+);
+
+// "Already submitted" was said for every status a draft can no longer be in, which is untrue of a
+// cancelled one. The status is what the buyer needs to know, and the server already resolved it.
+const notEditableMessage = computed(() => {
+  const status = statusLabel(orderReturn.value?.status, orderReturn.value?.statusDisplayValue);
+
+  return status ? t("return_edit.not_editable_message_with_status", { status }) : t("return_edit.not_editable_message");
+});
+
+usePageHead({ title: pageTitle });
+
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("returns.menu.link.title"), route: { name: "Returns" } },
-  { title: t("return_edit.title") },
+  { title: pageTitle.value },
 ]);
 
 const isMobile = breakpoints.smaller("lg");
