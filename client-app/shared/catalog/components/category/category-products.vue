@@ -22,15 +22,17 @@
         :class="`category-products__list category-products__list--${displayedViewMode}`"
         :data-test-id="`products-${displayedViewMode}-view`"
       >
-        <template v-if="fetchingProducts">
+        <template v-if="fetchingProducts && !holdingCards">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />
         </template>
 
         <template v-else>
+          <!-- Keyed by seat, not by product: the card that turns has to be the same element on the
+               way back, and a key that moves with the product would replace it mid-turn. -->
           <ProductCard
-            v-for="(item, index) in products"
-            :key="item.id"
-            :loading="fetchingProducts"
+            v-for="(item, index) in displayedProducts"
+            :key="index"
+            :loading="false"
             :view-mode="displayedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
@@ -92,7 +94,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, onMounted, toRef, useTemplateRef, watch } from "vue";
+import { computed, onMounted, ref, toRef, useTemplateRef, watch } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
@@ -127,6 +129,8 @@ interface IProps {
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
+  /** Bumped when a sorting is pressed. A change to it is what arms the flip. */
+  sortToken?: number;
   mode?: CatalogPaginationModeType;
 }
 
@@ -139,16 +143,64 @@ interface IEmits {
 const { browserTarget } = useBrowserTarget();
 
 const grid = useTemplateRef<HTMLElement>("grid");
-const { displayedViewMode, enter } = useCatalogGridMotion(grid, toRef(props, "savedViewMode"));
+const { displayedViewMode, enter, flip } = useCatalogGridMotion(grid, toRef(props, "savedViewMode"));
+
+const products = toRef(props, "products");
+
+/** What the grid is showing, which lags `products` for as long as a flip takes to change it over. */
+const displayedProducts = ref<Product[]>([...products.value]);
+
+/** A sorting was chosen and the result it asked for has not arrived yet. */
+const awaitingSort = ref(false);
+
+/**
+ * Sorting does not change the question, only the answer's order, so the page keeps the cards it has
+ * while the new order is fetched. Every other reload — a filter, a category, a search — is a
+ * different question, and showing the old answer under it would be a lie.
+ */
+const holdingCards = computed(() => awaitingSort.value && displayedProducts.value.length > 0);
+
+watch(
+  () => props.sortToken,
+  () => {
+    awaitingSort.value = true;
+  },
+);
+
+watch(products, (next) => {
+  // The flip owns the change-over; assigning here would put the new result on screen before it.
+  if (!props.fetchingProducts && !awaitingSort.value) {
+    displayedProducts.value = [...next];
+  }
+});
 
 // A result set only exists once the search that fetched it has finished — until then the grid holds
 // skeletons, and animating those would be animating the wait rather than the answer.
 watch(
   () => props.fetchingProducts,
-  (isFetching, wasFetching) => {
-    if (wasFetching && !isFetching) {
-      void enter();
+  async (isFetching, wasFetching) => {
+    if (isFetching || !wasFetching) {
+      return;
     }
+
+    const next = [...products.value];
+    const wasAwaitingSort = awaitingSort.value;
+
+    awaitingSort.value = false;
+
+    // A page that came back a different length has no seat-for-seat correspondence to turn through.
+    if (wasAwaitingSort && next.length > 0 && next.length === displayedProducts.value.length) {
+      const flipped = await flip((index) => {
+        displayedProducts.value[index] = next[index];
+      });
+
+      if (flipped) {
+        return;
+      }
+    }
+
+    displayedProducts.value = next;
+    await enter();
   },
 );
 
@@ -243,6 +295,16 @@ function sendGASelectItemEvent(product: Product): void {
   --columnsAmountDesktop: v-bind(props.columnsAmountDesktop);
 
   &__list {
+    // The depth a turn is seen through, and the blank back of a card that would otherwise show
+    // through it. Both belong to the turn, so they are only here while one is running.
+    &--flipping {
+      perspective: 1200px;
+
+      > * {
+        backface-visibility: hidden;
+      }
+    }
+
     &--grid {
       @apply grid gap-5;
 

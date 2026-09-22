@@ -6,10 +6,21 @@ import type { Ref } from "vue";
 const EASING = "cubic-bezier(0.22, 0.9, 0.28, 1)";
 
 const FADE_DURATION = 130;
+
+/** The split-flap: a card turns away, changes, and turns back. */
+const FLIP_OUT_DURATION = 105;
+const FLIP_IN_DURATION = 125;
+const FLIP_STAGGER = 55;
+const FLIP_OUT_EASING = "cubic-bezier(0.4, 0, 0.85, 0.5)";
+const FLIP_IN_EASING = "cubic-bezier(0.15, 0.9, 0.3, 1)";
+
 const RISE_DURATION = 420;
 const RISE_STAGGER = 40;
 /** Past this many cards the wave stops deepening, or the last row of a full page enters a second late. */
 const RISE_STAGGER_CAP = 12;
+
+/** Set on the grid for the length of a flip, so it can hold the depth the turn is seen through. */
+export const FLIPPING_CLASS = "category-products__list--flipping";
 
 /**
  * Moves the products grid when what it shows changes.
@@ -29,6 +40,7 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
   const displayedViewMode = ref(viewMode.value);
 
   let fade: Animation | undefined;
+  let flipping = false;
 
   function canAnimate(element: HTMLElement | null): element is HTMLElement {
     return !!element && !reducedMotion.value && typeof element.animate === "function";
@@ -61,6 +73,69 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
       animation.finished.then(() => undefined).catch(() => undefined),
       new Promise<void>((resolve) => setTimeout(resolve, duration + 240)),
     ]);
+  }
+
+  function turn(card: HTMLElement, from: string, to: string, duration: number, easing: string) {
+    const animation = card.animate([{ transform: from }, { transform: to }], {
+      duration,
+      easing,
+      fill: "forwards",
+    });
+
+    return settled(animation, duration);
+  }
+
+  function wait(ms: number) {
+    return new Promise<void>((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * One card's turn: away, changed at the edge, and back. Changing it here rather than changing the
+   * whole grid at once is the point — a single update would change the cards still facing the reader.
+   */
+  async function flipCard(card: HTMLElement, index: number, axis: string, swapAt: (index: number) => void) {
+    await wait(index * FLIP_STAGGER);
+    await turn(card, `${axis}(0deg)`, `${axis}(-90deg)`, FLIP_OUT_DURATION, FLIP_OUT_EASING);
+
+    swapAt(index);
+    await nextTick();
+
+    await turn(card, `${axis}(90deg)`, `${axis}(0deg)`, FLIP_IN_DURATION, FLIP_IN_EASING);
+    card.style.transform = "none";
+  }
+
+  /**
+   * Turns every card on its own axis and changes what it holds at the edge, as a wave down the grid.
+   * The axis follows the layout — a tile turns on the vertical, a row on the horizontal — because
+   * turning a shape across its long side reads as the shape breaking rather than flipping.
+   *
+   * @param swapAt  Called with a card's index the moment that card stands edge-on.
+   * @returns whether the wave ran. When it did not, the caller still has to show the new result.
+   */
+  async function flip(swapAt: (index: number) => void) {
+    const element = grid.value;
+
+    if (flipping || !canAnimate(element)) {
+      return false;
+    }
+
+    const cards = Array.from(element.children) as HTMLElement[];
+
+    if (!cards.length) {
+      return false;
+    }
+
+    const axis = displayedViewMode.value === "list" ? "rotateX" : "rotateY";
+
+    flipping = true;
+    element.classList.add(FLIPPING_CLASS);
+
+    await Promise.all(cards.map((card, index) => flipCard(card, index, axis, swapAt)));
+
+    element.classList.remove(FLIPPING_CLASS);
+    flipping = false;
+
+    return true;
   }
 
   function riseIn() {
@@ -122,5 +197,5 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
 
   onBeforeUnmount(clearAnimations);
 
-  return { displayedViewMode, enter };
+  return { displayedViewMode, enter, flip };
 }

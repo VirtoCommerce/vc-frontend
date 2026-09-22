@@ -22,7 +22,7 @@ function installFakeAnimations() {
       cancelled: false,
       target: this,
       finished: Promise.resolve(),
-      cancel() {
+      cancel(this: { cancelled: boolean }) {
         this.cancelled = true;
       },
     } as unknown as FakeAnimationType;

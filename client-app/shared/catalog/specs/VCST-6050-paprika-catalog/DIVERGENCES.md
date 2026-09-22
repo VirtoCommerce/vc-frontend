@@ -52,7 +52,7 @@ _(filled in as each is confirmed against the backend — see the iteration notes
 |---|---|
 | 9 | The design warns that the sort control "must answer the press instantly, or a second and a half reads as a control that did not take the press". The storefront's `selectedSort` follows the backend's `selected` flag, which is a round trip away — measured at ~1.5s on QA, during which the rail did not move. `category-sort.vue` now holds the pressed value until the search it started settles, then hands authority back. |
 
-## Cut because the storefront's data flow cannot carry it
+## Built, after changing how the page reports a sort
 
 ### 10. The split-flap on a sort change
 
@@ -75,12 +75,22 @@ skeletons while it waits. Measured on QA, clicking a sort tab:
 The old cards are gone a tenth of a second in and the new ones arrive a second and a half later, so
 there is no frame in which a card can be turned from one product to the other.
 
-**What would make it possible:** hold the old cards through the fetch instead of showing skeletons,
-for a sort change only. That is a change to how the page reports loading, not a change of animation,
-so it is Ivan's call rather than something to slip in behind a visual ticket.
+**What was changed to allow it:** on a sort change only, the grid holds the cards it has instead of
+dropping them for skeletons. Sorting does not change the question, only the order of the answer, so
+the old answer is still true while the new order is fetched. Every other reload — a filter, a
+category, a search — is a different question, and keeps its skeletons.
 
-**What ships instead:** the new result set rises in — the design's own entry animation — so the wave
-still reads down the grid when the order changes.
+Two consequences worth knowing:
+
+- Cards are keyed by **seat**, not by product id, because a card that turns has to be the same
+  element on the way back. `ProductCard` therefore outlives the product it was opened on and now
+  clears what it worked out about the last one.
+- The flip is armed by the **press**, not by `selectedSort`. That follows the backend's `selected`
+  flag and only moves once the search has answered — a second and a half after the grid has already
+  had to decide whether to hold its cards.
+
+Measured after the change: no skeleton phase, all sixteen cards turned, contents changed at 1071ms
+and the wave finished at 1689ms.
 
 ### Built exactly as drawn
 

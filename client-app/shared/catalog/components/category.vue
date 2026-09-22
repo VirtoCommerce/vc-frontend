@@ -113,7 +113,7 @@
               :options="translatedProductSortingList"
               :loading="fetchingProducts"
               class="category__sort"
-              @change="resetCurrentPage"
+              @change="applySort"
             />
 
             <!-- In stock and branches -->
@@ -179,6 +179,7 @@
 
         <CategoryProducts
           :card-type="cardType"
+          :sort-token="sortToken"
           :columns-amount-desktop="columnsAmountDesktop"
           :columns-amount-tablet="columnsAmountTablet"
           :fetching-more-products="fetchingMoreProducts"
@@ -564,6 +565,16 @@ function trackViewSearchResults(): void {
     results_count: totalProductsCount.value,
     results_page: currentPage.value,
   });
+}
+
+// Counted from the press, not from the sorting the store has confirmed: `selectedSort` follows the
+// backend's own `selected` flag and only moves once the search has answered — a second and a half
+// after the grid has had to decide whether to hold its cards or drop them for skeletons.
+const sortToken = ref(0);
+
+function applySort() {
+  sortToken.value += 1;
+  void resetCurrentPage();
 }
 
 function selectProduct(product: Product): void {

@@ -144,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, toRef, useTemplateRef } from "vue";
+import { computed, nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -236,6 +236,13 @@ const {
 });
 
 const variationsLoaded = ref(false);
+
+// The grid keys its cards by seat so a card can turn without being replaced, which means this
+// component outlives the product it was opened on. Nothing it worked out about the last one holds.
+watch(productId, () => {
+  isExpanded.value = false;
+  variationsLoaded.value = false;
+});
 
 const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
 
