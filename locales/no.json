@@ -1533,7 +1533,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Legg til i liste",
       "in_the_list_tooltip": "På listen",
-      "variations_button": "{0} varianter",
+      "variations_button": "Ingen varianter | {count} variant | {count} varianter",
       "customize_button": "Tilpass",
       "show_on_a_separate_page": "Vis på en separat side",
       "no_products_message": "Ingen produkter i denne kategorien",

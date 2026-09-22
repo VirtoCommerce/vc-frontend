@@ -1533,7 +1533,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Добавить в список",
       "in_the_list_tooltip": "В списке",
-      "variations_button": "Вариаций: {0}",
+      "variations_button": "Нет вариаций | {count} вариация | {count} вариации | {count} вариаций",
       "customize_button": "Настроить",
       "show_on_a_separate_page": "Открыть в новом окне",
       "no_products_message": "В этой категории нет товаров",

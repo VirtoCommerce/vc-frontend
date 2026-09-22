@@ -1533,7 +1533,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Dodaj do listy",
       "in_the_list_tooltip": "Na liście",
-      "variations_button": "{0} wariantów",
+      "variations_button": "Brak wariantów | {count} wariant | {count} warianty | {count} wariantów",
       "customize_button": "Dostosuj",
       "show_on_a_separate_page": "Pokaż na osobnej stronie",
       "no_products_message": "Nie ma produktów w tej kategorii",

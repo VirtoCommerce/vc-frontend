@@ -53,7 +53,7 @@
             v-else-if="item.hasVariations"
             :to="navigatable ? item.route : undefined"
             :target="browserTarget"
-            :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
+            :button-text="$t('pages.catalog.variations_button', getVariationsCount(item))"
           />
 
           <VcAddToCart
@@ -120,6 +120,7 @@
 import { computed, ref } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";

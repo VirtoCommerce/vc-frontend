@@ -1533,7 +1533,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "リストに追加",
       "in_the_list_tooltip": "リスト追加済み",
-      "variations_button": "バリエーション：{0}",
+      "variations_button": "バリエーションはありません | バリエーション：{count} | バリエーション：{count}",
       "customize_button": "カスタマイズ",
       "show_on_a_separate_page": "別ページで表示",
       "no_products_message": "このカテゴリーに商品がありません",
