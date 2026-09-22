@@ -11,6 +11,8 @@ const FADE_DURATION = 130;
 const FLIP_OUT_DURATION = 105;
 const FLIP_IN_DURATION = 125;
 const FLIP_STAGGER = 55;
+/** How long cards abandoned mid-turn take to come back level before a new wave starts. */
+const FLIP_RECOVER_DURATION = 90;
 const FLIP_OUT_EASING = "cubic-bezier(0.4, 0, 0.85, 0.5)";
 /**
  * The depth each card is seen through. It belongs in the card's own transform, not on the grid as a
@@ -46,7 +48,8 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
   const displayedViewMode = ref(viewMode.value);
 
   let fade: Animation | undefined;
-  let flipping = false;
+  /** Bumped by every wave, so a card still turning for an older one knows to stop. */
+  let flipGeneration = 0;
 
   function canAnimate(element: HTMLElement | null): element is HTMLElement {
     return !!element && !reducedMotion.value && typeof element.animate === "function";
@@ -59,6 +62,7 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
    * a left-over fade would strand it at zero.
    */
   function clearAnimations() {
+    flipGeneration += 1;
     fade?.cancel();
     fade = undefined;
     grid.value?.getAnimations().forEach((animation) => animation.cancel());
@@ -99,8 +103,53 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
    * One card's turn: away, changed at the edge, and back. Changing it here rather than changing the
    * whole grid at once is the point — a single update would change the cards still facing the reader.
    */
-  async function flipCard(card: HTMLElement, index: number, axis: string, swapAt: (index: number) => void) {
+  /**
+   * Brings cards left mid-turn by an abandoned wave back to facing the reader, all together and
+   * without the wave's stagger. Cancelling their animations outright would snap a card from the
+   * angle it had reached straight to none in a single frame; starting the new wave from that angle
+   * instead would leave a card standing askew until its turn came round, up to eight hundred
+   * milliseconds later. Neither reads as movement.
+   */
+  async function recover(cards: HTMLElement[], axis: string) {
+    // Read every card before writing to any of them, so the measurement costs one layout, not one
+    // per card.
+    const current = cards.map((card) => getComputedStyle(card).transform);
+
+    if (current.every((transform) => transform === "none")) {
+      return;
+    }
+
+    await Promise.all(
+      cards.map((card, index) => {
+        card.getAnimations().forEach((animation) => animation.cancel());
+        card.style.transform = current[index] === "none" ? "" : current[index];
+
+        return turn(
+          card,
+          current[index] === "none" ? `${FLIP_DEPTH} ${axis}(0deg)` : current[index],
+          `${FLIP_DEPTH} ${axis}(0deg)`,
+          FLIP_RECOVER_DURATION,
+          FLIP_IN_EASING,
+        );
+      }),
+    );
+  }
+
+  async function flipCard(
+    card: HTMLElement,
+    index: number,
+    axis: string,
+    generation: number,
+    swapAt: (index: number) => void,
+  ) {
+    const superseded = () => generation !== flipGeneration;
+
     await wait(index * FLIP_STAGGER);
+
+    if (superseded()) {
+      return;
+    }
+
     await turn(
       card,
       `${FLIP_DEPTH} ${axis}(0deg)`,
@@ -109,11 +158,18 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
       FLIP_OUT_EASING,
     );
 
+    if (superseded()) {
+      return;
+    }
+
     swapAt(index);
     await nextTick();
 
     await turn(card, `${FLIP_DEPTH} ${axis}(90deg)`, `${FLIP_DEPTH} ${axis}(0deg)`, FLIP_IN_DURATION, FLIP_IN_EASING);
-    card.style.transform = "none";
+
+    if (!superseded()) {
+      card.style.transform = "none";
+    }
   }
 
   /**
@@ -127,7 +183,7 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
   async function flip(swapAt: (index: number) => void) {
     const element = grid.value;
 
-    if (flipping || !canAnimate(element)) {
+    if (!canAnimate(element)) {
       return false;
     }
 
@@ -137,15 +193,25 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
       return false;
     }
 
+    // A second sorting arriving mid-wave takes the grid over rather than being dropped: the cards
+    // still turning for the previous order are answering a question nobody is asking any more.
+    const generation = ++flipGeneration;
     const axis = displayedViewMode.value === "list" ? "rotateX" : "rotateY";
 
-    flipping = true;
     element.classList.add(FLIPPING_CLASS);
+    await recover(cards, axis);
 
-    await Promise.all(cards.map((card, index) => flipCard(card, index, axis, swapAt)));
+    if (generation !== flipGeneration) {
+      return true;
+    }
+
+    await Promise.all(cards.map((card, index) => flipCard(card, index, axis, generation, swapAt)));
+
+    if (generation !== flipGeneration) {
+      return true;
+    }
 
     element.classList.remove(FLIPPING_CLASS);
-    flipping = false;
 
     return true;
   }

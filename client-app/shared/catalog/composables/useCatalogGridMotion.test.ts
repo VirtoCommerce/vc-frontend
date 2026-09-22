@@ -129,6 +129,22 @@ describe("useCatalogGridMotion", () => {
     expect(frames[0][1].transform).toContain("rotateY(-90deg)");
   });
 
+  it("lets a second wave take the grid over from one still turning", async () => {
+    const { api } = mountGrid(3);
+    animations.length = 0;
+
+    const firstSwaps: number[] = [];
+    const first = api.flip((index) => firstSwaps.push(index));
+    // The reader pressed another sorting before the first order finished arriving.
+    const secondSwaps: number[] = [];
+    await api.flip((index) => secondSwaps.push(index));
+    await first;
+
+    // The abandoned wave stops changing cards; the one the reader is waiting for changes them all.
+    expect(secondSwaps).toHaveLength(3);
+    expect(firstSwaps.length).toBeLessThan(3);
+  });
+
   it("switches the layout without moving anything when motion is not wanted", async () => {
     reduced = true;
     const { viewMode, api } = mountGrid();
