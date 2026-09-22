@@ -89,6 +89,12 @@ const isMegaMenuShown = computed(() => {
   // which is also what header-plate reads to decide it is stuck.
   @apply sticky z-20;
 
+  // Everything around the plate — the air above it, the air below it, and the strip the
+  // pinned plate reserves but no longer paints — is air, not an element. Without this it
+  // lies over the page as an invisible lid and swallows clicks meant for the content.
+  // The plate itself takes the events back (see header-plate.vue).
+  @apply pointer-events-none;
+
   // The shell's top padding, negated: the plate then lands flush at viewport 0 when the
   // header pins, which is also the geometry header-plate reads to decide it is stuck.
   top: calc(-1 * var(--page-stack, 1.5rem));

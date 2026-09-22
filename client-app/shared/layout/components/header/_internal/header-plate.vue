@@ -175,14 +175,38 @@ watch(route, () => {
   // mega-menu.vue, and two separate numbers would part company on the first edit.
   --header-row-pad-x: 1.5rem;
 
+  // One curve for everything that moves when the plate pins, so the height it gives up and
+  // the padding that takes its place cancel out at every frame rather than only at the ends.
+  --stick-ease: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
   // .app-header owns stickiness, the page inset and the height vars.
   @apply relative z-[2];
+
+  transition: padding-bottom var(--stick-ease);
 
   &--stuck {
     $stuck: &;
 
     --mega-menu-height: 0px;
     --mega-menu-border-color: transparent;
+
+    // The plate gives its height back to the page ON SCREEN, and keeps every pixel of it
+    // in FLOW. Letting the flow height shrink is what made the second row flicker on a
+    // slow scroll: a header that gets shorter above the fold makes the document shorter,
+    // the browser's scroll anchoring pulls the scroll back to hold the content still, the
+    // plate's top crosses back over zero, it un-pins and grows again — and the two states
+    // chase each other. Measured before the fix: scrolling to 28 / 32 / 33 landed on
+    // 26 / 25 / 25 and the stuck class flipped 1-0-1-0-1; with scroll anchoring switched
+    // off by hand the same sweep held every pixel and flipped once.
+    //
+    // So the plate hands the height to a padding that is air, not surface, and rides the
+    // same curve as the rows that are giving it up — the flow height then never moves.
+    padding-bottom: 1.5rem;
+
+    // Plus the category row, when the store shows one.
+    &:has(.header-plate__mega) {
+      padding-bottom: 4rem;
+    }
   }
 
   &__surface {
@@ -193,7 +217,10 @@ watch(route, () => {
     // No outline either — the design separates the plate from the canvas with the shadow
     // alone, and a border over it reads as a second contour. The plate's own edge is the
     // glass pair instead: a sheen inset along the top, a cool line underneath.
-    @apply relative;
+    //
+    // The surface is where the header stops being air: .app-header drops pointer events so
+    // its reserved strip does not cover the page, and the painted plate takes them back.
+    @apply pointer-events-auto relative;
 
     // Its own stacking context, or a neighbouring plate's backdrop-filter drags this one's
     // content into the blur in Safari (WebKit #98538).
@@ -242,8 +269,8 @@ watch(route, () => {
     min-height: 5.5rem;
     padding: 0.75rem var(--header-row-pad-x);
     transition:
-      min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-      padding-block 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height var(--stick-ease),
+      padding-block var(--stick-ease);
 
     #{$stuck} & {
       @apply py-2;
@@ -267,7 +294,7 @@ watch(route, () => {
     // the pinned header no air at all.
     @apply h-11;
 
-    transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height var(--stick-ease);
 
     #{$stuck} & {
       @apply h-[2.125rem];
@@ -301,11 +328,13 @@ watch(route, () => {
   }
 
   &__mega {
-    @apply overflow-hidden transition-[height] duration-200;
+    @apply overflow-hidden;
+
+    transition: height var(--stick-ease);
   }
 
   &__dropdown {
-    @apply absolute inset-x-0 z-[1] overflow-y-auto shadow-md;
+    @apply pointer-events-auto absolute inset-x-0 z-[1] overflow-y-auto shadow-md;
 
     background: var(--header-bottom-bg-color);
     border-radius: var(--vc-radius);
@@ -317,10 +346,9 @@ watch(route, () => {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    &__row,
-    &__logo {
-      transition: none;
-    }
+    --stick-ease: 0s;
+
+    transition: none;
   }
 }
 </style>
