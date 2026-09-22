@@ -21,10 +21,7 @@
         </BadgesWrapper>
       </VcProductImage>
 
-      <VcProductActions
-        :direction="viewMode === 'grid' ? 'vertical' : 'horizontal'"
-        :with-background="viewMode === 'grid'"
-      >
+      <VcProductActions :direction="viewMode === 'grid' ? 'vertical' : 'horizontal'">
         <AddToList :product="product" />
 
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
@@ -315,6 +312,16 @@ const variationsCount = computed(() => {
     order: 0;
   }
 
+  // The title is the product's name here, not a link away from the page: the grid is scanned for
+  // what a thing is, and a column of blue underlines reads as navigation rather than as goods.
+  :deep(.vc-product-title) {
+    @apply text-neutral-950;
+
+    &:hover {
+      @apply text-neutral-950 underline;
+    }
+  }
+
   &__spec {
     @apply inline-flex max-w-full items-baseline gap-1 rounded-full px-2 py-1 text-xs leading-none;
 
@@ -322,11 +329,11 @@ const variationsCount = computed(() => {
   }
 
   &__spec-label {
-    @apply shrink-0 font-bold text-neutral-600;
+    @apply shrink-0 font-bold text-neutral-950;
   }
 
   &__spec-value {
-    @apply truncate font-normal text-neutral-950;
+    @apply truncate font-normal text-neutral-600;
   }
 
   $list: "";

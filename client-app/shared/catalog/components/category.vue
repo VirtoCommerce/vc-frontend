@@ -36,176 +36,192 @@
           />
         </template>
 
-        <VcTypography tag="h1" class="category__title">
-          <i18n-t
-            v-if="!categoryId && !isRoot && searchParams.keyword"
-            :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
-            tag="span"
-          >
-            <template #keyword>
-              <strong>{{ searchParams.keyword }}</strong>
-            </template>
-          </i18n-t>
+        <!-- The page is laid out as plates on the canvas: the heading is one plate, the category's
+             picture a second beside it, and the listing a third below. -->
+        <div class="category__head">
+          <div class="category__head-plate">
+            <span v-if="headEyebrow" class="category__eyebrow">{{ headEyebrow }}</span>
 
-          <!-- Skeleton -->
-          <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
+            <VcTypography tag="h1" class="category__title">
+              <i18n-t
+                v-if="!categoryId && !isRoot && searchParams.keyword"
+                :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
+                tag="span"
+              >
+                <template #keyword>
+                  <strong>{{ searchParams.keyword }}</strong>
+                </template>
+              </i18n-t>
 
-          <span v-else-if="title">
-            {{ title }}
-          </span>
+              <!-- Skeleton -->
+              <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
 
-          <span v-else-if="currentCategory && searchQueryParam">
-            {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
-          </span>
+              <span v-else-if="title">
+                {{ title }}
+              </span>
 
-          <span v-else>
-            {{ currentCategory?.name }}
-          </span>
+              <span v-else-if="currentCategory && searchQueryParam">
+                {{
+                  $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name })
+                }}
+              </span>
 
-          <sup v-if="showProductsCount" class="category__products-count">
-            <b class="me-1" data-test-id="products-count-label">
-              {{ $n(totalProductsCount, "decimal") }}
-            </b>
+              <span v-else>
+                {{ currentCategory?.name }}
+              </span>
 
-            <template v-if="currentCategory && searchQueryParam">
-              {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
-            </template>
+              <sup v-if="showProductsCount" class="category__products-count">
+                <b class="me-1" data-test-id="products-count-label">
+                  {{ $n(totalProductsCount, "decimal") }}
+                </b>
 
-            <template v-else>
-              {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
-            </template>
-          </sup>
-        </VcTypography>
+                <template v-if="currentCategory && searchQueryParam">
+                  {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
+                </template>
 
-        <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
-
-        <template v-if="!hideAllControls">
-          <div
-            :class="[
-              'category__filters',
-              {
-                'category__filters--sticky': stickyMobileHeaderIsVisible,
-              },
-            ]"
-          >
-            <!-- Popup sidebar filters toggler -->
-            <VcButton
-              v-if="!hideSidebar"
-              class="category__facets-button"
-              icon="filter"
-              size="sm"
-              :aria-label="$t('common.accessibility.open_filters')"
-              @click="showFiltersSidebar"
-            />
-
-            <!-- View options - horizontal view -->
-            <ViewMode
-              v-if="!hideViewModeSelector"
-              v-model:mode="savedViewMode"
-              class="category__view-mode"
-              data-test-id="view-switcher"
-            />
-
-            <!-- Sorting -->
-            <CategorySort
-              v-if="!hideSorting && !isHorizontalFilters"
-              v-model="selectedSort"
-              :options="translatedProductSortingList"
-              :loading="fetchingProducts"
-              class="category__sort"
-              @change="applySort"
-            />
-
-            <!-- In stock and branches -->
-            <CategoryControls
-              v-if="!hideControls && !isMobile && !isHorizontalFilters"
-              v-model="localStorageInStock"
-              v-model:purchased-before="localStoragePurchasedBefore"
-              :loading="fetchingProducts"
-              :saved-branches="localStorageBranches"
-              class="category__controls"
-              @open-branches-modal="openBranchesModal"
-              @apply-in-stock="resetCurrentPage"
-              @apply-purchased-before="resetCurrentPage"
-            />
+                <template v-else>
+                  {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+                </template>
+              </sup>
+            </VcTypography>
           </div>
 
-          <!-- Horizontal filters -->
-          <CategoryHorizontalFilters
-            v-if="isHorizontalFilters && !isMobile"
-            :facets-loading="fetchingFacets"
-            :sortings="sortings"
-            :loading="fetchingProducts || fetchingFacets"
-            :filters="filtersToShow"
-            :hide-sorting="hideSorting"
-            :hide-all-filters="hideSidebar"
-            @reset-facet-filters="resetFacetFilters"
-            @change:filters="applyFiltersOnly($event)"
-            @show-popup-sidebar="showFiltersSidebar"
-            @apply-sort="resetCurrentPage"
+          <div v-if="headImage" class="category__head-art">
+            <img :src="headImage" alt="" class="category__head-image" />
+          </div>
+        </div>
+
+        <div class="category__body">
+          <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
+
+          <template v-if="!hideAllControls">
+            <div
+              :class="[
+                'category__filters',
+                {
+                  'category__filters--sticky': stickyMobileHeaderIsVisible,
+                },
+              ]"
+            >
+              <!-- Popup sidebar filters toggler -->
+              <VcButton
+                v-if="!hideSidebar"
+                class="category__facets-button"
+                icon="filter"
+                size="sm"
+                :aria-label="$t('common.accessibility.open_filters')"
+                @click="showFiltersSidebar"
+              />
+
+              <!-- View options - horizontal view -->
+              <ViewMode
+                v-if="!hideViewModeSelector"
+                v-model:mode="savedViewMode"
+                class="category__view-mode"
+                data-test-id="view-switcher"
+              />
+
+              <!-- Sorting -->
+              <CategorySort
+                v-if="!hideSorting && !isHorizontalFilters"
+                v-model="selectedSort"
+                :options="translatedProductSortingList"
+                :loading="fetchingProducts"
+                class="category__sort"
+                @change="applySort"
+              />
+
+              <!-- In stock and branches -->
+              <CategoryControls
+                v-if="!hideControls && !isMobile && !isHorizontalFilters"
+                v-model="localStorageInStock"
+                v-model:purchased-before="localStoragePurchasedBefore"
+                :loading="fetchingProducts"
+                :saved-branches="localStorageBranches"
+                class="category__controls"
+                @open-branches-modal="openBranchesModal"
+                @apply-in-stock="resetCurrentPage"
+                @apply-purchased-before="resetCurrentPage"
+              />
+            </div>
+
+            <!-- Horizontal filters -->
+            <CategoryHorizontalFilters
+              v-if="isHorizontalFilters && !isMobile"
+              :facets-loading="fetchingFacets"
+              :sortings="sortings"
+              :loading="fetchingProducts || fetchingFacets"
+              :filters="filtersToShow"
+              :hide-sorting="hideSorting"
+              :hide-all-filters="hideSidebar"
+              @reset-facet-filters="resetFacetFilters"
+              @change:filters="applyFiltersOnly($event)"
+              @show-popup-sidebar="showFiltersSidebar"
+              @apply-sort="resetCurrentPage"
+            />
+
+            <ActiveFilterChips
+              v-if="hasSelectedFilters || isResetPageButtonShown || activeControls.length"
+              :filters="productsFilters.filters"
+              :facets-to-hide="normalizedFacetsToHide"
+              :controls="activeControls"
+              @apply-filters="applyFiltersOnly"
+              @cancel-control="cancelControl"
+            >
+              <template #actions>
+                <VcChip
+                  v-if="hasSelectedFilters || activeControls.length"
+                  color="secondary"
+                  variant="outline"
+                  clickable
+                  @click="resetFacetAndControlsFilters"
+                >
+                  <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+                  <VcIcon name="reset" />
+                </VcChip>
+
+                <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
+                  <span>{{ $t("common.buttons.reset_page") }}</span>
+
+                  <VcIcon name="reset" />
+                </VcChip>
+              </template>
+            </ActiveFilterChips>
+          </template>
+
+          <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
+
+          <CategoryProducts
+            :card-type="cardType"
+            :sort-token="sortToken"
+            :columns-amount-desktop="columnsAmountDesktop"
+            :columns-amount-tablet="columnsAmountTablet"
+            :fetching-more-products="fetchingMoreProducts"
+            :fetching-products="fetchingProducts"
+            :fixed-products-count="fixedProductsCount"
+            :has-active-filters="
+              hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+            "
+            :items-per-page="itemsPerPage"
+            :pages-count="pagesCount"
+            :page-number="currentPage"
+            :page-history="pageHistory"
+            :products="products"
+            :saved-view-mode="savedViewMode"
+            :mode="catalogPaginationMode"
+            :keyword="searchParams.keyword"
+            class="category__products"
+            @change-page="changeProductsPage"
+            @reset-filter-keyword="handleResetFilterKeyword"
+            @select-product="selectProduct"
           />
 
-          <ActiveFilterChips
-            v-if="hasSelectedFilters || isResetPageButtonShown || activeControls.length"
-            :filters="productsFilters.filters"
-            :facets-to-hide="normalizedFacetsToHide"
-            :controls="activeControls"
-            @apply-filters="applyFiltersOnly"
-            @cancel-control="cancelControl"
-          >
-            <template #actions>
-              <VcChip
-                v-if="hasSelectedFilters || activeControls.length"
-                color="secondary"
-                variant="outline"
-                clickable
-                @click="resetFacetAndControlsFilters"
-              >
-                <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-                <VcIcon name="reset" />
-              </VcChip>
-
-              <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
-                <span>{{ $t("common.buttons.reset_page") }}</span>
-
-                <VcIcon name="reset" />
-              </VcChip>
-            </template>
-          </ActiveFilterChips>
-        </template>
-
-        <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
-
-        <CategoryProducts
-          :card-type="cardType"
-          :sort-token="sortToken"
-          :columns-amount-desktop="columnsAmountDesktop"
-          :columns-amount-tablet="columnsAmountTablet"
-          :fetching-more-products="fetchingMoreProducts"
-          :fetching-products="fetchingProducts"
-          :fixed-products-count="fixedProductsCount"
-          :has-active-filters="
-            hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
-          "
-          :items-per-page="itemsPerPage"
-          :pages-count="pagesCount"
-          :page-number="currentPage"
-          :page-history="pageHistory"
-          :products="products"
-          :saved-view-mode="savedViewMode"
-          :mode="catalogPaginationMode"
-          :keyword="searchParams.keyword"
-          class="category__products"
-          @change-page="changeProductsPage"
-          @reset-filter-keyword="handleResetFilterKeyword"
-          @select-product="selectProduct"
-        />
-
-        <div class="category__products-bottom">
-          <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
-            {{ $t("pages.catalog.show_all_results") }}
-          </VcButton>
+          <div class="category__products-bottom">
+            <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
+              {{ $t("pages.catalog.show_all_results") }}
+            </VcButton>
+          </div>
         </div>
       </VcLayout>
     </template>
@@ -567,6 +583,12 @@ function trackViewSearchResults(): void {
   });
 }
 
+/** The parent section, named over the title so the reader knows where in the catalog they stand. */
+const headEyebrow = computed(() => (props.isRoot ? undefined : currentCategory.value?.parent?.name));
+
+/** The category's own picture, set per category in the admin; the plate is left out when there is none. */
+const headImage = computed(() => currentCategory.value?.images?.[0]?.url);
+
 // Counted from the press, not from the sorting the store has confirmed: `selectedSort` follows the
 // backend's own `selected` flag and only moves once the search has answered — a second and a half
 // after the grid has had to decide whether to hold its cards or drop them for skeletons.
@@ -762,6 +784,80 @@ onMounted(() => {
 
 <style lang="scss">
 .category {
+  // The page is plates on the canvas, on the same numbers as the header and footer plates PR #2494
+  // built: one radius, one inside, one shadow, and one step between every plate. The fallbacks are
+  // those values, so a theme without the paprika tokens still gets round plates.
+  --category-plate-radius: var(--plate-radius, 1.75rem);
+  --category-plate-pad-y: var(--plate-pad-y, 2.25rem);
+  --category-plate-pad-x: var(--plate-pad-x, 2rem);
+  --category-plate-gap: var(--page-stack, 1.625rem);
+
+  %plate {
+    padding: var(--category-plate-pad-y) var(--category-plate-pad-x);
+    border-radius: var(--category-plate-radius);
+    background: theme("colors.additional.50");
+    box-shadow: var(--plate-shadow, theme("boxShadow.md"));
+  }
+
+  .vc-layout__container {
+    @media (min-width: theme("screens.md")) {
+      gap: var(--category-plate-gap);
+    }
+  }
+
+  .vc-layout__sidebar {
+    @extend %plate;
+
+    padding: 1.75rem 1.5rem;
+
+    // The sidebar plate is the frame now. The widgets inside it drew one of their own, which put a
+    // box inside the box; they lie flat on the plate and are parted by a hairline instead.
+    .vc-widget {
+      @apply rounded-none border-0 bg-transparent shadow-none;
+
+      & + .vc-widget {
+        @apply border-t border-neutral-100 pt-5;
+      }
+    }
+  }
+
+  &__head {
+    @apply flex items-stretch;
+
+    gap: var(--category-plate-gap);
+    margin-bottom: var(--category-plate-gap);
+  }
+
+  &__head-plate {
+    @extend %plate;
+    @apply flex min-w-0 grow flex-col justify-center gap-2;
+  }
+
+  &__eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.14em] text-primary-500;
+  }
+
+  // The picture is a third of the row and fills its plate edge to edge; the heading keeps the rest.
+  &__head-art {
+    @apply hidden shrink-0 overflow-hidden;
+
+    width: 32%;
+    border-radius: var(--category-plate-radius);
+    box-shadow: var(--plate-shadow, theme("boxShadow.md"));
+
+    @media (min-width: theme("screens.lg")) {
+      @apply block;
+    }
+  }
+
+  &__head-image {
+    @apply size-full object-cover;
+  }
+
+  &__body {
+    @extend %plate;
+  }
+
   &__breadcrumbs {
     @apply mb-2.5;
 
