@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Rutnät",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Resultat per sida:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Pris, lågt till högt",
       "price_high_to_low": "Pris, högt till lågt",
       "date_new_to_old": "Datum, nytt till gammalt",
-      "date_old_to_new": "Datum, gammalt till nytt"
+      "date_old_to_new": "Datum, gammalt till nytt",
+      "short": {
+        "featured": "Utvalda",
+        "alphabetically_a_z": "A-Ö",
+        "alphabetically_z_a": "Ö-A",
+        "price_low_to_high": "Pris ↑",
+        "price_high_to_low": "Pris ↓",
+        "date_new_to_old": "Nyaste",
+        "date_old_to_new": "Äldsta"
+      }
     },
     "compare": {
       "add_to_compare": {

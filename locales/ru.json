@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Карточки",
-        "list_label": "Список"
+        "list_label": "Список",
+        "aria_label": "Макет"
       },
       "page_size": {
         "label": "Результатов на странице:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Цена, от низкой к высокой",
       "price_high_to_low": "Цена: от высокой к низкой",
       "date_new_to_old": "Дата, от новых к старым",
-      "date_old_to_new": "Дата: сначала старые"
+      "date_old_to_new": "Дата: сначала старые",
+      "short": {
+        "featured": "Рекомендуемые",
+        "alphabetically_a_z": "А-Я",
+        "alphabetically_z_a": "Я-А",
+        "price_low_to_high": "Цена ↑",
+        "price_high_to_low": "Цена ↓",
+        "date_new_to_old": "Новые",
+        "date_old_to_new": "Старые"
+      }
     },
     "compare": {
       "add_to_compare": {

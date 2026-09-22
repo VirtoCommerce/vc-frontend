@@ -98,30 +98,22 @@
               @click="showFiltersSidebar"
             />
 
-            <!-- Sorting -->
-            <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
-              <VcLabel class="category__sort-label">
-                {{ $t("pages.catalog.sort_by_label") }}
-              </VcLabel>
-
-              <VcSelect
-                v-model="selectedSort"
-                text-field="name"
-                value-field="id"
-                :disabled="fetchingProducts"
-                :items="translatedProductSortingList"
-                class="category__sort-dropdown"
-                size="sm"
-                @change="resetCurrentPage"
-              />
-            </div>
-
             <!-- View options - horizontal view -->
             <ViewMode
               v-if="!hideViewModeSelector"
               v-model:mode="savedViewMode"
               class="category__view-mode"
               data-test-id="view-switcher"
+            />
+
+            <!-- Sorting -->
+            <CategorySort
+              v-if="!hideSorting && !isHorizontalFilters"
+              v-model="selectedSort"
+              :options="translatedProductSortingList"
+              :loading="fetchingProducts"
+              class="category__sort"
+              @change="resetCurrentPage"
             />
 
             <!-- In stock and branches -->
@@ -259,6 +251,7 @@ import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.v
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
+import CategorySort from "@/shared/catalog/components/category/category-sort.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 const props = defineProps<IProps>();
 
@@ -809,27 +802,15 @@ onMounted(() => {
   }
 
   &__sort {
-    @apply flex gap-2 items-center;
-
+    // No layout of its own: the rail is one control, and a gap set here would reopen the seam the
+    // seg track closes between its seats.
     @media (width < theme("screens.md")) {
-      @apply grow;
+      @apply min-w-0 grow;
     }
 
     @media (min-width: theme("screens.lg")) {
       @apply order-last;
     }
-  }
-
-  &__sort-label {
-    @apply me-2 shrink-0;
-
-    @media (width < theme("screens.md")) {
-      @apply hidden;
-    }
-  }
-
-  &__sort-dropdown {
-    @apply w-full;
   }
 
   &__view-mode {

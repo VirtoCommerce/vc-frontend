@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Siatka",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Układ"
       },
       "page_size": {
         "label": "Wyników na stronę:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Cena, od najniższej",
       "price_high_to_low": "Cena: od najwyższej",
       "date_new_to_old": "Data, od najnowszej",
-      "date_old_to_new": "Data, od najstarszych"
+      "date_old_to_new": "Data, od najstarszych",
+      "short": {
+        "featured": "Polecane",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Cena ↑",
+        "price_high_to_low": "Cena ↓",
+        "date_new_to_old": "Najnowsze",
+        "date_old_to_new": "Najstarsze"
+      }
     },
     "compare": {
       "add_to_compare": {

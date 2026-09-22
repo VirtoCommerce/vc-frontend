@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Grid",
-        "list_label": "List"
+        "list_label": "List",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Results per page:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Price, low to high",
       "price_high_to_low": "Price, high to low",
       "date_new_to_old": "Date, new to old",
-      "date_old_to_new": "Date, old to new"
+      "date_old_to_new": "Date, old to new",
+      "short": {
+        "featured": "Featured",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Price \u2191",
+        "price_high_to_low": "Price \u2193",
+        "date_new_to_old": "Newest",
+        "date_old_to_new": "Oldest"
+      }
     },
     "compare": {
       "add_to_compare": {

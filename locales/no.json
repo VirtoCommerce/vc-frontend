@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Rutenett",
-        "list_label": "Liste"
+        "list_label": "Liste",
+        "aria_label": "Visningsmodus"
       },
       "page_size": {
         "label": "Resultater per side:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Pris, lav til høy",
       "price_high_to_low": "Pris, høy til lav",
       "date_new_to_old": "Dato, ny til gammel",
-      "date_old_to_new": "Dato, gammel til ny"
+      "date_old_to_new": "Dato, gammel til ny",
+      "short": {
+        "featured": "Utvalgte",
+        "alphabetically_a_z": "A-Å",
+        "alphabetically_z_a": "Å-A",
+        "price_low_to_high": "Pris ↑",
+        "price_high_to_low": "Pris ↓",
+        "date_new_to_old": "Nyeste",
+        "date_old_to_new": "Eldste"
+      }
     },
     "compare": {
       "add_to_compare": {

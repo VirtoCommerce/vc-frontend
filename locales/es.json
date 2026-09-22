@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Cuadrícula",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Diseño"
       },
       "page_size": {
         "label": "Resultados por página:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Precio: de menor a mayor",
       "price_high_to_low": "Precio, de mayor a menor",
       "date_new_to_old": "Fecha, de más reciente a más antigua",
-      "date_old_to_new": "Fecha, de antiguo a nuevo"
+      "date_old_to_new": "Fecha, de antiguo a nuevo",
+      "short": {
+        "featured": "Destacado",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Precio ↑",
+        "price_high_to_low": "Precio ↓",
+        "date_new_to_old": "Más recientes",
+        "date_old_to_new": "Más antiguos"
+      }
     },
     "compare": {
       "add_to_compare": {

@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "グリッド表示",
-        "list_label": "リスト表示"
+        "list_label": "リスト表示",
+        "aria_label": "レイアウト"
       },
       "page_size": {
         "label": "表示件数："
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "価格の低い順",
       "price_high_to_low": "価格（高い順）",
       "date_new_to_old": "日付、新しい順",
-      "date_old_to_new": "日付、古い順"
+      "date_old_to_new": "日付、古い順",
+      "short": {
+        "featured": "注目の商品",
+        "alphabetically_a_z": "アルファベット順 (A-Z)",
+        "alphabetically_z_a": "アルファベット順 (Z-A)",
+        "price_low_to_high": "価格 (安い順)",
+        "price_high_to_low": "価格 (高い順)",
+        "date_new_to_old": "新着順",
+        "date_old_to_new": "古い順"
+      }
     },
     "compare": {
       "add_to_compare": {

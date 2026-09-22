@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Ruudukko",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Asettelu"
       },
       "page_size": {
         "label": "Tuloksia per sivu:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Hinta, alhaisesta korkeaan",
       "price_high_to_low": "Hinta, korkeasta alhaiseen",
       "date_new_to_old": "Päivämäärä, uusi vanhaan",
-      "date_old_to_new": "Päivämäärä, vanha uuteen"
+      "date_old_to_new": "Päivämäärä, vanha uuteen",
+      "short": {
+        "featured": "Suositellut",
+        "alphabetically_a_z": "Aakkosjärjestys A-Ö",
+        "alphabetically_z_a": "Aakkosjärjestys Ö-A",
+        "price_low_to_high": "Hinta ↑",
+        "price_high_to_low": "Hinta ↓",
+        "date_new_to_old": "Uusimmat",
+        "date_old_to_new": "Vanhimmat"
+      }
     },
     "compare": {
       "add_to_compare": {

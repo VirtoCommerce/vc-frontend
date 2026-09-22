@@ -717,7 +717,8 @@
     "catalog": {
       "view_mode": {
         "grid_label": "Grade",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Resultados por página:"
@@ -1049,7 +1050,16 @@
       "price_low_to_high": "Preço, do menor para o maior",
       "price_high_to_low": "Preço, do maior para o menor",
       "date_new_to_old": "Data, mais recente para o mais antigo",
-      "date_old_to_new": "Data, do mais antigo para o mais recente"
+      "date_old_to_new": "Data, do mais antigo para o mais recente",
+      "short": {
+        "featured": "Em destaque",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Preço ↑",
+        "price_high_to_low": "Preço ↓",
+        "date_new_to_old": "Mais recentes",
+        "date_old_to_new": "Mais antigos"
+      }
     },
     "compare": {
       "add_to_compare": {
