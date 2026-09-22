@@ -36,7 +36,7 @@ export function getTranslatedMenuLink(menuLink: ExtendedMenuLinkType, i18n = glo
     translated.title = i18n?.global.t(menuLink.title);
   }
 
-  if (menuLink.children?.length) {
+  if (menuLink.children) {
     translated.children = menuLink.children.map((child) => getTranslatedMenuLink(child, i18n));
   }
 
