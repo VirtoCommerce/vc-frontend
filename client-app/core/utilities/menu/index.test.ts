@@ -286,5 +286,17 @@ describe("Menu Utilities", () => {
         ],
       });
     });
+
+    it("leaves the input untouched so it can be translated again", () => {
+      const child: ExtendedMenuLinkType = { title: "child_key", route: "/child-route" };
+      const menuLink: ExtendedMenuLinkType = { title: "test_key", route: "/test-route", children: [child] };
+
+      const result = getTranslatedMenuLink(menuLink);
+
+      expect(menuLink.title).toBe("test_key");
+      expect(child.title).toBe("child_key");
+      expect(result).not.toBe(menuLink);
+      expect(result.children?.[0]).not.toBe(child);
+    });
   });
 });

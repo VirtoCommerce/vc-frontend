@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { clone, cloneDeep, mergeWith } from "lodash-es";
+import { mergeWith } from "lodash-es";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
@@ -84,7 +84,7 @@ export function _useNavigations() {
         return undefined;
       }
 
-      const schema = clone(getTranslatedMenuLink(raw));
+      const schema = getTranslatedMenuLink(raw);
 
       if (Array.isArray(schema.children)) {
         if (key === "marketing" && !hasModule(MODULE_ID_MARKETING_EXPERIENCE_API)) {
@@ -155,9 +155,8 @@ export function _useNavigations() {
   }
 
   // Registered account sections (e.g. Sales Rep hub), visibility-filtered and translated for the
-  // mobile drill-down. Clone children first — getTranslatedMenuLink mutates its shared-registry input.
-  // `priority` is intentionally not applied here: mobile prepends in registration order (desktop is
-  // the priority-ordered path — see AccountNavigationSectionType.priority).
+  // mobile drill-down. `priority` is intentionally not applied here: mobile prepends in registration
+  // order (desktop is the priority-ordered path — see AccountNavigationSectionType.priority).
   const mobileRegisteredAccountSections = computed<ExtendedMenuLinkType[]>(() =>
     registeredAccountSections.value
       .filter((section) => !section.isVisible || section.isVisible.value)
@@ -166,7 +165,7 @@ export function _useNavigations() {
           id: section.id,
           title: section.title,
           icon: section.icon,
-          children: cloneDeep(section.children),
+          children: section.children,
         }),
       ),
   );
