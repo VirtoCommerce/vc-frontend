@@ -671,7 +671,7 @@
         "title": "商品"
       },
       "gifts_section": {
-        "title": "+ ギフトを追加"
+        "title": "ギフト"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "カートへの追加結果",
@@ -1484,7 +1484,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "カート",
+      "title": "ショッピングカート",
       "empty_cart_description": "カートが空です",
       "empty_cart_search_text": "検索して必要なものを見つけましょう",
       "recently_browsed_products": "最近見た商品",
