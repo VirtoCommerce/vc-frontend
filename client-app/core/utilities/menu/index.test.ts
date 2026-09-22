@@ -287,6 +287,16 @@ describe("Menu Utilities", () => {
       });
     });
 
+    it("does not share the route object with the input", () => {
+      const menuLink: ExtendedMenuLinkType = { title: "test_key", route: { name: "Quotes", params: { id: "1" } } };
+
+      const result = getTranslatedMenuLink(menuLink);
+
+      expect(result.route).toEqual(menuLink.route);
+      expect(result.route).not.toBe(menuLink.route);
+      expect((result.route as { params: object }).params).not.toBe((menuLink.route as { params: object }).params);
+    });
+
     it("leaves the input untouched so it can be translated again", () => {
       const child: ExtendedMenuLinkType = { title: "child_key", route: "/child-route" };
       const menuLink: ExtendedMenuLinkType = { title: "test_key", route: "/test-route", children: [child] };
