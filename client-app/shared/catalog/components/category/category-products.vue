@@ -192,6 +192,11 @@ watch(products, async (next) => {
   awaitingSort.value = false;
   changingOver.value = true;
 
+  // The cards turn onto their new products, and a product whose photo has not arrived turns onto a
+  // blank. The result is in hand a moment before the wave starts, so the photos are fetched and
+  // decoded in that moment — capped, because a slow image must not hold the whole grid still.
+  await warmImages(next);
+
   // The backend decides what comes back, so the new page need not be the length of the old one. The
   // seats both pages share turn over; any beyond them are added or dropped once the wave is done.
   const flipped = await flip((index) => {
@@ -231,6 +236,32 @@ watch(
     await enter();
   },
 );
+
+/**
+ * Only the first cards need their photo before the wave reaches them — the last card does not turn
+ * for another nine hundred milliseconds, which is head start enough. Waiting longer than this buys
+ * nothing and delays the whole grid.
+ */
+const IMAGE_WARM_TIMEOUT = 150;
+
+function warmImages(items: Product[]) {
+  const sources = items.map((item) => item.imgSrc).filter((source): source is string => !!source);
+
+  if (!sources.length) {
+    return Promise.resolve();
+  }
+
+  const decoded = Promise.all(
+    sources.map((source) => {
+      const image = new Image();
+      image.src = source;
+
+      return image.decode().catch(() => undefined);
+    }),
+  );
+
+  return Promise.race([decoded.then(() => undefined), new Promise<void>((r) => setTimeout(r, IMAGE_WARM_TIMEOUT))]);
+}
 
 onMounted(() => {
   if (!props.fetchingProducts) {
