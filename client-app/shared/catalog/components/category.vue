@@ -37,8 +37,19 @@
         </template>
 
         <VcTypography tag="h1" class="category__title">
+          <!-- The scanned code filters instead of being a keyword, so the heading is the only place it shows. -->
           <i18n-t
-            v-if="!categoryId && !isRoot && searchParams.keyword"
+            v-if="!categoryId && !isRoot && barcode"
+            :keypath="emptyViewSearchOnly ? 'pages.search.header_barcode_empty' : 'pages.search.header_barcode'"
+            tag="span"
+          >
+            <template #barcode>
+              <strong>{{ barcode }}</strong>
+            </template>
+          </i18n-t>
+
+          <i18n-t
+            v-else-if="!categoryId && !isRoot && searchParams.keyword"
             :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
             tag="span"
           >
@@ -193,7 +204,8 @@
           :fetching-products="fetchingProducts"
           :fixed-products-count="fixedProductsCount"
           :has-active-filters="
-            hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+            !barcode &&
+            (hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length)
           "
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
@@ -202,7 +214,7 @@
           :products="products"
           :saved-view-mode="savedViewMode"
           :mode="catalogPaginationMode"
-          :keyword="searchParams.keyword"
+          :keyword="searchParams.keyword || barcode"
           class="category__products"
           @change-page="changeProductsPage"
           @reset-filter-keyword="handleResetFilterKeyword"
@@ -225,7 +237,7 @@ import { omit } from "lodash-es";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
@@ -235,15 +247,19 @@ import { globals } from "@/core/globals";
 import {
   getFilterExpression,
   getFilterExpressionForAvailableIn,
+  getFilterExpressionForBarcode,
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForInStockVariations,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
+  getProductRoute,
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
+import { shouldOpenSingleBarcodeHit } from "@/shared/layout/composables/useBarcodeSearch";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
@@ -267,6 +283,12 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 const viewModes = ["grid", "list"] as const;
 
 const CATEGORY_FACET_PARAM_NAME = "__outline_named";
+
+// Query params that mean the shown result is no longer the plain "what does this code match" answer.
+const NARROWING_QUERY_PARAMS = [QueryParamName.Facets, QueryParamName.Page, QueryParamName.Sort];
+
+// What the empty view's reset clears: both ways a search term reaches this page.
+const SEARCH_QUERY_PARAMS = [QueryParamName.SearchPhrase, QueryParamName.Barcode];
 
 type ViewModeType = (typeof viewModes)[number];
 
@@ -421,24 +443,44 @@ const categoryListProperties = computed(() => ({
   related_type: "category",
 }));
 
+// A scanned code arrives in its own query param and is matched by the API against the product index
+// fields configured for the store, so it filters instead of becoming a search keyword.
+const barcodeQueryParam = useRouteQueryParam<string | string[]>(QueryParamName.Barcode, { defaultValue: "" });
+
+// A repeated `?barcode=a&barcode=b` arrives as an array; one scan yields one code, so take the first.
+const barcode = computed(() => {
+  const value = barcodeQueryParam.value;
+  return (Array.isArray(value) ? value[0] : value) || "";
+});
+
+const catalogBasePath = useCatalogBasePath();
+const redirectedBarcodes = new Set<string>();
+
 const filteredOnlyBySearch = computed(() => {
-  return !hasSelectedFilters.value && !!searchQueryParam.value;
+  return !hasSelectedFilters.value && (!!searchQueryParam.value || !!barcode.value);
 });
 const emptyViewSearchOnly = computed(() => {
   return filteredOnlyBySearch.value && products.value.length === 0 && !fetchingProducts.value;
 });
 const hideAllControls = computed(() => {
-  return emptyViewSearchOnly.value;
+  return emptyViewSearchOnly.value || !!barcode.value;
 });
 
 const isSidebarVisible = computed(() => {
-  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
+  return (
+    !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value && !barcode.value
+  );
 });
 const showProductsCount = computed(() => {
   return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
 
 const activeControls = computed(() => {
+  // A barcode lookup does not apply them, so no chip may claim one.
+  if (barcode.value) {
+    return [];
+  }
+
   const controls = [];
 
   if (localStorageInStock.value) {
@@ -514,10 +556,18 @@ const searchParams = computed<ProductsSearchParamsType>(() => ({
   keyword: searchQueryParam.value || props.keyword,
   filter: [
     props.filter,
-    facetsQueryParam.value,
-    getFilterExpressionForInStockVariations(localStorageInStock.value),
-    getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
-    getFilterExpressionForAvailableIn(localStorageBranches.value),
+    getFilterExpressionForBarcode(barcode.value),
+    // A scanned code is an identity lookup - the shopper is holding the item - so nothing they were
+    // browsing with narrows it: neither the facets in the URL nor the in-stock, purchased-before and
+    // branch preferences may hide the product the code identifies.
+    ...(barcode.value
+      ? []
+      : [
+          facetsQueryParam.value,
+          getFilterExpressionForInStockVariations(localStorageInStock.value),
+          getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
+          getFilterExpressionForAvailableIn(localStorageBranches.value),
+        ]),
   ]
     .filter(Boolean)
     .join(" "),
@@ -553,6 +603,9 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
 }
 
 async function fetchProducts(): Promise<void> {
+  const requestedBarcode = barcode.value;
+  const wasNarrowed = NARROWING_QUERY_PARAMS.some((paramName) => !!route.query[paramName]);
+
   await _fetchProducts(searchParams.value);
 
   /**
@@ -563,6 +616,29 @@ async function fetchProducts(): Promise<void> {
   if (searchQueryParam.value) {
     trackViewSearchResults();
   }
+
+  openSingleBarcodeHit(requestedBarcode, wasNarrowed);
+}
+
+function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): void {
+  const canOpen = shouldOpenSingleBarcodeHit({
+    requestedBarcode,
+    currentBarcode: barcode.value,
+    wasNarrowed,
+    redirectedBarcodes,
+    totalCount: totalProductsCount.value,
+    itemCount: products.value.length,
+  });
+
+  if (!canOpen) {
+    return;
+  }
+
+  redirectedBarcodes.add(requestedBarcode);
+
+  const [product] = products.value;
+
+  void router.replace(getProductRoute(product.id, product.slug, catalogBasePath.value));
 }
 
 function trackViewSearchResults(): void {
@@ -583,9 +659,10 @@ function resetPage() {
 }
 
 async function handleResetFilterKeyword() {
-  const hadKeyword = !!searchQueryParam.value;
+  const hadKeyword = !!searchQueryParam.value || !!barcode.value;
 
   resetSearchKeyword();
+  barcodeQueryParam.value = "";
   await resetFacetAndControlsFilters({ skipPageReset: true });
 
   if (!hadKeyword) {
@@ -607,11 +684,11 @@ async function handleResetFilterKeyword() {
   if (isCategoryScope.value) {
     void router.replace({
       ...previousResolvedRoute,
-      query: omit(previousResolvedRoute.query, QueryParamName.SearchPhrase),
+      query: omit(previousResolvedRoute.query, SEARCH_QUERY_PARAMS),
     });
   } else {
     const catalogQuery = router.currentRoute.value.name === ROUTES.SEARCH.NAME ? router.currentRoute.value.query : {};
-    const catalogQueryWithoutSearch = omit(catalogQuery, QueryParamName.SearchPhrase);
+    const catalogQueryWithoutSearch = omit(catalogQuery, SEARCH_QUERY_PARAMS);
 
     void router.replace({ name: ROUTES.CATALOG.NAME, query: catalogQueryWithoutSearch });
   }

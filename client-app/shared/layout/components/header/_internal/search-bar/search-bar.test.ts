@@ -27,12 +27,19 @@ vi.mock("@/core/globals", () => ({
 }));
 
 vi.mock("@/core/composables", () => ({
+  useAnalytics: () => ({ analytics: vi.fn() }),
   useRouteQueryParam: () => ref(""),
   useThemeContext: () => ({ themeContext: ref({ settings: {} }) }),
 }));
 
+const { settingValues } = vi.hoisted(() => ({ settingValues: new Map<string, unknown>() }));
+
 vi.mock("@/core/composables/useModuleSettings", () => ({
-  useModuleSettings: () => ({ getSettingValue: () => undefined }),
+  useModuleSettings: () => ({ getSettingValue: (name: string) => settingValues.get(name) }),
+}));
+
+vi.mock("vue-router", () => ({
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 vi.mock("@/shared/layout/composables/useSearchBar", () => ({
@@ -61,9 +68,20 @@ vi.mock("../search-dropdown.vue", () => ({
     },
   }),
 }));
-vi.mock("./barcode-scanner.vue", () => ({ default: { name: "BarcodeScanner", render: () => null } }));
+vi.mock("./barcode-scanner.vue", () => ({
+  default: defineComponent({
+    name: "BarcodeScanner",
 
-/** Renders the `prepend` slot (where the scope indicators live) and the `placeholder` attr passed to VcInput. */
+    setup() {
+      return () => h("button", { "data-testid": "barcode-scanner" });
+    },
+  }),
+}));
+
+/**
+ * Renders the `prepend` slot (where the scope indicators live), the `append` slot (search and
+ * barcode buttons) and the `placeholder` attr passed to VcInput.
+ */
 const VcInputStub = defineComponent({
   name: "VcInput",
   inheritAttrs: false,
@@ -73,6 +91,7 @@ const VcInputStub = defineComponent({
       h("div", { class: "input" }, [
         h("span", { "data-testid": "placeholder" }, attrs.placeholder as string),
         slots.prepend?.(),
+        slots.append?.(),
       ]);
   },
 });
@@ -86,6 +105,7 @@ const VcButtonStub = defineComponent({
   },
 });
 
+const BARCODE_SCANNER_SELECTOR = '[data-testid="barcode-scanner"]';
 const LOADING_INDICATOR_SELECTOR = '[aria-label="shared.layout.search_bar.scope_loading_label"]';
 const PLACEHOLDER_SELECTOR = '[data-testid="placeholder"]';
 const DROPDOWN_SELECTOR = '[data-testid="search-dropdown"]';
@@ -116,6 +136,7 @@ function createComponent() {
 }
 
 beforeEach(() => {
+  settingValues.clear();
   searchScopeData.value = { queryScope: "", searchScope: [] };
   preparingScope.value = false;
 });
@@ -169,6 +190,24 @@ describe("SearchBar scope indicators", () => {
     const chips = wrapper.findAll("[data-search-scope]");
     expect(chips).toHaveLength(1);
     expect(chips[0].text()).toBe("Parent category");
+  });
+});
+
+describe("SearchBar barcode scanner", () => {
+  // The store setting is public but optional: a backend that does not know it yet must keep the
+  // scanner, so only an explicit `false` hides the button.
+  it("shows the scanner when the store setting is missing", () => {
+    const wrapper = createComponent();
+
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(1);
+  });
+
+  it("hides the scanner when the store disabled it", () => {
+    settingValues.set("Catalog.Search.BarcodeScannerEnabled", false);
+
+    const wrapper = createComponent();
+
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(0);
   });
 });
 

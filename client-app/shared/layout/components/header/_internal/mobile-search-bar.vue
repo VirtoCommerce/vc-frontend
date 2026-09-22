@@ -24,7 +24,7 @@
             @keydown.enter="searchDropdownRef?.handleSearch()"
           >
             <template #append>
-              <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+              <BarcodeScanner v-if="!searchPhrase && isScannerEnabled" @scanned-code="onBarcodeScanned" />
 
               <VcButton
                 class="mobile-search-bar__button"
@@ -71,6 +71,7 @@ import {
   getFilterExpressionForInStockVariations,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
+import { useBarcodeSearch } from "@/shared/layout/composables/useBarcodeSearch";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import BarcodeScanner from "./search-bar/barcode-scanner.vue";
@@ -139,12 +140,13 @@ function reset() {
   searchPhrase.value = "";
 }
 
-function onBarcodeScanned(value: string) {
-  if (value) {
+const { isScannerEnabled, onBarcodeScanned } = useBarcodeSearch({
+  searchFullText: (value) => {
     searchPhrase.value = value;
     searchDropdownRef.value?.handleSearch();
-  }
-}
+  },
+  hideSearchResults: hideSearchBar,
+});
 
 onMounted(() => {
   if (searchPhraseInUrl.value) {

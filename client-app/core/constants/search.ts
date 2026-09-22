@@ -27,4 +27,6 @@ export const EXCLUDED_FILTER_NAMES = [
   "isPurchased",
   "productfamilyid",
   "is",
+  // Travels in its own route param (not in ?facets), so a chip for it could never be removed or reset.
+  "barcode",
 ];

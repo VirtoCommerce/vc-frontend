@@ -553,7 +553,9 @@ export function useProducts(
   }
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
-    return filters.filter((filter) => !isZeroPriceFilter(filter) && !isExcludedFilter(filter));
+    // Server-generated filters (`is:product`, the barcode expansion, …) are not the user's choice:
+    // they must not become chips, count as applied filters, or be echoed back as facet filters.
+    return filters.filter((filter) => !filter.isGenerated && !isZeroPriceFilter(filter) && !isExcludedFilter(filter));
   }
 
   async function resetCurrentPage() {

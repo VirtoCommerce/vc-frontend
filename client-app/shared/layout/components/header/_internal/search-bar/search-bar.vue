@@ -49,7 +49,7 @@
 
       <template #append>
         <BarcodeScanner
-          v-if="!searchPhrase"
+          v-if="!searchPhrase && isScannerEnabled"
           :aria-label="$t('shared.layout.search_bar.barcode_detector.title')"
           @scanned-code="onBarcodeScanned"
         />
@@ -99,6 +99,7 @@ import {
   getFilterExpressionForZeroPrice,
   toCSV,
 } from "@/core/utilities";
+import { useBarcodeSearch } from "@/shared/layout/composables/useBarcodeSearch";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchDropdown from "../search-dropdown.vue";
@@ -206,12 +207,13 @@ function handleProductSelect() {
   hideSearchDropdown();
 }
 
-function onBarcodeScanned(value: string) {
-  if (value) {
+const { isScannerEnabled, onBarcodeScanned } = useBarcodeSearch({
+  searchFullText: (value) => {
     searchPhrase.value = value;
     searchDropdownRef.value?.handleSearch();
-  }
-}
+  },
+  hideSearchResults: hideSearchDropdown,
+});
 
 watch(isCategoryScope, (isCategory) => {
   if (!isCategory && searchPhrase.value && !searchPhraseInUrl.value) {
