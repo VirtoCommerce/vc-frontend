@@ -167,39 +167,44 @@ watch(
   },
 );
 
-watch(products, (next) => {
-  // The flip owns the change-over; assigning here would put the new result on screen before it.
-  if (!props.fetchingProducts && !awaitingSort.value) {
+/**
+ * The change-over is driven by the result itself, not by the loading flag. Sorting is done by the
+ * backend, and a sorting the reader has already visited comes straight back out of the cache — the
+ * flag never rises, so anything waiting on it would animate on a first visit and sit still on a
+ * second, which is exactly how it behaved.
+ */
+watch(products, async (next) => {
+  if (!awaitingSort.value) {
     displayedProducts.value = [...next];
+    return;
+  }
+
+  awaitingSort.value = false;
+
+  // The backend decides what comes back, so the new page need not be the length of the old one. The
+  // seats both pages share turn over; any beyond them are added or dropped once the wave is done.
+  const flipped = await flip((index) => {
+    if (index < next.length) {
+      displayedProducts.value[index] = next[index];
+    }
+  });
+
+  displayedProducts.value = [...next];
+
+  if (!flipped) {
+    await enter();
   }
 });
 
-// A result set only exists once the search that fetched it has finished — until then the grid holds
-// skeletons, and animating those would be animating the wait rather than the answer.
+// Every other reload — a filter, a category, a search — asks a different question, so it holds
+// skeletons and its answer rises in. A search that is still running has nothing to show yet.
 watch(
   () => props.fetchingProducts,
   async (isFetching, wasFetching) => {
-    if (isFetching || !wasFetching) {
+    if (isFetching || !wasFetching || awaitingSort.value) {
       return;
     }
 
-    const next = [...products.value];
-    const wasAwaitingSort = awaitingSort.value;
-
-    awaitingSort.value = false;
-
-    // A page that came back a different length has no seat-for-seat correspondence to turn through.
-    if (wasAwaitingSort && next.length > 0 && next.length === displayedProducts.value.length) {
-      const flipped = await flip((index) => {
-        displayedProducts.value[index] = next[index];
-      });
-
-      if (flipped) {
-        return;
-      }
-    }
-
-    displayedProducts.value = next;
     await enter();
   },
 );
