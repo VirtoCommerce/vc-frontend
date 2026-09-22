@@ -157,9 +157,11 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
-  // A row of the header plate, not a band of its own: the plate supplies the surface
-  // and the horizontal padding, and a hairline separates the two rows.
-  @apply flex items-center px-5 border-t;
+  // A row of the header plate, not a band of its own: the plate supplies the surface,
+  // the horizontal padding and the hairline that separates the two rows.
+  @apply flex items-center border-t;
+
+  padding-inline: var(--header-row-pad-x, theme("padding.5"));
 
   // Height and hairline are variables, not fixed utilities: the sticky header collapses this
   // row from the outside, and a rule in the parent component cannot win here on specificity

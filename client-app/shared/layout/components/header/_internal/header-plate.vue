@@ -171,6 +171,10 @@ watch(route, () => {
 
   --glass: var(--header-bottom-bg-color);
 
+  // One handle for both rows of the plate: the logo row lives here, the category row in
+  // mega-menu.vue, and two separate numbers would part company on the first edit.
+  --header-row-pad-x: 1.5rem;
+
   // .app-header owns stickiness, the page inset and the height vars.
   @apply relative z-[2];
 
@@ -182,14 +186,21 @@ watch(route, () => {
   }
 
   &__surface {
-    // No overflow clipping here: the dropdowns (search suggestions, locale pill, account
+    // No overflow clipping here: the dropdowns (search suggestions, preferences, account
     // menu) render inside the plate and would be cut off. The collapsing mega row does its
     // own clipping, and every child is transparent, so the rounded corners need none.
-    @apply border;
+    //
+    // No outline either — the design separates the plate from the canvas with the shadow
+    // alone, and a border over it reads as a second contour. The plate's own edge is the
+    // glass pair instead: a sheen inset along the top, a cool line underneath.
+    @apply relative;
 
+    // Its own stacking context, or a neighbouring plate's backdrop-filter drags this one's
+    // content into the blur in Safari (WebKit #98538).
+    isolation: isolate;
     border-radius: var(--plate-radius, 1.75rem);
-    border-color: color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
-    // The one glass surface of the shell: a vertical wash over a blurred backdrop.
+    // The one glass surface of the shell: a vertical wash over a blurred backdrop. Three
+    // stops, not a flat wash — that is what reads as thickness rather than as a scrim.
     background: linear-gradient(
       180deg,
       color-mix(in srgb, var(--glass) 94%, transparent),
@@ -198,19 +209,47 @@ watch(route, () => {
     );
     backdrop-filter: saturate(190%) blur(22px);
     box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--glass) 85%, transparent),
-      0 10px 34px color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent);
+      inset 0 1px 0 var(--glass-sheen, color-mix(in srgb, var(--glass) 85%, transparent)),
+      inset 0 -1px 0 var(--glass-under, transparent),
+      var(--glass-shadow, 0 10px 34px color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent));
     color: var(--header-bottom-text-color);
     transition: border-radius var(--transition-duration) ease;
 
-    // Flush against the window edge the top corners have nothing to round against.
+    // A translucent plate with nothing behind it is a washed-out surface, so where the
+    // browser cannot blur, the glass falls back to the solid header colour.
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      background: var(--glass);
+    }
+
+    // Flush against the window edge the top corners have nothing to round against, and
+    // the plate now hangs over the page — it takes the deeper shadow while it does.
     #{$stuck} & {
       @apply rounded-t-none;
+
+      box-shadow:
+        inset 0 1px 0 var(--glass-sheen, color-mix(in srgb, var(--glass) 85%, transparent)),
+        inset 0 -1px 0 var(--glass-under, transparent),
+        var(--plate-shadow-lift, 0 18px 44px color-mix(in srgb, var(--header-bottom-text-color) 12%, transparent));
     }
   }
 
   &__row {
-    @apply flex items-center gap-3.5 px-5 py-2.5;
+    // 88 tall at rest, 64 once pinned: the header gives its height back to the page as
+    // soon as it starts covering it. Height and padding ride the same curve, or the row
+    // settles in two steps.
+    @apply flex items-center gap-5;
+
+    min-height: 5.5rem;
+    padding: 0.75rem var(--header-row-pad-x);
+    transition:
+      min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      padding-block 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    #{$stuck} & {
+      @apply py-2;
+
+      min-height: 4rem;
+    }
   }
 
   &__brand {
@@ -224,7 +263,15 @@ watch(route, () => {
   }
 
   &__logo {
-    @apply h-8;
+    // Steps down with the row rather than staying put: a 44px logo in a 64px row leaves
+    // the pinned header no air at all.
+    @apply h-11;
+
+    transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    #{$stuck} & {
+      @apply h-[2.125rem];
+    }
   }
 
   &__catalog {
@@ -266,6 +313,13 @@ watch(route, () => {
 
     &--hidden {
       @apply -translate-y-full;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__row,
+    &__logo {
+      transition: none;
     }
   }
 }

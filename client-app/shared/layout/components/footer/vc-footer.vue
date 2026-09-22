@@ -89,17 +89,16 @@ onMounted(() => {
   }
 
   &__shell {
-    @apply mx-auto flex flex-col gap-6 pb-6;
+    @apply mx-auto flex flex-col;
 
-    // The page inset the header plate shares with the page's own plates.
-    --gutter: theme("padding.6");
+    // The page inset and the vertical step the footer plates share with the header plate
+    // and the page's own plates. The gap between the two plates is the same step as
+    // everywhere else in the column; below them the design closes the page on the gutter.
+    --gutter: var(--page-gutter, theme("padding.6"));
 
     max-width: calc(var(--vc-container-max-width, 87.75rem) + 2 * var(--gutter));
-    padding-inline: var(--gutter);
-
-    @media (min-width: theme("screens.lg")) {
-      --gutter: theme("padding.8");
-    }
+    gap: var(--page-stack, 1.5rem);
+    padding: 0 var(--gutter) var(--gutter);
 
     @media print {
       @apply p-0;
@@ -113,14 +112,13 @@ onMounted(() => {
   }
 
   &__top {
-    // Measured off the design's rendered footer at 1512: the logo and the legal line both
-    // start 32px inside the plate, and the plate is 270px tall, which puts 36px above the
-    // column titles and below the last link.
-    @apply px-8 py-9 shadow-xl;
-
+    // A plate like any other on the page: the theme's own inside (36/32, a rung down below
+    // lg), the plate radius, and the soft shadow that is the only thing separating it from
+    // the canvas. The fallbacks keep a fork that drops the demo theme file intact.
+    padding: var(--plate-pad-y, 2.25rem) var(--plate-pad-x, 2rem);
     background: var(--footer-top-bg-color);
-    // The fallback keeps the plates round for a fork that drops the demo theme file.
     border-radius: var(--plate-radius, 1.75rem);
+    box-shadow: var(--plate-shadow, theme("boxShadow.xl"));
     color: var(--footer-top-text-color);
 
     @media (min-width: theme("screens.sm")) {
@@ -167,28 +165,31 @@ onMounted(() => {
       @apply grid-cols-3;
     }
 
+    // The design runs five columns on a 1448 content width with a 76px gutter between
+    // them — the last step used to wait for 2xl, which left the widest desktop a column
+    // short of the drawing. It draws exactly five blocks and so never says what the gap
+    // between ROWS should be; a store that serves more wraps, and 76px of it left a hole
+    // under the shortest column, so rows fall back to the page's own step.
     @media (min-width: theme("screens.lg")) {
-      @apply grid-cols-4;
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply gap-19;
-    }
-
-    @media (min-width: theme("screens.2xl")) {
       @apply grid-cols-5;
+
+      gap: var(--page-stack, 1.5rem) 4.75rem;
     }
   }
 
   &__bottom {
-    @apply flex flex-col items-center justify-between gap-1 px-8 py-4 text-center text-sm shadow-xl;
+    // The same plate, one line tall: the design keeps its horizontal inside so the legal
+    // line stands on the same vertical as the columns above, and trims the vertical to 22.
+    @apply flex flex-col items-center justify-between gap-1 text-center text-sm;
 
+    padding: 1.375rem var(--plate-pad-x, 2rem);
     background: var(--footer-bottom-bg-color);
     border-radius: var(--plate-radius, 1.75rem);
+    box-shadow: var(--plate-shadow, theme("boxShadow.xl"));
     color: var(--footer-bottom-text-color);
 
     @media (min-width: theme("screens.md")) {
-      @apply flex-row py-5;
+      @apply flex-row;
     }
 
     @media print {
@@ -196,7 +197,9 @@ onMounted(() => {
     }
 
     #{$compact} & {
-      @apply rounded-none px-4 shadow-none;
+      @apply rounded-none px-4;
+
+      box-shadow: none;
 
       @media (min-width: theme("screens.md")) {
         @apply px-6;

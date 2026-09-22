@@ -12,6 +12,30 @@
   // each consumer repeats it as a fallback so a fork that drops the file keeps round plates.
   --plate-radius: 1.75rem;
 
+  // The rest of the design's page rhythm, read off its own :root. One knob per measure so
+  // the header plate, the footer plates and the gaps between them cannot drift apart:
+  //   stack 26  the one vertical step — above the header, between plates, below them
+  //   gutter 32 the page's side inset
+  //   pad     36/32  a plate's own inside
+  --page-stack: 1.625rem;
+  --page-gutter: 2rem;
+  --plate-pad-y: 2.25rem;
+  --plate-pad-x: 2rem;
+
+  // A plate is separated from the canvas by a soft shadow and nothing else — no outline,
+  // which would read as a second contour over the shadow. The sticky header swaps in the
+  // deeper "lift" while it hangs over the page, and the glass pair is the header's own
+  // edge: a light sheen on top, a cool line underneath.
+  --plate-shadow:
+    0 1px 2px rgb(from theme("colors.neutral.950") r g b / 0.05),
+    0 6px 20px rgb(from theme("colors.neutral.950") r g b / 0.06);
+  --plate-shadow-lift:
+    0 2px 4px rgb(from theme("colors.neutral.950") r g b / 0.06),
+    0 18px 44px rgb(from theme("colors.neutral.950") r g b / 0.12);
+  --glass-sheen: rgb(from theme("colors.additional.50") r g b / 0.85);
+  --glass-under: rgb(from theme("colors.accent.800") r g b / 0.06);
+  --glass-shadow: 0 10px 34px rgb(from theme("colors.neutral.950") r g b / 0.1);
+
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
   --vc-chip-radius: 9999px;
@@ -21,7 +45,9 @@
   // No --vc-select-radius: it also drives the dropdown PANEL, so a pill there rounds
   // the whole option list away. It falls through to --vc-radius instead.
 
-  --vc-container-max-width: 90.625rem;
+  // The design's content column: 1550, up from the kit's 1404 (decision recorded in its
+  // own :root as "+100 on the 1450 reference").
+  --vc-container-max-width: 96.875rem;
 
   // The footer's top plate is white here, so it takes the header's logo, not the inverted
   // one every other preset's dark band needs. The dark variant below takes it back.
@@ -33,6 +59,33 @@
 html.dark {
   --footer-logo-light-display: none;
   --footer-logo-inverted-display: block;
+
+  // Dark keeps the same shapes and changes the paint: the shadow deepens and gains the
+  // half-pixel hairline that is the only thing separating one dark surface from another,
+  // and the sheen flips from white to the warm top step.
+  --plate-shadow:
+    0 16px 48px -8px rgb(from theme("colors.additional.950") r g b / 0.55),
+    0 0 0 0.5px rgb(from theme("colors.additional.950") r g b / 0.5);
+  --plate-shadow-lift:
+    0 24px 64px -10px rgb(from theme("colors.additional.950") r g b / 0.66),
+    0 0 0 0.5px rgb(from theme("colors.additional.950") r g b / 0.5);
+  // The dark sheen is a LIGHT warm tint, so it comes off the top of the neutral scale:
+  // this preset inverts primary-950 into the dark end, where it would draw a black line.
+  --glass-sheen: rgb(from theme("colors.neutral.950") r g b / 0.12);
+  --glass-under: rgb(from theme("colors.additional.950") r g b / 0.35);
+  --glass-shadow: 0 10px 34px rgb(from theme("colors.additional.950") r g b / 0.38);
+}
+
+// The design steps the plate down a rung below its 900px breakpoint — radius 28 -> 22 and
+// the inside 36/32 -> 28/24. lg (1024) is the nearest one this project has, and radius,
+// padding and gutter step together so the plate stays proportionate.
+@media (width < theme("screens.lg")) {
+  :root {
+    --plate-radius: 1.375rem;
+    --plate-pad-y: 1.75rem;
+    --plate-pad-x: 1.5rem;
+    --page-gutter: 1.5rem;
+  }
 }
 
 @media (width >= theme("screens.lg")) {

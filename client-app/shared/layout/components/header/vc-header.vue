@@ -89,24 +89,24 @@ const isMegaMenuShown = computed(() => {
   // which is also what header-plate reads to decide it is stuck.
   @apply sticky z-20;
 
-  top: -0.625rem;
+  // The shell's top padding, negated: the plate then lands flush at viewport 0 when the
+  // header pins, which is also the geometry header-plate reads to decide it is stuck.
+  top: calc(-1 * var(--page-stack, 1.5rem));
 
   @media print {
     @apply hidden;
   }
 
-  // The page inset the header plate shares with the page's own plates.
+  // The page inset and the vertical step the header plate shares with the page's own
+  // plates. One step above the plate and the same one below it: in the design every gap
+  // in the column — over the header, between plates, under the last one — is --page-stack.
   &__shell {
-    @apply relative mx-auto pb-2 pt-2.5;
+    @apply relative mx-auto;
 
-    --gutter: theme("padding.6");
+    --gutter: var(--page-gutter, theme("padding.6"));
 
     max-width: calc(var(--vc-container-max-width, 87.75rem) + 2 * var(--gutter));
-    padding-inline: var(--gutter);
-
-    @media (width >= theme("screens.lg")) {
-      --gutter: theme("padding.8");
-    }
+    padding: var(--page-stack, 1.5rem) var(--gutter);
   }
 
   &__print {
