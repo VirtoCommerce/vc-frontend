@@ -1,19 +1,15 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1072.0-pr-3108-b6ef-vcst-5378-unified-buyer-flow-b6ef79b0",
+  "PlatformVersion": "3.1071.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1072.0-pr-3108-b6ef-vcst-5378-unified-buyer-flow-b6ef79b0",
-  "PlatformAssetUrl": "https://vc3prerelease.blob.core.windows.net/packages/VirtoCommerce.Platform.3.1072.0-pr-3108-b6ef-vcst-5378-unified-buyer-flow-b6ef79b0.zip",
+  "PlatformImageTag": "3.1071.0",
+  "PlatformAssetUrl": "",
   "Sources": [
     {
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": [
-        {
-          "BlobName": "VirtoCommerce.UCP_3.1006.0-pr-7-9bc9.zip"
-        }
-      ]
+      "Modules": []
     },
     {
       "Name": "GithubReleases",
@@ -362,6 +358,10 @@
         {
           "Id": "VirtoCommerce.Core",
           "Version": "3.1009.0"
+        },
+        {
+          "Id": "VirtoCommerce.UCP",
+          "Version": "3.1005.0"
         }
       ]
     }
