@@ -9,6 +9,14 @@ import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart } from "@/shared/cart";
 import type { ILanguage } from "@/core/types";
 
+function getCountryCode(language: ILanguage): string {
+  return (
+    languageToCountryMap[language.cultureName.toLocaleLowerCase()] ||
+    languageToCountryMap[language.twoLetterLanguageName] ||
+    "xx"
+  );
+}
+
 /**
  * Currency and language switching, shared by the header locale pill and the standalone
  * selectors. Both carry side effects the callers must not reimplement: a currency change
@@ -79,14 +87,6 @@ export function useLocaleSwitch() {
     removeLocaleFromUrl();
     void broadcast.emit(dataChangedEvent);
     location.reload();
-  }
-
-  function getCountryCode(language: ILanguage): string {
-    return (
-      languageToCountryMap[language.cultureName.toLocaleLowerCase()] ||
-      languageToCountryMap[language.twoLetterLanguageName] ||
-      "xx"
-    );
   }
 
   return {

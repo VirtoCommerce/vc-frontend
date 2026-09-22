@@ -23,9 +23,12 @@
     </template>
 
     <template #content>
-      <div class="header-preferences-menu__panel">
-        <div class="header-preferences-menu__column">
-          <section v-if="supportedCurrencies.length > 1" class="header-preferences-menu__group">
+      <div
+        class="header-preferences-menu__panel"
+        :class="{ 'header-preferences-menu__panel--single': columnCount === 1 }"
+      >
+        <div v-if="isSettingsColumnShown" class="header-preferences-menu__column">
+          <section v-if="isCurrencyShown" class="header-preferences-menu__group">
             <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.currency") }}</h3>
 
             <button
@@ -70,7 +73,7 @@
           </section>
         </div>
 
-        <div v-if="supportedLanguages.length > 1" class="header-preferences-menu__column">
+        <div v-if="isLanguageColumnShown" class="header-preferences-menu__column">
           <section class="header-preferences-menu__group">
             <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.language") }}</h3>
 
@@ -100,7 +103,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { useDarkMode } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
+import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useLocaleSwitch } from "@/shared/layout/composables";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 
@@ -110,6 +117,7 @@ const COLOR_MODES = [
   { value: "system", icon: "monitor" },
 ] as const;
 
+const route = useRoute();
 const { isDarkModeAvailable, colorMode } = useDarkMode();
 const {
   currentCurrency,
@@ -120,6 +128,15 @@ const {
   selectLanguage,
   getCountryCode,
 } = useLocaleSwitch();
+
+// The loyalty catalog prices in points, and a currency change re-prices the cart — the
+// previous header hid the selector on those routes and this one has to keep doing it.
+const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === ROUTES.LOYALTY_CATALOG.PATH);
+
+const isCurrencyShown = computed(() => !isLoyaltyCatalogRoute.value && supportedCurrencies.value.length > 1);
+const isSettingsColumnShown = computed(() => isCurrencyShown.value || isDarkModeAvailable.value);
+const isLanguageColumnShown = computed(() => supportedLanguages.value.length > 1);
+const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(isLanguageColumnShown.value));
 </script>
 
 <style lang="scss">
@@ -169,6 +186,14 @@ const {
     // panel arrived at left 926px and walked to 761.5px. Fixed width, nothing to walk.
     inline-size: 38.75rem;
     grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+
+    // A store with one language (or one on a loyalty route) renders a single column, and the
+    // fixed two-track width would leave the other track blank across half the panel.
+    &--single {
+      @apply grid-cols-1;
+
+      inline-size: 23.25rem;
+    }
 
     // The store decides how many currencies and languages there are — QA serves 9 and 15,
     // which is a panel taller than the window. Each column carries its own scroll.

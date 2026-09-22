@@ -1,4 +1,10 @@
 <template>
+  <Teleport to="body">
+    <VcLoaderOverlay v-if="reverting" fixed-spinner data-test-id="back-to-operator-loader">
+      {{ $t("shared.layout.header.top_header.switching_back") }}
+    </VcLoaderOverlay>
+  </Teleport>
+
   <VcPopover
     class="header-account-menu"
     placement="bottom-end"
@@ -80,7 +86,7 @@ import TopHeaderOrganizations from "./top-header-organizations.vue";
 
 const { user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
-const { backToOperatorLabel, backToOperator } = useImpersonate();
+const { reverting, backToOperatorLabel, backToOperator } = useImpersonate();
 
 const displayName = computed(() => user.value.contact?.fullName || user.value.userName);
 
