@@ -2,6 +2,7 @@
   <VcTabSwitchGroup variant="seg" class="view-mode" :aria-label="$t('shared.catalog.view_mode.aria_label')">
     <VcTabSwitch
       v-model="viewMode"
+      size="sm"
       value="grid"
       icon="grid"
       :label="$t('shared.catalog.view_mode.grid_label')"
@@ -16,6 +17,7 @@
 
     <VcTabSwitch
       v-model="viewMode"
+      size="sm"
       value="list"
       icon="list"
       :label="$t('shared.catalog.view_mode.list_label')"

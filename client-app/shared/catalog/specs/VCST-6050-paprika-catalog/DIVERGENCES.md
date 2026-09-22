@@ -38,3 +38,16 @@ _(filled in as each is confirmed against the backend — see the iteration notes
 | 6 | `storefront.css` (synced) | No `category__head`, no `category__head-art`, no `vc-catalog-empty`, no `seg` group variant |
 | 6 | `CatalogScreen.jsx` | Uses all four |
 | 6 | Conclusion | The synced CSS is behind the JSX. Styles for those are derived from the screenshots, not ported. |
+
+## Built, but not as the design draws it
+
+| # | The design draws | What ships, and why |
+|---|---|---|
+| 7 | The toolbar as one row: layout rail, two switches, five sort tabs | Two rows at the design's own 1550px container. The storefront's toolbar carries **three** switches (`Purchased before` is store-configurable and the design has no such control) and **seven** sortings, which measure 1316px against 1261px of column. This is more content, not looser styling — every part matches the design's own geometry (40px rails, 3px track padding, 14px tab padding, 14px type). |
+| 8 | `In stock` as the switch label | `Show in stock` — the storefront's existing string, unchanged. Renaming it would move the label in thirteen locales for every theme, not just this one. |
+
+## Fixed against the design's own warning
+
+| # | Note |
+|---|---|
+| 9 | The design warns that the sort control "must answer the press instantly, or a second and a half reads as a control that did not take the press". The storefront's `selectedSort` follows the backend's `selected` flag, which is a round trip away — measured at ~1.5s on QA, during which the rail did not move. `category-sort.vue` now holds the pressed value until the search it started settles, then hands authority back. |

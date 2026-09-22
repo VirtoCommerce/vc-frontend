@@ -720,6 +720,9 @@
         "list_label": "List",
         "aria_label": "Layout"
       },
+      "sort": {
+        "aria_label": "Sort"
+      },
       "page_size": {
         "label": "Results per page:"
       },
