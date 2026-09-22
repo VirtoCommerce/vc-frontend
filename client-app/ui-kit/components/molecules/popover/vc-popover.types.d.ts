@@ -8,6 +8,9 @@ declare global {
   type VcPopoverOffsetOptionsType = OffsetOptions;
   type VcPopoverShiftOptionsType = ShiftOptions;
 
+  /** Roles VcPopover understands; `dialog` also enables its non-modal dialog keyboard contract. */
+  type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
+
   type VcPopoverContextType = {
     enableTeleport: Ref<boolean>;
   };
