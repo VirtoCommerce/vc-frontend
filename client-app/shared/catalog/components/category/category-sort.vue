@@ -85,6 +85,11 @@ function select(id: string) {
 
   scrollbar-width: none;
 
+  // A tab never breaks its own label — "Price ↑" split onto two lines on a phone.
+  .vc-tab-switch__button {
+    @apply whitespace-nowrap;
+  }
+
   &::-webkit-scrollbar {
     @apply hidden;
   }

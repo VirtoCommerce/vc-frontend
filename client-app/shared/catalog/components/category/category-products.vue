@@ -363,16 +363,20 @@ function sendGASelectItemEvent(product: Product): void {
 
 <style lang="scss">
 .category-products {
+  @apply @container;
+
   --vc-product-title-font-size: theme("fontSize.sm");
   // photo · product · availability · unit price · add to cart · actions — read by the rows and the heading.
   --product-list-columns: 5rem minmax(0, 1fr) 9.5rem 8.5rem 10.625rem 4.375rem;
 
   &__list-head {
-    @apply mb-2 hidden gap-x-3 px-[1.0625rem] text-[0.65625rem] font-bold uppercase tracking-[0.1em] text-neutral-500;
+    @apply mb-2 mt-3 hidden gap-x-3 px-[1.0625rem] text-[0.65625rem] font-bold uppercase tracking-[0.1em] text-neutral-500;
 
     grid-template-columns: var(--product-list-columns);
 
-    @media (min-width: theme("screens.lg")) {
+    // Shown on the same threshold the rows switch on, measured on the same box — the listing's own
+    // width, which the window does not know once a sidebar stands beside it.
+    @container (min-width: 60rem) {
       @apply grid;
     }
   }

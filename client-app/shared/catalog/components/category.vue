@@ -779,6 +779,69 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+// The facet stack as the design draws it, on the desktop rail and in the phone's filter drawer
+// alike — the drawer is teleported out of the page, so it cannot inherit these from the rail.
+@mixin facet-rail {
+  // The design's "nested widget" (Ilya, 22.09.2026): a widget lying inside another's plate draws
+  // no plate of its own and keeps no side inset, so heading and rows stand on the plate's edge.
+  // What it keeps is the kit's own vertical rhythm — a 38px heading with a 24px fold chevron, and
+  // 16px above and 20px below the body.
+  .vc-widget {
+    // No rule between a heading and its body — the kit divides its own children with one.
+    --vc-widget-divide-color: transparent;
+
+    @apply rounded-none border-0 bg-transparent p-0 shadow-none;
+  }
+
+  .vc-widget__header {
+    @apply px-0;
+  }
+
+  .vc-widget__slot-container {
+    @apply border-0;
+  }
+
+  .vc-widget__slot {
+    @apply px-0 pb-5 pt-4;
+  }
+
+  .vc-widget__append-icon {
+    --vc-icon-size: 1.5rem;
+  }
+
+  // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
+  // the wrappers — a "next widget" selector never finds a widget beside another.
+  .category__selector + .category__product-filters,
+  .products-filters__container > * + * {
+    @apply border-t border-neutral-200;
+  }
+
+  .category__selector {
+    @apply mb-0;
+  }
+
+  // Facet rows are the same size-sm row as the category list: 10px above and below a 14px name, the
+  // plate bleeding 12px past the text so the name stays on the heading's vertical. The kit paints
+  // each row paper white, which on the warm plate read as a white block behind the list.
+  .vc-menu-item__inner {
+    @apply -mx-3 w-[calc(100%+1.5rem)] bg-transparent px-3;
+
+    &:hover {
+      @apply bg-neutral-100;
+    }
+  }
+
+  // The fade over a cut-off list has to end in the plate's colour, not white, or it draws a pale band.
+  .facet-filter-widget__fade::after {
+    --tw-gradient-from: var(--category-plate-bg, theme("colors.additional.50")) var(--tw-gradient-from-position);
+    --tw-gradient-to: transparent var(--tw-gradient-to-position);
+  }
+}
+
+.filters-popup-sidebar {
+  @include facet-rail;
+}
+
 .category {
   // The page is plates on the canvas, on the same numbers as the header and footer plates PR #2494
   // built: one radius, one inside, one shadow, and one step between every plate. The fallbacks are
@@ -824,57 +887,7 @@ onMounted(() => {
 
     padding: 1.75rem;
 
-    // The design's "nested widget" (Ilya, 22.09.2026): a widget lying inside another's plate draws
-    // no plate of its own and keeps no side inset, so heading and rows stand on the plate's edge.
-    // What it keeps is the kit's own vertical rhythm — a 38px heading with a 24px fold chevron, and
-    // 16px above and 20px below the body.
-    .vc-widget {
-      @apply rounded-none border-0 bg-transparent p-0 shadow-none;
-    }
-
-    .vc-widget__header {
-      @apply px-0;
-    }
-
-    .vc-widget__slot-container {
-      @apply border-0;
-    }
-
-    .vc-widget__slot {
-      @apply px-0 pb-5 pt-4;
-    }
-
-    .vc-widget__append-icon {
-      --vc-icon-size: 1.5rem;
-    }
-
-    // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
-    // the wrappers — a "next widget" selector never finds a widget beside another.
-    .category__selector + .category__product-filters,
-    .products-filters__container > * + * {
-      @apply border-t border-neutral-200;
-    }
-
-    .category__selector {
-      @apply mb-0;
-    }
-
-    // Facet rows are the same size-sm row as the category list: 10px above and below a 14px name, the
-    // plate bleeding 12px past the text so the name stays on the heading's vertical. The kit paints
-    // each row paper white, which on the warm plate read as a white block behind the list.
-    .vc-menu-item__inner {
-      @apply -mx-3 w-[calc(100%+1.5rem)] bg-transparent px-3;
-
-      &:hover {
-        @apply bg-neutral-100;
-      }
-    }
-
-    // The fade over a cut-off list has to end in the plate's colour, not white, or it draws a pale band.
-    .facet-filter-widget__fade::after {
-      --tw-gradient-from: var(--category-plate-bg) var(--tw-gradient-from-position);
-      --tw-gradient-to: transparent var(--tw-gradient-to-position);
-    }
+    @include facet-rail;
 
     .category__clear-all {
       @apply mt-7 h-[2.8125rem] rounded-full text-base font-semibold text-neutral-950;
@@ -957,7 +970,7 @@ onMounted(() => {
   }
 
   &__filters {
-    @apply flex items-center gap-3 my-3 empty:h-2;
+    @apply flex flex-wrap items-center gap-3 my-3 empty:h-2;
 
     @media (min-width: theme("screens.md")) {
       @apply mb-3.5 mt-3 flex-wrap justify-end;
@@ -980,9 +993,10 @@ onMounted(() => {
 
   &__sort {
     // No layout of its own: the rail is one control, and a gap set here would reopen the seam the
-    // seg track closes between its seats.
+    // seg track closes between its seats. On a phone it takes a row to itself under the filter and
+    // layout buttons — squeezed between them it had room for one and a half tabs.
     @media (width < theme("screens.md")) {
-      @apply min-w-0 grow;
+      @apply order-last w-full min-w-0;
     }
 
     @media (min-width: theme("screens.lg")) {

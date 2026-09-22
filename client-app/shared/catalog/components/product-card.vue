@@ -89,6 +89,8 @@
 
     <VcProductButton
       v-else-if="product.isConfigurable"
+      variant="outline"
+      color="secondary"
       data-test-id="product-card-configurations-button"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
@@ -101,6 +103,8 @@
 
     <template v-else-if="product.hasVariations">
       <VcProductButton
+        variant="outline"
+        color="secondary"
         class="product-card__variations-button"
         :data-test-id="`variations-${product.code}-button`"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
@@ -112,6 +116,8 @@
       />
 
       <VcProductButton
+        variant="outline"
+        color="secondary"
         class="product-card__variations-link-button"
         :data-test-id="`variations-${product.code}-button`"
         :to="link"
@@ -524,7 +530,36 @@ const variationsCount = computed(() => {
     :deep(.vc-product-card__wrapper) {
       @apply items-center gap-x-3 gap-y-1 px-4 py-3;
 
-      @container (min-width: theme("containers.2xl")) {
+      // Narrow, as the design has it below a 60rem container: no columns and no heading — photo
+      // beside the product, the stock as a full-width line with a rule under it, then the price and
+      // the stepper on one line. Every cell the row carries has a place, so none falls into a
+      // leftover track.
+      grid-template-areas:
+        "image vendor     vendor      vendor"
+        "image title      title       title"
+        "image properties properties  properties"
+        "stock stock      stock       stock"
+        "price price      add-to-cart actions";
+      grid-template-columns: 5rem auto minmax(9.375rem, 13.75rem) auto;
+      grid-template-rows: auto;
+      column-gap: 0.875rem;
+      row-gap: 0.625rem;
+
+      // Below 34rem the photo goes and the product takes the width. The design's bottom line is a
+      // wrapping flex, and at a phone's width it wraps: the price above, the stepper and the actions
+      // below — side by side they need 360px of a 300px row.
+      @container (width < 34rem) {
+        grid-template-areas:
+          "vendor      vendor"
+          "title       title"
+          "properties  properties"
+          "stock       stock"
+          "price       price"
+          "add-to-cart actions";
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      @container (min-width: 60rem) {
         grid-template-areas:
           "image vendor     stock price add-to-cart actions"
           "image title      stock price add-to-cart actions"
@@ -534,7 +569,16 @@ const variationsCount = computed(() => {
       }
     }
 
+    // The kit keeps the photo and the actions in one media box, which the row's areas have no place
+    // for: auto-placed, it opened an extra column on the right that ate the row's width and dropped
+    // the actions onto a line of their own. Unboxed, each goes to its own area.
+    :deep(.vc-product-card__media) {
+      display: contents;
+    }
+
     :deep(.vc-product-image) {
+      grid-area: image;
+
       @apply size-20 border-0;
 
       background: color-mix(in srgb, theme("colors.neutral.950") 3%, theme("colors.additional.50"));
@@ -558,6 +602,8 @@ const variationsCount = computed(() => {
     }
 
     :deep(.vc-product-properties) {
+      grid-area: properties;
+
       @apply m-0 w-auto flex-row flex-wrap self-start;
 
       display: flex;
@@ -566,7 +612,17 @@ const variationsCount = computed(() => {
     .product-card__stock {
       grid-area: stock;
 
-      @apply flex flex-col items-start gap-1;
+      @apply flex flex-row flex-wrap items-center gap-1.5 border-b border-neutral-200 pb-2.5;
+
+      @container (min-width: 60rem) {
+        @apply flex-col items-start gap-1 border-0 pb-0;
+      }
+    }
+
+    :deep(.vc-product-image) {
+      @container (width < 34rem) {
+        @apply hidden;
+      }
     }
 
     // The kit gives the price its own width in a row; here it keeps to its column, figure over the
@@ -574,12 +630,16 @@ const variationsCount = computed(() => {
     :deep(.vc-product-price) {
       --vc-product-price-font-size: 1.25rem;
 
-      @apply m-0 w-full min-w-0 items-end text-end;
+      @apply m-0 w-full min-w-0 whitespace-nowrap;
+
+      @container (min-width: 60rem) {
+        @apply items-end text-end;
+      }
     }
 
     :deep(.vc-quantity-stepper),
     :deep(.vc-product-button) {
-      @apply m-0 w-full max-w-none;
+      @apply m-0 w-full min-w-[9.375rem] max-w-none;
     }
 
     // In a row the quick actions are ordinary controls beside the button, not an overlay on the photo,

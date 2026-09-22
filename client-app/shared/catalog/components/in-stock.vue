@@ -1,5 +1,5 @@
 <template>
-  <VcChip v-if="isDigital" :size="size" variant="outline-dark" color="info" rounded>
+  <VcChip v-if="isDigital" :size="size" :variant="labeled ? 'soft' : 'outline-dark'" color="info" rounded>
     <VcIcon name="cloud" />
 
     {{ $t("common.labels.digital_product") }}
@@ -8,7 +8,7 @@
   <VcChip
     v-else-if="isInStock"
     :size="size"
-    variant="outline-dark"
+    :variant="labeled ? 'soft' : 'outline-dark'"
     :color="isLowStock ? 'warning' : 'success'"
     rounded
     :title="$t('common.labels.in_stock')"
@@ -31,7 +31,7 @@
   <VcChip
     v-else
     :size="size"
-    variant="outline-dark"
+    :variant="labeled ? 'soft' : 'outline-dark'"
     color="danger"
     rounded
     :title="
