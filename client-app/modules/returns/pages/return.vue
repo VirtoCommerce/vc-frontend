@@ -48,6 +48,12 @@
           <span>{{ orderReturn.cancelReason }}</span>
         </div>
 
+        <div v-if="orderReturn.rejectReason" class="mt-5 flex flex-col">
+          <span class="text-sm text-neutral-400">{{ $t("return_details.reject_reason") }}</span>
+
+          <span>{{ orderReturn.rejectReason }}</span>
+        </div>
+
         <template v-if="cancelAction" #footer>
           <VcTooltip v-if="!cancelAction.isAvailable" placement="top">
             <template #trigger>
@@ -92,6 +98,12 @@
 
                   <span v-else>{{ item.approvedQuantity }}</span>
                 </div>
+
+                <div v-if="item.rejectReason" class="return-details__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("return_details.reject_reason") }}</span>
+
+                  <span>{{ item.rejectReason }}</span>
+                </div>
               </div>
             </template>
 
@@ -112,6 +124,10 @@
               <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
 
               <span v-else>{{ item.approvedQuantity }}</span>
+
+              <div v-if="item.rejectReason" class="text-sm text-danger-500">
+                {{ item.rejectReason }}
+              </div>
             </VcTableColumn>
           </VcTable>
         </template>

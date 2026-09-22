@@ -12,6 +12,7 @@ query GetReturn($id: String!, $cultureName: String) {
     rejectReason
     cancelReason
     itemsQuantity
+    approvedQuantity
     availableActions {
       name
       isAvailable
@@ -30,6 +31,7 @@ query GetReturn($id: String!, $cultureName: String) {
       itemState
       reasonCode
       reasonComment
+      rejectReason
       serialNumber
       attachments {
         name
