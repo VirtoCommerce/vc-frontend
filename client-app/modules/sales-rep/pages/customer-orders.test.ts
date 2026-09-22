@@ -1,7 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
+import { CUSTOMER_PROFILE_ROUTE_NAME, DASHBOARD_ROUTE_NAME } from "../constants";
 import CustomerOrders from "./customer-orders.vue";
 
 const state = await vi.hoisted(async () => {
@@ -222,6 +222,16 @@ describe("CustomerOrders", () => {
 
     const items = stub(wrapper, "nav.crumbs").props().items as IBreadcrumb[];
     expect(items.some((item) => item.title === "MERCURY123")).toBe(false);
+  });
+
+  it("links the hub breadcrumb to the Sales Rep dashboard", async () => {
+    const wrapper = createWrapper();
+    await flushPromises();
+
+    const items = stub(wrapper, "nav.crumbs").props().items as IBreadcrumb[];
+    const hub = items.find((item) => item.title === "sales_rep.hub.title");
+
+    expect(hub?.route).toEqual({ name: DASHBOARD_ROUTE_NAME });
   });
 
   it("shows the not-found view instead of the list for a customer the rep does not serve", () => {
