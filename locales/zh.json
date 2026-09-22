@@ -724,6 +724,7 @@
         "label": "每页结果数："
       },
       "product_card": {
+        "variants": "多规格",
         "price_label": "@:common.labels.product_price",
         "product_rating": "评分：",
         "product_vendor": "供应商："

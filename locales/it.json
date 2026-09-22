@@ -724,6 +724,7 @@
         "label": "Risultati per pagina:"
       },
       "product_card": {
+        "variants": "Varianti",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Valutazione:",
         "product_vendor": "Fornitore:"

@@ -8,15 +8,17 @@
   <VcChip
     v-else-if="isInStock"
     :size="size"
-    variant="outline-dark"
+    :variant="labeled ? 'soft' : 'outline-dark'"
     color="success"
     rounded
     :title="$t('common.labels.in_stock')"
   >
-    <VcIcon name="cube" variant="solid" />
+    <VcIcon name="cube" :variant="labeled ? undefined : 'solid'" />
 
     <span class="inline-block min-w-3 text-center">
-      {{ quantity ? inStockQuantityLabel : $t("common.labels.in_stock") }}
+      <template v-if="labeled && quantity">{{ $t("common.labels.in_stock") }}: {{ inStockQuantityLabel }}</template>
+
+      <template v-else>{{ quantity ? inStockQuantityLabel : $t("common.labels.in_stock") }}</template>
     </span>
   </VcChip>
 
@@ -47,6 +49,11 @@ interface IProps {
   quantity?: number | null;
   size?: VcChipSizeType;
   textEnabled?: boolean;
+  /**
+   * Name the state beside the count — "In stock: 142" — on a soft chip. A bare number is enough where
+   * a column heading says what it counts; on a card nothing does.
+   */
+  labeled?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

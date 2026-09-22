@@ -727,6 +727,7 @@
         "label": "Wyników na stronę:"
       },
       "product_card": {
+        "variants": "Warianty",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Ocena:",
         "product_vendor": "Sprzedawca:"

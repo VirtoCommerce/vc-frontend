@@ -827,14 +827,24 @@ onMounted(() => {
     // The sidebar plate is the frame now. The widgets inside it drew one of their own, which put a
     // box inside the box; they lie flat on the plate and are parted by a hairline.
     .vc-widget {
+      // The header's 38px floor centred every heading in a box, which put 9px above and below each
+      // one on top of the design's own spacing.
+      --header-min-h: 0px;
+
       @apply rounded-none border-0 bg-transparent p-0 shadow-none;
     }
 
     // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
     // the wrappers — a "next widget" selector never finds a widget beside another.
+    // 17px either side of the rule, as the design spaces its sections.
     .category__selector + .category__product-filters,
     .products-filters__container > * + * {
-      @apply mt-5 border-t border-neutral-200 pt-5;
+      @apply mt-[1.0625rem] border-t border-neutral-200 pt-[1.0625rem];
+    }
+
+    // Under the crumb the design draws a rule before the list starts.
+    .category__selector .vc-widget__header-container:not(:last-child) {
+      @apply border-b border-neutral-200 pb-2;
     }
 
     // The widget's own chrome assumed it was a card: 16px of inset on every side and a rule between

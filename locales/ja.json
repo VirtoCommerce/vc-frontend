@@ -724,6 +724,7 @@
         "label": "表示件数："
       },
       "product_card": {
+        "variants": "バリエーション",
         "price_label": "@:common.labels.product_price",
         "product_rating": "評価：",
         "product_vendor": "販売元："
