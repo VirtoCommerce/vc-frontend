@@ -34,6 +34,19 @@
             class="category__product-filters"
             @change:filters="applyFiltersOnly($event)"
           />
+
+          <!-- The way out of a narrowed listing sits at the foot of the rail that narrowed it. It only
+               appears once something is picked: a reset with nothing to reset is a dead control. -->
+          <VcButton
+            v-if="hasSelectedFilters || activeControls.length"
+            class="category__clear-all"
+            variant="soft"
+            color="neutral"
+            full-width
+            @click="resetFacetAndControlsFilters"
+          >
+            {{ $t("common.buttons.reset_filters") }}
+          </VcButton>
         </template>
 
         <!-- The page is laid out as plates on the canvas: the heading is one plate, the category's
@@ -866,6 +879,10 @@ onMounted(() => {
       }
     }
 
+    .category__clear-all {
+      @apply mt-7 h-[2.8125rem] rounded-full text-base font-semibold text-neutral-950;
+    }
+
     .facet-filter-widget__count {
       @apply h-6 min-w-[1.875rem] justify-center rounded-full border-0 px-2 text-[0.8125rem] font-semibold text-neutral-700;
 
@@ -890,11 +907,16 @@ onMounted(() => {
   }
 
   // The picture is a third of the row and fills its plate edge to edge; the heading keeps the rest.
+  // The heading sets the row's height and the picture fills whatever that is — an image left to its
+  // own size stretched the whole row to its height. Category art is cut out on transparency and
+  // cropped to the object, so it is contained and anchored to the far corner, where the design lets
+  // the object run to the plate's edge, rather than covered and clipped.
   &__head-art {
-    @apply hidden shrink-0 overflow-hidden;
+    @apply relative hidden shrink-0 overflow-hidden;
 
     width: 32%;
     border-radius: var(--category-plate-radius);
+    background: var(--category-plate-bg);
     box-shadow: var(--plate-shadow, theme("boxShadow.md"));
 
     @media (min-width: theme("screens.lg")) {
@@ -903,7 +925,7 @@ onMounted(() => {
   }
 
   &__head-image {
-    @apply size-full object-cover;
+    @apply absolute inset-0 size-full object-contain object-right-bottom;
   }
 
   &__body {
