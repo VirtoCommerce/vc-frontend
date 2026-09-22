@@ -107,10 +107,10 @@
                     size="sm"
                     :to="getProductRoute(item.product.id, item.product.slug)"
                     :target="browserTarget"
-                    :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                    :aria-label="getVariationsLabel(item.product)"
                   >
                     <span>
-                      {{ t("pages.catalog.variations_button", [(item.product.variations?.length || 0) + 1]) }}
+                      {{ getVariationsLabel(item.product) }}
                     </span>
                   </VcButton>
 
@@ -169,7 +169,7 @@
                       size="sm"
                       :to="getProductRoute(item.product.id, item.product.slug)"
                       :target="browserTarget"
-                      :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                      :aria-label="getVariationsLabel(item.product)"
                     />
 
                     <VcButton
@@ -313,6 +313,7 @@ import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import { useHorizontalScrollSync } from "@/ui-kit/composables";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useCompareAddToCart, useCompareTableRowPins } from "../composables";
@@ -401,6 +402,10 @@ async function onRemoveProduct(item: ICompareDisplayProduct) {
 
   await nextTick();
   headerRowRef.value?.focus();
+}
+
+function getVariationsLabel(product: Product): string {
+  return t("pages.catalog.variations_button", getVariationsCount(product));
 }
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
