@@ -23,11 +23,12 @@
         v-if="$slots.content && !disabled && shouldRenderContent"
         :id="contentId"
         ref="floating"
-        :style="{ zIndex, display, width, ...floatingStyles }"
+        :style="{ zIndex, display, width, '--vc-popover-origin': transformOrigin, ...floatingStyles }"
         :class="[
           'vc-popover__body',
           {
             'vc-popover__body--shadow': shadow,
+            'vc-popover__body--positioned': positioned,
           },
         ]"
         :role="role"
@@ -146,11 +147,34 @@ const emitTriggerProps = computed(() => ({
 }));
 
 const display = computed(() => (opened.value ? "block" : "none"));
+
+// Floating UI needs the element in the document before it can measure it, so the first frame after
+// opening paints at the unpositioned coordinates and the second one jumps to the real place — read
+// as the panel sliding in from the side. The entrance is therefore held until the position exists.
+const positioned = computed(() => opened.value && isPositioned.value);
+
+// Grow out of the trigger rather than out of nowhere: the origin is the edge that faces it.
+const SIDE_ORIGINS: Record<string, string> = { top: "bottom", bottom: "top", left: "right", right: "left" };
+const ALIGNMENT_ORIGINS: Record<string, string> = { start: "left", end: "right" };
+
+const transformOrigin = computed(() => {
+  const [side, alignment] = resolvedPlacement.value.split("-");
+  const block = SIDE_ORIGINS[side] ?? "center";
+  const inline = alignment ? (ALIGNMENT_ORIGINS[alignment] ?? "center") : "center";
+
+  // transform-origin reads horizontal first, so a side placement puts its edge in front.
+  return side === "left" || side === "right" ? `${block} center` : `${inline} ${block}`;
+});
 const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${middlewareData.value.arrow.x}px` : ""));
 const _bgColor = computed(() => getColorValue(props.bgColor));
 const _radius = computed(() => props.radius);
 
-const { floatingStyles, middlewareData } = useFloating(reference, floating, {
+const {
+  floatingStyles,
+  middlewareData,
+  isPositioned,
+  placement: resolvedPlacement,
+} = useFloating(reference, floating, {
   placement,
   strategy,
   transform: false,
@@ -206,6 +230,7 @@ watch(opened, (value: boolean) => emit("toggle", value));
 .vc-popover {
   $popper: "";
   $shadow: "";
+  $positioned: "";
 
   @apply max-w-full;
 
@@ -236,6 +261,10 @@ watch(opened, (value: boolean) => emit("toggle", value));
     &--shadow {
       $shadow: &;
     }
+
+    &--positioned {
+      $positioned: &;
+    }
   }
 
   &__arrow {
@@ -247,10 +276,35 @@ watch(opened, (value: boolean) => emit("toggle", value));
   }
 
   &__content {
-    @apply bg-[--bg-color] rounded-[--radius];
+    // Held back until Floating UI has a position — see `positioned` in the script — and then it
+    // grows out of the edge facing the trigger instead of being switched on in place. The panel
+    // itself carries the offsets, so the transform here is free to be used for motion.
+    // The origin arrives as an inline custom property on the body: v-bind() would land on the
+    // component's root, which a teleported panel is not.
+    @apply rounded-[--radius] bg-[--bg-color] opacity-0;
+
+    --duration: var(--vc-popover-enter-duration, 0.14s);
+
+    transform: translateY(-0.25rem) scale(0.97);
+    transform-origin: var(--vc-popover-origin, center top);
+    transition:
+      opacity var(--duration) ease,
+      transform var(--duration) cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    #{$positioned} & {
+      @apply opacity-100;
+
+      transform: none;
+    }
 
     #{$shadow} & {
       @apply shadow-lg;
+    }
+
+    // The distance is what the motion is for; without it the panel just fades.
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+      transition: opacity var(--duration) ease;
     }
   }
 }

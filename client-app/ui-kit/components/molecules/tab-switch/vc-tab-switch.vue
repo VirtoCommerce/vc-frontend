@@ -38,7 +38,7 @@
       </slot>
 
       <slot v-bind="{ checked, value, label }">
-        <span v-if="label" class="vc-tab-switch__label">
+        <span v-if="label" class="vc-tab-switch__label" :data-label="label">
           {{ label }}
         </span>
       </slot>
@@ -177,6 +177,21 @@ function onInput() {
       --vc-icon-color: var(--vc-tab-switch-hover-icon-color, var(--hover-color));
 
       @apply text-[--hover-color];
+    }
+  }
+
+  &__label {
+    // The box is reserved at the CHECKED weight and the label is centred in it. Heavier text is
+    // wider, so without the reservation a rail of equal columns grows by a pixel or two whenever
+    // the longest option is picked, and everything beside it twitches — measured 217.33 -> 218.75
+    // on the header's three appearance modes, enough to nudge the panel's column.
+    @apply grid justify-items-center;
+
+    &::after {
+      @apply invisible h-0 overflow-hidden;
+
+      content: attr(data-label);
+      font-weight: var(--checked-weight);
     }
   }
 
