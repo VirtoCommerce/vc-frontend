@@ -347,7 +347,7 @@
           "catalog_menu_button": "目录",
           "main_menu": "主菜单"
         },
-        "locale_pill": {
+        "preferences_menu": {
           "aria_label": "Currency, language and theme",
           "currency": "Currency",
           "appearance": "Appearance",

@@ -34,7 +34,7 @@
         </ul>
 
         <div class="header-plate__end">
-          <HeaderLocalePill />
+          <HeaderPreferencesMenu />
 
           <HeaderAccountMenu v-if="isAuthenticated" />
 
@@ -75,7 +75,7 @@ import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import CatalogMenu from "./catalog-menu.vue";
 import HeaderAccountMenu from "./header-account-menu.vue";
-import HeaderLocalePill from "./header-locale-pill.vue";
+import HeaderPreferencesMenu from "./header-preferences-menu.vue";
 import LinkDefault from "./link-components/link-default.vue";
 import MegaMenu from "./mega-menu.vue";
 import SearchBar from "./search-bar/search-bar.vue";

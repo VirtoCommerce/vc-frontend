@@ -347,7 +347,7 @@
           "catalog_menu_button": "Catálogo",
           "main_menu": "Menú principal"
         },
-        "locale_pill": {
+        "preferences_menu": {
           "aria_label": "Currency, language and theme",
           "currency": "Currency",
           "appearance": "Appearance",

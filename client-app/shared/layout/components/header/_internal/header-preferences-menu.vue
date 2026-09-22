@@ -1,19 +1,19 @@
 <template>
   <VcPopover
-    class="header-locale"
+    class="header-preferences-menu"
     placement="bottom-end"
     :offset-options="10"
     role="dialog"
-    :aria-label="$t('shared.layout.header.locale_pill.aria_label')"
+    :aria-label="$t('shared.layout.header.preferences_menu.aria_label')"
     bg-color="--header-bottom-bg-color"
     shadow
   >
     <template #trigger="{ opened, triggerProps }">
       <button
         type="button"
-        class="header-locale__pill"
-        :class="{ 'header-locale__pill--opened': opened }"
-        data-test-id="locale-pill"
+        class="header-preferences-menu__pill"
+        :class="{ 'header-preferences-menu__pill--opened': opened }"
+        data-test-id="preferences-menu"
         v-bind="triggerProps"
       >
         <b>{{ currentCurrency?.code }} · {{ currentLanguage.twoLetterLanguageName.toUpperCase() }}</b>
@@ -23,31 +23,31 @@
     </template>
 
     <template #content>
-      <div class="header-locale__panel">
-        <div class="header-locale__column">
-          <section v-if="supportedCurrencies.length > 1" class="header-locale__group">
-            <h3 class="header-locale__title">{{ $t("shared.layout.header.locale_pill.currency") }}</h3>
+      <div class="header-preferences-menu__panel">
+        <div class="header-preferences-menu__column">
+          <section v-if="supportedCurrencies.length > 1" class="header-preferences-menu__group">
+            <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.currency") }}</h3>
 
             <button
               v-for="currency in supportedCurrencies"
               :key="currency.code"
               type="button"
-              class="header-locale__item"
+              class="header-preferences-menu__item"
               :aria-current="currency.code === currentCurrency?.code ? 'true' : undefined"
               @click="selectCurrency(currency.code)"
             >
-              <span class="header-locale__symbol">{{ currency.symbol }}</span>
+              <span class="header-preferences-menu__symbol">{{ currency.symbol }}</span>
 
-              <b class="header-locale__code">{{ currency.code }}</b>
+              <b class="header-preferences-menu__code">{{ currency.code }}</b>
 
-              <span class="header-locale__name">{{ currency.englishName }}</span>
+              <span class="header-preferences-menu__name">{{ currency.englishName }}</span>
             </button>
           </section>
 
-          <section v-if="isDarkModeAvailable" class="header-locale__group">
-            <h3 class="header-locale__title">{{ $t("shared.layout.header.locale_pill.appearance") }}</h3>
+          <section v-if="isDarkModeAvailable" class="header-preferences-menu__group">
+            <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.appearance") }}</h3>
 
-            <div class="header-locale__modes">
+            <div class="header-preferences-menu__modes">
               <!-- VcTabSwitch does not write to its model — v-model only feeds `checked`, and the
                    consumer commits the new value from @change (see view-mode.vue). -->
               <VcTabSwitch
@@ -57,7 +57,7 @@
                 name="header-color-mode"
                 :value="mode.value"
                 :icon="mode.icon"
-                :label="$t(`shared.layout.header.locale_pill.theme.${mode.value}`)"
+                :label="$t(`shared.layout.header.preferences_menu.theme.${mode.value}`)"
                 size="sm"
                 @change="colorMode = $event"
               />
@@ -65,15 +65,15 @@
           </section>
         </div>
 
-        <div v-if="supportedLanguages.length > 1" class="header-locale__column">
-          <section class="header-locale__group">
-            <h3 class="header-locale__title">{{ $t("shared.layout.header.locale_pill.language") }}</h3>
+        <div v-if="supportedLanguages.length > 1" class="header-preferences-menu__column">
+          <section class="header-preferences-menu__group">
+            <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.language") }}</h3>
 
             <button
               v-for="language in supportedLanguages"
               :key="language.cultureName"
               type="button"
-              class="header-locale__item"
+              class="header-preferences-menu__item"
               :aria-current="language.cultureName === currentLanguage.cultureName ? 'true' : undefined"
               :data-culture-name="language.cultureName"
               @click="selectLanguage(language.cultureName)"
@@ -81,7 +81,7 @@
               <VcImage
                 :src="getFlagIconUrl(getCountryCode(language))"
                 :alt="language.nativeName"
-                class="header-locale__flag"
+                class="header-preferences-menu__flag"
                 lazy
               />
 
@@ -118,7 +118,7 @@ const {
 </script>
 
 <style lang="scss">
-.header-locale {
+.header-preferences-menu {
   // The panel may be teleported out of the header, so it paints from the same global
   // theme keys the plate uses rather than inheriting anything.
   --ink: var(--header-bottom-text-color);
