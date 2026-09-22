@@ -1,5 +1,5 @@
 <template>
-  <VcTabSwitchGroup variant="seg" class="category-sort" :aria-label="$t('shared.catalog.sort.aria_label')">
+  <VcTabSwitchGroup variant="seg" class="category-sort" :aria-label="$t('shared.sorting.aria_label')">
     <VcTabSwitch
       v-for="option in options"
       :key="option.id"

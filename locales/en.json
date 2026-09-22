@@ -720,9 +720,6 @@
         "list_label": "List",
         "aria_label": "Layout"
       },
-      "sort": {
-        "aria_label": "Sort"
-      },
       "page_size": {
         "label": "Results per page:"
       },
@@ -1047,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Sort",
       "featured": "Featured",
       "alphabetically_a_z": "Alphabetically, A-Z",
       "alphabetically_z_a": "Alphabetically, Z-A",

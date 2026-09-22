@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortera",
       "featured": "Utvalda",
       "alphabetically_a_z": "Alfabetiskt, A-Ö",
       "alphabetically_z_a": "Alfabetiskt, Ö-A",

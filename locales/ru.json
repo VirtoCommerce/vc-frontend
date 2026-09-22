@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Сортировка",
       "featured": "Рекомендуемые",
       "alphabetically_a_z": "По алфавиту, А-Я",
       "alphabetically_z_a": "По алфавиту, Я-А",

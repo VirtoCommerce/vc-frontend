@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Lajittele",
       "featured": "Suositellut",
       "alphabetically_a_z": "Aakkosjärjestyksessä, A-Ö",
       "alphabetically_z_a": "Aakkosjärjestyksessä, Ö-A",

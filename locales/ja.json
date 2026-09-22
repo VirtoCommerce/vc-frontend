@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "並べ替え",
       "featured": "おすすめ",
       "alphabetically_a_z": "アルファベット順 (A-Z)",
       "alphabetically_z_a": "アルファベット順 (Z-A)",

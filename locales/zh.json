@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "排序",
       "featured": "精选",
       "alphabetically_a_z": "按字母顺序，A-Z",
       "alphabetically_z_a": "按字母 Z-A 排序",

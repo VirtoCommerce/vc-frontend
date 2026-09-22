@@ -1047,6 +1047,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortuj",
       "featured": "Polecane",
       "alphabetically_a_z": "Alfabetycznie, A-Z",
       "alphabetically_z_a": "Alfabetycznie, od Z do A",

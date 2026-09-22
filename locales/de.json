@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortieren",
       "featured": "Empfohlen",
       "alphabetically_a_z": "Alphabetisch, A-Z",
       "alphabetically_z_a": "Alphabetisch, Z-A",

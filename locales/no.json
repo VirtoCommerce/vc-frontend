@@ -1044,6 +1044,7 @@
       }
     },
     "sorting": {
+      "aria_label": "Sorter",
       "featured": "Fremhevet",
       "alphabetically_a_z": "Alfabetisk, A-Å",
       "alphabetically_z_a": "Alfabetisk, Å-A",
