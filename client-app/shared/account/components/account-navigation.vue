@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash-es";
 import { computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { getTranslatedMenuLink } from "@/core/utilities";
@@ -95,12 +94,10 @@ const sections = computed<RenderSectionType[]>(() => {
     if (section.isVisible && !section.isVisible.value) {
       continue;
     }
-    // Registered sections carry raw i18n keys; translate to match the built-in getters. Clone first —
-    // getTranslatedMenuLink mutates in place, and these objects are shared registry state.
     const translated = getTranslatedMenuLink({
       title: section.title,
       icon: section.icon,
-      children: cloneDeep(section.children),
+      children: section.children,
     });
     result.push({
       id: section.id,

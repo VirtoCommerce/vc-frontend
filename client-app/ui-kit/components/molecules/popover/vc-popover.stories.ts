@@ -27,11 +27,13 @@ const meta: Meta<typeof VcPopover> = {
     },
     disabled: {
       control: "boolean",
-      description: "Prevents the popover from opening",
+      description:
+        "Prevents the popover from opening, and closes an open one. For a `dialog` panel it also hands focus back to the trigger once it clears, but only when disabling left focus on the document body.",
     },
     hover: {
       control: "boolean",
-      description: "Opens the popover on hover instead of click",
+      description:
+        "Opens the popover on hover and focus instead of click. A hover panel never takes focus, so it cannot carry a dialog the keyboard needs to enter.",
     },
     arrowEnabled: {
       control: "boolean",
@@ -153,6 +155,52 @@ export const Disabled: StoryType = {
             </template>
             <template #content>
               <div class="rounded bg-additional-50 p-4 shadow-md">This will never show</div>
+            </template>
+          </VcPopover>
+        `,
+      },
+    },
+  },
+};
+
+export const Dialog: StoryType = {
+  args: {
+    role: "dialog",
+    ariaLabel: "Filters",
+    // Both shipping drawers offset the panel; flush against the trigger the focus ring's top band is
+    // painted on the trigger itself, which is what this story exists to show.
+    offsetOptions: 8,
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcPopover v-bind="args">
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Open filters</VcButton>
+      </template>
+      <template #content="{ close }">
+        <div class="rounded bg-additional-50 p-4 shadow-md text-sm space-y-3">
+          <p>Press Escape here — the panel closes and focus goes back to the trigger.</p>
+          <VcButton size="sm" @click="close">Apply</VcButton>
+        </div>
+      </template>
+    </VcPopover>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`role="dialog"` opts the panel into the non-modal dialog contract: it is named by `ariaLabel`, takes focus when it opens, closes on Escape from anywhere in its DOM subtree (teleported content sits outside it), and hands focus back to the trigger on close. The page stays interactive, so no `aria-modal` and no focus trap.',
+      },
+      source: {
+        code: `
+          <VcPopover role="dialog" aria-label="Filters" :offset-options="8">
+            <template #trigger="{ triggerProps }">
+              <VcButton v-bind="triggerProps">Open filters</VcButton>
+            </template>
+            <template #content="{ close }">
+              <div class="rounded bg-additional-50 p-4 shadow-md">
+                <VcButton size="sm" @click="close">Apply</VcButton>
+              </div>
             </template>
           </VcPopover>
         `,
