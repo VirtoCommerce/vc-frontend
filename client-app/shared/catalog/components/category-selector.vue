@@ -3,48 +3,47 @@
     <div v-for="i in 6" :key="i" />
   </VcWidgetSkeleton>
 
-  <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs">
-    <template v-if="!!parentCategory" #header>
-      <router-link
-        :to="getCategoryRoute(parentCategory, locationQuery, catalogBasePath)"
-        class="-mx-2 flex grow items-center gap-1.5 rounded-sm px-2 py-1 text-sm hover:bg-neutral-50"
-      >
-        <VcIcon class="text-primary" name="chevron-left" size="xs" />
+  <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs" class="category-selector">
+    <!-- Where the reader stands, as one line: the section it sits in, then its own name. The section
+         is the way back up, so it stays a link. -->
+    <template #header>
+      <div class="category-selector__crumb">
+        <template v-if="parentCategory">
+          <router-link
+            :to="getCategoryRoute(parentCategory, locationQuery, catalogBasePath)"
+            class="category-selector__parent"
+          >
+            {{ parentCategory.name }}
+          </router-link>
 
-        <span class="font-bold">
-          {{ parentCategory.name }}
+          <span class="category-selector__dot" aria-hidden="true">&middot;</span>
+        </template>
+
+        <span class="category-selector__current">
+          <template v-if="objectType === 'Category' && category?.name">{{ category.name }}</template>
+
+          <template v-else-if="objectType === 'Catalog'">{{ seoInfo?.pageTitle }}</template>
         </span>
-      </router-link>
+      </div>
     </template>
 
     <template v-if="subcategories.length" #default>
-      <div class="-mt-1 mb-0.5 py-0.5 text-xs font-black uppercase text-neutral-900">
-        <template v-if="objectType === 'Category' && category?.name">
-          {{ category.name }}
-        </template>
-
-        <template v-else-if="objectType === 'Catalog'">
-          {{ seoInfo?.pageTitle }}
-        </template>
-      </div>
-
-      <div class="flex flex-col pl-4">
+      <div class="category-selector__list">
         <router-link
           v-for="(item, index) in subcategories"
           :key="index"
           :to="subcategoriesRoutes[item.id]"
-          class="-mx-2 mt-0.5 flex items-center gap-1 rounded-sm px-2 py-0.5 text-sm transition-colors hover:bg-neutral-50"
+          class="category-selector__item"
         >
-          <span class="line-clamp-2 [word-break:break-word]">{{ item.name }}</span>
+          <span class="category-selector__name">{{ item.name }}</span>
 
           <VcBadge
             v-if="item.facet?.count"
-            class=""
-            :class="['ml-auto', 'items-center', 'h-3.5', { 'px-1': item.facet.count > 9 }]"
-            variant="outline"
-            size="xs"
+            class="category-selector__count"
+            variant="soft"
+            size="sm"
             rounded
-            color="secondary"
+            color="neutral"
           >
             {{ $n(item.facet.count, "decimal") }}
           </VcBadge>
@@ -125,3 +124,43 @@ function getFacet(category: CategoryType) {
   });
 }
 </script>
+
+<style lang="scss">
+.category-selector {
+  &__crumb {
+    @apply flex min-w-0 flex-wrap items-baseline gap-x-1.5 text-[0.9375rem] leading-snug;
+  }
+
+  &__parent {
+    @apply text-neutral-500 hover:text-neutral-950 hover:underline;
+  }
+
+  &__dot {
+    @apply text-neutral-400;
+  }
+
+  &__current {
+    @apply font-bold text-neutral-950;
+  }
+
+  &__list {
+    @apply flex flex-col;
+  }
+
+  // The same row as a facet option — 34px, a 16px name, the count pinned right — so the rail reads
+  // as one list from top to bottom rather than two kinds of list stacked.
+  &__item {
+    @apply flex min-h-[2.125rem] items-center gap-2.5 py-1 text-base text-neutral-700 hover:text-neutral-950;
+  }
+
+  &__name {
+    @apply line-clamp-2 [word-break:break-word];
+  }
+
+  &__count {
+    @apply ms-auto h-6 min-w-[1.875rem] shrink-0 justify-center rounded-full border-0 px-2 text-[0.8125rem] font-semibold text-neutral-700;
+
+    background: color-mix(in srgb, theme("colors.neutral.950") 6%, transparent);
+  }
+}
+</style>

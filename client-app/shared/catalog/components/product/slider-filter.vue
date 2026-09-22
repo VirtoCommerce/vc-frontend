@@ -1,13 +1,6 @@
 <template>
   <div v-if="typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue" class="slider-filter">
-    <VcWidget
-      v-if="mode === 'collapsable'"
-      class="slider-filter-widget"
-      size="xs"
-      collapsible
-      :title="facet.label"
-      collapsed
-    >
+    <VcWidget v-if="mode === 'collapsable'" class="slider-filter-widget" size="xs" :title="facet.label">
       <div>
         <VcSlider
           :value="sliderValue"

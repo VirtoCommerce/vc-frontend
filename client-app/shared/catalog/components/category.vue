@@ -775,10 +775,15 @@ onMounted(() => {
   --category-plate-pad-x: var(--plate-pad-x, 2rem);
   --category-plate-gap: var(--page-stack, 1.625rem);
 
+  // The plate surface is the design's warm off-white (#fffdfa), not paper white — the same step the
+  // footer's top plate already paints with, so every plate on the page is one colour and they flip
+  // to dark together.
+  --category-plate-bg: var(--footer-top-bg-color, #fffdf9);
+
   %plate {
     padding: var(--category-plate-pad-y) var(--category-plate-pad-x);
     border-radius: var(--category-plate-radius);
-    background: theme("colors.additional.50");
+    background: var(--category-plate-bg);
     box-shadow: var(--plate-shadow, theme("boxShadow.md"));
   }
 
@@ -788,19 +793,83 @@ onMounted(() => {
     }
   }
 
+  // The rail is 280 wide with 28 of inside all round, as the design measures it — 224 of content.
+  // Two classes deep on purpose: the layout sets this width through its own position modifier, and
+  // an equal-weight rule here loses to it on load order.
+  .vc-layout .vc-layout__sidebar-container {
+    @media (min-width: theme("screens.xl")) {
+      width: 17.5rem;
+    }
+  }
+
   .vc-layout__sidebar {
     @extend %plate;
 
-    padding: 1.75rem 1.5rem;
+    // The layout gives the sticky sidebar a width of its own as well as its container's; it follows
+    // the container so the two cannot disagree.
+    @apply w-full;
+
+    padding: 1.75rem;
 
     // The sidebar plate is the frame now. The widgets inside it drew one of their own, which put a
-    // box inside the box; they lie flat on the plate and are parted by a hairline instead.
+    // box inside the box; they lie flat on the plate and are parted by a hairline.
     .vc-widget {
-      @apply rounded-none border-0 bg-transparent shadow-none;
+      @apply rounded-none border-0 bg-transparent p-0 shadow-none;
+    }
 
-      & + .vc-widget {
-        @apply border-t border-neutral-100 pt-5;
+    // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
+    // the wrappers — a "next widget" selector never finds a widget beside another.
+    .category__selector + .category__product-filters,
+    .products-filters__container > * + * {
+      @apply mt-5 border-t border-neutral-200 pt-5;
+    }
+
+    // The widget's own chrome assumed it was a card: 16px of inset on every side and a rule between
+    // its heading and its body. On the plate that pushed every row 16px in from the hairlines and put
+    // a second hairline under each heading.
+    .vc-widget__header-container {
+      @apply mb-3 min-h-0 p-0;
+    }
+
+    .vc-widget__header,
+    .vc-widget__slot {
+      @apply p-0;
+    }
+
+    .vc-widget__slot-container {
+      @apply border-0;
+    }
+
+    .category__selector {
+      @apply mb-0;
+    }
+
+    // Section headings are names, not labels: sentence case and bold, in the ink of the rows.
+    .vc-widget__title {
+      @apply text-base font-bold normal-case tracking-normal text-neutral-950;
+
+      // Facet names arrive as the store keyed them — "price" — and a heading starts with a capital.
+      // ::first-letter only applies to a block container, and the title is an inline span.
+      @apply inline-block;
+
+      &::first-letter {
+        @apply uppercase;
       }
+    }
+
+    // One row every 34px: an 18px box, ten of air, a 16px name, and the count pinned right.
+    .vc-menu-item__inner {
+      @apply min-h-[2.125rem] gap-2.5 rounded-lg px-0 py-1 text-base text-neutral-700;
+
+      &:hover {
+        @apply bg-transparent text-neutral-950;
+      }
+    }
+
+    .facet-filter-widget__count {
+      @apply h-6 min-w-[1.875rem] justify-center rounded-full border-0 px-2 text-[0.8125rem] font-semibold text-neutral-700;
+
+      background: color-mix(in srgb, theme("colors.neutral.950") 6%, transparent);
     }
   }
 

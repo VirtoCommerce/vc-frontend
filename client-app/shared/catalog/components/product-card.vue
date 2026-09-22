@@ -28,6 +28,10 @@
       </VcProductActions>
     </template>
 
+    <VcProductVendor v-if="maker">
+      {{ maker }}
+    </VcProductVendor>
+
     <VcProductTitle
       :title="product.name"
       :to="link"
@@ -35,10 +39,6 @@
       fix-height
       @click="$emit('linkClick', product, $event)"
     />
-
-    <VcProductVendor v-if="$cfg.vendor_enabled">
-      {{ product.vendor?.name }}
-    </VcProductVendor>
 
     <VcProductProperties v-if="cardType !== 'short' && properties.length">
       <span v-for="(property, i) in properties" :key="i" class="product-card__spec">
@@ -138,7 +138,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
-import { useBrowserTarget } from "@/core/composables";
+import { useBrowserTarget, useThemeContext } from "@/core/composables";
 import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
@@ -182,6 +182,7 @@ const isExpanded = ref(false);
 const productCard = useTemplateRef("productCard");
 
 const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
+const { themeContext } = useThemeContext();
 
 const productId = computed(() => product.value.id);
 
@@ -199,9 +200,32 @@ const listPrice = computed(() =>
     : product.value.price.list,
 );
 
+/** The property a catalog carries its brand in, when the brand is not a vendor record. */
+const BRAND_PROPERTY_NAME = "brand";
+
+const productProperties = computed(() =>
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).filter(
+    (property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  ),
+);
+
+const isBrandProperty = (name?: string) => name?.toLowerCase() === BRAND_PROPERTY_NAME;
+
+/**
+ * Who makes it, shown over the title. A marketplace names the vendor; a catalog without vendors
+ * usually keeps the brand as an ordinary property, and QA's does. Either way it is one name, and
+ * showing it again as a chip would spend one of the card's two chips on what the eyebrow already said.
+ */
+const maker = computed(
+  () =>
+    (themeContext.value?.settings?.vendor_enabled && props.product.vendor?.name) ||
+    productProperties.value.find((property) => isBrandProperty(property.name))?.value ||
+    undefined,
+);
+
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
-    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+  productProperties.value
+    .filter((property) => !isBrandProperty(property.name))
     // Two, as the design has it: a third row turns the card into a table of attributes, and the
     // grid is scanned for the product, not read for its specification.
     .slice(0, 2),
@@ -307,20 +331,18 @@ const variationsCount = computed(() => {
   // The brand reads as an eyebrow over the title, not as a line under it: it is what the eye lands
   // on first when scanning a grid of products it does not yet know.
   :deep(.vc-product-vendor) {
-    @apply mt-0 text-[0.6875rem] uppercase leading-[1.1rem] tracking-[0.06em] text-neutral-500;
+    @apply mt-3 text-[0.6875rem] uppercase leading-[1.1rem] tracking-[0.06em] text-neutral-500;
 
-    order: 0;
+    // The kit orders everything in the card through one sequence, media included — the photo, then
+    // the title at 2. The brand shares the title's step and comes first in the markup, so it sits
+    // between the two instead of above the photo.
+    order: 2;
   }
 
   // The title is the product's name here, not a link away from the page: the grid is scanned for
   // what a thing is, and a column of blue underlines reads as navigation rather than as goods.
-  :deep(.vc-product-title) {
-    @apply text-neutral-950;
-
-    &:hover {
-      @apply text-neutral-950 underline;
-    }
-  }
+  --vc-product-title-link-color: theme("colors.neutral.950");
+  --vc-product-title-link-hover-color: theme("colors.neutral.950");
 
   &__spec {
     @apply inline-flex max-w-full items-baseline gap-1 rounded-full px-2 py-1 text-xs leading-none;
