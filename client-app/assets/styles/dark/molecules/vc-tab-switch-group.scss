@@ -2,8 +2,12 @@
   // The rail's light track is ink at 5%, which on a dark panel is a lightening film — the
   // track would sit ABOVE the surface it is meant to be cut into. Dark cuts it the other way:
   // near-black at 60%, so the groove reads as depth in both themes.
+  //
+  // The near-black is neutral-50, not additional-950: every dark preset in the repo flips
+  // additional-950 to the LIGHT end of the ramp, so that spelling paints the groove as a 60%
+  // white wash over the panel. neutral-50 is the darkest surface step in all eight of them.
   &--seg {
-    --track-color: var(--vc-tab-switch-group-track-color, color-mix(in srgb, var(--color-additional-950) 60%, transparent));
+    --track-color: var(--vc-tab-switch-group-track-color, color-mix(in srgb, var(--color-neutral-50) 60%, transparent));
   }
 
   // The indicator cannot stay additional-50 here: in dark that step IS the panel colour, and the

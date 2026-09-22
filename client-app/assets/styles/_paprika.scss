@@ -63,17 +63,22 @@ html.dark {
   // Dark keeps the same shapes and changes the paint: the shadow deepens and gains the
   // half-pixel hairline that is the only thing separating one dark surface from another,
   // and the sheen flips from white to the warm top step.
+  //
+  // Both ends come off the NEUTRAL ramp, because that is the one this preset inverts: in
+  // light its dark end is 950, in dark it is 50, and either way the shadow is the darkest
+  // step the theme has. The additional pair cannot carry this — the repo's dark presets
+  // flip additional-950 to the light end (it is the ink for a lifted solid fill), so a
+  // shadow written against it turns into a white halo the moment the preset is corrected.
   --plate-shadow:
-    0 16px 48px -8px rgb(from theme("colors.additional.950") r g b / 0.55),
-    0 0 0 0.5px rgb(from theme("colors.additional.950") r g b / 0.5);
+    0 16px 48px -8px rgb(from theme("colors.neutral.50") r g b / 0.55),
+    0 0 0 0.5px rgb(from theme("colors.neutral.50") r g b / 0.5);
   --plate-shadow-lift:
-    0 24px 64px -10px rgb(from theme("colors.additional.950") r g b / 0.66),
-    0 0 0 0.5px rgb(from theme("colors.additional.950") r g b / 0.5);
-  // The dark sheen is a LIGHT warm tint, so it comes off the top of the neutral scale:
-  // this preset inverts primary-950 into the dark end, where it would draw a black line.
+    0 24px 64px -10px rgb(from theme("colors.neutral.50") r g b / 0.66),
+    0 0 0 0.5px rgb(from theme("colors.neutral.50") r g b / 0.5);
+  // The dark sheen is a LIGHT warm tint, so it comes off the other end of the same scale.
   --glass-sheen: rgb(from theme("colors.neutral.950") r g b / 0.12);
-  --glass-under: rgb(from theme("colors.additional.950") r g b / 0.35);
-  --glass-shadow: 0 10px 34px rgb(from theme("colors.additional.950") r g b / 0.38);
+  --glass-under: rgb(from theme("colors.neutral.50") r g b / 0.35);
+  --glass-shadow: 0 10px 34px rgb(from theme("colors.neutral.50") r g b / 0.38);
 }
 
 // The design steps the plate down a rung below its 900px breakpoint — radius 28 -> 22 and
