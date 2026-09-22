@@ -51,3 +51,43 @@ _(filled in as each is confirmed against the backend — see the iteration notes
 | # | Note |
 |---|---|
 | 9 | The design warns that the sort control "must answer the press instantly, or a second and a half reads as a control that did not take the press". The storefront's `selectedSort` follows the backend's `selected` flag, which is a round trip away — measured at ~1.5s on QA, during which the rail did not move. `category-sort.vue` now holds the pressed value until the search it started settles, then hands authority back. |
+
+## Cut because the storefront's data flow cannot carry it
+
+### 10. The split-flap on a sort change
+
+`CatalogScreen.jsx` turns every card on its own axis and swaps its contents **exactly at the edge**,
+as a wave down the grid — `rotateY` in the grid, `rotateX` in the list, 105ms out and 125ms back,
+staggered 55ms.
+
+It cannot be built here, and the reason is not styling.
+
+The prototype re-sorts an array it already holds, so at the moment a card stands edge-on, both the
+old product and the new one are in hand. The storefront asks the backend for a new page and shows
+skeletons while it waits. Measured on QA, clicking a sort tab:
+
+| t | the grid holds |
+|---|---|
+| 0 ms | 16 cards, the old result |
+| 135 ms | 16 skeletons |
+| 1560 ms | 16 cards, the new result |
+
+The old cards are gone a tenth of a second in and the new ones arrive a second and a half later, so
+there is no frame in which a card can be turned from one product to the other.
+
+**What would make it possible:** hold the old cards through the fetch instead of showing skeletons,
+for a sort change only. That is a change to how the page reports loading, not a change of animation,
+so it is Ivan's call rather than something to slip in behind a visual ticket.
+
+**What ships instead:** the new result set rises in — the design's own entry animation — so the wave
+still reads down the grid when the order changes.
+
+### Built exactly as drawn
+
+| Animation | Where |
+|---|---|
+| Crossfade on a layout change — opacity to 0 with a 6px blur over 130ms, then the new shape | `useCatalogGridMotion` |
+| Rise on entry — 14px up, 6px blur, 420ms, staggered 40ms and capped at twelve cards | `useCatalogGridMotion` |
+| Both skipped under `prefers-reduced-motion` and where Web Animations do not exist | `useCatalogGridMotion` |
+| The timer race against `finished`, which never settles in a background tab | `useCatalogGridMotion` |
+| Cancelling the filled fade rather than painting over it — the grid element is reused across a layout change (measured), and a filled animation beats an inline style | `useCatalogGridMotion` |

@@ -18,8 +18,9 @@
       </div>
 
       <div
-        :class="`category-products__list category-products__list--${savedViewMode}`"
-        :data-test-id="`products-${savedViewMode}-view`"
+        ref="grid"
+        :class="`category-products__list category-products__list--${displayedViewMode}`"
+        :data-test-id="`products-${displayedViewMode}-view`"
       >
         <template v-if="fetchingProducts">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />
@@ -30,7 +31,7 @@
             v-for="(item, index) in products"
             :key="item.id"
             :loading="fetchingProducts"
-            :view-mode="savedViewMode"
+            :view-mode="displayedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
             :browser-target="browserTarget"
@@ -91,10 +92,11 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, toRef } from "vue";
+import { computed, onMounted, toRef, useTemplateRef, watch } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
+import { useCatalogGridMotion } from "@/shared/catalog/composables/useCatalogGridMotion";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { Product } from "@/core/api/graphql/types";
@@ -136,6 +138,26 @@ interface IEmits {
 
 const { browserTarget } = useBrowserTarget();
 
+const grid = useTemplateRef<HTMLElement>("grid");
+const { displayedViewMode, enter } = useCatalogGridMotion(grid, toRef(props, "savedViewMode"));
+
+// A result set only exists once the search that fetched it has finished — until then the grid holds
+// skeletons, and animating those would be animating the wait rather than the answer.
+watch(
+  () => props.fetchingProducts,
+  (isFetching, wasFetching) => {
+    if (wasFetching && !isFetching) {
+      void enter();
+    }
+  },
+);
+
+onMounted(() => {
+  if (!props.fetchingProducts) {
+    void enter();
+  }
+});
+
 function loadPreviousPage() {
   emit("changePage", minVisitedPage.value - 1);
 }
@@ -152,7 +174,9 @@ const maxVisitedPage = computed(() => Math.max(...pageHistory.value));
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
-const skeletonComponent = computed(() => (props.savedViewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));
+const skeletonComponent = computed(() =>
+  displayedViewMode.value === "list" ? ProductSkeletonList : ProductSkeletonGrid,
+);
 
 const columns = computed(() => ({
   null: 1,
@@ -162,10 +186,10 @@ const columns = computed(() => ({
 }));
 
 const lazyCardsCount = computed(() => {
-  if (props.savedViewMode === "grid") {
+  if (displayedViewMode.value === "grid") {
     return getGridLazyCardsCount();
   }
-  if (props.savedViewMode == "list") {
+  if (displayedViewMode.value === "list") {
     return getListLazyCardsCount();
   }
   return 0;
