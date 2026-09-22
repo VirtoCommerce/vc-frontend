@@ -295,11 +295,13 @@ function sendGASelectItemEvent(product: Product): void {
   --columnsAmountDesktop: v-bind(props.columnsAmountDesktop);
 
   &__list {
-    // Only the blank back of a card, which would otherwise show through it mid-turn. The depth is
-    // carried by each card's own transform, so that every card turns about its own axis.
+    // Everything a card needs for the length of a turn, and not a moment longer. `will-change` puts
+    // each card on its own layer so the turn is composited instead of repainting a card-sized
+    // subtree every frame; holding sixteen such layers permanently would be the opposite trade.
     &--flipping > * {
       backface-visibility: hidden;
       transform-origin: 50% 50%;
+      will-change: transform;
     }
 
     &--grid {
