@@ -870,13 +870,29 @@ onMounted(() => {
       }
     }
 
-    // One row every 34px: an 18px box, ten of air, a 16px name, and the count pinned right.
+    // One row every 34px: an 18px box, ten of air, a 16px name, and the count pinned right. The kit
+    // paints each row paper white, which on the warm plate read as a white block behind the list.
     .vc-menu-item__inner {
-      @apply min-h-[2.125rem] gap-2.5 rounded-lg px-0 py-1 text-base text-neutral-700;
+      @apply min-h-[2.125rem] gap-2.5 rounded-lg bg-transparent px-0 py-1 text-base text-neutral-700;
 
       &:hover {
         @apply bg-transparent text-neutral-950;
       }
+    }
+
+    // The search sits on the plate like the rows under it: no inset of its own and no rule beneath.
+    .facet-filter-widget__search {
+      @apply border-0 px-0 pb-2 pt-0;
+    }
+
+    .vc-widget__footer-container {
+      @apply border-0;
+    }
+
+    // The fade over a cut-off list has to end in the plate's colour, not white, or it draws a pale band.
+    .facet-filter-widget__fade::after {
+      --tw-gradient-from: var(--category-plate-bg) var(--tw-gradient-from-position);
+      --tw-gradient-to: transparent var(--tw-gradient-to-position);
     }
 
     .category__clear-all {
@@ -897,9 +913,14 @@ onMounted(() => {
     margin-bottom: var(--category-plate-gap);
   }
 
+  // One height whether or not there is a parent to name over the title — the height of a plate that
+  // has both lines — and the content centred in it, so a title on its own sits in the middle rather
+  // than under an empty line. Written from the plate's own inside so it steps with it below lg.
   &__head-plate {
     @extend %plate;
     @apply flex min-w-0 grow flex-col justify-center gap-2;
+
+    min-height: calc(var(--category-plate-pad-y) * 2 + 4.1875rem);
   }
 
   &__eyebrow {
