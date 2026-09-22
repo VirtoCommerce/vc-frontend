@@ -4,12 +4,13 @@ import { ref } from "vue";
 vi.mock("@/core/composables", () => {
   const nativeSignIn = vi.fn<(params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
+  const lockoutSecondsRemaining = ref<number>();
   const analytics = vi.fn();
 
   return {
-    __mockAuthState: { nativeSignIn, authErrors },
+    __mockAuthState: { nativeSignIn, authErrors, lockoutSecondsRemaining },
     __mockAnalyticsState: { analytics },
-    useAuth: () => ({ nativeSignIn, errors: authErrors }),
+    useAuth: () => ({ nativeSignIn, errors: authErrors, lockoutSecondsRemaining }),
     useAnalytics: () => ({ analytics }),
   };
 });
@@ -66,6 +67,7 @@ type IdentityErrorMockType = { code: string; description: string };
 type AuthMockStateType = {
   nativeSignIn: ReturnType<typeof vi.fn>;
   authErrors: { value: IdentityErrorMockType[] | undefined };
+  lockoutSecondsRemaining: { value: number | undefined };
 };
 
 type AnalyticsMockStateType = {
@@ -124,6 +126,7 @@ describe("useOtpSignIn", () => {
     auth.nativeSignIn.mockReset();
     auth.nativeSignIn.mockResolvedValue(undefined);
     auth.authErrors.value = undefined;
+    auth.lockoutSecondsRemaining.value = undefined;
 
     const signMeIn = await getSignMeInState();
     signMeIn.signIn.mockReset();
@@ -199,10 +202,7 @@ describe("useOtpSignIn", () => {
     expect(loading.value).toBe(false);
   });
 
-  it("verifyCode completes sign-in and reports success when the outcome is Success", async () => {
-    const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = { outcome: "Success" };
-
+  it("verifyCode completes sign-in and reports success when there is no error", async () => {
     const auth = await getAuthState();
     const signMeIn = await getSignMeInState();
     const { analytics } = await getAnalyticsState();
@@ -212,9 +212,6 @@ describe("useOtpSignIn", () => {
 
     const result = await verifyCode("buyer@acme.com", "123456");
 
-    expect(postedUrl).toBe("/api/otp/verify");
-    expect(postedBody).toEqual({ storeId: "store-1", email: "buyer@acme.com", code: "123456" });
-    expect(result).toEqual({ outcome: "Success" });
     expect(auth.nativeSignIn).toHaveBeenCalledTimes(1);
     expect(auth.nativeSignIn).toHaveBeenCalledWith({
       storeId: "store-1",
@@ -222,65 +219,47 @@ describe("useOtpSignIn", () => {
       code: "123456",
     });
     expect(signMeIn.signIn).toHaveBeenCalledTimes(1);
+    expect(result).toEqual({ outcome: "Success" });
     expect(analytics).toHaveBeenCalledWith("login", "otp", { success: true });
   });
 
-  it("verifyCode reports failure and does not redirect for a recoverable sign-in error", async () => {
-    const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = { outcome: "Success" };
-
+  it("verifyCode returns AccountLocked with the seconds remaining when the token exchange reports a lockout", async () => {
     const auth = await getAuthState();
-    auth.authErrors.value = [{ code: "user_not_found", description: "User not found" }];
+    auth.authErrors.value = [{ code: "account_locked", description: "Too many attempts" }];
+    auth.lockoutSecondsRemaining.value = 245;
 
     const signMeIn = await getSignMeInState();
-    signMeIn.signInErrors.value = [{ code: "user_not_found", description: "User not found" }];
-
     const { analytics } = await getAnalyticsState();
+
     const { useOtpSignIn } = await importComposable();
     const { verifyCode } = useOtpSignIn();
 
-    const originalLocation = window.location;
-    Object.defineProperty(window, "location", { configurable: true, value: { href: "" } });
+    const result = await verifyCode("buyer@acme.com", "123456");
 
-    await verifyCode("buyer@acme.com", "123456");
-
-    expect(analytics).toHaveBeenCalledWith("login", "otp", {
-      success: false,
-      errors: "user_not_found: User not found",
-    });
-    expect(window.location.href).toBe("");
-
-    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
+    expect(result).toEqual({ outcome: "AccountLocked", lockoutSecondsRemaining: 245 });
+    expect(signMeIn.signIn).not.toHaveBeenCalled();
+    expect(analytics).toHaveBeenCalledWith("login", "otp", { success: false, errors: "account_locked" });
   });
 
-  it("verifyCode redirects to /400 when the sign-in is not allowed", async () => {
-    const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = { outcome: "Success" };
-
+  it("verifyCode returns OtpDisabled when the token exchange reports OTP is disabled", async () => {
     const auth = await getAuthState();
-    auth.authErrors.value = [{ code: "sign_in_not_allowed", description: "Sign-in not allowed" }];
+    auth.authErrors.value = [{ code: "otp_disabled", description: "OTP disabled" }];
 
     const signMeIn = await getSignMeInState();
-    signMeIn.signInErrors.value = [{ code: "sign_in_not_allowed", description: "Sign-in not allowed" }];
 
     const { useOtpSignIn } = await importComposable();
     const { verifyCode } = useOtpSignIn();
 
-    const originalLocation = window.location;
-    Object.defineProperty(window, "location", { configurable: true, value: { href: "" } });
+    const result = await verifyCode("buyer@acme.com", "123456");
 
-    await verifyCode("buyer@acme.com", "123456");
-
-    expect(window.location.href).toBe("/400");
-
-    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
+    expect(result).toEqual({ outcome: "OtpDisabled" });
+    expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
-  it("verifyCode does not sign in when the code is rejected", async () => {
-    const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = { outcome: "InvalidCode" };
-
+  it("verifyCode returns InvalidCode for any other token exchange error", async () => {
     const auth = await getAuthState();
+    auth.authErrors.value = [{ code: "invalid_code", description: "The code is invalid or has expired." }];
+
     const signMeIn = await getSignMeInState();
 
     const { useOtpSignIn } = await importComposable();
@@ -289,35 +268,53 @@ describe("useOtpSignIn", () => {
     const result = await verifyCode("buyer@acme.com", "000000");
 
     expect(result).toEqual({ outcome: "InvalidCode" });
-    expect(auth.nativeSignIn).not.toHaveBeenCalled();
     expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
-  it("verifyCode resolves to undefined when the request fails (useFetch never rejects)", async () => {
-    const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = null;
-    fetchState.fetchResult.error.value = new Error("network error");
-
+  it("verifyCode redirects to /400 when the sign-in is not allowed", async () => {
     const auth = await getAuthState();
+    auth.authErrors.value = [{ code: "sign_in_not_allowed", description: "Sign-in not allowed" }];
+
     const signMeIn = await getSignMeInState();
 
     const { useOtpSignIn } = await importComposable();
     const { verifyCode } = useOtpSignIn();
 
+    const originalLocation = window.location;
+    Object.defineProperty(window, "location", { configurable: true, value: { href: "" } });
+
     const result = await verifyCode("buyer@acme.com", "123456");
 
-    expect(result).toBeUndefined();
-    expect(auth.nativeSignIn).not.toHaveBeenCalled();
+    expect(window.location.href).toBe("/400");
+    expect(result).toEqual({ outcome: "InvalidCode" });
+    expect(signMeIn.signIn).not.toHaveBeenCalled();
+
+    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
+  });
+
+  it("verifyCode still resolves the structured outcome when getToken(true) rejects on the 400 response", async () => {
+    // nativeSignIn -> getToken(true) rejects on any non-2xx /connect/token response (same as the
+    // password grant's authorize()), even though the error body already populated authErrors.
+    const auth = await getAuthState();
+    auth.authErrors.value = [{ code: "invalid_code", description: "The code is invalid or has expired." }];
+    auth.nativeSignIn.mockRejectedValue(new Error("Request failed with status code 400"));
+
+    const signMeIn = await getSignMeInState();
+
+    const { useOtpSignIn } = await importComposable();
+    const { verifyCode } = useOtpSignIn();
+
+    const result = await verifyCode("buyer@acme.com", "000000");
+
+    expect(result).toEqual({ outcome: "InvalidCode" });
     expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
-  it("verifyCode logs and reports failure when completing sign-in throws", async () => {
-    const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = { outcome: "Success" };
-
+  it("verifyCode logs and reports failure when the token exchange throws", async () => {
     const auth = await getAuthState();
     auth.nativeSignIn.mockRejectedValue(new Error("token exchange failed"));
 
+    const signMeIn = await getSignMeInState();
     const { Logger } = await import("@/core/utilities");
     const { analytics } = await getAnalyticsState();
     const { useOtpSignIn } = await importComposable();
@@ -325,7 +322,8 @@ describe("useOtpSignIn", () => {
 
     const result = await verifyCode("buyer@acme.com", "123456");
 
-    expect(result).toEqual({ outcome: "Success" });
+    expect(result).toBeUndefined();
+    expect(signMeIn.signIn).not.toHaveBeenCalled();
     expect(Logger.error).toHaveBeenCalled();
     expect(analytics).toHaveBeenCalledWith("login", "otp", { success: false, errors: "token exchange failed" });
   });

@@ -32,6 +32,7 @@ function _useAuth() {
     .json<ConnectTokenResponseType>();
 
   const errors = computed(() => data.value?.errors);
+  const lockoutSecondsRemaining = computed(() => data.value?.lockoutSecondsRemaining);
 
   const headers = computed(() => {
     if (state.value.access_token) {
@@ -170,6 +171,7 @@ function _useAuth() {
     headers,
     isExpired,
     errors,
+    lockoutSecondsRemaining,
     isAuthorizing,
     authorize,
     externalSignInCallback,
