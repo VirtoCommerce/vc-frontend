@@ -8,15 +8,22 @@ import {
   MODULE_ID_CATALOG,
 } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
+import { parseJsonStringArray } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import type { Ref } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 /**
  * The search results route a scanned code navigates to in exact match mode. The code travels as its own
  * query param (not as `q`), so the results page can turn it into the `barcode` filter term.
  */
-export function getBarcodeSearchRoute(value: string): RouteLocationRaw {
+function getBarcodeSearchRoute(value: string): RouteLocationRaw {
   return { name: ROUTES.SEARCH.NAME, query: { [QueryParamName.Barcode]: value } };
+}
+
+/** The setting holds a JSON array of index fields; an unreadable one must not switch to exact match. */
+function hasBarcodeSearchFields(rawValue: unknown): boolean {
+  return !!parseJsonStringArray(rawValue)?.length;
 }
 
 /**
@@ -26,11 +33,8 @@ export function getBarcodeSearchRoute(value: string): RouteLocationRaw {
  * code cannot navigate.
  */
 export function shouldOpenSingleBarcodeHit(request: {
-  /** The code the completed request was issued for. */
   requestedBarcode: string;
-  /** The code the URL holds now. */
   currentBarcode: string;
-  /** Whether the request carried facet/page/sort params. */
   wasNarrowed: boolean;
   redirectedBarcodes: ReadonlySet<string>;
   totalCount: number;
@@ -48,33 +52,15 @@ export function shouldOpenSingleBarcodeHit(request: {
   );
 }
 
-/** The setting arrives as a JSON string; anything else (missing, malformed) means "no fields configured". */
-function parseBarcodeSearchFields(rawValue: unknown): string[] {
-  if (typeof rawValue !== "string" || !rawValue) {
-    return [];
-  }
-
-  try {
-    const fields = JSON.parse(rawValue) as unknown;
-
-    if (Array.isArray(fields) && fields.every((field) => typeof field === "string")) {
-      return fields;
-    }
-  } catch {
-    // fall through: an unreadable value must not switch the scanner to exact match
-  }
-
-  return [];
-}
-
 /**
  * Store-level barcode scanner configuration, shared by the desktop and mobile search bars.
  * A backend without the settings keeps today's behaviour: the scanner is shown and a scanned code is
  * searched as a full-text phrase.
  */
 export function useBarcodeSearch(options: {
-  /** Today's behaviour: put the code in the input and run a keyword search. */
-  searchFullText: (value: string) => void;
+  /** The bar's input model — today's behaviour puts the code in it and runs a keyword search. */
+  searchPhrase: Ref<string>;
+  searchDropdownRef: Readonly<Ref<{ handleSearch: () => void } | null>>;
   /** What the bar binds to the dropdown's `hide` event — the exact path navigates without the dropdown. */
   hideSearchResults: () => void;
 }) {
@@ -84,16 +70,12 @@ export function useBarcodeSearch(options: {
 
   const isScannerEnabled = computed(() => getSettingValue(CATALOG_BARCODE_SCANNER_ENABLED_KEY) !== false);
 
-  const isExactMatch = computed(
-    () => parseBarcodeSearchFields(getSettingValue(CATALOG_BARCODE_SEARCH_FIELDS_KEY)).length > 0,
-  );
-
   function onBarcodeScanned(value: string): void {
     if (!value) {
       return;
     }
 
-    if (isExactMatch.value) {
+    if (hasBarcodeSearchFields(getSettingValue(CATALOG_BARCODE_SEARCH_FIELDS_KEY))) {
       // Parity with the full-text path's `search` event. By design the code is NOT saved to the search
       // history (it is not a keyword) and the lookup stays global (no category scope).
       analytics("search", value);
@@ -102,7 +84,8 @@ export function useBarcodeSearch(options: {
       return;
     }
 
-    options.searchFullText(value);
+    options.searchPhrase.value = value;
+    options.searchDropdownRef.value?.handleSearch();
   }
 
   return {

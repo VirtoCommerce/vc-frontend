@@ -2,6 +2,11 @@ import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
+import {
+  BARCODE_SCANNER_ENABLED_SETTING,
+  BARCODE_SCANNER_SELECTOR,
+  searchBarStubs,
+} from "./search-bar/search-bar-test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 
 const mockTranslate = (key: string) => key;
@@ -28,13 +33,15 @@ vi.mock("@/core/composables", () => ({
   useThemeContext: () => ({ themeContext: ref({ settings: {} }) }),
 }));
 
-vi.mock("@/core/composables/useModuleSettings", () => ({
-  useModuleSettings: () => ({ getSettingValue: (name: string) => settingValues.get(name) }),
-}));
+vi.mock("@/core/composables/useModuleSettings", async () => {
+  const { createModuleSettingsMock } = await import("./search-bar/search-bar-test-utils");
+  return createModuleSettingsMock(settingValues);
+});
 
-vi.mock("vue-router", () => ({
-  useRouter: () => ({ push: vi.fn() }),
-}));
+vi.mock("vue-router", async () => {
+  const { createRouterMock } = await import("./search-bar/search-bar-test-utils");
+  return createRouterMock();
+});
 
 vi.mock("@/shared/layout/composables/useSearchBar", () => ({
   useSearchBar: () => ({
@@ -55,44 +62,10 @@ vi.mock("./search-dropdown.vue", () => ({
   }),
 }));
 
-vi.mock("./search-bar/barcode-scanner.vue", () => ({
-  default: defineComponent({
-    name: "BarcodeScanner",
-
-    setup() {
-      return () => h("button", { "data-testid": "barcode-scanner" });
-    },
-  }),
-}));
-
-/** Renders the `append` slot, where the scanner and search buttons live. */
-const VcInputStub = defineComponent({
-  name: "VcInput",
-  inheritAttrs: false,
-
-  setup(_props, { slots }) {
-    return () => h("div", { class: "input" }, slots.append?.());
-  },
+vi.mock("./search-bar/barcode-scanner.vue", async () => {
+  const { createBarcodeScannerMock } = await import("./search-bar/search-bar-test-utils");
+  return createBarcodeScannerMock();
 });
-
-const VcButtonStub = defineComponent({
-  name: "VcButton",
-  inheritAttrs: false,
-
-  setup(_props, { slots, attrs }) {
-    return () => h("button", { ...attrs }, slots.default?.());
-  },
-});
-
-const VcScrollbarStub = defineComponent({
-  name: "VcScrollbar",
-
-  setup(_props, { slots }) {
-    return () => h("div", slots.default?.());
-  },
-});
-
-const BARCODE_SCANNER_SELECTOR = '[data-testid="barcode-scanner"]';
 
 let mountedWrapper: VueWrapper | undefined;
 
@@ -100,11 +73,7 @@ function createComponent() {
   mountedWrapper = mount(MobileSearchBar, {
     props: { visible: true },
     global: {
-      stubs: {
-        VcInput: VcInputStub,
-        VcButton: VcButtonStub,
-        VcScrollbar: VcScrollbarStub,
-      },
+      stubs: searchBarStubs,
       mocks: { $t: mockTranslate },
     },
   });
@@ -130,7 +99,7 @@ describe("MobileSearchBar barcode scanner", () => {
   });
 
   it("hides the scanner when the store disabled it", () => {
-    settingValues.set("Catalog.Search.BarcodeScannerEnabled", false);
+    settingValues.set(BARCODE_SCANNER_ENABLED_SETTING, false);
 
     const wrapper = createComponent();
 

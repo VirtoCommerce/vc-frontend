@@ -236,3 +236,27 @@ export function humanizeName(name: unknown): string {
 export function isMarkdownWithFrontmatter(content: string): boolean {
   return content.trimStart().startsWith("---");
 }
+
+/**
+ * Reads a value that is expected to hold a JSON array of strings (a shape several store settings use).
+ * Returns the array only when the value is a string parsing to an array whose every item is a string;
+ * anything else (missing, not a string, malformed JSON, an object, non-string items) yields `undefined`,
+ * so the caller can fall back instead of acting on a half-understood value.
+ */
+export function parseJsonStringArray(value: unknown): string[] | undefined {
+  if (typeof value !== "string" || !value) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+
+    if (Array.isArray(parsed) && parsed.every((item): item is string => typeof item === "string")) {
+      return parsed;
+    }
+  } catch {
+    // an unreadable value is treated like an absent one
+  }
+
+  return undefined;
+}

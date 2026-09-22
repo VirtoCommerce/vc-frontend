@@ -2,6 +2,7 @@ import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
+import { BARCODE_SCANNER_ENABLED_SETTING, BARCODE_SCANNER_SELECTOR, searchBarStubs } from "./search-bar-test-utils";
 import SearchBar from "./search-bar.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
@@ -34,13 +35,15 @@ vi.mock("@/core/composables", () => ({
 
 const { settingValues } = vi.hoisted(() => ({ settingValues: new Map<string, unknown>() }));
 
-vi.mock("@/core/composables/useModuleSettings", () => ({
-  useModuleSettings: () => ({ getSettingValue: (name: string) => settingValues.get(name) }),
-}));
+vi.mock("@/core/composables/useModuleSettings", async () => {
+  const { createModuleSettingsMock } = await import("./search-bar-test-utils");
+  return createModuleSettingsMock(settingValues);
+});
 
-vi.mock("vue-router", () => ({
-  useRouter: () => ({ push: vi.fn() }),
-}));
+vi.mock("vue-router", async () => {
+  const { createRouterMock } = await import("./search-bar-test-utils");
+  return createRouterMock();
+});
 
 vi.mock("@/shared/layout/composables/useSearchBar", () => ({
   useSearchBar: () => ({
@@ -68,44 +71,11 @@ vi.mock("../search-dropdown.vue", () => ({
     },
   }),
 }));
-vi.mock("./barcode-scanner.vue", () => ({
-  default: defineComponent({
-    name: "BarcodeScanner",
-
-    setup() {
-      return () => h("button", { "data-testid": "barcode-scanner" });
-    },
-  }),
-}));
-
-/**
- * Renders the `prepend` slot (where the scope indicators live), the `append` slot (search and
- * barcode buttons) and the `placeholder` attr passed to VcInput.
- */
-const VcInputStub = defineComponent({
-  name: "VcInput",
-  inheritAttrs: false,
-
-  setup(_props, { slots, attrs }) {
-    return () =>
-      h("div", { class: "input" }, [
-        h("span", { "data-testid": "placeholder" }, attrs.placeholder as string),
-        slots.prepend?.(),
-        slots.append?.(),
-      ]);
-  },
+vi.mock("./barcode-scanner.vue", async () => {
+  const { createBarcodeScannerMock } = await import("./search-bar-test-utils");
+  return createBarcodeScannerMock();
 });
 
-const VcButtonStub = defineComponent({
-  name: "VcButton",
-  inheritAttrs: false,
-
-  setup(_props, { slots, attrs }) {
-    return () => h("button", { ...attrs }, slots.default?.());
-  },
-});
-
-const BARCODE_SCANNER_SELECTOR = '[data-testid="barcode-scanner"]';
 const LOADING_INDICATOR_SELECTOR = '[aria-label="shared.layout.search_bar.scope_loading_label"]';
 const PLACEHOLDER_SELECTOR = '[data-testid="placeholder"]';
 const DROPDOWN_SELECTOR = '[data-testid="search-dropdown"]';
@@ -124,10 +94,7 @@ let mountedWrapper: VueWrapper | undefined;
 function createComponent() {
   mountedWrapper = mount(SearchBar, {
     global: {
-      stubs: {
-        VcInput: VcInputStub,
-        VcButton: VcButtonStub,
-      },
+      stubs: searchBarStubs,
       mocks: { $t: mockTranslate },
     },
   });
@@ -203,7 +170,7 @@ describe("SearchBar barcode scanner", () => {
   });
 
   it("hides the scanner when the store disabled it", () => {
-    settingValues.set("Catalog.Search.BarcodeScannerEnabled", false);
+    settingValues.set(BARCODE_SCANNER_ENABLED_SETTING, false);
 
     const wrapper = createComponent();
 

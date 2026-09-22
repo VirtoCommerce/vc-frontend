@@ -141,10 +141,8 @@ function reset() {
 }
 
 const { isScannerEnabled, onBarcodeScanned } = useBarcodeSearch({
-  searchFullText: (value) => {
-    searchPhrase.value = value;
-    searchDropdownRef.value?.handleSearch();
-  },
+  searchPhrase,
+  searchDropdownRef,
   hideSearchResults: hideSearchBar,
 });
 

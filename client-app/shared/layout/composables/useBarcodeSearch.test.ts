@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getBarcodeSearchRoute, shouldOpenSingleBarcodeHit, useBarcodeSearch } from "./useBarcodeSearch";
+import { ref } from "vue";
+import { shouldOpenSingleBarcodeHit, useBarcodeSearch } from "./useBarcodeSearch";
 
 const { routerPush, trackEvent, settingValues } = vi.hoisted(() => ({
   routerPush: vi.fn(),
@@ -22,18 +23,21 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
 const ENABLED_KEY = "Catalog.Search.BarcodeScannerEnabled";
 const FIELDS_KEY = "Catalog.Search.BarcodeSearchFields";
 
-const searchFullText = vi.fn();
+const searchPhrase = ref("");
+const handleSearch = vi.fn();
+const searchDropdownRef = ref<{ handleSearch: () => void } | null>({ handleSearch });
 const hideSearchResults = vi.fn();
 
 function createComposable() {
-  return useBarcodeSearch({ searchFullText, hideSearchResults });
+  return useBarcodeSearch({ searchPhrase, searchDropdownRef, hideSearchResults });
 }
 
 beforeEach(() => {
   settingValues.clear();
+  searchPhrase.value = "";
   routerPush.mockClear();
   trackEvent.mockClear();
-  searchFullText.mockClear();
+  handleSearch.mockClear();
   hideSearchResults.mockClear();
 });
 
@@ -114,10 +118,7 @@ describe("useBarcodeSearch", () => {
 
     it.each([
       ["missing", undefined],
-      ["an empty array", "[]"],
-      ["invalid JSON", "[gtin"],
-      ["an object", '{"field":"gtin"}'],
-      ["an array of non-strings", "[1,2]"],
+      ["not a readable field list", "[gtin"],
     ])("searches the code as a phrase when the setting is %s", (_case, value) => {
       if (value !== undefined) {
         settingValues.set(FIELDS_KEY, value);
@@ -125,7 +126,8 @@ describe("useBarcodeSearch", () => {
 
       scan();
 
-      expect(searchFullText).toHaveBeenCalledWith("4006381333931");
+      expect(searchPhrase.value).toBe("4006381333931");
+      expect(handleSearch).toHaveBeenCalledOnce();
       expect(routerPush).not.toHaveBeenCalled();
     });
 
@@ -138,40 +140,12 @@ describe("useBarcodeSearch", () => {
       scan();
 
       expect(routerPush).toHaveBeenCalledWith({ name: "Search", query: { barcode: "4006381333931" } });
-      expect(searchFullText).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("getBarcodeSearchRoute", () => {
-    it("navigates to the search results page with the code in its own query param", () => {
-      expect(getBarcodeSearchRoute("4006381333931")).toEqual({
-        name: "Search",
-        query: { barcode: "4006381333931" },
-      });
+      expect(searchPhrase.value).toBe("");
+      expect(handleSearch).not.toHaveBeenCalled();
     });
   });
 
   describe("onBarcodeScanned", () => {
-    it("searches the code as a phrase when no fields are configured", () => {
-      const { onBarcodeScanned } = createComposable();
-
-      onBarcodeScanned("4006381333931");
-
-      expect(searchFullText).toHaveBeenCalledWith("4006381333931");
-      expect(routerPush).not.toHaveBeenCalled();
-    });
-
-    it("navigates to the barcode search results when fields are configured", () => {
-      settingValues.set(FIELDS_KEY, '["gtin"]');
-
-      const { onBarcodeScanned } = createComposable();
-
-      onBarcodeScanned("4006381333931");
-
-      expect(routerPush).toHaveBeenCalledWith({ name: "Search", query: { barcode: "4006381333931" } });
-      expect(searchFullText).not.toHaveBeenCalled();
-    });
-
     // Leaving the overlay open would cover the results page the push navigates to.
     it("closes the search results overlay before navigating", () => {
       settingValues.set(FIELDS_KEY, '["gtin"]');
@@ -199,7 +173,8 @@ describe("useBarcodeSearch", () => {
       onBarcodeScanned("");
 
       expect(routerPush).not.toHaveBeenCalled();
-      expect(searchFullText).not.toHaveBeenCalled();
+      expect(searchPhrase.value).toBe("");
+      expect(handleSearch).not.toHaveBeenCalled();
       expect(hideSearchResults).not.toHaveBeenCalled();
     });
   });

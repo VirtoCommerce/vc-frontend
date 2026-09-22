@@ -90,11 +90,9 @@ export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): strin
 }
 
 /**
- * Generates a filter expression for a scanned barcode.
  * `barcode` is a virtual filter name: the API expands it into the product index fields configured
  * for the store (`Catalog.Search.BarcodeSearchFields`).
- * @param value - A string or reactive string value holding the scanned code
- * @returns A string representing the barcode filter expression
+ * A scanned payload is arbitrary text, so it is escaped to keep quotes and backslashes inside the term.
  */
 export function getFilterExpressionForBarcode(value?: MaybeRef<string>): string {
   const barcode = unref(value);

@@ -203,10 +203,7 @@
           :fetching-more-products="fetchingMoreProducts"
           :fetching-products="fetchingProducts"
           :fixed-products-count="fixedProductsCount"
-          :has-active-filters="
-            !barcode &&
-            (hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length)
-          "
+          :has-active-filters="hasActiveFilters"
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
           :page-number="currentPage"
@@ -445,31 +442,25 @@ const categoryListProperties = computed(() => ({
 
 // A scanned code arrives in its own query param and is matched by the API against the product index
 // fields configured for the store, so it filters instead of becoming a search keyword.
-const barcodeQueryParam = useRouteQueryParam<string | string[]>(QueryParamName.Barcode, { defaultValue: "" });
+const barcode = useRouteQueryParam<string>(QueryParamName.Barcode, { defaultValue: "" });
 
-// A repeated `?barcode=a&barcode=b` arrives as an array; one scan yields one code, so take the first.
-const barcode = computed(() => {
-  const value = barcodeQueryParam.value;
-  return (Array.isArray(value) ? value[0] : value) || "";
-});
+const isBarcodeLookup = computed(() => !!barcode.value);
 
 const catalogBasePath = useCatalogBasePath();
 const redirectedBarcodes = new Set<string>();
 
 const filteredOnlyBySearch = computed(() => {
-  return !hasSelectedFilters.value && (!!searchQueryParam.value || !!barcode.value);
+  return !hasSelectedFilters.value && (!!searchQueryParam.value || isBarcodeLookup.value);
 });
 const emptyViewSearchOnly = computed(() => {
   return filteredOnlyBySearch.value && products.value.length === 0 && !fetchingProducts.value;
 });
 const hideAllControls = computed(() => {
-  return emptyViewSearchOnly.value || !!barcode.value;
+  return emptyViewSearchOnly.value || isBarcodeLookup.value;
 });
 
 const isSidebarVisible = computed(() => {
-  return (
-    !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value && !barcode.value
-  );
+  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !hideAllControls.value;
 });
 const showProductsCount = computed(() => {
   return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
@@ -477,7 +468,7 @@ const showProductsCount = computed(() => {
 
 const activeControls = computed(() => {
   // A barcode lookup does not apply them, so no chip may claim one.
-  if (barcode.value) {
+  if (isBarcodeLookup.value) {
     return [];
   }
 
@@ -503,6 +494,17 @@ const activeControls = computed(() => {
   }
 
   return controls;
+});
+
+// A barcode lookup applies none of them (see `searchParams`), so the products view must not offer a reset.
+const hasActiveFilters = computed(() => {
+  return (
+    !isBarcodeLookup.value &&
+    (hasSelectedFilters.value ||
+      localStorageInStock.value ||
+      localStoragePurchasedBefore.value ||
+      !!localStorageBranches.value.length)
+  );
 });
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
@@ -554,21 +556,19 @@ const searchParams = computed<ProductsSearchParamsType>(() => ({
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: searchQueryParam.value || props.keyword,
-  filter: [
-    props.filter,
-    getFilterExpressionForBarcode(barcode.value),
-    // A scanned code is an identity lookup - the shopper is holding the item - so nothing they were
-    // browsing with narrows it: neither the facets in the URL nor the in-stock, purchased-before and
-    // branch preferences may hide the product the code identifies.
-    ...(barcode.value
-      ? []
-      : [
-          facetsQueryParam.value,
-          getFilterExpressionForInStockVariations(localStorageInStock.value),
-          getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
-          getFilterExpressionForAvailableIn(localStorageBranches.value),
-        ]),
-  ]
+  // A scanned code is an identity lookup - the shopper is holding the item - so nothing they were
+  // browsing with narrows it: neither the facets in the URL nor the in-stock, purchased-before and
+  // branch preferences may hide the product the code identifies.
+  filter: (isBarcodeLookup.value
+    ? [props.filter, getFilterExpressionForBarcode(barcode.value)]
+    : [
+        props.filter,
+        facetsQueryParam.value,
+        getFilterExpressionForInStockVariations(localStorageInStock.value),
+        getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
+        getFilterExpressionForAvailableIn(localStorageBranches.value),
+      ]
+  )
     .filter(Boolean)
     .join(" "),
   preserveUserQuery: !!preserveUserQueryQueryParam.value,
@@ -608,6 +608,11 @@ async function fetchProducts(): Promise<void> {
 
   await _fetchProducts(searchParams.value);
 
+  // A single hit leaves for the product page, so this list is never seen and must not be reported.
+  if (openSingleBarcodeHit(requestedBarcode, wasNarrowed)) {
+    return;
+  }
+
   /**
    * Send Google Analytics event for products.
    */
@@ -616,11 +621,9 @@ async function fetchProducts(): Promise<void> {
   if (searchQueryParam.value) {
     trackViewSearchResults();
   }
-
-  openSingleBarcodeHit(requestedBarcode, wasNarrowed);
 }
 
-function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): void {
+function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): boolean {
   const canOpen = shouldOpenSingleBarcodeHit({
     requestedBarcode,
     currentBarcode: barcode.value,
@@ -631,7 +634,7 @@ function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): v
   });
 
   if (!canOpen) {
-    return;
+    return false;
   }
 
   redirectedBarcodes.add(requestedBarcode);
@@ -639,6 +642,8 @@ function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): v
   const [product] = products.value;
 
   void router.replace(getProductRoute(product.id, product.slug, catalogBasePath.value));
+
+  return true;
 }
 
 function trackViewSearchResults(): void {
@@ -659,10 +664,10 @@ function resetPage() {
 }
 
 async function handleResetFilterKeyword() {
-  const hadKeyword = !!searchQueryParam.value || !!barcode.value;
+  const hadKeyword = !!searchQueryParam.value || isBarcodeLookup.value;
 
   resetSearchKeyword();
-  barcodeQueryParam.value = "";
+  barcode.value = "";
   await resetFacetAndControlsFilters({ skipPageReset: true });
 
   if (!hadKeyword) {
