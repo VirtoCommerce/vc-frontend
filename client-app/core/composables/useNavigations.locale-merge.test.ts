@@ -46,8 +46,6 @@ vi.mock("@/core/api/graphql", () => ({
   getMenu: vi.fn(() => Promise.resolve([])),
 }));
 
-// Everything but the translation helper is stubbed: the real `getTranslatedMenuLink` is what these
-// tests exercise.
 vi.mock("@/core/utilities", async () => {
   const menu = await vi.importActual<typeof import("@/core/utilities/menu")>("@/core/utilities/menu");
 
@@ -68,7 +66,7 @@ const MenuLink = defineComponent({
   template: `<span class="link">{{ item.title }}</span>`,
 });
 
-/** Mirrors how account-navigation.vue renders a section: each link object is handed to a child as a prop. */
+/** Hands each link to a child as a prop, like account-navigation.vue — that is where the bug showed. */
 function mountSection(section: ComputedRef<ExtendedMenuLinkType | undefined>) {
   return mount(
     defineComponent({
@@ -92,7 +90,7 @@ function labels(wrapper: ReturnType<typeof mountSection>) {
   return wrapper.findAll(".link").map((w) => w.text());
 }
 
-/** The shape `useLanguages().mergeLocalesMessages` uses for module and plugin bundles. */
+/** The shape `useLanguages().mergeLocalesMessages` uses; `mergeLocaleMessage` does not trigger Vue. */
 function mergeBundle(i18n: I18n, locale: string, messages: Record<string, unknown>) {
   i18n.global.setLocaleMessage(locale, merge({}, i18n.global.getLocaleMessage(locale), messages));
 }
@@ -108,7 +106,6 @@ describe("useNavigations menu labels vs. late locale bundles", () => {
     const { i18n, navigations } = await setup();
     const wrapper = mountSection(navigations.desktopPurchasingMenuItems);
 
-    // The module's locale bundle is still in flight, so the raw key is all there is to show.
     expect(labels(wrapper)).toContain("quotes.navigation.route_name");
 
     mergeBundle(i18n, "en", { quotes: { navigation: { route_name: "Quote requests" } } });

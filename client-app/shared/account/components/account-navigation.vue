@@ -94,7 +94,6 @@ const sections = computed<RenderSectionType[]>(() => {
     if (section.isVisible && !section.isVisible.value) {
       continue;
     }
-    // Registered sections carry raw i18n keys; translate to match the built-in getters.
     const translated = getTranslatedMenuLink({
       title: section.title,
       icon: section.icon,

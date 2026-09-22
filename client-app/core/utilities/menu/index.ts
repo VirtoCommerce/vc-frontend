@@ -25,13 +25,9 @@ export function categoryToExtendedMenuLink(category: Category, isCatalogItem?: b
 }
 
 /**
- * Translates a menu link tree into a fresh copy, leaving the input untouched.
- *
- * Translating in place would write the label back over the i18n key, which costs twice: the key is
- * gone, so a later locale switch can't re-translate it; and the link objects keep their identity, so
- * a component holding one as a prop never re-renders. Module locale bundles are merged
- * asynchronously at boot, well after the menu first renders, and the sidebar was left showing raw
- * keys for good (VCST-5681).
+ * Returns a copy; the input keeps its i18n keys. Translating in place would both destroy the key a
+ * later locale switch needs and keep object identity, so a component holding a link as a prop never
+ * re-renders when a module's locale bundle merges after the first render (VCST-5681).
  */
 export function getTranslatedMenuLink(menuLink: ExtendedMenuLinkType, i18n = globals.i18n): ExtendedMenuLinkType {
   const translated: ExtendedMenuLinkType = { ...menuLink };
