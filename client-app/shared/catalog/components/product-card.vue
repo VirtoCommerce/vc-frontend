@@ -43,17 +43,12 @@
       {{ product.vendor?.name }}
     </VcProductVendor>
 
-    <VcProductProperties v-if="cardType !== 'short'">
-      <VcProperty v-for="(property, i) in properties" :key="i" :label="property.label">
-        {{ property.value }}
-      </VcProperty>
+    <VcProductProperties v-if="cardType !== 'short' && properties.length">
+      <span v-for="(property, i) in properties" :key="i" class="product-card__spec">
+        <b class="product-card__spec-label">{{ property.label }}</b>
 
-      <VcProperty
-        v-if="productReviewsEnabled && product.rating"
-        :label="$t('shared.catalog.product_card.product_rating')"
-      >
-        <VcRating size="xs" :value="product.rating.value" :review-count="product.rating.reviewCount" />
-      </VcProperty>
+        <span class="product-card__spec-value">{{ property.value }}</span>
+      </span>
     </VcProductProperties>
 
     <VcProductPrice
@@ -147,13 +142,8 @@
 import { computed, nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import {
-  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
-  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
-} from "@/modules/customer-reviews/constants";
 import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
@@ -196,9 +186,6 @@ const productCard = useTemplateRef("productCard");
 
 const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
-const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
-const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
-
 const productId = computed(() => product.value.id);
 
 const catalogBasePath = useCatalogBasePath();
@@ -218,7 +205,9 @@ const listPrice = computed(() =>
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
     .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
-    .slice(0, 3),
+    // Two, as the design has it: a third row turns the card into a table of attributes, and the
+    // grid is scanned for the product, not read for its specification.
+    .slice(0, 2),
 );
 
 const badgeSize = computed(() => {
@@ -311,6 +300,35 @@ const variationsCount = computed(() => {
 
 <style scoped lang="scss">
 .product-card {
+  // The design puts the specification in chips rather than a two-column table with dotted leaders:
+  // on a card the pair is scanned, not read across, and the leader draws the eye along a line that
+  // carries nothing.
+  :deep(.vc-product-properties) {
+    @apply flex flex-wrap items-center gap-1.5;
+  }
+
+  // The brand reads as an eyebrow over the title, not as a line under it: it is what the eye lands
+  // on first when scanning a grid of products it does not yet know.
+  :deep(.vc-product-vendor) {
+    @apply mt-0 text-[0.6875rem] uppercase leading-[1.1rem] tracking-[0.06em] text-neutral-500;
+
+    order: 0;
+  }
+
+  &__spec {
+    @apply inline-flex max-w-full items-baseline gap-1 rounded-full px-2 py-1 text-xs leading-none;
+
+    background: color-mix(in srgb, theme("colors.neutral.950") 5%, transparent);
+  }
+
+  &__spec-label {
+    @apply shrink-0 font-bold text-neutral-600;
+  }
+
+  &__spec-value {
+    @apply truncate font-normal text-neutral-950;
+  }
+
   $list: "";
 
   &--list {
