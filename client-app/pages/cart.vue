@@ -502,7 +502,7 @@ void (async () => {
 
   &__alert,
   &__action {
-    @apply mt-4;
+    @apply mt-3;
   }
 
   &__mobile-bar {
