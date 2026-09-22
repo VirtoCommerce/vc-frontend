@@ -128,6 +128,24 @@ describe("useNavigations menu labels vs. late locale bundles", () => {
     expect(labels(wrapper)).toContain("Angebotsanfragen");
   });
 
+  it("keeps the raw keys in a registered section", async () => {
+    const { i18n, navigations } = await setup();
+    const child = { id: "hub-dashboard", title: "sales_rep.hub.dashboard.navigation.link" };
+    const section = { id: "hub", title: "sales_rep.navigation.link", children: [child] };
+
+    navigations.registerAccountSection(section);
+    mergeBundle(i18n, "en", {
+      sales_rep: { navigation: { link: "Sales Rep hub" }, hub: { dashboard: { navigation: { link: "Dashboard" } } } },
+    });
+
+    const [translated] = navigations.mobileRegisteredAccountSections.value;
+    expect([translated.title, translated.children?.[0]?.title]).toEqual(["Sales Rep hub", "Dashboard"]);
+    expect([section.title, child.title]).toEqual([
+      "sales_rep.navigation.link",
+      "sales_rep.hub.dashboard.navigation.link",
+    ]);
+  });
+
   it("keeps the raw keys in the shared menu schema", async () => {
     const { i18n, navigations } = await setup();
 
