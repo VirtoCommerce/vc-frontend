@@ -19,7 +19,7 @@
     >
       <span class="relative">
         <slot name="icon">
-          <VcIcon v-if="link.icon" :name="link.icon" :size="24" class="mb-0.5 text-primary" />
+          <VcIcon v-if="link.icon" :name="link.icon" :size="24" class="mb-0.5 text-secondary-600" />
         </slot>
 
         <transition mode="out-in" name="scale">
