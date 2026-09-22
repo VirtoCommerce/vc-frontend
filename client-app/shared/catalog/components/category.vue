@@ -824,79 +824,50 @@ onMounted(() => {
 
     padding: 1.75rem;
 
-    // The sidebar plate is the frame now. The widgets inside it drew one of their own, which put a
-    // box inside the box; they lie flat on the plate and are parted by a hairline.
+    // The design's "nested widget" (Ilya, 22.09.2026): a widget lying inside another's plate draws
+    // no plate of its own and keeps no side inset, so heading and rows stand on the plate's edge.
+    // What it keeps is the kit's own vertical rhythm — a 38px heading with a 24px fold chevron, and
+    // 16px above and 20px below the body.
     .vc-widget {
-      // The header's 38px floor centred every heading in a box, which put 9px above and below each
-      // one on top of the design's own spacing.
-      --header-min-h: 0px;
-
       @apply rounded-none border-0 bg-transparent p-0 shadow-none;
     }
 
-    // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
-    // the wrappers — a "next widget" selector never finds a widget beside another.
-    // 17px either side of the rule, as the design spaces its sections.
-    .category__selector + .category__product-filters,
-    .products-filters__container > * + * {
-      @apply mt-[1.0625rem] border-t border-neutral-200 pt-[1.0625rem];
-    }
-
-    // Under the crumb the design draws a rule before the list starts.
-    .category__selector .vc-widget__header-container:not(:last-child) {
-      @apply border-b border-neutral-200 pb-2;
-    }
-
-    // The widget's own chrome assumed it was a card: 16px of inset on every side and a rule between
-    // its heading and its body. On the plate that pushed every row 16px in from the hairlines and put
-    // a second hairline under each heading.
-    .vc-widget__header-container {
-      @apply mb-3 min-h-0 p-0;
-    }
-
-    .vc-widget__header,
-    .vc-widget__slot {
-      @apply p-0;
+    .vc-widget__header {
+      @apply px-0;
     }
 
     .vc-widget__slot-container {
       @apply border-0;
     }
 
+    .vc-widget__slot {
+      @apply px-0 pb-5 pt-4;
+    }
+
+    .vc-widget__append-icon {
+      --vc-icon-size: 1.5rem;
+    }
+
+    // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
+    // the wrappers — a "next widget" selector never finds a widget beside another.
+    .category__selector + .category__product-filters,
+    .products-filters__container > * + * {
+      @apply border-t border-neutral-200;
+    }
+
     .category__selector {
       @apply mb-0;
     }
 
-    // Section headings are names, not labels: sentence case and bold, in the ink of the rows.
-    .vc-widget__title {
-      @apply text-base font-bold normal-case tracking-normal text-neutral-950;
-
-      // Facet names arrive as the store keyed them — "price" — and a heading starts with a capital.
-      // ::first-letter only applies to a block container, and the title is an inline span.
-      @apply inline-block;
-
-      &::first-letter {
-        @apply uppercase;
-      }
-    }
-
-    // One row every 34px: an 18px box, ten of air, a 16px name, and the count pinned right. The kit
-    // paints each row paper white, which on the warm plate read as a white block behind the list.
+    // Facet rows are the same size-sm row as the category list: 10px above and below a 14px name, the
+    // plate bleeding 12px past the text so the name stays on the heading's vertical. The kit paints
+    // each row paper white, which on the warm plate read as a white block behind the list.
     .vc-menu-item__inner {
-      @apply min-h-[2.125rem] gap-2.5 rounded-lg bg-transparent px-0 py-1 text-base text-neutral-700;
+      @apply -mx-3 w-[calc(100%+1.5rem)] bg-transparent px-3;
 
       &:hover {
-        @apply bg-transparent text-neutral-950;
+        @apply bg-neutral-100;
       }
-    }
-
-    // The search sits on the plate like the rows under it: no inset of its own and no rule beneath.
-    .facet-filter-widget__search {
-      @apply border-0 px-0 pb-2 pt-0;
-    }
-
-    .vc-widget__footer-container {
-      @apply border-0;
     }
 
     // The fade over a cut-off list has to end in the plate's colour, not white, or it draws a pale band.
@@ -907,12 +878,6 @@ onMounted(() => {
 
     .category__clear-all {
       @apply mt-7 h-[2.8125rem] rounded-full text-base font-semibold text-neutral-950;
-    }
-
-    .facet-filter-widget__count {
-      @apply h-6 min-w-[1.875rem] justify-center rounded-full border-0 px-2 text-[0.8125rem] font-semibold text-neutral-700;
-
-      background: color-mix(in srgb, theme("colors.neutral.950") 6%, transparent);
     }
   }
 

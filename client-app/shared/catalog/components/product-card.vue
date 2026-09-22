@@ -114,7 +114,7 @@
 
     <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
       <InStock
-        labeled
+        :labeled="viewMode === 'list'"
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
         :quantity="product.availabilityData?.availableQuantity"

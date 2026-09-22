@@ -1,8 +1,6 @@
 <template>
   <!-- Collapsable mode -->
-  <!-- Open and fixed, as the design draws the rail: a facet folded shut hides the very counts a
-       buyer reads the rail for, and a chevron beside every heading is noise when none is ever shut. -->
-  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs">
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible>
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
@@ -32,7 +30,7 @@
           <span>{{ item.label }}</span>
 
           <template #append>
-            <VcBadge class="facet-filter-widget__count" variant="soft" size="sm" rounded color="neutral">
+            <VcBadge class="facet-filter-widget__count" variant="soft" size="sm" rounded color="secondary">
               {{ $n(Number(item.count), "decimal") }}
             </VcBadge>
           </template>

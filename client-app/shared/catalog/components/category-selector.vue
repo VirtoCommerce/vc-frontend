@@ -3,53 +3,53 @@
     <div v-for="i in 6" :key="i" />
   </VcWidgetSkeleton>
 
-  <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs" class="category-selector">
-    <!-- Where the reader stands, as one line: the section it sits in, then its own name. The section
-         is the way back up, so it stays a link. -->
-    <template #header>
-      <div class="category-selector__crumb">
-        <template v-if="parentCategory">
-          <router-link
-            :to="getCategoryRoute(parentCategory, locationQuery, catalogBasePath)"
-            class="category-selector__parent"
-          >
-            {{ parentCategory.name }}
-          </router-link>
+  <VcWidget
+    v-else-if="!!parentCategory || subcategories.length"
+    size="xs"
+    :title="$t('shared.layout.search_dropdown.categories_label')"
+    class="category-selector"
+  >
+    <!-- The design's secondary-nav list: the way up, the section the reader is in as the active row,
+         then what lies inside it. -->
+    <nav class="category-selector__list">
+      <router-link
+        v-if="parentCategory"
+        :to="getCategoryRoute(parentCategory, locationQuery, catalogBasePath)"
+        class="category-selector__item category-selector__item--up"
+      >
+        <VcIcon name="chevron-left" size="xs" class="category-selector__up-icon" />
 
-          <span class="category-selector__dot" aria-hidden="true">&middot;</span>
-        </template>
+        <span class="category-selector__name">{{ parentCategory.name }}</span>
+      </router-link>
 
-        <span class="category-selector__current">
+      <span class="category-selector__item category-selector__item--active" aria-current="page">
+        <span class="category-selector__name">
           <template v-if="objectType === 'Category' && category?.name">{{ category.name }}</template>
 
           <template v-else-if="objectType === 'Catalog'">{{ seoInfo?.pageTitle }}</template>
         </span>
-      </div>
-    </template>
+      </span>
 
-    <template v-if="subcategories.length" #default>
-      <div class="category-selector__list">
-        <router-link
-          v-for="(item, index) in subcategories"
-          :key="index"
-          :to="subcategoriesRoutes[item.id]"
-          class="category-selector__item"
+      <router-link
+        v-for="(item, index) in subcategories"
+        :key="index"
+        :to="subcategoriesRoutes[item.id]"
+        class="category-selector__item category-selector__item--child"
+      >
+        <span class="category-selector__name">{{ item.name }}</span>
+
+        <VcBadge
+          v-if="item.facet?.count"
+          class="category-selector__count"
+          variant="soft"
+          size="sm"
+          rounded
+          color="secondary"
         >
-          <span class="category-selector__name">{{ item.name }}</span>
-
-          <VcBadge
-            v-if="item.facet?.count"
-            class="category-selector__count"
-            variant="soft"
-            size="sm"
-            rounded
-            color="neutral"
-          >
-            {{ $n(item.facet.count, "decimal") }}
-          </VcBadge>
-        </router-link>
-      </div>
-    </template>
+          {{ $n(item.facet.count, "decimal") }}
+        </VcBadge>
+      </router-link>
+    </nav>
   </VcWidget>
 </template>
 
@@ -127,40 +127,50 @@ function getFacet(category: CategoryType) {
 
 <style lang="scss">
 .category-selector {
-  &__crumb {
-    @apply flex min-w-0 flex-wrap items-baseline gap-x-1.5 text-[0.9375rem] leading-snug;
-  }
-
-  &__parent {
-    @apply text-neutral-500 hover:text-neutral-950 hover:underline;
-  }
-
-  &__dot {
-    @apply text-neutral-400;
-  }
-
-  &__current {
-    @apply font-bold text-neutral-950;
+  // The design heads this block with an h5 — the rail's one sentence-case heading — rather than the
+  // uppercase label the facets below carry: it names where the reader is, not what they can filter.
+  .vc-widget__title {
+    @apply text-base normal-case;
   }
 
   &__list {
-    @apply flex flex-col;
+    @apply flex flex-col gap-0.5;
   }
 
-  // The same row as a facet option — 34px, a 16px name, the count pinned right — so the rail reads
-  // as one list from top to bottom rather than two kinds of list stacked.
+  // The design's size-sm menu row: 10px above and below a 14px name. Its plate bleeds 12px past the
+  // text on both sides, so the names stand on the heading's vertical while the hover and the active
+  // fill still read as a row — the side-menu device from the account pages.
   &__item {
-    @apply flex min-h-[2.125rem] items-center gap-2.5 py-1 text-base text-neutral-700 hover:text-neutral-950;
+    @apply -mx-3 flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-sm leading-[1.35] text-neutral-950 transition-colors;
+
+    &:is(a):hover {
+      @apply bg-neutral-100;
+    }
+
+    &--up {
+      @apply text-neutral-600;
+    }
+
+    &--active {
+      @apply bg-secondary-100 font-bold;
+    }
+
+    // Children sit one step in, under the section they belong to.
+    &--child {
+      @apply ps-6;
+    }
+  }
+
+  &__up-icon {
+    @apply text-primary;
   }
 
   &__name {
-    @apply line-clamp-2 [word-break:break-word];
+    @apply line-clamp-2 min-w-0 [word-break:break-word];
   }
 
   &__count {
-    @apply ms-auto h-6 min-w-[1.875rem] shrink-0 justify-center rounded-full border-0 px-2 text-[0.8125rem] font-semibold text-neutral-700;
-
-    background: color-mix(in srgb, theme("colors.neutral.950") 6%, transparent);
+    @apply ms-auto shrink-0;
   }
 }
 </style>

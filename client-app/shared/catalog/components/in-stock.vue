@@ -1,6 +1,6 @@
 <template>
   <VcChip v-if="isDigital" :size="size" variant="outline-dark" color="info" rounded>
-    <VcIcon name="cloud" variant="solid" />
+    <VcIcon name="cloud" />
 
     {{ $t("common.labels.digital_product") }}
   </VcChip>
@@ -8,12 +8,12 @@
   <VcChip
     v-else-if="isInStock"
     :size="size"
-    :variant="labeled ? 'soft' : 'outline-dark'"
+    variant="outline-dark"
     color="success"
     rounded
     :title="$t('common.labels.in_stock')"
   >
-    <VcIcon name="cube" :variant="labeled ? undefined : 'solid'" />
+    <VcIcon name="cube" />
 
     <span class="inline-block min-w-3 text-center">
       <template v-if="labeled && quantity">{{ $t("common.labels.in_stock") }}: {{ inStockQuantityLabel }}</template>
@@ -32,7 +32,7 @@
       !isAvailable ? $t('common.messages.product_no_longer_available') : $t('common.messages.product_out_of_stock')
     "
   >
-    <VcIcon name="cube" variant="solid" />
+    <VcIcon name="cube" />
 
     <span class="inline-block min-w-3 text-center">0</span>
   </VcChip>
@@ -49,10 +49,7 @@ interface IProps {
   quantity?: number | null;
   size?: VcChipSizeType;
   textEnabled?: boolean;
-  /**
-   * Name the state beside the count — "In stock: 142" — on a soft chip. A bare number is enough where
-   * a column heading says what it counts; on a card nothing does.
-   */
+  /** Name the state beside the count — "In stock: 142" — where no column heading says what it counts. */
   labeled?: boolean;
 }
 
