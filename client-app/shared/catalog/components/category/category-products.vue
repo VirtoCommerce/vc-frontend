@@ -150,15 +150,19 @@ const products = toRef(props, "products");
 /** What the grid is showing, which lags `products` for as long as a flip takes to change it over. */
 const displayedProducts = ref<Product[]>([...products.value]);
 
-/** A sorting was chosen and the result it asked for has not arrived yet. */
+/** A sorting was pressed and the result it asked for has not arrived yet. */
 const awaitingSort = ref(false);
+
+/** The result arrived and the cards are turning over to it. */
+const changingOver = ref(false);
 
 /**
  * Sorting does not change the question, only the answer's order, so the page keeps the cards it has
- * while the new order is fetched. Every other reload — a filter, a category, a search — is a
- * different question, and showing the old answer under it would be a lie.
+ * — through the wait AND through the turn that follows. Dropping them at either point puts
+ * skeletons on screen mid-animation. Every other reload asks a different question, and showing the
+ * old answer under it would be a lie.
  */
-const holdingCards = computed(() => awaitingSort.value && displayedProducts.value.length > 0);
+const holdingCards = computed(() => (awaitingSort.value || changingOver.value) && displayedProducts.value.length > 0);
 
 watch(
   () => props.sortToken,
@@ -171,7 +175,7 @@ watch(
  * The change-over is driven by the result itself, not by the loading flag. Sorting is done by the
  * backend, and a sorting the reader has already visited comes straight back out of the cache — the
  * flag never rises, so anything waiting on it would animate on a first visit and sit still on a
- * second, which is exactly how it behaved.
+ * second.
  */
 watch(products, async (next) => {
   if (!awaitingSort.value) {
@@ -179,7 +183,14 @@ watch(products, async (next) => {
     return;
   }
 
+  // The store empties the list while it fetches. That is the question being asked, not the answer
+  // to it — turning the cards over to it would turn them over to nothing.
+  if (!next.length) {
+    return;
+  }
+
   awaitingSort.value = false;
+  changingOver.value = true;
 
   // The backend decides what comes back, so the new page need not be the length of the old one. The
   // seats both pages share turn over; any beyond them are added or dropped once the wave is done.
@@ -190,6 +201,7 @@ watch(products, async (next) => {
   });
 
   displayedProducts.value = [...next];
+  changingOver.value = false;
 
   if (!flipped) {
     await enter();
@@ -197,11 +209,22 @@ watch(products, async (next) => {
 });
 
 // Every other reload — a filter, a category, a search — asks a different question, so it holds
-// skeletons and its answer rises in. A search that is still running has nothing to show yet.
+// skeletons and its answer rises in.
 watch(
   () => props.fetchingProducts,
   async (isFetching, wasFetching) => {
-    if (isFetching || !wasFetching || awaitingSort.value) {
+    if (isFetching || !wasFetching) {
+      return;
+    }
+
+    // The turn owns the change-over, and a search that came back with the page it already had has
+    // nothing to turn to — release the hold rather than leave the grid waiting on a wave.
+    if (changingOver.value) {
+      return;
+    }
+
+    if (awaitingSort.value) {
+      awaitingSort.value = false;
       return;
     }
 
