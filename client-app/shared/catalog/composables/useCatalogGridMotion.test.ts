@@ -116,6 +116,19 @@ describe("useCatalogGridMotion", () => {
     expect((stray as unknown as { cancelled: boolean }).cancelled).toBe(true);
   });
 
+  it("carries the depth in each card's own transform, so every card turns about its own axis", async () => {
+    const { api } = mountGrid(4);
+    animations.length = 0;
+
+    await api.flip(() => {});
+
+    // A `perspective` property on the grid would put one vanishing point at the grid's centre, and
+    // a card in an outer column would turn as though watched from the side.
+    const frames = animations.map((animation) => animation.keyframes as { transform: string }[]);
+    expect(frames.every((frame) => frame.every((step) => step.transform.startsWith("perspective(1200px)")))).toBe(true);
+    expect(frames[0][1].transform).toContain("rotateY(-90deg)");
+  });
+
   it("switches the layout without moving anything when motion is not wanted", async () => {
     reduced = true;
     const { viewMode, api } = mountGrid();

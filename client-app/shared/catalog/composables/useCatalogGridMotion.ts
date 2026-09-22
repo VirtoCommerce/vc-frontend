@@ -12,6 +12,12 @@ const FLIP_OUT_DURATION = 105;
 const FLIP_IN_DURATION = 125;
 const FLIP_STAGGER = 55;
 const FLIP_OUT_EASING = "cubic-bezier(0.4, 0, 0.85, 0.5)";
+/**
+ * The depth each card is seen through. It belongs in the card's own transform, not on the grid as a
+ * `perspective` property: that gives every card one shared vanishing point at the grid's centre, so
+ * a card in an outer column turns as though watched from the side instead of about its own axis.
+ */
+const FLIP_DEPTH = "perspective(1200px)";
 const FLIP_IN_EASING = "cubic-bezier(0.15, 0.9, 0.3, 1)";
 
 const RISE_DURATION = 420;
@@ -95,12 +101,18 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
    */
   async function flipCard(card: HTMLElement, index: number, axis: string, swapAt: (index: number) => void) {
     await wait(index * FLIP_STAGGER);
-    await turn(card, `${axis}(0deg)`, `${axis}(-90deg)`, FLIP_OUT_DURATION, FLIP_OUT_EASING);
+    await turn(
+      card,
+      `${FLIP_DEPTH} ${axis}(0deg)`,
+      `${FLIP_DEPTH} ${axis}(-90deg)`,
+      FLIP_OUT_DURATION,
+      FLIP_OUT_EASING,
+    );
 
     swapAt(index);
     await nextTick();
 
-    await turn(card, `${axis}(90deg)`, `${axis}(0deg)`, FLIP_IN_DURATION, FLIP_IN_EASING);
+    await turn(card, `${FLIP_DEPTH} ${axis}(90deg)`, `${FLIP_DEPTH} ${axis}(0deg)`, FLIP_IN_DURATION, FLIP_IN_EASING);
     card.style.transform = "none";
   }
 

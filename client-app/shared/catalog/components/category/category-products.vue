@@ -295,14 +295,11 @@ function sendGASelectItemEvent(product: Product): void {
   --columnsAmountDesktop: v-bind(props.columnsAmountDesktop);
 
   &__list {
-    // The depth a turn is seen through, and the blank back of a card that would otherwise show
-    // through it. Both belong to the turn, so they are only here while one is running.
-    &--flipping {
-      perspective: 1200px;
-
-      > * {
-        backface-visibility: hidden;
-      }
+    // Only the blank back of a card, which would otherwise show through it mid-turn. The depth is
+    // carried by each card's own transform, so that every card turns about its own axis.
+    &--flipping > * {
+      backface-visibility: hidden;
+      transform-origin: 50% 50%;
     }
 
     &--grid {
