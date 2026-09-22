@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "填写退货详情",
-    "not_editable_message": "该退货已提交",
     "details_section": "详情",
     "bulk_section": "应用到所有行",
     "apply_to_all": "将一个原因应用到全部 {count} 行",

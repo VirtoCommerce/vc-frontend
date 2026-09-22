@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Legg til returdetaljer",
-    "not_editable_message": "Denne returen er allerede sendt inn",
     "details_section": "Detaljer",
     "bulk_section": "Bruk på alle linjer",
     "apply_to_all": "Bruk én årsak på alle {count} linjene",
