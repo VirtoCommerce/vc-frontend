@@ -667,7 +667,9 @@ watch(
   }
 
   &__row-value {
-    @apply flex min-w-48 max-w-60 flex-1 items-center break-words px-3 py-2.5 text-sm font-normal text-neutral-900;
+    @apply flex min-w-48 max-w-60 flex-1 items-center px-3 py-2.5 text-sm font-normal text-neutral-900;
+
+    overflow-wrap: anywhere;
 
     @media (width < theme("screens.md")) {
       @apply w-28 min-w-0 max-w-none flex-none;
