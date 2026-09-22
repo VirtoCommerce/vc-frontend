@@ -4,9 +4,10 @@
 
   <!-- Desktop header -->
   <template v-else>
-    <div ref="stickyHeader" class="app-header">
+    <div class="app-header">
       <div class="app-header__shell">
         <HeaderPlate
+          ref="headerPlate"
           :is-catalog-button-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen"
           :is-mega-menu-shown="isMegaMenuShown"
         />
@@ -22,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
+import { useBreakpoints, useCssVar } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { DESKTOP_MENU_MODES } from "@/core/constants";
@@ -45,7 +46,10 @@ const breakpoints = useBreakpoints(BREAKPOINTS);
 const { logoUrl } = useWhiteLabeling();
 const { themeContext } = useThemeContext();
 
-const stickyHeader = ref<HTMLElement | null>(null);
+// The height the plate PAINTS when pinned, which the plate itself reports. Measuring the
+// .app-header shell instead counted the air around the plate and the padding the pinned plate
+// keeps in flow, and put everything hanging off these vars a step and a half too low.
+const headerPlate = ref<{ pinnedHeight: number } | null>(null);
 const headerHeightVar = useCssVar("--vc-layout-sidebar-offset-top");
 // Exact sticky header height (no offset buffer), so other components (e.g. sticky elements that
 // need to sit flush below the app header) can rely on it too. Only updated here for desktop —
@@ -54,7 +58,7 @@ const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
 // For optimization on mobile devices
 const isMobile = breakpoints.smaller("lg");
-const { height: headerHeight } = useElementBounding(stickyHeader);
+const headerHeight = computed(() => headerPlate.value?.pinnedHeight ?? 0);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
