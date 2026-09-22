@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Товар",
+        "availability": "Наличие",
+        "unit_price": "Цена за единицу",
+        "add_to_cart": "В корзину"
+      },
       "view_mode": {
         "grid_label": "Карточки",
         "list_label": "Список",
@@ -724,6 +730,8 @@
         "label": "Результатов на странице:"
       },
       "product_card": {
+        "only_left": "Осталось {n}",
+        "configurable": "Настраиваемый",
         "variants": "Варианты",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Рейтинг:",

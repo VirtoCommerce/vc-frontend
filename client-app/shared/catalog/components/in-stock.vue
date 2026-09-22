@@ -9,14 +9,20 @@
     v-else-if="isInStock"
     :size="size"
     variant="outline-dark"
-    color="success"
+    :color="isLowStock ? 'warning' : 'success'"
     rounded
     :title="$t('common.labels.in_stock')"
   >
     <VcIcon name="cube" />
 
     <span class="inline-block min-w-3 text-center">
-      <template v-if="labeled && quantity">{{ $t("common.labels.in_stock") }}: {{ inStockQuantityLabel }}</template>
+      <template v-if="labeled && isLowStock">{{
+        $t("shared.catalog.product_card.only_left", { n: quantity })
+      }}</template>
+
+      <template v-else-if="labeled && quantity"
+        >{{ $t("common.labels.in_stock") }}: {{ inStockQuantityLabel }}</template
+      >
 
       <template v-else>{{ quantity ? inStockQuantityLabel : $t("common.labels.in_stock") }}</template>
     </span>
@@ -34,7 +40,9 @@
   >
     <VcIcon name="cube" />
 
-    <span class="inline-block min-w-3 text-center">0</span>
+    <span class="inline-block min-w-3 text-center">
+      {{ labeled ? $t("common.messages.product_out_of_stock") : 0 }}
+    </span>
   </VcChip>
 </template>
 
@@ -59,6 +67,11 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "sm",
   textEnabled: true,
 });
+
+/** At or under this many, the chip warns rather than reassures: "Only 4 left". */
+const LOW_STOCK_THRESHOLD = 10;
+
+const isLowStock = computed(() => !!props.quantity && props.quantity <= LOW_STOCK_THRESHOLD);
 
 const inStockQuantityLabel = computed<string>(() =>
   props.quantity && props.quantity > MAX_DISPLAY_IN_STOCK_QUANTITY

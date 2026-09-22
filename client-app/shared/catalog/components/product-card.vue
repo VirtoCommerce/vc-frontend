@@ -28,7 +28,7 @@
       </VcProductActions>
     </template>
 
-    <VcProductVendor v-if="maker || product.hasVariations">
+    <VcProductVendor v-if="maker || product.hasVariations || product.isConfigurable">
       <span v-if="maker" class="product-card__maker">{{ maker }}</span>
 
       <!-- Said up front, because a product with variations is bought differently: it opens a choice
@@ -42,6 +42,17 @@
         class="product-card__variants"
       >
         {{ $t("shared.catalog.product_card.variants") }}
+      </VcBadge>
+
+      <VcBadge
+        v-else-if="product.isConfigurable"
+        variant="soft"
+        color="info"
+        size="sm"
+        rounded
+        class="product-card__variants"
+      >
+        {{ $t("shared.catalog.product_card.configurable") }}
       </VcBadge>
     </VcProductVendor>
 
@@ -113,15 +124,30 @@
     </template>
 
     <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
+      <template v-if="viewMode !== 'list'">
+        <InStock
+          labeled
+          :is-in-stock="product.availabilityData?.isInStock"
+          :is-digital="product.productType === ProductType.Digital"
+          :quantity="product.availabilityData?.availableQuantity"
+        />
+
+        <CountInCart :product-id="product.id" :currency="product.price.currency" />
+      </template>
+    </AddToCartSimple>
+
+    <!-- In the list the stock is a column of its own — AVAILABILITY — rather than a line under the
+         stepper, and it is there for every product, including those bought through variations. -->
+    <div v-if="viewMode === 'list'" class="product-card__stock">
       <InStock
-        :labeled="viewMode === 'list'"
+        labeled
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
         :quantity="product.availabilityData?.availableQuantity"
       />
 
       <CountInCart :product-id="product.id" :currency="product.price.currency" />
-    </AddToCartSimple>
+    </div>
 
     <template v-if="viewMode === 'list'" #expanded-content>
       <div v-show="isExpanded" class="product-card__variants-wrapper">
@@ -479,6 +505,89 @@ const variationsCount = computed(() => {
       @apply aspect-square h-auto border-0;
 
       background: color-mix(in srgb, theme("colors.neutral.950") 3%, theme("colors.additional.50"));
+    }
+  }
+
+  // List: the design's catalog row — photo · product · availability · unit price · add to cart ·
+  // actions — on the kit's own grid areas, so no kit component is touched. The columns come from
+  // --product-list-columns, which the grid also hands the column heading above the rows: the two
+  // cannot drift apart when one is edited.
+  &.product-card--list {
+    @apply rounded-xl border border-neutral-100 shadow-none;
+
+    &:hover {
+      @apply shadow-md;
+    }
+
+    --vc-product-title-font-size: 0.9375rem;
+
+    :deep(.vc-product-card__wrapper) {
+      @apply items-center gap-x-3 gap-y-1 px-4 py-3;
+
+      @container (min-width: theme("containers.2xl")) {
+        grid-template-areas:
+          "image vendor     stock price add-to-cart actions"
+          "image title      stock price add-to-cart actions"
+          "image properties stock price add-to-cart actions";
+        grid-template-columns: var(--product-list-columns);
+        grid-template-rows: auto auto auto;
+      }
+    }
+
+    :deep(.vc-product-image) {
+      @apply size-20 border-0;
+
+      background: color-mix(in srgb, theme("colors.neutral.950") 3%, theme("colors.additional.50"));
+    }
+
+    :deep(.badges-wrapper) {
+      @apply start-1 top-1 bg-transparent p-0;
+
+      &::before,
+      &::after {
+        @apply hidden;
+      }
+    }
+
+    :deep(.vc-product-vendor) {
+      @apply mt-0 self-end text-[0.6875rem] tracking-[0.06em];
+    }
+
+    :deep(.vc-product-title) {
+      @apply mt-0 self-center font-bold;
+    }
+
+    :deep(.vc-product-properties) {
+      @apply m-0 w-auto flex-row flex-wrap self-start;
+
+      display: flex;
+    }
+
+    .product-card__stock {
+      grid-area: stock;
+
+      @apply flex flex-col items-start gap-1;
+    }
+
+    // The kit gives the price its own width in a row; here it keeps to its column, figure over the
+    // struck list price, both on the right edge.
+    :deep(.vc-product-price) {
+      --vc-product-price-font-size: 1.25rem;
+
+      @apply m-0 w-full min-w-0 items-end text-end;
+    }
+
+    :deep(.vc-quantity-stepper),
+    :deep(.vc-product-button) {
+      @apply m-0 w-full max-w-none;
+    }
+
+    // In a row the quick actions are ordinary controls beside the button, not an overlay on the photo,
+    // so they are always there.
+    :deep(.vc-product-actions) {
+      grid-area: actions;
+
+      @apply static flex-row opacity-100;
     }
   }
 

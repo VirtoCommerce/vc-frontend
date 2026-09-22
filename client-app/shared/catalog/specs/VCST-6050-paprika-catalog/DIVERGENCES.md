@@ -101,3 +101,12 @@ and the wave finished at 1689ms.
 | Both skipped under `prefers-reduced-motion` and where Web Animations do not exist | `useCatalogGridMotion` |
 | The timer race against `finished`, which never settles in a background tab | `useCatalogGridMotion` |
 | Cancelling the filled fade rather than painting over it — the grid element is reused across a layout change (measured), and a filled animation beats an inline style | `useCatalogGridMotion` |
+
+## Card badges and stock
+
+| # | The design draws | What ships, and why |
+|---|---|---|
+| 11 | `New`, `Bestseller`, `B2B` badges on the photo | Not built. The prototype hard-codes them per product; the storefront's `Product` type carries no such field. The discount badge (from the price) and the purchased-before badge are drawn, at the design's size and position — 22px, 8px in from the photo's corner. |
+| 12 | Stock as "Low stock" / "In stock" / out of stock | "Only N left" at 10 or fewer, "In stock: N" above that, "Out of stock" at none. The threshold of 10 is ours — the design has no number, only the state. |
+| 13 | A `PACK` column in the list | Cut with the pack picker (#3). The list keeps photo · product · availability · unit price · add to cart · actions. |
+| 14 | An "Add to cart" button on simple products | The storefront's quantity stepper, kept by decision (Ivan, 2026-09-22): the design's button is one control where a B2B buyer needs two. |

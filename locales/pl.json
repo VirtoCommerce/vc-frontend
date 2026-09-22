@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Dostępność",
+        "unit_price": "Cena jednostkowa",
+        "add_to_cart": "Dodaj do koszyka"
+      },
       "view_mode": {
         "grid_label": "Siatka",
         "list_label": "Lista",
@@ -727,6 +733,8 @@
         "label": "Wyników na stronę:"
       },
       "product_card": {
+        "only_left": "Zostało tylko {n}",
+        "configurable": "Konfigurowalny",
         "variants": "Warianty",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Ocena:",

@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "商品",
+        "availability": "在庫状況",
+        "unit_price": "単価",
+        "add_to_cart": "カートに追加"
+      },
       "view_mode": {
         "grid_label": "グリッド表示",
         "list_label": "リスト表示",
@@ -724,6 +730,8 @@
         "label": "表示件数："
       },
       "product_card": {
+        "only_left": "残り{n}点",
+        "configurable": "カスタマイズ可",
         "variants": "バリエーション",
         "price_label": "@:common.labels.product_price",
         "product_rating": "評価：",

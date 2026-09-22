@@ -17,6 +17,20 @@
         </VcButton>
       </div>
 
+      <!-- The list's column heading stands outside the rows, as the design sets it, and takes its
+           columns from the same variable the rows do. -->
+      <div v-if="displayedViewMode === 'list'" class="category-products__list-head" aria-hidden="true">
+        <span />
+
+        <span>{{ $t("shared.catalog.product_list.product") }}</span>
+
+        <span>{{ $t("shared.catalog.product_list.availability") }}</span>
+
+        <span class="text-end">{{ $t("shared.catalog.product_list.unit_price") }}</span>
+
+        <span class="col-span-2 text-end">{{ $t("shared.catalog.product_list.add_to_cart") }}</span>
+      </div>
+
       <div
         ref="grid"
         :class="`category-products__list category-products__list--${displayedViewMode}`"
@@ -350,6 +364,19 @@ function sendGASelectItemEvent(product: Product): void {
 <style lang="scss">
 .category-products {
   --vc-product-title-font-size: theme("fontSize.sm");
+  // photo · product · availability · unit price · add to cart · actions — read by the rows and the heading.
+  --product-list-columns: 5rem minmax(0, 1fr) 9.5rem 8.5rem 10.625rem 4.375rem;
+
+  &__list-head {
+    @apply mb-2 hidden gap-x-3 px-[1.0625rem] text-[0.65625rem] font-bold uppercase tracking-[0.1em] text-neutral-500;
+
+    grid-template-columns: var(--product-list-columns);
+
+    @media (min-width: theme("screens.lg")) {
+      @apply grid;
+    }
+  }
+
   --columnsAmountTablet: v-bind(props.columnsAmountTablet);
   --columnsAmountDesktop: v-bind(props.columnsAmountDesktop);
 
@@ -383,7 +410,7 @@ function sendGASelectItemEvent(product: Product): void {
       @apply -mx-5 divide-y space-y-2;
 
       @media (min-width: theme("screens.md")) {
-        @apply divide-y-0 mx-0 space-y-3.5;
+        @apply divide-y-0 mx-0 space-y-2.5;
       }
     }
   }

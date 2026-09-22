@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "商品",
+        "availability": "库存",
+        "unit_price": "单价",
+        "add_to_cart": "加入购物车"
+      },
       "view_mode": {
         "grid_label": "网格",
         "list_label": "列表",
@@ -724,6 +730,8 @@
         "label": "每页结果数："
       },
       "product_card": {
+        "only_left": "仅剩{n}件",
+        "configurable": "可定制",
         "variants": "多规格",
         "price_label": "@:common.labels.product_price",
         "product_rating": "评分：",

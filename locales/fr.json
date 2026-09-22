@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produit",
+        "availability": "Disponibilité",
+        "unit_price": "Prix unitaire",
+        "add_to_cart": "Ajouter au panier"
+      },
       "view_mode": {
         "grid_label": "Grille",
         "list_label": "Liste",
@@ -724,6 +730,8 @@
         "label": "Résultats par page :"
       },
       "product_card": {
+        "only_left": "Plus que {n}",
+        "configurable": "Configurable",
         "variants": "Variantes",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Évaluation :",

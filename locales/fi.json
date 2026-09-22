@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Tuote",
+        "availability": "Saatavuus",
+        "unit_price": "Yksikköhinta",
+        "add_to_cart": "Lisää ostoskoriin"
+      },
       "view_mode": {
         "grid_label": "Ruudukko",
         "list_label": "Lista",
@@ -724,6 +730,8 @@
         "label": "Tuloksia per sivu:"
       },
       "product_card": {
+        "only_left": "Vain {n} jäljellä",
+        "configurable": "Muokattava",
         "variants": "Muunnelmat",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Arvostelu:",

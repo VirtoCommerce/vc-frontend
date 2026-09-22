@@ -715,6 +715,12 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Tilgjengelighet",
+        "unit_price": "Enhetspris",
+        "add_to_cart": "Legg i handlekurv"
+      },
       "view_mode": {
         "grid_label": "Rutenett",
         "list_label": "Liste",
@@ -724,6 +730,8 @@
         "label": "Resultater per side:"
       },
       "product_card": {
+        "only_left": "Bare {n} igjen",
+        "configurable": "Konfigurerbar",
         "variants": "Varianter",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Vurdering:",
