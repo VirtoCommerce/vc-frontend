@@ -807,6 +807,12 @@ onMounted(() => {
     @apply px-0;
   }
 
+  // The heading carries the hairline under it; rounded like the widget, the rule's ends curl up.
+  .vc-widget__header,
+  .vc-widget__header-container {
+    @apply rounded-none;
+  }
+
   .vc-widget__slot-container,
   .vc-widget__footer-container {
     @apply border-0;
