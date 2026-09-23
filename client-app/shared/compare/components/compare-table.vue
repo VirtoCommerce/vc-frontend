@@ -429,8 +429,13 @@ watch(
 
 <style lang="scss">
 .compare-table {
+  // The table fills the widget's slot edge to edge, so the corners it rounds are the widget's
+  // own — they have to come off the same knob, or a theme that rounds plates harder than cards
+  // leaves them poking out past the plate.
+  --edge-radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+
   &__scroll {
-    @apply block overflow-x-auto rounded-b-[--vc-radius];
+    @apply block overflow-x-auto rounded-b-[--edge-radius];
   }
 
   &__tbody {
@@ -438,7 +443,7 @@ watch(
   }
 
   &__header-row {
-    @apply sticky z-10 flex overflow-hidden rounded-t-[--vc-radius] border-b border-neutral-200 bg-additional-50;
+    @apply sticky z-10 flex overflow-hidden rounded-t-[--edge-radius] border-b border-neutral-200 bg-additional-50;
 
     // Sits flush below the app header (shorter on mobile — see vc-header.vue/mobile-header.vue,
     // which keep this var updated with the header's live, current height).
@@ -457,7 +462,7 @@ watch(
     @apply hidden;
 
     @media (width < theme("screens.md")) {
-      @apply flex rounded-t-[--vc-radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
+      @apply flex rounded-t-[--edge-radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
     }
   }
 
