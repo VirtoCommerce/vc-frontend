@@ -57,6 +57,18 @@ describe("block registry", () => {
     expect(getBlock("customerProfile", "nope")).toBeUndefined();
   });
 
+  // `order` decides the default arrangement only — reconcileLayout keeps whatever the rep saved —
+  // so this is what a rep who never opened Edit layout sees, and the design leads with top sellers.
+  it("leads the dashboard's left column with top sellers", () => {
+    const left = getBlockRegistry("dashboard")
+      .filter((block) => block.region === "mainLeft")
+      .slice()
+      .sort((a, b) => a.order - b.order)
+      .map((block) => block.id);
+
+    expect(left).toEqual(["top_sellers", "orders"]);
+  });
+
   // Mutates module state on purpose — kept last, with an id no real block uses.
   it("registers a late-shipped block and ignores a duplicate id", () => {
     const block = { id: "test-only-block", region: "mainLeft", titleKey: "x", order: 99, component: {} } as const;
