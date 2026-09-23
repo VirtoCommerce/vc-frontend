@@ -1,0 +1,7 @@
+.stat-widget {
+  // The one colour on this card that does not survive the ramp flip: on the dark additional-50
+  // surface danger-600 bottoms out at 3.07:1 (default/mercury) and clears 4.5 in no preset, while
+  // danger-700 holds 5.17 at its worst (coffee) across all eight. It paints the falling delta and
+  // the per-card error line.
+  --stat-widget-negative-ink: theme("colors.danger.700");
+}

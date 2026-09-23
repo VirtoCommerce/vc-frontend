@@ -1,5 +1,9 @@
 <template>
-  <div class="stat-widget" :class="`stat-widget--${accent}`" :aria-busy="loading || undefined">
+  <div
+    class="stat-widget"
+    :class="[`stat-widget--${accent}`, { 'stat-widget--dense': dense }]"
+    :aria-busy="loading || undefined"
+  >
     <div class="stat-widget__head">
       <!-- Decorator slot ahead of the accent icon; the layout puts its drag affordance here. -->
       <slot name="leading" />
@@ -58,6 +62,8 @@ interface IProps {
   deltaIcon?: string;
   // Shows a spinner overlay over the card while the statistics query is in flight.
   loading?: boolean;
+  // Tightens type and padding so a crowded row still reads; the row, not the card, knows it is crowded.
+  dense?: boolean;
   // Already-localized (like `label`); its presence *is* the error state and outranks the figures.
   errorText?: string;
 }
@@ -72,6 +78,7 @@ withDefaults(defineProps<IProps>(), {
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .stat-widget {
+  $self: &;
   $accents: (
     primary: var(--color-primary-500),
     secondary: var(--color-secondary-500),
@@ -81,8 +88,12 @@ withDefaults(defineProps<IProps>(), {
     neutral: var(--color-neutral-400),
   );
 
+  // Both places a card paints red. Named because the dark layer has to move it: measured on the
+  // additional-50 surface, danger-600 gives 3.72:1 (red.dark) and 3.76:1 (coffee.dark) — under AA.
+  --stat-widget-negative-ink: theme("colors.danger.600");
+
   // `relative` anchors the loader overlay; `overflow-hidden` clips its backdrop to the rounded corners.
-  @apply relative flex h-full flex-col gap-1.5 overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
+  @apply relative flex h-full flex-col gap-1.5 overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-md;
 
   // Logical property so the accent bar flips in RTL; one custom property feeds both bar and icon.
   border-inline-start: 4px solid var(--stat-widget-accent);
@@ -105,11 +116,13 @@ withDefaults(defineProps<IProps>(), {
   // caption used to pull its card's value 13px above its neighbours'. `lh` is the caption's own line
   // box, so the reserve tracks the type scale; `flex` centers a short caption on the icon's line.
   &__label {
-    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-wide text-neutral-500;
+    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-[0.06em] text-neutral-900;
   }
 
+  // The figure carries the display face, not the body one, and tabular digits so a column of cards
+  // keeps its decimal points in line while the numbers refresh.
   &__value {
-    @apply text-3xl font-bold leading-tight text-neutral-900;
+    @apply font-geologica text-3xl font-black leading-tight tracking-[-0.035em] tabular-nums text-neutral-900;
 
     // Muted so the placeholder doesn't read as a figure.
     &--pending {
@@ -119,7 +132,9 @@ withDefaults(defineProps<IProps>(), {
 
   // `mt-auto` pins it where the delta row would sit, keeping card heights even.
   &__error {
-    @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-600;
+    @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold;
+
+    color: var(--stat-widget-negative-ink);
   }
 
   &__unit {
@@ -127,22 +142,43 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__sub {
-    @apply text-xs text-neutral-500;
+    @apply text-[0.8125rem] text-neutral-600;
   }
 
   &__delta {
-    @apply mt-auto flex items-center gap-1 pt-1.5 text-sm font-bold;
+    @apply mt-auto flex items-center gap-1 pt-1.5 text-[0.8125rem] font-bold;
 
     &--positive {
       @apply text-success-600;
     }
 
     &--negative {
-      @apply text-danger-600;
+      color: var(--stat-widget-negative-ink);
     }
 
     &--neutral {
       @apply text-neutral-500;
+    }
+  }
+
+  // A crowded row: the card keeps every part, at the size the row can still fit.
+  &--dense {
+    @apply gap-1 p-3;
+
+    #{$self}__label {
+      @apply min-h-[2.5em] items-start text-[0.6875rem] leading-tight tracking-[0.04em];
+    }
+
+    #{$self}__value {
+      @apply text-2xl;
+    }
+
+    #{$self}__sub {
+      @apply truncate text-xs;
+    }
+
+    #{$self}__delta {
+      @apply text-xs;
     }
   }
 }
