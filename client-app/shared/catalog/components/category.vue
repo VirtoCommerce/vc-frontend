@@ -945,8 +945,13 @@ onMounted(() => {
       @apply p-0;
     }
 
+    // The hairline under a heading steps up to neutral 300 in dark, where 200 on the plate vanishes.
     .vc-widget__header {
       @apply min-h-0 border-b border-neutral-200 pb-2 pt-0;
+
+      html.dark & {
+        @apply border-neutral-300;
+      }
     }
 
     .vc-widget__title {
@@ -1101,6 +1106,12 @@ onMounted(() => {
     --vc-tab-switch-checked-shadow: var(--category-plate-shadow);
 
     @apply border-0;
+
+    // In dark the pill carries the fill and its own rim; a shadow on the segment over it would lay a
+    // second veil on the pill's edge.
+    html.dark & {
+      --vc-tab-switch-checked-shadow: none;
+    }
   }
 
   &__filters-right {
