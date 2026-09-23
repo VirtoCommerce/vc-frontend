@@ -203,7 +203,16 @@ const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(
 
     // The store decides how many currencies and languages there are — QA serves 9 and 15,
     // which is a panel taller than the window. Each column carries its own scroll.
-    max-height: calc(100vh - 7rem);
+    //
+    // The ceiling is what VcPopover measured for this panel where it actually landed. The
+    // `100vh - 7rem` it replaces was a guess at the trigger's offset: it happened to be close
+    // under a resting header and wrong under a taller one, and either way it clamped the GRID
+    // while the row track below kept sizing to content — a 475-tall window put the columns 128px
+    // past the panel's own bottom, painted outside its corners, with neither of them scrolling.
+    // `minmax(0, 1fr)` is what makes the track obey the ceiling; `min-h-0` on the columns is the
+    // flex spelling of the same thing and does nothing for a grid item whose track already grew.
+    grid-template-rows: minmax(0, 1fr);
+    max-block-size: var(--vc-popover-available-height, calc(100vh - 7rem));
     color: var(--ink);
 
     @media (width < theme("screens.md")) {

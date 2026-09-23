@@ -68,12 +68,21 @@ async function onBackToOperator(close: () => void): Promise<void> {
 <style lang="scss">
 .header-account-menu {
   &__trigger {
-    @apply grid size-[42px] flex-none cursor-pointer place-items-center rounded-full border-0 text-sm font-bold;
+    // 34, not 42: the pod is the quietest control in the row and at 42 it read as the loudest.
+    // Its type is the header's smallest step, the same 12.5 the locale pill takes, so the two
+    // sit as a pair rather than as a pill beside a button.
+    @apply grid size-[34px] flex-none cursor-pointer place-items-center rounded-full border-0 font-bold;
 
-    @apply font-geologica tracking-wide;
+    @apply font-geologica;
 
-    background: color-mix(in srgb, var(--header-bottom-text-color) 12%, transparent);
-    color: var(--header-bottom-text-color);
+    font-size: 0.78125rem;
+    letter-spacing: 0.02em;
+    // Palette steps rather than a tint of the band's ink: the tint rendered correctly in both
+    // themes, but it moved with whatever the band happened to be painted, so the pod could not
+    // be told to match the pill beside it. These are the steps the design names, and they flip
+    // with the preset on their own.
+    background: theme("colors.neutral.200");
+    color: theme("colors.neutral.800");
     // `--transition-duration` is declared nowhere in the repo, and a bare var() with no fallback
     // makes the whole declaration invalid — without this the trigger snapped instead of fading.
     transition:
@@ -81,12 +90,12 @@ async function onBackToOperator(close: () => void): Promise<void> {
       color var(--transition-duration, 0.2s) ease;
 
     &:hover {
-      background: color-mix(in srgb, var(--header-bottom-text-color) 20%, transparent);
+      background: theme("colors.neutral.300");
     }
 
     &--opened {
-      background: var(--header-bottom-text-color);
-      color: var(--header-bottom-bg-color);
+      background: theme("colors.neutral.950");
+      color: theme("colors.additional.50");
     }
   }
 }

@@ -16,9 +16,14 @@
   // as 600, so 400 is the real step down — which also puts the selection in the same family as
   // the current row of the category menu. The fill alone only reaches 2.40:1, so the state is
   // carried by the pair of inset rings as well; the label on it reads 7.21:1.
+  //
+  // No backdrop-filter on this one. The indicator does not sit still: it travels between the
+  // segments over half a second, animating `left` and `width`, and a blurred backdrop is
+  // re-sampled on every frame of that — the most expensive thing a compositor can be asked for
+  // here, and the reason the move stuttered. The contrast case below never rested on the blur:
+  // it is carried by the fill and the pair of rings.
   &--seg &__pill {
     background: var(--vc-tab-switch-group-pill-color, color-mix(in srgb, var(--color-secondary-400) 72%, transparent));
-    backdrop-filter: blur(10px) saturate(140%);
     box-shadow: var(--vc-tab-switch-group-pill-shadow, theme("boxShadow.md")),
       inset 0 0 0 1px color-mix(in srgb, var(--color-secondary-700) 20%, transparent),
       inset 0 1px 0 color-mix(in srgb, var(--color-secondary-800) 26%, transparent);

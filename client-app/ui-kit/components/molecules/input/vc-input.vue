@@ -368,23 +368,29 @@ provide<VcInputContextType>("inputContext", {
 
     @apply flex items-stretch p-0.5 border border-[--container-border-color] rounded-[--radius] bg-[--container-bg-color] select-none;
 
-    // Height is per size, and so is the override: a theme that wants one size taller must not
-    // silently resize the other three. Each default is that size's own long-standing height.
+    // Height and type are per size, and so are their overrides: a theme that wants one size
+    // taller or quieter must not silently resize the other three. Each default is that size's
+    // own long-standing value. The type is a knob because a field set into a busy row is not
+    // always the size its height says — the header's search stands 40 and reads at 14.
+    // The size classes stay: they carry the line-height as well, and only the size is overridable.
     #{$sizeXs} & {
       @apply text-sm;
 
+      font-size: var(--vc-input-font-size, theme("fontSize.sm"));
       height: var(--vc-input-height, theme("height.8"));
     }
 
     #{$sizeSm} & {
       @apply text-base;
 
+      font-size: var(--vc-input-font-size, theme("fontSize.base"));
       height: var(--vc-input-height, 2.375rem);
     }
 
     #{$sizeMd} & {
       @apply text-base;
 
+      font-size: var(--vc-input-font-size, theme("fontSize.base"));
       height: var(--vc-input-height, theme("height.11"));
     }
 

@@ -247,8 +247,16 @@ onMounted(() => {
   // kit's 44 — the design's whole header row is 88 and the field has to leave the icon links
   // their own air. The fallbacks are the kit's own values, for a fork without the theme file.
   --vc-input-height: 2.5rem;
+  // The design's header search is its own control, not the kit's `md`: it stands 40 rather than
+  // 44 and reads at 14 rather than 16 — a field in a busy row is not the size its height says.
+  --vc-input-font-size: theme("fontSize.sm");
   --vc-input-bg-color: var(--glass-row, theme("colors.additional.50"));
   --vc-input-border-color: theme("colors.neutral.300");
+  // The controls INSIDE the field are neutral-600 in both themes, which is a step the preset
+  // token does not hold: it is neutral-900 in paprika.dark and falls to the kit's neutral-500
+  // in light. Set here rather than on the preset because that token paints every ghost-neutral
+  // button in the app, and only this one was measured against the design.
+  --vc-button-ghost-neutral-text: theme("colors.neutral.600");
 
   @apply relative flex grow items-stretch;
 

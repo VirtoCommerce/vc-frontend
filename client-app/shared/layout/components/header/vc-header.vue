@@ -91,7 +91,12 @@ const isMegaMenuShown = computed(() => {
   // and the shell is exactly as tall as the header. The negative offset equals the
   // shell's top padding, so the plate itself lands flush at viewport 0 when pinned —
   // which is also what header-plate reads to decide it is stuck.
-  @apply sticky z-20;
+  //
+  // Above the screens' own sticky panels, which is what the design asks for — its header is 60
+  // in a stack whose plates are 1. Ours is not that stack: the catalog and account toolbars sit
+  // at 40 and used to pin OVER the header, while modals, the popup sidebar and the mobile menu
+  // are at 50 and have to stay over it. 45 is the only rung that is both.
+  @apply sticky z-[45];
 
   // Everything around the plate — the air above it, the air below it, and the strip the
   // pinned plate reserves but no longer paints — is air, not an element. Without this it

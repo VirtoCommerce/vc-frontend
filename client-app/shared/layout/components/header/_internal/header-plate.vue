@@ -200,6 +200,16 @@ defineExpose({ pinnedHeight });
     --mega-menu-height: 0px;
     --mega-menu-border-color: transparent;
 
+    // The icon row loses its captions and closes up: the labels go to nothing by max-height and
+    // max-width, the items give back 2 of their inset, and 4 of gap comes back between what is
+    // left — otherwise the bare 24px icons sit almost touching. Set as plain properties because
+    // the links are another block's elements; bottom-header-link declares what each one means.
+    --header-link-label-max-h: 0px;
+    --header-link-label-max-w: 0px;
+    --header-link-label-opacity: 0;
+    --header-link-pad-x: theme("padding[2.5]");
+    --header-links-gap: theme("gap.1");
+
     // The plate gives its height back to the page ON SCREEN, and keeps every pixel of it
     // in FLOW. Letting the flow height shrink is what made the second row flicker on a
     // slow scroll: a header that gets shorter above the fold makes the document shorter,
@@ -331,6 +341,9 @@ defineExpose({ pinnedHeight });
 
   &__links {
     @apply -mx-2 flex flex-none items-center;
+
+    gap: var(--header-links-gap, 0px);
+    transition: gap var(--stick-ease);
   }
 
   &__end {

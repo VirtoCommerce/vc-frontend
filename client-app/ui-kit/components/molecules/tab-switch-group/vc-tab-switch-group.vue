@@ -41,6 +41,7 @@ const EASING = "cubic-bezier(0.34, 0.86, 0.22, 1)";
 const box = shallowRef<HTMLElement | null>(null);
 const pill = shallowRef<HTMLElement | null>(null);
 const previous = shallowRef<{ left: number; width: number } | null>(null);
+let awaitingViewTransition = false;
 
 const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
@@ -69,11 +70,53 @@ function movePill() {
     return;
   }
 
+  // A view transition paints snapshots of the page over the live document for its whole duration,
+  // and one of them is a still image. An indicator travelling underneath it is simply not there
+  // to be seen: measured on the colour-mode switch, whose reveal is 620ms against this 520ms, and
+  // whose circle closes ONTO the control that was pressed — so the segment that just changed is
+  // the last pixel uncovered, and the move is over by then. Going the other way the same circle
+  // opens out of that control, the live layer is on top, and the move shows, which is exactly the
+  // asymmetry this looks for.
+  //
+  // No app class is read for it: the transition's own pseudo-elements carry running animations,
+  // and those are visible through the standard `getAnimations()`. Holding the whole move,
+  // position included, is what lets the replay animate from where the indicator still visibly is.
+  const transition =
+    typeof document.getAnimations === "function"
+      ? document.getAnimations().find((animation) => {
+          const pseudo = (animation.effect as KeyframeEffect | null)?.pseudoElement;
+
+          return (
+            typeof pseudo === "string" && pseudo.startsWith("::view-transition") && animation.playState === "running"
+          );
+        })
+      : undefined;
+
+  if (transition) {
+    if (!awaitingViewTransition) {
+      awaitingViewTransition = true;
+      void transition.finished
+        .catch(() => {})
+        .finally(() => {
+          awaitingViewTransition = false;
+          movePill();
+        });
+    }
+
+    return;
+  }
+
   const activeRect = active.getBoundingClientRect();
   // Physical offsets on purpose: these are measured geometry, not authored direction, and the
   // measurement already accounts for RTL.
-  const left = Math.round(activeRect.left - boxRect.left);
-  const width = Math.round(activeRect.width);
+  //
+  // Unrounded. An integer number of CSS pixels is only a whole device pixel at 100% zoom on a
+  // 1x screen; at any other zoom it lands mid-pixel, and the indicator's 1px inset rings smear
+  // across two columns of them. Measured at 100% on a 2x screen, rounding alone already put the
+  // right edge 0.45px inside the next segment. The browser snaps to the device grid itself, and
+  // does it correctly at every zoom.
+  const left = activeRect.left - boxRect.left;
+  const width = activeRect.width;
   const from = previous.value;
 
   // A redraw that was not about the tabs.
@@ -100,7 +143,7 @@ function movePill() {
       { left: `${nearEdge}px`, width: `${farEdge - nearEdge}px`, offset: SPREAD_OFFSET },
       { left: `${left}px`, width: `${width}px` },
     ],
-    { duration: DURATION, easing: EASING },
+    { duration: DURATION, easing: EASING, fill: "forwards" },
   );
 }
 

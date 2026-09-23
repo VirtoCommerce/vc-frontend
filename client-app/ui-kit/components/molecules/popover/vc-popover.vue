@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
+import { flip, offset, shift, size, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
 import { onClickOutside } from "@vueuse/core";
 import { ref, toRefs, computed, watch, inject } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
@@ -201,6 +201,18 @@ const {
     flip(flipOptions.value),
     offset(offsetOptions.value),
     shift(shiftOptions.value),
+    // How much room the panel actually has, published for its content to clamp against. Nothing
+    // else can work it out: the height left below a trigger depends on where flip and shift put
+    // the panel, which only Floating UI knows, so a panel guessing it with a `100vh - n` had to
+    // hardcode an assumption about its own trigger and was wrong the moment the header grew.
+    // Written as a property rather than applied here, because what should scroll is the
+    // consumer's decision — the whole panel, or a column inside it.
+    size({
+      padding: 8,
+      apply({ availableHeight, elements }) {
+        elements.floating.style.setProperty("--vc-popover-available-height", `${Math.floor(availableHeight)}px`);
+      },
+    }),
     arrow({ element: floatingArrow }),
   ],
   whileElementsMounted(...args) {
