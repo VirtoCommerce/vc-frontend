@@ -11,6 +11,8 @@
           :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
+          clearable
+          @clear="searchKeyword = ''"
         />
       </div>
 
@@ -112,6 +114,8 @@
           :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
+          clearable
+          @clear="searchKeyword = ''"
         />
       </div>
 
