@@ -1743,6 +1743,49 @@
       },
       "error": "Failed to load data",
       "retry": "Try again"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "One catalog · many verified suppliers",
+        "title": "Source electronics the way your business buys.",
+        "subtitle": "Real-time stock across authorized distributors, your contract pricing from search to invoice, and next-day fulfillment on everything held locally.",
+        "browse_catalog": "Browse catalog",
+        "notches": {
+          "search": {
+            "title": "Search or browse the full catalog",
+            "text": "By product, brand or your own SKU"
+          },
+          "guest_cart": {
+            "title": "Build a cart as a guest",
+            "text": "It carries over when you sign in"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Authorized distributor network",
+        "title": "Shop by supplier",
+        "authorized": "Authorized distributor",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "SKUs in the catalog"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Authorized suppliers"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Fulfillment on in-stock lines"
+          }
+        }
+      }
     }
   },
   "identity_error": {

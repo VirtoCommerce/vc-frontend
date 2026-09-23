@@ -19,7 +19,7 @@ const emit = defineEmits<IEmits>();
 defineProps<IProps>();
 
 const pages = {
-  "/": defineAsyncComponent(() => import("@/pages/home.vue")),
+  "/": defineAsyncComponent(() => import("@/pages/demo-home/demo-home.vue")),
   "/demo-landing": defineAsyncComponent(() => import("@/pages/demo-landing.vue")),
 } as const;
 
