@@ -367,8 +367,12 @@ const variationsCount = computed(() => {
 
 <style scoped lang="scss">
 .product-card {
-  // The lift on hover eases rather than snaps.
-  @apply transition-shadow duration-200 ease-out;
+  // The card lies flat on the plate and lifts only under the pointer, easing rather than snapping.
+  @apply shadow-none transition-shadow duration-200 ease-out;
+
+  &:hover {
+    @apply shadow-lg;
+  }
 
   // The title is the product's name here, not a link away from the page: the grid is scanned for
   // what a thing is, and a column of blue underlines reads as navigation rather than as goods.
@@ -519,7 +523,7 @@ const variationsCount = computed(() => {
   // --product-list-columns, which the grid also hands the column heading above the rows: the two
   // cannot drift apart when one is edited.
   &.product-card--list {
-    @apply rounded-xl border border-neutral-100 shadow-none;
+    @apply rounded-xl border border-neutral-100;
 
     &:hover {
       @apply shadow-md;
