@@ -158,3 +158,19 @@ Limits:
 - The stuck header is 129px tall where the design's is 65; the rail hangs off it through the kit's
   sticky logic, so it follows #2494 when the header shrinks. The catalog reads `--page-stack`, so it follows
   #2494 once they land there.
+
+## Diffed against the rendered design (2026-09-23)
+
+The design project, exported whole and served locally, was measured against the catalog element by
+element — computed style against computed style, at 1440 and 390, grid and list — and the visible
+text of every control compared. What remains, and why:
+
+- Page gutter and plate inside on a phone (design 12 / 24, ours 24 / 28), the stuck header's height,
+  the footer's dark sheen: #2494's page tokens, not touched from the catalog.
+- The grid card's stock chip names its state ("In stock: 61"); the design shows the bare figure in
+  the grid and the named state only in the list. Kept from the earlier reference — **to confirm**.
+- Kit strings: "Add to Compare" beside "Add to list" (design "Add to wishlist" / "Add to compare"),
+  and "You have reached the end of the list." (design "You've reached the end of the list").
+- The category facet the store returns is also titled "Categories", beside the category list.
+- The switch reads "In stock" as the design has it; the chip it raises stays "Show in stock", as in
+  the design.

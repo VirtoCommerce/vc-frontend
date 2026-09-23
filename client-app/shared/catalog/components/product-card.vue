@@ -538,10 +538,10 @@ const variationsCount = computed(() => {
       @apply leading-[1.32];
     }
 
-    // Room for two rows of chips. The design writes 49, but its own chip is 22.675 tall and two rows
-    // with the 5px gap come to 50.35 — at 49 a card with two rows sits 1.35px lower than its neighbours.
+    // Room for two rows of chips. The design writes 49, but its chip renders 23.4 tall and two rows
+    // with the 5px gap come to 51.8 — at 49 a card with two rows sits lower than its neighbours.
     :deep(.vc-product-properties) {
-      @apply mt-2 min-h-[3.1469rem];
+      @apply mt-2 min-h-[3.2375rem];
     }
 
     // The design keeps one rhythm from the top — every block holds its height, chips included — so
@@ -696,6 +696,7 @@ const variationsCount = computed(() => {
         grid-template-columns: var(--product-list-columns);
         grid-template-rows: auto auto auto;
         column-gap: 0.75rem;
+        row-gap: 0.25rem;
       }
     }
 
@@ -728,13 +729,13 @@ const variationsCount = computed(() => {
     }
 
     :deep(.vc-product-vendor) {
-      @apply mt-0 self-end text-[0.6875rem] tracking-[0.06em];
+      @apply mt-0 self-end text-[0.6875rem] leading-[1.125rem] tracking-[0.06em];
     }
 
     // In the row the name is a link again, in the kit's link blue: the row is read across to the
     // product, not scanned for what a thing is.
     :deep(.vc-product-title) {
-      @apply mt-0 self-center text-[0.9375rem] font-bold;
+      @apply mt-0 self-center font-geologica text-[0.9375rem] font-bold tracking-[-0.008em];
     }
 
     :deep(.vc-product-title__text) {
@@ -770,6 +771,8 @@ const variationsCount = computed(() => {
     :deep(.vc-product-price) {
       --vc-product-price-font-size: 1.25rem;
 
+      @apply font-geologica tracking-[-0.02em];
+
       @apply m-0 flex w-full min-w-0 flex-row flex-wrap items-baseline justify-start gap-x-1.5 whitespace-nowrap text-start;
 
       @container (min-width: 60rem) {
@@ -793,6 +796,10 @@ const variationsCount = computed(() => {
       grid-area: actions;
 
       @apply static flex-row bg-transparent p-0 opacity-100;
+    }
+
+    :deep(.vc-product-actions-button) {
+      --vc-icon-size: 1.25rem;
     }
 
     :deep(.vc-product-actions-button:not(.vc-product-actions-button--active)) {

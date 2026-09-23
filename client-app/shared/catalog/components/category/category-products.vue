@@ -368,7 +368,7 @@ function sendGASelectItemEvent(product: Product): void {
   --product-list-columns: 4.5rem minmax(0, 1fr) 8.25rem 7.75rem 9.375rem auto;
 
   &__list-head {
-    @apply hidden gap-x-3 px-[1.0625rem] pb-2 text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-neutral-500;
+    @apply hidden gap-x-3 px-[1.0625rem] pb-2 text-[0.6875rem] font-bold uppercase leading-[1.55] tracking-[0.1em] text-neutral-500;
 
     grid-template-columns: var(--product-list-columns);
 

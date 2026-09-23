@@ -36,7 +36,7 @@
         <VcSwitch
           v-model="savedInStock"
           :disabled="loading"
-          :aria-label="$t('pages.catalog.instock_filter_card.checkbox_label')"
+          :aria-label="$t('common.labels.in_stock')"
           size="sm"
           label-position="right"
           @change="$emit('applyInStock')"
@@ -47,7 +47,7 @@
               'category-controls__label--muted': !savedInStock,
             }"
           >
-            {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+            {{ $t("common.labels.in_stock") }}
           </span>
         </VcSwitch>
       </template>

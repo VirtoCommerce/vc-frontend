@@ -34,7 +34,7 @@
             :disabled="updatingFiltersState"
             @change="onTopFiltersChange({ inStock: $event })"
           >
-            {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+            {{ $t("common.labels.in_stock") }}
           </VcCheckbox>
 
           <VcCheckbox
