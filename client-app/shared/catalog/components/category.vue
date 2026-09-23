@@ -1033,8 +1033,9 @@ onMounted(() => {
     }
   }
 
-  // The heading row is a text plate and the category's picture, 2 : 1 at one fixed height; the
-  // picture answers "where am I" faster than the title does.
+  // The heading row is a text plate and the category's picture, 2 : 1 at one fixed height, from a
+  // portrait tablet up; the picture answers "where am I" faster than the title does. On a phone
+  // the row is the text plate alone.
   &__head {
     @apply grid;
 
@@ -1042,7 +1043,7 @@ onMounted(() => {
     gap: var(--category-plate-gap);
     margin-bottom: var(--category-plate-gap);
 
-    @media (width >= 900px) {
+    @media (min-width: theme("screens.md")) {
       block-size: 8.75rem;
 
       > .category__head-plate {
@@ -1051,7 +1052,7 @@ onMounted(() => {
     }
 
     &--art {
-      @media (width >= 900px) {
+      @media (min-width: theme("screens.md")) {
         grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       }
     }
@@ -1074,8 +1075,9 @@ onMounted(() => {
     background: var(--category-plate-bg);
     box-shadow: var(--category-plate-shadow);
 
-    @media (width < 900px) {
-      @apply aspect-video h-auto;
+    // Under the text on a phone it would be a second screenful before the products.
+    @media (width < theme("screens.md")) {
+      @apply hidden;
     }
 
     html.dark & {
