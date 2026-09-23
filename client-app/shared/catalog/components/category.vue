@@ -966,8 +966,11 @@ onMounted(() => {
       @apply min-h-[1.125rem] leading-[1.125rem] text-neutral-700;
     }
 
+    // The field stands on the column's edges like the rows under it, and the heading's hairline is
+    // the only rule: the design keeps the kit's 12px inset and a second line under the field, a
+    // leftover from when a facet had side padding of its own, and in a card it read as a box in a box.
     .facet-filter-widget__search {
-      @apply p-3;
+      @apply border-0 px-0 pb-1 pt-2.5;
     }
 
     // The fade over a cut-off list ends in the card's colour, not white, or it draws a pale band.
