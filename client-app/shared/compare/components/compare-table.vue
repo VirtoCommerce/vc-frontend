@@ -457,7 +457,18 @@ watch(
     }
 
     &--stuck {
-      @apply shadow-md;
+      // Pinned, the row is no longer the widget's top edge — it is a band across its middle, and
+      // a rounded corner there is a notch the rows behind it show through.
+      @apply rounded-t-none;
+
+      // The app header's plate keeps its rounded bottom corners while pinned, and the rows
+      // sliding behind it surface at full strength in the two wedges those corners leave. This
+      // carries the widget's own surface up behind the plate to back them, as tall as the corner
+      // it fills. A shadow rather than an element: it takes no part in layout, and this row's
+      // own `overflow-hidden` would clip a pseudo-element placed above it.
+      box-shadow:
+        0 calc(-1 * var(--plate-radius, 1.75rem)) 0 theme("colors.additional.50"),
+        theme("boxShadow.md");
     }
   }
 
