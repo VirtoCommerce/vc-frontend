@@ -145,6 +145,16 @@ Limits:
   shape are page-level rules and belong to PR #2494.
 - In dark every design plate carries a 1px sheen along its top edge. The catalog's plates and rail
   cards now do; the footer plates (#2494) do not yet.
+- Icons. The design draws anything under 16px from the solid set (its rule R2); the catalog's
+  stock, in-cart, reset and purchased glyphs now ask for `variant="solid"`. What the catalog cannot
+  reach, because the kit picks the glyph: the chip's close cross (outline `x`, the design's solid
+  `delete-2`) and the link under N variations (outline `external-link` at 12). The kit's outline
+  stroke ladder is also a step off the design's — 16: 1.5 against 1.4, 24: 1.75 / 1.85, 28:
+  1.8 / 2.0, 36: 2.0 / 2.2, 56: 2.7 / 2.9 — and `heart` and `list` are a newer Lucide cut than the
+  design's (a rounder heart; list dots at 5/12/19 against 6/12/18). All of that is `vc-icon.vue`
+  and `ui-kit/icons`, site-wide, not the catalog's to override. The arrow ladder matches exactly.
+- The stepper's minus and plus carry the design's own 3.7 stroke in the catalog card; the cart,
+  compare and product-page steppers do not yet.
 - The stuck header is 129px tall where the design's is 65; the rail hangs off it through the kit's
   sticky logic, so it follows #2494 when the header shrinks. The catalog reads `--page-stack`, so it follows
   #2494 once they land there.

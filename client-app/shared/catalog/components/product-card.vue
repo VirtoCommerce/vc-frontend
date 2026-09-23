@@ -414,6 +414,20 @@ const variationsCount = computed(() => {
     box-shadow: 0 0 0 4px theme("colors.additional.50");
   }
 
+  // The stepper's minus and plus at the design's 14 in a small field, and at its own heavier stroke —
+  // 3.7, a per-instance weight the design tunes for the stepper alone; the kit draws them at 16 on
+  // the arrow curve's 2.2.
+  :deep(.vc-quantity-stepper) {
+    --vc-button-icon-size: 0.875rem;
+    --vc-icon-stroke: 3.7;
+  }
+
+  // A minus that cannot go lower is the design's neutral 500 on 200 — the kit's 400 read as a
+  // thinner stroke than the white plus beside it.
+  :deep(.vc-quantity-stepper .vc-button--disabled) {
+    --vc-icon-color: theme("colors.neutral.500");
+  }
+
   // Figures in a price keep one width, so a column of prices lines up digit under digit.
   :deep(.vc-product-price__actual),
   :deep(.vc-product-price__list) {
@@ -459,14 +473,6 @@ const variationsCount = computed(() => {
   html.dark &__spec {
     background: rgb(from theme("colors.neutral.950") r g b / 0.06);
     border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
-  }
-
-  // The stock chip's glyph at 14px: the kit's small chip draws a 10px one, which beside a sentence
-  // rather than a bare number read as a speck. The chip rebuilds its glyph size from its own
-  // `--icon-size` on the content, so that is the knob.
-  :deep(.vc-quantity-stepper__badges .vc-chip),
-  :deep(.product-card__stock .vc-chip) {
-    --icon-size: 0.875rem;
   }
 
   // The quick actions come out on hover and on keyboard focus, and stay out where there is no hover

@@ -176,13 +176,13 @@
                 >
                   <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-                  <VcIcon name="reset" />
+                  <VcIcon name="reset" variant="solid" />
                 </VcChip>
 
                 <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
                   <span>{{ $t("common.buttons.reset_page") }}</span>
 
-                  <VcIcon name="reset" />
+                  <VcIcon name="reset" variant="solid" />
                 </VcChip>
               </template>
             </ActiveFilterChips>
@@ -215,8 +215,8 @@
             @select-product="selectProduct"
           />
 
-          <div class="category__products-bottom">
-            <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
+          <div v-if="showButtonToDefaultView" class="category__products-bottom">
+            <VcButton color="primary" :to="{ query: { view: 'default' } }">
               {{ $t("pages.catalog.show_all_results") }}
             </VcButton>
           </div>

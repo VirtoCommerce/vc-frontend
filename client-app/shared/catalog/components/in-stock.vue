@@ -1,6 +1,6 @@
 <template>
   <VcChip v-if="isDigital" :size="size" :variant="labeled ? 'soft' : 'outline-dark'" color="info" rounded>
-    <VcIcon name="cloud" />
+    <VcIcon name="cloud" variant="solid" />
 
     {{ $t("common.labels.digital_product") }}
   </VcChip>
@@ -13,7 +13,7 @@
     rounded
     :title="$t('common.labels.in_stock')"
   >
-    <VcIcon name="cube" />
+    <VcIcon name="cube" variant="solid" />
 
     <span class="inline-block min-w-3 text-center">
       <template v-if="labeled && isLowStock">{{
@@ -38,7 +38,7 @@
       !isAvailable ? $t('common.messages.product_no_longer_available') : $t('common.messages.product_out_of_stock')
     "
   >
-    <VcIcon name="cube" />
+    <VcIcon name="cube" variant="solid" />
 
     <span class="inline-block min-w-3 text-center">
       {{ labeled ? $t("common.messages.product_out_of_stock") : 0 }}
