@@ -2,7 +2,7 @@
   <VcModal :title="$t('shared.catalog.branches_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
     <VcCheckboxGroup v-model="selectedBranchesIds">
       <!-- DESKTOP content BEGIN -->
-      <div class="hidden border sm:flex sm:rounded">
+      <div class="hidden overflow-hidden border border-neutral-200 sm:flex sm:rounded-[--vc-radius]">
         <div
           class="flex shrink-0 grow flex-col transition-all delay-100"
           :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"
@@ -51,7 +51,7 @@
         <div
           v-if="branches.length"
           class="flex shrink-0 flex-col overflow-hidden transition-all"
-          :class="[selectedBranchesIds.length ? 'w-1/2 border-l' : 'w-0']"
+          :class="[selectedBranchesIds.length ? 'w-1/2 border-l border-neutral-200' : 'w-0']"
         >
           <div class="flex h-11 items-center justify-between bg-neutral-50 py-2 pl-4 pr-3.5">
             <div class="text-sm">
@@ -84,7 +84,7 @@
       <!-- DESKTOP content END -->
 
       <!-- MOBILE content BEGIN -->
-      <div class="flex max-h-full grow flex-col rounded border sm:hidden">
+      <div class="flex max-h-full grow flex-col rounded-[--vc-radius] border border-neutral-200 sm:hidden">
         <div class="flex min-h-11 items-stretch bg-neutral-50 px-6 text-sm">
           <button
             type="button"
@@ -119,7 +119,7 @@
           </template>
         </div>
 
-        <div class="border-b px-6 py-3">
+        <div class="border-b border-neutral-200 px-6 py-3">
           <BranchSearch :model-value="searchInput" @update:input="search($event)" />
         </div>
 

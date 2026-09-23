@@ -825,6 +825,12 @@ onMounted(() => {
   .vc-widget__append-icon {
     --vc-icon-size: 1.5rem;
   }
+
+  // The kit squares the bottom of anything in a widget's footer to meet the widget's own corners.
+  // Here the footer is a pill button floating inside the card, and a squared hover fill read as a tab.
+  .facet-filter-widget__more {
+    @apply rounded-full;
+  }
 }
 
 // The drawer is teleported out of the page and carries the facets on its own surface, so it takes
