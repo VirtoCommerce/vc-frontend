@@ -138,8 +138,8 @@ file are cross-referenced, not repeated.
       serves buyer-facing widgets), so every visitor loads it before the router is installed:
       ~115 KB raw on the critical path, the manifest fetched twice (gate + runtime), about six
       sequential round trips to the platform on a cold cache — measured ≈ 150 ms warm and
-      ≈ 1.5–2 s cold at ~350 ms RTT. The fixes are [VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)
-      (#1) and the fetch-hook seeding (#3).
+      ≈ 1.5–2 s cold at ~350 ms RTT. [VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)
+      (#1, #2504) takes a declared plugin's code off that path; the fetch-hook seeding (#3) is the rest.
       For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
       (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
 - [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off and the
@@ -188,10 +188,23 @@ Definition and rationale: *Pilot* section of the discovery spec.
       `removeRoute` of a host name, so remove-then-add cannot launder a squat. That covers
       takeover, not authorization, and only inside the window: a claim made after the phase settles
       is unguarded.
-- [ ] [**VCST-5761** — declare plugin contributions so boot stops blocking and nothing shifts when
-      a plugin lands](https://virtocommerce.atlassian.net/browse/VCST-5761). It also absorbs, from
-      this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the backstop's
-      late-registration hole, and a switched-off plugin paying the whole load chain.
+- [x] [**VCST-5761** — declare plugin contributions so boot stops blocking and nothing shifts when
+      a plugin lands](https://virtocommerce.atlassian.net/browse/VCST-5761) — #2504. It also absorbs,
+      from this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the
+      backstop's late-registration hole, and a switched-off plugin paying the whole load chain.
+      What it leaves open:
+  - [ ] **A switched-off plugin costs one request, not zero.** Contributions ride in `contentFiles`
+        because vc-platform's `PluginManifestFile` binds six `plugin.json` fields and drops the rest
+        (`AppManifestService.cs:450`). Zero needs the platform model, its descriptor hash and
+        x-api's `StorePlugin` to carry `when` (at least) — then phase A reads it from `store.plugins`.
+  - [ ] **The sales-rep plugin declares nothing yet** — its `plugin.config.ts` in
+        vc-module-sales-rep#13, against facade `0.1.3`. Until then it keeps blocking boot.
+  - [ ] **Reserved-box sizes** exist for `productCard/card-button` (measured: 0.0082 of CLS from
+        the cards without a reservation, none with one) and for `block`; every other slot relies on
+        the host fallback it hides, or has none and holds zero height. Size them as plugins start
+        declaring them.
+  - [ ] Global conditions are read once at boot; a sign-in mid-session does not re-declare
+        (out of scope in the ticket, as for module `init()` today).
 - [ ] [**VCST-5762** — extension-registry precedence: the host must win regardless of
       order](https://virtocommerce.atlassian.net/browse/VCST-5762). Changes a facade-exported
       signature, so it carries a contract rebuild.

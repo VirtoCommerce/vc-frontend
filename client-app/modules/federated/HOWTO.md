@@ -515,10 +515,26 @@ The build writes it to `dist/contributions.json`; `public/plugin.json` lists tha
 `contentFiles`, which is how the platform advertises it next to `remoteEntry.js` — no backend
 change, and the platform's content hash busts caches.
 
-> **Declared, not yet honoured.** The host does not read `contributions.json` yet (VCST-5761 parts
-> 2–4: skipping a switched-off plugin, placeholder routes, reserved slots). Until then a declaration
-> changes nothing at runtime, and `init()` must still register everything itself. Declaring now
-> costs nothing and is what those parts will build on.
+What the host does with it, before any of the plugin's code is fetched:
+
+- **Plugin-level `when` false** ⇒ the plugin is skipped: no manifest, no `remoteEntry.js`, no
+  chunks. It costs the one small `contributions.json` request.
+- **Routes** get a placeholder under their `parent`, so a deep link resolves on first paint inside
+  the parent's layout and guards and shows a loader. When the plugin settles the same URL resolves
+  again — to the route your `init()` registered under that name, or to the host's 404 if it never
+  did or the plugin failed. Your own `beforeEnter` guards still run on the real route; if one is a
+  permission check, put it in `when` too so no placeholder exists for a user who cannot pass it.
+- **Menu entries** render before your chunk loads. Register the same `id` from `init()` and yours
+  replaces the declared one; if the plugin fails, the declared ones are withdrawn.
+- **Slots** with `reserve` or `block` hold their box while the plugin is on the way, and reveal
+  your component only once the plugin has settled — so it never paints before your locales merged.
+- **Boot does not wait for your code.** It still does for a plugin that declared nothing, exactly as
+  before — declaring is how a plugin opts out of the wait.
+
+`init()` still registers everything itself: a declaration tells the host what is coming, it does
+not replace the registration. Locally, an `APP_MODULES_FEDERATION_REMOTES` remote is read the same
+way — the host looks for `contributions.json` beside its `mf-manifest.json`, which is where the
+scaffold's build puts it, and treats a missing one as "declares nothing".
 
 ```ts
 // plugin.config.ts
@@ -572,9 +588,9 @@ type policies, service-worker registration, module-local registries, wishlist sh
 
 | Builder                              | Emits                        | Namespace | Accepted on                  | True when                                          |
 | ------------------------------------ | ---------------------------- | --------- | ---------------------------- | -------------------------------------------------- |
-| `settingEnabled(key)`                | `{ setting }`                | global    | plugin, route, menu, slot    | the store's module setting `key` is truthy         |
-| `settingValue(key).eq(v)`            | `{ setting, eq }`            | global    | plugin, route, menu, slot    | that setting equals `v` (bare: truthy)             |
-| `themeSetting(key)` / `.eq(v)`       | `{ themeSetting[, eq] }`     | global    | plugin, route, menu, slot    | `settings_data.json` key `key` is truthy / equals `v` |
+| `settingEnabled(key)`                | `{ setting }`                | global    | plugin, route, menu, slot    | the store's module setting `key` is `true` — what `useModuleSettings().isEnabled` checks |
+| `settingValue(key).eq(v)`            | `{ setting, eq }`            | global    | plugin, route, menu, slot    | that setting equals `v` (bare: is `true`)          |
+| `themeSetting(key)` / `.eq(v)`       | `{ themeSetting[, eq] }`     | global    | plugin, route, menu, slot    | `settings_data.json` key `key` is `true` / equals `v` |
 | `authenticated()`                    | `{ authenticated: true }`    | global    | plugin, route, menu, slot    | the user is signed in                              |
 | `userCan(p, …)`                      | `{ can }` (several: `and`)   | global    | plugin, route, menu, slot    | the user holds every permission                    |
 | `field(path)` / `.eq(v)`             | `{ field[, eq] }`            | slot      | slot only                    | `path` in the slot's context is truthy / equals `v` |
@@ -606,6 +622,18 @@ slot id; it is derived from the host's registry, so it cannot drift from what th
 | `headerMenu/*`, `mobileMenu/*`, `accountMenu/*`, `mobileHeader/*` | none — `field` takes no path | global keys only: `when: userCan("sales-rep:access")`                  |
 
 Paths reach four levels deep and do not traverse arrays.
+
+### Seeing what happened
+
+```ts
+import { usePluginsStatus } from "@vc-frontend/core";
+
+const { plugins, stateOf, whenSettled } = usePluginsStatus();
+// plugins.value: [{ name: "sales-rep", state: "skipped", reason: "its declared `when` is false (…)" }]
+```
+
+`Logger` is a no-op in production, so this is the only way to tell a switched-off plugin from a
+broken one there.
 
 ### One ordering constraint to know about
 

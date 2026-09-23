@@ -230,14 +230,14 @@ that skew — it makes it loud and isolated instead of silently corrupting.
 app-runner.ts
   │  getStorePlugins(domain)                  // issued early, alongside the other boot queries
   │  … other boot work …
-  │  const ready = startFederatedModules({ fetchPlugins, hasPermission });
-  │  await ready;                             // BEFORE app.use(router)
+  │  const ready = startFederatedModules({ fetchPlugins, hasPermission, conditionContext });
+  │  await ready;                             // BEFORE app.use(router) — see "What boot waits for"
   ▼
 startFederatedModules()            bootstrap.ts
   │  if (!isFederationEnabled()) return;   ← module_federation_enabled: false ⇒ instant no-op
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
-initFederatedModules()             index.ts
+prepareFederatedModules()          index.ts — phase A, no plugin code runs
   0. fetchPlugins()                the platform's list, on its own 2s budget (bootstrap.ts).
                                    Slow or failing ⇒ no plugins, never a stalled boot
   1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
@@ -248,22 +248,56 @@ initFederatedModules()             index.ts
   1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
                                    before any fetch — the platform serves one list to everyone.
                                    A UX/latency filter, not a boundary (see Security model)
+  1b. contributions.json           listed in the descriptor's contentFiles (or beside the manifest
+                                   for an env remote, optional); 2s budget, same origin rule.
+                                   Listed but unreadable, or an unknown format ⇒ SKIPPED
+  1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
+                                   of the plugin is ever fetched
+  1d. applyContributions()         placeholder routes, menu entries, slot declarations
+  ▼
+loadPreparedModules()              index.ts — phase B, per plugin, concurrently
   2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes(compatible)   no force: a known name is already a no-op in the runtime
-  3a. installRouteGuard()          wraps addRoute/removeRoute for the whole phase below
+  3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op
+  3a. installRouteGuard()          wraps addRoute/removeRoute while ANY plugin is still running;
+                                   a declared name is the plugin's to replace, a host name is not
   4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
                                    has one (3s budget each); a module without init() still
                                    counts as loaded
-  5. Promise.allSettled            one bad plugin cannot abort the others
+  5. settle                        status → loaded / failed / skipped; unclaimed placeholders and
+                                   dead declared menu entries are withdrawn (all of them on failure)
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
 
+Evaluation order, end to end: `permission` (the platform descriptor) → plugin-level `when` →
+manifest → CONTRACT GATE → load → SHARED-DEPENDENCY GATE → `init()`. Three chances to say no
+before a byte of plugin code is fetched.
+
+### What boot waits for
+
+- **Phase A, always**: the plugin list and each plugin's `contributions.json`. Placeholders, declared
+  menu entries and reserved slots must exist before the router resolves the first URL.
+- **Phase B, only for plugins that declared nothing**: they register their routes in `init()`, so
+  boot waits for them exactly as it always did, bounded by `BOOT_BACKSTOP_MS` — which stays for
+  that reason alone.
+- **Never for a declared plugin's code.** Its placeholder renders a loader inside the parent's
+  layout and guards and becomes the plugin's page when it settles, or the host's 404 in place if it
+  failed. Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
+  of ~3.3s, and the page arrives at the same URL.
+
+After every plugin settled, a URL that landed on the catch-all is resolved again and followed if a
+late route now matches it — the backstop's old "late plugins may register routes after the first
+navigation" hole.
+
+`usePluginsStatus()` (facade) exposes each plugin's `pending` / `loaded` / `failed` / `skipped` and
+the reason, reactively.
+
 In production `Logger` is a no-op for **every** level, `error` included, and
 `startFederatedModules` discards the loader's result and returns `void`. So a plugin that is
-skipped, failed or lost to the backstop produces no production signal at all — the operator's only
+skipped, failed or lost to the backstop produces no production log line — `usePluginsStatus()` is
+the only thing code can ask, and nothing reports it anywhere yet; the operator's only
 symptom is that the feature is absent. Reporting
 outcomes to Application Insights (`trackException` for **failed** — something broke; a
 `trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
@@ -274,12 +308,11 @@ unusable from a loader that runs before the plugin installs).
 
 Three design points worth calling out:
 
-- **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
-  `init()` is registered _before_ the initial navigation resolves — deep links to
-  plugin routes work on first paint. It is also why the budgets below are blank-screen time for
-  the **whole storefront**, not just for a plugin's own page. VCST-5761 removes that wait: a plugin
-  declares its routes in `plugin.json`, the host registers a placeholder and mounts immediately, so
-  only a visitor opening a plugin page waits — and sees a loader instead of a blank page.
+- **Awaited before `app.use(router)` only as far as it has to be** — see "What boot waits for".
+  A plugin that declared nothing registers its routes in `init()`, so for it boot still waits and
+  the budgets below are blank-screen time for the whole storefront. A plugin that declared its
+  contributions gets placeholders instead, and only a visitor opening its page waits — on a
+  loader, inside the page's layout.
 - **Started only after every host plugin has installed.** The route guard covers the whole
   load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
   remove-then-add would be refused. Outside preview mode nothing between costs boot time.
