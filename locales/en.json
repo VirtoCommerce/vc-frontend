@@ -1785,6 +1785,24 @@
             "label": "Fulfillment on in-stock lines"
           }
         }
+      },
+      "why_buy": {
+        "eyebrow": "Why buy from us",
+        "title": "Straightforward terms, real inventory",
+        "cards": {
+          "stock": {
+            "title": "Real-time stock",
+            "text": "Quantity on hand per warehouse, with the lead time when it has to be sourced."
+          },
+          "pricing": {
+            "title": "Contract pricing everywhere",
+            "text": "Your negotiated price shows from search to invoice, tax and freight included."
+          },
+          "fulfillment": {
+            "title": "Next-day fulfillment",
+            "text": "In-stock orders ship same day, with manufacturer warranty and free returns within 30 days."
+          }
+        }
       }
     }
   },
