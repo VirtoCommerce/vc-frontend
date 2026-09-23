@@ -319,13 +319,18 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 
 # terminal 2 - the host, pointed at your plugin
 cd vc-frontend
-APP_MODULES_FEDERATION_ENABLED=true \
+# once: the stock theme ships the switch off, so nothing would be built or loaded
+sed -i 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
 APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```
 
 Notes on the host side:
 
+- **Turn the host switch on first.** `module_federation_enabled` in
+  `client-app/config/settings_data.json` ships `false`, and with it off `vite.federation.ts` builds no
+  MF host at all — the remotes override is read by a runtime that is not in the bundle, so you get a
+  storefront with no plugin and no error. Don't commit that flip with your plugin work.
 - **build + preview is the canonical run** — it matches what CI/prod produce, so it is the
   default for _running_ the host. (`yarn dev` also works and additionally gives HMR — see
   [**The dev inner loop**](#the-dev-inner-loop) below — reach for it as the iteration loop.)
@@ -374,10 +379,14 @@ Once the two servers are up, how you iterate depends on which side you're changi
   run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
   injected into the host page, so edits hot-update live across the MF boundary. Verified on
   this harness for route / UI-kit / `useModuleSettings` plugins **and** for a plugin that
-  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client
-  (an older note warned the dev server couldn't prebundle the shared GraphQL facade — that no
-  longer reproduces). `build`+`preview` is still the canonical run because it matches
-  CI/prod; use `yarn dev` when you want the HMR loop.
+  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client.
+  `build`+`preview` is still the canonical run because it matches CI/prod; use `yarn dev`
+  when you want the HMR loop.
+
+  > `yarn dev` only starts because `vite.federation.ts` keeps `@vc-frontend/core` out of
+  > `optimizeDeps`: the MF plugin force-includes every shared key, and prebundling the facade
+  > with esbuild runs no Vite plugins, so its `.graphql` imports have no loader. Remove that
+  > guard and dev dies with `No loader is configured for ".graphql" files`.
 
 **Changing the host** — you only rebuild the host when the **remote list/name** in the env override
 changes (it is inlined at build time) or host source changes; plain plugin edits never need a host
@@ -416,22 +425,23 @@ scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dis
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`, `style-src` — your
    stylesheets arrive by URL too).
 
-### The other route: shipping inside a Virto Commerce module
+### The primary path in detail
 
-The platform released a second way for a storefront plugin to reach a browser, on
-2026-08-03 — `vc-module-x-api` **3.1016.0** and `vc-module-x-frontend` **3.1005.0**. Instead
-of its own hosting, the plugin rides in a backend module's artifacts and the platform both
-serves and announces it:
+The platform side shipped on 2026-08-03 — `vc-module-x-api` **3.1016.0** and
+`vc-module-x-frontend` **3.1005.0** — and this host consumes it. The plugin rides in a backend
+module's artifacts, and the platform both serves and announces it:
 
-- the module declares a dependency on x-frontend, and its build writes the bundle to
-  `{MODULE_FOLDER}/plugins/vc-frontend/`;
-- the environment yml routes `- path: /modules  route: platform`;
-- the storefront asks for the list rather than being told at build time:
+- the module declares a dependency on `VirtoCommerce.XFrontend` (that is what makes the platform
+  probe it), and its build writes the bundle to `{MODULE_FOLDER}/plugins/vc-frontend/`;
+- whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
+  `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
+  plugin is skipped: the storefront boots, the feature is simply absent;
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, 2 s budget, fails
+  closed to "no plugins" — an older x-api answers 400 and the visitor sees nothing of it):
 
 ```graphql
-query InitializeApplication($domain: String!) {
+query GetStorePlugins($domain: String!) {
   store(domain: $domain) {
-    storeUrl
     plugins(appId: "vc-frontend") {
       id
       version
@@ -439,39 +449,42 @@ query InitializeApplication($domain: String!) {
       entry {
         type
         path
+        hash
+      }
+      contentFiles {
+        type
+        path
+        hash
       }
       remote {
         name
         exposed
-      }
-      contentFiles {
-        hash
-        path
       }
     }
   }
 }
 ```
 
-Same origin as the storefront, so no per-plugin CSP entry and no external hosting to buy.
+The platform advertises `.../remoteEntry.js`; the loader rewrites that to the sibling
+`mf-manifest.json` and reads `requiredHostVersion` from it before any plugin code runs (the
+contract gate). `createRemoteFederationOptions` emits both files — keep `remoteEntry.js` unhashed,
+the platform synthesizes that exact path. `?v=<entry.hash>` is the only freshness signal: the
+platform sets no `Cache-Control` on these files.
 
-**This host does not consume that yet**, and two things have to move first:
+Same origin as the storefront, so a `'self'` CSP covers it and there is no external hosting to buy.
+The bundle is fetched before the router is installed, so declare `permission` in `plugin.json`
+whenever the plugin serves a subset of users — every other visitor then pays nothing for it
+(VCST-5761 moves the whole load off the boot path). Installing such a module is a code-admission
+decision for the storefront: the plugin runs with the host's full privileges — see the README's
+security model.
 
-1. The loader reads `APP_MODULES_FEDERATION_REMOTES` — the build-time env described above —
-   not `plugins(appId:)`. That is `TODO.md` #2.
-2. The loader **requires a manifest JSON URL** and skips anything else (see the "entry must
-   be a manifest JSON URL" guard in `index.ts`), while the platform advertises
-   `.../remoteEntry.js`. Either the loader learns to take a remoteEntry, or the platform's
-   entry path points at `mf-manifest.json`.
-
-For the packaging half there is a working reference:
-`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` —
-`@module-federation/vite`, remote `name` set to the .NET module id, `outDir` writing straight
-into the discovery folder, and `remoteEntry.js` deliberately left unhashed because the
-platform synthesizes that exact path. Read it for the build config only: that sample is a
-plugin for the **System Operations admin app**, so its `./Module` expose and
-`install(host, ctx)` shape are that app's contract — this host's are `./plugin` and `init()`,
-as in Steps 2 and 3.
+Reference implementation: `vc-module-sales-rep` (`src/VirtoCommerce.SalesRep.Web/StorefrontApp`,
+built into `plugins/vc-frontend/` by the `BuildStorefrontPlugin` / `PublishStorefrontPlugin`
+targets of its `.csproj` under `vc-build Compress`). An older packaging reference is
+`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` — read it for
+the build config only: that sample is a plugin for the **System Operations admin app**, so its
+`./Module` expose and `install(host, ctx)` shape are that app's contract — this host's are
+`./plugin` and `init()`, as in Steps 2 and 3.
 
 ---
 
@@ -493,6 +506,143 @@ those keys.
 
 How the ExtensionPoint system works, the available categories, and payload shapes:
 [`client-app/shared/common/composables/extensionRegistry/README.md`](../../shared/common/composables/extensionRegistry/README.md).
+
+## Declaring contributions
+
+`plugin.config.ts` (scaffolded) tells the storefront what the plugin contributes **before any of
+its code runs**: its routes, menu entries, the extension points it fills, and a condition on each.
+The build writes it to `dist/contributions.json`; `public/plugin.json` lists that file in
+`contentFiles`, which is how the platform advertises it next to `remoteEntry.js` — no backend
+change, and the platform's content hash busts caches.
+
+What the host does with it, before any of the plugin's code is fetched:
+
+- **Plugin-level `when` false** ⇒ the plugin is skipped: no manifest, no `remoteEntry.js`, no
+  chunks. It costs the one small `contributions.json` request.
+- **Routes** get a placeholder under their `parent`, so a deep link resolves on first paint inside
+  the parent's layout and guards and shows a loader. When the plugin settles the same URL resolves
+  again — to the route your `init()` registered under that name, or to the host's 404 if it never
+  did or the plugin failed. Your own `beforeEnter` guards still run on the real route; if one is a
+  permission check, put it in `when` too so no placeholder exists for a user who cannot pass it.
+- **Menu entries** render before your chunk loads. Register the same `id` from `init()` and yours
+  replaces the declared one; if the plugin fails, the declared ones are withdrawn.
+- **Slots** with `reserve` or `block` hold their box while the plugin is on the way, and reveal
+  your component only once the plugin has settled — so it never paints before your locales merged.
+- **Boot does not wait for your code.** It still does for a plugin that declared nothing, exactly as
+  before — declaring is how a plugin opts out of the wait.
+
+`init()` still registers everything itself: a declaration tells the host what is coming, it does
+not replace the registration. Locally, an `APP_MODULES_FEDERATION_REMOTES` remote is read the same
+way — the host looks for `contributions.json` beside its `mf-manifest.json`, which is where the
+scaffold's build puts it, and treats a missing one as "declares nothing".
+
+```ts
+// plugin.config.ts
+import { definePluginManifest, settingEnabled, userCan } from "@vc-frontend/core/manifest";
+
+export default definePluginManifest({
+  when: settingEnabled("SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
+  routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments", when: userCan("sales-rep-documents:read") }],
+  menu: [{ surface: "header", group: "corporate", id: "sales-reps", title: "sales_rep.navigation.link", routeName: "SalesReps" }],
+  slots: [{ at: "sharedList/provenance-note", policy: "reserve", when: (field) => field("scope").eq("Customer") }],
+});
+```
+
+```json
+{
+  "format": 1,
+  "when": { "setting": "SalesRep.Enabled" },
+  "routes": [{ "path": "documents", "name": "SalesRepDocuments", "parent": "Company", "when": { "can": "sales-rep-documents:read" } }],
+  "menu": [{ "surface": "header", "group": "corporate", "id": "sales-reps", "title": "sales_rep.navigation.link", "routeName": "SalesReps" }],
+  "slots": [{ "at": "sharedList/provenance-note", "policy": "reserve", "when": { "field": "scope", "eq": "Customer" } }]
+}
+```
+
+**Write host names as literals.** `plugin.config.ts` runs in node, inside your build, and the
+facade's root (`@vc-frontend/core`) has no runtime there — only types; its implementation comes from
+the host at runtime. `import { ROUTES } from "@vc-frontend/core"` therefore fails the build with *No
+known conditions for "." specifier*. Nothing is lost: `parent: "Company"` and
+`at: "sharedList/provenance-note"` are checked against the host's own `ROUTES` and
+`EXTENSION_NAMES` through the contract, so a host rename fails your `type-check` once you move to
+that facade version. `import type` from `@vc-frontend/core` is fine, and so are your own constants
+as long as that module imports no facade value.
+
+Every field is optional, and an empty `definePluginManifest({})` emits `{ "format": 1 }`. A
+malformed declaration fails **your** build — `yarn type-check` for anything the types can see (an
+unknown parent route, slot, menu group or field path, a `field(...)` term outside a slot), `yarn
+build` for the rest (a route name or slot declared twice).
+
+### What each entry is
+
+| Entry      | Maps to                                                  | Notes                                                                                   |
+| ---------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `when`     | the whole plugin                                         | Global keys only. The cheapest gate there is: false ⇒ no manifest, no `remoteEntry.js`. |
+| `routes[]` | `router.addRoute(parent, …)`                             | `parent` is a host route name (`ROUTES.*.NAME`); absent = a root route. `redirect` makes it a redirect entry — push-messages' "sign in first" case is a second entry with the negated `when`. |
+| `menu[]`   | `surface: "header"` → `mergeMenuSchema`; `"account"` → `registerAccountSection` | `group` is a header-schema section (`main`, `purchasing`, `marketing`, `user`, `corporate`) — not a route name. An account section carries `children`, each with its own `when`. |
+| `slots[]`  | `useExtensionRegistry().register` / `registerContribution` | `at` is `"<category>/<name>"`. `policy`: `reserve` holds the box, `block` holds a region (payment), `none` is a data contribution into host markup. |
+
+Not declared, because nothing about them is visible before the plugin runs: locales, Apollo cache
+type policies, service-worker registration, module-local registries, wishlist sharing scopes.
+
+### Condition keys
+
+| Builder                              | Emits                        | Namespace | Accepted on                  | True when                                          |
+| ------------------------------------ | ---------------------------- | --------- | ---------------------------- | -------------------------------------------------- |
+| `settingEnabled(key)`                | `{ setting }`                | global    | plugin, route, menu, slot    | the store's module setting `key` is `true` — what `useModuleSettings().isEnabled` checks |
+| `settingValue(key).eq(v)`            | `{ setting, eq }`            | global    | plugin, route, menu, slot    | that setting equals `v` (bare: is `true`)          |
+| `themeSetting(key)` / `.eq(v)`       | `{ themeSetting[, eq] }`     | global    | plugin, route, menu, slot    | `settings_data.json` key `key` is `true` / equals `v` |
+| `authenticated()`                    | `{ authenticated: true }`    | global    | plugin, route, menu, slot    | the user is signed in                              |
+| `userCan(p, …)`                      | `{ can }` (several: `and`)   | global    | plugin, route, menu, slot    | the user holds every permission                    |
+| `field(path)` / `.eq(v)`             | `{ field[, eq] }`            | slot      | slot only                    | `path` in the slot's context is truthy / equals `v` |
+| `and(…)`, `or(…)`, `not(c)`          | `{ and }`, `{ or }`, `{ not }` | either  | wherever their operands are  | as named                                           |
+
+**Two evaluation phases.** Global keys are read once, after the user is resolved and before the
+plugin is fetched — the moment `init()` runs today; a sign-in mid-session does not re-evaluate them.
+Slot keys are read per render, per item (true for one product card, false for the next), so they
+can never gate a fetch. `field` is not an import: it is the argument of a slot's `when` callback,
+typed against that slot's context, so a path that does not exist there — or any `field` term on the
+plugin, a route or a menu entry — does not compile. `.eq(...)` on an enum-typed string field takes
+any string: a plugin may own values the host's generated enum does not list.
+
+These are **load guards, not a security boundary**: store settings are public, the bundle is public
+by URL, and the backend still authorizes every query.
+
+### Slot contexts
+
+A slot's context is what the host hands that extension point's `condition` — the same value a
+registered entry's own `condition` receives. `SlotContextMapType` in the contract spells it out per
+slot id; it is derived from the host's registry, so it cannot drift from what the host renders.
+
+| Slots                                              | Context (`field` paths start here)          | Example                                                                 |
+| -------------------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------- |
+| `productCard/*`, `productPage/*`                   | the `Product`                               | `(field) => and(not(field("availabilityData.isInStock")), not(field("hasVariations")))` → `{ "and": [{ "not": { "field": "availabilityData.isInStock" } }, { "not": { "field": "hasVariations" } }] }` |
+| `paymentPage/*`, `orderPaymentPage/*`              | `{ order, paymentTypeName }`                | `(field) => field("paymentTypeName").eq("Skyflow")` → `{ "field": "paymentTypeName", "eq": "Skyflow" }` |
+| `cartPayment/*`                                    | `{ paymentTypeName }`                       | as above                                                                |
+| `sharedList/*`                                     | the list's `SharingSettingType`             | `(field) => field("scope").eq("Customer")` → `{ "field": "scope", "eq": "Customer" }` |
+| `headerMenu/*`, `mobileMenu/*`, `accountMenu/*`, `mobileHeader/*` | none — `field` takes no path | global keys only: `when: userCan("sales-rep:access")`                  |
+
+Paths reach four levels deep and do not traverse arrays.
+
+### Seeing what happened
+
+```ts
+import { usePluginsStatus } from "@vc-frontend/core";
+
+const { plugins, stateOf, whenSettled } = usePluginsStatus();
+// plugins.value: [{ name: "sales-rep", state: "skipped", reason: "its declared `when` is false (…)" }]
+```
+
+`Logger` is a no-op in production, so this is the only way to tell a switched-off plugin from a
+broken one there.
+
+### One ordering constraint to know about
+
+Once the host stops waiting for plugins before it mounts, `init()` can finish after the first
+queries have run. `registerCacheTypePolicies` is order-sensitive in a way that hides today: a type
+policy added **after** a query normalised data does not apply to what is already in the cache.
+Policies on your own types, queried from your own pages, are unaffected — sales-rep's and
+push-messages' are that kind. A policy that patches `keyFields` on a **host** type would silently
+misbehave; don't write one.
 
 ## Extending the facade
 

@@ -9,8 +9,12 @@ in-repo modules in `client-app/modules/*` — those ship inside the host bundle.
 of MF is exactly that separation: a plugin team can build and release on their own cadence
 without touching or rebuilding this repo.
 
-> Jira: **VCST-5159**. Everything here is behind the `APP_MODULES_FEDERATION_ENABLED` flag and is a **no-op
-> when the flag is off** — the harness ships with **zero built-in remotes**.
+> Jira: **VCST-5159**. Everything here hangs on one switch, `module_federation_enabled` in
+> `client-app/config/settings_data.json`, and is a **no-op when it is `false`** — the harness ships with
+> **zero built-in remotes**. The stock theme ships it **`false`**: until a plugin is actually released
+> there is nothing to load, and an MF host costs bundle size and a boot round trip either way. Set it to
+> `true`, next to the theme's other feature toggles, and rebuild to load whatever the platform advertises.
+> A theme that predates the key (a fork) counts as `true`, so it keeps loading plugins.
 
 > **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
 > [`HOWTO.md`](./HOWTO.md). This file is the reference for how the host side works.
@@ -21,19 +25,21 @@ without touching or rebuilding this repo.
 
 ```bash
 # Serve the host WITH federation enabled, pointing at one or more remotes.
+# `module_federation_enabled` ships `false`, so flip it in client-app/config/settings_data.json
+# first — otherwise no MF host is built and the override below is read by nothing.
 # build + preview is the canonical run (matches CI/prod); `yarn dev` also works and adds
 # HMR (verified even for @apollo/client-sharing plugins) — use it as the iteration loop
 # (HOWTO.md "The dev inner loop"). Use `--mode=development` locally so the store resolves
 # from APP_BACKEND_URL — a prod-mode build resolves it from `localhost` and renders an
 # empty page. See HOWTO.md step 4.
-APP_MODULES_FEDERATION_ENABLED=true \
 APP_MODULES_FEDERATION_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview
 ```
 
-- `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). Only
-  `"true"`, `"1"`, `"yes"` or `"on"` enable it — any other value counts as off (allowlist:
-  enabling remote code loading is the dangerous direction).
+- `module_federation_enabled` in `client-app/config/settings_data.json` → the host switch. `vite.federation.ts`
+  reads it to decide whether the MF host plugin (and so the MF runtime, `remoteEntry-<hash>.js`, `mf-manifest.json`)
+  is built at all; `enabled.ts` reads it at runtime to decide whether to ask the platform for plugins and
+  start the loader. `false` ⇒ neither, and that is what the stock theme ships; a missing key counts as `true`.
 - `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
   override**. URLs must be **https** (http is allowed for localhost only). When set it replaces
   the platform list entirely, so a local remote is never mixed with the deployed ones.
@@ -51,8 +57,8 @@ than fed to the MF runtime. Locally the plugin folder is proxied to `APP_BACKEND
 (`^/modules/.*/plugins/vc-frontend/` in `vite.config.ts`, dev and preview alike), so the platform
 path works in `yarn dev` and `yarn preview` — not just against a deployed host.
 
-> `APP_MODULES_FEDERATION_ENABLED` is still inlined at BUILD time (Vite `import.meta.env`), so
-> turning the host into a federation host is a rebuild; which plugins it then loads is not.
+> `settings_data.json` is imported statically, so the switch is baked into a build — turning federation
+> on or off is a rebuild; which plugins the host then loads is not.
 
 That's the whole operator surface. Everything below is _why_ and _how_.
 
@@ -224,14 +230,14 @@ that skew — it makes it loud and isolated instead of silently corrupting.
 app-runner.ts
   │  getStorePlugins(domain)                  // issued early, alongside the other boot queries
   │  … other boot work …
-  │  const ready = startFederatedModules({ fetchPlugins, hasPermission });
-  │  await ready;                             // BEFORE app.use(router)
+  │  const ready = startFederatedModules({ fetchPlugins, hasPermission, conditionContext });
+  │  await ready;                             // BEFORE app.use(router) — see "What boot waits for"
   ▼
 startFederatedModules()            bootstrap.ts
-  │  if (!APP_MODULES_FEDERATION_ENABLED) return;              ← flag off ⇒ instant no-op
+  │  if (!isFederationEnabled()) return;   ← module_federation_enabled: false ⇒ instant no-op
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
-initFederatedModules()             index.ts
+prepareFederatedModules()          index.ts — phase A, no plugin code runs
   0. fetchPlugins()                the platform's list, on its own 2s budget (bootstrap.ts).
                                    Slow or failing ⇒ no plugins, never a stalled boot
   1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
@@ -242,22 +248,56 @@ initFederatedModules()             index.ts
   1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
                                    before any fetch — the platform serves one list to everyone.
                                    A UX/latency filter, not a boundary (see Security model)
+  1b. contributions.json           listed in the descriptor's contentFiles (or beside the manifest
+                                   for an env remote, optional); 2s budget, same origin rule.
+                                   Listed but unreadable, or an unknown format ⇒ SKIPPED
+  1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
+                                   of the plugin is ever fetched
+  1d. applyContributions()         placeholder routes, menu entries, slot declarations
+  ▼
+loadPreparedModules()              index.ts — phase B, per plugin, concurrently
   2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes(compatible)   no force: a known name is already a no-op in the runtime
-  3a. installRouteGuard()          wraps addRoute/removeRoute for the whole phase below
+  3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op
+  3a. installRouteGuard()          wraps addRoute/removeRoute while ANY plugin is still running;
+                                   a declared name is the plugin's to replace, a host name is not
   4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
                                    has one (3s budget each); a module without init() still
                                    counts as loaded
-  5. Promise.allSettled            one bad plugin cannot abort the others
+  5. settle                        status → loaded / failed / skipped; unclaimed placeholders and
+                                   dead declared menu entries are withdrawn (all of them on failure)
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
 
+Evaluation order, end to end: `permission` (the platform descriptor) → plugin-level `when` →
+manifest → CONTRACT GATE → load → SHARED-DEPENDENCY GATE → `init()`. Three chances to say no
+before a byte of plugin code is fetched.
+
+### What boot waits for
+
+- **Phase A, always**: the plugin list and each plugin's `contributions.json`. Placeholders, declared
+  menu entries and reserved slots must exist before the router resolves the first URL.
+- **Phase B, only for plugins that declared nothing**: they register their routes in `init()`, so
+  boot waits for them exactly as it always did, bounded by `BOOT_BACKSTOP_MS` — which stays for
+  that reason alone.
+- **Never for a declared plugin's code.** Its placeholder renders a loader inside the parent's
+  layout and guards and becomes the plugin's page when it settles, or the host's 404 in place if it
+  failed. Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
+  of ~3.3s, and the page arrives at the same URL.
+
+After every plugin settled, a URL that landed on the catch-all is resolved again and followed if a
+late route now matches it — the backstop's old "late plugins may register routes after the first
+navigation" hole.
+
+`usePluginsStatus()` (facade) exposes each plugin's `pending` / `loaded` / `failed` / `skipped` and
+the reason, reactively.
+
 In production `Logger` is a no-op for **every** level, `error` included, and
 `startFederatedModules` discards the loader's result and returns `void`. So a plugin that is
-skipped, failed or lost to the backstop produces no production signal at all — the operator's only
+skipped, failed or lost to the backstop produces no production log line — `usePluginsStatus()` is
+the only thing code can ask, and nothing reports it anywhere yet; the operator's only
 symptom is that the feature is absent. Reporting
 outcomes to Application Insights (`trackException` for **failed** — something broke; a
 `trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
@@ -268,9 +308,11 @@ unusable from a loader that runs before the plugin installs).
 
 Three design points worth calling out:
 
-- **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
-  `init()` is registered _before_ the initial navigation resolves — deep links to
-  plugin routes work on first paint.
+- **Awaited before `app.use(router)` only as far as it has to be** — see "What boot waits for".
+  A plugin that declared nothing registers its routes in `init()`, so for it boot still waits and
+  the budgets below are blank-screen time for the whole storefront. A plugin that declared its
+  contributions gets placeholders instead, and only a visitor opening its page waits — on a
+  loader, inside the page's layout.
 - **Started only after every host plugin has installed.** The route guard covers the whole
   load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
   remove-then-add would be refused. Outside preview mode nothing between costs boot time.
@@ -380,7 +422,8 @@ hosted remote.
 
 | File              | Role                                                                                                                                                                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bootstrap.ts`    | App-runner entry. Flag check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
+| `bootstrap.ts`    | App-runner entry. Switch check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
+| `enabled.ts`      | `isFederationEnabled()`: the theme's `module_federation_enabled`. Shared by `bootstrap.ts` and by `app-runner`'s plugin-list query, so both read one predicate.                                |
 | `index.ts`        | The loader: resolve+validate remotes → version gate → `registerRemotes` → `loadRemote`/`init` (time-budgeted) → report. Contains the `IFederatedPlugin` contract.               |
 | `version-gate.ts` | The CONTRACT GATE: fail-closed semver check of `requiredHostVersion` (version or range) against the facade version.                                                             |
 | `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
@@ -389,19 +432,19 @@ hosted remote.
 
 | File                                 | Role                                                                                                                                                                                                                                                 |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults), `isMfFlagEnabled`. Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
-| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (consumes `createHostShared()`), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
+| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults). Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
+| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`; host entry is `remoteEntry-<hash>.js` so a CDN cannot serve a stale one), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
 | `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
 | `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                                                                              |
 
 ---
 
-## Environment variables
+## Configuration
 
-| Var              | Scope                | Meaning                                                                                                              |
-| ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `APP_MODULES_FEDERATION_ENABLED`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
-| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
+| Setting                                                              | Scope                        | Meaning                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `module_federation_enabled` (`client-app/config/settings_data.json`) | build time (static import)   | The host switch. `false` ⇒ no MF host plugin in the Vite build (no MF runtime, `remoteEntry.js` or `mf-manifest.json`), no plugin-list query, no loader — a complete no-op. Missing ⇒ `true`.                                                                                     |
+| `APP_MODULES_FEDERATION_REMOTES` (env)                               | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
 
 ---
 
@@ -450,7 +493,8 @@ decision for the storefront. What the harness enforces today:
   proceed at the cap with the wrapper still installed, since the loader keeps running detached.
 - **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
   whatever modules are installed, so a platform administrator with install rights decides which
-  plugins the storefront loads; the env override stays build-time. It is still backend-supplied
+  plugins the storefront loads; the env override stays build-time, and the theme's
+  `module_federation_enabled` is all-or-nothing, not a pick list. It is still backend-supplied
   data, so whoever controls the GraphQL response controls the list — bounded, since that origin
   also serves the host bundle.
 
@@ -486,7 +530,12 @@ already read makes validated bytes == executed bytes **and** removes the extra r
 
 ## Gotchas & guarantees
 
-- **Off by default.** No flag, no cost — the loader isn't even imported.
+- **One switch, shipped off.** `module_federation_enabled: false` in
+  `client-app/config/settings_data.json` ⇒ no MF host build, no plugin-list query, and the loader
+  isn't even imported — zero cost, which is what the stock theme ships. A missing key counts as
+  `true`, so a fork that predates the key is unaffected. Turned on, the harness itself
+  costs **+67 KB gzip on the initial payload and +159 KB gzip across the whole build (+9 %)**,
+  measured federation on vs off at the same commit — before any plugin is installed.
 - **Isolation is total**, malformed descriptors included. Every descriptor field is read through
   a string guard and the list itself is checked for arrayness, because the projection is a
   hand-written structural type and nothing else guards its shape — a non-string `permission` or

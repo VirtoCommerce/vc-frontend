@@ -192,6 +192,7 @@ describe("app-runner boot order", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.doUnmock("@/config/settings_data.json");
   });
 
   it("puts the theme context and the user in place before the loader, and the router after it", async () => {
@@ -213,8 +214,19 @@ describe("app-runner boot order", () => {
   describe("discovery wiring", () => {
     const PLUGINS = [{ id: "sales-rep" }] as unknown as readonly IPlatformPlugin[];
 
-    it("issues the plugin-list query and hands its result to the loader when the flag is on", async () => {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    function stubFederation(enabled: boolean) {
+      vi.doMock("@/config/settings_data.json", async (importOriginal) => {
+        const real = await importOriginal<{ default: { current: string; settings: Record<string, unknown> } }>();
+        return {
+          default: { ...real.default, settings: { ...real.default.settings, module_federation_enabled: enabled } },
+        };
+      });
+    }
+
+    // The stock theme ships the switch OFF, so the cases about the query itself have to turn it on.
+    beforeEach(() => stubFederation(true));
+
+    it("issues the plugin-list query and hands its result to the loader", async () => {
       getStorePluginsMock.mockResolvedValue(PLUGINS);
 
       await runBoot();
@@ -225,7 +237,21 @@ describe("app-runner boot order", () => {
       await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBe(PLUGINS);
     });
 
-    it("issues nothing and resolves to no plugins when the flag is off", async () => {
+    it("issues nothing and resolves to no plugins when the theme turns federation off", async () => {
+      stubFederation(false);
+
+      await runBoot();
+
+      expect(getStorePluginsMock).not.toHaveBeenCalled();
+      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
+    });
+
+    // Reads client-app/config/settings_data.json itself: the shipped theme must not query the
+    // platform for plugins until the Sales Rep Hub plugin is released.
+    it("issues nothing with the theme config as shipped", async () => {
+      vi.doUnmock("@/config/settings_data.json");
+      vi.resetModules();
+
       await runBoot();
 
       expect(getStorePluginsMock).not.toHaveBeenCalled();
@@ -233,7 +259,6 @@ describe("app-runner boot order", () => {
     });
 
     it("starts the query before it awaits the page context, so the round trips overlap", async () => {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       getStorePluginsMock.mockImplementation(() => {
         order.push("getStorePlugins");
         return Promise.resolve([]);
@@ -249,7 +274,6 @@ describe("app-runner boot order", () => {
     });
 
     it("issues nothing when the env override is set, since that list wins anyway", async () => {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", '{"local":"http://localhost:3001/mf-manifest.json"}');
 
       await runBoot();
@@ -262,7 +286,6 @@ describe("app-runner boot order", () => {
   it("starts the loader only after the host plugin that mutates routes has installed", async () => {
     // The loader's route guard cannot tell a host call from a plugin's, so a host install running
     // inside its phase has its own routes refused.
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     previewBoot.isActive = true;
 
     await runBoot();

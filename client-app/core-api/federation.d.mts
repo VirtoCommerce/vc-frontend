@@ -50,5 +50,3 @@ export declare function createRemoteFederationOptions(options: {
   exposes?: Record<string, string>;
   sharedOverrides?: SharedOverridesType;
 }): IRemoteFederationOptions;
-
-export declare function isMfFlagEnabled(value: string | boolean | undefined): boolean;

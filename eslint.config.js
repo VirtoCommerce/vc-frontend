@@ -59,6 +59,11 @@ export default defineConfigWithVueTs(
       "dist/",
       // Generated, self-contained @vc-frontend/core type contract (see client-app/core-api/README.md).
       "client-app/core-api/contract/",
+      // See the contract from a plugin's side, so they sit outside every host tsconfig project (they
+      // import `@vc-frontend/core`, which would pull the contract back in); build-types.mjs type-checks
+      // them in isolation instead.
+      "client-app/core-api/manifest.d.mts",
+      "client-app/core-api/contract-checks/",
       ".certificates/",
       "artifacts/",
       "storybook-static/",

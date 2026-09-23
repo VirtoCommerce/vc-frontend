@@ -166,21 +166,27 @@ describe("initFederatedModules", () => {
     expect(result.loaded).toEqual(["local"]);
   });
 
-  it("resolves with every remote failed (never rejects) when registerRemotes throws", async () => {
+  it("fails only the remote whose registration throws, and never rejects", async () => {
     stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL, loyalty: "https://plugins.example.com/loyalty/mf-manifest.json" });
-    // Once, not persistent: beforeEach's clearAllMocks() does not remove implementations.
-    registerRemotesMock.mockImplementationOnce(() => {
-      throw new Error("runtime not initialized");
+    loadRemoteMock.mockResolvedValue({});
+    registerRemotesMock.mockImplementation((remotes: { name: string }[]) => {
+      if (remotes[0]?.name === "news") {
+        throw new Error("runtime not initialized");
+      }
     });
 
-    const result = await initFederatedModules();
+    try {
+      const result = await initFederatedModules();
 
-    expect(result.failed).toEqual(expect.arrayContaining(["news", "loyalty"]));
-    expect(result.failed).toHaveLength(2);
-    expect(result.loaded).toEqual([]);
-    expect(loadRemoteMock).not.toHaveBeenCalled();
-    expect(loggerErrorMock).toHaveBeenCalledWith("[MF] registerRemotes failed", expect.any(Error));
+      expect(result.failed).toEqual(["news"]);
+      expect(result.loaded).toEqual(["loyalty"]);
+      expect(loadRemoteMock).toHaveBeenCalledTimes(1);
+      expect(loggerErrorMock).toHaveBeenCalledWith('[MF] registerRemotes failed for "news"', expect.any(Error));
+    } finally {
+      // clearAllMocks() in beforeEach does not remove implementations.
+      registerRemotesMock.mockImplementation(() => undefined);
+    }
   });
 
   it("loads a compatible plugin and calls its init()", async () => {

@@ -33,14 +33,88 @@ import type {
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 
+// Module scope rather than inside the composable, so the host-only declaration helpers below reach
+// the same state without widening `useNavigations`, which the facade publishes to plugins.
+const menuSchema = shallowRef<MenuType | null>(menuData);
+// Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
+// shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
+const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
+
+/**
+ * Entries the host added from a plugin's declared contributions, before the plugin ran. The
+ * plugin's own registration under the same id replaces them instead of being duplicated (links) or
+ * refused (sections); anything the plugin never claimed is withdrawn if it fails.
+ */
+const declaredLinkIds = new Set<string>();
+const declaredSectionIds = new Set<string>();
+
+function mergeIntoMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+  menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      const incoming = new Set((srcValue as ExtendedMenuLinkType[]).map((link) => link?.id).filter(Boolean));
+      const kept = (objValue as ExtendedMenuLinkType[]).filter(
+        (link) => !(link?.id && declaredLinkIds.has(link.id) && incoming.has(link.id)),
+      );
+      return kept.concat(srcValue);
+    }
+  });
+  triggerRef(menuSchema);
+}
+
+function removeLinks(links: ExtendedMenuLinkType[] | undefined, ids: Set<string>): ExtendedMenuLinkType[] | undefined {
+  return links
+    ?.filter((link) => !(link.id && ids.has(link.id)))
+    .map((link) => (link.children ? { ...link, children: removeLinks(link.children, ids) } : link));
+}
+
+/** Host-only: header links declared by a plugin, identified by `ids` so they can be withdrawn. */
+export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[]): void {
+  mergeIntoMenuSchema(schema);
+  ids.forEach((id) => declaredLinkIds.add(id));
+}
+
+/** Host-only: an account section declared by a plugin; the plugin's own registration replaces it. */
+export function declareAccountSection(section: AccountNavigationSectionType): void {
+  if (registeredAccountSections.value.some((x) => x.id === section.id)) {
+    Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring the declaration.`);
+    return;
+  }
+  declaredSectionIds.add(section.id);
+  registeredAccountSections.value = [...registeredAccountSections.value, section];
+}
+
+/** Host-only: drops whatever of these declarations the plugin did not register itself. */
+export function withdrawDeclaredNavigation(linkIds: readonly string[], sectionIds: readonly string[]): void {
+  const links = new Set(linkIds.filter((id) => declaredLinkIds.has(id)));
+  if (links.size && menuSchema.value) {
+    const { desktop, mobile } = menuSchema.value.header;
+    const strip = (section: Record<string, ExtendedMenuLinkType | ExtendedMenuLinkType[]>) =>
+      Object.fromEntries(
+        Object.entries(section).map(([key, value]) => [
+          key,
+          Array.isArray(value) ? removeLinks(value, links) : { ...value, children: removeLinks(value.children, links) },
+        ]),
+      );
+    menuSchema.value = {
+      ...menuSchema.value,
+      header: {
+        desktop: strip(desktop) as MenuType["header"]["desktop"],
+        mobile: strip(mobile) as MenuType["header"]["mobile"],
+      },
+    };
+    links.forEach((id) => declaredLinkIds.delete(id));
+  }
+  const sections = new Set(sectionIds.filter((id) => declaredSectionIds.has(id)));
+  if (sections.size) {
+    registeredAccountSections.value = registeredAccountSections.value.filter((x) => !sections.has(x.id));
+    sections.forEach((id) => declaredSectionIds.delete(id));
+  }
+}
+
 export function _useNavigations() {
   const { currentCurrency } = useCurrency();
 
   const matchingRouteName = ref("");
-  const menuSchema = shallowRef<MenuType | null>(menuData);
-  // Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
-  // shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
-  const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
   const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
   const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
   const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -285,16 +359,17 @@ export function _useNavigations() {
   }
 
   function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
-    menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
-      if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-        return objValue.concat(srcValue) as ExtendedMenuLinkType[];
-      }
-    });
-    triggerRef(menuSchema);
+    mergeIntoMenuSchema(additionalSchema);
   }
 
-  // Registers an account left-rail section (idempotent by id). Modules call this at init.
+  // Registers an account left-rail section (idempotent by id). Modules call this at init. A section
+  // the host declared on the plugin's behalf is replaced by the plugin's own.
   function registerAccountSection(section: AccountNavigationSectionType) {
+    if (declaredSectionIds.has(section.id)) {
+      declaredSectionIds.delete(section.id);
+      registeredAccountSections.value = registeredAccountSections.value.map((x) => (x.id === section.id ? section : x));
+      return;
+    }
     if (registeredAccountSections.value.some((x) => x.id === section.id)) {
       Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
       return;
