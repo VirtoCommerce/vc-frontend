@@ -51,6 +51,12 @@
   // because the design names one, and because two copies drift the moment either is retuned.
   --glass-row: rgb(from theme("colors.additional.50") r g b / 0.6);
 
+  // A hint is not the value: at the field's own size a placeholder reads as content already
+  // typed, and the longer the hint the more it does. One step down across the scale — flat 14,
+  // not a ratio, so an xs field (14 itself) keeps hint and value in step instead of dropping
+  // the hint to a fraction of a pixel.
+  --vc-input-placeholder-font-size: theme("fontSize.sm");
+
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
   --vc-chip-radius: 9999px;

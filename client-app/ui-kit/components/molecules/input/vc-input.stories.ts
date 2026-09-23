@@ -438,7 +438,7 @@ export const SurfaceCSSVariables: StoryType = {
     components: { VcInput },
     template: `<div
       class="rounded-lg bg-gradient-to-br from-primary-100 to-secondary-100 p-6"
-      style="--vc-input-height: 2.5rem; --vc-input-bg-color: rgb(255 255 255 / 0.6); --vc-input-border-color: var(--color-neutral-300)"
+      style="--vc-input-height: 2.5rem; --vc-input-bg-color: rgb(255 255 255 / 0.6); --vc-input-border-color: var(--color-neutral-300); --vc-input-placeholder-font-size: 0.875rem"
     >
       <VcInput label="Search" placeholder="Type to search" />
     </div>`,
@@ -447,7 +447,7 @@ export const SurfaceCSSVariables: StoryType = {
     docs: {
       description: {
         story:
-          "`--vc-input-height`, `--vc-input-bg-color` and `--vc-input-border-color` let a theme sit the field on a translucent plate — a glass header, for instance — instead of the opaque default. The height knob applies to whichever size is in play and leaves the other sizes alone; each size keeps its own default.",
+          "`--vc-input-height`, `--vc-input-bg-color` and `--vc-input-border-color` let a theme sit the field on a translucent plate — a glass header, for instance — instead of the opaque default. The height knob applies to whichever size is in play and leaves the other sizes alone; each size keeps its own default. `--vc-input-placeholder-font-size` sizes the hint on its own, for a field whose placeholder is a sentence rather than a word; it defaults to `inherit`, so the value and the hint stay the same size unless a theme says otherwise.",
       },
       source: {
         code: `<div style="--vc-input-height: 2.5rem; --vc-input-bg-color: rgb(255 255 255 / 0.6)">

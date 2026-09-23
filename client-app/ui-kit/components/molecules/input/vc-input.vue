@@ -493,6 +493,11 @@ provide<VcInputContextType>("inputContext", {
     &::placeholder {
       @apply text-neutral-500 font-normal;
 
+      // The hint may be set smaller than the value it stands in for — a long placeholder reads
+      // as a label at the field's own size. `inherit` is the default, so an untouched field
+      // renders exactly as before.
+      font-size: var(--vc-input-placeholder-font-size, inherit);
+
       #{$error} & {
         @apply text-danger-500;
       }
