@@ -715,14 +715,27 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Dostępność",
+        "unit_price": "Cena jednostkowa",
+        "add_to_cart": "Dodaj do koszyka"
+      },
       "view_mode": {
         "grid_label": "Siatka",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Układ"
+      },
+      "sort": {
+        "aria_label": "Sortuj"
       },
       "page_size": {
         "label": "Wyników na stronę:"
       },
       "product_card": {
+        "low_stock": "Niski stan",
+        "configurable": "Konfigurowalny",
+        "variants": "Warianty",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Ocena:",
         "product_vendor": "Sprzedawca:"
@@ -1043,13 +1056,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortuj",
       "featured": "Polecane",
       "alphabetically_a_z": "Alfabetycznie, A-Z",
       "alphabetically_z_a": "Alfabetycznie, od Z do A",
       "price_low_to_high": "Cena, od najniższej",
       "price_high_to_low": "Cena: od najwyższej",
       "date_new_to_old": "Data, od najnowszej",
-      "date_old_to_new": "Data, od najstarszych"
+      "date_old_to_new": "Data, od najstarszych",
+      "short": {
+        "featured": "Polecane",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Cena ↑",
+        "price_high_to_low": "Cena ↓",
+        "date_new_to_old": "Najnowsze",
+        "date_old_to_new": "Najstarsze"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1554,7 @@
         "select_branch_text": "Wybierz oddział odbioru, aby zobaczyć produkty dostępne teraz w magazynie"
       },
       "products_found_message": "wynik | wyniki",
+      "products_found_label": "produktów znaleziono | produkt znaleziony | produkty znalezione | produktów znaleziono",
       "products_found_message_search": "znaleziono wynik | znaleziono wyników",
       "search_in_category": "Szukaj \"{keyword}\" w {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1567,7 @@
       "show_on_a_separate_page": "Pokaż na osobnej stronie",
       "no_products_message": "Nie ma produktów w tej kategorii",
       "no_products_filtered_message": "Nie znaleziono wyników",
+      "no_products_filtered_hint": "Poluzuj któryś z nich albo zacznij od nowa.",
       "no_facet_found_message": "Brak wyników",
       "no_products_button": "Resetuj wyszukiwanie",
       "products_icon": "Ikona produktu",

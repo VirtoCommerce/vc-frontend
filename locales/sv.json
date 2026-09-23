@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Tillgänglighet",
+        "unit_price": "Styckpris",
+        "add_to_cart": "Lägg i varukorgen"
+      },
       "view_mode": {
         "grid_label": "Rutnät",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Resultat per sida:"
       },
       "product_card": {
+        "low_stock": "Lågt lager",
+        "configurable": "Konfigurerbar",
+        "variants": "Varianter",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Betyg:",
         "product_vendor": "Leverantör:"
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortera",
       "featured": "Utvalda",
       "alphabetically_a_z": "Alfabetiskt, A-Ö",
       "alphabetically_z_a": "Alfabetiskt, Ö-A",
       "price_low_to_high": "Pris, lågt till högt",
       "price_high_to_low": "Pris, högt till lågt",
       "date_new_to_old": "Datum, nytt till gammalt",
-      "date_old_to_new": "Datum, gammalt till nytt"
+      "date_old_to_new": "Datum, gammalt till nytt",
+      "short": {
+        "featured": "Utvalda",
+        "alphabetically_a_z": "A-Ö",
+        "alphabetically_z_a": "Ö-A",
+        "price_low_to_high": "Pris ↑",
+        "price_high_to_low": "Pris ↓",
+        "date_new_to_old": "Nyaste",
+        "date_old_to_new": "Äldsta"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "Välj en upphämtningsfilial för att se produkter som finns i lager nu"
       },
       "products_found_message": "resultat | resultat",
+      "products_found_label": "produkt hittad | produkter hittade",
       "products_found_message_search": "resultat hittades | resultat hittades",
       "search_in_category": "Sök efter \"{keyword}\" i {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "Visa på en separat sida",
       "no_products_message": "Det finns inga produkter i denna kategori",
       "no_products_filtered_message": "Inga resultat hittades",
+      "no_products_filtered_hint": "Lätta på något av dem eller börja om.",
       "no_facet_found_message": "Inga resultat",
       "no_products_button": "Återställ sökning",
       "products_icon": "Produktikon",

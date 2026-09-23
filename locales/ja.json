@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "商品",
+        "availability": "在庫状況",
+        "unit_price": "単価",
+        "add_to_cart": "カートに追加"
+      },
       "view_mode": {
         "grid_label": "グリッド表示",
-        "list_label": "リスト表示"
+        "list_label": "リスト表示",
+        "aria_label": "レイアウト"
       },
       "page_size": {
         "label": "表示件数："
       },
       "product_card": {
+        "low_stock": "在庫わずか",
+        "configurable": "カスタマイズ可",
+        "variants": "バリエーション",
         "price_label": "@:common.labels.product_price",
         "product_rating": "評価：",
         "product_vendor": "販売元："
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "並べ替え",
       "featured": "おすすめ",
       "alphabetically_a_z": "アルファベット順 (A-Z)",
       "alphabetically_z_a": "アルファベット順 (Z-A)",
       "price_low_to_high": "価格の低い順",
       "price_high_to_low": "価格（高い順）",
       "date_new_to_old": "日付、新しい順",
-      "date_old_to_new": "日付、古い順"
+      "date_old_to_new": "日付、古い順",
+      "short": {
+        "featured": "注目の商品",
+        "alphabetically_a_z": "アルファベット順 (A-Z)",
+        "alphabetically_z_a": "アルファベット順 (Z-A)",
+        "price_low_to_high": "価格 (安い順)",
+        "price_high_to_low": "価格 (高い順)",
+        "date_new_to_old": "新着順",
+        "date_old_to_new": "古い順"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "受け取り店舗を選択して、現在在庫のある商品を確認してください"
       },
       "products_found_message": "件の検索結果",
+      "products_found_label": "件の商品",
       "products_found_message_search": "件見つかりました | 件見つかりました",
       "search_in_category": "「{category}」で「{keyword}」を検索",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "別ページで表示",
       "no_products_message": "このカテゴリーに商品がありません",
       "no_products_filtered_message": "該当する商品が見つかりません",
+      "no_products_filtered_hint": "条件をゆるめるか、最初からやり直してください。",
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",

@@ -1,13 +1,6 @@
 <template>
   <div v-if="typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue" class="slider-filter">
-    <VcWidget
-      v-if="mode === 'collapsable'"
-      class="slider-filter-widget"
-      size="xs"
-      collapsible
-      :title="facet.label"
-      collapsed
-    >
+    <VcWidget v-if="mode === 'collapsable'" class="slider-filter-widget" size="xs" collapsible :title="label">
       <div>
         <VcSlider
           :value="sliderValue"
@@ -15,7 +8,7 @@
           :max="facetMax"
           :cols="sliderCols"
           show-tooltip-on-col-hover
-          cols-height="36px"
+          cols-height="2rem"
           update-on-column-click
           @change="handleSliderChange"
         />
@@ -39,7 +32,7 @@
           variant="outline"
           v-bind="triggerProps"
         >
-          {{ facet.label }}
+          {{ label }}
 
           <template #append>
             <span class="slider-filter-dropdown__append">
@@ -60,7 +53,7 @@
             :cols="sliderCols"
             show-tooltip-on-col-hover
             update-on-column-click
-            cols-height="36px"
+            cols-height="2rem"
             @change="handleSliderChange"
           />
         </div>
@@ -71,6 +64,8 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import { useI18n } from "vue-i18n";
+import { globals } from "@/core/globals";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
 
@@ -91,6 +86,15 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { facet, filter } = toRefs(props);
+
+const { t } = useI18n();
+
+/** The store sends the price facet under its field name, "price"; it is headed as the design heads it, "Price (USD)". */
+const label = computed(() =>
+  facet.value.paramName.toLowerCase() === "price" && globals.currencyCode
+    ? `${t("common.labels.price")} (${globals.currencyCode})`
+    : facet.value.label,
+);
 
 const facetMin = computed(() => {
   return typeof facet.value.statistics?.min === "number" ? Math.floor(facet.value.statistics.min) : undefined;
@@ -226,6 +230,27 @@ function applyRange(range: [number | null, number | null]) {
 </script>
 
 <style lang="scss">
+// The price slider as the design draws it: a 32px histogram, the track 14 below it so the handles
+// sit clear of the bars, and the two fields as rounded boxes with the figure centred at 14 — a
+// pair of values, not two search boxes — with a quiet dash between them.
+.slider-filter {
+  .noUi-target {
+    @apply mt-3.5;
+  }
+
+  .vc-slider__input .vc-input__container {
+    @apply rounded-lg;
+  }
+
+  .vc-slider__input input {
+    @apply text-center text-sm;
+  }
+
+  .vc-slider__dash {
+    @apply text-neutral-500;
+  }
+}
+
 .slider-filter-dropdown {
   $opened: "";
 

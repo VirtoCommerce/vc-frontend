@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "商品",
+        "availability": "库存",
+        "unit_price": "单价",
+        "add_to_cart": "加入购物车"
+      },
       "view_mode": {
         "grid_label": "网格",
-        "list_label": "列表"
+        "list_label": "列表",
+        "aria_label": "布局"
       },
       "page_size": {
         "label": "每页结果数："
       },
       "product_card": {
+        "low_stock": "库存紧张",
+        "configurable": "可定制",
+        "variants": "多规格",
         "price_label": "@:common.labels.product_price",
         "product_rating": "评分：",
         "product_vendor": "供应商："
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "排序",
       "featured": "精选",
       "alphabetically_a_z": "按字母顺序，A-Z",
       "alphabetically_z_a": "按字母 Z-A 排序",
       "price_low_to_high": "价格，从低到高",
       "price_high_to_low": "价格从高到低",
       "date_new_to_old": "日期，由新到旧",
-      "date_old_to_new": "日期，从旧到新"
+      "date_old_to_new": "日期，从旧到新",
+      "short": {
+        "featured": "精选",
+        "alphabetically_a_z": "按字母顺序 A-Z",
+        "alphabetically_z_a": "按字母顺序 Z-A",
+        "price_low_to_high": "价格 ↑",
+        "price_high_to_low": "价格 ↓",
+        "date_new_to_old": "最新",
+        "date_old_to_new": "最旧"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "选择一个自取分支以查看当前有库存的产品"
       },
       "products_found_message": "结果 | 结果",
+      "products_found_label": "件商品",
       "products_found_message_search": "找到结果 | 找到结果",
       "search_in_category": "在 {category} 中搜索“{keyword}”",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "在单独页面显示",
       "no_products_message": "此类别中没有产品",
       "no_products_filtered_message": "未找到结果",
+      "no_products_filtered_hint": "放宽其中一个条件，或重新开始。",
       "no_facet_found_message": "无结果",
       "no_products_button": "重置搜索",
       "products_icon": "产品图标",

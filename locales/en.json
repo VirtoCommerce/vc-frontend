@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Product",
+        "availability": "Availability",
+        "unit_price": "Unit price",
+        "add_to_cart": "Add to cart"
+      },
       "view_mode": {
         "grid_label": "Grid",
-        "list_label": "List"
+        "list_label": "List",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Results per page:"
       },
       "product_card": {
+        "low_stock": "Low stock",
+        "configurable": "Configurable",
+        "variants": "Variants",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Rating:",
         "product_vendor": "Vendor:"
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sort",
       "featured": "Featured",
       "alphabetically_a_z": "Alphabetically, A-Z",
       "alphabetically_z_a": "Alphabetically, Z-A",
       "price_low_to_high": "Price, low to high",
       "price_high_to_low": "Price, high to low",
       "date_new_to_old": "Date, new to old",
-      "date_old_to_new": "Date, old to new"
+      "date_old_to_new": "Date, old to new",
+      "short": {
+        "featured": "Featured",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Price \u2191",
+        "price_high_to_low": "Price \u2193",
+        "date_new_to_old": "Newest",
+        "date_old_to_new": "Oldest"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "products_found_message": "result | results",
+      "products_found_label": "product found | products found",
       "products_found_message_search": "result found | results found",
       "search_in_category": "Search for \"{keyword}\" in {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
       "no_products_filtered_message": "There are no results found",
+      "no_products_filtered_hint": "Loosen one of them, or start over.",
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",

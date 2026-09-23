@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Producto",
+        "availability": "Disponibilidad",
+        "unit_price": "Precio unitario",
+        "add_to_cart": "Añadir al carrito"
+      },
       "view_mode": {
         "grid_label": "Cuadrícula",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Diseño"
       },
       "page_size": {
         "label": "Resultados por página:"
       },
       "product_card": {
+        "low_stock": "Pocas existencias",
+        "configurable": "Configurable",
+        "variants": "Variantes",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Calificación:",
         "product_vendor": "Vendedor:"
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Ordenar",
       "featured": "Destacados",
       "alphabetically_a_z": "Alfabéticamente, A-Z",
       "alphabetically_z_a": "Alfabéticamente, Z-A",
       "price_low_to_high": "Precio: de menor a mayor",
       "price_high_to_low": "Precio, de mayor a menor",
       "date_new_to_old": "Fecha, de más reciente a más antigua",
-      "date_old_to_new": "Fecha, de antiguo a nuevo"
+      "date_old_to_new": "Fecha, de antiguo a nuevo",
+      "short": {
+        "featured": "Destacado",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Precio ↑",
+        "price_high_to_low": "Precio ↓",
+        "date_new_to_old": "Más recientes",
+        "date_old_to_new": "Más antiguos"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "Selecciona una sucursal de recogida para ver los productos que están en stock ahora"
       },
       "products_found_message": "resultado | resultados",
+      "products_found_label": "producto encontrado | productos encontrados",
       "products_found_message_search": "resultado encontrado | resultados encontrados",
       "search_in_category": "Buscar \"{keyword}\" en {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "Mostrar en una página separada",
       "no_products_message": "No hay productos en esta categoría",
       "no_products_filtered_message": "No se encontraron resultados",
+      "no_products_filtered_hint": "Relaja alguno o empieza de nuevo.",
       "no_facet_found_message": "No se encontraron resultados",
       "no_products_button": "Restablecer búsqueda",
       "products_icon": "Icono de producto",

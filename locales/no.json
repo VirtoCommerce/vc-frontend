@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Tilgjengelighet",
+        "unit_price": "Enhetspris",
+        "add_to_cart": "Legg i handlekurv"
+      },
       "view_mode": {
         "grid_label": "Rutenett",
-        "list_label": "Liste"
+        "list_label": "Liste",
+        "aria_label": "Visningsmodus"
       },
       "page_size": {
         "label": "Resultater per side:"
       },
       "product_card": {
+        "low_stock": "Lav beholdning",
+        "configurable": "Konfigurerbar",
+        "variants": "Varianter",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Vurdering:",
         "product_vendor": "Leverandør:"
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sorter",
       "featured": "Fremhevet",
       "alphabetically_a_z": "Alfabetisk, A-Å",
       "alphabetically_z_a": "Alfabetisk, Å-A",
       "price_low_to_high": "Pris, lav til høy",
       "price_high_to_low": "Pris, høy til lav",
       "date_new_to_old": "Dato, ny til gammel",
-      "date_old_to_new": "Dato, gammel til ny"
+      "date_old_to_new": "Dato, gammel til ny",
+      "short": {
+        "featured": "Utvalgte",
+        "alphabetically_a_z": "A-Å",
+        "alphabetically_z_a": "Å-A",
+        "price_low_to_high": "Pris ↑",
+        "price_high_to_low": "Pris ↓",
+        "date_new_to_old": "Nyeste",
+        "date_old_to_new": "Eldste"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "Velg et hentepunkt for å se produkter på lager"
       },
       "products_found_message": "resultat | resultater",
+      "products_found_label": "produkt funnet | produkter funnet",
       "products_found_message_search": "resultat funnet | resultater funnet",
       "search_in_category": "Søk etter \"{keyword}\" i kategorien {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "Vis på en separat side",
       "no_products_message": "Ingen produkter i denne kategorien",
       "no_products_filtered_message": "Ingen resultater funnet",
+      "no_products_filtered_hint": "Løsne på et av dem, eller begynn på nytt.",
       "no_facet_found_message": "Ingen resultater",
       "no_products_button": "Tilbakestill søk",
       "products_icon": "Produktikon",

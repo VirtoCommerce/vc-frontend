@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Tuote",
+        "availability": "Saatavuus",
+        "unit_price": "Yksikköhinta",
+        "add_to_cart": "Lisää ostoskoriin"
+      },
       "view_mode": {
         "grid_label": "Ruudukko",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Asettelu"
       },
       "page_size": {
         "label": "Tuloksia per sivu:"
       },
       "product_card": {
+        "low_stock": "Vähissä",
+        "configurable": "Muokattava",
+        "variants": "Muunnelmat",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Arvostelu:",
         "product_vendor": "Toimittaja:"
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Lajittele",
       "featured": "Suositellut",
       "alphabetically_a_z": "Aakkosjärjestyksessä, A-Ö",
       "alphabetically_z_a": "Aakkosjärjestyksessä, Ö-A",
       "price_low_to_high": "Hinta, alhaisesta korkeaan",
       "price_high_to_low": "Hinta, korkeasta alhaiseen",
       "date_new_to_old": "Päivämäärä, uusi vanhaan",
-      "date_old_to_new": "Päivämäärä, vanha uuteen"
+      "date_old_to_new": "Päivämäärä, vanha uuteen",
+      "short": {
+        "featured": "Suositellut",
+        "alphabetically_a_z": "Aakkosjärjestys A-Ö",
+        "alphabetically_z_a": "Aakkosjärjestys Ö-A",
+        "price_low_to_high": "Hinta ↑",
+        "price_high_to_low": "Hinta ↓",
+        "date_new_to_old": "Uusimmat",
+        "date_old_to_new": "Vanhimmat"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "Valitse noutopiste nähdäksesi varastossa olevat tuotteet"
       },
       "products_found_message": "tulosta | tulosta",
+      "products_found_label": "tuote löytyi | tuotetta löytyi",
       "products_found_message_search": "tulosta löydetty | tulosta löydetty",
       "search_in_category": "Hae \"{keyword}\" kategoriasta {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "Näytä erillisellä sivulla",
       "no_products_message": "Tässä kategoriassa ei ole tuotteita",
       "no_products_filtered_message": "Tuloksia ei löytynyt",
+      "no_products_filtered_hint": "Väljennä jotakin niistä tai aloita alusta.",
       "no_facet_found_message": "Ei tuloksia",
       "no_products_button": "Nollaa haku",
       "products_icon": "Tuotekuvake",

@@ -1,8 +1,10 @@
 <template>
   <VcContainer>
-    <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
-
-    <Category :title is-root />
+    <Category :title is-root>
+      <template #breadcrumbs>
+        <VcBreadcrumbs :items="breadcrumbs" />
+      </template>
+    </Category>
   </VcContainer>
 </template>
 

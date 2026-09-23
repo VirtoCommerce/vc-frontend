@@ -715,14 +715,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Товар",
+        "availability": "Наличие",
+        "unit_price": "Цена за единицу",
+        "add_to_cart": "В корзину"
+      },
       "view_mode": {
         "grid_label": "Карточки",
-        "list_label": "Список"
+        "list_label": "Список",
+        "aria_label": "Макет"
       },
       "page_size": {
         "label": "Результатов на странице:"
       },
       "product_card": {
+        "low_stock": "Мало на складе",
+        "configurable": "Настраиваемый",
+        "variants": "Варианты",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Рейтинг:",
         "product_vendor": "Поставщик:"
@@ -1043,13 +1053,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Сортировка",
       "featured": "Рекомендуемые",
       "alphabetically_a_z": "По алфавиту, А-Я",
       "alphabetically_z_a": "По алфавиту, Я-А",
       "price_low_to_high": "Цена, от низкой к высокой",
       "price_high_to_low": "Цена: от высокой к низкой",
       "date_new_to_old": "Дата, от новых к старым",
-      "date_old_to_new": "Дата: сначала старые"
+      "date_old_to_new": "Дата: сначала старые",
+      "short": {
+        "featured": "Рекомендуемые",
+        "alphabetically_a_z": "А-Я",
+        "alphabetically_z_a": "Я-А",
+        "price_low_to_high": "Цена ↑",
+        "price_high_to_low": "Цена ↓",
+        "date_new_to_old": "Новые",
+        "date_old_to_new": "Старые"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1531,6 +1551,7 @@
         "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
       },
       "products_found_message": "результат | результатов",
+      "products_found_label": "товаров найдено | товар найден | товара найдено | товаров найдено",
       "products_found_message_search": "результат найден | результата найдено",
       "search_in_category": "Поиск \"{keyword}\" в {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1543,6 +1564,7 @@
       "show_on_a_separate_page": "Открыть в новом окне",
       "no_products_message": "В этой категории нет товаров",
       "no_products_filtered_message": "Результаты не найдены",
+      "no_products_filtered_hint": "Ослабьте один из них или начните заново.",
       "no_facet_found_message": "Результатов нет",
       "no_products_button": "Очистить поиск",
       "products_icon": "Иконка товара",
