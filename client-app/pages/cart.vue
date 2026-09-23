@@ -455,6 +455,10 @@ void (async () => {
 .cart {
   --vc-container-pt: theme("padding.5");
   --vc-container-pb: theme("padding.14");
+  // Every section on this page is a plate on the canvas, so they take the theme's plate
+  // shadow rather than the widget's default. The fallback is the shadow the design draws
+  // here, for a fork without the theme file.
+  --vc-widget-shadow: var(--plate-shadow, theme("boxShadow.0"));
 
   @apply relative;
 
@@ -483,6 +487,8 @@ void (async () => {
     --p-x: theme("padding.10");
     --p-t: theme("padding.10");
     --p-b: theme("padding.10");
+    // The empty plate is the page's only surface, so it steps back down to the widget's
+    // own shadow instead of the deeper plate one the sections take.
     --vc-widget-shadow: theme("boxShadow.0");
 
     @apply text-center;

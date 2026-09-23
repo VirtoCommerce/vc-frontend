@@ -23,7 +23,7 @@
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
             <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
               <slot name="prepend">
-                <VcShape v-if="prependIcon" :icon="prependIcon" />
+                <VcIcon v-if="prependIcon" class="vc-widget__prepend-icon" :name="prependIcon" />
               </slot>
             </span>
 
@@ -121,6 +121,8 @@ watchEffect(() => {
   $collapsed: "";
 
   --p-x: theme("padding.4");
+  --p-t: theme("padding.4");
+  --p-b: theme("padding.5");
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
@@ -206,7 +208,7 @@ watchEffect(() => {
   }
 
   &--no-border {
-    @apply border-none shadow-none;
+    @apply border-none;
   }
 
   &__header-container {
@@ -234,11 +236,15 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
+    @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold break-words;
   }
 
   &__slot {
-    @apply pt-4 pb-5 px-[--p-x] empty:hidden;
+    @apply pt-[--p-t] pb-[--p-b] px-[--p-x] empty:hidden;
+  }
+
+  &__prepend-icon {
+    --vc-icon-color: theme("colors.primary.500");
   }
 
   &__append-icon {
