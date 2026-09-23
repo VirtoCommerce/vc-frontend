@@ -120,9 +120,14 @@ watchEffect(() => {
   $collapsible: "";
   $collapsed: "";
 
-  --p-x: theme("padding.4");
-  --p-t: theme("padding.4");
-  --p-b: theme("padding.5");
+  // The body's own inset. Public, because a page that wants a roomier plate has to be able to
+  // say so by name: these three used to be reachable only as `--p-x`/`--p-t`/`--p-b`, which are
+  // this block's private spelling — an app setting them was writing into the kit's internals,
+  // and they inherit, so the value also landed on every widget nested below. The horizontal one
+  // steps up with the size; the knob wins over that step wherever it is set.
+  --p-x: var(--vc-widget-padding-x, theme("padding.4"));
+  --p-t: var(--vc-widget-padding-top, theme("padding.4"));
+  --p-b: var(--vc-widget-padding-bottom, theme("padding.5"));
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
@@ -174,7 +179,7 @@ watchEffect(() => {
       --shape-size: 2.25rem;
 
       @media (min-width: theme("screens.sm")) {
-        --p-x: theme("padding.6");
+        --p-x: var(--vc-widget-padding-x, theme("padding.6"));
       }
     }
 
@@ -186,7 +191,7 @@ watchEffect(() => {
       --shape-size: 2.5rem;
 
       @media (min-width: theme("screens.lg")) {
-        --p-x: theme("padding.7");
+        --p-x: var(--vc-widget-padding-x, theme("padding.7"));
       }
 
       &:not(#{$collapsible}) {
@@ -216,10 +221,14 @@ watchEffect(() => {
 
     &,
     & > * {
-      @apply rounded-t;
+      // The widget's own curve, not a fixed step: `rounded-t` is 4px whatever --radius says, so
+      // on a theme that rounds its plates to 28 the header's corners cut inside the plate — and
+      // on a collapsible widget those corners are a button, whose focus ring follows them.
+      border-radius: var(--radius) var(--radius) 0 0;
 
+      // Collapsed, the header IS the whole plate, so it rounds on all four.
       #{$collapsed} & {
-        @apply rounded-b;
+        border-radius: var(--radius);
       }
     }
   }
@@ -237,6 +246,10 @@ watchEffect(() => {
 
   &__title {
     @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold break-words;
+
+    // The display face is set a touch tight, the same as every other heading it stands beside —
+    // the face is drawn for it and reads loose at a title's size without it.
+    letter-spacing: -0.02em;
   }
 
   &__slot {
@@ -256,10 +269,12 @@ watchEffect(() => {
   }
 
   &__footer-container {
-    @apply rounded-b empty:hidden;
+    @apply empty:hidden;
 
+    &,
     & > * {
-      @apply rounded-b;
+      // The same curve the header takes, at the other end of the plate.
+      border-radius: 0 0 var(--radius) var(--radius);
     }
   }
 

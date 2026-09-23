@@ -26,6 +26,7 @@
                   value="all"
                   :label="t('shared.compare.table.tabs.all')"
                   :disabled="isTabSwitchDisabled"
+                  data-test-id="compare-tab-all"
                   @change="activeTab = $event"
                 />
 
@@ -35,6 +36,7 @@
                   value="differences"
                   :label="t('shared.compare.table.tabs.differences')"
                   :disabled="isTabSwitchDisabled"
+                  data-test-id="compare-tab-differences"
                   @change="activeTab = $event"
                 />
               </VcTabSwitchGroup>

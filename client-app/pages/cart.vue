@@ -1,5 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="loading" no-bg />
+  <VcLoaderOverlay v-if="showPageLoader" no-bg />
 
   <VcContainer v-else :class="['cart', { 'cart--empty': !cart?.items?.length }]">
     <VcLoaderOverlay :visible="isCartLocked" fixed-spinner />
@@ -19,15 +19,20 @@
         <div class="cart__empty-hint">{{ $t("pages.cart.empty_cart_search_text") }}</div>
 
         <div class="cart__empty-actions">
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+          <VcButton
+            v-if="!!continue_shopping_link"
+            :external-link="continue_shopping_link"
+            size="lg"
+            prepend-icon="shopping-bag"
+          >
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton v-else to="/" prepend-icon="shopping-bag">
+          <VcButton v-else to="/" size="lg" prepend-icon="shopping-bag">
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'BulkOrder' }" variant="outline" prepend-icon="bulk">
+          <VcButton :to="{ name: 'BulkOrder' }" size="lg" variant="outline" prepend-icon="bulk">
             {{ $t("common.buttons.add_with_bulk_order") }}
           </VcButton>
         </div>
@@ -305,6 +310,18 @@ const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 
+// Only while there is nothing to show at all. `loading` also covers the save-for-later
+// mutations, placing the order and the header's ship-to refetch — all of which happen with a
+// rendered cart in front of the customer, and swapping the page for a spinner there unmounts
+// the whole container, single-page checkout fields included, and loses what they had typed.
+const showPageLoader = computed(
+  () =>
+    loading.value &&
+    !cart.value?.items?.length &&
+    !recentlyBrowsedProducts.value.length &&
+    !hasAvailableSavedForLaterItems.value,
+);
+
 const otherCartTotals = computed(
   () =>
     cart.value?.cartTotals?.filter(
@@ -455,10 +472,6 @@ void (async () => {
 .cart {
   --vc-container-pt: theme("padding.5");
   --vc-container-pb: theme("padding.14");
-  // Every section on this page is a plate on the canvas, so they take the theme's plate
-  // shadow rather than the widget's default. The fallback is the shadow the design draws
-  // here, for a fork without the theme file.
-  --vc-widget-shadow: var(--plate-shadow, theme("boxShadow.0"));
 
   @apply relative;
 
@@ -484,12 +497,19 @@ void (async () => {
   }
 
   &__empty {
-    --p-x: theme("padding.10");
-    --p-t: theme("padding.10");
-    --p-b: theme("padding.10");
-    // The empty plate is the page's only surface, so it steps back down to the widget's
-    // own shadow instead of the deeper plate one the sections take.
-    --vc-widget-shadow: theme("boxShadow.0");
+    // The design gives this one plate a 40 inset on every side rather than the widget's own
+    // 16/24/20 — it is the whole page rather than a section of one, and what it holds is
+    // centred with nothing beside it (CartScreen.jsx, the empty branch).
+    --vc-widget-padding-top: theme("padding.10");
+    --vc-widget-padding-bottom: theme("padding.10");
+
+    // Sideways it waits for the room, the way the widget's own inset does: the design draws
+    // this plate at one desktop width and states the 40 inline, where no breakpoint can reach
+    // it, but 40 a side on a 360 phone leaves 248 for a `lg` button that measures 252 in
+    // English and more in German. Below `sm` the kit's own 16 stands.
+    @media (width >= theme("screens.sm")) {
+      --vc-widget-padding-x: theme("padding.10");
+    }
 
     @apply text-center;
   }
@@ -499,7 +519,8 @@ void (async () => {
   }
 
   &__empty-actions {
-    @apply mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2.5;
+    // One gap, not two: the design spaces the pair the same however they wrap.
+    @apply mt-6 flex flex-wrap justify-center gap-6;
   }
 
   &__section {

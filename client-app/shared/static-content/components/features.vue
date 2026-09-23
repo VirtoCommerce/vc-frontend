@@ -51,10 +51,6 @@ const classObject = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-
 .features-block {
   &.bg-neutral-800 {
     color: white;

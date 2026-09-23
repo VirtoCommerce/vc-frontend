@@ -125,9 +125,6 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .products-section {
-  --p-t: theme("padding.6");
-  --p-b: theme("padding.6");
-
   &__groups {
     @apply space-y-5;
 

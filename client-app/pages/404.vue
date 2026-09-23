@@ -43,9 +43,3 @@ watch(page404AnchorIsVisible, (value) => {
   }
 });
 </script>
-
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-</style>

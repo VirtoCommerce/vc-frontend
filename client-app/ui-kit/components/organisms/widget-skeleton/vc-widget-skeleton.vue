@@ -70,21 +70,24 @@ withDefaults(defineProps<IProps>(), {
 
   box-shadow: var(--shadow);
 
+  // Each size's inset reads VcWidget's padding knob first, for the same reason the surface
+  // knobs above are mirrored: a placeholder that keeps the kit's inset while the widget it
+  // stands in for takes the page's would jump the moment the real content arrives.
   &--size {
     &--xs {
-      --p-x: theme("padding.4");
+      --p-x: var(--vc-widget-padding-x, theme("padding.4"));
       --header-p-y: theme("padding[2.5]");
       --placeholder-h: 1.125rem;
     }
 
     &--sm {
-      --p-x: theme("padding.4");
+      --p-x: var(--vc-widget-padding-x, theme("padding.4"));
       --header-p-y: theme("padding.3");
       --placeholder-h: 1.375rem;
     }
 
     &--md {
-      --p-x: theme("padding.6");
+      --p-x: var(--vc-widget-padding-x, theme("padding.6"));
       --header-p-y: theme("padding.3");
       --placeholder-h: 1.625rem;
     }
@@ -92,14 +95,14 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       $sizeLG: &;
 
-      --p-x: theme("padding.5");
+      --p-x: var(--vc-widget-padding-x, theme("padding.5"));
       --header-p-y: theme("padding.4");
       --placeholder-h: 2.625rem;
 
       @apply divide-none;
 
       @media (min-width: theme("screens.lg")) {
-        --p-x: theme("padding.7");
+        --p-x: var(--vc-widget-padding-x, theme("padding.7"));
       }
     }
   }
