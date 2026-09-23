@@ -443,7 +443,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Search",
+        "enter_keyword_placeholder": "Search products and parts",
         "enter_keyword_placeholder_category": "Search within {category}",
         "search_button": "Search",
         "scope_loading_label": "Loading search context",

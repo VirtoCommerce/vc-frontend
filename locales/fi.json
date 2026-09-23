@@ -443,7 +443,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Hae",
+        "enter_keyword_placeholder": "Hae tuotteita ja osia",
         "enter_keyword_placeholder_category": "Hae kategoriasta {category}",
         "search_button": "Hae",
         "scope_loading_label": "Ladataan hakukontekstia",

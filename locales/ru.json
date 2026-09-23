@@ -443,7 +443,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Поиск",
+        "enter_keyword_placeholder": "Поиск товаров и запчастей",
         "enter_keyword_placeholder_category": "Искать в {category}",
         "search_button": "Искать",
         "scope_loading_label": "Загрузка контекста поиска",

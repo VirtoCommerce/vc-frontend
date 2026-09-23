@@ -443,7 +443,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "検索",
+        "enter_keyword_placeholder": "製品・部品を検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "search_button": "検索",
         "scope_loading_label": "検索コンテキストを読み込み中",
