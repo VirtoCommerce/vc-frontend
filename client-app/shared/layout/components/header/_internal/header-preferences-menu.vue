@@ -150,29 +150,35 @@ const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(
   --line: color-mix(in srgb, var(--ink) 12%, transparent);
 
   &__pill {
-    @apply flex flex-none cursor-pointer items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-2 text-sm;
+    @apply flex flex-none cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full;
 
-    border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
-    background: transparent;
-    color: var(--header-bottom-link-color);
-    transition:
-      background var(--transition-duration, 0.2s) ease,
-      border-color var(--transition-duration, 0.2s) ease;
+    // 12.5px, off the design's own scale rather than a Tailwind step: the pill is the smallest
+    // type in the header and sm (14) made it read as a second nav item next to the icon links.
+    // The line-height is the design's body ratio, not a step, so the box stays 35 and not 36.
+    font-size: 0.78125rem;
+    line-height: 1.55;
+    padding: 7px 11px;
+
+    // The same fill the search field takes: both are holes in the glass, not cards on it.
+    background: var(--glass-row, transparent);
+    border: 1px solid theme("colors.neutral.200");
+    color: theme("colors.neutral.950");
+    transition: border-color var(--transition-duration, 0.2s) ease;
 
     b {
-      @apply font-semibold;
+      @apply font-bold;
 
-      color: var(--ink);
+      letter-spacing: 0.02em;
     }
 
+    // Only the outline moves. The design never fills this control — a fill here would make it
+    // the loudest thing in a row whose whole job is to stay quiet behind the search field.
     &:hover {
-      background: color-mix(in srgb, var(--ink) 6%, transparent);
-      border-color: color-mix(in srgb, var(--ink) 26%, transparent);
+      border-color: theme("colors.neutral.300");
     }
 
     &--opened {
-      background: color-mix(in srgb, var(--ink) 8%, transparent);
-      border-color: color-mix(in srgb, var(--ink) 26%, transparent);
+      border-color: theme("colors.primary.500");
     }
   }
 

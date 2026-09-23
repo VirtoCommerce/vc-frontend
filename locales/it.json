@@ -443,7 +443,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Cerca",
+        "enter_keyword_placeholder": "Cerca prodotti e ricambi",
         "enter_keyword_placeholder_category": "Cerca in {category}",
         "search_button": "Cerca",
         "scope_loading_label": "Caricamento contesto di ricerca",

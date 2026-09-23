@@ -443,7 +443,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Sök",
+        "enter_keyword_placeholder": "Sök produkter och delar",
         "enter_keyword_placeholder_category": "Sök inom {category}",
         "search_button": "Sök",
         "scope_loading_label": "Laddar sökcontext",

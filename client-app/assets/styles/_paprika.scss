@@ -46,6 +46,17 @@
   --glass-under: rgb(from theme("colors.accent.800") r g b / 0.06);
   --glass-shadow: 0 10px 34px rgb(from theme("colors.neutral.950") r g b / 0.1);
 
+  // The controls that ride ON the glass — the search field and the locale pill — share one
+  // fill, weaker than the sheen: they are holes in the plate, not a second plate. One token
+  // because the design names one, and because two copies drift the moment either is retuned.
+  --glass-row: rgb(from theme("colors.additional.50") r g b / 0.6);
+
+  // A hint is not the value: at the field's own size a placeholder reads as content already
+  // typed, and the longer the hint the more it does. One step down across the scale — flat 14,
+  // not a ratio, so an xs field (14 itself) keeps hint and value in step instead of dropping
+  // the hint to a fraction of a pixel.
+  --vc-input-placeholder-font-size: theme("fontSize.sm");
+
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
   --vc-chip-radius: 9999px;
@@ -99,6 +110,8 @@ html.dark {
     0 0 0 0.5px rgb(from theme("colors.neutral.50") r g b / 0.5);
   // The dark sheen is a LIGHT warm tint, so it comes off the other end of the same scale.
   --glass-sheen: rgb(from theme("colors.neutral.950") r g b / 0.12);
+  // Same flip for the row fill, and the same ratio to the sheen the light pair has.
+  --glass-row: rgb(from theme("colors.neutral.950") r g b / 0.06);
   --glass-under: rgb(from theme("colors.neutral.50") r g b / 0.35);
   --glass-shadow: 0 10px 34px rgb(from theme("colors.neutral.50") r g b / 0.38);
 }

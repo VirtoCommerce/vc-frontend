@@ -443,7 +443,7 @@
         "by_virto": "由 Virto Commerce 提供"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "搜索",
+        "enter_keyword_placeholder": "搜索产品和配件",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "search_button": "搜索",
         "scope_loading_label": "正在加载搜索上下文",

@@ -54,10 +54,16 @@
           @scanned-code="onBarcodeScanned"
         />
 
+        <!-- Sized explicitly, not from the field's context: the kit derives a nested button from
+             the input's SIZE (md -> sm, 38), and this field is a themed 40 rather than the 44 that
+             size means, so the derived button overflowed its 34 of inner box. 32 is what the design
+             puts in a 40 field, and it is what the scope chips and the scanner beside it already are. -->
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
+          class="search-bar__submit"
           icon="search"
           icon-size="1.25rem"
+          size="xs"
           :loading="loading"
           data-test-id="global-search-apply-button"
           @click="searchDropdownRef?.handleSearch()"
@@ -236,6 +242,14 @@ onMounted(() => {
 
 <style lang="scss">
 .search-bar {
+  // On the glass plate the field is a hole in the surface, not a card on top of it: it takes
+  // the shared row fill and the softer of the two line steps, and it stands 40 rather than the
+  // kit's 44 — the design's whole header row is 88 and the field has to leave the icon links
+  // their own air. The fallbacks are the kit's own values, for a fork without the theme file.
+  --vc-input-height: 2.5rem;
+  --vc-input-bg-color: var(--glass-row, theme("colors.additional.50"));
+  --vc-input-border-color: theme("colors.neutral.300");
+
   @apply relative flex grow items-stretch;
 
   &__input {
@@ -244,6 +258,14 @@ onMounted(() => {
 
   &__button {
     @apply ms-1;
+  }
+
+  &__submit {
+    // The design insets the last control 4 from the field's edge and leaves 8 to the one before
+    // it. The field's own padding is 2 and cannot carry the rest — it also sets where the text
+    // sits — so the difference is margin on the button, exactly as the design does it. The start
+    // margin is 2 rather than 8 because the scanner ahead of it already contributes its own 6.
+    @apply ms-0.5 me-0.5;
   }
 
   &__dropdown {
