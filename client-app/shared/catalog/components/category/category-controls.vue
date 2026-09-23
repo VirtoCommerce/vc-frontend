@@ -135,7 +135,7 @@ interface IProps {
   // A switch carries a state and its label repeats it: an off switch's label goes quiet, so in a
   // row of three the one that is on reads first.
   &__label {
-    @apply whitespace-nowrap text-sm text-neutral-950 transition-colors duration-200;
+    @apply whitespace-nowrap text-sm leading-[1.55] text-neutral-950 transition-colors duration-200;
 
     &--muted {
       @apply text-neutral-500;
@@ -143,7 +143,7 @@ interface IProps {
   }
 
   &__availability {
-    @apply whitespace-nowrap text-sm text-neutral-950 transition-colors duration-200;
+    @apply whitespace-nowrap text-sm leading-[1.55] text-neutral-950 transition-colors duration-200;
 
     &--muted {
       @apply text-neutral-500;

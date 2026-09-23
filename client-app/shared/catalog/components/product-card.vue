@@ -420,6 +420,14 @@ const variationsCount = computed(() => {
   :deep(.vc-quantity-stepper) {
     --vc-button-icon-size: 0.875rem;
     --vc-icon-stroke: 3.7;
+
+    .vc-input__container {
+      @apply border-neutral-300;
+    }
+
+    input {
+      @apply text-sm font-bold tabular-nums;
+    }
   }
 
   // A minus that cannot go lower is the design's neutral 500 on 200 — the kit's 400 read as a
@@ -455,7 +463,7 @@ const variationsCount = computed(() => {
   }
 
   &__spec {
-    @apply min-w-0 max-w-full truncate rounded-lg border border-neutral-100 bg-neutral-100 px-2 py-0.5 text-[0.71875rem] leading-[1.45] text-neutral-700;
+    @apply min-w-0 max-w-full truncate rounded-lg border border-neutral-100 bg-neutral-100 px-2 py-0.5 text-xs leading-[1.45] text-neutral-700;
   }
 
   &__spec-label {
@@ -514,15 +522,15 @@ const variationsCount = computed(() => {
     }
 
     :deep(.vc-product-vendor) {
-      @apply mt-3 h-[1.125rem] text-[0.71875rem] leading-[1.4] tracking-[0.08em];
+      @apply mt-3 h-[1.05rem] overflow-visible text-xs leading-[1.4] tracking-[0.08em];
     }
 
     :deep(.vc-product-title) {
-      --vc-product-title-font-size: 0.90625rem;
+      --vc-product-title-font-size: 0.9375rem;
       --vc-product-title-link-color: theme("colors.neutral.950");
       --vc-product-title-link-hover-color: theme("colors.accent.600");
 
-      @apply mt-1.5 h-[2.64em] font-geologica text-[0.90625rem] font-semibold tracking-[-0.008em];
+      @apply mt-1.5 h-[2.64em] font-geologica text-[0.9375rem] font-semibold tracking-[-0.008em];
     }
 
     // The kit pins the title's own line-height; the text inside it takes the design's.
@@ -546,11 +554,11 @@ const variationsCount = computed(() => {
     :deep(.vc-product-price) {
       --vc-product-price-font-size: 1.1875rem;
 
-      @apply mt-2.5 font-geologica tracking-[-0.02em];
+      @apply mt-2.5 gap-x-1.5 font-geologica tracking-[-0.02em];
     }
 
     :deep(.vc-product-price__actual) {
-      @apply font-bold;
+      @apply whitespace-nowrap font-bold;
     }
 
     // "From" and the struck list price are one size: both are a condition of the figure, not part of it.
@@ -580,9 +588,10 @@ const variationsCount = computed(() => {
       @apply mt-1.5 min-h-[1.375rem];
     }
 
-    // The photo is a white plate with a hairline, the colour its packshots are shot on.
+    // The photo is a white plate with a hairline, the colour its packshots are shot on, and the
+    // brand line is the only step under it — the kit's own 16 below the photo doubled the gap.
     :deep(.vc-product-image) {
-      @apply aspect-square h-auto rounded-[0.625rem] border border-neutral-100 bg-additional-50;
+      @apply mb-0 aspect-square h-auto rounded-[0.625rem] border border-neutral-100 bg-additional-50;
     }
 
     :deep(.vc-product-image__img),

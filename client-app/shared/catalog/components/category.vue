@@ -815,7 +815,7 @@ onMounted(() => {
   // The kit paints each row paper white, which on the warm surface reads as a block behind the list.
   // Resting rows only — the kit's hover and active fills stay as they are.
   .vc-menu-item__inner {
-    @apply px-0;
+    @apply rounded-md px-0;
 
     &:not(:hover, .vc-menu-item__inner--active) {
       @apply bg-transparent;
@@ -824,6 +824,8 @@ onMounted(() => {
 
   .vc-widget__append-icon {
     --vc-icon-size: 1.5rem;
+
+    @apply text-primary-500;
   }
 
   // The field stands on the column's edges like the rows under it, and the heading's hairline is
@@ -831,6 +833,12 @@ onMounted(() => {
   // leftover from when a facet had side padding of its own, and in a card it read as a box in a box.
   .facet-filter-widget__search {
     @apply border-0 px-0 pb-1 pt-2.5;
+  }
+
+  // The rows start right under the heading's rule, as the design stacks them; the kit pads its list
+  // 6px at each end for a widget that had no such rule.
+  .facet-filter-widget__container {
+    @apply py-0;
   }
 
   // The kit squares the bottom of anything in a widget's footer to meet the widget's own corners.
@@ -942,7 +950,7 @@ onMounted(() => {
     }
 
     .vc-widget__title {
-      @apply font-geologica text-lg font-bold normal-case leading-[1.375rem] tracking-normal text-neutral-950;
+      @apply font-geologica text-lg font-bold normal-case leading-[1.375rem] tracking-[-0.02em] text-neutral-950;
     }
 
     .vc-widget__prepend-append,
@@ -970,7 +978,7 @@ onMounted(() => {
     }
 
     .facet-filter-widget__container .vc-menu-item__content {
-      @apply min-h-[1.125rem] leading-[1.125rem] text-neutral-700;
+      @apply block min-h-[1.125rem] truncate leading-[1.125rem] text-neutral-700;
     }
 
     // The fade over a cut-off list ends in the card's colour, not white, or it draws a pale band.
@@ -986,6 +994,10 @@ onMounted(() => {
 
       .vc-widget__header {
         @apply pb-1.5;
+      }
+
+      .vc-widget__title {
+        @apply tracking-[-0.01em];
       }
 
       .vc-widget__slot {
@@ -1053,16 +1065,17 @@ onMounted(() => {
   &__title {
     --vc-typography-text-transform: none;
 
-    @apply font-geologica text-[1.9rem] font-semibold leading-[1.12] tracking-[-0.03em];
+    @apply font-geologica text-[1.875rem] font-semibold leading-[1.12] tracking-[-0.03em];
 
     @media (min-width: 1920px) {
-      @apply text-[2.05rem];
+      @apply text-[2.0625rem];
     }
   }
 
-  // A note to the title, not part of it: 14 and quiet, lifted half an em.
+  // A note to the title, not part of it: 14 and quiet, raised as a superscript the way the design sets
+  // it — by the line box, not by the reset's relative offset.
   &__products-count {
-    @apply top-[-0.5em] ms-2 whitespace-nowrap text-sm font-normal normal-case tracking-normal text-neutral-500;
+    @apply static ms-2 whitespace-nowrap align-super text-sm font-normal normal-case leading-[1.12] tracking-normal text-neutral-500;
   }
 
   &__title-skeleton {
@@ -1078,6 +1091,16 @@ onMounted(() => {
     @apply flex flex-wrap items-center gap-3;
 
     margin-bottom: var(--category-inner);
+  }
+
+  // The layout switch and the sort are the design's seg track: no rim, 13 each side of a label, and
+  // the soft plate shadow on the sliding pill and the chosen segment rather than the kit's md.
+  .vc-tab-switch-group--seg {
+    --vc-tab-switch-padding-x: 0.8125rem;
+    --vc-tab-switch-group-pill-shadow: var(--category-plate-shadow);
+    --vc-tab-switch-checked-shadow: var(--category-plate-shadow);
+
+    @apply border-0;
   }
 
   &__filters-right {

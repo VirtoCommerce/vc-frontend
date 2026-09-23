@@ -137,7 +137,7 @@ function getFacet(category: CategoryType) {
   // text on both sides so the names stand on the heading's vertical while the hover and the
   // active fill still read as a row.
   &__item {
-    @apply -mx-2.5 flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm leading-[1.35] text-neutral-950 transition-colors;
+    @apply -mx-2.5 flex min-h-9 items-center gap-1.5 rounded-md px-2.5 py-2 text-sm leading-[1.35] text-neutral-950 transition-colors;
 
     &:is(a):hover {
       @apply bg-neutral-100;
@@ -154,11 +154,6 @@ function getFacet(category: CategoryType) {
 
     &--active {
       @apply bg-secondary-100 font-bold;
-    }
-
-    // Children sit one step in, under the section they belong to.
-    &--child {
-      @apply ps-6;
     }
   }
 
