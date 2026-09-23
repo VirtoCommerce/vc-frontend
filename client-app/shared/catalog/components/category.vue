@@ -191,10 +191,9 @@
           <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
 
           <CategoryProducts
+            ref="categoryProducts"
             :card-type="cardType"
             :sort-token="sortToken"
-            :columns-amount-desktop="columnsAmountDesktop"
-            :columns-amount-tablet="columnsAmountTablet"
             :fetching-more-products="fetchingMoreProducts"
             :fetching-products="fetchingProducts"
             :fixed-products-count="fixedProductsCount"
@@ -202,6 +201,7 @@
               hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
             "
             :items-per-page="itemsPerPage"
+            :grid-columns="gridColumns"
             :pages-count="pagesCount"
             :page-number="currentPage"
             :page-history="pageHistory"
@@ -229,7 +229,18 @@
 <script setup lang="ts">
 import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import { omit } from "lodash-es";
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  toRef,
+  toRefs,
+  useTemplateRef,
+  watch,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
@@ -248,6 +259,7 @@ import {
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import { getRowAlignedPageSize, useCatalogGridColumns } from "@/shared/catalog/composables/useCatalogGridColumns";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
@@ -413,7 +425,11 @@ const { selectedAddress } = useShipToLocation();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
-const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
+const categoryProducts = useTemplateRef("categoryProducts");
+const gridColumns = useCatalogGridColumns(categoryProducts);
+
+/** Whole rows per page: 16 cards on three columns left a row of one at the foot of every page. */
+const itemsPerPage = computed(() => getRowAlignedPageSize(gridColumns.value, DEFAULT_PAGE_SIZE));
 
 const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 const hideViewModeSelector = computed(() => {
@@ -729,8 +745,9 @@ watchDebounced(
   },
 );
 
+// A page size that follows the column count is not a new question, so it does not scroll the reader.
 watchDebounced(
-  computed(() => JSON.stringify(searchParams.value)),
+  computed(() => JSON.stringify(omit(searchParams.value, "itemsPerPage"))),
   () => {
     if (categoryProductsAnchor.value && (!isHorizontalFilters.value || isMobile.value)) {
       categoryProductsAnchor.value.scrollIntoView({ block: "center" });

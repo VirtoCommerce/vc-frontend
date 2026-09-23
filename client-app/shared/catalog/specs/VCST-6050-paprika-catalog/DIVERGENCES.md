@@ -130,6 +130,7 @@ Kept against the design by earlier decision:
 | 18 | Two switches, "In stock" and "Available at branches" | Three: the storefront's "Purchased before" stays. With three, the switches and the sort do not fit one line at 1440, and the group wraps onto a line of its own. |
 | 19 | A 124px stepper in a 196px last column | 150: our stepper does not go narrower, so the last track is 150 plus the actions. |
 | 20 | A sticky-free toolbar | Matches: the storefront's own sticky toolbar on phones is gone. |
+| 21 | A fixed page of cards | The page size follows the columns the grid draws — 16 rounded up to whole rows: 16 on 1, 2 and 4 columns, 18 on 3 and 6, 20 on 5 — so no page ends on a part-filled row. The column count is read off the listing's width, the same ladder the CSS uses, and `columnsAmountDesktop` / `columnsAmountTablet` (brand page, Builder.io blocks) no longer steer the catalog grid. |
 
 Limits:
 

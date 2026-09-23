@@ -124,20 +124,18 @@ const props = withDefaults(defineProps<IProps>(), {
   mode: CATALOG_PAGINATION_MODES.infiniteScroll,
   itemsPerPage: DEFAULT_PAGE_SIZE,
   viewMode: "grid",
-  columnsAmountTablet: "3",
-  columnsAmountDesktop: "4",
 });
 
 interface IProps {
   cardType?: "full" | "short";
-  columnsAmountDesktop?: string;
-  columnsAmountTablet?: string;
   fetchingMoreProducts: boolean;
   fetchingProducts: boolean;
   fixedProductsCount?: number;
   hasActiveFilters: boolean;
   keyword?: string;
   itemsPerPage?: number;
+  /** The grid's column count as it is drawn; the first two rows' images load eagerly. */
+  gridColumns?: number;
   pagesCount: number;
   pageHistory: Readonly<number[]>;
   pageNumber: number;
@@ -303,13 +301,6 @@ const skeletonComponent = computed(() =>
   displayedViewMode.value === "list" ? ProductSkeletonList : ProductSkeletonGrid,
 );
 
-const columns = computed(() => ({
-  null: 1,
-  xs: 2,
-  md: Number(props.columnsAmountTablet),
-  xl: Number(props.columnsAmountDesktop),
-}));
-
 const lazyCardsCount = computed(() => {
   if (displayedViewMode.value === "grid") {
     return getGridLazyCardsCount();
@@ -322,19 +313,8 @@ const lazyCardsCount = computed(() => {
 
 function getGridLazyCardsCount() {
   const rowCount = 2;
-  if (breakpoints.isSmaller("xs")) {
-    return columns.value.null;
-  }
-  if (breakpoints.isInBetween("xs", "md")) {
-    return columns.value.xs * rowCount;
-  }
-  if (breakpoints.isInBetween("md", "xl")) {
-    return columns.value.md * rowCount;
-  }
-  if (breakpoints.isGreaterOrEqual("xl")) {
-    return columns.value.xl * rowCount;
-  }
-  return 0;
+
+  return (props.gridColumns ?? 1) * rowCount;
 }
 
 function getListLazyCardsCount() {
