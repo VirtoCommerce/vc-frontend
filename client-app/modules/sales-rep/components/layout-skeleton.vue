@@ -59,22 +59,39 @@ const columns = computed(() =>
 // Stands in until the saved document arrives — registry defaults would show a layout that is not the
 // rep's, then shuffle it.
 .layout-skeleton {
-  @apply flex flex-col gap-5;
+  @apply flex flex-col;
+
+  gap: var(--page-stack, 1.25rem);
 
   &__stats {
     @apply flex flex-wrap gap-4;
   }
 
   &__row {
-    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
+    @apply flex flex-col;
+
+    gap: var(--page-stack, 1.25rem);
+
+    @media (width >= theme("screens.xl")) {
+      @apply flex-row items-start;
+    }
   }
 
   &__main {
-    @apply flex min-w-0 flex-1 flex-col gap-5;
+    @apply flex min-w-0 flex-1 flex-col;
+
+    gap: var(--page-stack, 1.25rem);
   }
 
+  // Matches layout-surface.vue's rail, or the row jumps when the saved document lands.
   &__aside {
-    @apply flex min-w-0 flex-col gap-5 xl:w-96 xl:shrink-0;
+    @apply flex min-w-0 flex-col;
+
+    gap: var(--page-stack, 1.25rem);
+
+    @media (width >= theme("screens.xl")) {
+      @apply w-[20.625rem] shrink-0;
+    }
   }
 
   // Wraps like layout-region--horizontal; pulses like the kit's skeleton beside it.
