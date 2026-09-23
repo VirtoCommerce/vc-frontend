@@ -45,7 +45,7 @@
       "meta_title": "Sélectionner les articles à retourner",
       "table_description": "lignes de commande disponibles au retour",
       "select_all": "Sélectionner toutes les lignes éligibles",
-      "eligible_count": "{eligible} lignes éligibles sur {total}",
+      "eligible_count": "{eligible} sur {total} lignes éligibles",
       "nothing_returnable": "Rien ne peut être retourné dans cette commande",
       "window_hint": "Les articles peuvent être retournés dans les {days} jours suivant la livraison",
       "selected_summary": "{lines} sélectionnées · {quantity} articles",
@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Ajouter les détails du retour",
-    "not_editable_message": "Ce retour a déjà été soumis",
     "details_section": "Détails",
     "bulk_section": "Appliquer à toutes les lignes",
     "apply_to_all": "Appliquer un motif aux {count} lignes",

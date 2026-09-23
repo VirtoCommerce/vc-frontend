@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "返品内容の入力",
-    "not_editable_message": "この返品はすでに申請済みです",
     "details_section": "詳細",
     "bulk_section": "すべての明細に適用",
     "apply_to_all": "{count} 件すべてに同じ理由を適用",

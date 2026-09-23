@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Aggiungi i dettagli del reso",
-    "not_editable_message": "Questo reso è già stato inviato",
     "details_section": "Dettagli",
     "bulk_section": "Applica a tutte le righe",
     "apply_to_all": "Applica un motivo a tutte le {count} righe",

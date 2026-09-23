@@ -120,7 +120,6 @@
   },
   "return_edit": {
     "title": "Lisää palautuksen tiedot",
-    "not_editable_message": "Tämä palautus on jo lähetetty",
     "details_section": "Tiedot",
     "bulk_section": "Käytä kaikkiin riveihin",
     "apply_to_all": "Käytä yhtä syytä kaikkiin {count} riviin",

@@ -7,13 +7,21 @@
     <VcTypography tag="h1">{{ $t("returns.select_items.title") }}</VcTypography>
 
     <VcEmptyView
-      v-if="!loading && !returnableItems.length"
+      v-if="!loading && !items.length"
       :text="$t('returns.select_items.nothing_returnable')"
       icon="outline-order"
     />
 
     <template v-else>
-      <VcAlert v-if="windowDays" color="info" variant="soft" size="sm" class="mb-5" icon>
+      <!--
+        Nothing returnable is said once, above the table, rather than instead of it: every line
+        carries its own reason and the buyer needs to read them to know what to do next.
+      -->
+      <VcAlert v-if="!loading && !returnableItems.length" color="warning" variant="soft" size="sm" class="mb-5" icon>
+        {{ $t("returns.select_items.nothing_returnable") }}
+      </VcAlert>
+
+      <VcAlert v-else-if="windowDays" color="info" variant="soft" size="sm" class="mb-5" icon>
         {{ $t("returns.select_items.window_hint", { days: windowDays }) }}
       </VcAlert>
 
@@ -144,7 +152,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
@@ -166,7 +174,7 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
-  title: t("returns.select_items.meta_title"),
+  title: computed(() => t("returns.select_items.meta_title")),
 });
 
 const {
