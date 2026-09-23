@@ -6,11 +6,21 @@
   --vc-radius: 0.75rem;
 
   // The next rung up the design's radius ladder: --vc-radius is the card/panel step (12),
-  // the plate step (28) is the shell — the header and footer plates. Unprefixed, like the
-  // shell's other app-layer vars (--glass, --header-*, --footer-*): no ui-kit component
-  // reads it, and --vc-* is the kit's own consumable namespace. This file owns the value;
-  // each consumer repeats it as a fallback so a fork that drops the file keeps round plates.
+  // the plate step (28) is every surface that sits straight on the canvas — the header and
+  // footer plates, and every widget. Unprefixed, like the shell's other app-layer vars
+  // (--glass, --header-*, --footer-*): no ui-kit component reads it, and --vc-* is the kit's
+  // own consumable namespace. This file owns the value; each consumer OUTSIDE it repeats the
+  // value as a fallback so a fork that drops the file keeps round plates.
   --plate-radius: 1.75rem;
+
+  // A widget is a plate: the design gives it the canvas radius and no outline, and lets the
+  // lightest rung of the shadow scale be the whole edge. --vc-widget-divide-color has to be
+  // named, because it defaults to the border colour just cleared — and that would take the
+  // rule under a widget title with it.
+  --vc-widget-radius: var(--plate-radius);
+  --vc-widget-border-color: transparent;
+  --vc-widget-divide-color: theme("colors.neutral.200");
+  --vc-widget-shadow: theme("boxShadow.0");
 
   // The rest of the design's page rhythm, read off its own :root. One knob per measure so
   // the header plate, the footer plates and the gaps between them cannot drift apart:
@@ -49,6 +59,13 @@
   // own :root as "+100 on the 1450 reference").
   --vc-container-max-width: 96.875rem;
 
+  // The canvas is the page's, not the container's. The plates stand off it on every side —
+  // above the header, around the footer, down the gutters — and none of that is inside a
+  // VcContainer, so the container can no longer be the only thing painting it. It is handed
+  // the canvas below; here it stops drawing its own, and the decoration it draws with it.
+  --vc-container-bg-color: transparent;
+  --vc-container-bg-image-display: none;
+
   // The footer's top plate is white here, so it takes the header's logo, not the inverted
   // one every other preset's dark band needs. The dark variant below takes it back.
   --footer-logo-light-display: block;
@@ -59,6 +76,11 @@
 html.dark {
   --footer-logo-light-display: none;
   --footer-logo-inverted-display: block;
+
+  // Dark has no shadow to spend: one dark surface is told from the next by a hairline, so
+  // the widget takes its border back and gives up the shadow.
+  --vc-widget-border-color: theme("colors.neutral.200");
+  --vc-widget-shadow: none;
 
   // Dark keeps the same shapes and changes the paint: the shadow deepens and gains the
   // half-pixel hairline that is the only thing separating one dark surface from another,
@@ -108,4 +130,14 @@ html,
 
   // CJK has no italic and the browser would fake the slant.
   font-synthesis: none;
+}
+
+// The app's canvas. `--body-bg-color` is the token every preset already sets and the one
+// the container used to read second-hand, but nothing has ever put it on the page itself:
+// outside a container the canvas fell through to the browser's own — white in light, and
+// in dark the UA's near-black instead of this preset's #16120e. The design paints it on
+// `body`, and from `body` it propagates to the whole canvas, overscroll included, so a
+// short page and a rubber-banded one end up the same colour as a full one.
+body {
+  @apply bg-[--body-bg-color];
 }

@@ -255,6 +255,7 @@
               :class="[
                 'vc-table__cell',
                 `vc-table__cell--align--${column.align ?? 'left'}`,
+                { 'vc-table__cell--strong': column.strong },
                 getColumnFixedClasses(column, 'vc-table__cell'),
                 column.classes,
               ]"
@@ -1298,9 +1299,15 @@ watch(
   }
 
   &__cell {
-    @apply px-4 py-3;
+    // A shade below the header, which keeps its neutral-950: the two weights are what give a
+    // row its hierarchy when every cell is otherwise the same size.
+    @apply px-4 py-3 text-neutral-800;
 
     @include column-align;
+
+    &--strong {
+      @apply font-bold text-neutral-950;
+    }
 
     &--fixed {
       @apply bg-additional-50;
@@ -1371,11 +1378,22 @@ watch(
   }
 
   &__footer {
-    @apply px-3 py-10 empty:hidden md:px-5 md:pb-5;
+    // The pager starts where the rows start: centred under a full-width table it read as
+    // belonging to nothing. Exposed as one padding box too — a table inset inside a card
+    // measures the gap above the pager from the table's own border, not from its last row,
+    // and the default 40 reads as a hole there.
+    @apply flex flex-col items-start empty:hidden;
+
+    padding: var(--vc-table-footer-padding, 2.5rem 0.75rem);
+
+    @media (width >= theme("screens.md")) {
+      padding: var(--vc-table-footer-padding, 2.5rem 1.25rem 1.25rem);
+    }
   }
 
   &__page-limit-message {
-    @apply mb-3 text-center;
+    // `w-full` holds the centring the footer's new `items-start` would otherwise take away.
+    @apply mb-3 w-full text-center;
   }
 }
 </style>

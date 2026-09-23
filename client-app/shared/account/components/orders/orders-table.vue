@@ -18,61 +18,20 @@
       <OrderCard :item="item" :order-scope="orderScope" />
     </template>
 
-    <!-- Desktop columns -->
-    <VcTableColumn id="number" v-slot="{ item }" :title="$t('pages.account.orders.order_number_label')" sortable>
+    <!-- Desktop columns: the four the design draws — number, date, status, total -->
+    <VcTableColumn id="number" v-slot="{ item }" :title="$t('pages.account.orders.order_number_label')" sortable strong>
       {{ item.number }}
     </VcTableColumn>
 
-    <VcTableColumn
-      v-if="orderScope === 'private'"
-      id="purchaseOrder"
-      v-slot="{ item }"
-      :title="$t('pages.account.orders.purchase_number_label')"
-    >
-      {{ item.purchaseOrderNumber }}
-    </VcTableColumn>
-
-    <VcTableColumn
-      v-if="orderScope === 'organization'"
-      id="buyerName"
-      v-slot="{ item }"
-      :title="$t('pages.account.orders.buyer_name_label')"
-      class="w-32 xl:w-40"
-    >
-      {{ item.customerName }}
-    </VcTableColumn>
-
-    <VcTableColumn
-      id="invoice"
-      v-slot="{ item }"
-      :title="$t('pages.account.orders.invoice_label')"
-      class="w-32 xl:w-40"
-    >
-      {{ item.inPayments?.[0]?.number }}
-    </VcTableColumn>
-
-    <VcTableColumn
-      id="createdDate"
-      v-slot="{ item }"
-      :title="$t('pages.account.orders.date_label')"
-      sortable
-      class="w-28"
-    >
+    <VcTableColumn id="createdDate" v-slot="{ item }" :title="$t('pages.account.orders.date_label')" sortable>
       {{ $d(item?.createdDate) }}
     </VcTableColumn>
 
-    <VcTableColumn id="status" v-slot="{ item }" :title="$t('pages.account.orders.status_label')" sortable class="w-36">
+    <VcTableColumn id="status" v-slot="{ item }" :title="$t('pages.account.orders.status_label')" sortable>
       <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" class="inline-block" />
     </VcTableColumn>
 
-    <VcTableColumn
-      id="total"
-      v-slot="{ item }"
-      :title="$t('pages.account.orders.total_label')"
-      sortable
-      align="right"
-      class="w-32"
-    >
+    <VcTableColumn id="total" v-slot="{ item }" :title="$t('pages.account.orders.total_label')" sortable align="right">
       <div class="flex flex-col">
         <span v-for="total in getDisplayTotals(item)" :key="total.currency.code">
           {{ total.formattedAmount }}

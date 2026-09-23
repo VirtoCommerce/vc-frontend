@@ -46,6 +46,34 @@ export const NoBorder: StoryType = {
   },
 };
 
+// A shadowless widget has only its outline left, so it takes the edge colour from its own knob
+// rather than from the one a theme clears in exchange for a shadow.
+export const NoShadowBorderCSSVariable: StoryType = {
+  args: {
+    shadow: false,
+    title: "Widget title",
+  },
+  render: renderWidget(`<div :style="{ '--vc-widget-no-shadow-border-color': '#e5451c' }">
+    <VcWidget v-bind="args">Widget text</VcWidget>
+  </div>`),
+};
+
+// The surface knobs together: a widget can be drawn as a plate that sits straight on the
+// canvas, with the shadow as its only edge.
+export const SurfaceCSSVariables: StoryType = {
+  args: {
+    title: "Widget title",
+  },
+  render: renderWidget(`<div :style="{
+    '--vc-widget-radius': '1.75rem',
+    '--vc-widget-border-color': 'transparent',
+    '--vc-widget-divide-color': '#e7ddce',
+    '--vc-widget-shadow': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+  }">
+    <VcWidget v-bind="args">Widget text</VcWidget>
+  </div>`),
+};
+
 export const Title: StoryType = {
   args: {
     title: "Widget title",

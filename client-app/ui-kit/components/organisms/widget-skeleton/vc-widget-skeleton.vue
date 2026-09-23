@@ -57,7 +57,18 @@ withDefaults(defineProps<IProps>(), {
 .vc-widget-skeleton {
   $sizeLG: "";
 
-  @apply relative border border-neutral-100 bg-additional-50 rounded divide-y shadow-md animate-pulse;
+  // VcWidget's surface knobs, so a theme that reshapes the widget reshapes the placeholder
+  // standing in for it. Not --vc-widget-divide-color: this component's rules are placeholder
+  // bars, not content. The fallbacks are its own long-standing values, not the widget's, so an
+  // untouched theme renders exactly as before.
+  --border-color: var(--vc-widget-border-color, theme("colors.neutral.100"));
+  --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
+  --radius: var(--vc-widget-radius, theme("borderRadius.DEFAULT"));
+  --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
+
+  @apply relative border border-[--border-color] bg-[--bg-color] rounded-[--radius] divide-y animate-pulse;
+
+  box-shadow: var(--shadow);
 
   &--size {
     &--xs {
@@ -94,6 +105,10 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &--no-shadow {
+    // Same reason as VcWidget's, on the same knob — but the fallback stays this component's
+    // own colour, which is a step lighter than the widget's.
+    --border-color: var(--vc-widget-no-shadow-border-color, theme("colors.neutral.100"));
+
     @apply shadow-none;
   }
 
