@@ -773,8 +773,14 @@ onMounted(() => {
     @apply border-0;
   }
 
+  // The kit paints each row paper white, which on the warm surface reads as a block behind the list.
+  // Resting rows only — the kit's hover and active fills stay as they are.
   .vc-menu-item__inner {
-    @apply bg-transparent px-0;
+    @apply px-0;
+
+    &:not(:hover, .vc-menu-item__inner--active) {
+      @apply bg-transparent;
+    }
   }
 
   .vc-widget__append-icon {
