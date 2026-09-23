@@ -83,31 +83,39 @@
         </VcButton>
       </div>
 
-      <VcScrollTopButton />
+      <!-- A phone's way back up, as the design has it: an orange disc once the reader is 400 down. -->
+      <VcButton
+        v-if="isCompact && scrolledDown"
+        class="category-products__scroll-top"
+        icon="chevron-up"
+        :aria-label="$t('common.buttons.scroll_to_top')"
+        @click="scrollToTop"
+      />
     </template>
 
-    <!-- Empty view -->
-    <VcEmptyView
-      v-else
-      :text="
-        hasActiveFilters || keyword
-          ? $t('pages.catalog.no_products_filtered_message')
-          : $t('pages.catalog.no_products_message')
-      "
-      icon="outline-stock"
-      :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
-    >
-      <template v-if="hasActiveFilters || keyword" #button>
-        <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
-          {{ $t("pages.catalog.no_products_button") }}
+    <!-- Where the grid would be: what happened, and the way out beside it. -->
+    <div v-else class="category-products__empty">
+      <p class="category-products__empty-title">
+        {{
+          hasActiveFilters || keyword
+            ? $t("pages.catalog.no_products_filtered_message")
+            : $t("pages.catalog.no_products_message")
+        }}
+      </p>
+
+      <template v-if="hasActiveFilters || keyword">
+        <p class="category-products__empty-hint">{{ $t("pages.catalog.no_products_filtered_hint") }}</p>
+
+        <VcButton size="sm" variant="outline" color="primary" @click="$emit('resetFilterKeyword')">
+          {{ $t("common.buttons.reset_filters") }}
         </VcButton>
       </template>
-    </VcEmptyView>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
+import { useBreakpoints, useWindowScroll } from "@vueuse/core";
 import { computed, onMounted, ref, toRef, useTemplateRef, watch } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
@@ -296,6 +304,14 @@ const minVisitedPage = computed(() => Math.min(...pageHistory.value));
 const maxVisitedPage = computed(() => Math.max(...pageHistory.value));
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
+const isCompact = breakpoints.smaller("lg");
+
+const { y: scrollY } = useWindowScroll();
+const scrolledDown = computed(() => scrollY.value > 400);
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
 const skeletonComponent = computed(() =>
   displayedViewMode.value === "list" ? ProductSkeletonList : ProductSkeletonGrid,
@@ -363,6 +379,24 @@ function sendGASelectItemEvent(product: Product): void {
     }
   }
 
+  &__empty {
+    @apply flex flex-col items-center gap-1.5 rounded-xl border border-dashed border-neutral-200 px-6 py-14 text-center;
+
+    background: rgb(from theme("colors.additional.50") r g b / 0.6);
+
+    html.dark & {
+      background: rgb(from theme("colors.primary.950") r g b / 0.06);
+    }
+  }
+
+  &__empty-title {
+    @apply m-0 font-geologica text-[1.0625rem] font-bold text-neutral-950;
+  }
+
+  &__empty-hint {
+    @apply m-0 mb-3.5 text-[0.84375rem] text-neutral-500;
+  }
+
   &__list {
     // Everything a card needs for the length of a turn, and not a moment longer. `will-change` puts
     // each card on its own layer so the turn is composited instead of repainting a card-sized
@@ -423,8 +457,15 @@ function sendGASelectItemEvent(product: Product): void {
     @apply mt-4;
   }
 
+  &__scroll-top {
+    @apply fixed bottom-4 end-4 z-[45] size-11 rounded-full;
+
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.25);
+  }
+
+  // The end of the list is said quietly, a step down from the page's ink.
   &__infinity {
-    @apply mt-8;
+    @apply mt-9 text-neutral-700;
   }
 }
 </style>

@@ -1564,6 +1564,7 @@
       "show_on_a_separate_page": "別ページで表示",
       "no_products_message": "このカテゴリーに商品がありません",
       "no_products_filtered_message": "該当する商品が見つかりません",
+      "no_products_filtered_hint": "条件をゆるめるか、最初からやり直してください。",
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",

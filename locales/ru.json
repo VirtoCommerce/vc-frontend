@@ -1564,6 +1564,7 @@
       "show_on_a_separate_page": "Открыть в новом окне",
       "no_products_message": "В этой категории нет товаров",
       "no_products_filtered_message": "Результаты не найдены",
+      "no_products_filtered_hint": "Ослабьте один из них или начните заново.",
       "no_facet_found_message": "Результатов нет",
       "no_products_button": "Очистить поиск",
       "products_icon": "Иконка товара",

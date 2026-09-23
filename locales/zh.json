@@ -1564,6 +1564,7 @@
       "show_on_a_separate_page": "在单独页面显示",
       "no_products_message": "此类别中没有产品",
       "no_products_filtered_message": "未找到结果",
+      "no_products_filtered_hint": "放宽其中一个条件，或重新开始。",
       "no_facet_found_message": "无结果",
       "no_products_button": "重置搜索",
       "products_icon": "产品图标",

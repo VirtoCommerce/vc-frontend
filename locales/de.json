@@ -1564,6 +1564,7 @@
       "show_on_a_separate_page": "Auf einer separaten Seite anzeigen",
       "no_products_message": "Es gibt keine Produkte in dieser Kategorie",
       "no_products_filtered_message": "Keine Ergebnisse gefunden",
+      "no_products_filtered_hint": "Lockern Sie einen davon oder beginnen Sie von vorn.",
       "no_facet_found_message": "Keine Ergebnisse",
       "no_products_button": "Suche zurücksetzen",
       "products_icon": "Produktikone",

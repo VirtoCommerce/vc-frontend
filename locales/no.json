@@ -1564,6 +1564,7 @@
       "show_on_a_separate_page": "Vis på en separat side",
       "no_products_message": "Ingen produkter i denne kategorien",
       "no_products_filtered_message": "Ingen resultater funnet",
+      "no_products_filtered_hint": "Løsne på et av dem, eller begynn på nytt.",
       "no_facet_found_message": "Ingen resultater",
       "no_products_button": "Tilbakestill søk",
       "products_icon": "Produktikon",

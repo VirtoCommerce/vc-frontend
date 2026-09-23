@@ -1564,6 +1564,7 @@
       "show_on_a_separate_page": "Näytä erillisellä sivulla",
       "no_products_message": "Tässä kategoriassa ei ole tuotteita",
       "no_products_filtered_message": "Tuloksia ei löytynyt",
+      "no_products_filtered_hint": "Väljennä jotakin niistä tai aloita alusta.",
       "no_facet_found_message": "Ei tuloksia",
       "no_products_button": "Nollaa haku",
       "products_icon": "Tuotekuvake",

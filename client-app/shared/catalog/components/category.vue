@@ -426,7 +426,7 @@ const { selectedAddress } = useShipToLocation();
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
 const categoryProducts = useTemplateRef("categoryProducts");
-const gridColumns = useCatalogGridColumns(categoryProducts);
+const gridColumns = useCatalogGridColumns(() => categoryProducts.value?.$el as HTMLElement | undefined);
 
 /** Whole rows per page: 16 cards on three columns left a row of one at the foot of every page. */
 const itemsPerPage = computed(() => getRowAlignedPageSize(gridColumns.value, DEFAULT_PAGE_SIZE));

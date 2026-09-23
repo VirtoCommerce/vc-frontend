@@ -547,7 +547,9 @@ const variationsCount = computed(() => {
       @apply font-bold;
     }
 
-    :deep(.vc-product-price__list) {
+    // "From" and the struck list price are one size: both are a condition of the figure, not part of it.
+    :deep(.vc-product-price__list),
+    :deep(.vc-product-price__variations) {
       @apply text-sm font-normal tracking-normal;
     }
 

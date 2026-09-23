@@ -1,7 +1,7 @@
 import { unrefElement, useResizeObserver, useWindowSize } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { BREAKPOINTS } from "@/ui-kit/constants";
-import type { MaybeElementRef } from "@vueuse/core";
+import type { MaybeComputedElementRef } from "@vueuse/core";
 
 /**
  * From lg the grid holds as many 215px cards as fit with 20 between them: N columns need
@@ -44,7 +44,7 @@ export function getRowAlignedPageSize(columns: number, pageSize: number): number
  * taken as soon as the listing mounts, not left to the first resize callback: the first products
  * request goes out a moment later and has to ask for whole rows already.
  */
-export function useCatalogGridColumns(listing: MaybeElementRef) {
+export function useCatalogGridColumns(listing: MaybeComputedElementRef) {
   const { width: viewportWidth } = useWindowSize();
   const listingWidth = ref(0);
 
