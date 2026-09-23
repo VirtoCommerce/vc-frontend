@@ -1,0 +1,6 @@
+.account-navigation {
+  // Dark reads by brightening, and neutral-100 is the widget's own surface here — so the
+  // hover moves a step up the neutral ramp and the active row one step up the secondary one.
+  --vc-menu-item-hover-bg: theme("colors.neutral.200");
+  --vc-menu-item-active-bg: theme("colors.secondary.200");
+}

@@ -247,16 +247,18 @@ onMounted(() => {
       }
     }
 
+    // Hover and the active mark are separately overridable, so a list can break the
+    // "one colour, two shades" pairing.
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
         &:hover {
-          @apply bg-[--color-#{$color}-50];
+          background-color: var(--vc-menu-item-hover-bg, var(--color-#{$color}-50));
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--vc-menu-item-active-bg, var(--color-#{$color}-100));
         }
       }
     }

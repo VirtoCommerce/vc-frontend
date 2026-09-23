@@ -169,7 +169,7 @@ onMounted(() => {
   // and would stay as a straight line across the plate's rounded bottom corners.
   height: var(--mega-menu-height, 2.5rem);
   border-color: var(--mega-menu-border-color, color-mix(in srgb, var(--header-bottom-text-color) 8%, transparent));
-  transition: border-color var(--transition-duration) ease;
+  transition: border-color var(--transition-duration, 0.2s) ease;
 
   &__popover {
     @apply flex items-stretch;

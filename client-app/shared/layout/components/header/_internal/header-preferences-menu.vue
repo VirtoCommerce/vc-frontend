@@ -156,8 +156,8 @@ const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(
     background: transparent;
     color: var(--header-bottom-link-color);
     transition:
-      background var(--transition-duration) ease,
-      border-color var(--transition-duration) ease;
+      background var(--transition-duration, 0.2s) ease,
+      border-color var(--transition-duration, 0.2s) ease;
 
     b {
       @apply font-semibold;
@@ -231,8 +231,8 @@ const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(
     border-radius: calc(var(--vc-radius) - 2px);
     color: inherit;
     transition:
-      background var(--transition-duration) ease,
-      color var(--transition-duration) ease;
+      background var(--transition-duration, 0.2s) ease,
+      color var(--transition-duration, 0.2s) ease;
 
     // A tint of the ink, not a palette step: it lands right in both themes, where a fixed
     // light grey would darken the dark panel instead of lifting it.

@@ -116,7 +116,14 @@ const sections = computed<RenderSectionType[]>(() => {
 
 <style lang="scss">
 .account-navigation {
-  @apply space-y-4;
+  // A nav hover is a neutral tint, so the secondary fill is left to say "you are here" and
+  // nothing else. Dark brightens instead: see dark/shared/account/account-navigation.
+  --vc-menu-item-hover-bg: theme("colors.neutral.100");
+
+  @apply flex flex-col;
+
+  // The same vertical step the theme puts between plates; the kit's own gap without it.
+  gap: var(--page-stack, theme("spacing.4"));
 
   &__container {
     @apply pt-3 px-4 pb-4;

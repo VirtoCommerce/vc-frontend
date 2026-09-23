@@ -132,6 +132,8 @@ watchEffect(() => {
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] bg-center;
 
+  // Raw, not `shadow-[--shadow]`: Tailwind reads a bare custom property there as a shadow
+  // COLOUR and drops the box-shadow declaration altogether.
   box-shadow: var(--shadow);
 
   @media (width < theme("screens.md")) {
@@ -196,6 +198,10 @@ watchEffect(() => {
   }
 
   &--no-shadow {
+    // With the shadow gone the outline is the widget's only edge, so this one does not read
+    // the border colour a theme clears in exchange for a shadow — it has its own knob.
+    --border-color: var(--vc-widget-no-shadow-border-color, theme("colors.neutral.200"));
+
     @apply shadow-none;
   }
 
