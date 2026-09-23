@@ -3769,6 +3769,36 @@ type SlotContextMapType = {
 };
 type SlotContextOfType<Id extends SlotIdType> = ConditionParamType<CategoryOfType<Id>>;
 
+type PluginStateType = "pending" | "loaded" | "failed" | "skipped";
+interface IPluginStatusType {
+    name: string;
+    state: PluginStateType;
+    /** Why it failed or was skipped. */
+    reason?: string;
+}
+/** Whether the host can stop waiting on `name`: it settled, it expired, or it was never declared. */
+declare function isPluginSettled(name: string): boolean;
+/** Resolves once `name` settles or expires; immediately for a plugin the host never saw. */
+declare function whenPluginSettled(name: string): Promise<IPluginStatusType>;
+/**
+ * What became of each federated plugin, reactively. The only way to tell a missing feature from a
+ * failed plugin in production, where `Logger` is a no-op.
+ */
+declare function usePluginsStatus(): {
+    plugins: Readonly<vue.Ref<readonly {
+        readonly name: string;
+        readonly state: PluginStateType;
+        readonly reason?: string | undefined;
+    }[], readonly {
+        readonly name: string;
+        readonly state: PluginStateType;
+        readonly reason?: string | undefined;
+    }[]>>;
+    stateOf: (name: string) => PluginStateType | undefined;
+    isSettled: typeof isPluginSettled;
+    whenSettled: typeof whenPluginSettled;
+};
+
 declare const ROUTES: {
     readonly CATALOG: {
         readonly NAME: "Catalog";
@@ -4761,8 +4791,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, useRouteQueryParam, useUser, useWishlistSharingScopes };
-export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IRouteContributionType, ISlotContributionType, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, RouteDeclarationType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopeSavedContextType };
+export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useUser, useWishlistSharingScopes };
+export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;

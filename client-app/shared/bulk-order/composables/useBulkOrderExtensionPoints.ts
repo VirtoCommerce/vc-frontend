@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { shallowRef } from "vue";
+import { shallowRef, triggerRef } from "vue";
 import type { DefineComponent, MaybeRefOrGetter } from "vue";
 
 export interface ITab {
@@ -17,6 +17,8 @@ function _useBulkOrderExtensionPoints() {
   function registerAdditionalTab(tab: ITab) {
     if (!additionalTabs.value.some((el) => el.id === tab.id)) {
       additionalTabs.value.push(tab);
+      // shallowRef tracks `.value` reassignment only; a registration after mount must re-render.
+      triggerRef(additionalTabs);
     }
   }
 

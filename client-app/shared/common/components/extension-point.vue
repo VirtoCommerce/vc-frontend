@@ -1,7 +1,27 @@
 <template>
+  <!--
+    Held while the plugin that declared this slot is on the way — even once its component is
+    registered, because the plugin merges its locales in init() and revealing earlier would paint raw
+    keys. The host's own fallback keeps the box its exact size, hidden and inert; a slot without one
+    is sized by host CSS on `data-slot`.
+  -->
+  <div
+    v-if="heldPolicy"
+    :class="['extension-point-reserve', $attrs.class]"
+    :data-slot="`${category}/${name}`"
+    :data-policy="heldPolicy"
+    aria-busy="true"
+  >
+    <div v-if="$slots.default" class="extension-point-reserve__fallback" inert>
+      <slot v-bind="{ extensionProps: undefined }" />
+    </div>
+
+    <VcLoader v-if="heldPolicy === 'block'" class="extension-point-reserve__loader" />
+  </div>
+
   <component
     :is="getComponent(category, name)"
-    v-if="name && isRegistered(category, name)"
+    v-else-if="name && isRegistered(category, name)"
     v-bind="{ ...getProps(category, name), ...$attrs }"
   />
 
@@ -25,6 +45,7 @@
 import { computed, useSlots, watch } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import { heldPolicyOf, reservationFor } from "@/modules/federated/contributions/declare";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 import type { ConditionParamType, ContributionType } from "@/shared/common/types/extensionRegistryMap";
@@ -80,13 +101,24 @@ const { getComponent, getContribution, getProps, isRegistered, passesCondition }
 
 const slots = useSlots();
 
+/**
+ * Handed a slot context, the declaration's field conditions decide for this render; without one,
+ * the call site already gated this extension point with `$canRenderExtensionPoint`.
+ */
+const heldPolicy = computed(() => {
+  const { category, name, conditionParameter } = props;
+  return conditionParameter === undefined
+    ? heldPolicyOf(category, name)
+    : reservationFor(category, name, conditionParameter);
+});
+
 // A computed so the template tracks the registry as well as the props: an entry registered after
 // this point starts its contribution instead of staying dark until the next remount.
 const contribution = computed(() => {
   const { category, name, conditionParameter } = props;
 
-  // A component replaces the fallback, so nothing would read a contribution.
-  if (!name || isRegistered(category, name)) {
+  // A component replaces the fallback, so nothing would read a contribution; a held box shows none.
+  if (!name || heldPolicy.value || isRegistered(category, name)) {
     return undefined;
   }
 
@@ -118,3 +150,25 @@ if (IS_DEVELOPMENT) {
   );
 }
 </script>
+
+<style lang="scss">
+.extension-point-reserve {
+  @apply relative;
+
+  &__fallback {
+    @apply invisible;
+  }
+
+  &__loader {
+    @apply absolute inset-0 m-auto;
+  }
+
+  &[data-policy="block"] {
+    @apply min-h-24;
+  }
+
+  &[data-slot="productCard/card-button"] {
+    @apply min-h-9;
+  }
+}
+</style>

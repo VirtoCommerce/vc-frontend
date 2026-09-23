@@ -85,6 +85,9 @@ export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames"
 // with the facade. `SlotContextMapType` is derived from the extension registry, so a host-side change to
 // a slot's condition parameter changes the contract.
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
+// What became of each federated plugin — the only production signal, since `Logger` is a no-op there.
+export { usePluginsStatus } from "@/modules/federated/contributions/status";
+export type { IPluginStatusType, PluginStateType } from "@/modules/federated/contributions/status";
 export type {
   ComparableConditionType,
   ConditionNodeType,

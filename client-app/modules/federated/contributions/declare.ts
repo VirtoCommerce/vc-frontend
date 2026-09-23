@@ -237,6 +237,19 @@ export function reservationFor(
   return evaluateResidual(declared.condition, slotContext) ? declared.policy : undefined;
 }
 
+/**
+ * The policy of a still-pending declaration for this slot, ignoring its field conditions — for an
+ * extension point that is not handed the slot context itself because its call site already decided
+ * (with `$canRenderExtensionPoint`) that it renders at all.
+ */
+export function heldPolicyOf(category: string, name: string | undefined): SlotPolicyType | undefined {
+  const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;
+  if (!declared || declared.policy === "none" || isPluginSettled(declared.plugin)) {
+    return undefined;
+  }
+  return declared.policy;
+}
+
 /** The plugin that declared this slot, if it has not settled yet. */
 export function pendingPluginOf(category: string, name: string | undefined): string | undefined {
   const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;

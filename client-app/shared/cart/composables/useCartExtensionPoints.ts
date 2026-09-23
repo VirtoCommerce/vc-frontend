@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { shallowRef } from "vue";
+import { shallowRef, triggerRef } from "vue";
 import type { DefineComponent } from "vue";
 
 type ElementType = {
@@ -14,6 +14,8 @@ function _useCartExtensionPoints() {
   function registerSidebarWidget(element: ElementType) {
     if (!sidebarWidgets.value.some((el) => el.id === element.id)) {
       sidebarWidgets.value.push(element);
+      // shallowRef tracks `.value` reassignment only; a registration after mount must re-render.
+      triggerRef(sidebarWidgets);
     }
   }
 

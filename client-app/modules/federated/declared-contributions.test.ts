@@ -1,14 +1,16 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
+import { PLACEHOLDER_META_KEY, resetDeclaredSlots } from "./contributions/declare";
+import { resetPluginStatuses, usePluginsStatus } from "./contributions/status";
+import { loadPreparedModules, prepareFederatedModules } from "./index";
 import type { IPlatformPlugin } from "./index";
 import type { Router } from "vue-router";
 
-const { loadRemoteMock, registerRemotesMock, globalsMock } = vi.hoisted(() => ({
-  loadRemoteMock: vi.fn(),
-  registerRemotesMock: vi.fn(),
-  globalsMock: {},
-}));
+const { loadRemoteMock, registerRemotesMock, globalsMock } = vi.hoisted(() => {
+  const hostGlobals: { router?: Router } = {};
+  return { loadRemoteMock: vi.fn(), registerRemotesMock: vi.fn(), globalsMock: hostGlobals };
+});
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
@@ -66,15 +68,15 @@ function context(enabled: boolean) {
 describe("declared contributions in the loader", () => {
   let router: Router;
 
-  beforeEach(async () => {
-    vi.resetModules();
+  beforeEach(() => {
     vi.clearAllMocks();
     router = createRouter({
       history: createMemoryHistory(),
       routes: [{ path: "/company", name: "Company", component: { template: "<router-view />" }, children: [] }],
     });
     globalsMock.router = router;
-    (await import("./contributions/status")).resetPluginStatuses();
+    resetPluginStatuses();
+    resetDeclaredSlots();
   });
 
   afterEach(() => {
@@ -83,8 +85,6 @@ describe("declared contributions in the loader", () => {
 
   it("fetches nothing of a plugin whose declared `when` is false, and reports why", async () => {
     const fetchMock = stubFetch(DECLARED);
-    const { prepareFederatedModules, loadPreparedModules } = await import("./index");
-    const { usePluginsStatus } = await import("./contributions/status");
 
     const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(false) });
     await loadPreparedModules(prepared).all;
@@ -102,7 +102,6 @@ describe("declared contributions in the loader", () => {
 
   it("asks nothing, not even the contributions, of a plugin the user may not run", async () => {
     const fetchMock = stubFetch(DECLARED);
-    const { prepareFederatedModules } = await import("./index");
 
     await prepareFederatedModules({
       plugins: [{ ...plugin(), permission: "sales-rep:access" }],
@@ -122,8 +121,6 @@ describe("declared contributions in the loader", () => {
           finishInit = resolve;
         }),
     });
-    const { prepareFederatedModules, loadPreparedModules } = await import("./index");
-    const { PLACEHOLDER_META_KEY } = await import("./contributions/declare");
 
     const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
 
@@ -148,7 +145,6 @@ describe("declared contributions in the loader", () => {
   it("still waits for a plugin that declared nothing", async () => {
     stubFetch(undefined);
     loadRemoteMock.mockResolvedValue({ init: vi.fn() });
-    const { prepareFederatedModules } = await import("./index");
 
     const prepared = await prepareFederatedModules({ plugins: [plugin([])], conditionContext: context(true) });
 
@@ -159,8 +155,6 @@ describe("declared contributions in the loader", () => {
   it("withdraws a failed plugin's placeholder so its deep link ends on the host's not-found page", async () => {
     stubFetch(DECLARED);
     loadRemoteMock.mockRejectedValue(new Error("chunk 404"));
-    const { prepareFederatedModules, loadPreparedModules } = await import("./index");
-    const { usePluginsStatus } = await import("./contributions/status");
 
     const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
     expect(router.hasRoute("SalesRepDocuments")).toBe(true);
@@ -172,7 +166,6 @@ describe("declared contributions in the loader", () => {
 
   it("skips a plugin that lists contributions but does not serve them", async () => {
     stubFetch(DECLARED, { contributionsStatus: 404 });
-    const { prepareFederatedModules } = await import("./index");
 
     const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
 
@@ -182,8 +175,6 @@ describe("declared contributions in the loader", () => {
 
   it("skips a plugin whose contributions are in a format this host does not read", async () => {
     stubFetch({ ...DECLARED, format: 2 });
-    const { prepareFederatedModules } = await import("./index");
-    const { usePluginsStatus } = await import("./contributions/status");
 
     await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
 

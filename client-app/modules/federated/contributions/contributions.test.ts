@@ -160,6 +160,7 @@ describe("applyContributions / releaseContributions", () => {
     routes: [
       { path: "documents", parent: "Company", name: "SalesRepDocuments", when: { can: "sales-rep:access" } },
       { path: "hidden", parent: "Company", name: "Hidden", when: { can: "nope" } },
+      // @ts-expect-error JSON from a plugin can name a parent this host does not have
       { path: "gone", parent: "Missing", name: "Orphan" },
       { path: "home", name: "Home" },
       { path: "sign", parent: "Company", name: "SignRedirect", redirect: "SignIn", when: { authenticated: true } },
