@@ -1,5 +1,5 @@
 <template>
-  <VcWidget id="products" size="lg" class="products-section">
+  <VcWidget id="products" size="md" class="products-section">
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="products-section__groups">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
@@ -125,6 +125,9 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .products-section {
+  --p-t: theme("padding.6");
+  --p-b: theme("padding.6");
+
   &__groups {
     @apply space-y-5;
 

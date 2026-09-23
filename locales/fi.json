@@ -671,7 +671,7 @@
         "title": "Tuotteet"
       },
       "gifts_section": {
-        "title": "+ Lisää lahja"
+        "title": "Lahjat"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Tuotteiden lisääminen ostoskoriin",
@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Kaikki",
-          "differences": "Erot"
+          "differences": "Erot",
+          "group_label": "Rivisuodatin"
         },
         "uncategorized": "Luokittelemattomat",
         "unresolved_category": "Tuntematon luokka",

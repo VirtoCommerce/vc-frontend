@@ -671,7 +671,7 @@
         "title": "Produkter"
       },
       "gifts_section": {
-        "title": "+ Lägg till en gåva"
+        "title": "Gåvor"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Resultat av att lägga till produkter i kundvagnen",
@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Alla",
-          "differences": "Skillnader"
+          "differences": "Skillnader",
+          "group_label": "Radfilter"
         },
         "uncategorized": "Osorterad",
         "unresolved_category": "Okänd kategori",

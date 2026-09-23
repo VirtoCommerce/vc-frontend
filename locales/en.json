@@ -671,7 +671,7 @@
         "title": "Products"
       },
       "gifts_section": {
-        "title": "+ Add a gift"
+        "title": "Gifts"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Adding products to cart result",
@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "All",
-          "differences": "Differences"
+          "differences": "Differences",
+          "group_label": "Row filter"
         },
         "uncategorized": "Uncategorized",
         "unresolved_category": "Unknown category",
@@ -1484,7 +1485,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "Cart",
+      "title": "Shopping cart",
       "empty_cart_description": "Your cart is empty",
       "empty_cart_search_text": "Use the search to find everything you need",
       "recently_browsed_products": "Recently browsed",

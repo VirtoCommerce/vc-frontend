@@ -1,52 +1,24 @@
 <template>
-  <template v-if="!cart?.items?.length && !recentlyBrowsedProducts?.length && !hasAvailableSavedForLaterItems">
-    <VcLoaderOverlay v-if="loading" no-bg />
+  <VcLoaderOverlay v-if="loading" no-bg />
 
-    <VcEmptyPage
-      v-else
-      :title="title ?? $t('pages.cart.title')"
-      image="basket.jpg"
-      icon="outline-cart"
-      :breadcrumbs="hideBreadcrumbs ? [] : breadcrumbs"
-    >
-      <div class="mb-6 text-lg font-bold">
-        {{ $t("pages.cart.empty_cart_description") }}
-      </div>
-
-      <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
-          {{ $t("common.buttons.continue_shopping") }}
-        </VcButton>
-
-        <VcButton v-else to="/" prepend-icon="shopping-bag">
-          {{ $t("common.buttons.continue_shopping") }}
-        </VcButton>
-
-        <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
-          {{ $t("common.buttons.add_with_bulk_order") }}
-        </VcButton>
-      </div>
-    </VcEmptyPage>
-  </template>
-
-  <VcContainer v-else class="relative max-lg:pb-12">
+  <VcContainer v-else :class="['cart', { 'cart--empty': !cart?.items?.length }]">
     <VcLoaderOverlay :visible="isCartLocked" fixed-spinner />
 
-    <VcBreadcrumbs v-if="!hideBreadcrumbs" :items="breadcrumbs" class="max-lg:hidden" />
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" :items="breadcrumbs" class="cart__breadcrumbs" />
 
-    <VcTypography tag="h1" class="mb-5">
+    <VcTypography tag="h1" class="cart__title">
       {{ title ?? $t("pages.cart.title") }}
     </VcTypography>
 
     <template v-if="!cart?.items?.length">
-      <VcWidget class="mb-10 mt-8" size="lg">
-        <div class="text-lg font-bold">
+      <VcWidget class="cart__empty" :border="false" size="md">
+        <VcTypography tag="h4">
           {{ $t("pages.cart.empty_cart_description") }}
-        </div>
+        </VcTypography>
 
-        <div class="mt-1 text-sm font-normal">{{ $t("pages.cart.empty_cart_search_text") }}</div>
+        <div class="cart__empty-hint">{{ $t("pages.cart.empty_cart_search_text") }}</div>
 
-        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
+        <div class="cart__empty-actions">
           <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
@@ -55,7 +27,7 @@
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
+          <VcButton :to="{ name: 'BulkOrder' }" variant="outline" prepend-icon="bulk">
             {{ $t("common.buttons.add_with_bulk_order") }}
           </VcButton>
         </div>
@@ -65,14 +37,14 @@
         v-if="hasAvailableSavedForLaterItems && !shouldHide('cart-for-later')"
         :saved-for-later-list="savedForLaterList"
         :loading="moveFromSavedForLaterOverflowed"
-        class="mt-5"
+        class="cart__section"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
       <RecentlyBrowsedProducts
         v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
         :products="recentlyBrowsedProducts"
-        class="mt-5"
+        class="cart__section"
       />
     </template>
 
@@ -104,49 +76,49 @@
         <GiftsSection
           v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
           :gifts="availableExtendedGifts"
-          class="mt-5"
+          class="cart__section"
           @toggle:gift="toggleGift"
         />
 
         <!-- Sections for single page checkout -->
         <template v-if="!$cfg.checkout_multistep_enabled">
-          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
+          <ShippingDetailsSection v-if="!allItemsAreDigital" class="cart__section" />
 
           <BillingDetailsSection :cart="cart" />
 
-          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
+          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="cart__section" />
         </template>
 
         <CartForLater
           v-if="hasAvailableSavedForLaterItems && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
-          class="mt-5"
+          class="cart__section"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
           :products="recentlyBrowsedProducts"
-          class="mt-5"
+          class="cart__section"
         />
 
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
-              <LoyaltyValidationAlert class="mt-4" />
+              <LoyaltyValidationAlert class="cart__alert" />
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="checkout-button"
-                class="mt-4"
+                class="cart__action"
               >
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder data-test-id="place-order-button" v-else class="mt-4" />
+              <PlaceOrder data-test-id="place-order-button" v-else class="cart__action" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -155,7 +127,7 @@
                     color="warning"
                     size="sm"
                     variant="solid-light"
-                    class="mt-4"
+                    class="cart__alert"
                     icon
                   >
                     {{ $t("common.messages.fill_all_required") }}
@@ -169,7 +141,7 @@
                   color="warning"
                   size="sm"
                   variant="solid-light"
-                  class="mt-4"
+                  class="cart__alert"
                   icon
                 >
                   {{ $t("common.messages.something_went_wrong") }}
@@ -178,13 +150,13 @@
             </template>
           </OrderSummary>
 
-          <CouponsSection class="mt-5" />
+          <CouponsSection class="cart__section" />
 
           <component
             :is="item.element"
             v-for="item in sidebarWidgets.filter((item) => !shouldHide(item.id))"
             :key="item.id"
-            class="mt-5"
+            class="cart__section"
             @lock-cart="isCartLocked = true"
             @unlock-cart="isCartLocked = false"
           />
@@ -192,21 +164,14 @@
       </VcLayout>
 
       <transition name="slide-fade-bottom">
-        <div
-          v-if="!loading && cart?.items?.length"
-          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
-        >
-          <div class="text-end text-base font-bold text-neutral-950">
+        <div v-if="!loading && cart?.items?.length" class="cart__mobile-bar">
+          <div class="cart__mobile-total">
             <span class="me-1">{{ $t("common.labels.total") }}:</span>
 
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
           </div>
 
-          <div
-            v-for="cartTotal in otherCartTotals"
-            :key="cartTotal.total.currency.code"
-            class="text-end text-base font-bold text-neutral-950"
-          >
+          <div v-for="cartTotal in otherCartTotals" :key="cartTotal.total.currency.code" class="cart__mobile-total">
             <span class="me-1">
               {{ $t("common.labels.total_in_currency", { currency: cartTotal.total.currency.code }) }}:
             </span>
@@ -218,12 +183,12 @@
             v-if="$cfg.checkout_multistep_enabled"
             :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
-            class="!mt-2"
+            class="cart__mobile-action"
           >
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder data-test-id="sticked-place-order-button" v-else class="!mt-2" />
+          <PlaceOrder data-test-id="sticked-place-order-button" v-else class="cart__mobile-action" />
         </div>
       </transition>
     </template>
@@ -485,3 +450,89 @@ void (async () => {
   }
 })();
 </script>
+
+<style lang="scss">
+.cart {
+  --vc-container-pt: theme("padding.5");
+  --vc-container-pb: theme("padding.14");
+  // Every section on this page is a plate on the canvas, so they take the theme's plate
+  // shadow rather than the widget's default. The fallback is the shadow the design draws
+  // here, for a fork without the theme file.
+  --vc-widget-shadow: var(--plate-shadow, theme("boxShadow.0"));
+
+  @apply relative;
+
+  &--empty {
+    --vc-container-pt: theme("padding.10");
+    --vc-container-pb: theme("padding.24");
+
+    .cart__title {
+      @apply mb-6;
+    }
+  }
+
+  &__breadcrumbs {
+    @apply mb-3;
+
+    @media (width < theme("screens.lg")) {
+      @apply hidden;
+    }
+  }
+
+  &__title {
+    @apply mb-5;
+  }
+
+  &__empty {
+    --p-x: theme("padding.10");
+    --p-t: theme("padding.10");
+    --p-b: theme("padding.10");
+    // The empty plate is the page's only surface, so it steps back down to the widget's
+    // own shadow instead of the deeper plate one the sections take.
+    --vc-widget-shadow: theme("boxShadow.0");
+
+    @apply text-center;
+  }
+
+  &__empty-hint {
+    @apply mt-1 text-sm font-normal text-neutral-600;
+  }
+
+  &__empty-actions {
+    @apply mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2.5;
+  }
+
+  &__section {
+    @apply mt-5;
+  }
+
+  &__alert,
+  &__action {
+    @apply mt-3;
+  }
+
+  &__mobile-bar {
+    @apply fixed bottom-0 start-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3;
+
+    box-shadow:
+      0 2px 10px 0 rgb(0 0 0 / 10%),
+      0 0 25px -5px rgb(0 0 0 / 20%);
+
+    @media (width >= theme("screens.md")) {
+      @apply hidden;
+    }
+
+    @media print {
+      @apply hidden;
+    }
+  }
+
+  &__mobile-total {
+    @apply text-end text-base font-bold text-neutral-950;
+  }
+
+  &__mobile-action {
+    margin-top: theme("spacing.2") !important;
+  }
+}
+</style>

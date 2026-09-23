@@ -671,7 +671,7 @@
         "title": "Prodotti"
       },
       "gifts_section": {
-        "title": "+ Aggiungi un regalo"
+        "title": "Regali"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Risultato aggiunta prodotti al carrello",
@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Tutti",
-          "differences": "Differenze"
+          "differences": "Differenze",
+          "group_label": "Filtro righe"
         },
         "uncategorized": "Non categorizzato",
         "unresolved_category": "Categoria sconosciuta",
