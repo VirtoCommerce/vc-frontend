@@ -46,6 +46,7 @@
 import { useMutation } from "@vue/apollo-composable";
 import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency } from "@/core/composables";
+import { useCartContext } from "@/core/composables/useCartContext";
 import { globals } from "@/core/globals";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart } from "@/shared/cart";
@@ -55,6 +56,7 @@ const { cart } = useShortCart();
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
 const { userId, storeId, cultureName, currencyCode: currentCurrencyCode } = globals;
+const { cartName } = useCartContext();
 
 async function select(code: string): Promise<void> {
   if (currentCurrency.value?.code !== code) {
@@ -67,6 +69,7 @@ async function select(code: string): Promise<void> {
           storeId,
           cultureName,
           currencyCode: currentCurrencyCode,
+          cartName: cartName.value,
         },
       });
     }

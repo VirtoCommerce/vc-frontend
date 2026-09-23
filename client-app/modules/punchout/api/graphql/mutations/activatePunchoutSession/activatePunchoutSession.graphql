@@ -1,7 +1,7 @@
-  mutation activatePunchoutSession($command:  ActivatePunchoutSessionCommandType!) {
-     activatePunchoutSession(command:$command) {
-			error
-      punchoutCartId
-      punchoutCartName
-    }
+mutation activatePunchoutSession($command: ActivatePunchoutSessionCommandType!) {
+  activatePunchoutSession(command: $command) {
+    error
+    punchoutCartId
+    punchoutCartName
   }
+}

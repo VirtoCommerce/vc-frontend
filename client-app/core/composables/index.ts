@@ -3,6 +3,7 @@ export * from "./useAuth";
 export * from "./useBrandProfile";
 export * from "./useBreadcrumbs";
 export * from "./useBrowserTarget";
+export * from "./useCartContext";
 export * from "./useCategoriesRoutes";
 export * from "./useCountries";
 export * from "./useCurrency";
