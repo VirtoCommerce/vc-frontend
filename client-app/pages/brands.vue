@@ -223,9 +223,9 @@ watch(activeNavItem, (newActiveNavItem) => {
   @apply bg-neutral-50 grow;
 
   &__widget {
-    --header-p-y: 1.25rem;
-    --p-x: 1.75rem;
-    --slot-p-t: 1.75rem;
+    // `--header-p-y` and `--slot-p-t` went with it: VcWidget reads neither, and the class is on
+    // a VcWidget, not on the skeleton that still has a `--header-p-y` of its own.
+    --vc-widget-padding-x: 1.75rem;
   }
 
   &__breadcrumbs {

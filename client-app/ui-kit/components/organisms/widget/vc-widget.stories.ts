@@ -229,3 +229,15 @@ export const HeaderFooterOnly: StoryType = {
     <template #footer>Footer text</template>
   </VcWidget>`),
 };
+
+// The three padding knobs, set from outside by name. Without them a consumer could only reach
+// this widget's inset through `--p-x`/`--p-t`/`--p-b`, which are the block's private spelling.
+export const PaddingFromTheOutside: StoryType = {
+  args: {
+    title: "Roomier plate",
+  },
+  render:
+    renderWidget(`<div style="--vc-widget-padding-x: 2.5rem; --vc-widget-padding-top: 2.5rem; --vc-widget-padding-bottom: 2.5rem">
+    <VcWidget v-bind="args">Widget text</VcWidget>
+  </div>`),
+};

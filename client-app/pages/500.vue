@@ -30,9 +30,3 @@ usePageHead({
   title: `${t("pages.500.error_code")} ${t("pages.500.error_text")}`,
 });
 </script>
-
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-</style>

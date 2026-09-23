@@ -107,16 +107,17 @@ const isMegaMenuShown = computed(() => {
     @apply hidden;
   }
 
-  // The page inset and the vertical step the header plate shares with the page's own
-  // plates. One step above the plate and the same one below it: in the design every gap
-  // in the column — over the header, between plates, under the last one — is --page-stack.
+  // The page inset, and the one step of air ABOVE the plate. Nothing below it: the gap down to
+  // the first content belongs to the page, which already spends it through VcContainer's own
+  // top padding — measured against the design at 1512, its header ends at 154 and the content
+  // starts at 194, all 40 of it the container's. A step here as well made ours 66.
   &__shell {
     @apply relative mx-auto;
 
     --gutter: var(--page-gutter, theme("padding.6"));
 
     max-width: calc(var(--vc-container-max-width, 87.75rem) + 2 * var(--gutter));
-    padding: var(--page-stack, 1.5rem) var(--gutter);
+    padding: var(--page-stack, 1.5rem) var(--gutter) 0;
   }
 
   &__print {
