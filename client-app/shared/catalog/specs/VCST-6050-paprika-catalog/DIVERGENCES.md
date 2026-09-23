@@ -133,6 +133,8 @@ Kept against the design by earlier decision:
 
 Limits:
 
+- The seg tabs pad 14px each side where the design pads 13. That is #2494's `VcTabSwitchGroup`
+  (`--vc-tab-switch-padding-x: 3.5`), so it is theirs to move, not the catalog's to override.
 - The kit pins the product title's line-height with `!important`. The design's 1.32 goes on the
   title's inner text instead, and the title box is sized to two such lines.
 - The design's phone layer (below 600: page gutter 12, plate step 13) and the drawer's full-height

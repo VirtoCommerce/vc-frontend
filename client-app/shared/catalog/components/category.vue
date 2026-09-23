@@ -971,6 +971,10 @@ onMounted(() => {
     @media (width < 900px) {
       @apply aspect-video h-auto;
     }
+
+    html.dark & {
+      border-color: rgb(from theme("colors.primary.950") r g b / 0.5);
+    }
   }
 
   &__breadcrumbs {

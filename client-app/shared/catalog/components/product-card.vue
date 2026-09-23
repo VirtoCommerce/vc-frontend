@@ -28,7 +28,8 @@
       </VcProductActions>
     </template>
 
-    <VcProductVendor v-if="maker || product.hasVariations || product.isConfigurable">
+    <!-- Always there in the grid, empty or not, so the titles of a row stand on one line. -->
+    <VcProductVendor v-if="viewMode === 'grid' || maker || product.hasVariations || product.isConfigurable">
       <span v-if="maker" class="product-card__maker">{{ maker }}</span>
 
       <!-- Said up front, because a product with variations is bought differently: it opens a choice
@@ -381,6 +382,14 @@ const variationsCount = computed(() => {
       0 4px 16px rgb(from theme("colors.secondary.500") r g b / 0.28);
   }
 
+  // Dark has no warm shadow to spend: the lift is the theme's darkest step, off the neutral ramp the
+  // preset inverts (its additional pair flips to the light end).
+  html.dark &:hover {
+    box-shadow:
+      0 2px 6px rgb(from theme("colors.neutral.50") r g b / 0.45),
+      0 10px 28px rgb(from theme("colors.neutral.50") r g b / 0.5);
+  }
+
   // The brand reads as an eyebrow over the title: it is what the eye lands on first when scanning a
   // grid of products it does not yet know.
   :deep(.vc-product-vendor) {
@@ -414,16 +423,25 @@ const variationsCount = computed(() => {
     @apply font-semibold text-neutral-950;
   }
 
-  // The stock chip at the design's measure: a 14px glyph beside 13px of text. The kit's small chip
-  // draws a 10px glyph, which beside a sentence rather than a bare number read as a speck.
-  // The chip rebuilds its glyph size from its own `--icon-size` on the content, so that is the knob.
+  // In dark the neutral 100 step is the card itself, and a flat chip would vanish into it: it lifts
+  // off with a wash of the ink instead.
+  // Packshots are shot on white; in dark the photo and its plate are knocked back together, so a
+  // grid of tiles stops glaring without a seam opening between the two.
+  html.dark & :deep(.vc-product-image) {
+    filter: brightness(0.94);
+  }
+
+  html.dark &__spec {
+    background: rgb(from theme("colors.neutral.950") r g b / 0.06);
+    border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
+  }
+
+  // The stock chip's glyph at 14px: the kit's small chip draws a 10px one, which beside a sentence
+  // rather than a bare number read as a speck. The chip rebuilds its glyph size from its own
+  // `--icon-size` on the content, so that is the knob.
   :deep(.vc-quantity-stepper__badges .vc-chip),
   :deep(.product-card__stock .vc-chip) {
     --icon-size: 0.875rem;
-
-    .vc-chip__content {
-      @apply text-[0.8125rem];
-    }
   }
 
   // The quick actions come out on hover and on keyboard focus, and stay out where there is no hover
@@ -465,7 +483,7 @@ const variationsCount = computed(() => {
     }
 
     :deep(.vc-product-vendor) {
-      @apply mt-3 min-h-0 text-[0.71875rem] leading-[1.4] tracking-[0.08em];
+      @apply mt-3 min-h-[1.4em] text-[0.71875rem] leading-[1.4] tracking-[0.08em];
     }
 
     :deep(.vc-product-title) {
