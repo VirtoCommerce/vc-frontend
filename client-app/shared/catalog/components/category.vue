@@ -831,6 +831,11 @@ onMounted(() => {
     }
   }
 
+  // The list scrolls, so the bleed has to fit inside its box or it opens a horizontal scrollbar.
+  .facet-filter-widget__container {
+    @apply -mx-3 px-3;
+  }
+
   // The fade over a cut-off list has to end in the plate's colour, not white, or it draws a pale band.
   .facet-filter-widget__fade::after {
     --tw-gradient-from: var(--category-plate-bg, theme("colors.additional.50")) var(--tw-gradient-from-position);
