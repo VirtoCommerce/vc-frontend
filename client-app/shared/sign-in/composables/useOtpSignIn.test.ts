@@ -28,10 +28,6 @@ vi.mock("@/shared/account/composables", () => {
   };
 });
 
-vi.mock("@/core/globals", () => ({
-  globals: { storeId: "store-1" },
-}));
-
 vi.mock("@/core/utilities", () => ({
   Logger: {
     error: vi.fn(),
@@ -158,7 +154,7 @@ describe("useOtpSignIn", () => {
     vi.clearAllMocks();
   });
 
-  it("requestCode posts storeId and email to /api/otp/request and returns the response", async () => {
+  it("requestCode posts the email to /api/otp/request and returns the response", async () => {
     const fetchState = await getFetchState();
     fetchState.fetchResult.data.value = { outcome: "CodeSent", maskedEmail: "b•••r@acme.com" };
 
@@ -168,7 +164,7 @@ describe("useOtpSignIn", () => {
     const result = await requestCode("buyer@acme.com");
 
     expect(postedUrl).toBe("/api/otp/request");
-    expect(postedBody).toEqual({ storeId: "store-1", email: "buyer@acme.com" });
+    expect(postedBody).toEqual({ email: "buyer@acme.com" });
     expect(result).toEqual({ outcome: "CodeSent", maskedEmail: "b•••r@acme.com" });
     expect(loading.value).toBe(false);
   });
@@ -214,7 +210,6 @@ describe("useOtpSignIn", () => {
 
     expect(auth.nativeSignIn).toHaveBeenCalledTimes(1);
     expect(auth.nativeSignIn).toHaveBeenCalledWith({
-      storeId: "store-1",
       email: "buyer@acme.com",
       code: "123456",
     });

@@ -2,7 +2,6 @@ import { ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { useAnalytics, useAuth } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
-import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
 
@@ -35,9 +34,7 @@ export function useOtpSignIn() {
     loading.value = true;
 
     try {
-      const { data } = await useFetch("/api/otp/request")
-        .post({ storeId: globals.storeId, email })
-        .json<IOtpRequestResponse>();
+      const { data } = await useFetch("/api/otp/request").post({ email }).json<IOtpRequestResponse>();
 
       return data.value ?? undefined;
     } finally {
@@ -55,7 +52,7 @@ export function useOtpSignIn() {
       let tokenExchangeError: unknown;
 
       try {
-        await nativeSignIn({ storeId: globals.storeId, email, code });
+        await nativeSignIn({ email, code });
       } catch (e) {
         // getToken(true) rejects on any non-2xx /connect/token response, but authErrors is
         // already populated from the response body by then - handle it below like any other
