@@ -1550,6 +1550,7 @@
         "select_branch_text": "Seleziona una filiale di ritiro per vedere i prodotti disponibili ora"
       },
       "products_found_message": "risultato | risultati",
+      "products_found_label": "prodotto trovato | prodotti trovati",
       "products_found_message_search": "risultato trovato | risultati trovati",
       "search_in_category": "Cerca \"{keyword}\" in {category}",
       "filters_button": "@:common.buttons.filters",

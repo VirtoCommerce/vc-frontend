@@ -71,6 +71,24 @@
               <span v-else>
                 {{ currentCategory?.name }}
               </span>
+
+              <!-- The count answers the grid under it: "8 products found", and on a phone, "8 results". -->
+              <sup v-if="showProductsCount" class="category__products-count">
+                <b class="me-1" data-test-id="products-count-label">{{ $n(totalProductsCount, "decimal") }}</b>
+                {{ " " }}
+
+                <template v-if="currentCategory && searchQueryParam">
+                  {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
+                </template>
+
+                <template v-else-if="isMobile">
+                  {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+                </template>
+
+                <template v-else>
+                  {{ $t("pages.catalog.products_found_label", totalProductsCount) }}
+                </template>
+              </sup>
             </VcTypography>
           </div>
 
@@ -421,6 +439,10 @@ const hideAllControls = computed(() => {
 
 const isSidebarVisible = computed(() => {
   return !props.hideSidebar && !isCompact.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
+});
+
+const showProductsCount = computed(() => {
+  return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
 
 const activeControls = computed(() => {
@@ -997,6 +1019,11 @@ onMounted(() => {
     @media (min-width: 1920px) {
       @apply text-[2.05rem];
     }
+  }
+
+  // A note to the title, not part of it: 14 and quiet, lifted half an em.
+  &__products-count {
+    @apply top-[-0.5em] ms-2 whitespace-nowrap text-sm font-normal normal-case tracking-normal text-neutral-500;
   }
 
   &__title-skeleton {

@@ -1550,6 +1550,7 @@
         "select_branch_text": "Välj en upphämtningsfilial för att se produkter som finns i lager nu"
       },
       "products_found_message": "resultat | resultat",
+      "products_found_label": "produkt hittad | produkter hittade",
       "products_found_message_search": "resultat hittades | resultat hittades",
       "search_in_category": "Sök efter \"{keyword}\" i {category}",
       "filters_button": "@:common.buttons.filters",

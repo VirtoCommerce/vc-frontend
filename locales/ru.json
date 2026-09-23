@@ -1550,6 +1550,7 @@
         "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
       },
       "products_found_message": "результат | результатов",
+      "products_found_label": "товаров найдено | товар найден | товара найдено | товаров найдено",
       "products_found_message_search": "результат найден | результата найдено",
       "search_in_category": "Поиск \"{keyword}\" в {category}",
       "filters_button": "@:common.buttons.filters",

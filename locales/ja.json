@@ -1550,6 +1550,7 @@
         "select_branch_text": "受け取り店舗を選択して、現在在庫のある商品を確認してください"
       },
       "products_found_message": "件の検索結果",
+      "products_found_label": "件の商品",
       "products_found_message_search": "件見つかりました | 件見つかりました",
       "search_in_category": "「{category}」で「{keyword}」を検索",
       "filters_button": "@:common.buttons.filters",

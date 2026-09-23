@@ -1550,6 +1550,7 @@
         "select_branch_text": "选择一个自取分支以查看当前有库存的产品"
       },
       "products_found_message": "结果 | 结果",
+      "products_found_label": "件商品",
       "products_found_message_search": "找到结果 | 找到结果",
       "search_in_category": "在 {category} 中搜索“{keyword}”",
       "filters_button": "@:common.buttons.filters",
