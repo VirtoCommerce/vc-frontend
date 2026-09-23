@@ -483,7 +483,7 @@ void (async () => {
     --p-x: theme("padding.10");
     --p-t: theme("padding.10");
     --p-b: theme("padding.10");
-    --plate-shadow: theme("boxShadow.0");
+    --vc-widget-shadow: theme("boxShadow.0");
 
     @apply text-center;
   }
