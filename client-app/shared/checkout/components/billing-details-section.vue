@@ -3,7 +3,7 @@
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
     class="mt-5"
-    size="lg"
+    size="md"
     data-test-id="payment-details-section"
   >
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
@@ -90,7 +90,7 @@
     v-if="paymentCardVisible"
     :title="$t('shared.checkout.billing_details_section.payment_card')"
     prepend-icon="cash"
-    size="lg"
+    size="md"
     class="mt-5"
   >
     <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod!" />

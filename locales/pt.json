@@ -671,7 +671,7 @@
         "title": "Produtos"
       },
       "gifts_section": {
-        "title": "+ Adicionar um Presente"
+        "title": "Presentes"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Resultado ao adicionar produtos ao carrinho",
@@ -1089,7 +1089,8 @@
       "table": {
         "tabs": {
           "all": "Todos",
-          "differences": "Diferenças"
+          "differences": "Diferenças",
+          "group_label": "Filtro de linhas"
         },
         "uncategorized": "Não categorizado",
         "unresolved_category": "Categoria desconhecida",
@@ -1504,7 +1505,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "Carrinho",
+      "title": "Carrinho de compras",
       "empty_cart_description": "Seu carrinho está vazio",
       "empty_cart_search_text": "Use a pesquisa para encontrar tudo o que precisa",
       "recently_browsed_products": "Recentemente visualizados",

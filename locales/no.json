@@ -671,7 +671,7 @@
         "title": "Produkter"
       },
       "gifts_section": {
-        "title": "+ Legg til gave"
+        "title": "Gaver"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Legge produkter i handlekurven",
@@ -1089,7 +1089,8 @@
       "table": {
         "tabs": {
           "all": "Alle",
-          "differences": "Forskjeller"
+          "differences": "Forskjeller",
+          "group_label": "Radfilter"
         },
         "uncategorized": "Ukategorisert",
         "unresolved_category": "Ukjent kategori",

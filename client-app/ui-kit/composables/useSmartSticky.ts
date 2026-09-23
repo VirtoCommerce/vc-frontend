@@ -1,4 +1,4 @@
-import { useCssVar, useElementBounding, useThrottleFn } from "@vueuse/core";
+import { useElementBounding, useThrottleFn } from "@vueuse/core";
 import { computed, onBeforeUnmount, onMounted, ref, toValue, watch } from "vue";
 import type { CSSProperties, MaybeRefOrGetter, Ref } from "vue";
 
@@ -63,6 +63,14 @@ interface IUseSmartStickyReturn {
 }
 
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
+
+// Read on every measure. These offsets are published on :root by the app header and change
+// while the page lives — the header pins and gives a row back. useCssVar read them once and,
+// being writable, mirrored that first value into the element's own style, where it then
+// shadowed every later change to the root var.
+function readSpacing(element: HTMLElement, name: string): number {
+  return Number.parseFloat(getComputedStyle(element).getPropertyValue(name)) || 0;
+}
 
 function checkShortElement(
   viewportTop: number,
@@ -206,13 +214,6 @@ export function useSmartSticky(options: ISmartStickyOptions): IUseSmartStickyRet
   const containerBounding = useElementBounding(container, BOUNDING_OPTIONS);
   const elementBounding = useElementBounding(stickyElement, BOUNDING_OPTIONS);
 
-  const stickyElementResolved = computed(() => toValue(stickyElement));
-  const topOffsetCssVar = useCssVar(topOffsetVar, stickyElementResolved);
-  const bottomOffsetCssVar = useCssVar(bottomOffsetVar, stickyElementResolved);
-
-  const topSpacingResolved = computed(() => Number.parseFloat(topOffsetCssVar.value ?? "0") || 0);
-  const bottomSpacingResolved = computed(() => Number.parseFloat(bottomOffsetCssVar.value ?? "0") || 0);
-
   const isEnabled = computed(() => toValue(enabled));
 
   function getScrollPosition(): number {
@@ -261,8 +262,8 @@ export function useSmartSticky(options: ISmartStickyOptions): IUseSmartStickyRet
       dimensions.value.elementWidth = elementBounding.width.value;
     }
 
-    dimensions.value.topSpacing = topSpacingResolved.value;
-    dimensions.value.bottomSpacing = bottomSpacingResolved.value;
+    dimensions.value.topSpacing = readSpacing(element, topOffsetVar);
+    dimensions.value.bottomSpacing = readSpacing(element, bottomOffsetVar);
   }
 
   function calculatePosition(useDirectValues = false) {

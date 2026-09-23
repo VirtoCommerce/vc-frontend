@@ -46,7 +46,7 @@
 
       <!-- Second row of the same plate. It collapses to zero height once the plate sticks,
            so a scrolled page keeps a single-row header. -->
-      <MegaMenu v-if="isMegaMenuShown" class="header-plate__mega" />
+      <MegaMenu v-if="isMegaMenuShown" ref="mega" class="header-plate__mega" />
     </div>
 
     <transition
@@ -100,7 +100,15 @@ const catalogButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
 const stuck = ref(false);
 
-const { bottom } = useElementBounding(plate);
+const mega = ref<{ $el: HTMLElement } | null>(null);
+
+const { bottom, height: surfaceHeight } = useElementBounding(plate);
+const { height: megaHeight } = useElementBounding(computed(() => mega.value?.$el ?? null));
+
+// What the plate paints once pinned: the second row collapses to nothing and the plate keeps
+// its flow height as padding (see --stuck below), so the painted height is the surface without
+// that row — the same number pinned or not, which is what sticky consumers need.
+const pinnedHeight = computed(() => surfaceHeight.value - megaHeight.value);
 
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const dropdownStyle = computed<StyleValue | undefined>(() =>
@@ -163,6 +171,8 @@ function focusoutDropdown(payload: FocusEvent) {
 watch(route, () => {
   catalogMenuVisible.value = false;
 });
+
+defineExpose({ pinnedHeight });
 </script>
 
 <style lang="scss">

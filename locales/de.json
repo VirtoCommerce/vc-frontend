@@ -671,7 +671,7 @@
         "title": "Produkte"
       },
       "gifts_section": {
-        "title": "+ Geschenk hinzufügen"
+        "title": "Geschenke"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Ergebnis zum Hinzufügen von Produkten zum Warenkorb",
@@ -1089,7 +1089,8 @@
       "table": {
         "tabs": {
           "all": "Alle",
-          "differences": "Unterschiede"
+          "differences": "Unterschiede",
+          "group_label": "Zeilenfilter"
         },
         "uncategorized": "Nicht kategorisiert",
         "unresolved_category": "Unbekannte Kategorie",

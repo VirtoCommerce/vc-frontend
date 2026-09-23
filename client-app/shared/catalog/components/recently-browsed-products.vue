@@ -3,7 +3,7 @@
     v-if="products.length"
     :title="$t('pages.cart.recently_browsed_products')"
     prepend-icon="cursor-click"
-    size="lg"
+    size="md"
   >
     <VcProductsGrid short>
       <ProductCardRecentlyBrowsed
