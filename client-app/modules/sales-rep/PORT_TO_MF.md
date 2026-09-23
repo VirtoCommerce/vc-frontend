@@ -62,6 +62,12 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
   the messages re-merge on a runtime locale switch, not only at init.
 - Re-add `import "./styles.css";` at the top — MF injects the module's global CSS itself;
   in-host that file was dropped (it was comment-only; the real styling is scoped in the `.vue`).
+- **One exception to "the real styling is scoped in the `.vue`"**:
+  `client-app/assets/styles/dark/modules/sales-rep/stat-widget.scss`, wired from `_dark.scss`,
+  carries the KPI card's dark overrides — the AA-safe negative ink and the dropped elevation. It
+  lives **outside** the module, like `loadModuleLocale` above, so copying the module folder does
+  not bring it, and a port without it ships `danger-600` (fails AA on 7 of the 8 dark presets) and
+  a white halo where the shadow inverts.
 
 ## 3. Tests
 
@@ -106,7 +112,8 @@ copy the list. The facade's build fails if that list ever drifts from what its f
 
 **The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
 (+`@types/sortablejs`), which `components/layout-region.vue` imports directly, nor `@vueuse/core`
-for `useBreakpoints` in `pages/customer-profile.vue`. Add both, and decide whether `sortablejs` is
+for `useBreakpoints` in `pages/customer-profile.vue` and `pages/dashboard.vue`. Add both, and
+decide whether `sortablejs` is
 bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is _not_ needed —
 the layout used `useSortable` at one point and no longer does.
 

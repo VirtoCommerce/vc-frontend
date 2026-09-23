@@ -27,4 +27,5 @@ html.dark {
   @include meta.load-css("dark/shared/catalog/product-pickup-locations");
   @include meta.load-css("dark/shared/checkout/select-address-map-view");
   @include meta.load-css("dark/shared/layout/header-account-menu-panel");
+  @include meta.load-css("dark/modules/sales-rep/stat-widget");
 }
