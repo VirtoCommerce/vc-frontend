@@ -1,9 +1,10 @@
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { isFederationEnabled } from "./enabled";
 import type { IFederatedLoaderOptions, IPlatformPlugin } from "./index";
 
-interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
+interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | "conditionContext"> {
   /** A function, not a list, so the flag check below is the only thing that can issue the query. */
   fetchPlugins?: () => Promise<readonly IPlatformPlugin[] | undefined>;
 }
@@ -18,11 +19,33 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
  * Outer cap for what the per-phase budgets cannot cover: this loader's own chunk fetch (deliberately
  * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery 2 +
  * manifest 2 + 2×load 3 = 10s — leaving 2s for the chunk fetch. Past it boot proceeds and the loader
- * finishes detached, so late plugins may register routes after the first navigation.
+ * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
+ * It only bounds plugins that declared nothing: boot never waits for a declared plugin's code.
  * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
  */
 // Exported for the invariant test only (backstop > discovery + manifest + 2×load defaults).
 export const BOOT_BACKSTOP_MS = 12_000;
+
+/**
+ * A route a plugin registered only in its `init()` does not exist when a deep link resolves before
+ * that — the user lands on the catch-all. Once every plugin has settled, the same URL is resolved
+ * again and followed if it now matches something else.
+ */
+function reResolveOnceSettled(): void {
+  const router = globals.router;
+  if (!router) {
+    return;
+  }
+  const current = router.currentRoute.value;
+  // Not installed yet: the first navigation will see every route there is.
+  if (current.matched.length === 0) {
+    return;
+  }
+  const next = router.resolve(current.fullPath);
+  if (next.name !== current.name) {
+    void router.replace({ path: current.path, query: current.query, hash: current.hash, force: true });
+  }
+}
 
 /** Budget for the plugin list; without one it was the only unbudgeted leg inside the backstop. */
 export const DISCOVERY_TIMEOUT_MS = 2_000;
@@ -76,14 +99,25 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
   // degrades to "no plugins" and can never break boot.
   const work = (async () => {
     try {
-      const [plugins, { initFederatedModules }] = await Promise.all([
+      const [plugins, { prepareFederatedModules, loadPreparedModules }] = await Promise.all([
         withDiscoveryBudget(options?.fetchPlugins).catch((error) => {
           Logger.error("[MF] Could not read the platform's plugin list", error);
           return undefined;
         }),
         import("./index"),
       ]);
-      await initFederatedModules({ plugins, hasPermission: options?.hasPermission });
+      // Waited for: a plugin's declarations are what lets boot NOT wait for its code — placeholders,
+      // menu entries and reserved slots must exist before the router resolves the first URL.
+      const prepared = await prepareFederatedModules({
+        plugins,
+        hasPermission: options?.hasPermission,
+        conditionContext: options?.conditionContext,
+      });
+      const { blocking, all } = loadPreparedModules(prepared);
+      void all.then(reResolveOnceSettled);
+      // A plugin that declared nothing registers its routes in init(), so boot still waits for it,
+      // exactly as before.
+      await blocking;
     } catch (error) {
       // A loader-chunk fetch failure degrades to "no plugins" here, not to a reload.
       ignoreChunkLoadFailure(error);

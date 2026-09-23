@@ -6,9 +6,9 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT } from "./manifest-format.mjs";
 
-export const CONTRIBUTIONS_FILE_NAME = "contributions.json";
-export const CONTRIBUTIONS_FORMAT = 1;
+export { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT };
 
 const SLOT_POLICIES = new Set(["reserve", "block", "none"]);
 const MENU_SURFACES = new Set(["header", "account"]);

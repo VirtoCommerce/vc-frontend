@@ -11,6 +11,8 @@
     "federation.d.mts",
     "manifest.mjs",
     "manifest.d.mts",
+    "manifest-format.mjs",
+    "manifest-format.d.mts",
     "codegen.mjs",
     "codegen.d.mts",
     "testing.mjs",

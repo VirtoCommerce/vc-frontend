@@ -319,9 +319,20 @@ export default async () => {
   const federatedModulesReady = startFederatedModules({
     fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
     hasPermission: checkPermissions,
+    // Read once, now — the same moment every module's init() reads them.
+    conditionContext: {
+      setting: (key) =>
+        themeContext.value.storeSettings?.modules
+          ?.flatMap((module) => module.settings ?? [])
+          .find((setting) => setting.name === key)?.value,
+      themeSetting: (key) => (themeContext.value.settings as unknown as Record<string, unknown> | undefined)?.[key],
+      isAuthenticated: isAuthenticated.value,
+      can: (permission) => checkPermissions(permission),
+    },
   });
 
-  // Federated plugin routes must exist before the router is installed. Never rejects.
+  // What must exist before the router is installed: the routes of plugins that declared nothing,
+  // and the placeholders of those that did. Never rejects.
   await federatedModulesReady;
 
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
