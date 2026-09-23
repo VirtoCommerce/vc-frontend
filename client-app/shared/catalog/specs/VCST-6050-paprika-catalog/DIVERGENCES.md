@@ -137,6 +137,7 @@ Limits:
   (`--vc-tab-switch-padding-x: 3.5`), so it is theirs to move, not the catalog's to override.
 - The kit pins the product title's line-height with `!important`. The design's 1.32 goes on the
   title's inner text instead, and the title box is sized to two such lines.
-- The design's phone layer (below 600: page gutter 12, plate step 13) and the drawer's full-height
+- The design's phone layer (below 600: page gutter 12, plate step 13), its wide mode (from 1920: a
+  1900 content column, type ×1.0625; from 1680: plate inside 40 high) and the drawer's full-height
   shape are page-level rules and belong to PR #2494. The catalog reads `--page-stack`, so it follows
   #2494 once they land there.

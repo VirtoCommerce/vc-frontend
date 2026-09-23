@@ -738,6 +738,11 @@ const variationsCount = computed(() => {
     :deep(.vc-quantity-stepper),
     :deep(.vc-product-button) {
       @apply m-0 w-full min-w-[9.375rem] max-w-none;
+
+      // On a phone the stepper keeps the design's 220 at most and stands by the actions on the right.
+      @container (width < 34rem) {
+        @apply max-w-[13.75rem] justify-self-end;
+      }
     }
 
     // In a row the quick actions are ordinary controls beside the button, not an overlay on the photo,
