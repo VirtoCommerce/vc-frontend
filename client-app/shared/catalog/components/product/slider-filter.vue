@@ -8,7 +8,7 @@
           :max="facetMax"
           :cols="sliderCols"
           show-tooltip-on-col-hover
-          cols-height="36px"
+          cols-height="2rem"
           update-on-column-click
           @change="handleSliderChange"
         />
@@ -53,7 +53,7 @@
             :cols="sliderCols"
             show-tooltip-on-col-hover
             update-on-column-click
-            cols-height="36px"
+            cols-height="2rem"
             @change="handleSliderChange"
           />
         </div>
@@ -230,6 +230,27 @@ function applyRange(range: [number | null, number | null]) {
 </script>
 
 <style lang="scss">
+// The price slider as the design draws it: a 32px histogram, the track 14 below it so the handles
+// sit clear of the bars, and the two fields as rounded boxes with the figure centred at 14 — a
+// pair of values, not two search boxes — with a quiet dash between them.
+.slider-filter {
+  .noUi-target {
+    @apply mt-3.5;
+  }
+
+  .vc-slider__input .vc-input__container {
+    @apply rounded-lg;
+  }
+
+  .vc-slider__input input {
+    @apply text-center text-sm;
+  }
+
+  .vc-slider__dash {
+    @apply text-neutral-500;
+  }
+}
+
 .slider-filter-dropdown {
   $opened: "";
 
