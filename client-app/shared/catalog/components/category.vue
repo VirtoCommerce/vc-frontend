@@ -869,6 +869,16 @@ onMounted(() => {
     @apply text-sm leading-[1.125rem];
   }
 
+  // The drawer keeps the kit's own list rhythm, as the design's does: rows 40 (a 20px line and 10
+  // above and below) and 16 between facets.
+  .products-filters__container {
+    @apply gap-4;
+  }
+
+  .facet-filter-widget__container .vc-menu-item__content {
+    @apply min-h-5;
+  }
+
   .facet-filter-widget__fade::after {
     --tw-gradient-from: theme("colors.additional.50") var(--tw-gradient-from-position);
   }
