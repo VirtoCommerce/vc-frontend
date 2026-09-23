@@ -49,6 +49,13 @@
   // own :root as "+100 on the 1450 reference").
   --vc-container-max-width: 96.875rem;
 
+  // The canvas is the page's, not the container's. The plates stand off it on every side —
+  // above the header, around the footer, down the gutters — and none of that is inside a
+  // VcContainer, so the container can no longer be the only thing painting it. It is handed
+  // the canvas below; here it stops drawing its own, and the decoration it draws with it.
+  --vc-container-bg-color: transparent;
+  --vc-container-bg-image-display: none;
+
   // The footer's top plate is white here, so it takes the header's logo, not the inverted
   // one every other preset's dark band needs. The dark variant below takes it back.
   --footer-logo-light-display: block;
@@ -108,4 +115,14 @@ html,
 
   // CJK has no italic and the browser would fake the slant.
   font-synthesis: none;
+}
+
+// The app's canvas. `--body-bg-color` is the token every preset already sets and the one
+// the container used to read second-hand, but nothing has ever put it on the page itself:
+// outside a container the canvas fell through to the browser's own — white in light, and
+// in dark the UA's near-black instead of this preset's #16120e. The design paints it on
+// `body`, and from `body` it propagates to the whole canvas, overscroll included, so a
+// short page and a rubber-banded one end up the same colour as a full one.
+body {
+  @apply bg-[--body-bg-color];
 }
