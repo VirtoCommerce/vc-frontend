@@ -65,7 +65,7 @@
       @click="$emit('linkClick', product, $event)"
     />
 
-    <VcProductProperties v-if="cardType !== 'short' && properties.length">
+    <VcProductProperties v-if="cardType !== 'short' && (viewMode === 'grid' || properties.length)">
       <span v-for="(property, i) in properties" :key="i" class="product-card__spec">
         <b class="product-card__spec-label">{{ property.label }}</b>
         {{ " " }}
@@ -91,7 +91,7 @@
     <VcProductButton
       v-else-if="product.isConfigurable"
       variant="outline"
-      color="secondary"
+      color="primary"
       data-test-id="product-card-configurations-button"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
@@ -483,7 +483,7 @@ const variationsCount = computed(() => {
     }
 
     :deep(.vc-product-vendor) {
-      @apply mt-3 min-h-[1.4em] text-[0.71875rem] leading-[1.4] tracking-[0.08em];
+      @apply mt-3 h-[1.125rem] text-[0.71875rem] leading-[1.4] tracking-[0.08em];
     }
 
     :deep(.vc-product-title) {
@@ -499,8 +499,17 @@ const variationsCount = computed(() => {
       @apply leading-[1.32];
     }
 
+    // Room for two rows of chips. The design writes 49, but its own chip is 22.675 tall and two rows
+    // with the 5px gap come to 50.35 — at 49 a card with two rows sits 1.35px lower than its neighbours.
     :deep(.vc-product-properties) {
-      @apply mt-2 min-h-[3.0625rem];
+      @apply mt-2 min-h-[3.1469rem];
+    }
+
+    // The design keeps one rhythm from the top — every block holds its height, chips included — so
+    // the prices of a row stand on one line. The kit's spacer instead pushes the bottom block down to
+    // the card's foot, and a variations button taller than a stepper then lifts its price by 14px.
+    :deep(.vc-product-card__expander) {
+      @apply hidden;
     }
 
     :deep(.vc-product-price) {
@@ -520,6 +529,18 @@ const variationsCount = computed(() => {
     :deep(.vc-quantity-stepper),
     :deep(.vc-product-button) {
       @apply mt-2.5;
+    }
+
+    // The line under the button, close under it as the design sets it: 8 below "Customize", bold with
+    // a 16px glyph; 6 below "N variations", regular with a 12px one.
+    :deep(.vc-product-button__link) {
+      @apply mt-2 gap-1.5 leading-4;
+    }
+
+    .product-card__variations-link-button :deep(.vc-product-button__link) {
+      --vc-icon-size: 0.75rem;
+
+      @apply mt-1.5 gap-1 font-normal;
     }
 
     :deep(.vc-quantity-stepper__badges) {
