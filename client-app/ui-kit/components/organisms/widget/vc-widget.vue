@@ -125,9 +125,14 @@ watchEffect(() => {
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+  // Exposed so a theme can give the widget its own elevation — a theme whose surfaces are
+  // plates needs a shadow that survives dark mode, where this one's black is invisible.
+  --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
   --header-gap: theme("gap.2");
 
-  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
+  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] bg-center;
+
+  box-shadow: var(--shadow);
 
   @media (width < theme("screens.md")) {
     .vc-container & {

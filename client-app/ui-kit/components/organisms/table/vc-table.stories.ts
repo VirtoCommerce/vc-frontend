@@ -430,6 +430,53 @@ async function onPageChange(newPage: number) {
   },
 };
 
+// 5. StrongColumn
+export const StrongColumn: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => ({ args }),
+    template: `
+      <VcTable :items="args.items" :pages="args.pages" :page="args.page" :bordered="args.bordered">
+        <VcTableColumn id="name" title="Name" strong v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`strong` marks the column that identifies the row: its cells take the strong weight and the darkest ink, while the rest of the body sits a shade below the header.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" bordered>
+  <VcTableColumn id="name" title="Name" strong v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
 // 5. ColumnAlignment
 export const ColumnAlignment: StoryType = {
   args: {
