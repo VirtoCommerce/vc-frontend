@@ -8,7 +8,7 @@
   // covered without dragging in the rest.
   "extends": "./tsconfig.app.json",
   "include": ["client-app/**/*.test-d.ts", "client-app/**/*.d.ts"],
-  "exclude": ["client-app/core-api/contract"],
+  "exclude": ["client-app/core-api/contract", "client-app/core-api/manifest.d.mts", "client-app/core-api/contract-checks"],
   "compilerOptions": {
     "noEmit": true,
     "composite": false,

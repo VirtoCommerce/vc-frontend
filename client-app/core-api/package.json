@@ -9,6 +9,8 @@
     "contract/tailwind-preset.cjs",
     "federation.mjs",
     "federation.d.mts",
+    "manifest.mjs",
+    "manifest.d.mts",
     "codegen.mjs",
     "codegen.d.mts",
     "testing.mjs",
@@ -23,6 +25,10 @@
     "./federation": {
       "types": "./federation.d.mts",
       "import": "./federation.mjs"
+    },
+    "./manifest": {
+      "types": "./manifest.d.mts",
+      "import": "./manifest.mjs"
     },
     "./codegen": {
       "types": "./codegen.d.mts",
