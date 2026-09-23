@@ -15,7 +15,10 @@
     ]"
     v-bind="attrs"
   >
-    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
+    <!-- The label is pinned to the smallest step rather than following the field's size: a
+         field's label is a caption over the value, and at the field's own size the two competed
+         for the same read. The size prop is still there for a consumer that wants otherwise. -->
+    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error" size="xs">
       {{ label }}
     </VcLabel>
 
@@ -303,6 +306,11 @@ provide<VcInputContextType>("inputContext", {
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
 
+  // Muted, so the caption gives way to the value under it. Declared here rather than in
+  // VcLabel's own default, which standalone labels — and the ones over a select or a
+  // textarea — keep at the darkest step.
+  --vc-label-color: var(--vc-input-label-color, theme("colors.neutral.700"));
+
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
   --vc-button-radius: calc(var(--radius) - 2px);
 
@@ -460,8 +468,20 @@ provide<VcInputContextType>("inputContext", {
     }
 
     &:autofill {
+      // Chrome paints the autofilled row itself, and a 1000px inset shadow is the only way to
+      // repaint it — but that shadow lands on THIS box, whose 3px corners cut straight across
+      // the container's curve. On a pill the fill spilled past the border at both ends and left
+      // the outline stranded outside it. So the fill takes the container's radius, less the 4px
+      // this box is inset by (1px margin + the container's 2px padding + its 1px border).
+      border-radius: max(0px, calc(var(--radius) - 4px));
+
+      // Chrome forces the value's colour through `-webkit-text-fill-color`, which plain `color`
+      // does not override — against the repainted row that left the text unreadable in dark.
+      -webkit-text-fill-color: theme("colors.neutral.950");
+
       &:disabled {
         box-shadow: 0 0 0 1000px var(--color-neutral-200) inset;
+        -webkit-text-fill-color: theme("colors.neutral.500");
         opacity: 0.6;
       }
 
