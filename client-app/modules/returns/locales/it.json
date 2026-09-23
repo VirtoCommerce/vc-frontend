@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Aggiungi i dettagli del reso",
+    "title_with_number": "Aggiungi i dettagli del reso #{number}",
     "details_section": "Dettagli",
     "bulk_section": "Applica a tutte le righe",
     "apply_to_all": "Applica un motivo a tutte le {count} righe",

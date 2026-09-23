@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "填写退货详情",
+    "title_with_number": "填写退货详情 #{number}",
     "details_section": "详情",
     "bulk_section": "应用到所有行",
     "apply_to_all": "将一个原因应用到全部 {count} 行",

@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Детали возврата",
+    "title_with_number": "Детали возврата #{number}",
     "details_section": "Детали",
     "bulk_section": "Применить ко всем позициям",
     "apply_to_all": "Применить одну причину ко всем позициям ({count})",

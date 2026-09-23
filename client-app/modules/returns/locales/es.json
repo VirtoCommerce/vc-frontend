@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Añadir detalles de la devolución",
+    "title_with_number": "Añadir detalles de la devolución #{number}",
     "details_section": "Detalles",
     "bulk_section": "Aplicar a todas las líneas",
     "apply_to_all": "Aplicar un motivo a las {count} líneas",

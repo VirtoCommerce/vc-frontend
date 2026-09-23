@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Dodaj szczegóły zwrotu",
+    "title_with_number": "Dodaj szczegóły zwrotu #{number}",
     "details_section": "Szczegóły",
     "bulk_section": "Zastosuj do wszystkich pozycji",
     "apply_to_all": "Zastosuj jeden powód do wszystkich {count} pozycji",

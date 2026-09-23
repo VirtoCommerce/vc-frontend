@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Lägg till returuppgifter",
+    "title_with_number": "Lägg till returuppgifter #{number}",
     "details_section": "Detaljer",
     "bulk_section": "Tillämpa på alla rader",
     "apply_to_all": "Tillämpa en orsak på alla {count} rader",

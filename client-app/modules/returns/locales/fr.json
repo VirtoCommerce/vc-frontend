@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Ajouter les détails du retour",
+    "title_with_number": "Ajouter les détails du retour #{number}",
     "details_section": "Détails",
     "bulk_section": "Appliquer à toutes les lignes",
     "apply_to_all": "Appliquer un motif aux {count} lignes",

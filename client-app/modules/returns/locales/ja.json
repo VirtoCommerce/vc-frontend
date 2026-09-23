@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "返品内容の入力",
+    "title_with_number": "返品内容の入力 #{number}",
     "details_section": "詳細",
     "bulk_section": "すべての明細に適用",
     "apply_to_all": "{count} 件すべてに同じ理由を適用",

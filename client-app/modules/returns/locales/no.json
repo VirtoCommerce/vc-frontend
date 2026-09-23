@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Legg til returdetaljer",
+    "title_with_number": "Legg til returdetaljer #{number}",
     "details_section": "Detaljer",
     "bulk_section": "Bruk på alle linjer",
     "apply_to_all": "Bruk én årsak på alle {count} linjene",
