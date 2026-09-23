@@ -236,6 +236,14 @@ onMounted(() => {
 
 <style lang="scss">
 .search-bar {
+  // On the glass plate the field is a hole in the surface, not a card on top of it: it takes
+  // the shared row fill and the softer of the two line steps, and it stands 40 rather than the
+  // kit's 44 — the design's whole header row is 88 and the field has to leave the icon links
+  // their own air. The fallbacks are the kit's own values, for a fork without the theme file.
+  --vc-input-height: 2.5rem;
+  --vc-input-bg-color: var(--glass-row, theme("colors.additional.50"));
+  --vc-input-border-color: theme("colors.neutral.300");
+
   @apply relative flex grow items-stretch;
 
   &__input {

@@ -353,18 +353,31 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__container {
-    @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
+    // The field's surface, exposed so a theme can sit it on a translucent plate instead of an
+    // opaque one. Defaults are the values this rule has always carried.
+    --container-bg-color: var(--vc-input-bg-color, theme("colors.additional.50"));
+    --container-border-color: var(--vc-input-border-color, theme("colors.neutral.400"));
 
+    @apply flex items-stretch p-0.5 border border-[--container-border-color] rounded-[--radius] bg-[--container-bg-color] select-none;
+
+    // Height is per size, and so is the override: a theme that wants one size taller must not
+    // silently resize the other three. Each default is that size's own long-standing height.
     #{$sizeXs} & {
-      @apply h-8 text-sm;
+      @apply text-sm;
+
+      height: var(--vc-input-height, theme("height.8"));
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem] text-base;
+      @apply text-base;
+
+      height: var(--vc-input-height, 2.375rem);
     }
 
     #{$sizeMd} & {
-      @apply h-11 text-base;
+      @apply text-base;
+
+      height: var(--vc-input-height, theme("height.11"));
     }
 
     &:has(input:focus-visible) {

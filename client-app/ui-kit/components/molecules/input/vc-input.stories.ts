@@ -433,6 +433,31 @@ export const NoBorder: StoryType = {
   },
 };
 
+export const SurfaceCSSVariables: StoryType = {
+  render: () => ({
+    components: { VcInput },
+    template: `<div
+      class="rounded-lg bg-gradient-to-br from-primary-100 to-secondary-100 p-6"
+      style="--vc-input-height: 2.5rem; --vc-input-bg-color: rgb(255 255 255 / 0.6); --vc-input-border-color: var(--color-neutral-300)"
+    >
+      <VcInput label="Search" placeholder="Type to search" />
+    </div>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`--vc-input-height`, `--vc-input-bg-color` and `--vc-input-border-color` let a theme sit the field on a translucent plate — a glass header, for instance — instead of the opaque default. The height knob applies to whichever size is in play and leaves the other sizes alone; each size keeps its own default.",
+      },
+      source: {
+        code: `<div style="--vc-input-height: 2.5rem; --vc-input-bg-color: rgb(255 255 255 / 0.6)">
+  <VcInput label="Search" />
+</div>`,
+      },
+    },
+  },
+};
+
 export const Sizes: StoryType = {
   render: () => ({
     components: { VcInput },

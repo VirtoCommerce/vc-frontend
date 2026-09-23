@@ -324,7 +324,10 @@ watch(route, () => {
   }
 
   &__end {
-    @apply flex flex-none items-center gap-2;
+    // 10, not the 8 the rest of the row uses, and 8 of clear air before it: the pill and the
+    // avatar are a pair apart from the icon links, and at an equal gap they read as two more
+    // links. The design spends both numbers on exactly that separation.
+    @apply flex flex-none items-center gap-2.5 ms-2;
   }
 
   &__mega {
