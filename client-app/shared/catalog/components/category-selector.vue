@@ -126,6 +126,8 @@ function getFacet(category: CategoryType) {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .category-selector {
   &__list {
     @apply flex flex-col;
@@ -139,6 +141,11 @@ function getFacet(category: CategoryType) {
 
     &:is(a):hover {
       @apply bg-neutral-100;
+    }
+
+    // The same ring the kit's menu rows draw, inside the row so the card's edge does not clip it.
+    &:focus-visible {
+      @include focus-ring($inset: true);
     }
 
     &--up {

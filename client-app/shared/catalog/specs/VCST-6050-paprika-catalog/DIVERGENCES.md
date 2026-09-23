@@ -142,5 +142,9 @@ Limits:
   title's inner text instead, and the title box is sized to two such lines.
 - The design's phone layer (below 600: page gutter 12, plate step 13), its wide mode (from 1920: a
   1900 content column, type ×1.0625; from 1680: plate inside 40 high) and the drawer's full-height
-  shape are page-level rules and belong to PR #2494. The catalog reads `--page-stack`, so it follows
+  shape are page-level rules and belong to PR #2494.
+- In dark every design plate carries a 1px sheen along its top edge. The catalog's plates and rail
+  cards now do; the footer plates (#2494) do not yet.
+- The stuck header is 129px tall where the design's is 65; the rail hangs off it through the kit's
+  sticky logic, so it follows #2494 when the header shrinks. The catalog reads `--page-stack`, so it follows
   #2494 once they land there.

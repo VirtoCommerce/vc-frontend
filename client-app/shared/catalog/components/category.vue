@@ -867,6 +867,13 @@ onMounted(() => {
     border-radius: var(--category-plate-radius);
     background: var(--category-plate-bg);
     box-shadow: var(--category-plate-shadow);
+
+    // In dark a plate's edge is the light catching its top, not an outline.
+    html.dark & {
+      box-shadow:
+        inset 0 1px 0 var(--glass-sheen, transparent),
+        var(--category-plate-shadow);
+    }
   }
 
   // Between the rail and the listing only: below md the layout unboxes its content column, and a
@@ -903,6 +910,12 @@ onMounted(() => {
       padding: 1rem 1.25rem 0.75rem;
       background: var(--category-plate-bg);
       box-shadow: var(--category-plate-shadow);
+
+      html.dark & {
+        box-shadow:
+          inset 0 1px 0 var(--glass-sheen, transparent),
+          var(--category-plate-shadow);
+      }
     }
 
     // Every block on the rail is headed the same way — Geologica 700 18/22 over a hairline — so
