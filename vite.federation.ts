@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { federation } from "@module-federation/vite";
-import { createHostShared, isMfFlagEnabled } from "./client-app/core-api/federation.mjs";
+import { createHostShared } from "./client-app/core-api/federation.mjs";
 import type { PluginOption } from "vite";
 
 /**
@@ -16,8 +16,13 @@ import type { PluginOption } from "vite";
  */
 
 const require = createRequire(import.meta.url);
+const FACADE_PACKAGE = "@vc-frontend/core";
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
 const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", import.meta.url));
+/** The theme's switch; the runtime reads the same key in client-app/modules/federated/enabled.ts. */
+const themeEnablesFederation =
+  (require("./client-app/config/settings_data.json") as { settings: { module_federation_enabled?: boolean } }).settings
+    .module_federation_enabled !== false;
 
 /**
  * Alias so the HOST resolves @vc-frontend/core to the real source entry (it provides
@@ -25,19 +30,21 @@ const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", imp
  * root is deliberately types-only, so package resolution must never be used for runtime.
  */
 export function federatedAlias(rootDir: string): Record<string, string> {
-  return { "@vc-frontend/core": path.resolve(rootDir, "client-app/core-api/index.ts") };
+  return { [FACADE_PACKAGE]: path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
-/** MF host plugin(s) — empty when APP_MODULES_FEDERATION_ENABLED is off. Spread into vite `plugins`. */
-export function federatedHostPlugin(enabled: string | boolean | undefined): PluginOption[] {
-  if (!isMfFlagEnabled(enabled)) {
+/** MF host plugin(s) — empty when the theme sets `module_federation_enabled: false`. Spread into vite `plugins`. */
+export function federatedHostPlugin(): PluginOption[] {
+  if (!themeEnablesFederation) {
     return [];
   }
   // dts off — types come from `yarn build:core-types`, not the MF dts plugin.
   return [
     federation({
       name: "host",
-      filename: "remoteEntry.js",
+      // Default `remoteEntry-[hash]`: nothing but this build loads the host's own entry, and an
+      // unhashed .js sits in CDN caches for hours after a deploy, pointing at chunks that no longer
+      // exist (qa1, 2026-09-11). Plugins keep an unhashed remoteEntry.js - the platform advertises it.
       manifest: true,
       dts: false,
       shareStrategy: "loaded-first",
@@ -45,7 +52,28 @@ export function federatedHostPlugin(enabled: string | boolean | undefined): Plug
       // shared providers via Node resolution from the project root - Vite aliases do
       // NOT apply. Without the explicit `import` path the host would register an
       // EMPTY module as the facade provider; `version` is explicit for the same reason.
-      shared: createHostShared({ "@vc-frontend/core": { version: coreApiVersion, import: coreApiEntry } }),
+      shared: createHostShared({ [FACADE_PACKAGE]: { version: coreApiVersion, import: coreApiEntry } }),
     }) as PluginOption,
+    keepFacadeOutOfOptimizeDeps(),
   ];
+}
+
+/**
+ * @module-federation/vite force-includes every shared key in `optimizeDeps` on serve, then strips from
+ * `exclude` whatever `include` holds. The facade resolves to project source, so esbuild would prebundle
+ * it with no Vite plugins: `@rollup/plugin-graphql` never runs and its `.graphql` imports fail to load.
+ */
+function keepFacadeOutOfOptimizeDeps(): PluginOption {
+  return {
+    name: "vc-frontend:facade-out-of-optimize-deps",
+    apply: "serve",
+    enforce: "post",
+    configResolved(config) {
+      const include = config.optimizeDeps.include ?? [];
+      config.optimizeDeps.include = include.filter((dep) => dep !== FACADE_PACKAGE);
+
+      const exclude = config.optimizeDeps.exclude ?? [];
+      config.optimizeDeps.exclude = [...exclude.filter((dep) => dep !== FACADE_PACKAGE), FACADE_PACKAGE];
+    },
+  };
 }
