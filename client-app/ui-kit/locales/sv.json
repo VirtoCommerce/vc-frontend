@@ -44,7 +44,15 @@
       "previous_year": "Föregående år",
       "next_year": "Nästa år",
       "today": "Idag",
-      "clear": "Rensa"
+      "clear": "Rensa",
+      "outside_suggested_range": "Utanför det föreslagna intervallet"
+    },
+    "date_range_input": {
+      "aria_label": "Datumintervall",
+      "clear": "Rensa datumintervall",
+      "end_date": "Slutdatum",
+      "invalid_range": "Slutdatumet måste vara på eller efter startdatumet",
+      "start_date": "Startdatum"
     },
     "date_selector": {
       "min_date_error": "Datum måste vara på eller efter {min}",

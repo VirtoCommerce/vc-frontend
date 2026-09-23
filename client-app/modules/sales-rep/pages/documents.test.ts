@@ -88,6 +88,12 @@ const createWrapper = createWrapperFactory(mount, Documents, {
     stubs: {
       // Renders its slot so tests can read which document the featured panel names.
       VcTypography: { template: "<div><slot /></div>" },
+      // Mirrors the real label>button structure so the chips' class lands where it does in the app.
+      VcTabSwitch: {
+        props: ["value", "modelValue"],
+        emits: ["change"],
+        template: `<label><button type="button" @click="$emit('change', value)"><slot /></button></label>`,
+      },
       VcInput: true,
       VcButton: true,
       VcBadge: true,
@@ -150,7 +156,7 @@ describe("Documents category tabs", () => {
     state.page.value = 3;
 
     const wrapper = createWrapper();
-    await wrapper.findAll(".sales-rep-rule-chips__tab")[1].trigger("click");
+    await wrapper.findAll(".sales-rep-rule-chips__tab")[1].find("button").trigger("click");
 
     expect(state.category.value).toBe("Catalogs");
     expect(state.page.value).toBe(1);

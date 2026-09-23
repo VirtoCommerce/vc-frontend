@@ -8,6 +8,7 @@
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
+        'vc-input--seamless': seamless,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
@@ -41,7 +42,8 @@
         :step="stepValue"
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
-        :aria-describedby="describedBy"
+        :aria-describedby="describedById"
+        :aria-invalid="invalid"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -61,7 +63,7 @@
           color="neutral"
           variant="ghost"
           class="vc-input__clear"
-          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          :icon-size="getInputClearIconSize(size)"
           @keydown.enter.stop.prevent
           @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
@@ -87,6 +89,7 @@
     </div>
 
     <VcInputDetails
+      v-if="!hideDetails"
       :id="counter || message ? detailsId : undefined"
       :show-empty="showEmptyDetails"
       :counter="counter"
@@ -103,7 +106,9 @@
 import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
 import type { MaskOptions } from "maska";
+import type { AriaAttributes } from "vue";
 
 export interface IProps {
   modelModifiers?: Record<string, boolean>;
@@ -117,10 +122,13 @@ export interface IProps {
   placeholder?: string;
   message?: string;
   singleLineMessage?: boolean;
+  /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
   error?: boolean;
   noBorder?: boolean;
+  seamless?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
+  hideDetails?: boolean;
   counter?: boolean;
   min?: string | number;
   max?: string | number;
@@ -163,6 +171,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   browserTooltip: "disabled",
   tabindex: 0,
+  hideDetails: false,
+  seamless: false,
 });
 
 if (import.meta.env.DEV && props.type === "date") {
@@ -177,13 +187,24 @@ const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-// Merged, not overwritten: the explicit binding below would otherwise drop `aria`'s own value.
-const describedBy = computed(() => {
-  const ids = [props.counter || props.message ? detailsId : undefined, props.aria?.["aria-describedby"]]
-    .filter(Boolean)
-    .join(" ");
+// mergeProps assigns unconditionally, so this later binding would erase a forwarded aria-describedby.
+const describedById = computed<string | undefined>(() => {
+  const forwarded = props.aria?.["aria-describedby"];
+  const forwardedId = typeof forwarded === "string" ? forwarded : undefined;
+  const ownId = !props.hideDetails && (props.counter || props.message) ? detailsId : undefined;
+  return [ownId, forwardedId].filter(Boolean).join(" ") || undefined;
+});
 
-  return ids || undefined;
+// Per ARIA an empty aria-invalid means NOT invalid, so treat it as no override; any other
+// unrecognised token means "true".
+const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
+  const override = props.aria?.["aria-invalid"];
+
+  if (override == null || override === "") {
+    return props.error ? "true" : undefined;
+  }
+
+  return override === "false" || override === "grammar" || override === "spelling" ? override : "true";
 });
 
 const computedAutocomplete = computed(() => {
@@ -276,6 +297,7 @@ provide<VcInputContextType>("inputContext", {
   $disabled: "";
   $error: "";
   $noBorder: "";
+  $seamless: "";
   $center: "";
   $truncate: "";
 
@@ -318,6 +340,10 @@ provide<VcInputContextType>("inputContext", {
     $noBorder: &;
   }
 
+  &--seamless {
+    $seamless: &;
+  }
+
   &--center {
     $center: &;
   }
@@ -357,6 +383,26 @@ provide<VcInputContextType>("inputContext", {
     #{$noBorder} & {
       @apply border-none;
     }
+
+    #{$seamless} & {
+      @apply border-0 bg-transparent p-0;
+
+      // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
+      &:has(input:focus-visible) {
+        @apply outline-none;
+      }
+
+      // Outspecifies the disabled fill above: :has() lands at (0,2,1), a bare seamless rule at (0,2,0).
+      &:has(input:disabled) {
+        @apply bg-transparent;
+      }
+    }
+
+    #{$seamless}#{$sizeXs} &,
+    #{$seamless}#{$sizeSm} &,
+    #{$seamless}#{$sizeMd} & {
+      height: auto;
+    }
   }
 
   &__decorator {
@@ -369,7 +415,9 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
+    @apply relative m-px bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
+
+    padding-inline: var(--vc-input-padding-x, theme("padding.2"));
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;

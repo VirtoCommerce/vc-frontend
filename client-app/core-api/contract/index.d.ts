@@ -1740,8 +1740,10 @@ interface IProps$a {
     singleLineMessage?: boolean;
     error?: boolean;
     noBorder?: boolean;
+    seamless?: boolean;
     hidePasswordSwitcher?: boolean;
     showEmptyDetails?: boolean;
+    hideDetails?: boolean;
     counter?: boolean;
     min?: string | number;
     max?: string | number;

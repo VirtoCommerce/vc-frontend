@@ -89,6 +89,34 @@ export const LongPath: StoryType = {
   },
 };
 
+export const WithRouteGaps: StoryType = {
+  args: {
+    items: [
+      { title: "Home", route: "/" },
+      { title: "Account", route: "/account" },
+      { title: "Subcategory" },
+      { title: "Orders" },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "An item without a route renders as plain text, the same way the last item does.",
+      },
+      source: {
+        code: `
+          <VcBreadcrumbs :items="[
+            { title: 'Home', route: '/' },
+            { title: 'Account', route: '/account' },
+            { title: 'Subcategory' },
+            { title: 'Orders' }
+          ]" />
+        `,
+      },
+    },
+  },
+};
+
 export const WithRoutes: StoryType = {
   args: {
     items: [
