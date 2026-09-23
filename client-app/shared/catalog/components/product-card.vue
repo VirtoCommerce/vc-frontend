@@ -133,7 +133,7 @@
     <AddToCartSimple v-else :product="product">
       <template v-if="viewMode !== 'list'">
         <InStock
-          labeled
+          flag-low-stock
           :is-in-stock="product.availabilityData?.isInStock"
           :is-digital="product.productType === ProductType.Digital"
           :quantity="product.availabilityData?.availableQuantity"
@@ -148,6 +148,7 @@
     <div v-if="viewMode === 'list'" class="product-card__stock">
       <InStock
         labeled
+        flag-low-stock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
         :quantity="product.availabilityData?.availableQuantity"
@@ -436,6 +437,12 @@ const variationsCount = computed(() => {
     --vc-icon-color: theme("colors.neutral.500");
   }
 
+  // The stock and in-cart figures read in the page's ink; the chip's rim and glyph carry the state.
+  :deep(.vc-quantity-stepper__badges .vc-chip__content),
+  :deep(.product-card__stock .vc-chip__content) {
+    @apply text-neutral-800;
+  }
+
   // Figures in a price keep one width, so a column of prices lines up digit under digit.
   :deep(.vc-product-price__actual),
   :deep(.vc-product-price__list) {
@@ -481,23 +488,6 @@ const variationsCount = computed(() => {
   html.dark &__spec {
     background: rgb(from theme("colors.neutral.950") r g b / 0.06);
     border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
-  }
-
-  // The quick actions come out on hover and on keyboard focus, and stay out where there is no hover
-  // to reveal them — on a touch screen a hidden control is a missing one.
-  :deep(.vc-product-actions) {
-    @apply transition-opacity duration-150;
-
-    @media (hover: hover) {
-      @apply opacity-0;
-    }
-  }
-
-  &:hover,
-  &:focus-within {
-    :deep(.vc-product-actions) {
-      @apply opacity-100;
-    }
   }
 
   // Grid, after the design's card: a thin 8px plate with the photo flush to it and only the column
@@ -647,11 +637,12 @@ const variationsCount = computed(() => {
   // actions — on the kit's own grid areas, so no kit component is touched. The columns come from
   // --product-list-columns, which the grid also hands the column heading above the rows: the two
   // cannot drift apart when one is edited.
+  // The row sits on the plate with the kit's own shadow, and lifts a step under the pointer.
   &.product-card--list {
-    @apply rounded-xl border border-neutral-100;
+    @apply rounded-xl border border-neutral-100 shadow-md;
 
     &:hover {
-      @apply shadow-md;
+      @apply shadow-lg;
     }
 
     --vc-product-title-font-size: 0.9375rem;

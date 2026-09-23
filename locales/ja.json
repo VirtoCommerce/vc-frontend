@@ -730,7 +730,7 @@
         "label": "表示件数："
       },
       "product_card": {
-        "only_left": "残り{n}点",
+        "low_stock": "在庫わずか",
         "configurable": "カスタマイズ可",
         "variants": "バリエーション",
         "price_label": "@:common.labels.product_price",

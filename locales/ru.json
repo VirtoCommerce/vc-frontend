@@ -730,7 +730,7 @@
         "label": "Результатов на странице:"
       },
       "product_card": {
-        "only_left": "Осталось {n}",
+        "low_stock": "Мало на складе",
         "configurable": "Настраиваемый",
         "variants": "Варианты",
         "price_label": "@:common.labels.product_price",

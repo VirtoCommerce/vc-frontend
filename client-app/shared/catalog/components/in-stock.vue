@@ -1,5 +1,5 @@
 <template>
-  <VcChip v-if="isDigital" :size="size" :variant="labeled ? 'soft' : 'outline-dark'" color="info" rounded>
+  <VcChip v-if="isDigital" :size="size" variant="outline-dark" color="info" rounded>
     <VcIcon name="cloud" variant="solid" />
 
     {{ $t("common.labels.digital_product") }}
@@ -8,21 +8,18 @@
   <VcChip
     v-else-if="isInStock"
     :size="size"
-    :variant="labeled ? 'soft' : 'outline-dark'"
-    :color="isLowStock ? 'warning' : 'success'"
+    variant="outline-dark"
+    :color="flagLowStock && isLowStock ? 'danger' : 'success'"
     rounded
     :title="$t('common.labels.in_stock')"
   >
     <VcIcon name="cube" variant="solid" />
 
     <span class="inline-block min-w-3 text-center">
-      <template v-if="labeled && isLowStock">{{
-        $t("shared.catalog.product_card.only_left", { n: quantity })
-      }}</template>
-
-      <template v-else-if="labeled && quantity"
-        >{{ $t("common.labels.in_stock") }}: {{ inStockQuantityLabel }}</template
-      >
+      <template v-if="labeled && quantity">
+        {{ isLowStock ? $t("shared.catalog.product_card.low_stock") : $t("common.labels.in_stock") }}:
+        {{ inStockQuantityLabel }}
+      </template>
 
       <template v-else>{{ quantity ? inStockQuantityLabel : $t("common.labels.in_stock") }}</template>
     </span>
@@ -31,7 +28,7 @@
   <VcChip
     v-else
     :size="size"
-    :variant="labeled ? 'soft' : 'outline-dark'"
+    variant="outline-dark"
     color="danger"
     rounded
     :title="
@@ -59,6 +56,8 @@ interface IProps {
   textEnabled?: boolean;
   /** Name the state beside the count — "In stock: 142" — where no column heading says what it counts. */
   labeled?: boolean;
+  /** Turn the chip red at a low count, as the catalog does; elsewhere a low count is still in stock. */
+  flagLowStock?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -68,7 +67,7 @@ const props = withDefaults(defineProps<IProps>(), {
   textEnabled: true,
 });
 
-/** At or under this many, the chip warns rather than reassures: "Only 4 left". */
+/** At or under this many, the stock is low: "Low stock: 4". */
 const LOW_STOCK_THRESHOLD = 10;
 
 const isLowStock = computed(() => !!props.quantity && props.quantity <= LOW_STOCK_THRESHOLD);

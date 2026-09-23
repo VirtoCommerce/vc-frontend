@@ -730,7 +730,7 @@
         "label": "每页结果数："
       },
       "product_card": {
-        "only_left": "仅剩{n}件",
+        "low_stock": "库存紧张",
         "configurable": "可定制",
         "variants": "多规格",
         "price_label": "@:common.labels.product_price",

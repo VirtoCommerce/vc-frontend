@@ -730,7 +730,7 @@
         "label": "Tuloksia per sivu:"
       },
       "product_card": {
-        "only_left": "Vain {n} jäljellä",
+        "low_stock": "Vähissä",
         "configurable": "Muokattava",
         "variants": "Muunnelmat",
         "price_label": "@:common.labels.product_price",

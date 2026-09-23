@@ -730,7 +730,7 @@
         "label": "Risultati per pagina:"
       },
       "product_card": {
-        "only_left": "Solo {n} rimasti",
+        "low_stock": "Scorte basse",
         "configurable": "Configurabile",
         "variants": "Varianti",
         "price_label": "@:common.labels.product_price",
