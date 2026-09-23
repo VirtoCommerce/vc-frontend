@@ -308,14 +308,17 @@ function changePage(newPage: number): void {
     @apply [word-break:break-word];
   }
 
-  // Own the search→table spacing (gap-4 = 1rem, matching Orders) instead of the shell's gap-y-5 (1.25rem) between page children.
+  // Own the chips→card spacing (gap-4 = 1rem, matching Orders) instead of the shell's gap-y-5 (1.25rem) between page children.
   &__results {
     @apply flex flex-col gap-4;
   }
 
-  // The card's own toolbar strip: the search sits on the rows it filters, ruled off from them.
+  // The card's own toolbar strip: the search sits on the rows it filters, ruled off from them by the
+  // widget's own divider token, so a fork retuning the widget's rules moves this one with them.
   &__toolbar {
-    @apply flex flex-wrap items-center gap-3 border-b border-neutral-200 px-5 py-3.5;
+    @apply flex flex-wrap items-center gap-3 border-b px-5 py-3.5;
+
+    border-color: var(--vc-widget-divide-color, theme("colors.neutral.200"));
   }
 
   &__search-input {

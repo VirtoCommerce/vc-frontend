@@ -62,7 +62,6 @@ describe("block registry", () => {
   it("leads the dashboard's left column with top sellers", () => {
     const left = getBlockRegistry("dashboard")
       .filter((block) => block.region === "mainLeft")
-      .slice()
       .sort((a, b) => a.order - b.order)
       .map((block) => block.id);
 

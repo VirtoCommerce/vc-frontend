@@ -186,20 +186,20 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), organizationId: props.orga
 .layout-surface {
   @apply flex flex-col;
 
-  gap: var(--page-stack, 1.25rem);
+  gap: var(--page-stack, 1.625rem);
 
   // `relative` anchors the absolutely-positioned save overlay.
   &__layout {
     @apply relative flex flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
   }
 
   // Single column through tablet; the rail splits off only at xl. layout-skeleton.vue matches.
   &__row {
     @apply flex flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
 
     @media (width >= theme("screens.xl")) {
       @apply flex-row items-start;
@@ -210,7 +210,7 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), organizationId: props.orga
   &__main-col {
     @apply flex min-w-0 flex-1 flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
   }
 
   &__main {

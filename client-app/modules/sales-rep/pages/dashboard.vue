@@ -28,7 +28,9 @@ const { cards } = useSalesRepDashboardWidgets();
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-dashboard {
-  @apply flex flex-col gap-5;
+  @apply flex flex-col;
+
+  gap: var(--page-stack, 1.625rem);
 
   &__title {
     @apply [word-break:break-word];

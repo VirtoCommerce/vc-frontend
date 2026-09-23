@@ -61,7 +61,7 @@ const columns = computed(() =>
 .layout-skeleton {
   @apply flex flex-col;
 
-  gap: var(--page-stack, 1.25rem);
+  gap: var(--page-stack, 1.625rem);
 
   &__stats {
     @apply flex flex-wrap gap-4;
@@ -70,7 +70,7 @@ const columns = computed(() =>
   &__row {
     @apply flex flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
 
     @media (width >= theme("screens.xl")) {
       @apply flex-row items-start;
@@ -80,14 +80,14 @@ const columns = computed(() =>
   &__main {
     @apply flex min-w-0 flex-1 flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
   }
 
   // Matches layout-surface.vue's rail, or the row jumps when the saved document lands.
   &__aside {
     @apply flex min-w-0 flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
 
     @media (width >= theme("screens.xl")) {
       @apply w-[20.625rem] shrink-0;

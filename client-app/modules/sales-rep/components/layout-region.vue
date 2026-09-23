@@ -183,7 +183,7 @@ watch(
   &--vertical {
     @apply flex flex-col;
 
-    gap: var(--page-stack, 1.25rem);
+    gap: var(--page-stack, 1.625rem);
   }
 
   // Flex, not grid: a grid's track count comes from state, which lags the card SortableJS has already

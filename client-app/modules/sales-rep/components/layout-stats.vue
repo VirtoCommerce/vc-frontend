@@ -23,7 +23,7 @@
       @announce="$emit('announce', $event)"
     >
       <template #default="{ id }">
-        <StatWidget v-if="cardOf(id)" v-bind="cardProps(id, isDense(visible))">
+        <StatWidget v-if="cardOf(id)" v-bind="cardProps(id)">
           <template v-if="editing" #leading>
             <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
             <span class="layout-stats__handle" aria-hidden="true">
@@ -58,7 +58,7 @@
         @announce="$emit('announce', $event)"
       >
         <template #default="{ id }">
-          <StatWidget v-if="cardOf(id)" v-bind="cardProps(id, isDense(hidden))">
+          <StatWidget v-if="cardOf(id)" v-bind="cardProps(id)">
             <template v-if="editing" #leading>
               <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
               <span class="layout-stats__handle" aria-hidden="true">
@@ -108,18 +108,11 @@ const byKey = computed(() => new Map(props.cards.map((card) => [card.key, card])
 
 const cardOf = (id: string) => byKey.value.get(id);
 
-// Past four across, a card's own width is what runs out, so the row tells its cards to tighten.
-// Per zone, not per surface: the parked row fills up on its own while the visible one empties.
-const DENSE_FROM = 5;
-
-const isDense = (zone: readonly string[]) => zone.length >= DENSE_FROM;
-
 // Explicit, not spread: `key` and `labelKey` are not StatWidget props and would leak onto its root.
 // Total return keeps the required props non-optional; the template's `v-if` skips an unknown id.
-function cardProps(id: string, dense: boolean) {
+function cardProps(id: string) {
   const card = cardOf(id);
   return {
-    dense,
     label: card ? t(card.labelKey) : id,
     value: card?.value ?? "",
     valueSuffix: card?.valueSuffix,
