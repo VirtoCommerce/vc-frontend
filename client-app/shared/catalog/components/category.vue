@@ -5,11 +5,11 @@
     <template v-else>
       <!-- Popup sidebar for mobile and horizontal desktop view -->
       <FiltersPopupSidebar
-        v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
+        v-if="!hideSidebar && (isCompact || isHorizontalFilters)"
         :is-exist-selected-facets="hasSelectedFacets"
         :popup-sidebar-filters="filtersToShow"
         :facets-loading="fetchingFacets"
-        :is-mobile="isMobile"
+        :is-mobile="isCompact"
         :is-visible="isFiltersSidebarVisible"
         :loading="fetchingProducts"
         :hide-controls="hideControls"
@@ -34,26 +34,15 @@
             class="category__product-filters"
             @change:filters="applyFiltersOnly($event)"
           />
-
-          <!-- The way out of a narrowed listing sits at the foot of the rail that narrowed it. It only
-               appears once something is picked: a reset with nothing to reset is a dead control. -->
-          <VcButton
-            v-if="hasSelectedFilters || activeControls.length"
-            class="category__clear-all"
-            variant="soft"
-            color="neutral"
-            full-width
-            @click="resetFacetAndControlsFilters"
-          >
-            {{ $t("common.buttons.reset_filters") }}
-          </VcButton>
         </template>
 
         <!-- The page is laid out as plates on the canvas: the heading is one plate, the category's
              picture a second beside it, and the listing a third below. -->
-        <div class="category__head">
+        <div :class="['category__head', { 'category__head--art': headImage }]">
           <div class="category__head-plate">
-            <span v-if="headEyebrow" class="category__eyebrow">{{ headEyebrow }}</span>
+            <div v-if="$slots.breadcrumbs" class="category__breadcrumbs">
+              <slot name="breadcrumbs" />
+            </div>
 
             <VcTypography tag="h1" class="category__title">
               <i18n-t
@@ -85,23 +74,12 @@
             </VcTypography>
           </div>
 
-          <div v-if="headImage" class="category__head-art">
-            <img :src="headImage" alt="" class="category__head-image" />
-          </div>
+          <img v-if="headImage" :src="headImage" alt="" class="category__head-art" />
         </div>
 
         <div class="category__body">
-          <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
-
           <template v-if="!hideAllControls">
-            <div
-              :class="[
-                'category__filters',
-                {
-                  'category__filters--sticky': stickyMobileHeaderIsVisible,
-                },
-              ]"
-            >
+            <div class="category__filters">
               <!-- Popup sidebar filters toggler -->
               <VcButton
                 v-if="!hideSidebar"
@@ -120,28 +98,31 @@
                 data-test-id="view-switcher"
               />
 
-              <!-- Sorting -->
-              <CategorySort
-                v-if="!hideSorting && !isHorizontalFilters"
-                v-model="selectedSort"
-                :options="translatedProductSortingList"
-                :loading="fetchingProducts"
-                class="category__sort"
-                @change="applySort"
-              />
+              <!-- The page's quick filters and its order, one group on the far side of the layout switch -->
+              <div class="category__filters-right">
+                <!-- In stock and branches -->
+                <CategoryControls
+                  v-if="!hideControls && !isCompact && !isHorizontalFilters"
+                  v-model="localStorageInStock"
+                  v-model:purchased-before="localStoragePurchasedBefore"
+                  :loading="fetchingProducts"
+                  :saved-branches="localStorageBranches"
+                  class="category__controls"
+                  @open-branches-modal="openBranchesModal"
+                  @apply-in-stock="resetCurrentPage"
+                  @apply-purchased-before="resetCurrentPage"
+                />
 
-              <!-- In stock and branches -->
-              <CategoryControls
-                v-if="!hideControls && !isMobile && !isHorizontalFilters"
-                v-model="localStorageInStock"
-                v-model:purchased-before="localStoragePurchasedBefore"
-                :loading="fetchingProducts"
-                :saved-branches="localStorageBranches"
-                class="category__controls"
-                @open-branches-modal="openBranchesModal"
-                @apply-in-stock="resetCurrentPage"
-                @apply-purchased-before="resetCurrentPage"
-              />
+                <!-- Sorting -->
+                <CategorySort
+                  v-if="!hideSorting && !isHorizontalFilters"
+                  v-model="selectedSort"
+                  :options="translatedProductSortingList"
+                  :loading="fetchingProducts"
+                  class="category__sort"
+                  @change="applySort"
+                />
+              </div>
             </div>
 
             <!-- Horizontal filters -->
@@ -312,6 +293,8 @@ const currencyCode = computed(() => props.currencyCodeOverride || defaultCurrenc
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+/** Below lg the rail gives way to the filters drawer, and the quick filters move into it with the facets. */
+const isCompact = breakpoints.smaller("lg");
 
 const isCategoryNotFound = ref(false);
 
@@ -414,10 +397,6 @@ const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
-
 const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 const hideViewModeSelector = computed(() => {
   return !!props.viewMode && viewModes.includes(props.viewMode);
@@ -441,7 +420,7 @@ const hideAllControls = computed(() => {
 });
 
 const isSidebarVisible = computed(() => {
-  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
+  return !props.hideSidebar && !isCompact.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
 });
 
 const activeControls = computed(() => {
@@ -579,9 +558,6 @@ function trackViewSearchResults(): void {
   });
 }
 
-/** The parent section, named over the title so the reader knows where in the catalog they stand. */
-const headEyebrow = computed(() => (props.isRoot ? undefined : currentCategory.value?.parent?.name));
-
 /** The category's own picture, set per category in the admin; the plate is left out when there is none. */
 const headImage = computed(() => currentCategory.value?.images?.[0]?.url);
 
@@ -650,12 +626,10 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
   return false;
 }
 
-whenever(() => !isMobile.value, hideFiltersSidebar);
+whenever(() => !isCompact.value, hideFiltersSidebar);
 const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
-
-const isMobileLg = breakpoints.smaller("lg");
 
 watch(
   () => props.categoryId,
@@ -768,7 +742,7 @@ onBeforeUnmount(() => {
 function clearCategoryScope() {
   removeScopeItemByType("category");
 
-  if (!isMobileLg.value) {
+  if (!isCompact.value) {
     clearSearchResults();
   }
 }
@@ -779,248 +753,292 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-// The facet stack as the design draws it, on the desktop rail and in the phone's filter drawer
-// alike — the drawer is teleported out of the page, so it cannot inherit these from the rail.
-@mixin facet-rail {
-  // The design's "nested widget" (Ilya, 22.09.2026): a widget lying inside another's plate draws
-  // no plate of its own and keeps no side inset, so heading and rows stand on the plate's edge.
-  // What it keeps is the kit's own vertical rhythm — a 38px heading with a 24px fold chevron, and
-  // 16px above and 20px below the body.
+// The design's "nested widget" (Ilya, 22.09.2026): a widget lying inside someone else's surface
+// draws no plate of its own and keeps no side inset, so its heading and its rows stand on one
+// vertical with whatever holds it — here the rail's cards, and in the phone's drawer the drawer.
+@mixin nested-widget {
   .vc-widget {
-    // No rule between a heading and its body — the kit divides its own children with one.
     --vc-widget-divide-color: transparent;
 
-    @apply rounded-none border-0 bg-transparent p-0 shadow-none;
+    @apply rounded-none border-0 bg-transparent px-0 shadow-none;
   }
 
-  .vc-widget__header {
+  .vc-widget__header,
+  .vc-widget__slot {
     @apply px-0;
   }
 
-  .vc-widget__slot-container {
+  .vc-widget__slot-container,
+  .vc-widget__footer-container {
     @apply border-0;
   }
 
-  .vc-widget__slot {
-    @apply px-0 pb-5 pt-4;
+  .vc-menu-item__inner {
+    @apply bg-transparent px-0;
   }
 
   .vc-widget__append-icon {
     --vc-icon-size: 1.5rem;
   }
-
-  // Sections are parted by a hairline. Each facet sits in a wrapper of its own, so the rule goes on
-  // the wrappers — a "next widget" selector never finds a widget beside another.
-  .category__selector + .category__product-filters,
-  .products-filters__container > * + * {
-    @apply border-t border-neutral-200;
-  }
-
-  .category__selector {
-    @apply mb-0;
-  }
-
-  // Facet rows are the same size-sm row as the category list: 10px above and below a 14px name, the
-  // plate bleeding 12px past the text so the name stays on the heading's vertical. The kit paints
-  // each row paper white, which on the warm plate read as a white block behind the list.
-  .vc-menu-item__inner {
-    @apply -mx-3 w-[calc(100%+1.5rem)] bg-transparent px-3;
-
-    &:hover {
-      @apply bg-neutral-100;
-    }
-  }
-
-  // The list scrolls, so the bleed has to fit inside its box or it opens a horizontal scrollbar.
-  .facet-filter-widget__container {
-    @apply -mx-3 px-3;
-  }
-
-  // The fade over a cut-off list has to end in the plate's colour, not white, or it draws a pale band.
-  .facet-filter-widget__fade::after {
-    --tw-gradient-from: var(--category-plate-bg, theme("colors.additional.50")) var(--tw-gradient-from-position);
-    --tw-gradient-to: transparent var(--tw-gradient-to-position);
-  }
 }
 
+// The drawer is teleported out of the page and carries the facets on its own surface, so it takes
+// the nested widget and nothing of the rail's cards.
 .filters-popup-sidebar {
-  @include facet-rail;
+  @include nested-widget;
+
+  .vc-widget__title {
+    @apply text-sm leading-[1.125rem];
+  }
+
+  .facet-filter-widget__fade::after {
+    --tw-gradient-from: theme("colors.additional.50") var(--tw-gradient-from-position);
+  }
 }
 
 .category {
-  // The page is plates on the canvas, on the same numbers as the header and footer plates PR #2494
-  // built: one radius, one inside, one shadow, and one step between every plate. The fallbacks are
-  // those values, so a theme without the paprika tokens still gets round plates.
+  // The page is plates on the canvas, on the numbers PR #2494 built for the header and footer:
+  // one radius, one inside, one shadow and one step between every plate. The fallbacks are those
+  // values, so a theme without the paprika tokens still gets round plates.
   --category-plate-radius: var(--plate-radius, 1.75rem);
   --category-plate-pad-y: var(--plate-pad-y, 2.25rem);
   --category-plate-pad-x: var(--plate-pad-x, 2rem);
   --category-plate-gap: var(--page-stack, 1.625rem);
+  --category-plate-shadow: var(--plate-shadow, theme("boxShadow.md"));
 
-  // The plate surface is the design's warm off-white (#fffdfa), not paper white — the same step the
-  // footer's top plate already paints with, so every plate on the page is one colour and they flip
-  // to dark together.
+  // The plate is the design's warm off-white (#fffdf9), the step the footer's top plate paints
+  // with, so every plate on the page is one colour and they turn dark together.
   --category-plate-bg: var(--footer-top-bg-color, #fffdf9);
+
+  // The step inside a plate between its toolbar and the grid under it.
+  --category-inner: 1.5rem;
+
+  @media (width < 900px) {
+    --category-inner: 1.25rem;
+  }
 
   %plate {
     padding: var(--category-plate-pad-y) var(--category-plate-pad-x);
     border-radius: var(--category-plate-radius);
     background: var(--category-plate-bg);
-    box-shadow: var(--plate-shadow, theme("boxShadow.md"));
+    box-shadow: var(--category-plate-shadow);
   }
 
+  // Between the rail and the listing only: below md the layout unboxes its content column, and a
+  // row gap would add itself to the heading's own step.
   .vc-layout__container {
-    @media (min-width: theme("screens.md")) {
-      gap: var(--category-plate-gap);
-    }
+    column-gap: var(--category-plate-gap);
   }
 
-  // The rail is 280 wide with 28 of inside all round, as the design measures it — 224 of content.
-  // Two classes deep on purpose: the layout sets this width through its own position modifier, and
-  // an equal-weight rule here loses to it on load order.
+  // 280 wide, the design's rail. Two classes deep: the layout sets the width through its own
+  // position modifier, and an equal-weight rule loses to it on load order.
   .vc-layout .vc-layout__sidebar-container {
-    @media (min-width: theme("screens.xl")) {
-      width: 17.5rem;
-    }
+    width: 17.5rem;
   }
 
+  // The rail is not one plate but a stack of cards — the category list and every facet in a card
+  // of its own, 20 apart (Ilya, 22.09.2026). On one continuous surface a gap between two blocks
+  // reads as an empty line rather than as a border.
   .vc-layout__sidebar {
-    @extend %plate;
+    @apply flex w-full flex-col gap-5;
 
-    // The layout gives the sticky sidebar a width of its own as well as its container's; it follows
-    // the container so the two cannot disagree.
-    @apply w-full;
+    @include nested-widget;
 
-    padding: 1.75rem;
+    .products-filters__container {
+      @apply flex flex-col gap-5;
+    }
 
-    @include facet-rail;
+    // A card repeats the plate's surface at a smaller radius — 22 on a block this narrow looks
+    // inflated, 16 keeps it in the family.
+    .category__selector,
+    .products-filters__container > * > .vc-widget,
+    .slider-filter > .vc-widget {
+      @apply rounded-2xl;
 
-    .category__clear-all {
-      @apply mt-7 h-[2.8125rem] rounded-full text-base font-semibold text-neutral-950;
+      padding: 1rem 1.25rem 0.75rem;
+      background: var(--category-plate-bg);
+      box-shadow: var(--category-plate-shadow);
+    }
+
+    // Every block on the rail is headed the same way — Geologica 700 18/22 over a hairline — so
+    // the category list and the facets under it read as one level (Ilya's Figma, 22.09.2026).
+    .vc-widget__header-container {
+      @apply p-0;
+    }
+
+    .vc-widget__header {
+      @apply min-h-0 border-b border-neutral-200 pb-2 pt-0;
+    }
+
+    .vc-widget__title {
+      @apply font-geologica text-lg font-bold normal-case leading-[1.375rem] tracking-normal text-neutral-950;
+    }
+
+    .vc-widget__prepend-append,
+    .vc-widget__append-icon {
+      @apply flex h-6;
+    }
+
+    // A folded facet is its label alone: the hairline would hang along the card's bottom edge.
+    .vc-widget--collapsed .vc-widget__header {
+      @apply border-b-0 pb-0.5;
+    }
+
+    .facet-filter-widget .vc-widget__slot-container {
+      @apply pt-1;
+    }
+
+    .slider-filter-widget .vc-widget__slot {
+      @apply pb-1 pt-4;
+    }
+
+    // Rows are 36 — an 18 checkbox and 9 above and below — and the name is quieter than the
+    // heading over it.
+    .facet-filter-widget__container .vc-menu-item__inner {
+      @apply py-[0.5625rem];
+    }
+
+    .facet-filter-widget__container .vc-menu-item__content {
+      @apply min-h-[1.125rem] leading-[1.125rem] text-neutral-700;
+    }
+
+    .facet-filter-widget__search {
+      @apply p-3;
+    }
+
+    // The fade over a cut-off list ends in the card's colour, not white, or it draws a pale band.
+    .facet-filter-widget__fade::after {
+      --tw-gradient-from: var(--category-plate-bg) var(--tw-gradient-from-position);
+      --tw-gradient-to: transparent var(--tw-gradient-to-position);
+    }
+
+    // The category list's heading is the widget's own title and the list comes straight under it,
+    // 10 below the hairline, with the card's 20 all round.
+    .category__selector {
+      @apply p-5;
+
+      .vc-widget__header {
+        @apply pb-1.5;
+      }
+
+      .vc-widget__slot {
+        @apply px-0 pb-0 pt-2.5;
+      }
     }
   }
 
+  // The heading row is a text plate and the category's picture, 2 : 1 at one fixed height; the
+  // picture answers "where am I" faster than the title does.
   &__head {
-    @apply flex items-stretch;
+    @apply grid;
 
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--category-plate-gap);
     margin-bottom: var(--category-plate-gap);
-  }
 
-  // One height whether or not there is a parent to name over the title — the height of a plate that
-  // has both lines — and the content centred in it, so a title on its own sits in the middle rather
-  // than under an empty line. Written from the plate's own inside so it steps with it below lg.
-  &__head-plate {
-    @extend %plate;
-    @apply flex min-w-0 grow flex-col justify-center gap-2;
+    @media (width >= 900px) {
+      block-size: 8.75rem;
 
-    min-height: calc(var(--category-plate-pad-y) * 2 + 4.1875rem);
-  }
+      > .category__head-plate {
+        @apply py-0;
+      }
+    }
 
-  &__eyebrow {
-    @apply text-xs font-bold uppercase tracking-[0.14em] text-primary-500;
-  }
-
-  // The picture is a third of the row and fills its plate edge to edge; the heading keeps the rest.
-  // The heading sets the row's height and the picture fills whatever that is — an image left to its
-  // own size stretched the whole row to its height. Category art is cut out on transparency and
-  // cropped to the object, so it is contained and anchored to the far corner, where the design lets
-  // the object run to the plate's edge, rather than covered and clipped.
-  &__head-art {
-    @apply relative hidden shrink-0 overflow-hidden;
-
-    width: 32%;
-    border-radius: var(--category-plate-radius);
-    background: var(--category-plate-bg);
-    box-shadow: var(--plate-shadow, theme("boxShadow.md"));
-
-    @media (min-width: theme("screens.lg")) {
-      @apply block;
+    &--art {
+      @media (width >= 900px) {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      }
     }
   }
 
-  &__head-image {
-    @apply absolute inset-0 size-full object-contain object-right-bottom;
+  // 140 is the whole row, so the plate's own vertical inside does not fit in it: the text is
+  // centred instead.
+  &__head-plate {
+    @extend %plate;
+    @apply flex min-w-0 flex-col justify-center;
   }
 
-  &__body {
-    @extend %plate;
+  // The picture is its own plate, on the plate's material: the same shadow and a 2px edge of half
+  // white. box-sizing matters — the row is exactly 140, and an outside border would push it out.
+  &__head-art {
+    @apply block size-full min-h-0 box-border object-cover object-center;
+
+    border-radius: var(--category-plate-radius);
+    border: 2px solid rgb(from theme("colors.additional.50") r g b / 0.5);
+    background: var(--category-plate-bg);
+    box-shadow: var(--category-plate-shadow);
+
+    @media (width < 900px) {
+      @apply aspect-video h-auto;
+    }
   }
 
   &__breadcrumbs {
-    @apply mb-2.5;
-
-    @media (min-width: theme("screens.md")) {
-      @apply mb-4;
-    }
+    @apply mb-3.5;
   }
 
-  &__selector {
-    @apply mb-4;
-
-    @media (min-width: theme("screens.md")) {
-      @apply mb-5;
-    }
-  }
-
+  // Not the home page's display h1 but a caption to the row: 30 on 1.12, where the full h1 took
+  // the height the picture needs.
   &__title {
     --vc-typography-text-transform: none;
+
+    @apply font-geologica text-[1.9rem] font-semibold leading-[1.12];
+
+    @media (min-width: 1920px) {
+      @apply text-[2.05rem];
+    }
   }
 
   &__title-skeleton {
     @apply inline-block w-48 bg-neutral-200 md:w-64;
   }
 
-  &__products-count {
-    @apply -top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base;
+  &__body {
+    @extend %plate;
   }
 
+  // Layout switch on the left; the quick filters and the sort together on the right.
   &__filters {
-    @apply flex flex-wrap items-center gap-3 my-3 empty:h-2;
+    @apply flex flex-wrap items-center gap-3;
 
-    @media (min-width: theme("screens.md")) {
-      @apply mb-3.5 mt-3 flex-wrap justify-end;
+    margin-bottom: var(--category-inner);
+  }
+
+  &__filters-right {
+    @apply ms-auto flex flex-wrap items-center gap-5;
+
+    // Below 1240 the group takes a line of its own: the sort would otherwise eat the switches'
+    // width and break their labels in the middle.
+    @media (width < 1240px) {
+      @apply ms-0 w-full justify-between;
     }
 
-    @media (min-width: theme("screens.xl")) {
-      @apply gap-x-6;
-    }
-
-    &--sticky {
-      @apply z-40 sticky top-[2.1rem] -mx-6 bg-additional-50 px-5 py-3 shadow-lg;
+    @media (width < theme("screens.md")) {
+      @apply contents;
     }
   }
 
   &__facets-button {
-    @media (min-width: theme("screens.md")) {
+    @media (min-width: theme("screens.lg")) {
       @apply hidden;
     }
   }
 
+  // On a phone the five tabs take a line of their own; the track scrolls when even that is short.
   &__sort {
-    // No layout of its own: the rail is one control, and a gap set here would reopen the seam the
-    // seg track closes between its seats. On a phone it takes a row to itself under the filter and
-    // layout buttons — squeezed between them it had room for one and a half tabs.
     @media (width < theme("screens.md")) {
-      @apply order-last w-full min-w-0;
-    }
-
-    @media (min-width: theme("screens.lg")) {
-      @apply order-last;
+      @apply w-full min-w-0 flex-auto;
     }
   }
 
   &__view-mode {
-    @apply order-last;
-
-    @media (min-width: theme("screens.md")) {
-      @apply order-first me-auto;
+    @media (width < theme("screens.md")) {
+      @apply order-last;
     }
   }
 
-  &__controls {
-    @media (width < theme("screens.lg")) and (min-width: theme("screens.md")) {
-      @apply order-last w-full;
-    }
+  .active-filter-chips {
+    @apply mb-4;
   }
 
   &__products-bottom {

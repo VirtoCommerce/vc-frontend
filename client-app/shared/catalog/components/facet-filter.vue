@@ -5,7 +5,7 @@
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
           v-model="searchKeyword"
-          size="sm"
+          size="xs"
           maxlength="30"
           :disabled="loading"
           :aria-label="$t('common.labels.search', [facet.label])"

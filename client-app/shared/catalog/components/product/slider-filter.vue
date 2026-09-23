@@ -1,6 +1,6 @@
 <template>
   <div v-if="typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue" class="slider-filter">
-    <VcWidget v-if="mode === 'collapsable'" class="slider-filter-widget" size="xs" collapsible :title="facet.label">
+    <VcWidget v-if="mode === 'collapsable'" class="slider-filter-widget" size="xs" collapsible :title="label">
       <div>
         <VcSlider
           :value="sliderValue"
@@ -32,7 +32,7 @@
           variant="outline"
           v-bind="triggerProps"
         >
-          {{ facet.label }}
+          {{ label }}
 
           <template #append>
             <span class="slider-filter-dropdown__append">
@@ -64,6 +64,8 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import { useI18n } from "vue-i18n";
+import { globals } from "@/core/globals";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
 
@@ -84,6 +86,15 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { facet, filter } = toRefs(props);
+
+const { t } = useI18n();
+
+/** The store sends the price facet under its field name, "price"; it is headed as the design heads it, "Price (USD)". */
+const label = computed(() =>
+  facet.value.paramName.toLowerCase() === "price" && globals.currencyCode
+    ? `${t("common.labels.price")} (${globals.currencyCode})`
+    : facet.value.label,
+);
 
 const facetMin = computed(() => {
   return typeof facet.value.statistics?.min === "number" ? Math.floor(facet.value.statistics.min) : undefined;

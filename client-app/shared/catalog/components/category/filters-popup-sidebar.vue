@@ -18,6 +18,7 @@
             v-if="!hideControls && isPurchasedBeforeEnabled"
             :model-value="localFilters.purchasedBefore"
             class="filters-popup-sidebar__control"
+            size="sm"
             :disabled="updatingFiltersState"
             data-test-id="purchased-before-checkbox-filter"
             @change="onTopFiltersChange({ purchasedBefore: $event })"
@@ -29,6 +30,7 @@
             v-if="!hideControls"
             :model-value="localFilters.inStock"
             class="filters-popup-sidebar__control"
+            size="sm"
             :disabled="updatingFiltersState"
             @change="onTopFiltersChange({ inStock: $event })"
           >
@@ -38,6 +40,7 @@
           <VcCheckbox
             v-if="!hideControls"
             class="filters-popup-sidebar__control"
+            size="sm"
             :model-value="!!localFilters.branches.length"
             :disabled="updatingFiltersState"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"

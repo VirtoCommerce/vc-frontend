@@ -122,7 +122,7 @@ interface IProps {
 
 <style lang="scss">
 .category-controls {
-  @apply flex items-center gap-4 justify-end;
+  @apply flex min-w-0 flex-wrap items-center justify-end gap-x-[1.125rem] gap-y-2;
 
   // The tooltip wraps each switch in two blocks, and the inner one is a 24px line box with the
   // inline-flex switch sitting on its baseline — 18px of switch at the top of 24px of line. That put
@@ -132,23 +132,21 @@ interface IProps {
     @apply flex items-center;
   }
 
-  @media (min-width: theme("screens.xl")) {
-    @apply gap-6;
-  }
-
+  // A switch carries a state and its label repeats it: an off switch's label goes quiet, so in a
+  // row of three the one that is on reads first.
   &__label {
-    @apply whitespace-nowrap text-sm;
+    @apply whitespace-nowrap text-sm text-neutral-950 transition-colors duration-200;
 
     &--muted {
-      @apply text-neutral;
+      @apply text-neutral-500;
     }
   }
 
   &__availability {
-    @apply whitespace-nowrap text-sm;
+    @apply whitespace-nowrap text-sm text-neutral-950 transition-colors duration-200;
 
     &--muted {
-      @apply text-neutral;
+      @apply text-neutral-500;
     }
   }
 

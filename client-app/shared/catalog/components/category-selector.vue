@@ -127,21 +127,15 @@ function getFacet(category: CategoryType) {
 
 <style lang="scss">
 .category-selector {
-  // The design heads this block with an h5 — the rail's one sentence-case heading — rather than the
-  // uppercase label the facets below carry: it names where the reader is, not what they can filter.
-  .vc-widget__title {
-    @apply text-base normal-case;
-  }
-
   &__list {
-    @apply flex flex-col gap-0.5;
+    @apply flex flex-col;
   }
 
-  // The design's size-sm menu row: 10px above and below a 14px name. Its plate bleeds 12px past the
-  // text on both sides, so the names stand on the heading's vertical while the hover and the active
-  // fill still read as a row — the side-menu device from the account pages.
+  // The design's size-sm menu row: 8 above and below a 14px name, the plate running 10 past the
+  // text on both sides so the names stand on the heading's vertical while the hover and the
+  // active fill still read as a row.
   &__item {
-    @apply -mx-3 flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-sm leading-[1.35] text-neutral-950 transition-colors;
+    @apply -mx-2.5 flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm leading-[1.35] text-neutral-950 transition-colors;
 
     &:is(a):hover {
       @apply bg-neutral-100;

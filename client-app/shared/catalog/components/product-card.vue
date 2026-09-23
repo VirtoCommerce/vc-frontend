@@ -67,7 +67,7 @@
     <VcProductProperties v-if="cardType !== 'short' && properties.length">
       <span v-for="(property, i) in properties" :key="i" class="product-card__spec">
         <b class="product-card__spec-label">{{ property.label }}</b>
-
+        {{ " " }}
         <span class="product-card__spec-value">{{ property.value }}</span>
       </span>
     </VcProductProperties>
@@ -129,7 +129,7 @@
       />
     </template>
 
-    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCartSimple v-else :product="product">
       <template v-if="viewMode !== 'list'">
         <InStock
           labeled
@@ -367,31 +367,29 @@ const variationsCount = computed(() => {
 
 <style scoped lang="scss">
 .product-card {
-  // The card lies flat on the plate and lifts only under the pointer, easing rather than snapping.
-  @apply shadow-none transition-shadow duration-200 ease-out;
+  // The card lies flat on the plate and lifts only under the pointer: a warm shadow off the brown,
+  // not the kit's grey one, easing in with the border.
+  @apply shadow-none;
+
+  transition:
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
 
   &:hover {
-    @apply shadow-lg;
+    box-shadow:
+      0 1px 3px rgb(from theme("colors.secondary.500") r g b / 0.16),
+      0 4px 16px rgb(from theme("colors.secondary.500") r g b / 0.28);
   }
-
-  // The title is the product's name here, not a link away from the page: the grid is scanned for
-  // what a thing is, and a column of blue underlines reads as navigation rather than as goods.
-  --vc-product-title-link-color: theme("colors.neutral.950");
-  --vc-product-title-link-hover-color: theme("colors.neutral.950");
 
   // The brand reads as an eyebrow over the title: it is what the eye lands on first when scanning a
   // grid of products it does not yet know.
   :deep(.vc-product-vendor) {
-    @apply mt-0 text-xs uppercase leading-4 tracking-[0.12em] text-neutral-500;
+    @apply flex items-center gap-2 font-bold uppercase text-neutral-500;
 
     // The kit orders everything in the card through one sequence, media included — the photo, then
     // the title at 2. The brand shares the title's step and comes first in the markup, so it sits
     // between the two instead of above the photo.
     order: 2;
-  }
-
-  :deep(.vc-product-vendor) {
-    @apply flex items-center gap-2;
   }
 
   &__maker {
@@ -402,31 +400,18 @@ const variationsCount = computed(() => {
     @apply shrink-0 text-[0.6875rem] font-bold uppercase tracking-[0.08em];
   }
 
-  :deep(.vc-product-title) {
-    @apply mt-2.5;
-  }
-
   // The specification as chips rather than a two-column table with dotted leaders: on a card the
-  // pair is scanned, not read across. One chip per line, a rounded rectangle on the warm grey, 23px
-  // at 13px — a pill read as a button, and two side by side ran into each other.
+  // pair is scanned, not read across. At most two, side by side, wrapping when they do not fit.
   :deep(.vc-product-properties) {
-    @apply mt-2.5 flex flex-col items-start gap-[0.3125rem];
+    @apply flex flex-row flex-wrap content-start gap-[0.3125rem];
   }
 
   &__spec {
-    @apply inline-flex max-w-full items-baseline gap-1 rounded-lg bg-neutral-100 px-2 py-[0.3125rem] text-[0.8125rem] leading-[0.8125rem];
+    @apply min-w-0 max-w-full truncate rounded-lg border border-neutral-100 bg-neutral-100 px-2 py-0.5 text-[0.71875rem] leading-[1.45] text-neutral-700;
   }
 
   &__spec-label {
-    @apply shrink-0 font-bold text-neutral-950;
-  }
-
-  &__spec-value {
-    @apply truncate font-normal text-neutral-600;
-  }
-
-  :deep(.vc-product-price__actual) {
-    @apply font-extrabold;
+    @apply font-semibold text-neutral-950;
   }
 
   // The stock chip at the design's measure: a 14px glyph beside 13px of text. The kit's small chip
@@ -444,24 +429,11 @@ const variationsCount = computed(() => {
   // The quick actions come out on hover and on keyboard focus, and stay out where there is no hover
   // to reveal them — on a touch screen a hidden control is a missing one.
   :deep(.vc-product-actions) {
-    @apply gap-1.5 transition-opacity duration-150;
+    @apply transition-opacity duration-150;
 
     @media (hover: hover) {
       @apply opacity-0;
     }
-  }
-
-  // Each action is a 32px disc on the warm grey with a dark outline glyph, as the design draws them;
-  // the kit's bare 24px glyph read as decoration on the photo rather than as a control. A picked
-  // action keeps the kit's own colour so a saved or compared product still says so.
-  :deep(.vc-product-actions-button) {
-    --vc-icon-size: 1rem;
-
-    @apply size-8 rounded-full bg-neutral-100 p-0 transition-colors duration-150 hover:bg-neutral-200;
-  }
-
-  :deep(.vc-product-actions-button:not(.vc-product-actions-button--active)) {
-    @apply text-neutral-700 hover:text-neutral-950;
   }
 
   &:hover,
@@ -471,32 +443,83 @@ const variationsCount = computed(() => {
     }
   }
 
-  // Grid: 18px of inside for the text, and the photo let out to 9px of it on a light grey plate with
-  // no rule round it — the design's photo is wider than the column of type below it, and square.
-  // Written two classes deep: the kit sizes the title and price through `.vc-product-card > wrapper`
-  // selectors of the same weight as a one-class rule here, and it loads later.
+  // Grid, after the design's card: a thin 8px plate with the photo flush to it and only the column
+  // of type inset a further 10, the brand over the title, chips, and the quick actions as glass
+  // circles on the photo. Written two classes deep: the kit sizes the title and price through
+  // `.vc-product-card > wrapper` selectors of the same weight as a one-class rule here, and it
+  // loads later.
   &.product-card--grid {
-    // The design's type on the card: a 16px title and a 24px price.
-    :deep(.vc-product-title) {
-      --vc-product-title-font-size: 1rem;
+    @apply border-neutral-200;
 
-      @apply text-base;
+    :deep(.vc-product-card__wrapper) {
+      @apply px-2 pb-4 pt-2;
+    }
+
+    :deep(.vc-product-vendor),
+    :deep(.vc-product-title),
+    :deep(.vc-product-properties),
+    :deep(.vc-product-price),
+    :deep(.vc-quantity-stepper),
+    :deep(.vc-product-button) {
+      @apply px-2.5;
+    }
+
+    :deep(.vc-product-vendor) {
+      @apply mt-3 min-h-0 text-[0.71875rem] leading-[1.4] tracking-[0.08em];
+    }
+
+    :deep(.vc-product-title) {
+      --vc-product-title-font-size: 0.90625rem;
+      --vc-product-title-link-color: theme("colors.neutral.950");
+      --vc-product-title-link-hover-color: theme("colors.accent.600");
+
+      @apply mt-1.5 h-[2.64em] font-geologica text-[0.90625rem] font-semibold tracking-[-0.008em];
+    }
+
+    // The kit pins the title's own line-height; the text inside it takes the design's.
+    :deep(.vc-product-title__text) {
+      @apply leading-[1.32];
+    }
+
+    :deep(.vc-product-properties) {
+      @apply mt-2 min-h-[3.0625rem];
     }
 
     :deep(.vc-product-price) {
-      --vc-product-price-font-size: 1.5rem;
+      --vc-product-price-font-size: 1.1875rem;
+
+      @apply mt-2.5 font-geologica tracking-[-0.02em];
     }
 
-    :deep(.vc-product-card__wrapper) {
-      @apply p-[1.125rem];
+    :deep(.vc-product-price__actual) {
+      @apply font-bold;
     }
 
-    :deep(.vc-product-card__media) {
-      @apply -mx-[0.5625rem] -mt-[0.5625rem];
+    :deep(.vc-product-price__list) {
+      @apply text-sm font-normal tracking-normal;
     }
 
-    // The badges lie on the photo, 8px in from its corner. The kit cuts them a notch out of the
-    // photo instead — a white corner with rounded ears — which on the grey plate read as a patch.
+    :deep(.vc-quantity-stepper),
+    :deep(.vc-product-button) {
+      @apply mt-2.5;
+    }
+
+    :deep(.vc-quantity-stepper__badges) {
+      @apply mt-1.5 min-h-[1.375rem];
+    }
+
+    // The photo is a white plate with a hairline, the colour its packshots are shot on.
+    :deep(.vc-product-image) {
+      @apply aspect-square h-auto rounded-[0.625rem] border border-neutral-100 bg-additional-50;
+    }
+
+    :deep(.vc-product-image__img),
+    :deep(.vc-product-image__carousel-img) {
+      @apply p-2;
+    }
+
+    // The badges and the quick actions belong to the photo: 8 of card plus 8 inside it. The kit
+    // cuts the badges a notch out of the photo instead — a white corner with rounded ears.
     :deep(.badges-wrapper) {
       @apply start-2 top-2 bg-transparent p-0;
 
@@ -506,15 +529,36 @@ const variationsCount = computed(() => {
       }
     }
 
-    // The photo moved out by 9px, so the actions that hang in its corner move back in with it.
     :deep(.vc-product-actions) {
-      @apply end-2 top-2;
+      @apply end-2 top-2 gap-1.5 bg-transparent p-0;
     }
 
-    :deep(.vc-product-image) {
-      @apply aspect-square h-auto border-0;
+    // Each action is a 30px circle of frosted white with a warm brown glyph that turns the brand
+    // orange under the pointer and once picked.
+    :deep(.vc-product-actions-button) {
+      --vc-icon-size: 1rem;
 
-      background: color-mix(in srgb, theme("colors.neutral.950") 3%, theme("colors.additional.50"));
+      @apply size-[1.875rem] rounded-full p-0 text-secondary-600;
+
+      background: rgb(from theme("colors.additional.50") r g b / 0.9);
+      backdrop-filter: blur(28px) saturate(180%) brightness(1.08) contrast(1.05);
+      box-shadow:
+        inset 0 0 0 1px rgb(from theme("colors.additional.50") r g b / 0.6),
+        inset 0 1px 1px rgb(from theme("colors.additional.50") r g b / 0.85),
+        inset 0 -1px 2px rgb(from theme("colors.neutral.950") r g b / 0.06);
+      transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.12s ease;
+
+      &:hover,
+      &.vc-product-actions-button--active {
+        @apply text-primary-500;
+      }
+
+      &:active {
+        @apply scale-90;
+      }
     }
   }
 
@@ -544,7 +588,7 @@ const variationsCount = computed(() => {
         "image properties properties  properties"
         "stock stock      stock       stock"
         "price price      add-to-cart actions";
-      grid-template-columns: 5rem auto minmax(9.375rem, 13.75rem) auto;
+      grid-template-columns: 5rem minmax(0, 1fr) minmax(9.375rem, 13.75rem) auto;
       grid-template-rows: auto;
       column-gap: 0.875rem;
       row-gap: 0.625rem;
@@ -570,6 +614,7 @@ const variationsCount = computed(() => {
           "image properties stock price add-to-cart actions";
         grid-template-columns: var(--product-list-columns);
         grid-template-rows: auto auto auto;
+        column-gap: 0.75rem;
       }
     }
 
@@ -583,9 +628,13 @@ const variationsCount = computed(() => {
     :deep(.vc-product-image) {
       grid-area: image;
 
-      @apply size-20 border-0;
+      // 80 in a 72 track: it runs 8 into the gap, as the design has it, or the photo reads smaller
+      // than the caption beside it.
+      @apply size-20 max-w-none rounded-[0.625rem] border border-neutral-200 bg-additional-50;
+    }
 
-      background: color-mix(in srgb, theme("colors.neutral.950") 3%, theme("colors.additional.50"));
+    :deep(.vc-product-image__img) {
+      @apply p-1.5;
     }
 
     :deep(.badges-wrapper) {
@@ -601,8 +650,14 @@ const variationsCount = computed(() => {
       @apply mt-0 self-end text-[0.6875rem] tracking-[0.06em];
     }
 
+    // In the row the name is a link again, in the kit's link blue: the row is read across to the
+    // product, not scanned for what a thing is.
     :deep(.vc-product-title) {
-      @apply mt-0 self-center font-bold;
+      @apply mt-0 self-center text-[0.9375rem] font-bold;
+    }
+
+    :deep(.vc-product-title__text) {
+      @apply leading-[1.125rem];
     }
 
     :deep(.vc-product-properties) {
@@ -619,7 +674,7 @@ const variationsCount = computed(() => {
       @apply flex flex-row flex-wrap items-center gap-1.5 border-b border-neutral-200 pb-2.5;
 
       @container (min-width: 60rem) {
-        @apply flex-col items-start gap-1 border-0 pb-0;
+        @apply flex-col items-start gap-[0.3125rem] border-0 pb-0;
       }
     }
 
@@ -634,10 +689,10 @@ const variationsCount = computed(() => {
     :deep(.vc-product-price) {
       --vc-product-price-font-size: 1.25rem;
 
-      @apply m-0 w-full min-w-0 whitespace-nowrap;
+      @apply m-0 flex w-full min-w-0 flex-row flex-wrap items-baseline justify-start gap-x-1.5 whitespace-nowrap text-start;
 
       @container (min-width: 60rem) {
-        @apply items-end text-end;
+        @apply justify-end text-end;
       }
     }
 
@@ -651,7 +706,11 @@ const variationsCount = computed(() => {
     :deep(.vc-product-actions) {
       grid-area: actions;
 
-      @apply static flex-row opacity-100;
+      @apply static flex-row bg-transparent p-0 opacity-100;
+    }
+
+    :deep(.vc-product-actions-button:not(.vc-product-actions-button--active)) {
+      @apply text-neutral-400 hover:text-neutral-500;
     }
   }
 

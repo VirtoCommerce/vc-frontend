@@ -367,10 +367,12 @@ function sendGASelectItemEvent(product: Product): void {
 
   --vc-product-title-font-size: theme("fontSize.sm");
   // photo · product · availability · unit price · add to cart · actions — read by the rows and the heading.
-  --product-list-columns: 5rem minmax(0, 1fr) 9.5rem 8.5rem 10.625rem 4.375rem;
+  // The design's 72 · 1fr · 132 · 124 · 196; its last track holds the stepper and the actions, and our
+  // stepper does not go below 150, so that track is 150 plus the actions.
+  --product-list-columns: 4.5rem minmax(0, 1fr) 8.25rem 7.75rem 9.375rem auto;
 
   &__list-head {
-    @apply mb-2 mt-3 hidden gap-x-3 px-[1.0625rem] text-[0.65625rem] font-bold uppercase tracking-[0.1em] text-neutral-500;
+    @apply hidden gap-x-3 px-[1.0625rem] pb-2 text-[0.65625rem] font-bold uppercase tracking-[0.1em] text-neutral-500;
 
     grid-template-columns: var(--product-list-columns);
 
@@ -380,9 +382,6 @@ function sendGASelectItemEvent(product: Product): void {
       @apply grid;
     }
   }
-
-  --columnsAmountTablet: v-bind(props.columnsAmountTablet);
-  --columnsAmountDesktop: v-bind(props.columnsAmountDesktop);
 
   &__list {
     // Everything a card needs for the length of a turn, and not a moment longer. `will-change` puts
@@ -394,28 +393,37 @@ function sendGASelectItemEvent(product: Product): void {
       will-change: transform;
     }
 
+    // The column count is the listing's own business, not the page's: a fixed count gave a 145px
+    // card at 1240 once the rail took its share. One column on a phone, two on a tablet, and from
+    // lg as many 215px cards as the listing holds with 20 between them.
     &--grid {
-      @apply grid gap-5;
+      @apply grid grid-cols-1 gap-5;
 
-      @media (min-width: theme("screens.xs")) {
+      @media (min-width: theme("screens.sm")) {
         @apply grid-cols-2;
       }
 
-      @media (min-width: theme("screens.md")) {
-        grid-template-columns: repeat(var(--columnsAmountTablet), minmax(0, 1fr));
-      }
+      @media (min-width: theme("screens.lg")) {
+        @container (min-width: 685px) {
+          @apply grid-cols-3;
+        }
 
-      @media (min-width: theme("screens.xl")) {
-        grid-template-columns: repeat(var(--columnsAmountDesktop), minmax(0, 1fr));
+        @container (min-width: 920px) {
+          @apply grid-cols-4;
+        }
+
+        @container (min-width: 1155px) {
+          @apply grid-cols-5;
+        }
+
+        @container (min-width: 1390px) {
+          @apply grid-cols-6;
+        }
       }
     }
 
     &--list {
-      @apply -mx-5 divide-y space-y-2;
-
-      @media (min-width: theme("screens.md")) {
-        @apply divide-y-0 mx-0 space-y-2.5;
-      }
+      @apply flex flex-col gap-2.5;
     }
   }
 

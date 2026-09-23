@@ -110,3 +110,31 @@ and the wave finished at 1689ms.
 | 12 | Stock as "Low stock" / "In stock" / out of stock | "Only N left" at 10 or fewer, "In stock: N" above that, "Out of stock" at none. The threshold of 10 is ours — the design has no number, only the state. |
 | 13 | A `PACK` column in the list | Cut with the pack picker (#3). The list keeps photo · product · availability · unit price · add to cart · actions. |
 | 14 | An "Add to cart" button on simple products | The storefront's quantity stepper, kept by decision (Ivan, 2026-09-22): the design's button is one control where a B2B buyer needs two. |
+
+## Re-audit against the full `storefront.css` (2026-09-23)
+
+DesignSync's `get_file` stops at 256 KiB, and `storefront.css` is 611 KB: every earlier pass read
+its first 3,403 of 8,064 lines, which hold the base kit and none of the Paprika layer. The whole
+file (downloaded from the project by hand) moved these to the design's numbers: the rail as a stack
+of 16px cards, the 140px heading row with the breadcrumbs inside it and the picture as a framed
+plate, the grid card's 8px plate and 10px text inset, chips side by side, the column ladder by the
+listing's own width, the list row's link-blue title, and the sidebar/drawer switch at lg, not md.
+
+Kept against the design by earlier decision:
+
+| # | The design draws | What ships, and why |
+|---|---|---|
+| 15 | Quick actions always on the photo | Shown on hover and focus, on hover-capable devices only (Ivan, 2026-09-22). |
+| 16 | List rows at rest with the kit's `shadow-md` | Flat at rest, shadow on hover — the same as the grid (Ivan, 2026-09-23). |
+| 17 | No product-type badge ("the button already names it") | "Variants" / "Configurable" beside the brand, as asked earlier. |
+| 18 | Two switches, "In stock" and "Available at branches" | Three: the storefront's "Purchased before" stays. With three, the switches and the sort do not fit one line at 1440, and the group wraps onto a line of its own. |
+| 19 | A 124px stepper in a 196px last column | 150: our stepper does not go narrower, so the last track is 150 plus the actions. |
+| 20 | A sticky-free toolbar | Matches: the storefront's own sticky toolbar on phones is gone. |
+
+Limits:
+
+- The kit pins the product title's line-height with `!important`. The design's 1.32 goes on the
+  title's inner text instead, and the title box is sized to two such lines.
+- The design's phone layer (below 600: page gutter 12, plate step 13) and the drawer's full-height
+  shape are page-level rules and belong to PR #2494. The catalog reads `--page-stack`, so it follows
+  #2494 once they land there.
