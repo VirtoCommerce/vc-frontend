@@ -14,7 +14,6 @@ diffed against it element by element — computed styles, positions and visible 
 | Five sortings, `Relevance` among them | Four: Featured · Price ↑ · Price ↓ · Newest | Ivan, 2026-09-22 |
 | The discount badge in the brand orange | Red, the storefront's `DiscountBadge` | Ivan, 2026-09-22 |
 | No product-type badge | `Variants` / `Configurable` beside the brand | Ivan, 2026-09-22 |
-| On a sort change, the grid turns around one shared perspective | Each card turns about its own axis | Ivan, 2026-09-22 |
 
 ## Built differently, because the storefront works differently
 

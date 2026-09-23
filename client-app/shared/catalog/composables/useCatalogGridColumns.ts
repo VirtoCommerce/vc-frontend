@@ -15,8 +15,8 @@ const LISTING_STEPS = [
   { minWidth: 685, columns: 3 },
 ] as const;
 
-const SM = parseInt(BREAKPOINTS.sm);
-const LG = parseInt(BREAKPOINTS.lg);
+const SM = Number.parseInt(BREAKPOINTS.sm);
+const LG = Number.parseInt(BREAKPOINTS.lg);
 
 /** How many columns the catalog grid draws for this window and this listing width. */
 export function getGridColumns(viewportWidth: number, listingWidth: number): number {

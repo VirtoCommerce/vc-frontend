@@ -704,6 +704,11 @@ const variationsCount = computed(() => {
       // 80 in a 72 track: it runs 8 into the gap, as the design has it, or the photo reads smaller
       // than the caption beside it.
       @apply size-20 max-w-none rounded-[0.625rem] border border-neutral-200 bg-additional-50;
+
+      // Below 34rem the photo goes and the product takes the row.
+      @container (width < 34rem) {
+        @apply hidden;
+      }
     }
 
     :deep(.vc-product-image__img) {
@@ -748,12 +753,6 @@ const variationsCount = computed(() => {
 
       @container (min-width: 60rem) {
         @apply flex-col items-start gap-[0.3125rem] border-0 pb-0;
-      }
-    }
-
-    :deep(.vc-product-image) {
-      @container (width < 34rem) {
-        @apply hidden;
       }
     }
 

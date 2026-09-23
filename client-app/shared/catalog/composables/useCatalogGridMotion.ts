@@ -41,6 +41,10 @@ export const FLIPPING_CLASS = "category-products__list--flipping";
  * @param viewMode  The layout the owner has chosen. The grid follows it a beat late, so the change
  *   lands behind the dimming rather than under the reader's eye.
  */
+function wait(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
 export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Ref<"grid" | "list">) {
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
@@ -95,14 +99,6 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
     return settled(animation, duration);
   }
 
-  function wait(ms: number) {
-    return new Promise<void>((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
-   * One card's turn: away, changed at the edge, and back. Changing it here rather than changing the
-   * whole grid at once is the point — a single update would change the cards still facing the reader.
-   */
   /**
    * Brings cards left mid-turn by an abandoned wave back to facing the reader, all together and
    * without the wave's stagger. Cancelling their animations outright would snap a card from the
@@ -135,6 +131,10 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
     );
   }
 
+  /**
+   * One card's turn: away, changed at the edge, and back. Changing it here rather than changing the
+   * whole grid at once is the point — a single update would change the cards still facing the reader.
+   */
   async function flipCard(
     card: HTMLElement,
     index: number,
