@@ -48,7 +48,7 @@ const { t } = useI18n();
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-[0.14em] text-additional-50/60;
+    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-additional-50/60;
   }
 
   &__title {
@@ -60,7 +60,7 @@ const { t } = useI18n();
   }
 
   &__supplier {
-    @apply flex items-center gap-3.5 rounded-xl border border-additional-50/20 bg-additional-50/10 p-[19px] backdrop-blur-[8px];
+    @apply flex items-center gap-3.5 rounded-xl border border-additional-50/20 bg-additional-50/10 p-5 backdrop-blur-[8px];
   }
 
   &__logo {
@@ -103,6 +103,62 @@ const { t } = useI18n();
 
   &__stat-label {
     @apply text-base font-semibold text-additional-50/70;
+  }
+}
+
+@media (width < theme("screens.lg")) {
+  .suppliers-section {
+    &__supplier {
+      @apply flex-col items-stretch gap-2;
+    }
+
+    &__supplier-name {
+      @apply overflow-visible whitespace-normal;
+    }
+
+    &__stat-value {
+      @apply text-4xl;
+    }
+  }
+}
+
+@media (width < theme("screens.md")) {
+  .suppliers-section {
+    &__grid {
+      @apply grid-cols-2;
+    }
+
+    &__stat-value {
+      @apply text-3xl;
+    }
+  }
+}
+
+@media (width < theme("screens.sm")) {
+  .suppliers-section {
+    &__grid {
+      @apply gap-3;
+    }
+
+    &__supplier {
+      @apply p-3;
+    }
+
+    &__stats {
+      @apply mt-6 grid-cols-1 gap-3;
+    }
+
+    &__stat {
+      @apply flex items-center gap-3 px-4 py-3;
+    }
+
+    &__stat-value {
+      @apply w-32 flex-none text-2xl;
+    }
+
+    &__stat-label {
+      @apply text-sm;
+    }
   }
 }
 </style>
