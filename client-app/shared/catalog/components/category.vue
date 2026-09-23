@@ -1031,7 +1031,7 @@ onMounted(() => {
   &__title {
     --vc-typography-text-transform: none;
 
-    @apply font-geologica text-[1.9rem] font-semibold leading-[1.12];
+    @apply font-geologica text-[1.9rem] font-semibold leading-[1.12] tracking-[-0.03em];
 
     @media (min-width: 1920px) {
       @apply text-[2.05rem];

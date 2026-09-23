@@ -409,6 +409,31 @@ const variationsCount = computed(() => {
     @apply shrink-0 text-[0.6875rem] font-bold uppercase tracking-[0.08em];
   }
 
+  // A badge on the photo is cut out of it by a 4px ring of white, so it reads over any packshot.
+  :deep(.badges-wrapper .vc-badge) {
+    box-shadow: 0 0 0 4px theme("colors.additional.50");
+  }
+
+  // Figures in a price keep one width, so a column of prices lines up digit under digit.
+  :deep(.vc-product-price__actual),
+  :deep(.vc-product-price__list) {
+    @apply tabular-nums;
+  }
+
+  // The photo's dots are a phone's cue that it swipes; with a pointer the arrows say so, and the
+  // design leaves the dots out. On a phone they are 6px, quiet, 6 above the photo's foot.
+  :deep(.vc-product-image__carousel-bullets) {
+    @apply py-1.5 lg:hidden;
+  }
+
+  :deep(.vc-product-image__carousel-bullet) {
+    @apply size-1.5 border-0 bg-neutral-300 outline-0;
+
+    &.vc-product-image__carousel-bullet--active {
+      @apply bg-neutral-500;
+    }
+  }
+
   // The specification as chips rather than a two-column table with dotted leaders: on a card the
   // pair is scanned, not read across. At most two, side by side, wrapping when they do not fit.
   :deep(.vc-product-properties) {

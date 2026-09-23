@@ -131,6 +131,8 @@ Kept against the design by earlier decision:
 | 19 | A 124px stepper in a 196px last column | 150: our stepper does not go narrower, so the last track is 150 plus the actions. |
 | 20 | A sticky-free toolbar | Matches: the storefront's own sticky toolbar on phones is gone. |
 | 21 | A fixed page of cards | The page size follows the columns the grid draws — 16 rounded up to whole rows: 16 on 1, 2 and 4 columns, 18 on 3 and 6, 20 on 5 — so no page ends on a part-filled row. The column count is read off the listing's width, the same ladder the CSS uses, and `columnsAmountDesktop` / `columnsAmountTablet` (brand page, Builder.io blocks) no longer steer the catalog grid. |
+| 22 | The discount badge in the brand orange (`primary`) | Red (`danger`), the storefront's `DiscountBadge`: it was compared against the reference and kept (Ivan, 2026-09-22). |
+| 23 | Static photo dots, all one grey | The kit's carousel bullets at the design's 6px and grey, hidden from lg as the design has it; the current photo's bullet stays darker, because ours is a real carousel. |
 
 Limits:
 
