@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "すべて",
-          "differences": "違い"
+          "differences": "違い",
+          "group_label": "行フィルター"
         },
         "uncategorized": "未分類",
         "unresolved_category": "不明なカテゴリ",

@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Tous",
-          "differences": "Différences"
+          "differences": "Différences",
+          "group_label": "Filtre de lignes"
         },
         "uncategorized": "Non classé",
         "unresolved_category": "Catégorie inconnue",

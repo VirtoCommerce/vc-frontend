@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Kaikki",
-          "differences": "Erot"
+          "differences": "Erot",
+          "group_label": "Rivisuodatin"
         },
         "uncategorized": "Luokittelemattomat",
         "unresolved_category": "Tuntematon luokka",

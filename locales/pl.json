@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Wszystkie",
-          "differences": "Różnice"
+          "differences": "Różnice",
+          "group_label": "Filtr wierszy"
         },
         "uncategorized": "Nie skategoryzowane",
         "unresolved_category": "Nieznana kategoria",

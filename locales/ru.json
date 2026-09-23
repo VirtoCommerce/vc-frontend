@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Все",
-          "differences": "Различия"
+          "differences": "Различия",
+          "group_label": "Фильтр строк"
         },
         "uncategorized": "Без категории",
         "unresolved_category": "Неизвестная категория",

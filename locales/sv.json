@@ -1069,7 +1069,8 @@
       "table": {
         "tabs": {
           "all": "Alla",
-          "differences": "Skillnader"
+          "differences": "Skillnader",
+          "group_label": "Radfilter"
         },
         "uncategorized": "Osorterad",
         "unresolved_category": "Okänd kategori",

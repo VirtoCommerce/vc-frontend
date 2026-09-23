@@ -14,10 +14,14 @@
         <div class="compare-table__controls" :class="{ 'compare-table__controls--stuck': isCompact }">
           <Teleport v-if="mobileTabsBarRef" :to="mobileTabsBarRef" :disabled="!isMobile">
             <div class="compare-table__controls-top">
-              <div class="compare-table__tabs">
+              <VcTabSwitchGroup
+                class="compare-table__tabs"
+                variant="seg"
+                fill
+                :aria-label="t('shared.compare.table.tabs.group_label')"
+              >
                 <VcTabSwitch
                   :model-value="activeTab"
-                  class="compare-table__tab"
                   size="sm"
                   value="all"
                   :label="t('shared.compare.table.tabs.all')"
@@ -27,14 +31,13 @@
 
                 <VcTabSwitch
                   :model-value="activeTab"
-                  class="compare-table__tab"
                   size="sm"
                   value="differences"
                   :label="t('shared.compare.table.tabs.differences')"
                   :disabled="isTabSwitchDisabled"
                   @change="activeTab = $event"
                 />
-              </div>
+              </VcTabSwitchGroup>
 
               <p v-if="!isCompact && differCount > 0" class="compare-table__differ">
                 {{ t("shared.compare.table.differ_rows", { count: differCount, total: totalRows }) }}
@@ -514,13 +517,18 @@ watch(
   }
 
   &__tabs {
-    @apply grid grid-cols-2 gap-0.5 rounded-[--vc-radius] bg-neutral-100 p-1.5;
-  }
-
-  &__tab {
-    @apply w-full;
-
-    --vc-tab-switch-border-color: transparent;
+    // `fill` stretches the rail across its column, which is what the desktop sidebar wants. In
+    // the mobile bar it shares a row with the clear-category button, so there it shrinks to its
+    // own labels instead — a ceiling rather than a number, so the rail is as wide as the
+    // language needs and no wider. The `fr` tracks stay equal under it, both sized to the
+    // longer label.
+    // Two classes deep on purpose: the seg variant declares its own `max-w-full` at a single
+    // class and lands later in the sheet, so one class here loses the tie.
+    @media (width < theme("screens.md")) {
+      .compare-table & {
+        @apply max-w-fit;
+      }
+    }
   }
 
   &__differ {
