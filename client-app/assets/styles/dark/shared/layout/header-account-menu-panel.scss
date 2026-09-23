@@ -1,0 +1,13 @@
+.header-account-menu-panel {
+  // The same move the account sidebar makes, because these are the same rows in a second
+  // presentation: dark reads by brightening, so the hover steps up the neutral ramp and the
+  // active row up the secondary one. Both halves travel together — see the light block.
+  --hover-plate: theme("colors.neutral.200");
+  --active-plate: theme("colors.secondary.200");
+
+  // Both of these can end up ON that hover plate, and there they need a step the light theme does
+  // not: measured across the 8 dark presets, danger-700 bottoms out at 2.55:1 and neutral-600 at
+  // 3.40:1 (coffee, watermelon), while danger-900 holds 5.71 and neutral-800 holds 5.64.
+  --sign-out-ink: theme("colors.danger.900");
+  --subtitle-ink: theme("colors.neutral.800");
+}

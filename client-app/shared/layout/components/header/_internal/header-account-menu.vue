@@ -3,8 +3,10 @@
     class="header-account-menu"
     placement="bottom-end"
     :offset-options="10"
-    role="menu"
+    role="dialog"
     :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
+    bg-color="--color-additional-50"
+    lazy
     shadow
   >
     <template #trigger="{ opened, triggerProps }">
@@ -21,54 +23,13 @@
     </template>
 
     <template #content="{ close }">
-      <div class="header-account-menu__panel" data-test-id="account-menu">
-        <div class="header-account-menu__head">
-          <router-link
-            to="/account/dashboard"
-            class="header-account-menu__identity"
-            data-test-id="dashboard-link"
-            @click="close"
-          >
-            <VcIcon name="user-circle" />
-
-            <span class="header-account-menu__name">
-              {{ displayName }}
-            </span>
-          </router-link>
-
-          <VcButton
-            :title="$t('shared.layout.header.link_logout')"
-            variant="outline"
-            color="neutral"
-            size="xs"
-            data-test-id="sign-out-button"
-            icon
-            @click="signMeOut"
-          >
-            <VcIcon name="logout" />
-          </VcButton>
-        </div>
-
-        <div v-if="organization" class="header-account-menu__org">
-          {{ organization.name }}
-        </div>
-
-        <button
-          v-if="operator"
-          type="button"
-          class="header-account-menu__row"
-          data-test-id="back-to-operator-row"
-          @click="onBackToOperator(close)"
-        >
-          <VcIcon name="arrow-left" />
-
-          <span class="header-account-menu__name">
-            {{ backToOperatorLabel }}
-          </span>
-        </button>
-
-        <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="close" />
-      </div>
+      <HeaderAccountMenuPanel
+        :display-name="displayName"
+        :initials="initials"
+        @navigate="close"
+        @sign-out="signMeOut"
+        @back-to-operator="onBackToOperator(close)"
+      />
     </template>
   </VcPopover>
 </template>
@@ -76,11 +37,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
-import TopHeaderOrganizations from "./top-header-organizations.vue";
+import HeaderAccountMenuPanel from "./header-account-menu-panel.vue";
 
-const { user, operator, organization, isMultiOrganization } = useUser();
+const { user } = useUser();
 const { signMeOut } = useSignMeOut();
-const { backToOperatorLabel, backToOperator } = useImpersonate();
+const { backToOperator } = useImpersonate();
 
 const displayName = computed(() => user.value.contact?.fullName || user.value.userName);
 
@@ -107,9 +68,11 @@ async function onBackToOperator(close: () => void): Promise<void> {
 
     background: color-mix(in srgb, var(--header-bottom-text-color) 12%, transparent);
     color: var(--header-bottom-text-color);
+    // `--transition-duration` is declared nowhere in the repo, and a bare var() with no fallback
+    // makes the whole declaration invalid — without this the trigger snapped instead of fading.
     transition:
-      background var(--transition-duration) ease,
-      color var(--transition-duration) ease;
+      background var(--transition-duration, 0.2s) ease,
+      color var(--transition-duration, 0.2s) ease;
 
     &:hover {
       background: color-mix(in srgb, var(--header-bottom-text-color) 20%, transparent);
@@ -119,36 +82,6 @@ async function onBackToOperator(close: () => void): Promise<void> {
       background: var(--header-bottom-text-color);
       color: var(--header-bottom-bg-color);
     }
-  }
-
-  &__panel {
-    @apply flex w-64 flex-col;
-  }
-
-  &__head {
-    @apply flex max-w-full items-center justify-between gap-4 p-3;
-  }
-
-  &__identity {
-    @apply flex min-w-0 items-center gap-2;
-
-    color: var(--link-color);
-
-    &:hover {
-      color: var(--link-hover-color);
-    }
-  }
-
-  &__name {
-    @apply truncate;
-  }
-
-  &__org {
-    @apply truncate border-t border-neutral-200 px-3 py-2 text-xs italic text-neutral-600;
-  }
-
-  &__row {
-    @apply flex items-center gap-2 border-t border-neutral-200 p-3 text-start hover:bg-neutral-50;
   }
 }
 </style>

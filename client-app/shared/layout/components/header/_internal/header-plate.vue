@@ -240,7 +240,7 @@ watch(route, () => {
       inset 0 -1px 0 var(--glass-under, transparent),
       var(--glass-shadow, 0 10px 34px color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent));
     color: var(--header-bottom-text-color);
-    transition: border-radius var(--transition-duration) ease;
+    transition: border-radius var(--transition-duration, 0.2s) ease;
 
     // A translucent plate with nothing behind it is a washed-out surface, so where the
     // browser cannot blur, the glass falls back to the solid header colour.
@@ -282,7 +282,7 @@ watch(route, () => {
   &__brand {
     @apply flex-none;
 
-    transition: opacity var(--transition-duration) ease;
+    transition: opacity var(--transition-duration, 0.2s) ease;
 
     &:hover {
       opacity: 0.72;
@@ -306,8 +306,8 @@ watch(route, () => {
 
     color: var(--header-bottom-link-color);
     transition:
-      background var(--transition-duration) ease,
-      color var(--transition-duration) ease;
+      background var(--transition-duration, 0.2s) ease,
+      color var(--transition-duration, 0.2s) ease;
 
     &:hover {
       background: color-mix(in srgb, var(--header-bottom-text-color) 5%, transparent);
@@ -338,7 +338,7 @@ watch(route, () => {
 
     background: var(--header-bottom-bg-color);
     border-radius: var(--vc-radius);
-    transition: transform var(--transition-duration) ease;
+    transition: transform var(--transition-duration, 0.2s) ease;
 
     &--hidden {
       @apply -translate-y-full;
