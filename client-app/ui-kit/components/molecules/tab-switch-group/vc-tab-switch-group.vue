@@ -106,6 +106,20 @@ function movePill() {
     return;
   }
 
+  // Undo any ancestor scale before reading the geometry. A popover plays its panel in with
+  // `scale(.97)`, and this group is measured the moment that panel stops being display:none —
+  // mid-flight. getBoundingClientRect reports the SCALED box, so the indicator is placed for a
+  // panel 3% smaller than the one it ends up in: measured on the preferences panel, left came
+  // out 199.55 where the settled segment is at 206.0, and the width 97.84 against 101.0 — the
+  // indicator lands a few pixels left of its segment and stays there. offsetWidth is the layout
+  // width and ignores transforms, so their ratio is the scale in force.
+  //
+  // Only applied when it is clearly a transform: offsetWidth is rounded to an integer, so at
+  // rest the two differ by up to half a pixel and correcting by that would ADD error.
+  const layoutWidth = boxElement.offsetWidth;
+  const scale = layoutWidth > 0 ? boxRect.width / layoutWidth : 1;
+  const correction = Math.abs(1 - scale) > 0.01 ? scale : 1;
+
   const activeRect = active.getBoundingClientRect();
   // Physical offsets on purpose: these are measured geometry, not authored direction, and the
   // measurement already accounts for RTL.
@@ -115,8 +129,8 @@ function movePill() {
   // across two columns of them. Measured at 100% on a 2x screen, rounding alone already put the
   // right edge 0.45px inside the next segment. The browser snaps to the device grid itself, and
   // does it correctly at every zoom.
-  const left = activeRect.left - boxRect.left;
-  const width = activeRect.width;
+  const left = (activeRect.left - boxRect.left) / correction;
+  const width = activeRect.width / correction;
   const from = previous.value;
 
   // A redraw that was not about the tabs.
