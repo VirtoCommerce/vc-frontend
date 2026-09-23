@@ -286,12 +286,16 @@ const pkgJson = {
 
 const viteConfig = `import { federation } from "@module-federation/vite";
 import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
+import { pluginContributions } from "@vc-frontend/core/manifest";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import contributions from "./plugin.config";
 
 export default defineConfig({
   plugins: [
     vue(),
+    // Writes dist/contributions.json from plugin.config.ts.
+    pluginContributions(contributions),
     // Wiring conventions (expose key, shared singletons, manifest metadata) come from
     // the host - client-app/core-api/federation.mjs in the host checkout owns them.
     federation(
@@ -360,7 +364,7 @@ const tsconfig = {
     verbatimModuleSyntax: true,
     types: ["vite/client"],
   },
-  include: ["src", "vite.config.ts"],
+  include: ["src", "vite.config.ts", "plugin.config.ts"],
   // Off by default an unknown component is accepted silently, props unchecked. The contract
   // declares the ui-kit components the facade exports, so host tags survive the strictness.
   vueCompilerOptions: { strictTemplates: true },
@@ -382,6 +386,21 @@ export function init(): void {
   : `${stylesImport}export function init(): void {
   // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
 }
+`;
+
+const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
+
+// What the storefront learns about this plugin before running any of its code: routes, menu
+// entries, the extension points it fills, and conditions on each. Every field is optional, and
+// nothing declared here replaces a registration in src/index.ts — see HOWTO "Declaring
+// contributions".
+export default definePluginManifest({${
+  selected.router
+    ? `
+  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],
+`
+    : ""
+}});
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
@@ -447,6 +466,9 @@ symlinks, so the facade's types resolve their own imports from the host's node_m
 const pluginJson = {
   id: pluginName,
   remote: { name: pluginName, exposed: "./plugin" },
+  // The platform turns each entry into a hashed URL on the descriptor; this is the only way the
+  // storefront learns what plugin.config.ts declares before it fetches any of the plugin's code.
+  contentFiles: ["contributions.json"],
 };
 
 const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
@@ -627,6 +649,7 @@ mkdirSync(join(targetDir, "public"), { recursive: true });
 writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "index.html"), indexHtml);
 writeFileSync(join(targetDir, "vite.config.ts"), viteConfig);
+writeFileSync(join(targetDir, "plugin.config.ts"), pluginConfigTs);
 writeFileSync(join(targetDir, "tsconfig.json"), JSON.stringify(tsconfig, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "index.ts"), indexTs);
 if (selected.router) {

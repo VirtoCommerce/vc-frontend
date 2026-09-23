@@ -494,6 +494,115 @@ those keys.
 How the ExtensionPoint system works, the available categories, and payload shapes:
 [`client-app/shared/common/composables/extensionRegistry/README.md`](../../shared/common/composables/extensionRegistry/README.md).
 
+## Declaring contributions
+
+`plugin.config.ts` (scaffolded) tells the storefront what the plugin contributes **before any of
+its code runs**: its routes, menu entries, the extension points it fills, and a condition on each.
+The build writes it to `dist/contributions.json`; `public/plugin.json` lists that file in
+`contentFiles`, which is how the platform advertises it next to `remoteEntry.js` — no backend
+change, and the platform's content hash busts caches.
+
+> **Declared, not yet honoured.** The host does not read `contributions.json` yet (VCST-5761 parts
+> 2–4: skipping a switched-off plugin, placeholder routes, reserved slots). Until then a declaration
+> changes nothing at runtime, and `init()` must still register everything itself. Declaring now
+> costs nothing and is what those parts will build on.
+
+```ts
+// plugin.config.ts
+import { definePluginManifest, settingEnabled, userCan } from "@vc-frontend/core/manifest";
+
+export default definePluginManifest({
+  when: settingEnabled("SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
+  routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments", when: userCan("sales-rep-documents:read") }],
+  menu: [{ surface: "header", group: "corporate", id: "sales-reps", title: "sales_rep.navigation.link", routeName: "SalesReps" }],
+  slots: [{ at: "sharedList/provenance-note", policy: "reserve", when: (field) => field("scope").eq("Customer") }],
+});
+```
+
+```json
+{
+  "format": 1,
+  "when": { "setting": "SalesRep.Enabled" },
+  "routes": [{ "path": "documents", "name": "SalesRepDocuments", "parent": "Company", "when": { "can": "sales-rep-documents:read" } }],
+  "menu": [{ "surface": "header", "group": "corporate", "id": "sales-reps", "title": "sales_rep.navigation.link", "routeName": "SalesReps" }],
+  "slots": [{ "at": "sharedList/provenance-note", "policy": "reserve", "when": { "field": "scope", "eq": "Customer" } }]
+}
+```
+
+**Write host names as literals.** `plugin.config.ts` runs in node, inside your build, and the
+facade's root (`@vc-frontend/core`) has no runtime there — only types; its implementation comes from
+the host at runtime. `import { ROUTES } from "@vc-frontend/core"` therefore fails the build with *No
+known conditions for "." specifier*. Nothing is lost: `parent: "Company"` and
+`at: "sharedList/provenance-note"` are checked against the host's own `ROUTES` and
+`EXTENSION_NAMES` through the contract, so a host rename fails your `type-check` once you move to
+that facade version. `import type` from `@vc-frontend/core` is fine, and so are your own constants
+as long as that module imports no facade value.
+
+Every field is optional, and an empty `definePluginManifest({})` emits `{ "format": 1 }`. A
+malformed declaration fails **your** build — `yarn type-check` for anything the types can see (an
+unknown parent route, slot, menu group or field path, a `field(...)` term outside a slot), `yarn
+build` for the rest (a route name or slot declared twice).
+
+### What each entry is
+
+| Entry      | Maps to                                                  | Notes                                                                                   |
+| ---------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `when`     | the whole plugin                                         | Global keys only. The cheapest gate there is: false ⇒ no manifest, no `remoteEntry.js`. |
+| `routes[]` | `router.addRoute(parent, …)`                             | `parent` is a host route name (`ROUTES.*.NAME`); absent = a root route. `redirect` makes it a redirect entry — push-messages' "sign in first" case is a second entry with the negated `when`. |
+| `menu[]`   | `surface: "header"` → `mergeMenuSchema`; `"account"` → `registerAccountSection` | `group` is a header-schema section (`main`, `purchasing`, `marketing`, `user`, `corporate`) — not a route name. An account section carries `children`, each with its own `when`. |
+| `slots[]`  | `useExtensionRegistry().register` / `registerContribution` | `at` is `"<category>/<name>"`. `policy`: `reserve` holds the box, `block` holds a region (payment), `none` is a data contribution into host markup. |
+
+Not declared, because nothing about them is visible before the plugin runs: locales, Apollo cache
+type policies, service-worker registration, module-local registries, wishlist sharing scopes.
+
+### Condition keys
+
+| Builder                              | Emits                        | Namespace | Accepted on                  | True when                                          |
+| ------------------------------------ | ---------------------------- | --------- | ---------------------------- | -------------------------------------------------- |
+| `settingEnabled(key)`                | `{ setting }`                | global    | plugin, route, menu, slot    | the store's module setting `key` is truthy         |
+| `settingValue(key).eq(v)`            | `{ setting, eq }`            | global    | plugin, route, menu, slot    | that setting equals `v` (bare: truthy)             |
+| `themeSetting(key)` / `.eq(v)`       | `{ themeSetting[, eq] }`     | global    | plugin, route, menu, slot    | `settings_data.json` key `key` is truthy / equals `v` |
+| `authenticated()`                    | `{ authenticated: true }`    | global    | plugin, route, menu, slot    | the user is signed in                              |
+| `userCan(p, …)`                      | `{ can }` (several: `and`)   | global    | plugin, route, menu, slot    | the user holds every permission                    |
+| `field(path)` / `.eq(v)`             | `{ field[, eq] }`            | slot      | slot only                    | `path` in the slot's context is truthy / equals `v` |
+| `and(…)`, `or(…)`, `not(c)`          | `{ and }`, `{ or }`, `{ not }` | either  | wherever their operands are  | as named                                           |
+
+**Two evaluation phases.** Global keys are read once, after the user is resolved and before the
+plugin is fetched — the moment `init()` runs today; a sign-in mid-session does not re-evaluate them.
+Slot keys are read per render, per item (true for one product card, false for the next), so they
+can never gate a fetch. `field` is not an import: it is the argument of a slot's `when` callback,
+typed against that slot's context, so a path that does not exist there — or any `field` term on the
+plugin, a route or a menu entry — does not compile. `.eq(...)` on an enum-typed string field takes
+any string: a plugin may own values the host's generated enum does not list.
+
+These are **load guards, not a security boundary**: store settings are public, the bundle is public
+by URL, and the backend still authorizes every query.
+
+### Slot contexts
+
+A slot's context is what the host hands that extension point's `condition` — the same value a
+registered entry's own `condition` receives. `SlotContextMapType` in the contract spells it out per
+slot id; it is derived from the host's registry, so it cannot drift from what the host renders.
+
+| Slots                                              | Context (`field` paths start here)          | Example                                                                 |
+| -------------------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------- |
+| `productCard/*`, `productPage/*`                   | the `Product`                               | `(field) => and(not(field("availabilityData.isInStock")), not(field("hasVariations")))` → `{ "and": [{ "not": { "field": "availabilityData.isInStock" } }, { "not": { "field": "hasVariations" } }] }` |
+| `paymentPage/*`, `orderPaymentPage/*`              | `{ order, paymentTypeName }`                | `(field) => field("paymentTypeName").eq("Skyflow")` → `{ "field": "paymentTypeName", "eq": "Skyflow" }` |
+| `cartPayment/*`                                    | `{ paymentTypeName }`                       | as above                                                                |
+| `sharedList/*`                                     | the list's `SharingSettingType`             | `(field) => field("scope").eq("Customer")` → `{ "field": "scope", "eq": "Customer" }` |
+| `headerMenu/*`, `mobileMenu/*`, `accountMenu/*`, `mobileHeader/*` | none — `field` takes no path | global keys only: `when: userCan("sales-rep:access")`                  |
+
+Paths reach four levels deep and do not traverse arrays.
+
+### One ordering constraint to know about
+
+Once the host stops waiting for plugins before it mounts, `init()` can finish after the first
+queries have run. `registerCacheTypePolicies` is order-sensitive in a way that hides today: a type
+policy added **after** a query normalised data does not apply to what is already in the cache.
+Policies on your own types, queried from your own pages, are unaffected — sales-rep's and
+push-messages' are that kind. A policy that patches `keyFields` on a **host** type would silently
+misbehave; don't write one.
+
 ## Extending the facade
 
 Plugin needs something the facade doesn't export yet? That's a **host-side** change,

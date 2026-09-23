@@ -55,6 +55,7 @@ describe("create-plugin scaffolder", () => {
     for (const file of [
       "package.json",
       "vite.config.ts",
+      "plugin.config.ts",
       "tsconfig.json",
       "src/index.ts",
       "index.html",
@@ -71,11 +72,18 @@ describe("create-plugin scaffolder", () => {
 
     // The platform reads this to learn the expose key; without it it assumes "./Module" and the
     // host would loadRemote a key this plugin does not export.
+    // `contentFiles` is the only way contributions.json reaches the storefront; the plugin's build
+    // refuses to emit it otherwise.
     const descriptor = JSON.parse(readFileSync(join(dir, "public", "plugin.json"), "utf8")) as {
       id: string;
       remote: { name: string; exposed: string };
+      contentFiles: string[];
     };
-    expect(descriptor).toEqual({ id: "my-plugin", remote: { name: "my-plugin", exposed: "./plugin" } });
+    expect(descriptor).toEqual({
+      id: "my-plugin",
+      remote: { name: "my-plugin", exposed: "./plugin" },
+      contentFiles: ["contributions.json"],
+    });
 
     const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
       name: string;
@@ -91,6 +99,9 @@ describe("create-plugin scaffolder", () => {
     JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8"));
 
     expectParseableTs(join(dir, "vite.config.ts"));
+    expectParseableTs(join(dir, "plugin.config.ts"));
+    expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain("pluginContributions(contributions)");
+    expect(JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")).include).toContain("plugin.config.ts");
     expectParseableTs(join(dir, "src", "index.ts"));
     expectParseableTs(join(dir, "vitest.config.ts"));
     expectParseableTs(join(dir, "eslint.config.js"));
