@@ -1,23 +1,13 @@
 <template>
   <div class="mobile-menu">
-    <div
-      class="mobile-menu__overlay"
-      role="button"
-      tabindex="0"
-      :aria-label="$t('common.buttons.close')"
-      @click="$emit('close')"
-      @keydown.enter="$emit('close')"
-      @keydown.space.prevent="$emit('close')"
-    />
+    <!-- A dimmer, not a control: it sits before the panel in the DOM, so as a focusable button it
+         would be the first stop of every Tab into an open menu. The panel's own ✕ and Escape are
+         the keyboard routes out. -->
+    <div class="mobile-menu__overlay" aria-hidden="true" @click="$emit('close')" />
 
-    <nav
-      ref="panel"
-      class="mobile-menu__panel"
-      tabindex="-1"
-      role="dialog"
-      aria-modal="true"
-      :aria-label="$t('common.labels.main_menu')"
-    >
+    <!-- role + label, but no `aria-modal`: that would promise AT the page behind is inert, and
+         nothing traps Tab there yet. -->
+    <nav ref="panel" class="mobile-menu__panel" tabindex="-1" role="dialog" :aria-label="$t('common.labels.main_menu')">
       <div class="mobile-menu__head">
         <div class="mobile-menu__brand">
           <span v-if="organization" class="mobile-menu__org">
@@ -175,12 +165,19 @@ function selectMenuItem(item: ExtendedMenuLinkType) {
   triggerRef(openedMenuItemsStack);
 }
 
-// The menu is a plate floating over a dimmed page — a dialog in everything but the tag — so it
-// answers Escape and takes the focus with it. Not `.stop`: nothing else is open above it, and a
-// blanket stop is what breaks the next dialog up the stack.
 const panel = useTemplateRef<HTMLElement>("panel");
 
-onKeyStroke("Escape", () => emit("close"));
+// The menu is a plate over a dimmed page, so it answers Escape. Not `.stop` — that breaks the
+// next dialog up the stack — and not unconditional either: the locale popover inside the menu
+// closes on KEYUP, and a keydown that unmounted the menu first would take the open dropdown down
+// with it. While such a layer is open its trigger carries aria-expanded, so the key is its.
+onKeyStroke("Escape", (event) => {
+  if ((event.target as HTMLElement | null)?.closest?.('[aria-expanded="true"]')) {
+    return;
+  }
+
+  emit("close");
+});
 
 onMounted(() => {
   goMainMenu();
@@ -195,30 +192,35 @@ onMounted(() => {
 
 <style lang="scss">
 .mobile-menu {
-  // The design floats the menu instead of filling the screen: a dark plate standing off every
-  // edge of the window, over a blurred page. The inset is the plate's own, not the page's
-  // gutter — the menu hangs over the page rather than sitting in its column, and at the page's
-  // 12px phone gutter it would read as a full-screen panel with rounded corners.
+  // The plate's own inset, not the page gutter: at the phone's 12px the menu would read as a
+  // full-screen panel with rounded corners.
   --mobile-menu-inset: 1.25rem;
+
+  // Kit tokens the plate is expected to set: the radios' ink and the count badge's pair.
+  --vc-radio-button-base-color: var(--mobile-menu-control-color);
+  --vc-badge-solid-light-neutral-bg: rgb(from var(--mobile-menu-text-color) r g b / 0.12);
+  --vc-badge-solid-light-neutral-text: var(--mobile-menu-text-color);
 
   @apply fixed inset-0 z-50;
 
   &__overlay {
     @apply absolute inset-0 cursor-pointer;
 
-    background: rgb(from theme("colors.neutral.950") r g b / 0.32);
+    // Off the MENU's own surface, not off neutral-950: that step is the dark end in light presets
+    // and the LIGHT end in dark ones, so the design's literal would brighten the page it is meant
+    // to dim. The menu plate is dark in every preset, which is exactly what a scrim wants.
+    background: rgb(from var(--mobile-menu-bg-color) r g b / 0.32);
     backdrop-filter: blur(6px);
   }
 
   &__panel {
     @apply absolute flex flex-col overflow-hidden;
 
-    // Logical, so the panel opens from the reading edge in RTL as it does in LTR. The safe-area
-    // insets are added, not substituted: on a notched phone the plate must clear the notch AND
-    // keep its own inset, or it reads as glued to the status bar.
+    // Safe-area insets are ADDED to the plate's own, not substituted for it.
     inset-block: calc(var(--mobile-menu-inset) + env(safe-area-inset-top, 0px))
       calc(var(--mobile-menu-inset) + env(safe-area-inset-bottom, 0px));
-    inset-inline: var(--mobile-menu-inset);
+    inset-inline: calc(var(--mobile-menu-inset) + env(safe-area-inset-left, 0px))
+      calc(var(--mobile-menu-inset) + env(safe-area-inset-right, 0px));
     border-radius: var(--plate-radius, 1.75rem);
     background: rgb(from var(--mobile-menu-bg-color) r g b / 0.94);
     backdrop-filter: blur(28px) saturate(135%);
@@ -228,19 +230,19 @@ onMounted(() => {
       var(--plate-shadow-lift, 0 18px 44px rgb(0 0 0 / 0.3));
     color: var(--mobile-menu-text-color);
 
-    // Where the browser cannot blur, a 94% plate over a page is mud — it goes solid instead.
+    // Where the browser cannot blur, a 94% plate over a page is mud — it goes solid.
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
       background: var(--mobile-menu-bg-color);
     }
 
-    // The panel takes focus when it opens so the keyboard starts inside the dialog, and it is
-    // `tabindex="-1"` — nothing can tab TO it. The ring the app draws on focus would be a
-    // 2px outline around the whole plate, marking a thing the user cannot act on.
+    // The panel takes focus on open so the keyboard starts inside the dialog, and it is
+    // `tabindex="-1"` — nothing can tab TO it, so the app's focus ring would mark a thing no one
+    // can act on. `outline: none`, not `outline-none`: the utility paints a TRANSPARENT 2px
+    // outline, which forced-colors mode repaints as a visible system ring.
     &:focus {
-      @apply outline-none;
+      outline: none;
     }
 
-    // Past the phone the plate stops stretching and stays a drawer against the reading edge.
     @media (min-width: theme("screens.md")) {
       inset-inline-end: auto;
       inline-size: 26.875rem;
@@ -278,8 +280,6 @@ onMounted(() => {
     @apply flex flex-col px-6 pb-6 pt-4;
   }
 
-  // A filled disc rather than an outlined glyph: it is the only way back out of a drilled-in
-  // list, and at the top of a dark plate an outline of it disappears.
   &__back {
     @apply flex size-10 shrink-0 appearance-none items-center justify-center self-start rounded-full;
 
@@ -290,15 +290,14 @@ onMounted(() => {
   &__title {
     @apply mb-0 mt-5 text-xs font-bold uppercase tracking-[0.14em];
 
-    // The design's "muted" ink: the menu's own text at 55%. Not a preset token — nothing but
-    // this caption needs it, and a knob no theme sets is a knob that drifts.
+    // The design's muted ink: the menu's own text at 55%.
     color: rgb(from var(--mobile-menu-text-color) r g b / 0.55);
   }
 
   &__divider {
     @apply my-5 h-px;
 
-    background: linear-gradient(to right, var(--mobile-menu-control-color), transparent);
+    background: linear-gradient(to right, theme("colors.accent.500"), transparent);
   }
 
   &__view-all {
@@ -315,18 +314,34 @@ onMounted(() => {
 // along.
 .mobile-menu-enter-active,
 .mobile-menu-leave-active {
+  // On the ROOT, because Vue reads the transitioned element's own duration to decide how long to
+  // keep the enter/leave classes — with no transition here they came and went inside one frame
+  // (measured: 16ms) and nothing animated.
   transition: opacity 0.22s ease;
 
+  .mobile-menu__overlay {
+    transition: opacity 0.22s ease;
+  }
+
   .mobile-menu__panel {
-    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
+// The fade stays on the two painted children: an ancestor at opacity < 1 is a backdrop root, and
+// a `backdrop-filter` inside one samples the group instead of the page — both blurs would be gone
+// for the whole animation and snap in at the end. The root keeps only the timing.
 .mobile-menu-enter-from,
 .mobile-menu-leave-to {
-  @apply opacity-0;
+  .mobile-menu__overlay {
+    @apply opacity-0;
+  }
 
   .mobile-menu__panel {
+    @apply opacity-0;
+
     transform: translateY(-8px) scale(0.985);
   }
 }
@@ -336,6 +351,7 @@ onMounted(() => {
   .mobile-menu-leave-active {
     transition: none;
 
+    .mobile-menu__overlay,
     .mobile-menu__panel {
       transition: none;
     }

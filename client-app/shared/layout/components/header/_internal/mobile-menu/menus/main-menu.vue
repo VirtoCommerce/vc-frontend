@@ -37,17 +37,13 @@
       <template v-if="isAuthenticated">
         <!-- Account -->
         <div class="main-menu__user">
-          <div
-            class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
-          >
-            <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-10" lazy />
+          <div class="main-menu__avatar">
+            <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" lazy />
 
             <VcIcon v-else name="user" />
           </div>
 
-          <div
-            class="line-clamp-3 flex flex-wrap items-center gap-x-1 text-[--mobile-menu-text-color] [word-break:break-word]"
-          >
+          <div class="main-menu__identity">
             <template v-if="operator">
               <span class="font-bold">
                 {{ operator.contact?.fullName || operator.userName }}
@@ -88,7 +84,7 @@
         </div>
 
         <!-- Account sections -->
-        <ul class="flex flex-col gap-y-1">
+        <ul class="main-menu__sections">
           <!-- Registered sections (e.g. Sales Rep hub) always lead, in registration order. Mobile does
                NOT honor `priority` (desktop does): the built-ins below are hardcoded blocks, so there's
                no list to interleave into. Priority-aware mobile is deferred to the mobile-menu redesign.
@@ -251,6 +247,22 @@ const settingsMenuItem: ExtendedMenuLinkType = {
     @apply mb-2 mt-1 flex flex-row items-center gap-3 font-geologica;
 
     color: var(--mobile-menu-text-color);
+  }
+
+  &__avatar {
+    @apply flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300;
+
+    img {
+      @apply size-10;
+    }
+  }
+
+  &__identity {
+    @apply line-clamp-3 flex flex-wrap items-center gap-x-1 [word-break:break-word];
+  }
+
+  &__sections {
+    @apply flex flex-col gap-y-2;
   }
 
   &__actions {

@@ -1,5 +1,5 @@
 <template>
-  <ul class="mt-4 flex grow flex-col gap-y-1">
+  <ul class="mt-4 flex grow flex-col gap-y-2">
     <li v-for="item in items" :key="item.title">
       <ExtensionPoint
         category="mobileMenu"

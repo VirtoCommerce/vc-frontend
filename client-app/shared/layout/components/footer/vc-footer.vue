@@ -183,7 +183,7 @@ onMounted(() => {
     }
 
     @media (min-width: theme("screens.sm")) {
-      @apply grow grid-cols-3 gap-12;
+      @apply grow grid-cols-3;
 
       > :last-child:nth-child(odd) {
         --footer-links-list-columns: 1;

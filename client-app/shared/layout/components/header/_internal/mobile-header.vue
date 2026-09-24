@@ -4,7 +4,7 @@
       <div ref="plate" class="mobile-header__plate">
         <!-- region Default slot -->
         <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
-          <div v-if="customSlots.default" class="mobile-header__bar">
+          <div v-if="customSlots.default" class="mobile-header__bar mobile-header__bar--custom">
             <component :is="customSlots.default" />
           </div>
 
@@ -14,6 +14,7 @@
 
             <div v-else class="mobile-header__side">
               <button
+                ref="burger"
                 :aria-label="$t('common.labels.main_menu')"
                 type="button"
                 class="mobile-header__button mobile-header__button--burger"
@@ -87,24 +88,26 @@
 
   <!-- Mobile menu -->
   <transition name="mobile-menu">
-    <MobileMenu v-if="mobileMenuVisible" class="print:hidden" @close="mobileMenuVisible = false" />
+    <MobileMenu v-if="mobileMenuVisible" class="print:hidden" @close="closeMenu" />
   </transition>
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useCssVar, useElementSize, useEventListener, useScrollLock } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
+import { computed, nextTick, ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useStuckPlate } from "@/shared/layout/composables/useStuckPlate";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
 
 const mobileMenuVisible = ref(false);
 const plate = ref<HTMLElement | null>(null);
-const stuck = ref(false);
+const burger = ref<HTMLElement | null>(null);
+const { stuck } = useStuckPlate(plate);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar } = useSearchBar();
@@ -113,10 +116,8 @@ const { height } = useElementSize(plate);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 
-// Exact app header height, kept live so sticky elements elsewhere (e.g. tables with a sticky
-// header row) can sit flush below the pinned plate instead of under it. VcHeader owns this var
-// on desktop (see vc-header.vue). The PLATE is measured, not the header: the air the shell
-// keeps above it scrolls away, and only what the plate paints stays on screen.
+// The PLATE, not the header: the shell's air scrolls away and only what the plate paints stays
+// on screen. VcHeader owns this var on desktop.
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
 watch(
@@ -127,20 +128,13 @@ watch(
   { immediate: true },
 );
 
-// Read from geometry rather than scrollY — correct through anchor jumps, resizes and pages that
-// do not start at zero. Capture phase, because the scroll may happen on an inner container.
-// Same rule as the desktop plate (header-plate.vue), so both headers pin on one definition.
-function updateStuck() {
-  const element = plate.value;
-
-  if (element) {
-    stuck.value = element.getBoundingClientRect().top <= 0.5;
-  }
+// The menu unmounts with focus inside it, so the trigger takes it back — otherwise the next Tab
+// restarts at the top of the document.
+async function closeMenu() {
+  mobileMenuVisible.value = false;
+  await nextTick();
+  burger.value?.focus();
 }
-
-useEventListener("scroll", updateStuck, { passive: true, capture: true });
-useEventListener("resize", updateStuck);
-watch(plate, updateStuck, { flush: "post" });
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);
@@ -154,19 +148,13 @@ syncRefs(isScrollLocked, scrollLock);
 
   --glass: var(--header-bottom-bg-color);
 
-  // Sticky, not fixed: the header is a plate in the page's own column, so it travels with the
-  // page and pins at the top edge — the same thing the desktop plate does, and the reason the
-  // page no longer needs a spacer element standing in for a header that had left the flow.
   @apply sticky z-40;
 
-  // Everything around the plate is air: the gutters down both sides and the step above it. An
-  // element there would lie over the page as an invisible lid and swallow taps meant for the
-  // content — in 12px of gutter that is a dead strip along both edges. The plate takes the
-  // events back.
+  // The gutters and the step above the plate are air; an element there would swallow taps meant
+  // for the page under it. The plate takes the events back.
   @apply pointer-events-none;
 
-  // The shell's top padding, negated: the plate then lands flush at viewport 0 when the header
-  // pins, which is also the geometry it reads to decide it is stuck.
+  // The shell's top padding, negated, so the plate lands flush at viewport 0 when it pins.
   top: calc(-1 * var(--page-stack, 1.5rem));
 
   @media print {
@@ -187,8 +175,7 @@ syncRefs(isScrollLocked, scrollLock);
   }
 
   &__plate {
-    // No overflow clipping: the search panel hangs below the bar and would be cut off. Its own
-    // corners are rounded instead, and the plate gives its bottom pair up while it is open.
+    // No overflow clipping: the search panel hangs below the bar and would be cut off.
     @apply pointer-events-auto relative;
 
     // Its own stacking context, or a neighbouring plate's backdrop-filter drags this one's
@@ -205,18 +192,16 @@ syncRefs(isScrollLocked, scrollLock);
     box-shadow:
       inset 0 1px 0 var(--glass-sheen, color-mix(in srgb, var(--glass) 85%, transparent)),
       inset 0 -1px 0 var(--glass-under, transparent),
-      var(--plate-shadow, 0 10px 34px color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent));
+      var(--glass-shadow, 0 10px 34px color-mix(in srgb, var(--header-bottom-text-color) 10%, transparent));
     color: var(--header-bottom-text-color);
     transition: border-radius var(--transition-duration, 0.2s) ease;
 
-    // A translucent plate with nothing behind it is a washed-out surface, so where the browser
-    // cannot blur, the glass falls back to the solid header colour.
+    // Where the browser cannot blur, the glass falls back to the solid header colour.
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
       background: var(--glass);
     }
 
-    // Flush against the window edge the top corners have nothing to round against, and the
-    // plate now hangs over the page — it takes the deeper shadow while it does.
+    // Flush against the window edge, hanging over the page: square top, deeper shadow.
     #{$stuck} & {
       @apply rounded-t-none;
 
@@ -226,9 +211,8 @@ syncRefs(isScrollLocked, scrollLock);
         var(--plate-shadow-lift, 0 18px 44px color-mix(in srgb, var(--header-bottom-text-color) 12%, transparent));
     }
 
-    // The open search panel continues the plate downwards, so the seam between them has to be
-    // straight. `__content` and not the `.mobile-search-bar` wrapper: the wrapper is always in
-    // the tree and only the panel inside it appears with the search.
+    // `__content`, not the `.mobile-search-bar` wrapper: the wrapper is always in the tree and
+    // only the panel inside it appears with the search.
     &:has(.mobile-search-bar__content) {
       @apply rounded-b-none;
 
@@ -237,9 +221,13 @@ syncRefs(isScrollLocked, scrollLock);
   }
 
   &__bar {
-    // Above the search panel and its backdrop: the panel slides out from under the row, and the
-    // row stays lit while it is open.
+    // Above the search panel and its backdrop, so the row stays lit while the panel is out.
     @apply relative z-20 flex h-14 w-full items-center justify-between gap-x-2;
+
+    // A page replacing the whole row through the nested-header slot sizes itself.
+    &--custom {
+      @apply block h-auto;
+    }
   }
 
   &__side {
@@ -251,22 +239,14 @@ syncRefs(isScrollLocked, scrollLock);
   }
 
   &__button {
-    @apply flex items-center px-1 py-2 xs:px-2;
+    @apply flex items-center px-1 py-2;
 
     color: var(--mobile-header-icon-color, theme("colors.primary.DEFAULT"));
 
-    // A module can put a link in this row through the `mobileHeader` extension point, and the
-    // one that does (push messages) renders the header's own link block — which carries a
-    // caption under its icon. The row is 56 tall and four icons wide; the captions are what
-    // the pinned desktop plate collapses, and these are the properties it collapses them with.
-    --header-link-label-max-h: 0px;
-    --header-link-label-max-w: 0px;
-    --header-link-label-opacity: 0;
-    --header-link-pad-x: 0px;
+    @media (width >= theme("screens.xs")) {
+      @apply px-2;
+    }
 
-    // The one control on the row that is not an icon in a row of icons: it opens the menu, and
-    // the design gives it the plate's own inside on the left so the glyph lines up with the
-    // logo beside it rather than with the plate's edge.
     &--burger {
       @apply h-full pe-2 ps-5;
     }

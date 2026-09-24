@@ -57,14 +57,10 @@
   // the hint to a fraction of a pixel.
   --vc-input-placeholder-font-size: theme("fontSize.sm");
 
-  // The mobile header's icons are quiet ink, not the accent: on the glass plate a row of four
-  // accent glyphs reads as four buttons shouting over the logo. The design names secondary-600
-  // for it, and the desktop plate hardcodes exactly that — but this file is loaded
-  // unconditionally (main.scss), so whatever stands here is what EVERY preset gets, and
-  // secondary-600 is 2.54:1 on black-gold's white plate, under 1.4.11's 3:1 for an icon. The
-  // header's own link ink is the same idea expressed as a token each preset already tunes for
-  // this surface: it clears 3:1 in all sixteen (worst 3.36, black-gold light) and in paprika
-  // lands on #543f2c, one palette step off the drawing's #6d533d.
+  // Quiet ink, not the accent. The design names secondary-600 and the desktop plate hardcodes
+  // it, but this file is loaded unconditionally, so that value would reach every preset — and
+  // it is 2.54:1 on black-gold's white plate, under 1.4.11's 3:1. The header's own link token
+  // clears 3:1 in all sixteen (worst 3.36) and lands one palette step off the drawing here.
   --mobile-header-icon-color: var(--header-bottom-link-color);
 
   --vc-button-radius: 9999px;
@@ -136,11 +132,9 @@ html.dark {
     --plate-pad-x: 1.5rem;
     --page-gutter: 1.5rem;
 
-    // A widget reaches 18px past the container's inset below md, which put it 6px clear of the
-    // screen when that inset was 24 and 6px OFF the screen once the phone halves it — and in
-    // between left the page's plates on two different verticals, the header at the gutter and
-    // the widget under it 18 further out. Here every plate stands on the page's gutter. The
-    // token is the kit's, defaulting to the reach it has always had.
+    // A widget reaches 18px past the container's inset below md — 6px off the screen once the
+    // phone halves that inset, and 18px out of line with the header above it before then. Below
+    // the desktop every plate stands on the page's gutter.
     --vc-widget-container-margin-x: 0px;
   }
 }
@@ -152,12 +146,9 @@ html.dark {
   }
 }
 
-// One rung further down on the phone, where the design halves the page's own inset and the
-// step between plates — 24 -> 12 and 26 -> 13 — and squares the plate's inside off at 24/24.
-// The design draws this below 600; sm (640) is the nearest rung this project has, the same
-// snap the block above makes from its 900 to lg. The container's inset travels with the
-// gutter: the plates the header and footer paint and the content a page puts between them
-// stand on one vertical, and a page that forgets to move one of them cannot happen.
+// The phone rung: gutter and step halve (24 -> 12, 26 -> 13) and the plate's inside squares off
+// at 24. The design draws this below 600; sm is the nearest rung here, the same snap the block
+// above makes from its 900 to lg. The container's inset travels with the gutter.
 @media (width < theme("screens.sm")) {
   :root {
     --page-gutter: 0.75rem;
@@ -165,10 +156,8 @@ html.dark {
     --plate-pad-y: 1.5rem;
     --vc-container-px: 0.75rem;
 
-    // The air a page keeps above and below its own content is the same step as the one between
-    // plates, or the column reads in two rhythms: 13 between the plates of a page and 24 from
-    // the header down to the first of them. A page that spends its own numbers (the empty cart
-    // does) still overrides these.
+    // A page's own top and bottom air is the step between plates, or the column reads in two
+    // rhythms. A page that spends its own numbers still overrides these.
     --vc-container-pt: var(--page-stack);
     --vc-container-pb: var(--page-stack);
   }
