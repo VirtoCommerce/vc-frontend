@@ -32,6 +32,10 @@
   --plate-pad-y: 2.25rem;
   --plate-pad-x: 2rem;
 
+  // A plate's fill is not the canvas white: the design warms it a quarter of the way to the
+  // warning tint, so the plate still reads as a surface where the shadow is at its thinnest.
+  --plate-bg: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
+
   // A plate is separated from the canvas by a soft shadow and nothing else — no outline,
   // which would read as a second contour over the shadow. The sticky header swaps in the
   // deeper "lift" while it hangs over the page, and the glass pair is the header's own

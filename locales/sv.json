@@ -1560,7 +1560,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Lägg till i lista",
       "in_the_list_tooltip": "I listan",
-      "variations_button": "{0} varianter",
+      "variations_button": "Inga varianter | {count} variant | {count} varianter",
       "customize_button": "Anpassa",
       "show_on_a_separate_page": "Visa på en separat sida",
       "no_products_message": "Det finns inga produkter i denna kategori",
@@ -1744,6 +1744,123 @@
       },
       "error": "Det gick inte att läsa in data",
       "retry": "Försök igen"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "En katalog · många verifierade leverantörer",
+        "title": "Köp elektronik på det sätt ditt företag handlar.",
+        "subtitle": "Realtidslager hos auktoriserade distributörer, dina avtalspriser från sökning till faktura, och leverans nästa dag på allt som finns i lager lokalt.",
+        "browse_catalog": "Bläddra i katalogen",
+        "notches": {
+          "search": {
+            "title": "Sök eller bläddra i hela katalogen",
+            "text": "Efter produkt, märke eller din egen SKU"
+          },
+          "guest_cart": {
+            "title": "Skapa en varukorg som gäst",
+            "text": "Den sparas när du loggar in"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Auktoriserat nätverk av distributörer",
+        "title": "Handla efter leverantör",
+        "authorized": "Auktoriserad distributör",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU:er i katalogen"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Auktoriserade leverantörer"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Leverans på artiklar i lager"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Bläddra i sortimentet",
+        "title": "Handla efter kategori",
+        "all_categories": "Alla kategorier",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Populära favoriter",
+            "meta": "Smarta hem-prylar till hemmabio — anslutna, parkopplade och redo att skickas"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Toppsäljande",
+            "meta": "5G-smartphones till bilhållare — skalade, laddade och redo att skickas i bulk."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Handla utan konto",
+        "title": "Populärt bland köpare",
+        "see_all": "Se alla"
+      },
+      "why_buy": {
+        "eyebrow": "Varför handla hos oss",
+        "title": "Enkla villkor, verkligt lager",
+        "cards": {
+          "stock": {
+            "title": "Verkligt lager",
+            "text": "Antal i lager per lagerställe, med ledtid när det måste tas fram."
+          },
+          "pricing": {
+            "title": "Avtalspriser överallt",
+            "text": "Ditt förhandlade pris visas från sökning till faktura, inklusive skatt och frakt."
+          },
+          "fulfillment": {
+            "title": "Leverans nästa dag",
+            "text": "Beställningar i lager skickas samma dag, med tillverkargaranti och gratis returer inom 30 dagar."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Vad det förändrar",
+        "title": "Måndag morgon, i siffror",
+        "stats": {
+          "reorder": {
+            "value": "2 klick",
+            "label": "För att beställa förra månadens leverans, inklusive kvantiteter"
+          },
+          "trail": {
+            "value": "1 spår",
+            "label": "Från en sparad lista till en lagd beställning med godkännandehistorik"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Av visade priser är dina avtalspriser, inklusive skatt och frakt"
+          },
+          "calls": {
+            "value": "0 samtal",
+            "label": "Beställning, spårning och dokumentuppslag — ingen telefonkö"
+          }
+        },
+        "quote": {
+          "text": "\"Vi slutade hålla ett kalkylblad med priser — webbplatsen visar våra.\"",
+          "name": "Inköpsansvarig",
+          "role": "Anläggningsgrupp · 6 platser"
+        }
+      },
+      "brands": {
+        "eyebrow": "Auktoriserad distributör för"
+      },
+      "cta": {
+        "title": "Bli kund",
+        "text": "Avtalspriser, överenskomna betalningsvillkor och PO-utcheckning — vanligtvis godkänt inom en arbetsdag.",
+        "become_customer": "Bli kund",
+        "talk_to_sales": "Prata med säljare"
+      }
     }
   },
   "identity_error": {

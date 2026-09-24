@@ -1560,7 +1560,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Adicionar à lista",
       "in_the_list_tooltip": "Na lista",
-      "variations_button": "Variações {0}",
+      "variations_button": "Sem variações | {count} variação | {count} variações",
       "customize_button": "Personalizar",
       "show_on_a_separate_page": "Mostrar em uma página separada",
       "no_products_message": "Não há produtos nesta categoria",
@@ -1744,6 +1744,123 @@
       },
       "error": "Falha ao carregar dados",
       "retry": "Tentar novamente"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Um catálogo · muitos fornecedores verificados",
+        "title": "Adquira eletrônicos da forma como sua empresa compra.",
+        "subtitle": "Estoque em tempo real em distribuidores autorizados, seus preços de contrato da pesquisa à fatura e entrega no dia seguinte em tudo o que está em estoque localmente.",
+        "browse_catalog": "Navegar catálogo",
+        "notches": {
+          "search": {
+            "title": "Pesquise ou navegue pelo catálogo completo",
+            "text": "Por produto, marca ou seu próprio SKU"
+          },
+          "guest_cart": {
+            "title": "Crie um carrinho como convidado",
+            "text": "Ele é transferido quando você faz login"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Rede de distribuidores autorizados",
+        "title": "Compre por fornecedor",
+        "authorized": "Distribuidor autorizado",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84.000+",
+            "label": "SKUs no catálogo"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Fornecedores autorizados"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Entrega em itens em estoque"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Navegue pelo sortimento",
+        "title": "Compre por categoria",
+        "all_categories": "Todas as categorias",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Favoritos da multidão",
+            "meta": "Gadgets de casa inteligente a home theater — conectados, pareados e prontos para enviar"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Mais vendidos",
+            "meta": "Smartphones 5G a suportes de carro — embalados, carregados e prontos para enviar em lote."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Compre sem conta",
+        "title": "Popular entre compradores",
+        "see_all": "Ver tudo"
+      },
+      "why_buy": {
+        "eyebrow": "Por que comprar conosco",
+        "title": "Termos diretos, inventário real",
+        "cards": {
+          "stock": {
+            "title": "Estoque em tempo real",
+            "text": "Quantidade em estoque por armazém, com o prazo de entrega quando precisa ser fornecido."
+          },
+          "pricing": {
+            "title": "Preços de contrato em todos os lugares",
+            "text": "Seu preço negociado aparece da pesquisa à fatura, impostos e frete incluídos."
+          },
+          "fulfillment": {
+            "title": "Entrega no dia seguinte",
+            "text": "Pedidos em estoque são enviados no mesmo dia, com garantia do fabricante e devoluções gratuitas em 30 dias."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "O que muda",
+        "title": "Segunda-feira de manhã, em números",
+        "stats": {
+          "reorder": {
+            "value": "2 cliques",
+            "label": "Para refazer o pedido da entrega do mês passado, com as quantidades de linha incluídas"
+          },
+          "trail": {
+            "value": "1 trilha",
+            "label": "De uma lista salva a um pedido feito com histórico de aprovação"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Dos preços exibidos são seus preços de contrato, impostos e frete incluídos"
+          },
+          "calls": {
+            "value": "0 chamadas",
+            "label": "Pedidos, rastreamento e consulta de documentos — sem árvore telefônica"
+          }
+        },
+        "quote": {
+          "text": "“Paramos de manter uma planilha de preços — o site mostra os nossos.”",
+          "name": "Líder de compras",
+          "role": "Grupo de instalações · 6 sites"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autorizado por"
+      },
+      "cta": {
+        "title": "Torne-se um cliente",
+        "text": "Preços de contrato, termos de pagamento acordados e checkout com PO — geralmente aprovado em um dia útil.",
+        "become_customer": "Torne-se um cliente",
+        "talk_to_sales": "Falar com vendas"
+      }
     }
   },
   "identity_error": {

@@ -1560,7 +1560,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Ajouter à la liste",
       "in_the_list_tooltip": "Dans la liste",
-      "variations_button": "{0} variations",
+      "variations_button": "Aucune variation | {count} variation | {count} variations",
       "customize_button": "Personnaliser",
       "show_on_a_separate_page": "Afficher sur une page séparée",
       "no_products_message": "Il n'y a pas de produits dans cette catégorie",
@@ -1744,6 +1744,123 @@
       },
       "error": "Échec du chargement des données",
       "retry": "Réessayer"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Un catalogue · de nombreux fournisseurs vérifiés",
+        "title": "Sourcez des produits électroniques comme votre entreprise achète.",
+        "subtitle": "Stock en temps réel sur les distributeurs autorisés, vos prix contractuels de la recherche à la facture, et livraison le lendemain sur tout ce qui est en stock localement.",
+        "browse_catalog": "Parcourir le catalogue",
+        "notches": {
+          "search": {
+            "title": "Recherchez ou parcourez le catalogue complet",
+            "text": "Par produit, marque ou votre propre SKU"
+          },
+          "guest_cart": {
+            "title": "Créez un panier en tant qu'invité",
+            "text": "Il est conservé lorsque vous vous connectez"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Réseau de distributeurs autorisés",
+        "title": "Achetez par fournisseur",
+        "authorized": "Distributeur agréé",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU dans le catalogue"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Fournisseurs autorisés"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Livraison sur les articles en stock"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Parcourez l'assortiment",
+        "title": "Achetez par catégorie",
+        "all_categories": "Toutes les catégories",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Favoris du public",
+            "meta": "Gadgets domotiques à home cinéma — connectés, jumelés et prêts à être expédiés"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Meilleures ventes",
+            "meta": "Smartphones 5G aux supports de voiture — emballés, chargés et prêts à être expédiés en gros."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Achetez sans compte",
+        "title": "Populaire auprès des acheteurs",
+        "see_all": "Voir tout"
+      },
+      "why_buy": {
+        "eyebrow": "Pourquoi acheter chez nous",
+        "title": "Conditions claires, inventaire réel",
+        "cards": {
+          "stock": {
+            "title": "Stock en temps réel",
+            "text": "Quantité en stock par entrepôt, avec le délai de livraison lorsqu'il doit être approvisionné."
+          },
+          "pricing": {
+            "title": "Prix contractuels partout",
+            "text": "Votre prix négocié s'affiche de la recherche à la facture, taxes et fret inclus."
+          },
+          "fulfillment": {
+            "title": "Livraison le lendemain",
+            "text": "Les commandes en stock sont expédiées le jour même, avec garantie fabricant et retours gratuits sous 30 jours."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Ce que cela change",
+        "title": "Lundi matin, en chiffres",
+        "stats": {
+          "reorder": {
+            "value": "2 clics",
+            "label": "Pour recommander la livraison du mois dernier, quantités incluses"
+          },
+          "trail": {
+            "value": "1 piste",
+            "label": "D'une liste enregistrée à une commande passée avec un historique d'approbation"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Des prix affichés sont vos prix contractuels, taxes et fret inclus"
+          },
+          "calls": {
+            "value": "0 appels",
+            "label": "Commandes, suivi et recherche de documents — pas d'arborescence téléphonique"
+          }
+        },
+        "quote": {
+          "text": "« Nous avons arrêté de tenir une feuille de calcul des prix — le site affiche les nôtres. »",
+          "name": "Responsable des achats",
+          "role": "Groupe des installations · 6 sites"
+        }
+      },
+      "brands": {
+        "eyebrow": "Distributeur agréé pour"
+      },
+      "cta": {
+        "title": "Devenez client",
+        "text": "Prix contractuels, conditions de paiement convenues et paiement par PO — généralement approuvé dans un délai d'un jour ouvrable.",
+        "become_customer": "Devenir client",
+        "talk_to_sales": "Parler aux ventes"
+      }
     }
   },
   "identity_error": {

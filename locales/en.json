@@ -1560,7 +1560,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Add to list",
       "in_the_list_tooltip": "In the list",
-      "variations_button": "{0} variations",
+      "variations_button": "No variations | {count} variation | {count} variations",
       "customize_button": "Customize",
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
@@ -1744,6 +1744,123 @@
       },
       "error": "Failed to load data",
       "retry": "Try again"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "One catalog · many verified suppliers",
+        "title": "Source electronics the way your business buys.",
+        "subtitle": "Real-time stock across authorized distributors, your contract pricing from search to invoice, and next-day fulfillment on everything held locally.",
+        "browse_catalog": "Browse catalog",
+        "notches": {
+          "search": {
+            "title": "Search or browse the full catalog",
+            "text": "By product, brand or your own SKU"
+          },
+          "guest_cart": {
+            "title": "Build a cart as a guest",
+            "text": "It carries over when you sign in"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Authorized distributor network",
+        "title": "Shop by supplier",
+        "authorized": "Authorized distributor",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "SKUs in the catalog"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Authorized suppliers"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Fulfillment on in-stock lines"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Browse the assortment",
+        "title": "Shop by category",
+        "all_categories": "All categories",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Crowd favorites",
+            "meta": "Smart home gadgets to home theater — plugged in, paired and ready to ship"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Top selling",
+            "meta": "5G smartphones to car holders — cased, charged and ready to ship in bulk."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Shop without an account",
+        "title": "Popular with buyers",
+        "see_all": "See all"
+      },
+      "why_buy": {
+        "eyebrow": "Why buy from us",
+        "title": "Straightforward terms, real inventory",
+        "cards": {
+          "stock": {
+            "title": "Real-time stock",
+            "text": "Quantity on hand per warehouse, with the lead time when it has to be sourced."
+          },
+          "pricing": {
+            "title": "Contract pricing everywhere",
+            "text": "Your negotiated price shows from search to invoice, tax and freight included."
+          },
+          "fulfillment": {
+            "title": "Next-day fulfillment",
+            "text": "In-stock orders ship same day, with manufacturer warranty and free returns within 30 days."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "What it changes",
+        "title": "Monday morning, in numbers",
+        "stats": {
+          "reorder": {
+            "value": "2 clicks",
+            "label": "To reorder last month's delivery, line quantities included"
+          },
+          "trail": {
+            "value": "1 trail",
+            "label": "From a saved list to a placed order with an approval history"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Of prices shown are your contract prices, tax and freight included"
+          },
+          "calls": {
+            "value": "0 calls",
+            "label": "Ordering, tracking and document lookup — no phone tree"
+          }
+        },
+        "quote": {
+          "text": "“We stopped keeping a spreadsheet of prices — the site shows ours.”",
+          "name": "Procurement lead",
+          "role": "Facilities group · 6 sites"
+        }
+      },
+      "brands": {
+        "eyebrow": "Authorized distributor for"
+      },
+      "cta": {
+        "title": "Become a customer",
+        "text": "Contract pricing, agreed payment terms and PO checkout — usually approved within one business day.",
+        "become_customer": "Become a customer",
+        "talk_to_sales": "Talk to sales"
+      }
     }
   },
   "identity_error": {

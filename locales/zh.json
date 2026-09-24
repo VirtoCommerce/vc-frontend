@@ -1560,7 +1560,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "添加到清单",
       "in_the_list_tooltip": "在清单中",
-      "variations_button": "{0} 个变体",
+      "variations_button": "没有变体 | {count} 个变体 | {count} 个变体",
       "customize_button": "自定义",
       "show_on_a_separate_page": "在单独页面显示",
       "no_products_message": "此类别中没有产品",
@@ -1744,6 +1744,123 @@
       },
       "error": "加载数据失败",
       "retry": "重试"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "一个目录 · 多个认证供应商",
+        "title": "以您的业务采购方式采购电子产品。",
+        "subtitle": "授权分销商的实时库存，从搜索到发票的合同定价，以及本地库存商品的次日配送。",
+        "browse_catalog": "浏览目录",
+        "notches": {
+          "search": {
+            "title": "搜索或浏览完整目录",
+            "text": "按产品、品牌或您自己的 SKU"
+          },
+          "guest_cart": {
+            "title": "作为访客创建购物车",
+            "text": "登录后购物车会保留"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "授权分销商网络",
+        "title": "按供应商购物",
+        "authorized": "授权分销商",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "目录中的 SKU"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "授权供应商"
+          },
+          "fulfillment": {
+            "value": "24小时",
+            "label": "现货商品的配送"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "浏览商品",
+        "title": "按类别购物",
+        "all_categories": "所有类别",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "热门商品",
+            "meta": "从智能家居小工具到家庭影院 — 即插即用，配对完成，准备发货"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "畅销商品",
+            "meta": "从 5G 智能手机到车载支架 — 有保护壳、已充电，准备批量发货。"
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "无需账户即可购物",
+        "title": "买家热门",
+        "see_all": "查看全部"
+      },
+      "why_buy": {
+        "eyebrow": "为什么选择我们",
+        "title": "条款清晰，库存真实",
+        "cards": {
+          "stock": {
+            "title": "实时库存",
+            "text": "每个仓库的在手数量，以及需要采购时的交货时间。"
+          },
+          "pricing": {
+            "title": "处处都是合同定价",
+            "text": "您的协商价格从搜索到发票，含税费和运费。"
+          },
+          "fulfillment": {
+            "title": "次日配送",
+            "text": "现货订单当天发货，提供制造商保修和 30 天内免费退货。"
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "改变了什么",
+        "title": "周一早晨，用数字衡量",
+        "stats": {
+          "reorder": {
+            "value": "2 次点击",
+            "label": "重新订购上个月的订单，包含行项目数量"
+          },
+          "trail": {
+            "value": "1 次跟踪",
+            "label": "从保存的列表到已下单，并附有审批历史记录"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "显示的价格都是您的合同价格，含税费和运费"
+          },
+          "calls": {
+            "value": "0 次电话",
+            "label": "订购、跟踪和查找文件 — 无需电话菜单"
+          }
+        },
+        "quote": {
+          "text": "“我们不再保留价格电子表格了 — 网站显示我们的价格。”",
+          "name": "采购主管",
+          "role": "设施部门 · 6 个站点"
+        }
+      },
+      "brands": {
+        "eyebrow": "授权分销商"
+      },
+      "cta": {
+        "title": "成为客户",
+        "text": "合同定价、商定的付款条款和 PO 结账 — 通常在一个工作日内获批。",
+        "become_customer": "成为客户",
+        "talk_to_sales": "联系销售"
+      }
     }
   },
   "identity_error": {
