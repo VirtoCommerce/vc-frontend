@@ -25,11 +25,14 @@
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
             <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
               <slot name="prepend">
+                <!-- A span, not the shape's default div: a collapsible widget draws this header
+                     as a button, and flow content inside one is invalid. -->
                 <VcShape
                   v-if="prependIcon && iconShape"
                   class="vc-widget__prepend-shape"
                   :icon="prependIcon"
                   mask="circle"
+                  tag="span"
                 />
 
                 <VcIcon v-else-if="prependIcon" class="vc-widget__prepend-icon" :name="prependIcon" />

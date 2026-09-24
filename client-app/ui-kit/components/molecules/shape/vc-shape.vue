@@ -1,9 +1,9 @@
 <template>
-  <div class="vc-shape" :style="style">
+  <component :is="tag" class="vc-shape" :style="style">
     <slot>
       <VcIcon v-if="icon" :name="icon" />
     </slot>
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
@@ -17,11 +17,17 @@ interface IProps {
   bgColor?: string;
   img?: string;
   mask?: string;
+  /**
+   * The element to draw as. A `div` is flow content, which is invalid inside a `button` — so a
+   * consumer that renders this into one (a collapsible widget's header) asks for `span` instead.
+   */
+  tag?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   mask: "polygon",
   img: "",
+  tag: "div",
 });
 
 const iconUrl = computed(() => getIconUrl(props.mask));
