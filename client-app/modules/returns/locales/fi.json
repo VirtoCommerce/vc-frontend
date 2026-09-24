@@ -5,6 +5,10 @@
       "table_description": "palautusten luettelo"
     },
     "title": "Palautukset",
+    "scope": {
+      "organization": "Kaikki palautukset",
+      "own": "Omat palautukset"
+    },
     "no_returns_message": "Palautuksia ei ole vielä",
     "no_results_message": "Hakuasi vastaavia palautuksia ei löytynyt",
     "search_placeholder": "Hae RMA:n, tilauksen, viitteen tai tuotteen mukaan",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Päivämäärä",
+        "buyer": "Ostajan nimi",
         "status": "Tila",
         "quantity": "Määrä"
       }
@@ -101,7 +106,8 @@
     "summary_section": "Yhteenveto",
     "items_section": "Tuotteet",
     "order_number": "Tilausnumero",
-    "customer_reference": "Oma tilausviitteesi",
+    "requested_by": "Pyytäjä",
+    "customer_reference": "Tilausviite",
     "customer_comment": "Kommentti",
     "cancel_reason": "Peruutuksen syy",
     "cancel_button": "Peruuta palautus",

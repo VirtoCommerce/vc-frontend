@@ -29,6 +29,12 @@
             <span>{{ orderReturn.orderNumber }}</span>
           </div>
 
+          <div v-if="isColleaguesReturn" class="flex flex-col">
+            <span class="text-sm text-neutral-400">{{ $t("return_details.requested_by") }}</span>
+
+            <span>{{ orderReturn.customerName }}</span>
+          </div>
+
           <div v-if="orderReturn.customerReference" class="flex flex-col">
             <span class="text-sm text-neutral-400">{{ $t("return_details.customer_reference") }}</span>
 
@@ -54,7 +60,7 @@
           <span>{{ orderReturn.rejectReason }}</span>
         </div>
 
-        <template v-if="cancelAction" #footer>
+        <template v-if="cancelAction && !isColleaguesReturn" #footer>
           <VcTooltip v-if="!cancelAction.isAvailable" placement="top">
             <template #trigger>
               <VcButton color="danger" variant="outline" size="sm" disabled>
@@ -147,6 +153,7 @@ import { useReturn } from "@/modules/returns/composables/useReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
 import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
+import { useUser } from "@/shared/account/composables/useUser";
 import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -171,6 +178,12 @@ const { cancelAction } = useReturnActions(orderReturn);
 const { statusLabel } = useReturnStatusLabel();
 
 const { codeText } = useReturnErrors();
+const { user } = useUser();
+
+// Opened through the organization scope: readable, but every action belongs to the buyer who raised it.
+const isColleaguesReturn = computed(
+  () => !!orderReturn.value?.customerId && orderReturn.value.customerId !== user.value.id,
+);
 
 // Mapped once per result rather than per render, and field by field: spreading the fragment would
 // leave its mimeType sitting next to the contentType the uploader actually reads.

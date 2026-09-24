@@ -5,13 +5,17 @@ import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 import { useGetReturnsQuery } from "@/modules/returns/api/graphql/queries/getReturns";
+import { ReturnScopeEnum } from "@/modules/returns/api/graphql/types";
+import { RETURN_SCOPE, VIEW_ORGANIZATION_RETURNS_PERMISSION } from "@/modules/returns/constants";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { ISortInfo } from "@/core/types";
-import type { ReturnsFilterDataType } from "@/modules/returns/types";
+import type { ReturnScopeType, ReturnsFilterDataType } from "@/modules/returns/types";
 import type { LocationQueryRaw, LocationQueryValue } from "vue-router";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
 
 type ListStateType = {
+  scope: ReturnScopeType;
   keyword: string;
   statuses: string[];
   startDate?: string;
@@ -24,9 +28,23 @@ export function useReturns() {
   const route = useRoute();
   const router = useRouter();
 
+  const { organization, checkPermissions } = useUser();
+
   const itemsPerPage = ref(DEFAULT_ITEMS_PER_PAGE);
 
+  // The server refuses the organization scope outright rather than narrowing it, so it is only
+  // offered to a contact it would be granted to.
+  const canViewOrganizationReturns = computed(
+    () => !!organization.value && checkPermissions(VIEW_ORGANIZATION_RETURNS_PERMISSION),
+  );
+
+  // Whoever may see the organization's returns lands on them, as on the orders page.
+  const defaultScope = computed<ReturnScopeType>(() =>
+    canViewOrganizationReturns.value ? RETURN_SCOPE.ORGANIZATION : RETURN_SCOPE.OWN,
+  );
+
   const state = computed<ListStateType>(() => ({
+    scope: asScope(asString(route.query.scope)) ?? defaultScope.value,
     keyword: asString(route.query.keyword),
     statuses: asArray(route.query.status),
     startDate: asString(route.query.startDate) || undefined,
@@ -35,6 +53,9 @@ export function useReturns() {
     page: Number.parseInt(asString(route.query.page), 10) || 1,
   }));
 
+  const scope = computed<ReturnScopeType>(() =>
+    canViewOrganizationReturns.value ? state.value.scope : RETURN_SCOPE.OWN,
+  );
   const keyword = computed(() => state.value.keyword);
   const page = computed(() => state.value.page);
   const sort = computed(() => Sort.fromString(state.value.sort));
@@ -52,6 +73,7 @@ export function useReturns() {
   const { loading, result, refetch } = useGetReturnsQuery(
     computed(() => ({
       storeId: globals.storeId,
+      scope: scope.value === RETURN_SCOPE.ORGANIZATION ? ReturnScopeEnum.Organization : ReturnScopeEnum.Own,
       cultureName: globals.cultureName,
       first: itemsPerPage.value,
       after: String((page.value - 1) * itemsPerPage.value),
@@ -73,6 +95,10 @@ export function useReturns() {
       write({ page: value });
     }
   });
+
+  function applyScope(value: ReturnScopeType): void {
+    write({ scope: value, page: 1 });
+  }
 
   function applyKeyword(value?: string): void {
     write({ keyword: value?.trim() ?? "", page: 1 });
@@ -100,6 +126,7 @@ export function useReturns() {
     const next = { ...state.value, ...patch };
     const query: LocationQueryRaw = { ...route.query };
 
+    put(query, "scope", next.scope === defaultScope.value ? "" : next.scope);
     put(query, "keyword", next.keyword);
     put(query, "status", next.statuses);
     put(query, "startDate", next.startDate);
@@ -115,12 +142,15 @@ export function useReturns() {
     returns,
     totalCount,
     itemsPerPage,
+    canViewOrganizationReturns,
+    scope,
     page,
     pages,
     sort,
     keyword,
     filter,
     isFilterEmpty,
+    applyScope,
     applyKeyword,
     applyFilter,
     applySorting,
@@ -132,6 +162,10 @@ export function useReturns() {
 
 function asString(value: LocationQueryValue | LocationQueryValue[] | undefined): string {
   return (Array.isArray(value) ? value[0] : value) ?? "";
+}
+
+function asScope(value: string): ReturnScopeType | undefined {
+  return Object.values(RETURN_SCOPE).find((scope) => scope === value);
 }
 
 function asArray(value: LocationQueryValue | LocationQueryValue[] | undefined): string[] {

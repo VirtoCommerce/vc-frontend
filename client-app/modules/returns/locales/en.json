@@ -5,6 +5,10 @@
       "table_description": "list of returns"
     },
     "title": "Returns",
+    "scope": {
+      "organization": "All returns",
+      "own": "My returns"
+    },
     "no_returns_message": "There are no returns yet",
     "no_results_message": "No returns match your search",
     "search_placeholder": "Search by RMA, order, reference or product",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Date",
+        "buyer": "Buyer name",
         "status": "Status",
         "quantity": "Qty"
       }
@@ -101,7 +106,8 @@
     "summary_section": "Summary",
     "items_section": "Items",
     "order_number": "Order number",
-    "customer_reference": "Your purchase order reference",
+    "requested_by": "Requested by",
+    "customer_reference": "Purchase order reference",
     "customer_comment": "Comment",
     "cancel_reason": "Cancellation reason",
     "reject_reason": "Reason for decline",

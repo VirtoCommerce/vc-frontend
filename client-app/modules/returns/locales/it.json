@@ -5,6 +5,10 @@
       "table_description": "elenco dei resi"
     },
     "title": "Resi",
+    "scope": {
+      "organization": "Tutti i resi",
+      "own": "I miei resi"
+    },
     "no_returns_message": "Non ci sono ancora resi",
     "no_results_message": "Nessun reso corrisponde alla ricerca",
     "search_placeholder": "Cerca per RMA, ordine, riferimento o prodotto",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Data",
+        "buyer": "Nome dell'acquirente",
         "status": "Stato",
         "quantity": "Qtà"
       }
@@ -101,7 +106,8 @@
     "summary_section": "Riepilogo",
     "items_section": "Articoli",
     "order_number": "Numero d'ordine",
-    "customer_reference": "Il tuo riferimento d'ordine",
+    "requested_by": "Richiesto da",
+    "customer_reference": "Riferimento d'ordine",
     "customer_comment": "Commento",
     "cancel_reason": "Motivo dell'annullamento",
     "cancel_button": "Annulla reso",

@@ -5,6 +5,10 @@
       "table_description": "lista de devoluções"
     },
     "title": "Devoluções",
+    "scope": {
+      "organization": "Todas as devoluções",
+      "own": "Minhas devoluções"
+    },
     "no_returns_message": "Ainda não há devoluções",
     "no_results_message": "Nenhuma devolução corresponde à sua pesquisa",
     "search_placeholder": "Pesquisar por RMA, encomenda, referência ou produto",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Data",
+        "buyer": "Nome do comprador",
         "status": "Estado",
         "quantity": "Qtd."
       }
@@ -101,7 +106,8 @@
     "summary_section": "Resumo",
     "items_section": "Itens",
     "order_number": "Número do pedido",
-    "customer_reference": "Sua referência de pedido",
+    "requested_by": "Solicitada por",
+    "customer_reference": "Referência do pedido",
     "customer_comment": "Comentário",
     "cancel_reason": "Motivo do cancelamento",
     "cancel_button": "Cancelar devolução",

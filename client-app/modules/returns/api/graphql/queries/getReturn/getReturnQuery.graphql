@@ -7,6 +7,9 @@ query GetReturn($id: String!, $cultureName: String) {
     createdDate
     orderId
     orderNumber
+    customerId
+    customerName
+    organizationName
     customerReference
     customerComment
     rejectReason

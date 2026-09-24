@@ -5,6 +5,10 @@
       "table_description": "lista över returer"
     },
     "title": "Returer",
+    "scope": {
+      "organization": "Alla returer",
+      "own": "Mina returer"
+    },
     "no_returns_message": "Det finns inga returer ännu",
     "no_results_message": "Inga returer matchar din sökning",
     "search_placeholder": "Sök på RMA, order, referens eller produkt",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Datum",
+        "buyer": "Köparens namn",
         "status": "Status",
         "quantity": "Antal"
       }
@@ -101,7 +106,8 @@
     "summary_section": "Sammanfattning",
     "items_section": "Artiklar",
     "order_number": "Ordernummer",
-    "customer_reference": "Din inköpsorderreferens",
+    "requested_by": "Begärd av",
+    "customer_reference": "Inköpsorderreferens",
     "customer_comment": "Kommentar",
     "cancel_reason": "Orsak till avbokning",
     "cancel_button": "Avbryt retur",

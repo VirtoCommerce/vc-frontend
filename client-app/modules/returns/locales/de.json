@@ -5,6 +5,10 @@
       "table_description": "Liste der Rücksendungen"
     },
     "title": "Rücksendungen",
+    "scope": {
+      "organization": "Alle Rücksendungen",
+      "own": "Meine Rücksendungen"
+    },
     "no_returns_message": "Es liegen noch keine Rücksendungen vor",
     "no_results_message": "Keine Rücksendungen entsprechen Ihrer Suche",
     "search_placeholder": "Suche nach RMA, Bestellung, Referenz oder Artikel",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Datum",
+        "buyer": "Name des Käufers",
         "status": "Status",
         "quantity": "Menge"
       }
@@ -101,7 +106,8 @@
     "summary_section": "Übersicht",
     "items_section": "Artikel",
     "order_number": "Bestellnummer",
-    "customer_reference": "Ihre Bestellreferenz",
+    "requested_by": "Angefordert von",
+    "customer_reference": "Bestellreferenz",
     "customer_comment": "Kommentar",
     "cancel_reason": "Stornierungsgrund",
     "cancel_button": "Rücksendung stornieren",

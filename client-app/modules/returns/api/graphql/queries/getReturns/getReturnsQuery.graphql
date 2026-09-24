@@ -1,5 +1,6 @@
 query GetReturns(
   $storeId: String!
+  $scope: ReturnScopeEnum
   $first: Int
   $after: String
   $sort: String
@@ -11,6 +12,7 @@ query GetReturns(
 ) {
   returns(
     storeId: $storeId
+    scope: $scope
     first: $first
     after: $after
     sort: $sort
@@ -27,6 +29,7 @@ query GetReturns(
       statusDisplayValue(cultureName: $cultureName)
       createdDate
       orderId
+      customerName
       itemsQuantity
       availableActions {
         name

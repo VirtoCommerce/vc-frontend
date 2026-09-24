@@ -2,6 +2,26 @@
   <div class="returns-list">
     <VcTypography tag="h1">{{ $t("returns.title") }}</VcTypography>
 
+    <div v-if="canViewOrganizationReturns" class="returns-list__scope-tabs">
+      <VcTabSwitch
+        :model-value="scope"
+        :value="RETURN_SCOPE.ORGANIZATION"
+        icon="case"
+        :label="$t('returns.scope.organization')"
+        :disabled="loading"
+        @change="applyScope(RETURN_SCOPE.ORGANIZATION)"
+      />
+
+      <VcTabSwitch
+        :model-value="scope"
+        :value="RETURN_SCOPE.OWN"
+        icon="user"
+        :label="$t('returns.scope.own')"
+        :disabled="loading"
+        @change="applyScope(RETURN_SCOPE.OWN)"
+      />
+    </div>
+
     <div class="returns-list__toolbar">
       <div class="returns-list__search-wrapper">
         <VcInput
@@ -87,6 +107,12 @@
                 <span class="returns-list__mobile-value">{{ $d(new Date(item.createdDate)) }}</span>
               </div>
 
+              <div v-if="isOrganizationScope" class="returns-list__mobile-cell">
+                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.buyer") }}</span>
+
+                <span class="returns-list__mobile-value">{{ item.customerName }}</span>
+              </div>
+
               <div class="returns-list__mobile-cell">
                 <span class="returns-list__mobile-label">{{ $t("returns.list.columns.status") }}</span>
 
@@ -107,6 +133,16 @@
 
           <VcTableColumn id="createdDate" v-slot="{ item }" :title="$t('returns.list.columns.date')" sortable>
             {{ $d(new Date(item.createdDate)) }}
+          </VcTableColumn>
+
+          <VcTableColumn
+            v-if="isOrganizationScope"
+            id="customerName"
+            v-slot="{ item }"
+            :title="$t('returns.list.columns.buyer')"
+            sortable
+          >
+            {{ item.customerName }}
           </VcTableColumn>
 
           <VcTableColumn id="status" v-slot="{ item }" :title="$t('returns.list.columns.status')" sortable>
@@ -135,7 +171,7 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatuses";
 import { useReturns } from "@/modules/returns/composables/useReturns";
-import { RETURN_ACTION } from "@/modules/returns/constants";
+import { RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
 import type { ReturnsFilterDataType } from "@/modules/returns/types";
 import ReturnsFilters from "@/modules/returns/components/returns-filters.vue";
 
@@ -163,6 +199,9 @@ const {
   filter,
   isFilterEmpty,
   itemsPerPage,
+  canViewOrganizationReturns,
+  scope,
+  applyScope,
   applyKeyword,
   applyFilter,
   applySorting,
@@ -174,6 +213,8 @@ const { statuses } = useReturnStatuses();
 const { statusLabel } = useReturnStatusLabel();
 
 const localKeyword = ref(keyword.value);
+
+const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
 
 const isSearching = computed(() => Boolean(keyword.value) || !isFilterEmpty.value);
 
@@ -249,6 +290,14 @@ watch(keyword, (value) => {
 
 <style lang="scss">
 .returns-list {
+  &__scope-tabs {
+    @apply mt-5 flex w-full gap-2;
+
+    > * {
+      @apply flex-1;
+    }
+  }
+
   &__toolbar {
     @apply mb-4 mt-5 flex flex-col gap-3;
 

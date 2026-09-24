@@ -5,6 +5,10 @@
       "table_description": "liste des retours"
     },
     "title": "Retours",
+    "scope": {
+      "organization": "Tous les retours",
+      "own": "Mes retours"
+    },
     "no_returns_message": "Il n'y a pas encore de retours",
     "no_results_message": "Aucun retour ne correspond à votre recherche",
     "search_placeholder": "Rechercher par RMA, commande, référence ou produit",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA",
         "date": "Date",
+        "buyer": "Nom de l'acheteur",
         "status": "Statut",
         "quantity": "Qté"
       }
@@ -101,7 +106,8 @@
     "summary_section": "Résumé",
     "items_section": "Articles",
     "order_number": "Numéro de commande",
-    "customer_reference": "Votre référence de commande",
+    "requested_by": "Demandé par",
+    "customer_reference": "Référence de commande",
     "customer_comment": "Commentaire",
     "cancel_reason": "Motif d'annulation",
     "cancel_button": "Annuler le retour",

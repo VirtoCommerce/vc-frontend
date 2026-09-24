@@ -5,6 +5,10 @@
       "table_description": "返品のリスト"
     },
     "title": "返品",
+    "scope": {
+      "organization": "すべての返品",
+      "own": "自分の返品"
+    },
     "no_returns_message": "返品はまだありません",
     "no_results_message": "検索条件に一致する返品はありません",
     "search_placeholder": "RMA・注文・参照番号・商品で検索",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA番号",
         "date": "日付",
+        "buyer": "購入者名",
         "status": "ステータス",
         "quantity": "数量"
       }
@@ -101,6 +106,7 @@
     "summary_section": "概要",
     "items_section": "商品",
     "order_number": "注文番号",
+    "requested_by": "申請者",
     "customer_reference": "発注参照番号",
     "customer_comment": "コメント",
     "cancel_reason": "キャンセル理由",

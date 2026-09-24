@@ -5,6 +5,10 @@
       "table_description": "退货列表"
     },
     "title": "退货",
+    "scope": {
+      "organization": "所有退货",
+      "own": "我的退货"
+    },
     "no_returns_message": "暂无退货",
     "no_results_message": "没有符合搜索条件的退货",
     "search_placeholder": "按 RMA、订单、参考号或商品搜索",
@@ -90,6 +94,7 @@
       "columns": {
         "number": "RMA编号",
         "date": "日期",
+        "buyer": "买家姓名",
         "status": "状态",
         "quantity": "数量"
       }
@@ -101,7 +106,8 @@
     "summary_section": "摘要",
     "items_section": "商品",
     "order_number": "订单编号",
-    "customer_reference": "您的采购单号",
+    "requested_by": "申请人",
+    "customer_reference": "采购单号",
     "customer_comment": "备注",
     "cancel_reason": "取消原因",
     "cancel_button": "取消退货",
