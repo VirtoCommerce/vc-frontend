@@ -69,7 +69,7 @@
     </div>
 
     <TopHeaderOrganizations
-      v-if="isMultiOrganization"
+      v-if="IS_ORGANIZATION_SWITCHER_SHOWN && isMultiOrganization"
       class="header-account-menu-panel__organizations"
       @organization-selected="emit('navigate')"
     />
@@ -99,6 +99,15 @@ interface IProps {
   displayName: string;
   initials: string;
 }
+
+/**
+ * The organisation switcher is the one block in this panel the design has not drawn. It is the old
+ * header's component standing unstyled next to rows that were, so it reads as a different product.
+ * Held out rather than deleted: the wiring around it — the multi-organisation guard and the
+ * `navigate` emit that closes the panel after a switch — is exactly what has to come back, so
+ * turning this to `true` is the whole restore. Flip it when the design arrives.
+ */
+const IS_ORGANIZATION_SWITCHER_SHOWN = false;
 
 const { user, operator, organization, isMultiOrganization } = useUser();
 const { backToOperatorLabel } = useImpersonate();
