@@ -1833,6 +1833,12 @@
       },
       "brands": {
         "eyebrow": "Authorized distributor for"
+      },
+      "cta": {
+        "title": "Become a customer",
+        "text": "Contract pricing, agreed payment terms and PO checkout — usually approved within one business day.",
+        "become_customer": "Become a customer",
+        "talk_to_sales": "Talk to sales"
       }
     }
   },

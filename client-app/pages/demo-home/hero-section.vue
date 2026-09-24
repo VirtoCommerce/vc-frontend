@@ -180,6 +180,14 @@ const cartRoute = ROUTES.CART.PATH;
   }
 }
 
+@media (width < theme("screens.sm")) {
+  .hero-section {
+    &__actions > * {
+      @apply w-full;
+    }
+  }
+}
+
 @media (width >= theme("screens.lg")) {
   .hero-section {
     @apply grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-12 rounded-[28px] px-8 py-9;

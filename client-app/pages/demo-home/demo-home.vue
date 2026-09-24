@@ -9,12 +9,15 @@
     <ChangesSection />
 
     <BrandsSection />
+
+    <CtaSection />
   </div>
 </template>
 
 <script setup lang="ts">
 import BrandsSection from "./brands-section.vue";
 import ChangesSection from "./changes-section.vue";
+import CtaSection from "./cta-section.vue";
 import HeroSection from "./hero-section.vue";
 import SuppliersSection from "./suppliers-section.vue";
 import WhyBuySection from "./why-buy-section.vue";
