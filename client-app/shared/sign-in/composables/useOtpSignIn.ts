@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { useAnalytics, useAuth } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
 
@@ -18,7 +19,7 @@ export interface IOtpVerifyResponse {
   lockoutSecondsRemaining?: number;
 }
 
-// Error codes OtpEmailTokenGrantHandler returns from POST /connect/token (grant_type=otp_email) on failure.
+// Error codes OtpGrantTypeHandler returns from POST /connect/token (grant_type=otp_email) on failure.
 const OTP_ERROR_CODE_ACCOUNT_LOCKED = "account_locked";
 const OTP_ERROR_CODE_OTP_DISABLED = "otp_disabled";
 
@@ -35,7 +36,9 @@ export function useOtpSignIn() {
     resetSignInErrors();
 
     try {
-      const { data } = await useFetch("/api/otp/request").post({ email }).json<IOtpRequestResponse>();
+      const { data } = await useFetch("/api/otp/request")
+        .post({ email, storeId: globals.storeId })
+        .json<IOtpRequestResponse>();
 
       return data.value ?? undefined;
     } finally {
@@ -53,7 +56,7 @@ export function useOtpSignIn() {
       let tokenExchangeError: unknown;
 
       try {
-        await nativeSignIn({ email, code });
+        await nativeSignIn({ email, code, storeId: globals.storeId });
       } catch (e) {
         // getToken(true) rejects on any non-2xx /connect/token response, but authErrors is
         // already populated from the response body by then - handle it below like any other
