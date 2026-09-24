@@ -42,10 +42,11 @@ defineProps<IProps>();
   }
 
   &__title {
-    // The design heads a block at its h2 step, not at a flat `xl`: 26/32, against the 20/28 this
-    // was. Its own wide step takes that to 32/38 above 1900, which this does not follow — that
-    // needs a breakpoint the project's scale does not carry.
-    @apply grow text-[1.625rem]/[2rem] font-bold uppercase text-neutral-950;
+    // 20/36, read off the design's own DESCRIPTION heading. The size was already right; the leading
+    // was not — 28 against 36, which is what made the row sit tight under its rule. The design steps
+    // this to 32/38 above 1900, which is not followed here: the project's scale carries no such
+    // screen, and a bare pixel breakpoint is out.
+    @apply grow text-xl/[2.25rem] font-bold uppercase text-neutral-950;
   }
 }
 </style>
