@@ -1,0 +1,5 @@
+mutation CreateSalesRepTask($command: InputCreateSalesRepTask!) {
+  createSalesRepTask(command: $command) {
+    ...salesRepTaskFields
+  }
+}

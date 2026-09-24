@@ -110,6 +110,7 @@
     "customer_reference": "采购单号",
     "customer_comment": "备注",
     "cancel_reason": "取消原因",
+    "reject_reason": "拒绝原因",
     "cancel_button": "取消退货",
     "columns": {
       "requested": "申请数量",
@@ -126,6 +127,9 @@
   },
   "return_edit": {
     "title": "填写退货详情",
+    "title_with_number": "填写退货详情 #{number}",
+    "not_editable_message": "此退货已无法更改",
+    "not_editable_message_with_status": "此退货已无法更改，当前状态为 {status}",
     "details_section": "详情",
     "bulk_section": "应用到所有行",
     "apply_to_all": "将一个原因应用到全部 {count} 行",

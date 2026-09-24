@@ -127,6 +127,7 @@
   },
   "return_edit": {
     "title": "Add return details",
+    "title_with_number": "Add return details #{number}",
     "not_editable_message": "This return can no longer be changed",
     "not_editable_message_with_status": "This return can no longer be changed — its status is {status}",
     "details_section": "Details",

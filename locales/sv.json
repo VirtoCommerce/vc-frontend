@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Den här kassan tillhör ett annat konto eller en annan organisation. Logga in med kontot som du använder i din shoppingassistent och försök igen.",
+      "expired": "Den här kassalänken har gått ut, har redan använts eller är inte tillgänglig på den här fliken. Be din shoppingassistent om en ny länk.",
+      "restore_failed": "Vi kunde inte öppna kassan. Försök öppna länken igen om en stund.",
+      "authorization_failed": "Vi kunde inte fortsätta inloggningen",
+      "authorization_retry": "Starta om anslutningen från din shoppingassistent. Kontakta butiksadministratören om problemet kvarstår."
+    },
     "buttons": {
       "home": "Hemsida",
       "ok": "OK",

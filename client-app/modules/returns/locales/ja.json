@@ -110,6 +110,7 @@
     "customer_reference": "発注参照番号",
     "customer_comment": "コメント",
     "cancel_reason": "キャンセル理由",
+    "reject_reason": "却下理由",
     "cancel_button": "返品をキャンセル",
     "columns": {
       "requested": "申請数",
@@ -126,6 +127,9 @@
   },
   "return_edit": {
     "title": "返品内容の入力",
+    "title_with_number": "返品内容の入力 #{number}",
+    "not_editable_message": "この返品は変更できなくなりました",
+    "not_editable_message_with_status": "この返品は変更できなくなりました（ステータス: {status}）",
     "details_section": "詳細",
     "bulk_section": "すべての明細に適用",
     "apply_to_all": "{count} 件すべてに同じ理由を適用",

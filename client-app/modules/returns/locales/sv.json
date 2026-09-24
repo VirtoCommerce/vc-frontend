@@ -110,6 +110,7 @@
     "customer_reference": "Inköpsorderreferens",
     "customer_comment": "Kommentar",
     "cancel_reason": "Orsak till avbokning",
+    "reject_reason": "Orsak till avslag",
     "cancel_button": "Avbryt retur",
     "columns": {
       "requested": "Begärt",
@@ -126,6 +127,9 @@
   },
   "return_edit": {
     "title": "Lägg till returuppgifter",
+    "title_with_number": "Lägg till returuppgifter #{number}",
+    "not_editable_message": "Den här returen kan inte längre ändras",
+    "not_editable_message_with_status": "Den här returen kan inte längre ändras – dess status är {status}",
     "details_section": "Detaljer",
     "bulk_section": "Tillämpa på alla rader",
     "apply_to_all": "Tillämpa en orsak på alla {count} rader",

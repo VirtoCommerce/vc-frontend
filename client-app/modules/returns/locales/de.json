@@ -110,6 +110,7 @@
     "customer_reference": "Bestellreferenz",
     "customer_comment": "Kommentar",
     "cancel_reason": "Stornierungsgrund",
+    "reject_reason": "Ablehnungsgrund",
     "cancel_button": "Rücksendung stornieren",
     "columns": {
       "requested": "Angefragt",
@@ -126,6 +127,9 @@
   },
   "return_edit": {
     "title": "Rücksendedetails hinzufügen",
+    "title_with_number": "Rücksendedetails hinzufügen #{number}",
+    "not_editable_message": "Diese Rücksendung kann nicht mehr geändert werden",
+    "not_editable_message_with_status": "Diese Rücksendung kann nicht mehr geändert werden – ihr Status ist {status}",
     "details_section": "Details",
     "bulk_section": "Auf alle Positionen anwenden",
     "apply_to_all": "Einen Grund auf alle {count} Positionen anwenden",

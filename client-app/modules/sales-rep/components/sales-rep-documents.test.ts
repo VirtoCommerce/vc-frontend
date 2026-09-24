@@ -32,6 +32,12 @@ vi.mock("../files", async (importOriginal) => ({
   openAuthorizedFile: openAuthorizedFileMock,
 }));
 
+// VCST-6083: a non-inline type gets a Download action, which goes straight to the shared download util.
+const downloadFileMock = vi.hoisted(() => vi.fn());
+vi.mock("@/shared/files", () => ({
+  downloadFile: downloadFileMock,
+}));
+
 // The layout query behind <LayoutSurface>; the widget's own data query is the mocked composable above.
 const apolloMock = await vi.hoisted(async () => {
   const { ref, shallowRef } = await import("vue");
@@ -218,6 +224,66 @@ describe("SalesRepDocuments states", () => {
     expect(wrapper.findAll(".sales-rep-documents__row")).toHaveLength(0);
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBe("error");
+  });
+});
+
+// VCST-6083: the widget listed DOC/XLS/ZIP rows with no action at all, while /company/documents offers
+// Download for the same document. Every listed row must carry an action.
+describe("SalesRepDocuments non-inline documents", () => {
+  const DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  const XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  const ZIP = "application/zip";
+
+  beforeEach(() => {
+    downloadFileMock.mockClear();
+  });
+
+  it.each([DOCX, XLSX, ZIP])("offers a Download action for %s", (contentType) => {
+    state.items.value = [makeDocument({ contentType, name: "Price list.xlsx", displayName: "Price list" })];
+
+    const wrapper = createWrapper();
+    const download = wrapper.find(".sales-rep-documents__download");
+
+    expect(download.exists()).toBe(true);
+    expect(download.element.tagName).toBe("BUTTON");
+    expect(download.text()).toBe("sales_rep.documents.details.download");
+  });
+
+  it("downloads the document through the shared download util", async () => {
+    state.items.value = [
+      makeDocument({ id: "doc-2", contentType: XLSX, name: "Price list.xlsx", url: "/api/sales-rep/documents/doc-2" }),
+    ];
+
+    const wrapper = createWrapper();
+    await wrapper.find(".sales-rep-documents__download").trigger("click");
+
+    expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-2", "Price list.xlsx");
+    expect(openAuthorizedFileMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps a single Open action for an inline-renderable document", () => {
+    state.items.value = [makeDocument()];
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".sales-rep-documents__open").exists()).toBe(true);
+    expect(wrapper.find(".sales-rep-documents__download").exists()).toBe(false);
+  });
+
+  it("gives every row in a mixed list exactly one action", () => {
+    state.items.value = [
+      makeDocument(),
+      makeDocument({ id: "doc-2", contentType: DOCX, name: "Credit application.docx" }),
+      makeDocument({ id: "doc-3", contentType: ZIP, name: "Contract pack.zip" }),
+    ];
+
+    const wrapper = createWrapper();
+    const rows = wrapper.findAll(".sales-rep-documents__row");
+
+    expect(rows).toHaveLength(3);
+    for (const row of rows) {
+      expect(row.findAll("button")).toHaveLength(1);
+    }
   });
 });
 

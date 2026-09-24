@@ -110,6 +110,7 @@
     "customer_reference": "Riferimento d'ordine",
     "customer_comment": "Commento",
     "cancel_reason": "Motivo dell'annullamento",
+    "reject_reason": "Motivo del rifiuto",
     "cancel_button": "Annulla reso",
     "columns": {
       "requested": "Richiesto",
@@ -126,6 +127,9 @@
   },
   "return_edit": {
     "title": "Aggiungi i dettagli del reso",
+    "title_with_number": "Aggiungi i dettagli del reso #{number}",
+    "not_editable_message": "Questo reso non può più essere modificato",
+    "not_editable_message_with_status": "Questo reso non può più essere modificato: il suo stato è {status}",
     "details_section": "Dettagli",
     "bulk_section": "Applica a tutte le righe",
     "apply_to_all": "Applica un motivo a tutte le {count} righe",
