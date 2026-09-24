@@ -144,7 +144,7 @@ const failed = computed(() => Boolean(error.value));
 
   &__open,
   &__download {
-    @apply justify-self-end;
+    @apply w-full;
   }
 
   &__skeleton {
