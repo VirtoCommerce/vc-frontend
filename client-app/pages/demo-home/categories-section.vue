@@ -1,13 +1,19 @@
 <template>
   <section class="categories-section">
     <div class="categories-section__head">
-      <div>
+      <div class="categories-section__heading">
         <p class="categories-section__eyebrow">{{ t("pages.demo_home.categories.eyebrow") }}</p>
 
         <VcTypography tag="h2">{{ t("pages.demo_home.categories.title") }}</VcTypography>
       </div>
 
-      <VcButton :to="catalogRoute" size="sm" variant="outline" append-icon="arrow-right">
+      <VcButton
+        :to="catalogRoute"
+        class="categories-section__all"
+        size="sm"
+        variant="outline"
+        append-icon="arrow-right"
+      >
         {{ t("pages.demo_home.categories.all_categories") }}
       </VcButton>
     </div>
@@ -346,6 +352,36 @@ const tiles = computed(() =>
     // Five small tiles leave one cell empty in the last row of three
     &__tile:last-child {
       @apply col-span-2;
+    }
+  }
+}
+
+@media (width < theme("screens.sm")) {
+  .categories-section {
+    @apply flex flex-col;
+
+    &__head {
+      @apply contents;
+    }
+
+    &__heading {
+      @apply mb-8;
+    }
+
+    &__grid {
+      @apply gap-3;
+    }
+
+    &__tile {
+      @apply p-4;
+    }
+
+    &__tile--xl {
+      @apply p-5;
+    }
+
+    &__all {
+      @apply order-last mt-6 w-full;
     }
   }
 }
