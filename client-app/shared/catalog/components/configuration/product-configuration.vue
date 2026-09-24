@@ -1,10 +1,16 @@
 <template>
   <VcWidget
     class="product-configuration"
-    prepend-icon="adjustments"
     :title="$t('shared.catalog.product_details.product_configuration.title')"
     size="lg"
   >
+    <!-- The same mark PROPERTIES and DESCRIPTION carry, because the design gives all three blocks
+         one head. `prepend-icon` drew a bare glyph in the brand orange instead — the only block on
+         the page whose heading had no disc under its icon. -->
+    <template #prepend>
+      <VcShape icon="adjustments" class="product-configuration__shape" mask="circle" />
+    </template>
+
     <!-- Set in caps, like PROPERTIES and DESCRIPTION standing above it on the same page: the design
          gives every block on the PDP one heading treatment, and this was the only sentence-case one
          among them. Through the slot rather than by styling the widget's own title element, which
@@ -347,6 +353,16 @@ async function openSaveChangesModal(): Promise<boolean> {
 <style lang="scss">
 .product-configuration {
   $required: "";
+
+  &__shape {
+    // Kept in step with `product-titled-block__shape`, the other two heads on this page.
+    --vc-shape-size: 2.25rem;
+    // 20 in a 36 disc, the design's pair. The kit sizes a shape's glyph at half the disc, which
+    // on 36 is 18 and leaves the mark reading smaller than the ones beside it.
+    --vc-shape-icon-size: 1.25rem;
+    --vc-shape-bg-color: theme("colors.secondary.400");
+    --vc-icon-stroke: 1.6;
+  }
 
   &__heading {
     // Caps, and without the display face's negative tracking: that tracking is cut for mixed case,

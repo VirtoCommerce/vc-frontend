@@ -46,7 +46,10 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   --bg-color: var(--props-bg-color, var(--vc-shape-bg-color, theme("colors.secondary.500")));
 
   --vc-icon-color: var(--props-icon-color, var(--vc-shape-color, theme("colors.additional.50")));
-  --vc-icon-size: 50%;
+  // Half the disc, and nameable. A consumer that has to meet a drawing where the glyph is not
+  // half — 20 in a 36 disc — could otherwise only say so by landing a declaration on this same
+  // element, which is a race with this one rather than an override.
+  --vc-icon-size: var(--vc-shape-icon-size, 50%);
 
   @apply relative flex items-center justify-center size-[--size] bg-[--bg-color] bg-cover bg-center;
 
