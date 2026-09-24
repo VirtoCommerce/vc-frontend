@@ -3,6 +3,7 @@
     v-if="reviews?.length || feedbackAvailable"
     :title="$t('common.labels.feedback')"
     prepend-icon="chat"
+    icon-shape
     size="lg"
     class="product-reviews"
   >

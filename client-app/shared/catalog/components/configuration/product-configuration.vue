@@ -2,25 +2,10 @@
   <VcWidget
     class="product-configuration"
     :title="$t('shared.catalog.product_details.product_configuration.title')"
+    prepend-icon="adjustments"
+    icon-shape
     size="lg"
   >
-    <!-- The same mark PROPERTIES and DESCRIPTION carry, because the design gives all three blocks
-         one head. `prepend-icon` drew a bare glyph in the brand orange instead — the only block on
-         the page whose heading had no disc under its icon. -->
-    <template #prepend>
-      <VcShape icon="adjustments" class="product-configuration__shape" mask="circle" />
-    </template>
-
-    <!-- Set in caps, like PROPERTIES and DESCRIPTION standing above it on the same page: the design
-         gives every block on the PDP one heading treatment, and this was the only sentence-case one
-         among them. Through the slot rather than by styling the widget's own title element, which
-         belongs to the kit — the `title` prop stays for the ARIA id it feeds. -->
-    <template #title>
-      <span class="product-configuration__heading">
-        {{ $t("shared.catalog.product_details.product_configuration.title") }}
-      </span>
-    </template>
-
     <div id="product-configuration-anchor" />
 
     <div class="product-configuration__widgets">
@@ -353,23 +338,6 @@ async function openSaveChangesModal(): Promise<boolean> {
 <style lang="scss">
 .product-configuration {
   $required: "";
-
-  &__shape {
-    // Kept in step with `product-titled-block__shape`, the other two heads on this page.
-    --vc-shape-size: 2.25rem;
-    // 20 in a 36 disc, the design's pair. The kit sizes a shape's glyph at half the disc, which
-    // on 36 is 18 and leaves the mark reading smaller than the ones beside it.
-    --vc-shape-icon-size: 1.25rem;
-    --vc-shape-bg-color: theme("colors.secondary.400");
-    --vc-icon-stroke: 1.6;
-  }
-
-  &__heading {
-    // Caps, and without the display face's negative tracking: that tracking is cut for mixed case,
-    // and on capitals it closes the letters up. The other two block headings on this page are set
-    // the same way.
-    @apply uppercase tracking-normal;
-  }
 
   // The group's header is two things on one line: the name with its subtitle, and the badge that
   // says the group may be skipped. The badge keeps its size while the name takes the rest.

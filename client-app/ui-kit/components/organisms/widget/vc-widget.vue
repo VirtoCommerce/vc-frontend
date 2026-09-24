@@ -9,6 +9,7 @@
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
         'vc-widget--nested': nested,
+        'vc-widget--icon-shape': iconShape,
       },
     ]"
   >
@@ -24,7 +25,14 @@
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
             <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
               <slot name="prepend">
-                <VcIcon v-if="prependIcon" class="vc-widget__prepend-icon" :name="prependIcon" />
+                <VcShape
+                  v-if="prependIcon && iconShape"
+                  class="vc-widget__prepend-shape"
+                  :icon="prependIcon"
+                  mask="circle"
+                />
+
+                <VcIcon v-else-if="prependIcon" class="vc-widget__prepend-icon" :name="prependIcon" />
               </slot>
             </span>
 
@@ -90,6 +98,13 @@ interface IProps {
    * content 36-52px off the edge and break its alignment with everything else in that shell.
    */
   nested?: boolean;
+  /**
+   * Draws the prepended icon on a disc and sets the title to match, which is how this theme marks
+   * the head of a content block. Off by default: a widget that is a panel rather than a block — a
+   * checkout section, a cart summary — keeps the bare glyph. Retune it with the
+   * `--vc-widget-icon-shape-*` variables rather than per call site.
+   */
+  iconShape?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -293,6 +308,31 @@ watchEffect(() => {
 
   &__prepend-icon {
     --vc-icon-color: theme("colors.primary.500");
+  }
+
+  // The block head's mark. The four numbers live here and nowhere else, so a theme retunes every
+  // marked widget in the app from one place instead of per call site.
+  &__prepend-shape {
+    --vc-shape-size: var(--vc-widget-icon-shape-size, 2.25rem);
+    // The kit sizes a shape's glyph at half its disc, which on 36 is 18 and leaves the mark reading
+    // smaller than the title beside it.
+    --vc-shape-icon-size: var(--vc-widget-icon-shape-icon-size, 1.25rem);
+    --vc-shape-bg-color: var(--vc-widget-icon-shape-bg-color, theme("colors.secondary.400"));
+    --vc-icon-stroke: var(--vc-widget-icon-shape-icon-stroke, 1.6);
+  }
+
+  &--icon-shape {
+    // The widget's OWN head, through a direct child: a marked block can hold plain widgets of its
+    // own — the configuration block holds one per section — and a descendant selector set those in
+    // caps too, at the outer head's leading.
+    > #{$self}__header-container #{$self}__title {
+      // The title is led to the disc's own height, so the head is one row however a theme resizes
+      // the mark. `tracking-normal` undoes the display face's tightening, which is cut for mixed
+      // case and closes capitals up.
+      @apply uppercase tracking-normal;
+
+      line-height: var(--vc-widget-icon-shape-size, 2.25rem);
+    }
   }
 
   &__append-icon {

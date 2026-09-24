@@ -255,3 +255,25 @@ export const Nested: StoryType = {
     <VcWidget title="Plain widget">A plain widget draws its own plate and sits a step inside.</VcWidget>
   </div>`),
 };
+
+// The block head: the prepended icon drawn on a disc, with the title set in caps and led to the
+// disc's height so the two make one row. Off by default, because a widget that is a panel rather
+// than a headed block — a checkout section, a cart summary — keeps the bare glyph. The four numbers
+// are reachable by name, so a theme retunes every marked widget at once.
+export const IconShape: StoryType = {
+  args: {
+    title: "Product variations",
+    prependIcon: "cube",
+    iconShape: true,
+    size: "lg",
+  },
+  render: renderWidget(`<div>
+    <VcWidget v-bind="args">Marked: the head of a content block.</VcWidget>
+
+    <VcWidget title="Product variations" prepend-icon="cube" size="lg">Unmarked, which is the default.</VcWidget>
+
+    <div style="--vc-widget-icon-shape-size: 3rem; --vc-widget-icon-shape-bg-color: var(--color-primary-500)">
+      <VcWidget v-bind="args" title="Retuned from outside" />
+    </div>
+  </div>`),
+};
