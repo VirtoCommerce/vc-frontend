@@ -167,12 +167,13 @@ function selectMenuItem(item: ExtendedMenuLinkType) {
 
 const panel = useTemplateRef<HTMLElement>("panel");
 
-// The menu is a plate over a dimmed page, so it answers Escape. Not `.stop` — that breaks the
-// next dialog up the stack — and not unconditional either: the locale popover inside the menu
-// closes on KEYUP, and a keydown that unmounted the menu first would take the open dropdown down
-// with it. While such a layer is open its trigger carries aria-expanded, so the key is its.
-onKeyStroke("Escape", (event) => {
-  if ((event.target as HTMLElement | null)?.closest?.('[aria-expanded="true"]')) {
+// The menu is a plate over a dimmed page, so it answers Escape. Not `.stop` — that breaks the next
+// dialog up the stack — and not unconditional either: the locale popover inside the menu closes on
+// KEYUP, so a keydown that unmounted the menu first would take the open dropdown with it. Asked of
+// the panel rather than of the event, because the popover teleports its list: with focus inside it
+// the event has no expanded ancestor, while the trigger still marks itself open.
+onKeyStroke("Escape", () => {
+  if (panel.value?.querySelector('[aria-expanded="true"]')) {
     return;
   }
 
