@@ -135,6 +135,13 @@ html.dark {
     --plate-pad-y: 1.75rem;
     --plate-pad-x: 1.5rem;
     --page-gutter: 1.5rem;
+
+    // A widget reaches 18px past the container's inset below md, which put it 6px clear of the
+    // screen when that inset was 24 and 6px OFF the screen once the phone halves it — and in
+    // between left the page's plates on two different verticals, the header at the gutter and
+    // the widget under it 18 further out. Here every plate stands on the page's gutter. The
+    // token is the kit's, defaulting to the reach it has always had.
+    --vc-widget-container-margin-x: 0px;
   }
 }
 
@@ -164,12 +171,6 @@ html.dark {
     // does) still overrides these.
     --vc-container-pt: var(--page-stack);
     --vc-container-pb: var(--page-stack);
-
-    // A widget widens itself past the container's inset on a narrow screen — 18px against the
-    // 24 the container used to keep, which left it 6px clear of the edge. At a 12px gutter the
-    // same 18 puts it 6px OFF the screen, and the clipped side takes the plate's corner with
-    // it. Here the plate stands on the page's gutter like every other one.
-    --vc-widget-container-margin-x: 0px;
   }
 }
 
