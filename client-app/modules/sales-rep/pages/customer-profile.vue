@@ -52,10 +52,11 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import LayoutSurface from "../components/layout-surface.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
-import { CUSTOMER_PROFILE_LAYOUT_SCOPE, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import { CUSTOMER_PROFILE_LAYOUT_SCOPE, DASHBOARD_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
 interface IProps {
   organizationId: string;
@@ -86,8 +87,8 @@ usePageHead({
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("sales_rep.hub.title") },
+  { title: t("common.links.account"), route: { name: ROUTES.ACCOUNT.NAME } },
+  { title: t("sales_rep.hub.title"), route: { name: DASHBOARD_ROUTE_NAME } },
   { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
   { title: customer.value?.organizationName ?? "" },
 ]);

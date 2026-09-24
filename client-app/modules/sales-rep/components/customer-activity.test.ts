@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { VcTabSwitch } from "@/ui-kit/components/molecules";
 import CustomerActivity from "./customer-activity.vue";
 import type { SalesRepCustomerActivitySummaryType } from "../types";
 
@@ -54,11 +55,13 @@ function summaryFixture(
 // Slot-rendering stub: the product label lives in the link's slot, which a default stub would drop.
 const VcLinkStub = { name: "VcLinkStub", props: ["to"], template: "<a><slot /></a>" };
 
-// SalesRepRuleChips stays real — the sub-view tests below click its tabs.
+// SalesRepRuleChips stays real — the sub-view tests below click its tabs — and so does the
+// VcTabSwitch it renders them with: stubbed, the chips have no button to click.
 const createWrapper = createWrapperFactory(mount, CustomerActivity, {
   props: { organizationId: "org1" },
   global: {
     renderStubDefaultSlot: false,
+    components: { VcTabSwitch },
     stubs: {
       VcWidget: { template: '<div><slot name="append" /><slot name="default-container" /></div>' },
       VcButton: true,
@@ -71,8 +74,9 @@ const createWrapper = createWrapperFactory(mount, CustomerActivity, {
   },
 });
 
-// The chip row renders the baseline (Summary) first, then the declared rules in order.
-const chips = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".sales-rep-rule-chips__tab");
+// The chip row renders the baseline (Summary) first, then the declared rules in order. The tab class
+// sits on VcTabSwitch's <label>; its inner <button> is what carries the click.
+const chips = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".sales-rep-rule-chips__tab button");
 
 beforeEach(() => {
   state.summary.value = undefined;

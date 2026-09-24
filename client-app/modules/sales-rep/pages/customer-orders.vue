@@ -149,7 +149,12 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import SalesRepOrdersFilters from "../components/sales-rep-orders-filters.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
-import { CUSTOMER_ORDERS_SORT_FIELDS, CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import {
+  CUSTOMER_ORDERS_SORT_FIELDS,
+  CUSTOMER_PROFILE_ROUTE_NAME,
+  DASHBOARD_ROUTE_NAME,
+  MY_CUSTOMERS_ROUTE_NAME,
+} from "../constants";
 import { salesRepOrderRoute } from "../utils";
 import type { SalesRepCustomerOrderRowType, SalesRepOrdersFilterDataType } from "../types";
 import type { RouteLocationRaw } from "vue-router";
@@ -325,7 +330,10 @@ function changePage(newPage: number): void {
 usePageHead({ title: heading });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const trail = [{ title: t("common.links.account"), route: { name: "Account" } }, { title: t("sales_rep.hub.title") }];
+  const trail = [
+    { title: t("common.links.account"), route: { name: "Account" } },
+    { title: t("sales_rep.hub.title"), route: { name: DASHBOARD_ROUTE_NAME } },
+  ];
 
   if (!hasCustomer.value) {
     return [...trail, { title: t("sales_rep.customer_orders.breadcrumb") }];

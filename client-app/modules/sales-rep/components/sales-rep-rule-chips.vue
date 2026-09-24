@@ -1,22 +1,25 @@
 <template>
   <div class="sales-rep-rule-chips">
-    <!-- The baseline tab (no rule name) renders in the same loop as the rules, so it can sit at
-         either end: clicking it clears the filter, and it is active while nothing is selected. -->
-    <button
+    <!-- Baseline tab: no rule name, so it clears the filter and is active while nothing is selected.
+         It renders in the SAME loop as the rules so it can sit at either end (see `allLast`).
+         Its value is `Boolean(true)` so no non-empty rule name can collide with it — `:value="true"`
+         trips vue/prefer-true-attribute-shorthand and the shorthand it asks for passes "" instead. -->
+    <VcTabSwitch
       v-for="tab in tabs"
       :key="tab.name ?? ''"
-      type="button"
-      :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': isActive(tab) }]"
-      :aria-pressed="isActive(tab)"
-      @click="modelValue = tab.name"
+      class="sales-rep-rule-chips__tab"
+      size="sm"
+      :value="tab.name ?? Boolean(true)"
+      :model-value="tab.name ? modelValue : !modelValue"
+      @change="modelValue = tab.name"
     >
-      <span class="sales-rep-rule-chips__label" :data-text="tab.label">{{ tab.label }}</span>
+      <span class="sales-rep-rule-chips__label">{{ tab.label }}</span>
 
       <span v-if="tab.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(tab.count) }}</span>
 
       <!-- Adornments belong to whoever knows what a tab means: the baseline arrives with no name. -->
       <slot name="suffix" :tab="tab" />
-    </button>
+    </VcTabSwitch>
   </div>
 </template>
 
@@ -76,11 +79,6 @@ const tabs = computed<TabType[]>(() => {
 
   return props.allLast ? [...selectableRules.value, baseline] : [baseline, ...selectableRules.value];
 });
-
-// The baseline carries no rule name, so "nothing selected" is what makes it the active tab.
-function isActive(tab: TabType): boolean {
-  return tab.name ? modelValue.value === tab.name : !modelValue.value;
-}
 </script>
 
 <style lang="scss">
@@ -88,34 +86,25 @@ function isActive(tab: TabType): boolean {
 .sales-rep-rule-chips {
   @apply flex flex-wrap items-center gap-1;
 
-  // The transparent border keeps every tab the same size so selecting one causes no layout shift.
-  &__tab {
-    // Radius follows the app-wide `--vc-radius` token so it tracks the theme's roundness setting.
-    @apply inline-flex cursor-pointer items-center gap-1 rounded-[--vc-radius] border border-transparent px-3 py-1.5 text-sm font-medium text-neutral-500;
+  // The component's accent-500 default drops hover text below WCAG AA in every preset (VCST-5890).
+  --vc-tab-switch-hover-color: var(--color-neutral-900);
 
-    &:hover {
-      @apply text-neutral-900;
-    }
-
-    &--active {
-      @apply border-neutral-200 bg-additional-50 font-semibold text-neutral-900 shadow;
-    }
-  }
-
-  &__label {
-    @apply inline-flex flex-col items-center;
-
-    // Invisible ::after reserves the bold width so toggling font-weight never resizes the tab (avoids reflow).
-    &::after {
-      @apply invisible h-0 overflow-hidden font-semibold;
-
-      content: attr(data-text);
-    }
-  }
-
-  // Always bold + accent (the count doesn't dim with an unselected label), per the documents mock.
+  // The tab's own styling dims an unselected LABEL but leaves its count alone, so accenting every count left
+  // the selected chip with nothing to tell it apart. Only the selected one is accented; the rest go neutral,
+  // which is also what the mock shows (QA A-19). This reverses the earlier reading of the documents mock —
+  // that mock does accent the count, but it does so on a chip row where the same was true of all of them.
+  //
+  // Brand -500 on the selected chip, and it clears AA there precisely BECAUSE the split above exists:
+  // QA's 4.21:1 (A-13) was brand on the #F5F5F5 page canvas, which is where the UNSELECTED counts sit —
+  // and those are neutral now. A selected tab's button is `bg-additional-50`, so its count sits on white,
+  // where the same step computes to ~4.6:1. Darkening it to -700 read as no accent at all.
   &__count {
-    @apply font-semibold text-primary-500;
+    // Bold like the label beside it: the count is the number the rep scans the row for.
+    @apply font-bold text-neutral-600;
+
+    .vc-tab-switch--checked & {
+      @apply text-primary-500;
+    }
   }
 }
 </style>

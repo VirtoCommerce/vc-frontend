@@ -25,8 +25,9 @@ vi.mock("vue-router", () => ({
 }));
 vi.mock("../composables/useSalesRepCustomersCount", async () => {
   const { ref } = await import("vue");
-  // Zero hides the badge, which is not what these tests are about.
-  return { useSalesRepCustomersCount: () => ({ count: ref(0) }) };
+  // Zero hides the badge, which is not what these tests are about. The component takes the SHARED
+  // wrapper (VCST-5890), so mocking only the inner one leaves its import undefined.
+  return { useSharedSalesRepCustomersCount: () => ({ count: ref(0) }) };
 });
 
 const MenuItemStub = { name: "MenuItemStub", props: ["active", "to"], template: "<a><slot /></a>" };

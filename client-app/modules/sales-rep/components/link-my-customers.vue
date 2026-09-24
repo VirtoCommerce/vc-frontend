@@ -22,7 +22,7 @@
 import { capitalize } from "lodash-es";
 import { computed, toRef } from "vue";
 import { useLink, useRoute } from "vue-router";
-import { useSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
+import { useSharedSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IProps {
@@ -33,7 +33,7 @@ const props = defineProps<IProps>();
 
 const item = toRef(props, "item");
 
-const { count } = useSalesRepCustomersCount();
+const { count } = useSharedSalesRepCustomersCount();
 
 // The link's area rule when it declares one — vue-router marks a link active by route RECORD, which
 // cannot see that the customer profile and a customer's activity belong here too — else the record match.

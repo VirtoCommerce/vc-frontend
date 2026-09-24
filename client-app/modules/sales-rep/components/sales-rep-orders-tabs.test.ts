@@ -36,9 +36,24 @@ vi.mock("../composables/useSalesRepOrders", () => ({
   },
 }));
 
+/** Mirrors the real label>button structure so the chips' class lands where it does in the app. */
+const VcTabSwitchStub = defineComponent({
+  name: "VcTabSwitch",
+  props: { value: { type: null, default: undefined }, modelValue: { type: null, default: undefined } },
+  emits: { change: (value: unknown) => value !== undefined },
+
+  setup(props, { emit, slots }) {
+    return () =>
+      h("label", null, [
+        h("button", { type: "button", onClick: () => emit("change", props.value) }, slots.default?.()),
+      ]);
+  },
+});
+
 const global = {
   stubs: {
     LayoutWidget: { template: '<div><slot name="default-container" /></div>' },
+    VcTabSwitch: VcTabSwitchStub,
     VcEmptyView: true,
     VcTable: true,
     VcTableColumn: true,
@@ -46,6 +61,8 @@ const global = {
     VcLink: true,
   },
 };
+
+const TABS = ".sales-rep-rule-chips__tab";
 
 /** The settings seam is a provide, so a real `LayoutBlock` has to install it. */
 const Surface = defineComponent({
@@ -95,7 +112,7 @@ describe("the order status tabs of a widget inside a layout", () => {
     mocks.filterRules = CATALOG;
     const { wrapper, draft, filter } = mountOrders();
 
-    await wrapper.findAll(".sales-rep-rule-chips__tab")[2].trigger("click");
+    await wrapper.findAll(TABS)[2].find("button").trigger("click");
     expect(filter()).toBe("Processing");
 
     // Unchecked while editing: the draft moves, the saved document does not.
@@ -108,7 +125,7 @@ describe("the order status tabs of a widget inside a layout", () => {
     draft.hiddenTabs = [];
     await wrapper.setProps({ editing: false });
     expect(filter()).toBe("Processing");
-    expect(wrapper.findAll(".sales-rep-rule-chips__tab")).toHaveLength(3);
+    expect(wrapper.findAll(TABS)).toHaveLength(3);
   });
 
   // The chips' count element is opt-in (documents category tabs); rules without counts render none.
@@ -123,14 +140,14 @@ describe("the order status tabs of a widget inside a layout", () => {
     mocks.filterRules = CATALOG;
     const { wrapper, saved, filter } = mountOrders();
 
-    await wrapper.findAll(".sales-rep-rule-chips__tab")[2].trigger("click");
+    await wrapper.findAll(TABS)[2].find("button").trigger("click");
     expect(filter()).toBe("Processing");
 
     saved.hiddenTabs = ["Processing"];
     await nextTick();
 
     expect(filter()).toBeUndefined();
-    expect(wrapper.findAll(".sales-rep-rule-chips__tab")).toHaveLength(2);
+    expect(wrapper.findAll(TABS)).toHaveLength(2);
   });
 
   // A tray restore: edit mode already on, catalog already cached, so neither watch source changes again.

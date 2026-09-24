@@ -11,7 +11,8 @@
       "amount": "Beløp",
       "redeemed": "Innløst",
       "earned": "Opptjent",
-      "registration": "Registrering"
+      "registration": "Registrering",
+      "mission": "Oppdragsbelønning"
     },
     "list_details": {
       "empty_list": "Listen din er tom"
@@ -67,12 +68,13 @@
           "type_orders": "Antall ordre",
           "points": "poeng",
           "days_left": "{count} dag igjen | {count} dager igjen",
+          "no_deadline": "Ingen frist",
           "mission_completed": "Oppdrag fullført",
           "completed": "Fullført",
           "open_mission": "Åpent oppdrag",
           "progress_skus": "{current} av {target} SKU-er",
           "progress_any_sku": "minst 1 av {target} SKU-er",
-          "progress_spend": "{sum} brukt",
+          "progress_spend": "{sum} av {target} brukt",
           "progress_orders": "{current} av {target} ordre"
         },
         "sku_modal": {

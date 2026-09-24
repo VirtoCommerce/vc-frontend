@@ -275,7 +275,6 @@
       "company_info": "Informações da Empresa",
       "company_members": "Membros da Empresa",
       "contact_administrator": "contate o administrador do site",
-      "saved_credit_cards": "Cartões de Crédito Salvos",
       "skip_to_main_content": "Ir para o conteúdo principal",
       "skip_to_footer": "Ir para o rodapé"
     },
@@ -337,6 +336,7 @@
           "back_to_operator": "Voltar para {name}",
           "switching_back": "Voltando…",
           "no_results": "Nenhum resultado encontrado",
+          "organization_locked_tooltip": "Esta organização está bloqueada. Entre em contato com o administrador para obter acesso.",
           "dark_mode": {
             "system": "Tema: automático",
             "dark": "Tema: escuro",
@@ -369,8 +369,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardados para mais tarde",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -486,8 +485,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -596,7 +594,7 @@
         "created_date_label": "Data de criação",
         "start_date_label": "Data de início",
         "end_date_label": "Data de término",
-        "invalid_range": "Intervalo de datas inválido.",
+        "date_range_label": "Intervalo de datas",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -640,24 +638,6 @@
       "delete_logo_modal": {
         "title": "Excluir logotipo da organização",
         "message": "Você realmente deseja remover o logotipo atual da organização? Este processo é irreversível."
-      }
-    },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Adicionar para Comparar",
-          "remove": "Remover de Comparar"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Apenas {productsLimit} produtos podem ser comparados",
-        "added_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> foi adicionado à lista de comparação <span class=\"hidden lg:inline\">(itens restantes - {itemsLeft})</span>",
-        "removed_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> foi removido da lista de comparação",
-        "compare_button": "Comparar"
-      },
-      "clear_list_modal": {
-        "title": "Confirmar Limpeza",
-        "message": "Você confirma a remoção de todos os produtos da lista de comparação?"
       }
     },
     "cart": {
@@ -1059,6 +1039,49 @@
       "price_high_to_low": "Preço, do maior para o menor",
       "date_new_to_old": "Data, mais recente para o mais antigo",
       "date_old_to_new": "Data, do mais antigo para o mais recente"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Adicionar à Comparação",
+          "remove": "Remover da Comparação"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Apenas {productsLimit} produtos da mesma categoria podem ser comparados",
+        "added_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> adicionado à lista de comparação <span class=\"hidden lg:inline\">(itens restantes - {itemsLeft})</span>",
+        "removed_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> removido da lista de comparação",
+        "compare_button": "Comparar",
+        "added_to_cart_html": "Adicionado <strong>{productName}</strong> ao carrinho",
+        "fetch_failed": "Não foi possível carregar alguns produtos comparados. Tente novamente."
+      },
+      "table": {
+        "tabs": {
+          "all": "Todos",
+          "differences": "Diferenças"
+        },
+        "uncategorized": "Não categorizado",
+        "unresolved_category": "Categoria desconhecida",
+        "differ_rows": "Diferem: {count} de {total} linhas",
+        "clear_category": "Limpar categoria",
+        "remove_product": "Remover da comparação",
+        "add_to_cart": "Adicionar ao carrinho",
+        "fields": {
+          "price_per_unit": "Preço por unidade",
+          "price_per_unit_tooltip": "Preço, sem IVA, por unidade.",
+          "customer_rating": "Avaliação do cliente",
+          "availability": "Disponibilidade",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Quantidade mínima de pedido",
+          "min_order_qty_tooltip": "MOQ — número mínimo de unidades por pedido."
+        },
+        "pin": {
+          "pin_title": "Fixar no topo",
+          "unpin_title": "Desafixar",
+          "pin_label": "Fixar “{label}”",
+          "unpin_label": "Desafixar “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1341,13 +1364,6 @@
         "create_list_button_mobile": "Criar",
         "lists_icon": "Ícone da lista"
       },
-      "saved_credit_cards": {
-        "no_cards": "Você ainda não salvou nenhum cartão de crédito",
-        "delete_credit_card_modal": {
-          "title": "Confirmar Exclusão",
-          "message": "Tem certeza de que deseja remover o cartão de crédito?"
-        }
-      },
       "list_details": {
         "meta": {
           "title": "Lista: {0}"
@@ -1510,7 +1526,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Adicionar à lista",
       "in_the_list_tooltip": "Na lista",
-      "variations_button": "Variações {0}",
+      "variations_button": "Sem variações | {count} variação | {count} variações",
       "customize_button": "Personalizar",
       "show_on_a_separate_page": "Mostrar em uma página separada",
       "no_products_message": "Não há produtos nesta categoria",
@@ -1637,33 +1653,6 @@
     "loyalty_catalog": {
       "title": "Catálogo de fidelidade"
     },
-    "compare": {
-      "meta": {
-        "title": "Comparar produtos",
-        "keywords": "teste, comparar, produtos, página, palavras-chave",
-        "description": "Descrição da página de comparação de produtos de teste"
-      },
-      "empty_list": {
-        "title": "Comparar produtos",
-        "message": "Sua lista de comparação de produtos está vazia",
-        "button_text": "Continue navegando aqui",
-        "img_alt": "Carrinho vazio",
-        "img_alt_mobile": "Carrinho vazio móvel"
-      },
-      "header_block": {
-        "title": "Comparar produtos",
-        "counter_message": "{productsNumber} itens de {productsLimit} adicionados",
-        "differences_checkbox_label": "Mostrar apenas diferenças",
-        "clear_button": "Limpar lista"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Comparar produtos"
-      }
-    },
     "branch": {
       "address": "Endereço",
       "phone": "Telefone: ",
@@ -1692,6 +1681,34 @@
     },
     "brand": {
       "products_title": "Produtos"
+    },
+    "compare": {
+      "title": "Comparar produtos",
+      "meta": {
+        "keywords": "comparar produtos, comparação de produtos, comparação lado a lado",
+        "description": "Compare produtos lado a lado para encontrar a melhor opção para suas necessidades."
+      },
+      "added_count": "{count} de {total} adicionados",
+      "added_count_in_category": "{count} de {total} adicionados em {category}",
+      "actions": {
+        "clear_all": "Limpar tudo"
+      },
+      "clear_all_modal": {
+        "title": "Limpar tudo",
+        "message": "Nenhum produto será removido da comparação. | 1 produto será removido da comparação. | Todos os {n} produtos serão removidos da comparação. | Todos os {n} produtos serão removidos da comparação."
+      },
+      "clear_category_modal": {
+        "title": "Limpar categoria",
+        "message": "Nenhum produto em {category} será removido da comparação. | 1 produto em {category} será removido da comparação. | Todos os {n} produtos em {category} serão removidos da comparação. | Todos os {n} produtos em {category} serão removidos da comparação."
+      },
+      "empty": {
+        "title": "Sua lista de comparação está vazia",
+        "description": "Adicione produtos do catálogo para comparar suas características lado a lado. Você pode comparar até {limit} produtos por categoria.",
+        "restore_button": "Restaurar produtos",
+        "add_button": "Adicionar produtos"
+      },
+      "error": "Falha ao carregar dados",
+      "retry": "Tentar novamente"
     }
   },
   "identity_error": {

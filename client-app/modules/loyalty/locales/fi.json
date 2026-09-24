@@ -11,7 +11,8 @@
       "amount": "Määrä",
       "redeemed": "Lunastettu",
       "earned": "Ansaittu",
-      "registration": "Rekisteröityminen"
+      "registration": "Rekisteröityminen",
+      "mission": "Tehtäväpalkkio"
     },
     "list_details": {
       "empty_list": "Listasi on tyhjä"
@@ -67,12 +68,13 @@
           "type_orders": "Tilausten määrä",
           "points": "pistettä",
           "days_left": "{count} päivä jäljellä | {count} päivää jäljellä",
+          "no_deadline": "Ei määräaikaa",
           "mission_completed": "Tehtävä suoritettu",
           "completed": "Suoritettu",
           "open_mission": "Avaa tehtävä",
           "progress_skus": "{current} / {target} tuotetta",
           "progress_any_sku": "vähintään 1 / {target} tuotetta",
-          "progress_spend": "{sum} käytetty",
+          "progress_spend": "{sum} käytetty kohteesta {target}",
           "progress_orders": "{current} / {target} tilausta"
         },
         "sku_modal": {
