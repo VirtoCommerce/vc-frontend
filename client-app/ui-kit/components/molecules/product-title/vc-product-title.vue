@@ -131,10 +131,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
       &--item {
         #{$wrapperSelector} {
-          // The design reads this row at 16/20, a step above the card-level `sm` the other view
-          // modes take. `item` is the configuration's option row and nothing else — both call
-          // sites in the app are that row.
-          @apply self-center text-base/[1.25rem];
+          @apply self-center;
         }
 
         &:has(.vc-product-vendor) #{$wrapperSelector} {
