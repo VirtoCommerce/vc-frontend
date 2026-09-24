@@ -145,7 +145,11 @@ watchEffect(() => {
 
   @media (width < theme("screens.md")) {
     .vc-container & {
-      @apply -mx-4.5;
+      // The widget reaches past the container's inset on a narrow screen. Keyed to a token
+      // because the amount is only right against the inset it was chosen for: a theme with a
+      // narrower page gutter has to be able to stop the widget going off the screen. The
+      // default is the value this rule has always had.
+      margin-inline: var(--vc-widget-container-margin-x, -1.125rem);
     }
 
     #{$self} & {

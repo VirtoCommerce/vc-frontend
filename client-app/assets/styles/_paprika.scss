@@ -57,12 +57,15 @@
   // the hint to a fraction of a pixel.
   --vc-input-placeholder-font-size: theme("fontSize.sm");
 
-  // The mobile header's icons are the design's secondary ink, not the accent. On the glass
-  // plate a row of four accent glyphs reads as four buttons shouting over the logo, and the
-  // desktop plate beside it already sets its own controls in the same quiet ink. The token
-  // carries the previous value as its fallback, so a preset that never declares it keeps the
-  // accent row it had.
-  --mobile-header-icon-color: theme("colors.secondary.600");
+  // The mobile header's icons are quiet ink, not the accent: on the glass plate a row of four
+  // accent glyphs reads as four buttons shouting over the logo. The design names secondary-600
+  // for it, and the desktop plate hardcodes exactly that — but this file is loaded
+  // unconditionally (main.scss), so whatever stands here is what EVERY preset gets, and
+  // secondary-600 is 2.54:1 on black-gold's white plate, under 1.4.11's 3:1 for an icon. The
+  // header's own link ink is the same idea expressed as a token each preset already tunes for
+  // this surface: it clears 3:1 in all sixteen (worst 3.36, black-gold light) and in paprika
+  // lands on #543f2c, one palette step off the drawing's #6d533d.
+  --mobile-header-icon-color: var(--header-bottom-link-color);
 
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
@@ -154,6 +157,19 @@ html.dark {
     --page-stack: 0.8125rem;
     --plate-pad-y: 1.5rem;
     --vc-container-px: 0.75rem;
+
+    // The air a page keeps above and below its own content is the same step as the one between
+    // plates, or the column reads in two rhythms: 13 between the plates of a page and 24 from
+    // the header down to the first of them. A page that spends its own numbers (the empty cart
+    // does) still overrides these.
+    --vc-container-pt: var(--page-stack);
+    --vc-container-pb: var(--page-stack);
+
+    // A widget widens itself past the container's inset on a narrow screen — 18px against the
+    // 24 the container used to keep, which left it 6px clear of the edge. At a 12px gutter the
+    // same 18 puts it 6px OFF the screen, and the clipped side takes the plate's corner with
+    // it. Here the plate stands on the page's gutter like every other one.
+    --vc-widget-container-margin-x: 0px;
   }
 }
 

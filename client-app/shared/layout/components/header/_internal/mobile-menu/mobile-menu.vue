@@ -6,10 +6,18 @@
       tabindex="0"
       :aria-label="$t('common.buttons.close')"
       @click="$emit('close')"
-      @keypress="$emit('close')"
+      @keydown.enter="$emit('close')"
+      @keydown.space.prevent="$emit('close')"
     />
 
-    <nav class="mobile-menu__panel">
+    <nav
+      ref="panel"
+      class="mobile-menu__panel"
+      tabindex="-1"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="$t('common.labels.main_menu')"
+    >
       <div class="mobile-menu__head">
         <div class="mobile-menu__brand">
           <span v-if="organization" class="mobile-menu__org">
@@ -84,7 +92,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, shallowRef, triggerRef } from "vue";
+import { onKeyStroke } from "@vueuse/core";
+import { computed, onMounted, shallowRef, triggerRef, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -103,7 +112,7 @@ interface IEmits {
   (event: "close"): void;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const { t } = useI18n();
 
@@ -166,12 +175,21 @@ function selectMenuItem(item: ExtendedMenuLinkType) {
   triggerRef(openedMenuItemsStack);
 }
 
+// The menu is a plate floating over a dimmed page — a dialog in everything but the tag — so it
+// answers Escape and takes the focus with it. Not `.stop`: nothing else is open above it, and a
+// blanket stop is what breaks the next dialog up the stack.
+const panel = useTemplateRef<HTMLElement>("panel");
+
+onKeyStroke("Escape", () => emit("close"));
+
 onMounted(() => {
   goMainMenu();
 
   if (mobilePreSelectedMenuItem.value) {
     selectMenuItem(mobilePreSelectedMenuItem.value);
   }
+
+  panel.value?.focus();
 });
 </script>
 
@@ -213,6 +231,13 @@ onMounted(() => {
     // Where the browser cannot blur, a 94% plate over a page is mud — it goes solid instead.
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
       background: var(--mobile-menu-bg-color);
+    }
+
+    // The panel takes focus when it opens so the keyboard starts inside the dialog, and it is
+    // `tabindex="-1"` — nothing can tab TO it. The ring the app draws on focus would be a
+    // 2px outline around the whole plate, marking a thing the user cannot act on.
+    &:focus {
+      @apply outline-none;
     }
 
     // Past the phone the plate stops stretching and stays a drawer against the reading edge.
@@ -283,39 +308,35 @@ onMounted(() => {
   }
 }
 
-// Enters from the trigger, leaves the way it came. Both the plate and the page behind it move
-// together, or the blur lands before the menu does.
+// The fade is declared on the ROOT, not only on the plate inside it: Vue reads the transitioned
+// element's own computed duration to decide how long to keep the enter/leave classes, and a root
+// with no transition resolves in one frame — measured, the classes came and went within 16ms and
+// nothing animated. With the root timed, they hold for the full 223ms and the plate's lift rides
+// along.
 .mobile-menu-enter-active,
 .mobile-menu-leave-active {
-  .mobile-menu__panel {
-    transition:
-      opacity 0.22s ease,
-      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-  }
+  transition: opacity 0.22s ease;
 
-  .mobile-menu__overlay {
-    transition: opacity 0.22s ease;
+  .mobile-menu__panel {
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
 .mobile-menu-enter-from,
 .mobile-menu-leave-to {
+  @apply opacity-0;
+
   .mobile-menu__panel {
-    @apply opacity-0;
-
     transform: translateY(-8px) scale(0.985);
-  }
-
-  .mobile-menu__overlay {
-    @apply opacity-0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .mobile-menu-enter-active,
   .mobile-menu-leave-active {
-    .mobile-menu__panel,
-    .mobile-menu__overlay {
+    transition: none;
+
+    .mobile-menu__panel {
       transition: none;
     }
   }

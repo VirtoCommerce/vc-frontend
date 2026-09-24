@@ -285,7 +285,7 @@ syncRefs(isScrollLocked, scrollLock);
   }
 
   &__badge {
-    @apply absolute -right-2 -top-2 transition-transform;
+    @apply absolute -end-2 -top-2 transition-transform;
   }
 }
 </style>
