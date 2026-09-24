@@ -102,9 +102,6 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const { cartName } = useCartContext();
-  // Reactive, and spread at call time: `cartName` identifies the punchout cart, and it is also part
-  // of the GetShortCart cache key - a stale copy would write the mutation result onto the default
-  // cart's cache entry while the query reads the punchout one.
   const commonVariables = computed(() => ({ storeId, currencyCode, cultureName, userId, cartName: cartName.value }));
   const { analytics } = useAnalytics();
   const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);

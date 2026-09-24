@@ -54,13 +54,7 @@ export type ExtensionCategoryMapType = {
   mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }, { count?: MaybeRefOrGetter<number> }>;
   accountMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
   mobileHeader: ExtensionEntryType;
-  /** The desktop top header's account row, beside the name of whoever is signed in. */
   topHeaderStatus: ExtensionEntryType;
-  /**
-   * The rows of the desktop top header's account dropdown, below "back to operator". The slot
-   * passes the menu's own close handler down, so an entry must keep a single element root - hide it
-   * with `v-show`, since `v-if` leaves nothing for the listener to land on.
-   */
   topHeaderAccountMenu: ExtensionEntryType;
   productCard: ExtensionEntryType<
     { product?: Product; isTextShown?: boolean; lazy?: boolean },
