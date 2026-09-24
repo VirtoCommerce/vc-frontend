@@ -198,8 +198,8 @@ onMounted(() => {
 
   // Kit tokens the plate is expected to set: the radios' ink and the count badge's pair.
   --vc-radio-button-base-color: var(--mobile-menu-control-color);
-  --vc-badge-solid-light-neutral-bg: rgb(from var(--mobile-menu-text-color) r g b / 0.12);
-  --vc-badge-solid-light-neutral-text: var(--mobile-menu-text-color);
+  --vc-badge-soft-neutral-bg: rgb(from var(--mobile-menu-text-color) r g b / 0.12);
+  --vc-badge-soft-neutral-text: var(--mobile-menu-text-color);
 
   @apply fixed inset-0 z-50;
 
