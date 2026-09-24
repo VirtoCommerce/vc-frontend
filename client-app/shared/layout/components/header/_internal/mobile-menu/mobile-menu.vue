@@ -5,9 +5,12 @@
          the keyboard routes out. -->
     <div class="mobile-menu__overlay" aria-hidden="true" @click="$emit('close')" />
 
-    <!-- role + label, but no `aria-modal`: that would promise AT the page behind is inert, and
-         nothing traps Tab there yet. -->
-    <nav ref="panel" class="mobile-menu__panel" tabindex="-1" role="dialog" :aria-label="$t('common.labels.main_menu')">
+    <!-- A named navigation landmark, and deliberately not `role="dialog"`. The drawer covers the
+         page and dims it, but nothing traps Tab: announcing a dialog would send a reader into
+         content they cannot see and give them no boundary to come back from. The role belongs here
+         the day the panel traps focus — until then `nav` is what this actually is, and keeping the
+         landmark is worth more than the label. Escape and ✕ are the routes out either way. -->
+    <nav ref="panel" class="mobile-menu__panel" tabindex="-1" :aria-label="$t('common.labels.main_menu')">
       <div class="mobile-menu__head">
         <div class="mobile-menu__brand">
           <span v-if="organization" class="mobile-menu__org">

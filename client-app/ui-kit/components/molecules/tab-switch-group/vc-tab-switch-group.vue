@@ -1,5 +1,5 @@
 <template>
-  <div
+  <fieldset
     ref="box"
     :class="[
       'vc-tab-switch-group',
@@ -8,14 +8,18 @@
         'vc-tab-switch-group--fill': fill,
       },
     ]"
-    role="group"
     :aria-label="ariaLabel"
   >
+    <!-- A `fieldset`, which IS the group role natively, so no `role` attribute: every switch in the
+         slot owns a radio input sharing one `name`, which makes this a set of form controls rather
+         than a generic div. The comment sits INSIDE the element on purpose — a comment above the
+         root turns the template into a fragment, and the root stops being the element. -->
+
     <!-- Before the switches, so it paints under them: both are positioned, and DOM order decides. -->
     <span ref="pill" class="vc-tab-switch-group__pill" aria-hidden="true" />
 
     <slot />
-  </div>
+  </fieldset>
 </template>
 
 <script setup lang="ts">
@@ -202,6 +206,12 @@ useResizeObserver(box, movePill);
   --pill-shadow: var(--vc-tab-switch-group-pill-shadow, theme("boxShadow.md"));
 
   @apply relative flex flex-wrap items-stretch;
+
+  // The UA's own fieldset styling, undone. `border` and `padding` are restated below anyway; these
+  // two are not, and `min-inline-size: min-content` is the one that matters — it stops the track
+  // shrinking inside a flex or grid parent, which is every place this is used.
+  margin: 0;
+  min-inline-size: 0;
 
   gap: var(--gap);
   padding: var(--padding);

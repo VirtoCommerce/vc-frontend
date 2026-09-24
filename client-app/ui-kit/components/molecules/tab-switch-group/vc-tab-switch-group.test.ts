@@ -24,10 +24,13 @@ function mountGroup(props: Record<string, unknown> = {}, selected = "grid") {
 }
 
 describe("VcTabSwitchGroup", () => {
+  // A `fieldset` IS the group role, so the group is asserted through the element rather than through
+  // a `role` attribute — and the attribute must stay ABSENT, or it is being restated redundantly.
   it("groups the switches for assistive technology", () => {
     const wrapper = mountGroup({ ariaLabel: "View mode" });
 
-    expect(wrapper.attributes("role")).toBe("group");
+    expect(wrapper.element.tagName).toBe("FIELDSET");
+    expect(wrapper.attributes("role")).toBeUndefined();
     expect(wrapper.attributes("aria-label")).toBe("View mode");
   });
 
