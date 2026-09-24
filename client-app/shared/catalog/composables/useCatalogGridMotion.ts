@@ -30,6 +30,64 @@ const RISE_STAGGER_CAP = 12;
 /** Set on the grid for the length of a flip, so it can hold the depth the turn is seen through. */
 export const FLIPPING_CLASS = "category-products__list--flipping";
 
+function wait(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * A background tab freezes the document timeline: the animation still reports `running`, its
+ * `currentTime` never moves, and `finished` never settles. Whatever waits on it has to be able to
+ * give up on its own.
+ */
+function settled(animation: Animation, duration: number): Promise<void> {
+  return Promise.race([
+    animation.finished.then(() => undefined).catch(() => undefined),
+    new Promise<void>((resolve) => setTimeout(resolve, duration + 240)),
+  ]);
+}
+
+function turn(card: HTMLElement, from: string, to: string, duration: number, easing: string) {
+  const animation = card.animate([{ transform: from }, { transform: to }], {
+    duration,
+    easing,
+    fill: "forwards",
+  });
+
+  return settled(animation, duration);
+}
+
+/**
+ * Brings cards left mid-turn by an abandoned wave back to facing the reader, all together and
+ * without the wave's stagger. Cancelling their animations outright would snap a card from the
+ * angle it had reached straight to none in a single frame; starting the new wave from that angle
+ * instead would leave a card standing askew until its turn came round, up to eight hundred
+ * milliseconds later. Neither reads as movement.
+ */
+async function recover(cards: HTMLElement[], axis: string) {
+  // Read every card before writing to any of them, so the measurement costs one layout, not one
+  // per card.
+  const current = cards.map((card) => getComputedStyle(card).transform);
+
+  if (current.every((transform) => transform === "none")) {
+    return;
+  }
+
+  await Promise.all(
+    cards.map((card, index) => {
+      card.getAnimations().forEach((animation) => animation.cancel());
+      card.style.transform = current[index] === "none" ? "" : current[index];
+
+      return turn(
+        card,
+        current[index] === "none" ? `${FLIP_DEPTH} ${axis}(0deg)` : current[index],
+        `${FLIP_DEPTH} ${axis}(0deg)`,
+        FLIP_RECOVER_DURATION,
+        FLIP_IN_EASING,
+      );
+    }),
+  );
+}
+
 /**
  * Moves the products grid when what it shows changes.
  *
@@ -41,10 +99,6 @@ export const FLIPPING_CLASS = "category-products__list--flipping";
  * @param viewMode  The layout the owner has chosen. The grid follows it a beat late, so the change
  *   lands behind the dimming rather than under the reader's eye.
  */
-function wait(ms: number) {
-  return new Promise<void>((resolve) => setTimeout(resolve, ms));
-}
-
 export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Ref<"grid" | "list">) {
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
@@ -88,60 +142,6 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
       // A superseded wave returns without taking its own class off; nothing else ever does.
       grid.value.classList.remove(FLIPPING_CLASS);
     }
-  }
-
-  /**
-   * A background tab freezes the document timeline: the animation still reports `running`, its
-   * `currentTime` never moves, and `finished` never settles. Whatever waits on it has to be able to
-   * give up on its own.
-   */
-  function settled(animation: Animation, duration: number): Promise<void> {
-    return Promise.race([
-      animation.finished.then(() => undefined).catch(() => undefined),
-      new Promise<void>((resolve) => setTimeout(resolve, duration + 240)),
-    ]);
-  }
-
-  function turn(card: HTMLElement, from: string, to: string, duration: number, easing: string) {
-    const animation = card.animate([{ transform: from }, { transform: to }], {
-      duration,
-      easing,
-      fill: "forwards",
-    });
-
-    return settled(animation, duration);
-  }
-
-  /**
-   * Brings cards left mid-turn by an abandoned wave back to facing the reader, all together and
-   * without the wave's stagger. Cancelling their animations outright would snap a card from the
-   * angle it had reached straight to none in a single frame; starting the new wave from that angle
-   * instead would leave a card standing askew until its turn came round, up to eight hundred
-   * milliseconds later. Neither reads as movement.
-   */
-  async function recover(cards: HTMLElement[], axis: string) {
-    // Read every card before writing to any of them, so the measurement costs one layout, not one
-    // per card.
-    const current = cards.map((card) => getComputedStyle(card).transform);
-
-    if (current.every((transform) => transform === "none")) {
-      return;
-    }
-
-    await Promise.all(
-      cards.map((card, index) => {
-        card.getAnimations().forEach((animation) => animation.cancel());
-        card.style.transform = current[index] === "none" ? "" : current[index];
-
-        return turn(
-          card,
-          current[index] === "none" ? `${FLIP_DEPTH} ${axis}(0deg)` : current[index],
-          `${FLIP_DEPTH} ${axis}(0deg)`,
-          FLIP_RECOVER_DURATION,
-          FLIP_IN_EASING,
-        );
-      }),
-    );
   }
 
   /**
