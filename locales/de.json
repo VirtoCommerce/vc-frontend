@@ -1743,6 +1743,123 @@
       },
       "error": "Daten konnten nicht geladen werden",
       "retry": "Erneut versuchen"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Ein Katalog · viele geprüfte Lieferanten",
+        "title": "Beziehen Sie Elektronik so, wie Ihr Unternehmen einkauft.",
+        "subtitle": "Echtzeit-Lagerbestand bei autorisierten Distributoren, Ihre Vertragspreise von der Suche bis zur Rechnung und Lieferung am nächsten Tag für alles, was lokal vorrätig ist.",
+        "browse_catalog": "Katalog durchsuchen",
+        "notches": {
+          "search": {
+            "title": "Vollständigen Katalog durchsuchen oder suchen",
+            "text": "Nach Produkt, Marke oder Ihrer eigenen SKU"
+          },
+          "guest_cart": {
+            "title": "Warenkorb als Gast erstellen",
+            "text": "Er wird übernommen, wenn Sie sich anmelden"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Netzwerk autorisierter Distributoren",
+        "title": "Nach Lieferant einkaufen",
+        "authorized": "Autorisierter Distributor",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84.000+",
+            "label": "SKUs im Katalog"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Autorisierte Lieferanten"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Lieferung für vorrätige Artikel"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Sortiment durchsuchen",
+        "title": "Nach Kategorie einkaufen",
+        "all_categories": "Alle Kategorien",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Beliebte Artikel",
+            "meta": "Smart-Home-Gadgets bis Heimkino – angeschlossen, gekoppelt und versandbereit"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Bestseller",
+            "meta": "5G-Smartphones bis Autohalterungen – verpackt, aufgeladen und bereit für den Großversand."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Ohne Konto einkaufen",
+        "title": "Beliebt bei Käufern",
+        "see_all": "Alle anzeigen"
+      },
+      "why_buy": {
+        "eyebrow": "Warum bei uns einkaufen",
+        "title": "Klare Bedingungen, echter Lagerbestand",
+        "cards": {
+          "stock": {
+            "title": "Echtzeit-Lagerbestand",
+            "text": "Verfügbare Menge pro Lager, mit der Vorlaufzeit, wenn es beschafft werden muss."
+          },
+          "pricing": {
+            "title": "Vertragspreise überall",
+            "text": "Ihr ausgehandelter Preis wird von der Suche bis zur Rechnung angezeigt, inklusive Steuern und Fracht."
+          },
+          "fulfillment": {
+            "title": "Lieferung am nächsten Tag",
+            "text": "Vorrätige Bestellungen werden noch am selben Tag versandt, mit Herstellergarantie und kostenlosen Rücksendungen innerhalb von 30 Tagen."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Was sich ändert",
+        "title": "Montagmorgen, in Zahlen",
+        "stats": {
+          "reorder": {
+            "value": "2 Klicks",
+            "label": "Um die Lieferung des letzten Monats nachzubestellen, inklusive Mengen"
+          },
+          "trail": {
+            "value": "1 Pfad",
+            "label": "Von einer gespeicherten Liste zu einer aufgegebenen Bestellung mit Genehmigungsverlauf"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Der angezeigten Preise sind Ihre Vertragspreise, inklusive Steuern und Fracht"
+          },
+          "calls": {
+            "value": "0 Anrufe",
+            "label": "Bestellung, Verfolgung und Dokumentensuche – kein Telefonmenü"
+          }
+        },
+        "quote": {
+          "text": "„Wir haben aufgehört, eine Preistabelle zu führen – die Website zeigt unsere an.“",
+          "name": "Leiter Beschaffung",
+          "role": "Facility Management · 6 Standorte"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autorisierter Distributor für"
+      },
+      "cta": {
+        "title": "Kunde werden",
+        "text": "Vertragspreise, vereinbarte Zahlungsbedingungen und PO-Checkout – normalerweise innerhalb eines Werktages genehmigt.",
+        "become_customer": "Kunde werden",
+        "talk_to_sales": "Mit dem Vertrieb sprechen"
+      }
     }
   },
   "identity_error": {

@@ -1743,6 +1743,123 @@
       },
       "error": "Tietojen lataaminen epäonnistui",
       "retry": "Yritä uudelleen"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Yksi luettelo · monta todennettua toimittajaa",
+        "title": "Hanki elektroniikkaa yrityksesi tapaan.",
+        "subtitle": "Reaaliaikainen varasto valtuutetuilta jakelijoilta, sopimushintasi hausta laskuun ja seuraavan päivän toimitus kaikelle paikallisesti varastoidulle.",
+        "browse_catalog": "Selaa luetteloa",
+        "notches": {
+          "search": {
+            "title": "Hae tai selaa koko luetteloa",
+            "text": "Tuotteen, merkin tai oman SKU:si mukaan"
+          },
+          "guest_cart": {
+            "title": "Luo ostoskori vieraana",
+            "text": "Se säilyy, kun kirjaudut sisään"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Valtuutettu jakeluverkosto",
+        "title": "Osta toimittajittain",
+        "authorized": "Valtuutettu jakelija",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU:ta luettelossa"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Valtuutettua toimittajaa"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Toimitus varastossa oleville tuotteille"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Selaa valikoimaa",
+        "title": "Osta kategorian mukaan",
+        "all_categories": "Kaikki kategoriat",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Suosittuja",
+            "meta": "Älykkäät kodin laitteet kotiteatteriin — kytketty, paritettu ja valmiina lähetettäväksi"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Suosituimmat",
+            "meta": "5G-älypuhelimista autotelineisiin — koteloitu, ladattu ja valmiina lähetettäväksi irtotavarana."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Osta ilman tiliä",
+        "title": "Suosittua ostajien keskuudessa",
+        "see_all": "Katso kaikki"
+      },
+      "why_buy": {
+        "eyebrow": "Miksi ostaa meiltä",
+        "title": "Selkeät ehdot, todellinen varasto",
+        "cards": {
+          "stock": {
+            "title": "Reaaliaikainen varasto",
+            "text": "Varastossa olevien määrien mukaan per varasto, toimitusaika, kun se on hankittava."
+          },
+          "pricing": {
+            "title": "Sopimushinnat kaikkialla",
+            "text": "Neuvoteltu hintasi näkyy hausta laskuun, verot ja rahti sisältyvät hintaan."
+          },
+          "fulfillment": {
+            "title": "Seuraavan päivän toimitus",
+            "text": "Varastossa olevat tilaukset lähetetään saman päivän aikana, valmistajan takuulla ja ilmaisilla palautuksilla 30 päivän sisällä."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Mitä se muuttaa",
+        "title": "Maanantaiaamu numeroina",
+        "stats": {
+          "reorder": {
+            "value": "2 napsautusta",
+            "label": "Tilataksesi uudelleen viime kuukauden toimituksen, rivimäärät mukaan lukien"
+          },
+          "trail": {
+            "value": "1 polku",
+            "label": "Tallennuslistasta asetettuun tilaukseen hyväksyntähistorialla"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Näytetyistä hinnoista ovat sopimushintojasi, verot ja rahti sisältyvät"
+          },
+          "calls": {
+            "value": "0 puhelua",
+            "label": "Tilaaminen, seuranta ja dokumenttien haku — ei puhelinvalikkoa"
+          }
+        },
+        "quote": {
+          "text": "“Lopetimme hintojen laskentataulukon pitämisen — sivusto näyttää omat hintamme.”",
+          "name": "Hankintapäällikkö",
+          "role": "Tilahallinto · 6 sivustoa"
+        }
+      },
+      "brands": {
+        "eyebrow": "Valtuutettu jakelija"
+      },
+      "cta": {
+        "title": "Ryhdy asiakkaaksi",
+        "text": "Sopimushinnat, sovitut maksuehdot ja PO-maksu — yleensä hyväksytty yhden työpäivän kuluessa.",
+        "become_customer": "Ryhdy asiakkaaksi",
+        "talk_to_sales": "Ota yhteyttä myyntiin"
+      }
     }
   },
   "identity_error": {
