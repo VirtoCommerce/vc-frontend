@@ -116,12 +116,14 @@ const failed = computed(() => Boolean(error.value));
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:text-[--link-hover-color];
   }
 
+  // One grid for the whole list (icon | title | action), each row a subgrid: the action column takes the
+  // widest button in the list, so Open and Download rows get the same title width in every locale.
   &__list {
-    @apply m-0 flex list-none flex-col divide-y divide-neutral-100 p-0;
+    @apply m-0 grid list-none grid-cols-[auto_minmax(0,1fr)_auto] divide-y divide-neutral-100 p-0;
   }
 
   &__row {
-    @apply flex items-center gap-3 py-3;
+    @apply col-span-full grid grid-cols-subgrid items-center gap-x-3 py-3;
   }
 
   &__icon {
@@ -142,11 +144,11 @@ const failed = computed(() => Boolean(error.value));
 
   &__open,
   &__download {
-    @apply flex-none;
+    @apply justify-self-end;
   }
 
   &__skeleton {
-    @apply h-9 w-full animate-pulse rounded bg-neutral-100;
+    @apply col-span-full h-9 w-full animate-pulse rounded bg-neutral-100;
   }
 }
 </style>
