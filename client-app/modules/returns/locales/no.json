@@ -120,6 +120,8 @@
   },
   "return_edit": {
     "title": "Legg til returdetaljer",
+    "not_editable_message": "Denne returen kan ikke lenger endres",
+    "not_editable_message_with_status": "Denne returen kan ikke lenger endres — statusen er {status}",
     "details_section": "Detaljer",
     "bulk_section": "Bruk på alle linjer",
     "apply_to_all": "Bruk én årsak på alle {count} linjene",

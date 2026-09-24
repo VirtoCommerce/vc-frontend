@@ -120,6 +120,8 @@
   },
   "return_edit": {
     "title": "Lägg till returuppgifter",
+    "not_editable_message": "Den här returen kan inte längre ändras",
+    "not_editable_message_with_status": "Den här returen kan inte längre ändras – dess status är {status}",
     "details_section": "Detaljer",
     "bulk_section": "Tillämpa på alla rader",
     "apply_to_all": "Tillämpa en orsak på alla {count} rader",

@@ -120,6 +120,8 @@
   },
   "return_edit": {
     "title": "Lisää palautuksen tiedot",
+    "not_editable_message": "Tätä palautusta ei voi enää muuttaa",
+    "not_editable_message_with_status": "Tätä palautusta ei voi enää muuttaa — sen tila on {status}",
     "details_section": "Tiedot",
     "bulk_section": "Käytä kaikkiin riveihin",
     "apply_to_all": "Käytä yhtä syytä kaikkiin {count} riviin",

@@ -120,6 +120,8 @@
   },
   "return_edit": {
     "title": "Rücksendedetails hinzufügen",
+    "not_editable_message": "Diese Rücksendung kann nicht mehr geändert werden",
+    "not_editable_message_with_status": "Diese Rücksendung kann nicht mehr geändert werden — ihr Status ist {status}",
     "details_section": "Details",
     "bulk_section": "Auf alle Positionen anwenden",
     "apply_to_all": "Einen Grund auf alle {count} Positionen anwenden",

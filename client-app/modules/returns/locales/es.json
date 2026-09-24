@@ -120,6 +120,8 @@
   },
   "return_edit": {
     "title": "Añadir detalles de la devolución",
+    "not_editable_message": "Esta devolución ya no se puede modificar",
+    "not_editable_message_with_status": "Esta devolución ya no se puede modificar: su estado es {status}",
     "details_section": "Detalles",
     "bulk_section": "Aplicar a todas las líneas",
     "apply_to_all": "Aplicar un motivo a las {count} líneas",

@@ -120,6 +120,8 @@
   },
   "return_edit": {
     "title": "Детали возврата",
+    "not_editable_message": "Этот возврат больше нельзя изменить",
+    "not_editable_message_with_status": "Этот возврат больше нельзя изменить — его статус: {status}",
     "details_section": "Детали",
     "bulk_section": "Применить ко всем позициям",
     "apply_to_all": "Применить одну причину ко всем позициям ({count})",
