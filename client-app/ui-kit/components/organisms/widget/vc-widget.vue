@@ -8,6 +8,7 @@
         'vc-widget--collapsed': _collapsed,
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
+        'vc-widget--nested': nested,
       },
     ]"
   >
@@ -83,6 +84,12 @@ interface IProps {
   collapsed?: boolean;
   shadow?: boolean;
   border?: boolean;
+  /**
+   * The widget already sits inside someone else's shell — a plate, a sidebar, a column. It then
+   * draws no plate of its own and keeps no side inset, because two nested insets in a row push the
+   * content 36-52px off the edge and break its alignment with everything else in that shell.
+   */
+  nested?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -155,6 +162,24 @@ watchEffect(() => {
 
   &--collapsible {
     $collapsible: &;
+  }
+
+  // Chromeless: the shell around it already drew the plate. Expressed entirely through this
+  // block's own tokens rather than by re-declaring the paint, so it cannot fall out of step with
+  // the base rule and so a theme that overrides `--vc-widget-*` from outside still loses here —
+  // which is the point, since the plate it would be painting is not this widget's to draw.
+  //
+  // The rows go with it: a nested widget's list has to stand on the same vertical as its own
+  // heading, and `--vc-menu-item-padding-x` is the kit's public name for that inset. The hover
+  // plate still spans the full width of the shell, which is what the account sidebar does too.
+  &--nested {
+    --bg-color: transparent;
+    --border-color: transparent;
+    --divide-color: transparent;
+    --shadow: none;
+    --radius: 0;
+    --p-x: 0px;
+    --vc-menu-item-padding-x: 0px;
   }
 
   &--size {

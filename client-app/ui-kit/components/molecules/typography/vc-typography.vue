@@ -50,6 +50,14 @@ const _color = computed(() => getColorValue(props.color));
 </script>
 
 <style lang="scss">
+// Where the type steps up for a very wide screen. NOT `2xl`, which is 1500: at the 1512 the design
+// is drawn and shown at, the kit's `2xl` step has already fired and every heading renders one step
+// larger than the design — measured on the design's product, cart, dashboard and orders screens,
+// all of which sit at the base size there (h1 32/36 against our 36/40). The design's own wide mode
+// starts much later: above 1280 its only breakpoints are 1900 (x2) and 1920 (x4), with 1500 used
+// exactly once. So the step belongs at 1900, where it still serves the projector pass.
+$wide: 1900px;
+
 .vc-typography {
   --props-font-size: v-bind(props.fontSize);
   --props-font-weight: v-bind(props.fontWeight);
@@ -86,7 +94,7 @@ const _color = computed(() => getColorValue(props.color));
         line-height: var(--line-height, 34px);
       }
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 36px);
         line-height: var(--line-height, 40px);
       }
@@ -103,7 +111,7 @@ const _color = computed(() => getColorValue(props.color));
         line-height: var(--line-height, 30px);
       }
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 28px);
         line-height: var(--line-height, 34px);
       }
@@ -119,7 +127,7 @@ const _color = computed(() => getColorValue(props.color));
         line-height: var(--line-height, 26px);
       }
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 22px);
         line-height: var(--line-height, 30px);
       }
@@ -131,7 +139,7 @@ const _color = computed(() => getColorValue(props.color));
       line-height: var(--line-height, 24px);
       letter-spacing: -0.015em;
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 20px);
         line-height: var(--line-height, 26px);
       }
@@ -143,7 +151,7 @@ const _color = computed(() => getColorValue(props.color));
       line-height: var(--line-height, 22px);
       letter-spacing: -0.01em;
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 17px);
         line-height: var(--line-height, 23px);
       }
@@ -155,7 +163,7 @@ const _color = computed(() => getColorValue(props.color));
       line-height: var(--line-height, 20px);
       letter-spacing: -0.006em;
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 15px);
         line-height: var(--line-height, 21px);
       }
@@ -167,7 +175,7 @@ const _color = computed(() => getColorValue(props.color));
       line-height: var(--line-height, 1.5);
       text-transform: var(--text-transform, none);
 
-      @media (width >= theme("screens.2xl")) {
+      @media (width >= $wide) {
         font-size: var(--font-size, 17px);
         line-height: var(--line-height, 26px);
       }

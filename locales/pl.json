@@ -726,9 +726,6 @@
         "list_label": "Lista",
         "aria_label": "Układ"
       },
-      "sort": {
-        "aria_label": "Sortuj"
-      },
       "page_size": {
         "label": "Wyników na stronę:"
       },

@@ -186,6 +186,11 @@ onMounted(() => {
   --props-max-lines: v-bind(maxLines);
   --max-lines: var(--props-max-lines, 2);
 
+  // The row's own side inset. Public, because a shell that already pays for the inset has to be
+  // able to take it back by name — a chromeless widget, for one, whose rows must line up with its
+  // own heading rather than sit a step inside it. The hover plate still spans the full width.
+  --p-x: var(--vc-menu-item-padding-x, theme("padding.3"));
+
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
@@ -197,7 +202,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full px-[--p-x] bg-additional-50 text-left rounded-[inherit] font-normal;
 
     &:not(:disabled) {
       @apply text-neutral-950;

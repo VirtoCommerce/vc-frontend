@@ -241,3 +241,17 @@ export const PaddingFromTheOutside: StoryType = {
     <VcWidget v-bind="args">Widget text</VcWidget>
   </div>`),
 };
+
+// Nested: the widget is already inside someone else's plate, so it draws none of its own and
+// keeps no side inset — its heading and its rows stand on the same vertical as the shell's.
+// Shown inside a plain plate so the alignment is the thing you can see.
+export const Nested: StoryType = {
+  render:
+    renderWidget(`<div style="background: var(--color-additional-50); border-radius: var(--vc-radius); padding: 1.5rem; box-shadow: var(--tw-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1))">
+    <p style="margin-bottom: 0.75rem">The shell already pays for the inset.</p>
+
+    <VcWidget nested title="Nested widget">Its heading and this text line up with the sentence above.</VcWidget>
+
+    <VcWidget title="Plain widget">A plain widget draws its own plate and sits a step inside.</VcWidget>
+  </div>`),
+};
