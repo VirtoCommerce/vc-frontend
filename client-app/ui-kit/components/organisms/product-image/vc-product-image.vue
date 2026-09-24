@@ -131,7 +131,9 @@ function slideChanged(swiper: SwiperInstance) {
 
   --radius: var(--vc-product-image-radius, var(--vc-radius, 0.5rem));
 
-  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded-[--radius];
+  // Clipped to its own corners: the tile is rounded, and anything it holds — a packshot that fills
+  // rather than contains, a carousel mid-slide — otherwise squares them off again.
+  @apply relative z-0 max-w-full aspect-square overflow-hidden border border-neutral-200 rounded-[--radius];
 
   &__carousel {
     @apply h-full w-full;
@@ -205,16 +207,23 @@ function slideChanged(swiper: SwiperInstance) {
 
     &--view-mode {
       &--grid {
+        // One name for the three nodes that have to agree. A theme that wants a different tile —
+        // the square the Paprika catalog is drawn on, say — had to restate the ratio on each of
+        // them; restating it on the plate alone left the picture at 220/196 inside a square and
+        // put a band of empty plate under every packshot. The default is the ratio this has
+        // always had.
+        --ratio: var(--vc-product-image-aspect-ratio, 220 / 196);
+
         #{$self} {
-          @apply mb-4 aspect-[220/196];
+          @apply mb-4 aspect-[--ratio];
         }
 
         #{$carouselImg} {
-          @apply aspect-[220/196];
+          @apply aspect-[--ratio];
         }
 
         #{$img} {
-          @apply aspect-[220/196];
+          @apply aspect-[--ratio];
         }
       }
 

@@ -42,6 +42,10 @@ const box = shallowRef<HTMLElement | null>(null);
 const pill = shallowRef<HTMLElement | null>(null);
 const previous = shallowRef<{ left: number; width: number } | null>(null);
 let awaitingViewTransition = false;
+// The travel is filled forwards, and a filled animation outranks the inline styles written below
+// it. Held so it can be taken back the moment those styles change, or the finished fill would keep
+// answering for `left`/`width` after the indicator has been told to be somewhere else.
+let travel: Animation | null = null;
 
 const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
@@ -58,6 +62,11 @@ function movePill() {
   const active = boxElement.querySelector(".vc-tab-switch--checked");
 
   if (!active) {
+    // Nothing is checked, so the last travel has nothing left to describe: dropped here rather than
+    // only on the next move, because `previous` goes with it and the next move will therefore take
+    // the first-paint path, which does not animate and would have left the old fill in charge.
+    travel?.cancel();
+    travel = null;
     pillElement.style.opacity = "0";
     previous.value = null;
     return;
@@ -144,6 +153,7 @@ function movePill() {
     return;
   }
 
+  travel?.cancel();
   previous.value = { left, width };
   pillElement.style.opacity = "1";
   pillElement.style.left = `${left}px`;
@@ -157,7 +167,7 @@ function movePill() {
   const nearEdge = Math.min(from.left, left);
   const farEdge = Math.max(from.left + from.width, left + width);
 
-  pillElement.animate(
+  travel = pillElement.animate(
     [
       { left: `${from.left}px`, width: `${from.width}px` },
       { left: `${nearEdge}px`, width: `${farEdge - nearEdge}px`, offset: SPREAD_OFFSET },

@@ -365,7 +365,12 @@ function sendGASelectItemEvent(product: Product): void {
   // photo · product · availability · unit price · add to cart · actions — read by the rows and the heading.
   // The design's 72 · 1fr · 132 · 124 · 196; its last track holds the stepper and the actions, and our
   // stepper does not go below 150, so that track is 150 plus the actions.
-  --product-list-columns: 4.5rem minmax(0, 1fr) 8.25rem 7.75rem 9.375rem auto;
+  // The last track is a length, not `auto`. `auto` is sized by what stands in it, and the heading
+  // holds nothing there — so the heading's track collapsed to 0 and its `1fr` swallowed the 64px the
+  // rows give the actions: AVAILABILITY, UNIT PRICE and ADD TO CART each sat 64px to the right of
+  // the column they name (measured 989/1133/1269 against 925/1069/1205). 4rem is what the pair of
+  // 30px action buttons and their gap come to, and it is the same number for both.
+  --product-list-columns: 4.5rem minmax(0, 1fr) 8.25rem 7.75rem 9.375rem 4rem;
 
   &__list-head {
     @apply hidden gap-x-3 px-[1.0625rem] pb-2 text-[0.6875rem] font-bold uppercase leading-[1.55] tracking-[0.1em] text-neutral-500;

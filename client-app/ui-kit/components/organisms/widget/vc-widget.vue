@@ -176,7 +176,13 @@ watchEffect(() => {
   // The rows go with it: a nested widget's list has to stand on the same vertical as its own
   // heading, and `--vc-menu-item-padding-x` is the kit's public name for that inset. The hover
   // plate still spans the full width of the shell, which is what the account sidebar does too.
-  &--nested {
+  //
+  // Compounded with the block's own class on purpose. The size rules below set `--p-x` as well, at
+  // one class each, and they are written after this one — so at equal specificity they won, and a
+  // nested widget at the DEFAULT `md` kept a 24px inset while its rows had already given theirs up:
+  // exactly the misalignment the variant exists to remove. Measured on the running page before this
+  // line: `--p-x` came back 1.5rem at md and 1.75rem at lg, 0px only at sm and xs.
+  &--nested#{$self} {
     --bg-color: transparent;
     --border-color: transparent;
     --divide-color: transparent;

@@ -57,11 +57,15 @@
       </VcBadge>
     </VcProductVendor>
 
+    <!-- The two-line reserve is the grid's: there the titles of a row have to start on one line, and
+         a short name would otherwise pull the whole column up. A row of the list already stands on
+         its photo, so the reserve only made every row 17.55px taller than the design's — which holds
+         106 on all of them, measured, against our 110. -->
     <VcProductTitle
       :title="product.name"
       :to="link"
       lines-number="2"
-      fix-height
+      :fix-height="viewMode === 'grid'"
       @click="$emit('linkClick', product, $event)"
     />
 
@@ -496,6 +500,11 @@ const variationsCount = computed(() => {
   // `.vc-product-card > wrapper` selectors of the same weight as a one-class rule here, and it
   // loads later.
   &.product-card--grid {
+    // The design's tile is a square, and the picture inside it fills that square — the kit's grid
+    // default is 220/196, which left 27.6px of empty plate under every packshot (measured against
+    // the design's 235x235 in the same 236.5 box).
+    --vc-product-image-aspect-ratio: 1 / 1;
+
     @apply border-neutral-200;
 
     :deep(.vc-product-card__wrapper) {
@@ -639,10 +648,22 @@ const variationsCount = computed(() => {
   // cannot drift apart when one is edited.
   // The row sits on the plate with the kit's own shadow, and lifts a step under the pointer.
   &.product-card--list {
-    @apply rounded-xl border border-neutral-100 shadow-md;
+    @apply rounded-xl border border-neutral-100;
+
+    // Written out instead of `@apply shadow-md`. The row is meant to keep the kit's plate — the
+    // design takes the plate away in the grid and leaves the list alone — but the utility landed
+    // fully transparent here: measured on the running row, `box-shadow` computed as
+    // `rgba(0,0,0,0) 0 0 0 0, ...` while `--tw-shadow` still held the right value, and the rows
+    // read as flat against the design's elevated ones. The neutral ramp is the one this preset
+    // inverts, so the pair also survives dark, where the kit's own black has nothing to say.
+    box-shadow:
+      0 4px 6px -1px rgb(from theme("colors.neutral.950") r g b / 0.1),
+      0 2px 4px -2px rgb(from theme("colors.neutral.950") r g b / 0.1);
 
     &:hover {
-      @apply shadow-lg;
+      box-shadow:
+        0 10px 15px -3px rgb(from theme("colors.neutral.950") r g b / 0.1),
+        0 4px 6px -4px rgb(from theme("colors.neutral.950") r g b / 0.1);
     }
 
     --vc-product-title-font-size: 0.9375rem;
