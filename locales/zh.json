@@ -1559,7 +1559,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "添加到清单",
       "in_the_list_tooltip": "在清单中",
-      "variations_button": "{0} 个变体",
+      "variations_button": "没有变体 | {count} 个变体 | {count} 个变体",
       "customize_button": "自定义",
       "show_on_a_separate_page": "在单独页面显示",
       "no_products_message": "此类别中没有产品",

@@ -1559,7 +1559,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Lägg till i lista",
       "in_the_list_tooltip": "I listan",
-      "variations_button": "{0} varianter",
+      "variations_button": "Inga varianter | {count} variant | {count} varianter",
       "customize_button": "Anpassa",
       "show_on_a_separate_page": "Visa på en separat sida",
       "no_products_message": "Det finns inga produkter i denna kategori",
