@@ -48,6 +48,13 @@ vi.mock("@/shared/cart/composables", async () => {
   return { ...actual, useShortCart: mocks.useShortCartMock };
 });
 
+vi.mock("vue-i18n", () => ({
+  useI18n: vi.fn().mockReturnValue({
+    t: (key: string) => key,
+    te: () => true,
+  }),
+}));
+
 /**
  * VCST-6000 — a genuinely 0-byte file must NOT satisfy a REQUIRED File section.
  * Mirrors the sibling Text section rule, which already requires non-empty content.
@@ -56,7 +63,6 @@ describe("useConfigurableProduct — required File section rejects 0-byte files 
   let productIdSeed = 0;
 
   beforeAll(() => {
-    mockI18n();
     mocks.useMutationMock.mockReturnValue({
       mutate: vi.fn(),
       loading: ref(false),
@@ -169,14 +175,3 @@ describe("useConfigurableProduct — required File section rejects 0-byte files 
     expect(composable.isRequiredConfigurationComplete.value).toBe(false);
   });
 });
-
-function mockI18n(): void {
-  vi.mock("vue-i18n", () => {
-    return {
-      useI18n: vi.fn().mockReturnValue({
-        t: (key: string) => key,
-        te: () => true,
-      }),
-    };
-  });
-}
