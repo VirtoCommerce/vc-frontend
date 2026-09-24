@@ -89,7 +89,7 @@
         :data-test-id="`variations-${product.code}-button`"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
-        :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+        :button-text="$t('pages.catalog.variations_button', variationsCount)"
         :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
         :loading="fetchingVariations"
         @link-click="handleVariationsClick"
@@ -101,7 +101,7 @@
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
-        :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+        :button-text="$t('pages.catalog.variations_button', variationsCount)"
         :target="browserTarget || browserTargetFromSetting"
         @link-click="$emit('linkClick', product, $event)"
       />
@@ -158,6 +158,7 @@ import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBaseP
 import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
+import { getPurchasableVariationsCount, getVariationsCount } from "@/shared/catalog/utilities/variations";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
@@ -285,21 +286,9 @@ async function handleVariationsClick() {
   }
 }
 
-const variationsCount = computed(() => {
-  if (!productsFilters.value.inStock) {
-    return (props.product.variations?.length || 0) + 1;
-  }
-
-  let result = 0;
-  if (props.product.availabilityData?.isInStock && props.product.availabilityData.isBuyable) {
-    result++;
-  }
-  result +=
-    props.product.variations?.filter((x) => x.availabilityData?.isInStock && x.availabilityData?.isBuyable)?.length ||
-    0;
-
-  return result;
-});
+const variationsCount = computed(() =>
+  productsFilters.value.inStock ? getPurchasableVariationsCount(props.product) : getVariationsCount(props.product),
+);
 </script>
 
 <style scoped lang="scss">
