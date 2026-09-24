@@ -10,7 +10,7 @@
 
     <ul class="suppliers-section__grid">
       <li v-for="name in SUPPLIERS" :key="name" class="suppliers-section__supplier">
-        <VcImage class="suppliers-section__logo" />
+        <VcImage class="suppliers-section__logo" :src="`sup-${name.replace('_', '-')}.webp`" lazy />
 
         <span class="suppliers-section__supplier-body">
           <span class="suppliers-section__supplier-name">{{ t(`pages.demo_home.suppliers.names.${name}`) }}</span>
