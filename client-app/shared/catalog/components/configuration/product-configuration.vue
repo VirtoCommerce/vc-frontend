@@ -382,6 +382,10 @@ async function openSaveChangesModal(): Promise<boolean> {
   }
 
   &__optional {
+    // The body face: a badge is not a heading, and this one sits inside the widget's title, whose
+    // face it was inheriting.
+    @apply font-inter;
+
     // The design's badge corner. The theme rounds every control to a pill, which on a word this
     // short reads as a status dot rather than a label.
     --vc-badge-radius: 0.5rem;
@@ -407,6 +411,11 @@ async function openSaveChangesModal(): Promise<boolean> {
   }
 
   &__items {
+    // The design's pair for an option row: the name at 16/20 and the figure at 20. Ours came out of
+    // the kit at 14 for both, so the row read a size below every other listing on the page.
+    --vc-product-title-font-size: 1rem;
+    --vc-product-price-font-size: 1.25rem;
+
     @apply @container mt-5;
 
     @container (max-width: theme("containers.2xl")) {

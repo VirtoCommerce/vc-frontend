@@ -42,7 +42,10 @@ defineProps<IProps>();
   }
 
   &__title {
-    @apply grow text-xl font-bold uppercase text-neutral-950;
+    // The design heads a block at its h2 step, not at a flat `xl`: 26/32, against the 20/28 this
+    // was. Its own wide step takes that to 32/38 above 1900, which this does not follow — that
+    // needs a breakpoint the project's scale does not carry.
+    @apply grow text-[1.625rem]/[2rem] font-bold uppercase text-neutral-950;
   }
 }
 </style>
