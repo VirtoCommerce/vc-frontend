@@ -169,6 +169,23 @@ describe("useOtpSignIn", () => {
     expect(loading.value).toBe(false);
   });
 
+  it("requestCode clears errors left over from a previous verifyCode attempt", async () => {
+    // A failed verifyCode leaves signInErrors set; starting a fresh request (e.g. after "use a
+    // different email" or "resend code") must not leave the old error visible.
+    const signMeIn = await getSignMeInState();
+    signMeIn.signInErrors.value = [{ code: "invalid_code", description: "The code is invalid or has expired." }];
+
+    const fetchState = await getFetchState();
+    fetchState.fetchResult.data.value = { outcome: "CodeSent", maskedEmail: "b•••r@acme.com" };
+
+    const { useOtpSignIn } = await importComposable();
+    const { requestCode } = useOtpSignIn();
+
+    await requestCode("buyer@acme.com");
+
+    expect(signMeIn.resetErrors).toHaveBeenCalled();
+  });
+
   it("requestCode resolves to undefined when the request fails (useFetch never rejects)", async () => {
     const fetchState = await getFetchState();
     fetchState.fetchResult.data.value = null;

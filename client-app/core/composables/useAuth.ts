@@ -34,6 +34,10 @@ function _useAuth() {
   const errors = computed(() => data.value?.errors);
   const lockoutSecondsRemaining = computed(() => data.value?.lockoutSecondsRemaining);
 
+  function resetErrors() {
+    data.value = null;
+  }
+
   const headers = computed(() => {
     if (state.value.access_token) {
       return {
@@ -171,6 +175,7 @@ function _useAuth() {
     headers,
     isExpired,
     errors,
+    resetErrors,
     lockoutSecondsRemaining,
     isAuthorizing,
     authorize,

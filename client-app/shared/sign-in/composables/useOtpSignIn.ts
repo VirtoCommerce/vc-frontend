@@ -32,6 +32,7 @@ export function useOtpSignIn() {
 
   async function requestCode(email: string): Promise<IOtpRequestResponse | undefined> {
     loading.value = true;
+    resetSignInErrors();
 
     try {
       const { data } = await useFetch("/api/otp/request").post({ email }).json<IOtpRequestResponse>();
