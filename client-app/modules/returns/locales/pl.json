@@ -104,6 +104,7 @@
     "customer_reference": "Twój numer zamówienia",
     "customer_comment": "Komentarz",
     "cancel_reason": "Powód anulowania",
+    "reject_reason": "Powód odrzucenia",
     "cancel_button": "Anuluj zwrot",
     "columns": {
       "requested": "Zgłoszono",
@@ -121,6 +122,8 @@
   "return_edit": {
     "title": "Dodaj szczegóły zwrotu",
     "title_with_number": "Dodaj szczegóły zwrotu #{number}",
+    "not_editable_message": "Tego zwrotu nie można już zmienić",
+    "not_editable_message_with_status": "Tego zwrotu nie można już zmienić – jego status to {status}",
     "details_section": "Szczegóły",
     "bulk_section": "Zastosuj do wszystkich pozycji",
     "apply_to_all": "Zastosuj jeden powód do wszystkich {count} pozycji",

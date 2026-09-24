@@ -104,6 +104,7 @@
     "customer_reference": "Din bestillingsreferanse",
     "customer_comment": "Kommentar",
     "cancel_reason": "Årsak til kansellering",
+    "reject_reason": "Årsak til avslag",
     "cancel_button": "Avbryt retur",
     "columns": {
       "requested": "Forespurt",
@@ -121,6 +122,8 @@
   "return_edit": {
     "title": "Legg til returdetaljer",
     "title_with_number": "Legg til returdetaljer #{number}",
+    "not_editable_message": "Denne returen kan ikke lenger endres",
+    "not_editable_message_with_status": "Denne returen kan ikke lenger endres – statusen er {status}",
     "details_section": "Detaljer",
     "bulk_section": "Bruk på alle linjer",
     "apply_to_all": "Bruk én årsak på alle {count} linjene",
