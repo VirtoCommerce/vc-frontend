@@ -5,10 +5,10 @@
     </VcLoaderOverlay>
   </Teleport>
 
-  <section class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
-    <ul class="flex flex-col gap-y-2 px-9 py-6">
+  <section class="main-menu">
+    <ul class="main-menu__list">
       <li>
-        <MobileMenuLink :link="menuItem" class="py-1 text-2xl font-bold" @close="$emit('close')">
+        <MobileMenuLink :link="menuItem" big @close="$emit('close')">
           {{ menuItem.title }}
         </MobileMenuLink>
       </li>
@@ -33,14 +33,14 @@
       </li>
     </ul>
 
-    <div class="flex flex-col gap-y-2 px-9 py-6">
+    <div class="main-menu__list main-menu__list--account">
       <template v-if="isAuthenticated">
         <!-- Account -->
-        <div class="my-2 flex flex-row gap-4 text-xl">
+        <div class="main-menu__user">
           <div
-            class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
+            class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
           >
-            <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-12" lazy />
+            <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-10" lazy />
 
             <VcIcon v-else name="user" />
           </div>
@@ -62,11 +62,11 @@
           </div>
         </div>
 
-        <div class="mb-4 flex justify-between gap-2">
+        <div class="main-menu__actions">
           <button
             v-if="operator"
             type="button"
-            class="flex items-center gap-1 font-bold text-[--mobile-menu-navigation-color]"
+            class="main-menu__action main-menu__action--operator"
             data-test-id="mobile-back-to-operator-button"
             @click="onBackToOperator"
           >
@@ -77,7 +77,7 @@
 
           <button
             type="button"
-            class="group flex items-center gap-1 font-bold text-[--mobile-menu-link-color]"
+            class="main-menu__action"
             data-test-id="mobile-account-menu-logout-row"
             @click="signMeOut"
           >
@@ -88,13 +88,13 @@
         </div>
 
         <!-- Account sections -->
-        <ul class="flex flex-col gap-y-2">
+        <ul class="flex flex-col gap-y-1">
           <!-- Registered sections (e.g. Sales Rep hub) always lead, in registration order. Mobile does
                NOT honor `priority` (desktop does): the built-ins below are hardcoded blocks, so there's
                no list to interleave into. Priority-aware mobile is deferred to the mobile-menu redesign.
                See AccountNavigationSectionType.priority. -->
           <li v-for="section in mobileRegisteredAccountSections" :key="section.id">
-            <MobileMenuLink :link="section" class="py-1 text-2xl font-bold" @select="$emit('selectItem', section)">
+            <MobileMenuLink :link="section" big @select="$emit('selectItem', section)">
               {{ section.title }}
             </MobileMenuLink>
           </li>
@@ -104,7 +104,7 @@
             <MobileMenuLink
               v-if="mobilePurchasingMenuItem"
               :link="mobilePurchasingMenuItem"
-              class="py-1 text-2xl font-bold"
+              big
               @select="$emit('selectItem', mobilePurchasingMenuItem!)"
             >
               {{ mobilePurchasingMenuItem.title }}
@@ -116,7 +116,7 @@
             <MobileMenuLink
               v-if="mobileMarketingMenuItem && mobileMarketingMenuItem.children?.length"
               :link="mobileMarketingMenuItem"
-              class="py-1 text-2xl font-bold"
+              big
               @select="$emit('selectItem', mobileMarketingMenuItem!)"
             >
               {{ mobileMarketingMenuItem.title }}
@@ -128,7 +128,7 @@
             <MobileMenuLink
               v-if="mobileCorporateMenuItem && isCorporateMember"
               :link="mobileCorporateMenuItem"
-              class="py-1 text-2xl font-bold"
+              big
               @select="$emit('selectItem', mobileCorporateMenuItem!)"
             >
               {{ mobileCorporateMenuItem.title }}
@@ -140,7 +140,7 @@
             <MobileMenuLink
               v-if="mobileUserMenuItem"
               :link="mobileUserMenuItem"
-              class="py-1 text-2xl font-bold"
+              big
               @select="$emit('selectItem', mobileUserMenuItem!)"
             >
               {{ mobileUserMenuItem.title }}
@@ -156,7 +156,7 @@
             v-for="item in unauthorizedMenuItems"
             :key="item.title"
             :link="item"
-            class="py-1.5 text-2xl font-bold"
+            big
             @close="$emit('close')"
           >
             {{ item.title }}
@@ -168,7 +168,7 @@
       <MobileMenuLink
         v-if="supportedCurrencies.length > 1"
         :link="settingsMenuItem"
-        class="py-1 text-2xl font-bold"
+        big
         @select="$emit('selectItem', settingsMenuItem)"
       >
         {{ $t("shared.layout.header.mobile.settings") }}
@@ -224,3 +224,49 @@ const settingsMenuItem: ExtendedMenuLinkType = {
   children: [{}],
 };
 </script>
+
+<style lang="scss">
+.main-menu {
+  // The menu's outline: the store's own links, then — behind a hairline — who is signed in and
+  // what their account holds. Both halves share the plate's inside (24), and the rows carry
+  // their own height, so the list only spends what it needs.
+  @apply grow overflow-y-auto;
+
+  // The hairline between the store's links and the account block, drawn off the menu's own ink
+  // rather than off additional-50: that step is white in light presets and near-black in dark
+  // ones, so the rule vanished exactly where a dark plate needs it most.
+  > * + * {
+    border-top: 1px solid rgb(from var(--mobile-menu-text-color) r g b / 0.2);
+  }
+
+  &__list {
+    @apply flex flex-col gap-y-1 px-6 pb-5 pt-3;
+
+    &--account {
+      @apply py-5;
+    }
+  }
+
+  &__user {
+    @apply mb-2 mt-1 flex flex-row items-center gap-3 font-geologica;
+
+    color: var(--mobile-menu-text-color);
+  }
+
+  &__actions {
+    @apply mb-4 flex justify-between gap-2;
+  }
+
+  &__action {
+    @apply flex items-center gap-1.5 text-sm font-semibold;
+
+    color: var(--mobile-menu-link-color);
+
+    // Leaving impersonation is not the same act as signing out, and the design keeps it in the
+    // menu's navigation ink so the two never read as one pair of buttons.
+    &--operator {
+      color: var(--mobile-menu-navigation-color);
+    }
+  }
+}
+</style>

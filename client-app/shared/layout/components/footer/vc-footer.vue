@@ -121,11 +121,16 @@ onMounted(() => {
     box-shadow: var(--plate-shadow, theme("boxShadow.xl"));
     color: var(--footer-top-text-color);
 
+    // One column on the phone — the logo cannot stand beside five link blocks in 318px of
+    // plate — and the design's own 20 between them, which replaces the margin the brand used
+    // to carry. The desktop gutter comes back at lg, with the rest of the desktop ladder.
+    @apply flex flex-col gap-5;
+
     @media (min-width: theme("screens.sm")) {
-      @apply flex gap-14;
+      @apply flex-row;
     }
 
-    @media (min-width: theme("screens.md")) {
+    @media (min-width: theme("screens.lg")) {
       @apply gap-16;
     }
 
@@ -135,11 +140,19 @@ onMounted(() => {
   }
 
   &__brand {
-    @apply mb-5 flex-none;
+    @apply flex-none;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply mb-5;
+    }
   }
 
   &__logo {
     @apply h-11;
+
+    @media (width < theme("screens.lg")) {
+      @apply h-9;
+    }
 
     // Which logo of the pair shows is the plate's paint, and only the theme knows it: every
     // preset but paprika still paints the top row dark, so the default keeps the inverted
@@ -155,14 +168,28 @@ onMounted(() => {
   }
 
   &__links {
-    @apply grid;
+    // Two columns on the phone, three from sm up, five on the desktop — the design's ladder.
+    // Two is what a 318px plate holds without the captions wrapping to one word per line; one
+    // column made the footer longer than the page it closes.
+    @apply grid grid-cols-2 gap-x-6 gap-y-5;
 
-    @media (min-width: theme("screens.sm")) {
-      @apply grow grid-cols-2 gap-12;
+    // An odd number of blocks leaves the last one alone on its row. It takes the full width
+    // instead and splits its own links in two, so the footer ends on a line rather than on a
+    // column with a tail hanging off it.
+    > :last-child:nth-child(odd) {
+      --footer-links-list-columns: 2;
+
+      grid-column: 1 / -1;
     }
 
-    @media (min-width: theme("screens.md")) {
-      @apply grid-cols-3;
+    @media (min-width: theme("screens.sm")) {
+      @apply grow grid-cols-3 gap-12;
+
+      > :last-child:nth-child(odd) {
+        --footer-links-list-columns: 1;
+
+        grid-column: auto;
+      }
     }
 
     // The design runs five columns on a 1448 content width with a 76px gutter between
@@ -183,6 +210,15 @@ onMounted(() => {
     @apply flex flex-col items-center justify-between gap-1 text-center text-sm;
 
     padding: 1.375rem var(--plate-pad-x, 2rem);
+
+    // Centred type needs a line it can be centred ON. Below the desktop ladder both halves of
+    // the legal line wrap, and a wrapped centred paragraph reads as two ragged blocks — the
+    // design sets it back on the plate's own start edge.
+    @media (width < theme("screens.lg")) {
+      @apply items-start gap-2.5 text-start text-[0.8125rem]/[1.5];
+
+      padding: 1.25rem var(--plate-pad-x, 2rem);
+    }
     background: var(--footer-bottom-bg-color);
     border-radius: var(--plate-radius, 1.75rem);
     box-shadow: var(--plate-shadow, theme("boxShadow.xl"));

@@ -1,83 +1,86 @@
 <template>
-  <nav
-    class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color]"
-  >
-    <div class="flex h-16 shrink-0 items-center gap-x-3 px-6">
-      <div class="grow pr-6">
-        <span
-          v-if="organization"
-          class="line-clamp-2 text-xl italic leading-[22px] text-[--mobile-menu-text-color] [word-break:break-word]"
-        >
-          {{ organization?.name }}
-        </span>
-
-        <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="max-h-9" lazy />
-      </div>
-
-      <!-- Dark mode toggle -->
-      <DarkModeToggle
-        :tooltip="false"
-        :icon-size="22"
-        test-id="mobile-dark-mode-toggle"
-        class="appearance-none p-2 text-[--mobile-menu-navigation-color]"
-      />
-
-      <!-- Language block -->
-      <LanguageSelector v-if="supportedLanguages.length > 1" />
-
-      <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="delete-thin" class="text-[--mobile-menu-navigation-color]" :size="22" />
-      </button>
-    </div>
-
-    <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
-      <div class="flex flex-col px-10 py-6">
-        <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation-color]" @click="goBack">
-          <VcIcon name="arrow-circle-left" size="lg" />
-        </button>
-
-        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-[--mobile-menu-text-color]">
-          {{ openedItem?.title }}
-        </h2>
-
-        <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
-
-        <SettingsMenu v-else-if="openedItem.id === 'settings'" />
-
-        <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
-
-        <!-- view all catalog link -->
-        <template v-if="openedItem?.isCatalogItem && openedItem?.route">
-          <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
-
-          <a
-            v-if="isExternalLink(openedItem.route)"
-            class="view-all-link"
-            :href="openedItem.route as string"
-            target="_blank"
-            rel="noopener noreferrer"
-            @click="$emit('close')"
-          >
-            {{ $t("shared.layout.header.mobile.view_all_catalog") }}
-          </a>
-
-          <router-link v-else class="view-all-link" :to="openedItem.route" @click="$emit('close')">
-            {{ $t("shared.layout.header.mobile.view_all_catalog") }}
-          </router-link>
-        </template>
-      </div>
-    </section>
-
-    <MainMenu v-else :menu-item="homeMenuItem" @close="$emit('close')" @select-item="selectMenuItem" />
-
+  <div class="mobile-menu">
     <div
-      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-additional-950/5 backdrop-blur-lg md:block"
+      class="mobile-menu__overlay"
       role="button"
       tabindex="0"
+      :aria-label="$t('common.buttons.close')"
       @click="$emit('close')"
       @keypress="$emit('close')"
     />
-  </nav>
+
+    <nav class="mobile-menu__panel">
+      <div class="mobile-menu__head">
+        <div class="mobile-menu__brand">
+          <span v-if="organization" class="mobile-menu__org">
+            {{ organization?.name }}
+          </span>
+
+          <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="mobile-menu__logo" lazy />
+        </div>
+
+        <!-- Dark mode toggle -->
+        <DarkModeToggle
+          :tooltip="false"
+          :icon-size="22"
+          test-id="mobile-dark-mode-toggle"
+          class="mobile-menu__control"
+        />
+
+        <!-- Language block -->
+        <LanguageSelector v-if="supportedLanguages.length > 1" />
+
+        <button
+          type="button"
+          class="mobile-menu__control"
+          :aria-label="$t('common.buttons.close')"
+          @click="$emit('close')"
+        >
+          <VcIcon name="delete-thin" :size="22" />
+        </button>
+      </div>
+
+      <section v-if="openedItem" class="mobile-menu__body">
+        <div class="mobile-menu__drill">
+          <button type="button" class="mobile-menu__back" :aria-label="$t('common.buttons.back')" @click="goBack">
+            <VcIcon name="arrow-left" :size="22" />
+          </button>
+
+          <h2 v-if="openedItem?.title" class="mobile-menu__title">
+            {{ openedItem?.title }}
+          </h2>
+
+          <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
+
+          <SettingsMenu v-else-if="openedItem.id === 'settings'" />
+
+          <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+
+          <!-- view all catalog link -->
+          <template v-if="openedItem?.isCatalogItem && openedItem?.route">
+            <div class="mobile-menu__divider"></div>
+
+            <a
+              v-if="isExternalLink(openedItem.route)"
+              class="mobile-menu__view-all"
+              :href="openedItem.route as string"
+              target="_blank"
+              rel="noopener noreferrer"
+              @click="$emit('close')"
+            >
+              {{ $t("shared.layout.header.mobile.view_all_catalog") }}
+            </a>
+
+            <router-link v-else class="mobile-menu__view-all" :to="openedItem.route" @click="$emit('close')">
+              {{ $t("shared.layout.header.mobile.view_all_catalog") }}
+            </router-link>
+          </template>
+        </div>
+      </section>
+
+      <MainMenu v-else :menu-item="homeMenuItem" @close="$emit('close')" @select-item="selectMenuItem" />
+    </nav>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -172,34 +175,149 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .mobile-menu {
-  --sidebar-max-width: 430px;
-  --vc-radio-button-base-color: var(--mobile-menu-control-color);
+  // The design floats the menu instead of filling the screen: a dark plate standing off every
+  // edge of the window, over a blurred page. The inset is the plate's own, not the page's
+  // gutter — the menu hangs over the page rather than sitting in its column, and at the page's
+  // 12px phone gutter it would read as a full-screen panel with rounded corners.
+  --mobile-menu-inset: 1.25rem;
 
-  box-shadow: 5px 0 15px 0 rgba(0, 0, 0, 0.5);
+  @apply fixed inset-0 z-50;
 
-  @apply md:max-w-[var(--sidebar-max-width)];
+  &__overlay {
+    @apply absolute inset-0 cursor-pointer;
+
+    background: rgb(from theme("colors.neutral.950") r g b / 0.32);
+    backdrop-filter: blur(6px);
+  }
+
+  &__panel {
+    @apply absolute flex flex-col overflow-hidden;
+
+    // Logical, so the panel opens from the reading edge in RTL as it does in LTR. The safe-area
+    // insets are added, not substituted: on a notched phone the plate must clear the notch AND
+    // keep its own inset, or it reads as glued to the status bar.
+    inset-block: calc(var(--mobile-menu-inset) + env(safe-area-inset-top, 0px))
+      calc(var(--mobile-menu-inset) + env(safe-area-inset-bottom, 0px));
+    inset-inline: var(--mobile-menu-inset);
+    border-radius: var(--plate-radius, 1.75rem);
+    background: rgb(from var(--mobile-menu-bg-color) r g b / 0.94);
+    backdrop-filter: blur(28px) saturate(135%);
+    border: 1px solid rgb(from var(--mobile-menu-text-color) r g b / 0.09);
+    box-shadow:
+      inset 0 1px 0 rgb(from var(--mobile-menu-text-color) r g b / 0.12),
+      var(--plate-shadow-lift, 0 18px 44px rgb(0 0 0 / 0.3));
+    color: var(--mobile-menu-text-color);
+
+    // Where the browser cannot blur, a 94% plate over a page is mud — it goes solid instead.
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      background: var(--mobile-menu-bg-color);
+    }
+
+    // Past the phone the plate stops stretching and stays a drawer against the reading edge.
+    @media (min-width: theme("screens.md")) {
+      inset-inline-end: auto;
+      inline-size: 26.875rem;
+      max-inline-size: calc(100% - 2 * var(--mobile-menu-inset));
+    }
+  }
+
+  &__head {
+    @apply flex h-16 shrink-0 items-center gap-1 pe-3 ps-6;
+  }
+
+  &__brand {
+    @apply min-w-0 grow pe-1;
+  }
+
+  &__org {
+    @apply line-clamp-2 text-xl italic leading-[22px] [word-break:break-word];
+  }
+
+  &__logo {
+    @apply max-h-9;
+  }
+
+  &__control {
+    @apply appearance-none p-2;
+
+    color: var(--mobile-menu-navigation-color);
+  }
+
+  &__body {
+    @apply grow overflow-y-auto;
+  }
+
+  &__drill {
+    @apply flex flex-col px-6 pb-6 pt-4;
+  }
+
+  // A filled disc rather than an outlined glyph: it is the only way back out of a drilled-in
+  // list, and at the top of a dark plate an outline of it disappears.
+  &__back {
+    @apply flex size-10 shrink-0 appearance-none items-center justify-center self-start rounded-full;
+
+    background: var(--mobile-menu-control-color);
+    color: theme("colors.additional.50");
+  }
+
+  &__title {
+    @apply mb-0 mt-5 text-xs font-bold uppercase tracking-[0.14em];
+
+    // The design's "muted" ink: the menu's own text at 55%. Not a preset token — nothing but
+    // this caption needs it, and a knob no theme sets is a knob that drifts.
+    color: rgb(from var(--mobile-menu-text-color) r g b / 0.55);
+  }
+
+  &__divider {
+    @apply my-5 h-px;
+
+    background: linear-gradient(to right, var(--mobile-menu-control-color), transparent);
+  }
+
+  &__view-all {
+    @apply text-[0.9375rem] font-semibold tracking-[0.01em];
+
+    color: var(--mobile-menu-link-active-color);
+  }
 }
 
-.view-all-link {
-  @apply text-lg tracking-[0.01em] text-[--mobile-menu-link-active-color];
+// Enters from the trigger, leaves the way it came. Both the plate and the page behind it move
+// together, or the blur lands before the menu does.
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  .mobile-menu__panel {
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .mobile-menu__overlay {
+    transition: opacity 0.22s ease;
+  }
 }
 
-.mobile-menu__overlay {
-  @apply left-[var(--sidebar-max-width)];
-}
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  .mobile-menu__panel {
+    @apply opacity-0;
 
-.is-visible .mobile-menu__overlay {
-  animation: fadeIn 0.4s forwards;
-}
+    transform: translateY(-8px) scale(0.985);
+  }
 
-@keyframes fadeIn {
-  from {
+  .mobile-menu__overlay {
     @apply opacity-0;
   }
-  to {
-    @apply opacity-100;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-enter-active,
+  .mobile-menu-leave-active {
+    .mobile-menu__panel,
+    .mobile-menu__overlay {
+      transition: none;
+    }
   }
 }
 </style>

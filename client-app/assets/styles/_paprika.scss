@@ -57,6 +57,13 @@
   // the hint to a fraction of a pixel.
   --vc-input-placeholder-font-size: theme("fontSize.sm");
 
+  // The mobile header's icons are the design's secondary ink, not the accent. On the glass
+  // plate a row of four accent glyphs reads as four buttons shouting over the logo, and the
+  // desktop plate beside it already sets its own controls in the same quiet ink. The token
+  // carries the previous value as its fallback, so a preset that never declares it keeps the
+  // accent row it had.
+  --mobile-header-icon-color: theme("colors.secondary.600");
+
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
   --vc-chip-radius: 9999px;
@@ -132,6 +139,21 @@ html.dark {
   :root {
     // VcContainer's own 2xl step widens the gutter to 48px; Paprika holds it at 32.
     --vc-container-px: 2rem;
+  }
+}
+
+// One rung further down on the phone, where the design halves the page's own inset and the
+// step between plates — 24 -> 12 and 26 -> 13 — and squares the plate's inside off at 24/24.
+// The design draws this below 600; sm (640) is the nearest rung this project has, the same
+// snap the block above makes from its 900 to lg. The container's inset travels with the
+// gutter: the plates the header and footer paint and the content a page puts between them
+// stand on one vertical, and a page that forgets to move one of them cannot happen.
+@media (width < theme("screens.sm")) {
+  :root {
+    --page-gutter: 0.75rem;
+    --page-stack: 0.8125rem;
+    --plate-pad-y: 1.5rem;
+    --vc-container-px: 0.75rem;
   }
 }
 

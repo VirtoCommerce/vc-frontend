@@ -1,5 +1,5 @@
 <template>
-  <ul class="mt-4 flex grow flex-col gap-y-2">
+  <ul class="mt-4 flex grow flex-col gap-y-1">
     <li v-for="item in items" :key="item.title">
       <ExtensionPoint
         category="mobileMenu"
@@ -13,7 +13,6 @@
             :link="item"
             :count="toValue(extensionProps?.count)"
             :format-text-function="capitalize"
-            class="py-1 text-lg"
             @close="$emit('close')"
             @select="$emit('selectItem', item)"
           >
