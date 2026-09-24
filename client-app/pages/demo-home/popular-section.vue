@@ -53,6 +53,10 @@ onMounted(async () => {
 
   &__eyebrow {
     @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
+
+    html.dark & {
+      @apply text-primary-600;
+    }
   }
 
   &__see-all {

@@ -52,6 +52,10 @@ const { t } = useI18n();
 
   &__eyebrow {
     @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
+
+    html.dark & {
+      @apply text-primary-600;
+    }
   }
 
   &__grid {
@@ -80,6 +84,14 @@ const { t } = useI18n();
 
   &__quote {
     @apply flex h-full flex-col gap-4 rounded-xl bg-neutral-950 p-8 text-additional-50;
+
+    // The ink tile stays dark in both themes, but the ramps flip in dark: the tile takes the dark
+    // end back, and its white ink is re-pointed here, which every additional-50 utility below reads.
+    html.dark & {
+      --color-additional-50: var(--color-neutral-950);
+
+      @apply bg-neutral-50/[0.82];
+    }
   }
 
   &__quote-text {

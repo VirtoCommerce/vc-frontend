@@ -26,19 +26,28 @@ const catalogRoute = ROUTES.CATALOG.PATH;
 
 <style lang="scss">
 .cta-section {
-  --vc-typography-color: theme("colors.additional.50");
+  // The plate's roles, declared once per theme: the dark ramp has no pure white, so in dark the
+  // plate steps back to its closest dark tint and takes its own family's near-white for ink.
+  --cta-bg: theme("colors.primary.500");
+  --cta-fg: theme("colors.additional.50");
+  --cta-ink: theme("colors.primary.600");
+  --cta-hover: theme("colors.primary.50");
+  --cta-press: theme("colors.primary.100");
 
-  // Buttons are inverted on the orange plate: no kit color reads on it
-  --vc-button-solid-primary-bg: theme("colors.additional.50");
-  --vc-button-solid-primary-border: theme("colors.additional.50");
-  --vc-button-solid-primary-text: theme("colors.primary.600");
-  --vc-button-solid-primary-icon: theme("colors.primary.600");
-  --vc-button-outline-primary-bg: transparent;
-  --vc-button-outline-primary-border: theme("colors.additional.50 / 40%");
-  --vc-button-outline-primary-text: theme("colors.additional.50");
-  --vc-button-outline-primary-icon: theme("colors.additional.50");
+  html.dark & {
+    --cta-bg: theme("colors.primary.300");
+    --cta-fg: theme("colors.primary.950");
+    --cta-ink: theme("colors.primary.200");
+    --cta-hover: theme("colors.primary.900");
+    --cta-press: theme("colors.primary.800");
+  }
 
-  @apply flex flex-wrap items-center justify-between gap-8 rounded-[--plate-radius] bg-primary px-8 py-9 text-additional-50;
+  --vc-typography-color: var(--cta-fg);
+
+  @apply flex flex-wrap items-center justify-between gap-8 rounded-[--plate-radius] px-8 py-9;
+
+  background: var(--cta-bg);
+  color: var(--cta-fg);
 
   &__title {
     @apply max-w-[18ch];
@@ -52,30 +61,49 @@ const catalogRoute = ROUTES.CATALOG.PATH;
     @apply flex flex-wrap gap-3;
   }
 
-  // The kit derives hover and press by mixing with white/black, which turns both buttons
-  // opaque white here. The extra class outweighs the kit's `:hover:not(...)` selectors.
-  & &__actions .vc-button--solid--primary {
+  // Buttons are inverted on the orange plate: no kit color reads on it. The colors go on the
+  // button itself, since the kit's dark theme sets them there too (`html.dark .vc-button...`), and
+  // the extra classes outweigh both that and the kit's `:hover:not(...)` selectors, which would
+  // otherwise mix the hover and press states with white/black into opaque white.
+  & &__actions .vc-button.vc-button--solid--primary {
+    --bg-color: var(--cta-fg);
+    --border-color: var(--cta-fg);
+    --text-color: var(--cta-ink);
+    --vc-icon-color: var(--cta-ink);
+
+    box-shadow: 0 8px 24px theme("colors.additional.950 / 16%");
+
+    // additional-950 is the light end in dark, which would make the shadow glow
+    html.dark & {
+      box-shadow: 0 8px 24px theme("colors.additional.50 / 16%");
+    }
+
     &:hover {
-      --bg-color: theme("colors.primary.50");
+      --bg-color: var(--cta-hover);
       --border-color: var(--bg-color);
     }
 
     &:active {
-      --bg-color: theme("colors.primary.100");
+      --bg-color: var(--cta-press);
       --border-color: var(--bg-color);
     }
   }
 
-  & &__actions .vc-button--outline--primary {
+  & &__actions .vc-button.vc-button--outline--primary {
+    --bg-color: transparent;
+    --border-color: rgb(from var(--cta-fg) r g b / 40%);
+    --text-color: var(--cta-fg);
+    --vc-icon-color: var(--cta-fg);
+
     &:hover {
-      --bg-color: theme("colors.additional.50 / 12%");
-      --border-color: theme("colors.additional.50 / 70%");
+      --bg-color: rgb(from var(--cta-fg) r g b / 12%);
+      --border-color: rgb(from var(--cta-fg) r g b / 70%);
     }
 
     &:active {
-      --bg-color: theme("colors.additional.50 / 20%");
-      --border-color: theme("colors.additional.50 / 70%");
-      --text-color: theme("colors.additional.50");
+      --bg-color: rgb(from var(--cta-fg) r g b / 20%);
+      --border-color: rgb(from var(--cta-fg) r g b / 70%);
+      --text-color: var(--cta-fg);
     }
   }
 }

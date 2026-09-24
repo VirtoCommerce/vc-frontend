@@ -70,6 +70,10 @@ const { t } = useI18n();
 
   &__eyebrow {
     @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
+
+    html.dark & {
+      @apply text-primary-600;
+    }
   }
 
   &__grid {
@@ -116,16 +120,37 @@ const { t } = useI18n();
     @apply bg-primary text-additional-50;
 
     --vc-typography-color: theme("colors.additional.50");
+
+    // The dark ramp has no pure white, so the plate steps back to its closest dark tint and
+    // takes its own family's near-white for ink.
+    html.dark & {
+      @apply bg-primary-300 text-primary-950;
+
+      --vc-typography-color: theme("colors.primary.950");
+    }
   }
 
   &__card--taupe {
     @apply bg-secondary text-additional-50;
 
     --vc-typography-color: theme("colors.additional.50");
+
+    html.dark & {
+      @apply bg-secondary-400 text-secondary-950;
+
+      --vc-typography-color: theme("colors.secondary.950");
+    }
   }
 
   &__card--sand {
     @apply bg-neutral-100 text-neutral-700;
+
+    // Sand stays light in dark, so its ink comes from the dark end of the ramp.
+    html.dark & {
+      @apply bg-neutral-950 text-secondary-300;
+
+      --vc-typography-color: theme("colors.secondary.50");
+    }
   }
 
   &__card-text {
