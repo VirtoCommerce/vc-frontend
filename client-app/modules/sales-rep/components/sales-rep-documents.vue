@@ -47,6 +47,19 @@
             >
               {{ t("sales_rep.documents.open") }}
             </VcButton>
+
+            <!-- Non-inline types (DOC/XLS/ZIP…) are never opened in a tab; offer Download, as /company/documents does. -->
+            <VcButton
+              v-else
+              class="sales-rep-documents__download"
+              size="xs"
+              color="secondary"
+              variant="outline"
+              prepend-icon="download"
+              @click="downloadFile(document.url, document.name)"
+            >
+              {{ t("sales_rep.documents.details.download") }}
+            </VcButton>
           </li>
         </ul>
       </div>
@@ -57,6 +70,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { downloadFile } from "@/shared/files";
 import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_ROUTE_NAME } from "../constants";
@@ -126,7 +140,8 @@ const failed = computed(() => Boolean(error.value));
     @apply mt-0.5 truncate text-xs text-neutral-500;
   }
 
-  &__open {
+  &__open,
+  &__download {
     @apply flex-none;
   }
 
