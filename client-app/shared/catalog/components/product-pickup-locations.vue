@@ -9,11 +9,12 @@
         <VcLoaderOverlay v-if="loading || modalOpening" />
 
         <div class="product-pickup-locations__group">
-          <VcImage
-            src="in-store-pickup.svg"
-            :alt="$t('shared.catalog.shipment_options.check_pickup_locations')"
-            class="product-pickup-locations__img"
-          />
+          <!-- A line icon on a tinted tile, as the design marks this block. What it replaces was a
+               full-colour illustration — the only raster sticker on the page, and the one thing in
+               the sidebar that did not belong to the palette. -->
+          <span class="product-pickup-locations__img" aria-hidden="true">
+            <VcIcon name="truck" />
+          </span>
 
           <button
             type="button"
@@ -118,11 +119,17 @@ async function openMapModal() {
   }
 
   &__group {
-    @apply flex flex-row gap-x-3 items-center border border-neutral-400 rounded p-2.5 min-h-[74px];
+    // The theme's tile radius, not Tailwind's bare `rounded`: 4px is a step this design does not
+    // use anywhere, and next to the 28px plate around it the corner read as unfinished.
+    @apply flex min-h-[74px] flex-row items-center gap-x-3 rounded-[--vc-radius] border border-neutral-400 p-2.5;
   }
 
   &__img {
-    @apply size-12 shrink-0 rounded;
+    // 26 in a 48 tile, the design's own numbers; the tile takes the image radius, one rung below
+    // the group's.
+    --vc-icon-size: 1.625rem;
+
+    @apply flex size-12 shrink-0 items-center justify-center rounded-[0.625rem] bg-secondary-50 text-secondary-500;
   }
 
   &__link {

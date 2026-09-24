@@ -366,10 +366,19 @@ async function openSaveChangesModal(): Promise<boolean> {
   }
 
   &__optional {
+    // The design's badge corner. The theme rounds every control to a pill, which on a word this
+    // short reads as a status dot rather than a label.
+    --vc-badge-radius: 0.5rem;
+
     @apply shrink-0;
   }
 
   &__widgets {
+    // The groups are tight plates, not the page's soft 28: nested one inside another, the same
+    // radius made the inner block look like it was floating loose in the outer one. The design's
+    // own step for a nested widget.
+    --vc-widget-radius: 0.625rem;
+
     @apply space-y-5;
   }
 
