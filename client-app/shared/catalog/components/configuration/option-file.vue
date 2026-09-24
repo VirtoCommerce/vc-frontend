@@ -53,13 +53,20 @@ async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
-  emit("input", attachedAndUploadedFiles.value);
+  emitFiles();
 }
 
 async function onRemoveFiles(filesToRemove: FileType[]) {
   await removeFiles(filesToRemove);
 
-  emit("input", attachedAndUploadedFiles.value);
+  emitFiles();
+}
+
+function emitFiles() {
+  // Skip an empty report the section doesn't need: it would echo back as a new empty `value` and reset the field
+  if (attachedAndUploadedFiles.value.length || value.value?.length) {
+    emit("input", attachedAndUploadedFiles.value);
+  }
 }
 
 function onFileDownload(file: FileType) {
