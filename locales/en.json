@@ -1803,6 +1803,33 @@
             "text": "In-stock orders ship same day, with manufacturer warranty and free returns within 30 days."
           }
         }
+      },
+      "changes": {
+        "eyebrow": "What it changes",
+        "title": "Monday morning, in numbers",
+        "stats": {
+          "reorder": {
+            "value": "2 clicks",
+            "label": "To reorder last month's delivery, line quantities included"
+          },
+          "trail": {
+            "value": "1 trail",
+            "label": "From a saved list to a placed order with an approval history"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Of prices shown are your contract prices, tax and freight included"
+          },
+          "calls": {
+            "value": "0 calls",
+            "label": "Ordering, tracking and document lookup — no phone tree"
+          }
+        },
+        "quote": {
+          "text": "“We stopped keeping a spreadsheet of prices — the site shows ours.”",
+          "name": "Procurement lead",
+          "role": "Facilities group · 6 sites"
+        }
       }
     }
   },

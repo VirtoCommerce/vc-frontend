@@ -5,10 +5,13 @@
     <SuppliersSection />
 
     <WhyBuySection />
+
+    <ChangesSection />
   </div>
 </template>
 
 <script setup lang="ts">
+import ChangesSection from "./changes-section.vue";
 import HeroSection from "./hero-section.vue";
 import SuppliersSection from "./suppliers-section.vue";
 import WhyBuySection from "./why-buy-section.vue";
