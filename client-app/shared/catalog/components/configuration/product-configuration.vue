@@ -27,31 +27,50 @@
           :collapsed="index !== 0"
         >
           <template #title>
-            <div class="product-configuration__title" data-test-id="section-title">
-              {{ section.name }}
-              <span v-if="section.isRequired" class="product-configuration__required">*</span>
-            </div>
+            <!-- The design names an optional group with a badge at the end of its header rather than
+                 with a word inside the description, so required and optional read at a glance from
+                 the same place. It rides in the title slot, not the append one: append is where the
+                 kit keeps the collapse chevron, and a slot there would replace it. -->
+            <div class="product-configuration__header">
+              <div class="product-configuration__section-heading">
+                <div class="product-configuration__title" data-test-id="section-title">
+                  {{ section.name }}
+                  <span v-if="section.isRequired" class="product-configuration__required">*</span>
+                </div>
 
-            <div class="product-configuration__subtitle" data-test-id="section-description">
-              {{ section.description }}
+                <div class="product-configuration__subtitle" data-test-id="section-description">
+                  {{ section.description }}
 
-              <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
-                {{ validationErrors.get(section.id) }}
+                  <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
+                    {{ validationErrors.get(section.id) }}
+                  </div>
+
+                  <div
+                    v-else
+                    data-test-id="section-subtitle"
+                    class="product-configuration__value"
+                    :class="[
+                      hasSelectedOption(section.id)
+                        ? 'product-configuration__value--selected'
+                        : 'product-configuration__value--not-selected',
+                      section.isRequired ? 'product-configuration__value--required' : '',
+                    ]"
+                  >
+                    {{ getSectionSubtitle(section) }}
+                  </div>
+                </div>
               </div>
 
-              <div
-                v-else
-                data-test-id="section-subtitle"
-                class="product-configuration__value"
-                :class="[
-                  hasSelectedOption(section.id)
-                    ? 'product-configuration__value--selected'
-                    : 'product-configuration__value--not-selected',
-                  section.isRequired ? 'product-configuration__value--required' : '',
-                ]"
+              <VcBadge
+                v-if="!section.isRequired"
+                variant="outline"
+                color="accent"
+                size="xs"
+                class="product-configuration__optional"
+                data-test-id="section-optional-badge"
               >
-                {{ getSectionSubtitle(section) }}
-              </div>
+                {{ $t("shared.catalog.product_details.product_configuration.optional") }}
+              </VcBadge>
             </div>
           </template>
 
@@ -334,6 +353,20 @@ async function openSaveChangesModal(): Promise<boolean> {
     // and on capitals it closes the letters up. The other two block headings on this page are set
     // the same way.
     @apply uppercase tracking-normal;
+  }
+
+  // The group's header is two things on one line: the name with its subtitle, and the badge that
+  // says the group may be skipped. The badge keeps its size while the name takes the rest.
+  &__header {
+    @apply flex items-center gap-3;
+  }
+
+  &__section-heading {
+    @apply min-w-0 grow;
+  }
+
+  &__optional {
+    @apply shrink-0;
   }
 
   &__widgets {

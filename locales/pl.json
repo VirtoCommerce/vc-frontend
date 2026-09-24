@@ -776,6 +776,7 @@
           "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?",
           "check_your_configuration": "Sprawdź konfigurację produktu",
           "required_section": "Sekcja jest wymagana",
+          "optional": "Opcjonalne",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
           "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
           "section-text-fieldset": {
