@@ -67,12 +67,13 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, syncRefs, useElementBounding, useEventListener, useScrollLock } from "@vueuse/core";
+import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
+import { useStuckPlate } from "@/shared/layout/composables/useStuckPlate";
 import CatalogMenu from "./catalog-menu.vue";
 import HeaderAccountMenu from "./header-account-menu.vue";
 import HeaderPreferencesMenu from "./header-preferences-menu.vue";
@@ -98,7 +99,7 @@ const plate = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
 const catalogButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
-const stuck = ref(false);
+const { stuck } = useStuckPlate(plate);
 
 const mega = ref<{ $el: HTMLElement } | null>(null);
 
@@ -116,21 +117,6 @@ const dropdownStyle = computed<StyleValue | undefined>(() =>
 );
 
 const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
-
-// Read from geometry rather than scrollY: that stays correct through anchor jumps,
-// resizes, and pages that do not start at zero. Capture phase, because the scroll
-// may happen on an inner container rather than on window.
-function updateStuck() {
-  const element = plate.value;
-
-  if (element) {
-    stuck.value = element.getBoundingClientRect().top <= 0.5;
-  }
-}
-
-useEventListener("scroll", updateStuck, { passive: true, capture: true });
-useEventListener("resize", updateStuck);
-watch(plate, updateStuck, { flush: "post" });
 
 onClickOutside(
   catalogMenuElement,

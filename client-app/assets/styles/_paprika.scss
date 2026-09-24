@@ -57,6 +57,12 @@
   // the hint to a fraction of a pixel.
   --vc-input-placeholder-font-size: theme("fontSize.sm");
 
+  // Quiet ink, not the accent. The design names secondary-600 and the desktop plate hardcodes
+  // it, but this file is loaded unconditionally, so that value would reach every preset — and
+  // it is 2.54:1 on black-gold's white plate, under 1.4.11's 3:1. The header's own link token
+  // clears 3:1 in all sixteen (worst 3.36) and lands one palette step off the drawing here.
+  --mobile-header-icon-color: var(--header-bottom-link-color);
+
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
   --vc-chip-radius: 9999px;
@@ -125,6 +131,11 @@ html.dark {
     --plate-pad-y: 1.75rem;
     --plate-pad-x: 1.5rem;
     --page-gutter: 1.5rem;
+
+    // A widget reaches 18px past the container's inset below md — 6px off the screen once the
+    // phone halves that inset, and 18px out of line with the header above it before then. Below
+    // the desktop every plate stands on the page's gutter.
+    --vc-widget-container-margin-x: 0px;
   }
 }
 
@@ -132,6 +143,23 @@ html.dark {
   :root {
     // VcContainer's own 2xl step widens the gutter to 48px; Paprika holds it at 32.
     --vc-container-px: 2rem;
+  }
+}
+
+// The phone rung: gutter and step halve (24 -> 12, 26 -> 13) and the plate's inside squares off
+// at 24. The design draws this below 600; sm is the nearest rung here, the same snap the block
+// above makes from its 900 to lg. The container's inset travels with the gutter.
+@media (width < theme("screens.sm")) {
+  :root {
+    --page-gutter: 0.75rem;
+    --page-stack: 0.8125rem;
+    --plate-pad-y: 1.5rem;
+    --vc-container-px: 0.75rem;
+
+    // A page's own top and bottom air is the step between plates, or the column reads in two
+    // rhythms. A page that spends its own numbers still overrides these.
+    --vc-container-pt: var(--page-stack);
+    --vc-container-pb: var(--page-stack);
   }
 }
 
