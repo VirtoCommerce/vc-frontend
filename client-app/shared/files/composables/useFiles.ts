@@ -20,7 +20,7 @@ import {
   toUploadedFile,
   toUploadingFile,
 } from "@/ui-kit/utilities";
-import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
+import type { FileUploadResultType, IFailedFileUpload, IFileOptions } from "@/shared/files/types";
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import type { MaybeRef, WatchSource } from "vue";
 
@@ -157,11 +157,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   // Helper function to process upload results
   function processUploadResults(results: FileUploadResultType[] | undefined, filesToProcess: IUploadingFile[]) {
-    if (!results) {
-      return;
-    }
-
-    results.forEach((result) => {
+    results?.forEach((result) => {
       const uploadedFile = filesToProcess.find((fileInfo) => fileInfo.name === result.name);
       if (uploadedFile) {
         if (result.succeeded) {
@@ -171,6 +167,19 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
         }
       }
     });
+
+    // Some errors (e.g. INVALID_SCOPE) name no file, and a file left "uploading" keeps uploadFiles looping
+    const unreportedFiles = filesToProcess.filter(isUploadingFile);
+    if (unreportedFiles.length === 0) {
+      return;
+    }
+
+    const unnamedError = results?.find((result): result is IFailedFileUpload => !result.succeeded && !result.name);
+    const unreportedFileError = unnamedError
+      ? getErrorMessage(unnamedError.errorCode, unnamedError.errorParameter, unnamedError.errorMessage)
+      : getErrorMessage("EXCEPTION");
+
+    unreportedFiles.forEach((file) => toFailedFile(file, unreportedFileError));
   }
 
   async function uploadFiles(): Promise<void> {
