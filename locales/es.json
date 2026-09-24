@@ -1743,6 +1743,123 @@
       },
       "error": "Error al cargar datos",
       "retry": "Intentar de nuevo"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Un catálogo · muchos proveedores verificados",
+        "title": "Obtenga productos electrónicos de la manera que su empresa compra.",
+        "subtitle": "Stock en tiempo real de distribuidores autorizados, sus precios de contrato desde la búsqueda hasta la factura, y entrega al día siguiente de todo lo que se encuentra localmente.",
+        "browse_catalog": "Explorar catálogo",
+        "notches": {
+          "search": {
+            "title": "Buscar o explorar el catálogo completo",
+            "text": "Por producto, marca o su propio SKU"
+          },
+          "guest_cart": {
+            "title": "Crear un carrito como invitado",
+            "text": "Se transfiere cuando inicia sesión"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Red de distribuidores autorizados",
+        "title": "Comprar por proveedor",
+        "authorized": "Distribuidor autorizado",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "SKUs en el catálogo"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Proveedores autorizados"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Entrega de líneas en stock"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Explore el surtido",
+        "title": "Comprar por categoría",
+        "all_categories": "Todas las categorías",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Favoritos del público",
+            "meta": "Gadgets inteligentes para el hogar hasta cine en casa — conectados, emparejados y listos para enviar"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Los más vendidos",
+            "meta": "Smartphones 5G hasta soportes para coche — con funda, cargados y listos para enviar al por mayor."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Comprar sin cuenta",
+        "title": "Popular entre los compradores",
+        "see_all": "Ver todo"
+      },
+      "why_buy": {
+        "eyebrow": "Por qué comprar con nosotros",
+        "title": "Términos sencillos, inventario real",
+        "cards": {
+          "stock": {
+            "title": "Stock en tiempo real",
+            "text": "Cantidad en mano por almacén, con el plazo de entrega cuando debe ser obtenido."
+          },
+          "pricing": {
+            "title": "Precios de contrato en todas partes",
+            "text": "Su precio negociado se muestra desde la búsqueda hasta la factura, impuestos y flete incluidos."
+          },
+          "fulfillment": {
+            "title": "Entrega al día siguiente",
+            "text": "Los pedidos en stock se envían el mismo día, con garantía del fabricante y devoluciones gratuitas en 30 días."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Lo que cambia",
+        "title": "Lunes por la mañana, en números",
+        "stats": {
+          "reorder": {
+            "value": "2 clics",
+            "label": "Para reordenar la entrega del mes pasado, incluidas las cantidades de línea"
+          },
+          "trail": {
+            "value": "1 rastro",
+            "label": "Desde una lista guardada hasta un pedido realizado con historial de aprobaciones"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "De los precios mostrados son sus precios de contrato, impuestos y flete incluidos"
+          },
+          "calls": {
+            "value": "0 llamadas",
+            "label": "Pedidos, seguimiento y consulta de documentos — sin árbol telefónico"
+          }
+        },
+        "quote": {
+          "text": "“Dejamos de mantener una hoja de cálculo de precios — el sitio muestra los nuestros.”",
+          "name": "Jefe de adquisiciones",
+          "role": "Grupo de instalaciones · 6 sitios"
+        }
+      },
+      "brands": {
+        "eyebrow": "Distribuidor autorizado para"
+      },
+      "cta": {
+        "title": "Conviértase en cliente",
+        "text": "Precios de contrato, términos de pago acordados y pago con PO — generalmente aprobado dentro de un día hábil.",
+        "become_customer": "Conviértase en cliente",
+        "talk_to_sales": "Hablar con ventas"
+      }
     }
   },
   "identity_error": {

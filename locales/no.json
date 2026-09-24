@@ -1743,6 +1743,123 @@
       },
       "error": "Kunne ikke laste inn data",
       "retry": "Prøv igjen"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Én katalog · mange verifiserte leverandører",
+        "title": "Kjøp elektronikk slik din bedrift handler.",
+        "subtitle": "Sanntidslager hos autoriserte distributører, dine avtalepriser fra søk til faktura, og levering neste dag på alt som er lokalt på lager.",
+        "browse_catalog": "Se katalogen",
+        "notches": {
+          "search": {
+            "title": "Søk eller bla i hele katalogen",
+            "text": "Etter produkt, merke eller din egen SKU"
+          },
+          "guest_cart": {
+            "title": "Bygg en handlekurv som gjest",
+            "text": "Den overføres når du logger inn"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Autorisert distributørnettverk",
+        "title": "Handle etter leverandør",
+        "authorized": "Autorisert distributør",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "Varenumre i katalogen"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Autoriserte leverandører"
+          },
+          "fulfillment": {
+            "value": "24t",
+            "label": "Levering på varer på lager"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Utforsk sortimentet",
+        "title": "Handle etter kategori",
+        "all_categories": "Alle kategorier",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Folkets favoritter",
+            "meta": "Smarthusenheter til hjemmekino – koblet til, paret og klar for forsendelse"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Toppselgere",
+            "meta": "5G-smarttelefoner til bilholdere – dekket, ladet og klar for forsendelse i bulk."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Handle uten konto",
+        "title": "Populært blant kjøpere",
+        "see_all": "Se alle"
+      },
+      "why_buy": {
+        "eyebrow": "Hvorfor handle hos oss",
+        "title": "Enkle vilkår, reelt lager",
+        "cards": {
+          "stock": {
+            "title": "Sanntidslager",
+            "text": "Antall på lager per lager, med leveringstid når det må hentes."
+          },
+          "pricing": {
+            "title": "Avtalepriser overalt",
+            "text": "Din forhandlede pris vises fra søk til faktura, inkludert skatt og frakt."
+          },
+          "fulfillment": {
+            "title": "Levering neste dag",
+            "text": "Varer på lager sendes samme dag, med produsentgaranti og gratis retur innen 30 dager."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Hva det endrer",
+        "title": "Mandag morgen, i tall",
+        "stats": {
+          "reorder": {
+            "value": "2 klikk",
+            "label": "For å bestille forrige måneds levering, inkludert antall"
+          },
+          "trail": {
+            "value": "1 spor",
+            "label": "Fra en lagret liste til en bestilling med godkjenningshistorikk"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Av viste priser er dine avtalepriser, inkludert skatt og frakt"
+          },
+          "calls": {
+            "value": "0 anrop",
+            "label": "Bestilling, sporing og dokumentoppslag – ingen telefonsløyfe"
+          }
+        },
+        "quote": {
+          "text": "\"Vi sluttet å føre en regneark med priser – nettstedet viser våre.\"",
+          "name": "Innkjøpssjef",
+          "role": "Fasilitetsgruppe · 6 lokasjoner"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autorisert distributør for"
+      },
+      "cta": {
+        "title": "Bli kunde",
+        "text": "Avtalepriser, avtalte betalingsbetingelser og PO-kasse – vanligvis godkjent innen én virkedag.",
+        "become_customer": "Bli kunde",
+        "talk_to_sales": "Snakk med salg"
+      }
     }
   },
   "identity_error": {

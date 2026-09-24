@@ -1743,6 +1743,123 @@
       },
       "error": "Nie udało się załadować danych",
       "retry": "Spróbuj ponownie"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Jeden katalog · wielu zweryfikowanych dostawców",
+        "title": "Pozyskuj elektronikę tak, jak kupuje Twoja firma.",
+        "subtitle": "Informacje o stanie magazynowym w czasie rzeczywistym u autoryzowanych dystrybutorów, Twoje ceny kontraktowe od wyszukiwania do faktury i dostawa następnego dnia wszystkiego, co jest na stanie lokalnie.",
+        "browse_catalog": "Przeglądaj katalog",
+        "notches": {
+          "search": {
+            "title": "Wyszukaj lub przejrzyj cały katalog",
+            "text": "Według produktu, marki lub własnego SKU"
+          },
+          "guest_cart": {
+            "title": "Zbuduj koszyk jako gość",
+            "text": "Przenosi się po zalogowaniu"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Sieć autoryzowanych dystrybutorów",
+        "title": "Kupuj według dostawcy",
+        "authorized": "Autoryzowany dystrybutor",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU w katalogu"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Autoryzowani dostawcy"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Dostawa linii w magazynie"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Przeglądaj asortyment",
+        "title": "Kupuj według kategorii",
+        "all_categories": "Wszystkie kategorie",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Ulubione przez klientów",
+            "meta": "Inteligentne gadżety domowe do kina domowego — podłączone, sparowane i gotowe do wysyłki"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Najlepiej sprzedające się",
+            "meta": "Smartfony 5G do uchwytów samochodowych — zapakowane, naładowane i gotowe do masowej wysyłki."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Kupuj bez konta",
+        "title": "Popularne wśród kupujących",
+        "see_all": "Zobacz wszystko"
+      },
+      "why_buy": {
+        "eyebrow": "Dlaczego warto u nas kupować",
+        "title": "Proste warunki, rzeczywisty stan magazynowy",
+        "cards": {
+          "stock": {
+            "title": "Informacje o stanie magazynowym w czasie rzeczywistym",
+            "text": "Ilość na stanie w każdym magazynie, z czasem realizacji, gdy trzeba ją pozyskać."
+          },
+          "pricing": {
+            "title": "Ceny kontraktowe wszędzie",
+            "text": "Twoja negocjowana cena jest widoczna od wyszukiwania do faktury, w tym podatki i fracht."
+          },
+          "fulfillment": {
+            "title": "Dostawa następnego dnia",
+            "text": "Zamówienia w magazynie są wysyłane tego samego dnia, z gwarancją producenta i bezpłatnymi zwrotami w ciągu 30 dni."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Co to zmienia",
+        "title": "Poniedziałkowy poranek, w liczbach",
+        "stats": {
+          "reorder": {
+            "value": "2 kliknięcia",
+            "label": "Aby ponownie zamówić dostawę z zeszłego miesiąca, w tym ilości linii"
+          },
+          "trail": {
+            "value": "1 ścieżka",
+            "label": "Od zapisanej listy do złożonego zamówienia z historią zatwierdzeń"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Cen widocznych to Twoje ceny kontraktowe, w tym podatki i fracht"
+          },
+          "calls": {
+            "value": "0 połączeń",
+            "label": "Zamawianie, śledzenie i wyszukiwanie dokumentów — bez drzewa telefonicznego"
+          }
+        },
+        "quote": {
+          "text": "„Przestaliśmy prowadzić arkusz kalkulacyjny z cenami — strona pokazuje nasze.”",
+          "name": "Kierownik ds. zaopatrzenia",
+          "role": "Grupa ds. obiektów · 6 lokalizacji"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autoryzowany dystrybutor dla"
+      },
+      "cta": {
+        "title": "Zostań klientem",
+        "text": "Ceny kontraktowe, uzgodnione warunki płatności i płatność PO — zazwyczaj zatwierdzane w ciągu jednego dnia roboczego.",
+        "become_customer": "Zostań klientem",
+        "talk_to_sales": "Porozmawiaj ze sprzedażą"
+      }
     }
   },
   "identity_error": {
