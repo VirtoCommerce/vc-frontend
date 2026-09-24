@@ -5,6 +5,16 @@
     :title="$t('shared.catalog.product_details.product_configuration.title')"
     size="lg"
   >
+    <!-- Set in caps, like PROPERTIES and DESCRIPTION standing above it on the same page: the design
+         gives every block on the PDP one heading treatment, and this was the only sentence-case one
+         among them. Through the slot rather than by styling the widget's own title element, which
+         belongs to the kit — the `title` prop stays for the ARIA id it feeds. -->
+    <template #title>
+      <span class="product-configuration__heading">
+        {{ $t("shared.catalog.product_details.product_configuration.title") }}
+      </span>
+    </template>
+
     <div id="product-configuration-anchor" />
 
     <div class="product-configuration__widgets">
@@ -318,6 +328,13 @@ async function openSaveChangesModal(): Promise<boolean> {
 <style lang="scss">
 .product-configuration {
   $required: "";
+
+  &__heading {
+    // Caps, and without the display face's negative tracking: that tracking is cut for mixed case,
+    // and on capitals it closes the letters up. The other two block headings on this page are set
+    // the same way.
+    @apply uppercase tracking-normal;
+  }
 
   &__widgets {
     @apply space-y-5;
