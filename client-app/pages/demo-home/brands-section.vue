@@ -42,6 +42,12 @@ const { t } = useI18n();
 
   &__item {
     @apply flex items-center justify-center;
+
+    // Ink logos vanish on a dark plate, and Vantage has its white "V" cut into the alpha,
+    // so each logo sits on a light plate instead of being recoloured by a filter.
+    html.dark & {
+      @apply rounded-xl bg-secondary-950 px-4 py-3;
+    }
   }
 
   &__logo {
