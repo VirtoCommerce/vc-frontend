@@ -1786,6 +1786,21 @@
           }
         }
       },
+      "categories": {
+        "eyebrow": "Browse the assortment",
+        "title": "Shop by category",
+        "all_categories": "All categories",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Crowd favorites",
+            "meta": "Smart home gadgets to home theater — plugged in, paired and ready to ship"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Top selling",
+            "meta": "5G smartphones to car holders — cased, charged and ready to ship in bulk."
+          }
+        }
+      },
       "why_buy": {
         "eyebrow": "Why buy from us",
         "title": "Straightforward terms, real inventory",

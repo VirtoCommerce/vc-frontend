@@ -2,6 +2,8 @@
   <div class="demo-home">
     <HeroSection />
 
+    <CategoriesSection />
+
     <SuppliersSection />
 
     <WhyBuySection />
@@ -16,6 +18,7 @@
 
 <script setup lang="ts">
 import BrandsSection from "./brands-section.vue";
+import CategoriesSection from "./categories-section.vue";
 import ChangesSection from "./changes-section.vue";
 import CtaSection from "./cta-section.vue";
 import HeroSection from "./hero-section.vue";
