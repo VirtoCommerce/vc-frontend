@@ -66,6 +66,7 @@
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
+import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
 
@@ -89,12 +90,20 @@ const { facet, filter } = toRefs(props);
 
 const { t } = useI18n();
 
+// The facet's numbers come back in whatever currency the search asked for, and a loyalty catalog
+// asks for its own: the heading has to name that one, not the store's, or the caption and the range
+// under it disagree. Same source the pages thread into the queries as `currencyCodeOverride`, read
+// here rather than passed down through the filter list so the two cannot drift apart.
+const loyaltyCurrency = useLoyaltyCatalogCurrency();
+
 /** The store sends the price facet under its field name, "price"; it is headed as the design heads it, "Price (USD)". */
-const label = computed(() =>
-  facet.value.paramName.toLowerCase() === "price" && globals.currencyCode
-    ? `${t("common.labels.price")} (${globals.currencyCode})`
-    : facet.value.label,
-);
+const label = computed(() => {
+  const currency = loyaltyCurrency.value || globals.currencyCode;
+
+  return facet.value.paramName.toLowerCase() === "price" && currency
+    ? `${t("common.labels.price")} (${currency})`
+    : facet.value.label;
+});
 
 const facetMin = computed(() => {
   return typeof facet.value.statistics?.min === "number" ? Math.floor(facet.value.statistics.min) : undefined;

@@ -67,6 +67,17 @@ watch(
   },
 );
 
+// ...and the loading flag is not the only way the answer arrives. A sorting the reader has already
+// visited comes straight back out of the cache and never raises it, and a back or forward never goes
+// through `select` at all — so the guess outlived both, and the rail sat pressed on Price while the
+// listing had returned to Featured. The model landing anywhere other than what was pressed is the
+// same news the flag was carrying: the guess is spent.
+watch(modelValue, (value) => {
+  if (value !== pending.value) {
+    pending.value = undefined;
+  }
+});
+
 function select(id: string) {
   if (id === pressed.value) {
     return;

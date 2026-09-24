@@ -654,8 +654,7 @@ const variationsCount = computed(() => {
     // design takes the plate away in the grid and leaves the list alone — but the utility landed
     // fully transparent here: measured on the running row, `box-shadow` computed as
     // `rgba(0,0,0,0) 0 0 0 0, ...` while `--tw-shadow` still held the right value, and the rows
-    // read as flat against the design's elevated ones. The neutral ramp is the one this preset
-    // inverts, so the pair also survives dark, where the kit's own black has nothing to say.
+    // read as flat against the design's elevated ones.
     box-shadow:
       0 4px 6px -1px rgb(from theme("colors.neutral.950") r g b / 0.1),
       0 2px 4px -2px rgb(from theme("colors.neutral.950") r g b / 0.1);
@@ -664,6 +663,22 @@ const variationsCount = computed(() => {
       box-shadow:
         0 10px 15px -3px rgb(from theme("colors.neutral.950") r g b / 0.1),
         0 4px 6px -4px rgb(from theme("colors.neutral.950") r g b / 0.1);
+    }
+
+    // The neutral ramp is the one this preset INVERTS: 950 is the dark end in light and the light
+    // end in dark, so the pair above turns into a pale halo there rather than a shadow. Same swap
+    // the grid's hover and the page plates already make, and the deeper spread dark needs to read
+    // an edge at all.
+    html.dark & {
+      box-shadow:
+        0 2px 6px rgb(from theme("colors.neutral.50") r g b / 0.45),
+        0 8px 22px rgb(from theme("colors.neutral.50") r g b / 0.4);
+
+      &:hover {
+        box-shadow:
+          0 4px 10px rgb(from theme("colors.neutral.50") r g b / 0.5),
+          0 12px 30px rgb(from theme("colors.neutral.50") r g b / 0.5);
+      }
     }
 
     --vc-product-title-font-size: 0.9375rem;

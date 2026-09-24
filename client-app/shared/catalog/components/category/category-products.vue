@@ -176,6 +176,10 @@ const awaitingSort = ref(false);
 /** The result arrived and the cards are turning over to it. */
 const changingOver = ref(false);
 
+/** Which answer the grid is currently working on. Not reactive: nothing renders it, it only settles
+ * which of two overlapping change-overs is allowed to finish. */
+let answer = 0;
+
 /**
  * Sorting does not change the question, only the answer's order, so the page keeps the cards it has
  * — through the wait AND through the turn that follows. Dropping them at either point puts
@@ -198,7 +202,16 @@ watch(
  * second.
  */
 watch(products, async (next) => {
+  // Every answer that reaches the grid takes a number. A change-over is two awaits long — the
+  // photos, then the wave — and whatever lands inside it is a newer answer to a question the reader
+  // has since changed. Without the number the older run went on to its end and wrote its own
+  // products back over the newer ones: a filter applied mid-wave came through the branch below,
+  // painted the grid, and was overwritten half a second later by the list it had replaced.
+  const run = ++answer;
+
   if (!awaitingSort.value) {
+    // Whatever the run this supersedes was holding, it is not holding it any more.
+    changingOver.value = false;
     displayedProducts.value = [...next];
     return;
   }
@@ -217,13 +230,23 @@ watch(products, async (next) => {
   // decoded in that moment — capped, because a slow image must not hold the whole grid still.
   await warmImages(next);
 
+  if (run !== answer) {
+    return;
+  }
+
   // The backend decides what comes back, so the new page need not be the length of the old one. The
   // seats both pages share turn over; any beyond them are added or dropped once the wave is done.
   const flipped = await flip((index) => {
-    if (index < next.length) {
-      displayedProducts.value[index] = next[index];
+    if (run !== answer || index >= next.length) {
+      return;
     }
+
+    displayedProducts.value[index] = next[index];
   });
+
+  if (run !== answer) {
+    return;
+  }
 
   displayedProducts.value = [...next];
   changingOver.value = false;

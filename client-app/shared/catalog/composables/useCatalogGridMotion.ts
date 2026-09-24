@@ -69,11 +69,24 @@ export function useCatalogGridMotion(grid: Ref<HTMLElement | null>, viewMode: Re
     flipGeneration += 1;
     fade?.cancel();
     fade = undefined;
-    grid.value?.getAnimations().forEach((animation) => animation.cancel());
+
+    // `subtree`, because the cards carry the animations that strand them. A card whose wave was
+    // superseded stops where it stood — edge-on, at 90 degrees — and its turn is filled forwards, so
+    // it keeps answering for `transform` after everything else has moved on. The rise that follows
+    // fills BACKWARDS: it covers the card while it runs and lets the old turn take the transform
+    // back the moment it ends, which is a card that fades in and then vanishes. Switching grid/list
+    // mid-wave is the way there, because that path calls `enter` and never `recover`.
+    grid.value?.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
 
     if (grid.value) {
       grid.value.style.opacity = "";
       grid.value.style.filter = "";
+      // Cancelling gives the cards their inline transform back, and `recover` leaves one behind.
+      Array.from(grid.value.children).forEach((card) => {
+        (card as HTMLElement).style.transform = "";
+      });
+      // A superseded wave returns without taking its own class off; nothing else ever does.
+      grid.value.classList.remove(FLIPPING_CLASS);
     }
   }
 
