@@ -969,15 +969,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Antall produkter",
-        "list_edit_button": "Rediger",
-        "remove_list_button": "Fjern",
+        "rename_list_button": "Gi nytt navn",
+        "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
         "share_button": "Del",
         "last_modified_label": "Sist endret: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
-        "list_settings_button": "Listeinnstillinger",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listen din er tom",
         "empty_list_button": "Fortsett å bla",
         "list_icon": "Listeikon"
@@ -1001,11 +1001,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Ny liste",
-        "edit_mode_title": "Listeinnstillinger",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
-        "sharing_scope_label": "Delingsalternativer",
-        "sharing_scope_placeholder": "Vennligst velg ett alternativ",
         "sharing_link_label": "Lenke",
         "create_button": "Opprett liste",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1012,25 @@
         "make_shared": "Gjør delt",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisasjon",
-          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+          "Organization": "Min organisasjon",
+          "AnyoneAnonymous": "Alle med lenken"
         },
         "clipboard_success": "Lenke kopiert",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
+      },
+      "share_wishlist_modal": {
+        "title": "Del «{listName}»",
+        "who_can_access_label": "Hvem har tilgang",
+        "scope_selected": "{label}, valgt"
+      },
+      "stop_sharing_modal": {
+        "title": "Slutte å dele denne listen?",
+        "message": "Alle som listen er delt med, mister tilgangen. Du kan dele den på nytt når som helst.",
+        "confirm_button": "Slutt å dele",
+        "change_title": "Endre hvem som har tilgang?",
+        "change_message": "Alle som listen er delt med nå, mister tilgangen.",
+        "change_confirm_button": "Endre tilgang",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",

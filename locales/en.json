@@ -969,15 +969,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_edit_button": "Edit",
-        "remove_list_button": "Delete",
+        "rename_list_button": "Rename",
+        "remove_list_button": "Remove list",
         "make_private_button": "Make private",
         "share_button": "Share",
         "last_modified_label": "Last modified: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
-        "list_settings_button": "List settings",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
@@ -1001,11 +1001,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "New List",
-        "edit_mode_title": "List settings",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "List name",
         "list_name_placeholder": "Enter name",
-        "sharing_scope_label": "Sharing options",
-        "sharing_scope_placeholder": "Please select one option",
         "sharing_link_label": "Link",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1012,25 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "Private",
-          "Organization": "Organization",
-          "AnyoneAnonymous": "Anyone (readonly)"
+          "Organization": "My organization",
+          "AnyoneAnonymous": "Anyone with link"
         },
         "clipboard_success": "Link copied",
         "save_error": "The list could not be saved. Please try again."
+      },
+      "share_wishlist_modal": {
+        "title": "Share “{listName}”",
+        "who_can_access_label": "Who can access",
+        "scope_selected": "{label}, selected"
+      },
+      "stop_sharing_modal": {
+        "title": "Stop sharing this list?",
+        "message": "Everyone the list is shared with will lose access. You can share it again at any time.",
+        "confirm_button": "Stop sharing",
+        "change_title": "Change who can access?",
+        "change_message": "Everyone the list is shared with now will lose access.",
+        "change_confirm_button": "Change access",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

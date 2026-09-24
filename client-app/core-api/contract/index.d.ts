@@ -1418,10 +1418,27 @@ type SharingSettingType = {
     id: Scalars['String']['output'];
     /** Created by current user */
     isOwner: Scalars['Boolean']['output'];
+    /** Message saved with the share (one for all targets) */
+    message?: Maybe<Scalars['String']['output']>;
     /** Scope (private, organization, etc.) */
     scope?: Maybe<WishlistScopeType>;
-    /** Id of the principal the list is shared with (id space defined by scope); null for non-targeted scopes */
+    /**
+     * Id of the first target the list is shared with; owner only, null for non-targeted scopes
+     * @deprecated Use targets
+     */
     sharedWithId?: Maybe<Scalars['String']['output']>;
+    /** Targets the list is shared with (id space defined by scope); owner only, empty for other viewers and for non-targeted scopes */
+    targets: Array<SharingTargetType>;
+};
+type SharingTargetType = {
+    /** Id the list is shared with (id space defined by scope) */
+    id: Scalars['String']['output'];
+    /** Image URL of the target, when resolved */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** Display name of the target, when the module owning the scope resolves it */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Secondary display line of the target (e.g. city and region), when resolved */
+    subtitle?: Maybe<Scalars['String']['output']>;
 };
 type TierPriceType = {
     /** Price */
@@ -1788,6 +1805,21 @@ type __VLS_PrettifyLocal$1<T> = (T extends any ? {
     [K in keyof T as K]: T[K];
 }) & {};
 
+type CreateWishlistPayloadType = {
+    listName?: string;
+    description?: string;
+    scope?: string;
+    sharingKey?: string;
+    sharedWithId?: string;
+};
+
+type ChangeWishlistPayloadType = CreateWishlistPayloadType & {
+    listId: string;
+    addSharedWithIds?: string[];
+    removeSharedWithIds?: string[];
+    message?: string;
+};
+
 interface ILanguage {
     cultureName: string;
     nativeName: string;
@@ -2099,6 +2131,7 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
         page?: number;
         loading?: boolean;
         error?: boolean;
+        /** Hides the built-in header row; body rows keep their selection cell, but the select-all goes with the header. */
         hideDefaultHeader?: boolean;
         hideDefaultFooter?: boolean;
         description?: string;
@@ -2143,6 +2176,7 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
          * Selected row keys (v-model:selection). Parent-owned, so selection persists across
          * `items`/page/sort/filter changes. Accepts `string | number` keys but compares them
          * as strings (matching `getItemKey`), so numeric `[1, 2]` still matches `id: 1` / `id: 2`.
+         * Rows without an `id` are keyed `__row_<index>` — give items an `id` for stable selection.
          */
         selection?: VcTableSelectionKeyType[];
         /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
@@ -2179,7 +2213,16 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
             index: number;
         }) => any;
     } & {
-        header?: (props: {}) => any;
+        header?: (props: {
+            showSelectionColumn: boolean;
+            selectionMode?: VcTableSelectionModeType;
+            isAllSelected: boolean;
+            isSomeSelected: boolean;
+            canSelectAll: boolean;
+            toggleSelectAll: () => void;
+            selectionColumnAttrs: VcTableSelectionColumnAttrsType;
+            headAttrs: VcTableHeadAttrsType;
+        }) => any;
     } & {
         'desktop-skeleton'?: (props: {}) => any;
     } & {
@@ -3061,12 +3104,16 @@ declare function useNotifications(): {
     stack: vue.ComputedRef<INotificationExtended[]>;
 };
 
-/** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
+/** A tab of the share dialog's scope strip. Modules contribute their own through `registerSharingScope`. */
 interface IWishlistSharingScopeType {
     scope: string;
     labelKey: string;
     /** Status line for the list owner; falls back to the generic "Shared". */
     statusKey?: string;
+    /** Glyph shown on the scope's tab in the share dialog. */
+    icon?: string;
+    /** Position among the tabs, ascending; scopes that declare none come last. */
+    order?: number;
     supportsLink?: boolean;
     shoppable?: boolean;
     /** Defaults to available. */
@@ -3076,19 +3123,31 @@ interface IWishlistSharingScopeType {
 type WishlistSharingScopeSavedContextType = {
     listName: string;
     sharingLink: string;
+    /** The audience the server persisted, so a scope reports what was saved rather than its own draft. */
+    targets: SharingTargetType[];
 };
+/** What a scope may contribute to the list's write command, mirroring the fields of `changeWishlist`. */
+type WishlistSharingScopePayloadType = Pick<ChangeWishlistPayloadType, "addSharedWithIds" | "removeSharedWithIds" | "message">;
 /**
- * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
- * instance rather than the registration object: the registry is a global filled at module init, while the state these
- * depend on is per-open.
+ * What a scope's `element` passes to `defineExpose`. Typing the raw side is what makes the contract checkable at the
+ * contributor's end; the modal reads it through Vue's expose proxy, which unwraps every ref.
+ */
+interface IWishlistSharingScopeExposeType {
+    canSave?: MaybeRef<boolean>;
+    dirty?: MaybeRef<boolean>;
+    payload?: MaybeRef<WishlistSharingScopePayloadType>;
+    onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
+}
+/**
+ * The same contract as the modal sees it, with the refs already unwrapped. Comes from the rendered instance rather
+ * than the registration object: the registry is a global filled at module init, while the state these depend on is
+ * per-open.
  */
 interface IWishlistSharingScopeControlsType {
     canSave?: boolean;
     /** The core form cannot see per-scope input, so a scope reports its own changes. */
     dirty?: boolean;
-    payload?: {
-        sharedWithId?: string;
-    };
+    payload?: WishlistSharingScopePayloadType;
     /** Must handle its own failures — the list is already persisted by then. */
     onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
 }
@@ -3267,7 +3326,7 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 declare const CORE_VERSION: string;
 
 export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, ROUTES, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
-export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, WishlistSharingScopeSavedContextType };
+export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LocaleLoaderType, MenuType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;
@@ -3337,6 +3396,13 @@ type VcTableSelectionKeyType = string | number;
 type VcTableSelectionMetaType<T = unknown> = {
     action: "select" | "deselect" | "select-all" | "deselect-all";
     row?: T;
+  };
+type VcTableSelectionColumnAttrsType = {
+    class: string;
+    style: Record<string, string>;
+  };
+type VcTableHeadAttrsType = {
+    class: string;
   };
 interface IBreadcrumb {
     title: string;

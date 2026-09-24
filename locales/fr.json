@@ -969,15 +969,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Nombre de produits",
-        "list_edit_button": "Modifier",
-        "remove_list_button": "Supprimer",
+        "rename_list_button": "Renommer",
+        "remove_list_button": "Supprimer la liste",
         "make_private_button": "Rendre privé",
         "share_button": "Partager",
         "last_modified_label": "Dernière modification : {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",
-        "list_settings_button": "Paramètres de la liste",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Votre liste est vide",
         "empty_list_button": "Continuer à naviguer",
         "list_icon": "Icône de liste"
@@ -1001,11 +1001,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nouvelle liste",
-        "edit_mode_title": "Paramètres de la liste",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nom de la liste",
         "list_name_placeholder": "Veuillez entrer le nom",
-        "sharing_scope_label": "Options de partage",
-        "sharing_scope_placeholder": "Veuillez choisir une option",
         "sharing_link_label": "Lien",
         "create_button": "Créer une liste",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1012,25 @@
         "make_shared": "Rendre partagé",
         "sharing_scope": {
           "Private": "Privé(e)",
-          "Organization": "Organisation",
-          "AnyoneAnonymous": "Tout le monde (lecture seule)"
+          "Organization": "Mon organisation",
+          "AnyoneAnonymous": "Toute personne disposant du lien"
         },
         "clipboard_success": "Lien copié",
         "save_error": "La liste n'a pas pu être enregistrée. Veuillez réessayer."
+      },
+      "share_wishlist_modal": {
+        "title": "Partager « {listName} »",
+        "who_can_access_label": "Qui a accès",
+        "scope_selected": "{label}, sélectionné"
+      },
+      "stop_sharing_modal": {
+        "title": "Arrêter de partager cette liste ?",
+        "message": "Toutes les personnes avec qui la liste est partagée perdront l'accès. Vous pourrez la partager à nouveau à tout moment.",
+        "confirm_button": "Arrêter le partage",
+        "change_title": "Modifier qui a accès ?",
+        "change_message": "Toutes les personnes avec qui la liste est actuellement partagée perdront l'accès.",
+        "change_confirm_button": "Modifier l'accès",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirmer la suppression",
