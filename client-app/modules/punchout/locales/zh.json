@@ -1,1 +1,6 @@
-{}
+{
+  "punchout": {
+    "mode_label": "Punchout 模式",
+    "back_to_customer_mode": "返回客户模式"
+  }
+}

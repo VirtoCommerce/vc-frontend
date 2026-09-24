@@ -1,1 +1,6 @@
-{}
+{
+  "punchout": {
+    "mode_label": "Punchout-tila",
+    "back_to_customer_mode": "Takaisin asiakastilaan"
+  }
+}
