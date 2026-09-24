@@ -129,7 +129,13 @@ function movePill() {
   // across two columns of them. Measured at 100% on a 2x screen, rounding alone already put the
   // right edge 0.45px inside the next segment. The browser snaps to the device grid itself, and
   // does it correctly at every zoom.
-  const left = (activeRect.left - boxRect.left) / correction;
+  // Minus the box's own border. `left` is set on an absolutely positioned pill, so the browser
+  // lays it out from the box's PADDING edge, while getBoundingClientRect measures from its BORDER
+  // edge — and the seg variant draws a 1px rim. The two origins differ by exactly that rim, so the
+  // pill sat a whole pixel right of its segment everywhere the rim is kept: measured on the
+  // preferences panel, the pill's left edge at 922.99 against the segment's 921.86. The catalog's
+  // own groups read 0.00 because they strip the rim with `border-0`, which is what hid this.
+  const left = (activeRect.left - boxRect.left) / correction - boxElement.clientLeft;
   const width = activeRect.width / correction;
   const from = previous.value;
 
