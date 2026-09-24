@@ -275,7 +275,6 @@
       "company_info": "Yrityksen tiedot",
       "company_members": "Yrityksen jäsenet",
       "contact_administrator": "ota yhteyttä sivuston ylläpitäjään",
-      "saved_credit_cards": "Tallennetut luottokortit",
       "skip_to_main_content": "Siirry pääsisältöön",
       "skip_to_footer": "Siirry alatunnisteeseen"
     },
@@ -337,6 +336,7 @@
           "back_to_operator": "Takaisin: {name}",
           "switching_back": "Palataan…",
           "no_results": "Ei tuloksia",
+          "organization_locked_tooltip": "Tämä organisaatio on lukittu. Ota yhteyttä pääkäyttäjääsi saadaksesi pääsyn.",
           "dark_mode": {
             "system": "Teema: automaattinen",
             "dark": "Teema: tumma",
@@ -369,8 +369,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Tallessa myöhempää varten",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -486,8 +485,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -596,7 +594,7 @@
         "created_date_label": "Luontipäivämäärä",
         "start_date_label": "Aloituspäivämäärä",
         "end_date_label": "Lopetuspäivämäärä",
-        "invalid_range": "Virheellinen päivämääräväli.",
+        "date_range_label": "Päivämääräväli",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -1406,13 +1404,6 @@
         "create_list_button_mobile": "Luo",
         "lists_icon": "Listakuvake"
       },
-      "saved_credit_cards": {
-        "no_cards": "Et ole tallentanut yhtään luottokorttia vielä",
-        "delete_credit_card_modal": {
-          "title": "Vahvista poisto",
-          "message": "Haluatko varmasti poistaa luottokortin?"
-        }
-      },
       "list_details": {
         "meta": {
           "title": "Lista: {0}"
@@ -1575,7 +1566,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Lisää listaan",
       "in_the_list_tooltip": "Listalla",
-      "variations_button": "{0} vaihtoehtoa",
+      "variations_button": "Ei vaihtoehtoja | {count} vaihtoehto | {count} vaihtoehtoa",
       "customize_button": "Mukauta",
       "show_on_a_separate_page": "Näytä erillisellä sivulla",
       "no_products_message": "Tässä kategoriassa ei ole tuotteita",

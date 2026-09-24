@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.58.0",
+  "version": "2.59.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -41,7 +41,7 @@
     "generate:backend-packages": "yarn precheck && vite-node scripts/generate-backend-packages-json.js",
     "generate:bundle-map": "yarn precheck && GENERATE_BUNDLE_MAP=true yarn build-only",
     "generate:dependency-graph": "yarn precheck && depcruise $0 --focus $0 --focus-depth 0 --reaches $1 --config .dependency-graph.cjs --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
-    "storybook:styles": "yarn precheck && npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/dist/preflight.css",
+    "storybook:styles": "yarn precheck && npx sass --no-source-map storybook-styles/preflight.scss | npx tailwindcss -i - -o storybook-styles/dist/preflight.css",
     "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
     "postinstall": "yarn precheck && husky",
@@ -189,5 +189,5 @@
   "engines": {
     "node": ">=22.22.1 <23.0.0"
   },
-  "packageManager": "yarn@4.7.0"
+  "packageManager": "yarn@4.17.0+sha512.c2957de2f9025ab14d63b24d0d8be1f1655810e22c341042c27f7ecd017b180ec12db73d69ac366d71b304ef9f069349ce462de96f04f8f1da317f4f762c95ae"
 }

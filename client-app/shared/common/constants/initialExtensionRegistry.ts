@@ -43,5 +43,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   productPage: {},
   paymentPage: {},
   orderPaymentPage: {},
+  cartPayment: {},
   sharedList: {},
 };

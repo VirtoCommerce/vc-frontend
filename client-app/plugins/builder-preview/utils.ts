@@ -6,7 +6,13 @@ export function getBuilderOrigin() {
   if (cachedBuilderOrigin === undefined) {
     const urlParams = new URLSearchParams(globalThis.location.search);
     const ep = urlParams.get("ep");
-    cachedBuilderOrigin = ep?.replace(/\/$/, "") ?? "";
+    try {
+      const endpoint = ep ? new URL(ep) : null;
+      cachedBuilderOrigin =
+        endpoint && (endpoint.protocol === "http:" || endpoint.protocol === "https:") ? endpoint.origin : "";
+    } catch {
+      cachedBuilderOrigin = "";
+    }
   }
 
   return cachedBuilderOrigin || undefined;
