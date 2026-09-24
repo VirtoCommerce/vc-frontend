@@ -1801,6 +1801,11 @@
           }
         }
       },
+      "popular": {
+        "eyebrow": "Shop without an account",
+        "title": "Popular with buyers",
+        "see_all": "See all"
+      },
       "why_buy": {
         "eyebrow": "Why buy from us",
         "title": "Straightforward terms, real inventory",

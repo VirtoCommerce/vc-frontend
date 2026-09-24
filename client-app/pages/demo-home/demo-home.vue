@@ -4,6 +4,8 @@
 
     <CategoriesSection />
 
+    <PopularSection />
+
     <SuppliersSection />
 
     <WhyBuySection />
@@ -22,6 +24,7 @@ import CategoriesSection from "./categories-section.vue";
 import ChangesSection from "./changes-section.vue";
 import CtaSection from "./cta-section.vue";
 import HeroSection from "./hero-section.vue";
+import PopularSection from "./popular-section.vue";
 import SuppliersSection from "./suppliers-section.vue";
 import WhyBuySection from "./why-buy-section.vue";
 </script>
