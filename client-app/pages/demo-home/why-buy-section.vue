@@ -147,6 +147,8 @@ const { t } = useI18n();
 
 @media (width < theme("screens.lg")) {
   .why-buy-section {
+    @apply p-6;
+
     &__grid {
       @apply grid-cols-[minmax(0,2fr)_minmax(0,1fr)];
 

@@ -108,6 +108,8 @@ const { t } = useI18n();
 
 @media (width < theme("screens.lg")) {
   .suppliers-section {
+    @apply p-6;
+
     &__supplier {
       @apply flex-col items-stretch gap-2;
     }

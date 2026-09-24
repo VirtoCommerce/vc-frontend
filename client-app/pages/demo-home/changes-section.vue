@@ -105,6 +105,8 @@ const { t } = useI18n();
 
 @media (width < theme("screens.lg")) {
   .changes-section {
+    @apply p-6;
+
     &__grid {
       @apply block space-y-7;
     }
