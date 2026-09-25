@@ -128,7 +128,7 @@
   },
   "return_edit": {
     "title": "Rücksendedetails hinzufügen",
-    "title_with_number": "Rücksendedetails hinzufügen #{number}",
+    "title_with_number": "Details zur Rücksendung {number} hinzufügen",
     "not_editable_message": "Diese Rücksendung kann nicht mehr geändert werden",
     "not_editable_message_with_status": "Diese Rücksendung kann nicht mehr geändert werden – ihr Status ist {status}",
     "details_section": "Details",
