@@ -1,19 +1,15 @@
+import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
-import { shouldOpenSingleBarcodeHit, useBarcodeSearch } from "./useBarcodeSearch";
+import { shouldOpenSingleBarcodeHit, takeUnreportedScan, useBarcodeSearch } from "./useBarcodeSearch";
 
-const { routerPush, trackEvent, settingValues } = vi.hoisted(() => ({
-  routerPush: vi.fn(),
-  trackEvent: vi.fn(),
+const { routerPush, settingValues } = vi.hoisted(() => ({
+  routerPush: vi.fn(() => Promise.resolve<unknown>(undefined)),
   settingValues: new Map<string, unknown>(),
 }));
 
 vi.mock("vue-router", () => ({
   useRouter: () => ({ push: routerPush }),
-}));
-
-vi.mock("@/core/composables", () => ({
-  useAnalytics: () => ({ analytics: trackEvent }),
 }));
 
 vi.mock("@/core/composables/useModuleSettings", () => ({
@@ -36,7 +32,6 @@ beforeEach(() => {
   settingValues.clear();
   searchPhrase.value = "";
   routerPush.mockClear();
-  trackEvent.mockClear();
   handleSearch.mockClear();
   hideSearchResults.mockClear();
 });
@@ -156,13 +151,67 @@ describe("useBarcodeSearch", () => {
       expect(hideSearchResults.mock.invocationCallOrder[0]).toBeLessThan(routerPush.mock.invocationCallOrder[0]);
     });
 
-    // Parity with the full-text path, which reports the phrase it navigated with.
-    it("reports the scanned code as a search event", () => {
+    // The `search` event carries what the search found, so the results page sends it once it has the results.
+    // The pending scan is module state, so each of these tests scans a code of its own.
+    it("leaves the scanned code for the results page to report, once", () => {
       settingValues.set(FIELDS_KEY, '["gtin"]');
 
-      createComposable().onBarcodeScanned("4006381333931");
+      createComposable().onBarcodeScanned("5901234123457");
 
-      expect(trackEvent).toHaveBeenCalledWith("search", "4006381333931");
+      expect(takeUnreportedScan("5901234123457")).toBe(true);
+      expect(takeUnreportedScan("5901234123457")).toBe(false);
+    });
+
+    // A slower fetch for an earlier code must not use up the report owed to the latest scan.
+    it("keeps the report for a fetch of the scanned code only", () => {
+      settingValues.set(FIELDS_KEY, '["gtin"]');
+
+      createComposable().onBarcodeScanned("5901234123464");
+
+      expect(takeUnreportedScan("5901234123457")).toBe(false);
+      expect(takeUnreportedScan("5901234123464")).toBe(true);
+    });
+
+    // The push fails with a "duplicated" navigation, so no request of the results page would take the report.
+    it("drops the report when the scanned code is already on screen", async () => {
+      settingValues.set(FIELDS_KEY, '["gtin"]');
+      routerPush.mockResolvedValueOnce({ type: 16, from: {}, to: {} });
+
+      createComposable().onBarcodeScanned("5901234123488");
+      await flushPromises();
+
+      expect(takeUnreportedScan("5901234123488")).toBe(false);
+    });
+
+    it("drops the report when the navigation fails", async () => {
+      settingValues.set(FIELDS_KEY, '["gtin"]');
+      routerPush.mockRejectedValueOnce(new Error("guard failed"));
+
+      createComposable().onBarcodeScanned("5901234123495");
+      await flushPromises();
+
+      expect(takeUnreportedScan("5901234123495")).toBe(false);
+    });
+
+    // A later scan owns the report; an earlier scan's failed navigation must not drop it.
+    it("keeps a newer scan's report when an earlier navigation fails", async () => {
+      settingValues.set(FIELDS_KEY, '["gtin"]');
+      routerPush.mockResolvedValueOnce({ type: 8, from: {}, to: {} });
+
+      const { onBarcodeScanned } = createComposable();
+
+      onBarcodeScanned("5901234123501");
+      onBarcodeScanned("5901234123518");
+      await flushPromises();
+
+      expect(takeUnreportedScan("5901234123518")).toBe(true);
+    });
+
+    // The phrase path goes through the dropdown, which reports its own `search` event.
+    it("leaves nothing to report when the code is searched as a phrase", () => {
+      createComposable().onBarcodeScanned("5901234123471");
+
+      expect(takeUnreportedScan("5901234123471")).toBe(false);
     });
 
     it("ignores an empty code", () => {

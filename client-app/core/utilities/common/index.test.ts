@@ -15,6 +15,7 @@ import {
   buildRedirectUrl,
   humanizeName,
   parseJsonStringArray,
+  toFirstString,
 } from "./index";
 import type { RouteLocationNormalized } from "vue-router";
 
@@ -636,5 +637,28 @@ describe("parseJsonStringArray", () => {
     expect(parseJsonStringArray(null)).toBeUndefined();
     expect(parseJsonStringArray(["gtin"])).toBeUndefined();
     expect(parseJsonStringArray("")).toBeUndefined();
+  });
+});
+
+describe("toFirstString", () => {
+  it("returns a string as is", () => {
+    expect(toFirstString("150701")).toBe("150701");
+    expect(toFirstString("")).toBe("");
+  });
+
+  // `?barcode=a&barcode=b` reaches the page as an array.
+  it("returns the first entry of an array", () => {
+    expect(toFirstString(["150701", "150702"])).toBe("150701");
+  });
+
+  it("returns an empty string when the first array entry is not a string", () => {
+    expect(toFirstString([null, "150702"])).toBe("");
+    expect(toFirstString([])).toBe("");
+  });
+
+  it("returns an empty string for a non-string value", () => {
+    expect(toFirstString(undefined)).toBe("");
+    expect(toFirstString(null)).toBe("");
+    expect(toFirstString(150701)).toBe("");
   });
 });

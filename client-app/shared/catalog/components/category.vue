@@ -5,7 +5,7 @@
     <template v-else>
       <!-- Popup sidebar for mobile and horizontal desktop view -->
       <FiltersPopupSidebar
-        v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
+        v-if="!hideSidebar && !isBarcodeLookup && (isMobile || isHorizontalFilters)"
         :is-exist-selected-facets="hasSelectedFacets"
         :popup-sidebar-filters="filtersToShow"
         :facets-loading="fetchingFacets"
@@ -39,12 +39,12 @@
         <VcTypography tag="h1" class="category__title">
           <!-- The scanned code filters instead of being a keyword, so the heading is the only place it shows. -->
           <i18n-t
-            v-if="!categoryId && !isRoot && barcode"
+            v-if="!categoryId && !isRoot && barcodeQueryParam"
             :keypath="emptyViewSearchOnly ? 'pages.search.header_barcode_empty' : 'pages.search.header_barcode'"
             tag="span"
           >
             <template #barcode>
-              <strong>{{ barcode }}</strong>
+              <strong>{{ barcodeQueryParam }}</strong>
             </template>
           </i18n-t>
 
@@ -90,6 +90,7 @@
 
         <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
 
+        <!-- A barcode lookup applies no facets or in-stock/purchased-before/branch preferences, so it hides them -->
         <template v-if="!hideAllControls">
           <div
             :class="[
@@ -101,7 +102,7 @@
           >
             <!-- Popup sidebar filters toggler -->
             <VcButton
-              v-if="!hideSidebar"
+              v-if="!hideSidebar && !isBarcodeLookup"
               class="category__facets-button"
               icon="filter"
               size="sm"
@@ -109,8 +110,8 @@
               @click="showFiltersSidebar"
             />
 
-            <!-- Sorting -->
-            <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
+            <!-- Sorting (also stands in for the horizontal filters' own while a barcode lookup hides them) -->
+            <div v-if="!hideSorting && (!isHorizontalFilters || isBarcodeLookup)" class="category__sort">
               <VcLabel class="category__sort-label">
                 {{ $t("pages.catalog.sort_by_label") }}
               </VcLabel>
@@ -137,7 +138,7 @@
 
             <!-- In stock and branches -->
             <CategoryControls
-              v-if="!hideControls && !isMobile && !isHorizontalFilters"
+              v-if="!hideControls && !isBarcodeLookup && !isMobile && !isHorizontalFilters"
               v-model="localStorageInStock"
               v-model:purchased-before="localStoragePurchasedBefore"
               :loading="fetchingProducts"
@@ -151,7 +152,7 @@
 
           <!-- Horizontal filters -->
           <CategoryHorizontalFilters
-            v-if="isHorizontalFilters && !isMobile"
+            v-if="isHorizontalFilters && !isMobile && !isBarcodeLookup"
             :facets-loading="fetchingFacets"
             :sortings="sortings"
             :loading="fetchingProducts || fetchingFacets"
@@ -211,7 +212,7 @@
           :products="products"
           :saved-view-mode="savedViewMode"
           :mode="catalogPaginationMode"
-          :keyword="searchParams.keyword || barcode"
+          :keyword="searchParams.keyword || barcodeQueryParam"
           class="category__products"
           @change-page="changeProductsPage"
           @reset-filter-keyword="handleResetFilterKeyword"
@@ -234,7 +235,7 @@ import { omit } from "lodash-es";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
@@ -256,7 +257,7 @@ import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBaseP
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
-import { shouldOpenSingleBarcodeHit } from "@/shared/layout/composables/useBarcodeSearch";
+import { shouldOpenSingleBarcodeHit, takeUnreportedScan } from "@/shared/layout/composables/useBarcodeSearch";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
@@ -282,6 +283,7 @@ const viewModes = ["grid", "list"] as const;
 const CATEGORY_FACET_PARAM_NAME = "__outline_named";
 
 // Query params that mean the shown result is no longer the plain "what does this code match" answer.
+// `q` is not one: a barcode lookup does not send the keyword (see `searchParams`).
 const NARROWING_QUERY_PARAMS = [QueryParamName.Facets, QueryParamName.Page, QueryParamName.Sort];
 
 // What the empty view's reset clears: both ways a search term reaches this page.
@@ -384,6 +386,8 @@ const {
   sortings,
   totalProductsCount,
   preserveUserQueryQueryParam,
+  barcodeQueryParam,
+  isBarcodeLookup,
 
   applyFilters: _applyFilters,
   applyFiltersOnly,
@@ -440,11 +444,8 @@ const categoryListProperties = computed(() => ({
   related_type: "category",
 }));
 
-// A scanned code arrives in its own query param and is matched by the API against the product index
-// fields configured for the store, so it filters instead of becoming a search keyword.
-const barcode = useRouteQueryParam<string>(QueryParamName.Barcode, { defaultValue: "" });
-
-const isBarcodeLookup = computed(() => !!barcode.value);
+// A lookup ignores `q`, so analytics report the scanned code as its term.
+const searchTerm = computed(() => (isBarcodeLookup.value ? barcodeQueryParam.value : searchQueryParam.value));
 
 const catalogBasePath = useCatalogBasePath();
 const redirectedBarcodes = new Set<string>();
@@ -456,18 +457,24 @@ const emptyViewSearchOnly = computed(() => {
   return filteredOnlyBySearch.value && products.value.length === 0 && !fetchingProducts.value;
 });
 const hideAllControls = computed(() => {
-  return emptyViewSearchOnly.value || isBarcodeLookup.value;
+  return emptyViewSearchOnly.value;
 });
 
 const isSidebarVisible = computed(() => {
-  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !hideAllControls.value;
+  return (
+    !props.hideSidebar &&
+    !isMobile.value &&
+    !isHorizontalFilters.value &&
+    !emptyViewSearchOnly.value &&
+    !isBarcodeLookup.value
+  );
 });
 const showProductsCount = computed(() => {
   return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
 
 const activeControls = computed(() => {
-  // A barcode lookup does not apply them, so no chip may claim one.
+  // A barcode lookup does not apply them, so no chip (nor "Reset filters") may claim one.
   if (isBarcodeLookup.value) {
     return [];
   }
@@ -496,7 +503,7 @@ const activeControls = computed(() => {
   return controls;
 });
 
-// A barcode lookup applies none of them (see `searchParams`), so the products view must not offer a reset.
+// A barcode lookup applies none of them (see `searchParams`), so the empty view must not offer a reset.
 const hasActiveFilters = computed(() => {
   return (
     !isBarcodeLookup.value &&
@@ -555,12 +562,12 @@ const searchParams = computed<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: searchQueryParam.value || props.keyword,
-  // A scanned code is an identity lookup - the shopper is holding the item - so nothing they were
-  // browsing with narrows it: neither the facets in the URL nor the in-stock, purchased-before and
-  // branch preferences may hide the product the code identifies.
+  // A barcode lookup is exact, so the keyword is intentionally not sent: `?q` must neither narrow nor empty it.
+  keyword: isBarcodeLookup.value ? "" : searchQueryParam.value || props.keyword,
+  // A lookup identifies the item the shopper holds, so neither the URL's facets nor the in-stock,
+  // purchased-before and branch preferences may hide it.
   filter: (isBarcodeLookup.value
-    ? [props.filter, getFilterExpressionForBarcode(barcode.value)]
+    ? [props.filter, getFilterExpressionForBarcode(barcodeQueryParam.value)]
     : [
         props.filter,
         facetsQueryParam.value,
@@ -597,19 +604,26 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
    */
   analytics("viewItemList", products.value, categoryListProperties.value);
 
-  if (searchQueryParam.value) {
+  if (searchTerm.value) {
     trackViewSearchResults();
   }
 }
 
 async function fetchProducts(): Promise<void> {
-  const requestedBarcode = barcode.value;
+  const requestedBarcode = barcodeQueryParam.value;
   const wasNarrowed = NARROWING_QUERY_PARAMS.some((paramName) => !!route.query[paramName]);
+  // Taken as the request starts, so a request that fails leaves no report for a later one to send.
+  const reportsScan = takeUnreportedScan(requestedBarcode);
 
-  await _fetchProducts(searchParams.value);
+  const result = await _fetchProducts(searchParams.value);
+
+  // The scan's `search` event, with what it found, as the full-text path sends it from the search bar.
+  if (reportsScan) {
+    analytics("search", requestedBarcode, result.items, result.totalCount);
+  }
 
   // A single hit leaves for the product page, so this list is never seen and must not be reported.
-  if (openSingleBarcodeHit(requestedBarcode, wasNarrowed)) {
+  if (openSingleBarcodeHit(requestedBarcode, wasNarrowed, result)) {
     return;
   }
 
@@ -618,19 +632,23 @@ async function fetchProducts(): Promise<void> {
    */
   analytics("viewItemList", products.value, categoryListProperties.value);
 
-  if (searchQueryParam.value) {
+  if (searchTerm.value) {
     trackViewSearchResults();
   }
 }
 
-function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): boolean {
+function openSingleBarcodeHit(
+  requestedBarcode: string,
+  wasNarrowed: boolean,
+  result: { items: Product[]; totalCount: number },
+): boolean {
   const canOpen = shouldOpenSingleBarcodeHit({
     requestedBarcode,
-    currentBarcode: barcode.value,
+    currentBarcode: barcodeQueryParam.value,
     wasNarrowed,
     redirectedBarcodes,
-    totalCount: totalProductsCount.value,
-    itemCount: products.value.length,
+    totalCount: result.totalCount,
+    itemCount: result.items.length,
   });
 
   if (!canOpen) {
@@ -639,7 +657,7 @@ function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): b
 
   redirectedBarcodes.add(requestedBarcode);
 
-  const [product] = products.value;
+  const [product] = result.items;
 
   void router.replace(getProductRoute(product.id, product.slug, catalogBasePath.value));
 
@@ -647,7 +665,7 @@ function openSingleBarcodeHit(requestedBarcode: string, wasNarrowed: boolean): b
 }
 
 function trackViewSearchResults(): void {
-  analytics("viewSearchResults", searchQueryParam.value, {
+  analytics("viewSearchResults", searchTerm.value, {
     visible_items: products.value.map((product) => ({ code: product.code })),
     results_count: totalProductsCount.value,
     results_page: currentPage.value,
@@ -666,8 +684,13 @@ function resetPage() {
 async function handleResetFilterKeyword() {
   const hadKeyword = !!searchQueryParam.value || isBarcodeLookup.value;
 
-  resetSearchKeyword();
-  barcode.value = "";
+  if (isBarcodeLookup.value) {
+    // One navigation: two param writes in a row both start from the old query, so the second restores `q`.
+    await router.push({ hash: route.hash, query: omit(route.query, SEARCH_QUERY_PARAMS) });
+  } else {
+    resetSearchKeyword();
+  }
+
   await resetFacetAndControlsFilters({ skipPageReset: true });
 
   if (!hadKeyword) {
@@ -778,6 +801,11 @@ watch(
 
 watch(searchQueryParam, (value) => {
   setQueryScope(value);
+  void resetCurrentPage();
+});
+
+// A new scan starts from the first page, as a new keyword does.
+watch(barcodeQueryParam, () => {
   void resetCurrentPage();
 });
 

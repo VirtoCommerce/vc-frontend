@@ -1,6 +1,5 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { useAnalytics } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   CATALOG_BARCODE_SCANNER_ENABLED_KEY,
@@ -26,8 +25,28 @@ function hasBarcodeSearchFields(rawValue: unknown): boolean {
   return !!parseJsonStringArray(rawValue)?.length;
 }
 
+// A scan whose `search` event is owed. The event carries the results, so the results page sends it: the request
+// that starts with this code takes it (see `takeUnreportedScan`), and a scan that does not navigate drops it.
+let unreportedScan: string | undefined;
+
+export function takeUnreportedScan(barcode: string): boolean {
+  if (!barcode || barcode !== unreportedScan) {
+    return false;
+  }
+
+  unreportedScan = undefined;
+
+  return true;
+}
+
+function forgetUnreportedScan(barcode: string): void {
+  if (unreportedScan === barcode) {
+    unreportedScan = undefined;
+  }
+}
+
 /**
- * D4: a scanned code identifies one product, so a single hit opens it instead of a one-item list.
+ * A scanned code identifies one product, so a single hit opens it instead of a one-item list.
  * The decision is taken on the state captured when the request was issued, so a response for a code the
  * URL has moved on from, a result narrowed by facets/paging/sorting, or a second completion for the same
  * code cannot navigate.
@@ -65,7 +84,6 @@ export function useBarcodeSearch(options: {
   hideSearchResults: () => void;
 }) {
   const router = useRouter();
-  const { analytics } = useAnalytics();
   const { getSettingValue } = useModuleSettings(MODULE_ID_CATALOG);
 
   const isScannerEnabled = computed(() => getSettingValue(CATALOG_BARCODE_SCANNER_ENABLED_KEY) !== false);
@@ -76,11 +94,20 @@ export function useBarcodeSearch(options: {
     }
 
     if (hasBarcodeSearchFields(getSettingValue(CATALOG_BARCODE_SEARCH_FIELDS_KEY))) {
-      // Parity with the full-text path's `search` event. By design the code is NOT saved to the search
-      // history (it is not a keyword) and the lookup stays global (no category scope).
-      analytics("search", value);
+      // By design the code is NOT saved to the search history (it is not a keyword) and the lookup stays global
+      // (no category scope).
+      unreportedScan = value;
       options.hideSearchResults();
-      void router.push(getBarcodeSearchRoute(value));
+      // Without a navigation (the code is already on screen, or it failed) no request would take the report,
+      // and a later one for this code (a sort change, Back) must not send it late.
+      void router.push(getBarcodeSearchRoute(value)).then(
+        (failure) => {
+          if (failure) {
+            forgetUnreportedScan(value);
+          }
+        },
+        () => forgetUnreportedScan(value),
+      );
       return;
     }
 

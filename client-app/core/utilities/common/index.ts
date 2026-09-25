@@ -260,3 +260,13 @@ export function parseJsonStringArray(value: unknown): string[] | undefined {
 
   return undefined;
 }
+
+/**
+ * A route query value is a string, `null` or an array of them (`?q=a&q=b`); code expecting one string
+ * takes the first entry, and anything that is not a string reads as "".
+ */
+export function toFirstString(value: unknown): string {
+  const first: unknown = Array.isArray(value) ? value[0] : value;
+
+  return typeof first === "string" ? first : "";
+}
