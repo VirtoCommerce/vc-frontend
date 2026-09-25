@@ -51,8 +51,10 @@ import WhyBuySection from "./why-buy-section.vue";
 html.dark .demo-home > * {
   isolation: isolate;
   backdrop-filter: blur(28px) saturate(135%);
+  // The sheen catches the top and the left edge, as if lit from the upper left.
   box-shadow:
     inset 0 1px 0 var(--glass-sheen),
+    inset 1px 0 0 var(--glass-sheen),
     var(--plate-shadow);
 
   // A translucent plate with nothing to blur reads as mush, so it goes near-opaque.
