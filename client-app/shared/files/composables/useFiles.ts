@@ -20,7 +20,7 @@ import {
   toUploadedFile,
   toUploadingFile,
 } from "@/ui-kit/utilities";
-import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
+import type { FileUploadResultType, IFailedFileUpload, IFileOptions } from "@/shared/files/types";
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import type { MaybeRef, WatchSource } from "vue";
 
@@ -157,11 +157,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   // Helper function to process upload results
   function processUploadResults(results: FileUploadResultType[] | undefined, filesToProcess: IUploadingFile[]) {
-    if (!results) {
-      return;
-    }
-
-    results.forEach((result) => {
+    results?.forEach((result) => {
       const uploadedFile = filesToProcess.find((fileInfo) => fileInfo.name === result.name);
       if (uploadedFile) {
         if (result.succeeded) {
@@ -170,6 +166,21 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
           toFailedFile(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
         }
       }
+    });
+
+    // Results are matched to files by name, and a rejected upload can come back without one —
+    // INVALID_SCOPE, for instance, names the scope rather than the file. Anything the response did
+    // not account for must still be failed here: a file left in "uploading" is never terminal, and
+    // uploadFiles() retries such a file for as long as the page is open.
+    const unnamedError = results?.find((result): result is IFailedFileUpload => !result.succeeded && !result.name);
+
+    filesToProcess.filter(isUploadingFile).forEach((file) => {
+      toFailedFile(
+        file,
+        unnamedError
+          ? getErrorMessage(unnamedError.errorCode, unnamedError.errorParameter, unnamedError.errorMessage)
+          : t("file_error.UPLOAD_FAILED"),
+      );
     });
   }
 

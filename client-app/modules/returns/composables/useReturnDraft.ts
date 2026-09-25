@@ -1,0 +1,273 @@
+import { computed, onScopeDispose, ref, toValue, watch } from "vue";
+import { queuedMutationsController } from "@/core/api/graphql/config/links/queued-mutations/queued-mutations";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { globals } from "@/core/globals";
+import { useSubmitReturnMutation } from "@/modules/returns/api/graphql/mutations/submitReturn";
+import { useUpdateReturnMutation } from "@/modules/returns/api/graphql/mutations/updateReturn";
+import { useGetReturnQuery } from "@/modules/returns/api/graphql/queries/getReturn";
+import { useGetReturnableItemsQuery } from "@/modules/returns/api/graphql/queries/getReturnableItems";
+import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
+import { getReturnErrorDetails, useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
+import { useReturnReasons } from "@/modules/returns/composables/useReturnReasons";
+import { ATTACHMENTS_REQUIRED_KEY, FILE_UPLOAD_SCOPE, MODULE_ID } from "@/modules/returns/constants";
+import type { ReturnDraftLineType } from "@/modules/returns/types";
+import type { MaybeRefOrGetter } from "vue";
+
+export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
+  const { result, loading, refetch } = useGetReturnQuery(computed(() => ({ id: toValue(returnId) })));
+  const { mutate: updateReturn, loading: saving } = useUpdateReturnMutation();
+  const { mutate: submitReturn, loading: submitting } = useSubmitReturnMutation();
+  const { requiresComment } = useReturnReasons();
+  const { report } = useReturnErrors();
+  const { getSettingValue } = useModuleSettings(MODULE_ID);
+
+  // Matches the module's own default: off unless a store turned it on. Requiring a photo before
+  // the platform has a FileUpload scope configured makes submit impossible.
+  const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) === true);
+
+  // keepPreviousResult leaves the previous draft in the result until the next one's response lands.
+  // The router reuses the page between drafts, so without this check the page would show, and
+  // allow editing of, a return whose id is no longer the one being saved to.
+  const orderReturn = computed(() => {
+    const value = result.value?.return;
+
+    return value?.id === toValue(returnId) ? value : undefined;
+  });
+
+  // A draft holds no quantity, so what the server reports as returnable already includes what this
+  // draft asks for - it is the ceiling the buyer may raise a line to.
+  const { result: returnableResult, refetch: refetchReturnable } = useGetReturnableItemsQuery(
+    computed(() => ({ orderId: orderReturn.value?.orderId ?? "" })),
+    computed(() => !!orderReturn.value?.orderId),
+  );
+
+  const maxQuantities = computed(() =>
+    Object.fromEntries(
+      (returnableResult.value?.returnableItems ?? []).map((item) => [item.orderLineItemId, item.returnableQuantity]),
+    ),
+  );
+
+  function maxQuantity(line: ReturnDraftLineType): number {
+    return maxQuantities.value[line.orderLineItemId] ?? line.quantity;
+  }
+
+  // Set when the server refuses a submit for a specific line, so the page can point at it.
+  const unavailableLineId = ref("");
+
+  // Flips synchronously on click, unlike the mutation's own loading flag, which only turns true
+  // after the pre-submit save has settled.
+  const submitInProgress = ref(false);
+
+  const { canEdit, canSubmit: submitAllowed } = useReturnActions(orderReturn);
+
+  const customerReference = ref("");
+  const customerComment = ref("");
+  const lines = ref<ReturnDraftLineType[]>([]);
+
+  // Seeded once per return, not kept in sync: the buyer is typing into these and an autosave
+  // response must not overwrite a field mid-keystroke. The router reuses this component between
+  // two drafts, so the seed has to reopen when the id changes or the previous draft stays on screen.
+  let seededReturnId = "";
+
+  // Cleared as soon as the id moves on, not when the next draft arrives: until then the form would
+  // hold the previous draft's lines under the new id, and any autosave would write them there.
+  watch(
+    () => toValue(returnId),
+    () => {
+      seededReturnId = "";
+      customerReference.value = "";
+      customerComment.value = "";
+      lines.value = [];
+    },
+    { flush: "sync" },
+  );
+
+  watch(
+    orderReturn,
+    (value) => {
+      if (!value || value.id === seededReturnId) {
+        return;
+      }
+
+      seededReturnId = value.id;
+      customerReference.value = value.customerReference ?? "";
+      customerComment.value = value.customerComment ?? "";
+      lines.value = (value.items ?? []).map((item) => ({
+        orderLineItemId: item.orderLineItemId ?? "",
+        name: item.name ?? undefined,
+        sku: item.sku ?? undefined,
+        measureUnit: item.measureUnit ?? undefined,
+        quantity: item.quantity,
+        reasonCode: item.reasonCode ?? "",
+        reasonComment: item.reasonComment ?? "",
+        serialNumber: item.serialNumber ?? "",
+        attachments: (item.attachments ?? []).map((attachment) => ({
+          name: attachment.name,
+          url: attachment.url,
+          size: attachment.size,
+          mimeType: attachment.mimeType ?? undefined,
+        })),
+        attachmentUrls: (item.attachments ?? []).map((attachment) => attachment.url),
+      }));
+    },
+    // A cached result is already there when this runs, and without immediate the seed would wait for
+    // a change that may never come - leaving an empty form that the next autosave would persist.
+    { immediate: true },
+  );
+
+  // The quantity field commits 0 while a buyer clears it to retype, and that 0 autosaves; without
+  // this the draft reads as ready and the server refuses it at submit.
+  const missingQuantity = computed(() => lines.value.filter((line) => line.quantity < 1));
+
+  const missingReason = computed(() => lines.value.filter((line) => !line.reasonCode));
+
+  const missingComment = computed(() =>
+    lines.value.filter((line) => requiresComment(line.reasonCode) && !line.reasonComment.trim()),
+  );
+
+  const missingAttachment = computed(() =>
+    lines.value.filter((line) => attachmentsRequired.value && line.attachmentUrls.length === 0),
+  );
+
+  // Counted per cause, not just in total: a hint that always names the reason sends the buyer to a
+  // field they have already filled when what is actually missing is a comment or a photo.
+  const incompleteCounts = computed(() => ({
+    quantity: missingQuantity.value.length,
+    reason: missingReason.value.length,
+    comment: missingComment.value.length,
+    attachment: missingAttachment.value.length,
+  }));
+
+  const incompleteLines = computed(() => [
+    ...new Set([...missingQuantity.value, ...missingReason.value, ...missingComment.value, ...missingAttachment.value]),
+  ]);
+
+  const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);
+
+  async function save(fromSubmit = false): Promise<boolean> {
+    // The form must belong to the id it is saved under, or one draft's lines overwrite another's.
+    if (!canEdit.value || seededReturnId !== toValue(returnId)) {
+      return false;
+    }
+
+    try {
+      await updateReturn({
+        command: {
+          returnId: toValue(returnId),
+          customerReference: customerReference.value,
+          customerComment: customerComment.value,
+          items: lines.value.map((line) => ({
+            orderLineItemId: line.orderLineItemId,
+            quantity: line.quantity,
+            reasonCode: line.reasonCode || undefined,
+            reasonComment: line.reasonComment || undefined,
+            serialNumber: line.serialNumber || undefined,
+            attachmentUrls: line.attachmentUrls,
+          })),
+        },
+      });
+
+      return true;
+    } catch (error) {
+      // Autosave runs unattended on every keystroke, so a rejection must not go unhandled. But the
+      // queue merges a pending autosave with the submit's own save into one request and rejects
+      // both promises from it, and one failure deserves one message.
+      if (fromSubmit || !submitInProgress.value) {
+        report(error);
+      }
+
+      return false;
+    }
+  }
+
+  // UpdateReturn is a queued-mutations target, so the link debounces it, merges what piled up and
+  // never runs two in parallel for one return. A hand-rolled timer did none of that: the last
+  // response won rather than the last edit, and leaving the page dropped whatever was pending.
+  function autosave(): void {
+    void save();
+  }
+
+  function flushAutosave(): void {
+    queuedMutationsController.flushNow("UpdateReturn", toValue(returnId));
+  }
+
+  onScopeDispose(flushAutosave);
+
+  function applyReasonToAll(reasonCode: string): void {
+    lines.value.forEach((line) => {
+      line.reasonCode = reasonCode;
+    });
+
+    void autosave();
+  }
+
+  async function submit(): Promise<boolean> {
+    if (submitInProgress.value) {
+      return false;
+    }
+
+    submitInProgress.value = true;
+
+    try {
+      return await submitInternal();
+    } finally {
+      submitInProgress.value = false;
+    }
+  }
+
+  async function submitInternal(): Promise<boolean> {
+    // Enqueue what is on screen and drain the queue at once. Awaiting the debounce instead would
+    // leave Submit clickable for another second, and an edit still queued would otherwise land
+    // against a return that is no longer a draft.
+    const saved = save(true);
+    flushAutosave();
+
+    if (!(await saved)) {
+      return false;
+    }
+
+    try {
+      unavailableLineId.value = "";
+
+      const submitted = await submitReturn({
+        command: { returnId: toValue(returnId) },
+        cultureName: globals.cultureName,
+      });
+
+      return submitted?.data?.submitReturn?.status === "Requested";
+    } catch (error) {
+      unavailableLineId.value = getReturnErrorDetails(error).orderLineItemId ?? "";
+      // The ceiling the buyer sees was read before a colleague spent it, so it has to be re-read
+      // before they can pick a number the server will accept.
+      await refetchReturnable();
+      report(error);
+
+      return false;
+    }
+  }
+
+  return {
+    loading,
+    saving,
+    submitting: computed(() => submitting.value || submitInProgress.value),
+    orderReturn,
+    canEdit,
+    customerReference,
+    customerComment,
+    lines,
+    incompleteLines,
+    incompleteCounts,
+    canSubmit,
+    maxQuantity,
+    unavailableLineId,
+    attachmentsRequired,
+    fileUploadScope: FILE_UPLOAD_SCOPE,
+    requiresComment,
+    autosave,
+    flushAutosave,
+    save,
+    applyReasonToAll,
+    submit,
+    refetch,
+  };
+}

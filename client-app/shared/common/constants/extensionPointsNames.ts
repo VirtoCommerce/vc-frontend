@@ -33,6 +33,9 @@ const CUSTOM_EXTENSION_NAMES = {
   orderPaymentPage: {
     paymentMethods: "payment-methods",
   },
+  orderDetails: {
+    actions: "actions",
+  },
   sharedList: {
     provenanceNote: "provenance-note",
   },

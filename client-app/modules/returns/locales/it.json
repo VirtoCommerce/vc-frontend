@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Resi",
+      "table_description": "elenco dei resi"
+    },
+    "title": "Resi",
+    "no_returns_message": "Non ci sono ancora resi",
+    "no_results_message": "Nessun reso corrisponde alla ricerca",
+    "search_placeholder": "Cerca per RMA, ordine, riferimento o prodotto",
+    "search_aria": "Cerca resi",
+    "filters": {
+      "title": "Filtri",
+      "created_date": "Data di creazione",
+      "start_date": "Data di inizio",
+      "end_date": "Data di fine",
+      "invalid_range": "Intervallo di date non valido.",
+      "custom_date": "Data personalizzata",
+      "last_day": "Ultimo giorno",
+      "last_week": "Ultima settimana",
+      "last_month": "Ultimo mese",
+      "last_year": "Ultimo anno",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Bozza",
+      "Requested": "Richiesto",
+      "PartiallyApproved": "Approvato parzialmente",
+      "Approved": "Approvato",
+      "Rejected": "Rifiutato",
+      "Cancelled": "Annullato",
+      "Canceled": "Annullato",
+      "New": "Nuovo",
+      "Processing": "In elaborazione",
+      "Completed": "Completato"
+    },
+    "request_button": "Richiedi un reso",
+    "menu": {
+      "link": {
+        "title": "Resi"
+      }
+    },
+    "select_items": {
+      "title": "Seleziona gli articoli da restituire",
+      "meta_title": "Seleziona gli articoli da restituire",
+      "table_description": "righe d'ordine disponibili per il reso",
+      "select_all": "Seleziona tutte le righe idonee",
+      "eligible_count": "{eligible} righe idonee su {total}",
+      "nothing_returnable": "Nulla di questo ordine può essere restituito",
+      "window_hint": "Gli articoli possono essere resi entro {days} giorni dalla consegna",
+      "selected_summary": "{lines} selezionate · {quantity} articoli",
+      "columns": {
+        "item": "Articolo",
+        "ordered": "Ordinato",
+        "returnable": "Restituibile",
+        "quantity": "Quantità"
+      },
+      "quantity_for": "Quantità da restituire per {name}",
+      "continue": "Continua"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "I resi sono disattivati per questo negozio",
+      "ORDER_STATUS_NOT_ALLOWED": "I resi non sono consentiti dallo stato di questo ordine",
+      "LINE_CANCELLED": "Questa riga è stata annullata",
+      "NOT_DELIVERED": "Non ancora consegnato",
+      "OUTSIDE_RETURN_WINDOW": "Fuori dal periodo di reso",
+      "NOTHING_LEFT_TO_RETURN": "Già richiesto per intero",
+      "UNHANDLED": "Questo articolo non può essere reso"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Questo reso non è più in una fase in cui ciò sia possibile",
+      "UNHANDLED": "Questa azione non è al momento disponibile"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "Non è stato possibile allegare uno dei file. Rimuovilo e caricalo di nuovo.",
+      "INVALID_REQUEST": "Alcuni dati non sono accettati. Controlla motivi e commenti e riprova.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Data",
+        "status": "Stato",
+        "quantity": "Qtà"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Reso {0}",
+    "not_found_message": "Questo reso non è stato trovato",
+    "summary_section": "Riepilogo",
+    "items_section": "Articoli",
+    "order_number": "Numero d'ordine",
+    "customer_reference": "Il tuo riferimento d'ordine",
+    "customer_comment": "Commento",
+    "cancel_reason": "Motivo dell'annullamento",
+    "cancel_button": "Annulla reso",
+    "columns": {
+      "requested": "Richiesto",
+      "approved": "Approvato"
+    },
+    "table_description": "articoli resi"
+  },
+  "return_cancel": {
+    "title": "Annulla reso",
+    "text": "Il reso {0} verrà ritirato e i suoi articoli torneranno disponibili per il reso.",
+    "reason_label": "Motivo (facoltativo)",
+    "keep_button": "Mantieni il reso",
+    "confirm_button": "Annulla reso"
+  },
+  "return_edit": {
+    "title": "Aggiungi i dettagli del reso",
+    "title_with_number": "Aggiungi i dettagli del reso {number}",
+    "not_editable_message": "Questo reso non può più essere modificato",
+    "not_editable_message_with_status": "Questo reso non può più essere modificato: il suo stato è {status}",
+    "details_section": "Dettagli",
+    "bulk_section": "Applica a tutte le righe",
+    "apply_to_all": "Applica un motivo a tutte le {count} righe",
+    "apply": "Applica",
+    "reason": "Motivo",
+    "serial_number": "Numero di serie",
+    "reason_comment": "Qual è il problema?",
+    "saving": "Salvataggio…",
+    "saved_automatically": "Salvato automaticamente",
+    "submit": "Invia il reso",
+    "files": "Foto o documenti",
+    "files_required": "Foto o documenti (obbligatorio)",
+    "incomplete": {
+      "quantity": "{count} riga/righe richiedono ancora una quantità",
+      "reason": "{count} riga/righe senza motivo",
+      "comment": "{count} riga/righe richiedono ancora un commento",
+      "attachment": "{count} riga/righe richiedono ancora una foto"
+    },
+    "uploads_pending": "In attesa del completamento del caricamento dei file",
+    "uploads_failed": "Alcuni file non sono stati caricati. Rimuovili o riprova prima di inviare.",
+    "quantity_for": "Quantità da rendere per {name}",
+    "available": "su {quantity} disponibili"
+  }
+}
