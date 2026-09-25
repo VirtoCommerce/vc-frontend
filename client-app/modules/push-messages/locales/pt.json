@@ -1,6 +1,7 @@
 {
   "push_messages": {
     "title": "Notificações",
+    "header_title": "Alertas",
     "menu_item_name": "Notificações",
     "empty_list": "Você não tem novas notificações no momento",
     "options": {

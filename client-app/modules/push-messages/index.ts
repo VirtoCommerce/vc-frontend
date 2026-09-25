@@ -38,7 +38,8 @@ const menuItems: DeepPartial<MenuType> = {
       main: [
         {
           id: "push-messages",
-          title: "push_messages.menu_item_name",
+          // The header link alone is renamed; the menus and the page keep theirs.
+          title: "push_messages.header_title",
           icon: "notification-v2",
           priority: 40,
         },
