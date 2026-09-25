@@ -150,6 +150,15 @@ html.dark {
   }
 }
 
+// The design's wide rung: the column goes 1550 -> 1900 and nothing else moves — the gutter
+// stays 32, so the container needs 1964 of window before the column reaches 1900. The header
+// and footer shells read the same var and travel with it.
+@media (width >= theme("screens.4xl")) {
+  :root {
+    --vc-container-max-width: 118.75rem;
+  }
+}
+
 // The phone rung: gutter and step halve (24 -> 12, 26 -> 13) and the plate's inside squares off
 // at 24. The design draws this below 600; sm is the nearest rung here, the same snap the block
 // above makes from its 900 to lg. The container's inset travels with the gutter.
