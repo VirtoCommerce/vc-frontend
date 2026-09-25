@@ -227,7 +227,7 @@ const tiles = computed(() =>
   }
 
   &__name {
-    @apply font-geologica text-2xl font-bold leading-[1.1667] tracking-[-0.015em];
+    @apply font-geologica text-2xl font-semibold leading-[1.1667] tracking-[-0.015em];
   }
 
   &__tile--xl &__name {
