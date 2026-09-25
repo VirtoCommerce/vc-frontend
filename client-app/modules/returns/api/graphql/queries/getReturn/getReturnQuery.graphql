@@ -12,7 +12,6 @@ query GetReturn($id: String!, $cultureName: String) {
     rejectReason
     cancelReason
     itemsQuantity
-    approvedQuantity
     availableActions {
       name
       isAvailable
