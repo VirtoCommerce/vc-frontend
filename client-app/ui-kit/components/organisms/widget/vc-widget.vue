@@ -316,6 +316,20 @@ watchEffect(() => {
     letter-spacing: -0.02em;
   }
 
+  &__slot-container {
+    // The plate's curve is a border-radius on a box whose children paint over it, so a body that runs
+    // edge to edge — a table handed in through `default-container` — squares the corner off the moment
+    // a row takes a fill. Only the box that ENDS the plate rounds and clips; with a footer below it,
+    // that box is the footer and this one stays square. Clip rather than round alone: the fill is on a
+    // `td` several levels down, which a radius here would not reach. Every panel the kit floats
+    // (popover, select, dropdown, tooltip, date picker) teleports to the body, so none of them is
+    // clipped by this.
+    &:last-child {
+      border-radius: 0 0 var(--radius) var(--radius);
+      overflow: clip;
+    }
+  }
+
   &__slot {
     @apply pt-[--p-t] pb-[--p-b] px-[--p-x] empty:hidden;
   }
