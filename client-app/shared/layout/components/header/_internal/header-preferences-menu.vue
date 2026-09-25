@@ -5,7 +5,7 @@
     :offset-options="10"
     role="dialog"
     :aria-label="$t('shared.layout.header.preferences_menu.aria_label')"
-    bg-color="--header-bottom-bg-color"
+    bg-color="--color-additional-50"
     shadow
   >
     <template #trigger="{ opened, triggerProps }">
@@ -145,9 +145,16 @@ const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(
   // theme keys the plate uses rather than inheriting anything.
   --ink: var(--header-bottom-text-color);
 
-  // The panel's own surface, so a selected row can invert straight onto it.
-  --surface: var(--header-bottom-bg-color);
+  // The panel's own surface, so a selected row can invert straight onto it. additional-50, as the
+  // account menu beside it: in dark the header colour is the canvas, a step below that panel.
+  --surface: var(--color-additional-50);
   --line: color-mix(in srgb, var(--ink) 12%, transparent);
+
+  // Same as the account menu: the kit's shadow-lg is drawn in additional-950, the light end in
+  // this dark preset, so it glowed. The design's user-menu shadow, in black.
+  html.dark & {
+    --vc-popover-shadow: 0 18px 48px rgb(0 0 0 / 0.5);
+  }
 
   &__pill {
     @apply flex flex-none cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full;
@@ -183,7 +190,8 @@ const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(
   }
 
   &__panel {
-    @apply grid gap-4 p-4;
+    // The account menu's outline, so the two header panels share one edge.
+    @apply grid gap-4 rounded-[--vc-radius] border border-neutral-200 p-4;
 
     // The design pins the panel at 620 rather than letting the two lists size it, and that is
     // not a detail: a panel whose width follows its content keeps growing for a few frames after

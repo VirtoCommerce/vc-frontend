@@ -67,6 +67,12 @@ async function onBackToOperator(close: () => void): Promise<void> {
 
 <style lang="scss">
 .header-account-menu {
+  // The kit's shadow-lg is drawn in additional-950, which this dark preset keeps at the light end
+  // (it is the ink of the dark layer), so the panel glowed. The design's user-menu shadow, in black.
+  html.dark & {
+    --vc-popover-shadow: 0 18px 48px rgb(0 0 0 / 0.5);
+  }
+
   &__trigger {
     // 34, not 42: the pod is the quietest control in the row and at 42 it read as the loudest.
     // Its type is the header's smallest step, the same 12.5 the locale pill takes, so the two

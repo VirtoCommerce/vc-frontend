@@ -300,7 +300,7 @@ watchEffect(() => {
   }
 
   &__img {
-    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center;
+    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center bg-[--vc-product-image-bg];
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;

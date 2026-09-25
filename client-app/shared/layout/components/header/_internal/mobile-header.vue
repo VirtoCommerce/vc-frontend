@@ -146,7 +146,7 @@ syncRefs(isScrollLocked, scrollLock);
 .mobile-header {
   $stuck: "";
 
-  --glass: var(--header-bottom-bg-color);
+  --glass: var(--header-plate-glass, var(--header-bottom-bg-color));
 
   @apply sticky z-40;
 

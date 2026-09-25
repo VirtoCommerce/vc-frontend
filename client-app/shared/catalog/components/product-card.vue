@@ -376,12 +376,23 @@ const variationsCount = computed(() =>
       0 4px 16px rgb(from theme("colors.secondary.500") r g b / 0.28);
   }
 
-  // Dark has no warm shadow to spend: the lift is the theme's darkest step, off the neutral ramp the
-  // preset inverts (its additional pair flips to the light end).
-  html.dark &:hover {
-    box-shadow:
-      0 2px 6px rgb(from theme("colors.neutral.50") r g b / 0.45),
-      0 10px 28px rgb(from theme("colors.neutral.50") r g b / 0.5);
+  // Dark: the card is a tinted inset on the glass plate — a warm 1px line and a soft top sheen —
+  // and lifts on plain black. neutral-50 is the canvas itself, so a shadow drawn in it vanished.
+  html.dark & {
+    border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
+    box-shadow: inset 0 1px 0 rgb(from theme("colors.neutral.950") r g b / 0.07);
+
+    &:hover {
+      box-shadow:
+        inset 0 1px 0 rgb(from theme("colors.neutral.950") r g b / 0.07),
+        0 2px 6px rgb(0 0 0 / 0.45),
+        0 10px 28px rgb(0 0 0 / 0.5);
+    }
+  }
+
+  // On the tint neutral-500 drops to 4.3:1, under AA: the brand steps up one ink rung.
+  html.dark & :deep(.vc-product-vendor) {
+    @apply text-neutral-600;
   }
 
   // The brand reads as an eyebrow over the title: it is what the eye lands on first when scanning a
@@ -472,12 +483,6 @@ const variationsCount = computed(() =>
 
   // In dark the neutral 100 step is the card itself, and a flat chip would vanish into it: it lifts
   // off with a wash of the ink instead.
-  // Packshots are shot on white; in dark the photo and its plate are knocked back together, so a
-  // grid of tiles stops glaring without a seam opening between the two.
-  html.dark & :deep(.vc-product-image) {
-    filter: brightness(0.94);
-  }
-
   html.dark &__spec {
     background: rgb(from theme("colors.neutral.950") r g b / 0.06);
     border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
@@ -660,13 +665,13 @@ const variationsCount = computed(() =>
     // an edge at all.
     html.dark & {
       box-shadow:
-        0 2px 6px rgb(from theme("colors.neutral.50") r g b / 0.45),
-        0 8px 22px rgb(from theme("colors.neutral.50") r g b / 0.4);
+        0 2px 6px rgb(0 0 0 / 0.45),
+        0 8px 22px rgb(0 0 0 / 0.4);
 
       &:hover {
         box-shadow:
-          0 4px 10px rgb(from theme("colors.neutral.50") r g b / 0.5),
-          0 12px 30px rgb(from theme("colors.neutral.50") r g b / 0.5);
+          0 4px 10px rgb(0 0 0 / 0.5),
+          0 12px 30px rgb(0 0 0 / 0.5);
       }
     }
 

@@ -45,12 +45,12 @@ const { t } = useI18n();
 
   // The ink plate stays dark in both themes, but the ramps flip in dark: neutral-950 turns light
   // and additional-50 turns dark. So the plate takes the dark end back, and its white ink is
-  // re-pointed here, which every additional-50 utility below reads. The design's neutral-50 is
-  // the page background itself, so the plate sits one step up, where dark cards sit.
+  // re-pointed here, which every additional-50 utility below reads. In dark the plate is the
+  // same glass as the sections around it.
   html.dark & {
     --color-additional-50: var(--color-neutral-950);
 
-    @apply bg-neutral-100;
+    background: var(--plate-bg);
   }
 
   &__head {

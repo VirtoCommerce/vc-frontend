@@ -102,6 +102,10 @@
   // one every other preset's dark band needs. The dark variant below takes it back.
   --footer-logo-light-display: block;
   --footer-logo-inverted-display: none;
+
+  // Packshots are shot on white, so every product photo slot sits on white in both themes.
+  // Unset in other presets, where the slots stay transparent.
+  --vc-product-image-bg: #ffffff;
 }
 
 // _dark.scss loads before this file, so these win for the paprika dark variant.
@@ -109,37 +113,60 @@ html.dark {
   --footer-logo-light-display: none;
   --footer-logo-inverted-display: block;
 
+  // Every solid fill lightens on hover by one rule: the kit's darkening made warning, danger,
+  // success, info and secondary sink on hover, while primary rose.
+  --vc-button-solid-hover-mix: white 24%;
+
   // Dark has no shadow to spend: one dark surface is told from the next by a hairline, so
   // the widget takes its border back and gives up the shadow.
   --vc-widget-border-color: theme("colors.neutral.200");
   --vc-widget-shadow: none;
+
+  // The rules between a widget's head, body and footer step up a rung: 200 on the plate vanishes.
+  // The account rail made this swap first; every widget takes it now.
+  --vc-widget-divide-color: theme("colors.neutral.300");
 
   // The hover goes back up a rung here. Dark's 100 IS the plate — `additional-50` resolves to the
   // same #29201b — so the light rule's value would paint the row in the surface it stands on and
   // there would be no hover at all. 200 is the first step that leaves the plate.
   --vc-table-row-hover-bg-color: theme("colors.neutral.200");
 
-  // Dark keeps the same shapes and changes the paint: the shadow deepens and gains the
-  // half-pixel hairline that is the only thing separating one dark surface from another,
-  // and the sheen flips from white to the warm top step.
+  // Dark keeps the same shapes and changes the paint: the shadow deepens, and a warm 1px rim
+  // is what actually separates one dark surface from the next.
   //
-  // Both ends come off the NEUTRAL ramp, because that is the one this preset inverts: in
-  // light its dark end is 950, in dark it is 50, and either way the shadow is the darkest
-  // step the theme has. The additional pair cannot carry this — the repo's dark presets
-  // flip additional-950 to the light end (it is the ink for a lifted solid fill), so a
-  // shadow written against it turns into a white halo the moment the preset is corrected.
+  // The shadow is plain black, not a neutral step: neutral-50 IS the canvas (#1e1814), so a
+  // shadow drawn in it vanished into the page and took the plate's edge with it. Black is
+  // also safe from the additional-950 flip that turns a shadow into a white halo.
+  --plate-rim: 0 0 0 1px rgb(from theme("colors.neutral.950") r g b / 0.09);
   --plate-shadow:
-    0 16px 48px -8px rgb(from theme("colors.neutral.50") r g b / 0.55),
-    0 0 0 0.5px rgb(from theme("colors.neutral.50") r g b / 0.5);
+    var(--plate-rim),
+    0 16px 48px -8px rgb(0 0 0 / 0.55),
+    0 0 0 0.5px rgb(0 0 0 / 0.5);
   --plate-shadow-lift:
-    0 24px 64px -10px rgb(from theme("colors.neutral.50") r g b / 0.66),
-    0 0 0 0.5px rgb(from theme("colors.neutral.50") r g b / 0.5);
+    var(--plate-rim),
+    0 24px 64px -10px rgb(0 0 0 / 0.66),
+    0 0 0 0.5px rgb(0 0 0 / 0.5);
+  // The header's colour is the canvas's in this preset, so its glass takes the surface step.
+  --header-plate-glass: theme("colors.neutral.100");
+
+  // A page plate is glass: the surface step at 72%, over a blur. The light recipe mixes in
+  // warning-50, which in dark is mustard.
+  --plate-bg: rgb(from theme("colors.additional.50") r g b / 0.72);
+
+  // The preset's footer bands are near-black (#150f0c / #0a0705): holes beside every other plate.
+  // Both footer plates, and the catalog's facet cards that borrow the top one, take the page plate.
+  --footer-top-bg-color: var(--plate-bg);
+  --footer-bottom-bg-color: var(--plate-bg);
+
+  // A card on a plate has no blur of its own, only a warm tint: the design's
+  // rgba(55,45,38,.55) under a 4.5% wash of rgba(255,243,236), flattened into one colour.
+  --vc-product-card-bg-color: rgb(71 61 54 / 0.57);
   // The dark sheen is a LIGHT warm tint, so it comes off the other end of the same scale.
   --glass-sheen: rgb(from theme("colors.neutral.950") r g b / 0.12);
   // Same flip for the row fill, and the same ratio to the sheen the light pair has.
   --glass-row: rgb(from theme("colors.neutral.950") r g b / 0.06);
-  --glass-under: rgb(from theme("colors.neutral.50") r g b / 0.35);
-  --glass-shadow: 0 10px 34px rgb(from theme("colors.neutral.50") r g b / 0.38);
+  --glass-under: rgb(0 0 0 / 0.35);
+  --glass-shadow: var(--plate-shadow);
 }
 
 // The design steps the plate down a rung below its 900px breakpoint — radius 28 -> 22 and

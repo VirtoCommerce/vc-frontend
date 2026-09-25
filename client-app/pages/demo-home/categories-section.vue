@@ -270,6 +270,18 @@ const tiles = computed(() =>
     @apply text-neutral-950;
 
     background: linear-gradient(121deg, theme("colors.warning.100"), theme("colors.secondary.50"));
+
+    // The dark warning steps are mustard: the design paints this tile chocolate instead, with its
+    // eyebrow lifted to hold 4.5:1 on the light end.
+    html.dark & {
+      --tile-glow: from #563520 r g b;
+
+      background: linear-gradient(121deg, #563520, #2f241e);
+    }
+  }
+
+  html.dark &__tile--sand &__tile-eyebrow {
+    color: #f0a283;
   }
 
   &__tile--sand &__name {
@@ -282,6 +294,11 @@ const tiles = computed(() =>
     @apply text-neutral-950;
 
     background: linear-gradient(118deg, theme("colors.neutral.200"), theme("colors.warning.50"));
+
+    // Same mustard in dark warning-50: the design ends the gradient on a warm brown.
+    html.dark & {
+      background: linear-gradient(118deg, theme("colors.neutral.200"), #3f2719);
+    }
   }
 
   &__tile--sand2 &__name {

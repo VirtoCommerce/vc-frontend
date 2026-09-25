@@ -574,7 +574,7 @@ watch(
   }
 
   &__product-image-wrap {
-    @apply relative h-44 overflow-hidden rounded-[--vc-radius] border border-neutral-300;
+    @apply relative h-44 overflow-hidden rounded-[--vc-radius] border border-neutral-300 bg-[--vc-product-image-bg];
 
     @media (width < theme("screens.md")) {
       @apply h-24;

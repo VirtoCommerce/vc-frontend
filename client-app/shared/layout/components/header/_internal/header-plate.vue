@@ -165,7 +165,8 @@ defineExpose({ pinnedHeight });
 .header-plate {
   $stuck: "";
 
-  --glass: var(--header-bottom-bg-color);
+  // A preset whose header colour equals its canvas hands the glass its own fill.
+  --glass: var(--header-plate-glass, var(--header-bottom-bg-color));
 
   // One handle for both rows of the plate: the logo row lives here, the category row in
   // mega-menu.vue, and two separate numbers would part company on the first edit.

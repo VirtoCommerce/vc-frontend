@@ -24,7 +24,8 @@
   // it is carried by the fill and the pair of rings.
   &--seg &__pill {
     background: var(--vc-tab-switch-group-pill-color, color-mix(in srgb, var(--color-secondary-400) 72%, transparent));
-    box-shadow: var(--vc-tab-switch-group-pill-shadow, theme("boxShadow.md")),
+    // Not boxShadow.md: it is drawn in additional-950, the light end here, and glowed.
+    box-shadow: var(--vc-tab-switch-group-pill-shadow, var(--vc-tab-switch-checked-shadow)),
       inset 0 0 0 1px color-mix(in srgb, var(--color-secondary-700) 20%, transparent),
       inset 0 1px 0 color-mix(in srgb, var(--color-secondary-800) 26%, transparent);
   }

@@ -133,7 +133,7 @@ function slideChanged(swiper: SwiperInstance) {
 
   // Clipped to its own corners: the tile is rounded, and anything it holds — a packshot that fills
   // rather than contains, a carousel mid-slide — otherwise squares them off again.
-  @apply relative z-0 max-w-full aspect-square overflow-hidden border border-neutral-200 rounded-[--radius];
+  @apply relative z-0 max-w-full aspect-square overflow-hidden border border-neutral-200 rounded-[--radius] bg-[--vc-product-image-bg];
 
   &__carousel {
     @apply h-full w-full;

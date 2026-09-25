@@ -475,7 +475,7 @@ watch(opened, (value: boolean) => {
     @apply w-3 h-3 rotate-45 bg-[--arrow-color];
 
     #{$shadow} & {
-      @apply shadow-md;
+      box-shadow: var(--vc-popover-arrow-shadow, theme("boxShadow.md"));
     }
   }
 
@@ -502,7 +502,7 @@ watch(opened, (value: boolean) => {
     }
 
     #{$shadow} & {
-      @apply shadow-lg;
+      box-shadow: var(--vc-popover-shadow, theme("boxShadow.lg"));
     }
 
     // The distance is what the motion is for; without it the panel just fades.

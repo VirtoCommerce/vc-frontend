@@ -227,7 +227,10 @@ watch(
   &__group {
     // Each section is its own outlined tile, as the design draws it, instead of the lists running
     // together down one surface with only their titles to separate them.
-    @apply rounded-[--vc-radius] border border-neutral-200 p-1 pb-1.5;
+    @apply rounded-[--vc-radius] border p-1 pb-1.5;
+
+    // The preferences panel's line, so the two header panels draw their tiles alike.
+    border-color: color-mix(in srgb, var(--header-bottom-text-color) 12%, transparent);
 
     // A nav hover is a neutral tint, so the secondary fill is left to say "you are here" and
     // nothing else — the same pairing the account sidebar uses. BOTH halves are declared here, on

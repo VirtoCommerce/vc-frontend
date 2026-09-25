@@ -45,6 +45,24 @@ import WhyBuySection from "./why-buy-section.vue";
   padding-inline: var(--gutter);
 }
 
+// Dark: every section is a glass plate — the one blurred level of the page. Each section keeps
+// its own fill (--plate-bg, or a brand/ink paint); the blur, sheen and edge are shared here.
+// isolation stops a neighbour's backdrop-filter dragging this plate into its blur in Safari.
+html.dark .demo-home > * {
+  isolation: isolate;
+  backdrop-filter: blur(28px) saturate(135%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-sheen),
+    var(--plate-shadow);
+
+  // A translucent plate with nothing to blur reads as mush, so it goes near-opaque.
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    // neutral-100, not additional-50: it resolves on the section itself, and the suppliers plate
+    // re-points additional-50 to its light ink.
+    --plate-bg: rgb(from theme("colors.neutral.100") r g b / 0.95);
+  }
+}
+
 @media (width >= theme("screens.lg")) {
   .demo-home {
     @apply py-6;

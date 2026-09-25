@@ -110,6 +110,13 @@ const cartRoute = ROUTES.CART.PATH;
     --notch-bg: var(--plate-bg);
     --fillet: 18px;
 
+    // The dark plate is translucent glass and the photo would show through the notch, so the notch
+    // takes the colour the plate actually reads as: its 72% of neutral-100 over the flat
+    // neutral-50 canvas.
+    html.dark & {
+      --notch-bg: color-mix(in srgb, theme("colors.neutral.100") 72%, theme("colors.neutral.50"));
+    }
+
     --fillet-shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0H100V100A100 100 0 0 0 0 0Z'/%3E%3C/svg%3E");
 
     @apply absolute z-[2] flex flex-col gap-2.5 p-4;
