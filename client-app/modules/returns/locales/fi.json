@@ -104,6 +104,7 @@
     "customer_reference": "Oma tilausviitteesi",
     "customer_comment": "Kommentti",
     "cancel_reason": "Peruutuksen syy",
+    "reject_reason": "Hylkäyksen syy",
     "cancel_button": "Peruuta palautus",
     "columns": {
       "requested": "Pyydetty",
@@ -122,7 +123,7 @@
     "title": "Lisää palautuksen tiedot",
     "title_with_number": "Lisää palautuksen {number} tiedot",
     "not_editable_message": "Tätä palautusta ei voi enää muuttaa",
-    "not_editable_message_with_status": "Tätä palautusta ei voi enää muuttaa — sen tila on {status}",
+    "not_editable_message_with_status": "Tätä palautusta ei voi enää muuttaa – sen tila on {status}",
     "details_section": "Tiedot",
     "bulk_section": "Käytä kaikkiin riveihin",
     "apply_to_all": "Käytä yhtä syytä kaikkiin {count} riviin",

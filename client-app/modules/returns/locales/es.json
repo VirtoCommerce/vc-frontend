@@ -104,6 +104,7 @@
     "customer_reference": "Su referencia de pedido",
     "customer_comment": "Comentario",
     "cancel_reason": "Motivo de cancelación",
+    "reject_reason": "Motivo del rechazo",
     "cancel_button": "Cancelar devolución",
     "columns": {
       "requested": "Solicitado",

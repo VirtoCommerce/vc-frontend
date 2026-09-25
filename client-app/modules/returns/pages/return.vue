@@ -4,7 +4,7 @@
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
-    <VcTypography tag="h1">{{ $t("return_details.title", [orderReturn?.number ?? ""]) }}</VcTypography>
+    <VcTypography tag="h1">{{ pageTitle }}</VcTypography>
 
     <VcEmptyView v-if="!loading && !orderReturn" :text="$t('return_details.not_found_message')" icon="outline-order" />
 
@@ -46,6 +46,12 @@
           <span class="text-sm text-neutral-400">{{ $t("return_details.cancel_reason") }}</span>
 
           <span>{{ orderReturn.cancelReason }}</span>
+        </div>
+
+        <div v-if="orderReturn.rejectReason" class="mt-5 flex flex-col">
+          <span class="text-sm text-neutral-400">{{ $t("return_details.reject_reason") }}</span>
+
+          <span>{{ orderReturn.rejectReason }}</span>
         </div>
 
         <template v-if="cancelAction" #footer>
@@ -92,6 +98,12 @@
 
                   <span v-else>{{ item.approvedQuantity }}</span>
                 </div>
+
+                <div v-if="item.rejectReason" class="return-details__card-row">
+                  <span class="text-sm text-neutral-400">{{ $t("return_details.reject_reason") }}</span>
+
+                  <span>{{ item.rejectReason }}</span>
+                </div>
               </div>
             </template>
 
@@ -112,6 +124,10 @@
               <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
 
               <span v-else>{{ item.approvedQuantity }}</span>
+
+              <div v-if="item.rejectReason" class="text-sm text-danger-500">
+                {{ item.rejectReason }}
+              </div>
             </VcTableColumn>
           </VcTable>
         </template>
@@ -127,6 +143,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
+import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturn } from "@/modules/returns/composables/useReturn";
 import { useReturnActions } from "@/modules/returns/composables/useReturnActions";
 import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
@@ -192,10 +209,14 @@ function openCancelModal(): void {
   });
 }
 
+const pageTitle = computed(() => t("return_details.title", [orderReturn.value?.number ?? ""]));
+
+usePageHead({ title: pageTitle });
+
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("returns.menu.link.title"), route: { name: "Returns" } },
-  { title: t("return_details.title", [orderReturn.value?.number ?? ""]) },
+  { title: pageTitle.value },
 ]);
 
 const isMobile = breakpoints.smaller("lg");
