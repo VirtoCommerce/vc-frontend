@@ -187,10 +187,12 @@ defineExpose({ pinnedHeight });
     --mega-menu-height: 0px;
     --mega-menu-border-color: transparent;
 
-    // The icon row loses its captions and closes up: the labels go to nothing by max-height and
-    // max-width, the items give back 2 of their inset, and 4 of gap comes back between what is
-    // left — otherwise the bare 24px icons sit almost touching. Set as plain properties because
-    // the links are another block's elements; bottom-header-link declares what each one means.
+    // The icon row loses its captions and closes up: the label's own type shrinks to nothing and
+    // the two maxima follow it down, the items give back 2 of their inset, and 4 of gap comes
+    // back between what is left — otherwise the bare 24px icons sit almost touching. Set as
+    // plain properties because the links are another block's elements; bottom-header-link
+    // declares what each one means.
+    --header-link-label-font-size: 0px;
     --header-link-label-max-h: 0px;
     --header-link-label-max-w: 0px;
     --header-link-label-opacity: 0;

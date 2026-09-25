@@ -58,6 +58,9 @@ withDefaults(defineProps<IProps>(), {
   --label-max-h: var(--header-link-label-max-h, 1rem);
   --label-max-w: var(--header-link-label-max-w, 8rem);
   --label-opacity: var(--header-link-label-opacity, 1);
+  // `inherit` is the resting value on purpose: the size is the row's own text-xs, read off the
+  // parent rather than restated here, so the two cannot drift.
+  --label-font-size: var(--header-link-label-font-size, inherit);
 
   @apply flex flex-col items-center gap-0.5 text-xs tracking-wide;
 
@@ -88,19 +91,30 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__label {
-    // Collapsed by max-height and max-width rather than display, so the row sinks with the rest
-    // of the header instead of jumping a frame early. The WIDTH matters as much as the height:
-    // left at its own size a hidden label still holds the item open, the icons stand at uneven
-    // steps and the search field gains nothing.
+    // The label SHRINKS away, it is not cut away: the type itself rides the curve, so the item
+    // narrows from the first frame and no glyph is ever half a letter. The two maxima stay as
+    // the bound — they guard a translation wider than 8rem and close the item at the end — but
+    // with the type shrinking they no longer reach the text: it is always the narrower of the
+    // two. Left to them alone the label held its full size for the first half of the curve and
+    // was then guillotined from the right in the last 100ms, which is what read as a snap.
     @apply block overflow-hidden;
+
+    // A ratio, not the xs pair's 0.875rem: an absolute leading keeps the line box open at its
+    // resting height while the type inside it shrinks, and the box clips the glyphs instead.
+    // 7/6 is that same pair, 14 over 12, so the label is unchanged at rest.
+    line-height: 1.16667;
 
     max-height: var(--label-max-h);
     max-width: var(--label-max-w);
+    font-size: var(--label-font-size);
     opacity: var(--label-opacity);
+    // One curve for all four, or the label fades out before it has finished shrinking and the
+    // last frames are a snap again: the fade used to land at 150ms against the geometry's 250.
     transition:
       max-height var(--stick-ease, 0.25s cubic-bezier(0.4, 0, 0.2, 1)),
       max-width var(--stick-ease, 0.25s cubic-bezier(0.4, 0, 0.2, 1)),
-      opacity 0.15s ease;
+      font-size var(--stick-ease, 0.25s cubic-bezier(0.4, 0, 0.2, 1)),
+      opacity var(--stick-ease, 0.25s cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   @media (prefers-reduced-motion: reduce) {
