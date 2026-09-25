@@ -111,6 +111,10 @@ function onSelect(day: string | undefined): void {
   // already ships that pairing on every solid primary button.
   --vc-calendar-selected-bg: var(--color-vc-background-solid-primary, var(--color-primary-500));
 
+  &.vc-calendar {
+    @apply border-0 p-0;
+  }
+
   &__dots {
     // .vc-calendar__day is position:relative, so the row sits under the number without shifting the grid.
     @apply pointer-events-none absolute inset-x-0 bottom-1 flex justify-center gap-0.5;

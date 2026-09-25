@@ -203,12 +203,11 @@
       "load_failed": "Bestellungen konnten nicht geladen werden"
     },
     "tasks": {
-      "title": "Kalender",
+      "title": "Aufgaben",
       "widget_title": "Aufgaben & Fälligkeiten",
-      "full_calendar": "Vollständiger Kalender",
+      "view_all": "Alle Aufgaben",
       "new_task": "Neue Aufgabe",
-      "add_task": "Aufgabe hinzufügen",
-      "today": "Heute",
+      "due_dates": "Fälligkeiten",
       "empty": "Keine Aufgaben in diesem Tab",
       "empty_day": "An diesem Tag ist nichts fällig",
       "load_failed": "Aufgaben konnten nicht geladen werden",
@@ -223,8 +222,10 @@
         "task": "Aufgabe",
         "status": "Status",
         "notes": "Notizen",
-        "complete_aria": "„{name}“ als erledigt markieren",
-        "reopen_aria": "„{name}“ wieder öffnen",
+        "actions": "Aktionen",
+        "mark_complete": "Als erledigt markieren",
+        "reopen": "Wieder öffnen",
+        "action_aria": "{action}: „{name}“",
         "edit_aria": "„{name}“ bearbeiten"
       },
       "status": {

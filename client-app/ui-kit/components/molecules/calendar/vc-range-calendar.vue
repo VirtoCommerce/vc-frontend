@@ -549,6 +549,9 @@ defineExpose({ focusActiveCell });
 
     grid-template-columns: repeat(7, var(--cell-size));
     gap: var(--grid-gap);
+    // As in vc-calendar. The header here is clamped to the seven columns, so only something like a long footer
+    // label could make the box wider than the grid — and then the tracks stay centred instead of packing left.
+    justify-content: center;
   }
 
   &__weekday {
