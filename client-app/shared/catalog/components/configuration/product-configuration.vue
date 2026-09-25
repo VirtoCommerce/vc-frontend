@@ -390,6 +390,10 @@ async function openSaveChangesModal(): Promise<boolean> {
     @container (max-width: theme("containers.2xl")) {
       @apply space-y-3;
     }
+
+    @media (width >= theme("screens.lg")) {
+      @apply overflow-hidden rounded-md;
+    }
   }
 
   &__error {
@@ -398,7 +402,7 @@ async function openSaveChangesModal(): Promise<boolean> {
 
   &__value {
     &--selected {
-      @apply text-neutral-500;
+      @apply text-success-600;
     }
 
     &--required {
@@ -406,7 +410,7 @@ async function openSaveChangesModal(): Promise<boolean> {
     }
 
     &--not-selected {
-      @apply text-neutral-500;
+      @apply text-info-800;
 
       &#{$required} {
         @apply text-danger-800;

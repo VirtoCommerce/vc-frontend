@@ -206,6 +206,9 @@ html.dark {
 // properties column exists for the narrow layout only, so it folds to nothing here.
 .product-configuration .option-product {
   @container (min-width: theme("containers.2xl")) {
+    // Flat rows: only the zebra tells one from the next, and the list rounds as a whole.
+    --vc-product-card-radius: 0;
+
     .vc-product-card__wrapper {
       grid-template-areas: "select image title properties price add-to-cart total";
       grid-template-rows: auto;
