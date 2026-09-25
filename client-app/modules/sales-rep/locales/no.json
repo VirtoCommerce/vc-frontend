@@ -203,12 +203,11 @@
       "load_failed": "Kunne ikke laste ordrene"
     },
     "tasks": {
-      "title": "Kalender",
+      "title": "Oppgaver",
       "widget_title": "Oppgaver og frister",
-      "full_calendar": "Hele kalenderen",
+      "view_all": "Alle oppgaver",
       "new_task": "Ny oppgave",
-      "add_task": "Legg til oppgave",
-      "today": "I dag",
+      "due_dates": "Frister",
       "empty": "Ingen oppgaver i denne fanen",
       "empty_day": "Ingenting har frist denne dagen",
       "load_failed": "Kunne ikke laste oppgavene",
@@ -223,8 +222,10 @@
         "task": "Oppgave",
         "status": "Status",
         "notes": "Notater",
-        "complete_aria": "Merk «{name}» som fullført",
-        "reopen_aria": "Gjenåpne «{name}»",
+        "actions": "Handlinger",
+        "mark_complete": "Merk som fullført",
+        "reopen": "Gjenåpne",
+        "action_aria": "{action}: «{name}»",
         "edit_aria": "Rediger «{name}»"
       },
       "status": {

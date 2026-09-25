@@ -2,7 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SalesRepTaskModal from "../components/sales-rep-task-modal.vue";
 import { localDayKey, localDayWindow } from "../tasks";
-import Calendar from "./calendar.vue";
+import TasksPage from "./tasks.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
@@ -27,7 +27,6 @@ const state = await vi.hoisted(async () => {
     refetchCounts: vi.fn(),
     refetchMarkers: vi.fn(),
     setCompleted: vi.fn(),
-    goToToday: vi.fn(),
     openModal: vi.fn(),
   };
 });
@@ -36,7 +35,7 @@ const state = await vi.hoisted(async () => {
 // nothing else from the router.
 vi.mock("vue-router", async () => {
   const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
-  return { ...actual, useRoute: () => ({ path: "/company/calendar" }) };
+  return { ...actual, useRoute: () => ({ path: "/company/tasks" }) };
 });
 // The ?filter= deep link; a plain ref stands in for the route-backed writable computed.
 vi.mock("@/core/composables/useRouteQueryParam", () => ({ useRouteQueryParam: () => state.filterParam }));
@@ -59,7 +58,7 @@ vi.mock("../composables/useSalesRepTaskCalendar", async () => {
       error: ref(null),
       refetch: state.refetchMarkers,
     }),
-    useMonthAnchor: () => ({ month: state.month, setMonth: vi.fn(), goToToday: state.goToToday }),
+    useMonthAnchor: () => ({ month: state.month, setMonth: vi.fn() }),
   };
 });
 vi.mock("../composables/useSalesRepTaskMutations", async () => {
@@ -139,7 +138,7 @@ const CalendarStub = {
 // Plain mount (not createWrapperFactory): this file mocks the vue-i18n module, and the shared factory's
 // defaults build a real i18n plugin from it.
 function createWrapper() {
-  return mount(Calendar, {
+  return mount(TasksPage, {
     global: {
       renderStubDefaultSlot: false,
       stubs: {
@@ -206,7 +205,6 @@ beforeEach(() => {
   state.refetch.mockClear();
   state.refetchCounts.mockClear();
   state.refetchMarkers.mockClear();
-  state.goToToday.mockClear();
   state.openModal.mockClear();
   state.setCompleted.mockClear().mockResolvedValue(true);
   state.useSalesRepTasks.mockClear();
@@ -222,7 +220,7 @@ beforeEach(() => {
   }));
 });
 
-describe("Calendar tabs", () => {
+describe("Tasks page tabs", () => {
   // The chips come from the server's filter rules; the counts query answers by the same rule names, so the two
   // are joined by name rather than by a hand-kept list.
   it("badges each server-offered tab with its own count", () => {
@@ -293,7 +291,7 @@ describe("Calendar tabs", () => {
   });
 });
 
-describe("Calendar day scope", () => {
+describe("Tasks page day scope", () => {
   // The page sat at the top of the hub with no trail back (QA A-20). Home is the composable's own.
   it("places itself in the account trail", () => {
     const wrapper = createWrapper();
@@ -334,7 +332,7 @@ describe("Calendar day scope", () => {
     const live = wrapper.find('[aria-live="polite"]');
     expect(live.exists()).toBe(true);
     expect(live.attributes("aria-atomic")).toBe("true");
-    expect(live.find(".sales-rep-calendar__day-count").exists()).toBe(true);
+    expect(live.find(".sales-rep-tasks-page__day-count").exists()).toBe(true);
   });
 
   it("heads the list with the day in the short format", () => {
@@ -343,25 +341,13 @@ describe("Calendar day scope", () => {
     expect(dMock).toHaveBeenCalledWith(expect.any(Date), "short");
     expect(dMock.mock.calls.every(([, format]) => format !== "long")).toBe(true);
   });
-
-  it("returns to today from wherever the rep browsed to", async () => {
-    const wrapper = createWrapper();
-    wrapper.getComponent(CalendarStub).vm.$emit("update:modelValue", "2026-10-20");
-    await flushPromises();
-
-    await button(wrapper, "tasks.today").trigger("click");
-
-    // Both halves: the day the list is scoped to, and the month the grid shows.
-    expect(taskOptions().period.value).toEqual(localDayWindow(localDayKey(new Date())));
-    expect(state.goToToday).toHaveBeenCalled();
-  });
 });
 
 /**
  * The day and the tab are two views of the same set, not two filters over it. Anding them put an active
  * "Completed 3" chip over an empty list, because the badges count the whole set while the list counted one day.
  */
-describe("Calendar tab scope", () => {
+describe("Tasks page tab scope", () => {
   it("drops the day window while a status tab is active", async () => {
     const wrapper = createWrapper();
 
@@ -389,7 +375,7 @@ describe("Calendar tab scope", () => {
 
     await pickTab(wrapper, "overdue");
 
-    expect(wrapper.get(".sales-rep-calendar__day-title").text()).toBe("Overdue");
+    expect(wrapper.get(".sales-rep-tasks-page__day-title").text()).toBe("Overdue");
   });
 
   // "Nothing due on this day" is wrong copy for a list that is not scoped to a day.
@@ -402,7 +388,7 @@ describe("Calendar tab scope", () => {
   });
 });
 
-describe("Calendar states", () => {
+describe("Tasks page states", () => {
   it("lists the day's tasks", () => {
     state.items.value = [makeTask()];
     state.totalCount.value = 4;
@@ -411,7 +397,7 @@ describe("Calendar states", () => {
 
     expect(wrapper.getComponent(ListStub).props("tasks")).toHaveLength(1);
     // The header counts the whole day, not the page the pager is on.
-    const count = wrapper.find(".sales-rep-calendar__day-count").text();
+    const count = wrapper.find(".sales-rep-tasks-page__day-count").text();
     expect(count).toContain("sales_rep.tasks.day_task_count");
     expect(count).toContain('"count":4');
   });
@@ -438,7 +424,7 @@ describe("Calendar states", () => {
   it("explains each dot colour in a legend", () => {
     const wrapper = createWrapper();
 
-    expect(wrapper.findAll(".sales-rep-calendar__legend-item").map((item) => item.text())).toEqual([
+    expect(wrapper.findAll(".sales-rep-tasks-page__legend-item").map((item) => item.text())).toEqual([
       "sales_rep.tasks.legend.upcoming",
       "sales_rep.tasks.legend.overdue",
       "sales_rep.tasks.legend.completed",
@@ -446,7 +432,7 @@ describe("Calendar states", () => {
   });
 });
 
-describe("Calendar writes", () => {
+describe("Tasks page writes", () => {
   // Every surface reads the same records, so a write refreshes the list, the tab counts and the dots.
   it("completes a task and refreshes all three surfaces", async () => {
     state.items.value = [makeTask()];

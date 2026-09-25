@@ -1,8 +1,8 @@
 <template>
   <LayoutWidget :title="title" size="md" class="sales-rep-tasks">
     <template #append>
-      <VcLink :to="{ name: CALENDAR_ROUTE_NAME }" class="sales-rep-tasks__all-link">
-        {{ t("sales_rep.tasks.full_calendar") }}
+      <VcLink :to="{ name: TASKS_ROUTE_NAME }" class="sales-rep-tasks__all-link">
+        {{ t("sales_rep.tasks.view_all") }}
 
         <VcIcon name="arrow-right" size="xs" />
       </VcLink>
@@ -10,15 +10,15 @@
 
     <template #default-container>
       <div class="sales-rep-tasks__body">
-        <!-- Full size, matching the Calendar page: at `sm` the cells were too tight for the day markers to
-             sit under the date comfortably. -->
+        <!-- Full size: the dashboard rail has the width for it (7 × 2.5rem + gaps, 292px, inside the body's
+             padding), unlike the Tasks page's narrower month rail, which takes `sm`. -->
         <SalesRepTaskCalendar v-model="selectedDay" :month="month" :day-markers="dayMarkers" @update:month="setMonth" />
 
         <!-- The one thing on this widget that is not about the day on screen: overdue work is due in the past,
              so without this the dashboard shows a rep nothing at all about it. -->
         <VcLink
           v-if="overdueCount"
-          :to="{ name: CALENDAR_ROUTE_NAME, query: { filter: TASKS_OVERDUE_RULE } }"
+          :to="{ name: TASKS_ROUTE_NAME, query: { filter: TASKS_OVERDUE_RULE } }"
           class="sales-rep-tasks__overdue"
         >
           <VcIcon name="clock-alert" size="xs" />
@@ -44,11 +44,7 @@
         </ul>
 
         <ul v-else class="sales-rep-tasks__list">
-          <li
-            v-for="task in tasks"
-            :key="task.id"
-            :class="['sales-rep-tasks__row', `sales-rep-tasks__row--${task.status}`]"
-          >
+          <li v-for="task in tasks" :key="task.id" class="sales-rep-tasks__row">
             <div class="sales-rep-tasks__details">
               <span class="sales-rep-tasks__name" :title="task.name">{{ task.name }}</span>
 
@@ -70,7 +66,7 @@ import { useBlockChrome } from "../composables/useBlockChrome";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
 import { useSalesRepOverdueTaskCount } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
-import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS, TASKS_OVERDUE_RULE, TASKS_SORT_RULE } from "../constants";
+import { TASKS_ROUTE_NAME, TASKS_DEFAULT_ROWS, TASKS_OVERDUE_RULE, TASKS_SORT_RULE } from "../constants";
 import { localDayKey, localDayKeyToDate, localDayWindow, taskSubline } from "../tasks";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepTaskCalendar from "./sales-rep-task-calendar.vue";
@@ -120,7 +116,7 @@ const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), 
 
 // The row cap is by design; the count disagreeing with the rows was not (VCST-5732 QA A-4). Said only when
 // the cap actually bites: an unconditional "(5 shown)" would read as oddly on an ordinary day as the
-// calendar page's old "7 of 7" did.
+// Tasks page's old "7 of 7" did.
 const dayCountLabel = computed(() =>
   tasks.value.length < totalCount.value
     ? t("sales_rep.tasks.day_task_count_capped", { total: totalCount.value, shown: tasks.value.length })
@@ -166,39 +162,11 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
   }
 
   &__list {
-    @apply m-0 flex list-none flex-col p-0;
+    @apply m-0 flex list-none flex-col divide-y divide-neutral-100 p-0;
   }
 
   &__row {
-    @apply relative flex items-center gap-3 py-3 ps-3;
-
-    // A mark per row, not a rail: a full-height border butts against its neighbour's, so the accents merge
-    // into one unbroken line down the list. Inset into the row instead, and logical so it flips in RTL.
-    &::before {
-      @apply absolute inset-y-2 start-0 w-[3px] rounded-full;
-
-      content: "";
-    }
-
-    // Explicit rather than `divide-y divide-neutral-100` on the list: Tailwind's divide-COLOUR emits the
-    // `border-color` SHORTHAND on every child but the first, which is what wiped the accent off every row
-    // but the first (QA M-5) while it was still drawn as a border.
-    & + & {
-      border-block-start: 1px solid var(--color-neutral-100);
-    }
-
-    // A canceled task earns no mark, like its calendar day: the bar stays transparent.
-    &--overdue::before {
-      background-color: var(--color-danger-500);
-    }
-
-    &--upcoming::before {
-      background-color: var(--color-info-500);
-    }
-
-    &--completed::before {
-      background-color: var(--color-success-500);
-    }
+    @apply flex items-center gap-3 py-3;
   }
 
   &__details {

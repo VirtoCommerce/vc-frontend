@@ -203,12 +203,11 @@
       "load_failed": "Impossibile caricare gli ordini"
     },
     "tasks": {
-      "title": "Calendario",
+      "title": "Attività",
       "widget_title": "Attività e scadenze",
-      "full_calendar": "Calendario completo",
+      "view_all": "Tutte le attività",
       "new_task": "Nuova attività",
-      "add_task": "Aggiungi attività",
-      "today": "Oggi",
+      "due_dates": "Scadenze",
       "empty": "Nessuna attività in questa scheda",
       "empty_day": "Nessuna scadenza in questo giorno",
       "load_failed": "Impossibile caricare le attività",
@@ -223,8 +222,10 @@
         "task": "Attività",
         "status": "Stato",
         "notes": "Note",
-        "complete_aria": "Segna «{name}» come completata",
-        "reopen_aria": "Riapri «{name}»",
+        "actions": "Azioni",
+        "mark_complete": "Segna come completata",
+        "reopen": "Riapri",
+        "action_aria": "{action}: «{name}»",
         "edit_aria": "Modifica «{name}»"
       },
       "status": {

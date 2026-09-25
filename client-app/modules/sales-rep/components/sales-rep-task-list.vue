@@ -5,59 +5,34 @@
     :items="tasks"
     :pages="pages"
     :page="page"
-    :row-class="rowClass"
     mobile-breakpoint="lg"
     @page-changed="$emit('update:page', $event)"
   >
     <template #mobile-item="{ item }">
       <div class="sales-rep-task-list__mobile-item">
-        <VcCheckbox
-          :model-value="item.status === 'completed'"
-          :aria-label="completionLabel(item)"
-          :disabled="busy || item.status === 'canceled'"
-          @update:model-value="$emit('toggle', item)"
-        />
+        <!-- Same label the desktop control carries: without it the only accessible name is the task title,
+             which names the row but not what activating it does (QA A-17). -->
+        <button
+          type="button"
+          :class="titleClass(item)"
+          :title="item.name"
+          :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
+          @click="$emit('edit', item)"
+        >
+          <span class="sales-rep-task-list__name">{{ item.name }}</span>
+        </button>
 
-        <div class="sales-rep-task-list__mobile-body">
-          <!-- Same label the desktop control carries: without it the only accessible name is the task title,
-               which names the row but not what activating it does (QA A-17). -->
-          <button
-            type="button"
-            class="sales-rep-task-list__title-button"
-            :title="item.name"
-            :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
-            @click="$emit('edit', item)"
-          >
-            <span class="sales-rep-task-list__name">{{ item.name }}</span>
-          </button>
+        <span v-if="sublines.get(item.id)" class="sales-rep-task-list__meta">{{ sublines.get(item.id) }}</span>
 
-          <span v-if="sublines.get(item.id)" class="sales-rep-task-list__meta">{{ sublines.get(item.id) }}</span>
+        <SalesRepTaskStatus :status="item.status" />
 
-          <SalesRepTaskStatus :status="item.status" />
+        <p v-if="item.description" :title="item.description" class="sales-rep-task-list__notes">
+          {{ item.description }}
+        </p>
 
-          <p v-if="item.description" :title="item.description" class="sales-rep-task-list__notes">
-            {{ item.description }}
-          </p>
-        </div>
+        <SalesRepTaskAction :task="item" :disabled="busy" @toggle="$emit('toggle', item)" />
       </div>
     </template>
-
-    <VcTableColumn id="done" class="sales-rep-task-list__done-col">
-      <!-- The column still has to name itself for assistive tech; an empty <th> is what Lighthouse reports
-           as td-has-header (QA A-15). Hidden rather than titled, so it spends no column width. -->
-      <template #header>
-        <span class="sr-only">{{ t("sales_rep.tasks.status.completed") }}</span>
-      </template>
-
-      <template #default="{ item }">
-        <VcCheckbox
-          :model-value="item.status === 'completed'"
-          :aria-label="completionLabel(item)"
-          :disabled="busy || item.status === 'canceled'"
-          @update:model-value="$emit('toggle', item)"
-        />
-      </template>
-    </VcTableColumn>
 
     <VcTableColumn id="task" :title="t('sales_rep.tasks.table.task')">
       <template #default="{ item }">
@@ -65,7 +40,7 @@
              dashboard widget does the same on its own titles. -->
         <button
           type="button"
-          class="sales-rep-task-list__title-button"
+          :class="titleClass(item)"
           :title="item.name"
           :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
           @click="$emit('edit', item)"
@@ -88,6 +63,12 @@
         <span :title="item.description" class="sales-rep-task-list__notes">{{ item.description }}</span>
       </template>
     </VcTableColumn>
+
+    <VcTableColumn id="actions" :title="t('sales_rep.tasks.table.actions')" class="sales-rep-task-list__actions-col">
+      <template #default="{ item }">
+        <SalesRepTaskAction :task="item" :disabled="busy" @toggle="$emit('toggle', item)" />
+      </template>
+    </VcTableColumn>
   </VcTable>
 </template>
 
@@ -95,13 +76,14 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { taskSubline } from "../tasks";
+import SalesRepTaskAction from "./sales-rep-task-action.vue";
 import SalesRepTaskStatus from "./sales-rep-task-status.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 
 interface IProps {
   tasks: SalesRepTaskType[];
   loading?: boolean;
-  /** A write is in flight; the checkboxes hold still until it settles. */
+  /** A write is in flight; the row actions hold still until it settles. */
   busy?: boolean;
   page?: number;
   pages?: number;
@@ -120,40 +102,32 @@ const { t, d } = useI18n();
 // Resolved once per row rather than per template read: each one formats a date through Intl.
 const sublines = computed(() => new Map(props.tasks.map((task) => [task.id, taskSubline(task, t, d)])));
 
-function completionLabel(task: SalesRepTaskType): string {
-  return task.status === "completed"
-    ? t("sales_rep.tasks.table.reopen_aria", { name: task.name })
-    : t("sales_rep.tasks.table.complete_aria", { name: task.name });
-}
-
-// Overdue rows carry a left accent, matching the mockup's red/blue/green bars.
-function rowClass(item: SalesRepTaskType, index: number): string {
+function titleClass(task: SalesRepTaskType): string[] {
   return [
-    "sales-rep-task-list__row",
-    `sales-rep-task-list__row--${item.status}`,
-    index % 2 === 1 ? "bg-neutral-50" : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+    "sales-rep-task-list__title-button",
+    task.status === "completed" ? "sales-rep-task-list__title-button--completed" : "",
+  ];
 }
 </script>
 
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-list {
+  @apply pb-3;
+
   // Fixed layout, so a long note can no longer size its own column and squeeze the task title beside it.
-  // Only the two content-shaped columns are measured — a checkbox and a chip — and the remainder is split
+  // Only the two content-shaped columns are measured — a chip and an action — and the remainder is split
   // equally between Task and Notes, which is what fixed layout does with columns that declare no width.
   .vc-table__desktop {
     @apply table-fixed;
   }
 
-  &__done-col {
-    @apply w-10;
-  }
-
   &__status-col {
     @apply w-36;
+  }
+
+  &__actions-col {
+    @apply w-56;
   }
 
   &__title-button {
@@ -164,6 +138,10 @@ function rowClass(item: SalesRepTaskType, index: number): string {
     // truncate never engaged and the table overflowed the page instead (QA M-1). Wrapping text has a
     // min-content width of its longest word, which the column can shrink to; the clamp caps the height.
     @apply line-clamp-2 max-w-full text-start text-sm font-bold text-[--link-color] hover:text-[--link-hover-color];
+
+    &--completed {
+      @apply font-normal text-neutral-600 line-through;
+    }
   }
 
   &__name {
@@ -183,35 +161,7 @@ function rowClass(item: SalesRepTaskType, index: number): string {
   }
 
   &__mobile-item {
-    @apply flex items-start gap-3 border-b px-5 py-4.5;
-  }
-
-  &__mobile-body {
-    @apply flex min-w-0 grow flex-col items-start gap-1.5;
-  }
-
-  // A mark per row, not a rail: a full-height border butts against the next row's, so the accents merge into
-  // one unbroken line down the table. Inset into the first cell instead, and logical so it flips in RTL.
-  &__row td:first-child {
-    @apply relative;
-
-    &::before {
-      @apply absolute inset-y-2 start-0 w-[3px] rounded-full;
-
-      content: "";
-    }
-  }
-
-  &__row--overdue td:first-child::before {
-    background-color: var(--color-danger-500);
-  }
-
-  &__row--upcoming td:first-child::before {
-    background-color: var(--color-info-500);
-  }
-
-  &__row--completed td:first-child::before {
-    background-color: var(--color-success-500);
+    @apply flex flex-col items-start gap-1.5 border-b px-5 py-4.5;
   }
 }
 </style>

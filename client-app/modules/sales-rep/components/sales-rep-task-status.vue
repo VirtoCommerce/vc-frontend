@@ -1,6 +1,8 @@
 <template>
   <VcChip :color="appearance.color" :variant="appearance.variant" size="sm" rounded truncate>
-    {{ t(`sales_rep.tasks.status.${status}`) }}
+    <VcIcon variant="solid" :name="appearance.icon" />
+
+    <span>{{ t(`sales_rep.tasks.status.${status}`) }}</span>
   </VcChip>
 </template>
 
@@ -17,12 +19,16 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-// Overdue is the only one that needs to pull the eye, so it is the only filled chip.
-const APPEARANCE: Record<SalesRepTaskStatusType, { color: VcChipColorType; variant: VcChipVariantType }> = {
-  overdue: { color: "danger", variant: "soft" },
-  upcoming: { color: "info", variant: "outline" },
-  completed: { color: "success", variant: "outline" },
-  canceled: { color: "neutral", variant: "outline" },
+type StatusAppearanceType = { color: VcChipColorType; variant: VcChipVariantType; icon: string };
+
+// The Orders recipe (settings_data.json → orders_statuses): semantic colour + variant + a leading glyph, and the
+// same pairs as the order states they read like — open work as Processing, closed as Completed / Cancelled.
+// "tonal" is what those settings still spell as the deprecated "outline-dark"; VcChip renders the two the same.
+const APPEARANCE: Record<SalesRepTaskStatusType, StatusAppearanceType> = {
+  overdue: { color: "danger", variant: "tonal", icon: "circle-solid" },
+  upcoming: { color: "info", variant: "outline", icon: "process" },
+  completed: { color: "success", variant: "tonal", icon: "circle-solid" },
+  canceled: { color: "neutral", variant: "tonal", icon: "circle-solid" },
 };
 
 const appearance = computed(() => APPEARANCE[props.status]);

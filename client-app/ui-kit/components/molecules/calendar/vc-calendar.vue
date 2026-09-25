@@ -490,6 +490,9 @@ defineExpose({
 
     grid-template-columns: repeat(7, var(--cell-size));
     gap: var(--grid-gap);
+    // The box is as wide as its widest row, and a long month name can make that the header ("September 2026"
+    // at `sm` is ~6px wider than seven columns). Fixed tracks would then pack to the start, all slack on one side.
+    justify-content: center;
   }
 
   &__weekday {
