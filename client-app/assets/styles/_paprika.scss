@@ -21,6 +21,8 @@
   --vc-widget-border-color: transparent;
   --vc-widget-divide-color: theme("colors.neutral.200");
   --vc-widget-shadow: theme("boxShadow.0");
+  // The plate's own cream (#fffdf9), not the kit's white: a widget is one of the page's plates.
+  --vc-widget-bg-color: var(--plate-bg);
 
   // The rest of the design's page rhythm, read off its own :root. One knob per measure so
   // the header plate, the footer plates and the gaps between them cannot drift apart:
@@ -121,6 +123,8 @@ html.dark {
   // the widget takes its border back and gives up the shadow.
   --vc-widget-border-color: theme("colors.neutral.200");
   --vc-widget-shadow: none;
+  // Dark keeps the widget's solid surface: the dark plate is translucent glass, meant for a blur.
+  --vc-widget-bg-color: theme("colors.additional.50");
 
   // The rules between a widget's head, body and footer step up a rung: 200 on the plate vanishes.
   // The account rail made this swap first; every widget takes it now.
