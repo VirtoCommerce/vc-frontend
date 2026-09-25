@@ -134,9 +134,9 @@ export type QueryReturnsArgs = {
   endDate?: InputMaybe<Scalars['DateTime']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
+  scope?: InputMaybe<ReturnScopeEnum>;
   sort?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['DateTime']['input']>;
-  scope?: InputMaybe<ReturnScopeEnum>;
   statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   storeId: Scalars['String']['input'];
 };
