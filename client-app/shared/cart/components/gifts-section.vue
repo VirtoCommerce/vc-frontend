@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="$t('shared.cart.gifts_section.title')" prepend-icon="gift" size="md">
+  <VcWidget :title="$t('shared.cart.gifts_section.title')" prepend-icon="gift" icon-shape size="md">
     <VcLineItems :with-header="false">
       <template #line-items>
         <VcLineItem

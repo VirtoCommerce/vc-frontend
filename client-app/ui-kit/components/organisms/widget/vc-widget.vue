@@ -148,11 +148,17 @@ watchEffect(() => {
   // The body's own inset. Public, because a page that wants a roomier plate has to be able to
   // say so by name: these three used to be reachable only as `--p-x`/`--p-t`/`--p-b`, which are
   // this block's private spelling — an app setting them was writing into the kit's internals,
-  // and they inherit, so the value also landed on every widget nested below. The horizontal one
-  // steps up with the size; the knob wins over that step wherever it is set.
-  --p-x: var(--vc-widget-padding-x, theme("padding.4"));
-  --p-t: var(--vc-widget-padding-top, theme("padding.4"));
-  --p-b: var(--vc-widget-padding-bottom, theme("padding.5"));
+  // and they inherit, so the value also landed on every widget nested below. The inset steps up
+  // with the size; a knob wins over that step wherever it is set.
+  //
+  // One inset, four sides: `--pad` is that step. The horizontal one used to be the only one that
+  // grew with the size, so a `md` widget stood its body 24 off the sides and 16/20 off the top and
+  // bottom — plain to read once the body is a bordered table, whose box then sits closer to the
+  // plate's top edge than to either side.
+  --pad: theme("padding.4");
+  --p-x: var(--vc-widget-padding-x, var(--pad));
+  --p-t: var(--vc-widget-padding-top, var(--pad));
+  --p-b: var(--vc-widget-padding-bottom, var(--pad));
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
@@ -232,7 +238,7 @@ watchEffect(() => {
       --shape-size: 2.25rem;
 
       @media (min-width: theme("screens.sm")) {
-        --p-x: var(--vc-widget-padding-x, theme("padding.6"));
+        --pad: theme("padding.6");
       }
     }
 
@@ -244,7 +250,7 @@ watchEffect(() => {
       --shape-size: 2.5rem;
 
       @media (min-width: theme("screens.lg")) {
-        --p-x: var(--vc-widget-padding-x, theme("padding.7"));
+        --pad: theme("padding.7");
       }
 
       &:not(#{$collapsible}) {
@@ -298,7 +304,12 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold break-words;
+    @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-text] break-words;
+
+    // The same knob the typography block's headings read: a widget's title is one of them, set in
+    // the same face, and a theme that lightens its headings has to reach this one too or the page
+    // carries two weights. The kit's own weight stays the fallback.
+    font-weight: var(--vc-typography-heading-font-weight, 700);
 
     // The display face is set a touch tight, the same as every other heading it stands beside —
     // the face is drawn for it and reads loose at a title's size without it.
@@ -325,15 +336,17 @@ watchEffect(() => {
   }
 
   &--icon-shape {
+    // A marked head draws no rule under it: the disc already says where the block starts, and the
+    // rule under it made a second, weaker edge a few pixels below the first.
+    @apply divide-none;
+
     // The widget's OWN head, through a direct child: a marked block can hold plain widgets of its
-    // own — the configuration block holds one per section — and a descendant selector set those in
-    // caps too, at the outer head's leading.
+    // own — the configuration block holds one per section — and a descendant selector set those at
+    // the outer head's leading.
     > #{$self}__header-container #{$self}__title {
       // The title is led to the disc's own height, so the head is one row however a theme resizes
-      // the mark. `tracking-normal` undoes the display face's tightening, which is cut for mixed
-      // case and closes capitals up.
-      @apply uppercase tracking-normal;
-
+      // the mark. It used to be set in caps here as well; the design took the caps off every
+      // section head (Ilya, 24.09.2026), which also gives the display face its own tracking back.
       line-height: var(--vc-widget-icon-shape-size, 2.25rem);
     }
   }

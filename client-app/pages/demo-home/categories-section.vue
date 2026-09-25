@@ -7,15 +7,9 @@
         <VcTypography tag="h2">{{ t("pages.demo_home.categories.title") }}</VcTypography>
       </div>
 
-      <VcButton
-        :to="catalogRoute"
-        class="categories-section__all"
-        size="sm"
-        variant="outline"
-        append-icon="arrow-right"
-      >
+      <SectionLink :to="catalogRoute" class="categories-section__all">
         {{ t("pages.demo_home.categories.all_categories") }}
-      </VcButton>
+      </SectionLink>
     </div>
 
     <div v-if="tiles.length" class="categories-section__grid">
@@ -57,6 +51,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getCategoryRoute } from "@/core/utilities/categories";
 import { ROUTES } from "@/router/routes/constants";
+import SectionLink from "./section-link.vue";
 import { useHomeCategories } from "./use-home-categories";
 
 type TileToneType = "sand" | "sand2" | "taupe" | "accent" | "gold" | "cocoa" | "ink";

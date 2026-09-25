@@ -66,6 +66,9 @@ $wide: 1900px;
 
   --font-size: var(--props-font-size, var(--vc-typography-font-size));
   --font-weight: var(--props-font-weight, var(--vc-typography-font-weight));
+  // One knob for the whole heading ladder, so a theme retunes h1-h6 together instead of six times.
+  // Each level keeps its own value as the fallback, so nothing moves until a theme names it.
+  --heading-weight: var(--vc-typography-heading-font-weight, 700);
   --text-transform: var(--props-text-transform, var(--vc-typography-text-transform));
   --color: var(--props-color, var(--vc-typography-color, theme("colors.neutral.950")));
 
@@ -85,7 +88,7 @@ $wide: 1900px;
 
     &--h1 {
       font-size: var(--font-size, 32px);
-      font-weight: var(--font-weight, 700);
+      font-weight: var(--font-weight, var(--heading-weight));
       line-height: var(--line-height, 36px);
       letter-spacing: -0.03em;
 
@@ -102,7 +105,7 @@ $wide: 1900px;
 
     &--h2 {
       font-size: var(--font-size, 26px);
-      font-weight: var(--font-weight, 700);
+      font-weight: var(--font-weight, var(--heading-weight));
       line-height: var(--line-height, 32px);
       letter-spacing: -0.025em;
 
@@ -119,7 +122,7 @@ $wide: 1900px;
 
     &--h3 {
       font-size: var(--font-size, 20px);
-      font-weight: var(--font-weight, 700);
+      font-weight: var(--font-weight, var(--heading-weight));
       line-height: var(--line-height, 28px);
       letter-spacing: -0.02em;
 
@@ -135,7 +138,9 @@ $wide: 1900px;
 
     &--h4 {
       font-size: var(--font-size, 18px);
-      font-weight: var(--font-weight, 600);
+      // h4 is the one level whose own default is already 600, so it reads the knob directly
+      // rather than `--heading-weight` — which would take it up to 700 for every theme.
+      font-weight: var(--font-weight, var(--vc-typography-heading-font-weight, 600));
       line-height: var(--line-height, 24px);
       letter-spacing: -0.015em;
 
@@ -147,7 +152,7 @@ $wide: 1900px;
 
     &--h5 {
       font-size: var(--font-size, 16px);
-      font-weight: var(--font-weight, 700);
+      font-weight: var(--font-weight, var(--heading-weight));
       line-height: var(--line-height, 22px);
       letter-spacing: -0.01em;
 
@@ -159,7 +164,7 @@ $wide: 1900px;
 
     &--h6 {
       font-size: var(--font-size, 14px);
-      font-weight: var(--font-weight, 700);
+      font-weight: var(--font-weight, var(--heading-weight));
       line-height: var(--line-height, 20px);
       letter-spacing: -0.006em;
 

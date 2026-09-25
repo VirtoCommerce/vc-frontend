@@ -67,6 +67,11 @@
   // clears 3:1 in all sixteen (worst 3.36) and lands one palette step off the drawing here.
   --mobile-header-icon-color: var(--header-bottom-link-color);
 
+  // Every heading in the display face is set one step lighter than the kit's: at Geologica's
+  // weights 700 is a display weight, and at a page title's size it reads as a shout. One knob,
+  // read by the typography block's h1-h6 and by a widget's title, so the two cannot drift.
+  --vc-typography-heading-font-weight: 600;
+
   --vc-button-radius: 9999px;
   --vc-badge-radius: 9999px;
   --vc-chip-radius: 9999px;

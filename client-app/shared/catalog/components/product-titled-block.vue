@@ -26,7 +26,8 @@ defineProps<IProps>();
   @apply space-y-4;
 
   &__header {
-    @apply flex items-center gap-2;
+    // 10 to the disc, the gap a marked widget head already keeps.
+    @apply flex items-center gap-2.5;
   }
 
   &__shape {
@@ -42,11 +43,14 @@ defineProps<IProps>();
   }
 
   &__title {
-    // 20/36, read off the design's own DESCRIPTION heading. The size was already right; the leading
-    // was not — 28 against 36, which is what made the row sit tight under its rule. The design steps
-    // this to 32/38 above 1900, which is not followed here: the project's scale carries no such
-    // screen, and a bare pixel breakpoint is out.
-    @apply grow text-xl/[2.25rem] font-bold uppercase text-neutral-950;
+    // The same head a marked widget draws, because the two render the SAME section: `description`
+    // picks this block when the body collapses and a VcWidget when it does not. So: the display
+    // face at its own tracking, the shared heading weight, and the disc's height for a leading so
+    // the row stays one line. The caps came off with every other section head (Ilya, 24.09.2026).
+    @apply grow break-words font-geologica text-xl/[2.25rem] text-neutral-950;
+
+    font-weight: var(--vc-typography-heading-font-weight, 700);
+    letter-spacing: -0.02em;
   }
 }
 </style>

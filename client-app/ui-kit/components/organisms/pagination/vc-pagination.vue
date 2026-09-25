@@ -188,7 +188,9 @@ const setPage = (page: number) => {
   }
 
   &__pages {
-    @apply order-2 flex justify-center;
+    // The numbers are round controls, not a strip: without a gap two circles meet and read as one
+    // capsule with a rule through it. 8 is the step the design gives this row.
+    @apply order-2 flex justify-center gap-2;
 
     #{$wrapped} & {
       @apply flex-wrap;

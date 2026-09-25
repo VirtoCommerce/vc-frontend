@@ -7,7 +7,7 @@
         <VcTypography tag="h2">{{ t("pages.demo_home.popular.title") }}</VcTypography>
       </div>
 
-      <VcLink :to="categoryRoute" class="popular-section__see-all">{{ t("pages.demo_home.popular.see_all") }}</VcLink>
+      <SectionLink :to="categoryRoute">{{ t("pages.demo_home.popular.see_all") }}</SectionLink>
     </div>
 
     <div class="popular-section__list">
@@ -27,6 +27,7 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { getCategoryRoute } from "@/core/utilities/categories";
 import { ProductCard, useProducts } from "@/shared/catalog";
+import SectionLink from "./section-link.vue";
 
 const CATEGORY_ID = "83599552-64ab-42de-af90-aa1d881a53cf";
 const PRODUCTS_COUNT = 10;
@@ -57,12 +58,6 @@ onMounted(async () => {
     html.dark & {
       @apply text-primary-600;
     }
-  }
-
-  &__see-all {
-    @apply text-sm font-bold;
-
-    color: var(--link-color);
   }
 
   &__list {
