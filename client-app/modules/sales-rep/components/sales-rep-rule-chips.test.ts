@@ -1,8 +1,10 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { h } from "vue";
 import { VcTabSwitch } from "@/ui-kit/components/molecules";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import type { SalesRepRuleType } from "../types";
+import type { VNode } from "vue";
 
 // formatStatCount formats in the store's culture.
 vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US" } }));
@@ -14,15 +16,22 @@ const RULES: SalesRepRuleType[] = [
 
 // The real VcTabSwitch, not a stub: the selected state lives in its markup, so a stub cannot see it.
 // VcIcon is resolved above the `v-if` that guards it, so it needs a stub even with no icon prop.
-function mountChips(props: Partial<InstanceType<typeof SalesRepRuleChips>["$props"]> = {}) {
+function mountChips(
+  props: Partial<InstanceType<typeof SalesRepRuleChips>["$props"]> = {},
+  slots?: { suffix: (params: { tab: { name?: string } }) => VNode },
+) {
   return mount(SalesRepRuleChips, {
     props: { rules: RULES, allLabel: "All", ...props },
+    slots,
     global: { components: { VcTabSwitch }, stubs: { VcIcon: true } },
   });
 }
 
 const pressed = (wrapper: ReturnType<typeof mountChips>) =>
   wrapper.findAll(".sales-rep-rule-chips__tab button").map((tab) => tab.attributes("aria-pressed"));
+
+const labels = (wrapper: ReturnType<typeof mountChips>) =>
+  wrapper.findAll(".sales-rep-rule-chips__label").map((label) => label.text());
 
 describe("SalesRepRuleChips", () => {
   it("presses the baseline tab while no rule is chosen", () => {
@@ -47,6 +56,40 @@ describe("SalesRepRuleChips", () => {
     await wrapper.findAll(".sales-rep-rule-chips__tab button")[2].trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toEqual([["Processing"]]);
+  });
+
+  // A set of alternatives reads with the widest option first — "All, Orders, Customers...".
+  it("puts the baseline tab first by default", () => {
+    expect(labels(mountChips())).toEqual(["All", "New", "Processing"]);
+  });
+
+  // A vocabulary that reads as a progression widens left to right, so the baseline belongs at the end.
+  it("puts the baseline tab last when asked", () => {
+    expect(labels(mountChips({ allLast: true }))).toEqual(["New", "Processing", "All"]);
+  });
+
+  // Wherever it sits, the baseline is the pressed one while nothing is selected, and clicking it clears.
+  // Clearing has to start from a selection: re-clicking the already-active baseline is a no-op, because
+  // defineModel does not emit a value that did not change.
+  it("presses and clears the baseline wherever it sits", async () => {
+    expect(pressed(mountChips({ allLast: true }))).toEqual(["false", "false", "true"]);
+
+    const wrapper = mountChips({ allLast: true, modelValue: "Processing" });
+
+    await wrapper.findAll(".sales-rep-rule-chips__tab button")[2].trigger("click");
+
+    expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
+  });
+
+  // Adornments are the caller's to decide: the component hands each tab's name to the slot and knows
+  // nothing about what the name means. The baseline has no name.
+  it("renders the suffix slot for every tab, naming each one", () => {
+    const wrapper = mountChips(
+      {},
+      { suffix: (params: { tab: { name?: string } }) => h("i", { class: "mark" }, params.tab.name ?? "baseline") },
+    );
+
+    expect(wrapper.findAll(".mark").map((mark) => mark.text())).toEqual(["baseline", "New", "Processing"]);
   });
 
   // The baseline's value is a boolean, so no non-empty rule name can equal it — a string sentinel
