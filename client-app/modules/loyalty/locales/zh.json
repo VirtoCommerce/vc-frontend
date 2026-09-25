@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "兑换您的积分",
           "description": "用积分兑换奖励目录中的商品。",
-          "catalog": "目录"
+          "catalog": "奖励目录"
         },
         "card": {
           "type_products": "精选 SKU",

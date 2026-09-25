@@ -32,7 +32,7 @@
           icon="shopping-bag"
           :title="$t('pages.account.missions.redeem_banner.title')"
           :description="$t('pages.account.missions.redeem_banner.description')"
-          :link-to="{ name: ROUTES.LOYALTY_CATALOG.NAME }"
+          :link-to="isLoyaltyCatalogAvailable ? { name: ROUTES.LOYALTY_CATALOG.NAME } : undefined"
           :link-text="$t('pages.account.missions.redeem_banner.catalog')"
         />
       </div>
@@ -63,12 +63,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes/constants";
+import { useLoyaltySettings } from "@/shared/loyalty/composables/useLoyaltySettings";
 import MissionCard from "../components/mission-card.vue";
 import MissionsBanner from "../components/missions-banner.vue";
 import PointsBalance from "../components/points-balance.vue";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import { useMissions } from "../composables/useMissions";
 
+const { isLoyaltyCatalogAvailable } = useLoyaltySettings();
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
 const { fetchMissions, missions, page, pagesCount, loading: missionsLoading } = useMissions();
 
