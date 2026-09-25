@@ -14,6 +14,8 @@ import {
   areStringOrNumberEqual,
   buildRedirectUrl,
   humanizeName,
+  parseJsonStringArray,
+  toFirstString,
 } from "./index";
 import type { RouteLocationNormalized } from "vue-router";
 
@@ -607,5 +609,56 @@ describe("humanizeName", () => {
     expect(humanizeName(undefined)).toBe("");
     expect(humanizeName(null)).toBe("");
     expect(humanizeName({})).toBe("");
+  });
+});
+
+describe("parseJsonStringArray", () => {
+  it("returns the array when the value is a JSON array of strings", () => {
+    expect(parseJsonStringArray('["gtin","code"]')).toEqual(["gtin", "code"]);
+    expect(parseJsonStringArray("[]")).toEqual([]);
+  });
+
+  it("returns undefined for malformed JSON", () => {
+    expect(parseJsonStringArray("[gtin")).toBeUndefined();
+  });
+
+  it("returns undefined when the JSON is not an array", () => {
+    expect(parseJsonStringArray('{"field":"gtin"}')).toBeUndefined();
+    expect(parseJsonStringArray('"gtin"')).toBeUndefined();
+  });
+
+  it("returns undefined when the array holds non-string items", () => {
+    expect(parseJsonStringArray("[1,2]")).toBeUndefined();
+    expect(parseJsonStringArray('["gtin",null]')).toBeUndefined();
+  });
+
+  it("returns undefined for a non-string or empty input", () => {
+    expect(parseJsonStringArray(undefined)).toBeUndefined();
+    expect(parseJsonStringArray(null)).toBeUndefined();
+    expect(parseJsonStringArray(["gtin"])).toBeUndefined();
+    expect(parseJsonStringArray("")).toBeUndefined();
+  });
+});
+
+describe("toFirstString", () => {
+  it("returns a string as is", () => {
+    expect(toFirstString("150701")).toBe("150701");
+    expect(toFirstString("")).toBe("");
+  });
+
+  // `?barcode=a&barcode=b` reaches the page as an array.
+  it("returns the first entry of an array", () => {
+    expect(toFirstString(["150701", "150702"])).toBe("150701");
+  });
+
+  it("returns an empty string when the first array entry is not a string", () => {
+    expect(toFirstString([null, "150702"])).toBe("");
+    expect(toFirstString([])).toBe("");
+  });
+
+  it("returns an empty string for a non-string value", () => {
+    expect(toFirstString(undefined)).toBe("");
+    expect(toFirstString(null)).toBe("");
+    expect(toFirstString(150701)).toBe("");
   });
 });

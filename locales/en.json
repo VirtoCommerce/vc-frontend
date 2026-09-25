@@ -1584,6 +1584,8 @@
       "title": "Search",
       "header": "Your search for {keyword} returned the following",
       "header_empty": "Sorry, your search for \"{keyword}\" didn't return any results",
+      "header_barcode": "Your search for barcode {barcode} returned the following",
+      "header_barcode_empty": "No products found for barcode {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Your <strong>{0}</strong> query did not return any results",

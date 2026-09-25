@@ -27,4 +27,8 @@ export const EXCLUDED_FILTER_NAMES = [
   "isPurchased",
   "productfamilyid",
   "is",
+  // A backend without the barcode expansion middleware echoes the term back as an ordinary user filter,
+  // which `useProducts.prepareFilters` cannot drop by its `isGenerated` flag (the primary mechanism).
+  // Keep it hidden by name until that backend version is the minimum supported one.
+  "barcode",
 ];
