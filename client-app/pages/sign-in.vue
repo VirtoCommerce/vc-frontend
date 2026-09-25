@@ -2,20 +2,39 @@
   <VcEmptyPage class="sign-in" icon="outline-security" image="sign-in.jpg">
     <div class="sign-in__form">
       <VcTypography tag="h1" class="sign-in__title">
-        {{ $t("pages.sign_in.header") }}
+        {{ pageTitle }}
       </VcTypography>
 
-      <SignInForm v-if="hasPasswordAuthentication" />
+      <OtpEmailSignInForm
+        v-if="showOtpEmailForm"
+        :has-password-authentication="hasPasswordAuthentication"
+        @switch-to-password="switchToPassword"
+        @step-changed="otpStep = $event"
+      />
+
+      <template v-else>
+        <SignInForm v-if="hasPasswordAuthentication" />
+
+        <button
+          v-if="hasOtpEmailAuthentication"
+          type="button"
+          class="sign-in__switch-link"
+          data-test-id="otp-email-switch-to-otp-link"
+          @click="switchToOtp"
+        >
+          {{ $t("shared.sign_in.otp_email_sign_in_form.switch_to_otp_link") }}
+        </button>
+      </template>
     </div>
 
     <IdentityProviders
-      v-if="hasOnlyIdentityProviders"
+      v-if="hasIdentityProviders && !hasSignInForm"
       :providers="identityProviders"
       :return-url="returnUrl"
       class="sign-in__providers sign-in__providers--only"
     />
 
-    <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders" #side>
+    <template v-if="hasIdentityProviders && hasSignInForm" #side>
       <div class="sign-in__side">
         <SignInDivider>{{ $t("pages.sign_in.divider_text") }}</SignInDivider>
 
@@ -32,18 +51,32 @@ import { useRoute } from "vue-router";
 import { usePageHead, useReturnUrl } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
+import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
+import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
 
-const { identityProviders, hasIdentityProviders, hasOnlyIdentityProviders, hasPasswordAuthentication } =
-  useIdentityProviders();
+const { t } = useI18n();
+const { identityProviders, hasIdentityProviders, hasPasswordAuthentication } = useIdentityProviders();
 const { getReturnUrl } = useReturnUrl();
 const route = useRoute();
 
 const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
 
-const { t } = useI18n();
+const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
+const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
+
+// hasOnlyIdentityProviders (from useIdentityProviders) doesn't know about OTP, so it can't
+// tell "only providers" from "providers + OTP" — this page derives its own, OTP-aware version.
+const hasSignInForm = computed(() => hasPasswordAuthentication.value || hasOtpEmailAuthentication.value);
+
+const pageTitle = computed(() =>
+  showOtpEmailForm.value && otpStep.value === "verify"
+    ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
+    : t("pages.sign_in.header"),
+);
 
 usePageHead({
   title: t("pages.sign_in.meta.title"),
@@ -66,6 +99,14 @@ usePageHead({
 
   &__title {
     @apply mb-3;
+  }
+
+  &__switch-link {
+    @apply mt-6 block text-sm font-bold text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
   }
 
   &__side {

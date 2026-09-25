@@ -32,6 +32,11 @@ function _useAuth() {
     .json<ConnectTokenResponseType>();
 
   const errors = computed(() => data.value?.errors);
+  const lockoutSecondsRemaining = computed(() => data.value?.lockoutSecondsRemaining);
+
+  function resetErrors() {
+    data.value = null;
+  }
 
   const headers = computed(() => {
     if (state.value.access_token) {
@@ -102,6 +107,16 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
+  async function nativeSignIn(params: Record<string, string>): Promise<void> {
+    getTokenParams.value = new URLSearchParams({
+      grant_type: "otp_email",
+      scope: "offline_access",
+      ...params,
+    });
+
+    await (getTokenRequest = getToken(true));
+  }
+
   async function refresh(organizationId?: string) {
     const params = new URLSearchParams({
       grant_type: "refresh_token",
@@ -160,9 +175,12 @@ function _useAuth() {
     headers,
     isExpired,
     errors,
+    resetErrors,
+    lockoutSecondsRemaining,
     isAuthorizing,
     authorize,
     externalSignInCallback,
+    nativeSignIn,
     refresh,
     unauthorize,
 

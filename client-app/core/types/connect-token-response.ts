@@ -10,4 +10,5 @@ export type ConnectTokenResponseType = {
   errors?: Array<IdentityErrorType>;
   error?: string;
   token_type?: string;
+  lockoutSecondsRemaining?: number;
 };
