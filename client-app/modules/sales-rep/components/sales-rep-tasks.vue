@@ -10,9 +10,16 @@
 
     <template #default-container>
       <div class="sales-rep-tasks__body">
-        <!-- Full size, matching the Calendar page: at `sm` the cells were too tight for the day markers to
-             sit under the date comfortably. -->
-        <SalesRepTaskCalendar v-model="selectedDay" :month="month" :day-markers="dayMarkers" @update:month="setMonth" />
+        <!-- `sm`, not the Calendar page's full size: this widget stands in the dashboard's narrow column,
+             where the md grid runs past the plate. The day markers keep their room — they sit under the
+             date, and the sm cell is still tall enough for both. -->
+        <SalesRepTaskCalendar
+          v-model="selectedDay"
+          :month="month"
+          :day-markers="dayMarkers"
+          size="sm"
+          @update:month="setMonth"
+        />
 
         <!-- The one thing on this widget that is not about the day on screen: overdue work is due in the past,
              so without this the dashboard shows a rep nothing at all about it. -->
