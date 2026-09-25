@@ -1,0 +1,17 @@
+query GetReturnableItems($orderId: String!) {
+  returnableItems(orderId: $orderId) {
+    orderLineItemId
+    productId
+    sku
+    name
+    imageUrl
+    measureUnit
+    orderedQuantity
+    deliveredQuantity
+    returnableQuantity
+    isReturnable
+    ineligibilityReason
+    deliveryDate
+    returnableUntil
+  }
+}

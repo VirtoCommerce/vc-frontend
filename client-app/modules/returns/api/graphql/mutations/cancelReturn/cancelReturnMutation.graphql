@@ -1,0 +1,14 @@
+mutation CancelReturn($command: CancelReturnCommandType!, $cultureName: String) {
+  cancelReturn(command: $command) {
+    id
+    number
+    status
+    statusDisplayValue(cultureName: $cultureName)
+    availableActions {
+      name
+      isAvailable
+      unavailableReason
+    }
+    cancelReason
+  }
+}

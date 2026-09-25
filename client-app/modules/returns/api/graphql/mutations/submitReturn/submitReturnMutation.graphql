@@ -1,0 +1,13 @@
+mutation SubmitReturn($command: SubmitReturnCommandType!, $cultureName: String) {
+  submitReturn(command: $command) {
+    id
+    number
+    status
+    statusDisplayValue(cultureName: $cultureName)
+    availableActions {
+      name
+      isAvailable
+      unavailableReason
+    }
+  }
+}

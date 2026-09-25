@@ -15,6 +15,13 @@
           {{ $t("common.buttons.print_order") }}
         </VcButton>
 
+        <ExtensionPoint
+          v-if="$canRenderExtensionPoint('orderDetails', EXTENSION_NAMES.orderDetails.actions, order)"
+          :name="EXTENSION_NAMES.orderDetails.actions"
+          category="orderDetails"
+          :order="order"
+        />
+
         <VcButton
           v-if="showReorderButton"
           :loading="loadingAddItemsToCart"
@@ -187,6 +194,7 @@ import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/share
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis.ts";
 import { AddressInfo, VendorName } from "@/shared/common";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";

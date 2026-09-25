@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "返品",
+      "table_description": "返品のリスト"
+    },
+    "title": "返品",
+    "no_returns_message": "返品はまだありません",
+    "no_results_message": "検索条件に一致する返品はありません",
+    "search_placeholder": "RMA・注文・参照番号・商品で検索",
+    "search_aria": "返品を検索",
+    "filters": {
+      "title": "フィルター",
+      "created_date": "作成日",
+      "start_date": "開始日",
+      "end_date": "終了日",
+      "invalid_range": "無効な日付範囲です。",
+      "custom_date": "日付指定",
+      "last_day": "昨日",
+      "last_week": "先週",
+      "last_month": "先月",
+      "last_year": "昨年",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "下書き",
+      "Requested": "申請済み",
+      "PartiallyApproved": "一部承認",
+      "Approved": "承認済み",
+      "Rejected": "却下",
+      "Cancelled": "キャンセル済み",
+      "Canceled": "キャンセル済み",
+      "New": "新規",
+      "Processing": "処理中",
+      "Completed": "完了"
+    },
+    "request_button": "返品を依頼",
+    "menu": {
+      "link": {
+        "title": "返品"
+      }
+    },
+    "select_items": {
+      "title": "返品する商品を選択",
+      "meta_title": "返品する商品を選択",
+      "table_description": "返品可能な注文明細",
+      "select_all": "対象の明細をすべて選択",
+      "eligible_count": "{total} 件中 {eligible} 件が対象",
+      "nothing_returnable": "この注文から返品できる商品はありません",
+      "window_hint": "商品はお届け後 {days} 日以内に返品できます",
+      "selected_summary": "{lines} 件選択 · {quantity} 点",
+      "columns": {
+        "item": "商品",
+        "ordered": "注文数",
+        "returnable": "返品可能数",
+        "quantity": "返品数"
+      },
+      "quantity_for": "{name} の返品数",
+      "continue": "次へ"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "このストアでは返品が無効です",
+      "ORDER_STATUS_NOT_ALLOWED": "この注文のステータスでは返品できません",
+      "LINE_CANCELLED": "この明細はキャンセルされました",
+      "NOT_DELIVERED": "未配送",
+      "OUTSIDE_RETURN_WINDOW": "返品期間を過ぎています",
+      "NOTHING_LEFT_TO_RETURN": "すでに全数申請済みです",
+      "UNHANDLED": "この商品は返品できません"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "この返品はそれができる段階を過ぎています",
+      "UNHANDLED": "この操作は現在ご利用いただけません"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "ファイルの一つを添付できませんでした。削除して再度アップロードしてください。",
+      "INVALID_REQUEST": "入力内容の一部が受け付けられません。理由とコメントを確認してください。",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA番号",
+        "date": "日付",
+        "status": "ステータス",
+        "quantity": "数量"
+      }
+    }
+  },
+  "return_details": {
+    "title": "返品 {0}",
+    "not_found_message": "この返品は見つかりませんでした",
+    "summary_section": "概要",
+    "items_section": "商品",
+    "order_number": "注文番号",
+    "customer_reference": "発注参照番号",
+    "customer_comment": "コメント",
+    "cancel_reason": "キャンセル理由",
+    "cancel_button": "返品をキャンセル",
+    "columns": {
+      "requested": "申請数",
+      "approved": "承認数"
+    },
+    "table_description": "返品する商品"
+  },
+  "return_cancel": {
+    "title": "返品をキャンセル",
+    "text": "返品 {0} は取り消され、商品は再び返品できるようになります。",
+    "reason_label": "理由（任意）",
+    "keep_button": "返品を維持",
+    "confirm_button": "返品をキャンセル"
+  },
+  "return_edit": {
+    "title": "返品内容の入力",
+    "title_with_number": "返品 {number} の内容の入力",
+    "not_editable_message": "この返品は変更できなくなりました",
+    "not_editable_message_with_status": "この返品は変更できなくなりました（ステータス: {status}）",
+    "details_section": "詳細",
+    "bulk_section": "すべての明細に適用",
+    "apply_to_all": "{count} 件すべてに同じ理由を適用",
+    "apply": "適用",
+    "reason": "理由",
+    "serial_number": "シリアル番号",
+    "reason_comment": "どのような不具合ですか？",
+    "saving": "保存中…",
+    "saved_automatically": "自動保存されました",
+    "submit": "返品を申請",
+    "files": "写真または書類",
+    "files_required": "写真または書類（必須）",
+    "incomplete": {
+      "quantity": "{count} 件の明細に数量が必要です",
+      "reason": "{count} 件の明細に理由が必要です",
+      "comment": "{count} 件の明細にコメントが必要です",
+      "attachment": "{count} 件の明細に写真が必要です"
+    },
+    "uploads_pending": "ファイルのアップロード完了を待っています",
+    "uploads_failed": "一部のファイルをアップロードできませんでした。送信前に削除または再試行してください。",
+    "quantity_for": "{name} の返品数量",
+    "available": "（利用可能 {quantity}）"
+  }
+}
