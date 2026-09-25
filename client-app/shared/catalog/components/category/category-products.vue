@@ -188,10 +188,15 @@ let answer = 0;
  */
 const holdingCards = computed(() => (awaitingSort.value || changingOver.value) && displayedProducts.value.length > 0);
 
+/** Whether the search the hold is waiting on has gone out. Not reactive: nothing renders it, it only
+ * tells the sorting's own emptied list apart from the next question's. */
+let sortFetchStarted = false;
+
 watch(
   () => props.sortToken,
   () => {
     awaitingSort.value = true;
+    sortFetchStarted = false;
   },
 );
 
@@ -219,6 +224,17 @@ watch(products, async (next) => {
   // The store empties the list while it fetches. That is the question being asked, not the answer
   // to it — turning the cards over to it would turn them over to nothing.
   if (!next.length) {
+    // The sorting empties the list at most once, as its own search goes out — a sorting answered
+    // from the cache lands in a single flush and is never seen empty. A second emptying under the
+    // same hold is a filter, a category or a search started before the sorting answered, and the
+    // cards being held answer a question the reader has since left — let go of them for skeletons.
+    if (sortFetchStarted) {
+      awaitingSort.value = false;
+      changingOver.value = false;
+      return;
+    }
+
+    sortFetchStarted = true;
     return;
   }
 
