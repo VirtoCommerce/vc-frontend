@@ -202,7 +202,10 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-[--p-x] bg-additional-50 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full px-[--p-x] text-left rounded-[inherit] font-normal;
+
+    // The row's rest fill, public so a theme can put its rows on its own surface.
+    background-color: var(--vc-menu-item-bg, var(--color-additional-50));
 
     &:not(:disabled) {
       @apply text-neutral-950;
