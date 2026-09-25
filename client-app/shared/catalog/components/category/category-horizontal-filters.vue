@@ -104,8 +104,14 @@ const { sortList: translatedProductSortingList, selectedSort } = useProductSorti
 );
 
 function sortingItemClickHandler(id: string, close: () => void) {
-  sortQueryParam.value = id;
-  emit("applySort");
+  // The URL is what the search is built from, so choosing the sorting that is already applied starts
+  // no search at all — and the grid's hold, armed for a search that never goes out, would keep the
+  // cards it has until some later reload emptied the list in that search's place.
+  if (id !== sortQueryParam.value) {
+    sortQueryParam.value = id;
+    emit("applySort");
+  }
+
   close();
 }
 </script>

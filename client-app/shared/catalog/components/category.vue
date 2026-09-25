@@ -155,7 +155,7 @@
               @reset-facet-filters="resetFacetFilters"
               @change:filters="applyFiltersOnly($event)"
               @show-popup-sidebar="showFiltersSidebar"
-              @apply-sort="resetCurrentPage"
+              @apply-sort="applySort"
             />
 
             <ActiveFilterChips
