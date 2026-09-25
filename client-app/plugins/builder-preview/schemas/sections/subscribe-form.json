@@ -1,5 +1,6 @@
 {
   "name": "Subscribe form",
+  "description": "Newsletter / email subscription form with title, subtitle, email input, consent checkbox and submit button. Use when: newsletter signup, lead capture, email-list opt-in. Skip when: a generic action button without a form (use `call-to-action`), or a full contact form (this theme has no such section — say so to the user instead of forcing). `title` and `subtitle` head the block. `placeholder` is the input hint (default a sample email). `checkboxText` is the consent line as HTML — keep the default Terms/Policy link unless the user supplied specific consent copy. `buttonText` is the submit label (default 'Submit'; pick a verb-led label like 'Subscribe' if the topic is clear).",
   "icon": "email",
   "displayField": "name",
   "settings": [

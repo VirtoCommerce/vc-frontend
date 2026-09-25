@@ -1,5 +1,6 @@
 {
   "name": "Blog",
+  "description": "Blog post / article — content-heavy page for editorial content, news articles, announcements, how-to guides. Use when: the user asks for a 'blog post', 'article', 'news item', or describes a topic in narrative / editorial form. Skip when: the user wants a generic landing or info page (use `page`) or a product detail page (use `product`). Page settings: `header` is the visible H1 / post title (typically the article title); `hideBreadcrumbs` defaults to false — keep it false for blog posts so readers can navigate back to the blog index; `seoInfo` carries SEO meta (`pageTitle`, `metaKeywords`, `metaDescription`) — fill `metaDescription` if the user supplied a summary, otherwise leave empty for the editor to fill later.",
   "previewRule": "{{item.settings.permalink}}",
   "request": [
     {
