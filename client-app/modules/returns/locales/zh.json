@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "填写退货详情",
+    "title_with_number": "填写退货 {number} 的详情",
     "not_editable_message": "此退货已无法更改",
     "not_editable_message_with_status": "此退货已无法更改，当前状态为 {status}",
     "details_section": "详情",

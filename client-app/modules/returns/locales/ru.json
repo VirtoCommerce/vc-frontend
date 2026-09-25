@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Детали возврата",
+    "title_with_number": "Детали возврата {number}",
     "not_editable_message": "Этот возврат больше нельзя изменить",
     "not_editable_message_with_status": "Этот возврат больше нельзя изменить — его статус: {status}",
     "details_section": "Детали",

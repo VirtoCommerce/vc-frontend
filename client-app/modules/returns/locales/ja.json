@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "返品内容の入力",
+    "title_with_number": "返品 {number} の内容の入力",
     "not_editable_message": "この返品は変更できなくなりました",
     "not_editable_message_with_status": "この返品は変更できなくなりました（ステータス: {status}）",
     "details_section": "詳細",

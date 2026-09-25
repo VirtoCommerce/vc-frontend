@@ -120,6 +120,7 @@
   },
   "return_edit": {
     "title": "Aggiungi i dettagli del reso",
+    "title_with_number": "Aggiungi i dettagli del reso {number}",
     "not_editable_message": "Questo reso non può più essere modificato",
     "not_editable_message_with_status": "Questo reso non può più essere modificato: il suo stato è {status}",
     "details_section": "Dettagli",
