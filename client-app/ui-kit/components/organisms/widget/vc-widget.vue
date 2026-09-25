@@ -167,6 +167,16 @@ watchEffect(() => {
   // plates needs a shadow that survives dark mode, where this one's black is invisible.
   --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
   --header-gap: theme("gap.2");
+  // The head's own three measures, public for the same reason the body's inset is: a theme whose
+  // widget is a NAVIGATION card — the account rail, the catalog's facet rail — sets a heading over a
+  // hairline and wants it led tight, not centred in a control-height row. Each keeps the size step
+  // it has always had as its default, so nothing moves until a theme names one.
+  --header-min-height: var(--vc-widget-header-min-height, var(--header-min-h));
+  // A pair is legal here (`padding-block: 20px 6px`), which is what a heading standing over a
+  // hairline needs: its air above the card's inset, its air below the rule's.
+  --header-p-y: var(--vc-widget-header-padding-y, theme("padding.1"));
+  --header-p-x: var(--vc-widget-header-padding-x, var(--p-x));
+  --title-size: var(--vc-widget-title-font-size, var(--title-text));
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] bg-center;
 
@@ -293,7 +303,10 @@ watchEffect(() => {
   }
 
   &__header {
-    @apply flex items-center gap-[--header-gap] min-h-[--header-min-h] px-[--p-x] py-1 w-full;
+    @apply flex items-center gap-[--header-gap] min-h-[--header-min-height] w-full;
+
+    padding-block: var(--header-p-y);
+    padding-inline: var(--header-p-x);
   }
 
   &__prepend-append {
@@ -304,7 +317,7 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-text] break-words;
+    @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-size] break-words;
 
     // The same knob the typography block's headings read: a widget's title is one of them, set in
     // the same face, and a theme that lightens its headings has to reach this one too or the page
@@ -319,14 +332,20 @@ watchEffect(() => {
   &__slot-container {
     // The plate's curve is a border-radius on a box whose children paint over it, so a body that runs
     // edge to edge — a table handed in through `default-container` — squares the corner off the moment
-    // a row takes a fill. Only the box that ENDS the plate rounds and clips; with a footer below it,
-    // that box is the footer and this one stays square. Clip rather than round alone: the fill is on a
-    // `td` several levels down, which a radius here would not reach. Every panel the kit floats
-    // (popover, select, dropdown, tooltip, date picker) teleports to the body, so none of them is
-    // clipped by this.
+    // a row takes a fill. Only the box that ENDS the plate carries the curve; with a footer below it,
+    // that box is the footer and this one stays square.
+    //
+    // NOT `overflow: clip`, which was tried and reverted: VcPopover does not teleport by default
+    // (`enableTeleport` resolves to false) and `.vc-popover` is `position: relative`, so a panel's
+    // containing block sits INSIDE this box — measured on the cart, a probe hanging 80px past the
+    // bottom edge was clipped away. Every select, dropdown, tooltip and date picker inside a widget
+    // body would have lost whatever opened past the plate. The flush body rounds its OWN corner
+    // instead: `--vc-table-flush-radius` is the kit's channel for that, and the radius below is for a
+    // body that paints a background of its own.
     &:last-child {
+      --vc-table-flush-radius: var(--radius);
+
       border-radius: 0 0 var(--radius) var(--radius);
-      overflow: clip;
     }
   }
 

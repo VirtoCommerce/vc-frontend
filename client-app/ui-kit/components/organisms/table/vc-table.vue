@@ -830,7 +830,11 @@ const scrollbarStyle = computed(() => {
 const desktopBorderWidth = computed(() => (props.bordered ? "1px" : "0"));
 const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
 
-const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "0"));
+// A bordered table draws its own box, so it rounds to its own radius. An UNBORDERED one is flush
+// with whatever surface holds it, and the corner it stands on is that surface's — a widget hands it
+// down through `--vc-table-flush-radius`. Without it the last row's fill paints a square corner over
+// the plate's curve.
+const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "var(--vc-table-flush-radius, 0px)"));
 const mobileRadius = computed(() => (props.mobileBordered ? "var(--radius)" : "0"));
 
 function toggleSortDirection(currentDirection: VcTableSortDirectionType): VcTableSortDirectionType {

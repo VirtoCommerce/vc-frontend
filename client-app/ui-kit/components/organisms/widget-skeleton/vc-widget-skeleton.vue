@@ -70,24 +70,30 @@ withDefaults(defineProps<IProps>(), {
 
   box-shadow: var(--shadow);
 
-  // Each size's inset reads VcWidget's padding knob first, for the same reason the surface
+  // Each size's inset reads VcWidget's padding knobs first, for the same reason the surface
   // knobs above are mirrored: a placeholder that keeps the kit's inset while the widget it
-  // stands in for takes the page's would jump the moment the real content arrives.
+  // stands in for takes the page's would jump the moment the real content arrives. One `--pad`
+  // per size, read by all three, because the widget it stands in for is one inset on four sides —
+  // a hardcoded 16/20 here left the placeholder shorter than the content that replaced it.
+  --p-x: var(--vc-widget-padding-x, var(--pad));
+  --p-t: var(--vc-widget-padding-top, var(--pad));
+  --p-b: var(--vc-widget-padding-bottom, var(--pad));
+
   &--size {
     &--xs {
-      --p-x: var(--vc-widget-padding-x, theme("padding.4"));
+      --pad: theme("padding.4");
       --header-p-y: theme("padding[2.5]");
       --placeholder-h: 1.125rem;
     }
 
     &--sm {
-      --p-x: var(--vc-widget-padding-x, theme("padding.4"));
+      --pad: theme("padding.4");
       --header-p-y: theme("padding.3");
       --placeholder-h: 1.375rem;
     }
 
     &--md {
-      --p-x: var(--vc-widget-padding-x, theme("padding.6"));
+      --pad: theme("padding.6");
       --header-p-y: theme("padding.3");
       --placeholder-h: 1.625rem;
     }
@@ -95,14 +101,14 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       $sizeLG: &;
 
-      --p-x: var(--vc-widget-padding-x, theme("padding.5"));
+      --pad: theme("padding.5");
       --header-p-y: theme("padding.4");
       --placeholder-h: 2.625rem;
 
       @apply divide-none;
 
       @media (min-width: theme("screens.lg")) {
-        --p-x: var(--vc-widget-padding-x, theme("padding.7"));
+        --pad: theme("padding.7");
       }
     }
   }
@@ -158,7 +164,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__slot {
-    @apply pt-4 pb-5 px-[--p-x];
+    @apply pt-[--p-t] pb-[--p-b] px-[--p-x];
 
     #{$sizeLG} & {
       @apply pt-0;

@@ -961,8 +961,11 @@ onMounted(() => {
       }
     }
 
-    // Every block on the rail is headed the same way — Geologica 700 18/22 over a hairline — so
-    // the category list and the facets under it read as one level (Ilya's Figma, 22.09.2026).
+    // Every block on the rail is headed the same way — Geologica 18/22 over a hairline — so the
+    // category list and the facets under it read as one level (Ilya's Figma, 22.09.2026). The
+    // WEIGHT is no longer pinned here: the display face went to 600 across the theme
+    // (Ilya, 24.09.2026) and the kit's title reads that knob, so a `font-bold` on this rule alone
+    // would leave the facet rail heavier than every other heading on the page.
     .vc-widget__header-container {
       @apply p-0;
     }
@@ -977,7 +980,7 @@ onMounted(() => {
     }
 
     .vc-widget__title {
-      @apply font-geologica text-lg font-bold normal-case leading-[1.375rem] tracking-[-0.02em] text-neutral-950;
+      @apply font-geologica text-lg normal-case leading-[1.375rem] tracking-[-0.02em] text-neutral-950;
     }
 
     .vc-widget__prepend-append,

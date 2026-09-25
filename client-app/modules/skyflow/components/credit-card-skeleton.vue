@@ -19,7 +19,7 @@
   @apply flex flex-col border-y bg-additional-50 pb-4 pt-4.5 shadow-sm;
 
   @media (width >= theme("screens.md")) {
-    @apply flex-row items-center rounded border-x py-0;
+    @apply flex-row items-center rounded-[--vc-radius] border-x py-0;
   }
 
   &__number {

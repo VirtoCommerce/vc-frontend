@@ -50,13 +50,14 @@ const _color = computed(() => getColorValue(props.color));
 </script>
 
 <style lang="scss">
-// Where the type steps up for a very wide screen. NOT `2xl`, which is 1500: at the 1512 the design
+// Where the type steps up for a very wide screen. NOT `2xl`, which is 1440: at the 1512 the design
 // is drawn and shown at, the kit's `2xl` step has already fired and every heading renders one step
 // larger than the design — measured on the design's product, cart, dashboard and orders screens,
 // all of which sit at the base size there (h1 32/36 against our 36/40). The design's own wide mode
-// starts much later: above 1280 its only breakpoints are 1900 (x2) and 1920 (x4), with 1500 used
-// exactly once. So the step belongs at 1900, where it still serves the projector pass.
-$wide: 1900px;
+// starts much later: above 1280 its only breakpoints are 1900 (x2) and 1920 (x4). `4xl` is this
+// project's step for that rung — 1900 snaps to it, the way every width the design names snaps to
+// the nearest step of ours — and it still serves the projector pass.
+$wide: theme("screens.4xl");
 
 .vc-typography {
   --props-font-size: v-bind(props.fontSize);

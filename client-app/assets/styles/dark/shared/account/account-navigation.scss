@@ -3,4 +3,8 @@
   // hover moves a step up the neutral ramp and the active row one step up the secondary one.
   --vc-menu-item-hover-bg: theme("colors.neutral.200");
   --vc-menu-item-active-bg: theme("colors.secondary.200");
+
+  // The hairline under a group's heading steps up a rung too: 200 on this plate vanishes. The
+  // facet rail on the category page makes the same swap for the same reason.
+  --vc-widget-divide-color: theme("colors.neutral.300");
 }

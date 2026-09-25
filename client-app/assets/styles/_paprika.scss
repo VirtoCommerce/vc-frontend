@@ -114,6 +114,11 @@ html.dark {
   --vc-widget-border-color: theme("colors.neutral.200");
   --vc-widget-shadow: none;
 
+  // The hover goes back up a rung here. Dark's 100 IS the plate — `additional-50` resolves to the
+  // same #29201b — so the light rule's value would paint the row in the surface it stands on and
+  // there would be no hover at all. 200 is the first step that leaves the plate.
+  --vc-table-row-hover-bg-color: theme("colors.neutral.200");
+
   // Dark keeps the same shapes and changes the paint: the shadow deepens and gains the
   // half-pixel hairline that is the only thing separating one dark surface from another,
   // and the sheen flips from white to the warm top step.
