@@ -12,6 +12,7 @@
     "no_returns_message": "Nie ma jeszcze żadnych zwrotów",
     "no_results_message": "Żadne zwroty nie pasują do wyszukiwania",
     "search_placeholder": "Szukaj według RMA, zamówienia, referencji lub produktu",
+    "search_placeholder_organization": "Szukaj według RMA, zamówienia, referencji, produktu lub kupującego",
     "search_aria": "Szukaj zwrotów",
     "filters": {
       "title": "Filtry",

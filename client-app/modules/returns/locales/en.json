@@ -12,6 +12,7 @@
     "no_returns_message": "There are no returns yet",
     "no_results_message": "No returns match your search",
     "search_placeholder": "Search by RMA, order, reference or product",
+    "search_placeholder_organization": "Search by RMA, order, reference, product or buyer",
     "search_aria": "Search returns",
     "filters": {
       "title": "Filters",

@@ -12,6 +12,7 @@
     "no_returns_message": "Non ci sono ancora resi",
     "no_results_message": "Nessun reso corrisponde alla ricerca",
     "search_placeholder": "Cerca per RMA, ordine, riferimento o prodotto",
+    "search_placeholder_organization": "Cerca per RMA, ordine, riferimento, prodotto o acquirente",
     "search_aria": "Cerca resi",
     "filters": {
       "title": "Filtri",

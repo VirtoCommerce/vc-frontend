@@ -29,7 +29,7 @@
           maxlength="64"
           class="returns-list__search"
           :disabled="loading"
-          :placeholder="$t('returns.search_placeholder')"
+          :placeholder="$t(searchPlaceholderKey)"
           clearable
           @keydown.enter="applyKeyword(localKeyword)"
           @clear="applyKeyword('')"
@@ -215,6 +215,11 @@ const { statusLabel } = useReturnStatusLabel();
 const localKeyword = ref(keyword.value);
 
 const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
+
+// Only the organization's list is read by people looking for a colleague, so only it mentions the buyer.
+const searchPlaceholderKey = computed(() =>
+  isOrganizationScope.value ? "returns.search_placeholder_organization" : "returns.search_placeholder",
+);
 
 const isSearching = computed(() => Boolean(keyword.value) || !isFilterEmpty.value);
 

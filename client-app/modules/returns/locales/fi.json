@@ -12,6 +12,7 @@
     "no_returns_message": "Palautuksia ei ole vielä",
     "no_results_message": "Hakuasi vastaavia palautuksia ei löytynyt",
     "search_placeholder": "Hae RMA:n, tilauksen, viitteen tai tuotteen mukaan",
+    "search_placeholder_organization": "Hae RMA:n, tilauksen, viitteen, tuotteen tai ostajan mukaan",
     "search_aria": "Hae palautuksia",
     "filters": {
       "title": "Suodattimet",

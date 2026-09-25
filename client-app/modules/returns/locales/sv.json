@@ -12,6 +12,7 @@
     "no_returns_message": "Det finns inga returer ännu",
     "no_results_message": "Inga returer matchar din sökning",
     "search_placeholder": "Sök på RMA, order, referens eller produkt",
+    "search_placeholder_organization": "Sök på RMA, order, referens, produkt eller köpare",
     "search_aria": "Sök returer",
     "filters": {
       "title": "Filter",

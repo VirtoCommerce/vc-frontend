@@ -12,6 +12,7 @@
     "no_returns_message": "Aún no hay devoluciones",
     "no_results_message": "Ninguna devolución coincide con su búsqueda",
     "search_placeholder": "Buscar por RMA, pedido, referencia o producto",
+    "search_placeholder_organization": "Buscar por RMA, pedido, referencia, producto o comprador",
     "search_aria": "Buscar devoluciones",
     "filters": {
       "title": "Filtros",

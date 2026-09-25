@@ -12,6 +12,7 @@
     "no_returns_message": "暂无退货",
     "no_results_message": "没有符合搜索条件的退货",
     "search_placeholder": "按 RMA、订单、参考号或商品搜索",
+    "search_placeholder_organization": "按 RMA、订单、参考号、商品或买家搜索",
     "search_aria": "搜索退货",
     "filters": {
       "title": "过滤器",

@@ -12,6 +12,7 @@
     "no_returns_message": "Возвратов пока нет",
     "no_results_message": "По запросу ничего не найдено",
     "search_placeholder": "Поиск по RMA, заказу, ссылке или товару",
+    "search_placeholder_organization": "Поиск по RMA, заказу, ссылке, товару или покупателю",
     "search_aria": "Поиск возвратов",
     "filters": {
       "title": "Фильтры",

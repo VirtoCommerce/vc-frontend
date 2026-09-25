@@ -12,6 +12,7 @@
     "no_returns_message": "Es liegen noch keine Rücksendungen vor",
     "no_results_message": "Keine Rücksendungen entsprechen Ihrer Suche",
     "search_placeholder": "Suche nach RMA, Bestellung, Referenz oder Artikel",
+    "search_placeholder_organization": "Suche nach RMA, Bestellung, Referenz, Artikel oder Käufer",
     "search_aria": "Rücksendungen suchen",
     "filters": {
       "title": "Filter",

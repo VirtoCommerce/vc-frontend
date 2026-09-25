@@ -12,6 +12,7 @@
     "no_returns_message": "返品はまだありません",
     "no_results_message": "検索条件に一致する返品はありません",
     "search_placeholder": "RMA・注文・参照番号・商品で検索",
+    "search_placeholder_organization": "RMA・注文・参照番号・商品・購入者で検索",
     "search_aria": "返品を検索",
     "filters": {
       "title": "フィルター",
