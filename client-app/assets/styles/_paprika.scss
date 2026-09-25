@@ -201,6 +201,41 @@ html.dark {
   }
 }
 
+// A configurator option is one flat 96px row on the desktop: radio, 64px picture, the name at
+// the body face, then the unit price, the quantity and the line total, all regular 14. The
+// properties column exists for the narrow layout only, so it folds to nothing here.
+.product-configuration .option-product {
+  @container (min-width: theme("containers.2xl")) {
+    .vc-product-card__wrapper {
+      grid-template-areas: "select image title properties price add-to-cart total";
+      grid-template-rows: auto;
+      grid-template-columns: 2rem 4.75rem minmax(0, 1fr) 0 6.75rem 6.25rem 8.25rem;
+      min-height: 6rem;
+    }
+
+    .vc-product-properties {
+      @apply h-0 overflow-hidden;
+    }
+
+    .vc-product-title {
+      @apply font-inter font-bold leading-[1.17];
+    }
+
+    .vc-product-price,
+    .vc-product-total {
+      --vc-product-price-font-size: 0.875rem;
+    }
+
+    .vc-product-price__actual {
+      @apply font-normal;
+    }
+
+    .vc-product-total {
+      @apply ms-0 w-auto;
+    }
+  }
+}
+
 // Every lg widget is the design's `.vc-widget--lg`, one recipe wherever it stands: the head
 // seated 16 off the corner rather than centred in a control-height row, the body 16/18/20, the
 // title 16. Nested widgets inherit custom properties, so every knob is handed back to the

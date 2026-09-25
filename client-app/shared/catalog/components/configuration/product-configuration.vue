@@ -381,10 +381,9 @@ async function openSaveChangesModal(): Promise<boolean> {
   }
 
   &__items {
-    // The design's pair for an option row: the name at 16/20 and the figure at 20. Ours came out of
-    // the kit at 14 for both, so the row read a size below every other listing on the page.
-    --vc-product-title-font-size: 1rem;
-    --vc-product-price-font-size: 1.25rem;
+    // The design's option row sets the name and both figures at 14.
+    --vc-product-title-font-size: 0.875rem;
+    --vc-product-price-font-size: 0.875rem;
 
     @apply @container mt-5;
 
@@ -399,7 +398,7 @@ async function openSaveChangesModal(): Promise<boolean> {
 
   &__value {
     &--selected {
-      @apply text-success-600;
+      @apply text-neutral-500;
     }
 
     &--required {
@@ -407,7 +406,7 @@ async function openSaveChangesModal(): Promise<boolean> {
     }
 
     &--not-selected {
-      @apply text-info-800;
+      @apply text-neutral-500;
 
       &#{$required} {
         @apply text-danger-800;
