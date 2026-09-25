@@ -4,7 +4,7 @@
     prepend-icon="cash"
     icon-shape
     class="mt-5"
-    size="md"
+    size="lg"
     data-test-id="payment-details-section"
   >
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
@@ -92,7 +92,7 @@
     :title="$t('shared.checkout.billing_details_section.payment_card')"
     prepend-icon="cash"
     icon-shape
-    size="md"
+    size="lg"
     class="mt-5"
   >
     <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod!" />

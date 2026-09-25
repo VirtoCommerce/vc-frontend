@@ -339,8 +339,6 @@ async function openSaveChangesModal(): Promise<boolean> {
 .product-configuration {
   $required: "";
 
-  --vc-widget-title-font-size: 1rem;
-
   // The group's header is two things on one line: the name with its subtitle, and the badge that
   // says the group may be skipped. The badge keeps its size while the name takes the rest.
   &__header {
@@ -368,7 +366,6 @@ async function openSaveChangesModal(): Promise<boolean> {
     // radius made the inner block look like it was floating loose in the outer one. The design's
     // own step for a nested widget.
     --vc-widget-radius: 0.625rem;
-    --vc-widget-title-font-size: initial;
     --vc-widget-border-color: theme("colors.neutral.200");
     --vc-widget-shadow: none;
 

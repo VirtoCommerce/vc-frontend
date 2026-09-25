@@ -3,7 +3,7 @@
     :title="$t('pages.cart.saved_for_later')"
     prepend-icon="bookmark"
     icon-shape
-    size="md"
+    size="lg"
     class="cart-for-later"
   >
     <template v-slot:append>

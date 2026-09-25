@@ -193,29 +193,19 @@ html.dark {
   }
 }
 
-// A widget headed by the disc seats the disc on its own inset, not centred in a control-height
-// row: the cart and checkout sections (md) at 16 with the body 16/18/20, the product page's
-// blocks (lg) at 24 with 20 between head and body. Nested widgets inherit custom properties,
-// so every knob is handed back to the defaults one level down.
+// A widget headed by the disc is the design's `.vc-widget--lg`, one recipe on the cart, the
+// checkout and the product page: the disc seated 16 off the corner rather than centred in a
+// control-height row, the body 16/18/20, the title 16. Nested widgets inherit custom
+// properties, so every knob is handed back to the defaults one level down.
 @media (width >= theme("screens.lg")) {
-  .vc-widget--icon-shape {
-    &.vc-widget--size--md {
-      --vc-widget-header-min-height: 0px;
-      --vc-widget-header-padding-y: 1rem 0;
-      --vc-widget-header-padding-x: 1rem;
-      --vc-widget-padding-x: 1.125rem;
-      --vc-widget-padding-top: 1rem;
-      --vc-widget-padding-bottom: 1.25rem;
-    }
-
-    &.vc-widget--size--lg {
-      --vc-widget-header-min-height: 0px;
-      --vc-widget-header-padding-y: 1.5rem 0;
-      --vc-widget-header-padding-x: 1.5rem;
-      --vc-widget-padding-x: 1.5rem;
-      --vc-widget-padding-top: 1.25rem;
-      --vc-widget-padding-bottom: 1.5rem;
-    }
+  .vc-widget--icon-shape.vc-widget--size--lg {
+    --vc-widget-header-min-height: 0px;
+    --vc-widget-header-padding-y: 1rem 0;
+    --vc-widget-header-padding-x: 1rem;
+    --vc-widget-padding-x: 1.125rem;
+    --vc-widget-padding-top: 1rem;
+    --vc-widget-padding-bottom: 1.25rem;
+    --vc-widget-title-font-size: 1rem;
 
     .vc-widget:not(.vc-widget--icon-shape) {
       --vc-widget-header-min-height: initial;
@@ -224,6 +214,7 @@ html.dark {
       --vc-widget-padding-x: initial;
       --vc-widget-padding-top: initial;
       --vc-widget-padding-bottom: initial;
+      --vc-widget-title-font-size: initial;
     }
   }
 }
