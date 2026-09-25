@@ -193,6 +193,14 @@ html.dark {
   }
 }
 
+// The empty page's illustration is the design's 320 on the desktop, not the kit's 440: at 440 it
+// pushed the sign-up form down to 516 and stood a column away from it.
+@media (width >= theme("screens.lg")) {
+  :root .vc-empty-page {
+    --vc-composite-shape-size: 20rem;
+  }
+}
+
 // Every lg widget is the design's `.vc-widget--lg`, one recipe wherever it stands: the head
 // seated 16 off the corner rather than centred in a control-height row, the body 16/18/20, the
 // title 16. Nested widgets inherit custom properties, so every knob is handed back to the

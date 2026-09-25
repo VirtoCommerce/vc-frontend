@@ -1177,7 +1177,7 @@
       "meta": {
         "title": "Forgot password"
       },
-      "header": "reset your password",
+      "header": "Reset your password",
       "email_will_be_sended_message": "We will send you an email with reset password instructions.",
       "reset_link_was_sent_message": "We sent you a reset password link to your inbox",
       "home_button": "@:common.buttons.home"

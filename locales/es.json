@@ -1177,7 +1177,7 @@
       "meta": {
         "title": "Olvidé mi contraseña"
       },
-      "header": "restablece tu contraseña",
+      "header": "Restablece tu contraseña",
       "email_will_be_sended_message": "Te enviaremos un correo electrónico con instrucciones para restablecer la contraseña",
       "reset_link_was_sent_message": "Te enviamos un enlace para restablecer la contraseña a tu bandeja de entrada.",
       "home_button": "@:common.buttons.home"

@@ -1177,7 +1177,7 @@
       "meta": {
         "title": "Забыли пароль"
       },
-      "header": "сбросить пароль",
+      "header": "Сбросить пароль",
       "email_will_be_sended_message": "Мы отправим вам письмо с инструкциями по сбросу пароля",
       "reset_link_was_sent_message": "Мы отправили вам ссылку для сброса пароля на ваш почтовый ящик",
       "home_button": "@:common.buttons.home"

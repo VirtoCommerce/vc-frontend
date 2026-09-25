@@ -1177,7 +1177,7 @@
       "meta": {
         "title": "Zapomniałeś hasła"
       },
-      "header": "zresetuj swoje hasło",
+      "header": "Zresetuj swoje hasło",
       "email_will_be_sended_message": "Wyślemy Ci e-mail z instrukcjami resetowania hasła",
       "reset_link_was_sent_message": "Wysłaliśmy Ci link do resetowania hasła na Twój email.",
       "home_button": "@:common.buttons.home"

@@ -1,6 +1,6 @@
 <template>
   <VcEmptyPage icon="outline-security-pc" image="reg.jpg" hide-mobile-side>
-    <div class="order-first w-full text-start sm:pe-12 lg:pe-24 lg:ps-12">
+    <div class="order-first w-full text-start sm:pe-12 lg:ps-12">
       <VcTypography tag="h1" class="mb-6">
         {{ $t("pages.sign_up.header") }}
       </VcTypography>

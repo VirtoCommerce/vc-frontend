@@ -1177,7 +1177,7 @@
       "meta": {
         "title": "Password dimenticata"
       },
-      "header": "reimposta la tua password",
+      "header": "Reimposta la tua password",
       "email_will_be_sended_message": "Ti invieremo un'email con le istruzioni per reimpostare la password",
       "reset_link_was_sent_message": "Ti abbiamo inviato un link per reimpostare la password nella tua casella di posta.",
       "home_button": "@:common.buttons.home"
