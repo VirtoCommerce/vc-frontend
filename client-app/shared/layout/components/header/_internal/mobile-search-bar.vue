@@ -24,7 +24,11 @@
             @keydown.enter="searchDropdownRef?.handleSearch()"
           >
             <template #append>
-              <BarcodeScanner v-if="!searchPhrase && isScannerEnabled" @scanned-code="onBarcodeScanned" />
+              <BarcodeScanner
+                v-if="!searchPhrase && isScannerEnabled"
+                :aria-label="$t('shared.layout.search_bar.barcode_detector.title')"
+                @scanned-code="onBarcodeScanned"
+              />
 
               <VcButton
                 class="mobile-search-bar__button"
