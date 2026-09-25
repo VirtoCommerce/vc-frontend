@@ -125,4 +125,17 @@ const catalogRoute = ROUTES.CATALOG.PATH;
     }
   }
 }
+
+@media (width >= theme("screens.lg")) {
+  .cta-section {
+    &__title {
+      --vc-typography-font-size: 1.875rem;
+      --line-height: 2.25rem;
+    }
+
+    &__text {
+      @apply mt-5 leading-5;
+    }
+  }
+}
 </style>

@@ -58,7 +58,7 @@ const { t } = useI18n();
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-additional-50/60;
+    @apply mb-1.5 text-xs font-bold uppercase leading-5 tracking-[0.14em] text-additional-50/60;
   }
 
   &__title {
@@ -70,7 +70,7 @@ const { t } = useI18n();
   }
 
   &__supplier {
-    @apply flex items-center gap-3.5 rounded-xl border border-additional-50/20 bg-additional-50/10 p-5 backdrop-blur-[8px];
+    @apply flex items-center gap-3.5 rounded-xl border border-additional-50/20 bg-additional-50/10 p-[19px] backdrop-blur-[8px];
   }
 
   &__logo {
@@ -86,11 +86,11 @@ const { t } = useI18n();
   }
 
   &__supplier-name {
-    @apply block truncate font-geologica text-sm font-bold;
+    @apply block truncate font-geologica text-[15px] font-bold leading-[1.55];
   }
 
   &__supplier-role {
-    @apply block text-xs text-additional-50/60;
+    @apply block text-xs leading-[1.55] text-additional-50/60;
   }
 
   &__stats {
@@ -178,6 +178,15 @@ const { t } = useI18n();
 
     &__stat-label {
       @apply text-sm;
+    }
+  }
+}
+
+@media (width >= theme("screens.lg")) {
+  .suppliers-section {
+    &__title {
+      --vc-typography-font-size: 1.875rem;
+      --line-height: 2.25rem;
     }
   }
 }

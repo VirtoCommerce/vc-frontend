@@ -3,7 +3,7 @@
     <div class="changes-section__head">
       <p class="changes-section__eyebrow">{{ t("pages.demo_home.changes.eyebrow") }}</p>
 
-      <VcTypography tag="h2">{{ t("pages.demo_home.changes.title") }}</VcTypography>
+      <VcTypography tag="h2" class="changes-section__title">{{ t("pages.demo_home.changes.title") }}</VcTypography>
     </div>
 
     <div class="changes-section__grid">
@@ -51,11 +51,7 @@ const { t } = useI18n();
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
-
-    html.dark & {
-      @apply text-primary-600;
-    }
+    @apply mb-1.5 text-xs font-bold uppercase leading-5 tracking-[0.14em] text-primary-600;
   }
 
   &__grid {
@@ -145,6 +141,15 @@ const { t } = useI18n();
   .changes-section {
     &__stat-label {
       @apply text-xs;
+    }
+  }
+}
+
+@media (width >= theme("screens.lg")) {
+  .changes-section {
+    &__title {
+      --vc-typography-font-size: 1.875rem;
+      --line-height: 2.25rem;
     }
   }
 }

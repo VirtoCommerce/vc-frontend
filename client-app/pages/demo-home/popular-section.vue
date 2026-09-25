@@ -4,7 +4,7 @@
       <div>
         <p class="popular-section__eyebrow">{{ t("pages.demo_home.popular.eyebrow") }}</p>
 
-        <VcTypography tag="h2">{{ t("pages.demo_home.popular.title") }}</VcTypography>
+        <VcTypography tag="h2" class="popular-section__title">{{ t("pages.demo_home.popular.title") }}</VcTypography>
       </div>
 
       <SectionLink :to="categoryRoute">{{ t("pages.demo_home.popular.see_all") }}</SectionLink>
@@ -53,11 +53,7 @@ onMounted(async () => {
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
-
-    html.dark & {
-      @apply text-primary-600;
-    }
+    @apply mb-1.5 text-xs font-bold uppercase leading-5 tracking-[0.14em] text-primary-600;
   }
 
   &__list {
@@ -77,6 +73,15 @@ onMounted(async () => {
 
     &__card {
       @apply w-[13.75rem] flex-none snap-start;
+    }
+  }
+}
+
+@media (width >= theme("screens.lg")) {
+  .popular-section {
+    &__title {
+      --vc-typography-font-size: 1.875rem;
+      --line-height: 2.25rem;
     }
   }
 }

@@ -4,7 +4,9 @@
       <div class="categories-section__heading">
         <p class="categories-section__eyebrow">{{ t("pages.demo_home.categories.eyebrow") }}</p>
 
-        <VcTypography tag="h2">{{ t("pages.demo_home.categories.title") }}</VcTypography>
+        <VcTypography tag="h2" class="categories-section__title">{{
+          t("pages.demo_home.categories.title")
+        }}</VcTypography>
       </div>
 
       <SectionLink :to="catalogRoute" class="categories-section__all">
@@ -122,11 +124,7 @@ const tiles = computed(() =>
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
-
-    html.dark & {
-      @apply text-primary-600;
-    }
+    @apply mb-1.5 text-xs font-bold uppercase leading-5 tracking-[0.14em] text-primary-600;
   }
 
   // First four tiles form the bento (two tall + two stacked), the rest fall into rows of three
@@ -414,6 +412,15 @@ const tiles = computed(() =>
 
     &__tile--xl &__name {
       @apply text-2xl;
+    }
+  }
+}
+
+@media (width >= theme("screens.lg")) {
+  .categories-section {
+    &__title {
+      --vc-typography-font-size: 1.875rem;
+      --line-height: 2.25rem;
     }
   }
 }

@@ -11,7 +11,9 @@
     <div class="why-buy-section__grid">
       <article class="why-buy-section__col">
         <div class="why-buy-section__card why-buy-section__card--brand">
-          <VcTypography tag="h3" variant="h3">{{ t("pages.demo_home.why_buy.cards.stock.title") }}</VcTypography>
+          <VcTypography tag="h3" variant="h3" class="why-buy-section__card-title">{{
+            t("pages.demo_home.why_buy.cards.stock.title")
+          }}</VcTypography>
 
           <p class="why-buy-section__card-text">{{ t("pages.demo_home.why_buy.cards.stock.text") }}</p>
         </div>
@@ -28,7 +30,9 @@
           </div>
 
           <div class="why-buy-section__card why-buy-section__card--sand">
-            <VcTypography tag="h3" variant="h3">{{ t("pages.demo_home.why_buy.cards.pricing.title") }}</VcTypography>
+            <VcTypography tag="h3" variant="h3" class="why-buy-section__card-title">{{
+              t("pages.demo_home.why_buy.cards.pricing.title")
+            }}</VcTypography>
 
             <p class="why-buy-section__card-text">{{ t("pages.demo_home.why_buy.cards.pricing.text") }}</p>
           </div>
@@ -36,7 +40,7 @@
 
         <div class="why-buy-section__row">
           <div class="why-buy-section__card why-buy-section__card--taupe">
-            <VcTypography tag="h3" variant="h3">
+            <VcTypography tag="h3" variant="h3" class="why-buy-section__card-title">
               {{ t("pages.demo_home.why_buy.cards.fulfillment.title") }}
             </VcTypography>
 
@@ -69,11 +73,7 @@ const { t } = useI18n();
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
-
-    html.dark & {
-      @apply text-primary-600;
-    }
+    @apply mb-1.5 text-xs font-bold uppercase leading-5 tracking-[0.14em] text-primary-600;
   }
 
   &__grid {
@@ -234,6 +234,48 @@ const { t } = useI18n();
 
     &__row > &__media {
       @apply hidden;
+    }
+  }
+}
+
+@media (width >= theme("screens.lg")) {
+  .why-buy-section {
+    &__title {
+      --vc-typography-font-size: 1.875rem;
+      --line-height: 2.25rem;
+    }
+
+    &__grid {
+      @apply grid-cols-[minmax(0,374.667fr)_minmax(0,742fr)];
+    }
+
+    &__col > &__card {
+      @apply flex-auto gap-3 pb-8 pe-[31px] ps-[31px] pt-7;
+    }
+
+    &__col > &__media {
+      @apply flex-[0_0_340px];
+    }
+
+    &__row {
+      @apply flex h-[260px];
+    }
+
+    &__row > &__card {
+      @apply aspect-auto w-[clamp(240px,23%,340px)] flex-none gap-2.5 px-6 py-[26px];
+    }
+
+    &__row > &__media {
+      @apply min-w-0 flex-1;
+    }
+
+    &__card-title {
+      --vc-typography-font-size: 1.625rem;
+      --line-height: 1.2;
+    }
+
+    &__card-text {
+      @apply text-[15px];
     }
   }
 }

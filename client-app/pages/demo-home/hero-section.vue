@@ -73,11 +73,7 @@ const cartRoute = ROUTES.CART.PATH;
   }
 
   &__eyebrow {
-    @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
-
-    html.dark & {
-      @apply text-primary-600;
-    }
+    @apply mb-2.5 text-xs font-bold uppercase leading-5 tracking-[0.14em] text-primary-600;
   }
 
   &__title {
