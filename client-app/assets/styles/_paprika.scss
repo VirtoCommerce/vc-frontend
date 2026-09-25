@@ -254,18 +254,18 @@ html.dark {
     --vc-widget-padding-top: 1rem;
     --vc-widget-padding-bottom: 1.25rem;
     --vc-widget-title-font-size: 1rem;
+  }
 
-    // Zero specificity: it only has to beat inheritance, and a component that names its own
-    // nested widget's knobs must still win.
-    :where(.vc-widget:not(.vc-widget--size--lg)) {
-      --vc-widget-header-min-height: initial;
-      --vc-widget-header-padding-y: initial;
-      --vc-widget-header-padding-x: initial;
-      --vc-widget-padding-x: initial;
-      --vc-widget-padding-top: initial;
-      --vc-widget-padding-bottom: initial;
-      --vc-widget-title-font-size: initial;
-    }
+  // Zero specificity: it only has to beat inheritance, and a component that names its own
+  // nested widget's knobs must still win.
+  :where(.vc-widget--size--lg .vc-widget:not(.vc-widget--size--lg)) {
+    --vc-widget-header-min-height: initial;
+    --vc-widget-header-padding-y: initial;
+    --vc-widget-header-padding-x: initial;
+    --vc-widget-padding-x: initial;
+    --vc-widget-padding-top: initial;
+    --vc-widget-padding-bottom: initial;
+    --vc-widget-title-font-size: initial;
   }
 }
 

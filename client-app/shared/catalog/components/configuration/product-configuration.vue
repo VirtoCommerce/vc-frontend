@@ -387,6 +387,10 @@ async function openSaveChangesModal(): Promise<boolean> {
     --vc-widget-padding-bottom: 1.25rem;
   }
 
+  &__title {
+    @apply leading-[18px];
+  }
+
   &__subtitle {
     @apply mt-0.5 text-xs font-normal normal-case leading-[15px] text-neutral max-w-3xl;
   }
