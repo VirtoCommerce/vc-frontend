@@ -17,7 +17,7 @@
             {{ organization?.name }}
           </span>
 
-          <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="mobile-menu__logo" lazy />
+          <VcImage v-else :src="secondaryLogoUrl" :alt="$context.storeName" class="mobile-menu__logo" lazy />
         </div>
 
         <!-- Dark mode toggle -->
@@ -88,7 +88,7 @@
 import { onKeyStroke } from "@vueuse/core";
 import { computed, onMounted, shallowRef, triggerRef, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useNavigations } from "@/core/composables";
+import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -112,6 +112,8 @@ const { t } = useI18n();
 const { supportedLanguages } = useLanguages();
 const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
+// The menu plate is dark in both themes, so it always takes the dark-mode logo.
+const { secondaryLogoUrl } = useWhiteLabeling();
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
     ? {

@@ -5,7 +5,7 @@
       class="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 bg-additional-50 px-6 shadow-md lg:h-auto lg:px-12 lg:py-5 print:relative print:px-0 print:shadow-none"
     >
       <router-link to="/" replace>
-        <VcImage :src="logoUrl" :alt="$context.storeName" class="h-9 lg:h-12 print:h-12" lazy />
+        <VcImage :src="themeLogoUrl" :alt="$context.storeName" class="h-9 lg:h-12 print:h-12" lazy />
       </router-link>
 
       <div class="flex">
@@ -38,5 +38,5 @@ import { useWhiteLabeling } from "@/core/composables";
 import VcFooter from "../footer/vc-footer.vue";
 import Created from "../print/created.vue";
 
-const { logoUrl } = useWhiteLabeling();
+const { themeLogoUrl } = useWhiteLabeling();
 </script>

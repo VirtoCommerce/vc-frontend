@@ -6,7 +6,7 @@
       :aria-label="$t('shared.layout.header.bottom_header.main_menu')"
     >
       <router-link :to="$context.settings.default_return_url ?? '/'">
-        <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
+        <VcImage :src="themeLogoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
       <template v-if="organization">
@@ -93,7 +93,7 @@ defineProps<IProps>();
 
 const router = useRouter();
 const { organization } = useUser();
-const { logoUrl } = useWhiteLabeling();
+const { themeLogoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 
 const bottomHeader = ref<HTMLElement | null>(null);

@@ -3,7 +3,7 @@
     <div ref="plate" class="header-plate__surface">
       <nav class="header-plate__row" :aria-label="$t('shared.layout.header.bottom_header.main_menu')">
         <router-link class="header-plate__brand" :to="$context.settings.default_return_url ?? '/'">
-          <VcImage :src="logoUrl" :alt="$context.storeName" class="header-plate__logo" lazy />
+          <VcImage :src="themeLogoUrl" :alt="$context.storeName" class="header-plate__logo" lazy />
         </router-link>
 
         <a
@@ -92,7 +92,7 @@ defineProps<IProps>();
 const router = useRouter();
 const route = useRoute();
 const { isAuthenticated } = useUser();
-const { logoUrl } = useWhiteLabeling();
+const { themeLogoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 
 const plate = ref<HTMLElement | null>(null);

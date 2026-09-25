@@ -4,14 +4,7 @@
       <!-- Top plate -->
       <div v-if="!compact" class="app-footer__top">
         <div class="app-footer__brand">
-          <VcImage :src="logoUrl" :alt="$context.storeName" class="app-footer__logo app-footer__logo--light" lazy />
-
-          <VcImage
-            :src="secondaryLogoUrl"
-            :alt="$context.storeName"
-            class="app-footer__logo app-footer__logo--inverted"
-            lazy
-          />
+          <VcImage :src="themeLogoUrl" :alt="$context.storeName" class="app-footer__logo" lazy />
         </div>
 
         <nav class="app-footer__links">
@@ -60,7 +53,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { logoUrl, secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
+const { themeLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 const { footerLinks, fetchFooterLinks } = useNavigations();
 
 const { version } = pkg;
@@ -152,18 +145,6 @@ onMounted(() => {
 
     @media (width < theme("screens.lg")) {
       @apply h-9;
-    }
-
-    // Which logo of the pair shows is the plate's paint, and only the theme knows it: every
-    // preset but paprika still paints the top row dark, so the default keeps the inverted
-    // logo the dark band has always needed. A theme with a light plate flips both knobs.
-    // The hidden one is display:none and lazy, so it is never fetched.
-    &--light {
-      display: var(--footer-logo-light-display, none);
-    }
-
-    &--inverted {
-      display: var(--footer-logo-inverted-display, block);
     }
   }
 

@@ -24,7 +24,7 @@
               </button>
 
               <router-link class="mobile-header__brand" :to="$context.settings.default_return_url ?? '/'">
-                <VcImage :src="logoUrl" :alt="$context.storeName" class="mobile-header__logo" lazy />
+                <VcImage :src="themeLogoUrl" :alt="$context.storeName" class="mobile-header__logo" lazy />
               </router-link>
             </div>
             <!-- endregion Left slot -->
@@ -114,7 +114,7 @@ const { searchBarVisible, toggleSearchBar } = useSearchBar();
 
 const { height } = useElementSize(plate);
 const { cart } = useShortCart();
-const { logoUrl } = useWhiteLabeling();
+const { themeLogoUrl } = useWhiteLabeling();
 
 // The PLATE, not the header: the shell's air scrolls away and only what the plate paints stays
 // on screen. VcHeader owns this var on desktop.

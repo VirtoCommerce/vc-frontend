@@ -102,11 +102,6 @@
   --vc-container-bg-color: transparent;
   --vc-container-bg-image-display: none;
 
-  // The footer's top plate is white here, so it takes the header's logo, not the inverted
-  // one every other preset's dark band needs. The dark variant below takes it back.
-  --footer-logo-light-display: block;
-  --footer-logo-inverted-display: none;
-
   // Packshots are shot on white, so every product photo slot sits on white in both themes.
   // Unset in other presets, where the slots stay transparent.
   --vc-product-image-bg: #ffffff;
@@ -114,9 +109,6 @@
 
 // _dark.scss loads before this file, so these win for the paprika dark variant.
 html.dark {
-  --footer-logo-light-display: none;
-  --footer-logo-inverted-display: block;
-
   // Every solid fill lightens on hover by one rule: the kit's darkening made warning, danger,
   // success, info and secondary sink on hover, while primary rose.
   --vc-button-solid-hover-mix: white 24%;
