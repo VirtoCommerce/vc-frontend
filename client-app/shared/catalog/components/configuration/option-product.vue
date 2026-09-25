@@ -78,5 +78,11 @@ function getProperties(properties: DeepReadonly<Property[]>) {
   &:nth-child(odd) {
     --vc-product-card-bg-color: theme("colors.neutral.50");
   }
+
+  // The design sets a product's name in the display face wherever it appears, this row included;
+  // the kit leaves the family to inherit, and inside a widget's header context that is the body face.
+  &__title {
+    @apply font-geologica;
+  }
 }
 </style>

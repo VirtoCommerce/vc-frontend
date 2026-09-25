@@ -13,6 +13,7 @@
         <VcWidget
           v-if="isSectionVisible(section.id)"
           data-test-id="section"
+          class="product-configuration__section"
           collapsible
           size="xs"
           :collapsed="index !== 0"
@@ -369,15 +370,25 @@ async function openSaveChangesModal(): Promise<boolean> {
     --vc-widget-border-color: theme("colors.neutral.200");
     --vc-widget-shadow: none;
 
-    @apply space-y-5;
+    @apply space-y-4;
   }
 
   &__required {
     @apply text-danger;
   }
 
+  &__section {
+    // The design's group: its head 12 off every edge, the options 16 in from the sides and top.
+    --vc-widget-header-min-height: 0px;
+    --vc-widget-header-padding-y: 0.75rem;
+    --vc-widget-header-padding-x: 0.75rem;
+    --vc-widget-padding-x: 1rem;
+    --vc-widget-padding-top: 1rem;
+    --vc-widget-padding-bottom: 1.25rem;
+  }
+
   &__subtitle {
-    @apply mt-1 text-xs font-normal normal-case text-neutral max-w-3xl;
+    @apply mt-0.5 text-xs font-normal normal-case leading-[15px] text-neutral max-w-3xl;
   }
 
   &__items {
@@ -385,7 +396,7 @@ async function openSaveChangesModal(): Promise<boolean> {
     --vc-product-title-font-size: 0.875rem;
     --vc-product-price-font-size: 0.875rem;
 
-    @apply @container mt-5;
+    @apply @container max-lg:mt-5;
 
     @container (max-width: theme("containers.2xl")) {
       @apply space-y-3;

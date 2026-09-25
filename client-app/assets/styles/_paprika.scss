@@ -221,12 +221,14 @@ html.dark {
     }
 
     .vc-product-title {
-      @apply font-inter font-bold leading-[1.17];
+      @apply font-bold leading-[1.17];
     }
 
     .vc-product-price,
     .vc-product-total {
       --vc-product-price-font-size: 0.875rem;
+
+      @apply font-geologica;
     }
 
     .vc-product-price__actual {
@@ -253,7 +255,9 @@ html.dark {
     --vc-widget-padding-bottom: 1.25rem;
     --vc-widget-title-font-size: 1rem;
 
-    .vc-widget:not(.vc-widget--size--lg) {
+    // Zero specificity: it only has to beat inheritance, and a component that names its own
+    // nested widget's knobs must still win.
+    :where(.vc-widget:not(.vc-widget--size--lg)) {
       --vc-widget-header-min-height: initial;
       --vc-widget-header-padding-y: initial;
       --vc-widget-header-padding-x: initial;
