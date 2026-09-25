@@ -64,7 +64,11 @@
           </template>
 
           <template #desktop-body>
-            <tr v-for="log in historyLogs" :key="log.id" class="cursor-default even:bg-neutral-50 hover:bg-neutral-200">
+            <tr
+              v-for="log in historyLogs"
+              :key="log.id"
+              class="cursor-default even:bg-neutral-50 hover:bg-[--vc-table-row-hover-bg-color]"
+            >
               <td class="overflow-hidden text-ellipsis p-5">
                 {{ getOperation(log) }}
               </td>
