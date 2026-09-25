@@ -193,6 +193,41 @@ html.dark {
   }
 }
 
+// A widget headed by the disc seats the disc on its own inset, not centred in a control-height
+// row: the cart and checkout sections (md) at 16 with the body 16/18/20, the product page's
+// blocks (lg) at 24 with 20 between head and body. Nested widgets inherit custom properties,
+// so every knob is handed back to the defaults one level down.
+@media (width >= theme("screens.lg")) {
+  .vc-widget--icon-shape {
+    &.vc-widget--size--md {
+      --vc-widget-header-min-height: 0px;
+      --vc-widget-header-padding-y: 1rem 0;
+      --vc-widget-header-padding-x: 1rem;
+      --vc-widget-padding-x: 1.125rem;
+      --vc-widget-padding-top: 1rem;
+      --vc-widget-padding-bottom: 1.25rem;
+    }
+
+    &.vc-widget--size--lg {
+      --vc-widget-header-min-height: 0px;
+      --vc-widget-header-padding-y: 1.5rem 0;
+      --vc-widget-header-padding-x: 1.5rem;
+      --vc-widget-padding-x: 1.5rem;
+      --vc-widget-padding-top: 1.25rem;
+      --vc-widget-padding-bottom: 1.5rem;
+    }
+
+    .vc-widget:not(.vc-widget--icon-shape) {
+      --vc-widget-header-min-height: initial;
+      --vc-widget-header-padding-y: initial;
+      --vc-widget-header-padding-x: initial;
+      --vc-widget-padding-x: initial;
+      --vc-widget-padding-top: initial;
+      --vc-widget-padding-bottom: initial;
+    }
+  }
+}
+
 // The design's wide rung: the column goes 1550 -> 1900 and nothing else moves — the gutter
 // stays 32, so the container needs 1964 of window before the column reaches 1900. The header
 // and footer shells read the same var and travel with it.
