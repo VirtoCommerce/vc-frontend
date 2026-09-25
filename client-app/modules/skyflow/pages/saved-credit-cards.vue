@@ -10,7 +10,7 @@
     </div>
 
     <!-- Credit Cards -->
-    <div v-else-if="skyflowCards?.length" class="space-y-3 md:space-y-2.5">
+    <div v-else-if="skyflowCards?.length" class="flex flex-col gap-3">
       <CreditCard
         v-for="(creditCard, index) in skyflowCards"
         :key="index"

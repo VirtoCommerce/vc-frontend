@@ -45,7 +45,10 @@ const _size = computed(() => {
     return "sm";
   }
 
-  return "md";
+  // A control taller than `sm` does NOT get a label to match: the caption stops growing at 14,
+  // which is where the design holds it for every field it labels — a `md` select included. Pass
+  // `size` explicitly for the rare label that has to track its control.
+  return "sm";
 });
 </script>
 

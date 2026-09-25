@@ -8,6 +8,8 @@
         'vc-widget--collapsed': _collapsed,
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
+        'vc-widget--nested': nested,
+        'vc-widget--icon-shape': iconShape,
       },
     ]"
   >
@@ -23,7 +25,17 @@
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
             <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
               <slot name="prepend">
-                <VcShape v-if="prependIcon" :icon="prependIcon" />
+                <!-- A span, not the shape's default div: a collapsible widget draws this header
+                     as a button, and flow content inside one is invalid. -->
+                <VcShape
+                  v-if="prependIcon && iconShape"
+                  class="vc-widget__prepend-shape"
+                  :icon="prependIcon"
+                  mask="circle"
+                  tag="span"
+                />
+
+                <VcIcon v-else-if="prependIcon" class="vc-widget__prepend-icon" :name="prependIcon" />
               </slot>
             </span>
 
@@ -83,6 +95,19 @@ interface IProps {
   collapsed?: boolean;
   shadow?: boolean;
   border?: boolean;
+  /**
+   * The widget already sits inside someone else's shell — a plate, a sidebar, a column. It then
+   * draws no plate of its own and keeps no side inset, because two nested insets in a row push the
+   * content 36-52px off the edge and break its alignment with everything else in that shell.
+   */
+  nested?: boolean;
+  /**
+   * Draws the prepended icon on a disc and sets the title to match, which is how this theme marks
+   * the head of a content block. Off by default: a widget that is a panel rather than a block — a
+   * checkout section, a cart summary — keeps the bare glyph. Retune it with the
+   * `--vc-widget-icon-shape-*` variables rather than per call site.
+   */
+  iconShape?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -120,18 +145,52 @@ watchEffect(() => {
   $collapsible: "";
   $collapsed: "";
 
-  --p-x: theme("padding.4");
+  // The body's own inset. Public, because a page that wants a roomier plate has to be able to
+  // say so by name: these three used to be reachable only as `--p-x`/`--p-t`/`--p-b`, which are
+  // this block's private spelling — an app setting them was writing into the kit's internals,
+  // and they inherit, so the value also landed on every widget nested below. The inset steps up
+  // with the size; a knob wins over that step wherever it is set.
+  //
+  // One inset, four sides: `--pad` is that step. The horizontal one used to be the only one that
+  // grew with the size, so a `md` widget stood its body 24 off the sides and 16/20 off the top and
+  // bottom — plain to read once the body is a bordered table, whose box then sits closer to the
+  // plate's top edge than to either side.
+  --pad: theme("padding.4");
+  --p-x: var(--vc-widget-padding-x, var(--pad));
+  --p-t: var(--vc-widget-padding-top, var(--pad));
+  --p-b: var(--vc-widget-padding-bottom, var(--pad));
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+  // Exposed so a theme can give the widget its own elevation — a theme whose surfaces are
+  // plates needs a shadow that survives dark mode, where this one's black is invisible.
+  --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
   --header-gap: theme("gap.2");
+  // The head's own three measures, public for the same reason the body's inset is: a theme whose
+  // widget is a NAVIGATION card — the account rail, the catalog's facet rail — sets a heading over a
+  // hairline and wants it led tight, not centred in a control-height row. Each keeps the size step
+  // it has always had as its default, so nothing moves until a theme names one.
+  --header-min-height: var(--vc-widget-header-min-height, var(--header-min-h));
+  // A pair is legal here (`padding-block: 20px 6px`), which is what a heading standing over a
+  // hairline needs: its air above the card's inset, its air below the rule's.
+  --header-p-y: var(--vc-widget-header-padding-y, theme("padding.1"));
+  --header-p-x: var(--vc-widget-header-padding-x, var(--p-x));
+  --title-size: var(--vc-widget-title-font-size, var(--title-text));
 
-  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
+  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] bg-center;
+
+  // Raw, not `shadow-[--shadow]`: Tailwind reads a bare custom property there as a shadow
+  // COLOUR and drops the box-shadow declaration altogether.
+  box-shadow: var(--shadow);
 
   @media (width < theme("screens.md")) {
     .vc-container & {
-      @apply -mx-4.5;
+      // The widget reaches past the container's inset on a narrow screen. Keyed to a token
+      // because the amount is only right against the inset it was chosen for: a theme with a
+      // narrower page gutter has to be able to stop the widget going off the screen. The
+      // default is the value this rule has always had.
+      margin-inline: var(--vc-widget-container-margin-x, -1.125rem);
     }
 
     #{$self} & {
@@ -141,6 +200,30 @@ watchEffect(() => {
 
   &--collapsible {
     $collapsible: &;
+  }
+
+  // Chromeless: the shell around it already drew the plate. Expressed entirely through this
+  // block's own tokens rather than by re-declaring the paint, so it cannot fall out of step with
+  // the base rule and so a theme that overrides `--vc-widget-*` from outside still loses here —
+  // which is the point, since the plate it would be painting is not this widget's to draw.
+  //
+  // The rows go with it: a nested widget's list has to stand on the same vertical as its own
+  // heading, and `--vc-menu-item-padding-x` is the kit's public name for that inset. The hover
+  // plate still spans the full width of the shell, which is what the account sidebar does too.
+  //
+  // Compounded with the block's own class on purpose. The size rules below set `--p-x` as well, at
+  // one class each, and they are written after this one — so at equal specificity they won, and a
+  // nested widget at the DEFAULT `md` kept a 24px inset while its rows had already given theirs up:
+  // exactly the misalignment the variant exists to remove. Measured on the running page before this
+  // line: `--p-x` came back 1.5rem at md and 1.75rem at lg, 0px only at sm and xs.
+  &--nested#{$self} {
+    --bg-color: transparent;
+    --border-color: transparent;
+    --divide-color: transparent;
+    --shadow: none;
+    --radius: 0;
+    --p-x: 0px;
+    --vc-menu-item-padding-x: 0px;
   }
 
   &--size {
@@ -165,7 +248,7 @@ watchEffect(() => {
       --shape-size: 2.25rem;
 
       @media (min-width: theme("screens.sm")) {
-        --p-x: theme("padding.6");
+        --pad: theme("padding.6");
       }
     }
 
@@ -177,7 +260,7 @@ watchEffect(() => {
       --shape-size: 2.5rem;
 
       @media (min-width: theme("screens.lg")) {
-        --p-x: theme("padding.7");
+        --pad: theme("padding.7");
       }
 
       &:not(#{$collapsible}) {
@@ -191,11 +274,15 @@ watchEffect(() => {
   }
 
   &--no-shadow {
+    // With the shadow gone the outline is the widget's only edge, so this one does not read
+    // the border colour a theme clears in exchange for a shadow — it has its own knob.
+    --border-color: var(--vc-widget-no-shadow-border-color, theme("colors.neutral.200"));
+
     @apply shadow-none;
   }
 
   &--no-border {
-    @apply border-none shadow-none;
+    @apply border-none;
   }
 
   &__header-container {
@@ -203,16 +290,23 @@ watchEffect(() => {
 
     &,
     & > * {
-      @apply rounded-t;
+      // The widget's own curve, not a fixed step: `rounded-t` is 4px whatever --radius says, so
+      // on a theme that rounds its plates to 28 the header's corners cut inside the plate — and
+      // on a collapsible widget those corners are a button, whose focus ring follows them.
+      border-radius: var(--radius) var(--radius) 0 0;
 
+      // Collapsed, the header IS the whole plate, so it rounds on all four.
       #{$collapsed} & {
-        @apply rounded-b;
+        border-radius: var(--radius);
       }
     }
   }
 
   &__header {
-    @apply flex items-center gap-[--header-gap] min-h-[--header-min-h] px-[--p-x] py-1 w-full;
+    @apply flex items-center gap-[--header-gap] min-h-[--header-min-height] w-full;
+
+    padding-block: var(--header-p-y);
+    padding-inline: var(--header-p-x);
   }
 
   &__prepend-append {
@@ -223,11 +317,71 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
+    @apply font-geologica flex flex-col justify-center min-w-0 grow text-[length:--title-size] break-words;
+
+    // The same knob the typography block's headings read: a widget's title is one of them, set in
+    // the same face, and a theme that lightens its headings has to reach this one too or the page
+    // carries two weights. The kit's own weight stays the fallback.
+    font-weight: var(--vc-typography-heading-font-weight, 700);
+
+    // The display face is set a touch tight, the same as every other heading it stands beside —
+    // the face is drawn for it and reads loose at a title's size without it.
+    letter-spacing: -0.02em;
+  }
+
+  &__slot-container {
+    // The plate's curve is a border-radius on a box whose children paint over it, so a body that runs
+    // edge to edge — a table handed in through `default-container` — squares the corner off the moment
+    // a row takes a fill. Only the box that ENDS the plate carries the curve; with a footer below it,
+    // that box is the footer and this one stays square.
+    //
+    // NOT `overflow: clip`, which was tried and reverted: VcPopover does not teleport by default
+    // (`enableTeleport` resolves to false) and `.vc-popover` is `position: relative`, so a panel's
+    // containing block sits INSIDE this box — measured on the cart, a probe hanging 80px past the
+    // bottom edge was clipped away. Every select, dropdown, tooltip and date picker inside a widget
+    // body would have lost whatever opened past the plate. The flush body rounds its OWN corner
+    // instead: `--vc-table-flush-radius` is the kit's channel for that, and the radius below is for a
+    // body that paints a background of its own.
+    &:last-child {
+      --vc-table-flush-radius: var(--radius);
+
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
   }
 
   &__slot {
-    @apply pt-4 pb-5 px-[--p-x] empty:hidden;
+    @apply pt-[--p-t] pb-[--p-b] px-[--p-x] empty:hidden;
+  }
+
+  &__prepend-icon {
+    --vc-icon-color: theme("colors.primary.500");
+  }
+
+  // The block head's mark. The four numbers live here and nowhere else, so a theme retunes every
+  // marked widget in the app from one place instead of per call site.
+  &__prepend-shape {
+    --vc-shape-size: var(--vc-widget-icon-shape-size, 2.25rem);
+    // The kit sizes a shape's glyph at half its disc, which on 36 is 18 and leaves the mark reading
+    // smaller than the title beside it.
+    --vc-shape-icon-size: var(--vc-widget-icon-shape-icon-size, 1.25rem);
+    --vc-shape-bg-color: var(--vc-widget-icon-shape-bg-color, theme("colors.secondary.400"));
+    --vc-icon-stroke: var(--vc-widget-icon-shape-icon-stroke, 1.6);
+  }
+
+  &--icon-shape {
+    // A marked head draws no rule under it: the disc already says where the block starts, and the
+    // rule under it made a second, weaker edge a few pixels below the first.
+    @apply divide-none;
+
+    // The widget's OWN head, through a direct child: a marked block can hold plain widgets of its
+    // own — the configuration block holds one per section — and a descendant selector set those at
+    // the outer head's leading.
+    > #{$self}__header-container #{$self}__title {
+      // The title is led to the disc's own height, so the head is one row however a theme resizes
+      // the mark. It used to be set in caps here as well; the design took the caps off every
+      // section head (Ilya, 24.09.2026), which also gives the display face its own tracking back.
+      line-height: var(--vc-widget-icon-shape-size, 2.25rem);
+    }
   }
 
   &__append-icon {
@@ -239,10 +393,12 @@ watchEffect(() => {
   }
 
   &__footer-container {
-    @apply rounded-b empty:hidden;
+    @apply empty:hidden;
 
+    &,
     & > * {
-      @apply rounded-b;
+      // The same curve the header takes, at the other end of the plate.
+      border-radius: 0 0 var(--radius) var(--radius);
     }
   }
 

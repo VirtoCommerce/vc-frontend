@@ -4,6 +4,7 @@
     v-if="relatedProducts?.length"
     :title="$t('pages.product.related_product_section_title')"
     prepend-icon="cube"
+    icon-shape
     size="lg"
   >
     <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 3, sm: 4 }">

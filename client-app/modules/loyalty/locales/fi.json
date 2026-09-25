@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Lunasta pisteitäsi",
           "description": "Vaihda pisteitä tuotteisiin palkintoluettelossa.",
-          "catalog": "Luettelo"
+          "catalog": "Palkintoluettelo"
         },
         "card": {
           "type_products": "Suositellut tuotteet",

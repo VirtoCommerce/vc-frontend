@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Riscatta i tuoi punti",
           "description": "Scambia punti per prodotti nel catalogo premi.",
-          "catalog": "Catalogo"
+          "catalog": "Catalogo premi"
         },
         "card": {
           "type_products": "SKU in primo piano",

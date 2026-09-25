@@ -188,7 +188,9 @@ const setPage = (page: number) => {
   }
 
   &__pages {
-    @apply order-2 flex justify-center;
+    // The numbers are round controls, not a strip: without a gap two circles meet and read as one
+    // capsule with a rule through it. 8 is the step the design gives this row.
+    @apply order-2 flex justify-center gap-2;
 
     #{$wrapped} & {
       @apply flex-wrap;
@@ -196,10 +198,24 @@ const setPage = (page: number) => {
   }
 
   &__page {
-    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded text-xs font-bold;
+    // A pager is a row of controls, so the number takes the same full radius the arrows beside it
+    // already have — those are VcButtons and were rounded with everything else, while this one kept
+    // a hardcoded 4px and left two different arcs in one row. `min-width` equals the height, so a
+    // one- or two-digit page draws a true circle and "100" stretches to a pill rather than a box.
+    --radius: var(--vc-pagination-page-radius, 9999px);
+    --border: var(--vc-pagination-page-border-color, theme("colors.neutral.200"));
+    --hover-border: var(--vc-pagination-page-hover-border-color, theme("colors.primary.200"));
 
+    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 text-xs font-bold;
+
+    border-radius: var(--radius);
+
+    // The ring is drawn even when the page is not the current one: white on a white plate read as a
+    // bare digit, and the row did not look like a row of round controls at all.
     &[type="button"] {
       @apply bg-additional-50 text-neutral-950;
+
+      border: 1px solid var(--border);
     }
 
     &:focus-visible {
@@ -209,6 +225,8 @@ const setPage = (page: number) => {
 
     &:hover {
       @apply bg-primary-50;
+
+      border-color: var(--hover-border);
     }
 
     &--active {
@@ -216,10 +234,13 @@ const setPage = (page: number) => {
 
       background-color: var(--page-active-bg);
       color: var(--page-active-text);
+      border: 1px solid var(--page-active-bg);
     }
 
     &--ellipsis {
       @apply pointer-events-none;
+
+      border: 0;
     }
   }
 

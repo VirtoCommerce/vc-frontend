@@ -354,6 +354,17 @@
           "catalog_menu_button": "Katalog",
           "main_menu": "Hovedmeny"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Logg inn",
         "link_register_now": "Registrer deg nå",
         "link_logout": "Logg ut",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Søk",
+        "enter_keyword_placeholder": "Søk etter produkter og deler",
         "enter_keyword_placeholder_category": "Søk i kategorien {category}",
         "search_button": "Søk",
         "scope_loading_label": "Laster søkekontekst",
@@ -667,7 +678,7 @@
         "title": "Produkter"
       },
       "gifts_section": {
-        "title": "+ Legg til gave"
+        "title": "Gaver"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Legge produkter i handlekurven",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Tilgjengelighet",
+        "unit_price": "Enhetspris",
+        "add_to_cart": "Legg i handlekurv"
+      },
       "view_mode": {
         "grid_label": "Rutenett",
-        "list_label": "Liste"
+        "list_label": "Liste",
+        "aria_label": "Visningsmodus"
       },
       "page_size": {
         "label": "Resultater per side:"
       },
       "product_card": {
+        "low_stock": "Lav beholdning",
+        "configurable": "Konfigurerbar",
+        "variants": "Varianter",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Vurdering:",
         "product_vendor": "Leverandør:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "Produktkonfigurasjonen er endret. Vil du lagre den?",
           "check_your_configuration": "Sjekk produktkonfigurasjonen",
           "required_section": "Seksjonen er obligatorisk",
+          "optional": "Valgfritt",
           "optional_no_selected": "Tilpass valget ditt ytterligere (valgfritt)",
           "required_no_selected": "Fyll ut alle obligatoriske alternativer for å fullføre valget ditt",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sorter",
       "featured": "Fremhevet",
       "alphabetically_a_z": "Alfabetisk, A-Å",
       "alphabetically_z_a": "Alfabetisk, Å-A",
       "price_low_to_high": "Pris, lav til høy",
       "price_high_to_low": "Pris, høy til lav",
       "date_new_to_old": "Dato, ny til gammel",
-      "date_old_to_new": "Dato, gammel til ny"
+      "date_old_to_new": "Dato, gammel til ny",
+      "short": {
+        "featured": "Utvalgte",
+        "alphabetically_a_z": "A-Å",
+        "alphabetically_z_a": "Å-A",
+        "price_low_to_high": "Pris ↑",
+        "price_high_to_low": "Pris ↓",
+        "date_new_to_old": "Nyeste",
+        "date_old_to_new": "Eldste"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "Alle",
-          "differences": "Forskjeller"
+          "differences": "Forskjeller",
+          "group_label": "Radfilter"
         },
         "uncategorized": "Ukategorisert",
         "unresolved_category": "Ukjent kategori",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Velg et hentepunkt for å se produkter på lager"
       },
       "products_found_message": "resultat | resultater",
+      "products_found_label": "produkt funnet | produkter funnet",
       "products_found_message_search": "resultat funnet | resultater funnet",
       "search_in_category": "Søk etter \"{keyword}\" i kategorien {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Vis på en separat side",
       "no_products_message": "Ingen produkter i denne kategorien",
       "no_products_filtered_message": "Ingen resultater funnet",
+      "no_products_filtered_hint": "Løsne på et av dem, eller begynn på nytt.",
       "no_facet_found_message": "Ingen resultater",
       "no_products_button": "Tilbakestill søk",
       "products_icon": "Produktikon",
@@ -1716,6 +1751,123 @@
       },
       "error": "Kunne ikke laste inn data",
       "retry": "Prøv igjen"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Én katalog · mange verifiserte leverandører",
+        "title": "Kjøp elektronikk slik din bedrift handler.",
+        "subtitle": "Sanntidslager hos autoriserte distributører, dine avtalepriser fra søk til faktura, og levering neste dag på alt som er lokalt på lager.",
+        "browse_catalog": "Se katalogen",
+        "notches": {
+          "search": {
+            "title": "Søk eller bla i hele katalogen",
+            "text": "Etter produkt, merke eller din egen SKU"
+          },
+          "guest_cart": {
+            "title": "Bygg en handlekurv som gjest",
+            "text": "Den overføres når du logger inn"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Autorisert distributørnettverk",
+        "title": "Handle etter leverandør",
+        "authorized": "Autorisert distributør",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "Varenumre i katalogen"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Autoriserte leverandører"
+          },
+          "fulfillment": {
+            "value": "24t",
+            "label": "Levering på varer på lager"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Utforsk sortimentet",
+        "title": "Handle etter kategori",
+        "all_categories": "Alle kategorier",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Folkets favoritter",
+            "meta": "Smarthusenheter til hjemmekino – koblet til, paret og klar for forsendelse"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Toppselgere",
+            "meta": "5G-smarttelefoner til bilholdere – dekket, ladet og klar for forsendelse i bulk."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Handle uten konto",
+        "title": "Populært blant kjøpere",
+        "see_all": "Se alle"
+      },
+      "why_buy": {
+        "eyebrow": "Hvorfor handle hos oss",
+        "title": "Enkle vilkår, reelt lager",
+        "cards": {
+          "stock": {
+            "title": "Sanntidslager",
+            "text": "Antall på lager per lager, med leveringstid når det må hentes."
+          },
+          "pricing": {
+            "title": "Avtalepriser overalt",
+            "text": "Din forhandlede pris vises fra søk til faktura, inkludert skatt og frakt."
+          },
+          "fulfillment": {
+            "title": "Levering neste dag",
+            "text": "Varer på lager sendes samme dag, med produsentgaranti og gratis retur innen 30 dager."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Hva det endrer",
+        "title": "Mandag morgen, i tall",
+        "stats": {
+          "reorder": {
+            "value": "2 klikk",
+            "label": "For å bestille forrige måneds levering, inkludert antall"
+          },
+          "trail": {
+            "value": "1 spor",
+            "label": "Fra en lagret liste til en bestilling med godkjenningshistorikk"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Av viste priser er dine avtalepriser, inkludert skatt og frakt"
+          },
+          "calls": {
+            "value": "0 anrop",
+            "label": "Bestilling, sporing og dokumentoppslag – ingen telefonsløyfe"
+          }
+        },
+        "quote": {
+          "text": "\"Vi sluttet å føre en regneark med priser – nettstedet viser våre.\"",
+          "name": "Innkjøpssjef",
+          "role": "Fasilitetsgruppe · 6 lokasjoner"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autorisert distributør for"
+      },
+      "cta": {
+        "title": "Bli kunde",
+        "text": "Avtalepriser, avtalte betalingsbetingelser og PO-kasse – vanligvis godkjent innen én virkedag.",
+        "become_customer": "Bli kunde",
+        "talk_to_sales": "Snakk med salg"
+      }
     }
   },
   "identity_error": {

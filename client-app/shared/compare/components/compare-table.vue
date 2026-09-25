@@ -14,27 +14,32 @@
         <div class="compare-table__controls" :class="{ 'compare-table__controls--stuck': isCompact }">
           <Teleport v-if="mobileTabsBarRef" :to="mobileTabsBarRef" :disabled="!isMobile">
             <div class="compare-table__controls-top">
-              <div class="compare-table__tabs">
+              <VcTabSwitchGroup
+                class="compare-table__tabs"
+                variant="seg"
+                fill
+                :aria-label="t('shared.compare.table.tabs.group_label')"
+              >
                 <VcTabSwitch
                   :model-value="activeTab"
-                  class="compare-table__tab"
                   size="sm"
                   value="all"
                   :label="t('shared.compare.table.tabs.all')"
                   :disabled="isTabSwitchDisabled"
+                  data-test-id="compare-tab-all"
                   @change="activeTab = $event"
                 />
 
                 <VcTabSwitch
                   :model-value="activeTab"
-                  class="compare-table__tab"
                   size="sm"
                   value="differences"
                   :label="t('shared.compare.table.tabs.differences')"
                   :disabled="isTabSwitchDisabled"
+                  data-test-id="compare-tab-differences"
                   @change="activeTab = $event"
                 />
-              </div>
+              </VcTabSwitchGroup>
 
               <p v-if="!isCompact && differCount > 0" class="compare-table__differ">
                 {{ t("shared.compare.table.differ_rows", { count: differCount, total: totalRows }) }}
@@ -434,8 +439,13 @@ watch(
 
 <style lang="scss">
 .compare-table {
+  // The table fills the widget's slot edge to edge, so the corners it rounds are the widget's
+  // own — they have to come off the same knob, or a theme that rounds plates harder than cards
+  // leaves them poking out past the plate.
+  --edge-radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+
   &__scroll {
-    @apply block overflow-x-auto rounded-b-[--vc-radius];
+    @apply block overflow-x-auto rounded-b-[--edge-radius];
   }
 
   &__tbody {
@@ -443,7 +453,7 @@ watch(
   }
 
   &__header-row {
-    @apply sticky z-10 flex overflow-hidden rounded-t-[--vc-radius] border-b border-neutral-200 bg-additional-50;
+    @apply sticky z-10 flex overflow-hidden rounded-t-[--edge-radius] border-b border-neutral-200 bg-additional-50;
 
     // Sits flush below the app header (shorter on mobile — see vc-header.vue/mobile-header.vue,
     // which keep this var updated with the header's live, current height).
@@ -454,7 +464,18 @@ watch(
     }
 
     &--stuck {
-      @apply shadow-md;
+      // Pinned, the row is no longer the widget's top edge — it is a band across its middle, and
+      // a rounded corner there is a notch the rows behind it show through.
+      @apply rounded-t-none;
+
+      // The app header's plate keeps its rounded bottom corners while pinned, and the rows
+      // sliding behind it surface at full strength in the two wedges those corners leave. This
+      // carries the widget's own surface up behind the plate to back them, as tall as the corner
+      // it fills. A shadow rather than an element: it takes no part in layout, and this row's
+      // own `overflow-hidden` would clip a pseudo-element placed above it.
+      box-shadow:
+        0 calc(-1 * var(--plate-radius, 1.75rem)) 0 theme("colors.additional.50"),
+        theme("boxShadow.md");
     }
   }
 
@@ -462,7 +483,7 @@ watch(
     @apply hidden;
 
     @media (width < theme("screens.md")) {
-      @apply flex rounded-t-[--vc-radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
+      @apply flex rounded-t-[--edge-radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
     }
   }
 
@@ -514,13 +535,18 @@ watch(
   }
 
   &__tabs {
-    @apply grid grid-cols-2 gap-0.5 rounded-[--vc-radius] bg-neutral-100 p-1.5;
-  }
-
-  &__tab {
-    @apply w-full;
-
-    --vc-tab-switch-border-color: transparent;
+    // `fill` stretches the rail across its column, which is what the desktop sidebar wants. In
+    // the mobile bar it shares a row with the clear-category button, so there it shrinks to its
+    // own labels instead — a ceiling rather than a number, so the rail is as wide as the
+    // language needs and no wider. The `fr` tracks stay equal under it, both sized to the
+    // longer label.
+    // Two classes deep on purpose: the seg variant declares its own `max-w-full` at a single
+    // class and lands later in the sheet, so one class here loses the tie.
+    @media (width < theme("screens.md")) {
+      .compare-table & {
+        @apply max-w-fit;
+      }
+    }
   }
 
   &__differ {
@@ -548,7 +574,7 @@ watch(
   }
 
   &__product-image-wrap {
-    @apply relative h-44 overflow-hidden rounded-[--vc-radius] border border-neutral-300;
+    @apply relative h-44 overflow-hidden rounded-[--vc-radius] border border-neutral-300 bg-[--vc-product-image-bg];
 
     @media (width < theme("screens.md")) {
       @apply h-24;

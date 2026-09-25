@@ -54,57 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { getSlugInfo } from "@/core/api/graphql/slugInfo/queries/getSlugInfo";
-import { useLanguages } from "@/core/composables/useLanguages";
-import { languageToCountryMap } from "@/core/constants";
-import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
+import { useLocaleSwitch } from "@/shared/layout/composables";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
-import type { ILanguage } from "@/core/types";
 
-const {
-  supportedLanguages,
-  pinLocale,
-  removeLocaleFromUrl,
-  currentLanguage,
-  previousCultureSlug,
-  getUrlWithoutLocale,
-} = useLanguages();
-const broadcast = useBroadcast();
-
-async function select(cultureName: string) {
-  pinLocale(cultureName);
-  const permalink = location.pathname.slice(1);
-
-  if (cultureName === currentLanguage.value?.cultureName) {
-    return;
-  }
-
-  const slugInfo = await getSlugInfo({ permalink, cultureName });
-
-  if (!slugInfo?.entityInfo) {
-    previousCultureSlug.value = {
-      cultureName: currentLanguage.value?.cultureName,
-      slug: getUrlWithoutLocale(location.pathname).slice(1),
-    };
-  } else {
-    previousCultureSlug.value = {
-      cultureName: "",
-      slug: "",
-    };
-  }
-
-  removeLocaleFromUrl();
-  void broadcast.emit(dataChangedEvent);
-  location.reload();
-}
-
-function getCountryCode(language: ILanguage): string {
-  return (
-    languageToCountryMap[language.cultureName.toLocaleLowerCase()] ||
-    languageToCountryMap[language.twoLetterLanguageName] ||
-    "xx" // placeholder for unknown country
-  );
-}
+const { supportedLanguages, currentLanguage, selectLanguage: select, getCountryCode } = useLocaleSwitch();
 </script>
 
 <style lang="scss">

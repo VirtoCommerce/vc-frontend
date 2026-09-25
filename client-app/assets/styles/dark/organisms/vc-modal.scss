@@ -1,0 +1,14 @@
+.vc-modal__backdrop {
+  // The light scrim is neutral-900 at 30%, and the dark presets invert that ramp: 900 is near-white
+  // there, so the scrim lit the page up instead of dimming it. Black, and stronger, because a dark
+  // page needs more to recede behind the dialog.
+  background-color: rgb(0 0 0 / 0.6);
+}
+
+.vc-dialog {
+  // shadow-lg is drawn in additional-950, the light end in dark presets, so the dialog glowed.
+  // Same shape, in black — a touch stronger than the popovers', as the dialog floats highest.
+  box-shadow:
+    0 6px 15px 0 rgb(0 0 0 / 0.4),
+    0 4px 6px -4px rgb(0 0 0 / 0.4);
+}

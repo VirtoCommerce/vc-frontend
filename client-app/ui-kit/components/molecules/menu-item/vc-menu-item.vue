@@ -186,6 +186,11 @@ onMounted(() => {
   --props-max-lines: v-bind(maxLines);
   --max-lines: var(--props-max-lines, 2);
 
+  // The row's own side inset. Public, because a shell that already pays for the inset has to be
+  // able to take it back by name — a chromeless widget, for one, whose rows must line up with its
+  // own heading rather than sit a step inside it. The hover plate still spans the full width.
+  --p-x: var(--vc-menu-item-padding-x, theme("padding.3"));
+
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
@@ -197,7 +202,10 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full px-[--p-x] text-left rounded-[inherit] font-normal;
+
+    // The row's rest fill, public so a theme can put its rows on its own surface.
+    background-color: var(--vc-menu-item-bg, var(--color-additional-50));
 
     &:not(:disabled) {
       @apply text-neutral-950;
@@ -247,16 +255,18 @@ onMounted(() => {
       }
     }
 
+    // Hover and the active mark are separately overridable, so a list can break the
+    // "one colour, two shades" pairing.
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
         &:hover {
-          @apply bg-[--color-#{$color}-50];
+          background-color: var(--vc-menu-item-hover-bg, var(--color-#{$color}-50));
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--vc-menu-item-active-bg, var(--color-#{$color}-100));
         }
       }
     }

@@ -21,39 +21,60 @@
         </BadgesWrapper>
       </VcProductImage>
 
-      <VcProductActions
-        :direction="viewMode === 'grid' ? 'vertical' : 'horizontal'"
-        :with-background="viewMode === 'grid'"
-      >
+      <VcProductActions :direction="viewMode === 'grid' ? 'vertical' : 'horizontal'">
         <AddToList :product="product" />
 
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
       </VcProductActions>
     </template>
 
+    <!-- Always there in the grid, empty or not, so the titles of a row stand on one line. -->
+    <VcProductVendor v-if="viewMode === 'grid' || maker || product.hasVariations || product.isConfigurable">
+      <span v-if="maker" class="product-card__maker">{{ maker }}</span>
+
+      <!-- Said up front, because a product with variations is bought differently: it opens a choice
+           rather than going straight into the cart. -->
+      <VcBadge
+        v-if="product.hasVariations"
+        variant="soft"
+        color="success"
+        size="sm"
+        rounded
+        class="product-card__variants"
+      >
+        {{ $t("shared.catalog.product_card.variants") }}
+      </VcBadge>
+
+      <VcBadge
+        v-else-if="product.isConfigurable"
+        variant="soft"
+        color="info"
+        size="sm"
+        rounded
+        class="product-card__variants"
+      >
+        {{ $t("shared.catalog.product_card.configurable") }}
+      </VcBadge>
+    </VcProductVendor>
+
+    <!-- The two-line reserve is the grid's: there the titles of a row have to start on one line, and
+         a short name would otherwise pull the whole column up. A row of the list already stands on
+         its photo, so the reserve only made every row 17.55px taller than the design's — which holds
+         106 on all of them, measured, against our 110. -->
     <VcProductTitle
       :title="product.name"
       :to="link"
       lines-number="2"
-      fix-height
+      :fix-height="viewMode === 'grid'"
       @click="$emit('linkClick', product, $event)"
     />
 
-    <VcProductVendor v-if="$cfg.vendor_enabled">
-      {{ product.vendor?.name }}
-    </VcProductVendor>
-
-    <VcProductProperties v-if="cardType !== 'short'">
-      <VcProperty v-for="(property, i) in properties" :key="i" :label="property.label">
-        {{ property.value }}
-      </VcProperty>
-
-      <VcProperty
-        v-if="productReviewsEnabled && product.rating"
-        :label="$t('shared.catalog.product_card.product_rating')"
-      >
-        <VcRating size="xs" :value="product.rating.value" :review-count="product.rating.reviewCount" />
-      </VcProperty>
+    <VcProductProperties v-if="cardType !== 'short' && (viewMode === 'grid' || properties.length)">
+      <span v-for="(property, i) in properties" :key="i" class="product-card__spec">
+        <b class="product-card__spec-label">{{ property.label }}</b>
+        {{ " " }}
+        <span class="product-card__spec-value">{{ property.value }}</span>
+      </span>
     </VcProductProperties>
 
     <VcProductPrice
@@ -73,6 +94,8 @@
 
     <VcProductButton
       v-else-if="product.isConfigurable"
+      variant="outline"
+      color="primary"
       data-test-id="product-card-configurations-button"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
@@ -85,6 +108,8 @@
 
     <template v-else-if="product.hasVariations">
       <VcProductButton
+        variant="outline"
+        color="secondary"
         class="product-card__variations-button"
         :data-test-id="`variations-${product.code}-button`"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
@@ -96,6 +121,8 @@
       />
 
       <VcProductButton
+        variant="outline"
+        color="secondary"
         class="product-card__variations-link-button"
         :data-test-id="`variations-${product.code}-button`"
         :to="link"
@@ -107,15 +134,32 @@
       />
     </template>
 
-    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCartSimple v-else :product="product">
+      <template v-if="viewMode !== 'list'">
+        <InStock
+          flag-low-stock
+          :is-in-stock="product.availabilityData?.isInStock"
+          :is-digital="product.productType === ProductType.Digital"
+          :quantity="product.availabilityData?.availableQuantity"
+        />
+
+        <CountInCart :product-id="product.id" :currency="product.price.currency" />
+      </template>
+    </AddToCartSimple>
+
+    <!-- In the list the stock is a column of its own — AVAILABILITY — rather than a line under the
+         stepper, and it is there for every product, including those bought through variations. -->
+    <div v-if="viewMode === 'list'" class="product-card__stock">
       <InStock
+        labeled
+        flag-low-stock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
         :quantity="product.availabilityData?.availableQuantity"
       />
 
       <CountInCart :product-id="product.id" :currency="product.price.currency" />
-    </AddToCartSimple>
+    </div>
 
     <template v-if="viewMode === 'list'" #expanded-content>
       <div v-show="isExpanded" class="product-card__variants-wrapper">
@@ -144,16 +188,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, toRef, useTemplateRef } from "vue";
+import { computed, nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
-import { useBrowserTarget } from "@/core/composables";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useBrowserTarget, useThemeContext } from "@/core/composables";
 import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import {
-  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
-  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
-} from "@/modules/customer-reviews/constants";
 import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
@@ -196,9 +235,7 @@ const isExpanded = ref(false);
 const productCard = useTemplateRef("productCard");
 
 const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
-
-const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
-const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
+const { themeContext } = useThemeContext();
 
 const productId = computed(() => product.value.id);
 
@@ -216,14 +253,39 @@ const listPrice = computed(() =>
     : product.value.price.list,
 );
 
+/** The property a catalog carries its brand in, when the brand is not a vendor record. */
+const BRAND_PROPERTY_NAME = "brand";
+
+const productProperties = computed(() =>
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).filter(
+    (property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  ),
+);
+
+const isBrandProperty = (name?: string) => name?.toLowerCase() === BRAND_PROPERTY_NAME;
+
+/**
+ * Who makes it, shown over the title. A marketplace names the vendor; a catalog without vendors
+ * usually keeps the brand as an ordinary property, and QA's does. Either way it is one name, and
+ * showing it again as a chip would spend one of the card's two chips on what the eyebrow already said.
+ */
+const maker = computed(
+  () =>
+    (themeContext.value?.settings?.vendor_enabled && props.product.vendor?.name) ||
+    productProperties.value.find((property) => isBrandProperty(property.name))?.value ||
+    undefined,
+);
+
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
-    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
-    .slice(0, 3),
+  productProperties.value
+    .filter((property) => !isBrandProperty(property.name))
+    // Two, as the design has it: a third row turns the card into a table of attributes, and the
+    // grid is scanned for the product, not read for its specification.
+    .slice(0, 2),
 );
 
 const badgeSize = computed(() => {
-  return props.viewMode === "grid" ? "lg" : "md";
+  return props.viewMode === "grid" ? "md" : "sm";
 });
 
 const {
@@ -237,6 +299,13 @@ const {
 });
 
 const variationsLoaded = ref(false);
+
+// The grid keys its cards by seat so a card can turn without being replaced, which means this
+// component outlives the product it was opened on. Nothing it worked out about the last one holds.
+watch(productId, () => {
+  isExpanded.value = false;
+  variationsLoaded.value = false;
+});
 
 const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
 
@@ -293,6 +362,471 @@ const variationsCount = computed(() =>
 
 <style scoped lang="scss">
 .product-card {
+  // The card lies flat on the plate and lifts only under the pointer: a warm shadow off the brown,
+  // not the kit's grey one, easing in with the border.
+  @apply shadow-none;
+
+  transition:
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+
+  &:hover {
+    box-shadow:
+      0 1px 3px rgb(from theme("colors.secondary.500") r g b / 0.16),
+      0 4px 16px rgb(from theme("colors.secondary.500") r g b / 0.28);
+  }
+
+  // Dark: the card is a tinted inset on the glass plate — a warm 1px line and a soft top sheen —
+  // and lifts on plain black. neutral-50 is the canvas itself, so a shadow drawn in it vanished.
+  html.dark & {
+    border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
+    box-shadow: inset 0 1px 0 rgb(from theme("colors.neutral.950") r g b / 0.07);
+
+    &:hover {
+      box-shadow:
+        inset 0 1px 0 rgb(from theme("colors.neutral.950") r g b / 0.07),
+        0 2px 6px rgb(0 0 0 / 0.45),
+        0 10px 28px rgb(0 0 0 / 0.5);
+    }
+  }
+
+  // On the tint neutral-500 drops to 4.3:1, under AA: the brand steps up one ink rung.
+  html.dark & :deep(.vc-product-vendor) {
+    @apply text-neutral-600;
+  }
+
+  // The brand reads as an eyebrow over the title: it is what the eye lands on first when scanning a
+  // grid of products it does not yet know.
+  :deep(.vc-product-vendor) {
+    @apply flex items-center gap-2 font-bold uppercase text-neutral-500;
+
+    // The kit orders everything in the card through one sequence, media included — the photo, then
+    // the title at 2. The brand shares the title's step and comes first in the markup, so it sits
+    // between the two instead of above the photo.
+    order: 2;
+  }
+
+  &__maker {
+    @apply truncate;
+  }
+
+  &__variants {
+    @apply shrink-0 text-[0.6875rem] font-bold uppercase tracking-[0.08em];
+  }
+
+  // A badge on the photo is cut out of it by a 4px ring of white, so it reads over any packshot.
+  :deep(.badges-wrapper .vc-badge) {
+    box-shadow: 0 0 0 4px theme("colors.additional.50");
+  }
+
+  // The stepper's minus and plus at the design's 14 in a small field, and at its own heavier stroke —
+  // 3.7, a per-instance weight the design tunes for the stepper alone; the kit draws them at 16 on
+  // the arrow curve's 2.2.
+  :deep(.vc-quantity-stepper) {
+    --vc-button-icon-size: 0.875rem;
+    --vc-icon-stroke: 3.7;
+
+    .vc-input__container {
+      @apply border-neutral-300;
+    }
+
+    input {
+      @apply text-sm font-bold tabular-nums;
+    }
+  }
+
+  // A minus that cannot go lower is the design's neutral 500 on 200 — the kit's 400 read as a
+  // thinner stroke than the white plus beside it.
+  :deep(.vc-quantity-stepper .vc-button--disabled) {
+    --vc-icon-color: theme("colors.neutral.500");
+  }
+
+  // The stock and in-cart figures read in the page's ink; the chip's rim and glyph carry the state.
+  :deep(.vc-quantity-stepper__badges .vc-chip__content),
+  :deep(.product-card__stock .vc-chip__content) {
+    @apply text-neutral-800;
+  }
+
+  // Figures in a price keep one width, so a column of prices lines up digit under digit.
+  :deep(.vc-product-price__actual),
+  :deep(.vc-product-price__list) {
+    @apply tabular-nums;
+  }
+
+  // The photo's dots are a phone's cue that it swipes; with a pointer the arrows say so, and the
+  // design leaves the dots out. On a phone they are 6px, quiet, 6 above the photo's foot.
+  :deep(.vc-product-image__carousel-bullets) {
+    @apply py-1.5 lg:hidden;
+  }
+
+  :deep(.vc-product-image__carousel-bullet) {
+    @apply size-1.5 border-0 bg-neutral-300 outline-0;
+
+    &.vc-product-image__carousel-bullet--active {
+      @apply bg-neutral-500;
+    }
+  }
+
+  // The specification as chips rather than a two-column table with dotted leaders: on a card the
+  // pair is scanned, not read across. At most two, side by side, wrapping when they do not fit.
+  :deep(.vc-product-properties) {
+    @apply flex flex-row flex-wrap content-start gap-[0.3125rem];
+  }
+
+  &__spec {
+    @apply min-w-0 max-w-full truncate rounded-lg border border-neutral-100 bg-neutral-100 px-2 py-0.5 text-xs leading-[1.45] text-neutral-700;
+  }
+
+  &__spec-label {
+    @apply font-semibold text-neutral-950;
+  }
+
+  // In dark the neutral 100 step is the card itself, and a flat chip would vanish into it: it lifts
+  // off with a wash of the ink instead.
+  html.dark &__spec {
+    background: rgb(from theme("colors.neutral.950") r g b / 0.06);
+    border-color: rgb(from theme("colors.neutral.950") r g b / 0.09);
+  }
+
+  // Grid, after the design's card: a thin 8px plate with the photo flush to it and only the column
+  // of type inset a further 10, the brand over the title, chips, and the quick actions as glass
+  // circles on the photo. Written two classes deep: the kit sizes the title and price through
+  // `.vc-product-card > wrapper` selectors of the same weight as a one-class rule here, and it
+  // loads later.
+  &.product-card--grid {
+    // The design's tile is a square, and the picture inside it fills that square — the kit's grid
+    // default is 220/196, which left 27.6px of empty plate under every packshot (measured against
+    // the design's 235x235 in the same 236.5 box).
+    --vc-product-image-aspect-ratio: 1 / 1;
+
+    @apply border-neutral-200;
+
+    :deep(.vc-product-card__wrapper) {
+      @apply px-2 pb-4 pt-2;
+    }
+
+    :deep(.vc-product-vendor),
+    :deep(.vc-product-title),
+    :deep(.vc-product-properties),
+    :deep(.vc-product-price),
+    :deep(.vc-quantity-stepper),
+    :deep(.vc-product-button) {
+      @apply px-2.5;
+    }
+
+    :deep(.vc-product-vendor) {
+      @apply mt-3 h-[1.05rem] overflow-visible text-xs leading-[1.4] tracking-[0.08em];
+    }
+
+    :deep(.vc-product-title) {
+      --vc-product-title-font-size: 0.9375rem;
+      --vc-product-title-link-color: theme("colors.neutral.950");
+      --vc-product-title-link-hover-color: theme("colors.accent.600");
+
+      @apply mt-1.5 h-[2.64em] font-geologica text-[0.9375rem] font-semibold tracking-[-0.008em];
+    }
+
+    // The kit pins the title's own line-height; the text inside it takes the design's.
+    :deep(.vc-product-title__text) {
+      @apply leading-[1.32];
+    }
+
+    // Room for two rows of chips. The design writes 49, but its chip renders 23.4 tall and two rows
+    // with the 5px gap come to 51.8 — at 49 a card with two rows sits lower than its neighbours.
+    :deep(.vc-product-properties) {
+      @apply mt-2 min-h-[3.2375rem];
+    }
+
+    // The design keeps one rhythm from the top — every block holds its height, chips included — so
+    // the prices of a row stand on one line. The kit's spacer instead pushes the bottom block down to
+    // the card's foot, and a variations button taller than a stepper then lifts its price by 14px.
+    :deep(.vc-product-card__expander) {
+      @apply hidden;
+    }
+
+    :deep(.vc-product-price) {
+      --vc-product-price-font-size: 1.1875rem;
+
+      @apply mt-2.5 gap-x-1.5 font-geologica tracking-[-0.02em];
+    }
+
+    :deep(.vc-product-price__actual) {
+      @apply whitespace-nowrap font-bold;
+    }
+
+    // "From" and the struck list price are one size: both are a condition of the figure, not part of it.
+    :deep(.vc-product-price__list),
+    :deep(.vc-product-price__variations) {
+      @apply text-sm font-normal tracking-normal;
+    }
+
+    :deep(.vc-quantity-stepper),
+    :deep(.vc-product-button) {
+      @apply mt-2.5;
+    }
+
+    // The line under the button, close under it as the design sets it: 8 below "Customize", bold with
+    // a 16px glyph; 6 below "N variations", regular with a 12px one.
+    :deep(.vc-product-button__link) {
+      @apply mt-2 gap-1.5 leading-4;
+    }
+
+    .product-card__variations-link-button :deep(.vc-product-button__link) {
+      --vc-icon-size: 0.75rem;
+
+      @apply mt-1.5 gap-1 font-normal;
+    }
+
+    :deep(.vc-quantity-stepper__badges) {
+      @apply mt-1.5 min-h-[1.375rem];
+    }
+
+    // The photo is a white plate with a hairline, the colour its packshots are shot on, and the
+    // brand line is the only step under it — the kit's own 16 below the photo doubled the gap.
+    :deep(.vc-product-image) {
+      @apply mb-0 aspect-square h-auto rounded-[0.625rem] border border-neutral-100 bg-additional-50;
+    }
+
+    :deep(.vc-product-image__img),
+    :deep(.vc-product-image__carousel-img) {
+      @apply p-2;
+    }
+
+    // The badges and the quick actions belong to the photo: 8 of card plus 8 inside it. The kit
+    // cuts the badges a notch out of the photo instead — a white corner with rounded ears.
+    :deep(.badges-wrapper) {
+      @apply start-2 top-2 bg-transparent p-0;
+
+      &::before,
+      &::after {
+        @apply hidden;
+      }
+    }
+
+    :deep(.vc-product-actions) {
+      @apply end-2 top-2 gap-1.5 bg-transparent p-0;
+    }
+
+    // Each action is a 30px circle of frosted white with a warm brown glyph that turns the brand
+    // orange under the pointer and once picked.
+    :deep(.vc-product-actions-button) {
+      --vc-icon-size: 1rem;
+
+      @apply size-[1.875rem] rounded-full p-0 text-secondary-600;
+
+      background: rgb(from theme("colors.additional.50") r g b / 0.9);
+      backdrop-filter: blur(28px) saturate(180%) brightness(1.08) contrast(1.05);
+      box-shadow:
+        inset 0 0 0 1px rgb(from theme("colors.additional.50") r g b / 0.6),
+        inset 0 1px 1px rgb(from theme("colors.additional.50") r g b / 0.85),
+        inset 0 -1px 2px rgb(from theme("colors.neutral.950") r g b / 0.06);
+      transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.12s ease;
+
+      &:hover,
+      &.vc-product-actions-button--active {
+        @apply text-primary-500;
+      }
+
+      &:active {
+        @apply scale-90;
+      }
+    }
+  }
+
+  // List: the design's catalog row — photo · product · availability · unit price · add to cart ·
+  // actions — on the kit's own grid areas, so no kit component is touched. The columns come from
+  // --product-list-columns, which the grid also hands the column heading above the rows: the two
+  // cannot drift apart when one is edited.
+  // The row sits on the plate with the kit's own shadow, and lifts a step under the pointer.
+  &.product-card--list {
+    @apply rounded-xl border border-neutral-100;
+
+    // Written out instead of `@apply shadow-md`. The row is meant to keep the kit's plate — the
+    // design takes the plate away in the grid and leaves the list alone — but the utility landed
+    // fully transparent here: measured on the running row, `box-shadow` computed as
+    // `rgba(0,0,0,0) 0 0 0 0, ...` while `--tw-shadow` still held the right value, and the rows
+    // read as flat against the design's elevated ones.
+    box-shadow:
+      0 4px 6px -1px rgb(from theme("colors.neutral.950") r g b / 0.1),
+      0 2px 4px -2px rgb(from theme("colors.neutral.950") r g b / 0.1);
+
+    &:hover {
+      box-shadow:
+        0 10px 15px -3px rgb(from theme("colors.neutral.950") r g b / 0.1),
+        0 4px 6px -4px rgb(from theme("colors.neutral.950") r g b / 0.1);
+    }
+
+    // The neutral ramp is the one this preset INVERTS: 950 is the dark end in light and the light
+    // end in dark, so the pair above turns into a pale halo there rather than a shadow. Same swap
+    // the grid's hover and the page plates already make, and the deeper spread dark needs to read
+    // an edge at all.
+    html.dark & {
+      box-shadow:
+        0 2px 6px rgb(0 0 0 / 0.45),
+        0 8px 22px rgb(0 0 0 / 0.4);
+
+      &:hover {
+        box-shadow:
+          0 4px 10px rgb(0 0 0 / 0.5),
+          0 12px 30px rgb(0 0 0 / 0.5);
+      }
+    }
+
+    --vc-product-title-font-size: 0.9375rem;
+
+    :deep(.vc-product-card__wrapper) {
+      @apply items-center gap-x-3 gap-y-1 px-4 py-3;
+
+      // Narrow, as the design has it below a 60rem container: no columns and no heading — photo
+      // beside the product, the stock as a full-width line with a rule under it, then the price and
+      // the stepper on one line. Every cell the row carries has a place, so none falls into a
+      // leftover track.
+      grid-template-areas:
+        "image vendor     vendor      vendor"
+        "image title      title       title"
+        "image properties properties  properties"
+        "stock stock      stock       stock"
+        "price price      add-to-cart actions";
+      grid-template-columns: 5rem minmax(0, 1fr) minmax(9.375rem, 13.75rem) auto;
+      grid-template-rows: auto;
+      column-gap: 0.875rem;
+      row-gap: 0.625rem;
+
+      // Below 34rem the photo goes and the product takes the width. The design's bottom line is a
+      // wrapping flex, and at a phone's width it wraps: the price above, the stepper and the actions
+      // below — side by side they need 360px of a 300px row.
+      @container (width < 34rem) {
+        grid-template-areas:
+          "vendor      vendor"
+          "title       title"
+          "properties  properties"
+          "stock       stock"
+          "price       price"
+          "add-to-cart actions";
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      @container (min-width: 60rem) {
+        grid-template-areas:
+          "image vendor     stock price add-to-cart actions"
+          "image title      stock price add-to-cart actions"
+          "image properties stock price add-to-cart actions";
+        grid-template-columns: var(--product-list-columns);
+        grid-template-rows: auto auto auto;
+        column-gap: 0.75rem;
+        row-gap: 0.25rem;
+      }
+    }
+
+    // The kit keeps the photo and the actions in one media box, which the row's areas have no place
+    // for: auto-placed, it opened an extra column on the right that ate the row's width and dropped
+    // the actions onto a line of their own. Unboxed, each goes to its own area.
+    :deep(.vc-product-card__media) {
+      display: contents;
+    }
+
+    :deep(.vc-product-image) {
+      grid-area: image;
+
+      // 80 in a 72 track: it runs 8 into the gap, as the design has it, or the photo reads smaller
+      // than the caption beside it.
+      @apply size-20 max-w-none rounded-[0.625rem] border border-neutral-200 bg-additional-50;
+
+      // Below 34rem the photo goes and the product takes the row.
+      @container (width < 34rem) {
+        @apply hidden;
+      }
+    }
+
+    :deep(.vc-product-image__img) {
+      @apply p-1.5;
+    }
+
+    :deep(.badges-wrapper) {
+      @apply start-1 top-1 bg-transparent p-0;
+
+      &::before,
+      &::after {
+        @apply hidden;
+      }
+    }
+
+    :deep(.vc-product-vendor) {
+      @apply mt-0 self-end text-[0.6875rem] leading-[1.125rem] tracking-[0.06em];
+    }
+
+    // In the row the name is a link again, in the kit's link blue: the row is read across to the
+    // product, not scanned for what a thing is.
+    :deep(.vc-product-title) {
+      @apply mt-0 self-center font-geologica text-[0.9375rem] font-bold tracking-[-0.008em];
+    }
+
+    :deep(.vc-product-title__text) {
+      @apply leading-[1.125rem];
+    }
+
+    :deep(.vc-product-properties) {
+      grid-area: properties;
+
+      @apply m-0 w-auto flex-row flex-wrap self-start;
+
+      display: flex;
+    }
+
+    .product-card__stock {
+      grid-area: stock;
+
+      @apply flex flex-row flex-wrap items-center gap-1.5 border-b border-neutral-200 pb-2.5;
+
+      @container (min-width: 60rem) {
+        @apply flex-col items-start gap-[0.3125rem] border-0 pb-0;
+      }
+    }
+
+    // The kit gives the price its own width in a row; here it keeps to its column, figure over the
+    // struck list price, both on the right edge.
+    :deep(.vc-product-price) {
+      --vc-product-price-font-size: 1.25rem;
+
+      @apply font-geologica tracking-[-0.02em];
+
+      @apply m-0 flex w-full min-w-0 flex-row flex-wrap items-baseline justify-start gap-x-1.5 whitespace-nowrap text-start;
+
+      @container (min-width: 60rem) {
+        @apply justify-end text-end;
+      }
+    }
+
+    :deep(.vc-quantity-stepper),
+    :deep(.vc-product-button) {
+      @apply m-0 w-full min-w-[9.375rem] max-w-none;
+
+      // On a phone the stepper keeps the design's 220 at most and stands by the actions on the right.
+      @container (width < 34rem) {
+        @apply max-w-[13.75rem] justify-self-end;
+      }
+    }
+
+    // In a row the quick actions are ordinary controls beside the button, not an overlay on the photo,
+    // so they are always there.
+    :deep(.vc-product-actions) {
+      grid-area: actions;
+
+      @apply static flex-row bg-transparent p-0 opacity-100;
+    }
+
+    :deep(.vc-product-actions-button) {
+      --vc-icon-size: 1.25rem;
+    }
+
+    :deep(.vc-product-actions-button:not(.vc-product-actions-button--active)) {
+      @apply text-neutral-400 hover:text-neutral-500;
+    }
+  }
+
   $list: "";
 
   &--list {

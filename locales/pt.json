@@ -354,6 +354,17 @@
           "catalog_menu_button": "Catálogo",
           "main_menu": "Menu principal"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Entrar",
         "link_register_now": "Inscreva-se agora",
         "link_logout": "Sair",
@@ -439,7 +450,7 @@
         "by_virto": "Por Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Pesquisar",
+        "enter_keyword_placeholder": "Pesquisar produtos e peças",
         "enter_keyword_placeholder_category": "Pesquisar em {category}",
         "search_button": "Pesquisar",
         "scope_loading_label": "A carregar o contexto de pesquisa",
@@ -667,7 +678,7 @@
         "title": "Produtos"
       },
       "gifts_section": {
-        "title": "+ Adicionar um Presente"
+        "title": "Presentes"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Resultado ao adicionar produtos ao carrinho",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produto",
+        "availability": "Disponibilidade",
+        "unit_price": "Preço unitário",
+        "add_to_cart": "Adicionar ao carrinho"
+      },
       "view_mode": {
         "grid_label": "Grade",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Resultados por página:"
       },
       "product_card": {
+        "low_stock": "Estoque baixo",
+        "configurable": "Configurável",
+        "variants": "Variantes",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Avaliação:",
         "product_vendor": "Fornecedor:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "A configuração do produto foi alterada. Você quer salvar?",
           "check_your_configuration": "Verifique a configuração do produto",
           "required_section": "Secção obrigatória",
+          "optional": "Opcional",
           "optional_no_selected": "Personalize ainda mais a sua seleção (opcional)",
           "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Ordenar",
       "featured": "Em destaque",
       "alphabetically_a_z": "Alfabeticamente, A-Z",
       "alphabetically_z_a": "Alfabeticamente, Z-A",
       "price_low_to_high": "Preço, do menor para o maior",
       "price_high_to_low": "Preço, do maior para o menor",
       "date_new_to_old": "Data, mais recente para o mais antigo",
-      "date_old_to_new": "Data, do mais antigo para o mais recente"
+      "date_old_to_new": "Data, do mais antigo para o mais recente",
+      "short": {
+        "featured": "Em destaque",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Preço ↑",
+        "price_high_to_low": "Preço ↓",
+        "date_new_to_old": "Mais recentes",
+        "date_old_to_new": "Mais antigos"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "Todos",
-          "differences": "Diferenças"
+          "differences": "Diferenças",
+          "group_label": "Filtro de linhas"
         },
         "uncategorized": "Não categorizado",
         "unresolved_category": "Categoria desconhecida",
@@ -1480,7 +1513,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "Carrinho",
+      "title": "Carrinho de compras",
       "empty_cart_description": "Seu carrinho está vazio",
       "empty_cart_search_text": "Use a pesquisa para encontrar tudo o que precisa",
       "recently_browsed_products": "Recentemente visualizados",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Selecione uma filial para ver os produtos que estão em estoque agora"
       },
       "products_found_message": "resultado | resultados",
+      "products_found_label": "produtos encontrados | produto encontrado | produtos encontrados",
       "products_found_message_search": "resultado encontrado | resultados encontrados",
       "search_in_category": "Pesquisar por \"{keyword}\" em {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Mostrar em uma página separada",
       "no_products_message": "Não há produtos nesta categoria",
       "no_products_filtered_message": "Nenhum resultado encontrado",
+      "no_products_filtered_hint": "Alivie um deles ou recomece.",
       "no_facet_found_message": "Nenhum resultado",
       "no_products_button": "Resetar pesquisa",
       "products_icon": "Ícone de produto",
@@ -1716,6 +1751,123 @@
       },
       "error": "Falha ao carregar dados",
       "retry": "Tentar novamente"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Um catálogo · muitos fornecedores verificados",
+        "title": "Adquira eletrônicos da forma como sua empresa compra.",
+        "subtitle": "Estoque em tempo real em distribuidores autorizados, seus preços de contrato da pesquisa à fatura e entrega no dia seguinte em tudo o que está em estoque localmente.",
+        "browse_catalog": "Navegar catálogo",
+        "notches": {
+          "search": {
+            "title": "Pesquise ou navegue pelo catálogo completo",
+            "text": "Por produto, marca ou seu próprio SKU"
+          },
+          "guest_cart": {
+            "title": "Crie um carrinho como convidado",
+            "text": "Ele é transferido quando você faz login"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Rede de distribuidores autorizados",
+        "title": "Compre por fornecedor",
+        "authorized": "Distribuidor autorizado",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84.000+",
+            "label": "SKUs no catálogo"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Fornecedores autorizados"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Entrega em itens em estoque"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Navegue pelo sortimento",
+        "title": "Compre por categoria",
+        "all_categories": "Todas as categorias",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Favoritos da multidão",
+            "meta": "Gadgets de casa inteligente a home theater — conectados, pareados e prontos para enviar"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Mais vendidos",
+            "meta": "Smartphones 5G a suportes de carro — embalados, carregados e prontos para enviar em lote."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Compre sem conta",
+        "title": "Popular entre compradores",
+        "see_all": "Ver tudo"
+      },
+      "why_buy": {
+        "eyebrow": "Por que comprar conosco",
+        "title": "Termos diretos, inventário real",
+        "cards": {
+          "stock": {
+            "title": "Estoque em tempo real",
+            "text": "Quantidade em estoque por armazém, com o prazo de entrega quando precisa ser fornecido."
+          },
+          "pricing": {
+            "title": "Preços de contrato em todos os lugares",
+            "text": "Seu preço negociado aparece da pesquisa à fatura, impostos e frete incluídos."
+          },
+          "fulfillment": {
+            "title": "Entrega no dia seguinte",
+            "text": "Pedidos em estoque são enviados no mesmo dia, com garantia do fabricante e devoluções gratuitas em 30 dias."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "O que muda",
+        "title": "Segunda-feira de manhã, em números",
+        "stats": {
+          "reorder": {
+            "value": "2 cliques",
+            "label": "Para refazer o pedido da entrega do mês passado, com as quantidades de linha incluídas"
+          },
+          "trail": {
+            "value": "1 trilha",
+            "label": "De uma lista salva a um pedido feito com histórico de aprovação"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Dos preços exibidos são seus preços de contrato, impostos e frete incluídos"
+          },
+          "calls": {
+            "value": "0 chamadas",
+            "label": "Pedidos, rastreamento e consulta de documentos — sem árvore telefônica"
+          }
+        },
+        "quote": {
+          "text": "“Paramos de manter uma planilha de preços — o site mostra os nossos.”",
+          "name": "Líder de compras",
+          "role": "Grupo de instalações · 6 sites"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autorizado por"
+      },
+      "cta": {
+        "title": "Torne-se um cliente",
+        "text": "Preços de contrato, termos de pagamento acordados e checkout com PO — geralmente aprovado em um dia útil.",
+        "become_customer": "Torne-se um cliente",
+        "talk_to_sales": "Falar com vendas"
+      }
     }
   },
   "identity_error": {

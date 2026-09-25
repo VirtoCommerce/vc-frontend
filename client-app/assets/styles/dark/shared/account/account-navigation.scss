@@ -1,0 +1,14 @@
+.account-navigation {
+  // The light card borrows the footer's top band, which in dark is the near-black #150f0c — a hole
+  // beside the page's widgets. Dark takes the widgets' own surface back.
+  --vc-widget-bg-color: theme("colors.additional.50");
+
+  // Dark reads by brightening, and neutral-100 is the widget's own surface here — so the
+  // hover moves a step up the neutral ramp and the active row one step up the secondary one.
+  --vc-menu-item-hover-bg: theme("colors.neutral.200");
+  --vc-menu-item-active-bg: theme("colors.secondary.200");
+
+  // The hairline under a group's heading steps up a rung too: 200 on this plate vanishes. The
+  // facet rail on the category page makes the same swap for the same reason.
+  --vc-widget-divide-color: theme("colors.neutral.300");
+}

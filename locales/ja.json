@@ -354,6 +354,17 @@
           "catalog_menu_button": "カタログ",
           "main_menu": "メインメニュー"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "ログイン",
         "link_register_now": "今すぐ登録",
         "link_logout": "ログアウト",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "検索",
+        "enter_keyword_placeholder": "製品・部品を検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "search_button": "検索",
         "scope_loading_label": "検索コンテキストを読み込み中",
@@ -667,7 +678,7 @@
         "title": "商品"
       },
       "gifts_section": {
-        "title": "+ ギフトを追加"
+        "title": "ギフト"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "カートへの追加結果",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "商品",
+        "availability": "在庫状況",
+        "unit_price": "単価",
+        "add_to_cart": "カートに追加"
+      },
       "view_mode": {
         "grid_label": "グリッド表示",
-        "list_label": "リスト表示"
+        "list_label": "リスト表示",
+        "aria_label": "レイアウト"
       },
       "page_size": {
         "label": "表示件数："
       },
       "product_card": {
+        "low_stock": "在庫わずか",
+        "configurable": "カスタマイズ可",
+        "variants": "バリエーション",
         "price_label": "@:common.labels.product_price",
         "product_rating": "評価：",
         "product_vendor": "販売元："
@@ -762,6 +783,7 @@
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
           "check_your_configuration": "製品構成を確認してください",
           "required_section": "セクションは必須です",
+          "optional": "任意",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
           "required_no_selected": "すべての必須オプションを選択して、完了してください",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "並べ替え",
       "featured": "おすすめ",
       "alphabetically_a_z": "アルファベット順 (A-Z)",
       "alphabetically_z_a": "アルファベット順 (Z-A)",
       "price_low_to_high": "価格の低い順",
       "price_high_to_low": "価格（高い順）",
       "date_new_to_old": "日付、新しい順",
-      "date_old_to_new": "日付、古い順"
+      "date_old_to_new": "日付、古い順",
+      "short": {
+        "featured": "注目の商品",
+        "alphabetically_a_z": "アルファベット順 (A-Z)",
+        "alphabetically_z_a": "アルファベット順 (Z-A)",
+        "price_low_to_high": "価格 (安い順)",
+        "price_high_to_low": "価格 (高い順)",
+        "date_new_to_old": "新着順",
+        "date_old_to_new": "古い順"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "すべて",
-          "differences": "違い"
+          "differences": "違い",
+          "group_label": "行フィルター"
         },
         "uncategorized": "未分類",
         "unresolved_category": "不明なカテゴリ",
@@ -1480,7 +1513,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "カート",
+      "title": "ショッピングカート",
       "empty_cart_description": "カートが空です",
       "empty_cart_search_text": "検索して必要なものを見つけましょう",
       "recently_browsed_products": "最近見た商品",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "受け取り店舗を選択して、現在在庫のある商品を確認してください"
       },
       "products_found_message": "件の検索結果",
+      "products_found_label": "件の商品",
       "products_found_message_search": "件見つかりました | 件見つかりました",
       "search_in_category": "「{category}」で「{keyword}」を検索",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "別ページで表示",
       "no_products_message": "このカテゴリーに商品がありません",
       "no_products_filtered_message": "該当する商品が見つかりません",
+      "no_products_filtered_hint": "条件をゆるめるか、最初からやり直してください。",
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",
@@ -1716,6 +1751,123 @@
       },
       "error": "データの読み込みに失敗しました",
       "retry": "もう一度試す"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "一つのカタログ · 認定サプライヤー多数",
+        "title": "ビジネスの購買方法に合わせて電子機器を調達する。",
+        "subtitle": "認定ディストリビューターの在庫をリアルタイムで確認。検索から請求書まで契約価格が通し、地域倉庫にある商品は翌日出荷します。",
+        "browse_catalog": "カタログを見る",
+        "notches": {
+          "search": {
+            "title": "カタログ全体を検索・閲覧",
+            "text": "製品名、ブランド、自社の品番から"
+          },
+          "guest_cart": {
+            "title": "ログインなしでカートを作成",
+            "text": "サインイン後もそのまま引き継がれます"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "認定ディストリビューターネットワーク",
+        "title": "サプライヤーから探す",
+        "authorized": "認定ディストリビューター",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "カタログ掲載SKU数"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "認定サプライヤー"
+          },
+          "fulfillment": {
+            "value": "24時間",
+            "label": "在庫品の出荷対応"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "品揃えを見る",
+        "title": "カテゴリーから探す",
+        "all_categories": "すべてのカテゴリー",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "定番の人気",
+            "meta": "スマートホーム機器からホームシアターまで — 接続・ペアリング済みですぐに出荷"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "売れ筋",
+            "meta": "5Gスマートフォンから車載ホルダーまで — ケース装着・充電済みで大口出荷に対応。"
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "アカウントなしで購入",
+        "title": "バイヤーに人気",
+        "see_all": "すべて見る"
+      },
+      "why_buy": {
+        "eyebrow": "選ばれる理由",
+        "title": "明快な条件と、実在する在庫",
+        "cards": {
+          "stock": {
+            "title": "リアルタイム在庫",
+            "text": "倉庫ごとの在庫数を表示。取り寄せが必要な場合はリードタイムも確認できます。"
+          },
+          "pricing": {
+            "title": "どこでも契約価格",
+            "text": "交渉済みの価格が検索から請求書まで表示されます。税・送料込みです。"
+          },
+          "fulfillment": {
+            "title": "翌日出荷",
+            "text": "在庫品のご注文は当日出荷。メーカー保証付きで、30日以内の返品は無料です。"
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "何が変わるか",
+        "title": "月曜の朝を数字で",
+        "stats": {
+          "reorder": {
+            "value": "2クリック",
+            "label": "先月の納品分を、明細の数量ごと再注文"
+          },
+          "trail": {
+            "value": "1つの履歴",
+            "label": "保存リストから発注まで、承認履歴つきで一貫管理"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "表示価格はすべてお客様の契約価格。税・送料込み"
+          },
+          "calls": {
+            "value": "0件の電話",
+            "label": "注文・追跡・書類の確認まで — 電話の自動応答は不要"
+          }
+        },
+        "quote": {
+          "text": "「価格表のスプレッドシートを管理する必要がなくなりました — サイトに自社の価格が表示されるからです。」",
+          "name": "調達責任者",
+          "role": "施設管理グループ · 6拠点"
+        }
+      },
+      "brands": {
+        "eyebrow": "正規取扱ブランド"
+      },
+      "cta": {
+        "title": "お取引を始める",
+        "text": "契約価格、合意済みの支払条件、発注書での決済 — 通常1営業日以内に承認されます。",
+        "become_customer": "お取引を始める",
+        "talk_to_sales": "営業に相談する"
+      }
     }
   },
   "identity_error": {

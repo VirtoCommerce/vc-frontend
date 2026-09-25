@@ -78,6 +78,11 @@ const _bgColor = computed(() => getColorValue(props.bgColor));
     @apply overflow-hidden absolute inset-0 bg-[--bg-color];
 
     svg {
+      // A theme whose canvas is painted once, page-wide, has no use for a decoration the
+      // container draws per page — and the prop that turns it off is per call site, which a
+      // theme cannot reach. `block` is what an absolutely positioned svg already computes to.
+      display: var(--vc-container-bg-image-display, block);
+
       @apply absolute size-[28rem] bottom-[-10rem] right-[-10rem];
 
       @media (min-width: theme("screens.xl")) {

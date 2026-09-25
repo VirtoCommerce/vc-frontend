@@ -4,7 +4,7 @@
     :class="`fixed top-0 z-[21] flex h-1 w-full justify-center bg-[--color-${badgeColor}-500]`"
     :aria-label="`Environment indicator: ${environmentName}`"
   >
-    <VcBadge class="h-[22px] min-w-17 items-center rounded-b-md" :color="badgeColor">
+    <VcBadge class="h-[22px] min-w-17 items-center" :color="badgeColor" size="sm" rounded>
       {{ environmentName }}
     </VcBadge>
   </aside>

@@ -20,7 +20,8 @@ const meta: Meta<typeof VcLabel> = {
     size: {
       control: "select",
       options: ["xs", "sm", "md", "lg"],
-      description: "Label size",
+      description:
+        "Label size. Left unset inside a field, it follows the field's context and stops at `sm` — an `md` or `lg` control still gets a 14px caption. `VcInput` pins its own to `xs`.",
     },
   },
   args: {

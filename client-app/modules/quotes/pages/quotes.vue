@@ -111,7 +111,7 @@
             <tr
               v-for="quote in quotes"
               :key="quote.id"
-              class="cursor-pointer last:rounded-b-[--vc-radius] even:bg-neutral-50 hover:bg-neutral-200"
+              class="cursor-pointer even:bg-neutral-50 hover:bg-[--vc-table-row-hover-bg-color]"
               tabindex="0"
               @click="goToQuoteDetails(quote)"
               @keydown.enter.prevent="goToQuoteDetails(quote)"

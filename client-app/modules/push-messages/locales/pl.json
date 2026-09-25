@@ -1,6 +1,7 @@
 {
   "push_messages": {
     "title": "Powiadomienia",
+    "header_title": "Alerty",
     "menu_item_name": "Powiadomienia",
     "empty_list": "Nie masz nowych powiadomień w tej chwili",
     "options": {

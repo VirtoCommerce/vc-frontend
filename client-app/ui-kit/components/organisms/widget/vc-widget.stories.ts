@@ -46,6 +46,34 @@ export const NoBorder: StoryType = {
   },
 };
 
+// A shadowless widget has only its outline left, so it takes the edge colour from its own knob
+// rather than from the one a theme clears in exchange for a shadow.
+export const NoShadowBorderCSSVariable: StoryType = {
+  args: {
+    shadow: false,
+    title: "Widget title",
+  },
+  render: renderWidget(`<div :style="{ '--vc-widget-no-shadow-border-color': '#e5451c' }">
+    <VcWidget v-bind="args">Widget text</VcWidget>
+  </div>`),
+};
+
+// The surface knobs together: a widget can be drawn as a plate that sits straight on the
+// canvas, with the shadow as its only edge.
+export const SurfaceCSSVariables: StoryType = {
+  args: {
+    title: "Widget title",
+  },
+  render: renderWidget(`<div :style="{
+    '--vc-widget-radius': '1.75rem',
+    '--vc-widget-border-color': 'transparent',
+    '--vc-widget-divide-color': '#e7ddce',
+    '--vc-widget-shadow': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+  }">
+    <VcWidget v-bind="args">Widget text</VcWidget>
+  </div>`),
+};
+
 export const Title: StoryType = {
   args: {
     title: "Widget title",
@@ -200,4 +228,52 @@ export const HeaderFooterOnly: StoryType = {
 
     <template #footer>Footer text</template>
   </VcWidget>`),
+};
+
+// The three padding knobs, set from outside by name. Without them a consumer could only reach
+// this widget's inset through `--p-x`/`--p-t`/`--p-b`, which are the block's private spelling.
+export const PaddingFromTheOutside: StoryType = {
+  args: {
+    title: "Roomier plate",
+  },
+  render:
+    renderWidget(`<div style="--vc-widget-padding-x: 2.5rem; --vc-widget-padding-top: 2.5rem; --vc-widget-padding-bottom: 2.5rem">
+    <VcWidget v-bind="args">Widget text</VcWidget>
+  </div>`),
+};
+
+// Nested: the widget is already inside someone else's plate, so it draws none of its own and
+// keeps no side inset — its heading and its rows stand on the same vertical as the shell's.
+// Shown inside a plain plate so the alignment is the thing you can see.
+export const Nested: StoryType = {
+  render:
+    renderWidget(`<div style="background: var(--color-additional-50); border-radius: var(--vc-radius); padding: 1.5rem; box-shadow: var(--tw-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1))">
+    <p style="margin-bottom: 0.75rem">The shell already pays for the inset.</p>
+
+    <VcWidget nested title="Nested widget">Its heading and this text line up with the sentence above.</VcWidget>
+
+    <VcWidget title="Plain widget">A plain widget draws its own plate and sits a step inside.</VcWidget>
+  </div>`),
+};
+
+// The block head: the prepended icon drawn on a disc, with the title set in caps and led to the
+// disc's height so the two make one row. Off by default, because a widget that is a panel rather
+// than a headed block — a checkout section, a cart summary — keeps the bare glyph. The four numbers
+// are reachable by name, so a theme retunes every marked widget at once.
+export const IconShape: StoryType = {
+  args: {
+    title: "Product variations",
+    prependIcon: "cube",
+    iconShape: true,
+    size: "lg",
+  },
+  render: renderWidget(`<div>
+    <VcWidget v-bind="args">Marked: the head of a content block.</VcWidget>
+
+    <VcWidget title="Product variations" prepend-icon="cube" size="lg">Unmarked, which is the default.</VcWidget>
+
+    <div style="--vc-widget-icon-shape-size: 3rem; --vc-widget-icon-shape-bg-color: var(--color-primary-500)">
+      <VcWidget v-bind="args" title="Retuned from outside" />
+    </div>
+  </div>`),
 };

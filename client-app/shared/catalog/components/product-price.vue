@@ -189,6 +189,15 @@ const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | unde
     @apply text-base font-bold;
   }
 
+  &__value {
+    @apply font-geologica text-[22px] leading-[34px];
+
+    :deep(.price__actual),
+    :deep(.price__value) {
+      @apply font-black;
+    }
+  }
+
   &__unavailable {
     @apply flex items-center gap-1 text-primary-500;
   }

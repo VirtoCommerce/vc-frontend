@@ -1,5 +1,5 @@
 <template>
-  <MobileMenuLink :link="item" :count="unreadCount" class="py-1 text-lg" @close="$emit('close')">
+  <MobileMenuLink :link="item" :count="unreadCount" @close="$emit('close')">
     {{ item.title }}
   </MobileMenuLink>
 </template>

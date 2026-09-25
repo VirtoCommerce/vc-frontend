@@ -5,11 +5,11 @@
     <template v-else>
       <!-- Popup sidebar for mobile and horizontal desktop view -->
       <FiltersPopupSidebar
-        v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
+        v-if="!hideSidebar && (isCompact || isHorizontalFilters)"
         :is-exist-selected-facets="hasSelectedFacets"
         :popup-sidebar-filters="filtersToShow"
         :facets-loading="fetchingFacets"
-        :is-mobile="isMobile"
+        :is-mobile="isCompact"
         :is-visible="isFiltersSidebarVisible"
         :loading="fetchingProducts"
         :hide-controls="hideControls"
@@ -36,183 +36,190 @@
           />
         </template>
 
-        <VcTypography tag="h1" class="category__title">
-          <i18n-t
-            v-if="!categoryId && !isRoot && searchParams.keyword"
-            :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
-            tag="span"
-          >
-            <template #keyword>
-              <strong>{{ searchParams.keyword }}</strong>
-            </template>
-          </i18n-t>
-
-          <!-- Skeleton -->
-          <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
-
-          <span v-else-if="title">
-            {{ title }}
-          </span>
-
-          <span v-else-if="currentCategory && searchQueryParam">
-            {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
-          </span>
-
-          <span v-else>
-            {{ currentCategory?.name }}
-          </span>
-
-          <sup v-if="showProductsCount" class="category__products-count">
-            <b class="me-1" data-test-id="products-count-label">
-              {{ $n(totalProductsCount, "decimal") }}
-            </b>
-
-            <template v-if="currentCategory && searchQueryParam">
-              {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
-            </template>
-
-            <template v-else>
-              {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
-            </template>
-          </sup>
-        </VcTypography>
-
-        <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
-
-        <template v-if="!hideAllControls">
-          <div
-            :class="[
-              'category__filters',
-              {
-                'category__filters--sticky': stickyMobileHeaderIsVisible,
-              },
-            ]"
-          >
-            <!-- Popup sidebar filters toggler -->
-            <VcButton
-              v-if="!hideSidebar"
-              class="category__facets-button"
-              icon="filter"
-              size="sm"
-              :aria-label="$t('common.accessibility.open_filters')"
-              @click="showFiltersSidebar"
-            />
-
-            <!-- Sorting -->
-            <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
-              <VcLabel class="category__sort-label">
-                {{ $t("pages.catalog.sort_by_label") }}
-              </VcLabel>
-
-              <VcSelect
-                v-model="selectedSort"
-                text-field="name"
-                value-field="id"
-                :disabled="fetchingProducts"
-                :items="translatedProductSortingList"
-                class="category__sort-dropdown"
-                size="sm"
-                @change="resetCurrentPage"
-              />
+        <!-- The page is laid out as plates on the canvas: the heading is one plate, the category's
+             picture a second beside it, and the listing a third below. -->
+        <div :class="['category__head', { 'category__head--art': headImage }]">
+          <div class="category__head-plate">
+            <div v-if="$slots.breadcrumbs" class="category__breadcrumbs">
+              <slot name="breadcrumbs" />
             </div>
 
-            <!-- View options - horizontal view -->
-            <ViewMode
-              v-if="!hideViewModeSelector"
-              v-model:mode="savedViewMode"
-              class="category__view-mode"
-              data-test-id="view-switcher"
-            />
+            <VcTypography tag="h1" class="category__title">
+              <i18n-t
+                v-if="!categoryId && !isRoot && searchParams.keyword"
+                :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
+                tag="span"
+              >
+                <template #keyword>
+                  <strong>{{ searchParams.keyword }}</strong>
+                </template>
+              </i18n-t>
 
-            <!-- In stock and branches -->
-            <CategoryControls
-              v-if="!hideControls && !isMobile && !isHorizontalFilters"
-              v-model="localStorageInStock"
-              v-model:purchased-before="localStoragePurchasedBefore"
-              :loading="fetchingProducts"
-              :saved-branches="localStorageBranches"
-              class="category__controls"
-              @open-branches-modal="openBranchesModal"
-              @apply-in-stock="resetCurrentPage"
-              @apply-purchased-before="resetCurrentPage"
-            />
+              <!-- Skeleton -->
+              <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
+
+              <span v-else-if="title">
+                {{ title }}
+              </span>
+
+              <span v-else-if="currentCategory && searchQueryParam">
+                {{
+                  $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name })
+                }}
+              </span>
+
+              <span v-else>
+                {{ currentCategory?.name }}
+              </span>
+
+              <!-- The count answers the grid under it: "8 products found", and on a phone, "8 results". -->
+              <sup v-if="showProductsCount" class="category__products-count">
+                <b class="me-1" data-test-id="products-count-label">{{ $n(totalProductsCount, "decimal") }}</b>
+                {{ " " }}
+
+                <template v-if="currentCategory && searchQueryParam">
+                  {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
+                </template>
+
+                <template v-else-if="isMobile">
+                  {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+                </template>
+
+                <template v-else>
+                  {{ $t("pages.catalog.products_found_label", totalProductsCount) }}
+                </template>
+              </sup>
+            </VcTypography>
           </div>
 
-          <!-- Horizontal filters -->
-          <CategoryHorizontalFilters
-            v-if="isHorizontalFilters && !isMobile"
-            :facets-loading="fetchingFacets"
-            :sortings="sortings"
-            :loading="fetchingProducts || fetchingFacets"
-            :filters="filtersToShow"
-            :hide-sorting="hideSorting"
-            :hide-all-filters="hideSidebar"
-            @reset-facet-filters="resetFacetFilters"
-            @change:filters="applyFiltersOnly($event)"
-            @show-popup-sidebar="showFiltersSidebar"
-            @apply-sort="resetCurrentPage"
+          <img v-if="headImage" :src="headImage" alt="" class="category__head-art" />
+        </div>
+
+        <div class="category__body">
+          <template v-if="!hideAllControls">
+            <div class="category__filters">
+              <!-- Popup sidebar filters toggler -->
+              <VcButton
+                v-if="!hideSidebar"
+                class="category__facets-button"
+                icon="filter"
+                size="sm"
+                :aria-label="$t('common.accessibility.open_filters')"
+                @click="showFiltersSidebar"
+              />
+
+              <!-- View options - horizontal view -->
+              <ViewMode
+                v-if="!hideViewModeSelector"
+                v-model:mode="savedViewMode"
+                class="category__view-mode"
+                data-test-id="view-switcher"
+              />
+
+              <!-- The page's quick filters and its order, one group on the far side of the layout switch -->
+              <div class="category__filters-right">
+                <!-- In stock and branches -->
+                <CategoryControls
+                  v-if="!hideControls && !isCompact && !isHorizontalFilters"
+                  v-model="localStorageInStock"
+                  v-model:purchased-before="localStoragePurchasedBefore"
+                  :loading="fetchingProducts"
+                  :saved-branches="localStorageBranches"
+                  class="category__controls"
+                  @open-branches-modal="openBranchesModal"
+                  @apply-in-stock="resetCurrentPage"
+                  @apply-purchased-before="resetCurrentPage"
+                />
+
+                <!-- Sorting -->
+                <CategorySort
+                  v-if="!hideSorting && !isHorizontalFilters"
+                  v-model="selectedSort"
+                  :options="translatedProductSortingList"
+                  :loading="fetchingProducts"
+                  class="category__sort"
+                  @change="applySort"
+                />
+              </div>
+            </div>
+
+            <!-- Horizontal filters -->
+            <CategoryHorizontalFilters
+              v-if="isHorizontalFilters && !isMobile"
+              :facets-loading="fetchingFacets"
+              :sortings="sortings"
+              :loading="fetchingProducts || fetchingFacets"
+              :filters="filtersToShow"
+              :hide-sorting="hideSorting"
+              :hide-all-filters="hideSidebar"
+              @reset-facet-filters="resetFacetFilters"
+              @change:filters="applyFiltersOnly($event)"
+              @show-popup-sidebar="showFiltersSidebar"
+              @apply-sort="applySort"
+            />
+
+            <ActiveFilterChips
+              v-if="hasSelectedFilters || isResetPageButtonShown || activeControls.length"
+              :filters="productsFilters.filters"
+              :facets-to-hide="normalizedFacetsToHide"
+              :controls="activeControls"
+              @apply-filters="applyFiltersOnly"
+              @cancel-control="cancelControl"
+            >
+              <template #actions>
+                <VcChip
+                  v-if="hasSelectedFilters || activeControls.length"
+                  color="secondary"
+                  variant="outline"
+                  clickable
+                  @click="resetFacetAndControlsFilters"
+                >
+                  <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+                  <VcIcon name="reset" variant="solid" />
+                </VcChip>
+
+                <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
+                  <span>{{ $t("common.buttons.reset_page") }}</span>
+
+                  <VcIcon name="reset" variant="solid" />
+                </VcChip>
+              </template>
+            </ActiveFilterChips>
+          </template>
+
+          <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
+
+          <CategoryProducts
+            ref="categoryProducts"
+            :card-type="cardType"
+            :sort-token="sortToken"
+            :fetching-more-products="fetchingMoreProducts"
+            :fetching-products="fetchingProducts"
+            :fixed-products-count="fixedProductsCount"
+            :has-active-filters="
+              hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+            "
+            :items-per-page="itemsPerPage"
+            :grid-columns="gridColumns"
+            :pages-count="pagesCount"
+            :page-number="currentPage"
+            :page-history="pageHistory"
+            :products="products"
+            :saved-view-mode="savedViewMode"
+            :mode="catalogPaginationMode"
+            :keyword="searchParams.keyword"
+            class="category__products"
+            @change-page="changeProductsPage"
+            @reset-filter-keyword="handleResetFilterKeyword"
+            @select-product="selectProduct"
           />
 
-          <ActiveFilterChips
-            v-if="hasSelectedFilters || isResetPageButtonShown || activeControls.length"
-            :filters="productsFilters.filters"
-            :facets-to-hide="normalizedFacetsToHide"
-            :controls="activeControls"
-            @apply-filters="applyFiltersOnly"
-            @cancel-control="cancelControl"
-          >
-            <template #actions>
-              <VcChip
-                v-if="hasSelectedFilters || activeControls.length"
-                color="secondary"
-                variant="outline"
-                clickable
-                @click="resetFacetAndControlsFilters"
-              >
-                <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-                <VcIcon name="reset" />
-              </VcChip>
-
-              <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
-                <span>{{ $t("common.buttons.reset_page") }}</span>
-
-                <VcIcon name="reset" />
-              </VcChip>
-            </template>
-          </ActiveFilterChips>
-        </template>
-
-        <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
-
-        <CategoryProducts
-          :card-type="cardType"
-          :columns-amount-desktop="columnsAmountDesktop"
-          :columns-amount-tablet="columnsAmountTablet"
-          :fetching-more-products="fetchingMoreProducts"
-          :fetching-products="fetchingProducts"
-          :fixed-products-count="fixedProductsCount"
-          :has-active-filters="
-            hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
-          "
-          :items-per-page="itemsPerPage"
-          :pages-count="pagesCount"
-          :page-number="currentPage"
-          :page-history="pageHistory"
-          :products="products"
-          :saved-view-mode="savedViewMode"
-          :mode="catalogPaginationMode"
-          :keyword="searchParams.keyword"
-          class="category__products"
-          @change-page="changeProductsPage"
-          @reset-filter-keyword="handleResetFilterKeyword"
-          @select-product="selectProduct"
-        />
-
-        <div class="category__products-bottom">
-          <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
-            {{ $t("pages.catalog.show_all_results") }}
-          </VcButton>
+          <div v-if="showButtonToDefaultView" class="category__products-bottom">
+            <VcButton color="primary" :to="{ query: { view: 'default' } }">
+              {{ $t("pages.catalog.show_all_results") }}
+            </VcButton>
+          </div>
         </div>
       </VcLayout>
     </template>
@@ -222,7 +229,18 @@
 <script setup lang="ts">
 import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import { omit } from "lodash-es";
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  toRef,
+  toRefs,
+  useTemplateRef,
+  watch,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
@@ -241,6 +259,7 @@ import {
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import { getRowAlignedPageSize, useCatalogGridColumns } from "@/shared/catalog/composables/useCatalogGridColumns";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
@@ -259,6 +278,7 @@ import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.v
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
+import CategorySort from "@/shared/catalog/components/category/category-sort.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 const props = defineProps<IProps>();
 
@@ -303,6 +323,8 @@ const currencyCode = computed(() => props.currencyCodeOverride || defaultCurrenc
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+/** Below lg the rail gives way to the filters drawer, and the quick filters move into it with the facets. */
+const isCompact = breakpoints.smaller("lg");
 
 const isCategoryNotFound = ref(false);
 
@@ -403,11 +425,11 @@ const { selectedAddress } = useShipToLocation();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
-const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
+const categoryProducts = useTemplateRef("categoryProducts");
+const gridColumns = useCatalogGridColumns(() => categoryProducts.value?.$el as HTMLElement | undefined);
 
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+/** Whole rows per page: 16 cards on three columns left a row of one at the foot of every page. */
+const itemsPerPage = computed(() => getRowAlignedPageSize(gridColumns.value, DEFAULT_PAGE_SIZE));
 
 const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 const hideViewModeSelector = computed(() => {
@@ -432,8 +454,9 @@ const hideAllControls = computed(() => {
 });
 
 const isSidebarVisible = computed(() => {
-  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
+  return !props.hideSidebar && !isCompact.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
 });
+
 const showProductsCount = computed(() => {
   return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
@@ -573,6 +596,19 @@ function trackViewSearchResults(): void {
   });
 }
 
+/** The category's own picture, set per category in the admin; the plate is left out when there is none. */
+const headImage = computed(() => currentCategory.value?.images?.[0]?.url);
+
+// Counted from the press, not from the sorting the store has confirmed: `selectedSort` follows the
+// backend's own `selected` flag and only moves once the search has answered — a second and a half
+// after the grid has had to decide whether to hold its cards or drop them for skeletons.
+const sortToken = ref(0);
+
+function applySort() {
+  sortToken.value += 1;
+  void resetCurrentPage();
+}
+
 function selectProduct(product: Product): void {
   analytics("selectItem", product, categoryListProperties.value);
 }
@@ -628,12 +664,10 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
   return false;
 }
 
-whenever(() => !isMobile.value, hideFiltersSidebar);
+whenever(() => !isCompact.value, hideFiltersSidebar);
 const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
-
-const isMobileLg = breakpoints.smaller("lg");
 
 watch(
   () => props.categoryId,
@@ -711,8 +745,9 @@ watchDebounced(
   },
 );
 
+// A page size that follows the column count is not a new question, so it does not scroll the reader.
 watchDebounced(
-  computed(() => JSON.stringify(searchParams.value)),
+  computed(() => JSON.stringify(omit(searchParams.value, "itemsPerPage"))),
   () => {
     if (categoryProductsAnchor.value && (!isHorizontalFilters.value || isMobile.value)) {
       categoryProductsAnchor.value.scrollIntoView({ block: "center" });
@@ -746,7 +781,7 @@ onBeforeUnmount(() => {
 function clearCategoryScope() {
   removeScopeItemByType("category");
 
-  if (!isMobileLg.value) {
+  if (!isCompact.value) {
     clearSearchResults();
   }
 }
@@ -757,93 +792,390 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+// The design's "nested widget" (Ilya, 22.09.2026): a widget lying inside someone else's surface
+// draws no plate of its own and keeps no side inset, so its heading and its rows stand on one
+// vertical with whatever holds it — here the rail's cards, and in the phone's drawer the drawer.
+@mixin nested-widget {
+  .vc-widget {
+    --vc-widget-divide-color: transparent;
+
+    @apply rounded-none border-0 bg-transparent px-0 shadow-none;
+  }
+
+  .vc-widget__header,
+  .vc-widget__slot {
+    @apply px-0;
+  }
+
+  // The heading carries the hairline under it; rounded like the widget, the rule's ends curl up.
+  .vc-widget__header,
+  .vc-widget__header-container {
+    @apply rounded-none;
+  }
+
+  .vc-widget__slot-container,
+  .vc-widget__footer-container {
+    @apply border-0;
+  }
+
+  // The kit paints each row paper white, which on the warm surface reads as a block behind the list.
+  // Resting rows only — the kit's hover and active fills stay as they are.
+  .vc-menu-item__inner {
+    @apply rounded-md px-0;
+
+    &:not(:hover, .vc-menu-item__inner--active) {
+      @apply bg-transparent;
+    }
+  }
+
+  .vc-widget__append-icon {
+    --vc-icon-size: 1.5rem;
+
+    @apply text-primary-500;
+  }
+
+  // The field stands on the column's edges like the rows under it, and the heading's hairline is
+  // the only rule: the design keeps the kit's 12px inset and a second line under the field, a
+  // leftover from when a facet had side padding of its own, and in a card it read as a box in a box.
+  .facet-filter-widget__search {
+    @apply border-0 px-0 pb-1 pt-2.5;
+  }
+
+  // The rows start right under the heading's rule, as the design stacks them; the kit pads its list
+  // 6px at each end for a widget that had no such rule.
+  .facet-filter-widget__container {
+    @apply py-0;
+  }
+
+  // The fade over a cut-off list ends on the list's own edge; the kit hangs it 6px past, into the
+  // padding that is gone here, and in a scrolling list that overhang opened a scrollbar.
+  .facet-filter-widget__fade::after {
+    @apply bottom-0;
+  }
+
+  // The kit squares the bottom of anything in a widget's footer to meet the widget's own corners.
+  // Here the footer is a pill button floating inside the card, and a squared hover fill read as a tab.
+  .facet-filter-widget__more {
+    @apply rounded-full;
+  }
+}
+
+// The drawer is teleported out of the page and carries the facets on its own surface, so it takes
+// the nested widget and nothing of the rail's cards.
+.filters-popup-sidebar {
+  @include nested-widget;
+
+  .vc-widget__title {
+    @apply text-sm leading-[1.125rem];
+  }
+
+  // The drawer keeps the kit's own list rhythm, as the design's does: rows 40 (a 20px line and 10
+  // above and below) and 16 between facets.
+  .products-filters__container {
+    @apply gap-4;
+  }
+
+  .facet-filter-widget__container .vc-menu-item__content {
+    @apply min-h-5;
+  }
+
+  .facet-filter-widget__fade::after {
+    --tw-gradient-from: theme("colors.additional.50") var(--tw-gradient-from-position);
+  }
+}
+
 .category {
+  // The page is plates on the canvas, on the numbers PR #2494 built for the header and footer:
+  // one radius, one inside, one shadow and one step between every plate. The fallbacks are those
+  // values, so a theme without the paprika tokens still gets round plates.
+  --category-plate-radius: var(--plate-radius, 1.75rem);
+  --category-plate-pad-y: var(--plate-pad-y, 2.25rem);
+  --category-plate-pad-x: var(--plate-pad-x, 2rem);
+  --category-plate-gap: var(--page-stack, 1.625rem);
+  --category-plate-shadow: var(--plate-shadow, theme("boxShadow.md"));
+
+  // The plate is the design's warm off-white (#fffdf9), the step the footer's top plate paints
+  // with, so every plate on the page is one colour and they turn dark together.
+  --category-plate-bg: var(--footer-top-bg-color, #fffdf9);
+
+  // The step inside a plate between its toolbar and the grid under it.
+  --category-inner: 1.5rem;
+
+  @media (width < 900px) {
+    --category-inner: 1.25rem;
+  }
+
+  %plate {
+    padding: var(--category-plate-pad-y) var(--category-plate-pad-x);
+    border-radius: var(--category-plate-radius);
+    background: var(--category-plate-bg);
+    box-shadow: var(--category-plate-shadow);
+
+    // In dark a plate's edge is the light catching its top, not an outline.
+    html.dark & {
+      box-shadow:
+        inset 0 1px 0 var(--glass-sheen, transparent),
+        var(--category-plate-shadow);
+    }
+  }
+
+  // Between the rail and the listing only: below md the layout unboxes its content column, and a
+  // row gap would add itself to the heading's own step.
+  .vc-layout__container {
+    column-gap: var(--category-plate-gap);
+  }
+
+  // 280 wide, the design's rail. Two classes deep: the layout sets the width through its own
+  // position modifier, and an equal-weight rule loses to it on load order.
+  .vc-layout .vc-layout__sidebar-container {
+    width: 17.5rem;
+  }
+
+  // The rail is not one plate but a stack of cards — the category list and every facet in a card
+  // of its own, 20 apart (Ilya, 22.09.2026). On one continuous surface a gap between two blocks
+  // reads as an empty line rather than as a border.
+  .vc-layout__sidebar {
+    @apply flex w-full flex-col gap-5;
+
+    @include nested-widget;
+
+    .products-filters__container {
+      @apply flex flex-col gap-5;
+    }
+
+    // A card repeats the plate's surface at a smaller radius — 22 on a block this narrow looks
+    // inflated, 16 keeps it in the family.
+    .category__selector,
+    .products-filters__container > * > .vc-widget,
+    .slider-filter > .vc-widget {
+      @apply rounded-2xl;
+
+      padding: 1rem 1.25rem 0.75rem;
+      background: var(--category-plate-bg);
+      box-shadow: var(--category-plate-shadow);
+
+      html.dark & {
+        box-shadow:
+          inset 0 1px 0 var(--glass-sheen, transparent),
+          var(--category-plate-shadow);
+      }
+    }
+
+    // Every block on the rail is headed the same way — Geologica 18/22 over a hairline — so the
+    // category list and the facets under it read as one level (Ilya's Figma, 22.09.2026). The
+    // WEIGHT is no longer pinned here: the display face went to 600 across the theme
+    // (Ilya, 24.09.2026) and the kit's title reads that knob, so a `font-bold` on this rule alone
+    // would leave the facet rail heavier than every other heading on the page.
+    .vc-widget__header-container {
+      @apply p-0;
+    }
+
+    // The hairline under a heading steps up to neutral 300 in dark, where 200 on the plate vanishes.
+    .vc-widget__header {
+      @apply min-h-0 border-b border-neutral-200 pb-2 pt-0;
+
+      html.dark & {
+        @apply border-neutral-300;
+      }
+    }
+
+    .vc-widget__title {
+      @apply font-geologica text-lg normal-case leading-[1.375rem] tracking-[-0.02em] text-neutral-950;
+    }
+
+    .vc-widget__prepend-append,
+    .vc-widget__append-icon {
+      @apply flex h-6;
+    }
+
+    // A folded facet is its label alone: the hairline would hang along the card's bottom edge.
+    .vc-widget--collapsed .vc-widget__header {
+      @apply border-b-0 pb-0.5;
+    }
+
+    .facet-filter-widget .vc-widget__slot-container {
+      @apply pt-1;
+    }
+
+    .slider-filter-widget .vc-widget__slot {
+      @apply pb-1 pt-4;
+    }
+
+    // Rows are 36 — an 18 checkbox and 9 above and below — and the name is quieter than the
+    // heading over it.
+    .facet-filter-widget__container .vc-menu-item__inner {
+      @apply py-[0.5625rem];
+    }
+
+    .facet-filter-widget__container .vc-menu-item__content {
+      @apply block min-h-[1.125rem] truncate leading-[1.125rem] text-neutral-700;
+    }
+
+    // The fade over a cut-off list ends in the card's colour, not white, or it draws a pale band.
+    .facet-filter-widget__fade::after {
+      --tw-gradient-from: var(--category-plate-bg) var(--tw-gradient-from-position);
+      --tw-gradient-to: transparent var(--tw-gradient-to-position);
+    }
+
+    // The category list's heading is the widget's own title and the list comes straight under it,
+    // 10 below the hairline, with the card's 20 all round.
+    .category__selector {
+      @apply p-5;
+
+      .vc-widget__header {
+        @apply pb-1.5;
+      }
+
+      .vc-widget__title {
+        @apply tracking-[-0.01em];
+      }
+
+      .vc-widget__slot {
+        @apply px-0 pb-0 pt-2.5;
+      }
+    }
+  }
+
+  // The heading row is a text plate and the category's picture, 2 : 1 at one fixed height, from a
+  // portrait tablet up; the picture answers "where am I" faster than the title does. On a phone
+  // the row is the text plate alone.
+  &__head {
+    @apply grid;
+
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--category-plate-gap);
+    margin-bottom: var(--category-plate-gap);
+
+    @media (min-width: theme("screens.md")) {
+      block-size: 8.75rem;
+
+      > .category__head-plate {
+        @apply py-0;
+      }
+    }
+
+    &--art {
+      @media (min-width: theme("screens.md")) {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      }
+    }
+  }
+
+  // 140 is the whole row, so the plate's own vertical inside does not fit in it: the text is
+  // centred instead.
+  &__head-plate {
+    @extend %plate;
+    @apply flex min-w-0 flex-col justify-center;
+  }
+
+  // The picture is its own plate, on the plate's material: the same shadow and a 2px edge of half
+  // white. box-sizing matters — the row is exactly 140, and an outside border would push it out.
+  &__head-art {
+    @apply block size-full min-h-0 box-border object-cover object-center;
+
+    border-radius: var(--category-plate-radius);
+    border: 2px solid rgb(from theme("colors.additional.50") r g b / 0.5);
+    background: var(--category-plate-bg);
+    box-shadow: var(--category-plate-shadow);
+
+    // Under the text on a phone it would be a second screenful before the products.
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
+
+    html.dark & {
+      border-color: rgb(from theme("colors.primary.950") r g b / 0.5);
+    }
+  }
+
   &__breadcrumbs {
-    @apply mb-2.5;
-
-    @media (min-width: theme("screens.md")) {
-      @apply mb-4;
-    }
+    @apply mb-3.5;
   }
 
-  &__selector {
-    @apply mb-4;
-
-    @media (min-width: theme("screens.md")) {
-      @apply mb-5;
-    }
-  }
-
+  // Not the home page's display h1 but a caption to the row: 30 on 1.12, where the full h1 took
+  // the height the picture needs.
   &__title {
     --vc-typography-text-transform: none;
+
+    @apply font-geologica text-[1.875rem] font-semibold leading-[1.12] tracking-[-0.03em];
+
+    @media (min-width: 1920px) {
+      @apply text-[2.0625rem];
+    }
+  }
+
+  // A note to the title, not part of it: 14 and quiet, raised as a superscript the way the design sets
+  // it — by the line box, not by the reset's relative offset.
+  &__products-count {
+    @apply static ms-2 whitespace-nowrap align-super text-sm font-normal normal-case leading-[1.12] tracking-normal text-neutral-500;
   }
 
   &__title-skeleton {
     @apply inline-block w-48 bg-neutral-200 md:w-64;
   }
 
-  &__products-count {
-    @apply -top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base;
+  &__body {
+    @extend %plate;
   }
 
+  // Layout switch on the left; the quick filters and the sort together on the right.
   &__filters {
-    @apply flex items-center gap-3 my-3 empty:h-2;
+    @apply flex flex-wrap items-center gap-3;
 
-    @media (min-width: theme("screens.md")) {
-      @apply mb-3.5 mt-3 flex-wrap justify-end;
+    margin-bottom: var(--category-inner);
+  }
+
+  // The layout switch and the sort are the design's seg track: no rim, 13 each side of a label, and
+  // the soft plate shadow on the sliding pill and the chosen segment rather than the kit's md.
+  .vc-tab-switch-group--seg {
+    --vc-tab-switch-padding-x: 0.8125rem;
+    --vc-tab-switch-group-pill-shadow: var(--category-plate-shadow);
+    --vc-tab-switch-checked-shadow: var(--category-plate-shadow);
+
+    @apply border-0;
+
+    // In dark the pill carries the fill and its own rim; a shadow on the segment over it would lay a
+    // second veil on the pill's edge.
+    html.dark & {
+      --vc-tab-switch-checked-shadow: none;
+    }
+  }
+
+  &__filters-right {
+    @apply ms-auto flex flex-wrap items-center gap-5;
+
+    // Below 1240 the group takes a line of its own: the sort would otherwise eat the switches'
+    // width and break their labels in the middle.
+    @media (width < 1240px) {
+      @apply ms-0 w-full justify-between;
     }
 
-    @media (min-width: theme("screens.xl")) {
-      @apply gap-x-6;
-    }
-
-    &--sticky {
-      @apply z-40 sticky top-[2.1rem] -mx-6 bg-additional-50 px-5 py-3 shadow-lg;
+    @media (width < theme("screens.md")) {
+      @apply contents;
     }
   }
 
   &__facets-button {
-    @media (min-width: theme("screens.md")) {
+    @media (min-width: theme("screens.lg")) {
       @apply hidden;
     }
   }
 
+  // On a phone the five tabs take a line of their own; the track scrolls when even that is short.
   &__sort {
-    @apply flex gap-2 items-center;
-
     @media (width < theme("screens.md")) {
-      @apply grow;
+      @apply w-full min-w-0 flex-auto;
     }
+  }
 
-    @media (min-width: theme("screens.lg")) {
+  &__view-mode {
+    @media (width < theme("screens.md")) {
       @apply order-last;
     }
   }
 
-  &__sort-label {
-    @apply me-2 shrink-0;
-
-    @media (width < theme("screens.md")) {
-      @apply hidden;
-    }
-  }
-
-  &__sort-dropdown {
-    @apply w-full;
-  }
-
-  &__view-mode {
-    @apply order-last;
-
-    @media (min-width: theme("screens.md")) {
-      @apply order-first me-auto;
-    }
-  }
-
-  &__controls {
-    @media (width < theme("screens.lg")) and (min-width: theme("screens.md")) {
-      @apply order-last w-full;
-    }
+  .active-filter-chips {
+    @apply mb-4;
   }
 
   &__products-bottom {

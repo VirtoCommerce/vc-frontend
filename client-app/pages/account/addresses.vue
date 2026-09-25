@@ -6,7 +6,13 @@
         {{ $t("common.titles.addresses") }}
       </VcTypography>
 
-      <VcButton v-if="addresses.length" size="sm" variant="outline" @click="openAddOrUpdateAddressModal()">
+      <VcButton
+        v-if="addresses.length"
+        size="sm"
+        variant="outline"
+        prepend-icon="plus"
+        @click="openAddOrUpdateAddressModal()"
+      >
         <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>
 
         <span class="hidden sm:inline">{{ $t("common.buttons.add_new_address") }}</span>
@@ -26,102 +32,101 @@
     </VcEmptyView>
 
     <VcWidget v-else size="lg">
-      <template #default-container>
-        <!-- View Table -->
-        <VcTable
-          :loading="addressesLoading"
-          :columns="columns"
-          :sort="sort"
-          :items="addresses"
-          :pages="pages"
-          :page="page"
-          :description="$t('pages.account.addresses.meta.table_description')"
-          @page-changed="onPageChange"
-          @header-click="applySorting"
-        >
-          <template #mobile-item="itemData">
-            <div class="relative grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.recipient_name") }}
-                </span>
+      <!-- View Table -->
+      <VcTable
+        bordered
+        :loading="addressesLoading"
+        :columns="columns"
+        :sort="sort"
+        :items="addresses"
+        :pages="pages"
+        :page="page"
+        :description="$t('pages.account.addresses.meta.table_description')"
+        @page-changed="onPageChange"
+        @header-click="applySorting"
+      >
+        <template #mobile-item="itemData">
+          <div class="relative grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("common.labels.recipient_name") }}
+              </span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
-                  {{ itemData.item.firstName }} {{ itemData.item.lastName }}
-                </span>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.address") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis">
-                  {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
-                  {{ itemData.item.line1 }}
-                  {{ itemData.item.postalCode }}
-                </span>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.phone") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis pr-4">
-                  {{ itemData.item.phone }}
-                </span>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.email") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis">
-                  {{ itemData.item.email }}
-                </span>
-              </div>
-
-              <AddressDropdownMenu
-                class="absolute right-4 top-3"
-                :address="itemData.item"
-                placement="left-start"
-                @edit="openAddOrUpdateAddressModal(itemData.item)"
-                @delete="removeAddress(itemData.item)"
-              />
+              <span class="overflow-hidden text-ellipsis pr-4 font-black">
+                {{ itemData.item.firstName }} {{ itemData.item.lastName }}
+              </span>
             </div>
-          </template>
 
-          <template #desktop-body>
-            <tr v-for="address in addresses" :key="address.id" class="even:bg-neutral-50">
-              <td class="overflow-hidden text-ellipsis p-5">{{ address.firstName }} {{ address.lastName }}</td>
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("common.labels.address") }}
+              </span>
 
-              <td class="overflow-hidden text-ellipsis p-5">
-                {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-                {{ address.postalCode }}
-              </td>
+              <span class="overflow-hidden text-ellipsis">
+                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
+                {{ itemData.item.line1 }}
+                {{ itemData.item.postalCode }}
+              </span>
+            </div>
 
-              <td class="overflow-hidden text-ellipsis p-5">
-                {{ address.phone }}
-              </td>
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("common.labels.phone") }}
+              </span>
 
-              <td class="overflow-hidden text-ellipsis p-5">
-                {{ address.email }}
-              </td>
+              <span class="overflow-hidden text-ellipsis pr-4">
+                {{ itemData.item.phone }}
+              </span>
+            </div>
 
-              <td class="p-5 text-end">
-                <AddressDropdownMenu
-                  class="inline-block"
-                  :address="address"
-                  @edit="openAddOrUpdateAddressModal(address)"
-                  @delete="removeAddress(address)"
-                />
-              </td>
-            </tr>
-          </template>
-        </VcTable>
-      </template>
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("common.labels.email") }}
+              </span>
+
+              <span class="overflow-hidden text-ellipsis">
+                {{ itemData.item.email }}
+              </span>
+            </div>
+
+            <AddressDropdownMenu
+              class="absolute right-4 top-3"
+              :address="itemData.item"
+              placement="left-start"
+              @edit="openAddOrUpdateAddressModal(itemData.item)"
+              @delete="removeAddress(itemData.item)"
+            />
+          </div>
+        </template>
+
+        <template #desktop-body>
+          <tr v-for="address in addresses" :key="address.id" class="even:bg-neutral-50">
+            <td class="overflow-hidden text-ellipsis p-5">{{ address.firstName }} {{ address.lastName }}</td>
+
+            <td class="overflow-hidden text-ellipsis p-5">
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </td>
+
+            <td class="overflow-hidden text-ellipsis p-5">
+              {{ address.phone }}
+            </td>
+
+            <td class="overflow-hidden text-ellipsis p-5">
+              {{ address.email }}
+            </td>
+
+            <td class="p-5 text-end">
+              <AddressDropdownMenu
+                class="inline-block"
+                :address="address"
+                @edit="openAddOrUpdateAddressModal(address)"
+                @delete="removeAddress(address)"
+              />
+            </td>
+          </tr>
+        </template>
+      </VcTable>
     </VcWidget>
   </div>
 </template>

@@ -136,7 +136,9 @@ const text = useVModel(props, "modelValue", emit);
     }
 
     &:autofill {
-      -webkit-text-fill-color: var(--color-neutral-100);
+      // 950, not 100: the ramp's readable end in BOTH themes. 100 is #f1eae0 in light, which is
+      // all but invisible on the pale row Chrome paints an autofilled field with.
+      -webkit-text-fill-color: var(--color-neutral-950);
 
       &:disabled {
         -webkit-text-fill-color: var(--color-neutral-500);

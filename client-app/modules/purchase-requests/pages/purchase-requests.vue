@@ -62,7 +62,7 @@
               <tr
                 v-for="purchaseRequest in purchaseRequests"
                 :key="purchaseRequest.id"
-                class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+                class="cursor-pointer even:bg-neutral-50 hover:bg-[--vc-table-row-hover-bg-color]"
                 tabindex="0"
                 @click="goToPurchaseRequest(purchaseRequest)"
                 @keydown.enter.prevent="goToPurchaseRequest(purchaseRequest)"

@@ -1,8 +1,9 @@
 <template>
   <VcWidget
     class="product-configuration"
-    prepend-icon="adjustments"
     :title="$t('shared.catalog.product_details.product_configuration.title')"
+    prepend-icon="adjustments"
+    icon-shape
     size="lg"
   >
     <div id="product-configuration-anchor" />
@@ -12,36 +13,56 @@
         <VcWidget
           v-if="isSectionVisible(section.id)"
           data-test-id="section"
+          class="product-configuration__section"
           collapsible
           size="xs"
           :collapsed="index !== 0"
         >
           <template #title>
-            <div class="product-configuration__title" data-test-id="section-title">
-              {{ section.name }}
-              <span v-if="section.isRequired" class="product-configuration__required">*</span>
-            </div>
+            <!-- The design names an optional group with a badge at the end of its header rather than
+                 with a word inside the description, so required and optional read at a glance from
+                 the same place. It rides in the title slot, not the append one: append is where the
+                 kit keeps the collapse chevron, and a slot there would replace it. -->
+            <div class="product-configuration__header">
+              <div class="product-configuration__section-heading">
+                <div class="product-configuration__title" data-test-id="section-title">
+                  {{ section.name }}
+                  <span v-if="section.isRequired" class="product-configuration__required">*</span>
+                </div>
 
-            <div class="product-configuration__subtitle" data-test-id="section-description">
-              {{ section.description }}
+                <div class="product-configuration__subtitle" data-test-id="section-description">
+                  {{ section.description }}
 
-              <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
-                {{ validationErrors.get(section.id) }}
+                  <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
+                    {{ validationErrors.get(section.id) }}
+                  </div>
+
+                  <div
+                    v-else
+                    data-test-id="section-subtitle"
+                    class="product-configuration__value"
+                    :class="[
+                      hasSelectedOption(section.id)
+                        ? 'product-configuration__value--selected'
+                        : 'product-configuration__value--not-selected',
+                      section.isRequired ? 'product-configuration__value--required' : '',
+                    ]"
+                  >
+                    {{ getSectionSubtitle(section) }}
+                  </div>
+                </div>
               </div>
 
-              <div
-                v-else
-                data-test-id="section-subtitle"
-                class="product-configuration__value"
-                :class="[
-                  hasSelectedOption(section.id)
-                    ? 'product-configuration__value--selected'
-                    : 'product-configuration__value--not-selected',
-                  section.isRequired ? 'product-configuration__value--required' : '',
-                ]"
+              <VcBadge
+                v-if="!section.isRequired"
+                variant="outline"
+                color="accent"
+                size="xs"
+                class="product-configuration__optional"
+                data-test-id="section-optional-badge"
               >
-                {{ getSectionSubtitle(section) }}
-              </div>
+                {{ $t("shared.catalog.product_details.product_configuration.optional") }}
+              </VcBadge>
             </div>
           </template>
 
@@ -319,23 +340,74 @@ async function openSaveChangesModal(): Promise<boolean> {
 .product-configuration {
   $required: "";
 
+  // The group's header is two things on one line: the name with its subtitle, and the badge that
+  // says the group may be skipped. The badge keeps its size while the name takes the rest.
+  &__header {
+    @apply flex items-center gap-3;
+  }
+
+  &__section-heading {
+    @apply min-w-0 grow;
+  }
+
+  &__optional {
+    // The body face: a badge is not a heading, and this one sits inside the widget's title, whose
+    // face it was inheriting.
+    @apply font-inter;
+
+    // The design's badge corner. The theme rounds every control to a pill, which on a word this
+    // short reads as a status dot rather than a label.
+    --vc-badge-radius: 0.5rem;
+
+    @apply shrink-0;
+  }
+
   &__widgets {
-    @apply space-y-5;
+    // The groups are tight plates, not the page's soft 28: nested one inside another, the same
+    // radius made the inner block look like it was floating loose in the outer one. The design's
+    // own step for a nested widget.
+    --vc-widget-radius: 0.625rem;
+    --vc-widget-border-color: theme("colors.neutral.200");
+    --vc-widget-shadow: none;
+
+    @apply space-y-4;
   }
 
   &__required {
     @apply text-danger;
   }
 
+  &__section {
+    // The design's group: its head 12 off every edge, the options 16 in from the sides and top.
+    --vc-widget-header-min-height: 0px;
+    --vc-widget-header-padding-y: 0.75rem;
+    --vc-widget-header-padding-x: 0.75rem;
+    --vc-widget-padding-x: 1rem;
+    --vc-widget-padding-top: 1rem;
+    --vc-widget-padding-bottom: 1.25rem;
+  }
+
+  &__title {
+    @apply leading-[18px];
+  }
+
   &__subtitle {
-    @apply mt-1 text-xs font-normal normal-case text-neutral max-w-3xl;
+    @apply mt-0.5 text-xs font-normal normal-case leading-[15px] text-neutral max-w-3xl;
   }
 
   &__items {
-    @apply @container mt-5;
+    // The design's option row sets the name and both figures at 14.
+    --vc-product-title-font-size: 0.875rem;
+    --vc-product-price-font-size: 0.875rem;
+
+    @apply @container max-lg:mt-5;
 
     @container (max-width: theme("containers.2xl")) {
       @apply space-y-3;
+    }
+
+    @media (width >= theme("screens.lg")) {
+      @apply overflow-hidden rounded-md;
     }
   }
 

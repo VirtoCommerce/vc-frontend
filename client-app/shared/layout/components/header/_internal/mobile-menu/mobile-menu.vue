@@ -1,89 +1,94 @@
 <template>
-  <nav
-    class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color]"
-  >
-    <div class="flex h-16 shrink-0 items-center gap-x-3 px-6">
-      <div class="grow pr-6">
-        <span
-          v-if="organization"
-          class="line-clamp-2 text-xl italic leading-[22px] text-[--mobile-menu-text-color] [word-break:break-word]"
+  <div class="mobile-menu">
+    <!-- A dimmer, not a control: it sits before the panel in the DOM, so as a focusable button it
+         would be the first stop of every Tab into an open menu. The panel's own ✕ and Escape are
+         the keyboard routes out. -->
+    <div class="mobile-menu__overlay" aria-hidden="true" @click="$emit('close')" />
+
+    <!-- A named navigation landmark, and deliberately not `role="dialog"`. The drawer covers the
+         page and dims it, but nothing traps Tab: announcing a dialog would send a reader into
+         content they cannot see and give them no boundary to come back from. The role belongs here
+         the day the panel traps focus — until then `nav` is what this actually is, and keeping the
+         landmark is worth more than the label. Escape and ✕ are the routes out either way. -->
+    <nav ref="panel" class="mobile-menu__panel" tabindex="-1" :aria-label="$t('common.labels.main_menu')">
+      <div class="mobile-menu__head">
+        <div class="mobile-menu__brand">
+          <span v-if="organization" class="mobile-menu__org">
+            {{ organization?.name }}
+          </span>
+
+          <VcImage v-else :src="secondaryLogoUrl" :alt="$context.storeName" class="mobile-menu__logo" lazy />
+        </div>
+
+        <!-- Dark mode toggle -->
+        <DarkModeToggle
+          :tooltip="false"
+          :icon-size="22"
+          test-id="mobile-dark-mode-toggle"
+          class="mobile-menu__control"
+        />
+
+        <!-- Language block -->
+        <LanguageSelector v-if="supportedLanguages.length > 1" />
+
+        <button
+          type="button"
+          class="mobile-menu__control"
+          :aria-label="$t('common.buttons.close')"
+          @click="$emit('close')"
         >
-          {{ organization?.name }}
-        </span>
-
-        <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="max-h-9" lazy />
-      </div>
-
-      <!-- Dark mode toggle -->
-      <DarkModeToggle
-        :tooltip="false"
-        :icon-size="22"
-        test-id="mobile-dark-mode-toggle"
-        class="appearance-none p-2 text-[--mobile-menu-navigation-color]"
-      />
-
-      <!-- Language block -->
-      <LanguageSelector v-if="supportedLanguages.length > 1" />
-
-      <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="delete-thin" class="text-[--mobile-menu-navigation-color]" :size="22" />
-      </button>
-    </div>
-
-    <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
-      <div class="flex flex-col px-10 py-6">
-        <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation-color]" @click="goBack">
-          <VcIcon name="arrow-circle-left" size="lg" />
+          <VcIcon name="delete-thin" :size="22" />
         </button>
-
-        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-[--mobile-menu-text-color]">
-          {{ openedItem?.title }}
-        </h2>
-
-        <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
-
-        <SettingsMenu v-else-if="openedItem.id === 'settings'" />
-
-        <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
-
-        <!-- view all catalog link -->
-        <template v-if="openedItem?.isCatalogItem && openedItem?.route">
-          <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
-
-          <a
-            v-if="isExternalLink(openedItem.route)"
-            class="view-all-link"
-            :href="openedItem.route as string"
-            target="_blank"
-            rel="noopener noreferrer"
-            @click="$emit('close')"
-          >
-            {{ $t("shared.layout.header.mobile.view_all_catalog") }}
-          </a>
-
-          <router-link v-else class="view-all-link" :to="openedItem.route" @click="$emit('close')">
-            {{ $t("shared.layout.header.mobile.view_all_catalog") }}
-          </router-link>
-        </template>
       </div>
-    </section>
 
-    <MainMenu v-else :menu-item="homeMenuItem" @close="$emit('close')" @select-item="selectMenuItem" />
+      <section v-if="openedItem" class="mobile-menu__body">
+        <div class="mobile-menu__drill">
+          <button type="button" class="mobile-menu__back" :aria-label="$t('common.buttons.back')" @click="goBack">
+            <VcIcon name="arrow-left" :size="22" />
+          </button>
 
-    <div
-      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-additional-950/5 backdrop-blur-lg md:block"
-      role="button"
-      tabindex="0"
-      @click="$emit('close')"
-      @keypress="$emit('close')"
-    />
-  </nav>
+          <h2 v-if="openedItem?.title" class="mobile-menu__title">
+            {{ openedItem?.title }}
+          </h2>
+
+          <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
+
+          <SettingsMenu v-else-if="openedItem.id === 'settings'" />
+
+          <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+
+          <!-- view all catalog link -->
+          <template v-if="openedItem?.isCatalogItem && openedItem?.route">
+            <div class="mobile-menu__divider"></div>
+
+            <a
+              v-if="isExternalLink(openedItem.route)"
+              class="mobile-menu__view-all"
+              :href="openedItem.route as string"
+              target="_blank"
+              rel="noopener noreferrer"
+              @click="$emit('close')"
+            >
+              {{ $t("shared.layout.header.mobile.view_all_catalog") }}
+            </a>
+
+            <router-link v-else class="mobile-menu__view-all" :to="openedItem.route" @click="$emit('close')">
+              {{ $t("shared.layout.header.mobile.view_all_catalog") }}
+            </router-link>
+          </template>
+        </div>
+      </section>
+
+      <MainMenu v-else :menu-item="homeMenuItem" @close="$emit('close')" @select-item="selectMenuItem" />
+    </nav>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, shallowRef, triggerRef } from "vue";
+import { onKeyStroke } from "@vueuse/core";
+import { computed, onMounted, shallowRef, triggerRef, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useNavigations } from "@/core/composables";
+import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -100,13 +105,15 @@ interface IEmits {
   (event: "close"): void;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const { t } = useI18n();
 
 const { supportedLanguages } = useLanguages();
 const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
+// The menu plate is dark in both themes, so it always takes the dark-mode logo.
+const { secondaryLogoUrl } = useWhiteLabeling();
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
     ? {
@@ -163,43 +170,197 @@ function selectMenuItem(item: ExtendedMenuLinkType) {
   triggerRef(openedMenuItemsStack);
 }
 
+const panel = useTemplateRef<HTMLElement>("panel");
+
+// The menu is a plate over a dimmed page, so it answers Escape. Not `.stop` — that breaks the next
+// dialog up the stack — and not unconditional either: the locale popover inside the menu closes on
+// KEYUP, so a keydown that unmounted the menu first would take the open dropdown with it. Asked of
+// the panel rather than of the event, because the popover teleports its list: with focus inside it
+// the event has no expanded ancestor, while the trigger still marks itself open.
+onKeyStroke("Escape", () => {
+  if (panel.value?.querySelector('[aria-expanded="true"]')) {
+    return;
+  }
+
+  emit("close");
+});
+
 onMounted(() => {
   goMainMenu();
 
   if (mobilePreSelectedMenuItem.value) {
     selectMenuItem(mobilePreSelectedMenuItem.value);
   }
+
+  panel.value?.focus();
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .mobile-menu {
-  --sidebar-max-width: 430px;
+  // The plate's own inset, not the page gutter: at the phone's 12px the menu would read as a
+  // full-screen panel with rounded corners.
+  --mobile-menu-inset: 1.25rem;
+
+  // Kit tokens the plate is expected to set: the radios' ink and the count badge's pair.
   --vc-radio-button-base-color: var(--mobile-menu-control-color);
+  --vc-badge-soft-neutral-bg: rgb(from var(--mobile-menu-text-color) r g b / 0.12);
+  --vc-badge-soft-neutral-text: var(--mobile-menu-text-color);
 
-  box-shadow: 5px 0 15px 0 rgba(0, 0, 0, 0.5);
+  @apply fixed inset-0 z-50;
 
-  @apply md:max-w-[var(--sidebar-max-width)];
+  &__overlay {
+    @apply absolute inset-0 cursor-pointer;
+
+    // Off the MENU's own surface, not off neutral-950: that step is the dark end in light presets
+    // and the LIGHT end in dark ones, so the design's literal would brighten the page it is meant
+    // to dim. The menu plate is dark in every preset, which is exactly what a scrim wants.
+    background: rgb(from var(--mobile-menu-bg-color) r g b / 0.32);
+    backdrop-filter: blur(6px);
+  }
+
+  &__panel {
+    @apply absolute flex flex-col overflow-hidden;
+
+    // Safe-area insets are ADDED to the plate's own, not substituted for it.
+    inset-block: calc(var(--mobile-menu-inset) + env(safe-area-inset-top, 0px))
+      calc(var(--mobile-menu-inset) + env(safe-area-inset-bottom, 0px));
+    inset-inline: calc(var(--mobile-menu-inset) + env(safe-area-inset-left, 0px))
+      calc(var(--mobile-menu-inset) + env(safe-area-inset-right, 0px));
+    border-radius: var(--plate-radius, 1.75rem);
+    background: rgb(from var(--mobile-menu-bg-color) r g b / 0.94);
+    backdrop-filter: blur(28px) saturate(135%);
+    border: 1px solid rgb(from var(--mobile-menu-text-color) r g b / 0.09);
+    box-shadow:
+      inset 0 1px 0 rgb(from var(--mobile-menu-text-color) r g b / 0.12),
+      var(--plate-shadow-lift, 0 18px 44px rgb(0 0 0 / 0.3));
+    color: var(--mobile-menu-text-color);
+
+    // Where the browser cannot blur, a 94% plate over a page is mud — it goes solid.
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      background: var(--mobile-menu-bg-color);
+    }
+
+    // The panel takes focus on open so the keyboard starts inside the dialog, and it is
+    // `tabindex="-1"` — nothing can tab TO it, so the app's focus ring would mark a thing no one
+    // can act on. `outline: none`, not `outline-none`: the utility paints a TRANSPARENT 2px
+    // outline, which forced-colors mode repaints as a visible system ring.
+    &:focus {
+      outline: none;
+    }
+
+    @media (min-width: theme("screens.md")) {
+      inset-inline-end: auto;
+      inline-size: 26.875rem;
+      max-inline-size: calc(100% - 2 * var(--mobile-menu-inset));
+    }
+  }
+
+  &__head {
+    @apply flex h-16 shrink-0 items-center gap-1 pe-3 ps-6;
+  }
+
+  &__brand {
+    @apply min-w-0 grow pe-1;
+  }
+
+  &__org {
+    @apply line-clamp-2 text-xl italic leading-[22px] [word-break:break-word];
+  }
+
+  &__logo {
+    @apply max-h-9;
+  }
+
+  &__control {
+    @apply appearance-none p-2;
+
+    color: var(--mobile-menu-navigation-color);
+  }
+
+  &__body {
+    @apply grow overflow-y-auto;
+  }
+
+  &__drill {
+    @apply flex flex-col px-6 pb-6 pt-4;
+  }
+
+  &__back {
+    @apply flex size-10 shrink-0 appearance-none items-center justify-center self-start rounded-full;
+
+    background: var(--mobile-menu-control-color);
+    color: theme("colors.additional.50");
+  }
+
+  &__title {
+    @apply mb-0 mt-5 text-xs font-bold uppercase tracking-[0.14em];
+
+    // The design's muted ink: the menu's own text at 55%.
+    color: rgb(from var(--mobile-menu-text-color) r g b / 0.55);
+  }
+
+  &__divider {
+    @apply my-5 h-px;
+
+    background: linear-gradient(to right, theme("colors.accent.500"), transparent);
+  }
+
+  &__view-all {
+    @apply text-[0.9375rem] font-semibold tracking-[0.01em];
+
+    color: var(--mobile-menu-link-active-color);
+  }
 }
 
-.view-all-link {
-  @apply text-lg tracking-[0.01em] text-[--mobile-menu-link-active-color];
+// The fade is declared on the ROOT, not only on the plate inside it: Vue reads the transitioned
+// element's own computed duration to decide how long to keep the enter/leave classes, and a root
+// with no transition resolves in one frame — measured, the classes came and went within 16ms and
+// nothing animated. With the root timed, they hold for the full 223ms and the plate's lift rides
+// along.
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  // On the ROOT, because Vue reads the transitioned element's own duration to decide how long to
+  // keep the enter/leave classes — with no transition here they came and went inside one frame
+  // (measured: 16ms) and nothing animated.
+  transition: opacity 0.22s ease;
+
+  .mobile-menu__overlay {
+    transition: opacity 0.22s ease;
+  }
+
+  .mobile-menu__panel {
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
 }
 
-.mobile-menu__overlay {
-  @apply left-[var(--sidebar-max-width)];
-}
-
-.is-visible .mobile-menu__overlay {
-  animation: fadeIn 0.4s forwards;
-}
-
-@keyframes fadeIn {
-  from {
+// The fade stays on the two painted children: an ancestor at opacity < 1 is a backdrop root, and
+// a `backdrop-filter` inside one samples the group instead of the page — both blurs would be gone
+// for the whole animation and snap in at the end. The root keeps only the timing.
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  .mobile-menu__overlay {
     @apply opacity-0;
   }
-  to {
-    @apply opacity-100;
+
+  .mobile-menu__panel {
+    @apply opacity-0;
+
+    transform: translateY(-8px) scale(0.985);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-enter-active,
+  .mobile-menu-leave-active {
+    transition: none;
+
+    .mobile-menu__overlay,
+    .mobile-menu__panel {
+      transition: none;
+    }
   }
 }
 </style>

@@ -2,7 +2,7 @@
   <VcButton
     class="barcode-scanner"
     color="neutral"
-    variant="surface"
+    variant="ghost"
     size="xs"
     type="button"
     icon="barcode"

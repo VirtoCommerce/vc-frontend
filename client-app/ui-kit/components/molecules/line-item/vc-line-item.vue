@@ -128,7 +128,7 @@
           color="neutral"
           size="sm"
           variant="ghost"
-          icon="delete-thin"
+          icon="trash-2"
           data-test-id="remove-item-button"
           :disabled="disabled"
           @click="$emit('remove')"
@@ -300,7 +300,7 @@ watchEffect(() => {
   }
 
   &__img {
-    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center;
+    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center bg-[--vc-product-image-bg];
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;

@@ -346,6 +346,241 @@ type Breadcrumb = {
     /** Catalog, category or product */
     typeName: Scalars['String']['output'];
 };
+type CartAddressType = {
+    /** Address type */
+    addressType?: Maybe<Scalars['Int']['output']>;
+    /** City */
+    city?: Maybe<Scalars['String']['output']>;
+    /** Country code */
+    countryCode?: Maybe<Scalars['String']['output']>;
+    /** Country name */
+    countryName?: Maybe<Scalars['String']['output']>;
+    /** Description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Email */
+    email?: Maybe<Scalars['String']['output']>;
+    /** First name */
+    firstName?: Maybe<Scalars['String']['output']>;
+    /** Id */
+    id?: Maybe<Scalars['String']['output']>;
+    /** Id */
+    key?: Maybe<Scalars['String']['output']>;
+    /** Last name */
+    lastName?: Maybe<Scalars['String']['output']>;
+    /** Line1 */
+    line1?: Maybe<Scalars['String']['output']>;
+    /** Line2 */
+    line2?: Maybe<Scalars['String']['output']>;
+    /** Middle name */
+    middleName?: Maybe<Scalars['String']['output']>;
+    /** Name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Company name */
+    organization?: Maybe<Scalars['String']['output']>;
+    /** Outer id */
+    outerId?: Maybe<Scalars['String']['output']>;
+    /** Phone */
+    phone?: Maybe<Scalars['String']['output']>;
+    /** Postal code */
+    postalCode: Scalars['String']['output'];
+    /** Region id */
+    regionId?: Maybe<Scalars['String']['output']>;
+    /** Region name */
+    regionName?: Maybe<Scalars['String']['output']>;
+    /** Zip */
+    zip?: Maybe<Scalars['String']['output']>;
+};
+type CartConfigurationItemFileType = {
+    /** MIME type of the file */
+    contentType?: Maybe<Scalars['String']['output']>;
+    /** Name of the file */
+    name: Scalars['String']['output'];
+    /** Size of the file */
+    size: Scalars['Long']['output'];
+    /** URL of the file */
+    url: Scalars['String']['output'];
+};
+type CartConfigurationItemType = {
+    /** Configuration section that defines this configuration item */
+    configurationSection?: Maybe<ConfigurationSectionType>;
+    /** Custom text for 'Text' configuration item section */
+    customText?: Maybe<Scalars['String']['output']>;
+    /** Extended price */
+    extendedPrice: MoneyType;
+    /** List of files for 'File' configuration item section */
+    files?: Maybe<Array<Maybe<CartConfigurationItemFileType>>>;
+    /** Configuration item ID */
+    id: Scalars['String']['output'];
+    /** Configuration item image URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** List price */
+    listPrice: MoneyType;
+    /** Configuration item name */
+    name?: Maybe<Scalars['String']['output']>;
+    product?: Maybe<Product>;
+    /** Configuration item product ID */
+    productId?: Maybe<Scalars['String']['output']>;
+    /** Configuration item product quantity */
+    quantity?: Maybe<Scalars['Int']['output']>;
+    /** Sale price */
+    salePrice: MoneyType;
+    /** Configuration item section ID */
+    sectionId: Scalars['String']['output'];
+    /** Configuration item section name */
+    sectionName?: Maybe<Scalars['String']['output']>;
+    /** Whether the configuration item is selected for checkout */
+    selectedForCheckout: Scalars['Boolean']['output'];
+    /** Configuration item SKU */
+    sku?: Maybe<Scalars['String']['output']>;
+    /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
+    type: Scalars['String']['output'];
+};
+type CartShipmentItemType = {
+    lineItem?: Maybe<LineItemType>;
+    /** Quantity */
+    quantity: Scalars['Int']['output'];
+};
+type CartTotalType = {
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Is current total in default total currency */
+    isDefaultTotalCurrency: Scalars['Boolean']['output'];
+    /** Cart subtotal */
+    subTotal: MoneyType;
+    /** Total tax */
+    taxTotal: MoneyType;
+    /** Cart total */
+    total: MoneyType;
+};
+type CartType = {
+    /** Addresses */
+    addresses: Array<CartAddressType>;
+    /** Available Gifts */
+    availableGifts: Array<GiftItemType>;
+    /** Available payment methods */
+    availablePaymentMethods: Array<PaymentMethodType>;
+    availableShippingMethods: Array<ShippingMethodType>;
+    /** Cart totals */
+    cartTotals?: Maybe<Array<Maybe<CartTotalType>>>;
+    /** Shopping cart channel ID */
+    channelId?: Maybe<Scalars['String']['output']>;
+    /** Cart checkout ID */
+    checkoutId: Scalars['String']['output'];
+    /** Shopping cart text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Coupons */
+    coupons: Array<CouponType>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Shopping cart user ID */
+    customerId: Scalars['String']['output'];
+    /** Shopping cart user name */
+    customerName?: Maybe<Scalars['String']['output']>;
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Total discount with tax */
+    discountTotalWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Total extended price */
+    extendedPriceTotal: MoneyType;
+    /** Total extended price with tax */
+    extendedPriceTotalWithTax: MoneyType;
+    /** Shopping cart fee */
+    fee: MoneyType;
+    /** Total fee */
+    feeTotal: MoneyType;
+    /** Total fee with tax */
+    feeTotalWithTax: MoneyType;
+    /** Shopping cart fee with tax */
+    feeWithTax: MoneyType;
+    /** Gifts */
+    gifts: Array<GiftItemType>;
+    /** Total handling */
+    handlingTotal: MoneyType;
+    /** Total handling with tax */
+    handlingTotalWithTax: MoneyType;
+    /** Has physical products */
+    hasPhysicalProducts?: Maybe<Scalars['Boolean']['output']>;
+    /** Shopping cart ID */
+    id: Scalars['String']['output'];
+    /** Displays whether the shopping cart is anonymous */
+    isAnonymous: Scalars['Boolean']['output'];
+    /** Displays whether the shopping cart is recurring */
+    isRecuring?: Maybe<Scalars['Boolean']['output']>;
+    /** Items */
+    items: Array<LineItemType>;
+    /** Item count */
+    itemsCount: Scalars['Int']['output'];
+    /** Quantity of items */
+    itemsQuantity: Scalars['Int']['output'];
+    /** Get total points amount */
+    loyaltyPoints?: Maybe<MoneyType>;
+    /** Shopping cart name */
+    name: Scalars['String']['output'];
+    /** Shopping cart organization ID */
+    organizationId?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart organization name */
+    organizationName?: Maybe<Scalars['String']['output']>;
+    /** Payment price */
+    paymentPrice: MoneyType;
+    /** Payment price with tax */
+    paymentPriceWithTax: MoneyType;
+    /** Total payment */
+    paymentTotal: MoneyType;
+    /** Total payment with tax */
+    paymentTotalWithTax: MoneyType;
+    /** Payments */
+    payments: Array<PaymentType>;
+    /** Purchase order number */
+    purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
+    /** Shipments */
+    shipments: Array<ShipmentType>;
+    /** Shipping price */
+    shippingPrice: MoneyType;
+    /** Shipping price with tax */
+    shippingPriceWithTax: MoneyType;
+    /** Total shipping */
+    shippingTotal: MoneyType;
+    /** Total shipping with tax */
+    shippingTotalWithTax: MoneyType;
+    /** Shopping cart status */
+    status?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart store ID */
+    storeId: Scalars['String']['output'];
+    /** Shopping cart subtotal */
+    subTotal: MoneyType;
+    /** Subtotal discount */
+    subTotalDiscount: MoneyType;
+    /** Subtotal discount with tax */
+    subTotalDiscountWithTax: MoneyType;
+    /** Subtotal with tax */
+    subTotalWithTax: MoneyType;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percentage */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Total tax */
+    taxTotal: MoneyType;
+    /** Shipping tax type */
+    taxType: Scalars['String']['output'];
+    /** Shopping cart total */
+    total: MoneyType;
+    /** Shopping cart type */
+    type?: Maybe<Scalars['String']['output']>;
+    /** A set of errors in case the cart is invalid */
+    validationErrors: Array<ValidationErrorType>;
+    /** Shopping cart volumetric weight value */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** A set of temporary warnings for a cart user */
+    warnings: Array<ValidationErrorType>;
+    /** Shopping cart weight value */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Shopping cart weight unit value */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+};
 type CatalogDiscountType = {
     /** Discount amount */
     amount: Scalars['Decimal']['output'];
@@ -419,6 +654,54 @@ type CommonVendor = {
     name: Scalars['String']['output'];
     /** Vendor rating */
     rating?: Maybe<Rating>;
+};
+type ConfigurationLineItemType = {
+    /** Currency */
+    currency?: Maybe<CurrencyType>;
+    /** Total discount amount */
+    discountAmount?: Maybe<MoneyType>;
+    /** Extended price */
+    extendedPrice?: Maybe<MoneyType>;
+    /** The unique identifier */
+    id?: Maybe<Scalars['String']['output']>;
+    /** Whether the option is selected by default */
+    isDefault: Scalars['Boolean']['output'];
+    /** List price */
+    listPrice?: Maybe<MoneyType>;
+    product?: Maybe<Product>;
+    /** The quantity of the option */
+    quantity: Scalars['Int']['output'];
+    /** Sale price */
+    salePrice?: Maybe<MoneyType>;
+    /** The text of the Text-type option */
+    text?: Maybe<Scalars['String']['output']>;
+};
+type ConfigurationSectionType = {
+    /** Is custom text allowed for Text-type section */
+    allowCustomText: Scalars['Boolean']['output'];
+    /** Is predefined text options allowed for Text-type section */
+    allowTextOptions: Scalars['Boolean']['output'];
+    /** If set, this section is only shown when the referenced section has a selection made */
+    dependsOnSectionId?: Maybe<Scalars['String']['output']>;
+    /** Configuration section description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Configuration section id */
+    id: Scalars['String']['output'];
+    /** Is configuration section required */
+    isRequired: Scalars['Boolean']['output'];
+    /** Maximum text length for Text-type section */
+    maxLength?: Maybe<Scalars['Int']['output']>;
+    /** Configuration section name */
+    name?: Maybe<Scalars['String']['output']>;
+    options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
+    /** Configuration section type. Possible values: 'Product', 'Text', 'File' */
+    type: Scalars['String']['output'];
+};
+type CouponType = {
+    /** Coupon code */
+    code?: Maybe<Scalars['String']['output']>;
+    /** Is coupon was applied successfully */
+    isAppliedSuccessfully: Scalars['Boolean']['output'];
 };
 type CurrencyType = {
     /** Currency code may be used ISO 4217 */
@@ -555,6 +838,22 @@ type DictionaryItemType = {
     /** Name */
     name: Scalars['String']['output'];
 };
+type DiscountType = {
+    /** Discount amount */
+    amount: Scalars['Decimal']['output'];
+    /** Discount amount with tax */
+    amountWithTax: Scalars['Decimal']['output'];
+    /** Coupon */
+    coupon?: Maybe<Scalars['String']['output']>;
+    /** Value of discount description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount in the specified currency */
+    moneyAmount: MoneyType;
+    /** Discount amount with tax in the specified currency */
+    moneyAmountWithTax: MoneyType;
+    /** Value of promotion id */
+    promotionId?: Maybe<Scalars['String']['output']>;
+};
 type DynamicPropertyType = {
     dictionaryItems?: Maybe<DictionaryItemConnection>;
     /** The order for the dynamic property to display */
@@ -603,6 +902,33 @@ declare enum DynamicPropertyValueTypes {
     ShortText = "SHORT_TEXT",
     Undefined = "UNDEFINED"
 }
+type ErrorParameterType = {
+    /** key */
+    key: Scalars['String']['output'];
+    /** Value */
+    value: Scalars['String']['output'];
+};
+type GiftItemType = {
+    /** Product category ID */
+    categoryId?: Maybe<Scalars['String']['output']>;
+    /** Artificial ID for this value object */
+    id: Scalars['String']['output'];
+    /** Value of reward image absolute URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** Line item ID in case there is a gift in the cart. If there is no gift, it stays null */
+    lineItemId?: Maybe<Scalars['String']['output']>;
+    /** Measurement unit */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    /** Name of the reward */
+    name: Scalars['String']['output'];
+    product?: Maybe<Product>;
+    /** Product ID */
+    productId?: Maybe<Scalars['String']['output']>;
+    /** Promotion ID */
+    promotionId: Scalars['String']['output'];
+    /** Number of gifts in the reward */
+    quantity: Scalars['Int']['output'];
+};
 type IdentityErrorInfoType = {
     /** Error code */
     code: Scalars['String']['output'];
@@ -695,6 +1021,126 @@ type InventoryInfo = {
     preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
     /** Inventory reserved quantity */
     reservedQuantity: Scalars['Long']['output'];
+};
+type LineItemType = {
+    /** Catalog ID value */
+    catalogId: Scalars['String']['output'];
+    /** Category ID value */
+    categoryId?: Maybe<Scalars['String']['output']>;
+    /** Configuration items for configurable product */
+    configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
+    /** Line item create date */
+    createdDate: Scalars['DateTime']['output'];
+    /** Line item currency code */
+    currencyCode?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Total discount with tax */
+    discountTotalWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart line item dynamic property values */
+    dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+    /** Extended price */
+    extendedPrice: MoneyType;
+    /** Extended price with tax */
+    extendedPriceWithTax: MoneyType;
+    /** Line item fulfillment center ID value */
+    fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+    /** Line item fulfillment center name value */
+    fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+    /** Height value */
+    height?: Maybe<Scalars['Decimal']['output']>;
+    /** Line item ID */
+    id: Scalars['String']['output'];
+    /** Value of line item image absolute URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** In stock quantity */
+    inStockQuantity: Scalars['Int']['output'];
+    /** flag of line item is a gift */
+    isGift: Scalars['Boolean']['output'];
+    /** Shows whether this is read-only */
+    isReadOnly: Scalars['Boolean']['output'];
+    /** Shows whether the line item is recurring */
+    isReccuring: Scalars['Boolean']['output'];
+    /** Shows whether this is valid */
+    isValid: Scalars['Boolean']['output'];
+    /** Culture name in the ISO 3166-1 alpha-3 format */
+    languageCode?: Maybe<Scalars['String']['output']>;
+    /** Length value */
+    length?: Maybe<Scalars['Decimal']['output']>;
+    /** List price */
+    listPrice: MoneyType;
+    /** List price with tax */
+    listPriceWithTax: MoneyType;
+    /** List total */
+    listTotal: MoneyType;
+    /** List total with tax */
+    listTotalWithTax: MoneyType;
+    /** Get points amount */
+    loyaltyPoints?: Maybe<MoneyType>;
+    /** Measurement unit value */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    /** Line item name value */
+    name: Scalars['String']['output'];
+    /** Line item comment */
+    note?: Maybe<Scalars['String']['output']>;
+    /** Line item quantity value */
+    objectType: Scalars['String']['output'];
+    /** Placed price */
+    placedPrice: MoneyType;
+    /** Placed price with tax */
+    placedPriceWithTax: MoneyType;
+    product?: Maybe<Product>;
+    /** Product ID value */
+    productId: Scalars['String']['output'];
+    /** Product outer Id */
+    productOuterId?: Maybe<Scalars['String']['output']>;
+    /** Product type: Physical, Digital, or Subscription */
+    productType?: Maybe<Scalars['String']['output']>;
+    /** Line item quantity value */
+    quantity: Scalars['Int']['output'];
+    /** Requirement for line item shipping */
+    requiredShipping: Scalars['Boolean']['output'];
+    /** Sale price */
+    salePrice: MoneyType;
+    /** Sale price with tax */
+    salePriceWithTax: MoneyType;
+    /** Shows whether the line item is selected for buying */
+    selectedForCheckout: Scalars['Boolean']['output'];
+    /** Line item shipping method code value */
+    shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+    /** Indicates whether the PlacedPrice should be visible to the customer */
+    showPlacedPrice: Scalars['Boolean']['output'];
+    /** Product SKU value */
+    sku: Scalars['String']['output'];
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Total shipping tax amount value */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Shipping tax type value */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Value of line item thumbnail image absolute URL */
+    thumbnailImageUrl?: Maybe<Scalars['String']['output']>;
+    /** Validation errors */
+    validationErrors: Array<ValidationErrorType>;
+    vendor?: Maybe<CommonVendor>;
+    /** Volumetric weight value */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** Warehouse location */
+    warehouseLocation?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart weight value */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Weight unit value */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+    /** Width value */
+    width?: Maybe<Scalars['Decimal']['output']>;
 };
 type MoneyType = {
     /** A decimal with the amount rounded to the significant number of decimal digits. */
@@ -1061,6 +1507,48 @@ type PaymentInType = {
     vendor?: Maybe<CommonVendor>;
     voidedDate?: Maybe<Scalars['DateTime']['output']>;
 };
+type PaymentMethodType = {
+    /** Is payment method available for cart payment */
+    allowCartPayment: Scalars['Boolean']['output'];
+    /** Value of payment gateway code */
+    code: Scalars['String']['output'];
+    /** Currency */
+    currency: CurrencyType;
+    /** Payment method description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Is payment method available for partial payments */
+    isAvailableForPartial: Scalars['Boolean']['output'];
+    /** Value of payment method logo absolute URL */
+    logoUrl?: Maybe<Scalars['String']['output']>;
+    /** Localized name of payment method. */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Value of payment group type */
+    paymentMethodGroupType: Scalars['String']['output'];
+    /** Value of payment method type */
+    paymentMethodType: Scalars['String']['output'];
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Value of payment method priority */
+    priority: Scalars['Int']['output'];
+    /** Tax details */
+    taxDetails?: Maybe<Array<TaxDetailType>>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+};
 type PaymentTransactionType = {
     amount: MoneyType;
     gatewayIpAddress?: Maybe<Scalars['String']['output']>;
@@ -1075,6 +1563,48 @@ type PaymentTransactionType = {
     responseData?: Maybe<Scalars['String']['output']>;
     status?: Maybe<Scalars['String']['output']>;
     type?: Maybe<Scalars['String']['output']>;
+};
+type PaymentType = {
+    /** Amount */
+    amount: MoneyType;
+    /** Billing address */
+    billingAddress?: Maybe<CartAddressType>;
+    /** Text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<Maybe<DiscountType>>;
+    /** Cart payment dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Payment Id */
+    id: Scalars['String']['output'];
+    /** Value of payment outer id */
+    outerId?: Maybe<Scalars['String']['output']>;
+    /** Value of payment gateway code */
+    paymentGatewayCode?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    purpose?: Maybe<Scalars['String']['output']>;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+    vendor?: Maybe<CommonVendor>;
 };
 type PickupAddressType = {
     /** Address type */
@@ -1423,6 +1953,110 @@ type SharingSettingType = {
     /** Id of the principal the list is shared with (id space defined by scope); null for non-targeted scopes */
     sharedWithId?: Maybe<Scalars['String']['output']>;
 };
+type ShipmentType = {
+    /** Text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Delivery address */
+    deliveryAddress?: Maybe<CartAddressType>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart shipment dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Fee */
+    fee: MoneyType;
+    /** Fee with tax */
+    feeWithTax: MoneyType;
+    /** Fulfillment center id */
+    fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+    /** Value of height */
+    height?: Maybe<Scalars['Decimal']['output']>;
+    /** Shipment Id */
+    id: Scalars['String']['output'];
+    /** Items */
+    items: Array<CartShipmentItemType>;
+    /** Value of length */
+    length?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of measurement units */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    pickupLocation?: Maybe<PickupLocationType>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Shipment method code */
+    shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+    /** Shipment method option */
+    shipmentMethodOption?: Maybe<Scalars['String']['output']>;
+    shippingMethod?: Maybe<ShippingMethodType>;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+    vendor?: Maybe<CommonVendor>;
+    /** Value of volumetric weight */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of weight */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of weight unit */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+    /** Value of width */
+    width?: Maybe<Scalars['Decimal']['output']>;
+};
+type ShippingMethodType = {
+    /** Value of shipping gateway code */
+    code: Scalars['String']['output'];
+    /** Currency */
+    currency: CurrencyType;
+    /** Shipping method description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    id: Scalars['String']['output'];
+    /** Value of shipping method logo absolute URL */
+    logoUrl?: Maybe<Scalars['String']['output']>;
+    /** Shipping method name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Value of shipping method option description */
+    optionDescription?: Maybe<Scalars['String']['output']>;
+    /** Value of shipping method option name */
+    optionName?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Value of shipping method priority */
+    priority: Scalars['Int']['output'];
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+};
+type TaxDetailType = {
+    /** Amount */
+    amount: MoneyType;
+    /** Name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Rate */
+    rate: MoneyType;
+};
 type TierPriceType = {
     /** Price */
     price: MoneyType;
@@ -1430,6 +2064,17 @@ type TierPriceType = {
     priceWithTax: MoneyType;
     /** Quantity */
     quantity: Scalars['Long']['output'];
+};
+type ValidationErrorType = {
+    /** Error code */
+    errorCode?: Maybe<Scalars['String']['output']>;
+    /** Error message */
+    errorMessage?: Maybe<Scalars['String']['output']>;
+    errorParameters?: Maybe<Array<Maybe<ErrorParameterType>>>;
+    /** Object id */
+    objectId?: Maybe<Scalars['String']['output']>;
+    /** Object type */
+    objectType?: Maybe<Scalars['String']['output']>;
 };
 type VariationType = {
     /** Assets */
@@ -1641,14 +2286,14 @@ declare function focus(): void;
 declare function blur(): void;
 declare var __VLS_16$1: {};
 declare var __VLS_23: {};
-declare var __VLS_25: {};
+declare var __VLS_25$1: {};
 declare var __VLS_32: {};
 type __VLS_Slots$8 = {} & {
     prepend?: (props: typeof __VLS_16$1) => any;
 } & {
     default?: (props: typeof __VLS_23) => any;
 } & {
-    append?: (props: typeof __VLS_25) => any;
+    append?: (props: typeof __VLS_25$1) => any;
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
@@ -1721,6 +2366,7 @@ interface IProps$a {
     placeholder?: string;
     message?: string;
     singleLineMessage?: boolean;
+    /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
     error?: boolean;
     noBorder?: boolean;
     seamless?: boolean;
@@ -1950,7 +2596,7 @@ declare var __VLS_16: {
 declare var __VLS_18: {
     error: boolean;
 };
-declare var __VLS_73: {
+declare var __VLS_76: {
     item: any;
     index: number;
 };
@@ -1959,7 +2605,7 @@ type __VLS_Slots$4 = {} & {
 } & {
     placeholder?: (props: typeof __VLS_18) => any;
 } & {
-    item?: (props: typeof __VLS_73) => any;
+    item?: (props: typeof __VLS_76) => any;
 };
 declare const __VLS_base$4: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: any) => any;
@@ -2099,6 +2745,7 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
         page?: number;
         loading?: boolean;
         error?: boolean;
+        /** Hides the built-in header row; body rows keep their selection cell, but the select-all goes with the header. */
         hideDefaultHeader?: boolean;
         hideDefaultFooter?: boolean;
         description?: string;
@@ -2143,6 +2790,7 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
          * Selected row keys (v-model:selection). Parent-owned, so selection persists across
          * `items`/page/sort/filter changes. Accepts `string | number` keys but compares them
          * as strings (matching `getItemKey`), so numeric `[1, 2]` still matches `id: 1` / `id: 2`.
+         * Rows without an `id` are keyed `__row_<index>` — give items an `id` for stable selection.
          */
         selection?: VcTableSelectionKeyType[];
         /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
@@ -2179,7 +2827,16 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
             index: number;
         }) => any;
     } & {
-        header?: (props: {}) => any;
+        header?: (props: {
+            showSelectionColumn: boolean;
+            selectionMode?: VcTableSelectionModeType;
+            isAllSelected: boolean;
+            isSomeSelected: boolean;
+            canSelectAll: boolean;
+            toggleSelectAll: () => void;
+            selectionColumnAttrs: VcTableSelectionColumnAttrsType;
+            headAttrs: VcTableHeadAttrsType;
+        }) => any;
     } & {
         'desktop-skeleton'?: (props: {}) => any;
     } & {
@@ -2267,6 +2924,8 @@ interface IProps$3 {
     sortable?: boolean;
     /** Text alignment within the column */
     align?: VcTableAlignType;
+    /** Renders the column's cells in the body text's strong weight and darkest ink — for the column that identifies the row. */
+    strong?: boolean;
     /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;
     /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
@@ -2283,6 +2942,19 @@ interface IProps$2 {
     collapsed?: boolean;
     shadow?: boolean;
     border?: boolean;
+    /**
+     * The widget already sits inside someone else's shell — a plate, a sidebar, a column. It then
+     * draws no plate of its own and keeps no side inset, because two nested insets in a row push the
+     * content 36-52px off the edge and break its alignment with everything else in that shell.
+     */
+    nested?: boolean;
+    /**
+     * Draws the prepended icon on a disc and sets the title to match, which is how this theme marks
+     * the head of a content block. Off by default: a widget that is a panel rather than a block — a
+     * checkout section, a cart summary — keeps the bare glyph. Retune it with the
+     * `--vc-widget-icon-shape-*` variables rather than per call site.
+     */
+    iconShape?: boolean;
     size?: "xs" | "sm" | "md" | "lg";
 }
 declare var __VLS_9$1: {
@@ -2294,15 +2966,15 @@ declare var __VLS_11$1: {
     collapsed: boolean;
 };
 declare var __VLS_13: {};
-declare var __VLS_20: {};
-declare var __VLS_22: {
+declare var __VLS_25: {};
+declare var __VLS_27: {
     collapsible: boolean;
     collapsed: boolean;
 };
-declare var __VLS_34: {};
-declare var __VLS_36: {};
-declare var __VLS_38: {};
-declare var __VLS_40: {};
+declare var __VLS_39: {};
+declare var __VLS_41: {};
+declare var __VLS_43: {};
+declare var __VLS_45: {};
 type __VLS_Slots$1 = {} & {
     'header-container'?: (props: typeof __VLS_9$1) => any;
 } & {
@@ -2310,17 +2982,17 @@ type __VLS_Slots$1 = {} & {
 } & {
     prepend?: (props: typeof __VLS_13) => any;
 } & {
-    title?: (props: typeof __VLS_20) => any;
+    title?: (props: typeof __VLS_25) => any;
 } & {
-    append?: (props: typeof __VLS_22) => any;
+    append?: (props: typeof __VLS_27) => any;
 } & {
-    'default-container'?: (props: typeof __VLS_34) => any;
+    'default-container'?: (props: typeof __VLS_39) => any;
 } & {
-    default?: (props: typeof __VLS_36) => any;
+    default?: (props: typeof __VLS_41) => any;
 } & {
-    'footer-container'?: (props: typeof __VLS_38) => any;
+    'footer-container'?: (props: typeof __VLS_43) => any;
 } & {
-    footer?: (props: typeof __VLS_40) => any;
+    footer?: (props: typeof __VLS_45) => any;
 };
 declare const __VLS_base$1: vue.DefineComponent<IProps$2, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     toggleCollapse: (value: boolean) => any;
@@ -2388,6 +3060,14 @@ declare const __VLS_export: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.Comp
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;
 
+interface IPaymentMethodParameters {
+    hidePaymentButton?: boolean;
+    payment?: PaymentType;
+    disabled?: boolean;
+    cart?: CartType;
+    order?: CustomerOrderType;
+}
+
 /** The plugin renders its own markup in place of the host's. */
 type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boolean = never> = {
     component: Component;
@@ -2447,6 +3127,10 @@ type ExtensionCategoryMapType = {
         paymentTypeName: string;
     }, never, ({ order, paymentTypeName }: {
         order: CustomerOrderType;
+        paymentTypeName: string;
+    }) => boolean>;
+    /** The cart-stage payment step (`shared/payment/components/payment.vue`). */
+    cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
         paymentTypeName: string;
     }) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
@@ -3322,6 +4006,8 @@ type VcTableColumnType = {
     title?: string;
     sortable?: boolean;
     align?: VcTableAlignType;
+    /** Renders the column's cells in the body text's strong weight and darkest ink. */
+    strong?: boolean;
     classes?: string;
     /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;
@@ -3338,6 +4024,13 @@ type VcTableSelectionMetaType<T = unknown> = {
     action: "select" | "deselect" | "select-all" | "deselect-all";
     row?: T;
   };
+type VcTableSelectionColumnAttrsType = {
+    class: string;
+    style: Record<string, string>;
+  };
+type VcTableHeadAttrsType = {
+    class: string;
+  };
 interface IBreadcrumb {
     title: string;
     /**
@@ -3345,7 +4038,7 @@ interface IBreadcrumb {
      */
     route?: RouteLocationRaw;
   }
-type BreakpointsType = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+type BreakpointsType = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 type VcTableItemType = {
     id?: string | number;
     [key: string]: unknown;

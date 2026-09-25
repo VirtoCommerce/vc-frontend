@@ -1,0 +1,311 @@
+<template>
+  <VcPopover
+    class="header-preferences-menu"
+    placement="bottom-end"
+    :offset-options="10"
+    role="dialog"
+    :aria-label="$t('shared.layout.header.preferences_menu.aria_label')"
+    bg-color="--color-additional-50"
+    shadow
+  >
+    <template #trigger="{ opened, triggerProps }">
+      <button
+        type="button"
+        class="header-preferences-menu__pill"
+        :class="{ 'header-preferences-menu__pill--opened': opened }"
+        data-test-id="preferences-menu"
+        v-bind="triggerProps"
+      >
+        <b>{{ currentCurrency?.code }} · {{ currentLanguage.twoLetterLanguageName.toUpperCase() }}</b>
+
+        <VcIcon :name="opened ? 'chevron-up' : 'chevron-down'" size="xxs" />
+      </button>
+    </template>
+
+    <template #content>
+      <div
+        class="header-preferences-menu__panel"
+        :class="{ 'header-preferences-menu__panel--single': columnCount === 1 }"
+      >
+        <div v-if="isSettingsColumnShown" class="header-preferences-menu__column">
+          <section v-if="isCurrencyShown" class="header-preferences-menu__group">
+            <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.currency") }}</h3>
+
+            <button
+              v-for="currency in supportedCurrencies"
+              :key="currency.code"
+              type="button"
+              class="header-preferences-menu__item"
+              :aria-current="currency.code === currentCurrency?.code ? 'true' : undefined"
+              @click="selectCurrency(currency.code)"
+            >
+              <span class="header-preferences-menu__symbol">{{ currency.symbol }}</span>
+
+              <b class="header-preferences-menu__code">{{ currency.code }}</b>
+
+              <span class="header-preferences-menu__name">{{ currency.englishName }}</span>
+            </button>
+          </section>
+
+          <section v-if="isDarkModeAvailable" class="header-preferences-menu__group">
+            <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.appearance") }}</h3>
+
+            <VcTabSwitchGroup
+              class="header-preferences-menu__modes"
+              variant="seg"
+              fill
+              :aria-label="$t('shared.layout.header.preferences_menu.appearance')"
+            >
+              <!-- VcTabSwitch does not write to its model — v-model only feeds `checked`, and the
+                   consumer commits the new value from @change (see view-mode.vue). -->
+              <VcTabSwitch
+                v-for="mode in COLOR_MODES"
+                :key="mode.value"
+                v-model="colorMode"
+                name="header-color-mode"
+                :value="mode.value"
+                :icon="mode.icon"
+                :label="$t(`shared.layout.header.preferences_menu.theme.${mode.value}`)"
+                size="sm"
+                @change="colorMode = $event"
+              />
+            </VcTabSwitchGroup>
+          </section>
+        </div>
+
+        <div v-if="isLanguageColumnShown" class="header-preferences-menu__column">
+          <section class="header-preferences-menu__group">
+            <h3 class="header-preferences-menu__title">{{ $t("shared.layout.header.preferences_menu.language") }}</h3>
+
+            <button
+              v-for="language in supportedLanguages"
+              :key="language.cultureName"
+              type="button"
+              class="header-preferences-menu__item"
+              :aria-current="language.cultureName === currentLanguage.cultureName ? 'true' : undefined"
+              :data-culture-name="language.cultureName"
+              @click="selectLanguage(language.cultureName)"
+            >
+              <VcImage
+                :src="getFlagIconUrl(getCountryCode(language))"
+                :alt="language.nativeName"
+                class="header-preferences-menu__flag"
+                lazy
+              />
+
+              <span>{{ language.nativeName }}</span>
+            </button>
+          </section>
+        </div>
+      </div>
+    </template>
+  </VcPopover>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { useDarkMode } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
+import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
+import { useLocaleSwitch } from "@/shared/layout/composables";
+import { getFlagIconUrl } from "@/ui-kit/utilities";
+
+const COLOR_MODES = [
+  { value: "light", icon: "sun" },
+  { value: "dark", icon: "moon" },
+  { value: "system", icon: "monitor" },
+] as const;
+
+const route = useRoute();
+const { isDarkModeAvailable, colorMode } = useDarkMode();
+const {
+  currentCurrency,
+  supportedCurrencies,
+  currentLanguage,
+  supportedLanguages,
+  selectCurrency,
+  selectLanguage,
+  getCountryCode,
+} = useLocaleSwitch();
+
+// The loyalty catalog prices in points, and a currency change re-prices the cart — the
+// previous header hid the selector on those routes and this one has to keep doing it.
+const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === ROUTES.LOYALTY_CATALOG.PATH);
+
+const isCurrencyShown = computed(() => !isLoyaltyCatalogRoute.value && supportedCurrencies.value.length > 1);
+const isSettingsColumnShown = computed(() => isCurrencyShown.value || isDarkModeAvailable.value);
+const isLanguageColumnShown = computed(() => supportedLanguages.value.length > 1);
+const columnCount = computed(() => Number(isSettingsColumnShown.value) + Number(isLanguageColumnShown.value));
+</script>
+
+<style lang="scss">
+.header-preferences-menu {
+  // The panel may be teleported out of the header, so it paints from the same global
+  // theme keys the plate uses rather than inheriting anything.
+  --ink: var(--header-bottom-text-color);
+
+  // The panel's own surface, so a selected row can invert straight onto it. additional-50, as the
+  // account menu beside it: in dark the header colour is the canvas, a step below that panel.
+  --surface: var(--color-additional-50);
+  --line: color-mix(in srgb, var(--ink) 12%, transparent);
+
+  // Same as the account menu: the kit's shadow-lg is drawn in additional-950, the light end in
+  // this dark preset, so it glowed. The design's user-menu shadow, in black.
+  html.dark & {
+    --vc-popover-shadow: 0 18px 48px rgb(0 0 0 / 0.5);
+  }
+
+  &__pill {
+    @apply flex flex-none cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full;
+
+    // 12.5px, off the design's own scale rather than a Tailwind step: the pill is the smallest
+    // type in the header and sm (14) made it read as a second nav item next to the icon links.
+    // The line-height is the design's body ratio, not a step, so the box stays 35 and not 36.
+    font-size: 0.78125rem;
+    line-height: 1.55;
+    padding: 7px 11px;
+
+    // The same fill the search field takes: both are holes in the glass, not cards on it.
+    background: var(--glass-row, transparent);
+    border: 1px solid theme("colors.neutral.200");
+    color: theme("colors.neutral.950");
+    transition: border-color var(--transition-duration, 0.2s) ease;
+
+    b {
+      @apply font-bold;
+
+      letter-spacing: 0.02em;
+    }
+
+    // Only the outline moves. The design never fills this control — a fill here would make it
+    // the loudest thing in a row whose whole job is to stay quiet behind the search field.
+    &:hover {
+      border-color: theme("colors.neutral.300");
+    }
+
+    &--opened {
+      border-color: theme("colors.primary.500");
+    }
+  }
+
+  &__panel {
+    // The account menu's outline, so the two header panels share one edge.
+    @apply grid gap-4 rounded-[--vc-radius] border border-neutral-200 p-4;
+
+    // The design pins the panel at 620 rather than letting the two lists size it, and that is
+    // not a detail: a panel whose width follows its content keeps growing for a few frames after
+    // it opens — flags decode, fonts settle — and because it is aligned to the trigger's right
+    // edge, the growth drags its left edge across the screen. Measured on the first open: the
+    // panel arrived at left 926px and walked to 761.5px. Fixed width, nothing to walk.
+    inline-size: 38.75rem;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+
+    // A store with one language (or one on a loyalty route) renders a single column, and the
+    // fixed two-track width would leave the other track blank across half the panel.
+    &--single {
+      @apply grid-cols-1;
+
+      inline-size: 23.25rem;
+    }
+
+    // The store decides how many currencies and languages there are — QA serves 9 and 15,
+    // which is a panel taller than the window. Each column carries its own scroll.
+    //
+    // The ceiling is what VcPopover measured for this panel where it actually landed. The
+    // `100vh - 7rem` it replaces was a guess at the trigger's offset: it happened to be close
+    // under a resting header and wrong under a taller one, and either way it clamped the GRID
+    // while the row track below kept sizing to content — a 475-tall window put the columns 128px
+    // past the panel's own bottom, painted outside its corners, with neither of them scrolling.
+    // `minmax(0, 1fr)` is what makes the track obey the ceiling; `min-h-0` on the columns is the
+    // flex spelling of the same thing and does nothing for a grid item whose track already grew.
+    grid-template-rows: minmax(0, 1fr);
+    max-block-size: var(--vc-popover-available-height, calc(100vh - 7rem));
+    color: var(--ink);
+
+    @media (width < theme("screens.md")) {
+      @apply grid-cols-1;
+
+      inline-size: min(23.25rem, calc(100vw - 2rem));
+    }
+  }
+
+  &__column {
+    @apply flex min-h-0 flex-col gap-4 overflow-y-auto;
+  }
+
+  &__group {
+    // Each setting is its own outlined card, as the design draws it, instead of three
+    // lists running together down one surface with only their titles to separate them.
+    @apply flex flex-col gap-0.5 rounded-[--vc-radius] p-2;
+
+    border: 1px solid var(--line);
+  }
+
+  &__title {
+    @apply mb-1 px-2 text-xs font-bold uppercase tracking-wide;
+
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+
+  &__item {
+    @apply flex w-full cursor-pointer items-center gap-2 border-0 bg-transparent p-2 text-start text-sm leading-tight;
+
+    border-radius: calc(var(--vc-radius) - 2px);
+    color: inherit;
+    transition:
+      background var(--transition-duration, 0.2s) ease,
+      color var(--transition-duration, 0.2s) ease;
+
+    // A tint of the ink, not a palette step: it lands right in both themes, where a fixed
+    // light grey would darken the dark panel instead of lifting it.
+    &:hover {
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
+    }
+
+    // The design fills the selected row with the ink and flips its text back to the
+    // panel's surface. Naming both ends keeps it correct in dark, where the two swap.
+    &[aria-current="true"] {
+      background: var(--ink);
+      color: var(--surface);
+    }
+  }
+
+  &__symbol {
+    // The column is fixed so the codes line up down the list, and 2rem is what the widest
+    // symbol the store can serve needs — QA's GH₵ measures 31px. `truncate` is the backstop:
+    // a longer one clips instead of sliding out of the box and over the code next to it.
+    @apply w-8 flex-none truncate text-center;
+
+    // Muted against whatever the row is painted with, so the selected row mutes against
+    // its own light text rather than disappearing into the ink behind it.
+    color: color-mix(in srgb, currentColor 55%, transparent);
+  }
+
+  &__code {
+    @apply flex-none font-bold;
+  }
+
+  &__name {
+    // The design sets the English name against the far edge of the card, which is what
+    // gives the list its column; `ps-6` is the smallest gap the longest code may keep.
+    @apply ms-auto truncate ps-6;
+
+    color: color-mix(in srgb, currentColor 55%, transparent);
+  }
+
+  &__modes {
+    // The rail itself is VcTabSwitchGroup's seg variant. Only one thing differs from the
+    // catalog's rails: here the glyphs stay in the brand colour in every state, selected or
+    // not — the design's single exception, because in the catalog the accent is already
+    // spoken for by the sort switcher.
+    --vc-icon-color: theme("colors.primary.500");
+    --vc-tab-switch-color: theme("colors.primary.500");
+    --vc-tab-switch-hover-icon-color: theme("colors.primary.500");
+  }
+
+  &__flag {
+    @apply h-3.5 w-5 flex-none object-cover;
+  }
+}
+</style>

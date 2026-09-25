@@ -139,11 +139,11 @@ async function copyCoupon(text?: string) {
   }
 
   &__code-value {
-    @apply font-bold uppercase leading-5;
+    @apply font-bold uppercase leading-[1.55];
   }
 
   &__code-button {
-    @apply w-full bg-secondary-50 border transition-colors border-dashed border-secondary-400 px-2.5 py-3 rounded flex flex-col;
+    @apply w-full bg-secondary-50 border transition-colors border-dashed border-secondary-400 px-5 py-3 rounded-full flex flex-col;
 
     &:hover {
       @apply bg-secondary-100;
@@ -151,7 +151,7 @@ async function copyCoupon(text?: string) {
   }
 
   &__click-label {
-    @apply text-xs text-secondary-500;
+    @apply text-xs leading-[1.55] text-secondary-500;
 
     @media (pointer: coarse) {
       @apply hidden;
@@ -159,7 +159,7 @@ async function copyCoupon(text?: string) {
   }
 
   &__tap-label {
-    @apply hidden text-xs text-secondary-500;
+    @apply hidden text-xs leading-[1.55] text-secondary-500;
 
     @media (pointer: coarse) {
       @apply inline;

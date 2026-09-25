@@ -13,6 +13,14 @@ html.dark {
   // 3:1 on every dark surface a ring lands on, in all 7 presets.
   --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-600));
 
+  // A popover lifts on shadow-lg (the arrow on shadow-md), drawn in additional-950 — the LIGHT end
+  // in every dark preset, so every dropdown glowed. Same shapes, in black.
+  --vc-popover-shadow: 0 6px 15px 0 rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --vc-popover-arrow-shadow: 0 4px 6px 0 rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+
+  // Same for a checked tab switch's boxShadow.md.
+  --vc-tab-switch-checked-shadow: 0 4px 6px 0 rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+
   @include meta.load-css("dark/atoms/vc-badge");
   @include meta.load-css("dark/molecules/vc-input");
   @include meta.load-css("dark/molecules/vc-button");
@@ -20,8 +28,13 @@ html.dark {
   @include meta.load-css("dark/molecules/vc-alert");
   @include meta.load-css("dark/molecules/vc-menu-item");
   @include meta.load-css("dark/molecules/vc-range-calendar");
+  @include meta.load-css("dark/molecules/vc-tab-switch-group");
   @include meta.load-css("dark/organisms/vc-pagination");
+  @include meta.load-css("dark/organisms/vc-modal");
   @include meta.load-css("dark/organisms/vc-table");
+  @include meta.load-css("dark/shared/account/account-navigation");
   @include meta.load-css("dark/shared/catalog/product-pickup-locations");
   @include meta.load-css("dark/shared/checkout/select-address-map-view");
+  @include meta.load-css("dark/shared/layout/header-account-menu-panel");
+  @include meta.load-css("dark/modules/sales-rep/stat-widget");
 }

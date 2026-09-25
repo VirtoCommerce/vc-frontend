@@ -1,10 +1,10 @@
 <template>
   <VcEmptyPage icon="outline-security" image="sign-in.jpg" :status-color="isSucceeded ? 'success' : 'secondary'">
-    <VcTypography tag="h1" class="order-first mb-3">
+    <VcTypography tag="h1" class="order-first mb-7">
       {{ $t("pages.forgot_password.header") }}
     </VcTypography>
 
-    <div v-if="!isSucceeded">
+    <div v-if="!isSucceeded" class="grow">
       <div class="mb-4 text-base">
         {{ $t("pages.forgot_password.email_will_be_sended_message") }}
       </div>
@@ -12,7 +12,7 @@
       <ForgotPasswordForm @succeeded="onSucceeded()" />
     </div>
 
-    <div v-else>
+    <div v-else class="grow">
       <div class="mb-5 text-base">{{ $t("pages.forgot_password.reset_link_was_sent_message") }}</div>
 
       <VcButton to="/" min-width="12rem">

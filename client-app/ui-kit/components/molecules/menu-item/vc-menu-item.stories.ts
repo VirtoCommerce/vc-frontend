@@ -48,6 +48,20 @@ export const Active: StoryType = {
   },
 };
 
+// A neutral hover, with the colour left to mark the current row.
+export const ColorCSSVariables: StoryType = {
+  render: () => ({
+    setup: () => ({}),
+    template: `<div
+      class="flex flex-col"
+      :style="{ '--vc-menu-item-hover-bg': '#f1eae0', '--vc-menu-item-active-bg': '#f3e8e0' }"
+    >
+      <VcMenuItem color="secondary">Hover me</VcMenuItem>
+      <VcMenuItem color="secondary" active>Current page</VcMenuItem>
+    </div>`,
+  }),
+};
+
 export const Link: StoryType = {
   args: {
     to: "/some/link",

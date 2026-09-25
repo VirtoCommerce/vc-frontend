@@ -87,9 +87,3 @@ watchEffect(async () => {
   });
 });
 </script>
-
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-</style>

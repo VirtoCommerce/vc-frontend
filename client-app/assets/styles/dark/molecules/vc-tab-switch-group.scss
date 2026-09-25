@@ -1,0 +1,32 @@
+.vc-tab-switch-group {
+  // The rail's light track is ink at 5%, which on a dark panel is a lightening film — the
+  // track would sit ABOVE the surface it is meant to be cut into. Dark cuts it the other way:
+  // near-black at 60%, so the groove reads as depth in both themes.
+  //
+  // The near-black is neutral-50, not additional-950: every dark preset in the repo flips
+  // additional-950 to the LIGHT end of the ramp, so that spelling paints the groove as a 60%
+  // white wash over the panel. neutral-50 is the darkest surface step in all eight of them.
+  &--seg {
+    --track-color: var(--vc-tab-switch-group-track-color, color-mix(in srgb, var(--color-neutral-50) 60%, transparent));
+  }
+
+  // The indicator cannot stay additional-50 here: in dark that step IS the panel colour, and the
+  // selected segment measured 1.24:1 against its own track where 3:1 is required (WCAG 1.4.11).
+  // It moves to secondary-400, one step down from 600 — in the dark ramp 500 is nearly as light
+  // as 600, so 400 is the real step down — which also puts the selection in the same family as
+  // the current row of the category menu. The fill alone only reaches 2.40:1, so the state is
+  // carried by the pair of inset rings as well; the label on it reads 7.21:1.
+  //
+  // No backdrop-filter on this one. The indicator does not sit still: it travels between the
+  // segments over half a second, animating `left` and `width`, and a blurred backdrop is
+  // re-sampled on every frame of that — the most expensive thing a compositor can be asked for
+  // here, and the reason the move stuttered. The contrast case below never rested on the blur:
+  // it is carried by the fill and the pair of rings.
+  &--seg &__pill {
+    background: var(--vc-tab-switch-group-pill-color, color-mix(in srgb, var(--color-secondary-400) 72%, transparent));
+    // Not boxShadow.md: it is drawn in additional-950, the light end here, and glowed.
+    box-shadow: var(--vc-tab-switch-group-pill-shadow, var(--vc-tab-switch-checked-shadow)),
+      inset 0 0 0 1px color-mix(in srgb, var(--color-secondary-700) 20%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--color-secondary-800) 26%, transparent);
+  }
+}

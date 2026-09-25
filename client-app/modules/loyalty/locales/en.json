@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Redeem your points",
           "description": "Trade points for products in the rewards catalog.",
-          "catalog": "Catalog"
+          "catalog": "Rewards catalog"
         },
         "card": {
           "type_products": "Featured SKUs",

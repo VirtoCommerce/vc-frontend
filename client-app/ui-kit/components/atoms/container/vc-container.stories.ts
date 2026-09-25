@@ -65,6 +65,30 @@ export const NoBgImage: StoryType = {
   },
 };
 
+export const BgImageHiddenByTheme: StoryType = {
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<div style="--vc-container-bg-image-display: none">
+      <VcContainer v-bind="args">
+        <div class="rounded bg-additional-50 p-6 shadow-sm">Page content goes here</div>
+      </VcContainer>
+    </div>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `<div style="--vc-container-bg-image-display: none">
+  <VcContainer>Page content goes here</VcContainer>
+</div>`,
+      },
+      description: {
+        story:
+          "`--vc-container-bg-image-display: none` drops the decorative SVG from every container at once — for a theme that paints its canvas page-wide instead of per container. The `has-bg-image` prop stays the per-call-site switch.",
+      },
+    },
+  },
+};
+
 export const NoPadding: StoryType = {
   args: {
     noPadding: true,

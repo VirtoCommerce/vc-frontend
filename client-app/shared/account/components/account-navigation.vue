@@ -113,10 +113,37 @@ const sections = computed<RenderSectionType[]>(() => {
 
 <style lang="scss">
 .account-navigation {
-  @apply space-y-4;
+  // A nav hover is a neutral tint, so the secondary fill is left to say "you are here" and
+  // nothing else. Dark brightens instead: see dark/shared/account/account-navigation.
+  --vc-menu-item-hover-bg: theme("colors.neutral.100");
+
+  // One construction for every side rail in the theme: this is the catalog's facet card, built from
+  // the widget's own knobs rather than from a second pile of `.vc-widget` overrides. The numbers are
+  // the design's (Ilya, 23.09.2026): a 16 card on the plate's surface, 20 of inset, a heading led
+  // tight over a hairline with 6 above the rule and 10 below it, and rows that spend the last 10 of
+  // that inset themselves, so the current item's plate reaches within 10 of the card's edge instead
+  // of stopping 20 short.
+  --vc-widget-radius: 1rem;
+  --vc-widget-bg-color: var(--footer-top-bg-color, #fffdf9);
+  --vc-widget-shadow: var(--plate-shadow, theme("boxShadow.md"));
+  --vc-widget-header-padding-x: 1.25rem;
+  --vc-widget-header-padding-y: 1.25rem 0.375rem;
+  --vc-widget-header-min-height: 0px;
+  --vc-widget-title-font-size: theme("fontSize.lg");
+  --vc-menu-item-padding-x: 0.625rem;
+
+  @apply flex flex-col;
+
+  // 20, the step the facet rail keeps between its cards — not the page's step between plates: these
+  // are cards on one rail, and the wider gap read as an empty line between them.
+  gap: theme("spacing.5");
 
   &__container {
-    @apply pt-3 px-4 pb-4;
+    // The rows carry the rest of the card's inset themselves, so the current item's plate reaches
+    // within 10 of the edge while its label still sits on the heading's vertical. The widget's own
+    // `--vc-widget-padding-*` cannot do it: this block is handed in through `default-container`,
+    // which replaces the slot those knobs pad.
+    @apply flex flex-col p-2.5;
   }
 }
 </style>

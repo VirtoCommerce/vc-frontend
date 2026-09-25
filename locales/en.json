@@ -354,6 +354,17 @@
           "catalog_menu_button": "Catalog",
           "main_menu": "Main menu"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
         "link_logout": "Logout",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Search",
+        "enter_keyword_placeholder": "Search products and parts",
         "enter_keyword_placeholder_category": "Search within {category}",
         "search_button": "Search",
         "scope_loading_label": "Loading search context",
@@ -667,7 +678,7 @@
         "title": "Products"
       },
       "gifts_section": {
-        "title": "+ Add a gift"
+        "title": "Gifts"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Adding products to cart result",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Product",
+        "availability": "Availability",
+        "unit_price": "Unit price",
+        "add_to_cart": "Add to cart"
+      },
       "view_mode": {
         "grid_label": "Grid",
-        "list_label": "List"
+        "list_label": "List",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Results per page:"
       },
       "product_card": {
+        "low_stock": "Low stock",
+        "configurable": "Configurable",
+        "variants": "Variants",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Rating:",
         "product_vendor": "Vendor:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "The product configuration has been changed. Do you want to save it?",
           "check_your_configuration": "Check your product configuration",
           "required_section": "Section is required",
+          "optional": "Optional",
           "optional_no_selected": "Personalize your selection further (optional)",
           "required_no_selected": "Complete all required options to finalize your selection",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sort",
       "featured": "Featured",
       "alphabetically_a_z": "Alphabetically, A-Z",
       "alphabetically_z_a": "Alphabetically, Z-A",
       "price_low_to_high": "Price, low to high",
       "price_high_to_low": "Price, high to low",
       "date_new_to_old": "Date, new to old",
-      "date_old_to_new": "Date, old to new"
+      "date_old_to_new": "Date, old to new",
+      "short": {
+        "featured": "Featured",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Price \u2191",
+        "price_high_to_low": "Price \u2193",
+        "date_new_to_old": "Newest",
+        "date_old_to_new": "Oldest"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "All",
-          "differences": "Differences"
+          "differences": "Differences",
+          "group_label": "Row filter"
         },
         "uncategorized": "Uncategorized",
         "unresolved_category": "Unknown category",
@@ -1151,7 +1184,7 @@
       "meta": {
         "title": "Forgot password"
       },
-      "header": "reset your password",
+      "header": "Reset your password",
       "email_will_be_sended_message": "We will send you an email with reset password instructions.",
       "reset_link_was_sent_message": "We sent you a reset password link to your inbox",
       "home_button": "@:common.buttons.home"
@@ -1480,7 +1513,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "Cart",
+      "title": "Shopping cart",
       "empty_cart_description": "Your cart is empty",
       "empty_cart_search_text": "Use the search to find everything you need",
       "recently_browsed_products": "Recently browsed",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "products_found_message": "result | results",
+      "products_found_label": "product found | products found",
       "products_found_message_search": "result found | results found",
       "search_in_category": "Search for \"{keyword}\" in {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
       "no_products_filtered_message": "There are no results found",
+      "no_products_filtered_hint": "Loosen one of them, or start over.",
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
@@ -1716,6 +1751,123 @@
       },
       "error": "Failed to load data",
       "retry": "Try again"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "One catalog · many verified suppliers",
+        "title": "Source electronics the way your business buys.",
+        "subtitle": "Real-time stock across authorized distributors, your contract pricing from search to invoice, and next-day fulfillment on everything held locally.",
+        "browse_catalog": "Browse catalog",
+        "notches": {
+          "search": {
+            "title": "Search or browse the full catalog",
+            "text": "By product, brand or your own SKU"
+          },
+          "guest_cart": {
+            "title": "Build a cart as a guest",
+            "text": "It carries over when you sign in"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Authorized distributor network",
+        "title": "Shop by supplier",
+        "authorized": "Authorized distributor",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "SKUs in the catalog"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Authorized suppliers"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Fulfillment on in-stock lines"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Browse the assortment",
+        "title": "Shop by category",
+        "all_categories": "All categories",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Crowd favorites",
+            "meta": "Smart home gadgets to home theater — plugged in, paired and ready to ship"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Top selling",
+            "meta": "5G smartphones to car holders — cased, charged and ready to ship in bulk."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Shop without an account",
+        "title": "Popular with buyers",
+        "see_all": "See all"
+      },
+      "why_buy": {
+        "eyebrow": "Why buy from us",
+        "title": "Straightforward terms, real inventory",
+        "cards": {
+          "stock": {
+            "title": "Real-time stock",
+            "text": "Quantity on hand per warehouse, with the lead time when it has to be sourced."
+          },
+          "pricing": {
+            "title": "Contract pricing everywhere",
+            "text": "Your negotiated price shows from search to invoice, tax and freight included."
+          },
+          "fulfillment": {
+            "title": "Next-day fulfillment",
+            "text": "In-stock orders ship same day, with manufacturer warranty and free returns within 30 days."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "What it changes",
+        "title": "Monday morning, in numbers",
+        "stats": {
+          "reorder": {
+            "value": "2 clicks",
+            "label": "To reorder last month's delivery, line quantities included"
+          },
+          "trail": {
+            "value": "1 trail",
+            "label": "From a saved list to a placed order with an approval history"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Of prices shown are your contract prices, tax and freight included"
+          },
+          "calls": {
+            "value": "0 calls",
+            "label": "Ordering, tracking and document lookup — no phone tree"
+          }
+        },
+        "quote": {
+          "text": "“We stopped keeping a spreadsheet of prices — the site shows ours.”",
+          "name": "Procurement lead",
+          "role": "Facilities group · 6 sites"
+        }
+      },
+      "brands": {
+        "eyebrow": "Authorized distributor for"
+      },
+      "cta": {
+        "title": "Become a customer",
+        "text": "Contract pricing, agreed payment terms and PO checkout — usually approved within one business day.",
+        "become_customer": "Become a customer",
+        "talk_to_sales": "Talk to sales"
+      }
     }
   },
   "identity_error": {

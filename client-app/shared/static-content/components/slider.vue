@@ -87,9 +87,9 @@ const breakpoints = useBreakpoints(BREAKPOINTS);
 type FixedHeightsType = { [K in Exclude<SlideHeightType, "auto">]: { [V in BreakpointsType]: number } };
 
 const FIXED_HEIGHTS: FixedHeightsType = {
-  small: { xs: 250, sm: 250, md: 400, lg: 400, xl: 450, "2xl": 450 },
-  medium: { xs: 300, sm: 300, md: 450, lg: 450, xl: 500, "2xl": 500 },
-  large: { xs: 350, sm: 350, md: 500, lg: 500, xl: 550, "2xl": 550 },
+  small: { xs: 250, sm: 250, md: 400, lg: 400, xl: 450, "2xl": 450, "3xl": 450, "4xl": 450 },
+  medium: { xs: 300, sm: 300, md: 450, lg: 450, xl: 500, "2xl": 500, "3xl": 500, "4xl": 500 },
+  large: { xs: 350, sm: 350, md: 500, lg: 500, xl: 550, "2xl": 550, "3xl": 550, "4xl": 550 },
 };
 
 const imageHeight = computed(() => {

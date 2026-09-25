@@ -157,7 +157,23 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
-  @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
+  // A row of the header plate, not a band of its own: the plate supplies the surface,
+  // the horizontal padding and the hairline that separates the two rows.
+  @apply flex items-center border-t;
+
+  padding-inline: var(--header-row-pad-x, theme("padding.5"));
+
+  // Height and hairline are variables, not fixed utilities: the sticky header collapses this
+  // row from the outside, and a rule in the parent component cannot win here on specificity
+  // alone. The hairline has to go with the height — a border does not collapse with its box,
+  // and would stay as a straight line across the plate's rounded bottom corners.
+  height: var(--mega-menu-height, 2.5rem);
+  // An opaque palette step, not a tint of the band ink: the row sits on translucent glass, and
+  // a tinted line let the page scrolling underneath modulate it — the hairline visibly breathed
+  // as content passed behind the plate. neutral-200 is the step the design names, and it flips
+  // with the theme, so dark gets its own dark line rather than this one washed out.
+  border-color: var(--mega-menu-border-color, theme("colors.neutral.200"));
+  transition: border-color var(--transition-duration, 0.2s) ease;
 
   &__popover {
     @apply flex items-stretch;
@@ -184,11 +200,17 @@ onMounted(() => {
   }
 
   &__nav {
-    @apply grow flex items-center gap-6;
+    // 16. At 24 the row ran out of width and started dropping categories on a 1512 screen,
+    // which is the one width this header is drawn for.
+    @apply grow flex items-center gap-4;
   }
 
   &__link {
     @apply text-sm font-normal text-[--header-bottom-link-color] whitespace-nowrap;
+
+    // The design's body ratio rather than the kit's `sm` step: 14/18 sets the links a hair
+    // higher than the "All products" button beside them, and the row reads misaligned.
+    line-height: 1.55;
 
     &:hover {
       @apply text-[--header-bottom-link-hover-color];

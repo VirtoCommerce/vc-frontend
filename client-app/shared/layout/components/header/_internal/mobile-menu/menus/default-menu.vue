@@ -13,7 +13,6 @@
             :link="item"
             :count="toValue(extensionProps?.count)"
             :format-text-function="capitalize"
-            class="py-1 text-lg"
             @close="$emit('close')"
             @select="$emit('selectItem', item)"
           >

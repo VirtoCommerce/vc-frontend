@@ -1,16 +1,18 @@
 <template>
   <!-- Collapsable mode -->
-  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible collapsed>
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible>
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
           v-model="searchKeyword"
-          size="sm"
+          size="xs"
           maxlength="30"
           :disabled="loading"
           :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
+          clearable
+          @clear="searchKeyword = ''"
         />
       </div>
 
@@ -18,31 +20,25 @@
         <VcMenuItem
           v-for="item in searchedValues"
           :key="item.value"
-          size="xs"
+          size="sm"
           color="secondary"
           :data-test-id="`filter-${facet.paramName}-${item.value}`"
           @click="handleFacetItemClick(item)"
         >
           <template #prepend>
-            <VcCheckbox :model-value="isSelected(item)" tabindex="-1" size="xs" :disabled="loading" />
+            <VcCheckbox :model-value="isSelected(item)" tabindex="-1" size="sm" :disabled="loading" />
           </template>
 
           <span>{{ item.label }}</span>
 
           <template #append>
-            <VcBadge
-              :class="{ 'px-1': item.count && item.count > 9 }"
-              variant="outline"
-              size="xs"
-              rounded
-              color="secondary"
-            >
+            <VcBadge class="facet-filter-widget__count" variant="soft" size="sm" rounded color="secondary">
               {{ $n(Number(item.count), "decimal") }}
             </VcBadge>
           </template>
         </VcMenuItem>
 
-        <VcMenuItem v-if="isNoResults" size="xs" disabled>
+        <VcMenuItem v-if="isNoResults" size="sm" disabled>
           {{ $t("pages.catalog.no_facet_found_message") }}
         </VcMenuItem>
 
@@ -118,6 +114,8 @@
           :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
+          clearable
+          @clear="searchKeyword = ''"
         />
       </div>
 

@@ -14,6 +14,7 @@
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.description_block_title')"
     prepend-icon="document-text"
+    icon-shape
   >
     <div class="text-base text-neutral-600">
       <VcMarkdownRender :src="description" />
