@@ -29,9 +29,11 @@
 
         <MissionsBanner
           variant="dark"
-          icon="gift"
+          icon="shopping-bag"
           :title="$t('pages.account.missions.redeem_banner.title')"
           :description="$t('pages.account.missions.redeem_banner.description')"
+          :link-to="{ name: ROUTES.LOYALTY_CATALOG.NAME }"
+          :link-text="$t('pages.account.missions.redeem_banner.catalog')"
         />
       </div>
 
@@ -60,6 +62,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { ROUTES } from "@/router/routes/constants";
 import MissionCard from "../components/mission-card.vue";
 import MissionsBanner from "../components/missions-banner.vue";
 import PointsBalance from "../components/points-balance.vue";
@@ -93,7 +96,7 @@ onMounted(loadData);
 <style lang="scss">
 .missions {
   &__description {
-    @apply text-neutral-700;
+    @apply mt-3 text-neutral-700;
   }
 
   &__banners {

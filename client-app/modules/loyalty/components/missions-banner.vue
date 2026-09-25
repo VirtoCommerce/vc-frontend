@@ -1,7 +1,7 @@
 <template>
-  <div class="missions-banner" :class="`missions-banner--${variant}`">
-    <div class="missions-banner__icon" :class="`missions-banner__icon--${variant}`">
-      <VcIcon :name="icon" variant="solid" class="text-primary" :size="28" />
+  <div class="missions-banner" :class="`missions-banner--${tone}`">
+    <div class="missions-banner__icon">
+      <VcIcon :name="icon" :size="24" />
     </div>
 
     <div class="missions-banner__body">
@@ -12,13 +12,14 @@
       </slot>
     </div>
 
-    <router-link v-if="linkTo" :to="linkTo" class="missions-banner__link missions-banner__link--default">
+    <VcButton v-if="linkTo" :to="linkTo" :color="tone" variant="soft" size="sm" class="missions-banner__link">
       {{ linkText }}
-    </router-link>
+    </VcButton>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
@@ -30,55 +31,47 @@ interface IProps {
   linkText?: string;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+// Both banners are white cards told apart by their accent: the balance in primary, the
+// rewards in info.
+const tone = computed(() => (props.variant === "dark" ? "info" : "primary"));
 </script>
 
 <style lang="scss">
 .missions-banner {
-  @apply flex items-center gap-4 rounded-[--vc-radius] border p-5 shadow-sm;
+  --accent: theme("colors.primary.500");
 
-  &--light {
-    @apply border-neutral-200 bg-additional-50;
-  }
+  @apply flex items-center gap-4 rounded-[--plate-radius,1.75rem] border-s-4 border-[--accent] bg-additional-50 p-5;
 
-  &--dark {
-    @apply border-transparent bg-additional-950;
+  box-shadow:
+    2px 4px 10px -1px rgb(from theme("colors.additional.950") r g b / 0.08),
+    0 0 3px rgb(from theme("colors.additional.950") r g b / 0.08);
+
+  &--info {
+    --accent: theme("colors.info.500");
   }
 
   &__icon {
-    @apply flex size-14 shrink-0 items-center justify-center rounded-full;
+    @apply flex size-14 shrink-0 items-center justify-center rounded-full bg-[--accent];
 
-    &--light {
-      @apply bg-primary-50;
-    }
-
-    &--dark {
-      @apply bg-additional-50/10;
-    }
+    --vc-icon-color: theme("colors.additional.50");
   }
 
   &__body {
-    @apply flex min-w-0 flex-col;
+    @apply flex min-w-0 flex-auto flex-col gap-1;
   }
 
   &__title {
-    @apply font-bold text-additional-50;
+    @apply text-sm font-extrabold uppercase leading-[18px] tracking-[0.02em] text-neutral-900;
   }
 
   &__subtitle {
-    @apply text-sm text-neutral-400;
+    @apply text-[13px] leading-[18px] text-neutral-600;
   }
 
   &__link {
-    @apply ms-auto flex shrink-0 items-center gap-1 text-sm font-bold;
-
-    &--default {
-      @apply text-[--link-color] hover:text-[--link-hover-color];
-    }
-
-    &--accent {
-      @apply text-primary hover:text-primary-600;
-    }
+    @apply shrink-0;
   }
 }
 </style>

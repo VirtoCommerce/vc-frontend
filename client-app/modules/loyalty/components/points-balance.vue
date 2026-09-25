@@ -30,7 +30,7 @@ defineProps<IProps>();
   @apply flex min-w-0 flex-col;
 
   &__label {
-    @apply text-xs font-bold uppercase tracking-wide text-neutral-500;
+    @apply text-xs font-bold uppercase leading-[14px] tracking-[0.06em] text-neutral-900;
   }
 
   &__value {
