@@ -38,12 +38,7 @@
           close();
         "
       >
-        <VcImage
-          :src="getFlagIconUrl(getCountryCode(item))"
-          :alt="currentLanguage.nativeName"
-          class="language-selector__item-img"
-          lazy
-        />
+        <VcImage :src="getFlagIconUrl(getCountryCode(item))" alt="" class="language-selector__item-img" lazy />
 
         <span class="language-selector__item-text">
           {{ item.nativeName.replace(/ *\([^)]*\) */g, "") }}
