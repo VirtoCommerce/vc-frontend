@@ -193,12 +193,12 @@ html.dark {
   }
 }
 
-// A widget headed by the disc is the design's `.vc-widget--lg`, one recipe on the cart, the
-// checkout and the product page: the disc seated 16 off the corner rather than centred in a
-// control-height row, the body 16/18/20, the title 16. Nested widgets inherit custom
-// properties, so every knob is handed back to the defaults one level down.
+// Every lg widget is the design's `.vc-widget--lg`, one recipe wherever it stands: the head
+// seated 16 off the corner rather than centred in a control-height row, the body 16/18/20, the
+// title 16. Nested widgets inherit custom properties, so every knob is handed back to the
+// defaults one level down.
 @media (width >= theme("screens.lg")) {
-  .vc-widget--icon-shape.vc-widget--size--lg {
+  .vc-widget--size--lg {
     --vc-widget-header-min-height: 0px;
     --vc-widget-header-padding-y: 1rem 0;
     --vc-widget-header-padding-x: 1rem;
@@ -207,7 +207,7 @@ html.dark {
     --vc-widget-padding-bottom: 1.25rem;
     --vc-widget-title-font-size: 1rem;
 
-    .vc-widget:not(.vc-widget--icon-shape) {
+    .vc-widget:not(.vc-widget--size--lg) {
       --vc-widget-header-min-height: initial;
       --vc-widget-header-padding-y: initial;
       --vc-widget-header-padding-x: initial;

@@ -1,5 +1,5 @@
 <template>
-  <VcWidget id="products" size="md" class="products-section">
+  <VcWidget id="products" size="lg" class="products-section">
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="products-section__groups">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
