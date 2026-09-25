@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Wykorzystaj swoje punkty",
           "description": "Wymień punkty na produkty w katalogu nagród.",
-          "catalog": "Katalog"
+          "catalog": "Katalog nagród"
         },
         "card": {
           "type_products": "Polecane SKU",

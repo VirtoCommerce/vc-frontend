@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "ポイントを交換する",
           "description": "報酬カタログでポイントを商品と交換しましょう。",
-          "catalog": "カタログ"
+          "catalog": "報酬カタログ"
         },
         "card": {
           "type_products": "注目のSKU",

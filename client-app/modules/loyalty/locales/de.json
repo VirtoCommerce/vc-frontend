@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Deine Punkte einlösen",
           "description": "Tausche Punkte gegen Produkte im Prämienkatalog ein.",
-          "catalog": "Katalog"
+          "catalog": "Prämienkatalog"
         },
         "card": {
           "type_products": "Vorgestellte SKUs",
