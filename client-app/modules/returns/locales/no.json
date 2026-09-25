@@ -121,7 +121,7 @@
   },
   "return_edit": {
     "title": "Legg til returdetaljer",
-    "title_with_number": "Legg til returdetaljer #{number}",
+    "title_with_number": "Legg til detaljer for retur {number}",
     "not_editable_message": "Denne returen kan ikke lenger endres",
     "not_editable_message_with_status": "Denne returen kan ikke lenger endres – statusen er {status}",
     "details_section": "Detaljer",

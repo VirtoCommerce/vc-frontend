@@ -121,7 +121,7 @@
   },
   "return_edit": {
     "title": "Lägg till returuppgifter",
-    "title_with_number": "Lägg till returuppgifter #{number}",
+    "title_with_number": "Lägg till uppgifter för retur {number}",
     "not_editable_message": "Den här returen kan inte längre ändras",
     "not_editable_message_with_status": "Den här returen kan inte längre ändras – dess status är {status}",
     "details_section": "Detaljer",

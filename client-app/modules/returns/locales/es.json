@@ -121,7 +121,7 @@
   },
   "return_edit": {
     "title": "Añadir detalles de la devolución",
-    "title_with_number": "Añadir detalles de la devolución #{number}",
+    "title_with_number": "Añadir detalles a la devolución {number}",
     "not_editable_message": "Esta devolución ya no se puede modificar",
     "not_editable_message_with_status": "Esta devolución ya no se puede modificar: su estado es {status}",
     "details_section": "Detalles",

@@ -121,7 +121,7 @@
   },
   "return_edit": {
     "title": "Ajouter les détails du retour",
-    "title_with_number": "Ajouter les détails du retour #{number}",
+    "title_with_number": "Ajouter les détails du retour {number}",
     "not_editable_message": "Ce retour ne peut plus être modifié",
     "not_editable_message_with_status": "Ce retour ne peut plus être modifié : son statut est {status}",
     "details_section": "Détails",

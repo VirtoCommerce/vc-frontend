@@ -121,7 +121,7 @@
   },
   "return_edit": {
     "title": "Dodaj szczegóły zwrotu",
-    "title_with_number": "Dodaj szczegóły zwrotu #{number}",
+    "title_with_number": "Dodaj szczegóły zwrotu {number}",
     "not_editable_message": "Tego zwrotu nie można już zmienić",
     "not_editable_message_with_status": "Tego zwrotu nie można już zmienić – jego status to {status}",
     "details_section": "Szczegóły",

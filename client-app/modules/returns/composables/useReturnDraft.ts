@@ -25,7 +25,14 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   // the platform has a FileUpload scope configured makes submit impossible.
   const attachmentsRequired = computed(() => getSettingValue(ATTACHMENTS_REQUIRED_KEY) === true);
 
-  const orderReturn = computed(() => result.value?.return);
+  // keepPreviousResult leaves the previous draft in the result until the next one's response lands.
+  // The router reuses the page between drafts, so without this check the page would show, and
+  // allow editing of, a return whose id is no longer the one being saved to.
+  const orderReturn = computed(() => {
+    const value = result.value?.return;
+
+    return value?.id === toValue(returnId) ? value : undefined;
+  });
 
   // A draft holds no quantity, so what the server reports as returnable already includes what this
   // draft asks for - it is the ceiling the buyer may raise a line to.
@@ -61,6 +68,19 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   // response must not overwrite a field mid-keystroke. The router reuses this component between
   // two drafts, so the seed has to reopen when the id changes or the previous draft stays on screen.
   let seededReturnId = "";
+
+  // Cleared as soon as the id moves on, not when the next draft arrives: until then the form would
+  // hold the previous draft's lines under the new id, and any autosave would write them there.
+  watch(
+    () => toValue(returnId),
+    () => {
+      seededReturnId = "";
+      customerReference.value = "";
+      customerComment.value = "";
+      lines.value = [];
+    },
+    { flush: "sync" },
+  );
 
   watch(
     orderReturn,
@@ -125,7 +145,8 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   const canSubmit = computed(() => submitAllowed.value && lines.value.length > 0 && incompleteLines.value.length === 0);
 
   async function save(fromSubmit = false): Promise<boolean> {
-    if (!canEdit.value) {
+    // The form must belong to the id it is saved under, or one draft's lines overwrite another's.
+    if (!canEdit.value || seededReturnId !== toValue(returnId)) {
       return false;
     }
 
