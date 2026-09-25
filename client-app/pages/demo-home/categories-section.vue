@@ -128,6 +128,10 @@ const tiles = computed(() =>
 
   &__eyebrow {
     @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
+
+    html.dark & {
+      @apply text-primary-600;
+    }
   }
 
   // First four tiles form the bento (two tall + two stacked), the rest fall into rows of three

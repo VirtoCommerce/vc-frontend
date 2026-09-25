@@ -43,6 +43,16 @@ const { t } = useI18n();
 .suppliers-section {
   @apply rounded-[--plate-radius] bg-neutral-950 px-8 py-9 text-additional-50;
 
+  // The ink plate stays dark in both themes, but the ramps flip in dark: neutral-950 turns light
+  // and additional-50 turns dark. So the plate takes the dark end back, and its white ink is
+  // re-pointed here, which every additional-50 utility below reads. The design's neutral-50 is
+  // the page background itself, so the plate sits one step up, where dark cards sit.
+  html.dark & {
+    --color-additional-50: var(--color-neutral-950);
+
+    @apply bg-neutral-100;
+  }
+
   &__head {
     @apply mb-8;
   }
@@ -65,6 +75,10 @@ const { t } = useI18n();
 
   &__logo {
     @apply size-10 flex-none rounded-xl bg-additional-50 object-cover;
+
+    html.dark & {
+      @apply bg-secondary-950;
+    }
   }
 
   &__supplier-body {
@@ -99,6 +113,10 @@ const { t } = useI18n();
 
   &__stat:nth-child(2) &__stat-value {
     color: #deccaa;
+
+    html.dark & {
+      @apply text-secondary-800;
+    }
   }
 
   &__stat-label {

@@ -74,6 +74,10 @@ const cartRoute = ROUTES.CART.PATH;
 
   &__eyebrow {
     @apply mb-2.5 text-xs font-bold uppercase leading-none tracking-widest text-primary;
+
+    html.dark & {
+      @apply text-primary-600;
+    }
   }
 
   &__title {
@@ -191,6 +195,11 @@ const cartRoute = ROUTES.CART.PATH;
 @media (width >= theme("screens.lg")) {
   .hero-section {
     @apply grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-12 rounded-[28px] px-8 py-9;
+
+    &__title {
+      --vc-typography-font-size: 3.125rem;
+      --line-height: 1.02;
+    }
 
     &__art {
       @apply min-h-[420px];
