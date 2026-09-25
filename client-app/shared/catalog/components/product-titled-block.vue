@@ -47,7 +47,7 @@ defineProps<IProps>();
     // picks this block when the body collapses and a VcWidget when it does not. So: the display
     // face at its own tracking, the shared heading weight, and the disc's height for a leading so
     // the row stays one line. The caps came off with every other section head (Ilya, 24.09.2026).
-    @apply grow break-words font-geologica text-xl/[2.25rem] text-neutral-950;
+    @apply grow break-words font-geologica text-base/[2.25rem] text-neutral-950;
 
     font-weight: var(--vc-typography-heading-font-weight, 700);
     letter-spacing: -0.02em;
