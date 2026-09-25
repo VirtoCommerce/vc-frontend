@@ -30,13 +30,24 @@ import WhyBuySection from "./why-buy-section.vue";
 </script>
 
 <style lang="scss">
+// The page rolls its own shell instead of a VcContainer, so it repeats the container's
+// arithmetic rather than a width of its own: the cap is the content column PLUS its two
+// gutters, and the gutter is then spent as padding — which is what puts the sections on
+// exactly the column the header and footer plates stand on. `max-w-screen-2xl` used to
+// stand here, and a breakpoint is not a content width: it pinned the page to whatever
+// 2xl happened to be and never saw the theme's wide rung.
 .demo-home {
-  @apply mx-auto flex w-full max-w-screen-2xl flex-col gap-[1.625rem] px-6 py-5;
+  @apply mx-auto flex w-full flex-col gap-[1.625rem] py-5;
+
+  --gutter: var(--page-gutter, theme("padding.6"));
+
+  max-width: calc(var(--vc-container-max-width, 87.75rem) + 2 * var(--gutter));
+  padding-inline: var(--gutter);
 }
 
 @media (width >= theme("screens.lg")) {
   .demo-home {
-    @apply px-8 py-6;
+    @apply py-6;
   }
 }
 </style>
