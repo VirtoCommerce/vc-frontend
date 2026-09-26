@@ -82,6 +82,8 @@
             </span>
           </template>
 
+          <ExtensionPointList category="topHeaderStatus" />
+
           <button
             ref="accountButton"
             type="button"
@@ -166,6 +168,8 @@
                 {{ backToOperatorLabel }}
               </span>
             </button>
+
+            <ExtensionPointList category="topHeaderAccountMenu" @click="closeLoginMenu" />
 
             <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>

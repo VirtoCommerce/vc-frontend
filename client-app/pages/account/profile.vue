@@ -89,6 +89,7 @@ import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
+import { useCartContext } from "@/core/composables/useCartContext";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals } from "@/core/globals";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
@@ -105,6 +106,7 @@ const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency()
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
 const { storeId, cultureName } = globals;
+const { cartName } = useCartContext();
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
@@ -152,6 +154,7 @@ async function applyCurrency(): Promise<void> {
         newCurrencyCode: user.value.contact.currencyCode,
         cultureName,
         currencyCode: globals.currencyCode,
+        cartName: cartName.value,
       },
     });
 

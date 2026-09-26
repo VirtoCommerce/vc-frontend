@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useGetMeQuery } from "@/core/api/graphql";
 import { ChangeCartCurrencyDocument, ClearCartDocument, MergeCartDocument } from "@/core/api/graphql/types";
 import { useAuth } from "@/core/composables/useAuth";
+import { useCartContext } from "@/core/composables/useCartContext";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
@@ -22,6 +23,7 @@ export function useSignMeIn() {
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
   const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
   const { currencyCode: currentCurrencyCode, storeId, cultureName } = globals;
+  const { cartName } = useCartContext();
   const { mutate: clearCurrencyCart } = useMutation(ClearCartDocument);
 
   const { isLoading: loading, execute: signIn } = useAsyncState(
@@ -64,6 +66,7 @@ export function useSignMeIn() {
                 storeId,
                 cultureName,
                 currencyCode: currentCurrencyCode,
+                cartName: cartName.value,
               },
             });
           }

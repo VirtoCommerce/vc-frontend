@@ -107,6 +107,11 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/skyflow/api/graphql",
     schemaPath: `${backendUrl}/graphql/skyflow`,
   },
+  {
+    name: "Punchout",
+    apiPath: "client-app/modules/punchout/api/graphql",
+    schemaPath: `${backendUrl}/graphql/punchout`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",
