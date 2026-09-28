@@ -26,10 +26,11 @@ export type CancelReturnCommandType = {
 };
 
 export type CreateReturnCommandType = {
+  /** Culture the buyer is using, such as en-US. The return's status emails are written in it; without it, in the order's. */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   customerComment?: InputMaybe<Scalars['String']['input']>;
   customerReference?: InputMaybe<Scalars['String']['input']>;
   items: Array<InputReturnItemType>;
-  languageCode?: InputMaybe<Scalars['String']['input']>;
   orderId: Scalars['String']['input'];
 };
 
@@ -177,7 +178,7 @@ export type ReturnEdge = {
 };
 
 export type ReturnLineItemType = {
-  /** Quantity an agent authorized; 0 means the line was rejected. */
+  /** Quantity the agent approved once the line is decided (see itemState); 0 until then, and when it is declined. */
   approvedQuantity: Scalars['Int']['output'];
   attachments: Array<ReturnAttachmentType>;
   id: Scalars['String']['output'];
@@ -221,8 +222,6 @@ export enum ReturnScopeEnum {
 }
 
 export type ReturnType = {
-  /** Total quantity authorized across the return's lines. */
-  approvedQuantity: Scalars['Int']['output'];
   /** Every known action, each flagged with whether it would be accepted now. */
   availableActions: Array<ReturnActionType>;
   /** Why the buyer withdrew the return. */
