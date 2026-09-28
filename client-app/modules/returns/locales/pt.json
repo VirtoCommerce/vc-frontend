@@ -123,7 +123,7 @@
     "title": "Adicionar detalhes da devolução",
     "title_with_number": "Adicionar detalhes da devolução {number}",
     "not_editable_message": "Esta devolução já não pode ser alterada",
-    "not_editable_message_with_status": "Esta devolução já não pode ser alterada: o seu estado é {status}",
+    "not_editable_message_with_status": "Esta devolução já não pode ser alterada — o seu estado é {status}",
     "details_section": "Detalhes",
     "bulk_section": "Aplicar a todas as linhas",
     "apply_to_all": "Aplicar um motivo às {count} linhas",

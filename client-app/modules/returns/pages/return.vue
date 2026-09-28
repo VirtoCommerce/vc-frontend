@@ -98,12 +98,6 @@
 
                   <span v-else>{{ item.approvedQuantity }}</span>
                 </div>
-
-                <div v-if="item.rejectReason" class="return-details__card-row">
-                  <span class="text-sm text-neutral-400">{{ $t("return_details.reject_reason") }}</span>
-
-                  <span>{{ item.rejectReason }}</span>
-                </div>
               </div>
             </template>
 
@@ -124,10 +118,6 @@
               <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
 
               <span v-else>{{ item.approvedQuantity }}</span>
-
-              <div v-if="item.rejectReason" class="text-sm text-danger-500">
-                {{ item.rejectReason }}
-              </div>
             </VcTableColumn>
           </VcTable>
         </template>
@@ -209,7 +199,9 @@ function openCancelModal(): void {
   });
 }
 
-const pageTitle = computed(() => t("return_details.title", [orderReturn.value?.number ?? ""]));
+const pageTitle = computed(() =>
+  orderReturn.value?.number ? t("return_details.title", [orderReturn.value.number]) : t("returns.title"),
+);
 
 usePageHead({ title: pageTitle });
 
