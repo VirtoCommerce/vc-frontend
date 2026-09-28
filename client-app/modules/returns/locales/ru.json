@@ -6,7 +6,6 @@
     },
     "title": "Возвраты",
     "scope": {
-      "organization": "Все возвраты",
       "own": "Мои возвраты"
     },
     "no_returns_message": "Возвратов пока нет",

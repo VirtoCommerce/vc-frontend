@@ -6,7 +6,6 @@
     },
     "title": "Returer",
     "scope": {
-      "organization": "Alla returer",
       "own": "Mina returer"
     },
     "no_returns_message": "Det finns inga returer ännu",

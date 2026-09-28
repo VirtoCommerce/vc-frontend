@@ -6,7 +6,6 @@
     },
     "title": "Rücksendungen",
     "scope": {
-      "organization": "Alle Rücksendungen",
       "own": "Meine Rücksendungen"
     },
     "no_returns_message": "Es liegen noch keine Rücksendungen vor",

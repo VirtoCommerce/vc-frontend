@@ -6,7 +6,6 @@
     },
     "title": "Palautukset",
     "scope": {
-      "organization": "Kaikki palautukset",
       "own": "Omat palautukset"
     },
     "no_returns_message": "Palautuksia ei ole vielä",

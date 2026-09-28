@@ -6,7 +6,6 @@
     },
     "title": "Retours",
     "scope": {
-      "organization": "Tous les retours",
       "own": "Mes retours"
     },
     "no_returns_message": "Il n'y a pas encore de retours",

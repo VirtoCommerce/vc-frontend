@@ -6,7 +6,6 @@
     },
     "title": "Devoluções",
     "scope": {
-      "organization": "Todas as devoluções",
       "own": "Minhas devoluções"
     },
     "no_returns_message": "Ainda não há devoluções",

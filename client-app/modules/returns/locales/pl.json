@@ -6,7 +6,6 @@
     },
     "title": "Zwroty",
     "scope": {
-      "organization": "Wszystkie zwroty",
       "own": "Moje zwroty"
     },
     "no_returns_message": "Nie ma jeszcze żadnych zwrotów",

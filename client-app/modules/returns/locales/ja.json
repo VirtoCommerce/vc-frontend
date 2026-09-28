@@ -6,7 +6,6 @@
     },
     "title": "返品",
     "scope": {
-      "organization": "すべての返品",
       "own": "自分の返品"
     },
     "no_returns_message": "返品はまだありません",

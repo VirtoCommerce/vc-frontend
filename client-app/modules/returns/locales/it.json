@@ -6,7 +6,6 @@
     },
     "title": "Resi",
     "scope": {
-      "organization": "Tutti i resi",
       "own": "I miei resi"
     },
     "no_returns_message": "Non ci sono ancora resi",

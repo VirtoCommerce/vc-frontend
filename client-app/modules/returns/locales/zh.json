@@ -6,7 +6,6 @@
     },
     "title": "退货",
     "scope": {
-      "organization": "所有退货",
       "own": "我的退货"
     },
     "no_returns_message": "暂无退货",

@@ -6,7 +6,6 @@
     },
     "title": "Returer",
     "scope": {
-      "organization": "Alle returer",
       "own": "Mine returer"
     },
     "no_returns_message": "Det finnes ingen returer ennå",
