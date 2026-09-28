@@ -46,9 +46,7 @@ export function useOtpSignIn() {
     }
   }
 
-  // Verifying and completing sign-in both happen in the same POST /connect/token call - it's the
-  // one place that already has to check the code, so it reports the detailed outcome directly
-  // instead of a separate, purely-informational /api/otp/verify call duplicating that check.
+  // POST /connect/token with grant_type=otp_email verifies the code and issues the tokens in one call.
   async function verifyCode(email: string, code: string): Promise<IOtpVerifyResponse | undefined> {
     loading.value = true;
 
