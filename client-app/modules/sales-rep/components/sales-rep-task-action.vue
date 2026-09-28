@@ -2,7 +2,7 @@
   <VcButton
     v-if="action"
     size="sm"
-    variant="surface"
+    variant="ghost"
     color="secondary"
     icon-size="1rem"
     class="sales-rep-task-action"
@@ -67,8 +67,8 @@ const label = computed(() => (action.value ? t(action.value.labelKey) : ""));
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-action {
-  // The glyph lines up with whatever sits above it — the column heading, or the card text on mobile — instead of a
-  // button's padding and border in from it. --px is the size's own padding; 2px is VcButton's fixed border-2.
+  // Lines the glyph up with the column heading (or the card text on mobile).
+  // TODO: --px and the 2px border-2 are VcButton internals; use public --vc-button-* tokens once the kit has them.
   margin-inline-start: calc((var(--px) + 2px) * -1);
 
   // VcButton only spaces its own prepend-icon; a slotted one brings its own gap.

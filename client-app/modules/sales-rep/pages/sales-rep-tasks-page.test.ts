@@ -2,7 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SalesRepTaskModal from "../components/sales-rep-task-modal.vue";
 import { localDayKey, localDayWindow } from "../tasks";
-import TasksPage from "./tasks.vue";
+import TasksPage from "./sales-rep-tasks-page.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
@@ -16,12 +16,13 @@ const state = await vi.hoisted(async () => {
     page: ref(1),
     pages: ref(1),
     totalCount: ref(0),
-    counts: ref({ day: 0, upcoming: 0, overdue: 0, completed: 0 }),
+    counts: ref({ day: 0, today: 0, all: 0, upcoming: 0, overdue: 0, completed: 0 }),
     countsDayWindow: undefined as { value: { from: string; to: string } } | undefined,
     rules: ref<{ name: string; label: string }[]>([]),
     filterParam: ref(""),
     rulesFailed: ref(false),
     month: ref("2026-10-01"),
+    setMonth: vi.fn(),
     useSalesRepTasks: vi.fn(),
     refetch: vi.fn(),
     refetchCounts: vi.fn(),
@@ -58,7 +59,7 @@ vi.mock("../composables/useSalesRepTaskCalendar", async () => {
       error: ref(null),
       refetch: state.refetchMarkers,
     }),
-    useMonthAnchor: () => ({ month: state.month, setMonth: vi.fn() }),
+    useMonthAnchor: () => ({ month: state.month, setMonth: state.setMonth }),
   };
 });
 vi.mock("../composables/useSalesRepTaskMutations", async () => {
@@ -117,8 +118,16 @@ const BreadcrumbsStub = {
 
 const ChipsStub = {
   name: "SalesRepRuleChips",
-  props: ["modelValue", "rules", "allLabel", "allCount", "loading"],
-  template: '<div class="chips" />',
+  props: ["modelValue", "rules", "loading"],
+  // The page fills the baseline with its own Today / day / All chips.
+  template: '<div class="chips"><slot name="baseline" /></div>',
+};
+
+const ScopeChipsStub = {
+  name: "SalesRepTaskScopeChips",
+  props: ["view", "dayLabel", "showDay", "counts"],
+  emits: ["today", "day", "all", "clearDay"],
+  template: '<div class="scope-chips" />',
 };
 
 const ListStub = {
@@ -150,6 +159,7 @@ function createWrapper() {
         VcBreadcrumbs: BreadcrumbsStub,
         SalesRepRuleAlert: true,
         SalesRepRuleChips: ChipsStub,
+        SalesRepTaskScopeChips: ScopeChipsStub,
         SalesRepTaskList: ListStub,
         SalesRepTaskCalendar: CalendarStub,
         VcEmptyView: true,
@@ -197,10 +207,11 @@ beforeEach(() => {
   state.page.value = 1;
   state.pages.value = 1;
   state.totalCount.value = 0;
-  state.counts.value = { day: 0, upcoming: 0, overdue: 0, completed: 0 };
+  state.counts.value = { day: 0, today: 0, all: 0, upcoming: 0, overdue: 0, completed: 0 };
   state.rules.value = [];
   state.rulesFailed.value = false;
   state.month.value = "2026-10-01";
+  state.setMonth.mockClear();
   dMock.mockClear();
   state.refetch.mockClear();
   state.refetchCounts.mockClear();
@@ -228,7 +239,7 @@ describe("Tasks page tabs", () => {
       { name: "upcoming", label: "Upcoming" },
       { name: "overdue", label: "Overdue" },
     ];
-    state.counts.value = { day: 2, upcoming: 7, overdue: 3, completed: 2 };
+    state.counts.value = { day: 2, today: 2, all: 12, upcoming: 7, overdue: 3, completed: 2 };
 
     const wrapper = createWrapper();
     const chips = wrapper.getComponent(ChipsStub);
@@ -239,23 +250,14 @@ describe("Tasks page tabs", () => {
     ]);
   });
 
-  // The baseline chip lists the selected day, so its badge is that day's total — not every task the rep ever
-  // had, which would promise a hundred rows over a list of two while the status badges match theirs exactly.
-  it("badges the baseline chip with the selected day's total, and hands the counts query that day", () => {
-    state.counts.value = { day: 2, upcoming: 7, overdue: 3, completed: 2 };
+  // Each scope chip's badge is its own scope's total; the counts query is handed the picked day for the day chip.
+  it("badges the Today / day / All chips from the counts query, and hands it the picked day", () => {
+    state.counts.value = { day: 2, today: 2, all: 12, upcoming: 7, overdue: 3, completed: 2 };
 
     const wrapper = createWrapper();
 
-    expect(wrapper.getComponent(ChipsStub).props("allCount")).toBe(2);
+    expect(wrapper.getComponent(ScopeChipsStub).props("counts")).toEqual(state.counts.value);
     expect(state.countsDayWindow?.value).toEqual(localDayWindow(localDayKey(new Date())));
-  });
-
-  // Labelled with the day it lists rather than "All": the status chips span every date from today, so the
-  // baseline is a different scope, not a superset of them (VCST-5732 QA A-2, A-5).
-  it('labels the baseline chip with the day on screen, not "All"', () => {
-    const wrapper = createWrapper();
-
-    expect(wrapper.getComponent(ChipsStub).props("allLabel")).toBe("Oct 15, 2026");
   });
 
   // The dashboard's overdue notice arrives as ?filter=overdue, so the page must open on that tab rather
@@ -288,6 +290,99 @@ describe("Tasks page tabs", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.getComponent(ChipsStub).props("rules")).toEqual([]);
+  });
+});
+
+describe("Tasks page scope chips", () => {
+  const scopeChips = (wrapper: WrapperType) => wrapper.getComponent(ScopeChipsStub);
+
+  async function pickDay(wrapper: WrapperType, day: string) {
+    wrapper.getComponent(CalendarStub).vm.$emit("update:modelValue", day);
+    await flushPromises();
+  }
+
+  it("opens on Today, with no chip of its own for the day", () => {
+    const wrapper = createWrapper();
+
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: false });
+  });
+
+  // A day other than today gets a chip labelled with its date, so the row says which day the list shows.
+  it("gives a picked day its own chip", async () => {
+    const wrapper = createWrapper();
+
+    await pickDay(wrapper, "2026-10-20");
+
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "day", showDay: true, dayLabel: "Oct 15, 2026" });
+  });
+
+  // What the old header button did: the list, the tab and the grid's month all come back to today.
+  it("returns to today from the Today chip, from a picked day and a tab", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+    await pickTab(wrapper, "overdue");
+
+    scopeChips(wrapper).vm.$emit("today");
+    await flushPromises();
+
+    const today = localDayKey(new Date());
+    expect(state.filterParam.value).toBe("");
+    expect(taskOptions().period.value).toEqual(localDayWindow(today));
+    expect(state.setMonth).toHaveBeenCalledWith(today);
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: false });
+  });
+
+  it("clears a picked day back to today from its chip", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+
+    scopeChips(wrapper).vm.$emit("clearDay");
+    await flushPromises();
+
+    expect(taskOptions().period.value).toEqual(localDayWindow(localDayKey(new Date())));
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: false });
+  });
+
+  // The day's chip stays while a tab is on, so the rep can get back to that day; clearing it leaves the tab alone.
+  it("keeps the picked day's chip under a tab, and clears it without dropping the tab", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+    await pickTab(wrapper, "overdue");
+
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: undefined, showDay: true });
+
+    scopeChips(wrapper).vm.$emit("clearDay");
+    await flushPromises();
+
+    expect(state.filterParam.value).toBe("overdue");
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: undefined, showDay: false });
+  });
+
+  it("goes back to the picked day from its chip", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+    await pickTab(wrapper, "overdue");
+
+    scopeChips(wrapper).vm.$emit("day");
+    await flushPromises();
+
+    expect(state.filterParam.value).toBe("");
+    expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-20"));
+  });
+
+  // Every task: no day window and no rule, so the list and the All badge count the same set.
+  it("lists every task under All", async () => {
+    const wrapper = createWrapper();
+
+    scopeChips(wrapper).vm.$emit("all");
+    await flushPromises();
+
+    expect(taskOptions().period.value).toBeUndefined();
+    expect(taskOptions().filter.value).toBeUndefined();
+    expect(scopeChips(wrapper).props("view")).toBe("all");
+    expect(wrapper.get(".sales-rep-tasks-page__day-title").text()).toBe("sales_rep.tasks.all");
+    // Not day-scoped, so no day is highlighted.
+    expect(wrapper.getComponent(CalendarStub).props("modelValue")).toBeUndefined();
   });
 });
 
@@ -429,6 +524,21 @@ describe("Tasks page states", () => {
       "sales_rep.tasks.legend.overdue",
       "sales_rep.tasks.legend.completed",
     ]);
+  });
+
+  // The rail is sized for the `sm` grid (VCST-6077); at `md` it would spill past the widget.
+  it("draws the month rail's calendar at sm", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.getComponent(CalendarStub).props("size")).toBe("sm");
+  });
+
+  it("names the month rail after its own heading", () => {
+    const wrapper = createWrapper();
+    const titleId = wrapper.get("aside").attributes("aria-labelledby");
+
+    expect(titleId).toBeTruthy();
+    expect(wrapper.get(`[id="${titleId}"]`).text()).toBe("sales_rep.tasks.due_dates");
   });
 });
 

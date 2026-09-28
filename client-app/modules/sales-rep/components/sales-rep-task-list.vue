@@ -102,10 +102,10 @@ const { t, d } = useI18n();
 // Resolved once per row rather than per template read: each one formats a date through Intl.
 const sublines = computed(() => new Map(props.tasks.map((task) => [task.id, taskSubline(task, t, d)])));
 
-function titleClass(task: SalesRepTaskType): string[] {
+function titleClass(task: SalesRepTaskType) {
   return [
     "sales-rep-task-list__title-button",
-    task.status === "completed" ? "sales-rep-task-list__title-button--completed" : "",
+    { "sales-rep-task-list__title-button--completed": task.status === "completed" },
   ];
 }
 </script>
@@ -140,7 +140,7 @@ function titleClass(task: SalesRepTaskType): string[] {
     @apply line-clamp-2 max-w-full text-start text-sm font-bold text-[--link-color] hover:text-[--link-hover-color];
 
     &--completed {
-      @apply font-normal text-neutral-600 line-through;
+      @apply line-through;
     }
   }
 

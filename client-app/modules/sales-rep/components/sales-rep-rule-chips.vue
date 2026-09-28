@@ -5,17 +5,21 @@
          but every surface here already reads a falsy filter as the baseline).
          `Boolean(true)`, not `:value="true"`: the latter trips vue/prefer-true-attribute-shorthand,
          and the shorthand it asks for passes "" instead — same reason as variations.vue. -->
-    <VcTabSwitch
-      class="sales-rep-rule-chips__tab"
-      size="sm"
-      :value="Boolean(true)"
-      :model-value="!modelValue"
-      @change="modelValue = undefined"
-    >
-      <span class="sales-rep-rule-chips__label">{{ allLabel }}</span>
+    <!-- A surface whose "no rule" state has more than one view (the Tasks page: Today / a day / All) draws its
+         own baseline chips here, inside the row so they share its layout and chip styles. -->
+    <slot name="baseline">
+      <VcTabSwitch
+        class="sales-rep-rule-chips__tab"
+        size="sm"
+        :value="Boolean(true)"
+        :model-value="!modelValue"
+        @change="modelValue = undefined"
+      >
+        <span class="sales-rep-rule-chips__label">{{ allLabel }}</span>
 
-      <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
-    </VcTabSwitch>
+        <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
+      </VcTabSwitch>
+    </slot>
 
     <VcTabSwitch
       v-for="rule in selectableRules"
@@ -41,8 +45,8 @@ import type { SalesRepRuleType } from "../types";
 interface IProps {
   // The server-defined filter rules to offer as tabs.
   rules: SalesRepRuleType[];
-  // Label for the synthetic baseline tab (the "All" / no-filter option).
-  allLabel: string;
+  // Label for the synthetic baseline tab (the "All" / no-filter option). Unused when the #baseline slot is filled.
+  allLabel?: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".

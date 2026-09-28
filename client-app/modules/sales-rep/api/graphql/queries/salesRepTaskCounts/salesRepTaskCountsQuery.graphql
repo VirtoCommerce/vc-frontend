@@ -1,9 +1,19 @@
-# One round trip for the tab badges: four aliases of the same field, each asking only for totalCount
+# One round trip for the chip badges: aliases of the same field, each asking only for totalCount
 # (first: 0 fetches no rows). The backend has no dedicated counts query and does not need one.
-# `day` is what the "All" tab shows - the selected day, not every task ever - so it takes the day window,
-# while the status aliases span every date like the tabs they badge.
-query SalesRepTaskCounts($today: DateTime!, $period: SalesRepStatisticsPeriodInput!) {
+# `day` is the picked day and `currentDay` today (the same window until another day is picked); `all` spans every
+# task, and the status aliases span every date like the tabs they badge.
+query SalesRepTaskCounts(
+  $today: DateTime!
+  $period: SalesRepStatisticsPeriodInput!
+  $todayPeriod: SalesRepStatisticsPeriodInput!
+) {
   day: salesRepTasks(first: 0, period: $period) {
+    totalCount
+  }
+  currentDay: salesRepTasks(first: 0, period: $todayPeriod) {
+    totalCount
+  }
+  all: salesRepTasks(first: 0) {
     totalCount
   }
   upcoming: salesRepTasks(first: 0, filter: "upcoming", today: $today) {

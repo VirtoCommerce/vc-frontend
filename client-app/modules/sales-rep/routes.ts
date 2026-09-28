@@ -31,7 +31,7 @@ const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
 const DocumentsPage = () => import("./pages/documents.vue");
-const TasksPage = () => import("./pages/tasks.vue");
+const TasksPage = () => import("./pages/sales-rep-tasks-page.vue");
 
 // Reps only: the My customers gate (SalesRep.Enabled + sales-rep:access) AND every extra permission
 // the page names (checkPermissions is a variadic AND; admins pass), else -> Dashboard.

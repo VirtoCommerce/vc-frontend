@@ -18,21 +18,27 @@
       </div>
     </div>
 
+    <SalesRepRuleAlert :filter-failed="filterRulesFailed" />
+
+    <!-- Today, a picked day and All are the views with no status rule. A picked day gets a chip of its own,
+         labelled with its date, so the row always says which day the list shows (VCST-5732 QA A-2, A-5). -->
+    <SalesRepRuleChips v-model="filter" :rules="tabRules" :loading="filterRulesLoading">
+      <template #baseline>
+        <SalesRepTaskScopeChips
+          :view="scopeView"
+          :day-label="selectedDayLabel"
+          :show-day="!isToday"
+          :counts="counts"
+          @today="goToToday"
+          @day="selectDay(selectedDay)"
+          @all="showAll"
+          @clear-day="clearDay"
+        />
+      </template>
+    </SalesRepRuleChips>
+
     <div class="sales-rep-tasks-page__body">
       <div class="sales-rep-tasks-page__main">
-        <SalesRepRuleAlert :filter-failed="filterRulesFailed" />
-
-        <!-- The baseline chip is labelled with the day it lists, not "All": the status chips are anchored to
-             today and span every date, so a chip reading "All" claimed a scope it never had, and nothing showed
-             which day one of them had taken over from (VCST-5732 QA A-2, A-5). -->
-        <SalesRepRuleChips
-          v-model="filter"
-          :rules="tabRules"
-          :all-label="selectedDayLabel"
-          :all-count="counts.day"
-          :loading="filterRulesLoading"
-        />
-
         <VcWidget size="md">
           <template #header-container>
             <div class="sales-rep-tasks-page__day-head">
@@ -65,7 +71,7 @@
                  which scope that is depends on whether a status tab replaced the day. -->
             <VcEmptyView
               v-else-if="!tasks.length && !loading"
-              :text="t(filter ? 'sales_rep.tasks.empty' : 'sales_rep.tasks.empty_day')"
+              :text="t(inDayView ? 'sales_rep.tasks.empty_day' : 'sales_rep.tasks.empty')"
               variant="empty"
               icon="calendar"
             />
@@ -87,22 +93,19 @@
 
       <aside class="sales-rep-tasks-page__aside" :aria-labelledby="dueDatesTitleId">
         <VcWidget size="sm">
-          <!-- .vc-calendar is inline-flex over fixed-width columns, so on its own it hugs the inline start of
-               the rail and leaves the slack on one side (QA M-10). Centring belongs on the container: an
-               inline-level box ignores auto margins. The title and legend sit inside it to share its left edge. -->
+          <!-- Centres the inline-flex calendar (QA M-10); the title and legend share its left edge. -->
           <div class="sales-rep-tasks-page__month">
-            <!-- In the content, not the widget's title: a header row brings its own divider and inset, and the
-                 mockup runs the title straight into the month. -->
-            <h2 :id="dueDatesTitleId" class="sales-rep-tasks-page__month-title">
+            <!-- In the content, not the widget's title: a header row would add a divider the mockup does not have. -->
+            <VcTypography :id="dueDatesTitleId" tag="h2" variant="h5" class="sales-rep-tasks-page__month-title">
               {{ t("sales_rep.tasks.due_dates") }}
-            </h2>
+            </VcTypography>
 
-            <!-- No selection while a tab is active: the list is not day-scoped then, so highlighting a day would
+            <!-- No selection outside the day view: the list is not day-scoped then, so highlighting a day would
                  misdescribe it - and reka emits nothing when the clicked day is already the selected one, which
                  made that cell a dead click. With no selection, any day is a change and clears the tab. -->
             <SalesRepTaskCalendar
               size="sm"
-              :model-value="filter ? undefined : selectedDay"
+              :model-value="inDayView ? selectedDay : undefined"
               :month="month"
               :day-markers="dayMarkers"
               @update:model-value="selectDay"
@@ -133,6 +136,7 @@ import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import SalesRepTaskCalendar from "../components/sales-rep-task-calendar.vue";
 import SalesRepTaskList from "../components/sales-rep-task-list.vue";
 import SalesRepTaskModal from "../components/sales-rep-task-modal.vue";
+import SalesRepTaskScopeChips from "../components/sales-rep-task-scope-chips.vue";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
 import { useSalesRepTaskCounts } from "../composables/useSalesRepTaskCounts";
@@ -140,7 +144,7 @@ import { useSalesRepTaskMutations } from "../composables/useSalesRepTaskMutation
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
 import { TASKS_SORT_RULE } from "../constants";
 import { TASK_MARKER_KINDS, localDayKey, localDayKeyToDate, localDayWindow, toMonthKey } from "../tasks";
-import type { SalesRepTaskType } from "../types/tasks";
+import type { SalesRepTaskScopeType, SalesRepTaskType } from "../types/tasks";
 
 const { t, d } = useI18n();
 const { openModal } = useModal();
@@ -155,7 +159,11 @@ const breadcrumbs = useBreadcrumbs(() => [
 // Names the month rail's landmark after its own heading.
 const dueDatesTitleId = useId();
 
-const selectedDay = ref(localDayKey(new Date()));
+// Resolved once, like the counts' own boundary: a "today" that moved mid-session would reshuffle the chips.
+const todayKey = localDayKey(new Date());
+const selectedDay = ref(todayKey);
+// All is a view of its own rather than a server rule: every task, with neither a day window nor a filter.
+const showingAll = ref(false);
 // Drives the dots query. The calendar owns which month is on screen and reports it back.
 const { month, setMonth } = useMonthAnchor();
 
@@ -178,8 +186,23 @@ const filter = computed<string | undefined>({
   },
 });
 
+const inDayView = computed(() => !filter.value && !showingAll.value);
+const isToday = computed(() => selectedDay.value === todayKey);
+// Which of Today / the picked day / All is on; undefined while a status tab has taken over.
+const scopeView = computed<SalesRepTaskScopeType | undefined>(() => {
+  if (filter.value) {
+    return undefined;
+  }
+
+  if (showingAll.value) {
+    return "all";
+  }
+
+  return isToday.value ? "today" : "day";
+});
+
 const dayWindow = computed(() => localDayWindow(selectedDay.value));
-const period = computed(() => (filter.value ? undefined : dayWindow.value));
+const period = computed(() => (inDayView.value ? dayWindow.value : undefined));
 
 const {
   items: tasks,
@@ -195,7 +218,7 @@ const {
   sort: TASKS_SORT_RULE,
 });
 
-// The baseline badge follows the day, not the tab: it is what clicking that chip lists.
+// Every chip's badge in one request; `day` follows the picked day, `today` stays on today.
 const { counts, refetch: refetchCounts } = useSalesRepTaskCounts(dayWindow);
 const { dayMarkers, refetch: refetchMarkers } = useSalesRepTaskCalendar(month);
 const { setCompleted, loading: saving } = useSalesRepTaskMutations();
@@ -219,16 +242,36 @@ const tabRules = computed(() =>
 // "short" (Sep 1, 2026), not "long" — the long named format appends a time, and this heading names a DAY.
 const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
 
-// Whichever view is on: the day, or the tab named by its own chip.
-const panelTitle = computed(() =>
-  filter.value
-    ? (filterRules.value.find((rule) => rule.name === filter.value)?.label ?? filter.value)
-    : selectedDayLabel.value,
-);
+// Whichever view is on: the tab named by its own chip, All, or the day.
+const panelTitle = computed(() => {
+  if (filter.value) {
+    return filterRules.value.find((rule) => rule.name === filter.value)?.label ?? filter.value;
+  }
+
+  return showingAll.value ? t("sales_rep.tasks.all") : selectedDayLabel.value;
+});
 
 function selectDay(day: string): void {
   selectedDay.value = day;
+  showingAll.value = false;
   filter.value = undefined;
+}
+
+// The Today chip: the list, the tab and the grid's month all come back to today.
+function goToToday(): void {
+  selectDay(todayKey);
+  setMonth(todayKey);
+}
+
+function showAll(): void {
+  showingAll.value = true;
+  filter.value = undefined;
+}
+
+// The picked day's ×: back to today. Only a view of that day changes with it — a tab or All stays on screen.
+function clearDay(): void {
+  selectedDay.value = todayKey;
+  setMonth(todayKey);
 }
 
 function changePage(value: number): void {
@@ -256,10 +299,10 @@ async function toggleCompletion(task: SalesRepTaskType): Promise<void> {
 // that no longer contains it, leaving "Task saved" over a list where it is nowhere to be seen. A delete reports
 // nothing — there is no row left to go to.
 async function onTaskSaved(dayKey?: string): Promise<void> {
-  // Follow the task only in the DAY view, and only when it actually moved. A status tab spans every date,
-  // so a task that changed date is in or out of that tab on its own merits — jumping to its day would throw
-  // away the tab the rep chose, and the `?filter=` in the URL with it.
-  const movedTo = dayKey && !filter.value && dayKey !== selectedDay.value ? dayKey : undefined;
+  // Follow the task only in the DAY view, and only when it actually moved. A status tab and All span every date,
+  // so a task that changed date is in or out of them on its own merits — jumping to its day would throw away
+  // the view the rep chose, and a tab's `?filter=` in the URL with it.
+  const movedTo = dayKey && inDayView.value && dayKey !== selectedDay.value ? dayKey : undefined;
   const rescopesGrid = !!movedTo && toMonthKey(movedTo) !== month.value;
 
   if (movedTo) {
@@ -306,16 +349,13 @@ function openTaskModal(task?: SalesRepTaskType): void {
     @apply flex flex-none flex-wrap gap-3;
   }
 
-  // The month rail only splits off at xl, matching layout-surface's aside breakpoint. It starts level with the
-  // chips, not the list: the chips filter the list, so they belong to its column (VCST-6077).
+  // The month rail splits off at xl, like layout-surface's aside, level with the list column.
   &__body {
     @apply flex flex-col gap-5 xl:flex-row xl:items-start;
   }
 
-  // Stacked like the page's own children, which .account-shell__content spaces with gap-y-5: the alert and
-  // the chips left that parent when they moved into this column.
   &__main {
-    @apply flex min-w-0 grow flex-col gap-5;
+    @apply min-w-0 grow;
   }
 
   &__day-head {
@@ -327,9 +367,7 @@ function openTaskModal(task?: SalesRepTaskType): void {
     @apply mt-2 block text-xs text-neutral-500;
   }
 
-  // A few pixels wider than a `sm` calendar needs (7 × 2rem + 6 × 2px = 236px inside the widget's padding): its
-  // header grows with the month name, and a rail sized to the grid alone ellipsizes "September 2026". __month
-  // centres whatever is left over (VCST-6077).
+  // Room for a `sm` calendar plus a long month name ("September 2026"); __month centres the rest.
   &__aside {
     @apply min-w-0 xl:w-[17.5rem] xl:shrink-0;
   }
@@ -338,9 +376,8 @@ function openTaskModal(task?: SalesRepTaskType): void {
     @apply mx-auto w-fit;
   }
 
-  // Set like a `sm` VcWidget title, which is what it stands in for.
   &__month-title {
-    @apply mb-3 text-base font-bold uppercase [word-break:break-word];
+    @apply mb-3;
   }
 
   &__legend {

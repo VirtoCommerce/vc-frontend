@@ -133,10 +133,8 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
   &__body {
     @apply flex flex-col px-6 py-2;
 
-    // .vc-calendar is inline-flex over a grid of fixed --cell-size columns, so as a stretched flex item it
-    // gets a box wider than its own grid and the days bunch against one edge (QA M-10). Shrink-wrap and
-    // centre it instead; `mx-auto` would not do it, an inline-level box ignores auto margins.
-    .vc-calendar {
+    // The calendar is inline-flex over fixed-width columns: stretched, its days bunch against one edge (QA M-10).
+    .sales-rep-task-calendar {
       @apply self-center;
     }
   }

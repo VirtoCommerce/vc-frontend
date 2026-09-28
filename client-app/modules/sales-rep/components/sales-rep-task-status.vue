@@ -21,9 +21,9 @@ const { t } = useI18n();
 
 type StatusAppearanceType = { color: VcChipColorType; variant: VcChipVariantType; icon: string };
 
-// The Orders recipe (settings_data.json → orders_statuses): semantic colour + variant + a leading glyph, and the
-// same pairs as the order states they read like — open work as Processing, closed as Completed / Cancelled.
-// "tonal" is what those settings still spell as the deprecated "outline-dark"; VcChip renders the two the same.
+// The Orders recipe (settings_data.json → orders_statuses), one order state per task state: upcoming = Processing,
+// overdue = Cancelled (the danger pair), completed = Completed; canceled has no order twin and takes neutral.
+// "tonal" is the current name of the deprecated "outline-dark" those settings still use.
 const APPEARANCE: Record<SalesRepTaskStatusType, StatusAppearanceType> = {
   overdue: { color: "danger", variant: "tonal", icon: "circle-solid" },
   upcoming: { color: "info", variant: "outline", icon: "process" },

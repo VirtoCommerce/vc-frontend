@@ -111,9 +111,9 @@ function onSelect(day: string | undefined): void {
   // already ships that pairing on every solid primary button.
   --vc-calendar-selected-bg: var(--color-vc-background-solid-primary, var(--color-primary-500));
 
-  &.vc-calendar {
-    @apply border-0 p-0;
-  }
+  // One frame, not two: every surface already puts this calendar inside a widget.
+  --vc-calendar-border-width: 0;
+  --vc-calendar-padding: 0;
 
   &__dots {
     // .vc-calendar__day is position:relative, so the row sits under the number without shifting the grid.
