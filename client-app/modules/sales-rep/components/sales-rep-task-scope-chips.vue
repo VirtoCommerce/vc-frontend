@@ -12,13 +12,20 @@
       type="button"
       class="sales-rep-task-scope-chips__clear"
       :aria-label="t('sales_rep.tasks.clear_day_aria', { date: dayLabel })"
-      @click="$emit('clearDay')"
+      @click="clearDay"
     >
       <VcIcon name="delete-2" size="12px" />
     </button>
   </span>
 
-  <VcTabSwitch class="sales-rep-rule-chips__tab" size="sm" value="today" :model-value="view" @change="$emit('today')">
+  <VcTabSwitch
+    ref="todayTabRef"
+    class="sales-rep-rule-chips__tab"
+    size="sm"
+    value="today"
+    :model-value="view"
+    @change="$emit('today')"
+  >
     <span class="sales-rep-rule-chips__label">{{ t("sales_rep.tasks.today") }}</span>
 
     <span class="sales-rep-rule-chips__count">{{ formatStatCount(counts.today) }}</span>
@@ -32,9 +39,11 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatStatCount } from "../utils";
 import type { SalesRepTaskCountsType, SalesRepTaskScopeType } from "../types/tasks";
+import type { ComponentPublicInstance } from "vue";
 
 interface IProps {
   /** The scope on screen; undefined while a status tab has taken over. */
@@ -46,7 +55,7 @@ interface IProps {
   counts: Pick<SalesRepTaskCountsType, "today" | "all">;
 }
 
-defineEmits<{
+const emit = defineEmits<{
   (event: "today"): void;
   (event: "day"): void;
   (event: "all"): void;
@@ -56,6 +65,13 @@ defineEmits<{
 defineProps<IProps>();
 
 const { t } = useI18n();
+
+const todayTabRef = useTemplateRef<ComponentPublicInstance | null>("todayTabRef");
+
+function clearDay(): void {
+  (todayTabRef.value?.$el as HTMLElement | undefined)?.querySelector("button")?.focus();
+  emit("clearDay");
+}
 </script>
 
 <style lang="scss">

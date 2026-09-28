@@ -699,8 +699,9 @@ describe("Tasks page writes", () => {
 
     expect(state.refetch).not.toHaveBeenCalled();
     expect(state.refetchMarkers).not.toHaveBeenCalled();
-    // The counts carry the day for the All badge, so the move rescoped them as well.
-    expect(state.refetchCounts).not.toHaveBeenCalled();
+    // The counts key off no day, so nothing restarts them: a task saved onto another day still has to reach
+    // the All and status badges.
+    expect(state.refetchCounts).toHaveBeenCalled();
   });
 
   it("still refreshes the counts when the save stayed on the day on screen", async () => {

@@ -16,7 +16,7 @@ type PropsType = { view?: SalesRepTaskScopeType; showDay?: boolean };
  * Mounted inside a single-root host, as the chips row renders it: the component is multi-root, and VTU's findAll on a
  * fragment lists matching roots before nested matches, which would scramble the chip order under test.
  */
-function createWrapper(options: PropsType = {}) {
+function createWrapper(options: PropsType = {}, attachTo?: HTMLElement) {
   // `in`, not a default: an explicit undefined view (a status tab is on) must stay undefined.
   const view = "view" in options ? options.view : "today";
   const Host = defineComponent({
@@ -32,6 +32,7 @@ function createWrapper(options: PropsType = {}) {
   });
 
   return mount(Host, {
+    attachTo,
     global: {
       stubs: {
         VcTabSwitch: {
@@ -105,5 +106,17 @@ describe("SalesRepTaskScopeChips", () => {
 
     expect(chips(wrapper).emitted("clearDay")).toHaveLength(1);
     expect(chips(wrapper).emitted("day")).toBeUndefined();
+  });
+
+  // The × leaves with its chip; without a next stop, focus would drop to <body> and a keyboard user back to the top.
+  it("hands focus to Today as the picked day's chip is cleared", async () => {
+    const wrapper = createWrapper({ view: "day", showDay: true }, document.body);
+    const clear = wrapper.get<HTMLButtonElement>(".sales-rep-task-scope-chips__clear");
+    clear.element.focus();
+
+    await clear.trigger("click");
+
+    expect(document.activeElement).toBe(tab(wrapper, "today").get(".tab-button").element);
+    wrapper.unmount();
   });
 });

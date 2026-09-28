@@ -333,10 +333,11 @@ async function onTaskSaved(dayKey?: string): Promise<void> {
    * Only the surfaces the move did NOT rescope get an explicit refetch. Apollo restarts a query whose variables
    * changed on its own, and its `restart` is deferred to `nextTick` while `refetch()` runs synchronously — so
    * refetching a rescoped query here fires a second, redundant request carrying the pre-move variables.
-   * The list and the counts both key off the selected day, so they rescope together or not at all.
+   * The counts key off no day, so no move rescopes them: they are always refetched.
    */
   await Promise.allSettled([
-    ...(movedTo ? [] : [refetchCounts(), refetch()]),
+    refetchCounts(),
+    ...(movedTo ? [] : [refetch()]),
     ...(rescopesGrid ? [] : [refetchMarkers()]),
   ]);
 }
@@ -396,7 +397,7 @@ function openTaskModal(task?: SalesRepTaskType): void {
   }
 
   &__month-title {
-    @apply mb-3;
+    @apply mb-1;
   }
 
   &__legend {
