@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Returer",
+      "table_description": "liste over returer"
+    },
+    "title": "Returer",
+    "no_returns_message": "Det finnes ingen returer ennå",
+    "no_results_message": "Ingen returer samsvarer med søket",
+    "search_placeholder": "Søk etter RMA, ordre, referanse eller produkt",
+    "search_aria": "Søk i returer",
+    "filters": {
+      "title": "Filtre",
+      "created_date": "Opprettelsesdato",
+      "start_date": "Startdato",
+      "end_date": "Sluttdato",
+      "invalid_range": "Ugyldig datoområde.",
+      "custom_date": "Tilpasset dato",
+      "last_day": "Siste dag",
+      "last_week": "Siste uke",
+      "last_month": "Siste måned",
+      "last_year": "Siste år",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Utkast",
+      "Requested": "Forespørt",
+      "PartiallyApproved": "Delvis godkjent",
+      "Approved": "Godkjent",
+      "Rejected": "Avvist",
+      "Cancelled": "Kansellert",
+      "Canceled": "Kansellert",
+      "New": "Ny",
+      "Processing": "Behandles",
+      "Completed": "Fullført"
+    },
+    "request_button": "Be om retur",
+    "menu": {
+      "link": {
+        "title": "Returer"
+      }
+    },
+    "select_items": {
+      "title": "Velg varer som skal returneres",
+      "meta_title": "Velg varer som skal returneres",
+      "table_description": "ordrelinjer tilgjengelig for retur",
+      "select_all": "Velg alle kvalifiserte linjer",
+      "eligible_count": "{eligible} av {total} linjer kvalifisert",
+      "nothing_returnable": "Ingenting i denne ordren kan returneres",
+      "window_hint": "Varer kan returneres innen {days} dager etter levering",
+      "selected_summary": "{lines} valgt · {quantity} varer",
+      "columns": {
+        "item": "Vare",
+        "ordered": "Bestilt",
+        "returnable": "Returnerbar",
+        "quantity": "Antall"
+      },
+      "quantity_for": "Returantall for {name}",
+      "continue": "Fortsett"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Returer er slått av for denne butikken",
+      "ORDER_STATUS_NOT_ALLOWED": "Returer er ikke tillatt fra denne ordrens status",
+      "LINE_CANCELLED": "Denne linjen ble kansellert",
+      "NOT_DELIVERED": "Ikke levert ennå",
+      "OUTSIDE_RETURN_WINDOW": "Utenfor returfristen",
+      "NOTHING_LEFT_TO_RETURN": "Allerede fullstendig forespurt",
+      "UNHANDLED": "Denne varen kan ikke returneres"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Denne returen er ikke lenger på et stadium der det er mulig",
+      "UNHANDLED": "Denne handlingen er ikke tilgjengelig akkurat nå"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "En av filene kunne ikke legges ved. Fjern den og last opp på nytt.",
+      "INVALID_REQUEST": "Noen av opplysningene godtas ikke. Kontroller årsaker og kommentarer og prøv igjen.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Dato",
+        "status": "Status",
+        "quantity": "Antall"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Retur {0}",
+    "not_found_message": "Denne returen ble ikke funnet",
+    "summary_section": "Sammendrag",
+    "items_section": "Varer",
+    "order_number": "Ordrenummer",
+    "customer_reference": "Din bestillingsreferanse",
+    "customer_comment": "Kommentar",
+    "cancel_reason": "Årsak til kansellering",
+    "cancel_button": "Avbryt retur",
+    "columns": {
+      "requested": "Forespurt",
+      "approved": "Godkjent"
+    },
+    "table_description": "returnerte varer"
+  },
+  "return_cancel": {
+    "title": "Avbryt retur",
+    "text": "Retur {0} trekkes tilbake, og varene blir tilgjengelige for retur igjen.",
+    "reason_label": "Årsak (valgfritt)",
+    "keep_button": "Behold retur",
+    "confirm_button": "Avbryt retur"
+  },
+  "return_edit": {
+    "title": "Legg til returdetaljer",
+    "title_with_number": "Legg til detaljer for retur {number}",
+    "not_editable_message": "Denne returen kan ikke lenger endres",
+    "not_editable_message_with_status": "Denne returen kan ikke lenger endres — statusen er {status}",
+    "details_section": "Detaljer",
+    "bulk_section": "Bruk på alle linjer",
+    "apply_to_all": "Bruk én årsak på alle {count} linjene",
+    "apply": "Bruk",
+    "reason": "Årsak",
+    "serial_number": "Serienummer",
+    "reason_comment": "Hva er galt med den?",
+    "saving": "Lagrer…",
+    "saved_automatically": "Lagret automatisk",
+    "submit": "Send inn retur",
+    "files": "Bilder eller dokumenter",
+    "files_required": "Bilder eller dokumenter (påkrevd)",
+    "incomplete": {
+      "quantity": "{count} linje(r) mangler fortsatt et antall",
+      "reason": "{count} linje(r) mangler årsak",
+      "comment": "{count} linje(r) mangler fortsatt en kommentar",
+      "attachment": "{count} linje(r) mangler fortsatt et bilde"
+    },
+    "uploads_pending": "Venter på at filene skal lastes opp",
+    "uploads_failed": "Noen filer kunne ikke lastes opp. Fjern dem eller prøv igjen før du sender.",
+    "quantity_for": "Antall som returneres for {name}",
+    "available": "av {quantity} tilgjengelig"
+  }
+}

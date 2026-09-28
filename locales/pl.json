@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Ta realizacja zamówienia należy do innego konta lub organizacji. Zaloguj się na konto używane w asystencie zakupowym i spróbuj ponownie.",
+      "expired": "Ten link do realizacji zamówienia wygasł, został już użyty lub jest niedostępny w tej karcie. Poproś asystenta zakupowego o nowy link.",
+      "restore_failed": "Nie udało się otworzyć realizacji zamówienia. Spróbuj ponownie otworzyć link za chwilę.",
+      "authorization_failed": "Nie udało się kontynuować logowania",
+      "authorization_retry": "Uruchom ponownie połączenie w asystencie zakupowym. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem sklepu."
+    },
     "buttons": {
       "home": "Strona główna",
       "ok": "OK",
