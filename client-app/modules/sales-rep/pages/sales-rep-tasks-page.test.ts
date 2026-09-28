@@ -16,8 +16,7 @@ const state = await vi.hoisted(async () => {
     page: ref(1),
     pages: ref(1),
     totalCount: ref(0),
-    counts: ref({ day: 0, today: 0, all: 0, upcoming: 0, overdue: 0, completed: 0 }),
-    countsDayWindow: undefined as { value: { from: string; to: string } } | undefined,
+    counts: ref({ today: 0, all: 0, upcoming: 0, overdue: 0, completed: 0 }),
     rules: ref<{ name: string; label: string }[]>([]),
     filterParam: ref(""),
     rulesFailed: ref(false),
@@ -44,10 +43,12 @@ vi.mock("../composables/useSalesRepTasks", () => ({ useSalesRepTasks: state.useS
 vi.mock("../composables/useSalesRepTaskCounts", async () => {
   const { ref } = await import("vue");
   return {
-    useSalesRepTaskCounts: (dayWindow: { value: { from: string; to: string } }) => {
-      state.countsDayWindow = dayWindow;
-      return { counts: state.counts, loading: ref(false), error: ref(null), refetch: state.refetchCounts };
-    },
+    useSalesRepTaskCounts: () => ({
+      counts: state.counts,
+      loading: ref(false),
+      error: ref(null),
+      refetch: state.refetchCounts,
+    }),
   };
 });
 vi.mock("../composables/useSalesRepTaskCalendar", async () => {
@@ -207,7 +208,7 @@ beforeEach(() => {
   state.page.value = 1;
   state.pages.value = 1;
   state.totalCount.value = 0;
-  state.counts.value = { day: 0, today: 0, all: 0, upcoming: 0, overdue: 0, completed: 0 };
+  state.counts.value = { today: 0, all: 0, upcoming: 0, overdue: 0, completed: 0 };
   state.rules.value = [];
   state.rulesFailed.value = false;
   state.month.value = "2026-10-01";
@@ -239,7 +240,7 @@ describe("Tasks page tabs", () => {
       { name: "upcoming", label: "Upcoming" },
       { name: "overdue", label: "Overdue" },
     ];
-    state.counts.value = { day: 2, today: 2, all: 12, upcoming: 7, overdue: 3, completed: 2 };
+    state.counts.value = { today: 2, all: 12, upcoming: 7, overdue: 3, completed: 2 };
 
     const wrapper = createWrapper();
     const chips = wrapper.getComponent(ChipsStub);
@@ -250,14 +251,12 @@ describe("Tasks page tabs", () => {
     ]);
   });
 
-  // Each scope chip's badge is its own scope's total; the counts query is handed the picked day for the day chip.
-  it("badges the Today / day / All chips from the counts query, and hands it the picked day", () => {
-    state.counts.value = { day: 2, today: 2, all: 12, upcoming: 7, overdue: 3, completed: 2 };
+  it("badges the Today and All chips from the counts query", () => {
+    state.counts.value = { today: 2, all: 12, upcoming: 7, overdue: 3, completed: 2 };
 
     const wrapper = createWrapper();
 
     expect(wrapper.getComponent(ScopeChipsStub).props("counts")).toEqual(state.counts.value);
-    expect(state.countsDayWindow?.value).toEqual(localDayWindow(localDayKey(new Date())));
   });
 
   // The dashboard's overdue notice arrives as ?filter=overdue, so the page must open on that tab rather
@@ -329,7 +328,41 @@ describe("Tasks page scope chips", () => {
     expect(state.filterParam.value).toBe("");
     expect(taskOptions().period.value).toEqual(localDayWindow(today));
     expect(state.setMonth).toHaveBeenCalledWith(today);
+    // Only its × closes the date chip (VCST-6077 mockup).
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: true });
+  });
+
+  it("keeps the date chip when today is picked in the calendar", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+
+    await pickDay(wrapper, localDayKey(new Date()));
+
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: true });
+  });
+
+  it("moves the date chip to the latest day picked", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+    await pickDay(wrapper, "2026-10-22");
+
+    expect(dMock).toHaveBeenLastCalledWith(new Date("2026-10-22T00:00:00"), "short");
+    expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-22"));
+  });
+
+  // Closing the chip while Today is on changes nothing else.
+  it("closes the date chip from Today without leaving Today", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+    scopeChips(wrapper).vm.$emit("today");
+    await flushPromises();
+    state.setMonth.mockClear();
+
+    scopeChips(wrapper).vm.$emit("clearDay");
+    await flushPromises();
+
     expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: false });
+    expect(state.setMonth).not.toHaveBeenCalled();
   });
 
   it("clears a picked day back to today from its chip", async () => {
@@ -368,6 +401,7 @@ describe("Tasks page scope chips", () => {
 
     expect(state.filterParam.value).toBe("");
     expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-20"));
+    expect(state.setMonth).toHaveBeenLastCalledWith("2026-10-20");
   });
 
   // Every task: no day window and no rule, so the list and the All badge count the same set.

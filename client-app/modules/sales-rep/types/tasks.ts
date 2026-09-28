@@ -28,8 +28,6 @@ export type SalesRepTaskDayMarkersType = Record<string, SalesRepTaskDayType>;
 export type SalesRepTaskScopeType = "today" | "day" | "all";
 
 export type SalesRepTaskCountsType = {
-  /** Tasks due on the picked day — the date chip's badge, unlike the status tabs spanning every date. */
-  day: number;
   today: number;
   all: number;
   upcoming: number;

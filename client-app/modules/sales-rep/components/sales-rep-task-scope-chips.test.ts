@@ -26,7 +26,7 @@ function createWrapper(options: PropsType = {}) {
           view,
           showDay: options.showDay ?? false,
           dayLabel: "Oct 20, 2026",
-          counts: { today: 3, day: 5, all: 12 },
+          counts: { today: 3, all: 12 },
         }),
       ]),
   });
@@ -61,11 +61,11 @@ describe("SalesRepTaskScopeChips", () => {
     expect(tab(wrapper, "all").text()).toBe("sales_rep.tasks.all12");
   });
 
-  it("puts a picked day's chip, named by its date, ahead of Today", () => {
+  it("puts a picked day's chip, named by its date and with no badge, ahead of Today", () => {
     const wrapper = createWrapper({ view: "day", showDay: true });
 
     expect(tabs(wrapper).map((chip) => chip.attributes("data-value"))).toEqual(["day", "today", "all"]);
-    expect(tab(wrapper, "day").text()).toBe("Oct 20, 20265");
+    expect(tab(wrapper, "day").text()).toBe("Oct 20, 2026");
   });
 
   it.each(["today", "day", "all"] as const)("marks %s as the chip on screen", (view) => {

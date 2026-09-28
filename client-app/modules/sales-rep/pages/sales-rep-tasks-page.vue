@@ -26,11 +26,11 @@
       <template #baseline>
         <SalesRepTaskScopeChips
           :view="scopeView"
-          :day-label="selectedDayLabel"
-          :show-day="!isToday"
+          :day-label="dateChipLabel"
+          :show-day="Boolean(dateChip)"
           :counts="counts"
           @today="goToToday"
-          @day="selectDay(selectedDay)"
+          @day="showDateChip"
           @all="showAll"
           @clear-day="clearDay"
         />
@@ -162,6 +162,8 @@ const dueDatesTitleId = useId();
 // Resolved once, like the counts' own boundary: a "today" that moved mid-session would reshuffle the chips.
 const todayKey = localDayKey(new Date());
 const selectedDay = ref(todayKey);
+// The date chip's day: opened by picking a day other than today, closed only by its ×.
+const dateChip = ref<string>();
 // All is a view of its own rather than a server rule: every task, with neither a day window nor a filter.
 const showingAll = ref(false);
 // Drives the dots query. The calendar owns which month is on screen and reports it back.
@@ -201,8 +203,7 @@ const scopeView = computed<SalesRepTaskScopeType | undefined>(() => {
   return isToday.value ? "today" : "day";
 });
 
-const dayWindow = computed(() => localDayWindow(selectedDay.value));
-const period = computed(() => (inDayView.value ? dayWindow.value : undefined));
+const period = computed(() => (inDayView.value ? localDayWindow(selectedDay.value) : undefined));
 
 const {
   items: tasks,
@@ -218,8 +219,8 @@ const {
   sort: TASKS_SORT_RULE,
 });
 
-// Every chip's badge in one request; `day` follows the picked day, `today` stays on today.
-const { counts, refetch: refetchCounts } = useSalesRepTaskCounts(dayWindow);
+// Every chip's badge in one request.
+const { counts, refetch: refetchCounts } = useSalesRepTaskCounts();
 const { dayMarkers, refetch: refetchMarkers } = useSalesRepTaskCalendar(month);
 const { setCompleted, loading: saving } = useSalesRepTaskMutations();
 
@@ -241,6 +242,7 @@ const tabRules = computed(() =>
 
 // "short" (Sep 1, 2026), not "long" — the long named format appends a time, and this heading names a DAY.
 const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
+const dateChipLabel = computed(() => (dateChip.value ? d(localDayKeyToDate(dateChip.value), "short") : ""));
 
 // Whichever view is on: the tab named by its own chip, All, or the day.
 const panelTitle = computed(() => {
@@ -255,6 +257,10 @@ function selectDay(day: string): void {
   selectedDay.value = day;
   showingAll.value = false;
   filter.value = undefined;
+
+  if (day !== todayKey) {
+    dateChip.value = day;
+  }
 }
 
 // The Today chip: the list, the tab and the grid's month all come back to today.
@@ -268,10 +274,23 @@ function showAll(): void {
   filter.value = undefined;
 }
 
-// The picked day's ×: back to today. Only a view of that day changes with it — a tab or All stays on screen.
+// The date chip: back to its day, with the grid on that day's month.
+function showDateChip(): void {
+  if (dateChip.value) {
+    selectDay(dateChip.value);
+    setMonth(dateChip.value);
+  }
+}
+
+// The date chip's ×. A view of its day falls back to today; a tab or All stays on screen.
 function clearDay(): void {
-  selectedDay.value = todayKey;
-  setMonth(todayKey);
+  const wasItsDay = selectedDay.value === dateChip.value;
+  dateChip.value = undefined;
+
+  if (wasItsDay) {
+    selectedDay.value = todayKey;
+    setMonth(todayKey);
+  }
 }
 
 function changePage(value: number): void {

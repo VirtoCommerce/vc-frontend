@@ -5,23 +5,20 @@ import { HUB_FETCH_POLICY } from "../constants";
 import { localDayKey, localDayWindow, startOfLocalDayIso } from "../tasks";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepTaskCountsType } from "../types/tasks";
-import type { Ref } from "vue";
 
 /**
- * Badges for the Today / picked day / All / Upcoming / Overdue / Completed chips, in ONE round trip: the query
- * aliases salesRepTasks with first: 0, so each alias returns only a totalCount. There is deliberately no backend
- * counts query — aliasing already gives a single request, and a bespoke field would have to re-derive the rules.
- *
- * `day` takes the picked day's window and `today` today's; they are the same window until another day is picked.
+ * Badges for the Today / All / Upcoming / Overdue / Completed chips, in ONE round trip: the query aliases
+ * salesRepTasks with first: 0, so each alias returns only a totalCount. There is deliberately no backend counts
+ * query — aliasing already gives a single request, and a bespoke field would have to re-derive the rules.
  */
-export function useSalesRepTaskCounts(dayWindow: Ref<{ from: string; to: string }>) {
+export function useSalesRepTaskCounts() {
   const today = startOfLocalDayIso();
   // Resolved once, like `today`: a boundary that moved mid-session would reshuffle the badges under the rep.
   const todayPeriod = localDayWindow(localDayKey(new Date()));
 
   const { result, loading, error, onError, refetch } = useSalesRepHubQuery(
     SalesRepTaskCountsDocument,
-    computed(() => ({ today, period: dayWindow.value, todayPeriod })),
+    computed(() => ({ today, todayPeriod })),
     { fetchPolicy: HUB_FETCH_POLICY },
   );
 
@@ -30,7 +27,6 @@ export function useSalesRepTaskCounts(dayWindow: Ref<{ from: string; to: string 
   });
 
   const counts = computed<SalesRepTaskCountsType>(() => ({
-    day: result.value?.day?.totalCount ?? 0,
     today: result.value?.currentDay?.totalCount ?? 0,
     all: result.value?.all?.totalCount ?? 0,
     upcoming: result.value?.upcoming?.totalCount ?? 0,

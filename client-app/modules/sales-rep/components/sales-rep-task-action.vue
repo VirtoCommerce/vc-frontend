@@ -3,7 +3,7 @@
     v-if="action"
     size="sm"
     variant="ghost"
-    color="secondary"
+    color="neutral"
     icon-size="1rem"
     class="sales-rep-task-action"
     :disabled="disabled"

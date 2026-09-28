@@ -1,10 +1,8 @@
 <template>
-  <!-- Only while a day other than today is picked; clearing it goes back to today. -->
+  <!-- Opened by picking a day other than today, closed only by its ×. No badge: the mockup gives it none. -->
   <span v-if="showDay" class="sales-rep-task-scope-chips__day">
     <VcTabSwitch class="sales-rep-rule-chips__tab" size="sm" value="day" :model-value="view" @change="$emit('day')">
       <span class="sales-rep-rule-chips__label">{{ dayLabel }}</span>
-
-      <span class="sales-rep-rule-chips__count">{{ formatStatCount(counts.day) }}</span>
 
       <!-- Room for the clear button laid over this end: the tab's content sits in a <button> of its own. -->
       <span class="sales-rep-task-scope-chips__clear-space" aria-hidden="true" />
@@ -16,7 +14,7 @@
       :aria-label="t('sales_rep.tasks.clear_day_aria', { date: dayLabel })"
       @click="$emit('clearDay')"
     >
-      <VcIcon name="delete-2" size="xs" />
+      <VcIcon name="delete-2" size="12px" />
     </button>
   </span>
 
@@ -41,11 +39,11 @@ import type { SalesRepTaskCountsType, SalesRepTaskScopeType } from "../types/tas
 interface IProps {
   /** The scope on screen; undefined while a status tab has taken over. */
   view?: SalesRepTaskScopeType;
-  /** The picked day, as the chip names it. */
+  /** The day the date chip holds, as the chip names it. */
   dayLabel: string;
-  /** A day other than today is picked, so it gets a chip of its own. */
+  /** A day other than today has been picked and its chip not closed yet. */
   showDay: boolean;
-  counts: Pick<SalesRepTaskCountsType, "today" | "day" | "all">;
+  counts: Pick<SalesRepTaskCountsType, "today" | "all">;
 }
 
 defineEmits<{
