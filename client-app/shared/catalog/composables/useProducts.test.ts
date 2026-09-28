@@ -145,8 +145,13 @@ vi.mock("@/shared/modal", () => ({
   }),
 }));
 
-vi.mock("@vueuse/core", () => {
+// Partial, like the other suites that mock this module: replacing it wholesale breaks as soon as
+// anything in the graph reaches for another export - the logger takes `noop` from here.
+vi.mock("@vueuse/core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@vueuse/core")>();
+
   return {
+    ...actual,
     useLocalStorage: () => ({
       value: [],
     }),

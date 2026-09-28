@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Returns",
+      "table_description": "list of returns"
+    },
+    "title": "Returns",
+    "no_returns_message": "There are no returns yet",
+    "no_results_message": "No returns match your search",
+    "search_placeholder": "Search by RMA, order, reference or product",
+    "search_aria": "Search returns",
+    "filters": {
+      "title": "Filters",
+      "created_date": "Created date",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "invalid_range": "Invalid date range.",
+      "custom_date": "Custom date",
+      "last_day": "Last day",
+      "last_week": "Last week",
+      "last_month": "Last month",
+      "last_year": "Last year",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Draft",
+      "Requested": "Requested",
+      "PartiallyApproved": "Partially approved",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Cancelled": "Cancelled",
+      "Canceled": "Cancelled",
+      "New": "New",
+      "Processing": "Processing",
+      "Completed": "Completed"
+    },
+    "request_button": "Request return",
+    "menu": {
+      "link": {
+        "title": "Returns"
+      }
+    },
+    "select_items": {
+      "title": "Select items to return",
+      "meta_title": "Select items to return",
+      "table_description": "order lines available for return",
+      "select_all": "Select all eligible lines",
+      "eligible_count": "{eligible} of {total} lines eligible",
+      "nothing_returnable": "Nothing in this order can be returned",
+      "window_hint": "Items can be returned within {days} days of delivery",
+      "selected_summary": "{lines} selected · {quantity} items",
+      "columns": {
+        "item": "Item",
+        "ordered": "Ordered",
+        "returnable": "Returnable",
+        "quantity": "Return qty"
+      },
+      "quantity_for": "Return quantity for {name}",
+      "continue": "Continue"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Returns are switched off for this store",
+      "ORDER_STATUS_NOT_ALLOWED": "Returns are not allowed from this order's status",
+      "LINE_CANCELLED": "This line was cancelled",
+      "NOT_DELIVERED": "Not delivered yet",
+      "OUTSIDE_RETURN_WINDOW": "Outside the return window",
+      "NOTHING_LEFT_TO_RETURN": "Already fully requested",
+      "UNHANDLED": "This item cannot be returned"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible",
+      "UNHANDLED": "This action is not available right now"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "One of the files could not be attached. Remove it and upload again.",
+      "INVALID_REQUEST": "Some of the details are not accepted. Check the reasons and comments and try again.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Date",
+        "status": "Status",
+        "quantity": "Qty"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Return {0}",
+    "not_found_message": "This return was not found",
+    "summary_section": "Summary",
+    "items_section": "Items",
+    "order_number": "Order number",
+    "customer_reference": "Your purchase order reference",
+    "customer_comment": "Comment",
+    "cancel_reason": "Cancellation reason",
+    "cancel_button": "Cancel return",
+    "columns": {
+      "requested": "Requested",
+      "approved": "Approved"
+    },
+    "table_description": "returned items"
+  },
+  "return_cancel": {
+    "title": "Cancel return",
+    "text": "Return {0} will be withdrawn and its items will become available to return again.",
+    "reason_label": "Reason (optional)",
+    "keep_button": "Keep return",
+    "confirm_button": "Cancel return"
+  },
+  "return_edit": {
+    "title": "Add return details",
+    "title_with_number": "Add details to return {number}",
+    "not_editable_message": "This return can no longer be changed",
+    "not_editable_message_with_status": "This return can no longer be changed — its status is {status}",
+    "details_section": "Details",
+    "bulk_section": "Apply to all lines",
+    "apply_to_all": "Apply one reason to all {count} lines",
+    "apply": "Apply",
+    "reason": "Reason",
+    "serial_number": "Serial number",
+    "reason_comment": "What is wrong with it?",
+    "saving": "Saving…",
+    "saved_automatically": "Saved automatically",
+    "submit": "Submit return",
+    "files": "Photos or documents",
+    "files_required": "Photos or documents (required)",
+    "incomplete": {
+      "quantity": "{count} line(s) still need a quantity",
+      "reason": "{count} line(s) still need a reason",
+      "comment": "{count} line(s) still need a comment",
+      "attachment": "{count} line(s) still need a photo"
+    },
+    "uploads_pending": "Waiting for the files to finish uploading",
+    "uploads_failed": "Some files failed to upload. Remove or retry them before submitting.",
+    "quantity_for": "Quantity to return for {name}",
+    "available": "of {quantity} available"
+  }
+}
