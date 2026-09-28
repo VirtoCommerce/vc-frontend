@@ -47,6 +47,19 @@
             >
               {{ t("sales_rep.documents.open") }}
             </VcButton>
+
+            <!-- Non-inline types (DOC/XLS/ZIP…) are never opened in a tab; offer Download, as /company/documents does. -->
+            <VcButton
+              v-else
+              class="sales-rep-documents__download"
+              size="xs"
+              color="secondary"
+              variant="outline"
+              prepend-icon="download"
+              @click="downloadFile(document.url, document.name)"
+            >
+              {{ t("sales_rep.documents.details.download") }}
+            </VcButton>
           </li>
         </ul>
       </div>
@@ -57,6 +70,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { downloadFile } from "@/shared/files";
 import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_ROUTE_NAME } from "../constants";
@@ -102,12 +116,14 @@ const failed = computed(() => Boolean(error.value));
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:text-[--link-hover-color];
   }
 
+  // One grid for the whole list (icon | title | action), each row a subgrid: the action column takes the
+  // widest button in the list, so Open and Download rows get the same title width in every locale.
   &__list {
-    @apply m-0 flex list-none flex-col divide-y divide-neutral-100 p-0;
+    @apply m-0 grid list-none grid-cols-[auto_minmax(0,1fr)_auto] divide-y divide-neutral-100 p-0;
   }
 
   &__row {
-    @apply flex items-center gap-3 py-3;
+    @apply col-span-full grid grid-cols-subgrid items-center gap-x-3 py-3;
   }
 
   &__icon {
@@ -126,12 +142,13 @@ const failed = computed(() => Boolean(error.value));
     @apply mt-0.5 truncate text-xs text-neutral-500;
   }
 
-  &__open {
-    @apply flex-none;
+  &__open,
+  &__download {
+    @apply w-full;
   }
 
   &__skeleton {
-    @apply h-9 w-full animate-pulse rounded bg-neutral-100;
+    @apply col-span-full h-9 w-full animate-pulse rounded bg-neutral-100;
   }
 }
 </style>

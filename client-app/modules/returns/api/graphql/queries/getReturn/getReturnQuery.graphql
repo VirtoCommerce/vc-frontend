@@ -1,0 +1,42 @@
+query GetReturn($id: String!, $cultureName: String) {
+  return(id: $id) {
+    id
+    number
+    status
+    statusDisplayValue(cultureName: $cultureName)
+    createdDate
+    orderId
+    orderNumber
+    customerReference
+    customerComment
+    rejectReason
+    cancelReason
+    itemsQuantity
+    availableActions {
+      name
+      isAvailable
+      unavailableReason
+    }
+    items {
+      id
+      orderLineItemId
+      sku
+      name
+      imageUrl
+      measureUnit
+      orderedQuantity
+      quantity
+      approvedQuantity
+      itemState
+      reasonCode
+      reasonComment
+      serialNumber
+      attachments {
+        name
+        url
+        mimeType
+        size
+      }
+    }
+  }
+}

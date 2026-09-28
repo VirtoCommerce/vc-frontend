@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Devoluciones",
+      "table_description": "lista de devoluciones"
+    },
+    "title": "Devoluciones",
+    "no_returns_message": "Aún no hay devoluciones",
+    "no_results_message": "Ninguna devolución coincide con su búsqueda",
+    "search_placeholder": "Buscar por RMA, pedido, referencia o producto",
+    "search_aria": "Buscar devoluciones",
+    "filters": {
+      "title": "Filtros",
+      "created_date": "Fecha de creación",
+      "start_date": "Fecha de inicio",
+      "end_date": "Fecha de finalización",
+      "invalid_range": "Rango de fechas no válido.",
+      "custom_date": "Fecha personalizada",
+      "last_day": "Último día",
+      "last_week": "Última semana",
+      "last_month": "Último mes",
+      "last_year": "Último año",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Borrador",
+      "Requested": "Solicitada",
+      "PartiallyApproved": "Aprobada parcialmente",
+      "Approved": "Aprobada",
+      "Rejected": "Rechazada",
+      "Cancelled": "Cancelada",
+      "Canceled": "Cancelada",
+      "New": "Nueva",
+      "Processing": "En proceso",
+      "Completed": "Completada"
+    },
+    "request_button": "Solicitar devolución",
+    "menu": {
+      "link": {
+        "title": "Devoluciones"
+      }
+    },
+    "select_items": {
+      "title": "Seleccionar artículos a devolver",
+      "meta_title": "Seleccionar artículos a devolver",
+      "table_description": "líneas del pedido disponibles para devolución",
+      "select_all": "Seleccionar todas las líneas elegibles",
+      "eligible_count": "{eligible} de {total} líneas elegibles",
+      "nothing_returnable": "No se puede devolver nada de este pedido",
+      "window_hint": "Los artículos pueden devolverse en un plazo de {days} días desde la entrega",
+      "selected_summary": "{lines} seleccionadas · {quantity} artículos",
+      "columns": {
+        "item": "Artículo",
+        "ordered": "Pedido",
+        "returnable": "Devolvible",
+        "quantity": "Cantidad"
+      },
+      "quantity_for": "Cantidad a devolver de {name}",
+      "continue": "Continuar"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Las devoluciones están desactivadas en esta tienda",
+      "ORDER_STATUS_NOT_ALLOWED": "No se permiten devoluciones desde el estado de este pedido",
+      "LINE_CANCELLED": "Esta línea fue cancelada",
+      "NOT_DELIVERED": "Aún no entregado",
+      "OUTSIDE_RETURN_WINDOW": "Fuera del plazo de devolución",
+      "NOTHING_LEFT_TO_RETURN": "Ya solicitado por completo",
+      "UNHANDLED": "Este artículo no se puede devolver"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Esta devolución ya no está en una fase en la que eso sea posible",
+      "UNHANDLED": "Esta acción no está disponible ahora mismo"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "No se pudo adjuntar uno de los archivos. Elimínelo y vuelva a subirlo.",
+      "INVALID_REQUEST": "Algunos datos no se aceptan. Revise los motivos y comentarios e inténtelo de nuevo.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Fecha",
+        "status": "Estado",
+        "quantity": "Cant."
+      }
+    }
+  },
+  "return_details": {
+    "title": "Devolución {0}",
+    "not_found_message": "No se encontró esta devolución",
+    "summary_section": "Resumen",
+    "items_section": "Artículos",
+    "order_number": "Número de pedido",
+    "customer_reference": "Su referencia de pedido",
+    "customer_comment": "Comentario",
+    "cancel_reason": "Motivo de cancelación",
+    "cancel_button": "Cancelar devolución",
+    "columns": {
+      "requested": "Solicitado",
+      "approved": "Aprobado"
+    },
+    "table_description": "artículos devueltos"
+  },
+  "return_cancel": {
+    "title": "Cancelar devolución",
+    "text": "La devolución {0} se retirará y sus artículos volverán a estar disponibles para devolver.",
+    "reason_label": "Motivo (opcional)",
+    "keep_button": "Mantener devolución",
+    "confirm_button": "Cancelar devolución"
+  },
+  "return_edit": {
+    "title": "Añadir detalles de la devolución",
+    "title_with_number": "Añadir detalles a la devolución {number}",
+    "not_editable_message": "Esta devolución ya no se puede modificar",
+    "not_editable_message_with_status": "Esta devolución ya no se puede modificar: su estado es {status}",
+    "details_section": "Detalles",
+    "bulk_section": "Aplicar a todas las líneas",
+    "apply_to_all": "Aplicar un motivo a las {count} líneas",
+    "apply": "Aplicar",
+    "reason": "Motivo",
+    "serial_number": "Número de serie",
+    "reason_comment": "¿Qué problema tiene?",
+    "saving": "Guardando…",
+    "saved_automatically": "Guardado automáticamente",
+    "submit": "Enviar devolución",
+    "files": "Fotos o documentos",
+    "files_required": "Fotos o documentos (obligatorio)",
+    "incomplete": {
+      "quantity": "{count} línea(s) aún necesitan una cantidad",
+      "reason": "Faltan motivos en {count} línea(s)",
+      "comment": "{count} línea(s) aún necesitan un comentario",
+      "attachment": "{count} línea(s) aún necesitan una foto"
+    },
+    "uploads_pending": "Esperando a que terminen de subirse los archivos",
+    "uploads_failed": "Algunos archivos no se pudieron subir. Elimínelos o reinéntelo antes de enviar.",
+    "quantity_for": "Cantidad a devolver de {name}",
+    "available": "de {quantity} disponibles"
+  }
+}
