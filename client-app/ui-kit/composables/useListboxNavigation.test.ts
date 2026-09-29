@@ -91,45 +91,45 @@ describe("useListboxNavigation", () => {
   });
 });
 
-describe("useListboxNavigation pointer highlight", () => {
-  it("marks a highlight moved by the pointer until the keyboard moves it", () => {
-    const { highlightedIndex, isPointerHighlight, pointTo, navigate } = useListboxNavigation({
+describe("useListboxNavigation passive highlight", () => {
+  it("marks a passive highlight until the keyboard moves it", () => {
+    const { highlightedIndex, isPassiveHighlight, highlightPassively, navigate } = useListboxNavigation({
       componentId: COMPONENT_ID,
       items: ref(["a", "b", "c"]),
     });
 
-    pointTo(1);
+    highlightPassively(1);
 
     expect(highlightedIndex.value).toBe(1);
-    expect(isPointerHighlight.value).toBe(true);
+    expect(isPassiveHighlight.value).toBe(true);
 
     navigate("down");
 
     expect(highlightedIndex.value).toBe(2);
-    expect(isPointerHighlight.value).toBe(false);
+    expect(isPassiveHighlight.value).toBe(false);
   });
 
   it("clears the mark when the keyboard lands on the same option", () => {
-    const { isPointerHighlight, pointTo, navigate } = useListboxNavigation({
+    const { isPassiveHighlight, highlightPassively, navigate } = useListboxNavigation({
       componentId: COMPONENT_ID,
       items: ref(["a", "b", "c"]),
     });
 
-    pointTo(0);
+    highlightPassively(0);
     navigate("home");
 
-    expect(isPointerHighlight.value).toBe(false);
+    expect(isPassiveHighlight.value).toBe(false);
   });
 
   it("clears the mark when the index is set directly", () => {
-    const { highlightedIndex, isPointerHighlight, pointTo } = useListboxNavigation({
+    const { highlightedIndex, isPassiveHighlight, highlightPassively } = useListboxNavigation({
       componentId: COMPONENT_ID,
       items: ref(["a", "b", "c"]),
     });
 
-    pointTo(0);
+    highlightPassively(0);
     highlightedIndex.value = 2;
 
-    expect(isPointerHighlight.value).toBe(false);
+    expect(isPassiveHighlight.value).toBe(false);
   });
 });

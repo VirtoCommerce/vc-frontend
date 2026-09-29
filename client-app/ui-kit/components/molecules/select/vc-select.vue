@@ -106,7 +106,8 @@
                 :option-id="getOptionId(index)"
                 :data-vc-select-option="componentId"
                 :active="isActiveItem(item)"
-                :highlighted="index === highlightedIndex && !isPointerHighlight"
+                :highlighted="index === highlightedIndex"
+                :highlight-ring="!isPassiveHighlight"
                 :aria-selected="isActiveItem(item)"
                 role="option"
                 :size="itemSize"
@@ -116,7 +117,7 @@
                   !multiple && close();
                 "
                 @mousedown.prevent
-                @mousemove="pointTo(index)"
+                @mousemove="highlightPassively(index)"
               >
                 <VcCheckbox
                   v-if="multiple"
@@ -237,7 +238,8 @@ const props = withDefaults(
     total?: number;
     /**
      * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
-     * matches that are not loaded. Defaults to the selected matches that are loaded.
+     * matches that are not loaded. Defaults to the selected matches that are loaded, and is kept
+     * between that number and `total`.
      */
     selectedCount?: number;
     /** Shows a loading indicator inside the list. */
@@ -300,7 +302,7 @@ const {
   valueField: toRef(() => props.valueField),
 });
 
-const { highlightedIndex, isPointerHighlight, getOptionId, navigate, pointTo } = useListboxNavigation({
+const { highlightedIndex, isPassiveHighlight, getOptionId, navigate, highlightPassively } = useListboxNavigation({
   componentId,
   items: filteredItems,
   getKey: getItemValue,
@@ -406,7 +408,7 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
       // APG: Down/Home open on the first option, Up/End on the last.
       const toLast = key === "end" || key === "up";
 
-      highlightedIndex.value = toLast ? filteredItems.value.length - 1 : 0;
+      navigate(toLast ? "end" : "home");
     });
     return;
   }
@@ -444,7 +446,7 @@ function toggled(value: boolean) {
   isShown.value = value;
 
   if (isShown.value) {
-    highlightedIndex.value = filteredItems.value.findIndex((item) => isActiveItem(item));
+    highlightPassively(filteredItems.value.findIndex((item) => isActiveItem(item)));
     return;
   }
 
@@ -561,10 +563,12 @@ const countedSelected = computed(() => {
     return selectedValues.value.length;
   }
 
-  // Never below what is visibly selected, whatever the consumer reports.
-  return props.serverFilter
-    ? Math.max(props.selectedCount ?? 0, selectedVisibleCount.value)
-    : selectedVisibleCount.value;
+  if (!props.serverFilter || !Number.isFinite(props.selectedCount)) {
+    return selectedVisibleCount.value;
+  }
+
+  // Between what is visibly selected and the number of matches, whatever the consumer reports.
+  return Math.min(Math.max(props.selectedCount!, selectedVisibleCount.value), totalCount.value);
 });
 
 // Checked means `n of n`: a fully selected page of a longer list is still partial.

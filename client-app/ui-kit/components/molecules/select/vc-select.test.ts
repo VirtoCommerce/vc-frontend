@@ -424,6 +424,7 @@ describe("VcSelect", () => {
     it("ignores the consumer's selected count when no query narrows the list", () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
+        serverFilter: true,
         total: 5,
         selectedCount: 4,
         modelValue: ["Albania"],
@@ -465,6 +466,40 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 1");
+    });
+
+    it("counts only the visible selection under a local filter that leaves several matches", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        selectedCount: 10,
+        modelValue: ["Albania"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 2");
+    });
+
+    it("never counts more than the matches of a server-side query", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        total: 5,
+        selectedCount: 7,
+        modelValue: [],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("5 of 5");
     });
 
     it("names the checkbox with its count and keeps the name when it is checked", async () => {
@@ -1092,7 +1127,6 @@ describe("VcSelect", () => {
       expect(field.classes()).not.toContain("vc-input--opened");
     });
 
-    // A highlight the pointer moved is not a keyboard position, so it draws no focus ring.
     it("rings the highlight moved by the keyboard, not the one moved by the pointer", async () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
@@ -1101,12 +1135,36 @@ describe("VcSelect", () => {
       await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
       await input.trigger("keydown", { key: "a" });
 
-      expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+      const pointed = wrapper.findAll(".vc-menu-item__inner")[1];
+
+      expect(pointed.classes()).toContain("vc-menu-item__inner--highlighted");
+      expect(pointed.classes()).not.toContain("vc-menu-item__inner--highlight-ring");
       expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[1].attributes("id"));
 
       await input.trigger("keydown", { key: "ArrowDown" });
 
-      expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("China");
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("China");
+    });
+
+    it("opens onto the selection without a focus ring until the keyboard moves", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
+      expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Belgium");
+    });
+
+    it("rings the first option when ArrowDown opens onto it", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Albania" });
+      const input = wrapper.get("input");
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      await nextTick();
+
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
     });
 
     it("opens with the current selection highlighted", async () => {

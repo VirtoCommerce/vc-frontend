@@ -22,6 +22,7 @@
         {
           'vc-menu-item__inner--active': active,
           'vc-menu-item__inner--highlighted': highlighted,
+          'vc-menu-item__inner--highlight-ring': highlighted && highlightRing,
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
@@ -74,10 +75,12 @@ interface IProps {
   ariaSelected?: boolean;
   optionId?: string;
   /**
-   * Keyboard-highlighted state for `aria-activedescendant` lists, where DOM focus stays on
-   * the combobox and cannot provide the usual focus ring.
+   * The active option of an `aria-activedescendant` list, where DOM focus stays on the combobox
+   * and cannot provide the usual focus ring.
    */
   highlighted?: boolean;
+  /** Draws the focus ring on a highlighted item. Turn it off while the highlight follows the pointer. */
+  highlightRing?: boolean;
   /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
   tabindex?: number;
 }
@@ -93,6 +96,7 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   clickable: true,
   tabindex: 0,
+  highlightRing: true,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -199,6 +203,7 @@ onMounted(() => {
 
   $active: "";
   $highlighted: "";
+  $highlightRing: "";
   $truncate: "";
   $maxLines: "";
 
@@ -217,6 +222,10 @@ onMounted(() => {
       $active: &;
 
       @apply font-bold;
+    }
+
+    &--highlight-ring {
+      $highlightRing: &;
     }
 
     &--highlighted {
@@ -277,7 +286,7 @@ onMounted(() => {
         }
 
         // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
-        &#{$highlighted} {
+        &#{$highlightRing} {
           @include focus-ring($inset: true);
         }
       }

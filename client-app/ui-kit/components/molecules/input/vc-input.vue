@@ -410,8 +410,7 @@ provide<VcInputContextType>("inputContext", {
       @apply border-0 bg-transparent p-0;
 
       // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
-      &:has(input:focus-visible),
-      #{$opened}#{$seamless} & {
+      &:has(input:focus-visible) {
         @apply outline-none;
       }
 
@@ -419,6 +418,10 @@ provide<VcInputContextType>("inputContext", {
       &:has(input:disabled) {
         @apply bg-transparent;
       }
+    }
+
+    #{$seamless}#{$opened} & {
+      @apply outline-none;
     }
 
     #{$seamless}#{$sizeXs} &,

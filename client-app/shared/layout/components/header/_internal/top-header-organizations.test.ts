@@ -182,11 +182,12 @@ describe("TopHeaderOrganizations", () => {
 
     await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
 
-    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(true);
+    expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
 
     await wrapper.get("input").trigger("keydown", { key: "ArrowDown" });
 
-    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(true);
+    expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(true);
   });
 
   it("keeps focus in the search field when an option is pressed with the mouse", () => {
