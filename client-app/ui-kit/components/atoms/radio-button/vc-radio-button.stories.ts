@@ -458,12 +458,11 @@ export const CustomHitArea: StoryType = {
     docs: {
       description: {
         story:
-          "The pointer target around the circle is at least `--vc-radio-button-hit-area-size` (default `1.5rem`) square, invisible and taking no layout. Not applied inside `VcMenuItem`, where the item is the target.",
+          "The pointer target around the circle is at least `--vc-radio-button-hit-area-size` (default `1.5rem`) square, invisible and taking no layout. Not applied inside a clickable or linked `VcMenuItem`, where the item is the target.",
       },
       source: {
         code: `
           <VcRadioButton
-            v-model="selected"
             value="value"
             size="sm"
             aria-label="Select row"
