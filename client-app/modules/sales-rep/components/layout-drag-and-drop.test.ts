@@ -433,7 +433,7 @@ describe("stat row drag and drop", () => {
 // The stat row is horizontal and drags whole cards; a widget column is vertical and drags by a handle,
 // so it exercises a different branch of the same component.
 describe("widget column drag and drop", () => {
-  function setupColumn() {
+  function setupColumn({ hiddenSibling = false } = {}) {
     const announce = vi.fn();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the composable's full surface
     let api: any;
@@ -451,21 +451,25 @@ describe("widget column drag and drop", () => {
         // a stand-in would leave the button this suite clicks unrendered.
         const slots = { default: () => h(LayoutWidget, { title: "widget" }, { default: () => "body" }) };
 
-        return () =>
+        const region = (dropHidden: boolean) =>
           h(
             LayoutRegion,
             {
               scope: "customerProfile",
-              entries: layout.visibleIn("mainRight"),
+              entries: dropHidden ? layout.hiddenIn("mainRight") : layout.visibleIn("mainRight"),
               orientation: "vertical",
               group: "sales-rep-customer-main-right",
               editing: layout.editing.value,
+              dropHidden,
               onReorder,
               onSetHidden,
               onAnnounce: announce,
             },
             slots,
           );
+
+        // A paired hidden zone gives a keyboard ring somewhere to go, so its absence becomes observable.
+        return () => (hiddenSibling ? h("div", [region(false), region(true)]) : region(false));
       },
     });
 
@@ -497,7 +501,7 @@ describe("widget column drag and drop", () => {
 
   // Widgets hide with ✕ only; the cross-axis arrows must not park one the way they park a stat card.
   it("gives a widget column no keyboard route into another list", async () => {
-    const { wrapper, api, announce } = setupColumn();
+    const { wrapper, api, announce } = setupColumn({ hiddenSibling: true });
     api.startEdit();
     await nextTick();
 

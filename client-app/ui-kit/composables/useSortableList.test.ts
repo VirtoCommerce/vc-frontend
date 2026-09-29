@@ -475,6 +475,19 @@ describe("useSortableList — pointer", () => {
     expect(instances).toHaveLength(1);
   });
 
+  it("keeps `accepts` on a group handed over live", async () => {
+    const group = ref("first");
+    const { sortable } = await mounted({ group, accepts: () => true });
+
+    group.value = "second";
+    await nextTick();
+
+    expect(sortable.option).toHaveBeenCalledWith(
+      "group",
+      expect.objectContaining({ name: "second", put: expect.any(Function) }),
+    );
+  });
+
   it("wires the options the drag behaviour depends on", async () => {
     const { sortable } = await mounted({ handle: ".grip", filter: ".close", group: "g" });
 
