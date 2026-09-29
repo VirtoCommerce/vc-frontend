@@ -317,6 +317,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
 
     @container (max-width: theme("containers.xs")) {
       @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
+    }
   }
 
   &__files {
