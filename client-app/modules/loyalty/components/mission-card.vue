@@ -102,7 +102,7 @@ function openMission(): void {
   @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-md;
 
   &__banner {
-    @apply relative h-[13.125rem] shrink-0 bg-secondary-800;
+    @apply relative h-52 shrink-0 bg-secondary-800;
   }
 
   &__image {
