@@ -22,7 +22,6 @@ const { authorizeWithGrant } = useAuth();
 const { startSession, endSession } = usePunchoutSession();
 
 function leave() {
-  // A full reload, not a router push. Sign-in ends the same way.
   location.href = "/";
 }
 
@@ -36,14 +35,14 @@ onMounted(async () => {
       }),
     );
 
-    if (response?.access_token) {
+    if (response?.access_token && response.token_type && response.expires_in) {
       startSession({
         // The grant issues no refresh token, bearer token lifetime is the session's lifetime.
-        expiresAt: Date.now() + (response.expires_in ?? 0) * 1000,
+        expiresAt: Date.now() + response.expires_in * 1000,
       });
     } else {
       endSession();
-      Logger.error("punchout/activate", response?.error ?? "The punchout grant returned no access token");
+      Logger.error("punchout/activate", response?.error ?? "The punchout grant returned an incomplete token response");
     }
   } catch (error) {
     endSession();
