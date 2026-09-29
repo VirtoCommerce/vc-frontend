@@ -1196,15 +1196,32 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
     });
 
-    it("opens on the first option with ArrowDown, not on the selection", async () => {
-      const wrapper = createWrapper({ items: ITEMS, modelValue: "China" });
+    it.each([
+      ["ArrowDown", "Albania"],
+      ["Home", "Albania"],
+      ["ArrowUp", "China"],
+      ["End", "China"],
+    ])("opens with %s on its own start, not on the selection", async (key, start) => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
       const input = wrapper.get("input");
 
-      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key });
       await nextTick();
       await nextTick();
 
-      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe(start);
+    });
+
+    it("opens an autocomplete by typing with nothing highlighted", async () => {
+      // "a" keeps Albania first, so a highlight left on the selection would survive the filter.
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Albania" });
+      const input = wrapper.get("input");
+
+      await input.setValue("Albaniaa");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+      expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
     });
 
     it("rings the selection when Enter opens the list", async () => {
