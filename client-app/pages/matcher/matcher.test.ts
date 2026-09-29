@@ -140,6 +140,10 @@ describe("Matcher search scope hand-over", () => {
 
     expect(seen).not.toContain(false);
     expect(isScopePending.value).toBe(true);
+
+    // Pending only because the new page is preparing: once it has, nothing of the hold is left.
+    preparingScope.value = false;
+    expect(isScopePending.value).toBe(false);
   });
 
   it("holds the scope again on the next category swap", async () => {
@@ -148,6 +152,7 @@ describe("Matcher search scope hand-over", () => {
     setCategoryScope();
     await setSlugContentState("loading");
     await setSlugContentState("ready");
+    expect(isScopePending.value).toBe(false);
 
     setCategoryScope();
     await setSlugContentState("loading");
