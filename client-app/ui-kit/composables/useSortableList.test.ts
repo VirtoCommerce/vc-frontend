@@ -6,14 +6,19 @@ import type { EffectScope } from "vue";
 
 // Stand in for SortableJS: record what each list constructs with, so a gesture can be replayed through
 // the real handlers.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's option and event objects
-const instances: { el: HTMLElement; options: Record<string, any>; option: ReturnType<typeof vi.fn> }[] = [];
+const instances: {
+  el: HTMLElement;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's option and event objects
+  options: Record<string, any>;
+  option: ReturnType<typeof vi.fn>;
+  destroy: ReturnType<typeof vi.fn>;
+}[] = [];
 vi.mock("sortablejs", () => ({
   default: class {
     option = vi.fn();
     destroy = vi.fn();
     constructor(el: HTMLElement, options: Record<string, unknown>) {
-      instances.push({ el, options, option: this.option });
+      instances.push({ el, options, option: this.option, destroy: this.destroy });
     }
   },
 }));
@@ -433,6 +438,25 @@ describe("useSortableList — pointer", () => {
     await nextTick();
 
     expect(el.dataset.sortableName).toBe("rail");
+  });
+
+  it("destroys the SortableJS instance with its scope", async () => {
+    const { sortable } = await mounted();
+
+    scopes.at(-1)!.stop();
+
+    expect(sortable.destroy).toHaveBeenCalledOnce();
+  });
+
+  it("hands SortableJS a new group without rebuilding", async () => {
+    const group = ref("first");
+    const { sortable } = await mounted({ group });
+
+    group.value = "second";
+    await nextTick();
+
+    expect(sortable.option).toHaveBeenCalledWith("group", "second");
+    expect(instances).toHaveLength(1);
   });
 
   it("wires the options the drag behaviour depends on", async () => {

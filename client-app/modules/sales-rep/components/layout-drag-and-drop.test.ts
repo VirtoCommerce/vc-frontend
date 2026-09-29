@@ -434,6 +434,7 @@ describe("stat row drag and drop", () => {
 // so it exercises a different branch of the same component.
 describe("widget column drag and drop", () => {
   function setupColumn() {
+    const announce = vi.fn();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the composable's full surface
     let api: any;
 
@@ -461,6 +462,7 @@ describe("widget column drag and drop", () => {
               editing: layout.editing.value,
               onReorder,
               onSetHidden,
+              onAnnounce: announce,
             },
             slots,
           );
@@ -476,7 +478,7 @@ describe("widget column drag and drop", () => {
         stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true },
       },
     });
-    return { wrapper, api };
+    return { wrapper, api, announce };
   }
 
   it("reorders a column and leaves no duplicate node behind", async () => {
@@ -491,6 +493,23 @@ describe("widget column drag and drop", () => {
     expect(api.visibleIn("mainRight")).toEqual(["info", "actions"]);
     const ids = blockIds(wrapper);
     expect(ids).toEqual(["info", "actions"]);
+  });
+
+  // Widgets hide with ✕ only; the cross-axis arrows must not park one the way they park a stat card.
+  it("gives a widget column no keyboard route into another list", async () => {
+    const { wrapper, api, announce } = setupColumn();
+    api.startEdit();
+    await nextTick();
+
+    const handle = wrapper.find('[data-block-id="actions"] .layout-widget__handle');
+    handle.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    // The grab's wording spells the keys out, and a column's must not offer up/down hiding.
+    expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed", parkable: false }));
+    handle.element.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
+
+    expect(api.hiddenIn("mainRight")).toEqual([]);
+    expect(handle.attributes("aria-pressed")).toBe("true");
   });
 
   it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
