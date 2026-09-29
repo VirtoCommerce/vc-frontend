@@ -109,7 +109,7 @@
       "no_results_found": "Tuloksia ei löytynyt",
       "no_options": "Ei vaihtoehtoja saatavilla",
       "select_all": "Valitse kaikki",
-      "deselect_all": "Poista kaikki valinnat",
+      "select_all_label": "Valitse kaikki, {selected} / {total}",
       "selected_of_total": "{selected} / {total}"
     },
     "file": {

@@ -72,8 +72,7 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.findAll('[role="option"]')).toHaveLength(3);
   });
 
-  // Поле — комбобокс, который управляет списком, поэтому оно обязано лежать СНАРУЖИ него и выше:
-  // внутри `role="listbox"` могут быть только опции, а `aria-controls` должен на что-то указывать.
+  // The field controls the list, so it sits outside and above it: a listbox holds only options.
   it("keeps the search field above the list it controls, not inside it", () => {
     const wrapper = mountComponent();
     const field = wrapper.get("[data-test-id='organizations-search']").element;
@@ -84,8 +83,7 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.get("input").attributes("aria-controls")).toBe(list.id);
   });
 
-  // Внутри role="listbox" допустимы только опции: ни пустое состояние, ни пейджер (role="status")
-  // ими не являются, поэтому список лежит ВНУТРИ области прокрутки, а не является ею.
+  // A listbox holds only options, so the empty state and the pager (role="status") sit beside it.
   it("keeps the empty state and the pager out of the listbox", async () => {
     state.organizations.value = [];
     state.hasNextPage.value = true;
@@ -117,8 +115,7 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
   });
 
-  // Редактируемому полю Home/End нужны для каретки. VcSelect перехватывает их только когда
-  // поле read-only; здесь оно всегда редактируемое, значит не перехватываем никогда.
+  // An editable field needs Home/End for the caret.
   it("leaves Home and End to the caret in the search field", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -182,6 +179,21 @@ describe("TopHeaderOrganizations", () => {
 
   // Un-hoisting the current organization mid-request shifts every option up by one, which
   // invalidates the keyboard highlight on every page load.
+  // The debounced search has not answered yet, so the highlighted row belongs to the old query.
+  it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
+    const wrapper = mountComponent();
+    const input = wrapper.get("input");
+
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await input.setValue("init");
+    await input.trigger("keydown", { key: "Enter" });
+    await nextTick();
+
+    expect(state.trySwitch).not.toHaveBeenCalled();
+    expect(state.search).toHaveBeenCalled();
+  });
+
   it("keeps the current organization pinned to the top while a page loads", async () => {
     state.organization.value = { id: "org-3", name: "Initech" };
     const wrapper = mountComponent();
@@ -239,8 +251,7 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.find(".vc-load-more").exists()).toBe(true);
   });
 
-  // Список организаций короче своей области почти всегда: без запроса, который не ждёт прокрутки,
-  // вторая страница не пришла бы никогда.
+  // The list is nearly always shorter than its region, so page two is asked for without a scroll.
   it("asks for the next page when the list rests at its bottom", async () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
@@ -251,8 +262,7 @@ describe("TopHeaderOrganizations", () => {
       scrollTop: 0,
     });
 
-    // В jsdom нет ни вёрстки, ни ResizeObserver: измерение провоцируется изменением контента,
-    // которое скроллбар действительно наблюдает.
+    // jsdom has no layout or ResizeObserver: a content change triggers the measurement.
     state.organizations.value = [...state.organizations.value, { id: "org-4", name: "Hooli" }];
     await new Promise((resolve) => setTimeout(resolve, 160));
 
@@ -267,8 +277,7 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.find("[data-test-id='organizations-empty-list']").exists()).toBe(true);
   });
 
-  // Ниже порога поиска поля нет, а опции намеренно вне таб-порядка: без своего таб-стопа
-  // список не достать с клавиатуры вообще. До этого тесты сидели только на ветке с полем.
+  // Without a search field the options are out of tab order, so the list needs its own tab stop.
   describe("below the search threshold", () => {
     beforeEach(() => {
       state.isShowSearch.value = false;
@@ -319,8 +328,7 @@ describe("TopHeaderOrganizations", () => {
       const input = wrapper.get("input");
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
-      // Поле лежит снаружи области прокрутки, и её обработчик всё равно уходит в ранний возврат:
-      // одно нажатие обязано сдвинуть подсветку ровно на один шаг.
+      // The field is outside the scroll region, whose handler returns early: one press, one step.
       await input.trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 

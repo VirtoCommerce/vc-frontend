@@ -12,11 +12,7 @@ type ParamsType<T> = {
 
 export type ListboxNavigationKeyType = "up" | "down" | "home" | "end";
 
-/**
- * The box the list scrolls in: the listbox itself when it owns the overflow, otherwise the scroll
- * region it is wrapped in — a listbox that owns only options cannot also be the region holding a
- * loader or an empty state. Bounded at `document.body`, so the page is never it.
- */
+// The listbox itself, or the scroll region wrapping it; never the page.
 function getScrollBox(list: HTMLElement): HTMLElement {
   let node: HTMLElement | null = list;
 
@@ -32,12 +28,8 @@ function getScrollBox(list: HTMLElement): HTMLElement {
 }
 
 /**
- * Keyboard state for a listbox driven by `aria-activedescendant`.
- *
- * DOM focus stays on the combobox or search field; the active option is published through
- * `aria-activedescendant` and styled with a `highlighted` flag. Moving real focus onto options
- * instead — as both listboxes in this repo used to do — makes typing impossible in a search
- * field and ties navigation to DOM order.
+ * Keyboard state for a listbox driven by `aria-activedescendant`: DOM focus stays on the combobox
+ * or search field, and the active option is published by id and styled with a `highlighted` flag.
  */
 export function useListboxNavigation<T>(params: ParamsType<T>) {
   const highlightedIndex = ref(-1);
@@ -71,8 +63,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   }
 
   function navigate(key: ListboxNavigationKeyType): void {
-    // An empty list has no position to move to, and index 0 of it would publish an
-    // `aria-activedescendant` pointing at an option that is not there.
+    // Index 0 of an empty list would point `aria-activedescendant` at nothing.
     if (!count.value) {
       return;
     }
@@ -90,10 +81,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     highlightedIndex.value = -1;
   }
 
-  /**
-   * Deliberately not `scrollIntoView`: that scrolls every scrollable ancestor, so opening a
-   * list low on the page yanks the whole page. This adjusts only the scroll box's own scrollTop.
-   */
+  // Not `scrollIntoView`, which also scrolls the page.
   function scrollHighlightedIntoView(index: number): void {
     const option = document.getElementById(getOptionId(index));
     const list = option?.closest<HTMLElement>('[role="listbox"]');
@@ -113,11 +101,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     }
   }
 
-  /**
-   * Paging appends to the list, so the highlighted option is still where it was — dropping the
-   * highlight there would throw the user back to the top mid-navigation. A rebuilt list (a new
-   * search) puts a different option under the index, and then the highlight has to go.
-   */
+  // Paging appends, so the highlight survives; a rebuilt list puts another option under it.
   watch(params.items, (items, previous) => {
     const index = highlightedIndex.value;
 
@@ -145,7 +129,6 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     activeDescendantId,
     getOptionId,
     navigate,
-    move,
     reset,
   };
 }

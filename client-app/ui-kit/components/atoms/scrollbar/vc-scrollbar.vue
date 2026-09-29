@@ -60,19 +60,13 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const el = useTemplateRef<HTMLElement>("el");
 
-// The edges the region is resting against, as of the last measurement. They are the state the
-// reach-* events are derived from, published so that a descendant deciding something from them —
-// VcLoadMore asking for the next page — reads the same numbers rather than measuring its own.
-// Pre-measurement defaults describe an unscrolled region that has not reached its end.
+// Published so a descendant (VcLoadMore) reads the same edges the reach-* events come from.
 const isAtTop = ref(true);
 const isAtBottom = ref(false);
 const isAtLeft = ref(true);
 const isAtRight = ref(false);
 
-// Bumped every time the edges above are re-read from a real box. A descendant deciding something
-// from them needs to know not just WHERE the region rests but WHEN that was established: the
-// measurement runs behind a debounce, so between a content change and the next measurement the
-// edges describe a box that no longer exists.
+// Bumped on every real measurement: the edges are debounced, so a reader needs to know they are fresh.
 const measuredAt = ref(0);
 
 provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measuredAt });
@@ -83,9 +77,7 @@ provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measured
 // The tab stop is added automatically when content overflows on an enabled axis AND the region
 // has no focusable descendants AND no interactive container role; `focusable` stays as an
 // explicit override.
-// The role is looked for inside the region as well as on it: a listbox that owns only options
-// has to wrap in one of these regions rather than be it, and its keyboard model is the same
-// whichever of the two elements carries the role.
+// Looked for inside the region too: a listbox holding only options sits inside it, not on it.
 const INTERACTIVE_CONTAINER_SELECTOR = [
   "listbox",
   "menu",
@@ -152,8 +144,7 @@ function checkContent(): void {
   }
 }
 
-// maxWait: a region whose content keeps changing — a spinner, a live counter — restarts a plain
-// debounce forever and the check never runs at all.
+// maxWait: content that keeps changing (a spinner) would otherwise postpone the check forever.
 const scheduleContentUpdate = useDebounceFn(checkContent, 100, { maxWait: 300 });
 
 onMounted(() => {
@@ -162,8 +153,7 @@ onMounted(() => {
 
 // flush: "post": a pre-flush watcher would run before these props' overflow classes (below)
 // reach the DOM, reading scrollHeight/clientHeight off the still-stale layout.
-// checkContent, not just the tab stop: these props decide which axes may announce, so turning one
-// on has to re-measure — otherwise the axis stays silent until some unrelated content change.
+// These props also decide which axes may announce, so they re-measure.
 watch([() => props.vertical, () => props.horizontal, () => props.disabled], checkContent, {
   flush: "post",
 });
@@ -182,17 +172,8 @@ useMutationObserver(el, scheduleContentUpdate, {
 });
 useEventListener(el, "load", scheduleContentUpdate, { capture: true });
 
-/**
- * Which edges the region touches, emitted as arrivals at each one.
- *
- * Deliberately not tied to the scroll event: content that fits the viewport produces no scroll at
- * all, so an edge that is reached from the very first render would otherwise never be reported.
- *
- * It reports arrivals and nothing more. Whether a list that still fits should ask for another page
- * is the caller's decision — this component cannot tell content that arrived from content the
- * caller drew in response to the last announcement, and guessing produced both a stalling pager
- * and a self-retriggering one.
- */
+// Measured on content changes as well as on scroll: content that fits never scrolls. Emits
+// arrivals only; whether to ask for more is the caller's decision.
 function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollTop" | "scrollLeft"> {
   const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
   const threshold = props.edgeThreshold;
@@ -204,25 +185,18 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
     isAtRight: scrollLeft + clientWidth >= scrollWidth - threshold,
   };
 
-  // A collapsed axis measures 0 and therefore scores as sitting at BOTH of its edges — a popover's
-  // content while closed (VcPopover renders it eagerly and hides it with display:none), a
-  // `max-height: 0` region, a squeezed flex item. `||`, not `&&`: one collapsed axis is enough,
-  // and the other axis's numbers are meaningless while the box has no area. Announce nothing and
-  // leave the published state for the first real measurement rather than poisoning it with this one.
+  // A collapsed box (a closed popover's display:none content) sits at every edge; ignore it.
   if (!clientHeight || !clientWidth) {
     return measured;
   }
 
   measuredAt.value++;
 
-  // An axis that cannot scroll sits at both of its edges by definition (`overflow: hidden` on the
-  // disabled modifier, and `overflow-*-auto` only on the axis that is turned on), so announcing
-  // them would report an arrival nobody can make.
+  // An axis that cannot scroll sits at both edges by definition, so it announces nothing.
   const verticalScrolls = props.vertical && !props.disabled;
   const horizontalScrolls = props.horizontal && !props.disabled;
 
-  // The refs still hold the PREVIOUS measurement here — they are written at the end of this
-  // function — which is what makes the four events below arrivals rather than states.
+  // The refs still hold the previous measurement, which makes these arrivals rather than states.
   if (verticalScrolls && measured.isAtTop && !isAtTop.value) {
     emit("reachTop");
   }
@@ -236,9 +210,7 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
     emit("reachRight");
   }
 
-  // The state doubles as the latch, so it is written only for the axes that can emit: recording an
-  // arrival on a gated axis would leave it already "arrived", and turning that axis on later
-  // (VcTable binds both from props) would then announce nothing.
+  // Written only for axes that can emit, or enabling one later would find it already "arrived".
   if (verticalScrolls) {
     isAtTop.value = measured.isAtTop;
     isAtBottom.value = measured.isAtBottom;
@@ -261,14 +233,9 @@ const onScroll = useThrottleFn(
 
     void scheduleContentUpdate();
 
-    // Snapshot before the handlers run: updateEdges calls the consumer's reach-* handlers
-    // synchronously, and one of those may scroll the element, which would leave the payload
-    // describing a position the flags were never computed from.
+    // Read before updateEdges runs the reach-* handlers, which may scroll.
     const { scrollTop, scrollLeft } = target;
 
-    // `scroll` reports the position, so it carries the flags rather than the transitions, and only
-    // an actual scroll emits it. The flags come back from updateEdges: computing them a second time
-    // here would let the payload and the reach-* events drift apart on any threshold change.
     const edges = updateEdges(target);
 
     emit("scroll", { scrollTop, scrollLeft, ...edges });

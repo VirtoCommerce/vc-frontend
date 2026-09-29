@@ -109,7 +109,7 @@
       "no_results_found": "Ingen resultater funnet",
       "no_options": "Ingen alternativer tilgjengelig",
       "select_all": "Velg alle",
-      "deselect_all": "Fjern alle valg",
+      "select_all_label": "Velg alle, {selected} av {total}",
       "selected_of_total": "{selected} av {total}"
     },
     "file": {

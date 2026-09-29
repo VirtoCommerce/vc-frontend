@@ -46,8 +46,7 @@ describe("useListboxNavigation", () => {
     document.body.innerHTML = "";
   });
 
-  // `home` ставил нулевой индекс без оглядки на длину: в пустом списке
-  // `aria-activedescendant` указывал на опцию, которой нет.
+  // An empty list has no index 0 for `aria-activedescendant` to point at.
   it.each(["home", "end", "down", "up"] as const)("has nowhere to go on an empty list: %s", (key) => {
     const { navigate, highlightedIndex, activeDescendantId } = useListboxNavigation({
       componentId: COMPONENT_ID,
@@ -68,7 +67,7 @@ describe("useListboxNavigation", () => {
     await nextTick();
     await nextTick();
 
-    // Последняя опция кончается на 400, окно региона — на 100.
+    // The last option ends at 400; the region's viewport ends at 100.
     expect(region.scrollTop).toBe(300);
     expect(list.scrollTop).toBe(0);
   });

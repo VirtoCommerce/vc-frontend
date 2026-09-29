@@ -11,7 +11,7 @@ import type { VueWrapper } from "@vue/test-utils";
 
 const ITEMS = ["Albania", "Belgium", "China"];
 
-// VcScrollbar внутри списка дебаунсит пересчёт краёв на 100 мс.
+// VcScrollbar debounces its edge measurement by 100 ms.
 async function afterContentSettles() {
   await new Promise((resolve) => setTimeout(resolve, 160));
 }
@@ -21,12 +21,11 @@ const OBJECT_ITEMS = [
   { id: "2", name: "Belgium" },
 ];
 
-// "bel" — префикс Belgium и подстрока внутри Abel: набор различает includes от startsWith
-// и заодно пиннит порядок, в котором union() поднимает префиксные совпадения наверх.
+// "bel" prefixes Belgium and sits inside Abel: tells includes from startsWith and pins the
+// order in which prefix matches are hoisted.
 const AFFIX_ITEMS = ["Abel", "Belgium"];
 
-// Реальные строки для двух параметризованных ключей: с пустыми messages t() вернул бы
-// голый ключ, и подстановка счётчика осталась бы непроверенной.
+// Real strings for the parameterised keys; with empty messages t() would return the bare key.
 const countingI18n = createI18n({
   locale: "en",
   legacy: false,
@@ -38,24 +37,20 @@ const countingI18n = createI18n({
           items_selected: "{0} items selected",
           results_available: "{0} results available",
           selected_of_total: "{selected} of {total}",
+          select_all_label: "Select all, {selected} of {total}",
         },
       },
     },
   },
 });
 
-// attachTo: VcSelect ищет опции через document.querySelectorAll, а document.activeElement
-// отслеживает только присоединённые узлы — detached-монтирование ломает и то и другое.
-// Отсюда обязательный auto-unmount: оставшийся в body экземпляр перехватывал бы
-// эти запросы в следующих тестах.
+// attachTo: document.activeElement only tracks attached nodes, and a leftover instance would
+// answer the next test's queries, hence the auto-unmount.
 enableAutoUnmount(afterEach);
 
-// Монтирование намеренно интеграционное: дети (VcInput, VcPopover, VcMenuItem, VcCheckbox)
-// не заглушены, потому что характеризуется поведение всей связки триггер-попап-список.
-// Компоненты передаются объектом, а не плагином uiKit: фабрика сливает опции через
-// lodash.merge, и плагин продублировал бы директиву html-safe. Из директив дереву нужна
-// только maska (vc-input.vue:31). Фабрика поднимает i18n с пустыми messages, поэтому
-// t("ui_kit.select.no_options") возвращает сам ключ — ожидания ниже сравниваются с ключами.
+// Integration mount on purpose: the trigger, popover, list and checkbox are not stubbed.
+// Components go in as an object, not the uiKit plugin, which would duplicate html-safe under
+// lodash.merge; only maska is needed. i18n has empty messages, so t() returns keys.
 const mountSelect = createWrapperFactory(mount, VcSelect, {
   attachTo: document.body,
   global: { components: UIKitComponents, directives: { maska: vMaska } },
@@ -113,10 +108,8 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
     });
 
-    // Single сравнивает по идентичности, а не по содержимому: эквивалентный, но другой
-    // объект — это новый выбор, и он обязан эмитить. На этом держится date-filter-select,
-    // который пересоздаёт свои диапазоны при смене локали и ждёт change, чтобы сбросить
-    // флаги валидности.
+    // Single mode compares by identity: an equal but distinct object is a new pick and must emit
+    // (date-filter-select.vue rebuilds its ranges on a locale change).
     it("re-emits for a deep-equal but distinct object", async () => {
       const items = [{ code: "al" }, { code: "be" }];
       const wrapper = createWrapper({ items, textField: "code", modelValue: { code: "be" } });
@@ -126,8 +119,7 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[items[1]]]);
     });
 
-    // Пустая строка как модель не совпадает ни с одним элементом, поэтому должна
-    // вести себя как «ничего не выбрано», а не съедать placeholder пустой меткой.
+    // An empty-string model matches nothing and must leave the placeholder.
     it("shows the placeholder for an empty model value", () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
@@ -140,7 +132,7 @@ describe("VcSelect", () => {
       expect(wrapper.get("input").attributes("placeholder")).toBe("Pick one");
     });
 
-    // Значение, которого нет в items, не должно протекать в поле как сырой текст.
+    // A value missing from items must not leak into the field as raw text.
     it("does not leak an unmatched valueField model into the field", () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
@@ -163,10 +155,8 @@ describe("VcSelect", () => {
   });
 
   describe("multiple selection", () => {
-    // Проп объявлен как `M & boolean`, а не просто `M`: без литерального boolean в типе
-    // Vue не генерирует приведение, и shorthand-атрибут `multiple` приезжает пустой
-    // строкой — falsy. Приложение передаёт именно shorthand, поэтому мультивыбор
-    // молча превращался в одиночный. Здесь пустая строка эмулирует shorthand.
+    // `M & boolean` keeps Vue's Boolean cast: a valueless `multiple` attribute must not arrive as
+    // "" and fall back to single mode. The empty string emulates the shorthand.
     it("treats a valueless multiple attribute as true", () => {
       const wrapper = createWrapper({
         items: ITEMS,
@@ -203,8 +193,7 @@ describe("VcSelect", () => {
       expect(wrapper.get("input").attributes("placeholder")).toBe("2 items selected");
     });
 
-    // Модель в multiple хранит значения valueField, поэтому подсветка обязана
-    // сравнивать значения с значениями, а не с целыми объектами.
+    // The multiple model holds valueField values, so the highlight compares values.
     it("marks selected options with aria-selected when valueField is set", () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
@@ -219,7 +208,7 @@ describe("VcSelect", () => {
       expect(flags).toEqual(["false", "true"]);
     });
 
-    // Модель одинакова в обоих режимах: массив значений valueField, а не целых элементов.
+    // Both modes store valueField values, never whole items.
     it("stores valueField values, not whole items", async () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
@@ -234,8 +223,7 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[["1"]]]);
     });
 
-    // Неинициализированная модель трактуется как пустой массив, а не проваливается
-    // в одиночный выбор (как было до рефакторинга).
+    // An uninitialised model counts as an empty array.
     it("treats an uninitialised model as empty", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true });
 
@@ -313,8 +301,7 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3");
     });
 
-    // Чекбокс обязан говорить то же, что счётчик рядом: "30 of 3000" — это не «выбрано всё».
-    // Отмеченным он уводил клик в ветку снятия и сбрасывал загруженную страницу.
+    // "30 of 3000" is not "all selected": a checked box would send the click down the clearing path.
     it("stays partial while a fully selected page is only part of the set", () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
 
@@ -331,7 +318,7 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("selectAll")).toHaveLength(1);
     });
 
-    // Фильтр сужает набор: выбирается видимое, а отфильтрованный выбор сохраняется.
+    // A filter narrows the set: the visible options are added, hidden selections are kept.
     it("acts on the filtered subset only", async () => {
       const wrapper = createWrapper({ ...selectAllProps, autocomplete: true, modelValue: ["China"] });
 
@@ -342,8 +329,7 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[["China", "Belgium"]]]);
     });
 
-    // Счётчик и чекбокс рядом обязаны говорить об одном наборе. С фильтром "bel" виден один
-    // невыбранный Belgium, а выбранная Albania скрыта — раньше подпись читалась "1 of 1".
+    // With "bel" only the unselected Belgium is visible, so the count must not read "1 of 1".
     it("counts only what the filter leaves visible", async () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, autocomplete: true, modelValue: ["Albania"] });
       const input = wrapper.get("input");
@@ -357,7 +343,51 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("false");
     });
 
-    it("keeps counting against the whole set while a server-side filter is on", async () => {
+    it("clears the whole selection, loaded or not, when nothing narrows the list", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, total: 5, modelValue: [...ITEMS, "Denmark", "Egypt"] });
+
+      await wrapper.get(".vc-select__select-all input").trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
+    });
+
+    it("counts only the loaded matches while a server-side query narrows the list", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        total: 5,
+        modelValue: [...ITEMS, "Denmark", "Egypt"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 5");
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+    });
+
+    it("names the checkbox with its count and keeps the name when it is checked", async () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS] });
+
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-label")).toBe("Select all, 3 of 3");
+    });
+
+    // A click that adds nothing must not leave the native box toggled against the component's state.
+    it("keeps the native checkbox in step when a click changes nothing", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, total: 3000, modelValue: [...ITEMS] });
+      const checkbox = wrapper.get(".vc-select__select-all input").element as HTMLInputElement;
+
+      checkbox.click();
+      await nextTick();
+
+      expect(checkbox.checked).toBe(false);
+      expect(checkbox.indeterminate).toBe(true);
+    });
+
+    it("counts against the consumer's total while a server-side filter is on", async () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         autocomplete: true,
@@ -374,13 +404,37 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3000");
     });
 
-    // Текст «Select all» был соседним span и ничего не подписывал: кликался только сам чекбокс.
+    // The label text lives in the checkbox's own slot, so it toggles the control.
     it("toggles when the visible label text is clicked", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
 
       await wrapper.get(".vc-select__select-all-text").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[ITEMS]]);
+    });
+
+    it("leaves Shift+Tab to the browser", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+
+      const event = new KeyboardEvent("keydown", { key: "Tab", shiftKey: true, bubbles: true, cancelable: true });
+      input.element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(document.activeElement).toBe(input.element);
+    });
+
+    it("keeps the selections a filter hides when clearing the visible ones", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, autocomplete: true, modelValue: ["China", "Belgium"] });
+
+      await wrapper.get("input").trigger("click");
+      await wrapper.get("input").setValue("bel");
+      await wrapper.get(".vc-select__select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[["China"]]]);
     });
 
     it("hands focus to the checkbox on Tab, since the popover is out of tab order", async () => {
@@ -471,8 +525,7 @@ describe("VcSelect", () => {
       expect(wrapper.get(".sr-only").text()).toBe("2 results available");
     });
 
-    // Двухстадийная очистка: первый клик стирает только строку поиска и возвращает
-    // полный список, не трогая выбор. Шаг 1 переносит фильтр и выбор в useSelect.
+    // Two-stage clear: the first click wipes the query only and leaves the selection alone.
     it("clears the search text before the selection", async () => {
       const wrapper = createWrapper({
         items: ITEMS,
@@ -507,7 +560,7 @@ describe("VcSelect", () => {
       expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
     });
 
-    // Пустой список и загрузка следующей страницы — два разных индикатора в одном и том же месте.
+    // An empty list and a further page on its way are two indicators for the same spot.
     it.each([
       ["a first page with nothing to show yet", { items: [], loading: true }],
       ["a further page on its way", { items: ITEMS, loading: true, hasNextPage: true }],
@@ -517,14 +570,44 @@ describe("VcSelect", () => {
       expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
     });
 
+    it("leaves the empty-list spinner to the pager while a further page is coming", () => {
+      const wrapper = createWrapper({ items: [], loading: true, hasNextPage: true });
+
+      expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
+      expect(wrapper.get(".vc-load-more").find(".vc-loader").exists()).toBe(true);
+      expect(wrapper.find('[role="option"]').exists()).toBe(false);
+    });
+
+    it("names the loading row", () => {
+      const wrapper = createWrapper({ items: [], loading: true });
+
+      expect(wrapper.get('[role="option"]').text()).toBe("ui_kit.messages.loading_text");
+    });
+
+    // The options on screen stay the previous query's until the consumer answers.
+    it("drops the highlight when a server-side query is typed", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.trigger("keydown", { key: "ArrowDown" });
+
+      expect(input.attributes("aria-activedescendant")).toBeDefined();
+
+      await input.setValue("chi");
+      await input.trigger("keydown", { key: "Enter" });
+
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
+
     it("shows no spinner while nothing is being fetched", () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
 
       expect(wrapper.find(".vc-loader").exists()).toBe(false);
     });
 
-    // Внутри role="listbox" допустимы только опции, а пейджер — это role="status". Поэтому
-    // список лежит ВНУТРИ области прокрутки, а не является ею.
+    // A listbox holds only options and the pager is role="status", so it sits beside the list.
     it("keeps the pager out of the listbox", () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: true });
       const pager = wrapper.get(".vc-load-more");
@@ -534,8 +617,7 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-scrollbar").element.contains(pager.element)).toBe(true);
     });
 
-    // Проводка целиком: список внутри попапа измеряется, стоит у своего низа — и селект просит
-    // страницу, хотя прокручивать тут нечего.
+    // End to end: the list inside the popup rests at its bottom and asks for a page without a scroll.
     it("asks for the next page when the open list rests at its bottom", async () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
 
@@ -547,17 +629,14 @@ describe("VcSelect", () => {
         scrollTop: 0,
       });
 
-      // В браузере измеримым список делает само открытие, и пересчёт запускает ResizeObserver.
-      // В jsdom его нет, поэтому измерение провоцируется тем, что скроллбар действительно
-      // наблюдает, — пришедшей строкой.
+      // jsdom has no ResizeObserver, so a landed row provokes the measurement instead.
       await wrapper.setProps({ items: [...ITEMS, "Denmark"] });
       await afterContentSettles();
 
       expect(wrapper.emitted("loadMore")).toHaveLength(1);
     });
 
-    // Подгрузка страницы дописывает элементы в конец: подсвеченный не сдвинулся, значит
-    // подсветка обязана уцелеть. Сброс отбрасывал бы пользователя в начало на каждой странице.
+    // Paging appends, so the highlighted option has not moved and the highlight survives.
     it("keeps the highlight when a further page is appended", async () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
       const input = wrapper.get("input");
@@ -578,7 +657,7 @@ describe("VcSelect", () => {
       expect(wrapper.findAll('[role="option"]')).toHaveLength(5);
     });
 
-    // А вот подмена списка (новый ответ поиска) ставит под индекс другой пункт — тут сброс нужен.
+    // A replaced list (a new search answer) puts another option under the index.
     it("drops the highlight when the list is replaced", async () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
       const input = wrapper.get("input");
@@ -642,8 +721,8 @@ describe("VcSelect", () => {
       }
     });
 
-    // Очистка уходит немедленно и не отменяет уже запланированный запрос. Без проверки
-    // отменённый "bel" прилетал следом и снова сужал только что восстановленный полный список.
+    // Clearing is sent at once and cannot cancel the scheduled query, so a cleared "bel" must
+    // not land afterwards.
     it("drops a query that was cleared before it went out", async () => {
       vi.useFakeTimers();
 
@@ -673,8 +752,7 @@ describe("VcSelect", () => {
   });
 
   describe("keyboard and ARIA", () => {
-    // Открытие стрелкой ставило подсветку на индекс 0 безусловно: в пустом списке
-    // `aria-activedescendant` указывал в пустоту.
+    // Opening onto an empty list must not point `aria-activedescendant` at nothing.
     it("publishes no active option while the list has none", async () => {
       const wrapper = createWrapper({ items: [] });
       const input = wrapper.get("input");
@@ -691,13 +769,12 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-activedescendant")).toBeUndefined();
     });
 
-    // Фокус остаётся на триггере: список ведётся через aria-activedescendant, а не переносом
-    // фокуса. Иначе в autocomplete после первой же стрелки нельзя было бы печатать.
+    // Focus stays on the trigger (aria-activedescendant), so autocomplete keeps accepting typing.
     it("keeps DOM focus on the trigger while arrowing through options", async () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
 
-      // Реальный фокус, а не только событие: trigger("focus") не двигает document.activeElement.
+      // Real focus: trigger("focus") does not move document.activeElement.
       (input.element as HTMLInputElement).focus();
       await input.trigger("focus");
       await input.trigger("keydown", { key: "ArrowDown" });
@@ -729,8 +806,7 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
     });
 
-    // Открытие с клавиатуры: APG кладёт подсветку на первый пункт для Down/Home и на последний
-    // для Up/End. Раньше всё, кроме End, открывало список на нулевом индексе.
+    // APG: Down/Home open on the first option, Up/End on the last.
     it("opens on the last option with ArrowUp", async () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
@@ -790,8 +866,7 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-controls")).toBe(wrapper.get('[role="listbox"]').attributes("id"));
     });
 
-    // Закрытие возвращает фокус на триггер, а дефолтный триггер открывается по фокусу —
-    // без развязки эти двое гоняются друг за другом и список не закрыть выбором пункта.
+    // Closing hands focus back to the trigger; that must not reopen the list.
     it("closes when an option is picked with the default trigger", async () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
@@ -807,8 +882,7 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(input.element);
     });
 
-    // Клик снаружи уже поставил фокус туда, куда целился пользователь. Забрать его обратно —
-    // значит не дать кликнуть в соседнее поле: оно закроет список и сразу потеряет фокус.
+    // An outside click already put focus where the user aimed; taking it back would lose that click.
     it("leaves focus alone when it has already moved outside", async () => {
       const outside = document.createElement("input");
       document.body.appendChild(outside);
@@ -821,13 +895,62 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-expanded")).toBe("true");
 
       outside.focus();
-      // Именно так закрытие приходит от клика снаружи: попап сам гасит себя и сообщает об этом.
+      // This is how an outside click closes it: the popover reports the toggle itself.
       wrapper.getComponent({ name: "VcPopover" }).vm.$emit("toggle", false);
       await nextTick();
 
       expect(document.activeElement).toBe(outside);
 
       outside.remove();
+    });
+
+    // aria-activedescendant keeps DOM focus on the trigger; a mouse press on an option would take it.
+    it("keeps focus on the trigger when an option is pressed with the mouse", async () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+
+      const option = wrapper.findAll('[role="option"]')[1];
+      const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      option.element.dispatchEvent(press);
+      await option.trigger("click");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      expect(press.defaultPrevented).toBe(true);
+      expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
+    });
+
+    it("hands focus back to the trigger from a teleported list", async () => {
+      const host = document.createElement("div");
+      host.id = "popover-host";
+      document.body.appendChild(host);
+
+      const wrapper = createWrapper({ items: ITEMS, enableTeleport: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      const option = host.querySelector<HTMLElement>('[role="option"]')!;
+      option.focus();
+      option.click();
+      await nextTick();
+
+      expect(document.activeElement).toBe(input.element);
+
+      wrapper.unmount();
+      host.remove();
+    });
+
+    it("opens with the current selection highlighted", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[1].attributes("id"));
     });
 
     // A plain select is a button: the click toggles it, and focus alone must not open it — the
@@ -916,9 +1039,7 @@ describe("VcSelect", () => {
       expect(wrapper.find(`#${detailsId}`).exists()).toBe(true);
     });
 
-    // DEFECT — меняется на шаге 3: сейчас activedescendant выставляется одновременно
-    // с реальным переносом фокуса, то есть две взаимоисключающие модели работают разом.
-    it("points aria-activedescendant at the focused option", async () => {
+    it("points aria-activedescendant at the highlighted option", async () => {
       const wrapper = createWrapper({ items: ITEMS });
 
       expect(wrapper.get("input").attributes("aria-activedescendant")).toBeUndefined();
@@ -939,10 +1060,8 @@ describe("VcSelect", () => {
     });
   });
 
-  // Модалка наводит фокус через focusFirstElement, и useFocusManagement расширяет её выборку
-  // селектором `.vc-select__container` — специально ради этого элемента. Без своего tabindex он
-  // не фокусируется, а focusFirstElement всё равно возвращает true, поэтому промах молчаливый:
-  // фокус остаётся на body и первый Tab уводит за пределы модалки.
+  // A modal's focusFirstElement targets `.vc-select__container` (useFocusManagement); without
+  // its own tabindex focus silently stays on <body>.
   it("keeps the container focusable, so a modal's autofocus lands on it", () => {
     const wrapper = createWrapper({ items: ITEMS });
     const container = wrapper.get(".vc-select__container");
@@ -964,8 +1083,7 @@ describe("VcSelect", () => {
       placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
     };
 
-    // Незаданное значение из GraphQL приезжает как null, а без valueField модель — это и есть
-    // item, поэтому null доезжал до #selected слота как «выбор», которого нет.
+    // An unset GraphQL value arrives as null, and without valueField the model is the item.
     it("shows the placeholder for a null model, not the selected slot", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: null as unknown as string }, slots);
 
@@ -987,8 +1105,7 @@ describe("VcSelect", () => {
       expect(wrapper.find(".probe-selected").exists()).toBe(false);
     });
 
-    // Без valueField модель — это сам элемент, поэтому значение, которого нет в items,
-    // всё равно попадает в слот, а не проваливается в placeholder.
+    // Without valueField the model is the item, so an unmatched value still reaches the slot.
     it("renders the selected slot for a model value that matches no item", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Atlantis" }, slots);
 
@@ -996,8 +1113,7 @@ describe("VcSelect", () => {
       expect(wrapper.find(".probe-placeholder").exists()).toBe(false);
     });
 
-    // Позитивная ветка слота: selected (vc-select.vue:273) резолвит модель обратно в элемент
-    // через valueField, и слот получает целый объект. Шаг 1 переписывает этот резолв.
+    // The slot receives the whole item that the valueField model resolves to.
     it("passes the resolved item to the selected slot", () => {
       const wrapper = createWrapper(
         { items: OBJECT_ITEMS, textField: "name", valueField: "id", modelValue: "2" },
@@ -1034,10 +1150,8 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-trigger--button").classes()).toContain("vc-select-trigger--size--xs");
     });
 
-    // Клик по слотовому триггеру не открывал список с тех пор, как VcSelect переехал с
-    // VcDropdownMenu на VcPopover: тот вешает свой `click: toggle` на обёртку #trigger-слота,
-    // и наш emit складывался с ним в двойной toggle. Ветка с VcInput уцелела только потому,
-    // что vc-input.vue сам гасит клик (`@click.stop`).
+    // VcPopover binds its own `click: toggle` on the #trigger wrapper, so the trigger's click must
+    // not reach it too, or the two toggles cancel out.
     it("opens, closes and reopens on click", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
       const trigger = wrapper.get(".vc-select-trigger__button");
@@ -1078,9 +1192,7 @@ describe("VcSelect", () => {
       expect(wrapper.classes()).toContain("vc-select--opened");
     });
 
-    // Триггер — отдельный компонент, значит отдельный БЭМ-блок со своими стилями. Состояния
-    // приезжают пропсами и становятся его собственными модификаторами: тянуться селектором
-    // из `.vc-select--opened` в чужой блок было бы ровно тем, что канон запрещает.
+    // The trigger is its own BEM block, and its states arrive as its own modifiers.
     it("owns its block and carries the state modifiers on its own root", () => {
       const wrapper = createWrapper({ items: ITEMS, disabled: true, readonly: true, error: true }, slots);
       const root = wrapper.get(".vc-select-trigger");
@@ -1098,8 +1210,7 @@ describe("VcSelect", () => {
       expect(wrapper.html()).not.toContain("vc-select__button");
     });
 
-    // Настоящая <button>, а не div с role: внутри лежит кнопка очистки, а кнопку в кнопку
-    // вкладывать нельзя — она осталась соседом, а триггер накрывает коробку псевдоэлементом.
+    // A real <button>, beside the clear button rather than around it: buttons cannot nest.
     it("renders a real button element carrying the combobox semantics", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Belgium" }, slots);
       const trigger = wrapper.get(".vc-select-trigger__button");
@@ -1239,21 +1350,6 @@ describe("VcSelect inside a dialog popover", () => {
     await nextTick();
 
     expect(dialogIsOpen(wrapper)).toBe(true);
-  });
-
-  // A click puts DOM focus on the option in browsers that focus what they click.
-  it("consumes Escape from a focused option and hands focus back to the trigger", async () => {
-    const wrapper = mountDialogHost({ props: { multiple: true } });
-    await openDialogAndSelect(wrapper);
-
-    const option = wrapper.get('[role="option"]');
-    (option.element as HTMLElement).focus();
-    pressOn(option.element, "Escape");
-    await nextTick();
-
-    expect(selectIsOpen(wrapper)).toBe(false);
-    expect(dialogIsOpen(wrapper)).toBe(true);
-    expect(document.activeElement).toBe(selectTrigger(wrapper).element);
   });
 
   it("consumes Escape from the Select all checkbox and hands focus back to the trigger", async () => {

@@ -14,6 +14,8 @@
 
     <slot v-else-if="showSpinner" name="loading">
       <VcLoader />
+
+      <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
     </slot>
 
     <slot v-else name="end">
@@ -71,19 +73,9 @@ if (import.meta.env.DEV && !scrollbar && props.hasNextPage) {
   console.warn("VcLoadMore: no VcScrollbar around it, so nothing can tell it the list reached its end.");
 }
 
-/**
- * Whether the list, as the scrollbar last read it, wants another page.
- *
- * Read only at the moment of a measurement — see the watcher below. Every input except the
- * geometry is consumer-driven and can change while the published edges describe a box that no
- * longer exists, because the measurement runs behind a debounce: a handler appends rows and drops
- * `loading` in the same tick, and a decision taken then reads the geometry from before the append,
- * which still says "at the bottom". That is a second page nobody asked for.
- *
- * `loading` is therefore a guard and not a trigger. It covers the one way the edge is genuinely
- * re-reached while a request is in flight — the user scrolls up and comes back — and it is what
- * the spinner reports.
- */
+// Read only when a measurement lands (the watcher below): the edges come from a debounced
+// measurement, so reacting to props would read the box from before an append and ask twice.
+// `loading` is a guard, not a trigger.
 const wantsMore = computed(
   () => props.hasNextPage && !props.loading && !props.pageLimitReached && scrollbar?.isAtBottom.value === true,
 );
@@ -92,47 +84,36 @@ const showSpinner = computed(() => props.loading && props.hasNextPage);
 
 const showEnd = computed(() => props.showEndOfList && !props.hasNextPage && !props.loading);
 
-/**
- * How much the region holds, as a plain node count.
- *
- * Only ever read at rest — nothing is asked for while `loading` — so a spinner or a placeholder
- * row drawn in reply to the last request is absent from both readings, and the number moves only
- * for content that stayed.
- */
-function readContentSize(): number {
-  return scrollbar?.el.value?.getElementsByTagName("*").length ?? 0;
+// What the region shows, read only at rest, so a spinner drawn for the last request is never in it.
+// Text rather than a node count: a new search can land exactly as many rows as the list it replaced.
+function readContent(): string {
+  return scrollbar?.el.value?.textContent ?? "";
 }
 
-/** What the region held when the last page was asked for; null until something has been asked. */
-const askedAt = ref<number | null>(null);
+/** What the region showed when the last page was asked for; null until something has been asked. */
+const askedAt = ref<string | null>(null);
 
 /**
- * Decided on a reading of the box, never on a prop transition, and asked again only once the last
- * request has been answered with something.
- *
- * A list that still fits its viewport has to be asked about again — nothing will ever scroll it —
- * and the page that landed is what re-opens the question. A request that brings nothing back does
- * not: a failed fetch, or a backend still claiming a next page it will not serve, leaves the
- * region exactly as it was and is not repeated. Neither is recoverable from in here, so the
- * consumer owns saying so; asking again forever is not saying it.
+ * Asks again only once the last request changed what the list shows. A short list is never
+ * scrolled, so the landed page is what re-opens the question; a failed fetch leaves the list as
+ * it was and is not repeated — the consumer recovers by changing `items` or `has-next-page`.
  */
 function reconsider(): void {
   if (!wantsMore.value) {
     return;
   }
 
-  const size = readContentSize();
+  const content = readContent();
 
-  if (size === askedAt.value) {
+  if (content === askedAt.value) {
     return;
   }
 
-  askedAt.value = size;
+  askedAt.value = content;
   emit("loadMore");
 }
 
-// A list that ran out and was rebuilt — a new search, a reopened popup — counts from scratch, or
-// its first page would be skipped whenever the old list happened to end at the same size.
+// A list that ran out and was rebuilt counts from scratch.
 watch(
   () => props.hasNextPage,
   (hasNextPage) => {
@@ -144,9 +125,7 @@ watch(
 
 watch(() => scrollbar?.measuredAt.value, reconsider);
 
-// A list already resting at its bottom when this component appears — a popover opening onto a
-// short first page, a `v-if` flipping — has been measured already, and no further measurement is
-// coming, so the first request has to be asked for outright.
+// A list already at rest at its bottom on mount gets no further measurement.
 onMounted(reconsider);
 </script>
 

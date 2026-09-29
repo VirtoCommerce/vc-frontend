@@ -78,11 +78,7 @@ interface IProps {
    * the combobox and cannot provide the usual focus ring.
    */
   highlighted?: boolean;
-  /**
-   * Tab-order position of the inner element. Defaults to 0. Pass -1 for options inside a
-   * listbox driven by `aria-activedescendant`, where focus stays on the combobox and the
-   * options must not be reachable with Tab.
-   */
+  /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
   tabindex?: number;
 }
 
@@ -280,11 +276,7 @@ onMounted(() => {
           @apply bg-[--color-#{$color}-100];
         }
 
-        // The keyboard position needs an indicator of its own. The background step above is
-        // 1.11-1.33:1 against the list surface across red/coffee light and dark — far under the
-        // 3:1 WCAG 1.4.11 asks of the visual information identifying a component's state — and on
-        // a selected option `--active` overrides it outright, at equal specificity and later in
-        // the file, so there is nothing left to see. An outline collides with neither.
+        // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
         &#{$highlighted} {
           @include focus-ring($inset: true);
         }

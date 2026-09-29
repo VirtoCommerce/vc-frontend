@@ -14,7 +14,6 @@ declare module "vue" {
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
     VcImage: typeof Components.VcImage;
-    /** @deprecated Use VcLoadMore inside a VcScrollbar instead */
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
     /** @deprecated Use VcProperty or VcProductProperties instead */

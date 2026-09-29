@@ -37,8 +37,7 @@ describe("VcScrollbar", () => {
   });
 
   describe("edge events", () => {
-    // Контент, который помещается целиком, не рождает ни одного события прокрутки. Потребитель,
-    // подгружающий страницы по reach-bottom, застревал бы на первой навсегда.
+    // Content that fits never scrolls, so a reach-bottom pager would stall on page one.
     it("reports the bottom on mount when the content fits", async () => {
       const wrapper = mountScrollbar(1);
 
@@ -74,8 +73,7 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachRight")).toBeUndefined();
     });
 
-    // Защёлка гейтнутой оси не должна доезжать до "уже прибыли": VcTable включает оси пропсами,
-    // и после включения ось обязана объявить свой край.
+    // A gated axis must not latch as "arrived": enabling it later has to announce its edge.
     it("announces the bottom when the vertical axis is turned on after mount", async () => {
       const wrapper = mount(VcScrollbar, {
         attachTo: document.body,
@@ -94,7 +92,7 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
     });
 
-    // Дозагруженная страница двигает нижний край, но прокрутки при этом не происходит.
+    // A loaded page moves the bottom edge without any scroll.
     it("re-arms the bottom when content is appended below the viewport", async () => {
       const wrapper = mountScrollbar(1);
       const element = wrapper.element as HTMLElement;
@@ -120,8 +118,7 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(2);
     });
 
-    // Ось без overflow:auto стоит у обоих своих краёв по определению — объявлять прибытие,
-    // которого никто не может совершить, нечестно.
+    // An axis without overflow:auto sits at both edges by definition, so it announces nothing.
     it.each([
       ["a horizontal-only scrollbar", { horizontal: true }],
       ["a disabled scrollbar", { vertical: true, disabled: true }],
@@ -174,7 +171,7 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
     });
 
-    // `scroll` описывает позицию, а не переход, поэтому его источник — только сама прокрутка.
+    // `scroll` reports a position, so only an actual scroll emits it.
     it("emits the scroll payload only when something actually scrolled", async () => {
       const wrapper = mountScrollbar(1);
       const element = wrapper.element as HTMLElement;
@@ -212,9 +209,8 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBe("0");
     });
 
-    // Точка входа с клавиатуры принадлежит самому listbox-у (он ведёт aria-activedescendant),
-    // и не важно, лежит роль на регионе или внутри него: список, которому можно владеть только
-    // опциями, обязан лежать ВНУТРИ региона, а не быть им.
+    // The listbox owns the keyboard entry (aria-activedescendant) whether its role is on the
+    // region or inside it.
     it.each([
       ["on the region itself", () => h("p", "row"), { role: "listbox" }],
       ["on a list inside it", () => h("ul", { role: "listbox" }, [h("li", { role: "option" }, "row")]), {}],

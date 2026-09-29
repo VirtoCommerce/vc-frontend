@@ -14,17 +14,8 @@
       },
     ]"
   >
-    <!--
-      A real button, not a div with role="button": the clear control below is a button too, and
-      one may not nest inside another, so it stays a sibling and the trigger stretches over the
-      whole box with a pseudo-element instead of wrapping it.
-    -->
-    <!--
-      role="combobox", although this is a real <button>: `aria-activedescendant` is not allowed on
-      `role=button`, so without it assistive tech drops the attribute and the keyboard walk through
-      the list is announced to nobody. APG's select-only combobox is exactly this — a button-shaped
-      control that owns `aria-expanded`, `aria-controls` and the active descendant.
-    -->
+    <!-- A sibling of the clear button (buttons cannot nest), with role="combobox" because
+         `aria-activedescendant` is not allowed on role=button (APG select-only combobox). -->
     <button
       :id="triggerId"
       type="button"
@@ -46,7 +37,6 @@
       @keydown.up.prevent="$emit('navigate', 'up')"
       @keydown.home.prevent="$emit('navigate', 'home')"
       @keydown.end.prevent="$emit('navigate', 'end')"
-      @keydown.esc="$emit('escape', $event)"
       @keydown.tab="$emit('tab', $event)"
     >
       <span class="vc-select-trigger__content">
@@ -66,7 +56,6 @@
       variant="ghost"
       class="vc-select-trigger__clear"
       :icon-size="getInputClearIconSize(size)"
-      @keydown.esc="$emit('escape', $event)"
       @keydown.enter.stop.prevent
       @keyup.enter.stop.prevent="$emit('clear')"
       @click.stop="$emit('clear')"
@@ -115,7 +104,6 @@
     @keydown.end="onEnd"
     @keydown.enter="$emit('confirm', $event)"
     @click="onClick"
-    @keydown.esc="$emit('escape', $event)"
     @keydown.tab="$emit('tab', $event)"
   >
     <template #append>
@@ -129,7 +117,6 @@
         variant="ghost"
         class="vc-select-trigger__clear"
         :icon-size="getInputClearIconSize(size)"
-        @keydown.esc="$emit('escape', $event)"
         @keydown.enter.stop.prevent
         @keyup.enter.stop.prevent="$emit('clear')"
         @click.stop="$emit('clear')"
@@ -144,7 +131,6 @@
         variant="ghost"
         tabindex="-1"
         class="vc-select-trigger__arrow"
-        @keydown.esc="$emit('escape', $event)"
         @click.stop="$emit('toggle')"
       />
     </template>
@@ -158,7 +144,6 @@ import { getInputClearIconSize } from "@/ui-kit/utilities";
 const emit = defineEmits<{
   (event: "toggle"): void;
   (event: "open"): void;
-  (event: "escape", payload: KeyboardEvent): void;
   (event: "clear"): void;
   (event: "navigate", key: "up" | "down" | "home" | "end"): void;
   (event: "confirm", payload: KeyboardEvent): void;
@@ -187,23 +172,15 @@ const props = defineProps<{
   activeDescendantId?: string;
 }>();
 
-// The `selected` slot only renders behind `hasSelection`, so it always receives a real item —
-// declaring it as `T` keeps consumers from having to narrow what cannot be undefined there.
+// `selected` renders only behind `hasSelection`, so its item is never undefined.
 defineSlots<{
   selected?: (props: { item: T; error?: boolean }) => unknown;
   placeholder?: (props: { error?: boolean }) => unknown;
 }>();
 
-/**
- * Focus never opens the list — the WAI-ARIA APG reference comboboxes do not, and every path that
- * did open on focus fought with the focus the close returns to the trigger.
- *
- * A plain select toggles on click, like a button. Autocomplete only ever opens on click, because a
- * click inside the field is the user placing a caret, never a request to take the list away.
- */
+// Focus never opens the list (APG). A plain select toggles on click; autocomplete only opens,
+// since a click in the field places the caret.
 function onClick(): void {
-  // Not a ternary inside emit(): the emit type is a set of call signatures, so a union argument
-  // matches none of them.
   if (props.autocomplete) {
     emit("open");
     return;
@@ -212,8 +189,7 @@ function onClick(): void {
   emit("toggle");
 }
 
-// Home/End move the text caret when the user is typing; only steal them when the field is
-// read-only (a plain select), where there is no caret to move.
+// Home/End belong to the caret in an editable field.
 function onHome(event: KeyboardEvent): void {
   if (!props.autocomplete) {
     event.preventDefault();
@@ -246,14 +222,15 @@ defineExpose({
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-select-trigger {
+  $self: &;
   $disabled: "";
   $readonly: "";
   $opened: "";
   $error: "";
 
-  // Same token chain VcSelect uses, declared here rather than inherited from it: this block
-  // renders inside VcSelect today, but a block that only works under one parent is not a block.
   --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
   &--disabled {
@@ -272,10 +249,14 @@ defineExpose({
     $error: &;
   }
 
-  // The slotted branch paints its own box. The field branch is a VcInput and paints itself,
-  // so it takes neither the border nor the size scale.
+  // The field branch is a VcInput and paints its own box, border and size.
   &--button {
-    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
+    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-start;
+
+    // The ring outlines the whole box, as VcInput's does, not the inner button.
+    &:has(#{$self}__button:focus-visible) {
+      @include focus-ring;
+    }
 
     &#{$disabled} {
       @apply bg-neutral cursor-not-allowed pointer-events-none;
@@ -294,8 +275,7 @@ defineExpose({
     }
   }
 
-  // Same scale as VcInput so both branches line up at a given size.
-  // `auto` keeps its height from the content, as before.
+  // VcInput's scale; `auto` takes its height from the content.
   &--size {
     &--xs {
       @apply h-8 text-sm;
@@ -323,12 +303,14 @@ defineExpose({
   }
 
   &__button {
-    @apply grow flex min-w-0 h-full text-left;
+    @apply grow flex min-w-0 h-full text-start;
 
-    // The chevron and the space around it stay clickable without moving inside the button —
-    // they cannot, because the clear control is a button and one may not nest in another. The
-    // stretched pseudo-element hands the whole box back to the trigger; the clear control is
-    // positioned and later in the DOM, so it still paints above and stays clickable.
+    &:focus-visible {
+      @apply outline-none;
+    }
+
+    // Stretches the hit area over the chevron; the clear button is positioned and later in the
+    // DOM, so it stays above it.
     &::after {
       @apply absolute inset-0;
 
@@ -355,7 +337,7 @@ defineExpose({
   }
 
   &__icon {
-    @apply shrink-0 mr-3 text-neutral-900;
+    @apply shrink-0 me-3 text-neutral-900;
 
     #{$disabled} & {
       @apply text-neutral-400;

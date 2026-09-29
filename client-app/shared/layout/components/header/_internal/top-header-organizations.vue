@@ -46,13 +46,11 @@
       </VcInput>
     </div>
 
-    <!-- The keys are taken on the region rather than on the list itself: the list is the tab stop
-         only when there is no search field, and the region is what holds focus either way. -->
     <VcScrollbar vertical :edge-threshold="50" class="top-header-organizations__list" @keydown="onListKeydown">
-      <!-- Only options may live inside a listbox, so the scroll region wraps the list instead of
-           being it: neither the empty state nor the loader below is an option. -->
+      <!-- Only options may live in a listbox, so the empty state and the pager sit beside it. -->
       <ul
         :id="listboxId"
+        class="top-header-organizations__listbox"
         role="listbox"
         :aria-label="$t('common.labels.organizations')"
         :tabindex="isShowSearch ? undefined : 0"
@@ -145,9 +143,7 @@ onMounted(() => {
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
 
-  // No `loading` check: a new search empties the list first, so `length > 0` already keeps the
-  // current organization off an empty result. Gating on `loading` instead un-hoists it for the
-  // duration of every request, and a paging round trip then shifts every option up by one.
+  // Not gated on `loading`: that un-hoists the current organization on every page request.
   if (organization.value && organizations.value.length > 0) {
     return [organization.value, ...withoutCurrent];
   }
@@ -155,7 +151,13 @@ const displayedOrganizations = computed(() => {
   return withoutCurrent;
 });
 
-const { highlightedIndex, activeDescendantId, getOptionId, navigate } = useListboxNavigation({
+const {
+  highlightedIndex,
+  activeDescendantId,
+  getOptionId,
+  navigate,
+  reset: resetHighlight,
+} = useListboxNavigation({
   componentId,
   items: displayedOrganizations,
   getKey: (item) => item.id,
@@ -200,12 +202,7 @@ const NAVIGATION_KEYS: Record<string, ListboxNavigationKeyType> = {
   End: "end",
 };
 
-/**
- * Below the search threshold there is no field to own the keyboard, and the options are out of
- * tab order by design (`aria-activedescendant`), so the list itself becomes the tab stop and takes
- * the same keys. Inert while the field is rendered: its own events bubble up through here, and
- * both handlers would navigate.
- */
+// Without a search field the list is the tab stop and takes the keys; with one, the field does.
 function onListKeydown(event: KeyboardEvent): void {
   if (isShowSearch.value) {
     return;
@@ -231,7 +228,6 @@ function onListKeydown(event: KeyboardEvent): void {
   }
 }
 
-/** Enter picks the highlighted organization; with nothing highlighted it runs the search. */
 async function onEnter(): Promise<void> {
   const highlighted = displayedOrganizations.value[highlightedIndex.value];
 
@@ -245,7 +241,10 @@ async function onEnter(): Promise<void> {
 
 const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
 
+// The results only change after the debounced search lands; until then Enter must search, not pick.
 async function onSearchInput(): Promise<void> {
+  resetHighlight();
+
   if (!searchPhrase.value.trim()) {
     await search();
   } else {
@@ -254,12 +253,15 @@ async function onSearchInput(): Promise<void> {
 }
 
 async function onSearchClear(): Promise<void> {
+  resetHighlight();
   reset();
   await search();
 }
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .top-header-organizations {
   @apply rounded-b-md border-t bg-neutral-50;
 
@@ -279,9 +281,13 @@ async function onSearchClear(): Promise<void> {
     }
   }
 
-  // The scroll region around the list; 15rem is what the menu around it can spare.
   &__list {
     @apply my-1 max-h-60 w-full select-none;
+  }
+
+  // The scroll region clips an outset ring.
+  &__listbox:focus-visible {
+    @include focus-ring($inset: true);
   }
 
   &__radio {

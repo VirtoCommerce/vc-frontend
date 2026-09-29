@@ -13,9 +13,7 @@ type ParamsType<T, V> = {
   valueField?: Ref<VcSelectFieldAccessorType<T, V> | undefined>;
 };
 
-// `!item` rather than a null check: the pre-refactor accessor was `textField && item ? … : item`,
-// so a falsy option (0, "", false) resolves to itself instead of being indexed. It also keeps a
-// null item from throwing, which the old code did when `valueField` was set.
+// `!item`, not a null check: a falsy option (0, "", false) resolves to itself.
 function readField<T, R>(item: T, accessor: VcSelectFieldAccessorType<T, R> | undefined): unknown {
   if (accessor === undefined || !item) {
     return item;
@@ -46,11 +44,7 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return Array.isArray(params.modelValue.value) ? params.modelValue.value : [];
   });
 
-  /**
-   * The item behind a single-mode model value. Without `valueField` the model IS the item,
-   * so a value that matches nothing in `items` is still handed back — dropping it would stop
-   * the `#selected` slot rendering for anyone whose model outlives its options list.
-   */
+  // Without `valueField` the model is the item, so an unmatched value is still handed back.
   const selectedItem = computed<T | undefined>(() => {
     const found = params.multiple.value
       ? undefined
@@ -61,12 +55,8 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return found ?? (rawModelIsTheItem ? (params.modelValue.value as T | undefined) : undefined);
   });
 
-  /**
-   * Comparison depth is per mode, exactly as before the refactor: multiple compares deeply,
-   * single compares by identity. Making single deep looks tidier but swallows a legitimate
-   * re-pick — `date-filter-select.vue` rebuilds its ranges on locale change, and re-picking
-   * the same range must still emit so the component can reset its validity flags.
-   */
+  // Multiple compares deeply, single by identity: date-filter-select.vue rebuilds its ranges and
+  // relies on re-picking an equal range still emitting.
   function isActiveItem(item: T): boolean {
     const itemValue = getItemValue(item);
 
@@ -77,10 +67,7 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return itemValue === params.modelValue.value;
   }
 
-  /**
-   * Model after toggling `item` in multiple mode. An uninitialised model counts as empty,
-   * so the array shape is preserved instead of falling through to single-select behaviour.
-   */
+  // An uninitialised model counts as empty.
   function getToggledValues(item: T): V[] {
     const itemValue = getItemValue(item);
     const existingIndex = selectedValues.value.findIndex((selectedValue) => isEqual(selectedValue, itemValue));
@@ -100,13 +87,7 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return params.modelValue.value != null;
   });
 
-  /**
-   * Lower-cased text the filter matches against. Only a primitive carries one: an option that
-   * resolves to an object — no `textField`, and the item itself is an object — used to stringify
-   * to "[object Object]", so it matched any query that is a substring of that, and nothing else.
-   * Excluding it is the whole behaviour change, and it only reaches a select that filters a list
-   * of objects with no way to label them.
-   */
+  // Only a primitive has text to match; an unlabelled object would stringify to "[object Object]".
   function getFilterText(item: T): string {
     const text = getItemText(item);
 

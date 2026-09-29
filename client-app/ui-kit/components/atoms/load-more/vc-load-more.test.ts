@@ -28,8 +28,8 @@ async function afterContentSettles() {
 // Globally registered in the app, and `$t` comes from the i18n plugin; a bare mount has neither.
 const GLOBAL = { components: { VcIcon, VcLoader }, mocks: { $t: (key: string) => key } };
 
-function renderRows(count: number) {
-  return Array.from({ length: count }, (_, index) => h("p", { key: index }, `row ${index}`));
+function renderRows(count: number, label: string) {
+  return Array.from({ length: count }, (_, index) => h("p", { key: `${label}-${index}` }, `${label} ${index}`));
 }
 
 type StateType = {
@@ -38,6 +38,7 @@ type StateType = {
   showEndOfList: boolean;
   pageLimitReached: boolean;
   rows: number;
+  rowLabel: string;
   present: boolean;
 };
 
@@ -53,6 +54,7 @@ function mountList(initial: Partial<StateType> = {}) {
     showEndOfList: false,
     pageLimitReached: false,
     rows: 1,
+    rowLabel: "row",
     present: true,
     ...initial,
   });
@@ -63,7 +65,7 @@ function mountList(initial: Partial<StateType> = {}) {
       setup() {
         return () =>
           h(VcScrollbar, { vertical: true }, () => [
-            ...renderRows(state.rows),
+            ...renderRows(state.rows, state.rowLabel),
             state.present
               ? h(VcLoadMore, {
                   loading: state.loading,
@@ -103,6 +105,31 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
+  // A new search answered with exactly as many rows as the list it replaced, next page still claimed.
+  it("asks again for a rebuilt list of the same size", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 3 });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    await afterContentSettles();
+
+    state.rowLabel = "match";
+    state.loading = false;
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
+  it("names the spinner for the status region", () => {
+    const { wrapper } = mountList({ loading: true });
+
+    expect(wrapper.get('[role="status"]').text()).toBe("ui_kit.messages.loading_text");
+  });
+
   it("asks for nothing while a page is already on its way", async () => {
     const { onLoadMore, region } = mountList({ loading: true });
 
@@ -121,8 +148,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).not.toHaveBeenCalled();
   });
 
-  // Тот самый случай, ради которого всё это: страница пришла, список по-прежнему помещается
-  // целиком, и попросить следующую больше некому — прокрутки не будет.
+  // The page landed and the list still fits: nothing will scroll, so it has to ask again.
   it("asks again once the page has landed and the list still fits", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -141,9 +167,8 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  // Обработчик отвечает на запрос тем, что рисует — спиннер, строки-заглушки. Контент изменился,
-  // регион по-прежнему стоит у своего низа; запрос — это переход, а не состояние, поэтому ответ
-  // не порождает следующий вопрос. Именно на этом трижды спотыкались предыдущие подходы.
+  // The answer being drawn (a spinner, placeholder rows) changes the content but is not a new
+  // question.
   it("does not ask twice while the answer to the first request is being drawn", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -159,8 +184,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // Упавший запрос ничего не приносит: строки и hasNextPage те же, а исчезнувший спиннер — это
-  // очередное изменение содержимого. Раньше на нём вопрос задавался заново, и так без конца.
+  // A failed request brings nothing back; the vanished spinner alone must not ask again.
   it("does not ask again for a page that came back with nothing", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -178,8 +202,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // Размер — счётчик, а не отпечаток: заново собранный список может совпасть по нему со старым,
-  // и тогда его первая страница не была бы запрошена никогда.
+  // A rebuilt list may match the old one exactly, so running out resets the record.
   it("counts from scratch once the list has run out", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -191,8 +214,8 @@ describe("VcLoadMore", () => {
     state.hasNextPage = false;
     await afterContentSettles();
 
-    // Новый список ровно того же размера, на котором спрашивали старый. Измерение надо
-    // спровоцировать: сам по себе флаг ничего в регионе не меняет.
+    // A list identical to the one last asked from; the flag alone changes nothing, so a
+    // measurement is provoked.
     state.hasNextPage = true;
     region.firstElementChild?.setAttribute("role", "none");
     await afterContentSettles();
@@ -200,8 +223,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  // А вот край, до которого действительно доехали заново, пока запрос ещё в пути, — это тот
-  // самый случай, который держит `loading`, и единственный, который он держит.
+  // An edge genuinely re-reached while a request is in flight is what `loading` guards.
   it("asks for nothing more while the page it asked for is still on its way", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });
 
@@ -225,10 +247,8 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // Пришедшая страница сдвигает низ, но измерение отстаёт на дебаунс. Потребитель дописывает
-  // строки и снимает `loading` в одном тике, и решение, принятое на этом переходе, читает
-  // геометрию ДО дописывания — она всё ещё говорит «мы у низа». Это вторая страница, которую
-  // никто не просил.
+  // The consumer appends rows and drops `loading` in one tick, while the measurement lags a
+  // debounce behind: deciding on that transition would read the pre-append box and ask twice.
   it("does not ask for a second page on the loading flag alone, before the region is re-measured", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });
 
@@ -254,8 +274,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // Попапу VcSelect список отдают уже измеренным: к моменту появления этого компонента у скроллбара
-  // менять нечего, и ждать изменения — значит не спросить никогда.
+  // VcSelect's popup mounts onto an already measured list, so no further measurement comes.
   it("asks as soon as it appears in a list that is already resting at its bottom", async () => {
     const { state, onLoadMore, region } = mountList({ present: false });
 
@@ -298,8 +317,7 @@ describe("VcLoadMore", () => {
     expect(wrapper.find(".vc-load-more").exists()).toBe(visible);
   });
 
-  // Строка «вы дошли до конца» — не побочный эффект отсутствия следующей страницы: под списком из
-  // четырёх опций она не нужна, поэтому её просят явно.
+  // The end-of-list line is opt-in: a four-option dropdown does not want it.
   it.each([
     ["nothing at all by default", {}, null],
     ["the end of the list when asked for it", { showEndOfList: true }, "ui_kit.reach_limit.end_list"],
@@ -325,8 +343,7 @@ describe("VcLoadMore", () => {
     }
   });
 
-  // Предел страниц — это «дальше не покажем». Следующая страница формально есть, и ничего сейчас
-  // не грузится: единственное, что удерживает запрос, — сам предел.
+  // A page limit means "no more will be shown": a next page exists and nothing is loading.
   it("asks for nothing once the page limit is reached", async () => {
     const { onLoadMore, region } = mountList({ hasNextPage: true, loading: false, pageLimitReached: true });
 
@@ -336,7 +353,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).not.toHaveBeenCalled();
   });
 
-  // И спиннер он тоже вытесняет: крутиться не за чем, страница всё равно не будет показана.
+  // It displaces the spinner too: the page would not be shown anyway.
   it("shows the limit instead of a spinner while a request is still in flight", async () => {
     const { wrapper, region } = mountList({ hasNextPage: true, loading: true, pageLimitReached: true });
 

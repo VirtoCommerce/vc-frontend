@@ -109,7 +109,7 @@
       "no_results_found": "Keine Ergebnisse gefunden",
       "no_options": "Keine Optionen verfügbar",
       "select_all": "Alle auswählen",
-      "deselect_all": "Alle abwählen",
+      "select_all_label": "Alle auswählen, {selected} von {total}",
       "selected_of_total": "{selected} von {total}"
     },
     "file": {

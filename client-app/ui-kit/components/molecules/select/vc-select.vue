@@ -32,11 +32,7 @@
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
-        <!--
-          has-selection is `!= null`, not `!== undefined`: an unset GraphQL value arrives as null,
-          and without `valueField` the raw model IS the item, so a null model reached the #selected
-          slot as a selection that is not there.
-        -->
+        <!-- `!= null`: an unset GraphQL value arrives as null, and without `valueField` the model is the item. -->
         <VcSelectTrigger
           ref="triggerElement"
           :selected-item="selected"
@@ -58,7 +54,6 @@
           :active-descendant-id="activeDescendantId"
           @toggle="toggle"
           @open="open"
-          @escape="onEscape($event, close)"
           @clear="clear"
           @navigate="onNavigate($event, open)"
           @confirm="onConfirm($event, toggle, close)"
@@ -78,8 +73,6 @@
       <template v-if="enabled" #content="{ close }">
         <div class="vc-select__dropdown">
           <div v-if="showSelectAll" class="vc-select__select-all">
-            <!-- The text goes in the checkbox's own slot: as a sibling span it labelled nothing,
-                   so clicking the word "Select all" did not toggle the control. -->
             <VcCheckbox
               ref="selectAllElement"
               size="sm"
@@ -87,8 +80,9 @@
               :model-value="isAllSelected"
               :indeterminate="isSomeSelected"
               :aria-label="selectAllLabel"
+              prevent-default
               @change="onSelectAll"
-              @keydown.esc="onEscape($event, close)"
+              @keydown.esc.stop="close()"
               @keydown.down.prevent="focusTrigger()"
             >
               <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
@@ -98,8 +92,7 @@
           </div>
 
           <VcScrollbar class="vc-select__scroll" vertical>
-            <!-- Only options may live inside a listbox, so the scroll region wraps the list
-                 instead of being it: the loader below is a status message, not an option. -->
+            <!-- Only options may live in a listbox, so the pager sits beside the list, not in it. -->
             <ul
               :id="listboxId"
               class="vc-select__list"
@@ -122,8 +115,8 @@
                   select(item);
                   !multiple && close();
                 "
+                @mousedown.prevent
                 @mousemove="highlightedIndex = index"
-                @keydown.esc="onEscape($event, close)"
               >
                 <VcCheckbox
                   v-if="multiple"
@@ -138,17 +131,17 @@
               </VcMenuItem>
 
               <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
-                <!-- The row is a flex line that starts at the left like any option; a spinner standing
-                 in for the whole list belongs in the middle of it. -->
                 <span class="vc-select__loading">
                   <slot name="loading">
                     <VcLoader />
+
+                    <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
                   </slot>
                 </span>
               </VcMenuItem>
 
               <VcMenuItem
-                v-else-if="!filteredItems.length"
+                v-else-if="!filteredItems.length && !loading"
                 role="option"
                 :aria-selected="false"
                 disabled
@@ -226,12 +219,8 @@ const props = withDefaults(
     message?: string;
     autocomplete?: boolean;
     singleLineMessage?: boolean;
-    /**
-     * The `& boolean` is load-bearing, not decoration: with a bare `M` the compiler emits no
-     * Boolean prop cast, so a valueless `multiple` attribute arrives as "" and multi-select
-     * silently degrades to single. The rule below judges the intersection as useless because
-     * `M` is already constrained to boolean — it cannot see the runtime cast that depends on it.
-     */
+    /** Allows several values; the model is then an array. */
+    // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
     // eslint-disable-next-line sonarjs/no-useless-intersection
     multiple?: M & boolean;
     clearable?: boolean;
@@ -240,6 +229,7 @@ const props = withDefaults(
     /**
      * Size of the whole set for the counter. Defaults to the number of options currently
      * rendered; pass it explicitly when the list is paged and `items` holds only one page.
+     * With `server-filter`, it is the number of matches for the current query.
      */
     total?: number;
     /** Shows a loading indicator inside the list. */
@@ -274,7 +264,7 @@ const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<{ focus: () => void }>("triggerElement");
 
-// VcDropdownMenu used to do this; the dropdown matches the trigger's width.
+// The dropdown matches the trigger's width.
 const popoverElement = useTemplateRef<{ $el: HTMLElement }>("popoverElement");
 const { width: triggerWidth } = useElementBounding(() => popoverElement.value?.$el ?? null);
 const dropdownWidth = computed(() => `${triggerWidth.value}px`);
@@ -368,12 +358,8 @@ const search = computed({
   },
 });
 
-/**
- * Single funnel for both events; each caller passes the shape correct for its own mode.
- * `M` is still an unresolved type parameter here, so `VcSelectEmittedType<V, M>` stays a
- * deferred conditional type and nothing can be assigned to it without a cast — the lint
- * rule judges the cast by the resolved type, the compiler by the deferred one.
- */
+// `VcSelectEmittedType<V, M>` stays a deferred conditional type while `M` is unresolved, so the
+// value needs a cast that the lint rule, judging the resolved type, calls unnecessary.
 function commit(value: V | V[] | undefined): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   emit("update:modelValue", value as VcSelectEmittedType<V, M>);
@@ -391,9 +377,7 @@ function select(item: T) {
     return;
   }
 
-  // Single mode stays idempotent: re-picking the current value emits nothing.
-  // Reuses isActiveItem so the check matches the deep comparison that drives the
-  // highlight — a strict `===` here would re-emit for a deep-equal object model.
+  // Re-picking the current value emits nothing.
   if (isActiveItem(item)) {
     return;
   }
@@ -411,8 +395,7 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
         return;
       }
 
-      // APG: Down/Home open on the first option, Up/End on the last. Opening upwards onto the
-      // first option would send the very next ArrowUp wrapping to the bottom.
+      // APG: Down/Home open on the first option, Up/End on the last.
       const toLast = key === "end" || key === "up";
 
       highlightedIndex.value = toLast ? filteredItems.value.length - 1 : 0;
@@ -423,11 +406,7 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
   navigate(key);
 }
 
-/**
- * Enter is consumed only when it does something. Closed, a select-only combobox opens on it (APG),
- * while an editable one leaves it to its form (address-form.vue); open, it accepts the highlighted
- * option, and with none highlighted there is nothing to accept, so a select in a form still submits.
- */
+// Enter is consumed only when it opens a select-only list or accepts an option; otherwise a form owns it.
 function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) {
   if (!isShown.value) {
     if (props.autocomplete || !enabled.value) {
@@ -453,25 +432,10 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
   }
 }
 
-/**
- * Only an open list consumes Escape. A closed one leaves it to whatever encloses the select: both
- * filter drawers are dialog popovers that close on it, and would close along with the list if the
- * key went on bubbling — the popover wrapper cannot stop it, the list is already shut when it looks.
- */
-function onEscape(event: KeyboardEvent, close: () => void) {
-  if (!isShown.value) {
-    return;
-  }
-
-  event.stopPropagation();
-  close();
-}
-
 function toggled(value: boolean) {
   isShown.value = value;
 
   if (isShown.value) {
-    // Open with the current selection highlighted, so the first arrow press moves from there.
     highlightedIndex.value = filteredItems.value.findIndex((item) => isActiveItem(item));
     return;
   }
@@ -479,23 +443,13 @@ function toggled(value: boolean) {
   filterValue.value = "";
   highlightedIndex.value = -1;
 
-  // A closed dropdown owes the keyboard user its focus back — but only while the focus is still
-  // ours to give back. An outside click has already put it where the user asked for it, and
-  // taking it from there is what makes the next field impossible to click into.
   if (holdsFocus()) {
     focusTrigger();
   }
 }
 
-/**
- * May the trigger take the focus back? Only when nobody else is holding it: an outside click has
- * already delivered it to whatever the user aimed at, and pulling it away from there is what makes
- * the next field impossible to click into.
- *
- * A bare `<body>` counts as ours. Clicking past the dropdown onto nothing focusable leaves focus
- * nowhere, and so does picking an option in a browser that does not focus what it clicks — the
- * keyboard user has to get the trigger back in both.
- */
+// Focus returns to the trigger only if it is still ours (or nowhere): an outside click has already
+// put it where the user aimed.
 function holdsFocus(): boolean {
   const active = document.activeElement;
 
@@ -503,26 +457,20 @@ function holdsFocus(): boolean {
     return true;
   }
 
-  // The dropdown is teleported, so it is not a descendant of the root; reach it through the
-  // listbox id, the one element the two sides share.
+  // A teleported dropdown is not inside the root; the listbox id reaches it.
   const dropdown = document.getElementById(listboxId)?.closest(".vc-select__dropdown");
 
   return document.getElementById(componentId)?.contains(active) === true || dropdown?.contains(active) === true;
 }
 
-/**
- * Typing is what opens an autocomplete list — the APG editable combobox opens on input, not on
- * focus. While closed the field shows the current selection, so the keystroke landed inside that
- * label; typing starts a fresh query instead of editing the selected text.
- */
+// Typing opens an autocomplete list (APG). Closed, the field shows the selection, so the keystroke
+// starts a fresh query rather than editing that label.
 function onSearchInput(value: string, open: () => void): void {
   if (!props.autocomplete || isShown.value) {
     filterValue.value = value;
     return;
   }
 
-  // Open before assigning: the live-region watcher on the filtered list only announces while the
-  // list is on screen, and it runs once for both changes.
   open();
   filterValue.value = insertedText(selectedText.value ?? "", value);
 }
@@ -546,13 +494,10 @@ function focusTrigger() {
   triggerElement.value?.focus();
 }
 
-// Server-side search: the consumer owns filtering, so the typed text is forwarded instead of
-// being applied locally. Clearing is sent immediately — waiting to restore a full list feels broken.
+// Clearing is sent at once; typing is debounced.
 const SEARCH_DEBOUNCE_MS = 300;
 
-// The query it was scheduled with has to still be the query: clearing emits straight away and
-// cannot cancel this call, so without the check a search typed a moment earlier lands afterwards
-// and narrows the full list that was just restored.
+// A query cleared before its debounce fired must not land after the clear.
 const emitSearchDebounced = useDebounceFn((value: string) => {
   if (filterValue.value === value) {
     emit("search", value);
@@ -563,6 +508,9 @@ watch(filterValue, (value) => {
   if (!props.serverFilter) {
     return;
   }
+
+  // The options under the highlight stay the previous query's until the consumer answers.
+  highlightedIndex.value = -1;
 
   if (value) {
     void emitSearchDebounced(value);
@@ -582,12 +530,9 @@ if (import.meta.env.DEV && props.selectAll && !props.multiple) {
 
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
-// A spinner replaces the empty row only while there is nothing to show yet, and only while
-// nothing else is already reporting the fetch: VcLoadMore draws its own as soon as it knows
-// another page is coming, and two spinners in a row of three is what the overlap used to look like.
+// VcLoadMore draws its own spinner once another page is known to exist.
 const showLoadingRow = computed(() => props.loading && !filteredItems.value.length && !props.hasNextPage);
 
-/** Select all acts on what the user can see, so an active filter narrows it. */
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
 
 const selectedVisibleCount = computed(
@@ -595,27 +540,17 @@ const selectedVisibleCount = computed(
     selectableValues.value.filter((value) => selectedValues.value.some((current) => isEqual(current, value))).length,
 );
 
-/**
- * The counter must describe the same set the checkbox beside it reports on, and Select all acts
- * on what the user can see. While a local filter is narrowing the list, `total` cannot know about
- * it — left alone it reads `1 of 1` next to an unchecked box, the one selected item being the one
- * the filter hid. A server-side filter is exempt: there the consumer re-supplies both the items
- * and the matching `total`.
- */
-const localFilter = computed(() => !!filterValue.value && !props.serverFilter);
+// While a query narrows the list, only the matching options count: a local filter is unknown to
+// `total`, and with `server-filter` the consumer's `total` counts the matches.
+const isNarrowed = computed(() => !!filterValue.value);
 
 const totalCount = computed(() =>
-  localFilter.value ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
+  isNarrowed.value && !props.serverFilter ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
 );
 
-const selectedCount = computed(() => (localFilter.value ? selectedVisibleCount.value : selectedValues.value.length));
+const selectedCount = computed(() => (isNarrowed.value ? selectedVisibleCount.value : selectedValues.value.length));
 
-/**
- * Checked is what the counter beside it says: `n of n`. Every loaded option being selected is not
- * enough on a paged list — the box read as fully checked next to `30 of 3000`, and clicking it
- * took the clearing branch and dropped the thirty. Short of the total it is indeterminate, and a
- * click adds the loaded page and leaves the rest to the `selectAll` listener.
- */
+// Checked means `n of n`: a fully selected page of a longer list is still partial.
 const isAllSelected = computed(
   () =>
     selectableValues.value.length > 0 &&
@@ -629,16 +564,17 @@ const selectedOfTotal = computed(() =>
   t("ui_kit.select.selected_of_total", { selected: selectedCount.value, total: totalCount.value }),
 );
 
-const selectAllLabel = computed(
-  () =>
-    `${t(isAllSelected.value ? "ui_kit.select.deselect_all" : "ui_kit.select.select_all")}, ${selectedOfTotal.value}`,
+const selectAllLabel = computed(() =>
+  t("ui_kit.select.select_all_label", { selected: selectedCount.value, total: totalCount.value }),
 );
 
 function onSelectAll() {
   if (isAllSelected.value) {
-    // Clear only what is visible; anything filtered out keeps its selection.
+    // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
     const visible = selectableValues.value;
-    commit(selectedValues.value.filter((value) => !visible.some((item) => isEqual(item, value))));
+    commit(
+      isNarrowed.value ? selectedValues.value.filter((value) => !visible.some((item) => isEqual(item, value))) : [],
+    );
   } else {
     const merged = [...selectedValues.value];
 
@@ -651,8 +587,7 @@ function onSelectAll() {
     commit(merged);
   }
 
-  // Always announced: the component can only reach loaded options, so a paged consumer
-  // needs the event to decide whether to fetch and select the rest.
+  // A paged consumer fetches and selects the unloaded rest on this event.
   emit("selectAll");
 }
 
@@ -668,11 +603,7 @@ function onTab(event: KeyboardEvent) {
   }
 }
 
-/**
- * The Select all checkbox sits outside the listbox, so `aria-activedescendant` cannot reach
- * it, and the popover is teleported, so native Tab order does not either. Tab from the
- * trigger hands focus over explicitly.
- */
+// The checkbox is outside the listbox and possibly teleported, so Tab hands focus over explicitly.
 function focusSelectAll(): boolean {
   const input = selectAllElement.value?.$el?.querySelector<HTMLElement>("input");
 
@@ -695,9 +626,7 @@ function focusSelectAll(): boolean {
     @apply relative rounded-[--radius];
   }
 
-  // The dropdown is teleported out of the block, so it inherits nothing from it and declares its
-  // own tokens. The `--vc-dropdown-menu-*` fallbacks keep overrides working for anyone who styled
-  // this dropdown before it moved off VcDropdownMenu.
+  // Teleported, so it declares its own tokens; `--vc-dropdown-menu-*` stay as fallbacks.
   &__dropdown {
     --dropdown-max-height: var(--vc-select-dropdown-max-height, var(--vc-dropdown-menu-max-height, 12rem));
     --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem)));
@@ -706,8 +635,6 @@ function focusSelectAll(): boolean {
       var(--vc-dropdown-menu-bg-color, var(--color-additional-50))
     );
 
-    // overflow-hidden lets the container round its own corners, so the first and last option
-    // need no radius of their own.
     @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] select-none;
   }
 
@@ -719,7 +646,6 @@ function focusSelectAll(): boolean {
     @apply w-full divide-y divide-neutral-100;
   }
 
-  // The loader left the list, so it no longer gets its separator from the list's own divide-y.
   &__more {
     @apply border-t border-neutral-100;
   }
@@ -728,8 +654,6 @@ function focusSelectAll(): boolean {
     @apply flex w-full justify-center;
   }
 
-  // shrink-0 + the rule below it: the row is a flex sibling of the scroll area now, so it has to
-  // refuse to shrink and draw the line that separated it from the list.
   &__select-all {
     @apply flex shrink-0 items-center gap-3 border-b border-neutral-100 px-3 py-2.5;
 

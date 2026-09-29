@@ -7,13 +7,8 @@ type ScrollBoxType = {
 };
 
 /**
- * jsdom has no layout, so a scroll region's geometry has to be described by hand — and nothing
- * stops the numbers being ones no browser could produce. `scrollHeight` is clamped to at least
- * `clientHeight`, so content that fits reports them EQUAL; a smaller `scrollHeight` is unreachable
- * in a real browser and once let a wrong geometry fix pass ten green tests.
- *
- * Both axes are guarded, including the width this helper supplies by default — a guard written for
- * one axis invents an impossible box on the other.
+ * Hand-written scroll geometry for jsdom, which has no layout. Throws on a box no browser can
+ * produce: `scrollHeight`/`scrollWidth` are never below `clientHeight`/`clientWidth`.
  */
 export function describeScrollBox(element: HTMLElement, box: ScrollBoxType): void {
   const clientWidth = box.clientWidth ?? 300;

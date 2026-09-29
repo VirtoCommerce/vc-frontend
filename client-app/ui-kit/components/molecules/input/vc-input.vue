@@ -185,7 +185,6 @@ const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
-// Only read by the read-only ring rule below; see useFocusModality for why it is document-wide.
 const { isPointerFocus: pointerFocus } = useFocusModality();
 const listeners = useListeners();
 const attrs = useAttrsOnly();
