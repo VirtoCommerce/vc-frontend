@@ -5,6 +5,7 @@
       "apply": "Apply",
       "cancel": "Cancel",
       "clear": "Clear",
+      "clear_field": "Clear {field}",
       "close": "Close",
       "copy": "Copy",
       "deny": "Deny",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "Close alert",
       "open_calendar": "Open calendar",
+      "open_calendar_for": "Open calendar for {field}",
       "calendar": "Calendar",
       "product_quantity": "Product quantity",
       "decrease_quantity": "Decrease quantity",

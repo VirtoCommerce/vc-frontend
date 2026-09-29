@@ -446,7 +446,7 @@ export const Clearable: StoryType = {
     docs: {
       description: {
         story:
-          "Clear button appears in the input while there is text; clicking emits both `clear` and `update:modelValue(undefined)`. The calendar trigger remains available.",
+          "Clear button appears in the input while there is text; clicking emits both `clear` and `update:modelValue(undefined)`. The calendar trigger remains available. `clearLabel` and `calendarButtonLabel` rename the two buttons for assistive technology; VcDateRangePicker's split layout names them after each field, so its two pickers stay distinguishable.",
       },
       source: {
         code: `<VcDatePicker v-model="value" label="Date" clearable />`,

@@ -145,7 +145,7 @@
         "created_date": "Data de criação",
         "start_date": "Data de início",
         "end_date": "Data de término",
-        "invalid_range": "Intervalo de datas inválido.",
+        "date_range": "Intervalo de datas",
         "order_status": "@:common.labels.status",
         "customer": "Selecionar cliente",
         "reset": "Reiniciar",
@@ -154,7 +154,8 @@
         "last_day": "Último dia",
         "last_week": "Última semana",
         "last_month": "Último mês",
-        "last_year": "Último ano"
+        "last_year": "Último ano",
+        "remove_filter": "Remover filtro: {label}"
       }
     },
     "communication": {

@@ -5,6 +5,7 @@
       "apply": "Käytä",
       "cancel": "Peruuta",
       "clear": "Tyhjennä",
+      "clear_field": "Tyhjennä {field}",
       "close": "Sulje",
       "copy": "Kopioi",
       "deny": "Hylkää",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "Sulje hälytys",
       "open_calendar": "Avaa kalenteri",
+      "open_calendar_for": "Avaa kalenteri: {field}",
       "calendar": "Kalenteri",
       "product_quantity": "Tuotteen määrä",
       "decrease_quantity": "Vähennä määrää",

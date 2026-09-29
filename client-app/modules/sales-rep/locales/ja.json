@@ -145,7 +145,7 @@
         "created_date": "作成日",
         "start_date": "開始日",
         "end_date": "終了日",
-        "invalid_range": "無効な日付範囲です。",
+        "date_range": "期間",
         "order_status": "@:common.labels.status",
         "customer": "顧客を選択",
         "reset": "リセット",
@@ -154,7 +154,8 @@
         "last_day": "昨日",
         "last_week": "先週",
         "last_month": "先月",
-        "last_year": "昨年"
+        "last_year": "昨年",
+        "remove_filter": "フィルターを削除: {label}"
       }
     },
     "communication": {

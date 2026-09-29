@@ -218,6 +218,27 @@ export const Clearable: StoryType = {
   },
 };
 
+export const ClearLabel: StoryType = {
+  args: {
+    ...commonArgs,
+    label: "Start date",
+    clearable: true,
+    clearLabel: "Clear Start date",
+    modelValue: "Sample text",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`clearLabel` renames the clear button for assistive technology. The default, "Clear", cannot tell two clearable fields in one row apart; VcDateRangePicker\'s split fields name theirs after the field.',
+      },
+      source: {
+        code: `<VcInput label="Start date" clearable clear-label="Clear Start date" v-model="value" />`,
+      },
+    },
+  },
+};
+
 export const Disabled: StoryType = {
   render: () => ({
     components: { VcInput, VcButton },

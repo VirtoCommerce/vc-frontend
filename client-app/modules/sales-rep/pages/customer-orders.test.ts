@@ -55,6 +55,21 @@ vi.mock("../composables/useSalesRepColumnSort", async () => {
   };
 });
 vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
+
+// The shared test i18n has no messages, so a real `t` drops its parameters; keep them visible.
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+
+  return {
+    ...actual,
+    useI18n: () => {
+      const composer = actual.useI18n();
+      const t = (key: string, params?: unknown) => (params ? `${key} ${JSON.stringify(params)}` : composer.t(key));
+
+      return { ...composer, t };
+    },
+  };
+});
 vi.mock("vue-router", async () => {
   const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
   return {
@@ -86,9 +101,9 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
       VcLink: true,
       VcEmptyView: true,
       VcChip: {
-        props: { closable: Boolean },
+        props: { closable: Boolean, closeButtonAriaLabel: { type: String, default: undefined } },
         emits: ["close", "click"],
-        template: `<span class="chip" @click="$emit('click')"><slot /><button v-if="closable" class="chip-close" @click.stop="$emit('close')" /></span>`,
+        template: `<span class="chip" @click="$emit('click')"><slot /><button v-if="closable" class="chip-close" :aria-label="closeButtonAriaLabel" @click.stop="$emit('close')" /></span>`,
       },
       SalesRepOrdersFilters: true,
       OrderStatus: true,
@@ -283,6 +298,28 @@ describe("CustomerOrders", () => {
     expect(wrapper.findAll(".chip")).toHaveLength(4);
     expect(wrapper.text()).toContain("New");
     expect(wrapper.text()).toContain("ACME");
+  });
+
+  it("writes chip dates the way the date fields show them, zero-padded", () => {
+    state.filters.value = { statuses: [], customerNames: [], startDate: "2026-08-07", endDate: "2026-08-17" };
+
+    const wrapper = createWrapper();
+
+    const labels = wrapper.findAll(".chip").map((chip) => chip.text());
+    expect(labels).toContain('common.labels.starts_from ["08/07/2026"]');
+    expect(labels).toContain('common.labels.ends_to ["08/17/2026"]');
+  });
+
+  it("names every chip's close button after the filter it removes", () => {
+    state.statusOptions.value = [{ name: "New", label: "New", count: 2 }];
+    state.filters.value = { statuses: ["New"], customerNames: ["ACME"], startDate: undefined, endDate: undefined };
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll(".chip-close").map((button) => button.attributes("aria-label"))).toEqual([
+      'sales_rep.customer_orders.filters.remove_filter {"label":"New"}',
+      'sales_rep.customer_orders.filters.remove_filter {"label":"ACME"}',
+    ]);
   });
 
   it("shows no chips while nothing is filtered", () => {

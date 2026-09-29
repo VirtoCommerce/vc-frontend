@@ -25,6 +25,8 @@
         :model-value="modelValue?.start"
         :label="startLabel"
         :aria-label="startLabel ? undefined : t('ui_kit.date_range_input.start_date')"
+        :calendar-button-label="t('ui_kit.accessibility.open_calendar_for', { field: fieldNames.start })"
+        :clear-label="t('ui_kit.buttons.clear_field', { field: fieldNames.start })"
         :placeholder="startPlaceholder"
         :name="sideAttr(name, 'start')"
         :calendar-soft-max="modelValue?.end"
@@ -44,6 +46,8 @@
         :model-value="modelValue?.end"
         :label="endLabel"
         :aria-label="endLabel ? undefined : t('ui_kit.date_range_input.end_date')"
+        :calendar-button-label="t('ui_kit.accessibility.open_calendar_for', { field: fieldNames.end })"
+        :clear-label="t('ui_kit.buttons.clear_field', { field: fieldNames.end })"
         :placeholder="endPlaceholder"
         :name="sideAttr(name, 'end')"
         :calendar-soft-min="modelValue?.start"
@@ -314,6 +318,12 @@ const aggregatedErrorText = computed<string | undefined>(() =>
   isSplit.value ? splitErrorText.value : inputErrorText.value,
 );
 watch(aggregatedErrorText, (value) => emit("update:errorText", value), { immediate: true });
+
+// Two of every field button in "split": each names its own field, or the pairs read identically.
+const fieldNames = computed(() => ({
+  start: props.startLabel || t("ui_kit.date_range_input.start_date"),
+  end: props.endLabel || t("ui_kit.date_range_input.end_date"),
+}));
 
 // Start-aligned so the start field's calendar does not overhang the separator; sides pass through.
 const startPlacement = computed<VcPopoverPlacementType>(() => {

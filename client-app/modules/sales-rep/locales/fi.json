@@ -145,7 +145,7 @@
         "created_date": "Luontipäivämäärä",
         "start_date": "Aloituspäivämäärä",
         "end_date": "Lopetuspäivämäärä",
-        "invalid_range": "Virheellinen päivämääräväli.",
+        "date_range": "Päivämääräväli",
         "order_status": "Valitse tilauksen tila",
         "customer": "Valitse asiakas",
         "reset": "Nollaa",
@@ -154,7 +154,8 @@
         "last_day": "Viimeinen päivä",
         "last_week": "Viime viikko",
         "last_month": "Viime kuukausi",
-        "last_year": "Viime vuosi"
+        "last_year": "Viime vuosi",
+        "remove_filter": "Poista suodatin: {label}"
       }
     },
     "communication": {
