@@ -1,0 +1,38 @@
+query GetReturns(
+  $storeId: String!
+  $first: Int
+  $after: String
+  $sort: String
+  $keyword: String
+  $statuses: [String]
+  $startDate: DateTime
+  $endDate: DateTime
+  $cultureName: String
+) {
+  returns(
+    storeId: $storeId
+    first: $first
+    after: $after
+    sort: $sort
+    keyword: $keyword
+    statuses: $statuses
+    startDate: $startDate
+    endDate: $endDate
+  ) {
+    totalCount
+    items {
+      id
+      number
+      status
+      statusDisplayValue(cultureName: $cultureName)
+      createdDate
+      orderId
+      itemsQuantity
+      availableActions {
+        name
+        isAvailable
+        unavailableReason
+      }
+    }
+  }
+}
