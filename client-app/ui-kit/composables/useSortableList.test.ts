@@ -281,6 +281,20 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals.at(-1)).toEqual({ kind: "noTarget", id: "b" });
   });
 
+  // A list remounting under its own name registers before the one it replaces cleans up.
+  it("keeps a list that took over a name when the old one goes", () => {
+    const ring = ["shown", "parked"];
+    const source = setup({ name: "shown", group: "stats-3", ring, orientation: "horizontal" });
+    const old = setup({ name: "parked", group: "stats-3", ring, orientation: "horizontal" });
+    setup({ name: "parked", group: "stats-3", ring, orientation: "horizontal" });
+
+    old.scope.stop();
+    source.press(" ", "a");
+    source.press("ArrowDown", "a");
+
+    expect(source.moves).toEqual([{ id: "a", from: "shown", to: "parked" }]);
+  });
+
   it("forgets a list once its scope is disposed", () => {
     const ring = ["shown", "parked"];
     const source = setup({ name: "shown", group: "stats-2", ring, orientation: "horizontal" });
@@ -373,6 +387,19 @@ describe("useSortableList — pointer", () => {
     return { el, trailing, list, moves, order: () => items, sortable: instances.at(-1)! };
   }
 
+  // A drop names its target by this attribute, so a caller rendering its own container must get it too.
+  it("stamps the list's name on the container, and follows a rename", async () => {
+    const name = ref("main");
+    const { el } = await mounted({ name });
+
+    expect(el.dataset.sortableName).toBe("main");
+
+    name.value = "rail";
+    await nextTick();
+
+    expect(el.dataset.sortableName).toBe("rail");
+  });
+
   it("wires the options the drag behaviour depends on", async () => {
     const { sortable } = await mounted({ handle: ".grip", filter: ".close", group: "g" });
 
@@ -382,8 +409,8 @@ describe("useSortableList — pointer", () => {
       handle: ".grip",
       filter: ".close",
       preventOnFilter: false,
-      ghostClass: "vc-sortable__ghost",
-      dragClass: "vc-sortable__drag",
+      ghostClass: "vc-sortable__item--ghost",
+      dragClass: "vc-sortable__item--drag",
       disabled: false,
       // Without a touch hold, a swipe starting on an item drags instead of scrolling the page.
       delay: 200,

@@ -16,9 +16,10 @@ export interface IBlockSettingsContextType {
   updateSettings: (patch: Partial<SalesRepBlockSettingsType>) => void;
 }
 
-const BLOCK_SETTINGS = Symbol("blockSettings") as InjectionKey<IBlockSettingsContextType>;
+const BLOCK_SETTINGS = Symbol("blockSettings") as InjectionKey<IBlockSettingsContextType | undefined>;
 
-export function provideBlockSettings(context: IBlockSettingsContextType): void {
+/** `undefined` withdraws the offer from everything below, as a widget does once it has taken it. */
+export function provideBlockSettings(context: IBlockSettingsContextType | undefined): void {
   provide(BLOCK_SETTINGS, context);
 }
 

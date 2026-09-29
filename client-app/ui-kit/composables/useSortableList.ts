@@ -58,16 +58,16 @@ export interface ISortableListOptions {
    * time, skipping lists that are not mounted or refuse the item, and stop at either end.
    */
   ring?: MaybeRefOrGetter<readonly string[] | undefined>;
-  /** Per-item acceptance, asked on the pointer path (SortableJS `put`) AND the keyboard path. */
+  /** Per-item acceptance, asked on the pointer path (SortableJS `put`) AND the keyboard path. Read once. */
   accepts?: (id: string, from: string) => boolean;
-  /** Which children are items. Anything else in the container is ignored and keeps its place. */
+  /** Which children are items. Anything else in the container is ignored and keeps its place. Read once. */
   itemSelector?: string;
   /**
    * Pointer handle inside an item. Without one the whole item drags and takes the keyboard itself;
-   * with one, the keyboard goes through `handleAttrs`.
+   * with one, the keyboard goes through `handleAttrs`. Read once.
    */
   handle?: string;
-  /** Elements inside an item that must never start a drag — controls sitting inside the handle. */
+  /** Elements inside an item that must never start a drag — controls sitting inside the handle. Read once. */
   filter?: string;
   orientation?: MaybeRefOrGetter<SortableOrientationType>;
   /** While false the list is inert and its items keep their own behaviour. */
@@ -342,8 +342,8 @@ export function useSortableList(
       preventOnFilter: false,
       draggable: itemSelector,
       animation: 150,
-      ghostClass: "vc-sortable__ghost",
-      dragClass: "vc-sortable__drag",
+      ghostClass: "vc-sortable__item--ghost",
+      dragClass: "vc-sortable__item--drag",
       disabled: !isEnabled(),
 
       // SortableJS defaults to `delay: 0` and preventDefaults every touchmove once a tap registers, so a
@@ -407,6 +407,13 @@ export function useSortableList(
     { immediate: true, flush: "sync" },
   );
 
+  // The list's name is what a sibling's drop reports as its target, so the list stamps it itself — a
+  // caller rendering its own container need not know the attribute.
+  watch([() => toValue(container), nameOf], ([el, name]) => el?.setAttribute(SORTABLE_NAME_ATTRIBUTE, name), {
+    immediate: true,
+    flush: "sync",
+  });
+
   watch(isEnabled, (enabled) => {
     sortable?.option("disabled", !enabled);
     if (!enabled) {
@@ -424,10 +431,14 @@ export function useSortableList(
       }
       const lists = listsByGroup.get(group) ?? new Map<string, RegisteredListType>();
       listsByGroup.set(group, lists);
-      lists.set(name, { accepts: options.accepts });
+      const entry: RegisteredListType = { accepts: options.accepts };
+      lists.set(name, entry);
       onCleanup(() => {
-        lists.delete(name);
-        if (!lists.size) {
+        // A list remounting under the same name registers before the old one cleans up.
+        if (lists.get(name) === entry) {
+          lists.delete(name);
+        }
+        if (!lists.size && listsByGroup.get(group) === lists) {
           listsByGroup.delete(group);
         }
       });

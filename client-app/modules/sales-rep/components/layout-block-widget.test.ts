@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { h } from "vue";
+import { defineComponent, h } from "vue";
+import { useBlockSettings } from "../composables/useBlockSettings";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import LayoutRegion from "./layout-region.vue";
 import LayoutWidget from "./layout-widget.vue";
@@ -97,6 +98,36 @@ describe("LayoutBlock wrapping a real LayoutWidget", () => {
 
     expect(wrapper.find(".layout-widget__handle").exists()).toBe(true);
     expect(wrapper.get(".vc-widget__title").text()).toBe("sales_rep.orders.title");
+  });
+
+  // Only the widget that renders the block carries its controls; one nested inside it is a plain widget.
+  it("renders no second set of controls for a widget nested inside another", () => {
+    const wrapper = mountBlock(true, () =>
+      h(
+        LayoutWidget,
+        { title: "Outer" },
+        { default: () => h(LayoutWidget, { title: "Inner" }, { default: () => "body" }) },
+      ),
+    );
+
+    expect(wrapper.findAll(".layout-widget__handle")).toHaveLength(1);
+    expect(wrapper.findAll(".layout-widget__hide")).toHaveLength(1);
+    expect(wrapper.findAll(".layout-widget__rows")).toHaveLength(0);
+  });
+
+  // A content widget reads its row cap through `useBlockSettings`; inside another widget it is not a block.
+  it("offers the block's settings to no component nested inside its widget", () => {
+    let nested: unknown = "unset";
+    const Reader = defineComponent({
+      setup() {
+        nested = useBlockSettings();
+        return () => h("span");
+      },
+    });
+
+    mountBlock(true, () => h(LayoutWidget, { title: "Outer" }, { default: () => h(Reader) }));
+
+    expect(nested).toBeUndefined();
   });
 
   // The orders widget puts a "View all" link in `#append`; the ✕ joins it rather than replacing it.

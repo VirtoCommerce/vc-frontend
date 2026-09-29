@@ -14,9 +14,10 @@ export interface ILayoutBlockContextType {
   hide: () => void;
 }
 
-const LAYOUT_BLOCK = Symbol("layoutBlock") as InjectionKey<ILayoutBlockContextType>;
+const LAYOUT_BLOCK = Symbol("layoutBlock") as InjectionKey<ILayoutBlockContextType | undefined>;
 
-export function provideLayoutBlock(context: ILayoutBlockContextType): void {
+/** `undefined` withdraws the offer from everything below, as a widget does once it has taken it. */
+export function provideLayoutBlock(context: ILayoutBlockContextType | undefined): void {
   provide(LAYOUT_BLOCK, context);
 }
 

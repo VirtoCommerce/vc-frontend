@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" ref="container" class="vc-sortable" :data-sortable-name="name">
+  <component :is="tag" ref="container" class="vc-sortable">
     <slot name="before" />
 
     <ItemScope
@@ -43,13 +43,13 @@ export interface IProps<TItem = unknown> {
   group?: string;
   /** Ordered names of this list and its siblings, walked by the cross-axis arrows. Ends do not wrap. */
   ring?: readonly string[];
-  /** Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. */
+  /** Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. Read at mount. */
   accepts?: (id: string, from: string) => boolean;
-  /** Which children are items. Defaults to the `data-sortable-id` that `attrs` puts on each. */
+  /** Which children are items. Defaults to the `data-sortable-id` that `attrs` puts on each. Read at mount. */
   itemSelector?: string;
-  /** Pointer handle inside an item. Without one the whole item drags and takes the keyboard. */
+  /** Pointer handle inside an item. Without one the whole item drags and takes the keyboard. Read at mount. */
   handle?: string;
-  /** Elements inside an item that must never start a drag, such as a button inside the handle. */
+  /** Elements inside an item that must never start a drag, such as a button inside the handle. Read at mount. */
   filter?: string;
   /** Which arrows reorder: ↑/↓ for "vertical", ←/→ for "horizontal". */
   orientation?: SortableOrientationType;
@@ -197,16 +197,17 @@ const ItemScope = defineComponent({
     }
   }
 
-  // SortableJS moves the dragged element to the insertion point, so this previews what lands there.
-  &__item#{&}__ghost {
-    @apply rounded-[--vc-radius] outline-dashed outline-1 outline-offset-2;
+  // SortableJS moves the dragged element to the insertion point, so this previews what lands there. No
+  // radius: the item's shape is the consumer's.
+  &__item#{&}__item--ghost {
+    @apply outline-dashed outline-1 outline-offset-2;
 
     opacity: var(--vc-sortable-ghost-opacity);
     outline-color: var(--vc-sortable-accent-color);
   }
 
   // The clone under the pointer stays solid, so what is carried reads as the real item.
-  &__item#{&}__drag {
+  &__item#{&}__item--drag {
     opacity: 1;
   }
 }
