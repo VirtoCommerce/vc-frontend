@@ -144,6 +144,23 @@ describe("getReturnUrlValue", () => {
     const result = getReturnUrlValue();
     expect(result).toBeNull();
   });
+
+  // Regression tests: a naive prefix check on the raw string can be fooled by a tab/newline
+  // or a backslash hiding a second "/", but new URL() normalizes those before parsing, so the
+  // hostname comparison above already rejects them.
+  it.each([
+    { case: "a protocol-relative URL", href: "http://example.com?returnUrl=//evil.com" },
+    { case: "a backslash-then-slash bypass", href: "http://example.com?returnUrl=/%5Cevil.com" },
+    { case: "a tab-hidden protocol-relative bypass", href: "http://example.com?returnUrl=/%09/evil.com" },
+    { case: "a newline-hidden protocol-relative bypass", href: "http://example.com?returnUrl=/%0A/evil.com" },
+  ])("should return null for $case", ({ href }) => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: { href },
+    });
+
+    expect(getReturnUrlValue()).toBeNull();
+  });
 });
 
 describe("extractHostname", () => {

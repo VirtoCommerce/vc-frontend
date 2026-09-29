@@ -44,7 +44,15 @@
       "previous_year": "Anno precedente",
       "next_year": "Anno successivo",
       "today": "Oggi",
-      "clear": "Cancella"
+      "clear": "Cancella",
+      "outside_suggested_range": "Fuori dall'intervallo suggerito"
+    },
+    "date_range_input": {
+      "aria_label": "Intervallo di date",
+      "clear": "Cancella intervallo di date",
+      "end_date": "Data di fine",
+      "invalid_range": "La data di fine deve essere successiva o uguale alla data di inizio",
+      "start_date": "Data di inizio"
     },
     "date_selector": {
       "min_date_error": "La data deve essere successiva o uguale a {min}",

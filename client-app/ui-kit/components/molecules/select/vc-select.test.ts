@@ -1,12 +1,13 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { h, nextTick } from "vue";
+import { defineComponent, h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
+import type { VueWrapper } from "@vue/test-utils";
 
 const ITEMS = ["Albania", "Belgium", "China"];
 
@@ -1110,5 +1111,269 @@ describe("VcSelect", () => {
       expect(trigger.find("button").exists()).toBe(false);
       expect(wrapper.get(".vc-select-trigger__clear").element.closest(".vc-select-trigger__button")).toBeNull();
     });
+  });
+});
+
+// A select inside a dialog popover: the shape both filter drawers ship, minus the teleport, so
+// Escape really travels from the select up to the dialog.
+const DialogHost = defineComponent({
+  components: { VcPopover: UIKitComponents.VcPopover, VcSelect },
+
+  props: {
+    autocomplete: { type: Boolean, default: false },
+    clearable: { type: Boolean, default: false },
+    multiple: { type: Boolean, default: false },
+    readonly: { type: Boolean, default: false },
+    selectAll: { type: Boolean, default: false },
+    slotted: { type: Boolean, default: false },
+    selected: { type: [String, Array], default: undefined },
+  },
+
+  setup() {
+    return { items: ["Custom date", "Last day", "Last week"] };
+  },
+
+  template: `
+    <VcPopover role="dialog" aria-label="Filters">
+      <template #default="{ triggerProps }">
+        <button class="trigger" v-bind="triggerProps">Open</button>
+      </template>
+
+      <template #content>
+        <VcSelect
+          :items="items"
+          label="Created date"
+          :autocomplete="autocomplete"
+          :clearable="clearable"
+          :multiple="multiple"
+          :readonly="readonly"
+          :select-all="selectAll"
+          :model-value="selected"
+        >
+          <template v-if="slotted" #selected="{ item }">{{ item }}</template>
+          <template v-if="slotted" #placeholder>Pick one</template>
+        </VcSelect>
+      </template>
+    </VcPopover>
+  `,
+});
+
+const mountDialogHost = createWrapperFactory(mount, DialogHost, {
+  attachTo: document.body,
+  global: { components: UIKitComponents, directives: { maska: vMaska } },
+});
+
+const DIALOG_NAME = "Filters";
+
+// Named, not positional: once the list is open there are two panels.
+function dialogIsOpen(wrapper: VueWrapper): boolean {
+  return !wrapper.get(`.vc-popover__body[aria-label="${DIALOG_NAME}"]`).attributes("style")?.includes("display: none");
+}
+
+function selectIsOpen(wrapper: VueWrapper): boolean {
+  return wrapper.get(".vc-select").classes().includes("vc-select--opened");
+}
+
+function selectTrigger(wrapper: VueWrapper) {
+  return wrapper.get(".vc-select-trigger__button, .vc-select input");
+}
+
+function pressOn(element: Element, key: string, init: KeyboardEventInit = {}): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...init });
+  element.dispatchEvent(event);
+  return event;
+}
+
+async function openDialogAndSelect(wrapper: VueWrapper) {
+  await wrapper.get("button.trigger").trigger("click");
+  await nextTick();
+
+  (selectTrigger(wrapper).element as HTMLElement).focus();
+  await selectTrigger(wrapper).trigger("click");
+  await nextTick();
+}
+
+describe("VcSelect inside a dialog popover", () => {
+  it("opens its list without closing the dialog", async () => {
+    const wrapper = mountDialogHost();
+    await openDialogAndSelect(wrapper);
+
+    expect(selectIsOpen(wrapper)).toBe(true);
+    expect(dialogIsOpen(wrapper)).toBe(true);
+  });
+
+  it.each([
+    ["the input trigger", false],
+    ["the slotted trigger", true],
+  ])("consumes Escape on %s while its list is open, leaving the dialog open", async (_, slotted) => {
+    const wrapper = mountDialogHost({ props: { slotted } });
+    await openDialogAndSelect(wrapper);
+
+    pressOn(selectTrigger(wrapper).element, "Escape");
+    await nextTick();
+
+    expect(selectIsOpen(wrapper)).toBe(false);
+    expect(dialogIsOpen(wrapper)).toBe(true);
+    expect(document.activeElement).toBe(selectTrigger(wrapper).element);
+  });
+
+  it("lets Escape reach the dialog once its list is closed", async () => {
+    const wrapper = mountDialogHost();
+    await openDialogAndSelect(wrapper);
+
+    pressOn(selectTrigger(wrapper).element, "Escape");
+    await nextTick();
+    pressOn(selectTrigger(wrapper).element, "Escape");
+    await nextTick();
+
+    expect(dialogIsOpen(wrapper)).toBe(false);
+  });
+
+  it("ignores an auto-repeated Escape, so holding the key does not close the dialog too", async () => {
+    const wrapper = mountDialogHost();
+    await openDialogAndSelect(wrapper);
+
+    pressOn(selectTrigger(wrapper).element, "Escape");
+    await nextTick();
+    pressOn(selectTrigger(wrapper).element, "Escape", { repeat: true });
+    await nextTick();
+
+    expect(dialogIsOpen(wrapper)).toBe(true);
+  });
+
+  // A click puts DOM focus on the option in browsers that focus what they click.
+  it("consumes Escape from a focused option and hands focus back to the trigger", async () => {
+    const wrapper = mountDialogHost({ props: { multiple: true } });
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get('[role="option"]');
+    (option.element as HTMLElement).focus();
+    pressOn(option.element, "Escape");
+    await nextTick();
+
+    expect(selectIsOpen(wrapper)).toBe(false);
+    expect(dialogIsOpen(wrapper)).toBe(true);
+    expect(document.activeElement).toBe(selectTrigger(wrapper).element);
+  });
+
+  it("consumes Escape from the Select all checkbox and hands focus back to the trigger", async () => {
+    const wrapper = mountDialogHost({ props: { multiple: true, selectAll: true } });
+    await openDialogAndSelect(wrapper);
+
+    const checkbox = wrapper.get(".vc-select__select-all input");
+    (checkbox.element as HTMLElement).focus();
+    pressOn(checkbox.element, "Escape");
+    await nextTick();
+
+    expect(selectIsOpen(wrapper)).toBe(false);
+    expect(dialogIsOpen(wrapper)).toBe(true);
+    expect(document.activeElement).toBe(selectTrigger(wrapper).element);
+  });
+
+  // Both buttons live in the input trigger's append slot.
+  it.each([[".vc-select-trigger__clear"], [".vc-select-trigger__arrow"]])(
+    "consumes Escape from %s while its list is open",
+    async (selector) => {
+      const wrapper = mountDialogHost({ props: { clearable: true, selected: "Last day" } });
+      await openDialogAndSelect(wrapper);
+
+      pressOn(wrapper.get(selector).element, "Escape");
+      await nextTick();
+
+      expect(selectIsOpen(wrapper)).toBe(false);
+      expect(dialogIsOpen(wrapper)).toBe(true);
+    },
+  );
+
+  // Closing empties the filter, which unmounts the very button the key was pressed on.
+  it("keeps focus on the trigger when Escape unmounts the clear button", async () => {
+    const wrapper = mountDialogHost({ props: { autocomplete: true, clearable: true } });
+    await openDialogAndSelect(wrapper);
+
+    const input = wrapper.get(".vc-select input");
+    await input.setValue("Cust");
+    await nextTick();
+
+    const clear = wrapper.get(".vc-select-trigger__clear");
+    (clear.element as HTMLElement).focus();
+    pressOn(clear.element, "Escape");
+    await nextTick();
+    await nextTick();
+
+    expect(selectIsOpen(wrapper)).toBe(false);
+    expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
+    expect(document.activeElement).toBe(input.element);
+  });
+
+  // Enter is consumed only by a select-only combobox (APG). An editable one keeps it for its form —
+  // address-form.vue.
+  it.each([
+    [false, true],
+    [true, false],
+  ])("with autocomplete=%s, Enter on the closed trigger is consumed: %s", async (autocomplete, consumed) => {
+    const wrapper = mountDialogHost({ props: { autocomplete } });
+    await openDialogAndSelect(wrapper);
+
+    pressOn(selectTrigger(wrapper).element, "Escape");
+    await nextTick();
+
+    const event = pressOn(selectTrigger(wrapper).element, "Enter");
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(consumed);
+    expect(selectIsOpen(wrapper)).toBe(consumed);
+  });
+
+  it("leaves Enter alone when the select is readonly", async () => {
+    const wrapper = mountDialogHost({ props: { readonly: true } });
+    await wrapper.get("button.trigger").trigger("click");
+    await nextTick();
+
+    const event = pressOn(selectTrigger(wrapper).element, "Enter");
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(selectIsOpen(wrapper)).toBe(false);
+  });
+
+  // With no option highlighted there is nothing to accept, so a select in a form must still submit.
+  it("leaves Enter alone while its list is open with nothing highlighted", async () => {
+    const wrapper = mountDialogHost();
+    await openDialogAndSelect(wrapper);
+
+    const event = pressOn(selectTrigger(wrapper).element, "Enter");
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(selectIsOpen(wrapper)).toBe(true);
+  });
+
+  it("consumes Enter that accepts the highlighted option", async () => {
+    const wrapper = mountDialogHost();
+    await openDialogAndSelect(wrapper);
+
+    pressOn(selectTrigger(wrapper).element, "ArrowDown");
+    await nextTick();
+
+    const event = pressOn(selectTrigger(wrapper).element, "Enter");
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(selectIsOpen(wrapper)).toBe(false);
+    expect(dialogIsOpen(wrapper)).toBe(true);
+  });
+
+  it("returns focus to the trigger when picking an option closes the list", async () => {
+    const wrapper = mountDialogHost();
+    await openDialogAndSelect(wrapper);
+
+    const option = wrapper.get(".vc-menu-item__inner");
+    (option.element as HTMLElement).focus();
+    await option.trigger("click");
+    await nextTick();
+
+    expect(selectIsOpen(wrapper)).toBe(false);
+    expect(dialogIsOpen(wrapper)).toBe(true);
+    expect(document.activeElement).toBe(selectTrigger(wrapper).element);
   });
 });

@@ -15,15 +15,15 @@
       :name="name"
       :show-empty-details="showEmptyDetails"
       single-line-message
-      :min="min"
+      :min="boundMin"
       :max="max"
       center
       :select-on-click="selectOnClick"
       :aria="{
         role: 'spinbutton',
-        'aria-valuemin': min,
-        'aria-valuemax': max,
-        'aria-valuenow': model ?? '',
+        'aria-valuemin': boundMin,
+        'aria-valuemax': max ?? null,
+        'aria-valuenow': model ?? null,
       }"
       @blur="normalize"
       @keydown.up.prevent="() => handleArrowKey('increment')"
@@ -74,7 +74,9 @@ interface IProps {
   disabled?: boolean;
   ariaLabel?: string;
   step?: number;
+  /** Step floor for positive values. With `allowZero`, 0 stays reachable below it. */
   min?: number;
+  /** Upper bound. Omitted means unbounded — nothing is announced to assistive tech. */
   max?: number;
   error?: boolean;
   message?: string;
@@ -89,14 +91,18 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
-  max: Number.MAX_SAFE_INTEGER,
   size: "sm",
   allowZero: true,
   buttonsColor: "primary",
 });
 
 const lastNonEmptyValue = ref<number | undefined>(undefined);
-const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
+
+// `allowZero` keeps 0 reachable below `stepMin`, so publishing `stepMin` as the input's own bound
+// makes an untouched 0 a constraint violation.
+const stepMin = computed(() => props.min ?? (props.allowZero ? 0 : 1));
+const stepMax = computed(() => props.max ?? Number.MAX_SAFE_INTEGER);
+const boundMin = computed(() => (props.allowZero ? 0 : stepMin.value));
 
 const vcInputRef = useTemplateRef<{ inputElement: HTMLInputElement | undefined }>("vcInputRef");
 
@@ -111,8 +117,8 @@ const isDecrementDisabled = computed(
     !checkIfOperationIsAllowed({
       value: model.value,
       step: props.step,
-      min: min.value,
-      max: props.max,
+      min: stepMin.value,
+      max: stepMax.value,
       allowZero: props.allowZero,
       direction: "decrement",
     }),
@@ -124,8 +130,8 @@ const isIncrementDisabled = computed(
     !checkIfOperationIsAllowed({
       value: model.value,
       step: props.step,
-      min: min.value,
-      max: props.max,
+      min: stepMin.value,
+      max: stepMax.value,
       allowZero: props.allowZero,
       direction: "increment",
     }),
@@ -139,8 +145,8 @@ function handleDecrement() {
   const newValue = calculateStepper({
     value: model.value,
     step: props.step,
-    min: min.value,
-    max: props.max,
+    min: stepMin.value,
+    max: stepMax.value,
     allowZero: props.allowZero,
     direction: "decrement",
   });
@@ -155,8 +161,8 @@ function handleIncrement() {
   const newValue = calculateStepper({
     value: model.value,
     step: props.step,
-    min: min.value,
-    max: props.max,
+    min: stepMin.value,
+    max: stepMax.value,
     allowZero: props.allowZero,
     direction: "increment",
   });
@@ -189,7 +195,7 @@ function handleArrowKey(direction: "increment" | "decrement") {
   }
 
   if (model.value === undefined) {
-    model.value = min.value;
+    model.value = stepMin.value;
     return;
   }
 

@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, ref, readonly, onMounted } from "vue";
 import { getOrganizations } from "@/core/api/graphql/account";
-import { Logger } from "@/core/utilities";
+import { Logger, escapeFilterSyntaxValue } from "@/core/utilities";
 import { ContactStatus } from "@/shared/company/types";
 import type { OrganizationFieldsType } from "@/core/api/graphql/account";
 
@@ -22,17 +22,11 @@ function _useUserOrganizations() {
   const currentPage = computed(() => Math.ceil(organizations.value.length / ORGANIZATIONS_PER_PAGE));
   const isShowSearch = computed(() => totalOrganizations.value > SEARCH_THRESHOLD);
 
-  /**
-   * Note: At this moment, Contact/Member query supports filters inside and it breaks encoding.
-   * We need to apply this workaround
-   *  */
-  const formattedSearchPhrase = computed(() => {
-    if (!searchPhrase.value) {
-      return "";
-    }
-    const escaped = searchPhrase.value.replace(/"/g, '\\"');
-    return `"${escaped}"`;
-  });
+  // Note: At this moment, Contact/Member query supports filters inside and it breaks encoding.
+  // We need to apply this workaround by quoting the phrase as a filter-syntax string literal.
+  const formattedSearchPhrase = computed(() =>
+    searchPhrase.value ? `"${escapeFilterSyntaxValue(searchPhrase.value)}"` : "",
+  );
 
   async function loadOrganizations(): Promise<void> {
     if (loading.value || !hasNextPage.value) {

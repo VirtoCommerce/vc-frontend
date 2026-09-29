@@ -1,6 +1,8 @@
 export * from "./useAttrsOnly";
+export * from "./useCalendarPopover";
 export * from "./useComponentId";
 export * from "./useDateField";
+export * from "./useDateRangeField";
 export * from "./useFocusManagement";
 export * from "./useFocusModality";
 export * from "./useHorizontalScrollSync";
@@ -8,4 +10,5 @@ export * from "./useListboxNavigation";
 export * from "./useListeners";
 export * from "./useQuantityValidationSchema";
 export * from "./useSelect";
+export * from "./useShellFocusEvents";
 export * from "./useSmartSticky";

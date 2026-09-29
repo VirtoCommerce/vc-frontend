@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Dieser Checkout gehört zu einem anderen Konto oder einer anderen Organisation. Melden Sie sich mit dem Konto an, das Sie in Ihrem Einkaufsassistenten verwenden, und versuchen Sie es erneut.",
+      "expired": "Dieser Checkout-Link ist abgelaufen, wurde bereits verwendet oder ist in diesem Tab nicht verfügbar. Fordern Sie bei Ihrem Einkaufsassistenten einen neuen Checkout-Link an.",
+      "restore_failed": "Ihr Checkout konnte nicht geöffnet werden. Bitte versuchen Sie den Link in einem Moment erneut.",
+      "authorization_failed": "Die Anmeldung konnte nicht fortgesetzt werden",
+      "authorization_retry": "Bitte starten Sie die Verbindung über Ihren Einkaufsassistenten neu. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihren Shop-Administrator."
+    },
     "buttons": {
       "home": "Startseite",
       "ok": "OK",
@@ -275,7 +282,6 @@
       "company_info": "Firmeninformationen",
       "company_members": "Firmenmitglieder",
       "contact_administrator": "den Administrator der Website kontaktieren",
-      "saved_credit_cards": "Gespeicherte Kreditkarten",
       "skip_to_main_content": "Zum Hauptinhalt springen",
       "skip_to_footer": "Zum Footer springen"
     },
@@ -370,8 +376,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Für später gespeichert",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -487,8 +492,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -597,7 +601,7 @@
         "created_date_label": "Erstellungsdatum",
         "start_date_label": "Startdatum",
         "end_date_label": "Enddatum",
-        "invalid_range": "Ungültiger Datumsbereich.",
+        "date_range_label": "Datumsbereich",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -1367,13 +1371,6 @@
         "create_list_button_mobile": "Erstellen",
         "lists_icon": "Listen-Symbol"
       },
-      "saved_credit_cards": {
-        "no_cards": "Sie haben noch keine Kreditkarten gespeichert",
-        "delete_credit_card_modal": {
-          "title": "Löschen bestätigen",
-          "message": "Sind Sie sicher, dass Sie die Kreditkarte entfernen möchten?"
-        }
-      },
       "list_details": {
         "meta": {
           "title": "Liste: {0}"
@@ -1536,7 +1533,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Zur Liste hinzufügen",
       "in_the_list_tooltip": "In der Liste",
-      "variations_button": "{0} Variationen",
+      "variations_button": "Keine Variationen | {count} Variation | {count} Variationen",
       "customize_button": "Konfigurieren",
       "show_on_a_separate_page": "Auf einer separaten Seite anzeigen",
       "no_products_message": "Es gibt keine Produkte in dieser Kategorie",

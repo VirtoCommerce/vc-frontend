@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "Tallennetut luottokortit",
+      "no_cards": "Et ole tallentanut yhtään luottokorttia vielä",
+      "delete_credit_card_modal": {
+        "title": "Vahvista poisto",
+        "message": "Haluatko varmasti poistaa luottokortin?"
+      }
+    }
+  }
+}

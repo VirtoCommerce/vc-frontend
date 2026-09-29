@@ -1,12 +1,14 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
-import { tryParseDate } from "@/ui-kit/components/molecules/calendar/use-calendar-base";
-import { formatDateLocale, parseDateInput } from "@/ui-kit/utilities/date";
+import { formatDateLocale, parseDateInput, tryParseDate } from "@/ui-kit/utilities/date";
 import type { CalendarDate } from "@internationalized/date";
 import type { MaybeRef, Ref } from "vue";
 
 export type VcDateFieldUpdateOnType = "blur" | "enter";
+
+/** Why the typed date is rejected; each value is also its `ui_kit.date_input.*` message key. */
+type DateFieldFailureType = "invalid_format" | "min_date_error" | "max_date_error" | "unavailable_date";
 
 export interface IUseDateFieldOptions {
   /** ISO YYYY-MM-DD from parent (the source of truth). */
@@ -83,44 +85,46 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
-  const isValid = computed<boolean>(() => {
+  // One ladder for both readers: `isValid` wants the verdict, `errorText` the reason.
+  const failure = computed<DateFieldFailureType | undefined>(() => {
     if (isEmpty.value) {
-      return true;
-    }
-    const cd = parsedDate.value;
-    if (!cd) {
-      return false;
-    }
-    if (minDate.value && cd.compare(minDate.value) < 0) {
-      return false;
-    }
-    if (maxDate.value && cd.compare(maxDate.value) > 0) {
-      return false;
-    }
-    if (isDisabledDateHit(cd)) {
-      return false;
-    }
-    return true;
-  });
-
-  const errorText = computed<string | undefined>(() => {
-    if (!touched.value || isValid.value || isEmpty.value) {
       return undefined;
     }
     const cd = parsedDate.value;
     if (!cd) {
-      return t("ui_kit.date_input.invalid_format");
+      return "invalid_format";
     }
     if (minDate.value && cd.compare(minDate.value) < 0) {
-      return t("ui_kit.date_input.min_date_error", { min: opts.min?.value });
+      return "min_date_error";
     }
     if (maxDate.value && cd.compare(maxDate.value) > 0) {
-      return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
+      return "max_date_error";
     }
     if (isDisabledDateHit(cd)) {
-      return t("ui_kit.date_input.unavailable_date");
+      return "unavailable_date";
     }
     return undefined;
+  });
+
+  const isValid = computed<boolean>(() => !failure.value);
+
+  // Keys stay literal so `yarn check-locales` can still see them.
+  const errorText = computed<string | undefined>(() => {
+    if (!touched.value) {
+      return undefined;
+    }
+    switch (failure.value) {
+      case "invalid_format":
+        return t("ui_kit.date_input.invalid_format");
+      case "min_date_error":
+        return t("ui_kit.date_input.min_date_error", { min: opts.min?.value });
+      case "max_date_error":
+        return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
+      case "unavailable_date":
+        return t("ui_kit.date_input.unavailable_date");
+      default:
+        return undefined;
+    }
   });
 
   function commit(): void {
@@ -141,34 +145,48 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
+  /**
+   * Empties the text without reading the model. `reset` cannot serve a CLEAR: an uncontrolled parent
+   * never writes back, so repainting from the model puts the cleared date straight back.
+   */
+  function clearText(): void {
+    displayValue.value = "";
+    touched.value = false;
+  }
+
   function onBlur(): void {
     const mode = toValue(opts.updateOn) ?? "blur";
     if (mode === "blur") {
-      touched.value = true;
       commit();
     }
   }
 
+  // Enter commits whatever `updateOn` says; `commit` marks the field touched.
   function onEnter(): void {
-    touched.value = true;
     commit();
   }
 
   function onClear(): void {
-    displayValue.value = "";
-    touched.value = false;
+    clearText();
     if (opts.modelValue.value !== undefined) {
       opts.onCommit(undefined);
     }
   }
 
+  function reset(): void {
+    syncDisplayFromModel();
+    touched.value = false;
+  }
+
   return {
+    clearText,
     displayValue,
     errorText,
     isValid,
     onBlur,
     onEnter,
     onClear,
+    reset,
     /** Commit displayValue unconditionally (bypasses `updateOn`). Used for programmatic commits like paste. */
     commit,
   };

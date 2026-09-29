@@ -248,13 +248,6 @@
                     @fail="failure = true"
                   />
 
-                  <PaymentProcessingSkyflow
-                    v-else-if="paymentMethodCode === 'SkyflowPaymentMethod'"
-                    :order="order"
-                    @success="success = true"
-                    @fail="failure = true"
-                  />
-
                   <PaymentProcessingCyberSource
                     v-else-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
                     :order="order"
@@ -270,14 +263,9 @@
                   />
 
                   <ExtensionPointList
-                    v-else-if="
-                      paymentMethodCode &&
-                      $canRenderExtensionPoint('orderPaymentPage', 'payment-methods', {
-                        order: order,
-                        paymentTypeName: paymentMethodCode,
-                      })
-                    "
+                    v-else-if="paymentMethodCode"
                     category="orderPaymentPage"
+                    :condition-params="{ order: order, paymentTypeName: paymentMethodCode }"
                     :order="order"
                     :payment-type-name="paymentMethodCode"
                     @success="success = true"
@@ -306,7 +294,7 @@
 
 <script setup lang="ts">
 import { cloneDeep } from "lodash-es";
-import { computed, defineAsyncComponent, ref, watch, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -325,12 +313,6 @@ import PaymentProcessingCyberSource from "@/shared/payment/components/payment-pr
 import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
 
 const props = defineProps<IProps>();
-
-// Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
-// (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
-const PaymentProcessingSkyflow = defineAsyncComponent(
-  () => import("@/shared/payment/components/payment-processing-skyflow.vue"),
-);
 
 interface IProps {
   orderId: string;

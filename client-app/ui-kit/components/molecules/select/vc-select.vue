@@ -58,10 +58,10 @@
           :active-descendant-id="activeDescendantId"
           @toggle="toggle"
           @open="open"
-          @close="close()"
+          @escape="onEscape($event, close)"
           @clear="clear"
           @navigate="onNavigate($event, open)"
-          @confirm="onConfirm(toggle, close)"
+          @confirm="onConfirm($event, toggle, close)"
           @tab="onTab"
           @update:search="onSearchInput($event, open)"
         >
@@ -88,7 +88,7 @@
               :indeterminate="isSomeSelected"
               :aria-label="selectAllLabel"
               @change="onSelectAll"
-              @keydown.esc="focusTrigger()"
+              @keydown.esc="onEscape($event, close)"
               @keydown.down.prevent="focusTrigger()"
             >
               <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
@@ -123,6 +123,7 @@
                   !multiple && close();
                 "
                 @mousemove="highlightedIndex = index"
+                @keydown.esc="onEscape($event, close)"
               >
                 <VcCheckbox
                   v-if="multiple"
@@ -422,8 +423,18 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
   navigate(key);
 }
 
-function onConfirm(toggle: () => void, close: () => void) {
+/**
+ * Enter is consumed only when it does something. Closed, a select-only combobox opens on it (APG),
+ * while an editable one leaves it to its form (address-form.vue); open, it accepts the highlighted
+ * option, and with none highlighted there is nothing to accept, so a select in a form still submits.
+ */
+function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) {
   if (!isShown.value) {
+    if (props.autocomplete || !enabled.value) {
+      return;
+    }
+
+    event.preventDefault();
     toggle();
     return;
   }
@@ -434,11 +445,26 @@ function onConfirm(toggle: () => void, close: () => void) {
     return;
   }
 
+  event.preventDefault();
   select(item);
 
   if (!props.multiple) {
     close();
   }
+}
+
+/**
+ * Only an open list consumes Escape. A closed one leaves it to whatever encloses the select: both
+ * filter drawers are dialog popovers that close on it, and would close along with the list if the
+ * key went on bubbling — the popover wrapper cannot stop it, the list is already shut when it looks.
+ */
+function onEscape(event: KeyboardEvent, close: () => void) {
+  if (!isShown.value) {
+    return;
+  }
+
+  event.stopPropagation();
+  close();
 }
 
 function toggled(value: boolean) {

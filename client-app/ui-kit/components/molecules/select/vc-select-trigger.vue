@@ -40,13 +40,13 @@
       :aria-disabled="disabled || undefined"
       :aria-describedby="detailsId"
       @click.stop="$emit('toggle')"
-      @keydown.enter.prevent="$emit('confirm')"
-      @keydown.space.prevent="$emit('confirm')"
+      @keydown.enter.prevent="$emit('confirm', $event)"
+      @keydown.space.prevent="$emit('confirm', $event)"
       @keydown.down.prevent="$emit('navigate', 'down')"
       @keydown.up.prevent="$emit('navigate', 'up')"
       @keydown.home.prevent="$emit('navigate', 'home')"
       @keydown.end.prevent="$emit('navigate', 'end')"
-      @keydown.esc="$emit('close')"
+      @keydown.esc="$emit('escape', $event)"
       @keydown.tab="$emit('tab', $event)"
     >
       <span class="vc-select-trigger__content">
@@ -65,7 +65,8 @@
       color="neutral"
       variant="ghost"
       class="vc-select-trigger__clear"
-      :icon-size="clearIconSize"
+      :icon-size="getInputClearIconSize(size)"
+      @keydown.esc="$emit('escape', $event)"
       @keydown.enter.stop.prevent
       @keyup.enter.stop.prevent="$emit('clear')"
       @click.stop="$emit('clear')"
@@ -112,9 +113,9 @@
     @keydown.up.prevent="$emit('navigate', 'up')"
     @keydown.home="onHome"
     @keydown.end="onEnd"
-    @keydown.enter.prevent="$emit('confirm')"
+    @keydown.enter="$emit('confirm', $event)"
     @click="onClick"
-    @keydown.esc="$emit('close')"
+    @keydown.esc="$emit('escape', $event)"
     @keydown.tab="$emit('tab', $event)"
   >
     <template #append>
@@ -127,7 +128,8 @@
         color="neutral"
         variant="ghost"
         class="vc-select-trigger__clear"
-        :icon-size="clearIconSize"
+        :icon-size="getInputClearIconSize(size)"
+        @keydown.esc="$emit('escape', $event)"
         @keydown.enter.stop.prevent
         @keyup.enter.stop.prevent="$emit('clear')"
         @click.stop="$emit('clear')"
@@ -142,6 +144,7 @@
         variant="ghost"
         tabindex="-1"
         class="vc-select-trigger__arrow"
+        @keydown.esc="$emit('escape', $event)"
         @click.stop="$emit('toggle')"
       />
     </template>
@@ -149,15 +152,16 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import { computed, useTemplateRef } from "vue";
+import { useTemplateRef } from "vue";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
 
 const emit = defineEmits<{
   (event: "toggle"): void;
   (event: "open"): void;
-  (event: "close"): void;
+  (event: "escape", payload: KeyboardEvent): void;
   (event: "clear"): void;
   (event: "navigate", key: "up" | "down" | "home" | "end"): void;
-  (event: "confirm"): void;
+  (event: "confirm", payload: KeyboardEvent): void;
   (event: "tab", payload: KeyboardEvent): void;
   (event: "update:search", value: string): void;
 }>();
@@ -189,11 +193,6 @@ defineSlots<{
   selected?: (props: { item: T; error?: boolean }) => unknown;
   placeholder?: (props: { error?: boolean }) => unknown;
 }>();
-
-// Mirrors the ternary in vc-input.vue:64. The shared `getInputClearIconSize` helper that
-// would replace both lives in the unmerged VCST-5097 branch; adding a second definition
-// here would collide on merge, so this stays local until that branch lands.
-const clearIconSize = computed(() => (props.size === "md" ? "0.875rem" : "0.75rem"));
 
 /**
  * Focus never opens the list — the WAI-ARIA APG reference comboboxes do not, and every path that

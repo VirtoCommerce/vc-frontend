@@ -68,6 +68,7 @@
           "type_orders": "Tilausten määrä",
           "points": "pistettä",
           "days_left": "{count} päivä jäljellä | {count} päivää jäljellä",
+          "no_deadline": "Ei määräaikaa",
           "mission_completed": "Tehtävä suoritettu",
           "completed": "Suoritettu",
           "open_mission": "Avaa tehtävä",

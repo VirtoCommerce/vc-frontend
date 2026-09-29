@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "Lagrede kredittkort",
+      "no_cards": "Du har ikke lagret noen kredittkort ennå",
+      "delete_credit_card_modal": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette kredittkortet?"
+      }
+    }
+  }
+}

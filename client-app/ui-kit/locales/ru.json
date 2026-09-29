@@ -44,7 +44,15 @@
       "previous_year": "Предыдущий год",
       "next_year": "Следующий год",
       "today": "Сегодня",
-      "clear": "Очистить"
+      "clear": "Очистить",
+      "outside_suggested_range": "Вне рекомендуемого диапазона"
+    },
+    "date_range_input": {
+      "aria_label": "Диапазон дат",
+      "clear": "Очистить диапазон дат",
+      "end_date": "Дата окончания",
+      "invalid_range": "Дата окончания должна быть не раньше даты начала",
+      "start_date": "Дата начала"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",

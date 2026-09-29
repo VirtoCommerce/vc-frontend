@@ -18,11 +18,7 @@
     </div>
 
     <div class="mission-card__body">
-      <div class="mission-card__meta">
-        <VcBadge :color="view.dateSeverity" />
-
-        <span v-if="view.dateLabel" class="mission-card__days">{{ view.dateLabel }}</span>
-      </div>
+      <MissionDateBadge class="mission-card__meta" :severity="view.dateSeverity" :label="view.dateLabel" />
 
       <div class="mission-card__progress">
         <div class="mission-card__track">
@@ -59,6 +55,7 @@
 <script setup lang="ts">
 import { useModal } from "@/shared/modal";
 import { MISSION_TYPE, useMissionCard } from "../composables";
+import MissionDateBadge from "./mission-date-badge.vue";
 import OrderMissionModal from "./order-mission-modal.vue";
 import SkuMissionModal from "./sku-mission-modal.vue";
 import type { MissionDataType, MissionType } from "../composables";
@@ -126,11 +123,7 @@ function openMission(): void {
   }
 
   &__meta {
-    @apply mb-3 flex items-center gap-2;
-  }
-
-  &__days {
-    @apply text-sm font-bold text-neutral-600;
+    @apply mb-3;
   }
 
   &__progress {

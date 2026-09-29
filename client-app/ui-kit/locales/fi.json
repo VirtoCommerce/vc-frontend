@@ -44,7 +44,15 @@
       "previous_year": "Edellinen vuosi",
       "next_year": "Seuraava vuosi",
       "today": "Tänään",
-      "clear": "Tyhjennä"
+      "clear": "Tyhjennä",
+      "outside_suggested_range": "Ehdotetun aikavälin ulkopuolella"
+    },
+    "date_range_input": {
+      "aria_label": "Päivämääräväli",
+      "clear": "Tyhjennä päivämääräväli",
+      "end_date": "Päättymispäivä",
+      "invalid_range": "Päättymispäivän on oltava sama tai myöhäisempi kuin alkamispäivä",
+      "start_date": "Alkamispäivä"
     },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",

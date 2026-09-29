@@ -44,7 +44,15 @@
       "previous_year": "前年",
       "next_year": "翌年",
       "today": "今日",
-      "clear": "クリア"
+      "clear": "クリア",
+      "outside_suggested_range": "推奨範囲外です"
+    },
+    "date_range_input": {
+      "aria_label": "日付範囲",
+      "clear": "日付範囲をクリア",
+      "end_date": "終了日",
+      "invalid_range": "終了日は開始日以降である必要があります",
+      "start_date": "開始日"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",

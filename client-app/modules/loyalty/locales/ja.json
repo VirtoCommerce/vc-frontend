@@ -68,6 +68,7 @@
           "type_orders": "注文数",
           "points": "ポイント",
           "days_left": "{count}日残リ | {count}日残リ",
+          "no_deadline": "期限なし",
           "mission_completed": "ミッション完了",
           "completed": "完了",
           "open_mission": "ミッションを開く",

@@ -150,6 +150,27 @@ export const Dot: StoryObj = {
   render: renderTemplate(`<VcBadge />`),
 };
 
+export const DotColors: StoryObj = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A slotless badge renders as a dot. It carries no text, so the fill alone conveys the status and must clear 3:1 against its surface (WCAG 1.4.11) — solid dots therefore fill with shade 700 instead of the variant shade, and a preset overrides them through `color_vc_background_solid_<color>` like any other solid surface.",
+      },
+    },
+  },
+  render: () => ({
+    components: { VcBadge },
+    setup: () => ({ colors: COLORS }),
+    template: `<div class="flex flex-wrap gap-6">
+      <div v-for="color in colors" class="flex items-center gap-2">
+        <VcBadge :color="color" />
+        <span class="text-sm">{{ color }}</span>
+      </div>
+    </div>`,
+  }),
+};
+
 export const AllSizes: StoryObj = {
   render: () => ({
     components: { VcBadge },
