@@ -80,8 +80,7 @@ interface IProps {
    */
   highlighted?: boolean;
   /**
-   * Draws the focus ring on a highlighted item. Turn it off for a highlight the keyboard did not
-   * put there (the pointer, or a list the pointer opened onto its selection).
+   * Draws the focus ring on a highlighted item. Turn it off for a highlight that follows the pointer.
    */
   highlightRing?: boolean;
   /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */

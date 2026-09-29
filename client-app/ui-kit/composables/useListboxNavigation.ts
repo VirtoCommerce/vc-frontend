@@ -33,16 +33,17 @@ function getScrollBox(list: HTMLElement): HTMLElement {
 /**
  * Keyboard state for a listbox driven by `aria-activedescendant`: DOM focus stays on the combobox
  * or search field, and the active option is published by id and styled with a `highlighted` flag.
- * Bind VcMenuItem's `highlight-ring` to `!isPassiveHighlight` so only a keyboard position rings,
- * and let Enter accept only such a position.
+ * Bind VcMenuItem's `highlight-ring` to `!isPassiveHighlight` so only a keyboard position rings.
  */
 export function useListboxNavigation<T>(params: ParamsType<T>) {
   const highlightedIndex = ref(-1);
   const count = computed(() => params.items.value.length);
 
-  // A highlight the pointer put there (or a list the pointer opened onto its selection) is not a
-  // keyboard position: it keeps its background but draws no ring until the keyboard moves it.
+  // A highlight the pointer put there is not a keyboard position: it keeps its background but
+  // draws no ring until the keyboard moves it. Any other write makes it a keyboard position.
   const isPassiveHighlight = ref(false);
+
+  watch(highlightedIndex, () => (isPassiveHighlight.value = false), { flush: "sync" });
 
   function highlight(index: number): void {
     highlightedIndex.value = index;

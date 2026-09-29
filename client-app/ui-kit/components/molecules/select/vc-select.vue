@@ -439,7 +439,7 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
     return;
   }
 
-  const item = isPassiveHighlight.value ? undefined : filteredItems.value[highlightedIndex.value];
+  const item = filteredItems.value[highlightedIndex.value];
 
   if (item === undefined) {
     return;
@@ -453,20 +453,15 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
   }
 }
 
-// Opened from the keyboard, the selection is a keyboard position and rings; from the pointer it is passive.
+// Opened from the keyboard, the list starts on the selection; opened by the pointer, on nothing,
+// so Enter never acts on an option the user has not pointed at or moved to.
 let openedByKeyboard = false;
 
 function toggled(value: boolean) {
   isShown.value = value;
 
   if (isShown.value) {
-    const selectedIndex = filteredItems.value.findIndex((item) => isActiveItem(item));
-
-    if (openedByKeyboard) {
-      highlight(selectedIndex);
-    } else {
-      highlightPassively(selectedIndex);
-    }
+    highlight(openedByKeyboard ? filteredItems.value.findIndex((item) => isActiveItem(item)) : -1);
 
     openedByKeyboard = false;
     return;

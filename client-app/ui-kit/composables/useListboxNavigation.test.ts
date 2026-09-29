@@ -133,6 +133,18 @@ describe("useListboxNavigation passive highlight", () => {
     expect(isPassiveHighlight.value).toBe(false);
   });
 
+  it("clears the mark on a direct write to the index", () => {
+    const { highlightedIndex, isPassiveHighlight, highlightPassively } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(["a", "b", "c"]),
+    });
+
+    highlightPassively(0);
+    highlightedIndex.value = 2;
+
+    expect(isPassiveHighlight.value).toBe(false);
+  });
+
   it("drops only a passive highlight when the pointer leaves the list", () => {
     const list = document.createElement("ul");
     document.body.append(list);

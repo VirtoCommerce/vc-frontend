@@ -1182,18 +1182,18 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("China");
     });
 
-    it("opens onto the selection without a focus ring until the keyboard moves", async () => {
+    it("opens by the pointer onto no highlight, so the keyboard starts at the top", async () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
       const input = wrapper.get("input");
 
       await input.trigger("click");
 
-      expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
-      expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Belgium");
+      expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
 
       await input.trigger("keydown", { key: "ArrowDown" });
 
-      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("China");
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
     });
 
     it("rings the selection when Enter opens the list", async () => {
@@ -1222,7 +1222,7 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
     });
 
-    it("leaves a passive highlight alone on Enter", async () => {
+    it("leaves Enter to the form after a pointer open", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: ["Belgium"] });
       const input = wrapper.get("input");
 
@@ -1288,15 +1288,6 @@ describe("VcSelect", () => {
       await wrapper.get('[role="listbox"]').trigger("mouseleave");
 
       expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Albania");
-    });
-
-    it("opens with the current selection highlighted", async () => {
-      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
-      const input = wrapper.get("input");
-
-      await input.trigger("click");
-
-      expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[1].attributes("id"));
     });
 
     // A plain select is a button: the click toggles it, and focus alone must not open it — the

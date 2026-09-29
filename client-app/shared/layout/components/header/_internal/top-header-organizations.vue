@@ -226,7 +226,7 @@ function onListKeydown(event: KeyboardEvent): void {
     return;
   }
 
-  const highlighted = isPassiveHighlight.value ? undefined : displayedOrganizations.value[highlightedIndex.value];
+  const highlighted = displayedOrganizations.value[highlightedIndex.value];
 
   if (highlighted) {
     event.preventDefault();
@@ -235,7 +235,7 @@ function onListKeydown(event: KeyboardEvent): void {
 }
 
 async function onEnter(): Promise<void> {
-  const highlighted = isPassiveHighlight.value ? undefined : displayedOrganizations.value[highlightedIndex.value];
+  const highlighted = displayedOrganizations.value[highlightedIndex.value];
 
   if (highlighted) {
     await selectOrganization(highlighted.id);
