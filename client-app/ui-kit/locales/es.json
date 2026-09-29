@@ -5,7 +5,7 @@
       "apply": "Aplicar",
       "cancel": "Cancelar",
       "clear": "Borrar",
-      "clear_field": "Borrar {field}",
+      "clear_field": "Borrar: {field}",
       "close": "Cerrar",
       "copy": "Copiar",
       "deny": "Denegar",
@@ -23,7 +23,7 @@
     "accessibility": {
       "close_alert": "Cerrar alerta",
       "open_calendar": "Abrir calendario",
-      "open_calendar_for": "Abrir calendario de {field}",
+      "open_calendar_for": "Abrir calendario: {field}",
       "calendar": "Calendario",
       "product_quantity": "Cantidad del producto",
       "decrease_quantity": "Disminuir cantidad",
