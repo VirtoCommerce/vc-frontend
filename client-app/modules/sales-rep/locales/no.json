@@ -155,7 +155,7 @@
         "last_week": "Siste uke",
         "last_month": "Siste måned",
         "last_year": "Siste år",
-        "remove_filter": "Fjern filter: {label}"
+        "remove_filter": "Fjern filteret «{label}»"
       }
     },
     "communication": {

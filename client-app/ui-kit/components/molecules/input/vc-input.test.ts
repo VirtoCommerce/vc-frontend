@@ -174,6 +174,11 @@ describe("VcInput clearable", () => {
     });
     expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear Start date");
   });
+
+  it("falls back to the default name for an empty clearLabel", () => {
+    const wrapper = createInputWrapper({ props: { modelValue: "value", clearable: true, clearLabel: "" } });
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).not.toBe("");
+  });
 });
 
 describe("VcInput seamless", () => {

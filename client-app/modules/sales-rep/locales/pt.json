@@ -155,7 +155,7 @@
         "last_week": "Última semana",
         "last_month": "Último mês",
         "last_year": "Último ano",
-        "remove_filter": "Remover filtro: {label}"
+        "remove_filter": "Remover o filtro “{label}”"
       }
     },
     "communication": {

@@ -5,7 +5,7 @@
       "apply": "Käytä",
       "cancel": "Peruuta",
       "clear": "Tyhjennä",
-      "clear_field": "Tyhjennä {field}",
+      "clear_field": "Tyhjennä: {field}",
       "close": "Sulje",
       "copy": "Kopioi",
       "deny": "Hylkää",

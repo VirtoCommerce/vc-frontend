@@ -5,10 +5,19 @@ import { createWrapperFactory } from "@/core/utilities/tests";
 import SalesRepOrdersFilters from "./sales-rep-orders-filters.vue";
 
 const isPhone = ref(false);
+const askedBreakpoints: string[] = [];
 
 vi.mock("@vueuse/core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@vueuse/core")>();
-  return { ...actual, useBreakpoints: () => ({ smaller: () => isPhone }) };
+  return {
+    ...actual,
+    useBreakpoints: () => ({
+      smaller: (name: string) => {
+        askedBreakpoints.push(name);
+        return isPhone;
+      },
+    }),
+  };
 });
 
 afterEach(() => {
@@ -133,6 +142,27 @@ describe("SalesRepOrdersFilters", () => {
     expect(lastChange(wrapper)).toMatchObject({ startDate: "2026-05-01", endDate: "2026-05-31" });
   });
 
+  it("clears both bounds when the picker empties the range", async () => {
+    const wrapper = createWrapper({
+      props: {
+        statuses: [],
+        applied: { statuses: [], customerNames: [], startDate: "2026-05-01", endDate: "2026-05-31" },
+      },
+    });
+    await wrapper.setProps({
+      applied: { statuses: [], customerNames: [], startDate: "2026-05-01", endDate: "2026-05-31" },
+    });
+
+    rangePicker(wrapper).vm.$emit("update:modelValue", undefined);
+    await nextTick();
+
+    expect(rangePicker(wrapper).props("modelValue")).toBeUndefined();
+
+    await applyButton(wrapper).trigger("click");
+
+    expect(lastChange(wrapper)).toMatchObject({ startDate: undefined, endDate: undefined });
+  });
+
   it("blocks Apply while the picker reports the custom range invalid", async () => {
     const wrapper = createWrapper();
 
@@ -248,6 +278,14 @@ describe("SalesRepOrdersFilters — the date range field", () => {
   });
 
   // "combined" renders the start/end labels as aria-labels only, so the one visible label names the pair.
+  // `sm`, as the account orders filter splits them — the ticket measured the merged field at 375px.
+  it("switches layouts at the sm breakpoint", () => {
+    askedBreakpoints.length = 0;
+    createWrapper();
+
+    expect(askedBreakpoints).toEqual(["sm"]);
+  });
+
   it("merges them into one field, labelled as a range, on a phone", async () => {
     const wrapper = createWrapper();
 

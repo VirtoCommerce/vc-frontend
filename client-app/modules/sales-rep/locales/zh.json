@@ -155,7 +155,7 @@
         "last_week": "上周",
         "last_month": "上个月",
         "last_year": "去年",
-        "remove_filter": "移除筛选条件：{label}"
+        "remove_filter": "移除筛选条件“{label}”"
       }
     },
     "communication": {

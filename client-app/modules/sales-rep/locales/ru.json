@@ -155,7 +155,7 @@
         "last_week": "Последняя неделя",
         "last_month": "Последний месяц",
         "last_year": "Последний год",
-        "remove_filter": "Удалить фильтр: {label}"
+        "remove_filter": "Удалить фильтр «{label}»"
       }
     },
     "communication": {

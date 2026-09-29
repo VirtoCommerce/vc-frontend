@@ -57,7 +57,7 @@
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <VcButton
           :disabled="disabled"
-          :aria-label="clearLabel ?? $t('ui_kit.buttons.clear')"
+          :aria-label="clearLabel || $t('ui_kit.buttons.clear')"
           type="button"
           icon="delete-thin"
           color="neutral"

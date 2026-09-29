@@ -155,7 +155,7 @@
         "last_week": "Viime viikko",
         "last_month": "Viime kuukausi",
         "last_year": "Viime vuosi",
-        "remove_filter": "Poista suodatin: {label}"
+        "remove_filter": "Poista suodatin ”{label}”"
       }
     },
     "communication": {

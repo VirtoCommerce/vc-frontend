@@ -155,7 +155,7 @@
         "last_week": "先週",
         "last_month": "先月",
         "last_year": "昨年",
-        "remove_filter": "フィルターを削除: {label}"
+        "remove_filter": "フィルター「{label}」を削除"
       }
     },
     "communication": {

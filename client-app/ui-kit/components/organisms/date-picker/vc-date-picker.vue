@@ -49,7 +49,7 @@
             variant="ghost"
             color="primary"
             :disabled="disabled || readonly"
-            :aria-label="calendarButtonLabel ?? t('ui_kit.accessibility.open_calendar')"
+            :aria-label="calendarButtonLabel || t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
             @keydown.esc="onTriggerEscape($event, opened, close)"
           />
