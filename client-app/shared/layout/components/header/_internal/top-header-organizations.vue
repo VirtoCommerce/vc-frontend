@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, useEventListener } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
@@ -161,17 +161,13 @@ const {
   getOptionId,
   navigate,
   highlightPassively,
-  dropPassiveHighlight,
   reset: resetHighlight,
 } = useListboxNavigation({
   componentId,
   items: displayedOrganizations,
   getKey: (item) => item.id,
+  list: useTemplateRef<HTMLElement>("listElement"),
 });
-
-// On the element, not in the template: a handler there trips the vuejs-accessibility rules.
-const listElement = useTemplateRef<HTMLElement>("listElement");
-useEventListener(listElement, "mouseleave", dropPassiveHighlight);
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {
@@ -230,7 +226,7 @@ function onListKeydown(event: KeyboardEvent): void {
     return;
   }
 
-  const highlighted = displayedOrganizations.value[highlightedIndex.value];
+  const highlighted = isPassiveHighlight.value ? undefined : displayedOrganizations.value[highlightedIndex.value];
 
   if (highlighted) {
     event.preventDefault();
@@ -239,7 +235,7 @@ function onListKeydown(event: KeyboardEvent): void {
 }
 
 async function onEnter(): Promise<void> {
-  const highlighted = displayedOrganizations.value[highlightedIndex.value];
+  const highlighted = isPassiveHighlight.value ? undefined : displayedOrganizations.value[highlightedIndex.value];
 
   if (highlighted) {
     await selectOrganization(highlighted.id);

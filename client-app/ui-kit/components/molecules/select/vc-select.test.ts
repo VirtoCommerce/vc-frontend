@@ -1222,15 +1222,46 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
     });
 
-    it("rings the last option when ArrowUp opens onto it", async () => {
-      const wrapper = createWrapper({ items: ITEMS, modelValue: "China" });
+    it("leaves a passive highlight alone on Enter", async () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: ["Belgium"] });
       const input = wrapper.get("input");
 
-      await input.trigger("keydown", { key: "ArrowUp" });
+      await input.trigger("click");
+
+      const event = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+      input.element.dispatchEvent(event);
+      await nextTick();
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
+
+    // The selection sits where the key would open, so only the ring tells a keyboard open.
+    it.each([
+      ["End", "China"],
+      ["ArrowUp", "China"],
+      ["ArrowDown", "Albania"],
+    ])("rings the selection when %s opens onto it", async (key, selection) => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: selection });
+      const input = wrapper.get("input");
+
+      await input.trigger("keydown", { key });
       await nextTick();
       await nextTick();
 
-      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("China");
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe(selection);
+    });
+
+    it("opens the slotted trigger with Space and rings the selection", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" }, { selected: () => h("span", "chosen") });
+      const button = wrapper.get(".vc-select-trigger__button");
+
+      (button.element as HTMLElement).focus();
+      await button.trigger("keydown", { key: " " });
+      await nextTick();
+
+      expect(button.attributes("aria-expanded")).toBe("true");
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Belgium");
     });
 
     it("drops a pointer highlight when the pointer leaves the list", async () => {
@@ -1239,6 +1270,9 @@ describe("VcSelect", () => {
 
       await input.trigger("click");
       await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+
+      expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Belgium");
+
       await wrapper.get('[role="listbox"]').trigger("mouseleave");
 
       expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
@@ -1254,17 +1288,6 @@ describe("VcSelect", () => {
       await wrapper.get('[role="listbox"]').trigger("mouseleave");
 
       expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Albania");
-    });
-
-    it("rings the first option when ArrowDown opens onto it", async () => {
-      const wrapper = createWrapper({ items: ITEMS, modelValue: "Albania" });
-      const input = wrapper.get("input");
-
-      await input.trigger("keydown", { key: "ArrowDown" });
-      await nextTick();
-      await nextTick();
-
-      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
     });
 
     it("opens with the current selection highlighted", async () => {

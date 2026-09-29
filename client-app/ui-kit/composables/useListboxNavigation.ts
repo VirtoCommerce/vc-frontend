@@ -1,3 +1,4 @@
+import { useEventListener } from "@vueuse/core";
 import { computed, nextTick, ref, watch } from "vue";
 import type { Ref } from "vue";
 
@@ -8,6 +9,8 @@ type ParamsType<T> = {
   items: Ref<readonly T[]>;
   /** Identity of an option. Defaults to the item itself; pass one when the list is rebuilt. */
   getKey?: (item: T) => unknown;
+  /** The listbox element; when given, a pointer highlight is dropped as the pointer leaves it. */
+  list?: Readonly<Ref<HTMLElement | null>>;
 };
 
 export type ListboxNavigationKeyType = "up" | "down" | "home" | "end";
@@ -30,17 +33,21 @@ function getScrollBox(list: HTMLElement): HTMLElement {
 /**
  * Keyboard state for a listbox driven by `aria-activedescendant`: DOM focus stays on the combobox
  * or search field, and the active option is published by id and styled with a `highlighted` flag.
- * Bind VcMenuItem's `highlight-ring` to `!isPassiveHighlight`, so only a keyboard position rings.
+ * Bind VcMenuItem's `highlight-ring` to `!isPassiveHighlight` so only a keyboard position rings,
+ * and let Enter accept only such a position.
  */
 export function useListboxNavigation<T>(params: ParamsType<T>) {
   const highlightedIndex = ref(-1);
   const count = computed(() => params.items.value.length);
 
-  // A highlight the pointer or an opening list put there is not a keyboard position: it keeps its
-  // background but draws no focus ring (VcMenuItem `highlight-ring`) until the keyboard moves it.
+  // A highlight the pointer put there (or a list the pointer opened onto its selection) is not a
+  // keyboard position: it keeps its background but draws no ring until the keyboard moves it.
   const isPassiveHighlight = ref(false);
 
-  watch(highlightedIndex, () => (isPassiveHighlight.value = false), { flush: "sync" });
+  function highlight(index: number): void {
+    highlightedIndex.value = index;
+    isPassiveHighlight.value = false;
+  }
 
   function highlightPassively(index: number): void {
     highlightedIndex.value = index;
@@ -50,8 +57,12 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   // A pointer highlight ends with the pointer; left in place it would look like a selection.
   function dropPassiveHighlight(): void {
     if (isPassiveHighlight.value) {
-      highlightedIndex.value = -1;
+      reset();
     }
+  }
+
+  if (params.list) {
+    useEventListener(params.list, "mouseleave", dropPassiveHighlight);
   }
 
   function getItemKey(item: T): unknown {
@@ -99,7 +110,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   }
 
   function reset(): void {
-    highlightedIndex.value = -1;
+    highlight(-1);
   }
 
   // Not `scrollIntoView`, which also scrolls the page.
@@ -150,8 +161,8 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     activeDescendantId,
     getOptionId,
     navigate,
+    highlight,
     highlightPassively,
-    dropPassiveHighlight,
     isPassiveHighlight,
     reset,
   };

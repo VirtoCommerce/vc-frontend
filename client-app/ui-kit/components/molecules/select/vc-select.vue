@@ -179,7 +179,7 @@
 </template>
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
-import { useDebounceFn, useElementBounding, useEventListener } from "@vueuse/core";
+import { useDebounceFn, useElementBounding } from "@vueuse/core";
 import { isEqual } from "lodash-es";
 import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -239,8 +239,8 @@ const props = withDefaults(
     total?: number;
     /**
      * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
-     * matches that are not loaded. Defaults to the selected matches that are loaded; capped at
-     * `total`, and never below the selected matches that are loaded.
+     * matches that are not loaded. Defaults to the selected matches that are loaded. Capped at
+     * `total`, except that it never falls below the selected matches that are loaded.
      */
     selectedCount?: number;
     /** Shows a loading indicator inside the list. */
@@ -303,16 +303,20 @@ const {
   valueField: toRef(() => props.valueField),
 });
 
-const { highlightedIndex, isPassiveHighlight, getOptionId, navigate, highlightPassively, dropPassiveHighlight } =
-  useListboxNavigation({
-    componentId,
-    items: filteredItems,
-    getKey: getItemValue,
-  });
-
-// On the element, not in the template: a handler there trips the vuejs-accessibility rules.
-const listElement = useTemplateRef<HTMLElement>("listElement");
-useEventListener(listElement, "mouseleave", dropPassiveHighlight);
+const {
+  highlightedIndex,
+  isPassiveHighlight,
+  getOptionId,
+  navigate,
+  highlight,
+  highlightPassively,
+  reset: resetHighlight,
+} = useListboxNavigation({
+  componentId,
+  items: filteredItems,
+  getKey: getItemValue,
+  list: useTemplateRef<HTMLElement>("listElement"),
+});
 
 // Only announce an active option while the list is on screen.
 const activeDescendantId = computed(() =>
@@ -435,7 +439,7 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
     return;
   }
 
-  const item = filteredItems.value[highlightedIndex.value];
+  const item = isPassiveHighlight.value ? undefined : filteredItems.value[highlightedIndex.value];
 
   if (item === undefined) {
     return;
@@ -459,7 +463,7 @@ function toggled(value: boolean) {
     const selectedIndex = filteredItems.value.findIndex((item) => isActiveItem(item));
 
     if (openedByKeyboard) {
-      highlightedIndex.value = selectedIndex;
+      highlight(selectedIndex);
     } else {
       highlightPassively(selectedIndex);
     }
@@ -469,7 +473,7 @@ function toggled(value: boolean) {
   }
 
   filterValue.value = "";
-  highlightedIndex.value = -1;
+  resetHighlight();
 
   if (holdsFocus()) {
     focusTrigger();
@@ -538,7 +542,7 @@ watch(filterValue, (value) => {
   }
 
   // The options under the highlight stay the previous query's until the consumer answers.
-  highlightedIndex.value = -1;
+  resetHighlight();
 
   if (value) {
     void emitSearchDebounced(value);

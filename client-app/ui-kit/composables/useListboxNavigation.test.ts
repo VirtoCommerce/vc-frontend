@@ -121,15 +121,38 @@ describe("useListboxNavigation passive highlight", () => {
     expect(isPassiveHighlight.value).toBe(false);
   });
 
-  it("clears the mark when the index is set directly", () => {
-    const { highlightedIndex, isPassiveHighlight, highlightPassively } = useListboxNavigation({
+  it("clears the mark when the index is set as a keyboard position", () => {
+    const { isPassiveHighlight, highlightPassively, highlight } = useListboxNavigation({
       componentId: COMPONENT_ID,
       items: ref(["a", "b", "c"]),
     });
 
     highlightPassively(0);
-    highlightedIndex.value = 2;
+    highlight(0);
 
     expect(isPassiveHighlight.value).toBe(false);
+  });
+
+  it("drops only a passive highlight when the pointer leaves the list", () => {
+    const list = document.createElement("ul");
+    document.body.append(list);
+
+    const { highlightedIndex, highlightPassively, navigate } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(["a", "b", "c"]),
+      list: ref(list),
+    });
+
+    highlightPassively(1);
+    list.dispatchEvent(new MouseEvent("mouseleave"));
+
+    expect(highlightedIndex.value).toBe(-1);
+
+    navigate("down");
+    list.dispatchEvent(new MouseEvent("mouseleave"));
+
+    expect(highlightedIndex.value).toBe(0);
+
+    list.remove();
   });
 });

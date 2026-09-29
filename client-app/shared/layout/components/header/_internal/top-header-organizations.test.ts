@@ -194,9 +194,23 @@ describe("TopHeaderOrganizations", () => {
     const wrapper = mountComponent();
 
     await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+
+    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(true);
+
     await wrapper.get('[role="listbox"]').trigger("mouseleave");
 
     expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+  });
+
+  it("runs the search on Enter over a row the pointer highlighted", async () => {
+    const wrapper = mountComponent();
+
+    await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+    await wrapper.get("input").trigger("keydown", { key: "Enter" });
+    await nextTick();
+
+    expect(state.trySwitch).not.toHaveBeenCalled();
+    expect(state.search).toHaveBeenCalled();
   });
 
   it("keeps focus in the search field when an option is pressed with the mouse", () => {
