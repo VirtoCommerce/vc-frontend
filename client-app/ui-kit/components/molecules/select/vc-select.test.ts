@@ -1196,6 +1196,17 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
     });
 
+    it("opens on the first option with ArrowDown, not on the selection", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "China" });
+      const input = wrapper.get("input");
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      await nextTick();
+
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Albania");
+    });
+
     it("rings the selection when Enter opens the list", async () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
       const input = wrapper.get("input");

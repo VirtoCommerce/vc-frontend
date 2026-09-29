@@ -453,8 +453,8 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
   }
 }
 
-// Opened with Enter or Space the list starts on the selection (the arrow keys pick their own start);
-// opened by the pointer, on nothing, so Enter never acts on an option the pointer has not reached.
+// Opened by the pointer, the list starts on nothing, so Enter never acts on an option the pointer
+// has not reached.
 let openedByKeyboard = false;
 
 function toggled(value: boolean) {
