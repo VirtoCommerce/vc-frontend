@@ -89,7 +89,23 @@ const { preparingScope, prepareScope } = useSearchScore();
 let wrapper: VueWrapper | undefined;
 
 function mountCategory(props: { categoryId?: string; isRoot?: boolean }) {
-  wrapper = shallowMount(Category, { props, global: { mocks: { $t: (key: string) => key, $n: String } } });
+  wrapper = shallowMount(Category, {
+    props,
+    global: {
+      mocks: { $t: (key: string) => key, $n: String },
+      // Registered globally by the ui-kit plugin, which no test boots.
+      stubs: {
+        VcButton: true,
+        VcChip: true,
+        VcIcon: true,
+        VcLabel: true,
+        VcLayout: true,
+        VcSelect: true,
+        VcTypography: true,
+        "i18n-t": true,
+      },
+    },
+  });
   return wrapper;
 }
 
