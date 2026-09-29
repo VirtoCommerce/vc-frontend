@@ -1,10 +1,10 @@
 <template>
   <div
-    class="vc-product-skeleton-list grid gap-x-3.5 bg-additional-50 px-4 pb-5 pt-4 lg:place-items-center lg:rounded lg:py-3.5 lg:shadow lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-neutral-200 lg:hover:shadow-lg"
+    class="vc-product-skeleton-list grid gap-x-3 rounded-xl border border-neutral-100 bg-additional-50 px-4 py-3 lg:place-items-center"
   >
     <div class="vc-product-skeleton-list__mobile-left sm:contents">
       <!-- Product image -->
-      <div class="vc-product-skeleton-list__img relative block size-[72px] bg-neutral-100 xl:size-[86px]"></div>
+      <div class="vc-product-skeleton-list__img relative block size-20 rounded-[0.625rem] bg-neutral-100"></div>
 
       <div
         class="vc-product-skeleton-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-3 lg:gap-3"
@@ -75,13 +75,7 @@
 
     <div class="vc-product-skeleton-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-2.5">
       <!-- Add to cart -->
-      <div class="flex h-9 items-stretch rounded border-2 border-neutral-100">
-        <div class="flex w-1/2 items-center justify-center">
-          <div class="h-4 w-1/5 bg-neutral-100"></div>
-        </div>
-
-        <div class="flex w-1/2 items-center justify-center bg-neutral-100"></div>
-      </div>
+      <div class="h-[2.375rem] rounded-full bg-neutral-100"></div>
 
       <div class="flex items-center gap-1">
         <!-- in stock -->
@@ -95,7 +89,7 @@
 
 <style scoped lang="scss">
 .vc-product-skeleton-list {
-  grid-template-columns: 72px 1fr;
+  grid-template-columns: 80px 1fr;
   grid-template-areas:
     "mobile-left name"
     "mobile-left properties"
@@ -104,7 +98,7 @@
     "mobile-left .";
 
   @media (min-width: theme("screens.sm")) {
-    grid-template-columns: 72px 1fr 40%;
+    grid-template-columns: 80px 1fr 40%;
     grid-template-areas:
       "img name price"
       "img name add-to-cart"
@@ -113,7 +107,7 @@
   }
 
   @media (min-width: theme("screens.lg")) {
-    grid-template-columns: 72px 1fr 126px 207px;
+    grid-template-columns: 80px 1fr 126px 207px;
     grid-template-areas:
       "img name price add-to-cart"
       "img properties price add-to-cart"
@@ -122,7 +116,7 @@
   }
 
   @media (min-width: theme("screens.xl")) {
-    grid-template-columns: 86px 1fr 31.5% 140px 207px;
+    grid-template-columns: 80px 1fr 31.5% 140px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"
       "img buttons properties price add-to-cart"

@@ -11,14 +11,14 @@
     <div class="relative">
       <VcLoaderOverlay :visible="changing" />
 
-      <div class="mb-4 flex justify-between text-base font-black">
+      <div class="flex justify-between py-1.5 text-sm font-normal text-neutral-700">
         <span>{{ $t("common.labels.subtotal") }}</span>
 
         <span><VcPriceDisplay :value="summarySubTotal!" data-test-id="cart-subtotal-label" /></span>
       </div>
 
-      <div class="border-y py-2 text-base font-normal">
-        <div class="flex justify-between">
+      <div class="text-sm font-normal text-neutral-700">
+        <div class="flex justify-between py-1.5">
           <component
             :is="hasDiscounts ? 'button' : 'span'"
             class="flex appearance-none items-center"
@@ -81,7 +81,7 @@
           </div>
         </template>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between py-1.5">
           <span>{{ $t("common.labels.tax") }}</span>
 
           <span>
@@ -90,7 +90,7 @@
           </span>
         </div>
 
-        <div v-if="!noShipping" class="flex justify-between">
+        <div v-if="!noShipping" class="flex justify-between py-1.5">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
 
           <span>
@@ -100,28 +100,28 @@
         </div>
       </div>
 
-      <div class="mt-4 flex justify-between text-base font-black">
+      <div class="mt-3 flex items-baseline justify-between border-t pt-3 text-sm font-bold text-neutral-700">
         <span>{{ $t("common.labels.total") }}</span>
 
-        <span class="text-[--price-color] print:text-inherit">
+        <span class="text-xl text-[--price-color] print:text-inherit">
           <VcPriceDisplay v-if="summaryTotal" :value="summaryTotal" data-test-id="cart-total-label" />
         </span>
       </div>
 
       <div v-if="otherTotals.length" class="flex flex-col" data-test-id="cart-other-currency-totals">
-        <div v-for="total in otherTotals" :key="total.total.currency.code" class="mt-4 border-t pt-4">
-          <div class="mb-4 text-base font-black">
+        <div v-for="total in otherTotals" :key="total.total.currency.code" class="mt-4 pt-4">
+          <div class="mb-4 text-sm font-bold text-neutral-700">
             {{ $t("common.labels.total_in_currency", { currency: total.total.currency.code }) }}
           </div>
 
-          <div class="mb-4 flex justify-between text-base font-black">
+          <div class="flex justify-between py-1.5 text-sm font-normal text-neutral-700">
             <span>{{ $t("common.labels.subtotal") }}</span>
 
             <span><VcPriceDisplay :value="total.subTotal" /></span>
           </div>
 
-          <div class="border-y py-2 text-base font-normal">
-            <div class="flex justify-between">
+          <div class="text-sm font-normal text-neutral-700">
+            <div class="flex justify-between py-1.5">
               <span>{{ $t("common.labels.discount") }}</span>
 
               <span v-if="total.discountTotal">
@@ -131,10 +131,10 @@
             </div>
           </div>
 
-          <div class="mt-4 flex justify-between text-base font-black">
+          <div class="mt-3 flex items-baseline justify-between border-t pt-3 text-sm font-bold text-neutral-700">
             <span>{{ $t("common.labels.total") }}</span>
 
-            <span class="text-[--price-color] print:text-inherit">
+            <span class="text-xl text-[--price-color] print:text-inherit">
               <VcPriceDisplay :value="total.total" />
             </span>
           </div>
@@ -144,7 +144,7 @@
 
     <slot name="footer" />
 
-    <div v-if="footnote" class="mt-4 text-xs font-normal text-neutral-500">
+    <div v-if="footnote" class="mt-3 text-center text-[0.6875rem] font-normal text-neutral-500">
       <slot name="footnote">
         {{ $t("common.messages.checkout_pricing_warning") }}
       </slot>

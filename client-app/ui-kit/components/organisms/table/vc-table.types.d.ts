@@ -9,6 +9,8 @@ declare global {
     title?: string;
     sortable?: boolean;
     align?: VcTableAlignType;
+    /** Renders the column's cells in the body text's strong weight and darkest ink. */
+    strong?: boolean;
     classes?: string;
     /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;

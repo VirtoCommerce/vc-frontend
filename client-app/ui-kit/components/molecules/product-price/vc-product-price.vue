@@ -154,7 +154,9 @@ defineProps<IProps>();
           @apply hidden;
 
           @container (min-width: theme("containers.4xl")) {
-            --vc-product-price-font-size: theme("fontSize.sm");
+            // The figure carries the row, as it does in every other listing: the design sets it at
+            // 18 here, against the `sm` this was, which left it no bigger than the name beside it.
+            --vc-product-price-font-size: 1.125rem;
 
             @apply flex flex-col justify-end w-[6.75rem] text-end;
           }

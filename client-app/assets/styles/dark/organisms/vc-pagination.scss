@@ -4,4 +4,15 @@
   // the inactive pages' fill, so the chip's contrast against its siblings equals its own text
   // contrast. Against the page background it is measured separately — 7.28:1 at worst (coffee).
   --page-active-bg: var(--vc-pagination-page-active-bg, var(--color-primary-700));
+
+  // The ring round an unselected page carries the light value `neutral-200`, and the ramp inverts:
+  // in dark that is #2b2621 on a #241c15 plate, 1.12:1 — the hairline the design added so the row
+  // reads as round controls disappears entirely. `neutral-400` restores the INTENT rather than the
+  // number: 2.43:1 in paprika, 3.88 in red, 3.80 in coffee, still a hairline and not a border.
+  --vc-pagination-page-border-color: var(--color-neutral-400);
+
+  // Light brightens the ring toward `primary-200`; inverted, that step is a muddy brown (#793826 in
+  // paprika) and a hover that goes dull is the trap this theme has hit before. Dark brightens to the
+  // brand step instead.
+  --vc-pagination-page-hover-border-color: var(--color-primary-500);
 }

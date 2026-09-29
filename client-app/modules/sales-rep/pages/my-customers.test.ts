@@ -147,4 +147,28 @@ describe("MyCustomers states", () => {
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBe("search");
   });
+
+  // The search lives in the card's toolbar, above the branch that swaps table for empty view, because
+  // a result the rep wants to change the term on is exactly an empty one.
+  it.each([
+    ["no rows", () => {}],
+    [
+      "a failed query",
+      () => {
+        state.error.value = new Error("boom");
+      },
+    ],
+    [
+      "a keyword that matched nothing",
+      () => {
+        state.keyword.value = "acme";
+      },
+    ],
+  ])("keeps the search reachable with %s", (_case, arrange) => {
+    arrange();
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find("vc-input-stub").exists()).toBe(true);
+  });
 });

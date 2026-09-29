@@ -2,6 +2,7 @@
   <VcWidget
     :title="$t('shared.checkout.shipping_details_section.title')"
     prepend-icon="truck"
+    icon-shape
     size="lg"
     class="shipping-details-section"
     data-test-id="shipping-details-section"

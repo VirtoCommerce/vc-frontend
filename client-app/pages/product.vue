@@ -24,13 +24,15 @@
         {{ selectedVariationName || product.name }}
       </VcTypography>
 
-      <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
+      <div
+        class="mt-3 flex flex-wrap items-center gap-1 rounded-[--vc-radius] border border-neutral-100 bg-[--glass-row] px-3.5 py-3 empty:hidden max-sm:justify-between sm:gap-6"
+      >
         <VcCopyText
           v-if="!product.hasVariations"
           :text="product.code"
           :notification="$t('pages.product.sku_copied_message')"
         >
-          <span class="text-base text-secondary-900">
+          <span class="text-sm text-secondary-900">
             {{ $t("pages.product.sku_label") }}
             <span class="font-black">#{{ product.code }}</span>
           </span>
@@ -547,9 +549,3 @@ watch(
   { immediate: true },
 );
 </script>
-
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-</style>

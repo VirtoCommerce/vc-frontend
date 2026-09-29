@@ -31,7 +31,7 @@
       <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFilters')">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon name="reset" />
+        <VcIcon name="reset" variant="solid" />
       </VcChip>
     </slot>
   </div>
@@ -170,5 +170,10 @@ function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFil
 <style lang="scss">
 .active-filter-chips {
   @apply flex mb-3 flex-wrap gap-2;
+
+  // The design's md chip closes with a 12px glyph; the kit draws 9.6.
+  .vc-chip {
+    --close-button-icon-size: 0.75rem;
+  }
 }
 </style>

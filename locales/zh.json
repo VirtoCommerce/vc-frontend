@@ -354,6 +354,17 @@
           "catalog_menu_button": "目录",
           "main_menu": "主菜单"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "登录",
         "link_register_now": "立即注册",
         "link_logout": "登出",
@@ -439,7 +450,7 @@
         "by_virto": "由 Virto Commerce 提供"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "搜索",
+        "enter_keyword_placeholder": "搜索产品和配件",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "search_button": "搜索",
         "scope_loading_label": "正在加载搜索上下文",
@@ -667,7 +678,7 @@
         "title": "产品"
       },
       "gifts_section": {
-        "title": "+ 添加礼物"
+        "title": "礼品"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "添加商品到购物车结果",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "商品",
+        "availability": "库存",
+        "unit_price": "单价",
+        "add_to_cart": "加入购物车"
+      },
       "view_mode": {
         "grid_label": "网格",
-        "list_label": "列表"
+        "list_label": "列表",
+        "aria_label": "布局"
       },
       "page_size": {
         "label": "每页结果数："
       },
       "product_card": {
+        "low_stock": "库存紧张",
+        "configurable": "可定制",
+        "variants": "多规格",
         "price_label": "@:common.labels.product_price",
         "product_rating": "评分：",
         "product_vendor": "供应商："
@@ -762,6 +783,7 @@
           "changed_confirmation": "产品配置已更改。您要保存吗？",
           "check_your_configuration": "检查您的产品配置",
           "required_section": "此部分为必填项",
+          "optional": "可选",
           "optional_no_selected": "个性化您的选择（可选）",
           "required_no_selected": "请填写所有必填选项以完成选择",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "排序",
       "featured": "精选",
       "alphabetically_a_z": "按字母顺序，A-Z",
       "alphabetically_z_a": "按字母 Z-A 排序",
       "price_low_to_high": "价格，从低到高",
       "price_high_to_low": "价格从高到低",
       "date_new_to_old": "日期，由新到旧",
-      "date_old_to_new": "日期，从旧到新"
+      "date_old_to_new": "日期，从旧到新",
+      "short": {
+        "featured": "精选",
+        "alphabetically_a_z": "按字母顺序 A-Z",
+        "alphabetically_z_a": "按字母顺序 Z-A",
+        "price_low_to_high": "价格 ↑",
+        "price_high_to_low": "价格 ↓",
+        "date_new_to_old": "最新",
+        "date_old_to_new": "最旧"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "全部",
-          "differences": "差异"
+          "differences": "差异",
+          "group_label": "行筛选"
         },
         "uncategorized": "未分类",
         "unresolved_category": "未知分类",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "选择一个自取分支以查看当前有库存的产品"
       },
       "products_found_message": "结果 | 结果",
+      "products_found_label": "件商品",
       "products_found_message_search": "找到结果 | 找到结果",
       "search_in_category": "在 {category} 中搜索“{keyword}”",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "在单独页面显示",
       "no_products_message": "此类别中没有产品",
       "no_products_filtered_message": "未找到结果",
+      "no_products_filtered_hint": "放宽其中一个条件，或重新开始。",
       "no_facet_found_message": "无结果",
       "no_products_button": "重置搜索",
       "products_icon": "产品图标",
@@ -1716,6 +1751,123 @@
       },
       "error": "加载数据失败",
       "retry": "重试"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "一个目录 · 多个认证供应商",
+        "title": "以您的业务采购方式采购电子产品。",
+        "subtitle": "授权分销商的实时库存，从搜索到发票的合同定价，以及本地库存商品的次日配送。",
+        "browse_catalog": "浏览目录",
+        "notches": {
+          "search": {
+            "title": "搜索或浏览完整目录",
+            "text": "按产品、品牌或您自己的 SKU"
+          },
+          "guest_cart": {
+            "title": "作为访客创建购物车",
+            "text": "登录后购物车会保留"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "授权分销商网络",
+        "title": "按供应商购物",
+        "authorized": "授权分销商",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "目录中的 SKU"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "授权供应商"
+          },
+          "fulfillment": {
+            "value": "24小时",
+            "label": "现货商品的配送"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "浏览商品",
+        "title": "按类别购物",
+        "all_categories": "所有类别",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "热门商品",
+            "meta": "从智能家居小工具到家庭影院 — 即插即用，配对完成，准备发货"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "畅销商品",
+            "meta": "从 5G 智能手机到车载支架 — 有保护壳、已充电，准备批量发货。"
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "无需账户即可购物",
+        "title": "买家热门",
+        "see_all": "查看全部"
+      },
+      "why_buy": {
+        "eyebrow": "为什么选择我们",
+        "title": "条款清晰，库存真实",
+        "cards": {
+          "stock": {
+            "title": "实时库存",
+            "text": "每个仓库的在手数量，以及需要采购时的交货时间。"
+          },
+          "pricing": {
+            "title": "处处都是合同定价",
+            "text": "您的协商价格从搜索到发票，含税费和运费。"
+          },
+          "fulfillment": {
+            "title": "次日配送",
+            "text": "现货订单当天发货，提供制造商保修和 30 天内免费退货。"
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "改变了什么",
+        "title": "周一早晨，用数字衡量",
+        "stats": {
+          "reorder": {
+            "value": "2 次点击",
+            "label": "重新订购上个月的订单，包含行项目数量"
+          },
+          "trail": {
+            "value": "1 次跟踪",
+            "label": "从保存的列表到已下单，并附有审批历史记录"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "显示的价格都是您的合同价格，含税费和运费"
+          },
+          "calls": {
+            "value": "0 次电话",
+            "label": "订购、跟踪和查找文件 — 无需电话菜单"
+          }
+        },
+        "quote": {
+          "text": "“我们不再保留价格电子表格了 — 网站显示我们的价格。”",
+          "name": "采购主管",
+          "role": "设施部门 · 6 个站点"
+        }
+      },
+      "brands": {
+        "eyebrow": "授权分销商"
+      },
+      "cta": {
+        "title": "成为客户",
+        "text": "合同定价、商定的付款条款和 PO 结账 — 通常在一个工作日内获批。",
+        "become_customer": "成为客户",
+        "talk_to_sales": "联系销售"
+      }
     }
   },
   "identity_error": {

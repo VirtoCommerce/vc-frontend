@@ -29,7 +29,13 @@ const isExternalLink = computed(() => {
 
 <style lang="scss">
 .footer-link {
-  @apply block text-sm text-[--footer-top-link-color] truncate;
+  @apply block truncate text-sm text-[--footer-top-link-color];
+
+  // Below the desktop ladder the columns are narrow enough that truncating would cut most
+  // captions, so the link wraps instead and takes the taller tap target that comes with it.
+  @media (width < theme("screens.lg")) {
+    @apply overflow-visible whitespace-normal py-[0.3125rem] text-[0.90625rem]/[1.35];
+  }
 
   &:hover {
     @apply text-[--footer-top-link-hover-color];

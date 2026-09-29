@@ -136,7 +136,7 @@ describe("CompareTable — focus management", () => {
     // they only appear once that ref populates and triggers a second render pass.
     await nextTick();
 
-    const tabButton = wrapper.get(".compare-table__tab").element as HTMLElement;
+    const tabButton = wrapper.get('[data-test-id="compare-tab-all"]').element as HTMLElement;
     tabButton.focus();
     expect(document.activeElement).toBe(tabButton);
 

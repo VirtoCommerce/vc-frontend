@@ -19,6 +19,7 @@
         size="xs"
         class="vc-address-selection__button"
         data-test-id="select-address-button"
+        :aria-label="$t('common.titles.edit_address')"
         @click="$emit('change')"
       />
     </template>

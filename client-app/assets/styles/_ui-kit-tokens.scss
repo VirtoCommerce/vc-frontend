@@ -803,6 +803,15 @@
   --vc-chip-ghost-accent-icon:      var(--color-vc-icon-ghost-accent,          currentColor);
 
   // ============================================================
+  // VcTable
+  // ============================================================
+  // A row's hover fill. Public because the kit's default is neutral-200, which in a warm palette
+  // is the LINE step: laid across a whole row it reads as a selected row, not as a hover. Named
+  // here rather than only inside the block so the pages that hand-roll their own `<tr>` (quotes,
+  // purchase requests, points history) can reach the same value.
+  --vc-table-row-hover-bg-color: var(--color-neutral-200);
+
+  // ============================================================
   // VcAlert — reuses the shared `--color-vc-*` semantic override keys so a
   // single preset override drives button/badge/chip/alert. Fallbacks match VcBadge.
   // VcAlert supports 4 variants (solid, soft, outline, tonal) — no surface/ghost.

@@ -38,7 +38,11 @@ const cols = computed(() => ({
   md: props.columns?.md ?? 4,
   lg: props.columns?.lg ?? 5,
   xl: props.columns?.xl ?? 6,
+  // The two widest rungs hold the 2xl count: the grid's column ladder ends at 2xl, and
+  // `short` reads this map by the active breakpoint — without them it would fall back to 4.
   "2xl": props.columns?.["2xl"] ?? 6,
+  "3xl": props.columns?.["3xl"] ?? props.columns?.["2xl"] ?? 6,
+  "4xl": props.columns?.["4xl"] ?? props.columns?.["2xl"] ?? 6,
 }));
 
 const currentBreakpoint = computed(() => breakpoints.active().value ?? "default");

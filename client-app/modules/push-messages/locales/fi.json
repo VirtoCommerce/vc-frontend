@@ -1,6 +1,7 @@
 {
   "push_messages": {
     "title": "Ilmoitukset",
+    "header_title": "Hälytykset",
     "menu_item_name": "Ilmoitukset",
     "empty_list": "Sinulla ei ole tällä hetkellä uusia ilmoituksia",
     "options": {

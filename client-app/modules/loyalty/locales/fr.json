@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Échangez vos points",
           "description": "Échangez des points contre des produits dans le catalogue des récompenses.",
-          "catalog": "Catalogue"
+          "catalog": "Catalogue des récompenses"
         },
         "card": {
           "type_products": "SKU en vedette",

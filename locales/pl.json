@@ -354,6 +354,17 @@
           "catalog_menu_button": "Katalog",
           "main_menu": "Menu główne"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Zaloguj się",
         "link_register_now": "Zarejestruj się teraz",
         "link_logout": "Wyloguj się",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Szukaj",
+        "enter_keyword_placeholder": "Szukaj produktów i części",
         "enter_keyword_placeholder_category": "Szukaj w {category}",
         "search_button": "Szukaj",
         "scope_loading_label": "Ładowanie kontekstu wyszukiwania",
@@ -667,7 +678,7 @@
         "title": "Produkty"
       },
       "gifts_section": {
-        "title": "+ Dodaj prezent"
+        "title": "Prezenty"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Wynik dodawania produktów do koszyka",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Dostępność",
+        "unit_price": "Cena jednostkowa",
+        "add_to_cart": "Dodaj do koszyka"
+      },
       "view_mode": {
         "grid_label": "Siatka",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Układ"
       },
       "page_size": {
         "label": "Wyników na stronę:"
       },
       "product_card": {
+        "low_stock": "Niski stan",
+        "configurable": "Konfigurowalny",
+        "variants": "Warianty",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Ocena:",
         "product_vendor": "Sprzedawca:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?",
           "check_your_configuration": "Sprawdź konfigurację produktu",
           "required_section": "Sekcja jest wymagana",
+          "optional": "Opcjonalne",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
           "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortuj",
       "featured": "Polecane",
       "alphabetically_a_z": "Alfabetycznie, A-Z",
       "alphabetically_z_a": "Alfabetycznie, od Z do A",
       "price_low_to_high": "Cena, od najniższej",
       "price_high_to_low": "Cena: od najwyższej",
       "date_new_to_old": "Data, od najnowszej",
-      "date_old_to_new": "Data, od najstarszych"
+      "date_old_to_new": "Data, od najstarszych",
+      "short": {
+        "featured": "Polecane",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Cena ↑",
+        "price_high_to_low": "Cena ↓",
+        "date_new_to_old": "Najnowsze",
+        "date_old_to_new": "Najstarsze"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "Wszystkie",
-          "differences": "Różnice"
+          "differences": "Różnice",
+          "group_label": "Filtr wierszy"
         },
         "uncategorized": "Nie skategoryzowane",
         "unresolved_category": "Nieznana kategoria",
@@ -1151,7 +1184,7 @@
       "meta": {
         "title": "Zapomniałeś hasła"
       },
-      "header": "zresetuj swoje hasło",
+      "header": "Zresetuj swoje hasło",
       "email_will_be_sended_message": "Wyślemy Ci e-mail z instrukcjami resetowania hasła",
       "reset_link_was_sent_message": "Wysłaliśmy Ci link do resetowania hasła na Twój email.",
       "home_button": "@:common.buttons.home"
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Wybierz oddział odbioru, aby zobaczyć produkty dostępne teraz w magazynie"
       },
       "products_found_message": "wynik | wyniki",
+      "products_found_label": "produktów znaleziono | produkt znaleziony | produkty znalezione | produktów znaleziono",
       "products_found_message_search": "znaleziono wynik | znaleziono wyników",
       "search_in_category": "Szukaj \"{keyword}\" w {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Pokaż na osobnej stronie",
       "no_products_message": "Nie ma produktów w tej kategorii",
       "no_products_filtered_message": "Nie znaleziono wyników",
+      "no_products_filtered_hint": "Poluzuj któryś z nich albo zacznij od nowa.",
       "no_facet_found_message": "Brak wyników",
       "no_products_button": "Resetuj wyszukiwanie",
       "products_icon": "Ikona produktu",
@@ -1716,6 +1751,123 @@
       },
       "error": "Nie udało się załadować danych",
       "retry": "Spróbuj ponownie"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Jeden katalog · wielu zweryfikowanych dostawców",
+        "title": "Pozyskuj elektronikę tak, jak kupuje Twoja firma.",
+        "subtitle": "Informacje o stanie magazynowym w czasie rzeczywistym u autoryzowanych dystrybutorów, Twoje ceny kontraktowe od wyszukiwania do faktury i dostawa następnego dnia wszystkiego, co jest na stanie lokalnie.",
+        "browse_catalog": "Przeglądaj katalog",
+        "notches": {
+          "search": {
+            "title": "Wyszukaj lub przejrzyj cały katalog",
+            "text": "Według produktu, marki lub własnego SKU"
+          },
+          "guest_cart": {
+            "title": "Zbuduj koszyk jako gość",
+            "text": "Przenosi się po zalogowaniu"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Sieć autoryzowanych dystrybutorów",
+        "title": "Kupuj według dostawcy",
+        "authorized": "Autoryzowany dystrybutor",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU w katalogu"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Autoryzowani dostawcy"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Dostawa linii w magazynie"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Przeglądaj asortyment",
+        "title": "Kupuj według kategorii",
+        "all_categories": "Wszystkie kategorie",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Ulubione przez klientów",
+            "meta": "Inteligentne gadżety domowe do kina domowego — podłączone, sparowane i gotowe do wysyłki"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Najlepiej sprzedające się",
+            "meta": "Smartfony 5G do uchwytów samochodowych — zapakowane, naładowane i gotowe do masowej wysyłki."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Kupuj bez konta",
+        "title": "Popularne wśród kupujących",
+        "see_all": "Zobacz wszystko"
+      },
+      "why_buy": {
+        "eyebrow": "Dlaczego warto u nas kupować",
+        "title": "Proste warunki, rzeczywisty stan magazynowy",
+        "cards": {
+          "stock": {
+            "title": "Informacje o stanie magazynowym w czasie rzeczywistym",
+            "text": "Ilość na stanie w każdym magazynie, z czasem realizacji, gdy trzeba ją pozyskać."
+          },
+          "pricing": {
+            "title": "Ceny kontraktowe wszędzie",
+            "text": "Twoja negocjowana cena jest widoczna od wyszukiwania do faktury, w tym podatki i fracht."
+          },
+          "fulfillment": {
+            "title": "Dostawa następnego dnia",
+            "text": "Zamówienia w magazynie są wysyłane tego samego dnia, z gwarancją producenta i bezpłatnymi zwrotami w ciągu 30 dni."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Co to zmienia",
+        "title": "Poniedziałkowy poranek, w liczbach",
+        "stats": {
+          "reorder": {
+            "value": "2 kliknięcia",
+            "label": "Aby ponownie zamówić dostawę z zeszłego miesiąca, w tym ilości linii"
+          },
+          "trail": {
+            "value": "1 ścieżka",
+            "label": "Od zapisanej listy do złożonego zamówienia z historią zatwierdzeń"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Cen widocznych to Twoje ceny kontraktowe, w tym podatki i fracht"
+          },
+          "calls": {
+            "value": "0 połączeń",
+            "label": "Zamawianie, śledzenie i wyszukiwanie dokumentów — bez drzewa telefonicznego"
+          }
+        },
+        "quote": {
+          "text": "„Przestaliśmy prowadzić arkusz kalkulacyjny z cenami — strona pokazuje nasze.”",
+          "name": "Kierownik ds. zaopatrzenia",
+          "role": "Grupa ds. obiektów · 6 lokalizacji"
+        }
+      },
+      "brands": {
+        "eyebrow": "Autoryzowany dystrybutor dla"
+      },
+      "cta": {
+        "title": "Zostań klientem",
+        "text": "Ceny kontraktowe, uzgodnione warunki płatności i płatność PO — zazwyczaj zatwierdzane w ciągu jednego dnia roboczego.",
+        "become_customer": "Zostań klientem",
+        "talk_to_sales": "Porozmawiaj ze sprzedażą"
+      }
     }
   },
   "identity_error": {

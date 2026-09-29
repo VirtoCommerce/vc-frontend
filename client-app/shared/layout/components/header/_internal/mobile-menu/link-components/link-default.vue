@@ -1,11 +1,5 @@
 <template>
-  <MobileMenuLink
-    :link="item"
-    :count="count"
-    class="py-1 text-2xl font-bold"
-    @close="$emit('close')"
-    @select="$emit('selectItem')"
-  >
+  <MobileMenuLink :link="item" :count="count" big @close="$emit('close')" @select="$emit('selectItem')">
     {{ item.title }}
   </MobileMenuLink>
 </template>

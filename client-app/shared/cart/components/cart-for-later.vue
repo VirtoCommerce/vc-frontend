@@ -1,5 +1,11 @@
 <template>
-  <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg" class="cart-for-later">
+  <VcWidget
+    :title="$t('pages.cart.saved_for_later')"
+    prepend-icon="bookmark"
+    icon-shape
+    size="lg"
+    class="cart-for-later"
+  >
     <template v-slot:append>
       <VcButton
         variant="outline"

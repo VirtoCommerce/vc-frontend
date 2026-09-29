@@ -4,6 +4,7 @@
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
       prepend-icon="clipboard-list"
+      icon-shape
       size="lg"
       class="print:break-inside-auto"
     >

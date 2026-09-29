@@ -45,24 +45,24 @@ const topSellersSettings: SalesRepBlockSettingType[] = [
 
 const dashboardBlocks: SalesRepBlockType[] = [
   ...statBlocks("dashboard"),
-  // The dashboard has no right rail yet — `mainRight` stays empty and the row collapses to one
-  // column until a widget registers into it.
-  {
-    id: "orders",
-    region: "mainLeft",
-    titleKey: "sales_rep.orders.title",
-    order: 10,
-    component: SalesRepOrders,
-    props: { filterable: true },
-    settings: ordersSettings,
-  },
+  // Top sellers leads the column and orders follow, as the design draws it. `order` decides the
+  // DEFAULT only: reconcileLayout keeps an arrangement the rep already saved.
   {
     id: "top_sellers",
     region: "mainLeft",
     titleKey: "sales_rep.top_sellers.title",
-    order: 20,
+    order: 10,
     component: TopSellers,
     settings: topSellersSettings,
+  },
+  {
+    id: "orders",
+    region: "mainLeft",
+    titleKey: "sales_rep.orders.title",
+    order: 20,
+    component: SalesRepOrders,
+    props: { filterable: true },
+    settings: ordersSettings,
   },
 ];
 

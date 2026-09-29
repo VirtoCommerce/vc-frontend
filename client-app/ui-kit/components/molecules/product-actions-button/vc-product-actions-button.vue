@@ -100,11 +100,18 @@ const onClick = () => {
     }
   }
 
+  // The resting ink, and the one it takes under the pointer. Public, because the set is drawn in a
+  // different colour wherever it lands — warm secondary over a packshot on a catalogue card, a
+  // quieter neutral in a column of page actions — and a page had no way to say which without
+  // reaching into this block. Both default to what they have always been.
+  --color: var(--vc-product-actions-button-color, theme("colors.neutral.500"));
+  --hover-color: var(--vc-product-actions-button-hover-color, theme("colors.neutral.700"));
+
   &:not(#{$active}) {
-    @apply text-neutral-500;
+    color: var(--color);
 
     &:hover:not(#{$disabled}) {
-      @apply text-neutral-700;
+      color: var(--hover-color);
     }
 
     #{$loaderIcon} {

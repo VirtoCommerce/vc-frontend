@@ -1,0 +1,66 @@
+// Switching light <-> dark is ~400 custom properties changing at once on html.dark, and no
+// CSS transition can carry that — which is why it used to land in one frame. The View
+// Transitions API animates a snapshot of the whole page instead, so the switch reads as one
+// movement out of the control that was pressed. The geometry comes in as custom properties
+// on <html> from switchColorMode(); browsers without the API, and anyone asking for reduced
+// motion, never get the class and repaint instantly, exactly as before.
+//
+// The two directions are not the same gesture. Light OPENS: the day grows out of the control
+// over the night behind it. Dark CLOSES: the day is drawn shut into the control and the night
+// is already there underneath — which is what evening does, and what a page turning itself
+// inside out on the way to dark does not.
+html.color-mode-switching {
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    // The UA cross-fades the two snapshots with plus-lighter, which would run underneath the
+    // clip and wash both of them out.
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  &::view-transition-new(root) {
+    animation: color-mode-open var(--color-mode-switch-duration, 0.62s) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+}
+
+html.dark.color-mode-switching {
+  &::view-transition-new(root) {
+    animation: none;
+  }
+
+  &::view-transition-old(root) {
+    // The one that moves has to be the one on top: the pair paints new over old by default.
+    z-index: 1;
+    // Symmetric easing rather than the mirror of the opening curve — an ease-in would snap the
+    // last of the light shut, which is the abruptness this whole file exists to remove.
+    // `forwards`, or the clip reverts to none on the last frame and the old snapshot pops back
+    // over the new page at full size until the pseudo tree is torn down — a flash of the mode
+    // that was just left. Invisible on the way out (the open ends at full circle anyway), and
+    // the reason the flash only ever showed going dark.
+    animation: color-mode-close var(--color-mode-switch-duration, 0.62s) cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+}
+
+@keyframes color-mode-open {
+  from {
+    clip-path: circle(0 at var(--color-mode-switch-x, 50%) var(--color-mode-switch-y, 50%));
+  }
+
+  to {
+    clip-path: circle(
+      var(--color-mode-switch-radius, 150vmax) at var(--color-mode-switch-x, 50%) var(--color-mode-switch-y, 50%)
+    );
+  }
+}
+
+@keyframes color-mode-close {
+  from {
+    clip-path: circle(
+      var(--color-mode-switch-radius, 150vmax) at var(--color-mode-switch-x, 50%) var(--color-mode-switch-y, 50%)
+    );
+  }
+
+  to {
+    clip-path: circle(0 at var(--color-mode-switch-x, 50%) var(--color-mode-switch-y, 50%));
+  }
+}

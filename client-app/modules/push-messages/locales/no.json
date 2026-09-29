@@ -1,6 +1,7 @@
 {
   "push_messages": {
     "title": "Varsler",
+    "header_title": "Varsler",
     "menu_item_name": "Varsler",
     "empty_list": "Du har ingen nye varsler for øyeblikket",
     "options": {

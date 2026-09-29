@@ -92,7 +92,7 @@ watch(email, () => {
   @apply text-start;
 
   &__input {
-    @apply mb-4;
+    @apply mb-4 max-w-sm;
   }
 
   &__actions {

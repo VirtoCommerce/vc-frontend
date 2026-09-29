@@ -1,7 +1,13 @@
-// Autofill: browser forces light background; override with dark surface + light text.
+// Autofill: the browser paints the row itself, and the value's colour only yields to
+// `-webkit-text-fill-color`. This used to name neutral-100 "light text" — but the dark presets
+// invert the neutral ramp, so 100 is #241c15 there, the same hex as the additional-50 the field
+// repaints its own autofill row with. Text and background were the identical colour: the value
+// was in the field and could only be seen by selecting it. The readable end of this ramp is 950
+// — #312720 in light, #f6efe6 in dark — which is what VcInput's own rule already uses. Kept here
+// because this file also reaches bare `input`/`textarea` elements outside the kit's components.
 input:autofill,
 textarea:autofill {
-  -webkit-text-fill-color: var(--color-neutral-100);
+  -webkit-text-fill-color: var(--color-neutral-950);
 
   &:disabled {
     -webkit-text-fill-color: var(--color-neutral-500);

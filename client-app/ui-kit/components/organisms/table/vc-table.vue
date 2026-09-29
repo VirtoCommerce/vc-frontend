@@ -255,6 +255,7 @@
               :class="[
                 'vc-table__cell',
                 `vc-table__cell--align--${column.align ?? 'left'}`,
+                { 'vc-table__cell--strong': column.strong },
                 getColumnFixedClasses(column, 'vc-table__cell'),
                 column.classes,
               ]"
@@ -829,7 +830,11 @@ const scrollbarStyle = computed(() => {
 const desktopBorderWidth = computed(() => (props.bordered ? "1px" : "0"));
 const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
 
-const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "0"));
+// A bordered table draws its own box, so it rounds to its own radius. An UNBORDERED one is flush
+// with whatever surface holds it, and the corner it stands on is that surface's — a widget hands it
+// down through `--vc-table-flush-radius`. Without it the last row's fill paints a square corner over
+// the plate's curve.
+const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "var(--vc-table-flush-radius, 0px)"));
 const mobileRadius = computed(() => (props.mobileBordered ? "var(--radius)" : "0"));
 
 function toggleSortDirection(currentDirection: VcTableSortDirectionType): VcTableSortDirectionType {
@@ -1138,6 +1143,9 @@ watch(
     --vc-table-selected-bg-color,
     var(--vc-table-selected-bg, rgb(from var(--color-primary-500) r g b / var(--selected-bg-alpha)))
   );
+  // A row's hover fill. Named because neutral-200 is the palette's LINE step, and a theme whose
+  // plate is near-white reads a line colour laid across a whole row as a selection, not a hover.
+  --row-hover-bg: var(--vc-table-row-hover-bg-color, theme("colors.neutral.200"));
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
   --mobile-border-width: v-bind(mobileBorderWidth);
@@ -1258,7 +1266,7 @@ watch(
     }
 
     &:hover {
-      @apply bg-neutral-200;
+      background-color: var(--row-hover-bg);
     }
 
     &--selected {
@@ -1298,9 +1306,15 @@ watch(
   }
 
   &__cell {
-    @apply px-4 py-3;
+    // A shade below the header, which keeps its neutral-950: the two weights are what give a
+    // row its hierarchy when every cell is otherwise the same size.
+    @apply px-4 py-3 text-neutral-800;
 
     @include column-align;
+
+    &--strong {
+      @apply font-bold text-neutral-950;
+    }
 
     &--fixed {
       @apply bg-additional-50;
@@ -1310,7 +1324,7 @@ watch(
       }
 
       #{$row}:hover & {
-        @apply bg-neutral-200;
+        background-color: var(--row-hover-bg);
       }
 
       // Keep the highlight on sticky (opaque) cells of a selected row.
@@ -1371,11 +1385,22 @@ watch(
   }
 
   &__footer {
-    @apply px-3 py-10 empty:hidden md:px-5 md:pb-5;
+    // The pager starts where the rows start: centred under a full-width table it read as
+    // belonging to nothing. Exposed as one padding box too — a table inset inside a card
+    // measures the gap above the pager from the table's own border, not from its last row,
+    // and the default 40 reads as a hole there.
+    @apply flex flex-col items-start empty:hidden;
+
+    padding: var(--vc-table-footer-padding, 2.5rem 0.75rem);
+
+    @media (width >= theme("screens.md")) {
+      padding: var(--vc-table-footer-padding, 2.5rem 1.25rem 1.25rem);
+    }
   }
 
   &__page-limit-message {
-    @apply mb-3 text-center;
+    // `w-full` holds the centring the footer's new `items-start` would otherwise take away.
+    @apply mb-3 w-full text-center;
   }
 }
 </style>

@@ -15,7 +15,7 @@
         <VcDialogHeader :closable="false">
           <div class="vc-push-messages__head">
             <div class="vc-push-messages__title">
-              <span>{{ $t("push_messages.title") }}</span>
+              <span>{{ $t("push_messages.header_title") }}</span>
 
               <VcBadge v-if="unreadCount > 0" variant="outline" size="sm" rounded>
                 {{ unreadCount }}

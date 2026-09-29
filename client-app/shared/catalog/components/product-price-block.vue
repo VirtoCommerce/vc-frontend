@@ -22,9 +22,9 @@
 
     <template #footer-container>
       <div class="product-price-block__actions">
-        <AddToList class="product-price-block__add-to-list" :product="product" :icon-size="20" />
+        <AddToList class="product-price-block__add-to-list" :product="product" :icon-size="16" />
 
-        <AddToCompareCatalog class="product-price-block__add-to-compare" :product="product" :icon-size="20" />
+        <AddToCompareCatalog class="product-price-block__add-to-compare" :product="product" :icon-size="16" />
 
         <VcPopover class="product-price-block__share-popover" :offset-options="8" z-index="10" enable-teleport>
           <template #default="{ triggerProps, opened }">
@@ -34,7 +34,7 @@
               :class="['product-price-block__share-button', { 'product-price-block__share-button--active': opened }]"
               v-bind="triggerProps"
             >
-              <VcIcon name="share" size="sm" aria-hidden="true" />
+              <VcIcon name="share" aria-hidden="true" />
             </button>
           </template>
 
@@ -87,7 +87,7 @@
           rel="noopener noreferrer"
           class="product-price-block__mail-link"
         >
-          <VcIcon name="mail" size="sm" aria-hidden="true" />
+          <VcIcon name="mail" aria-hidden="true" />
         </a>
 
         <button
@@ -96,7 +96,7 @@
           type="button"
           @click="print()"
         >
-          <VcIcon name="printer" size="sm" aria-hidden="true" />
+          <VcIcon name="printer" aria-hidden="true" />
         </button>
       </div>
     </template>
@@ -181,6 +181,13 @@ function print() {
   }
 
   &__actions {
+    // One ink and one size for all five. Three of them were painted `primary` and drawn at 20 while
+    // the other two came out neutral at 20 — so the row read as two of something and three of
+    // something else. The design draws the set at 16 in neutral-800 and keeps the brand colour for
+    // the things that act on the cart.
+    --vc-icon-size: 1rem;
+    --vc-product-actions-button-color: theme("colors.neutral.800");
+
     @apply flex select-none divide-x print:hidden;
   }
 
@@ -191,7 +198,7 @@ function print() {
   }
 
   &__share-button {
-    @apply flex size-full cursor-pointer items-center justify-center text-primary hover:bg-neutral-50;
+    @apply flex size-full cursor-pointer items-center justify-center text-neutral-800 hover:bg-neutral-50;
 
     &--active {
       @apply text-neutral-400;
@@ -200,7 +207,7 @@ function print() {
 
   &__mail-link,
   &__print-button {
-    @apply flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 text-primary hover:bg-neutral-50;
+    @apply flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 text-neutral-800 hover:bg-neutral-50;
   }
 
   &__share-content {

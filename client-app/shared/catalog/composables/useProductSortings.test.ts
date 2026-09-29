@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { computed, ref } from "vue";
-import { PRODUCT_SORTING_LIST } from "@/core/constants/products";
+import { PRODUCT_SORTING_LIST, PRODUCT_SORTING_SHORT_NAMES } from "@/core/constants/products";
 import { useProductSortings } from "./useProductSortings";
 import type { ProductSortingType } from "@/core/api/graphql/types";
 import type { Ref, WritableComputedRef } from "vue";
@@ -34,7 +34,13 @@ describe("useProductSortings", () => {
     it("falls back to the hardcoded list when there are no backend definitions", () => {
       const { sortList } = useProductSortings(sortingsRef(), writableParam(""));
 
-      expect(sortList.value).toEqual(PRODUCT_SORTING_LIST.map((item) => ({ id: item.id, name: item.name })));
+      expect(sortList.value).toEqual(
+        PRODUCT_SORTING_LIST.map((item) => ({
+          id: item.id,
+          name: item.name,
+          shortName: PRODUCT_SORTING_SHORT_NAMES[item.id],
+        })),
+      );
     });
 
     it("maps backend definitions and routes the default option to an empty id", () => {
@@ -47,15 +53,24 @@ describe("useProductSortings", () => {
       );
 
       expect(sortList.value).toEqual([
-        { id: "", name: "Featured" },
-        { id: "price-ascending", name: "Price" },
+        { id: "", name: "Featured", shortName: "shared.sorting.short.featured" },
+        { id: "price-ascending", name: "Price", shortName: "shared.sorting.short.price_low_to_high" },
       ]);
     });
 
     it("falls back to the id when a definition has no name", () => {
       const { sortList } = useProductSortings(sortingsRef([def({ id: "custom", name: undefined })]), writableParam(""));
 
-      expect(sortList.value).toEqual([{ id: "custom", name: "custom" }]);
+      expect(sortList.value).toEqual([{ id: "custom", name: "custom", shortName: "custom" }]);
+    });
+
+    it("keeps the full name as the short name for a sorting the storefront has no short name for", () => {
+      const { sortList } = useProductSortings(
+        sortingsRef([def({ id: "lead-time-ascending", name: "Lead time" })]),
+        writableParam(""),
+      );
+
+      expect(sortList.value).toEqual([{ id: "lead-time-ascending", name: "Lead time", shortName: "Lead time" }]);
     });
 
     it("reacts to the sortings source changing", () => {
@@ -66,7 +81,9 @@ describe("useProductSortings", () => {
 
       sortings.value = [def({ id: "price-ascending", name: "Price", selected: true })];
 
-      expect(sortList.value).toEqual([{ id: "price-ascending", name: "Price" }]);
+      expect(sortList.value).toEqual([
+        { id: "price-ascending", name: "Price", shortName: "shared.sorting.short.price_low_to_high" },
+      ]);
     });
   });
 

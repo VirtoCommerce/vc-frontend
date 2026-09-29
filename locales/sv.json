@@ -354,6 +354,17 @@
           "catalog_menu_button": "Katalog",
           "main_menu": "Huvudmeny"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Logga in",
         "link_register_now": "Registrera dig nu",
         "link_logout": "Logga ut",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Sök",
+        "enter_keyword_placeholder": "Sök produkter och delar",
         "enter_keyword_placeholder_category": "Sök inom {category}",
         "search_button": "Sök",
         "scope_loading_label": "Laddar sökcontext",
@@ -667,7 +678,7 @@
         "title": "Produkter"
       },
       "gifts_section": {
-        "title": "+ Lägg till en gåva"
+        "title": "Gåvor"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Resultat av att lägga till produkter i kundvagnen",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Produkt",
+        "availability": "Tillgänglighet",
+        "unit_price": "Styckpris",
+        "add_to_cart": "Lägg i varukorgen"
+      },
       "view_mode": {
         "grid_label": "Rutnät",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Layout"
       },
       "page_size": {
         "label": "Resultat per sida:"
       },
       "product_card": {
+        "low_stock": "Lågt lager",
+        "configurable": "Konfigurerbar",
+        "variants": "Varianter",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Betyg:",
         "product_vendor": "Leverantör:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "Produktkonfigurationen har ändrats. Vill du spara den?",
           "check_your_configuration": "Kontrollera din produktkonfiguration",
           "required_section": "Sektionen är obligatorisk",
+          "optional": "Valfritt",
           "optional_no_selected": "Anpassa ditt val ytterligare (valfritt)",
           "required_no_selected": "Slutför alla obligatoriska alternativ för att slutföra ditt val",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Sortera",
       "featured": "Utvalda",
       "alphabetically_a_z": "Alfabetiskt, A-Ö",
       "alphabetically_z_a": "Alfabetiskt, Ö-A",
       "price_low_to_high": "Pris, lågt till högt",
       "price_high_to_low": "Pris, högt till lågt",
       "date_new_to_old": "Datum, nytt till gammalt",
-      "date_old_to_new": "Datum, gammalt till nytt"
+      "date_old_to_new": "Datum, gammalt till nytt",
+      "short": {
+        "featured": "Utvalda",
+        "alphabetically_a_z": "A-Ö",
+        "alphabetically_z_a": "Ö-A",
+        "price_low_to_high": "Pris ↑",
+        "price_high_to_low": "Pris ↓",
+        "date_new_to_old": "Nyaste",
+        "date_old_to_new": "Äldsta"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "Alla",
-          "differences": "Skillnader"
+          "differences": "Skillnader",
+          "group_label": "Radfilter"
         },
         "uncategorized": "Osorterad",
         "unresolved_category": "Okänd kategori",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Välj en upphämtningsfilial för att se produkter som finns i lager nu"
       },
       "products_found_message": "resultat | resultat",
+      "products_found_label": "produkt hittad | produkter hittade",
       "products_found_message_search": "resultat hittades | resultat hittades",
       "search_in_category": "Sök efter \"{keyword}\" i {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Visa på en separat sida",
       "no_products_message": "Det finns inga produkter i denna kategori",
       "no_products_filtered_message": "Inga resultat hittades",
+      "no_products_filtered_hint": "Lätta på något av dem eller börja om.",
       "no_facet_found_message": "Inga resultat",
       "no_products_button": "Återställ sökning",
       "products_icon": "Produktikon",
@@ -1716,6 +1751,123 @@
       },
       "error": "Det gick inte att läsa in data",
       "retry": "Försök igen"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "En katalog · många verifierade leverantörer",
+        "title": "Köp elektronik på det sätt ditt företag handlar.",
+        "subtitle": "Realtidslager hos auktoriserade distributörer, dina avtalspriser från sökning till faktura, och leverans nästa dag på allt som finns i lager lokalt.",
+        "browse_catalog": "Bläddra i katalogen",
+        "notches": {
+          "search": {
+            "title": "Sök eller bläddra i hela katalogen",
+            "text": "Efter produkt, märke eller din egen SKU"
+          },
+          "guest_cart": {
+            "title": "Skapa en varukorg som gäst",
+            "text": "Den sparas när du loggar in"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Auktoriserat nätverk av distributörer",
+        "title": "Handla efter leverantör",
+        "authorized": "Auktoriserad distributör",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU:er i katalogen"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Auktoriserade leverantörer"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Leverans på artiklar i lager"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Bläddra i sortimentet",
+        "title": "Handla efter kategori",
+        "all_categories": "Alla kategorier",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Populära favoriter",
+            "meta": "Smarta hem-prylar till hemmabio — anslutna, parkopplade och redo att skickas"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Toppsäljande",
+            "meta": "5G-smartphones till bilhållare — skalade, laddade och redo att skickas i bulk."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Handla utan konto",
+        "title": "Populärt bland köpare",
+        "see_all": "Se alla"
+      },
+      "why_buy": {
+        "eyebrow": "Varför handla hos oss",
+        "title": "Enkla villkor, verkligt lager",
+        "cards": {
+          "stock": {
+            "title": "Verkligt lager",
+            "text": "Antal i lager per lagerställe, med ledtid när det måste tas fram."
+          },
+          "pricing": {
+            "title": "Avtalspriser överallt",
+            "text": "Ditt förhandlade pris visas från sökning till faktura, inklusive skatt och frakt."
+          },
+          "fulfillment": {
+            "title": "Leverans nästa dag",
+            "text": "Beställningar i lager skickas samma dag, med tillverkargaranti och gratis returer inom 30 dagar."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Vad det förändrar",
+        "title": "Måndag morgon, i siffror",
+        "stats": {
+          "reorder": {
+            "value": "2 klick",
+            "label": "För att beställa förra månadens leverans, inklusive kvantiteter"
+          },
+          "trail": {
+            "value": "1 spår",
+            "label": "Från en sparad lista till en lagd beställning med godkännandehistorik"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Av visade priser är dina avtalspriser, inklusive skatt och frakt"
+          },
+          "calls": {
+            "value": "0 samtal",
+            "label": "Beställning, spårning och dokumentuppslag — ingen telefonkö"
+          }
+        },
+        "quote": {
+          "text": "\"Vi slutade hålla ett kalkylblad med priser — webbplatsen visar våra.\"",
+          "name": "Inköpsansvarig",
+          "role": "Anläggningsgrupp · 6 platser"
+        }
+      },
+      "brands": {
+        "eyebrow": "Auktoriserad distributör för"
+      },
+      "cta": {
+        "title": "Bli kund",
+        "text": "Avtalspriser, överenskomna betalningsvillkor och PO-utcheckning — vanligtvis godkänt inom en arbetsdag.",
+        "become_customer": "Bli kund",
+        "talk_to_sales": "Prata med säljare"
+      }
     }
   },
   "identity_error": {

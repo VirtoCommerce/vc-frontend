@@ -3,38 +3,37 @@
     <component
       :is="isLink ? 'a' : 'button'"
       :href="getHrefValue(href)"
-      :class="['flex min-h-9 w-full items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
+      :class="['mobile-menu-link', { 'mobile-menu-link--big': big }, $attrs.class]"
       @click.prevent="click(navigate)"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
         <VcIcon
           v-if="link.icon"
           :name="link.icon"
-          :size="32"
+          :size="22"
           :class="[
-            isLink && (isActive || isExactActive)
-              ? 'text-[--mobile-menu-icon-active-color]'
-              : 'text-[--mobile-menu-icon-color]',
+            'mobile-menu-link__icon',
+            { 'mobile-menu-link__icon--active': isLink && (isActive || isExactActive) },
           ]"
         />
       </slot>
 
       <span
         :class="[
-          'line-clamp-3 break-words',
-          isLink && !isExternalLink && (isActive || isExactActive)
-            ? 'text-[--mobile-menu-link-active-color]'
-            : 'text-[--mobile-menu-link-color]',
+          'mobile-menu-link__text',
+          {
+            'mobile-menu-link__text--active': isLink && !isExternalLink && (isActive || isExactActive),
+          },
         ]"
       >
         <slot v-bind="{ isActive, isExactActive, formattedText: formatTextFunction(link.title) }" />
       </span>
 
-      <VcBadge v-if="count" variant="solid-light" color="neutral" rounded>
+      <VcBadge v-if="count" variant="soft" color="neutral" rounded>
         {{ $n(count, { style: "decimal", notation: "compact" }) }}
       </VcBadge>
 
-      <VcIcon v-if="isParent" class="ml-auto text-[--mobile-menu-navigation-color]" name="chevron-right" />
+      <VcIcon v-if="isParent" class="mobile-menu-link__chevron" name="chevron-right" />
     </component>
   </router-link>
 </template>
@@ -54,6 +53,8 @@ interface IProps {
   link: ExtendedMenuLinkType;
   count?: number;
   formatTextFunction?: (text: string | undefined) => string;
+  /** A row of the menu's own outline (main list, account sections) rather than a drilled-in child. */
+  big?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -96,3 +97,41 @@ const toValue = computed(() => {
   return props.link.route ?? "#";
 });
 </script>
+
+<style lang="scss">
+.mobile-menu-link {
+  // 40 tall with 4 of air above and below the label: the menu is a floating plate now, and the
+  // outline has to fit one screen without the list scrolling before the account block is
+  // reached. The two sizes are the design's own pair — the outline is set in the display face,
+  // a drilled-in child in the body one, so depth reads without indenting anything.
+  @apply flex min-h-10 w-full items-center gap-x-3 py-1 text-left text-[0.9375rem] leading-tight tracking-[0.01em];
+
+  &--big {
+    @apply font-geologica text-[1.0625rem] font-semibold;
+  }
+
+  &__icon {
+    color: var(--mobile-menu-icon-color);
+
+    &--active {
+      color: var(--mobile-menu-icon-active-color);
+    }
+  }
+
+  &__text {
+    @apply line-clamp-3 break-words;
+
+    color: var(--mobile-menu-link-color);
+
+    &--active {
+      color: var(--mobile-menu-link-active-color);
+    }
+  }
+
+  &__chevron {
+    @apply ms-auto;
+
+    color: var(--mobile-menu-navigation-color);
+  }
+}
+</style>

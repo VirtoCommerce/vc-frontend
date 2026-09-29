@@ -1,12 +1,18 @@
 <template>
   <div>
-    <VcTypography tag="h1" class="lg:hidden">
+    <VcTypography tag="h1">
       {{ $t("pages.account.dashboard.title") }}
     </VcTypography>
 
     <PendingInvitesWidget />
 
-    <VcWidget :title="$t('pages.account.dashboard.last_orders_card.title')">
+    <VcWidget>
+      <template #title>
+        <span class="font-inter text-base/8 font-bold uppercase">
+          {{ $t("pages.account.dashboard.last_orders_card.title") }}
+        </span>
+      </template>
+
       <template #append>
         <VcButton class="lg:!hidden" :to="{ name: 'Orders' }" variant="outline" size="xs">
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
@@ -57,7 +63,13 @@
     </VcWidget>
 
     <div class="flex flex-col gap-y-5 lg:flex-row lg:gap-x-5 lg:gap-y-0">
-      <VcWidget :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-0 lg:grow">
+      <VcWidget class="lg:w-0 lg:grow">
+        <template #title>
+          <span class="font-inter text-base/8 font-bold uppercase">
+            {{ $t("pages.account.dashboard.monthly_report_card.title") }}
+          </span>
+        </template>
+
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
             src="spend-chart.svg"
@@ -88,7 +100,13 @@
         </div>
       </VcWidget>
 
-      <VcWidget :title="$t('pages.account.dashboard.orders_status_card.title')" class="h-48 lg:w-0 lg:grow" />
+      <VcWidget class="h-48 lg:w-0 lg:grow">
+        <template #title>
+          <span class="font-inter text-base/8 font-bold uppercase">
+            {{ $t("pages.account.dashboard.orders_status_card.title") }}
+          </span>
+        </template>
+      </VcWidget>
     </div>
   </div>
 </template>

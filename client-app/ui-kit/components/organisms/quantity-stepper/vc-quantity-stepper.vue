@@ -221,6 +221,11 @@ watch(
 .vc-quantity-stepper {
   $self: &;
 
+  // The two circles are smaller than the field they sit in — 28 in a 38px pill, the way the design
+  // draws them; the button scale's `xs` is 32 and filled the pill almost edge to edge. Public, so a
+  // page that wants the plain scale step back can say so by name.
+  --vc-button-size: var(--vc-quantity-stepper-button-size, 1.75rem);
+
   @apply @container flex-none;
 
   &__badges {

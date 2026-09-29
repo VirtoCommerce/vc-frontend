@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Canjea tus puntos",
           "description": "Cambia puntos por productos en el catálogo de recompensas.",
-          "catalog": "Catálogo"
+          "catalog": "Catálogo de recompensas"
         },
         "card": {
           "type_products": "SKU destacados",

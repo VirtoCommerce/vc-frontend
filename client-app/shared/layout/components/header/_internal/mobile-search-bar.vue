@@ -1,14 +1,19 @@
 <template>
   <div class="mobile-search-bar">
-    <transition name="fade">
-      <button
-        v-if="visible"
-        type="button"
-        class="mobile-search-bar__backdrop"
-        :aria-label="$t('common.labels.close')"
-        @click="hideSearchBar"
-      />
-    </transition>
+    <!-- Out of the tree on purpose: the host plate carries a backdrop-filter, and that makes it
+         the containing block for every fixed descendant — the dimmer ended up the size of the
+         header row and greyed it out instead of the page. -->
+    <Teleport to="body">
+      <transition name="mobile-search-bar-backdrop">
+        <button
+          v-if="visible"
+          type="button"
+          class="mobile-search-bar__backdrop"
+          :aria-label="$t('common.buttons.close')"
+          @click="hideSearchBar"
+        />
+      </transition>
+    </Teleport>
 
     <transition name="slide-down">
       <div v-if="visible" ref="contentElement" class="mobile-search-bar__content">
@@ -155,8 +160,9 @@ onMounted(() => {
 
 <style lang="scss">
 .mobile-search-bar {
+  // Teleported to <body>, so it is styled by its own class and not as a descendant of the block.
   &__backdrop {
-    @apply fixed inset-0 z-10 cursor-pointer;
+    @apply fixed inset-0 z-[39] cursor-pointer;
 
     background-color: rgba(194, 195, 195, 0.6);
 
@@ -165,8 +171,25 @@ onMounted(() => {
     }
   }
 
+  &-backdrop-enter-active,
+  &-backdrop-leave-active {
+    @apply transition-opacity duration-200;
+  }
+
+  &-backdrop-enter-from,
+  &-backdrop-leave-to {
+    @apply opacity-0;
+  }
+
   &__content {
     @apply absolute left-0 right-0 z-10 bg-[--mobile-search-bar-bg];
+
+    // The panel hangs below whatever opened it and closes that surface off, so its bottom
+    // corners are the host's to set — the mobile header hands it the plate's radius and gives
+    // up its own bottom pair for as long as the panel is out. A host that says nothing gets
+    // the square panel it had.
+    border-end-start-radius: var(--mobile-search-bar-radius, 0);
+    border-end-end-radius: var(--mobile-search-bar-radius, 0);
   }
 
   &__wrapper {
@@ -186,16 +209,6 @@ onMounted(() => {
   }
 
   // Transitions styles
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.2s ease;
-  }
-
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
-
   .slide-down-enter-active {
     transition: transform 0.3s ease;
     transition-delay: 0.1s;

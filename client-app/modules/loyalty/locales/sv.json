@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Lös in dina poäng",
           "description": "Byt poäng mot produkter i belöningskatalogen.",
-          "catalog": "Katalog"
+          "catalog": "Belöningskatalog"
         },
         "card": {
           "type_products": "Utvalda SKU:er",

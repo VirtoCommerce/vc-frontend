@@ -295,8 +295,12 @@ defineExpose({
   }
 
   &--size {
+    // Each step's height, and each one reads the public knob before its own default: a control that
+    // has to meet a design at a size the scale does not carry — the catalog's stepper wants 28 in an
+    // `xs` circle, against this 32 — can say so by name instead of writing into `--size`, which is
+    // this block's private spelling.
     &--xxs {
-      --size: 1.625rem;
+      --size: var(--vc-button-size, 1.625rem);
       --line-height: 0.875rem;
       --icon-size: 0.875rem;
       --px: theme("padding[2.5]");
@@ -305,7 +309,7 @@ defineExpose({
     }
 
     &--xs {
-      --size: 2rem;
+      --size: var(--vc-button-size, 2rem);
       --line-height: 0.875rem;
       --icon-size: 1rem;
       --px: theme("padding.3");
@@ -314,7 +318,7 @@ defineExpose({
     }
 
     &--sm {
-      --size: 2.375rem;
+      --size: var(--vc-button-size, 2.375rem);
       --line-height: 1rem;
       --icon-size: 1.25rem;
       --px: theme("padding[3.5]");
@@ -324,7 +328,7 @@ defineExpose({
     }
 
     &--md {
-      --size: 2.75rem;
+      --size: var(--vc-button-size, 2.75rem);
       --line-height: 1.25rem;
       --icon-size: 1.5rem;
       --px: theme("padding.4");
@@ -334,7 +338,7 @@ defineExpose({
     }
 
     &--lg {
-      --size: 3.25rem;
+      --size: var(--vc-button-size, 3.25rem);
       --line-height: 1.5rem;
       --icon-size: 1.75rem;
       --px: theme("padding.5");

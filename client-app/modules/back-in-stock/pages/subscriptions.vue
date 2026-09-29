@@ -212,7 +212,11 @@ watchEffect(fetchProductsAndSubscriptions);
   }
 
   &__list {
-    @apply bg-additional-50;
+    // The fill sits on the OUTER box while the rounded, bordered card is `__container` inside it,
+    // on exactly the same rectangle — so a flat fill paints four square corners out past the
+    // curve. Same radius, same curve. (Below the container query the card has neither border nor
+    // radius and the rows stack, where this is a no-op.)
+    @apply rounded-[--vc-radius] bg-additional-50;
   }
 
   &__pagination {

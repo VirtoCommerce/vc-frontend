@@ -188,6 +188,12 @@ module.exports = {
     screens: BREAKPOINTS,
     fontFamily: {
       lato: ["Lato", "sans-serif"],
+      // Named after the font, like `lato`: the generic `body`/`sans` keys are already
+      // taken by the tw-elements plugin (Roboto) and lose silently.
+      // Noto sits LAST on purpose: it ships its own latin and cyrillic, and leading
+      // the stack would pull European text out of it. Slices load by unicode-range.
+      geologica: ["Geologica", "Noto Sans JP", "Noto Sans SC", "system-ui", "sans-serif"],
+      inter: ["Inter", "Noto Sans JP", "Noto Sans SC", "system-ui", "sans-serif"],
     },
 
     fontSize: {

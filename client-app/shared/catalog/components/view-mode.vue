@@ -1,7 +1,8 @@
 <template>
-  <div class="view-mode" role="group">
+  <VcTabSwitchGroup variant="seg" class="view-mode" :aria-label="$t('shared.catalog.view_mode.aria_label')">
     <VcTabSwitch
       v-model="viewMode"
+      size="sm"
       value="grid"
       icon="grid"
       :label="$t('shared.catalog.view_mode.grid_label')"
@@ -16,6 +17,7 @@
 
     <VcTabSwitch
       v-model="viewMode"
+      size="sm"
       value="list"
       icon="list"
       :label="$t('shared.catalog.view_mode.list_label')"
@@ -27,7 +29,7 @@
         {{ $t("shared.catalog.view_mode.list_label") }}
       </span>
     </VcTabSwitch>
-  </div>
+  </VcTabSwitchGroup>
 </template>
 
 <script setup lang="ts">
@@ -52,8 +54,6 @@ const viewMode = computed(() => props.mode);
 
 <style lang="scss">
 .view-mode {
-  @apply flex gap-2;
-
   &__text {
     @apply max-md:hidden;
   }

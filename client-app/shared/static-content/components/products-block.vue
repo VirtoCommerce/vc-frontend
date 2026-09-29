@@ -94,10 +94,6 @@ watchEffect(async () => {
 </script>
 
 <style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-
 .products-block {
   &.bg-neutral-800 {
     color: white;

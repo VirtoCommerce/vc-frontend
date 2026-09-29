@@ -15,6 +15,12 @@ vi.mock("@/core/composables", async (importOriginal) => ({
   useBrowserTarget: () => ({ browserTarget: ref("_self") }),
 }));
 
+// The card reads the theme context for the vendor eyebrow. Its getter throws when nothing set the
+// context, and a computed that throws is not re-run, so only the first mount in a file would fail.
+vi.mock("@/core/composables/useThemeContext", () => ({
+  useThemeContext: () => ({ themeContext: { value: { settings: {} } } }),
+}));
+
 vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: () => ({ isEnabled: () => computed(() => false) }),
 }));

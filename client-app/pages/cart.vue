@@ -1,61 +1,38 @@
 <template>
-  <template v-if="!cart?.items?.length && !recentlyBrowsedProducts?.length && !hasAvailableSavedForLaterItems">
-    <VcLoaderOverlay v-if="loading" no-bg />
+  <VcLoaderOverlay v-if="showPageLoader" no-bg />
 
-    <VcEmptyPage
-      v-else
-      :title="title ?? $t('pages.cart.title')"
-      image="basket.jpg"
-      icon="outline-cart"
-      :breadcrumbs="hideBreadcrumbs ? [] : breadcrumbs"
-    >
-      <div class="mb-6 text-lg font-bold">
-        {{ $t("pages.cart.empty_cart_description") }}
-      </div>
-
-      <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
-          {{ $t("common.buttons.continue_shopping") }}
-        </VcButton>
-
-        <VcButton v-else to="/" prepend-icon="shopping-bag">
-          {{ $t("common.buttons.continue_shopping") }}
-        </VcButton>
-
-        <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
-          {{ $t("common.buttons.add_with_bulk_order") }}
-        </VcButton>
-      </div>
-    </VcEmptyPage>
-  </template>
-
-  <VcContainer v-else class="relative max-lg:pb-12">
+  <VcContainer v-else :class="['cart', { 'cart--empty': !cart?.items?.length }]">
     <VcLoaderOverlay :visible="isCartLocked" fixed-spinner />
 
-    <VcBreadcrumbs v-if="!hideBreadcrumbs" :items="breadcrumbs" class="max-lg:hidden" />
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" :items="breadcrumbs" class="cart__breadcrumbs" />
 
-    <VcTypography tag="h1" class="mb-5">
+    <VcTypography tag="h1" class="cart__title">
       {{ title ?? $t("pages.cart.title") }}
     </VcTypography>
 
     <template v-if="!cart?.items?.length">
-      <VcWidget class="mb-10 mt-8" size="lg">
-        <div class="text-lg font-bold">
+      <VcWidget class="cart__empty" :border="false" size="md">
+        <VcTypography tag="h4">
           {{ $t("pages.cart.empty_cart_description") }}
-        </div>
+        </VcTypography>
 
-        <div class="mt-1 text-sm font-normal">{{ $t("pages.cart.empty_cart_search_text") }}</div>
+        <div class="cart__empty-hint">{{ $t("pages.cart.empty_cart_search_text") }}</div>
 
-        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+        <div class="cart__empty-actions">
+          <VcButton
+            v-if="!!continue_shopping_link"
+            :external-link="continue_shopping_link"
+            size="lg"
+            prepend-icon="shopping-bag"
+          >
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton v-else to="/" prepend-icon="shopping-bag">
+          <VcButton v-else to="/" size="lg" prepend-icon="shopping-bag">
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
+          <VcButton :to="{ name: 'BulkOrder' }" size="lg" variant="outline" prepend-icon="bulk">
             {{ $t("common.buttons.add_with_bulk_order") }}
           </VcButton>
         </div>
@@ -65,14 +42,14 @@
         v-if="hasAvailableSavedForLaterItems && !shouldHide('cart-for-later')"
         :saved-for-later-list="savedForLaterList"
         :loading="moveFromSavedForLaterOverflowed"
-        class="mt-5"
+        class="cart__section"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
       <RecentlyBrowsedProducts
         v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
         :products="recentlyBrowsedProducts"
-        class="mt-5"
+        class="cart__section"
       />
     </template>
 
@@ -104,49 +81,49 @@
         <GiftsSection
           v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
           :gifts="availableExtendedGifts"
-          class="mt-5"
+          class="cart__section"
           @toggle:gift="toggleGift"
         />
 
         <!-- Sections for single page checkout -->
         <template v-if="!$cfg.checkout_multistep_enabled">
-          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
+          <ShippingDetailsSection v-if="!allItemsAreDigital" class="cart__section" />
 
           <BillingDetailsSection :cart="cart" />
 
-          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
+          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="cart__section" />
         </template>
 
         <CartForLater
           v-if="hasAvailableSavedForLaterItems && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
-          class="mt-5"
+          class="cart__section"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
           :products="recentlyBrowsedProducts"
-          class="mt-5"
+          class="cart__section"
         />
 
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
-              <LoyaltyValidationAlert class="mt-4" />
+              <LoyaltyValidationAlert class="cart__alert" />
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="checkout-button"
-                class="mt-4"
+                class="cart__action"
               >
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder data-test-id="place-order-button" v-else class="mt-4" />
+              <PlaceOrder data-test-id="place-order-button" v-else class="cart__action" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -155,7 +132,7 @@
                     color="warning"
                     size="sm"
                     variant="solid-light"
-                    class="mt-4"
+                    class="cart__alert"
                     icon
                   >
                     {{ $t("common.messages.fill_all_required") }}
@@ -169,7 +146,7 @@
                   color="warning"
                   size="sm"
                   variant="solid-light"
-                  class="mt-4"
+                  class="cart__alert"
                   icon
                 >
                   {{ $t("common.messages.something_went_wrong") }}
@@ -178,13 +155,13 @@
             </template>
           </OrderSummary>
 
-          <CouponsSection class="mt-5" />
+          <CouponsSection class="cart__section" />
 
           <component
             :is="item.element"
             v-for="item in sidebarWidgets.filter((item) => !shouldHide(item.id))"
             :key="item.id"
-            class="mt-5"
+            class="cart__section"
             @lock-cart="isCartLocked = true"
             @unlock-cart="isCartLocked = false"
           />
@@ -192,21 +169,14 @@
       </VcLayout>
 
       <transition name="slide-fade-bottom">
-        <div
-          v-if="!loading && cart?.items?.length"
-          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
-        >
-          <div class="text-end text-base font-bold text-neutral-950">
+        <div v-if="!loading && cart?.items?.length" class="cart__mobile-bar">
+          <div class="cart__mobile-total">
             <span class="me-1">{{ $t("common.labels.total") }}:</span>
 
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
           </div>
 
-          <div
-            v-for="cartTotal in otherCartTotals"
-            :key="cartTotal.total.currency.code"
-            class="text-end text-base font-bold text-neutral-950"
-          >
+          <div v-for="cartTotal in otherCartTotals" :key="cartTotal.total.currency.code" class="cart__mobile-total">
             <span class="me-1">
               {{ $t("common.labels.total_in_currency", { currency: cartTotal.total.currency.code }) }}:
             </span>
@@ -218,12 +188,12 @@
             v-if="$cfg.checkout_multistep_enabled"
             :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
-            class="!mt-2"
+            class="cart__mobile-action"
           >
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder data-test-id="sticked-place-order-button" v-else class="!mt-2" />
+          <PlaceOrder data-test-id="sticked-place-order-button" v-else class="cart__mobile-action" />
         </div>
       </transition>
     </template>
@@ -339,6 +309,18 @@ const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
+
+// Only while there is nothing to show at all. `loading` also covers the save-for-later
+// mutations, placing the order and the header's ship-to refetch — all of which happen with a
+// rendered cart in front of the customer, and swapping the page for a spinner there unmounts
+// the whole container, single-page checkout fields included, and loses what they had typed.
+const showPageLoader = computed(
+  () =>
+    loading.value &&
+    !cart.value?.items?.length &&
+    !recentlyBrowsedProducts.value.length &&
+    !hasAvailableSavedForLaterItems.value,
+);
 
 const otherCartTotals = computed(
   () =>
@@ -485,3 +467,93 @@ void (async () => {
   }
 })();
 </script>
+
+<style lang="scss">
+.cart {
+  --vc-container-pt: theme("padding.5");
+  --vc-container-pb: theme("padding.14");
+
+  @apply relative;
+
+  &--empty {
+    --vc-container-pt: theme("padding.10");
+    --vc-container-pb: theme("padding.24");
+
+    .cart__title {
+      @apply mb-6;
+    }
+  }
+
+  &__breadcrumbs {
+    @apply mb-3;
+
+    @media (width < theme("screens.lg")) {
+      @apply hidden;
+    }
+  }
+
+  &__title {
+    @apply mb-5;
+  }
+
+  &__empty {
+    // The design gives this one plate a 40 inset on every side rather than the widget's own
+    // 16/24/20 — it is the whole page rather than a section of one, and what it holds is
+    // centred with nothing beside it (CartScreen.jsx, the empty branch).
+    --vc-widget-padding-top: theme("padding.10");
+    --vc-widget-padding-bottom: theme("padding.10");
+
+    // Sideways it waits for the room, the way the widget's own inset does: the design draws
+    // this plate at one desktop width and states the 40 inline, where no breakpoint can reach
+    // it, but 40 a side on a 360 phone leaves 248 for a `lg` button that measures 252 in
+    // English and more in German. Below `sm` the kit's own 16 stands.
+    @media (width >= theme("screens.sm")) {
+      --vc-widget-padding-x: theme("padding.10");
+    }
+
+    @apply text-center;
+  }
+
+  &__empty-hint {
+    @apply mt-1 text-sm font-normal text-neutral-600;
+  }
+
+  &__empty-actions {
+    // One gap, not two: the design spaces the pair the same however they wrap.
+    @apply mt-6 flex flex-wrap justify-center gap-6;
+  }
+
+  &__section {
+    @apply mt-5;
+  }
+
+  &__alert,
+  &__action {
+    @apply mt-3;
+  }
+
+  &__mobile-bar {
+    @apply fixed bottom-0 start-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3;
+
+    box-shadow:
+      0 2px 10px 0 rgb(0 0 0 / 10%),
+      0 0 25px -5px rgb(0 0 0 / 20%);
+
+    @media (width >= theme("screens.md")) {
+      @apply hidden;
+    }
+
+    @media print {
+      @apply hidden;
+    }
+  }
+
+  &__mobile-total {
+    @apply text-end text-base font-bold text-neutral-950;
+  }
+
+  &__mobile-action {
+    margin-top: theme("spacing.2") !important;
+  }
+}
+</style>

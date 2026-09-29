@@ -55,10 +55,11 @@
     &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
       // Darken the rest colour. Fallback stays the `$solid-hover` shade: presets without
       // the override key have hover shades brighter than their dark rest fill.
+      // A preset can swap the mix-in (colour + amount) through --vc-button-solid-hover-mix.
       --bg-color: color-mix(
         in srgb,
         var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
-        black 8%
+        var(--vc-button-solid-hover-mix, black 8%)
       );
       --border-color: var(--bg-color);
     }

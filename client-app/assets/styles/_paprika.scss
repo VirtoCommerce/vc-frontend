@@ -1,0 +1,315 @@
+// Paprika theme foundation (VCST-6030): geometry and typography. Colour arrives
+// through the Paprika preset JSON and _colors.scss.
+
+:root {
+  // The design's surface radius: 12 for cards and panels, pill for every control.
+  --vc-radius: 0.75rem;
+
+  // The next rung up the design's radius ladder: --vc-radius is the card/panel step (12),
+  // the plate step (28) is every surface that sits straight on the canvas — the header and
+  // footer plates, and every widget. Unprefixed, like the shell's other app-layer vars
+  // (--glass, --header-*, --footer-*): no ui-kit component reads it, and --vc-* is the kit's
+  // own consumable namespace. This file owns the value; each consumer OUTSIDE it repeats the
+  // value as a fallback so a fork that drops the file keeps round plates.
+  --plate-radius: 1.75rem;
+
+  // A widget is a plate: the design gives it the canvas radius and no outline, and lets the
+  // lightest rung of the shadow scale be the whole edge. --vc-widget-divide-color has to be
+  // named, because it defaults to the border colour just cleared — and that would take the
+  // rule under a widget title with it.
+  --vc-widget-radius: var(--plate-radius);
+  --vc-widget-border-color: transparent;
+  --vc-widget-divide-color: theme("colors.neutral.200");
+  --vc-widget-shadow: theme("boxShadow.0");
+  // The plate's own cream (#fffdf9), not the kit's white: a widget is one of the page's plates.
+  --vc-widget-bg-color: var(--plate-bg);
+  // A menu row rests on the same cream, so a list inside a widget does not paint white stripes.
+  --vc-menu-item-bg: var(--plate-bg);
+
+  // The rest of the design's page rhythm, read off its own :root. One knob per measure so
+  // the header plate, the footer plates and the gaps between them cannot drift apart:
+  //   stack 26  the one vertical step — above the header, between plates, below them
+  //   gutter 32 the page's side inset
+  //   pad     36/32  a plate's own inside
+  --page-stack: 1.625rem;
+  --page-gutter: 2rem;
+  --plate-pad-y: 2.25rem;
+  --plate-pad-x: 2rem;
+
+  // A plate's fill is not the canvas white: the design warms it a quarter of the way to the
+  // warning tint, so the plate still reads as a surface where the shadow is at its thinnest.
+  --plate-bg: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
+
+  // A plate is separated from the canvas by a soft shadow and nothing else — no outline,
+  // which would read as a second contour over the shadow. The sticky header swaps in the
+  // deeper "lift" while it hangs over the page, and the glass pair is the header's own
+  // edge: a light sheen on top, a cool line underneath.
+  --plate-shadow:
+    0 1px 2px rgb(from theme("colors.neutral.950") r g b / 0.05),
+    0 6px 20px rgb(from theme("colors.neutral.950") r g b / 0.06);
+  --plate-shadow-lift:
+    0 2px 4px rgb(from theme("colors.neutral.950") r g b / 0.06),
+    0 18px 44px rgb(from theme("colors.neutral.950") r g b / 0.12);
+  --glass-sheen: rgb(from theme("colors.additional.50") r g b / 0.85);
+  --glass-under: rgb(from theme("colors.accent.800") r g b / 0.06);
+  --glass-shadow: 0 10px 34px rgb(from theme("colors.neutral.950") r g b / 0.1);
+
+  // The controls that ride ON the glass — the search field and the locale pill — share one
+  // fill, weaker than the sheen: they are holes in the plate, not a second plate. One token
+  // because the design names one, and because two copies drift the moment either is retuned.
+  --glass-row: rgb(from theme("colors.additional.50") r g b / 0.6);
+
+  // A hint is not the value: at the field's own size a placeholder reads as content already
+  // typed, and the longer the hint the more it does. One step down across the scale — flat 14,
+  // not a ratio, so an xs field (14 itself) keeps hint and value in step instead of dropping
+  // the hint to a fraction of a pixel.
+  --vc-input-placeholder-font-size: theme("fontSize.sm");
+
+  // Quiet ink, not the accent. The design names secondary-600 and the desktop plate hardcodes
+  // it, but this file is loaded unconditionally, so that value would reach every preset — and
+  // it is 2.54:1 on black-gold's white plate, under 1.4.11's 3:1. The header's own link token
+  // clears 3:1 in all sixteen (worst 3.36) and lands one palette step off the drawing here.
+  --mobile-header-icon-color: var(--header-bottom-link-color);
+
+  // Every heading in the display face is set one step lighter than the kit's: at Geologica's
+  // weights 700 is a display weight, and at a page title's size it reads as a shout. One knob,
+  // read by the typography block's h1-h6 and by a widget's title, so the two cannot drift.
+  --vc-typography-heading-font-weight: 600;
+
+  // A row's hover, one step down from the kit's. The kit hovers on neutral-200, which in this
+  // palette is the LINE colour (#e7ddce) — laid across a whole row on a white plate it reads as a
+  // selected row rather than as the pointer passing over one. 100 is the surface step above the
+  // zebra's 50 and stays a hover.
+  --vc-table-row-hover-bg-color: theme("colors.neutral.100");
+
+  --vc-button-radius: 9999px;
+  --vc-badge-radius: 9999px;
+  --vc-chip-radius: 9999px;
+  --vc-tab-switch-radius: 9999px;
+  --vc-input-radius: 9999px;
+  --vc-product-image-radius: 0.625rem;
+  // No --vc-select-radius: it also drives the dropdown PANEL, so a pill there rounds
+  // the whole option list away. It falls through to --vc-radius instead.
+
+  // The design's content column: 1550, up from the kit's 1404 (decision recorded in its
+  // own :root as "+100 on the 1450 reference").
+  --vc-container-max-width: 96.875rem;
+
+  // The canvas is the page's, not the container's. The plates stand off it on every side —
+  // above the header, around the footer, down the gutters — and none of that is inside a
+  // VcContainer, so the container can no longer be the only thing painting it. It is handed
+  // the canvas below; here it stops drawing its own, and the decoration it draws with it.
+  --vc-container-bg-color: transparent;
+  --vc-container-bg-image-display: none;
+
+  // Packshots are shot on white, so every product photo slot sits on white in both themes.
+  // Unset in other presets, where the slots stay transparent.
+  --vc-product-image-bg: #ffffff;
+}
+
+// _dark.scss loads before this file, so these win for the paprika dark variant.
+html.dark {
+  // Every solid fill lightens on hover by one rule: the kit's darkening made warning, danger,
+  // success, info and secondary sink on hover, while primary rose.
+  --vc-button-solid-hover-mix: white 24%;
+
+  // Dark has no shadow to spend: one dark surface is told from the next by a hairline, so
+  // the widget takes its border back and gives up the shadow.
+  --vc-widget-border-color: theme("colors.neutral.200");
+  --vc-widget-shadow: none;
+  // Dark keeps the widget's solid surface: the dark plate is translucent glass, meant for a blur.
+  --vc-widget-bg-color: theme("colors.additional.50");
+  --vc-menu-item-bg: theme("colors.additional.50");
+
+  // The rules between a widget's head, body and footer step up a rung: 200 on the plate vanishes.
+  // The account rail made this swap first; every widget takes it now.
+  --vc-widget-divide-color: theme("colors.neutral.300");
+
+  // The hover goes back up a rung here. Dark's 100 IS the plate — `additional-50` resolves to the
+  // same #29201b — so the light rule's value would paint the row in the surface it stands on and
+  // there would be no hover at all. 200 is the first step that leaves the plate.
+  --vc-table-row-hover-bg-color: theme("colors.neutral.200");
+
+  // Dark keeps the same shapes and changes the paint: the shadow deepens, and a warm 1px rim
+  // is what actually separates one dark surface from the next.
+  //
+  // The shadow is plain black, not a neutral step: neutral-50 IS the canvas (#1e1814), so a
+  // shadow drawn in it vanished into the page and took the plate's edge with it. Black is
+  // also safe from the additional-950 flip that turns a shadow into a white halo.
+  --plate-rim: 0 0 0 1px rgb(from theme("colors.neutral.950") r g b / 0.09);
+  --plate-shadow:
+    var(--plate-rim),
+    0 16px 48px -8px rgb(0 0 0 / 0.55),
+    0 0 0 0.5px rgb(0 0 0 / 0.5);
+  --plate-shadow-lift:
+    var(--plate-rim),
+    0 24px 64px -10px rgb(0 0 0 / 0.66),
+    0 0 0 0.5px rgb(0 0 0 / 0.5);
+  // The header's colour is the canvas's in this preset, so its glass takes the surface step.
+  --header-plate-glass: theme("colors.neutral.100");
+
+  // A page plate is glass: the surface step at 72%, over a blur. The light recipe mixes in
+  // warning-50, which in dark is mustard.
+  --plate-bg: rgb(from theme("colors.additional.50") r g b / 0.72);
+
+  // The preset's footer bands are near-black (#150f0c / #0a0705): holes beside every other plate.
+  // Both footer plates, and the catalog's facet cards that borrow the top one, take the page plate.
+  --footer-top-bg-color: var(--plate-bg);
+  --footer-bottom-bg-color: var(--plate-bg);
+
+  // A card on a plate has no blur of its own, only a warm tint: the design's
+  // rgba(55,45,38,.55) under a 4.5% wash of rgba(255,243,236), flattened into one colour.
+  --vc-product-card-bg-color: rgb(71 61 54 / 0.57);
+  // The dark sheen is a LIGHT warm tint, so it comes off the other end of the same scale.
+  --glass-sheen: rgb(from theme("colors.neutral.950") r g b / 0.12);
+  // Same flip for the row fill, and the same ratio to the sheen the light pair has.
+  --glass-row: rgb(from theme("colors.neutral.950") r g b / 0.06);
+  --glass-under: rgb(0 0 0 / 0.35);
+  --glass-shadow: var(--plate-shadow);
+}
+
+// The design steps the plate down a rung below its 900px breakpoint — radius 28 -> 22 and
+// the inside 36/32 -> 28/24. lg (1024) is the nearest one this project has, and radius,
+// padding and gutter step together so the plate stays proportionate.
+@media (width < theme("screens.lg")) {
+  :root {
+    --plate-radius: 1.375rem;
+    --plate-pad-y: 1.75rem;
+    --plate-pad-x: 1.5rem;
+    --page-gutter: 1.5rem;
+
+    // A widget reaches 18px past the container's inset below md — 6px off the screen once the
+    // phone halves that inset, and 18px out of line with the header above it before then. Below
+    // the desktop every plate stands on the page's gutter.
+    --vc-widget-container-margin-x: 0px;
+  }
+}
+
+@media (width >= theme("screens.lg")) {
+  :root {
+    // VcContainer's own 2xl step widens the gutter to 48px; Paprika holds it at 32.
+    --vc-container-px: 2rem;
+  }
+}
+
+// The empty page's illustration is the design's 320 on the desktop, not the kit's 440: at 440 it
+// pushed the sign-up form down to 516 and stood a column away from it.
+@media (width >= theme("screens.lg")) {
+  :root .vc-empty-page {
+    --vc-composite-shape-size: 20rem;
+  }
+}
+
+// A configurator option is one flat 96px row on the desktop: radio, 64px picture, the name at
+// the body face, then the unit price, the quantity and the line total, all regular 14. The
+// properties column exists for the narrow layout only, so it folds to nothing here.
+.product-configuration .option-product {
+  @container (min-width: theme("containers.2xl")) {
+    // Flat rows: only the zebra tells one from the next, and the list rounds as a whole.
+    --vc-product-card-radius: 0;
+
+    .vc-product-card__wrapper {
+      grid-template-areas: "select image title properties price add-to-cart total";
+      grid-template-rows: auto;
+      grid-template-columns: 2rem 4.75rem minmax(0, 1fr) 0 6.75rem 6.25rem 8.25rem;
+      min-height: 6rem;
+    }
+
+    .vc-product-properties {
+      @apply h-0 overflow-hidden;
+    }
+
+    .vc-product-title {
+      @apply font-bold leading-[1.17];
+    }
+
+    .vc-product-price,
+    .vc-product-total {
+      --vc-product-price-font-size: 0.875rem;
+
+      @apply font-geologica;
+    }
+
+    .vc-product-price__actual {
+      @apply font-normal;
+    }
+
+    .vc-product-total {
+      @apply ms-0 w-auto;
+    }
+  }
+}
+
+// Every lg widget is the design's `.vc-widget--lg`, one recipe wherever it stands: the head
+// seated 16 off the corner rather than centred in a control-height row, the body 16/18/20, the
+// title 16. Nested widgets inherit custom properties, so every knob is handed back to the
+// defaults one level down.
+@media (width >= theme("screens.lg")) {
+  .vc-widget--size--lg {
+    --vc-widget-header-min-height: 0px;
+    --vc-widget-header-padding-y: 1rem 0;
+    --vc-widget-header-padding-x: 1rem;
+    --vc-widget-padding-x: 1.125rem;
+    --vc-widget-padding-top: 1rem;
+    --vc-widget-padding-bottom: 1.25rem;
+    --vc-widget-title-font-size: 1rem;
+  }
+
+  // Zero specificity: it only has to beat inheritance, and a component that names its own
+  // nested widget's knobs must still win.
+  :where(.vc-widget--size--lg .vc-widget:not(.vc-widget--size--lg)) {
+    --vc-widget-header-min-height: initial;
+    --vc-widget-header-padding-y: initial;
+    --vc-widget-header-padding-x: initial;
+    --vc-widget-padding-x: initial;
+    --vc-widget-padding-top: initial;
+    --vc-widget-padding-bottom: initial;
+    --vc-widget-title-font-size: initial;
+  }
+}
+
+// The design's wide rung: the column goes 1550 -> 1900 and nothing else moves — the gutter
+// stays 32, so the container needs 1964 of window before the column reaches 1900. The header
+// and footer shells read the same var and travel with it.
+@media (width >= theme("screens.4xl")) {
+  :root {
+    --vc-container-max-width: 118.75rem;
+  }
+}
+
+// The phone rung: gutter and step halve (24 -> 12, 26 -> 13) and the plate's inside squares off
+// at 24. The design draws this below 600; sm is the nearest rung here, the same snap the block
+// above makes from its 900 to lg. The container's inset travels with the gutter.
+@media (width < theme("screens.sm")) {
+  :root {
+    --page-gutter: 0.75rem;
+    --page-stack: 0.8125rem;
+    --plate-pad-y: 1.5rem;
+    --vc-container-px: 0.75rem;
+
+    // A page's own top and bottom air is the step between plates, or the column reads in two
+    // rhythms. A page that spends its own numbers still overrides these.
+    --vc-container-pt: var(--page-stack);
+    --vc-container-pb: var(--page-stack);
+  }
+}
+
+// preflight.scss pins `font-lato` on the same selectors from @layer base, which any
+// unlayered rule outranks. :host keeps federated modules (shadow DOM) in step.
+html,
+:host {
+  @apply font-inter;
+
+  // CJK has no italic and the browser would fake the slant.
+  font-synthesis: none;
+}
+
+// The app's canvas. `--body-bg-color` is the token every preset already sets and the one
+// the container used to read second-hand, but nothing has ever put it on the page itself:
+// outside a container the canvas fell through to the browser's own — white in light, and
+// in dark the UA's near-black instead of this preset's #16120e. The design paints it on
+// `body`, and from `body` it propagates to the whole canvas, overscroll included, so a
+// short page and a rubber-banded one end up the same colour as a full one.
+body {
+  @apply bg-[--body-bg-color];
+}

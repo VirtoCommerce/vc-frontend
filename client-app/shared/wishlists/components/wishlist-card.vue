@@ -66,6 +66,14 @@ const { isCorporateMember } = useUser();
 .wishlist-card {
   @apply relative rounded-[--vc-radius] bg-additional-50 p-4 text-sm shadow-md;
 
+  // shadow-md is drawn in additional-950, the light end in dark presets, so it glowed. Same shape
+  // in black.
+  html.dark & {
+    box-shadow:
+      0 4px 6px 0 rgb(0 0 0 / 0.3),
+      0 2px 4px -2px rgb(0 0 0 / 0.3);
+  }
+
   @container (min-width: theme("containers.xl")) {
     @apply grid items-center gap-x-6 px-5;
 

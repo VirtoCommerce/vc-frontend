@@ -1,6 +1,7 @@
 {
   "push_messages": {
     "title": "通知",
+    "header_title": "アラート",
     "menu_item_name": "通知",
     "empty_list": "現在、新しい通知はありません",
     "options": {

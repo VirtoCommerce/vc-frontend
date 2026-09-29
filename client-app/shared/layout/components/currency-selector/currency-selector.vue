@@ -43,39 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import { useMutation } from "@vue/apollo-composable";
-import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
-import { useCurrency } from "@/core/composables";
-import { globals } from "@/core/globals";
-import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
-import { useShortCart } from "@/shared/cart";
+import { useLocaleSwitch } from "@/shared/layout/composables";
 
-const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { cart } = useShortCart();
-const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
-const broadcast = useBroadcast();
-const { userId, storeId, cultureName, currencyCode: currentCurrencyCode } = globals;
-
-async function select(code: string): Promise<void> {
-  if (currentCurrency.value?.code !== code) {
-    if (cart.value) {
-      await changeCartCurrency({
-        command: {
-          userId,
-          cartId: cart.value.id,
-          newCurrencyCode: code,
-          storeId,
-          cultureName,
-          currencyCode: currentCurrencyCode,
-        },
-      });
-    }
-
-    void broadcast.emit(dataChangedEvent);
-
-    saveCurrencyCode(code);
-  }
-}
+const { currentCurrency, supportedCurrencies, selectCurrency: select } = useLocaleSwitch();
 </script>
 
 <style lang="scss">

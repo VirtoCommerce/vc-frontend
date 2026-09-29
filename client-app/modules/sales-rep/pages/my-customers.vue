@@ -5,29 +5,6 @@
     </VcTypography>
 
     <div class="my-customers__results">
-      <div class="my-customers__search">
-        <VcInput
-          v-model="localKeyword"
-          maxlength="64"
-          class="my-customers__search-input"
-          :disabled="loading"
-          :placeholder="t('sales_rep.my_customers.table.search_placeholder')"
-          clearable
-          @keydown.enter="applyKeyword"
-          @clear="resetKeyword"
-        >
-          <template #append>
-            <VcButton
-              :aria-label="t('sales_rep.my_customers.table.search_aria')"
-              :disabled="loading"
-              icon="search"
-              icon-size="1.25rem"
-              @click="applyKeyword"
-            />
-          </template>
-        </VcInput>
-      </div>
-
       <!-- Without it the segment chips and the sortable headers just aren't there, with nothing saying why. -->
       <SalesRepRuleAlert :filter-failed="filterRulesFailed" :sort-failed="sortRulesFailed" />
 
@@ -40,30 +17,60 @@
         />
       </div>
 
-      <!-- A failure gets its own view: it must not land in the empty state, which would read as "no
-           customers" or, with a keyword active, offer a Reset search that can't help (VCST-5586). -->
-      <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.my_customers.table.load_failed')" variant="error" />
-
-      <!-- Empty here means "nothing matches" (keyword/filter active), not "no customers"; reset is keyword-only. -->
-      <VcEmptyView
-        v-else-if="!items.length && !loading"
-        :text="
-          keyword || filter ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')
-        "
-        :variant="keyword || filter ? 'search' : 'empty'"
-        icon="outline-order"
-      >
-        <template v-if="keyword" #button>
-          <VcButton prepend-icon="reset" @click="resetKeyword">
-            {{ t("sales_rep.my_customers.table.reset_search") }}
-          </VcButton>
-        </template>
-      </VcEmptyView>
-
-      <VcWidget v-else size="md">
+      <!-- Search rides inside the card, above the rows it filters, and stays there in every state —
+           an empty result is exactly when the rep needs to change the term. -->
+      <VcWidget size="md">
         <template #default-container>
+          <div class="my-customers__toolbar">
+            <VcInput
+              v-model="localKeyword"
+              maxlength="64"
+              class="my-customers__search-input"
+              :disabled="loading"
+              :placeholder="t('sales_rep.my_customers.table.search_placeholder')"
+              clearable
+              @keydown.enter="applyKeyword"
+              @clear="resetKeyword"
+            >
+              <template #append>
+                <VcButton
+                  :aria-label="t('sales_rep.my_customers.table.search_aria')"
+                  :disabled="loading"
+                  icon="search"
+                  icon-size="1.25rem"
+                  @click="applyKeyword"
+                />
+              </template>
+            </VcInput>
+          </div>
+
+          <!-- A failure gets its own view: it must not land in the empty state, which would read as "no
+               customers" or, with a keyword active, offer a Reset search that can't help (VCST-5586). -->
+          <VcEmptyView
+            v-if="failed && !loading"
+            :text="t('sales_rep.my_customers.table.load_failed')"
+            variant="error"
+          />
+
+          <!-- Empty here means "nothing matches" (keyword/filter active), not "no customers"; reset is keyword-only. -->
+          <VcEmptyView
+            v-else-if="!items.length && !loading"
+            :text="
+              keyword || filter ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')
+            "
+            :variant="keyword || filter ? 'search' : 'empty'"
+            icon="outline-order"
+          >
+            <template v-if="keyword" #button>
+              <VcButton prepend-icon="reset" @click="resetKeyword">
+                {{ t("sales_rep.my_customers.table.reset_search") }}
+              </VcButton>
+            </template>
+          </VcEmptyView>
+
           <!-- Sorting maps each header to a named backend rule; all three customer rules reverse on a second click. -->
           <VcTable
+            v-else
             :loading="loading"
             :items="items"
             :pages="pages"
@@ -301,17 +308,21 @@ function changePage(newPage: number): void {
     @apply [word-break:break-word];
   }
 
-  // Own the search→table spacing (gap-4 = 1rem, matching Orders) instead of the shell's gap-y-5 (1.25rem) between page children.
+  // Own the chips→card spacing (gap-4 = 1rem, matching Orders) instead of the shell's gap-y-5 (1.25rem) between page children.
   &__results {
     @apply flex flex-col gap-4;
   }
 
-  &__search {
-    @apply flex;
+  // The card's own toolbar strip: the search sits on the rows it filters, ruled off from them by the
+  // widget's own divider token, so a fork retuning the widget's rules moves this one with them.
+  &__toolbar {
+    @apply flex flex-wrap items-center gap-3 border-b px-5 py-3.5;
+
+    border-color: var(--vc-widget-divide-color, theme("colors.neutral.200"));
   }
 
   &__search-input {
-    @apply w-full;
+    @apply min-w-[12.5rem] flex-auto;
   }
 
   &__controls {

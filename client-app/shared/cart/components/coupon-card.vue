@@ -159,7 +159,7 @@ const viewConfig = computed<IViewConfig>(() => {
   $applied: "";
   $error: "";
 
-  @apply border p-2.5 rounded flex gap-3;
+  @apply border p-2.5 rounded-[--vc-radius] flex gap-3;
 
   &--default {
     $default: &;

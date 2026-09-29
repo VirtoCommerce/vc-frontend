@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Løs inn poengene dine",
           "description": "Bytt poeng mot produkter i belønningskatalogen.",
-          "catalog": "Katalog"
+          "catalog": "Belønningskatalog"
         },
         "card": {
           "type_products": "Utvalgte SKU-er",

@@ -3,54 +3,53 @@
     <div v-for="i in 6" :key="i" />
   </VcWidgetSkeleton>
 
-  <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs">
-    <template v-if="!!parentCategory" #header>
+  <VcWidget
+    v-else-if="!!parentCategory || subcategories.length"
+    size="xs"
+    :title="$t('shared.layout.search_dropdown.categories_label')"
+    class="category-selector"
+  >
+    <!-- The design's secondary-nav list: the way up, the section the reader is in as the active row,
+         then what lies inside it. -->
+    <nav class="category-selector__list">
       <router-link
+        v-if="parentCategory"
         :to="getCategoryRoute(parentCategory, locationQuery, catalogBasePath)"
-        class="-mx-2 flex grow items-center gap-1.5 rounded-sm px-2 py-1 text-sm hover:bg-neutral-50"
+        class="category-selector__item category-selector__item--up"
       >
-        <VcIcon class="text-primary" name="chevron-left" size="xs" />
+        <VcIcon name="chevron-left" size="xs" class="category-selector__up-icon" />
 
-        <span class="font-bold">
-          {{ parentCategory.name }}
-        </span>
+        <span class="category-selector__name">{{ parentCategory.name }}</span>
       </router-link>
-    </template>
 
-    <template v-if="subcategories.length" #default>
-      <div class="-mt-1 mb-0.5 py-0.5 text-xs font-black uppercase text-neutral-900">
-        <template v-if="objectType === 'Category' && category?.name">
-          {{ category.name }}
-        </template>
+      <span class="category-selector__item category-selector__item--active" aria-current="page">
+        <span class="category-selector__name">
+          <template v-if="objectType === 'Category' && category?.name">{{ category.name }}</template>
 
-        <template v-else-if="objectType === 'Catalog'">
-          {{ seoInfo?.pageTitle }}
-        </template>
-      </div>
+          <template v-else-if="objectType === 'Catalog'">{{ seoInfo?.pageTitle }}</template>
+        </span>
+      </span>
 
-      <div class="flex flex-col pl-4">
-        <router-link
-          v-for="(item, index) in subcategories"
-          :key="index"
-          :to="subcategoriesRoutes[item.id]"
-          class="-mx-2 mt-0.5 flex items-center gap-1 rounded-sm px-2 py-0.5 text-sm transition-colors hover:bg-neutral-50"
+      <router-link
+        v-for="(item, index) in subcategories"
+        :key="index"
+        :to="subcategoriesRoutes[item.id]"
+        class="category-selector__item category-selector__item--child"
+      >
+        <span class="category-selector__name">{{ item.name }}</span>
+
+        <VcBadge
+          v-if="item.facet?.count"
+          class="category-selector__count"
+          variant="soft"
+          size="sm"
+          rounded
+          color="secondary"
         >
-          <span class="line-clamp-2 [word-break:break-word]">{{ item.name }}</span>
-
-          <VcBadge
-            v-if="item.facet?.count"
-            class=""
-            :class="['ml-auto', 'items-center', 'h-3.5', { 'px-1': item.facet.count > 9 }]"
-            variant="outline"
-            size="xs"
-            rounded
-            color="secondary"
-          >
-            {{ $n(item.facet.count, "decimal") }}
-          </VcBadge>
-        </router-link>
-      </div>
-    </template>
+          {{ $n(item.facet.count, "decimal") }}
+        </VcBadge>
+      </router-link>
+    </nav>
   </VcWidget>
 </template>
 
@@ -125,3 +124,49 @@ function getFacet(category: CategoryType) {
   });
 }
 </script>
+
+<style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
+.category-selector {
+  &__list {
+    @apply flex flex-col;
+  }
+
+  // The design's size-sm menu row: 8 above and below a 14px name, the plate running 10 past the
+  // text on both sides so the names stand on the heading's vertical while the hover and the
+  // active fill still read as a row.
+  &__item {
+    @apply -mx-2.5 flex min-h-9 items-center gap-1.5 rounded-md px-2.5 py-2 text-sm leading-[1.35] text-neutral-950 transition-colors;
+
+    &:is(a):hover {
+      @apply bg-neutral-100;
+    }
+
+    // The same ring the kit's menu rows draw, inside the row so the card's edge does not clip it.
+    &:focus-visible {
+      @include focus-ring($inset: true);
+    }
+
+    &--up {
+      @apply text-neutral-600;
+    }
+
+    &--active {
+      @apply bg-secondary-100 font-bold;
+    }
+  }
+
+  &__up-icon {
+    @apply text-primary;
+  }
+
+  &__name {
+    @apply line-clamp-2 min-w-0 [word-break:break-word];
+  }
+
+  &__count {
+    @apply ms-auto shrink-0;
+  }
+}
+</style>

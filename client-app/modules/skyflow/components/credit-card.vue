@@ -19,7 +19,7 @@
       color="neutral"
       size="xs"
       variant="ghost"
-      icon="delete-thin"
+      icon="trash-2"
       @click="$emit('remove')"
     />
 
@@ -49,7 +49,9 @@ defineProps<IProps>();
 .credit-card {
   $disabled: "";
 
-  @apply relative flex flex-wrap items-center gap-2 rounded bg-additional-50 p-4 pe-2 text-sm text-neutral-900 shadow-md;
+  // `rounded` is a flat 4px whatever the theme says, and this card is a tile on the page's canvas —
+  // it takes the theme's own surface radius, the same one every panel beside it takes.
+  @apply relative flex flex-wrap items-center gap-2 rounded-[--vc-radius] bg-additional-50 p-4 pe-2 text-sm text-neutral-900 shadow-md;
 
   &--disabled {
     $disabled: &;
@@ -94,10 +96,13 @@ defineProps<IProps>();
   }
 
   &__remove {
+    // The remove control stands BEFORE the expiry, which is what carries the expiry's own 32 to the
+    // card's edge. It used to be sent to the end, where it sat hard against the edge and the expiry
+    // read as the last thing in the row.
     @apply -mt-1;
 
     @media (width > theme("screens.xs")) {
-      @apply order-last mt-0;
+      @apply mt-0;
     }
   }
 }

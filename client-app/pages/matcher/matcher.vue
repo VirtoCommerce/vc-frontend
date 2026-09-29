@@ -57,7 +57,8 @@ const router = useRouter();
 const { modulesSettings, themeContext } = useThemeContext();
 
 const PRIORITIES = computed(() => {
-  return { ...DEFAULT_PRIORITIES, ...themeContext.value.settings.previewers_settings?.priorities };
+  // NOTE: 'internal' always wins so the built-in main page is never replaced by Builder.io or page builder content.
+  return { ...DEFAULT_PRIORITIES, ...themeContext.value.settings.previewers_settings?.priorities, internal: 0 };
 });
 
 const viewQueryParam = useRouteQueryParam<string>("view");

@@ -23,11 +23,12 @@
         v-if="$slots.content && !disabled && shouldRenderContent"
         :id="contentId"
         ref="floating"
-        :style="{ zIndex, display, width, ...floatingStyles }"
+        :style="{ zIndex, display, width, '--vc-popover-origin': transformOrigin, ...floatingStyles }"
         :class="[
           'vc-popover__body',
           {
             'vc-popover__body--shadow': shadow,
+            'vc-popover__body--positioned': positioned,
           },
         ]"
         :role="role"
@@ -54,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
+import { flip, offset, shift, size, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
 import { onClickOutside, useEventListener } from "@vueuse/core";
 import { ref, toRefs, computed, watch, inject, nextTick } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
@@ -206,11 +207,53 @@ const emitTriggerProps = computed(() => ({
 }));
 
 const display = computed(() => (opened.value ? "block" : "none"));
+
+// A closed panel is display:none, so Floating UI measures it as zero and the position it holds
+// while closed is stale — measured on the header's preferences menu: left 1374px against the 955px
+// it belongs at. Reopening paints that stale place for one frame before autoUpdate corrects it,
+// which is the panel "sliding in from the right". isPositioned cannot gate this, because after the
+// first open it is already true; so the panel stays transparent until a position has been written
+// for THIS opening. Two frames: autoUpdate measures and writes on the first one.
+const repositioned = ref(false);
+
+watch(opened, (isOpen) => {
+  repositioned.value = false;
+
+  if (!isOpen || typeof requestAnimationFrame !== "function") {
+    return;
+  }
+
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      repositioned.value = opened.value;
+    }),
+  );
+});
+
+const positioned = computed(() => opened.value && isPositioned.value && repositioned.value);
+
+// Grow out of the trigger rather than out of nowhere: the origin is the edge that faces it.
+const SIDE_ORIGINS: Record<string, string> = { top: "bottom", bottom: "top", left: "right", right: "left" };
+const ALIGNMENT_ORIGINS: Record<string, string> = { start: "left", end: "right" };
+
+const transformOrigin = computed(() => {
+  const [side, alignment] = resolvedPlacement.value.split("-");
+  const block = SIDE_ORIGINS[side] ?? "center";
+  const inline = alignment ? (ALIGNMENT_ORIGINS[alignment] ?? "center") : "center";
+
+  // transform-origin reads horizontal first, so a side placement puts its edge in front.
+  return side === "left" || side === "right" ? `${block} center` : `${inline} ${block}`;
+});
 const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${middlewareData.value.arrow.x}px` : ""));
 const _bgColor = computed(() => getColorValue(props.bgColor));
 const _radius = computed(() => props.radius);
 
-const { floatingStyles, middlewareData } = useFloating(reference, floating, {
+const {
+  floatingStyles,
+  middlewareData,
+  isPositioned,
+  placement: resolvedPlacement,
+} = useFloating(reference, floating, {
   placement,
   strategy,
   transform: false,
@@ -218,6 +261,18 @@ const { floatingStyles, middlewareData } = useFloating(reference, floating, {
     flip(flipOptions.value),
     offset(offsetOptions.value),
     shift(shiftOptions.value),
+    // How much room the panel actually has, published for its content to clamp against. Nothing
+    // else can work it out: the height left below a trigger depends on where flip and shift put
+    // the panel, which only Floating UI knows, so a panel guessing it with a `100vh - n` had to
+    // hardcode an assumption about its own trigger and was wrong the moment the header grew.
+    // Written as a property rather than applied here, because what should scroll is the
+    // consumer's decision — the whole panel, or a column inside it.
+    size({
+      padding: 8,
+      apply({ availableHeight, elements }) {
+        elements.floating.style.setProperty("--vc-popover-available-height", `${Math.floor(availableHeight)}px`);
+      },
+    }),
     arrow({ element: floatingArrow }),
   ],
   whileElementsMounted(...args) {
@@ -377,6 +432,7 @@ watch(opened, (value: boolean) => {
 .vc-popover {
   $popper: "";
   $shadow: "";
+  $positioned: "";
 
   @apply max-w-full;
 
@@ -409,21 +465,50 @@ watch(opened, (value: boolean) => {
     &--shadow {
       $shadow: &;
     }
+
+    &--positioned {
+      $positioned: &;
+    }
   }
 
   &__arrow {
     @apply w-3 h-3 rotate-45 bg-[--arrow-color];
 
     #{$shadow} & {
-      @apply shadow-md;
+      box-shadow: var(--vc-popover-arrow-shadow, theme("boxShadow.md"));
     }
   }
 
   &__content {
-    @apply bg-[--bg-color] rounded-[--radius];
+    // Held back until Floating UI has a position — see `positioned` in the script — and then it
+    // grows out of the edge facing the trigger instead of being switched on in place. The panel
+    // itself carries the offsets, so the transform here is free to be used for motion.
+    // The origin arrives as an inline custom property on the body: v-bind() would land on the
+    // component's root, which a teleported panel is not.
+    @apply rounded-[--radius] bg-[--bg-color] opacity-0;
+
+    --duration: var(--vc-popover-enter-duration, 0.14s);
+
+    transform: translateY(-0.25rem) scale(0.97);
+    transform-origin: var(--vc-popover-origin, center top);
+    transition:
+      opacity var(--duration) ease,
+      transform var(--duration) cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    #{$positioned} & {
+      @apply opacity-100;
+
+      transform: none;
+    }
 
     #{$shadow} & {
-      @apply shadow-lg;
+      box-shadow: var(--vc-popover-shadow, theme("boxShadow.lg"));
+    }
+
+    // The distance is what the motion is for; without it the panel just fades.
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+      transition: opacity var(--duration) ease;
     }
   }
 }

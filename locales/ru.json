@@ -354,6 +354,17 @@
           "catalog_menu_button": "Каталог",
           "main_menu": "Основное меню"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Вход",
         "link_register_now": "Регистрация",
         "link_logout": "Выход",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Поиск",
+        "enter_keyword_placeholder": "Поиск товаров и запчастей",
         "enter_keyword_placeholder_category": "Искать в {category}",
         "search_button": "Искать",
         "scope_loading_label": "Загрузка контекста поиска",
@@ -667,7 +678,7 @@
         "title": "Товары"
       },
       "gifts_section": {
-        "title": "+ Добавить подарок"
+        "title": "Подарки"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Добавление товаров в корзину",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Товар",
+        "availability": "Наличие",
+        "unit_price": "Цена за единицу",
+        "add_to_cart": "В корзину"
+      },
       "view_mode": {
         "grid_label": "Карточки",
-        "list_label": "Список"
+        "list_label": "Список",
+        "aria_label": "Макет"
       },
       "page_size": {
         "label": "Результатов на странице:"
       },
       "product_card": {
+        "low_stock": "Мало на складе",
+        "configurable": "Настраиваемый",
+        "variants": "Варианты",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Рейтинг:",
         "product_vendor": "Поставщик:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
           "check_your_configuration": "Проверьте конфигурацию товара",
           "required_section": "Раздел обязателен",
+          "optional": "Необязательно",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
           "required_no_selected": "Завершите выбор, указав все необходимые параметры",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Сортировка",
       "featured": "Рекомендуемые",
       "alphabetically_a_z": "По алфавиту, А-Я",
       "alphabetically_z_a": "По алфавиту, Я-А",
       "price_low_to_high": "Цена, от низкой к высокой",
       "price_high_to_low": "Цена: от высокой к низкой",
       "date_new_to_old": "Дата, от новых к старым",
-      "date_old_to_new": "Дата: сначала старые"
+      "date_old_to_new": "Дата: сначала старые",
+      "short": {
+        "featured": "Рекомендуемые",
+        "alphabetically_a_z": "А-Я",
+        "alphabetically_z_a": "Я-А",
+        "price_low_to_high": "Цена ↑",
+        "price_high_to_low": "Цена ↓",
+        "date_new_to_old": "Новые",
+        "date_old_to_new": "Старые"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "Все",
-          "differences": "Различия"
+          "differences": "Различия",
+          "group_label": "Фильтр строк"
         },
         "uncategorized": "Без категории",
         "unresolved_category": "Неизвестная категория",
@@ -1151,7 +1184,7 @@
       "meta": {
         "title": "Забыли пароль"
       },
-      "header": "сбросить пароль",
+      "header": "Сбросить пароль",
       "email_will_be_sended_message": "Мы отправим вам письмо с инструкциями по сбросу пароля",
       "reset_link_was_sent_message": "Мы отправили вам ссылку для сброса пароля на ваш почтовый ящик",
       "home_button": "@:common.buttons.home"
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
       },
       "products_found_message": "результат | результатов",
+      "products_found_label": "товаров найдено | товар найден | товара найдено | товаров найдено",
       "products_found_message_search": "результат найден | результата найдено",
       "search_in_category": "Поиск \"{keyword}\" в {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Открыть в новом окне",
       "no_products_message": "В этой категории нет товаров",
       "no_products_filtered_message": "Результаты не найдены",
+      "no_products_filtered_hint": "Ослабьте один из них или начните заново.",
       "no_facet_found_message": "Результатов нет",
       "no_products_button": "Очистить поиск",
       "products_icon": "Иконка товара",
@@ -1716,6 +1751,123 @@
       },
       "error": "Не удалось загрузить данные",
       "retry": "Повторить попытку"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Один каталог · много проверенных поставщиков",
+        "title": "Закупайте электронику так, как это делает ваш бизнес.",
+        "subtitle": "Реальные остатки у авторизованных дистрибьюторов, ваши контрактные цены от поиска до счета-фактуры и доставка на следующий день для всего, что есть на складе.",
+        "browse_catalog": "Просмотреть каталог",
+        "notches": {
+          "search": {
+            "title": "Искать или просмотреть полный каталог",
+            "text": "По продукту, бренду или вашему собственному артикулу"
+          },
+          "guest_cart": {
+            "title": "Создать корзину в качестве гостя",
+            "text": "Она переносится при входе в систему"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Сеть авторизованных дистрибьюторов",
+        "title": "Покупайте у поставщика",
+        "authorized": "Авторизованный дистрибьютор",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84 000+",
+            "label": "SKU в каталоге"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Авторизованные поставщики"
+          },
+          "fulfillment": {
+            "value": "24ч",
+            "label": "Доставка для позиций на складе"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Просмотреть ассортимент",
+        "title": "Покупайте по категориям",
+        "all_categories": "Все категории",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Популярные товары",
+            "meta": "Умные гаджеты для дома и домашние кинотеатры — подключены, сопряжены и готовы к отправке"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Лидеры продаж",
+            "meta": "Смартфоны 5G и автомобильные держатели — в чехлах, заряжены и готовы к оптовой отправке."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Покупайте без аккаунта",
+        "title": "Популярное у покупателей",
+        "see_all": "Посмотреть все"
+      },
+      "why_buy": {
+        "eyebrow": "Почему покупают у нас",
+        "title": "Простые условия, реальные запасы",
+        "cards": {
+          "stock": {
+            "title": "Реальные остатки",
+            "text": "Количество на складе по складам, со сроками поставки, если товар нужно закупать."
+          },
+          "pricing": {
+            "title": "Контрактные цены везде",
+            "text": "Ваша согласованная цена отображается от поиска до счета-фактуры, включая налоги и доставку."
+          },
+          "fulfillment": {
+            "title": "Доставка на следующий день",
+            "text": "Заказы на товары в наличии отправляются в тот же день, с гарантией производителя и бесплатным возвратом в течение 30 дней."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Что это меняет",
+        "title": "Понедельник утро, в цифрах",
+        "stats": {
+          "reorder": {
+            "value": "2 клика",
+            "label": "Чтобы повторно заказать доставку за прошлый месяц, включая количество позиций"
+          },
+          "trail": {
+            "value": "1 след",
+            "label": "От сохраненного списка до размещенного заказа с историей утверждений"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "Показанных цен — это ваши контрактные цены, включая налоги и доставку"
+          },
+          "calls": {
+            "value": "0 звонков",
+            "label": "Заказ, отслеживание и поиск документов — без телефонного меню"
+          }
+        },
+        "quote": {
+          "text": "«Мы перестали вести таблицу цен — на сайте отображаются наши».",
+          "name": "Руководитель отдела закупок",
+          "role": "Отдел эксплуатации · 6 объектов"
+        }
+      },
+      "brands": {
+        "eyebrow": "Авторизованный дистрибьютор"
+      },
+      "cta": {
+        "title": "Станьте клиентом",
+        "text": "Контрактные цены, согласованные условия оплаты и оформление заказа по счету — обычно утверждается в течение одного рабочего дня.",
+        "become_customer": "Стать клиентом",
+        "talk_to_sales": "Связаться с отделом продаж"
+      }
     }
   },
   "identity_error": {

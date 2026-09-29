@@ -60,7 +60,7 @@
         "redeem_banner": {
           "title": "Resgate seus pontos",
           "description": "Troque pontos por produtos no catálogo de recompensas.",
-          "catalog": "Catálogo"
+          "catalog": "Catálogo de recompensas"
         },
         "card": {
           "type_products": "SKUs em destaque",

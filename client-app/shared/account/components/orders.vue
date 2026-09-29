@@ -93,9 +93,11 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <VcWidget v-else size="lg">
+    <VcWidget v-else class="orders__plate" size="lg">
       <template #default-container>
         <OrdersTable
+          bordered
+          class="orders__table"
           :loading="ordersLoading"
           :orders="orders"
           :sort="sort"
@@ -275,6 +277,30 @@ watch(
     @media (width >= theme("screens.lg")) {
       @apply flex flex-wrap mb-4 gap-x-3 gap-y-2;
     }
+  }
+
+  &__plate {
+    // The card the table sits in is a plate, like the header and the footer: the shell's
+    // radius, no outline — the shadow is the only separation — and the theme's own shadow
+    // token, which the dark variant repoints off black so it stays visible there.
+    --vc-widget-radius: var(--plate-radius, 1.75rem);
+    --vc-widget-border-color: transparent;
+    // The fallback is the shadow the design draws on this card, for a fork without the theme file.
+    --vc-widget-shadow: var(--plate-shadow, theme("boxShadow.0"));
+  }
+
+  &__table {
+    // The plate keeps an inset so the rows stop short of its corners — without it the
+    // rounding cuts the first and last row and the table reads as a stump. The table's own
+    // radius is the plate's less that inset, as a formula: written as a number the two
+    // would drift apart the first time either is retuned.
+    --inset: 1.125rem;
+    --vc-table-radius: max(0px, calc(var(--plate-radius, 1.75rem) - var(--inset)));
+
+    // The pager sits below the table's border, so its top gap is measured from that border.
+    --vc-table-footer-padding: 1.25rem 0.25rem 0.25rem;
+
+    padding: var(--inset);
   }
 }
 </style>

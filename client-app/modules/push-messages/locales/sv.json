@@ -1,6 +1,7 @@
 {
   "push_messages": {
     "title": "Meddelanden",
+    "header_title": "Aviseringar",
     "menu_item_name": "Meddelanden",
     "empty_list": "Du har inga nya meddelanden för närvarande",
     "options": {

@@ -1,8 +1,10 @@
 <template>
   <VcContainer>
-    <VcBreadcrumbs v-if="currentCategory?.breadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
-
-    <Category :category-id="categoryId" :currency-code-override="loyaltyCurrencyOverride" allow-set-meta />
+    <Category :category-id="categoryId" :currency-code-override="loyaltyCurrencyOverride" allow-set-meta>
+      <template v-if="currentCategory?.breadcrumbs" #breadcrumbs>
+        <VcBreadcrumbs :items="breadcrumbs" />
+      </template>
+    </Category>
   </VcContainer>
 </template>
 

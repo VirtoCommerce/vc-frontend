@@ -354,6 +354,17 @@
           "catalog_menu_button": "Catálogo",
           "main_menu": "Menú principal"
         },
+        "preferences_menu": {
+          "aria_label": "Currency, language and theme",
+          "currency": "Currency",
+          "appearance": "Appearance",
+          "language": "Language",
+          "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
         "link_sign_in": "Iniciar sesión",
         "link_register_now": "Regístrate ahora",
         "link_logout": "Cerrar sesión",
@@ -439,7 +450,7 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "enter_keyword_placeholder": "Buscar",
+        "enter_keyword_placeholder": "Buscar productos y piezas",
         "enter_keyword_placeholder_category": "Buscar en {category}",
         "search_button": "Buscar",
         "scope_loading_label": "Cargando contexto de búsqueda",
@@ -667,7 +678,7 @@
         "title": "Productos"
       },
       "gifts_section": {
-        "title": "+ Añadir un regalo"
+        "title": "Regalos"
       },
       "add_bulk_items_to_cart_results_modal": {
         "title": "Resultado de añadir productos al carrito",
@@ -711,14 +722,24 @@
       }
     },
     "catalog": {
+      "product_list": {
+        "product": "Producto",
+        "availability": "Disponibilidad",
+        "unit_price": "Precio unitario",
+        "add_to_cart": "Añadir al carrito"
+      },
       "view_mode": {
         "grid_label": "Cuadrícula",
-        "list_label": "Lista"
+        "list_label": "Lista",
+        "aria_label": "Diseño"
       },
       "page_size": {
         "label": "Resultados por página:"
       },
       "product_card": {
+        "low_stock": "Pocas existencias",
+        "configurable": "Configurable",
+        "variants": "Variantes",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Calificación:",
         "product_vendor": "Vendedor:"
@@ -762,6 +783,7 @@
           "changed_confirmation": "La configuración del producto ha sido cambiada. ¿Quieres guardarla?",
           "check_your_configuration": "Verifica la configuración de tu producto",
           "required_section": "La sección es obligatoria",
+          "optional": "Opcional",
           "optional_no_selected": "Personaliza aún más tu selección (opcional)",
           "required_no_selected": "Completa todas las opciones obligatorias para finalizar tu selección",
           "section-text-fieldset": {
@@ -1039,13 +1061,23 @@
       }
     },
     "sorting": {
+      "aria_label": "Ordenar",
       "featured": "Destacados",
       "alphabetically_a_z": "Alfabéticamente, A-Z",
       "alphabetically_z_a": "Alfabéticamente, Z-A",
       "price_low_to_high": "Precio: de menor a mayor",
       "price_high_to_low": "Precio, de mayor a menor",
       "date_new_to_old": "Fecha, de más reciente a más antigua",
-      "date_old_to_new": "Fecha, de antiguo a nuevo"
+      "date_old_to_new": "Fecha, de antiguo a nuevo",
+      "short": {
+        "featured": "Destacado",
+        "alphabetically_a_z": "A-Z",
+        "alphabetically_z_a": "Z-A",
+        "price_low_to_high": "Precio ↑",
+        "price_high_to_low": "Precio ↓",
+        "date_new_to_old": "Más recientes",
+        "date_old_to_new": "Más antiguos"
+      }
     },
     "compare": {
       "add_to_compare": {
@@ -1065,7 +1097,8 @@
       "table": {
         "tabs": {
           "all": "Todos",
-          "differences": "Diferencias"
+          "differences": "Diferencias",
+          "group_label": "Filtro de filas"
         },
         "uncategorized": "No categorizado",
         "unresolved_category": "Categoría desconocida",
@@ -1151,7 +1184,7 @@
       "meta": {
         "title": "Olvidé mi contraseña"
       },
-      "header": "restablece tu contraseña",
+      "header": "Restablece tu contraseña",
       "email_will_be_sended_message": "Te enviaremos un correo electrónico con instrucciones para restablecer la contraseña",
       "reset_link_was_sent_message": "Te enviamos un enlace para restablecer la contraseña a tu bandeja de entrada.",
       "home_button": "@:common.buttons.home"
@@ -1480,7 +1513,7 @@
       "meta": {
         "title": "@:pages.cart.title"
       },
-      "title": "Carrito",
+      "title": "Carrito de compras",
       "empty_cart_description": "Tu carrito está vacío",
       "empty_cart_search_text": "Usa la búsqueda para encontrar todo lo que necesitas",
       "recently_browsed_products": "Visto recientemente",
@@ -1526,6 +1559,7 @@
         "select_branch_text": "Selecciona una sucursal de recogida para ver los productos que están en stock ahora"
       },
       "products_found_message": "resultado | resultados",
+      "products_found_label": "producto encontrado | productos encontrados",
       "products_found_message_search": "resultado encontrado | resultados encontrados",
       "search_in_category": "Buscar \"{keyword}\" en {category}",
       "filters_button": "@:common.buttons.filters",
@@ -1538,6 +1572,7 @@
       "show_on_a_separate_page": "Mostrar en una página separada",
       "no_products_message": "No hay productos en esta categoría",
       "no_products_filtered_message": "No se encontraron resultados",
+      "no_products_filtered_hint": "Relaja alguno o empieza de nuevo.",
       "no_facet_found_message": "No se encontraron resultados",
       "no_products_button": "Restablecer búsqueda",
       "products_icon": "Icono de producto",
@@ -1716,6 +1751,123 @@
       },
       "error": "Error al cargar datos",
       "retry": "Intentar de nuevo"
+    },
+    "demo_home": {
+      "hero": {
+        "eyebrow": "Un catálogo · muchos proveedores verificados",
+        "title": "Obtenga productos electrónicos de la manera que su empresa compra.",
+        "subtitle": "Stock en tiempo real de distribuidores autorizados, sus precios de contrato desde la búsqueda hasta la factura, y entrega al día siguiente de todo lo que se encuentra localmente.",
+        "browse_catalog": "Explorar catálogo",
+        "notches": {
+          "search": {
+            "title": "Buscar o explorar el catálogo completo",
+            "text": "Por producto, marca o su propio SKU"
+          },
+          "guest_cart": {
+            "title": "Crear un carrito como invitado",
+            "text": "Se transfiere cuando inicia sesión"
+          }
+        }
+      },
+      "suppliers": {
+        "eyebrow": "Red de distribuidores autorizados",
+        "title": "Comprar por proveedor",
+        "authorized": "Distribuidor autorizado",
+        "names": {
+          "northline": "Northline Industrial",
+          "cedar_pike": "Cedar & Pike",
+          "vantage": "Vantage MRO Supply",
+          "rowan": "Rowan Equipment"
+        },
+        "stats": {
+          "skus": {
+            "value": "84,000+",
+            "label": "SKUs en el catálogo"
+          },
+          "suppliers": {
+            "value": "380",
+            "label": "Proveedores autorizados"
+          },
+          "fulfillment": {
+            "value": "24h",
+            "label": "Entrega de líneas en stock"
+          }
+        }
+      },
+      "categories": {
+        "eyebrow": "Explore el surtido",
+        "title": "Comprar por categoría",
+        "all_categories": "Todas las categorías",
+        "tiles": {
+          "consumer_electronics": {
+            "eyebrow": "Favoritos del público",
+            "meta": "Gadgets inteligentes para el hogar hasta cine en casa — conectados, emparejados y listos para enviar"
+          },
+          "phones_and_accessories": {
+            "eyebrow": "Los más vendidos",
+            "meta": "Smartphones 5G hasta soportes para coche — con funda, cargados y listos para enviar al por mayor."
+          }
+        }
+      },
+      "popular": {
+        "eyebrow": "Comprar sin cuenta",
+        "title": "Popular entre los compradores",
+        "see_all": "Ver todo"
+      },
+      "why_buy": {
+        "eyebrow": "Por qué comprar con nosotros",
+        "title": "Términos sencillos, inventario real",
+        "cards": {
+          "stock": {
+            "title": "Stock en tiempo real",
+            "text": "Cantidad en mano por almacén, con el plazo de entrega cuando debe ser obtenido."
+          },
+          "pricing": {
+            "title": "Precios de contrato en todas partes",
+            "text": "Su precio negociado se muestra desde la búsqueda hasta la factura, impuestos y flete incluidos."
+          },
+          "fulfillment": {
+            "title": "Entrega al día siguiente",
+            "text": "Los pedidos en stock se envían el mismo día, con garantía del fabricante y devoluciones gratuitas en 30 días."
+          }
+        }
+      },
+      "changes": {
+        "eyebrow": "Lo que cambia",
+        "title": "Lunes por la mañana, en números",
+        "stats": {
+          "reorder": {
+            "value": "2 clics",
+            "label": "Para reordenar la entrega del mes pasado, incluidas las cantidades de línea"
+          },
+          "trail": {
+            "value": "1 rastro",
+            "label": "Desde una lista guardada hasta un pedido realizado con historial de aprobaciones"
+          },
+          "prices": {
+            "value": "100%",
+            "label": "De los precios mostrados son sus precios de contrato, impuestos y flete incluidos"
+          },
+          "calls": {
+            "value": "0 llamadas",
+            "label": "Pedidos, seguimiento y consulta de documentos — sin árbol telefónico"
+          }
+        },
+        "quote": {
+          "text": "“Dejamos de mantener una hoja de cálculo de precios — el sitio muestra los nuestros.”",
+          "name": "Jefe de adquisiciones",
+          "role": "Grupo de instalaciones · 6 sitios"
+        }
+      },
+      "brands": {
+        "eyebrow": "Distribuidor autorizado para"
+      },
+      "cta": {
+        "title": "Conviértase en cliente",
+        "text": "Precios de contrato, términos de pago acordados y pago con PO — generalmente aprobado dentro de un día hábil.",
+        "become_customer": "Conviértase en cliente",
+        "talk_to_sales": "Hablar con ventas"
+      }
     }
   },
   "identity_error": {

@@ -368,6 +368,12 @@ Three states the prototype could not specify, decided here:
 The prototype's `--dense` stat variant (≥5 cards) is **not** ported: with 4 cards it would never
 render, so the flex basis rules in `layout-region.vue` cover every case on their own.
 
+> **Reversed by VCST-6030.** The dashboard now carries six cards and the customer profile five, so
+> the row does reach the crowded case. The variant is ported as a container query on the card
+> itself (`stat-widget.vue`, `@container (width < 12rem)`) rather than the prototype's card count:
+> this row wraps, so the card's own width is what runs out, and a phone rendering one full-width
+> card must not get the crowded scale.
+
 ## Explicitly out of scope
 
 Per-block `settings` (sent as `[]`) · new widgets · cross-column moves · per-customer layouts ·

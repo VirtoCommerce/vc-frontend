@@ -1,12 +1,14 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { PRODUCT_SORTING_LIST } from "@/core/constants";
+import { PRODUCT_SORTING_LIST, PRODUCT_SORTING_SHORT_NAMES } from "@/core/constants";
 import type { ProductSortingType } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter, WritableComputedRef } from "vue";
 
 export interface IProductSortingOption {
   id: string;
   name: string;
+  /** The name a segmented rail shows; falls back to `name` for a sorting the storefront has no short name for. */
+  shortName: string;
 }
 
 /**
@@ -23,6 +25,14 @@ export function useProductSortings(
 ) {
   const { t } = useI18n();
 
+  function shortName(id: string, fullName: string): string {
+    const key = PRODUCT_SORTING_SHORT_NAMES[id];
+
+    // A store may define sortings the storefront knows nothing about, and a made-up abbreviation of
+    // one would be worse than the name the store chose.
+    return key ? t(key) : fullName;
+  }
+
   /**
    * Dropdown options. Uses the backend-driven sortings when available; otherwise falls back to the translated
    * hardcoded list (before the first fetch; an old backend that lacks the field errors the query outright).
@@ -31,15 +41,21 @@ export function useProductSortings(
     const definitions = toValue(sortings);
 
     if (definitions.length) {
-      return definitions.map((definition) => ({
+      return definitions.map((definition) => {
         // The default option maps to "" so it stays the ?sort-free URL and an empty sort tells the backend to
         // apply the store default (the backend resolves "" -> the default option deterministically).
-        id: definition.isDefault ? "" : definition.id,
-        name: definition.name ?? definition.id,
-      }));
+        const id = definition.isDefault ? "" : definition.id;
+        const name = definition.name ?? definition.id;
+
+        return { id, name, shortName: shortName(id, name) };
+      });
     }
 
-    return PRODUCT_SORTING_LIST.map((item) => ({ id: item.id, name: t(item.name) }));
+    return PRODUCT_SORTING_LIST.map((item) => {
+      const name = t(item.name);
+
+      return { id: item.id, name, shortName: shortName(item.id, name) };
+    });
   });
 
   /**

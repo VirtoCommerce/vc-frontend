@@ -3,6 +3,7 @@ import { computed, shallowRef } from "vue";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
+import { useDarkMode } from "./useDarkMode";
 import { useThemeContext } from "./useThemeContext";
 import type { WhiteLabelingSettingsType } from "@/core/api/graphql/types";
 
@@ -29,6 +30,8 @@ function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
 }
 
 function _useWhiteLabeling() {
+  const { isDark } = useDarkMode();
+
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (!moduleEnabled.value) {
       return;
@@ -47,6 +50,12 @@ function _useWhiteLabeling() {
     logoUrl: computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image),
     secondaryLogoUrl: computed(
       () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
+    ),
+    /** The one logo for the current colour mode: the primary in light, the secondary in dark. */
+    themeLogoUrl: computed(() =>
+      isDark.value
+        ? (whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image)
+        : (whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image),
     ),
     footerLinks: computed(() =>
       whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item)),

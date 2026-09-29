@@ -1,0 +1,12 @@
+.stat-widget {
+  // The one colour on this card that does not survive the ramp flip: on the dark additional-50
+  // surface danger-600 fails AA in 7 of the 8 presets (3.07:1 at worst, default/mercury; only
+  // paprika.dark clears it, at 5.68), while danger-700 holds 5.17 at its worst, coffee. It paints
+  // the falling delta and the per-card error line.
+  --stat-widget-negative-ink: theme("colors.danger.700");
+
+  // Every boxShadow step is written against additional-950, which these presets flip to the light
+  // end — the elevation would read as a white halo. The card keeps its border and drops the lift,
+  // the same trade _paprika.scss makes for widgets.
+  --stat-widget-shadow: none;
+}
