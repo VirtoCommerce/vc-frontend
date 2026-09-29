@@ -35,6 +35,27 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   const highlightedIndex = ref(-1);
   const count = computed(() => params.items.value.length);
 
+  // A highlight the pointer moved is not a keyboard position, so the option draws no focus ring.
+  const isPointerHighlight = ref(false);
+  let pointing = false;
+
+  function pointTo(index: number): void {
+    pointing = true;
+    highlightedIndex.value = index;
+    pointing = false;
+    isPointerHighlight.value = true;
+  }
+
+  watch(
+    highlightedIndex,
+    () => {
+      if (!pointing) {
+        isPointerHighlight.value = false;
+      }
+    },
+    { flush: "sync" },
+  );
+
   function getItemKey(item: T): unknown {
     return params.getKey ? params.getKey(item) : item;
   }
@@ -63,6 +84,8 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   }
 
   function navigate(key: ListboxNavigationKeyType): void {
+    isPointerHighlight.value = false;
+
     // Index 0 of an empty list would point `aria-activedescendant` at nothing.
     if (!count.value) {
       return;
@@ -129,6 +152,8 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     activeDescendantId,
     getOptionId,
     navigate,
+    pointTo,
+    isPointerHighlight,
     reset,
   };
 }

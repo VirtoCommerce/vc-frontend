@@ -128,7 +128,7 @@ export interface IProps {
   error?: boolean;
   noBorder?: boolean;
   seamless?: boolean;
-  /** A popup this field controls is open; the field is then drawn with the focus ring. */
+  /** A popup this field controls (a select's list) is open; the field is then drawn with the focus ring. */
   opened?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
@@ -410,7 +410,8 @@ provide<VcInputContextType>("inputContext", {
       @apply border-0 bg-transparent p-0;
 
       // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
-      &:has(input:focus-visible) {
+      &:has(input:focus-visible),
+      #{$opened}#{$seamless} & {
         @apply outline-none;
       }
 

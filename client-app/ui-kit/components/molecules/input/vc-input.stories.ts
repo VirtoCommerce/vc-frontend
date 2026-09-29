@@ -54,7 +54,7 @@ const meta: Meta = {
     opened: {
       control: "boolean",
       description:
-        "A popup this field controls is open (a select or a calendar), so the field is drawn with the focus ring whether or not it holds focus.",
+        "A popup this field controls is open (a select's list), so the field is drawn with the focus ring whether or not it holds focus.",
     },
     noBorder: {
       control: "boolean",

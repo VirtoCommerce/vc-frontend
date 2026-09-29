@@ -62,7 +62,7 @@
           size="xs"
           role="option"
           :option-id="getOptionId(index)"
-          :highlighted="index === highlightedIndex"
+          :highlighted="index === highlightedIndex && !isPointerHighlight"
           :tabindex="-1"
           :aria-selected="contactOrganizationId === item.id"
           :disabled="item.isLockedForCurrentUser"
@@ -71,7 +71,7 @@
           "
           @click="selectOrganization(item.id)"
           @mousedown="onOptionMousedown"
-          @mousemove="highlightedIndex = index"
+          @mousemove="pointTo(index)"
         >
           <VcRadioButton
             :model-value="contactOrganizationId"
@@ -154,9 +154,11 @@ const displayedOrganizations = computed(() => {
 
 const {
   highlightedIndex,
+  isPointerHighlight,
   activeDescendantId,
   getOptionId,
   navigate,
+  pointTo,
   reset: resetHighlight,
 } = useListboxNavigation({
   componentId,

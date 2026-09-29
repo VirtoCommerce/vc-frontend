@@ -177,7 +177,18 @@ describe("TopHeaderOrganizations", () => {
     expect(state.trySwitch).not.toHaveBeenCalled();
   });
 
-  // The debounced search has not answered yet, so the highlighted row belongs to the old query.
+  it("rings the highlight moved by the keyboard, not the one moved by the pointer", async () => {
+    const wrapper = mountComponent();
+
+    await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+
+    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+
+    await wrapper.get("input").trigger("keydown", { key: "ArrowDown" });
+
+    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(true);
+  });
+
   it("keeps focus in the search field when an option is pressed with the mouse", () => {
     const wrapper = mountComponent();
     const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
@@ -187,6 +198,7 @@ describe("TopHeaderOrganizations", () => {
     expect(press.defaultPrevented).toBe(true);
   });
 
+  // The debounced search has not answered yet, so the highlighted row belongs to the old query.
   it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");

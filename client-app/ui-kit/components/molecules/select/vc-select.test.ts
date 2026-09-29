@@ -421,6 +421,36 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
+    it("ignores the consumer's selected count when no query narrows the list", () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        total: 5,
+        selectedCount: 4,
+        modelValue: ["Albania"],
+      });
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 5");
+    });
+
+    it("never counts fewer than the visibly selected matches", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        total: 5,
+        selectedCount: 0,
+        modelValue: [...ITEMS],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 5");
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+    });
+
     it("ignores the consumer's selected count under a local filter", async () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
@@ -1056,6 +1086,27 @@ describe("VcSelect", () => {
       await wrapper.get("input").trigger("click");
 
       expect(field.classes()).toContain("vc-input--opened");
+
+      await wrapper.get("input").trigger("keydown", { key: "Escape" });
+
+      expect(field.classes()).not.toContain("vc-input--opened");
+    });
+
+    // A highlight the pointer moved is not a keyboard position, so it draws no focus ring.
+    it("rings the highlight moved by the keyboard, not the one moved by the pointer", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+      await input.trigger("keydown", { key: "a" });
+
+      expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+      expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[1].attributes("id"));
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+
+      expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("China");
     });
 
     it("opens with the current selection highlighted", async () => {

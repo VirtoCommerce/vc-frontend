@@ -22,7 +22,6 @@
         {
           'vc-menu-item__inner--active': active,
           'vc-menu-item__inner--highlighted': highlighted,
-          'vc-menu-item__inner--pointer': highlighted && pointerModality,
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
@@ -49,7 +48,7 @@
 <script setup lang="ts">
 import { ref, computed, provide, onMounted } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
-import { useComponentId, useFocusModality } from "@/ui-kit/composables";
+import { useComponentId } from "@/ui-kit/composables";
 import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -95,8 +94,6 @@ const props = withDefaults(defineProps<IProps>(), {
   clickable: true,
   tabindex: 0,
 });
-
-const { isPointerFocus: pointerModality } = useFocusModality();
 
 const currentElement = ref<HTMLElement>();
 const parentTag = ref("");
@@ -202,7 +199,6 @@ onMounted(() => {
 
   $active: "";
   $highlighted: "";
-  $pointer: "";
   $truncate: "";
   $maxLines: "";
 
@@ -221,10 +217,6 @@ onMounted(() => {
       $active: &;
 
       @apply font-bold;
-    }
-
-    &--pointer {
-      $pointer: &;
     }
 
     &--highlighted {
@@ -285,8 +277,7 @@ onMounted(() => {
         }
 
         // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
-        // A highlight that follows the pointer is not a keyboard position, so it does not ring.
-        &#{$highlighted}:not(#{$pointer}) {
+        &#{$highlighted} {
           @include focus-ring($inset: true);
         }
       }

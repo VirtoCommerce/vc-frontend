@@ -106,7 +106,7 @@
                 :option-id="getOptionId(index)"
                 :data-vc-select-option="componentId"
                 :active="isActiveItem(item)"
-                :highlighted="index === highlightedIndex"
+                :highlighted="index === highlightedIndex && !isPointerHighlight"
                 :aria-selected="isActiveItem(item)"
                 role="option"
                 :size="itemSize"
@@ -116,7 +116,7 @@
                   !multiple && close();
                 "
                 @mousedown.prevent
-                @mousemove="highlightedIndex = index"
+                @mousemove="pointTo(index)"
               >
                 <VcCheckbox
                   v-if="multiple"
@@ -300,7 +300,7 @@ const {
   valueField: toRef(() => props.valueField),
 });
 
-const { highlightedIndex, getOptionId, navigate } = useListboxNavigation({
+const { highlightedIndex, isPointerHighlight, getOptionId, navigate, pointTo } = useListboxNavigation({
   componentId,
   items: filteredItems,
   getKey: getItemValue,
@@ -561,7 +561,10 @@ const countedSelected = computed(() => {
     return selectedValues.value.length;
   }
 
-  return props.serverFilter ? (props.selectedCount ?? selectedVisibleCount.value) : selectedVisibleCount.value;
+  // Never below what is visibly selected, whatever the consumer reports.
+  return props.serverFilter
+    ? Math.max(props.selectedCount ?? 0, selectedVisibleCount.value)
+    : selectedVisibleCount.value;
 });
 
 // Checked means `n of n`: a fully selected page of a longer list is still partial.
