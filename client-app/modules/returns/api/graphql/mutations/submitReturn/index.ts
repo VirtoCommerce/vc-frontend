@@ -7,6 +7,7 @@ export function useSubmitReturnMutation() {
     context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
     refetchQueries: [
       OperationNames.Query.GetReturns,
+      OperationNames.Query.GetOrganizationReturns,
       OperationNames.Query.GetReturn,
       OperationNames.Query.GetReturnableItems,
     ],

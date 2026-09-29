@@ -1,5 +1,6 @@
-query GetReturns(
+query GetOrganizationReturns(
   $storeId: String!
+  $organizationId: String!
   $first: Int
   $after: String
   $sort: String
@@ -9,8 +10,9 @@ query GetReturns(
   $endDate: DateTime
   $cultureName: String
 ) {
-  returns(
+  organizationReturns(
     storeId: $storeId
+    organizationId: $organizationId
     first: $first
     after: $after
     sort: $sort

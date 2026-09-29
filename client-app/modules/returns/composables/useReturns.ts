@@ -4,8 +4,8 @@ import { DEFAULT_SORT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
+import { useGetOrganizationReturnsQuery } from "@/modules/returns/api/graphql/queries/getOrganizationReturns";
 import { useGetReturnsQuery } from "@/modules/returns/api/graphql/queries/getReturns";
-import { ReturnScopeEnum } from "@/modules/returns/api/graphql/types";
 import { RETURN_SCOPE, VIEW_ORGANIZATION_RETURNS_PERMISSION } from "@/modules/returns/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { ISortInfo } from "@/core/types";
@@ -70,23 +70,42 @@ export function useReturns() {
     () => !filter.value.statuses.length && !filter.value.startDate && !filter.value.endDate,
   );
 
-  const { loading, result, refetch } = useGetReturnsQuery(
-    computed(() => ({
-      storeId: globals.storeId,
-      scope: scope.value === RETURN_SCOPE.ORGANIZATION ? ReturnScopeEnum.Organization : ReturnScopeEnum.Own,
-      cultureName: globals.cultureName,
-      first: itemsPerPage.value,
-      after: String((page.value - 1) * itemsPerPage.value),
-      sort: state.value.sort,
-      keyword: state.value.keyword || undefined,
-      statuses: state.value.statuses.length ? state.value.statuses : undefined,
-      startDate: toStartDateFilterValue(state.value.startDate),
-      endDate: toEndDateFilterValue(state.value.endDate),
-    })),
+  const listVariables = computed(() => ({
+    storeId: globals.storeId,
+    cultureName: globals.cultureName,
+    first: itemsPerPage.value,
+    after: String((page.value - 1) * itemsPerPage.value),
+    sort: state.value.sort,
+    keyword: state.value.keyword || undefined,
+    statuses: state.value.statuses.length ? state.value.statuses : undefined,
+    startDate: toStartDateFilterValue(state.value.startDate),
+    endDate: toEndDateFilterValue(state.value.endDate),
+  }));
+
+  const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
+
+  const ownReturnsQuery = useGetReturnsQuery(
+    listVariables,
+    computed(() => !isOrganizationScope.value),
   );
 
-  const returns = computed(() => result.value?.returns?.items ?? []);
-  const totalCount = computed(() => result.value?.returns?.totalCount ?? 0);
+  const organizationReturnsQuery = useGetOrganizationReturnsQuery(
+    computed(() => ({ ...listVariables.value, organizationId: organization.value?.id ?? "" })),
+    isOrganizationScope,
+  );
+
+  const loading = computed(() =>
+    isOrganizationScope.value ? organizationReturnsQuery.loading.value : ownReturnsQuery.loading.value,
+  );
+
+  const connection = computed(() =>
+    isOrganizationScope.value
+      ? organizationReturnsQuery.result.value?.organizationReturns
+      : ownReturnsQuery.result.value?.returns,
+  );
+
+  const returns = computed(() => connection.value?.items ?? []);
+  const totalCount = computed(() => connection.value?.totalCount ?? 0);
   const pages = computed(() => Math.ceil(totalCount.value / itemsPerPage.value));
 
   // Narrowing a filter can leave the URL pointing past the end of the shorter list.
@@ -118,6 +137,10 @@ export function useReturns() {
 
   function resetFilters(): void {
     write({ keyword: "", statuses: [], startDate: undefined, endDate: undefined, page: 1 });
+  }
+
+  function refetch() {
+    return isOrganizationScope.value ? organizationReturnsQuery.refetch() : ownReturnsQuery.refetch();
   }
 
   // One replace for the whole query: the setter of useRouteQueryParam reads the current route,
