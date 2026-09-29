@@ -5,8 +5,7 @@ import type { PunchoutSessionType } from "../types";
 
 const INITIAL_STATE: PunchoutSessionType = Object.freeze({
   isActive: false,
-  punchoutCartName: "",
-  punchoutCartId: "",
+  expiresAt: 0,
 });
 
 function _usePunchoutSession() {
@@ -16,11 +15,11 @@ function _usePunchoutSession() {
     { mergeDefaults: true },
   );
 
-  function startSession(payload: Omit<PunchoutSessionType, "isActive">) {
+  function startSession(payload: Pick<PunchoutSessionType, "expiresAt">) {
     session.value = {
+      ...INITIAL_STATE,
       isActive: true,
-      punchoutCartName: payload.punchoutCartName,
-      punchoutCartId: payload.punchoutCartId,
+      expiresAt: payload.expiresAt,
     };
   }
 
@@ -30,8 +29,7 @@ function _usePunchoutSession() {
 
   return {
     isPunchoutMode: computed(() => session.value.isActive),
-    punchoutCartId: computed(() => session.value.punchoutCartId),
-    punchoutCartName: computed(() => session.value.punchoutCartName),
+    expiresAt: computed(() => session.value.expiresAt),
     session: readonly(session),
     startSession,
     endSession,

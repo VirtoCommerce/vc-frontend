@@ -1,5 +1,5 @@
+import { useEventListener } from "@vueuse/core";
 import { defineAsyncComponent, watch } from "vue";
-import { useCartContext } from "@/core/composables/useCartContext";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
@@ -12,21 +12,6 @@ import type { Router, RouteRecordRaw } from "vue-router";
 const PunchoutSession = () => import("./pages/punchout-session.vue");
 const { isEnabled } = useModuleSettings(MODULE_ID);
 
-// Points the cart queries at the punchout cart for as long as the session is active
-// Runs at boot, before the app is mounted, so a session restored from local storage is already in place when the header fires the first cart
-function syncCartContext() {
-  const { isPunchoutMode, punchoutCartName } = usePunchoutSession();
-  const { isAuthenticated } = useUser();
-  const { setCartName } = useCartContext();
-
-  // A punchout session left in local storage must not aim an anonymous at the punchout cart after a sign out
-  watch(
-    [isPunchoutMode, punchoutCartName, isAuthenticated],
-    ([isActive, cartName, isSignedIn]) => setCartName(isActive && isSignedIn ? cartName : undefined),
-    { immediate: true },
-  );
-}
-
 // Drops a punchout session. Sign-out reloads the page, so this check is actually ends the session (a watch would be racing the reload)
 function endSessionIfSignedOut() {
   const { isAuthenticated } = useUser();
@@ -37,19 +22,52 @@ function endSessionIfSignedOut() {
   }
 }
 
+// Drops a punchout session once its time is up. The time is checked again when the tab comes back.
+// The first check runs synchronously so an expired session never reaches the cart context
+function endSessionOnExpiry() {
+  const { session, endSession } = usePunchoutSession();
+  let timerId: ReturnType<typeof setTimeout> | undefined;
+
+  function checkExpiry() {
+    clearTimeout(timerId);
+
+    const { expiresAt } = session.value;
+    if (!expiresAt) {
+      return;
+    }
+
+    const remaining = expiresAt - Date.now();
+    if (remaining <= 0) {
+      endSession();
+    } else {
+      timerId = setTimeout(checkExpiry, remaining);
+    }
+  }
+
+  checkExpiry();
+  watch(() => session.value.expiresAt, checkExpiry);
+  useEventListener(document, "visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      checkExpiry();
+    }
+  });
+}
+
 export function init(router: Router, i18n: I18n) {
   if (isEnabled(ENABLED_KEY)) {
+    // The route is the sign-in for a punchout visitor, it exchanges the session token for an access token.
+    // It must be reachable while anonymous, even in a store that allows no anonymous browsing.
     const route: RouteRecordRaw = {
       path: "/punchout/:sessionToken",
       name: "PunchoutSession",
       component: PunchoutSession,
       props: true,
-      meta: { requiresAuth: true },
+      meta: { public: true },
     };
 
     router.addRoute(route);
     endSessionIfSignedOut();
-    syncCartContext();
+    endSessionOnExpiry();
 
     const { register } = useExtensionRegistry();
     register("topHeaderStatus", PUNCHOUT_MODE_LABEL_ID, {

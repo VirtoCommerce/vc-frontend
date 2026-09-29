@@ -4,10 +4,11 @@
 
 <script lang="ts" setup>
 import { onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useAuth } from "@/core/composables/useAuth";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { activatePunchoutSession } from "../api/graphql/mutations/activatePunchoutSession";
 import { usePunchoutSession } from "../composables/usePunchoutSession";
+import { PUNCHOUT_GRANT_TYPE } from "../constants";
 
 interface IProps {
   sessionToken?: string;
@@ -17,27 +18,38 @@ const props = withDefaults(defineProps<IProps>(), {
   sessionToken: "",
 });
 
-const router = useRouter();
+const { authorizeWithGrant } = useAuth();
 const { startSession, endSession } = usePunchoutSession();
+
+function leave() {
+  // A full reload, not a router push. Sign-in ends the same way.
+  location.href = "/";
+}
 
 onMounted(async () => {
   try {
-    const result = await activatePunchoutSession(props.sessionToken);
+    const response = await authorizeWithGrant(
+      new URLSearchParams({
+        grant_type: PUNCHOUT_GRANT_TYPE,
+        session_token: props.sessionToken,
+        storeId: globals.storeId,
+      }),
+    );
 
-    if (result && !result.error) {
+    if (response?.access_token) {
       startSession({
-        punchoutCartId: result.punchoutCartId ?? "",
-        punchoutCartName: result.punchoutCartName ?? "",
+        // The grant issues no refresh token, bearer token lifetime is the session's lifetime.
+        expiresAt: Date.now() + (response.expires_in ?? 0) * 1000,
       });
     } else {
       endSession();
-      Logger.error("punchout/activatePunchoutSession", result?.error ?? "No activation result");
+      Logger.error("punchout/activate", response?.error ?? "The punchout grant returned no access token");
     }
-  } catch (e) {
+  } catch (error) {
     endSession();
-    Logger.error("punchout/activatePunchoutSession", e);
+    Logger.error("punchout/activate", error);
   }
 
-  await router.replace({ path: "/" });
+  leave();
 });
 </script>

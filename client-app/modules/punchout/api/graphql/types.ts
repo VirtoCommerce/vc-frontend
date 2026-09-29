@@ -40,6 +40,8 @@ export type PunchoutResultType = {
 export type PunchoutSessonActivationResultType = {
   /** Error code of a failed activation. Empty when the session was activated. */
   error?: Maybe<Scalars['String']['output']>;
+  /** Number of seconds until the punchout session expires, counted from the moment of activation. Empty when the activation failed. */
+  expiresIn?: Maybe<Scalars['Int']['output']>;
   /** The cart the punchout session works with. Empty when the session uses the default cart. */
   punchoutCartId?: Maybe<Scalars['String']['output']>;
   /** The name of the cart the punchout session works with. */
@@ -55,10 +57,10 @@ export type ActivatePunchoutSessionMutationVariables = Exact<{
 }>;
 
 
-export type ActivatePunchoutSessionMutation = { activatePunchoutSession?: { error?: string, punchoutCartId?: string, punchoutCartName?: string } };
+export type ActivatePunchoutSessionMutation = { activatePunchoutSession?: { error?: string, punchoutCartId?: string, punchoutCartName?: string, expiresIn?: number } };
 
 
-export const ActivatePunchoutSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"activatePunchoutSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ActivatePunchoutSessionCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activatePunchoutSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"punchoutCartId"}},{"kind":"Field","name":{"kind":"Name","value":"punchoutCartName"}}]}}]}}]} as unknown as DocumentNode<ActivatePunchoutSessionMutation, ActivatePunchoutSessionMutationVariables>;
+export const ActivatePunchoutSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"activatePunchoutSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ActivatePunchoutSessionCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activatePunchoutSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"punchoutCartId"}},{"kind":"Field","name":{"kind":"Name","value":"punchoutCartName"}},{"kind":"Field","name":{"kind":"Name","value":"expiresIn"}}]}}]}}]} as unknown as DocumentNode<ActivatePunchoutSessionMutation, ActivatePunchoutSessionMutationVariables>;
 export const OperationNames = {
   Mutation: {
     activatePunchoutSession: 'activatePunchoutSession'
