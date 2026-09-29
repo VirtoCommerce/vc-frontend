@@ -24,6 +24,7 @@ Grep `from "@/` over the module rather than trusting the file lists below.
 | `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` (`useSalesRepHubQuery.ts`, `useSalesRepCommunication.ts`) | `@vc-frontend/core` — added to the facade for this port. Every hub read runs through `useSalesRepHubQuery`, so this one import carries the whole module |
 | `toStartDateFilterValue` / `toEndDateFilterValue` (`pages/customer-orders.vue`, VCST-5733) | `@vc-frontend/core` — added for this port |
 | Direct ui-kit subpath imports — `VcWidget`, `VcButton`, `VcInput`, `VcCheckbox`, `VcWidgetSkeleton`, and the `@/ui-kit/components` barrel | `@vc-frontend/core`, all by name |
+| `VcSortable` (`components/layout-region.vue`) and `useSortableItem` / the `Sortable*` types from `@/ui-kit/composables` (`components/layout-widget.vue`, `components/layout-region.vue`), VCST-5902 | **Not facade exports yet** — add them, from ONE copy. `useSortableItem` injects what `VcSortable` provides, under a module-private symbol, so a plugin that bundled its own copy of either would find no item context and render no drag handles |
 | `ROUTES` (`index.ts`, `pages/customer-profile.vue`) — the `Company` / `Account` parent route names | `@vc-frontend/core` — added for this port. `router.addRoute(parent, …)` throws on an unknown parent, so these names are contract; hard-coding the strings puts a host rename outside every gate |
 | Real ui-kit components in specs — `VcButton`, `VcWidget`, `VcWidgetSkeleton`, `VcCheckbox`, `VcInput` mounted through `@/ui-kit/...` paths in `layout-surface.test.ts`, `layout-block-widget.test.ts`, `layout-widget-settings.test.ts`, `layout-drag-and-drop.test.ts` | **Accepted fidelity loss.** The facade's root export is types-only, so a plugin's specs cannot mount the real components; they resolve to the facade mock (§3) and become stubs. `layout-surface.test.ts` says why it matters — the edit toggle is a real `VcButton` and a stub would not carry its click. Keep those assertions on the host side, or drive the toggle through the component's own emit |
 | `useExtensionRegistry` and `EXTENSION_NAMES` (`index.ts`)                                                                                                             | `@vc-frontend/core`. `EXTENSION_NAMES` carries the HOST's ids only, and is typed as exactly those — asking it for a name it does not declare is a compile error, not an `undefined` you discover when the badge never appears. Your own entry ids stay yours: this module keeps `MY_CUSTOMERS_NAV_LINK_ID` |
@@ -104,11 +105,10 @@ runtime. Miss them and the failure is quiet: `skipLibCheck` degrades the missing
 `Cannot find module 'lodash-es'`. `yarn create:plugin` does this for you; a hand-assembled repo must
 copy the list. The facade's build fails if that list ever drifts from what its files import.
 
-**The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
-(+`@types/sortablejs`), which `components/layout-region.vue` imports directly, nor `@vueuse/core`
-for `useBreakpoints` in `pages/customer-profile.vue`. Add both, and decide whether `sortablejs` is
-bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is _not_ needed —
-the layout used `useSortable` at one point and no longer does.
+**The old plugin `package.json` predates the saved-layout work** — it has no `@vueuse/core` for
+`useBreakpoints` in `pages/customer-profile.vue`; add it. It needs no `sortablejs` any more: since
+VCST-5902 the drag-and-drop lives in the ui-kit's `VcSortable`, which the module renders. `@vueuse/integrations`
+is _not_ needed either.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
 

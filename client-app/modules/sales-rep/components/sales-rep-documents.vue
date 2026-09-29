@@ -71,7 +71,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { downloadFile } from "@/shared/files";
-import { useBlockChrome } from "../composables/useBlockChrome";
+import { useBlockSettings } from "../composables/useBlockSettings";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_ROUTE_NAME } from "../constants";
 import { isInlineRenderable, openAuthorizedFile } from "../files";
@@ -90,10 +90,10 @@ withDefaults(defineProps<IProps>(), {
 const { t, d } = useI18n();
 
 // Absent when this widget renders outside a layout.
-const chrome = useBlockChrome();
+const blockSettings = useBlockSettings();
 
 // The saved cap, not the draft: it is a query variable, so it applies on save.
-const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? DOCUMENTS_DEFAULT_ROWS);
+const rowLimit = computed(() => blockSettings?.savedSettings.value.maxRows ?? DOCUMENTS_DEFAULT_ROWS);
 
 // Hidden ⇒ zero requests: the layout mounts only visible blocks (see useSalesRepDocuments.ts).
 const {

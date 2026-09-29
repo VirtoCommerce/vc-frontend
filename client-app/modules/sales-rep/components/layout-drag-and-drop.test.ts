@@ -240,7 +240,7 @@ describe("stat row drag and drop", () => {
     expect(wrapper.element.contains(document.activeElement)).toBe(true);
   });
 
-  // `layout-block--grabbed` is not gated on edit mode, so a grab left behind keeps the card at 45%
+  // The grabbed state is not gated on edit mode, so a grab left behind keeps the card at 45%
   // opacity with a drop shadow on the ordinary dashboard, and Space would drop rather than grab it.
   it("drops a held card's grab when edit mode ends", async () => {
     const { wrapper, api } = setup();
@@ -250,19 +250,19 @@ describe("stat row drag and drop", () => {
     const card = wrapper.find('[data-block-id="orders_placed_week"]');
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     await nextTick();
-    expect(card.element.className).toContain("layout-block--grabbed");
+    expect(card.element.className).toContain("vc-sortable__item--grabbed");
 
     api.cancel();
     await nextTick();
 
     expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "layout-block--grabbed",
+      "vc-sortable__item--grabbed",
     );
 
     api.startEdit();
     await nextTick();
     expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "layout-block--grabbed",
+      "vc-sortable__item--grabbed",
     );
   });
 
@@ -327,7 +327,7 @@ describe("stat row drag and drop", () => {
     const { api } = setup();
     const [visible] = zones;
 
-    expect(visible.options.draggable).toBe(".layout-block");
+    expect(visible.options.draggable).toBe("[data-sortable-id]");
     expect(visible.options.group).toBe("sales-rep-stats-dashboard");
     // Whole-card drag for stats, so no handle selector narrows it.
     expect(visible.options.handle).toBeUndefined();
@@ -355,14 +355,14 @@ describe("stat row drag and drop", () => {
     const card = wrapper.find('[data-block-id="orders_placed_week"]');
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     await nextTick();
-    expect(card.element.className).toContain("layout-block--grabbed");
+    expect(card.element.className).toContain("vc-sortable__item--grabbed");
 
     const order = api.visibleIn("statistics");
     zones[0].options.onChoose({ item: card.element });
     await nextTick();
 
     expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "layout-block--grabbed",
+      "vc-sortable__item--grabbed",
     );
     // Released, not cancelled — a cancel would reshuffle the list mid-drag.
     expect(api.visibleIn("statistics")).toEqual(order);

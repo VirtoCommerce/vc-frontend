@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { provideLayoutSettings } from "../composables/useLayoutSettings";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
-import LayoutBlock from "./layout-block.vue";
+import LayoutRegion from "./layout-region.vue";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleToggles from "./sales-rep-rule-toggles.vue";
 import type { ILayoutSettingsType } from "../composables/useLayoutSettings";
@@ -15,6 +15,12 @@ import VcInput from "@/ui-kit/components/molecules/input/vc-input.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+vi.mock("sortablejs", () => ({
+  default: class {
+    option = vi.fn();
+    destroy = vi.fn();
+  },
+}));
 
 // The kit components under test are real — their prop and slot contracts are exactly what this
 // feature leans on, and a stub would keep passing after one of them changed. The rest are stubbed
@@ -45,8 +51,13 @@ const Surface = defineComponent({
     // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- each mount installs one fixed seam
     provideLayoutSettings(props.settings);
 
+    // A real region: the widget's controls come from the sortable item it renders inside.
     return () =>
-      h(LayoutBlock, { blockId: "orders", title: "Recent orders", editing: props.editing }, { default: slots.default });
+      h(
+        LayoutRegion,
+        { scope: "dashboard", entries: ["orders"], orientation: "vertical", group: "test", editing: props.editing },
+        { default: slots.default },
+      );
   },
 });
 

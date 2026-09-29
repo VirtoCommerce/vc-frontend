@@ -890,4 +890,15 @@
   --vc-alert-tonal-danger-border:    var(--color-vc-border-tonal-danger,        var(--color-danger-500));
   --vc-alert-tonal-danger-text:      var(--color-vc-text-tonal-danger,          var(--color-danger-800));
   --vc-alert-tonal-danger-icon:      var(--color-vc-icon-tonal-danger,          var(--color-danger-700));
+
+  // ============================================================
+  // VcSortable — drag states. Layout stays the consumer's; these retheme only the affordance.
+  // ============================================================
+  --vc-sortable-cursor: grab;
+  --vc-sortable-cursor-active: grabbing;
+  --vc-sortable-accent-color: var(--color-vc-sortable-accent, var(--color-primary-500));
+  --vc-sortable-handle-ring-color: var(--color-vc-sortable-handle-ring, var(--color-primary-200));
+  --vc-sortable-grabbed-opacity: 0.45;
+  --vc-sortable-grabbed-shadow: theme("boxShadow.xl");
+  --vc-sortable-ghost-opacity: 0.45;
 }

@@ -162,9 +162,9 @@ standalone at all, since both read the host's theme context.
 A package that is **not** in `MF_SHARED_RANGES` needs no ceremony: `yarn add` it and it
 gets bundled into your plugin, even when the host happens to use it too. A second copy is
 only a bundle-size cost, not a correctness one — that is exactly the criterion the shared
-list is built on (`federation.mjs`). The sales-rep hub's `sortablejs` (drag-and-drop
-layout) is the worked example: leaf DOM library, no cross-copy state, so it stays out of
-the shared list and rides along in the plugin bundle.
+list is built on (`federation.mjs`). `sortablejs` is the worked example: leaf DOM library, no
+cross-copy state, so it stays out of the shared list and a plugin that uses it directly
+bundles its own copy.
 
 > **The exception to watch: libraries whose state crosses the host/plugin boundary
 > through `provide`/`inject`.** `vee-validate` is the live case — sales-rep gets away with
