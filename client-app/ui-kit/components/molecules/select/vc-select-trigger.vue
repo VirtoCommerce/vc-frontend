@@ -271,7 +271,7 @@ defineExpose({
     }
 
     &#{$opened} {
-      @apply ring-[3px] ring-primary-100;
+      @include focus-ring;
     }
   }
 
