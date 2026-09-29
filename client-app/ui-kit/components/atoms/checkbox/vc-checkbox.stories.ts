@@ -360,6 +360,31 @@ export const CustomColor: StoryType = {
   },
 };
 
+export const CustomHitArea: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox },
+    setup: () => ({ args }),
+    template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-hit-area-size:2.75rem]" />',
+  }),
+  args: {
+    size: "sm",
+    ariaLabel: "Select row",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The pointer target around the box is at least `--vc-checkbox-hit-area-size` (default `1.5rem`) square, invisible and taking no layout. Not applied inside `VcMenuItem`, where the item is the target.",
+      },
+      source: {
+        code: `
+<VcCheckbox size="sm" aria-label="Select row" class="[--vc-checkbox-hit-area-size:2.75rem]" />
+        `,
+      },
+    },
+  },
+};
+
 export const InsideMenuItem: StoryType = {
   render: (args) => ({
     components: { VcCheckbox, VcButton, VcDropdownMenu, VcMenuItem },
