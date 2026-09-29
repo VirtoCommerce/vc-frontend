@@ -43,12 +43,12 @@ describe("VcDatePicker — button names", () => {
   it("names the calendar trigger and the clear button as the caller asks", () => {
     const wrapper = mountPicker({
       clearable: true,
-      calendarButtonLabel: "Open calendar for Start date",
-      clearLabel: "Clear Start date",
+      calendarButtonLabel: "Open calendar: Start date",
+      clearLabel: "Clear: Start date",
     });
 
-    expect(wrapper.find('button[aria-label="Open calendar for Start date"]').exists()).toBe(true);
-    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear Start date");
+    expect(wrapper.find('button[aria-label="Open calendar: Start date"]').exists()).toBe(true);
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear: Start date");
   });
 
   it("falls back to the default trigger name for an empty calendarButtonLabel", () => {

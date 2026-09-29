@@ -170,9 +170,9 @@ describe("VcInput clearable", () => {
 
   it("names the clear button with clearLabel when one is given", () => {
     const wrapper = createInputWrapper({
-      props: { modelValue: "value", clearable: true, clearLabel: "Clear Start date" },
+      props: { modelValue: "value", clearable: true, clearLabel: "Clear: Start date" },
     });
-    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear Start date");
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear: Start date");
   });
 
   it("falls back to the default name for an empty clearLabel", () => {
@@ -201,8 +201,8 @@ describe("VcDateInput passthrough props", () => {
   });
 
   it("forwards clearLabel to VcInput", () => {
-    const wrapper = createDateInputWrapper({ props: { modelValue: "", clearLabel: "Clear Start date" } });
-    expect(wrapper.findComponent({ name: "VcInput" }).props("clearLabel")).toBe("Clear Start date");
+    const wrapper = createDateInputWrapper({ props: { modelValue: "", clearLabel: "Clear: Start date" } });
+    expect(wrapper.findComponent({ name: "VcInput" }).props("clearLabel")).toBe("Clear: Start date");
   });
 
   it("forwards seamless to VcInput", () => {
