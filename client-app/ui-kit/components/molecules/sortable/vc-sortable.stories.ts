@@ -174,7 +174,7 @@ export const Handle: StoryType = {
       source: {
         code: `<VcSortable v-model="widgets" handle=".vc-widget__header-container" class="flex flex-col gap-4">
   <template #item="{ item, attrs }">
-    <div v-bind="attrs"><MyWidget :title="item" /></div>
+    <div v-bind="attrs" class="rounded-[--vc-radius]"><MyWidget :title="item" /></div>
   </template>
 </VcSortable>
 
