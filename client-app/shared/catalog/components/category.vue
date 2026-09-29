@@ -222,18 +222,7 @@
 <script setup lang="ts">
 import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import { omit } from "lodash-es";
-import {
-  computed,
-  defineAsyncComponent,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowRef,
-  toRef,
-  toRefs,
-  watch,
-} from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
@@ -640,7 +629,7 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope, holdScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
 
@@ -648,7 +637,7 @@ const isMobileLg = breakpoints.smaller("lg");
 
 watch(
   () => props.categoryId,
-  async (categoryId) => {
+  async (categoryId, _previous, onCleanup) => {
     if (categoryId || props.isRoot) {
       isCategoryNotFound.value = false;
 
@@ -657,6 +646,13 @@ watch(
       if (categoryId) {
         preparingScope.value = true;
       }
+
+      // The flag is shared: a fetch outliving its page must not clear the one the next page set.
+      let isStale = false;
+      onCleanup(() => {
+        isStale = true;
+        preparingScope.value = false;
+      });
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -677,7 +673,9 @@ watch(
           productFilter,
         });
       } finally {
-        preparingScope.value = false;
+        if (!isStale) {
+          preparingScope.value = false;
+        }
       }
 
       if (!props.isRoot) {
@@ -750,10 +748,6 @@ function changeSearchBarScope(categoryId: string, label?: string) {
 }
 
 onBeforeUnmount(() => {
-  // Held for one tick: a page mounting in the same render may take the scope over (see matcher.vue).
-  if (isCategoryScope.value) {
-    void nextTick(holdScope());
-  }
   clearCategoryScope();
   document.body.style.overflowAnchor = "auto";
 });

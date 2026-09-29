@@ -135,7 +135,12 @@ const { preparingScope, holdScope } = useSearchScore();
 // The category page renders asynchronously, so it starts preparing its search scope a moment after
 // this component shows. Until it does, nothing would hold the scope and the search bar would collapse.
 watch(
-  () => props.isVisible && !loading.value && objectType.value === ObjectType.Category,
+  () =>
+    props.isVisible &&
+    !loading.value &&
+    objectType.value === ObjectType.Category &&
+    // Without an id the category never prepares, so nothing would end the hold.
+    Boolean(slugInfo.value?.entityInfo?.objectId),
   (isCategory, _previous, onCleanup) => {
     if (!isCategory) {
       return;

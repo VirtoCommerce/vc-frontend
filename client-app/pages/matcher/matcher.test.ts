@@ -5,6 +5,7 @@ import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import Matcher from "./matcher.vue";
 import type { UpdateStateEventArgs } from "./priorityManager";
 import type { VueWrapper } from "@vue/test-utils";
+import CategoryPage from "@/pages/category.vue";
 
 const previewerEmitters: Record<string, (value: UpdateStateEventArgs) => void> = {};
 
@@ -57,7 +58,38 @@ vi.mock("vue-router", () => ({
 vi.mock("@/core/composables", () => ({
   useThemeContext: () => ({ modulesSettings: ref([]), themeContext: ref({ settings: {} }) }),
   useRouteQueryParam: () => ref(undefined),
+  useBreadcrumbs: () => ref([]),
 }));
+
+// The category route's page, real, around a stub of the shared category it renders.
+vi.mock("@/shared/catalog/components/category.vue", async () => {
+  const vue = await import("vue");
+  const { useSearchScore: searchScore } = await import("@/shared/layout/composables/useSearchScore");
+  return {
+    __esModule: true,
+    default: vue.defineComponent({
+      setup() {
+        vue.onBeforeUnmount(() => {
+          searchScore().searchScopeData.value = { queryScope: "", searchScope: [] };
+        });
+        return () => vue.h("div", { "data-testid": "category" });
+      },
+    }),
+  };
+});
+vi.mock("@/shared/catalog/composables/useCategory", () => ({
+  useCategory: () => ({ category: ref(), fetchCategory: vi.fn() }),
+}));
+vi.mock("@/shared/catalog/composables/useLoyaltyCatalogCurrency", () => ({
+  useLoyaltyCatalogCurrency: () => ref(undefined),
+}));
+
+const SlotStub = defineComponent({
+  setup:
+    (_, { slots }) =>
+    () =>
+      h("div", slots.default?.()),
+});
 
 const { searchScopeData, isScopePending, preparingScope } = useSearchScore();
 
@@ -191,6 +223,63 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(true);
 
     await setSlugContentState("ready");
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  // A breadcrumb click on a category opened from the header menu: the category route's page is replaced
+  // by the matcher in one render, and the category under it drops its scope first.
+  it("takes over the scope a category route's page hands over as the matcher replaces it", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    setCategoryScope();
+    const isMatcher = ref(false);
+    const Host = defineComponent({
+      setup: () => () => (isMatcher.value ? h(Matcher) : h(CategoryPage, { categoryId: "category-1" })),
+    });
+    wrapper = mount(Host, { global: { stubs: { VcLoaderOverlay: true, VcBreadcrumbs: true, VcContainer: SlotStub } } });
+    await flushPromises();
+
+    const seen: boolean[] = [];
+    const stop = watch(isScopePending, (pending) => seen.push(pending), { flush: "sync" });
+    isMatcher.value = true;
+    await flushPromises();
+    stop();
+
+    expect(searchScopeData.value.searchScope).toHaveLength(0);
+    expect(seen).not.toContain(false);
+    expect(isScopePending.value).toBe(true);
+
+    previewerEmitters.internal({ state: "empty" });
+    await setSlugContentState("ready");
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("hands nothing over from a category page that had no scope yet", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const isMatcher = ref(false);
+    const Host = defineComponent({
+      setup: () => () => (isMatcher.value ? h(Matcher) : h(CategoryPage, { categoryId: "category-1" })),
+    });
+    wrapper = mount(Host, { global: { stubs: { VcLoaderOverlay: true, VcBreadcrumbs: true, VcContainer: SlotStub } } });
+
+    isMatcher.value = true;
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="page"]').exists()).toBe(false);
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("lets the hand-over lapse when no page takes it", async () => {
+    setCategoryScope();
+    const isCategory = ref(true);
+    const Host = defineComponent({
+      setup: () => () => (isCategory.value ? h(CategoryPage, { categoryId: "category-1" }) : h("div", "cart")),
+    });
+    wrapper = mount(Host, { global: { stubs: { VcBreadcrumbs: true, VcContainer: SlotStub } } });
+
+    isCategory.value = false;
+    await flushPromises();
 
     expect(isScopePending.value).toBe(false);
   });

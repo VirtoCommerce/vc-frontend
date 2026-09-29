@@ -1,17 +1,18 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, ref } from "vue";
+import { computed, defineComponent, h, nextTick, ref } from "vue";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SlugContent from "./slug-content.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
 const loading = ref(false);
 const objectType = ref<string | undefined>();
+const objectId = ref<string | undefined>("category-1");
 
 vi.mock("@/shared/common", () => ({
   useSlugInfo: () => ({
     loading,
-    slugInfo: ref({ entityInfo: { objectType: objectType.value, objectId: "category-1" } }),
+    slugInfo: computed(() => ({ entityInfo: { objectType: objectType.value, objectId: objectId.value } })),
     objectType,
     hasContent: ref(false),
     hasPageDocumentContent: ref(false),
@@ -57,6 +58,7 @@ afterEach(() => {
   wrapper = undefined;
   loading.value = false;
   objectType.value = undefined;
+  objectId.value = "category-1";
   preparingScope.value = false;
   // Holds are global state: one leaked here would fail every test after it, far from the cause.
   expect(isScopePending.value).toBe(false);
@@ -102,6 +104,16 @@ describe("SlugContent search scope", () => {
 
   it("holds nothing for a page that is not a category", async () => {
     objectType.value = "CatalogProduct";
+    const slugContent = mountSlugContent();
+
+    await slugContent.setProps({ isVisible: true });
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("holds nothing for a category without an id, which would never start preparing", async () => {
+    objectType.value = "Category";
+    objectId.value = undefined;
     const slugContent = mountSlugContent();
 
     await slugContent.setProps({ isVisible: true });

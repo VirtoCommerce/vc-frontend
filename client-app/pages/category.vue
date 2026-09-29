@@ -7,11 +7,12 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs, watch } from "vue";
+import { nextTick, onBeforeUnmount, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import Category from "@/shared/catalog/components/category.vue";
 
 interface IProps {
@@ -26,6 +27,16 @@ const { category: currentCategory, fetchCategory } = useCategory();
 const loyaltyCurrencyOverride = useLoyaltyCatalogCurrency();
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
+
+const { isCategoryScope, holdScope } = useSearchScore();
+
+// Before the category below drops its scope. Held for one tick: a page mounting in the same render
+// (the matcher, on a breadcrumb click) takes it over; any other page lets it lapse.
+onBeforeUnmount(() => {
+  if (isCategoryScope.value) {
+    void nextTick(holdScope());
+  }
+});
 
 watch(
   categoryId,
