@@ -217,6 +217,18 @@ describe("useSortableList — keyboard", () => {
     expect(list.isGrabbed("b")).toBe(true);
   });
 
+  // Space would scroll the page and the arrows would scroll it too, while the list is also acting on them.
+  it("takes every key it acts on from the page", () => {
+    const { press } = setup({ name: "keys", group: "keys", ring: ["keys", "other"] });
+    setup({ name: "other", group: "keys", ring: ["keys", "other"] });
+
+    expect(press(" ", "b").preventDefault).toHaveBeenCalled();
+    expect(press("ArrowDown", "b").preventDefault).toHaveBeenCalled();
+    expect(press("Escape", "b").preventDefault).toHaveBeenCalled();
+    press(" ", "b");
+    expect(press("ArrowRight", "b").preventDefault).toHaveBeenCalled();
+  });
+
   it("only responds to the grabbed item's own control", () => {
     const { press, order } = setup();
 
@@ -268,15 +280,38 @@ describe("useSortableList — moving between lists by keyboard", () => {
   });
 
   // The pointer asks the target through SortableJS `put`; the keyboard has to ask the same predicate.
-  it("skips a list that refuses the item, and one that is not mounted", () => {
+  it("skips a list that refuses the item and moves on to the next one", () => {
+    const ring = ["shown", "refuser", "parked"];
     const accepts = vi.fn(() => false);
-    const { press, moves, signals } = setupPair(accepts);
+    const source = setup({ name: "shown", group: "skip", ring, orientation: "horizontal" });
+    setup({ name: "refuser", group: "skip", ring, orientation: "horizontal", accepts });
+    setup({ name: "parked", group: "skip", ring, orientation: "horizontal" });
+
+    source.press(" ", "b");
+    source.press("ArrowDown", "b");
+
+    expect(accepts).toHaveBeenCalledWith("b", "shown");
+    expect(source.moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+  });
+
+  it("skips a list that is not mounted, and one that is disabled", () => {
+    const ring = ["shown", "absent", "off", "parked"];
+    const source = setup({ name: "shown", group: "skip-2", ring, orientation: "horizontal" });
+    setup({ name: "off", group: "skip-2", ring, orientation: "horizontal", enabled: false });
+    setup({ name: "parked", group: "skip-2", ring, orientation: "horizontal" });
+
+    source.press(" ", "b");
+    source.press("ArrowDown", "b");
+
+    expect(source.moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+  });
+
+  it("announces that no list takes the item when every one in that direction refuses", () => {
+    const { press, moves, signals } = setupPair(() => false);
 
     press(" ", "b");
     press("ArrowDown", "b");
 
-    expect(accepts).toHaveBeenCalledWith("b", "shown");
-    // "archived" is in the ring but no list by that name exists, so nothing can take the item.
     expect(moves).toEqual([]);
     expect(signals.at(-1)).toEqual({ kind: "noTarget", id: "b" });
   });
@@ -489,6 +524,59 @@ describe("useSortableList — pointer", () => {
     expect(moves).toEqual([{ id: "a", from: "main", to: "parked", index: 0 }]);
     expect(el.firstElementChild).toBe(item);
     expect(other.children).toHaveLength(0);
+  });
+
+  // Without the node's original neighbour (no `start` seen), the index is read after the node is removed.
+  it("puts the node back by index on a backward move when no start was seen", async () => {
+    const { el, sortable } = await mounted();
+    const item = el.querySelector('[data-sortable-id="c"]') as HTMLElement;
+
+    el.insertBefore(item, el.firstChild);
+    sortable.options.onUpdate({ from: el, to: el, item, oldIndex: 2, oldDraggableIndex: 2, newDraggableIndex: 0 });
+
+    expect([...el.children].map((child) => (child as HTMLElement).dataset.sortableId ?? "p")).toEqual([
+      "a",
+      "b",
+      "c",
+      "p",
+    ]);
+  });
+
+  it("moves focus to the item in the list it was moved into by keyboard", async () => {
+    const make = (name: string, ids: string[]) => {
+      const el = document.createElement("div");
+      for (const id of ids) {
+        const child = document.createElement("div");
+        child.dataset.sortableId = id;
+        child.tabIndex = 0;
+        el.append(child);
+      }
+      document.body.append(el);
+      const scope = effectScope();
+      scopes.push(scope);
+      const list = scope.run(() =>
+        useSortableList(el, {
+          name,
+          group: "focus",
+          ring: ["shown", "parked"],
+          orientation: "horizontal",
+          items: () => ids,
+          onReorder: vi.fn(),
+          onMove: vi.fn(),
+        }),
+      )!;
+      return { el, list };
+    };
+    const shown = make("shown", ["a"]);
+    const parked = make("parked", ["a"]);
+
+    const press = (key: string) =>
+      shown.list.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    press(" ");
+    press("ArrowDown");
+    await nextTick();
+
+    expect(document.activeElement).toBe(parked.el.firstElementChild);
   });
 
   it("does nothing on the end of a drag that stayed in its list", async () => {

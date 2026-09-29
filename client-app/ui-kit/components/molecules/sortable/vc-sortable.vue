@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import { computed, defineComponent, useTemplateRef } from "vue";
+import { Comment, computed, defineComponent, useTemplateRef } from "vue";
 import { provideSortableItem, useSortableList } from "@/ui-kit/composables";
 import type {
   SortableHandleAttrsType,
@@ -141,7 +141,8 @@ const ItemScope = defineComponent({
     });
 
     return () => {
-      const nodes = scopeProps.renderItem() ?? [];
+      // Development builds keep template comments as vnodes; they must not turn the item into a fragment.
+      const nodes = (scopeProps.renderItem() ?? []).filter((node) => node.type !== Comment);
       return nodes.length === 1 ? nodes[0] : nodes;
     };
   },
@@ -171,7 +172,7 @@ const ItemScope = defineComponent({
       cursor: var(--vc-sortable-cursor);
 
       &:active {
-        cursor: var(--vc-sortable-cursor-active);
+        cursor: var(--vc-sortable-active-cursor);
       }
 
       // The keyboard moves the item and restores focus a tick later, so the held ring cannot depend on
@@ -186,7 +187,7 @@ const ItemScope = defineComponent({
     cursor: var(--vc-sortable-cursor);
 
     &:active {
-      cursor: var(--vc-sortable-cursor-active);
+      cursor: var(--vc-sortable-active-cursor);
     }
 
     // Stands in for the "I am holding this" feedback a pointer user gets from the cursor.

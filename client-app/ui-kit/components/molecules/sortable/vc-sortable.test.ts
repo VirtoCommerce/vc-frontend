@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, ref } from "vue";
+import { createCommentVNode, defineComponent, h, nextTick, ref } from "vue";
 import { useSortableItem } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
 import type { ISortableItemContextType } from "@/ui-kit/composables";
@@ -82,6 +82,22 @@ describe("VcSortable", () => {
     expect(rows).toHaveLength(3);
     expect(rows[1].previousSibling).toBe(rows[0]);
     expect(rows[2].previousSibling).toBe(rows[1]);
+  });
+
+  it("ignores template comments around the item's root element", () => {
+    const wrapper = mount(VcSortable<string>, {
+      props: { modelValue: ["a", "b"], name: "main" },
+      slots: {
+        item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => [
+          createCommentVNode("the row"),
+          h("div", { ...attrs, class: ["row", attrs.class] }, item),
+        ],
+      },
+      attachTo: document.body,
+    });
+    const rows = wrapper.findAll(".row").map((row) => row.element);
+
+    expect(rows[1].previousSibling).toBe(rows[0]);
   });
 
   it("puts the list's attributes on each item's own root element", () => {

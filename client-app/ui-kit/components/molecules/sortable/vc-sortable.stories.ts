@@ -169,7 +169,7 @@ export const Handle: StoryType = {
     docs: {
       description: {
         story:
-          "With a `handle` only that part starts a pointer drag, and the keyboard goes through `handleAttrs`, which a component inside the item picks up with `useSortableItem()`. `filter` keeps controls inside the handle clickable.",
+          "With a `handle` only that part starts a pointer drag, and the keyboard goes through `handleAttrs`, which a component inside the item picks up with `useSortableItem()`. Controls inside the handle stay clickable when listed in `filter`.",
       },
       source: {
         code: `<VcSortable v-model="widgets" handle=".vc-widget__header-container" class="flex flex-col gap-4">

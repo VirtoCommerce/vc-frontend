@@ -895,7 +895,7 @@
   // VcSortable — drag states. Layout stays the consumer's; these retheme only the affordance.
   // ============================================================
   --vc-sortable-cursor: grab;
-  --vc-sortable-cursor-active: grabbing;
+  --vc-sortable-active-cursor: grabbing;
   // The drag outlines draw in the primary outline colour, so they follow a preset's own override of it.
   --vc-sortable-accent-color: var(--color-vc-border-outline-primary, var(--color-primary-500));
   // No shared key names a pale ring; palette only until a preset needs one.

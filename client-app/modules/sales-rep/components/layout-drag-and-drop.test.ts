@@ -83,6 +83,7 @@ function setup() {
   // Spied as well as applied: a same-list drag must emit no park at all, which surviving state alone
   // cannot show — `setHidden` would no-op on a block already in the half it names.
   const setHidden = vi.fn();
+  const announce = vi.fn();
 
   const Harness = defineComponent({
     setup() {
@@ -106,6 +107,7 @@ function setup() {
           editing: layout.editing.value,
           onReorder: (ids: string[]) => layout.reorderVisible("statistics", ids),
           onSetHidden: toggleHidden,
+          onAnnounce: announce,
         });
     },
   });
@@ -116,7 +118,7 @@ function setup() {
     attachTo: document.body,
     global: { stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
   });
-  return { wrapper, api, setHidden };
+  return { wrapper, api, setHidden, announce };
 }
 
 /** Replay a drop into another zone: SortableJS's DOM move, then the handler it fires. */
@@ -366,6 +368,32 @@ describe("stat row drag and drop", () => {
     );
     // Released, not cancelled — a cancel would reshuffle the list mid-drag.
     expect(api.visibleIn("statistics")).toEqual(order);
+  });
+
+  // The ui-kit reports list moves in its own terms; the stat row words them as hiding and showing.
+  it("announces a grab, a park and a restore in the stat row's own words, and a no-op not at all", async () => {
+    const { wrapper, api, announce } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const key = (id: string, name: string) =>
+      wrapper.find(`[data-block-id="${id}"]`).element.dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+
+    key("active_carts", " ");
+    expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed", parkable: true }));
+
+    key("active_carts", "ArrowDown");
+    await nextTick();
+    expect(announce).toHaveBeenLastCalledWith({ kind: "parked", id: "active_carts" });
+
+    key("active_carts", " ");
+    announce.mockClear();
+    key("active_carts", "ArrowDown");
+    expect(announce).not.toHaveBeenCalled();
+
+    key("active_carts", "ArrowUp");
+    await nextTick();
+    expect(announce).toHaveBeenLastCalledWith({ kind: "restored", id: "active_carts" });
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {

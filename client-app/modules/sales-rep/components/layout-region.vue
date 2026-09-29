@@ -74,7 +74,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { titleOf } = useBlockTitle(() => props.scope);
 
-// A region is one half of its region: the shown blocks or the hidden ones. That half is all a move
+// Each list holds one half of a layout region — its shown blocks or its hidden ones. That half is all a move
 // across zones changes, so it is what names the list.
 const VISIBLE_ZONE = "visible";
 const HIDDEN_ZONE = "hidden";

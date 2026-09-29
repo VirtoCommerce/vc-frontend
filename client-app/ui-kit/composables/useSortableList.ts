@@ -82,9 +82,13 @@ export interface ISortableListOptions {
 export const SORTABLE_ITEM_ATTRIBUTE = "data-sortable-id";
 export const SORTABLE_NAME_ATTRIBUTE = "data-sortable-name";
 
-type RegisteredListType = { accepts?: (id: string, from: string) => boolean };
+type RegisteredListType = {
+  accepts?: (id: string, from: string) => boolean;
+  isEnabled: () => boolean;
+  focusItem: (id: string) => void;
+};
 
-// The keyboard has no drop target under a pointer to ask, so a list needs its siblings' `accepts`.
+// The keyboard has no drop target under a pointer to ask, so a list needs to ask its siblings directly.
 const listsByGroup = new Map<string, Map<string, RegisteredListType>>();
 
 function moveWithin(items: readonly string[], id: string, index: number): string[] {
@@ -98,7 +102,7 @@ function moveWithin(items: readonly string[], id: string, index: number): string
  * undoes every move and reports it instead, so state alone drives the render.
  *
  * Keyboard: Space/Enter grabs and drops, arrows along `orientation` move, Escape puts it back, blur
- * cancels, and the cross-axis arrows move the item along `ring`.
+ * cancels, and the cross-axis arrows move the item along `ring` — focus follows it into the sibling list.
  */
 export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
@@ -195,17 +199,29 @@ export function useSortableList(
     for (let index = ring.indexOf(name) + delta; index >= 0 && index < ring.length; index += delta) {
       const target = ring[index];
       const sibling = siblings?.get(target);
-      if (target === name || !sibling || sibling.accepts?.(id, name) === false) {
+      // Refused as the pointer would be: SortableJS drops nothing into a disabled list either.
+      if (target === name || !sibling?.isEnabled() || sibling.accepts?.(id, name) === false) {
         continue;
       }
       // The item leaves this list, so the grab is released rather than followed across containers.
       release();
       options.onMove?.({ id, from: name, to: target });
       announce({ kind: "movedList", id, from: name, to: target });
+      // Its control unmounts here and mounts there, which drops focus to <body>; the owner has applied the
+      // move by the next render, so focus follows it into the sibling.
+      void nextTick(() => sibling.focusItem(id));
       return;
     }
 
     announce({ kind: "noTarget", id });
+  }
+
+  function focusItem(id: string): void {
+    const item = [...(toValue(container)?.querySelectorAll<HTMLElement>(`[${SORTABLE_ITEM_ATTRIBUTE}]`) ?? [])].find(
+      (candidate) => candidate.getAttribute(SORTABLE_ITEM_ATTRIBUTE) === id,
+    );
+    const target = whole ? item : item?.querySelector<HTMLElement>(".vc-sortable__handle");
+    target?.focus({ preventScroll: true });
   }
 
   function onKeydown(event: KeyboardEvent, id: string): void {
@@ -309,11 +325,11 @@ export function useSortableList(
   let originSibling: Node | null = null;
 
   function restore(event: Sortable.SortableEvent): void {
-    const sibling =
-      originSibling?.parentNode === event.from ? originSibling : (event.from.children[event.oldIndex ?? 0] ?? null);
-    event.item.remove();
-    event.from.insertBefore(event.item, sibling);
+    const saved = originSibling?.parentNode === event.from ? originSibling : null;
     originSibling = null;
+    // Removed before the fallback index is read: with the item still in place, a backward move reads one short.
+    event.item.remove();
+    event.from.insertBefore(event.item, saved ?? event.from.children[event.oldIndex ?? 0] ?? null);
   }
 
   function groupOption(group: string | undefined): Sortable.Options["group"] {
@@ -431,7 +447,7 @@ export function useSortableList(
       }
       const lists = listsByGroup.get(group) ?? new Map<string, RegisteredListType>();
       listsByGroup.set(group, lists);
-      const entry: RegisteredListType = { accepts: options.accepts };
+      const entry: RegisteredListType = { accepts: options.accepts, isEnabled, focusItem };
       lists.set(name, entry);
       onCleanup(() => {
         // A list remounting under the same name registers before the old one cleans up.
