@@ -1661,6 +1661,15 @@ describe("VcSelect", () => {
       expect(wrapper.find(".probe-placeholder").exists()).toBe(false);
     });
 
+    it("passes the error state to the placeholder slot", () => {
+      const wrapper = createWrapper(
+        { items: ITEMS, error: true },
+        { placeholder: ({ error }: { error?: boolean }) => h("span", { class: "probe-placeholder" }, String(error)) },
+      );
+
+      expect(wrapper.get(".probe-placeholder").text()).toBe("true");
+    });
+
     it("shows the placeholder slot for an empty multiple selection", () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] }, slots);
 
