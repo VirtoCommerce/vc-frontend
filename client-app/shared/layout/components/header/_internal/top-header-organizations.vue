@@ -70,6 +70,7 @@
             item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
           "
           @click="selectOrganization(item.id)"
+          @mousedown="onOptionMousedown"
           @mousemove="highlightedIndex = index"
         >
           <VcRadioButton
@@ -240,6 +241,13 @@ async function onEnter(): Promise<void> {
 }
 
 const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
+
+// With a search field the keys belong to it, so a click must not move focus onto the option.
+function onOptionMousedown(event: MouseEvent): void {
+  if (isShowSearch.value) {
+    event.preventDefault();
+  }
+}
 
 // The results only change after the debounced search lands; until then Enter must search, not pick.
 async function onSearchInput(): Promise<void> {

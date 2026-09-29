@@ -401,6 +401,42 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("true");
     });
 
+    it("shows mixed while the consumer reports selected matches that are not loaded", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        hasNextPage: true,
+        total: 5,
+        selectedCount: 2,
+        modelValue: ["Denmark", "Egypt"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("2 of 5");
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+    });
+
+    it("ignores the consumer's selected count under a local filter", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        selectedCount: 10,
+        modelValue: ["Belgium"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("bel");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 1");
+    });
+
     it("names the checkbox with its count and keeps the name when it is checked", async () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS] });
 
@@ -1009,6 +1045,17 @@ describe("VcSelect", () => {
 
       wrapper.unmount();
       host.remove();
+    });
+
+    it("draws the field as opened only while the list is open", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const field = wrapper.get(".vc-select-trigger");
+
+      expect(field.classes()).not.toContain("vc-input--opened");
+
+      await wrapper.get("input").trigger("click");
+
+      expect(field.classes()).toContain("vc-input--opened");
     });
 
     it("opens with the current selection highlighted", async () => {

@@ -10,6 +10,7 @@
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
         'vc-input--seamless': seamless,
+        'vc-input--opened': opened,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
@@ -127,6 +128,8 @@ export interface IProps {
   error?: boolean;
   noBorder?: boolean;
   seamless?: boolean;
+  /** A popup this field controls is open; the field is then drawn with the focus ring. */
+  opened?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
   hideDetails?: boolean;
@@ -174,6 +177,7 @@ const props = withDefaults(defineProps<IProps>(), {
   tabindex: 0,
   hideDetails: false,
   seamless: false,
+  opened: false,
 });
 
 if (import.meta.env.DEV && props.type === "date") {
@@ -301,6 +305,7 @@ provide<VcInputContextType>("inputContext", {
   $error: "";
   $noBorder: "";
   $seamless: "";
+  $opened: "";
   $center: "";
   $truncate: "";
 
@@ -351,6 +356,10 @@ provide<VcInputContextType>("inputContext", {
     $seamless: &;
   }
 
+  &--opened {
+    $opened: &;
+  }
+
   &--center {
     $center: &;
   }
@@ -374,12 +383,13 @@ provide<VcInputContextType>("inputContext", {
       @apply h-11 text-base;
     }
 
-    &:has(input:focus-visible) {
+    &:has(input:focus-visible),
+    #{$opened} & {
       @include focus-ring;
     }
 
     // A read-only field takes no typing, so a mouse click on it is not a reason to ring.
-    #{$readonly}#{$pointerFocus} & {
+    #{$readonly}#{$pointerFocus}:not(#{$opened}) & {
       @apply outline-none;
     }
 

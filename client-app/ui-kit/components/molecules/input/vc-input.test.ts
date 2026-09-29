@@ -142,6 +142,18 @@ describe("VcInput focus modality", () => {
   });
 });
 
+describe("VcInput opened", () => {
+  it("marks the field while a popup it controls is open", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    expect(wrapper.classes()).not.toContain("vc-input--opened");
+
+    await wrapper.setProps({ opened: true });
+
+    expect(wrapper.classes()).toContain("vc-input--opened");
+  });
+});
+
 // VCST-5912: the error state was visual only, so assistive tech never heard about it.
 describe("VcInput aria-invalid", () => {
   it("is absent on an untouched input", () => {

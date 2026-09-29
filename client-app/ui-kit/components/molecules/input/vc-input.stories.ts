@@ -51,6 +51,11 @@ const meta: Meta = {
       description:
         "Removes the details row entirely, including its `aria-describedby` association — `message`/`counter` are silently ignored, not just visually hidden. Only pair with a parent that owns its own error display and description association, as VcDateRangeInput does.",
     },
+    opened: {
+      control: "boolean",
+      description:
+        "A popup this field controls is open (a select or a calendar), so the field is drawn with the focus ring whether or not it holds focus.",
+    },
     noBorder: {
       control: "boolean",
       description:
@@ -299,6 +304,25 @@ export const Readonly: StoryType = {
       },
       source: {
         code: `<VcInput label="Label" readonly model-value="Read-only value" />`,
+      },
+    },
+  },
+};
+
+export const Opened: StoryType = {
+  args: {
+    ...commonArgs,
+    readonly: true,
+    opened: true,
+    modelValue: "Albania",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "`opened` draws the focus ring while a popup the field controls is open.",
+      },
+      source: {
+        code: `<VcInput label="Country" readonly :opened="isOpen" model-value="Albania" />`,
       },
     },
   },

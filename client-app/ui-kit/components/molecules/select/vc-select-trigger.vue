@@ -95,6 +95,7 @@
     :disabled="disabled"
     :readonly="readonly || !autocomplete"
     :error="error"
+    :opened="opened"
     truncate
     disable-autocomplete
     @update:model-value="$emit('update:search', String($event ?? ''))"
@@ -270,6 +271,7 @@ defineExpose({
       @apply border-danger;
     }
 
+    // Open looks like focus, whichever way it was opened.
     &#{$opened} {
       @include focus-ring;
     }

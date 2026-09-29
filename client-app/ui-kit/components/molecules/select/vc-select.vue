@@ -236,8 +236,8 @@ const props = withDefaults(
      */
     total?: number;
     /**
-     * Selected options among `total`, for a paged list whose selection reaches past the loaded
-     * options (a `server-filter` query). Defaults to the selected options that are loaded.
+     * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
+     * matches that are not loaded. Defaults to the selected matches that are loaded.
      */
     selectedCount?: number;
     /** Shows a loading indicator inside the list. */
@@ -556,26 +556,30 @@ const totalCount = computed(() =>
   isNarrowed.value && !props.serverFilter ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
 );
 
-const selectedCount = computed(
-  () => props.selectedCount ?? (isNarrowed.value ? selectedVisibleCount.value : selectedValues.value.length),
-);
+const countedSelected = computed(() => {
+  if (!isNarrowed.value) {
+    return selectedValues.value.length;
+  }
+
+  return props.serverFilter ? (props.selectedCount ?? selectedVisibleCount.value) : selectedVisibleCount.value;
+});
 
 // Checked means `n of n`: a fully selected page of a longer list is still partial.
 const isAllSelected = computed(
   () =>
     selectableValues.value.length > 0 &&
     selectedVisibleCount.value === selectableValues.value.length &&
-    selectedCount.value >= totalCount.value,
+    countedSelected.value >= totalCount.value,
 );
 
-const isSomeSelected = computed(() => selectedVisibleCount.value > 0 && !isAllSelected.value);
+const isSomeSelected = computed(() => countedSelected.value > 0 && !isAllSelected.value);
 
 const selectedOfTotal = computed(() =>
-  t("ui_kit.select.selected_of_total", { selected: selectedCount.value, total: totalCount.value }),
+  t("ui_kit.select.selected_of_total", { selected: countedSelected.value, total: totalCount.value }),
 );
 
 const selectAllLabel = computed(() =>
-  t("ui_kit.select.select_all_label", { selected: selectedCount.value, total: totalCount.value }),
+  t("ui_kit.select.select_all_label", { selected: countedSelected.value, total: totalCount.value }),
 );
 
 function onSelectAll() {

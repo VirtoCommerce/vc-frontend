@@ -178,6 +178,15 @@ describe("TopHeaderOrganizations", () => {
   });
 
   // The debounced search has not answered yet, so the highlighted row belongs to the old query.
+  it("keeps focus in the search field when an option is pressed with the mouse", () => {
+    const wrapper = mountComponent();
+    const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+
+    wrapper.findAll('[role="option"]')[1].element.dispatchEvent(press);
+
+    expect(press.defaultPrevented).toBe(true);
+  });
+
   it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -192,7 +201,7 @@ describe("TopHeaderOrganizations", () => {
     expect(state.search).toHaveBeenCalled();
   });
 
-  it("runs the search on Enter right after the field is cleared", async () => {
+  it("does not switch on Enter right after the field is cleared", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
 
@@ -322,6 +331,16 @@ describe("TopHeaderOrganizations", () => {
       await nextTick();
 
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
+    });
+
+    // Without a field the list region takes the keys, so the pressed option has to take focus.
+    it("lets a pressed option take focus", () => {
+      const wrapper = mountComponent();
+      const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+
+      wrapper.findAll('[role="option"]')[1].element.dispatchEvent(press);
+
+      expect(press.defaultPrevented).toBe(false);
     });
 
     it("picks the highlighted organization on Enter", async () => {
