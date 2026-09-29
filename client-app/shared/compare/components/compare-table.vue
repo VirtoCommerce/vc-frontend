@@ -60,139 +60,133 @@
           </div>
 
           <div ref="headerScrollRef" class="compare-table__header-scroll">
-            <div class="compare-table__thead">
-              <div class="compare-table__header-inner">
-                <div
-                  v-for="item in products"
-                  :key="item.entry.localId ?? item.product.id"
-                  class="compare-table__product"
-                  :class="{ 'compare-table__product--compact': isCompact }"
-                  role="columnheader"
-                  :aria-label="item.product.name"
-                >
-                  <template v-if="isCompact">
-                    <div class="compare-table__product-summary">
-                      <div class="compare-table__product-summary-image-wrap">
-                        <VcImage
-                          class="compare-table__product-summary-image"
-                          :src="item.product.imgSrc"
-                          :alt="item.product.name"
-                        />
-                      </div>
-
-                      <VcProductTitle
-                        class="compare-table__product-summary-title"
-                        :to="getProductRoute(item.product.id, item.product.slug)"
-                        :title="item.product.name"
-                        :lines-number="1"
-                        @click="emit('selectItem', item.product)"
-                      >
-                        {{ item.product.name }}
-                      </VcProductTitle>
+            <div class="compare-table__header-inner">
+              <div
+                v-for="item in products"
+                :key="item.entry.localId ?? item.product.id"
+                class="compare-table__product"
+                :class="{ 'compare-table__product--compact': isCompact }"
+                role="columnheader"
+                :aria-label="item.product.name"
+              >
+                <template v-if="isCompact">
+                  <div class="compare-table__product-summary">
+                    <div class="compare-table__product-summary-image-wrap">
+                      <VcImage
+                        class="compare-table__product-summary-image"
+                        :src="item.product.imgSrc"
+                        :alt="item.product.name"
+                      />
                     </div>
+
+                    <VcProductTitle
+                      class="compare-table__product-summary-title"
+                      :to="getProductRoute(item.product.id, item.product.slug)"
+                      :title="item.product.name"
+                      :lines-number="1"
+                      @click="emit('selectItem', item.product)"
+                    >
+                      {{ item.product.name }}
+                    </VcProductTitle>
+                  </div>
+
+                  <VcButton
+                    v-if="item.product.isConfigurable"
+                    class="compare-table__product-cart-button"
+                    prepend-icon="cube-transparent"
+                    size="sm"
+                    :to="getConfigurationLink(item)"
+                    :target="browserTarget"
+                    :aria-label="t('pages.catalog.customize_button')"
+                  >
+                    <span>
+                      {{ t("pages.catalog.customize_button") }}
+                    </span>
+                  </VcButton>
+
+                  <VcButton
+                    v-else-if="item.product.hasVariations"
+                    class="compare-table__product-cart-button"
+                    prepend-icon="layers"
+                    size="sm"
+                    :to="getProductRoute(item.product.id, item.product.slug)"
+                    :target="browserTarget"
+                    :aria-label="getVariationsLabel(item.product)"
+                  >
+                    <span>
+                      {{ getVariationsLabel(item.product) }}
+                    </span>
+                  </VcButton>
+
+                  <VcButton
+                    v-else
+                    class="compare-table__product-cart-button"
+                    prepend-icon="shopping-cart"
+                    size="sm"
+                    :loading="isAddingToCart(item)"
+                    :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
+                    :aria-label="t('shared.compare.table.add_to_cart')"
+                    @click="onAddToCart(item)"
+                  >
+                    <span>
+                      {{ t("shared.compare.table.add_to_cart") }}
+                    </span>
+                  </VcButton>
+                </template>
+
+                <template v-else>
+                  <div class="compare-table__product-image-wrap">
+                    <VcImage class="compare-table__product-image" :src="item.product.imgSrc" :alt="item.product.name" />
+
+                    <VcProductActions class="compare-table__product-remove" with-background>
+                      <VcProductActionsButton
+                        icon="trash-2"
+                        :tooltip-text="t('shared.compare.table.remove_product')"
+                        @click="onRemoveProduct(item)"
+                      />
+                    </VcProductActions>
+                  </div>
+
+                  <div class="compare-table__product-footer">
+                    <VcProductTitle
+                      class="compare-table__product-title"
+                      :to="getProductRoute(item.product.id, item.product.slug)"
+                      :title="item.product.name"
+                      :lines-number="2"
+                      @click="emit('selectItem', item.product)"
+                    >
+                      {{ item.product.name }}
+                    </VcProductTitle>
 
                     <VcButton
                       v-if="item.product.isConfigurable"
-                      class="compare-table__product-cart-button"
-                      prepend-icon="cube-transparent"
+                      icon="cube-transparent"
                       size="sm"
                       :to="getConfigurationLink(item)"
                       :target="browserTarget"
                       :aria-label="t('pages.catalog.customize_button')"
-                    >
-                      <span>
-                        {{ t("pages.catalog.customize_button") }}
-                      </span>
-                    </VcButton>
+                    />
 
                     <VcButton
                       v-else-if="item.product.hasVariations"
-                      class="compare-table__product-cart-button"
-                      prepend-icon="layers"
+                      icon="layers"
                       size="sm"
                       :to="getProductRoute(item.product.id, item.product.slug)"
                       :target="browserTarget"
                       :aria-label="getVariationsLabel(item.product)"
-                    >
-                      <span>
-                        {{ getVariationsLabel(item.product) }}
-                      </span>
-                    </VcButton>
+                    />
 
                     <VcButton
                       v-else
-                      class="compare-table__product-cart-button"
-                      prepend-icon="shopping-cart"
+                      icon="shopping-cart"
                       size="sm"
                       :loading="isAddingToCart(item)"
                       :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
                       :aria-label="t('shared.compare.table.add_to_cart')"
                       @click="onAddToCart(item)"
-                    >
-                      <span>
-                        {{ t("shared.compare.table.add_to_cart") }}
-                      </span>
-                    </VcButton>
-                  </template>
-
-                  <template v-else>
-                    <div class="compare-table__product-image-wrap">
-                      <VcImage
-                        class="compare-table__product-image"
-                        :src="item.product.imgSrc"
-                        :alt="item.product.name"
-                      />
-
-                      <VcProductActions class="compare-table__product-remove" with-background>
-                        <VcProductActionsButton
-                          icon="trash-2"
-                          :tooltip-text="t('shared.compare.table.remove_product')"
-                          @click="onRemoveProduct(item)"
-                        />
-                      </VcProductActions>
-                    </div>
-
-                    <div class="compare-table__product-footer">
-                      <VcProductTitle
-                        class="compare-table__product-title"
-                        :to="getProductRoute(item.product.id, item.product.slug)"
-                        :title="item.product.name"
-                        :lines-number="2"
-                        @click="emit('selectItem', item.product)"
-                      >
-                        {{ item.product.name }}
-                      </VcProductTitle>
-
-                      <VcButton
-                        v-if="item.product.isConfigurable"
-                        icon="cube-transparent"
-                        size="sm"
-                        :to="getConfigurationLink(item)"
-                        :target="browserTarget"
-                        :aria-label="t('pages.catalog.customize_button')"
-                      />
-
-                      <VcButton
-                        v-else-if="item.product.hasVariations"
-                        icon="layers"
-                        size="sm"
-                        :to="getProductRoute(item.product.id, item.product.slug)"
-                        :target="browserTarget"
-                        :aria-label="getVariationsLabel(item.product)"
-                      />
-
-                      <VcButton
-                        v-else
-                        icon="shopping-cart"
-                        size="sm"
-                        :loading="isAddingToCart(item)"
-                        :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
-                        :aria-label="t('shared.compare.table.add_to_cart')"
-                        @click="onAddToCart(item)"
-                      />
-                    </div>
-                  </template>
-                </div>
+                    />
+                  </div>
+                </template>
               </div>
             </div>
           </div>
@@ -451,11 +445,7 @@ watch(
 <style lang="scss">
 .compare-table {
   &__scroll {
-    @apply block overflow-x-auto rounded-b-[--vc-radius];
-  }
-
-  &__tbody {
-    @apply block;
+    @apply overflow-x-auto rounded-b-[--vc-radius];
   }
 
   &__header-row {
@@ -483,7 +473,7 @@ watch(
   }
 
   &__header-scroll {
-    @apply block min-w-0 flex-1 overflow-x-auto;
+    @apply min-w-0 flex-1 overflow-x-auto;
 
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -491,10 +481,6 @@ watch(
     &::-webkit-scrollbar {
       display: none;
     }
-  }
-
-  &__thead {
-    @apply block;
   }
 
   &__header-inner {
@@ -548,7 +534,7 @@ watch(
   }
 
   &__product {
-    @apply flex min-w-48 max-w-60 flex-1 flex-col gap-3 p-3 text-start font-normal;
+    @apply flex min-w-48 max-w-60 flex-1 flex-col gap-3 p-3;
 
     @media (width < theme("screens.md")) {
       @apply w-28 min-w-0 max-w-none flex-none;
@@ -644,7 +630,7 @@ watch(
   }
 
   &__row-label {
-    @apply sticky start-0 z-[1] flex w-60 shrink-0 items-center gap-1 border-e border-neutral-200 bg-additional-50 px-3 py-2.5 text-start text-xs font-normal text-neutral-600;
+    @apply sticky start-0 z-[1] flex w-60 shrink-0 items-center gap-1 border-e border-neutral-200 bg-additional-50 px-3 py-2.5 text-xs text-neutral-600;
 
     @media (width < theme("screens.md")) {
       @apply w-28;

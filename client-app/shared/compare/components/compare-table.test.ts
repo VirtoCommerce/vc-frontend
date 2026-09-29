@@ -36,13 +36,15 @@ vi.mock("@vueuse/core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@vueuse/core")>();
   const { ref: vueRef } = await import("vue");
   const headerRowTop = vueRef(100); // > appHeaderHeight (0) + 1, i.e. not compact by default
+  const isMobile = vueRef(false);
 
   return {
     ...actual,
-    useBreakpoints: () => ({ smaller: () => vueRef(false) }),
+    useBreakpoints: () => ({ smaller: () => isMobile }),
     useElementBounding: () => ({ top: headerRowTop, update: vi.fn() }),
     useCssVar: () => vueRef("0"),
     __headerRowTop: headerRowTop,
+    __isMobile: isMobile,
   };
 });
 
@@ -128,8 +130,14 @@ function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
   });
 }
 
+async function setMobile(mobile: boolean) {
+  const vueuseCore = (await import("@vueuse/core")) as unknown as { __isMobile: { value: boolean } };
+  vueuseCore.__isMobile.value = mobile;
+}
+
 afterEach(async () => {
   await setCompact(false);
+  await setMobile(false);
   tableRows.value = [];
 });
 
@@ -203,7 +211,7 @@ describe("CompareTable — table semantics", () => {
       .map((rowWrapper) =>
         rowWrapper
           .findAll('[role="cell"], [role="columnheader"], [role="rowheader"]')
-          .map((cell) => [cell.attributes("role"), cell.attributes("aria-label") ?? null]),
+          .map((cell) => [cell.attributes("role"), cell.attributes("aria-label") ?? cell.text()]),
       );
   }
 
@@ -212,21 +220,23 @@ describe("CompareTable — table semantics", () => {
     const wrapper = mountTable({ products: [product("p1"), product("p2")] });
     await nextTick();
 
+    expect(wrapper.get('[role="table"]').attributes("aria-label")).toBe("pages.compare.title");
+    // The corner cell holds the tabs and "Clear category"; each value sits under its own product.
     expect(rowsOf(wrapper)).toEqual([
       [
-        ["cell", null],
+        ["cell", expect.stringContaining("shared.compare.table.tabs.all")],
         ["columnheader", "Product p1"],
         ["columnheader", "Product p2"],
       ],
       [
         ["rowheader", "Label sku"],
-        ["cell", null],
-        ["cell", null],
+        ["cell", "SKU-1"],
+        ["cell", "SKU-2"],
       ],
       [
         ["rowheader", "Label color"],
-        ["cell", null],
-        ["cell", null],
+        ["cell", "Red"],
+        ["cell", "Blue"],
       ],
     ]);
 
@@ -241,10 +251,38 @@ describe("CompareTable — table semantics", () => {
     await setCompact(true);
     await nextTick();
 
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(2);
     expect(rowsOf(wrapper)[0]).toEqual([
-      ["cell", null],
+      ["cell", expect.any(String)],
       ["columnheader", "Product p1"],
       ["columnheader", "Product p2"],
+    ]);
+
+    wrapper.unmount();
+  });
+
+  // Below md the tabs move out to a bar above the table. The corner cell they leave must stay, empty,
+  // or every product header would slide one column left of its values.
+  it("keeps the corner cell, and the tabs out of the table, on mobile", async () => {
+    await setMobile(true);
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    const table = wrapper.get('[role="table"]');
+    expect(table.find(".compare-table__tabs").exists()).toBe(false);
+    expect(wrapper.find(".compare-table__mobile-tabs-bar .compare-table__tabs").exists()).toBe(true);
+    expect(rowsOf(wrapper)).toEqual([
+      [
+        ["cell", ""],
+        ["columnheader", "Product p1"],
+        ["columnheader", "Product p2"],
+      ],
+      [
+        ["rowheader", "Label sku"],
+        ["cell", "SKU-1"],
+        ["cell", "SKU-2"],
+      ],
     ]);
 
     wrapper.unmount();
