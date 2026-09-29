@@ -477,15 +477,21 @@ describe("useSortableList — pointer", () => {
 
   it("keeps `accepts` on a group handed over live", async () => {
     const group = ref("first");
-    const { sortable } = await mounted({ group, accepts: () => true });
+    const accepts = vi.fn(() => false);
+    const { sortable } = await mounted({ group, accepts });
+    const dragEl = document.createElement("div");
+    dragEl.dataset.sortableId = "x";
+    const fromEl = document.createElement("div");
+    fromEl.dataset.sortableName = "rail";
 
     group.value = "second";
     await nextTick();
 
-    expect(sortable.option).toHaveBeenCalledWith(
-      "group",
-      expect.objectContaining({ name: "second", put: expect.any(Function) }),
-    );
+    const [key, { name, put }] = sortable.option.mock.calls.at(-1)!;
+
+    expect([key, name]).toEqual(["group", "second"]);
+    expect(put({}, { el: fromEl }, dragEl)).toBe(false);
+    expect(accepts).toHaveBeenCalledWith("x", "rail");
   });
 
   it("wires the options the drag behaviour depends on", async () => {
