@@ -1640,18 +1640,24 @@ describe("VcSelect", () => {
       expect(control.attributes("aria-label")).toBe("Shipping country");
     });
 
-    // An unset GraphQL value arrives as null, and without valueField the model is the item.
-    it("passes the selected values to the selected slot in multiple mode", () => {
+    it("passes the selected values, not the items, to the selected slot in multiple mode", () => {
       const wrapper = createWrapper(
-        { items: ITEMS, multiple: true, modelValue: ["Albania", "China"] },
         {
-          selected: ({ item }: { item: unknown }) =>
-            h("span", { class: "probe-selected" }, (item as string[]).join(", ")),
+          items: OBJECT_ITEMS,
+          textField: "name",
+          valueField: "id",
+          multiple: true,
+          modelValue: ["1", "2"],
+          error: true,
+        },
+        {
+          selected: ({ item, error }: { item: unknown; error?: boolean }) =>
+            h("span", { class: "probe-selected" }, `${JSON.stringify(item)} ${String(error)}`),
           placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
         },
       );
 
-      expect(wrapper.get(".probe-selected").text()).toBe("Albania, China");
+      expect(wrapper.get(".probe-selected").text()).toBe('["1","2"] true');
       expect(wrapper.find(".probe-placeholder").exists()).toBe(false);
     });
 
@@ -1662,6 +1668,18 @@ describe("VcSelect", () => {
       expect(wrapper.find(".probe-placeholder").exists()).toBe(true);
     });
 
+    // A value that matches no item under valueField resolves to nothing, so there is no item to pass.
+    it("shows the placeholder for a single value that resolves to no item", () => {
+      const wrapper = createWrapper(
+        { items: OBJECT_ITEMS, textField: "name", valueField: "id", modelValue: "missing" },
+        slots,
+      );
+
+      expect(wrapper.find(".probe-placeholder").exists()).toBe(true);
+      expect(wrapper.find(".probe-selected").exists()).toBe(false);
+    });
+
+    // An unset GraphQL value arrives as null, and without valueField the model is the item.
     it("shows the placeholder for a null model, not the selected slot", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: null as unknown as string }, slots);
 

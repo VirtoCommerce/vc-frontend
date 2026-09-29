@@ -37,7 +37,7 @@
           ref="triggerElement"
           v-bind="triggerBindings"
           :selected-item="selectedSlotItem"
-          :has-selection="multiple ? selectedValues.length > 0 : selected != null"
+          :has-selection="multiple ? hasSelection : selected != null"
           @toggle="toggle"
           @clear="clear"
           @navigate="onNavigate($event, open)"
@@ -354,7 +354,6 @@ const selectedText = computed<string | null>(() => {
   return text === undefined || text === null ? null : String(text);
 });
 
-// The `#selected` slot gets the item in single mode and the selected values in multiple mode.
 const selectedSlotItem = computed(() => (props.multiple ? selectedValues.value : selected.value));
 
 const placeholderText = computed(() => selectedText.value ?? props.placeholder);

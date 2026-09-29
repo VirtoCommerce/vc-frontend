@@ -76,7 +76,7 @@ defineEmits<{
 }>();
 
 defineProps<{
-  /** Resolved item behind the model value; handed to the `selected` slot. */
+  /** What the `selected` slot receives: the resolved item, or the selected values in multiple mode. */
   selectedItem?: T;
   hasSelection: boolean;
   size: "xs" | "sm" | "md" | "auto";
