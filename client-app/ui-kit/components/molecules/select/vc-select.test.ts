@@ -484,6 +484,42 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 2");
     });
 
+    it("ignores a selected count that is not a number", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        total: 5,
+        selectedCount: Number.NaN,
+        modelValue: ["Albania"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 5");
+    });
+
+    it("never counts fewer than the checked rows, even above a lower total", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        total: 1,
+        selectedCount: 1,
+        modelValue: [...ITEMS],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 1");
+    });
+
     it("never counts more than the matches of a server-side query", async () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
@@ -1154,6 +1190,70 @@ describe("VcSelect", () => {
 
       expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
       expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Belgium");
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("China");
+    });
+
+    it("rings the selection when Enter opens the list", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("keydown", { key: "Enter" });
+      await nextTick();
+
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("Belgium");
+    });
+
+    it("forgets a keyboard open once the list closes", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("keydown", { key: "Enter" });
+      await nextTick();
+      await input.trigger("keydown", { key: "Escape" });
+      await nextTick();
+      await input.trigger("click");
+      await nextTick();
+
+      expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
+    });
+
+    it("rings the last option when ArrowUp opens onto it", async () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "China" });
+      const input = wrapper.get("input");
+
+      await input.trigger("keydown", { key: "ArrowUp" });
+      await nextTick();
+      await nextTick();
+
+      expect(wrapper.get(".vc-menu-item__inner--highlight-ring").text()).toBe("China");
+    });
+
+    it("drops a pointer highlight when the pointer leaves the list", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+      await wrapper.get('[role="listbox"]').trigger("mouseleave");
+
+      expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
+    });
+
+    it("keeps a keyboard highlight when the pointer leaves the list", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await wrapper.get('[role="listbox"]').trigger("mouseleave");
+
+      expect(wrapper.get(".vc-menu-item__inner--highlighted").text()).toBe("Albania");
     });
 
     it("rings the first option when ArrowDown opens onto it", async () => {

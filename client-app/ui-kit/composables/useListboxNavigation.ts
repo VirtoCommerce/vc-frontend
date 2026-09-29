@@ -30,6 +30,7 @@ function getScrollBox(list: HTMLElement): HTMLElement {
 /**
  * Keyboard state for a listbox driven by `aria-activedescendant`: DOM focus stays on the combobox
  * or search field, and the active option is published by id and styled with a `highlighted` flag.
+ * Bind VcMenuItem's `highlight-ring` to `!isPassiveHighlight`, so only a keyboard position rings.
  */
 export function useListboxNavigation<T>(params: ParamsType<T>) {
   const highlightedIndex = ref(-1);
@@ -44,6 +45,13 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   function highlightPassively(index: number): void {
     highlightedIndex.value = index;
     isPassiveHighlight.value = true;
+  }
+
+  // A pointer highlight ends with the pointer; left in place it would look like a selection.
+  function dropPassiveHighlight(): void {
+    if (isPassiveHighlight.value) {
+      highlightedIndex.value = -1;
+    }
   }
 
   function getItemKey(item: T): unknown {
@@ -143,6 +151,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     getOptionId,
     navigate,
     highlightPassively,
+    dropPassiveHighlight,
     isPassiveHighlight,
     reset,
   };

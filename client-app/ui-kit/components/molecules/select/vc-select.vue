@@ -95,6 +95,7 @@
             <!-- Only options may live in a listbox, so the pager sits beside the list, not in it. -->
             <ul
               :id="listboxId"
+              ref="listElement"
               class="vc-select__list"
               role="listbox"
               :aria-label="accessibleLabel"
@@ -178,7 +179,7 @@
 </template>
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
-import { useDebounceFn, useElementBounding } from "@vueuse/core";
+import { useDebounceFn, useElementBounding, useEventListener } from "@vueuse/core";
 import { isEqual } from "lodash-es";
 import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -238,8 +239,8 @@ const props = withDefaults(
     total?: number;
     /**
      * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
-     * matches that are not loaded. Defaults to the selected matches that are loaded, and is kept
-     * between that number and `total`.
+     * matches that are not loaded. Defaults to the selected matches that are loaded; capped at
+     * `total`, and never below the selected matches that are loaded.
      */
     selectedCount?: number;
     /** Shows a loading indicator inside the list. */
@@ -302,11 +303,16 @@ const {
   valueField: toRef(() => props.valueField),
 });
 
-const { highlightedIndex, isPassiveHighlight, getOptionId, navigate, highlightPassively } = useListboxNavigation({
-  componentId,
-  items: filteredItems,
-  getKey: getItemValue,
-});
+const { highlightedIndex, isPassiveHighlight, getOptionId, navigate, highlightPassively, dropPassiveHighlight } =
+  useListboxNavigation({
+    componentId,
+    items: filteredItems,
+    getKey: getItemValue,
+  });
+
+// On the element, not in the template: a handler there trips the vuejs-accessibility rules.
+const listElement = useTemplateRef<HTMLElement>("listElement");
+useEventListener(listElement, "mouseleave", dropPassiveHighlight);
 
 // Only announce an active option while the list is on screen.
 const activeDescendantId = computed(() =>
@@ -424,6 +430,7 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
     }
 
     event.preventDefault();
+    openedByKeyboard = true;
     toggle();
     return;
   }
@@ -442,11 +449,22 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
   }
 }
 
+// Opened from the keyboard, the selection is a keyboard position and rings; from the pointer it is passive.
+let openedByKeyboard = false;
+
 function toggled(value: boolean) {
   isShown.value = value;
 
   if (isShown.value) {
-    highlightPassively(filteredItems.value.findIndex((item) => isActiveItem(item)));
+    const selectedIndex = filteredItems.value.findIndex((item) => isActiveItem(item));
+
+    if (openedByKeyboard) {
+      highlightedIndex.value = selectedIndex;
+    } else {
+      highlightPassively(selectedIndex);
+    }
+
+    openedByKeyboard = false;
     return;
   }
 
@@ -567,8 +585,8 @@ const countedSelected = computed(() => {
     return selectedVisibleCount.value;
   }
 
-  // Between what is visibly selected and the number of matches, whatever the consumer reports.
-  return Math.min(Math.max(props.selectedCount!, selectedVisibleCount.value), totalCount.value);
+  // Capped at the number of matches, but never below what is visibly selected.
+  return Math.max(Math.min(props.selectedCount!, totalCount.value), selectedVisibleCount.value);
 });
 
 // Checked means `n of n`: a fully selected page of a longer list is still partial.

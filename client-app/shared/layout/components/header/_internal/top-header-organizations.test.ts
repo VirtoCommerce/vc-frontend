@@ -190,6 +190,15 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(true);
   });
 
+  it("drops a pointer highlight when the pointer leaves the list", async () => {
+    const wrapper = mountComponent();
+
+    await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+    await wrapper.get('[role="listbox"]').trigger("mouseleave");
+
+    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+  });
+
   it("keeps focus in the search field when an option is pressed with the mouse", () => {
     const wrapper = mountComponent();
     const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });

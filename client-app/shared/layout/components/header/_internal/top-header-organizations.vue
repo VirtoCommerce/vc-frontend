@@ -50,6 +50,7 @@
       <!-- Only options may live in a listbox, so the empty state and the pager sit beside it. -->
       <ul
         :id="listboxId"
+        ref="listElement"
         class="top-header-organizations__listbox"
         role="listbox"
         :aria-label="$t('common.labels.organizations')"
@@ -105,8 +106,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn } from "@vueuse/core";
-import { computed, onMounted, ref, watch } from "vue";
+import { useDebounceFn, useEventListener } from "@vueuse/core";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
@@ -160,12 +161,17 @@ const {
   getOptionId,
   navigate,
   highlightPassively,
+  dropPassiveHighlight,
   reset: resetHighlight,
 } = useListboxNavigation({
   componentId,
   items: displayedOrganizations,
   getKey: (item) => item.id,
 });
+
+// On the element, not in the template: a handler there trips the vuejs-accessibility rules.
+const listElement = useTemplateRef<HTMLElement>("listElement");
+useEventListener(listElement, "mouseleave", dropPassiveHighlight);
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {
