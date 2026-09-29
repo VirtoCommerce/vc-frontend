@@ -12,7 +12,10 @@ import type { MaybeRef, MaybeRefOrGetter } from "vue";
 import type { LocationQueryRaw } from "vue-router";
 
 const route = reactive<{ query: LocationQueryRaw }>({ query: {} });
-const replace = vi.fn();
+// Navigates like the real router, so a tab switch reaches the lists the way a click does.
+const replace = vi.fn(({ query }: { query: LocationQueryRaw }) => {
+  route.query = query;
+});
 const organization = ref<{ id: string } | null>(null);
 const permissions = ref<string[]>([]);
 
@@ -41,7 +44,7 @@ vi.mock("@/shared/account/composables/useUser", () => ({
 vi.mock("@/modules/returns/api/graphql/queries/getReturns", () => ({
   useGetReturnsQuery: (_: MaybeRefOrGetter<GetReturnsQueryVariables>, enabled?: MaybeRef<boolean>) => {
     ownEnabled = enabled;
-    return { loading: ref(false), result: ownResult, refetch: vi.fn() };
+    return { loading: ref(false), result: ownResult };
   },
 }));
 
@@ -52,7 +55,7 @@ vi.mock("@/modules/returns/api/graphql/queries/getOrganizationReturns", () => ({
   ) => {
     organizationVariables = value;
     organizationEnabled = enabled;
-    return { loading: ref(false), result: organizationResult, refetch: vi.fn() };
+    return { loading: ref(false), result: organizationResult };
   },
 }));
 
@@ -80,16 +83,26 @@ describe("useReturns scope", () => {
     organizationResult.value = undefined;
   });
 
-  it("opens on the organization's returns for a contact who may see them", () => {
+  it("opens on the contact's own returns, also for one who may see the organization's", () => {
+    // The organization's list is one tab away; the page never lands on it by itself.
     const { scope, canViewOrganizationReturns } = useReturns();
 
     expect(canViewOrganizationReturns.value).toBe(true);
+    expect(scope.value).toBe(RETURN_SCOPE.OWN);
+    expect(requestedList()).toBe("own");
+  });
+
+  it("opens the organization's returns when the link asks for them", () => {
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION };
+
+    const { scope } = useReturns();
+
     expect(scope.value).toBe(RETURN_SCOPE.ORGANIZATION);
     expect(requestedList()).toBe("organization");
   });
 
   it("asks for the organization the contact has selected, with the same filters as the own list", () => {
-    route.query = { keyword: "RET-42", status: "Requested", page: "2" };
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION, keyword: "RET-42", status: "Requested", page: "2" };
 
     useReturns();
 
@@ -103,15 +116,6 @@ describe("useReturns scope", () => {
     });
   });
 
-  it("keeps the contact's own returns when the link asks for them", () => {
-    route.query = { scope: RETURN_SCOPE.OWN };
-
-    const { scope } = useReturns();
-
-    expect(scope.value).toBe(RETURN_SCOPE.OWN);
-    expect(requestedList()).toBe("own");
-  });
-
   it("never asks for the organization without the permission, whatever the link says", () => {
     permissions.value = [];
     route.query = { scope: RETURN_SCOPE.ORGANIZATION };
@@ -123,8 +127,9 @@ describe("useReturns scope", () => {
     expect(requestedList()).toBe("own");
   });
 
-  it("never asks for the organization when the contact has none selected", () => {
+  it("never asks for the organization when the contact has none selected, whatever the link says", () => {
     organization.value = null;
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION };
 
     const { canViewOrganizationReturns } = useReturns();
 
@@ -132,8 +137,19 @@ describe("useReturns scope", () => {
     expect(requestedList()).toBe("own");
   });
 
+  it("drops an organization scope the contact may not use from the link on the next change", () => {
+    // A link a colleague shared: the page shows the contact's own returns, and the link stops saying otherwise.
+    permissions.value = [];
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION };
+
+    useReturns().applyKeyword("RET-42");
+
+    expect(replace).toHaveBeenCalledWith({ query: { keyword: "RET-42" } });
+  });
+
   it("shows the list of the tab it is on", () => {
     // Both queries can hold a result from an earlier visit; only the current tab's may show.
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION };
     ownResult.value = { returns: { totalCount: 1, items: [] } };
     organizationResult.value = { organizationReturns: { totalCount: 7, items: [] } };
 
@@ -141,25 +157,42 @@ describe("useReturns scope", () => {
 
     expect(totalCount.value).toBe(7);
 
-    route.query = { scope: RETURN_SCOPE.OWN };
     applyScope(RETURN_SCOPE.OWN);
 
     expect(totalCount.value).toBe(1);
+    expect(requestedList()).toBe("own");
   });
 
-  it("writes the non-default scope to the link and starts from the first page", () => {
+  it("writes the organization scope to the link and starts from the first page", () => {
     route.query = { page: "3" };
-
-    useReturns().applyScope(RETURN_SCOPE.OWN);
-
-    expect(replace).toHaveBeenCalledWith({ query: { scope: RETURN_SCOPE.OWN } });
-  });
-
-  it("drops the scope from the link when switching back to the default", () => {
-    route.query = { scope: RETURN_SCOPE.OWN, keyword: "RET-42" };
 
     useReturns().applyScope(RETURN_SCOPE.ORGANIZATION);
 
+    expect(replace).toHaveBeenCalledWith({ query: { scope: RETURN_SCOPE.ORGANIZATION } });
+  });
+
+  it("drops the scope from the link when switching back to the own returns", () => {
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION, keyword: "RET-42" };
+
+    useReturns().applyScope(RETURN_SCOPE.OWN);
+
     expect(replace).toHaveBeenCalledWith({ query: { keyword: "RET-42" } });
+  });
+
+  it("drops a sort by buyer when switching to the own returns, which have no buyer column", () => {
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION, sort: "customerName:asc" };
+
+    useReturns().applyScope(RETURN_SCOPE.OWN);
+
+    expect(replace).toHaveBeenCalledWith({ query: {} });
+  });
+
+  it("keeps any other sort across the tabs", () => {
+    // The control for the test above.
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION, sort: "number:asc" };
+
+    useReturns().applyScope(RETURN_SCOPE.OWN);
+
+    expect(replace).toHaveBeenCalledWith({ query: { sort: "number:asc" } });
   });
 });

@@ -171,7 +171,7 @@ const { statusLabel } = useReturnStatusLabel();
 const { codeText } = useReturnErrors();
 const { user } = useUser();
 
-// Opened through the organization scope: readable, but every action belongs to the buyer who raised it.
+// A colleague's return: readable, but every action belongs to the buyer who raised it.
 const isColleaguesReturn = computed(
   () => !!orderReturn.value?.customerId && orderReturn.value.customerId !== user.value.id,
 );

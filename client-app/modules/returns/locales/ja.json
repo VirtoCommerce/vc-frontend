@@ -94,7 +94,6 @@
       "columns": {
         "number": "RMA番号",
         "date": "日付",
-        "buyer": "購入者名",
         "status": "ステータス",
         "quantity": "数量"
       }

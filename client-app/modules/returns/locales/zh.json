@@ -94,7 +94,6 @@
       "columns": {
         "number": "RMA编号",
         "date": "日期",
-        "buyer": "买家姓名",
         "status": "状态",
         "quantity": "数量"
       }

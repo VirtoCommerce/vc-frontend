@@ -1,3 +1,5 @@
+#import "../../fragments/returnListItem.graphql"
+
 query GetReturns(
   $storeId: String!
   $first: Int
@@ -21,14 +23,7 @@ query GetReturns(
   ) {
     totalCount
     items {
-      id
-      number
-      status
-      statusDisplayValue(cultureName: $cultureName)
-      createdDate
-      orderId
-      customerName
-      itemsQuantity
+      ...returnListItem
       availableActions {
         name
         isAvailable

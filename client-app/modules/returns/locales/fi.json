@@ -94,7 +94,6 @@
       "columns": {
         "number": "RMA",
         "date": "Päivämäärä",
-        "buyer": "Ostajan nimi",
         "status": "Tila",
         "quantity": "Määrä"
       }

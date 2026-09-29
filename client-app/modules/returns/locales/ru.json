@@ -94,7 +94,6 @@
       "columns": {
         "number": "Номер",
         "date": "Дата",
-        "buyer": "Покупатель",
         "status": "Статус",
         "quantity": "Кол-во"
       }

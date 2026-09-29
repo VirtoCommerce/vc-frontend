@@ -3,6 +3,7 @@ export * from "./mutations/createReturn";
 export * from "./mutations/submitReturn";
 export * from "./mutations/updateReturn";
 
+export * from "./queries/getOrganizationReturns";
 export * from "./queries/getReturn";
 export * from "./queries/getReturnPolicy";
 export * from "./queries/getReturnReasons";

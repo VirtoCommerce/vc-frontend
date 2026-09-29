@@ -110,7 +110,7 @@
                 </div>
 
                 <div v-if="isOrganizationScope" class="returns-list__mobile-cell">
-                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.buyer") }}</span>
+                  <span class="returns-list__mobile-label">{{ $t("common.labels.buyer_name") }}</span>
 
                   <span class="returns-list__mobile-value">{{ item.customerName }}</span>
                 </div>
@@ -143,7 +143,7 @@
               v-if="isOrganizationScope"
               id="customerName"
               v-slot="{ item }"
-              :title="$t('returns.list.columns.buyer')"
+              :title="$t('common.labels.buyer_name')"
               sortable
             >
               {{ item.customerName }}
@@ -207,6 +207,7 @@ const {
   itemsPerPage,
   canViewOrganizationReturns,
   scope,
+  isOrganizationScope,
   applyScope,
   applyKeyword,
   applyFilter,
@@ -220,8 +221,6 @@ const { statuses } = useReturnStatuses();
 const { statusLabel } = useReturnStatusLabel();
 
 const localKeyword = ref(keyword.value);
-
-const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
 
 // Only the organization's list is read by people looking for a colleague, so only it mentions the buyer.
 const searchPlaceholderKey = computed(() =>

@@ -94,7 +94,6 @@
       "columns": {
         "number": "RMA",
         "date": "Fecha",
-        "buyer": "Nombre del comprador",
         "status": "Estado",
         "quantity": "Cant."
       }
