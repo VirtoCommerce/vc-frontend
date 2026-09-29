@@ -181,6 +181,27 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(false);
   });
 
+  // A category on its own route leaves before the matcher mounts, and holds its scope for one tick on the way out.
+  it("takes over a scope handed over by a page that left for this route", async () => {
+    const handOver = useSearchScore().holdScope();
+
+    await mountMatcher();
+    handOver();
+
+    expect(isScopePending.value).toBe(true);
+
+    await setSlugContentState("ready");
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("holds nothing on a first mount with nothing handed over", async () => {
+    await mountMatcher();
+
+    expect(wrapper!.find('[data-testid="page"]').exists()).toBe(false);
+    expect(isScopePending.value).toBe(false);
+  });
+
   it("releases the scope when the matcher itself is torn down mid-load", async () => {
     await mountMatcher();
     await setSlugContentState("ready");

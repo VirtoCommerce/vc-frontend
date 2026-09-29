@@ -38,6 +38,7 @@
 import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 
@@ -128,6 +129,26 @@ watchEffect(() => {
     emitState("empty");
   }
 });
+
+const { preparingScope, holdScope } = useSearchScore();
+
+// The category page renders asynchronously, so it starts preparing its search scope a moment after
+// this component shows. Until it does, nothing would hold the scope and the search bar would collapse.
+watch(
+  () => props.isVisible && !loading.value && objectType.value === ObjectType.Category,
+  (isCategory, _previous, onCleanup) => {
+    if (!isCategory) {
+      return;
+    }
+    const release = holdScope();
+    const stopWaiting = watch(preparingScope, release, { once: true });
+    onCleanup(() => {
+      stopWaiting();
+      release();
+    });
+  },
+  { immediate: true },
+);
 
 function emitState(state: StateType, redirectUrl?: string) {
   emit("setState", { state, redirectUrl });

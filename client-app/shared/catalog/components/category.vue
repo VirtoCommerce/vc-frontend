@@ -222,7 +222,18 @@
 <script setup lang="ts">
 import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import { omit } from "lodash-es";
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  toRef,
+  toRefs,
+  watch,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
@@ -629,7 +640,7 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope, holdScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
 
@@ -739,6 +750,10 @@ function changeSearchBarScope(categoryId: string, label?: string) {
 }
 
 onBeforeUnmount(() => {
+  // Held for one tick: a page mounting in the same render may take the scope over (see matcher.vue).
+  if (isCategoryScope.value) {
+    void nextTick(holdScope());
+  }
   clearCategoryScope();
   document.body.style.overflowAnchor = "auto";
 });

@@ -114,19 +114,21 @@ const visibleComponent = computed(() => {
   return result;
 });
 
-const { isCategoryScope, holdScope } = useSearchScore();
+const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 
 let releaseScope: (() => void) | undefined;
 
 // The loader replaces the category page before the next page is known, so the search bar would
 // drop its category scope and later rebuild it. Pre flush: the leaving category still holds it.
+// Immediate: a category on another route has already left, and hands its scope over on the way out.
 watch(
   () => visibleComponent.value === "loader",
   (isLoader) => {
-    if (isLoader && isCategoryScope.value && !releaseScope) {
+    if (isLoader && (isCategoryScope.value || isScopePending.value) && !releaseScope) {
       releaseScope = holdScope();
     }
   },
+  { immediate: true },
 );
 
 // Post flush: a category page that has just mounted is already preparing its own scope.
