@@ -170,6 +170,7 @@ describe("TopHeaderOrganizations", () => {
 
   it("runs the search on Enter when nothing is highlighted", async () => {
     const wrapper = mountComponent();
+    state.search.mockClear();
 
     await wrapper.get("input").trigger("keydown", { key: "Enter" });
 
@@ -226,6 +227,7 @@ describe("TopHeaderOrganizations", () => {
   it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
+    state.search.mockClear();
 
     await input.trigger("keydown", { key: "ArrowDown" });
     await input.trigger("keydown", { key: "ArrowDown" });
@@ -377,6 +379,15 @@ describe("TopHeaderOrganizations", () => {
       wrapper.findAll('[role="option"]')[1].element.dispatchEvent(press);
 
       expect(press.defaultPrevented).toBe(false);
+    });
+
+    it("picks the row the pointer highlighted on Enter", async () => {
+      const wrapper = mountComponent();
+
+      await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+      await wrapper.get('[role="listbox"]').trigger("keydown", { key: "Enter" });
+
+      expect(state.trySwitch).toHaveBeenCalledWith("org-2");
     });
 
     it("picks the highlighted organization on Enter", async () => {

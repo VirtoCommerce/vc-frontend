@@ -1222,6 +1222,17 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
     });
 
+    it("picks the row under the pointer on Enter", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await wrapper.findAll(".vc-menu-item")[2].trigger("mousemove");
+      await input.trigger("keydown", { key: "Enter" });
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([["China"]]);
+    });
+
     it("leaves Enter to the form after a pointer open", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: ["Belgium"] });
       const input = wrapper.get("input");

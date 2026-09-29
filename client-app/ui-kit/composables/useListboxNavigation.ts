@@ -40,7 +40,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   const count = computed(() => params.items.value.length);
 
   // A highlight the pointer put there is not a keyboard position: it keeps its background but
-  // draws no ring until the keyboard moves it. Any other write makes it a keyboard position.
+  // draws no ring until the keyboard moves it. Any other change of index makes it a keyboard position.
   const isPassiveHighlight = ref(false);
 
   watch(highlightedIndex, () => (isPassiveHighlight.value = false), { flush: "sync" });
