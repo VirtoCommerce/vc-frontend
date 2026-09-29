@@ -1,20 +1,20 @@
 <template>
-  <div class="missions-banner" :class="`missions-banner--${variant}`">
-    <div class="missions-banner__icon" :class="`missions-banner__icon--${variant}`">
-      <VcIcon :name="icon" variant="solid" class="text-primary" :size="28" />
+  <div class="missions-banner" :class="`missions-banner--color--${color}`">
+    <div class="missions-banner__icon">
+      <VcIcon :name="icon" :size="24" />
     </div>
 
     <div class="missions-banner__body">
-      <slot>
-        <span v-if="title" class="missions-banner__title">{{ title }}</span>
+      <span v-if="title" class="missions-banner__title">{{ title }}</span>
 
+      <slot>
         <p v-if="description" class="missions-banner__subtitle">{{ description }}</p>
       </slot>
     </div>
 
-    <router-link v-if="linkTo" :to="linkTo" class="missions-banner__link missions-banner__link--default">
+    <VcButton v-if="linkTo" class="missions-banner__action" :to="linkTo" :color="color" variant="soft" size="sm">
       {{ linkText }}
-    </router-link>
+    </VcButton>
   </div>
 </template>
 
@@ -22,7 +22,7 @@
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
-  variant: "light" | "dark";
+  color: "primary" | "info";
   icon: string;
   title?: string;
   description?: string;
@@ -35,50 +35,36 @@ defineProps<IProps>();
 
 <style lang="scss">
 .missions-banner {
-  @apply flex items-center gap-4 rounded-[--vc-radius] border p-5 shadow-sm;
+  --accent-color: theme("colors.primary.500");
 
-  &--light {
-    @apply border-neutral-200 bg-additional-50;
-  }
+  @apply flex items-center gap-4 rounded-[--vc-radius] border-s-4 border-[--accent-color] bg-additional-50 p-5;
 
-  &--dark {
-    @apply border-transparent bg-additional-950;
+  box-shadow:
+    2px 4px 10px -1px rgb(from theme("colors.additional.950") r g b / 0.08),
+    0 0 3px rgb(from theme("colors.additional.950") r g b / 0.08);
+
+  &--color--info {
+    --accent-color: theme("colors.info.500");
   }
 
   &__icon {
-    @apply flex size-14 shrink-0 items-center justify-center rounded-full;
-
-    &--light {
-      @apply bg-primary-50;
-    }
-
-    &--dark {
-      @apply bg-additional-50/10;
-    }
+    @apply flex size-14 shrink-0 items-center justify-center rounded-full bg-[--accent-color] text-additional-50;
   }
 
   &__body {
-    @apply flex min-w-0 flex-col;
+    @apply flex min-w-0 flex-col gap-1;
   }
 
   &__title {
-    @apply font-bold text-additional-50;
+    @apply text-sm font-extrabold uppercase tracking-[0.02em] text-neutral-900;
   }
 
   &__subtitle {
-    @apply text-sm text-neutral-400;
+    @apply text-sm text-neutral-600;
   }
 
-  &__link {
-    @apply ms-auto flex shrink-0 items-center gap-1 text-sm font-bold;
-
-    &--default {
-      @apply text-[--link-color] hover:text-[--link-hover-color];
-    }
-
-    &--accent {
-      @apply text-primary hover:text-primary-600;
-    }
+  &__action {
+    @apply ms-auto shrink-0;
   }
 }
 </style>

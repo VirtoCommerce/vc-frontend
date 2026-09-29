@@ -70,7 +70,6 @@
           "days_left": "{count} день остался | {count} дня осталось",
           "no_deadline": "Без срока",
           "mission_completed": "Миссия выполнена",
-          "completed": "Выполнено",
           "open_mission": "Открыть миссию",
           "progress_skus": "от {current} до {target} товаров",
           "progress_any_sku": "хотя бы 1 из {target} товаров",

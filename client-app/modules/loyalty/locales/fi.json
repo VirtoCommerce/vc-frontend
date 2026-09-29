@@ -70,7 +70,6 @@
           "days_left": "{count} päivä jäljellä | {count} päivää jäljellä",
           "no_deadline": "Ei määräaikaa",
           "mission_completed": "Tehtävä suoritettu",
-          "completed": "Suoritettu",
           "open_mission": "Avaa tehtävä",
           "progress_skus": "{current} / {target} tuotetta",
           "progress_any_sku": "vähintään 1 / {target} tuotetta",

@@ -70,7 +70,6 @@
           "days_left": "{count} dag kvar | {count} dagar kvar",
           "no_deadline": "Ingen tidsgräns",
           "mission_completed": "Uppdrag slutfört",
-          "completed": "Slutförd",
           "open_mission": "Öppna uppdrag",
           "progress_skus": "{current} av {target} SKU:er",
           "progress_any_sku": "minst 1 av {target} SKU:er",

@@ -70,7 +70,6 @@
           "days_left": "{count} giorno rimasto | {count} giorni rimasti",
           "no_deadline": "Senza scadenza",
           "mission_completed": "Missione completata",
-          "completed": "Completato",
           "open_mission": "Apri missione",
           "progress_skus": "{current} di {target} SKU",
           "progress_any_sku": "almeno 1 SKU su {target}",

@@ -3,22 +3,25 @@
     <div class="mission-card__banner">
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
-      <div class="mission-card__overlay"></div>
+      <div v-if="view.isCompleted" class="mission-card__done">
+        <VcIcon name="circle-check" :size="56" />
+      </div>
 
-      <VcChip class="mission-card__points" color="primary" variant="soft" size="sm" rounded>
-        <VcIcon name="star" variant="solid" />
-        {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
-      </VcChip>
+      <div class="mission-card__badges">
+        <VcChip color="warning" variant="tonal" size="sm" rounded>
+          <VcIcon class="vc-chip__icon" name="star" variant="solid" />
+          {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
+        </VcChip>
 
-      <VcChip v-if="view.isCompleted" class="mission-card__completed" color="success" size="sm" icon="check" rounded>
-        {{ $t("pages.account.missions.card.completed") }}
-      </VcChip>
-
-      <VcTypography class="mission-card__type" tag="span">{{ view.typeLabel }}</VcTypography>
+        <VcChip color="info" variant="tonal" size="sm" rounded>
+          <VcIcon class="vc-chip__icon" :name="typeIcon" variant="solid" />
+          {{ view.typeLabel }}
+        </VcChip>
+      </div>
     </div>
 
     <div class="mission-card__body">
-      <MissionDateBadge class="mission-card__meta" :severity="view.dateSeverity" :label="view.dateLabel" />
+      <span class="mission-card__note">{{ view.progressLabel }}</span>
 
       <div class="mission-card__progress">
         <div class="mission-card__track">
@@ -37,13 +40,13 @@
       </VcTypography>
 
       <div class="mission-card__footer">
-        <span class="mission-card__note">{{ view.progressLabel }}</span>
+        <MissionDateBadge :severity="view.dateSeverity" :label="view.dateLabel" />
 
         <VcButton
-          class="mission-card__action"
           icon="arrow-right"
           variant="outline"
           color="primary"
+          size="sm"
           :aria-label="$t('pages.account.missions.card.open_mission')"
           @click="openMission"
         />
@@ -53,6 +56,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useModal } from "@/shared/modal";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
@@ -68,6 +72,15 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { view } = useMissionCard(() => props.mission);
+
+const TYPE_ICONS: Record<MissionType, string> = {
+  [MISSION_TYPE.PerSkuAll]: "barcode",
+  [MISSION_TYPE.PerSkuAny]: "barcode",
+  [MISSION_TYPE.OrderValue]: "cash",
+  [MISSION_TYPE.OrderCount]: "shopping-bag",
+};
+
+const typeIcon = computed(() => TYPE_ICONS[props.mission.missionType as MissionType] ?? TYPE_ICONS.PerSkuAll);
 const { openModal } = useModal();
 
 const MODALS_BY_TYPE: Record<MissionType, Component> = {
@@ -86,44 +99,32 @@ function openMission(): void {
 
 <style lang="scss">
 .mission-card {
-  @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-sm;
+  @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-md;
 
   &__banner {
-    @apply relative h-36 shrink-0 bg-secondary-800;
+    @apply relative h-[13.125rem] shrink-0 bg-secondary-800;
   }
 
   &__image {
     @apply size-full object-cover;
   }
 
-  &__overlay {
-    @apply absolute inset-0;
+  &__done {
+    @apply absolute inset-0 flex items-center justify-center text-additional-50;
 
-    background: linear-gradient(
-      180deg,
-      rgb(from theme("colors.secondary.900") r g b / 0.05),
-      rgb(from theme("colors.secondary.900") r g b / 0.55)
-    );
+    background: rgb(from theme("colors.success.400") r g b / 0.75);
   }
 
-  &__points {
-    @apply absolute left-3 top-3;
-  }
-
-  &__completed {
-    @apply absolute right-3 top-3;
-  }
-
-  &__type {
-    @apply absolute bottom-2.5 left-3 text-xs font-black uppercase tracking-wider text-additional-50;
+  &__badges {
+    @apply absolute left-3 top-3 flex flex-wrap gap-2;
   }
 
   &__body {
     @apply flex flex-1 flex-col p-4;
   }
 
-  &__meta {
-    @apply mb-3;
+  &__note {
+    @apply mb-2 text-sm font-bold text-neutral-500;
   }
 
   &__progress {
@@ -135,7 +136,7 @@ function openMission(): void {
   }
 
   &__bar {
-    @apply h-full rounded-full bg-warning-500;
+    @apply h-full rounded-full bg-info-500;
 
     &--completed {
       @apply bg-success-500;
@@ -152,14 +153,6 @@ function openMission(): void {
 
   &__footer {
     @apply mt-auto flex items-center justify-between border-t border-neutral-200 pt-3.5;
-  }
-
-  &__note {
-    @apply text-sm font-bold text-neutral-500;
-  }
-
-  &__action {
-    @apply rounded-full;
   }
 }
 </style>

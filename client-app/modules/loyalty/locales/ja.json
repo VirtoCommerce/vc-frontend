@@ -70,7 +70,6 @@
           "days_left": "{count}日残リ | {count}日残リ",
           "no_deadline": "期限なし",
           "mission_completed": "ミッション完了",
-          "completed": "完了",
           "open_mission": "ミッションを開く",
           "progress_skus": "{current} / {target} SKU",
           "progress_any_sku": "{target}個中少なくとも1個",
