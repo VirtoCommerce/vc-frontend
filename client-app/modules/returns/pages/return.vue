@@ -199,9 +199,7 @@ function openCancelModal(): void {
   });
 }
 
-const pageTitle = computed(() =>
-  orderReturn.value?.number ? t("return_details.title", [orderReturn.value.number]) : t("returns.title"),
-);
+const pageTitle = computed(() => t("return_details.title", [orderReturn.value?.number ?? ""]));
 
 usePageHead({ title: pageTitle });
 
