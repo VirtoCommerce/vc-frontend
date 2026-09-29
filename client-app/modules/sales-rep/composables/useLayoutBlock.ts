@@ -16,8 +16,7 @@ export interface ILayoutBlockContextType {
 
 const LAYOUT_BLOCK = Symbol("layoutBlock") as InjectionKey<ILayoutBlockContextType | undefined>;
 
-/** `undefined` withdraws the offer from everything below, as a widget does once it has taken it. */
-export function provideLayoutBlock(context: ILayoutBlockContextType | undefined): void {
+export function provideLayoutBlock(context: ILayoutBlockContextType): void {
   provide(LAYOUT_BLOCK, context);
 }
 
