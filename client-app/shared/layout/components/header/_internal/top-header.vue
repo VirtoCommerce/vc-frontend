@@ -169,8 +169,6 @@
               </span>
             </button>
 
-            <ExtensionPointList category="topHeaderAccountMenu" @click="closeLoginMenu" />
-
             <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>
         </div>

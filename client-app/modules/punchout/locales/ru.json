@@ -1,6 +1,5 @@
 {
   "punchout": {
-    "mode_label": "Режим punchout",
-    "back_to_customer_mode": "Вернуться в обычный режим"
+    "mode_label": "Режим punchout"
   }
 }

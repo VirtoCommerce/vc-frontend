@@ -1,6 +1,5 @@
 {
   "punchout": {
-    "mode_label": "Mode punchout",
-    "back_to_customer_mode": "Retour au mode client"
+    "mode_label": "Mode punchout"
   }
 }

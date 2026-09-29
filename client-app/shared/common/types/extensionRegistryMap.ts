@@ -55,7 +55,6 @@ export type ExtensionCategoryMapType = {
   accountMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
   mobileHeader: ExtensionEntryType;
   topHeaderStatus: ExtensionEntryType;
-  topHeaderAccountMenu: ExtensionEntryType;
   productCard: ExtensionEntryType<
     { product?: Product; isTextShown?: boolean; lazy?: boolean },
     never,
