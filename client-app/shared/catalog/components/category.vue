@@ -629,7 +629,7 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, prepareScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
 
@@ -643,16 +643,8 @@ watch(
 
       setQueryScope(searchQueryParam.value);
 
-      if (categoryId) {
-        preparingScope.value = true;
-      }
-
-      // The flag is shared: a fetch outliving its page must not clear the one the next page set.
-      let isStale = false;
-      onCleanup(() => {
-        isStale = true;
-        preparingScope.value = false;
-      });
+      const finishPreparing = categoryId ? prepareScope() : undefined;
+      onCleanup(() => finishPreparing?.());
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -673,9 +665,7 @@ watch(
           productFilter,
         });
       } finally {
-        if (!isStale) {
-          preparingScope.value = false;
-        }
+        finishPreparing?.();
       }
 
       if (!props.isRoot) {

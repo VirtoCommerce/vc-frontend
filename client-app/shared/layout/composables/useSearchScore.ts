@@ -58,6 +58,23 @@ function _useSearchScore() {
     };
   }
 
+  let preparingOwner: symbol | undefined;
+
+  // Marks the scope as being prepared until the returned function is called. Only the latest caller
+  // clears it, so a fetch that outlives its page cannot clear what the next page has just set.
+  function prepareScope(): () => void {
+    const owner = Symbol("preparingScope");
+    preparingOwner = owner;
+    preparingScope.value = true;
+
+    return () => {
+      if (preparingOwner === owner) {
+        preparingOwner = undefined;
+        preparingScope.value = false;
+      }
+    };
+  }
+
   function setQueryScope(query: string) {
     searchScopeData.value = {
       ...searchScopeData.value,
@@ -77,6 +94,7 @@ function _useSearchScore() {
 
     setQueryScope,
     holdScope,
+    prepareScope,
 
     isCategoryScope,
   };

@@ -28,12 +28,12 @@ const loyaltyCurrencyOverride = useLoyaltyCatalogCurrency();
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
 
-const { isCategoryScope, holdScope } = useSearchScore();
+const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 
-// Before the category below drops its scope. Held for one tick: a page mounting in the same render
-// (the matcher, on a breadcrumb click) takes it over; any other page lets it lapse.
+// Before the category below drops its scope, or its first fetch is cut short. Held for one tick: a page
+// mounting in the same render (the matcher, on a breadcrumb click) takes it over; any other lets it lapse.
 onBeforeUnmount(() => {
-  if (isCategoryScope.value) {
+  if (isCategoryScope.value || isScopePending.value) {
     void nextTick(holdScope());
   }
 });

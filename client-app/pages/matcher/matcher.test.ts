@@ -62,6 +62,9 @@ vi.mock("@/core/composables", () => ({
 }));
 
 // The category route's page, real, around a stub of the shared category it renders.
+// Set by a test whose category page is still on its first fetch when it is replaced.
+const categoryState = vi.hoisted(() => ({ isFetching: false }));
+
 vi.mock("@/shared/catalog/components/category.vue", async () => {
   const vue = await import("vue");
   const { useSearchScore: searchScore } = await import("@/shared/layout/composables/useSearchScore");
@@ -69,8 +72,11 @@ vi.mock("@/shared/catalog/components/category.vue", async () => {
     __esModule: true,
     default: vue.defineComponent({
       setup() {
+        // As the real one: a fetch cut short by the page going ends its preparation with it.
+        const finishPreparing = categoryState.isFetching ? searchScore().prepareScope() : undefined;
         vue.onBeforeUnmount(() => {
           searchScore().searchScopeData.value = { queryScope: "", searchScope: [] };
+          finishPreparing?.();
         });
         return () => vue.h("div", { "data-testid": "category" });
       },
@@ -127,6 +133,7 @@ afterEach(() => {
   wrapper?.unmount();
   wrapper = undefined;
   pagePrepares = false;
+  categoryState.isFetching = false;
   preparingScope.value = false;
   // Holds are global state: one leaked here would fail every test after it, far from the cause.
   expect(isScopePending.value).toBe(false);
@@ -255,7 +262,35 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(false);
   });
 
-  it("hands nothing over from a category page that had no scope yet", async () => {
+  // Opened from the header menu and left before its first fetch returned: no scope yet, only its preparation.
+  it("takes over from a category route's page that is still preparing its scope", async () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    categoryState.isFetching = true;
+    const isMatcher = ref(false);
+    const Host = defineComponent({
+      setup: () => () => (isMatcher.value ? h(Matcher) : h(CategoryPage, { categoryId: "category-1" })),
+    });
+    wrapper = mount(Host, { global: { stubs: { VcLoaderOverlay: true, VcBreadcrumbs: true, VcContainer: SlotStub } } });
+    await flushPromises();
+    expect(isScopePending.value).toBe(true);
+
+    const seen: boolean[] = [];
+    const stop = watch(isScopePending, (pending) => seen.push(pending), { flush: "sync" });
+    isMatcher.value = true;
+    await flushPromises();
+    stop();
+
+    expect(preparingScope.value).toBe(false);
+    expect(seen).not.toContain(false);
+    expect(isScopePending.value).toBe(true);
+
+    previewerEmitters.internal({ state: "empty" });
+    await setSlugContentState("ready");
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("hands nothing over from a category page with neither a scope nor a fetch in flight", async () => {
     vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
     const isMatcher = ref(false);
     const Host = defineComponent({
