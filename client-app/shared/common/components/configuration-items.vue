@@ -59,28 +59,28 @@
                 </template>
               </td>
 
-              <td
-                class="configuration-items__value"
-                :class="{
-                  'configuration-items__value--files': configurationItem.type === CONFIGURABLE_SECTION_TYPES.file,
-                }"
-                :title="getText(configurationItem)"
-              >
-                <template v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file">
-                  <button
-                    v-for="file in getFiles(configurationItem)"
-                    :key="file.name"
-                    type="button"
-                    class="configuration-items__file"
-                    :title="file.name"
-                    :disabled="!file.url"
-                    @click="downloadFile(file.url!, file.name)"
-                  >
-                    {{ file.name }}
-                  </button>
-                </template>
+              <td v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file" class="configuration-items__value">
+                <!-- Zero width keeps long file names out of the table's min-content so they truncate -->
+                <div class="configuration-items__files">
+                  <template v-for="file in getFiles(configurationItem)" :key="file.url ?? file.name">
+                    <a
+                      v-if="file.url"
+                      class="configuration-items__file configuration-items__file--link"
+                      :href="file.url"
+                      :download="file.name"
+                      :title="file.name"
+                      @click.prevent="downloadFile(file.url, file.name)"
+                    >
+                      {{ file.name }}
+                    </a>
 
-                <template v-else>{{ getText(configurationItem) }}</template>
+                    <span v-else class="configuration-items__file" :title="file.name">{{ file.name }}</span>
+                  </template>
+                </div>
+              </td>
+
+              <td v-else class="configuration-items__value" :title="getText(configurationItem)">
+                {{ getText(configurationItem) }}
               </td>
 
               <td v-if="hasAnyPrice" class="configuration-items__price">
@@ -317,17 +317,16 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
 
     @container (max-width: theme("containers.xs")) {
       @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
-    }
+  }
 
-    &--files {
-      @apply flex flex-col items-start gap-1 overflow-visible whitespace-normal;
-    }
+  &__files {
+    @apply flex w-0 min-w-full flex-col items-start gap-1;
   }
 
   &__file {
-    @apply max-w-full truncate text-start;
+    @apply max-w-full truncate;
 
-    &:not(:disabled) {
+    &--link {
       color: var(--link-color);
 
       &:hover {
