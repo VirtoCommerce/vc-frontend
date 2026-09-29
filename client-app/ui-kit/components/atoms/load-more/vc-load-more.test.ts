@@ -28,8 +28,12 @@ async function afterContentSettles() {
 // Globally registered in the app, and `$t` comes from the i18n plugin; a bare mount has neither.
 const GLOBAL = { components: { VcIcon, VcLoader }, mocks: { $t: (key: string) => key } };
 
-function renderRows(count: number, label: string) {
-  return Array.from({ length: count }, (_, index) => h("p", { key: `${label}-${index}` }, `${label} ${index}`));
+function renderRows(count: number, label: string, images: boolean) {
+  return Array.from({ length: count }, (_, index) =>
+    images
+      ? h("img", { key: `${label}-${index}`, alt: `${label} ${index}` })
+      : h("p", { key: `${label}-${index}` }, `${label} ${index}`),
+  );
 }
 
 type StateType = {
@@ -39,6 +43,7 @@ type StateType = {
   pageLimitReached: boolean;
   rows: number;
   rowLabel: string;
+  imageRows: boolean;
   present: boolean;
 };
 
@@ -55,6 +60,7 @@ function mountList(initial: Partial<StateType> = {}) {
     pageLimitReached: false,
     rows: 1,
     rowLabel: "row",
+    imageRows: false,
     present: true,
     ...initial,
   });
@@ -65,7 +71,7 @@ function mountList(initial: Partial<StateType> = {}) {
       setup() {
         return () =>
           h(VcScrollbar, { vertical: true }, () => [
-            ...renderRows(state.rows, state.rowLabel),
+            ...renderRows(state.rows, state.rowLabel, state.imageRows),
             state.present
               ? h(VcLoadMore, {
                   loading: state.loading,
@@ -118,6 +124,63 @@ describe("VcLoadMore", () => {
     await afterContentSettles();
 
     state.rowLabel = "match";
+    state.loading = false;
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
+  it("asks again once a page of rows without text has landed and the list still fits", async () => {
+    const { state, onLoadMore, region } = mountList({ imageRows: true });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    await afterContentSettles();
+
+    state.rows = 4;
+    state.loading = false;
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
+  // A new search empties the list and brings back exactly the rows the last request was made from.
+  it("asks again for a list rebuilt identical to the one it last asked from", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 3 });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    state.rows = 0;
+    await afterContentSettles();
+
+    state.rows = 3;
+    state.loading = false;
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
+  it("asks again for a list of rows without text rebuilt identical to the one it last asked from", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 3, imageRows: true });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    state.rows = 0;
+    await afterContentSettles();
+
+    state.rows = 3;
     state.loading = false;
     await afterContentSettles();
 

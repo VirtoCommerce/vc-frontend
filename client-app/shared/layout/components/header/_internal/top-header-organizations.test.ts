@@ -177,8 +177,6 @@ describe("TopHeaderOrganizations", () => {
     expect(state.trySwitch).not.toHaveBeenCalled();
   });
 
-  // Un-hoisting the current organization mid-request shifts every option up by one, which
-  // invalidates the keyboard highlight on every page load.
   // The debounced search has not answered yet, so the highlighted row belongs to the old query.
   it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
     const wrapper = mountComponent();
@@ -194,6 +192,21 @@ describe("TopHeaderOrganizations", () => {
     expect(state.search).toHaveBeenCalled();
   });
 
+  it("runs the search on Enter right after the field is cleared", async () => {
+    const wrapper = mountComponent();
+    const input = wrapper.get("input");
+
+    await input.trigger("keydown", { key: "ArrowDown" });
+    wrapper.getComponent({ name: "VcInput" }).vm.$emit("clear");
+    await nextTick();
+    await input.trigger("keydown", { key: "Enter" });
+    await nextTick();
+
+    expect(state.trySwitch).not.toHaveBeenCalled();
+  });
+
+  // Un-hoisting the current organization mid-request shifts every option up by one, which
+  // invalidates the keyboard highlight on every page load.
   it("keeps the current organization pinned to the top while a page loads", async () => {
     state.organization.value = { id: "org-3", name: "Initech" };
     const wrapper = mountComponent();

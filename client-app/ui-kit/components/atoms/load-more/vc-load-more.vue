@@ -2,6 +2,7 @@
   <component
     :is="tag"
     v-if="pageLimitReached || showSpinner || showEnd"
+    ref="rootElement"
     class="vc-load-more"
     :data-test-id="testId"
     :role="role"
@@ -27,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, inject, onMounted, ref, useTemplateRef, watch } from "vue";
 import { vcScrollbarKey } from "../scrollbar/vc-scrollbar-context";
 
 interface IEmits {
@@ -37,10 +38,7 @@ interface IEmits {
 interface IProps {
   /** Another page exists. Nothing is ever requested without it. */
   hasNextPage?: boolean;
-  /**
-   * A page is on its way. It is what keeps one request from becoming many — see the note on
-   * `reconsider` — and it is what the spinner reports, so a paged list has to bind it.
-   */
+  /** A page is on its way: blocks a second request and shows the spinner, so a paged list has to bind it. */
   loading?: boolean;
   /**
    * Say "you have reached the end of the list" once no next page is left. Off by default: the
@@ -84,14 +82,22 @@ const showSpinner = computed(() => props.loading && props.hasNextPage);
 
 const showEnd = computed(() => props.showEndOfList && !props.hasNextPage && !props.loading);
 
-// What the region shows, read only at rest, so a spinner drawn for the last request is never in it.
-// Text rather than a node count: a new search can land exactly as many rows as the list it replaced.
-function readContent(): string {
-  return scrollbar?.el.value?.textContent ?? "";
+type ContentType = { size: number; text: string };
+
+const rootElement = useTemplateRef<HTMLElement>("rootElement");
+
+// The node count tells a landed page, even of rows without text; the text tells a rebuilt list.
+// This pager's own nodes are left out, or its spinner would mask a list emptied for a new search.
+function readContent(): ContentType {
+  const el = scrollbar?.el.value;
+  const own = rootElement.value;
+  const ownSize = own ? own.getElementsByTagName("*").length + 1 : 0;
+
+  return { size: (el?.getElementsByTagName("*").length ?? 0) - ownSize, text: el?.textContent ?? "" };
 }
 
-/** What the region showed when the last page was asked for; null until something has been asked. */
-const askedAt = ref<string | null>(null);
+/** What the region held when the last page was asked for; null until something has been asked. */
+const askedAt = ref<ContentType | null>(null);
 
 /**
  * Asks again only once the last request changed what the list shows. A short list is never
@@ -99,13 +105,14 @@ const askedAt = ref<string | null>(null);
  * it was and is not repeated — the consumer recovers by changing `items` or `has-next-page`.
  */
 function reconsider(): void {
-  if (!wantsMore.value) {
-    return;
-  }
-
   const content = readContent();
 
-  if (content === askedAt.value) {
+  // Content that shrank or no longer starts with what was asked from is a rebuilt list (a new search).
+  if (askedAt.value && (content.size < askedAt.value.size || !content.text.startsWith(askedAt.value.text))) {
+    askedAt.value = null;
+  }
+
+  if (!wantsMore.value || content.size === askedAt.value?.size) {
     return;
   }
 

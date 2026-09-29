@@ -283,8 +283,9 @@ onMounted(() => {
       }
     }
 
-    &:hover,
-    &:focus {
+    // `:where` keeps this at the specificity of the `:focus-visible` rule below, which must still win.
+    &:where(:not(#{$highlighted})):hover,
+    &:where(:not(#{$highlighted})):focus {
       @apply outline-none ring-0;
     }
 

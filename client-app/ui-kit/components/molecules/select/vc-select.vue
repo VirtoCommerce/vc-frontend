@@ -190,8 +190,11 @@ import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 const emit = defineEmits<{
   (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
   (event: "change", value: VcSelectEmittedType<V, M>): void;
-  /** Select all was pressed. Fires alongside the model update, so a paged consumer can load the rest. */
-  (event: "selectAll"): void;
+  /**
+   * Select all was pressed: `selected` is true when it selected, false when it cleared. Fires
+   * alongside the model update, so a paged consumer can select or clear the options not loaded.
+   */
+  (event: "selectAll", selected: boolean): void;
   /** The list is resting at its end and more pages are available. */
   (event: "loadMore"): void;
   /** Debounced search text; only emitted when `serverFilter` is set. */
@@ -232,6 +235,11 @@ const props = withDefaults(
      * With `server-filter`, it is the number of matches for the current query.
      */
     total?: number;
+    /**
+     * Selected options among `total`, for a paged list whose selection reaches past the loaded
+     * options (a `server-filter` query). Defaults to the selected options that are loaded.
+     */
+    selectedCount?: number;
     /** Shows a loading indicator inside the list. */
     loading?: boolean;
     /**
@@ -548,7 +556,9 @@ const totalCount = computed(() =>
   isNarrowed.value && !props.serverFilter ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
 );
 
-const selectedCount = computed(() => (isNarrowed.value ? selectedVisibleCount.value : selectedValues.value.length));
+const selectedCount = computed(
+  () => props.selectedCount ?? (isNarrowed.value ? selectedVisibleCount.value : selectedValues.value.length),
+);
 
 // Checked means `n of n`: a fully selected page of a longer list is still partial.
 const isAllSelected = computed(
@@ -569,7 +579,9 @@ const selectAllLabel = computed(() =>
 );
 
 function onSelectAll() {
-  if (isAllSelected.value) {
+  const clearing = isAllSelected.value;
+
+  if (clearing) {
     // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
     const visible = selectableValues.value;
     commit(
@@ -587,8 +599,7 @@ function onSelectAll() {
     commit(merged);
   }
 
-  // A paged consumer fetches and selects the unloaded rest on this event.
-  emit("selectAll");
+  emit("selectAll", !clearing);
 }
 
 const selectAllElement = useTemplateRef<{ $el: HTMLElement }>("selectAllElement");
@@ -626,7 +637,7 @@ function focusSelectAll(): boolean {
     @apply relative rounded-[--radius];
   }
 
-  // Teleported, so it declares its own tokens; `--vc-dropdown-menu-*` stay as fallbacks.
+  // May be teleported, so it declares its own tokens; `--vc-dropdown-menu-*` stay as fallbacks.
   &__dropdown {
     --dropdown-max-height: var(--vc-select-dropdown-max-height, var(--vc-dropdown-menu-max-height, 12rem));
     --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem)));

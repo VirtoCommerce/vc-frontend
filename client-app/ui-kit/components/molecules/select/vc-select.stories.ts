@@ -34,6 +34,7 @@ interface IVcSelectStoryArgs {
   multiple?: boolean;
   selectAll?: boolean;
   total?: number;
+  selectedCount?: number;
   loading?: boolean;
   hasNextPage?: boolean;
   serverFilter?: boolean;

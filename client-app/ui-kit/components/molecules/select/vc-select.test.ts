@@ -369,6 +369,38 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
+    it("tells a select from a clear in the selectAll event", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const checkbox = wrapper.get(".vc-select__select-all input");
+
+      await checkbox.trigger("click");
+      await wrapper.setProps({ modelValue: [...ITEMS] });
+      await checkbox.trigger("click");
+
+      expect(wrapper.emitted("selectAll")).toEqual([[true], [false]]);
+    });
+
+    // Only the consumer knows how many matches are selected on pages that are not loaded.
+    it("checks once the consumer reports every match of a server-side query selected", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        hasNextPage: true,
+        total: 5,
+        selectedCount: 5,
+        modelValue: [...ITEMS, "Denmark", "Egypt"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("5 of 5");
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("true");
+    });
+
     it("names the checkbox with its count and keeps the name when it is checked", async () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS] });
 
@@ -411,6 +443,24 @@ describe("VcSelect", () => {
       await wrapper.get(".vc-select__select-all-text").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[ITEMS]]);
+    });
+
+    it("is not checked for an empty list", () => {
+      const wrapper = createWrapper({ ...selectAllProps, items: [], modelValue: [] });
+
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("false");
+    });
+
+    it("hands focus back to the trigger on ArrowDown from the checkbox", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const input = wrapper.get("input");
+      const checkbox = wrapper.get(".vc-select__select-all input");
+
+      await input.trigger("click");
+      (checkbox.element as HTMLInputElement).focus();
+      await checkbox.trigger("keydown", { key: "ArrowDown" });
+
+      expect(document.activeElement).toBe(input.element);
     });
 
     it("leaves Shift+Tab to the browser", async () => {
@@ -782,6 +832,23 @@ describe("VcSelect", () => {
 
       expect(document.activeElement).toBe(input.element);
       expect(wrapper.findAll('[role="option"]')[0].attributes("id")).toBe(input.attributes("aria-activedescendant"));
+    });
+
+    it("leaves Home and End to the caret in an autocomplete field", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      const home = new KeyboardEvent("keydown", { key: "Home", bubbles: true, cancelable: true });
+      input.element.dispatchEvent(home);
+      const end = new KeyboardEvent("keydown", { key: "End", bubbles: true, cancelable: true });
+      input.element.dispatchEvent(end);
+      await nextTick();
+
+      expect(home.defaultPrevented).toBe(false);
+      expect(end.defaultPrevented).toBe(false);
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
     });
 
     it("wraps around and supports Home/End", async () => {
