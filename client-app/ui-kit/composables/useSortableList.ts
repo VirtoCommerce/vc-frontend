@@ -1,6 +1,6 @@
 import Sortable from "sortablejs";
 import { nextTick, readonly, ref, toValue, watch } from "vue";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter, Ref } from "vue";
 
 export type SortableOrientationType = "vertical" | "horizontal";
 
@@ -52,12 +52,13 @@ export interface ISortableListOptions {
   /** Ids in render order. The single source of truth — the DOM is only a projection of it. */
   items: () => readonly string[];
   /** Lists sharing a group exchange items. */
-  group?: MaybeRefOrGetter<string | undefined>;
+  group?: MaybeRefOrGetter<string> | Ref<string | undefined> | (() => string | undefined);
   /**
    * Ordered names of this list and its siblings in the group. The cross-axis arrows walk it one list at a
    * time, skipping lists that are not mounted or refuse the item, and stop at either end.
    */
-  ring?: MaybeRefOrGetter<readonly string[] | undefined>;
+  ring?:
+    MaybeRefOrGetter<readonly string[]> | Ref<readonly string[] | undefined> | (() => readonly string[] | undefined);
   /** Per-item acceptance, asked on the pointer path (SortableJS `put`) AND the keyboard path. Read once. */
   accepts?: (id: string, from: string) => boolean;
   /** Which children are items. Anything else in the container is ignored and keeps its place. Read once. */
@@ -117,7 +118,7 @@ export function useSortableList(
   let originIndex = -1;
 
   const nameOf = () => toValue(options.name);
-  const groupOf = () => toValue(options.group);
+  const groupOf = () => toValue<string | undefined>(options.group);
   const isEnabled = () => toValue(options.enabled) ?? true;
 
   function announce(signal: SortableSignalType): void {
@@ -154,7 +155,7 @@ export function useSortableList(
     }
     grabbedId.value = id;
     originIndex = index;
-    const ring = toValue(options.ring);
+    const ring = toValue<readonly string[] | undefined>(options.ring);
     announce({ kind: "grabbed", id, index, total: items.length, canChangeList: Boolean(ring && ring.length > 1) });
   }
 
@@ -194,7 +195,7 @@ export function useSortableList(
   }
 
   function stepList(id: string, delta: number): void {
-    const ring = toValue(options.ring) ?? [];
+    const ring = toValue<readonly string[] | undefined>(options.ring) ?? [];
     const name = nameOf();
     const siblings = listsByGroup.get(groupOf() ?? "");
 
@@ -272,7 +273,7 @@ export function useSortableList(
       return;
     }
 
-    const ring = toValue(options.ring);
+    const ring = toValue<readonly string[] | undefined>(options.ring);
     if (ring && ring.length > 1 && (event.key === listBack || event.key === listForward)) {
       event.preventDefault();
       stepList(id, event.key === listBack ? -1 : 1);
