@@ -3,7 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCommentVNode, defineComponent, h, nextTick, ref } from "vue";
 import { useSortableItem } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
-import type { ISortableItemContextType } from "@/ui-kit/composables";
+import type { ISortableItemContextType, SortableMovePayloadType } from "@/ui-kit/composables";
+import type { Ref } from "vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's option and event objects
 const instances: { el: HTMLElement; options: Record<string, any> }[] = [];
@@ -276,8 +277,8 @@ describe("VcSortable", () => {
     });
 
     function mountPair(handle: boolean) {
-      const lists = { shown: ref(["a", "b"]), parked: ref(["x", "y"]) };
-      const onMove = ({ id, from, to }: { id: string; from: "shown" | "parked"; to: "shown" | "parked" }) => {
+      const lists: Record<string, Ref<string[]>> = { shown: ref(["a", "b"]), parked: ref(["x", "y"]) };
+      const onMove = ({ id, from, to }: SortableMovePayloadType) => {
         lists[from].value = lists[from].value.filter((item) => item !== id);
         lists[to].value = [...lists[to].value, id];
       };
