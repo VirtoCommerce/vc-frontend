@@ -102,7 +102,8 @@ function moveWithin(items: readonly string[], id: string, index: number): string
  * undoes every move and reports it instead, so state alone drives the render.
  *
  * Keyboard: Space/Enter grabs and drops, arrows along `orientation` move, Escape puts it back, blur
- * cancels, and the cross-axis arrows move the item along `ring` — focus follows it into the sibling list.
+ * cancels, and the cross-axis arrows move the item along `ring` — focus follows it into the sibling list
+ * unless the owner has already moved focus elsewhere.
  */
 export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
@@ -208,8 +209,12 @@ export function useSortableList(
       options.onMove?.({ id, from: name, to: target });
       announce({ kind: "movedList", id, from: name, to: target });
       // Its control unmounts here and mounts there, which drops focus to <body>; the owner has applied the
-      // move by the next render, so focus follows it into the sibling.
-      void nextTick(() => sibling.focusItem(id));
+      // move by the next render, so focus follows it into the sibling — unless the owner placed it already.
+      void nextTick(() => {
+        if (!document.activeElement || document.activeElement === document.body) {
+          sibling.focusItem(id);
+        }
+      });
       return;
     }
 

@@ -579,6 +579,42 @@ describe("useSortableList — pointer", () => {
     expect(document.activeElement).toBe(parked.el.firstElementChild);
   });
 
+  it("leaves focus where the owner put it after a keyboard move between lists", async () => {
+    const make = (name: string) => {
+      const el = document.createElement("div");
+      const child = document.createElement("div");
+      child.dataset.sortableId = "a";
+      child.tabIndex = 0;
+      el.append(child);
+      document.body.append(el);
+      const scope = effectScope();
+      scopes.push(scope);
+      return scope.run(() =>
+        useSortableList(el, {
+          name,
+          group: "focus-owner",
+          ring: ["shown", "parked"],
+          orientation: "horizontal",
+          items: () => ["a"],
+          onReorder: vi.fn(),
+          onMove: () => owned.focus(),
+        }),
+      )!;
+    };
+    const owned = document.createElement("button");
+    document.body.append(owned);
+    const shown = make("shown");
+    make("parked");
+
+    const press = (key: string) =>
+      shown.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    press(" ");
+    press("ArrowDown");
+    await nextTick();
+
+    expect(document.activeElement).toBe(owned);
+  });
+
   it("does nothing on the end of a drag that stayed in its list", async () => {
     const { el, moves, sortable } = await mounted();
     const item = el.querySelector('[data-sortable-id="a"]') as HTMLElement;
