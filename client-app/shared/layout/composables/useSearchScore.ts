@@ -20,6 +20,9 @@ function _useSearchScore() {
   });
 
   const preparingScope = ref(false);
+  const scopeHolds = ref(0);
+
+  const isScopePending = computed(() => preparingScope.value || scopeHolds.value > 0);
 
   const isCategoryScope = computed(() => {
     return searchScopeData.value.searchScope.some((el) => el.type === "category");
@@ -41,6 +44,20 @@ function _useSearchScore() {
     searchScopeData.value.searchScope.push(item);
   }
 
+  // Bridges a page swap: the old scope is dropped before the next page starts preparing its own.
+  function holdScope(): () => void {
+    scopeHolds.value++;
+
+    let released = false;
+
+    return () => {
+      if (!released) {
+        released = true;
+        scopeHolds.value--;
+      }
+    };
+  }
+
   function setQueryScope(query: string) {
     searchScopeData.value = {
       ...searchScopeData.value,
@@ -52,12 +69,14 @@ function _useSearchScore() {
     searchScopeData,
     searchScopeFilterExpression,
     preparingScope,
+    isScopePending,
 
     removeScopeItemByType,
     removeScopeItemById,
     addScopeItem,
 
     setQueryScope,
+    holdScope,
 
     isCategoryScope,
   };
