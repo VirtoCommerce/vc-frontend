@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import CompareTable from "./compare-table.vue";
 import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
+import type { DOMWrapper } from "@vue/test-utils";
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key }),
@@ -200,18 +201,30 @@ describe("CompareTable — focus management", () => {
 });
 
 describe("CompareTable — table semantics", () => {
-  // The header row and the body are separate DOM subtrees, so no native table can relate them. One
-  // ARIA table has to own both, with every row laid out as the same columns: label, then products.
+  // The header row and the body are separate scroll containers, yet one table has to own both,
+  // with every row laid out as the same columns: label, then products.
+  function cellRole(cell: DOMWrapper<Element>) {
+    if (cell.element.tagName === "TD") {
+      return "cell";
+    }
+
+    const scope = cell.attributes("scope");
+
+    if (scope === "col") {
+      return "columnheader";
+    }
+
+    return scope === "row" ? "rowheader" : `th[scope=${scope}]`;
+  }
+
   function rowsOf(wrapper: ReturnType<typeof mountTable>) {
-    const tables = wrapper.findAll('[role="table"]');
+    const tables = wrapper.findAll("table");
     expect(tables).toHaveLength(1);
 
     return tables[0]
-      .findAll('[role="row"]')
+      .findAll("tr")
       .map((rowWrapper) =>
-        rowWrapper
-          .findAll('[role="cell"], [role="columnheader"], [role="rowheader"]')
-          .map((cell) => [cell.attributes("role"), cell.attributes("aria-label") ?? cell.text()]),
+        rowWrapper.findAll("td, th").map((cell) => [cellRole(cell), cell.attributes("aria-label") ?? cell.text()]),
       );
   }
 
@@ -220,7 +233,7 @@ describe("CompareTable — table semantics", () => {
     const wrapper = mountTable({ products: [product("p1"), product("p2")] });
     await nextTick();
 
-    expect(wrapper.get('[role="table"]').attributes("aria-label")).toBe("pages.compare.title");
+    expect(wrapper.get("table").attributes("aria-label")).toBe("pages.compare.title");
     // The corner cell holds the tabs and "Clear category"; each value sits under its own product.
     expect(rowsOf(wrapper)).toEqual([
       [
@@ -269,7 +282,7 @@ describe("CompareTable — table semantics", () => {
     const wrapper = mountTable({ products: [product("p1"), product("p2")] });
     await nextTick();
 
-    const table = wrapper.get('[role="table"]');
+    const table = wrapper.get("table");
     expect(table.find(".compare-table__tabs").exists()).toBe(false);
     expect(wrapper.find(".compare-table__mobile-tabs-bar .compare-table__tabs").exists()).toBe(true);
     expect(rowsOf(wrapper)).toEqual([
@@ -284,6 +297,20 @@ describe("CompareTable — table semantics", () => {
         ["cell", "SKU-2"],
       ],
     ]);
+
+    wrapper.unmount();
+  });
+
+  it("scrolls the header row along with the body", async () => {
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    const body = wrapper.get("tbody").element;
+    body.scrollLeft = 120;
+    body.dispatchEvent(new Event("scroll"));
+
+    expect(wrapper.get("thead").element.scrollLeft).toBe(120);
 
     wrapper.unmount();
   });
