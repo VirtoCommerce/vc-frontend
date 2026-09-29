@@ -177,7 +177,8 @@ describe("VcInput clearable", () => {
 
   it("falls back to the default name for an empty clearLabel", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "value", clearable: true, clearLabel: "" } });
-    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).not.toBe("");
+    // The shared test `$t` mock appends its (here empty) arguments after a space.
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")?.trim()).toBe("ui_kit.buttons.clear");
   });
 });
 

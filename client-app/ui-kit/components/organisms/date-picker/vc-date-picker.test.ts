@@ -50,6 +50,12 @@ describe("VcDatePicker — button names", () => {
     expect(wrapper.find('button[aria-label="Open calendar for Start date"]').exists()).toBe(true);
     expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear Start date");
   });
+
+  it("falls back to the default trigger name for an empty calendarButtonLabel", () => {
+    const wrapper = mountPicker({ calendarButtonLabel: "" });
+
+    expect(wrapper.find('button[aria-label="ui_kit.accessibility.open_calendar"]').exists()).toBe(true);
+  });
 });
 
 describe("VcDatePicker — preventDeselect", () => {

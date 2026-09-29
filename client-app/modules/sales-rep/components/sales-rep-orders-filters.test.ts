@@ -2,21 +2,26 @@ import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import SalesRepOrdersFilters from "./sales-rep-orders-filters.vue";
 
 const isPhone = ref(false);
 const askedBreakpoints: string[] = [];
+const breakpointScales: unknown[] = [];
 
 vi.mock("@vueuse/core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@vueuse/core")>();
   return {
     ...actual,
-    useBreakpoints: () => ({
-      smaller: (name: string) => {
-        askedBreakpoints.push(name);
-        return isPhone;
-      },
-    }),
+    useBreakpoints: (scale: unknown) => {
+      breakpointScales.push(scale);
+      return {
+        smaller: (name: string) => {
+          askedBreakpoints.push(name);
+          return isPhone;
+        },
+      };
+    },
   };
 });
 
@@ -277,15 +282,17 @@ describe("SalesRepOrdersFilters — the date range field", () => {
     });
   });
 
-  // "combined" renders the start/end labels as aria-labels only, so the one visible label names the pair.
   // `sm`, as the account orders filter splits them — the ticket measured the merged field at 375px.
   it("switches layouts at the sm breakpoint", () => {
     askedBreakpoints.length = 0;
+    breakpointScales.length = 0;
     createWrapper();
 
     expect(askedBreakpoints).toEqual(["sm"]);
+    expect(breakpointScales).toEqual([BREAKPOINTS]);
   });
 
+  // "combined" renders the start/end labels as aria-labels only, so the one visible label names the pair.
   it("merges them into one field, labelled as a range, on a phone", async () => {
     const wrapper = createWrapper();
 
