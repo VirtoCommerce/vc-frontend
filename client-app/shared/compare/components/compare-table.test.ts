@@ -2,7 +2,7 @@ import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import CompareTable from "./compare-table.vue";
-import type { ICompareDisplayProduct } from "../types";
+import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key }),
@@ -11,6 +11,8 @@ vi.mock("vue-i18n", () => ({
 vi.mock("@/core/composables", () => ({
   useBrowserTarget: () => ({ browserTarget: { value: "_blank" } }),
 }));
+
+const tableRows: { value: ICompareTableRow[] } = { value: [] };
 
 vi.mock("../composables", () => ({
   useCompareAddToCart: () => ({
@@ -22,7 +24,7 @@ vi.mock("../composables", () => ({
     isRowPinned: () => false,
     togglePin: vi.fn(),
     pinnedRows: { value: [] },
-    unpinnedRows: { value: [] },
+    unpinnedRows: tableRows,
   }),
 }));
 
@@ -97,6 +99,10 @@ async function setCompact(compact: boolean) {
   vueuseCore.__headerRowTop.value = compact ? 0 : 100;
 }
 
+function row(key: string, values: string[]): ICompareTableRow {
+  return { key, label: `Label ${key}`, kind: "text", values, differs: false };
+}
+
 function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
   // attachTo: real DOM connection is what document.activeElement tracks — a detached mount (the
   // default) makes every .focus() in this file a silent no-op.
@@ -124,6 +130,7 @@ function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
 
 afterEach(async () => {
   await setCompact(false);
+  tableRows.value = [];
 });
 
 describe("CompareTable — focus management", () => {
@@ -180,6 +187,66 @@ describe("CompareTable — focus management", () => {
     await nextTick();
 
     expect(document.activeElement).toBe(wrapper.get(".compare-table__header-row").element);
+    wrapper.unmount();
+  });
+});
+
+describe("CompareTable — table semantics", () => {
+  // The header row and the body are separate DOM subtrees, so no native table can relate them. One
+  // ARIA table has to own both, with every row laid out as the same columns: label, then products.
+  function rowsOf(wrapper: ReturnType<typeof mountTable>) {
+    const tables = wrapper.findAll('[role="table"]');
+    expect(tables).toHaveLength(1);
+
+    return tables[0]
+      .findAll('[role="row"]')
+      .map((rowWrapper) =>
+        rowWrapper
+          .findAll('[role="cell"], [role="columnheader"], [role="rowheader"]')
+          .map((cell) => [cell.attributes("role"), cell.attributes("aria-label") ?? null]),
+      );
+  }
+
+  it("puts the product header row and every attribute row in one table, column for column", async () => {
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"]), row("color", ["Red", "Blue"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    expect(rowsOf(wrapper)).toEqual([
+      [
+        ["cell", null],
+        ["columnheader", "Product p1"],
+        ["columnheader", "Product p2"],
+      ],
+      [
+        ["rowheader", "Label sku"],
+        ["cell", null],
+        ["cell", null],
+      ],
+      [
+        ["rowheader", "Label color"],
+        ["cell", null],
+        ["cell", null],
+      ],
+    ]);
+
+    wrapper.unmount();
+  });
+
+  it("keeps the product columns once the header row turns compact", async () => {
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    await setCompact(true);
+    await nextTick();
+
+    expect(rowsOf(wrapper)[0]).toEqual([
+      ["cell", null],
+      ["columnheader", "Product p1"],
+      ["columnheader", "Product p2"],
+    ]);
+
     wrapper.unmount();
   });
 });
