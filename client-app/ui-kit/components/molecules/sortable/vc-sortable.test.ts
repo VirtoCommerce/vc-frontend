@@ -263,4 +263,76 @@ describe("VcSortable", () => {
 
     expect(seen[0].outer?.grabbed.value).toBe(true);
   });
+
+  // The item leaves one list and renders in the other only once the owner applies the move, so focus has
+  // to follow on the render after it — onto the item itself, or onto its handle in a handle list.
+  describe("focus after a keyboard move between lists", () => {
+    const Grip = defineComponent({
+      setup() {
+        const context = useSortableItem();
+        return () =>
+          h("button", { ...(context?.handleAttrs.value ?? {}), class: ["grip", context?.handleAttrs.value?.class] });
+      },
+    });
+
+    function mountPair(handle: boolean) {
+      const lists = { shown: ref(["a", "b"]), parked: ref(["x", "y"]) };
+      const onMove = ({ id, from, to }: { id: string; from: "shown" | "parked"; to: "shown" | "parked" }) => {
+        lists[from].value = lists[from].value.filter((item) => item !== id);
+        lists[to].value = [...lists[to].value, id];
+      };
+      const list = (name: "shown" | "parked") =>
+        h(
+          VcSortable<string>,
+          {
+            modelValue: lists[name].value,
+            name,
+            group: "pair",
+            ring: ["shown", "parked"],
+            orientation: handle ? "vertical" : "horizontal",
+            handle: handle ? ".grip" : undefined,
+            onMove,
+          },
+          {
+            item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) =>
+              h("div", { ...attrs, class: ["row", attrs.class] }, handle ? [h(Grip)] : item),
+          },
+        );
+      mount(defineComponent({ setup: () => () => h("div", [list("shown"), list("parked")]) }), {
+        attachTo: document.body,
+      });
+
+      const row = document.querySelector<HTMLElement>('[data-sortable-name="shown"] [data-sortable-id="a"]')!;
+      return handle ? row.querySelector<HTMLElement>(".grip")! : row;
+    }
+
+    const key = (el: HTMLElement, name: string) => el.dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+
+    it("lands on the moved item in the list it went to", async () => {
+      const control = mountPair(false);
+      control.focus();
+      key(control, " ");
+      key(control, "ArrowDown");
+      await nextTick();
+      await nextTick();
+
+      const active = document.activeElement as HTMLElement;
+      expect(active.dataset.sortableId).toBe("a");
+      expect(active.closest<HTMLElement>("[data-sortable-name]")?.dataset.sortableName).toBe("parked");
+    });
+
+    it("lands on the moved item's handle in a handle list", async () => {
+      const control = mountPair(true);
+      control.focus();
+      key(control, " ");
+      key(control, "ArrowRight");
+      await nextTick();
+      await nextTick();
+
+      const active = document.activeElement as HTMLElement;
+      expect(active.classList.contains("grip")).toBe(true);
+      expect(active.closest<HTMLElement>("[data-sortable-id]")?.dataset.sortableId).toBe("a");
+      expect(active.closest<HTMLElement>("[data-sortable-name]")?.dataset.sortableName).toBe("parked");
+    });
+  });
 });

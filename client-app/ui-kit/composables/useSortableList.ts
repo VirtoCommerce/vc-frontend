@@ -74,7 +74,8 @@ export interface ISortableListOptions {
   enabled?: MaybeRefOrGetter<boolean>;
   /** Same-list reorder, as the full new order. */
   onReorder: (ids: string[]) => void;
-  /** Cross-list move. Whoever owns both arrays applies it — never this list alone. */
+  /** Cross-list move. Whoever owns both arrays applies it — never this list alone — and synchronously, or
+   * focus cannot follow the item into the other list. */
   onMove?: (payload: SortableMovePayloadType) => void;
   onAnnounce?: (signal: SortableSignalType) => void;
 }

@@ -60,7 +60,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSortableItem } from "@/ui-kit/composables";
 import { provideBlockSettings, useBlockSettings } from "../composables/useBlockSettings";
-import { provideLayoutBlock, useLayoutBlock } from "../composables/useLayoutBlock";
+import { useLayoutBlock } from "../composables/useLayoutBlock";
 import LayoutRowsInput from "./layout-rows-input.vue";
 
 interface IProps {
@@ -84,8 +84,7 @@ const item = useSortableItem();
 const block = item ? useLayoutBlock() : undefined;
 const settings = item ? useBlockSettings() : undefined;
 
-// The whole block is this widget's now, so a widget nested in its slot plays no part in the layout.
-provideLayoutBlock(undefined);
+// The whole block is this widget's now, so a content widget nested in its slot reads no block settings.
 provideBlockSettings(undefined);
 
 // Null outside edit mode, and for stat cards, which drag whole.

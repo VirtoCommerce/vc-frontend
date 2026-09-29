@@ -30,7 +30,7 @@ import type {
 import type { PropType, VNode } from "vue";
 
 export interface IEmits {
-  /** An item left this list for another one in its group. The owner of both lists applies it. */
+  /** An item left this list for another one in its group. The owner of both lists applies it, synchronously. */
   (event: "move", payload: SortableMovePayloadType): void;
   /** Every keyboard state change, unlocalized, for the consumer's `aria-live` region. */
   (event: "announce", signal: SortableSignalType): void;

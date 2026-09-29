@@ -335,6 +335,22 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(source.moves).toEqual([{ id: "a", from: "shown", to: "parked" }]);
   });
 
+  // A stale cleanup must not delete the group's map that a newer list has since created.
+  it("keeps a list that registered after its group emptied, when an older one goes", () => {
+    const ring = ["shown", "parked"];
+    const older = setup({ name: "parked", group: "stats-4", ring, orientation: "horizontal" });
+    const taker = setup({ name: "parked", group: "stats-4", ring, orientation: "horizontal" });
+    taker.scope.stop();
+    setup({ name: "parked", group: "stats-4", ring, orientation: "horizontal" });
+    const source = setup({ name: "shown", group: "stats-4", ring, orientation: "horizontal" });
+
+    older.scope.stop();
+    source.press(" ", "a");
+    source.press("ArrowDown", "a");
+
+    expect(source.moves).toEqual([{ id: "a", from: "shown", to: "parked" }]);
+  });
+
   it("forgets a list once its scope is disposed", () => {
     const ring = ["shown", "parked"];
     const source = setup({ name: "shown", group: "stats-2", ring, orientation: "horizontal" });
