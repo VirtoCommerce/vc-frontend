@@ -36,8 +36,8 @@
           v-if="$slots.selected || $slots.placeholder"
           ref="triggerElement"
           v-bind="triggerBindings"
-          :selected-item="selected"
-          :has-selection="selected != null"
+          :selected-item="selectedSlotItem"
+          :has-selection="multiple ? selectedValues.length > 0 : selected != null"
           @toggle="toggle"
           @clear="clear"
           @navigate="onNavigate($event, open)"
@@ -46,7 +46,7 @@
           @focusout="onFocusOut($event, close)"
         >
           <template v-if="$slots.selected" #selected="scope">
-            <slot name="selected" v-bind="scope" />
+            <slot name="selected" :item="scope.item as M extends true ? V[] : T" :error="scope.error" />
           </template>
 
           <template v-if="$slots.placeholder" #placeholder="scope">
@@ -221,10 +221,7 @@ const props = withDefaults(
     message?: string;
     autocomplete?: boolean;
     singleLineMessage?: boolean;
-    /**
-     * Allows several values; the model is then an array. A custom trigger renders only `#placeholder`
-     * here: `#selected` takes one item and is not supported in this mode.
-     */
+    /** Allows several values; the model is then an array. */
     // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
     // eslint-disable-next-line sonarjs/no-useless-intersection
     multiple?: M & boolean;
@@ -265,6 +262,15 @@ const props = withDefaults(
     itemSize: "sm",
   },
 );
+
+defineSlots<{
+  /** The chosen item in single mode, the selected values in multiple mode. */
+  selected?: (props: { item: M extends true ? V[] : T; error?: boolean }) => unknown;
+  placeholder?: (props: { error?: boolean }) => unknown;
+  item?: (props: { item: T; index: number }) => unknown;
+  loading?: () => unknown;
+  empty?: () => unknown;
+}>();
 
 provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? false) });
 
@@ -347,6 +353,9 @@ const selectedText = computed<string | null>(() => {
   // null, not "": an empty string would suppress the placeholder that `?? placeholder` provides.
   return text === undefined || text === null ? null : String(text);
 });
+
+// The `#selected` slot gets the item in single mode and the selected values in multiple mode.
+const selectedSlotItem = computed(() => (props.multiple ? selectedValues.value : selected.value));
 
 const placeholderText = computed(() => selectedText.value ?? props.placeholder);
 

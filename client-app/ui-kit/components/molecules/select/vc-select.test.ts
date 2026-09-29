@@ -1641,6 +1641,27 @@ describe("VcSelect", () => {
     });
 
     // An unset GraphQL value arrives as null, and without valueField the model is the item.
+    it("passes the selected values to the selected slot in multiple mode", () => {
+      const wrapper = createWrapper(
+        { items: ITEMS, multiple: true, modelValue: ["Albania", "China"] },
+        {
+          selected: ({ item }: { item: unknown }) =>
+            h("span", { class: "probe-selected" }, (item as string[]).join(", ")),
+          placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
+        },
+      );
+
+      expect(wrapper.get(".probe-selected").text()).toBe("Albania, China");
+      expect(wrapper.find(".probe-placeholder").exists()).toBe(false);
+    });
+
+    it("shows the placeholder slot for an empty multiple selection", () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] }, slots);
+
+      expect(wrapper.find(".probe-selected").exists()).toBe(false);
+      expect(wrapper.find(".probe-placeholder").exists()).toBe(true);
+    });
+
     it("shows the placeholder for a null model, not the selected slot", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: null as unknown as string }, slots);
 
