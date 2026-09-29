@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "退货",
+      "table_description": "退货列表"
+    },
+    "title": "退货",
+    "no_returns_message": "暂无退货",
+    "no_results_message": "没有符合搜索条件的退货",
+    "search_placeholder": "按 RMA、订单、参考号或商品搜索",
+    "search_aria": "搜索退货",
+    "filters": {
+      "title": "过滤器",
+      "created_date": "创建日期",
+      "start_date": "开始日期",
+      "end_date": "结束日期",
+      "invalid_range": "日期范围无效。",
+      "custom_date": "自定义日期",
+      "last_day": "最后一天",
+      "last_week": "上周",
+      "last_month": "上个月",
+      "last_year": "去年",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "草稿",
+      "Requested": "已申请",
+      "PartiallyApproved": "部分批准",
+      "Approved": "已批准",
+      "Rejected": "已拒绝",
+      "Cancelled": "已取消",
+      "Canceled": "已取消",
+      "New": "新建",
+      "Processing": "处理中",
+      "Completed": "已完成"
+    },
+    "request_button": "申请退货",
+    "menu": {
+      "link": {
+        "title": "退货"
+      }
+    },
+    "select_items": {
+      "title": "选择要退货的商品",
+      "meta_title": "选择要退货的商品",
+      "table_description": "可退货的订单行",
+      "select_all": "选择所有符合条件的行",
+      "eligible_count": "{total} 行中有 {eligible} 行符合条件",
+      "nothing_returnable": "此订单中没有可退货的商品",
+      "window_hint": "商品可在送达后 {days} 天内退货",
+      "selected_summary": "已选 {lines} 行 · {quantity} 件",
+      "columns": {
+        "item": "商品",
+        "ordered": "已订购",
+        "returnable": "可退数量",
+        "quantity": "退货数量"
+      },
+      "quantity_for": "{name} 的退货数量",
+      "continue": "继续"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "此店铺已关闭退货功能",
+      "ORDER_STATUS_NOT_ALLOWED": "该订单状态不允许退货",
+      "LINE_CANCELLED": "此行已取消",
+      "NOT_DELIVERED": "尚未送达",
+      "OUTSIDE_RETURN_WINDOW": "已超出退货期限",
+      "NOTHING_LEFT_TO_RETURN": "已全部申请",
+      "UNHANDLED": "此商品不可退货"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "此退货已不处于可以执行该操作的阶段",
+      "UNHANDLED": "当前无法执行此操作"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "其中一个文件无法附加。请删除后重新上传。",
+      "INVALID_REQUEST": "部分内容未被接受。请检查退货原因和备注后重试。",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA编号",
+        "date": "日期",
+        "status": "状态",
+        "quantity": "数量"
+      }
+    }
+  },
+  "return_details": {
+    "title": "退货 {0}",
+    "not_found_message": "未找到此退货",
+    "summary_section": "摘要",
+    "items_section": "商品",
+    "order_number": "订单编号",
+    "customer_reference": "您的采购单号",
+    "customer_comment": "备注",
+    "cancel_reason": "取消原因",
+    "cancel_button": "取消退货",
+    "columns": {
+      "requested": "申请数量",
+      "approved": "批准数量"
+    },
+    "table_description": "退货商品"
+  },
+  "return_cancel": {
+    "title": "取消退货",
+    "text": "退货 {0} 将被撤回，其商品将重新可供退货。",
+    "reason_label": "原因（可选）",
+    "keep_button": "保留退货",
+    "confirm_button": "取消退货"
+  },
+  "return_edit": {
+    "title": "填写退货详情",
+    "title_with_number": "填写退货 {number} 的详情",
+    "not_editable_message": "此退货已无法更改",
+    "not_editable_message_with_status": "此退货已无法更改，当前状态为 {status}",
+    "details_section": "详情",
+    "bulk_section": "应用到所有行",
+    "apply_to_all": "将一个原因应用到全部 {count} 行",
+    "apply": "应用",
+    "reason": "原因",
+    "serial_number": "序列号",
+    "reason_comment": "有什么问题？",
+    "saving": "正在保存…",
+    "saved_automatically": "已自动保存",
+    "submit": "提交退货",
+    "files": "照片或文件",
+    "files_required": "照片或文件（必填）",
+    "incomplete": {
+      "quantity": "还有 {count} 条明细需要填写数量",
+      "reason": "还有 {count} 行未填写原因",
+      "comment": "还有 {count} 条明细需要填写备注",
+      "attachment": "还有 {count} 条明细需要上传照片"
+    },
+    "uploads_pending": "正在等待文件上传完成",
+    "uploads_failed": "部分文件上传失败。请在提交前删除或重试。",
+    "quantity_for": "{name} 的退货数量",
+    "available": "共 {quantity} 件可退"
+  }
+}

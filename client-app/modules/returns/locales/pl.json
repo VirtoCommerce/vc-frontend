@@ -1,0 +1,149 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Zwroty",
+      "table_description": "lista zwrotów"
+    },
+    "title": "Zwroty",
+    "no_returns_message": "Nie ma jeszcze żadnych zwrotów",
+    "no_results_message": "Żadne zwroty nie pasują do wyszukiwania",
+    "search_placeholder": "Szukaj według RMA, zamówienia, referencji lub produktu",
+    "search_aria": "Szukaj zwrotów",
+    "filters": {
+      "title": "Filtry",
+      "created_date": "Data utworzenia",
+      "start_date": "Data rozpoczęcia",
+      "end_date": "Data zakończenia",
+      "invalid_range": "Nieprawidłowy zakres dat.",
+      "custom_date": "Data niestandardowa",
+      "last_day": "Ostatni dzień",
+      "last_week": "Ostatni tydzień",
+      "last_month": "Ostatni miesiąc",
+      "last_year": "Ostatni rok",
+      "status": "@:common.labels.status"
+    },
+    "statuses": {
+      "Draft": "Wersja robocza",
+      "Requested": "Zgłoszony",
+      "PartiallyApproved": "Częściowo zatwierdzony",
+      "Approved": "Zatwierdzony",
+      "Rejected": "Odrzucony",
+      "Cancelled": "Anulowany",
+      "Canceled": "Anulowany",
+      "New": "Nowy",
+      "Processing": "W trakcie",
+      "Completed": "Zakończony"
+    },
+    "request_button": "Zgłoś zwrot",
+    "menu": {
+      "link": {
+        "title": "Zwroty"
+      }
+    },
+    "select_items": {
+      "title": "Wybierz produkty do zwrotu",
+      "meta_title": "Wybierz produkty do zwrotu",
+      "table_description": "pozycje zamówienia dostępne do zwrotu",
+      "select_all": "Zaznacz wszystkie kwalifikujące się pozycje",
+      "eligible_count": "{eligible} z {total} pozycji kwalifikuje się",
+      "nothing_returnable": "Nic z tego zamówienia nie może zostać zwrócone",
+      "window_hint": "Produkty można zwrócić w ciągu {days} dni od dostawy",
+      "selected_summary": "Wybrano: {lines} · {quantity} szt.",
+      "columns": {
+        "item": "Produkt",
+        "ordered": "Zamówiono",
+        "returnable": "Do zwrotu",
+        "quantity": "Ilość"
+      },
+      "quantity_for": "Ilość do zwrotu dla {name}",
+      "continue": "Kontynuuj"
+    },
+    "ineligibility": {
+      "RETURNS_DISABLED": "Zwroty są wyłączone dla tego sklepu",
+      "ORDER_STATUS_NOT_ALLOWED": "Zwroty nie są dozwolone przy tym statusie zamówienia",
+      "LINE_CANCELLED": "Ta pozycja została anulowana",
+      "NOT_DELIVERED": "Jeszcze nie dostarczono",
+      "OUTSIDE_RETURN_WINDOW": "Poza okresem zwrotu",
+      "NOTHING_LEFT_TO_RETURN": "Już w całości zgłoszone",
+      "UNHANDLED": "Tego produktu nie można zwrócić"
+    },
+    "action_unavailable": {
+      "WRONG_STATUS": "Ten zwrot nie jest już na etapie, na którym jest to możliwe",
+      "UNHANDLED": "Ta akcja jest obecnie niedostępna"
+    },
+    "errors": {
+      "RETURN_QUANTITY_UNAVAILABLE": "Some items are no longer available to return in the quantity you asked for. Adjust the quantities and try again.",
+      "LINE_NOT_RETURNABLE": "An item on this return can no longer be returned. Remove it and try again.",
+      "ATTACHMENTS_REQUIRED": "Every line needs at least one photo or document.",
+      "WRONG_STATUS": "This return is no longer at a stage where that is possible.",
+      "ORDER_NOT_ELIGIBLE": "Returns are not allowed for this order.",
+      "ORDER_NOT_FOUND": "This order was not found.",
+      "RETURN_NOT_FOUND": "This return was not found.",
+      "NO_ITEMS": "A return needs at least one item.",
+      "INVALID_QUANTITY": "Enter a quantity of at least one.",
+      "LINE_ITEM_NOT_FOUND": "An item on this return is not on the order any more.",
+      "ATTACHMENT_NOT_AVAILABLE": "Nie udało się dołączyć jednego z plików. Usuń go i prześlij ponownie.",
+      "INVALID_REQUEST": "Niektóre dane nie zostały zaakceptowane. Sprawdź powody i komentarze i spróbuj ponownie.",
+      "UNHANDLED": "Something went wrong. Please try again."
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Data",
+        "status": "Status",
+        "quantity": "Ilość"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Zwrot {0}",
+    "not_found_message": "Nie znaleziono tego zwrotu",
+    "summary_section": "Podsumowanie",
+    "items_section": "Produkty",
+    "order_number": "Numer zamówienia",
+    "customer_reference": "Twój numer zamówienia",
+    "customer_comment": "Komentarz",
+    "cancel_reason": "Powód anulowania",
+    "cancel_button": "Anuluj zwrot",
+    "columns": {
+      "requested": "Zgłoszono",
+      "approved": "Zatwierdzono"
+    },
+    "table_description": "zwracane produkty"
+  },
+  "return_cancel": {
+    "title": "Anuluj zwrot",
+    "text": "Zwrot {0} zostanie wycofany, a jego produkty będą ponownie dostępne do zwrotu.",
+    "reason_label": "Powód (opcjonalnie)",
+    "keep_button": "Zachowaj zwrot",
+    "confirm_button": "Anuluj zwrot"
+  },
+  "return_edit": {
+    "title": "Dodaj szczegóły zwrotu",
+    "title_with_number": "Dodaj szczegóły zwrotu {number}",
+    "not_editable_message": "Tego zwrotu nie można już zmienić",
+    "not_editable_message_with_status": "Tego zwrotu nie można już zmienić — jego status to {status}",
+    "details_section": "Szczegóły",
+    "bulk_section": "Zastosuj do wszystkich pozycji",
+    "apply_to_all": "Zastosuj jeden powód do wszystkich {count} pozycji",
+    "apply": "Zastosuj",
+    "reason": "Powód",
+    "serial_number": "Numer seryjny",
+    "reason_comment": "Co jest nie tak?",
+    "saving": "Zapisywanie…",
+    "saved_automatically": "Zapisano automatycznie",
+    "submit": "Wyślij zwrot",
+    "files": "Zdjęcia lub dokumenty",
+    "files_required": "Zdjęcia lub dokumenty (wymagane)",
+    "incomplete": {
+      "quantity": "{count} pozycja(e) nadal wymaga(ją) ilości",
+      "reason": "W {count} pozycji brakuje powodu",
+      "comment": "{count} pozycja(e) nadal wymaga(ją) komentarza",
+      "attachment": "{count} pozycja(e) nadal wymaga(ją) zdjęcia"
+    },
+    "uploads_pending": "Trwa przesyłanie plików",
+    "uploads_failed": "Niektórych plików nie udało się przesłać. Usuń je lub spróbuj ponownie przed wysłaniem.",
+    "quantity_for": "Ilość do zwrotu dla {name}",
+    "available": "z {quantity} dostępnych"
+  }
+}

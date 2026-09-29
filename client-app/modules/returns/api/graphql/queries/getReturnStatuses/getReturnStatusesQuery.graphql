@@ -1,0 +1,8 @@
+query GetReturnStatuses($cultureName: String) {
+  returnStatuses(cultureName: $cultureName) {
+    items {
+      key
+      value
+    }
+  }
+}
