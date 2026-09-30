@@ -764,6 +764,17 @@
           "required_section": "セクションは必須です",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
           "required_no_selected": "すべての必須オプションを選択して、完了してください",
+          "checklist": {
+            "title": "構成チェックリスト",
+            "done": "(完了)",
+            "selected": "{name} — {value}",
+            "required": "{name} — 必須",
+            "optional": "{name} — 任意",
+            "fill_it_in": "入力する",
+            "upload_file": "ファイルをアップロード",
+            "check_it_out": "オプションを見る",
+            "review": "見直す"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "カスタムオプション：{0}",
             "custom_option_empty": "カスタムオプション：空",

@@ -11,6 +11,7 @@
       <template v-for="(section, index) in configuration" :key="section.id">
         <VcWidget
           v-if="isSectionVisible(section.id)"
+          :id="getConfigurationSectionElementId(section.id)"
           data-test-id="section"
           collapsible
           size="xs"
@@ -147,7 +148,12 @@
 import { nextTick, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
+import {
+  getConfigurationSectionElementId,
+  useConfigurableLineItemId,
+  useConfigurableProduct,
+  useConfigurationSectionNavigation,
+} from "@/shared/catalog/composables";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { SaveChangesModal } from "@/shared/common";
 import { useModal } from "@/shared/modal";
@@ -193,8 +199,25 @@ const {
 
 const { openModal } = useModal();
 const notifications = useNotifications();
+const { onNavigateToSection } = useConfigurationSectionNavigation();
 
 const isMouseInteraction = ref(false);
+
+onNavigateToSection(async (sectionId) => {
+  const sectionElement = document.getElementById(getConfigurationSectionElementId(sectionId));
+  const sectionHeader = sectionElement?.querySelector<HTMLElement>(".vc-widget__header-container");
+  if (!sectionElement || !sectionHeader) {
+    return;
+  }
+
+  if (sectionElement.classList.contains("vc-widget--collapsed")) {
+    sectionHeader.click();
+    await nextTick();
+  }
+
+  sectionElement.scrollIntoView({ behavior: "smooth", block: "start" });
+  sectionHeader.focus({ preventScroll: true });
+});
 
 function handleItemsFocusIn(event: FocusEvent) {
   if (isMouseInteraction.value) {

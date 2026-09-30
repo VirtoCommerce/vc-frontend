@@ -764,6 +764,17 @@
           "required_section": "La section est obligatoire",
           "optional_no_selected": "Personnalisez davantage votre sélection (facultatif)",
           "required_no_selected": "Veuillez compléter toutes les options requises pour finaliser votre sélection.",
+          "checklist": {
+            "title": "Liste de contrôle de la configuration",
+            "done": "(terminé)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obligatoire",
+            "optional": "{name} — facultatif",
+            "fill_it_in": "Remplir",
+            "upload_file": "Téléverser un fichier",
+            "check_it_out": "Voir les options",
+            "review": "Vérifier"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Option personnalisée : {0}",
             "custom_option_empty": "Option personnalisée : vide",

@@ -9,6 +9,12 @@
         :template-layout="templateLayout"
       />
 
+      <ProductConfigurationChecklist
+        v-if="product.isConfigurable"
+        class="product-price-block__configuration-checklist"
+        :product-id="product.id"
+      />
+
       <VcLink
         v-if="product.isConfigurable && configurableLineItemId"
         class="product-price-block__create-config"
@@ -113,6 +119,7 @@ import { useConfigurableLineItemId } from "@/shared/catalog/composables";
 import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
+import ProductConfigurationChecklist from "./configuration/product-configuration-checklist.vue";
 import ProductPrice from "./product-price.vue";
 import type { Product } from "@/core/api/graphql/types";
 
@@ -166,6 +173,10 @@ function print() {
 
 <style lang="scss" scoped>
 .product-price-block {
+  &__configuration-checklist:not(:first-child) {
+    @apply mt-4;
+  }
+
   &__create-config {
     @apply flex items-center gap-1 text-xs font-bold;
 
