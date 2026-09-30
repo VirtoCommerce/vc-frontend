@@ -1,6 +1,8 @@
 import { existsSync } from "node:fs";
 import { generate } from "@graphql-codegen/cli";
-import { CODEGEN_CONFIG as CONFIG, CODEGEN_PLUGINS as PLUGINS } from "@vc-frontend/core/codegen";
+// By path, not as "@vc-frontend/core/codegen": this runs under vite-node with the host's vite config,
+// whose `@vc-frontend/core` alias also rewrites every subpath onto core-api/index.ts.
+import { CODEGEN_CONFIG as CONFIG, CODEGEN_PLUGINS as PLUGINS } from "../../client-app/core-api/codegen.mjs";
 import {
   addExtension,
   describeErrorDetails,
