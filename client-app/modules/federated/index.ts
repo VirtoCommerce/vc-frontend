@@ -58,6 +58,11 @@ interface IRemoteDescriptor {
    * may simply not exist; a platform plugin that lists one in `contentFiles` must serve it.
    */
   contributions?: { url: string; optional: boolean };
+  /**
+   * The declaration the platform served inline (`store.plugins[].contributions`, platform 3.1076+),
+   * as JSON text. When present the file is never fetched.
+   */
+  inlineContributions?: string;
 }
 
 /**
@@ -73,6 +78,8 @@ export interface IPlatformPlugin {
   entry?: { type?: string | null; path?: string | null; hash?: string | null } | null;
   contentFiles?: readonly ({ type?: string | null; path?: string | null; hash?: string | null } | null)[] | null;
   remote?: { name?: string | null; exposed?: string | null } | null;
+  /** The plugin's declared contributions as JSON text; absent on a platform older than 3.1076. */
+  contributions?: string | null;
 }
 
 /** Subset of the MF manifest the host reads before executing plugin code. */
@@ -538,6 +545,7 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       styles: collectStyles(plugin),
       version: asString(plugin?.version),
       contributions: findContributions(plugin),
+      inlineContributions: asString(plugin?.contributions),
     });
   }
   return resolved;
@@ -770,7 +778,43 @@ type ContributionsReadType = { ok: true; contributions?: IPluginContributionsTyp
  * skipped — the host cannot tell whether its `when` would have said no. An env remote's sibling
  * file is optional: none means "declares nothing", i.e. today's behaviour.
  */
+/** A declared body, whether it came inline with the plugin list or from the file. */
+function toContributions(
+  body: unknown,
+  readOptional: (reason: string) => ContributionsReadType,
+): ContributionsReadType {
+  if (body === null || typeof body !== "object" || Array.isArray(body)) {
+    return readOptional("not a JSON object");
+  }
+  const { format } = body as { format?: unknown };
+  if (format === undefined) {
+    return readOptional("the file carries no `format`");
+  }
+  if (format !== CONTRIBUTIONS_FORMAT) {
+    // Not optional even for an env remote: the plugin did declare, in a shape this host cannot read.
+    return {
+      ok: false,
+      reason: `its contributions are format ${String(format)}, this host reads ${CONTRIBUTIONS_FORMAT}`,
+    };
+  }
+  return { ok: true, contributions: body as IPluginContributionsType };
+}
+
+/** Inline wins: it arrived with the plugin list, so reading it costs nothing. */
+function readInlineContributions(json: string): ContributionsReadType {
+  let body: unknown;
+  try {
+    body = JSON.parse(json);
+  } catch {
+    return { ok: false, reason: "its inline contributions are not valid JSON" };
+  }
+  return toContributions(body, (reason) => ({ ok: false, reason: `its inline contributions are unusable: ${reason}` }));
+}
+
 async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): Promise<ContributionsReadType> {
+  if (remote.inlineContributions !== undefined) {
+    return readInlineContributions(remote.inlineContributions);
+  }
   const declared = remote.contributions;
   if (!declared) {
     return { ok: true };
@@ -798,21 +842,7 @@ async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): 
       return (await response.json()) as unknown;
     };
     const body = await withTimeout(read(), timeoutMs, `contributions fetch for "${remote.name}"`);
-    if (body === null || typeof body !== "object" || Array.isArray(body)) {
-      return readOptional("not a JSON object");
-    }
-    const { format } = body as { format?: unknown };
-    if (format === undefined) {
-      return readOptional("the file carries no `format`");
-    }
-    if (format !== CONTRIBUTIONS_FORMAT) {
-      // Not optional even for an env remote: the plugin did declare, in a shape this host cannot read.
-      return {
-        ok: false,
-        reason: `its contributions are format ${String(format)}, this host reads ${CONTRIBUTIONS_FORMAT}`,
-      };
-    }
-    return { ok: true, contributions: body as IPluginContributionsType };
+    return toContributions(body, readOptional);
   } catch (error) {
     return readOptional(error instanceof Error ? error.message : String(error));
   }

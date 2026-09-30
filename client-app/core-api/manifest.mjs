@@ -4,7 +4,7 @@
  * Plain JS so the plugin's build (node) imports it natively, like federation.mjs. The shapes are
  * typed in the contract (`IPluginManifestConfigType`, `IPluginContributionsType`).
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT } from "./manifest-format.mjs";
 
@@ -297,17 +297,21 @@ export function definePluginManifest(config) {
 }
 
 /**
- * Emits `contributions.json` into the build output. It only reaches the storefront through the
- * platform descriptor, so the build fails when `public/plugin.json` does not list it in
- * `contentFiles` — otherwise every declaration would be silently ignored.
+ * Puts the declaration where the storefront reads it. Inline, as `contributions` in the built
+ * `plugin.json`: a platform that serves it (3.1076+) hands it to the host with the plugin list, so
+ * nothing is fetched for it. And as `contributions.json`, listed in `contentFiles`, for a platform
+ * that drops keys it does not know — the host then fetches that file instead. The build fails when
+ * `public/plugin.json` does not list it, since that platform would never advertise it.
  */
 export function pluginContributions(contributions) {
   let publicDir;
+  let outDir;
   return {
     name: "vc-frontend:plugin-contributions",
     apply: "build",
     configResolved(config) {
       publicDir = config.publicDir;
+      outDir = resolve(config.root, config.build.outDir);
     },
     buildStart() {
       const pluginJsonPath = publicDir ? resolve(publicDir, "plugin.json") : undefined;
@@ -327,6 +331,15 @@ export function pluginContributions(contributions) {
         fileName: CONTRIBUTIONS_FILE_NAME,
         source: JSON.stringify(contributions, null, 2) + "\n",
       });
+    },
+    // After Vite copied public/: the built plugin.json is the one the platform reads.
+    closeBundle() {
+      const builtPluginJson = resolve(outDir, "plugin.json");
+      if (!existsSync(builtPluginJson)) {
+        return;
+      }
+      const pluginJson = JSON.parse(readFileSync(builtPluginJson, "utf8"));
+      writeFileSync(builtPluginJson, JSON.stringify({ ...pluginJson, contributions }, null, 2) + "\n");
     },
   };
 }

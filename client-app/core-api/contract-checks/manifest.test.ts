@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -172,7 +172,7 @@ describe("pluginContributions", () => {
     dir = mkdtempSync(join(tmpdir(), "vc-contributions-"));
     writeFileSync(join(dir, "plugin.json"), JSON.stringify(pluginJson));
     const plugin = pluginContributions({ format: 1, when: { setting: "X" } });
-    plugin.configResolved({ publicDir: dir });
+    plugin.configResolved({ publicDir: dir, root: dir, build: { outDir: "dist" } });
     const context = { error: vi.fn((message: string) => { throw new Error(message); }), emitFile: vi.fn() };
     return { plugin, context };
   }
@@ -190,6 +190,21 @@ describe("pluginContributions", () => {
     });
   });
 
+  it("writes the declaration into the built plugin.json, next to what the plugin declared there", () => {
+    const { plugin } = withPluginJson({ id: "p", contentFiles: [CONTRIBUTIONS_FILE_NAME] });
+    // What Vite leaves in outDir after copying public/.
+    mkdirSync(join(dir!, "dist"));
+    writeFileSync(join(dir!, "dist", "plugin.json"), JSON.stringify({ id: "p", contentFiles: [CONTRIBUTIONS_FILE_NAME] }));
+
+    plugin.closeBundle();
+
+    expect(JSON.parse(readFileSync(join(dir!, "dist", "plugin.json"), "utf8"))).toEqual({
+      id: "p",
+      contentFiles: [CONTRIBUTIONS_FILE_NAME],
+      contributions: { format: 1, when: { setting: "X" } },
+    });
+  });
+
   it("fails the build when plugin.json does not list it, since the host would never see it", () => {
     const { plugin, context } = withPluginJson({ id: "p", contentFiles: ["styles.css"] });
 
@@ -198,7 +213,7 @@ describe("pluginContributions", () => {
 
   it("fails the build when there is no plugin.json at all", () => {
     const plugin = pluginContributions({ format: 1 });
-    plugin.configResolved({ publicDir: join(tmpdir(), "vc-contributions-missing") });
+    plugin.configResolved({ publicDir: join(tmpdir(), "vc-contributions-missing"), root: tmpdir(), build: { outDir: "dist" } });
     const context = { error: vi.fn((message: string) => { throw new Error(message); }) };
 
     expect(() => plugin.buildStart.call(context)).toThrow(/public\/plugin.json, which is missing/);

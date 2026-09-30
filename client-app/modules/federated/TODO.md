@@ -193,10 +193,12 @@ Definition and rationale: *Pilot* section of the discovery spec.
       from this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the
       backstop's late-registration hole, and a switched-off plugin paying the whole load chain.
       What it leaves open:
-  - [ ] **A switched-off plugin costs one request, not zero.** Contributions ride in `contentFiles`
-        because vc-platform's `PluginManifestFile` binds six `plugin.json` fields and drops the rest
-        (`AppManifestService.cs:450`). Zero needs the platform model, its descriptor hash and
-        x-api's `StorePlugin` to carry `when` (at least) — then phase A reads it from `store.plugins`.
+  - [ ] **Zero requests for a switched-off plugin, and none for any declaration** — needs the two
+        backend changes to ship: vc-platform (`plugin.json` `contributions` →
+        `PluginDescriptor.Contributions`, covered by the manifest hash) and vc-module-x-api
+        (`StorePlugin.contributions`). The host already prefers the inline declaration and falls back
+        to `contributions.json` in `contentFiles` without them. Verified end to end on a local
+        platform built from both branches.
   - [ ] **The sales-rep plugin declares nothing yet** — its `plugin.config.ts` in
         vc-module-sales-rep#13, against facade `0.1.3`. Until then it keeps blocking boot.
   - [ ] **Reserved-box sizes** exist for `productCard/card-button` (measured: 0.0082 of CLS from

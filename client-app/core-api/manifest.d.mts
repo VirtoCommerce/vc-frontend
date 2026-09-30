@@ -33,9 +33,10 @@ export declare function definePluginManifest(config: IPluginManifestConfigType):
 export interface IPluginContributionsVitePlugin {
   name: string;
   apply: "build";
-  configResolved(config: { publicDir: string }): void;
+  configResolved(config: { publicDir: string; root: string; build: { outDir: string } }): void;
   buildStart(): void;
   generateBundle(): void;
+  closeBundle(): void;
 }
 
 export declare function pluginContributions(contributions: IPluginContributionsType): IPluginContributionsVitePlugin;

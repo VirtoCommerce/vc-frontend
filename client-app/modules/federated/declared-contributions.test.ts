@@ -164,6 +164,34 @@ describe("declared contributions in the loader", () => {
     expect(usePluginsStatus().stateOf("sales-rep")).toBe("failed");
   });
 
+  it("reads the declaration the platform served inline, and fetches no file for it", async () => {
+    const fetchMock = stubFetch(DECLARED);
+
+    const prepared = await prepareFederatedModules({
+      plugins: [{ ...plugin(), contributions: JSON.stringify(DECLARED) }],
+      conditionContext: context(true),
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+    expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBe("sales-rep");
+  });
+
+  it("skips a plugin whose inline declaration is not valid JSON, rather than guess at it", async () => {
+    const fetchMock = stubFetch(DECLARED);
+
+    const prepared = await prepareFederatedModules({
+      plugins: [{ ...plugin(), contributions: "{ not json" }],
+      conditionContext: context(true),
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(prepared.result.skipped).toEqual(["sales-rep"]);
+    expect(usePluginsStatus().plugins.value[0]).toMatchObject({
+      reason: "its inline contributions are not valid JSON",
+    });
+  });
+
   it("skips a plugin that lists contributions but does not serve them", async () => {
     stubFetch(DECLARED, { contributionsStatus: 404 });
 
