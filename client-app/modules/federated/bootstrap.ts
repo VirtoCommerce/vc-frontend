@@ -20,24 +20,20 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
  * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery 2 +
  * manifest 2 + 2×load 3 = 10s — leaving 2s for the chunk fetch. Past it boot proceeds and the loader
  * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
- * It only bounds plugins that declared nothing: boot never waits for a declared plugin's code.
+ * Bounds undeclared plugins only.
  * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
  */
 // Exported for the invariant test only (backstop > discovery + manifest + 2×load defaults).
 export const BOOT_BACKSTOP_MS = 12_000;
 
-/**
- * A route a plugin registered only in its `init()` does not exist when a deep link resolves before
- * that — the user lands on the catch-all. Once every plugin has settled, the same URL is resolved
- * again and followed if it now matches something else.
- */
+/** Re-resolves the current URL once every plugin settled: a deep link may have hit the catch-all before its route existed. */
 function reResolveOnceSettled(): void {
   const router = globals.router;
   if (!router) {
     return;
   }
   const current = router.currentRoute.value;
-  // Not installed yet: the first navigation will see every route there is.
+  // Router not installed yet.
   if (current.matched.length === 0) {
     return;
   }
@@ -106,8 +102,6 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
         }),
         import("./index"),
       ]);
-      // Waited for: a plugin's declarations are what lets boot NOT wait for its code — placeholders,
-      // menu entries and reserved slots must exist before the router resolves the first URL.
       const prepared = await prepareFederatedModules({
         plugins,
         hasPermission: options?.hasPermission,
@@ -115,8 +109,6 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
       });
       const { blocking, all } = loadPreparedModules(prepared);
       void all.then(reResolveOnceSettled);
-      // A plugin that declared nothing registers its routes in init(), so boot still waits for it,
-      // exactly as before.
       await blocking;
     } catch (error) {
       // A loader-chunk fetch failure degrades to "no plugins" here, not to a reload.

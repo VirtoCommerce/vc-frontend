@@ -506,10 +506,7 @@ if (unlisted.length) {
  * create-plugin installs both, so a scaffolded plugin is unaffected by the split.
  */
 const KNOWN_RANGES = { ...MF_SHARED_RANGES, ...CONTRACT_TYPE_PEERS };
-/**
- * `from "x"`, `require("x")` and the `import("x")` form the .d.mts files use for type-only refs.
- * Node built-ins (`node:fs` in manifest.mjs, which runs in the plugin's build) are not packages.
- */
+// `from "x"`, `require("x")` and `import("x")`; `node:` built-ins are not packages.
 const externalsIn = (source) =>
   [
     ...source.matchAll(/from ['"]([^'".][^'"]*)['"]/g),
@@ -638,11 +635,8 @@ step(
     : "contract is self-contained (0 unresolved names).",
 );
 
-// 2b2 ── prove the manifest API types a plugin.config.ts the way it promises ────
-// `@vc-frontend/core/manifest` is hand-typed over contract types, and its guarantees are all
-// type-level: a `field(...)` term outside a slot, an unknown slot, parent route or field path must
-// not compile. contract-checks/manifest.check.ts asserts each with `@ts-expect-error`, so a
-// guarantee that stops holding surfaces as an unused directive (TS2578) instead of a silent `any`.
+// 2b2 ── type-check the manifest API against the contract ────
+// A guarantee that stops holding surfaces as an unused `@ts-expect-error` (TS2578).
 step("type-checking the manifest API against the contract…");
 const MANIFEST_CHECK_FILE = resolve(CORE_API_DIR, "contract-checks", "manifest.check.ts");
 const MANIFEST_TYPES_FILE = resolve(CORE_API_DIR, "manifest.d.mts");

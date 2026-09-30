@@ -19,8 +19,6 @@ describe("startFederatedModules", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    // prepare + load behave as the old single init as far as these cases go: whatever the mock
-    // does is what boot waits for.
     vi.doMock("./index", () => ({
       prepareFederatedModules: (options: unknown) => Promise.resolve({ options }),
       loadPreparedModules: ({ options }: { options: unknown }) => {

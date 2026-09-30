@@ -1,9 +1,4 @@
-/**
- * Declared plugin contributions: the condition builders a plugin's `plugin.config.ts` uses, the
- * normaliser that turns that config into `contributions.json`, and the Vite plugin that emits it.
- * Plain JS so the plugin's build (node) imports it natively, like federation.mjs. The shapes are
- * typed in the contract (`IPluginManifestConfigType`, `IPluginContributionsType`).
- */
+/** Condition builders, `definePluginManifest` and the Vite plugin that emits it. Plain JS: runs in the plugin's node build. */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT } from "./manifest-format.mjs";
@@ -33,10 +28,7 @@ function isScalar(value) {
   return value === null || ["string", "number", "boolean"].includes(typeof value);
 }
 
-/**
- * `.eq` stays off the emitted JSON: non-enumerable, so neither `JSON.stringify` nor a spread sees it,
- * and the condition reads as "truthy" until someone calls it.
- */
+// Non-enumerable, so `.eq` stays out of the emitted JSON.
 function comparable(node) {
   Object.defineProperty(node, "eq", {
     enumerable: false,
@@ -66,7 +58,6 @@ export function authenticated() {
   return { authenticated: true };
 }
 
-/** All of them. */
 export function userCan(...permissions) {
   if (permissions.length === 0) {
     throw new ManifestError("userCan()", "needs at least one permission");
@@ -99,10 +90,7 @@ function field(path) {
 
 const CONDITION_KEYS = ["setting", "themeSetting", "authenticated", "can", "field", "and", "or", "not"];
 
-/**
- * Re-reads a condition into a plain node. Builders already produce well-formed ones; this catches a
- * hand-written literal, and it is what drops a stray `eq` method.
- */
+// Validates hand-written literals and drops the `eq` method.
 function normalizeCondition(condition, where, allowField) {
   if (condition === null || typeof condition !== "object" || Array.isArray(condition)) {
     throw new ManifestError(where, `a condition must be an object, got ${JSON.stringify(condition)}`);
@@ -266,11 +254,7 @@ function normalizeList(value, what, normalize) {
   return value.map(normalize);
 }
 
-/**
- * The default export of a plugin's `plugin.config.ts`. Validates the declaration and returns it in
- * the shape the build writes to `contributions.json`; anything malformed fails the plugin's build
- * here, not the storefront at runtime.
- */
+/** The default export of `plugin.config.ts`; a malformed declaration fails the plugin's build. */
 export function definePluginManifest(config) {
   if (config === null || typeof config !== "object") {
     throw new ManifestError("definePluginManifest()", "expects an object");
@@ -297,11 +281,8 @@ export function definePluginManifest(config) {
 }
 
 /**
- * Puts the declaration where the storefront reads it. Inline, as `contributions` in the built
- * `plugin.json`: a platform that serves it (3.1076+) hands it to the host with the plugin list, so
- * nothing is fetched for it. And as `contributions.json`, listed in `contentFiles`, for a platform
- * that drops keys it does not know — the host then fetches that file instead. The build fails when
- * `public/plugin.json` does not list it, since that platform would never advertise it.
+ * Writes the declaration into the built `plugin.json` (served inline by platform 3.1076+) and to
+ * `contributions.json`, the `contentFiles` fallback for older platforms.
  */
 export function pluginContributions(contributions) {
   let publicDir;
@@ -332,7 +313,7 @@ export function pluginContributions(contributions) {
         source: JSON.stringify(contributions, null, 2) + "\n",
       });
     },
-    // After Vite copied public/: the built plugin.json is the one the platform reads.
+    // Runs after Vite copied public/plugin.json.
     closeBundle() {
       const builtPluginJson = resolve(outDir, "plugin.json");
       if (!existsSync(builtPluginJson)) {

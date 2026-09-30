@@ -1,8 +1,4 @@
-/**
- * Compiled by build-types.mjs against the freshly generated contract, exactly as a plugin's
- * `plugin.config.ts` sees the facade. Every `@ts-expect-error` must still fire: an unused one fails
- * the build, so a guarantee that silently stops holding is caught here, not in a plugin.
- */
+// Compiled by build-types.mjs against the generated contract; every `@ts-expect-error` must still fire.
 import {
   and,
   authenticated,
@@ -15,7 +11,7 @@ import {
 } from "@vc-frontend/core/manifest";
 import type { ConditionType, IPluginContributionsType, SlotContextMapType, SlotIdType } from "@vc-frontend/core";
 
-// ── The reference case: every contribution the sales-rep module makes that is visible before it runs ──
+// ── sales-rep's contributions ──
 
 const ACCESS = "sales-rep:access";
 const DOCUMENTS_READ = "sales-rep-documents:read";
@@ -89,7 +85,7 @@ export const salesRep: IPluginContributionsType = definePluginManifest({
   ],
 });
 
-// ── Every other kind of condition and slot context ──────────────────────────────────────────────
+// ── Other conditions and slot contexts ──
 
 definePluginManifest({
   when: and(themeSetting("push_messages_enabled"), authenticated(), settingValue("Some.Mode").eq("on")),
@@ -114,7 +110,7 @@ definePluginManifest({
   ],
 });
 
-// ── What must NOT compile ─────────────────────────────────────────────────────────────────────
+// ── Must not compile ──
 
 // @ts-expect-error a name the category does not list
 export const unknownName: keyof SlotContextMapType = "productCard/nope";

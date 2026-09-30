@@ -33,18 +33,13 @@ import type {
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 
-// Module scope rather than inside the composable, so the host-only declaration helpers below reach
-// the same state without widening `useNavigations`, which the facade publishes to plugins.
+// Module scope, so the host-only helpers below share it without widening the published `useNavigations`.
 const menuSchema = shallowRef<MenuType | null>(menuData);
 // Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
 // shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
 const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
 
-/**
- * Entries the host added from a plugin's declared contributions, before the plugin ran. The
- * plugin's own registration under the same id replaces them instead of being duplicated (links) or
- * refused (sections); anything the plugin never claimed is withdrawn if it fails.
- */
+// Added from a plugin's declaration; the plugin's own registration under the same id replaces them.
 const declaredLinkIds = new Set<string>();
 const declaredSectionIds = new Set<string>();
 
@@ -67,13 +62,13 @@ function removeLinks(links: ExtendedMenuLinkType[] | undefined, ids: Set<string>
     .map((link) => (link.children ? { ...link, children: removeLinks(link.children, ids) } : link));
 }
 
-/** Host-only: header links declared by a plugin, identified by `ids` so they can be withdrawn. */
+/** Host-only. */
 export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[]): void {
   mergeIntoMenuSchema(schema);
   ids.forEach((id) => declaredLinkIds.add(id));
 }
 
-/** Host-only: an account section declared by a plugin; the plugin's own registration replaces it. */
+/** Host-only. */
 export function declareAccountSection(section: AccountNavigationSectionType): void {
   if (registeredAccountSections.value.some((x) => x.id === section.id)) {
     Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring the declaration.`);
@@ -83,7 +78,7 @@ export function declareAccountSection(section: AccountNavigationSectionType): vo
   registeredAccountSections.value = [...registeredAccountSections.value, section];
 }
 
-/** Host-only: drops whatever of these declarations the plugin did not register itself. */
+/** Host-only: drops the declarations the plugin did not register itself. */
 export function withdrawDeclaredNavigation(linkIds: readonly string[], sectionIds: readonly string[]): void {
   const links = new Set(linkIds.filter((id) => declaredLinkIds.has(id)));
   if (links.size && menuSchema.value) {
@@ -362,8 +357,8 @@ export function _useNavigations() {
     mergeIntoMenuSchema(additionalSchema);
   }
 
-  // Registers an account left-rail section (idempotent by id). Modules call this at init. A section
-  // the host declared on the plugin's behalf is replaced by the plugin's own.
+  // Registers an account left-rail section (idempotent by id). Modules call this at init. Replaces a
+  // declared section with the same id.
   function registerAccountSection(section: AccountNavigationSectionType) {
     if (declaredSectionIds.has(section.id)) {
       declaredSectionIds.delete(section.id);

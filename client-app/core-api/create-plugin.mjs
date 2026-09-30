@@ -294,7 +294,7 @@ import contributions from "./plugin.config";
 export default defineConfig({
   plugins: [
     vue(),
-    // Writes dist/contributions.json from plugin.config.ts.
+    // Emits plugin.config.ts into plugin.json and contributions.json.
     pluginContributions(contributions),
     // Wiring conventions (expose key, shared singletons, manifest metadata) come from
     // the host - client-app/core-api/federation.mjs in the host checkout owns them.
@@ -390,10 +390,8 @@ export function init(): void {
 
 const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
 
-// What the storefront learns about this plugin before running any of its code: routes, menu
-// entries, the extension points it fills, and conditions on each. Every field is optional, and
-// nothing declared here replaces a registration in src/index.ts — see HOWTO "Declaring
-// contributions".
+// What the storefront knows before running this plugin. It does not replace the registrations in
+// src/index.ts — see HOWTO "Declaring contributions".
 export default definePluginManifest({${
   selected.router
     ? `
@@ -466,8 +464,7 @@ symlinks, so the facade's types resolve their own imports from the host's node_m
 const pluginJson = {
   id: pluginName,
   remote: { name: pluginName, exposed: "./plugin" },
-  // The platform turns each entry into a hashed URL on the descriptor; this is the only way the
-  // storefront learns what plugin.config.ts declares before it fetches any of the plugin's code.
+  // Fallback for platforms older than 3.1076, which do not serve `contributions` inline.
   contentFiles: ["contributions.json"],
 };
 

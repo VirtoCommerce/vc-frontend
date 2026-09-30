@@ -101,10 +101,7 @@ const { getComponent, getContribution, getProps, isRegistered, passesCondition }
 
 const slots = useSlots();
 
-/**
- * Handed a slot context, the declaration's field conditions decide for this render; without one,
- * the call site already gated this extension point with `$canRenderExtensionPoint`.
- */
+// Without a slot context, the call site already gated this with `$canRenderExtensionPoint`.
 const heldPolicy = computed(() => {
   const { category, name, conditionParameter } = props;
   return conditionParameter === undefined
@@ -117,7 +114,6 @@ const heldPolicy = computed(() => {
 const contribution = computed(() => {
   const { category, name, conditionParameter } = props;
 
-  // A component replaces the fallback, so nothing would read a contribution; a held box shows none.
   if (!name || heldPolicy.value || isRegistered(category, name)) {
     return undefined;
   }

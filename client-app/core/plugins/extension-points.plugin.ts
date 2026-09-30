@@ -11,8 +11,7 @@ export const extensionPointsPlugin: Plugin = {
     const { canRender } = useExtensionRegistry();
 
     /**
-     * Checking if component should be rendered — or, while the plugin that declared this slot is on
-     * the way, whether the extension point should hold its box so nothing shifts when it lands.
+     * Checking if component should be rendered, or its box held for a pending declaring plugin.
      * @example:
      *  <ExtensionPoint v-if="$canRenderExtensionPoint('productCard', 'card-button', product)" />
      */

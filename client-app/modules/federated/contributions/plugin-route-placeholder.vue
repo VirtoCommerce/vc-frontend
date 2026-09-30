@@ -18,11 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const isGone = ref(false);
 
-/**
- * Stands in for a declared route until its plugin settles, rendered inside the parent's layout and
- * guards. Then the same URL is resolved again: the plugin's own record has replaced this one, or
- * the host withdrew it and the page is the host's not-found page — never an endless loader.
- */
+// Once the plugin settles, re-resolve the URL: the plugin's own route, or the host's 404.
 onMounted(async () => {
   const plugin = route.meta[PLACEHOLDER_META_KEY];
   if (typeof plugin !== "string") {

@@ -6,21 +6,17 @@ export type PluginStateType = "pending" | "loaded" | "failed" | "skipped";
 export interface IPluginStatusType {
   name: string;
   state: PluginStateType;
-  /** Why it failed or was skipped. */
   reason?: string;
 }
 
 const statuses = shallowRef(new Map<string, IPluginStatusType>());
-/** Pending plugins past their deadline: still pending, but no longer worth holding a box for. */
+/** Still pending, but past their deadline: no longer hold boxes. */
 const expired = shallowRef(new Set<string>());
 const waiters = new Map<string, ((status: IPluginStatusType) => void)[]>();
 
 const isFinal = (state: PluginStateType | undefined) => state !== undefined && state !== "pending";
 
-/**
- * Host-side writer, called by the loader. A plugin settles once: a late outcome after a timeout
- * already reported it (a load that resolves after its budget) does not rewrite what was shown.
- */
+/** Loader-only. The first final state wins: a late outcome after a timeout is ignored. */
 export function setPluginStatus(name: string, state: PluginStateType, reason?: string): void {
   const current = statuses.value.get(name);
   if (isFinal(current?.state)) {
@@ -37,10 +33,7 @@ export function setPluginStatus(name: string, state: PluginStateType, reason?: s
   }
 }
 
-/**
- * Past `ms`, a still-pending plugin stops holding reserved boxes and placeholders: its load chunk
- * can hang with no budget of its own, and a box must never be held forever.
- */
+/** The load chunk has no budget of its own, so a pending plugin must not hold boxes forever. */
 export function expirePendingAfter(name: string, ms: number): void {
   setTimeout(() => {
     if (statuses.value.get(name)?.state === "pending") {
@@ -54,12 +47,11 @@ export function expirePendingAfter(name: string, ms: number): void {
   }, ms);
 }
 
-/** Whether the host can stop waiting on `name`: it settled, it expired, or it was never declared. */
+/** Settled, expired, or never seen. */
 export function isPluginSettled(name: string): boolean {
   return isFinal(statuses.value.get(name)?.state) || expired.value.has(name) || !statuses.value.has(name);
 }
 
-/** Resolves once `name` settles or expires; immediately for a plugin the host never saw. */
 export function whenPluginSettled(name: string): Promise<IPluginStatusType> {
   const current = statuses.value.get(name);
   if (!current || isFinal(current.state) || expired.value.has(name)) {
@@ -72,10 +64,7 @@ export function whenPluginSettled(name: string): Promise<IPluginStatusType> {
 
 const plugins: ComputedRef<readonly IPluginStatusType[]> = computed(() => [...statuses.value.values()]);
 
-/**
- * What became of each federated plugin, reactively. The only way to tell a missing feature from a
- * failed plugin in production, where `Logger` is a no-op.
- */
+/** Each federated plugin's state, reactively; the only production signal, as `Logger` is a no-op there. */
 export function usePluginsStatus() {
   return {
     plugins: readonly(plugins),

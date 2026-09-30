@@ -72,8 +72,6 @@ describe("create-plugin scaffolder", () => {
 
     // The platform reads this to learn the expose key; without it it assumes "./Module" and the
     // host would loadRemote a key this plugin does not export.
-    // `contentFiles` is the only way contributions.json reaches the storefront; the plugin's build
-    // refuses to emit it otherwise.
     const descriptor = JSON.parse(readFileSync(join(dir, "public", "plugin.json"), "utf8")) as {
       id: string;
       remote: { name: string; exposed: string };

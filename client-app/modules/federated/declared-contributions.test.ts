@@ -132,7 +132,6 @@ describe("declared contributions in the loader", () => {
     await expect(loading.blocking).resolves.toBeUndefined();
     await flushPromises();
 
-    // The plugin's own init() takes its placeholder over: the guard lets it, it is not a host route.
     router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
     finishInit();
     const result = await loading.all;

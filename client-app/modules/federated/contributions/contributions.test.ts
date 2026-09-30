@@ -195,7 +195,6 @@ describe("applyContributions / releaseContributions", () => {
     expect(router.resolve("/company/documents").meta[declare.PLACEHOLDER_META_KEY]).toBe("sales-rep");
     expect(router.resolve("/company/sign").redirectedFrom).toBeUndefined();
     expect(router.getRoutes().find((route) => route.name === "SignRedirect")?.redirect).toEqual({ name: "SignIn" });
-    // A host route is never evicted by a declaration.
     expect(router.resolve("/").name).toBe("Home");
     expect(loggerErrorMock).toHaveBeenCalledWith(
       expect.stringContaining('declares route "Home", which is already taken'),
@@ -214,9 +213,7 @@ describe("applyContributions / releaseContributions", () => {
 
     expect(declare.reservationFor("sharedList", "provenance-note", { scope: "Customer" })).toBe("reserve");
     expect(declare.reservationFor("sharedList", "provenance-note", { scope: "Private" })).toBeUndefined();
-    // Its global term was false, so it was never declared.
     expect(declare.reservationFor("accountMenu", "docs", undefined)).toBeUndefined();
-    // `none` decorates host markup; there is nothing to hold.
     expect(declare.reservationFor("mobileMenu", "docs", undefined)).toBeUndefined();
     expect(declare.pendingSlotNames("sharedList")).toEqual(["provenance-note"]);
 
@@ -242,7 +239,6 @@ describe("applyContributions / releaseContributions", () => {
       context(),
       router,
     );
-    // The plugin's init() takes its declared route over.
     router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
 
     declare.releaseContributions(applied, router, true);

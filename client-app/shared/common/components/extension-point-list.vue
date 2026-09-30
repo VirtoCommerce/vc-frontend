@@ -46,10 +46,7 @@ const { getEntries, passesCondition } = useExtensionRegistry();
 
 const entries = computed(() => getEntries(props.category, props.names) as Record<string, unknown>);
 
-/**
- * The registered entries, plus the slots a still-pending plugin declared for this category, so a
- * `block` region holds its place before the plugin has registered anything.
- */
+// Plus pending declared slots, so a `block` region holds its place before registration.
 const listedNames = computed(() => {
   const pending = pendingSlotNames(props.category).filter((name) => !props.names || props.names.includes(name));
   return [...new Set([...Object.keys(entries.value), ...pending])];

@@ -53,15 +53,9 @@ interface IRemoteDescriptor {
   allowCrossOrigin?: boolean;
   /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
   version?: string;
-  /**
-   * Where the plugin's declared contributions are. `optional` for an env remote, whose sibling file
-   * may simply not exist; a platform plugin that lists one in `contentFiles` must serve it.
-   */
+  /** `optional`: an env remote's sibling file may not exist; a listed platform file must be served. */
   contributions?: { url: string; optional: boolean };
-  /**
-   * The declaration the platform served inline (`store.plugins[].contributions`, platform 3.1076+),
-   * as JSON text. When present the file is never fetched.
-   */
+  /** Served inline by `store.plugins` (platform 3.1076+); when present the file is not fetched. */
   inlineContributions?: string;
 }
 
@@ -78,7 +72,7 @@ export interface IPlatformPlugin {
   entry?: { type?: string | null; path?: string | null; hash?: string | null } | null;
   contentFiles?: readonly ({ type?: string | null; path?: string | null; hash?: string | null } | null)[] | null;
   remote?: { name?: string | null; exposed?: string | null } | null;
-  /** The plugin's declared contributions as JSON text; absent on a platform older than 3.1076. */
+  /** JSON text; absent before platform 3.1076. */
   contributions?: string | null;
 }
 
@@ -115,10 +109,7 @@ export interface IFederatedLoaderOptions {
    * BOOT_BACKSTOP_MS above manifestTimeoutMs + 2×loadTimeoutMs.
    */
   loadTimeoutMs?: number;
-  /**
-   * What declared `when` conditions are read against. Without one, only `can` is answerable (through
-   * `hasPermission`); every setting reads as unset.
-   */
+  /** Evaluates declared `when` conditions. Without it, settings read as unset and `can` uses `hasPermission`. */
   conditionContext?: IConditionContextType;
 }
 
@@ -265,8 +256,6 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
       exposed: SCAFFOLD_EXPOSE_KEY,
       styles: [],
       allowCrossOrigin: true,
-      // The scaffold writes it beside mf-manifest.json, so a plugin's own preview server serves both
-      // and the declared path can be exercised locally; an older plugin simply has none.
       contributions: { url: siblingUrl(value, CONTRIBUTIONS_FILE_NAME), optional: true },
     });
   }
@@ -321,7 +310,6 @@ function toManifestUrl(entryUrl: string): string {
 
 const isContributionsFile = (path: string) => path.split(/[\\/]/).pop()?.split("?")[0] === CONTRIBUTIONS_FILE_NAME;
 
-/** The declared-contributions file a platform plugin lists in `contentFiles`, as a same-origin URL. */
 function findContributions(plugin: IPlatformPlugin): IRemoteDescriptor["contributions"] {
   for (const file of Array.isArray(plugin.contentFiles) ? plugin.contentFiles : []) {
     const filePath = asString(file?.path);
@@ -621,8 +609,7 @@ function installRouteGuard(): () => void {
    */
   const isDeclared = (name: unknown) =>
     router.getRoutes().some((route) => route.name === name && route.meta?.[DECLARED_META_KEY] !== undefined);
-  // A route the host registered from a plugin's declaration is the plugin's to replace: it is
-  // exactly the placeholder its own `addRoute` is meant to take over.
+  // Declared placeholders are the plugin's to replace.
   const hostRouteNames = new Set(
     router
       .getRoutes()
@@ -772,13 +759,6 @@ function reportOutcome(result: IFederatedLoadResult, versions?: ReadonlyMap<stri
 
 type ContributionsReadType = { ok: true; contributions?: IPluginContributionsType } | { ok: false; reason: string };
 
-/**
- * Reads a plugin's declared contributions: plain JSON, budgeted like the manifest, and held to the
- * same origin rule. A platform plugin that lists the file but does not serve a readable one is
- * skipped — the host cannot tell whether its `when` would have said no. An env remote's sibling
- * file is optional: none means "declares nothing", i.e. today's behaviour.
- */
-/** A declared body, whether it came inline with the plugin list or from the file. */
 function toContributions(
   body: unknown,
   readOptional: (reason: string) => ContributionsReadType,
@@ -791,7 +771,7 @@ function toContributions(
     return readOptional("the file carries no `format`");
   }
   if (format !== CONTRIBUTIONS_FORMAT) {
-    // Not optional even for an env remote: the plugin did declare, in a shape this host cannot read.
+    // Not optional even for an env remote: it declared, in a format this host cannot read.
     return {
       ok: false,
       reason: `its contributions are format ${String(format)}, this host reads ${CONTRIBUTIONS_FORMAT}`,
@@ -800,7 +780,6 @@ function toContributions(
   return { ok: true, contributions: body as IPluginContributionsType };
 }
 
-/** Inline wins: it arrived with the plugin list, so reading it costs nothing. */
 function readInlineContributions(json: string): ContributionsReadType {
   let body: unknown;
   try {
@@ -811,6 +790,10 @@ function readInlineContributions(json: string): ContributionsReadType {
   return toContributions(body, (reason) => ({ ok: false, reason: `its inline contributions are unusable: ${reason}` }));
 }
 
+/**
+ * A platform plugin that lists the file but does not serve a readable one is skipped: its `when`
+ * is unknown. An env remote's file is optional.
+ */
 async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): Promise<ContributionsReadType> {
   if (remote.inlineContributions !== undefined) {
     return readInlineContributions(remote.inlineContributions);
@@ -848,19 +831,17 @@ async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): 
   }
 }
 
-/** A remote that passed every check the host can make without running any of its code. */
 interface IPreparedRemoteType {
   remote: IRemoteDescriptor;
-  /** Present when the plugin declared contributions; the host then does not wait for its code. */
   applied?: IAppliedContributionsType;
 }
 
 export interface IPreparedFederationType {
   result: IFederatedLoadResult;
   versions: ReadonlyMap<string, string>;
-  /** Declared nothing: loaded exactly as before, and boot waits for them. */
+  /** Declared nothing; boot waits for them. */
   blocking: IPreparedRemoteType[];
-  /** Declared: placeholders and menu entries exist already, so boot does not wait for their code. */
+  /** Declared; boot does not wait for their code. */
   deferred: IPreparedRemoteType[];
   manifestTimeoutMs: number;
   loadTimeoutMs: number;
@@ -871,11 +852,7 @@ function skip(result: IFederatedLoadResult, name: string, reason: string): void 
   setPluginStatus(name, "skipped", reason);
 }
 
-/**
- * Phase A — everything the host can decide before fetching a byte of plugin code, in the order
- * `permission` (the platform descriptor) → the plugin-level `when` → its declarations. A plugin
- * whose `when` is false costs the one small contributions request and nothing else. Never rejects.
- */
+/** Phase A: permission → declarations → plugin-level `when`, before any plugin code. Never rejects. */
 export async function prepareFederatedModules(options?: IFederatedLoaderOptions): Promise<IPreparedFederationType> {
   const manifestTimeoutMs = options?.manifestTimeoutMs ?? DEFAULT_MANIFEST_TIMEOUT_MS;
   const loadTimeoutMs = options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS;
@@ -904,7 +881,6 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
     can: (permission) => options?.hasPermission?.(permission) ?? false,
   };
 
-  // Before any network: a plugin the user may not run should cost nothing at all.
   const permitted = remotes.filter((remote) => {
     const permission = remote.permission?.trim();
     try {
@@ -939,7 +915,6 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
       continue;
     }
     setPluginStatus(remote.name, "pending");
-    // Past this, a pending plugin stops holding reserved boxes and placeholders.
     expirePendingAfter(remote.name, manifestTimeoutMs + 2 * loadTimeoutMs + 2_000);
     if (contributions && router) {
       prepared.deferred.push({ remote, applied: applyContributions(remote.name, contributions, context, router) });
@@ -950,10 +925,7 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
   return prepared;
 }
 
-/**
- * One plugin, from the CONTRACT GATE to `init()`. Never rejects; settles the plugin's status and,
- * for a declared plugin, withdraws whatever of its declarations it did not claim.
- */
+/** CONTRACT GATE → `init()` for one plugin. Never rejects. */
 async function runRemote(entry: IPreparedRemoteType, prepared: IPreparedFederationType): Promise<void> {
   const { remote, applied } = entry;
   const { result, manifestTimeoutMs, loadTimeoutMs } = prepared;
@@ -1018,17 +990,13 @@ async function runRemote(entry: IPreparedRemoteType, prepared: IPreparedFederati
 }
 
 export interface ILoadingFederationType {
-  /** Settles when every plugin that declared nothing has — what boot waits for. */
+  /** Undeclared plugins settled: what boot waits for. */
   blocking: Promise<void>;
-  /** Settles when every plugin has; resolves to the outcome. Never rejects. */
+  /** Every plugin settled. Never rejects. */
   all: Promise<IFederatedLoadResult>;
 }
 
-/**
- * Phase B — the manifest gate, `loadRemote` and `init()`, per plugin and concurrently. One route
- * guard covers ALL of them for as long as any is running (see installRouteGuard on why it must not
- * be per plugin), so it is also up while declared plugins finish after the app has mounted.
- */
+/** Phase B: manifest gate, `loadRemote`, `init()`, concurrently under one route guard (see installRouteGuard). */
 export function loadPreparedModules(prepared: IPreparedFederationType): ILoadingFederationType {
   const entries = [...prepared.blocking, ...prepared.deferred];
   if (entries.length === 0) {

@@ -17,7 +17,7 @@ function _useBulkOrderExtensionPoints() {
   function registerAdditionalTab(tab: ITab) {
     if (!additionalTabs.value.some((el) => el.id === tab.id)) {
       additionalTabs.value.push(tab);
-      // shallowRef tracks `.value` reassignment only; a registration after mount must re-render.
+      // shallowRef: re-render on a registration after mount.
       triggerRef(additionalTabs);
     }
   }

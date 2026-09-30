@@ -1,17 +1,16 @@
 import { Logger } from "@/core/utilities";
 import type { ConditionNodeType } from "./types";
 
-/** What the host knows before any plugin runs: the moment module `init()` runs today. */
 export interface IConditionContextType {
-  /** A module setting of the store, looked up by its name across all modules. */
+  /** A store module setting, by name. */
   setting(key: string): unknown;
-  /** A key of the theme's `settings_data.json`. */
+  /** A `settings_data.json` key. */
   themeSetting(key: string): unknown;
   isAuthenticated: boolean;
   can(permission: string): boolean;
 }
 
-/** A field-only condition left for render time, or the answer already. */
+/** Decided, or the field-only rest left for render time. */
 export type ResidualConditionType = boolean | ConditionNodeType;
 
 const warned = new Set<string>();
@@ -23,10 +22,7 @@ function warnOnce(key: string, message: string): void {
   }
 }
 
-/**
- * Settings follow the host's own convention (`useModuleSettings().isEnabled` is `=== true`), so
- * declaring `settingEnabled(ENABLED_KEY)` means exactly what the module's own check means.
- */
+// `=== true`, like `useModuleSettings().isEnabled`.
 function settingMatches(value: unknown, node: { eq?: unknown }): boolean {
   return "eq" in node ? value === node.eq : value === true;
 }
@@ -36,7 +32,6 @@ function malformed(node: unknown): false {
   return false;
 }
 
-/** A global leaf's answer, the field leaf itself, or `undefined` when `node` is not a leaf. */
 function resolveLeaf(node: ConditionNodeType, context: IConditionContextType): ResidualConditionType | undefined {
   if ("setting" in node) {
     return settingMatches(context.setting(node.setting), node);
@@ -82,12 +77,7 @@ function resolveJunction(
   return isAnd ? { and: rest } : { or: rest };
 }
 
-/**
- * Resolves every global term against `context` and leaves the `field` terms standing, so a slot's
- * condition is decided once for everything that does not depend on the item and per render for
- * what does. An unknown node is logged once and counts as false: a declaration from a newer
- * format must not make the host reserve boxes or register routes it cannot justify.
- */
+/** Decides every global term and leaves `field` terms for render time. An unknown node counts as false. */
 export function resolveGlobalTerms(node: ConditionNodeType, context: IConditionContextType): ResidualConditionType {
   if (node === null || typeof node !== "object") {
     return malformed(node);
@@ -124,7 +114,6 @@ function readPath(context: unknown, path: string): unknown {
   return value;
 }
 
-/** A residual from `resolveGlobalTerms`, decided against one render's slot context. */
 export function evaluateResidual(residual: ResidualConditionType, slotContext: unknown): boolean {
   if (typeof residual === "boolean") {
     return residual;
@@ -142,11 +131,10 @@ export function evaluateResidual(residual: ResidualConditionType, slotContext: u
   if ("or" in residual) {
     return residual.or.some((operand) => evaluateResidual(operand, slotContext));
   }
-  // Global terms never survive resolveGlobalTerms; anything else is not a condition.
   return false;
 }
 
-/** For the plugin, a route or a menu entry: a field term there cannot be decided, so it does not gate. */
+/** A field term cannot be decided here, so it does not gate. */
 export function isGloballyTrue(node: ConditionNodeType | undefined, context: IConditionContextType): boolean {
   if (node === undefined) {
     return true;

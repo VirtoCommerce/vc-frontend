@@ -15,9 +15,9 @@ import type { ExtendedMenuLinkType, MenuType } from "@/core/types";
 import type { DeepPartial } from "utility-types";
 import type { RouteRecordRaw, Router } from "vue-router";
 
-/** Carried by the host's stand-in for a declared route: the plugin the route belongs to. */
+/** On a placeholder route: the owning plugin's name. */
 export const PLACEHOLDER_META_KEY = "pluginPlaceholder";
-/** Carried by every route the host registered from a declaration, placeholder or redirect. */
+/** On every route registered from a declaration. */
 export const DECLARED_META_KEY = "declaredByPlugin";
 
 const PluginRoutePlaceholder = () => import("./plugin-route-placeholder.vue");
@@ -25,19 +25,17 @@ const PluginRoutePlaceholder = () => import("./plugin-route-placeholder.vue");
 interface IDeclaredSlotType {
   plugin: string;
   policy: SlotPolicyType;
-  /** The declaration's `when`, with its global terms already decided. */
   condition: ResidualConditionType;
 }
 
 const declaredSlots = shallowRef(new Map<string, IDeclaredSlotType>());
 
-/** What one plugin's declarations added, so the host can withdraw what the plugin never claimed. */
 export interface IAppliedContributionsType {
   plugin: string;
   placeholderRoutes: string[];
-  /** Declared header link id -> the route it points to. */
+  /** link id -> route name */
   links: Record<string, string>;
-  /** Declared account section id -> the routes its children point to. */
+  /** section id -> its children's route names */
   sections: Record<string, string[]>;
 }
 
@@ -111,8 +109,7 @@ function declareMenu(
   router: Router,
   applied: IAppliedContributionsType,
 ): void {
-  // A link is only declared when its route resolves now: RouterLink throws on an unknown name, and
-  // the header would fail to render until the plugin registered the route itself.
+  // RouterLink throws on an unknown route name.
   const linkable = (link: IMenuLinkContributionType) => {
     if (!isGloballyTrue(link.when, context)) {
       return false;
@@ -167,12 +164,7 @@ function declareSlots(contributions: IPluginContributionsType, context: IConditi
   declaredSlots.value = slots;
 }
 
-/**
- * Registers what a plugin declared, before any of its code is fetched: a placeholder per route, its
- * menu entries, and the slots it will fill. Every entry whose global `when` is false is simply not
- * declared, so a deep link to it 404s exactly as it does today when a module never calls `addRoute`.
- * Anything that cannot be registered safely is skipped with a log line, never thrown.
- */
+/** Entries whose global `when` is false are not declared. Never throws. */
 export function applyContributions(
   plugin: string,
   contributions: IPluginContributionsType,
@@ -187,10 +179,8 @@ export function applyContributions(
 }
 
 /**
- * Once the plugin settled: its unclaimed placeholders go (the plugin's own `addRoute` replaced the
- * rest), its slot declarations go, and so does every menu entry that the plugin never registered
- * itself and that now points nowhere — all of them when it failed. A section with one dead child is
- * withdrawn whole: the plugin evidently did not register it, and half a section is worse than none.
+ * Drops unclaimed placeholders, slot declarations, and menu entries that now point nowhere (all of
+ * them if the plugin failed). A section with one dead child is withdrawn whole.
  */
 export function releaseContributions(applied: IAppliedContributionsType, router: Router, loaded: boolean): void {
   for (const name of applied.placeholderRoutes) {
@@ -217,11 +207,7 @@ export function releaseContributions(applied: IAppliedContributionsType, router:
   }
 }
 
-/**
- * The box a declared slot holds while its plugin is on the way: its policy when the declaration
- * applies to this render, `undefined` when the host should render what it would without plugins.
- * `none` holds nothing — it decorates markup the host renders anyway.
- */
+/** The policy to hold for this render while the declaring plugin is pending; `none` holds nothing. */
 export function reservationFor(
   category: string,
   name: string | undefined,
@@ -237,11 +223,7 @@ export function reservationFor(
   return evaluateResidual(declared.condition, slotContext) ? declared.policy : undefined;
 }
 
-/**
- * The policy of a still-pending declaration for this slot, ignoring its field conditions — for an
- * extension point that is not handed the slot context itself because its call site already decided
- * (with `$canRenderExtensionPoint`) that it renders at all.
- */
+/** Like `reservationFor`, ignoring field conditions: the call site already gated the slot. */
 export function heldPolicyOf(category: string, name: string | undefined): SlotPolicyType | undefined {
   const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;
   if (!declared || declared.policy === "none" || isPluginSettled(declared.plugin)) {
@@ -250,13 +232,11 @@ export function heldPolicyOf(category: string, name: string | undefined): SlotPo
   return declared.policy;
 }
 
-/** The plugin that declared this slot, if it has not settled yet. */
 export function pendingPluginOf(category: string, name: string | undefined): string | undefined {
   const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;
   return declared && !isPluginSettled(declared.plugin) ? declared.plugin : undefined;
 }
 
-/** Declared, still-pending slot names of one category, for extension points that list a category. */
 export function pendingSlotNames(category: string): string[] {
   const prefix = `${category}/`;
   return [...declaredSlots.value.entries()]

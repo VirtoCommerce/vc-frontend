@@ -3747,23 +3747,13 @@ declare const CUSTOM_EXTENSION_NAMES: {
 declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;
 
 type NamedCategoryType = keyof typeof EXTENSION_NAMES;
-/**
- * The names a slot id may carry after its category. A category listed in `EXTENSION_NAMES` accepts
- * only those names; the rest (the menus, `mobileHeader`, `cartPayment`) are keyed by an id the
- * plugin owns, such as its own menu link id.
- */
 type SlotNameType<C extends ExtensionCategoryType> = C extends NamedCategoryType ? (typeof EXTENSION_NAMES)[C][keyof (typeof EXTENSION_NAMES)[C]] : string;
-/** `"<category>/<name>"`, the address of one extension point. */
+/** `"<category>/<name>"` */
 type SlotIdType = {
     [C in ExtensionCategoryType]: `${C}/${SlotNameType<C>}`;
 }[ExtensionCategoryType];
 type CategoryOfType<Id extends string> = Id extends `${infer C}/${string}` ? C extends ExtensionCategoryType ? C : never : never;
-/**
- * What the host hands a slot's condition when it renders it: the extension point's
- * `conditionParameter`, i.e. exactly what a registered entry's `condition` receives. Derived from the
- * registry, so a host-side change to a category's condition parameter changes this type — and the
- * generated contract with it.
- */
+/** Each slot's context: its extension point's `conditionParameter`, derived from the registry. */
 type SlotContextMapType = {
     [C in ExtensionCategoryType as `${C}/${SlotNameType<C>}`]: ConditionParamType<C>;
 };
@@ -3773,17 +3763,12 @@ type PluginStateType = "pending" | "loaded" | "failed" | "skipped";
 interface IPluginStatusType {
     name: string;
     state: PluginStateType;
-    /** Why it failed or was skipped. */
     reason?: string;
 }
-/** Whether the host can stop waiting on `name`: it settled, it expired, or it was never declared. */
+/** Settled, expired, or never seen. */
 declare function isPluginSettled(name: string): boolean;
-/** Resolves once `name` settles or expires; immediately for a plugin the host never saw. */
 declare function whenPluginSettled(name: string): Promise<IPluginStatusType>;
-/**
- * What became of each federated plugin, reactively. The only way to tell a missing feature from a
- * failed plugin in production, where `Logger` is a no-op.
- */
+/** Each federated plugin's state, reactively; the only production signal, as `Logger` is a no-op there. */
 declare function usePluginsStatus(): {
     plugins: Readonly<vue.Ref<readonly {
         readonly name: string;
@@ -3855,14 +3840,13 @@ declare const ROUTES: {
 
 type ConditionScalarType = string | number | boolean | null;
 /**
- * One condition, serialised. The host walks this tree; nothing in it is ever parsed as an
- * expression or executed.
+ * A serialised condition; never parsed or executed.
  *
- * - `setting` — a module setting of the store (`useModuleSettings`); truthy, or equal to `eq`.
- * - `themeSetting` — a key of the theme's `settings_data.json`; truthy, or equal to `eq`.
+ * - `setting` — a store module setting; `true`, or equal to `eq`.
+ * - `themeSetting` — a `settings_data.json` key; truthy, or equal to `eq`.
  * - `authenticated` — the user is signed in.
  * - `can` — the user holds that permission.
- * - `field` — a dot path into the slot's context (`SlotContextMapType`); truthy, or equal to `eq`. Slots only.
+ * - `field` — a dot path into the slot's context; truthy, or equal to `eq`. Slots only.
  */
 type ConditionNodeType = {
     setting: string;
@@ -3887,10 +3871,10 @@ type ConditionNodeType = {
 type HostRouteNameType = (typeof ROUTES)[keyof typeof ROUTES]["NAME"];
 interface IRouteContributionType {
     path: string;
-    /** Mounted under this host route; absent = a root route. */
+    /** Host parent route; absent = root. */
     parent?: HostRouteNameType;
     name: string;
-    /** A redirect entry: navigating here goes to this route name instead of rendering a page. */
+    /** Route name to redirect to instead of rendering a page. */
     redirect?: string;
     when?: ConditionNodeType;
 }
@@ -3902,14 +3886,12 @@ interface IMenuLinkContributionType {
     routeName: string;
     when?: ConditionNodeType;
 }
-/** A link in the header menu schema (`useNavigations().mergeMenuSchema`). */
 interface IHeaderMenuContributionType extends IMenuLinkContributionType {
     surface: "header";
     group: MenuGroupType;
     /** Both when absent. */
     viewport?: "desktop" | "mobile";
 }
-/** A section of the account left rail (`useNavigations().registerAccountSection`). */
 interface IAccountMenuContributionType {
     surface: "account";
     id: string;
@@ -3921,10 +3903,9 @@ interface IAccountMenuContributionType {
 }
 type MenuContributionType = IHeaderMenuContributionType | IAccountMenuContributionType;
 /**
- * - `reserve` — hold the slot's box until the plugin settles, then reveal it.
- * - `block` — hold a whole region, capped by the plugin's own budget, where a late contribution
- *   changes behaviour rather than pixels (payment).
- * - `none` — a data contribution into markup the host renders itself; nothing to hold.
+ * - `reserve` — hold the slot's box until the plugin settles.
+ * - `block` — hold a whole region, with a loader (e.g. payment).
+ * - `none` — hold nothing; the plugin only decorates host markup.
  */
 type SlotPolicyType = "reserve" | "block" | "none";
 interface ISlotContributionType {
@@ -3933,9 +3914,9 @@ interface ISlotContributionType {
     when?: ConditionNodeType;
 }
 interface IPluginContributionsType {
-    /** Bumped on an incompatible change of this shape; the host refuses a version it does not know. */
+    /** The host refuses a format it does not know. */
     format: 1;
-    /** Plugin-level gate: false ⇒ the host fetches nothing else of the plugin. */
+    /** False: the host fetches nothing of the plugin. */
     when?: ConditionNodeType;
     routes?: IRouteContributionType[];
     menu?: MenuContributionType[];
@@ -3943,31 +3924,23 @@ interface IPluginContributionsType {
 }
 type MenuGroupType = MenuSecionType | "main";
 declare const conditionScope: unique symbol;
-/**
- * A condition as the builders hand it out. The phantom scope is what makes a `field(...)` term a
- * compile error anywhere but a slot: there is no item to read before the plugin is fetched.
- */
+/** The phantom scope makes a `field(...)` term a compile error outside a slot. */
 type ConditionType<S extends "global" | "slot"> = ConditionNodeType & {
     readonly [conditionScope]?: S;
 };
 type GlobalConditionType = ConditionType<"global">;
 type SlotConditionType = ConditionType<"global" | "slot">;
-/** `settingValue(...)`, `themeSetting(...)`: truthy as they stand, or compared with `.eq(...)`. */
 type ComparableConditionType<S extends "global" | "slot", V = ConditionScalarType> = ConditionType<S> & {
     eq(value: V): ConditionType<S>;
 };
 type DepthType = [never, 0, 1, 2, 3];
-/** Every dot path into `T` that ends on a scalar, four levels deep; arrays are not traversed. */
+/** Dot paths to scalars, four levels deep; arrays are not traversed. */
 type FieldPathType<T, D extends number = 4> = [D] extends [never] ? never : T extends ConditionScalarType ? never : T extends readonly unknown[] ? never : T extends object ? {
     [K in Extract<keyof T, string>]: NonNullable<T[K]> extends ConditionScalarType ? K : NonNullable<T[K]> extends readonly unknown[] ? never : `${K}.${FieldPathType<NonNullable<T[K]>, DepthType[D]>}`;
 }[Extract<keyof T, string>] : never;
 type FieldValueType<T, P extends string> = P extends `${infer H}.${infer R}` ? H extends keyof T ? FieldValueType<NonNullable<T[H]>, R> : never : P extends keyof T ? NonNullable<T[P]> : never;
-/**
- * An enum-typed string field compares as a string: a plugin may own values the host's generated
- * enum does not list (sales-rep's `Customer` sharing scope).
- */
+/** Enums widen: a plugin may own values the host's generated enum lacks. */
 type WidenedType<V> = V extends string ? string : V extends number ? number : V extends boolean ? boolean : never;
-/** Handed to a slot's `when` callback, typed against that slot's context. */
 type FieldBuilderType<Ctx> = <P extends FieldPathType<NonNullable<Ctx>>>(path: P) => ComparableConditionType<"slot", WidenedType<FieldValueType<NonNullable<Ctx>, P>>>;
 type WithGlobalWhenType<T> = Omit<T, "when"> & {
     when?: GlobalConditionType;
@@ -3981,7 +3954,7 @@ type SlotDeclarationType = {
     [Id in SlotIdType]: {
         at: Id;
         policy: SlotPolicyType;
-        /** A global condition, or a callback that receives `field` typed against this slot's context. */
+        /** A global condition, or a callback receiving `field` typed against this slot's context. */
         when?: GlobalConditionType | ((field: FieldBuilderType<SlotContextOfType<Id>>) => SlotConditionType);
     };
 }[SlotIdType];

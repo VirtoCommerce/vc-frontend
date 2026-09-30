@@ -14,7 +14,7 @@ function _useCartExtensionPoints() {
   function registerSidebarWidget(element: ElementType) {
     if (!sidebarWidgets.value.some((el) => el.id === element.id)) {
       sidebarWidgets.value.push(element);
-      // shallowRef tracks `.value` reassignment only; a registration after mount must re-render.
+      // shallowRef: re-render on a registration after mount.
       triggerRef(sidebarWidgets);
     }
   }

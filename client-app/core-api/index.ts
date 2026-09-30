@@ -81,11 +81,8 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
 export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
-// Declared contributions (`@vc-frontend/core/manifest`): the shapes live here so they are versioned
-// with the facade. `SlotContextMapType` is derived from the extension registry, so a host-side change to
-// a slot's condition parameter changes the contract.
+// Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
-// What became of each federated plugin — the only production signal, since `Logger` is a no-op there.
 export { usePluginsStatus } from "@/modules/federated/contributions/status";
 export type { IPluginStatusType, PluginStateType } from "@/modules/federated/contributions/status";
 export type {
