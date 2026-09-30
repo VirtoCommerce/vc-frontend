@@ -174,8 +174,12 @@ defineExpose({ close });
         & > .vc-dialog .vc-dialog-content__container {
           @apply max-h-full h-full rounded-none;
         }
+      }
+    }
 
-        & > .vc-dialog .vc-dialog-content--scrollable .vc-dialog-content__container {
+    #{$mobileFullscreen}#{$scrollable} & {
+      @media (max-width: theme("screens.md")) {
+        & > .vc-dialog .vc-dialog-content__container {
           @apply h-max min-h-full max-h-none;
         }
       }
