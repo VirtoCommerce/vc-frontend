@@ -170,17 +170,8 @@ defineExpose({ close });
       @media (max-width: theme("screens.md")) {
         @apply h-full max-h-full max-w-full #{!important};
 
-        & > .vc-dialog,
-        & > .vc-dialog .vc-dialog-content__container {
+        & > .vc-dialog {
           @apply max-h-full h-full rounded-none;
-        }
-      }
-    }
-
-    #{$mobileFullscreen}#{$scrollable} & {
-      @media (max-width: theme("screens.md")) {
-        & > .vc-dialog .vc-dialog-content__container {
-          @apply h-max min-h-full max-h-none;
         }
       }
     }
