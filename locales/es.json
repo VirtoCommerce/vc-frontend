@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "Demasiados intentos fallidos",
-          "text_countdown": "Por tu seguridad, tu cuenta está bloqueada temporalmente. Vuelve a intentarlo en {time}.",
+          "text_countdown": "Vuelve a intentarlo en {time}.",
           "text_ready": "Ya puedes volver a intentarlo.",
           "start_over_button": "Intentar de nuevo"
         },

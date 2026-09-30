@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "For mange mislykkede forsøk",
-          "text_countdown": "Av sikkerhetshensyn er kontoen din midlertidig sperret. Prøv igjen om {time}.",
+          "text_countdown": "Prøv igjen om {time}.",
           "text_ready": "Du kan prøve igjen nå.",
           "start_over_button": "Prøv igjen"
         },

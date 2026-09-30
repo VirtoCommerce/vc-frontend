@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "Too many failed attempts",
-          "text_countdown": "For your security, your account is temporarily locked. Try again in {time}.",
+          "text_countdown": "Try again in {time}.",
           "text_ready": "You can try again now.",
           "start_over_button": "Try again"
         },

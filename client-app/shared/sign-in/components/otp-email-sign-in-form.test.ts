@@ -12,6 +12,15 @@ vi.mock("@/core/composables/useAuth", () => ({
   useAuth: () => ({ resetErrors }),
 }));
 
+vi.mock("@/core/composables/useErrorsTranslator", () => ({
+  useErrorsTranslator: () => ({
+    translate: (error: { description: string }) => error.description,
+  }),
+}));
+
+const temporaryLockout = { code: "user_is_temporary_locked_out", description: "Temporarily locked." };
+const permanentLockout = { code: "user_is_locked_out", description: "Blocked." };
+
 vi.mock("@/shared/common", () => ({
   ContactAdministratorLink: {
     name: "ContactAdministratorLink",
@@ -143,31 +152,32 @@ describe("OtpEmailSignInForm", () => {
     expect(requestForm(wrapper).exists()).toBe(true);
   });
 
-  it("counts an ordinary lockout down and re-enables the retry button at zero", async () => {
+  it("shows the platform text with a countdown and re-enables the retry button at zero", async () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
 
-    await verifyForm(wrapper).vm.$emit("locked", 5);
+    await verifyForm(wrapper).vm.$emit("locked", temporaryLockout, 5);
 
-    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("0:05");
+    const texts = () => wrapper.findAll(".otp-email-sign-in-form__terminal-text").map((text) => text.text());
+
+    expect(texts()[0]).toBe("Temporarily locked.");
+    expect(texts()[1]).toContain("0:05");
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(true);
 
     await vi.advanceTimersByTimeAsync(5000);
 
-    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe(
-      "shared.sign_in.otp_email_sign_in_form.locked.text_ready",
-    );
+    expect(texts()[1]).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_ready");
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
   });
 
-  it("treats an absurdly large lockout as indefinite: no countdown, contact administrator instead", async () => {
+  it("shows the platform text and the contact administrator link for a permanent lockout", async () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
 
-    // Well beyond any real lockout window — e.g. an admin-imposed or sentinel value.
-    await verifyForm(wrapper).vm.$emit("locked", 30 * 24 * 60 * 60);
+    await verifyForm(wrapper).vm.$emit("locked", permanentLockout, 2147483647);
 
-    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("common.messages.blocked");
+    expect(wrapper.findAll(".otp-email-sign-in-form__terminal-text")).toHaveLength(1);
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("Blocked.");
     expect(wrapper.findComponent({ name: "ContactAdministratorLink" }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: "VcButton" }).exists()).toBe(false);
   });
@@ -175,7 +185,7 @@ describe("OtpEmailSignInForm", () => {
   it("clears the sign-in errors when Try again returns to the request step", async () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
-    await verifyForm(wrapper).vm.$emit("locked", 0);
+    await verifyForm(wrapper).vm.$emit("locked", temporaryLockout, 0);
     resetErrors.mockClear();
 
     await wrapper.findComponent({ name: "VcButton" }).trigger("click");
@@ -184,15 +194,15 @@ describe("OtpEmailSignInForm", () => {
     expect(resetErrors).toHaveBeenCalled();
   });
 
-  it("shows a temporary lockout without a countdown when the remaining time is unknown", async () => {
+  it("shows only the platform text when the remaining time is unknown", async () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
 
-    await verifyForm(wrapper).vm.$emit("locked", undefined);
+    await verifyForm(wrapper).vm.$emit("locked", temporaryLockout, undefined);
 
-    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe(
-      "shared.account.sign_in_form.errors.user_is_temporary_locked_out",
-    );
+    expect(wrapper.findAll(".otp-email-sign-in-form__terminal-text").map((text) => text.text())).toEqual([
+      "Temporarily locked.",
+    ]);
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
   });
 

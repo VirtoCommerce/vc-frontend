@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "失败尝试次数过多",
-          "text_countdown": "出于安全考虑，您的账户已被临时锁定。请在 {time} 后重试。",
+          "text_countdown": "请在 {time} 后重试。",
           "text_ready": "您现在可以重试了。",
           "start_over_button": "重试"
         },

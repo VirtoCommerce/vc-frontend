@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "Trop de tentatives échouées",
-          "text_countdown": "Pour votre sécurité, votre compte est temporairement verrouillé. Réessayez dans {time}.",
+          "text_countdown": "Réessayez dans {time}.",
           "text_ready": "Vous pouvez réessayer maintenant.",
           "start_over_button": "Réessayer"
         },

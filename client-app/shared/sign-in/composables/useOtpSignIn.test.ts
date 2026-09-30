@@ -246,7 +246,7 @@ describe("useOtpSignIn", () => {
 
   it("verifyCode returns the error with the seconds remaining when the token exchange reports a lockout", async () => {
     const auth = await getAuthState();
-    auth.authErrors.value = [{ code: "account_locked", description: "Too many attempts" }];
+    auth.authErrors.value = [{ code: "user_is_temporary_locked_out", description: "Too many attempts" }];
     auth.lockoutSecondsRemaining.value = 245;
 
     const signMeIn = await getSignMeInState();
@@ -259,12 +259,12 @@ describe("useOtpSignIn", () => {
 
     expect(result).toEqual({
       succeeded: false,
-      error: { code: "account_locked", description: "Too many attempts" },
+      error: { code: "user_is_temporary_locked_out", description: "Too many attempts" },
       lockoutSecondsRemaining: 245,
     });
 
     expect(signMeIn.signIn).not.toHaveBeenCalled();
-    expect(analytics).toHaveBeenCalledWith("login", "otp", { success: false, errors: "account_locked" });
+    expect(analytics).toHaveBeenCalledWith("login", "otp", { success: false, errors: "user_is_temporary_locked_out" });
   });
 
   it("verifyCode returns the token exchange error", async () => {

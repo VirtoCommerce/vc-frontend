@@ -129,13 +129,17 @@ describe("OtpEmailVerifyForm", () => {
     expect(wrapper.emitted("disabled")).toBeTruthy();
   });
 
-  it("emits locked with the remaining lockout seconds", async () => {
-    verifyCode.mockResolvedValue({ succeeded: false, error: { code: "account_locked" }, lockoutSecondsRemaining: 42 });
+  it("emits locked with the error and the remaining lockout seconds", async () => {
+    verifyCode.mockResolvedValue({
+      succeeded: false,
+      error: { code: "user_is_temporary_locked_out" },
+      lockoutSecondsRemaining: 42,
+    });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
 
-    expect(wrapper.emitted("locked")).toEqual([[42]]);
+    expect(wrapper.emitted("locked")).toEqual([[{ code: "user_is_temporary_locked_out" }, 42]]);
   });
 
   it("shows sign-in errors with a contact-administrator link for a lockout error", () => {

@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "Zbyt wiele nieudanych prób",
-          "text_countdown": "Ze względów bezpieczeństwa Twoje konto jest tymczasowo zablokowane. Spróbuj ponownie za {time}.",
+          "text_countdown": "Spróbuj ponownie za {time}.",
           "text_ready": "Możesz spróbować ponownie teraz.",
           "start_over_button": "Spróbuj ponownie"
         },

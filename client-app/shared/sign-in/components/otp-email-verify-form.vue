@@ -115,7 +115,7 @@ import type { IOtpVerifyResponse } from "@/shared/sign-in/composables/useOtpSign
 const emit = defineEmits<{
   (e: "useDifferentEmail"): void;
   (e: "disabled"): void;
-  (e: "locked", lockoutSecondsRemaining: number | undefined): void;
+  (e: "locked", error: IdentityErrorType, lockoutSecondsRemaining: number | undefined): void;
 }>();
 
 const props = defineProps<{
@@ -173,8 +173,9 @@ async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<vo
     case IdentityErrors.OTP_DISABLED:
       emit("disabled");
       return;
-    case IdentityErrors.ACCOUNT_LOCKED:
-      emit("locked", result?.lockoutSecondsRemaining);
+    case IdentityErrors.USER_IS_LOCKED_OUT:
+    case IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT:
+      emit("locked", result.error, result.lockoutSecondsRemaining);
       return;
     case IdentityErrors.INVALID_CODE:
       await nextTick();

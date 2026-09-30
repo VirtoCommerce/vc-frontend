@@ -16,15 +16,12 @@
         {{ $t("shared.sign_in.otp_email_sign_in_form.locked.title") }}
       </h2>
 
-      <p v-if="isIndefiniteLockout" class="otp-email-sign-in-form__terminal-text">
-        {{ $t("common.messages.blocked") }} <ContactAdministratorLink />.
+      <p class="otp-email-sign-in-form__terminal-text">
+        {{ lockoutError && translate(lockoutError) }}
+        <template v-if="isPermanentLockout"> <ContactAdministratorLink />. </template>
       </p>
 
-      <p v-else-if="isLockoutTimeUnknown" class="otp-email-sign-in-form__terminal-text">
-        {{ $t("shared.account.sign_in_form.errors.user_is_temporary_locked_out") }}
-      </p>
-
-      <p v-else class="otp-email-sign-in-form__terminal-text">
+      <p v-if="hasLockoutTimer" class="otp-email-sign-in-form__terminal-text">
         {{
           lockoutCountdown.secondsLeft.value > 0
             ? $t("shared.sign_in.otp_email_sign_in_form.locked.text_countdown", {
@@ -35,7 +32,7 @@
       </p>
 
       <VcButton
-        v-if="!isIndefiniteLockout"
+        v-if="!isPermanentLockout"
         full-width
         :disabled="lockoutCountdown.secondsLeft.value > 0"
         @click="resetToRequest"
@@ -95,10 +92,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { useAuth } from "@/core/composables/useAuth";
+import { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
+import { isLockoutError } from "@/core/utilities";
 import { ContactAdministratorLink } from "@/shared/common";
 import { OtpStep } from "@/shared/sign-in/enums";
 import OtpEmailRequestForm from "./otp-email-request-form.vue";
 import OtpEmailVerifyForm from "./otp-email-verify-form.vue";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
 const emit = defineEmits<{
@@ -108,14 +108,14 @@ const emit = defineEmits<{
 defineProps<{
   hasPasswordAuthentication: boolean;
 }>();
-// A lockout this long isn't a real countdown a user should watch tick down (and the platform
-// can report an effectively-infinite value for an admin-imposed lockout) — treat it as indefinite.
-const MAX_COUNTDOWN_SECONDS = 7 * 24 * 60 * 60;
+
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
 const step = ref(OtpStep.Request);
 const terminalHeadingRef = ref<HTMLElement>();
-const isIndefiniteLockout = ref(false);
-const isLockoutTimeUnknown = ref(false);
+const lockoutError = ref<IdentityErrorType>();
+const isPermanentLockout = computed(() => isLockoutError(lockoutError.value?.code));
+const hasLockoutTimer = ref(false);
 const pending = ref<{
   email: string;
   maskedEmail: string;
@@ -188,17 +188,11 @@ function onRequested({ email, result }: { email: string; result: IOtpRequestResp
   step.value = OtpStep.Verify;
 }
 
-function onLocked(lockoutSecondsRemaining: number | undefined) {
+function onLocked(error: IdentityErrorType, lockoutSecondsRemaining: number | undefined) {
   pending.value = undefined;
-
-  const seconds = lockoutSecondsRemaining ?? 0;
-  isLockoutTimeUnknown.value = lockoutSecondsRemaining === undefined;
-  isIndefiniteLockout.value = seconds > MAX_COUNTDOWN_SECONDS;
-
-  if (!isIndefiniteLockout.value) {
-    lockoutCountdown.start(seconds);
-  }
-
+  lockoutError.value = error;
+  hasLockoutTimer.value = !isPermanentLockout.value && lockoutSecondsRemaining !== undefined;
+  lockoutCountdown.start(hasLockoutTimer.value ? (lockoutSecondsRemaining ?? 0) : 0);
   step.value = OtpStep.Locked;
 }
 

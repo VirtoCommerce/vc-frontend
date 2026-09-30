@@ -638,7 +638,7 @@
         },
         "locked": {
           "title": "Zu viele fehlgeschlagene Versuche",
-          "text_countdown": "Aus Sicherheitsgründen ist Ihr Konto vorübergehend gesperrt. Versuchen Sie es erneut in {time}.",
+          "text_countdown": "Versuchen Sie es erneut in {time}.",
           "text_ready": "Sie können es jetzt erneut versuchen.",
           "start_over_button": "Erneut versuchen"
         },
