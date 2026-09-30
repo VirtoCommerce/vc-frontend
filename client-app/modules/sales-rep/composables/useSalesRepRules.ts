@@ -7,6 +7,8 @@ import {
   SalesRepCustomerSortRulesDocument,
   SalesRepOrderFilterRulesDocument,
   SalesRepOrderSortRulesDocument,
+  SalesRepTaskFilterRulesDocument,
+  SalesRepTaskSortRulesDocument,
   SalesRepTopSellerFilterRulesDocument,
   SalesRepTopSellerSortRulesDocument,
 } from "../api/graphql/types";
@@ -65,6 +67,8 @@ const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, 
     document: asRuleDocument(SalesRepTopSellerSortRulesDocument),
     field: "salesRepTopSellerSortRules",
   },
+  "task:filter": { document: asRuleDocument(SalesRepTaskFilterRulesDocument), field: "salesRepTaskFilterRules" },
+  "task:sort": { document: asRuleDocument(SalesRepTaskSortRulesDocument), field: "salesRepTaskSortRules" },
 };
 
 /**

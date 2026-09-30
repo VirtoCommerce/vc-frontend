@@ -574,6 +574,74 @@ describe("createQueuedMutationsLink", () => {
     });
   });
 
+  // A module claims its own operation name in init(), so core never has to name it.
+  describe("registerTarget", () => {
+    it("queues an operation claimed after the controller was built", async () => {
+      const { link, registerTarget } = createQueuedMutationsController({ targets: [] });
+      const forward = createForward();
+
+      registerTarget(createQueueTarget<{ count: number }>("LateMutation", { debounceMs: 200 }), { owner: "returns" });
+
+      enqueue(link, forward, "LateMutation", { count: 1 });
+      enqueue(link, forward, "LateMutation", { count: 2 });
+
+      await vi.advanceTimersByTimeAsync(200);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+
+    it("leaves an unclaimed operation alone", async () => {
+      const { link } = createQueuedMutationsController({ targets: [] });
+      const forward = createForward();
+
+      enqueue(link, forward, "UnclaimedMutation", { count: 1 });
+      enqueue(link, forward, "UnclaimedMutation", { count: 2 });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(2);
+    });
+
+    it("refuses a claim on a name the host already owns", () => {
+      const { registerTarget, debug } = createQueuedMutationsController({
+        targets: [createQueueTarget("HostMutation", { debounceMs: 1000 })],
+      });
+
+      const accepted = registerTarget(createQueueTarget("HostMutation", { debounceMs: 5 }), { owner: "returns" });
+
+      expect(accepted).toBe(false);
+      expect(debug.owners.get("HostMutation")?.owner).toBe("host");
+      expect(debug.rejected).toHaveLength(1);
+    });
+
+    it("refuses a second plugin claiming the same name, and records who holds it", () => {
+      const { registerTarget, debug } = createQueuedMutationsController({ targets: [] });
+
+      expect(registerTarget(createQueueTarget("SharedMutation", {}), { owner: "first" })).toBe(true);
+      expect(registerTarget(createQueueTarget("SharedMutation", {}), { owner: "second" })).toBe(false);
+
+      expect(debug.owners.get("SharedMutation")?.owner).toBe("first");
+      expect(debug.rejected[0]).toMatchObject({ owner: "second", operationName: "SharedMutation" });
+    });
+
+    it("lets a higher priority claim take over from a plugin", () => {
+      const { registerTarget, debug } = createQueuedMutationsController({ targets: [] });
+
+      registerTarget(createQueueTarget("SharedMutation", {}), { owner: "first" });
+
+      expect(registerTarget(createQueueTarget("SharedMutation", {}), { owner: "second", priority: 1 })).toBe(true);
+      expect(debug.owners.get("SharedMutation")?.owner).toBe("second");
+    });
+
+    it("does not let a plugin outrank the host, however high it asks", () => {
+      const { registerTarget } = createQueuedMutationsController({
+        targets: [createQueueTarget("HostMutation", {})],
+      });
+
+      expect(registerTarget(createQueueTarget("HostMutation", {}), { owner: "greedy", priority: 9999 })).toBe(false);
+    });
+  });
+
   describe("heterogeneous targets", () => {
     it("should support targets with different variable types and custom merge per target", async () => {
       type VarsA = { items: string[] };

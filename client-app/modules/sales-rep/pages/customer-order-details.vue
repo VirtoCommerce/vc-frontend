@@ -160,7 +160,12 @@ import { OrderLineItems, OrderStatus } from "@/shared/account";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { AddressInfo, VendorName } from "@/shared/common";
 import { useSalesRepCustomerOrder } from "../composables/useSalesRepCustomerOrder";
-import { CUSTOMER_ORDERS_ROUTE_NAME, CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import {
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  CUSTOMER_PROFILE_ROUTE_NAME,
+  DASHBOARD_ROUTE_NAME,
+  MY_CUSTOMERS_ROUTE_NAME,
+} from "../constants";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
@@ -209,7 +214,7 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("sales_rep.hub.title") },
+  { title: t("sales_rep.hub.title"), route: { name: DASHBOARD_ROUTE_NAME } },
   { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
   {
     title: customerName.value,
