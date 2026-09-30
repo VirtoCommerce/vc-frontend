@@ -81,6 +81,7 @@
           "total_units": "总件数",
           "targets_met": "目标已达成",
           "cart_subtotal": "购物车小计",
+          "subtotal_hint": "合计和购物车小计均为预估值。最终价格（含折扣）将在商品加入购物车后计算。",
           "reward_hint": "达成所有目标即可赚取 {points} 积分",
           "reward_unlocked": "所有目标已达成 — 已解锁 {points} 积分",
           "close": "关闭",

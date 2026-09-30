@@ -81,6 +81,7 @@
           "total_units": "Unità totali",
           "targets_met": "Obiettivi raggiunti",
           "cart_subtotal": "Subtotale carrello",
+          "subtotal_hint": "I totali e il subtotale del carrello sono stime. I prezzi finali, inclusi gli sconti, vengono calcolati una volta aggiunti gli articoli al carrello.",
           "reward_hint": "Guadagna {points} punti quando tutti gli obiettivi sono soddisfatti",
           "reward_unlocked": "Tutti gli obiettivi raggiunti — {points} punti sbloccati",
           "close": "Chiudi",

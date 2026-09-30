@@ -81,6 +81,7 @@
           "total_units": "Unidades totais",
           "targets_met": "Metas atingidas",
           "cart_subtotal": "Subtotal do carrinho",
+          "subtotal_hint": "Os totais e o subtotal do carrinho são estimativas. Os preços finais, incluindo descontos, são calculados assim que os itens são adicionados ao seu carrinho.",
           "reward_hint": "Ganhe {points} pontos quando todas as metas forem atingidas",
           "reward_unlocked": "Todas as metas atingidas — {points} pontos desbloqueados",
           "close": "Fechar",

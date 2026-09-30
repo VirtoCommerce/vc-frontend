@@ -81,6 +81,7 @@
           "total_units": "Gesamte Einheiten",
           "targets_met": "Ziele erreicht",
           "cart_subtotal": "Warenkorb-Zwischensumme",
+          "subtotal_hint": "Die Gesamt- und Warenkorb-Zwischensummen sind Schätzungen. Endpreise, einschließlich Rabatten, werden berechnet, sobald die Artikel Ihrem Warenkorb hinzugefügt wurden.",
           "reward_hint": "Verdiene {points} Punkte, wenn alle Ziele erreicht sind",
           "reward_unlocked": "Alle Ziele erreicht — {points} Punkte freigeschaltet",
           "close": "Schließen",

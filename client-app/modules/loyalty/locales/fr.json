@@ -81,6 +81,7 @@
           "total_units": "Unités totales",
           "targets_met": "Cibles atteintes",
           "cart_subtotal": "Sous-total du panier",
+          "subtotal_hint": "Les totaux et le sous-total du panier sont des estimations. Les prix définitifs, y compris les remises, sont calculés une fois les articles ajoutés à votre panier.",
           "reward_hint": "Gagnez {points} points lorsque toutes les cibles sont atteintes",
           "reward_unlocked": "Toutes les cibles sont atteintes — {points} points débloqués",
           "close": "Fermer",

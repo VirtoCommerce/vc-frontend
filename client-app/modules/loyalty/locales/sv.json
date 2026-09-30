@@ -81,6 +81,7 @@
           "total_units": "Totala enheter",
           "targets_met": "Mål uppnådda",
           "cart_subtotal": "Varukorgens totalsumma",
+          "subtotal_hint": "Totalbelopp och varukorgens delsumma är uppskattningar. Slutliga priser, inklusive rabatter, beräknas när artiklarna har lagts i varukorgen.",
           "reward_hint": "Tjäna {points} poäng när alla mål är uppnådda",
           "reward_unlocked": "Alla mål uppnådda — {points} poäng upplåsta",
           "close": "Stäng",

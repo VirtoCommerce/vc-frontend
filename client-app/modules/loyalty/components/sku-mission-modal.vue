@@ -104,6 +104,10 @@
           <dd>{{ formatCurrency(cartSubtotal.amount, cartSubtotal.currencyCode) }}</dd>
         </div>
       </dl>
+
+      <VcAlert color="info" variant="soft" size="sm" icon>
+        {{ $t("pages.account.missions.sku_modal.subtotal_hint") }}
+      </VcAlert>
     </div>
 
     <template #actions="{ close }">
