@@ -104,6 +104,7 @@
     "customer_reference": "Ваш номер заказа",
     "customer_comment": "Комментарий",
     "cancel_reason": "Причина отмены",
+    "reject_reason": "Причина отклонения",
     "cancel_button": "Отменить возврат",
     "columns": {
       "requested": "Запрошено",
