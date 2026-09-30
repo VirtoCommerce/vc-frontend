@@ -331,6 +331,10 @@ async function addProductsToCart(close: () => void) {
     @apply mt-2;
   }
 
+  &__items .vc-line-item__name-actions {
+    @apply block;
+  }
+
   &__badges {
     @apply mt-2 flex gap-1.5;
   }

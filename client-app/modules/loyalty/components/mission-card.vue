@@ -9,12 +9,12 @@
 
       <div class="mission-card__badges">
         <VcChip color="warning" variant="tonal" size="sm" rounded>
-          <VcIcon class="vc-chip__icon" name="star" variant="solid" />
+          <VcIcon class="vc-chip__icon mission-card__points-icon" name="star" variant="solid" />
           {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
         </VcChip>
 
         <VcChip color="info" variant="tonal" size="sm" rounded>
-          <VcIcon class="vc-chip__icon" :name="typeIcon" variant="solid" />
+          <VcIcon class="vc-chip__icon mission-card__type-icon" :name="typeIcon" variant="solid" />
           {{ view.typeLabel }}
         </VcChip>
       </div>
