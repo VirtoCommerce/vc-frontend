@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { useRouteQueryParam } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   CATALOG_BARCODE_SCANNER_ENABLED_KEY,
@@ -7,7 +8,7 @@ import {
   MODULE_ID_CATALOG,
 } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
-import { parseJsonStringArray } from "@/core/utilities";
+import { parseJsonStringArray, toFirstString } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import type { Ref } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -119,4 +120,16 @@ export function useBarcodeSearch(options: {
     isScannerEnabled,
     onBarcodeScanned,
   };
+}
+
+/**
+ * The `q` the search bars show. A barcode lookup ignores `q` (the results page does not send it), so the bars
+ * ignore a leftover one too: shown, it would hide the scanner, and Enter would search it instead of the code.
+ */
+export function useSearchPhraseInUrl() {
+  const searchPhrase = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+  const barcode = useRouteQueryParam<string>(QueryParamName.Barcode);
+
+  // Decided as the results page decides a lookup (`isBarcodeLookup` in `useProducts`).
+  return computed(() => (toFirstString(barcode.value) ? "" : searchPhrase.value));
 }

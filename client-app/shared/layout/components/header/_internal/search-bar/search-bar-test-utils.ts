@@ -1,4 +1,4 @@
-import { defineComponent, h } from "vue";
+import { computed, defineComponent, h, ref } from "vue";
 
 /**
  * Shared scaffolding for the two search bar specs (desktop `search-bar` and `mobile-search-bar`).
@@ -8,11 +8,22 @@ import { defineComponent, h } from "vue";
 
 export const BARCODE_SCANNER_SELECTOR = '[data-testid="barcode-scanner"]';
 export const BARCODE_SCANNER_ENABLED_SETTING = "Catalog.Search.BarcodeScannerEnabled";
+export const SEARCH_PHRASE_SELECTOR = '[data-testid="search-phrase"]';
 
 /** The bars read every store setting through this composable; the map is the spec's control over it. */
 export function createModuleSettingsMock(settingValues: Map<string, unknown>) {
   return {
     useModuleSettings: () => ({ getSettingValue: (name: string) => settingValues.get(name) }),
+  };
+}
+
+/** The URL query the bars read; a spec sets it before mounting, or after it as a navigation would. */
+export const routeQuery = ref<Record<string, string>>({});
+
+/** A param missing from `routeQuery` reads as "", as it does through the real `useRouteQueryParam`. */
+export function createRouteQueryParamMock() {
+  return {
+    useRouteQueryParam: (key: string) => computed(() => routeQuery.value[key] ?? ""),
   };
 }
 
@@ -37,8 +48,8 @@ export function createBarcodeScannerMock() {
 }
 
 /**
- * Renders the `placeholder` attr and the `prepend` / `append` slots — where the scope indicators, the
- * search button and the barcode scanner live.
+ * Renders the `placeholder` attr, the bound phrase and the `prepend` / `append` slots — where the scope
+ * indicators, the search button and the barcode scanner live.
  */
 const VcInputStub = defineComponent({
   name: "VcInput",
@@ -48,6 +59,7 @@ const VcInputStub = defineComponent({
     return () =>
       h("div", { class: "input" }, [
         h("span", { "data-testid": "placeholder" }, attrs.placeholder as string),
+        h("span", { "data-testid": "search-phrase" }, attrs.modelValue as string),
         slots.prepend?.(),
         slots.append?.(),
       ]);

@@ -87,11 +87,10 @@
 import { onClickOutside, useElementBounding, useLocalStorage } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   getFilterExpressionForCategorySubtree,
@@ -99,7 +98,7 @@ import {
   getFilterExpressionForZeroPrice,
   toCSV,
 } from "@/core/utilities";
-import { useBarcodeSearch } from "@/shared/layout/composables/useBarcodeSearch";
+import { useBarcodeSearch, useSearchPhraseInUrl } from "@/shared/layout/composables/useBarcodeSearch";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchDropdown from "../search-dropdown.vue";
@@ -112,7 +111,7 @@ const searchDropdownRef = useTemplateRef<InstanceType<typeof SearchDropdown>>("s
 const { searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown, clearSearchResults, maxSearchLength } =
   useSearchBar();
 
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const searchPhraseInUrl = useSearchPhraseInUrl();
 
 const searchPhrase = ref("");
 

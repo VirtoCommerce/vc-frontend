@@ -64,18 +64,17 @@
 <script setup lang="ts">
 import { useElementBounding, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef } from "vue";
-import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForInStockVariations,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
-import { useBarcodeSearch } from "@/shared/layout/composables/useBarcodeSearch";
+import { useBarcodeSearch, useSearchPhraseInUrl } from "@/shared/layout/composables/useBarcodeSearch";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import BarcodeScanner from "./search-bar/barcode-scanner.vue";
@@ -88,7 +87,7 @@ interface IProps {
 defineProps<IProps>();
 
 const searchPhrase = ref("");
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const searchPhraseInUrl = useSearchPhraseInUrl();
 
 const { hideSearchBar, maxSearchLength, loading } = useSearchBar();
 

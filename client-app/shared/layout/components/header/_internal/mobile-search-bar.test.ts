@@ -1,10 +1,12 @@
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { defineComponent, h, nextTick, ref } from "vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
 import {
   BARCODE_SCANNER_ENABLED_SETTING,
   BARCODE_SCANNER_SELECTOR,
+  SEARCH_PHRASE_SELECTOR,
+  routeQuery,
   searchBarStubs,
 } from "./search-bar/search-bar-test-utils";
 import type { VueWrapper } from "@vue/test-utils";
@@ -27,11 +29,14 @@ vi.mock("@/core/globals", () => ({
   globals: { catalogId: "catalog-1", currencyCode: "USD" },
 }));
 
-vi.mock("@/core/composables", () => ({
-  useAnalytics: () => ({ analytics: vi.fn() }),
-  useRouteQueryParam: () => ref(""),
-  useThemeContext: () => ({ themeContext: ref({ settings: {} }) }),
-}));
+vi.mock("@/core/composables", async () => {
+  const { createRouteQueryParamMock } = await import("./search-bar/search-bar-test-utils");
+  return {
+    ...createRouteQueryParamMock(),
+    useAnalytics: () => ({ analytics: vi.fn() }),
+    useThemeContext: () => ({ themeContext: ref({ settings: {} }) }),
+  };
+});
 
 vi.mock("@/core/composables/useModuleSettings", async () => {
   const { createModuleSettingsMock } = await import("./search-bar/search-bar-test-utils");
@@ -83,6 +88,7 @@ function createComponent() {
 
 beforeEach(() => {
   settingValues.clear();
+  routeQuery.value = {};
 });
 
 afterEach(() => {
@@ -103,6 +109,29 @@ describe("MobileSearchBar barcode scanner", () => {
 
     const wrapper = createComponent();
 
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(0);
+  });
+});
+
+// Mirrors the desktop search bar: a barcode lookup ignores `q`, so neither bar may show a leftover one.
+describe("MobileSearchBar phrase from the URL", () => {
+  it("leaves the box empty and shows the scanner for a barcode lookup with a leftover q", async () => {
+    routeQuery.value = { barcode: "150701", q: "hat" };
+
+    const wrapper = createComponent();
+    await nextTick();
+
+    expect(wrapper.get(SEARCH_PHRASE_SELECTOR).text()).toBe("");
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(1);
+  });
+
+  it("fills the box from q when no barcode is set", async () => {
+    routeQuery.value = { q: "hat" };
+
+    const wrapper = createComponent();
+    await nextTick();
+
+    expect(wrapper.get(SEARCH_PHRASE_SELECTOR).text()).toBe("hat");
     expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(0);
   });
 });
