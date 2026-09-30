@@ -35,11 +35,11 @@ export type SalesRepRuleType = {
   defaultDirection?: SalesRepSortDirectionType;
   supportsDirection?: boolean;
 };
+export type SalesRepRuleDomainType = "order" | "customer" | "topSeller" | "task";
 // Column sorting needs only the direction metadata, never the display label, so a list of sort rules
 // defined in code does not have to invent one.
 export type SalesRepSortRuleType = Pick<SalesRepRuleType, "name" | "defaultDirection" | "supportsDirection">;
 
-export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
 export type SalesRepRuleKindType = "filter" | "sort";
 
 // View model for a ranked Top Sellers row. `units`/`revenue` are display-ready strings from the shared

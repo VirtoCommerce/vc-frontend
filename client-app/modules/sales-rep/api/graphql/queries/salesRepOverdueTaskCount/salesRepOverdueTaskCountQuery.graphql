@@ -1,0 +1,8 @@
+# The dashboard widget's overdue notice needs one number; the four-alias counts document would run three
+# aggregations it throws away. Same field and arguments as the counts query's `overdue` alias, so the two
+# share one cache entry rather than disagreeing.
+query SalesRepOverdueTaskCount($today: DateTime!) {
+  overdue: salesRepTasks(first: 0, filter: "overdue", today: $today) {
+    totalCount
+  }
+}

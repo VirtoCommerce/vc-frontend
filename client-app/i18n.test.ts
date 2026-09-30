@@ -117,3 +117,54 @@ describe("plural rules with full culture names", () => {
     expect(i18n.global.t("reviews", 21)).toBe("21 отзыв");
   });
 });
+
+type LocaleFileType = { pages: { catalog: { variations_button: string } } };
+
+const LOCALE_MESSAGES: Record<string, LocaleFileType> = Object.fromEntries(
+  Object.entries(import.meta.glob<{ default: LocaleFileType }>("../locales/*.json", { eager: true })).map(
+    ([filePath, module]) => [filePath.slice(filePath.lastIndexOf("/") + 1, -".json".length), module.default],
+  ),
+);
+
+function renderVariationsButton(locale: string, count: number): string {
+  const i18n = createI18n(locale, "USD", undefined, [locale]);
+  i18n.global.setLocaleMessage(locale, LOCALE_MESSAGES[locale]);
+  i18n.global.locale.value = locale;
+
+  return i18n.global.t("pages.catalog.variations_button", count);
+}
+
+describe("catalog variations_button message", () => {
+  // `check-locales` compares key presence only, so nothing else stops a locale from losing its forms.
+  it.each(Object.keys(LOCALE_MESSAGES))("%s carries a zero, a singular and a plural form", (locale) => {
+    expect(LOCALE_MESSAGES[locale].pages.catalog.variations_button.split(" | ").length).toBeGreaterThanOrEqual(3);
+  });
+
+  it.each([
+    [0, "No variations"],
+    [1, "1 variation"],
+    [2, "2 variations"],
+  ])("renders the English form for %i", (count, expected) => {
+    expect(renderVariationsButton("en", count)).toBe(expected);
+  });
+
+  it.each([
+    [0, "Нет вариаций"],
+    [1, "1 вариация"],
+    [2, "2 вариации"],
+    [5, "5 вариаций"],
+    [21, "21 вариация"],
+  ])("renders the Russian form for %i", (count, expected) => {
+    expect(renderVariationsButton("ru", count)).toBe(expected);
+  });
+
+  it.each([
+    [0, "Brak wariantów"],
+    [1, "1 wariant"],
+    [2, "2 warianty"],
+    [5, "5 wariantów"],
+    [22, "22 warianty"],
+  ])("renders the Polish form for %i", (count, expected) => {
+    expect(renderVariationsButton("pl", count)).toBe(expected);
+  });
+});

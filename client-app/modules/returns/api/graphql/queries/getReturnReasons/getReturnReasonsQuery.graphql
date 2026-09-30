@@ -1,0 +1,7 @@
+query GetReturnReasons($storeId: String!, $cultureName: String) {
+  returnReasons(storeId: $storeId, cultureName: $cultureName) {
+    code
+    localizedName
+    requiresComment
+  }
+}

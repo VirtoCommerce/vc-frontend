@@ -63,7 +63,10 @@
                 v-for="purchaseRequest in purchaseRequests"
                 :key="purchaseRequest.id"
                 class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+                tabindex="0"
                 @click="goToPurchaseRequest(purchaseRequest)"
+                @keydown.enter.prevent="goToPurchaseRequest(purchaseRequest)"
+                @keydown.space.prevent="goToPurchaseRequest(purchaseRequest)"
               >
                 <td class="overflow-hidden text-ellipsis p-5">
                   {{ purchaseRequest.number }}

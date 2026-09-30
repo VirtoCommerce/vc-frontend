@@ -112,7 +112,10 @@
               v-for="quote in quotes"
               :key="quote.id"
               class="cursor-pointer last:rounded-b-[--vc-radius] even:bg-neutral-50 hover:bg-neutral-200"
+              tabindex="0"
               @click="goToQuoteDetails(quote)"
+              @keydown.enter.prevent="goToQuoteDetails(quote)"
+              @keydown.space.prevent="goToQuoteDetails(quote)"
             >
               <td class="overflow-hidden text-ellipsis p-5">
                 {{ quote.number }}

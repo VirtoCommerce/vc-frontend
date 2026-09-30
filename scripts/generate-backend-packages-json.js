@@ -18,6 +18,15 @@ function log(message) {
   console.log(`${GREEN}${message}${RESET}`);
 }
 
+// Strip ASCII control characters (CR/LF and raw ESC included) before a value
+// reaches a log sink, so a hostile response body or error message can't forge
+// extra log lines or terminal escape sequences.
+// eslint-disable-next-line no-control-regex, sonarjs/duplicates-in-character-class -- control-char range is the point of this filter; \r/\n duplicate part of the \x00-\x1f range on purpose, since CodeQL js/log-injection only recognizes replace() as a sanitizer when \n is an explicit character-class member
+const LOG_UNSAFE_CHARS = /[\r\n\x00-\x1f\x7f]/g;
+function sanitizeForLog(value) {
+  return String(value).replace(LOG_UNSAFE_CHARS, "");
+}
+
 // Read backend URL from .env.local or .env file
 function getBackendUrl() {
   const backendUrl = process.env.APP_BACKEND_URL;
@@ -110,34 +119,34 @@ function promptPassword(question) {
   });
 }
 
-// Check if hostname is localhost or local IP address
+// Check if hostname is localhost or a private/loopback IPv4 address.
+// Matches the hostname against the full IPv4 literal shape first, so a
+// hostname like "10.evil.example.com" (which merely starts with "10.") is
+// never misclassified as local the way an unanchored startsWith() would.
 function isLocalHost(hostname) {
   if (!hostname) {
     return false;
   }
   const lowerHostname = hostname.toLowerCase();
+  if (lowerHostname === "localhost" || lowerHostname === "::1") {
+    return true;
+  }
+
+  const ipv4Match = lowerHostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!ipv4Match) {
+    return false;
+  }
+  const octets = ipv4Match.slice(1).map(Number);
+  if (octets.some((octet) => octet > 255)) {
+    return false;
+  }
+
+  const [firstOctet, secondOctet] = octets;
   return (
-    lowerHostname === "localhost" ||
-    lowerHostname === "127.0.0.1" ||
-    lowerHostname === "::1" ||
-    lowerHostname.startsWith("192.168.") ||
-    lowerHostname.startsWith("10.") ||
-    lowerHostname.startsWith("172.16.") ||
-    lowerHostname.startsWith("172.17.") ||
-    lowerHostname.startsWith("172.18.") ||
-    lowerHostname.startsWith("172.19.") ||
-    lowerHostname.startsWith("172.20.") ||
-    lowerHostname.startsWith("172.21.") ||
-    lowerHostname.startsWith("172.22.") ||
-    lowerHostname.startsWith("172.23.") ||
-    lowerHostname.startsWith("172.24.") ||
-    lowerHostname.startsWith("172.25.") ||
-    lowerHostname.startsWith("172.26.") ||
-    lowerHostname.startsWith("172.27.") ||
-    lowerHostname.startsWith("172.28.") ||
-    lowerHostname.startsWith("172.29.") ||
-    lowerHostname.startsWith("172.30.") ||
-    lowerHostname.startsWith("172.31.")
+    firstOctet === 127 ||
+    firstOctet === 10 ||
+    (firstOctet === 172 && secondOctet >= 16 && secondOctet <= 31) ||
+    (firstOctet === 192 && secondOctet === 168)
   );
 }
 
@@ -165,6 +174,7 @@ async function httpRequest(url, options = {}, retries = 5, retryInterval = 5000)
   // Only disable certificate verification for localhost/local development environments
   // This prevents MITM attacks on public endpoints like GitHub
   if (isHttps && isLocalHost(urlObj.hostname)) {
+    // codeql[js/disabling-certificate-validation]: gated to a local/loopback hostname (see isLocalHost above)
     requestOptions.rejectUnauthorized = false;
   }
 
@@ -212,7 +222,7 @@ async function httpRequest(url, options = {}, retries = 5, retryInterval = 5000)
 
 // Get authentication token
 async function getAuthToken(appAuthUrl, username, password) {
-  console.log(`Get-AuthToken: appAuthUrl ${appAuthUrl}`);
+  console.log(`Get-AuthToken: appAuthUrl ${sanitizeForLog(appAuthUrl)}`);
 
   const body = new URLSearchParams({
     username,
@@ -236,7 +246,7 @@ async function getAuthToken(appAuthUrl, username, password) {
 
     return response.access_token;
   } catch (error) {
-    console.error(`Error getting auth token: ${error.message}`);
+    console.error(`Error getting auth token: ${sanitizeForLog(error.message)}`);
     throw error;
   }
 }
@@ -247,7 +257,7 @@ async function fetchJson(url, retries = 5, retryInterval = 5000) {
     const response = await httpRequest(url, {}, retries, retryInterval);
     return typeof response === "string" ? JSON.parse(response) : response;
   } catch (error) {
-    console.error(`Error fetching JSON from ${url}: ${error.message}`);
+    console.error(`Error fetching JSON from ${sanitizeForLog(url)}: ${sanitizeForLog(error.message)}`);
     throw error;
   }
 }
@@ -272,13 +282,13 @@ function getInstalledModules(systeminfo) {
 
   if (!modules) {
     console.error("Error: systeminfo.installedModules is undefined or null");
-    console.error("Response structure:", JSON.stringify(systeminfo, null, 2));
-    console.error("Available properties:", Object.keys(systeminfo || {}));
+    console.error("Response structure:", sanitizeForLog(JSON.stringify(systeminfo, null, 2)));
+    console.error("Available properties:", sanitizeForLog(Object.keys(systeminfo || {}).join(", ")));
     process.exit(1);
   }
   if (!Array.isArray(modules)) {
     console.error("Error: systeminfo.installedModules is not an array");
-    console.error("installedModules value:", modules);
+    console.error("installedModules value:", sanitizeForLog(JSON.stringify(modules)));
     process.exit(1);
   }
 
@@ -392,7 +402,7 @@ async function handleLocalBackend(apiUrl) {
   try {
     systeminfo = await httpRequest(checkModulesUrl, { method: "GET", headers });
   } catch (error) {
-    console.error(`Failed to get system info: ${error.message}`);
+    console.error(`Failed to get system info: ${sanitizeForLog(error.message)}`);
     process.exit(1);
   }
 
@@ -413,7 +423,7 @@ async function handleLocalBackend(apiUrl) {
   const platformVersion = getPropertyCaseInsensitive(systeminfo, "platformVersion");
   if (!platformVersion) {
     console.error("Error: systeminfo.platformVersion is undefined or null");
-    console.error("Available properties:", Object.keys(systeminfo || {}));
+    console.error("Available properties:", sanitizeForLog(Object.keys(systeminfo || {}).join(", ")));
     process.exit(1);
   }
   if (isAlphaVersion(platformVersion)) {
@@ -435,7 +445,9 @@ async function handleRemoteBackend(apiUrl) {
   try {
     return await fetchJson(packagesJsonUrl);
   } catch (error) {
-    console.error(`Failed to get packages.json from ${packagesJsonUrl}: ${error.message}`);
+    console.error(
+      `Failed to get packages.json from ${sanitizeForLog(packagesJsonUrl)}: ${sanitizeForLog(error.message)}`,
+    );
     process.exit(1);
   }
 }
@@ -481,6 +493,6 @@ async function main() {
 try {
   await main();
 } catch (error) {
-  console.error(`Error: ${error.message}`);
+  console.error(`Error: ${sanitizeForLog(error.message)}`);
   process.exit(1);
 }

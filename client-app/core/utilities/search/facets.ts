@@ -17,6 +17,16 @@ import type { MaybeRef } from "vue";
  */
 
 /**
+ * Escapes backslashes and double quotes per the filter syntax's escaping rules, for embedding
+ * a value inside a filter-syntax expression (a facet filter clause or a quoted search phrase).
+ * Backslashes must be escaped first, otherwise the backslash added for the quote gets re-escaped.
+ * {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/filter-syntax.md#escaping-special-characters}
+ */
+export function escapeFilterSyntaxValue(value: string): string {
+  return value.replaceAll("\\", "\\\\").replaceAll('"', String.raw`\"`);
+}
+
+/**
  * Generates a filter expression for category subtree filtering
  * @param payload - Object containing catalogId and optional categoryId
  * @returns A string representing the category subtree filter expression
@@ -66,7 +76,7 @@ export function getFilterExpressionForPurchasedBefore(value: MaybeRef<boolean>):
  */
 export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): string {
   const branches = unref(value);
-  return branches.length ? `available_in:"${branches.join('","')}"` : "";
+  return branches.length ? `available_in:"${branches.map(escapeFilterSyntaxValue).join('","')}"` : "";
 }
 
 /**
@@ -75,7 +85,8 @@ export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): st
  * @returns A string representing the brand filter expression
  */
 export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): string {
-  return unref(brandName) ? `"BRAND":"${unref(brandName)}"` : "";
+  const brand = unref(brandName);
+  return brand ? `"BRAND":"${escapeFilterSyntaxValue(brand)}"` : "";
 }
 
 /**
@@ -89,12 +100,7 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
   for (const facet of unref(facets)) {
     const selectedValues: string[] = facet.values
       .filter((item) => item.selected)
-      .map((item) =>
-        item.value
-          // https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/filter-syntax.md#escaping-special-characters
-          .replace(/\\/g, "\\\\")
-          .replace(/"/g, '\\"'),
-      );
+      .map((item) => escapeFilterSyntaxValue(item.value));
 
     if (!selectedValues.length) {
       continue;
@@ -122,7 +128,7 @@ export function generateFilterExpressionFromFilters(filters: SearchProductFilter
   filters.forEach((filter) => {
     if (filter.termValues?.length) {
       // Handle term filters
-      const escapedTerms = filter.termValues.map((term) => term.value.replace(/\\/g, "\\\\").replace(/"/g, '\\"'));
+      const escapedTerms = filter.termValues.map((term) => escapeFilterSyntaxValue(term.value));
       filterExpressions.push(`"${filter.name}":"${escapedTerms.join('","')}"`);
     } else if (filter.rangeValues?.length) {
       // Handle range filters
