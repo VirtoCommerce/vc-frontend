@@ -174,6 +174,10 @@ defineExpose({ close });
         & > .vc-dialog .vc-dialog-content__container {
           @apply max-h-full h-full rounded-none;
         }
+
+        & > .vc-dialog .vc-dialog-content--scrollable .vc-dialog-content__container {
+          @apply h-max min-h-full max-h-none;
+        }
       }
     }
   }
