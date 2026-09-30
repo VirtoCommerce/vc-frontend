@@ -1,23 +1,27 @@
 <template>
   <div class="otp-email-sign-in-form">
-    <OtpEmailRequestForm v-if="step === 'request'" @succeeded="onRequested" @disabled="step = 'generic'" />
+    <OtpEmailRequestForm v-if="step === OtpStep.Request" @succeeded="onRequested" @disabled="step = OtpStep.Disabled" />
 
     <OtpEmailVerifyForm
-      v-else-if="step === 'verify' && pending"
+      v-else-if="step === OtpStep.Verify && pending"
       :email="pending.email"
       :masked-email="pending.maskedEmail"
       @use-different-email="resetToRequest"
-      @disabled="step = 'generic'"
+      @disabled="step = OtpStep.Disabled"
       @locked="onLocked"
     />
 
-    <div v-else-if="step === 'locked'" class="otp-email-sign-in-form__terminal">
+    <div v-else-if="step === OtpStep.Locked" class="otp-email-sign-in-form__terminal">
       <h2 ref="terminalHeadingRef" tabindex="-1" class="otp-email-sign-in-form__terminal-title">
         {{ $t("shared.sign_in.otp_email_sign_in_form.locked.title") }}
       </h2>
 
       <p v-if="isIndefiniteLockout" class="otp-email-sign-in-form__terminal-text">
         {{ $t("common.messages.blocked") }} <ContactAdministratorLink />.
+      </p>
+
+      <p v-else-if="isLockoutTimeUnknown" class="otp-email-sign-in-form__terminal-text">
+        {{ $t("shared.account.sign_in_form.errors.user_is_temporary_locked_out") }}
       </p>
 
       <p v-else class="otp-email-sign-in-form__terminal-text">
@@ -51,13 +55,13 @@
       </div>
     </div>
 
-    <div v-else-if="step === 'generic'" class="otp-email-sign-in-form__terminal">
+    <div v-else-if="step === OtpStep.Disabled" class="otp-email-sign-in-form__terminal">
       <h2 ref="terminalHeadingRef" tabindex="-1" class="otp-email-sign-in-form__terminal-title">
-        {{ $t("shared.sign_in.otp_email_sign_in_form.generic.title") }}
+        {{ $t("shared.sign_in.otp_email_sign_in_form.disabled.title") }}
       </h2>
 
       <p class="otp-email-sign-in-form__terminal-text">
-        {{ $t("shared.sign_in.otp_email_sign_in_form.generic.text") }}
+        {{ $t("shared.sign_in.otp_email_sign_in_form.disabled.text") }}
       </p>
 
       <VcButton
@@ -66,18 +70,18 @@
         data-test-id="otp-email-switch-to-password-button"
         @click="emit('switchToPassword')"
       >
-        {{ $t("shared.sign_in.otp_email_sign_in_form.generic.password_button") }}
+        {{ $t("shared.sign_in.otp_email_sign_in_form.disabled.password_button") }}
       </VcButton>
 
       <div class="otp-email-sign-in-form__terminal-footer">
         <button type="button" class="otp-email-sign-in-form__link" @click="resetToRequest">
-          {{ $t("shared.sign_in.otp_email_sign_in_form.generic.back_link") }}
+          {{ $t("shared.sign_in.otp_email_sign_in_form.disabled.back_link") }}
         </button>
       </div>
     </div>
 
     <button
-      v-if="step === 'request' && hasPasswordAuthentication"
+      v-if="step === OtpStep.Request && hasPasswordAuthentication"
       type="button"
       class="otp-email-sign-in-form__link otp-email-sign-in-form__switch-link"
       data-test-id="otp-email-switch-to-password-link"
@@ -90,27 +94,28 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { useAuth } from "@/core/composables/useAuth";
 import { ContactAdministratorLink } from "@/shared/common";
+import { OtpStep } from "@/shared/sign-in/enums";
 import OtpEmailRequestForm from "./otp-email-request-form.vue";
 import OtpEmailVerifyForm from "./otp-email-verify-form.vue";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
-import type { OtpStepType } from "@/shared/sign-in/composables/useOtpSignInMode";
 
 const emit = defineEmits<{
   (e: "switchToPassword"): void;
-  (e: "stepChanged", step: OtpStepType): void;
+  (e: "stepChanged", step: OtpStep): void;
 }>();
 defineProps<{
   hasPasswordAuthentication: boolean;
 }>();
-const DEFAULT_LOCKOUT_SECONDS = 900;
 // A lockout this long isn't a real countdown a user should watch tick down (and the platform
 // can report an effectively-infinite value for an admin-imposed lockout) — treat it as indefinite.
 const MAX_COUNTDOWN_SECONDS = 7 * 24 * 60 * 60;
 
-const step = ref<OtpStepType>("request");
+const step = ref(OtpStep.Request);
 const terminalHeadingRef = ref<HTMLElement>();
 const isIndefiniteLockout = ref(false);
+const isLockoutTimeUnknown = ref(false);
 const pending = ref<{
   email: string;
   maskedEmail: string;
@@ -152,6 +157,7 @@ function createCountdown() {
 }
 
 const lockoutCountdown = createCountdown();
+const { resetErrors } = useAuth();
 
 onBeforeUnmount(() => {
   lockoutCountdown.stop();
@@ -162,7 +168,11 @@ watch(
   async (value) => {
     emit("stepChanged", value);
 
-    if (value === "locked" || value === "generic") {
+    if (value !== OtpStep.Verify) {
+      resetErrors();
+    }
+
+    if (value === OtpStep.Locked || value === OtpStep.Disabled) {
       await nextTick();
       terminalHeadingRef.value?.focus();
     }
@@ -175,25 +185,26 @@ function onRequested({ email, result }: { email: string; result: IOtpRequestResp
     email,
     maskedEmail: result.maskedEmail ?? email,
   };
-  step.value = "verify";
+  step.value = OtpStep.Verify;
 }
 
 function onLocked(lockoutSecondsRemaining: number | undefined) {
   pending.value = undefined;
 
-  const seconds = lockoutSecondsRemaining ?? DEFAULT_LOCKOUT_SECONDS;
+  const seconds = lockoutSecondsRemaining ?? 0;
+  isLockoutTimeUnknown.value = lockoutSecondsRemaining === undefined;
   isIndefiniteLockout.value = seconds > MAX_COUNTDOWN_SECONDS;
 
   if (!isIndefiniteLockout.value) {
     lockoutCountdown.start(seconds);
   }
 
-  step.value = "locked";
+  step.value = OtpStep.Locked;
 }
 
 function resetToRequest() {
   pending.value = undefined;
-  step.value = "request";
+  step.value = OtpStep.Request;
 }
 </script>
 

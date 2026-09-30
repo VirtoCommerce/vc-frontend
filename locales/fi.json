@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Pääsysi tähän organisaatioon on estetty. Ota yhteyttä organisaatiosi järjestelmänvalvojaan",
           "user_cannot_login_in_store": "Pääsy evätty. Et voi kirjautua tähän kauppaan",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot"
+          "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot",
+          "store_not_found": "Tätä kauppaa ei ole olemassa.",
+          "duplicate_email_login_attempt": "Useat tilit käyttävät tätä sähköpostiosoitetta.",
+          "lockout_disabled": "Tällä tilillä ei voi kirjautua sisään koodilla.",
+          "invalid_code": "Tämä koodi ei ole oikein. Tarkista uusin sähköposti.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "Lähetämme sinulle koodin sähköpostitse. Salasanaa ei tarvita.",
           "email_label": "Sähköposti",
           "continue_button": "Jatka",
-          "switch_to_password_link": "Kirjaudu salasanalla",
-          "errors": {
-            "generic": "Jokin meni pieleen. Yritä uudelleen"
-          }
+          "switch_to_password_link": "Kirjaudu salasanalla"
         },
         "verify": {
           "header": "Tarkista sähköpostisi",
@@ -632,11 +634,7 @@
           "submit_button": "Kirjaudu sisään",
           "resend_button": "Lähetä koodi uudelleen",
           "use_different_email_link": "Käytä toista sähköpostiosoitetta",
-          "live_resent": "Uusi koodi lähetetty.",
-          "errors": {
-            "invalid_code": "Tämä koodi ei ole oikein. Tarkista uusin sähköposti nähdäksesi nykyisen koodin.",
-            "generic": "Jokin meni pieleen. Yritä uudelleen"
-          }
+          "live_resent": "Uusi koodi lähetetty."
         },
         "locked": {
           "title": "Liian monta epäonnistunutta yritystä",
@@ -644,7 +642,7 @@
           "text_ready": "Voit yrittää uudelleen nyt.",
           "start_over_button": "Yritä uudelleen"
         },
-        "generic": {
+        "disabled": {
           "title": "Emme voineet kirjata sinua sisään",
           "text": "Kokeile salasanaa tai ota yhteyttä tilisi ylläpitäjään, jos tämä toistuu.",
           "password_button": "Kirjaudu salasanalla",

@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Ihr Zugriff auf diese Organisation wurde gesperrt. Bitte wenden Sie sich an Ihren Organisationsadministrator",
           "user_cannot_login_in_store": "Zugriff verweigert. Sie können sich nicht im aktuellen Geschäft anmelden",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
+          "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben",
+          "store_not_found": "Diesen Shop gibt es nicht.",
+          "duplicate_email_login_attempt": "Mehrere Konten verwenden diese E-Mail-Adresse.",
+          "lockout_disabled": "Dieses Konto kann sich nicht mit einem Code anmelden.",
+          "invalid_code": "Dieser Code ist nicht richtig. Prüfen Sie die neueste E-Mail.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "Wir senden Ihnen einen Code per E-Mail. Kein Passwort nötig.",
           "email_label": "E-Mail",
           "continue_button": "Weiter",
-          "switch_to_password_link": "Stattdessen mit Passwort anmelden",
-          "errors": {
-            "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut"
-          }
+          "switch_to_password_link": "Stattdessen mit Passwort anmelden"
         },
         "verify": {
           "header": "Prüfen Sie Ihre E-Mails",
@@ -632,11 +634,7 @@
           "submit_button": "Anmelden",
           "resend_button": "Code erneut senden",
           "use_different_email_link": "Andere E-Mail-Adresse verwenden",
-          "live_resent": "Neuer Code gesendet.",
-          "errors": {
-            "invalid_code": "Dieser Code ist nicht richtig. Prüfen Sie die neueste E-Mail auf den aktuellen Code.",
-            "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut"
-          }
+          "live_resent": "Neuer Code gesendet."
         },
         "locked": {
           "title": "Zu viele fehlgeschlagene Versuche",
@@ -644,7 +642,7 @@
           "text_ready": "Sie können es jetzt erneut versuchen.",
           "start_over_button": "Erneut versuchen"
         },
-        "generic": {
+        "disabled": {
           "title": "Anmeldung nicht möglich",
           "text": "Versuchen Sie es stattdessen mit einem Passwort oder wenden Sie sich an Ihren Kontoadministrator, falls dies weiterhin auftritt.",
           "password_button": "Mit Passwort anmelden",

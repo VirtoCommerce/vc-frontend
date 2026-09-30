@@ -8,4 +8,7 @@ export enum IdentityErrors {
   USER_NOT_FOUND = "user_not_found",
   PASSWORD_EXPIRED = "password_expired",
   SIGN_IN_NOT_ALLOWED = "sign_in_not_allowed",
+  OTP_DISABLED = "otp_disabled",
+  ACCOUNT_LOCKED = "account_locked",
+  INVALID_CODE = "invalid_code",
 }

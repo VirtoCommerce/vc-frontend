@@ -1,33 +1,31 @@
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useFetch } from "@/core/api/common";
 import { useAnalytics, useAuth } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
-
-export type OtpRequestOutcomeType = "CodeSent" | "OtpDisabled";
-export type OtpVerifyOutcomeType = "Success" | "InvalidCode" | "OtpDisabled" | "AccountLocked";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 export interface IOtpRequestResponse {
-  outcome: OtpRequestOutcomeType;
+  succeeded: boolean;
+  error?: IdentityErrorType;
   maskedEmail?: string;
 }
 
 export interface IOtpVerifyResponse {
-  outcome: OtpVerifyOutcomeType;
+  succeeded: boolean;
+  error?: IdentityErrorType;
   lockoutSecondsRemaining?: number;
 }
-
-// Error codes OtpGrantTypeHandler returns from POST /connect/token (grant_type=otp_email) on failure.
-const OTP_ERROR_CODE_ACCOUNT_LOCKED = "account_locked";
-const OTP_ERROR_CODE_OTP_DISABLED = "otp_disabled";
 
 const ANALYTICS_LOGIN_METHOD = "otp";
 
 export function useOtpSignIn() {
   const loading = ref(false);
-  const { nativeSignIn, errors: authErrors, lockoutSecondsRemaining } = useAuth();
+  const { t } = useI18n();
+  const { otpSignIn, errors: authErrors, lockoutSecondsRemaining } = useAuth();
   const { signIn, errors: signInErrors, resetErrors: resetSignInErrors } = useSignMeIn();
   const { analytics } = useAnalytics();
 
@@ -54,7 +52,7 @@ export function useOtpSignIn() {
       let tokenExchangeError: unknown;
 
       try {
-        await nativeSignIn({ email, code, storeId: globals.storeId });
+        await otpSignIn({ email, code, storeId: globals.storeId });
       } catch (e) {
         // getToken(true) rejects on any non-2xx /connect/token response, but authErrors is
         // already populated from the response body by then - handle it below like any other
@@ -62,20 +60,14 @@ export function useOtpSignIn() {
         tokenExchangeError = e;
       }
 
-      const errorCode = authErrors.value?.[0]?.code;
-      if (errorCode) {
-        analytics("login", ANALYTICS_LOGIN_METHOD, { success: false, errors: errorCode });
+      const error = authErrors.value?.[0];
+      if (error) {
+        analytics("login", ANALYTICS_LOGIN_METHOD, { success: false, errors: error.code ?? error.description });
 
-        if (errorCode === OTP_ERROR_CODE_ACCOUNT_LOCKED) {
-          return { outcome: "AccountLocked", lockoutSecondsRemaining: lockoutSecondsRemaining.value };
-        }
-        if (errorCode === OTP_ERROR_CODE_OTP_DISABLED) {
-          return { outcome: "OtpDisabled" };
-        }
-        if (authErrors.value?.some((error) => error.code === IdentityErrors.SIGN_IN_NOT_ALLOWED)) {
+        if (error.code === IdentityErrors.SIGN_IN_NOT_ALLOWED) {
           location.href = "/400";
         }
-        return { outcome: "InvalidCode" };
+        return { succeeded: false, error, lockoutSecondsRemaining: lockoutSecondsRemaining.value };
       }
 
       if (tokenExchangeError) {
@@ -85,7 +77,7 @@ export function useOtpSignIn() {
       await signIn();
 
       analytics("login", ANALYTICS_LOGIN_METHOD, { success: true });
-      return { outcome: "Success" };
+      return { succeeded: true };
     } catch (e) {
       const error = e instanceof Error ? e : new Error(String(e));
       Logger.error(`${useOtpSignIn.name}.${verifyCode.name}`, e);
@@ -96,11 +88,16 @@ export function useOtpSignIn() {
     }
   }
 
+  function showError(error?: IdentityErrorType) {
+    signInErrors.value = [error ?? { description: t("common.messages.something_went_wrong") }];
+  }
+
   return {
     loading,
     requestCode,
     verifyCode,
     signInErrors,
     resetSignInErrors,
+    showError,
   };
 }

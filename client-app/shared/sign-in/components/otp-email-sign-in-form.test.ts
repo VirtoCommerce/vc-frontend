@@ -6,6 +6,12 @@ vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }));
 
+const resetErrors = vi.fn();
+
+vi.mock("@/core/composables/useAuth", () => ({
+  useAuth: () => ({ resetErrors }),
+}));
+
 vi.mock("@/shared/common", () => ({
   ContactAdministratorLink: {
     name: "ContactAdministratorLink",
@@ -85,7 +91,7 @@ describe("OtpEmailSignInForm", () => {
 
     await requestForm(wrapper).vm.$emit("succeeded", {
       email: "buyer@acme.com",
-      result: { outcome: "CodeSent", maskedEmail: "b***r@acme.com" },
+      result: { succeeded: true, maskedEmail: "b***r@acme.com" },
     });
 
     expect(verifyForm(wrapper).exists()).toBe(true);
@@ -98,7 +104,7 @@ describe("OtpEmailSignInForm", () => {
 
     await requestForm(wrapper).vm.$emit("succeeded", {
       email: "buyer@acme.com",
-      result: { outcome: "CodeSent" },
+      result: { succeeded: true },
     });
 
     expect(verifyForm(wrapper).props("maskedEmail")).toBe("buyer@acme.com");
@@ -108,7 +114,7 @@ describe("OtpEmailSignInForm", () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", {
       email: "buyer@acme.com",
-      result: { outcome: "CodeSent" },
+      result: { succeeded: true },
     });
 
     await verifyForm(wrapper).vm.$emit("useDifferentEmail");
@@ -123,7 +129,7 @@ describe("OtpEmailSignInForm", () => {
     await flushPromises();
 
     expect(wrapper.find(".otp-email-sign-in-form__terminal-title").text()).toBe(
-      "shared.sign_in.otp_email_sign_in_form.generic.title",
+      "shared.sign_in.otp_email_sign_in_form.disabled.title",
     );
     expect(document.activeElement).toBe(wrapper.find(".otp-email-sign-in-form__terminal-title").element);
   });
@@ -139,7 +145,7 @@ describe("OtpEmailSignInForm", () => {
 
   it("counts an ordinary lockout down and re-enables the retry button at zero", async () => {
     const wrapper = mountForm();
-    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { outcome: "CodeSent" } });
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
 
     await verifyForm(wrapper).vm.$emit("locked", 5);
 
@@ -156,7 +162,7 @@ describe("OtpEmailSignInForm", () => {
 
   it("treats an absurdly large lockout as indefinite: no countdown, contact administrator instead", async () => {
     const wrapper = mountForm();
-    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { outcome: "CodeSent" } });
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
 
     // Well beyond any real lockout window — e.g. an admin-imposed or sentinel value.
     await verifyForm(wrapper).vm.$emit("locked", 30 * 24 * 60 * 60);
@@ -164,6 +170,30 @@ describe("OtpEmailSignInForm", () => {
     expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("common.messages.blocked");
     expect(wrapper.findComponent({ name: "ContactAdministratorLink" }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: "VcButton" }).exists()).toBe(false);
+  });
+
+  it("clears the sign-in errors when Try again returns to the request step", async () => {
+    const wrapper = mountForm();
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
+    await verifyForm(wrapper).vm.$emit("locked", 0);
+    resetErrors.mockClear();
+
+    await wrapper.findComponent({ name: "VcButton" }).trigger("click");
+
+    expect(requestForm(wrapper).exists()).toBe(true);
+    expect(resetErrors).toHaveBeenCalled();
+  });
+
+  it("shows a temporary lockout without a countdown when the remaining time is unknown", async () => {
+    const wrapper = mountForm();
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
+
+    await verifyForm(wrapper).vm.$emit("locked", undefined);
+
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe(
+      "shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+    );
+    expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
   });
 
   it("hides the password switch link and buttons when the store has no password authentication", async () => {

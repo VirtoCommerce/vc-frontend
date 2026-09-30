@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "您对此组织的访问已被阻止。请联系您的组织管理员",
           "user_cannot_login_in_store": "访问被拒绝。您无法登录当前商店",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "未找到用户。请确保您输入了正确的信息"
+          "user_not_found": "未找到用户。请确保您输入了正确的信息",
+          "store_not_found": "此商店不存在。",
+          "duplicate_email_login_attempt": "多个账户使用此电子邮件。",
+          "lockout_disabled": "此账户无法使用验证码登录。",
+          "invalid_code": "验证码不正确。请查看最新邮件。",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "我们会将验证码发送到您的邮箱，无需密码。",
           "email_label": "邮箱",
           "continue_button": "继续",
-          "switch_to_password_link": "改用密码登录",
-          "errors": {
-            "generic": "出了点问题，请重试"
-          }
+          "switch_to_password_link": "改用密码登录"
         },
         "verify": {
           "header": "查看您的邮箱",
@@ -632,11 +634,7 @@
           "submit_button": "登录",
           "resend_button": "重新发送验证码",
           "use_different_email_link": "使用其他邮箱",
-          "live_resent": "已发送新验证码。",
-          "errors": {
-            "invalid_code": "验证码不正确。请查看最新邮件获取当前验证码。",
-            "generic": "出了点问题，请重试"
-          }
+          "live_resent": "已发送新验证码。"
         },
         "locked": {
           "title": "失败尝试次数过多",
@@ -644,7 +642,7 @@
           "text_ready": "您现在可以重试了。",
           "start_over_button": "重试"
         },
-        "generic": {
+        "disabled": {
           "title": "无法为您登录",
           "text": "请改用密码登录，如果问题持续出现，请联系您的账户管理员。",
           "password_button": "使用密码登录",

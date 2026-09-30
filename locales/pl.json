@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Twój dostęp do tej organizacji został zablokowany. Skontaktuj się z administratorem organizacji",
           "user_cannot_login_in_store": "Dostęp zabroniony. Nie możesz się zalogować do bieżącego sklepu",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje"
+          "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje",
+          "store_not_found": "Ten sklep nie istnieje.",
+          "duplicate_email_login_attempt": "Kilka kont używa tego adresu e-mail.",
+          "lockout_disabled": "To konto nie może logować się za pomocą kodu.",
+          "invalid_code": "Ten kod jest nieprawidłowy. Sprawdź najnowszą wiadomość e-mail.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "Wyślemy Ci kod e-mailem. Hasło nie jest potrzebne.",
           "email_label": "Email",
           "continue_button": "Dalej",
-          "switch_to_password_link": "Zaloguj się hasłem",
-          "errors": {
-            "generic": "Coś poszło nie tak. Spróbuj ponownie"
-          }
+          "switch_to_password_link": "Zaloguj się hasłem"
         },
         "verify": {
           "header": "Sprawdź swoją pocztę e-mail",
@@ -632,11 +634,7 @@
           "submit_button": "Zaloguj się",
           "resend_button": "Wyślij kod ponownie",
           "use_different_email_link": "Użyj innego adresu e-mail",
-          "live_resent": "Wysłano nowy kod.",
-          "errors": {
-            "invalid_code": "Ten kod jest nieprawidłowy. Sprawdź najnowszą wiadomość e-mail, aby zobaczyć aktualny kod.",
-            "generic": "Coś poszło nie tak. Spróbuj ponownie"
-          }
+          "live_resent": "Wysłano nowy kod."
         },
         "locked": {
           "title": "Zbyt wiele nieudanych prób",
@@ -644,7 +642,7 @@
           "text_ready": "Możesz spróbować ponownie teraz.",
           "start_over_button": "Spróbuj ponownie"
         },
-        "generic": {
+        "disabled": {
           "title": "Nie udało się Cię zalogować",
           "text": "Spróbuj zamiast tego użyć hasła lub skontaktuj się z administratorem konta, jeśli problem się powtarza.",
           "password_button": "Zaloguj się hasłem",

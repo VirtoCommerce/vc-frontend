@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "この組織へのアクセスがブロックされました。組織の管理者にお問い合わせください",
           "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
+          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください",
+          "store_not_found": "このストアは存在しません。",
+          "duplicate_email_login_attempt": "このメールアドレスは複数のアカウントで使用されています。",
+          "lockout_disabled": "このアカウントはコードでサインインできません。",
+          "invalid_code": "コードが正しくありません。最新のメールをご確認ください。",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "メールでコードをお送りします。パスワードは不要です。",
           "email_label": "メール",
           "continue_button": "続ける",
-          "switch_to_password_link": "パスワードでサインインする",
-          "errors": {
-            "generic": "問題が発生しました。もう一度お試しください"
-          }
+          "switch_to_password_link": "パスワードでサインインする"
         },
         "verify": {
           "header": "メールをご確認ください",
@@ -632,11 +634,7 @@
           "submit_button": "サインイン",
           "resend_button": "コードを再送信",
           "use_different_email_link": "別のメールアドレスを使う",
-          "live_resent": "新しいコードを送信しました。",
-          "errors": {
-            "invalid_code": "コードが正しくありません。最新のメールで現在のコードをご確認ください。",
-            "generic": "問題が発生しました。もう一度お試しください"
-          }
+          "live_resent": "新しいコードを送信しました。"
         },
         "locked": {
           "title": "失敗した試行が多すぎます",
@@ -644,7 +642,7 @@
           "text_ready": "今すぐ再試行できます。",
           "start_over_button": "再試行"
         },
-        "generic": {
+        "disabled": {
           "title": "サインインできませんでした",
           "text": "代わりにパスワードをお試しいただくか、この状態が続く場合はアカウント管理者にお問い合わせください。",
           "password_button": "パスワードでサインイン",

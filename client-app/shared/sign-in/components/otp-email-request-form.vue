@@ -1,14 +1,15 @@
 <template>
   <form class="otp-email-request-form" @submit="onSubmit">
     <VcAlert
-      v-if="errorMessage"
+      v-for="error in signInErrors"
+      :key="error.code"
       class="otp-email-request-form__error"
       color="danger"
       size="sm"
       variant="outline-dark"
       icon
     >
-      {{ errorMessage }}
+      {{ translate(error) }}
     </VcAlert>
 
     <p class="otp-email-request-form__subtitle">
@@ -45,11 +46,11 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
-import { Logger } from "@/core/utilities";
+import { useErrorsTranslator } from "@/core/composables";
+import { IdentityErrors } from "@/core/enums";
 import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
 const emit = defineEmits<{
@@ -57,7 +58,7 @@ const emit = defineEmits<{
   (e: "disabled"): void;
 }>();
 
-const { t } = useI18n();
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
 const schema = toTypedSchema(
   object({
@@ -68,30 +69,22 @@ const schema = toTypedSchema(
 const { errors: validationErrors, handleSubmit } = useForm({ validationSchema: schema });
 const { value: email } = useField<string>("email");
 
-const { loading, requestCode } = useOtpSignIn();
-const errorMessage = ref("");
+const { loading, requestCode, signInErrors, showError } = useOtpSignIn();
 
 const onSubmit = handleSubmit(async () => {
-  errorMessage.value = "";
+  const result = await requestCode(email.value);
 
-  try {
-    const result = await requestCode(email.value);
-
-    if (!result) {
-      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
-      return;
-    }
-
-    if (result.outcome === "OtpDisabled") {
-      emit("disabled");
-      return;
-    }
-
-    emit("succeeded", { email: email.value, result });
-  } catch (err) {
-    Logger.error("OtpEmailRequestForm", err);
-    errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
+  if (result?.error?.code === IdentityErrors.OTP_DISABLED) {
+    emit("disabled");
+    return;
   }
+
+  if (!result?.succeeded) {
+    showError(result?.error);
+    return;
+  }
+
+  emit("succeeded", { email: email.value, result });
 });
 </script>
 

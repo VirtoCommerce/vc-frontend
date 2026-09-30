@@ -6,9 +6,19 @@ import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSig
 
 const loading = ref(false);
 const requestCode = vi.fn<(email: string) => Promise<IOtpRequestResponse | undefined>>();
+const signInErrors = ref<{ code?: string; description: string }[] | undefined>();
+const showError = vi.fn((error?: { code?: string; description: string }) => {
+  signInErrors.value = [error ?? { description: "common.messages.something_went_wrong" }];
+});
 
 vi.mock("@/shared/sign-in/composables/useOtpSignIn", () => ({
-  useOtpSignIn: () => ({ loading, requestCode }),
+  useOtpSignIn: () => ({ loading, requestCode, signInErrors, showError }),
+}));
+
+vi.mock("@/core/composables", () => ({
+  useErrorsTranslator: () => ({
+    translate: (error: { description: string } | undefined) => error?.description,
+  }),
 }));
 
 vi.mock("@/core/utilities", async (importOriginal) => {
@@ -74,16 +84,17 @@ describe("OtpEmailRequestForm", () => {
   beforeEach(() => {
     loading.value = false;
     requestCode.mockReset();
+    signInErrors.value = undefined;
   });
 
   it("requests a code for the entered email and emits succeeded on Sent", async () => {
-    requestCode.mockResolvedValue({ outcome: "CodeSent", maskedEmail: "b***r@acme.com" });
+    requestCode.mockResolvedValue({ succeeded: true, maskedEmail: "b***r@acme.com" });
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 
     expect(requestCode).toHaveBeenCalledWith("buyer@acme.com");
     expect(wrapper.emitted("succeeded")).toEqual([
-      [{ email: "buyer@acme.com", result: { outcome: "CodeSent", maskedEmail: "b***r@acme.com" } }],
+      [{ email: "buyer@acme.com", result: { succeeded: true, maskedEmail: "b***r@acme.com" } }],
     ]);
   });
 
@@ -99,12 +110,25 @@ describe("OtpEmailRequestForm", () => {
   });
 
   it("emits disabled when the module reports OTP is disabled, without emitting succeeded", async () => {
-    requestCode.mockResolvedValue({ outcome: "OtpDisabled" });
+    requestCode.mockResolvedValue({ succeeded: false, error: { code: "otp_disabled" } });
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 
     expect(wrapper.emitted("disabled")).toBeTruthy();
     expect(wrapper.emitted("succeeded")).toBeFalsy();
+  });
+
+  it("shows the translated server error and does not emit", async () => {
+    requestCode.mockResolvedValue({
+      succeeded: false,
+      error: { code: "user_not_found", description: "User not found." },
+    });
+
+    const wrapper = await fillEmailAndSubmit("buyer@acme.com");
+
+    expect(wrapper.find('[role="alert"]').text()).toBe("User not found.");
+    expect(wrapper.emitted("succeeded")).toBeFalsy();
+    expect(wrapper.emitted("disabled")).toBeFalsy();
   });
 
   it("shows a generic error and does not emit when the request fails silently", async () => {
@@ -113,16 +137,8 @@ describe("OtpEmailRequestForm", () => {
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 
-    expect(wrapper.find('[role="alert"]').text()).toBe("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
+    expect(wrapper.find('[role="alert"]').text()).toBe("common.messages.something_went_wrong");
     expect(wrapper.emitted("succeeded")).toBeFalsy();
     expect(wrapper.emitted("disabled")).toBeFalsy();
-  });
-
-  it("shows a generic error when requestCode throws", async () => {
-    requestCode.mockRejectedValue(new Error("boom"));
-
-    const wrapper = await fillEmailAndSubmit("buyer@acme.com");
-
-    expect(wrapper.find('[role="alert"]').text()).toBe("shared.sign_in.otp_email_sign_in_form.request.errors.generic");
   });
 });

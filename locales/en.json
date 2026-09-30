@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Your access to this organization has been blocked. Please contact your organization administrator",
           "user_cannot_login_in_store": "Access denied. You cannot sign in to the current store",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "User not found. Ensure you've entered the correct information"
+          "user_not_found": "User not found. Ensure you've entered the correct information",
+          "store_not_found": "This store doesn't exist.",
+          "duplicate_email_login_attempt": "Several accounts use this email.",
+          "lockout_disabled": "This account can't sign in with a code.",
+          "invalid_code": "That code isn't right. Check the latest email.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "We'll email you a code. No password needed.",
           "email_label": "Email",
           "continue_button": "Continue",
-          "switch_to_password_link": "Sign in with a password instead",
-          "errors": {
-            "generic": "Something went wrong. Please try again"
-          }
+          "switch_to_password_link": "Sign in with a password instead"
         },
         "verify": {
           "header": "Check your email",
@@ -632,11 +634,7 @@
           "submit_button": "Sign in",
           "resend_button": "Resend code",
           "use_different_email_link": "Use a different email",
-          "live_resent": "New code sent.",
-          "errors": {
-            "invalid_code": "That code isn't right. Check the latest email for the current code.",
-            "generic": "Something went wrong. Please try again"
-          }
+          "live_resent": "New code sent."
         },
         "locked": {
           "title": "Too many failed attempts",
@@ -644,7 +642,7 @@
           "text_ready": "You can try again now.",
           "start_over_button": "Try again"
         },
-        "generic": {
+        "disabled": {
           "title": "We couldn't sign you in",
           "text": "Try a password instead, or contact your account administrator if this keeps happening.",
           "password_button": "Sign in with a password",

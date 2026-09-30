@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Su acceso a esta organización ha sido bloqueado. Póngase en contacto con el administrador de su organización",
           "user_cannot_login_in_store": "Acceso denegado. No puedes iniciar sesión en la tienda actual",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Usuario no encontrado. Por favor, asegúrate de haber introducido la información correcta"
+          "user_not_found": "Usuario no encontrado. Por favor, asegúrate de haber introducido la información correcta",
+          "store_not_found": "Esta tienda no existe.",
+          "duplicate_email_login_attempt": "Varias cuentas usan este correo electrónico.",
+          "lockout_disabled": "Esta cuenta no puede iniciar sesión con un código.",
+          "invalid_code": "Ese código no es correcto. Revisa el último correo electrónico.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "Te enviaremos un código por correo electrónico. No necesitas contraseña.",
           "email_label": "Correo electrónico",
           "continue_button": "Continuar",
-          "switch_to_password_link": "Iniciar sesión con contraseña",
-          "errors": {
-            "generic": "Algo salió mal. Inténtalo de nuevo"
-          }
+          "switch_to_password_link": "Iniciar sesión con contraseña"
         },
         "verify": {
           "header": "Revisa tu correo electrónico",
@@ -632,11 +634,7 @@
           "submit_button": "Iniciar sesión",
           "resend_button": "Reenviar código",
           "use_different_email_link": "Usar otro correo electrónico",
-          "live_resent": "Nuevo código enviado.",
-          "errors": {
-            "invalid_code": "Ese código no es correcto. Revisa el último correo electrónico para ver el código actual.",
-            "generic": "Algo salió mal. Inténtalo de nuevo"
-          }
+          "live_resent": "Nuevo código enviado."
         },
         "locked": {
           "title": "Demasiados intentos fallidos",
@@ -644,7 +642,7 @@
           "text_ready": "Ya puedes volver a intentarlo.",
           "start_over_button": "Intentar de nuevo"
         },
-        "generic": {
+        "disabled": {
           "title": "No pudimos iniciar tu sesión",
           "text": "Prueba con una contraseña, o contacta a tu administrador de cuenta si esto sigue ocurriendo.",
           "password_button": "Iniciar sesión con contraseña",

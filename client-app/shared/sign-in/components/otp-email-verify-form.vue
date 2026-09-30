@@ -31,7 +31,7 @@
       class="otp-email-verify-form__field"
       :class="{
         'otp-email-verify-form__field--focused': isFocused,
-        'otp-email-verify-form__field--error': !!errorMessage,
+        'otp-email-verify-form__field--error': hasError,
         'otp-email-verify-form__field--busy': loading,
       }"
     >
@@ -44,8 +44,8 @@
         inputmode="numeric"
         autocomplete="one-time-code"
         pattern="[0-9]*"
-        :aria-invalid="!!errorMessage"
-        aria-describedby="otp-email-hint otp-email-message"
+        :aria-invalid="hasError"
+        aria-describedby="otp-email-hint"
         data-test-id="otp-email-code-input"
         @input="onInput"
         @focus="isFocused = true"
@@ -64,10 +64,6 @@
           {{ code[index - 1] }}
         </div>
       </div>
-    </div>
-
-    <div v-if="errorMessage" id="otp-email-message" class="otp-email-verify-form__message" role="alert">
-      {{ errorMessage }}
     </div>
 
     <p id="otp-email-hint" class="otp-email-verify-form__hint">
@@ -96,7 +92,7 @@
         {{ $t("shared.sign_in.otp_email_sign_in_form.verify.resend_button") }}
       </button>
 
-      <button type="button" class="otp-email-verify-form__link" @click="emit('useDifferentEmail')">
+      <button type="button" class="otp-email-verify-form__link" :disabled="loading" @click="emit('useDifferentEmail')">
         {{ $t("shared.sign_in.otp_email_sign_in_form.verify.use_different_email_link") }}
       </button>
     </div>
@@ -109,7 +105,8 @@
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator } from "@/core/composables";
-import { isLockoutError, Logger } from "@/core/utilities";
+import { IdentityErrors } from "@/core/enums";
+import { isLockoutError } from "@/core/utilities";
 import { ContactAdministratorLink } from "@/shared/common";
 import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -130,15 +127,15 @@ const CODE_LENGTH = 6;
 
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
-const { loading, verifyCode, requestCode, signInErrors, resetSignInErrors } = useOtpSignIn();
+const { loading, verifyCode, requestCode, signInErrors, resetSignInErrors, showError } = useOtpSignIn();
 
 const codeInputRef = ref<HTMLInputElement>();
 const code = ref("");
 const isFocused = ref(false);
-const errorMessage = ref("");
 const liveMessage = ref("");
 
 const isCodeComplete = computed(() => code.value.length === CODE_LENGTH && /^\d+$/.test(code.value));
+const hasError = computed(() => !!signInErrors.value?.length);
 
 onMounted(() => {
   codeInputRef.value?.focus();
@@ -147,8 +144,8 @@ onMounted(() => {
 function onInput() {
   code.value = code.value.replace(/\D/g, "").slice(0, CODE_LENGTH);
 
-  if (errorMessage.value) {
-    errorMessage.value = "";
+  if (hasError.value) {
+    resetSignInErrors();
   }
 
   if (isCodeComplete.value && !loading.value) {
@@ -163,62 +160,53 @@ async function onSubmit() {
 
   resetSignInErrors();
 
-  try {
-    const result = await verifyCode(props.email, code.value);
-    await handleOutcome(result);
-  } catch (err) {
-    Logger.error("OtpEmailVerifyForm", err);
-    errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
-  }
+  const result = await verifyCode(props.email, code.value);
+  await handleOutcome(result);
 }
 
 async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<void> {
-  switch (result?.outcome) {
-    case "Success":
-      return;
-    case "OtpDisabled":
+  if (result?.succeeded) {
+    return;
+  }
+
+  switch (result?.error?.code) {
+    case IdentityErrors.OTP_DISABLED:
       emit("disabled");
       return;
-    case "AccountLocked":
-      emit("locked", result.lockoutSecondsRemaining);
+    case IdentityErrors.ACCOUNT_LOCKED:
+      emit("locked", result?.lockoutSecondsRemaining);
       return;
-    case "InvalidCode":
-      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.invalid_code");
+    case IdentityErrors.INVALID_CODE:
       await nextTick();
       codeInputRef.value?.focus();
       codeInputRef.value?.select();
       return;
     default:
-      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
+      if (!result) {
+        showError();
+      }
   }
 }
 
 async function onResend() {
-  errorMessage.value = "";
+  const result = await requestCode(props.email);
 
-  try {
-    const result = await requestCode(props.email);
-
-    if (result?.outcome === "OtpDisabled") {
-      emit("disabled");
-      return;
-    }
-
-    if (result?.outcome !== "CodeSent") {
-      errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
-      return;
-    }
-
-    code.value = "";
-    liveMessage.value = "";
-    await nextTick();
-    liveMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.live_resent");
-    await nextTick();
-    codeInputRef.value?.focus();
-  } catch (err) {
-    Logger.error("OtpEmailVerifyForm.onResend", err);
-    errorMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.errors.generic");
+  if (result?.error?.code === IdentityErrors.OTP_DISABLED) {
+    emit("disabled");
+    return;
   }
+
+  if (!result?.succeeded) {
+    showError(result?.error);
+    return;
+  }
+
+  code.value = "";
+  liveMessage.value = "";
+  await nextTick();
+  liveMessage.value = t("shared.sign_in.otp_email_sign_in_form.verify.live_resent");
+  await nextTick();
+  codeInputRef.value?.focus();
 }
 </script>
 
@@ -275,6 +263,10 @@ async function onResend() {
     @apply flex h-14 items-center justify-center rounded-md border border-neutral-300 bg-additional-50 text-lg font-semibold tabular-nums;
   }
 
+  &__field:focus-within {
+    @apply ring-2 ring-accent-700 ring-offset-2;
+  }
+
   &__field--focused &__cell--active {
     @apply border-accent-700 ring-1 ring-accent-700;
   }
@@ -285,10 +277,6 @@ async function onResend() {
 
   &__field--busy &__cells {
     @apply opacity-60;
-  }
-
-  &__message {
-    @apply mt-3 rounded-md border border-danger-200 bg-danger-50 px-3 py-2 text-sm text-danger-800;
   }
 
   &__hint {

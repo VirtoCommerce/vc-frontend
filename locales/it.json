@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Il tuo accesso a questa organizzazione è stato bloccato. Contatta l'amministratore della tua organizzazione",
           "user_cannot_login_in_store": "Accesso negato. Non puoi accedere al negozio corrente",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Utente non trovato. Assicurati di aver inserito le informazioni corrette"
+          "user_not_found": "Utente non trovato. Assicurati di aver inserito le informazioni corrette",
+          "store_not_found": "Questo negozio non esiste.",
+          "duplicate_email_login_attempt": "Più account utilizzano questa email.",
+          "lockout_disabled": "Questo account non può accedere con un codice.",
+          "invalid_code": "Questo codice non è corretto. Controlla l'ultima e-mail.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "Ti invieremo un codice via e-mail. Nessuna password necessaria.",
           "email_label": "Email",
           "continue_button": "Continua",
-          "switch_to_password_link": "Accedi con una password",
-          "errors": {
-            "generic": "Qualcosa è andato storto. Riprova"
-          }
+          "switch_to_password_link": "Accedi con una password"
         },
         "verify": {
           "header": "Controlla la tua e-mail",
@@ -632,11 +634,7 @@
           "submit_button": "Accedi",
           "resend_button": "Invia di nuovo il codice",
           "use_different_email_link": "Usa un'altra e-mail",
-          "live_resent": "Nuovo codice inviato.",
-          "errors": {
-            "invalid_code": "Questo codice non è corretto. Controlla l'ultima e-mail per il codice attuale.",
-            "generic": "Qualcosa è andato storto. Riprova"
-          }
+          "live_resent": "Nuovo codice inviato."
         },
         "locked": {
           "title": "Troppi tentativi falliti",
@@ -644,7 +642,7 @@
           "text_ready": "Ora puoi riprovare.",
           "start_over_button": "Riprova"
         },
-        "generic": {
+        "disabled": {
           "title": "Impossibile accedere",
           "text": "Prova con una password oppure contatta l'amministratore del tuo account se il problema persiste.",
           "password_button": "Accedi con una password",

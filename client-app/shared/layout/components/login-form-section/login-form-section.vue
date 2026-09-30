@@ -69,6 +69,7 @@ import { SignInForm, useUser } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
+import { OtpStep } from "@/shared/sign-in/enums";
 import { getImageUrl } from "@/ui-kit/utilities";
 import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 
@@ -86,7 +87,7 @@ const bgImage = computed(() =>
 );
 
 const sectionTitle = computed(() =>
-  showOtpEmailForm.value && otpStep.value === "verify"
+  showOtpEmailForm.value && otpStep.value === OtpStep.Verify
     ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
     : t("pages.home.sign_in_form_title"),
 );

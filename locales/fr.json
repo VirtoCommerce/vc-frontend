@@ -517,7 +517,12 @@
           "user_is_locked_in_organization": "Votre accès à cette organisation a été bloqué. Veuillez contacter l'administrateur de votre organisation",
           "user_cannot_login_in_store": "Accès refusé. Vous ne pouvez pas vous connecter au magasin actuel",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations"
+          "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations",
+          "store_not_found": "Cette boutique n'existe pas.",
+          "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
+          "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",
+          "invalid_code": "Ce code n'est pas correct. Vérifiez le dernier e-mail.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -619,10 +624,7 @@
           "subtitle": "Nous vous enverrons un code par e-mail. Aucun mot de passe requis.",
           "email_label": "E-mail",
           "continue_button": "Continuer",
-          "switch_to_password_link": "Se connecter avec un mot de passe",
-          "errors": {
-            "generic": "Une erreur s'est produite. Veuillez réessayer"
-          }
+          "switch_to_password_link": "Se connecter avec un mot de passe"
         },
         "verify": {
           "header": "Consultez votre e-mail",
@@ -632,11 +634,7 @@
           "submit_button": "Se connecter",
           "resend_button": "Renvoyer le code",
           "use_different_email_link": "Utiliser une autre adresse e-mail",
-          "live_resent": "Nouveau code envoyé.",
-          "errors": {
-            "invalid_code": "Ce code n'est pas correct. Vérifiez le dernier e-mail pour connaître le code actuel.",
-            "generic": "Une erreur s'est produite. Veuillez réessayer"
-          }
+          "live_resent": "Nouveau code envoyé."
         },
         "locked": {
           "title": "Trop de tentatives échouées",
@@ -644,7 +642,7 @@
           "text_ready": "Vous pouvez réessayer maintenant.",
           "start_over_button": "Réessayer"
         },
-        "generic": {
+        "disabled": {
           "title": "Impossible de vous connecter",
           "text": "Essayez plutôt un mot de passe, ou contactez l'administrateur de votre compte si le problème persiste.",
           "password_button": "Se connecter avec un mot de passe",

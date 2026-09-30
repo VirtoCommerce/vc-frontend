@@ -107,7 +107,7 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
-  async function nativeSignIn(params: Record<string, string>): Promise<void> {
+  async function otpSignIn(params: Record<string, string>): Promise<void> {
     getTokenParams.value = new URLSearchParams({
       grant_type: "otp_email",
       scope: "offline_access",
@@ -180,7 +180,7 @@ function _useAuth() {
     isAuthorizing,
     authorize,
     externalSignInCallback,
-    nativeSignIn,
+    otpSignIn,
     refresh,
     unauthorize,
 

@@ -53,6 +53,7 @@ import { SignInForm } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
+import { OtpStep } from "@/shared/sign-in/enums";
 import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
@@ -73,7 +74,7 @@ const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignI
 const hasSignInForm = computed(() => hasPasswordAuthentication.value || hasOtpEmailAuthentication.value);
 
 const pageTitle = computed(() =>
-  showOtpEmailForm.value && otpStep.value === "verify"
+  showOtpEmailForm.value && otpStep.value === OtpStep.Verify
     ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
     : t("pages.sign_in.header"),
 );

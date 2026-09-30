@@ -1,26 +1,25 @@
 import { computed, ref } from "vue";
+import { useAuth } from "@/core/composables/useAuth";
+import { OtpStep, SignInMode } from "@/shared/sign-in/enums";
 import type { ComputedRef, Ref } from "vue";
 
-export type OtpStepType = "request" | "verify" | "locked" | "generic";
-
 export function useOtpSignInMode(hasOtpEmailAuthentication: Ref<boolean> | ComputedRef<boolean>) {
-  const signInMode = ref<"password" | "otp">(hasOtpEmailAuthentication.value ? "otp" : "password");
-  const showOtpEmailForm = computed(() => hasOtpEmailAuthentication.value && signInMode.value === "otp");
+  const signInMode = ref(hasOtpEmailAuthentication.value ? SignInMode.Otp : SignInMode.Password);
+  const showOtpEmailForm = computed(() => hasOtpEmailAuthentication.value && signInMode.value === SignInMode.Otp);
 
-  const otpStep = ref<OtpStepType>("request");
+  const otpStep = ref(OtpStep.Request);
+  const { resetErrors } = useAuth();
 
   function switchToOtp() {
-    otpStep.value = "request";
-    signInMode.value = "otp";
+    signInMode.value = SignInMode.Otp;
   }
 
   function switchToPassword() {
-    otpStep.value = "request";
-    signInMode.value = "password";
+    resetErrors();
+    signInMode.value = SignInMode.Password;
   }
 
   return {
-    signInMode,
     showOtpEmailForm,
     otpStep,
     switchToOtp,

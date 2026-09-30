@@ -7,13 +7,16 @@ import type { IOtpRequestResponse, IOtpVerifyResponse } from "@/shared/sign-in/c
 const loading = ref(false);
 const verifyCode = vi.fn<(email: string, code: string) => Promise<IOtpVerifyResponse | undefined>>();
 const requestCode = vi.fn<(email: string) => Promise<IOtpRequestResponse | undefined>>();
-const signInErrors = ref<{ code: string; description: string }[] | undefined>();
+const signInErrors = ref<{ code?: string; description: string }[] | undefined>();
 const resetSignInErrors = vi.fn(() => {
   signInErrors.value = undefined;
 });
+const showError = vi.fn((error?: { code?: string; description: string }) => {
+  signInErrors.value = [error ?? { description: "common.messages.something_went_wrong" }];
+});
 
 vi.mock("@/shared/sign-in/composables/useOtpSignIn", () => ({
-  useOtpSignIn: () => ({ loading, verifyCode, requestCode, signInErrors, resetSignInErrors }),
+  useOtpSignIn: () => ({ loading, verifyCode, requestCode, signInErrors, resetSignInErrors, showError }),
 }));
 
 vi.mock("@/core/composables", () => ({
@@ -84,7 +87,7 @@ describe("OtpEmailVerifyForm", () => {
   });
 
   it("auto-submits once 6 digits are entered and verifies the code", async () => {
-    verifyCode.mockResolvedValue({ outcome: "Success" });
+    verifyCode.mockResolvedValue({ succeeded: true });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
@@ -94,7 +97,7 @@ describe("OtpEmailVerifyForm", () => {
 
   it("clears any previous sign-in error before a new verify attempt", async () => {
     signInErrors.value = [{ code: "user_not_found", description: "stale error" }];
-    verifyCode.mockResolvedValue({ outcome: "Success" });
+    verifyCode.mockResolvedValue({ succeeded: true });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
@@ -102,19 +105,23 @@ describe("OtpEmailVerifyForm", () => {
     expect(resetSignInErrors).toHaveBeenCalled();
   });
 
-  it("shows an inline error and re-selects the code on InvalidCode", async () => {
-    verifyCode.mockResolvedValue({ outcome: "InvalidCode" });
+  it("shows the server error only in the sign-in alert and marks the code field", async () => {
+    const error = { code: "invalid_code", description: "The code is invalid." };
+
+    verifyCode.mockImplementation(() => {
+      signInErrors.value = [error];
+      return Promise.resolve({ succeeded: false, error });
+    });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "000000");
 
-    expect(wrapper.find("#otp-email-message").text()).toBe(
-      "shared.sign_in.otp_email_sign_in_form.verify.errors.invalid_code",
-    );
+    expect(wrapper.findAll('[role="alert"]').map((alert) => alert.text())).toEqual(["The code is invalid."]);
+    expect(wrapper.find(".otp-email-verify-form__field--error").exists()).toBe(true);
   });
 
   it("emits disabled when the module became disabled", async () => {
-    verifyCode.mockResolvedValue({ outcome: "OtpDisabled" });
+    verifyCode.mockResolvedValue({ succeeded: false, error: { code: "otp_disabled" } });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
@@ -123,23 +130,12 @@ describe("OtpEmailVerifyForm", () => {
   });
 
   it("emits locked with the remaining lockout seconds", async () => {
-    verifyCode.mockResolvedValue({ outcome: "AccountLocked", lockoutSecondsRemaining: 42 });
+    verifyCode.mockResolvedValue({ succeeded: false, error: { code: "account_locked" }, lockoutSecondsRemaining: 42 });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
 
     expect(wrapper.emitted("locked")).toEqual([[42]]);
-  });
-
-  it("shows a generic error when verifyCode throws", async () => {
-    verifyCode.mockRejectedValue(new Error("boom"));
-
-    const wrapper = mountForm();
-    await typeCode(wrapper, "123456");
-
-    expect(wrapper.find("#otp-email-message").text()).toBe(
-      "shared.sign_in.otp_email_sign_in_form.verify.errors.generic",
-    );
   });
 
   it("shows sign-in errors with a contact-administrator link for a lockout error", () => {
@@ -162,8 +158,8 @@ describe("OtpEmailVerifyForm", () => {
     expect(alert.find("a").exists()).toBe(false);
   });
 
-  it("resend: reports success and clears the code only when the outcome is Sent", async () => {
-    requestCode.mockResolvedValue({ outcome: "CodeSent" });
+  it("resend: reports success and clears the code only when the code was sent", async () => {
+    requestCode.mockResolvedValue({ succeeded: true });
 
     const wrapper = mountForm();
     await codeInput(wrapper).setValue("11111");
@@ -190,13 +186,28 @@ describe("OtpEmailVerifyForm", () => {
 
     expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("11111");
     expect(wrapper.find("[aria-live='polite']").text()).toBe("");
-    expect(wrapper.find("#otp-email-message").text()).toBe(
-      "shared.sign_in.otp_email_sign_in_form.verify.errors.generic",
-    );
+    expect(wrapper.find('[role="alert"]').text()).toBe("common.messages.something_went_wrong");
+  });
+
+  it("resend: shows the translated server error and keeps the code", async () => {
+    requestCode.mockResolvedValue({
+      succeeded: false,
+      error: { code: "user_not_found", description: "User not found." },
+    });
+
+    const wrapper = mountForm();
+    await codeInput(wrapper).setValue("11111");
+
+    await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
+    await flushPromises();
+
+    expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("11111");
+    expect(wrapper.find("[aria-live='polite']").text()).toBe("");
+    expect(wrapper.find('[role="alert"]').text()).toBe("User not found.");
   });
 
   it("resend: emits disabled when the module became disabled", async () => {
-    requestCode.mockResolvedValue({ outcome: "OtpDisabled" });
+    requestCode.mockResolvedValue({ succeeded: false, error: { code: "otp_disabled" } });
 
     const wrapper = mountForm();
     await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
