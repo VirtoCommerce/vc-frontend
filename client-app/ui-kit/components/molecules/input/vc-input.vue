@@ -57,7 +57,7 @@
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <VcButton
           :disabled="disabled"
-          :aria-label="clearLabel || $t('ui_kit.buttons.clear')"
+          :aria-label="clearButtonAriaLabel || $t('ui_kit.buttons.clear')"
           type="button"
           icon="delete-thin"
           color="neutral"
@@ -148,7 +148,7 @@ export interface IProps {
   size?: VcInputSizeType;
   clearable?: boolean;
   /** Accessible name of the clear button. Default "Clear"; name the field when two clearable fields sit side by side. */
-  clearLabel?: string;
+  clearButtonAriaLabel?: string;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;

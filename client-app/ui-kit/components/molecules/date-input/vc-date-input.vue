@@ -17,7 +17,7 @@
     :aria="aria"
     :tabindex="tabindex"
     :clearable="clearable"
-    :clear-label="clearLabel"
+    :clear-button-aria-label="clearButtonAriaLabel"
     :test-id-input="dataTestId"
     :seamless="seamless"
     :hide-details="hideDetails"
@@ -78,7 +78,7 @@ interface IProps {
   mask?: boolean;
   clearable?: boolean;
   /** Accessible name of the clear button. Default "Clear". See VcInput. */
-  clearLabel?: string;
+  clearButtonAriaLabel?: string;
   ariaLabel?: string;
   /** Additional ARIA attributes forwarded to the underlying input element. */
   aria?: Record<string, string | number | null>;
