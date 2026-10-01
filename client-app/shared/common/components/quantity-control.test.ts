@@ -99,3 +99,36 @@ describe("QuantityControl in stepper mode", () => {
     expect(wrapper.find(`#${describedBy}`).text()).not.toBe("");
   });
 });
+
+// VCST-5990: a quote row arrives with quantity 0 and no allowZero, and nothing explained why it is invalid.
+describe("QuantityControl validated on mount", () => {
+  const quoteRow = { mode: "stepper" as const, modelValue: 0, validateOnMount: true };
+
+  it("explains an untouched zero when zero is not allowed", async () => {
+    const wrapper = createWrapper({ props: quoteRow });
+    await settle();
+
+    const input = wrapper.get("input");
+    const describedBy = input.attributes("aria-describedby");
+
+    expect(input.attributes("aria-invalid")).toBe("true");
+    expect(describedBy).toBeTruthy();
+    expect(wrapper.find(`#${describedBy}`).text()).not.toBe("");
+  });
+
+  it("still leaves an untouched zero valid when zero is allowed", async () => {
+    const wrapper = createWrapper({ props: { ...quoteRow, allowZero: true, minQuantity: 3 } });
+    await settle();
+
+    expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+
+  it("forwards consumer ARIA attributes to the stepper input", async () => {
+    const wrapper = createWrapper({
+      props: { ...stepperRow, modelValue: 5, aria: { "aria-describedby": "line-errors" } },
+    });
+    await nextTick();
+
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe("line-errors");
+  });
+});

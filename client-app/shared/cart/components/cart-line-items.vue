@@ -40,6 +40,7 @@
         :disabled="disabled"
         :readonly="readonly"
         disable-validation
+        :aria="getQuantityAria(item.id)"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
@@ -62,7 +63,11 @@
         :route="item.route"
       />
 
-      <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1 [&:not(:first-child)]:mt-2">
+      <div
+        v-if="localizedItemsErrors[item.id]"
+        :id="getErrorsId(item.id)"
+        class="flex flex-col gap-1 [&:not(:first-child)]:mt-2"
+      >
         <VcAlert
           v-for="(validationError, index) in localizedItemsErrors[item.id]"
           :key="index"
@@ -106,11 +111,13 @@ import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
+import { useComponentId } from "@/ui-kit/composables";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
 import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
+import { QUANTITY_VALIDATION_ERROR_CODES } from "../constants";
 
 interface IProps {
   disabled?: boolean;
@@ -162,6 +169,27 @@ const preparedLineItems = computed(() =>
 );
 
 watchEffect(() => setErrors(validationErrors.value));
+
+const componentId = useComponentId("cart-line-items");
+
+function getErrorsId(itemId: string): string {
+  return `${componentId}-${itemId}-errors`;
+}
+
+function getQuantityAria(itemId: string): Record<string, string> | undefined {
+  if (!localizedItemsErrors.value[itemId]) {
+    return undefined;
+  }
+
+  const hasQuantityError = validationErrors.value.some(
+    (error) => error.objectId === itemId && QUANTITY_VALIDATION_ERROR_CODES.has(error.errorCode ?? ""),
+  );
+
+  return {
+    "aria-describedby": getErrorsId(itemId),
+    ...(hasQuantityError && { "aria-invalid": "true" }),
+  };
+}
 
 const handleLinkClick = (item: PreparedLineItemType) => {
   const lineItem = props.items.find((cartLineItem) => cartLineItem.id === item.id);

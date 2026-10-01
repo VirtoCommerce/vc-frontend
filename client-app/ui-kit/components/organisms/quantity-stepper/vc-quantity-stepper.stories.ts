@@ -57,6 +57,37 @@ export const AllowZeroBelowMin: StoryType = {
   },
 };
 
+export const BelowMinWithoutZero: StoryType = {
+  args: {
+    min: 3,
+    max: 10,
+    value: 1,
+    allowZero: false,
+    error: true,
+    message: "You can order minimum 3 item(s)",
+  },
+  decorators: [
+    () => ({
+      template: '<div id="popover-host"></div><story />',
+    }),
+  ],
+};
+
+export const DescribedByExternalMessage: StoryType = {
+  args: {
+    min: 2,
+    max: 5,
+    value: 1,
+    allowZero: false,
+    aria: { "aria-invalid": "true", "aria-describedby": "quantity-stepper-story-message" },
+  },
+  decorators: [
+    () => ({
+      template: '<div><story /><p id="quantity-stepper-story-message">You can order from 2 to 5 items</p></div>',
+    }),
+  ],
+};
+
 export const Disabled: StoryType = {
   args: {
     disabled: true,

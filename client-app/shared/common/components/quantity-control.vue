@@ -44,6 +44,7 @@
     :message="errorMessage"
     :step="packSize"
     :allow-zero="allowZero"
+    :aria="aria"
     data-test-id="quantity-stepper"
   >
     <slot />
@@ -87,6 +88,8 @@ interface IProps {
   allowZero?: boolean;
   emitUpdateOnStepperChange?: boolean;
   disableValidation?: boolean;
+  /** Stepper mode only: extra ARIA attributes forwarded to the quantity input. */
+  aria?: Record<string, string | number | null>;
 }
 
 const emit = defineEmits<IEmits>();
@@ -185,7 +188,7 @@ const handleStepperChange = debounce(async () => {
 }, timeout.value ?? 0);
 
 onMounted(async () => {
-  if (mode.value === "stepper" && value.value === 0) {
+  if (mode.value === "stepper" && allowZero.value && value.value === 0) {
     return;
   }
 
