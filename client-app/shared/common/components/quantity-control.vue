@@ -189,10 +189,6 @@ const handleStepperChange = debounce(async () => {
 }, timeout.value ?? 0);
 
 onMounted(async () => {
-  if (mode.value === "stepper" && allowZero.value && value.value === 0) {
-    return;
-  }
-
   if (validateOnMount.value && !disableValidation.value) {
     await validateFields();
   }
