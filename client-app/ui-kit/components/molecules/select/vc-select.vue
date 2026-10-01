@@ -28,7 +28,6 @@
       placement="bottom-start"
       :offset-options="4"
       :z-index="10"
-      shadow
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
@@ -693,16 +692,14 @@ function onTab(event: KeyboardEvent) {
     @apply relative rounded-[--radius];
   }
 
-  // May be teleported, so it declares its own tokens; `--vc-dropdown-menu-*` stay as fallbacks.
+  // The card is the select's own: VcPopover only places it. May be teleported, so it declares its
+  // own tokens.
   &__dropdown {
-    --dropdown-max-height: var(--vc-select-dropdown-max-height, var(--vc-dropdown-menu-max-height, 12rem));
-    --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem)));
-    --dropdown-bg-color: var(
-      --vc-select-dropdown-bg-color,
-      var(--vc-dropdown-menu-bg-color, var(--color-additional-50))
-    );
+    --dropdown-max-height: var(--vc-select-dropdown-max-height, 12rem);
+    --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-radius, 0.5rem));
+    --dropdown-bg-color: var(--vc-select-dropdown-bg-color, var(--color-additional-50));
 
-    @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] select-none;
+    @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] shadow-lg select-none;
   }
 
   &__scroll {

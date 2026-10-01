@@ -340,9 +340,5 @@ onMounted(() => {
   &__append {
     @apply flex-none flex items-center h-[--content-height] empty:hidden;
   }
-
-  .vc-icon {
-    @apply flex-none;
-  }
 }
 </style>
