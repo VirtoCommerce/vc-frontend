@@ -10,7 +10,7 @@ This repo is synced into a private theme mirror that holds prospect demo branche
 # Upstream-only (all existing workflows)
 if: github.repository == 'VirtoCommerce/vc-frontend'
 
-# Mirror-only (build-theme.yml, sync-upstream.yml); the mirror sets the
+# Mirror-only (*-mirror.yml); the mirror sets the
 # repository variable THEME_MIRROR=true, vc-frontend and forks do not
 if: vars.THEME_MIRROR == 'true'
 

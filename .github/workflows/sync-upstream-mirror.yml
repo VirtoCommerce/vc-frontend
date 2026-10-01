@@ -17,7 +17,7 @@
 # (GITHUB_TOKEN cannot push .github/workflows changes), and optionally a Teams webhook
 # URL in TEAMS_WEBHOOK_URL. GitHub's own failure email for a scheduled run goes to whoever
 # last edited the cron line, which is an upstream author, so failures are posted there.
-name: Sync Upstream
+name: Sync Upstream (mirror)
 
 on:
   schedule:

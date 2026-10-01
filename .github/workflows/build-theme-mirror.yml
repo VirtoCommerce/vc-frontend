@@ -9,7 +9,7 @@
 # The artifact URL is published as the `theme-artifact` run artifact (artifact-url.json):
 # job outputs are not readable through the REST API. A consumer that wants the artifact
 # of a branch looks up the successful run whose head_sha is the branch's current head.
-name: Build Theme
+name: Build Theme (mirror)
 
 on:
   push:
@@ -64,7 +64,10 @@ jobs:
         run: |
           yarn version "$VERSION"
 
-      - name: Install dependencies
+      # Dependency lifecycle scripts are disabled: this job holds the blob upload SAS.
+      - name: Install dependencies (no lifecycle scripts, frozen lockfile)
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
         run: |
           yarn install --immutable
 
