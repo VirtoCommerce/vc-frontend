@@ -104,6 +104,7 @@
     "customer_reference": "発注参照番号",
     "customer_comment": "コメント",
     "cancel_reason": "キャンセル理由",
+    "reject_reason": "却下理由",
     "cancel_button": "返品をキャンセル",
     "columns": {
       "requested": "申請数",
