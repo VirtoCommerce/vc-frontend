@@ -25,8 +25,8 @@ on:
 jobs:
   analyze:
     name: Analyze (javascript-typescript)
-    # Upstream-only: skipped in the private theme mirror (VCST-5970).
-    if: ${{ github.repository == 'VirtoCommerce/vc-frontend' &&
+    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): skipped in the private theme mirror (VCST-5970).
+    if: ${{ github.repository_id == '296335982' &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}

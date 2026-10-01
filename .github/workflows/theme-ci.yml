@@ -19,8 +19,8 @@ on:
 
 jobs:
   ci:
-    # Upstream-only: every job here is skipped in the private theme mirror (VCST-5970).
-    if: ${{ github.repository == 'VirtoCommerce/vc-frontend' &&
+    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): every job here is skipped in the private theme mirror (VCST-5970).
+    if: ${{ github.repository_id == '296335982' &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
@@ -254,7 +254,7 @@ jobs:
           Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
   auto-tests:
     needs: ci
-    if: ${{ github.repository == 'VirtoCommerce/vc-frontend' &&
+    if: ${{ github.repository_id == '296335982' &&
         (((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
     uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.1000.1
@@ -272,7 +272,7 @@ jobs:
       sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
   
   deploy-cloud:
-    if: ${{ github.repository == 'VirtoCommerce/vc-frontend' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request') }}
+    if: ${{ github.repository_id == '296335982' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request') }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:

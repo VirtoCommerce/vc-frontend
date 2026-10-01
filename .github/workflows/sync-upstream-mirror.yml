@@ -13,10 +13,28 @@
 #   - tag moved upstream: delete that tag in the mirror (git push <mirror> :refs/tags/<tag>)
 #     and re-run. clone/* branches are unaffected: they point at commits, not tags.
 #
-# Mirror setup: a write deploy key whose private half is the MIRROR_PUSH_KEY secret
-# (GITHUB_TOKEN cannot push .github/workflows changes), and optionally a Teams webhook
-# URL in TEAMS_WEBHOOK_URL. GitHub's own failure email for a scheduled run goes to whoever
-# last edited the cron line, which is an upstream author, so failures are posted there.
+# Mirror setup (this workflow and build-theme-mirror.yml):
+#   - Repository variable THEME_MIRROR=true.
+#   - For build-theme-mirror.yml: repository variable BLOB_URL (the blob container for
+#     prospect builds; use a container of its own, not upstream's prerelease one) and
+#     secret BLOB_TOKEN (its SAS, with the leading "?").
+#   - A write deploy key whose private half is the MIRROR_PUSH_KEY secret (GITHUB_TOKEN
+#     cannot push .github/workflows changes).
+#   - Optionally a Teams webhook URL in TEAMS_WEBHOOK_URL. GitHub's own failure email for
+#     a scheduled run goes to whoever last edited the cron line, which is an upstream
+#     author, so failures are posted there.
+#   - Dependabot: .github/dependabot.yml arrives with dev, and version updates work in
+#     private repos. Turn them off for the mirror if the settings allow it; either way,
+#     never merge a Dependabot PR there, close it. Merging one diverges dev and fails
+#     every later sync until reset_dev is run.
+#
+# Known limitation: MIRROR_PUSH_KEY is a plain repository secret, so a workflow committed
+# to any branch of the mirror can read it, and the key itself can force-push or delete
+# any branch, clone/* included. Restricting it to dev needs a GitHub environment, which
+# private repos only get on the Team plan or above. Until then, mirror write access is
+# the trust boundary: anyone who can push a workflow there can already rewrite branches
+# with their own credentials. If the org moves to Team, put the key in an environment
+# limited to dev and add `environment:` to this job.
 name: Sync Upstream (mirror)
 
 on:
@@ -64,7 +82,9 @@ jobs:
         run: |
           report=report.md
           : > "$report"
-          if git merge-base --is-ancestor refs/remotes/origin/dev refs/remotes/upstream/dev; then
+          if ! git rev-parse -q --verify refs/remotes/origin/dev > /dev/null; then
+            echo "- dev: the mirror has no dev branch yet; Push dev creates it" >> "$report"
+          elif git merge-base --is-ancestor refs/remotes/origin/dev refs/remotes/upstream/dev; then
             echo "- dev: fast-forward, $(git rev-list --count refs/remotes/origin/dev..refs/remotes/upstream/dev) new commit(s)" >> "$report"
           else
             extra=$(git rev-list --count refs/remotes/upstream/dev..refs/remotes/origin/dev)
@@ -95,7 +115,10 @@ jobs:
         run: |
           git push origin 'refs/remotes/upstream/dev:refs/heads/dev'
 
+      # Runs even when the dev push failed, so new release tags keep arriving while dev
+      # waits for a reset_dev; the run still fails.
       - name: Push tags
+        if: ${{ !cancelled() && steps.diagnose.outcome == 'success' }}
         run: |
           git push origin 'refs/upstream-tags/*:refs/tags/*'
 

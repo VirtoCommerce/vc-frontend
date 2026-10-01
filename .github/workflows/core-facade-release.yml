@@ -16,8 +16,8 @@ on:
 
 jobs:
   release:
-    # Upstream-only: skipped in the private theme mirror (VCST-5970).
-    if: github.repository == 'VirtoCommerce/vc-frontend'
+    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): skipped in the private theme mirror (VCST-5970).
+    if: github.repository_id == '296335982'
     runs-on: ubuntu-latest
     permissions:
       contents: write # create the core-v* tag + release with the built-in GITHUB_TOKEN
