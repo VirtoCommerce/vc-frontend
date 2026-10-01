@@ -157,6 +157,7 @@ const HandleWidget = {
           size="xs"
           variant="ghost"
           color="secondary"
+          :style="item.grabbed.value ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
         />
       </template>
       <div class="text-sm text-neutral-600">Body of {{ title }}</div>

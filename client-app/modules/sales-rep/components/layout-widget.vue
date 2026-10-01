@@ -104,7 +104,8 @@ const heading = computed(() => props.title ?? block?.title.value);
 // Both controls are VcButtons and the drag states come from VcSortable; what is left here is the icon inks,
 // set through VcButton's own variables.
 .layout-widget {
-  // Held: the icon takes the drag accent, as a pointer user's grabbing cursor would.
+  // Held: the icon takes the drag accent, as a pointer user's grabbing cursor would. The key follows the
+  // handle's `variant="ghost"` + `color="secondary"`.
   &__handle[aria-pressed="true"] {
     --vc-button-ghost-secondary-icon: var(--vc-sortable-accent-color);
   }

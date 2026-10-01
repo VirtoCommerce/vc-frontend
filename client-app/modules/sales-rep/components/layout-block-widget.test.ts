@@ -1,6 +1,6 @@
-import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
-import { defineComponent, h } from "vue";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, nextTick } from "vue";
 import { useBlockSettings } from "../composables/useBlockSettings";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import LayoutRegion from "./layout-region.vue";
@@ -24,10 +24,13 @@ const global = { components: { VcButton, VcWidget }, stubs: { VcIcon: true, VcSh
 
 // The point of layout-widget.vue: the controls sit in the widget's own header, placed by VcWidget's
 // padding rather than metrics copied outside it. A real VcWidget, because that placement is under test.
+enableAutoUnmount(afterEach);
+
 describe("LayoutBlock wrapping a real LayoutWidget", () => {
   // Through a real region: the controls come from the sortable item the block renders as.
-  function mountBlock(editing: boolean, widget: () => unknown) {
+  function mountBlock(editing: boolean, widget: () => unknown, options: { attachTo?: HTMLElement } = {}) {
     return mount(LayoutRegion, {
+      ...options,
       props: {
         scope: "dashboard" as const,
         entries: ["orders"],
@@ -56,10 +59,13 @@ describe("LayoutBlock wrapping a real LayoutWidget", () => {
   // The controls are VcButtons, so the keyboard route into reordering only exists as long as VcButton
   // lets `keydown` / `blur` fall through to the button it renders. Nothing else would notice if it stopped.
   it("carries the handle's keyboard events through VcButton to the list", async () => {
-    const wrapper = mountBlock(true, titledWidget());
+    const wrapper = mountBlock(true, titledWidget(), { attachTo: document.body });
     const handle = wrapper.get(".layout-widget__handle");
 
-    await handle.trigger("keydown", { key: " " });
+    // Sent to whatever has focus, as a real key is: the list ignores keys bubbling from inside the handle.
+    (handle.element as HTMLElement).focus();
+    document.activeElement!.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+    await nextTick();
 
     expect(handle.attributes("aria-pressed")).toBe("true");
     expect(wrapper.get('[data-block-id="orders"]').classes()).toContain("vc-sortable__item--grabbed");
