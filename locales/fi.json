@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Kirjaudu kertakoodilla",
         "request": {
           "subtitle": "Lähetämme sinulle koodin sähköpostitse. Salasanaa ei tarvita.",
-          "email_label": "Sähköposti",
+          "email_label": "@:common.labels.email",
           "continue_button": "Jatka",
           "switch_to_password_link": "Kirjaudu salasanalla"
         },

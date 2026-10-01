@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Mit Einmalcode anmelden",
         "request": {
           "subtitle": "Wir senden Ihnen einen Code per E-Mail. Kein Passwort nötig.",
-          "email_label": "E-Mail",
+          "email_label": "@:common.labels.email",
           "continue_button": "Weiter",
           "switch_to_password_link": "Stattdessen mit Passwort anmelden"
         },

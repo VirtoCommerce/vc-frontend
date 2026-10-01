@@ -623,7 +623,7 @@
         "switch_to_otp_link": "改用一次性验证码登录",
         "request": {
           "subtitle": "我们会将验证码发送到您的邮箱，无需密码。",
-          "email_label": "邮箱",
+          "email_label": "@:common.labels.email",
           "continue_button": "继续",
           "switch_to_password_link": "改用密码登录"
         },

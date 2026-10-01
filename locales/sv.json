@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Logga in med engångskod",
         "request": {
           "subtitle": "Vi skickar en kod till din e-post. Inget lösenord behövs.",
-          "email_label": "E-post",
+          "email_label": "@:common.labels.email",
           "continue_button": "Fortsätt",
           "switch_to_password_link": "Logga in med lösenord istället"
         },

@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Войти по одноразовому коду",
         "request": {
           "subtitle": "Мы отправим вам код на почту. Пароль не нужен.",
-          "email_label": "Email",
+          "email_label": "@:common.labels.email",
           "continue_button": "Продолжить",
           "switch_to_password_link": "Войти по паролю"
         },

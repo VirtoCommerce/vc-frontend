@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Entrar com um código de uso único",
         "request": {
           "subtitle": "Enviaremos um código por e-mail. Nenhuma senha necessária.",
-          "email_label": "Email",
+          "email_label": "@:common.labels.email",
           "continue_button": "Continuar",
           "switch_to_password_link": "Entrar com uma senha"
         },

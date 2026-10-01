@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Se connecter avec un code à usage unique",
         "request": {
           "subtitle": "Nous vous enverrons un code par e-mail. Aucun mot de passe requis.",
-          "email_label": "E-mail",
+          "email_label": "@:common.labels.email",
           "continue_button": "Continuer",
           "switch_to_password_link": "Se connecter avec un mot de passe"
         },

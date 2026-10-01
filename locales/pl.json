@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Zaloguj się kodem jednorazowym",
         "request": {
           "subtitle": "Wyślemy Ci kod e-mailem. Hasło nie jest potrzebne.",
-          "email_label": "Email",
+          "email_label": "@:common.labels.email",
           "continue_button": "Dalej",
           "switch_to_password_link": "Zaloguj się hasłem"
         },

@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Accedi con un codice monouso",
         "request": {
           "subtitle": "Ti invieremo un codice via e-mail. Nessuna password necessaria.",
-          "email_label": "Email",
+          "email_label": "@:common.labels.email",
           "continue_button": "Continua",
           "switch_to_password_link": "Accedi con una password"
         },

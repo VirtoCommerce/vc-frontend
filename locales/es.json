@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Iniciar sesión con un código de un solo uso",
         "request": {
           "subtitle": "Te enviaremos un código por correo electrónico. No necesitas contraseña.",
-          "email_label": "Correo electrónico",
+          "email_label": "@:common.labels.email",
           "continue_button": "Continuar",
           "switch_to_password_link": "Iniciar sesión con contraseña"
         },

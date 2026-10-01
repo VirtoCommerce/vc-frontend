@@ -623,7 +623,7 @@
         "switch_to_otp_link": "ワンタイムコードでサインイン",
         "request": {
           "subtitle": "メールでコードをお送りします。パスワードは不要です。",
-          "email_label": "メール",
+          "email_label": "@:common.labels.email",
           "continue_button": "続ける",
           "switch_to_password_link": "パスワードでサインインする"
         },

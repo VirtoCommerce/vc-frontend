@@ -623,7 +623,7 @@
         "switch_to_otp_link": "Logg inn med engangskode",
         "request": {
           "subtitle": "Vi sender deg en kode på e-post. Du trenger ikke passord.",
-          "email_label": "E-post",
+          "email_label": "@:common.labels.email",
           "continue_button": "Fortsett",
           "switch_to_password_link": "Logg inn med passord i stedet"
         },
