@@ -293,6 +293,11 @@ describe("SalesRepOrdersFilters — the date range field", () => {
       label: undefined,
       startLabel: "sales_rep.customer_orders.filters.start_date",
       endLabel: "sales_rep.customer_orders.filters.end_date",
+    });
+  });
+
+  it("masks the field, teleports its calendar, and keeps its details row and calendar footer", () => {
+    expect(rangePicker(createWrapper()).props()).toMatchObject({
       mask: true,
       enableTeleport: true,
       showEmptyDetails: true,

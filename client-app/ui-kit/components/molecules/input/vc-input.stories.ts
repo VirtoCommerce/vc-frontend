@@ -218,7 +218,7 @@ export const Clearable: StoryType = {
   },
 };
 
-export const ClearLabel: StoryType = {
+export const ClearButtonAriaLabel: StoryType = {
   args: {
     ...commonArgs,
     label: "Start date",
