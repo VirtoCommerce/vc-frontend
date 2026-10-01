@@ -108,7 +108,6 @@
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator } from "@/core/composables";
-import { IdentityErrors } from "@/core/enums";
 import { isLockoutError } from "@/core/utilities";
 import { ContactAdministratorLink } from "@/shared/common";
 import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
@@ -126,14 +125,13 @@ interface IEmits {
   (event: "locked", error: IdentityErrorType, lockoutSecondsRemaining: number | undefined): void;
 }
 
-const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
-
+const props = defineProps<IProps>();
 const CODE_LENGTH = 6;
 
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
-const { loading, verifyCode, requestCode, signInErrors, resetSignInErrors, showError } = useOtpSignIn();
+const { loading, verifyCode, requestCode, signInErrors, resetSignInErrors, handleError } = useOtpSignIn();
 
 const codeInputRef = ref<HTMLInputElement>();
 const code = ref("");
@@ -189,24 +187,7 @@ async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<vo
     return;
   }
 
-  const error = result?.error;
-
-  if (error?.code === IdentityErrors.OTP_DISABLED) {
-    emit("disabled");
-    return;
-  }
-
-  if (
-    error?.code === IdentityErrors.USER_IS_LOCKED_OUT ||
-    error?.code === IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT
-  ) {
-    emit("locked", error, result?.lockoutSecondsRemaining);
-    return;
-  }
-
-  if (!result) {
-    showError();
-  }
+  handleError(result, emit);
 
   code.value = "";
   await nextTick();
@@ -216,13 +197,8 @@ async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<vo
 async function onResend() {
   const result = await requestCode(props.email);
 
-  if (result?.error?.code === IdentityErrors.OTP_DISABLED) {
-    emit("disabled");
-    return;
-  }
-
   if (!result?.succeeded) {
-    showError(result?.error);
+    handleError(result, emit);
     return;
   }
 

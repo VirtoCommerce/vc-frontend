@@ -48,11 +48,10 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useTemplateRef } from "vue";
 import { useField, useForm } from "vee-validate";
+import { useTemplateRef } from "vue";
 import { object, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
-import { IdentityErrors } from "@/core/enums";
 import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
@@ -60,6 +59,7 @@ import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSig
 interface IEmits {
   (event: "succeeded", payload: { email: string; result: IOtpRequestResponse }): void;
   (event: "disabled"): void;
+  (event: "locked", error: IdentityErrorType, lockoutSecondsRemaining: number | undefined): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -77,7 +77,7 @@ const schema = toTypedSchema(
 const { errors: validationErrors, handleSubmit } = useForm({ validationSchema: schema });
 const { value: email } = useField<string>("email");
 
-const { loading, requestCode, signInErrors, showError } = useOtpSignIn();
+const { loading, requestCode, signInErrors, handleError } = useOtpSignIn();
 
 const emailInput = useTemplateRef<{ inputElement: HTMLInputElement | null }>("emailInput");
 
@@ -90,13 +90,8 @@ defineExpose({ focus });
 const onSubmit = handleSubmit(async () => {
   const result = await requestCode(email.value);
 
-  if (result?.error?.code === IdentityErrors.OTP_DISABLED) {
-    emit("disabled");
-    return;
-  }
-
   if (!result?.succeeded) {
-    showError(result?.error);
+    handleError(result, emit);
     return;
   }
 

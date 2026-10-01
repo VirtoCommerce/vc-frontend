@@ -11,12 +11,10 @@ const signInErrors = ref<{ code?: string; description: string }[] | undefined>()
 const resetSignInErrors = vi.fn(() => {
   signInErrors.value = undefined;
 });
-const showError = vi.fn((error?: { code?: string; description: string }) => {
-  signInErrors.value = [error ?? { description: "common.messages.something_went_wrong" }];
-});
+const handleError = vi.fn();
 
 vi.mock("@/shared/sign-in/composables/useOtpSignIn", () => ({
-  useOtpSignIn: () => ({ loading, verifyCode, requestCode, signInErrors, resetSignInErrors, showError }),
+  useOtpSignIn: () => ({ loading, verifyCode, requestCode, signInErrors, resetSignInErrors, handleError }),
 }));
 
 vi.mock("@/core/composables", () => ({
@@ -82,6 +80,7 @@ describe("OtpEmailVerifyForm", () => {
     loading.value = false;
     verifyCode.mockReset();
     requestCode.mockReset();
+    handleError.mockReset();
     signInErrors.value = undefined;
     resetSignInErrors.mockClear();
   });
@@ -187,26 +186,30 @@ describe("OtpEmailVerifyForm", () => {
     expect(codeInput(wrapper).attributes("aria-describedby")).toBe("otp-email-code-error otp-email-hint");
   });
 
-  it("emits disabled when the module became disabled", async () => {
-    verifyCode.mockResolvedValue({ succeeded: false, error: { code: "otp_disabled" } });
+  it.each<[string, IOtpVerifyResponse | undefined]>([
+    ["OTP is disabled", { succeeded: false, error: { code: "otp_disabled" } }],
+    [
+      "the account is locked",
+      { succeeded: false, error: { code: "user_is_temporary_locked_out" }, lockoutSecondsRemaining: 42 },
+    ],
+    ["the code is invalid", { succeeded: false, error: { code: "invalid_code", description: "Wrong code." } }],
+    ["the verification fails silently", undefined],
+  ])("hands the verify result to handleError when %s", async (_case, result) => {
+    verifyCode.mockResolvedValue(result);
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
 
-    expect(wrapper.emitted("disabled")).toBeTruthy();
+    expect(handleError).toHaveBeenCalledWith(result, expect.any(Function));
   });
 
-  it("emits locked with the error and the remaining lockout seconds", async () => {
-    verifyCode.mockResolvedValue({
-      succeeded: false,
-      error: { code: "user_is_temporary_locked_out" },
-      lockoutSecondsRemaining: 42,
-    });
+  it("does not call handleError when the code was accepted", async () => {
+    verifyCode.mockResolvedValue({ succeeded: true });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
 
-    expect(wrapper.emitted("locked")).toEqual([[{ code: "user_is_temporary_locked_out" }, 42]]);
+    expect(handleError).not.toHaveBeenCalled();
   });
 
   it("shows sign-in errors with a contact-administrator link for a lockout error", () => {
@@ -244,8 +247,19 @@ describe("OtpEmailVerifyForm", () => {
     );
   });
 
-  it("resend: does not report success and keeps the code when the request actually failed", async () => {
-    requestCode.mockResolvedValue(undefined);
+  it.each<[string, IOtpRequestResponse | undefined]>([
+    ["the request fails silently", undefined],
+    [
+      "the module returns an error",
+      { succeeded: false, error: { code: "user_not_found", description: "User not found." } },
+    ],
+    ["OTP is disabled", { succeeded: false, error: { code: "otp_disabled" } }],
+    [
+      "the account is locked",
+      { succeeded: false, error: { code: "user_is_locked_out", description: "Blocked." }, lockoutSecondsRemaining: 42 },
+    ],
+  ])("resend: hands the result to handleError and keeps the code when %s", async (_case, result) => {
+    requestCode.mockResolvedValue(result);
 
     const wrapper = mountForm();
     await codeInput(wrapper).setValue("11111");
@@ -253,36 +267,9 @@ describe("OtpEmailVerifyForm", () => {
     await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
     await flushPromises();
 
+    expect(handleError).toHaveBeenCalledWith(result, expect.any(Function));
     expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("11111");
     expect(wrapper.find("[aria-live='polite']").text()).toBe("");
-    expect(wrapper.find('[role="alert"]').text()).toBe("common.messages.something_went_wrong");
-  });
-
-  it("resend: shows the translated server error and keeps the code", async () => {
-    requestCode.mockResolvedValue({
-      succeeded: false,
-      error: { code: "user_not_found", description: "User not found." },
-    });
-
-    const wrapper = mountForm();
-    await codeInput(wrapper).setValue("11111");
-
-    await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
-    await flushPromises();
-
-    expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("11111");
-    expect(wrapper.find("[aria-live='polite']").text()).toBe("");
-    expect(wrapper.find('[role="alert"]').text()).toBe("User not found.");
-  });
-
-  it("resend: emits disabled when the module became disabled", async () => {
-    requestCode.mockResolvedValue({ succeeded: false, error: { code: "otp_disabled" } });
-
-    const wrapper = mountForm();
-    await wrapper.find('[data-test-id="otp-email-resend-button"]').trigger("click");
-    await flushPromises();
-
-    expect(wrapper.emitted("disabled")).toBeTruthy();
   });
 
   it("focuses the code input once mounted", async () => {

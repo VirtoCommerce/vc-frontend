@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { errorHandler, HttpError, toServerError, useFetch } from "@/core/api/common";
 import { useAnalytics, useAuth } from "@/core/composables";
+import { IdentityErrors } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
@@ -11,12 +12,18 @@ export interface IOtpRequestResponse {
   succeeded: boolean;
   error?: IdentityErrorType;
   maskedEmail?: string;
+  lockoutSecondsRemaining?: number;
 }
 
 export interface IOtpVerifyResponse {
   succeeded: boolean;
   error?: IdentityErrorType;
   lockoutSecondsRemaining?: number;
+}
+
+interface IOtpErrorEmits {
+  (event: "disabled"): void;
+  (event: "locked", error: IdentityErrorType, lockoutSecondsRemaining: number | undefined): void;
 }
 
 const ANALYTICS_LOGIN_METHOD = "otp";
@@ -94,12 +101,26 @@ export function useOtpSignIn() {
     signInErrors.value = [error ?? { description: t("common.messages.something_went_wrong") }];
   }
 
+  function handleError(result: IOtpRequestResponse | IOtpVerifyResponse | undefined, emit: IOtpErrorEmits) {
+    switch (result?.error?.code) {
+      case IdentityErrors.OTP_DISABLED:
+        emit("disabled");
+        break;
+      case IdentityErrors.USER_IS_LOCKED_OUT:
+      case IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT:
+        emit("locked", result.error, result.lockoutSecondsRemaining);
+        break;
+      default:
+        showError(result?.error);
+    }
+  }
+
   return {
     loading,
     requestCode,
     verifyCode,
     signInErrors,
     resetSignInErrors,
-    showError,
+    handleError,
   };
 }

@@ -370,4 +370,53 @@ describe("useOtpSignIn", () => {
     expect(Logger.error).toHaveBeenCalled();
     expect(analytics).toHaveBeenCalledWith("login", "otp", { success: false, errors: "token exchange failed" });
   });
+
+  it("handleError emits disabled when OTP is disabled", async () => {
+    const signMeIn = await getSignMeInState();
+    const emit = vi.fn();
+
+    const { useOtpSignIn } = await importComposable();
+    useOtpSignIn().handleError({ succeeded: false, error: { code: "otp_disabled" } }, emit);
+
+    expect(emit).toHaveBeenCalledWith("disabled");
+    expect(signMeIn.signInErrors.value).toBeUndefined();
+  });
+
+  it.each(["user_is_locked_out", "user_is_temporary_locked_out"])(
+    "handleError emits locked with the remaining seconds for %s",
+    async (code) => {
+      const signMeIn = await getSignMeInState();
+      const emit = vi.fn();
+      const error = { code, description: "Locked." };
+
+      const { useOtpSignIn } = await importComposable();
+      useOtpSignIn().handleError({ succeeded: false, error, lockoutSecondsRemaining: 42 }, emit);
+
+      expect(emit).toHaveBeenCalledWith("locked", error, 42);
+      expect(signMeIn.signInErrors.value).toBeUndefined();
+    },
+  );
+
+  it("handleError shows any other error in the sign-in alert", async () => {
+    const signMeIn = await getSignMeInState();
+    const emit = vi.fn();
+    const error = { code: "invalid_code", description: "Wrong code." };
+
+    const { useOtpSignIn } = await importComposable();
+    useOtpSignIn().handleError({ succeeded: false, error }, emit);
+
+    expect(signMeIn.signInErrors.value).toEqual([error]);
+    expect(emit).not.toHaveBeenCalled();
+  });
+
+  it("handleError shows a generic error when there is no response", async () => {
+    const signMeIn = await getSignMeInState();
+    const emit = vi.fn();
+
+    const { useOtpSignIn } = await importComposable();
+    useOtpSignIn().handleError(undefined, emit);
+
+    expect(signMeIn.signInErrors.value).toEqual([{ description: "common.messages.something_went_wrong" }]);
+    expect(emit).not.toHaveBeenCalled();
+  });
 });
