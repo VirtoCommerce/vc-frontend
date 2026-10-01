@@ -217,8 +217,10 @@ function pinnedReleaseIsMissing() {
 // Derived from GROUPS so the group→packages mapping lives in exactly one place
 // (tailwind's empty `packages` self-excludes).
 const droppedShared = GROUPS.filter((group) => !selected[group.key]).flatMap((group) => group.packages);
+// Keys quoted only where JS requires it, as prettier prints them - the scaffold must pass its own lint.
+const objectKey = (name) => (/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name));
 const droppedSharedLines = droppedShared
-  .map((name) => `          "${name}": false, // not used by this plugin`)
+  .map((name) => `          ${objectKey(name)}: false, // not used by this plugin`)
   .join("\n");
 const sharedOverridesArg = droppedShared.length
   ? `\n        sharedOverrides: {\n${droppedSharedLines}\n        },`
@@ -260,7 +262,8 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
-    lint: "eslint . --fix",
+    lint: "eslint .",
+    "lint:fix": "eslint . --fix",
     format: "prettier --write src/",
     test: "vitest run",
     "test:watch": "vitest",
@@ -358,7 +361,8 @@ const tsconfig = {
     skipLibCheck: true,
     resolveJsonModule: true,
     verbatimModuleSyntax: true,
-    types: ["vite/client"],
+    // The facade is listed so its GlobalComponents declaration loads even when no file imports it.
+    types: ["vite/client", "@vc-frontend/core"],
   },
   include: ["src", "vite.config.ts"],
   // Off by default an unknown component is accepted silently, props unchecked. The contract
@@ -569,7 +573,7 @@ export default defineConfig({
       },
     ],
   },
-  test: { environment: "jsdom" },
+  test: { environment: "jsdom", passWithNoTests: true },
 });
 `;
 
@@ -596,7 +600,7 @@ export const globals = {
 
 export const useUser = () => ({ checkPermissions: () => true });
 export const useModuleSettings = () => ({ isEnabled: () => true, getModuleSettings: () => undefined });
-export const useModal = () => ({ openModal: () => {}, closeModal: () => {} });
+export const useModal = () => ({ openModal: () => () => {}, closeModal: () => {} });
 export const useNotifications = () => ({ success: () => {}, error: () => {}, warning: () => {}, info: () => {} });
 export const useNavigations = () => ({ mergeMenuSchema: () => {}, registerAccountSection: () => {} });
 export const useExtensionRegistry = () => ({ register: () => {}, registerContribution: () => {} });

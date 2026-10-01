@@ -105,7 +105,42 @@ describe("create-plugin scaffolder", () => {
     expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(true);
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("globals.router.addRoute");
     // Unused optional groups must be dropped from MF shared (spurious-gate protection).
-    expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain('"@apollo/client": false');
+    const viteConfig = readFileSync(join(dir, "vite.config.ts"), "utf8");
+    expect(viteConfig).toContain('"@apollo/client": false');
+    // Quoting a valid identifier fails the scaffold's own prettier rule.
+    expect(viteConfig).toContain(" graphql: false");
+  });
+
+  it("wires the test and type-check config the generated specs and templates depend on", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+
+    // A string key matches by prefix and would send @vc-frontend/core/testing to the mock too.
+    expect(readFileSync(join(dir, "vitest.config.ts"), "utf8")).toContain(String.raw`find: /^@vc-frontend\/core$/`);
+
+    const tsconfig = JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")) as {
+      compilerOptions: { types: string[] };
+      vueCompilerOptions: { strictTemplates: boolean };
+    };
+    expect(tsconfig.vueCompilerOptions.strictTemplates).toBe(true);
+    // Under strictTemplates every ui-kit tag is an error unless the facade's GlobalComponents load.
+    expect(tsconfig.compilerOptions.types).toContain("@vc-frontend/core");
+
+    const { scripts } = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+    };
+    // A fixing `lint` passes CI on every auto-fixable error.
+    expect(scripts.lint).toBe("eslint .");
+    expect(scripts["lint:fix"]).toBe("eslint . --fix");
+  });
+
+  it("scaffolds the --no-router variant without a page, and its test run still passes", () => {
+    const dir = scaffoldExpectingSuccess("bare-plugin", ["--yes", "--no-router"]);
+
+    expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(false);
+    expect(existsSync(join(dir, "src", "pages", "my-page.test.ts"))).toBe(false);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).not.toContain("addRoute");
+    // With no spec, `vitest run` exits 1.
+    expect(readFileSync(join(dir, "vitest.config.ts"), "utf8")).toContain("passWithNoTests: true");
   });
 
   it("scaffolds the apollo variant with codegen wired to the facade's config", () => {
