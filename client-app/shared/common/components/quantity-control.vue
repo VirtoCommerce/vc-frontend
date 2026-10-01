@@ -21,6 +21,7 @@
     :show-empty-details="showEmptyDetails"
     :message="message"
     :validate-on-mount="validateOnMount"
+    :aria="aria"
     data-test-id="add-to-cart-button"
     @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
     @update:validation="emit('update:validation', $event)"
@@ -88,7 +89,7 @@ interface IProps {
   allowZero?: boolean;
   emitUpdateOnStepperChange?: boolean;
   disableValidation?: boolean;
-  /** Stepper mode only: extra ARIA attributes forwarded to the quantity input. */
+  /** Extra ARIA attributes forwarded to the quantity input in either mode. */
   aria?: Record<string, string | number | null>;
 }
 

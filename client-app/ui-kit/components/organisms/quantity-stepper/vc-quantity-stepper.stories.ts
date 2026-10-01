@@ -18,6 +18,12 @@ const meta: Meta<typeof VcQuantityStepper> = {
         },
       },
     },
+    aria: {
+      control: false,
+      description:
+        "Extra ARIA attributes for the input, merged under the spinbutton role and value attributes this stepper owns. Object, not a control.",
+      table: { type: { summary: "Record<string, string | number | null>" } },
+    },
   },
   render: (args) => ({
     setup: () => {
@@ -55,22 +61,6 @@ export const AllowZeroBelowMin: StoryType = {
     value: 0,
     allowZero: true,
   },
-};
-
-export const BelowMinWithoutZero: StoryType = {
-  args: {
-    min: 3,
-    max: 10,
-    value: 1,
-    allowZero: false,
-    error: true,
-    message: "You can order minimum 3 item(s)",
-  },
-  decorators: [
-    () => ({
-      template: '<div id="popover-host"></div><story />',
-    }),
-  ],
 };
 
 export const DescribedByExternalMessage: StoryType = {

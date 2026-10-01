@@ -112,12 +112,12 @@ import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
 import { useComponentId } from "@/ui-kit/composables";
+import { QUANTITY_VALIDATION_ERROR_CODES } from "../enums";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
 import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
-import { QUANTITY_VALIDATION_ERROR_CODES } from "../constants";
 
 interface IProps {
   disabled?: boolean;
@@ -182,7 +182,9 @@ function getQuantityAria(itemId: string): Record<string, string> | undefined {
   }
 
   const hasQuantityError = validationErrors.value.some(
-    (error) => error.objectId === itemId && QUANTITY_VALIDATION_ERROR_CODES.has(error.errorCode ?? ""),
+    (error) =>
+      error.objectId === itemId &&
+      (QUANTITY_VALIDATION_ERROR_CODES as readonly string[]).includes(error.errorCode ?? ""),
   );
 
   return {

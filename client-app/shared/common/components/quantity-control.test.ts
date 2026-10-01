@@ -4,7 +4,7 @@ import { nextTick } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { VcButton, VcInput } from "@/ui-kit/components/molecules";
-import { VcQuantityStepper } from "@/ui-kit/components/organisms";
+import { VcAddToCart, VcQuantityStepper } from "@/ui-kit/components/organisms";
 import QuantityControl from "./quantity-control.vue";
 
 const createWrapper = createWrapperFactory(mount, QuantityControl, {
@@ -19,6 +19,13 @@ const createWrapper = createWrapperFactory(mount, QuantityControl, {
       VcIcon: true,
       VcTooltip: { template: '<div><slot name="trigger" /></div>' },
     },
+  },
+});
+
+const createButtonWrapper = createWrapperFactory(mount, QuantityControl, {
+  global: {
+    components: { VcAddToCart, VcInput, VcInputDetails, VcButton },
+    stubs: { VcQuantityStepper: true, VcLabel: true, VcIcon: true, VcTooltip: true },
   },
 });
 
@@ -122,13 +129,24 @@ describe("QuantityControl validated on mount", () => {
 
     expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
   });
+});
+
+describe("QuantityControl aria passthrough", () => {
+  const aria = { "aria-describedby": "line-errors", "aria-invalid": "true" };
 
   it("forwards consumer ARIA attributes to the stepper input", async () => {
-    const wrapper = createWrapper({
-      props: { ...stepperRow, modelValue: 5, aria: { "aria-describedby": "line-errors" } },
-    });
+    const wrapper = createWrapper({ props: { ...stepperRow, modelValue: 5, aria } });
     await nextTick();
 
     expect(wrapper.get("input").attributes("aria-describedby")).toBe("line-errors");
+    expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
+  });
+
+  it("forwards consumer ARIA attributes to the button-mode input", async () => {
+    const wrapper = createButtonWrapper({ props: { mode: "button", hideButton: true, modelValue: 5, aria } });
+    await nextTick();
+
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe("line-errors");
+    expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
   });
 });

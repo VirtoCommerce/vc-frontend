@@ -15,6 +15,7 @@
       :message="message"
       :show-empty-details="showEmptyDetails"
       :readonly="readonly"
+      :aria="aria"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -92,6 +93,8 @@ interface IProps {
   timeout?: number;
   validateOnMount?: boolean;
   size?: "sm" | "md";
+  /** Extra ARIA attributes for the quantity input, e.g. `aria-describedby` pointing at a message rendered outside. */
+  aria?: Record<string, string | number | null>;
 }
 
 const emit = defineEmits<IEmits>();

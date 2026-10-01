@@ -71,6 +71,15 @@ describe("CartLineItems quantity errors", () => {
     expect(wrapper.get(`#${input.attributes("aria-describedby")}`).text()).toContain("Price is invalid");
   });
 
+  it("does not invalidate a line for a quantity error that belongs to another object", async () => {
+    const wrapper = await mountWith([
+      lineError("PRODUCT_PRICE_INVALID", "Price is invalid"),
+      { ...lineError("PRODUCT_MIN_QTY", "Product quantity 1 is less than minimum 2"), objectId: "product-1" },
+    ]);
+
+    expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+
   it("leaves the quantity unmarked without line errors", async () => {
     const input = (await mountWith([])).get("input");
 
