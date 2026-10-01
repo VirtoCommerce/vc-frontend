@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Tilgang nektet. Du kan ikke logge inn i denne butikken",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon",
+          "sign_in_not_allowed": "Du kan ikke logge på med denne kontoen. Kontakt administratoren din.",
           "store_not_found": "Denne butikken finnes ikke.",
           "duplicate_email_login_attempt": "Flere kontoer bruker denne e-postadressen.",
           "lockout_disabled": "Denne kontoen kan ikke logge på med en kode.",

@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Dostęp zabroniony. Nie możesz się zalogować do bieżącego sklepu",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje",
+          "sign_in_not_allowed": "Nie możesz zalogować się na to konto. Skontaktuj się z administratorem.",
           "store_not_found": "Ten sklep nie istnieje.",
           "duplicate_email_login_attempt": "Kilka kont używa tego adresu e-mail.",
           "lockout_disabled": "To konto nie może logować się za pomocą kodu.",

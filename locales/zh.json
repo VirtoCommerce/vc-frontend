@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "访问被拒绝。您无法登录当前商店",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "未找到用户。请确保您输入了正确的信息",
+          "sign_in_not_allowed": "无法登录此账户。请联系您的管理员。",
           "store_not_found": "此商店不存在。",
           "duplicate_email_login_attempt": "多个账户使用此电子邮件。",
           "lockout_disabled": "此账户无法使用验证码登录。",

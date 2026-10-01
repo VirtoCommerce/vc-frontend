@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "ユーザーが見つかりません。入力情報を確認してください",
+          "sign_in_not_allowed": "このアカウントではサインインできません。管理者にお問い合わせください。",
           "store_not_found": "このストアは存在しません。",
           "duplicate_email_login_attempt": "このメールアドレスは複数のアカウントで使用されています。",
           "lockout_disabled": "このアカウントはコードでサインインできません。",

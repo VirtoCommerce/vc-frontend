@@ -307,7 +307,7 @@ describe("useOtpSignIn", () => {
     expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
-  it("verifyCode redirects to /400 when the sign-in is not allowed", async () => {
+  it("verifyCode returns sign_in_not_allowed for the form to show instead of leaving the page", async () => {
     const auth = await getAuthState();
     auth.authErrors.value = [{ code: "sign_in_not_allowed", description: "Sign-in not allowed" }];
 
@@ -320,16 +320,15 @@ describe("useOtpSignIn", () => {
     Object.defineProperty(window, "location", { configurable: true, value: { href: "" } });
 
     const result = await verifyCode("buyer@acme.com", "123456");
+    const { href } = window.location;
+    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
 
-    expect(window.location.href).toBe("/400");
+    expect(href).toBe("");
     expect(result).toEqual({
       succeeded: false,
       error: { code: "sign_in_not_allowed", description: "Sign-in not allowed" },
     });
-
     expect(signMeIn.signIn).not.toHaveBeenCalled();
-
-    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
   });
 
   it("verifyCode still returns the token exchange error when getToken(true) rejects on the 400 response", async () => {

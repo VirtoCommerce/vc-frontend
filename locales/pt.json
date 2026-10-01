@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Acesso negado. Você não pode entrar na loja atual",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas",
+          "sign_in_not_allowed": "Você não pode entrar com esta conta. Entre em contato com o administrador.",
           "store_not_found": "Esta loja não existe.",
           "duplicate_email_login_attempt": "Várias contas usam este e-mail.",
           "lockout_disabled": "Esta conta não pode entrar com um código.",

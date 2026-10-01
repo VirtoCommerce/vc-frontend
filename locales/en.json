@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Access denied. You cannot sign in to the current store",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "User not found. Ensure you've entered the correct information",
+          "sign_in_not_allowed": "You can't sign in to this account. Please contact your administrator.",
           "store_not_found": "This store doesn't exist.",
           "duplicate_email_login_attempt": "Several accounts use this email.",
           "lockout_disabled": "This account can't sign in with a code.",

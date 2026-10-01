@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Pääsy evätty. Et voi kirjautua tähän kauppaan",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot",
+          "sign_in_not_allowed": "Et voi kirjautua tällä tilillä. Ota yhteyttä ylläpitäjään.",
           "store_not_found": "Tätä kauppaa ei ole olemassa.",
           "duplicate_email_login_attempt": "Useat tilit käyttävät tätä sähköpostiosoitetta.",
           "lockout_disabled": "Tällä tilillä ei voi kirjautua sisään koodilla.",

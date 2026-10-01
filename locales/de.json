@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Zugriff verweigert. Sie können sich nicht im aktuellen Geschäft anmelden",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben",
+          "sign_in_not_allowed": "Sie können sich mit diesem Konto nicht anmelden. Bitte wenden Sie sich an Ihren Administrator.",
           "store_not_found": "Diesen Shop gibt es nicht.",
           "duplicate_email_login_attempt": "Mehrere Konten verwenden diese E-Mail-Adresse.",
           "lockout_disabled": "Dieses Konto kann sich nicht mit einem Code anmelden.",

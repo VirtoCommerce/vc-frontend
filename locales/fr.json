@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Accès refusé. Vous ne pouvez pas vous connecter au magasin actuel",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations",
+          "sign_in_not_allowed": "Vous ne pouvez pas vous connecter avec ce compte. Veuillez contacter votre administrateur.",
           "store_not_found": "Cette boutique n'existe pas.",
           "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
           "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",

@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Åtkomst nekad. Du kan inte logga in i den aktuella butiken",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information",
+          "sign_in_not_allowed": "Du kan inte logga in med det här kontot. Kontakta din administratör.",
           "store_not_found": "Den här butiken finns inte.",
           "duplicate_email_login_attempt": "Flera konton använder den här e-postadressen.",
           "lockout_disabled": "Det här kontot kan inte logga in med en kod.",

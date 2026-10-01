@@ -2,7 +2,6 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { errorHandler, HttpError, toServerError, useFetch } from "@/core/api/common";
 import { useAnalytics, useAuth } from "@/core/composables";
-import { IdentityErrors } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
@@ -70,10 +69,6 @@ export function useOtpSignIn() {
       const error = authErrors.value?.[0];
       if (error) {
         analytics("login", ANALYTICS_LOGIN_METHOD, { success: false, errors: error.code ?? error.description });
-
-        if (error.code === IdentityErrors.SIGN_IN_NOT_ALLOWED) {
-          location.href = "/400";
-        }
         return { succeeded: false, error, lockoutSecondsRemaining: lockoutSecondsRemaining.value };
       }
 

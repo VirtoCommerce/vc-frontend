@@ -518,6 +518,7 @@
           "user_cannot_login_in_store": "Acceso denegado. No puedes iniciar sesión en la tienda actual",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Usuario no encontrado. Por favor, asegúrate de haber introducido la información correcta",
+          "sign_in_not_allowed": "No puedes iniciar sesión con esta cuenta. Contacta a tu administrador.",
           "store_not_found": "Esta tienda no existe.",
           "duplicate_email_login_attempt": "Varias cuentas usan este correo electrónico.",
           "lockout_disabled": "Esta cuenta no puede iniciar sesión con un código.",
