@@ -54,15 +54,15 @@ file are cross-referenced, not repeated.
       `module-ci` pins Node 24 — check that the runner built `StorefrontApp`, and `unzip -Z1` the
       zip: `plugins/vc-frontend/` must sit at the module root (the first PR artefact had it under
       `bin/`).
-- [ ] **Release notes for 2.58.0.** MF is a preview. Version matrix: theme ≥ 2.58.0, SalesRep ≥
-      3.1009.0, x-api ≥ 3.1020.0 (the module's own floor; `store.plugins` itself needs 3.1016.0),
-      x-frontend ≥ 3.1005.0; Customer ≥ 3.1024.0 and ProfileExperienceApi ≥ 3.1018.0 come from the
+- [ ] **Release notes for 2.59.0.** MF is a preview. Version matrix: theme ≥ 2.59.0 (the settings
+      switch; 2.58.0 shipped the env flag), SalesRep ≥ 3.1009.0, x-api ≥ 3.1020.0 (the module's own
+      floor; `store.plugins` itself needs 3.1016.0), x-frontend ≥ 3.1005.0; Customer ≥ 3.1024.0 and ProfileExperienceApi ≥ 3.1018.0 come from the
       2.58 page context, not from MF. The `/modules` route. What happens when any of it is missing:
       the storefront boots, the hub is absent, nothing is logged in prod. The switch is build-time
       only. A module shipping `plugins/vc-frontend/` runs its code in every visitor's browser with
       the host's full privileges — install trusted modules only. Known limits: boot waits for the
       plugins, no prod telemetry, an externally hosted plugin needs a host rebuild plus CSP.
-- [ ] **Module README, "Storefront plugin" section**: needs theme ≥ 2.58.0 and the route; how to see
+- [ ] **Module README, "Storefront plugin" section**: needs theme ≥ 2.59.0 and the route; how to see
       the plugin loaded (`mf-manifest.json` → 200 in the network tab); why the hub is missing
       (404 = no route, `skipped` = facade or shared-library version).
 - [ ] **DevOps checklist for a new environment**: the `/modules` route; the storefront nginx must
@@ -71,10 +71,10 @@ file are cross-referenced, not repeated.
 
 **Plugin developer experience (walked end to end 2026-09-14)**
 
-- [x] **Toolchain parity for a scaffolded plugin** — #2480: eslint, prettier, editorconfig, vitest
+- [ ] **Toolchain parity for a scaffolded plugin** — #2480 (open): eslint, prettier, editorconfig, vitest
       (with the facade alias and a mock), `.vscode`, `packageManager`, `strictTemplates`, the
       lint/format/test scripts, and a warning when the pinned facade version has no release tag.
-- [x] **GraphQL codegen for a plugin with its own xAPI** — #2480: `--with-apollo` emits `codegen.ts`,
+- [ ] **GraphQL codegen for a plugin with its own xAPI** — #2480 (open): `--with-apollo` emits `codegen.ts`,
       `.env.example` and a sample document, and the scalars live in `@vc-frontend/core/codegen`,
       which the host's own generator now imports too.
 - [ ] **Ship the facade mock from the package instead of copying it per plugin**, with a
@@ -87,7 +87,8 @@ file are cross-referenced, not repeated.
       copy with its own locale state — silent breakage. Answering "yes" for a package the plugin
       never imports leaves a shared entry with `import: false` that nothing ever loads.
 - [ ] **Next-steps output prints a `cd ../../../../../..` path** — print the absolute target instead.
-- [ ] **Consider `vueCompilerOptions.strictTemplates` in the scaffolded tsconfig.** With the
+- [ ] **Consider `vueCompilerOptions.strictTemplates` in the scaffolded tsconfig.** Re-check once #2480
+      lands: it already adds `strictTemplates` to the scaffold. With the
       GlobalComponents augmentation (#2480) a known component is fully typed, but an unknown one is
       still accepted silently, so a misspelled tag stays a runtime-only failure. Strict templates
       also check unknown attributes. The sales-rep plugin uses only facade-exported components
@@ -125,8 +126,8 @@ file are cross-referenced, not repeated.
       `package.json` `files` — are not read at all.
       So an export can be deleted from `@vc-frontend/core/federation` with the version untouched,
       and `^0.1.x` plugins keep resolving a package that no longer has it. That is exactly what
-      #2481 does to `isMfFlagEnabled` (harmless in fact: nothing imports it and only `core-v0.1.0`
-      is released). Fold the subpath `.d.mts` files into `extractExportNames`' input so a removal
+      #2481 did to `isMfFlagEnabled` — caught in review, and #2481 bumps the facade to 0.2.0 by hand
+      (`yarn bump:core minor`). Fold the subpath `.d.mts` files into `extractExportNames`' input so a removal
       there demands the same pre-1.0 MINOR as a removal from the main contract.
 
 **Soon after**
@@ -148,8 +149,8 @@ file are cross-referenced, not repeated.
       `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
 - [ ] **E2E**: vc-testing-module has no Sales Rep Hub coverage at all — add a smoke (plugin loaded,
       hub menu visible for a rep) so the plugin path is not manual-only.
-- [ ] **Port #2439 / #2444 into the plugin** once facade `0.1.2` (#2480) is released;
-      `requiredHostVersion: "^0.1.2"`. Also #2468 and #2474, which need no new facade export.
+- [ ] **Port #2439 / #2444 into the plugin** once the facade carrying #2480 is released (0.2.x after
+      #2481's 0.2.0); `requiredHostVersion` = that version. Also #2468 and #2474, which need no new facade export.
       This is the parity gate for the switch-over item at the top.
 - [ ] **Module (backend owners)**: any SalesRep version crashes a platform running
       `ASPNETCORE_ENVIRONMENT=Development` — `ValidateOnBuild` rejects the scoped
