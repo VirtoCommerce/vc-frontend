@@ -83,9 +83,13 @@ jobs:
           cd ./tmp
           zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
 
+      # The action skips the upload (and still succeeds) unless BLOB_SAS is in the
+      # environment, whatever blobSAS says. Set here only, so install never sees it.
       - name: Publish to Blob
         id: blobRelease
         uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
+        env:
+          BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
