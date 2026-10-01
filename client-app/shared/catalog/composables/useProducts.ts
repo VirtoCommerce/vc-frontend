@@ -20,6 +20,7 @@ import {
   Logger,
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
+  toFirstString,
 } from "@/core/utilities";
 import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
@@ -123,6 +124,14 @@ export function useProducts(
   const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
     defaultValue: "",
   });
+
+  // A scanned code: the API matches it against the store's configured index fields, as a filter, not a keyword.
+  // A repeated param (`?barcode=a&barcode=b`) arrives as an array, so the lookup takes the first code.
+  const rawBarcodeQueryParam = useRouteQueryParam<string>(QueryParamName.Barcode, {
+    defaultValue: "",
+  });
+  const barcodeQueryParam = computed(() => toFirstString(rawBarcodeQueryParam.value));
+  const isBarcodeLookup = computed(() => !!barcodeQueryParam.value);
 
   const fetchingProducts = ref(initialFetchingState);
   const fetchingMoreProducts = ref(false);
@@ -446,6 +455,9 @@ export function useProducts(
           filters: prepareFilters(filters),
         };
       }
+
+      // The response this call applied, so a caller can act on its own request's result instead of the shared state.
+      return { items, totalCount };
     } catch (e) {
       Logger.error(`useProducts.${fetchProducts.name}`, e);
       throw e;
@@ -553,7 +565,14 @@ export function useProducts(
   }
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
-    return filters.filter((filter) => !isZeroPriceFilter(filter) && !isExcludedFilter(filter));
+    return filters.filter(
+      (filter) => !isGeneratedByBarcodeLookup(filter) && !isZeroPriceFilter(filter) && !isExcludedFilter(filter),
+    );
+  }
+
+  // Only a lookup hides generated filters: intent search's inferred ones stay chips, removing one keeps the query.
+  function isGeneratedByBarcodeLookup(filter: SearchProductFilterResult): boolean {
+    return isBarcodeLookup.value && !!filter.isGenerated;
   }
 
   async function resetCurrentPage() {
@@ -587,6 +606,8 @@ export function useProducts(
     searchQueryParam,
     sortQueryParam,
     preserveUserQueryQueryParam,
+    barcodeQueryParam,
+    isBarcodeLookup,
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
