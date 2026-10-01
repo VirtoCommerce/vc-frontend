@@ -83,7 +83,7 @@ export const WholeItem: StoryType = {
             <div
               v-bind="attrs"
               :aria-label="'Reorder ' + item"
-              class="rounded border border-neutral-300 bg-additional-50 px-3 py-2 text-sm outline-offset-2"
+              class="rounded-[--vc-radius] border border-neutral-300 bg-additional-50 px-3 py-2 text-sm outline-offset-2"
             >
               {{ item }}
             </div>
@@ -156,7 +156,7 @@ const HandleWidget = {
           icon="switch-vertical"
           size="xs"
           variant="ghost"
-          color="secondary"
+          :color="item.grabbed.value ? 'primary' : 'secondary'"
         />
       </template>
       <div class="text-sm text-neutral-600">Body of {{ title }}</div>
@@ -180,7 +180,13 @@ export const Handle: StoryType = {
 
 // MyWidget
 const item = useSortableItem(); // undefined outside a VcSortable
-<VcButton v-if="item?.handleAttrs.value" v-bind="item.handleAttrs.value" aria-label="Reorder" icon="switch-vertical" />`,
+<VcButton
+  v-if="item?.handleAttrs.value"
+  v-bind="item.handleAttrs.value"
+  aria-label="Reorder"
+  icon="switch-vertical"
+  :color="item.grabbed.value ? 'primary' : 'secondary'"
+/>`,
       },
     },
   },
@@ -245,7 +251,7 @@ export const LinkedLists: StoryType = {
             :ring="ring"
             :accepts="acceptsIn(name)"
             orientation="horizontal"
-            class="flex min-h-12 flex-wrap gap-2 rounded border border-dashed border-neutral-300 p-2"
+            class="flex min-h-12 flex-wrap gap-2 rounded-[--vc-radius] border border-dashed border-neutral-300 p-2"
             @move="onMove"
             @announce="message = describeSignal($event)"
           >
@@ -253,7 +259,7 @@ export const LinkedLists: StoryType = {
               <div
                 v-bind="attrs"
                 :aria-label="'Reorder ' + item"
-                class="rounded border border-neutral-300 bg-additional-50 px-3 py-1.5 text-sm outline-offset-2"
+                class="rounded-[--vc-radius] border border-neutral-300 bg-additional-50 px-3 py-1.5 text-sm outline-offset-2"
               >
                 {{ item }}
               </div>

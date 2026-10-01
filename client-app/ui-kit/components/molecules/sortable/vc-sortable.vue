@@ -11,8 +11,8 @@
       :render-item="() => $slots.item?.(scopeOf(item))"
     />
 
-    <!-- Inside the container but not an item — an empty-state hint, a footer. `itemSelector` never
-         matches it, so it keeps its place and the indices stay aligned with the model. -->
+    <!-- Inside the container but not an item — an empty-state hint, a footer. It carries no
+         `data-sortable-id`, so it keeps its place and the indices stay aligned with the model. -->
     <slot name="after" />
   </component>
 </template>
@@ -45,8 +45,6 @@ export interface IProps<TItem = unknown> {
   ring?: readonly string[];
   /** Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. Read at mount. */
   accepts?: (id: string, from: string) => boolean;
-  /** Which children are items. Defaults to the `data-sortable-id` that `attrs` puts on each. Read at mount. */
-  itemSelector?: string;
   /** Pointer handle inside an item. Without one the whole item drags and takes the keyboard. Read at mount. */
   handle?: string;
   /** Elements inside an item that must never start a drag, such as a button inside the handle. Read at mount. */
@@ -68,7 +66,6 @@ const props = withDefaults(defineProps<IProps<T>>(), {
   group: undefined,
   ring: undefined,
   accepts: undefined,
-  itemSelector: undefined,
   handle: undefined,
   filter: undefined,
   orientation: "vertical",
@@ -95,7 +92,7 @@ function keyOf(item: T): string {
 const byKey = computed(() => new Map(model.value.map((item) => [keyOf(item), item])));
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural: SortableJS reads these once
-const { itemSelector, handle, filter, accepts } = props;
+const { handle, filter, accepts } = props;
 
 const { isGrabbed, itemAttrs, handleAttrs } = useSortableList(container, {
   name: () => props.name,
@@ -103,7 +100,6 @@ const { isGrabbed, itemAttrs, handleAttrs } = useSortableList(container, {
   group: () => props.group,
   ring: () => props.ring,
   accepts,
-  itemSelector,
   handle,
   filter,
   orientation: () => props.orientation,
@@ -181,6 +177,20 @@ const ItemScope = defineComponent({
         @include focus-ring;
       }
     }
+
+    // SortableJS moves the dragged element to the insertion point, so this previews what lands there. No
+    // radius: the item's shape is the consumer's.
+    &#{$item}--ghost {
+      @apply outline-dashed outline-1 outline-offset-2;
+
+      opacity: var(--vc-sortable-ghost-opacity);
+      outline-color: var(--vc-sortable-accent-color);
+    }
+
+    // The clone under the pointer stays solid, so what is carried reads as the real item.
+    &#{$item}--drag {
+      opacity: 1;
+    }
   }
 
   &__handle {
@@ -192,24 +202,8 @@ const ItemScope = defineComponent({
 
     // Stands in for the "I am holding this" feedback a pointer user gets from the cursor.
     &[aria-pressed="true"] {
-      --vc-icon-color: var(--vc-sortable-accent-color);
-
       box-shadow: 0 0 0 2px var(--vc-sortable-handle-ring-color);
     }
-  }
-
-  // SortableJS moves the dragged element to the insertion point, so this previews what lands there. No
-  // radius: the item's shape is the consumer's.
-  &__item#{&}__item--ghost {
-    @apply outline-dashed outline-1 outline-offset-2;
-
-    opacity: var(--vc-sortable-ghost-opacity);
-    outline-color: var(--vc-sortable-accent-color);
-  }
-
-  // The clone under the pointer stays solid, so what is carried reads as the real item.
-  &__item#{&}__item--drag {
-    opacity: 1;
   }
 }
 </style>

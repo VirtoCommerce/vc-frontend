@@ -10,7 +10,7 @@
         icon="switch-vertical"
         icon-size="1rem"
         size="xs"
-        color="secondary"
+        :color="item?.grabbed.value ? 'primary' : 'secondary'"
         variant="ghost"
       />
     </template>
