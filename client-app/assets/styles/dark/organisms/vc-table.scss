@@ -3,5 +3,5 @@
 .vc-table {
   --selected-bg-alpha: 0.16;
   // neutral-200 is too strong a lift in dark: neutral-600 text on it drops to 3.4:1 in coffee.
-  --row-hover-bg-color: var(--vc-table-row-hover-bg-color, theme("colors.neutral.100"));
+  --row-hover-shade: theme("colors.neutral.100");
 }
