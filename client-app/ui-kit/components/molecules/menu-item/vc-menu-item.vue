@@ -214,7 +214,10 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full px-3 bg-additional-50 text-left font-normal;
+
+    // A list whose container clips its corners rounds its corner items through this knob.
+    border-radius: var(--vc-menu-item-radius, inherit);
 
     &:not(:disabled) {
       @apply text-neutral-950;
@@ -303,8 +306,6 @@ onMounted(() => {
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
     // language dropdown), so an outset ring is clipped: invert the shared offset.
     &:focus-visible {
-      @apply rounded-[inherit];
-
       @include focus-ring($inset: true);
     }
 

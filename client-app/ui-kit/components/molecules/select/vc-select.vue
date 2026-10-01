@@ -657,6 +657,8 @@ function onTab(event: KeyboardEvent) {
 
 <style lang="scss">
 .vc-select {
+  $scroll: "";
+
   --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
   @apply flex flex-col;
@@ -678,11 +680,28 @@ function onTab(event: KeyboardEvent) {
   }
 
   &__scroll {
+    $scroll: &;
+
     @apply max-h-[--dropdown-max-height] w-full;
   }
 
+  // The dropdown clips its rounded corners, so the first and last options take its radius, or the
+  // clip cuts their focus ring at rest. Select all sits above the list, VcLoadMore below it. An
+  // option scrolled against a corner is still cut, as in VcDropdownMenu.
   &__list {
     @apply w-full divide-y divide-neutral-100;
+
+    #{$scroll}:first-child & > :first-child {
+      --vc-menu-item-radius: var(--dropdown-radius) var(--dropdown-radius) 0 0;
+    }
+
+    &:last-child > :last-child {
+      --vc-menu-item-radius: 0 0 var(--dropdown-radius) var(--dropdown-radius);
+    }
+
+    #{$scroll}:first-child &:last-child > :only-child {
+      --vc-menu-item-radius: var(--dropdown-radius);
+    }
   }
 
   &__more {
