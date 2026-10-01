@@ -1028,7 +1028,7 @@
         "message": "Alle som listen er delt med, mister tilgangen. Du kan dele den på nytt når som helst.",
         "confirm_button": "Slutt å dele",
         "change_title": "Endre hvem som har tilgang?",
-        "change_message": "Alle som listen er delt med nå, mister tilgangen.",
+        "change_message": "Lenken forblir den samme. Noen brukere kan miste tilgangen.",
         "change_confirm_button": "Endre tilgang",
         "cancel_button": "@:common.buttons.cancel"
       },

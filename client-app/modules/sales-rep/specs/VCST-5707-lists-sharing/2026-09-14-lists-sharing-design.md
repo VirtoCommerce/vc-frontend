@@ -54,11 +54,11 @@ screenshot.
 6. **The confirmation names the action it confirms** (2026-09-14). Moving to `Private` asks "Stop
    sharing this list?" with a **Stop sharing** button — the Acceptance's wording, with "page"
    corrected to "list". Swapping one sharing scope for another asks "Change who can access?" with
-   **Change access**, because that moves the audience rather than ending it. The body names the
-   result — "Everyone the list is shared with will lose access" — rather than the Acceptance's
-   "anyone with the link", which is true for one of the four scopes it can be leaving, wrong for
-   Specific customers (access follows org membership) and backwards when the scope being moved to
-   _is_ Anyone with link.
+   **Change access**, because that moves the audience rather than ending it. Going private says
+   "Everyone the list is shared with will lose access"; a swap says only "The link stays the same.
+   Some users may lose access." (VCST-6104, 2026-10-01). The sharing key survives a scope change, so
+   a swap may revoke no one at all — moving to Anyone with link turns every link already sent into a
+   public one.
 7. **Select-all and picker paging are dropped, not pending** (2026-09-14). The frame draws Select-all
    as the dropdown's first row and `VcSelect` renders no slot there; a sentinel option in `items`
    disappears as soon as the rep types, which is exactly where "select all matching" is wanted.

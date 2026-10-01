@@ -1028,7 +1028,7 @@
         "message": "Alla som listan delas med förlorar åtkomsten. Du kan dela den igen när som helst.",
         "confirm_button": "Sluta dela",
         "change_title": "Ändra vem som har åtkomst?",
-        "change_message": "Alla som listan delas med nu förlorar åtkomsten.",
+        "change_message": "Länken förblir densamma. Vissa användare kan förlora åtkomsten.",
         "change_confirm_button": "Ändra åtkomst",
         "cancel_button": "@:common.buttons.cancel"
       },

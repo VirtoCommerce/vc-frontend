@@ -1028,7 +1028,7 @@
         "message": "Wszyscy, którym udostępniono listę, utracą dostęp. Możesz udostępnić ją ponownie w dowolnym momencie.",
         "confirm_button": "Zatrzymaj udostępnianie",
         "change_title": "Zmienić, kto ma dostęp?",
-        "change_message": "Wszyscy, którym obecnie udostępniono listę, utracą dostęp.",
+        "change_message": "Link pozostanie bez zmian. Niektórzy użytkownicy mogą utracić dostęp.",
         "change_confirm_button": "Zmień dostęp",
         "cancel_button": "@:common.buttons.cancel"
       },

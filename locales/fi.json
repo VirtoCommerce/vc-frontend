@@ -1028,7 +1028,7 @@
         "message": "Kaikki, joiden kanssa lista on jaettu, menettävät käyttöoikeuden. Voit jakaa sen uudelleen milloin tahansa.",
         "confirm_button": "Lopeta jakaminen",
         "change_title": "Muutetaanko käyttöoikeuksia?",
-        "change_message": "Kaikki, joiden kanssa lista on tällä hetkellä jaettu, menettävät käyttöoikeuden.",
+        "change_message": "Linkki pysyy samana. Jotkut käyttäjät voivat menettää käyttöoikeuden.",
         "change_confirm_button": "Muuta käyttöoikeuksia",
         "cancel_button": "@:common.buttons.cancel"
       },

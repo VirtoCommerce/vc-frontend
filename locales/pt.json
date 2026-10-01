@@ -1028,7 +1028,7 @@
         "message": "Todas as pessoas com quem a lista é partilhada perderão o acesso. Pode partilhá-la novamente em qualquer momento.",
         "confirm_button": "Parar de partilhar",
         "change_title": "Alterar quem tem acesso?",
-        "change_message": "Todas as pessoas com quem a lista é atualmente partilhada perderão o acesso.",
+        "change_message": "O link mantém-se o mesmo. Alguns utilizadores poderão perder o acesso.",
         "change_confirm_button": "Alterar acesso",
         "cancel_button": "@:common.buttons.cancel"
       },
