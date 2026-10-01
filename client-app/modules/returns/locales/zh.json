@@ -104,6 +104,7 @@
     "customer_reference": "您的采购单号",
     "customer_comment": "备注",
     "cancel_reason": "取消原因",
+    "reject_reason": "拒绝原因",
     "cancel_button": "取消退货",
     "columns": {
       "requested": "申请数量",

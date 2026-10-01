@@ -30,6 +30,7 @@ query GetReturn($id: String!, $cultureName: String) {
       itemState
       reasonCode
       reasonComment
+      rejectReason
       serialNumber
       attachments {
         name
