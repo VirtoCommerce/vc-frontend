@@ -31,8 +31,10 @@
     @keydown.home="onHome"
     @keydown.end="onEnd"
     @keydown.enter="$emit('confirm', $event)"
+    @keydown.space="onSpace"
     @click="onClick"
     @keydown.tab="$emit('tab', $event)"
+    @focusout="$emit('focusout', $event)"
   >
     <template #append>
       <VcButton
@@ -48,6 +50,7 @@
         @keydown.enter.stop.prevent
         @keyup.enter.stop.prevent="$emit('clear')"
         @click.stop="$emit('clear')"
+        @focusout="$emit('focusout', $event)"
       />
 
       <VcButton
@@ -61,6 +64,7 @@
         tabindex="-1"
         class="vc-select-field__arrow"
         @click.stop="$emit('toggle')"
+        @focusout="$emit('focusout', $event)"
       />
     </template>
   </VcInput>
@@ -78,6 +82,8 @@ const emit = defineEmits<{
   (event: "confirm", payload: KeyboardEvent): void;
   (event: "tab", payload: KeyboardEvent): void;
   (event: "update:search", value: string): void;
+  /** From the input and both buttons: VcInput hands its listeners to the input alone. */
+  (event: "focusout", payload: FocusEvent): void;
 }>();
 
 const props = defineProps<{
@@ -107,6 +113,14 @@ function onClick(): void {
   }
 
   emit("toggle");
+}
+
+// A select-only field takes no typing, so Space opens the list or accepts an option, as Enter does (APG).
+function onSpace(event: KeyboardEvent): void {
+  if (!props.autocomplete) {
+    event.preventDefault();
+    emit("confirm", event);
+  }
 }
 
 // Home/End belong to the caret in an editable field.

@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
@@ -1255,6 +1255,165 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
+    });
+
+    it("opens a select-only field with Space and accepts the highlighted option with it", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("keydown", { key: " " });
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: " " });
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([["Albania"]]);
+    });
+
+    it("leaves Space to the text of an autocomplete field", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+      const input = wrapper.get("input");
+      const event = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
+
+      input.element.dispatchEvent(event);
+      await nextTick();
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(input.attributes("aria-expanded")).toBe("false");
+    });
+
+    // Options are not tab stops, so Tab would otherwise walk away from an open list.
+    it("closes the list when focus leaves the select", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      onTestFinished(() => outside.remove());
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      // trigger() fires a synthetic focusout that moves no focus, so blur first to put activeElement
+      // on <body>, as a browser does during a Tab.
+      (input.element as HTMLInputElement).blur();
+      await input.trigger("focusout", { relatedTarget: outside });
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+      expect(document.activeElement).not.toBe(input.element);
+    });
+
+    it("closes the list when focus leaves the slotted trigger", async () => {
+      const wrapper = createWrapper({ items: ITEMS }, { placeholder: () => h("span", "pick") });
+      const control = wrapper.get(".vc-select-button__control");
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      onTestFinished(() => outside.remove());
+
+      await control.trigger("click");
+      await control.trigger("focusout", { relatedTarget: outside });
+      await nextTick();
+
+      expect(control.attributes("aria-expanded")).toBe("false");
+    });
+
+    it("closes the list when focus leaves Select all for the page", async () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
+      const input = wrapper.get("input");
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      onTestFinished(() => outside.remove());
+
+      await input.trigger("click");
+      await wrapper.get(".vc-select-all input").trigger("focusout", { relatedTarget: outside });
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+    });
+
+    // A Tab's order: activeElement is <body> while focusout fires, then the target takes focus.
+    // blur() itself adds a focusout with no relatedTarget, which the select ignores.
+    async function moveFocus(from: Element, to: HTMLElement) {
+      (from as HTMLElement).blur();
+      from.dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: to }));
+      to.focus();
+      await nextTick();
+    }
+
+    it.each([
+      ["clear", ".vc-select-field__clear"],
+      ["toggle", ".vc-select-field__arrow"],
+    ])("closes the list when focus leaves the field's %s button", async (_, selector) => {
+      const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania" });
+      const input = wrapper.get("input");
+      const button = wrapper.get(selector).element as HTMLElement;
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      onTestFinished(() => outside.remove());
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+      await moveFocus(input.element, button);
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      await moveFocus(button, outside);
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+    });
+
+    it("keeps the list open when focus goes nowhere", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+      await input.trigger("focusout", { relatedTarget: null });
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+    });
+
+    it.each([
+      ["after focus left an open list", true],
+      ["after focus left a closed one", false],
+    ])("still returns focus on a later pick %s", async (_, openFirst) => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      onTestFinished(() => outside.remove());
+
+      (input.element as HTMLInputElement).focus();
+
+      if (openFirst) {
+        await input.trigger("click");
+      }
+
+      await moveFocus(input.element, outside);
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+
+      const option = wrapper.findAll('[role="option"]')[1];
+      (option.element as HTMLElement).focus();
+      await option.trigger("click");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+      expect(document.activeElement).toBe(input.element);
+    });
+
+    it("keeps the list open when focus moves to Select all", async () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.trigger("focusout", { relatedTarget: wrapper.get(".vc-select-all input").element });
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
     });
 
     it("picks the row under the pointer on Enter", async () => {

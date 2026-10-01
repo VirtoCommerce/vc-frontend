@@ -44,6 +44,7 @@
           @navigate="onNavigate($event, open)"
           @confirm="onConfirm($event, toggle, close)"
           @tab="onTab"
+          @focusout="onFocusOut($event, close)"
         >
           <template v-if="$slots.selected" #selected="scope">
             <slot name="selected" v-bind="scope" />
@@ -68,11 +69,12 @@
           @confirm="onConfirm($event, toggle, close)"
           @tab="onTab"
           @update:search="onSearchInput($event, open)"
+          @focusout="onFocusOut($event, close)"
         />
       </template>
 
       <template v-if="enabled" #content="{ close }">
-        <div class="vc-select__dropdown">
+        <div class="vc-select__dropdown" @focusout="onFocusOut($event, close)">
           <VcSelectAll
             v-if="showSelectAll"
             ref="selectAllElement"
@@ -482,9 +484,11 @@ function toggled(value: boolean) {
   filterValue.value = "";
   resetHighlight();
 
-  if (holdsFocus()) {
+  if (!focusLeft && holdsFocus()) {
     focusTrigger();
   }
+
+  focusLeft = false;
 }
 
 // Focus returns to the trigger only if it is still ours (or nowhere): an outside click has already
@@ -496,10 +500,29 @@ function holdsFocus(): boolean {
     return true;
   }
 
+  return owns(active);
+}
+
+function owns(node: Node): boolean {
   // A teleported dropdown is not inside the root; the listbox id reaches it.
   const dropdown = document.getElementById(listboxId)?.closest(".vc-select__dropdown");
 
-  return document.getElementById(componentId)?.contains(active) === true || dropdown?.contains(active) === true;
+  return document.getElementById(componentId)?.contains(node) === true || dropdown?.contains(node) === true;
+}
+
+// Set while the list closes behind departing focus: activeElement is still <body> then, which
+// `holdsFocus` would read as "ours" and pull focus back.
+let focusLeft = false;
+
+// Options are not tab stops, so Tab walks focus out of the select; the list closes behind it
+// (APG). Focus that goes nowhere keeps it open: a click on the page is click-outside's to close.
+function onFocusOut(event: FocusEvent, close: () => void): void {
+  const next = event.relatedTarget;
+
+  if (isShown.value && next instanceof Node && !owns(next)) {
+    focusLeft = true;
+    close();
+  }
 }
 
 // Typing opens an autocomplete list (APG). Closed, the field shows the selection, so the keystroke
