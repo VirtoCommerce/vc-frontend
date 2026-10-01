@@ -19,6 +19,7 @@
     </p>
 
     <VcInput
+      ref="emailInput"
       v-model.trim="email"
       name="email"
       type="email"
@@ -47,6 +48,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
+import { useTemplateRef } from "vue";
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
@@ -76,6 +78,14 @@ const { errors: validationErrors, handleSubmit } = useForm({ validationSchema: s
 const { value: email } = useField<string>("email");
 
 const { loading, requestCode, signInErrors, showError } = useOtpSignIn();
+
+const emailInput = useTemplateRef<{ inputElement: HTMLInputElement | null }>("emailInput");
+
+function focus() {
+  emailInput.value?.inputElement?.focus();
+}
+
+defineExpose({ focus });
 
 const onSubmit = handleSubmit(async () => {
   const result = await requestCode(email.value);

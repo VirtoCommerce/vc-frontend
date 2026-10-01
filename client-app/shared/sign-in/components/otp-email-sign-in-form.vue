@@ -1,6 +1,11 @@
 <template>
   <div class="otp-email-sign-in-form">
-    <OtpEmailRequestForm v-if="step === OtpStep.Request" @succeeded="onRequested" @disabled="step = OtpStep.Disabled" />
+    <OtpEmailRequestForm
+      v-if="step === OtpStep.Request"
+      ref="requestForm"
+      @succeeded="onRequested"
+      @disabled="step = OtpStep.Disabled"
+    />
 
     <OtpEmailVerifyForm
       v-else-if="step === OtpStep.Verify && pending"
@@ -98,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAuth } from "@/core/composables/useAuth";
 import { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
@@ -130,6 +135,7 @@ const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sig
 
 const step = ref(OtpStep.Request);
 const terminalHeadingRef = ref<HTMLElement>();
+const requestForm = useTemplateRef<InstanceType<typeof OtpEmailRequestForm>>("requestForm");
 const lockoutError = ref<IdentityErrorType>();
 const isPermanentLockout = computed(() => isLockoutError(lockoutError.value?.code));
 const hasLockoutTimer = ref(false);
@@ -190,7 +196,7 @@ onBeforeUnmount(() => {
 
 watch(
   step,
-  async (value) => {
+  async (value, previous) => {
     emit("stepChanged", value);
 
     if (value !== OtpStep.Verify) {
@@ -200,6 +206,11 @@ watch(
     if (value === OtpStep.Locked || value === OtpStep.Disabled) {
       await nextTick();
       terminalHeadingRef.value?.focus();
+    }
+
+    if (value === OtpStep.Request && previous) {
+      await nextTick();
+      requestForm.value?.focus();
     }
   },
   { immediate: true },

@@ -28,10 +28,15 @@ vi.mock("@/shared/common", () => ({
   },
 }));
 
+const focusEmail = vi.fn();
+
 vi.mock("./otp-email-request-form.vue", () => ({
   default: {
     name: "OtpEmailRequestForm",
     emits: ["succeeded", "disabled"],
+    setup(_props: unknown, { expose }: { expose: (exposed: Record<string, unknown>) => void }) {
+      expose({ focus: focusEmail });
+    },
     template: `<div class="stub-request-form" />`,
   },
 }));
@@ -117,6 +122,19 @@ describe("OtpEmailSignInForm", () => {
     });
 
     expect(verifyForm(wrapper).props("maskedEmail")).toBe("buyer@acme.com");
+  });
+
+  it("focuses the email field only when the user comes back to the request step", async () => {
+    focusEmail.mockClear();
+    const wrapper = mountForm();
+    await flushPromises();
+    expect(focusEmail).not.toHaveBeenCalled();
+
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
+    await verifyForm(wrapper).vm.$emit("useDifferentEmail");
+    await flushPromises();
+
+    expect(focusEmail).toHaveBeenCalledOnce();
   });
 
   it("goes back to the request step from verify when the user asks for a different email", async () => {

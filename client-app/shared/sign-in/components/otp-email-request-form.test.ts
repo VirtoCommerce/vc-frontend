@@ -34,7 +34,13 @@ const stubs = {
   VcInput: {
     props: ["modelValue", "disabled", "error", "testIdInput"],
     emits: ["update:modelValue"],
+    setup(_props: unknown, { expose }: { expose: (exposed: Record<string, unknown>) => void }) {
+      const inputElement = ref<HTMLInputElement | null>(null);
+      expose({ inputElement });
+      return { inputElement };
+    },
     template: `<input
+      ref="inputElement"
       :value="modelValue"
       :disabled="disabled"
       :aria-invalid="error"
@@ -124,6 +130,18 @@ describe("OtpEmailRequestForm", () => {
     });
 
     expect(requestCode).not.toHaveBeenCalled();
+  });
+
+  it("exposes focus() that focuses the email field", () => {
+    const wrapper = mount(OtpEmailRequestForm, {
+      attachTo: document.body,
+      global: { mocks: { $t: (key: string) => key }, stubs },
+    });
+
+    (wrapper.vm as unknown as { focus: () => void }).focus();
+
+    expect(document.activeElement).toBe(wrapper.find('[data-test-id="otp-email-email-input"]').element);
+    wrapper.unmount();
   });
 
   it("emits disabled when the module reports OTP is disabled, without emitting succeeded", async () => {
