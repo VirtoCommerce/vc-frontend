@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { authorizeWithGrant } = useAuth();
-const { startSession, endSession } = usePunchoutSession();
+const { startSession } = usePunchoutSession();
 const broadcast = useBroadcast();
 
 function leave() {
@@ -39,7 +39,6 @@ onMounted(async () => {
     );
 
     if (response?.access_token && response.token_type && response.expires_in) {
-      // The previous user's id must not reach the next page context query.
       localStorage.removeItem(USER_ID_LOCAL_STORAGE);
 
       startSession({
@@ -50,11 +49,10 @@ onMounted(async () => {
       // Tokens are already persisted, so other tabs read the new session on reload.
       void broadcast.emit(reloadAndOpenMainPage, null, TabsType.OTHERS);
     } else {
-      endSession();
+      // A failed grant keeps the current tokens/active punchout session
       Logger.error("punchout/activate", response?.error ?? "The punchout grant returned an incomplete token response");
     }
   } catch (error) {
-    endSession();
     Logger.error("punchout/activate", error);
   }
 

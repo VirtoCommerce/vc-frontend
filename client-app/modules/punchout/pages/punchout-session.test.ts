@@ -72,7 +72,8 @@ describe("punchout session page", () => {
     await flushPromises();
 
     expect(localStorage.getItem(USER_ID_LOCAL_STORAGE)).toBe("previous-user-id");
-    expect(endSession).toHaveBeenCalledOnce();
+    expect(startSession).not.toHaveBeenCalled();
+    expect(endSession).not.toHaveBeenCalled();
     expect(emit).not.toHaveBeenCalled();
     expect(globalThis.location.href).toBe("/");
   });
