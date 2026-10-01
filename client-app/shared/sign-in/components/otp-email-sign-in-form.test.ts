@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import OtpEmailSignInForm from "./otp-email-sign-in-form.vue";
 
 vi.mock("vue-i18n", () => ({
-  useI18n: () => ({ t: (key: string) => key }),
+  useI18n: () => ({ t: (key: string) => key, locale: { value: "en" } }),
 }));
 
 const resetErrors = vi.fn();
@@ -171,6 +171,22 @@ describe("OtpEmailSignInForm", () => {
 
     expect(texts()[1]).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_ready");
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
+  });
+
+  it("shows a long lockout in hours and minutes instead of a minute count", async () => {
+    const wrapper = mountForm();
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
+
+    await verifyForm(wrapper).vm.$emit("locked", temporaryLockout, 2 * 3600 + 29 * 60 + 30);
+
+    const countdown = () => wrapper.findAll(".otp-email-sign-in-form__terminal-text")[1].text();
+    expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 2h 30m");
+
+    await vi.advanceTimersByTimeAsync((29 * 60 + 30) * 1000);
+    expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 2h");
+
+    await vi.advanceTimersByTimeAsync(3600 * 1000 + 1000);
+    expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 59:59");
   });
 
   it("shows the platform text and the contact administrator link for a permanent lockout", async () => {

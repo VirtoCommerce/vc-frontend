@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAuth } from "@/core/composables/useAuth";
 import { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
 import { isLockoutError } from "@/core/utilities";
@@ -117,6 +118,9 @@ interface IEmits {
 defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
+const SECONDS_PER_HOUR = 3600;
+
+const { locale } = useI18n();
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
 const step = ref(OtpStep.Request);
@@ -129,15 +133,27 @@ const pending = ref<{
   maskedEmail: string;
 }>();
 
+function formatUnit(value: number, unit: "hour" | "minute") {
+  return new Intl.NumberFormat(locale.value, { style: "unit", unit, unitDisplay: "narrow" }).format(value);
+}
+
 function createCountdown() {
   const secondsLeft = ref(0);
   let deadline = 0;
   let timer: ReturnType<typeof setInterval> | undefined;
 
   const formatted = computed(() => {
-    const minutes = Math.floor(secondsLeft.value / 60);
-    const seconds = String(secondsLeft.value % 60).padStart(2, "0");
-    return `${minutes}:${seconds}`;
+    if (secondsLeft.value < SECONDS_PER_HOUR) {
+      const minutes = Math.floor(secondsLeft.value / 60);
+      const seconds = String(secondsLeft.value % 60).padStart(2, "0");
+      return `${minutes}:${seconds}`;
+    }
+
+    const totalMinutes = Math.ceil(secondsLeft.value / 60);
+    const hours = formatUnit(Math.floor(totalMinutes / 60), "hour");
+    const minutes = totalMinutes % 60;
+
+    return minutes ? `${hours} ${formatUnit(minutes, "minute")}` : hours;
   });
 
   function tick() {
