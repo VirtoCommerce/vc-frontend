@@ -230,6 +230,20 @@ module.exports = {
         pathNot: "^client-app/modules/sales-rep/index[.]ts$",
       },
     },
+    {
+      name: "no-host-to-returns-internals",
+      comment:
+        "The host reached past 'modules/returns/index.ts'. The module contributes its own UI " +
+        "through the extension registry, so its entry point is the only surface the host needs.",
+      severity: "error",
+      from: {
+        pathNot: "^client-app/modules/returns/",
+      },
+      to: {
+        path: "^client-app/modules/returns/",
+        pathNot: "^client-app/modules/returns/index[.]ts$",
+      },
+    },
   ],
   options: {
     // The generated @vc-frontend/core type contract, its build/versioning scripts and
