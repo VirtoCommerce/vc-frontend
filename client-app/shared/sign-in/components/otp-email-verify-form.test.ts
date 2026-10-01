@@ -95,6 +95,28 @@ describe("OtpEmailVerifyForm", () => {
     expect(verifyCode).toHaveBeenCalledWith("buyer@acme.com", "123456");
   });
 
+  it("sends the code only once while it is being verified", async () => {
+    let finishVerify: (result: IOtpVerifyResponse) => void = () => {};
+    verifyCode.mockImplementation(() => {
+      loading.value = true;
+      return new Promise((resolve) => {
+        finishVerify = resolve;
+      });
+    });
+
+    const wrapper = mountForm();
+    await codeInput(wrapper).setValue("123456");
+    await wrapper.find("form").trigger("submit");
+    await codeInput(wrapper).setValue("1234567");
+    await flushPromises();
+
+    expect(verifyCode).toHaveBeenCalledOnce();
+
+    loading.value = false;
+    finishVerify({ succeeded: true });
+    await flushPromises();
+  });
+
   it("clears any previous sign-in error before a new verify attempt", async () => {
     signInErrors.value = [{ code: "user_not_found", description: "stale error" }];
     verifyCode.mockResolvedValue({ succeeded: true });

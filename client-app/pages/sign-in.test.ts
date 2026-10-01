@@ -56,7 +56,11 @@ async function mountPage() {
         VcTypography: { template: "<div><slot /></div>" },
         SignInDivider: { template: "<div class='divider'><slot /></div>" },
         IdentityProviders: { name: "IdentityProviders", props: ["providers", "returnUrl"], template: "<div />" },
-        OtpEmailSignInForm: { name: "OtpEmailSignInForm", template: "<div />" },
+        OtpEmailSignInForm: {
+          name: "OtpEmailSignInForm",
+          emits: ["switchToPassword", "stepChanged"],
+          template: "<div />",
+        },
       },
     },
   });
@@ -111,6 +115,30 @@ describe("sign-in page", () => {
     expect(wrapper.findComponent({ name: "OtpEmailSignInForm" }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: "IdentityProviders" }).props("providers")).toEqual(["AzureAD", "GoogleSSO"]);
     expect(wrapper.find(".divider").exists()).toBe(true);
+  });
+
+  it("titles the page with the verify header while OTP is on the verify step", async () => {
+    hasOtpEmailAuthentication.value = true;
+
+    const wrapper = await mountPage();
+    expect(wrapper.find(".sign-in__title").text()).toBe("pages.sign_in.header");
+
+    await wrapper.findComponent({ name: "OtpEmailSignInForm" }).vm.$emit("stepChanged", "verify");
+
+    expect(wrapper.find(".sign-in__title").text()).toBe("shared.sign_in.otp_email_sign_in_form.verify.header");
+  });
+
+  it("switches from OTP to the password form and back", async () => {
+    hasOtpEmailAuthentication.value = true;
+
+    const wrapper = await mountPage();
+    await wrapper.findComponent({ name: "OtpEmailSignInForm" }).vm.$emit("switchToPassword");
+
+    expect(wrapper.findComponent({ name: "SignInForm" }).exists()).toBe(true);
+
+    await wrapper.find('[data-test-id="otp-email-switch-to-otp-link"]').trigger("click");
+
+    expect(wrapper.findComponent({ name: "OtpEmailSignInForm" }).exists()).toBe(true);
   });
 
   it("resolves the page to come back to from the current route", async () => {

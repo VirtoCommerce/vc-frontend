@@ -94,7 +94,7 @@ describe("OtpEmailRequestForm", () => {
     signInErrors.value = undefined;
   });
 
-  it("requests a code for the entered email and emits succeeded on Sent", async () => {
+  it("requests a code for the entered email and emits succeeded when it was sent", async () => {
     requestCode.mockResolvedValue({ succeeded: true, maskedEmail: "b***r@acme.com" });
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
