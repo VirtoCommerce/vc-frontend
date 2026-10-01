@@ -76,6 +76,9 @@
       "optional": true
     }
   },
+  "devDependencies": {
+    "vitest": "^3.2.7"
+  },
   "scripts": {
     "build:types": "node build-types.mjs"
   }

@@ -357,7 +357,10 @@ function styleKindOf(filePath: string, rawType: unknown): true | string {
   if (isStyle) {
     return true;
   }
-  return isDeclared ? `"${String(rawType)}"` : "(none declared)";
+  if (!isDeclared) {
+    return "(none declared)";
+  }
+  return `"${typeof rawType === "string" ? rawType : JSON.stringify(rawType)}"`;
 }
 
 function collectStyles(plugin: IPlatformPlugin): string[] {
@@ -774,7 +777,7 @@ function toContributions(
     // Not optional even for an env remote: it declared, in a format this host cannot read.
     return {
       ok: false,
-      reason: `its contributions are format ${String(format)}, this host reads ${CONTRIBUTIONS_FORMAT}`,
+      reason: `its contributions are format ${JSON.stringify(format)}, this host reads ${CONTRIBUTIONS_FORMAT}`,
     };
   }
   return { ok: true, contributions: body as IPluginContributionsType };
@@ -998,17 +1001,17 @@ export interface ILoadingFederationType {
 
 /** Phase B: manifest gate, `loadRemote`, `init()`, concurrently under one route guard (see installRouteGuard). */
 export function loadPreparedModules(prepared: IPreparedFederationType): ILoadingFederationType {
-  const entries = [...prepared.blocking, ...prepared.deferred];
-  if (entries.length === 0) {
+  if (prepared.blocking.length + prepared.deferred.length === 0) {
     if (prepared.result.skipped.length > 0) {
       reportOutcome(prepared.result, prepared.versions);
     }
     return { blocking: Promise.resolve(), all: Promise.resolve(prepared.result) };
   }
   const releaseRouteGuard = installRouteGuard();
-  const runs = new Map(entries.map((entry) => [entry.remote.name, runRemote(entry, prepared)]));
-  const blocking = Promise.all(prepared.blocking.map((entry) => runs.get(entry.remote.name))).then(() => undefined);
-  const all = Promise.allSettled([...runs.values()]).then(() => {
+  const blockingRuns = prepared.blocking.map((entry) => runRemote(entry, prepared));
+  const deferredRuns = prepared.deferred.map((entry) => runRemote(entry, prepared));
+  const blocking = Promise.all(blockingRuns).then(() => undefined);
+  const all = Promise.allSettled([...blockingRuns, ...deferredRuns]).then(() => {
     releaseRouteGuard();
     reportOutcome(prepared.result, prepared.versions);
     return prepared.result;

@@ -1,9 +1,9 @@
 <template>
   <Error404 v-if="isGone" />
 
-  <div v-else class="plugin-route-placeholder" role="status" aria-busy="true">
+  <output v-else class="plugin-route-placeholder" aria-busy="true">
     <VcLoader />
-  </div>
+  </output>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,5 @@
 /** Condition builders, `definePluginManifest` and the Vite plugin that emits it. Plain JS: runs in the plugin's node build. */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT } from "./manifest-format.mjs";
 
@@ -9,6 +9,17 @@ const SLOT_POLICIES = new Set(["reserve", "block", "none"]);
 const MENU_SURFACES = new Set(["header", "account"]);
 const HEADER_VIEWPORTS = new Set(["desktop", "mobile"]);
 const SLOT_ID = /^[A-Za-z]+\/.+$/;
+
+function readJsonFile(path) {
+  try {
+    return JSON.parse(readFileSync(path, "utf8"));
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      return undefined;
+    }
+    throw error;
+  }
+}
 
 class ManifestError extends Error {
   constructor(where, message) {
@@ -88,7 +99,7 @@ function field(path) {
   return comparable({ field: requireString(path, "field()", "the field path") });
 }
 
-const CONDITION_KEYS = ["setting", "themeSetting", "authenticated", "can", "field", "and", "or", "not"];
+const CONDITION_KEYS = new Set(["setting", "themeSetting", "authenticated", "can", "field", "and", "or", "not"]);
 
 // Validates hand-written literals and drops the `eq` method.
 function normalizeCondition(condition, where, allowField) {
@@ -97,7 +108,7 @@ function normalizeCondition(condition, where, allowField) {
   }
   const keys = Object.keys(condition).filter((key) => key !== "eq");
   const [kind, ...extra] = keys;
-  if (!CONDITION_KEYS.includes(kind) || extra.length) {
+  if (!CONDITION_KEYS.has(kind) || extra.length) {
     throw new ManifestError(where, `unknown condition ${JSON.stringify(condition)}; use the builders`);
   }
   const hasEq = Object.prototype.propertyIsEnumerable.call(condition, "eq");
@@ -251,7 +262,7 @@ function normalizeList(value, what, normalize) {
   if (!Array.isArray(value)) {
     throw new ManifestError(what, "must be a list");
   }
-  return value.map(normalize);
+  return value.map((item, index) => normalize(item, index));
 }
 
 /** The default export of `plugin.config.ts`; a malformed declaration fails the plugin's build. */
@@ -295,11 +306,11 @@ export function pluginContributions(contributions) {
       outDir = resolve(config.root, config.build.outDir);
     },
     buildStart() {
-      const pluginJsonPath = publicDir ? resolve(publicDir, "plugin.json") : undefined;
-      if (!pluginJsonPath || !existsSync(pluginJsonPath)) {
+      const pluginJson = publicDir ? readJsonFile(resolve(publicDir, "plugin.json")) : undefined;
+      if (!pluginJson) {
         this.error(`${CONTRIBUTIONS_FILE_NAME} is only read through public/plugin.json, which is missing`);
       }
-      const contentFiles = JSON.parse(readFileSync(pluginJsonPath, "utf8")).contentFiles;
+      const { contentFiles } = pluginJson;
       if (!Array.isArray(contentFiles) || !contentFiles.includes(CONTRIBUTIONS_FILE_NAME)) {
         this.error(
           `public/plugin.json must list "${CONTRIBUTIONS_FILE_NAME}" in contentFiles, or the host never sees it`,
@@ -316,10 +327,10 @@ export function pluginContributions(contributions) {
     // Runs after Vite copied public/plugin.json.
     closeBundle() {
       const builtPluginJson = resolve(outDir, "plugin.json");
-      if (!existsSync(builtPluginJson)) {
+      const pluginJson = readJsonFile(builtPluginJson);
+      if (!pluginJson) {
         return;
       }
-      const pluginJson = JSON.parse(readFileSync(builtPluginJson, "utf8"));
       writeFileSync(builtPluginJson, JSON.stringify({ ...pluginJson, contributions }, null, 2) + "\n");
     },
   };
