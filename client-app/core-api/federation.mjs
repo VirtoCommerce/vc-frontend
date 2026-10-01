@@ -4,8 +4,7 @@
  * - the host build (vite.federation.ts) via createHostShared();
  * - plugin builds (node vite configs) via `@vc-frontend/core/federation` ->
  *   createRemoteFederationOptions() / createRemoteShared().
- * Mirrors vc-shell's @vc-shell/mf-config package. Plain .mjs with no node APIs so the
- * flag helper is also importable from browser code (bootstrap.ts).
+ * Mirrors vc-shell's @vc-shell/mf-config package.
  *
  * A package is listed only if a second copy breaks correctness (framework identity,
  * @vueuse global state, one Apollo cache + graphql, the live facade). Ranges must stay
@@ -20,7 +19,7 @@ export const MF_SHARED_RANGES = {
   "@apollo/client": "^3.14.0",
   "@vue/apollo-composable": "^4.2.0",
   graphql: "^16.14.0",
-  "@vc-frontend/core": "^0.1.0",
+  "@vc-frontend/core": "^0.2.0",
 };
 
 /**
@@ -105,7 +104,7 @@ export const REMOTE_SHARED = /* @__PURE__ */ createRemoteShared();
 
 /**
  * One-call federation() options for a PLUGIN build:
- *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.1.0" }))
+ *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.2.0" }))
  * The harness owns the wiring conventions (expose key, manifest metadata, shared
  * singletons, entry filename), so plugins pick convention changes up by updating
  * their host checkout instead of hand-editing config. Pure data - deliberately
