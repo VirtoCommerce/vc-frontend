@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "失败尝试次数过多",
+          "title_blocked": "账户已被锁定",
           "text_countdown": "请在 {time} 后重试。",
           "text_ready": "您现在可以重试了。",
           "start_over_button": "重试"

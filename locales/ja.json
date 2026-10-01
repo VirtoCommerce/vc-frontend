@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "失敗した試行が多すぎます",
+          "title_blocked": "アカウントがブロックされています",
           "text_countdown": "{time}後に再度お試しください。",
           "text_ready": "今すぐ再試行できます。",
           "start_over_button": "再試行"

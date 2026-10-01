@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "Muitas tentativas malsucedidas",
+          "title_blocked": "Conta bloqueada",
           "text_countdown": "Tente novamente em {time}.",
           "text_ready": "Você já pode tentar novamente.",
           "start_over_button": "Tentar novamente"

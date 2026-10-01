@@ -13,7 +13,11 @@
 
     <div v-else-if="step === OtpStep.Locked" class="otp-email-sign-in-form__terminal">
       <h2 ref="terminalHeadingRef" tabindex="-1" class="otp-email-sign-in-form__terminal-title">
-        {{ $t("shared.sign_in.otp_email_sign_in_form.locked.title") }}
+        {{
+          isPermanentLockout
+            ? $t("shared.sign_in.otp_email_sign_in_form.locked.title_blocked")
+            : $t("shared.sign_in.otp_email_sign_in_form.locked.title")
+        }}
       </h2>
 
       <p class="otp-email-sign-in-form__terminal-text">

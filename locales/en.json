@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "Too many failed attempts",
+          "title_blocked": "Account blocked",
           "text_countdown": "Try again in {time}.",
           "text_ready": "You can try again now.",
           "start_over_button": "Try again"

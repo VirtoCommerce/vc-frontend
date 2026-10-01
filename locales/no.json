@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "For mange mislykkede forsøk",
+          "title_blocked": "Kontoen er blokkert",
           "text_countdown": "Prøv igjen om {time}.",
           "text_ready": "Du kan prøve igjen nå.",
           "start_over_button": "Prøv igjen"

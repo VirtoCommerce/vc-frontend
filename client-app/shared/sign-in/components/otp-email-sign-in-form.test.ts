@@ -160,6 +160,9 @@ describe("OtpEmailSignInForm", () => {
 
     const texts = () => wrapper.findAll(".otp-email-sign-in-form__terminal-text").map((text) => text.text());
 
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-title").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.locked.title",
+    );
     expect(texts()[0]).toBe("Temporarily locked.");
     expect(texts()[1]).toContain("0:05");
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(true);
@@ -176,6 +179,9 @@ describe("OtpEmailSignInForm", () => {
 
     await verifyForm(wrapper).vm.$emit("locked", permanentLockout, 2147483647);
 
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-title").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.locked.title_blocked",
+    );
     expect(wrapper.findAll(".otp-email-sign-in-form__terminal-text")).toHaveLength(1);
     expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toContain("Blocked.");
     expect(wrapper.findComponent({ name: "ContactAdministratorLink" }).exists()).toBe(true);

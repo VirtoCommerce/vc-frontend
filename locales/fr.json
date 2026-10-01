@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "Trop de tentatives échouées",
+          "title_blocked": "Compte bloqué",
           "text_countdown": "Réessayez dans {time}.",
           "text_ready": "Vous pouvez réessayer maintenant.",
           "start_over_button": "Réessayer"

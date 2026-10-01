@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "Zu viele fehlgeschlagene Versuche",
+          "title_blocked": "Konto gesperrt",
           "text_countdown": "Versuchen Sie es erneut in {time}.",
           "text_ready": "Sie können es jetzt erneut versuchen.",
           "start_over_button": "Erneut versuchen"

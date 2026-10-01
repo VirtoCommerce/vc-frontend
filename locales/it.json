@@ -638,6 +638,7 @@
         },
         "locked": {
           "title": "Troppi tentativi falliti",
+          "title_blocked": "Account bloccato",
           "text_countdown": "Riprova tra {time}.",
           "text_ready": "Ora puoi riprovare.",
           "start_over_button": "Riprova"
