@@ -5,8 +5,10 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import { useAuth } from "@/core/composables/useAuth";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { TabsType, reloadAndOpenMainPage, useBroadcast } from "@/shared/broadcast";
 import { usePunchoutSession } from "../composables/usePunchoutSession";
 import { PUNCHOUT_GRANT_TYPE } from "../constants";
 
@@ -20,6 +22,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { authorizeWithGrant } = useAuth();
 const { startSession, endSession } = usePunchoutSession();
+const broadcast = useBroadcast();
 
 function leave() {
   location.href = "/";
@@ -36,10 +39,16 @@ onMounted(async () => {
     );
 
     if (response?.access_token && response.token_type && response.expires_in) {
+      // The previous user's id must not reach the next page context query.
+      localStorage.removeItem(USER_ID_LOCAL_STORAGE);
+
       startSession({
         // The grant issues no refresh token, bearer token lifetime is the session's lifetime.
         expiresAt: Date.now() + response.expires_in * 1000,
       });
+
+      // Tokens are already persisted, so other tabs read the new session on reload.
+      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.OTHERS);
     } else {
       endSession();
       Logger.error("punchout/activate", response?.error ?? "The punchout grant returned an incomplete token response");
