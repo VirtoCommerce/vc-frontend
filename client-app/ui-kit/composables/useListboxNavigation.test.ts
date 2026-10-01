@@ -89,6 +89,53 @@ describe("useListboxNavigation", () => {
     expect(list.scrollTop).toBe(300);
     expect(region.scrollTop).toBe(0);
   });
+
+  // Scrolling under a still pointer would put another row under it, which highlights and scrolls in turn.
+  it("leaves the list where it is for a pointer highlight on a clipped row", async () => {
+    const { region } = buildList(10);
+    const { highlightPassively } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(Array.from({ length: 10 })),
+    });
+
+    highlightPassively(2);
+    await nextTick();
+    await nextTick();
+
+    expect(region.scrollTop).toBe(0);
+  });
+
+  it("scrolls a pointer-highlighted row in once a key lands on it", async () => {
+    const { region } = buildList(3);
+    const { highlightPassively, navigate } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(Array.from({ length: 3 })),
+    });
+
+    highlightPassively(2);
+    await nextTick();
+    navigate("end");
+    await nextTick();
+    await nextTick();
+
+    // The last row spans 80-120 under a 100px viewport.
+    expect(region.scrollTop).toBe(20);
+  });
+
+  it.each([
+    ["0", [0, 1, 2], [0, 1, 2, 3]],
+    ["an empty string", ["", "b"], ["", "b", "c"]],
+    ["false", [false, true], [false, true, null]],
+  ])("keeps the highlight on %s when a page is appended", async (_, first, paged) => {
+    const items = ref<unknown[]>(first);
+    const { highlight, highlightedIndex } = useListboxNavigation({ componentId: COMPONENT_ID, items });
+
+    highlight(0);
+    items.value = paged;
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(0);
+  });
 });
 
 describe("useListboxNavigation passive highlight", () => {

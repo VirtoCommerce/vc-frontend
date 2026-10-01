@@ -142,15 +142,23 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
       return;
     }
 
-    const before = previous?.[index];
+    // By length, not truthiness: an option may be `0`, `""` or `false`. Past either end there is no
+    // option for `getKey` to read.
+    if (index >= previous.length || index >= items.length) {
+      reset();
+      return;
+    }
 
-    if (!before || index >= items.length || getItemKey(items[index]) !== getItemKey(before)) {
+    if (getItemKey(items[index]) !== getItemKey(previous[index])) {
       reset();
     }
   });
 
-  watch(highlightedIndex, (index) => {
-    if (index < 0) {
+  // Only the keyboard scrolls: a row under a still pointer that scrolled would hand the pointer the
+  // next row, which would highlight and scroll in turn. The flag is watched too, so a key that keeps
+  // a pointer-highlighted row (End on the last one) still brings it into view.
+  watch([highlightedIndex, isPassiveHighlight], ([index, passive]) => {
+    if (index < 0 || passive) {
       return;
     }
 
