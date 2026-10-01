@@ -631,7 +631,7 @@
           "header": "Kolla din e-post",
           "subtitle": "Vi skickade en kod till {email}.",
           "code_label": "Kod",
-          "paste_hint": "Det går att klistra in. På mobilen visas koden ovanför tangentbordet.",
+          "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
           "submit_button": "Logga in",
           "resend_button": "Skicka koden igen",
           "use_different_email_link": "Använd en annan e-postadress",

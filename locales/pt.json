@@ -631,7 +631,7 @@
           "header": "Verifique seu e-mail",
           "subtitle": "Enviamos um código para {email}.",
           "code_label": "Código",
-          "paste_hint": "Colar é compatível. No celular, o código é exibido acima do teclado.",
+          "paste_hint": "Digite ou cole o código. No celular, toque nele acima do teclado.",
           "submit_button": "Entrar",
           "resend_button": "Reenviar código",
           "use_different_email_link": "Usar outro e-mail",

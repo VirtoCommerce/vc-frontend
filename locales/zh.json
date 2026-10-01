@@ -631,7 +631,7 @@
           "header": "查看您的邮箱",
           "subtitle": "我们已向 {email} 发送了验证码。",
           "code_label": "验证码",
-          "paste_hint": "支持粘贴。在手机上，验证码会显示在键盘上方。",
+          "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
           "submit_button": "登录",
           "resend_button": "重新发送验证码",
           "use_different_email_link": "使用其他邮箱",

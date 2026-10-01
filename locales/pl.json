@@ -631,7 +631,7 @@
           "header": "Sprawdź swoją pocztę e-mail",
           "subtitle": "Wysłaliśmy kod na adres {email}.",
           "code_label": "Kod",
-          "paste_hint": "Wklejanie jest obsługiwane. Na telefonie kod pojawia się nad klawiaturą.",
+          "paste_hint": "Wpisz lub wklej kod. Na telefonie dotknij go nad klawiaturą.",
           "submit_button": "Zaloguj się",
           "resend_button": "Wyślij kod ponownie",
           "use_different_email_link": "Użyj innego adresu e-mail",

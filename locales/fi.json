@@ -631,7 +631,7 @@
           "header": "Tarkista sähköpostisi",
           "subtitle": "Lähetimme koodin osoitteeseen {email}.",
           "code_label": "Koodi",
-          "paste_hint": "Liittäminen on tuettu. Puhelimessa koodi tarjotaan näppäimistön yläpuolella.",
+          "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
           "submit_button": "Kirjaudu sisään",
           "resend_button": "Lähetä koodi uudelleen",
           "use_different_email_link": "Käytä toista sähköpostiosoitetta",

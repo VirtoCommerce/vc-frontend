@@ -631,7 +631,7 @@
           "header": "Prüfen Sie Ihre E-Mails",
           "subtitle": "Wir haben einen Code an {email} gesendet.",
           "code_label": "Code",
-          "paste_hint": "Einfügen wird unterstützt. Auf dem Smartphone wird der Code über der Tastatur angeboten.",
+          "paste_hint": "Geben Sie den Code ein oder fügen Sie ihn ein. Auf dem Smartphone tippen Sie ihn über der Tastatur an.",
           "submit_button": "Anmelden",
           "resend_button": "Code erneut senden",
           "use_different_email_link": "Andere E-Mail-Adresse verwenden",

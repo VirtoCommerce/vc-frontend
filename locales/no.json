@@ -631,7 +631,7 @@
           "header": "Sjekk e-posten din",
           "subtitle": "Vi sendte en kode til {email}.",
           "code_label": "Kode",
-          "paste_hint": "Innliming støttes. På mobil vises koden over tastaturet.",
+          "paste_hint": "Skriv inn eller lim inn koden. På mobil trykker du på den over tastaturet.",
           "submit_button": "Logg inn",
           "resend_button": "Send kode på nytt",
           "use_different_email_link": "Bruk en annen e-post",

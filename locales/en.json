@@ -631,7 +631,7 @@
           "header": "Check your email",
           "subtitle": "We sent a code to {email}.",
           "code_label": "Code",
-          "paste_hint": "Paste is supported. On phones the code is offered above the keyboard.",
+          "paste_hint": "Enter or paste the code. On mobile, tap it above your keyboard.",
           "submit_button": "Sign in",
           "resend_button": "Resend code",
           "use_different_email_link": "Use a different email",

@@ -631,7 +631,7 @@
           "header": "Revisa tu correo electrónico",
           "subtitle": "Enviamos un código a {email}.",
           "code_label": "Código",
-          "paste_hint": "Se admite pegar. En el móvil, el código se ofrece encima del teclado.",
+          "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
           "submit_button": "Iniciar sesión",
           "resend_button": "Reenviar código",
           "use_different_email_link": "Usar otro correo electrónico",

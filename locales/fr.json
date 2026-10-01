@@ -631,7 +631,7 @@
           "header": "Consultez votre e-mail",
           "subtitle": "Nous avons envoyé un code à {email}.",
           "code_label": "Code",
-          "paste_hint": "Le collage est pris en charge. Sur mobile, le code est proposé au-dessus du clavier.",
+          "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
           "submit_button": "Se connecter",
           "resend_button": "Renvoyer le code",
           "use_different_email_link": "Utiliser une autre adresse e-mail",

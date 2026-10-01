@@ -631,7 +631,7 @@
           "header": "Controlla la tua e-mail",
           "subtitle": "Abbiamo inviato un codice a {email}.",
           "code_label": "Codice",
-          "paste_hint": "L'incolla è supportato. Su telefono, il codice viene proposto sopra la tastiera.",
+          "paste_hint": "Inserisci o incolla il codice. Su dispositivo mobile, toccalo sopra la tastiera.",
           "submit_button": "Accedi",
           "resend_button": "Invia di nuovo il codice",
           "use_different_email_link": "Usa un'altra e-mail",
