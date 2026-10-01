@@ -120,6 +120,34 @@ describe("OtpEmailVerifyForm", () => {
     expect(wrapper.find(".otp-email-verify-form__field--error").exists()).toBe(true);
   });
 
+  it("clears a rejected code so the next keystroke cannot resubmit it", async () => {
+    verifyCode.mockResolvedValue({ succeeded: false, error: { code: "invalid_code", description: "Wrong code." } });
+
+    const wrapper = mountForm();
+    await typeCode(wrapper, "111111");
+
+    expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("");
+
+    await codeInput(wrapper).setValue("1");
+    await flushPromises();
+
+    expect(verifyCode).toHaveBeenCalledTimes(1);
+  });
+
+  it("replaces the typed digits with a pasted code instead of appending it", async () => {
+    verifyCode.mockResolvedValue({ succeeded: true });
+
+    const wrapper = mountForm();
+    await codeInput(wrapper).setValue("12");
+    await codeInput(wrapper).trigger("paste", {
+      clipboardData: { getData: () => "Your code: 418302" },
+    });
+    await flushPromises();
+
+    expect(verifyCode).toHaveBeenCalledOnce();
+    expect(verifyCode).toHaveBeenCalledWith("buyer@acme.com", "418302");
+  });
+
   it("emits disabled when the module became disabled", async () => {
     verifyCode.mockResolvedValue({ succeeded: false, error: { code: "otp_disabled" } });
 

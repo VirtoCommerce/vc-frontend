@@ -48,6 +48,7 @@
         aria-describedby="otp-email-hint"
         data-test-id="otp-email-code-input"
         @input="onInput"
+        @paste="onPaste"
         @focus="isFocused = true"
         @blur="isFocused = false"
       />
@@ -142,7 +143,21 @@ onMounted(() => {
 });
 
 function onInput() {
-  code.value = code.value.replace(/\D/g, "").slice(0, CODE_LENGTH);
+  setCode(code.value);
+}
+
+function onPaste(event: ClipboardEvent) {
+  const pasted = event.clipboardData?.getData("text") ?? "";
+  if (!/\d/.test(pasted)) {
+    return;
+  }
+
+  event.preventDefault();
+  setCode(pasted);
+}
+
+function setCode(value: string) {
+  code.value = value.replace(/\D/g, "").slice(0, CODE_LENGTH);
 
   if (hasError.value) {
     resetSignInErrors();
@@ -169,24 +184,28 @@ async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<vo
     return;
   }
 
-  switch (result?.error?.code) {
-    case IdentityErrors.OTP_DISABLED:
-      emit("disabled");
-      return;
-    case IdentityErrors.USER_IS_LOCKED_OUT:
-    case IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT:
-      emit("locked", result.error, result.lockoutSecondsRemaining);
-      return;
-    case IdentityErrors.INVALID_CODE:
-      await nextTick();
-      codeInputRef.value?.focus();
-      codeInputRef.value?.select();
-      return;
-    default:
-      if (!result) {
-        showError();
-      }
+  const error = result?.error;
+
+  if (error?.code === IdentityErrors.OTP_DISABLED) {
+    emit("disabled");
+    return;
   }
+
+  if (
+    error?.code === IdentityErrors.USER_IS_LOCKED_OUT ||
+    error?.code === IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT
+  ) {
+    emit("locked", error, result?.lockoutSecondsRemaining);
+    return;
+  }
+
+  if (!result) {
+    showError();
+  }
+
+  code.value = "";
+  await nextTick();
+  codeInputRef.value?.focus();
 }
 
 async function onResend() {
