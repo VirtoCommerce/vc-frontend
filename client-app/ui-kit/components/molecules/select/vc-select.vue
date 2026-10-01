@@ -222,7 +222,10 @@ const props = withDefaults(
     message?: string;
     autocomplete?: boolean;
     singleLineMessage?: boolean;
-    /** Allows several values; the model is then an array. */
+    /**
+     * Allows several values; the model is then an array. A custom trigger renders only `#placeholder`
+     * here: `#selected` takes one item and is not supported in this mode.
+     */
     // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
     // eslint-disable-next-line sonarjs/no-useless-intersection
     multiple?: M & boolean;
