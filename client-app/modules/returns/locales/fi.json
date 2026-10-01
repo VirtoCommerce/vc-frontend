@@ -104,6 +104,7 @@
     "customer_reference": "Oma tilausviitteesi",
     "customer_comment": "Kommentti",
     "cancel_reason": "Peruutuksen syy",
+    "reject_reason": "Hylkäyksen syy",
     "cancel_button": "Peruuta palautus",
     "columns": {
       "requested": "Pyydetty",

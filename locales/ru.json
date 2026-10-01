@@ -1584,6 +1584,8 @@
       "title": "Поиск",
       "header": "Ваш поиск {keyword} вернул следующее",
       "header_empty": "К сожалению, поиск по запросу «{keyword}» не дал результатов",
+      "header_barcode": "Ваш поиск по штрихкоду {barcode} вернул следующее",
+      "header_barcode_empty": "Товары по штрихкоду {barcode} не найдены",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ваш запрос <strong>{0}</strong> не дал результатов",
