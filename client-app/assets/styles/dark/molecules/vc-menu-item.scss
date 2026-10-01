@@ -20,7 +20,7 @@
       &--color--#{$color} {
         &:hover,
         &#{$highlighted} {
-          @apply bg-[--color-#{$color}-100];
+          @apply bg-[--color-#{$color}-50];
         }
 
         &#{$active} {
