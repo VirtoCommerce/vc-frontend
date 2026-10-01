@@ -107,12 +107,22 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
-  async function otpSignIn(params: Record<string, string>): Promise<void> {
-    getTokenParams.value = new URLSearchParams({
+  async function otpSignIn({ email, code, storeId }: { email: string; code: string; storeId: string }): Promise<void> {
+    const params = new URLSearchParams({
       grant_type: "otp_email",
       scope: "offline_access",
-      ...params,
+      storeId,
+      email,
+      code,
     });
+
+    const organizationId = localStorage.getItem(`organization-id-${email}`);
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+
+    getTokenParams.value = params;
 
     await (getTokenRequest = getToken(true));
   }
