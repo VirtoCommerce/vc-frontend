@@ -167,7 +167,7 @@ describe("OtpEmailSignInForm", () => {
       "shared.sign_in.otp_email_sign_in_form.locked.title",
     );
     expect(texts()[0]).toBe("Temporarily locked.");
-    expect(texts()[1]).toContain("0:05");
+    expect(texts()[1]).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 5s");
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(true);
 
     await vi.advanceTimersByTimeAsync(5000);
@@ -176,7 +176,7 @@ describe("OtpEmailSignInForm", () => {
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
   });
 
-  it("shows a long lockout in hours and minutes instead of a minute count", async () => {
+  it("shows the remaining lockout as a duration in hours, minutes or seconds", async () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { succeeded: true } });
 
@@ -188,8 +188,11 @@ describe("OtpEmailSignInForm", () => {
     await vi.advanceTimersByTimeAsync((29 * 60 + 30) * 1000);
     expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 2h");
 
-    await vi.advanceTimersByTimeAsync(3600 * 1000 + 1000);
-    expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 59:59");
+    await vi.advanceTimersByTimeAsync(90 * 60 * 1000);
+    expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 30m");
+
+    await vi.advanceTimersByTimeAsync((29 * 60 + 15) * 1000);
+    expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 45s");
   });
 
   it("shows the platform text and the contact administrator link for a permanent lockout", async () => {

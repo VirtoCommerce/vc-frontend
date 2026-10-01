@@ -122,7 +122,8 @@ interface IEmits {
 defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
-const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_MINUTE = 60;
+const MINUTES_PER_HOUR = 60;
 
 const { locale } = useI18n();
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
@@ -137,7 +138,7 @@ const pending = ref<{
   maskedEmail: string;
 }>();
 
-function formatUnit(value: number, unit: "hour" | "minute") {
+function formatUnit(value: number, unit: "hour" | "minute" | "second") {
   return new Intl.NumberFormat(locale.value, { style: "unit", unit, unitDisplay: "narrow" }).format(value);
 }
 
@@ -147,17 +148,15 @@ function createCountdown() {
   let timer: ReturnType<typeof setInterval> | undefined;
 
   const formatted = computed(() => {
-    if (secondsLeft.value < SECONDS_PER_HOUR) {
-      const minutes = Math.floor(secondsLeft.value / 60);
-      const seconds = String(secondsLeft.value % 60).padStart(2, "0");
-      return `${minutes}:${seconds}`;
+    if (secondsLeft.value < SECONDS_PER_MINUTE) {
+      return formatUnit(secondsLeft.value, "second");
     }
 
-    const totalMinutes = Math.ceil(secondsLeft.value / 60);
-    const hours = formatUnit(Math.floor(totalMinutes / 60), "hour");
-    const minutes = totalMinutes % 60;
+    const totalMinutes = Math.ceil(secondsLeft.value / SECONDS_PER_MINUTE);
+    const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR);
+    const minutes = totalMinutes % MINUTES_PER_HOUR;
 
-    return minutes ? `${hours} ${formatUnit(minutes, "minute")}` : hours;
+    return [hours && formatUnit(hours, "hour"), minutes && formatUnit(minutes, "minute")].filter(Boolean).join(" ");
   });
 
   function tick() {
