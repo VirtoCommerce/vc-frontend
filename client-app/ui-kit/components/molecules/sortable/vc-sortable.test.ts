@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createCommentVNode, defineComponent, h, nextTick, ref } from "vue";
+import { createCommentVNode, defineComponent, h, nextTick, ref, shallowRef } from "vue";
 import { useSortableItem } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
 import type { ISortableItemContextType, SortableMovePayloadType } from "@/ui-kit/composables";
@@ -139,6 +139,46 @@ describe("VcSortable", () => {
     expect(container.lastElementChild?.className).toBe("hint");
   });
 
+  it("maps a reorder of object items back to the same objects through `itemKey`", async () => {
+    const items = [{ id: "a" }, { id: "b" }, { id: "c" }];
+    const model = shallowRef(items);
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<{ id: string }>,
+              {
+                modelValue: model.value,
+                "onUpdate:modelValue": (value: { id: string }[]) => {
+                  model.value = value;
+                },
+                itemKey: (item: { id: string }) => item.id,
+              },
+              {
+                item: ({ item, attrs }: { item: { id: string }; attrs: Record<string, unknown> }) =>
+                  h("div", { ...attrs, class: ["row", attrs.class] }, item.id),
+              },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const container = wrapper.get(".vc-sortable").element as HTMLElement;
+    const item = wrapper.findAll(".row")[2].element as HTMLElement;
+
+    expect(item.getAttribute("data-sortable-id")).toBe("c");
+
+    const { options } = instances.at(-1)!;
+    options.onStart({ item });
+    container.insertBefore(item, container.firstElementChild);
+    options.onUpdate({ from: container, to: container, item, oldIndex: 2, oldDraggableIndex: 2, newDraggableIndex: 0 });
+    await nextTick();
+
+    expect(model.value).toEqual([items[2], items[0], items[1]]);
+    expect(model.value[0]).toBe(items[2]);
+  });
+
   // The v-model owner may refuse a reorder (a save in flight); nothing re-renders then, so only the
   // restore keeps the DOM matching the model.
   it("keeps the DOM on the model's order when the owner refuses a reorder", async () => {
@@ -230,6 +270,22 @@ describe("VcSortable", () => {
     ]);
   });
 
+  it("lets go of a held item that leaves the list", async () => {
+    const { wrapper, model } = mountList();
+    const row = () => wrapper.find('[data-sortable-id="b"]');
+
+    row().element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    await nextTick();
+    expect(row().attributes("aria-pressed")).toBe("true");
+
+    model.value = ["a", "c"];
+    await nextTick();
+    model.value = ["a", "c", "b"];
+    await nextTick();
+
+    expect(row().attributes("aria-pressed")).toBe("false");
+  });
+
   it("offers each item's drag controls to a component inside it, once", () => {
     seen.length = 0;
     mountList({ handle: ".grip" }, true);
@@ -239,6 +295,29 @@ describe("VcSortable", () => {
     expect(seen[0].outer?.handleAttrs.value).toMatchObject({ class: "vc-sortable__handle" });
     // Consumed by the first component, so a nested one renders no second handle.
     expect(seen.every((entry) => entry.inner === undefined)).toBe(true);
+  });
+
+  it("leaves the offer to a nested component when the outer one only peeks", () => {
+    const nested: (ISortableItemContextType | undefined)[] = [];
+    const Nested = defineComponent({
+      setup() {
+        nested.push(useSortableItem());
+        return () => h("span");
+      },
+    });
+    const Peek = defineComponent({
+      setup() {
+        useSortableItem({ consume: false });
+        return () => h("span", [h(Nested)]);
+      },
+    });
+
+    mount(VcSortable<string>, {
+      props: { modelValue: ["a"], handle: ".grip" },
+      slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs, [h(Peek)]) },
+    });
+
+    expect(nested.map((context) => context?.id.value)).toEqual(["a"]);
   });
 
   it("offers no handle in a list that drags by the whole item, or while disabled", async () => {

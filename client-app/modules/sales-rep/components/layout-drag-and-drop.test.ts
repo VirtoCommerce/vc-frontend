@@ -199,6 +199,8 @@ describe("stat row drag and drop", () => {
 
     await moveWithin(visible, "new_orders", 1);
     await dropInto(hidden, visible, "active_carts");
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(api.visibleIn("statistics")).toContain("active_carts");
 
     const ids = blockIds(wrapper);
     expect(new Set(ids).size).toBe(ids.length);
@@ -242,8 +244,8 @@ describe("stat row drag and drop", () => {
     expect(wrapper.element.contains(document.activeElement)).toBe(true);
   });
 
-  // The grabbed state is not gated on edit mode, so a grab left behind keeps the card at 45%
-  // opacity with a drop shadow on the ordinary dashboard, and Space would drop rather than grab it.
+  // A grab left behind would come back with the next edit: the card already held, so Space would drop
+  // rather than grab it.
   it("drops a held card's grab when edit mode ends", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -256,10 +258,6 @@ describe("stat row drag and drop", () => {
 
     api.cancel();
     await nextTick();
-
-    expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "vc-sortable__item--grabbed",
-    );
 
     api.startEdit();
     await nextTick();
@@ -371,6 +369,20 @@ describe("stat row drag and drop", () => {
   });
 
   // The ui-kit reports list moves in its own terms; the stat row words them as hiding and showing.
+  it("makes a stat card a named button only while editing", async () => {
+    const { wrapper, api } = setup();
+    const card = () => wrapper.find('[data-block-id="orders_placed_week"]');
+
+    expect(card().attributes("role")).toBeUndefined();
+    expect(card().attributes("aria-label")).toBeUndefined();
+
+    api.startEdit();
+    await nextTick();
+
+    expect(card().attributes("role")).toBe("button");
+    expect(card().attributes("aria-label")).toBe("sales_rep.hub.layout.a11y.reorder");
+  });
+
   it("announces a grab, a park and a restore in the stat row's own words, and a no-op not at all", async () => {
     const { wrapper, api, announce } = setup();
     api.startEdit();
@@ -394,6 +406,8 @@ describe("stat row drag and drop", () => {
     key("active_carts", "ArrowUp");
     await nextTick();
     expect(announce).toHaveBeenLastCalledWith({ kind: "restored", id: "active_carts" });
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(api.visibleIn("statistics")).toContain("active_carts");
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {

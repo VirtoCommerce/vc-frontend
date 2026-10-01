@@ -115,6 +115,14 @@ describe("LayoutBlock wrapping a real LayoutWidget", () => {
     expect(wrapper.findAll(".layout-widget__rows")).toHaveLength(0);
   });
 
+  it("gives an untitled widget nested inside another no title of the block's", () => {
+    const wrapper = mountBlock(true, () =>
+      h(LayoutWidget, { title: "Outer" }, { default: () => h(LayoutWidget, null, { default: () => "body" }) }),
+    );
+
+    expect(wrapper.findAll(".vc-widget__title").map((title) => title.text())).toEqual(["Outer"]);
+  });
+
   // A content widget reads its row cap through `useBlockSettings`; inside another widget it is not a block.
   it("offers the block's settings to no component nested inside its widget", () => {
     let nested: unknown = "unset";

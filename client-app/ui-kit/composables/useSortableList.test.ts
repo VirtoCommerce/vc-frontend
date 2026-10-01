@@ -127,6 +127,13 @@ describe("useSortableList — keyboard", () => {
 
     expect(order()).toEqual(["a", "b", "c"]);
     expect(signals.at(-1)).toEqual({ kind: "edge", id: "a", index: 0, total: 3 });
+
+    press(" ", "a");
+    press(" ", "c");
+    press("ArrowDown", "c");
+
+    expect(order()).toEqual(["a", "b", "c"]);
+    expect(signals.at(-1)).toEqual({ kind: "edge", id: "c", index: 2, total: 3 });
   });
 
   it("puts the item back on Escape", () => {
@@ -239,6 +246,25 @@ describe("useSortableList — keyboard", () => {
 
     press(" ", "a");
     press("ArrowDown", "c");
+
+    expect(order()).toEqual(["a", "b", "c"]);
+  });
+
+  it("leaves keys from a control inside a whole item to that control", () => {
+    const { list, press, order } = setup();
+    const item = document.createElement("div");
+    const field = item.appendChild(document.createElement("input"));
+    const fromField = (key: string) => {
+      const event = { key, preventDefault: vi.fn(), target: field, currentTarget: item } as unknown as KeyboardEvent;
+      list.itemAttrs("a").onKeydown!(event);
+      return event;
+    };
+
+    expect(fromField(" ").preventDefault).not.toHaveBeenCalled();
+    expect(list.isGrabbed("a")).toBe(false);
+
+    press(" ", "a", item);
+    fromField("ArrowDown");
 
     expect(order()).toEqual(["a", "b", "c"]);
   });

@@ -61,8 +61,6 @@ export interface ISortableListOptions {
     MaybeRefOrGetter<readonly string[]> | Ref<readonly string[] | undefined> | (() => readonly string[] | undefined);
   /** Per-item acceptance, asked on the pointer path (SortableJS `put`) AND the keyboard path. Read once. */
   accepts?: (id: string, from: string) => boolean;
-  /** Which children are items. Anything else in the container is ignored and keeps its place. Read once. */
-  itemSelector?: string;
   /**
    * Pointer handle inside an item. Without one the whole item drags and takes the keyboard itself;
    * with one, the keyboard goes through `handleAttrs`. Read once.
@@ -111,7 +109,6 @@ export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
   options: ISortableListOptions,
 ) {
-  const itemSelector = options.itemSelector ?? `[${SORTABLE_ITEM_ATTRIBUTE}]`;
   const whole = !options.handle;
 
   const grabbedId = ref<string>();
@@ -232,7 +229,9 @@ export function useSortableList(
   }
 
   function onKeydown(event: KeyboardEvent, id: string): void {
-    if (!isEnabled()) {
+    // A whole item's listener also hears keys bubbling from controls inside it, which keep their own.
+    const fromDescendant = whole && event.target instanceof Node && event.target !== event.currentTarget;
+    if (!isEnabled() || fromDescendant) {
       return;
     }
 
@@ -363,7 +362,8 @@ export function useSortableList(
       filter: options.filter,
       // Without it the filter preventDefaults the mousedown and the control inside the handle loses its click.
       preventOnFilter: false,
-      draggable: itemSelector,
+      // Items are what `itemAttrs` stamped; anything else in the container keeps its place.
+      draggable: `[${SORTABLE_ITEM_ATTRIBUTE}]`,
       animation: 150,
       ghostClass: "vc-sortable__item--ghost",
       dragClass: "vc-sortable__item--drag",
@@ -435,6 +435,14 @@ export function useSortableList(
   watch([() => toValue(container), nameOf], ([el, name]) => el?.setAttribute(SORTABLE_NAME_ATTRIBUTE, name), {
     immediate: true,
     flush: "sync",
+  });
+
+  // An item that leaves the list while held lets go here, before the render removes it: not every engine
+  // blurs a removed element (Chrome does, jsdom does not), and a blur-cancel would put it back.
+  watch(options.items, (ids) => {
+    if (grabbedId.value !== undefined && !ids.includes(grabbedId.value)) {
+      release();
+    }
   });
 
   watch(isEnabled, (enabled) => {
