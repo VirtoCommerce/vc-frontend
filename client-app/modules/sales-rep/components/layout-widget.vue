@@ -10,7 +10,7 @@
         icon="switch-vertical"
         icon-size="1rem"
         size="xs"
-        :color="item?.grabbed.value ? 'primary' : 'secondary'"
+        color="secondary"
         variant="ghost"
       />
     </template>
@@ -101,9 +101,14 @@ const heading = computed(() => props.title ?? block?.title.value);
 
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
-// Both controls are VcButtons and the drag states come from VcSortable, so what is left here is only the
-// hide button's intent.
+// Both controls are VcButtons and the drag states come from VcSortable; what is left here is the icon inks,
+// set through VcButton's own variables.
 .layout-widget {
+  // Held: the icon takes the drag accent, as a pointer user's grabbing cursor would.
+  &__handle[aria-pressed="true"] {
+    --vc-button-ghost-secondary-icon: var(--vc-sortable-accent-color);
+  }
+
   // Reversible — the widget comes back from the tray — so danger reads on hover only.
   &__hide:hover {
     --vc-icon-color: var(--color-danger-500);

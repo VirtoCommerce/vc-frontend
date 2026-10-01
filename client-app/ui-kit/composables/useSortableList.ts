@@ -229,8 +229,8 @@ export function useSortableList(
   }
 
   function onKeydown(event: KeyboardEvent, id: string): void {
-    // A whole item's listener also hears keys bubbling from controls inside it, which keep their own.
-    const fromDescendant = whole && event.target instanceof Node && event.target !== event.currentTarget;
+    // The item's or handle's listener also hears keys bubbling from controls inside it, which keep their own.
+    const fromDescendant = event.target instanceof Node && event.target !== event.currentTarget;
     if (!isEnabled() || fromDescendant) {
       return;
     }

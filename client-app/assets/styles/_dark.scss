@@ -13,6 +13,10 @@ html.dark {
   // 3:1 on every dark surface a ring lands on, in all 7 presets.
   --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-600));
 
+  // primary-200 measures 1.34–2.78 : 1 on the dark widget surface in five of the seven dark presets;
+  // 400 is the first step clearing 3 : 1 in all seven (3.20–11.84 : 1).
+  --vc-sortable-handle-ring-color: var(--color-primary-400);
+
   @include meta.load-css("dark/atoms/vc-badge");
   @include meta.load-css("dark/molecules/vc-input");
   @include meta.load-css("dark/molecules/vc-button");
@@ -20,7 +24,6 @@ html.dark {
   @include meta.load-css("dark/molecules/vc-alert");
   @include meta.load-css("dark/molecules/vc-menu-item");
   @include meta.load-css("dark/molecules/vc-range-calendar");
-  @include meta.load-css("dark/molecules/vc-sortable");
   @include meta.load-css("dark/organisms/vc-pagination");
   @include meta.load-css("dark/organisms/vc-table");
   @include meta.load-css("dark/shared/catalog/product-pickup-locations");

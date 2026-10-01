@@ -156,7 +156,7 @@ const HandleWidget = {
           icon="switch-vertical"
           size="xs"
           variant="ghost"
-          :color="item.grabbed.value ? 'primary' : 'secondary'"
+          color="secondary"
         />
       </template>
       <div class="text-sm text-neutral-600">Body of {{ title }}</div>
@@ -180,13 +180,7 @@ export const Handle: StoryType = {
 
 // MyWidget
 const item = useSortableItem(); // undefined outside a VcSortable
-<VcButton
-  v-if="item?.handleAttrs.value"
-  v-bind="item.handleAttrs.value"
-  aria-label="Reorder"
-  icon="switch-vertical"
-  :color="item.grabbed.value ? 'primary' : 'secondary'"
-/>`,
+<VcButton v-if="item?.handleAttrs.value" v-bind="item.handleAttrs.value" aria-label="Reorder" icon="switch-vertical" />`,
       },
     },
   },

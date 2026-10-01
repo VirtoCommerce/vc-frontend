@@ -1,10 +1,10 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCommentVNode, defineComponent, h, nextTick, ref, shallowRef } from "vue";
-import { useSortableItem } from "@/ui-kit/composables";
+import { useSortableItem, useSortableList } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
 import type { ISortableItemContextType, SortableMovePayloadType } from "@/ui-kit/composables";
-import type { Ref } from "vue";
+import type { Ref, VNode } from "vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's option and event objects
 const instances: { el: HTMLElement; options: Record<string, any> }[] = [];
@@ -284,6 +284,75 @@ describe("VcSortable", () => {
     await nextTick();
 
     expect(row().attributes("aria-pressed")).toBe("false");
+  });
+
+  it("keeps the grab across consecutive keyboard moves", async () => {
+    const { wrapper, model } = mountList();
+    const row = () => wrapper.find('[data-sortable-id="a"]').element;
+
+    row().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    row().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+    await nextTick();
+    await nextTick();
+    row().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+    await nextTick();
+
+    expect(model.value).toEqual(["b", "c", "a"]);
+  });
+
+  // Chrome blurs a focused element it removes, mid-patch; a blur-cancel then would put the item back.
+  it("lets go of a held item before the render that removes it", async () => {
+    const items = ref(["a", "b", "c"]);
+    const List = defineComponent({
+      setup() {
+        const el = ref<HTMLElement | null>(null);
+        const list = useSortableList(el, {
+          name: "raw",
+          items: () => items.value,
+          onReorder: (ids) => {
+            items.value = ids;
+          },
+        });
+        const blurOnRemoval = (vnode: VNode) => (vnode.el as HTMLElement).dispatchEvent(new FocusEvent("blur"));
+        return () =>
+          h(
+            "div",
+            { ref: el },
+            items.value.map((id) =>
+              h("div", { key: id, ...list.itemAttrs(id), onVnodeBeforeUnmount: blurOnRemoval }, id),
+            ),
+          );
+      },
+    });
+    const wrapper = mount(List, { attachTo: document.body });
+
+    wrapper.find('[data-sortable-id="b"]').element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    await nextTick();
+    items.value = ["a", "c"];
+    await nextTick();
+    await nextTick();
+
+    expect(items.value).toEqual(["a", "c"]);
+  });
+
+  it("leaves keys from a control inside the handle to that control", () => {
+    const Grip = defineComponent({
+      setup() {
+        const item = useSortableItem();
+        return () => h("div", { ...item?.handleAttrs.value, class: "grip" }, [h("button", { class: "inner" }, "x")]);
+      },
+    });
+    const wrapper = mount(VcSortable<string>, {
+      props: { modelValue: ["a"], handle: ".grip" },
+      slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs, [h(Grip)]) },
+      attachTo: document.body,
+    });
+    const event = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
+
+    wrapper.get(".inner").element.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(wrapper.get(".grip").attributes("aria-pressed")).toBe("false");
   });
 
   it("offers each item's drag controls to a component inside it, once", () => {
