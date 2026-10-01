@@ -7,7 +7,7 @@
         class="otp-email-request-form__error"
         color="danger"
         size="sm"
-        variant="outline-dark"
+        variant="tonal"
         icon
       >
         {{ translate(error) }}

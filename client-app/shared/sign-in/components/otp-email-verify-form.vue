@@ -7,7 +7,7 @@
         class="otp-email-verify-form__error"
         color="danger"
         size="sm"
-        variant="outline-dark"
+        variant="tonal"
         icon
       >
         <span v-if="isLockoutError(error?.code)">
