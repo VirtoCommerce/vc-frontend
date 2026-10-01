@@ -17,7 +17,7 @@
     >
       <template #prepend>
         <VcButton
-          v-if="preparingScope"
+          v-if="isScopePending"
           class="search-bar__button"
           color="secondary"
           append-icon="delete-2"
@@ -25,9 +25,12 @@
           variant="soft"
           disabled
           loading
-          min-width="5rem"
+          :min-width="SCOPE_MIN_WIDTH"
           :aria-label="$t('shared.layout.search_bar.scope_loading_label')"
-        />
+        >
+          <!-- Invisible under the loader: keeps the width of the chip being replaced. -->
+          <template v-if="lastScopeLabel" #default>{{ lastScopeLabel }}</template>
+        </VcButton>
 
         <template v-else>
           <VcButton
@@ -38,6 +41,7 @@
             append-icon="delete-2"
             size="xs"
             variant="soft"
+            :min-width="SCOPE_MIN_WIDTH"
             :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
             :data-search-scope="item.label"
             @click.stop="onScopeItemClick(item.id)"
@@ -123,8 +127,12 @@ const searchDropdownStyle = computed<StyleValue | undefined>(() => {
 
 onClickOutside(searchBarElement, hideSearchDropdown);
 
-const { searchScopeData, removeScopeItemById, isCategoryScope, preparingScope, searchScopeFilterExpression } =
+const SCOPE_MIN_WIDTH = "5rem";
+
+const { searchScopeData, removeScopeItemById, isCategoryScope, isScopePending, searchScopeFilterExpression } =
   useSearchScore();
+
+const lastScopeLabel = ref<string>();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -162,7 +170,7 @@ const categoriesFilterExpression = computed(() => {
 });
 
 const searchPlaceholder = computed(() => {
-  return isCategoryScope.value && !preparingScope.value
+  return isCategoryScope.value && !isScopePending.value
     ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
     : t("shared.layout.search_bar.enter_keyword_placeholder");
 });
@@ -212,6 +220,18 @@ function onBarcodeScanned(value: string) {
     searchDropdownRef.value?.handleSearch();
   }
 }
+
+watch(
+  [() => searchScopeData.value.searchScope.map((item) => item.label), isScopePending],
+  ([labels, pending]) => {
+    if (labels.length) {
+      lastScopeLabel.value = labels[0];
+    } else if (!pending) {
+      lastScopeLabel.value = undefined;
+    }
+  },
+  { immediate: true },
+);
 
 watch(isCategoryScope, (isCategory) => {
   if (!isCategory && searchPhrase.value && !searchPhraseInUrl.value) {

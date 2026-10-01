@@ -1,0 +1,144 @@
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { computed, defineComponent, h, nextTick, ref } from "vue";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
+import SlugContent from "./slug-content.vue";
+import type { VueWrapper } from "@vue/test-utils";
+
+const loading = ref(false);
+const objectType = ref<string | undefined>();
+const objectId = ref<string | undefined>("category-1");
+
+vi.mock("@/shared/common", () => ({
+  useSlugInfo: () => ({
+    loading,
+    slugInfo: computed(() => ({ entityInfo: { objectType: objectType.value, objectId: objectId.value } })),
+    objectType,
+    hasContent: ref(false),
+    hasPageDocumentContent: ref(false),
+    pageDocumentContent: ref(),
+    pageContent: ref(),
+    fetchContent: vi.fn(),
+    fetchPageDocumentContent: vi.fn(),
+    isMarkdownContent: ref(false),
+    markdownContent: ref(""),
+  }),
+}));
+
+vi.mock("@/shared/static-content", () => ({
+  useStaticPage: () => ({ staticPage: ref() }),
+}));
+
+vi.mock("@/core/composables", () => ({
+  useNavigations: () => ({ setMatchingRouteName: vi.fn() }),
+}));
+
+// Like the real category page: starts preparing its own scope as it is set up.
+vi.mock("@/pages/category.vue", () => ({
+  __esModule: true,
+  default: defineComponent({
+    setup() {
+      useSearchScore().preparingScope.value = true;
+      return () => h("div", { "data-testid": "category" });
+    },
+  }),
+}));
+
+const { isScopePending, preparingScope } = useSearchScore();
+
+let wrapper: VueWrapper | undefined;
+
+function mountSlugContent(isVisible = false) {
+  wrapper = mount(SlugContent, { props: { pathMatch: ["category"], isVisible } });
+  return wrapper;
+}
+
+afterEach(() => {
+  wrapper?.unmount();
+  wrapper = undefined;
+  loading.value = false;
+  objectType.value = undefined;
+  objectId.value = "category-1";
+  preparingScope.value = false;
+  // Holds are global state: one leaked here would fail every test after it, far from the cause.
+  expect(isScopePending.value).toBe(false);
+});
+
+describe("SlugContent search scope", () => {
+  // The category page is an async component: it is not there yet on the render that shows this one.
+  it("keeps the scope pending from showing a category until the category starts preparing", async () => {
+    objectType.value = "Category";
+    const slugContent = mountSlugContent();
+
+    await slugContent.setProps({ isVisible: true });
+
+    expect(slugContent.find('[data-testid="category"]').exists()).toBe(false);
+    expect(isScopePending.value).toBe(true);
+
+    await flushPromises();
+
+    expect(slugContent.find('[data-testid="category"]').exists()).toBe(true);
+    // Pending only because the category is preparing: once it has, nothing of the hold is left.
+    preparingScope.value = false;
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("holds the scope when mounted already showing a category", async () => {
+    objectType.value = "Category";
+    mountSlugContent(true);
+    await nextTick();
+
+    expect(isScopePending.value).toBe(true);
+
+    await flushPromises();
+  });
+
+  it("releases the scope when hidden before the category shows", async () => {
+    objectType.value = "Category";
+    const slugContent = mountSlugContent(true);
+
+    await slugContent.setProps({ isVisible: false });
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("holds nothing for a page that is not a category", async () => {
+    objectType.value = "CatalogProduct";
+    const slugContent = mountSlugContent();
+
+    await slugContent.setProps({ isVisible: true });
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("holds nothing for a category without an id, which would never start preparing", async () => {
+    objectType.value = "Category";
+    objectId.value = undefined;
+    const slugContent = mountSlugContent();
+
+    await slugContent.setProps({ isVisible: true });
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("holds nothing while the slug is still loading", async () => {
+    objectType.value = "Category";
+    loading.value = true;
+    const slugContent = mountSlugContent();
+
+    await slugContent.setProps({ isVisible: true });
+
+    expect(isScopePending.value).toBe(false);
+  });
+
+  it("releases the scope when torn down before the category shows", async () => {
+    objectType.value = "Category";
+    const slugContent = mountSlugContent(true);
+    await nextTick();
+
+    slugContent.unmount();
+    wrapper = undefined;
+
+    expect(isScopePending.value).toBe(false);
+  });
+});

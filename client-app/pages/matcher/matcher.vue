@@ -29,9 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { PreviewerStateType, UpdateStateEventArgs } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
@@ -111,6 +112,39 @@ const visibleComponent = computed(() => {
     return result.id;
   }
   return result;
+});
+
+const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
+
+let releaseScope: (() => void) | undefined;
+
+// The loader replaces the category page before the next page is known, so the search bar would
+// drop its category scope and later rebuild it. Pre flush: the leaving category still holds it.
+// Immediate: a category on another route has already left, and hands its scope over on the way out.
+watch(
+  () => visibleComponent.value === "loader",
+  (isLoader) => {
+    if (isLoader && (isCategoryScope.value || isScopePending.value) && !releaseScope) {
+      releaseScope = holdScope();
+    }
+  },
+  { immediate: true },
+);
+
+// Post flush: a category page that has just mounted is already preparing its own scope.
+watch(
+  () => visibleComponent.value === "loader",
+  (isLoader) => {
+    if (!isLoader) {
+      releaseScope?.();
+      releaseScope = undefined;
+    }
+  },
+  { flush: "post" },
+);
+
+onBeforeUnmount(() => {
+  releaseScope?.();
 });
 
 function updateState(eventArgs: UpdateStateEventArgs, previewerId: PreviewerStateType["id"]) {
