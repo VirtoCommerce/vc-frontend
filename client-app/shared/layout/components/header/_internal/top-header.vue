@@ -23,7 +23,7 @@
       <ShipToSelector />
     </div>
 
-    <div class="ms-auto flex min-w-0 items-center">
+    <div class="ms-auto flex min-w-0 shrink-0 items-center">
       <template v-if="isDarkModeAvailable">
         <DarkModeToggle
           tooltip
@@ -70,7 +70,7 @@
         <span class="mx-3 h-5 w-px bg-primary" />
 
         <!-- Account menu -->
-        <div ref="loginMenu" class="relative flex min-w-0 flex-row items-center gap-x-1">
+        <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
           <!-- Operator -->
           <template v-if="operator">
             <span class="whitespace-nowrap font-bold" data-test-id="operator-name-label">
@@ -88,7 +88,7 @@
             :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
             aria-haspopup="true"
             :aria-expanded="loginMenuVisible"
-            class="flex w-full min-w-0 cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            class="flex w-full cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             data-test-id="account-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
@@ -96,7 +96,7 @@
               <template v-if="isMultiOrganization && organization">
                 <span
                   data-test-id="organization-name-label"
-                  class="min-w-0 truncate xl:max-w-80"
+                  class="min-w-0 truncate xl:max-w-32 2xl:max-w-80"
                   :title="organization.name"
                 >
                   {{ organization.name }}
@@ -106,7 +106,7 @@
 
               <span
                 data-test-id="customer-name-label"
-                class="min-w-0 shrink-0 truncate xl:max-w-80"
+                class="min-w-0 shrink-0 truncate xl:max-w-32 2xl:max-w-80"
                 :title="user.contact?.fullName || user.userName"
                 >{{ user.contact?.fullName || user.userName }}</span
               >
