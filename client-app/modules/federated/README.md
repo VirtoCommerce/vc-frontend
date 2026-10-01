@@ -132,9 +132,11 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 
 **Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
 
-- UI (22 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
-  `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcLabel`, `VcLink`, `VcLoaderOverlay`,
-  `VcMarkdownRender`, `VcMenuItem`, `VcModal`, `VcSelect`, `VcTable`, `VcTableColumn`,
+- UI (35 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
+  `VcCheckboxGroup`, `VcChip`, `VcDatePicker`, `VcDialog`, `VcDialogContent`, `VcDialogFooter`,
+  `VcDialogHeader`, `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcInputDetails`, `VcLabel`,
+  `VcLayout`, `VcLink`, `VcLoaderOverlay`, `VcMarkdownRender`, `VcMenuItem`, `VcModal`,
+  `VcPagination`, `VcPopover`, `VcRating`, `VcSelect`, `VcTable`, `VcTableColumn`, `VcTabSwitch`,
   `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton` (`VcImage` is host-bound too —
   its thumbnail logic reads theme settings through a getter that throws until the host sets the
   theme context, so only a filename-only `src` renders standalone); the themed `OrderStatus`
@@ -151,6 +153,8 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Order rendering: `useOrderView` (the host's order view-model — gift vs regular items,
   per-currency groups, BOPIS) and the components its details page composes: `OrderLineItems`,
   `OrderSummary`, `OrderCommentSection`, `AcceptedGifts`, `AddressInfo`, `VendorName`
+  (`OrderSummary` also runs the host's `useFullCart`, `useCheckout` and `useSavedForLater` for
+  its loading state, exactly as on the host's own order page)
 - Order filtering: `getOrdersFilterExpression`, `STATUS_ORDERS_FACET_NAME`, `OrdersFilterDataType` —
   the filter grammar a plugin listing orders has to speak
 - Files: `downloadFile`, `getFileSize`, `ContentType`

@@ -94,8 +94,8 @@ export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { useNavigations } from "@/core/composables/useNavigations";
 export { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 export { usePageHead } from "@/core/composables/usePageHead";
-// A query-string parameter as a writable ref, replacing the current history entry the way the
-// host's own filters do - so a plugin's selection survives a reload and back/forward.
+// A query-string parameter as a writable ref, so a plugin's selection survives a reload and
+// back/forward. Each write pushes a history entry; `updateMethod: "replace"` overwrites it instead.
 export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
