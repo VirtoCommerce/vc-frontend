@@ -110,7 +110,6 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
-import { toCSV } from "@/core/utilities/common";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { downloadFile } from "@/shared/files";
 import type { MoneyType } from "@/core/api/graphql/types";
@@ -178,8 +177,6 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
       return configurationItem.customText ?? "";
     case CONFIGURABLE_SECTION_TYPES.product:
       return configurationItem.name ?? "";
-    case CONFIGURABLE_SECTION_TYPES.file:
-      return toCSV(getFiles(configurationItem).map((file) => file.name));
     default:
       return "";
   }

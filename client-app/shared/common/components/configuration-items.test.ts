@@ -20,7 +20,7 @@ function mountItems(files: Array<{ name: string; url?: string | null }>) {
 }
 
 describe("ConfigurationItems", () => {
-  it("renders one link per file and downloads it on click", async () => {
+  it("renders one link per file and downloads it on click", () => {
     const wrapper = mountItems([
       { name: "a.txt", url: "/api/files/a" },
       { name: "b.txt", url: "/api/files/b" },
@@ -30,7 +30,9 @@ describe("ConfigurationItems", () => {
     expect(links.map((link) => link.attributes("href"))).toEqual(["/api/files/a", "/api/files/b"]);
     expect(links[1].attributes("download")).toBe("b.txt");
 
-    await links[1].trigger("click");
+    const click = new MouseEvent("click", { cancelable: true });
+    links[1].element.dispatchEvent(click);
+    expect(click.defaultPrevented).toBe(true);
     expect(downloadFileMock).toHaveBeenCalledWith("/api/files/b", "b.txt");
   });
 
