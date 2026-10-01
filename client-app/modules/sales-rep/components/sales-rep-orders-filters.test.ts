@@ -64,6 +64,9 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
           label: { type: String, default: undefined },
           startLabel: { type: String, default: undefined },
           endLabel: { type: String, default: undefined },
+          mask: Boolean,
+          enableTeleport: Boolean,
+          showEmptyDetails: Boolean,
           showFooter: Boolean,
         },
         emits: ["update:modelValue", "update:valid"],
@@ -145,6 +148,19 @@ describe("SalesRepOrdersFilters", () => {
     await applyButton(wrapper).trigger("click");
 
     expect(lastChange(wrapper)).toMatchObject({ startDate: "2026-05-01", endDate: "2026-05-31" });
+  });
+
+  it("keeps a one-sided custom range", async () => {
+    const wrapper = createWrapper();
+
+    rangePicker(wrapper).vm.$emit("update:modelValue", { start: "2026-05-01", end: undefined });
+    await nextTick();
+
+    expect(rangePicker(wrapper).props("modelValue")).toEqual({ start: "2026-05-01", end: undefined });
+
+    await applyButton(wrapper).trigger("click");
+
+    expect(lastChange(wrapper)).toMatchObject({ startDate: "2026-05-01", endDate: undefined });
   });
 
   it("clears both bounds when the picker empties the range", async () => {
@@ -277,6 +293,9 @@ describe("SalesRepOrdersFilters — the date range field", () => {
       label: undefined,
       startLabel: "sales_rep.customer_orders.filters.start_date",
       endLabel: "sales_rep.customer_orders.filters.end_date",
+      mask: true,
+      enableTeleport: true,
+      showEmptyDetails: true,
       // The calendar footer's Clear is the field's pointer route back to empty.
       showFooter: true,
     });

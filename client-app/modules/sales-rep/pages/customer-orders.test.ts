@@ -56,6 +56,8 @@ vi.mock("../composables/useSalesRepColumnSort", async () => {
 });
 vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
 
+const i18nOverrides = vi.hoisted(() => ({ locale: undefined as string | undefined }));
+
 // The shared test i18n has no messages, so a real `t` drops its parameters; keep them visible.
 vi.mock("vue-i18n", async (importOriginal) => {
   const actual = await importOriginal<typeof import("vue-i18n")>();
@@ -65,8 +67,9 @@ vi.mock("vue-i18n", async (importOriginal) => {
     useI18n: () => {
       const composer = actual.useI18n();
       const t = (key: string, params?: unknown) => (params ? `${key} ${JSON.stringify(params)}` : composer.t(key));
+      const locale = i18nOverrides.locale ? { value: i18nOverrides.locale } : composer.locale;
 
-      return { ...composer, t };
+      return { ...composer, t, locale };
     },
   };
 });
@@ -308,6 +311,21 @@ describe("CustomerOrders", () => {
     const labels = wrapper.findAll(".chip").map((chip) => chip.text());
     expect(labels).toContain('common.labels.starts_from ["08/07/2026"]');
     expect(labels).toContain('common.labels.ends_to ["08/17/2026"]');
+  });
+
+  it("writes chip dates in the active locale's field format", () => {
+    i18nOverrides.locale = "de";
+    state.filters.value = { statuses: [], customerNames: [], startDate: "2026-08-07", endDate: undefined };
+
+    try {
+      const labels = createWrapper()
+        .findAll(".chip")
+        .map((chip) => chip.text());
+
+      expect(labels).toContain('common.labels.starts_from ["07.08.2026"]');
+    } finally {
+      i18nOverrides.locale = undefined;
+    }
   });
 
   it("names every chip's close button after the filter it removes", () => {

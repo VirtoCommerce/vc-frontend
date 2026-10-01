@@ -63,8 +63,11 @@ describe("VcDateRangePicker — split field button names", () => {
     ]);
   });
 
-  it("falls back to the start/end field names when the caller gives no labels", () => {
-    const wrapper = mountSplit();
+  it.each([
+    ["no labels", {}],
+    ["empty labels", { startLabel: "", endLabel: "" }],
+  ])("falls back to the start/end field names when the caller gives %s", (_, props) => {
+    const wrapper = mountSplit(props);
 
     expect(buttonNames(wrapper)).toEqual([
       "ui_kit.buttons.clear_field(ui_kit.date_range_input.start_date)",
