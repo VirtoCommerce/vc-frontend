@@ -1,4 +1,5 @@
 import { computed, ref, toValue, watch } from "vue";
+import { globals } from "@/core/globals";
 import { useCreateReturnMutation } from "@/modules/returns/api/graphql/mutations/createReturn";
 import { useGetReturnableItemsQuery } from "@/modules/returns/api/graphql/queries/getReturnableItems";
 import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
@@ -72,6 +73,7 @@ export function useReturnableItems(orderId: MaybeRefOrGetter<string>) {
     const created = await createReturnMutation({
       command: {
         orderId: toValue(orderId),
+        cultureName: globals.cultureName,
         items: selectedItems.value.map(({ item, quantity }) => ({
           orderLineItemId: item.orderLineItemId,
           quantity,

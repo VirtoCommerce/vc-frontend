@@ -104,6 +104,7 @@
     "customer_reference": "Il tuo riferimento d'ordine",
     "customer_comment": "Commento",
     "cancel_reason": "Motivo dell'annullamento",
+    "reject_reason": "Motivo del rifiuto",
     "cancel_button": "Annulla reso",
     "columns": {
       "requested": "Richiesto",
