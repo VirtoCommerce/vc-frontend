@@ -705,6 +705,9 @@ const tailwindPreset = generateTailwindPreset();
 
 const git = gitIn(REPO_ROOT);
 
+/** Hand-written files in the versioned tarball - like the preset, an edit to one ships only under a new version. */
+const VERSIONED_SOURCES = ["codegen.mjs", "codegen.d.mts"];
+
 /**
  * The newest published contract tag, or "" when nothing has been released yet (or tags were not
  * fetched). This is what a plugin actually installs, so it — not the base branch — is the baseline
@@ -744,10 +747,14 @@ function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT
     ? git(["show", `${baseSha}:client-app/core-api/contract/tailwind-preset.cjs`])
     : { status: 1 };
   const presetChanged = basePreset.status === 0 && basePreset.stdout !== currentPreset;
+  const sourceChanged = VERSIONED_SOURCES.some((file) => {
+    const baseSource = git(["show", `${baseSha}:client-app/core-api/${file}`]);
+    return baseSource.status === 0 && baseSource.stdout !== readFileSync(join(CORE_API_DIR, file), "utf8");
+  });
   return {
     baseRef,
     baseSha,
-    changed: baseContract.stdout !== currentContract || presetChanged,
+    changed: baseContract.stdout !== currentContract || presetChanged || sourceChanged,
     baseVersion,
     removedExports,
   };
@@ -780,7 +787,7 @@ function autoBumpIfContractChanged(currentContract, currentPreset, currentVersio
     const level = levelOf(decision.action);
     const { current, next } = bumpContractVersion(level);
     step(
-      `contract or tailwind preset changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (${level}; commit package.json too).`,
+      `contract or another file the facade ships changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (${level}; commit package.json too).`,
     );
   }
 }
@@ -827,7 +834,7 @@ if (CHECK_MODE) {
     }
     if (decision.action.startsWith("bump-")) {
       fail(
-        `the public contract or tailwind preset changed relative to ${base.baseRef}, but CORE_VERSION is still ` +
+        `the public contract or another file the facade ships changed relative to ${base.baseRef}, but CORE_VERSION is still ` +
           `${base.baseVersion}. Run \`yarn build:core-types\` (auto-bumps ${levelOf(decision.action)}).`,
       );
     }
