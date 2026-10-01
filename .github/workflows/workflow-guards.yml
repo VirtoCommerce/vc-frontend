@@ -56,16 +56,18 @@ jobs:
               fi
               rest=$(printf '%s' "$rest" | sed -E 's/^ *&& *//')
               # Outside '...' string literals, reject: a `||` outside parentheses (exit 1),
-              # and any `${{` or `}}` left after the outer pair was stripped (exit 2) -
-              # GitHub would join such an if: into one string, and a non-empty string is
-              # always true. The string goes in through ENVIRON: `awk -v` would decode
-              # escapes like \x27.
+              # and any dollar-brace-brace or }} left after the outer pair was stripped
+              # (exit 2) - GitHub would join such an if: into one string, and a non-empty
+              # string is always true. The string goes in through ENVIRON: `awk -v` would
+              # decode escapes like \x27.
+              # Never write dollar-brace-brace as one piece anywhere in this file, comments
+              # included: GitHub parses it as an expression and rejects the whole workflow.
               REST="$rest" awk 'BEGIN {
                   s = ENVIRON["REST"]; d = 0; q = 0
                   for (i = 1; i <= length(s); i++) {
                     c = substr(s, i, 1)
                     if (c == "\047") q = !q
-                    else if (!q && (substr(s, i, 3) == "${{" || substr(s, i, 2) == "}}")) exit 2
+                    else if (!q && (substr(s, i, 3) == ("$" "{{") || substr(s, i, 2) == "}}")) exit 2
                     else if (!q && c == "(") d++
                     else if (!q && c == ")") d--
                     else if (!q && d == 0 && substr(s, i, 2) == "||") exit 1
@@ -76,7 +78,8 @@ jobs:
                 echo "::error file=$file::Job '$job': unbalanced ' quotes in the condition after the repository guard."
                 status=1
               elif [ "$code" -eq 2 ]; then
-                echo "::error file=$file::Job '$job': use a single \${{ ... }} around the whole if:, or none. Anything outside it makes the condition always true."
+                open='$''{{'
+                echo "::error file=$file::Job '$job': use a single ${open} ... }} around the whole if:, or none. Anything outside it makes the condition always true."
                 status=1
               elif [ "$code" -ne 0 ]; then
                 echo "::error file=$file::Job '$job': the condition after the repository guard has a top-level ||. Wrap it in parentheses: guard && ( ... )."
