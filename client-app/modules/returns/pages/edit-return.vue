@@ -47,7 +47,7 @@
         size="lg"
         class="mt-5"
       >
-        <p class="mb-4 text-sm text-neutral-500">
+        <p class="mb-4 text-sm text-neutral-600">
           {{ [line.sku, line.measureUnit].filter(Boolean).join(" · ") }}
         </p>
 
@@ -59,7 +59,7 @@
             @update:model-value="onQuantityChanged(line, $event)"
           />
 
-          <span class="text-sm text-neutral-500">
+          <span class="text-sm text-neutral-600">
             {{ $t("return_edit.available", { quantity: maxQuantity(line) }) }}
           </span>
         </div>
@@ -99,7 +99,7 @@
         />
 
         <div class="mt-5">
-          <span class="text-sm text-neutral-500">
+          <span class="text-sm text-neutral-600">
             {{ attachmentsRequired ? $t("return_edit.files_required") : $t("return_edit.files") }}
           </span>
 
@@ -115,7 +115,7 @@
       </VcWidget>
 
       <div class="mt-5 flex items-center justify-between">
-        <span class="text-sm text-neutral-500">
+        <span class="text-sm text-neutral-600">
           {{ saving ? $t("return_edit.saving") : $t("return_edit.saved_automatically") }}
         </span>
 

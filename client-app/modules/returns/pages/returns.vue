@@ -278,7 +278,7 @@ watch(keyword, (value) => {
   }
 
   &__mobile-label {
-    @apply text-sm text-neutral-500;
+    @apply text-sm text-neutral-600;
   }
 
   &__mobile-value {
