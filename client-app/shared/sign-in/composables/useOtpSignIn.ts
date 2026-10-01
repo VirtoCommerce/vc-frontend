@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useFetch } from "@/core/api/common";
+import { errorHandler, HttpError, toServerError, useFetch } from "@/core/api/common";
 import { useAnalytics, useAuth } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -34,7 +34,14 @@ export function useOtpSignIn() {
     resetSignInErrors();
 
     try {
-      const { data } = await useFetch("/api/otp/request")
+      const { data } = await useFetch("/api/otp/request", {
+        onFetchError: (context) => {
+          if (context.response?.status !== HttpError.BAD_REQUEST) {
+            errorHandler(toServerError(context.error, context.response?.status), JSON.stringify(context.error));
+          }
+          return context;
+        },
+      })
         .post({ email, storeId: globals.storeId })
         .json<IOtpRequestResponse>();
 

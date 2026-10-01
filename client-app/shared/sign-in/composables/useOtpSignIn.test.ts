@@ -59,10 +59,14 @@ vi.mock("@/core/api/common", async () => {
   };
 
   const useFetch = vi.fn();
+  const errorHandler = vi.fn();
 
   return {
-    __mockFetchState: { useFetch, fetchResult },
+    __mockFetchState: { useFetch, fetchResult, errorHandler },
     useFetch,
+    errorHandler,
+    toServerError: () => "unhandled",
+    HttpError: { BAD_REQUEST: 400 },
   };
 });
 
@@ -86,6 +90,7 @@ type SignMeInMockStateType = {
 
 type FetchMockStateType = {
   useFetch: ReturnType<typeof vi.fn>;
+  errorHandler: ReturnType<typeof vi.fn>;
   fetchResult: {
     data: { value: unknown };
     error: { value: unknown };
@@ -206,6 +211,24 @@ describe("useOtpSignIn", () => {
 
     expect(result).toBeUndefined();
     expect(loading.value).toBe(false);
+  });
+
+  it("requestCode leaves a 400 to the form and reports any other failure globally", async () => {
+    const fetchState = await getFetchState();
+    let onFetchError: ((context: { response: { status: number } | null; error: unknown }) => unknown) | undefined;
+    fetchState.useFetch.mockImplementation((_url: string, options: { onFetchError: typeof onFetchError }) => {
+      onFetchError = options.onFetchError;
+      return { post: () => ({ json: () => Promise.resolve(fetchState.fetchResult) }) };
+    });
+
+    const { useOtpSignIn } = await importComposable();
+    await useOtpSignIn().requestCode("buyer@acme.com");
+
+    onFetchError?.({ response: { status: 400 }, error: "Bad Request" });
+    expect(fetchState.errorHandler).not.toHaveBeenCalled();
+
+    onFetchError?.({ response: { status: 500 }, error: "Internal Server Error" });
+    expect(fetchState.errorHandler).toHaveBeenCalledOnce();
   });
 
   it("resets loading if the fetch call itself throws synchronously", async () => {

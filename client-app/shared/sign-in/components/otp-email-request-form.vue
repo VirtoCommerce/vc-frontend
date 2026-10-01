@@ -60,9 +60,11 @@ const emit = defineEmits<{
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
+const EMAIL_MAX_LENGTH = 254;
+
 const schema = toTypedSchema(
   object({
-    email: string().required().email(),
+    email: string().required().email().max(EMAIL_MAX_LENGTH),
   }),
 );
 

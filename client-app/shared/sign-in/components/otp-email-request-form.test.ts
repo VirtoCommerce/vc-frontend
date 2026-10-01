@@ -32,11 +32,12 @@ vi.mock("vue-i18n", () => ({
 
 const stubs = {
   VcInput: {
-    props: ["modelValue", "disabled", "testIdInput"],
+    props: ["modelValue", "disabled", "error", "testIdInput"],
     emits: ["update:modelValue"],
     template: `<input
       :value="modelValue"
       :disabled="disabled"
+      :aria-invalid="error"
       :data-test-id="testIdInput"
       @input="$emit('update:modelValue', $event.target.value)"
     />`,
@@ -107,6 +108,22 @@ describe("OtpEmailRequestForm", () => {
 
     expect(requestCode).not.toHaveBeenCalled();
     expect(wrapper.emitted("succeeded")).toBeFalsy();
+  });
+
+  it("does not request a code for an email longer than the backend accepts", async () => {
+    const label = "b".repeat(63);
+    const email = `${"a".repeat(64)}@${label}.${label}.${label}.com`;
+
+    const wrapper = mountForm();
+    const input = wrapper.find('[data-test-id="otp-email-email-input"]');
+    await input.setValue(email);
+    await wrapper.find("form").trigger("submit");
+    await vi.waitFor(async () => {
+      await flushPromises();
+      expect(input.attributes("aria-invalid")).toBe("true");
+    });
+
+    expect(requestCode).not.toHaveBeenCalled();
   });
 
   it("emits disabled when the module reports OTP is disabled, without emitting succeeded", async () => {
