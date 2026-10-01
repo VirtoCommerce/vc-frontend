@@ -19,7 +19,7 @@ import dts from "rollup-plugin-dts";
 import { intersects, satisfies } from "semver";
 import ts from "typescript";
 import { bumpContractVersion } from "./bump-version.mjs";
-import { GIT_BIN, gitIn } from "./git.mjs";
+import { gitIn } from "./git.mjs";
 import { decideVersionAction, extractExportNames } from "./contract-versioning.mjs";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
@@ -703,11 +703,6 @@ function generateTailwindPreset() {
 
 const tailwindPreset = generateTailwindPreset();
 
-/**
- * Compares the freshly generated contract to the one committed on the base branch.
- * Returns null when no baseline is available (no git, no base ref, contract absent
- * at base) — callers then skip versioning logic quietly.
- */
 const git = gitIn(REPO_ROOT);
 
 /**
@@ -716,17 +711,16 @@ const git = gitIn(REPO_ROOT);
  * the RELEASE check has to judge a version level against.
  */
 function lastReleasedContractTag() {
-  if (!GIT_BIN) {
-    return "";
-  }
   const described = git(["describe", "--tags", "--match", "core-v*", "--abbrev=0"]);
   return described.status === 0 ? described.stdout.trim() : "";
 }
 
+/**
+ * Compares the freshly generated contract to the one committed on the base branch.
+ * Returns null when no baseline is available (no git, no base ref, contract absent
+ * at base) — callers then skip versioning logic quietly.
+ */
 function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT_BASE_REF) {
-  if (!GIT_BIN) {
-    return null;
-  }
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/contract/index.d.ts`]) : { status: 1 };
