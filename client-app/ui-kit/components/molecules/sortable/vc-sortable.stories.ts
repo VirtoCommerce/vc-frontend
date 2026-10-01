@@ -181,7 +181,15 @@ export const Handle: StoryType = {
 
 // MyWidget
 const item = useSortableItem(); // undefined outside a VcSortable
-<VcButton v-if="item?.handleAttrs.value" v-bind="item.handleAttrs.value" aria-label="Reorder" icon="switch-vertical" />`,
+<VcButton
+  v-if="item?.handleAttrs.value"
+  v-bind="item.handleAttrs.value"
+  aria-label="Reorder"
+  icon="switch-vertical"
+  variant="ghost"
+  color="secondary"
+  :style="item.grabbed.value ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
+/>`,
       },
     },
   },

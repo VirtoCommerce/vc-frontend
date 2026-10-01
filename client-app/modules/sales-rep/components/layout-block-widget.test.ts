@@ -22,10 +22,10 @@ vi.mock("sortablejs", () => ({
 // resolution above that branch, so it warns unless stubbed.
 const global = { components: { VcButton, VcWidget }, stubs: { VcIcon: true, VcShape: true } };
 
-// The point of layout-widget.vue: the controls sit in the widget's own header, placed by VcWidget's
-// padding rather than metrics copied outside it. A real VcWidget, because that placement is under test.
 enableAutoUnmount(afterEach);
 
+// The point of layout-widget.vue: the controls sit in the widget's own header, placed by VcWidget's
+// padding rather than metrics copied outside it. A real VcWidget, because that placement is under test.
 describe("LayoutBlock wrapping a real LayoutWidget", () => {
   // Through a real region: the controls come from the sortable item the block renders as.
   function mountBlock(editing: boolean, widget: () => unknown, options: { attachTo?: HTMLElement } = {}) {
