@@ -32,7 +32,7 @@
               {{ $t("returns.select_items.select_all") }}
             </VcCheckbox>
 
-            <span class="text-sm text-neutral-400">
+            <span class="text-sm text-neutral-500">
               {{ $t("returns.select_items.eligible_count", { eligible: returnableItems.length, total: items.length }) }}
             </span>
           </div>
@@ -47,7 +47,7 @@
               <div class="select-return-items__card">
                 <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
 
-                <div class="text-sm text-neutral-400">
+                <div class="text-sm text-neutral-500">
                   {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
                 </div>
 
@@ -56,19 +56,19 @@
                 </div>
 
                 <div class="select-return-items__card-row">
-                  <span class="text-sm text-neutral-400">{{ $t("returns.select_items.columns.ordered") }}</span>
+                  <span class="text-sm text-neutral-500">{{ $t("returns.select_items.columns.ordered") }}</span>
 
                   <span>{{ item.orderedQuantity }}</span>
                 </div>
 
                 <div class="select-return-items__card-row">
-                  <span class="text-sm text-neutral-400">{{ $t("returns.select_items.columns.returnable") }}</span>
+                  <span class="text-sm text-neutral-500">{{ $t("returns.select_items.columns.returnable") }}</span>
 
                   <span>{{ item.returnableQuantity }}</span>
                 </div>
 
                 <div v-if="item.isReturnable" class="select-return-items__card-row">
-                  <span class="text-sm text-neutral-400">{{ $t("returns.select_items.columns.quantity") }}</span>
+                  <span class="text-sm text-neutral-500">{{ $t("returns.select_items.columns.quantity") }}</span>
 
                   <ReturnQuantityInput
                     :model-value="quantities[item.orderLineItemId] ?? 0"
@@ -83,7 +83,7 @@
             <VcTableColumn id="item" v-slot="{ item }" :title="$t('returns.select_items.columns.item')">
               <div :class="{ 'text-neutral-400': !item.isReturnable }">{{ item.name }}</div>
 
-              <div class="text-sm text-neutral-400">
+              <div class="text-sm text-neutral-500">
                 {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
               </div>
 
@@ -124,12 +124,12 @@
                 @update:model-value="setQuantity(item, $event)"
               />
 
-              <span v-else class="text-neutral-400">&mdash;</span>
+              <span v-else class="text-neutral-500">&mdash;</span>
             </VcTableColumn>
           </VcTable>
 
           <div class="flex items-center justify-between p-5">
-            <span class="text-sm text-neutral-400">
+            <span class="text-sm text-neutral-500">
               {{
                 $t("returns.select_items.selected_summary", {
                   lines: selectedItems.length,
