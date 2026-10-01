@@ -25,7 +25,9 @@ on:
 jobs:
   analyze:
     name: Analyze (javascript-typescript)
-    if: ${{ github.actor != 'dependabot[bot]' &&
+    # Upstream-only: skipped in the private theme mirror (VCST-5970).
+    if: ${{ github.repository == 'VirtoCommerce/vc-frontend' &&
+         github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}
     runs-on: ubuntu-latest

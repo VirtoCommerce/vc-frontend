@@ -1,0 +1,126 @@
+# Keeps the private theme mirror in step with vc-frontend (VCST-5970). One way only:
+# upstream `dev` and all tags are pushed into the mirror; clone/* prospect branches and
+# anything else in the mirror are never touched. Mirror-only: the job is skipped in
+# vc-frontend and in forks, because only the mirror sets the repository variable
+# THEME_MIRROR=true.
+#
+# No --force, --mirror or --prune: a mirror `dev` with extra commits, a rewritten
+# upstream `dev`, or a moved tag fails the run instead of being overwritten.
+#
+# Recovery:
+#   - dev diverged: run this workflow with reset_dev=true. The mirror's current dev is
+#     saved as rescue/dev-<timestamp>, then dev is reset to upstream.
+#   - tag moved upstream: delete that tag in the mirror (git push <mirror> :refs/tags/<tag>)
+#     and re-run. clone/* branches are unaffected: they point at commits, not tags.
+#
+# Mirror setup: a write deploy key whose private half is the MIRROR_PUSH_KEY secret
+# (GITHUB_TOKEN cannot push .github/workflows changes), and optionally a Teams webhook
+# URL in TEAMS_WEBHOOK_URL. GitHub's own failure email for a scheduled run goes to whoever
+# last edited the cron line, which is an upstream author, so failures are posted there.
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+    inputs:
+      reset_dev:
+        description: 'Save mirror dev as rescue/dev-<timestamp>, then reset dev to upstream'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: vars.THEME_MIRROR == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      UPSTREAM_URL: https://github.com/VirtoCommerce/vc-frontend.git
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ssh-key: ${{ secrets.MIRROR_PUSH_KEY }}
+          fetch-depth: 0
+
+      # Upstream tags land in their own namespace so they can be compared with the
+      # mirror's before anything is pushed.
+      - name: Fetch upstream
+        run: |
+          git fetch --no-tags "$UPSTREAM_URL" \
+            '+refs/heads/dev:refs/remotes/upstream/dev' \
+            '+refs/tags/*:refs/upstream-tags/*'
+          git fetch --tags origin
+
+      - name: Diagnose
+        id: diagnose
+        run: |
+          report=report.md
+          : > "$report"
+          if git merge-base --is-ancestor refs/remotes/origin/dev refs/remotes/upstream/dev; then
+            echo "- dev: fast-forward, $(git rev-list --count refs/remotes/origin/dev..refs/remotes/upstream/dev) new commit(s)" >> "$report"
+          else
+            extra=$(git rev-list --count refs/remotes/upstream/dev..refs/remotes/origin/dev)
+            echo "- dev: DIVERGED. Mirror dev has $extra commit(s) that upstream dev does not: direct commits to the mirror's dev, or upstream rewrote its history. Fix: re-run with reset_dev=true." >> "$report"
+          fi
+          moved=0
+          while read -r tag up_sha; do
+            mirror_sha=$(git rev-parse -q --verify "refs/tags/$tag" || true)
+            if [ -n "$mirror_sha" ] && [ "$mirror_sha" != "$up_sha" ]; then
+              echo "- tag $tag: MOVED upstream. Fix: git push <mirror> :refs/tags/$tag, then re-run." >> "$report"
+              moved=$((moved + 1))
+            fi
+          done < <(git for-each-ref refs/upstream-tags --format='%(refname:strip=2) %(objectname)')
+          [ "$moved" -eq 0 ] && echo "- tags: no moved tags" >> "$report"
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Reset dev to upstream
+        if: inputs.reset_dev
+        run: |
+          stamp=$(date -u +%Y%m%dT%H%M%SZ)
+          mirror_dev=$(git rev-parse refs/remotes/origin/dev)
+          git push origin "refs/remotes/origin/dev:refs/heads/rescue/dev-$stamp"
+          git push --force-with-lease="refs/heads/dev:$mirror_dev" origin 'refs/remotes/upstream/dev:refs/heads/dev'
+          echo "- dev: reset to upstream; previous mirror dev saved as rescue/dev-$stamp" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Push dev
+        if: ${{ !inputs.reset_dev }}
+        run: |
+          git push origin 'refs/remotes/upstream/dev:refs/heads/dev'
+
+      - name: Push tags
+        run: |
+          git push origin 'refs/upstream-tags/*:refs/tags/*'
+
+      - name: Notify Teams on failure
+        if: failure()
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$TEAMS_WEBHOOK_URL" ]; then
+            echo "TEAMS_WEBHOOK_URL is not set; skipping notification."
+            exit 0
+          fi
+          details=$(cat report.md 2>/dev/null || echo "- diagnosis did not run; see the run log (checkout or fetch failed, e.g. MIRROR_PUSH_KEY revoked)")
+          jq -n --arg title "Theme mirror sync failed: $GITHUB_REPOSITORY" --arg details "$details" --arg url "$RUN_URL" '{
+            type: "message",
+            attachments: [{
+              contentType: "application/vnd.microsoft.card.adaptive",
+              content: {
+                type: "AdaptiveCard", version: "1.4",
+                body: [
+                  {type: "TextBlock", text: $title, weight: "Bolder", wrap: true},
+                  {type: "TextBlock", text: $details, wrap: true}
+                ],
+                actions: [{type: "Action.OpenUrl", title: "Open run", url: $url}]
+              }
+            }]
+          }' | curl -sS --fail -H 'Content-Type: application/json' -d @- "$TEAMS_WEBHOOK_URL"

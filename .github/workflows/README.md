@@ -1,6 +1,24 @@
 # Workflows
 
-GitHub Actions workflows for this repo. This document covers the supply-chain security setup; for what each workflow does, see the individual files.
+GitHub Actions workflows for this repo. This document covers the repository guards and the supply-chain security setup; for what each workflow does, see the individual files.
+
+## Repository guards: upstream vs. theme mirror
+
+This repo is synced into a private theme mirror that holds prospect demo branches (`clone/<prospect>-<version>`). Upstream CI, releases and deploys must not run there, and the mirror's own jobs must not run here. So every job's `if:` starts with a repository guard:
+
+```yaml
+# Upstream-only (all existing workflows)
+if: github.repository == 'VirtoCommerce/vc-frontend'
+
+# Mirror-only (build-theme.yml, sync-upstream.yml); the mirror sets the
+# repository variable THEME_MIRROR=true, vc-frontend and forks do not
+if: vars.THEME_MIRROR == 'true'
+
+# Combined with an existing condition: parenthesise anything containing ||
+if: ${{ github.repository == 'VirtoCommerce/vc-frontend' && (a || b) }}
+```
+
+A skipped job takes no runner, so guarded workflows cost the mirror nothing. [`workflow-guards.yml`](workflow-guards.yml) fails any PR that adds a job without a guard, or with a top-level `||` after it.
 
 ## Supply-chain security: pinned third-party actions
 

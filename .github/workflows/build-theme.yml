@@ -1,0 +1,118 @@
+# Builds a prospect theme in the private theme mirror and publishes the zip to blob
+# storage (VCST-5970). Mirror-only: the job is skipped in vc-frontend and in forks,
+# because only the mirror sets the repository variable THEME_MIRROR=true.
+#
+# Runs on every push to a clone/<prospect>-<version> branch; workflow_dispatch on such a
+# branch rebuilds it by hand. Only the newest push per branch is built: a newer push
+# cancels the in-flight build of the older one.
+#
+# The artifact URL is published as the `theme-artifact` run artifact (artifact-url.json):
+# job outputs are not readable through the REST API. A consumer that wants the artifact
+# of a branch looks up the successful run whose head_sha is the branch's current head.
+name: Build Theme
+
+on:
+  push:
+    branches:
+      - 'clone/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-theme-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: vars.THEME_MIRROR == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FORCE_COLOR: true
+    steps:
+      # The push trigger already filters on clone/**; this catches a manual dispatch on
+      # any other branch.
+      - name: Only prospect branches
+        run: |
+          case "$GITHUB_REF" in
+            refs/heads/clone/*) ;;
+            *) echo "::error::Build Theme only builds clone/* branches (got ${GITHUB_REF})."; exit 1 ;;
+          esac
+
+      - name: Set up Node 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '22'
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # <theme version>-<prospect branch>-<sha>, e.g. 2.57.0-acme-2.57.0-1a2b3c4: unique per
+      # build, and the zip name alone says which branch and commit it came from.
+      - name: Set VERSION
+        run: |
+          base=$(jq -r .version package.json)
+          slug=$(printf '%s' "${GITHUB_REF_NAME#clone/}" | tr -c 'A-Za-z0-9.-' '-')
+          echo "VERSION=${base}-${slug}-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Update package.json Version
+        run: |
+          yarn version "$VERSION"
+
+      - name: Install dependencies
+        run: |
+          yarn install --immutable
+
+      - name: Build
+        run: |
+          yarn build
+
+      - name: Add files to zip
+        run: |
+          mkdir -p ./tmp/default
+          mkdir ./artifacts
+          mv ./dist/* ./tmp/default
+          cd ./tmp
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
+
+      - name: Publish to Blob
+        id: blobRelease
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
+        with:
+          blobSAS: ${{ secrets.BLOB_TOKEN }}
+          blobUrl: ${{ vars.BLOB_URL }}
+
+      - name: Write artifact-url.json
+        env:
+          PACKAGE_URL: ${{ steps.blobRelease.outputs.packageUrl }}
+        run: |
+          if [ -z "$PACKAGE_URL" ]; then
+            echo "::error::Publish to Blob returned no package URL."
+            exit 1
+          fi
+          jq -n \
+            --arg url "$PACKAGE_URL" \
+            --arg ref "$GITHUB_REF_NAME" \
+            --arg sha "$GITHUB_SHA" \
+            --arg version "$VERSION" \
+            '{url: $url, ref: $ref, sha: $sha, version: $version}' \
+            > artifact-url.json
+          {
+            echo "### Theme artifact"
+            echo
+            echo "- Branch: \`$GITHUB_REF_NAME\` (\`${GITHUB_SHA::7}\`)"
+            echo "- Version: \`$VERSION\`"
+            echo "- URL: $PACKAGE_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload artifact-url.json
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: theme-artifact
+          path: artifact-url.json
+          if-no-files-found: error

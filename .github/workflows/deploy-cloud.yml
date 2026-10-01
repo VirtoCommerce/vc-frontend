@@ -83,6 +83,8 @@ on:
 
 jobs:
   deploy:
+    # Upstream-only: skipped in the private theme mirror (VCST-5970).
+    if: github.repository == 'VirtoCommerce/vc-frontend'
     runs-on: ubuntu-latest
     env:
       CLIENT_ID: ${{secrets.CLIENT_ID}}

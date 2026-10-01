@@ -4,6 +4,8 @@ on:
 
 jobs:
   ci:
+    # Upstream-only: skipped in the private theme mirror (VCST-5970).
+    if: github.repository == 'VirtoCommerce/vc-frontend'
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}

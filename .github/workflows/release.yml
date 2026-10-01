@@ -6,6 +6,8 @@ on:
 
 jobs:
   release:
+    # Upstream-only: skipped in the private theme mirror (VCST-5970).
+    if: github.repository == 'VirtoCommerce/vc-frontend'
     uses: VirtoCommerce/.github/.github/workflows/release.yml@v3.1000.1
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
