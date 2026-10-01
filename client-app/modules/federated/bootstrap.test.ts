@@ -67,15 +67,19 @@ describe("startFederatedModules", () => {
     expect(fetchPlugins).not.toHaveBeenCalled();
   });
 
-  it("treats a theme without the module_federation_enabled key as enabled", async () => {
-    stubThemeSettings({});
-    initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
-    const { startFederatedModules } = await loadBootstrap();
+  it.each([{}, { module_federation_enabled: "true" }, { module_federation_enabled: 1 }])(
+    "is a no-op when the theme settings are %j",
+    async (settings) => {
+      stubThemeSettings(settings);
+      const fetchPlugins = vi.fn();
+      const { startFederatedModules } = await loadBootstrap();
 
-    await startFederatedModules();
+      await startFederatedModules({ fetchPlugins });
 
-    expect(initFederatedModulesMock).toHaveBeenCalledOnce();
-  });
+      expect(initFederatedModulesMock).not.toHaveBeenCalled();
+      expect(fetchPlugins).not.toHaveBeenCalled();
+    },
+  );
 
   it("resolves (never rejects) when the loader chunk fails to load", async () => {
     vi.doMock("./index", () => {
