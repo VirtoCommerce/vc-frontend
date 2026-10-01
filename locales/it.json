@@ -769,7 +769,7 @@
             "done": "(completato)",
             "selected": "{name} — {value}",
             "required": "{name} — obbligatorio",
-            "optional": "{name} — facoltativo",
+            "optional": "{name} — opzionale",
             "fill_it_in": "Compila",
             "upload_file": "Carica un file",
             "check_it_out": "Scopri",

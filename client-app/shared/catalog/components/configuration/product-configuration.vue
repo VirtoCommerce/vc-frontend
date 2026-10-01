@@ -15,7 +15,8 @@
           data-test-id="section"
           collapsible
           size="xs"
-          :collapsed="index !== 0"
+          :collapsed="collapsedSections[section.id] ?? index !== 0"
+          @toggle-collapse="collapsedSections[section.id] = $event"
         >
           <template #title>
             <div class="product-configuration__title" data-test-id="section-title">
@@ -202,21 +203,19 @@ const notifications = useNotifications();
 const { onNavigateToSection } = useConfigurationSectionNavigation();
 
 const isMouseInteraction = ref(false);
+const collapsedSections = ref<Record<string, boolean>>({});
 
 onNavigateToSection(async (sectionId) => {
+  collapsedSections.value[sectionId] = false;
+  await nextTick();
+
   const sectionElement = document.getElementById(getConfigurationSectionElementId(sectionId));
-  const sectionHeader = sectionElement?.querySelector<HTMLElement>(".vc-widget__header-container");
-  if (!sectionElement || !sectionHeader) {
+  if (!sectionElement) {
     return;
   }
 
-  if (sectionElement.classList.contains("vc-widget--collapsed")) {
-    sectionHeader.click();
-    await nextTick();
-  }
-
   sectionElement.scrollIntoView({ behavior: "smooth", block: "start" });
-  sectionHeader.focus({ preventScroll: true });
+  sectionElement.querySelector<HTMLElement>(".vc-widget__header-container")?.focus({ preventScroll: true });
 });
 
 function handleItemsFocusIn(event: FocusEvent) {

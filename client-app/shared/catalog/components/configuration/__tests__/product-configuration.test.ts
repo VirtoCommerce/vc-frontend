@@ -75,8 +75,13 @@ function getSection(wrapper: ReturnType<typeof mountConfiguration>, sectionId: s
   return wrapper.get(`#product-configuration-section-${sectionId}`);
 }
 
-function isCollapsed(wrapper: ReturnType<typeof mountConfiguration>, sectionId: string) {
-  return getSection(wrapper, sectionId).classes().includes("vc-widget--collapsed");
+// Visibility of the section content (our own markup), not VcWidget internals
+function isExpanded(wrapper: ReturnType<typeof mountConfiguration>, sectionId: string) {
+  return getSection(wrapper, sectionId).get(".product-configuration__items").isVisible();
+}
+
+function getSectionHeader(wrapper: ReturnType<typeof mountConfiguration>, sectionId: string) {
+  return getSection(wrapper, sectionId).get(".vc-widget__header-container");
 }
 
 describe("ProductConfiguration sections", () => {
@@ -97,11 +102,24 @@ describe("ProductConfiguration sections", () => {
   it("expands only the first section initially", () => {
     const wrapper = mountConfiguration();
 
-    expect([isCollapsed(wrapper, "layers"), isCollapsed(wrapper, "filling"), isCollapsed(wrapper, "icing")]).toEqual([
+    expect(["layers", "filling", "icing"].map((sectionId) => isExpanded(wrapper, sectionId))).toEqual([
+      true,
       false,
-      true,
-      true,
+      false,
     ]);
+  });
+
+  it("reveals a section on navigation request: expands it before scrolling, then focuses its header", async () => {
+    const wrapper = mountConfiguration();
+    const expandedAtScroll: boolean[] = [];
+    scrollIntoView.mockImplementation(() => expandedAtScroll.push(isExpanded(wrapper, "icing")));
+
+    useConfigurationSectionNavigation().navigateToSection("icing");
+    await flushPromises();
+
+    expect(expandedAtScroll).toEqual([true]);
+    expect(scrollIntoView.mock.contexts).toEqual([getSection(wrapper, "icing").element]);
+    expect(document.activeElement).toBe(getSectionHeader(wrapper, "icing").element);
   });
 
   it("keeps an already expanded section open on navigation request", async () => {
@@ -110,29 +128,39 @@ describe("ProductConfiguration sections", () => {
     useConfigurationSectionNavigation().navigateToSection("layers");
     await flushPromises();
 
-    expect(isCollapsed(wrapper, "layers")).toBe(false);
-    expect(document.activeElement).toBe(getSection(wrapper, "layers").get(".vc-widget__header-container").element);
+    expect(isExpanded(wrapper, "layers")).toBe(true);
+    expect(document.activeElement).toBe(getSectionHeader(wrapper, "layers").element);
   });
 
-  it("reveals a section on navigation request: expands, scrolls to it and focuses its header", async () => {
+  it("expands again a section the user has collapsed", async () => {
+    const wrapper = mountConfiguration();
+
+    await getSectionHeader(wrapper, "layers").trigger("click");
+    expect(isExpanded(wrapper, "layers")).toBe(false);
+
+    useConfigurationSectionNavigation().navigateToSection("layers");
+    await flushPromises();
+
+    expect(isExpanded(wrapper, "layers")).toBe(true);
+  });
+
+  it("ignores a request for a section that is not rendered", async () => {
+    mountConfiguration();
+
+    useConfigurationSectionNavigation().navigateToSection("missing");
+    await flushPromises();
+
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("stops listening to navigation requests after unmount", async () => {
+    mountConfiguration().unmount();
     const wrapper = mountConfiguration();
 
     useConfigurationSectionNavigation().navigateToSection("icing");
     await flushPromises();
 
-    const section = getSection(wrapper, "icing");
-    expect(isCollapsed(wrapper, "icing")).toBe(false);
-    expect(scrollIntoView.mock.contexts).toEqual([section.element]);
-    expect(document.activeElement).toBe(section.get(".vc-widget__header-container").element);
-  });
-
-  it("stops listening to navigation requests after unmount", async () => {
-    mountConfiguration().unmount();
-    mountedWrapper = undefined;
-
-    useConfigurationSectionNavigation().navigateToSection("icing");
-    await flushPromises();
-
-    expect(scrollIntoView).not.toHaveBeenCalled();
+    expect(scrollIntoView).toHaveBeenCalledOnce();
+    expect(isExpanded(wrapper, "icing")).toBe(true);
   });
 });

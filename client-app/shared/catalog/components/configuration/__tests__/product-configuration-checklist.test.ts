@@ -126,12 +126,16 @@ describe("ProductConfigurationChecklist", () => {
       createSection({ id: "text", name: "Text", type: "Text", isRequired: true }),
       createSection({ id: "photo", name: "Photo", type: "File", isRequired: true }),
       createSection({ id: "icing", name: "Icing", type: "Product" }),
+      createSection({ id: "message", name: "Message", type: "Text" }),
+      createSection({ id: "topper", name: "Topper", type: "File" }),
     ];
     mocks.selectedConfiguration.value = {
       layers: { selectedOptionTextValue: "Top: Chocolate / Bottom: Chocolate" },
       text: { selectedOptionTextValue: "Happy birthday" },
       photo: { selectedOptionTextValue: "cake.png" },
       icing: { selectedOptionTextValue: "Vanilla" },
+      message: { selectedOptionTextValue: "With love" },
+      topper: { selectedOptionTextValue: "topper.png" },
     };
 
     expect(getRows(mountChecklist())).toEqual([
@@ -139,7 +143,24 @@ describe("ProductConfigurationChecklist", () => {
       { status: "done", label: "Text (completed)", action: undefined },
       { status: "done", label: "Photo (completed)", action: undefined },
       { status: "done", label: "Icing — Vanilla (completed)", action: undefined },
+      { status: "done", label: "Message (completed)", action: undefined },
+      { status: "done", label: "Topper (completed)", action: undefined },
     ]);
+  });
+
+  it("picks the icon by status", () => {
+    mocks.configuration.value = [
+      createSection({ id: "layers", name: "Layers", isRequired: true }),
+      createSection({ id: "filling", name: "Filling", isRequired: true }),
+      createSection({ id: "icing", name: "Icing" }),
+    ];
+    mocks.selectedConfiguration.value = { layers: { selectedOptionTextValue: "Chocolate" } };
+
+    const icons = mountChecklist()
+      .findAll('[data-test-id="configuration-checklist-item"]')
+      .map((item) => item.get("vc-icon-stub").attributes("name"));
+
+    expect(icons).toEqual(["circle-check", "circle-alert", "circle-alert"]);
   });
 
   it("turns a row green as soon as its section gets filled", async () => {

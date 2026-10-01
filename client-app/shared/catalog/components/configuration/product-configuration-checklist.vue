@@ -11,12 +11,7 @@
       :class="['product-configuration-checklist__item', `product-configuration-checklist__item--${item.status}`]"
       data-test-id="configuration-checklist-item"
     >
-      <VcIcon
-        class="product-configuration-checklist__icon"
-        :name="item.status === 'done' ? 'circle-check' : 'circle-alert'"
-        :size="16"
-        aria-hidden="true"
-      />
+      <VcIcon :name="item.status === 'done' ? 'circle-check' : 'circle-alert'" :size="16" aria-hidden="true" />
 
       <div class="product-configuration-checklist__content">
         <span
@@ -135,10 +130,24 @@ function getRequiredActionText(sectionType: string) {
 
   &__item {
     @apply flex gap-2;
-  }
 
-  &__icon {
-    @apply shrink-0;
+    &--done {
+      --vc-icon-color: var(--color-success-700);
+
+      @apply text-success-800;
+    }
+
+    &--required {
+      --vc-icon-color: var(--color-danger-700);
+
+      @apply text-danger-800;
+    }
+
+    &--optional {
+      --vc-icon-color: var(--color-warning-700);
+
+      @apply text-warning-800;
+    }
   }
 
   &__content {
@@ -151,30 +160,6 @@ function getRequiredActionText(sectionType: string) {
 
   &__link {
     @apply self-start font-bold text-[--link-color] hover:text-[--link-hover-color];
-  }
-
-  &__item--done {
-    @apply text-success-800;
-  }
-
-  &__item--done &__icon {
-    @apply text-success-700;
-  }
-
-  &__item--required {
-    @apply text-danger-800;
-  }
-
-  &__item--required &__icon {
-    @apply text-danger-700;
-  }
-
-  &__item--optional {
-    @apply text-warning-800;
-  }
-
-  &__item--optional &__icon {
-    @apply text-warning-700;
   }
 }
 </style>

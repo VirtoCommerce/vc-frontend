@@ -768,7 +768,7 @@
             "title": "Sjekkliste for konfigurasjon",
             "done": "(fullført)",
             "selected": "{name} — {value}",
-            "required": "{name} — påkrevd",
+            "required": "{name} — obligatorisk",
             "optional": "{name} — valgfritt",
             "fill_it_in": "Fyll ut",
             "upload_file": "Last opp en fil",
