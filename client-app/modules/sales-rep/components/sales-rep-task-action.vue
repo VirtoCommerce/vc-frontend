@@ -68,7 +68,7 @@ const label = computed(() => (action.value ? t(action.value.labelKey) : ""));
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-action {
   // Lines the glyph up with the column heading (or the card text on mobile).
-  // TODO: --px and the 2px border-2 are VcButton internals; use public --vc-button-* tokens once the kit has them.
+  // TODO(VCST-6133): --px and the 2px border-2 are VcButton internals; switch to the public tokens it adds.
   margin-inline-start: calc((var(--px) + 2px) * -1);
 
   // VcButton only spaces its own prepend-icon; a slotted one brings its own gap.

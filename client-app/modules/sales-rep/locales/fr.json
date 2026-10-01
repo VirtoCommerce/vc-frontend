@@ -210,7 +210,7 @@
       "due_dates": "Échéances",
       "today": "Aujourd'hui",
       "all": "Toutes",
-      "clear_day_aria": "Retirer {date} et revenir à aujourd'hui",
+      "clear_day_aria": "Retirer {date}",
       "empty": "Aucune tâche dans cet onglet",
       "empty_day": "Aucune échéance ce jour-là",
       "load_failed": "Impossible de charger les tâches",

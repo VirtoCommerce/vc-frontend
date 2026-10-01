@@ -210,7 +210,7 @@
       "due_dates": "Terminy",
       "today": "Dziś",
       "all": "Wszystkie",
-      "clear_day_aria": "Usuń {date} i wróć do dziś",
+      "clear_day_aria": "Usuń {date}",
       "empty": "Brak zadań na tej karcie",
       "empty_day": "Brak terminów w tym dniu",
       "load_failed": "Nie udało się wczytać zadań",

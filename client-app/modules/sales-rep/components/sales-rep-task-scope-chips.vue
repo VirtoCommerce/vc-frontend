@@ -1,47 +1,48 @@
 <template>
-  <!-- Opened by picking a day other than today, closed only by its ×. No badge: the mockup gives it none. -->
-  <span v-if="showDay" class="sales-rep-task-scope-chips__day">
-    <VcTabSwitch class="sales-rep-rule-chips__tab" size="sm" value="day" :model-value="view" @change="$emit('day')">
-      <span class="sales-rep-rule-chips__label">{{ dayLabel }}</span>
+  <!-- display: contents — the chips stay flex items of the rule-chips row, and the block still has a root. -->
+  <div class="sales-rep-task-scope-chips">
+    <!-- Opened by picking a day other than today, closed only by its ×. No badge: the mockup gives it none. -->
+    <span v-if="showDay" class="sales-rep-task-scope-chips__day">
+      <SalesRepRuleChip value="day" :model-value="view" :label="dayLabel" @change="$emit('day')">
+        <template #append>
+          <!-- Room for the clear button laid over this end: the chip's content sits in a <button> of its own. -->
+          <span class="sales-rep-task-scope-chips__clear-space" aria-hidden="true" />
+        </template>
+      </SalesRepRuleChip>
 
-      <!-- Room for the clear button laid over this end: the tab's content sits in a <button> of its own. -->
-      <span class="sales-rep-task-scope-chips__clear-space" aria-hidden="true" />
-    </VcTabSwitch>
+      <button
+        type="button"
+        class="sales-rep-task-scope-chips__clear"
+        :aria-label="t('sales_rep.tasks.clear_day_aria', { date: dayLabel })"
+        @click="clearDay"
+      >
+        <VcIcon name="delete-2" size="12px" />
+      </button>
+    </span>
 
-    <button
-      type="button"
-      class="sales-rep-task-scope-chips__clear"
-      :aria-label="t('sales_rep.tasks.clear_day_aria', { date: dayLabel })"
-      @click="clearDay"
-    >
-      <VcIcon name="delete-2" size="12px" />
-    </button>
-  </span>
+    <SalesRepRuleChip
+      ref="todayChipRef"
+      value="today"
+      :model-value="view"
+      :label="t('sales_rep.tasks.today')"
+      :count="counts.today"
+      @change="$emit('today')"
+    />
 
-  <VcTabSwitch
-    ref="todayTabRef"
-    class="sales-rep-rule-chips__tab"
-    size="sm"
-    value="today"
-    :model-value="view"
-    @change="$emit('today')"
-  >
-    <span class="sales-rep-rule-chips__label">{{ t("sales_rep.tasks.today") }}</span>
-
-    <span class="sales-rep-rule-chips__count">{{ formatStatCount(counts.today) }}</span>
-  </VcTabSwitch>
-
-  <VcTabSwitch class="sales-rep-rule-chips__tab" size="sm" value="all" :model-value="view" @change="$emit('all')">
-    <span class="sales-rep-rule-chips__label">{{ t("sales_rep.tasks.all") }}</span>
-
-    <span class="sales-rep-rule-chips__count">{{ formatStatCount(counts.all) }}</span>
-  </VcTabSwitch>
+    <SalesRepRuleChip
+      value="all"
+      :model-value="view"
+      :label="t('sales_rep.tasks.all')"
+      :count="counts.all"
+      @change="$emit('all')"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { formatStatCount } from "../utils";
+import SalesRepRuleChip from "./sales-rep-rule-chip.vue";
 import type { SalesRepTaskCountsType, SalesRepTaskScopeType } from "../types/tasks";
 import type { ComponentPublicInstance } from "vue";
 
@@ -66,10 +67,10 @@ defineProps<IProps>();
 
 const { t } = useI18n();
 
-const todayTabRef = useTemplateRef<ComponentPublicInstance | null>("todayTabRef");
+const todayChipRef = useTemplateRef<ComponentPublicInstance | null>("todayChipRef");
 
 function clearDay(): void {
-  (todayTabRef.value?.$el as HTMLElement | undefined)?.querySelector("button")?.focus();
+  (todayChipRef.value?.$el as HTMLElement | undefined)?.querySelector("button")?.focus();
   emit("clearDay");
 }
 </script>
@@ -77,17 +78,21 @@ function clearDay(): void {
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-scope-chips {
+  @apply contents;
+
   &__day {
     @apply relative inline-flex;
   }
 
+  // Wide enough that the 24px clear button clears the date beside it.
   &__clear-space {
-    @apply inline-block w-4;
+    @apply inline-block w-5;
   }
 
   // A sibling laid over the chip's end, not a child: it cannot nest inside the tab's own <button>.
+  // 24px: the WCAG 2.5.8 minimum, as it overlaps the chip's own target.
   &__clear {
-    @apply absolute inset-y-0 end-1 my-auto flex size-5 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900;
+    @apply absolute inset-y-0 end-1 my-auto flex size-6 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900;
   }
 }
 </style>

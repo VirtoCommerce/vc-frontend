@@ -210,7 +210,7 @@
       "due_dates": "Vencimientos",
       "today": "Hoy",
       "all": "Todas",
-      "clear_day_aria": "Quitar {date} y volver a hoy",
+      "clear_day_aria": "Quitar {date}",
       "empty": "No hay tareas en esta pestaña",
       "empty_day": "No vence nada este día",
       "load_failed": "No se pudieron cargar las tareas",

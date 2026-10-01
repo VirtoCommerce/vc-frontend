@@ -210,7 +210,7 @@
       "due_dates": "Eräpäivät",
       "today": "Tänään",
       "all": "Kaikki",
-      "clear_day_aria": "Poista {date}, takaisin tähän päivään",
+      "clear_day_aria": "Poista {date}",
       "empty": "Tällä välilehdellä ei ole tehtäviä",
       "empty_day": "Tänä päivänä ei eräänny mitään",
       "load_failed": "Tehtäviä ei voitu ladata",

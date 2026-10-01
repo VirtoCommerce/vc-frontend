@@ -210,7 +210,7 @@
       "due_dates": "Scadenze",
       "today": "Oggi",
       "all": "Tutte",
-      "clear_day_aria": "Rimuovi {date} e torna a oggi",
+      "clear_day_aria": "Rimuovi {date}",
       "empty": "Nessuna attività in questa scheda",
       "empty_day": "Nessuna scadenza in questo giorno",
       "load_failed": "Impossibile caricare le attività",

@@ -372,15 +372,19 @@ describe("Tasks page scope chips", () => {
     scopeChips(wrapper).vm.$emit("clearDay");
     await flushPromises();
 
-    expect(taskOptions().period.value).toEqual(localDayWindow(localDayKey(new Date())));
+    const today = localDayKey(new Date());
+    expect(taskOptions().period.value).toEqual(localDayWindow(today));
+    expect(state.setMonth).toHaveBeenLastCalledWith(today);
     expect(scopeChips(wrapper).props()).toMatchObject({ view: "today", showDay: false });
   });
 
-  // The day's chip stays while a tab is on, so the rep can get back to that day; clearing it leaves the tab alone.
+  // The day's chip stays while a tab is on, so the rep can get back to that day; clearing it leaves the tab alone,
+  // and the month the rep paged the grid to under it.
   it("keeps the picked day's chip under a tab, and clears it without dropping the tab", async () => {
     const wrapper = createWrapper();
     await pickDay(wrapper, "2026-10-20");
     await pickTab(wrapper, "overdue");
+    state.setMonth.mockClear();
 
     expect(scopeChips(wrapper).props()).toMatchObject({ view: undefined, showDay: true });
 
@@ -389,6 +393,26 @@ describe("Tasks page scope chips", () => {
 
     expect(state.filterParam.value).toBe("overdue");
     expect(scopeChips(wrapper).props()).toMatchObject({ view: undefined, showDay: false });
+    expect(state.setMonth).not.toHaveBeenCalled();
+
+    // The cleared day is not left behind as the new task's default either.
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { defaultDay: string } };
+    expect(call.props.defaultDay).toBe(localDayKey(new Date()));
+  });
+
+  it("clears the picked day under All without leaving All or moving the grid", async () => {
+    const wrapper = createWrapper();
+    await pickDay(wrapper, "2026-10-20");
+    scopeChips(wrapper).vm.$emit("all");
+    await flushPromises();
+    state.setMonth.mockClear();
+
+    scopeChips(wrapper).vm.$emit("clearDay");
+    await flushPromises();
+
+    expect(scopeChips(wrapper).props()).toMatchObject({ view: "all", showDay: false });
+    expect(state.setMonth).not.toHaveBeenCalled();
   });
 
   it("goes back to the picked day from its chip", async () => {
@@ -417,6 +441,31 @@ describe("Tasks page scope chips", () => {
     expect(wrapper.get(".sales-rep-tasks-page__day-title").text()).toBe("sales_rep.tasks.all");
     // Not day-scoped, so no day is highlighted.
     expect(wrapper.getComponent(CalendarStub).props("modelValue")).toBeUndefined();
+  });
+
+  // All spans every rule as well as every date, so it replaces a status tab — and its `?filter=` — rather than
+  // narrowing to it.
+  it("drops the status tab for All", async () => {
+    const wrapper = createWrapper();
+    await pickTab(wrapper, "overdue");
+
+    scopeChips(wrapper).vm.$emit("all");
+    await flushPromises();
+
+    expect(state.filterParam.value).toBe("");
+    expect(taskOptions().filter.value).toBeUndefined();
+    expect(scopeChips(wrapper).props("view")).toBe("all");
+  });
+
+  it("leaves All for the day picked in the calendar", async () => {
+    const wrapper = createWrapper();
+    scopeChips(wrapper).vm.$emit("all");
+    await flushPromises();
+
+    await pickDay(wrapper, "2026-10-20");
+
+    expect(scopeChips(wrapper).props("view")).toBe("day");
+    expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-20"));
   });
 });
 

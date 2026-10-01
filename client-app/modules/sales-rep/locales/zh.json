@@ -210,7 +210,7 @@
       "due_dates": "截止日期",
       "today": "今天",
       "all": "全部",
-      "clear_day_aria": "清除 {date}，返回今天",
+      "clear_day_aria": "清除 {date}",
       "empty": "此标签页没有任务",
       "empty_day": "当天没有到期事项",
       "load_failed": "无法加载任务",

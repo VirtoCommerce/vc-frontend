@@ -137,6 +137,9 @@ function titleClass(task: SalesRepTaskType) {
     // title grows its own column and `max-w-full` then resolves against a cell that has already stretched —
     // truncate never engaged and the table overflowed the page instead (QA M-1). Wrapping text has a
     // min-content width of its longest word, which the column can shrink to; the clamp caps the height.
+    //
+    // Link-coloured by design. On a hovered row it drops below AA in two presets: VcTable's fixed hover fill,
+    // tracked in VCST-6134.
     @apply line-clamp-2 max-w-full text-start text-sm font-bold text-[--link-color] hover:text-[--link-hover-color];
 
     &--completed {

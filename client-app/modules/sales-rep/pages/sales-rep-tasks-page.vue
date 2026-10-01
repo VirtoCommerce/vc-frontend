@@ -159,7 +159,8 @@ const breadcrumbs = useBreadcrumbs(() => [
 // Names the month rail's landmark after its own heading.
 const dueDatesTitleId = useId();
 
-// Resolved once, like the counts' own boundary: a "today" that moved mid-session would reshuffle the chips.
+// Resolved once, like the counts' own boundary: a "today" that moved mid-session would reshuffle the chips. So, on
+// purpose, a page left open past midnight keeps listing the day it opened on under Today until it is reloaded.
 const todayKey = localDayKey(new Date());
 const selectedDay = ref(todayKey);
 // The date chip's day: opened by picking a day other than today, closed only by its ×.
@@ -175,8 +176,8 @@ const { month, setMonth } = useMonthAnchor();
  * goes back to that day's full list. Anding them is what made an active "Completed 3" sit over an empty list —
  * the badges count the whole set, so a tab must show the whole set too.
  *
- * Held in the URL, so the dashboard's overdue notice can deep-link to `?filter=overdue` and the view survives
- * a refresh. `replace`, not `push`: stepping through the chips must not turn Back into an undo button. The
+ * Held in the URL, so the dashboard's overdue notice can deep-link to `?filter=overdue` and a status tab survives
+ * a refresh (All and a picked day do not: they reopen on Today). `replace`, not `push`: stepping through the chips must not turn Back into an undo button. The
  * baseline writes an empty string, which useRouteQueryParam drops from the query, so the day view stays on a
  * clean URL — and the day itself is not in there, because it defaults to today and a bookmarked date goes stale.
  */
@@ -282,13 +283,19 @@ function showDateChip(): void {
   }
 }
 
-// The date chip's ×. A view of its day falls back to today; a tab or All stays on screen.
+// The date chip's ×. A view of its day falls back to today; a tab or All stays on screen, and so does the month
+// the rep paged the grid to under it.
 function clearDay(): void {
-  const wasItsDay = selectedDay.value === dateChip.value;
+  const wasOnScreen = scopeView.value === "day";
+
+  // Also the new-task modal's default day, so it must not outlive the chip, on screen or not.
+  if (selectedDay.value === dateChip.value) {
+    selectedDay.value = todayKey;
+  }
+
   dateChip.value = undefined;
 
-  if (wasItsDay) {
-    selectedDay.value = todayKey;
+  if (wasOnScreen) {
     setMonth(todayKey);
   }
 }

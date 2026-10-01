@@ -210,7 +210,7 @@
       "due_dates": "Prazos",
       "today": "Hoje",
       "all": "Todas",
-      "clear_day_aria": "Remover {date} e voltar a hoje",
+      "clear_day_aria": "Remover {date}",
       "empty": "Nenhuma tarefa nesta aba",
       "empty_day": "Nada com prazo neste dia",
       "load_failed": "Falha ao carregar as tarefas",

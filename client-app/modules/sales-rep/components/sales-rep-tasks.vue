@@ -12,7 +12,13 @@
       <div class="sales-rep-tasks__body">
         <!-- Full size: the dashboard rail has the width for it (7 × 2.5rem + gaps, 292px, inside the body's
              padding), unlike the Tasks page's narrower month rail, which takes `sm`. -->
-        <SalesRepTaskCalendar v-model="selectedDay" :month="month" :day-markers="dayMarkers" @update:month="setMonth" />
+        <SalesRepTaskCalendar
+          v-model="selectedDay"
+          class="sales-rep-tasks__calendar"
+          :month="month"
+          :day-markers="dayMarkers"
+          @update:month="setMonth"
+        />
 
         <!-- The one thing on this widget that is not about the day on screen: overdue work is due in the past,
              so without this the dashboard shows a rep nothing at all about it. -->
@@ -132,11 +138,11 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
 .sales-rep-tasks {
   &__body {
     @apply flex flex-col px-6 py-2;
+  }
 
-    // The calendar is inline-flex over fixed-width columns: stretched, its days bunch against one edge (QA M-10).
-    .sales-rep-task-calendar {
-      @apply self-center;
-    }
+  // The calendar is inline-flex over fixed-width columns: stretched, its days bunch against one edge (QA M-10).
+  &__calendar {
+    @apply self-center;
   }
 
   &__all-link {

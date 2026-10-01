@@ -210,7 +210,7 @@
       "due_dates": "Fälligkeiten",
       "today": "Heute",
       "all": "Alle",
-      "clear_day_aria": "{date} entfernen, zurück zu heute",
+      "clear_day_aria": "{date} entfernen",
       "empty": "Keine Aufgaben in diesem Tab",
       "empty_day": "An diesem Tag ist nichts fällig",
       "load_failed": "Aufgaben konnten nicht geladen werden",

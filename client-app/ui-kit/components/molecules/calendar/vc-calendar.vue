@@ -403,7 +403,9 @@ defineExpose({
   --text-color: var(--color-neutral-800);
 
   --border-width: var(--vc-calendar-border-width, 1px);
-  --padding: var(--vc-calendar-padding, theme("padding.3"));
+  // Each size sets only its own default below; the public token overrides all of them here.
+  --size-padding: theme("padding.3");
+  --padding: var(--vc-calendar-padding, var(--size-padding));
 
   @apply inline-flex flex-col gap-2 bg-[--bg-color] text-[--text-color] border-[--border-color] rounded-[--radius];
 
@@ -426,7 +428,7 @@ defineExpose({
       --heading-text: 0.875rem;
       --weekday-text: 0.625rem;
       --grid-gap: 0.125rem;
-      --padding: var(--vc-calendar-padding, theme("padding.2"));
+      --size-padding: theme("padding.2");
 
       @apply gap-1.5;
     }
@@ -437,7 +439,7 @@ defineExpose({
       --heading-text: 0.8125rem;
       --weekday-text: 0.625rem;
       --grid-gap: 0.0625rem;
-      --padding: var(--vc-calendar-padding, theme("padding[1.5]"));
+      --size-padding: theme("padding[1.5]");
 
       @apply gap-1;
     }

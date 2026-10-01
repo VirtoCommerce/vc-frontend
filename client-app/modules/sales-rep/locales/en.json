@@ -210,7 +210,7 @@
       "due_dates": "Due dates",
       "today": "Today",
       "all": "All",
-      "clear_day_aria": "Clear {date}, back to today",
+      "clear_day_aria": "Clear {date}",
       "empty": "No tasks in this tab",
       "empty_day": "Nothing due on this day",
       "load_failed": "Couldn't load tasks",
