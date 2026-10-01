@@ -2,7 +2,7 @@
   <VcInput
     v-model="draft"
     type="number"
-    size="xs"
+    size="sm"
     min="0"
     :max="max"
     :disabled="disabled"
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 
 interface IProps {
   modelValue: number;
@@ -54,7 +54,11 @@ function onInput(): void {
   const value = clamp();
 
   if (Number(draft.value) > value) {
-    draft.value = value || undefined;
+    // After the typed number has rendered: corrected in the same tick, the field would get back the value
+    // it had before the keystroke, so it would not be rewritten and would keep showing, say, 50 of 5.
+    void nextTick(() => {
+      draft.value = value || undefined;
+    });
   }
 
   emit("update:modelValue", value);
