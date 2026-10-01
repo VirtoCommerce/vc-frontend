@@ -521,7 +521,7 @@
           "store_not_found": "Ten sklep nie istnieje.",
           "duplicate_email_login_attempt": "Kilka kont używa tego adresu e-mail.",
           "lockout_disabled": "To konto nie może logować się za pomocą kodu.",
-          "invalid_code": "Ten kod jest nieprawidłowy. Sprawdź najnowszą wiadomość e-mail.",
+          "invalid_code": "Ten kod nie zadziałał.",
           "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },

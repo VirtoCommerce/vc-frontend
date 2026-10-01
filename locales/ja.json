@@ -521,7 +521,7 @@
           "store_not_found": "このストアは存在しません。",
           "duplicate_email_login_attempt": "このメールアドレスは複数のアカウントで使用されています。",
           "lockout_disabled": "このアカウントはコードでサインインできません。",
-          "invalid_code": "コードが正しくありません。最新のメールをご確認ください。",
+          "invalid_code": "このコードは使用できませんでした。",
           "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },

@@ -521,7 +521,7 @@
           "store_not_found": "此商店不存在。",
           "duplicate_email_login_attempt": "多个账户使用此电子邮件。",
           "lockout_disabled": "此账户无法使用验证码登录。",
-          "invalid_code": "验证码不正确。请查看最新邮件。",
+          "invalid_code": "该验证码无法使用。",
           "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },

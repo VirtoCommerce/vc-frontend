@@ -521,7 +521,7 @@
           "store_not_found": "Такого магазина не существует.",
           "duplicate_email_login_attempt": "Этот адрес электронной почты используют несколько аккаунтов.",
           "lockout_disabled": "Этот аккаунт не может входить по коду.",
-          "invalid_code": "Этот код неверен. Проверьте последнее письмо.",
+          "invalid_code": "Этот код не подошёл.",
           "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },

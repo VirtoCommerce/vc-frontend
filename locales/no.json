@@ -521,7 +521,7 @@
           "store_not_found": "Denne butikken finnes ikke.",
           "duplicate_email_login_attempt": "Flere kontoer bruker denne e-postadressen.",
           "lockout_disabled": "Denne kontoen kan ikke logge på med en kode.",
-          "invalid_code": "Den koden stemmer ikke. Sjekk den nyeste e-posten.",
+          "invalid_code": "Denne koden fungerte ikke.",
           "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },

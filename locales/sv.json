@@ -521,7 +521,7 @@
           "store_not_found": "Den här butiken finns inte.",
           "duplicate_email_login_attempt": "Flera konton använder den här e-postadressen.",
           "lockout_disabled": "Det här kontot kan inte logga in med en kod.",
-          "invalid_code": "Den koden stämmer inte. Kontrollera det senaste e-postmeddelandet.",
+          "invalid_code": "Den här koden fungerade inte.",
           "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
