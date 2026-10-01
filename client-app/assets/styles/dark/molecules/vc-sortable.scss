@@ -1,0 +1,5 @@
+.vc-sortable__handle {
+  // primary-200 measures 1.34–2.78 : 1 on the dark widget surface in five of the seven dark presets;
+  // 400 is the first step clearing 3 : 1 in all seven (3.20–11.84 : 1).
+  --vc-sortable-handle-ring-color: var(--color-primary-400);
+}
