@@ -189,6 +189,11 @@ const handleStepperChange = debounce(async () => {
 }, timeout.value ?? 0);
 
 onMounted(async () => {
+  // An untouched 0 is "not in cart"; the max rule has no allowZero exemption and rejects it when stock is negative.
+  if (mode.value === "stepper" && allowZero.value && value.value === 0) {
+    return;
+  }
+
   if (validateOnMount.value && !disableValidation.value) {
     await validateFields();
   }

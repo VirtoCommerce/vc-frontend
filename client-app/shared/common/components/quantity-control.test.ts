@@ -123,6 +123,13 @@ describe("QuantityControl validated on mount", () => {
     expect(wrapper.find(`#${describedBy}`).text()).not.toBe("");
   });
 
+  it("leaves an untouched zero valid when zero is allowed even with negative stock", async () => {
+    const wrapper = createWrapper({ props: { ...quoteRow, allowZero: true, availableQuantity: -1 } });
+    await settle();
+
+    expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+
   it("still leaves an untouched zero valid when zero is allowed", async () => {
     const wrapper = createWrapper({ props: { ...quoteRow, allowZero: true, minQuantity: 3 } });
     await settle();
