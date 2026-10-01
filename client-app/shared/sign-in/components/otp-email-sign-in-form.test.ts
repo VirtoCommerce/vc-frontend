@@ -33,7 +33,7 @@ const focusEmail = vi.fn();
 vi.mock("./otp-email-request-form.vue", () => ({
   default: {
     name: "OtpEmailRequestForm",
-    emits: ["succeeded", "disabled"],
+    emits: ["succeeded", "disabled", "locked"],
     setup(_props: unknown, { expose }: { expose: (exposed: Record<string, unknown>) => void }) {
       expose({ focus: focusEmail });
     },
@@ -190,7 +190,7 @@ describe("OtpEmailSignInForm", () => {
 
     await vi.advanceTimersByTimeAsync(5000);
 
-    expect(texts()[1]).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_ready");
+    expect(texts()).toEqual(["shared.sign_in.otp_email_sign_in_form.locked.text_ready"]);
     expect(wrapper.findComponent({ name: "VcButton" }).props("disabled")).toBe(false);
   });
 
@@ -211,6 +211,15 @@ describe("OtpEmailSignInForm", () => {
 
     await vi.advanceTimersByTimeAsync((29 * 60 + 15) * 1000);
     expect(countdown()).toBe("shared.sign_in.otp_email_sign_in_form.locked.text_countdown 45s");
+  });
+
+  it("shows the lockout screen when the code request reports a lockout", async () => {
+    const wrapper = mountForm();
+
+    await requestForm(wrapper).vm.$emit("locked", temporaryLockout, 5);
+
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe("Temporarily locked.");
+    expect(wrapper.emitted("stepChanged")?.at(-1)).toEqual(["locked"]);
   });
 
   it("shows the platform text and the contact administrator link for a permanent lockout", async () => {

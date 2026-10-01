@@ -5,6 +5,7 @@
       ref="requestForm"
       @succeeded="onRequested"
       @disabled="step = OtpStep.Disabled"
+      @locked="onLocked"
     />
 
     <OtpEmailVerifyForm
@@ -25,20 +26,27 @@
         }}
       </h2>
 
-      <p class="otp-email-sign-in-form__terminal-text">
-        {{ lockoutError && translate(lockoutError) }}
-        <template v-if="isPermanentLockout"> <ContactAdministratorLink />. </template>
+      <p
+        v-if="hasLockoutTimer && lockoutCountdown.secondsLeft.value === 0"
+        class="otp-email-sign-in-form__terminal-text"
+      >
+        {{ $t("shared.sign_in.otp_email_sign_in_form.locked.text_ready") }}
       </p>
 
-      <p v-if="hasLockoutTimer" class="otp-email-sign-in-form__terminal-text">
-        {{
-          lockoutCountdown.secondsLeft.value > 0
-            ? $t("shared.sign_in.otp_email_sign_in_form.locked.text_countdown", {
-                time: lockoutCountdown.formatted.value,
-              })
-            : $t("shared.sign_in.otp_email_sign_in_form.locked.text_ready")
-        }}
-      </p>
+      <template v-else>
+        <p class="otp-email-sign-in-form__terminal-text">
+          {{ lockoutError && translate(lockoutError) }}
+          <template v-if="isPermanentLockout"> <ContactAdministratorLink />. </template>
+        </p>
+
+        <p v-if="hasLockoutTimer" class="otp-email-sign-in-form__terminal-text">
+          {{
+            $t("shared.sign_in.otp_email_sign_in_form.locked.text_countdown", {
+              time: lockoutCountdown.formatted.value,
+            })
+          }}
+        </p>
+      </template>
 
       <VcButton
         v-if="!isPermanentLockout"
@@ -124,9 +132,8 @@ interface IEmits {
   (event: "stepChanged", step: OtpStep): void;
 }
 
-defineProps<IProps>();
 const emit = defineEmits<IEmits>();
-
+defineProps<IProps>();
 const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;
 
