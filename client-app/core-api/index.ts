@@ -81,6 +81,33 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
 export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+// Declared contributions (`@vc-frontend/core/manifest`).
+export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
+export { usePluginsStatus } from "@/modules/federated/contributions/status";
+export type { IPluginStatusType, PluginStateType } from "@/modules/federated/contributions/status";
+export type {
+  ComparableConditionType,
+  ConditionNodeType,
+  ConditionScalarType,
+  ConditionType,
+  FieldBuilderType,
+  GlobalConditionType,
+  HostRouteNameType,
+  IAccountMenuContributionType,
+  IHeaderMenuContributionType,
+  IMenuLinkContributionType,
+  IPluginContributionsType,
+  IPluginManifestConfigType,
+  IRouteContributionType,
+  ISlotContributionType,
+  MenuContributionType,
+  MenuDeclarationType,
+  MenuLinkDeclarationType,
+  RouteDeclarationType,
+  SlotConditionType,
+  SlotDeclarationType,
+  SlotPolicyType,
+} from "@/modules/federated/contributions/types";
 
 // GraphQL / Apollo — same client, cache and auth link as the host.
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";

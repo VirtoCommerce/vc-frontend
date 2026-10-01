@@ -1,28 +1,47 @@
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
-import { isMfFlagEnabled } from "@/core-api/federation.mjs";
+import { isFederationEnabled } from "./enabled";
 import type { IFederatedLoaderOptions, IPlatformPlugin } from "./index";
 
-interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
+interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | "conditionContext"> {
   /** A function, not a list, so the flag check below is the only thing that can issue the query. */
   fetchPlugins?: () => Promise<readonly IPlatformPlugin[] | undefined>;
 }
 
 /**
  * App-runner entry for Module Federation. Kept free of static MF-runtime
- * imports: the loader (./index) is imported dynamically and only when APP_MODULES_FEDERATION_ENABLED is
- * set, so non-MF builds bundle neither the runtime nor the loader.
+ * imports: the loader (./index) is imported dynamically and only when the theme enables federation
+ * (see ./enabled), so a `module_federation_enabled: false` build bundles neither the runtime nor the loader.
  */
 
 /**
  * Outer cap for what the per-phase budgets cannot cover: this loader's own chunk fetch (deliberately
  * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery 2 +
  * manifest 2 + 2×load 3 = 10s — leaving 2s for the chunk fetch. Past it boot proceeds and the loader
- * finishes detached, so late plugins may register routes after the first navigation.
+ * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
+ * Bounds undeclared plugins only.
  * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
  */
 // Exported for the invariant test only (backstop > discovery + manifest + 2×load defaults).
 export const BOOT_BACKSTOP_MS = 12_000;
+
+/** Re-resolves the current URL once every plugin settled: a deep link may have hit the catch-all before its route existed. */
+function reResolveOnceSettled(): void {
+  const router = globals.router;
+  if (!router) {
+    return;
+  }
+  const current = router.currentRoute.value;
+  // Router not installed yet.
+  if (current.matched.length === 0) {
+    return;
+  }
+  const next = router.resolve(current.fullPath);
+  if (next.name !== current.name) {
+    void router.replace({ path: current.path, query: current.query, hash: current.hash, force: true });
+  }
+}
 
 /** Budget for the plugin list; without one it was the only unbudgeted leg inside the backstop. */
 export const DISCOVERY_TIMEOUT_MS = 2_000;
@@ -56,7 +75,7 @@ async function withDiscoveryBudget(
 }
 
 export async function startFederatedModules(options?: IStartOptions): Promise<void> {
-  if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {
+  if (!isFederationEnabled()) {
     return;
   }
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -76,14 +95,21 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
   // degrades to "no plugins" and can never break boot.
   const work = (async () => {
     try {
-      const [plugins, { initFederatedModules }] = await Promise.all([
+      const [plugins, { prepareFederatedModules, loadPreparedModules }] = await Promise.all([
         withDiscoveryBudget(options?.fetchPlugins).catch((error) => {
           Logger.error("[MF] Could not read the platform's plugin list", error);
           return undefined;
         }),
         import("./index"),
       ]);
-      await initFederatedModules({ plugins, hasPermission: options?.hasPermission });
+      const prepared = await prepareFederatedModules({
+        plugins,
+        hasPermission: options?.hasPermission,
+        conditionContext: options?.conditionContext,
+      });
+      const { blocking, all } = loadPreparedModules(prepared);
+      void all.then(reResolveOnceSettled);
+      await blocking;
     } catch (error) {
       // A loader-chunk fetch failure degrades to "no plugins" here, not to a reload.
       ignoreChunkLoadFailure(error);

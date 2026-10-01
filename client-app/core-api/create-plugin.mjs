@@ -286,12 +286,16 @@ const pkgJson = {
 
 const viteConfig = `import { federation } from "@module-federation/vite";
 import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
+import { pluginContributions } from "@vc-frontend/core/manifest";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import contributions from "./plugin.config";
 
 export default defineConfig({
   plugins: [
     vue(),
+    // Emits plugin.config.ts into plugin.json and contributions.json.
+    pluginContributions(contributions),
     // Wiring conventions (expose key, shared singletons, manifest metadata) come from
     // the host - client-app/core-api/federation.mjs in the host checkout owns them.
     federation(
@@ -360,7 +364,7 @@ const tsconfig = {
     verbatimModuleSyntax: true,
     types: ["vite/client"],
   },
-  include: ["src", "vite.config.ts"],
+  include: ["src", "vite.config.ts", "plugin.config.ts"],
   // Off by default an unknown component is accepted silently, props unchecked. The contract
   // declares the ui-kit components the facade exports, so host tags survive the strictness.
   vueCompilerOptions: { strictTemplates: true },
@@ -382,6 +386,19 @@ export function init(): void {
   : `${stylesImport}export function init(): void {
   // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
 }
+`;
+
+const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
+
+// What the storefront knows before running this plugin. It does not replace the registrations in
+// src/index.ts — see HOWTO "Declaring contributions".
+export default definePluginManifest({${
+  selected.router
+    ? `
+  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],
+`
+    : ""
+}});
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
@@ -447,6 +464,8 @@ symlinks, so the facade's types resolve their own imports from the host's node_m
 const pluginJson = {
   id: pluginName,
   remote: { name: pluginName, exposed: "./plugin" },
+  // Fallback for platforms older than 3.1076, which do not serve `contributions` inline.
+  contentFiles: ["contributions.json"],
 };
 
 const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
@@ -627,6 +646,7 @@ mkdirSync(join(targetDir, "public"), { recursive: true });
 writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "index.html"), indexHtml);
 writeFileSync(join(targetDir, "vite.config.ts"), viteConfig);
+writeFileSync(join(targetDir, "plugin.config.ts"), pluginConfigTs);
 writeFileSync(join(targetDir, "tsconfig.json"), JSON.stringify(tsconfig, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "index.ts"), indexTs);
 if (selected.router) {
@@ -691,7 +711,7 @@ console.log(`\nNext steps:
   yarn build && yarn preview   # serves mf-manifest.json on :3001
 
 Then point the host at it (--mode=development so the store resolves from APP_BACKEND_URL, not the hostname):
-  APP_MODULES_FEDERATION_ENABLED=true APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview
+  APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview
 
 @vc-frontend/core is pinned to the core-v${corePkg.version} release asset. If that release
 has not been published yet, yarn install will 404 - either run the "Core Facade Release"

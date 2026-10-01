@@ -2696,6 +2696,9 @@ type MenuType = {
     };
     footer: ExtendedMenuLinkType[];
 };
+type MobileMenuSectionType = Exclude<keyof MenuType["header"]["mobile"], "main">;
+type DesktopMenuSectionType = Exclude<keyof MenuType["header"]["desktop"], "main">;
+type MenuSecionType = MobileMenuSectionType | DesktopMenuSectionType;
 type ExtendedMenuLinkType = {
     id?: string;
     title?: string;
@@ -3774,6 +3777,225 @@ declare const CUSTOM_EXTENSION_NAMES: {
 };
 declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;
 
+type NamedCategoryType = keyof typeof EXTENSION_NAMES;
+type SlotNameType<C extends ExtensionCategoryType> = C extends NamedCategoryType ? (typeof EXTENSION_NAMES)[C][keyof (typeof EXTENSION_NAMES)[C]] : string;
+/** `"<category>/<name>"` */
+type SlotIdType = {
+    [C in ExtensionCategoryType]: `${C}/${SlotNameType<C>}`;
+}[ExtensionCategoryType];
+type CategoryOfType<Id extends string> = Id extends `${infer C}/${string}` ? C extends ExtensionCategoryType ? C : never : never;
+/** Each slot's context: its extension point's `conditionParameter`, derived from the registry. */
+type SlotContextMapType = {
+    [C in ExtensionCategoryType as `${C}/${SlotNameType<C>}`]: ConditionParamType<C>;
+};
+type SlotContextOfType<Id extends SlotIdType> = ConditionParamType<CategoryOfType<Id>>;
+
+type PluginStateType = "pending" | "loaded" | "failed" | "skipped";
+interface IPluginStatusType {
+    name: string;
+    state: PluginStateType;
+    reason?: string;
+}
+/** Settled, expired, or never seen. */
+declare function isPluginSettled(name: string): boolean;
+declare function whenPluginSettled(name: string): Promise<IPluginStatusType>;
+/** Each federated plugin's state, reactively; the only production signal, as `Logger` is a no-op there. */
+declare function usePluginsStatus(): {
+    plugins: Readonly<vue.Ref<readonly {
+        readonly name: string;
+        readonly state: PluginStateType;
+        readonly reason?: string | undefined;
+    }[], readonly {
+        readonly name: string;
+        readonly state: PluginStateType;
+        readonly reason?: string | undefined;
+    }[]>>;
+    stateOf: (name: string) => PluginStateType | undefined;
+    isSettled: typeof isPluginSettled;
+    whenSettled: typeof whenPluginSettled;
+};
+
+declare const ROUTES: {
+    readonly CATALOG: {
+        readonly NAME: "Catalog";
+        readonly PATH: "/catalog";
+    };
+    readonly LOYALTY_CATALOG: {
+        readonly NAME: "LoyaltyCatalog";
+        readonly PATH: "/loyalty-catalog";
+    };
+    readonly LOYALTY_PRODUCT: {
+        readonly NAME: "LoyaltyProduct";
+        readonly PATH: "/loyalty-catalog/product/:productId";
+    };
+    readonly LOYALTY_CATEGORY: {
+        readonly NAME: "LoyaltyCategory";
+        readonly PATH: "/loyalty-catalog/category/:categoryId";
+    };
+    readonly SEARCH: {
+        readonly NAME: "Search";
+        readonly PATH: "/search";
+    };
+    readonly SIGN_IN: {
+        readonly NAME: "SignIn";
+        readonly PATH: "/sign-in";
+    };
+    readonly CART: {
+        readonly NAME: "Cart";
+        readonly PATH: "/cart";
+    };
+    readonly CART_ID: {
+        readonly NAME: "CartId";
+        readonly PATH: "/cart/:cartId";
+    };
+    readonly CHANGE_PASSWORD: {
+        readonly NAME: "ChangePassword";
+        readonly PATH: "/change-password";
+    };
+    readonly SAVED_FOR_LATER: {
+        readonly NAME: "SavedForLater";
+    };
+    readonly PROMOTION_COUPONS: {
+        readonly NAME: "PromotionCoupons";
+        readonly PATH: "coupons";
+    };
+    readonly ACCOUNT: {
+        readonly NAME: "Account";
+        readonly PATH: "/account";
+    };
+    readonly COMPANY: {
+        readonly NAME: "Company";
+        readonly PATH: "/company";
+    };
+};
+
+type ConditionScalarType = string | number | boolean | null;
+/**
+ * A serialised condition; never parsed or executed.
+ *
+ * - `setting` — a store module setting; `true`, or equal to `eq`.
+ * - `themeSetting` — a `settings_data.json` key; truthy, or equal to `eq`.
+ * - `authenticated` — the user is signed in.
+ * - `can` — the user holds that permission.
+ * - `field` — a dot path into the slot's context; truthy, or equal to `eq`. Slots only.
+ */
+type ConditionNodeType = {
+    setting: string;
+    eq?: ConditionScalarType;
+} | {
+    themeSetting: string;
+    eq?: ConditionScalarType;
+} | {
+    authenticated: true;
+} | {
+    can: string;
+} | {
+    field: string;
+    eq?: ConditionScalarType;
+} | {
+    and: ConditionNodeType[];
+} | {
+    or: ConditionNodeType[];
+} | {
+    not: ConditionNodeType;
+};
+type HostRouteNameType = (typeof ROUTES)[keyof typeof ROUTES]["NAME"];
+interface IRouteContributionType {
+    path: string;
+    /** Host parent route; absent = root. */
+    parent?: HostRouteNameType;
+    name: string;
+    /** Route name to redirect to instead of rendering a page. */
+    redirect?: string;
+    when?: ConditionNodeType;
+}
+interface IMenuLinkContributionType {
+    id: string;
+    title: string;
+    icon?: string;
+    priority?: number;
+    routeName: string;
+    when?: ConditionNodeType;
+}
+interface IHeaderMenuContributionType extends IMenuLinkContributionType {
+    surface: "header";
+    group: MenuGroupType;
+    /** Both when absent. */
+    viewport?: "desktop" | "mobile";
+}
+interface IAccountMenuContributionType {
+    surface: "account";
+    id: string;
+    title: string;
+    icon?: string;
+    priority?: number;
+    when?: ConditionNodeType;
+    children: IMenuLinkContributionType[];
+}
+type MenuContributionType = IHeaderMenuContributionType | IAccountMenuContributionType;
+/**
+ * - `reserve` — hold the slot's box until the plugin settles.
+ * - `block` — hold a whole region, with a loader (e.g. payment).
+ * - `none` — hold nothing; the plugin only decorates host markup.
+ */
+type SlotPolicyType = "reserve" | "block" | "none";
+interface ISlotContributionType {
+    at: SlotIdType;
+    policy: SlotPolicyType;
+    when?: ConditionNodeType;
+}
+interface IPluginContributionsType {
+    /** The host refuses a format it does not know. */
+    format: 1;
+    /** False: the host fetches nothing of the plugin. */
+    when?: ConditionNodeType;
+    routes?: IRouteContributionType[];
+    menu?: MenuContributionType[];
+    slots?: ISlotContributionType[];
+}
+type MenuGroupType = MenuSecionType | "main";
+declare const conditionScope: unique symbol;
+/** The phantom scope makes a `field(...)` term a compile error outside a slot. */
+type ConditionType<S extends "global" | "slot"> = ConditionNodeType & {
+    readonly [conditionScope]?: S;
+};
+type GlobalConditionType = ConditionType<"global">;
+type SlotConditionType = ConditionType<"global" | "slot">;
+type ComparableConditionType<S extends "global" | "slot", V = ConditionScalarType> = ConditionType<S> & {
+    eq(value: V): ConditionType<S>;
+};
+type DepthType = [never, 0, 1, 2, 3];
+/** Dot paths to scalars, four levels deep; arrays are not traversed. */
+type FieldPathType<T, D extends number = 4> = [D] extends [never] ? never : T extends ConditionScalarType ? never : T extends readonly unknown[] ? never : T extends object ? {
+    [K in Extract<keyof T, string>]: NonNullable<T[K]> extends ConditionScalarType ? K : NonNullable<T[K]> extends readonly unknown[] ? never : `${K}.${FieldPathType<NonNullable<T[K]>, DepthType[D]>}`;
+}[Extract<keyof T, string>] : never;
+type FieldValueType<T, P extends string> = P extends `${infer H}.${infer R}` ? H extends keyof T ? FieldValueType<NonNullable<T[H]>, R> : never : P extends keyof T ? NonNullable<T[P]> : never;
+/** Enums widen: a plugin may own values the host's generated enum lacks. */
+type WidenedType<V> = V extends string ? string : V extends number ? number : V extends boolean ? boolean : never;
+type FieldBuilderType<Ctx> = <P extends FieldPathType<NonNullable<Ctx>>>(path: P) => ComparableConditionType<"slot", WidenedType<FieldValueType<NonNullable<Ctx>, P>>>;
+type WithGlobalWhenType<T> = Omit<T, "when"> & {
+    when?: GlobalConditionType;
+};
+type RouteDeclarationType = WithGlobalWhenType<IRouteContributionType>;
+type MenuLinkDeclarationType = WithGlobalWhenType<IMenuLinkContributionType>;
+type MenuDeclarationType = WithGlobalWhenType<IHeaderMenuContributionType> | (WithGlobalWhenType<Omit<IAccountMenuContributionType, "children">> & {
+    children: MenuLinkDeclarationType[];
+});
+type SlotDeclarationType = {
+    [Id in SlotIdType]: {
+        at: Id;
+        policy: SlotPolicyType;
+        /** A global condition, or a callback receiving `field` typed against this slot's context. */
+        when?: GlobalConditionType | ((field: FieldBuilderType<SlotContextOfType<Id>>) => SlotConditionType);
+    };
+}[SlotIdType];
+interface IPluginManifestConfigType {
+    when?: GlobalConditionType;
+    routes?: RouteDeclarationType[];
+    menu?: MenuDeclarationType[];
+    slots?: SlotDeclarationType[];
+}
+
 /**
  * Non-cached version of Apollo Client
  */
@@ -4439,60 +4661,6 @@ type LocaleLoaderType = (i18n: I18n, language: ILanguage) => Promise<void>;
  */
 declare function registerLocaleLoader(key: string, loader: LocaleLoaderType): void;
 
-declare const ROUTES: {
-    readonly CATALOG: {
-        readonly NAME: "Catalog";
-        readonly PATH: "/catalog";
-    };
-    readonly LOYALTY_CATALOG: {
-        readonly NAME: "LoyaltyCatalog";
-        readonly PATH: "/loyalty-catalog";
-    };
-    readonly LOYALTY_PRODUCT: {
-        readonly NAME: "LoyaltyProduct";
-        readonly PATH: "/loyalty-catalog/product/:productId";
-    };
-    readonly LOYALTY_CATEGORY: {
-        readonly NAME: "LoyaltyCategory";
-        readonly PATH: "/loyalty-catalog/category/:categoryId";
-    };
-    readonly SEARCH: {
-        readonly NAME: "Search";
-        readonly PATH: "/search";
-    };
-    readonly SIGN_IN: {
-        readonly NAME: "SignIn";
-        readonly PATH: "/sign-in";
-    };
-    readonly CART: {
-        readonly NAME: "Cart";
-        readonly PATH: "/cart";
-    };
-    readonly CART_ID: {
-        readonly NAME: "CartId";
-        readonly PATH: "/cart/:cartId";
-    };
-    readonly CHANGE_PASSWORD: {
-        readonly NAME: "ChangePassword";
-        readonly PATH: "/change-password";
-    };
-    readonly SAVED_FOR_LATER: {
-        readonly NAME: "SavedForLater";
-    };
-    readonly PROMOTION_COUPONS: {
-        readonly NAME: "PromotionCoupons";
-        readonly PATH: "coupons";
-    };
-    readonly ACCOUNT: {
-        readonly NAME: "Account";
-        readonly PATH: "/account";
-    };
-    readonly COMPANY: {
-        readonly NAME: "Company";
-        readonly PATH: "/company";
-    };
-};
-
 declare function useOrderView(source: MaybeRefOrGetter<CustomerOrderType | undefined>): {
     allItemsAreDigital: vue.ComputedRef<boolean>;
     giftItems: vue.ComputedRef<OrderLineItemType[]>;
@@ -4627,8 +4795,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, useRouteQueryParam, useUser, useWishlistSharingScopes };
-export type { CustomerOrderType, ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, OrdersFilterDataType, WishlistSharingScopeSavedContextType };
+export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useUser, useWishlistSharingScopes };
+export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;
