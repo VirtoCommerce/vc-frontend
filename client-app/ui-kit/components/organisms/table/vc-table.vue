@@ -1138,6 +1138,8 @@ watch(
     --vc-table-selected-bg-color,
     var(--vc-table-selected-bg, rgb(from var(--color-primary-500) r g b / var(--selected-bg-alpha)))
   );
+  // Row hover fill; the dark layer softens it so secondary row text keeps AA contrast.
+  --row-hover-bg-color: var(--vc-table-row-hover-bg-color, theme("colors.neutral.200"));
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
   --mobile-border-width: v-bind(mobileBorderWidth);
@@ -1258,7 +1260,7 @@ watch(
     }
 
     &:hover {
-      @apply bg-neutral-200;
+      background-color: var(--row-hover-bg-color);
     }
 
     &--selected {
