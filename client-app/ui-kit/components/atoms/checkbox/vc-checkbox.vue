@@ -268,7 +268,11 @@ function onClick(event: MouseEvent) {
     // Only where the control is its own target: inside an interactive parent the parent is, and an
     // overhang there would take clicks from the neighbouring item.
     label > & {
-      @include hit-area(var(--vc-checkbox-hit-area-size, 1.5rem));
+      position: relative;
+
+      &::before {
+        @include hit-area(var(--vc-checkbox-hit-area-size, 1.5rem));
+      }
     }
 
     #{$checked} & {
