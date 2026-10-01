@@ -151,7 +151,7 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Order rendering: `useOrderView` (the host's order view-model — gift vs regular items,
   per-currency groups, BOPIS) and the components its details page composes: `OrderLineItems`,
   `OrderSummary`, `OrderCommentSection`, `AcceptedGifts`, `AddressInfo`, `VendorName`
-- Order filtering: `getFilterExpression`, `STATUS_ORDERS_FACET_NAME`, `OrdersFilterDataType` —
+- Order filtering: `getOrdersFilterExpression`, `STATUS_ORDERS_FACET_NAME`, `OrdersFilterDataType` —
   the filter grammar a plugin listing orders has to speak
 - Files: `downloadFile`, `getFileSize`, `ContentType`
 - Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`,
