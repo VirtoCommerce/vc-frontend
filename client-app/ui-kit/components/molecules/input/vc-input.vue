@@ -371,6 +371,9 @@ provide<VcInputContextType>("inputContext", {
   &__container {
     @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
+    // Unset without the knob, so the container keeps inheriting its cursor.
+    cursor: var(--vc-input-cursor);
+
     #{$sizeXs} & {
       @apply h-8 text-sm;
     }
@@ -444,6 +447,7 @@ provide<VcInputContextType>("inputContext", {
     @apply relative m-px bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     padding-inline: var(--vc-input-padding-x, theme("padding.2"));
+    cursor: var(--vc-input-cursor, auto);
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;

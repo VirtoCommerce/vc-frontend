@@ -33,32 +33,17 @@
     >
       <template #trigger="{ open, toggle, close }">
         <!-- `!= null`: an unset GraphQL value arrives as null, and without `valueField` the model is the item. -->
-        <VcSelectTrigger
+        <VcSelectButton
+          v-if="$slots.selected || $slots.placeholder"
           ref="triggerElement"
+          v-bind="triggerBindings"
           :selected-item="selected"
           :has-selection="selected != null"
-          :search="search"
-          :placeholder-text="placeholderText ?? undefined"
-          :size="size"
-          :opened="isShown"
-          :clear-visible="isClearButtonVisible"
-          :autocomplete="autocomplete"
-          :disabled="disabled"
-          :readonly="readonly"
-          :error="error"
-          :required="required"
-          :accessible-label="accessibleLabel"
-          :trigger-id="triggerId"
-          :listbox-id="listboxId"
-          :details-id="detailsId"
-          :active-descendant-id="activeDescendantId"
           @toggle="toggle"
-          @open="open"
           @clear="clear"
           @navigate="onNavigate($event, open)"
           @confirm="onConfirm($event, toggle, close)"
           @tab="onTab"
-          @update:search="onSearchInput($event, open)"
         >
           <template v-if="$slots.selected" #selected="scope">
             <slot name="selected" v-bind="scope" />
@@ -67,29 +52,38 @@
           <template v-if="$slots.placeholder" #placeholder="scope">
             <slot name="placeholder" v-bind="scope" />
           </template>
-        </VcSelectTrigger>
+        </VcSelectButton>
+
+        <VcSelectField
+          v-else
+          ref="triggerElement"
+          v-bind="triggerBindings"
+          :search="search"
+          :placeholder-text="placeholderText ?? undefined"
+          :autocomplete="autocomplete"
+          @toggle="toggle"
+          @open="open"
+          @clear="clear"
+          @navigate="onNavigate($event, open)"
+          @confirm="onConfirm($event, toggle, close)"
+          @tab="onTab"
+          @update:search="onSearchInput($event, open)"
+        />
       </template>
 
       <template v-if="enabled" #content="{ close }">
         <div class="vc-select__dropdown">
-          <div v-if="showSelectAll" class="vc-select__select-all">
-            <VcCheckbox
-              ref="selectAllElement"
-              size="sm"
-              class="vc-select__select-all-control"
-              :model-value="isAllSelected"
-              :indeterminate="isSomeSelected"
-              :aria-label="selectAllLabel"
-              prevent-default
-              @change="onSelectAll"
-              @keydown.esc.stop="close()"
-              @keydown.down.prevent="focusTrigger()"
-            >
-              <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
-            </VcCheckbox>
-
-            <span class="vc-select__select-all-count">{{ selectedOfTotal }}</span>
-          </div>
+          <VcSelectAll
+            v-if="showSelectAll"
+            ref="selectAllElement"
+            :checked="isAllSelected"
+            :indeterminate="isSomeSelected"
+            :accessible-label="selectAllLabel"
+            :count="selectedOfTotal"
+            @change="onSelectAll"
+            @keydown.esc.stop="close()"
+            @keydown.down.prevent="focusTrigger()"
+          />
 
           <VcScrollbar class="vc-select__scroll" vertical>
             <!-- Only options may live in a listbox, so the pager sits beside the list, not in it. -->
@@ -186,7 +180,9 @@ import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
 import { insertedText } from "@/ui-kit/utilities/text-diff";
-import VcSelectTrigger from "./vc-select-trigger.vue";
+import VcSelectAll from "./vc-select-all.vue";
+import VcSelectButton from "./vc-select-button.vue";
+import VcSelectField from "./vc-select-field.vue";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
@@ -364,6 +360,22 @@ const isClearButtonVisible = computed(() => {
 
   return hasSelection.value;
 });
+
+// Shared by both triggers; each adds its own.
+const triggerBindings = computed(() => ({
+  size: props.size,
+  opened: isShown.value,
+  clearVisible: isClearButtonVisible.value,
+  disabled: props.disabled,
+  readonly: props.readonly,
+  error: props.error,
+  required: props.required,
+  accessibleLabel: accessibleLabel.value,
+  triggerId,
+  listboxId,
+  detailsId,
+  activeDescendantId: activeDescendantId.value,
+}));
 
 const search = computed({
   get() {
@@ -630,28 +642,16 @@ function onSelectAll() {
   emit("selectAll", !clearing);
 }
 
-const selectAllElement = useTemplateRef<{ $el: HTMLElement }>("selectAllElement");
+const selectAllElement = useTemplateRef<{ focus: () => boolean }>("selectAllElement");
 
 function onTab(event: KeyboardEvent) {
   if (!showSelectAll.value || !isShown.value || event.shiftKey) {
     return;
   }
 
-  if (focusSelectAll()) {
+  if (selectAllElement.value?.focus()) {
     event.preventDefault();
   }
-}
-
-// The checkbox is outside the listbox and possibly teleported, so Tab hands focus over explicitly.
-function focusSelectAll(): boolean {
-  const input = selectAllElement.value?.$el?.querySelector<HTMLElement>("input");
-
-  if (!input) {
-    return false;
-  }
-
-  input.focus();
-  return true;
 }
 </script>
 
@@ -691,22 +691,6 @@ function focusSelectAll(): boolean {
 
   &__loading {
     @apply flex w-full justify-center;
-  }
-
-  &__select-all {
-    @apply flex shrink-0 items-center gap-3 border-b border-neutral-100 px-3 py-2.5;
-
-    &-control {
-      @apply grow;
-    }
-
-    &-text {
-      @apply text-sm font-bold text-neutral-950;
-    }
-
-    &-count {
-      @apply shrink-0 text-sm text-neutral-600;
-    }
   }
 }
 </style>

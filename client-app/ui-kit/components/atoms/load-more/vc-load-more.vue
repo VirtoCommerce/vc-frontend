@@ -141,7 +141,8 @@ onMounted(reconsider);
   @apply flex items-center justify-center gap-2 p-2 text-base;
 
   &__icon {
-    @apply size-7 text-primary;
+    --vc-icon-size: theme("spacing.7");
+    --vc-icon-color: var(--color-primary-500);
   }
 }
 </style>

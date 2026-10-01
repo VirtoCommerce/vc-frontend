@@ -251,19 +251,19 @@ describe("VcSelect", () => {
     it("is absent unless asked for", () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
 
-      expect(wrapper.find(".vc-select__select-all").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-all").exists()).toBe(false);
     });
 
     it("is ignored in single mode", () => {
       const wrapper = createWrapper({ items: ITEMS, selectAll: true });
 
-      expect(wrapper.find(".vc-select__select-all").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-all").exists()).toBe(false);
     });
 
     it("selects every visible option and announces itself", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
 
-      await wrapper.get(".vc-select__select-all input").trigger("change");
+      await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[ITEMS]]);
       expect(wrapper.emitted("selectAll")).toHaveLength(1);
@@ -272,7 +272,7 @@ describe("VcSelect", () => {
     it("clears the visible options when everything is already selected", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS] });
 
-      await wrapper.get(".vc-select__select-all input").trigger("change");
+      await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
@@ -280,39 +280,39 @@ describe("VcSelect", () => {
     it("reports mixed state for a partial selection", () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: ["Albania"] });
 
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
     it("reports checked state once everything is selected", () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS] });
 
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("true");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("true");
     });
 
     it("counts against the whole set, not the loaded page", () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: ["Albania"], total: 3000 });
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3000");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 3000");
     });
 
     it("falls back to the option count when no total is given", () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: ["Albania"] });
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 3");
     });
 
     // "30 of 3000" is not "all selected": a checked box would send the click down the clearing path.
     it("stays partial while a fully selected page is only part of the set", () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 3000");
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 3000");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
     it("keeps the loaded page selected when it is clicked with pages still to come", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
 
-      await wrapper.get(".vc-select__select-all input").trigger("change");
+      await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]]]);
       expect(wrapper.emitted("selectAll")).toHaveLength(1);
@@ -324,7 +324,7 @@ describe("VcSelect", () => {
 
       await wrapper.get("input").trigger("focus");
       await wrapper.get("input").setValue("bel");
-      await wrapper.get(".vc-select__select-all input").trigger("change");
+      await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[["China", "Belgium"]]]);
     });
@@ -339,14 +339,14 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["Belgium"]);
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("0 of 1");
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("false");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("0 of 1");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("false");
     });
 
     it("clears the whole selection, loaded or not, when nothing narrows the list", async () => {
       const wrapper = createWrapper({ ...selectAllProps, total: 5, modelValue: [...ITEMS, "Denmark", "Egypt"] });
 
-      await wrapper.get(".vc-select__select-all input").trigger("click");
+      await wrapper.get(".vc-select-all input").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
@@ -365,13 +365,13 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 5");
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 5");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
     it("tells a select from a clear in the selectAll event", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
-      const checkbox = wrapper.get(".vc-select__select-all input");
+      const checkbox = wrapper.get(".vc-select-all input");
 
       await checkbox.trigger("click");
       await wrapper.setProps({ modelValue: [...ITEMS] });
@@ -397,8 +397,8 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("5 of 5");
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("true");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("true");
     });
 
     it("shows mixed while the consumer reports selected matches that are not loaded", async () => {
@@ -417,8 +417,8 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("2 of 5");
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("2 of 5");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
     it("ignores the consumer's selected count when no query narrows the list", () => {
@@ -430,7 +430,7 @@ describe("VcSelect", () => {
         modelValue: ["Albania"],
       });
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 5");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 5");
     });
 
     it("never counts fewer than the visibly selected matches", async () => {
@@ -448,8 +448,8 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 5");
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 5");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
     it("ignores the consumer's selected count under a local filter", async () => {
@@ -465,7 +465,7 @@ describe("VcSelect", () => {
       await input.setValue("bel");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 1");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 1");
     });
 
     it("counts only the visible selection under a local filter that leaves several matches", async () => {
@@ -481,7 +481,7 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 2");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 2");
     });
 
     it("ignores a selected count that is not a number", async () => {
@@ -499,7 +499,7 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 5");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 5");
     });
 
     it("never counts fewer than the checked rows, even above a lower total", async () => {
@@ -517,7 +517,7 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("3 of 1");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 1");
     });
 
     it("never counts more than the matches of a server-side query", async () => {
@@ -535,19 +535,19 @@ describe("VcSelect", () => {
       await input.setValue("a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("5 of 5");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
     });
 
     it("names the checkbox with its count and keeps the name when it is checked", async () => {
       const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS] });
 
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-label")).toBe("Select all, 3 of 3");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-label")).toBe("Select all, 3 of 3");
     });
 
     // A click that adds nothing must not leave the native box toggled against the component's state.
     it("keeps the native checkbox in step when a click changes nothing", async () => {
       const wrapper = createWrapper({ ...selectAllProps, total: 3000, modelValue: [...ITEMS] });
-      const checkbox = wrapper.get(".vc-select__select-all input").element as HTMLInputElement;
+      const checkbox = wrapper.get(".vc-select-all input").element as HTMLInputElement;
 
       checkbox.click();
       await nextTick();
@@ -570,14 +570,14 @@ describe("VcSelect", () => {
       await input.setValue("bel");
       await nextTick();
 
-      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3000");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 3000");
     });
 
     // The label text lives in the checkbox's own slot, so it toggles the control.
     it("toggles when the visible label text is clicked", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
 
-      await wrapper.get(".vc-select__select-all-text").trigger("click");
+      await wrapper.get(".vc-select-all__text").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[ITEMS]]);
     });
@@ -585,13 +585,13 @@ describe("VcSelect", () => {
     it("is not checked for an empty list", () => {
       const wrapper = createWrapper({ ...selectAllProps, items: [], modelValue: [] });
 
-      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("false");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("false");
     });
 
     it("hands focus back to the trigger on ArrowDown from the checkbox", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");
-      const checkbox = wrapper.get(".vc-select__select-all input");
+      const checkbox = wrapper.get(".vc-select-all input");
 
       await input.trigger("click");
       (checkbox.element as HTMLInputElement).focus();
@@ -619,7 +619,7 @@ describe("VcSelect", () => {
 
       await wrapper.get("input").trigger("click");
       await wrapper.get("input").setValue("bel");
-      await wrapper.get(".vc-select__select-all input").trigger("change");
+      await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[["China"]]]);
     });
@@ -632,7 +632,14 @@ describe("VcSelect", () => {
       await input.trigger("click");
       await input.trigger("keydown", { key: "Tab" });
 
-      expect(document.activeElement).toBe(wrapper.get(".vc-select__select-all input").element);
+      expect(document.activeElement).toBe(wrapper.get(".vc-select-all input").element);
+    });
+  });
+
+  describe("read-only field", () => {
+    it("drops the toggle button", () => {
+      expect(createWrapper({ items: ITEMS }).find(".vc-select-field__arrow").exists()).toBe(true);
+      expect(createWrapper({ items: ITEMS, readonly: true }).find(".vc-select-field__arrow").exists()).toBe(false);
     });
   });
 
@@ -640,13 +647,13 @@ describe("VcSelect", () => {
     it("hides the clear button when there is no selection", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true });
 
-      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-field__clear").exists()).toBe(false);
     });
 
     it("emits undefined on clear in single mode", async () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania" });
 
-      await wrapper.get(".vc-select-trigger__clear").trigger("click");
+      await wrapper.get(".vc-select-field__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
     });
@@ -659,7 +666,7 @@ describe("VcSelect", () => {
         modelValue: ["Albania"],
       });
 
-      await wrapper.get(".vc-select-trigger__clear").trigger("click");
+      await wrapper.get(".vc-select-field__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
@@ -667,7 +674,7 @@ describe("VcSelect", () => {
     it("hides the clear button when disabled", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania", disabled: true });
 
-      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-field__clear").exists()).toBe(false);
     });
   });
 
@@ -726,7 +733,7 @@ describe("VcSelect", () => {
 
       expect(wrapper.findAll('[role="option"]')).toHaveLength(1);
 
-      await wrapper.get(".vc-select-trigger__clear").trigger("click");
+      await wrapper.get(".vc-select-field__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
       expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
@@ -1064,7 +1071,7 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-controls")).toBeUndefined();
       expect(input.attributes("aria-expanded")).toBe("false");
 
-      await wrapper.get(".vc-select-trigger__arrow").trigger("click");
+      await wrapper.get(".vc-select-field__arrow").trigger("click");
 
       expect(input.attributes("aria-expanded")).toBe("true");
       expect(input.attributes("aria-controls")).toBe(wrapper.get('[role="listbox"]').attributes("id"));
@@ -1075,7 +1082,7 @@ describe("VcSelect", () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
 
-      await wrapper.get(".vc-select-trigger__arrow").trigger("click");
+      await wrapper.get(".vc-select-field__arrow").trigger("click");
 
       expect(input.attributes("aria-expanded")).toBe("true");
 
@@ -1150,7 +1157,7 @@ describe("VcSelect", () => {
 
     it("draws the field as opened only while the list is open", async () => {
       const wrapper = createWrapper({ items: ITEMS });
-      const field = wrapper.get(".vc-select-trigger");
+      const field = wrapper.get(".vc-select-field");
 
       expect(field.classes()).not.toContain("vc-input--opened");
 
@@ -1293,7 +1300,7 @@ describe("VcSelect", () => {
 
     it("opens the slotted trigger with Space and rings the selection", async () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" }, { selected: () => h("span", "chosen") });
-      const button = wrapper.get(".vc-select-trigger__button");
+      const button = wrapper.get(".vc-select-button__control");
 
       (button.element as HTMLElement).focus();
       await button.trigger("keydown", { key: " " });
@@ -1368,7 +1375,7 @@ describe("VcSelect", () => {
 
       expect(input.attributes("aria-expanded")).toBe("true");
 
-      await wrapper.get(".vc-select-trigger__arrow").trigger("click");
+      await wrapper.get(".vc-select-field__arrow").trigger("click");
       await nextTick();
 
       expect(input.attributes("aria-expanded")).toBe("false");
@@ -1459,6 +1466,21 @@ describe("VcSelect", () => {
       placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
     };
 
+    it("drops the chevron of a read-only slotted trigger", () => {
+      expect(createWrapper({ items: ITEMS }, slots).find(".vc-select-button__icon").exists()).toBe(true);
+      expect(createWrapper({ items: ITEMS, readonly: true }, slots).find(".vc-select-button__icon").exists()).toBe(
+        false,
+      );
+    });
+
+    it("points the label at the slotted trigger and hands it the aria-label", () => {
+      const wrapper = createWrapper({ items: ITEMS, label: "Country", ariaLabel: "Shipping country" }, slots);
+      const control = wrapper.get(".vc-select-button__control");
+
+      expect(wrapper.get("label").attributes("for")).toBe(control.attributes("id"));
+      expect(control.attributes("aria-label")).toBe("Shipping country");
+    });
+
     // An unset GraphQL value arrives as null, and without valueField the model is the item.
     it("shows the placeholder for a null model, not the selected slot", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: null as unknown as string }, slots);
@@ -1470,7 +1492,7 @@ describe("VcSelect", () => {
     it("renders the button branch instead of the input", () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
 
-      expect(wrapper.find(".vc-select-trigger--button").exists()).toBe(true);
+      expect(wrapper.find(".vc-select-button").exists()).toBe(true);
       expect(wrapper.find("input").exists()).toBe(false);
     });
 
@@ -1507,9 +1529,9 @@ describe("VcSelect", () => {
     it("honours the clearable prop", async () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Albania", clearable: true }, slots);
 
-      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(true);
+      expect(wrapper.find(".vc-select-button__clear").exists()).toBe(true);
 
-      await wrapper.get(".vc-select-trigger__clear").trigger("click");
+      await wrapper.get(".vc-select-button__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
     });
@@ -1517,20 +1539,20 @@ describe("VcSelect", () => {
     it("hides the clear button when nothing is selected", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true }, slots);
 
-      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-button__clear").exists()).toBe(false);
     });
 
     it("reflects the size prop as a modifier", () => {
       const wrapper = createWrapper({ items: ITEMS, size: "xs" }, slots);
 
-      expect(wrapper.get(".vc-select-trigger--button").classes()).toContain("vc-select-trigger--size--xs");
+      expect(wrapper.get(".vc-select-button").classes()).toContain("vc-select-button--size--xs");
     });
 
     // VcPopover binds its own `click: toggle` on the #trigger wrapper, so the trigger's click must
     // not reach it too, or the two toggles cancel out.
     it("opens, closes and reopens on click", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
-      const trigger = wrapper.get(".vc-select-trigger__button");
+      const trigger = wrapper.get(".vc-select-button__control");
 
       await trigger.trigger("click");
       await nextTick();
@@ -1553,7 +1575,7 @@ describe("VcSelect", () => {
       let wrapperClicks = 0;
 
       wrapper.get(".vc-popover__trigger").element.addEventListener("click", () => (wrapperClicks += 1));
-      await wrapper.get(".vc-select-trigger__button").trigger("click");
+      await wrapper.get(".vc-select-button__control").trigger("click");
 
       expect(wrapperClicks).toBe(0);
     });
@@ -1561,26 +1583,25 @@ describe("VcSelect", () => {
     it("opens the list on ArrowDown", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
 
-      await wrapper.get(".vc-select-trigger__button").trigger("keydown", { key: "ArrowDown" });
+      await wrapper.get(".vc-select-button__control").trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
-      expect(wrapper.get(".vc-select-trigger__button").attributes("aria-expanded")).toBe("true");
+      expect(wrapper.get(".vc-select-button__control").attributes("aria-expanded")).toBe("true");
       expect(wrapper.classes()).toContain("vc-select--opened");
     });
 
     // The trigger is its own BEM block, and its states arrive as its own modifiers.
     it("owns its block and carries the state modifiers on its own root", () => {
       const wrapper = createWrapper({ items: ITEMS, disabled: true, readonly: true, error: true }, slots);
-      const root = wrapper.get(".vc-select-trigger");
+      const root = wrapper.get(".vc-select-button");
 
       expect(root.classes()).toEqual(
         expect.arrayContaining([
-          "vc-select-trigger",
-          "vc-select-trigger--button",
-          "vc-select-trigger--size--md",
-          "vc-select-trigger--disabled",
-          "vc-select-trigger--readonly",
-          "vc-select-trigger--error",
+          "vc-select-button",
+          "vc-select-button--size--md",
+          "vc-select-button--disabled",
+          "vc-select-button--readonly",
+          "vc-select-button--error",
         ]),
       );
       expect(wrapper.html()).not.toContain("vc-select__button");
@@ -1589,14 +1610,14 @@ describe("VcSelect", () => {
     // A real <button>, beside the clear button rather than around it: buttons cannot nest.
     it("renders a real button element carrying the combobox semantics", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Belgium" }, slots);
-      const trigger = wrapper.get(".vc-select-trigger__button");
+      const trigger = wrapper.get(".vc-select-button__control");
 
       expect(trigger.element.tagName).toBe("BUTTON");
       expect(trigger.attributes("type")).toBe("button");
       expect(trigger.attributes("role")).toBe("combobox");
       expect(trigger.attributes("aria-haspopup")).toBe("listbox");
       expect(trigger.find("button").exists()).toBe(false);
-      expect(wrapper.get(".vc-select-trigger__clear").element.closest(".vc-select-trigger__button")).toBeNull();
+      expect(wrapper.get(".vc-select-button__clear").element.closest(".vc-select-button__control")).toBeNull();
     });
   });
 });
@@ -1662,7 +1683,7 @@ function selectIsOpen(wrapper: VueWrapper): boolean {
 }
 
 function selectTrigger(wrapper: VueWrapper) {
-  return wrapper.get(".vc-select-trigger__button, .vc-select input");
+  return wrapper.get(".vc-select-button__control, .vc-select input");
 }
 
 function pressOn(element: Element, key: string, init: KeyboardEventInit = {}): KeyboardEvent {
@@ -1732,7 +1753,7 @@ describe("VcSelect inside a dialog popover", () => {
     const wrapper = mountDialogHost({ props: { multiple: true, selectAll: true } });
     await openDialogAndSelect(wrapper);
 
-    const checkbox = wrapper.get(".vc-select__select-all input");
+    const checkbox = wrapper.get(".vc-select-all input");
     (checkbox.element as HTMLElement).focus();
     pressOn(checkbox.element, "Escape");
     await nextTick();
@@ -1743,7 +1764,7 @@ describe("VcSelect inside a dialog popover", () => {
   });
 
   // Both buttons live in the input trigger's append slot.
-  it.each([[".vc-select-trigger__clear"], [".vc-select-trigger__arrow"]])(
+  it.each([[".vc-select-field__clear"], [".vc-select-field__arrow"]])(
     "consumes Escape from %s while its list is open",
     async (selector) => {
       const wrapper = mountDialogHost({ props: { clearable: true, selected: "Last day" } });
@@ -1766,14 +1787,14 @@ describe("VcSelect inside a dialog popover", () => {
     await input.setValue("Cust");
     await nextTick();
 
-    const clear = wrapper.get(".vc-select-trigger__clear");
+    const clear = wrapper.get(".vc-select-field__clear");
     (clear.element as HTMLElement).focus();
     pressOn(clear.element, "Escape");
     await nextTick();
     await nextTick();
 
     expect(selectIsOpen(wrapper)).toBe(false);
-    expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
+    expect(wrapper.find(".vc-select-field__clear").exists()).toBe(false);
     expect(document.activeElement).toBe(input.element);
   });
 
@@ -1835,8 +1856,11 @@ describe("VcSelect inside a dialog popover", () => {
     expect(dialogIsOpen(wrapper)).toBe(true);
   });
 
-  it("returns focus to the trigger when picking an option closes the list", async () => {
-    const wrapper = mountDialogHost();
+  it.each([
+    ["the input trigger", false],
+    ["the slotted trigger", true],
+  ])("returns focus to %s when picking an option closes the list", async (_, slotted) => {
+    const wrapper = mountDialogHost({ props: { slotted } });
     await openDialogAndSelect(wrapper);
 
     const option = wrapper.get(".vc-menu-item__inner");

@@ -286,12 +286,12 @@ onMounted(() => {
         &#{$active} {
           @apply bg-[--color-#{$color}-100];
         }
-
-        // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
-        &#{$highlightRing} {
-          @include focus-ring($inset: true);
-        }
       }
+    }
+
+    // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
+    &#{$highlightRing} {
+      @include focus-ring($inset: true);
     }
 
     // `:where` keeps this at the specificity of the `:focus-visible` rule below, which must still win.
