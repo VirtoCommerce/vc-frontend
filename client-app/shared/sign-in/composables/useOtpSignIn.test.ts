@@ -183,8 +183,6 @@ describe("useOtpSignIn", () => {
   });
 
   it("requestCode clears errors left over from a previous verifyCode attempt", async () => {
-    // A failed verifyCode leaves signInErrors set; starting a fresh request (e.g. after "use a
-    // different email" or "resend code") must not leave the old error visible.
     const signMeIn = await getSignMeInState();
     signMeIn.signInErrors.value = [{ code: "invalid_code", description: "The code is invalid or has expired." }];
 

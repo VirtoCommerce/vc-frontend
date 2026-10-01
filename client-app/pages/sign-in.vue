@@ -69,8 +69,6 @@ const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
 const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
 const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
 
-// hasOnlyIdentityProviders (from useIdentityProviders) doesn't know about OTP, so it can't
-// tell "only providers" from "providers + OTP" — this page derives its own, OTP-aware version.
 const hasSignInForm = computed(() => hasPasswordAuthentication.value || hasOtpEmailAuthentication.value);
 
 const pageTitle = computed(() =>

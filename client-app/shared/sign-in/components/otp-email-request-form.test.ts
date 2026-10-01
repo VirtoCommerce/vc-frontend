@@ -149,7 +149,6 @@ describe("OtpEmailRequestForm", () => {
   });
 
   it("shows a generic error and does not emit when the request fails silently", async () => {
-    // A failed useFetch call resolves to undefined rather than throwing.
     requestCode.mockResolvedValue(undefined);
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");

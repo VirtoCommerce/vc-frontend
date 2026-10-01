@@ -223,8 +223,6 @@ describe("OtpEmailVerifyForm", () => {
   });
 
   it("resend: does not report success and keeps the code when the request actually failed", async () => {
-    // A failed useFetch call resolves to undefined rather than throwing — this must not
-    // be mistaken for a successful resend (that was the original, critical bug).
     requestCode.mockResolvedValue(undefined);
 
     const wrapper = mountForm();

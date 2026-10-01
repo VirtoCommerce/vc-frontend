@@ -132,8 +132,6 @@ function createCountdown() {
     return `${minutes}:${seconds}`;
   });
 
-  // Derived from a fixed deadline rather than decremented per tick, so a throttled
-  // background tab (fewer ticks/sec) still shows the real time remaining, not a drifted one.
   function tick() {
     secondsLeft.value = Math.max(0, Math.round((deadline - Date.now()) / 1000));
 
