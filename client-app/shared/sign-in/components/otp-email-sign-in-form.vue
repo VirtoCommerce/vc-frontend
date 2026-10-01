@@ -101,13 +101,17 @@ import OtpEmailVerifyForm from "./otp-email-verify-form.vue";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
-const emit = defineEmits<{
-  (e: "switchToPassword"): void;
-  (e: "stepChanged", step: OtpStep): void;
-}>();
-defineProps<{
+interface IProps {
   hasPasswordAuthentication: boolean;
-}>();
+}
+
+interface IEmits {
+  (event: "switchToPassword"): void;
+  (event: "stepChanged", step: OtpStep): void;
+}
+
+defineProps<IProps>();
+const emit = defineEmits<IEmits>();
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 

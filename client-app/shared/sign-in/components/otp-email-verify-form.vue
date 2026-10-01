@@ -115,16 +115,19 @@ import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpVerifyResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
-const emit = defineEmits<{
-  (e: "useDifferentEmail"): void;
-  (e: "disabled"): void;
-  (e: "locked", error: IdentityErrorType, lockoutSecondsRemaining: number | undefined): void;
-}>();
-
-const props = defineProps<{
+interface IProps {
   email: string;
   maskedEmail: string;
-}>();
+}
+
+interface IEmits {
+  (event: "useDifferentEmail"): void;
+  (event: "disabled"): void;
+  (event: "locked", error: IdentityErrorType, lockoutSecondsRemaining: number | undefined): void;
+}
+
+const props = defineProps<IProps>();
+const emit = defineEmits<IEmits>();
 
 const CODE_LENGTH = 6;
 

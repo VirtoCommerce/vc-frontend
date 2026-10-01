@@ -55,10 +55,12 @@ import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
-const emit = defineEmits<{
-  (e: "succeeded", payload: { email: string; result: IOtpRequestResponse }): void;
-  (e: "disabled"): void;
-}>();
+interface IEmits {
+  (event: "succeeded", payload: { email: string; result: IOtpRequestResponse }): void;
+  (event: "disabled"): void;
+}
+
+const emit = defineEmits<IEmits>();
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
