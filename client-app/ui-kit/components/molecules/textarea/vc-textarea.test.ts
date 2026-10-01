@@ -16,6 +16,7 @@ describe("VcTextarea accessible name", () => {
 
     expect(label.element.tagName).toBe("LABEL");
     expect(label.attributes("for")).toBe(wrapper.get("textarea").attributes("id"));
+    expect(wrapper.get("textarea").attributes("aria-label")).toBeUndefined();
   });
 
   it("never points the field at itself", () => {

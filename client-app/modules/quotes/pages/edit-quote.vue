@@ -20,7 +20,6 @@
           :required="!hasItems"
           :error="!commentValid"
           :message="commentErrorMessage"
-          :aria-label="$t('quote_details.quote_request_comment')"
           no-resize
           counter
           @input="editComment"
