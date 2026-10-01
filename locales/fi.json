@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Emme voineet kirjata sinua sisään",
           "text": "Kokeile salasanaa tai ota yhteyttä tilisi ylläpitäjään, jos tämä toistuu.",
+          "text_no_password": "Ota yhteyttä tilisi ylläpitäjään, jos tämä toistuu.",
           "password_button": "Kirjaudu salasanalla",
           "back_link": "Takaisin kirjautumiseen"
         }

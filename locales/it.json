@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Impossibile accedere",
           "text": "Prova con una password oppure contatta l'amministratore del tuo account se il problema persiste.",
+          "text_no_password": "Contatta l'amministratore del tuo account se il problema persiste.",
           "password_button": "Accedi con una password",
           "back_link": "Torna all'accesso"
         }

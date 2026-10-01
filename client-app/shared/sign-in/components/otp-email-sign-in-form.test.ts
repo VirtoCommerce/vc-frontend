@@ -141,6 +141,9 @@ describe("OtpEmailSignInForm", () => {
       "shared.sign_in.otp_email_sign_in_form.disabled.title",
     );
     expect(document.activeElement).toBe(wrapper.find(".otp-email-sign-in-form__terminal-title").element);
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.disabled.text",
+    );
   });
 
   it("returns from the generic terminal to the request step", async () => {
@@ -236,6 +239,9 @@ describe("OtpEmailSignInForm", () => {
     await requestForm(wrapper).vm.$emit("disabled");
 
     expect(wrapper.findComponent({ name: "VcButton" }).exists()).toBe(false);
+    expect(wrapper.find(".otp-email-sign-in-form__terminal-text").text()).toBe(
+      "shared.sign_in.otp_email_sign_in_form.disabled.text_no_password",
+    );
   });
 
   it("emits switchToPassword when the password link is used", async () => {

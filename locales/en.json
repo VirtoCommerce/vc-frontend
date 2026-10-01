@@ -646,6 +646,7 @@
         "disabled": {
           "title": "We couldn't sign you in",
           "text": "Try a password instead, or contact your account administrator if this keeps happening.",
+          "text_no_password": "Contact your account administrator if this keeps happening.",
           "password_button": "Sign in with a password",
           "back_link": "Back to sign in"
         }

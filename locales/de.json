@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Anmeldung nicht möglich",
           "text": "Versuchen Sie es stattdessen mit einem Passwort oder wenden Sie sich an Ihren Kontoadministrator, falls dies weiterhin auftritt.",
+          "text_no_password": "Wenden Sie sich an Ihren Kontoadministrator, falls dies weiterhin auftritt.",
           "password_button": "Mit Passwort anmelden",
           "back_link": "Zurück zur Anmeldung"
         }

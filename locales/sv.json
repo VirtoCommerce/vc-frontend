@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Vi kunde inte logga in dig",
           "text": "Prova med lösenord istället, eller kontakta din kontoadministratör om detta fortsätter.",
+          "text_no_password": "Kontakta din kontoadministratör om detta fortsätter.",
           "password_button": "Logga in med lösenord",
           "back_link": "Tillbaka till inloggningen"
         }

@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Não foi possível fazer login",
           "text": "Tente uma senha, ou entre em contato com o administrador da sua conta se isso continuar acontecendo.",
+          "text_no_password": "Entre em contato com o administrador da sua conta se isso continuar acontecendo.",
           "password_button": "Entrar com uma senha",
           "back_link": "Voltar ao login"
         }

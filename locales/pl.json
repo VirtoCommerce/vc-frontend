@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Nie udało się Cię zalogować",
           "text": "Spróbuj zamiast tego użyć hasła lub skontaktuj się z administratorem konta, jeśli problem się powtarza.",
+          "text_no_password": "Skontaktuj się z administratorem konta, jeśli problem się powtarza.",
           "password_button": "Zaloguj się hasłem",
           "back_link": "Powrót do logowania"
         }

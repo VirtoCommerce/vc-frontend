@@ -646,6 +646,7 @@
         "disabled": {
           "title": "无法为您登录",
           "text": "请改用密码登录，如果问题持续出现，请联系您的账户管理员。",
+          "text_no_password": "如果问题持续出现，请联系您的账户管理员。",
           "password_button": "使用密码登录",
           "back_link": "返回登录"
         }

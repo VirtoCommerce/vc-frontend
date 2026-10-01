@@ -62,7 +62,11 @@
       </h2>
 
       <p class="otp-email-sign-in-form__terminal-text">
-        {{ $t("shared.sign_in.otp_email_sign_in_form.disabled.text") }}
+        {{
+          hasPasswordAuthentication
+            ? $t("shared.sign_in.otp_email_sign_in_form.disabled.text")
+            : $t("shared.sign_in.otp_email_sign_in_form.disabled.text_no_password")
+        }}
       </p>
 
       <VcButton

@@ -646,6 +646,7 @@
         "disabled": {
           "title": "Impossible de vous connecter",
           "text": "Essayez plutôt un mot de passe, ou contactez l'administrateur de votre compte si le problème persiste.",
+          "text_no_password": "Contactez l'administrateur de votre compte si le problème persiste.",
           "password_button": "Se connecter avec un mot de passe",
           "back_link": "Retour à la connexion"
         }
