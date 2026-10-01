@@ -8,6 +8,7 @@
     :disabled="!enabled"
     :title="title"
     :aria-label="ariaLabel || title"
+    :aria-busy="loading || undefined"
     :tabindex="tabindex"
     :class="[
       'vc-button group',
@@ -472,8 +473,9 @@ defineExpose({
   &__content {
     @apply grid grid-flow-col justify-center items-center min-h-[calc(var(--size)-0.25rem)];
 
+    // opacity, not visibility: hidden content keeps the button's accessible name while loading
     #{$loading} & {
-      @apply invisible;
+      @apply opacity-0;
     }
   }
 
