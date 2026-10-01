@@ -48,7 +48,7 @@ const stubs = {
     template: `<button :disabled="disabled || loading"><slot /></button>`,
   },
   VcAlert: {
-    template: `<div role="alert"><slot /></div>`,
+    template: `<div class="vc-alert"><slot /></div>`,
   },
 };
 
@@ -146,6 +146,23 @@ describe("OtpEmailVerifyForm", () => {
 
     expect(verifyCode).toHaveBeenCalledOnce();
     expect(verifyCode).toHaveBeenCalledWith("buyer@acme.com", "418302");
+  });
+
+  it("points the code field at the error so screen readers announce it", async () => {
+    verifyCode.mockImplementation(() => {
+      signInErrors.value = [{ code: "invalid_code", description: "Wrong code." }];
+      return Promise.resolve({ succeeded: false, error: { code: "invalid_code", description: "Wrong code." } });
+    });
+
+    const wrapper = mountForm();
+    expect(codeInput(wrapper).attributes("aria-describedby")).toBe("otp-email-hint");
+
+    await typeCode(wrapper, "111111");
+
+    const errorRegion = wrapper.find("#otp-email-code-error");
+    expect(errorRegion.attributes("role")).toBe("alert");
+    expect(errorRegion.text()).toBe("Wrong code.");
+    expect(codeInput(wrapper).attributes("aria-describedby")).toBe("otp-email-code-error otp-email-hint");
   });
 
   it("emits disabled when the module became disabled", async () => {

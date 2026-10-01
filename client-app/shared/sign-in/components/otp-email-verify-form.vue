@@ -1,23 +1,25 @@
 <template>
   <form class="otp-email-verify-form" @submit.prevent="onSubmit">
-    <VcAlert
-      v-for="error in signInErrors"
-      :key="error.code"
-      class="otp-email-verify-form__error"
-      color="danger"
-      size="sm"
-      variant="outline-dark"
-      icon
-    >
-      <span v-if="isLockoutError(error?.code)">
-        {{ translate(error) }}
-        <ContactAdministratorLink />.
-      </span>
+    <div id="otp-email-code-error" role="alert">
+      <VcAlert
+        v-for="error in signInErrors"
+        :key="error.code"
+        class="otp-email-verify-form__error"
+        color="danger"
+        size="sm"
+        variant="outline-dark"
+        icon
+      >
+        <span v-if="isLockoutError(error?.code)">
+          {{ translate(error) }}
+          <ContactAdministratorLink />.
+        </span>
 
-      <span v-else>
-        {{ translate(error) }}
-      </span>
-    </VcAlert>
+        <span v-else>
+          {{ translate(error) }}
+        </span>
+      </VcAlert>
+    </div>
 
     <p class="otp-email-verify-form__subtitle">
       {{ $t("shared.sign_in.otp_email_sign_in_form.verify.subtitle", { email: props.maskedEmail }) }}
@@ -45,7 +47,7 @@
         autocomplete="one-time-code"
         pattern="[0-9]*"
         :aria-invalid="hasError"
-        aria-describedby="otp-email-hint"
+        :aria-describedby="hasError ? 'otp-email-code-error otp-email-hint' : 'otp-email-hint'"
         data-test-id="otp-email-code-input"
         @input="onInput"
         @paste="onPaste"

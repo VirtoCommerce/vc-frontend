@@ -1,16 +1,18 @@
 <template>
   <form class="otp-email-request-form" @submit="onSubmit">
-    <VcAlert
-      v-for="error in signInErrors"
-      :key="error.code"
-      class="otp-email-request-form__error"
-      color="danger"
-      size="sm"
-      variant="outline-dark"
-      icon
-    >
-      {{ translate(error) }}
-    </VcAlert>
+    <div role="alert">
+      <VcAlert
+        v-for="error in signInErrors"
+        :key="error.code"
+        class="otp-email-request-form__error"
+        color="danger"
+        size="sm"
+        variant="outline-dark"
+        icon
+      >
+        {{ translate(error) }}
+      </VcAlert>
+    </div>
 
     <p class="otp-email-request-form__subtitle">
       {{ $t("shared.sign_in.otp_email_sign_in_form.request.subtitle") }}

@@ -47,7 +47,7 @@ const stubs = {
     template: `<button :disabled="disabled || loading"><slot /></button>`,
   },
   VcAlert: {
-    template: `<div role="alert"><slot /></div>`,
+    template: `<div class="vc-alert"><slot /></div>`,
   },
 };
 
