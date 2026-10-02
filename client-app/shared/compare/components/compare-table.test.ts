@@ -2,7 +2,8 @@ import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import CompareTable from "./compare-table.vue";
-import type { ICompareDisplayProduct } from "../types";
+import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
+import type { DOMWrapper } from "@vue/test-utils";
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key }),
@@ -11,6 +12,8 @@ vi.mock("vue-i18n", () => ({
 vi.mock("@/core/composables", () => ({
   useBrowserTarget: () => ({ browserTarget: { value: "_blank" } }),
 }));
+
+const tableRows: { value: ICompareTableRow[] } = { value: [] };
 
 vi.mock("../composables", () => ({
   useCompareAddToCart: () => ({
@@ -22,7 +25,7 @@ vi.mock("../composables", () => ({
     isRowPinned: () => false,
     togglePin: vi.fn(),
     pinnedRows: { value: [] },
-    unpinnedRows: { value: [] },
+    unpinnedRows: tableRows,
   }),
 }));
 
@@ -34,13 +37,15 @@ vi.mock("@vueuse/core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@vueuse/core")>();
   const { ref: vueRef } = await import("vue");
   const headerRowTop = vueRef(100); // > appHeaderHeight (0) + 1, i.e. not compact by default
+  const isMobile = vueRef(false);
 
   return {
     ...actual,
-    useBreakpoints: () => ({ smaller: () => vueRef(false) }),
+    useBreakpoints: () => ({ smaller: () => isMobile }),
     useElementBounding: () => ({ top: headerRowTop, update: vi.fn() }),
     useCssVar: () => vueRef("0"),
     __headerRowTop: headerRowTop,
+    __isMobile: isMobile,
   };
 });
 
@@ -97,6 +102,10 @@ async function setCompact(compact: boolean) {
   vueuseCore.__headerRowTop.value = compact ? 0 : 100;
 }
 
+function row(key: string, values: string[]): ICompareTableRow {
+  return { key, label: `Label ${key}`, kind: "text", values, differs: false };
+}
+
 function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
   // attachTo: real DOM connection is what document.activeElement tracks — a detached mount (the
   // default) makes every .focus() in this file a silent no-op.
@@ -122,8 +131,15 @@ function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
   });
 }
 
+async function setMobile(mobile: boolean) {
+  const vueuseCore = (await import("@vueuse/core")) as unknown as { __isMobile: { value: boolean } };
+  vueuseCore.__isMobile.value = mobile;
+}
+
 afterEach(async () => {
   await setCompact(false);
+  await setMobile(false);
+  tableRows.value = [];
 });
 
 describe("CompareTable — focus management", () => {
@@ -180,6 +196,122 @@ describe("CompareTable — focus management", () => {
     await nextTick();
 
     expect(document.activeElement).toBe(wrapper.get(".compare-table__header-row").element);
+    wrapper.unmount();
+  });
+});
+
+describe("CompareTable — table semantics", () => {
+  // The header row and the body are separate scroll containers, yet one table has to own both,
+  // with every row laid out as the same columns: label, then products.
+  function cellRole(cell: DOMWrapper<Element>) {
+    if (cell.element.tagName === "TD") {
+      return "cell";
+    }
+
+    const scope = cell.attributes("scope");
+
+    if (scope === "col") {
+      return "columnheader";
+    }
+
+    return scope === "row" ? "rowheader" : `th[scope=${scope}]`;
+  }
+
+  function rowsOf(wrapper: ReturnType<typeof mountTable>) {
+    const tables = wrapper.findAll("table");
+    expect(tables).toHaveLength(1);
+
+    return tables[0]
+      .findAll("tr")
+      .map((rowWrapper) =>
+        rowWrapper.findAll("td, th").map((cell) => [cellRole(cell), cell.attributes("aria-label") ?? cell.text()]),
+      );
+  }
+
+  it("puts the product header row and every attribute row in one table, column for column", async () => {
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"]), row("color", ["Red", "Blue"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    expect(wrapper.get("table").attributes("aria-label")).toBe("pages.compare.title");
+    // The corner cell holds the tabs and "Clear category"; each value sits under its own product.
+    expect(rowsOf(wrapper)).toEqual([
+      [
+        ["cell", expect.stringContaining("shared.compare.table.tabs.all")],
+        ["columnheader", "Product p1"],
+        ["columnheader", "Product p2"],
+      ],
+      [
+        ["rowheader", "Label sku"],
+        ["cell", "SKU-1"],
+        ["cell", "SKU-2"],
+      ],
+      [
+        ["rowheader", "Label color"],
+        ["cell", "Red"],
+        ["cell", "Blue"],
+      ],
+    ]);
+
+    wrapper.unmount();
+  });
+
+  it("keeps the product columns once the header row turns compact", async () => {
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    await setCompact(true);
+    await nextTick();
+
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(2);
+    expect(rowsOf(wrapper)[0]).toEqual([
+      ["cell", expect.any(String)],
+      ["columnheader", "Product p1"],
+      ["columnheader", "Product p2"],
+    ]);
+
+    wrapper.unmount();
+  });
+
+  // Below md the tabs move out to a bar above the table. The corner cell they leave must stay, empty,
+  // or every product header would slide one column left of its values.
+  it("keeps the corner cell, and the tabs out of the table, on mobile", async () => {
+    await setMobile(true);
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    const table = wrapper.get("table");
+    expect(table.find(".compare-table__tabs").exists()).toBe(false);
+    expect(wrapper.find(".compare-table__mobile-tabs-bar .compare-table__tabs").exists()).toBe(true);
+    expect(rowsOf(wrapper)).toEqual([
+      [
+        ["cell", ""],
+        ["columnheader", "Product p1"],
+        ["columnheader", "Product p2"],
+      ],
+      [
+        ["rowheader", "Label sku"],
+        ["cell", "SKU-1"],
+        ["cell", "SKU-2"],
+      ],
+    ]);
+
+    wrapper.unmount();
+  });
+
+  it("scrolls the header row along with the body", async () => {
+    tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    const body = wrapper.get("tbody").element;
+    body.scrollLeft = 120;
+    body.dispatchEvent(new Event("scroll"));
+
+    expect(wrapper.get("thead").element.scrollLeft).toBe(120);
+
     wrapper.unmount();
   });
 });
