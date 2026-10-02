@@ -253,14 +253,14 @@ describe("stat row drag and drop", () => {
     const outside = document.body.appendChild(document.createElement("button"));
     const card = () => wrapper.find('[data-block-id="active_carts"]').element as HTMLElement;
 
-    card().focus();
-    card().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
-    card().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
-    await nextTick();
-    await nextTick();
-    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
-
     try {
+      card().focus();
+      card().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+      card().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+      await nextTick();
+      await nextTick();
+      expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+
       outside.focus();
       await nextTick();
       await nextTick();

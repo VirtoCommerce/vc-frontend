@@ -357,9 +357,9 @@ describe("VcSortable", () => {
 
   describe("a keyboard grab carried between lists", () => {
     // The owner of both lists applies every move, as a real consumer does.
-    function mountPair() {
-      const lists = ref<Record<string, string[]>>({ shown: ["a", "b", "c"], parked: ["x"] });
-      const ring = ["shown", "parked"];
+    function mountPair(initial: Record<string, string[]> = { shown: ["a", "b", "c"], parked: ["x"] }) {
+      const lists = ref<Record<string, string[]>>(initial);
+      const ring = Object.keys(initial);
       const signals: unknown[] = [];
       const onAnnounce = (signal: unknown) => signals.push(signal);
       const onMove = ({ id, from, to, index }: SortableMovePayloadType) => {
@@ -494,7 +494,7 @@ describe("VcSortable", () => {
 
     // SortableJS captures indices at the press; a carried grab blur-cancelling back into the pressed list
     // would move the wrong item.
-    it("lets go of a carried grab when a pointer press starts in another list of the group", async () => {
+    it("lets go of a carried grab when a pointer press starts in the list it was grabbed in", async () => {
       const { lists, key, element, sortableOf } = mountPair();
 
       await key("b", " ");
@@ -504,6 +504,18 @@ describe("VcSortable", () => {
       await nextTick();
 
       expect(lists.value.shown).toEqual(["a", "c"]);
+    });
+
+    it("still returns a carried grab home when the press is in a list it did not come from", async () => {
+      const { lists, key, element, sortableOf } = mountPair({ shown: ["a", "b", "c"], parked: ["x"], archive: [] });
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      sortableOf("archive").options.onChoose();
+      element("b").dispatchEvent(new FocusEvent("blur"));
+      await nextTick();
+
+      expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"], archive: [] });
     });
 
     it("still puts back a move inside one list when a press starts in another list", async () => {

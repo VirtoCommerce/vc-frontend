@@ -6,7 +6,8 @@ export type SortableOrientationType = "vertical" | "horizontal";
 
 /**
  * An item leaving this list for another one in its group. `index` is absent for a keyboard move — it appends —
- * except when Escape sends a held item back to the list it was grabbed in, at the place it left.
+ * except when a cancelled grab (Escape or blur) sends the item back to the list it was grabbed in, at the place
+ * it left.
  */
 export type SortableMovePayloadType = {
   id: string;
