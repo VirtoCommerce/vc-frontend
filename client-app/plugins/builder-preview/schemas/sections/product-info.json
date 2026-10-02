@@ -1,5 +1,6 @@
 {
   "name": "Product",
+  "description": "Product detail body — the centerpiece of a product page: image gallery with badges and prices, plus a column of nested blocks (description, properties, variations, etc.). Restricted to the `product` template. Use when: composing a product detail page — exactly one of these belongs in the page `content[]`. Skip when: not on the `product` template — this section will not render elsewhere. `settings` is empty; the section's body is configured through nested `blocks` of types `image`, `text`, `product-properties`, `product-description`, `product-variations`, `product-assets` (see catalog `blocks`).",
   "targetTemplates": ["product"],
   "icon": "smartphone",
   "displayField": "name",
