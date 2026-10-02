@@ -40,12 +40,12 @@ import { useSortableList } from "@/ui-kit/composables";
 import { provideSortableItem } from "@/ui-kit/composables/useSortableItem";
 import { checkItem, objectKey, warn } from "./vc-sortable-support";
 import type {
-  SortableGrabEventType,
+  SortableGrabPayloadType,
   SortableHandleAttrsType,
   SortableItemAttrsType,
   SortableMovePayloadType,
   SortableOrientationType,
-  SortableReleaseEventType,
+  SortableReleasePayloadType,
   SortableSignalType,
 } from "@/ui-kit/composables";
 import type { PropType, VNode } from "vue";
@@ -59,9 +59,9 @@ export interface IEmits {
    */
   (event: "announce", signal: SortableSignalType): void;
   /** A grab started, by pointer drag or by keyboard, in this list. */
-  (event: "grab", payload: SortableGrabEventType): void;
+  (event: "grab", payload: SortableGrabPayloadType): void;
   /** A grab ended. A keyboard grab carried across lists ends in the list that holds it then. */
-  (event: "release", payload: SortableReleaseEventType): void;
+  (event: "release", payload: SortableReleasePayloadType): void;
 }
 
 export interface IProps<TItem = unknown> {
@@ -75,7 +75,7 @@ export interface IProps<TItem = unknown> {
   accepts?: (id: string, from: string) => boolean;
   /**
    * Drag by a handle instead of the whole item. `true` drags by the element bound with `useSortableItem()`'s
-   * `handleAttrs`, which also takes the keyboard; a selector widens the pointer grip to what it matches.
+   * `handleAttrs`, which also takes the keyboard; a selector adds what it matches to that pointer grip.
    * Read at mount.
    */
   handle?: boolean | string;
@@ -89,7 +89,8 @@ export interface IProps<TItem = unknown> {
   tag?: string;
   /**
    * Maps an item to its id, as `move`, `accepts` and the signals report it. Defaults to the item itself for
-   * strings and numbers, and to an id generated per object otherwise — stable while the object is.
+   * strings and numbers, and to an id generated per object otherwise — stable while the object is, but
+   * opaque: pass one whenever `move` or `accepts` must map the id back to your data.
    */
   itemKey?: (item: TItem) => string;
 }
@@ -123,8 +124,10 @@ const { t } = useI18n();
 const instance = getCurrentInstance();
 
 // Read per call: the parent re-renders this vnode, and a listener can be bound or dropped with it.
+// `.once` listeners are stored under their own key.
 function hasListener(name: "onAnnounce" | "onMove"): boolean {
-  return Boolean(instance?.vnode.props?.[name]);
+  const vnodeProps = instance?.vnode.props;
+  return Boolean(vnodeProps?.[name] || vnodeProps?.[`${name}Once`]);
 }
 
 const container = useTemplateRef<HTMLElement>("container");
@@ -158,8 +161,12 @@ function describe(signal: SortableSignalType): string {
       return t("ui_kit.sortable.edge");
     case "cancelled":
       return t("ui_kit.sortable.cancelled");
+    // By place, not by `name`: that is an id, never translated.
     case "movedList":
-      return t("ui_kit.sortable.moved_list", { list: signal.to });
+      return t("ui_kit.sortable.moved_list", {
+        position: (props.listOrder?.indexOf(signal.to) ?? -1) + 1,
+        total: props.listOrder?.length ?? 0,
+      });
     case "noTarget":
       return t("ui_kit.sortable.no_target");
   }
@@ -211,6 +218,9 @@ if (import.meta.env.DEV) {
       `list in group "${props.group}" has no \`name\`: every unnamed list is "default", so moves cannot tell them apart.`,
     );
   }
+  if ((props.group || props.accepts) && !props.itemKey && model.value.some((item) => typeof item === "object")) {
+    warn("object items need an `itemKey` here: `move` and `accepts` would get generated ids you cannot map back.");
+  }
   if (props.group && !hasListener("onMove")) {
     warn(`list in group "${props.group}" has no \`@move\` listener: an item dragged across snaps back.`);
   }
@@ -254,7 +264,8 @@ const ItemScope = defineComponent({
 
     if (import.meta.env.DEV) {
       const scope = getCurrentInstance();
-      onMounted(() => checkItem(scope?.proxy?.$el, scopeProps.itemId, scopeProps.handleAttrs !== null));
+      // One warning per mistake: with several roots the attrs check would blame the wrong one.
+      onMounted(() => warnedRoots || checkItem(scope?.proxy?.$el, scopeProps.itemId, scopeProps.handleAttrs !== null));
     }
 
     let warnedRoots = false;

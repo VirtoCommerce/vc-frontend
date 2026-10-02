@@ -172,7 +172,7 @@
       "dropped": "Soltado en la posición {position} de {total}",
       "edge": "No se puede mover más",
       "cancelled": "Cancelado, de vuelta en su lugar",
-      "moved_list": "Movido a {list}",
+      "moved_list": "Movido a la lista {position} de {total}",
       "no_target": "Ninguna lista en esa dirección lo acepta"
     }
   }

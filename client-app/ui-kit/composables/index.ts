@@ -15,11 +15,11 @@ export type { ISortableItemContext } from "./useSortableItem";
 export { useSortableList } from "./useSortableList";
 export type {
   IUseSortableListOptions,
-  SortableGrabEventType,
+  SortableGrabPayloadType,
   SortableHandleAttrsType,
   SortableItemAttrsType,
   SortableMovePayloadType,
   SortableOrientationType,
-  SortableReleaseEventType,
+  SortableReleasePayloadType,
   SortableSignalType,
 } from "./useSortableList";

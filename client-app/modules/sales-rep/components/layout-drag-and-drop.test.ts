@@ -594,8 +594,9 @@ describe("widget column drag and drop", () => {
   it("gives Sortable a header handle, and excludes the hide button from it", () => {
     setupColumn();
 
+    // The kit adds its own handle element to the selector's grip.
     expect(zones[0].options).toMatchObject({
-      handle: WIDGET_DRAG_HANDLE_SELECTOR,
+      handle: `.vc-sortable__handle, ${WIDGET_DRAG_HANDLE_SELECTOR}`,
       filter: WIDGET_DRAG_FILTER_SELECTOR,
       preventOnFilter: false,
     });

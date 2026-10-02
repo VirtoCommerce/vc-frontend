@@ -1,5 +1,5 @@
 import Sortable from "sortablejs";
-import { nextTick, readonly, ref, toValue, watch } from "vue";
+import { nextTick, onScopeDispose, readonly, ref, toValue, watch } from "vue";
 import type { MaybeRefOrGetter, Ref } from "vue";
 
 export type SortableOrientationType = "vertical" | "horizontal";
@@ -41,13 +41,13 @@ export type SortableItemAttrsType = {
   onBlur?: () => void;
 };
 
-/** Spread onto the element that takes the keyboard in a list with a separate `handle`. */
 /** A grab starting, by pointer or keyboard. `from` is the list it starts in. */
-export type SortableGrabEventType = { id: string; from: string };
+export type SortableGrabPayloadType = { id: string; from: string };
 
 /** A grab ending — dropped, cancelled or let go — in whichever list holds it by then. */
-export type SortableReleaseEventType = { id: string };
+export type SortableReleasePayloadType = { id: string };
 
+/** Spread onto the element that takes the keyboard in a list with a separate `handle`. */
 export type SortableHandleAttrsType = {
   class: string;
   tabindex: "0";
@@ -73,7 +73,7 @@ export interface IUseSortableListOptions {
   accepts?: (id: string, from: string) => boolean;
   /**
    * Drag by a handle instead of the whole item; the keyboard then goes through `handleAttrs`. `true` drags
-   * by the element `handleAttrs` is bound to; a selector widens the pointer grip to whatever it matches.
+   * by the element `handleAttrs` is bound to; a selector adds whatever it matches to that pointer grip.
    * Read once.
    */
   handle?: boolean | string;
@@ -88,13 +88,13 @@ export interface IUseSortableListOptions {
    * focus cannot follow the item into the other list. */
   onMove?: (payload: SortableMovePayloadType) => void;
   onAnnounce?: (signal: SortableSignalType) => void;
-  onGrab?: (event: SortableGrabEventType) => void;
-  onRelease?: (event: SortableReleaseEventType) => void;
+  onGrab?: (payload: SortableGrabPayloadType) => void;
+  onRelease?: (payload: SortableReleasePayloadType) => void;
 }
 
 export const SORTABLE_ITEM_ATTRIBUTE = "data-sortable-id";
 export const SORTABLE_NAME_ATTRIBUTE = "data-sortable-name";
-const HANDLE_SELECTOR = ".vc-sortable__handle";
+export const HANDLE_SELECTOR = ".vc-sortable__handle";
 
 // Where a keyboard grab began, so Escape can undo every move it made, across lists too.
 type GrabOriginType = { list: string; index: number };
@@ -407,9 +407,35 @@ export function useSortableList(
     };
   }
 
+  // SortableJS accepts a native drop only over a list, so releasing in the gap between two lists is a
+  // cancelled drop to the browser, which flies the drag image back to where it started — while the item
+  // lands where the placeholder showed. Accepting the drop page-wide for the drag's length keeps the two
+  // in step; `drop` too, or text would land in a field under the pointer.
+  let acceptingDropsIn: Document | undefined;
+
+  function acceptDrop(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }
+
+  function stopAcceptingDrops(): void {
+    acceptingDropsIn?.removeEventListener("dragover", acceptDrop);
+    acceptingDropsIn?.removeEventListener("drop", acceptDrop);
+    acceptingDropsIn = undefined;
+  }
+
+  function startAcceptingDrops(doc: Document): void {
+    stopAcceptingDrops();
+    acceptingDropsIn = doc;
+    doc.addEventListener("dragover", acceptDrop);
+    doc.addEventListener("drop", acceptDrop);
+  }
+
   function pointerHandle(): string | undefined {
     if (typeof options.handle === "string") {
-      return options.handle;
+      return `${HANDLE_SELECTOR}, ${options.handle}`;
     }
     return options.handle ? HANDLE_SELECTOR : undefined;
   }
@@ -445,6 +471,7 @@ export function useSortableList(
 
       onStart: (event: Sortable.SortableEvent) => {
         originSibling = event.item.nextSibling;
+        startAcceptingDrops(el.ownerDocument);
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
         if (id) {
           options.onGrab?.({ id, from: nameOf() });
@@ -463,6 +490,7 @@ export function useSortableList(
 
       // Cross-list. `onEnd` fires once per drag, unlike separate onAdd/onRemove, which double-apply.
       onEnd: (event: Sortable.SortableEvent) => {
+        stopAcceptingDrops();
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
 
         if (event.from !== event.to) {
@@ -562,6 +590,12 @@ export function useSortableList(
     },
     { immediate: true },
   );
+
+  // A list unmounting with an item held ends that grab: no blur is coming if focus is elsewhere.
+  onScopeDispose(() => {
+    end();
+    stopAcceptingDrops();
+  });
 
   return { grabbedId: readonly(grabbedId), isGrabbed, itemAttrs, handleAttrs, release: end };
 }

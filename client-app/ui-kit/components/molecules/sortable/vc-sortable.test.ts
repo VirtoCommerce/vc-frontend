@@ -18,8 +18,10 @@ vi.mock("sortablejs", () => ({
   },
 }));
 
-// The list's own announcements are localized; the key is what a test can see.
-vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+// The list's own announcements are localized; the key and its parameters are what a test can see.
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({ t: (key: string, params?: object) => (params ? `${key} ${JSON.stringify(params)}` : key) }),
+}));
 
 enableAutoUnmount(afterEach);
 
@@ -696,7 +698,76 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     await wrapper.get(".row").trigger("keydown", { key: " " });
     await nextTick();
 
-    expect(liveRegion()?.textContent).toBe("ui_kit.sortable.grabbed");
+    expect(liveRegion()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
+  });
+
+  // Every signal kind, with what it is told: a swapped key or an off-by-one place is otherwise invisible.
+  async function spoken(keys: string[], props: Record<string, unknown> = {}) {
+    const { wrapper } = mountList(props);
+    const row = () => wrapper.find('[data-sortable-id="b"]').element;
+    for (const key of keys) {
+      row().dispatchEvent(new KeyboardEvent("keydown", { key }));
+      await nextTick();
+      await nextTick();
+    }
+    return liveRegion()?.textContent;
+  }
+
+  it.each([
+    [[" "], {}, 'ui_kit.sortable.grabbed {"position":2,"total":3}'],
+    [[" "], { listOrder: ["main", "other"] }, 'ui_kit.sortable.grabbed_lists {"position":2,"total":3}'],
+    [[" ", "ArrowDown"], {}, 'ui_kit.sortable.moved {"position":3,"total":3}'],
+    [[" ", "ArrowDown", " "], {}, 'ui_kit.sortable.dropped {"position":3,"total":3}'],
+    [[" ", "ArrowDown", "ArrowDown"], {}, "ui_kit.sortable.edge"],
+    [[" ", "Escape"], {}, "ui_kit.sortable.cancelled"],
+    [
+      [" ", "ArrowRight"],
+      { group: "alone", listOrder: ["main", "other"], onMove: vi.fn() },
+      "ui_kit.sortable.no_target",
+    ],
+  ])("words the keys %j for the live region", async (keys, props, text) => {
+    expect(await spoken(keys, props)).toBe(text);
+  });
+
+  it("names the list an item moved to by its place in `listOrder`, not by its id", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    const order = ["shown", "parked", "archive"];
+    const onMove = ({ id, from, to }: SortableMovePayloadType) => {
+      lists.value[from] = lists.value[from].filter((item) => item !== id);
+      lists.value[to] = [...lists.value[to], id];
+    };
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            ["shown", "parked"].map((name) =>
+              h(
+                VcSortable<string>,
+                { key: name, modelValue: lists.value[name], name, group: "spoken", listOrder: order, onMove },
+                { item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item) },
+              ),
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const item = document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
+
+    item.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    item.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
+    await nextTick();
+
+    const spokenTexts = [...document.querySelectorAll('[aria-live="polite"]')].map((region) => region.textContent);
+    expect(spokenTexts).toContain('ui_kit.sortable.moved_list {"position":2,"total":3}');
+  });
+
+  it("treats an `announce.once` listener as a listener", async () => {
+    const { wrapper } = mountList({ onAnnounceOnce: vi.fn() });
+
+    await wrapper.get(".row").trigger("keydown", { key: " " });
+
+    expect(liveRegion()).toBeNull();
   });
 
   // The same message twice is two events for a screen reader only if the region changes in between.
@@ -856,6 +927,44 @@ describe("VcSortable — development warnings", () => {
         expect.stringContaining('group "loud" has no `@move` listener'),
       ]),
     );
+  });
+
+  it("warns when object items in a group have no `itemKey`", () => {
+    mount(VcSortable<{ title: string }>, {
+      props: { modelValue: [{ title: "a" }], name: "objects", group: "objects", onMove: vi.fn() },
+      slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+      attachTo: document.body,
+    });
+
+    expect(warnings()).toContainEqual(expect.stringContaining("object items need an `itemKey` here"));
+  });
+
+  it("warns once, not twice, for an item slot with two roots", () => {
+    mountWith({ modelValue: ["a"] }, (attrs, id) => [h("div", attrs, id), h("span", "extra")]);
+
+    expect(warnings()).toHaveLength(1);
+  });
+
+  it("warns when `filter` changes after mount", async () => {
+    const filter = ref(".a");
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              { modelValue: ["a"], filter: filter.value },
+              { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+
+    filter.value = ".b";
+    await nextTick();
+
+    expect(warnings()).toContainEqual(expect.stringContaining("read at mount"));
   });
 
   it("warns when two items share an id", () => {

@@ -1,4 +1,4 @@
-import { SORTABLE_ITEM_ATTRIBUTE } from "@/ui-kit/composables/useSortableList";
+import { HANDLE_SELECTOR, SORTABLE_ITEM_ATTRIBUTE } from "@/ui-kit/composables/useSortableList";
 
 // Shared by every list, so an object carried across lists keeps its id.
 const objectKeys = new WeakMap<object, string>();
@@ -22,7 +22,7 @@ export function warn(text: string): void {
 export function checkItem(el: unknown, id: string, hasHandle: boolean): void {
   if (!(el instanceof Element) || !el.hasAttribute(SORTABLE_ITEM_ATTRIBUTE)) {
     warn(`item "${id}" did not get its \`attrs\`: bind them to the #item slot's root element.`);
-  } else if (hasHandle && !el.querySelector(".vc-sortable__handle")) {
+  } else if (hasHandle && !el.querySelector(HANDLE_SELECTOR)) {
     warn(`item "${id}" has no handle: bind \`useSortableItem().handleAttrs\` to an element inside it.`);
   }
 }

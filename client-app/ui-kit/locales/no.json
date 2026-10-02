@@ -172,7 +172,7 @@
       "dropped": "Sluppet på posisjon {position} av {total}",
       "edge": "Kan ikke flytte lenger",
       "cancelled": "Avbrutt, tilbake på opprinnelig plass",
-      "moved_list": "Flyttet til {list}",
+      "moved_list": "Flyttet til liste {position} av {total}",
       "no_target": "Ingen liste i den retningen tar imot den"
     }
   }

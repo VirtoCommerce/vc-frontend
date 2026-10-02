@@ -172,7 +172,7 @@
       "dropped": "Upuszczono na pozycji {position} z {total}",
       "edge": "Dalej się nie da",
       "cancelled": "Anulowano, element wrócił na miejsce",
-      "moved_list": "Przeniesiono do {list}",
+      "moved_list": "Przeniesiono do listy {position} z {total}",
       "no_target": "Żadna lista w tym kierunku go nie przyjmuje"
     }
   }

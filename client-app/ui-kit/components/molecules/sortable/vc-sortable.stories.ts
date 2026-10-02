@@ -173,7 +173,7 @@ export const Handle: StoryType = {
     docs: {
       description: {
         story:
-          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. The held look is that control's own, here through VcButton's icon variable. A selector instead of `true` widens the pointer grip to what it matches; controls inside it stay clickable when listed in `filter`.",
+          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. The held look is that control's own, here through VcButton's icon variable. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`.",
       },
       source: {
         code: `<!-- Dashboard.vue -->

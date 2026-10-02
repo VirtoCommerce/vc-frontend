@@ -172,7 +172,7 @@
       "dropped": "{total} 件中 {position} 番目に配置しました",
       "edge": "これ以上移動できません",
       "cancelled": "取り消しました。元の位置に戻りました",
-      "moved_list": "{list} に移動しました",
+      "moved_list": "{position} 番目のリスト（全 {total} 個）に移動しました",
       "no_target": "その方向に受け入れるリストはありません"
     }
   }

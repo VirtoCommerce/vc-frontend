@@ -172,7 +172,7 @@
       "dropped": "Pudotettu sijaintiin {position}/{total}",
       "edge": "Pidemmälle ei pääse",
       "cancelled": "Peruttu, palautettu alkuperäiselle paikalle",
-      "moved_list": "Siirretty kohteeseen {list}",
+      "moved_list": "Siirretty luetteloon {position}/{total}",
       "no_target": "Mikään luettelo siihen suuntaan ei ota sitä vastaan"
     }
   }

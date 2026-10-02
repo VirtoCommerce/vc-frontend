@@ -545,7 +545,7 @@ describe("useSortableList — pointer", () => {
     expect(sortable.options).toMatchObject({
       draggable: "[data-sortable-id]",
       group: "g",
-      handle: ".grip",
+      handle: ".vc-sortable__handle, .grip",
       filter: ".close",
       preventOnFilter: false,
       ghostClass: "vc-sortable__item--ghost",
@@ -818,7 +818,7 @@ describe("useSortableList — grab and release events", () => {
     const container = ref<HTMLElement | null>(null);
     const scope = effectScope();
     scopes.push(scope);
-    scope.run(() =>
+    const list = scope.run(() =>
       useSortableList(container, {
         name: "main",
         items: () => ["a"],
@@ -827,9 +827,11 @@ describe("useSortableList — grab and release events", () => {
         onRelease: ({ id }) => events.push(`release ${id}`),
         ...overrides,
       }),
-    );
+    )!;
     container.value = el;
-    return { el, item, events, sortable: () => instances.at(-1)! };
+    const key = (name: string) =>
+      list.itemAttrs("a").onKeydown!({ key: name, preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    return { el, item, events, list, key, scope, sortable: () => instances.at(-1)! };
   }
 
   it("reports a pointer drag from its start to its end", async () => {
@@ -850,10 +852,160 @@ describe("useSortableList — grab and release events", () => {
     expect(sortable().options.handle).toBe(".vc-sortable__handle");
   });
 
-  it("drags by whatever a handle selector matches", async () => {
+  it("adds what a handle selector matches to the handle element's grip", async () => {
     const { sortable } = pointer({ handle: ".grip" });
     await nextTick();
 
-    expect(sortable().options.handle).toBe(".grip");
+    expect(sortable().options.handle).toBe(".vc-sortable__handle, .grip");
+  });
+
+  it("reports a keyboard grab ended by a pointer press", async () => {
+    const { key, events, sortable } = pointer();
+    await nextTick();
+
+    key(" ");
+    sortable().options.onChoose();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("reports a grab ended by the caller's `release`", () => {
+    const { key, events, list } = pointer();
+
+    key(" ");
+    list.release();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("reports a grab ended by the list unmounting", () => {
+    const { key, events, scope } = pointer();
+
+    key(" ");
+    scope.stop();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("reports a grab ended by the held item leaving the list", async () => {
+    const ids = ref(["a", "b"]);
+    const { press, events } = withEvents({ items: () => ids.value });
+
+    press(" ", "a");
+    ids.value = ["b"];
+    await nextTick();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  // A shown list and a parked one; the owner applies a move only when `apply` says so.
+  function carry({ apply = true } = {}) {
+    const order = ["shown", "parked"];
+    const events: string[] = [];
+    let parked: string[] = [];
+    const shown = pointer({
+      name: "shown",
+      group: "exits",
+      listOrder: order,
+      orientation: "horizontal",
+      onRelease: ({ id }) => events.push(`release ${id} shown`),
+      onMove: ({ id, to }) => {
+        if (apply && to === "parked") {
+          parked = [...parked, id];
+        }
+      },
+    });
+    const target = setup({
+      name: "parked",
+      group: "exits",
+      listOrder: order,
+      orientation: "horizontal",
+      onRelease: ({ id }) => events.push(`release ${id} parked`),
+      items: () => parked,
+      onReorder: (ids) => {
+        parked = ids;
+      },
+    });
+    return { shown, target, events };
+  }
+
+  it("reports a carried grab cancelled back home from the list holding it", async () => {
+    const { shown, target, events } = carry();
+    await nextTick();
+
+    shown.key(" ");
+    shown.key("ArrowDown");
+    await nextTick();
+    target.press("Escape", "a");
+
+    expect(events).toEqual(["release a parked"]);
+  });
+
+  it("reports a carried grab the owner refused", async () => {
+    const { shown, events } = carry({ apply: false });
+    await nextTick();
+
+    shown.key(" ");
+    shown.key("ArrowDown");
+    await nextTick();
+
+    expect(events).toEqual(["release a parked"]);
+  });
+
+  it("reports a carried grab ended by a press in the list it came from", async () => {
+    const { shown, events } = carry();
+    await nextTick();
+
+    shown.key(" ");
+    shown.key("ArrowDown");
+    await nextTick();
+    shown.sortable().options.onChoose();
+
+    expect(events).toEqual(["release a parked"]);
+  });
+});
+
+// Released outside every list, a native drop nobody accepted is a cancel to the browser, which then
+// flies the drag image back to its start while the item lands where the placeholder showed.
+describe("useSortableList — a pointer drop between lists", () => {
+  function dragOver(type: "dragover" | "drop") {
+    const event = new Event(type, { bubbles: true, cancelable: true });
+    document.body.dispatchEvent(event);
+    return event.defaultPrevented;
+  }
+
+  async function mountedList() {
+    const el = document.createElement("div");
+    document.body.append(el);
+    const item = document.createElement("div");
+    item.dataset.sortableId = "a";
+    el.append(item);
+    const container = ref<HTMLElement | null>(el);
+    const scope = effectScope();
+    scopes.push(scope);
+    scope.run(() => useSortableList(container, { name: "main", items: () => ["a"], onReorder: vi.fn() }));
+    await nextTick();
+    return { el, item, scope, sortable: instances.at(-1)! };
+  }
+
+  it("accepts the drop anywhere on the page while its drag lasts, and only then", async () => {
+    const { el, item, sortable } = await mountedList();
+
+    expect([dragOver("dragover"), dragOver("drop")]).toEqual([false, false]);
+
+    sortable.options.onStart({ item, from: el });
+    expect([dragOver("dragover"), dragOver("drop")]).toEqual([true, true]);
+
+    sortable.options.onEnd({ item, from: el, to: el });
+    expect([dragOver("dragover"), dragOver("drop")]).toEqual([false, false]);
+  });
+
+  it("stops accepting drops when the list unmounts mid-drag", async () => {
+    const { el, item, sortable, scope } = await mountedList();
+
+    sortable.options.onStart({ item, from: el });
+    scope.stop();
+
+    expect(dragOver("dragover")).toBe(false);
   });
 });

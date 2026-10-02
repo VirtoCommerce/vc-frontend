@@ -172,7 +172,7 @@
       "dropped": "Dropped at position {position} of {total}",
       "edge": "No further to go",
       "cancelled": "Cancelled, back where it started",
-      "moved_list": "Moved to {list}",
+      "moved_list": "Moved to list {position} of {total}",
       "no_target": "No list in that direction takes it"
     }
   }
