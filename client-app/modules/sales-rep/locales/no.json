@@ -338,7 +338,8 @@
       "load_failed": "Kunne ikke laste aktivitet",
       "view_all": "All aktivitet",
       "my_activity": {
-        "title": "Min aktivitet"
+        "title": "Min aktivitet",
+        "empty": "Ingen aktivitet denne måneden"
       },
       "customer": {
         "title": "Kundeaktivitet",

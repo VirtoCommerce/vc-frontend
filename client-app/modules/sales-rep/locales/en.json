@@ -338,7 +338,8 @@
       "load_failed": "Couldn't load activity",
       "view_all": "All activity",
       "my_activity": {
-        "title": "My activity"
+        "title": "My activity",
+        "empty": "No activity this month"
       },
       "customer": {
         "title": "Customer activity",

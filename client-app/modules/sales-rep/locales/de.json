@@ -338,7 +338,8 @@
       "load_failed": "Aktivität konnte nicht geladen werden",
       "view_all": "Gesamte Aktivität",
       "my_activity": {
-        "title": "Meine Aktivität"
+        "title": "Meine Aktivität",
+        "empty": "Keine Aktivität in diesem Monat"
       },
       "customer": {
         "title": "Kundenaktivität",

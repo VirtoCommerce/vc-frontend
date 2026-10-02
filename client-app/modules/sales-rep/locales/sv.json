@@ -338,7 +338,8 @@
       "load_failed": "Kunde inte ladda aktivitet",
       "view_all": "All aktivitet",
       "my_activity": {
-        "title": "Min aktivitet"
+        "title": "Min aktivitet",
+        "empty": "Ingen aktivitet denna månad"
       },
       "customer": {
         "title": "Kundaktivitet",

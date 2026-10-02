@@ -338,7 +338,8 @@
       "load_failed": "无法加载活动",
       "view_all": "全部活动",
       "my_activity": {
-        "title": "我的活动"
+        "title": "我的活动",
+        "empty": "本月暂无活动"
       },
       "customer": {
         "title": "客户活动",

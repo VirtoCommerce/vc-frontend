@@ -1,8 +1,11 @@
 import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { buildStatisticsWindows } from "../utils";
 import MyActivity from "./my-activity.vue";
 import type { SalesRepActivityItemType } from "../types";
+import type { MaybeRefOrGetter } from "vue";
 
 const state = await vi.hoisted(async () => {
   const { ref } = await import("vue");
@@ -11,17 +14,11 @@ const state = await vi.hoisted(async () => {
     analyticsUnavailable: ref(false),
     loading: ref(false),
     error: ref<Error | null>(null),
+    useSalesRepActivities: vi.fn(),
   };
 });
 
-vi.mock("../composables/useSalesRepActivities", () => ({
-  useSalesRepActivities: () => ({
-    items: state.items,
-    analyticsUnavailable: state.analyticsUnavailable,
-    loading: state.loading,
-    error: state.error,
-  }),
-}));
+vi.mock("../composables/useSalesRepActivities", () => ({ useSalesRepActivities: state.useSalesRepActivities }));
 
 const createWrapper = createWrapperFactory(mount, MyActivity, {
   global: {
@@ -44,23 +41,30 @@ beforeEach(() => {
   state.analyticsUnavailable.value = false;
   state.loading.value = false;
   state.error.value = null;
+  state.useSalesRepActivities.mockClear();
+  state.useSalesRepActivities.mockImplementation(() => ({
+    items: state.items,
+    analyticsUnavailable: state.analyticsUnavailable,
+    loading: state.loading,
+    error: state.error,
+  }));
 });
 
 describe("MyActivity states", () => {
   // Analytics absence arrives as zero rows by contract, so the quiet view is the no-data one, not an error.
-  it("shows the no-data view, not an error, when there is no recent activity", () => {
+  it("shows the no-data view, not an error, when there is no activity this month", () => {
     const wrapper = createWrapper();
     const views = emptyViews(wrapper);
 
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBeUndefined();
-    expect(views[0].attributes("text")).toBe("sales_rep.activity.empty_period");
+    expect(views[0].attributes("text")).toBe("sales_rep.activity.my_activity.empty");
     // The all-activity link stays alongside the empty state.
     expect(wrapper.find("vc-link-stub").exists()).toBe(true);
   });
 
   // Defect 8: the widget's feed is mixed, so an empty one on a store whose analytics did not answer is
-  // not a quiet week — it is a week with the tracked half missing.
+  // not a quiet month — it is a month with the tracked half missing.
   it("names the unavailable state rather than a quiet period", () => {
     state.analyticsUnavailable.value = true;
 
@@ -105,5 +109,29 @@ describe("MyActivity states", () => {
 
     expect(wrapper.findAll("activity-row-stub")).toHaveLength(2);
     expect(wrapper.find("vc-link-stub").exists()).toBe(true);
+  });
+});
+
+describe("MyActivity wiring", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Unbounded, every dashboard visit read the whole analytics history. Mid-October, so this month and this
+  // year are different windows.
+  it("reads this month only", () => {
+    const now = new Date(2026, 9, 15, 12, 0, 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    createWrapper();
+
+    const options = state.useSalesRepActivities.mock.calls.at(-1)?.[0] as {
+      periodFrom: MaybeRefOrGetter<string | undefined>;
+      periodTo: MaybeRefOrGetter<string | undefined>;
+    };
+    const { mtdFrom, mtdTo } = buildStatisticsWindows(now);
+    expect(toValue(options.periodFrom)).toBe(mtdFrom);
+    expect(toValue(options.periodTo)).toBe(mtdTo);
   });
 });

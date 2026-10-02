@@ -338,7 +338,8 @@
       "load_failed": "No se pudo cargar la actividad",
       "view_all": "Toda la actividad",
       "my_activity": {
-        "title": "Mi actividad"
+        "title": "Mi actividad",
+        "empty": "No hay actividad este mes"
       },
       "customer": {
         "title": "Actividad del cliente",

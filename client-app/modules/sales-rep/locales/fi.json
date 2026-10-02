@@ -338,7 +338,8 @@
       "load_failed": "Aktiviteettia ei voitu ladata",
       "view_all": "Kaikki aktiviteetti",
       "my_activity": {
-        "title": "Oma aktiviteetti"
+        "title": "Oma aktiviteetti",
+        "empty": "Ei aktiviteettia tässä kuussa"
       },
       "customer": {
         "title": "Asiakkaan aktiviteetti",
