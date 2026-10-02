@@ -381,6 +381,9 @@ export function useSortableList(
   // Where the dragged node sat, so it goes back between the same neighbours — the index alone lands it
   // outside a v-for's anchors when the list is followed by other content.
   let originSibling: Node | null = null;
+  // Set by a drop outside every list. SortableJS then puts the node back by index alone, which lands the
+  // last item past the v-for's anchors, so it is put back here instead — and nothing is reordered.
+  let spilled = false;
 
   function restore(event: Sortable.SortableEvent): void {
     const saved = originSibling?.parentNode === event.from ? originSibling : null;
@@ -427,6 +430,9 @@ export function useSortableList(
       // Released outside every list, a native drop is a cancel to the browser, which flies the drag image
       // back to where it started. The item goes back there too, whatever placeholder was showing.
       revertOnSpill: true,
+      onSpill: () => {
+        spilled = true;
+      },
       ghostClass: "vc-sortable__item--ghost",
       dragClass: "vc-sortable__item--drag",
       disabled: !isEnabled(),
@@ -448,6 +454,7 @@ export function useSortableList(
 
       onStart: (event: Sortable.SortableEvent) => {
         originSibling = event.item.nextSibling;
+        spilled = false;
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
         if (id) {
           options.onGrab?.({ id, from: nameOf() });
@@ -457,6 +464,9 @@ export function useSortableList(
       // Draggable indices, never plain ones: other children of the container would shift them.
       onUpdate: (event: Sortable.SortableEvent) => {
         restore(event);
+        if (spilled) {
+          return;
+        }
 
         const ids = [...options.items()];
         const [moved] = ids.splice(event.oldDraggableIndex ?? 0, 1);
@@ -467,6 +477,12 @@ export function useSortableList(
       // Cross-list. `onEnd` fires once per drag, unlike separate onAdd/onRemove, which double-apply.
       onEnd: (event: Sortable.SortableEvent) => {
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
+
+        // Without an index change SortableJS fires no update, so `restore` has not run yet.
+        if (spilled && originSibling) {
+          restore(event);
+        }
+        spilled = false;
 
         if (event.from !== event.to) {
           // Back into the source list — state is what moves the item across.
