@@ -123,6 +123,20 @@ describe("VcSortable — a pointer drop outside every list", () => {
     },
   );
 
+  it.each(["native", "fallback"] as const)(
+    "%s: puts the item back by index when its old neighbour left the list during the drag",
+    async (mode) => {
+      const log: unknown[] = [];
+      const list = mountList("main", ["a", "b", "c"], false, log);
+      const neighbour = list.item("b");
+
+      await drag(mode, list.el, list.item("a"), document.body, () => neighbour.remove());
+
+      expect([list.order(), log]).toEqual(["a,c", []]);
+      list.el.insertBefore(neighbour, list.item("c"));
+    },
+  );
+
   // The spill is the drop's own business: the next drag inside the list reorders as any other.
   it.each(["native", "fallback"] as const)("%s: reorders on the next drag after a spill", async (mode) => {
     const log: unknown[] = [];

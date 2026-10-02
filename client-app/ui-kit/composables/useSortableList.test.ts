@@ -293,6 +293,17 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals.at(-1)).toMatchObject({ kind: "grabbed", canChangeList: true });
   });
 
+  it("treats a list order of one list as no list order", () => {
+    const { press, signals } = setup({ name: "solo", group: "solo", listOrder: ["solo"] });
+
+    press(" ", "b");
+    expect(signals.at(-1)).toMatchObject({ kind: "grabbed", canChangeList: false });
+
+    signals.length = 0;
+    expect(press("ArrowRight", "b").preventDefault).not.toHaveBeenCalled();
+    expect(signals).toEqual([]);
+  });
+
   it("moves the item to the next list in the list order and hands the grab over with it", () => {
     const { list, press, moves, signals, order, target } = setupPair();
 
