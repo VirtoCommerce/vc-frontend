@@ -145,7 +145,7 @@
         "created_date": "Дата создания",
         "start_date": "Дата начала",
         "end_date": "Дата окончания",
-        "invalid_range": "Некорректный диапазон дат.",
+        "date_range": "Диапазон дат",
         "order_status": "@:common.labels.status",
         "customer": "Выберите клиента",
         "reset": "Очистить",
@@ -154,7 +154,8 @@
         "last_day": "Последний день",
         "last_week": "Последняя неделя",
         "last_month": "Последний месяц",
-        "last_year": "Последний год"
+        "last_year": "Последний год",
+        "remove_filter": "Удалить фильтр «{label}»"
       }
     },
     "communication": {

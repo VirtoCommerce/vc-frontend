@@ -145,7 +145,7 @@
         "created_date": "Opprettelsesdato",
         "start_date": "Startdato",
         "end_date": "Sluttdato",
-        "invalid_range": "Ugyldig datoområde.",
+        "date_range": "Datointervall",
         "order_status": "Velg bestillingsstatus",
         "customer": "Velg kunde",
         "reset": "Tilbakestill",
@@ -154,7 +154,8 @@
         "last_day": "Siste dag",
         "last_week": "Siste uke",
         "last_month": "Siste måned",
-        "last_year": "Siste år"
+        "last_year": "Siste år",
+        "remove_filter": "Fjern filteret «{label}»"
       }
     },
     "communication": {
