@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Votre accès à cette organisation a été bloqué. Veuillez contacter l'administrateur de votre organisation",
           "user_cannot_login_in_store": "Accès refusé. Vous ne pouvez pas vous connecter au magasin actuel",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations"
+          "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations",
+          "sign_in_not_allowed": "Vous ne pouvez pas vous connecter avec ce compte. Veuillez contacter votre administrateur.",
+          "store_not_found": "Cette boutique n'existe pas.",
+          "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
+          "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",
+          "invalid_code": "Ce code n'a pas fonctionné.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Cliquez pour copier",
         "clipboard_success": "Coupon copié avec succès",
         "tap_to_copy": "Appuyez pour copier"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Se connecter avec un code à usage unique",
+        "request": {
+          "subtitle": "Nous vous enverrons un code par e-mail. Aucun mot de passe requis.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Continuer",
+          "switch_to_password_link": "Se connecter avec un mot de passe"
+        },
+        "verify": {
+          "header": "Consultez votre e-mail",
+          "subtitle": "Nous avons envoyé un code à {email}.",
+          "code_label": "Code",
+          "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
+          "submit_button": "Se connecter",
+          "resend_button": "Renvoyer le code",
+          "use_different_email_link": "Utiliser une autre adresse e-mail",
+          "live_resent": "Nouveau code envoyé."
+        },
+        "locked": {
+          "title": "Trop de tentatives échouées",
+          "title_blocked": "Compte bloqué",
+          "text_countdown": "Réessayez dans {time}.",
+          "text_ready": "Vous pouvez réessayer maintenant.",
+          "start_over_button": "Réessayer"
+        },
+        "disabled": {
+          "title": "Impossible de vous connecter",
+          "text": "Essayez plutôt un mot de passe, ou contactez l'administrateur de votre compte si le problème persiste.",
+          "text_no_password": "Contactez l'administrateur de votre compte si le problème persiste.",
+          "password_button": "Se connecter avec un mot de passe",
+          "back_link": "Retour à la connexion"
+        }
       }
     },
     "company": {

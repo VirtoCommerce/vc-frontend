@@ -203,14 +203,12 @@
       "load_failed": "No se pudieron cargar los pedidos"
     },
     "tasks": {
-      "title": "Tareas",
+      "title": "Calendario",
       "widget_title": "Tareas y vencimientos",
-      "view_all": "Todas las tareas",
+      "full_calendar": "Calendario completo",
       "new_task": "Nueva tarea",
-      "due_dates": "Vencimientos",
+      "add_task": "Añadir tarea",
       "today": "Hoy",
-      "all": "Todas",
-      "clear_day_aria": "Quitar {date}",
       "empty": "No hay tareas en esta pestaña",
       "empty_day": "No vence nada este día",
       "load_failed": "No se pudieron cargar las tareas",
@@ -225,10 +223,8 @@
         "task": "Tarea",
         "status": "Estado",
         "notes": "Notas",
-        "actions": "Acciones",
-        "mark_complete": "Marcar como completada",
-        "reopen": "Reabrir",
-        "action_aria": "{action}: «{name}»",
+        "complete_aria": "Marcar «{name}» como completada",
+        "reopen_aria": "Reabrir «{name}»",
         "edit_aria": "Editar «{name}»"
       },
       "status": {

@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Din tilgang til denne organisasjonen er blokkert. Kontakt organisasjonens administrator",
           "user_cannot_login_in_store": "Tilgang nektet. Du kan ikke logge inn i denne butikken",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"
+          "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon",
+          "sign_in_not_allowed": "Du kan ikke logge på med denne kontoen. Kontakt administratoren din.",
+          "store_not_found": "Denne butikken finnes ikke.",
+          "duplicate_email_login_attempt": "Flere kontoer bruker denne e-postadressen.",
+          "lockout_disabled": "Denne kontoen kan ikke logge på med en kode.",
+          "invalid_code": "Denne koden fungerte ikke.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Klikk for å kopiere",
         "clipboard_success": "Kupong kopiert vellykket",
         "tap_to_copy": "Trykk for å kopiere"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Logg inn med engangskode",
+        "request": {
+          "subtitle": "Vi sender deg en kode på e-post. Du trenger ikke passord.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Fortsett",
+          "switch_to_password_link": "Logg inn med passord i stedet"
+        },
+        "verify": {
+          "header": "Sjekk e-posten din",
+          "subtitle": "Vi sendte en kode til {email}.",
+          "code_label": "Kode",
+          "paste_hint": "Skriv inn eller lim inn koden. På mobil trykker du på den over tastaturet.",
+          "submit_button": "Logg inn",
+          "resend_button": "Send kode på nytt",
+          "use_different_email_link": "Bruk en annen e-post",
+          "live_resent": "Ny kode sendt."
+        },
+        "locked": {
+          "title": "For mange mislykkede forsøk",
+          "title_blocked": "Kontoen er blokkert",
+          "text_countdown": "Prøv igjen om {time}.",
+          "text_ready": "Du kan prøve igjen nå.",
+          "start_over_button": "Prøv igjen"
+        },
+        "disabled": {
+          "title": "Vi kunne ikke logge deg inn",
+          "text": "Prøv med passord i stedet, eller kontakt kontoadministratoren din hvis dette fortsetter.",
+          "text_no_password": "Kontakt kontoadministratoren din hvis dette fortsetter.",
+          "password_button": "Logg inn med passord",
+          "back_link": "Tilbake til innlogging"
+        }
       }
     },
     "company": {

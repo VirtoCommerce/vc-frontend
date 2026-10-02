@@ -203,14 +203,12 @@
       "load_failed": "Kunde inte läsa in ordrarna"
     },
     "tasks": {
-      "title": "Uppgifter",
+      "title": "Kalender",
       "widget_title": "Uppgifter och förfallodatum",
-      "view_all": "Alla uppgifter",
+      "full_calendar": "Hela kalendern",
       "new_task": "Ny uppgift",
-      "due_dates": "Förfallodatum",
+      "add_task": "Lägg till uppgift",
       "today": "I dag",
-      "all": "Alla",
-      "clear_day_aria": "Rensa {date}",
       "empty": "Inga uppgifter på den här fliken",
       "empty_day": "Inget förfaller denna dag",
       "load_failed": "Kunde inte läsa in uppgifterna",
@@ -225,10 +223,8 @@
         "task": "Uppgift",
         "status": "Status",
         "notes": "Anteckningar",
-        "actions": "Åtgärder",
-        "mark_complete": "Markera som slutförd",
-        "reopen": "Återöppna",
-        "action_aria": "{action}: ”{name}”",
+        "complete_aria": "Markera ”{name}” som slutförd",
+        "reopen_aria": "Återöppna ”{name}”",
         "edit_aria": "Redigera ”{name}”"
       },
       "status": {

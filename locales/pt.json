@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "O seu acesso a esta organização foi bloqueado. Entre em contacto com o administrador da sua organização",
           "user_cannot_login_in_store": "Acesso negado. Você não pode entrar na loja atual",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas"
+          "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas",
+          "sign_in_not_allowed": "Você não pode entrar com esta conta. Entre em contato com o administrador.",
+          "store_not_found": "Esta loja não existe.",
+          "duplicate_email_login_attempt": "Várias contas usam este e-mail.",
+          "lockout_disabled": "Esta conta não pode entrar com um código.",
+          "invalid_code": "Este código não funcionou.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Clique para copiar",
         "clipboard_success": "Cupom copiado com sucesso",
         "tap_to_copy": "Toque para copiar"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Entrar com um código de uso único",
+        "request": {
+          "subtitle": "Enviaremos um código por e-mail. Nenhuma senha necessária.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Continuar",
+          "switch_to_password_link": "Entrar com uma senha"
+        },
+        "verify": {
+          "header": "Verifique seu e-mail",
+          "subtitle": "Enviamos um código para {email}.",
+          "code_label": "Código",
+          "paste_hint": "Digite ou cole o código. No celular, toque nele acima do teclado.",
+          "submit_button": "Entrar",
+          "resend_button": "Reenviar código",
+          "use_different_email_link": "Usar outro e-mail",
+          "live_resent": "Novo código enviado."
+        },
+        "locked": {
+          "title": "Muitas tentativas malsucedidas",
+          "title_blocked": "Conta bloqueada",
+          "text_countdown": "Tente novamente em {time}.",
+          "text_ready": "Você já pode tentar novamente.",
+          "start_over_button": "Tentar novamente"
+        },
+        "disabled": {
+          "title": "Não foi possível fazer login",
+          "text": "Tente uma senha, ou entre em contato com o administrador da sua conta se isso continuar acontecendo.",
+          "text_no_password": "Entre em contato com o administrador da sua conta se isso continuar acontecendo.",
+          "password_button": "Entrar com uma senha",
+          "back_link": "Voltar ao login"
+        }
       }
     },
     "company": {

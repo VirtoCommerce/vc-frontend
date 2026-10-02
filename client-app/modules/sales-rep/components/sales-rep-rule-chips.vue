@@ -5,41 +5,44 @@
          but every surface here already reads a falsy filter as the baseline).
          `Boolean(true)`, not `:value="true"`: the latter trips vue/prefer-true-attribute-shorthand,
          and the shorthand it asks for passes "" instead — same reason as variations.vue. -->
-    <!-- A surface whose "no rule" state has more than one view (the Tasks page: Today / a day / All) draws its
-         own baseline chips here, inside the row so they share its layout. -->
-    <slot name="baseline">
-      <SalesRepRuleChip
-        :value="Boolean(true)"
-        :model-value="!modelValue"
-        :label="allLabel ?? ''"
-        :count="allCount"
-        @change="modelValue = undefined"
-      />
-    </slot>
+    <VcTabSwitch
+      class="sales-rep-rule-chips__tab"
+      size="sm"
+      :value="Boolean(true)"
+      :model-value="!modelValue"
+      @change="modelValue = undefined"
+    >
+      <span class="sales-rep-rule-chips__label">{{ allLabel }}</span>
 
-    <SalesRepRuleChip
+      <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
+    </VcTabSwitch>
+
+    <VcTabSwitch
       v-for="rule in selectableRules"
       :key="rule.name"
+      class="sales-rep-rule-chips__tab"
+      size="sm"
       :value="rule.name"
       :model-value="modelValue"
-      :label="rule.label"
-      :count="rule.count"
       @change="modelValue = $event"
-    />
+    >
+      <span class="sales-rep-rule-chips__label">{{ rule.label }}</span>
+
+      <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
+    </VcTabSwitch>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, watch } from "vue";
-import { selectableFilterRules } from "../utils";
-import SalesRepRuleChip from "./sales-rep-rule-chip.vue";
+import { formatStatCount, selectableFilterRules } from "../utils";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {
   // The server-defined filter rules to offer as tabs.
   rules: SalesRepRuleType[];
-  // Label for the synthetic baseline tab (the "All" / no-filter option). Unused when the #baseline slot is filled.
-  allLabel?: string;
+  // Label for the synthetic baseline tab (the "All" / no-filter option).
+  allLabel: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
@@ -76,5 +79,26 @@ const selectableRules = computed(() => selectableFilterRules(props.rules));
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-rule-chips {
   @apply flex flex-wrap items-center gap-1;
+
+  // The component's accent-500 default drops hover text below WCAG AA in every preset (VCST-5890).
+  --vc-tab-switch-hover-color: var(--color-neutral-900);
+
+  // The tab's own styling dims an unselected LABEL but leaves its count alone, so accenting every count left
+  // the selected chip with nothing to tell it apart. Only the selected one is accented; the rest go neutral,
+  // which is also what the mock shows (QA A-19). This reverses the earlier reading of the documents mock —
+  // that mock does accent the count, but it does so on a chip row where the same was true of all of them.
+  //
+  // Brand -500 on the selected chip, and it clears AA there precisely BECAUSE the split above exists:
+  // QA's 4.21:1 (A-13) was brand on the #F5F5F5 page canvas, which is where the UNSELECTED counts sit —
+  // and those are neutral now. A selected tab's button is `bg-additional-50`, so its count sits on white,
+  // where the same step computes to ~4.6:1. Darkening it to -700 read as no accent at all.
+  &__count {
+    // Bold like the label beside it: the count is the number the rep scans the row for.
+    @apply font-bold text-neutral-600;
+
+    .vc-tab-switch--checked & {
+      @apply text-primary-500;
+    }
+  }
 }
 </style>
