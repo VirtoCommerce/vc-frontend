@@ -112,6 +112,16 @@ type RegisteredListType = {
 // The keyboard has no drop target under a pointer to ask, so a list needs to ask its siblings directly.
 const listsByGroup = new Map<string, Map<string, RegisteredListType>>();
 
+// A moved item's control unmounts here and mounts there, which drops focus to <body>; the owner has
+// applied the move by the next render, so focus follows it — unless the owner placed it already.
+function followInto(list: RegisteredListType | undefined, id: string): void {
+  void nextTick(() => {
+    if (!document.activeElement || document.activeElement === document.body) {
+      list?.focusItem(id);
+    }
+  });
+}
+
 function moveWithin(items: readonly string[], id: string, index: number): string[] {
   const ids = items.filter((candidate) => candidate !== id);
   ids.splice(index, 0, id);
@@ -164,16 +174,6 @@ export function useSortableList(
   }
 
   const siblingsOf = () => listsByGroup.get(groupOf() ?? "");
-
-  // A moved item's control unmounts here and mounts there, which drops focus to <body>; the owner has
-  // applied the move by the next render, so focus follows it — unless the owner placed it already.
-  function followInto(list: RegisteredListType | undefined, id: string): void {
-    void nextTick(() => {
-      if (!document.activeElement || document.activeElement === document.body) {
-        list?.focusItem(id);
-      }
-    });
-  }
 
   // Vue's `insertBefore` blurs the moved node in Chrome and WebKit, and blur cancels a grab — so an
   // unguarded move snaps straight back. Ignore that self-inflicted blur until the refocus has run.
