@@ -246,6 +246,29 @@ describe("stat row drag and drop", () => {
     expect(api.visibleIn("statistics")).toEqual(before);
   });
 
+  it("brings back a parked card that is still held when focus leaves it, without pulling focus back", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+    const outside = document.body.appendChild(document.createElement("button"));
+    const card = () => wrapper.find('[data-block-id="active_carts"]').element as HTMLElement;
+
+    card().focus();
+    card().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    card().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+    await nextTick();
+    await nextTick();
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+
+    outside.focus();
+    await nextTick();
+    await nextTick();
+
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(document.activeElement).toBe(outside);
+    outside.remove();
+  });
+
   it("moves focus with a stat card that is parked by keyboard", async () => {
     const { wrapper, api } = setup();
     api.startEdit();

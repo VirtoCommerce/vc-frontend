@@ -168,7 +168,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   }
 
   /**
-   * Move a block between its region's halves. `index` is where it was dropped, else the end. A block
+   * Move a block between its region's halves. `index` is where it was dropped, or where Escape returns
+   * it to, else the end. A block
    * already in the destination is not in the source half, so a redundant call is a no-op.
    */
   function setHidden(id: string, hidden: boolean, index?: number): void {

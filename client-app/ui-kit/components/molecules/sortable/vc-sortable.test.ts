@@ -360,6 +360,8 @@ describe("VcSortable", () => {
     function mountPair() {
       const lists = ref<Record<string, string[]>>({ shown: ["a", "b", "c"], parked: ["x"] });
       const ring = ["shown", "parked"];
+      const signals: unknown[] = [];
+      const onAnnounce = (signal: unknown) => signals.push(signal);
       const onMove = ({ id, from, to, index }: SortableMovePayloadType) => {
         lists.value[from] = lists.value[from].filter((item) => item !== id);
         const target = [...lists.value[to]];
@@ -383,6 +385,7 @@ describe("VcSortable", () => {
             ring,
             orientation: "horizontal",
             onMove,
+            onAnnounce,
           },
           { item: renderItem },
         );
@@ -400,7 +403,10 @@ describe("VcSortable", () => {
         await nextTick();
       };
       const pressed = (id: string) => wrapper.find(`[data-sortable-id="${id}"]`).attributes("aria-pressed");
-      return { lists, key, pressed };
+      const element = (id: string) => wrapper.find(`[data-sortable-id="${id}"]`).element as HTMLElement;
+      const sortableOf = (name: string) =>
+        instances.find((entry) => entry.el.getAttribute("data-sortable-name") === name)!;
+      return { lists, key, pressed, element, signals, sortableOf };
     }
 
     it("keeps the item held in the list it moved to, until it is dropped", async () => {
@@ -428,6 +434,59 @@ describe("VcSortable", () => {
 
       expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"] });
       expect(pressed("b")).toBe("false");
+    });
+
+    it("returns the item to where it was first grabbed, however many lists it went through", async () => {
+      const { lists, key } = mountPair();
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      await key("b", "ArrowUp");
+      await key("b", "Escape");
+
+      expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"] });
+    });
+
+    it("lands focus on the item at home after Escape, and says the move was cancelled", async () => {
+      const { key, signals } = mountPair();
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      await key("b", "Escape");
+      await nextTick();
+
+      expect(document.activeElement?.getAttribute("data-sortable-id")).toBe("b");
+      expect(signals.at(-1)).toEqual({ kind: "cancelled", id: "b" });
+    });
+
+    it("returns the item home when focus leaves it, and leaves focus where it went", async () => {
+      const { lists, key, element } = mountPair();
+      const outside = document.body.appendChild(document.createElement("button"));
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      element("b").focus();
+      outside.focus();
+      await nextTick();
+      await nextTick();
+
+      expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"] });
+      expect(document.activeElement).toBe(outside);
+      outside.remove();
+    });
+
+    // SortableJS captures indices at the press; a carried grab blur-cancelling back into the pressed list
+    // would move the wrong item.
+    it("lets go of a carried grab when a pointer press starts in another list of the group", async () => {
+      const { lists, key, element, sortableOf } = mountPair();
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      sortableOf("shown").options.onChoose();
+      element("b").dispatchEvent(new FocusEvent("blur"));
+      await nextTick();
+
+      expect(lists.value.shown).toEqual(["a", "c"]);
     });
   });
 
