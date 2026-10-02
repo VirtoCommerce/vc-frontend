@@ -379,6 +379,8 @@ export interface IThemeConfigSettings {
 
   push_messages_enabled?: boolean;
   files_enabled?: boolean;
+  /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Missing ⇒ enabled. */
+  module_federation_enabled?: boolean;
 
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
