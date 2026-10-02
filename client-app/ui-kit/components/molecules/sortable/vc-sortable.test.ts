@@ -506,7 +506,24 @@ describe("VcSortable", () => {
       expect(lists.value.shown).toEqual(["a", "c"]);
     });
 
-    it("still returns a carried grab home when the press is in a list it did not come from", async () => {
+    it("lets go of a carried grab in place when the press is in the list that holds it", async () => {
+      const { lists, key, element, pressed, sortableOf } = mountPair({
+        shown: ["a", "b", "c"],
+        parked: ["x"],
+        archive: [],
+      });
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      sortableOf("parked").options.onChoose();
+      element("b").dispatchEvent(new FocusEvent("blur"));
+      await nextTick();
+
+      expect(lists.value).toEqual({ shown: ["a", "c"], parked: ["x", "b"], archive: [] });
+      expect(pressed("b")).toBe("false");
+    });
+
+    it("still returns a carried grab home when the press is in a third list of the group", async () => {
       const { lists, key, element, sortableOf } = mountPair({ shown: ["a", "b", "c"], parked: ["x"], archive: [] });
 
       await key("b", " ");
