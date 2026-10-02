@@ -58,6 +58,27 @@ export const DASHBOARD_ROUTE_NAME = "SalesRepDashboard";
 export const DASHBOARD_ROUTE_SEGMENT = "dashboard";
 export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
 
+// All-activity page (VCST-5337); a sibling of the hub pages under "Company".
+export const ACTIVITIES_ROUTE_NAME = "SalesRepActivities";
+export const ACTIVITIES_ROUTE_SEGMENT = "activities";
+export const ACTIVITIES_NAV_LINK_ID = "sales-rep-activities";
+// Backend paging: take defaults to 20 and caps at 50; take 0 returns counts only (backs the tabs).
+export const ACTIVITY_PAGE_SIZE = 20;
+// The backend's paging cap (ModuleConstants.Activities.MaxSkip): past it the query returns NO rows while
+// totalCount keeps describing the whole set, so the pager stops here.
+export const ACTIVITY_MAX_SKIP = 500;
+// Compact "My activity" dashboard widget shows the latest few events across all assigned accounts.
+export const MY_ACTIVITY_TAKE = 5;
+// Category vocabulary of salesRepActivities (the backend types it as free-form String). Ordered —
+// the page renders its tabs in this order, whatever order categoryCounts arrives in.
+export const ACTIVITY_CATEGORIES = ["orders", "customers", "searches", "productViews", "logins"] as const;
+// Categories sourced from tracked analytics (hour-precision buckets), named by the caveat line.
+export const GA_ACTIVITY_CATEGORIES = ["searches", "productViews", "logins"] as const;
+// Membership sets built once for the module. The arrays above stay: they carry the tab order.
+export const TRACKED_ACTIVITY_CATEGORIES = new Set<string>(GA_ACTIVITY_CATEGORIES);
+// The categories salesRepCustomerInsights can rank by count — only their tabs offer Top | Recent.
+export const RANKED_ACTIVITY_CATEGORIES = new Set<string>(["searches", "productViews"]);
+
 // Document library (VCST-5730). Read permission gates the widget, the page and the nav link;
 // write implies read and administrators pass — both are resolved server-side, the client only
 // checks for the read permission itself (an admin/writer also carries it through checkPermissions'
@@ -145,3 +166,9 @@ export const TOP_SELLERS_MAX_ROWS = 10;
 export const DOCUMENTS_DEFAULT_ROWS = 5;
 export const DOCUMENTS_MAX_ROWS = 10;
 export const MIN_ROWS = 1;
+
+// salesRepCustomerInsights sort names: "count" ranks by occurrences (Top), "date" by the latest hour bucket (Recent).
+export const INSIGHTS_DEFAULT_ROWS = 5;
+export const INSIGHTS_MAX_ROWS = 20;
+export const INSIGHTS_SORT_BY_COUNT = "count";
+export const INSIGHTS_SORT_BY_DATE = "date";

@@ -1,34 +1,22 @@
 <template>
   <div class="sales-rep-rule-chips">
-    <!-- Baseline tab: active when no rule is chosen; clicking it clears the filter. Its value is a
-         boolean so no non-empty rule name can collide with it (a rule named "" would still match,
-         but every surface here already reads a falsy filter as the baseline).
-         `Boolean(true)`, not `:value="true"`: the latter trips vue/prefer-true-attribute-shorthand,
-         and the shorthand it asks for passes "" instead — same reason as variations.vue. -->
+    <!-- The baseline tab (no rule name) renders in the same loop, so it can sit at either end. Its value is
+         `Boolean(true)`: `:value="true"` trips vue/prefer-true-attribute-shorthand, whose shorthand passes "". -->
     <VcTabSwitch
+      v-for="tab in tabs"
+      :key="tab.name ?? ''"
       class="sales-rep-rule-chips__tab"
       size="sm"
-      :value="Boolean(true)"
-      :model-value="!modelValue"
-      @change="modelValue = undefined"
+      :value="tab.name ?? Boolean(true)"
+      :model-value="tab.name ? modelValue : !modelValue"
+      @change="modelValue = tab.name"
     >
-      <span class="sales-rep-rule-chips__label">{{ allLabel }}</span>
+      <span class="sales-rep-rule-chips__label">{{ tab.label }}</span>
 
-      <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
-    </VcTabSwitch>
+      <span v-if="tab.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(tab.count) }}</span>
 
-    <VcTabSwitch
-      v-for="rule in selectableRules"
-      :key="rule.name"
-      class="sales-rep-rule-chips__tab"
-      size="sm"
-      :value="rule.name"
-      :model-value="modelValue"
-      @change="modelValue = $event"
-    >
-      <span class="sales-rep-rule-chips__label">{{ rule.label }}</span>
-
-      <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
+      <!-- Adornments belong to whoever knows what a tab means: the baseline arrives with no name. -->
+      <slot name="suffix" :tab="tab" />
     </VcTabSwitch>
   </div>
 </template>
@@ -38,6 +26,9 @@ import { computed, watch } from "vue";
 import { formatStatCount, selectableFilterRules } from "../utils";
 import type { SalesRepRuleType } from "../types";
 
+// A rendered tab: one of the rules, or the baseline, which has no rule name.
+type TabType = Omit<SalesRepRuleType, "name"> & { name?: string };
+
 interface IProps {
   // The server-defined filter rules to offer as tabs.
   rules: SalesRepRuleType[];
@@ -45,6 +36,8 @@ interface IProps {
   allLabel: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
+  // Baseline last, for a progression ("This month, This year, All time"); a set of alternatives keeps it first.
+  allLast?: boolean;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
   loading?: boolean;
 }
@@ -73,6 +66,15 @@ watch(
 
 // A backend "All" passthrough rule (customer segments carry one) would duplicate the baseline tab — drop it.
 const selectableRules = computed(() => selectableFilterRules(props.rules));
+
+const tabs = computed<TabType[]>(() => {
+  const baseline: TabType = {
+    label: props.allLabel,
+    count: props.allCount,
+  };
+
+  return props.allLast ? [...selectableRules.value, baseline] : [baseline, ...selectableRules.value];
+});
 </script>
 
 <style lang="scss">
