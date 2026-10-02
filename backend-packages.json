@@ -12,11 +12,11 @@
       "Modules": [
         {
           "Id": "VirtoCommerce.SalesRep",
-          "BlobName": "VirtoCommerce.SalesRep_3.1012.0-pr-21-efd6.zip"
+          "BlobName": "VirtoCommerce.SalesRep_3.1012.0-pr-21-9de7.zip"
         },
         {
           "Id": "VirtoCommerce.XCart",
-          "BlobName": "VirtoCommerce.XCart_3.1038.0-pr-141-31c3.zip"
+          "BlobName": "VirtoCommerce.XCart_3.1038.0-pr-141-b404.zip"
         },
         {
           "Id": "VirtoCommerce.Cart",
