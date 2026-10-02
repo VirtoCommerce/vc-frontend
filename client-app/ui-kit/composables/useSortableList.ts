@@ -407,44 +407,6 @@ export function useSortableList(
     };
   }
 
-  // SortableJS accepts a native drop only over a list, so releasing in the gap between two lists is a
-  // cancelled drop to the browser, which flies the drag image back to where it started — while the item
-  // lands where the placeholder showed. Accepting `dragover` page-wide for the drag's length keeps the two
-  // in step; SortableJS already cancels the `drop` itself. A drop zone of the page's own that decided —
-  // accepted, or refused with `dropEffect = "none"` — keeps its decision; one that refuses only by not
-  // cancelling `dragover` now gets the drop event, and must check what it holds. WebKit reads an unset
-  // `dropEffect` as "none", so it is seeded on the way down, before any zone, to keep "none" a refusal.
-  let acceptingDropsIn: Document | undefined;
-
-  function seedDropEffect(event: DragEvent): void {
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = "move";
-    }
-  }
-
-  function acceptDrop(event: DragEvent): void {
-    if (event.defaultPrevented || event.dataTransfer?.dropEffect === "none") {
-      return;
-    }
-    event.preventDefault();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = "move";
-    }
-  }
-
-  function stopAcceptingDrops(): void {
-    acceptingDropsIn?.removeEventListener("dragover", seedDropEffect, true);
-    acceptingDropsIn?.removeEventListener("dragover", acceptDrop);
-    acceptingDropsIn = undefined;
-  }
-
-  function startAcceptingDrops(doc: Document): void {
-    stopAcceptingDrops();
-    acceptingDropsIn = doc;
-    doc.addEventListener("dragover", seedDropEffect, true);
-    doc.addEventListener("dragover", acceptDrop);
-  }
-
   function pointerHandle(): string | undefined {
     if (typeof options.handle === "string") {
       return options.handle.trim() ? `${HANDLE_SELECTOR}, ${options.handle}` : undefined;
@@ -462,6 +424,9 @@ export function useSortableList(
       // Items are what `itemAttrs` stamped; anything else in the container keeps its place.
       draggable: `[${SORTABLE_ITEM_ATTRIBUTE}]`,
       animation: 150,
+      // Released outside every list, a native drop is a cancel to the browser, which flies the drag image
+      // back to where it started. The item goes back there too, whatever placeholder was showing.
+      revertOnSpill: true,
       ghostClass: "vc-sortable__item--ghost",
       dragClass: "vc-sortable__item--drag",
       disabled: !isEnabled(),
@@ -483,7 +448,6 @@ export function useSortableList(
 
       onStart: (event: Sortable.SortableEvent) => {
         originSibling = event.item.nextSibling;
-        startAcceptingDrops(el.ownerDocument);
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
         if (id) {
           options.onGrab?.({ id, from: nameOf() });
@@ -502,7 +466,6 @@ export function useSortableList(
 
       // Cross-list. `onEnd` fires once per drag, unlike separate onAdd/onRemove, which double-apply.
       onEnd: (event: Sortable.SortableEvent) => {
-        stopAcceptingDrops();
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
 
         if (event.from !== event.to) {
@@ -533,8 +496,6 @@ export function useSortableList(
       const instance = create(el);
       sortable = instance;
       onCleanup(() => {
-        // `destroy` mid-drag ends it without an `end` event.
-        stopAcceptingDrops();
         instance.destroy();
         sortable = undefined;
       });
@@ -606,10 +567,7 @@ export function useSortableList(
   );
 
   // A list unmounting with an item held ends that grab: no blur is coming if focus is elsewhere.
-  onScopeDispose(() => {
-    end();
-    stopAcceptingDrops();
-  });
+  onScopeDispose(end);
 
   return { grabbedId: readonly(grabbedId), isGrabbed, itemAttrs, handleAttrs, release: end };
 }

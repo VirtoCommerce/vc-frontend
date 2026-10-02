@@ -973,103 +973,18 @@ describe("useSortableList — grab and release events", () => {
   });
 });
 
-// Released outside every list, a native drop nobody accepted is a cancel to the browser, which then
-// flies the drag image back to its start while the item lands where the placeholder showed.
-describe("useSortableList — a pointer drop between lists", () => {
-  function dragOver() {
-    const event = new Event("dragover", { bubbles: true, cancelable: true });
-    document.body.dispatchEvent(event);
-    return event.defaultPrevented;
-  }
-
-  async function mountedList() {
+// Released outside every list, a native drop is a cancel to the browser, which flies the drag image
+// back to its start; the item has to go back there too, not land where the placeholder last showed.
+describe("useSortableList — a pointer drop outside every list", () => {
+  it("puts the item back where the drag started", async () => {
     const el = document.createElement("div");
     document.body.append(el);
-    const item = document.createElement("div");
-    item.dataset.sortableId = "a";
-    el.append(item);
     const container = ref<HTMLElement | null>(el);
     const scope = effectScope();
     scopes.push(scope);
     scope.run(() => useSortableList(container, { name: "main", items: () => ["a"], onReorder: vi.fn() }));
     await nextTick();
-    return { el, item, scope, container, sortable: instances.at(-1)! };
-  }
 
-  it("accepts the drop anywhere on the page while its drag lasts, and only then", async () => {
-    const { el, item, sortable } = await mountedList();
-
-    expect(dragOver()).toBe(false);
-
-    sortable.options.onStart({ item, from: el });
-    expect(dragOver()).toBe(true);
-
-    sortable.options.onEnd({ item, from: el, to: el });
-    expect(dragOver()).toBe(false);
-
-    // Nor does it touch another drag's effect afterwards.
-    const later = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
-      dataTransfer: { dropEffect: "copy" },
-    });
-    document.body.dispatchEvent(later);
-    expect(later.dataTransfer.dropEffect).toBe("copy");
-  });
-
-  // A page's own drop zone that refused the item, or took the drop itself, keeps its decision.
-  it.each([
-    ["refused", "none", false],
-    ["accepted as a copy", "copy", true],
-  ])("leaves a drop zone's own decision alone when it %s", async (_decision, effect, accept) => {
-    const { el, item, sortable } = await mountedList();
-    const zone = document.createElement("div");
-    document.body.append(zone);
-    zone.addEventListener("dragover", (event) => {
-      event.dataTransfer!.dropEffect = effect as DataTransfer["dropEffect"];
-      if (accept) {
-        event.preventDefault();
-      }
-    });
-    sortable.options.onStart({ item, from: el });
-
-    // WebKit's unset value; Chrome starts at "move".
-    const event = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
-      dataTransfer: { dropEffect: "none" },
-    });
-    zone.dispatchEvent(event);
-
-    expect([event.dataTransfer.dropEffect, event.defaultPrevented]).toEqual([effect, accept]);
-  });
-
-  // WebKit reads an unset `dropEffect` as "none"; that must not pass for a zone's refusal in the gap.
-  it("accepts the drop in the gap where nothing decided, though the engine starts at none", async () => {
-    const { el, item, sortable } = await mountedList();
-    sortable.options.onStart({ item, from: el });
-
-    const event = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
-      dataTransfer: { dropEffect: "none" },
-    });
-    document.body.dispatchEvent(event);
-
-    expect([event.dataTransfer.dropEffect, event.defaultPrevented]).toEqual(["move", true]);
-  });
-
-  it("stops accepting drops when the list unmounts mid-drag", async () => {
-    const { el, item, sortable, scope } = await mountedList();
-
-    sortable.options.onStart({ item, from: el });
-    scope.stop();
-
-    expect(dragOver()).toBe(false);
-  });
-
-  // SortableJS's `destroy` ends a drag without an `end` event, as when the container is swapped.
-  it("stops accepting drops when its Sortable is destroyed mid-drag", async () => {
-    const { el, item, sortable, container } = await mountedList();
-
-    sortable.options.onStart({ item, from: el });
-    container.value = document.createElement("div");
-    await nextTick();
-
-    expect(dragOver()).toBe(false);
+    expect(instances.at(-1)!.options.revertOnSpill).toBe(true);
   });
 });
