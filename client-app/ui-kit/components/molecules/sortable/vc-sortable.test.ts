@@ -463,16 +463,33 @@ describe("VcSortable", () => {
       const { lists, key, element } = mountPair();
       const outside = document.body.appendChild(document.createElement("button"));
 
+      try {
+        await key("b", " ");
+        await key("b", "ArrowDown");
+        element("b").focus();
+        outside.focus();
+        await nextTick();
+        await nextTick();
+
+        expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"] });
+        expect(document.activeElement).toBe(outside);
+      } finally {
+        outside.remove();
+      }
+    });
+
+    it("does not pull focus back to the item when it returns home on a blur to the page", async () => {
+      const { lists, key, element } = mountPair();
+
       await key("b", " ");
       await key("b", "ArrowDown");
       element("b").focus();
-      outside.focus();
+      element("b").blur();
       await nextTick();
       await nextTick();
 
       expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"] });
-      expect(document.activeElement).toBe(outside);
-      outside.remove();
+      expect(document.activeElement).toBe(document.body);
     });
 
     // SortableJS captures indices at the press; a carried grab blur-cancelling back into the pressed list
@@ -487,6 +504,18 @@ describe("VcSortable", () => {
       await nextTick();
 
       expect(lists.value.shown).toEqual(["a", "c"]);
+    });
+
+    it("still puts back a move inside one list when a press starts in another list", async () => {
+      const { lists, key, element, sortableOf } = mountPair();
+
+      await key("b", " ");
+      await key("b", "ArrowRight");
+      sortableOf("parked").options.onChoose();
+      element("b").dispatchEvent(new FocusEvent("blur"));
+      await nextTick();
+
+      expect(lists.value.shown).toEqual(["a", "b", "c"]);
     });
   });
 

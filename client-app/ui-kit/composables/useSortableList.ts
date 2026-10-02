@@ -94,7 +94,8 @@ type RegisteredListType = {
   focusItem: (id: string) => void;
   /** Takes over a grab that a sibling's cross-axis arrow carried into this list. */
   adopt: (id: string, origin: GrabOriginType) => void;
-  release: () => void;
+  /** Lets go of a grab that came from `list`, whose indices a pointer press there has just captured. */
+  releaseFrom: (list: string) => void;
 };
 
 // The keyboard has no drop target under a pointer to ask, so a list needs to ask its siblings directly.
@@ -406,11 +407,11 @@ export function useSortableList(
 
       // Sortable captures indices at choose time, so a keyboard grab cancelled mid-drag would reshuffle
       // the list under them. `release`, not `cancel` — the restore is the reshuffle.
-      // In every list of the group: a grab carried into a sibling would otherwise blur-cancel back into this
-      // one under the press.
+      // A grab carried out of this list into a sibling would blur-cancel back into it under the press, so
+      // it goes too. Any other grab in the group still cancels, as it touches nothing this press captured.
       onChoose: () => {
         release();
-        siblingsOf()?.forEach((list) => list.release());
+        siblingsOf()?.forEach((list) => list.releaseFrom(nameOf()));
       },
 
       onStart: (event: Sortable.SortableEvent) => {
@@ -506,7 +507,12 @@ export function useSortableList(
           }
         });
       };
-      const entry: RegisteredListType = { accepts: options.accepts, isEnabled, focusItem, adopt, release };
+      const releaseFrom = (list: string) => {
+        if (origin?.list === list) {
+          release();
+        }
+      };
+      const entry: RegisteredListType = { accepts: options.accepts, isEnabled, focusItem, adopt, releaseFrom };
       lists.set(name, entry);
       onCleanup(() => {
         // A list remounting under the same name registers before the old one cleans up.

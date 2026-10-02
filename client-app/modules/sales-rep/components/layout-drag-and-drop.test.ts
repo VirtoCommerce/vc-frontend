@@ -260,13 +260,16 @@ describe("stat row drag and drop", () => {
     await nextTick();
     expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
 
-    outside.focus();
-    await nextTick();
-    await nextTick();
+    try {
+      outside.focus();
+      await nextTick();
+      await nextTick();
 
-    expect(api.hiddenIn("statistics")).toEqual([]);
-    expect(document.activeElement).toBe(outside);
-    outside.remove();
+      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(document.activeElement).toBe(outside);
+    } finally {
+      outside.remove();
+    }
   });
 
   it("moves focus with a stat card that is parked by keyboard", async () => {
