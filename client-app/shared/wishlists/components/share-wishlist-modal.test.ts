@@ -589,6 +589,9 @@ describe("ShareWishlistModal", () => {
       await selectScope(TARGETED_SCOPE);
       await fireEvent.click(saveButton());
 
+      // This payload drops org-1, which revokes it, so the save waits for the confirmation (VCST-6104).
+      await confirmStopSharing();
+
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
       const command = mocks.updateWishlist.mock.calls[0][0];
       expect(command).toMatchObject({
@@ -687,6 +690,32 @@ describe("ShareWishlistModal", () => {
       expect(stopSharingConfirmation()).toBeInTheDocument();
       expect(mocks.updateWishlist).not.toHaveBeenCalled();
       expect(scopeRadio(WishlistScopeType.Organization).checked).toBe(true);
+    });
+
+    it("asks before dropping a recipient, even when the scope stays the same", async () => {
+      // The dropped organization loses the list, so the warning is exactly right here - and it used to be the one
+      // case that passed silently, because nothing about the scope changed (VCST-6104).
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+      controls.payload.value = { addSharedWithIds: [], removeSharedWithIds: ["org-1"] };
+
+      renderModal(targetedList("org-1", "org-2"));
+      await fireEvent.click(saveButton());
+
+      expect(stopSharingConfirmation()).toBeInTheDocument();
+      expect(mocks.updateWishlist).not.toHaveBeenCalled();
+    });
+
+    it("asks nothing when widening an already-shared list to anyone with the link", async () => {
+      // The key does not change and the scope admits everyone, so nobody is shut out - warning here was the other
+      // half of VCST-6104.
+      renderModal(targetedList("org-1"));
+
+      await selectScope(WishlistScopeType.AnyoneAnonymous);
+      await fireEvent.click(saveButton());
+
+      expect(stopSharingConfirmation()).not.toBeInTheDocument();
+      await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
     });
 
     it("asks nothing when a private list is shared for the first time", async () => {

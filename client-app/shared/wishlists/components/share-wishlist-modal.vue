@@ -121,6 +121,7 @@ const props = defineProps<IProps>();
 
 // The registry keys scopes by raw string; core's enum is one of those strings.
 const PRIVATE_SCOPE: string = WishlistScopeType.Private;
+const ANYONE_ANONYMOUS_SCOPE: string = WishlistScopeType.AnyoneAnonymous;
 
 const { t } = useI18n();
 
@@ -200,10 +201,22 @@ const hasCurrentAudience = computed(() =>
   getSharingScope(listSharingScope.value)?.element ? listTargets.value.length > 0 : true,
 );
 
-// Only leaving a sharing scope revokes an audience; a first share takes nothing away, and swapping recipients
-// inside one scope is not a revocation.
+// Switching to "anyone with the link" widens the audience and keeps the same key, so it shuts nobody out.
+// An organization's members do lose the list from their own lists page, but the link they held still opens it.
+const widensToAnyone = computed(() => sharingScope.value === ANYONE_ANONYMOUS_SCOPE);
+
+// Dropping a recipient revokes that recipient, whether or not the scope moved (VCST-6104).
+const revokesTargets = computed(() => !!scopeControls.value?.payload?.removeSharedWithIds?.length);
+
+// Leaving a sharing scope revokes its audience, and so does dropping a recipient inside one. A first share and a
+// widening take nothing away.
 const revokesCurrentAudience = computed(
-  () => listSharingScope.value !== PRIVATE_SCOPE && scopeChanged.value && hasCurrentAudience.value,
+  () =>
+    revokesTargets.value ||
+    (listSharingScope.value !== PRIVATE_SCOPE &&
+      scopeChanged.value &&
+      hasCurrentAudience.value &&
+      !widensToAnyone.value),
 );
 
 const confirmingStopSharing = ref(false);
