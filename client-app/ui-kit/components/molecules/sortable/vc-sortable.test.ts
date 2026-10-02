@@ -355,6 +355,82 @@ describe("VcSortable", () => {
     expect(wrapper.get(".grip").attributes("aria-pressed")).toBe("false");
   });
 
+  describe("a keyboard grab carried between lists", () => {
+    // The owner of both lists applies every move, as a real consumer does.
+    function mountPair() {
+      const lists = ref<Record<string, string[]>>({ shown: ["a", "b", "c"], parked: ["x"] });
+      const ring = ["shown", "parked"];
+      const onMove = ({ id, from, to, index }: SortableMovePayloadType) => {
+        lists.value[from] = lists.value[from].filter((item) => item !== id);
+        const target = [...lists.value[to]];
+        target.splice(index ?? target.length, 0, id);
+        lists.value[to] = target;
+      };
+      const setList = (name: string) => (value: string[]) => {
+        lists.value[name] = value;
+      };
+      const renderItem = ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) =>
+        h("div", { ...attrs, class: ["row", attrs.class] }, item);
+      const renderList = (name: string) =>
+        h(
+          VcSortable<string>,
+          {
+            key: name,
+            modelValue: lists.value[name],
+            "onUpdate:modelValue": setList(name),
+            name,
+            group: "pair",
+            ring,
+            orientation: "horizontal",
+            onMove,
+          },
+          { item: renderItem },
+        );
+      const wrapper = mount(
+        defineComponent({
+          setup() {
+            return () => ring.map(renderList);
+          },
+        }),
+        { attachTo: document.body },
+      );
+      const key = async (id: string, name: string) => {
+        wrapper.find(`[data-sortable-id="${id}"]`).element.dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+        await nextTick();
+        await nextTick();
+      };
+      const pressed = (id: string) => wrapper.find(`[data-sortable-id="${id}"]`).attributes("aria-pressed");
+      return { lists, key, pressed };
+    }
+
+    it("keeps the item held in the list it moved to, until it is dropped", async () => {
+      const { lists, key, pressed } = mountPair();
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      expect(lists.value).toEqual({ shown: ["a", "c"], parked: ["x", "b"] });
+      expect(pressed("b")).toBe("true");
+
+      await key("b", "ArrowLeft");
+      expect(lists.value.parked).toEqual(["b", "x"]);
+
+      await key("b", "Enter");
+      expect(pressed("b")).toBe("false");
+    });
+
+    it("puts the item back where it was grabbed on Escape, across lists", async () => {
+      const { lists, key, pressed } = mountPair();
+
+      await key("b", " ");
+      await key("b", "ArrowDown");
+      await key("b", "ArrowLeft");
+      await key("b", "Escape");
+
+      expect(lists.value).toEqual({ shown: ["a", "b", "c"], parked: ["x"] });
+      expect(pressed("b")).toBe("false");
+    });
+  });
+
   it("offers each item's drag controls to a component inside it, once", () => {
     seen.length = 0;
     mountList({ handle: ".grip" }, true);

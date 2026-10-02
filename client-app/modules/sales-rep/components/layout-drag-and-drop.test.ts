@@ -225,6 +225,27 @@ describe("stat row drag and drop", () => {
     expect(api.state.value.regions.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
   });
 
+  it("puts a card parked by keyboard back in its place on Escape", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+    const before = [...api.visibleIn("statistics")];
+    const key = async (name: string) => {
+      wrapper.find('[data-block-id="active_carts"]').element.dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+      await nextTick();
+      await nextTick();
+    };
+
+    await key(" ");
+    await key("ArrowDown");
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+
+    await key("Escape");
+
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(api.visibleIn("statistics")).toEqual(before);
+  });
+
   it("moves focus with a stat card that is parked by keyboard", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -398,7 +419,8 @@ describe("stat row drag and drop", () => {
     await nextTick();
     expect(announce).toHaveBeenLastCalledWith({ kind: "parked", id: "active_carts" });
 
-    key("active_carts", " ");
+    // Still held after the park: the next arrow acts in the parked zone, with no second grab.
+    await nextTick();
     announce.mockClear();
     key("active_carts", "ArrowDown");
     expect(announce).not.toHaveBeenCalled();

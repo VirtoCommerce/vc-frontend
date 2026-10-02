@@ -4,7 +4,10 @@ import type { MaybeRefOrGetter, Ref } from "vue";
 
 export type SortableOrientationType = "vertical" | "horizontal";
 
-/** An item leaving this list for another one in its group. `index` is absent for a keyboard move — it appends. */
+/**
+ * An item leaving this list for another one in its group. `index` is absent for a keyboard move — it appends —
+ * except when Escape sends a held item back to the list it was grabbed in, at the place it left.
+ */
 export type SortableMovePayloadType = {
   id: string;
   from: string;
@@ -82,10 +85,15 @@ export interface ISortableListOptions {
 export const SORTABLE_ITEM_ATTRIBUTE = "data-sortable-id";
 export const SORTABLE_NAME_ATTRIBUTE = "data-sortable-name";
 
+// Where a keyboard grab began, so Escape can undo every move it made, across lists too.
+type GrabOriginType = { list: string; index: number };
+
 type RegisteredListType = {
   accepts?: (id: string, from: string) => boolean;
   isEnabled: () => boolean;
   focusItem: (id: string) => void;
+  /** Takes over a grab that a sibling's cross-axis arrow carried into this list. */
+  adopt: (id: string, origin: GrabOriginType) => void;
 };
 
 // The keyboard has no drop target under a pointer to ask, so a list needs to ask its siblings directly.
@@ -102,8 +110,9 @@ function moveWithin(items: readonly string[], id: string, index: number): string
  * undoes every move and reports it instead, so state alone drives the render.
  *
  * Keyboard: Space/Enter grabs and drops, arrows along `orientation` move, Escape puts it back, blur
- * cancels, and the cross-axis arrows move the item along `ring` — focus follows it into the sibling list
- * unless the owner has already moved focus elsewhere.
+ * cancels, and the cross-axis arrows move the item along `ring`. The grab travels with the item, so it is
+ * held until dropped whichever list it is in, and Escape or blur returns it to where it was grabbed. Focus
+ * follows it into the sibling list unless the owner has already moved focus elsewhere.
  */
 export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
@@ -112,7 +121,7 @@ export function useSortableList(
   const whole = !options.handle;
 
   const grabbedId = ref<string>();
-  let originIndex = -1;
+  let origin: GrabOriginType | undefined;
 
   const nameOf = () => toValue(options.name);
   const groupOf = () => toValue<string | undefined>(options.group);
@@ -129,7 +138,19 @@ export function useSortableList(
   // Let go without moving anything back: the UI is going away, or a pointer drag is taking over.
   function release(): void {
     grabbedId.value = undefined;
-    originIndex = -1;
+    origin = undefined;
+  }
+
+  const siblingsOf = () => listsByGroup.get(groupOf() ?? "");
+
+  // A moved item's control unmounts here and mounts there, which drops focus to <body>; the owner has
+  // applied the move by the next render, so focus follows it — unless the owner placed it already.
+  function followInto(list: RegisteredListType | undefined, id: string): void {
+    void nextTick(() => {
+      if (!document.activeElement || document.activeElement === document.body) {
+        list?.focusItem(id);
+      }
+    });
   }
 
   // Vue's `insertBefore` blurs the moved node in Chrome and WebKit, and blur cancels a grab — so an
@@ -151,7 +172,7 @@ export function useSortableList(
       return;
     }
     grabbedId.value = id;
-    originIndex = index;
+    origin = { list: nameOf(), index };
     const ring = toValue<readonly string[] | undefined>(options.ring);
     announce({ kind: "grabbed", id, index, total: items.length, canChangeList: Boolean(ring && ring.length > 1) });
   }
@@ -165,9 +186,19 @@ export function useSortableList(
   // `target` only from Escape: putting the item back blurs it, so focus needs restoring. Blur-cancel
   // passes none — the user is tabbing away, and pulling focus back would trap them.
   function cancel(id: string, target?: HTMLElement | null): void {
-    const index = originIndex;
+    const from = origin;
     release();
-    options.onReorder(moveWithin(options.items(), id, index));
+
+    if (from && from.list !== nameOf()) {
+      options.onMove?.({ id, from: nameOf(), to: from.list, index: from.index });
+      announce({ kind: "cancelled", id });
+      if (target) {
+        followInto(siblingsOf()?.get(from.list), id);
+      }
+      return;
+    }
+
+    options.onReorder(moveWithin(options.items(), id, from?.index ?? 0));
     announce({ kind: "cancelled", id });
 
     if (target) {
@@ -194,7 +225,7 @@ export function useSortableList(
   function stepList(id: string, delta: number): void {
     const ring = toValue<readonly string[] | undefined>(options.ring) ?? [];
     const name = nameOf();
-    const siblings = listsByGroup.get(groupOf() ?? "");
+    const siblings = siblingsOf();
 
     for (let index = ring.indexOf(name) + delta; index >= 0 && index < ring.length; index += delta) {
       const target = ring[index];
@@ -203,17 +234,13 @@ export function useSortableList(
       if (target === name || !sibling?.isEnabled() || sibling.accepts?.(id, name) === false) {
         continue;
       }
-      // The item leaves this list, so the grab is released rather than followed across containers.
+      // The grab travels with the item: the sibling holds it from here, so the next key acts there.
+      const carried = origin ?? { list: name, index: options.items().indexOf(id) };
       release();
       options.onMove?.({ id, from: name, to: target });
       announce({ kind: "movedList", id, from: name, to: target });
-      // Its control unmounts here and mounts there, which drops focus to <body>; the owner has applied the
-      // move by the next render, so focus follows it into the sibling — unless the owner placed it already.
-      void nextTick(() => {
-        if (!document.activeElement || document.activeElement === document.body) {
-          sibling.focusItem(id);
-        }
-      });
+      sibling.adopt(id, carried);
+      followInto(sibling, id);
       return;
     }
 
@@ -462,7 +489,17 @@ export function useSortableList(
       }
       const lists = listsByGroup.get(group) ?? new Map<string, RegisteredListType>();
       listsByGroup.set(group, lists);
-      const entry: RegisteredListType = { accepts: options.accepts, isEnabled, focusItem };
+      const adopt = (id: string, carried: GrabOriginType) => {
+        grabbedId.value = id;
+        origin = carried;
+        // An owner that refused the move leaves nothing here to hold.
+        void nextTick(() => {
+          if (grabbedId.value === id && !options.items().includes(id)) {
+            release();
+          }
+        });
+      };
+      const entry: RegisteredListType = { accepts: options.accepts, isEnabled, focusItem, adopt };
       lists.set(name, entry);
       onCleanup(() => {
         // A list remounting under the same name registers before the old one cleans up.

@@ -246,27 +246,28 @@ export const LinkedLists: StoryType = {
       const held = ref<string>();
       const refuses = (name: string) => held.value !== undefined && !acceptsIn(name)(held.value);
 
-      function onDragStart(event: DragEvent) {
-        held.value = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-sortable-id]")?.dataset
-          .sortableId;
+      // SortableJS's own `choose` / `unchoose` bubble from the list on press and release, by mouse and by
+      // touch alike — and a press also ends a keyboard grab without a signal of its own.
+      function onChoose(event: Event) {
+        held.value = (event as Event & { item: HTMLElement }).item.dataset.sortableId;
       }
 
       function onAnnounce(signal: SortableSignalType) {
         message.value =
-          signal.kind === "noTarget" && signal.id === REFUSED
-            ? `No list in that direction takes ${REFUSED} — “archive” refuses it`
+          signal.kind === "noTarget" && signal.id === REFUSED && lists.value.parked.includes(REFUSED)
+            ? `No list below takes “${REFUSED}” — “archive” refuses it`
             : describeSignal(signal);
         if (signal.kind === "grabbed") {
           held.value = signal.id;
-        } else if (["dropped", "cancelled", "movedList"].includes(signal.kind)) {
+        } else if (signal.kind === "dropped" || signal.kind === "cancelled") {
           held.value = undefined;
         }
       }
 
-      return { lists, ring, message, onMove, acceptsIn, refuses, held, onDragStart, onAnnounce, REFUSED };
+      return { lists, ring, message, onMove, acceptsIn, refuses, held, onChoose, onAnnounce, REFUSED };
     },
     template: `
-      <div class="flex flex-col gap-4" @dragstart.capture="onDragStart" @dragend.capture="held = undefined">
+      <div class="flex flex-col gap-4" @choose="onChoose" @unchoose="held = undefined">
         <div v-for="name in ring" :key="name" class="flex flex-col gap-1">
           <div class="flex items-baseline gap-2 text-xs">
             <span class="font-bold uppercase text-neutral-500">{{ name }}</span>

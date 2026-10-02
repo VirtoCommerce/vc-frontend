@@ -274,8 +274,15 @@ describe("useSortableList — moving between lists by keyboard", () => {
   function setupPair(targetAccepts?: (id: string, from: string) => boolean) {
     const ring = ["shown", "parked", "archived"];
     const source = setup({ name: "shown", group: "stats", ring, orientation: "horizontal" });
-    setup({ name: "parked", group: "stats", ring, orientation: "horizontal", accepts: targetAccepts });
-    return source;
+    const target = setup({
+      name: "parked",
+      group: "stats",
+      ring,
+      orientation: "horizontal",
+      accepts: targetAccepts,
+      initial: ["x"],
+    });
+    return { ...source, target };
   }
 
   it("announces that the grab can change lists", () => {
@@ -286,8 +293,8 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals.at(-1)).toMatchObject({ kind: "grabbed", canChangeList: true });
   });
 
-  it("moves the item to the next list in the ring and lets go of it", () => {
-    const { list, press, moves, signals, order } = setupPair();
+  it("moves the item to the next list in the ring and hands the grab over with it", () => {
+    const { list, press, moves, signals, order, target } = setupPair();
 
     press(" ", "b");
     press("ArrowDown", "b");
@@ -295,8 +302,20 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
     expect(signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked" });
     expect(list.isGrabbed("b")).toBe(false);
+    expect(target.list.isGrabbed("b")).toBe(true);
     // The owner of both lists applies the move; this list's own order is untouched.
     expect(order()).toEqual(["a", "b", "c"]);
+  });
+
+  it("lets the grab go when the owner does not apply the move", async () => {
+    const { press, target } = setupPair();
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    // This harness's owner records moves without applying them, so "parked" never receives the item.
+    expect(target.list.isGrabbed("b")).toBe(false);
   });
 
   it("does not wrap past the start of the ring", () => {
