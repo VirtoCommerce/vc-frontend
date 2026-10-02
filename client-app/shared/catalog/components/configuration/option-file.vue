@@ -62,9 +62,13 @@ async function onRemoveFiles(filesToRemove: FileType[]) {
   emitFiles();
 }
 
+// Set while our own empty report travels back as an empty `value`, so the echo isn't taken for an external reset
+let isEmptyReportPending = false;
+
 function emitFiles() {
   // Skip an empty report the section doesn't need: it would echo back as a new empty `value` and reset the field
   if (attachedAndUploadedFiles.value.length || value.value?.length) {
+    isEmptyReportPending = attachedAndUploadedFiles.value.length === 0;
     emit("input", attachedAndUploadedFiles.value);
   }
 }
@@ -76,7 +80,10 @@ function onFileDownload(file: FileType) {
 }
 
 watch(value, (newValue) => {
-  if (!newValue?.length && files.value.length > 0) {
+  const isEmptyReportEcho = isEmptyReportPending;
+  isEmptyReportPending = false;
+
+  if (!newValue?.length && files.value.length > 0 && !isEmptyReportEcho) {
     void removeFiles([...files.value]);
   }
 });

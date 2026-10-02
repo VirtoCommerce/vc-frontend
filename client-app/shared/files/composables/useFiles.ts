@@ -29,6 +29,11 @@ const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 // Maximum number of simultaneous uploads
 const MAX_CONCURRENT_UPLOADS = 3;
 
+// Browsers percent-encode these characters in a multipart filename, and the server returns the encoded name
+function toMultipartFileName(name: string): string {
+  return name.replace(/"/g, "%22").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+}
+
 /**
  * File management
  * @param scope Scope files belongs to.
@@ -158,7 +163,11 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   // Helper function to process upload results
   function processUploadResults(results: FileUploadResultType[] | undefined, filesToProcess: IUploadingFile[]) {
     results?.forEach((result) => {
-      const uploadedFile = filesToProcess.find((fileInfo) => fileInfo.name === result.name);
+      const uploadedFile =
+        filesToProcess.find((fileInfo) => isUploadingFile(fileInfo) && fileInfo.name === result.name) ??
+        filesToProcess.find(
+          (fileInfo) => isUploadingFile(fileInfo) && toMultipartFileName(fileInfo.name) === result.name,
+        );
       if (uploadedFile) {
         if (result.succeeded) {
           toUploadedFile(uploadedFile, result.id, result.url);
@@ -262,7 +271,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       filesToUpload.forEach((file) => {
         const uploadingFile = uploadingFiles.value.find((f) => f.name === file.name);
         if (uploadingFile) {
-          toFailedFile(uploadingFile, t("file_error.UPLOAD_FAILED"));
+          toFailedFile(uploadingFile, getErrorMessage("EXCEPTION"));
         }
       });
     } finally {

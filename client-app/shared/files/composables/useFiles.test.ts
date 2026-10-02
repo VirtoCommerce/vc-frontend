@@ -147,17 +147,29 @@ describe("useFiles uploadFiles", () => {
     ]);
   });
 
-  it("fails a file the server saved under its browser-encoded name", async () => {
-    // The browser's multipart encoding sends the " in the name as %22, and the server saves and returns that name
-    // without decoding it, so no result carries the name of the attached file.
+  it("uploads a file the server saved under its browser-encoded name", async () => {
+    // The browser's multipart encoding sends the " in the name as %22, and the server returns that name undecoded.
     server.respond.mockImplementation(() => [saved("12%22 pipe.pdf")]);
     const composable = mountUseFiles();
     attach(composable, ['12" pipe.pdf']);
 
     await expect(upload(composable)).resolves.toBeUndefined();
 
+    expect(outcome(composable)).toEqual([{ name: '12" pipe.pdf', status: "uploaded", errorMessage: undefined }]);
+    expect(composable.uploadedFiles.value[0]).toMatchObject({ id: "id-12%22 pipe.pdf" });
+  });
+
+  it("fails the files of a request that errors", async () => {
+    server.respond.mockImplementation(() => {
+      throw new Error("Network Error");
+    });
+    const composable = mountUseFiles();
+    attach(composable, ["spec.pdf"]);
+
+    await expect(upload(composable)).resolves.toBeUndefined();
+
     expect(outcome(composable)).toEqual([
-      { name: '12" pipe.pdf', status: "error", errorMessage: "Failure while uploading file. Please try again." },
+      { name: "spec.pdf", status: "error", errorMessage: "Failure while uploading file. Please try again." },
     ]);
   });
 

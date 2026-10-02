@@ -146,6 +146,25 @@ describe("OptionFile", () => {
     expect(wrapper.find(".vc-file").exists()).toBe(false);
   });
 
+  it("keeps a failed file when the uploaded file next to it is removed", async () => {
+    server.respond.mockImplementation((fileNames) =>
+      fileNames.map((name) => (name === "failed.txt" ? invalidScope : saved(name))),
+    );
+    const { wrapper, optionFile } = mountOptionFile();
+    await attach(wrapper, "drawing.txt");
+    await attach(wrapper, "failed.txt");
+
+    const uploadedFile = wrapper.findAll(".vc-file").find((file) => file.text().includes("drawing.txt"));
+    await uploadedFile!.get('button[aria-label="Remove file"]').trigger("click");
+    await flushPromises();
+
+    expect(optionFile.emitted("input")?.at(-1)).toEqual([[]]);
+    const files = wrapper.findAll(".vc-file");
+    expect(files).toHaveLength(1);
+    expect(files[0].text()).toContain("failed.txt");
+    expect(files[0].get(".vc-file__message--error").text()).toMatch(/^Unknown scope '.*'\./);
+  });
+
   it("clears the field when the selection is cleared from outside", async () => {
     // Control: an empty `value` from product-configuration.vue still resets the field.
     server.respond.mockImplementation((fileNames) => fileNames.map((name) => saved(name)));
