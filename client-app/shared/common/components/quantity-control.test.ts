@@ -4,7 +4,7 @@ import { nextTick } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { VcButton, VcInput } from "@/ui-kit/components/molecules";
-import { VcQuantityStepper } from "@/ui-kit/components/organisms";
+import { VcAddToCart, VcQuantityStepper } from "@/ui-kit/components/organisms";
 import QuantityControl from "./quantity-control.vue";
 
 const createWrapper = createWrapperFactory(mount, QuantityControl, {
@@ -19,6 +19,13 @@ const createWrapper = createWrapperFactory(mount, QuantityControl, {
       VcIcon: true,
       VcTooltip: { template: '<div><slot name="trigger" /></div>' },
     },
+  },
+});
+
+const createButtonWrapper = createWrapperFactory(mount, QuantityControl, {
+  global: {
+    components: { VcAddToCart, VcInput, VcInputDetails, VcButton },
+    stubs: { VcQuantityStepper: true, VcLabel: true, VcIcon: true, VcTooltip: true },
   },
 });
 
@@ -97,5 +104,56 @@ describe("QuantityControl in stepper mode", () => {
     expect(input.attributes("aria-invalid")).toBe("true");
     expect(describedBy).toBeTruthy();
     expect(wrapper.find(`#${describedBy}`).text()).not.toBe("");
+  });
+});
+
+// VCST-5990: a quote row arrives with quantity 0 and no allowZero, and nothing explained why it is invalid.
+describe("QuantityControl validated on mount", () => {
+  const quoteRow = { mode: "stepper" as const, modelValue: 0, validateOnMount: true };
+
+  it("explains an untouched zero when zero is not allowed", async () => {
+    const wrapper = createWrapper({ props: quoteRow });
+    await settle();
+
+    const input = wrapper.get("input");
+    const describedBy = input.attributes("aria-describedby");
+
+    expect(input.attributes("aria-invalid")).toBe("true");
+    expect(describedBy).toBeTruthy();
+    expect(wrapper.find(`#${describedBy}`).text()).not.toBe("");
+  });
+
+  it("leaves an untouched zero valid when zero is allowed even with negative stock", async () => {
+    const wrapper = createWrapper({ props: { ...quoteRow, allowZero: true, availableQuantity: -1 } });
+    await settle();
+
+    expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+
+  it("still leaves an untouched zero valid when zero is allowed", async () => {
+    const wrapper = createWrapper({ props: { ...quoteRow, allowZero: true, minQuantity: 3 } });
+    await settle();
+
+    expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+});
+
+describe("QuantityControl aria passthrough", () => {
+  const aria = { "aria-describedby": "line-errors", "aria-invalid": "true" };
+
+  it("forwards consumer ARIA attributes to the stepper input", async () => {
+    const wrapper = createWrapper({ props: { ...stepperRow, modelValue: 5, aria } });
+    await nextTick();
+
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe("line-errors");
+    expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
+  });
+
+  it("forwards consumer ARIA attributes to the button-mode input", async () => {
+    const wrapper = createButtonWrapper({ props: { mode: "button", hideButton: true, modelValue: 5, aria } });
+    await nextTick();
+
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe("line-errors");
+    expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
   });
 });

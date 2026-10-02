@@ -20,6 +20,7 @@
       center
       :select-on-click="selectOnClick"
       :aria="{
+        ...aria,
         role: 'spinbutton',
         'aria-valuemin': boundMin,
         'aria-valuemax': max ?? null,
@@ -87,6 +88,11 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
+  /**
+   * Extra ARIA attributes for the input, e.g. `aria-describedby` pointing at a message rendered
+   * outside the stepper, or `aria-invalid`. The spinbutton role and value attributes always win.
+   */
+  aria?: Record<string, string | number | null>;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
