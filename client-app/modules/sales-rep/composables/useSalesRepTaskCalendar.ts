@@ -64,5 +64,9 @@ export function useMonthAnchor(initial: Date = new Date()) {
     month.value = toMonthKey(value);
   }
 
-  return { month, setMonth };
+  function goToToday(): void {
+    month.value = toMonthKey(new Date());
+  }
+
+  return { month, setMonth, goToToday };
 }

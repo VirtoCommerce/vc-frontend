@@ -203,14 +203,12 @@
       "load_failed": "Nie udało się wczytać zamówień"
     },
     "tasks": {
-      "title": "Zadania",
+      "title": "Kalendarz",
       "widget_title": "Zadania i terminy",
-      "view_all": "Wszystkie zadania",
+      "full_calendar": "Pełny kalendarz",
       "new_task": "Nowe zadanie",
-      "due_dates": "Terminy",
+      "add_task": "Dodaj zadanie",
       "today": "Dziś",
-      "all": "Wszystkie",
-      "clear_day_aria": "Usuń {date}",
       "empty": "Brak zadań na tej karcie",
       "empty_day": "Brak terminów w tym dniu",
       "load_failed": "Nie udało się wczytać zadań",
@@ -225,10 +223,8 @@
         "task": "Zadanie",
         "status": "Status",
         "notes": "Notatki",
-        "actions": "Akcje",
-        "mark_complete": "Oznacz jako ukończone",
-        "reopen": "Otwórz ponownie",
-        "action_aria": "{action}: „{name}”",
+        "complete_aria": "Oznacz „{name}” jako ukończone",
+        "reopen_aria": "Otwórz ponownie „{name}”",
         "edit_aria": "Edytuj „{name}”"
       },
       "status": {

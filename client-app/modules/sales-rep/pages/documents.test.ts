@@ -134,9 +134,9 @@ describe("Documents category tabs", () => {
     state.totalCount.value = 9;
 
     const wrapper = createWrapper();
-    const tabs = wrapper.findAll(".sales-rep-rule-chip");
+    const tabs = wrapper.findAll(".sales-rep-rule-chips__tab");
 
-    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chip__label").text())).toEqual([
+    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__label").text())).toEqual([
       "sales_rep.documents.page.all_tab", // t() is mocked to the key
       "Catalogs",
       "Guides",
@@ -144,7 +144,7 @@ describe("Documents category tabs", () => {
 
     // The count is a separate accent-styled element (design mock), not baked into the label; the All
     // baseline is the library total (root documents included), NOT the category sum which undercounts.
-    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chip__count").text())).toEqual(["9", "2", "5"]);
+    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__count").text())).toEqual(["9", "2", "5"]);
 
     // The "N documents" element next to the search field is gone — the tab counts carry the numbers.
     expect(wrapper.find(".documents-page__count").exists()).toBe(false);
@@ -156,7 +156,7 @@ describe("Documents category tabs", () => {
     state.page.value = 3;
 
     const wrapper = createWrapper();
-    await wrapper.findAll(".sales-rep-rule-chip")[1].find("button").trigger("click");
+    await wrapper.findAll(".sales-rep-rule-chips__tab")[1].find("button").trigger("click");
 
     expect(state.category.value).toBe("Catalogs");
     expect(state.page.value).toBe(1);

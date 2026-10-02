@@ -24,12 +24,9 @@ export type SalesRepTaskDayType = {
 
 export type SalesRepTaskDayMarkersType = Record<string, SalesRepTaskDayType>;
 
-/** The Tasks page's non-status views: today, another picked day, or every task. */
-export type SalesRepTaskScopeType = "today" | "day" | "all";
-
 export type SalesRepTaskCountsType = {
-  today: number;
-  all: number;
+  /** Tasks due on the selected day — what the baseline chip lists, unlike the status tabs spanning every date. */
+  day: number;
   upcoming: number;
   overdue: number;
   completed: number;
