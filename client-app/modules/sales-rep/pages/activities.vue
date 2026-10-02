@@ -183,9 +183,10 @@ const category = ref<string | undefined>(undefined);
 const page = ref(1);
 
 // The hub's shared period model (Lifetime / This month / This year), surfaced as chips. It opens on
-// This month: with no bounds the tracked categories are read from GA4's earliest supported date (2015),
-// so "All time" scans a decade to render a page. It stays one chip away.
-const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("month");
+// This year, the window of the widgets that link here, so "View all" never shows less than the widget
+// did. Not All time: with no bounds the tracked categories are read from GA4's earliest supported date
+// (2015), so it scans a decade to render a page. It stays one chip away.
+const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 // Chips speak "rule name | undefined"; undefined is the lifetime baseline.
 const periodRule = computed<string | undefined>({

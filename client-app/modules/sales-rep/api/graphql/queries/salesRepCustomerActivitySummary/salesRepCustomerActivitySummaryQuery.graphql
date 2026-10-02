@@ -15,6 +15,7 @@ query SalesRepCustomerActivitySummary(
     lastWebLogin
     visitsCount
     lastSearchTerm
+    lastSearchedDate
     isAnalyticsAvailable
     lastViewedProduct {
       code
@@ -22,5 +23,6 @@ query SalesRepCustomerActivitySummary(
       name
       imageUrl
     }
+    lastViewedDate
   }
 }

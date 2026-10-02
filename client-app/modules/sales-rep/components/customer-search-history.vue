@@ -8,6 +8,9 @@
         :rules="sortChipRules"
         :all-label="t('sales_rep.customer_insights.recent')"
       />
+
+      <!-- The window, named beside the rows: the empty text names it only when there are none. -->
+      <span class="customer-search-history__period">{{ t("sales_rep.activity.period.year") }}</span>
     </div>
 
     <div class="customer-search-history__content">
@@ -26,7 +29,7 @@
 
       <VcEmptyView
         v-else-if="!items.length && !loading"
-        :text="t('sales_rep.customer_insights.search_history.empty')"
+        :text="t('sales_rep.customer_insights.search_history.empty_this_year')"
         icon="search"
       />
 
@@ -115,6 +118,7 @@ watch(
   { immediate: true },
 );
 
+// This year, like the hub's other activity surfaces; the label and the empty text above name it.
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 const { items, unavailable, dataAsOf, loading, error } = useSalesRepSearchHistory({
@@ -142,7 +146,11 @@ const caveat = useInsightsCaveat(dataAsOf);
 
   // px-6 aligns the chips with the widget header title.
   &__filter {
-    @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
+    @apply flex items-center justify-between gap-3 border-b border-neutral-200 bg-neutral-50 px-6 py-3;
+  }
+
+  &__period {
+    @apply flex-none text-xs text-neutral-500;
   }
 
   &__content {

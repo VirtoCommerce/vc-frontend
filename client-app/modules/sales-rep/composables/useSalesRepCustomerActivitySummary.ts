@@ -48,6 +48,7 @@ export function useSalesRepCustomerActivitySummary(
           lastWebLogin: (node.lastWebLogin as string | undefined) ?? undefined,
           visitsCount: node.visitsCount,
           lastSearchTerm: node.lastSearchTerm ?? "",
+          lastSearchedDate: (node.lastSearchedDate as string | undefined) ?? undefined,
           lastViewedProduct: node.lastViewedProduct
             ? {
                 code: node.lastViewedProduct.code,
@@ -56,6 +57,7 @@ export function useSalesRepCustomerActivitySummary(
                 imageUrl: node.lastViewedProduct.imageUrl ?? "",
               }
             : undefined,
+          lastViewedDate: (node.lastViewedDate as string | undefined) ?? undefined,
           isAnalyticsAvailable: node.isAnalyticsAvailable,
         }
       : undefined;

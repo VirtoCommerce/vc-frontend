@@ -285,12 +285,14 @@
       "data_as_of": "Data per {date}",
       "search_history": {
         "empty": "Ingen sporede søk i denne perioden",
+        "empty_this_year": "Ingen sporede søk i år",
         "count": "{n} søk | {n} søk",
         "last_searched": "Sist søkt {date}",
         "load_failed": "Kunne ikke laste søkehistorikken"
       },
       "browse_history": {
         "empty": "Ingen sporede produktvisninger i denne perioden",
+        "empty_this_year": "Ingen sporede produktvisninger i år",
         "views": "{n} visning | {n} visninger",
         "load_failed": "Kunne ikke laste visningshistorikken"
       }
@@ -339,7 +341,7 @@
       "view_all": "All aktivitet",
       "my_activity": {
         "title": "Min aktivitet",
-        "empty": "Ingen aktivitet denne måneden"
+        "empty": "Ingen aktivitet i år"
       },
       "customer": {
         "title": "Kundeaktivitet",
@@ -350,7 +352,7 @@
         },
         "created_on": "Opprettet",
         "last_web_login": "Siste nettpålogging",
-        "visits": "Besøk",
+        "visits": "Totalt antall besøk",
         "last_search_term": "Siste søkeord",
         "last_viewed_product": "Sist viste produkt",
         "analytics_unavailable": "Nettaktivitet er ikke tilgjengelig akkurat nå — sporing er ikke koblet til for denne butikken, eller dataene kunne ikke leses.",

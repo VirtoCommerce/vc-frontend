@@ -196,8 +196,9 @@ vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName
 // Props-exposing stubs so the tab vocabulary and row scoping can be asserted.
 const RuleChipsStub = {
   name: "RuleChipsStub",
-  // Typed rather than a name list: a bare boolean attribute arrives as "" on an untyped prop.
-  props: { rules: Array, allLabel: String, allLast: Boolean, loading: Boolean },
+  // Typed rather than a name list: a bare boolean attribute arrives as "" on an untyped prop. modelValue
+  // is declared so props("modelValue") reads the selection; undeclared, it fell through as an attribute.
+  props: { rules: Array, allLabel: String, allLast: Boolean, loading: Boolean, modelValue: String },
   // Renders the suffix slot the way the real component does — once per tab, the baseline with no
   // name — so the page's adornment rule is observable.
   template: `<div>
@@ -323,6 +324,13 @@ describe("Activities page", () => {
     createWrapper();
 
     expect(activityCalls.options.every((options) => toValue(options.periodFrom) !== undefined)).toBe(true);
+  });
+
+  // The widgets that link here read this year, so "View all" must not open on less than they showed.
+  it("opens on This year, the window of the widgets that link here", () => {
+    const wrapper = createWrapper();
+
+    expect(findChips(wrapper)[1].props("modelValue")).toBe("year");
   });
 
   // Zero-count categories keep their tab: a rep must see a category exists and is quiet, not wonder

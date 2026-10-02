@@ -15,7 +15,7 @@
         <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.activity.load_failed')" variant="error" />
 
         <!-- Analytics absence is zero rows by contract, not an error. The feed here is mixed, so an empty
-             one on a store whose analytics did not answer is not a quiet month — the flag says which. -->
+             one on a store whose analytics did not answer is not a quiet year — the flag says which. -->
         <VcEmptyView v-else-if="!items.length && !loading" :text="emptyText" icon="activity" />
 
         <!-- Same first-load skeleton as the insights widgets — the GA-backed query can run for seconds. -->
@@ -44,10 +44,10 @@ const { t } = useI18n();
 
 // Latest few events across ALL assigned accounts — deliberately no organizationId, even on a scoped
 // surface; the full feed lives on the Activities page.
-// This month only, the period that page opens on: unbounded, every dashboard visit read the whole
+// This year only, the period that page opens on: unbounded, every dashboard visit read the whole
 // analytics history to show five rows.
 // No badges here, so none are selected — the widget waits for its own rows and nothing else.
-const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("month");
+const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 const { items, loading, error, analyticsUnavailable } = useSalesRepActivities({
   take: MY_ACTIVITY_TAKE,
   periodFrom,

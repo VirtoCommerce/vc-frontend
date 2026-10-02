@@ -46,7 +46,10 @@ function summaryFixture(
     lastWebLogin: "2026-08-20T10:00:00Z",
     visitsCount: 12,
     lastSearchTerm: "gloves",
+    // A year apart, and mid-day UTC so no timezone moves either into another year.
+    lastSearchedDate: "2025-11-03T14:00:00Z",
     lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "" },
+    lastViewedDate: "2024-10-02T14:00:00Z",
     isAnalyticsAvailable: true,
     ...overrides,
   };
@@ -176,6 +179,31 @@ describe("CustomerActivity summary states", () => {
 
     expect(productRow.text()).toContain("GONE-1");
     expect(productRow.findComponent({ name: "VcLinkStub" }).exists()).toBe(false);
+  });
+
+  // Lifetime figures, so a "last" fact may be years old — undated, "last viewed X" beside an empty
+  // this-year tab would read as a contradiction.
+  it("dates the last search and the last viewed product", () => {
+    state.summary.value = summaryFixture();
+
+    const rows = createWrapper().findAll(".customer-activity__row");
+
+    expect(rows[3].get(".customer-activity__date").text()).toContain("2025");
+    expect(rows[4].get(".customer-activity__date").text()).toContain("2024");
+  });
+
+  it("shows no date beside a dash", () => {
+    state.summary.value = summaryFixture({
+      lastSearchTerm: "",
+      lastSearchedDate: undefined,
+      lastViewedProduct: undefined,
+      lastViewedDate: undefined,
+    });
+
+    const rows = createWrapper().findAll(".customer-activity__row");
+
+    expect(rows[3].find(".customer-activity__date").exists()).toBe(false);
+    expect(rows[4].find(".customer-activity__date").exists()).toBe(false);
   });
 });
 

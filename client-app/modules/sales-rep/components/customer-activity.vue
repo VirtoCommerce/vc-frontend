@@ -82,6 +82,10 @@
                   </VcLink>
 
                   <template v-else>—</template>
+
+                  <span v-if="summary.lastSearchedDate" class="customer-activity__date">
+                    {{ $d(new Date(summary.lastSearchedDate)) }}
+                  </span>
                 </dd>
               </div>
 
@@ -108,6 +112,10 @@
                   </template>
 
                   <template v-else>—</template>
+
+                  <span v-if="summary.lastViewedDate" class="customer-activity__date">
+                    {{ $d(new Date(summary.lastViewedDate)) }}
+                  </span>
                 </dd>
               </div>
             </template>
@@ -184,7 +192,8 @@ watch(viewChip, (view) => {
   }
 });
 
-// Lifetime figures — the Activities page is where a rep narrows the period.
+// Lifetime figures, unlike the tabs beside them (this year): a "last" fact has to survive a quiet year,
+// so its date shows with it. The Activities page is where a rep narrows the period.
 const { summary, loading, error } = useSalesRepCustomerActivitySummary(() => props.organizationId);
 
 // One skeleton bar per definition row the loaded widget renders.
@@ -251,6 +260,11 @@ const productLabel = computed(() => {
 
   &__link {
     @apply text-[--link-color] hover:underline;
+  }
+
+  // Under the value, so a long product name keeps the whole first line.
+  &__date {
+    @apply block text-xs font-normal text-neutral-500;
   }
 
   &__note {

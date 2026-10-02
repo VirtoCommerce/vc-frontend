@@ -285,12 +285,14 @@
       "data_as_of": "Données au {date}",
       "search_history": {
         "empty": "Aucune recherche suivie sur cette période",
+        "empty_this_year": "Aucune recherche suivie cette année",
         "count": "{n} recherche | {n} recherches",
         "last_searched": "Dernière recherche le {date}",
         "load_failed": "Impossible de charger l'historique de recherche"
       },
       "browse_history": {
         "empty": "Aucune vue de produit suivie sur cette période",
+        "empty_this_year": "Aucune vue de produit suivie cette année",
         "views": "{n} vue | {n} vues",
         "load_failed": "Impossible de charger l'historique de navigation"
       }
@@ -339,7 +341,7 @@
       "view_all": "Toute l'activité",
       "my_activity": {
         "title": "Mon activité",
-        "empty": "Aucune activité ce mois-ci"
+        "empty": "Aucune activité cette année"
       },
       "customer": {
         "title": "Activité du client",
@@ -350,7 +352,7 @@
         },
         "created_on": "Créé le",
         "last_web_login": "Dernière connexion web",
-        "visits": "Visites",
+        "visits": "Total des visites",
         "last_search_term": "Dernier terme recherché",
         "last_viewed_product": "Dernier produit consulté",
         "analytics_unavailable": "L'activité web n'est pas disponible pour le moment — le suivi n'est pas connecté pour cette boutique, ou les données n'ont pas pu être lues.",

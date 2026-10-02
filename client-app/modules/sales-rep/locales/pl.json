@@ -285,12 +285,14 @@
       "data_as_of": "Dane na dzień {date}",
       "search_history": {
         "empty": "Brak śledzonych wyszukiwań w tym okresie",
+        "empty_this_year": "Brak śledzonych wyszukiwań w tym roku",
         "count": "{n} wyszukiwań | {n} wyszukiwanie | {n} wyszukiwania | {n} wyszukiwań",
         "last_searched": "Ostatnie wyszukiwanie: {date}",
         "load_failed": "Nie udało się wczytać historii wyszukiwania"
       },
       "browse_history": {
         "empty": "Brak śledzonych wyświetleń produktów w tym okresie",
+        "empty_this_year": "Brak śledzonych wyświetleń produktów w tym roku",
         "views": "{n} wyświetleń | {n} wyświetlenie | {n} wyświetlenia | {n} wyświetleń",
         "load_failed": "Nie udało się wczytać historii przeglądania"
       }
@@ -339,7 +341,7 @@
       "view_all": "Cała aktywność",
       "my_activity": {
         "title": "Moja aktywność",
-        "empty": "Brak aktywności w tym miesiącu"
+        "empty": "Brak aktywności w tym roku"
       },
       "customer": {
         "title": "Aktywność klienta",
@@ -350,7 +352,7 @@
         },
         "created_on": "Data utworzenia",
         "last_web_login": "Ostatnie logowanie w sieci",
-        "visits": "Wizyty",
+        "visits": "Łączna liczba wizyt",
         "last_search_term": "Ostatnie wyszukiwane hasło",
         "last_viewed_product": "Ostatnio oglądany produkt",
         "analytics_unavailable": "Aktywność w sieci jest obecnie niedostępna — śledzenie nie jest połączone z tym sklepem lub nie udało się odczytać danych.",

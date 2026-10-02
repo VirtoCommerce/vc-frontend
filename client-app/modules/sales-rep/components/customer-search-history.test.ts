@@ -23,9 +23,16 @@ vi.mock("../composables/useSalesRepSearchHistory", () => ({
     return { ...state };
   },
 }));
+// The window is captured too: the label and the empty text say "this year", so the request has to mean it.
+const periodFilter = vi.hoisted(() => ({ initial: undefined as string | undefined }));
 vi.mock("../composables/useSalesRepPeriodFilter", async () => {
   const { ref } = await import("vue");
-  return { useSalesRepPeriodFilter: () => ({ from: ref(undefined), to: ref(undefined) }) };
+  return {
+    useSalesRepPeriodFilter: (initial?: string) => {
+      periodFilter.initial = initial;
+      return { from: ref(undefined), to: ref(undefined) };
+    },
+  };
 });
 
 const createWrapper = createWrapperFactory(mount, CustomerSearchHistory, {
@@ -50,16 +57,26 @@ beforeEach(() => {
   state.dataAsOf.value = undefined;
   state.loading.value = false;
   state.error.value = null;
+  periodFilter.initial = undefined;
 });
 
 describe("CustomerSearchHistory states", () => {
-  it("shows the no-data view, not an error, when nothing was tracked", () => {
+  it("shows the no-data view, not an error, when nothing was tracked this year", () => {
     const wrapper = createWrapper();
     const views = emptyViews(wrapper);
 
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBeUndefined();
-    expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.search_history.empty");
+    expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.search_history.empty_this_year");
+  });
+
+  it("reads this year and names it beside the rows", () => {
+    state.items.value = [{ term: "coffee", count: 3 }];
+
+    const wrapper = createWrapper();
+
+    expect(periodFilter.initial).toBe("year");
+    expect(wrapper.get(".customer-search-history__period").text()).toBe("sales_rep.activity.period.year");
   });
 
   // The backend answers null when the store has no insights provider — the widget must name that

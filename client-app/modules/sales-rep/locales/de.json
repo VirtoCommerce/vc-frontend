@@ -285,12 +285,14 @@
       "data_as_of": "Datenstand: {date}",
       "search_history": {
         "empty": "Keine erfassten Suchanfragen in diesem Zeitraum",
+        "empty_this_year": "Keine erfassten Suchanfragen in diesem Jahr",
         "count": "{n} Suchanfrage | {n} Suchanfragen",
         "last_searched": "Zuletzt gesucht am {date}",
         "load_failed": "Suchverlauf konnte nicht geladen werden"
       },
       "browse_history": {
         "empty": "Keine erfassten Produktansichten in diesem Zeitraum",
+        "empty_this_year": "Keine erfassten Produktansichten in diesem Jahr",
         "views": "{n} Aufruf | {n} Aufrufe",
         "load_failed": "Angesehene Produkte konnten nicht geladen werden"
       }
@@ -339,7 +341,7 @@
       "view_all": "Gesamte Aktivität",
       "my_activity": {
         "title": "Meine Aktivität",
-        "empty": "Keine Aktivität in diesem Monat"
+        "empty": "Keine Aktivität in diesem Jahr"
       },
       "customer": {
         "title": "Kundenaktivität",
@@ -350,7 +352,7 @@
         },
         "created_on": "Erstellt am",
         "last_web_login": "Letzte Web-Anmeldung",
-        "visits": "Besuche",
+        "visits": "Besuche insgesamt",
         "last_search_term": "Letzter Suchbegriff",
         "last_viewed_product": "Zuletzt angesehenes Produkt",
         "analytics_unavailable": "Web-Aktivität ist derzeit nicht verfügbar — für diesen Shop ist kein Tracking verbunden, oder die Daten konnten nicht gelesen werden.",

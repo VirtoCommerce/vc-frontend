@@ -285,12 +285,14 @@
       "data_as_of": "{date} 時点のデータ",
       "search_history": {
         "empty": "この期間にトラッキングされた検索はありません",
+        "empty_this_year": "今年トラッキングされた検索はありません",
         "count": "{n} 回の検索",
         "last_searched": "最終検索日: {date}",
         "load_failed": "検索履歴を読み込めませんでした"
       },
       "browse_history": {
         "empty": "この期間にトラッキングされた商品閲覧はありません",
+        "empty_this_year": "今年トラッキングされた商品閲覧はありません",
         "views": "{n} 回の閲覧",
         "load_failed": "閲覧履歴を読み込めませんでした"
       }
@@ -339,7 +341,7 @@
       "view_all": "すべてのアクティビティ",
       "my_activity": {
         "title": "マイアクティビティ",
-        "empty": "今月のアクティビティはありません"
+        "empty": "今年のアクティビティはありません"
       },
       "customer": {
         "title": "顧客アクティビティ",
@@ -350,7 +352,7 @@
         },
         "created_on": "作成日",
         "last_web_login": "最終ウェブログイン",
-        "visits": "訪問数",
+        "visits": "総訪問数",
         "last_search_term": "最後の検索キーワード",
         "last_viewed_product": "最後に閲覧した商品",
         "analytics_unavailable": "ウェブ活動は現在利用できません — このストアではトラッキングが接続されていないか、データを読み取れませんでした。",

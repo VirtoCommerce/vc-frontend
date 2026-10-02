@@ -114,7 +114,9 @@ export type SalesRepCustomerActivitySummaryType = {
   lastWebLogin?: string;
   visitsCount: number;
   lastSearchTerm: string;
+  lastSearchedDate?: string;
   lastViewedProduct?: SalesRepActivityProductType;
+  lastViewedDate?: string;
   isAnalyticsAvailable: boolean;
 };
 

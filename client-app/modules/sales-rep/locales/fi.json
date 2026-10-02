@@ -285,12 +285,14 @@
       "data_as_of": "Tiedot: {date}",
       "search_history": {
         "empty": "Ei seurattuja hakuja tällä ajanjaksolla",
+        "empty_this_year": "Ei seurattuja hakuja tänä vuonna",
         "count": "{n} haku | {n} hakua",
         "last_searched": "Viimeksi haettu {date}",
         "load_failed": "Hakuhistorian lataaminen epäonnistui"
       },
       "browse_history": {
         "empty": "Ei seurattuja tuotekatseluja tällä ajanjaksolla",
+        "empty_this_year": "Ei seurattuja tuotekatseluja tänä vuonna",
         "views": "{n} katselukerta | {n} katselukertaa",
         "load_failed": "Selaushistorian lataaminen epäonnistui"
       }
@@ -339,7 +341,7 @@
       "view_all": "Kaikki aktiviteetti",
       "my_activity": {
         "title": "Oma aktiviteetti",
-        "empty": "Ei aktiviteettia tässä kuussa"
+        "empty": "Ei aktiviteettia tänä vuonna"
       },
       "customer": {
         "title": "Asiakkaan aktiviteetti",
@@ -350,7 +352,7 @@
         },
         "created_on": "Luotu",
         "last_web_login": "Viimeisin verkkokirjautuminen",
-        "visits": "Käynnit",
+        "visits": "Käynnit yhteensä",
         "last_search_term": "Viimeisin hakusana",
         "last_viewed_product": "Viimeksi katseltu tuote",
         "analytics_unavailable": "Verkkotoiminta ei ole juuri nyt saatavilla — seurantaa ei ole yhdistetty tähän kauppaan tai tietoja ei voitu lukea.",

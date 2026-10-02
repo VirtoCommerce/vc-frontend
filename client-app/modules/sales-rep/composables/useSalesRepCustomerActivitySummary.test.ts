@@ -24,8 +24,10 @@ describe("useSalesRepCustomerActivitySummary", () => {
         lastWebLogin: "2026-08-20T10:00:00Z",
         visitsCount: 12,
         lastSearchTerm: "gloves",
+        lastSearchedDate: "2026-08-19T09:00:00Z",
         isAnalyticsAvailable: true,
         lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
+        lastViewedDate: "2026-08-18T15:00:00Z",
       },
     } satisfies SalesRepCustomerActivitySummaryQuery;
 
@@ -36,8 +38,10 @@ describe("useSalesRepCustomerActivitySummary", () => {
       lastWebLogin: "2026-08-20T10:00:00Z",
       visitsCount: 12,
       lastSearchTerm: "gloves",
+      lastSearchedDate: "2026-08-19T09:00:00Z",
       isAnalyticsAvailable: true,
       lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
+      lastViewedDate: "2026-08-18T15:00:00Z",
     });
   });
 
@@ -59,7 +63,9 @@ describe("useSalesRepCustomerActivitySummary", () => {
       isAnalyticsAvailable: false,
       visitsCount: 0,
       lastSearchTerm: "",
+      lastSearchedDate: undefined,
       lastViewedProduct: undefined,
+      lastViewedDate: undefined,
     });
   });
 

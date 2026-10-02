@@ -285,12 +285,14 @@
       "data_as_of": "数据截至 {date}",
       "search_history": {
         "empty": "此时间段内没有已跟踪的搜索",
+        "empty_this_year": "今年没有已跟踪的搜索",
         "count": "{n} 次搜索",
         "last_searched": "上次搜索:{date}",
         "load_failed": "无法加载搜索历史"
       },
       "browse_history": {
         "empty": "此时间段内没有已跟踪的商品浏览",
+        "empty_this_year": "今年没有已跟踪的商品浏览",
         "views": "{n} 次浏览",
         "load_failed": "无法加载浏览历史"
       }
@@ -339,7 +341,7 @@
       "view_all": "全部活动",
       "my_activity": {
         "title": "我的活动",
-        "empty": "本月暂无活动"
+        "empty": "今年暂无活动"
       },
       "customer": {
         "title": "客户活动",
@@ -350,7 +352,7 @@
         },
         "created_on": "创建日期",
         "last_web_login": "最近网站登录",
-        "visits": "访问次数",
+        "visits": "总访问次数",
         "last_search_term": "最近搜索词",
         "last_viewed_product": "最近浏览的商品",
         "analytics_unavailable": "网站活动当前不可用 — 此商店未连接跟踪，或数据无法读取。",

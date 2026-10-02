@@ -285,12 +285,14 @@
       "data_as_of": "Data per {date}",
       "search_history": {
         "empty": "Inga spårade sökningar under den här perioden",
+        "empty_this_year": "Inga spårade sökningar i år",
         "count": "{n} sökning | {n} sökningar",
         "last_searched": "Senast sökt {date}",
         "load_failed": "Det gick inte att läsa in sökhistoriken"
       },
       "browse_history": {
         "empty": "Inga spårade produktvisningar under den här perioden",
+        "empty_this_year": "Inga spårade produktvisningar i år",
         "views": "{n} visning | {n} visningar",
         "load_failed": "Det gick inte att läsa in visningshistoriken"
       }
@@ -339,7 +341,7 @@
       "view_all": "All aktivitet",
       "my_activity": {
         "title": "Min aktivitet",
-        "empty": "Ingen aktivitet denna månad"
+        "empty": "Ingen aktivitet i år"
       },
       "customer": {
         "title": "Kundaktivitet",
@@ -350,7 +352,7 @@
         },
         "created_on": "Skapad",
         "last_web_login": "Senaste webbinloggning",
-        "visits": "Besök",
+        "visits": "Totalt antal besök",
         "last_search_term": "Senaste sökterm",
         "last_viewed_product": "Senast visade produkt",
         "analytics_unavailable": "Webbaktivitet är inte tillgänglig just nu — spårning är inte ansluten för den här butiken, eller så kunde data inte läsas.",

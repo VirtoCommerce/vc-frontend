@@ -285,12 +285,14 @@
       "data_as_of": "Data as of {date}",
       "search_history": {
         "empty": "No tracked searches in this period",
+        "empty_this_year": "No tracked searches this year",
         "count": "{n} search | {n} searches",
         "last_searched": "Last searched {date}",
         "load_failed": "Couldn't load search history"
       },
       "browse_history": {
         "empty": "No tracked product views in this period",
+        "empty_this_year": "No tracked product views this year",
         "views": "{n} view | {n} views",
         "load_failed": "Couldn't load browse history"
       }
@@ -339,7 +341,7 @@
       "view_all": "All activity",
       "my_activity": {
         "title": "My activity",
-        "empty": "No activity this month"
+        "empty": "No activity this year"
       },
       "customer": {
         "title": "Customer activity",
@@ -350,7 +352,7 @@
         },
         "created_on": "Created on",
         "last_web_login": "Last web login",
-        "visits": "Visits",
+        "visits": "Total visits",
         "last_search_term": "Last search term",
         "last_viewed_product": "Last viewed product",
         "analytics_unavailable": "Web activity isn't available right now — tracking isn't connected for this store, or the data couldn't be read.",

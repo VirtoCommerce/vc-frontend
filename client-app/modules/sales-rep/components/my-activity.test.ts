@@ -52,7 +52,7 @@ beforeEach(() => {
 
 describe("MyActivity states", () => {
   // Analytics absence arrives as zero rows by contract, so the quiet view is the no-data one, not an error.
-  it("shows the no-data view, not an error, when there is no activity this month", () => {
+  it("shows the no-data view, not an error, when there is no activity this year", () => {
     const wrapper = createWrapper();
     const views = emptyViews(wrapper);
 
@@ -64,7 +64,7 @@ describe("MyActivity states", () => {
   });
 
   // Defect 8: the widget's feed is mixed, so an empty one on a store whose analytics did not answer is
-  // not a quiet month — it is a month with the tracked half missing.
+  // not a quiet year — it is a year with the tracked half missing.
   it("names the unavailable state rather than a quiet period", () => {
     state.analyticsUnavailable.value = true;
 
@@ -119,7 +119,7 @@ describe("MyActivity wiring", () => {
 
   // Unbounded, every dashboard visit read the whole analytics history. Mid-October, so this month and this
   // year are different windows.
-  it("reads this month only", () => {
+  it("reads this year only", () => {
     const now = new Date(2026, 9, 15, 12, 0, 0);
     vi.useFakeTimers();
     vi.setSystemTime(now);
@@ -130,8 +130,8 @@ describe("MyActivity wiring", () => {
       periodFrom: MaybeRefOrGetter<string | undefined>;
       periodTo: MaybeRefOrGetter<string | undefined>;
     };
-    const { mtdFrom, mtdTo } = buildStatisticsWindows(now);
-    expect(toValue(options.periodFrom)).toBe(mtdFrom);
-    expect(toValue(options.periodTo)).toBe(mtdTo);
+    const { ytdFrom, ytdTo } = buildStatisticsWindows(now);
+    expect(toValue(options.periodFrom)).toBe(ytdFrom);
+    expect(toValue(options.periodTo)).toBe(ytdTo);
   });
 });
