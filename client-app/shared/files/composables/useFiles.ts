@@ -31,7 +31,7 @@ const MAX_CONCURRENT_UPLOADS = 3;
 
 // Browsers percent-encode these characters in a multipart filename, and the server returns the encoded name
 function toMultipartFileName(name: string): string {
-  return name.replace(/"/g, "%22").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+  return name.replaceAll('"', "%22").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
 }
 
 /**
