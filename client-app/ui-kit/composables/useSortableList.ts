@@ -454,7 +454,6 @@ export function useSortableList(
 
       onStart: (event: Sortable.SortableEvent) => {
         originSibling = event.item.nextSibling;
-        spilled = false;
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
         if (id) {
           options.onGrab?.({ id, from: nameOf() });
