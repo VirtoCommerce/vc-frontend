@@ -33,6 +33,7 @@
       <WishlistDropdownMenu
         v-if="list.sharingSetting?.access === WishlistAccessType.Write"
         :shareable="isCorporateMember && !!list.sharingSetting?.isOwner"
+        :removable="!!list.sharingSetting?.isOwner"
         @edit="$emit('settings', $event)"
         @share="$emit('share', $event)"
         @remove="$emit('remove', $event)"

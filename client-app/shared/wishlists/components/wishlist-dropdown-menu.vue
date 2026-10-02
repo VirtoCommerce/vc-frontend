@@ -50,6 +50,7 @@
       </VcMenuItem>
 
       <VcMenuItem
+        v-if="removable"
         data-test-id="wishlist-card-remove-menu-item"
         color="secondary"
         nowrap
@@ -78,8 +79,10 @@ interface IEmits {
 }
 
 interface IProps {
-  /** Sharing is a corporate feature; without it the menu is rename and remove only. */
+  /** Sharing is a corporate feature; without it the menu is rename only. */
   shareable?: boolean;
+  /** Removing a list is the owner's call: a co-member of an organization list may write it but not delete it. */
+  removable?: boolean;
 }
 
 defineEmits<IEmits>();
