@@ -12,6 +12,7 @@ export { default as VcLabel } from "./label/vc-label.vue";
 /** @deprecated Use VcProperty or VcProductProperties instead */
 export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";
 export { default as VcLink } from "./link/vc-link.vue";
+export { default as VcLoadMore } from "./load-more/vc-load-more.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-render.vue";
 export { default as VcPriceDisplay } from "./price-display/vc-price-display.vue";

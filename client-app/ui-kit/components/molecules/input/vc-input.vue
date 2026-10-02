@@ -5,10 +5,12 @@
       `vc-input--size--${size}`,
       {
         'vc-input--readonly': readonly,
+        'vc-input--pointer-focus': pointerFocus,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
         'vc-input--seamless': seamless,
+        'vc-input--opened': opened,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
@@ -105,7 +107,7 @@
 <script setup lang="ts" generic="T extends string | number | null">
 import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
-import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import { useAttrsOnly, useComponentId, useFocusModality, useListeners } from "@/ui-kit/composables";
 import { getInputClearIconSize } from "@/ui-kit/utilities";
 import type { MaskOptions } from "maska";
 import type { AriaAttributes } from "vue";
@@ -126,6 +128,8 @@ export interface IProps {
   error?: boolean;
   noBorder?: boolean;
   seamless?: boolean;
+  /** A popup this field controls (a select's list) is open; the field is then drawn with the focus ring. */
+  opened?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
   hideDetails?: boolean;
@@ -173,6 +177,7 @@ const props = withDefaults(defineProps<IProps>(), {
   tabindex: 0,
   hideDetails: false,
   seamless: false,
+  opened: false,
 });
 
 if (import.meta.env.DEV && props.type === "date") {
@@ -184,6 +189,7 @@ const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
+const { isPointerFocus: pointerFocus } = useFocusModality();
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
@@ -294,10 +300,12 @@ provide<VcInputContextType>("inputContext", {
   $sizeMd: "";
 
   $readonly: "";
+  $pointerFocus: "";
   $disabled: "";
   $error: "";
   $noBorder: "";
   $seamless: "";
+  $opened: "";
   $center: "";
   $truncate: "";
 
@@ -326,6 +334,10 @@ provide<VcInputContextType>("inputContext", {
     $readonly: &;
   }
 
+  &--pointer-focus {
+    $pointerFocus: &;
+  }
+
   &--disabled {
     $disabled: &;
   }
@@ -344,6 +356,10 @@ provide<VcInputContextType>("inputContext", {
     $seamless: &;
   }
 
+  &--opened {
+    $opened: &;
+  }
+
   &--center {
     $center: &;
   }
@@ -354,6 +370,9 @@ provide<VcInputContextType>("inputContext", {
 
   &__container {
     @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
+
+    // Unset without the knob, so the container keeps inheriting its cursor.
+    cursor: var(--vc-input-cursor);
 
     #{$sizeXs} & {
       @apply h-8 text-sm;
@@ -367,8 +386,14 @@ provide<VcInputContextType>("inputContext", {
       @apply h-11 text-base;
     }
 
-    &:has(input:focus-visible) {
+    &:has(input:focus-visible),
+    #{$opened} & {
       @include focus-ring;
+    }
+
+    // A read-only field takes no typing, so a mouse click on it is not a reason to ring.
+    #{$readonly}#{$pointerFocus}:not(#{$opened}) & {
+      @apply outline-none;
     }
 
     #{$error} & {
@@ -398,6 +423,10 @@ provide<VcInputContextType>("inputContext", {
       }
     }
 
+    #{$seamless}#{$opened} & {
+      @apply outline-none;
+    }
+
     #{$seamless}#{$sizeXs} &,
     #{$seamless}#{$sizeSm} &,
     #{$seamless}#{$sizeMd} & {
@@ -418,6 +447,7 @@ provide<VcInputContextType>("inputContext", {
     @apply relative m-px bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     padding-inline: var(--vc-input-padding-x, theme("padding.2"));
+    cursor: var(--vc-input-cursor, auto);
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;

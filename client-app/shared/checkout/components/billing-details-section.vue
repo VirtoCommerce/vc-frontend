@@ -48,7 +48,7 @@
           size="auto"
           required
           test-id-dropdown="payment-method-selector"
-          @change="(value) => setPaymentMethod(value)"
+          @change="onPaymentMethodChange"
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
@@ -104,7 +104,7 @@ import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
-import type { CartType } from "@/core/api/graphql/types";
+import type { CartType, PaymentMethodType } from "@/core/api/graphql/types";
 import Payment from "@/shared/payment/components/payment.vue";
 
 interface IProps {
@@ -144,4 +144,13 @@ const {
   isPurchaseOrderNumberEnabled,
   purchaseOrderNumber,
 } = useCheckout();
+
+// VcSelect emits undefined when cleared; the domain call takes a method, not a maybe-method.
+function onPaymentMethodChange(value?: PaymentMethodType): void {
+  if (!value) {
+    return;
+  }
+
+  void setPaymentMethod(value);
+}
 </script>

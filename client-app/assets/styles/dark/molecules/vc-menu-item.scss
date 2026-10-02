@@ -1,10 +1,15 @@
 .vc-menu-item {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
   $active: "";
+  $highlighted: "";
 
   &__inner {
     &--active {
       $active: &;
+    }
+
+    &--highlighted {
+      $highlighted: &;
     }
 
     &:not(#{$active}) {
@@ -13,8 +18,9 @@
 
     @each $color in $colors {
       &--color--#{$color} {
-        &:hover {
-          @apply bg-[--color-#{$color}-100];
+        &:hover,
+        &#{$highlighted} {
+          @apply bg-[--color-#{$color}-50];
         }
 
         &#{$active} {

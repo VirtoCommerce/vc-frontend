@@ -18,6 +18,7 @@ declare module "vue" {
     VcLabel: typeof Components.VcLabel;
     /** @deprecated Use VcProperty or VcProductProperties instead */
     VcLineItemProperty: typeof Components.VcLineItemProperty;
+    VcLoadMore: typeof Components.VcLoadMore;
     VcLoader: typeof Components.VcLoader;
     VcMarkdownRender: typeof Components.VcMarkdownRender;
     VcPriceDisplay: typeof Components.VcPriceDisplay;

@@ -60,7 +60,16 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const el = useTemplateRef<HTMLElement>("el");
 
-provide(vcScrollbarKey, { el });
+// Published so a descendant (VcLoadMore) reads the same edges the reach-* events come from.
+const isAtTop = ref(true);
+const isAtBottom = ref(false);
+const isAtLeft = ref(true);
+const isAtRight = ref(false);
+
+// Bumped on every real measurement: the edges are debounced, so a reader needs to know they are fresh.
+const measuredAt = ref(0);
+
+provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measuredAt });
 
 // A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but only
 // when nothing inside is focusable — axe passes regions with focusable content, and a tab stop
@@ -68,7 +77,8 @@ provide(vcScrollbarKey, { el });
 // The tab stop is added automatically when content overflows on an enabled axis AND the region
 // has no focusable descendants AND no interactive container role; `focusable` stays as an
 // explicit override.
-const INTERACTIVE_CONTAINER_ROLES = new Set([
+// Looked for inside the region too: a listbox holding only options sits inside it, not on it.
+const INTERACTIVE_CONTAINER_SELECTOR = [
   "listbox",
   "menu",
   "menubar",
@@ -78,7 +88,9 @@ const INTERACTIVE_CONTAINER_ROLES = new Set([
   "tablist",
   "combobox",
   "radiogroup",
-]);
+]
+  .map((role) => `[role="${role}"]`)
+  .join(", ");
 
 const FOCUSABLE_SELECTOR = [
   "a[href]",
@@ -116,8 +128,7 @@ function updateAutoTabStop(): void {
     return;
   }
 
-  const role = target.getAttribute("role");
-  if (role && INTERACTIVE_CONTAINER_ROLES.has(role)) {
+  if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CONTAINER_SELECTOR)) {
     needsAutoTabStop.value = false;
     return;
   }
@@ -125,15 +136,25 @@ function updateAutoTabStop(): void {
   needsAutoTabStop.value = !target.querySelector(FOCUSABLE_SELECTOR);
 }
 
-const scheduleAutoTabStopUpdate = useDebounceFn(updateAutoTabStop, 100);
+function checkContent(): void {
+  updateAutoTabStop();
+
+  if (el.value) {
+    updateEdges(el.value);
+  }
+}
+
+// maxWait: content that keeps changing (a spinner) would otherwise postpone the check forever.
+const scheduleContentUpdate = useDebounceFn(checkContent, 100, { maxWait: 300 });
 
 onMounted(() => {
-  void nextTick(updateAutoTabStop);
+  void nextTick(checkContent);
 });
 
 // flush: "post": a pre-flush watcher would run before these props' overflow classes (below)
 // reach the DOM, reading scrollHeight/clientHeight off the still-stale layout.
-watch([() => props.vertical, () => props.horizontal, () => props.disabled], updateAutoTabStop, {
+// These props also decide which axes may announce, so they re-measure.
+watch([() => props.vertical, () => props.horizontal, () => props.disabled], checkContent, {
   flush: "post",
 });
 
@@ -141,20 +162,67 @@ watch([() => props.vertical, () => props.horizontal, () => props.disabled], upda
 // components grows: structural and text changes are seen by the MutationObserver, image loads
 // only by the capture-phase load listener (load doesn't bubble and isn't a mutation). Attributes
 // are watched too, since FOCUSABLE_SELECTOR and the role guard both read them.
-useResizeObserver(el, scheduleAutoTabStopUpdate);
-useMutationObserver(el, scheduleAutoTabStopUpdate, {
+useResizeObserver(el, scheduleContentUpdate);
+useMutationObserver(el, scheduleContentUpdate, {
   childList: true,
   subtree: true,
   characterData: true,
   attributes: true,
   attributeFilter: ["disabled", "tabindex", "href", "contenteditable", "role"],
 });
-useEventListener(el, "load", scheduleAutoTabStopUpdate, { capture: true });
+useEventListener(el, "load", scheduleContentUpdate, { capture: true });
 
-const wasAtTop = ref(true);
-const wasAtBottom = ref(false);
-const wasAtLeft = ref(true);
-const wasAtRight = ref(false);
+// Measured on content changes as well as on scroll: content that fits never scrolls. Emits
+// arrivals only; whether to ask for more is the caller's decision.
+function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollTop" | "scrollLeft"> {
+  const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
+  const threshold = props.edgeThreshold;
+
+  const measured = {
+    isAtTop: scrollTop <= threshold,
+    isAtBottom: scrollTop + clientHeight >= scrollHeight - threshold,
+    isAtLeft: scrollLeft <= threshold,
+    isAtRight: scrollLeft + clientWidth >= scrollWidth - threshold,
+  };
+
+  // A collapsed box (a closed popover's display:none content) sits at every edge; ignore it.
+  if (!clientHeight || !clientWidth) {
+    return measured;
+  }
+
+  measuredAt.value++;
+
+  // An axis that cannot scroll sits at both edges by definition, so it announces nothing.
+  const verticalScrolls = props.vertical && !props.disabled;
+  const horizontalScrolls = props.horizontal && !props.disabled;
+
+  // The refs still hold the previous measurement, which makes these arrivals rather than states.
+  if (verticalScrolls && measured.isAtTop && !isAtTop.value) {
+    emit("reachTop");
+  }
+  if (verticalScrolls && measured.isAtBottom && !isAtBottom.value) {
+    emit("reachBottom");
+  }
+  if (horizontalScrolls && measured.isAtLeft && !isAtLeft.value) {
+    emit("reachLeft");
+  }
+  if (horizontalScrolls && measured.isAtRight && !isAtRight.value) {
+    emit("reachRight");
+  }
+
+  // Written only for axes that can emit, or enabling one later would find it already "arrived".
+  if (verticalScrolls) {
+    isAtTop.value = measured.isAtTop;
+    isAtBottom.value = measured.isAtBottom;
+  }
+
+  if (horizontalScrolls) {
+    isAtLeft.value = measured.isAtLeft;
+    isAtRight.value = measured.isAtRight;
+  }
+
+  return measured;
+}
 
 const onScroll = useThrottleFn(
   (event: Event) => {
@@ -163,42 +231,14 @@ const onScroll = useThrottleFn(
       return;
     }
 
-    void scheduleAutoTabStopUpdate();
+    void scheduleContentUpdate();
 
-    const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
-    const threshold = props.edgeThreshold;
+    // Read before updateEdges runs the reach-* handlers, which may scroll.
+    const { scrollTop, scrollLeft } = target;
 
-    const isAtTop = scrollTop <= threshold;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
-    const isAtLeft = scrollLeft <= threshold;
-    const isAtRight = scrollLeft + clientWidth >= scrollWidth - threshold;
+    const edges = updateEdges(target);
 
-    if (isAtTop && !wasAtTop.value) {
-      emit("reachTop");
-    }
-    if (isAtBottom && !wasAtBottom.value) {
-      emit("reachBottom");
-    }
-    if (isAtLeft && !wasAtLeft.value) {
-      emit("reachLeft");
-    }
-    if (isAtRight && !wasAtRight.value) {
-      emit("reachRight");
-    }
-
-    wasAtTop.value = isAtTop;
-    wasAtBottom.value = isAtBottom;
-    wasAtLeft.value = isAtLeft;
-    wasAtRight.value = isAtRight;
-
-    emit("scroll", {
-      scrollTop,
-      scrollLeft,
-      isAtTop,
-      isAtBottom,
-      isAtLeft,
-      isAtRight,
-    });
+    emit("scroll", { scrollTop, scrollLeft, ...edges });
   },
   100,
   true,
