@@ -351,7 +351,7 @@ const ItemScope = defineComponent({
       // The keyboard moves the item and restores focus a tick later, so the held ring cannot depend on
       // `:focus-visible`.
       // Held, not only focused: the ring doubles. A change of shape, at the ring's own colour and contrast; it
-      // reaches 8px outside the item, twice a plain ring.
+      // reaches offset + 3 × width outside the item (8px at the defaults), a plain ring offset + width.
       &[aria-pressed="true"] {
         @include focus-ring;
 
