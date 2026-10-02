@@ -132,9 +132,11 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 
 **Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
 
-- UI (22 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
-  `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcLabel`, `VcLink`, `VcLoaderOverlay`,
-  `VcMarkdownRender`, `VcMenuItem`, `VcModal`, `VcSelect`, `VcTable`, `VcTableColumn`,
+- UI (35 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
+  `VcCheckboxGroup`, `VcChip`, `VcDatePicker`, `VcDialog`, `VcDialogContent`, `VcDialogFooter`,
+  `VcDialogHeader`, `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcInputDetails`, `VcLabel`,
+  `VcLayout`, `VcLink`, `VcLoaderOverlay`, `VcMarkdownRender`, `VcMenuItem`, `VcModal`,
+  `VcPagination`, `VcPopover`, `VcRating`, `VcSelect`, `VcTable`, `VcTableColumn`, `VcTabSwitch`,
   `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton` (`VcImage` is host-bound too —
   its thumbnail logic reads theme settings through a getter that throws until the host sets the
   theme context, so only a filename-only `src` renders standalone); the themed `OrderStatus`
@@ -146,14 +148,23 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`,
   `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT`
 - Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
-  `usePageHead`, `useWishlistSharingScopes`
+  `usePageHead`, `useWishlistSharingScopes`, `useRouteQueryParam`, `useFetch` (the host's fetch
+  with its auth interceptors, so a plugin can read a protected file URL as the signed-in user)
+- Order rendering: `useOrderView` (the host's order view-model — gift vs regular items,
+  per-currency groups, BOPIS) and the components its details page composes: `OrderLineItems`,
+  `OrderSummary`, `OrderCommentSection`, `AcceptedGifts`, `AddressInfo`, `VendorName`
+  (`OrderSummary` also runs the host's `useFullCart`, `useCheckout` and `useSavedForLater` for
+  its loading state, exactly as on the host's own order page)
+- Order filtering: `getOrdersFilterExpression`, `STATUS_ORDERS_FACET_NAME`, `OrdersFilterDataType` —
+  the filter grammar a plugin listing orders has to speak
+- Files: `downloadFile`, `getFileSize`, `ContentType`
 - Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`,
-  `toStartDateFilterValue`, `toEndDateFilterValue`, `registerLocaleLoader`, `ROUTES` (the host
-  route names a plugin mounts under or links to)
+  `toStartDateFilterValue`, `toEndDateFilterValue`, `toLocalDateOnly`, `registerLocaleLoader`,
+  `ROUTES` (the host route names a plugin mounts under or links to)
 - Meta: `CORE_VERSION`, and the types `I18n`, `ILanguage`, `LocaleLoaderType`, `MenuType`,
   `ExtendedMenuLinkType`, `IWishlistSharingScopeControlsType`,
   `WishlistSharingScopeSavedContextType`
-- Separate subpaths: `@vc-frontend/core/federation`, `/tailwind-preset`, `/testing`
+- Separate subpaths: `@vc-frontend/core/federation`, `/tailwind-preset`, `/testing`, `/codegen`
 
 > **Rule of thumb:** keep the facade **small and additive**. The level depends on the
 > release line: on 0.x a new export ⇒ **patch** and removing/renaming ⇒ **minor**; from

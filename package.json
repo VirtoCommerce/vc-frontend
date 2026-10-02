@@ -107,6 +107,7 @@
     "@graphql-codegen/typed-document-node": "5.1.2",
     "@graphql-codegen/typescript": "4.1.6",
     "@graphql-codegen/typescript-operations": "4.6.1",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@module-federation/vite": "1.18.2",
     "@rollup/plugin-graphql": "^3.0.0",
     "@rushstack/eslint-patch": "^1.16.1",

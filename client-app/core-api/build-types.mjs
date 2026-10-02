@@ -19,6 +19,7 @@ import dts from "rollup-plugin-dts";
 import { intersects, satisfies } from "semver";
 import ts from "typescript";
 import { bumpContractVersion } from "./bump-version.mjs";
+import { gitIn } from "./git.mjs";
 import { decideVersionAction, extractExportNames } from "./contract-versioning.mjs";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
@@ -405,6 +406,73 @@ if (inlinedDeclarations.length) {
   step(`inlined ${inlinedDeclarations.length} ambient declaration(s).`);
 }
 
+// 2a2 ── declare the globally registered components ───────────────────────────
+// `app.use(uiKit)` registers them globally, so a plugin template uses `<VcButton>` unimported —
+// and vue-tsc accepts an unknown component silently, leaving every prop unchecked. Generated from
+// the facade's ui-kit re-exports: rollup-plugin-dts cannot inline the host's own augmentations,
+// and those are hand-maintained and already missing `VcLink` and `VcTableColumn`.
+step("declaring the host's global components…");
+
+const FACADE_ENTRY = resolve(CORE_API_DIR, "index.ts");
+const UI_KIT_COMPONENTS_MODULE = "@/ui-kit/components";
+
+/** Public names the facade re-exports from the ui-kit barrel, any tier. */
+function uiKitComponentExports() {
+  const source = ts.createSourceFile(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"), ts.ScriptTarget.Latest, true);
+  const names = new Set();
+  for (const statement of source.statements) {
+    const specifier = ts.isExportDeclaration(statement) ? statement.moduleSpecifier : undefined;
+    if (!specifier || !ts.isStringLiteral(specifier) || !specifier.text.startsWith(UI_KIT_COMPONENTS_MODULE)) {
+      continue;
+    }
+    if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) {
+        names.add(element.name.text);
+      }
+    }
+  }
+  return names;
+}
+
+/** Public export name -> the local declaration it aliases, as rollup renamed it. */
+function localNamesByExport(source) {
+  const file = ts.createSourceFile("contract.d.ts", source, ts.ScriptTarget.Latest, true);
+  const locals = new Map();
+  for (const statement of file.statements) {
+    if (!ts.isExportDeclaration(statement) || statement.moduleSpecifier || !statement.exportClause) {
+      continue;
+    }
+    if (ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) {
+        locals.set(element.name.text, (element.propertyName ?? element.name).text);
+      }
+    }
+  }
+  return locals;
+}
+
+const globalComponents = [...uiKitComponentExports()].sort(byCodepoint);
+const localNames = localNamesByExport(code);
+const unrolled = globalComponents.filter((name) => !localNames.has(name));
+if (unrolled.length) {
+  fail(`${unrolled.join(", ")} is re-exported from the ui-kit barrel but absent from the rolled contract.`);
+}
+if (globalComponents.length) {
+  code +=
+    "\n" +
+    [
+      "",
+      "// ── registered globally by `app.use(uiKit)`: usable in a plugin template unimported ──",
+      'declare module "vue" {',
+      "  export interface GlobalComponents {",
+      ...globalComponents.map((name) => `    ${name}: typeof ${localNames.get(name)};`),
+      "  }",
+      "}",
+      "",
+    ].join("\n");
+  step(`declared ${globalComponents.length} global component(s).`);
+}
+
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(
@@ -635,26 +703,10 @@ function generateTailwindPreset() {
 
 const tailwindPreset = generateTailwindPreset();
 
-/**
- * Compares the freshly generated contract to the one committed on the base branch.
- * Returns null when no baseline is available (no git, no base ref, contract absent
- * at base) — callers then skip versioning logic quietly.
- */
-// S4036: never resolve `git` through PATH - use well-known absolute locations only,
-// same stance as the vue-tsc spawn above. Exotic installs simply skip the (optional)
-// versioning automation; CI runs on a standard image where /usr/bin/git exists.
-const GIT_BIN = [
-  "/usr/bin/git",
-  "/usr/local/bin/git",
-  "/opt/homebrew/bin/git",
-  String.raw`C:\Program Files\Git\cmd\git.exe`,
-].find((candidate) => existsSync(candidate));
+const git = gitIn(REPO_ROOT);
 
-// maxBuffer: node's 1MB default would KILL the child once a committed artifact
-// outgrows it (status becomes null) — indistinguishable from "no baseline" below,
-// silently disabling the auto-bump and the require-major gate. Size the buffer so
-// that can't happen before anyone notices.
-const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+/** Hand-written files in the versioned tarball - like the preset, an edit to one ships only under a new version. */
+const VERSIONED_SOURCES = ["codegen.mjs", "codegen.d.mts"];
 
 /**
  * The newest published contract tag, or "" when nothing has been released yet (or tags were not
@@ -662,17 +714,16 @@ const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8
  * the RELEASE check has to judge a version level against.
  */
 function lastReleasedContractTag() {
-  if (!GIT_BIN) {
-    return "";
-  }
   const described = git(["describe", "--tags", "--match", "core-v*", "--abbrev=0"]);
   return described.status === 0 ? described.stdout.trim() : "";
 }
 
+/**
+ * Compares the freshly generated contract to the one committed on the base branch.
+ * Returns null when no baseline is available (no git, no base ref, contract absent
+ * at base) — callers then skip versioning logic quietly.
+ */
 function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT_BASE_REF) {
-  if (!GIT_BIN) {
-    return null;
-  }
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/contract/index.d.ts`]) : { status: 1 };
@@ -696,10 +747,14 @@ function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT
     ? git(["show", `${baseSha}:client-app/core-api/contract/tailwind-preset.cjs`])
     : { status: 1 };
   const presetChanged = basePreset.status === 0 && basePreset.stdout !== currentPreset;
+  const sourceChanged = VERSIONED_SOURCES.some((file) => {
+    const baseSource = git(["show", `${baseSha}:client-app/core-api/${file}`]);
+    return baseSource.status === 0 && baseSource.stdout !== readFileSync(join(CORE_API_DIR, file), "utf8");
+  });
   return {
     baseRef,
     baseSha,
-    changed: baseContract.stdout !== currentContract || presetChanged,
+    changed: baseContract.stdout !== currentContract || presetChanged || sourceChanged,
     baseVersion,
     removedExports,
   };
@@ -732,7 +787,7 @@ function autoBumpIfContractChanged(currentContract, currentPreset, currentVersio
     const level = levelOf(decision.action);
     const { current, next } = bumpContractVersion(level);
     step(
-      `contract or tailwind preset changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (${level}; commit package.json too).`,
+      `contract or another file the facade ships changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (${level}; commit package.json too).`,
     );
   }
 }
@@ -779,7 +834,7 @@ if (CHECK_MODE) {
     }
     if (decision.action.startsWith("bump-")) {
       fail(
-        `the public contract or tailwind preset changed relative to ${base.baseRef}, but CORE_VERSION is still ` +
+        `the public contract or another file the facade ships changed relative to ${base.baseRef}, but CORE_VERSION is still ` +
           `${base.baseVersion}. Run \`yarn build:core-types\` (auto-bumps ${levelOf(decision.action)}).`,
       );
     }

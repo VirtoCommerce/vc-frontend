@@ -59,6 +59,12 @@ describe("create-plugin scaffolder", () => {
       "src/index.ts",
       "index.html",
       "public/plugin.json",
+      "eslint.config.js",
+      "vitest.config.ts",
+      "src/mocks/vc-frontend-core.ts",
+      ".prettierrc.json",
+      ".editorconfig",
+      ".vscode/settings.json",
     ]) {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
     }
@@ -73,6 +79,8 @@ describe("create-plugin scaffolder", () => {
 
     const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
       name: string;
+      packageManager: string;
+      scripts: Record<string, string>;
       dependencies: Record<string, string>;
       devDependencies: Record<string, string>;
     };
@@ -84,12 +92,77 @@ describe("create-plugin scaffolder", () => {
 
     expectParseableTs(join(dir, "vite.config.ts"));
     expectParseableTs(join(dir, "src", "index.ts"));
+    expectParseableTs(join(dir, "vitest.config.ts"));
+    expectParseableTs(join(dir, "eslint.config.js"));
+    expectParseableTs(join(dir, "src", "mocks", "vc-frontend-core.ts"));
+    expectParseableTs(join(dir, "src", "pages", "my-page.test.ts"));
+
+    // yarn 1 ignores the .yarnrc.yml this writes and knows no `portal:`/`link:` protocol.
+    expect(pkg.packageManager).toMatch(/^yarn@/);
+    expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));
 
     // Default = router on: the route page and the addRoute init must be generated.
     expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(true);
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("globals.router.addRoute");
     // Unused optional groups must be dropped from MF shared (spurious-gate protection).
-    expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain('"@apollo/client": false');
+    const viteConfig = readFileSync(join(dir, "vite.config.ts"), "utf8");
+    expect(viteConfig).toContain('"@apollo/client": false');
+    // Quoting a valid identifier fails the scaffold's own prettier rule.
+    expect(viteConfig).toContain(" graphql: false");
+  });
+
+  it("wires the test and type-check config the generated specs and templates depend on", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+
+    // A string key matches by prefix and would send @vc-frontend/core/testing to the mock too.
+    expect(readFileSync(join(dir, "vitest.config.ts"), "utf8")).toContain(String.raw`find: /^@vc-frontend\/core$/`);
+
+    const tsconfig = JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")) as {
+      compilerOptions: { types: string[] };
+      vueCompilerOptions: { strictTemplates: boolean };
+    };
+    expect(tsconfig.vueCompilerOptions.strictTemplates).toBe(true);
+    // Under strictTemplates every ui-kit tag is an error unless the facade's GlobalComponents load.
+    expect(tsconfig.compilerOptions.types).toContain("@vc-frontend/core");
+
+    const { scripts } = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+    };
+    // A fixing `lint` passes CI on every auto-fixable error.
+    expect(scripts.lint).toBe("eslint .");
+    expect(scripts["lint:fix"]).toBe("eslint . --fix");
+  });
+
+  it("scaffolds the --no-router variant without a page, and its test run still passes", () => {
+    const dir = scaffoldExpectingSuccess("bare-plugin", ["--yes", "--no-router"]);
+
+    expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(false);
+    expect(existsSync(join(dir, "src", "pages", "my-page.test.ts"))).toBe(false);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).not.toContain("addRoute");
+    // With no spec, `vitest run` exits 1.
+    expect(readFileSync(join(dir, "vitest.config.ts"), "utf8")).toContain("passWithNoTests: true");
+  });
+
+  it("scaffolds the apollo variant with codegen wired to the facade's config", () => {
+    const dir = scaffoldExpectingSuccess("gql-plugin", ["--yes", "--with-apollo"]);
+
+    for (const file of ["codegen.ts", ".env.example", "src/api/graphql/queries/ping/pingQuery.graphql"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    expectParseableTs(join(dir, "codegen.ts"));
+
+    const codegen = readFileSync(join(dir, "codegen.ts"), "utf8");
+    // Scalars must come from the host, or the same backend value gets two TypeScript types.
+    expect(codegen).toContain('from "@vc-frontend/core/codegen"');
+    expect(codegen).toContain("/graphql/gql-plugin");
+
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    expect(pkg.scripts).toHaveProperty("generate:graphql-types");
+    // The generated types.ts imports it; the host resolves it transitively, a plugin must not.
+    expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
   });
 
   it("scaffolds the tailwind variant with the config/styles files", () => {
