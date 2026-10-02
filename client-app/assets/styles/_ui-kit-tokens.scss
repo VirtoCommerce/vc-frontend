@@ -900,7 +900,7 @@
   --vc-sortable-accent-color: var(--color-vc-border-outline-primary, var(--color-primary-500));
   // Unfaded: a keyboard-held item carries the focus ring, and a fade takes the ring below 3:1.
   --vc-sortable-grabbed-opacity: 1;
-  // None: under a whole item a shadow fills the gap between the item and its focus ring, below 3:1.
-  --vc-sortable-grabbed-shadow: none;
+  // Handle mode only: a whole item's focus ring sits on the item, and a shadow would fill the gap to it.
+  --vc-sortable-grabbed-shadow: theme("boxShadow.xl");
   --vc-sortable-ghost-opacity: 0.45;
 }

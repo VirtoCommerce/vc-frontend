@@ -332,8 +332,13 @@ const ItemScope = defineComponent({
     // Before `--whole`: a held whole item shows the focus ring, not the accent, on its outline.
     &#{$item}--grabbed {
       opacity: var(--vc-sortable-grabbed-opacity);
-      box-shadow: var(--vc-sortable-grabbed-shadow);
       outline-color: var(--vc-sortable-accent-color);
+    }
+
+    // Handle mode only: there the ring is on the handle, inside the item. Under a whole item a shadow fills
+    // the gap between the item and its ring.
+    &#{$item}--grabbed:not(#{$item}--whole) {
+      box-shadow: var(--vc-sortable-grabbed-shadow);
     }
 
     &--whole {
@@ -345,8 +350,12 @@ const ItemScope = defineComponent({
 
       // The keyboard moves the item and restores focus a tick later, so the held ring cannot depend on
       // `:focus-visible`.
+      // Held, not only focused: the ring doubles. A change of shape, at the ring's own colour and contrast.
       &[aria-pressed="true"] {
         @include focus-ring;
+
+        outline-style: double;
+        outline-width: calc(3 * var(--vc-focus-ring-width));
       }
     }
 
