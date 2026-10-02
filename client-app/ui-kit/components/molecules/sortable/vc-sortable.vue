@@ -77,8 +77,8 @@ export interface IProps<TItem = unknown> {
    */
   accepts?: (id: string, from: string) => boolean;
   /**
-   * A keyboard move into another list drops the item there instead of keeping it held, as a pointer drop does,
-   * and Escape no longer brings it back. Decided by the list the item leaves.
+   * Set on the list the item leaves: a keyboard move out of it into another list drops the item there instead
+   * of keeping it held, as a pointer drop does, and Escape no longer brings it back.
    */
   dropOnListChange?: boolean;
   /**

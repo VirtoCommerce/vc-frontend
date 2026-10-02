@@ -163,6 +163,11 @@ function cardProps(id: string) {
       var(--color-neutral-100) 9px,
       var(--color-neutral-100) 18px
     );
+
+    // A held card is unfaded, like any held item, or its focus ring drops below 3:1.
+    &:has([aria-pressed="true"]) {
+      @apply opacity-100;
+    }
   }
 }
 </style>

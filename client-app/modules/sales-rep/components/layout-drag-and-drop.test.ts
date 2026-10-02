@@ -274,6 +274,41 @@ describe("stat row drag and drop", () => {
     }
   });
 
+  // The restore direction is final too, so a restored card does not go back to "Hidden stats".
+  it("keeps a card restored by keyboard visible on Escape and when focus leaves it, leaving focus there", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+    const outside = document.body.appendChild(document.createElement("button"));
+    const card = () => wrapper.find('[data-block-id="active_carts"]').element as HTMLElement;
+    const key = async (name: string) => {
+      card().dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+      await nextTick();
+      await nextTick();
+    };
+
+    try {
+      await key(" ");
+      await key("ArrowDown");
+      await key(" ");
+      await key("ArrowUp");
+      expect(api.hiddenIn("statistics")).toEqual([]);
+
+      await key("Escape");
+      expect(api.hiddenIn("statistics")).toEqual([]);
+
+      outside.focus();
+      await nextTick();
+      await nextTick();
+
+      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(api.visibleIn("statistics")).toContain("active_carts");
+      expect(document.activeElement).toBe(outside);
+    } finally {
+      outside.remove();
+    }
+  });
+
   it("moves focus with a stat card that is parked by keyboard", async () => {
     const { wrapper, api } = setup();
     api.startEdit();

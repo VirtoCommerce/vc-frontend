@@ -173,7 +173,7 @@
       "edge": "无法继续移动",
       "cancelled": "已取消，已回到原位",
       "moved_list": "已移至第 {position} 个列表，共 {total} 个",
-      "moved_list_dropped": "已移至第 {position} 个列表并放下，共 {total} 个",
+      "moved_list_dropped": "已移至第 {position} 个列表（共 {total} 个）并放下",
       "no_target": "该方向没有可接收的列表"
     }
   }

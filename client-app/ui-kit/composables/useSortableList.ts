@@ -76,8 +76,8 @@ export interface IUseSortableListOptions {
    */
   accepts?: (id: string, from: string) => boolean;
   /**
-   * A keyboard move into another list drops the item there instead of keeping it held, and Escape no longer
-   * brings it back. Decided by the list the item leaves.
+   * Set on the list the item leaves: a keyboard move out of it into another list drops the item there instead
+   * of keeping it held, and Escape no longer brings it back.
    */
   dropOnListChange?: MaybeRefOrGetter<boolean>;
   /**

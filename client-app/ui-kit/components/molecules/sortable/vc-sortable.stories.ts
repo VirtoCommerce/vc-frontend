@@ -15,7 +15,6 @@ const meta = {
     },
     disabled: { control: "boolean" },
     liveRegion: { control: "boolean" },
-    dropOnListChange: { control: "boolean" },
     handle: { control: false, table: { type: { summary: "boolean | string" } } },
     group: { control: "text" },
     name: { control: "text" },
@@ -49,7 +48,7 @@ function describeSignal(signal: SortableSignalType): string {
     case "cancelled":
       return `Cancelled: ${signal.id} is back where it started`;
     case "movedList":
-      return `Moved ${signal.id} to ${signal.to}`;
+      return `Moved ${signal.id} to ${signal.to}${signal.dropped ? " and dropped" : ""}`;
     case "noTarget":
       return "No list in that direction takes it";
   }
@@ -233,15 +232,17 @@ const item = useSortableItem(); // undefined outside a VcSortable
 };
 
 export const LinkedLists: StoryType = {
+  args: { dropOnListChange: false },
+  argTypes: { dropOnListChange: { control: "boolean" } },
   parameters: {
     docs: {
       description: {
         story:
-          "Lists sharing a `group` exchange items, and `list-order` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list from `grab` to `release`. That marking is the consumer's: VcSortable does not dim refusing lists itself. This story turns `live-region` off and listens to `announce` to explain a refusal in its own words.",
+          "Lists sharing a `group` exchange items, and `list-order` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list from `grab` to `release`. That marking is the consumer's: VcSortable does not dim refusing lists itself. This story turns `live-region` off and listens to `announce` to explain a refusal in its own words. Turn `dropOnListChange` on to end the grab as the item enters the next list.",
       },
     },
   },
-  render: () => ({
+  render: (args) => ({
     components: { VcSortable },
     setup() {
       const lists = ref<Record<string, string[]>>({
@@ -273,7 +274,7 @@ export const LinkedLists: StoryType = {
             : describeSignal(signal);
       }
 
-      return { lists, listOrder, message, onMove, acceptsIn, refuses, held, onAnnounce, REFUSED };
+      return { args, lists, listOrder, message, onMove, acceptsIn, refuses, held, onAnnounce, REFUSED };
     },
     template: `
       <div class="flex flex-col gap-4">
@@ -292,6 +293,7 @@ export const LinkedLists: StoryType = {
             :accepts="acceptsIn(name)"
             orientation="horizontal"
             :live-region="false"
+            :drop-on-list-change="args.dropOnListChange"
             :class="[
               'flex min-h-12 flex-wrap gap-2 rounded-[--vc-radius] border border-dashed p-2',
               refuses(name) ? 'border-danger-500 bg-danger-50' : 'border-neutral-300',
