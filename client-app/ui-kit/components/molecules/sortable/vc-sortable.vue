@@ -124,10 +124,12 @@ const { t } = useI18n();
 const instance = getCurrentInstance();
 
 // Read per call: the parent re-renders this vnode, and a listener can be bound or dropped with it.
-// `.once` listeners are stored under their own key.
+// `.once` listeners are stored under their own key, and are spent by the first emit — as Vue counts them.
+const spentOnce = new Set<string>();
+
 function hasListener(name: "onAnnounce" | "onMove"): boolean {
   const vnodeProps = instance?.vnode.props;
-  return Boolean(vnodeProps?.[name] || vnodeProps?.[`${name}Once`]);
+  return Boolean(vnodeProps?.[name] || (vnodeProps?.[`${name}Once`] && !spentOnce.has(name)));
 }
 
 const container = useTemplateRef<HTMLElement>("container");
@@ -175,6 +177,9 @@ function describe(signal: SortableSignalType): string {
 function onAnnounce(signal: SortableSignalType): void {
   if (hasListener("onAnnounce")) {
     emit("announce", signal);
+    if (!instance?.vnode.props?.onAnnounce) {
+      spentOnce.add("onAnnounce");
+    }
     return;
   }
   // Cleared first, so a repeated message ("No further to go" twice) is announced again.
@@ -218,9 +223,6 @@ if (import.meta.env.DEV) {
       `list in group "${props.group}" has no \`name\`: every unnamed list is "default", so moves cannot tell them apart.`,
     );
   }
-  if ((props.group || props.accepts) && !props.itemKey && model.value.some((item) => typeof item === "object")) {
-    warn("object items need an `itemKey` here: `move` and `accepts` would get generated ids you cannot map back.");
-  }
   if (props.group && !hasListener("onMove")) {
     warn(`list in group "${props.group}" has no \`@move\` listener: an item dragged across snaps back.`);
   }
@@ -228,6 +230,22 @@ if (import.meta.env.DEV) {
   // Not `accepts`: an inline function is a new one on every render, though it means the same.
   watch([() => props.handle, () => props.filter], () =>
     warn("`handle` and `filter` are read at mount; changing them later has no effect."),
+  );
+
+  // Watched, not read once: object data usually arrives after mount.
+  let warnedObjects = false;
+  watch(
+    model,
+    (items) => {
+      if (warnedObjects || !(props.group || props.accepts) || props.itemKey) {
+        return;
+      }
+      if (items.some((item) => typeof item === "object")) {
+        warnedObjects = true;
+        warn("object items need an `itemKey` here: `move` and `accepts` would get generated ids you cannot map back.");
+      }
+    },
+    { immediate: true },
   );
 
   watch(

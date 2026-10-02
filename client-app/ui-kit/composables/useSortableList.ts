@@ -409,11 +409,16 @@ export function useSortableList(
 
   // SortableJS accepts a native drop only over a list, so releasing in the gap between two lists is a
   // cancelled drop to the browser, which flies the drag image back to where it started — while the item
-  // lands where the placeholder showed. Accepting the drop page-wide for the drag's length keeps the two
-  // in step; `drop` too, or text would land in a field under the pointer.
+  // lands where the placeholder showed. Accepting `dragover` page-wide for the drag's length keeps the two
+  // in step; SortableJS already cancels the `drop` itself. A drop zone of the page's own that decided —
+  // accepted, or refused with `dropEffect = "none"`, which a drag starts without — keeps its decision; one
+  // that refuses only by not cancelling `dragover` now gets the drop event, and must check what it holds.
   let acceptingDropsIn: Document | undefined;
 
   function acceptDrop(event: DragEvent): void {
+    if (event.defaultPrevented || event.dataTransfer?.dropEffect === "none") {
+      return;
+    }
     event.preventDefault();
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = "move";
@@ -422,7 +427,6 @@ export function useSortableList(
 
   function stopAcceptingDrops(): void {
     acceptingDropsIn?.removeEventListener("dragover", acceptDrop);
-    acceptingDropsIn?.removeEventListener("drop", acceptDrop);
     acceptingDropsIn = undefined;
   }
 
@@ -430,11 +434,10 @@ export function useSortableList(
     stopAcceptingDrops();
     acceptingDropsIn = doc;
     doc.addEventListener("dragover", acceptDrop);
-    doc.addEventListener("drop", acceptDrop);
   }
 
   function pointerHandle(): string | undefined {
-    if (typeof options.handle === "string") {
+    if (typeof options.handle === "string" && options.handle) {
       return `${HANDLE_SELECTOR}, ${options.handle}`;
     }
     return options.handle ? HANDLE_SELECTOR : undefined;
@@ -521,6 +524,8 @@ export function useSortableList(
       const instance = create(el);
       sortable = instance;
       onCleanup(() => {
+        // `destroy` mid-drag ends it without an `end` event.
+        stopAcceptingDrops();
         instance.destroy();
         sortable = undefined;
       });

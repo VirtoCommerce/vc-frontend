@@ -714,18 +714,24 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
   }
 
   it.each([
-    [[" "], {}, 'ui_kit.sortable.grabbed {"position":2,"total":3}'],
-    [[" "], { listOrder: ["main", "other"] }, 'ui_kit.sortable.grabbed_lists {"position":2,"total":3}'],
-    [[" ", "ArrowDown"], {}, 'ui_kit.sortable.moved {"position":3,"total":3}'],
-    [[" ", "ArrowDown", " "], {}, 'ui_kit.sortable.dropped {"position":3,"total":3}'],
-    [[" ", "ArrowDown", "ArrowDown"], {}, "ui_kit.sortable.edge"],
-    [[" ", "Escape"], {}, "ui_kit.sortable.cancelled"],
+    ["grabbed", [" "], {}, 'ui_kit.sortable.grabbed {"position":2,"total":3}'],
     [
+      "grabbed_lists",
+      [" "],
+      { listOrder: ["main", "other"] },
+      'ui_kit.sortable.grabbed_lists {"position":2,"total":3}',
+    ],
+    ["moved", [" ", "ArrowDown"], {}, 'ui_kit.sortable.moved {"position":3,"total":3}'],
+    ["dropped", [" ", "ArrowDown", " "], {}, 'ui_kit.sortable.dropped {"position":3,"total":3}'],
+    ["edge", [" ", "ArrowDown", "ArrowDown"], {}, "ui_kit.sortable.edge"],
+    ["cancelled", [" ", "Escape"], {}, "ui_kit.sortable.cancelled"],
+    [
+      "no_target",
       [" ", "ArrowRight"],
       { group: "alone", listOrder: ["main", "other"], onMove: vi.fn() },
       "ui_kit.sortable.no_target",
     ],
-  ])("words the keys %j for the live region", async (keys, props, text) => {
+  ])("words %s for the live region", async (_kind, keys, props, text) => {
     expect(await spoken(keys, props)).toBe(text);
   });
 
@@ -762,12 +768,20 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(spokenTexts).toContain('ui_kit.sortable.moved_list {"position":2,"total":3}');
   });
 
-  it("treats an `announce.once` listener as a listener", async () => {
-    const { wrapper } = mountList({ onAnnounceOnce: vi.fn() });
+  it("treats an `announce.once` listener as a listener until it has fired", async () => {
+    const once = vi.fn();
+    const { wrapper } = mountList({ onAnnounceOnce: once });
+    const row = wrapper.get(".row");
 
-    await wrapper.get(".row").trigger("keydown", { key: " " });
+    await row.trigger("keydown", { key: " " });
+    expect(once).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
+    expect(liveRegion()?.textContent ?? "").toBe("");
 
-    expect(liveRegion()).toBeNull();
+    await row.trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    expect(once).toHaveBeenCalledTimes(1);
+    expect(liveRegion()?.textContent).toBe('ui_kit.sortable.moved {"position":2,"total":3}');
   });
 
   // The same message twice is two events for a screen reader only if the region changes in between.
@@ -935,6 +949,55 @@ describe("VcSortable — development warnings", () => {
       slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
       attachTo: document.body,
     });
+
+    expect(warnings()).toContainEqual(expect.stringContaining("object items need an `itemKey` here"));
+  });
+
+  it("stays silent for object items in a group that do pass an `itemKey`", () => {
+    mount(VcSortable<{ title: string }>, {
+      props: {
+        modelValue: [{ title: "a" }],
+        name: "keyed",
+        group: "keyed",
+        onMove: vi.fn(),
+        itemKey: (item: { title: string }) => item.title,
+      },
+      slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+      attachTo: document.body,
+    });
+
+    expect(warnings()).toEqual([]);
+  });
+
+  it("warns for object items in a list with `accepts` alone", () => {
+    mount(VcSortable<{ title: string }>, {
+      props: { modelValue: [{ title: "a" }], accepts: () => true },
+      slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+      attachTo: document.body,
+    });
+
+    expect(warnings()).toContainEqual(expect.stringContaining("object items need an `itemKey` here"));
+  });
+
+  it("warns when object items without an `itemKey` arrive after mount", async () => {
+    const rows = ref<{ title: string }[]>([]);
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<{ title: string }>,
+              { modelValue: rows.value, name: "late", group: "late", onMove: vi.fn() },
+              { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    expect(warnings()).toEqual([]);
+
+    rows.value = [{ title: "a" }];
+    await nextTick();
 
     expect(warnings()).toContainEqual(expect.stringContaining("object items need an `itemKey` here"));
   });

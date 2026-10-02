@@ -859,6 +859,14 @@ describe("useSortableList — grab and release events", () => {
     expect(sortable().options.handle).toBe(".vc-sortable__handle, .grip");
   });
 
+  // An empty selector names no grip, so the whole item drags, as it always did.
+  it("drags by the whole item with an empty handle selector", async () => {
+    const { sortable } = pointer({ handle: "" });
+    await nextTick();
+
+    expect(sortable().options.handle).toBeUndefined();
+  });
+
   it("reports a keyboard grab ended by a pointer press", async () => {
     const { key, events, sortable } = pointer();
     await nextTick();
@@ -968,8 +976,8 @@ describe("useSortableList — grab and release events", () => {
 // Released outside every list, a native drop nobody accepted is a cancel to the browser, which then
 // flies the drag image back to its start while the item lands where the placeholder showed.
 describe("useSortableList — a pointer drop between lists", () => {
-  function dragOver(type: "dragover" | "drop") {
-    const event = new Event(type, { bubbles: true, cancelable: true });
+  function dragOver() {
+    const event = new Event("dragover", { bubbles: true, cancelable: true });
     document.body.dispatchEvent(event);
     return event.defaultPrevented;
   }
@@ -985,19 +993,43 @@ describe("useSortableList — a pointer drop between lists", () => {
     scopes.push(scope);
     scope.run(() => useSortableList(container, { name: "main", items: () => ["a"], onReorder: vi.fn() }));
     await nextTick();
-    return { el, item, scope, sortable: instances.at(-1)! };
+    return { el, item, scope, container, sortable: instances.at(-1)! };
   }
 
   it("accepts the drop anywhere on the page while its drag lasts, and only then", async () => {
     const { el, item, sortable } = await mountedList();
 
-    expect([dragOver("dragover"), dragOver("drop")]).toEqual([false, false]);
+    expect(dragOver()).toBe(false);
 
     sortable.options.onStart({ item, from: el });
-    expect([dragOver("dragover"), dragOver("drop")]).toEqual([true, true]);
+    expect(dragOver()).toBe(true);
 
     sortable.options.onEnd({ item, from: el, to: el });
-    expect([dragOver("dragover"), dragOver("drop")]).toEqual([false, false]);
+    expect(dragOver()).toBe(false);
+  });
+
+  // A page's own drop zone that refused the item, or took the drop itself, keeps its decision.
+  it.each([
+    ["refused", "none", false],
+    ["accepted as a copy", "copy", true],
+  ])("leaves a drop zone's own decision alone when it %s", async (_decision, effect, accept) => {
+    const { el, item, sortable } = await mountedList();
+    const zone = document.createElement("div");
+    document.body.append(zone);
+    zone.addEventListener("dragover", (event) => {
+      event.dataTransfer!.dropEffect = effect as DataTransfer["dropEffect"];
+      if (accept) {
+        event.preventDefault();
+      }
+    });
+    sortable.options.onStart({ item, from: el });
+
+    const event = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
+      dataTransfer: { dropEffect: "move" },
+    });
+    zone.dispatchEvent(event);
+
+    expect([event.dataTransfer.dropEffect, event.defaultPrevented]).toEqual([effect, accept]);
   });
 
   it("stops accepting drops when the list unmounts mid-drag", async () => {
@@ -1006,6 +1038,17 @@ describe("useSortableList — a pointer drop between lists", () => {
     sortable.options.onStart({ item, from: el });
     scope.stop();
 
-    expect(dragOver("dragover")).toBe(false);
+    expect(dragOver()).toBe(false);
+  });
+
+  // SortableJS's `destroy` ends a drag without an `end` event, as when the container is swapped.
+  it("stops accepting drops when its Sortable is destroyed mid-drag", async () => {
+    const { el, item, sortable, container } = await mountedList();
+
+    sortable.options.onStart({ item, from: el });
+    container.value = document.createElement("div");
+    await nextTick();
+
+    expect(dragOver()).toBe(false);
   });
 });
