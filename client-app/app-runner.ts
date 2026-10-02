@@ -40,6 +40,7 @@ import { init as initModuleQuotes } from "@/modules/quotes";
 import { init as initReturns } from "@/modules/returns";
 import { init as initSalesRep } from "@/modules/sales-rep";
 import { init as initSkyflow } from "@/modules/skyflow";
+import { init as initPunchout } from "@/modules/punchout";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
@@ -267,6 +268,7 @@ export default async () => {
   void initSalesRep(router, i18n);
   void initReturns(router, i18n);
   void initSkyflow(router, i18n);
+  void initPunchout(router, i18n);
 
   // Plugins
   app.use(head);
