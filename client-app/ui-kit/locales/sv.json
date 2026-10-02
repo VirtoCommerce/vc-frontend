@@ -173,6 +173,7 @@
       "edge": "Det går inte längre",
       "cancelled": "Avbrutet, tillbaka på ursprunglig plats",
       "moved_list": "Flyttad till lista {position} av {total}",
+      "moved_list_dropped": "Flyttad till lista {position} av {total} och släppt",
       "no_target": "Ingen lista åt det hållet tar emot den"
     }
   }

@@ -25,7 +25,8 @@ export type SortableSignalType =
   | { kind: "cancelled"; id: string }
   /** A cross-axis arrow found no list in that direction that accepts the item. */
   | { kind: "noTarget"; id: string }
-  | { kind: "movedList"; id: string; from: string; to: string };
+  /** `dropped`: the move ended the grab (`dropOnListChange`); otherwise the item is still held in `to`. */
+  | { kind: "movedList"; id: string; from: string; to: string; dropped: boolean };
 
 /**
  * Spread onto the consumer's own item element. `class` is a STRING: a bare `v-bind` of an object class
@@ -69,8 +70,16 @@ export interface IUseSortableListOptions {
    */
   listOrder?:
     MaybeRefOrGetter<readonly string[]> | Ref<readonly string[] | undefined> | (() => readonly string[] | undefined);
-  /** Per-item acceptance, asked on the pointer path (SortableJS `put`) AND the keyboard path. Read once. */
+  /**
+   * Per-item acceptance, asked on the pointer path (SortableJS `put`) AND the keyboard path. Called on every
+   * check, so it may close over reactive state.
+   */
   accepts?: (id: string, from: string) => boolean;
+  /**
+   * A keyboard move into another list drops the item there instead of keeping it held, and Escape no longer
+   * brings it back. Decided by the list the item leaves.
+   */
+  dropOnListChange?: MaybeRefOrGetter<boolean>;
   /**
    * Drag by a handle instead of the whole item; the keyboard then goes through `handleAttrs`. `true` drags
    * by the element `handleAttrs` is bound to; a selector adds whatever it matches to that pointer grip.
@@ -134,8 +143,9 @@ function moveWithin(items: readonly string[], id: string, index: number): string
  *
  * Keyboard: Space/Enter grabs and drops, arrows along `orientation` move, Escape puts it back, blur
  * cancels, and the cross-axis arrows move the item along `listOrder`. The grab travels with the item, so it is
- * held until dropped whichever list it is in, and Escape or blur returns it to where it was grabbed. Focus
- * follows it into the sibling list unless the owner has already moved focus elsewhere.
+ * held until dropped whichever list it is in, and Escape or blur returns it to where it was grabbed — unless
+ * `dropOnListChange` ends it on arrival. Focus follows it into the sibling list unless the owner has already
+ * moved focus elsewhere.
  */
 export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
@@ -259,12 +269,18 @@ export function useSortableList(
       if (target === name || !sibling?.isEnabled() || sibling.accepts?.(id, name) === false) {
         continue;
       }
-      // The grab travels with the item: the sibling holds it from here, so the next key acts there.
       const carried = origin ?? { list: name, index: options.items().indexOf(id) };
+      const dropped = Boolean(toValue(options.dropOnListChange));
       release();
       options.onMove?.({ id, from: name, to: target });
-      announce({ kind: "movedList", id, from: name, to: target });
-      sibling.adopt(id, carried);
+      if (dropped) {
+        options.onRelease?.({ id });
+      }
+      announce({ kind: "movedList", id, from: name, to: target, dropped });
+      // Otherwise the grab travels with the item: the sibling holds it from here, so the next key acts there.
+      if (!dropped) {
+        sibling.adopt(id, carried);
+      }
       followInto(sibling, id);
       return;
     }
@@ -401,12 +417,12 @@ export function useSortableList(
 
     return {
       name: group,
-      // A group name belongs to the list and cannot say "some items"; the rule belongs to the item.
+      // A group name belongs to the list and cannot say "some items"; the rule belongs to the item. Its own
+      // group, not `true`: SortableJS takes `true` from a function as "any group".
       put: (_to, from, dragEl) =>
-        accepts(
-          dragEl.getAttribute(SORTABLE_ITEM_ATTRIBUTE) ?? "",
-          from.el.getAttribute(SORTABLE_NAME_ATTRIBUTE) ?? "",
-        ),
+        accepts(dragEl.getAttribute(SORTABLE_ITEM_ATTRIBUTE) ?? "", from.el.getAttribute(SORTABLE_NAME_ATTRIBUTE) ?? "")
+          ? [group]
+          : false,
     };
   }
 

@@ -311,11 +311,52 @@ describe("useSortableList — moving between lists by keyboard", () => {
     press("ArrowDown", "b");
 
     expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
-    expect(signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked" });
+    expect(signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: false });
     expect(list.isGrabbed("b")).toBe(false);
     expect(target.list.isGrabbed("b")).toBe(true);
     // The owner of both lists applies the move; this list's own order is untouched.
     expect(order()).toEqual(["a", "b", "c"]);
+  });
+
+  it("ends the grab on arrival when the list the item leaves drops on a list change", () => {
+    const order = ["shown", "parked"];
+    const releases: string[] = [];
+    const source = setup({
+      name: "shown",
+      group: "drop",
+      listOrder: order,
+      orientation: "horizontal",
+      dropOnListChange: true,
+      onRelease: ({ id }) => releases.push(id),
+    });
+    const target = setup({ name: "parked", group: "drop", listOrder: order, orientation: "horizontal", initial: [] });
+
+    source.press(" ", "b");
+    source.press("ArrowDown", "b");
+
+    expect(source.moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+    expect(source.signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: true });
+    expect(releases).toEqual(["b"]);
+    expect(target.list.isGrabbed("b")).toBe(false);
+  });
+
+  it("carries the grab out of a list that does not drop, even into one that does", () => {
+    const order = ["shown", "parked"];
+    const source = setup({ name: "shown", group: "drop-2", listOrder: order, orientation: "horizontal" });
+    const target = setup({
+      name: "parked",
+      group: "drop-2",
+      listOrder: order,
+      orientation: "horizontal",
+      dropOnListChange: true,
+      initial: [],
+    });
+
+    source.press(" ", "b");
+    source.press("ArrowDown", "b");
+
+    expect(source.signals.at(-1)).toMatchObject({ kind: "movedList", dropped: false });
+    expect(target.list.isGrabbed("b")).toBe(true);
   });
 
   it("lets the grab go when the owner does not apply the move", async () => {
@@ -581,6 +622,20 @@ describe("useSortableList — pointer", () => {
     expect(name).toBe("g");
     expect(put({}, { el: fromEl }, dragEl)).toBe(false);
     expect(accepts).toHaveBeenCalledWith("x", "rail");
+  });
+
+  // SortableJS reads `true` from a function-form `put` as "any group", which would let a foreign list drop in.
+  it("keeps items from another group out when `accepts` allows them", async () => {
+    const { default: RealSortable } = await vi.importActual<{ default: typeof import("sortablejs") }>("sortablejs");
+    const { sortable } = await mounted({ group: "g", accepts: () => true });
+    const dragEl = document.createElement("div");
+    const to = new RealSortable(document.createElement("div"), { group: sortable.options.group });
+    const sameGroup = new RealSortable(document.createElement("div"), { group: "g" });
+    const otherGroup = new RealSortable(document.createElement("div"), { group: "other" });
+    const checkPut = (from: InstanceType<typeof RealSortable>) =>
+      (to.options.group as unknown as { checkPut: (...args: unknown[]) => boolean }).checkPut(to, from, dragEl);
+
+    expect([checkPut(sameGroup), checkPut(otherGroup)].map(Boolean)).toEqual([true, false]);
   });
 
   it("toggles instead of rebuilding when disabled changes", async () => {

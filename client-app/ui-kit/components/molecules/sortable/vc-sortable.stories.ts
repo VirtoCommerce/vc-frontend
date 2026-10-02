@@ -14,6 +14,8 @@ const meta = {
       table: { type: { summary: "vertical | horizontal" } },
     },
     disabled: { control: "boolean" },
+    liveRegion: { control: "boolean" },
+    dropOnListChange: { control: "boolean" },
     handle: { control: false, table: { type: { summary: "boolean | string" } } },
     group: { control: "text" },
     name: { control: "text" },
@@ -24,7 +26,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The list announces each step in its own localized `aria-live` region; listen to `announce` to take the wording over. `grab` and `release` report a grab by pointer or keyboard. The drag states retheme through the `--vc-sortable-*` tokens; in development, a mis-bound item or list warns in the console.",
+          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The list announces each step in its own localized `aria-live` region; `announce` reports each step unlocalized, and `live-region` off hands the wording to you. A keyboard move into another list keeps the item held unless `drop-on-list-change` is set on the list it leaves. `grab` and `release` report a grab by pointer or keyboard. The drag states retheme through the `--vc-sortable-*` tokens; in development, a mis-bound item or list warns in the console.",
       },
     },
   },
@@ -33,7 +35,7 @@ const meta = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-// For a story that takes the wording over through `announce`; without a listener the list speaks for itself.
+// For a story that takes the wording over through `announce` with `live-region` off; otherwise the list speaks for itself.
 function describeSignal(signal: SortableSignalType): string {
   switch (signal.kind) {
     case "grabbed":
@@ -173,7 +175,7 @@ export const Handle: StoryType = {
     docs: {
       description: {
         story:
-          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. The held look is that control's own, here through VcButton's icon variable. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`.",
+          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. The held look is that control's own, here through VcButton's icon variable. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`. A `handle` selector is matched against the item's rendered DOM, so make it name markup your template owns. A class inside another kit component is that component's internal and may change without notice. If you must target one, record the coupling next to the selector and cover it with a test that mounts the real component.",
       },
       source: {
         code: `<!-- Dashboard.vue -->
@@ -235,7 +237,7 @@ export const LinkedLists: StoryType = {
     docs: {
       description: {
         story:
-          "Lists sharing a `group` exchange items, and `list-order` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list from `grab` to `release`. That marking is the consumer's: VcSortable does not dim refusing lists itself. This story listens to `announce` to explain a refusal in its own words.",
+          "Lists sharing a `group` exchange items, and `list-order` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list from `grab` to `release`. That marking is the consumer's: VcSortable does not dim refusing lists itself. This story turns `live-region` off and listens to `announce` to explain a refusal in its own words.",
       },
     },
   },
@@ -289,6 +291,7 @@ export const LinkedLists: StoryType = {
             :list-order="listOrder"
             :accepts="acceptsIn(name)"
             orientation="horizontal"
+            :live-region="false"
             :class="[
               'flex min-h-12 flex-wrap gap-2 rounded-[--vc-radius] border border-dashed p-2',
               refuses(name) ? 'border-danger-500 bg-danger-50' : 'border-neutral-300',

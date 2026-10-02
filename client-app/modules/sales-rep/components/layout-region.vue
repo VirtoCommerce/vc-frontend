@@ -8,6 +8,8 @@
     :list-order="listOrder"
     :orientation="orientation"
     :disabled="!editing"
+    :live-region="false"
+    drop-on-list-change
     :handle="dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR"
     :filter="dragWhole ? undefined : WIDGET_DRAG_FILTER_SELECTOR"
     @update:model-value="$emit('reorder', $event)"

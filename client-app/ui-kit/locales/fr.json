@@ -173,6 +173,7 @@
       "edge": "Impossible d'aller plus loin",
       "cancelled": "Annulé, de retour à sa place",
       "moved_list": "Déplacé vers la liste {position} sur {total}",
+      "moved_list_dropped": "Déplacé vers la liste {position} sur {total} et déposé",
       "no_target": "Aucune liste dans cette direction ne l'accepte"
     }
   }

@@ -898,7 +898,8 @@
   --vc-sortable-active-cursor: grabbing;
   // Follows a preset's override of the primary outline key; without one, primary-500.
   --vc-sortable-accent-color: var(--color-vc-border-outline-primary, var(--color-primary-500));
-  --vc-sortable-grabbed-opacity: 0.45;
+  // Unfaded: a keyboard-held item carries the focus ring, and a fade takes the ring below 3:1.
+  --vc-sortable-grabbed-opacity: 1;
   --vc-sortable-grabbed-shadow: theme("boxShadow.xl");
   --vc-sortable-ghost-opacity: 0.45;
 }

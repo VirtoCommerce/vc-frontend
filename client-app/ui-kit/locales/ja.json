@@ -173,6 +173,7 @@
       "edge": "これ以上移動できません",
       "cancelled": "取り消しました。元の位置に戻りました",
       "moved_list": "{total} 個中 {position} 番目のリストに移動しました",
+      "moved_list_dropped": "{total} 個中 {position} 番目のリストに移動して配置しました",
       "no_target": "その方向に受け入れるリストはありません"
     }
   }

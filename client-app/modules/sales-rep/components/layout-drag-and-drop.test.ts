@@ -225,7 +225,8 @@ describe("stat row drag and drop", () => {
     expect(api.state.value.regions.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
   });
 
-  it("puts a card parked by keyboard back in its place on Escape", async () => {
+  // A keyboard park is final, as a pointer drop into the zone is: the grab ends there.
+  it("keeps a card parked by keyboard parked on Escape", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
     await nextTick();
@@ -242,11 +243,12 @@ describe("stat row drag and drop", () => {
 
     await key("Escape");
 
-    expect(api.hiddenIn("statistics")).toEqual([]);
-    expect(api.visibleIn("statistics")).toEqual(before);
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+    expect(api.visibleIn("statistics")).toEqual(before.filter((id) => id !== "active_carts"));
   });
 
-  it("brings back a parked card that is still held when focus leaves it, without pulling focus back", async () => {
+  // Clicking Save after a park moves focus first; the park must survive that blur.
+  it("keeps a parked card parked when focus leaves it, without pulling focus back", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
     await nextTick();
@@ -265,7 +267,7 @@ describe("stat row drag and drop", () => {
       await nextTick();
       await nextTick();
 
-      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
       expect(document.activeElement).toBe(outside);
     } finally {
       outside.remove();
@@ -375,7 +377,7 @@ describe("stat row drag and drop", () => {
     const [visible] = zones;
 
     expect(visible.options.draggable).toBe("[data-sortable-id]");
-    expect(visible.options.group).toBe("sales-rep-stats-dashboard");
+    expect(visible.options.group).toMatchObject({ name: "sales-rep-stats-dashboard" });
     // Whole-card drag for stats, so no handle selector narrows it.
     expect(visible.options.handle).toBeUndefined();
     // Disabled until edit mode, and enabled by the watch rather than a rebuild.
@@ -445,17 +447,33 @@ describe("stat row drag and drop", () => {
     await nextTick();
     expect(announce).toHaveBeenLastCalledWith({ kind: "parked", id: "active_carts" });
 
-    // Still held after the park: the next arrow acts in the parked zone, with no second grab.
+    // The park ended the grab: an arrow alone does nothing, and a restore needs a new grab.
     await nextTick();
     announce.mockClear();
-    key("active_carts", "ArrowDown");
+    key("active_carts", "ArrowUp");
     expect(announce).not.toHaveBeenCalled();
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
 
+    key("active_carts", " ");
     key("active_carts", "ArrowUp");
     await nextTick();
     expect(announce).toHaveBeenLastCalledWith({ kind: "restored", id: "active_carts" });
     expect(api.hiddenIn("statistics")).toEqual([]);
     expect(api.visibleIn("statistics")).toContain("active_carts");
+  });
+
+  // The surface owns the one region every list speaks through; a list's own would say each step twice.
+  it("leaves the announcing to the surface's region, rendering none per list", async () => {
+    const { wrapper, api, announce } = setup();
+    api.startEdit();
+    await nextTick();
+
+    wrapper.find('[data-block-id="active_carts"]').element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    await nextTick();
+    await nextTick();
+
+    expect(announce).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
+    expect(document.querySelectorAll('[aria-live="polite"]')).toHaveLength(0);
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {

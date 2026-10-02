@@ -173,6 +173,7 @@
       "edge": "Impossibile andare oltre",
       "cancelled": "Annullato, tornato al suo posto",
       "moved_list": "Spostato nell'elenco {position} di {total}",
+      "moved_list_dropped": "Spostato nell'elenco {position} di {total} e rilasciato",
       "no_target": "Nessun elenco in quella direzione lo accetta"
     }
   }

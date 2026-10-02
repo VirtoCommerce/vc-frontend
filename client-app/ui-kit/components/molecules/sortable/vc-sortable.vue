@@ -17,7 +17,7 @@
 
     <!-- Out of the container, which may be a `tbody`; Teleport leaves only comment anchors here. -->
     <Teleport to="body">
-      <span v-if="!hasListener('onAnnounce')" aria-live="polite" class="sr-only">{{ message }}</span>
+      <span v-if="liveRegion" aria-live="polite" class="sr-only">{{ message }}</span>
     </Teleport>
   </component>
 </template>
@@ -54,8 +54,8 @@ export interface IEmits {
   /** An item left this list for another one in its group. The owner of both lists applies it, synchronously. */
   (event: "move", payload: SortableMovePayloadType): void;
   /**
-   * Every keyboard state change, unlocalized. Listening replaces the list's own localized `aria-live`
-   * announcements, so the listener owns the wording and the live region.
+   * Every keyboard state change, unlocalized. A notification only: the list keeps announcing in its own region
+   * unless `liveRegion` is false, so a listener that renders its own region must turn that off, or both speak.
    */
   (event: "announce", signal: SortableSignalType): void;
   /** A grab started, by pointer drag or by keyboard, in this list. */
@@ -71,8 +71,16 @@ export interface IProps<TItem = unknown> {
   group?: string;
   /** Ordered names of this list and its siblings, walked by the cross-axis arrows. Ends do not wrap. */
   listOrder?: readonly string[];
-  /** Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. Read at mount. */
+  /**
+   * Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. Called on
+   * every check, so it may close over reactive state.
+   */
   accepts?: (id: string, from: string) => boolean;
+  /**
+   * A keyboard move into another list drops the item there instead of keeping it held, as a pointer drop does,
+   * and Escape no longer brings it back. Decided by the list the item leaves.
+   */
+  dropOnListChange?: boolean;
   /**
    * Drag by a handle instead of the whole item. `true` drags by the element bound with `useSortableItem()`'s
    * `handleAttrs`, which also takes the keyboard; a selector adds what it matches to that pointer grip.
@@ -85,6 +93,11 @@ export interface IProps<TItem = unknown> {
   orientation?: SortableOrientationType;
   /** Turns reordering off. The list is inert and the items keep their own behaviour. */
   disabled?: boolean;
+  /**
+   * Renders the list's own localized, polite `aria-live` region. Turn it off only when you announce `announce`
+   * signals yourself, e.g. one region shared by several lists.
+   */
+  liveRegion?: boolean;
   /** Container element. Layout stays the consumer's, so the class to style is their own. */
   tag?: string;
   /**
@@ -102,10 +115,12 @@ const props = withDefaults(defineProps<IProps<T>>(), {
   group: undefined,
   listOrder: undefined,
   accepts: undefined,
+  dropOnListChange: false,
   handle: undefined,
   filter: undefined,
   orientation: "vertical",
   disabled: false,
+  liveRegion: true,
   tag: "div",
   itemKey: undefined,
 });
@@ -113,7 +128,9 @@ const props = withDefaults(defineProps<IProps<T>>(), {
 defineSlots<{
   /** One item. Render exactly one root element and bind `attrs` to it — SortableJS moves that element. */
   item?(props: { item: T; attrs: SortableItemAttrsType; grabbed: boolean }): unknown;
+  /** Inside the container, ahead of the items, e.g. a header row. Not sortable, and not counted in indices. */
   before?(): unknown;
+  /** Inside the container, after the items, e.g. an empty-state hint or a footer. Not sortable, and not counted in indices. */
   after?(): unknown;
 }>();
 
@@ -123,13 +140,10 @@ const { t } = useI18n();
 
 const instance = getCurrentInstance();
 
-// Read per call: the parent re-renders this vnode, and a listener can be bound or dropped with it.
-// `.once` listeners are stored under their own key, and are spent by the first emit — as Vue counts them.
-const spentOnce = new Set<string>();
-
+// `.once` listeners are stored under their own key.
 function hasListener(name: "onAnnounce" | "onMove"): boolean {
   const vnodeProps = instance?.vnode.props;
-  return Boolean(vnodeProps?.[name] || (vnodeProps?.[`${name}Once`] && !spentOnce.has(name)));
+  return Boolean(vnodeProps?.[name] || vnodeProps?.[`${name}Once`]);
 }
 
 const container = useTemplateRef<HTMLElement>("container");
@@ -144,7 +158,7 @@ function keyOf(item: T): string {
 const byKey = computed(() => new Map(model.value.map((item) => [keyOf(item), item])));
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural: SortableJS reads these once
-const { handle, filter, accepts } = props;
+const { handle, filter } = props;
 
 const message = ref("");
 
@@ -165,7 +179,7 @@ function describe(signal: SortableSignalType): string {
       return t("ui_kit.sortable.cancelled");
     // By place, not by `name`: that is an id, never translated.
     case "movedList":
-      return t("ui_kit.sortable.moved_list", {
+      return t(signal.dropped ? "ui_kit.sortable.moved_list_dropped" : "ui_kit.sortable.moved_list", {
         position: (props.listOrder?.indexOf(signal.to) ?? -1) + 1,
         total: props.listOrder?.length ?? 0,
       });
@@ -175,12 +189,8 @@ function describe(signal: SortableSignalType): string {
 }
 
 function onAnnounce(signal: SortableSignalType): void {
-  if (hasListener("onAnnounce")) {
-    emit("announce", signal);
-    // Vue spends a `.once` handler on the first emit even beside a plain one.
-    if (instance?.vnode.props?.onAnnounceOnce) {
-      spentOnce.add("onAnnounce");
-    }
+  emit("announce", signal);
+  if (!props.liveRegion) {
     return;
   }
   // Cleared first, so a repeated message ("No further to go" twice) is announced again.
@@ -196,7 +206,9 @@ const { isGrabbed, itemAttrs, handleAttrs } = useSortableList(container, {
   items: () => model.value.map(keyOf),
   group: () => props.group,
   listOrder: () => props.listOrder,
-  accepts,
+  // Read per call, so a rule closing over state never goes stale.
+  accepts: (id, from) => props.accepts?.(id, from) ?? true,
+  dropOnListChange: () => props.dropOnListChange,
   handle,
   filter,
   orientation: () => props.orientation,
@@ -226,6 +238,9 @@ if (import.meta.env.DEV) {
   }
   if (props.group && !hasListener("onMove")) {
     warn(`list in group "${props.group}" has no \`@move\` listener: an item dragged across snaps back.`);
+  }
+  if (!props.liveRegion && !hasListener("onAnnounce")) {
+    warn("`liveRegion` is off and nothing listens to `announce`: keyboard sorting is silent for screen readers.");
   }
 
   // Not `accepts`: an inline function is a new one on every render, though it means the same.

@@ -768,48 +768,106 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(spokenTexts).toContain('ui_kit.sortable.moved_list {"position":2,"total":3}');
   });
 
-  // Vue spends `.once` on the first emit even beside a plain listener; dropping that one must not mute it.
-  it("speaks for itself once a plain listener goes, after a `.once` beside it was spent", async () => {
-    const listeners = ref<Record<string, unknown>>({ onAnnounce: vi.fn(), onAnnounceOnce: vi.fn() });
-    const wrapper = mount(
+  // A rule closing over state, or swapped after mount, must not go stale on either path.
+  it("asks the current `accepts` on the keyboard and the pointer path", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    const order = ["shown", "parked"];
+    const rule = ref<() => boolean>(() => false);
+    const onMove = ({ id, from, to }: SortableMovePayloadType) => {
+      lists.value[from] = lists.value[from].filter((item) => item !== id);
+      lists.value[to] = [...lists.value[to], id];
+    };
+    mount(
       defineComponent({
         setup() {
           return () =>
-            h(
-              VcSortable<string>,
-              { modelValue: ["a", "b"], ...listeners.value },
-              { item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item) },
+            order.map((name) =>
+              h(
+                VcSortable<string>,
+                {
+                  key: name,
+                  modelValue: lists.value[name],
+                  name,
+                  group: "rules",
+                  listOrder: order,
+                  accepts: name === "parked" ? rule.value : undefined,
+                  onMove,
+                },
+                { item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item) },
+              ),
             );
         },
       }),
       { attachTo: document.body },
     );
-    const row = () => wrapper.find('[data-sortable-id="a"]').element;
+    const parked = instances.find((instance) => instance.el.getAttribute("data-sortable-name") === "parked")!;
+    const shownEl = document.querySelector('[data-sortable-name="shown"]');
+    const item = () => document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
+    const put = () => parked.options.group.put({}, { el: shownEl }, item());
 
-    row().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
-    listeners.value = { onAnnounceOnce: listeners.value.onAnnounceOnce };
-    await nextTick();
-    row().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
-    await nextTick();
+    expect(put()).toBe(false);
+
+    rule.value = () => true;
     await nextTick();
 
-    expect(liveRegion()?.textContent).toBe("ui_kit.sortable.edge");
+    expect(put()).toEqual(["rules"]);
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    expect(lists.value).toEqual({ shown: [], parked: ["a"] });
   });
 
-  it("treats an `announce.once` listener as a listener until it has fired", async () => {
-    const once = vi.fn();
-    const { wrapper } = mountList({ onAnnounceOnce: once });
-    const row = wrapper.get(".row");
+  it("says the item was dropped when the move to another list ends the grab", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    const order = ["shown", "parked"];
+    const onMove = ({ id, from, to }: SortableMovePayloadType) => {
+      lists.value[from] = lists.value[from].filter((item) => item !== id);
+      lists.value[to] = [...lists.value[to], id];
+    };
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            order.map((name) =>
+              h(
+                VcSortable<string>,
+                {
+                  key: name,
+                  modelValue: lists.value[name],
+                  name,
+                  group: "dropped",
+                  listOrder: order,
+                  dropOnListChange: true,
+                  onMove,
+                },
+                { item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item) },
+              ),
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const item = () => document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
 
-    await row.trigger("keydown", { key: " " });
-    expect(once).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
-    expect(liveRegion()?.textContent ?? "").toBe("");
-
-    await row.trigger("keydown", { key: "ArrowDown" });
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
     await nextTick();
 
-    expect(once).toHaveBeenCalledTimes(1);
-    expect(liveRegion()?.textContent).toBe('ui_kit.sortable.moved {"position":2,"total":3}');
+    const spokenTexts = [...document.querySelectorAll('[aria-live="polite"]')].map((region) => region.textContent);
+    expect(spokenTexts).toContain('ui_kit.sortable.moved_list_dropped {"position":2,"total":2}');
+    expect(item().getAttribute("aria-pressed")).toBe("false");
+  });
+
+  // A listener bound only to log must not silence the list.
+  it("keeps its own region beside an `announce` listener, which hears every signal", async () => {
+    const onAnnounce = vi.fn();
+    const { wrapper } = mountList({ onAnnounce });
+
+    await wrapper.get(".row").trigger("keydown", { key: " " });
+    await nextTick();
+
+    expect(onAnnounce).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
+    expect(liveRegion()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
   });
 
   // The same message twice is two events for a screen reader only if the region changes in between.
@@ -832,13 +890,15 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(texts).toEqual(["ui_kit.sortable.edge", "", "ui_kit.sortable.edge"]);
   });
 
-  it("leaves the wording to an `announce` listener and renders no region of its own", async () => {
-    const { wrapper } = mountList({ onAnnounce: vi.fn() });
+  it("renders no region with `liveRegion` off, leaving the wording to an `announce` listener", async () => {
+    const onAnnounce = vi.fn();
+    const { wrapper } = mountList({ liveRegion: false, onAnnounce });
 
     await wrapper.get(".row").trigger("keydown", { key: " " });
     await nextTick();
 
     expect(liveRegion()).toBeNull();
+    expect(onAnnounce).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
   });
 
   it("keeps the live region out of the container, which may be a table body", () => {
@@ -940,6 +1000,13 @@ describe("VcSortable — development warnings", () => {
     mountList({ handle: ".grip", group: "quiet", onMove: vi.fn() }, true);
 
     expect(warnings()).toEqual([]);
+  });
+
+  it("warns when the live region is off and nothing listens to `announce`", () => {
+    mountList({ liveRegion: false });
+    mountList({ liveRegion: false, onAnnounce: vi.fn() });
+
+    expect(warnings()).toEqual([expect.stringContaining("`liveRegion` is off and nothing listens to `announce`")]);
   });
 
   it("warns when an item does not get its attrs", () => {
