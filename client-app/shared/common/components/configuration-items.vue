@@ -59,7 +59,27 @@
                 </template>
               </td>
 
-              <td class="configuration-items__value" :title="getText(configurationItem)">
+              <td v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file" class="configuration-items__value">
+                <!-- Zero width keeps long file names out of the table's min-content so they truncate -->
+                <div class="configuration-items__files">
+                  <template v-for="file in getFiles(configurationItem)" :key="file.url ?? file.name">
+                    <a
+                      v-if="file.url"
+                      class="configuration-items__file configuration-items__file--link"
+                      :href="file.url"
+                      :download="file.name"
+                      :title="file.name"
+                      @click.prevent="downloadFile(file.url, file.name)"
+                    >
+                      {{ file.name }}
+                    </a>
+
+                    <span v-else class="configuration-items__file" :title="file.name">{{ file.name }}</span>
+                  </template>
+                </div>
+              </td>
+
+              <td v-else class="configuration-items__value" :title="getText(configurationItem)">
                 {{ getText(configurationItem) }}
               </td>
 
@@ -90,8 +110,8 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
-import { toCSV } from "@/core/utilities/common";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
+import { downloadFile } from "@/shared/files";
 import type { MoneyType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -157,8 +177,6 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
       return configurationItem.customText ?? "";
     case CONFIGURABLE_SECTION_TYPES.product:
       return configurationItem.name ?? "";
-    case CONFIGURABLE_SECTION_TYPES.file:
-      return toCSV(getFiles(configurationItem).map((file) => file.name));
     default:
       return "";
   }
@@ -296,6 +314,22 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
 
     @container (max-width: theme("containers.xs")) {
       @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
+    }
+  }
+
+  &__files {
+    @apply flex w-0 min-w-full flex-col items-start gap-1;
+  }
+
+  &__file {
+    @apply max-w-full truncate;
+
+    &--link {
+      color: var(--link-color);
+
+      &:hover {
+        color: var(--link-hover-color);
+      }
     }
   }
 
