@@ -14,7 +14,9 @@ on:
 
 jobs:
   ci:
-    if: ${{ github.actor != 'dependabot[bot]' &&
+    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): every job here is skipped in the private theme mirror (VCST-5970).
+    if: ${{ github.repository_id == '296335982' &&
+         github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
     runs-on: ubuntu-latest
@@ -59,7 +61,7 @@ jobs:
           fetch-depth: 0
 
       - name: Get Image Version
-        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
         with:
           projectType: theme
         id: image
@@ -118,7 +120,7 @@ jobs:
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
-        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
@@ -148,7 +150,7 @@ jobs:
           tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.1
         if: always()
         id: jira_keys
         with:
@@ -182,7 +184,7 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+    if: ${{ github.repository_id == '296335982' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request') }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:

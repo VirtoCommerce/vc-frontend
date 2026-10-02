@@ -36,7 +36,11 @@
 
         <div class="order-mission-modal__progress">
           <div class="order-mission-modal__track">
-            <div class="order-mission-modal__bar" :style="{ width: `${view.percent}%` }"></div>
+            <div
+              class="order-mission-modal__bar"
+              :class="{ 'order-mission-modal__bar--completed': view.isCompleted }"
+              :style="{ width: `${view.percent}%` }"
+            ></div>
           </div>
 
           <span class="order-mission-modal__percent">{{ view.percent }}%</span>
@@ -126,7 +130,11 @@ const requirementLabel = computed(() => {
   }
 
   &__bar {
-    @apply h-full rounded-full bg-warning-500 transition-all;
+    @apply h-full rounded-full bg-info-500 transition-all;
+
+    &--completed {
+      @apply bg-success-500;
+    }
   }
 
   &__percent {

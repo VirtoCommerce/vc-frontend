@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Ihr Zugriff auf diese Organisation wurde gesperrt. Bitte wenden Sie sich an Ihren Organisationsadministrator",
           "user_cannot_login_in_store": "Zugriff verweigert. Sie können sich nicht im aktuellen Geschäft anmelden",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
+          "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben",
+          "sign_in_not_allowed": "Sie können sich mit diesem Konto nicht anmelden. Bitte wenden Sie sich an Ihren Administrator.",
+          "store_not_found": "Diesen Shop gibt es nicht.",
+          "duplicate_email_login_attempt": "Mehrere Konten verwenden diese E-Mail-Adresse.",
+          "lockout_disabled": "Dieses Konto kann sich nicht mit einem Code anmelden.",
+          "invalid_code": "Dieser Code hat nicht funktioniert.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Zum Kopieren anklicken",
         "clipboard_success": "Gutschein erfolgreich kopiert",
         "tap_to_copy": "Zum Kopieren tippen"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Mit Einmalcode anmelden",
+        "request": {
+          "subtitle": "Wir senden Ihnen einen Code per E-Mail. Kein Passwort nötig.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Weiter",
+          "switch_to_password_link": "Stattdessen mit Passwort anmelden"
+        },
+        "verify": {
+          "header": "Prüfen Sie Ihre E-Mails",
+          "subtitle": "Wir haben einen Code an {email} gesendet.",
+          "code_label": "Code",
+          "paste_hint": "Geben Sie den Code ein oder fügen Sie ihn ein. Auf dem Smartphone tippen Sie ihn über der Tastatur an.",
+          "submit_button": "Anmelden",
+          "resend_button": "Code erneut senden",
+          "use_different_email_link": "Andere E-Mail-Adresse verwenden",
+          "live_resent": "Neuer Code gesendet."
+        },
+        "locked": {
+          "title": "Zu viele fehlgeschlagene Versuche",
+          "title_blocked": "Konto gesperrt",
+          "text_countdown": "Versuchen Sie es erneut in {time}.",
+          "text_ready": "Sie können es jetzt erneut versuchen.",
+          "start_over_button": "Erneut versuchen"
+        },
+        "disabled": {
+          "title": "Anmeldung nicht möglich",
+          "text": "Versuchen Sie es stattdessen mit einem Passwort oder wenden Sie sich an Ihren Kontoadministrator, falls dies weiterhin auftritt.",
+          "text_no_password": "Wenden Sie sich an Ihren Kontoadministrator, falls dies weiterhin auftritt.",
+          "password_button": "Mit Passwort anmelden",
+          "back_link": "Zurück zur Anmeldung"
+        }
       }
     },
     "company": {
@@ -1584,6 +1625,8 @@
       "title": "Suche",
       "header": "Ihre Suche nach {keyword} ergab Folgendes",
       "header_empty": "Ihre Suche nach „{keyword}“ ergab leider keine Ergebnisse",
+      "header_barcode": "Ihre Suche nach dem Barcode {barcode} ergab Folgendes",
+      "header_barcode_empty": "Für den Barcode {barcode} wurden keine Produkte gefunden",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ihre <strong>{0}</strong>-Abfrage ergab keine Ergebnisse",

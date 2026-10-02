@@ -71,7 +71,7 @@
                     {{ item.number }}
                   </VcLink>
 
-                  <span>{{ item.total }}</span>
+                  <span class="sales-rep-orders__mobile-total">{{ item.total }}</span>
                 </div>
 
                 <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
@@ -304,7 +304,11 @@ const failed = computed(() => Boolean(error.value));
   }
 
   &__mobile-row {
-    @apply flex items-center justify-between font-bold;
+    @apply flex items-center justify-between gap-2 font-bold;
+  }
+
+  &__mobile-total {
+    @apply shrink-0 whitespace-nowrap;
   }
 
   &__mobile-customer {
