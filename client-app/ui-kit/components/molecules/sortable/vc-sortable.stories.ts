@@ -217,7 +217,7 @@ export const LinkedLists: StoryType = {
     docs: {
       description: {
         story:
-          "Lists sharing a `group` exchange items, and `ring` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — the “archive” list refuses “Invoices”.",
+          "Lists sharing a `group` exchange items, and `ring` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list while “Invoices” is held. That marking is the consumer's: VcSortable does not dim refusing lists itself.",
       },
     },
   },
@@ -239,14 +239,41 @@ export const LinkedLists: StoryType = {
         lists.value[to] = target;
       }
 
-      const acceptsIn = (name: string) => (id: string) => name !== "archive" || id !== "Invoices";
+      const REFUSED = "Invoices";
+      const acceptsIn = (name: string) => (id: string) => name !== "archive" || id !== REFUSED;
 
-      return { lists, ring, message, onMove, acceptsIn, describeSignal };
+      // What is held right now, by pointer or keyboard, so the story can mark the list that refuses it.
+      const held = ref<string>();
+      const refuses = (name: string) => held.value !== undefined && !acceptsIn(name)(held.value);
+
+      function onDragStart(event: DragEvent) {
+        held.value = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-sortable-id]")?.dataset
+          .sortableId;
+      }
+
+      function onAnnounce(signal: SortableSignalType) {
+        message.value =
+          signal.kind === "noTarget" && signal.id === REFUSED
+            ? `No list in that direction takes ${REFUSED} — “archive” refuses it`
+            : describeSignal(signal);
+        if (signal.kind === "grabbed") {
+          held.value = signal.id;
+        } else if (["dropped", "cancelled", "movedList"].includes(signal.kind)) {
+          held.value = undefined;
+        }
+      }
+
+      return { lists, ring, message, onMove, acceptsIn, refuses, held, onDragStart, onAnnounce, REFUSED };
     },
     template: `
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4" @dragstart.capture="onDragStart" @dragend.capture="held = undefined">
         <div v-for="name in ring" :key="name" class="flex flex-col gap-1">
-          <div class="text-xs font-bold uppercase text-neutral-500">{{ name }}</div>
+          <div class="flex items-baseline gap-2 text-xs">
+            <span class="font-bold uppercase text-neutral-500">{{ name }}</span>
+            <span v-if="!acceptsIn(name)(REFUSED)" :class="refuses(name) ? 'font-bold text-danger-700' : 'text-neutral-600'">
+              refuses “{{ REFUSED }}”
+            </span>
+          </div>
           <VcSortable
             v-model="lists[name]"
             :name="name"
@@ -254,9 +281,12 @@ export const LinkedLists: StoryType = {
             :ring="ring"
             :accepts="acceptsIn(name)"
             orientation="horizontal"
-            class="flex min-h-12 flex-wrap gap-2 rounded-[--vc-radius] border border-dashed border-neutral-300 p-2"
+            :class="[
+              'flex min-h-12 flex-wrap gap-2 rounded-[--vc-radius] border border-dashed p-2',
+              refuses(name) ? 'border-danger-500 bg-danger-50' : 'border-neutral-300',
+            ]"
             @move="onMove"
-            @announce="message = describeSignal($event)"
+            @announce="onAnnounce"
           >
             <template #item="{ item, attrs }">
               <div
