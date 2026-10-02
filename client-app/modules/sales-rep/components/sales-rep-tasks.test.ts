@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TASKS_ROUTE_NAME, TASKS_DEFAULT_ROWS } from "../constants";
+import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS } from "../constants";
 import SalesRepTasks from "./sales-rep-tasks.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 
@@ -95,13 +95,15 @@ beforeEach(() => {
 });
 
 describe("SalesRepTasks rows", () => {
-  it("renders a row per task with its status pill", () => {
+  it("renders a row per task with its status pill and accent", () => {
     state.items.value = [makeTask(), makeTask({ id: "task-2", name: "Send quote", status: "overdue" })];
 
     const wrapper = createWrapper();
 
     expect(rows(wrapper)).toHaveLength(2);
     expect(rows(wrapper)[0].find(".sales-rep-tasks__name").text()).toBe("Call ACME about the renewal");
+    expect(rows(wrapper)[0].classes()).toContain("sales-rep-tasks__row--upcoming");
+    expect(rows(wrapper)[1].classes()).toContain("sales-rep-tasks__row--overdue");
     expect(rows(wrapper)[1].find(".chip").attributes("data-color")).toBe("danger");
   });
 
@@ -140,7 +142,7 @@ describe("SalesRepTasks rows", () => {
   });
 
   // Nothing hidden, nothing to explain: "5 tasks (5 shown)" on every ordinary day is the noise the
-  // Tasks page's old "7 of 7 tasks" was.
+  // calendar page's old "7 of 7 tasks" was.
   it("says the count plainly when the cap hid nothing", () => {
     state.items.value = [makeTask(), makeTask({ id: "task-2" })];
     state.totalCount.value = 2;
@@ -205,10 +207,10 @@ describe("SalesRepTasks wiring", () => {
   });
 
   // The widget shows one day; the page is the all-tasks list.
-  it("links through to the Tasks page", () => {
+  it("links through to the calendar page", () => {
     const wrapper = createWrapper();
 
-    expect(wrapper.get(".sales-rep-tasks__all-link").attributes("data-route")).toBe(TASKS_ROUTE_NAME);
+    expect(wrapper.get(".sales-rep-tasks__all-link").attributes("data-route")).toBe(CALENDAR_ROUTE_NAME);
     // Unfiltered: this one is the general way in, not the overdue shortcut.
     expect(wrapper.get(".sales-rep-tasks__all-link").attributes("data-filter")).toBeUndefined();
   });
@@ -216,15 +218,15 @@ describe("SalesRepTasks wiring", () => {
 
 // Overdue work is due in the past, so the day this widget shows can never contain it.
 describe("SalesRepTasks overdue notice", () => {
-  it("surfaces the overdue total and links it to the Tasks page", () => {
+  it("surfaces the overdue total and links it to the calendar", () => {
     state.overdueCount.value = 3;
 
     const wrapper = createWrapper();
     const notice = wrapper.get(".sales-rep-tasks__overdue");
 
     expect(notice.text()).toContain('"count":3');
-    expect(notice.attributes("data-route")).toBe(TASKS_ROUTE_NAME);
-    // Deep-links to the Overdue tab: the page opens on the day, which by definition holds none of it.
+    expect(notice.attributes("data-route")).toBe(CALENDAR_ROUTE_NAME);
+    // Deep-links to the Overdue tab: the calendar opens on the day, which by definition holds none of it.
     // The literal, not the constant — this has to stay the rule name the server actually offers.
     expect(notice.attributes("data-filter")).toBe("overdue");
   });

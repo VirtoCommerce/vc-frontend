@@ -1,8 +1,8 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled, isSalesRepTasksEnabled } from "./composables/useSalesRepsConfig";
 import {
-  TASKS_ROUTE_NAME,
-  TASKS_ROUTE_SEGMENT,
+  CALENDAR_ROUTE_NAME,
+  CALENDAR_ROUTE_SEGMENT,
   ALL_CUSTOMER_ORDERS_ROUTE_NAME,
   ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
   CUSTOMER_ORDERS_ROUTE_NAME,
@@ -31,7 +31,7 @@ const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
 const DocumentsPage = () => import("./pages/documents.vue");
-const TasksPage = () => import("./pages/sales-rep-tasks-page.vue");
+const CalendarPage = () => import("./pages/calendar.vue");
 
 // Reps only: the My customers gate (SalesRep.Enabled + sales-rep:access) AND every extra permission
 // the page names (checkPermissions is a variadic AND; admins pass), else -> Dashboard.
@@ -108,12 +108,12 @@ export const documentsRoute: RouteRecordRaw = {
   },
 };
 
-// Tasks (VCST-5732) -> /company/tasks. Gated on vc-module-task-management being installed rather than on a
+// Calendar (VCST-5732) -> /company/calendar. Gated on vc-module-task-management being installed rather than on a
 // permission: with the module absent every task query answers empty, so the page would render a permanent blank.
-export const tasksRoute: RouteRecordRaw = {
-  path: TASKS_ROUTE_SEGMENT,
-  name: TASKS_ROUTE_NAME,
-  component: TasksPage,
+export const calendarRoute: RouteRecordRaw = {
+  path: CALENDAR_ROUTE_SEGMENT,
+  name: CALENDAR_ROUTE_NAME,
+  component: CalendarPage,
   meta: repRouteMeta,
   beforeEnter(_to, _from, next) {
     if (guardSalesRep(next) && isSalesRepTasksEnabled()) {

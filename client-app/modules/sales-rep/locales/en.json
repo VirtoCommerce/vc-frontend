@@ -203,14 +203,12 @@
       "load_failed": "Couldn't load orders"
     },
     "tasks": {
-      "title": "Tasks",
+      "title": "Calendar",
       "widget_title": "Tasks & due dates",
-      "view_all": "All tasks",
+      "full_calendar": "Full calendar",
       "new_task": "New task",
-      "due_dates": "Due dates",
+      "add_task": "Add task",
       "today": "Today",
-      "all": "All",
-      "clear_day_aria": "Clear {date}",
       "empty": "No tasks in this tab",
       "empty_day": "Nothing due on this day",
       "load_failed": "Couldn't load tasks",
@@ -225,10 +223,8 @@
         "task": "Task",
         "status": "Status",
         "notes": "Notes",
-        "actions": "Actions",
-        "mark_complete": "Mark as complete",
-        "reopen": "Reopen",
-        "action_aria": "{action}: “{name}”",
+        "complete_aria": "Mark “{name}” as completed",
+        "reopen_aria": "Reopen “{name}”",
         "edit_aria": "Edit “{name}”"
       },
       "status": {
