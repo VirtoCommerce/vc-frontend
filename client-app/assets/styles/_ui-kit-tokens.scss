@@ -900,7 +900,7 @@
   --vc-sortable-accent-color: var(--color-vc-border-outline-primary, var(--color-primary-500));
   // Unfaded: a keyboard-held item carries the focus ring, and a fade takes the ring below 3:1.
   --vc-sortable-grabbed-opacity: 1;
-  // `lg`, not `xl`: a deeper shadow under the ring takes red light below 3:1 at its bottom edge.
-  --vc-sortable-grabbed-shadow: theme("boxShadow.lg");
+  // `md`: a deeper one darkens the band under the ring, taking it below 3:1 on light grey surfaces.
+  --vc-sortable-grabbed-shadow: theme("boxShadow.md");
   --vc-sortable-ghost-opacity: 0.45;
 }

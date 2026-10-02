@@ -240,6 +240,7 @@ describe("stat row drag and drop", () => {
     await key(" ");
     await key("ArrowDown");
     expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+    expect(wrapper.find('[data-block-id="active_carts"]').attributes("aria-pressed")).toBe("false");
 
     await key("Escape");
 
@@ -290,9 +291,11 @@ describe("stat row drag and drop", () => {
     try {
       await key(" ");
       await key("ArrowDown");
+      expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
       await key(" ");
       await key("ArrowUp");
       expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(card().getAttribute("aria-pressed")).toBe("false");
 
       await key("Escape");
       expect(api.hiddenIn("statistics")).toEqual([]);

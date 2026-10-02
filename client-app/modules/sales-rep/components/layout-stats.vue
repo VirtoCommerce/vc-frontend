@@ -154,6 +154,9 @@ function cardProps(id: string) {
 
   // Hatching marks the zone as set aside; the cards in it stay rendered and draggable.
   &__parked-zone {
+    // No shadow under a held card: over the hatching it takes the ring below 3:1.
+    --vc-sortable-grabbed-shadow: none;
+
     @apply opacity-70;
 
     background: repeating-linear-gradient(
@@ -164,7 +167,7 @@ function cardProps(id: string) {
       var(--color-neutral-100) 18px
     );
 
-    // A held card is unfaded, like any held item, or its focus ring drops below 3:1.
+    // The zone unfades while it holds a card, or the held ring drops below 3:1 with it.
     &:has([aria-pressed="true"]) {
       @apply opacity-100;
     }
