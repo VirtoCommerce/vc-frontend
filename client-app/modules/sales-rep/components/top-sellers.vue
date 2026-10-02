@@ -116,7 +116,7 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
-import { useBlockChrome } from "../composables/useBlockChrome";
+import { useBlockSettings } from "../composables/useBlockSettings";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
@@ -169,8 +169,8 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
 });
 
 // The saved cap, not the draft: it is a query variable, so it applies on save.
-const chrome = useBlockChrome();
-const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
+const blockSettings = useBlockSettings();
+const rowLimit = computed(() => blockSettings?.savedSettings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
 
 const { items, loading, error } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,

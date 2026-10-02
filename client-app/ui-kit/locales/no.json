@@ -164,6 +164,17 @@
       "rating_label": "Vurdering {value} av {maxValue}",
       "read_only_button_aria_label": "Vurdering {value} av {maxValue}, ikke tilgjengelig for valg",
       "set_rating_aria_label": "Sett vurdering til {value} av {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Plukket opp, posisjon {position} av {total}. Piltastene flytter, mellomrom slipper, Escape avbryter.",
+      "grabbed_lists": "Plukket opp, posisjon {position} av {total}. Piltastene flytter, også til en annen liste; mellomrom slipper, Escape avbryter.",
+      "moved": "Posisjon {position} av {total}",
+      "dropped": "Sluppet på posisjon {position} av {total}",
+      "edge": "Kan ikke flytte lenger",
+      "cancelled": "Avbrutt, tilbake på opprinnelig plass",
+      "moved_list": "Flyttet til liste {position} av {total}",
+      "moved_list_dropped": "Flyttet til liste {position} av {total} og sluppet",
+      "no_target": "Ingen liste i den retningen tar imot den"
     }
   }
 }

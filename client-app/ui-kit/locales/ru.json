@@ -164,6 +164,17 @@
       "rating_label": "Рейтинг: {value} из {maxValue}",
       "read_only_button_aria_label": "Рейтинг: {value} из {maxValue}, недоступно для выбора",
       "set_rating_aria_label": "Установить рейтинг {value} из {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Взято, позиция {position} из {total}. Стрелки перемещают, пробел — положить, Escape — отменить.",
+      "grabbed_lists": "Взято, позиция {position} из {total}. Стрелки перемещают, в том числе в другой список; пробел — положить, Escape — отменить.",
+      "moved": "Позиция {position} из {total}",
+      "dropped": "Положено на позицию {position} из {total}",
+      "edge": "Дальше некуда",
+      "cancelled": "Отменено, элемент на прежнем месте",
+      "moved_list": "Перемещено в список {position} из {total}",
+      "moved_list_dropped": "Перемещено в список {position} из {total} и положено",
+      "no_target": "В этом направлении нет списка, который его примет"
     }
   }
 }

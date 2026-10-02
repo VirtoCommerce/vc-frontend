@@ -143,7 +143,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBlockChrome } from "../composables/useBlockChrome";
+import { useBlockSettings } from "../composables/useBlockSettings";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
@@ -206,11 +206,11 @@ const {
 const { rules: sortRules, failed: sortRulesFailed } = useSalesRepRules("order", "sort");
 
 // Absent when this widget renders outside a layout, which then configures nothing.
-const chrome = useBlockChrome();
-const editingTabs = computed(() => Boolean(chrome?.editing.value));
-const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
+const blockSettings = useBlockSettings();
+const editingTabs = computed(() => Boolean(blockSettings?.editing.value));
+const hiddenTabs = computed(() => blockSettings?.settings.value.hiddenTabs ?? []);
 // The saved selection, not the draft: tabs apply on save, like the row cap.
-const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
+const savedHiddenTabs = computed(() => blockSettings?.savedSettings.value.hiddenTabs ?? []);
 
 // The backend's "All" passthrough would duplicate the baseline chip, so it is not offered as a tab
 // and cannot be unchecked either.
@@ -231,14 +231,14 @@ watch(
   [editingTabs, selectableRules],
   () => {
     if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
-      chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
+      blockSettings?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
     }
   },
   { immediate: true },
 );
 
 function toggleTab(name: string): void {
-  chrome?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
+  blockSettings?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
 }
 
 // A save can retire the tab being filtered by, which the rep could then neither see nor clear.
@@ -257,7 +257,7 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
 });
 
 // The saved cap, not the draft: it is a query variable, so it applies on save.
-const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? props.limit);
+const rowLimit = computed(() => blockSettings?.savedSettings.value.maxRows ?? props.limit);
 
 const { orders, loading, error } = useSalesRepOrders({
   organizationId: () => props.organizationId,

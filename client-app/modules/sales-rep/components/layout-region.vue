@@ -1,39 +1,51 @@
 <template>
-  <component
-    :is="tag ?? 'div'"
-    ref="container"
+  <VcSortable
+    :model-value="[...entries]"
+    :tag="tag ?? 'div'"
     :class="['layout-region', `layout-region--${orientation}`, { 'layout-region--zone': editing && zone }]"
-    :data-drop-hidden="String(Boolean(dropHidden))"
+    :name="zoneName"
+    :group="group"
+    :list-order="listOrder"
+    :orientation="orientation"
+    :disabled="!editing"
+    :live-region="false"
+    drop-on-list-change
+    :handle="dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR"
+    :filter="dragWhole ? undefined : WIDGET_DRAG_FILTER_SELECTOR"
+    @update:model-value="$emit('reorder', $event)"
+    @move="onMove"
+    @announce="onAnnounce"
   >
-    <LayoutBlock
-      v-for="id in entries"
-      :key="id"
-      :block-id="id"
-      :title="titleOf(id)"
-      :editing="editing"
-      :grabbed="isGrabbed(id)"
-      :drag-whole="dragWhole"
-      @hide="$emit('setHidden', id, !dropHidden)"
-      @handle-keydown="onKeydown($event, id)"
-      @handle-blur="onBlur(id)"
-    >
-      <slot :id="id" :title="titleOf(id)" />
-    </LayoutBlock>
+    <template #item="{ item: id, attrs }">
+      <LayoutBlock
+        v-bind="attrs"
+        :block-id="id"
+        :title="titleOf(id)"
+        :editing="editing"
+        :drag-whole="dragWhole"
+        @hide="$emit('setHidden', id, !dropHidden)"
+      >
+        <slot :id="id" :title="titleOf(id)" />
+      </LayoutBlock>
+    </template>
 
     <!-- Always rendered while the zone is live; CSS hides it whenever the container holds a card. State
          only changes on drop, so gating on `entries` left the zone blank until then. -->
-    <div v-if="editing && zone" class="layout-region__empty">{{ emptyText }}</div>
-  </component>
+    <template #after>
+      <div v-if="editing && zone" class="layout-region__empty">{{ emptyText }}</div>
+    </template>
+  </VcSortable>
 </template>
 
 <script setup lang="ts">
-import Sortable from "sortablejs";
-import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
+import { computed } from "vue";
 import { useBlockTitle } from "../composables/useBlockTitle";
-import { useKeyboardSort } from "../composables/useKeyboardSort";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import LayoutBlock from "./layout-block.vue";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
+import type { SortableMovePayloadType, SortableSignalType } from "@/ui-kit/composables";
+// Imported, not global: this module's specs mount it without the ui-kit plugin (see PORT_TO_MF.md).
+import VcSortable from "@/ui-kit/components/molecules/sortable/vc-sortable.vue";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
@@ -63,119 +75,42 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { titleOf } = useBlockTitle(() => props.scope);
-const container = useTemplateRef<HTMLElement>("container");
 
-/**
- * Undo SortableJS's DOM edit so state drives the re-render. The re-insert is not optional: leaving the
- * node detached makes Vue anchor a later move against a node outside the document — `NotFoundError`,
- * block gone.
- *
- * Remove before reading the child index, or a backwards move is off by one. `oldIndex` addresses
- * `children`; the handlers below address `props.entries`.
- */
-function restore(event: Sortable.SortableEvent): void {
-  event.item.remove();
-  event.from.insertBefore(event.item, event.from.children[event.oldIndex ?? 0] ?? null);
+// Each list holds one half of a layout region — its shown blocks or its hidden ones. That half is all a move
+// across zones changes, so it is what names the list.
+const VISIBLE_ZONE = "visible";
+const HIDDEN_ZONE = "hidden";
+
+const zoneName = computed(() => (props.dropHidden ? HIDDEN_ZONE : VISIBLE_ZONE));
+
+// Only the stat row can park a block with the arrow keys; widget columns hide via the ✕ button.
+const listOrder = computed(() => (props.orientation === "horizontal" ? [VISIBLE_ZONE, HIDDEN_ZONE] : undefined));
+
+function onMove({ id, to, index }: SortableMovePayloadType): void {
+  emit("setHidden", id, to === HIDDEN_ZONE, index);
 }
 
-// A region's axis is structural: the stat row is always horizontal, a widget column always vertical.
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
-const axis = props.orientation;
-
-const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
-  orientation: axis,
-  items: () => [...props.entries],
-  // Every block in a zone shares the zone's hidden state, which is what `dropHidden` describes.
-  hidden: () => Boolean(props.dropHidden),
-  onReorder: (id, index) => {
-    const ids = props.entries.filter((candidate) => candidate !== id);
-    ids.splice(index, 0, id);
-    emit("reorder", ids);
-  },
-  // Only the stat row can park a block with the arrow keys; widget columns hide via the ✕ button.
-  onToggleHidden: axis === "horizontal" ? (id, hidden) => emit("setHidden", id, hidden) : undefined,
-  onSignal: (signal) => emit("announce", signal),
-});
-
-// Constructed directly rather than via `useSortable`: its internal mirror of the list could emit a
-// stale `reorder` after a cross-zone drop, landing the same block in both halves.
-let sortable: Sortable | undefined;
-
-// At mount, not setup: every option below reads a prop.
-onMounted(() => {
-  if (!container.value) {
-    return;
+function onAnnounce(signal: SortableSignalType): void {
+  switch (signal.kind) {
+    case "grabbed":
+      emit("announce", {
+        kind: "grabbed",
+        id: signal.id,
+        index: signal.index,
+        total: signal.total,
+        parkable: signal.canChangeList,
+      });
+      break;
+    case "movedList":
+      emit("announce", { kind: signal.to === HIDDEN_ZONE ? "parked" : "restored", id: signal.id });
+      break;
+    // A park key pointing at the zone the card is already in does nothing, and says nothing.
+    case "noTarget":
+      break;
+    default:
+      emit("announce", signal);
   }
-
-  sortable = new Sortable(container.value, {
-    group: props.group,
-    // Widgets drag by their header; stat cards by the whole card.
-    handle: props.dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR,
-    // The hide button lives inside that header, so without this a mousedown on ✕ starts a drag.
-    // `preventOnFilter: false` keeps its click — the default preventDefaults the mousedown.
-    filter: props.dragWhole ? undefined : WIDGET_DRAG_FILTER_SELECTOR,
-    preventOnFilter: false,
-    // Otherwise the empty-zone hint counts as an item and the indices stop matching `props.entries`.
-    draggable: ".layout-block",
-    animation: 150,
-    ghostClass: "sortable-ghost",
-    dragClass: "sortable-drag",
-    disabled: !props.editing,
-
-    // SortableJS defaults to `delay: 0` and preventDefaults every touchmove once a tap registers, so
-    // a swipe starting on a card drags instead of scrolling. `delayOnTouchOnly` exempts the mouse.
-    delay: 200,
-    delayOnTouchOnly: true,
-    touchStartThreshold: 5,
-
-    // Sortable captures indices at choose time, so a grab cancelled mid-drag reshuffles `entries`
-    // under them and drops the wrong block. `release`, not `cancel` — the restore is the reshuffle.
-    onChoose: () => release(),
-
-    // Derived from `props.entries`, not the DOM. The draggable-only indices are the ones that match it.
-    onUpdate: (event: Sortable.SortableEvent) => {
-      restore(event);
-
-      const ids = [...props.entries];
-      const [moved] = ids.splice(event.oldDraggableIndex ?? 0, 1);
-      ids.splice(event.newDraggableIndex ?? 0, 0, moved);
-      emit("reorder", ids);
-    },
-
-    // Cross-zone. `onEnd` fires once per drag, unlike separate onAdd/onRemove which double-applied.
-    onEnd: (event: Sortable.SortableEvent) => {
-      if (event.from === event.to) {
-        return; // same-list move, already handled by onUpdate
-      }
-
-      // Back into the source list, not the target — state is what moves the block across.
-      restore(event);
-
-      const id = event.item.dataset.blockId;
-      if (id) {
-        // `newDraggableIndex`, not `newIndex`: an empty target zone also renders its hint paragraph.
-        emit("setHidden", id, event.to.dataset.dropHidden === "true", event.newDraggableIndex ?? undefined);
-      }
-    },
-  });
-});
-
-onUnmounted(() => {
-  sortable?.destroy();
-  sortable = undefined;
-});
-
-// Toggled rather than rebuilt. No `immediate` — the constructor seeds it, and an immediate run would
-// fire before the instance exists.
-watch(
-  () => props.editing,
-  (editing) => {
-    sortable?.option("disabled", !editing);
-    if (!editing) {
-      release();
-    }
-  },
-);
+}
 </script>
 
 <style lang="scss">

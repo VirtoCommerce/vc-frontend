@@ -164,6 +164,17 @@
       "rating_label": "Betyg {value} av {maxValue}",
       "read_only_button_aria_label": "Betyg {value} av {maxValue}, inte tillgängligt för val",
       "set_rating_aria_label": "Ställ in betyg till {value} av {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Upplockad, position {position} av {total}. Piltangenterna flyttar, mellanslag släpper, Escape avbryter.",
+      "grabbed_lists": "Upplockad, position {position} av {total}. Piltangenterna flyttar, även till en annan lista; mellanslag släpper, Escape avbryter.",
+      "moved": "Position {position} av {total}",
+      "dropped": "Släppt på position {position} av {total}",
+      "edge": "Det går inte längre",
+      "cancelled": "Avbrutet, tillbaka på ursprunglig plats",
+      "moved_list": "Flyttad till lista {position} av {total}",
+      "moved_list_dropped": "Flyttad till lista {position} av {total} och släppt",
+      "no_target": "Ingen lista åt det hållet tar emot den"
     }
   }
 }

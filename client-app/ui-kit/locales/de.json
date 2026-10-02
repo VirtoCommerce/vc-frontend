@@ -164,6 +164,17 @@
       "rating_label": "Bewertung {value} von {maxValue}",
       "read_only_button_aria_label": "Bewertung {value} von {maxValue}, nicht zur Auswahl verfügbar",
       "set_rating_aria_label": "Bewertung auf {value} von {maxValue} setzen"
+    },
+    "sortable": {
+      "grabbed": "Aufgenommen, Position {position} von {total}. Pfeiltasten verschieben, Leertaste legt ab, Escape bricht ab.",
+      "grabbed_lists": "Aufgenommen, Position {position} von {total}. Pfeiltasten verschieben, auch in eine andere Liste; Leertaste legt ab, Escape bricht ab.",
+      "moved": "Position {position} von {total}",
+      "dropped": "Abgelegt an Position {position} von {total}",
+      "edge": "Weiter geht es nicht",
+      "cancelled": "Abgebrochen, wieder am Ausgangsort",
+      "moved_list": "In Liste {position} von {total} verschoben",
+      "moved_list_dropped": "In Liste {position} von {total} verschoben und abgelegt",
+      "no_target": "In dieser Richtung nimmt keine Liste es an"
     }
   }
 }
