@@ -46,7 +46,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
   });
 
   // Analytics off is NOT an error by contract: createdOn still arrives from the DB while the
-  // GA-sourced fields settle to empty — the widget renders its distinct not-configured state from this.
+  // GA-sourced fields settle to empty — the widget renders its distinct unavailable state from this.
   it("keeps createdOn while flagging analytics as unconfigured", () => {
     queryMock.result.value = {
       salesRepCustomerActivitySummary: {

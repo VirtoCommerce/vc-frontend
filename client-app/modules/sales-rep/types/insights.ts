@@ -1,5 +1,4 @@
-// View models for the customer-insights rail widgets (VCST-5337). Counts stay numbers: they are
-// interpolated into pluralized strings, so vue-i18n needs them for plural-form selection.
+// View models for the customer insights panels. Counts stay numbers: vue-i18n needs them to pick plural forms.
 
 export type SalesRepSearchTermRowType = {
   term: string;

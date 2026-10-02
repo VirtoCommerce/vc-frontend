@@ -10,12 +10,10 @@
 
     <template #default-container>
       <div class="my-activity__body">
-        <!-- A failure replaces the list rather than sharing the empty view: apollo keeps the previous
-             rows on a failed refetch, which would otherwise read as current activity (VCST-5586). -->
+        <!-- A failure replaces the list: apollo keeps stale rows on a failed refetch (VCST-5586). -->
         <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.activity.load_failed')" variant="error" />
 
-        <!-- Analytics absence is zero rows by contract, not an error. The feed here is mixed, so an empty
-             one on a store whose analytics did not answer is not a quiet year — the flag says which. -->
+        <!-- A mixed feed: empty is not a quiet year when analytics did not answer — the flag says which. -->
         <VcEmptyView v-else-if="!items.length && !loading" :text="emptyText" icon="activity" />
 
         <!-- Same first-load skeleton as the insights widgets — the GA-backed query can run for seconds. -->
@@ -42,11 +40,8 @@ import LayoutWidget from "./layout-widget.vue";
 
 const { t } = useI18n();
 
-// Latest few events across ALL assigned accounts — deliberately no organizationId, even on a scoped
-// surface; the full feed lives on the Activities page.
-// This year only, the period that page opens on: unbounded, every dashboard visit read the whole
-// analytics history to show five rows.
-// No badges here, so none are selected — the widget waits for its own rows and nothing else.
+// Latest events across ALL assigned accounts, this year only (the window the Activities page opens on).
+// No badges, so no counts are selected: the widget waits only for its own rows.
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 const { items, loading, error, analyticsUnavailable } = useSalesRepActivities({
   take: MY_ACTIVITY_TAKE,
@@ -70,8 +65,7 @@ const failed = computed(() => Boolean(error.value));
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .my-activity {
-  // min-height ≈ the five compact rows, so the card holds its footprint across
-  // skeleton → rows / empty instead of collapsing and re-expanding.
+  // min-height ≈ five compact rows, so the card keeps its footprint from skeleton to rows or empty.
   &__body {
     @apply min-h-60 px-6 pb-4 pt-1;
   }

@@ -852,7 +852,7 @@ describe("heading and breadcrumbs", () => {
 
 // ?organizationId= is a URL a rep can arrive at with any value. Unhandled, an id they cannot see
 // renders as their own feed — fallback heading, no customer crumb, every badge at 0 — while the rail
-// lights nothing, and Top mode blames the store's analytics for what is really an access answer.
+// lights nothing, and Top mode shows an empty list for what is really an access answer.
 describe("a customer the rep cannot see", () => {
   it("replaces the feed with the dead-end view and a way back", async () => {
     const wrapper = createWrapper({ props: { organizationId: "not-mine" } });

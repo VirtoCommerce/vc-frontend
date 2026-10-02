@@ -21,9 +21,8 @@ const CustomerProfileActions = markRaw(
   defineAsyncComponent(() => import("../components/customer-profile-actions.vue")),
 );
 const CustomerProfileInfo = markRaw(defineAsyncComponent(() => import("../components/customer-profile-info.vue")));
-// Not gated on any frontend module check: the backend's nulls / isAnalyticsAvailable are the
-// availability signal, and the widgets render their own states from them (VCST-5337). Search and
-// browse history are sub-views of this widget now, not blocks of their own.
+// Not gated on a frontend module check: isAnalyticsAvailable is the availability signal, and the widget renders
+// its own states. Search and browse history are its sub-views, not blocks of their own.
 const MyActivity = markRaw(defineAsyncComponent(() => import("../components/my-activity.vue")));
 const CustomerActivity = markRaw(defineAsyncComponent(() => import("../components/customer-activity.vue")));
 

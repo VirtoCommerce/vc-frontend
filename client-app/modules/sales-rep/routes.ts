@@ -182,16 +182,14 @@ export const allCustomerOrdersRoute: RouteRecordRaw = {
   beforeEnter: guardRepRoute,
 };
 
-// One route serves two things: "my activity" across every assigned customer, and a single customer's
-// activity (?organizationId=). Only the first is the rep's own — the second is a page about a
-// customer, reached from their profile.
+// One route, two pages: the rep's own "my activity", and one customer's activity (?organizationId=), which
+// belongs to that customer.
 export function isCustomerScopedActivity(route: RouteLocationNormalizedLoaded): boolean {
   return route.name === ACTIVITIES_ROUTE_NAME && Boolean(route.query.organizationId);
 }
 
-// The pages that belong to "My customers": the list, one customer's profile, and that customer's
-// activity. Spelled out because vue-router marks a link active by route RECORD — these are sibling
-// records under /company, so it cannot see that they are one area.
+// The pages of "My customers": the list, a profile and that customer's activity — sibling route records, so
+// vue-router cannot see they are one area.
 export function isMyCustomersArea(route: RouteLocationNormalizedLoaded): boolean {
   return (
     route.name === MY_CUSTOMERS_ROUTE_NAME ||

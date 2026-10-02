@@ -33,9 +33,8 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
     take: toValue(options.take) ?? INSIGHTS_DEFAULT_ROWS,
   }));
 
-  // Kept out of the cache. Both insights ops write the one Query.salesRepCustomerInsights entry — same field,
-  // same arguments — and its isAnalyticsAvailable answers for whichever collection that op selected: cached,
-  // the later op would answer for both, and each write replaced the entry and wiped the other op's rows.
+  // Kept out of the cache: both insights ops write one salesRepCustomerInsights entry (same field, same arguments)
+  // whose isAnalyticsAvailable answers for the collection that op selected — cached, each op overwrote the other.
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerSearchTermsDocument, variables, {
     fetchPolicy: "no-cache",
     enabled: options.enabled ?? true,
@@ -47,8 +46,7 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
 
   const payload = computed(() => result.value?.salesRepCustomerInsights);
 
-  // The backend reports every unavailable case through one flag — analytics absent, unconfigured, or a
-  // read that failed. A null payload now means only that the caller may not see this customer.
+  // One flag covers absent, unconfigured and failed; a null payload means the caller may not see this customer.
   const unavailable = computed(() => Boolean(result.value) && payload.value?.isAnalyticsAvailable === false);
 
   const items = computed<SalesRepSearchTermRowType[]>(() =>

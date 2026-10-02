@@ -1,6 +1,5 @@
 <template>
-  <!-- Chrome-less panel: rendered inside the Customer activity widget's "Product views" sub-view (it
-       used to be a widget of its own), so the widget box and title belong to the container. -->
+  <!-- Chrome-less: the Customer activity widget's "Product views" sub-view owns the box and the title. -->
   <div class="customer-browse-history">
     <div class="customer-browse-history__filter">
       <SalesRepRuleChips
@@ -58,8 +57,7 @@
               </span>
 
               <span class="customer-browse-history__text">
-                <!-- GA stores the product CODE in item_id; only a row the backend resolved to a real
-                     product carries a linkable id, so an unresolved row degrades to plain text. -->
+                <!-- Only a row resolved to a real product links; an unresolved code stays plain text. -->
                 <VcLink
                   v-if="item.isResolved"
                   :to="getProductRoute(item.productId)"
@@ -100,8 +98,7 @@ import type { SalesRepBrowsedProductRowType } from "../types/insights";
 
 interface IProps {
   organizationId: string;
-  // False while another sub-view is showing: the panel stays mounted (its rows are kept) but must not
-  // spend a GA round trip on a list nobody is looking at.
+  // False while hidden; the panel subscribes on its first show (absent means visible).
   active?: boolean;
 }
 
@@ -109,16 +106,14 @@ const props = defineProps<IProps>();
 
 const { t, d } = useI18n();
 
-// The baseline chip is "Recent" — the ticket asks for recent product views; the one selectable rule
-// flips to the most-viewed ranking.
+// Recent is the baseline (the ticket asks for recent product views); the one rule flips to most viewed.
 const sortChip = ref<string | undefined>(undefined);
 const sortChipRules = computed<SalesRepRuleType[]>(() => [
   { name: INSIGHTS_SORT_BY_COUNT, label: t("sales_rep.customer_insights.top") },
 ]);
 const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_DATE);
 
-// Subscribes on first show and stays subscribed: the parent keeps a visited view mounted precisely so that
-// returning to it refires nothing, and stopping on hide is what made it refire. Absent means visible.
+// Stays subscribed once shown: stopping on hide is what made a revisit refire its query.
 const visited = ref(false);
 watch(
   () => props.active,

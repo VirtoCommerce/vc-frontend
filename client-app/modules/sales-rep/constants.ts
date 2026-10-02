@@ -64,10 +64,8 @@ export const ACTIVITIES_ROUTE_SEGMENT = "activities";
 export const ACTIVITIES_NAV_LINK_ID = "sales-rep-activities";
 // Backend paging: take defaults to 20 and caps at 50; take 0 returns counts only (backs the tabs).
 export const ACTIVITY_PAGE_SIZE = 20;
-// How deep the backend will page the merged feed (its ModuleConstants.Activities.MaxSkip). A merged
-// page can only be sliced from the top `skip + take` rows of every requested category, so the cap is
-// what bounds one request's cost. Past it the query returns NO rows while totalCount keeps describing
-// the whole set — so the pager has to stop here, or it offers pages that render as "no activity".
+// The backend's paging cap (ModuleConstants.Activities.MaxSkip): past it the query returns NO rows while
+// totalCount keeps describing the whole set, so the pager stops here.
 export const ACTIVITY_MAX_SKIP = 500;
 // Compact "My activity" dashboard widget shows the latest few events across all assigned accounts.
 export const MY_ACTIVITY_TAKE = 5;
@@ -169,9 +167,7 @@ export const DOCUMENTS_DEFAULT_ROWS = 5;
 export const DOCUMENTS_MAX_ROWS = 10;
 export const MIN_ROWS = 1;
 
-// Customer-insights rail widgets (VCST-5337). Sort names come from the proposed
-// salesRepCustomerInsights contract (design doc §5): "count" ranks by occurrences (top),
-// "date" by the latest hour bucket GA reports (recent).
+// salesRepCustomerInsights sort names: "count" ranks by occurrences (Top), "date" by the latest hour bucket (Recent).
 export const INSIGHTS_DEFAULT_ROWS = 5;
 export const INSIGHTS_MAX_ROWS = 20;
 export const INSIGHTS_SORT_BY_COUNT = "count";

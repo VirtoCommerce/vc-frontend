@@ -45,8 +45,7 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
 
   const payload = computed(() => result.value?.salesRepCustomerInsights);
 
-  // The backend reports every unavailable case through one flag — analytics absent, unconfigured, or a
-  // read that failed. A null payload now means only that the caller may not see this customer.
+  // One flag covers absent, unconfigured and failed; a null payload means the caller may not see this customer.
   const unavailable = computed(() => Boolean(result.value) && payload.value?.isAnalyticsAvailable === false);
 
   const items = computed<SalesRepBrowsedProductRowType[]>(() =>

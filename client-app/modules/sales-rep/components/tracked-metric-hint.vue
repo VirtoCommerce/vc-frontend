@@ -1,10 +1,8 @@
 <template>
-  <!-- The class sits on an element this component owns: VcTooltip forwards attributes to VcPopover,
-       which does not always render a single root to receive them. -->
+  <!-- Own element for the class: VcTooltip forwards attributes to VcPopover, which may have no single root. -->
   <span class="tracked-metric-hint">
-    <!-- lazy: without it the popover mounts its floating element straight away, and floating-ui's
-         autoUpdate then measures the trigger every animation frame for the life of the page — once
-         per hint, and a tab row carries four. -->
+    <!-- lazy: otherwise the popover mounts at once and floating-ui's autoUpdate measures the trigger every
+         frame, once per hint. -->
     <VcTooltip lazy placement="top">
       <template #trigger>
         <VcIcon name="hourglass" :size="14" :label="t('sales_rep.activity.tracked_hint')" />
@@ -20,10 +18,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-// Marks a figure that comes from tracked storefront activity rather than from the platform's own
-// data, and says the one thing a reader can act on: it appears late, because Google processes events
-// for up to 48 hours. Such a figure is also slow to fetch, but that is not a decision anyone makes
-// here — the tab is going to be opened regardless — so it stays out of the wording.
+// Marks a tracked (GA) figure with the one thing a reader can act on: it can take up to 48 hours to appear.
 const { t } = useI18n();
 </script>
 
@@ -32,9 +27,7 @@ const { t } = useI18n();
 .tracked-metric-hint {
   @apply inline-flex shrink-0 items-center self-center text-neutral-400;
 
-  // VcTooltip wraps the icon in a popover and a trigger, both block elements, and VcIcon is an
-  // inline-block with align-top: in that inline context the icon sits against the line box instead
-  // of the text next to it. Flex the whole chain so it centres on the label.
+  // The tooltip's block wrappers leave VcIcon (inline-block, align-top) on the line box; flex them to centre it.
   .vc-popover,
   .vc-popover__trigger {
     @apply flex items-center;

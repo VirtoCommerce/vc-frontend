@@ -1,8 +1,6 @@
 <template>
-  <!-- Renders VcMenuItem directly (instead of the shared AccountNavigationItem) to carry the count
-       badge, reusing the `account-navigation-item` class for identical styling. The highlight is NOT
-       decided here: it follows the link's own area rule, the same one the shared item reads, so the
-       set of pages that light this link is written once (see routes.ts). -->
+  <!-- VcMenuItem directly, not AccountNavigationItem, to carry the count badge (same class, same styling).
+       The highlight follows the link's own area rule, written once in routes.ts. -->
   <VcMenuItem color="secondary" :active="isActive" :to="item.route" class="account-navigation-item">
     <template #prepend>
       <VcIcon size="sm" :name="item.icon" />
@@ -35,8 +33,7 @@ const item = toRef(props, "item");
 
 const { count } = useSharedSalesRepCustomersCount();
 
-// The link's area rule when it declares one — vue-router marks a link active by route RECORD, which
-// cannot see that the customer profile and a customer's activity belong here too — else the record match.
+// The link's area rule when it declares one, else vue-router's record match.
 const { isActive: isRouteRecordActive } = useLink({ to: item.value?.route ?? {} });
 const route = useRoute();
 const isActive = computed(() => item.value?.activeWhen?.(route) ?? isRouteRecordActive.value);

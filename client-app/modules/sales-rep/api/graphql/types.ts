@@ -2048,7 +2048,7 @@ export type SalesRepCustomerActivitySummary = {
   lastViewedProduct?: Maybe<SalesRepActivityProduct>;
   /** Last tracked storefront login, as the UTC start of an analytics hour bucket; null when analytics is unavailable or has no data. */
   lastWebLogin?: Maybe<Scalars['DateTime']['output']>;
-  /** Number of tracked storefront logins in the period (0 when analytics is not configured). */
+  /** Number of tracked storefront logins in the period, or ever without one (0 when analytics is unavailable). */
   visitsCount: Scalars['Int']['output'];
 };
 

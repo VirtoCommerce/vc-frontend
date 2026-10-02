@@ -26,9 +26,8 @@ type UseSalesRepActivitiesOptionsType = {
   enabled?: boolean | Ref<boolean> | (() => boolean);
 };
 
-// Owns the salesRepActivities op: a merged, newest-first feed of order/customer events (exact) and
-// analytics hour-buckets (searches, product views, logins). Unauthorized org / analytics absence are
-// nulls and zero counts by contract, never errors.
+// The salesRepActivities op: order/customer events (exact) merged with GA hour buckets, newest first. An
+// unauthorized org or absent analytics is nulls and zeros by contract, never an error.
 export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType = {}) {
   const variables = computed(() => ({
     organizationId: toValue(options.organizationId),
@@ -87,8 +86,7 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
 
   const totalCount = computed(() => result.value?.salesRepActivities?.totalCount ?? 0);
 
-  // Costs no extra work to select: it describes the sources that ran, it does not make any run. Only an
-  // explicit false counts, so nothing claims “unavailable” before the first response lands.
+  // Only an explicit false counts, so nothing claims “unavailable” before the first response lands.
   const analyticsUnavailable = computed(() => result.value?.salesRepActivities?.isAnalyticsAvailable === false);
 
   return { items, categoryCounts, totalCount, analyticsUnavailable, loading, error };

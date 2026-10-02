@@ -9,8 +9,7 @@
     </template>
 
     <template #default-container>
-      <!-- One widget instead of three stacked ones: the summary plus the two insights lists live here
-           as sub-views behind these chips (baseline = Summary). -->
+      <!-- The summary plus the two insights lists, as sub-views behind these chips (baseline = Summary). -->
       <div class="customer-activity__views">
         <SalesRepRuleChips
           v-model="viewChip"
@@ -121,10 +120,8 @@
             </template>
           </dl>
 
-          <!-- Distinct unavailable state for the GA-sourced rows: untracked or unreadable activity must
-               not read as "this customer never logs in / searches". Created on still shows — it comes
-               from the DB, so it survives a reporting outage. Outside the <dl>,
-               which may hold only dt/dd groups. -->
+          <!-- Untracked or unreadable activity must not read as "never logs in / searches"; Created on (DB data)
+               still shows. Outside the <dl>, which may hold only dt/dd groups. -->
           <div v-if="!summary.isAnalyticsAvailable" class="customer-activity__note">
             <VcIcon class="customer-activity__icon" name="circle-alert" :size="15" />
             {{ t("sales_rep.activity.customer.analytics_unavailable") }}
@@ -132,10 +129,8 @@
         </template>
       </div>
 
-      <!-- Mounted on first visit only, so opening the profile fires one GA-backed query, not three —
-           the same "not rendered means not fetching" rule the layout system applies to hidden widgets.
-           v-show after that, and each panel stays subscribed once shown, so returning to a visited view
-           does not refire its query. -->
+      <!-- Mounted on first visit, so opening the profile fires one GA-backed query, not three; v-show and a
+           kept subscription after, so a revisit refires nothing. -->
       <CustomerSearchHistory
         v-if="visitedViews.has(SEARCHES_VIEW)"
         v-show="viewChip === SEARCHES_VIEW"
@@ -192,8 +187,7 @@ watch(viewChip, (view) => {
   }
 });
 
-// Lifetime figures, unlike the tabs beside them (this year): a "last" fact has to survive a quiet year,
-// so its date shows with it. The Activities page is where a rep narrows the period.
+// Lifetime, unlike the tabs beside it (this year): a "last" fact must survive a quiet year, so it shows its date.
 const { summary, loading, error } = useSalesRepCustomerActivitySummary(() => props.organizationId);
 
 // One skeleton bar per definition row the loaded widget renders.
@@ -203,8 +197,7 @@ const failed = computed(() => Boolean(error.value));
 
 const searchRoute = computed(() => searchResultsRoute(summary.value?.lastSearchTerm ?? ""));
 
-// Link by id (the /product/{id} route always resolves); an unresolved code leaves productId empty,
-// so the row stays plain text.
+// By id: /product/{id} always resolves; an unresolved code has no id and stays plain text.
 const productRoute = computed(() => {
   const productId = summary.value?.lastViewedProduct?.productId;
   return productId ? getProductRoute(productId) : undefined;
@@ -228,7 +221,7 @@ const productLabel = computed(() => {
     @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
   }
 
-  // Mirrors vc-widget__slot, which padded this content while it was the widget's default slot.
+  // vc-widget__slot's padding.
   &__summary {
     @apply px-[--p-x] pb-5 pt-4;
   }
@@ -271,7 +264,7 @@ const productLabel = computed(() => {
     @apply flex items-start gap-2 py-3 text-sm text-neutral-500;
   }
 
-  // Outside the list now, so the last row above no longer draws this divider itself.
+  // The note sits outside the list, so it draws the divider the last row used to.
   &__list + &__note {
     @apply border-t border-neutral-100;
   }

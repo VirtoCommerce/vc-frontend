@@ -73,7 +73,6 @@
           <span>{{ t("sales_rep.activity.rows.unknown") }}</span>
         </template>
 
-        <!-- Hour buckets carry a count; the sign-in row says it in words, and the exact rows have none. -->
         <span v-if="showCount" class="activity-row__count">
           {{ t("sales_rep.activity.rows.count_suffix", { count: item.count }) }}
         </span>
@@ -84,8 +83,7 @@
           {{ item.organizationName }}
         </span>
 
-        <!-- Hour-bucket rows never render as an exact moment: compact rows carry a "~", full rows the
-             "during the hour of …" phrasing. -->
+        <!-- Hour buckets never render as an exact moment: "~" when compact, "during the hour of …" in full. -->
         <span class="activity-row__time">{{ timeLabel }}</span>
       </div>
     </div>
@@ -102,8 +100,8 @@ import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
   item: SalesRepActivityItemType;
-  // Compact rows (dashboard widget): relative time, no status/total.
   showOrganization?: boolean;
+  // Compact rows (dashboard widget): relative time, no status/total.
   compact?: boolean;
 }
 
@@ -119,8 +117,7 @@ const showCount = computed(() => props.item.count > 1 && COUNTED_TYPES.includes(
 
 const searchRoute = computed(() => searchResultsRoute(props.item.searchTerm));
 
-// Link by id (the /product/{id} route always resolves); an unresolved code leaves productId empty,
-// so such a row stays plain text.
+// By id: /product/{id} always resolves; an unresolved code has no id and stays plain text.
 const productRoute = computed(() => (props.item.productId ? getProductRoute(props.item.productId) : undefined));
 
 // GA-tracked name first, the code as the stable fallback (unresolvable codes still carry it).
@@ -136,8 +133,7 @@ const timeLabel = computed(() => {
 
   return props.item.precision === "hour"
     ? t("sales_rep.activity.time.during_hour", {
-        // "short" so an hour-bucket row reads like the exact rows beside it ("Aug 27, 2026"), which use
-        // "long" — the hour wording is the intended difference between them, the date style is not.
+        // "short" so the date reads like the exact rows' "long" one ("Aug 27, 2026"); only the hour wording differs.
         date: d(occurredAt, "short"),
         time: formatHourLabel(props.item.occurredAt),
       })

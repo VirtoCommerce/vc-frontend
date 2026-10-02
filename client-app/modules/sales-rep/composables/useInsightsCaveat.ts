@@ -3,10 +3,8 @@ import { useI18n } from "vue-i18n";
 import type { ComputedRef, Ref } from "vue";
 
 /**
- * The footer line both insights widgets render under their lists. GA sees a subset of real activity
- * (ad blockers, consent mode, the development guard), so a list without this caveat reads as a
- * complete record — the wording is part of the design, not decoration (design doc §4.7). `dataAsOf`
- * names how stale the data may be: GA processing lags by up to 24–48h.
+ * The footer line under both insights panels: GA sees a subset of real activity, so a list without it reads as a
+ * complete record. `dataAsOf` names how stale the data may be.
  */
 export function useInsightsCaveat(dataAsOf: Ref<string | undefined> | (() => string | undefined)): ComputedRef<string> {
   const { t, d } = useI18n();

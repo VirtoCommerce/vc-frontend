@@ -1,12 +1,8 @@
 import { useUser } from "@/shared/account";
 
 /**
- * GA4 user-scoped custom dimensions.
- *
- * Every name here has to be registered by hand in GA4 Admin against the exact same string, and GA does not
- * backfill: renaming one strands every report already built on it and starts its replacement from empty.
- * They live in one map so a store whose own property names collide can rename in a single place — see the
- * registration table in README.md.
+ * GA4 user-scoped custom dimensions. Each must be registered by hand in GA4 Admin under this exact string, and GA
+ * does not backfill: a rename strands every report built on it (registration table: README.md).
  */
 export const USER_PROPERTY_NAMES = {
   contactId: "contact_id",
@@ -17,12 +13,8 @@ export const USER_PROPERTY_NAMES = {
 } as const;
 
 /**
- * Mirrors `SALES_REP_ACCESS_PERMISSION` in the sales-rep module. A duplicated literal rather than an
- * import: analytics tagging must not make this module depend on a feature module.
- *
- * Deliberately raw membership, unlike `useUser().checkPermissions`, which grants an administrator every
- * permission — a store admin who never opens the hub is not a sales rep, and reporting them as one would
- * be worse than reporting nothing.
+ * Mirrors the sales-rep module's `SALES_REP_ACCESS_PERMISSION`, duplicated so tagging depends on no feature module.
+ * Read as raw membership: `checkPermissions` grants an administrator everything.
  */
 const SALES_REP_PERMISSION = "sales-rep:access";
 
@@ -32,19 +24,12 @@ export type SessionKindType = "self" | "impersonated";
 /** Every name in `USER_PROPERTY_NAMES`, `undefined` meaning "clear whatever GA holds for this one". */
 export type UserPropertiesType = Record<string, string | undefined>;
 
-// GA4 truncates a user-property value past this length silently. Doing it here instead keeps the stored
-// value predictable and testable.
+// GA4 silently truncates a user-property value past this length; truncating here keeps it predictable.
 const VALUE_MAX_LENGTH = 36;
 
 /**
- * The customer identity to tag GA events with — every property, every time.
- *
- * gtag `set` MERGES into what it already holds, so a key left out keeps the previous user's value: an
- * omitted `organization_id` would carry the last customer's organization into the next session, and an
- * anonymous visitor would keep browsing under the identity of whoever signed out. `undefined` is how GA is
- * told to drop one, so absent values are sent explicitly rather than skipped.
- *
- * `useUser().user` throws when the user has not loaded, so every read sits behind `isAuthenticated`.
+ * Every property, every time: gtag `set` MERGES, so an omitted key keeps the previous user's value; `undefined`
+ * is how GA drops one. `useUser().user` throws before the user loads, so every read sits behind `isAuthenticated`.
  */
 export function buildUserProperties(): UserPropertiesType {
   const { isAuthenticated, user, organization, operator } = useUser();
@@ -59,18 +44,13 @@ export function buildUserProperties(): UserPropertiesType {
     [USER_PROPERTY_NAMES.contactId]: capped(user.value.contact?.id),
     [USER_PROPERTY_NAMES.organizationId]: capped(organization.value?.id),
     [USER_PROPERTY_NAMES.organizationName]: capped(organization.value?.name),
-    // A flag rather than the role list: real role names run 18-20 characters, so a joined list overflows
-    // the 36-character cap after one or two and silently drops the rest — including, half the time, the
-    // very role this exists to report.
+    // A flag, not the role list: a joined list overflows the 36-character cap after one or two role names.
     [USER_PROPERTY_NAMES.isSalesRep]: String(user.value.permissions?.includes(SALES_REP_PERMISSION) ?? false),
     [USER_PROPERTY_NAMES.sessionKind]: sessionKind,
   };
 }
 
-/**
- * A watch source for the properties above: the same string while the identity is unchanged. Derived from
- * `buildUserProperties` rather than listing the fields again, so the two cannot drift.
- */
+/** A watch source: the same string while the identity is unchanged; derived from `buildUserProperties`. */
 export function userPropertiesKey(): string {
   return JSON.stringify(buildUserProperties());
 }

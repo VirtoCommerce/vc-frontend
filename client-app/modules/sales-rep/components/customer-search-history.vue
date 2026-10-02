@@ -1,6 +1,5 @@
 <template>
-  <!-- Chrome-less panel: rendered inside the Customer activity widget's "Searches" sub-view (it used
-       to be a widget of its own), so the widget box and title belong to the container. -->
+  <!-- Chrome-less: the Customer activity widget's "Searches" sub-view owns the box and the title. -->
   <div class="customer-search-history">
     <div class="customer-search-history__filter">
       <SalesRepRuleChips
@@ -87,8 +86,7 @@ import type { SalesRepRuleType } from "../types";
 
 interface IProps {
   organizationId: string;
-  // False while another sub-view is showing: the panel stays mounted (its rows are kept) but must not
-  // spend a GA round trip on a list nobody is looking at.
+  // False while hidden; the panel subscribes on its first show (absent means visible).
   active?: boolean;
 }
 
@@ -96,17 +94,14 @@ const props = defineProps<IProps>();
 
 const { t, d } = useI18n();
 
-// The baseline chip is "Top" (ranked by count); the one selectable rule flips to "Recent".
-// Recent is the baseline, as it is for product views and for the activity feed's own mode chip: the
-// newest searches are what the customer is asking about now, and "top" is the deliberate second look.
+// Recent is the baseline: the newest searches are what the customer is asking about now; Top is the second look.
 const sortChip = ref<string | undefined>(undefined);
 const sortChipRules = computed<SalesRepRuleType[]>(() => [
   { name: INSIGHTS_SORT_BY_COUNT, label: t("sales_rep.customer_insights.top") },
 ]);
 const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_DATE);
 
-// Subscribes on first show and stays subscribed: the parent keeps a visited view mounted precisely so that
-// returning to it refires nothing, and stopping on hide is what made it refire. Absent means visible.
+// Stays subscribed once shown: stopping on hide is what made a revisit refire its query.
 const visited = ref(false);
 watch(
   () => props.active,

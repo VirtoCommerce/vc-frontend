@@ -1,9 +1,7 @@
 <template>
   <div class="sales-rep-rule-chips">
-    <!-- Baseline tab: no rule name, so it clears the filter and is active while nothing is selected.
-         It renders in the SAME loop as the rules so it can sit at either end (see `allLast`).
-         Its value is `Boolean(true)` so no non-empty rule name can collide with it — `:value="true"`
-         trips vue/prefer-true-attribute-shorthand and the shorthand it asks for passes "" instead. -->
+    <!-- The baseline tab (no rule name) renders in the same loop, so it can sit at either end. Its value is
+         `Boolean(true)`: `:value="true"` trips vue/prefer-true-attribute-shorthand, whose shorthand passes "". -->
     <VcTabSwitch
       v-for="tab in tabs"
       :key="tab.name ?? ''"
@@ -38,9 +36,7 @@ interface IProps {
   allLabel: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
-  // Render the baseline tab after the rules instead of before them. For vocabularies that read as a
-  // progression the widest option belongs at the end ("This month, This year, All time"), while a
-  // set of alternatives keeps it first ("All, Orders, Customers…").
+  // Baseline last, for a progression ("This month, This year, All time"); a set of alternatives keeps it first.
   allLast?: boolean;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
   loading?: boolean;

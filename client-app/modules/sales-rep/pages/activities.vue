@@ -16,15 +16,13 @@
     </VcEmptyView>
 
     <template v-else>
-      <!-- Narrowed to one customer via the ?organizationId= query param (the customer widget links
-           here): the heading names that customer, exactly as the customer-orders page does. -->
+      <!-- ?organizationId= narrows the feed to one customer, and the heading names them (as customer-orders does). -->
       <VcTypography class="activities__title" tag="h1">
         {{ heading }}
       </VcTypography>
 
       <div class="activities__results">
         <div class="activities__controls">
-          <!-- Category tabs driven by categoryCounts; zero-count categories keep their tab. -->
           <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel">
             <!-- No name = the All tab, which merges tracked rows in and so carries the mark too. -->
             <template #suffix="{ tab }">
@@ -40,8 +38,7 @@
           />
         </div>
 
-        <!-- Top|Recent mode toggle — only for the tracked categories that rank (searches, product
-             views). Baseline chip = Recent (the feed), the customer panels' idiom in reverse. -->
+        <!-- Top|Recent, only on the tracked categories that rank (searches, product views); Recent is the baseline. -->
         <div v-if="isRankableTab" class="activities__mode">
           <SalesRepRuleChips
             v-model="modeChip"
@@ -57,20 +54,16 @@
 
         <VcWidget v-else size="md">
           <template #default-container>
-            <!-- Skeleton on EVERY fetch (first load, tab/period/mode switch, page turn) — the table
-                 widgets do the same via VcTable's loading prop, and the GA-backed query can run for
-                 seconds. -->
+            <!-- Skeleton on every fetch, as VcTable's loading prop does: the GA-backed query can run for seconds. -->
             <div v-if="viewLoading" class="activities__skeletons" aria-hidden="true">
               <div v-for="index in skeletonRows" :key="index" class="activities__skeleton" />
             </div>
 
-            <!-- Top mode: ranked count lists from salesRepCustomerInsights. Counts, not events — so
-                 no timestamps, and the list is capped single-page (no pager). -->
+            <!-- Top mode: ranked counts, not events — no timestamps, one capped page, no pager. -->
             <ol v-else-if="topMode && category === 'searches'" class="activities__top-list">
               <li v-for="(item, index) in topSearchItems" :key="item.term" class="activities__top-row">
                 <span class="activities__top-rank">{{ index + 1 }}</span>
 
-                <!-- The catalog search results page, exactly as the feed rows link (VCST-5731). -->
                 <VcLink
                   class="activities__top-link"
                   :to="searchResultsRoute(item.term)"
@@ -90,8 +83,7 @@
               <li v-for="(item, index) in topViewItems" :key="item.sku" class="activities__top-row">
                 <span class="activities__top-rank">{{ index + 1 }}</span>
 
-                <!-- Only a row the backend resolved to a real product carries a linkable id; an
-                     unresolved one degrades to plain text (name or code). -->
+                <!-- Only a row resolved to a real product links; an unresolved one stays plain text. -->
                 <VcLink
                   v-if="item.isResolved"
                   class="activities__top-link"
@@ -131,7 +123,6 @@
           </template>
         </VcWidget>
 
-        <!-- Honesty caveat for the GA-sourced categories (searches, product views, logins). -->
         <p v-if="showCaveat && !viewFailed" class="activities__caveat">
           <VcIcon name="info" :size="14" aria-hidden="true" />
           {{ t("sales_rep.activity.caveat") }}
@@ -182,10 +173,8 @@ const { t } = useI18n();
 const category = ref<string | undefined>(undefined);
 const page = ref(1);
 
-// The hub's shared period model (Lifetime / This month / This year), surfaced as chips. It opens on
-// This year, the window of the widgets that link here, so "View all" never shows less than the widget
-// did. Not All time: with no bounds the tracked categories are read from GA4's earliest supported date
-// (2015), so it scans a decade to render a page. It stays one chip away.
+// Opens on This year, the window of the widgets that link here, so "View all" never shows less than they did.
+// All time (no bounds) would read GA from 2015 to render a page; it stays one chip away.
 const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 // Chips speak "rule name | undefined"; undefined is the lifetime baseline.
@@ -201,11 +190,9 @@ const periodRules = computed<SalesRepRuleType[]>(() => [
   { name: "year", label: t("sales_rep.activity.period.year") },
 ]);
 
-// The categories salesRepCustomerInsights can rank by count; only their tabs get the mode toggle.
 const isRankableTab = computed(() => Boolean(category.value && RANKED_ACTIVITY_CATEGORIES.has(category.value)));
 
-// Baseline chip = Recent (today's feed); the one selectable rule flips to the ranked Top list —
-// the same chip idiom the customer panels use for their Top|Recent sort.
+// Recent (the feed) is the baseline; the one rule flips to the ranked Top list, as in the customer panels.
 const TOP_MODE_RULE = "top";
 const modeChip = ref<string | undefined>(undefined);
 const modeRules = computed<SalesRepRuleType[]>(() => [
@@ -239,9 +226,8 @@ watch(
   { flush: "sync" },
 );
 
-// The rows of the selected tab, and nothing else: without categoryCounts selected the backend reads
-// only the category being shown, so a database-backed tab (Orders, Customers) never waits on Google.
-// Paused in Top mode, where the ranked list replaces it and a period change would read GA for nothing.
+// Only the selected tab's rows: without categoryCounts the backend reads just that category, so Orders and
+// Customers never wait on Google. Paused in Top mode, where the ranked list replaces it.
 const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepActivities({
   organizationId: () => props.organizationId,
   categories: () => (category.value ? [category.value] : undefined),
@@ -253,9 +239,8 @@ const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepA
   enabled: () => !topMode.value,
 });
 
-// The badges, in their own request: counting every category is the slow half, and it does not change
-// as the rep switches tabs or turns pages, so it runs once per customer+period and the list never
-// waits for it. take: 0 asks for counts only.
+// The badges in their own request: counting every category is the slow half, and it does not change with the
+// tab or the page. take: 0 asks for counts only.
 const {
   categoryCounts,
   totalCount: countsTotal,
@@ -269,19 +254,14 @@ const {
   take: 0,
 });
 
-// Every badge reads the counts request, the SELECTED tab included. Taking that one from the rows
-// request instead kept it in step with the list under it, but at the price of one figure having two
-// sources: the same tab, and "All" with it, then changed value as the rep moved between tabs, which
-// reads as data changing under them rather than as two requests disagreeing.
+// Every badge reads the counts request, the selected tab included: one figure, one source.
 const countOf = (name: string) => categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0;
 
 // The counts request carries no category filter, so its own totalCount IS the "All" figure.
 const allCount = computed(() => countsTotal.value);
 
-// keepPreviousResult holds the outgoing response during a refetch, so the badges keep their
-// last-known figures while the period changes under them. Only the very first load has nothing to
-// hold: the tabs stay up without figures — a premature "(0)" on every tab reads as a real count,
-// then jumps. A customer switch is a first load too: the held figures are the previous customer's.
+// keepPreviousResult keeps the badges' last figures through a refetch. A first load has none to keep, and a
+// customer switch is one (the held figures are the previous customer's), so the tabs show no figures.
 const countsFor = ref<string>();
 watch(
   countsLoading,
@@ -297,20 +277,15 @@ const countsPending = computed(
 );
 const countsFailed = computed(() => Boolean(countsError.value));
 
-// A tracked tab carries an en dash rather than a figure when analytics did not answer: the badges sit in
-// the tab row, away from the empty view's wording, so a literal “(0)” there is read as “they searched
-// nothing” by a rep who is looking at another tab. Orders and Customers come from the database and keep
-// their counts. “All” keeps its figure too — it still holds real rows, though it undercounts. A failed
-// counts request dashes every tab, “All” included: its zeros, or the previous period's figures held by
-// keepPreviousResult, are not measurements of this one.
+// A tracked tab shows "–" when analytics did not answer: a "(0)" in the tab row reads as "they searched
+// nothing". Orders, Customers and All keep real counts; a failed counts request dashes every tab.
 const UNMEASURED_BADGE = "–";
 const badgeFor = (name: string) =>
   countsFailed.value || (countsAnalyticsUnavailable.value && TRACKED_ACTIVITY_CATEGORIES.has(name))
     ? UNMEASURED_BADGE
     : formatStatCount(countOf(name));
 
-// Fixed vocabulary + counts. Zero-count categories keep their tab by design — a rep must see that a
-// category exists and is quiet, not wonder where it went.
+// Zero-count categories keep their tab: a rep must see that a category exists and is quiet.
 const categoryRules = computed<SalesRepRuleType[]>(() =>
   ACTIVITY_CATEGORIES.map((name) => {
     const label = t(`sales_rep.activity.tabs.${name}`);
@@ -326,9 +301,7 @@ const allTabLabel = computed(() =>
 
 const failed = computed(() => Boolean(error.value));
 
-// Each Top list runs only while its tab shows it — the GA-backed op can take seconds, so no
-// speculative fetching. organizationId passes through only in the per-customer page mode; omitted,
-// the backend aggregates across every organization the rep serves.
+// Each Top list runs only while its tab shows it: no speculative GA reads.
 const topSearchesEnabled = computed(() => topMode.value && category.value === "searches");
 const topViewsEnabled = computed(() => topMode.value && category.value === "productViews");
 
@@ -389,9 +362,7 @@ const failedText = computed(() => {
 // The caveat concerns tracked (GA-sourced) rows, so it shows for those tabs and for the mixed "All" view.
 const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES.has(category.value));
 
-// A category tab narrows the wording; the tracked-period phrasing covers the period-scoped feed.
-// Top mode reuses the customer panels' "No tracked …" family, plus their unavailable state — which the
-// backend now reports through isAnalyticsAvailable rather than by nulling the payload.
+// Top mode reuses the customer panels' "No tracked …" wording and their unavailable state.
 const emptyText = computed(() => {
   if (topMode.value) {
     if (topUnavailable.value) {
@@ -401,9 +372,7 @@ const emptyText = computed(() => {
       ? t("sales_rep.customer_insights.search_history.empty")
       : t("sales_rep.customer_insights.browse_history.empty");
   }
-  // The feed mode reaches the same two causes as Top: an empty tracked tab is either a quiet period or a
-  // source that never answered, and only the flag separates them. showCaveat is the same GA-sourced scope,
-  // so the Orders and Customers tabs keep their own wording.
+  // An empty tracked tab is a quiet period or a source that never answered; only the flag tells them apart.
   if (analyticsUnavailable.value && showCaveat.value) {
     return t("sales_rep.customer_insights.analytics_unavailable");
   }
@@ -439,12 +408,8 @@ const {
 } = useSalesRepCustomer(() => props.organizationId ?? "");
 const customerName = computed(() => (props.organizationId ? customer.value?.organizationName : undefined));
 
-// Untreated, an id the rep cannot see reads as their own feed — fallback heading, no customer crumb,
-// every badge at 0 — and Top mode blames the store's analytics, since the insights query nulls its
-// payload for an invisible organization exactly as for an absent provider. Only this query can tell.
-// Both flags come already scoped: without an id the read is disabled, so neither can be true, and
-// `notFound` answers only for a read that settled on the id being asked about — this route serves the
-// rep-wide feed and a customer's on ONE instance, and the dead end must not flash while it switches.
+// An id the rep cannot see would otherwise read as their own feed (fallback heading, every badge 0); only this
+// query can tell. Both flags are scoped: no id, no read, and notFound answers only for the id being asked.
 const customerUnavailable = computed(() => customerFailed.value || customerNotFound.value);
 
 // The customer profile's own wording for the same two situations, reused rather than restated.
@@ -452,8 +417,7 @@ const unavailableText = computed(() =>
   customerFailed.value ? t("sales_rep.customer_profile.load_failed") : t("sales_rep.customer_profile.not_found"),
 );
 
-// One line, no subtitle: rep-wide names whose feed this is, the narrowed mode names the customer.
-// The bare noun stands in until the name resolves, so the heading never renders half-written.
+// The bare noun stands in until the customer's name resolves, so the heading never renders half-written.
 const heading = computed(() => {
   if (!props.organizationId) {
     return t("sales_rep.activity.page.title");
@@ -529,7 +493,6 @@ const breadcrumbs = useBreadcrumbs(() => {
     @apply min-w-0 text-sm font-medium [word-break:break-word];
   }
 
-  // Count emphasis carries the ranking (no timestamps in count mode).
   &__top-count {
     @apply ms-auto flex-none text-sm font-semibold text-neutral-500;
   }

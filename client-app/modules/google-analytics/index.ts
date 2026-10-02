@@ -53,9 +53,8 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     useScriptTag(`https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`);
   }
 
-  // Login, organization switch and impersonation all end in a full navigation, so this looks redundant —
-  // but `setUser` also replaces the user in place when another tab signs in (userReloadEvent -> fetchUser),
-  // and a one-shot read would keep tagging every later event with the previous identity.
+  // Not redundant: besides full navigations, `setUser` replaces the user in place when another tab signs in,
+  // and a one-shot read would keep tagging later events with the previous identity.
   watch(userPropertiesKey, () => applyUserProperties(usesDataLayerVariables));
 
   // Register analytics event tracker (works for both GTM-only and GA4)
@@ -98,11 +97,8 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
 }
 
 /**
- * Tags every subsequent event with the customer identity, so GA4 reports can be filtered down to one
- * account — `user_id` alone cannot, it is the User-ID feature and not a reportable dimension.
- *
- * Called unconditionally, including for an anonymous visitor: the payload always carries every property,
- * and skipping the call would leave the previous identity in place instead of clearing it.
+ * Tags later events with the customer identity (`user_id` is not a reportable dimension). Called for anonymous
+ * visitors too: skipping it would leave the previous identity in place instead of clearing it.
  */
 function applyUserProperties(pushToDataLayer: boolean): void {
   const userProperties = buildUserProperties();
