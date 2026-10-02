@@ -764,6 +764,17 @@
           "required_section": "Secção obrigatória",
           "optional_no_selected": "Personalize ainda mais a sua seleção (opcional)",
           "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção",
+          "checklist": {
+            "title": "Lista de verificação da configuração",
+            "done": "(concluído)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obrigatório",
+            "optional": "{name} — opcional",
+            "fill_it_in": "Preencher",
+            "upload_file": "Enviar um arquivo",
+            "check_it_out": "Ver opções",
+            "review": "Revisar"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Opção personalizada: {0}",
             "custom_option_empty": "Opção personalizada: vazio",

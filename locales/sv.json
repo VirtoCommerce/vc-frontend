@@ -764,6 +764,17 @@
           "required_section": "Sektionen är obligatorisk",
           "optional_no_selected": "Anpassa ditt val ytterligare (valfritt)",
           "required_no_selected": "Slutför alla obligatoriska alternativ för att slutföra ditt val",
+          "checklist": {
+            "title": "Checklista för konfiguration",
+            "done": "(klar)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obligatorisk",
+            "optional": "{name} — valfri",
+            "fill_it_in": "Fyll i",
+            "upload_file": "Ladda upp en fil",
+            "check_it_out": "Se alternativ",
+            "review": "Granska"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Anpassat alternativ: {0}",
             "custom_option_empty": "Anpassat alternativ: tomt",
