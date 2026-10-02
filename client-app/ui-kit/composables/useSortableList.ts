@@ -131,7 +131,7 @@ export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
   options: IUseSortableListOptions,
 ) {
-  const whole = !options.handle;
+  const whole = typeof options.handle === "string" ? !options.handle.trim() : !options.handle;
 
   const grabbedId = ref<string>();
   let origin: GrabOriginType | undefined;
@@ -411,9 +411,16 @@ export function useSortableList(
   // cancelled drop to the browser, which flies the drag image back to where it started — while the item
   // lands where the placeholder showed. Accepting `dragover` page-wide for the drag's length keeps the two
   // in step; SortableJS already cancels the `drop` itself. A drop zone of the page's own that decided —
-  // accepted, or refused with `dropEffect = "none"`, which a drag starts without — keeps its decision; one
-  // that refuses only by not cancelling `dragover` now gets the drop event, and must check what it holds.
+  // accepted, or refused with `dropEffect = "none"` — keeps its decision; one that refuses only by not
+  // cancelling `dragover` now gets the drop event, and must check what it holds. WebKit reads an unset
+  // `dropEffect` as "none", so it is seeded on the way down, before any zone, to keep "none" a refusal.
   let acceptingDropsIn: Document | undefined;
+
+  function seedDropEffect(event: DragEvent): void {
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }
 
   function acceptDrop(event: DragEvent): void {
     if (event.defaultPrevented || event.dataTransfer?.dropEffect === "none") {
@@ -426,6 +433,7 @@ export function useSortableList(
   }
 
   function stopAcceptingDrops(): void {
+    acceptingDropsIn?.removeEventListener("dragover", seedDropEffect, true);
     acceptingDropsIn?.removeEventListener("dragover", acceptDrop);
     acceptingDropsIn = undefined;
   }
@@ -433,12 +441,13 @@ export function useSortableList(
   function startAcceptingDrops(doc: Document): void {
     stopAcceptingDrops();
     acceptingDropsIn = doc;
+    doc.addEventListener("dragover", seedDropEffect, true);
     doc.addEventListener("dragover", acceptDrop);
   }
 
   function pointerHandle(): string | undefined {
-    if (typeof options.handle === "string" && options.handle) {
-      return `${HANDLE_SELECTOR}, ${options.handle}`;
+    if (typeof options.handle === "string") {
+      return options.handle.trim() ? `${HANDLE_SELECTOR}, ${options.handle}` : undefined;
     }
     return options.handle ? HANDLE_SELECTOR : undefined;
   }

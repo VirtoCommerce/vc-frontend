@@ -860,11 +860,11 @@ describe("useSortableList — grab and release events", () => {
   });
 
   // An empty selector names no grip, so the whole item drags, as it always did.
-  it("drags by the whole item with an empty handle selector", async () => {
-    const { sortable } = pointer({ handle: "" });
+  it.each([[""], ["  "]])("drags by the whole item with a blank handle selector %j", async (handle) => {
+    const { sortable, list } = pointer({ handle });
     await nextTick();
 
-    expect(sortable().options.handle).toBeUndefined();
+    expect([sortable().options.handle, list.itemAttrs("a").tabindex]).toEqual([undefined, "0"]);
   });
 
   it("reports a keyboard grab ended by a pointer press", async () => {
@@ -1006,6 +1006,13 @@ describe("useSortableList — a pointer drop between lists", () => {
 
     sortable.options.onEnd({ item, from: el, to: el });
     expect(dragOver()).toBe(false);
+
+    // Nor does it touch another drag's effect afterwards.
+    const later = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
+      dataTransfer: { dropEffect: "copy" },
+    });
+    document.body.dispatchEvent(later);
+    expect(later.dataTransfer.dropEffect).toBe("copy");
   });
 
   // A page's own drop zone that refused the item, or took the drop itself, keeps its decision.
@@ -1024,12 +1031,26 @@ describe("useSortableList — a pointer drop between lists", () => {
     });
     sortable.options.onStart({ item, from: el });
 
+    // WebKit's unset value; Chrome starts at "move".
     const event = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
-      dataTransfer: { dropEffect: "move" },
+      dataTransfer: { dropEffect: "none" },
     });
     zone.dispatchEvent(event);
 
     expect([event.dataTransfer.dropEffect, event.defaultPrevented]).toEqual([effect, accept]);
+  });
+
+  // WebKit reads an unset `dropEffect` as "none"; that must not pass for a zone's refusal in the gap.
+  it("accepts the drop in the gap where nothing decided, though the engine starts at none", async () => {
+    const { el, item, sortable } = await mountedList();
+    sortable.options.onStart({ item, from: el });
+
+    const event = Object.assign(new Event("dragover", { bubbles: true, cancelable: true }), {
+      dataTransfer: { dropEffect: "none" },
+    });
+    document.body.dispatchEvent(event);
+
+    expect([event.dataTransfer.dropEffect, event.defaultPrevented]).toEqual(["move", true]);
   });
 
   it("stops accepting drops when the list unmounts mid-drag", async () => {

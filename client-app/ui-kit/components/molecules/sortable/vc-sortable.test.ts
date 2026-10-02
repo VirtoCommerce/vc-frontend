@@ -768,6 +768,34 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(spokenTexts).toContain('ui_kit.sortable.moved_list {"position":2,"total":3}');
   });
 
+  // Vue spends `.once` on the first emit even beside a plain listener; dropping that one must not mute it.
+  it("speaks for itself once a plain listener goes, after a `.once` beside it was spent", async () => {
+    const listeners = ref<Record<string, unknown>>({ onAnnounce: vi.fn(), onAnnounceOnce: vi.fn() });
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              { modelValue: ["a", "b"], ...listeners.value },
+              { item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const row = () => wrapper.find('[data-sortable-id="a"]').element;
+
+    row().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    listeners.value = { onAnnounceOnce: listeners.value.onAnnounceOnce };
+    await nextTick();
+    row().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
+    await nextTick();
+    await nextTick();
+
+    expect(liveRegion()?.textContent).toBe("ui_kit.sortable.edge");
+  });
+
   it("treats an `announce.once` listener as a listener until it has fired", async () => {
     const once = vi.fn();
     const { wrapper } = mountList({ onAnnounceOnce: once });
@@ -997,6 +1025,32 @@ describe("VcSortable — development warnings", () => {
     expect(warnings()).toEqual([]);
 
     rows.value = [{ title: "a" }];
+    await nextTick();
+    rows.value = [];
+    await nextTick();
+    rows.value = [{ title: "b" }];
+    await nextTick();
+
+    expect(warnings()).toEqual([expect.stringContaining("object items need an `itemKey` here")]);
+  });
+
+  it("warns when object items without an `itemKey` are pushed into the model in place", async () => {
+    const rows = ref<{ title: string }[]>([]);
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<{ title: string }>,
+              { modelValue: rows.value, name: "pushed", group: "pushed", onMove: vi.fn() },
+              { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+
+    rows.value.push({ title: "a" });
     await nextTick();
 
     expect(warnings()).toContainEqual(expect.stringContaining("object items need an `itemKey` here"));

@@ -177,7 +177,8 @@ function describe(signal: SortableSignalType): string {
 function onAnnounce(signal: SortableSignalType): void {
   if (hasListener("onAnnounce")) {
     emit("announce", signal);
-    if (!instance?.vnode.props?.onAnnounce) {
+    // Vue spends a `.once` handler on the first emit even beside a plain one.
+    if (instance?.vnode.props?.onAnnounceOnce) {
       spentOnce.add("onAnnounce");
     }
     return;
@@ -235,12 +236,12 @@ if (import.meta.env.DEV) {
   // Watched, not read once: object data usually arrives after mount.
   let warnedObjects = false;
   watch(
-    model,
-    (items) => {
+    () => model.value.some((item) => typeof item === "object"),
+    (hasObjects) => {
       if (warnedObjects || !(props.group || props.accepts) || props.itemKey) {
         return;
       }
-      if (items.some((item) => typeof item === "object")) {
+      if (hasObjects) {
         warnedObjects = true;
         warn("object items need an `itemKey` here: `move` and `accepts` would get generated ids you cannot map back.");
       }
