@@ -5,9 +5,13 @@
       "table_description": "返品のリスト"
     },
     "title": "返品",
+    "scope": {
+      "own": "自分の返品"
+    },
     "no_returns_message": "返品はまだありません",
     "no_results_message": "検索条件に一致する返品はありません",
     "search_placeholder": "RMA・注文・参照番号・商品で検索",
+    "search_placeholder_organization": "RMA・注文・参照番号・商品・購入者で検索",
     "search_aria": "返品を検索",
     "filters": {
       "title": "フィルター",
@@ -101,6 +105,7 @@
     "summary_section": "概要",
     "items_section": "商品",
     "order_number": "注文番号",
+    "requested_by": "申請者",
     "customer_reference": "発注参照番号",
     "customer_comment": "コメント",
     "cancel_reason": "キャンセル理由",

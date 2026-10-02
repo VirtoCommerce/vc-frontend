@@ -4,14 +4,19 @@ import { DEFAULT_SORT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
+import { useGetOrganizationReturnsQuery } from "@/modules/returns/api/graphql/queries/getOrganizationReturns";
 import { useGetReturnsQuery } from "@/modules/returns/api/graphql/queries/getReturns";
+import { RETURN_SCOPE, VIEW_ORGANIZATION_RETURNS_PERMISSION } from "@/modules/returns/constants";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { ISortInfo } from "@/core/types";
-import type { ReturnsFilterDataType } from "@/modules/returns/types";
+import type { ReturnScopeType, ReturnsFilterDataType } from "@/modules/returns/types";
 import type { LocationQueryRaw, LocationQueryValue } from "vue-router";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
+const BUYER_COLUMN = "customerName";
 
 type ListStateType = {
+  scope: ReturnScopeType;
   keyword: string;
   statuses: string[];
   startDate?: string;
@@ -24,9 +29,22 @@ export function useReturns() {
   const route = useRoute();
   const router = useRouter();
 
+  const { organization, checkPermissions } = useUser();
+
   const itemsPerPage = ref(DEFAULT_ITEMS_PER_PAGE);
 
+  // organizationReturns answers Forbidden rather than narrowing, so the tab is only offered to a contact
+  // holding the permission.
+  const canViewOrganizationReturns = computed(
+    () => !!organization.value && checkPermissions(VIEW_ORGANIZATION_RETURNS_PERMISSION),
+  );
+
   const state = computed<ListStateType>(() => ({
+    // Everyone lands on their own returns; the organization's list opens only when the link asks for it.
+    scope:
+      canViewOrganizationReturns.value && asString(route.query.scope) === RETURN_SCOPE.ORGANIZATION
+        ? RETURN_SCOPE.ORGANIZATION
+        : RETURN_SCOPE.OWN,
     keyword: asString(route.query.keyword),
     statuses: asArray(route.query.status),
     startDate: asString(route.query.startDate) || undefined,
@@ -35,6 +53,7 @@ export function useReturns() {
     page: Number.parseInt(asString(route.query.page), 10) || 1,
   }));
 
+  const scope = computed(() => state.value.scope);
   const keyword = computed(() => state.value.keyword);
   const page = computed(() => state.value.page);
   const sort = computed(() => Sort.fromString(state.value.sort));
@@ -49,22 +68,42 @@ export function useReturns() {
     () => !filter.value.statuses.length && !filter.value.startDate && !filter.value.endDate,
   );
 
-  const { loading, result, refetch } = useGetReturnsQuery(
-    computed(() => ({
-      storeId: globals.storeId,
-      cultureName: globals.cultureName,
-      first: itemsPerPage.value,
-      after: String((page.value - 1) * itemsPerPage.value),
-      sort: state.value.sort,
-      keyword: state.value.keyword || undefined,
-      statuses: state.value.statuses.length ? state.value.statuses : undefined,
-      startDate: toStartDateFilterValue(state.value.startDate),
-      endDate: toEndDateFilterValue(state.value.endDate),
-    })),
+  const listVariables = computed(() => ({
+    storeId: globals.storeId,
+    cultureName: globals.cultureName,
+    first: itemsPerPage.value,
+    after: String((page.value - 1) * itemsPerPage.value),
+    sort: state.value.sort,
+    keyword: state.value.keyword || undefined,
+    statuses: state.value.statuses.length ? state.value.statuses : undefined,
+    startDate: toStartDateFilterValue(state.value.startDate),
+    endDate: toEndDateFilterValue(state.value.endDate),
+  }));
+
+  const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
+
+  const ownReturnsQuery = useGetReturnsQuery(
+    listVariables,
+    computed(() => !isOrganizationScope.value),
   );
 
-  const returns = computed(() => result.value?.returns?.items ?? []);
-  const totalCount = computed(() => result.value?.returns?.totalCount ?? 0);
+  const organizationReturnsQuery = useGetOrganizationReturnsQuery(
+    computed(() => ({ ...listVariables.value, organizationId: organization.value?.id ?? "" })),
+    isOrganizationScope,
+  );
+
+  const loading = computed(() =>
+    isOrganizationScope.value ? organizationReturnsQuery.loading.value : ownReturnsQuery.loading.value,
+  );
+
+  const connection = computed(() =>
+    isOrganizationScope.value
+      ? organizationReturnsQuery.result.value?.organizationReturns
+      : ownReturnsQuery.result.value?.returns,
+  );
+
+  const returns = computed(() => connection.value?.items ?? []);
+  const totalCount = computed(() => connection.value?.totalCount ?? 0);
   const pages = computed(() => Math.ceil(totalCount.value / itemsPerPage.value));
 
   // Narrowing a filter can leave the URL pointing past the end of the shorter list.
@@ -73,6 +112,14 @@ export function useReturns() {
       write({ page: value });
     }
   });
+
+  function applyScope(value: ReturnScopeType): void {
+    // The buyer column is only in the organization's list, so a sort by it does not follow into the own one.
+    const nextSort =
+      value === RETURN_SCOPE.OWN && sort.value.column === BUYER_COLUMN ? DEFAULT_SORT.toString() : state.value.sort;
+
+    write({ scope: value, sort: nextSort, page: 1 });
+  }
 
   function applyKeyword(value?: string): void {
     write({ keyword: value?.trim() ?? "", page: 1 });
@@ -100,6 +147,7 @@ export function useReturns() {
     const next = { ...state.value, ...patch };
     const query: LocationQueryRaw = { ...route.query };
 
+    put(query, "scope", next.scope === RETURN_SCOPE.OWN ? "" : next.scope);
     put(query, "keyword", next.keyword);
     put(query, "status", next.statuses);
     put(query, "startDate", next.startDate);
@@ -115,18 +163,21 @@ export function useReturns() {
     returns,
     totalCount,
     itemsPerPage,
+    canViewOrganizationReturns,
+    scope,
+    isOrganizationScope,
     page,
     pages,
     sort,
     keyword,
     filter,
     isFilterEmpty,
+    applyScope,
     applyKeyword,
     applyFilter,
     applySorting,
     changePage,
     resetFilters,
-    refetch,
   };
 }
 
