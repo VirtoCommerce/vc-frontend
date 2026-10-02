@@ -87,7 +87,7 @@
             </ol>
 
             <ol v-else-if="topMode" class="activities__top-list">
-              <li v-for="(item, index) in topViewItems" :key="item.productId" class="activities__top-row">
+              <li v-for="(item, index) in topViewItems" :key="item.sku" class="activities__top-row">
                 <span class="activities__top-rank">{{ index + 1 }}</span>
 
                 <!-- Only a row the backend resolved to a real product carries a linkable id; an
@@ -227,8 +227,20 @@ watch(category, () => {
   modeChip.value = undefined;
 });
 
+// A customer switch reuses this instance (same route, new query), so it starts over like a fresh open.
+watch(
+  () => props.organizationId,
+  () => {
+    category.value = undefined;
+    modeChip.value = undefined;
+    page.value = 1;
+  },
+  { flush: "sync" },
+);
+
 // The rows of the selected tab, and nothing else: without categoryCounts selected the backend reads
 // only the category being shown, so a database-backed tab (Orders, Customers) never waits on Google.
+// Paused in Top mode, where the ranked list replaces it and a period change would read GA for nothing.
 const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepActivities({
   organizationId: () => props.organizationId,
   categories: () => (category.value ? [category.value] : undefined),
@@ -237,6 +249,7 @@ const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepA
   take: ACTIVITY_PAGE_SIZE,
   skip: () => (page.value - 1) * ACTIVITY_PAGE_SIZE,
   withCategoryCounts: false,
+  enabled: () => !topMode.value,
 });
 
 // The badges, in their own request: counting every category is the slow half, and it does not change
@@ -246,6 +259,7 @@ const {
   categoryCounts,
   totalCount: countsTotal,
   loading: countsLoading,
+  error: countsError,
   analyticsUnavailable: countsAnalyticsUnavailable,
 } = useSalesRepActivities({
   organizationId: () => props.organizationId,
@@ -266,16 +280,31 @@ const allCount = computed(() => countsTotal.value);
 // keepPreviousResult holds the outgoing response during a refetch, so the badges keep their
 // last-known figures while the period changes under them. Only the very first load has nothing to
 // hold: the tabs stay up without figures — a premature "(0)" on every tab reads as a real count,
-// then jumps.
-const countsPending = computed(() => countsLoading.value && !categoryCounts.value.length);
+// then jumps. A customer switch is a first load too: the held figures are the previous customer's.
+const countsFor = ref<string>();
+watch(
+  countsLoading,
+  (isLoading) => {
+    if (!isLoading) {
+      countsFor.value = props.organizationId;
+    }
+  },
+  { immediate: true },
+);
+const countsPending = computed(
+  () => (countsLoading.value && !categoryCounts.value.length) || countsFor.value !== props.organizationId,
+);
+const countsFailed = computed(() => Boolean(countsError.value));
 
 // A tracked tab carries an en dash rather than a figure when analytics did not answer: the badges sit in
 // the tab row, away from the empty view's wording, so a literal “(0)” there is read as “they searched
 // nothing” by a rep who is looking at another tab. Orders and Customers come from the database and keep
-// their counts. “All” keeps its figure too — it still holds real rows, though it undercounts.
+// their counts. “All” keeps its figure too — it still holds real rows, though it undercounts. A failed
+// counts request dashes every tab, “All” included: its zeros, or the previous period's figures held by
+// keepPreviousResult, are not measurements of this one.
 const UNMEASURED_BADGE = "–";
 const badgeFor = (name: string) =>
-  countsAnalyticsUnavailable.value && TRACKED_ACTIVITY_CATEGORIES.has(name)
+  countsFailed.value || (countsAnalyticsUnavailable.value && TRACKED_ACTIVITY_CATEGORIES.has(name))
     ? UNMEASURED_BADGE
     : formatStatCount(countOf(name));
 
@@ -288,10 +317,10 @@ const categoryRules = computed<SalesRepRuleType[]>(() =>
   }),
 );
 
+const allBadge = computed(() => (countsFailed.value ? UNMEASURED_BADGE : formatStatCount(allCount.value)));
+
 const allTabLabel = computed(() =>
-  countsPending.value
-    ? t("sales_rep.activity.tabs.all")
-    : `${t("sales_rep.activity.tabs.all")} (${formatStatCount(allCount.value)})`,
+  countsPending.value ? t("sales_rep.activity.tabs.all") : `${t("sales_rep.activity.tabs.all")} (${allBadge.value})`,
 );
 
 const failed = computed(() => Boolean(error.value));

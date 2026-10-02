@@ -135,7 +135,7 @@ describe("CustomerActivity summary states", () => {
 
   // Unconfigured analytics is a distinct state, not an error and not fake zeros: the GA-sourced rows
   // give way to the note while Created on (a DB fact) keeps rendering.
-  it("shows created-on plus the not-configured note when analytics is off", () => {
+  it("shows created-on plus the unavailable note when analytics is unavailable", () => {
     state.summary.value = summaryFixture({
       isAnalyticsAvailable: false,
       lastWebLogin: undefined,
@@ -148,6 +148,8 @@ describe("CustomerActivity summary states", () => {
 
     expect(wrapper.findAll(".customer-activity__row")).toHaveLength(1);
     expect(wrapper.find(".customer-activity__note").exists()).toBe(true);
+    // A <dl> may hold only dt/dd groups, and the note is neither (axe definition-list).
+    expect(wrapper.find("dl .customer-activity__note").exists()).toBe(false);
   });
 
   // By product id, never a slug: /product/{id} always resolves, whereas the tracked SEO segment alone

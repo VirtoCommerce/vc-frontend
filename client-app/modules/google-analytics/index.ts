@@ -39,6 +39,12 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     window.dataLayer.push(arguments);
   };
 
+  const usesDataLayerVariables = Boolean(gtmContainerId);
+
+  // Before GTM's `gtm.js` entry and the `config` call below: the data layer is processed in order, so the
+  // first page_view sees only what was pushed ahead of it — and GA never backfills an untagged event.
+  applyUserProperties(usesDataLayerVariables);
+
   // Initialize GTM if GTMContainerId is provided (loaded before GA4)
   if (gtmContainerId) {
     window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -46,12 +52,6 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     // Inject GTM head script
     useScriptTag(`https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`);
   }
-
-  const usesDataLayerVariables = Boolean(gtmContainerId);
-
-  // Before the `config` call below, not after: properties set afterwards miss the initial page_view, and
-  // GA never backfills an event that went out untagged.
-  applyUserProperties(usesDataLayerVariables);
 
   // Login, organization switch and impersonation all end in a full navigation, so this looks redundant —
   // but `setUser` also replaces the user in place when another tab signs in (userReloadEvent -> fetchUser),

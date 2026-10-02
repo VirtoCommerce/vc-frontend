@@ -170,6 +170,19 @@ describe("useSalesRepCustomer", () => {
     expect(notFound.value).toBe(false);
   });
 
+  // Apollo's stop() keeps `error`, and this mock does the same. Unscoped, a failure outlived the id that
+  // caused it: the Activities page stayed on its error view after the rep went back to their own feed.
+  it("stops reporting a failure once the id is cleared", () => {
+    const organizationId = ref("org-1");
+    const { failed } = useSalesRepCustomer(() => organizationId.value);
+
+    queryMock.error.value = new Error("Failed to fetch");
+    expect(failed.value).toBe(true);
+
+    organizationId.value = "";
+    expect(failed.value).toBe(false);
+  });
+
   it("passes loading through and registers an error handler", () => {
     const { loading } = useSalesRepCustomer("org-1");
 

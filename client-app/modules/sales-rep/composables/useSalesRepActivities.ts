@@ -22,6 +22,8 @@ type UseSalesRepActivitiesOptionsType = {
   // Selecting the per-category counts is what makes the backend read EVERY category, tracked ones
   // included — so a caller that renders no badges leaves them out and waits only for its own rows.
   withCategoryCounts?: boolean;
+  // Pause the read while another view replaces these rows.
+  enabled?: boolean | Ref<boolean> | (() => boolean);
 };
 
 // Owns the salesRepActivities op: a merged, newest-first feed of order/customer events (exact) and
@@ -42,9 +44,13 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
     withCategoryCounts: options.withCategoryCounts ?? true,
   }));
 
+  // A computed, not the raw option: Apollo unwraps a ref inside its options but reads a getter as truthy.
+  const enabled = computed(() => toValue(options.enabled) ?? true);
+
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepActivitiesDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,
+    enabled,
   });
 
   onError((err) => {

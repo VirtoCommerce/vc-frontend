@@ -2,7 +2,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerBrowsedProductsDocument } from "../api/graphql/types";
-import { HUB_FETCH_POLICY, INSIGHTS_DEFAULT_ROWS } from "../constants";
+import { INSIGHTS_DEFAULT_ROWS } from "../constants";
 import { latestDate } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepBrowsedProductRowType } from "../types/insights";
@@ -33,8 +33,9 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
     take: toValue(options.take) ?? INSIGHTS_DEFAULT_ROWS,
   }));
 
+  // Kept out of the cache — see useSalesRepSearchHistory.
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerBrowsedProductsDocument, variables, {
-    fetchPolicy: HUB_FETCH_POLICY,
+    fetchPolicy: "no-cache",
     enabled: options.enabled ?? true,
   });
 
@@ -50,22 +51,17 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
 
   const items = computed<SalesRepBrowsedProductRowType[]>(() =>
     (payload.value?.browsedProducts ?? []).map((row) => ({
-      productId: row.productId,
+      productId: row.productId ?? "",
       name: row.name ?? "",
       sku: row.sku ?? "",
       imageUrl: row.imageUrl ?? "",
-      // browsedProducts.productId is non-null by contract: it falls back to the tracked code when the
-      // code matches no product. Such a row must not deep-link — /product/<code> 404s — and the code
-      // coming back unchanged is the only thing that distinguishes it from a resolved product id.
-      isResolved: Boolean(row.productId) && row.productId !== row.sku,
+      // No productId for a tracked code that matches no product: such a row must not deep-link.
+      isResolved: Boolean(row.productId),
       viewCount: row.viewCount,
       lastViewedDate: row.lastViewedDate as string | undefined,
     })),
   );
 
-  // Derived from the rows this op returned, NOT read from the payload's own `dataAsOf` — see the
-  // matching note in useSalesRepSearchHistory: the two ops share one normalized cache entry, and an
-  // argument-less `dataAsOf` in it would be whatever the other one wrote last.
   const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastViewedDate)));
 
   return { items, unavailable, dataAsOf, loading, error };

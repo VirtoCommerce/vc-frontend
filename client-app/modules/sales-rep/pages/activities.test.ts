@@ -61,13 +61,17 @@ const counts = await vi.hoisted(async () => {
     // The badges read this one: the two requests can disagree, and the tab row follows the counts.
     analyticsUnavailable: ref(false),
     loading: ref(false),
+    // Its own, not the rows request's: a failed list must not dash the badges, nor the reverse.
+    error: ref<Error | null>(null),
   };
 });
 
 type ActivityOptionsType = {
   take?: number;
+  skip?: number | (() => number);
   withCategoryCounts?: boolean;
   periodFrom?: Ref<string | undefined> | (() => string | undefined);
+  enabled?: () => boolean;
 };
 
 const activityCalls = vi.hoisted(() => ({ options: [] as ActivityOptionsType[] }));
@@ -90,7 +94,7 @@ vi.mock("../composables/useSalesRepActivities", () => ({
           totalCount: counts.totalCount,
           analyticsUnavailable: counts.analyticsUnavailable,
           loading: counts.loading,
-          error: state.error,
+          error: counts.error,
         };
   },
 }));
@@ -266,6 +270,7 @@ beforeEach(() => {
   counts.totalCount.value = 0;
   counts.analyticsUnavailable.value = false;
   counts.loading.value = false;
+  counts.error.value = null;
   customerState.loading.value = true;
   customerState.failed.value = false;
   state.loading.value = false;
@@ -494,6 +499,74 @@ describe("Activities page", () => {
     expect(rules[2].label).toContain("(–)"); // searches
     expect(rules[3].label).toContain("(–)"); // productViews
     expect(rules[4].label).toContain("(–)"); // logins
+  });
+
+  // Failed, the counts request has a figure for no tab — "(0)" on a first load, or the previous period's
+  // counts held by keepPreviousResult, would both read as measurements.
+  it("dashes every badge when the counts request failed", () => {
+    counts.categoryCounts.value = [{ category: "orders", count: 7 }];
+    counts.totalCount.value = 7;
+    counts.error.value = new Error("boom");
+
+    const wrapper = createWrapper();
+    const chips = findChips(wrapper)[0];
+    const rules = chips.props("rules") as SalesRepRuleType[];
+
+    expect(rules[0].label).toContain("(–)"); // orders: database-sourced, but this request never brought it
+    expect(chips.props("allLabel")).toContain("(–)");
+  });
+
+  // Same route, new query: the instance is reused, so the previous customer's page, tab and mode
+  // carried over.
+  it("starts over when the customer changes", async () => {
+    state.items.value = [{ category: "searches", type: "search" }];
+    state.totalCount.value = ACTIVITY_PAGE_SIZE * 5;
+    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
+    const rows = activityCalls.options.find((options) => options.withCategoryCounts === false);
+
+    await openTab(wrapper, "searches");
+    wrapper.findComponent({ name: "VcPaginationStub" }).vm.$emit("update:page", 4);
+    await nextTick();
+    await switchToTop(wrapper);
+    expect(toValue(rows?.skip)).toBe(3 * ACTIVITY_PAGE_SIZE);
+
+    await wrapper.setProps({ organizationId: "org-2" });
+
+    expect(findChips(wrapper)[0].props("modelValue")).toBeUndefined();
+    expect(toValue(rows?.skip)).toBe(0);
+    expect(toValue(rows?.enabled)).toBe(true); // out of Top mode
+  });
+
+  // keepPreviousResult held the previous customer's counts under the new heading until the request for
+  // the new one answered.
+  it("withholds the previous customer's counts until the new ones land", async () => {
+    counts.categoryCounts.value = [{ category: "orders", count: 7 }];
+    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
+    const ordersLabel = () => (findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label;
+
+    expect(ordersLabel()).toContain("(7)");
+
+    await wrapper.setProps({ organizationId: "org-2" });
+    expect(ordersLabel()).toBe("sales_rep.activity.tabs.orders");
+
+    counts.loading.value = true;
+    await nextTick();
+    counts.loading.value = false;
+    await nextTick();
+
+    expect(ordersLabel()).toContain("(7)");
+  });
+
+  // In Top mode the ranked list replaces the feed, so the feed's GA-backed request has nobody to answer.
+  it("pauses the feed request in Top mode", async () => {
+    const wrapper = createWrapper();
+    const rows = activityCalls.options.find((options) => options.withCategoryCounts === false);
+
+    await openTab(wrapper, "searches");
+    expect(toValue(rows?.enabled)).toBe(true);
+
+    await switchToTop(wrapper);
+    expect(toValue(rows?.enabled)).toBe(false);
   });
 
   // A period-scoped feed names the tracked window; clearing the chip widens it back to lifetime,

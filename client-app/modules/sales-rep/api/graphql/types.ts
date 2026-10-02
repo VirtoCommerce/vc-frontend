@@ -1938,8 +1938,8 @@ export type SalesRepBrowsedProduct = {
   lastViewedDate?: Maybe<Scalars['DateTime']['output']>;
   /** Product name (resolved from the catalog, falling back to the tracked name). */
   name?: Maybe<Scalars['String']['output']>;
-  /** Resolved product id, falling back to the tracked product code when the code no longer matches a product. */
-  productId: Scalars['String']['output'];
+  /** Resolved product id (null when the code no longer matches a product). */
+  productId?: Maybe<Scalars['String']['output']>;
   /** Product code (SKU) as tracked by analytics. */
   sku?: Maybe<Scalars['String']['output']>;
   /** Number of tracked views of the product in the period. */
@@ -2335,7 +2335,7 @@ export type SalesRepStatisticsPeriodInput = {
 };
 
 export type SalesRepTask = {
-  /** True when finished as done; false or null on a cancelled task. Combine with isActive and dueDate to render the status: active and due before the start of the viewer's today = overdue, active otherwise = upcoming, completed = done. */
+  /** True when finished as done. A reopened task also reports false, so read it with isActive: inactive and not true = cancelled. */
   completed?: Maybe<Scalars['Boolean']['output']>;
   /** When the task was created. */
   createdDate: Scalars['DateTime']['output'];
@@ -2353,7 +2353,7 @@ export type SalesRepTask = {
   name: Scalars['String']['output'];
   /** Priority name: Lowest, Low, Normal, High or Highest. */
   priority?: Maybe<Scalars['String']['output']>;
-  /** Task type - one of the values configured in the TaskManagement.TaskTypes settings dictionary. */
+  /** Task type - free text, typically one of the values salesRepTaskTypes offers. */
   type?: Maybe<Scalars['String']['output']>;
 };
 
@@ -2705,7 +2705,7 @@ export type SalesRepCustomerBrowsedProductsQueryVariables = Exact<{
 }>;
 
 
-export type SalesRepCustomerBrowsedProductsQuery = { salesRepCustomerInsights?: { isAnalyticsAvailable: boolean, dataAsOf?: any, browsedProducts: Array<{ productId: string, name?: string, sku?: string, imageUrl?: string, viewCount: number, lastViewedDate?: any }> } };
+export type SalesRepCustomerBrowsedProductsQuery = { salesRepCustomerInsights?: { isAnalyticsAvailable: boolean, dataAsOf?: any, browsedProducts: Array<{ productId?: string, name?: string, sku?: string, imageUrl?: string, viewCount: number, lastViewedDate?: any }> } };
 
 export type SalesRepCustomerSearchTermsQueryVariables = Exact<{
   organizationId?: InputMaybe<Scalars['String']['input']>;

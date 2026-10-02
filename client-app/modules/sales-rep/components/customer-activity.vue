@@ -29,96 +29,99 @@
           <div v-for="index in skeletonRows" :key="index" class="customer-activity__skeleton" />
         </div>
 
-        <dl v-else-if="summary" class="customer-activity__list">
-          <div v-if="summary.createdOn" class="customer-activity__row">
-            <dt class="customer-activity__label">
-              <VcIcon class="customer-activity__icon" name="calendar" :size="15" />
-              {{ t("sales_rep.activity.customer.created_on") }}
-            </dt>
+        <template v-else-if="summary">
+          <dl class="customer-activity__list">
+            <div v-if="summary.createdOn" class="customer-activity__row">
+              <dt class="customer-activity__label">
+                <VcIcon class="customer-activity__icon" name="calendar" :size="15" />
+                {{ t("sales_rep.activity.customer.created_on") }}
+              </dt>
 
-            <dd class="customer-activity__value">{{ $d(new Date(summary.createdOn)) }}</dd>
-          </div>
+              <dd class="customer-activity__value">{{ $d(new Date(summary.createdOn)) }}</dd>
+            </div>
+
+            <template v-if="summary.isAnalyticsAvailable">
+              <div class="customer-activity__row">
+                <dt class="customer-activity__label">
+                  <VcIcon class="customer-activity__icon" name="log-in" :size="15" />
+                  {{ t("sales_rep.activity.customer.last_web_login") }}
+                  <TrackedMetricHint />
+                </dt>
+
+                <dd class="customer-activity__value">
+                  {{ summary.lastWebLogin ? $d(new Date(summary.lastWebLogin)) : "—" }}
+                </dd>
+              </div>
+
+              <div class="customer-activity__row">
+                <dt class="customer-activity__label">
+                  <VcIcon class="customer-activity__icon" name="activity" :size="15" />
+                  {{ t("sales_rep.activity.customer.visits") }}
+                  <TrackedMetricHint />
+                </dt>
+
+                <dd class="customer-activity__value">{{ formatStatCount(summary.visitsCount) }}</dd>
+              </div>
+
+              <div class="customer-activity__row">
+                <dt class="customer-activity__label">
+                  <VcIcon class="customer-activity__icon" name="search" :size="15" />
+                  {{ t("sales_rep.activity.customer.last_search_term") }}
+                  <TrackedMetricHint />
+                </dt>
+
+                <dd class="customer-activity__value">
+                  <VcLink
+                    v-if="summary.lastSearchTerm"
+                    class="customer-activity__link"
+                    :to="searchRoute"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    “{{ summary.lastSearchTerm }}”
+                  </VcLink>
+
+                  <template v-else>—</template>
+                </dd>
+              </div>
+
+              <div class="customer-activity__row">
+                <dt class="customer-activity__label">
+                  <VcIcon class="customer-activity__icon" name="eye" :size="15" />
+                  {{ t("sales_rep.activity.customer.last_viewed_product") }}
+                  <TrackedMetricHint />
+                </dt>
+
+                <dd class="customer-activity__value">
+                  <template v-if="summary.lastViewedProduct">
+                    <VcLink
+                      v-if="productRoute"
+                      class="customer-activity__link"
+                      :to="productRoute"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {{ productLabel }}
+                    </VcLink>
+
+                    <template v-else>{{ productLabel }}</template>
+                  </template>
+
+                  <template v-else>—</template>
+                </dd>
+              </div>
+            </template>
+          </dl>
 
           <!-- Distinct unavailable state for the GA-sourced rows: untracked or unreadable activity must
                not read as "this customer never logs in / searches". Created on still shows — it comes
-               from the DB, so it survives a reporting outage. -->
+               from the DB, so it survives a reporting outage. Outside the <dl>,
+               which may hold only dt/dd groups. -->
           <div v-if="!summary.isAnalyticsAvailable" class="customer-activity__note">
             <VcIcon class="customer-activity__icon" name="circle-alert" :size="15" />
             {{ t("sales_rep.activity.customer.analytics_unavailable") }}
           </div>
-
-          <template v-else>
-            <div class="customer-activity__row">
-              <dt class="customer-activity__label">
-                <VcIcon class="customer-activity__icon" name="log-in" :size="15" />
-                {{ t("sales_rep.activity.customer.last_web_login") }}
-                <TrackedMetricHint />
-              </dt>
-
-              <dd class="customer-activity__value">
-                {{ summary.lastWebLogin ? $d(new Date(summary.lastWebLogin)) : "—" }}
-              </dd>
-            </div>
-
-            <div class="customer-activity__row">
-              <dt class="customer-activity__label">
-                <VcIcon class="customer-activity__icon" name="activity" :size="15" />
-                {{ t("sales_rep.activity.customer.visits") }}
-                <TrackedMetricHint />
-              </dt>
-
-              <dd class="customer-activity__value">{{ formatStatCount(summary.visitsCount) }}</dd>
-            </div>
-
-            <div class="customer-activity__row">
-              <dt class="customer-activity__label">
-                <VcIcon class="customer-activity__icon" name="search" :size="15" />
-                {{ t("sales_rep.activity.customer.last_search_term") }}
-                <TrackedMetricHint />
-              </dt>
-
-              <dd class="customer-activity__value">
-                <VcLink
-                  v-if="summary.lastSearchTerm"
-                  class="customer-activity__link"
-                  :to="searchRoute"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  “{{ summary.lastSearchTerm }}”
-                </VcLink>
-
-                <template v-else>—</template>
-              </dd>
-            </div>
-
-            <div class="customer-activity__row">
-              <dt class="customer-activity__label">
-                <VcIcon class="customer-activity__icon" name="eye" :size="15" />
-                {{ t("sales_rep.activity.customer.last_viewed_product") }}
-                <TrackedMetricHint />
-              </dt>
-
-              <dd class="customer-activity__value">
-                <template v-if="summary.lastViewedProduct">
-                  <VcLink
-                    v-if="productRoute"
-                    class="customer-activity__link"
-                    :to="productRoute"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ productLabel }}
-                  </VcLink>
-
-                  <template v-else>{{ productLabel }}</template>
-                </template>
-
-                <template v-else>—</template>
-              </dd>
-            </div>
-          </template>
-        </dl>
+        </template>
       </div>
 
       <!-- Mounted on first visit only, so opening the profile fires one GA-backed query, not three —
@@ -251,6 +254,11 @@ const productLabel = computed(() => {
 
   &__note {
     @apply flex items-start gap-2 py-3 text-sm text-neutral-500;
+  }
+
+  // Outside the list now, so the last row above no longer draws this divider itself.
+  &__list + &__note {
+    @apply border-t border-neutral-100;
   }
 
   &__all-link {

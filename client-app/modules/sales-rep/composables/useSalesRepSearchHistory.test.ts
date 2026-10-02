@@ -38,11 +38,17 @@ describe("useSalesRepSearchHistory", () => {
     expect(unavailable.value).toBe(false);
   });
 
-  // The payload's own dataAsOf is deliberately NOT read: both insights ops select the same root field
-  // with the same arguments, so Apollo keeps one normalized entry and an argument-less dataAsOf in it
-  // ends up whichever op answered last. Here the payload claims a date the rows do not support, which
-  // is exactly the shape of that bug — the browsed-products op having written it.
-  it("dates the list from its own rows, not from the shared payload field", () => {
+  // The shared Query.salesRepCustomerInsights entry let the other insights op answer for this one —
+  // its isAnalyticsAvailable among them — and each write wiped this op's rows.
+  it("keeps the op out of the shared cache", () => {
+    useSalesRepSearchHistory({ organizationId: "org-1" });
+
+    const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
+    const options = call[2] as { fetchPolicy?: string } | undefined;
+    expect(options?.fetchPolicy).toBe("no-cache");
+  });
+
+  it("dates the list from its own rows", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
         isAnalyticsAvailable: true,

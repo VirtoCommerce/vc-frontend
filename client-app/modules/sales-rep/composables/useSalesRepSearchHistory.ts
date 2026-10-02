@@ -2,7 +2,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerSearchTermsDocument } from "../api/graphql/types";
-import { HUB_FETCH_POLICY, INSIGHTS_DEFAULT_ROWS } from "../constants";
+import { INSIGHTS_DEFAULT_ROWS } from "../constants";
 import { latestDate } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepSearchTermRowType } from "../types/insights";
@@ -33,8 +33,11 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
     take: toValue(options.take) ?? INSIGHTS_DEFAULT_ROWS,
   }));
 
+  // Kept out of the cache. Both insights ops write the one Query.salesRepCustomerInsights entry — same field,
+  // same arguments — and its isAnalyticsAvailable answers for whichever collection that op selected: cached,
+  // the later op would answer for both, and each write replaced the entry and wiped the other op's rows.
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerSearchTermsDocument, variables, {
-    fetchPolicy: HUB_FETCH_POLICY,
+    fetchPolicy: "no-cache",
     enabled: options.enabled ?? true,
   });
 
@@ -56,12 +59,6 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
     })),
   );
 
-  // Derived from the rows this op returned, NOT read from the payload's own `dataAsOf`. Both insights
-  // ops select the same root field with the same arguments, so Apollo normalizes them into one cache
-  // entry — and `dataAsOf`, which takes no arguments, is a single key in it. Whichever of the two
-  // responses landed last would then date BOTH surfaces, including the one whose own rows carry no
-  // dates at all (sort "count" returns none). The backend defines the field as the latest date across
-  // the SELECTED collections, so for a single-collection op this is that same value, computed apart.
   const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastSearchedDate)));
 
   return { items, unavailable, dataAsOf, loading, error };

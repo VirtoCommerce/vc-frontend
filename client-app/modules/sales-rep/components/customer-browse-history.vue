@@ -42,7 +42,7 @@
           </template>
 
           <template v-else>
-            <li v-for="item in items" :key="item.productId" class="customer-browse-history__row">
+            <li v-for="item in items" :key="item.sku" class="customer-browse-history__row">
               <span class="customer-browse-history__thumb">
                 <VcImage
                   v-if="item.imageUrl"
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
 import { useInsightsCaveat } from "../composables/useInsightsCaveat";
@@ -114,8 +114,18 @@ const sortChipRules = computed<SalesRepRuleType[]>(() => [
 ]);
 const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_DATE);
 
-// Absent means visible: a panel rendered on its own is not gated.
-const isVisible = computed(() => props.active !== false);
+// Subscribes on first show and stays subscribed: the parent keeps a visited view mounted precisely so that
+// returning to it refires nothing, and stopping on hide is what made it refire. Absent means visible.
+const visited = ref(false);
+watch(
+  () => props.active,
+  (active) => {
+    if (active !== false) {
+      visited.value = true;
+    }
+  },
+  { immediate: true },
+);
 
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
@@ -125,7 +135,7 @@ const { items, unavailable, dataAsOf, loading, error } = useSalesRepBrowseHistor
   periodFrom,
   periodTo,
   take: INSIGHTS_DEFAULT_ROWS,
-  enabled: isVisible,
+  enabled: visited,
 });
 
 const failed = computed(() => Boolean(error.value));

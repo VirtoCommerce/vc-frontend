@@ -113,11 +113,15 @@ describe("CustomerBrowseHistory states", () => {
     expect(unresolved.text()).toContain("Mystery");
   });
 
-  it("does not query while another sub-view is showing", () => {
-    createWrapper({ props: { organizationId: "org-1", active: false } });
+  // Same contract as the searches panel: wait while hidden, then stay subscribed once shown.
+  it("queries from first show and stays subscribed after", async () => {
+    const wrapper = createWrapper({ props: { organizationId: "org-1", active: false } });
     expect(toValue(browseOptions.last?.enabled)).toBe(false);
 
-    createWrapper({ props: { organizationId: "org-1", active: true } });
+    await wrapper.setProps({ active: true });
+    expect(toValue(browseOptions.last?.enabled)).toBe(true);
+
+    await wrapper.setProps({ active: false });
     expect(toValue(browseOptions.last?.enabled)).toBe(true);
   });
 });

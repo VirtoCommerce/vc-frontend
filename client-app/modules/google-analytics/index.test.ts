@@ -197,6 +197,21 @@ describe("google-analytics init", () => {
     expect(pushed?.[USER_PROPERTY_NAMES.organizationId]).toBe("org-1");
   });
 
+  // GTM walks the data layer in order, and a tag firing on gtm.js reads only what came before it — so an
+  // identity pushed after it left every landing page_view untagged.
+  it("pushes the identity ahead of GTM's gtm.js entry", async () => {
+    hoisted.settings = { trackId: "", isEnabled: true, gtmContainerId: "GTM-TEST" };
+
+    await initInScope();
+
+    const entries = window.dataLayer as Record<string, string>[];
+    const identity = entries.findIndex((entry) => entry?.[USER_PROPERTY_NAMES.contactId] === "contact-1");
+    const gtmJs = entries.findIndex((entry) => entry?.event === "gtm.js");
+
+    expect(identity).toBeGreaterThanOrEqual(0);
+    expect(gtmJs).toBeGreaterThan(identity);
+  });
+
   it("does not push to the data layer when no GTM container is configured", async () => {
     await initInScope();
 

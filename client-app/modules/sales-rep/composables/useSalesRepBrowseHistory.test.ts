@@ -23,8 +23,6 @@ beforeEach(() => {
 });
 
 describe("useSalesRepBrowseHistory", () => {
-  // productId is non-null by contract: it falls back to the tracked code, so an unresolved row is the
-  // one whose productId still equals its sku — that, not a missing id, is what clears isResolved.
   it("maps rows, blanking absent display fields and flagging the unresolved code", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
@@ -32,8 +30,8 @@ describe("useSalesRepBrowseHistory", () => {
         dataAsOf: "2026-08-20T00:00:00Z",
         browsedProducts: [
           { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "img", viewCount: 4 },
-          // GA row the backend could not resolve: productId came back as the tracked code itself.
-          { productId: "CODE-2", sku: "CODE-2", viewCount: 1 },
+          // GA row the backend could not resolve: no productId.
+          { sku: "CODE-2", viewCount: 1 },
         ],
       },
     } satisfies SalesRepCustomerBrowsedProductsQuery;
@@ -51,7 +49,7 @@ describe("useSalesRepBrowseHistory", () => {
         lastViewedDate: undefined,
       },
       {
-        productId: "CODE-2",
+        productId: "",
         name: "",
         sku: "CODE-2",
         imageUrl: "",
@@ -60,6 +58,21 @@ describe("useSalesRepBrowseHistory", () => {
         lastViewedDate: undefined,
       },
     ]);
+  });
+
+  // In a catalog whose product ids equal their codes, the old `productId !== sku` test read every row as
+  // unresolved, so none of them ever got a link.
+  it("keeps a resolved product resolved when its id equals its code", () => {
+    queryMock.result.value = {
+      salesRepCustomerInsights: {
+        isAnalyticsAvailable: true,
+        browsedProducts: [{ productId: "SKU-1", sku: "SKU-1", viewCount: 2 }],
+      },
+    } satisfies SalesRepCustomerBrowsedProductsQuery;
+
+    const { items } = useSalesRepBrowseHistory({ organizationId: "org-1" });
+
+    expect(items.value[0].isResolved).toBe(true);
   });
 
   it("flags unavailable from the backend flag, but never before a result arrives", () => {
@@ -84,10 +97,15 @@ describe("useSalesRepBrowseHistory", () => {
     expect(unavailable.value).toBe(false);
   });
 
-  // Same reason as in useSalesRepSearchHistory: the two insights ops share one normalized cache entry,
-  // so the payload's argument-less dataAsOf is whichever of them answered last. The list dates itself
-  // from the rows it actually shows.
-  it("dates the list from its own rows, not from the shared payload field", () => {
+  it("keeps the op out of the shared cache", () => {
+    useSalesRepBrowseHistory({ organizationId: "org-1" });
+
+    const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
+    const options = call[2] as { fetchPolicy?: string } | undefined;
+    expect(options?.fetchPolicy).toBe("no-cache");
+  });
+
+  it("dates the list from its own rows", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
         isAnalyticsAvailable: true,

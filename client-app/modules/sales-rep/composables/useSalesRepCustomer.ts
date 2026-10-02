@@ -56,7 +56,8 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, op
   });
 
   // A failed read says nothing about whether the rep serves this customer, so the page words it differently.
-  const failed = computed(() => Boolean(error.value));
+  // Scoped like notFound: Apollo's stop() keeps the last error, so a cleared id would otherwise stay failed.
+  const failed = computed(() => enabled.value && Boolean(error.value));
 
   // Not served / unknown settle to the not-found view once loading finishes.
   const notFound = computed(
