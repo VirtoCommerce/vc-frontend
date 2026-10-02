@@ -88,7 +88,7 @@ const settings = item ? useBlockSettings() : undefined;
 provideBlockSettings(undefined);
 
 // Null outside edit mode, and for stat cards, which drag whole.
-const handleAttrs = computed(() => item?.handleAttrs.value ?? null);
+const handleAttrs = computed(() => item?.handleAttrs ?? null);
 
 // Only while editing: outside it the header is the widget's own, and a row cap is not something to
 // change in passing.

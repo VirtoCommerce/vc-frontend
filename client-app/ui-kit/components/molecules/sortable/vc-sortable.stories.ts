@@ -13,13 +13,18 @@ const meta = {
       options: ["vertical", "horizontal"],
       table: { type: { summary: "vertical | horizontal" } },
     },
-    enabled: { control: "boolean" },
+    disabled: { control: "boolean" },
+    handle: { control: false, table: { type: { summary: "boolean | string" } } },
+    group: { control: "text" },
+    name: { control: "text" },
+    tag: { control: "text" },
+    itemKey: { control: false, table: { type: { summary: "(item: T) => string" } } },
   },
   parameters: {
     docs: {
       description: {
         component:
-          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The drag states retheme through the `--vc-sortable-*` tokens.",
+          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The list announces each step in its own localized `aria-live` region; listen to `announce` to take the wording over. `grab` and `release` report a grab by pointer or keyboard. The drag states retheme through the `--vc-sortable-*` tokens; in development, a mis-bound item or list warns in the console.",
       },
     },
   },
@@ -28,7 +33,7 @@ const meta = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-// A visually hidden live region: the keyboard's only feedback. The consumer owns the wording.
+// For a story that takes the wording over through `announce`; without a listener the list speaks for itself.
 function describeSignal(signal: SortableSignalType): string {
   switch (signal.kind) {
     case "grabbed":
@@ -49,11 +54,12 @@ function describeSignal(signal: SortableSignalType): string {
 }
 
 export const WholeItem: StoryType = {
-  args: { orientation: "vertical", enabled: true },
+  args: { orientation: "vertical", disabled: false },
   parameters: {
     docs: {
       description: {
-        story: "Without a `handle` the whole item drags and is itself the keyboard control.",
+        story:
+          "Without a `handle` the whole item drags and is itself the keyboard control. Nothing else is needed for screen readers: the list announces every step itself.",
       },
       source: {
         code: `<VcSortable v-model="items" class="my-list">
@@ -68,8 +74,7 @@ export const WholeItem: StoryType = {
     components: { VcSortable },
     setup() {
       const items = ref(["Orders", "Quotes", "Returns", "Invoices"]);
-      const message = ref("");
-      return { args, items, message, describeSignal };
+      return { args, items };
     },
     template: `
       <div class="flex flex-col gap-3 max-w-sm">
@@ -77,7 +82,6 @@ export const WholeItem: StoryType = {
           v-model="items"
           v-bind="args"
           :class="args.orientation === 'horizontal' ? 'flex flex-wrap gap-2' : 'flex flex-col gap-2'"
-          @announce="message = describeSignal($event)"
         >
           <template #item="{ item, attrs }">
             <div
@@ -90,7 +94,6 @@ export const WholeItem: StoryType = {
           </template>
         </VcSortable>
         <div class="text-xs text-neutral-600">Order: {{ items.join(", ") }}</div>
-        <p class="sr-only" aria-live="polite">{{ message }}</p>
       </div>
     `,
   }),
@@ -101,7 +104,7 @@ export const ReorderMode: StoryType = {
     docs: {
       description: {
         story:
-          "A chip is a control of its own, so `enabled` gates a reorder mode: while it is off the chips filter and do not drag; while it is on the whole chip is the handle and loses its own action.",
+          "A chip is a control of its own, so `disabled` gates a reorder mode: while the list is disabled the chips filter and do not drag; while it is not, the whole chip is the handle and loses its own action.",
       },
     },
   },
@@ -121,7 +124,7 @@ export const ReorderMode: StoryType = {
     template: `
       <div class="flex flex-col gap-3">
         <VcSwitch v-model="reordering">Reorder mode</VcSwitch>
-        <VcSortable v-model="statuses" :enabled="reordering" orientation="horizontal" class="flex flex-wrap gap-2">
+        <VcSortable v-model="statuses" :disabled="!reordering" orientation="horizontal" class="flex flex-wrap gap-2">
           <template #item="{ item, attrs, grabbed }">
             <VcChip
               v-bind="attrs"
@@ -149,15 +152,15 @@ const HandleWidget = {
   },
   template: `
     <VcWidget :title="title" size="sm">
-      <template v-if="item?.handleAttrs.value" #prepend>
+      <template v-if="item?.handleAttrs" #prepend>
         <VcButton
-          v-bind="item.handleAttrs.value"
+          v-bind="item.handleAttrs"
           :aria-label="'Reorder ' + title"
           icon="switch-vertical"
           size="xs"
           variant="ghost"
           color="secondary"
-          :style="item.grabbed.value ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
+          :style="item.grabbed ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
         />
       </template>
       <div class="text-sm text-neutral-600">Body of {{ title }}</div>
@@ -170,26 +173,41 @@ export const Handle: StoryType = {
     docs: {
       description: {
         story:
-          "With a `handle` only that part starts a pointer drag, and the keyboard goes through `handleAttrs`, which a component inside the item picks up with `useSortableItem()`. Controls inside the handle stay clickable when listed in `filter`.",
+          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. The held look is that control's own, here through VcButton's icon variable. A selector instead of `true` widens the pointer grip to what it matches; controls inside it stay clickable when listed in `filter`.",
       },
       source: {
-        code: `<VcSortable v-model="widgets" handle=".vc-widget__header-container" class="flex flex-col gap-4">
-  <template #item="{ item, attrs }">
-    <div v-bind="attrs" class="rounded-[--vc-radius]"><MyWidget :title="item" /></div>
-  </template>
-</VcSortable>
+        code: `<!-- Dashboard.vue -->
+<template>
+  <VcSortable v-model="widgets" handle class="flex flex-col gap-4">
+    <template #item="{ item, attrs }">
+      <div v-bind="attrs"><MyWidget :title="item" /></div>
+    </template>
+  </VcSortable>
+</template>
 
-// MyWidget
+<!-- MyWidget.vue -->
+<script setup lang="ts">
+import { useSortableItem } from "@/ui-kit/composables";
+
+defineProps<{ title: string }>();
+
 const item = useSortableItem(); // undefined outside a VcSortable
-<VcButton
-  v-if="item?.handleAttrs.value"
-  v-bind="item.handleAttrs.value"
-  aria-label="Reorder"
-  icon="switch-vertical"
-  variant="ghost"
-  color="secondary"
-  :style="item.grabbed.value ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
-/>`,
+</script>
+
+<template>
+  <VcWidget :title="title">
+    <template v-if="item?.handleAttrs" #prepend>
+      <VcButton
+        v-bind="item.handleAttrs"
+        :aria-label="'Reorder ' + title"
+        icon="switch-vertical"
+        variant="ghost"
+        color="secondary"
+        :style="item.grabbed ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
+      />
+    </template>
+  </VcWidget>
+</template>`,
       },
     },
   },
@@ -201,7 +219,7 @@ const item = useSortableItem(); // undefined outside a VcSortable
     },
     template: `
       <div class="flex flex-col gap-3 max-w-md">
-        <VcSortable v-model="widgets" handle=".vc-widget__header-container" class="flex flex-col gap-4">
+        <VcSortable v-model="widgets" handle class="flex flex-col gap-4">
           <template #item="{ item, attrs }">
             <div v-bind="attrs" class="rounded-[--vc-radius]"><HandleWidget :title="item" /></div>
           </template>
@@ -217,7 +235,7 @@ export const LinkedLists: StoryType = {
     docs: {
       description: {
         story:
-          "Lists sharing a `group` exchange items, and `ring` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list while “Invoices” is held. That marking is the consumer's: VcSortable does not dim refusing lists itself.",
+          "Lists sharing a `group` exchange items, and `list-order` lets the cross-axis arrows (↑/↓ here) move a grabbed item to the neighbouring list. A move is emitted, never applied: the owner of both arrays applies it. `accepts` is asked on both paths — “archive” refuses “Invoices”, by pointer and by keyboard alike, and the story marks the refusing list from `grab` to `release`. That marking is the consumer's: VcSortable does not dim refusing lists itself. This story listens to `announce` to explain a refusal in its own words.",
       },
     },
   },
@@ -229,7 +247,7 @@ export const LinkedLists: StoryType = {
         parked: ["Invoices"],
         archive: [],
       });
-      const ring = ["shown", "parked", "archive"];
+      const listOrder = ["shown", "parked", "archive"];
       const message = ref("");
 
       function onMove({ id, from, to, index }: SortableMovePayloadType) {
@@ -246,29 +264,18 @@ export const LinkedLists: StoryType = {
       const held = ref<string>();
       const refuses = (name: string) => held.value !== undefined && !acceptsIn(name)(held.value);
 
-      // SortableJS's own `choose` / `unchoose` bubble from the list on press and release, by mouse and by
-      // touch alike — and a press also ends a keyboard grab without a signal of its own.
-      function onChoose(event: Event) {
-        held.value = (event as Event & { item: HTMLElement }).item.dataset.sortableId;
-      }
-
       function onAnnounce(signal: SortableSignalType) {
         message.value =
           signal.kind === "noTarget" && signal.id === REFUSED && lists.value.parked.includes(REFUSED)
             ? `No list below takes “${REFUSED}” — “archive” refuses it`
             : describeSignal(signal);
-        if (signal.kind === "grabbed") {
-          held.value = signal.id;
-        } else if (signal.kind === "dropped" || signal.kind === "cancelled") {
-          held.value = undefined;
-        }
       }
 
-      return { lists, ring, message, onMove, acceptsIn, refuses, held, onChoose, onAnnounce, REFUSED };
+      return { lists, listOrder, message, onMove, acceptsIn, refuses, held, onAnnounce, REFUSED };
     },
     template: `
-      <div class="flex flex-col gap-4" @choose="onChoose" @unchoose="held = undefined">
-        <div v-for="name in ring" :key="name" class="flex flex-col gap-1">
+      <div class="flex flex-col gap-4">
+        <div v-for="name in listOrder" :key="name" class="flex flex-col gap-1">
           <div class="flex items-baseline gap-2 text-xs">
             <span class="font-bold uppercase text-neutral-500">{{ name }}</span>
             <span v-if="!acceptsIn(name)(REFUSED)" :class="refuses(name) ? 'font-bold text-danger-700' : 'text-neutral-600'">
@@ -279,7 +286,7 @@ export const LinkedLists: StoryType = {
             v-model="lists[name]"
             :name="name"
             group="linked"
-            :ring="ring"
+            :list-order="listOrder"
             :accepts="acceptsIn(name)"
             orientation="horizontal"
             :class="[
@@ -288,6 +295,8 @@ export const LinkedLists: StoryType = {
             ]"
             @move="onMove"
             @announce="onAnnounce"
+            @grab="held = $event.id"
+            @release="held = undefined"
           >
             <template #item="{ item, attrs }">
               <div
@@ -307,11 +316,11 @@ export const LinkedLists: StoryType = {
 };
 
 export const Disabled: StoryType = {
-  args: { enabled: false },
+  args: { disabled: true },
   parameters: {
     docs: {
       description: {
-        story: "While `enabled` is false the list is inert: no drag, no keyboard control, no drag styling.",
+        story: "While `disabled` the list is inert: no drag, no keyboard control, no drag styling.",
       },
     },
   },

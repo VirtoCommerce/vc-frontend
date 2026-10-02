@@ -164,6 +164,16 @@
       "rating_label": "評価：{value}/{maxValue}",
       "read_only_button_aria_label": "評価：{value}/{maxValue}、選択はできません",
       "set_rating_aria_label": "評価を{value}/{maxValue}に設定"
+    },
+    "sortable": {
+      "grabbed": "選択しました。{total} 件中 {position} 番目。矢印キーで移動、Space で配置、Escape で取り消し。",
+      "grabbed_lists": "選択しました。{total} 件中 {position} 番目。矢印キーで移動（別のリストへも可）、Space で配置、Escape で取り消し。",
+      "moved": "{total} 件中 {position} 番目",
+      "dropped": "{total} 件中 {position} 番目に配置しました",
+      "edge": "これ以上移動できません",
+      "cancelled": "取り消しました。元の位置に戻りました",
+      "moved_list": "{list} に移動しました",
+      "no_target": "その方向に受け入れるリストはありません"
     }
   }
 }

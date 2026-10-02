@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCommentVNode, defineComponent, h, nextTick, ref, shallowRef } from "vue";
 import { useSortableItem, useSortableList } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
-import type { ISortableItemContextType, SortableMovePayloadType } from "@/ui-kit/composables";
+import type { ISortableItemContext, SortableMovePayloadType } from "@/ui-kit/composables";
 import type { Ref, VNode } from "vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's option and event objects
@@ -18,6 +18,9 @@ vi.mock("sortablejs", () => ({
   },
 }));
 
+// The list's own announcements are localized; the key is what a test can see.
+vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+
 enableAutoUnmount(afterEach);
 
 beforeEach(() => {
@@ -26,7 +29,7 @@ beforeEach(() => {
 
 // Records what `useSortableItem` hands a component rendered inside an item, and what one nested inside
 // that component gets.
-const seen: { outer?: ISortableItemContextType; inner?: ISortableItemContextType }[] = [];
+const seen: { outer?: ISortableItemContext; inner?: ISortableItemContext }[] = [];
 
 const Inner = defineComponent({
   setup() {
@@ -35,10 +38,12 @@ const Inner = defineComponent({
   },
 });
 
+// Binds the handle as a real consumer would, so a handle list mounts without a missing-handle warning.
 const Outer = defineComponent({
   setup() {
-    seen.push({ outer: useSortableItem() });
-    return () => h("span", [h(Inner)]);
+    const item = useSortableItem();
+    seen.push({ outer: item });
+    return () => h("span", { ...item?.handleAttrs }, [h(Inner)]);
   },
 });
 
@@ -260,8 +265,8 @@ describe("VcSortable", () => {
     other.remove();
   });
 
-  it("announces keyboard signals", async () => {
-    const { wrapper } = mountList();
+  it("hands keyboard signals to an `announce` listener", async () => {
+    const { wrapper } = mountList({ onAnnounce: vi.fn() });
 
     await wrapper.get(".row").trigger("keydown", { key: " " });
 
@@ -339,7 +344,10 @@ describe("VcSortable", () => {
     const Grip = defineComponent({
       setup() {
         const item = useSortableItem();
-        return () => h("div", { ...item?.handleAttrs.value, class: "grip" }, [h("button", { class: "inner" }, "x")]);
+        return () =>
+          h("div", { ...item?.handleAttrs, class: ["grip", item?.handleAttrs?.class] }, [
+            h("button", { class: "inner" }, "x"),
+          ]);
       },
     });
     const wrapper = mount(VcSortable<string>, {
@@ -359,7 +367,7 @@ describe("VcSortable", () => {
     // The owner of both lists applies every move, as a real consumer does.
     function mountPair(initial: Record<string, string[]> = { shown: ["a", "b", "c"], parked: ["x"] }) {
       const lists = ref<Record<string, string[]>>(initial);
-      const ring = Object.keys(initial);
+      const order = Object.keys(initial);
       const signals: unknown[] = [];
       const onAnnounce = (signal: unknown) => signals.push(signal);
       const onMove = ({ id, from, to, index }: SortableMovePayloadType) => {
@@ -382,7 +390,7 @@ describe("VcSortable", () => {
             "onUpdate:modelValue": setList(name),
             name,
             group: "pair",
-            ring,
+            listOrder: order,
             orientation: "horizontal",
             onMove,
             onAnnounce,
@@ -392,7 +400,7 @@ describe("VcSortable", () => {
       const wrapper = mount(
         defineComponent({
           setup() {
-            return () => ring.map(renderList);
+            return () => order.map(renderList);
           },
         }),
         { attachTo: document.body },
@@ -553,18 +561,19 @@ describe("VcSortable", () => {
     mountList({ handle: ".grip" }, true);
 
     expect(seen).toHaveLength(3);
-    expect(seen.map((entry) => entry.outer?.id.value)).toEqual(["a", "b", "c"]);
-    expect(seen[0].outer?.handleAttrs.value).toMatchObject({ class: "vc-sortable__handle" });
+    expect(seen.map((entry) => entry.outer?.id)).toEqual(["a", "b", "c"]);
+    expect(seen[0].outer?.handleAttrs).toMatchObject({ class: "vc-sortable__handle" });
     // Consumed by the first component, so a nested one renders no second handle.
     expect(seen.every((entry) => entry.inner === undefined)).toBe(true);
   });
 
   it("leaves the offer to a nested component when the outer one only peeks", () => {
-    const nested: (ISortableItemContextType | undefined)[] = [];
+    const nested: (ISortableItemContext | undefined)[] = [];
     const Nested = defineComponent({
       setup() {
-        nested.push(useSortableItem());
-        return () => h("span");
+        const item = useSortableItem();
+        nested.push(item);
+        return () => h("span", { ...item?.handleAttrs });
       },
     });
     const Peek = defineComponent({
@@ -579,31 +588,31 @@ describe("VcSortable", () => {
       slots: { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs, [h(Peek)]) },
     });
 
-    expect(nested.map((context) => context?.id.value)).toEqual(["a"]);
+    expect(nested.map((context) => context?.id)).toEqual(["a"]);
   });
 
   it("offers no handle in a list that drags by the whole item, or while disabled", async () => {
     seen.length = 0;
     const { wrapper } = mountList({}, true);
 
-    expect(seen[0].outer?.handleAttrs.value).toBeNull();
+    expect(seen[0].outer?.handleAttrs).toBeNull();
 
     seen.length = 0;
     wrapper.unmount();
-    mountList({ handle: ".grip", enabled: false }, true);
+    mountList({ handle: ".grip", disabled: true }, true);
 
-    expect(seen[0].outer?.handleAttrs.value).toBeNull();
+    expect(seen[0].outer?.handleAttrs).toBeNull();
   });
 
   it("reflects a keyboard grab in the item context", async () => {
     seen.length = 0;
     mountList({ handle: ".grip" }, true);
-    const handle = seen[0].outer!.handleAttrs.value!;
+    const handle = seen[0].outer!.handleAttrs!;
 
     handle.onKeydown({ key: " ", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     await nextTick();
 
-    expect(seen[0].outer?.grabbed.value).toBe(true);
+    expect(seen[0].outer?.grabbed).toBe(true);
   });
 
   // The item leaves one list and renders in the other only once the owner applies the move, so focus has
@@ -612,8 +621,7 @@ describe("VcSortable", () => {
     const Grip = defineComponent({
       setup() {
         const context = useSortableItem();
-        return () =>
-          h("button", { ...(context?.handleAttrs.value ?? {}), class: ["grip", context?.handleAttrs.value?.class] });
+        return () => h("button", { ...(context?.handleAttrs ?? {}), class: ["grip", context?.handleAttrs?.class] });
       },
     });
 
@@ -630,7 +638,7 @@ describe("VcSortable", () => {
             modelValue: lists[name].value,
             name,
             group: "pair",
-            ring: ["shown", "parked"],
+            listOrder: ["shown", "parked"],
             orientation: handle ? "vertical" : "horizontal",
             handle: handle ? ".grip" : undefined,
             onMove,
@@ -676,5 +684,232 @@ describe("VcSortable", () => {
       expect(active.closest<HTMLElement>("[data-sortable-id]")?.dataset.sortableId).toBe("a");
       expect(active.closest<HTMLElement>("[data-sortable-name]")?.dataset.sortableName).toBe("parked");
     });
+  });
+});
+
+describe("VcSortable — what a consumer gets without wiring it", () => {
+  const liveRegion = () => document.body.querySelector<HTMLElement>('[aria-live="polite"]');
+
+  it("announces a keyboard grab in its own live region", async () => {
+    const { wrapper } = mountList();
+
+    await wrapper.get(".row").trigger("keydown", { key: " " });
+    await nextTick();
+
+    expect(liveRegion()?.textContent).toBe("ui_kit.sortable.grabbed");
+  });
+
+  // The same message twice is two events for a screen reader only if the region changes in between.
+  it("announces a repeated message again", async () => {
+    const { wrapper } = mountList();
+    const press = (key: string) => wrapper.get(".row").element.dispatchEvent(new KeyboardEvent("keydown", { key }));
+    const texts: string[] = [];
+    press(" ");
+    press("ArrowUp");
+    await nextTick();
+    await nextTick();
+    texts.push(liveRegion()!.textContent);
+
+    press("ArrowUp");
+    await nextTick();
+    texts.push(liveRegion()!.textContent);
+    await nextTick();
+    texts.push(liveRegion()!.textContent);
+
+    expect(texts).toEqual(["ui_kit.sortable.edge", "", "ui_kit.sortable.edge"]);
+  });
+
+  it("leaves the wording to an `announce` listener and renders no region of its own", async () => {
+    const { wrapper } = mountList({ onAnnounce: vi.fn() });
+
+    await wrapper.get(".row").trigger("keydown", { key: " " });
+    await nextTick();
+
+    expect(liveRegion()).toBeNull();
+  });
+
+  it("keeps the live region out of the container, which may be a table body", () => {
+    const { wrapper } = mountList({ tag: "tbody" });
+
+    expect(wrapper.get(".vc-sortable").element.querySelector("[aria-live]")).toBeNull();
+    expect(liveRegion()).not.toBeNull();
+  });
+
+  it("reorders objects without an `itemKey`, keeping every one of them", () => {
+    const items = [{ name: "a" }, { name: "b" }, { name: "c" }];
+    const model = ref(items);
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<{ name: string }>,
+              {
+                modelValue: model.value,
+                "onUpdate:modelValue": (value: { name: string }[]) => {
+                  model.value = value;
+                },
+              },
+              {
+                item: ({ item, attrs }: { item: { name: string }; attrs: Record<string, unknown> }) =>
+                  h("div", { ...attrs, class: ["row", attrs.class] }, item.name),
+              },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const ids = wrapper.findAll(".row").map((row) => row.attributes("data-sortable-id"));
+
+    instances.at(-1)!.options.onUpdate({
+      item: wrapper.findAll(".row")[0].element,
+      from: wrapper.get(".vc-sortable").element,
+      oldIndex: 0,
+      oldDraggableIndex: 0,
+      newDraggableIndex: 2,
+    });
+
+    expect(new Set(ids).size).toBe(3);
+    expect(model.value).toEqual([items[1], items[2], items[0]]);
+  });
+
+  it("emits `grab` and `release` around a keyboard grab", async () => {
+    const onGrab = vi.fn();
+    const onRelease = vi.fn();
+    const { wrapper } = mountList({ onGrab, onRelease });
+    const row = wrapper.get(".row");
+
+    await row.trigger("keydown", { key: " " });
+    await row.trigger("keydown", { key: " " });
+
+    expect(onGrab).toHaveBeenCalledWith({ id: "a", from: "main" });
+    expect(onRelease).toHaveBeenCalledWith({ id: "a" });
+  });
+
+  it("drags by the handle element with a bare `handle`", () => {
+    mountList({ handle: true }, true);
+
+    expect(instances.at(-1)!.options.handle).toBe(".vc-sortable__handle");
+  });
+});
+
+describe("VcSortable — development warnings", () => {
+  let warn: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    warn.mockRestore();
+  });
+
+  const warnings = () => warn.mock.calls.map(([text]: unknown[]) => String(text));
+
+  function mountWith(props: Record<string, unknown>, item: (attrs: Record<string, unknown>, id: string) => unknown) {
+    return mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              { modelValue: ["a", "b"], ...props },
+              { item: ({ item: id, attrs }: { item: string; attrs: Record<string, unknown> }) => item(attrs, id) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+  }
+
+  it("stays silent for a list bound as documented", () => {
+    mountList();
+    mountList({ handle: ".grip", group: "quiet", onMove: vi.fn() }, true);
+
+    expect(warnings()).toEqual([]);
+  });
+
+  it("warns when an item does not get its attrs", () => {
+    mountWith({}, (_attrs, id) => h("div", id));
+
+    expect(warnings()).toContainEqual(expect.stringContaining('item "a" did not get its `attrs`'));
+  });
+
+  it("warns when the item slot renders more than one root", () => {
+    mountWith({}, (attrs, id) => [h("div", attrs, id), h("span", "extra")]);
+
+    expect(warnings()).toContainEqual(expect.stringContaining('item "a" renders 2 root nodes'));
+  });
+
+  it("warns when a handle list's item binds no handle", () => {
+    mountWith({ handle: true }, (attrs, id) => h("div", attrs, id));
+
+    expect(warnings()).toContainEqual(expect.stringContaining('item "a" has no handle'));
+  });
+
+  it("warns when a list in a group has no name, or no move listener", () => {
+    mountWith({ group: "loud" }, (attrs, id) => h("div", attrs, id));
+
+    expect(warnings()).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('group "loud" has no `name`'),
+        expect.stringContaining('group "loud" has no `@move` listener'),
+      ]),
+    );
+  });
+
+  it("warns when two items share an id", () => {
+    mountWith({ modelValue: ["a", "a"] }, (attrs, id) => h("div", attrs, id));
+
+    expect(warnings()).toContainEqual(expect.stringContaining("two items share an id"));
+  });
+
+  it("warns when a mount-time option changes later", async () => {
+    const handle = ref(".grip");
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              { modelValue: ["a"], handle: handle.value },
+              {
+                item: ({ attrs }: { attrs: Record<string, unknown> }) =>
+                  h("div", attrs, [h("i", { ...attrs, class: "vc-sortable__handle" })]),
+              },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+
+    handle.value = ".other";
+    await nextTick();
+
+    expect(warnings()).toContainEqual(expect.stringContaining("read at mount"));
+  });
+
+  // `:accepts="acceptsIn(name)"` hands a new function to every render; that is not a change.
+  it("stays silent when `accepts` is a fresh inline function on each render", async () => {
+    const tick = ref(0);
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              // Read here, so the parent re-renders and hands a new function.
+              { modelValue: ["a"], "data-tick": tick.value, accepts: () => true },
+              { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+
+    tick.value += 1;
+    await nextTick();
+
+    expect(warnings()).toEqual([]);
   });
 });

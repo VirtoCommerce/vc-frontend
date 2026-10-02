@@ -5,9 +5,9 @@
     :class="['layout-region', `layout-region--${orientation}`, { 'layout-region--zone': editing && zone }]"
     :name="zoneName"
     :group="group"
-    :ring="ring"
+    :list-order="listOrder"
     :orientation="orientation"
-    :enabled="Boolean(editing)"
+    :disabled="!editing"
     :handle="dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR"
     :filter="dragWhole ? undefined : WIDGET_DRAG_FILTER_SELECTOR"
     @update:model-value="$emit('reorder', $event)"
@@ -82,7 +82,7 @@ const HIDDEN_ZONE = "hidden";
 const zoneName = computed(() => (props.dropHidden ? HIDDEN_ZONE : VISIBLE_ZONE));
 
 // Only the stat row can park a block with the arrow keys; widget columns hide via the ✕ button.
-const ring = computed(() => (props.orientation === "horizontal" ? [VISIBLE_ZONE, HIDDEN_ZONE] : undefined));
+const listOrder = computed(() => (props.orientation === "horizontal" ? [VISIBLE_ZONE, HIDDEN_ZONE] : undefined));
 
 function onMove({ id, to, index }: SortableMovePayloadType): void {
   emit("setHidden", id, to === HIDDEN_ZONE, index);

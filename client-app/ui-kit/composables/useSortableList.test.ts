@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { useSortableList } from "./useSortableList";
-import type { ISortableListOptions, SortableMovePayloadType, SortableSignalType } from "./useSortableList";
+import type { IUseSortableListOptions, SortableMovePayloadType, SortableSignalType } from "./useSortableList";
 import type { EffectScope } from "vue";
 
 // Stand in for SortableJS: record what each list constructs with, so a gesture can be replayed through
@@ -34,7 +34,7 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-type SetupType = Partial<ISortableListOptions> & { initial?: string[] };
+type SetupType = Partial<IUseSortableListOptions> & { initial?: string[] };
 
 function setup({ initial = ["a", "b", "c"], ...overrides }: SetupType = {}) {
   let items = [...initial];
@@ -218,7 +218,7 @@ describe("useSortableList — keyboard", () => {
     expect(signals.map((signal) => signal.kind)).not.toContain("cancelled");
   });
 
-  it("leaves the cross-axis arrows inert without a ring", () => {
+  it("leaves the cross-axis arrows inert without a list order", () => {
     const { list, press, order, moves } = setup({ orientation: "horizontal" });
 
     press(" ", "b");
@@ -231,8 +231,8 @@ describe("useSortableList — keyboard", () => {
 
   // Space would scroll the page and the arrows would scroll it too, while the list is also acting on them.
   it("takes every key it acts on from the page", () => {
-    const { press } = setup({ name: "keys", group: "keys", ring: ["keys", "other"] });
-    setup({ name: "other", group: "keys", ring: ["keys", "other"] });
+    const { press } = setup({ name: "keys", group: "keys", listOrder: ["keys", "other"] });
+    setup({ name: "other", group: "keys", listOrder: ["keys", "other"] });
 
     expect(press(" ", "b").preventDefault).toHaveBeenCalled();
     expect(press("ArrowDown", "b").preventDefault).toHaveBeenCalled();
@@ -272,12 +272,12 @@ describe("useSortableList — keyboard", () => {
 
 describe("useSortableList — moving between lists by keyboard", () => {
   function setupPair(targetAccepts?: (id: string, from: string) => boolean) {
-    const ring = ["shown", "parked", "archived"];
-    const source = setup({ name: "shown", group: "stats", ring, orientation: "horizontal" });
+    const order = ["shown", "parked", "archived"];
+    const source = setup({ name: "shown", group: "stats", listOrder: order, orientation: "horizontal" });
     const target = setup({
       name: "parked",
       group: "stats",
-      ring,
+      listOrder: order,
       orientation: "horizontal",
       accepts: targetAccepts,
       initial: ["x"],
@@ -293,7 +293,7 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals.at(-1)).toMatchObject({ kind: "grabbed", canChangeList: true });
   });
 
-  it("moves the item to the next list in the ring and hands the grab over with it", () => {
+  it("moves the item to the next list in the list order and hands the grab over with it", () => {
     const { list, press, moves, signals, order, target } = setupPair();
 
     press(" ", "b");
@@ -318,7 +318,7 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(target.list.isGrabbed("b")).toBe(false);
   });
 
-  it("does not wrap past the start of the ring", () => {
+  it("does not wrap past the start of the list order", () => {
     const { list, press, moves, signals } = setupPair();
 
     press(" ", "b");
@@ -331,11 +331,11 @@ describe("useSortableList — moving between lists by keyboard", () => {
 
   // The pointer asks the target through SortableJS `put`; the keyboard has to ask the same predicate.
   it("skips a list that refuses the item and moves on to the next one", () => {
-    const ring = ["shown", "refuser", "parked"];
+    const order = ["shown", "refuser", "parked"];
     const accepts = vi.fn(() => false);
-    const source = setup({ name: "shown", group: "skip", ring, orientation: "horizontal" });
-    setup({ name: "refuser", group: "skip", ring, orientation: "horizontal", accepts });
-    setup({ name: "parked", group: "skip", ring, orientation: "horizontal" });
+    const source = setup({ name: "shown", group: "skip", listOrder: order, orientation: "horizontal" });
+    setup({ name: "refuser", group: "skip", listOrder: order, orientation: "horizontal", accepts });
+    setup({ name: "parked", group: "skip", listOrder: order, orientation: "horizontal" });
 
     source.press(" ", "b");
     source.press("ArrowDown", "b");
@@ -345,10 +345,10 @@ describe("useSortableList — moving between lists by keyboard", () => {
   });
 
   it("skips a list that is not mounted, and one that is disabled", () => {
-    const ring = ["shown", "absent", "off", "parked"];
-    const source = setup({ name: "shown", group: "skip-2", ring, orientation: "horizontal" });
-    setup({ name: "off", group: "skip-2", ring, orientation: "horizontal", enabled: false });
-    setup({ name: "parked", group: "skip-2", ring, orientation: "horizontal" });
+    const order = ["shown", "absent", "off", "parked"];
+    const source = setup({ name: "shown", group: "skip-2", listOrder: order, orientation: "horizontal" });
+    setup({ name: "off", group: "skip-2", listOrder: order, orientation: "horizontal", disabled: true });
+    setup({ name: "parked", group: "skip-2", listOrder: order, orientation: "horizontal" });
 
     source.press(" ", "b");
     source.press("ArrowDown", "b");
@@ -368,10 +368,10 @@ describe("useSortableList — moving between lists by keyboard", () => {
 
   // A list remounting under its own name registers before the one it replaces cleans up.
   it("keeps a list that took over a name when the old one goes", () => {
-    const ring = ["shown", "parked"];
-    const source = setup({ name: "shown", group: "stats-3", ring, orientation: "horizontal" });
-    const old = setup({ name: "parked", group: "stats-3", ring, orientation: "horizontal" });
-    setup({ name: "parked", group: "stats-3", ring, orientation: "horizontal" });
+    const order = ["shown", "parked"];
+    const source = setup({ name: "shown", group: "stats-3", listOrder: order, orientation: "horizontal" });
+    const old = setup({ name: "parked", group: "stats-3", listOrder: order, orientation: "horizontal" });
+    setup({ name: "parked", group: "stats-3", listOrder: order, orientation: "horizontal" });
 
     old.scope.stop();
     source.press(" ", "a");
@@ -382,12 +382,12 @@ describe("useSortableList — moving between lists by keyboard", () => {
 
   // A stale cleanup must not delete the group's map that a newer list has since created.
   it("keeps a list that registered after its group emptied, when an older one goes", () => {
-    const ring = ["shown", "parked"];
-    const older = setup({ name: "parked", group: "stats-4", ring, orientation: "horizontal" });
-    const taker = setup({ name: "parked", group: "stats-4", ring, orientation: "horizontal" });
+    const order = ["shown", "parked"];
+    const older = setup({ name: "parked", group: "stats-4", listOrder: order, orientation: "horizontal" });
+    const taker = setup({ name: "parked", group: "stats-4", listOrder: order, orientation: "horizontal" });
     taker.scope.stop();
-    setup({ name: "parked", group: "stats-4", ring, orientation: "horizontal" });
-    const source = setup({ name: "shown", group: "stats-4", ring, orientation: "horizontal" });
+    setup({ name: "parked", group: "stats-4", listOrder: order, orientation: "horizontal" });
+    const source = setup({ name: "shown", group: "stats-4", listOrder: order, orientation: "horizontal" });
 
     older.scope.stop();
     source.press(" ", "a");
@@ -397,9 +397,9 @@ describe("useSortableList — moving between lists by keyboard", () => {
   });
 
   it("forgets a list once its scope is disposed", () => {
-    const ring = ["shown", "parked"];
-    const source = setup({ name: "shown", group: "stats-2", ring, orientation: "horizontal" });
-    const target = setup({ name: "parked", group: "stats-2", ring, orientation: "horizontal" });
+    const order = ["shown", "parked"];
+    const source = setup({ name: "shown", group: "stats-2", listOrder: order, orientation: "horizontal" });
+    const target = setup({ name: "parked", group: "stats-2", listOrder: order, orientation: "horizontal" });
 
     target.scope.stop();
     source.press(" ", "a");
@@ -443,11 +443,11 @@ describe("useSortableList — attributes", () => {
   });
 
   it("is inert while disabled, and lets go of a grab when it becomes disabled", async () => {
-    const enabled = ref(true);
-    const { list, press } = setup({ enabled });
+    const disabled = ref(false);
+    const { list, press } = setup({ disabled });
 
     press(" ", "a");
-    enabled.value = false;
+    disabled.value = true;
     await nextTick();
 
     expect(list.isGrabbed("a")).toBe(false);
@@ -572,13 +572,13 @@ describe("useSortableList — pointer", () => {
     expect(accepts).toHaveBeenCalledWith("x", "rail");
   });
 
-  it("toggles instead of rebuilding when enabled changes", async () => {
-    const enabled = ref(false);
-    const { sortable } = await mounted({ enabled });
+  it("toggles instead of rebuilding when disabled changes", async () => {
+    const disabled = ref(true);
+    const { sortable } = await mounted({ disabled });
 
     expect(sortable.options.disabled).toBe(true);
 
-    enabled.value = true;
+    disabled.value = false;
     await nextTick();
 
     expect(sortable.option).toHaveBeenCalledWith("disabled", false);
@@ -662,7 +662,7 @@ describe("useSortableList — pointer", () => {
         useSortableList(el, {
           name,
           group: "focus",
-          ring: ["shown", "parked"],
+          listOrder: ["shown", "parked"],
           orientation: "horizontal",
           items: () => ids,
           onReorder: vi.fn(),
@@ -697,7 +697,7 @@ describe("useSortableList — pointer", () => {
         useSortableList(el, {
           name,
           group: "focus-owner",
-          ring: ["shown", "parked"],
+          listOrder: ["shown", "parked"],
           orientation: "horizontal",
           items: () => ["a"],
           onReorder: vi.fn(),
@@ -726,5 +726,134 @@ describe("useSortableList — pointer", () => {
     sortable.options.onEnd({ from: el, to: el, item, oldIndex: 0, newDraggableIndex: 1 });
 
     expect(moves).toEqual([]);
+  });
+});
+
+describe("useSortableList — grab and release events", () => {
+  function withEvents(overrides: SetupType = {}) {
+    const events: string[] = [];
+    const list = setup({
+      onGrab: ({ id, from }) => events.push(`grab ${id} ${from}`),
+      onRelease: ({ id }) => events.push(`release ${id}`),
+      ...overrides,
+    });
+    return { ...list, events };
+  }
+
+  it("reports a keyboard grab and its drop", () => {
+    const { press, events } = withEvents();
+
+    press(" ", "b");
+    press(" ", "b");
+
+    expect(events).toEqual(["grab b main", "release b"]);
+  });
+
+  it("reports a cancelled grab as released", () => {
+    const { press, blur, events } = withEvents();
+
+    press(" ", "a");
+    press("Escape", "a");
+    press(" ", "b");
+    blur("b");
+
+    expect(events).toEqual(["grab a main", "release a", "grab b main", "release b"]);
+  });
+
+  it("reports a grab ended by the list turning disabled", async () => {
+    const disabled = ref(false);
+    const { press, events } = withEvents({ disabled });
+
+    press(" ", "a");
+    disabled.value = true;
+    await nextTick();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  // Carried, not ended: the grab goes on in the sibling, which reports its end.
+  it("reports no release when the grab is carried into a sibling list", async () => {
+    const order = ["shown", "parked"];
+    const events: string[] = [];
+    const record = { onGrab: ({ id }: { id: string }) => events.push(`grab ${id}`) };
+    const source = setup({
+      ...record,
+      name: "shown",
+      group: "events",
+      listOrder: order,
+      orientation: "horizontal",
+      onRelease: ({ id }) => events.push(`release ${id} shown`),
+    });
+    let parked: string[] = [];
+    const target = setup({
+      ...record,
+      name: "parked",
+      group: "events",
+      listOrder: order,
+      orientation: "horizontal",
+      initial: [],
+      onRelease: ({ id }) => events.push(`release ${id} parked`),
+      items: () => parked,
+      onReorder: (ids) => {
+        parked = ids;
+      },
+    });
+
+    source.press(" ", "a");
+    parked = ["a"];
+    source.press("ArrowDown", "a");
+    await nextTick();
+    target.press(" ", "a");
+
+    expect(events).toEqual(["grab a", "release a parked"]);
+  });
+
+  function pointer(overrides: SetupType = {}) {
+    const el = document.createElement("div");
+    document.body.append(el);
+    const item = document.createElement("div");
+    item.dataset.sortableId = "a";
+    el.append(item);
+    const events: string[] = [];
+    const container = ref<HTMLElement | null>(null);
+    const scope = effectScope();
+    scopes.push(scope);
+    scope.run(() =>
+      useSortableList(container, {
+        name: "main",
+        items: () => ["a"],
+        onReorder: vi.fn(),
+        onGrab: ({ id, from }) => events.push(`grab ${id} ${from}`),
+        onRelease: ({ id }) => events.push(`release ${id}`),
+        ...overrides,
+      }),
+    );
+    container.value = el;
+    return { el, item, events, sortable: () => instances.at(-1)! };
+  }
+
+  it("reports a pointer drag from its start to its end", async () => {
+    const { el, item, events, sortable } = pointer();
+    await nextTick();
+
+    sortable().options.onStart({ item, from: el });
+    expect(events).toEqual(["grab a main"]);
+
+    sortable().options.onEnd({ item, from: el, to: el });
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("drags by the handle element itself with `handle: true`", async () => {
+    const { sortable } = pointer({ handle: true });
+    await nextTick();
+
+    expect(sortable().options.handle).toBe(".vc-sortable__handle");
+  });
+
+  it("drags by whatever a handle selector matches", async () => {
+    const { sortable } = pointer({ handle: ".grip" });
+    await nextTick();
+
+    expect(sortable().options.handle).toBe(".grip");
   });
 });

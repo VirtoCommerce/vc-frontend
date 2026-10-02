@@ -164,6 +164,16 @@
       "rating_label": "Ocena {value} na {maxValue}",
       "read_only_button_aria_label": "Ocena {value} na {maxValue}, niedostępna do wyboru",
       "set_rating_aria_label": "Ustaw ocenę na {value} z {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Chwycono, pozycja {position} z {total}. Strzałki przesuwają, spacja upuszcza, Escape anuluje.",
+      "grabbed_lists": "Chwycono, pozycja {position} z {total}. Strzałki przesuwają, także do innej listy; spacja upuszcza, Escape anuluje.",
+      "moved": "Pozycja {position} z {total}",
+      "dropped": "Upuszczono na pozycji {position} z {total}",
+      "edge": "Dalej się nie da",
+      "cancelled": "Anulowano, element wrócił na miejsce",
+      "moved_list": "Przeniesiono do {list}",
+      "no_target": "Żadna lista w tym kierunku go nie przyjmuje"
     }
   }
 }

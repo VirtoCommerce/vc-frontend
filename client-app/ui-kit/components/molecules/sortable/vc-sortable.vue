@@ -14,17 +14,38 @@
     <!-- Inside the container but not an item — an empty-state hint, a footer. It carries no
          `data-sortable-id`, so it keeps its place and the indices stay aligned with the model. -->
     <slot name="after" />
+
+    <!-- Out of the container, which may be a `tbody`; Teleport leaves only comment anchors here. -->
+    <Teleport to="body">
+      <span v-if="!hasListener('onAnnounce')" aria-live="polite" class="sr-only">{{ message }}</span>
+    </Teleport>
   </component>
 </template>
 
 <script setup lang="ts" generic="T">
-import { Comment, computed, defineComponent, useTemplateRef } from "vue";
-import { provideSortableItem, useSortableList } from "@/ui-kit/composables";
+import {
+  Comment,
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  useTemplateRef,
+  watch,
+} from "vue";
+import { useI18n } from "vue-i18n";
+import { useSortableList } from "@/ui-kit/composables";
+import { provideSortableItem } from "@/ui-kit/composables/useSortableItem";
+import { checkItem, objectKey, warn } from "./vc-sortable-support";
 import type {
+  SortableGrabEventType,
   SortableHandleAttrsType,
   SortableItemAttrsType,
   SortableMovePayloadType,
   SortableOrientationType,
+  SortableReleaseEventType,
   SortableSignalType,
 } from "@/ui-kit/composables";
 import type { PropType, VNode } from "vue";
@@ -32,30 +53,44 @@ import type { PropType, VNode } from "vue";
 export interface IEmits {
   /** An item left this list for another one in its group. The owner of both lists applies it, synchronously. */
   (event: "move", payload: SortableMovePayloadType): void;
-  /** Every keyboard state change, unlocalized, for the consumer's `aria-live` region. */
+  /**
+   * Every keyboard state change, unlocalized. Listening replaces the list's own localized `aria-live`
+   * announcements, so the listener owns the wording and the live region.
+   */
   (event: "announce", signal: SortableSignalType): void;
+  /** A grab started, by pointer drag or by keyboard, in this list. */
+  (event: "grab", payload: SortableGrabEventType): void;
+  /** A grab ended. A keyboard grab carried across lists ends in the list that holds it then. */
+  (event: "release", payload: SortableReleaseEventType): void;
 }
 
 export interface IProps<TItem = unknown> {
-  /** Names this list in `move` payloads, in `accepts` and in a sibling's `ring`. */
+  /** Names this list in `move` payloads, in `accepts` and in a sibling's `listOrder`. Required in a `group`. */
   name?: string;
   /** Lists sharing a group exchange items. */
   group?: string;
   /** Ordered names of this list and its siblings, walked by the cross-axis arrows. Ends do not wrap. */
-  ring?: readonly string[];
+  listOrder?: readonly string[];
   /** Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. Read at mount. */
   accepts?: (id: string, from: string) => boolean;
-  /** Pointer handle inside an item. Without one the whole item drags and takes the keyboard. Read at mount. */
-  handle?: string;
+  /**
+   * Drag by a handle instead of the whole item. `true` drags by the element bound with `useSortableItem()`'s
+   * `handleAttrs`, which also takes the keyboard; a selector widens the pointer grip to what it matches.
+   * Read at mount.
+   */
+  handle?: boolean | string;
   /** Elements inside an item that must never start a drag, such as a button inside the handle. Read at mount. */
   filter?: string;
   /** Which arrows reorder: ↑/↓ for "vertical", ←/→ for "horizontal". */
   orientation?: SortableOrientationType;
-  /** Reorder mode. While false the list is inert and the items keep their own behaviour. */
-  enabled?: boolean;
+  /** Turns reordering off. The list is inert and the items keep their own behaviour. */
+  disabled?: boolean;
   /** Container element. Layout stays the consumer's, so the class to style is their own. */
   tag?: string;
-  /** Maps an item to its id. Defaults to `String(item)`, which suits a list of ids. */
+  /**
+   * Maps an item to its id, as `move`, `accepts` and the signals report it. Defaults to the item itself for
+   * strings and numbers, and to an id generated per object otherwise — stable while the object is.
+   */
   itemKey?: (item: TItem) => string;
 }
 
@@ -64,12 +99,12 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps<T>>(), {
   name: "default",
   group: undefined,
-  ring: undefined,
+  listOrder: undefined,
   accepts: undefined,
   handle: undefined,
   filter: undefined,
   orientation: "vertical",
-  enabled: true,
+  disabled: false,
   tag: "div",
   itemKey: undefined,
 });
@@ -83,10 +118,22 @@ defineSlots<{
 
 const model = defineModel<T[]>({ required: true });
 
+const { t } = useI18n();
+
+const instance = getCurrentInstance();
+
+// Read per call: the parent re-renders this vnode, and a listener can be bound or dropped with it.
+function hasListener(name: "onAnnounce" | "onMove"): boolean {
+  return Boolean(instance?.vnode.props?.[name]);
+}
+
 const container = useTemplateRef<HTMLElement>("container");
 
 function keyOf(item: T): string {
-  return props.itemKey ? props.itemKey(item) : String(item);
+  if (props.itemKey) {
+    return props.itemKey(item);
+  }
+  return typeof item === "object" && item !== null ? objectKey(item) : String(item);
 }
 
 const byKey = computed(() => new Map(model.value.map((item) => [keyOf(item), item])));
@@ -94,27 +141,94 @@ const byKey = computed(() => new Map(model.value.map((item) => [keyOf(item), ite
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural: SortableJS reads these once
 const { handle, filter, accepts } = props;
 
+const message = ref("");
+
+function describe(signal: SortableSignalType): string {
+  switch (signal.kind) {
+    case "grabbed":
+      return t(signal.canChangeList ? "ui_kit.sortable.grabbed_lists" : "ui_kit.sortable.grabbed", {
+        position: signal.index + 1,
+        total: signal.total,
+      });
+    case "moved":
+      return t("ui_kit.sortable.moved", { position: signal.index + 1, total: signal.total });
+    case "dropped":
+      return t("ui_kit.sortable.dropped", { position: signal.index + 1, total: signal.total });
+    case "edge":
+      return t("ui_kit.sortable.edge");
+    case "cancelled":
+      return t("ui_kit.sortable.cancelled");
+    case "movedList":
+      return t("ui_kit.sortable.moved_list", { list: signal.to });
+    case "noTarget":
+      return t("ui_kit.sortable.no_target");
+  }
+}
+
+function onAnnounce(signal: SortableSignalType): void {
+  if (hasListener("onAnnounce")) {
+    emit("announce", signal);
+    return;
+  }
+  // Cleared first, so a repeated message ("No further to go" twice) is announced again.
+  message.value = "";
+  const text = describe(signal);
+  void nextTick(() => {
+    message.value = text;
+  });
+}
+
 const { isGrabbed, itemAttrs, handleAttrs } = useSortableList(container, {
   name: () => props.name,
   items: () => model.value.map(keyOf),
   group: () => props.group,
-  ring: () => props.ring,
+  listOrder: () => props.listOrder,
   accepts,
   handle,
   filter,
   orientation: () => props.orientation,
-  enabled: () => props.enabled,
+  disabled: () => props.disabled,
   // Same-list reorder only: a cross-list move never patches this list, or the item would land in both.
   onReorder: (ids) => {
     model.value = ids.map((id) => byKey.value.get(id)).filter((item): item is T => item !== undefined);
   },
   onMove: (payload) => emit("move", payload),
-  onAnnounce: (signal) => emit("announce", signal),
+  onAnnounce,
+  onGrab: (payload) => emit("grab", payload),
+  onRelease: (payload) => emit("release", payload),
 });
 
 function scopeOf(item: T) {
   const id = keyOf(item);
   return { item, attrs: itemAttrs(id), grabbed: isGrabbed(id) };
+}
+
+if (import.meta.env.DEV) {
+  const vnodeProps = instance?.vnode.props ?? {};
+
+  if (props.group && !("name" in vnodeProps)) {
+    warn(
+      `list in group "${props.group}" has no \`name\`: every unnamed list is "default", so moves cannot tell them apart.`,
+    );
+  }
+  if (props.group && !hasListener("onMove")) {
+    warn(`list in group "${props.group}" has no \`@move\` listener: an item dragged across snaps back.`);
+  }
+
+  // Not `accepts`: an inline function is a new one on every render, though it means the same.
+  watch([() => props.handle, () => props.filter], () =>
+    warn("`handle` and `filter` are read at mount; changing them later has no effect."),
+  );
+
+  watch(
+    () => model.value.map(keyOf),
+    (keys) => {
+      if (new Set(keys).size !== keys.length) {
+        warn("two items share an id, so a reorder would drop one. Pass an `itemKey` that is unique per item.");
+      }
+    },
+    { immediate: true },
+  );
 }
 
 // Renderless and fragment-free: SortableJS moves the item element itself, so anything this adds to the
@@ -130,15 +244,28 @@ const ItemScope = defineComponent({
   },
 
   setup(scopeProps) {
-    provideSortableItem({
-      id: computed(() => scopeProps.itemId),
-      grabbed: computed(() => scopeProps.grabbed),
-      handleAttrs: computed(() => scopeProps.handleAttrs),
-    });
+    provideSortableItem(
+      reactive({
+        id: computed(() => scopeProps.itemId),
+        grabbed: computed(() => scopeProps.grabbed),
+        handleAttrs: computed(() => scopeProps.handleAttrs),
+      }),
+    );
+
+    if (import.meta.env.DEV) {
+      const scope = getCurrentInstance();
+      onMounted(() => checkItem(scope?.proxy?.$el, scopeProps.itemId, scopeProps.handleAttrs !== null));
+    }
+
+    let warnedRoots = false;
 
     return () => {
       // Development builds keep template comments as vnodes; they must not turn the item into a fragment.
       const nodes = (scopeProps.renderItem() ?? []).filter((node) => node.type !== Comment);
+      if (import.meta.env.DEV && nodes.length !== 1 && !warnedRoots) {
+        warnedRoots = true;
+        warn(`item "${scopeProps.itemId}" renders ${nodes.length} root nodes; the #item slot needs exactly one.`);
+      }
       return nodes.length === 1 ? nodes[0] : nodes;
     };
   },
@@ -193,16 +320,13 @@ const ItemScope = defineComponent({
     }
   }
 
+  // The handle is the consumer's element — often another kit component — so only the cursor is set here;
+  // the held look is the consumer's, through that component's own knobs.
   &__handle {
     cursor: var(--vc-sortable-cursor);
 
     &:active {
       cursor: var(--vc-sortable-active-cursor);
-    }
-
-    // Stands in for the "I am holding this" feedback a pointer user gets from the cursor.
-    &[aria-pressed="true"] {
-      box-shadow: 0 0 0 2px var(--vc-sortable-handle-ring-color);
     }
   }
 }

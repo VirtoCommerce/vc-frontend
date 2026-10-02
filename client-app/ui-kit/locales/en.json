@@ -164,6 +164,16 @@
       "rating_label": "Rating {value} out of {maxValue}",
       "read_only_button_aria_label": "Rating {value} out of {maxValue}, not available for selection",
       "set_rating_aria_label": "Set rating to {value} out of {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Grabbed, position {position} of {total}. Arrow keys move it, Space drops it, Escape cancels.",
+      "grabbed_lists": "Grabbed, position {position} of {total}. Arrow keys move it, including to another list; Space drops it, Escape cancels.",
+      "moved": "Position {position} of {total}",
+      "dropped": "Dropped at position {position} of {total}",
+      "edge": "No further to go",
+      "cancelled": "Cancelled, back where it started",
+      "moved_list": "Moved to {list}",
+      "no_target": "No list in that direction takes it"
     }
   }
 }

@@ -164,6 +164,16 @@
       "rating_label": "Classificação {value} de {maxValue}",
       "read_only_button_aria_label": "Classificação {value} de {maxValue}, não disponível para seleção",
       "set_rating_aria_label": "Definir classificação para {value} de {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Selecionado, posição {position} de {total}. As setas movem, Espaço solta, Escape cancela.",
+      "grabbed_lists": "Selecionado, posição {position} de {total}. As setas movem, inclusive para outra lista; Espaço solta, Escape cancela.",
+      "moved": "Posição {position} de {total}",
+      "dropped": "Solto na posição {position} de {total}",
+      "edge": "Não é possível ir mais longe",
+      "cancelled": "Cancelado, de volta ao lugar original",
+      "moved_list": "Movido para {list}",
+      "no_target": "Nenhuma lista nessa direção o aceita"
     }
   }
 }
