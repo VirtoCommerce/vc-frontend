@@ -64,7 +64,7 @@ describe("CustomerSearchHistory states", () => {
 
   // The backend answers null when the store has no insights provider — the widget must name that
   // state instead of pretending the customer never searched.
-  it("names the not-configured state distinctly from the empty one", () => {
+  it("names the unavailable state distinctly from the empty one", () => {
     state.unavailable.value = true;
 
     const views = emptyViews(createWrapper());

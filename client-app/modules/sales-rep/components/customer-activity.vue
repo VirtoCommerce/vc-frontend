@@ -126,7 +126,8 @@
 
       <!-- Mounted on first visit only, so opening the profile fires one GA-backed query, not three —
            the same "not rendered means not fetching" rule the layout system applies to hidden widgets.
-           v-show after that, so returning to a visited view does not refire its query. -->
+           v-show after that, and each panel stays subscribed once shown, so returning to a visited view
+           does not refire its query. -->
       <CustomerSearchHistory
         v-if="visitedViews.has(SEARCHES_VIEW)"
         v-show="viewChip === SEARCHES_VIEW"

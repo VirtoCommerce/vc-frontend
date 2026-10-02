@@ -98,7 +98,8 @@ narrow any report to one customer. The `user_id` set in the `config` call is GA4
 The values are built in [`user-properties.ts`](./user-properties.ts) and sent with
 `gtag('set', 'user_properties', …)` before the first `config`, so the initial `page_view` carries them.
 When a GTM container id is configured they are also pushed to `dataLayer`, since GTM cannot read gtag's
-internal state.
+internal state — ahead of GTM's own `gtm.js` entry, because GTM processes the data layer in order and a tag
+firing on it sees only what was pushed before.
 
 ### Required GA4 Admin registration
 

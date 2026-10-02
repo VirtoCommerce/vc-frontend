@@ -62,7 +62,7 @@ describe("CustomerBrowseHistory states", () => {
     expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.browse_history.empty");
   });
 
-  it("names the not-configured state distinctly from the empty one", () => {
+  it("names the unavailable state distinctly from the empty one", () => {
     state.unavailable.value = true;
 
     const views = emptyViews(createWrapper());
