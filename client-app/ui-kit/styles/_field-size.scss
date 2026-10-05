@@ -20,14 +20,23 @@ $-sizes: (
   ),
 );
 
+// A size the scale does not hold would otherwise compile to no height and a broken theme() call.
+@function -size($size, $key) {
+  @if not map.has-key($-sizes, $size) {
+    @error "field-size: unknown size `#{$size}`; the scale holds #{map.keys($-sizes)}.";
+  }
+
+  @return map.get($-sizes, $size, $key);
+}
+
 @function field-height($size) {
-  @return map.get($-sizes, $size, height);
+  @return -size($size, height);
 }
 
 @function field-text-size($size) {
-  @return theme("fontSize.#{map.get($-sizes, $size, text)}[0]");
+  @return theme("fontSize.#{-size($size, text)}[0]");
 }
 
 @function field-line-height($size) {
-  @return theme("fontSize.#{map.get($-sizes, $size, text)}[1].lineHeight");
+  @return theme("fontSize.#{-size($size, text)}[1].lineHeight");
 }
