@@ -398,7 +398,7 @@ describe("VcSelect", () => {
       await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
-      expect(wrapper.emitted("selectAll")).toEqual([[false, ""]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: false, query: "" }]]);
     });
 
     it("selects the loaded page, then clears it, when the consumer adds no other page", async () => {
@@ -410,10 +410,7 @@ describe("VcSelect", () => {
       await checkbox.trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]], [[]]]);
-      expect(wrapper.emitted("selectAll")).toEqual([
-        [true, ""],
-        [false, ""],
-      ]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "" }], [{ selected: false, query: "" }]]);
     });
 
     // A filter narrows the set: the visible options are added, hidden selections are kept.
@@ -474,7 +471,7 @@ describe("VcSelect", () => {
       await wrapper.get("input").setValue("bel");
       await wrapper.get(".vc-select-all input").trigger("change");
 
-      expect(wrapper.emitted("selectAll")).toEqual([[true, "bel"]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "bel" }]]);
     });
 
     describe("development warnings", () => {
@@ -489,6 +486,19 @@ describe("VcSelect", () => {
         createWrapper({ ...selectAllProps, modelValue: [], ...props });
 
         expect(warn).toHaveBeenCalledWith(pagedWarning);
+      });
+
+      it.each([
+        ["once", { onSelectAllOnce: () => undefined }, false],
+        ["bound to undefined", { onSelectAll: undefined }, true],
+      ])("treats a handler %s accordingly", (_label, listener, warns) => {
+        const warn = spyOnWarn();
+
+        createWrapper({ ...selectAllProps, modelValue: [], total: 30, ...listener });
+
+        expect(warn.mock.calls.some(([message]) => String(message).includes("without a `@select-all` handler"))).toBe(
+          warns,
+        );
       });
 
       it("stays quiet for a paged select-all with a handler", () => {
@@ -525,10 +535,7 @@ describe("VcSelect", () => {
       await wrapper.setProps({ modelValue: [...ITEMS] });
       await checkbox.trigger("click");
 
-      expect(wrapper.emitted("selectAll")).toEqual([
-        [true, ""],
-        [false, ""],
-      ]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "" }], [{ selected: false, query: "" }]]);
     });
 
     // Only the consumer knows how many matches are selected on pages that are not loaded.
@@ -1012,6 +1019,46 @@ describe("VcSelect", () => {
         expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
         expect(wrapper.find(".vc-load-more").exists()).toBe(false);
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+      });
+
+      // The first items answer the empty query, so nothing has to be answered again.
+      it("hands paging back for a first query typed and deleted before it went out", async () => {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, hasNextPage: true });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("b");
+        await input.setValue("");
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+
+      // The options on screen still answer the previous query; the event would name the new one.
+      it("ignores Select all until the query on screen is answered", async () => {
+        const wrapper = createWrapper({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          multiple: true,
+          selectAll: true,
+          modelValue: [],
+          onSelectAll: () => undefined,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("chi");
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("selectAll")).toBeUndefined();
+        expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ items: ["China"] });
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "chi" }]]);
       });
 
       // A consumer need not fetch again for the query its items already answer.

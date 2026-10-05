@@ -198,9 +198,10 @@ const emit = defineEmits<{
    * Select all was pressed: `selected` is true when it selected, false when it cleared. Fires
    * alongside the model update, so a paged consumer can select or clear the options not loaded.
    * `query` is the text narrowing the list ("" for none): with one, the row acted on the matching
-   * options only, so a consumer adds or clears the query's matches, not the whole set.
+   * options only, so leave the rest of the selection alone — or, with `serverFilter`, add or clear
+   * the query's matches.
    */
-  (event: "selectAll", selected: boolean, query: string): void;
+  (event: "selectAll", payload: { selected: boolean; query: string }): void;
   /** The list is resting at its end and more pages are available. */
   (event: "loadMore"): void;
   /** The typed query, debounced; an emptied query is sent at once. Pair with `serverFilter` to filter on the server. */
@@ -258,7 +259,10 @@ const props = withDefaults(
      * `loading` must be bound alongside it, or one request becomes many.
      */
     hasNextPage?: boolean;
-    /** Turns off client-side filtering — the consumer filters and re-supplies `items`. */
+    /**
+     * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
+     * `search` with new `items` or a `loading` cycle: until then the list holds paging back.
+     */
     serverFilter?: boolean;
     testIdDropdown?: string;
     enableTeleport?: boolean;
@@ -653,7 +657,8 @@ if (import.meta.env.DEV) {
   const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
 
   // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
-  if (props.selectAll && props.multiple && !("onSelectAll" in vnodeProps)) {
+  // `@select-all.once` arrives as `onSelectAllOnce`, which emit also calls.
+  if (props.selectAll && props.multiple && !(vnodeProps.onSelectAll || vnodeProps.onSelectAllOnce)) {
     let warnedPaged = false;
 
     watch(
@@ -663,7 +668,8 @@ if (import.meta.env.DEV) {
           warnedPaged = true;
           // eslint-disable-next-line no-console
           console.warn(
-            "VcSelect: a paged `select-all` without a `@select-all` handler selects only the loaded options.",
+            "VcSelect: a paged `select-all` without a `@select-all` handler selects only the loaded " +
+              "options; add the rest of the set in `@select-all`.",
           );
         }
       },
@@ -764,6 +770,11 @@ const selectAllLabel = computed(() =>
 // A partial list whose loaded options are all selected clears too: selecting would change nothing,
 // and the pages it lacks are the consumer's to add on `selectAll`.
 function onSelectAll() {
+  // The options on screen still answer the previous query, which the event would misreport.
+  if (awaitingServerItems.value) {
+    return;
+  }
+
   const clearing = isEveryOptionSelected.value;
 
   if (clearing) {
@@ -784,7 +795,7 @@ function onSelectAll() {
     commit(merged);
   }
 
-  emit("selectAll", !clearing, filterValue.value);
+  emit("selectAll", { selected: !clearing, query: filterValue.value });
 }
 
 const selectAllElement = useTemplateRef<{ focus: () => boolean }>("selectAllElement");

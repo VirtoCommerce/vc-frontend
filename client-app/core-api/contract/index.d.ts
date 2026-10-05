@@ -2623,7 +2623,10 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
          * `loading` must be bound alongside it, or one request becomes many.
          */
         hasNextPage?: boolean;
-        /** Turns off client-side filtering — the consumer filters and re-supplies `items`. */
+        /**
+         * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
+         * `search` with new `items` or a `loading` cycle: until then the list holds paging back.
+         */
         serverFilter?: boolean;
         testIdDropdown?: string;
         enableTeleport?: boolean;
@@ -2636,7 +2639,10 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
         onLoadMore?: (() => any) | undefined;
         onChange?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
         "onUpdate:modelValue"?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
-        onSelectAll?: ((selected: boolean, query: string) => any) | undefined;
+        onSelectAll?: ((payload: {
+            selected: boolean;
+            query: string;
+        }) => any) | undefined;
     }> & (typeof globalThis extends {
         __VLS_PROPS_FALLBACK: infer P;
     } ? P : {});
@@ -2663,7 +2669,10 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
     emit: {
         (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
         (event: "change", value: VcSelectEmittedType<V, M>): void;
-        (event: "selectAll", selected: boolean, query: string): void;
+        (event: "selectAll", payload: {
+            selected: boolean;
+            query: string;
+        }): void;
         (event: "loadMore"): void;
         (event: "search", value: string): void;
     };

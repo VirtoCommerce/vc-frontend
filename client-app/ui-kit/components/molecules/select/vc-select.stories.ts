@@ -611,6 +611,7 @@ export const SelectAllWithTotal: StoryType = {
     placeholder: "Select buyers",
     multiple: true,
     selectAll: true,
+    autocomplete: true,
   },
   render: (args) => ({
     setup: () => {
@@ -621,7 +622,7 @@ export const SelectAllWithTotal: StoryType = {
 
       // The select can only add what is loaded; the rest of the set is the consumer's to add. A query
       // means the row acted on the matches only, which a server-filtered list answers itself.
-      function onSelectAll(all: boolean, query: string) {
+      function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
         if (!query) {
           selected.value = all ? [...allIds] : [];
         }
@@ -648,9 +649,9 @@ export const SelectAllWithTotal: StoryType = {
       description: {
         story:
           "A paged list holds one page, so `total` carries the size of the whole set for the counter, " +
-          "and Select all can only add the options that are loaded. `@select-all(true, query)` is the " +
+          "and Select all can only add the options that are loaded. `@select-all` with `selected: true` is the " +
           "consumer's cue to select the rest of the set — every id from the server — and " +
-          "`@select-all(false, query)` to clear it. With a `query` the row acted on the matching options " +
+          "`selected: false` the cue to clear it. With a `query` the row acted on the matching options " +
           "only: leave the rest of the selection alone, or, with `server-filter`, add or clear the " +
           "query's matches. A click on a row whose loaded options are all selected clears, so the row " +
           "never gets stuck on a partial selection.",
@@ -661,7 +662,7 @@ export const SelectAllWithTotal: StoryType = {
 const { items, total, allIds } = useBuyers();
 const selected = ref<string[]>([]);
 
-function onSelectAll(all: boolean, query: string) {
+function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
   if (!query) {
     selected.value = all ? allIds.value : [];
   }
