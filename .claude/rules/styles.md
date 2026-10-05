@@ -11,11 +11,9 @@ public `--vc-*` tokens, `_custom.scss` and their own BEM overrides. So every sty
 does it survive **a preset switch**, **dark mode**, **RTL**, and **a client override**? A style that only looks
 right in the default light preset is a bug.
 
-Nothing lints SCSS (no stylelint) and CI does not run ESLint. Only the Sass/Tailwind compile in `yarn build`
-catches anything, so everything below is review-only. When two forms are both accepted below, the one already used in the touched file wins. Severity guide: breaks the build or renders visibly wrong
+Nothing lints SCSS (no stylelint). Only the Sass/Tailwind compile in `yarn build`
+catches anything, so everything below is review-only. Severity guide: breaks the build or renders visibly wrong
 (in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
-
-**Moved code is new code.** Lines moved or copied into a new file or a newly extracted component are judged as added lines, even if the same text existed elsewhere before — the change chose to ship them again. Only lines left untouched in their original place count as legacy.
 
 ## 1. Where styles live
 
@@ -28,7 +26,7 @@ catches anything, so everything below is review-only. When two forms are both ac
 3. `<style lang="scss">` without `scoped` (isolation comes from the block name), no `:deep()` / `::v-deep`.
    Block order: `<template>` → `<script setup>` → `<style>`.
 4. Global files:
-   - `_colors.scss` and `preflight.scss` are "DO NOT EDIT".
+   - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
    - New global tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss` (UI-kit tokens) or `main.scss`.
    - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`,
@@ -201,10 +199,9 @@ catches anything, so everything below is review-only. When two forms are both ac
 
 ## Legacy — don't flag, don't copy
 
-- Utility-only templates (≈200 files), `print:hidden` and `max-lg:` in them, existing template `!mt-*` utilities.
-- 26 `<style scoped>` files; `login-form-section.vue` plain CSS with px `min-height`.
-- `vc-`-prefixed blocks outside ui-kit: `product-skeleton-list.vue`, `address-selection.vue`, `push-messages/vc-push-message*.vue`.
-- `.vc-typography--variant--h1` overrides in `static-content/*`, `pages/40x.vue`, `pages/product.vue`, `demo-landing.vue`.
-- Existing `@apply lg:` in `loyalty/pages/missions.vue`, `sales-rep/components/layout-surface.vue`; 19 existing
-  `max-width: theme(...)` queries; 12 `font-medium`, 6 `font-semibold`; ≈118 plain `rounded*`; `pages/cart.vue`
-  sticky footer `shadow-[...]`.
+- Utility-only templates, `print:hidden` and `max-lg:` in them, template `!mt-*` utilities.
+- `<style scoped>` blocks; plain CSS with px sizes.
+- `vc-`-prefixed blocks outside the UI kit.
+- `.vc-typography--variant--h1` overrides outside the kit.
+- `@apply` with breakpoint variants, `max-width: theme(...)` queries, `font-medium` / `font-semibold`, plain
+  `rounded*`, arbitrary `shadow-[...]`.

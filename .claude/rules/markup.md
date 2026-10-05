@@ -7,10 +7,6 @@ paths:
 
 Which components to use and how to customise them is in `ui-kit.md`; classes and styling in `styles.md`.
 
-**Moved code is new code.** Lines moved or copied into a new file or a newly extracted component are judged as added lines, even if the same text existed elsewhere before — the change chose to ship them again. Only lines left untouched in their original place count as legacy.
-
-CI does not run ESLint (only pre-commit lint-staged, where `warn` never blocks), so rules marked *(eslint warn)* / *(eslint error)* do reach `dev` — report them in added lines.
-
 ## Template structure
 1. `v-for` always has a stable `:key` from the entity's real identity (`id`, `sku`, `file.url` — not a display
    name that can repeat). `:key="index"` only for static/positional lists (skeleton rows, OTP cells); flag it on
@@ -50,11 +46,11 @@ CI does not run ESLint (only pre-commit lint-staged, where `warn` never blocks),
 ## Test ids
 21. `data-test-id="kebab-case"` (never `data-testid`/`data-qa`), unique on the page and specific enough to be an
     E2E selector, ending with the element kind: `-button`, `-link`, `-input`, `-label`, `-option`, `-section`.
-    It goes on the interactive element: for kit components with an inner control use their `test-id` prop
+    It goes on the interactive element: for kit components with an inner control use their `testId*` prop
     (`ui-kit.md` §6). Dynamic: `` :data-test-id="`filter-${facet.paramName}`" ``. Renaming an existing test id
     breaks E2E flows — call it out.
 
 ## Legacy — don't flag, don't copy
-- Utility-only templates with no `<style>` (≈200 files).
-- `<a :href>` with `text-[--link-color]` classes in `shared/catalog/components/product/properties.vue`.
-- 64 existing `:key="index"` usages; existing `uniqueId(...)` ids in the UI kit.
+- Utility-only templates with no `<style>`.
+- Raw `<a :href>` styled with `text-[--link-color]` classes.
+- `:key="index"` on existing lists; `uniqueId(...)` ids in the UI kit.
