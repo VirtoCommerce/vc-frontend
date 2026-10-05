@@ -1,5 +1,6 @@
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { LAYOUT_REGION_IDS } from "../constants";
 import { getBlock } from "../layout/registry";
 import { useLayoutAnnouncer } from "./useLayoutAnnouncer";
 import { focusBlockControl, focusEditToggle, focusSaveButton } from "./useLayoutFocus";
@@ -11,10 +12,14 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
   const { t } = useI18n();
   const layout = useSalesRepLayout(scope);
   const { message, announce, say } = useLayoutAnnouncer(scope);
-  const { setHidden, hiddenIn, editing, saveFailed } = layout;
+  const { setHidden, visibleIn, hiddenIn, editing, saveFailed } = layout;
 
   // Widgets from both columns share one tray; the stat row has its own paired zone instead.
   const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
+
+  const allHidden = computed(
+    () => !editing.value && LAYOUT_REGION_IDS.every((regionId) => visibleIn(regionId).length === 0),
+  );
 
   const componentOf = (id: string) => {
     const block = getBlock(scope, id);
@@ -31,6 +36,18 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
   function toggleHidden(id: string, hidden: boolean, index?: number): void {
     setHidden(id, hidden, index);
     focusBlockControl(id);
+  }
+
+  function editFromEmpty(): void {
+    layout.startEdit();
+    focusEditToggle();
+  }
+
+  async function restoreDefaults(): Promise<void> {
+    if (await layout.restoreDefaults()) {
+      say(t("sales_rep.hub.layout.restored"));
+      focusEditToggle();
+    }
   }
 
   // Entry rewrites the surface with nothing announcing it, and the arrow keys are otherwise only
@@ -60,16 +77,19 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     message,
     announce,
     hiddenWidgets,
+    allHidden,
     componentOf,
     propsOf,
     toggleHidden,
+    editFromEmpty,
+    restoreDefaults,
     loading: layout.loading,
     saving: layout.saving,
     editing: layout.editing,
     canEdit: layout.canEdit,
     loadFailed: layout.loadFailed,
     saveFailed: layout.saveFailed,
-    visibleIn: layout.visibleIn,
+    visibleIn,
     hiddenIn: layout.hiddenIn,
     settingsOf: layout.settingsOf,
     persistedSettingsOf: layout.persistedSettingsOf,

@@ -657,3 +657,83 @@ describe("useSalesRepLayout", () => {
     expect(saveFailed.value).toBe(true);
   });
 });
+
+// The empty state's way back: the registry defaults go out in one write, with no edit mode in between.
+describe("useSalesRepLayout restoreDefaults", () => {
+  const hiddenBlock = (id: string) => ({ ...echoedBlock(id), hidden: true });
+
+  // Every block parked — the arrangement the empty state is shown for.
+  const ALL_HIDDEN = {
+    salesRepLayout: {
+      regions: [
+        { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(hiddenBlock) },
+        { id: "mainLeft", blocks: ["orders", "top_sellers"].map(hiddenBlock) },
+        { id: "mainRight", blocks: ["actions", "info"].map(hiddenBlock) },
+      ],
+    },
+  };
+
+  it("writes the registry defaults straight away, without entering edit mode", async () => {
+    apolloMock.result.value = ALL_HIDDEN;
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
+
+    const { restoreDefaults, editing, visibleIn } = withLayout(scope);
+
+    await expect(restoreDefaults()).resolves.toBe(true);
+    expect(apolloMock.mutate).toHaveBeenCalledTimes(1);
+    expect(sentBlock("info")).toMatchObject({ hidden: false });
+    expect(editing.value).toBe(false);
+    expect(visibleIn("statistics")).toEqual(CUSTOMER_STAT_IDS);
+    expect(visibleIn("mainRight")).toEqual(["actions", "info"]);
+  });
+
+  // Back in the empty state the rep would have no way to tell the click did anything.
+  it("lands in edit mode on the defaults when the write fails, so Save retries it", async () => {
+    apolloMock.result.value = ALL_HIDDEN;
+    apolloMock.mutate.mockRejectedValue(new Error("network"));
+
+    const { restoreDefaults, save, editing, saveFailed, visibleIn } = withLayout(scope);
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(editing.value).toBe(true);
+    expect(saveFailed.value).toBe(true);
+    expect(visibleIn("mainLeft")).toEqual(["orders", "top_sellers"]);
+
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
+
+    await expect(save()).resolves.toBe(true);
+    expect(editing.value).toBe(false);
+    expect(saveFailed.value).toBe(false);
+  });
+
+  // Edit mode has its own Reset, and writing defaults from under a draft would throw the draft away.
+  it("does nothing while the layout is being edited", async () => {
+    apolloMock.result.value = ALL_HIDDEN;
+
+    const { startEdit, restoreDefaults } = withLayout(scope);
+    startEdit();
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(apolloMock.mutate).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when the read failed, so a full-replace save cannot clobber an unread layout", async () => {
+    apolloMock.error.value = new Error("boom");
+
+    const { restoreDefaults, editing } = withLayout(scope);
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(apolloMock.mutate).not.toHaveBeenCalled();
+    expect(editing.value).toBe(false);
+  });
+
+  it("refuses a second write while one is in flight", async () => {
+    apolloMock.result.value = ALL_HIDDEN;
+    apolloMock.saving.value = true;
+
+    const { restoreDefaults } = withLayout(scope);
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(apolloMock.mutate).not.toHaveBeenCalled();
+  });
+});

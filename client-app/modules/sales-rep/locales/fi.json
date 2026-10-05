@@ -89,6 +89,13 @@
         "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
         "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
         "max_rows": "Maksimirivit",
+        "restored": "Oletusasettelu palautettu.",
+        "empty": {
+          "title": "Kaikki lohkot on piilotettu",
+          "text": "Kaikki tämän sivun tunnusluvut ja widgetit on siirretty asetteluasetuksissa kohtaan {hidden}. Palauta oletusasettelu tuodaksesi kaiken takaisin, tai avaa {edit} ja valitse tarkalleen, mitä näytetään.",
+          "hidden": "Piilotetut",
+          "restore": "Palauta oletusasettelu"
+        },
         "a11y": {
           "reorder": "Järjestä {title}",
           "hide": "Piilota {title}",

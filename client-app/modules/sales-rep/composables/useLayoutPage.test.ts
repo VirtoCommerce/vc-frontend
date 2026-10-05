@@ -149,3 +149,101 @@ describe("useLayoutPage", () => {
     expect(propsOf("nonexistent")).toEqual({});
   });
 });
+
+describe("useLayoutPage with every block hidden", () => {
+  const hiddenBlock = (id: string) => ({ ...echoedBlock(id), hidden: true });
+
+  const documentOf = (toBlock: (id: string) => ReturnType<typeof echoedBlock>) => ({
+    regions: [
+      { id: "statistics", blocks: ["new_orders", "active_cart", "mtd", "orders_ytd", "aov"].map(toBlock) },
+      { id: "mainLeft", blocks: ["orders", "top_sellers"].map(toBlock) },
+      { id: "mainRight", blocks: ["actions", "info"].map(toBlock) },
+    ],
+  });
+
+  beforeEach(() => {
+    apolloMock.result.value = { salesRepLayout: documentOf(hiddenBlock) };
+  });
+
+  // In edit mode the empty zones and the tray are the way back, so the empty state would only cover them.
+  it("reports the surface empty outside edit mode only", () => {
+    const { allHidden, startEdit } = withPage("customerProfile");
+    expect(allHidden.value).toBe(true);
+
+    startEdit();
+    expect(allHidden.value).toBe(false);
+  });
+
+  it("does not report a surface that still shows one block", () => {
+    apolloMock.result.value = {
+      salesRepLayout: documentOf((id) => (id === "info" ? echoedBlock(id) : hiddenBlock(id))),
+    };
+
+    const { allHidden } = withPage("customerProfile");
+    expect(allHidden.value).toBe(false);
+  });
+
+  // The empty state unmounts with the clicked button in it, so focus would otherwise drop to <body>.
+  it("announces a restore that saved and hands focus to the edit toggle", async () => {
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: documentOf(echoedBlock) } });
+    renderChrome();
+
+    const { restoreDefaults, allHidden, message } = withPage("customerProfile");
+
+    await restoreDefaults();
+    await nextTick();
+    await nextTick();
+
+    expect(allHidden.value).toBe(false);
+    expect(message.value).toBe("sales_rep.hub.layout.restored");
+    expect(activeMarker()).toBe("layoutEditToggle");
+  });
+
+  // The failure lands in edit mode, whose entry announcement must not drown out the failure itself.
+  it("announces a restore that failed and hands focus to Save", async () => {
+    apolloMock.mutate.mockRejectedValue(new Error("network"));
+    renderChrome();
+
+    const { restoreDefaults, editing, message } = withPage("customerProfile");
+
+    await restoreDefaults();
+    await nextTick();
+    await nextTick();
+
+    expect(editing.value).toBe(true);
+    expect(message.value).toBe("sales_rep.hub.layout.save_failed");
+    expect(activeMarker()).toBe("layoutSave");
+  });
+
+  it("enters edit mode from the empty state with focus on the edit toggle", async () => {
+    renderChrome();
+
+    const { editFromEmpty, editing } = withPage("customerProfile");
+
+    editFromEmpty();
+    await nextTick();
+    await nextTick();
+
+    expect(editing.value).toBe(true);
+    expect(activeMarker()).toBe("layoutEditToggle");
+  });
+
+  // Saving with every block hidden swaps the toggle for the empty state, so its Edit layout button is the
+  // only control left to take focus — without it focus drops to <body>.
+  it("hands focus to the empty state's Edit layout when edit mode ends on an empty surface", async () => {
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: documentOf(hiddenBlock) } });
+    const emptyEdit = document.createElement("button");
+    emptyEdit.dataset.layoutEmptyEdit = "";
+    document.body.append(emptyEdit);
+
+    const { startEdit, save, allHidden } = withPage("customerProfile");
+    startEdit();
+
+    await expect(save()).resolves.toBe(true);
+    await nextTick();
+    await nextTick();
+
+    expect(allHidden.value).toBe(true);
+    expect(activeMarker()).toBe("layoutEmptyEdit");
+  });
+});

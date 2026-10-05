@@ -1,9 +1,14 @@
 import { nextTick } from "vue";
 
-/** Edit mode ends with the bar unmounting, taking focus with it. */
+/**
+ * Edit mode ends with the bar unmounting, taking focus with it. With every block hidden the toggle is gone
+ * too, and the empty state's Edit layout button stands in for it — the two never render together.
+ */
 export function focusEditToggle(): void {
   void nextTick(() => {
-    document.querySelector<HTMLElement>("[data-layout-edit-toggle]")?.focus({ preventScroll: true });
+    document
+      .querySelector<HTMLElement>("[data-layout-edit-toggle], [data-layout-empty-edit]")
+      ?.focus({ preventScroll: true });
   });
 }
 

@@ -317,6 +317,9 @@ describe("hidden documents widget", () => {
           VcImage: true,
           VcEmptyView: true,
           VcInput: true,
+          // The layout's empty state renders first; `i18n-t` because vue-i18n is mocked down to `useI18n`.
+          VcTypography: true,
+          "i18n-t": true,
         },
       },
     });
@@ -330,8 +333,9 @@ describe("hidden documents widget", () => {
 
     expect(state.useSalesRepDocuments).not.toHaveBeenCalled();
 
-    // Enter edit mode and restore the widget from the tray: only then may the query exist.
-    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    // Enter edit mode and restore the widget from the tray: only then may the query exist. With every
+    // block hidden the surface shows its empty state, whose own button is the way into edit mode.
+    await wrapper.find("[data-layout-empty-edit]").trigger("click");
     await flushPromises();
     expect(state.useSalesRepDocuments).not.toHaveBeenCalled();
 

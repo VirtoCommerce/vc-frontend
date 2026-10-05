@@ -13,90 +13,101 @@
     <div v-else class="layout-surface__layout" :inert="saving || undefined">
       <VcLoaderOverlay v-if="saving" />
 
-      <LayoutEditBar
-        v-if="editing"
-        :saving="saving"
-        :failed="saveFailed"
-        @save="save"
-        @cancel="cancel"
-        @reset="reset"
+      <!-- Replaces every region, edit button included, while all of them are empty outside edit mode. -->
+      <LayoutEmptyState
+        v-if="allHidden"
+        :restoring="saving"
+        :disabled="!canEdit"
+        @restore="restoreDefaults"
+        @edit="editFromEmpty"
       />
 
-      <!-- Cards come from the statistics queries; the layout only decides which show, and in what order. -->
-      <LayoutStats
-        :scope="scope"
-        :visible="visibleIn('statistics')"
-        :hidden="hiddenIn('statistics')"
-        :cards="cards"
-        :editing="editing"
-        @reorder="reorderVisible('statistics', $event)"
-        @reorder-hidden="reorderHidden('statistics', $event)"
-        @set-hidden="toggleHidden"
-        @announce="announce"
-      />
+      <template v-else>
+        <LayoutEditBar
+          v-if="editing"
+          :saving="saving"
+          :failed="saveFailed"
+          @save="save"
+          @cancel="cancel"
+          @reset="reset"
+        />
 
-      <!-- The rail exists only while something is visible in `mainRight`; until then the content runs
-           full width, matching the skeleton. -->
-      <div class="layout-surface__row">
-        <div class="layout-surface__main-col">
+        <!-- Cards come from the statistics queries; the layout only decides which show, and in what order. -->
+        <LayoutStats
+          :scope="scope"
+          :visible="visibleIn('statistics')"
+          :hidden="hiddenIn('statistics')"
+          :cards="cards"
+          :editing="editing"
+          @reorder="reorderVisible('statistics', $event)"
+          @reorder-hidden="reorderHidden('statistics', $event)"
+          @set-hidden="toggleHidden"
+          @announce="announce"
+        />
+
+        <!-- The rail exists only while something is visible in `mainRight`; until then the content runs
+             full width, matching the skeleton. -->
+        <div class="layout-surface__row">
+          <div class="layout-surface__main-col">
+            <LayoutRegion
+              class="layout-surface__main"
+              :scope="scope"
+              :entries="visibleIn('mainLeft')"
+              orientation="vertical"
+              :group="`sales-rep-${scope}-main-left`"
+              :editing="editing"
+              @reorder="reorderVisible('mainLeft', $event)"
+              @set-hidden="toggleHidden"
+              @announce="announce"
+            >
+              <template #default="{ id, title }">
+                <!-- Bindings bind first, so neither can shadow the heading the layout owns. -->
+                <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="bindingsOf(id)" :title="title" />
+              </template>
+            </LayoutRegion>
+
+            <LayoutEditButton
+              v-if="canEdit && editButtonPlacement === 'mainColumn'"
+              :editing="editing"
+              @toggle="editing ? cancel() : startEdit()"
+            />
+          </div>
+
+          <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
           <LayoutRegion
-            class="layout-surface__main"
+            v-if="visibleIn('mainRight').length"
+            class="layout-surface__aside"
+            tag="aside"
             :scope="scope"
-            :entries="visibleIn('mainLeft')"
+            :entries="visibleIn('mainRight')"
             orientation="vertical"
-            :group="`sales-rep-${scope}-main-left`"
+            :group="`sales-rep-${scope}-main-right`"
             :editing="editing"
-            @reorder="reorderVisible('mainLeft', $event)"
+            @reorder="reorderVisible('mainRight', $event)"
             @set-hidden="toggleHidden"
             @announce="announce"
           >
-            <template #default="{ id, title }">
-              <!-- Bindings bind first, so neither can shadow the heading the layout owns. -->
-              <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="bindingsOf(id)" :title="title" />
+            <!-- No `title`: rail widgets set their own heading. The registry's `titleKey` still names them
+                 in the tray and the announcements. -->
+            <template #default="{ id }">
+              <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="bindingsOf(id)" />
             </template>
           </LayoutRegion>
-
-          <LayoutEditButton
-            v-if="canEdit && editButtonPlacement === 'mainColumn'"
-            :editing="editing"
-            @toggle="editing ? cancel() : startEdit()"
-          />
         </div>
 
-        <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
-        <LayoutRegion
-          v-if="visibleIn('mainRight').length"
-          class="layout-surface__aside"
-          tag="aside"
+        <LayoutHiddenTray
+          v-if="editing && hiddenWidgets.length"
           :scope="scope"
-          :entries="visibleIn('mainRight')"
-          orientation="vertical"
-          :group="`sales-rep-${scope}-main-right`"
+          :entries="hiddenWidgets"
+          @restore="toggleHidden($event, false)"
+        />
+
+        <LayoutEditButton
+          v-if="canEdit && editButtonPlacement === 'end'"
           :editing="editing"
-          @reorder="reorderVisible('mainRight', $event)"
-          @set-hidden="toggleHidden"
-          @announce="announce"
-        >
-          <!-- No `title`: rail widgets set their own heading. The registry's `titleKey` still names them
-               in the tray and the announcements. -->
-          <template #default="{ id }">
-            <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="bindingsOf(id)" />
-          </template>
-        </LayoutRegion>
-      </div>
-
-      <LayoutHiddenTray
-        v-if="editing && hiddenWidgets.length"
-        :scope="scope"
-        :entries="hiddenWidgets"
-        @restore="toggleHidden($event, false)"
-      />
-
-      <LayoutEditButton
-        v-if="canEdit && editButtonPlacement === 'end'"
-        :editing="editing"
-        @toggle="editing ? cancel() : startEdit()"
-      />
+          @toggle="editing ? cancel() : startEdit()"
+        />
+      </template>
     </div>
 
     <!-- Visually hidden, but announced. Keyboard sorting is silent without it. -->
@@ -112,6 +123,7 @@ import { getBlock } from "../layout/registry";
 import { maxRowsSetting } from "../layout/settings";
 import LayoutEditBar from "./layout-edit-bar.vue";
 import LayoutEditButton from "./layout-edit-button.vue";
+import LayoutEmptyState from "./layout-empty-state.vue";
 import LayoutHiddenTray from "./layout-hidden-tray.vue";
 import LayoutRegion from "./layout-region.vue";
 import LayoutSkeleton from "./layout-skeleton.vue";
@@ -153,11 +165,14 @@ const {
   visibleIn,
   hiddenIn,
   hiddenWidgets,
+  allHidden,
   componentOf,
   propsOf,
   startEdit,
+  editFromEmpty,
   cancel,
   reset,
+  restoreDefaults,
   reorderVisible,
   reorderHidden,
   toggleHidden,

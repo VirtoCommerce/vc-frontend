@@ -76,7 +76,8 @@ function mountSurface(props: Record<string, unknown> = {}) {
     // the edit toggle is a VcButton, and a stub would not carry its click.
     global: {
       components: { VcButton, VcWidget, VcWidgetSkeleton },
-      stubs: { VcIcon: true, VcShape: true, VcAlert: true, VcLoaderOverlay: true },
+      // `i18n-t` too: vue-i18n is mocked down to `useI18n`, so its global component is never registered.
+      stubs: { VcIcon: true, VcShape: true, VcAlert: true, VcLoaderOverlay: true, VcTypography: true, "i18n-t": true },
     },
   });
 }
@@ -169,6 +170,68 @@ describe("LayoutSurface with an emptied rail", () => {
     await flushPromises();
 
     expect(wrapper.find(".layout-surface__aside").exists()).toBe(true);
+    expect(wrapper.find(".layout-surface__aside .probe").exists()).toBe(true);
+  });
+});
+
+// Every block hidden used to leave the page title and nothing else, with no hint of the way back.
+describe("LayoutSurface with every block hidden", () => {
+  async function mountAllHidden(props: Record<string, unknown> = {}) {
+    const blocks = getBlockRegistry("customerProfile").map((block) => ({ type: block.id, hidden: true }));
+    apolloMock.result.value = { salesRepLayout: { regions: [{ blocks }] } };
+
+    const wrapper = mountSurface(props);
+    await flushPromises();
+
+    return wrapper;
+  }
+
+  it("shows the empty state instead of the regions and the edit button", async () => {
+    const wrapper = await mountAllHidden({ editButtonPlacement: "mainColumn" });
+
+    expect(wrapper.find(".layout-empty-state").exists()).toBe(true);
+    expect(wrapper.find(".layout-surface__row").exists()).toBe(false);
+    expect(wrapper.find(".layout-stats").exists()).toBe(false);
+    expect(wrapper.find("[data-layout-edit-toggle]").exists()).toBe(false);
+  });
+
+  // In edit mode the empty zones and the tray are the way back, and the empty state would cover them.
+  it("opens edit mode from its own Edit layout button, with every block offered back", async () => {
+    const wrapper = await mountAllHidden();
+
+    await wrapper.find("[data-layout-empty-edit]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find(".layout-empty-state").exists()).toBe(false);
+    expect(wrapper.find(".layout-edit-bar").exists()).toBe(true);
+    expect(wrapper.find(`[data-restore-id="${PROBE_ID}"]`).exists()).toBe(true);
+  });
+
+  it("comes back when edit mode is cancelled without restoring anything", async () => {
+    const wrapper = await mountAllHidden();
+
+    await wrapper.find("[data-layout-empty-edit]").trigger("click");
+    await flushPromises();
+    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find(".layout-empty-state").exists()).toBe(true);
+  });
+
+  it("writes the defaults on Restore and renders the blocks again, without edit mode", async () => {
+    const wrapper = await mountAllHidden();
+    apolloMock.mutate.mockReset();
+    // Echo exactly what was sent: a disagreeing echo is a refused save.
+    apolloMock.mutate.mockImplementation(({ command }: { command: unknown }) =>
+      Promise.resolve({ data: { saveSalesRepLayout: command } }),
+    );
+
+    await wrapper.find("[data-layout-restore]").trigger("click");
+    await flushPromises();
+
+    expect(apolloMock.mutate).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(".layout-empty-state").exists()).toBe(false);
+    expect(wrapper.find(".layout-edit-bar").exists()).toBe(false);
     expect(wrapper.find(".layout-surface__aside .probe").exists()).toBe(true);
   });
 });

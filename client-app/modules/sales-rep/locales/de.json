@@ -89,6 +89,13 @@
         "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
         "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
         "max_rows": "Max Zeilen",
+        "restored": "Standardlayout wiederhergestellt.",
+        "empty": {
+          "title": "Alle Blöcke sind ausgeblendet",
+          "text": "Alle Kennzahlen und Widgets auf dieser Seite wurden in den Layout-Einstellungen in den Bereich {hidden} verschoben. Stellen Sie das Standardlayout wieder her, um alles zurückzuholen, oder öffnen Sie {edit}, um genau festzulegen, was angezeigt wird.",
+          "hidden": "Ausgeblendet",
+          "restore": "Standardlayout wiederherstellen"
+        },
         "a11y": {
           "reorder": "{title} umsortieren",
           "hide": "{title} ausblenden",

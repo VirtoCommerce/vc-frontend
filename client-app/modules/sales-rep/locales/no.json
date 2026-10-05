@@ -89,6 +89,13 @@
         "empty_visible": "Dra et nøkkeltall hit for å vise det",
         "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
         "max_rows": "Maks. rader",
+        "restored": "Standardoppsettet er gjenopprettet.",
+        "empty": {
+          "title": "Alle blokker er skjult",
+          "text": "Alle nøkkeltall og moduler på denne siden er flyttet til {hidden} i oppsettinnstillingene. Gjenopprett standardoppsettet for å få alt tilbake, eller åpne {edit} for å velge nøyaktig hva som skal vises.",
+          "hidden": "Skjulte",
+          "restore": "Gjenopprett standardoppsett"
+        },
         "a11y": {
           "reorder": "Endre rekkefølge på {title}",
           "hide": "Skjul {title}",
