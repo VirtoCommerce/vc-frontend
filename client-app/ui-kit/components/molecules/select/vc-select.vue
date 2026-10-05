@@ -602,6 +602,31 @@ if (import.meta.env.DEV && props.selectAll && !props.multiple) {
   console.warn("VcSelect: `select-all` only applies to `multiple` selects and is ignored here.");
 }
 
+// `multiple` with `valueField` used to store whole items; such a model now matches no option.
+if (import.meta.env.DEV) {
+  let warnedItemModel = false;
+
+  watch(
+    () => [props.multiple, props.valueField, props.modelValue, props.items] as const,
+    ([multiple, valueField, modelValue, items]) => {
+      if (warnedItemModel || !multiple || valueField === undefined || !Array.isArray(modelValue)) {
+        return;
+      }
+
+      const holdsItems = modelValue.some((value) =>
+        items.some((item) => isEqual(item, value) && !isEqual(getItemValue(item), value)),
+      );
+
+      if (holdsItems) {
+        warnedItemModel = true;
+        // eslint-disable-next-line no-console
+        console.warn("VcSelect: with `multiple` and `value-field` the model holds values, not items.");
+      }
+    },
+    { immediate: true },
+  );
+}
+
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
 // VcLoadMore draws its own spinner once another page is known to exist.

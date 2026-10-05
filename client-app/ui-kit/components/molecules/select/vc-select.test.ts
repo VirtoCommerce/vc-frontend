@@ -247,6 +247,53 @@ describe("VcSelect", () => {
 
       expect(wrapper.get('[role="listbox"]').attributes("aria-multiselectable")).toBeUndefined();
     });
+
+    describe("a model that still holds items under valueField", () => {
+      function spyOnWarn() {
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+        onTestFinished(() => warn.mockRestore());
+
+        return warn;
+      }
+
+      it("warns once in development", async () => {
+        const warn = spyOnWarn();
+        const wrapper = createWrapper({
+          items: OBJECT_ITEMS,
+          textField: "name",
+          valueField: "id",
+          multiple: true,
+          modelValue: [OBJECT_ITEMS[0]],
+        });
+
+        await wrapper.setProps({ modelValue: [...OBJECT_ITEMS] });
+
+        expect(warn).toHaveBeenCalledOnce();
+        expect(warn.mock.calls[0][0]).toContain("holds values, not items");
+      });
+
+      it("stays quiet for a model of values", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: OBJECT_ITEMS, textField: "name", valueField: "id", multiple: true, modelValue: ["1"] });
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+
+      it("stays quiet when valueField resolves to the item itself", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({
+          items: OBJECT_ITEMS,
+          textField: "name",
+          valueField: (item: never) => item,
+          multiple: true,
+          modelValue: [OBJECT_ITEMS[0]],
+        });
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe("select all", () => {
