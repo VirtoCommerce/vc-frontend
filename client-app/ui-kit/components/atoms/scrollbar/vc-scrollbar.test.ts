@@ -297,12 +297,14 @@ describe("VcScrollbar", () => {
         expect(press(wrapper.element).defaultPrevented).toBe(true);
       });
 
-      // Middle-click autoscroll is the browser's; a right press would still take focus.
-      it("leaves the middle button alone and still guards the right one", async () => {
+      // Middle-click autoscroll is the browser's; the right, back and forward buttons would still
+      // take focus.
+      it("leaves the middle button alone and still guards the others", async () => {
         const wrapper = await mountOverflowing(listbox);
+        const row = wrapper.get(".row").element;
 
-        expect(press(wrapper.get(".row").element, 1).defaultPrevented).toBe(false);
-        expect(press(wrapper.get(".row").element, 2).defaultPrevented).toBe(true);
+        expect(press(row, 1).defaultPrevented).toBe(false);
+        expect([2, 3, 4].map((button) => press(row, button).defaultPrevented)).toEqual([true, true, true]);
       });
 
       it("leaves text beside the interactive container selectable", async () => {

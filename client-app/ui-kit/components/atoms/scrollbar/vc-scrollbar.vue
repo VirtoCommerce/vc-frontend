@@ -151,7 +151,8 @@ function updateAutoTabStop(): void {
 }
 
 // The -1 only keeps the region out of the Tab order; a press on its own area (padding, the bar)
-// must not focus it and pull focus off the control that drives the list.
+// must not focus it and pull focus off the control that drives the list. The middle button is
+// left to the browser for autoscroll, at the cost of that press focusing the region.
 function onMousedown(event: MouseEvent): void {
   const region = el.value;
   const { target } = event;
