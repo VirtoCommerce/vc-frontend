@@ -157,7 +157,7 @@ function onMousedown(event: MouseEvent): void {
   const { target } = event;
 
   if (
-    event.button !== 0 ||
+    event.button === 1 ||
     autoTabStop.value !== -1 ||
     region?.getAttribute("tabindex") !== "-1" ||
     !(target instanceof Element)
