@@ -670,7 +670,15 @@ function onSelectAll({ selected: all, query }: { selected: boolean; query: strin
 </script>
 
 <template>
-  <VcSelect v-model="selected" :items="items" :total="total" multiple select-all @select-all="onSelectAll" />
+  <VcSelect
+    v-model="selected"
+    :items="items"
+    :total="total"
+    multiple
+    autocomplete
+    select-all
+    @select-all="onSelectAll"
+  />
 </template>
         `,
       },

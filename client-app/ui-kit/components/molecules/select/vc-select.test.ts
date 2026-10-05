@@ -391,7 +391,7 @@ describe("VcSelect", () => {
     });
 
     // Selecting would change nothing on a page that is all selected, so the row clears instead;
-    // the pages not loaded are the consumer's to add on selectAll(true).
+    // the pages not loaded are the consumer's to add on `selectAll` with `selected: true`.
     it("clears a fully selected page with pages still to come", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
 
@@ -489,7 +489,7 @@ describe("VcSelect", () => {
       });
 
       it.each([
-        ["once", { onSelectAllOnce: () => undefined }, false],
+        ["once, which a paged list outgrows after one press", { onSelectAllOnce: () => undefined }, true],
         ["bound to undefined", { onSelectAll: undefined }, true],
       ])("treats a handler %s accordingly", (_label, listener, warns) => {
         const warn = spyOnWarn();
@@ -515,6 +515,17 @@ describe("VcSelect", () => {
         createWrapper({ ...selectAllProps, modelValue: [] });
 
         expect(warn).not.toHaveBeenCalledWith(pagedWarning);
+      });
+
+      it("warns about server-filter without a search handler", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true });
+        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, onSearch: () => undefined });
+
+        expect(
+          warn.mock.calls.filter(([message]) => String(message).includes("needs a `@search` handler")),
+        ).toHaveLength(1);
       });
 
       it("warns about server-filter without autocomplete", () => {

@@ -261,7 +261,8 @@ const props = withDefaults(
     hasNextPage?: boolean;
     /**
      * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-     * `search` with new `items` or a `loading` cycle: until then the list holds paging back.
+     * `search` with a new `items` array (not an in-place change) or a `loading` cycle: until then the
+     * list holds paging back and ignores Select all.
      */
     serverFilter?: boolean;
     testIdDropdown?: string;
@@ -657,8 +658,9 @@ if (import.meta.env.DEV) {
   const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
 
   // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
-  // `@select-all.once` arrives as `onSelectAllOnce`, which emit also calls.
-  if (props.selectAll && props.multiple && !(vnodeProps.onSelectAll || vnodeProps.onSelectAllOnce)) {
+  // Truthy, not present: `@select-all="undefined"` handles nothing. `.once` is not exempt either — a
+  // paged list needs the handler on every press.
+  if (props.selectAll && props.multiple && !vnodeProps.onSelectAll) {
     let warnedPaged = false;
 
     watch(
@@ -680,6 +682,13 @@ if (import.meta.env.DEV) {
   if (props.serverFilter && !props.autocomplete) {
     // eslint-disable-next-line no-console
     console.warn("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
+  }
+
+  if (props.serverFilter && !vnodeProps.onSearch) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcSelect: `server-filter` needs a `@search` handler that answers with new `items` or a `loading` cycle.",
+    );
   }
 }
 
