@@ -1,7 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
-import { defineComponent, h, nextTick, reactive } from "vue";
+import { defineComponent, h, nextTick, reactive, ref } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
@@ -278,6 +278,41 @@ describe("VcSelect", () => {
         createWrapper({ items: OBJECT_ITEMS, textField: "name", ...props });
 
         expect(warned(warn)).toBe(warns);
+      });
+
+      it("stays quiet for a primitive that is one of mixed items", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: ["Other", ...OBJECT_ITEMS], modelValue: "Other" });
+
+        expect(warned(warn)).toBe(false);
+      });
+
+      it("warns once, and also for objects pushed into the same items array", async () => {
+        const warn = spyOnWarn();
+        const items = reactive<unknown[]>(["Other"]);
+        const model = ref<unknown>("1");
+        const parent = defineComponent({
+          setup: () => () => h(VcSelect as never, { items, modelValue: model.value }),
+        });
+
+        createWrapperFactory(mount, parent, {
+          attachTo: document.body,
+          global: { components: UIKitComponents, directives: { maska: vMaska } },
+        })();
+        await nextTick();
+
+        expect(warned(warn)).toBe(false);
+
+        items.push(...OBJECT_ITEMS);
+        await nextTick();
+
+        expect(warned(warn)).toBe(true);
+
+        model.value = "2";
+        await nextTick();
+
+        expect(warn.mock.calls.filter(([message]) => String(message).includes(primitiveWarning))).toHaveLength(1);
       });
 
       it("stays quiet for primitive items", () => {

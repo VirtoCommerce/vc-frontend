@@ -728,7 +728,16 @@ if (import.meta.env.DEV) {
   let warnedItemModel = false;
 
   watch(
-    () => [props.multiple, props.valueField, props.modelValue, props.items] as const,
+    // The lengths re-run the check for items pushed or a model entry added in place.
+    () =>
+      [
+        props.multiple,
+        props.valueField,
+        props.modelValue,
+        props.items,
+        props.items.length,
+        Array.isArray(props.modelValue) ? props.modelValue.length : 0,
+      ] as const,
     ([multiple, valueField, modelValue, items]) => {
       if (warnedItemModel || !multiple || valueField === undefined || !Array.isArray(modelValue)) {
         return;
@@ -760,14 +769,25 @@ if (import.meta.env.DEV) {
   let warnedPrimitiveModel = false;
 
   watch(
-    () => [props.valueField, props.modelValue, props.items] as const,
+    // The lengths re-run the check for items pushed or a model entry added in place.
+    () =>
+      [
+        props.valueField,
+        props.modelValue,
+        props.items,
+        props.items.length,
+        Array.isArray(props.modelValue) ? props.modelValue.length : 0,
+      ] as const,
     ([valueField, modelValue, items]) => {
       if (warnedPrimitiveModel || valueField !== undefined) {
         return;
       }
 
       const values = Array.isArray(modelValue) ? modelValue : [modelValue];
-      const holdsPrimitive = values.some((value) => value !== null && value !== undefined && typeof value !== "object");
+      // A primitive that is itself one of the items (mixed items) is a valid model.
+      const holdsPrimitive = values.some(
+        (value) => value !== null && value !== undefined && typeof value !== "object" && !items.includes(value),
+      );
       const offersObjects = items.some((item) => typeof item === "object" && item !== null);
 
       if (holdsPrimitive && offersObjects) {
