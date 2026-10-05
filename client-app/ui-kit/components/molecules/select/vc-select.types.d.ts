@@ -3,7 +3,7 @@ declare global {
   type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
 
   /** Property name, or an accessor function, resolving a field of an option. */
-  type VcSelectFieldAccessorType<T, R> = string | ((item: T) => R);
+  type VcSelectFieldAccessorType<T, R> = Extract<keyof T, string> | ((item: T) => R);
 }
 
 export {};

@@ -58,12 +58,16 @@ const mountSelect = createWrapperFactory(mount, VcSelect, {
 
 type MountOptionsType = NonNullable<Parameters<typeof mount<typeof VcSelect>>[1]>;
 
-function createWrapper(props: MountOptionsType["props"], slots?: MountOptionsType["slots"]) {
-  return mountSelect({ props, slots });
+// Mounted untyped, items are `unknown`, which has no keys to name; the fixtures name real ones.
+type HarnessPropsType = Omit<NonNullable<MountOptionsType["props"]>, "textField" | "valueField"> &
+  Partial<Record<"textField" | "valueField", string | ((item: never) => unknown)>>;
+
+function createWrapper(props: HarnessPropsType, slots?: MountOptionsType["slots"]) {
+  return mountSelect({ props: props as MountOptionsType["props"], slots });
 }
 
-function createWrapperWithMessages(props: MountOptionsType["props"]) {
-  return mountSelect({ props, global: { plugins: [countingI18n] } });
+function createWrapperWithMessages(props: HarnessPropsType) {
+  return mountSelect({ props: props as MountOptionsType["props"], global: { plugins: [countingI18n] } });
 }
 
 describe("VcSelect", () => {
@@ -160,7 +164,7 @@ describe("VcSelect", () => {
     it("treats a valueless multiple attribute as true", () => {
       const wrapper = createWrapper({
         items: ITEMS,
-        multiple: "" as unknown as boolean,
+        multiple: "",
         modelValue: [],
       });
 
@@ -1740,7 +1744,7 @@ describe("VcSelect", () => {
 
     // An unset GraphQL value arrives as null, and without valueField the model is the item.
     it("shows the placeholder for a null model, not the selected slot", () => {
-      const wrapper = createWrapper({ items: ITEMS, modelValue: null as unknown as string }, slots);
+      const wrapper = createWrapper({ items: ITEMS, modelValue: null }, slots);
 
       expect(wrapper.find(".probe-placeholder").exists()).toBe(true);
       expect(wrapper.find(".probe-selected").exists()).toBe(false);
