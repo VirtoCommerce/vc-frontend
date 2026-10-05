@@ -907,6 +907,53 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
     });
 
+    describe("a server-side query being answered", () => {
+      beforeEach(() => {
+        vi.useFakeTimers();
+      });
+
+      afterEach(() => {
+        vi.useRealTimers();
+      });
+
+      async function typeQuery(props: HarnessPropsType = { items: ITEMS }) {
+        const wrapper = createWrapper({ autocomplete: true, serverFilter: true, ...props });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ loading: true });
+
+        return wrapper;
+      }
+
+      const rows = (wrapper: VueWrapper) => wrapper.findAll('[role="option"]').map((option) => option.text());
+
+      it("shows the loading row above the previous query's options", async () => {
+        const wrapper = await typeQuery();
+
+        expect(rows(wrapper)).toEqual(["ui_kit.messages.loading_text", ...ITEMS]);
+      });
+
+      it("shows one spinner and asks for no next page of the previous query", async () => {
+        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
+
+        expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
+        expect(wrapper.find(".vc-load-more").exists()).toBe(false);
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+      });
+
+      it("hands paging back once the answer lands", async () => {
+        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
+
+        await wrapper.setProps({ items: ["Belgium"], loading: false });
+
+        expect(rows(wrapper)).toEqual(["Belgium"]);
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+    });
+
     describe("result count announced for a server-side query", () => {
       beforeEach(() => {
         vi.useFakeTimers();

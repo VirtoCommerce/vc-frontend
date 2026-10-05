@@ -97,6 +97,17 @@
               :aria-label="accessibleLabel"
               :aria-multiselectable="multiple || undefined"
             >
+              <!-- First, so a query being answered shows it above the previous query's options. -->
+              <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
+                <span class="vc-select__loading">
+                  <slot name="loading">
+                    <VcLoader />
+
+                    <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
+                  </slot>
+                </span>
+              </VcMenuItem>
+
               <VcMenuItem
                 v-for="(item, index) in filteredItems"
                 :key="index"
@@ -127,18 +138,8 @@
                 </slot>
               </VcMenuItem>
 
-              <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
-                <span class="vc-select__loading">
-                  <slot name="loading">
-                    <VcLoader />
-
-                    <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
-                  </slot>
-                </span>
-              </VcMenuItem>
-
               <VcMenuItem
-                v-else-if="!filteredItems.length && !loading"
+                v-if="!filteredItems.length && !loading"
                 role="option"
                 :aria-selected="false"
                 disabled
@@ -153,7 +154,7 @@
             <VcLoadMore
               class="vc-select__more"
               :loading="loading"
-              :has-next-page="hasNextPage"
+              :has-next-page="hasNextPage && !awaitingServerItems"
               @load-more="$emit('loadMore')"
             >
               <template v-if="$slots.loading" #loading>
@@ -669,7 +670,11 @@ if (import.meta.env.DEV) {
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
 // VcLoadMore draws its own spinner once another page is known to exist.
-const showLoadingRow = computed(() => props.loading && !filteredItems.value.length && !props.hasNextPage);
+// The pager owns the spinner for a further page; a query on its way, or an empty first page, is shown
+// here. A next page of the previous query is not asked for while its answer is pending.
+const showLoadingRow = computed(
+  () => props.loading && (awaitingServerItems.value || (!filteredItems.value.length && !props.hasNextPage)),
+);
 
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
 
