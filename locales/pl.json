@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Twój dostęp do tej organizacji został zablokowany. Skontaktuj się z administratorem organizacji",
           "user_cannot_login_in_store": "Dostęp zabroniony. Nie możesz się zalogować do bieżącego sklepu",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje"
+          "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje",
+          "sign_in_not_allowed": "Nie możesz zalogować się na to konto. Skontaktuj się z administratorem.",
+          "store_not_found": "Ten sklep nie istnieje.",
+          "duplicate_email_login_attempt": "Kilka kont używa tego adresu e-mail.",
+          "lockout_disabled": "To konto nie może logować się za pomocą kodu.",
+          "invalid_code": "Ten kod nie zadziałał.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Kliknij, aby skopiować",
         "clipboard_success": "Kupon pomyślnie skopiowany",
         "tap_to_copy": "Dotknij, aby skopiować"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Zaloguj się kodem jednorazowym",
+        "request": {
+          "subtitle": "Wyślemy Ci kod e-mailem. Hasło nie jest potrzebne.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Dalej",
+          "switch_to_password_link": "Zaloguj się hasłem"
+        },
+        "verify": {
+          "header": "Sprawdź swoją pocztę e-mail",
+          "subtitle": "Wysłaliśmy kod na adres {email}.",
+          "code_label": "Kod",
+          "paste_hint": "Wpisz lub wklej kod. Na telefonie dotknij go nad klawiaturą.",
+          "submit_button": "Zaloguj się",
+          "resend_button": "Wyślij kod ponownie",
+          "use_different_email_link": "Użyj innego adresu e-mail",
+          "live_resent": "Wysłano nowy kod."
+        },
+        "locked": {
+          "title": "Zbyt wiele nieudanych prób",
+          "title_blocked": "Konto zablokowane",
+          "text_countdown": "Spróbuj ponownie za {time}.",
+          "text_ready": "Możesz spróbować ponownie teraz.",
+          "start_over_button": "Spróbuj ponownie"
+        },
+        "disabled": {
+          "title": "Nie udało się Cię zalogować",
+          "text": "Spróbuj zamiast tego użyć hasła lub skontaktuj się z administratorem konta, jeśli problem się powtarza.",
+          "text_no_password": "Skontaktuj się z administratorem konta, jeśli problem się powtarza.",
+          "password_button": "Zaloguj się hasłem",
+          "back_link": "Powrót do logowania"
+        }
       }
     },
     "company": {
@@ -1584,6 +1625,8 @@
       "title": "Szukaj",
       "header": "Twoje wyszukiwanie {keyword} zwróciło następujące wyniki",
       "header_empty": "Przepraszamy, wyszukiwanie frazy „{keyword}” nie przyniosło żadnych wyników",
+      "header_barcode": "Twoje wyszukiwanie kodu kreskowego {barcode} zwróciło następujące wyniki",
+      "header_barcode_empty": "Nie znaleziono produktów dla kodu kreskowego {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Twoje zapytanie <strong>{0}</strong> nie zwróciło żadnych wyników",

@@ -8,6 +8,7 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForInStockVariations,
   getFilterExpressionForAvailableIn,
+  getFilterExpressionForBarcode,
   getFilterExpressionForBrand,
   getFilterExpressionFromFacets,
   generateFilterExpressionFromFilters,
@@ -146,6 +147,27 @@ describe("getFilterExpressionForBrand", () => {
   it("escapes quotes and backslashes in the brand name", () => {
     const result = getFilterExpressionForBrand(ref('Acme "Pro"\\'));
     expect(result).toBe('"BRAND":"Acme \\"Pro\\"\\\\"');
+  });
+});
+
+describe("getFilterExpressionForBarcode", () => {
+  it.each`
+    value              | expected
+    ${undefined}       | ${""}
+    ${""}              | ${""}
+    ${"4006381333931"} | ${'barcode:"4006381333931"'}
+  `("with value: $value -> $expected", ({ value, expected }) => {
+    const result = getFilterExpressionForBarcode(value === undefined ? undefined : ref(value));
+    expect(result).toBe(expected);
+  });
+
+  it("accepts a plain string", () => {
+    expect(getFilterExpressionForBarcode("4006381333931")).toBe('barcode:"4006381333931"');
+  });
+
+  // A scanned payload is arbitrary text, so quotes and backslashes must not break out of the term.
+  it("escapes quotes and backslashes in the scanned value", () => {
+    expect(getFilterExpressionForBarcode('400"63\\81')).toBe('barcode:"400\\"63\\\\81"');
   });
 });
 

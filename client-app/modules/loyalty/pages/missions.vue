@@ -19,8 +19,9 @@
     <template v-else>
       <div class="missions__banners">
         <MissionsBanner
-          variant="light"
+          color="primary"
           icon="badge-check"
+          :title="$t('pages.account.missions.balance_banner.label')"
           :link-to="{ name: 'PointsHistory' }"
           :link-text="$t('pages.account.missions.balance_banner.points_history')"
         >
@@ -28,8 +29,8 @@
         </MissionsBanner>
 
         <MissionsBanner
-          variant="dark"
-          icon="gift"
+          color="info"
+          icon="shopping-bag"
           :title="$t('pages.account.missions.redeem_banner.title')"
           :description="$t('pages.account.missions.redeem_banner.description')"
         />
@@ -101,7 +102,7 @@ onMounted(loadData);
   }
 
   &__cards {
-    @apply grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3;
+    @apply grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3;
   }
 
   &__pagination {
