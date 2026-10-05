@@ -101,8 +101,8 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
     const lastWeekEndDate = new Date(firstDayOfWeek);
 
     const lastMonthStartDate = new Date(currentDate);
-    lastMonthStartDate.setMonth(currentDate.getMonth() - 1);
     lastMonthStartDate.setDate(1);
+    lastMonthStartDate.setMonth(currentDate.getMonth() - 1);
 
     const lastMonthEndDate = new Date(currentDate);
     lastMonthEndDate.setDate(1);
