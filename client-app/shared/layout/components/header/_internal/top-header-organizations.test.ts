@@ -223,6 +223,16 @@ describe("TopHeaderOrganizations", () => {
     expect(press.defaultPrevented).toBe(true);
   });
 
+  // The scroller takes tabindex -1 once it overflows, which makes it focusable by a press.
+  it("keeps focus in the search field when the list's scroller is pressed", () => {
+    const wrapper = mountComponent();
+    const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+
+    wrapper.get(".top-header-organizations__list").element.dispatchEvent(press);
+
+    expect(press.defaultPrevented).toBe(true);
+  });
+
   // The debounced search has not answered yet, so the highlighted row belongs to the old query.
   it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
     const wrapper = mountComponent();

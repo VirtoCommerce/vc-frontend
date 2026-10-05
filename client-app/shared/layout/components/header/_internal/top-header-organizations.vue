@@ -46,7 +46,13 @@
       </VcInput>
     </div>
 
-    <VcScrollbar vertical :edge-threshold="50" class="top-header-organizations__list" @keydown="onListKeydown">
+    <VcScrollbar
+      vertical
+      :edge-threshold="50"
+      class="top-header-organizations__list"
+      @keydown="onListKeydown"
+      @mousedown="onListMousedown"
+    >
       <!-- Only options may live in a listbox, so the empty state and the pager sit beside it. -->
       <ul
         :id="listboxId"
@@ -72,7 +78,6 @@
             item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
           "
           @click="selectOrganization(item.id)"
-          @mousedown="onOptionMousedown"
           @mousemove="highlightPassively(index)"
         >
           <VcRadioButton
@@ -247,8 +252,9 @@ async function onEnter(): Promise<void> {
 
 const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
 
-// With a search field the keys belong to it, so a click must not move focus onto the option.
-function onOptionMousedown(event: MouseEvent): void {
+// With a search field the keys belong to it, so a press in the list, its scrollbar included, must
+// not move focus off it.
+function onListMousedown(event: MouseEvent): void {
   if (isShowSearch.value) {
     event.preventDefault();
   }
