@@ -225,6 +225,7 @@ watch(
   [() => searchScopeData.value.searchScope.map((item) => item.label), isScopePending],
   ([labels, pending]) => {
     if (labels.length) {
+      // The scope holds a single category: the category page replaces it rather than adding to it.
       lastScopeLabel.value = labels[0];
     } else if (!pending) {
       lastScopeLabel.value = undefined;

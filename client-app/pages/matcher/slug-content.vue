@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
@@ -132,6 +132,8 @@ watchEffect(() => {
 
 const { preparingScope, holdScope } = useSearchScore();
 
+let endScopeHold: (() => void) | undefined;
+
 // The category page renders asynchronously, so it starts preparing its search scope a moment after
 // this component shows. Until it does, nothing would hold the scope and the search bar would collapse.
 watch(
@@ -147,13 +149,19 @@ watch(
     }
     const release = holdScope();
     const stopWaiting = watch(preparingScope, release, { once: true });
-    onCleanup(() => {
+    endScopeHold = () => {
       stopWaiting();
       release();
-    });
+    };
+    onCleanup(endScopeHold);
   },
   { immediate: true },
 );
+
+// A category page that fails to load or set up never starts preparing, so nothing else would end the hold.
+onErrorCaptured(() => {
+  endScopeHold?.();
+});
 
 function emitState(state: StateType, redirectUrl?: string) {
   emit("setState", { state, redirectUrl });

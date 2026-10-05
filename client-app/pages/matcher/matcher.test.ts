@@ -11,12 +11,13 @@ const previewerEmitters: Record<string, (value: UpdateStateEventArgs) => void> =
 
 // Set by a test that needs the next page to start preparing its own scope on mount, as a category does.
 let pagePrepares = false;
+let finishPagePreparing: (() => void) | undefined;
 
 // Like the real category page: drops its search scope as it is torn down.
 const PageStub = defineComponent({
   setup() {
     if (pagePrepares) {
-      useSearchScore().preparingScope.value = true;
+      finishPagePreparing = useSearchScore().prepareScope();
     }
 
     onBeforeUnmount(() => {
@@ -133,6 +134,7 @@ afterEach(() => {
   wrapper?.unmount();
   wrapper = undefined;
   pagePrepares = false;
+  finishPagePreparing = undefined;
   categoryState.isFetching = false;
   preparingScope.value = false;
   // Holds are global state: one leaked here would fail every test after it, far from the cause.
@@ -181,7 +183,7 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(true);
 
     // Pending only because the new page is preparing: once it has, nothing of the hold is left.
-    preparingScope.value = false;
+    finishPagePreparing?.();
     expect(isScopePending.value).toBe(false);
   });
 

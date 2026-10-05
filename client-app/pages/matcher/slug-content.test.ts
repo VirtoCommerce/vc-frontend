@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { computed, defineComponent, h, nextTick, ref } from "vue";
+import { computed, defineComponent, h, nextTick, ref, watch } from "vue";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SlugContent from "./slug-content.vue";
 import type { VueWrapper } from "@vue/test-utils";
@@ -33,12 +33,20 @@ vi.mock("@/core/composables", () => ({
   useNavigations: () => ({ setMatchingRouteName: vi.fn() }),
 }));
 
+const categoryPage = vi.hoisted(() => ({
+  failsToSetUp: false,
+  finishPreparing: undefined as (() => void) | undefined,
+}));
+
 // Like the real category page: starts preparing its own scope as it is set up.
 vi.mock("@/pages/category.vue", () => ({
   __esModule: true,
   default: defineComponent({
     setup() {
-      useSearchScore().preparingScope.value = true;
+      if (categoryPage.failsToSetUp) {
+        throw new Error("Category setup failed");
+      }
+      categoryPage.finishPreparing = useSearchScore().prepareScope();
       return () => h("div", { "data-testid": "category" });
     },
   }),
@@ -59,6 +67,8 @@ afterEach(() => {
   loading.value = false;
   objectType.value = undefined;
   objectId.value = "category-1";
+  categoryPage.failsToSetUp = false;
+  categoryPage.finishPreparing = undefined;
   preparingScope.value = false;
   // Holds are global state: one leaked here would fail every test after it, far from the cause.
   expect(isScopePending.value).toBe(false);
@@ -79,7 +89,7 @@ describe("SlugContent search scope", () => {
 
     expect(slugContent.find('[data-testid="category"]').exists()).toBe(true);
     // Pending only because the category is preparing: once it has, nothing of the hold is left.
-    preparingScope.value = false;
+    categoryPage.finishPreparing?.();
     expect(isScopePending.value).toBe(false);
   });
 
@@ -129,6 +139,24 @@ describe("SlugContent search scope", () => {
     await slugContent.setProps({ isVisible: true });
 
     expect(isScopePending.value).toBe(false);
+  });
+
+  it("releases the scope when the category page fails to set up, and still reports the error", async () => {
+    categoryPage.failsToSetUp = true;
+    objectType.value = "Category";
+    const errorHandler = vi.fn();
+    const seen: boolean[] = [];
+    const stop = watch(isScopePending, (pending) => seen.push(pending), { flush: "sync" });
+    wrapper = mount(SlugContent, {
+      props: { pathMatch: ["category"], isVisible: true },
+      global: { config: { errorHandler } },
+    });
+
+    await flushPromises();
+    stop();
+
+    expect(errorHandler).toHaveBeenCalledOnce();
+    expect(seen).toEqual([true, false]);
   });
 
   it("releases the scope when torn down before the category shows", async () => {
