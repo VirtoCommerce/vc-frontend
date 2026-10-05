@@ -1,28 +1,9 @@
 <template>
-  <component
-    :is="tag"
-    v-if="pageLimitReached || showSpinner || showEnd"
-    ref="rootElement"
-    class="vc-load-more"
-    :data-test-id="testId"
-    :role="role"
-  >
-    <slot v-if="pageLimitReached" name="limit">
-      <VcIcon class="vc-load-more__icon" name="badge-check" />
-
-      <span>{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
-    </slot>
-
-    <slot v-else-if="showSpinner" name="loading">
+  <component :is="tag" v-if="showSpinner" ref="rootElement" class="vc-load-more" :data-test-id="testId" :role="role">
+    <slot name="loading">
       <VcLoader />
 
       <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
-    </slot>
-
-    <slot v-else name="end">
-      <VcIcon class="vc-load-more__icon" name="badge-check" />
-
-      <span>{{ $t("ui_kit.reach_limit.end_list") }}</span>
     </slot>
   </component>
 </template>
@@ -40,18 +21,6 @@ interface IProps {
   hasNextPage?: boolean;
   /** A page is on its way: blocks a second request and shows the spinner, so a paged list has to bind it. */
   loading?: boolean;
-  /**
-   * Say "you have reached the end of the list" once no next page is left. Off by default: the
-   * sentence is addressed to someone who scrolled a page-sized list to its end, and a dropdown of
-   * options does not want it under four items.
-   */
-  showEndOfList?: boolean;
-  /**
-   * Paging stopped short of the end because the backend will not serve past this page — the
-   * catalog's search window. Takes over from both other states: nothing more is coming, so there
-   * is no spinner, and the message says the results were cut rather than exhausted.
-   */
-  pageLimitReached?: boolean;
   tag?: string;
   testId?: string;
   role?: string;
@@ -74,13 +43,9 @@ if (import.meta.env.DEV && !scrollbar && props.hasNextPage) {
 // Read only when a measurement lands (the watcher below): the edges come from a debounced
 // measurement, so reacting to props would read the box from before an append and ask twice.
 // `loading` is a guard, not a trigger.
-const wantsMore = computed(
-  () => props.hasNextPage && !props.loading && !props.pageLimitReached && scrollbar?.isAtBottom.value === true,
-);
+const wantsMore = computed(() => props.hasNextPage && !props.loading && scrollbar?.isAtBottom.value === true);
 
 const showSpinner = computed(() => props.loading && props.hasNextPage);
-
-const showEnd = computed(() => props.showEndOfList && !props.hasNextPage && !props.loading);
 
 type ContentType = { size: number; text: string };
 
@@ -139,10 +104,5 @@ onMounted(reconsider);
 <style lang="scss">
 .vc-load-more {
   @apply flex items-center justify-center gap-2 p-2 text-base;
-
-  &__icon {
-    --vc-icon-size: theme("spacing.7");
-    --vc-icon-color: var(--color-primary-500);
-  }
 }
 </style>

@@ -24,8 +24,6 @@ const meta: Meta<typeof VcLoadMore> = {
       control: "boolean",
       description: "A page is on its way: shows the spinner and holds back further requests.",
     },
-    showEndOfList: { control: "boolean", description: "Say so once no next page is left." },
-    pageLimitReached: { control: "boolean", description: "The backend will not serve past this page." },
     tag: { control: "text" },
   },
 };
@@ -85,13 +83,11 @@ const DEFAULT_LOAD_MORE = `
 const STATES = [
   { label: "A page is on its way", props: { loading: true, hasNextPage: true } },
   { label: "More pages, nothing in flight", props: { loading: false, hasNextPage: true } },
-  { label: "No next page, silent (default)", props: { loading: false, hasNextPage: false } },
-  { label: "No next page, announced", props: { loading: false, hasNextPage: false, showEndOfList: true } },
-  { label: "Page limit reached", props: { loading: false, hasNextPage: false, pageLimitReached: true } },
+  { label: "No next page", props: { loading: false, hasNextPage: false } },
 ];
 
 export const Basic: StoryType = {
-  args: { loading: true, hasNextPage: true, showEndOfList: false, pageLimitReached: false },
+  args: { loading: true, hasNextPage: true },
   render: (args) => ({
     components: { VcLoadMore },
     setup: () => ({ args }),
@@ -108,12 +104,7 @@ export const Basic: StoryType = {
       source: {
         code: `
 <!-- Standalone, with no VcScrollbar above it: nothing is ever requested, the props draw the state. -->
-<VcLoadMore
-  :loading="loading"
-  :has-next-page="hasNextPage"
-  :show-end-of-list="showEndOfList"
-  :page-limit-reached="pageLimitReached"
-/>
+<VcLoadMore :loading="loading" :has-next-page="hasNextPage" />
         `,
       },
     },
@@ -140,19 +131,14 @@ export const States: StoryType = {
     docs: {
       description: {
         story:
-          "Every state the bottom of a paged list can be in. The end-of-list sentence is opt-in " +
-          "(`show-end-of-list`) rather than the automatic consequence of running out of pages: it is " +
-          "addressed to someone who scrolled a page-sized list to its end, and reads oddly under four " +
-          "options in a dropdown. `page-limit-reached` takes over from both other states — the results " +
-          "were cut, not exhausted, so there is nothing left to spin for.",
+          "Every state the bottom of a paged list can be in. Only a page on its way is drawn; the rest " +
+          "render nothing.",
       },
       source: {
         code: `
 <VcLoadMore loading has-next-page />   <!-- a page is on its way -->
 <VcLoadMore has-next-page />           <!-- more pages, nothing in flight: renders nothing at all -->
-<VcLoadMore />                         <!-- no next page: silent, which is the default -->
-<VcLoadMore show-end-of-list />        <!-- no next page: "You have reached the end of the list." -->
-<VcLoadMore page-limit-reached />      <!-- "No more results. Please try to change filters." -->
+<VcLoadMore />                         <!-- no next page: renders nothing -->
         `,
       },
     },
@@ -165,13 +151,10 @@ export const Paging: StoryType = {
     setup: () => ({ args, ...usePagedList(15, 15) }),
     template: listTemplate(DEFAULT_LOAD_MORE),
   }),
-  args: { showEndOfList: true },
   parameters: {
     docs: {
       description: {
-        story:
-          "The usual case: the first page overflows, and scrolling to the bottom asks for the next " +
-          "one. `show-end-of-list` is on, so the last page ends with the designer's row.",
+        story: "The usual case: the first page overflows, and scrolling to the bottom asks for the next one.",
       },
       source: {
         code: `
@@ -183,7 +166,7 @@ const { items, loading, hasNextPage, loadMore } = usePagedList();
   <VcScrollbar vertical :edge-threshold="50" class="h-64">
     <div v-for="item in items" :key="item">Item {{ item }}</div>
 
-    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" show-end-of-list @load-more="loadMore" />
+    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
   </VcScrollbar>
 </template>
         `,
@@ -198,7 +181,6 @@ export const ShortFirstPage: StoryType = {
     setup: () => ({ args, ...usePagedList(2, 3) }),
     template: listTemplate(DEFAULT_LOAD_MORE),
   }),
-  args: { showEndOfList: true },
   parameters: {
     docs: {
       description: {
@@ -214,7 +196,7 @@ export const ShortFirstPage: StoryType = {
 <VcScrollbar vertical :edge-threshold="50" class="h-64">
   <div v-for="item in items" :key="item">Item {{ item }}</div>
 
-  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" show-end-of-list @load-more="loadMore" />
+  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
 </VcScrollbar>
         `,
       },
@@ -237,9 +219,7 @@ export const CustomIndicator: StoryType = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Each state has a slot of its own — `#loading`, `#end`, `#limit` — and replacing one leaves " +
-          "the request behaviour untouched.",
+        story: "`#loading` replaces the spinner and leaves the request behaviour untouched.",
       },
       source: {
         code: `

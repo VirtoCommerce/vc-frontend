@@ -39,8 +39,6 @@ function renderRows(count: number, label: string, images: boolean) {
 type StateType = {
   loading: boolean;
   hasNextPage: boolean;
-  showEndOfList: boolean;
-  pageLimitReached: boolean;
   rows: number;
   rowLabel: string;
   imageRows: boolean;
@@ -56,8 +54,6 @@ function mountList(initial: Partial<StateType> = {}) {
   const state = reactive<StateType>({
     loading: false,
     hasNextPage: true,
-    showEndOfList: false,
-    pageLimitReached: false,
     rows: 1,
     rowLabel: "row",
     imageRows: false,
@@ -76,8 +72,6 @@ function mountList(initial: Partial<StateType> = {}) {
               ? h(VcLoadMore, {
                   loading: state.loading,
                   hasNextPage: state.hasNextPage,
-                  showEndOfList: state.showEndOfList,
-                  pageLimitReached: state.pageLimitReached,
                   onLoadMore,
                 })
               : null,
@@ -380,51 +374,13 @@ describe("VcLoadMore", () => {
     expect(wrapper.find(".vc-load-more").exists()).toBe(visible);
   });
 
-  // The end-of-list line is opt-in: a four-option dropdown does not want it.
-  it.each([
-    ["nothing at all by default", {}, null],
-    ["the end of the list when asked for it", { showEndOfList: true }, "ui_kit.reach_limit.end_list"],
-    ["the page limit whenever it is set", { pageLimitReached: true }, "ui_kit.reach_limit.page_limit_filters"],
-    [
-      "the page limit instead of the end, both being set",
-      { showEndOfList: true, pageLimitReached: true },
-      "ui_kit.reach_limit.page_limit_filters",
-    ],
-  ])("says %s once no next page is left", async (_label, props, text) => {
-    const { wrapper, region } = mountList({ hasNextPage: false, ...props });
+  it("says nothing once no next page is left", async () => {
+    const { wrapper, region } = mountList({ hasNextPage: false });
 
     describeFittingContent(region);
     await afterContentSettles();
 
-    const row = wrapper.find(".vc-load-more");
-
-    expect(row.exists()).toBe(text !== null);
-
-    if (text !== null) {
-      expect(row.text()).toContain(text);
-      expect(row.find(".vc-load-more__icon").exists()).toBe(true);
-    }
-  });
-
-  // A page limit means "no more will be shown": a next page exists and nothing is loading.
-  it("asks for nothing once the page limit is reached", async () => {
-    const { onLoadMore, region } = mountList({ hasNextPage: true, loading: false, pageLimitReached: true });
-
-    describeFittingContent(region);
-    await afterContentSettles();
-
-    expect(onLoadMore).not.toHaveBeenCalled();
-  });
-
-  // It displaces the spinner too: the page would not be shown anyway.
-  it("shows the limit instead of a spinner while a request is still in flight", async () => {
-    const { wrapper, region } = mountList({ hasNextPage: true, loading: true, pageLimitReached: true });
-
-    describeFittingContent(region);
-    await afterContentSettles();
-
-    expect(wrapper.find(".vc-loader").exists()).toBe(false);
-    expect(wrapper.get(".vc-load-more").text()).toContain("ui_kit.reach_limit.page_limit_filters");
+    expect(wrapper.find(".vc-load-more").exists()).toBe(false);
   });
 
   it("asks for nothing, and says why, with no scroll region around it", async () => {

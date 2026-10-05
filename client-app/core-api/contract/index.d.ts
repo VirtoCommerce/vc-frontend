@@ -4047,7 +4047,10 @@ type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | unde
 type VcSelectFieldAccessorType<T, R> = Extract<keyof T, string> | ((item: T) => R);
 type VcSelectValueKeyType<T, V> = [V] extends [T]
     ? Extract<keyof T, string>
-    : Extract<{ [K in keyof T]-?: unknown extends T[K] ? K : NonNullable<T[K]> extends V ? K : never }[keyof T], string>;
+    : Extract<
+        { [K in keyof T]-?: unknown extends T[K] ? K : NonNullable<T[K]> extends V ? K : never }[keyof T],
+        string
+      >;
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
 type VcTableAlignType = "center" | "right" | "left";
 type VcTableColumnType = {
