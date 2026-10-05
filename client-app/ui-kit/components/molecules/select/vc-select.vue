@@ -261,8 +261,8 @@ const props = withDefaults(
     hasNextPage?: boolean;
     /**
      * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-     * `search` with a new `items` array (not an in-place change) or a `loading` cycle: until then the
-     * list holds paging back and ignores Select all.
+     * `search` with new `items` or a `loading` cycle: until then the list holds paging back and
+     * ignores Select all.
      */
     serverFilter?: boolean;
     testIdDropdown?: string;
@@ -371,7 +371,8 @@ function sendSearch(value: string): void {
   }
 }
 
-watch(() => props.items, onServerAnswer);
+// Depth 1: an answer pushed or spliced into the same array counts as well as a new one.
+watch(() => props.items, onServerAnswer, { deep: 1 });
 
 watch(
   () => props.loading,
@@ -687,7 +688,8 @@ if (import.meta.env.DEV) {
   if (props.serverFilter && !vnodeProps.onSearch) {
     // eslint-disable-next-line no-console
     console.warn(
-      "VcSelect: `server-filter` needs a `@search` handler that answers with new `items` or a `loading` cycle.",
+      "VcSelect: `server-filter` needs a `@search` handler for every query (not `.once`) that answers " +
+        "with new `items` or a `loading` cycle; until then paging and Select all wait.",
     );
   }
 }

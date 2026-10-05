@@ -1,7 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
-import { defineComponent, h, nextTick } from "vue";
+import { defineComponent, h, nextTick, reactive } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
@@ -68,6 +68,11 @@ function createWrapper(props: HarnessPropsType, slots?: MountOptionsType["slots"
 
 function createWrapperWithMessages(props: HarnessPropsType) {
   return mountSelect({ props: props as MountOptionsType["props"], global: { plugins: [countingI18n] } });
+}
+
+// For fixtures that bind server-filter, which warns without a search handler.
+function noop() {
+  return undefined;
 }
 
 function spyOnWarn() {
@@ -451,6 +456,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         total: 5,
         modelValue: [...ITEMS, "Denmark", "Egypt"],
       });
@@ -517,22 +523,24 @@ describe("VcSelect", () => {
         expect(warn).not.toHaveBeenCalledWith(pagedWarning);
       });
 
-      it("warns about server-filter without a search handler", () => {
+      it.each([
+        ["no handler", {}, true],
+        ["a handler bound to undefined", { onSearch: undefined }, true],
+        ["a once handler, gone after the first query", { onSearchOnce: () => undefined }, true],
+        ["a handler", { onSearch: () => undefined }, false],
+      ])("warns about server-filter with %s accordingly", (_label, listener, warns) => {
         const warn = spyOnWarn();
 
-        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true });
-        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, onSearch: () => undefined });
+        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, ...listener });
 
-        expect(
-          warn.mock.calls.filter(([message]) => String(message).includes("needs a `@search` handler")),
-        ).toHaveLength(1);
+        expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@search` handler"))).toBe(warns);
       });
 
       it("warns about server-filter without autocomplete", () => {
         const warn = spyOnWarn();
 
-        createWrapper({ items: ITEMS, serverFilter: true });
-        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true });
+        createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop });
+        createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, autocomplete: true });
 
         expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
       });
@@ -555,6 +563,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         hasNextPage: true,
         total: 5,
         selectedCount: 5,
@@ -575,6 +584,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         hasNextPage: true,
         total: 5,
         selectedCount: 2,
@@ -594,6 +604,7 @@ describe("VcSelect", () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         serverFilter: true,
+        onSearch: noop,
         total: 5,
         selectedCount: 4,
         modelValue: ["Albania"],
@@ -607,6 +618,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         total: 5,
         selectedCount: 0,
         modelValue: [...ITEMS],
@@ -658,6 +670,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         total: 5,
         selectedCount: Number.NaN,
         modelValue: ["Albania"],
@@ -676,6 +689,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         total: 1,
         selectedCount: 1,
         modelValue: [...ITEMS],
@@ -694,6 +708,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         total: 5,
         selectedCount: 7,
         modelValue: [],
@@ -730,6 +745,7 @@ describe("VcSelect", () => {
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
+        onSearch: noop,
         total: 3000,
         modelValue: ["Albania"],
       });
@@ -980,7 +996,7 @@ describe("VcSelect", () => {
 
     // The options on screen stay the previous query's until the consumer answers.
     it("drops the highlight when a server-side query is typed", async () => {
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
       const input = wrapper.get("input");
 
       await input.trigger("click");
@@ -1005,7 +1021,7 @@ describe("VcSelect", () => {
       });
 
       async function typeQuery(props: HarnessPropsType = { items: ITEMS }) {
-        const wrapper = createWrapper({ autocomplete: true, serverFilter: true, ...props });
+        const wrapper = createWrapper({ autocomplete: true, serverFilter: true, onSearch: noop, ...props });
         const input = wrapper.get("input");
 
         await input.trigger("click");
@@ -1034,7 +1050,13 @@ describe("VcSelect", () => {
 
       // The first items answer the empty query, so nothing has to be answered again.
       it("hands paging back for a first query typed and deleted before it went out", async () => {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, hasNextPage: true });
+        const wrapper = createWrapper({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          hasNextPage: true,
+        });
         const input = wrapper.get("input");
 
         await input.trigger("click");
@@ -1045,12 +1067,39 @@ describe("VcSelect", () => {
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
+      // Paging stories push into the same array; that is an answer as much as a new one.
+      it("takes an answer spliced into the same items array", async () => {
+        const items = reactive([...ITEMS]);
+        // Through a parent: the mount factory deep-merges props, which would copy the array.
+        const parent = defineComponent({
+          setup: () => () =>
+            h(VcSelect as never, { items, autocomplete: true, serverFilter: true, onSearch: noop, hasNextPage: true }),
+        });
+        const wrapper = createWrapperFactory(mount, parent, {
+          attachTo: document.body,
+          global: { components: UIKitComponents, directives: { maska: vMaska } },
+        })();
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+
+        items.splice(0, items.length, "Belgium");
+        await nextTick();
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+
       // The options on screen still answer the previous query; the event would name the new one.
       it("ignores Select all until the query on screen is answered", async () => {
         const wrapper = createWrapper({
           items: ITEMS,
           autocomplete: true,
           serverFilter: true,
+          onSearch: noop,
           multiple: true,
           selectAll: true,
           modelValue: [],
@@ -1077,7 +1126,13 @@ describe("VcSelect", () => {
         ["a query typed and deleted before it went out", ["b", ""]],
         ["an answered query typed again", ["belx", "bel"]],
       ])("hands paging back for %s", async (_label, queries) => {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, hasNextPage: true });
+        const wrapper = createWrapper({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          hasNextPage: true,
+        });
         const input = wrapper.get("input");
 
         await input.trigger("click");
@@ -1120,7 +1175,7 @@ describe("VcSelect", () => {
       });
 
       async function typeQuery(
-        wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true }),
+        wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop }),
         query = "zzz",
       ) {
         const input = wrapper.get("input");
@@ -1269,7 +1324,7 @@ describe("VcSelect", () => {
     });
 
     it("does not filter locally when the consumer filters server-side", async () => {
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
 
       await wrapper.get("input").trigger("focus");
       await wrapper.get("input").setValue("zzz");
@@ -1290,7 +1345,7 @@ describe("VcSelect", () => {
       vi.useFakeTimers();
 
       try {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
 
         await wrapper.get("input").trigger("focus");
         await wrapper.get("input").setValue("bel");
@@ -1315,7 +1370,7 @@ describe("VcSelect", () => {
       vi.useFakeTimers();
 
       try {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
 
         await wrapper.get("input").trigger("focus");
         await wrapper.get("input").setValue("bel");
