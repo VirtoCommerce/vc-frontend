@@ -203,14 +203,12 @@
       "load_failed": "无法加载订单"
     },
     "tasks": {
-      "title": "任务",
+      "title": "日历",
       "widget_title": "任务与截止日期",
-      "view_all": "所有任务",
+      "full_calendar": "完整日历",
       "new_task": "新建任务",
-      "due_dates": "截止日期",
+      "add_task": "添加任务",
       "today": "今天",
-      "all": "全部",
-      "clear_day_aria": "清除 {date}",
       "empty": "此标签页没有任务",
       "empty_day": "当天没有到期事项",
       "load_failed": "无法加载任务",
@@ -225,10 +223,8 @@
         "task": "任务",
         "status": "状态",
         "notes": "备注",
-        "actions": "操作",
-        "mark_complete": "标记为已完成",
-        "reopen": "重新打开",
-        "action_aria": "{action}：“{name}”",
+        "complete_aria": "将“{name}”标记为已完成",
+        "reopen_aria": "重新打开“{name}”",
         "edit_aria": "编辑“{name}”"
       },
       "status": {

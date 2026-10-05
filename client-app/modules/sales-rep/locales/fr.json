@@ -203,14 +203,12 @@
       "load_failed": "Impossible de charger les commandes"
     },
     "tasks": {
-      "title": "Tâches",
+      "title": "Calendrier",
       "widget_title": "Tâches et échéances",
-      "view_all": "Toutes les tâches",
+      "full_calendar": "Calendrier complet",
       "new_task": "Nouvelle tâche",
-      "due_dates": "Échéances",
+      "add_task": "Ajouter une tâche",
       "today": "Aujourd'hui",
-      "all": "Toutes",
-      "clear_day_aria": "Retirer {date}",
       "empty": "Aucune tâche dans cet onglet",
       "empty_day": "Aucune échéance ce jour-là",
       "load_failed": "Impossible de charger les tâches",
@@ -225,10 +223,8 @@
         "task": "Tâche",
         "status": "Statut",
         "notes": "Notes",
-        "actions": "Actions",
-        "mark_complete": "Marquer comme terminée",
-        "reopen": "Rouvrir",
-        "action_aria": "{action} : « {name} »",
+        "complete_aria": "Marquer « {name} » comme terminée",
+        "reopen_aria": "Rouvrir « {name} »",
         "edit_aria": "Modifier « {name} »"
       },
       "status": {

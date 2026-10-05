@@ -402,15 +402,8 @@ defineExpose({
   --border-color: var(--color-neutral-200);
   --text-color: var(--color-neutral-800);
 
-  --border-width: var(--vc-calendar-border-width, 1px);
-  // Each size sets only its own default below; the public token overrides all of them here.
-  --size-padding: theme("padding.3");
-  --padding: var(--vc-calendar-padding, var(--size-padding));
+  @apply inline-flex flex-col p-3 gap-2 bg-[--bg-color] text-[--text-color] border border-[--border-color] rounded-[--radius];
 
-  @apply inline-flex flex-col gap-2 bg-[--bg-color] text-[--text-color] border-[--border-color] rounded-[--radius];
-
-  border-width: var(--border-width);
-  padding: var(--padding);
   max-width: 100%;
 
   &--size {
@@ -428,9 +421,8 @@ defineExpose({
       --heading-text: 0.875rem;
       --weekday-text: 0.625rem;
       --grid-gap: 0.125rem;
-      --size-padding: theme("padding.2");
 
-      @apply gap-1.5;
+      @apply p-2 gap-1.5;
     }
 
     &--xs {
@@ -439,9 +431,8 @@ defineExpose({
       --heading-text: 0.8125rem;
       --weekday-text: 0.625rem;
       --grid-gap: 0.0625rem;
-      --size-padding: theme("padding[1.5]");
 
-      @apply gap-1;
+      @apply p-1.5 gap-1;
     }
   }
 
@@ -499,9 +490,6 @@ defineExpose({
 
     grid-template-columns: repeat(7, var(--cell-size));
     gap: var(--grid-gap);
-    // The box is as wide as its widest row, and a long month name can make that the header ("September 2026"
-    // at `sm` is ~6px wider than seven columns). Fixed tracks would then pack to the start, all slack on one side.
-    justify-content: center;
   }
 
   &__weekday {

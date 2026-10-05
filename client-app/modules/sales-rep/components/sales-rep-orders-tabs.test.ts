@@ -62,7 +62,7 @@ const global = {
   },
 };
 
-const TABS = ".sales-rep-rule-chip";
+const TABS = ".sales-rep-rule-chips__tab";
 
 /** The settings seam is a provide, so a real `LayoutBlock` has to install it. */
 const Surface = defineComponent({
@@ -133,7 +133,7 @@ describe("the order status tabs of a widget inside a layout", () => {
     mocks.filterRules = CATALOG;
     const { wrapper } = mountOrders();
 
-    expect(wrapper.find(".sales-rep-rule-chip__count").exists()).toBe(false);
+    expect(wrapper.find(".sales-rep-rule-chips__count").exists()).toBe(false);
   });
 
   it("clears the chosen chip once the tab is saved away", async () => {

@@ -22,7 +22,7 @@ function mountChips(props: Partial<InstanceType<typeof SalesRepRuleChips>["$prop
 }
 
 const pressed = (wrapper: ReturnType<typeof mountChips>) =>
-  wrapper.findAll(".sales-rep-rule-chip button").map((tab) => tab.attributes("aria-pressed"));
+  wrapper.findAll(".sales-rep-rule-chips__tab button").map((tab) => tab.attributes("aria-pressed"));
 
 describe("SalesRepRuleChips", () => {
   it("presses the baseline tab while no rule is chosen", () => {
@@ -36,7 +36,7 @@ describe("SalesRepRuleChips", () => {
   it("clears the filter when the baseline tab is clicked back", async () => {
     const wrapper = mountChips({ modelValue: "Processing" });
 
-    await wrapper.findAll(".sales-rep-rule-chip button")[0].trigger("click");
+    await wrapper.findAll(".sales-rep-rule-chips__tab button")[0].trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
   });
@@ -44,7 +44,7 @@ describe("SalesRepRuleChips", () => {
   it("reports the rule name when a rule tab is clicked", async () => {
     const wrapper = mountChips();
 
-    await wrapper.findAll(".sales-rep-rule-chip button")[2].trigger("click");
+    await wrapper.findAll(".sales-rep-rule-chips__tab button")[2].trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toEqual([["Processing"]]);
   });
@@ -56,7 +56,7 @@ describe("SalesRepRuleChips", () => {
 
     expect(pressed(wrapper)).toEqual(["true", "false"]);
 
-    await wrapper.findAll(".sales-rep-rule-chip button")[1].trigger("click");
+    await wrapper.findAll(".sales-rep-rule-chips__tab button")[1].trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toEqual([["__all__"]]);
   });
@@ -65,7 +65,7 @@ describe("SalesRepRuleChips", () => {
   it("drops a backend all-rule instead of rendering a second baseline", () => {
     const wrapper = mountChips({ rules: [{ name: "All", label: "All" }, ...RULES] });
 
-    expect(wrapper.findAll(".sales-rep-rule-chip")).toHaveLength(3);
+    expect(wrapper.findAll(".sales-rep-rule-chips__tab")).toHaveLength(3);
   });
 
   it("falls back to the baseline when the chosen rule leaves the vocabulary", async () => {
@@ -94,7 +94,7 @@ describe("SalesRepRuleChips", () => {
       allCount: 9,
     });
 
-    expect(wrapper.findAll(".sales-rep-rule-chip__count").map((count) => count.text())).toEqual(["9", "4"]);
+    expect(wrapper.findAll(".sales-rep-rule-chips__count").map((count) => count.text())).toEqual(["9", "4"]);
   });
 
   // A zero count is on the documents page's first-paint path: allCount starts at 0 and the category
@@ -102,6 +102,6 @@ describe("SalesRepRuleChips", () => {
   it("renders a zero count rather than dropping it", () => {
     const wrapper = mountChips({ rules: [{ name: "New", label: "New", count: 0 }], allCount: 0 });
 
-    expect(wrapper.findAll(".sales-rep-rule-chip__count").map((count) => count.text())).toEqual(["0", "0"]);
+    expect(wrapper.findAll(".sales-rep-rule-chips__count").map((count) => count.text())).toEqual(["0", "0"]);
   });
 });

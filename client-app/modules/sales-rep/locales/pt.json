@@ -203,14 +203,12 @@
       "load_failed": "Falha ao carregar os pedidos"
     },
     "tasks": {
-      "title": "Tarefas",
+      "title": "Calendário",
       "widget_title": "Tarefas e prazos",
-      "view_all": "Todas as tarefas",
+      "full_calendar": "Calendário completo",
       "new_task": "Nova tarefa",
-      "due_dates": "Prazos",
+      "add_task": "Adicionar tarefa",
       "today": "Hoje",
-      "all": "Todas",
-      "clear_day_aria": "Remover {date}",
       "empty": "Nenhuma tarefa nesta aba",
       "empty_day": "Nada com prazo neste dia",
       "load_failed": "Falha ao carregar as tarefas",
@@ -225,10 +223,8 @@
         "task": "Tarefa",
         "status": "Status",
         "notes": "Notas",
-        "actions": "Ações",
-        "mark_complete": "Marcar como concluída",
-        "reopen": "Reabrir",
-        "action_aria": "{action}: «{name}»",
+        "complete_aria": "Marcar «{name}» como concluída",
+        "reopen_aria": "Reabrir «{name}»",
         "edit_aria": "Editar «{name}»"
       },
       "status": {
