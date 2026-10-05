@@ -1,5 +1,5 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { h, nextTick } from "vue";
 import { describeScrollBox as describeBox } from "@/core/utilities/tests";
 import VcScrollbar from "./vc-scrollbar.vue";
@@ -264,8 +264,8 @@ describe("VcScrollbar", () => {
     describe("a press on a region kept out of the Tab order", () => {
       const listbox = () => h("ul", { role: "listbox" }, [h("li", { role: "option", class: "row" }, "row")]);
 
-      function press(target: Element): MouseEvent {
-        const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      function press(target: Element, button = 0): MouseEvent {
+        const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true, button });
         target.dispatchEvent(event);
 
         return event;
@@ -287,6 +287,57 @@ describe("VcScrollbar", () => {
 
       it("leaves a press alone on a region that is a tab stop", async () => {
         const wrapper = await mountOverflowing(listbox, { focusable: true });
+
+        expect(press(wrapper.get(".row").element).defaultPrevented).toBe(false);
+      });
+
+      it("does not focus the region when its padding is pressed", async () => {
+        const wrapper = await mountOverflowing(listbox);
+
+        expect(press(wrapper.element).defaultPrevented).toBe(true);
+      });
+
+      it("leaves the middle button alone", async () => {
+        const wrapper = await mountOverflowing(listbox);
+
+        expect(press(wrapper.get(".row").element, 1).defaultPrevented).toBe(false);
+      });
+
+      it("leaves text beside the interactive container selectable", async () => {
+        const wrapper = await mountOverflowing(() => [h("p", { class: "note" }, "note"), listbox()]);
+
+        expect(press(wrapper.get(".note").element).defaultPrevented).toBe(false);
+      });
+
+      // Only a container inside the region counts; an outer menu around it does not.
+      it("leaves text beside the container selectable inside an outer interactive container", async () => {
+        const outer = document.createElement("div");
+        outer.setAttribute("role", "menu");
+        document.body.appendChild(outer);
+        onTestFinished(() => outer.remove());
+
+        const wrapper = mount(VcScrollbar, {
+          attachTo: outer,
+          props: { vertical: true },
+          slots: { default: () => [h("p", { class: "note" }, "note"), listbox()] },
+        });
+
+        describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 500, scrollTop: 0 });
+        await afterContentSettles();
+
+        expect(press(wrapper.get(".note").element).defaultPrevented).toBe(false);
+      });
+
+      it("leaves a press alone on a region a consumer made a tab stop", async () => {
+        const wrapper = mount(VcScrollbar, {
+          attachTo: document.body,
+          props: { vertical: true },
+          attrs: { tabindex: "0" },
+          slots: { default: listbox },
+        });
+
+        describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 500, scrollTop: 0 });
+        await afterContentSettles();
 
         expect(press(wrapper.get(".row").element).defaultPrevented).toBe(false);
       });

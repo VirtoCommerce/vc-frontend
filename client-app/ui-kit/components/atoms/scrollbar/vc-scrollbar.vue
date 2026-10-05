@@ -153,11 +153,23 @@ function updateAutoTabStop(): void {
 // The -1 only keeps the region out of the Tab order; a press on its own area (padding, the bar)
 // must not focus it and pull focus off the control that drives the list.
 function onMousedown(event: MouseEvent): void {
-  if (autoTabStop.value !== -1 || props.focusable || !(event.target instanceof Element)) {
+  const region = el.value;
+  const { target } = event;
+
+  if (
+    event.button !== 0 ||
+    autoTabStop.value !== -1 ||
+    region?.getAttribute("tabindex") !== "-1" ||
+    !(target instanceof Element)
+  ) {
     return;
   }
 
-  if (event.target.closest(`${FOCUSABLE_SELECTOR}, [tabindex]`) === el.value) {
+  // Only the region's own area and the interactive container: text beside it stays selectable.
+  const container = target.closest(INTERACTIVE_CONTAINER_SELECTOR);
+  const ownArea = target === region || (!!container && region.contains(container));
+
+  if (ownArea && target.closest(`${FOCUSABLE_SELECTOR}, [tabindex]`) === region) {
     event.preventDefault();
   }
 }
