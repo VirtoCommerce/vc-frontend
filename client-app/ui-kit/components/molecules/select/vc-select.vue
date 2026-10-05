@@ -200,7 +200,7 @@ const emit = defineEmits<{
   (event: "selectAll", selected: boolean): void;
   /** The list is resting at its end and more pages are available. */
   (event: "loadMore"): void;
-  /** Debounced search text; only emitted when `serverFilter` is set. */
+  /** The typed query, debounced; an emptied query is sent at once. Pair with `serverFilter` to filter on the server. */
   (event: "search", value: string): void;
 }>();
 
@@ -612,13 +612,11 @@ const emitSearchDebounced = useDebounceFn((value: string) => {
 }, SEARCH_DEBOUNCE_MS);
 
 watch(filterValue, (value) => {
-  if (!props.serverFilter) {
-    return;
+  if (props.serverFilter) {
+    // The options under the highlight stay the previous query's until the consumer answers.
+    resetHighlight();
+    awaitingServerItems.value = true;
   }
-
-  // The options under the highlight stay the previous query's until the consumer answers.
-  resetHighlight();
-  awaitingServerItems.value = true;
 
   if (value) {
     void emitSearchDebounced(value);

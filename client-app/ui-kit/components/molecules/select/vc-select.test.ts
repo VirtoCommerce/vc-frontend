@@ -1126,13 +1126,22 @@ describe("VcSelect", () => {
       }
     });
 
-    it("stays silent when filtering locally", async () => {
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+    // The query is published either way; serverFilter only turns the local filter off.
+    it("reports the query while still filtering locally", async () => {
+      vi.useFakeTimers();
 
-      await wrapper.get("input").trigger("focus");
-      await wrapper.get("input").setValue("bel");
+      try {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
 
-      expect(wrapper.emitted("search")).toBeUndefined();
+        await wrapper.get("input").trigger("focus");
+        await wrapper.get("input").setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.emitted("search")).toEqual([["bel"]]);
+        expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["Belgium"]);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 

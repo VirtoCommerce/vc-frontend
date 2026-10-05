@@ -706,9 +706,9 @@ const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuy
           "comes to rest at its bottom — which a two-option first page does immediately, with " +
           "nothing to scroll. `loading` is not optional here: it is what keeps one request from " +
           "becoming many, and what asks for the page after the one that just landed. Pair it with " +
-          "`server-filter` so the typed text is forwarded through `@search` (debounced 300ms) " +
-          "instead of being applied to the one page that happens to be loaded — otherwise the " +
-          "search would report no results for anything below the fold.",
+          "`server-filter`, which turns the local filter off: answer the typed text from `@search` " +
+          "(debounced 300ms) instead of filtering the one page that happens to be loaded — otherwise " +
+          "the search would report no results for anything below the fold.",
       },
     },
   },
