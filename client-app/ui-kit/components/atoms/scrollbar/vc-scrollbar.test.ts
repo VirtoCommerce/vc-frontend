@@ -330,6 +330,21 @@ describe("VcScrollbar", () => {
         expect(press(wrapper.get(".note").element).defaultPrevented).toBe(false);
       });
 
+      // A consumer's own -1 (a menubar of links) is not the guard's to enforce.
+      it("leaves a press alone on a region a consumer took out of the Tab order itself", async () => {
+        const wrapper = mount(VcScrollbar, {
+          attachTo: document.body,
+          props: { vertical: true },
+          attrs: { tabindex: "-1", role: "menubar" },
+          slots: { default: () => h("a", { href: "#", role: "menuitem" }, "link") },
+        });
+
+        describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 500, scrollTop: 0 });
+        await afterContentSettles();
+
+        expect(press(wrapper.element).defaultPrevented).toBe(false);
+      });
+
       it("leaves a press alone on a region a consumer made a tab stop", async () => {
         const wrapper = mount(VcScrollbar, {
           attachTo: document.body,
