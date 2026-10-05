@@ -76,8 +76,8 @@ provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measured
 // when nothing inside is focusable — axe passes regions with focusable content, and a tab stop
 // on e.g. an `aria-activedescendant`-driven listbox would break the combobox pattern.
 // The tab stop is added automatically when content overflows on an enabled axis AND the region
-// has no focusable descendants AND no interactive container role; an overflowing region that
-// holds such a role and nothing tabbable gets -1 instead. `focusable` stays as an explicit override.
+// has no focusable descendants AND no interactive container role; a region that holds such a
+// role and nothing tabbable gets -1 instead, overflowing or not. `focusable` stays as an explicit override.
 // Looked for inside the region too: a listbox holding only options sits inside it, not on it.
 const INTERACTIVE_CONTAINER_SELECTOR = [
   "listbox",
@@ -125,19 +125,20 @@ function updateAutoTabStop(): void {
     return;
   }
 
+  // Chromium makes an overflowing region with nothing tabbable in it a tab stop on its own, so
+  // keeping it out takes an explicit -1. Set whether or not it overflows yet: a popup's list is
+  // measured a debounce after it opens, and a Tab pressed before that would land on it.
+  if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CONTAINER_SELECTOR)) {
+    autoTabStop.value = target.querySelector(TABBABLE_SELECTOR) ? undefined : -1;
+    return;
+  }
+
   const overflows =
     (props.vertical && target.scrollHeight > target.clientHeight) ||
     (props.horizontal && target.scrollWidth > target.clientWidth);
 
   if (!overflows) {
     autoTabStop.value = undefined;
-    return;
-  }
-
-  // Chromium makes an overflowing region with nothing tabbable in it a tab stop on its own, so
-  // keeping it out takes an explicit -1.
-  if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CONTAINER_SELECTOR)) {
-    autoTabStop.value = target.querySelector(TABBABLE_SELECTOR) ? undefined : -1;
     return;
   }
 

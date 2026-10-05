@@ -225,11 +225,25 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBe("-1");
     });
 
-    it("leaves a region that fits without a tabindex", async () => {
+    // A popup's list is measured a debounce after it opens; the -1 must already be there.
+    it("keeps a listbox region out of the tab order before it overflows", async () => {
       const wrapper = mount(VcScrollbar, {
         attachTo: document.body,
         props: { vertical: true },
         slots: { default: () => h("ul", { role: "listbox" }, [h("li", { role: "option" }, "row")]) },
+      });
+
+      describeBox(wrapper.element as HTMLElement, { clientHeight: 0, scrollHeight: 0, scrollTop: 0 });
+      await afterContentSettles();
+
+      expect(wrapper.attributes("tabindex")).toBe("-1");
+    });
+
+    it("leaves a region that fits and holds no interactive role without a tabindex", async () => {
+      const wrapper = mount(VcScrollbar, {
+        attachTo: document.body,
+        props: { vertical: true },
+        slots: { default: () => h("p", "row") },
       });
 
       describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 100, scrollTop: 0 });
