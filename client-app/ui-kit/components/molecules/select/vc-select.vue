@@ -365,6 +365,15 @@ function onServerAnswer(): void {
   }
 }
 
+// Switched at runtime, the wait follows: on, the query typed has not been sent to the server; off,
+// the local filter answers it.
+watch(
+  () => props.serverFilter,
+  (serverFilter) => {
+    awaitingServerItems.value = !!serverFilter && filterValue.value !== answeredQuery;
+  },
+);
+
 // A consumer need not fetch again for a query its items already answer, so sending one is its answer.
 function sendSearch(value: string): void {
   searchedQuery = value;
@@ -397,7 +406,13 @@ watch(
 );
 
 const liveRegionMessage = computed(() => {
-  if (!isShown.value || !filterValue.value || awaitingServerItems.value) {
+  // An emptied list that is loading has no results to count yet.
+  if (
+    !isShown.value ||
+    !filterValue.value ||
+    awaitingServerItems.value ||
+    (props.loading && !filteredItems.value.length)
+  ) {
     return "";
   }
 

@@ -1107,6 +1107,48 @@ describe("VcSelect", () => {
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
+      // Refetching an already answered query and emptying the list is not "no results" yet.
+      it("announces nothing while an emptied list loads", async () => {
+        const wrapper = createWrapperWithMessages({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ items: ["Belgium"] });
+        await input.setValue("belx");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ loading: true, items: [] });
+
+        expect(wrapper.get('[aria-live="polite"]').text()).toBe("");
+      });
+
+      it.each([
+        ["off, so the local filter answers the query", false, true],
+        ["on, so the query typed waits for the server", true, false],
+      ])("follows server-filter switched %s", async (_label, serverFilter, pagerOn) => {
+        const wrapper = createWrapper({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: !serverFilter,
+          onSearch: noop,
+          hasNextPage: true,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await wrapper.setProps({ serverFilter });
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(pagerOn);
+      });
+
       // Emptying the list while loading is the consumer starting the query, not answering it.
       it("waits through items cleared while the query loads", async () => {
         const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
