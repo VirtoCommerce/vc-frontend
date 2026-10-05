@@ -261,8 +261,8 @@ const props = withDefaults(
     hasNextPage?: boolean;
     /**
      * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-     * `search` with new `items` or a `loading` cycle: until then the list holds paging back and
-     * ignores Select all.
+     * `search` by replacing `items` or pushing/splicing into it, or with a `loading` cycle (changes
+     * inside an item do not count): until then the list holds paging back and ignores Select all.
      */
     serverFilter?: boolean;
     testIdDropdown?: string;
@@ -371,8 +371,17 @@ function sendSearch(value: string): void {
   }
 }
 
-// Depth 1: an answer pushed or spliced into the same array counts as well as a new one.
-watch(() => props.items, onServerAnswer, { deep: 1 });
+// Depth 1: an answer pushed or spliced into the same array counts as well as a new one. While
+// `loading`, items emptied for the query are not its answer; the end of loading is.
+watch(
+  () => props.items,
+  () => {
+    if (!props.loading) {
+      onServerAnswer();
+    }
+  },
+  { deep: 1 },
+);
 
 watch(
   () => props.loading,

@@ -1093,6 +1093,19 @@ describe("VcSelect", () => {
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
+      // Emptying the list while loading is the consumer starting the query, not answering it.
+      it("waits through items cleared while the query loads", async () => {
+        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
+
+        await wrapper.setProps({ items: [] });
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+
+        await wrapper.setProps({ items: ["Belgium"], loading: false });
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+
       // The options on screen still answer the previous query; the event would name the new one.
       it("ignores Select all until the query on screen is answered", async () => {
         const wrapper = createWrapper({
