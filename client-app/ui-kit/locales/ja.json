@@ -96,7 +96,7 @@
         "out_of_stock": "在庫切れ",
         "positive_number": "値は正の数でなければなりません",
         "integer_number": "値は整数でなければなりません",
-        "pack_size": "{0} のパックで注文"
+        "pack_size": "{0}個単位でご注文ください"
       }
     },
     "pagination": {
