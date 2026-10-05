@@ -214,7 +214,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-left font-normal;
+    @apply flex items-center w-full px-3 bg-additional-50 text-start font-normal;
 
     // A list whose container clips its corners rounds its corner items through this knob.
     border-radius: var(--vc-menu-item-radius, inherit);

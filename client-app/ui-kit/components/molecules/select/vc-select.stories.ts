@@ -578,10 +578,6 @@ export const MultipleSelectAutocompleteClearable: StoryType = {
   },
 };
 
-// =============================================================================
-// Group 5: Object items
-// =============================================================================
-
 export const SelectAll: StoryType = {
   args: {
     items: ITEMS,
@@ -717,6 +713,10 @@ const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuy
     },
   },
 };
+
+// =============================================================================
+// Group 5: Object items
+// =============================================================================
 
 export const ObjectItems: StoryType = {
   args: {
