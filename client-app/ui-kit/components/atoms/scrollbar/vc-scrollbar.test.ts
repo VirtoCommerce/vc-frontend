@@ -260,5 +260,42 @@ describe("VcScrollbar", () => {
 
       expect(wrapper.attributes("tabindex")).toBeUndefined();
     });
+
+    describe("a press on a region kept out of the Tab order", () => {
+      const listbox = () => h("ul", { role: "listbox" }, [h("li", { role: "option", class: "row" }, "row")]);
+
+      function press(target: Element): MouseEvent {
+        const event = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+        target.dispatchEvent(event);
+
+        return event;
+      }
+
+      it("does not focus the region when its own area is pressed", async () => {
+        const wrapper = await mountOverflowing(listbox);
+
+        expect(press(wrapper.get(".row").element).defaultPrevented).toBe(true);
+      });
+
+      it("leaves a press on a focusable descendant alone", async () => {
+        const wrapper = await mountOverflowing(() =>
+          h("ul", { role: "listbox" }, [h("button", { role: "option", tabindex: -1, class: "row" }, "row")]),
+        );
+
+        expect(press(wrapper.get(".row").element).defaultPrevented).toBe(false);
+      });
+
+      it("leaves a press alone on a region that is a tab stop", async () => {
+        const wrapper = await mountOverflowing(listbox, { focusable: true });
+
+        expect(press(wrapper.get(".row").element).defaultPrevented).toBe(false);
+      });
+
+      it("leaves a press alone on a region without an interactive role", async () => {
+        const wrapper = await mountOverflowing(() => h("p", { class: "row" }, "row"));
+
+        expect(press(wrapper.get(".row").element).defaultPrevented).toBe(false);
+      });
+    });
   });
 });

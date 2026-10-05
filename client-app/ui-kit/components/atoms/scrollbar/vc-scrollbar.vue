@@ -14,6 +14,7 @@
       },
     ]"
     @scroll="onScroll"
+    @mousedown="onMousedown"
   >
     <slot />
   </component>
@@ -143,6 +144,18 @@ function updateAutoTabStop(): void {
   }
 
   autoTabStop.value = target.querySelector(FOCUSABLE_SELECTOR) ? undefined : 0;
+}
+
+// The -1 only keeps the region out of the Tab order; a press on its own area (padding, the bar)
+// must not focus it and pull focus off the control that drives the list.
+function onMousedown(event: MouseEvent): void {
+  if (autoTabStop.value !== -1 || props.focusable || !(event.target instanceof Element)) {
+    return;
+  }
+
+  if (event.target.closest(`${FOCUSABLE_SELECTOR}, [tabindex]`) === el.value) {
+    event.preventDefault();
+  }
 }
 
 function checkContent(): void {

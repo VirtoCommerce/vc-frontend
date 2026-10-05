@@ -223,7 +223,7 @@ describe("TopHeaderOrganizations", () => {
     expect(press.defaultPrevented).toBe(true);
   });
 
-  // The scroller takes tabindex -1 once it overflows, which makes it focusable by a press.
+  // The scroller takes tabindex -1 in search mode, which makes it focusable by a press.
   it("keeps focus in the search field when the list's scroller is pressed", () => {
     const wrapper = mountComponent();
     const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
