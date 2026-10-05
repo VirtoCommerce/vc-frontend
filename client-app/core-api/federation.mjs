@@ -105,7 +105,7 @@ export const REMOTE_SHARED = /* @__PURE__ */ createRemoteShared();
 
 /**
  * One-call federation() options for a PLUGIN build:
- *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.1.0" }))
+ *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.2.0" }))
  * The harness owns the wiring conventions (expose key, manifest metadata, shared
  * singletons, entry filename), so plugins pick convention changes up by updating
  * their host checkout instead of hand-editing config. Pure data - deliberately

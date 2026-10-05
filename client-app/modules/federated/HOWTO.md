@@ -194,7 +194,7 @@ export default defineConfig({
       createRemoteFederationOptions({
         name: "my-plugin",
         // CONTRACT GATE: the facade version this plugin is built against.
-        requiredHostVersion: "^0.1.0",
+        requiredHostVersion: "^0.2.0",
         // Optional: sharedOverrides / exposes when you need to deviate.
       }),
     ),
