@@ -37,11 +37,22 @@ describe("calculateStepper", () => {
     [{ value: 5, step: 1, min: 10, max: 2, allowZero: true, direction: "increment" as const }, 5, "min > max"],
     [{ value: 5, step: 1, min: 3, max: 3, allowZero: true, direction: "increment" as const }, 3, "min = max"],
 
-    // Max=0 (no upper limit)
-    [{ value: 100, step: 10, min: 0, max: 0, allowZero: true, direction: "increment" as const }, 110, "no max"],
-    [{ value: 10, step: 5, min: 0, max: 0, allowZero: true, direction: "decrement" as const }, 5, "no max"],
-    [{ value: -5, step: 3, min: 2, max: 0, allowZero: true, direction: "increment" as const }, 0, "negative no max"],
-    [{ value: -5, step: 3, min: 2, max: 0, allowZero: true, direction: "decrement" as const }, 0, "negative no max"],
+    // Max=Infinity (no upper limit)
+    [{ value: 100, step: 10, min: 0, max: Infinity, allowZero: true, direction: "increment" as const }, 110, "no max"],
+    [{ value: 10, step: 5, min: 0, max: Infinity, allowZero: true, direction: "decrement" as const }, 5, "no max"],
+    [
+      { value: -5, step: 3, min: 2, max: Infinity, allowZero: true, direction: "increment" as const },
+      0,
+      "negative no max",
+    ],
+    [
+      { value: -5, step: 3, min: 2, max: Infinity, allowZero: true, direction: "decrement" as const },
+      0,
+      "negative no max",
+    ],
+
+    [{ value: 0, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, 0, "zero max"],
+    [{ value: 5, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, 0, "above zero max"],
 
     // AllowZero=false scenarios
     [{ value: undefined, step: 1, min: 0, max: 10, allowZero: false, direction: "increment" as const }, 2, "undefined"],
@@ -102,10 +113,14 @@ describe("checkIfOperationIsAllowed", () => {
     [{ value: 3, step: 2, min: 1, max: 7, allowZero: true, direction: "increment" as const }, true, "unaligned"],
     [{ value: 6, step: 2, min: 1, max: 7, allowZero: true, direction: "increment" as const }, false, "near max"],
 
-    // Max=0 (no upper limit)
-    [{ value: 100, step: 10, min: 0, max: 0, allowZero: true, direction: "increment" as const }, true, "no max"],
-    [{ value: 10, step: 5, min: 0, max: 0, allowZero: true, direction: "decrement" as const }, true, "no max"],
-    [{ value: 0, step: 5, min: 0, max: 0, allowZero: true, direction: "decrement" as const }, false, "at zero"],
+    // Max=Infinity (no upper limit)
+    [{ value: 100, step: 10, min: 0, max: Infinity, allowZero: true, direction: "increment" as const }, true, "no max"],
+    [{ value: 10, step: 5, min: 0, max: Infinity, allowZero: true, direction: "decrement" as const }, true, "no max"],
+    [{ value: 0, step: 5, min: 0, max: Infinity, allowZero: true, direction: "decrement" as const }, false, "at zero"],
+
+    // Max=0 is a real ceiling
+    [{ value: 0, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, false, "zero max"],
+    [{ value: 5, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, false, "above zero max"],
 
     // Error conditions
     [{ value: 3, step: 0, min: 1, max: 5, allowZero: true, direction: "increment" as const }, false, "zero step"],
@@ -137,7 +152,7 @@ describe("checkIfOperationIsAllowed", () => {
 
     // Special edge cases
     [{ value: 3, step: 2.5, min: 0, max: 10, allowZero: true, direction: "increment" as const }, true, "float step"],
-    [{ value: 5, step: 1, min: 10, max: 0, allowZero: true, direction: "increment" as const }, true, "special"],
+    [{ value: 5, step: 1, min: 10, max: Infinity, allowZero: true, direction: "increment" as const }, true, "special"],
   ] as const)(
     "$direction $value with step $step = $1 | [$min - $max] allowZero $allowZero | $2",
     (options, expected, description) => {
