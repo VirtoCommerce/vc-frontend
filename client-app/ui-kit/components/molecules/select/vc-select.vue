@@ -728,16 +728,7 @@ if (import.meta.env.DEV) {
   let warnedItemModel = false;
 
   watch(
-    // The lengths re-run the check for items pushed or a model entry added in place.
-    () =>
-      [
-        props.multiple,
-        props.valueField,
-        props.modelValue,
-        props.items,
-        props.items.length,
-        Array.isArray(props.modelValue) ? props.modelValue.length : 0,
-      ] as const,
+    () => [props.multiple, props.valueField, props.modelValue, props.items] as const,
     ([multiple, valueField, modelValue, items]) => {
       if (warnedItemModel || !multiple || valueField === undefined || !Array.isArray(modelValue)) {
         return;
@@ -759,7 +750,9 @@ if (import.meta.env.DEV) {
         );
       }
     },
-    { immediate: true },
+    // Depth 2: the tuple, then the entries of items and of the model, so a push, a splice or an
+    // index assignment in place re-runs the check.
+    { immediate: true, deep: 2 },
   );
 }
 
@@ -769,15 +762,7 @@ if (import.meta.env.DEV) {
   let warnedPrimitiveModel = false;
 
   watch(
-    // The lengths re-run the check for items pushed or a model entry added in place.
-    () =>
-      [
-        props.valueField,
-        props.modelValue,
-        props.items,
-        props.items.length,
-        Array.isArray(props.modelValue) ? props.modelValue.length : 0,
-      ] as const,
+    () => [props.valueField, props.modelValue, props.items] as const,
     ([valueField, modelValue, items]) => {
       if (warnedPrimitiveModel || valueField !== undefined) {
         return;
@@ -799,7 +784,9 @@ if (import.meta.env.DEV) {
         );
       }
     },
-    { immediate: true },
+    // Depth 2: the tuple, then the entries of items and of the model, so a push, a splice or an
+    // index assignment in place re-runs the check.
+    { immediate: true, deep: 2 },
   );
 }
 

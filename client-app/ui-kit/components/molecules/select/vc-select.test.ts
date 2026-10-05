@@ -83,6 +83,17 @@ function spyOnWarn() {
   return warn;
 }
 
+// Mounted through a parent so reactive arrays reach the select as they are: the mount factory
+// deep-merges props, which would copy them.
+function mountWithReactiveProps(props: () => Record<string, unknown>) {
+  const parent = defineComponent({ setup: () => () => h(VcSelect as never, props()) });
+
+  return createWrapperFactory(mount, parent, {
+    attachTo: document.body,
+    global: { components: UIKitComponents, directives: { maska: vMaska } },
+  })();
+}
+
 describe("VcSelect", () => {
   describe("rendering", () => {
     it("renders a combobox input and one option per item", () => {
@@ -315,6 +326,38 @@ describe("VcSelect", () => {
         expect(warn.mock.calls.filter(([message]) => String(message).includes(primitiveWarning))).toHaveLength(1);
       });
 
+      // Each row starts valid, then one in-place change makes the model a stray primitive.
+      it.each([
+        ["objects pushed into the items", ["Other"], ["1"], (items: unknown[]) => items.push(...OBJECT_ITEMS)],
+        ["an item replaced by an object", ["Other"], ["1"], (items: unknown[]) => (items[0] = OBJECT_ITEMS[0])],
+        [
+          "an id pushed into the model",
+          ["Other", ...OBJECT_ITEMS],
+          ["Other"],
+          (_items: unknown[], model: unknown[]) => model.push("1"),
+        ],
+        [
+          "a model entry replaced by an id",
+          ["Other", ...OBJECT_ITEMS],
+          ["Other"],
+          (_items: unknown[], model: unknown[]) => (model[0] = "1"),
+        ],
+      ])("warns after %s in place", async (_label, startItems, startModel, change) => {
+        const warn = spyOnWarn();
+        const items = reactive<unknown[]>([...startItems]);
+        const model = reactive<unknown[]>([...startModel]);
+
+        mountWithReactiveProps(() => ({ items, multiple: true, modelValue: model }));
+        await nextTick();
+
+        expect(warned(warn)).toBe(false);
+
+        change(items, model);
+        await nextTick();
+
+        expect(warned(warn)).toBe(true);
+      });
+
       it("stays quiet for primitive items", () => {
         const warn = spyOnWarn();
 
@@ -369,6 +412,52 @@ describe("VcSelect", () => {
           }),
         ).not.toThrow();
         expect(warn).not.toHaveBeenCalled();
+      });
+
+      it.each([
+        ["an item pushed into the model", (model: unknown[]) => model.push({ id: "9", name: "Zambia" })],
+        ["a model entry replaced by an item", (model: unknown[]) => (model[0] = OBJECT_ITEMS[0])],
+      ])("warns after %s in place", async (_label, change) => {
+        const warn = spyOnWarn();
+        const model = reactive<unknown[]>(["1"]);
+
+        mountWithReactiveProps(() => ({
+          items: OBJECT_ITEMS,
+          textField: "name",
+          valueField: "id",
+          multiple: true,
+          modelValue: model,
+        }));
+        await nextTick();
+
+        expect(warn).not.toHaveBeenCalled();
+
+        change(model);
+        await nextTick();
+
+        expect(warn).toHaveBeenCalledOnce();
+      });
+
+      it("warns after an item that matches the model is pushed into the items", async () => {
+        const warn = spyOnWarn();
+        const items = reactive<unknown[]>([OBJECT_ITEMS[1]]);
+        const byId = (item: { id: string }) => item.id;
+
+        mountWithReactiveProps(() => ({
+          items,
+          textField: "name",
+          valueField: byId,
+          multiple: true,
+          modelValue: [OBJECT_ITEMS[0]],
+        }));
+        await nextTick();
+
+        expect(warn).not.toHaveBeenCalled();
+
+        items.push(OBJECT_ITEMS[0]);
+        await nextTick();
+
+        expect(warn).toHaveBeenCalledOnce();
       });
 
       it("stays quiet for a model of values", () => {
