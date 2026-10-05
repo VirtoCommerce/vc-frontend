@@ -114,5 +114,19 @@ describe("VcQuantityStepper bounds", () => {
 
       expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([6]);
     });
+
+    it("treats max 0 as a real ceiling", async () => {
+      const wrapper = createWrapper({ props: { modelValue: 5, max: 0 } });
+      const input = wrapper.get("input");
+      const increment = wrapper.findAllComponents({ name: "VcButton" }).at(-1)!;
+
+      expect(input.attributes("max")).toBe("0");
+      expect(input.attributes("aria-valuemax")).toBe("0");
+      expect(increment.attributes("disabled")).toBeDefined();
+
+      await increment.trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
   });
 });

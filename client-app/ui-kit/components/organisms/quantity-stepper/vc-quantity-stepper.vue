@@ -76,7 +76,7 @@ interface IProps {
   step?: number;
   /** Step floor for positive values. With `allowZero`, 0 stays reachable below it. */
   min?: number;
-  /** Upper bound. Omitted means unbounded — nothing is announced to assistive tech. */
+  /** Upper bound. Omit it (`undefined`) for no limit — nothing is announced to assistive tech. 0 is a real ceiling. */
   max?: number;
   error?: boolean;
   message?: string;
@@ -101,7 +101,7 @@ const lastNonEmptyValue = ref<number | undefined>(undefined);
 // `allowZero` keeps 0 reachable below `stepMin`, so publishing `stepMin` as the input's own bound
 // makes an untouched 0 a constraint violation.
 const stepMin = computed(() => props.min ?? (props.allowZero ? 0 : 1));
-const stepMax = computed(() => props.max ?? Number.MAX_SAFE_INTEGER);
+const stepMax = computed(() => props.max ?? Number.POSITIVE_INFINITY);
 const boundMin = computed(() => (props.allowZero ? 0 : stepMin.value));
 
 const vcInputRef = useTemplateRef<{ inputElement: HTMLInputElement | undefined }>("vcInputRef");

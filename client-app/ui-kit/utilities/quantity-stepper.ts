@@ -59,7 +59,7 @@ export function calculateStepper(options: StepperParamsType): number {
   }
 
   const minAligned = Math.ceil(min / step) * step;
-  const maxAligned = max === 0 ? Number.POSITIVE_INFINITY : Math.floor(max / step) * step;
+  const maxAligned = Math.floor(max / step) * step;
 
   if (maxAligned < Math.max(minAligned, 0)) {
     return value;
@@ -73,12 +73,12 @@ export function calculateStepper(options: StepperParamsType): number {
 export function checkIfOperationIsAllowed(options: StepperParamsType): boolean {
   const { value, step, min, max, allowZero, direction } = options;
 
-  if (step <= 0 || value === undefined || (max < min && max !== 0)) {
+  if (step <= 0 || value === undefined || max < min) {
     return false;
   }
 
   if (direction === "increment") {
-    const maxAligned = max === 0 ? Number.POSITIVE_INFINITY : Math.floor(max / step) * step;
+    const maxAligned = Math.floor(max / step) * step;
     return value < maxAligned;
   }
 
