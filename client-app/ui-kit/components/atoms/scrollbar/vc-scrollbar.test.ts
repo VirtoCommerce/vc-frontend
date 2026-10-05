@@ -299,7 +299,7 @@ describe("VcScrollbar", () => {
 
       // Middle-click autoscroll is the browser's; the right, back and forward buttons would still
       // take focus.
-      it("leaves the middle button alone and still guards the others", async () => {
+      it("leaves the middle button alone and still guards the right, back and forward ones", async () => {
         const wrapper = await mountOverflowing(listbox);
         const row = wrapper.get(".row").element;
 
