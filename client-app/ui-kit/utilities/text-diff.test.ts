@@ -22,6 +22,18 @@ describe("insertedText", () => {
     expect(insertedText("Belgium", "Belgiumchi")).toBe("chi");
   });
 
+  // Typing over a selected label replaces it, so nothing on either side is shared.
+  it.each([
+    ["one character", "c"],
+    ["a pasted run", "chi"],
+  ])("returns %s typed over the whole label", (_label, typed) => {
+    expect(insertedText("Belgium", typed)).toBe(typed);
+  });
+
+  it("returns the text typed over part of a label", () => {
+    expect(insertedText("Belgium", "Bechi")).toBe("chi");
+  });
+
   it("returns nothing for an unchanged value", () => {
     expect(insertedText("Belgium", "Belgium")).toBe("");
   });
