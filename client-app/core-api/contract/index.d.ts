@@ -2591,7 +2591,7 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
         /** Property name, or an accessor, producing the option label. */
         textField?: VcSelectFieldAccessorType<T, string>;
         /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
-        valueField?: VcSelectValueFieldType<T, NoInfer<V>>;
+        valueField?: VcSelectValueKeyType<T, NoInfer<V>> | ((item: T) => V);
         placeholder?: string;
         showEmptyDetails?: boolean;
         error?: boolean;
@@ -4045,9 +4045,9 @@ type VcMenuItemColorType = VcMainColorType;
 type VcPopoverPlacementType = Placement;
 type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
 type VcSelectFieldAccessorType<T, R> = Extract<keyof T, string> | ((item: T) => R);
-type VcSelectValueFieldType<T, V> = [V] extends [T]
-    ? VcSelectFieldAccessorType<T, V>
-    : Extract<{ [K in keyof T]-?: NonNullable<T[K]> extends V ? K : never }[keyof T], string> | ((item: T) => V);
+type VcSelectValueKeyType<T, V> = [V] extends [T]
+    ? Extract<keyof T, string>
+    : Extract<{ [K in keyof T]-?: unknown extends T[K] ? K : NonNullable<T[K]> extends V ? K : never }[keyof T], string>;
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
 type VcTableAlignType = "center" | "right" | "left";
 type VcTableColumnType = {

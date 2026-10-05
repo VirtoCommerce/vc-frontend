@@ -218,7 +218,8 @@ const props = withDefaults(
     /** Property name, or an accessor, producing the option label. */
     textField?: VcSelectFieldAccessorType<T, string>;
     /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
-    valueField?: VcSelectValueFieldType<T, NoInfer<V>>;
+    // The accessor may infer the model type; only the key form must not.
+    valueField?: VcSelectValueKeyType<T, NoInfer<V>> | ((item: T) => V);
     placeholder?: string;
     showEmptyDetails?: boolean;
     error?: boolean;
