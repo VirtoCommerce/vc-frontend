@@ -181,7 +181,7 @@
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
 import { useDebounceFn, useElementBounding } from "@vueuse/core";
 import { isEqual } from "lodash-es";
-import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
+import { computed, getCurrentInstance, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
@@ -197,8 +197,10 @@ const emit = defineEmits<{
   /**
    * Select all was pressed: `selected` is true when it selected, false when it cleared. Fires
    * alongside the model update, so a paged consumer can select or clear the options not loaded.
+   * `query` is the text narrowing the list ("" for none): with one, the row acted on the matching
+   * options only, so a consumer adds or clears the query's matches, not the whole set.
    */
-  (event: "selectAll", selected: boolean): void;
+  (event: "selectAll", selected: boolean, query: string): void;
   /** The list is resting at its end and more pages are available. */
   (event: "loadMore"): void;
   /** The typed query, debounced; an emptied query is sent at once. Pair with `serverFilter` to filter on the server. */
@@ -344,9 +346,22 @@ const activeDescendantId = computed(() =>
 // wrong query. An answer that lands before the current query was even sent is the previous one's.
 const awaitingServerItems = ref(false);
 let searchedQuery = "";
+// The items on screen answer this query; the first ones answer the empty one.
+let answeredQuery = "";
 
 function onServerAnswer(): void {
   if (searchedQuery === filterValue.value) {
+    awaitingServerItems.value = false;
+    answeredQuery = searchedQuery;
+  }
+}
+
+// A consumer need not fetch again for a query its items already answer, so sending one is its answer.
+function sendSearch(value: string): void {
+  searchedQuery = value;
+  emit("search", value);
+
+  if (value === answeredQuery) {
     awaitingServerItems.value = false;
   }
 }
@@ -607,8 +622,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 // A query cleared before its debounce fired must not land after the clear.
 const emitSearchDebounced = useDebounceFn((value: string) => {
   if (filterValue.value === value) {
-    searchedQuery = value;
-    emit("search", value);
+    sendSearch(value);
   }
 }, SEARCH_DEBOUNCE_MS);
 
@@ -622,8 +636,7 @@ watch(filterValue, (value) => {
   if (value) {
     void emitSearchDebounced(value);
   } else {
-    searchedQuery = "";
-    emit("search", "");
+    sendSearch("");
   }
 });
 
@@ -634,6 +647,34 @@ watch(filterValue, (value) => {
 if (import.meta.env.DEV && props.selectAll && !props.multiple) {
   // eslint-disable-next-line no-console
   console.warn("VcSelect: `select-all` only applies to `multiple` selects and is ignored here.");
+}
+
+if (import.meta.env.DEV) {
+  const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
+
+  // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
+  if (props.selectAll && props.multiple && !("onSelectAll" in vnodeProps)) {
+    let warnedPaged = false;
+
+    watch(
+      () => props.hasNextPage || (props.total ?? 0) > props.items.length,
+      (paged) => {
+        if (paged && !warnedPaged) {
+          warnedPaged = true;
+          // eslint-disable-next-line no-console
+          console.warn(
+            "VcSelect: a paged `select-all` without a `@select-all` handler selects only the loaded options.",
+          );
+        }
+      },
+      { immediate: true },
+    );
+  }
+
+  if (props.serverFilter && !props.autocomplete) {
+    // eslint-disable-next-line no-console
+    console.warn("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
+  }
 }
 
 // `multiple` with `valueField` used to store whole items; such a model now matches no option.
@@ -743,7 +784,7 @@ function onSelectAll() {
     commit(merged);
   }
 
-  emit("selectAll", !clearing);
+  emit("selectAll", !clearing, filterValue.value);
 }
 
 const selectAllElement = useTemplateRef<{ focus: () => boolean }>("selectAllElement");

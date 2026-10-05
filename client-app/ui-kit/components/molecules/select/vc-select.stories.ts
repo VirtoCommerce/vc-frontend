@@ -619,9 +619,12 @@ export const SelectAllWithTotal: StoryType = {
       const items = ref(allIds.slice(0, 6));
       const selected = ref<string[]>([]);
 
-      // The select can only add what is loaded; the rest of the set is the consumer's to add.
-      function onSelectAll(all: boolean) {
-        selected.value = all ? [...allIds] : [];
+      // The select can only add what is loaded; the rest of the set is the consumer's to add. A query
+      // means the row acted on the matches only, which a server-filtered list answers itself.
+      function onSelectAll(all: boolean, query: string) {
+        if (!query) {
+          selected.value = all ? [...allIds] : [];
+        }
       }
 
       return { args, items, selected, total: TOTAL, onSelectAll };
@@ -645,10 +648,12 @@ export const SelectAllWithTotal: StoryType = {
       description: {
         story:
           "A paged list holds one page, so `total` carries the size of the whole set for the counter, " +
-          "and Select all can only add the options that are loaded. `@select-all(true)` is the " +
+          "and Select all can only add the options that are loaded. `@select-all(true, query)` is the " +
           "consumer's cue to select the rest of the set — every id from the server — and " +
-          "`@select-all(false)` to clear it. A click on a row whose loaded options are all selected " +
-          "clears, so the row never gets stuck on a partial selection.",
+          "`@select-all(false, query)` to clear it. With a `query` the row acted on the matching options " +
+          "only: leave the rest of the selection alone, or, with `server-filter`, add or clear the " +
+          "query's matches. A click on a row whose loaded options are all selected clears, so the row " +
+          "never gets stuck on a partial selection.",
       },
       source: {
         code: `
@@ -656,8 +661,10 @@ export const SelectAllWithTotal: StoryType = {
 const { items, total, allIds } = useBuyers();
 const selected = ref<string[]>([]);
 
-function onSelectAll(all: boolean) {
-  selected.value = all ? allIds.value : [];
+function onSelectAll(all: boolean, query: string) {
+  if (!query) {
+    selected.value = all ? allIds.value : [];
+  }
 }
 </script>
 
@@ -739,6 +746,7 @@ const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuy
     :has-next-page="hasNextPage"
     :total="totalCount"
     multiple
+    autocomplete
     server-filter
     @load-more="loadNextPage"
     @search="search"

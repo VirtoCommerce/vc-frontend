@@ -2636,7 +2636,7 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
         onLoadMore?: (() => any) | undefined;
         onChange?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
         "onUpdate:modelValue"?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
-        onSelectAll?: ((selected: boolean) => any) | undefined;
+        onSelectAll?: ((selected: boolean, query: string) => any) | undefined;
     }> & (typeof globalThis extends {
         __VLS_PROPS_FALLBACK: infer P;
     } ? P : {});
@@ -2663,7 +2663,7 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
     emit: {
         (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
         (event: "change", value: VcSelectEmittedType<V, M>): void;
-        (event: "selectAll", selected: boolean): void;
+        (event: "selectAll", selected: boolean, query: string): void;
         (event: "loadMore"): void;
         (event: "search", value: string): void;
     };
