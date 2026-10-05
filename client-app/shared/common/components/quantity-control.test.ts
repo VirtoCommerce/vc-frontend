@@ -107,7 +107,6 @@ describe("QuantityControl in stepper mode", () => {
   });
 });
 
-// VCST-5990: a quote row arrives with quantity 0 and no allowZero, and nothing explained why it is invalid.
 describe("QuantityControl validated on mount", () => {
   const quoteRow = { mode: "stepper" as const, modelValue: 0, validateOnMount: true };
 

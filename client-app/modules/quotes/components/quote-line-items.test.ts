@@ -35,8 +35,6 @@ async function settle() {
   await new Promise((resolve) => setTimeout(resolve, 50));
 }
 
-// VCST-5990: a quote row without a tier quantity renders 0, which a quote cannot be submitted with,
-// and nothing told assistive tech why the field was wrong.
 describe("QuoteLineItems quantity without a tier quantity", () => {
   it("announces the invalid state with the text that explains it", async () => {
     const wrapper = createWrapper("stepper");

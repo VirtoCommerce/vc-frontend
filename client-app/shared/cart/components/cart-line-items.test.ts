@@ -50,8 +50,6 @@ async function mountWith(validationErrors: ValidationErrorType[]) {
   return wrapper;
 }
 
-// VCST-5990: the cart sends the typed quantity and the server explains it, but the field was never
-// tied to that explanation, so assistive tech heard neither that it was wrong nor why.
 describe("CartLineItems quantity errors", () => {
   it("marks the quantity invalid and describes it with the server message", async () => {
     const wrapper = await mountWith([lineError("PRODUCT_MIN_MAX_QTY", "You can order from 2 to 5 items")]);
@@ -61,6 +59,17 @@ describe("CartLineItems quantity errors", () => {
     expect(input.attributes("aria-invalid")).toBe("true");
     expect(describedBy).toBeTruthy();
     expect(wrapper.get(`#${describedBy}`).text()).toContain("You can order from 2 to 5 items");
+  });
+
+  it.each([
+    ["PRODUCT_PACK_SIZE_LIMIT", "Order in packs of 2"],
+    ["LINE_ITEM_LIMIT", "You can order maximum 999999 items."],
+  ])("marks the quantity invalid when %s is the line's only error", async (errorCode, errorMessage) => {
+    const wrapper = await mountWith([lineError(errorCode, errorMessage)]);
+    const input = wrapper.get("input");
+
+    expect(input.attributes("aria-invalid")).toBe("true");
+    expect(wrapper.get(`#${input.attributes("aria-describedby")}`).text()).toContain(errorMessage);
   });
 
   it("describes but does not invalidate the quantity for a line error about something else", async () => {

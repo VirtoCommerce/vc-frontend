@@ -1763,6 +1763,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Dostępna ilość produktu {availQty} jest niewystarczająca dla żądanej {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Minimalne zamówienie {minQty} szt. jest niedostępne w magazynie",
     "PRODUCT_EXACT_QTY": "Możesz zamówić {minQty} szt.",
+    "PRODUCT_PACK_SIZE_LIMIT": "Zamów w paczkach po {packSize}",
+    "LINE_ITEM_LIMIT": "Możesz zamówić maksymalnie {limit} szt.",
     "CART_INVALID_PRODUCT": "Nieprawidłowy produkt"
   },
   "file_error": {
