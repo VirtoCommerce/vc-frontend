@@ -109,6 +109,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/field-size" as *;
 @use "@/ui-kit/styles/focus-ring" as *;
 
 .vc-select-button {
@@ -125,25 +126,14 @@ defineExpose({
   font-size: var(--text-size);
   line-height: var(--line-height);
 
-  // VcInput's scale, as a minimum: the slots may hold taller content.
+  // The field scale, as a minimum: the slots may hold taller content.
   &--size {
-    &--xs {
-      --min-height: theme("spacing.8");
-      --text-size: theme("fontSize.sm[0]");
-      --line-height: theme("fontSize.sm[1].lineHeight");
-    }
-
-    &--sm {
-      // No 2.375rem spacing token — literal, same as vc-input.
-      --min-height: 2.375rem;
-      --text-size: theme("fontSize.base[0]");
-      --line-height: theme("fontSize.base[1].lineHeight");
-    }
-
-    &--md {
-      --min-height: theme("spacing.11");
-      --text-size: theme("fontSize.base[0]");
-      --line-height: theme("fontSize.base[1].lineHeight");
+    @each $size in (xs, sm, md) {
+      &--#{$size} {
+        --min-height: #{field-height($size)};
+        --text-size: #{field-text-size($size)};
+        --line-height: #{field-line-height($size)};
+      }
     }
   }
 

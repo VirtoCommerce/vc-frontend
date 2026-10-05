@@ -292,6 +292,7 @@ provide<VcInputContextType>("inputContext", {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/field-size" as *;
 @use "@/ui-kit/styles/focus-ring" as *;
 
 .vc-input {
@@ -375,15 +376,21 @@ provide<VcInputContextType>("inputContext", {
     cursor: var(--vc-input-cursor);
 
     #{$sizeXs} & {
-      @apply h-8 text-sm;
+      height: field-height(xs);
+      font-size: field-text-size(xs);
+      line-height: field-line-height(xs);
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem] text-base;
+      height: field-height(sm);
+      font-size: field-text-size(sm);
+      line-height: field-line-height(sm);
     }
 
     #{$sizeMd} & {
-      @apply h-11 text-base;
+      height: field-height(md);
+      font-size: field-text-size(md);
+      line-height: field-line-height(md);
     }
 
     &:has(input:focus-visible),

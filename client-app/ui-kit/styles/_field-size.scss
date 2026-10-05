@@ -1,0 +1,33 @@
+@use "sass:map";
+
+// The field size scale: VcInput's height and text per size, which every control sized to sit
+// beside a field reads from here. Functions only — each caller puts the values in its own
+// properties or private variables, so nothing leaks into a nested component.
+
+$-sizes: (
+  xs: (
+    height: theme("spacing.8"),
+    text: "sm",
+  ),
+  // No 2.375rem spacing token.
+  sm: (
+    height: 2.375rem,
+    text: "base",
+  ),
+  md: (
+    height: theme("spacing.11"),
+    text: "base",
+  ),
+);
+
+@function field-height($size) {
+  @return map.get($-sizes, $size, height);
+}
+
+@function field-text-size($size) {
+  @return theme("fontSize.#{map.get($-sizes, $size, text)}[0]");
+}
+
+@function field-line-height($size) {
+  @return theme("fontSize.#{map.get($-sizes, $size, text)}[1].lineHeight");
+}

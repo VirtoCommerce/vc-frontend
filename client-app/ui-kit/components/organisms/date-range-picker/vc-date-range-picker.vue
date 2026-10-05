@@ -387,20 +387,19 @@ function onCalendarClear(): void {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/field-size" as *;
+
 .vc-date-range-picker {
   // Below this width the split row stacks; container queries can't read CSS custom properties.
   $fields-stack-breakpoint: 22rem;
 
-  --field-height: theme("spacing.11");
+  --field-height: #{field-height(md)};
 
   &--size {
-    &--xs {
-      --field-height: theme("spacing.8");
-    }
-
-    &--sm {
-      // No 2.375rem spacing token — literal, same as vc-input.
-      --field-height: 2.375rem;
+    @each $size in (xs, sm) {
+      &--#{$size} {
+        --field-height: #{field-height($size)};
+      }
     }
 
     // "auto" is content-sized; a fixed separator height would decentre the dash.
