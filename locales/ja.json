@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "この組織へのアクセスがブロックされました。組織の管理者にお問い合わせください",
           "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
+          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください",
+          "sign_in_not_allowed": "このアカウントではサインインできません。管理者にお問い合わせください。",
+          "store_not_found": "このストアは存在しません。",
+          "duplicate_email_login_attempt": "このメールアドレスは複数のアカウントで使用されています。",
+          "lockout_disabled": "このアカウントはコードでサインインできません。",
+          "invalid_code": "このコードは使用できませんでした。",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "コピーするにはクリック",
         "clipboard_success": "クーポンをコピーしました",
         "tap_to_copy": "タップしてコピー"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "ワンタイムコードでサインイン",
+        "request": {
+          "subtitle": "メールでコードをお送りします。パスワードは不要です。",
+          "email_label": "@:common.labels.email",
+          "continue_button": "続ける",
+          "switch_to_password_link": "パスワードでサインインする"
+        },
+        "verify": {
+          "header": "メールをご確認ください",
+          "subtitle": "{email} 宛てにコードを送信しました。",
+          "code_label": "コード",
+          "paste_hint": "コードを入力するか貼り付けてください。モバイルでは、キーボードの上に表示されるコードをタップしてください。",
+          "submit_button": "サインイン",
+          "resend_button": "コードを再送信",
+          "use_different_email_link": "別のメールアドレスを使う",
+          "live_resent": "新しいコードを送信しました。"
+        },
+        "locked": {
+          "title": "失敗した試行が多すぎます",
+          "title_blocked": "アカウントがブロックされています",
+          "text_countdown": "{time}後に再度お試しください。",
+          "text_ready": "今すぐ再試行できます。",
+          "start_over_button": "再試行"
+        },
+        "disabled": {
+          "title": "サインインできませんでした",
+          "text": "代わりにパスワードをお試しいただくか、この状態が続く場合はアカウント管理者にお問い合わせください。",
+          "text_no_password": "この状態が続く場合は、アカウント管理者にお問い合わせください。",
+          "password_button": "パスワードでサインイン",
+          "back_link": "サインインに戻る"
+        }
       }
     },
     "company": {
@@ -1584,6 +1625,8 @@
       "title": "検索",
       "header": "「{keyword}」の検索結果",
       "header_empty": "申し訳ありません。「{keyword}」の検索では、何も結果がありませんでした",
+      "header_barcode": "バーコード「{barcode}」の検索結果",
+      "header_barcode_empty": "バーコード「{barcode}」に該当する商品は見つかりませんでした",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "「<strong>{0}</strong>」に一致する結果が見つかりませんでした",

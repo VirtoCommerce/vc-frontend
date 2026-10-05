@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Din åtkomst till den här organisationen har blockerats. Kontakta din organisationsadministratör",
           "user_cannot_login_in_store": "Åtkomst nekad. Du kan inte logga in i den aktuella butiken",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information"
+          "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information",
+          "sign_in_not_allowed": "Du kan inte logga in med det här kontot. Kontakta din administratör.",
+          "store_not_found": "Den här butiken finns inte.",
+          "duplicate_email_login_attempt": "Flera konton använder den här e-postadressen.",
+          "lockout_disabled": "Det här kontot kan inte logga in med en kod.",
+          "invalid_code": "Den här koden fungerade inte.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Klicka för att kopiera",
         "clipboard_success": "Kupong kopierad",
         "tap_to_copy": "Tryck för att kopiera"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Logga in med engångskod",
+        "request": {
+          "subtitle": "Vi skickar en kod till din e-post. Inget lösenord behövs.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Fortsätt",
+          "switch_to_password_link": "Logga in med lösenord istället"
+        },
+        "verify": {
+          "header": "Kolla din e-post",
+          "subtitle": "Vi skickade en kod till {email}.",
+          "code_label": "Kod",
+          "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
+          "submit_button": "Logga in",
+          "resend_button": "Skicka koden igen",
+          "use_different_email_link": "Använd en annan e-postadress",
+          "live_resent": "Ny kod skickad."
+        },
+        "locked": {
+          "title": "För många misslyckade försök",
+          "title_blocked": "Kontot är blockerat",
+          "text_countdown": "Försök igen om {time}.",
+          "text_ready": "Du kan försöka igen nu.",
+          "start_over_button": "Försök igen"
+        },
+        "disabled": {
+          "title": "Vi kunde inte logga in dig",
+          "text": "Prova med lösenord istället, eller kontakta din kontoadministratör om detta fortsätter.",
+          "text_no_password": "Kontakta din kontoadministratör om detta fortsätter.",
+          "password_button": "Logga in med lösenord",
+          "back_link": "Tillbaka till inloggningen"
+        }
       }
     },
     "company": {
@@ -1584,6 +1625,8 @@
       "title": "Sök",
       "header": "Din sökning efter {keyword} gav följande resultat",
       "header_empty": "Tyvärr, din sökning efter \"{keyword}\" gav inga resultat",
+      "header_barcode": "Din sökning efter streckkoden {barcode} gav följande resultat",
+      "header_barcode_empty": "Inga produkter hittades för streckkoden {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Din sökning efter <strong>{0}</strong> gav inga resultat",
