@@ -59,7 +59,7 @@ function searchBarImpressions() {
   );
 }
 
-describe("SearchDropdown search_bar impression (VCST-6100)", () => {
+describe("SearchDropdown search_bar impression", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     products.value = [];
