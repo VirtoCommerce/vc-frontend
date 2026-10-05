@@ -86,7 +86,8 @@
             @keydown.down.prevent="focusTrigger()"
           />
 
-          <VcScrollbar class="vc-select__scroll" vertical>
+          <!-- Pointer use inside the list, the scrollbar included, keeps focus on the trigger. -->
+          <VcScrollbar class="vc-select__scroll" vertical @mousedown.prevent>
             <!-- Only options may live in a listbox, so the pager sits beside the list, not in it. -->
             <ul
               :id="listboxId"
@@ -112,7 +113,6 @@
                   select(item);
                   !multiple && close();
                 "
-                @mousedown.prevent
                 @mousemove="highlightPassively(index)"
               >
                 <VcCheckbox

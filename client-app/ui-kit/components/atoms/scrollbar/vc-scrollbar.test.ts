@@ -214,8 +214,35 @@ describe("VcScrollbar", () => {
     it.each([
       ["on the region itself", () => h("p", "row"), { role: "listbox" }],
       ["on a list inside it", () => h("ul", { role: "listbox" }, [h("li", { role: "option" }, "row")]), {}],
-    ])("adds no tab stop of its own when the listbox role sits %s", async (_label, slot, props) => {
+      [
+        "on a list of buttons taken out of the tab order",
+        () => h("ul", { role: "listbox" }, [h("button", { role: "option", tabindex: -1 }, "row")]),
+        {},
+      ],
+    ])("keeps the region out of the tab order when the listbox role sits %s", async (_label, slot, props) => {
       const wrapper = await mountOverflowing(slot, props);
+
+      expect(wrapper.attributes("tabindex")).toBe("-1");
+    });
+
+    it("leaves a region that fits without a tabindex", async () => {
+      const wrapper = mount(VcScrollbar, {
+        attachTo: document.body,
+        props: { vertical: true },
+        slots: { default: () => h("ul", { role: "listbox" }, [h("li", { role: "option" }, "row")]) },
+      });
+
+      describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 100, scrollTop: 0 });
+      await afterContentSettles();
+
+      expect(wrapper.attributes("tabindex")).toBeUndefined();
+    });
+
+    // Focusable content keeps the browser from making the region a tab stop, so it needs no -1.
+    it("leaves an overflowing listbox with a focusable descendant without a tabindex", async () => {
+      const wrapper = await mountOverflowing(() =>
+        h("ul", { role: "listbox", tabindex: 0 }, [h("li", { role: "option" }, "row")]),
+      );
 
       expect(wrapper.attributes("tabindex")).toBeUndefined();
     });

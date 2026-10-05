@@ -3,7 +3,7 @@
     :is="tag"
     ref="el"
     :data-test-id="testId"
-    :tabindex="isFocusable ? 0 : undefined"
+    :tabindex="tabindex"
     :class="[
       'vc-scrollbar',
       {
@@ -92,7 +92,7 @@ const INTERACTIVE_CONTAINER_SELECTOR = [
   .map((role) => `[role="${role}"]`)
   .join(", ");
 
-const FOCUSABLE_SELECTOR = [
+const FOCUSABLE_SELECTORS = [
   "a[href]",
   "area[href]",
   "button:not([disabled])",
@@ -105,17 +105,22 @@ const FOCUSABLE_SELECTOR = [
   "video[controls]",
   "summary",
   "iframe",
-].join(", ");
+];
 
-const needsAutoTabStop = ref(false);
+const FOCUSABLE_SELECTOR = FOCUSABLE_SELECTORS.join(", ");
 
-const isFocusable = computed(() => props.focusable || needsAutoTabStop.value);
+// What puts a descendant in the Tab sequence; the browser's own scroller tab stop yields only to that.
+const TABBABLE_SELECTOR = FOCUSABLE_SELECTORS.map((selector) => `${selector}:not([tabindex="-1"])`).join(", ");
+
+const autoTabStop = ref<0 | -1 | undefined>();
+
+const tabindex = computed(() => (props.focusable ? 0 : autoTabStop.value));
 
 function updateAutoTabStop(): void {
   const target = el.value;
 
   if (!target || props.disabled || (!props.vertical && !props.horizontal)) {
-    needsAutoTabStop.value = false;
+    autoTabStop.value = undefined;
     return;
   }
 
@@ -124,16 +129,18 @@ function updateAutoTabStop(): void {
     (props.horizontal && target.scrollWidth > target.clientWidth);
 
   if (!overflows) {
-    needsAutoTabStop.value = false;
+    autoTabStop.value = undefined;
     return;
   }
 
+  // Chromium makes an overflowing region with nothing tabbable in it a tab stop on its own, so
+  // keeping it out takes an explicit -1.
   if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CONTAINER_SELECTOR)) {
-    needsAutoTabStop.value = false;
+    autoTabStop.value = target.querySelector(TABBABLE_SELECTOR) ? undefined : -1;
     return;
   }
 
-  needsAutoTabStop.value = !target.querySelector(FOCUSABLE_SELECTOR);
+  autoTabStop.value = target.querySelector(FOCUSABLE_SELECTOR) ? undefined : 0;
 }
 
 function checkContent(): void {

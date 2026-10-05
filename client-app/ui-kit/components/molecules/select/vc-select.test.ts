@@ -630,8 +630,13 @@ describe("VcSelect", () => {
 
       (input.element as HTMLInputElement).focus();
       await input.trigger("click");
-      await input.trigger("keydown", { key: "Tab" });
 
+      // jsdom never moves focus on Tab itself; in a browser an uncancelled Tab would carry focus
+      // past the checkbox.
+      const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      input.element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(true);
       expect(document.activeElement).toBe(wrapper.get(".vc-select-all input").element);
     });
   });
@@ -1132,6 +1137,21 @@ describe("VcSelect", () => {
 
       expect(press.defaultPrevented).toBe(true);
       expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
+    });
+
+    // The scroller is focusable by pointer once it opts out of the Tab order, and Escape is not heard
+    // there.
+    it("keeps focus on the trigger when the list's scroller is pressed", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+
+      const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      wrapper.get(".vc-select__scroll").element.dispatchEvent(press);
+
+      expect(press.defaultPrevented).toBe(true);
     });
 
     it("hands focus back to the trigger from a teleported list", async () => {
@@ -1638,6 +1658,36 @@ describe("VcSelect", () => {
 
       expect(wrapper.get("label").attributes("for")).toBe(control.attributes("id"));
       expect(control.attributes("aria-label")).toBe("Shipping country");
+    });
+
+    it("links the slotted trigger to the listbox and the highlighted option while open", async () => {
+      const wrapper = createWrapper({ items: ITEMS }, slots);
+      const control = wrapper.get(".vc-select-button__control");
+
+      expect(control.attributes("aria-controls")).toBeUndefined();
+      expect(control.attributes("aria-activedescendant")).toBeUndefined();
+
+      await control.trigger("keydown", { key: "ArrowDown" });
+
+      expect(control.attributes("aria-controls")).toBe(wrapper.get('[role="listbox"]').attributes("id"));
+      expect(control.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
+    });
+
+    it("marks the slotted trigger invalid and required and describes it with the details", () => {
+      const wrapper = createWrapper({ items: ITEMS, error: true, required: true, message: "Pick one" }, slots);
+      const control = wrapper.get(".vc-select-button__control");
+      const detailsId = control.attributes("aria-describedby");
+
+      expect(control.attributes("aria-invalid")).toBe("true");
+      expect(control.attributes("aria-required")).toBe("true");
+      expect(detailsId).toBeTruthy();
+      expect(wrapper.find(`#${detailsId}`).exists()).toBe(true);
+    });
+
+    it("marks a disabled slotted trigger aria-disabled", () => {
+      const control = createWrapper({ items: ITEMS, disabled: true }, slots).get(".vc-select-button__control");
+
+      expect(control.attributes("aria-disabled")).toBe("true");
     });
 
     it("passes the selected values, not the items, to the selected slot in multiple mode", () => {
