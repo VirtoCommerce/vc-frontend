@@ -645,7 +645,7 @@ if (import.meta.env.DEV) {
         return;
       }
 
-      // An off-page selection matches no loaded item, but still carries the value field itself.
+      // An off-page selection matches no loaded item, but still carries a string value field as a key.
       const holdsItems = modelValue.some(
         (value) =>
           (typeof valueField === "string" && typeof value === "object" && value !== null && valueField in value) ||

@@ -287,6 +287,21 @@ describe("VcSelect", () => {
         expect(warn).toHaveBeenCalledOnce();
       });
 
+      it("stays quiet for a null entry in the model", () => {
+        const warn = spyOnWarn();
+
+        expect(() =>
+          createWrapper({
+            items: OBJECT_ITEMS,
+            textField: "name",
+            valueField: "id",
+            multiple: true,
+            modelValue: [null],
+          }),
+        ).not.toThrow();
+        expect(warn).not.toHaveBeenCalled();
+      });
+
       it("stays quiet for a model of values", () => {
         const warn = spyOnWarn();
 
@@ -952,6 +967,20 @@ describe("VcSelect", () => {
         await wrapper.setProps({ loading: true });
         await wrapper.get("input").setValue("ab");
         await wrapper.setProps({ items: ["Albania", "Bahamas"], loading: false });
+
+        expect(announced(wrapper)).toBe("");
+      });
+
+      // Clearing is a query too: the answer to "" must not unmute a retyped "a" still waiting.
+      it("stays silent for the answer to a cleared query", async () => {
+        const wrapper = await typeQuery(undefined, "a");
+        const input = wrapper.get("input");
+
+        await wrapper.setProps({ items: ["Albania"] });
+        await wrapper.setProps({ loading: true });
+        await input.setValue("");
+        await input.setValue("a");
+        await wrapper.setProps({ items: [...ITEMS], loading: false });
 
         expect(announced(wrapper)).toBe("");
       });
