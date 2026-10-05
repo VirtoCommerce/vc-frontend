@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
-import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
@@ -893,12 +893,23 @@ describe("VcSelect", () => {
     });
 
     describe("result count announced for a server-side query", () => {
-      async function typeQuery() {
-        const wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true });
+      beforeEach(() => {
+        vi.useFakeTimers();
+      });
+
+      afterEach(() => {
+        vi.useRealTimers();
+      });
+
+      async function typeQuery(
+        wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true }),
+        query = "zzz",
+      ) {
         const input = wrapper.get("input");
 
         await input.trigger("click");
-        await input.setValue("zzz");
+        await input.setValue(query);
+        await vi.advanceTimersByTimeAsync(300);
 
         return wrapper;
       }
@@ -932,6 +943,17 @@ describe("VcSelect", () => {
         await wrapper.setProps({ loading: false });
 
         expect(announced(wrapper)).toBe("3 results available");
+      });
+
+      // The answer to "a" lands while "ab" is still waiting for its debounce.
+      it("stays silent for an answer to a query that is no longer on screen", async () => {
+        const wrapper = await typeQuery(undefined, "a");
+
+        await wrapper.setProps({ loading: true });
+        await wrapper.get("input").setValue("ab");
+        await wrapper.setProps({ items: ["Albania", "Bahamas"], loading: false });
+
+        expect(announced(wrapper)).toBe("");
       });
     });
 

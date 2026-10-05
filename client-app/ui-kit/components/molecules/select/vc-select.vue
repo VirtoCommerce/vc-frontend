@@ -336,21 +336,24 @@ const activeDescendantId = computed(() =>
 );
 
 // With `serverFilter` the options on screen belong to the previous query until the consumer
-// answers with new items or finishes loading; their count would describe the wrong query.
+// answers the query on screen with new items or finishes loading; their count would describe the
+// wrong query. An answer that lands before the current query was even sent is the previous one's.
 const awaitingServerItems = ref(false);
+let searchedQuery = "";
 
-watch(
-  () => props.items,
-  () => {
+function onServerAnswer(): void {
+  if (searchedQuery === filterValue.value) {
     awaitingServerItems.value = false;
-  },
-);
+  }
+}
+
+watch(() => props.items, onServerAnswer);
 
 watch(
   () => props.loading,
   (loading) => {
     if (!loading) {
-      awaitingServerItems.value = false;
+      onServerAnswer();
     }
   },
 );
@@ -600,6 +603,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 // A query cleared before its debounce fired must not land after the clear.
 const emitSearchDebounced = useDebounceFn((value: string) => {
   if (filterValue.value === value) {
+    searchedQuery = value;
     emit("search", value);
   }
 }, SEARCH_DEBOUNCE_MS);
@@ -616,6 +620,7 @@ watch(filterValue, (value) => {
   if (value) {
     void emitSearchDebounced(value);
   } else {
+    searchedQuery = "";
     emit("search", "");
   }
 });
