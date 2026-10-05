@@ -96,7 +96,7 @@
         "out_of_stock": "Loppu varastosta",
         "positive_number": "Arvon on oltava positiivinen numero",
         "integer_number": "Arvon on oltava kokonaisluku",
-        "pack_size": "Tilaa {0} kpl paketeissa"
+        "pack_size": "Tilaa {0} kpl:n pakkauksissa"
       }
     },
     "pagination": {

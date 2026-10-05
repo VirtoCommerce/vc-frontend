@@ -96,7 +96,7 @@
         "out_of_stock": "Esaurito",
         "positive_number": "Il valore deve essere un numero positivo",
         "integer_number": "Il valore deve essere un numero intero",
-        "pack_size": "Ordina in pacchi da {0}"
+        "pack_size": "Ordina in confezioni da {0}"
       }
     },
     "pagination": {

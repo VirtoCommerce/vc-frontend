@@ -96,7 +96,7 @@
         "out_of_stock": "缺货",
         "positive_number": "值必须是正数",
         "integer_number": "值必须是整数",
-        "pack_size": "按 {0} 的包装订购"
+        "pack_size": "请按每包 {0} 件订购"
       }
     },
     "pagination": {

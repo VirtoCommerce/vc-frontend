@@ -1763,7 +1763,7 @@
     "PRODUCT_QTY_INSUFFICIENT": "Tuotteen saatavilla oleva määrä {availQty} ei riitä pyydettyyn {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Vähimmäistilaus {minQty} tuotetta ei ole saatavilla varastossa",
     "PRODUCT_EXACT_QTY": "Voit tilata {minQty} tuotetta",
-    "PRODUCT_PACK_SIZE_LIMIT": "Tilaa {packSize} kpl paketeissa",
+    "PRODUCT_PACK_SIZE_LIMIT": "Tilaa {packSize} kpl:n pakkauksissa",
     "LINE_ITEM_LIMIT": "Voit tilata enintään {limit} tuotetta",
     "CART_INVALID_PRODUCT": "Virheellinen tuote"
   },
