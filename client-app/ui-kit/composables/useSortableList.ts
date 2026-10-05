@@ -85,6 +85,7 @@ export interface IUseSortableListOptions {
    * by the element `handleAttrs` is bound to; a selector adds whatever it matches to that pointer grip.
    * Read once.
    */
+  // eslint-disable-next-line sonarjs/no-redundant-optional -- false positive: the union has no `undefined`
   handle?: boolean | string;
   /** Elements inside an item that must never start a drag — controls sitting inside the handle. Read once. */
   filter?: string;
@@ -380,6 +381,7 @@ export function useSortableList(
   }
 
   /** Null while the list is disabled, and for a list that drags by the whole item. */
+  // eslint-disable-next-line sonarjs/function-return-type -- null is the documented "no handle" result
   function handleAttrs(id: string): SortableHandleAttrsType | null {
     if (whole || !isEnabled()) {
       return null;
@@ -409,6 +411,7 @@ export function useSortableList(
     event.from.insertBefore(event.item, saved ?? event.from.children[event.oldIndex ?? 0] ?? null);
   }
 
+  // eslint-disable-next-line sonarjs/function-return-type -- SortableJS takes a group name or a group object
   function groupOption(group: string | undefined): Sortable.Options["group"] {
     if (!group || !options.accepts) {
       return group;

@@ -86,6 +86,7 @@ export interface IProps<TItem = unknown> {
    * `handleAttrs`, which also takes the keyboard; a selector adds what it matches to that pointer grip.
    * Read at mount.
    */
+  // eslint-disable-next-line sonarjs/no-redundant-optional -- false positive: the union has no `undefined`
   handle?: boolean | string;
   /** Elements inside an item that must never start a drag, such as a button inside the handle. Read at mount. */
   filter?: string;
