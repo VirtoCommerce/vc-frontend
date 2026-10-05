@@ -13,7 +13,7 @@ import { useShortCart } from "@/shared/cart/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 export function useSignMeIn() {
-  const { errors: authErrors } = useAuth();
+  const { errors: authErrors, resetErrors: resetAuthErrors } = useAuth();
   const broadcast = useBroadcast();
   const { cart } = useShortCart();
   const { result: me, load: getMe } = useGetMeQuery();
@@ -86,6 +86,7 @@ export function useSignMeIn() {
   syncRefs(authErrors, errors);
 
   function resetErrors() {
+    resetAuthErrors();
     errors.value = [];
   }
 
