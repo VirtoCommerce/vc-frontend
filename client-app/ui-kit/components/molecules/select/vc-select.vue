@@ -640,14 +640,20 @@ if (import.meta.env.DEV) {
         return;
       }
 
-      const holdsItems = modelValue.some((value) =>
-        items.some((item) => isEqual(item, value) && !isEqual(getItemValue(item), value)),
+      // An off-page selection matches no loaded item, but still carries the value field itself.
+      const holdsItems = modelValue.some(
+        (value) =>
+          (typeof valueField === "string" && typeof value === "object" && value !== null && valueField in value) ||
+          items.some((item) => isEqual(item, value) && !isEqual(getItemValue(item), value)),
       );
 
       if (holdsItems) {
         warnedItemModel = true;
         // eslint-disable-next-line no-console
-        console.warn("VcSelect: with `multiple` and `value-field` the model holds values, not items.");
+        console.warn(
+          "VcSelect: with `multiple` and `value-field` the model holds values, not items. " +
+            "Map the items to their `value-field`, or drop `value-field` to keep whole items.",
+        );
       }
     },
     { immediate: true },

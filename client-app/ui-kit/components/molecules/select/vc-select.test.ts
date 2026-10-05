@@ -272,6 +272,21 @@ describe("VcSelect", () => {
         expect(warn.mock.calls[0][0]).toContain("holds values, not items");
       });
 
+      // Paged or server-filtered lists rarely have the earlier selections loaded.
+      it("warns for an item that is not on the loaded page", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({
+          items: OBJECT_ITEMS,
+          textField: "name",
+          valueField: "id",
+          multiple: true,
+          modelValue: [{ id: "9", name: "Zambia" }],
+        });
+
+        expect(warn).toHaveBeenCalledOnce();
+      });
+
       it("stays quiet for a model of values", () => {
         const warn = spyOnWarn();
 
