@@ -381,7 +381,7 @@ export function useSortableList(
   }
 
   /** Null while the list is disabled, and for a list that drags by the whole item. */
-  // eslint-disable-next-line sonarjs/function-return-type -- null is the documented "no handle" result
+  // eslint-disable-next-line sonarjs/function-return-type -- false positive: the rule exempts null returns
   function handleAttrs(id: string): SortableHandleAttrsType | null {
     if (whole || !isEnabled()) {
       return null;
