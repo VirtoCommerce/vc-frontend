@@ -358,15 +358,16 @@ let answeredQuery = "";
 // An answer belongs to the last query sent, whatever was typed since; it only ends the wait when
 // that query is still the one on screen.
 function onServerAnswer(): void {
-  answeredQuery = searchedQuery;
+  // Filtered locally, the items answer no query but the empty one.
+  answeredQuery = props.serverFilter ? searchedQuery : "";
 
   if (searchedQuery === filterValue.value) {
     awaitingServerItems.value = false;
   }
 }
 
-// Switched at runtime, the wait follows: on, the query typed has not been sent to the server; off,
-// the local filter answers it.
+// Switched at runtime, the wait follows: on, the query typed has not been answered by the server;
+// off, the local filter answers it.
 watch(
   () => props.serverFilter,
   (serverFilter) => {

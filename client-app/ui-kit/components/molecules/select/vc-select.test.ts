@@ -36,6 +36,7 @@ const countingI18n = createI18n({
         select: {
           items_selected: "{0} items selected",
           results_available: "{0} results available",
+          no_results_found: "No results found",
           selected_of_total: "{selected} of {total}",
           select_all_label: "Select all, {selected} of {total}",
         },
@@ -1147,6 +1148,66 @@ describe("VcSelect", () => {
         await wrapper.setProps({ serverFilter });
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(pagerOn);
+      });
+
+      // Items that changed under the local filter answered no query.
+      it("waits for the server once switched on, even after the items changed", async () => {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop, hasNextPage: true });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ items: [...ITEMS, "Benin"] });
+        await wrapper.setProps({ serverFilter: true });
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+      });
+
+      it("has nothing to wait for when switched on with no query", async () => {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop, hasNextPage: true });
+
+        await wrapper.get("input").trigger("click");
+        await wrapper.setProps({ serverFilter: true });
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+
+      // The answer is in; a further page loading must not mute the count of what is listed.
+      it("keeps counting the options while a list that has them loads", async () => {
+        const wrapper = createWrapperWithMessages({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ items: ["Belgium"] });
+        await wrapper.setProps({ loading: true });
+
+        expect(wrapper.get('[aria-live="polite"]').text()).toBe("1 results available");
+      });
+
+      it("says there are no results once an empty answer has loaded", async () => {
+        const wrapper = createWrapperWithMessages({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+        await wrapper.setProps({ items: [], loading: true });
+        await wrapper.setProps({ loading: false });
+
+        expect(wrapper.get('[aria-live="polite"]').text()).toBe("No results found");
       });
 
       // Emptying the list while loading is the consumer starting the query, not answering it.
