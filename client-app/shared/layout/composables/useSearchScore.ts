@@ -60,8 +60,7 @@ function _useSearchScore() {
 
   let preparingOwner: symbol | undefined;
 
-  // Marks the scope as being prepared until the returned function is called. Only the latest caller
-  // clears it, so a fetch that outlives its page cannot clear what the next page has just set.
+  // Only the latest caller's finish clears it: a fetch outliving its page must not clear the next page's.
   function prepareScope(): () => void {
     const owner = Symbol("preparingScope");
     preparingOwner = owner;

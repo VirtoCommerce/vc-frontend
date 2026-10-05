@@ -5,7 +5,6 @@ import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import Category from "./category.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
-// Each fetchCategory call waits here until a test resolves it.
 const pendingFetches = vi.hoisted(() => [] as Array<(value: unknown) => void>);
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
@@ -139,7 +138,6 @@ describe("Category — search scope preparation", () => {
     expect(preparingScope.value).toBe(false);
   });
 
-  // The next page is already preparing its own scope when the old fetch resolves.
   it("leaves the next page's preparation alone when a fetch outlives its page", async () => {
     mountCategory({ categoryId: "category-1" });
     wrapper!.unmount();

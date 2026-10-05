@@ -134,8 +134,7 @@ const { preparingScope, holdScope } = useSearchScore();
 
 let endScopeHold: (() => void) | undefined;
 
-// The category page renders asynchronously, so it starts preparing its search scope a moment after
-// this component shows. Until it does, nothing would hold the scope and the search bar would collapse.
+// The async category page prepares its scope a moment after this shows; hold it until then.
 watch(
   () =>
     props.isVisible &&

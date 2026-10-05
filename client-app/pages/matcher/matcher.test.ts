@@ -9,11 +9,9 @@ import CategoryPage from "@/pages/category.vue";
 
 const previewerEmitters: Record<string, (value: UpdateStateEventArgs) => void> = {};
 
-// Set by a test that needs the next page to start preparing its own scope on mount, as a category does.
 let pagePrepares = false;
 let finishPagePreparing: (() => void) | undefined;
 
-// Like the real category page: drops its search scope as it is torn down.
 const PageStub = defineComponent({
   setup() {
     if (pagePrepares) {
@@ -62,8 +60,6 @@ vi.mock("@/core/composables", () => ({
   useBreadcrumbs: () => ref([]),
 }));
 
-// The category route's page, real, around a stub of the shared category it renders.
-// Set by a test whose category page is still on its first fetch when it is replaced.
 const categoryState = vi.hoisted(() => ({ isFetching: false }));
 
 vi.mock("@/shared/catalog/components/category.vue", async () => {
@@ -73,7 +69,6 @@ vi.mock("@/shared/catalog/components/category.vue", async () => {
     __esModule: true,
     default: vue.defineComponent({
       setup() {
-        // As the real one: a fetch cut short by the page going ends its preparation with it.
         const finishPreparing = categoryState.isFetching ? searchScore().prepareScope() : undefined;
         vue.onBeforeUnmount(() => {
           searchScore().searchScopeData.value = { queryScope: "", searchScope: [] };
@@ -137,7 +132,6 @@ afterEach(() => {
   finishPagePreparing = undefined;
   categoryState.isFetching = false;
   preparingScope.value = false;
-  // Holds are global state: one leaked here would fail every test after it, far from the cause.
   expect(isScopePending.value).toBe(false);
 });
 
@@ -165,8 +159,6 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(false);
   });
 
-  // Released after the render, not before it: the category page that has just mounted has to be preparing
-  // its own scope by then, or the search bar paints one frame with no indicator at all.
   it("hands the pending scope straight to a category page that mounts in its place", async () => {
     await mountMatcher();
     await setSlugContentState("ready");
@@ -182,7 +174,6 @@ describe("Matcher search scope hand-over", () => {
     expect(seen).not.toContain(false);
     expect(isScopePending.value).toBe(true);
 
-    // Pending only because the new page is preparing: once it has, nothing of the hold is left.
     finishPagePreparing?.();
     expect(isScopePending.value).toBe(false);
   });
@@ -222,7 +213,6 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(false);
   });
 
-  // A category on its own route leaves before the matcher mounts, and holds its scope for one tick on the way out.
   it("takes over a scope handed over by a page that left for this route", async () => {
     const handOver = useSearchScore().holdScope();
 
@@ -236,8 +226,6 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(false);
   });
 
-  // A breadcrumb click on a category opened from the header menu: the category route's page is replaced
-  // by the matcher in one render, and the category under it drops its scope first.
   it("takes over the scope a category route's page hands over as the matcher replaces it", async () => {
     vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
     setCategoryScope();
@@ -264,7 +252,6 @@ describe("Matcher search scope hand-over", () => {
     expect(isScopePending.value).toBe(false);
   });
 
-  // Opened from the header menu and left before its first fetch returned: no scope yet, only its preparation.
   it("takes over from a category route's page that is still preparing its scope", async () => {
     vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
     categoryState.isFetching = true;

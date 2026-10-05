@@ -38,7 +38,6 @@ const categoryPage = vi.hoisted(() => ({
   finishPreparing: undefined as (() => void) | undefined,
 }));
 
-// Like the real category page: starts preparing its own scope as it is set up.
 vi.mock("@/pages/category.vue", () => ({
   __esModule: true,
   default: defineComponent({
@@ -70,12 +69,10 @@ afterEach(() => {
   categoryPage.failsToSetUp = false;
   categoryPage.finishPreparing = undefined;
   preparingScope.value = false;
-  // Holds are global state: one leaked here would fail every test after it, far from the cause.
   expect(isScopePending.value).toBe(false);
 });
 
 describe("SlugContent search scope", () => {
-  // The category page is an async component: it is not there yet on the render that shows this one.
   it("keeps the scope pending from showing a category until the category starts preparing", async () => {
     objectType.value = "Category";
     const slugContent = mountSlugContent();
@@ -88,7 +85,6 @@ describe("SlugContent search scope", () => {
     await flushPromises();
 
     expect(slugContent.find('[data-testid="category"]').exists()).toBe(true);
-    // Pending only because the category is preparing: once it has, nothing of the hold is left.
     categoryPage.finishPreparing?.();
     expect(isScopePending.value).toBe(false);
   });

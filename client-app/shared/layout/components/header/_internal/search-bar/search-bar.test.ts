@@ -181,8 +181,6 @@ describe("SearchBar scope indicators", () => {
 });
 
 describe("SearchBar scope slot geometry", () => {
-  // The loading indicator replaces the chip in place: it must keep the chip's content, invisible
-  // under the loader, or the input after it moves while the next scope is prepared.
   it("keeps the replaced chip's label inside the loading indicator while the scope is held", async () => {
     setCategoryScope("child-category", "Child category");
 

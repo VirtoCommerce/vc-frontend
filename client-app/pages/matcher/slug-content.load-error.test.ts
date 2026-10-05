@@ -28,7 +28,7 @@ vi.mock("@/core/composables", () => ({
   useNavigations: () => ({ setMatchingRouteName: vi.fn() }),
 }));
 
-// Its own file: a category page that has loaded once stays loaded for the rest of the module's life.
+// Own file: vi.mock is file-wide, and a resolved import stays cached for the whole file.
 vi.mock("@/pages/category.vue", () => {
   throw new Error("Failed to fetch dynamically imported module");
 });

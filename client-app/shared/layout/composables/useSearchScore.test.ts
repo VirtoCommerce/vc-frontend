@@ -19,7 +19,6 @@ describe("useSearchScore — prepareScope", () => {
     expect(preparingScope.value).toBe(false);
   });
 
-  // A category fetch that resolves after its page is gone must not clear the next page's preparation.
   it("ignores a finish from a caller that a newer one has replaced", () => {
     const finishFirst = prepareScope();
     const finishSecond = prepareScope();
