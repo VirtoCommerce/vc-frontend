@@ -754,6 +754,35 @@ if (import.meta.env.DEV) {
   );
 }
 
+// Without `valueField` the model is the item itself, so a primitive model over object items matches
+// no option and the whole item is what a pick writes into it.
+if (import.meta.env.DEV) {
+  let warnedPrimitiveModel = false;
+
+  watch(
+    () => [props.valueField, props.modelValue, props.items] as const,
+    ([valueField, modelValue, items]) => {
+      if (warnedPrimitiveModel || valueField !== undefined) {
+        return;
+      }
+
+      const values = Array.isArray(modelValue) ? modelValue : [modelValue];
+      const holdsPrimitive = values.some((value) => value !== null && value !== undefined && typeof value !== "object");
+      const offersObjects = items.some((item) => typeof item === "object" && item !== null);
+
+      if (holdsPrimitive && offersObjects) {
+        warnedPrimitiveModel = true;
+        // eslint-disable-next-line no-console
+        console.warn(
+          "VcSelect: the model holds a primitive but the items are objects, and without `value-field` " +
+            "the model is the item. Set `value-field` to the key the model holds.",
+        );
+      }
+    },
+    { immediate: true },
+  );
+}
+
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
 // The pager owns the spinner for a further page; a query on its way, or an empty first page, is shown

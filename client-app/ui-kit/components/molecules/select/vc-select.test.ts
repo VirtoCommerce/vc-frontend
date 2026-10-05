@@ -261,6 +261,34 @@ describe("VcSelect", () => {
       expect(wrapper.get('[role="listbox"]').attributes("aria-multiselectable")).toBeUndefined();
     });
 
+    describe("a primitive model over object items without valueField", () => {
+      const primitiveWarning = "the model holds a primitive but the items are objects";
+      const warned = (warn: ReturnType<typeof spyOnWarn>) =>
+        warn.mock.calls.some(([message]) => String(message).includes(primitiveWarning));
+
+      it.each([
+        ["a single id", { modelValue: "1" }, true],
+        ["a list of ids", { multiple: true, modelValue: ["1"] }, true],
+        ["the item itself", { modelValue: OBJECT_ITEMS[0] }, false],
+        ["no model yet", { modelValue: undefined }, false],
+        ["an id with valueField", { valueField: "id", modelValue: "1" }, false],
+      ])("warns for %s accordingly", (_label, props, warns) => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: OBJECT_ITEMS, textField: "name", ...props });
+
+        expect(warned(warn)).toBe(warns);
+      });
+
+      it("stays quiet for primitive items", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: ITEMS, modelValue: "Albania" });
+
+        expect(warned(warn)).toBe(false);
+      });
+    });
+
     describe("a model that still holds items under valueField", () => {
       it("warns once in development", async () => {
         const warn = spyOnWarn();
