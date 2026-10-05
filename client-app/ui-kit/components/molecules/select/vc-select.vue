@@ -403,7 +403,9 @@ const search = computed({
 });
 
 // `VcSelectEmittedType<V, M>` stays a deferred conditional type while `M` is unresolved, so the
-// value needs a cast that the lint rule, judging the resolved type, calls unnecessary.
+// value needs a cast that the lint rule, judging the resolved type, calls unnecessary. The rule
+// below reads the unconstrained `V` as `unknown`; the union names the three shapes a commit takes.
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 function commit(value: V | V[] | undefined): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   emit("update:modelValue", value as VcSelectEmittedType<V, M>);
