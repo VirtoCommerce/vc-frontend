@@ -1093,6 +1093,20 @@ describe("VcSelect", () => {
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
+      // The answer to "bel" lands after "belx" was typed; typing "bel" again needs no new fetch.
+      it("remembers an answer that landed while the user typed on", async () => {
+        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
+        const input = wrapper.get("input");
+
+        await wrapper.setProps({ items: ["Belgium"] });
+        await input.setValue("belx");
+        await wrapper.setProps({ loading: false });
+        await input.setValue("bel");
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+
       // Emptying the list while loading is the consumer starting the query, not answering it.
       it("waits through items cleared while the query loads", async () => {
         const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });

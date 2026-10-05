@@ -2625,8 +2625,9 @@ declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props:
         hasNextPage?: boolean;
         /**
          * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-         * `search` by replacing `items` or pushing/splicing into it, or with a `loading` cycle (changes
-         * inside an item do not count): until then the list holds paging back and ignores Select all.
+         * `search` by replacing `items` or pushing/splicing into it while `loading` is off, or with a
+         * `loading` cycle (changes inside an item do not count): until then the list holds paging back
+         * and ignores Select all.
          */
         serverFilter?: boolean;
         testIdDropdown?: string;

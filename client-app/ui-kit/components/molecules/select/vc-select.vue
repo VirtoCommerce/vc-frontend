@@ -261,8 +261,9 @@ const props = withDefaults(
     hasNextPage?: boolean;
     /**
      * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-     * `search` by replacing `items` or pushing/splicing into it, or with a `loading` cycle (changes
-     * inside an item do not count): until then the list holds paging back and ignores Select all.
+     * `search` by replacing `items` or pushing/splicing into it while `loading` is off, or with a
+     * `loading` cycle (changes inside an item do not count): until then the list holds paging back
+     * and ignores Select all.
      */
     serverFilter?: boolean;
     testIdDropdown?: string;
@@ -354,10 +355,13 @@ let searchedQuery = "";
 // The items on screen answer this query; the first ones answer the empty one.
 let answeredQuery = "";
 
+// An answer belongs to the last query sent, whatever was typed since; it only ends the wait when
+// that query is still the one on screen.
 function onServerAnswer(): void {
+  answeredQuery = searchedQuery;
+
   if (searchedQuery === filterValue.value) {
     awaitingServerItems.value = false;
-    answeredQuery = searchedQuery;
   }
 }
 
