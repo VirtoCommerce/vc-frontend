@@ -218,7 +218,9 @@ const props = withDefaults(
     /** Property name, or an accessor, producing the option label. */
     textField?: VcSelectFieldAccessorType<T, string>;
     /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
-    // The accessor may infer the model type; only the key form must not.
+    // The accessor may infer the model type; only the key form must not. The rule resolves the key
+    // type with T and V unknown, where it is `never`.
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     valueField?: VcSelectValueKeyType<T, NoInfer<V>> | ((item: T) => V);
     placeholder?: string;
     showEmptyDetails?: boolean;
