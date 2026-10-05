@@ -746,6 +746,22 @@ describe("VcSelect", () => {
       expect(texts).toEqual(["Belgium", "Abel"]);
     });
 
+    it("matches numeric options by their text", async () => {
+      const wrapper = createWrapper({ items: [10, 25, 31], autocomplete: true });
+
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("1");
+
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["10", "31"]);
+    });
+
+    // A falsy option has no field to read, so it labels itself.
+    it("labels a falsy option with itself under textField", () => {
+      const wrapper = createWrapper({ items: [0, 1], textField: "name" });
+
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["0", ""]);
+    });
+
     it("matches case-insensitively", async () => {
       const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
 
