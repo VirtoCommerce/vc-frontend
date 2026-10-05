@@ -24,8 +24,7 @@ const meta: Meta<typeof VcAddToCart> = {
     hideButton: { control: "boolean" },
     aria: {
       control: false,
-      description:
-        "Extra ARIA attributes for the quantity input, e.g. `aria-describedby` pointing at a message rendered outside. Object, not a control.",
+      description: "Extra ARIA attributes forwarded to the quantity input. Object, not a control.",
       table: { type: { summary: "Record<string, string | number | null>" } },
     },
   },

@@ -21,7 +21,7 @@ const meta: Meta<typeof VcQuantityStepper> = {
     aria: {
       control: false,
       description:
-        "Extra ARIA attributes for the input, merged under the spinbutton role and value attributes this stepper owns. Object, not a control.",
+        "Extra ARIA attributes for the input; `role`, `aria-label` and `aria-valuemin/max/now` always win. Object, not a control.",
       table: { type: { summary: "Record<string, string | number | null>" } },
     },
   },

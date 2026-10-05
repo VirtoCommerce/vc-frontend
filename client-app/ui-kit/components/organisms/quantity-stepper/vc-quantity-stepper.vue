@@ -88,7 +88,7 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
-  /** Extra ARIA attributes for the input; `role` and `aria-valuemin/max/now` always win. */
+  /** Extra ARIA attributes for the input; `role`, `aria-label` and `aria-valuemin/max/now` always win. */
   aria?: Record<string, string | number | null>;
 }
 
