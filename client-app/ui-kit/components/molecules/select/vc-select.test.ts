@@ -390,13 +390,27 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
-    it("keeps the loaded page selected when it is clicked with pages still to come", async () => {
+    // Selecting would change nothing on a page that is all selected, so the row clears instead;
+    // the pages not loaded are the consumer's to add on selectAll(true).
+    it("clears a fully selected page with pages still to come", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
 
       await wrapper.get(".vc-select-all input").trigger("change");
 
-      expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]]]);
-      expect(wrapper.emitted("selectAll")).toHaveLength(1);
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[false]]);
+    });
+
+    it("selects the loaded page, then clears it, when the consumer adds no other page", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [], total: 3000 });
+      const checkbox = wrapper.get(".vc-select-all input");
+
+      await checkbox.trigger("change");
+      await wrapper.setProps({ modelValue: [...ITEMS] });
+      await checkbox.trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]], [[]]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[true], [false]]);
     });
 
     // A filter narrows the set: the visible options are added, hidden selections are kept.

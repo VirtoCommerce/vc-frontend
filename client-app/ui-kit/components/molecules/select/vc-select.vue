@@ -669,7 +669,6 @@ if (import.meta.env.DEV) {
 
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
-// VcLoadMore draws its own spinner once another page is known to exist.
 // The pager owns the spinner for a further page; a query on its way, or an empty first page, is shown
 // here. A next page of the previous query is not asked for while its answer is pending.
 const showLoadingRow = computed(
@@ -704,13 +703,12 @@ const countedSelected = computed(() => {
   return Math.max(Math.min(props.selectedCount!, totalCount.value), selectedVisibleCount.value);
 });
 
-// Checked means `n of n`: a fully selected page of a longer list is still partial.
-const isAllSelected = computed(
-  () =>
-    selectableValues.value.length > 0 &&
-    selectedVisibleCount.value === selectableValues.value.length &&
-    countedSelected.value >= totalCount.value,
+const isEveryOptionSelected = computed(
+  () => selectableValues.value.length > 0 && selectedVisibleCount.value === selectableValues.value.length,
 );
+
+// Checked means `n of n`: a fully selected page of a longer list is still partial.
+const isAllSelected = computed(() => isEveryOptionSelected.value && countedSelected.value >= totalCount.value);
 
 const isSomeSelected = computed(() => countedSelected.value > 0 && !isAllSelected.value);
 
@@ -722,8 +720,10 @@ const selectAllLabel = computed(() =>
   t("ui_kit.select.select_all_label", { selected: countedSelected.value, total: totalCount.value }),
 );
 
+// A partial list whose loaded options are all selected clears too: selecting would change nothing,
+// and the pages it lacks are the consumer's to add on `selectAll`.
 function onSelectAll() {
-  const clearing = isAllSelected.value;
+  const clearing = isEveryOptionSelected.value;
 
   if (clearing) {
     // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.

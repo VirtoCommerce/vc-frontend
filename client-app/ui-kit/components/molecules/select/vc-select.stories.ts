@@ -607,18 +607,64 @@ export const SelectAll: StoryType = {
 
 export const SelectAllWithTotal: StoryType = {
   args: {
-    items: ITEMS,
     label: "Buyer name",
     placeholder: "Select buyers",
     multiple: true,
     selectAll: true,
-    total: 3000,
-    modelValue: ["Albania"],
   },
+  render: (args) => ({
+    setup: () => {
+      const TOTAL = 30;
+      const allIds = Array.from({ length: TOTAL }, (_, index) => `Buyer ${index + 1}`);
+      const items = ref(allIds.slice(0, 6));
+      const selected = ref<string[]>([]);
+
+      // The select can only add what is loaded; the rest of the set is the consumer's to add.
+      function onSelectAll(all: boolean) {
+        selected.value = all ? [...allIds] : [];
+      }
+
+      return { args, items, selected, total: TOTAL, onSelectAll };
+    },
+    template: `
+      <div class="mb-32">
+        <VcSelect
+          v-bind="args"
+          v-model="selected"
+          :items="items"
+          :total="total"
+          @select-all="onSelectAll"
+        />
+
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} of {{ total }} loaded, {{ selected.length }} selected</div>
+      </div>
+    `,
+  }),
   parameters: {
     docs: {
       description: {
-        story: "Paged list: only one page is loaded, so `total` carries the real size for the counter.",
+        story:
+          "A paged list holds one page, so `total` carries the size of the whole set for the counter, " +
+          "and Select all can only add the options that are loaded. `@select-all(true)` is the " +
+          "consumer's cue to select the rest of the set — every id from the server — and " +
+          "`@select-all(false)` to clear it. A click on a row whose loaded options are all selected " +
+          "clears, so the row never gets stuck on a partial selection.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const { items, total, allIds } = useBuyers();
+const selected = ref<string[]>([]);
+
+function onSelectAll(all: boolean) {
+  selected.value = all ? allIds.value : [];
+}
+</script>
+
+<template>
+  <VcSelect v-model="selected" :items="items" :total="total" multiple select-all @select-all="onSelectAll" />
+</template>
+        `,
       },
     },
   },
