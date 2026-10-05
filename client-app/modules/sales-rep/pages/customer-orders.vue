@@ -246,6 +246,21 @@ type FilterChipType = {
   label: string;
 };
 
+// The status facet only lists terms the current result set holds, so a search matching nothing drops the
+// applied status and its chip would fall back to the raw term. Labels seen in earlier responses are kept;
+// they are per culture, and a culture switch reloads the app.
+const statusLabels = ref<Record<string, string>>({});
+
+watch(
+  statusOptions,
+  (options) => {
+    for (const { name, label } of options) {
+      statusLabels.value[name] = label;
+    }
+  },
+  { immediate: true },
+);
+
 const filterChips = computed<FilterChipType[]>(() => {
   const { statuses, customerNames, startDate, endDate } = filters.value;
   const chips: FilterChipType[] = [];
@@ -255,7 +270,7 @@ const filterChips = computed<FilterChipType[]>(() => {
       id: `statuses:${status}`,
       field: "statuses",
       value: status,
-      label: statusOptions.value.find((option) => option.name === status)?.label ?? status,
+      label: statusLabels.value[status] ?? status,
     });
   }
 

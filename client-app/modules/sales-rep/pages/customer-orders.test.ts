@@ -291,6 +291,20 @@ describe("CustomerOrders", () => {
     expect(wrapper.findAll(".chip")).toHaveLength(0);
   });
 
+  it("keeps the localized status chip label when the result set comes back empty (VCST-6175)", async () => {
+    state.statusOptions.value = [{ name: "Cancelled", label: "Abgesagt", count: 3 }];
+    state.filters.value = { statuses: ["Cancelled"], customerNames: [], startDate: undefined, endDate: undefined };
+
+    const wrapper = createWrapper();
+    expect(wrapper.findAll(".chip")[0].text()).toBe("Abgesagt");
+
+    // A zero-match response carries no status facet.
+    state.statusOptions.value = [];
+    await flushPromises();
+
+    expect(wrapper.findAll(".chip")[0].text()).toBe("Abgesagt");
+  });
+
   it("drops a single filter when its chip is closed", async () => {
     state.statusOptions.value = [{ name: "New", label: "New", count: 2 }];
     state.filters.value = { statuses: ["New"], customerNames: ["ACME"], startDate: undefined, endDate: undefined };
