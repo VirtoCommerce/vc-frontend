@@ -1763,7 +1763,7 @@
     "PRODUCT_QTY_INSUFFICIENT": "产品可用数量 {availQty} 不足以满足请求的 {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "最小订单 {minQty} 件的库存不足",
     "PRODUCT_EXACT_QTY": "您可以订购 {minQty} 件",
-    "PRODUCT_PACK_SIZE_LIMIT": "按 {packSize} 包装",
+    "PRODUCT_PACK_SIZE_LIMIT": "按 {packSize} 的包装订购",
     "LINE_ITEM_LIMIT": "您最多可以订购 {limit} 件",
     "CART_INVALID_PRODUCT": "无效的产品"
   },

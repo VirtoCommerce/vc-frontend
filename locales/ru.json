@@ -1763,7 +1763,7 @@
     "PRODUCT_QTY_INSUFFICIENT": "Доступное количество товара {availQty} недостаточно для запрошенного {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Минимальный заказ {minQty} шт. нет в наличии",
     "PRODUCT_EXACT_QTY": "Вы можете заказать {minQty} шт.",
-    "PRODUCT_PACK_SIZE_LIMIT": "Заказ упаковками по {packSize}",
+    "PRODUCT_PACK_SIZE_LIMIT": "Заказ в упаковках по {packSize}",
     "LINE_ITEM_LIMIT": "Вы можете заказать максимум {limit} шт.",
     "CART_INVALID_PRODUCT": "Недействительный товар"
   },
