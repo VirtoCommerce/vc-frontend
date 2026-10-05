@@ -861,6 +861,49 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
     });
 
+    describe("result count announced for a server-side query", () => {
+      async function typeQuery() {
+        const wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("zzz");
+
+        return wrapper;
+      }
+
+      const announced = (wrapper: VueWrapper) => wrapper.get('[aria-live="polite"]').text();
+
+      it("stays silent until the consumer answers", async () => {
+        expect(announced(await typeQuery())).toBe("");
+      });
+
+      it("stays silent while the consumer is loading", async () => {
+        const wrapper = await typeQuery();
+
+        await wrapper.setProps({ loading: true });
+
+        expect(announced(wrapper)).toBe("");
+      });
+
+      it("counts the items the consumer answered with", async () => {
+        const wrapper = await typeQuery();
+
+        await wrapper.setProps({ items: ["Albania"] });
+
+        expect(announced(wrapper)).toBe("1 results available");
+      });
+
+      it("counts the options once loading finishes", async () => {
+        const wrapper = await typeQuery();
+
+        await wrapper.setProps({ loading: true });
+        await wrapper.setProps({ loading: false });
+
+        expect(announced(wrapper)).toBe("3 results available");
+      });
+    });
+
     it("shows no spinner while nothing is being fetched", () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
 

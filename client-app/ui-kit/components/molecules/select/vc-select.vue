@@ -335,8 +335,28 @@ const activeDescendantId = computed(() =>
   isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
 );
 
+// With `serverFilter` the options on screen belong to the previous query until the consumer
+// answers with new items or finishes loading; their count would describe the wrong query.
+const awaitingServerItems = ref(false);
+
+watch(
+  () => props.items,
+  () => {
+    awaitingServerItems.value = false;
+  },
+);
+
+watch(
+  () => props.loading,
+  (loading) => {
+    if (!loading) {
+      awaitingServerItems.value = false;
+    }
+  },
+);
+
 const liveRegionMessage = computed(() => {
-  if (!isShown.value || !filterValue.value) {
+  if (!isShown.value || !filterValue.value || awaitingServerItems.value) {
     return "";
   }
 
@@ -591,6 +611,7 @@ watch(filterValue, (value) => {
 
   // The options under the highlight stay the previous query's until the consumer answers.
   resetHighlight();
+  awaitingServerItems.value = true;
 
   if (value) {
     void emitSearchDebounced(value);
