@@ -2,8 +2,14 @@ import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { getBlockRegistry, registerBlock } from "../layout/registry";
+import LayoutEditBar from "./layout-edit-bar.vue";
+import LayoutEditButton from "./layout-edit-button.vue";
+import LayoutEmptyState from "./layout-empty-state.vue";
+import LayoutRegion from "./layout-region.vue";
+import LayoutStats from "./layout-stats.vue";
 import LayoutSurface from "./layout-surface.vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 import VcWidgetSkeleton from "@/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue";
 
@@ -73,9 +79,10 @@ function mountSurface(props: Record<string, unknown> = {}) {
     props: { scope: "customerProfile" as const, cards: [], ...props },
     attachTo: document.body,
     // The ui-kit plugin registers these globally and no test boots it. VcButton must be the real one —
-    // the edit toggle is a VcButton, and a stub would not carry its click.
+    // the edit toggle is a VcButton, and a stub would not carry its click. VcEmptyView too: the empty
+    // state's buttons live in its slots, which a stub does not render.
     global: {
-      components: { VcButton, VcWidget, VcWidgetSkeleton },
+      components: { VcButton, VcEmptyView, VcWidget, VcWidgetSkeleton },
       // `i18n-t` too: vue-i18n is mocked down to `useI18n`, so its global component is never registered.
       stubs: { VcIcon: true, VcShape: true, VcAlert: true, VcLoaderOverlay: true, VcTypography: true, "i18n-t": true },
     },
@@ -189,10 +196,10 @@ describe("LayoutSurface with every block hidden", () => {
   it("shows the empty state instead of the regions and the edit button", async () => {
     const wrapper = await mountAllHidden({ editButtonPlacement: "mainColumn" });
 
-    expect(wrapper.find(".layout-empty-state").exists()).toBe(true);
-    expect(wrapper.find(".layout-surface__row").exists()).toBe(false);
-    expect(wrapper.find(".layout-stats").exists()).toBe(false);
-    expect(wrapper.find("[data-layout-edit-toggle]").exists()).toBe(false);
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
+    expect(wrapper.findComponent(LayoutStats).exists()).toBe(false);
+    expect(wrapper.findAllComponents(LayoutRegion)).toHaveLength(0);
+    expect(wrapper.findComponent(LayoutEditButton).exists()).toBe(false);
   });
 
   // In edit mode the empty zones and the tray are the way back, and the empty state would cover them.
@@ -202,8 +209,8 @@ describe("LayoutSurface with every block hidden", () => {
     await wrapper.find("[data-layout-empty-edit]").trigger("click");
     await flushPromises();
 
-    expect(wrapper.find(".layout-empty-state").exists()).toBe(false);
-    expect(wrapper.find(".layout-edit-bar").exists()).toBe(true);
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(false);
+    expect(wrapper.findComponent(LayoutEditBar).exists()).toBe(true);
     expect(wrapper.find(`[data-restore-id="${PROBE_ID}"]`).exists()).toBe(true);
   });
 
@@ -215,7 +222,7 @@ describe("LayoutSurface with every block hidden", () => {
     await wrapper.find("[data-layout-edit-toggle]").trigger("click");
     await flushPromises();
 
-    expect(wrapper.find(".layout-empty-state").exists()).toBe(true);
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
   });
 
   it("writes the defaults on Restore and renders the blocks again, without edit mode", async () => {
@@ -230,8 +237,8 @@ describe("LayoutSurface with every block hidden", () => {
     await flushPromises();
 
     expect(apolloMock.mutate).toHaveBeenCalledTimes(1);
-    expect(wrapper.find(".layout-empty-state").exists()).toBe(false);
-    expect(wrapper.find(".layout-edit-bar").exists()).toBe(false);
-    expect(wrapper.find(".layout-surface__aside .probe").exists()).toBe(true);
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(false);
+    expect(wrapper.findComponent(LayoutEditBar).exists()).toBe(false);
+    expect(wrapper.findComponent(Probe).exists()).toBe(true);
   });
 });

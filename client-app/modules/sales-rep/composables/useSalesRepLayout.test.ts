@@ -677,12 +677,13 @@ describe("useSalesRepLayout restoreDefaults", () => {
     apolloMock.result.value = ALL_HIDDEN;
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
 
-    const { restoreDefaults, editing, visibleIn } = withLayout(scope);
+    const { restoreDefaults, editing, saveFailed, visibleIn } = withLayout(scope);
 
     await expect(restoreDefaults()).resolves.toBe(true);
     expect(apolloMock.mutate).toHaveBeenCalledTimes(1);
     expect(sentBlock("info")).toMatchObject({ hidden: false });
     expect(editing.value).toBe(false);
+    expect(saveFailed.value).toBe(false);
     expect(visibleIn("statistics")).toEqual(CUSTOMER_STAT_IDS);
     expect(visibleIn("mainRight")).toEqual(["actions", "info"]);
   });

@@ -1,7 +1,9 @@
 <template>
-  <div class="layout-empty-state">
-    <!-- eslint-disable-next-line vue/no-v-html -- a static asset from this repo, never user content -->
-    <div class="layout-empty-state__art" aria-hidden="true" v-html="artRaw" />
+  <VcEmptyView class="layout-empty-state">
+    <template #icon>
+      <!-- eslint-disable-next-line vue/no-v-html -- a static asset from this repo, never user content -->
+      <div class="layout-empty-state__art" aria-hidden="true" v-html="artRaw" />
+    </template>
 
     <VcTypography tag="h2" class="layout-empty-state__title">
       {{ t("sales_rep.hub.layout.empty.title") }}
@@ -17,29 +19,31 @@
       </template>
     </i18n-t>
 
-    <div class="layout-empty-state__actions">
-      <VcButton
-        prepend-icon="rotate-ccw"
-        data-layout-restore
-        :loading="restoring"
-        :disabled="disabled"
-        @click="$emit('restore')"
-      >
-        {{ t("sales_rep.hub.layout.empty.restore") }}
-      </VcButton>
+    <template #button>
+      <div class="layout-empty-state__actions">
+        <VcButton
+          prepend-icon="rotate-ccw"
+          data-layout-restore
+          :loading="restoring"
+          :disabled="disabled"
+          @click="$emit('restore')"
+        >
+          {{ t("sales_rep.hub.layout.empty.restore") }}
+        </VcButton>
 
-      <VcButton
-        variant="outline"
-        color="secondary"
-        prepend-icon="adjustments"
-        data-layout-empty-edit
-        :disabled="disabled || restoring"
-        @click="$emit('edit')"
-      >
-        {{ t("sales_rep.hub.layout.edit") }}
-      </VcButton>
-    </div>
-  </div>
+        <VcButton
+          variant="outline"
+          color="secondary"
+          prepend-icon="adjustments"
+          data-layout-empty-edit
+          :disabled="disabled || restoring"
+          @click="$emit('edit')"
+        >
+          {{ t("sales_rep.hub.layout.edit") }}
+        </VcButton>
+      </div>
+    </template>
+  </VcEmptyView>
 </template>
 
 <script setup lang="ts">
@@ -65,7 +69,7 @@ const { t } = useI18n();
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .layout-empty-state {
-  @apply mx-auto flex w-full max-w-xl flex-col items-center gap-5 pt-5 text-center;
+  @apply mx-auto max-w-xl;
 
   &__title {
     @apply pt-3 [word-break:break-word];
@@ -79,8 +83,14 @@ const { t } = useI18n();
     }
   }
 
+  // A fixed width rather than `w-full`: the kit's button wrapper shrinks to its content, so a percentage
+  // would never stretch the stacked buttons on a phone.
   &__actions {
-    @apply mt-1 flex w-full max-w-80 flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center;
+    @apply mt-1 flex w-80 max-w-full flex-col gap-3;
+
+    @media (width >= theme("screens.sm")) {
+      @apply w-auto flex-row flex-wrap justify-center;
+    }
   }
 }
 </style>
