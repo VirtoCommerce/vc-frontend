@@ -14,6 +14,7 @@ declare module "vue" {
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
     VcImage: typeof Components.VcImage;
+    /** For a window-scrolled list. Inside a `VcScrollbar` use `VcLoadMore`, which also refills a short page. */
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
     /** @deprecated Use VcProperty or VcProductProperties instead */

@@ -6,6 +6,7 @@ export { default as VcCheckboxGroup } from "./checkbox-group/vc-checkbox-group.v
 export { default as VcContainer } from "./container/vc-container.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
+/** For a window-scrolled list. Inside a `VcScrollbar` use `VcLoadMore`, which also refills a short page. */
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
 export { default as VcInputDetails } from "./input-details/vc-input-details.vue";
 export { default as VcLabel } from "./label/vc-label.vue";
