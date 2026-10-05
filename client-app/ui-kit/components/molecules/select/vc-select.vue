@@ -155,7 +155,11 @@
               :loading="loading"
               :has-next-page="hasNextPage"
               @load-more="$emit('loadMore')"
-            />
+            >
+              <template v-if="$slots.loading" #loading>
+                <slot name="loading" />
+              </template>
+            </VcLoadMore>
           </VcScrollbar>
         </div>
       </template>
@@ -268,7 +272,9 @@ defineSlots<{
   selected?: (props: { item: M extends true ? V[] : T; error?: boolean }) => unknown;
   placeholder?: (props: { error?: boolean }) => unknown;
   item?: (props: { item: T; index: number }) => unknown;
+  /** Replaces the loading indicator, for the first page and for every next one. */
   loading?: () => unknown;
+  /** Replaces the text of the row shown when there are no options or no matches. */
   empty?: () => unknown;
 }>();
 

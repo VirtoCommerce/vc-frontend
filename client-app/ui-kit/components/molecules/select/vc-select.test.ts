@@ -828,6 +828,16 @@ describe("VcSelect", () => {
       expect(wrapper.find('[role="option"]').exists()).toBe(false);
     });
 
+    it.each([
+      ["a first page with nothing to show yet", { items: [], loading: true }],
+      ["a further page on its way", { items: ITEMS, loading: true, hasNextPage: true }],
+    ])("puts the loading slot in place of the spinner for %s", (_label, props) => {
+      const wrapper = createWrapper(props, { loading: () => h("span", { class: "probe-loading" }, "wait") });
+
+      expect(wrapper.findAll(".probe-loading")).toHaveLength(1);
+      expect(wrapper.find(".vc-loader").exists()).toBe(false);
+    });
+
     it("names the loading row", () => {
       const wrapper = createWrapper({ items: [], loading: true });
 
