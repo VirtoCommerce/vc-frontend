@@ -88,10 +88,7 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
-  /**
-   * Extra ARIA attributes for the input, e.g. `aria-describedby` pointing at a message rendered
-   * outside the stepper, or `aria-invalid`. The spinbutton role and value attributes always win.
-   */
+  /** Extra ARIA attributes for the input; `role` and `aria-valuemin/max/now` always win. */
   aria?: Record<string, string | number | null>;
 }
 

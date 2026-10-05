@@ -19,7 +19,7 @@ export const LOYALTY_VALIDATION_ERROR_CODES = [
   CartValidationErrors.LOYALTY_PAYMENT_METHOD_NOT_ALLOWED,
 ] as const;
 
-/** Line-item validation codes that are about the entered quantity, not the product or price. */
+/** Line-item error codes about the entered quantity. */
 export const QUANTITY_VALIDATION_ERROR_CODES = [
   CartValidationErrors.PRODUCT_QTY_CHANGED,
   CartValidationErrors.PRODUCT_MIN_QTY,

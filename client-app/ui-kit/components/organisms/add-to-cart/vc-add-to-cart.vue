@@ -93,7 +93,7 @@ interface IProps {
   timeout?: number;
   validateOnMount?: boolean;
   size?: "sm" | "md";
-  /** Extra ARIA attributes for the quantity input, e.g. `aria-describedby` pointing at a message rendered outside. */
+  /** Extra ARIA attributes forwarded to the quantity input. */
   aria?: Record<string, string | number | null>;
 }
 

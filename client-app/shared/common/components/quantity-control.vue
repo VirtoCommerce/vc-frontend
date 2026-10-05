@@ -89,7 +89,7 @@ interface IProps {
   allowZero?: boolean;
   emitUpdateOnStepperChange?: boolean;
   disableValidation?: boolean;
-  /** Extra ARIA attributes forwarded to the quantity input in either mode. */
+  /** Forwarded to the quantity input in both modes. */
   aria?: Record<string, string | number | null>;
 }
 
@@ -189,7 +189,7 @@ const handleStepperChange = debounce(async () => {
 }, timeout.value ?? 0);
 
 onMounted(async () => {
-  // An untouched 0 is "not in cart"; the max rule has no allowZero exemption and rejects it when stock is negative.
+  // Untouched 0 = not in cart; the max rule would reject it on negative stock.
   if (mode.value === "stepper" && allowZero.value && value.value === 0) {
     return;
   }
