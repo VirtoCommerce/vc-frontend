@@ -159,7 +159,8 @@ describe("dom-analytics engine", () => {
       item_list_name: "Related",
     });
 
-    products.value = [a];
+    // An unrelated DOM change rescans the list: the same products and list params must not resend
+    document.body.append(document.createElement("i"));
     await flush();
     expect(analyticsMock).toHaveBeenCalledTimes(1);
 

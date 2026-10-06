@@ -176,9 +176,10 @@ export function startEngine(rules: RuleType[]): () => void {
 
   document.addEventListener("click", onClick, true);
 
-  const observer = new MutationObserver(scheduleScan);
+  let observer: MutationObserver | undefined;
   let stopItemListener: (() => void) | undefined;
   if (appearRules.length) {
+    observer = new MutationObserver(scheduleScan);
     observer.observe(document.body, { childList: true, subtree: true });
     stopItemListener = onItemChange(scheduleScan);
     scheduleScan();
@@ -187,7 +188,7 @@ export function startEngine(rules: RuleType[]): () => void {
   return () => {
     isStopped = true;
     document.removeEventListener("click", onClick, true);
-    observer.disconnect();
+    observer?.disconnect();
     stopItemListener?.();
   };
 }
