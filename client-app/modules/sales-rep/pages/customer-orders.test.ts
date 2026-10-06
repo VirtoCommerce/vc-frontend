@@ -291,7 +291,7 @@ describe("CustomerOrders", () => {
     expect(wrapper.findAll(".chip")).toHaveLength(0);
   });
 
-  it("keeps the localized status chip label when the result set comes back empty (VCST-6175)", async () => {
+  it("keeps the localized status chip label when the result set comes back empty", async () => {
     state.statusOptions.value = [{ name: "Cancelled", label: "Abgesagt", count: 3 }];
     state.filters.value = { statuses: ["Cancelled"], customerNames: [], startDate: undefined, endDate: undefined };
 
