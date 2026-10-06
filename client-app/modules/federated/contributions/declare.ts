@@ -33,6 +33,7 @@ const declaredSlots = shallowRef(new Map<string, IDeclaredSlotType>());
 export interface IAppliedContributionsType {
   plugin: string;
   placeholderRoutes: string[];
+  redirectRoutes: string[];
   /** link id -> route name */
   links: Record<string, string>;
   /** section id -> its children's route names */
@@ -97,7 +98,9 @@ function declareRoutes(
     } else {
       router.addRoute(route.parent, record);
     }
-    if (!route.redirect) {
+    if (route.redirect) {
+      applied.redirectRoutes.push(route.name);
+    } else {
       applied.placeholderRoutes.push(route.name);
     }
   }
@@ -164,28 +167,47 @@ function declareSlots(contributions: IPluginContributionsType, context: IConditi
   declaredSlots.value = slots;
 }
 
-/** Entries whose global `when` is false are not declared. Never throws. */
+/**
+ * Entries whose global `when` is false are not declared. Throws on an entry the router rejects or
+ * a malformed one, after withdrawing whatever the plugin had declared so far.
+ */
 export function applyContributions(
   plugin: string,
   contributions: IPluginContributionsType,
   context: IConditionContextType,
   router: Router,
 ): IAppliedContributionsType {
-  const applied: IAppliedContributionsType = { plugin, placeholderRoutes: [], links: {}, sections: {} };
-  declareRoutes(contributions, context, router, applied);
-  declareMenu(contributions, context, router, applied);
-  declareSlots(contributions, context, plugin);
+  const applied: IAppliedContributionsType = {
+    plugin,
+    placeholderRoutes: [],
+    redirectRoutes: [],
+    links: {},
+    sections: {},
+  };
+  try {
+    declareRoutes(contributions, context, router, applied);
+    declareMenu(contributions, context, router, applied);
+    declareSlots(contributions, context, plugin);
+  } catch (error) {
+    releaseContributions(applied, router, false);
+    throw error;
+  }
   return applied;
 }
 
 /**
  * Drops unclaimed placeholders, slot declarations, and menu entries that now point nowhere (all of
- * them if the plugin failed). A section with one dead child is withdrawn whole.
+ * them, redirects included, if the plugin failed). A section with one dead child is withdrawn whole.
  */
 export function releaseContributions(applied: IAppliedContributionsType, router: Router, loaded: boolean): void {
+  const metaOf = (name: string) => router.getRoutes().find((route) => route.name === name)?.meta;
   for (const name of applied.placeholderRoutes) {
-    const record = router.getRoutes().find((route) => route.name === name);
-    if (record?.meta?.[PLACEHOLDER_META_KEY] === applied.plugin) {
+    if (metaOf(name)?.[PLACEHOLDER_META_KEY] === applied.plugin) {
+      router.removeRoute(name);
+    }
+  }
+  for (const name of applied.redirectRoutes) {
+    if (!loaded && metaOf(name)?.[DECLARED_META_KEY] === applied.plugin) {
       router.removeRoute(name);
     }
   }

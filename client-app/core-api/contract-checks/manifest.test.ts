@@ -136,13 +136,16 @@ describe("definePluginManifest", () => {
   it("refuses a field term anywhere but a slot", () => {
     expect(() => definePluginManifest({ when: { field: "x" } })).toThrow(/only valid on a slot/);
     expect(() =>
-      definePluginManifest({ routes: [{ path: "p", name: "P", when: and(authenticated(), { field: "x" }) }] }),
+      definePluginManifest({ routes: [{ path: "/p", name: "P", when: and(authenticated(), { field: "x" }) }] }),
     ).toThrow(/only valid on a slot/);
   });
 
   it("refuses a malformed declaration with the place it is in", () => {
-    expect(() => definePluginManifest({ routes: [{ path: "a", name: "A" }, { path: "b", name: "A" }] })).toThrow(
+    expect(() => definePluginManifest({ routes: [{ path: "/a", name: "A" }, { path: "/b", name: "A" }] })).toThrow(
       /routes: name "A" is declared twice/,
+    );
+    expect(() => definePluginManifest({ routes: [{ path: "page", name: "P" }] })).toThrow(
+      /routes\[0\]: a route without `parent` needs an absolute `path`/,
     );
     expect(() => definePluginManifest({ slots: [{ at: "productCard", policy: "reserve" }] })).toThrow(
       /slots\[0\]: `at` must read "<category>\/<name>"/,

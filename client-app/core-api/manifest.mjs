@@ -184,6 +184,11 @@ function normalizeRoute(route, index) {
   };
   if (route.parent !== undefined) {
     out.parent = requireString(route.parent, where, "`parent`");
+  } else if (!out.path.startsWith("/")) {
+    throw new ManifestError(
+      where,
+      `a route without \`parent\` needs an absolute \`path\`, got ${JSON.stringify(out.path)}`,
+    );
   }
   if (route.redirect !== undefined) {
     out.redirect = requireString(route.redirect, where, "`redirect`");

@@ -191,6 +191,39 @@ describe("declared contributions in the loader", () => {
     });
   });
 
+  it.each([
+    ["the router rejects", { path: "oops", name: "Oops" }],
+    ["is malformed", null],
+  ])("skips only the plugin whose declaration %s, leaving none of its entries behind", async (_, badRoute) => {
+    const fetchMock = stubFetch(DECLARED);
+    const broken = {
+      ...plugin([]),
+      id: "Broken",
+      remote: { name: "broken", exposed: "./plugin" },
+      contributions: JSON.stringify({
+        format: 1,
+        routes: [
+          { path: "/broken", name: "BrokenPage" },
+          { path: "old", parent: "Company", name: "BrokenRedirect", redirect: "BrokenPage" },
+          badRoute,
+        ],
+      }),
+    };
+
+    const prepared = await prepareFederatedModules({
+      plugins: [broken, { ...plugin(), contributions: JSON.stringify(DECLARED) }],
+      conditionContext: context(true),
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(prepared.result.skipped).toEqual(["broken"]);
+    expect(usePluginsStatus().stateOf("broken")).toBe("skipped");
+    expect(router.hasRoute("BrokenPage")).toBe(false);
+    expect(router.hasRoute("BrokenRedirect")).toBe(false);
+    expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+    expect(router.hasRoute("SalesRepDocuments")).toBe(true);
+  });
+
   it("skips a plugin that lists contributions but does not serve them", async () => {
     stubFetch(DECLARED, { contributionsStatus: 404 });
 

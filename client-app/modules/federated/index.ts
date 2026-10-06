@@ -855,6 +855,33 @@ function skip(result: IFederatedLoadResult, name: string, reason: string): void 
   setPluginStatus(name, "skipped", reason);
 }
 
+type DeclaredType = { applied?: IAppliedContributionsType } | { skipReason: string };
+
+/** The plugin-level `when`, then the entries. Never throws: one bad declaration costs its own plugin only. */
+function declareContributions(
+  name: string,
+  contributions: IPluginContributionsType | undefined,
+  context: IConditionContextType,
+  router: Router | undefined,
+): DeclaredType {
+  if (!contributions) {
+    return {};
+  }
+  try {
+    if (!isGloballyTrue(contributions.when, context)) {
+      const skipReason = `its declared \`when\` is false (${JSON.stringify(contributions.when)})`;
+      Logger.info(`[MF] Skipping "${name}": ${skipReason}`);
+      return { skipReason };
+    }
+    return { applied: router ? applyContributions(name, contributions, context, router) : undefined };
+  } catch (error) {
+    // Only `format` is checked before this, so a malformed entry or a path the router rejects lands here.
+    Logger.error(`[MF] Skipping "${name}": its contributions could not be applied`, error);
+    const message = error instanceof Error ? error.message : String(error);
+    return { skipReason: `its contributions could not be applied: ${message}` };
+  }
+}
+
 /** Phase A: permission → declarations → plugin-level `when`, before any plugin code. Never rejects. */
 export async function prepareFederatedModules(options?: IFederatedLoaderOptions): Promise<IPreparedFederationType> {
   const manifestTimeoutMs = options?.manifestTimeoutMs ?? DEFAULT_MANIFEST_TIMEOUT_MS;
@@ -910,17 +937,16 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
       skip(result, remote.name, read.reason);
       continue;
     }
-    const { contributions } = read;
-    if (contributions && !isGloballyTrue(contributions.when, context)) {
-      const reason = `its declared \`when\` is false (${JSON.stringify(contributions.when)})`;
-      Logger.info(`[MF] Skipping "${remote.name}": ${reason}`);
-      skip(result, remote.name, reason);
+    const declared = declareContributions(remote.name, read.contributions, context, router);
+    if ("skipReason" in declared) {
+      skip(result, remote.name, declared.skipReason);
       continue;
     }
+    const { applied } = declared;
     setPluginStatus(remote.name, "pending");
     expirePendingAfter(remote.name, manifestTimeoutMs + 2 * loadTimeoutMs + 2_000);
-    if (contributions && router) {
-      prepared.deferred.push({ remote, applied: applyContributions(remote.name, contributions, context, router) });
+    if (applied) {
+      prepared.deferred.push({ remote, applied });
     } else {
       prepared.blocking.push({ remote });
     }

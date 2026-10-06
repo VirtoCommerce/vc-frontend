@@ -258,6 +258,7 @@ describe("applyContributions / releaseContributions", () => {
     declare.releaseContributions(applied, router, false);
 
     expect(router.hasRoute("SalesRepDocuments")).toBe(false);
+    expect(router.hasRoute("SignRedirect")).toBe(false);
     const nav = navigations.useNavigations();
     expect(nav.desktopCorporateMenuItems.value?.children?.map((link) => link.id) ?? []).not.toContain("docs-link");
     expect(nav.registeredAccountSections.value).toEqual([]);
