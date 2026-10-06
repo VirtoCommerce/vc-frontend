@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Su acceso a esta organización ha sido bloqueado. Póngase en contacto con el administrador de su organización",
           "user_cannot_login_in_store": "Acceso denegado. No puedes iniciar sesión en la tienda actual",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Usuario no encontrado. Por favor, asegúrate de haber introducido la información correcta"
+          "user_not_found": "Usuario no encontrado. Por favor, asegúrate de haber introducido la información correcta",
+          "sign_in_not_allowed": "No puedes iniciar sesión con esta cuenta. Contacta a tu administrador.",
+          "store_not_found": "Esta tienda no existe.",
+          "duplicate_email_login_attempt": "Varias cuentas usan este correo electrónico.",
+          "lockout_disabled": "Esta cuenta no puede iniciar sesión con un código.",
+          "invalid_code": "Este código no ha funcionado.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Haz clic para copiar",
         "clipboard_success": "Cupón copiado con éxito",
         "tap_to_copy": "Toca para copiar"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Iniciar sesión con un código de un solo uso",
+        "request": {
+          "subtitle": "Te enviaremos un código por correo electrónico. No necesitas contraseña.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Continuar",
+          "switch_to_password_link": "Iniciar sesión con contraseña"
+        },
+        "verify": {
+          "header": "Revisa tu correo electrónico",
+          "subtitle": "Enviamos un código a {email}.",
+          "code_label": "Código",
+          "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
+          "submit_button": "Iniciar sesión",
+          "resend_button": "Reenviar código",
+          "use_different_email_link": "Usar otro correo electrónico",
+          "live_resent": "Nuevo código enviado."
+        },
+        "locked": {
+          "title": "Demasiados intentos fallidos",
+          "title_blocked": "Cuenta bloqueada",
+          "text_countdown": "Vuelve a intentarlo en {time}.",
+          "text_ready": "Ya puedes volver a intentarlo.",
+          "start_over_button": "Intentar de nuevo"
+        },
+        "disabled": {
+          "title": "No pudimos iniciar tu sesión",
+          "text": "Prueba con una contraseña, o contacta a tu administrador de cuenta si esto sigue ocurriendo.",
+          "text_no_password": "Contacta a tu administrador de cuenta si esto sigue ocurriendo.",
+          "password_button": "Iniciar sesión con contraseña",
+          "back_link": "Volver al inicio de sesión"
+        }
       }
     },
     "company": {
@@ -969,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Cantidad de productos",
-        "list_edit_button": "Editar",
-        "remove_list_button": "Eliminar",
+        "rename_list_button": "Renombrar",
+        "remove_list_button": "Eliminar lista",
         "make_private_button": "Hacer privado",
         "share_button": "Compartir",
         "last_modified_label": "Última modificación: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Añadir todo al carrito",
-        "list_settings_button": "Configuraciones de la lista",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Tu lista está vacía",
         "empty_list_button": "Continuar navegando",
         "list_icon": "Icono de lista"
@@ -1001,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nueva lista",
-        "edit_mode_title": "Configuraciones de la lista",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nombre de la lista",
         "list_name_placeholder": "Por favor, introduce el nombre",
-        "sharing_scope_label": "Opciones para compartir",
-        "sharing_scope_placeholder": "Por favor, seleccione una opción",
         "sharing_link_label": "Enlace",
         "create_button": "Crear lista",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1053,25 @@
         "make_shared": "Hacer compartida",
         "sharing_scope": {
           "Private": "Privado",
-          "Organization": "Organización",
-          "AnyoneAnonymous": "Cualquiera (solo lectura)"
+          "Organization": "Mi organización",
+          "AnyoneAnonymous": "Cualquiera con el enlace"
         },
         "clipboard_success": "Enlace copiado",
         "save_error": "No se pudo guardar la lista. Inténtalo de nuevo."
+      },
+      "share_wishlist_modal": {
+        "title": "Compartir “{listName}”",
+        "who_can_access_label": "Quién tiene acceso",
+        "scope_selected": "{label}, seleccionado"
+      },
+      "stop_sharing_modal": {
+        "title": "¿Dejar de compartir esta lista?",
+        "message": "Todas las personas con las que se comparte la lista perderán el acceso. Puede volver a compartirla en cualquier momento.",
+        "confirm_button": "Dejar de compartir",
+        "change_title": "¿Cambiar quién tiene acceso?",
+        "change_message": "El enlace sigue siendo el mismo. Algunos usuarios podrían perder el acceso.",
+        "change_confirm_button": "Cambiar acceso",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirmar eliminación",
@@ -1584,6 +1637,8 @@
       "title": "Buscar",
       "header": "Tu búsqueda de {keyword} devolvió lo siguiente",
       "header_empty": "Lo sentimos, su búsqueda de \"{keyword}\" no produjo ningún resultado",
+      "header_barcode": "Tu búsqueda del código de barras {barcode} devolvió lo siguiente",
+      "header_barcode_empty": "No se encontraron productos para el código de barras {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Tu consulta <strong>{0}</strong> no devolvió ningún resultado",

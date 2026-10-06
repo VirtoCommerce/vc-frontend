@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "您对此组织的访问已被阻止。请联系您的组织管理员",
           "user_cannot_login_in_store": "访问被拒绝。您无法登录当前商店",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "未找到用户。请确保您输入了正确的信息"
+          "user_not_found": "未找到用户。请确保您输入了正确的信息",
+          "sign_in_not_allowed": "无法登录此账户。请联系您的管理员。",
+          "store_not_found": "此商店不存在。",
+          "duplicate_email_login_attempt": "多个账户使用此电子邮件。",
+          "lockout_disabled": "此账户无法使用验证码登录。",
+          "invalid_code": "该验证码无法使用。",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "点击复制",
         "clipboard_success": "优惠券已复制",
         "tap_to_copy": "点击复制"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "改用一次性验证码登录",
+        "request": {
+          "subtitle": "我们会将验证码发送到您的邮箱，无需密码。",
+          "email_label": "@:common.labels.email",
+          "continue_button": "继续",
+          "switch_to_password_link": "改用密码登录"
+        },
+        "verify": {
+          "header": "查看您的邮箱",
+          "subtitle": "我们已向 {email} 发送了验证码。",
+          "code_label": "验证码",
+          "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
+          "submit_button": "登录",
+          "resend_button": "重新发送验证码",
+          "use_different_email_link": "使用其他邮箱",
+          "live_resent": "已发送新验证码。"
+        },
+        "locked": {
+          "title": "失败尝试次数过多",
+          "title_blocked": "账户已被锁定",
+          "text_countdown": "请在 {time} 后重试。",
+          "text_ready": "您现在可以重试了。",
+          "start_over_button": "重试"
+        },
+        "disabled": {
+          "title": "无法为您登录",
+          "text": "请改用密码登录，如果问题持续出现，请联系您的账户管理员。",
+          "text_no_password": "如果问题持续出现，请联系您的账户管理员。",
+          "password_button": "使用密码登录",
+          "back_link": "返回登录"
+        }
       }
     },
     "company": {
@@ -969,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "商品数量",
-        "list_edit_button": "编辑",
-        "remove_list_button": "删除",
+        "rename_list_button": "重命名",
+        "remove_list_button": "删除列表",
         "make_private_button": "设为私人",
         "share_button": "分享",
         "last_modified_label": "最后修改：{date}"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
-        "list_settings_button": "清单设置",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "您的清单是空的",
         "empty_list_button": "继续浏览",
         "list_icon": "清单图标"
@@ -1001,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "新清单",
-        "edit_mode_title": "清单设置",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
-        "sharing_scope_label": "分享选项",
-        "sharing_scope_placeholder": "请选择一个选项",
         "sharing_link_label": "链接",
         "create_button": "创建清单",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1053,25 @@
         "make_shared": "设为共享",
         "sharing_scope": {
           "Private": "私密",
-          "Organization": "组织",
-          "AnyoneAnonymous": "任何人（只读）"
+          "Organization": "我的组织",
+          "AnyoneAnonymous": "任何拥有链接的人"
         },
         "clipboard_success": "链接已复制",
         "save_error": "无法保存列表，请重试。"
+      },
+      "share_wishlist_modal": {
+        "title": "分享“{listName}”",
+        "who_can_access_label": "谁可以访问",
+        "scope_selected": "{label}，已选择"
+      },
+      "stop_sharing_modal": {
+        "title": "停止共享此清单？",
+        "message": "与之共享此清单的所有人都将失去访问权限。您可以随时重新共享。",
+        "confirm_button": "停止共享",
+        "change_title": "更改谁可以访问？",
+        "change_message": "链接保持不变。部分用户可能会失去访问权限。",
+        "change_confirm_button": "更改访问权限",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",
@@ -1584,6 +1637,8 @@
       "title": "搜索",
       "header": "您搜索的 {keyword} 返回了以下结果",
       "header_empty": "抱歉，您搜索“{keyword}”未找到任何结果",
+      "header_barcode": "您搜索的条形码 {barcode} 返回了以下结果",
+      "header_barcode_empty": "未找到条形码为 {barcode} 的商品",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "您的 <strong>{0}</strong> 查询未返回任何结果",
