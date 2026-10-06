@@ -14,7 +14,13 @@
       @page-changed="changePage"
     >
       <template #desktop-body>
-        <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
+        <tr
+          v-for="(variation, variationIndex) in variations"
+          :key="variation.code"
+          v-track-item="variation"
+          data-name="product-card"
+          class="variations-table__row"
+        >
           <td class="variations-table__col variations-table__col--title">
             <VcProductTitle :to="getProductRoute(variation.id, variation.slug)" :lines-number="2">
               {{ variation.name }}

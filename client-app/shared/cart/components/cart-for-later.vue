@@ -1,5 +1,13 @@
 <template>
-  <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg" class="cart-for-later">
+  <VcWidget
+    :title="$t('pages.cart.saved_for_later')"
+    prepend-icon="bookmark"
+    size="lg"
+    class="cart-for-later"
+    data-name="product-list"
+    data-list-id="recently_browsed_products"
+    :data-list-name="$t('pages.cart.recently_browsed_products')"
+  >
     <template v-slot:append>
       <VcButton
         variant="outline"
@@ -19,7 +27,6 @@
         :saved-for-later-list="savedForLaterList"
         :background="false"
         :loading="loading"
-        @link-click="selectItemEvent(item.product)"
         @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)"
       />
     </VcProductsGrid>
@@ -39,10 +46,8 @@
 
 <script setup lang="ts">
 import { computed, toRef, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useAnalytics } from "@/core/composables/useAnalytics";
 import { ROUTES } from "@/router/routes/constants";
-import type { SavedForLaterListFragment, Product } from "@/core/api/graphql/types";
+import type { SavedForLaterListFragment } from "@/core/api/graphql/types";
 import CartItemForLater from "@/shared/cart/components/cart-item-for-later.vue";
 
 interface IEmits {
@@ -65,22 +70,6 @@ const VISIBLE_ITEMS_STEP = 6;
 const maxVisibleItems = ref(6);
 const availableItems = computed(() => savedForLaterList.value?.items.filter((item) => item.product) ?? []);
 const visibleItems = computed(() => availableItems.value.slice(0, maxVisibleItems.value));
-
-const listProperties = computed(() => ({
-  item_list_id: "recently_browsed_products",
-  item_list_name: t("pages.cart.recently_browsed_products"),
-}));
-
-const { analytics } = useAnalytics();
-const { t } = useI18n();
-
-function selectItemEvent(item?: SavedForLaterListFragment["items"][number]["product"]) {
-  if (!item) {
-    return;
-  }
-
-  analytics("selectItem", item as Product, listProperties.value);
-}
 </script>
 
 <style lang="scss">

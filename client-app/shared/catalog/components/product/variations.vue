@@ -10,6 +10,11 @@
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
+    data-name="product-list"
+    data-list-id="variations"
+    :data-list-name="`${$t('shared.catalog.product_details.variations.title')} ${productName}`"
+    :data-related-id="productId"
+    data-related-type="product"
   >
     <template v-if="!isSmallScreen && isTableView" #append>
       <VcButton
@@ -101,9 +106,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { onBeforeUnmount, onMounted, ref, toRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useAnalytics } from "@/core/composables";
+import { onBeforeUnmount, onMounted, ref, toRef } from "vue";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
@@ -142,8 +145,6 @@ const props = defineProps<IProps>();
 
 const variations = toRef(props, "variations");
 
-const { analytics } = useAnalytics();
-const { t } = useI18n();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
 const isFullView = ref(false);
@@ -187,23 +188,6 @@ function handleKeyUp(event: KeyboardEvent) {
     isFullView.value = false;
   }
 }
-
-watch(
-  variations,
-  (variationsValue) => {
-    if (!variationsValue?.length) {
-      return;
-    }
-
-    analytics("viewItemList", variationsValue, {
-      item_list_id: "variations",
-      item_list_name: `${t("shared.catalog.product_details.variations.title")} ${props.productName}`,
-      related_id: props.productId,
-      related_type: "product",
-    });
-  },
-  { immediate: true },
-);
 </script>
 
 <style lang="scss">
