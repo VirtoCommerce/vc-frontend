@@ -247,6 +247,28 @@ function normalizeSlot(slot, index) {
   return withWhen({ at, policy: slot.policy }, when, where, true);
 }
 
+/** One link id may sit in several groups and viewports, as in the host's own menu; not twice in one. */
+function menuPlaces(entry) {
+  if (entry.surface !== "header") {
+    return ["the account menu"];
+  }
+  const viewports = entry.viewport ? [entry.viewport] : [...HEADER_VIEWPORTS];
+  return viewports.map((viewport) => `${viewport} "${entry.group}"`);
+}
+
+function rejectDuplicateMenuEntries(menu) {
+  const seen = new Set();
+  for (const entry of menu) {
+    for (const place of menuPlaces(entry)) {
+      const key = `${entry.id}\n${place}`;
+      if (seen.has(key)) {
+        throw new ManifestError("menu", `id ${JSON.stringify(entry.id)} is declared twice in ${place}`);
+      }
+      seen.add(key);
+    }
+  }
+}
+
 function rejectDuplicates(items, key, what) {
   const seen = new Set();
   for (const item of items) {
@@ -282,7 +304,7 @@ export function definePluginManifest(config) {
   }
   const menu = normalizeList(config.menu, "menu", normalizeMenu);
   if (menu) {
-    rejectDuplicates(menu, "id", "menu");
+    rejectDuplicateMenuEntries(menu);
     out.menu = menu;
   }
   const slots = normalizeList(config.slots, "slots", normalizeSlot);

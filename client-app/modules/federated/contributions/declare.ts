@@ -150,7 +150,7 @@ function declareMenu(
   for (const entry of Array.isArray(contributions.menu) ? contributions.menu : []) {
     if (entry.surface !== "header") {
       declareAccountEntry(entry, context, linkable, applied);
-    } else if (linkable(entry) && declareMenuLinks(headerSchema(entry), [entry.id])) {
+    } else if (linkable(entry) && declareMenuLinks(headerSchema(entry), [entry.id], applied.plugin)) {
       applied.links[entry.id] = entry.routeName;
     }
   }

@@ -309,4 +309,31 @@ describe("applyContributions / releaseContributions", () => {
     expect(nav.desktopCorporateMenuItems.value?.children?.map((link) => link.id)).toContain("docs-link");
     expect(nav.registeredAccountSections.value.map((section) => section.id)).toEqual(["hub"]);
   });
+
+  it("declares one link id in several groups, and withdraws all of them when the plugin fails", async () => {
+    const { declare, status, navigations, router } = await setup();
+    status.setPluginStatus("sales-rep", "pending");
+    const link = { surface: "header", id: "docs-link", title: "t", routeName: "SalesRepDocuments" } as const;
+
+    const applied = declare.applyContributions(
+      "sales-rep",
+      {
+        ...salesRep,
+        menu: [
+          { ...link, group: "corporate" },
+          { ...link, group: "main" },
+        ],
+      },
+      context(),
+      router,
+    );
+    const nav = navigations.useNavigations();
+    expect(nav.desktopCorporateMenuItems.value?.children?.map((item) => item.id)).toContain("docs-link");
+    expect(nav.desktopMainMenuItems.value.map((item) => item.id)).toContain("docs-link");
+
+    declare.releaseContributions(applied, router, false);
+
+    expect(nav.desktopCorporateMenuItems.value?.children?.map((item) => item.id) ?? []).not.toContain("docs-link");
+    expect(nav.desktopMainMenuItems.value.map((item) => item.id)).not.toContain("docs-link");
+  });
 });

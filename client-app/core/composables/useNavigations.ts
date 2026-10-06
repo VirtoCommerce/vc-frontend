@@ -40,7 +40,8 @@ const menuSchema = shallowRef<MenuType | null>(menuData);
 const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
 
 // Added from a plugin's declaration; the plugin's own registration under the same id replaces them.
-const declaredLinkIds = new Set<string>();
+/** link id -> the plugin that declared it */
+const declaredLinkIds = new Map<string, string>();
 const declaredSectionIds = new Set<string>();
 
 function mergeIntoMenuSchema(additionalSchema: DeepPartial<MenuType>) {
@@ -74,15 +75,18 @@ function isLinkIdTaken(id: string): boolean {
   );
 }
 
-/** Host-only. Refuses an id the menu already has: withdrawing works by id. */
-export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[]): boolean {
-  const taken = ids.find(isLinkIdTaken);
+/**
+ * Host-only. Refuses an id the menu already has unless this plugin declared it, so withdrawing by id
+ * only ever removes the plugin's own links.
+ */
+export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[], plugin: string): boolean {
+  const taken = ids.find((id) => declaredLinkIds.get(id) !== plugin && isLinkIdTaken(id));
   if (taken !== undefined) {
     Logger.warn(`[useNavigations] menu link "${taken}" is already in the menu; ignoring the declaration.`);
     return false;
   }
   mergeIntoMenuSchema(schema);
-  ids.forEach((id) => declaredLinkIds.add(id));
+  ids.forEach((id) => declaredLinkIds.set(id, plugin));
   return true;
 }
 

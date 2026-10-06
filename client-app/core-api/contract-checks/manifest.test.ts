@@ -139,6 +139,23 @@ describe("definePluginManifest", () => {
     ).toThrow(/only valid on a slot/);
   });
 
+  it("lets one link id sit in several places, as the host's own menu does, but not twice in one", () => {
+    const link = { surface: "header", id: "docs", title: "t", routeName: "Docs" } as const;
+
+    expect(() =>
+      definePluginManifest({
+        menu: [
+          { ...link, group: "corporate", viewport: "desktop" },
+          { ...link, group: "main", viewport: "mobile" },
+          { ...link, group: "purchasing" },
+        ],
+      }),
+    ).not.toThrow();
+    expect(() =>
+      definePluginManifest({ menu: [{ ...link, group: "main" }, { ...link, group: "main", viewport: "mobile" }] }),
+    ).toThrow(/menu: id "docs" is declared twice in mobile "main"/);
+  });
+
   it("refuses a malformed declaration with the place it is in", () => {
     expect(() => definePluginManifest({ routes: [{ path: "/a", name: "A" }, { path: "/b", name: "A" }] })).toThrow(
       /routes: name "A" is declared twice/,
