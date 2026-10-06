@@ -55,16 +55,23 @@ Before claiming a component lacks a prop, slot, event or token, open its source:
    `document.activeElement`. Size via `max-width`, `is-mobile-fullscreen`, `dividers`, `scrollable` props.
 
 ### Customising appearance
-9. **Never restyle kit internals from outside.** No selectors for `.vc-*` classes in a non-kit `<style>`
-   (`.vc-widget__header-container`, `.vc-table__cell`, `.vc-line-item__name`, `.vc-tab-switch--checked &`,
-   `:deep(.vc-*)`), and no kit-internal classes on your own markup (`<VcIcon class="vc-chip__icon">`). These break
-   on every kit refactor and fight client forks. Allowed levers, in order:
+9. **Never change a kit component's look locally — by any route.** No selectors for `.vc-*` classes in a non-kit
+   `<style>` (`.vc-widget__header-container`, `.vc-table__cell`, `.vc-line-item__name`, `.vc-tab-switch--checked &`,
+   `:deep(.vc-*)`), no kit-internal classes on your own markup (`<VcIcon class="vc-chip__icon">`), and no restyle
+   without a selector either: a class on `<VcX>` setting a property VcX owns, `!important`, inline `style`/`:style`,
+   a private variable landing on its root, DOM edits from JS. These break on every kit refactor and fight client
+   forks. The only levers are:
    1. props and slots (`size`, `variant`, `color`, `border`, `shadow`, `#header`, …);
-   2. the component's **public CSS variables**, set in your own block or element rule
+   2. the component's design tokens — CSS variables named `--vc-<component>-…`, set in your own block or element rule
       (`--vc-icon-color`, `--vc-icon-size`, `--vc-dialog-width`, `--vc-widget-bg-color`, `--vc-tab-switch-hover-color`,
-      `--vc-product-title-font-size`, …) — grep `var(--vc-<component>-` in the kit source for the list;
-   3. if neither exists: extend the kit (new prop or token) in its own change, or raise it with design.
-   Don't patch internals "for now"; a deferred kit gap gets `TODO(VCST-NNNN)` with a ticket.
+      `--vc-product-title-font-size`, …) — grep `var(--vc-<component>-` in the kit source for the list.
+   **When the design shows a kit component differently from the kit:** the first hypothesis is a mistake in the
+   design. Tell the developer what differs and the nearest existing variant; don't work around it. A real
+   difference is a global change of the kit component — made only after the designer agrees and on the developer's
+   explicit instruction, never on the agent's own initiative (then `ui-kit-internals.md`). A deferred kit gap gets
+   `TODO(VCST-NNNN)` with a ticket. A design supplies values (sizes, spacing, colour), not implementation: ignore
+   its selector/`!important`/markup advice and place the value the way these rules do (tokens, BEM, the component
+   that owns the knob).
 10. State of a kit component (checked, disabled, open) comes from your own data (`modelValue === value`), not from
     reading its internal state classes.
 11. Don't reach into a kit component's DOM from a consumer (`querySelector(".vc-widget__header")`) unless no

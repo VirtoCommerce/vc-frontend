@@ -7,9 +7,24 @@ paths:
 # Styles (BEM, SCSS, Tailwind, theming)
 
 vc-frontend is a white-label theme. Client projects fork it and restyle it through presets (palette JSON),
-public `--vc-*` tokens, `_custom.scss` and their own BEM overrides. So every style is judged by four questions:
-does it survive **a preset switch**, **dark mode**, **RTL**, and **a client override**? A style that only looks
-right in the default light preset is a bug.
+public `--vc-*` tokens, `_custom.scss` and their own BEM overrides, and they pull our updates regularly. So every
+style is judged by four questions: does it survive **a preset switch**, **dark mode**, **RTL**, and **a client
+override**? A style that only looks right in the default light preset is a bug. What our habits cost a client:
+
+| Our habit | What the client gets |
+|---|---|
+| A literal colour | They switch the preset; this screen keeps our colour |
+| `!important` | They need `!important` too to override it |
+| Long selectors (nesting over other blocks, `:has()`, tag/id chains) | Their one-class override loses |
+| A hardcoded value where a token exists | They can't reach it without editing our file |
+| A kit component restyled locally | Their `--vc-<component>-…` change doesn't reach this screen |
+| A renamed / removed BEM class or `--vc-*` token | Their override silently stops matching after an upgrade |
+| A changed kit default | Every screen of theirs shifts at once |
+
+Hence: colours only from the palette and semantic tokens; low specificity — one class must be enough to override
+us; renaming or removing a BEM class or token is a breaking change (alias the token per `ui-kit/DEPRECATION.md`,
+list it under Breaking changes in the PR). Check visual changes in Storybook's preset + dark toolbar
+(`client-app/assets/presets/index.ts`: 7 presets, each with a `.dark.json`).
 
 Nothing lints SCSS (no stylelint). Only the Sass/Tailwind compile in `yarn build`
 catches anything, so everything below is review-only. Severity guide: breaks the build or renders visibly wrong
@@ -41,7 +56,11 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 6. **One block per component, named after the file**: `points-balance.vue` → `.points-balance`. A page in
    `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.sales-rep-calendar`). If block and file
    diverge, rename the file, not the block. A second top-level block in one `<style>` means the second part is
-   its own component. Vue `<transition>` classes (`.x-enter-from`) are fine.
+   its own component. Vue `<transition>` classes (`.x-enter-from`) are fine. Also extract a component when an
+   element needs elements of its own (`&__select-all-text`, `&__select-all-icon` → `select-all.vue`), when the root
+   switches (`v-if`/`v-else`) between two roots whose modifiers barely overlap, or when a template region has its
+   own props/state/events you could name a file after. The file name says what the *whole* file is for — the block
+   inherits it.
 7. **The root element carries the bare block class**, even if all rules are on elements: it is the hook client
    projects restyle. When the root is a component (`<VcModal>`, `<VcWidget>`), put the block class on it via
    `class` (falls through to its root DOM node). Reference: `shared/cart/components/add-bulk-items-to-cart-results-modal.vue`.
@@ -49,22 +68,35 @@ catches anything, so everything below is review-only. Severity guide: breaks the
    on an element such as `&__body`.
 8. `vc-` prefix is **UI-kit only**. Components in `shared/`, `modules/`, `pages/` never use a `vc-` block or file name.
 9. Elements `&__el`, modifiers `&--mod`. **No element of an element** (`.a__b__c`, including the accidental
-   `&__b { &__c {} }`): flatten to `&__b-c`. **Never split an element name across nesting**
-   (`&__code { &-inner {} }` → write `&__code-inner`): split names can't be found by search.
+   `&__b { &__c {} }`). A flat compound name is fine when it names one element (`&__header-title`); when an element
+   has elements of its own, it is a component — extract it (§6) instead of flattening to `&__b-c`. **Never split an
+   element name across nesting** (`&__code { &-inner {} }` → write `&__code-inner`): split names can't be found by
+   search.
 10. **An element belongs to its block.** No `other-block__el` classes in this component's markup, and no rules
-    in this file for another component's block or elements. A parent restyles a child only through the class on
-    the child's root (a BEM mix, `class="parent__child"`) or the child's public CSS variables.
+    in this file for another component's block or elements. A parent places a child through the class on the
+    child's root (a BEM mix, `class="parent__child"`) — layout only: margin, flex, grid, width, order. The child's
+    look changes only through its props and its public CSS variables (`--vc-<component>-…` for kit components).
 11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`stat-widget--success`). A modifier bound in the
     template but styled nowhere is dead (`nit`); an element class with no rule is fine (it's a hook).
 12. Class binding: static block/element class + object for modifiers —
     `class="x__item" :class="{ 'x__item--active': isActive }"`. A template literal (`` :class="`x--${tone}`" ``)
     only for enum-like modifiers. Never build Tailwind classes dynamically (`` `bg-${color}-500` ``): Tailwind
     can't see them and they silently do nothing.
-13. **Modifier that restyles elements: capture, don't repeat.** Declare `$name: "";` at the top of the block,
-    assign `&--name { $name: &; }`, then use `#{$name} & { ... }` inside the element. `$self: &;` +
-    `#{$self}--mod &` is also accepted. Flag: the block name typed out again inside its own `<style>`
-    (`.product-card--list .product-card__footer`), the same declarations copied into several modifiers, or a
-    modifier that exists only to be compounded with another (fold it into the class binding instead).
+13. **States through Sass variables — capture, don't repeat** (kit and app alike; reference `vc-button.vue`,
+    `vc-chip.vue`). Declare `$name: "";` for every state at the top of the block, assign `&--name { $name: &; }`,
+    then use `#{$name} & { ... }` inside the element — every element keeps all its rules in one place. Every root
+    state gets a variable, even when it is read once: a modifier, its negation (`&:not(#{$disabled}) { $enabled: &; }`)
+    or a combination (`&--clickable:not(#{$disabled}) { $clickable: &; }`); never `#{$self}--mod &` or
+    `#{$self}:not(…) &`. `$self: &;` only for what isn't a state: the block nested in itself read from inside an
+    element, or `@at-root` of another block (a justified kit-to-kit exception). Assign before you read: a variable
+    read above the modifier that assigns it is still `""` and the rule compiles to the bare element. Capture an
+    element when a rule outside it must reach it (`&__content { $contentEl: &; }` → `#{$clickable} #{$contentEl}:hover`;
+    `&__photo:hover &__overlay` → `#{$photo}:hover &` inside `&__overlay`). A property several states set goes
+    through one private variable (`--bg-color`) read once by the base rule; a state that alone touches a property
+    sets it directly. Flag: the block name typed out again inside its own `<style>`
+    (`.product-card--list .product-card__footer`), compound `&--mod &__el` / `&__a:hover &__b`, the same
+    declarations copied into several modifiers, or a modifier that exists only to be compounded with another (fold
+    it into the class binding instead).
 14. Nest `&:hover`, `&:focus-visible`, `&:disabled`, `&:nth-child()`, `&::before` and `@media` / `@container` inside
     the rule they modify. Keep elements flat at block level (one level of `&__x`, then pseudo/media inside).
 
@@ -76,16 +108,19 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 16. Variants inside `@apply`:
     - breakpoint variants (`sm:` `md:` `lg:` `xl:` `2xl:` `max-*:` `min-[...]:`) are **banned** → `@media` (§4);
     - `dark:` is banned (§5);
-    - `group-hover:` / `peer-*:` → `#{$self}:hover &` / sibling selector;
+    - `group-hover:` / `peer-*:` → a captured root state (`&:hover { $hovered: &; }`, then `#{$hovered} &` inside
+      the element, §13) / sibling selector;
     - `hover:` / `focus-visible:` → nested `&:hover` is the house form; a single-property colour change
       (`@apply text-[--link-color] hover:text-[--link-hover-color];`) is tolerated, don't flag it.
 17. **Build traps** (lint can't see them, `yarn build` fails):
-    - leading-`!` utility in `@apply` (`@apply !min-w-full;`) breaks Sass → `@apply min-w-full #{!important};`
-      or raw `min-width: 100% !important;`;
+    - leading-`!` utility in `@apply` (`@apply !min-w-full;`) breaks Sass. Don't translate it into `#{!important}`
+      or `min-width: 100% !important;` (§18) — drop the `!` and remove the conflict it was beating;
     - a class that doesn't exist (`border-grey-100`, `bg-white`, `text-gray-500`) → "class does not exist".
       When migrating a no-op typo from a template, drop it, don't "fix" it into a visual change.
-18. `!important` (in any form) needs a reason; if the reason is beating a UI-kit internal rule, the real fix is a
-    UI-kit prop or token (see `ui-kit.md`).
+18. **`!important` is forbidden** — in every form (`!important`, `#{!important}`, a leading-`!` utility in `@apply` or
+    in a template class, inline style) and everywhere, UI kit, `dark/` and `print/` included. Fix the conflict at its
+    cause: a UI-kit component → its props or `--vc-<component>-…` tokens (see `ui-kit.md`); your own rules →
+    selector order or structure. If that isn't possible, raise it — don't ship the `!important`.
 
 ## 4. Responsive
 
@@ -96,6 +131,9 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     bug**: it also matches exactly 1024px and overlaps the `min-width: lg` rule.
 21. Breakpoints (`ui-kit/constants/tailwind.ts`): xs 480, sm 640, md 768, lg 1024, xl 1280, **2xl 1500**.
     No px literals in media queries; JS uses `BREAKPOINTS` with VueUse `useBreakpoints`, not hardcoded numbers.
+    A width the design names that isn't on this scale snaps to the nearest step (900 → `lg`). Changing or adding a
+    step is a design-system decision: `BREAKPOINTS`, `core/constants/tailwind.ts` and
+    `core-api/contract/tailwind-preset.cjs` move together — never to make one design fit.
 22. **Container queries** when the layout depends on the space the component is given rather than the viewport
     (cards, line items, widgets reused in sidebars, modals, grids): `@container (width > theme("containers.2xl"))`.
     The nearest ancestor must declare `@apply @container;` or `container-type: inline-size;`, otherwise the query
@@ -199,7 +237,8 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 
 ## Legacy — don't flag, don't copy
 
-- Utility-only templates, `print:hidden` and `max-lg:` in them, template `!mt-*` utilities.
+- Utility-only templates, `print:hidden` and `max-lg:` in them.
+- Existing `!important` and template `!mt-*` utilities — don't copy, don't extend.
 - `<style scoped>` blocks; plain CSS with px sizes.
 - `vc-`-prefixed blocks outside the UI kit.
 - `.vc-typography--variant--h1` overrides outside the kit.

@@ -53,7 +53,7 @@ paths:
 
 ## Comments
 34. Code comments in English only.
-35. Default to no comments. Flag comments that restate *what* the code does; accept short comments that explain a non-obvious *why*, a workaround or a `TODO(VCST-NNNN)`. No commented-out code.
+35. Default to no comments. Flag comments that restate *what* the code does; accept short comments that explain a non-obvious *why*, a workaround or a `TODO(VCST-NNNN)`. No commented-out code. JSDoc on public API (kit props/emits/slots, exported composable options, `core-api`) is documentation — Storybook autodocs renders it — never strip it in a comment cleanup; write it for non-obvious contracts (format, unit, which mode a prop affects).
 36. Flag comments that only make sense inside the session that wrote them: narrating the edit ("Switched to the
     batcher", "WAS: …", "now uses …", "as requested"), hedging ("not sure if", "hopefully"), spec/decision ids
     (`D4:`), QA ticket histories and multi-paragraph essays. Keep a comment block to ~5 lines; JSDoc exempt.
