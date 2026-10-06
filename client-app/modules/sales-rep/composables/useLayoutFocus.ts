@@ -12,6 +12,17 @@ export function focusEditToggle(): void {
   });
 }
 
+/**
+ * The empty state's actions unmount it with their own button, and the edit toggle can sit a page below.
+ * The surface's start is where the rep goes next: the restored blocks, or the edit bar. No `preventScroll`,
+ * so it comes into view if the rep had scrolled.
+ */
+export function focusSurfaceStart(): void {
+  void nextTick(() => {
+    document.querySelector<HTMLElement>("[data-layout-surface]")?.focus();
+  });
+}
+
 /** Starting a save makes the wrapper `inert`, blurring Save to `<body>`; on failure nothing reclaims it. */
 export function focusSaveButton(): void {
   void nextTick(() => {

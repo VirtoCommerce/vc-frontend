@@ -658,11 +658,9 @@ describe("useSalesRepLayout", () => {
   });
 });
 
-// The empty state's way back: the registry defaults go out in one write, with no edit mode in between.
 describe("useSalesRepLayout restoreDefaults", () => {
   const hiddenBlock = (id: string) => ({ ...echoedBlock(id), hidden: true });
 
-  // Every block parked — the arrangement the empty state is shown for.
   const ALL_HIDDEN = {
     salesRepLayout: {
       regions: [

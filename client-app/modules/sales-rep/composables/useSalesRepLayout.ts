@@ -33,6 +33,7 @@ function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
  * Drives one layout surface. `startEdit` snapshots into a draft, every change targets the draft, and
  * `save` writes the whole document in one mutation (the backend replaces, not merges). `reset` refills
  * the draft from registry defaults but still needs a save, so a stray click is recoverable.
+ * `restoreDefaults` is the one write that skips the draft: the empty state's button saves defaults at once.
  */
 export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const registry = getBlockRegistry(scope);
@@ -255,7 +256,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     const defaults = reconcileLayout(null, registry);
     const saved = await persist(defaults);
     if (!saved) {
-      // Draft first: the failure moves focus to Save, which only exists once edit mode has rendered.
+      // Draft first: edit mode's entry announcement must come before the failure's, not over it.
       draft.value = defaults;
     }
     saveFailed.value = !saved;

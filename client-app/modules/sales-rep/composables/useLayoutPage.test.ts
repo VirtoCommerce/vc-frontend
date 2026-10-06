@@ -165,6 +165,14 @@ describe("useLayoutPage with every block hidden", () => {
     apolloMock.result.value = { salesRepLayout: documentOf(hiddenBlock) };
   });
 
+  // Where the empty state's actions send focus; `tabIndex` so jsdom lets a div take it, as the template does.
+  function renderSurface(): void {
+    const surface = document.createElement("div");
+    surface.dataset.layoutSurface = "";
+    surface.tabIndex = -1;
+    document.body.append(surface);
+  }
+
   // In edit mode the empty zones and the tray are the way back, so the empty state would only cover them.
   it("reports the surface empty outside edit mode only", () => {
     const { allHidden, startEdit } = withPage("customerProfile");
@@ -174,19 +182,24 @@ describe("useLayoutPage with every block hidden", () => {
     expect(allHidden.value).toBe(false);
   });
 
-  it("does not report a surface that still shows one block", () => {
+  it.each([
+    ["a stat card", "new_orders"],
+    ["a main-column widget", "orders"],
+    ["a rail widget", "info"],
+  ])("does not report a surface that still shows %s", (_label, visibleId) => {
     apolloMock.result.value = {
-      salesRepLayout: documentOf((id) => (id === "info" ? echoedBlock(id) : hiddenBlock(id))),
+      salesRepLayout: documentOf((id) => (id === visibleId ? echoedBlock(id) : hiddenBlock(id))),
     };
 
     const { allHidden } = withPage("customerProfile");
     expect(allHidden.value).toBe(false);
   });
 
-  // The empty state unmounts with the clicked button in it, so focus would otherwise drop to <body>.
-  it("announces a restore that saved and hands focus to the edit toggle", async () => {
+  // The edit toggle is still in the DOM, but it can sit a page below the blocks that just came back.
+  it("announces a restore that saved and hands focus to the start of the surface", async () => {
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: documentOf(echoedBlock) } });
     renderChrome();
+    renderSurface();
 
     const { restoreDefaults, allHidden, message } = withPage("customerProfile");
 
@@ -196,7 +209,34 @@ describe("useLayoutPage with every block hidden", () => {
 
     expect(allHidden.value).toBe(false);
     expect(message.value).toBe("sales_rep.hub.layout.restored");
-    expect(activeMarker()).toBe("layoutEditToggle");
+    expect(activeMarker()).toBe("layoutSurface");
+  });
+
+  // Only the surface is inert during the write, so the rep can be on another page by the time it lands.
+  it("leaves focus alone when the page is gone before a restore lands", async () => {
+    let land!: (value: unknown) => void;
+    apolloMock.mutate.mockReturnValue(
+      new Promise((resolve) => {
+        land = resolve;
+      }),
+    );
+    renderSurface();
+    const elsewhere = document.createElement("input");
+    document.body.append(elsewhere);
+
+    const owner = effectScope();
+    const page = owner.run(() => useLayoutPage("customerProfile"))!;
+    const restoring = page.restoreDefaults();
+    owner.stop();
+    elsewhere.focus();
+
+    land({ data: { saveSalesRepLayout: documentOf(echoedBlock) } });
+    await restoring;
+    await nextTick();
+    await nextTick();
+
+    expect(document.activeElement).toBe(elsewhere);
+    expect(page.message.value).toBe("");
   });
 
   // The failure lands in edit mode, whose entry announcement must not drown out the failure itself.
@@ -215,8 +255,9 @@ describe("useLayoutPage with every block hidden", () => {
     expect(activeMarker()).toBe("layoutSave");
   });
 
-  it("enters edit mode from the empty state with focus on the edit toggle", async () => {
+  it("enters edit mode from the empty state with focus at the start of the surface", async () => {
     renderChrome();
+    renderSurface();
 
     const { editFromEmpty, editing } = withPage("customerProfile");
 
@@ -225,7 +266,7 @@ describe("useLayoutPage with every block hidden", () => {
     await nextTick();
 
     expect(editing.value).toBe(true);
-    expect(activeMarker()).toBe("layoutEditToggle");
+    expect(activeMarker()).toBe("layoutSurface");
   });
 
   // Saving with every block hidden swaps the toggle for the empty state, so its Edit layout button is the

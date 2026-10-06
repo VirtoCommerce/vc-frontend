@@ -1,9 +1,9 @@
-import { computed, watch } from "vue";
+import { computed, onScopeDispose, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { LAYOUT_REGION_IDS } from "../constants";
 import { getBlock } from "../layout/registry";
 import { useLayoutAnnouncer } from "./useLayoutAnnouncer";
-import { focusBlockControl, focusEditToggle, focusSaveButton } from "./useLayoutFocus";
+import { focusBlockControl, focusEditToggle, focusSaveButton, focusSurfaceStart } from "./useLayoutFocus";
 import { useSalesRepLayout } from "./useSalesRepLayout";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 
@@ -40,13 +40,19 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
 
   function editFromEmpty(): void {
     layout.startEdit();
-    focusEditToggle();
+    focusSurfaceStart();
   }
 
+  // Only the surface is inert while the write is in flight, so the rep can leave the page before it lands.
+  let disposed = false;
+  onScopeDispose(() => {
+    disposed = true;
+  });
+
   async function restoreDefaults(): Promise<void> {
-    if (await layout.restoreDefaults()) {
+    if ((await layout.restoreDefaults()) && !disposed) {
       say(t("sales_rep.hub.layout.restored"));
-      focusEditToggle();
+      focusSurfaceStart();
     }
   }
 
