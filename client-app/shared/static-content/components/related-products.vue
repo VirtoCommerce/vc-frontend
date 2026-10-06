@@ -2,12 +2,12 @@
   <!-- Related products section -->
   <VcWidget
     v-if="relatedProducts?.length"
-    :title="$t('pages.product.related_product_section_title')"
+    :title="title"
     prepend-icon="cube"
     size="lg"
     data-name="product-list"
     data-list-id="related_products"
-    :data-list-name="`${$t('pages.product.related_product_section_title')} ${productName}`"
+    :data-list-name="`${title} ${productName}`"
     :data-related-id="productId"
     data-related-type="product"
   >
@@ -27,6 +27,8 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { extractNumberFromString } from "@/core/utilities";
 import { ProductCardRelated } from "@/shared/catalog";
 import { BREAKPOINTS } from "@/ui-kit/constants";
@@ -40,8 +42,10 @@ interface IProps {
 
 defineProps<IProps>();
 
+const { t } = useI18n();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
+const title = computed(() => t("pages.product.related_product_section_title"));
 const lg = breakpoints.smaller("lg");
 
 const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);

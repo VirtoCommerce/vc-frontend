@@ -1,8 +1,8 @@
-# DOM Analytics Module
+# DOM Analytics
 
 Sends analytics events described by markup instead of `analytics(...)` calls in component code. An element gets a role in `data-name`, a rule maps the role to an event, and one document-level listener calls `useAnalytics().analytics(...)` when the rule matches.
 
-The module is one more producer on the `useAnalytics` bus. Trackers (Google Analytics or your own, see [useAnalytics](../../core/composables/useAnalytics/README.md#creating-an-analytics-provider-module)) receive the same events as from manual calls and cannot tell them apart.
+It is one more producer on the `useAnalytics` bus, registered by `domAnalyticsPlugin`. Trackers (Google Analytics or your own, see [useAnalytics](../../composables/useAnalytics/README.md#creating-an-analytics-provider-module)) receive the same events as from manual calls and cannot tell them apart.
 
 ## When to use markup and when to call `analytics()`
 
@@ -89,21 +89,19 @@ Argument sources:
 - `object`: an object assembled from several attributes; keys may be dot paths (`"price.actual.amount"`).
 - `collect`: an array of `item`s from all descendants with the given `data-name`.
 
-Every source accepts `from` (closest ancestor with this `data-name`), `select` (descendant with this `data-name`) and `optional`. When a required argument resolves to nothing, the event is skipped.
+Every source accepts `from` (closest ancestor with this `data-name`) and `optional`. When a required argument resolves to nothing, the event is skipped.
 
-To add rules from a theme, pass them to `init` in `app-runner.ts`:
+To add rules from a theme, pass them to the plugin in `app-runner.ts`:
 
 ```ts
-initDomAnalytics(app, [...domAnalyticsRules, myRule]);
+import { rules } from "@/core/plugins/dom-analytics/rules";
+
+app.use(domAnalyticsPlugin, { rules: [...rules, myRule] });
 ```
 
 ## Triggers
 
-- **click**: one capture-phase listener on `document`. From the clicked element the engine walks up through `data-name` ancestors until a rule sends an event.
+- **click**: one capture-phase listener on `document`. Only a click on a link or a button counts. From it the engine walks up through `data-name` ancestors until a rule sends an event.
 - **appear**: a `MutationObserver` on `body`, plus a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` count as the same entity, so a refetched product does not resend `viewItem`.
 
 `appear` means "rendered in the DOM", not "scrolled into the viewport", which matches the moment the manual calls used to fire.
-
-## Removing the module
-
-Delete the `initDomAnalytics(...)` line in `app-runner.ts`. Leftover `data-name` attributes are inert, and `v-track-item` only produces a Vue warning in development.

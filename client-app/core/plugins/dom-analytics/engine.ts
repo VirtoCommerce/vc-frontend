@@ -10,9 +10,10 @@ function byName(name: string): string {
   return `[${NAME_ATTR}="${name}"]`;
 }
 
-function resolveScope(el: Element, { from, select }: { from?: string; select?: string }): Element | null {
-  const scope = from ? el.closest(byName(from)) : el;
-  return select ? (scope?.querySelector(byName(select)) ?? null) : scope;
+const INTERACTIVE = "a, button";
+
+function resolveScope(el: Element, from?: string): Element | null {
+  return from ? el.closest(byName(from)) : el;
 }
 
 function readAttr(el: Element, { attr, type }: AttrFieldType): string | number | undefined {
@@ -43,7 +44,7 @@ function readItem(el: Element, fallback?: ObjectSourceType): unknown {
 }
 
 function resolveArg(el: Element, arg: ArgSourceType): unknown {
-  const scope = resolveScope(el, arg);
+  const scope = resolveScope(el, arg.from);
   if (!scope) {
     return undefined;
   }
@@ -102,7 +103,7 @@ function isSameArgs(a: unknown[], b: unknown[]): boolean {
  * Listens to the document and turns rule matches into `analytics(...)` calls.
  * Returns a function that removes all listeners.
  */
-export function startEngine(rules: RuleType[], root: Document = document): () => void {
+export function startEngine(rules: RuleType[]): () => void {
   const { analytics } = useAnalytics();
 
   function send(rule: RuleType, args: unknown[]): void {
@@ -114,7 +115,12 @@ export function startEngine(rules: RuleType[], root: Document = document): () =>
 
   // Capture phase: a component calling stopPropagation() must not hide the click
   function onClick(event: Event): void {
-    let el = event.target instanceof Element ? event.target.closest(`[${NAME_ATTR}]`) : null;
+    // Only a click on a link or a button inside the role counts, not on its padding or empty space
+    const interactive = event.target instanceof Element ? event.target.closest(INTERACTIVE) : null;
+    if (!interactive) {
+      return;
+    }
+    let el = interactive.closest(`[${NAME_ATTR}]`);
     while (el) {
       const name = el.getAttribute(NAME_ATTR);
       const matched = clickRules.filter((rule) => rule.target === name);
@@ -136,11 +142,15 @@ export function startEngine(rules: RuleType[], root: Document = document): () =>
   // An element fires again only when it gets different arguments (e.g. a new products array)
   const sentArgs = new WeakMap<Element, Map<RuleType, unknown[]>>();
   let isScanScheduled = false;
+  let isStopped = false;
 
   function scan(): void {
     isScanScheduled = false;
+    if (isStopped) {
+      return;
+    }
     appearRules.forEach((rule) => {
-      root.querySelectorAll(byName(rule.target)).forEach((el) => {
+      document.querySelectorAll(byName(rule.target)).forEach((el) => {
         const args = resolveArgs(el, rule);
         if (!args) {
           return;
@@ -164,18 +174,19 @@ export function startEngine(rules: RuleType[], root: Document = document): () =>
     }
   }
 
-  root.addEventListener("click", onClick, true);
+  document.addEventListener("click", onClick, true);
 
   const observer = new MutationObserver(scheduleScan);
   let stopItemListener: (() => void) | undefined;
   if (appearRules.length) {
-    observer.observe(root.body, { childList: true, subtree: true });
+    observer.observe(document.body, { childList: true, subtree: true });
     stopItemListener = onItemChange(scheduleScan);
     scheduleScan();
   }
 
   return () => {
-    root.removeEventListener("click", onClick, true);
+    isStopped = true;
+    document.removeEventListener("click", onClick, true);
     observer.disconnect();
     stopItemListener?.();
   };

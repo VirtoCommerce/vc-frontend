@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
-import { startEngine } from "./core";
+import { startEngine } from "./engine";
 import { vTrackItem } from "./registry";
 import type { RuleType } from "./types";
 
@@ -30,6 +30,13 @@ const VIEW_ITEM_LIST: RuleType = {
   trigger: "appear",
   target: "product-list",
   args: [{ source: "collect", target: "product-card" }, LIST_PARAMS],
+};
+
+const SELECT_BY_SKU: RuleType = {
+  event: "selectItem",
+  trigger: "click",
+  target: "product-link",
+  args: [{ source: "attr", from: "product-card", attr: "sku" }, LIST_PARAMS],
 };
 
 const ProductList = defineComponent({
@@ -188,6 +195,85 @@ describe("dom-analytics engine", () => {
       ["viewItem", { id: "2", code: "B" }],
     ]);
     wrapper.unmount();
+  });
+
+  it("ignores a click on the role element outside its link", () => {
+    document.body.innerHTML = `
+      <div data-name="product-card" data-sku="A">
+        <div data-name="product-link"><a>x</a><span data-test-id="gap">gap</span></div>
+      </div>`;
+    stop = startEngine([SELECT_BY_SKU]);
+
+    document.querySelector<HTMLElement>("[data-test-id='gap']")?.click();
+    expect(analyticsMock).not.toHaveBeenCalled();
+
+    document.querySelector("a")?.click();
+    expect(analyticsMock).toHaveBeenCalledOnce();
+  });
+
+  it("sends even when the link stops propagation", () => {
+    document.body.innerHTML = `<div data-name="product-card" data-sku="A"><a data-name="product-link">x</a></div>`;
+    document.querySelector("a")?.addEventListener("click", (e) => e.stopPropagation());
+    stop = startEngine([SELECT_BY_SKU]);
+
+    document.querySelector("a")?.click();
+
+    expect(analyticsMock).toHaveBeenCalledOnce();
+  });
+
+  it("sends only for the innermost matching role", () => {
+    document.body.innerHTML = `
+      <div data-name="banner" data-promo="summer">
+        <div data-name="product-card" data-sku="A"><a data-name="product-link">x</a></div>
+      </div>`;
+    stop = startEngine([
+      SELECT_BY_SKU,
+      { event: "search", trigger: "click", target: "banner", args: [{ source: "attr", attr: "promo" }] },
+    ]);
+
+    document.querySelector("a")?.click();
+
+    expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("selectItem", "A", undefined);
+  });
+
+  it("drops a numeric attribute that is not a number", () => {
+    document.body.innerHTML = `
+      <div data-name="product-card" data-sku="A" data-price="abc"><a data-name="product-link">x</a></div>`;
+    stop = startEngine([
+      {
+        event: "selectItem",
+        trigger: "click",
+        target: "product-link",
+        args: [
+          {
+            source: "object",
+            from: "product-card",
+            fields: { code: { attr: "sku" }, price: { attr: "price", type: "number" } },
+          },
+        ],
+      },
+    ]);
+
+    document.querySelector("a")?.click();
+
+    expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("selectItem", { code: "A" });
+  });
+
+  it("does not send viewItemList for a list without cards", async () => {
+    document.body.innerHTML = `<div data-name="product-list" data-list-id="related"></div>`;
+    stop = startEngine([VIEW_ITEM_LIST]);
+    await flush();
+
+    expect(analyticsMock).not.toHaveBeenCalled();
+  });
+
+  it("stops appear tracking after dispose", async () => {
+    startEngine([{ event: "search", trigger: "appear", target: "promo", args: [{ source: "attr", attr: "term" }] }])();
+
+    document.body.innerHTML = `<div data-name="promo" data-term="sale"></div>`;
+    await flush();
+
+    expect(analyticsMock).not.toHaveBeenCalled();
   });
 
   it("stops listening after dispose", async () => {

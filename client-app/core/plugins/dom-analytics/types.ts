@@ -5,8 +5,6 @@ export type TriggerType = "click" | "appear";
 type ScopeType = {
   /** `data-name` of the closest ancestor (or the element itself) to resolve from */
   from?: string;
-  /** `data-name` of a descendant inside the scope to resolve from */
-  select?: string;
   /** Without it, an unresolved argument skips the event */
   optional?: boolean;
 };
