@@ -219,7 +219,7 @@ export default defineConfig({
       createRemoteFederationOptions({
         name: "my-plugin",
         // CONTRACT GATE: the facade version this plugin is built against.
-        requiredHostVersion: "^0.1.0",
+        requiredHostVersion: "^0.2.0",
         // Optional: sharedOverrides / exposes when you need to deviate.
       }),
     ),
@@ -324,7 +324,7 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 # terminal 2 - the host, pointed at your plugin
 cd vc-frontend
 # once: the stock theme ships the switch off, so nothing would be built or loaded
-sed -i 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
+perl -pi -e 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
 APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```

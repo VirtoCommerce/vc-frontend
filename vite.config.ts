@@ -7,7 +7,7 @@ import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
-import { federatedHostPlugin, federatedAlias } from "./vite.federation.js";
+import { federatedHostPlugin, federatedAlias, federatedDefine } from "./vite.federation.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
@@ -115,6 +115,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       // https://vue-i18n.intlify.dev/guide/advanced/optimization.html#reduce-bundle-size-with-feature-build-flags
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
+      ...federatedDefine(),
     },
     build: {
       target: browserslistToEsbuild(),

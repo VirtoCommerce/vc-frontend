@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { federation } from "@module-federation/vite";
 import { createHostShared } from "./client-app/core-api/federation.mjs";
+import { isFederationSwitchOn } from "./client-app/modules/federated/switch.js";
 import type { PluginOption } from "vite";
 
 /**
@@ -19,10 +20,9 @@ const require = createRequire(import.meta.url);
 const FACADE_PACKAGE = "@vc-frontend/core";
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
 const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", import.meta.url));
-/** The theme's switch; the runtime reads the same key in client-app/modules/federated/enabled.ts. */
-const themeEnablesFederation =
-  (require("./client-app/config/settings_data.json") as { settings: { module_federation_enabled?: boolean } }).settings
-    .module_federation_enabled !== false;
+/** The theme's settings; the runtime reads the same key through the same predicate (client-app/modules/federated/enabled.ts). */
+const themeSettings = (require("./client-app/config/settings_data.json") as { settings: Record<string, unknown> })
+  .settings;
 
 /**
  * Alias so the HOST resolves @vc-frontend/core to the real source entry (it provides
@@ -33,9 +33,17 @@ export function federatedAlias(rootDir: string): Record<string, string> {
   return { [FACADE_PACKAGE]: path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
-/** MF host plugin(s) — empty when the theme sets `module_federation_enabled: false`. Spread into vite `plugins`. */
-export function federatedHostPlugin(): PluginOption[] {
-  if (!themeEnablesFederation) {
+/**
+ * `__MF_HOST__`: whether this build is an MF host. A constant, so a switch-off build drops the
+ * loader's dynamic import, and with it the loader and MF runtime chunk. Spread into vite `define`.
+ */
+export function federatedDefine(settings: Record<string, unknown> = themeSettings): Record<string, string> {
+  return { __MF_HOST__: JSON.stringify(isFederationSwitchOn(settings)) };
+}
+
+/** MF host plugin(s) — empty unless the theme sets `module_federation_enabled: true`. Spread into vite `plugins`. */
+export function federatedHostPlugin(settings: Record<string, unknown> = themeSettings): PluginOption[] {
+  if (!isFederationSwitchOn(settings)) {
     return [];
   }
   // dts off — types come from `yarn build:core-types`, not the MF dts plugin.

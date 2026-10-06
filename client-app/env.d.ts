@@ -8,6 +8,9 @@ interface Window {
   dataLayer: Array<unknown>;
 }
 
+/** Whether this build is an MF host (`module_federation_enabled`); see vite.federation.ts. */
+declare const __MF_HOST__: boolean;
+
 interface ImportMetaEnv {
   /** JSON map of remote name -> mf-manifest.json URL. Inlined at BUILD time (see modules/federated/README.md). */
   readonly APP_MODULES_FEDERATION_REMOTES?: string;
