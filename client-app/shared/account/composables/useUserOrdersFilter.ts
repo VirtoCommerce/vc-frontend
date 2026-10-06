@@ -2,7 +2,7 @@ import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { CUSTOMER_NAME_FACET_NAME } from "@/core/constants";
 import { DateFilterId, XApiPermissions } from "@/core/enums";
-import { toEndDateFilterValue, toStartDateFilterValue, toDateISOString } from "@/core/utilities";
+import { toEndDateFilterValue, toStartDateFilterValue, toDateISOString, toLocalDateOnly } from "@/core/utilities";
 import { useUser } from "./useUser";
 import { facets } from "./useUserOrders";
 import type { DateFilterType } from "@/core/types";
@@ -125,26 +125,26 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
       {
         id: DateFilterId.LAST_DAY,
         label: t("common.labels.last_day"),
-        startDate: lastDayStartDate.toISOString(),
-        endDate: currentDate.toISOString(),
+        startDate: toLocalDateOnly(lastDayStartDate),
+        endDate: toLocalDateOnly(currentDate),
       },
       {
         id: DateFilterId.LAST_WEEK,
         label: t("common.labels.last_week"),
-        startDate: lastWeekStartDate.toISOString(),
-        endDate: lastWeekEndDate.toISOString(),
+        startDate: toLocalDateOnly(lastWeekStartDate),
+        endDate: toLocalDateOnly(lastWeekEndDate),
       },
       {
         id: DateFilterId.LAST_MONTH,
         label: t("common.labels.last_month"),
-        startDate: lastMonthStartDate.toISOString(),
-        endDate: lastMonthEndDate.toISOString(),
+        startDate: toLocalDateOnly(lastMonthStartDate),
+        endDate: toLocalDateOnly(lastMonthEndDate),
       },
       {
         id: DateFilterId.LAST_YEAR,
         label: t("common.labels.last_year"),
-        startDate: lastYearStartDate.toISOString(),
-        endDate: lastYearEndDate.toISOString(),
+        startDate: toLocalDateOnly(lastYearStartDate),
+        endDate: toLocalDateOnly(lastYearEndDate),
       },
     ];
   }

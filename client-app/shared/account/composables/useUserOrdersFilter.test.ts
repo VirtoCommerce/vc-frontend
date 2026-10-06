@@ -34,9 +34,9 @@ function getLastMonthRange() {
   return getRange(DateFilterId.LAST_MONTH);
 }
 
-// Local midnight, the same way the composable builds its dates.
+// Local calendar date (YYYY-MM-DD), the format the presets emit.
 function localDate(year: number, monthIndex: number, day: number): string {
-  return new Date(year, monthIndex, day).toISOString();
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 describe("useUserOrdersFilter — Last week date preset", () => {
@@ -126,5 +126,46 @@ describe("useUserOrdersFilter — Last month date preset", () => {
       startDate: localDate(2026, 11, 1),
       endDate: localDate(2027, 0, 1),
     });
+  });
+});
+
+describe("useUserOrdersFilter — applied date filter east of UTC", () => {
+  const originalTimeZone = process.env.TZ;
+
+  beforeEach(() => {
+    // UTC+3: local midnight is still the previous day in UTC.
+    process.env.TZ = "Europe/Kyiv";
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    // Assigning undefined would store the string "undefined" and switch the worker to UTC.
+    if (originalTimeZone === undefined) {
+      delete process.env.TZ;
+    } else {
+      process.env.TZ = originalTimeZone;
+    }
+  });
+
+  function applyPreset(id: string) {
+    const { dateFilterTypes, handleOrdersDateFilterChange, filterData } = useUserOrdersFilter();
+    const preset = dateFilterTypes.value.find((item) => item.id === id);
+    handleOrdersDateFilterChange(preset!);
+    return { startDate: filterData.value.startDate, endDate: filterData.value.endDate };
+  }
+
+  it("keeps the local calendar days of the Last week preset", () => {
+    // Friday, Oct 2 2026 — the previous week is Mon Sep 21 to Mon Sep 28.
+    vi.setSystemTime(new Date(2026, 9, 2, 10, 30));
+
+    expect(applyPreset(DateFilterId.LAST_WEEK)).toEqual({ startDate: "2026-09-21", endDate: "2026-09-28" });
+  });
+
+  it("keeps the local calendar days of the Last month preset", () => {
+    // Saturday, Oct 31 2026 — the previous month starts on Sep 1.
+    vi.setSystemTime(new Date(2026, 9, 31, 10, 30));
+
+    expect(applyPreset(DateFilterId.LAST_MONTH)).toEqual({ startDate: "2026-09-01", endDate: "2026-10-01" });
   });
 });
