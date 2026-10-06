@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "この組織へのアクセスがブロックされました。組織の管理者にお問い合わせください",
           "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
+          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください",
+          "sign_in_not_allowed": "このアカウントではサインインできません。管理者にお問い合わせください。",
+          "store_not_found": "このストアは存在しません。",
+          "duplicate_email_login_attempt": "このメールアドレスは複数のアカウントで使用されています。",
+          "lockout_disabled": "このアカウントはコードでサインインできません。",
+          "invalid_code": "このコードは使用できませんでした。",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "コピーするにはクリック",
         "clipboard_success": "クーポンをコピーしました",
         "tap_to_copy": "タップしてコピー"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "ワンタイムコードでサインイン",
+        "request": {
+          "subtitle": "メールでコードをお送りします。パスワードは不要です。",
+          "email_label": "@:common.labels.email",
+          "continue_button": "続ける",
+          "switch_to_password_link": "パスワードでサインインする"
+        },
+        "verify": {
+          "header": "メールをご確認ください",
+          "subtitle": "{email} 宛てにコードを送信しました。",
+          "code_label": "コード",
+          "paste_hint": "コードを入力するか貼り付けてください。モバイルでは、キーボードの上に表示されるコードをタップしてください。",
+          "submit_button": "サインイン",
+          "resend_button": "コードを再送信",
+          "use_different_email_link": "別のメールアドレスを使う",
+          "live_resent": "新しいコードを送信しました。"
+        },
+        "locked": {
+          "title": "失敗した試行が多すぎます",
+          "title_blocked": "アカウントがブロックされています",
+          "text_countdown": "{time}後に再度お試しください。",
+          "text_ready": "今すぐ再試行できます。",
+          "start_over_button": "再試行"
+        },
+        "disabled": {
+          "title": "サインインできませんでした",
+          "text": "代わりにパスワードをお試しいただくか、この状態が続く場合はアカウント管理者にお問い合わせください。",
+          "text_no_password": "この状態が続く場合は、アカウント管理者にお問い合わせください。",
+          "password_button": "パスワードでサインイン",
+          "back_link": "サインインに戻る"
+        }
       }
     },
     "company": {
@@ -969,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_edit_button": "Edit",
-        "remove_list_button": "Delete",
+        "rename_list_button": "名前を変更",
+        "remove_list_button": "リストを削除",
         "make_private_button": "Make private",
         "share_button": "Share",
         "last_modified_label": "Last modified: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
-        "list_settings_button": "List settings",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
@@ -1001,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "New List",
-        "edit_mode_title": "List Settings",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
-        "sharing_scope_label": "共有オプション",
-        "sharing_scope_placeholder": "いずれか 1 つを選択してください",
         "sharing_link_label": "リンク",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1053,25 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "プライベート",
-          "Organization": "組織",
-          "AnyoneAnonymous": "誰でも（閲覧専用）"
+          "Organization": "自分の組織",
+          "AnyoneAnonymous": "リンクを知っている全員"
         },
         "clipboard_success": "リンクをコピーしました",
         "save_error": "リストを保存できませんでした。もう一度お試しください。"
+      },
+      "share_wishlist_modal": {
+        "title": "「{listName}」を共有",
+        "who_can_access_label": "アクセスできるユーザー",
+        "scope_selected": "{label}、選択中"
+      },
+      "stop_sharing_modal": {
+        "title": "このリストの共有を停止しますか？",
+        "message": "このリストを共有しているすべての相手がアクセスできなくなります。共有はいつでも再開できます。",
+        "confirm_button": "共有を停止",
+        "change_title": "アクセスできる相手を変更しますか？",
+        "change_message": "リンクは変わりません。一部のユーザーがアクセスできなくなる可能性があります。",
+        "change_confirm_button": "アクセスを変更",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

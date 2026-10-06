@@ -105,6 +105,8 @@ export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWish
 // for the modal to read it.
 export type {
   IWishlistSharingScopeControlsType,
+  IWishlistSharingScopeExposeType,
+  WishlistSharingScopePayloadType,
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 

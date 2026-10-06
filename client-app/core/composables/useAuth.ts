@@ -32,6 +32,11 @@ function _useAuth() {
     .json<ConnectTokenResponseType>();
 
   const errors = computed(() => data.value?.errors);
+  const lockoutSecondsRemaining = computed(() => data.value?.lockoutSecondsRemaining);
+
+  function resetErrors() {
+    data.value = null;
+  }
 
   const headers = computed(() => {
     if (state.value.access_token) {
@@ -102,6 +107,26 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
+  async function otpSignIn({ email, code, storeId }: { email: string; code: string; storeId: string }): Promise<void> {
+    const params = new URLSearchParams({
+      grant_type: "otp_email",
+      scope: "offline_access",
+      storeId,
+      email,
+      code,
+    });
+
+    const organizationId = localStorage.getItem(`organization-id-${email}`);
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+
+    getTokenParams.value = params;
+
+    await (getTokenRequest = getToken(true));
+  }
+
   async function refresh(organizationId?: string) {
     const params = new URLSearchParams({
       grant_type: "refresh_token",
@@ -160,9 +185,12 @@ function _useAuth() {
     headers,
     isExpired,
     errors,
+    resetErrors,
+    lockoutSecondsRemaining,
     isAuthorizing,
     authorize,
     externalSignInCallback,
+    otpSignIn,
     refresh,
     unauthorize,
 

@@ -116,7 +116,13 @@
               {{ item.organizationName }}
             </VcTableColumn>
 
-            <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" sortable>
+            <VcTableColumn
+              id="date"
+              v-slot="{ item }"
+              :title="t('sales_rep.orders.date')"
+              sortable
+              class="customer-orders__value"
+            >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
@@ -130,7 +136,7 @@
               :title="t('sales_rep.orders.total')"
               sortable
               align="right"
-              class="font-bold"
+              class="customer-orders__value font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -246,6 +252,21 @@ type FilterChipType = {
   label: string;
 };
 
+// The status facet only lists terms the current result set holds, so a search matching nothing drops the
+// applied status and its chip would fall back to the raw term. Labels seen in earlier responses are kept;
+// they are per culture, and a culture switch reloads the app.
+const statusLabels = ref<Record<string, string>>({});
+
+watch(
+  statusOptions,
+  (options) => {
+    for (const { name, label } of options) {
+      statusLabels.value[name] = label;
+    }
+  },
+  { immediate: true },
+);
+
 const filterChips = computed<FilterChipType[]>(() => {
   const { statuses, customerNames, startDate, endDate } = filters.value;
   const chips: FilterChipType[] = [];
@@ -255,7 +276,7 @@ const filterChips = computed<FilterChipType[]>(() => {
       id: `statuses:${status}`,
       field: "statuses",
       value: status,
-      label: statusOptions.value.find((option) => option.name === status)?.label ?? status,
+      label: statusLabels.value[status] ?? status,
     });
   }
 
@@ -372,6 +393,11 @@ const breadcrumbs = useBreadcrumbs(() => {
 
   &__order-link {
     @apply text-[--link-color] hover:text-[--link-hover-color];
+  }
+
+  // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
+  &__value {
+    @apply whitespace-nowrap;
   }
 
   &__mobile-item {

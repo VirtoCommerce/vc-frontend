@@ -1991,10 +1991,27 @@ type SharingSettingType = {
     id: Scalars['String']['output'];
     /** Created by current user */
     isOwner: Scalars['Boolean']['output'];
+    /** Message saved with the share (one for all targets) */
+    message?: Maybe<Scalars['String']['output']>;
     /** Scope (private, organization, etc.) */
     scope?: Maybe<WishlistScopeType>;
-    /** Id of the principal the list is shared with (id space defined by scope); null for non-targeted scopes */
+    /**
+     * Id of the first target the list is shared with; owner only, null for non-targeted scopes
+     * @deprecated Use targets
+     */
     sharedWithId?: Maybe<Scalars['String']['output']>;
+    /** Targets the list is shared with (id space defined by scope); owner only, empty for other viewers and for non-targeted scopes */
+    targets: Array<SharingTargetType>;
+};
+type SharingTargetType = {
+    /** Id the list is shared with (id space defined by scope) */
+    id: Scalars['String']['output'];
+    /** Image URL of the target, when resolved */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** Display name of the target, when the module owning the scope resolves it */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Secondary display line of the target (e.g. city and region), when resolved */
+    subtitle?: Maybe<Scalars['String']['output']>;
 };
 type ShipmentType = {
     /** Text comment */
@@ -2649,6 +2666,21 @@ type AnyAddressType = {
     workingHours?: string;
     availabilityNote?: string;
     availabilityType?: string;
+};
+
+type CreateWishlistPayloadType = {
+    listName?: string;
+    description?: string;
+    scope?: string;
+    sharingKey?: string;
+    sharedWithId?: string;
+};
+
+type ChangeWishlistPayloadType = CreateWishlistPayloadType & {
+    listId: string;
+    addSharedWithIds?: string[];
+    removeSharedWithIds?: string[];
+    message?: string;
 };
 
 interface ILanguage {
@@ -4311,12 +4343,16 @@ declare function useNotifications(): {
     stack: vue.ComputedRef<INotificationExtended[]>;
 };
 
-/** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
+/** A tab of the share dialog's scope strip. Modules contribute their own through `registerSharingScope`. */
 interface IWishlistSharingScopeType {
     scope: string;
     labelKey: string;
     /** Status line for the list owner; falls back to the generic "Shared". */
     statusKey?: string;
+    /** Glyph shown on the scope's tab in the share dialog. */
+    icon?: string;
+    /** Position among the tabs, ascending; scopes that declare none come last. */
+    order?: number;
     supportsLink?: boolean;
     shoppable?: boolean;
     /** Defaults to available. */
@@ -4326,19 +4362,31 @@ interface IWishlistSharingScopeType {
 type WishlistSharingScopeSavedContextType = {
     listName: string;
     sharingLink: string;
+    /** The audience the server persisted, so a scope reports what was saved rather than its own draft. */
+    targets: SharingTargetType[];
 };
+/** What a scope may contribute to the list's write command, mirroring the fields of `changeWishlist`. */
+type WishlistSharingScopePayloadType = Pick<ChangeWishlistPayloadType, "addSharedWithIds" | "removeSharedWithIds" | "message">;
 /**
- * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
- * instance rather than the registration object: the registry is a global filled at module init, while the state these
- * depend on is per-open.
+ * What a scope's `element` passes to `defineExpose`. Typing the raw side is what makes the contract checkable at the
+ * contributor's end; the modal reads it through Vue's expose proxy, which unwraps every ref.
+ */
+interface IWishlistSharingScopeExposeType {
+    canSave?: MaybeRef<boolean>;
+    dirty?: MaybeRef<boolean>;
+    payload?: MaybeRef<WishlistSharingScopePayloadType>;
+    onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
+}
+/**
+ * The same contract as the modal sees it, with the refs already unwrapped. Comes from the rendered instance rather
+ * than the registration object: the registry is a global filled at module init, while the state these depend on is
+ * per-open.
  */
 interface IWishlistSharingScopeControlsType {
     canSave?: boolean;
     /** The core form cannot see per-scope input, so a scope reports its own changes. */
     dirty?: boolean;
-    payload?: {
-        sharedWithId?: string;
-    };
+    payload?: WishlistSharingScopePayloadType;
     /** Must handle its own failures — the list is already persisted by then. */
     onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
 }
@@ -4628,7 +4676,7 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 declare const CORE_VERSION: string;
 
 export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, useRouteQueryParam, useUser, useWishlistSharingScopes };
-export type { CustomerOrderType, ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, OrdersFilterDataType, WishlistSharingScopeSavedContextType };
+export type { CustomerOrderType, ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LocaleLoaderType, MenuType, OrdersFilterDataType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;

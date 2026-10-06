@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "O seu acesso a esta organização foi bloqueado. Entre em contacto com o administrador da sua organização",
           "user_cannot_login_in_store": "Acesso negado. Você não pode entrar na loja atual",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas"
+          "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas",
+          "sign_in_not_allowed": "Você não pode entrar com esta conta. Entre em contato com o administrador.",
+          "store_not_found": "Esta loja não existe.",
+          "duplicate_email_login_attempt": "Várias contas usam este e-mail.",
+          "lockout_disabled": "Esta conta não pode entrar com um código.",
+          "invalid_code": "Este código não funcionou.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Clique para copiar",
         "clipboard_success": "Cupom copiado com sucesso",
         "tap_to_copy": "Toque para copiar"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Entrar com um código de uso único",
+        "request": {
+          "subtitle": "Enviaremos um código por e-mail. Nenhuma senha necessária.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Continuar",
+          "switch_to_password_link": "Entrar com uma senha"
+        },
+        "verify": {
+          "header": "Verifique seu e-mail",
+          "subtitle": "Enviamos um código para {email}.",
+          "code_label": "Código",
+          "paste_hint": "Digite ou cole o código. No celular, toque nele acima do teclado.",
+          "submit_button": "Entrar",
+          "resend_button": "Reenviar código",
+          "use_different_email_link": "Usar outro e-mail",
+          "live_resent": "Novo código enviado."
+        },
+        "locked": {
+          "title": "Muitas tentativas malsucedidas",
+          "title_blocked": "Conta bloqueada",
+          "text_countdown": "Tente novamente em {time}.",
+          "text_ready": "Você já pode tentar novamente.",
+          "start_over_button": "Tentar novamente"
+        },
+        "disabled": {
+          "title": "Não foi possível fazer login",
+          "text": "Tente uma senha, ou entre em contato com o administrador da sua conta se isso continuar acontecendo.",
+          "text_no_password": "Entre em contato com o administrador da sua conta se isso continuar acontecendo.",
+          "password_button": "Entrar com uma senha",
+          "back_link": "Voltar ao login"
+        }
       }
     },
     "company": {
@@ -969,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Contagem de produtos",
-        "list_edit_button": "Editar",
-        "remove_list_button": "Excluir",
+        "rename_list_button": "Renomear",
+        "remove_list_button": "Remover lista",
         "make_private_button": "Tornar privado",
         "share_button": "Compartilhar",
         "last_modified_label": "Última modificação: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Adicionar tudo ao carrinho",
-        "list_settings_button": "Configurações da lista",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Sua lista está vazia",
         "empty_list_button": "Continuar navegando",
         "list_icon": "Ícone da lista"
@@ -1001,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nova Lista",
-        "edit_mode_title": "Configurações da Lista",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nome da lista",
         "list_name_placeholder": "Por favor, insira o nome",
-        "sharing_scope_label": "Opções de compartilhamento",
-        "sharing_scope_placeholder": "Por favor, selecione uma opção",
         "sharing_link_label": "Link",
         "create_button": "Criar lista",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1053,25 @@
         "make_shared": "Tornar compartilhada",
         "sharing_scope": {
           "Private": "Privado",
-          "Organization": "Organização",
-          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
+          "Organization": "Minha organização",
+          "AnyoneAnonymous": "Qualquer pessoa com o link"
         },
         "clipboard_success": "Link copiado",
         "save_error": "Não foi possível salvar a lista. Tente novamente."
+      },
+      "share_wishlist_modal": {
+        "title": "Compartilhar “{listName}”",
+        "who_can_access_label": "Quem tem acesso",
+        "scope_selected": "{label}, selecionado"
+      },
+      "stop_sharing_modal": {
+        "title": "Parar de partilhar esta lista?",
+        "message": "Todas as pessoas com quem a lista é partilhada perderão o acesso. Pode partilhá-la novamente em qualquer momento.",
+        "confirm_button": "Parar de partilhar",
+        "change_title": "Alterar quem tem acesso?",
+        "change_message": "O link mantém-se o mesmo. Alguns utilizadores poderão perder o acesso.",
+        "change_confirm_button": "Alterar acesso",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirmar Exclusão",
