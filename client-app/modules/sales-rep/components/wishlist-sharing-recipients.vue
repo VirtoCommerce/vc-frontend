@@ -28,13 +28,17 @@
       :aria-label="t('sales_rep.list_sharing.recipients_title', { count: recipients.length })"
     >
       <li v-for="(recipient, index) in visibleRecipients" :key="recipient.organizationId">
-        <div class="wishlist-sharing-recipients__row">
+        <div data-test-id="wishlist-sharing-recipient-row" class="wishlist-sharing-recipients__row">
           <WishlistSharingAvatar :organization-name="recipient.organizationName" :image-url="recipient.imageUrl" />
 
           <span class="wishlist-sharing-recipients__meta">
             <span class="wishlist-sharing-recipients__name">{{ recipient.organizationName }}</span>
 
-            <span v-if="recipient.location" class="wishlist-sharing-recipients__location">
+            <span
+              v-if="recipient.location"
+              data-test-id="wishlist-sharing-recipient-location"
+              class="wishlist-sharing-recipients__location"
+            >
               {{ recipient.location }}
             </span>
           </span>

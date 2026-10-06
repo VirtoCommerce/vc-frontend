@@ -76,7 +76,7 @@ function renderRecipients(recipients: WishlistSharingRecipientType[], props: Rec
 }
 
 function rows() {
-  return component.container.querySelectorAll(".wishlist-sharing-recipients__row");
+  return component.queryAllByTestId("wishlist-sharing-recipient-row");
 }
 
 function toggle() {
@@ -94,13 +94,13 @@ describe("WishlistSharingRecipients", () => {
 
     expect(rows()).toHaveLength(2);
     expect(component.getByText("Customer 1")).toBeInTheDocument();
-    expect(component.getByText("Richmond, Virginia")).toBeInTheDocument();
+    expect(component.getByTestId("wishlist-sharing-recipient-location")).toHaveTextContent("Richmond, Virginia");
   });
 
   it("leaves out the second line for a customer whose address never loaded", () => {
     renderRecipients([{ organizationId: "org-1", organizationName: "Acme", location: "", imageUrl: "" }]);
 
-    expect(component.container.querySelector(".wishlist-sharing-recipients__location")).toBeNull();
+    expect(component.queryByTestId("wishlist-sharing-recipient-location")).toBeNull();
   });
 
   it("initials a recipient from the first two words of their name", () => {

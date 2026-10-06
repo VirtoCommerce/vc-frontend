@@ -6,8 +6,9 @@
     max-width="46rem"
     test-id="share-wishlist-modal"
     :is-persistent="saving"
+    class="share-wishlist-modal"
   >
-    <div class="share-wishlist-modal">
+    <div class="share-wishlist-modal__body">
       <fieldset class="share-wishlist-modal__scope-group">
         <legend class="share-wishlist-modal__scope-label">
           {{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}
@@ -314,7 +315,9 @@ async function copySharingLink() {
 
 <style lang="scss">
 .share-wishlist-modal {
-  @apply space-y-4;
+  &__body {
+    @apply space-y-4;
+  }
 
   &__scope-group {
     // A fieldset defaults to `min-inline-size: min-content`, which stops it shrinking inside the dialog.

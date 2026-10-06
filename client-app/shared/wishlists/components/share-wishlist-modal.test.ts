@@ -136,6 +136,7 @@ const AsyncScopeControls = defineAsyncComponent(() =>
 
 // Native controls stand in for the ui-kit: the kit's own dropdown/teleport behaviour is covered where it lives.
 const VcModal = defineComponent({
+  inheritAttrs: false,
   props: { title: { type: String, default: "" }, isPersistent: { type: Boolean, default: false } },
   emits: ["close"],
   setup(props, { slots, emit }) {
