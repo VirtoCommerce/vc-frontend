@@ -686,6 +686,30 @@ describe("useSalesRepLayout restoreDefaults", () => {
     expect(visibleIn("mainRight")).toEqual(["actions", "info"]);
   });
 
+  // `ALL_HIDDEN` already carries default settings, so the case above cannot tell a reset from a carry-over.
+  it("resets each block's settings to the registry defaults, not only its visibility", async () => {
+    const customised = [
+      { key: "maxRows", value: 12 },
+      { key: "tab.New", value: false },
+    ];
+    apolloMock.result.value = {
+      salesRepLayout: {
+        regions: ALL_HIDDEN.salesRepLayout.regions.map((region) => ({
+          ...region,
+          blocks: region.blocks.map((block) => (block.type === "orders" ? { ...block, settings: customised } : block)),
+        })),
+      },
+    };
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
+
+    const { restoreDefaults, settingsOf } = withLayout(scope);
+    expect(settingsOf("orders")).toMatchObject({ maxRows: 12, hiddenTabs: ["New"] });
+
+    await expect(restoreDefaults()).resolves.toBe(true);
+    expect(sentBlock("orders")?.settings).toEqual([{ key: "maxRows", value: 5 }]);
+    expect(settingsOf("orders")).toMatchObject({ maxRows: 5, hiddenTabs: [] });
+  });
+
   // Back in the empty state the rep would have no way to tell the click did anything.
   it("lands in edit mode on the defaults when the write fails, so Save retries it", async () => {
     apolloMock.result.value = ALL_HIDDEN;
