@@ -113,9 +113,9 @@ defineExpose({
 @use "@/ui-kit/styles/focus-ring" as *;
 
 .vc-select-button {
-  $self: &;
   $disabled: "";
   $error: "";
+  $control: "";
 
   --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
@@ -153,14 +153,9 @@ defineExpose({
     @apply border-danger;
   }
 
-  // The ring outlines the whole box, as VcInput's does, not the inner control. Open looks like
-  // focus, whichever way it was opened.
-  &:has(#{$self}__control:focus-visible),
-  &--opened {
-    @include focus-ring;
-  }
-
   &__control {
+    $control: &;
+
     @apply grow flex self-stretch min-w-0 text-start;
 
     &:focus-visible {
@@ -174,6 +169,13 @@ defineExpose({
 
       content: "";
     }
+  }
+
+  // The ring outlines the whole box, as VcInput's does, not the inner control. Open looks like
+  // focus, whichever way it was opened.
+  &:has(#{$control}:focus-visible),
+  &--opened {
+    @include focus-ring;
   }
 
   &__content {
