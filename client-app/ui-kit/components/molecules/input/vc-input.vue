@@ -318,6 +318,14 @@ provide<VcInputContextType>("inputContext", {
   @apply flex flex-col;
 
   &--size {
+    @each $size in (xs, sm, md) {
+      &--#{$size} {
+        --height: #{field-height($size)};
+        --text-size: #{field-text-size($size)};
+        --line-height: #{field-line-height($size)};
+      }
+    }
+
     &--xs {
       $sizeXs: &;
     }
@@ -375,23 +383,9 @@ provide<VcInputContextType>("inputContext", {
     // Unset without the knob, so the container keeps inheriting its cursor.
     cursor: var(--vc-input-cursor);
 
-    #{$sizeXs} & {
-      height: field-height(xs);
-      font-size: field-text-size(xs);
-      line-height: field-line-height(xs);
-    }
-
-    #{$sizeSm} & {
-      height: field-height(sm);
-      font-size: field-text-size(sm);
-      line-height: field-line-height(sm);
-    }
-
-    #{$sizeMd} & {
-      height: field-height(md);
-      font-size: field-text-size(md);
-      line-height: field-line-height(md);
-    }
+    height: var(--height);
+    font-size: var(--text-size);
+    line-height: var(--line-height);
 
     &:has(input:focus-visible),
     #{$opened} & {
