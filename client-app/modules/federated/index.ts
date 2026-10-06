@@ -1,7 +1,7 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
+import { CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
 import { version as CORE_VERSION } from "@/core-api/package.json";
 import { applyContributions, DECLARED_META_KEY, releaseContributions } from "./contributions/declare";
 import { isGloballyTrue } from "./contributions/evaluate";
@@ -53,8 +53,8 @@ interface IRemoteDescriptor {
   allowCrossOrigin?: boolean;
   /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
   version?: string;
-  /** Env remotes only: the optional `contributions.json` beside the manifest. */
-  contributionsUrl?: string;
+  /** Env remotes only: the built `plugin.json` beside the manifest, whose `contributions` are optional. */
+  pluginJsonUrl?: string;
   /** Platform remotes only: served inline by `store.plugins`. */
   inlineContributions?: string;
 }
@@ -195,6 +195,7 @@ const SAFE_REMOTE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 const SCAFFOLD_EXPOSE_KEY = "./plugin";
 const PLATFORM_EXPOSE_KEY = "./Module";
 const MF_MANIFEST_FILE = "mf-manifest.json";
+const PLUGIN_JSON_FILE = "plugin.json";
 const PLATFORM_SCRIPT_ENTRY_TYPE = "script";
 const PLATFORM_STYLE_FILE_TYPE = "style";
 
@@ -256,7 +257,7 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
       exposed: SCAFFOLD_EXPOSE_KEY,
       styles: [],
       allowCrossOrigin: true,
-      contributionsUrl: siblingUrl(value, CONTRIBUTIONS_FILE_NAME),
+      pluginJsonUrl: siblingUrl(value, PLUGIN_JSON_FILE),
     });
   }
   return resolved;
@@ -771,12 +772,12 @@ function readInlineContributions(json: string): ContributionsReadType {
   return toContributions(body, (reason) => ({ ok: false, reason: `its inline contributions are unusable: ${reason}` }));
 }
 
-/** An env remote's file is optional: a missing one declares nothing. */
+/** An env remote's `plugin.json` is optional: a missing one, or one without `contributions`, declares nothing. */
 async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): Promise<ContributionsReadType> {
   if (remote.inlineContributions !== undefined) {
     return readInlineContributions(remote.inlineContributions);
   }
-  const url = remote.contributionsUrl;
+  const url = remote.pluginJsonUrl;
   if (!url) {
     return { ok: true };
   }
@@ -799,8 +800,12 @@ async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): 
       }
       return (await response.json()) as unknown;
     };
-    const body = await withTimeout(read(), timeoutMs, `contributions fetch for "${remote.name}"`);
-    return toContributions(body, readOptional);
+    const body = await withTimeout(read(), timeoutMs, `plugin.json fetch for "${remote.name}"`);
+    const contributions = (body as { contributions?: unknown } | null)?.contributions;
+    if (contributions === undefined) {
+      return readOptional("its plugin.json declares none");
+    }
+    return toContributions(contributions, readOptional);
   } catch (error) {
     return readOptional(error instanceof Error ? error.message : String(error));
   }

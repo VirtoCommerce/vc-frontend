@@ -512,8 +512,7 @@ How the ExtensionPoint system works, the available categories, and payload shape
 `plugin.config.ts` (scaffolded) tells the storefront what the plugin contributes **before any of
 its code runs**: its routes, menu entries, the extension points it fills, and a condition on each.
 The build writes it as `contributions` into the built `plugin.json`, which the platform serves in
-`store.plugins`, so the host has it with the plugin list and fetches nothing for it. It also writes
-`dist/contributions.json` for local development (see the end of this section).
+`store.plugins`, so the host has it with the plugin list and fetches nothing for it.
 
 What the host does with it, before any of the plugin's code is fetched:
 
@@ -535,8 +534,8 @@ What the host does with it, before any of the plugin's code is fetched:
 
 `init()` still registers everything itself: a declaration tells the host what is coming, it does
 not replace the registration. Locally, an `APP_MODULES_FEDERATION_REMOTES` remote is read the same
-way — the host looks for `contributions.json` beside its `mf-manifest.json`, which is where the
-scaffold's build puts it, and treats a missing one as "declares nothing".
+way — the host reads `contributions` from the `plugin.json` beside its `mf-manifest.json`, which a
+build puts there (`yarn dev` does not), and treats a missing one as "declares nothing".
 
 ```ts
 // plugin.config.ts

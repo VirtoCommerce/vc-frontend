@@ -1,9 +1,9 @@
 /** Condition builders, `definePluginManifest` and the Vite plugin that emits it. Plain JS: runs in the plugin's node build. */
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT } from "./manifest-format.mjs";
+import { CONTRIBUTIONS_FORMAT } from "./manifest-format.mjs";
 
-export { CONTRIBUTIONS_FILE_NAME, CONTRIBUTIONS_FORMAT };
+export { CONTRIBUTIONS_FORMAT };
 
 const SLOT_POLICIES = new Set(["reserve", "block", "none"]);
 const MENU_SURFACES = new Set(["header", "account"]);
@@ -293,10 +293,7 @@ export function definePluginManifest(config) {
   return out;
 }
 
-/**
- * Writes the declaration into the built `plugin.json`, which the platform serves inline, and to
- * `contributions.json`, which the host reads beside the manifest of an env-configured remote.
- */
+/** Writes the declaration into the built `plugin.json` as `contributions`. */
 export function pluginContributions(contributions) {
   let publicDir;
   let outDir;
@@ -311,13 +308,6 @@ export function pluginContributions(contributions) {
       if (!publicDir || !readJsonFile(resolve(publicDir, "plugin.json"))) {
         this.error("the platform serves the declaration from public/plugin.json, which is missing");
       }
-    },
-    generateBundle() {
-      this.emitFile({
-        type: "asset",
-        fileName: CONTRIBUTIONS_FILE_NAME,
-        source: JSON.stringify(contributions, null, 2) + "\n",
-      });
     },
     // Runs after Vite copied public/plugin.json.
     closeBundle() {

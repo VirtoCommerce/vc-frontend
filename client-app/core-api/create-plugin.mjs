@@ -294,7 +294,7 @@ import contributions from "./plugin.config";
 export default defineConfig({
   plugins: [
     vue(),
-    // Writes plugin.config.ts into plugin.json, and into contributions.json for local development.
+    // Writes plugin.config.ts into the built plugin.json.
     pluginContributions(contributions),
     // Wiring conventions (expose key, shared singletons, manifest metadata) come from
     // the host - client-app/core-api/federation.mjs in the host checkout owns them.

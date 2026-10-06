@@ -179,20 +179,25 @@ describe("declared contributions in the loader", () => {
     [200, "deferred", "sales-rep"],
     [404, "blocking", undefined],
   ] as const)(
-    "reads an env remote's contributions.json beside its manifest, and a missing one declares nothing (HTTP %i)",
+    "reads an env remote's declaration from the plugin.json beside its manifest; a missing one declares nothing (HTTP %i)",
     async (status, phase, placeholderOwner) => {
       vi.stubEnv(
         "APP_MODULES_FEDERATION_REMOTES",
         JSON.stringify({ "sales-rep": "http://localhost:3001/mf-manifest.json" }),
       );
       const fetchMock = vi.fn((requested: string) =>
-        Promise.resolve({ ok: status < 400, status, url: requested, json: () => Promise.resolve(DECLARED) }),
+        Promise.resolve({
+          ok: status < 400,
+          status,
+          url: requested,
+          json: () => Promise.resolve({ id: "p", contributions: DECLARED }),
+        }),
       );
       vi.stubGlobal("fetch", fetchMock);
 
       const prepared = await prepareFederatedModules({ conditionContext: context(true) });
 
-      expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(["http://localhost:3001/contributions.json"]);
+      expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(["http://localhost:3001/plugin.json"]);
       expect(prepared[phase].map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
       expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBe(placeholderOwner);
     },

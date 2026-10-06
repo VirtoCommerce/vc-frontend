@@ -175,21 +175,14 @@ describe("pluginContributions", () => {
     writeFileSync(join(dir, "plugin.json"), JSON.stringify(pluginJson));
     const plugin = pluginContributions({ format: 1, when: { setting: "X" } });
     plugin.configResolved({ publicDir: dir, root: dir, build: { outDir: "dist" } });
-    const context = { error: vi.fn((message: string) => { throw new Error(message); }), emitFile: vi.fn() };
+    const context = { error: vi.fn((message: string) => { throw new Error(message); }) };
     return { plugin, context };
   }
 
-  it("emits contributions.json", () => {
+  it("accepts a project whose public/plugin.json exists", () => {
     const { plugin, context } = withPluginJson({ id: "p" });
 
-    plugin.buildStart.call(context);
-    plugin.generateBundle.call(context);
-
-    expect(context.emitFile).toHaveBeenCalledWith({
-      type: "asset",
-      fileName: "contributions.json",
-      source: JSON.stringify({ format: 1, when: { setting: "X" } }, null, 2) + "\n",
-    });
+    expect(() => plugin.buildStart.call(context)).not.toThrow();
   });
 
   it("writes the declaration into the built plugin.json, next to what the plugin declared there", () => {

@@ -7,7 +7,6 @@ import type {
   IPluginManifestConfigType,
 } from "@vc-frontend/core";
 
-export declare const CONTRIBUTIONS_FILE_NAME: "contributions.json";
 export declare const CONTRIBUTIONS_FORMAT: 1;
 
 /** A store module setting is `true`. */
@@ -32,7 +31,6 @@ export interface IPluginContributionsVitePlugin {
   apply: "build";
   configResolved(config: { publicDir: string; root: string; build: { outDir: string } }): void;
   buildStart(): void;
-  generateBundle(): void;
   closeBundle(): void;
 }
 
