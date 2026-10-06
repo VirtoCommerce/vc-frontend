@@ -99,8 +99,16 @@ function isSameArgs(a: unknown[], b: unknown[]): boolean {
   return a.length === b.length && a.every((arg, i) => isShallowEqual(arg, b[i]));
 }
 
+const scanners = new Set<() => void>();
+
+/** Rescans the document in every running engine, e.g. after new `appear` rules were added */
+export function rescan(): void {
+  scanners.forEach((scan) => scan());
+}
+
 /**
  * Listens to the document and turns rule matches into `analytics(...)` calls.
+ * `rules` is read on every click and scan, so rules pushed into it later take effect.
  * Returns a function that removes all listeners.
  */
 export function startEngine(rules: RuleType[]): () => void {
@@ -110,10 +118,6 @@ export function startEngine(rules: RuleType[]): () => void {
     analytics(rule.event, ...(args as AnalyticsEventMapType[typeof rule.event]));
   }
 
-  const clickRules = rules.filter((rule) => rule.trigger === "click");
-  const appearRules = rules.filter((rule) => rule.trigger === "appear");
-
-  // Capture phase: a component calling stopPropagation() must not hide the click
   function onClick(event: Event): void {
     // Only a click on a link or a button inside the role counts, not on its padding or empty space
     const interactive = event.target instanceof Element ? event.target.closest(INTERACTIVE) : null;
@@ -123,7 +127,7 @@ export function startEngine(rules: RuleType[]): () => void {
     let el = interactive.closest(ANY_NAME);
     while (el) {
       const name = el.getAttribute(NAME_ATTR);
-      const matched = clickRules.filter((rule) => rule.target === name);
+      const matched = rules.filter((rule) => rule.trigger === "click" && rule.target === name);
       let isSent = false;
       for (const rule of matched) {
         const args = resolveArgs(el, rule);
@@ -139,7 +143,7 @@ export function startEngine(rules: RuleType[]): () => void {
     }
   }
 
-  // An element fires again only when it gets different arguments (e.g. a new products array)
+  // An element fires again only when it gets different arguments: other entities or other list params
   const sentArgs = new WeakMap<Element, Map<RuleType, unknown[]>>();
   let isScanScheduled = false;
   let isStopped = false;
@@ -149,7 +153,10 @@ export function startEngine(rules: RuleType[]): () => void {
     if (isStopped) {
       return;
     }
-    appearRules.forEach((rule) => {
+    rules.forEach((rule) => {
+      if (rule.trigger !== "appear") {
+        return;
+      }
       document.querySelectorAll(byName(rule.target)).forEach((el) => {
         const args = resolveArgs(el, rule);
         if (!args) {
@@ -174,21 +181,20 @@ export function startEngine(rules: RuleType[]): () => void {
     }
   }
 
+  // Capture phase: a component calling stopPropagation() must not hide the click
   document.addEventListener("click", onClick, true);
 
-  let observer: MutationObserver | undefined;
-  let stopItemListener: (() => void) | undefined;
-  if (appearRules.length) {
-    observer = new MutationObserver(scheduleScan);
-    observer.observe(document.body, { childList: true, subtree: true });
-    stopItemListener = onItemChange(scheduleScan);
-    scheduleScan();
-  }
+  const observer = new MutationObserver(scheduleScan);
+  observer.observe(document.body, { childList: true, subtree: true });
+  const stopItemListener = onItemChange(scheduleScan);
+  scanners.add(scheduleScan);
+  scheduleScan();
 
   return () => {
     isStopped = true;
     document.removeEventListener("click", onClick, true);
-    observer?.disconnect();
-    stopItemListener?.();
+    observer.disconnect();
+    stopItemListener();
+    scanners.delete(scheduleScan);
   };
 }

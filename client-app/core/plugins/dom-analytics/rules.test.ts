@@ -11,7 +11,7 @@ vi.mock("@/core/composables/useAnalytics", () => ({
   useAnalytics: () => ({ analytics: analyticsMock }),
 }));
 
-const PRODUCT = { id: "1", code: "ABC", name: "Laptop", price: { actual: { amount: 999.5 } } };
+const PRODUCT = { id: "1", code: "ABC", name: "Laptop", price: { actual: { amount: 999.5 }, list: { amount: 999.5 } } };
 
 const LIST_PROPERTIES = {
   item_list_id: "related_products",

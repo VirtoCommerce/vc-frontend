@@ -24,7 +24,7 @@ Rules are in [rules.ts](./rules.ts).
 | `viewItemList` | `product-list` appears | items are collected from its `product-card` descendants |
 | `viewItem` | `product-details` appears | the product is bound with `v-track-item` |
 
-`selectItem` and `viewItemList` need `data-list-id` on the `product-list` container. A card outside a list sends nothing, so a list that calls `analytics()` itself simply has no container.
+`selectItem` and `viewItemList` need a `product-list` container with at least one list attribute (`data-list-id`, `data-list-name`, `data-related-id`, `data-related-type`). A card outside a list sends nothing, so a list that calls `analytics()` itself simply has no container.
 
 ## Tracking a product block
 
@@ -64,7 +64,7 @@ A card built from ui-kit atoms gets the roles by hand (see `favorite-products.vu
 </div>
 ```
 
-The event carries only these fields. Brand, categories and discount are missing because there is no full product object.
+`data-product-price` fills both `price.actual.amount` and `price.list.amount`. The event carries only these fields. Brand, categories and discount are missing because there is no full product object.
 
 ## Adding a rule
 
@@ -91,13 +91,18 @@ Argument sources:
 
 Every source accepts `from` (closest ancestor with this `data-name`) and `optional`. When a required argument resolves to nothing, the event is skipped.
 
-To add rules from a theme, pass them to the plugin in `app-runner.ts`:
+To add rules from a theme, call `addRules` from your module's `init()`, the same way an analytics provider calls `addTracker`. Core files stay untouched:
 
 ```ts
-import { rules } from "@/core/plugins/dom-analytics/rules";
+// modules/my-module/index.ts
+import { addRules } from "@/core/plugins";
 
-app.use(domAnalyticsPlugin, { rules: [...rules, myRule] });
+export function init(): void {
+  addRules([myRule]);
+}
 ```
+
+Added rules apply from the next click, and `appear` rules rescan the page right away.
 
 ## Triggers
 

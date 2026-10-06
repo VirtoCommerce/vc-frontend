@@ -21,6 +21,7 @@ const PRODUCT_FROM_ATTRS: ObjectSourceType = {
     code: { attr: "productSku" },
     name: { attr: "productName" },
     "price.actual.amount": { attr: "productPrice", type: "number" },
+    "price.list.amount": { attr: "productPrice", type: "number" },
   },
 };
 

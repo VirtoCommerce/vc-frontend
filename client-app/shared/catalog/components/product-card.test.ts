@@ -1,6 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, ref } from "vue";
+import { getItem, vTrackItem } from "@/core/plugins/dom-analytics/registry";
 import { createI18n } from "@/i18n";
 import { uiKit } from "@/ui-kit";
 import enMessages from "../../../../locales/en.json";
@@ -87,6 +88,7 @@ function mountCard(options: Parameters<typeof createProduct>[0]) {
     props: { product: createProduct(options), viewMode: "list" as const },
     global: {
       plugins: [i18n, uiKit],
+      directives: { trackItem: vTrackItem },
       mocks: {
         $cfg: {},
         $canRenderExtensionPoint: () => false,
@@ -149,5 +151,15 @@ describe("product card variations button label with the in-stock filter on", () 
 
     expect(buttonLabels(wrapper)).toEqual(["No variations", "No variations"]);
     expect(panelHeading(wrapper)).toBe("No available variations");
+  });
+});
+
+describe("product card analytics roles", () => {
+  it("binds the product to the card and marks its links", () => {
+    const wrapper = mountCard({ siblings: 0 });
+
+    expect(wrapper.attributes("data-name")).toBe("product-card");
+    expect(getItem(wrapper.element)).toBe(wrapper.props("product"));
+    expect(wrapper.findAll("[data-name='product-link']").length).toBeGreaterThan(0);
   });
 });

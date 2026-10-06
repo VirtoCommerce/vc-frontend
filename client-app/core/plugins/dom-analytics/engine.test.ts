@@ -1,7 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, ref } from "vue";
-import { startEngine } from "./engine";
+import { rescan, startEngine } from "./engine";
 import { vTrackItem } from "./registry";
 import type { RuleType } from "./types";
 
@@ -41,7 +41,7 @@ const SELECT_BY_SKU: RuleType = {
 
 const ProductList = defineComponent({
   directives: { trackItem: vTrackItem },
-  props: { products: { type: Array as () => { code: string }[], required: true } },
+  props: { products: { type: Array as () => { id?: string; code: string }[], required: true } },
 
   template: `
     <div data-name="product-list" data-list-id="related" data-list-name="Related">
@@ -155,7 +155,6 @@ describe("dom-analytics engine", () => {
       item_list_name: "Related",
     });
 
-    // An unrelated DOM change rescans the list: the same products and list params must not resend
     document.body.append(document.createElement("i"));
     await flushPromises();
     expect(analyticsMock).toHaveBeenCalledTimes(1);
@@ -170,7 +169,6 @@ describe("dom-analytics engine", () => {
     expect(analyticsMock).toHaveBeenCalledTimes(3);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], expect.any(Object));
 
-    // Same products, new list params: the next rescan must resend
     document.querySelector<HTMLElement>("[data-name='product-list']")?.setAttribute("data-list-id", "similar");
     document.body.append(document.createElement("i"));
     await flushPromises();
@@ -180,6 +178,42 @@ describe("dom-analytics engine", () => {
       item_list_name: "Related",
     });
     wrapper.unmount();
+  });
+
+  it("does not resend viewItemList for a refetched list with the same ids", async () => {
+    stop = startEngine([VIEW_ITEM_LIST]);
+    const wrapper = mount(ProductList, { props: { products: [{ id: "1", code: "A" }] }, attachTo: document.body });
+    await flushPromises();
+
+    await wrapper.setProps({ products: [{ id: "1", code: "A" }] });
+    await flushPromises();
+
+    expect(analyticsMock.mock.calls.filter(([event]) => event === "viewItemList")).toHaveLength(1);
+    wrapper.unmount();
+  });
+
+  it("applies rules added after start", async () => {
+    document.body.innerHTML = `
+      <div data-name="promo" data-term="sale"></div>
+      <div data-name="product-card" data-sku="A"><button data-name="product-link">x</button></div>`;
+    const rules: RuleType[] = [];
+    stop = startEngine(rules);
+    await flushPromises();
+
+    rules.push(SELECT_BY_SKU, {
+      event: "search",
+      trigger: "appear",
+      target: "promo",
+      args: [{ source: "attr", attr: "term" }],
+    });
+    rescan();
+    await flushPromises();
+    document.querySelector("button")?.click();
+
+    expect(analyticsMock.mock.calls).toEqual([
+      ["search", "sale"],
+      ["selectItem", "A", undefined],
+    ]);
   });
 
   it("sends appear again only when the bound entity changes on the same element", async () => {
@@ -198,7 +232,6 @@ describe("dom-analytics engine", () => {
     ]);
     await flushPromises();
 
-    // A refetch returns new nested objects for the same product
     product.value = { id: "1", code: "A", price: { amount: 1 } };
     await flushPromises();
     product.value = { id: "2", code: "B", price: { amount: 2 } };

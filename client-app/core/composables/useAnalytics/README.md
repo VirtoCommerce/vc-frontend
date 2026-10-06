@@ -10,7 +10,7 @@ import { useAnalytics } from "@/core/composables/useAnalytics";
 const { analytics } = useAnalytics();
 
 // Track a predefined event
-analytics("viewItem", product, { currency: "USD" });
+analytics("addItemToCart", product, quantity, { currency: "USD" });
 ```
 
 ## Events From Markup
@@ -94,6 +94,8 @@ export const events: TrackerEventsType = {
   // ... other event handlers
 };
 ```
+
+Events sent from [markup](../../plugins/dom-analytics/README.md#markup-without-a-vue-object-builderio-html-custom-themes) may carry a partial product: for plain HTML only `id`, `code`, `name` and `price` are set. Handlers should not rely on other fields being present.
 
 4. Implement the interface of extending events. See an [example of implementation](/client-app/modules/google-analytics/README.md#extending-events) in Google Analytics module.
 

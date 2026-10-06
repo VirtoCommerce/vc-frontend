@@ -511,10 +511,6 @@ watch(
   { immediate: true },
 );
 
-/**
- * Send historical event for product.
- */
-
 const fetchedProductId = computed(() => product.value?.id);
 
 watch(
