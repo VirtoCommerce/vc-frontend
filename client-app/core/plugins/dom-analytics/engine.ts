@@ -5,12 +5,12 @@ import type { ArgSourceType, AttrFieldType, ObjectSourceType, RuleType } from ".
 import type { AnalyticsEventMapType } from "@/core/types/analytics";
 
 const NAME_ATTR = "data-name";
+const ANY_NAME = `[${NAME_ATTR}]`;
+const INTERACTIVE = "a, button";
 
 function byName(name: string): string {
   return `[${NAME_ATTR}="${name}"]`;
 }
-
-const INTERACTIVE = "a, button";
 
 function resolveScope(el: Element, from?: string): Element | null {
   return from ? el.closest(byName(from)) : el;
@@ -120,7 +120,7 @@ export function startEngine(rules: RuleType[]): () => void {
     if (!interactive) {
       return;
     }
-    let el = interactive.closest(`[${NAME_ATTR}]`);
+    let el = interactive.closest(ANY_NAME);
     while (el) {
       const name = el.getAttribute(NAME_ATTR);
       const matched = clickRules.filter((rule) => rule.target === name);
@@ -135,7 +135,7 @@ export function startEngine(rules: RuleType[]): () => void {
       if (isSent) {
         return;
       }
-      el = el.parentElement?.closest(`[${NAME_ATTR}]`) ?? null;
+      el = el.parentElement?.closest(ANY_NAME) ?? null;
     }
   }
 

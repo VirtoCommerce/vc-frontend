@@ -236,9 +236,11 @@ describe("dom-analytics engine", () => {
     expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("selectItem", "A", undefined);
   });
 
-  it("drops a numeric attribute that is not a number", () => {
+  it("drops attributes that are empty or not a number", () => {
     document.body.innerHTML = `
-      <div data-name="product-card" data-sku="A" data-price="abc"><a data-name="product-link">x</a></div>`;
+      <div data-name="product-card" data-sku="A" data-price="abc" data-vendor="" data-stock="">
+        <a data-name="product-link">x</a>
+      </div>`;
     stop = startEngine([
       {
         event: "selectItem",
@@ -248,7 +250,12 @@ describe("dom-analytics engine", () => {
           {
             source: "object",
             from: "product-card",
-            fields: { code: { attr: "sku" }, price: { attr: "price", type: "number" } },
+            fields: {
+              code: { attr: "sku" },
+              price: { attr: "price", type: "number" },
+              vendor: { attr: "vendor" },
+              stock: { attr: "stock", type: "number" },
+            },
           },
         ],
       },
@@ -257,6 +264,31 @@ describe("dom-analytics engine", () => {
     document.querySelector("a")?.click();
 
     expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("selectItem", { code: "A" });
+  });
+
+  it("collects only the cards that resolve to an item", async () => {
+    document.body.innerHTML = `
+      <div data-name="product-list" data-list-id="related">
+        <div data-name="product-card" data-sku="A"></div>
+        <div data-name="product-card"></div>
+      </div>`;
+    stop = startEngine([
+      {
+        event: "viewItemList",
+        trigger: "appear",
+        target: "product-list",
+        args: [
+          {
+            source: "collect",
+            target: "product-card",
+            fallback: { source: "object", fields: { code: { attr: "sku" } } },
+          },
+        ],
+      },
+    ]);
+    await flush();
+
+    expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItemList", [{ code: "A" }]);
   });
 
   it("does not send viewItemList for a list without cards", async () => {
