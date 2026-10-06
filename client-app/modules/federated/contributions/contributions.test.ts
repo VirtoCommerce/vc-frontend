@@ -196,7 +196,7 @@ describe("applyContributions / releaseContributions", () => {
     expect(router.resolve("/company/sign").redirectedFrom).toBeUndefined();
     expect(router.getRoutes().find((route) => route.name === "SignRedirect")?.redirect).toEqual({ name: "SignIn" });
     expect(router.resolve("/").name).toBe("Home");
-    expect(loggerErrorMock).toHaveBeenCalledWith(
+    expect(loggerWarnMock).toHaveBeenCalledWith(
       expect.stringContaining('declares route "Home", which is already taken'),
     );
     expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining('menu link to "NotDeclared"'));
@@ -278,5 +278,64 @@ describe("applyContributions / releaseContributions", () => {
     const links = nav.desktopCorporateMenuItems.value?.children?.filter((link) => link.id === "docs-link");
     expect(links?.map((link) => link.route)).toEqual([{ name: "Home" }]);
     expect(nav.registeredAccountSections.value.map((section) => section.title)).toEqual(["real hub"]);
+  });
+
+  it("refuses a declared link or section id that is already taken, so withdrawing it cannot take another's", async () => {
+    const { declare, status, navigations, router } = await setup();
+    const nav = navigations.useNavigations();
+    nav.mergeMenuSchema({
+      header: { desktop: { corporate: { children: [{ id: "docs-link", title: "host", route: { name: "Home" } }] } } },
+    });
+    nav.registerAccountSection({ id: "hub", title: "host hub", children: [] });
+    status.setPluginStatus("sales-rep", "pending");
+
+    const applied = declare.applyContributions("sales-rep", salesRep, context(), router);
+    declare.releaseContributions(applied, router, false);
+
+    const links = nav.desktopCorporateMenuItems.value?.children?.filter((link) => link.id === "docs-link");
+    expect(links?.map((link) => link.route)).toEqual([{ name: "Home" }]);
+    expect(nav.registeredAccountSections.value.map((section) => section.title)).toEqual(["host hub"]);
+  });
+
+  it("keeps the first plugin's declared section when a second plugin declaring the same id fails", async () => {
+    const { declare, status, navigations, router } = await setup();
+    status.setPluginStatus("sales-rep", "pending");
+    status.setPluginStatus("other", "pending");
+    declare.applyContributions("sales-rep", salesRep, context(), router);
+
+    const other = declare.applyContributions("other", { format: 1, menu: salesRep.menu }, context(), router);
+    declare.releaseContributions(other, router, false);
+
+    const nav = navigations.useNavigations();
+    expect(nav.desktopCorporateMenuItems.value?.children?.map((link) => link.id)).toContain("docs-link");
+    expect(nav.registeredAccountSections.value.map((section) => section.id)).toEqual(["hub"]);
+  });
+
+  it("declares a redirect only to an existing route, and drops it once its target is gone", async () => {
+    const { declare, status, router } = await setup();
+    status.setPluginStatus("sales-rep", "pending");
+
+    const applied = declare.applyContributions(
+      "sales-rep",
+      {
+        format: 1,
+        routes: [
+          { path: "docs", parent: "Company", name: "Docs" },
+          { path: "old-docs", parent: "Company", name: "OldDocs", redirect: "Docs" },
+          { path: "nowhere", parent: "Company", name: "Nowhere", redirect: "NotARoute" },
+        ],
+      },
+      context(),
+      router,
+    );
+
+    expect(router.hasRoute("OldDocs")).toBe(true);
+    expect(router.hasRoute("Nowhere")).toBe(false);
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining('redirects to "NotARoute"'));
+
+    declare.releaseContributions(applied, router, true);
+
+    expect(router.hasRoute("Docs")).toBe(false);
+    expect(router.hasRoute("OldDocs")).toBe(false);
   });
 });

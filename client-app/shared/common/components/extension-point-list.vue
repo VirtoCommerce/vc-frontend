@@ -10,7 +10,7 @@
     >
       <!-- Forwarding an empty slot would tell every ExtensionPoint it has a fallback. -->
       <template v-if="$slots.default" #default="{ extensionProps }">
-        <slot v-bind="{ name: String(name), entry: entries[name], extensionProps }" />
+        <slot v-bind="{ name: String(name), entry: entryOf(name), extensionProps }" />
       </template>
     </ExtensionPoint>
   </template>
@@ -44,17 +44,20 @@ const props = defineProps<IProps<C>>();
 
 const { getEntries, passesCondition } = useExtensionRegistry();
 
-const entries = computed(() => getEntries(props.category, props.names) as Record<string, unknown>);
+// Not cached in a computed: getEntries returns the same readonly proxy after an in-place registration,
+// so a computed holding it never invalidates and a late entry would not be listed.
+const entries = () => getEntries(props.category, props.names) as Record<string, unknown>;
+const entryOf = (name: string) => entries()[name];
 
 // Plus pending declared slots, so a `block` region holds its place before registration.
 const listedNames = computed(() => {
   const pending = pendingSlotNames(props.category).filter((name) => !props.names || props.names.includes(name));
-  return [...new Set([...Object.keys(entries.value), ...pending])];
+  return [...new Set([...Object.keys(entries()), ...pending])];
 });
 
 function rendersEntry(name: string): boolean {
   const parameter = props.conditionParams as ConditionParamType<C>;
-  if (name in entries.value) {
+  if (name in entries()) {
     return passesCondition(props.category, name, parameter);
   }
   return reservationFor(props.category, name, parameter) !== undefined;

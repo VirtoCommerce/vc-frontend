@@ -11,7 +11,7 @@ const Layout = { template: "<div class='company-layout'><router-view /></div>" }
 const RealPage = { template: "<p class='real-page'>documents</p>" };
 const context = { setting: () => true, themeSetting: () => undefined, isAuthenticated: true, can: () => true };
 
-async function openDeepLink() {
+async function openDeepLink(extraRoutes: { path: string; parent: "Company"; name: string }[] = []) {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -22,7 +22,7 @@ async function openDeepLink() {
   setPluginStatus("p", "pending");
   const applied = applyContributions(
     "p",
-    { format: 1, routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments" }] },
+    { format: 1, routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments" }, ...extraRoutes] },
     context,
     router,
   );
@@ -69,5 +69,42 @@ describe("PluginRoutePlaceholder", () => {
     expect(wrapper.find(".not-found").exists()).toBe(true);
     expect(wrapper.find(".loader").exists()).toBe(false);
     expect(router.currentRoute.value.fullPath).toBe("/company/documents?tab=all");
+  });
+
+  it("follows the user to another pending route of the plugin and resolves that one when it settles", async () => {
+    const { router, wrapper, applied } = await openDeepLink([
+      { path: "customers", parent: "Company", name: "SalesRepCustomers" },
+    ]);
+    await router.push("/company/customers");
+    await flushPromises();
+
+    router.addRoute("Company", { path: "customers", name: "SalesRepCustomers", component: RealPage });
+    releaseContributions(applied, router, true);
+    setPluginStatus("p", "loaded");
+    await flushPromises();
+    await flushPromises();
+
+    expect(wrapper.find(".company-layout .real-page").exists()).toBe(true);
+    expect(wrapper.find(".loader").exists()).toBe(false);
+  });
+
+  it("shows a loader again on another plugin's pending route after this one ended on not-found", async () => {
+    const { router, wrapper, applied } = await openDeepLink();
+    setPluginStatus("q", "pending");
+    applyContributions(
+      "q",
+      { format: 1, routes: [{ path: "reports", parent: "Company", name: "Reports" }] },
+      context,
+      router,
+    );
+    releaseContributions(applied, router, false);
+    setPluginStatus("p", "failed");
+    await flushPromises();
+    expect(wrapper.find(".not-found").exists()).toBe(true);
+
+    await router.push("/company/reports");
+    await flushPromises();
+
+    expect(wrapper.find(".loader").exists()).toBe(true);
   });
 });

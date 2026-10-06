@@ -62,20 +62,39 @@ function removeLinks(links: ExtendedMenuLinkType[] | undefined, ids: Set<string>
     .map((link) => (link.children ? { ...link, children: removeLinks(link.children, ids) } : link));
 }
 
-/** Host-only. */
-export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[]): void {
+function hasLinkId(links: ExtendedMenuLinkType[] | undefined, id: string): boolean {
+  return links?.some((link) => link.id === id || hasLinkId(link.children, id)) ?? false;
+}
+
+function isLinkIdTaken(id: string): boolean {
+  const header = menuSchema.value?.header;
+  const sections = [header?.desktop, header?.mobile].flatMap((viewport) => Object.values(viewport ?? {}));
+  return sections.some((section) =>
+    hasLinkId(Array.isArray(section) ? section : (section as ExtendedMenuLinkType | undefined)?.children, id),
+  );
+}
+
+/** Host-only. Refuses an id the menu already has: withdrawing works by id. */
+export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[]): boolean {
+  const taken = ids.find(isLinkIdTaken);
+  if (taken !== undefined) {
+    Logger.warn(`[useNavigations] menu link "${taken}" is already in the menu; ignoring the declaration.`);
+    return false;
+  }
   mergeIntoMenuSchema(schema);
   ids.forEach((id) => declaredLinkIds.add(id));
+  return true;
 }
 
 /** Host-only. */
-export function declareAccountSection(section: AccountNavigationSectionType): void {
+export function declareAccountSection(section: AccountNavigationSectionType): boolean {
   if (registeredAccountSections.value.some((x) => x.id === section.id)) {
     Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring the declaration.`);
-    return;
+    return false;
   }
   declaredSectionIds.add(section.id);
   registeredAccountSections.value = [...registeredAccountSections.value, section];
+  return true;
 }
 
 /** Host-only: drops the declarations the plugin did not register itself. */

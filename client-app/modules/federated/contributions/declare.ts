@@ -5,6 +5,7 @@ import { evaluateResidual, isGloballyTrue, resolveGlobalTerms } from "./evaluate
 import { isPluginSettled } from "./status";
 import type { IConditionContextType, ResidualConditionType } from "./evaluate";
 import type {
+  IAccountMenuContributionType,
   IHeaderMenuContributionType,
   IMenuLinkContributionType,
   IPluginContributionsType,
@@ -33,7 +34,8 @@ const declaredSlots = shallowRef(new Map<string, IDeclaredSlotType>());
 export interface IAppliedContributionsType {
   plugin: string;
   placeholderRoutes: string[];
-  redirectRoutes: string[];
+  /** route name -> redirect target */
+  redirects: Record<string, string>;
   /** link id -> route name */
   links: Record<string, string>;
   /** section id -> its children's route names */
@@ -71,6 +73,20 @@ function toRouteRecord(route: IRouteContributionType, plugin: string): RouteReco
   };
 }
 
+/** Why the router cannot take this route as declared, or undefined if it can. */
+function unroutableReason(route: IRouteContributionType, router: Router): string | undefined {
+  if (route.parent !== undefined && !router.hasRoute(route.parent)) {
+    return `under "${route.parent}", which does not exist`;
+  }
+  if (router.hasRoute(route.name)) {
+    return "which is already taken";
+  }
+  if (route.redirect && !router.hasRoute(route.redirect)) {
+    return `which redirects to "${route.redirect}", not a route`;
+  }
+  return undefined;
+}
+
 function declareRoutes(
   contributions: IPluginContributionsType,
   context: IConditionContextType,
@@ -82,14 +98,9 @@ function declareRoutes(
     if (!isGloballyTrue(route.when, context)) {
       continue;
     }
-    if (route.parent !== undefined && !router.hasRoute(route.parent)) {
-      Logger.warn(
-        `[MF] "${plugin}" declares route "${route.name}" under "${route.parent}", which does not exist - skipped`,
-      );
-      continue;
-    }
-    if (router.hasRoute(route.name)) {
-      Logger.error(`[MF] "${plugin}" declares route "${route.name}", which is already taken - skipped`);
+    const reason = unroutableReason(route, router);
+    if (reason) {
+      Logger.warn(`[MF] "${plugin}" declares route "${route.name}", ${reason} - skipped`);
       continue;
     }
     const record = toRouteRecord(route, plugin);
@@ -99,10 +110,33 @@ function declareRoutes(
       router.addRoute(route.parent, record);
     }
     if (route.redirect) {
-      applied.redirectRoutes.push(route.name);
+      applied.redirects[route.name] = route.redirect;
     } else {
       applied.placeholderRoutes.push(route.name);
     }
+  }
+}
+
+function declareAccountEntry(
+  entry: IAccountMenuContributionType,
+  context: IConditionContextType,
+  linkable: (link: IMenuLinkContributionType) => boolean,
+  applied: IAppliedContributionsType,
+): void {
+  const declaredChildren = Array.isArray(entry.children) ? entry.children : [];
+  const children = isGloballyTrue(entry.when, context) ? declaredChildren.filter(linkable) : [];
+  if (children.length === 0) {
+    return;
+  }
+  const declared = declareAccountSection({
+    id: entry.id,
+    title: entry.title,
+    icon: entry.icon,
+    priority: entry.priority,
+    children: children.map(toLink),
+  });
+  if (declared) {
+    applied.sections[entry.id] = children.map((child) => child.routeName);
   }
 }
 
@@ -127,26 +161,11 @@ function declareMenu(
   };
 
   for (const entry of Array.isArray(contributions.menu) ? contributions.menu : []) {
-    if (entry.surface === "header") {
-      if (linkable(entry)) {
-        declareMenuLinks(headerSchema(entry), [entry.id]);
-        applied.links[entry.id] = entry.routeName;
-      }
-      continue;
+    if (entry.surface !== "header") {
+      declareAccountEntry(entry, context, linkable, applied);
+    } else if (linkable(entry) && declareMenuLinks(headerSchema(entry), [entry.id])) {
+      applied.links[entry.id] = entry.routeName;
     }
-    const declaredChildren = Array.isArray(entry.children) ? entry.children : [];
-    const children = isGloballyTrue(entry.when, context) ? declaredChildren.filter(linkable) : [];
-    if (children.length === 0) {
-      continue;
-    }
-    declareAccountSection({
-      id: entry.id,
-      title: entry.title,
-      icon: entry.icon,
-      priority: entry.priority,
-      children: children.map(toLink),
-    });
-    applied.sections[entry.id] = children.map((child) => child.routeName);
   }
 }
 
@@ -180,7 +199,7 @@ export function applyContributions(
   const applied: IAppliedContributionsType = {
     plugin,
     placeholderRoutes: [],
-    redirectRoutes: [],
+    redirects: {},
     links: {},
     sections: {},
   };
@@ -196,8 +215,8 @@ export function applyContributions(
 }
 
 /**
- * Drops unclaimed placeholders, slot declarations, and menu entries that now point nowhere (all of
- * them, redirects included, if the plugin failed). A section with one dead child is withdrawn whole.
+ * Drops unclaimed placeholders, slot declarations, and redirects and menu entries that now point
+ * nowhere (all of them if the plugin failed). A section with one dead child is withdrawn whole.
  */
 export function releaseContributions(applied: IAppliedContributionsType, router: Router, loaded: boolean): void {
   const metaOf = (name: string) => router.getRoutes().find((route) => route.name === name)?.meta;
@@ -206,8 +225,8 @@ export function releaseContributions(applied: IAppliedContributionsType, router:
       router.removeRoute(name);
     }
   }
-  for (const name of applied.redirectRoutes) {
-    if (!loaded && metaOf(name)?.[DECLARED_META_KEY] === applied.plugin) {
+  for (const [name, target] of Object.entries(applied.redirects)) {
+    if ((!loaded || !router.hasRoute(target)) && metaOf(name)?.[DECLARED_META_KEY] === applied.plugin) {
       router.removeRoute(name);
     }
   }
