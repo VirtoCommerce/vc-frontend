@@ -32,6 +32,8 @@ export default defineConfig((env) =>
           include: ["client-app/**/*.ts", "client-app/**/*.vue"],
         },
       },
+      // Specs flip the switch through settings_data.json; the constant only strips a switch-off bundle.
+      define: { __MF_HOST__: "true" },
       resolve: {
         alias: {
           "@": path.resolve(__dirname, "client-app"),

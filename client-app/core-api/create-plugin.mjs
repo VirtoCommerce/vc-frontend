@@ -423,7 +423,7 @@ console.log(`\nNext steps:
 Then point the host at it (--mode=development so the store resolves from APP_BACKEND_URL, not the hostname).
 The stock theme ships module_federation_enabled: false, which builds no MF host at all, so turn it on
 in the host's client-app/config/settings_data.json first (and don't commit that):
-  sed -i 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
+  perl -pi -e 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
   APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview
 
 @vc-frontend/core is pinned to the core-v${corePkg.version} release asset. If that release

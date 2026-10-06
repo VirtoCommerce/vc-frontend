@@ -33,6 +33,14 @@ export function federatedAlias(rootDir: string): Record<string, string> {
   return { [FACADE_PACKAGE]: path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
+/**
+ * `__MF_HOST__`: whether this build is an MF host. A constant, so a switch-off build drops the
+ * loader's dynamic import, and with it the loader and MF runtime chunk. Spread into vite `define`.
+ */
+export function federatedDefine(settings: Record<string, unknown> = themeSettings): Record<string, string> {
+  return { __MF_HOST__: JSON.stringify(isFederationSwitchOn(settings)) };
+}
+
 /** MF host plugin(s) — empty unless the theme sets `module_federation_enabled: true`. Spread into vite `plugins`. */
 export function federatedHostPlugin(settings: Record<string, unknown> = themeSettings): PluginOption[] {
   if (!isFederationSwitchOn(settings)) {

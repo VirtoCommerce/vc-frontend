@@ -1,6 +1,6 @@
 // @vitest-environment node
-import { describe, expect, it } from "vitest";
-import { federatedHostPlugin } from "./vite.federation.js";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { federatedDefine, federatedHostPlugin } from "./vite.federation.js";
 import type { Plugin, PluginOption, ResolvedConfig } from "vite";
 
 const FACADE = "@vc-frontend/core";
@@ -10,6 +10,10 @@ function flatPlugins(options: PluginOption[]): Plugin[] {
 }
 
 describe("federatedHostPlugin", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("returns no plugins with the theme config as shipped", () => {
     expect(federatedHostPlugin()).toEqual([]);
   });
@@ -22,7 +26,18 @@ describe("federatedHostPlugin", () => {
   );
 
   it("returns the MF host plugins when the theme sets module_federation_enabled to true", () => {
-    expect(flatPlugins(federatedHostPlugin({ module_federation_enabled: true })).length).toBeGreaterThan(0);
+    // federation() returns no plugins under a test runner unless told otherwise.
+    vi.stubEnv("MFE_VITE_NO_TEST_ENV_CHECK", "true");
+
+    const names = flatPlugins(federatedHostPlugin({ module_federation_enabled: true })).map(({ name }) => name);
+
+    expect(names).toContain("module-federation-vite");
+  });
+
+  it("defines __MF_HOST__ from the same switch", () => {
+    expect(federatedDefine()).toEqual({ __MF_HOST__: "false" });
+    expect(federatedDefine({ module_federation_enabled: true })).toEqual({ __MF_HOST__: "true" });
+    expect(federatedDefine({ module_federation_enabled: "true" })).toEqual({ __MF_HOST__: "false" });
   });
 
   it("moves the facade from optimizeDeps.include to optimizeDeps.exclude on serve", () => {

@@ -11,8 +11,8 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
 /**
  * App-runner entry for Module Federation. Kept free of static MF-runtime
  * imports: the loader (./index) is imported dynamically and only when the theme enables federation
- * (see ./enabled). A build with the switch off has no MF runtime at all, and the loader chunk it still
- * emits is never fetched.
+ * (see ./enabled). In a switch-off build `__MF_HOST__` is `false`, so that import, the loader and the
+ * MF runtime are not bundled at all.
  */
 
 /**
@@ -57,7 +57,7 @@ async function withDiscoveryBudget(
 }
 
 export async function startFederatedModules(options?: IStartOptions): Promise<void> {
-  if (!isFederationEnabled()) {
+  if (!__MF_HOST__ || !isFederationEnabled()) {
     return;
   }
   let timer: ReturnType<typeof setTimeout> | undefined;
