@@ -10,7 +10,7 @@ export type ConditionScalarType = string | number | boolean | null;
  * A serialised condition; never parsed or executed.
  *
  * - `setting` — a store module setting; `true`, or equal to `eq`.
- * - `themeSetting` — a `settings_data.json` key; truthy, or equal to `eq`.
+ * - `themeSetting` — a `settings_data.json` key; `true`, or equal to `eq`.
  * - `authenticated` — the user is signed in.
  * - `can` — the user holds that permission.
  * - `field` — a dot path into the slot's context; truthy, or equal to `eq`. Slots only.

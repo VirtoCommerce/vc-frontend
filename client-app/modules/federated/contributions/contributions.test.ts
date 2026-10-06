@@ -64,12 +64,16 @@ describe("resolveGlobalTerms", () => {
     expect(resolveGlobalTerms({ and: [field, { field: "b" }] }, ctx)).toEqual({ and: [field, { field: "b" }] });
   });
 
-  it("treats an unknown key as false and logs it once", () => {
-    const node = { future: "x" } as unknown as ConditionNodeType;
+  it("rejects an unknown key or a malformed node, also under `not`, rather than read it as false", () => {
+    const unknown = { future: "x" } as unknown as ConditionNodeType;
+    const malformed = { and: "x" } as unknown as ConditionNodeType;
 
-    expect(resolveGlobalTerms(node, context())).toBe(false);
-    expect(resolveGlobalTerms(node, context())).toBe(false);
-    expect(loggerWarnMock.mock.calls.filter(([message]) => String(message).includes("unknown key"))).toHaveLength(1);
+    expect(() => resolveGlobalTerms(unknown, context())).toThrow(/unknown condition key "future"/);
+    expect(() => resolveGlobalTerms({ not: unknown }, context())).toThrow(/unknown condition key "future"/);
+    expect(() => resolveGlobalTerms({ not: malformed }, context())).toThrow(/malformed condition/);
+    expect(() => resolveGlobalTerms({ not: null as unknown as ConditionNodeType }, context())).toThrow(
+      /malformed condition/,
+    );
   });
 });
 

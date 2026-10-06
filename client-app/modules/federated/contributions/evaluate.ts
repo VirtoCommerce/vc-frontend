@@ -27,9 +27,9 @@ function settingMatches(value: unknown, node: { eq?: unknown }): boolean {
   return "eq" in node ? value === node.eq : value === true;
 }
 
-function malformed(node: unknown): false {
-  warnOnce(`shape:${JSON.stringify(node)}`, `[MF] ignoring a malformed condition ${JSON.stringify(node)}`);
-  return false;
+/** Thrown, not read as false: under `not` a false turns into true, so an unreadable condition must cost its plugin. */
+function malformed(node: unknown): never {
+  throw new Error(`malformed condition ${JSON.stringify(node)}`);
 }
 
 function resolveLeaf(node: ConditionNodeType, context: IConditionContextType): ResidualConditionType | undefined {
@@ -77,7 +77,7 @@ function resolveJunction(
   return isAnd ? { and: rest } : { or: rest };
 }
 
-/** Decides every global term and leaves `field` terms for render time. An unknown node counts as false. */
+/** Decides every global term and leaves `field` terms for render time. Throws on an unknown or malformed node. */
 export function resolveGlobalTerms(node: ConditionNodeType, context: IConditionContextType): ResidualConditionType {
   if (node === null || typeof node !== "object") {
     return malformed(node);
@@ -96,11 +96,7 @@ export function resolveGlobalTerms(node: ConditionNodeType, context: IConditionC
   if ("or" in node) {
     return resolveJunction(node.or, false, context, node);
   }
-  warnOnce(
-    `key:${Object.keys(node).join(",")}`,
-    `[MF] ignoring a condition with an unknown key: ${JSON.stringify(node)}`,
-  );
-  return false;
+  throw new Error(`unknown condition key "${Object.keys(node).join('", "')}"`);
 }
 
 function readPath(context: unknown, path: string): unknown {

@@ -246,6 +246,18 @@ describe("declared contributions in the loader", () => {
     expect(router.hasRoute("SalesRepDocuments")).toBe(true);
   });
 
+  it("skips a plugin whose condition this host cannot read, instead of running it", async () => {
+    stubFetch();
+
+    const prepared = await prepareFederatedModules({
+      plugins: [plugin({ format: 1, when: { not: { future: "x" } } })],
+      conditionContext: context(true),
+    });
+
+    expect(prepared.result.skipped).toEqual(["sales-rep"]);
+    expect(usePluginsStatus().plugins.value[0]).toMatchObject({ reason: expect.stringContaining('"future"') });
+  });
+
   it("skips a plugin whose contributions are in a format this host does not read", async () => {
     stubFetch();
 

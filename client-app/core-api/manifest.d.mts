@@ -13,7 +13,7 @@ export declare const CONTRIBUTIONS_FORMAT: 1;
 export declare function settingEnabled(key: string): GlobalConditionType;
 /** A store module setting is `true`, or `.eq(value)`. */
 export declare function settingValue(key: string): ComparableConditionType<"global">;
-/** A `settings_data.json` key is truthy, or `.eq(value)`. */
+/** A `settings_data.json` key is `true`, or `.eq(value)`. */
 export declare function themeSetting(key: string): ComparableConditionType<"global">;
 export declare function authenticated(): GlobalConditionType;
 /** The user holds all of these permissions. */
