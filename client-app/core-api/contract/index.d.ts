@@ -3916,6 +3916,8 @@ interface IPluginContributionsType {
     format: 1;
     /** False: the host fetches nothing of the plugin. */
     when?: ConditionNodeType;
+    /** Boot waits for this plugin's `init()`; without it the plugin loads alongside the app. */
+    blocksBoot?: true;
     routes?: IRouteContributionType[];
     menu?: MenuContributionType[];
     slots?: ISlotContributionType[];
@@ -3958,6 +3960,8 @@ type SlotDeclarationType = {
 }[SlotIdType];
 interface IPluginManifestConfigType {
     when?: GlobalConditionType;
+    /** Make boot wait for `init()`, e.g. for something that must be in place before the first render. */
+    blocksBoot?: boolean;
     routes?: RouteDeclarationType[];
     menu?: MenuDeclarationType[];
     slots?: SlotDeclarationType[];

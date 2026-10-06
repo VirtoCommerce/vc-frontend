@@ -819,9 +819,9 @@ interface IPreparedRemoteType {
 export interface IPreparedFederationType {
   result: IFederatedLoadResult;
   versions: ReadonlyMap<string, string>;
-  /** Declared nothing; boot waits for them. */
+  /** Asked for it with `blocksBoot`; boot waits for their `init()`. */
   blocking: IPreparedRemoteType[];
-  /** Declared; boot does not wait for their code. */
+  /** Everything else; boot does not wait for their code. */
   deferred: IPreparedRemoteType[];
   manifestTimeoutMs: number;
   loadTimeoutMs: number;
@@ -919,13 +919,13 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
       skip(result, remote.name, declared.skipReason);
       continue;
     }
-    const { applied } = declared;
     setPluginStatus(remote.name, "pending");
     expirePendingAfter(remote.name, manifestTimeoutMs + 2 * loadTimeoutMs + 2_000);
-    if (applied) {
-      prepared.deferred.push({ remote, applied });
+    const entry = { remote, applied: declared.applied };
+    if (read.contributions?.blocksBoot === true) {
+      prepared.blocking.push(entry);
     } else {
-      prepared.blocking.push({ remote });
+      prepared.deferred.push(entry);
     }
   }
   return prepared;
@@ -996,7 +996,7 @@ async function runRemote(entry: IPreparedRemoteType, prepared: IPreparedFederati
 }
 
 export interface ILoadingFederationType {
-  /** Undeclared plugins settled: what boot waits for. */
+  /** The `blocksBoot` plugins settled: what boot waits for. */
   blocking: Promise<void>;
   /** Every plugin settled. Never rejects. */
   all: Promise<IFederatedLoadResult>;

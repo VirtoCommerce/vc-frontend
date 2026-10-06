@@ -128,6 +128,12 @@ describe("definePluginManifest", () => {
     expect(JSON.parse(JSON.stringify(contributions))).toEqual(contributions);
   });
 
+  it("emits `blocksBoot` only when it is true, and refuses anything but a boolean", () => {
+    expect(definePluginManifest({ blocksBoot: true })).toEqual({ format: 1, blocksBoot: true });
+    expect(definePluginManifest({ blocksBoot: false })).toEqual({ format: 1 });
+    expect(() => definePluginManifest({ blocksBoot: "yes" } as never)).toThrow(/`blocksBoot` must be a boolean/);
+  });
+
   it("emits only the format for an empty declaration", () => {
     expect(definePluginManifest({})).toEqual({ format: 1 });
   });

@@ -283,12 +283,12 @@ before a byte of plugin code is fetched.
 
 - **Phase A, always**: the plugin list, which carries each plugin's declaration. Placeholders, declared
   menu entries and reserved slots must exist before the router resolves the first URL.
-- **Phase B, only for plugins that declared nothing**: they register their routes in `init()`, so
-  boot waits for them exactly as it always did, bounded by `BOOT_BACKSTOP_MS` — which stays for
-  that reason alone.
-- **Never for a declared plugin's code.** Its placeholder renders a loader inside the parent's
-  layout and guards and becomes the plugin's page when it settles, or the host's 404 in place if it
-  failed. Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
+- **Phase B, only for plugins that set `blocksBoot`**: boot waits for their `init()`, bounded by
+  `BOOT_BACKSTOP_MS` — which stays for that reason alone.
+- **Never for any other plugin's code**, declared or not. A declared route's placeholder renders a
+  loader inside the parent's layout and guards and becomes the plugin's page when it settles, or the
+  host's 404 in place if it failed. An undeclared route resolves to the catch-all first and is
+  followed once it appears (below). Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
   of ~3.3s, and the page arrives at the same URL.
 
 After every plugin settled, a URL that landed on the catch-all is resolved again and followed if a
@@ -313,10 +313,9 @@ unusable from a loader that runs before the plugin installs).
 Three design points worth calling out:
 
 - **Awaited before `app.use(router)` only as far as it has to be** — see "What boot waits for".
-  A plugin that declared nothing registers its routes in `init()`, so for it boot still waits and
-  the budgets below are blank-screen time for the whole storefront. A plugin that declared its
-  contributions gets placeholders instead, and only a visitor opening its page waits — on a
-  loader, inside the page's layout.
+  Only a `blocksBoot` plugin makes the budgets below blank-screen time for the whole storefront.
+  Any other plugin loads alongside the app; one that declared its routes gets placeholders, so
+  only a visitor opening its page waits — on a loader, inside the page's layout.
 - **Started only after every host plugin has installed.** The route guard covers the whole
   load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
   remove-then-add would be refused. Outside preview mode nothing between costs boot time.

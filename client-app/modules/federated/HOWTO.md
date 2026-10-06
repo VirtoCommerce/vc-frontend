@@ -530,8 +530,10 @@ What the host does with it, before any of the plugin's code is fetched:
   A link whose route is neither a host route nor declared in `routes` is skipped.
 - **Slots** with `reserve` or `block` hold their box while the plugin is on the way, and reveal
   your component only once the plugin has settled — so it never paints before your locales merged.
-- **Boot does not wait for your code.** It still does for a plugin that declared nothing, exactly as
-  before — declaring is how a plugin opts out of the wait.
+- **Boot does not wait for your code**, whether you declare anything or not. Set `blocksBoot: true`
+  when something must be in place before the first render; boot then waits for your `init()`, up to
+  its budgets. A route you do not declare shows the host's 404 on a deep link until your `init()`
+  registers it, then the same URL resolves to it.
 
 `init()` still registers everything itself: a declaration tells the host what is coming, it does
 not replace the registration. Locally, an `APP_MODULES_FEDERATION_REMOTES` remote is read the same
@@ -581,6 +583,7 @@ reason in `usePluginsStatus()`, and whatever it had declared is withdrawn.
 | Entry      | Maps to                                                  | Notes                                                                                   |
 | ---------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `when`     | the whole plugin                                         | Global keys only. The cheapest gate there is: false ⇒ no manifest, no `remoteEntry.js`. |
+| `blocksBoot` | boot waits for your `init()`                           | Off by default. For what must exist before the first render; it costs every page its wait. |
 | `routes[]` | `router.addRoute(parent, …)`                             | `parent` is a host route name (`ROUTES.*.NAME`); absent = a root route, whose `path` must start with `/`. Each becomes a placeholder until your `init()` registers the real route under the same name. |
 | `menu[]`   | `surface: "header"` → `mergeMenuSchema`; `"account"` → `registerAccountSection` | `group` is a header-schema section (`main`, `purchasing`, `marketing`, `user`, `corporate`) — not a route name. An account section carries `children`, each with its own `when`. |
 | `slots[]`  | `useExtensionRegistry().register` / `registerContribution` | `at` is `"<category>/<name>"`. `policy`: `reserve` holds the box, `block` holds a region (payment), `none` is a data contribution into host markup. |

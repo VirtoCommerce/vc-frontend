@@ -20,7 +20,7 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
  * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery 2 +
  * manifest 2 + 2×load 3 = 10s — leaving 2s for the chunk fetch. Past it boot proceeds and the loader
  * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
- * Bounds undeclared plugins only.
+ * Bounds the plugins that set `blocksBoot` only; boot waits for no other plugin's code.
  * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
  */
 // Exported for the invariant test only (backstop > discovery + manifest + 2×load defaults).

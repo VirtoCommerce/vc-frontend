@@ -262,14 +262,14 @@ describe("startFederatedModules with declared plugins", () => {
     return prepare;
   }
 
-  it("does not wait for a declared plugin's code", async () => {
+  it("does not wait for the code of a plugin that did not ask for it", async () => {
     stubLoader(Promise.resolve(), new Promise(() => {}));
     const { startFederatedModules } = await loadBootstrap();
 
     await expect(startFederatedModules({ fetchPlugins: () => Promise.resolve([]) })).resolves.toBeUndefined();
   });
 
-  it("waits for the plugins that declared nothing, as before", async () => {
+  it("waits for the plugins that set blocksBoot", async () => {
     const blocking = deferred();
     stubLoader(blocking.promise, new Promise(() => {}));
     const { startFederatedModules } = await loadBootstrap();

@@ -296,6 +296,12 @@ export function definePluginManifest(config) {
   }
   const out = { format: CONTRIBUTIONS_FORMAT };
   withWhen(out, config.when, "when");
+  if (config.blocksBoot !== undefined && typeof config.blocksBoot !== "boolean") {
+    throw new ManifestError("blocksBoot", `\`blocksBoot\` must be a boolean, got ${JSON.stringify(config.blocksBoot)}`);
+  }
+  if (config.blocksBoot) {
+    out.blocksBoot = true;
+  }
 
   const routes = normalizeList(config.routes, "routes", normalizeRoute);
   if (routes) {

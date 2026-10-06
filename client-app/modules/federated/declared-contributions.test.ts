@@ -140,11 +140,22 @@ describe("declared contributions in the loader", () => {
     expect(router.resolve("/company/documents").matched.at(-1)?.components?.default).toBe(Page);
   });
 
-  it("still waits for a plugin that declared nothing", async () => {
+  it("does not make boot wait for a plugin that declared nothing", async () => {
     stubFetch();
-    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
 
     const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
+
+    expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+    expect(prepared.blocking).toEqual([]);
+  });
+
+  it("makes boot wait for a plugin that asks for it, whatever else it declares", async () => {
+    stubFetch();
+
+    const prepared = await prepareFederatedModules({
+      plugins: [plugin({ format: 1, blocksBoot: true })],
+      conditionContext: context(true),
+    });
 
     expect(prepared.blocking.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
     expect(prepared.deferred).toEqual([]);
@@ -171,16 +182,16 @@ describe("declared contributions in the loader", () => {
     });
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(prepared.blocking.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+    expect(prepared.deferred).toEqual([{ remote: expect.objectContaining({ name: "sales-rep" }), applied: undefined }]);
     expect(router.hasRoute("SalesRepDocuments")).toBe(false);
   });
 
   it.each([
-    [200, "deferred", "sales-rep"],
-    [404, "blocking", undefined],
+    [200, "sales-rep"],
+    [404, undefined],
   ] as const)(
     "reads an env remote's declaration from the plugin.json beside its manifest; a missing one declares nothing (HTTP %i)",
-    async (status, phase, placeholderOwner) => {
+    async (status, placeholderOwner) => {
       vi.stubEnv(
         "APP_MODULES_FEDERATION_REMOTES",
         JSON.stringify({ "sales-rep": "http://localhost:3001/mf-manifest.json" }),
@@ -198,7 +209,7 @@ describe("declared contributions in the loader", () => {
       const prepared = await prepareFederatedModules({ conditionContext: context(true) });
 
       expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(["http://localhost:3001/plugin.json"]);
-      expect(prepared[phase].map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+      expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
       expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBe(placeholderOwner);
     },
   );
