@@ -24,24 +24,11 @@ Rules are in [rules.ts](./rules.ts).
 | `viewItemList` | `product-list` appears | items are collected from its `product-card` descendants |
 | `viewItem` | `product-details` appears | the product is bound with `v-track-item` |
 
-`selectItem` and `viewItemList` need `data-list-id` on the `product-list` container. A card outside a list sends nothing, which keeps manually tracked lists from sending a second event.
-
-Lists that send these events from markup: product blocks on the product and cart pages (related, recommended, recently browsed, saved for later), product variations, and Page Builder / Builder.io blocks (products block, products carousel, favorite products).
-
-## What stays manual
-
-These lists keep `analytics()` calls on purpose:
-
-| List | Why |
-| --- | --- |
-| Category page | A barcode scan with a single hit redirects to the product and must not send `viewItemList`. This is decided after the search response, when the cards are already rendered. |
-| Search dropdown | The list parameters follow the typed phrase, while the products arrive later. Markup would pair old products with the new phrase. |
-| Cart, wishlists, saved for later page, shared list | The product link is rendered inside the ui-kit `VcLineItem`, so the `product-link` role cannot be placed on it without changing the kit. |
-| Compare page | Kept out of scope: its `viewItemList` dedupes by the shown set and configured prices, which the manual call already handles. |
+`selectItem` and `viewItemList` need `data-list-id` on the `product-list` container. A card outside a list sends nothing, so a list that calls `analytics()` itself simply has no container.
 
 ## Tracking a product block
 
-`ProductCard`, `ProductCardRelated`, `ProductCardRecommended`, `ProductCardRecentlyBrowsed` and `CartItemForLater` already carry the `product-card` / `product-link` roles and bind the product with `v-track-item`. A block only wraps them in a list container:
+`ProductCard`, `ProductCardRelated`, `ProductCardRecommended` and `ProductCardRecentlyBrowsed` already carry the `product-card` / `product-link` roles and bind the product with `v-track-item`. A block only wraps them in a list container:
 
 ```vue
 <div
@@ -117,4 +104,4 @@ app.use(domAnalyticsPlugin, { rules: [...rules, myRule] });
 - **click**: one capture-phase listener on `document`. Only a click on a link or a button counts. From it the engine walks up through `data-name` ancestors until a rule sends an event.
 - **appear**: a `MutationObserver` on `body`, plus a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` count as the same entity, so a refetched product does not resend `viewItem`.
 
-`appear` means "rendered in the DOM", not "scrolled into the viewport", which matches the moment the manual calls used to fire.
+`appear` means "rendered in the DOM", not "scrolled into the viewport": the event fires as soon as the list is rendered.

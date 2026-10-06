@@ -1,14 +1,14 @@
 <template>
-  <VcProductCard v-if="item.product" v-track-item="item.product" data-name="product-card" :background="false">
+  <VcProductCard v-if="item.product" :background="false">
     <VcProductImage :img-src="item.imageUrl" :alt="item.product.name" />
 
     <VcProductTitle
-      data-name="product-link"
       lines-number="2"
       fix-height
       :to="link"
       :target="browserTarget"
       :title="item.product.name"
+      @click="$emit('linkClick', $event)"
     >
       {{ item.product.name }}
     </VcProductTitle>
@@ -33,6 +33,7 @@ import type { SavedForLaterListFragment, SavedForLaterLineItemFragment } from "@
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
+  (event: "linkClick", globalEvent: MouseEvent): void;
   (event: "addToCart", lineItemId: string): void;
 }
 

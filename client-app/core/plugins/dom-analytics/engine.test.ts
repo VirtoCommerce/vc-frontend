@@ -172,7 +172,7 @@ describe("dom-analytics engine", () => {
   });
 
   it("sends appear again only when the bound entity changes on the same element", async () => {
-    const product = ref({ id: "1", code: "A" });
+    const product = ref({ id: "1", code: "A", price: { amount: 1 } });
     const wrapper = mount(
       defineComponent({
         directives: { trackItem: vTrackItem },
@@ -186,14 +186,15 @@ describe("dom-analytics engine", () => {
     ]);
     await flush();
 
-    product.value = { id: "1", code: "A" };
+    // A refetch returns new nested objects for the same product
+    product.value = { id: "1", code: "A", price: { amount: 1 } };
     await flush();
-    product.value = { id: "2", code: "B" };
+    product.value = { id: "2", code: "B", price: { amount: 2 } };
     await flush();
 
     expect(analyticsMock.mock.calls).toEqual([
-      ["viewItem", { id: "1", code: "A" }],
-      ["viewItem", { id: "2", code: "B" }],
+      ["viewItem", { id: "1", code: "A", price: { amount: 1 } }],
+      ["viewItem", { id: "2", code: "B", price: { amount: 2 } }],
     ]);
     wrapper.unmount();
   });
