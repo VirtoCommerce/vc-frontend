@@ -151,15 +151,14 @@ describe("definePluginManifest", () => {
     expect(() =>
       definePluginManifest({
         menu: [
-          { ...link, group: "corporate", viewport: "desktop" },
-          { ...link, group: "main", viewport: "mobile" },
-          { ...link, group: "purchasing" },
+          { ...link, group: "corporate" },
+          { ...link, group: "main" },
         ],
       }),
     ).not.toThrow();
     expect(() =>
-      definePluginManifest({ menu: [{ ...link, group: "main" }, { ...link, group: "main", viewport: "mobile" }] }),
-    ).toThrow(/menu: id "docs" is declared twice in mobile "main"/);
+      definePluginManifest({ menu: [{ ...link, group: "main" }, { ...link, group: "main" }] }),
+    ).toThrow(/menu: id "docs" is declared twice in group "main"/);
   });
 
   it("refuses a malformed declaration with the place it is in", () => {

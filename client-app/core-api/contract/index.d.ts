@@ -3887,8 +3887,6 @@ interface IMenuLinkContributionType {
 interface IHeaderMenuContributionType extends IMenuLinkContributionType {
     surface: "header";
     group: MenuGroupType;
-    /** Both when absent. */
-    viewport?: "desktop" | "mobile";
 }
 interface IAccountMenuContributionType {
     surface: "account";

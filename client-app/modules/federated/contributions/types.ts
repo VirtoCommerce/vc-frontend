@@ -47,8 +47,6 @@ export interface IMenuLinkContributionType {
 export interface IHeaderMenuContributionType extends IMenuLinkContributionType {
   surface: "header";
   group: MenuGroupType;
-  /** Both when absent. */
-  viewport?: "desktop" | "mobile";
 }
 
 export interface IAccountMenuContributionType {

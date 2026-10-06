@@ -54,8 +54,7 @@ function toLink(link: IMenuLinkContributionType): ExtendedMenuLinkType {
 function headerSchema(entry: IHeaderMenuContributionType): DeepPartial<MenuType> {
   const link = toLink(entry);
   const placed = entry.group === "main" ? [link] : { children: [link] };
-  const viewports = entry.viewport ? [entry.viewport] : (["desktop", "mobile"] as const);
-  return { header: Object.fromEntries(viewports.map((viewport) => [viewport, { [entry.group]: placed }])) };
+  return { header: { desktop: { [entry.group]: placed }, mobile: { [entry.group]: placed } } };
 }
 
 function toRouteRecord(route: IRouteContributionType, plugin: string): RouteRecordRaw {

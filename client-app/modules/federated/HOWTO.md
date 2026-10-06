@@ -526,7 +526,7 @@ What the host does with it, before any of the plugin's code is fetched:
 - **Menu entries** render before your chunk loads. Register the same `id` from `init()` and yours
   replaces the declared one; if the plugin fails, the declared ones are withdrawn. An `id` the menu
   already has — the host's or another plugin's — is refused, so give yours a plugin-specific one; your
-  own `id` may sit in several groups and viewports, as the host's do.
+  own `id` may sit in several groups, as the host's do. A header entry shows on desktop and mobile alike.
   A link whose route is neither a host route nor declared in `routes` is skipped.
 - **Slots** with `reserve` or `block` hold their box while the plugin is on the way, and reveal
   your component only once the plugin has settled — so it never paints before your locales merged.

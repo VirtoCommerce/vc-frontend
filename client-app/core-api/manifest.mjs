@@ -7,7 +7,6 @@ export { CONTRIBUTIONS_FORMAT };
 
 const SLOT_POLICIES = new Set(["reserve", "block", "none"]);
 const MENU_SURFACES = new Set(["header", "account"]);
-const HEADER_VIEWPORTS = new Set(["desktop", "mobile"]);
 const SLOT_ID = /^[A-Za-z]+\/.+$/;
 
 function readJsonFile(path) {
@@ -204,12 +203,6 @@ function normalizeMenu(entry, index) {
       group: requireString(entry.group, where, "`group`"),
       ...normalizeLink(entry, where),
     };
-    if (entry.viewport !== undefined) {
-      if (!HEADER_VIEWPORTS.has(entry.viewport)) {
-        throw new ManifestError(where, '`viewport` must be "desktop" or "mobile"');
-      }
-      out.viewport = entry.viewport;
-    }
     return out;
   }
   if (!Array.isArray(entry.children)) {
@@ -247,25 +240,16 @@ function normalizeSlot(slot, index) {
   return withWhen({ at, policy: slot.policy }, when, where, true);
 }
 
-/** One link id may sit in several groups and viewports, as in the host's own menu; not twice in one. */
-function menuPlaces(entry) {
-  if (entry.surface !== "header") {
-    return ["the account menu"];
-  }
-  const viewports = entry.viewport ? [entry.viewport] : [...HEADER_VIEWPORTS];
-  return viewports.map((viewport) => `${viewport} "${entry.group}"`);
-}
-
+/** One link id may sit in several groups, as in the host's own menu; not twice in one. */
 function rejectDuplicateMenuEntries(menu) {
   const seen = new Set();
   for (const entry of menu) {
-    for (const place of menuPlaces(entry)) {
-      const key = `${entry.id}\n${place}`;
-      if (seen.has(key)) {
-        throw new ManifestError("menu", `id ${JSON.stringify(entry.id)} is declared twice in ${place}`);
-      }
-      seen.add(key);
+    const place = entry.surface === "header" ? `group "${entry.group}"` : "the account menu";
+    const key = `${entry.id}\n${place}`;
+    if (seen.has(key)) {
+      throw new ManifestError("menu", `id ${JSON.stringify(entry.id)} is declared twice in ${place}`);
     }
+    seen.add(key);
   }
 }
 
