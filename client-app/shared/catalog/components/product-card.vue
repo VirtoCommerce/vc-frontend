@@ -1,5 +1,7 @@
 <template>
   <VcProductCard
+    v-track-item="product"
+    data-name="product-card"
     :view-mode="viewMode"
     :data-product-sku="product.code"
     border
@@ -32,6 +34,7 @@
     </template>
 
     <VcProductTitle
+      data-name="product-link"
       :title="product.name"
       :to="link"
       lines-number="2"
@@ -74,6 +77,7 @@
     <VcProductButton
       v-else-if="product.isConfigurable"
       data-test-id="product-card-configurations-button"
+      data-name="product-link"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
       :link-to="link"
@@ -97,6 +101,7 @@
 
       <VcProductButton
         class="product-card__variations-link-button"
+        data-name="product-link"
         :data-test-id="`variations-${product.code}-button`"
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"

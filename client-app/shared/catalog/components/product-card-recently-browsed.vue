@@ -1,14 +1,14 @@
 <template>
-  <VcProductCard :background="false">
+  <VcProductCard v-track-item="product" data-name="product-card" :background="false">
     <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
 
     <VcProductTitle
+      data-name="product-link"
       lines-number="2"
       fix-height
       :to="link"
       :title="product.name"
       :target="browserTarget"
-      @click="$emit('linkClick', $event)"
     >
       {{ product.name }}
     </VcProductTitle>
@@ -70,15 +70,9 @@ import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import type { Product } from "@/core/api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
-interface IEmits {
-  (event: "linkClick", globalEvent: MouseEvent): void;
-}
-
 interface IProps {
   product: Product;
 }
-
-defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 

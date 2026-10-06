@@ -1,5 +1,11 @@
 <template>
-  <div class="products-carousel" :class="background">
+  <div
+    class="products-carousel"
+    :class="background"
+    data-name="product-list"
+    data-list-id="products_carousel"
+    :data-list-name="title"
+  >
     <div class="products-carousel__wrapper">
       <VcTypography v-if="title" tag="h2" variant="h1" class="products-carousel__title">
         {{ title }}

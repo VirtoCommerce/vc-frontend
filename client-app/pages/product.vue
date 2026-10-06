@@ -2,6 +2,8 @@
   <template v-if="product && productTemplate">
     <VcContainer
       ref="productComponentAnchor"
+      v-track-item="product"
+      data-name="product-details"
       class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
     >
       <FiltersPopupSidebar
@@ -153,7 +155,7 @@ import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "v
 import { useRouter, useRoute } from "vue-router";
 import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
-import { useBreadcrumbs, useAnalytics, usePageTitle, useSeoKeywords } from "@/core/composables";
+import { useBreadcrumbs, usePageTitle, useSeoKeywords } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -271,7 +273,6 @@ const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 const { xPickupEnabled } = useXPickup();
 
-const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
 const router = useRouter();
@@ -511,7 +512,7 @@ watch(
 );
 
 /**
- * Send Google Analytics event and historical event for product.
+ * Send historical event for product.
  */
 
 const fetchedProductId = computed(() => product.value?.id);
@@ -520,8 +521,6 @@ watch(
   fetchedProductId,
   () => {
     if (fetchedProductId.value && product.value) {
-      analytics("viewItem", product.value);
-
       void pushHistoricalEvent({
         eventType: "click",
         productId: product.value.id,

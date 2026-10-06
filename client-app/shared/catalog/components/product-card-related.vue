@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard :background="false">
+  <VcProductCard v-track-item="product" data-name="product-card" :background="false">
     <template #media>
       <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name" />
 
@@ -11,12 +11,12 @@
     </template>
 
     <VcProductTitle
+      data-name="product-link"
       lines-number="2"
       fix-height
       :to="link"
       :title="product.name"
       :target="browserTarget"
-      @click="$emit('linkClick', $event)"
     >
       {{ product.name }}
     </VcProductTitle>
@@ -59,15 +59,9 @@ import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
-interface IEmits {
-  (event: "linkClick", globalEvent: MouseEvent): void;
-}
-
 interface IProps {
   product: Product;
 }
-
-defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
