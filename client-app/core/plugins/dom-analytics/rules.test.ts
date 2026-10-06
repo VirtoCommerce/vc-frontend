@@ -1,6 +1,6 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, nextTick } from "vue";
+import { defineComponent } from "vue";
 import { startEngine } from "./engine";
 import { vTrackItem } from "./registry";
 import { rules } from "./rules";
@@ -19,11 +19,6 @@ const LIST_PROPERTIES = {
   related_id: "P1",
   related_type: "product",
 };
-
-async function flush(): Promise<void> {
-  await nextTick();
-  await Promise.resolve();
-}
 
 describe("dom-analytics rules", () => {
   let stop: (() => void) | undefined;
@@ -58,7 +53,7 @@ describe("dom-analytics rules", () => {
       </div>
     </div>`;
     stop = startEngine(rules);
-    await flush();
+    await flushPromises();
 
     document.querySelector("a")?.click();
 
@@ -72,7 +67,7 @@ describe("dom-analytics rules", () => {
     document.body.innerHTML = `
       <div data-name="product-card" data-product-sku="ABC"><a data-name="product-link">Laptop</a></div>`;
     stop = startEngine(rules);
-    await flush();
+    await flushPromises();
 
     document.querySelector("a")?.click();
 
@@ -90,7 +85,7 @@ describe("dom-analytics rules", () => {
       { attachTo: document.body },
     );
     stop = startEngine(rules);
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItem", product);
     wrapper.unmount();

@@ -1,6 +1,6 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, nextTick, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import { startEngine } from "./engine";
 import { vTrackItem } from "./registry";
 import type { RuleType } from "./types";
@@ -51,11 +51,6 @@ const ProductList = defineComponent({
     </div>
   `,
 });
-
-async function flush(): Promise<void> {
-  await nextTick();
-  await Promise.resolve();
-}
 
 describe("dom-analytics engine", () => {
   let stop: (() => void) | undefined;
@@ -153,7 +148,7 @@ describe("dom-analytics engine", () => {
       { attachTo: document.body },
     );
     stop = startEngine([VIEW_ITEM_LIST]);
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItemList", [a], {
       item_list_id: "related",
@@ -162,18 +157,28 @@ describe("dom-analytics engine", () => {
 
     // An unrelated DOM change rescans the list: the same products and list params must not resend
     document.body.append(document.createElement("i"));
-    await flush();
+    await flushPromises();
     expect(analyticsMock).toHaveBeenCalledTimes(1);
 
     products.value = [a, b];
-    await flush();
+    await flushPromises();
     expect(analyticsMock).toHaveBeenCalledTimes(2);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, b], expect.any(Object));
 
     products.value = [a, c];
-    await flush();
+    await flushPromises();
     expect(analyticsMock).toHaveBeenCalledTimes(3);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], expect.any(Object));
+
+    // Same products, new list params: the next rescan must resend
+    document.querySelector<HTMLElement>("[data-name='product-list']")?.setAttribute("data-list-id", "similar");
+    document.body.append(document.createElement("i"));
+    await flushPromises();
+    expect(analyticsMock).toHaveBeenCalledTimes(4);
+    expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], {
+      item_list_id: "similar",
+      item_list_name: "Related",
+    });
     wrapper.unmount();
   });
 
@@ -191,13 +196,13 @@ describe("dom-analytics engine", () => {
     stop = startEngine([
       { event: "viewItem", trigger: "appear", target: "product-details", args: [{ source: "item" }] },
     ]);
-    await flush();
+    await flushPromises();
 
     // A refetch returns new nested objects for the same product
     product.value = { id: "1", code: "A", price: { amount: 1 } };
-    await flush();
+    await flushPromises();
     product.value = { id: "2", code: "B", price: { amount: 2 } };
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock.mock.calls).toEqual([
       ["viewItem", { id: "1", code: "A", price: { amount: 1 } }],
@@ -295,7 +300,7 @@ describe("dom-analytics engine", () => {
         ],
       },
     ]);
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItemList", [{ code: "A" }]);
   });
@@ -303,7 +308,7 @@ describe("dom-analytics engine", () => {
   it("does not send viewItemList for a list without cards", async () => {
     document.body.innerHTML = `<div data-name="product-list" data-list-id="related"></div>`;
     stop = startEngine([VIEW_ITEM_LIST]);
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock).not.toHaveBeenCalled();
   });
@@ -312,7 +317,7 @@ describe("dom-analytics engine", () => {
     startEngine([{ event: "search", trigger: "appear", target: "promo", args: [{ source: "attr", attr: "term" }] }])();
 
     document.body.innerHTML = `<div data-name="promo" data-term="sale"></div>`;
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock).not.toHaveBeenCalled();
   });
@@ -329,7 +334,7 @@ describe("dom-analytics engine", () => {
     ])();
 
     document.querySelector("a")?.click();
-    await flush();
+    await flushPromises();
 
     expect(analyticsMock).not.toHaveBeenCalled();
   });
