@@ -5,7 +5,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   and,
   authenticated,
-  CONTRIBUTIONS_FILE_NAME,
   definePluginManifest,
   not,
   or,
@@ -180,8 +179,8 @@ describe("pluginContributions", () => {
     return { plugin, context };
   }
 
-  it("emits contributions.json when plugin.json lists it", () => {
-    const { plugin, context } = withPluginJson({ id: "p", contentFiles: [CONTRIBUTIONS_FILE_NAME] });
+  it("emits contributions.json", () => {
+    const { plugin, context } = withPluginJson({ id: "p" });
 
     plugin.buildStart.call(context);
     plugin.generateBundle.call(context);
@@ -194,24 +193,18 @@ describe("pluginContributions", () => {
   });
 
   it("writes the declaration into the built plugin.json, next to what the plugin declared there", () => {
-    const { plugin } = withPluginJson({ id: "p", contentFiles: [CONTRIBUTIONS_FILE_NAME] });
+    const { plugin } = withPluginJson({ id: "p", contentFiles: ["styles.css"] });
     // What Vite leaves in outDir after copying public/.
     mkdirSync(join(dir!, "dist"));
-    writeFileSync(join(dir!, "dist", "plugin.json"), JSON.stringify({ id: "p", contentFiles: [CONTRIBUTIONS_FILE_NAME] }));
+    writeFileSync(join(dir!, "dist", "plugin.json"), JSON.stringify({ id: "p", contentFiles: ["styles.css"] }));
 
     plugin.closeBundle();
 
     expect(JSON.parse(readFileSync(join(dir!, "dist", "plugin.json"), "utf8"))).toEqual({
       id: "p",
-      contentFiles: [CONTRIBUTIONS_FILE_NAME],
+      contentFiles: ["styles.css"],
       contributions: { format: 1, when: { setting: "X" } },
     });
-  });
-
-  it("fails the build when plugin.json does not list it, since the host would never see it", () => {
-    const { plugin, context } = withPluginJson({ id: "p", contentFiles: ["styles.css"] });
-
-    expect(() => plugin.buildStart.call(context)).toThrow(/must list "contributions.json" in contentFiles/);
   });
 
   it("fails the build when there is no plugin.json at all", () => {

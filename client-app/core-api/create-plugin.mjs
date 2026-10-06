@@ -294,7 +294,7 @@ import contributions from "./plugin.config";
 export default defineConfig({
   plugins: [
     vue(),
-    // Emits plugin.config.ts into plugin.json and contributions.json.
+    // Writes plugin.config.ts into plugin.json, and into contributions.json for local development.
     pluginContributions(contributions),
     // Wiring conventions (expose key, shared singletons, manifest metadata) come from
     // the host - client-app/core-api/federation.mjs in the host checkout owns them.
@@ -464,8 +464,6 @@ symlinks, so the facade's types resolve their own imports from the host's node_m
 const pluginJson = {
   id: pluginName,
   remote: { name: pluginName, exposed: "./plugin" },
-  // Fallback for platforms older than 3.1076, which do not serve `contributions` inline.
-  contentFiles: ["contributions.json"],
 };
 
 const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";

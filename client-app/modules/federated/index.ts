@@ -53,9 +53,9 @@ interface IRemoteDescriptor {
   allowCrossOrigin?: boolean;
   /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
   version?: string;
-  /** `optional`: an env remote's sibling file may not exist; a listed platform file must be served. */
-  contributions?: { url: string; optional: boolean };
-  /** Served inline by `store.plugins` (platform 3.1076+); when present the file is not fetched. */
+  /** Env remotes only: the optional `contributions.json` beside the manifest. */
+  contributionsUrl?: string;
+  /** Platform remotes only: served inline by `store.plugins`. */
   inlineContributions?: string;
 }
 
@@ -72,7 +72,7 @@ export interface IPlatformPlugin {
   entry?: { type?: string | null; path?: string | null; hash?: string | null } | null;
   contentFiles?: readonly ({ type?: string | null; path?: string | null; hash?: string | null } | null)[] | null;
   remote?: { name?: string | null; exposed?: string | null } | null;
-  /** JSON text; absent before platform 3.1076. */
+  /** JSON text. */
   contributions?: string | null;
 }
 
@@ -256,7 +256,7 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
       exposed: SCAFFOLD_EXPOSE_KEY,
       styles: [],
       allowCrossOrigin: true,
-      contributions: { url: siblingUrl(value, CONTRIBUTIONS_FILE_NAME), optional: true },
+      contributionsUrl: siblingUrl(value, CONTRIBUTIONS_FILE_NAME),
     });
   }
   return resolved;
@@ -308,24 +308,6 @@ function toManifestUrl(entryUrl: string): string {
   return url.toString();
 }
 
-const isContributionsFile = (path: string) => path.split(/[\\/]/).pop()?.split("?")[0] === CONTRIBUTIONS_FILE_NAME;
-
-function findContributions(plugin: IPlatformPlugin): IRemoteDescriptor["contributions"] {
-  for (const file of Array.isArray(plugin.contentFiles) ? plugin.contentFiles : []) {
-    const filePath = asString(file?.path);
-    if (!filePath || !isContributionsFile(filePath)) {
-      continue;
-    }
-    const url = toAbsoluteUrl(filePath);
-    if (!url || !isSameOrigin(url)) {
-      Logger.error(`[MF] Plugin "${String(plugin?.id)}": ignoring "${filePath}", which is not same-origin`);
-      return undefined;
-    }
-    return { url: withCacheBuster(url, file?.hash), optional: false };
-  }
-  return undefined;
-}
-
 /**
  * The platform sets no Cache-Control on these files, so `?v={hash}` is the only freshness signal.
  * A hash that is present but unreadable therefore costs more than it looks like it does.
@@ -369,9 +351,6 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
     const filePath = asString(file?.path);
     if (!filePath) {
       Logger.error(`[MF] Plugin "${String(plugin?.id)}": ignoring a content file with no usable path`);
-      continue;
-    }
-    if (isContributionsFile(filePath)) {
       continue;
     }
     const kind = styleKindOf(filePath, file?.type);
@@ -535,7 +514,6 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       permission: asString(plugin?.permission),
       styles: collectStyles(plugin),
       version: asString(plugin?.version),
-      contributions: findContributions(plugin),
       inlineContributions: asString(plugin?.contributions),
     });
   }
@@ -793,28 +771,22 @@ function readInlineContributions(json: string): ContributionsReadType {
   return toContributions(body, (reason) => ({ ok: false, reason: `its inline contributions are unusable: ${reason}` }));
 }
 
-/**
- * A platform plugin that lists the file but does not serve a readable one is skipped: its `when`
- * is unknown. An env remote's file is optional.
- */
+/** An env remote's file is optional: a missing one declares nothing. */
 async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): Promise<ContributionsReadType> {
   if (remote.inlineContributions !== undefined) {
     return readInlineContributions(remote.inlineContributions);
   }
-  const declared = remote.contributions;
-  if (!declared) {
+  const url = remote.contributionsUrl;
+  if (!url) {
     return { ok: true };
   }
   const readOptional = (reason: string): ContributionsReadType => {
-    if (declared.optional) {
-      Logger.info(`[MF] "${remote.name}": no declared contributions (${reason})`);
-      return { ok: true };
-    }
-    return { ok: false, reason: `its contributions could not be read: ${reason}` };
+    Logger.info(`[MF] "${remote.name}": no declared contributions (${reason})`);
+    return { ok: true };
   };
   try {
     const read = async () => {
-      const response = await fetch(declared.url, {
+      const response = await fetch(url, {
         headers: { accept: "application/json" },
         signal: AbortSignal.timeout(timeoutMs),
       });

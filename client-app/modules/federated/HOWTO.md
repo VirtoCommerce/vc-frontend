@@ -511,17 +511,14 @@ How the ExtensionPoint system works, the available categories, and payload shape
 
 `plugin.config.ts` (scaffolded) tells the storefront what the plugin contributes **before any of
 its code runs**: its routes, menu entries, the extension points it fills, and a condition on each.
-The build puts it in two places. Inline, as `contributions` in the built `plugin.json`: a platform
-≥ 3.1076 with xAPI ≥ 3.1025 serves it in `store.plugins`, so the host has it with the plugin list and
-fetches nothing for it. And as `dist/contributions.json`, which `public/plugin.json` lists in
-`contentFiles`, for an older platform that drops the key — the host then fetches that one file,
-cache-busted by the platform's content hash.
+The build writes it as `contributions` into the built `plugin.json`, which the platform serves in
+`store.plugins`, so the host has it with the plugin list and fetches nothing for it. It also writes
+`dist/contributions.json` for local development (see the end of this section).
 
 What the host does with it, before any of the plugin's code is fetched:
 
 - **Plugin-level `when` false** ⇒ the plugin is skipped: no manifest, no `remoteEntry.js`, no
-  chunks. On a platform that serves the declaration inline that is zero requests; on an older one,
-  the one small `contributions.json`.
+  chunks — zero requests.
 - **Routes** get a placeholder under their `parent`, so a deep link resolves on first paint inside
   the parent's layout and guards and shows a loader. When the plugin settles the same URL resolves
   again — to the route your `init()` registered under that name, or to the host's 404 if it never

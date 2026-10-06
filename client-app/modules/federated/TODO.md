@@ -196,9 +196,8 @@ Definition and rationale: *Pilot* section of the discovery spec.
   - [ ] **Zero requests for a switched-off plugin, and none for any declaration** — needs the two
         backend changes to ship: vc-platform (`plugin.json` `contributions` →
         `PluginDescriptor.Contributions`, covered by the manifest hash) and vc-module-x-api
-        (`StorePlugin.contributions`). The host already prefers the inline declaration and falls back
-        to `contributions.json` in `contentFiles` without them. Verified end to end on a local
-        platform built from both branches.
+        (`StorePlugin.contributions`). The host reads only the inline declaration, so it needs both.
+        Verified end to end on a local platform built from both branches.
   - [ ] **The sales-rep plugin declares nothing yet** — its `plugin.config.ts` in
         vc-module-sales-rep#13, against facade `0.1.3`. Until then it keeps blocking boot.
   - [ ] **Reserved-box sizes** exist for `productCard/card-button` (measured: 0.0082 of CLS from

@@ -297,8 +297,8 @@ export function definePluginManifest(config) {
 }
 
 /**
- * Writes the declaration into the built `plugin.json` (served inline by platform 3.1076+) and to
- * `contributions.json`, the `contentFiles` fallback for older platforms.
+ * Writes the declaration into the built `plugin.json`, which the platform serves inline, and to
+ * `contributions.json`, which the host reads beside the manifest of an env-configured remote.
  */
 export function pluginContributions(contributions) {
   let publicDir;
@@ -311,15 +311,8 @@ export function pluginContributions(contributions) {
       outDir = resolve(config.root, config.build.outDir);
     },
     buildStart() {
-      const pluginJson = publicDir ? readJsonFile(resolve(publicDir, "plugin.json")) : undefined;
-      if (!pluginJson) {
-        this.error(`${CONTRIBUTIONS_FILE_NAME} is only read through public/plugin.json, which is missing`);
-      }
-      const { contentFiles } = pluginJson;
-      if (!Array.isArray(contentFiles) || !contentFiles.includes(CONTRIBUTIONS_FILE_NAME)) {
-        this.error(
-          `public/plugin.json must list "${CONTRIBUTIONS_FILE_NAME}" in contentFiles, or the host never sees it`,
-        );
+      if (!publicDir || !readJsonFile(resolve(publicDir, "plugin.json"))) {
+        this.error("the platform serves the declaration from public/plugin.json, which is missing");
       }
     },
     generateBundle() {

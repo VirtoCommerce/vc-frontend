@@ -26,13 +26,14 @@ vi.mock("@/core/utilities", async (importOriginal) => ({
 const BASE = "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend";
 const Page = { template: "<div />" };
 
-function plugin(contentFiles: IPlatformPlugin["contentFiles"] = [{ path: `${BASE}/contributions.json`, hash: "C1" }]) {
+function plugin(contributions?: unknown): IPlatformPlugin {
   return {
     id: "VirtoCommerce.SalesRep",
     entry: { type: "script", path: `${BASE}/remoteEntry.js`, hash: "E1" },
-    contentFiles,
+    contentFiles: [],
     remote: { name: "sales-rep", exposed: "./plugin" },
-  } satisfies IPlatformPlugin;
+    contributions: contributions === undefined ? undefined : JSON.stringify(contributions),
+  };
 }
 
 const DECLARED = {
@@ -41,17 +42,15 @@ const DECLARED = {
   routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments" }],
 };
 
-function stubFetch(contributions: unknown, init: { contributionsStatus?: number } = {}) {
-  const fetchMock = vi.fn((requested: string) => {
-    const isContributions = requested.includes("contributions.json");
-    const status = isContributions ? (init.contributionsStatus ?? 200) : 200;
-    return Promise.resolve({
-      ok: status < 400,
-      status,
+function stubFetch() {
+  const fetchMock = vi.fn((requested: string) =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
       url: requested,
-      json: () => Promise.resolve(isContributions ? contributions : { metaData: { requiredHostVersion: "^1.0.0" } }),
-    });
-  });
+      json: () => Promise.resolve({ metaData: { requiredHostVersion: "^1.0.0" } }),
+    }),
+  );
   vi.stubGlobal("fetch", fetchMock);
   return fetchMock;
 }
@@ -81,17 +80,16 @@ describe("declared contributions in the loader", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it("fetches nothing of a plugin whose declared `when` is false, and reports why", async () => {
-    const fetchMock = stubFetch(DECLARED);
+    const fetchMock = stubFetch();
 
-    const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(false) });
+    const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(false) });
     await loadPreparedModules(prepared).all;
 
-    expect(fetchMock.mock.calls.map(([url]) => String(url))).toEqual([
-      `${globalThis.location.origin}${BASE}/contributions.json?v=C1`,
-    ]);
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(loadRemoteMock).not.toHaveBeenCalled();
     expect(router.hasRoute("SalesRepDocuments")).toBe(false);
     expect(prepared.result.skipped).toEqual(["sales-rep"]);
@@ -100,20 +98,21 @@ describe("declared contributions in the loader", () => {
     ]);
   });
 
-  it("asks nothing, not even the contributions, of a plugin the user may not run", async () => {
-    const fetchMock = stubFetch(DECLARED);
+  it("does not declare anything of a plugin the user may not run", async () => {
+    stubFetch();
 
-    await prepareFederatedModules({
-      plugins: [{ ...plugin(), permission: "sales-rep:access" }],
+    const prepared = await prepareFederatedModules({
+      plugins: [{ ...plugin(DECLARED), permission: "sales-rep:access" }],
       hasPermission: () => false,
       conditionContext: context(true),
     });
 
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(prepared.result.skipped).toEqual(["sales-rep"]);
+    expect(router.hasRoute("SalesRepDocuments")).toBe(false);
   });
 
   it("declares a plugin's routes before its code loads and does not make boot wait for it", async () => {
-    stubFetch(DECLARED);
+    stubFetch();
     let finishInit!: () => void;
     loadRemoteMock.mockResolvedValue({
       init: () =>
@@ -122,7 +121,7 @@ describe("declared contributions in the loader", () => {
         }),
     });
 
-    const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
+    const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(true) });
 
     expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
     expect(prepared.blocking).toEqual([]);
@@ -142,20 +141,20 @@ describe("declared contributions in the loader", () => {
   });
 
   it("still waits for a plugin that declared nothing", async () => {
-    stubFetch(undefined);
+    stubFetch();
     loadRemoteMock.mockResolvedValue({ init: vi.fn() });
 
-    const prepared = await prepareFederatedModules({ plugins: [plugin([])], conditionContext: context(true) });
+    const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
 
     expect(prepared.blocking.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
     expect(prepared.deferred).toEqual([]);
   });
 
   it("withdraws a failed plugin's placeholder so its deep link ends on the host's not-found page", async () => {
-    stubFetch(DECLARED);
+    stubFetch();
     loadRemoteMock.mockRejectedValue(new Error("chunk 404"));
 
-    const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
+    const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(true) });
     expect(router.hasRoute("SalesRepDocuments")).toBe(true);
     await loadPreparedModules(prepared).all;
 
@@ -163,21 +162,44 @@ describe("declared contributions in the loader", () => {
     expect(usePluginsStatus().stateOf("sales-rep")).toBe("failed");
   });
 
-  it("reads the declaration the platform served inline, and fetches no file for it", async () => {
-    const fetchMock = stubFetch(DECLARED);
+  it("reads no contributions.json a platform plugin lists in contentFiles: only the inline declaration counts", async () => {
+    const fetchMock = stubFetch();
 
     const prepared = await prepareFederatedModules({
-      plugins: [{ ...plugin(), contributions: JSON.stringify(DECLARED) }],
+      plugins: [{ ...plugin(), contentFiles: [{ path: `${BASE}/contributions.json`, hash: "C1" }] }],
       conditionContext: context(true),
     });
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
-    expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBe("sales-rep");
+    expect(prepared.blocking.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+    expect(router.hasRoute("SalesRepDocuments")).toBe(false);
   });
 
+  it.each([
+    [200, "deferred", "sales-rep"],
+    [404, "blocking", undefined],
+  ] as const)(
+    "reads an env remote's contributions.json beside its manifest, and a missing one declares nothing (HTTP %i)",
+    async (status, phase, placeholderOwner) => {
+      vi.stubEnv(
+        "APP_MODULES_FEDERATION_REMOTES",
+        JSON.stringify({ "sales-rep": "http://localhost:3001/mf-manifest.json" }),
+      );
+      const fetchMock = vi.fn((requested: string) =>
+        Promise.resolve({ ok: status < 400, status, url: requested, json: () => Promise.resolve(DECLARED) }),
+      );
+      vi.stubGlobal("fetch", fetchMock);
+
+      const prepared = await prepareFederatedModules({ conditionContext: context(true) });
+
+      expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(["http://localhost:3001/contributions.json"]);
+      expect(prepared[phase].map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+      expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBe(placeholderOwner);
+    },
+  );
+
   it("skips a plugin whose inline declaration is not valid JSON, rather than guess at it", async () => {
-    const fetchMock = stubFetch(DECLARED);
+    const fetchMock = stubFetch();
 
     const prepared = await prepareFederatedModules({
       plugins: [{ ...plugin(), contributions: "{ not json" }],
@@ -195,9 +217,9 @@ describe("declared contributions in the loader", () => {
     ["the router rejects", { path: "oops", name: "Oops" }],
     ["is malformed", null],
   ])("skips only the plugin whose declaration %s, leaving none of its entries behind", async (_, badRoute) => {
-    const fetchMock = stubFetch(DECLARED);
+    const fetchMock = stubFetch();
     const broken = {
-      ...plugin([]),
+      ...plugin(),
       id: "Broken",
       remote: { name: "broken", exposed: "./plugin" },
       contributions: JSON.stringify({
@@ -211,7 +233,7 @@ describe("declared contributions in the loader", () => {
     };
 
     const prepared = await prepareFederatedModules({
-      plugins: [broken, { ...plugin(), contributions: JSON.stringify(DECLARED) }],
+      plugins: [broken, plugin(DECLARED)],
       conditionContext: context(true),
     });
 
@@ -224,19 +246,10 @@ describe("declared contributions in the loader", () => {
     expect(router.hasRoute("SalesRepDocuments")).toBe(true);
   });
 
-  it("skips a plugin that lists contributions but does not serve them", async () => {
-    stubFetch(DECLARED, { contributionsStatus: 404 });
-
-    const prepared = await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
-
-    expect(prepared.result.skipped).toEqual(["sales-rep"]);
-    expect(loadRemoteMock).not.toHaveBeenCalled();
-  });
-
   it("skips a plugin whose contributions are in a format this host does not read", async () => {
-    stubFetch({ ...DECLARED, format: 2 });
+    stubFetch();
 
-    await prepareFederatedModules({ plugins: [plugin()], conditionContext: context(true) });
+    await prepareFederatedModules({ plugins: [plugin({ ...DECLARED, format: 2 })], conditionContext: context(true) });
 
     expect(usePluginsStatus().plugins.value[0]).toMatchObject({
       state: "skipped",

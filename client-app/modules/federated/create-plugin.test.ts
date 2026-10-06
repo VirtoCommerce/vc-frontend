@@ -75,12 +75,10 @@ describe("create-plugin scaffolder", () => {
     const descriptor = JSON.parse(readFileSync(join(dir, "public", "plugin.json"), "utf8")) as {
       id: string;
       remote: { name: string; exposed: string };
-      contentFiles: string[];
     };
     expect(descriptor).toEqual({
       id: "my-plugin",
       remote: { name: "my-plugin", exposed: "./plugin" },
-      contentFiles: ["contributions.json"],
     });
 
     const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {

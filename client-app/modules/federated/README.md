@@ -248,9 +248,10 @@ prepareFederatedModules()          index.ts — phase A, no plugin code runs
   1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
                                    before any fetch — the platform serves one list to everyone.
                                    A UX/latency filter, not a boundary (see Security model)
-  1b. contributions.json           listed in the descriptor's contentFiles (or beside the manifest
-                                   for an env remote, optional); 2s budget, same origin rule.
-                                   Listed but unreadable, or an unknown format ⇒ SKIPPED
+  1b. declaration                  inline in the descriptor's `contributions`, or for an env remote
+                                   the optional contributions.json beside its manifest (2s budget,
+                                   same origin rule). Unparseable or an unknown format ⇒ SKIPPED;
+                                   an entry the router rejects ⇒ SKIPPED and withdrawn
   1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
                                    of the plugin is ever fetched
   1d. applyContributions()         placeholder routes, menu entries, slot declarations
@@ -277,7 +278,7 @@ before a byte of plugin code is fetched.
 
 ### What boot waits for
 
-- **Phase A, always**: the plugin list and each plugin's `contributions.json`. Placeholders, declared
+- **Phase A, always**: the plugin list, which carries each plugin's declaration. Placeholders, declared
   menu entries and reserved slots must exist before the router resolves the first URL.
 - **Phase B, only for plugins that declared nothing**: they register their routes in `init()`, so
   boot waits for them exactly as it always did, bounded by `BOOT_BACKSTOP_MS` — which stays for
