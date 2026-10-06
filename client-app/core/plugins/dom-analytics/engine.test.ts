@@ -142,6 +142,7 @@ describe("dom-analytics engine", () => {
   it("sends viewItemList once per distinct products array", async () => {
     const a = { code: "A" };
     const b = { code: "B" };
+    const c = { code: "C" };
     const products = ref([a]);
     const wrapper = mount(
       defineComponent({
@@ -168,6 +169,11 @@ describe("dom-analytics engine", () => {
     await flush();
     expect(analyticsMock).toHaveBeenCalledTimes(2);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, b], expect.any(Object));
+
+    products.value = [a, c];
+    await flush();
+    expect(analyticsMock).toHaveBeenCalledTimes(3);
+    expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], expect.any(Object));
     wrapper.unmount();
   });
 
@@ -177,7 +183,8 @@ describe("dom-analytics engine", () => {
       defineComponent({
         directives: { trackItem: vTrackItem },
         setup: () => ({ product }),
-        template: `<div v-track-item="product" data-name="product-details">{{ product.code }}</div>`,
+        // No text bound to the product: only the directive update can trigger a rescan
+        template: `<div v-track-item="product" data-name="product-details"></div>`,
       }),
       { attachTo: document.body },
     );
