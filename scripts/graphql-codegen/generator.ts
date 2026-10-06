@@ -159,6 +159,17 @@ async function runCodegen() {
 
     reportOutcome(coreOutcome);
     coreOutcomes.push(coreOutcome);
+  } else if (await isSchemaEndpointAbsent(core.schemaPath)) {
+    // Core is not generated, but its probe still catches a wrong backend, which would otherwise make
+    // every selected module look not installed.
+    reportAbortedCore({
+      name: CORE_NAME,
+      typesPath: `${core.apiPath}/types.ts`,
+      status: "skipped",
+      reason: `"${core.schemaPath}" answered 404`,
+    });
+    process.exitCode = 1;
+    return;
   }
 
   // Reported as each module settles; the array keeps declaration order for the summary.
@@ -287,7 +298,7 @@ function reportAbortedCore(outcome: OutcomeType): void {
   if (outcome.status === "skipped") {
     // Not a module: an absent core endpoint means the URL or the backend itself is wrong.
     console.error(
-      `${RED}✖${RESET} ${BOLD}Core${RESET}: no GraphQL schema at "${core.schemaPath}"\n  ${outcome.reason}`,
+      `${RED}✖${RESET} ${BOLD}${CORE_NAME}${RESET}: no GraphQL schema at "${core.schemaPath}"\n  ${outcome.reason}`,
     );
   } else {
     reportFailure(outcome);
