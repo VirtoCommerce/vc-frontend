@@ -76,7 +76,7 @@ interface IProps {
   step?: number;
   /** Step floor for positive values. With `allowZero`, 0 stays reachable below it. */
   min?: number;
-  /** Upper bound. Omit it (`undefined`) for no limit — nothing is announced to assistive tech. 0 is a real ceiling. */
+  /** Upper bound. Omit it (`undefined`) for no limit — nothing is announced to assistive tech. `0` caps the value at 0. */
   max?: number;
   error?: boolean;
   message?: string;

@@ -62,6 +62,13 @@ export const ZeroMax: StoryType = {
     max: 0,
     value: 0,
   },
+  parameters: {
+    docs: {
+      description: {
+        story: "`max: 0` caps the value at 0. For no limit, omit `max`.",
+      },
+    },
+  },
 };
 
 export const Disabled: StoryType = {
