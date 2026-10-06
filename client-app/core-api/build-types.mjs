@@ -20,7 +20,13 @@ import { intersects, satisfies } from "semver";
 import ts from "typescript";
 import { bumpContractVersion } from "./bump-version.mjs";
 import { gitIn } from "./git.mjs";
-import { decideVersionAction, extractExportNames } from "./contract-versioning.mjs";
+import {
+  decideVersionAction,
+  extractExportNames,
+  packageJsonShape,
+  toLf,
+  versionedSourceFiles,
+} from "./contract-versioning.mjs";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
 const CHECK_MODE = process.argv.includes("--check");
@@ -473,6 +479,47 @@ if (globalComponents.length) {
   step(`declared ${globalComponents.length} global component(s).`);
 }
 
+// 2a3 ── declare the globally registered directives ───────────────────────────
+// strictTemplates (the scaffold's default) rejects an unknown directive, so `v-html-safe` in a plugin
+// template failed type-check. Types are spelled here because two of the three sources are untyped
+// or not a contract peer; the guard below keeps the list in step with what ui-kit registers.
+step("declaring the host's global directives…");
+
+const UI_KIT_ENTRY = resolve(REPO_ROOT, "client-app/ui-kit/index.ts");
+const anyHtml = 'import("vue").Directive<HTMLElement, string | null | undefined>';
+/** Registered by `app.use(uiKit)`: its own `app.directive(...)` calls, plus vue-html-secure's three. */
+const GLOBAL_DIRECTIVES = {
+  mask: 'typeof import("maska/vue").vMaska',
+  onClickOutside: 'import("vue").Directive<HTMLElement, (event: PointerEvent) => void>',
+  htmlSafe: anyHtml,
+  htmlEscape: anyHtml,
+  htmlRemove: anyHtml,
+};
+
+const registeredDirectives = [
+  ...readFileSync(UI_KIT_ENTRY, "utf8").matchAll(/app\.directive\(\s*["']([^"']+)["']/g),
+].map((match) => match[1]);
+const undeclaredDirectives = registeredDirectives.filter((name) => !(name in GLOBAL_DIRECTIVES));
+if (undeclaredDirectives.length) {
+  fail(
+    `ui-kit registers ${undeclaredDirectives.join(", ")}, which GLOBAL_DIRECTIVES in build-types.mjs does not type.`,
+  );
+}
+const directiveKey = (name) => `v${name[0].toUpperCase()}${name.slice(1)}`;
+code +=
+  "\n" +
+  [
+    "",
+    "// ── directives registered globally by `app.use(uiKit)` ──",
+    'declare module "vue" {',
+    "  export interface GlobalDirectives {",
+    ...Object.entries(GLOBAL_DIRECTIVES).map(([name, type]) => `    ${directiveKey(name)}: ${type};`),
+    "  }",
+    "}",
+    "",
+  ].join("\n");
+step(`declared ${Object.keys(GLOBAL_DIRECTIVES).length} global directive(s).`);
+
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(
@@ -705,8 +752,12 @@ const tailwindPreset = generateTailwindPreset();
 
 const git = gitIn(REPO_ROOT);
 
-/** Hand-written files in the versioned tarball - like the preset, an edit to one ships only under a new version. */
-const VERSIONED_SOURCES = ["codegen.mjs", "codegen.d.mts"];
+/**
+ * Every hand-written file the tarball ships, read from `files` so a newly published one is covered
+ * without touching this list. Like the preset, an edit to one ships only under a new version.
+ */
+const VERSIONED_SOURCES = versionedSourceFiles(corePkg.files);
+const readText = (file) => toLf(readFileSync(file, "utf8"));
 
 /**
  * The newest published contract tag, or "" when nothing has been released yet (or tags were not
@@ -746,15 +797,18 @@ function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT
   const basePreset = baseSha
     ? git(["show", `${baseSha}:client-app/core-api/contract/tailwind-preset.cjs`])
     : { status: 1 };
-  const presetChanged = basePreset.status === 0 && basePreset.stdout !== currentPreset;
+  const presetChanged = basePreset.status === 0 && toLf(basePreset.stdout) !== currentPreset;
+  // Absent at base = newly published, which is a change.
   const sourceChanged = VERSIONED_SOURCES.some((file) => {
     const baseSource = git(["show", `${baseSha}:client-app/core-api/${file}`]);
-    return baseSource.status === 0 && baseSource.stdout !== readFileSync(join(CORE_API_DIR, file), "utf8");
+    return baseSource.status !== 0 || toLf(baseSource.stdout) !== readText(join(CORE_API_DIR, file));
   });
+  const manifestChanged =
+    packageJsonShape(basePkgJson.stdout) !== packageJsonShape(readFileSync(join(CORE_API_DIR, "package.json"), "utf8"));
   return {
     baseRef,
     baseSha,
-    changed: baseContract.stdout !== currentContract || presetChanged || sourceChanged,
+    changed: toLf(baseContract.stdout) !== currentContract || presetChanged || sourceChanged || manifestChanged,
     baseVersion,
     removedExports,
   };
@@ -793,11 +847,11 @@ function autoBumpIfContractChanged(currentContract, currentPreset, currentVersio
 }
 
 if (CHECK_MODE) {
-  const committed = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, "utf8") : "";
+  const committed = existsSync(OUT_FILE) ? readText(OUT_FILE) : "";
   if (committed !== contract) {
     fail("committed contract/index.d.ts is stale — run `yarn build:core-types` and commit the result.");
   }
-  const committedPreset = existsSync(PRESET_OUT_FILE) ? readFileSync(PRESET_OUT_FILE, "utf8") : "";
+  const committedPreset = existsSync(PRESET_OUT_FILE) ? readText(PRESET_OUT_FILE) : "";
   if (committedPreset !== tailwindPreset) {
     fail("committed contract/tailwind-preset.cjs is stale — run `yarn build:core-types` and commit the result.");
   }

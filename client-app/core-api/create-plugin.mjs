@@ -11,7 +11,7 @@
  * --with-vueuse, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
  */
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
@@ -669,7 +669,12 @@ if (selected.apollo) {
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
-writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
+// The host's supply-chain age gate, so a plugin does not install a package the host would refuse.
+const hostAgeGate = readFileSync(resolve(REPO_ROOT, ".yarnrc.yml"), "utf8").match(/^npmMinimalAgeGate:.*$/m)?.[0];
+writeFileSync(
+  join(targetDir, ".yarnrc.yml"),
+  ["nodeLinker: node-modules", hostAgeGate, ""].filter((line) => line !== undefined).join("\n"),
+);
 
 if (pinnedReleaseIsMissing()) {
   console.log(

@@ -97,6 +97,7 @@ describe("create-plugin scaffolder", () => {
     expectParseableTs(join(dir, "src", "mocks", "vc-frontend-core.ts"));
     expectParseableTs(join(dir, "src", "pages", "my-page.test.ts"));
 
+    expect(readFileSync(join(dir, ".yarnrc.yml"), "utf8")).toMatch(/^npmMinimalAgeGate: /m);
     // yarn 1 ignores the .yarnrc.yml this writes and knows no `portal:`/`link:` protocol.
     expect(pkg.packageManager).toMatch(/^yarn@/);
     expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));

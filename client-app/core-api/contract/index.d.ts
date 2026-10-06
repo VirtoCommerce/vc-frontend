@@ -4788,3 +4788,15 @@ declare module "vue" {
     VcWidgetSkeleton: typeof _default$8;
   }
 }
+
+
+// ── directives registered globally by `app.use(uiKit)` ──
+declare module "vue" {
+  export interface GlobalDirectives {
+    vMask: typeof import("maska/vue").vMaska;
+    vOnClickOutside: import("vue").Directive<HTMLElement, (event: PointerEvent) => void>;
+    vHtmlSafe: import("vue").Directive<HTMLElement, string | null | undefined>;
+    vHtmlEscape: import("vue").Directive<HTMLElement, string | null | undefined>;
+    vHtmlRemove: import("vue").Directive<HTMLElement, string | null | undefined>;
+  }
+}
