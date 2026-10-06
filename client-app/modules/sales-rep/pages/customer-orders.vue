@@ -116,7 +116,13 @@
               {{ item.organizationName }}
             </VcTableColumn>
 
-            <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" sortable>
+            <VcTableColumn
+              id="date"
+              v-slot="{ item }"
+              :title="t('sales_rep.orders.date')"
+              sortable
+              class="customer-orders__value"
+            >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
@@ -130,7 +136,7 @@
               :title="t('sales_rep.orders.total')"
               sortable
               align="right"
-              class="font-bold"
+              class="customer-orders__value font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -372,6 +378,11 @@ const breadcrumbs = useBreadcrumbs(() => {
 
   &__order-link {
     @apply text-[--link-color] hover:text-[--link-hover-color];
+  }
+
+  // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
+  &__value {
+    @apply whitespace-nowrap;
   }
 
   &__mobile-item {
