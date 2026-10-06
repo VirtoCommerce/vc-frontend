@@ -34,7 +34,7 @@ describe("useMissionCard", () => {
     const { view } = useMissionCard(createMission({ daysRemaining: null }));
 
     expect(view.value.dateLabel).toBe("pages.account.missions.card.no_deadline");
-    expect(view.value.dateSeverity).toBe("warning");
+    expect(view.value.dateSeverity).toBe("success");
   });
 
   it("labels a completed mission", () => {
@@ -65,8 +65,10 @@ describe("useMissionCard", () => {
     expect(view.value.dateSeverity).toBe("danger");
   });
 
-  it("turns the severity to danger below the danger threshold", () => {
-    expect(useMissionCard(createMission({ daysRemaining: 10 })).view.value.dateSeverity).toBe("warning");
-    expect(useMissionCard(createMission({ daysRemaining: 9 })).view.value.dateSeverity).toBe("danger");
+  it("steps the severity down by the days-left thresholds", () => {
+    expect(useMissionCard(createMission({ daysRemaining: 31 })).view.value.dateSeverity).toBe("success");
+    expect(useMissionCard(createMission({ daysRemaining: 30 })).view.value.dateSeverity).toBe("warning");
+    expect(useMissionCard(createMission({ daysRemaining: 16 })).view.value.dateSeverity).toBe("warning");
+    expect(useMissionCard(createMission({ daysRemaining: 15 })).view.value.dateSeverity).toBe("danger");
   });
 });
