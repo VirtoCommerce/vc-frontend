@@ -198,17 +198,18 @@ describe("LayoutSurface with every block hidden", () => {
   const restoreButton = (wrapper: Awaited<ReturnType<typeof mountAllHidden>>) =>
     wrapper.findAllComponents(VcButton).find((button) => button.attributes("data-layout-restore") !== undefined);
 
-  it("shows the empty state instead of the regions and the edit button", async () => {
-    const wrapper = await mountAllHidden({ editButtonPlacement: "mainColumn" });
+  it.each(["mainColumn", "end"])(
+    "shows the empty state instead of the regions and the edit button (%s)",
+    async (placement) => {
+      const wrapper = await mountAllHidden({ editButtonPlacement: placement });
 
-    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
-    expect(wrapper.findComponent(LayoutStats).exists()).toBe(false);
-    expect(wrapper.findAllComponents(LayoutRegion)).toHaveLength(0);
-    expect(wrapper.findComponent(LayoutEditButton).exists()).toBe(false);
-  });
+      expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
+      expect(wrapper.findComponent(LayoutStats).exists()).toBe(false);
+      expect(wrapper.findAllComponents(LayoutRegion)).toHaveLength(0);
+      expect(wrapper.findComponent(LayoutEditButton).exists()).toBe(false);
+    },
+  );
 
-  // A refetch after a disagreeing echo leaves the all-hidden result in place with editing unavailable;
-  // both actions would otherwise look live and do nothing.
   it("disables both actions while the layout cannot be edited", async () => {
     const wrapper = await mountAllHidden();
 

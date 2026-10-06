@@ -195,7 +195,6 @@ describe("useLayoutPage with every block hidden", () => {
     expect(allHidden.value).toBe(false);
   });
 
-  // The edit toggle is still in the DOM, but it can sit a page below the blocks that just came back.
   it("announces a restore that saved and hands focus to the start of the surface", async () => {
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: documentOf(echoedBlock) } });
     renderChrome();
@@ -212,7 +211,6 @@ describe("useLayoutPage with every block hidden", () => {
     expect(activeMarker()).toBe("layoutSurface");
   });
 
-  // Only the surface is inert during the write, so the rep can be on another page by the time it lands.
   it("leaves focus alone when the page is gone before a restore lands", async () => {
     let land!: (value: unknown) => void;
     apolloMock.mutate.mockReturnValue(

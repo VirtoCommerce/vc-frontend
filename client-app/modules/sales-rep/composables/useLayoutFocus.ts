@@ -23,10 +23,13 @@ export function focusSurfaceStart(): void {
   });
 }
 
-/** Starting a save makes the wrapper `inert`, blurring Save to `<body>`; on failure nothing reclaims it. */
+/**
+ * Starting a save makes the wrapper `inert`, blurring Save to `<body>`; on failure nothing reclaims it.
+ * No `preventScroll`: a failed restore mounts the edit bar above where Restore was, possibly off screen.
+ */
 export function focusSaveButton(): void {
   void nextTick(() => {
-    document.querySelector<HTMLElement>("[data-layout-save]")?.focus({ preventScroll: true });
+    document.querySelector<HTMLElement>("[data-layout-save]")?.focus();
   });
 }
 
