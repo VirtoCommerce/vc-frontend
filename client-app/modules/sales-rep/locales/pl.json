@@ -202,6 +202,70 @@
       "filter_all": "Wszyscy",
       "load_failed": "Nie udało się wczytać zamówień"
     },
+    "tasks": {
+      "title": "Kalendarz",
+      "widget_title": "Zadania i terminy",
+      "full_calendar": "Pełny kalendarz",
+      "new_task": "Nowe zadanie",
+      "add_task": "Dodaj zadanie",
+      "today": "Dziś",
+      "empty": "Brak zadań na tej karcie",
+      "empty_day": "Brak terminów w tym dniu",
+      "load_failed": "Nie udało się wczytać zadań",
+      "day_task_count": "{count} zadań | {count} zadanie | {count} zadania | {count} zadań",
+      "overdue_total": "{count} zaległych zadań | {count} zaległe zadanie | {count} zaległe zadania | {count} zaległych zadań",
+      "day_task_count_capped": "{total} zadań (wyświetlono {shown})",
+      "day_markers": "{count} zadań. Oznaczono: {kinds} | {count} zadanie. Oznaczono: {kinds} | {count} zadania. Oznaczono: {kinds} | {count} zadań. Oznaczono: {kinds}",
+      "page": {
+        "subtitle": "Twoje zadania, działania następcze i terminy ze wszystkich kont — w układzie dziennym."
+      },
+      "table": {
+        "task": "Zadanie",
+        "status": "Status",
+        "notes": "Notatki",
+        "complete_aria": "Oznacz „{name}” jako ukończone",
+        "reopen_aria": "Otwórz ponownie „{name}”",
+        "edit_aria": "Edytuj „{name}”"
+      },
+      "status": {
+        "upcoming": "Nadchodzące",
+        "overdue": "Po terminie",
+        "completed": "Ukończone",
+        "canceled": "Anulowane"
+      },
+      "priority": {
+        "lowest": "Najniższy",
+        "low": "Niski",
+        "normal": "Normalny",
+        "high": "Wysoki",
+        "highest": "Najwyższy"
+      },
+      "due_relative": {
+        "expired": "Termin minął {date}",
+        "due": "Termin {date}"
+      },
+      "legend": {
+        "upcoming": "Nadchodzące",
+        "overdue": "Po terminie",
+        "completed": "Ukończone"
+      },
+      "form": {
+        "create_title": "Nowe zadanie",
+        "edit_title": "Edytuj zadanie",
+        "name_label": "Tytuł",
+        "due_date_label": "Termin",
+        "priority_label": "Priorytet",
+        "type_label": "Typ",
+        "description_label": "Notatki",
+        "save_button": "Zapisz",
+        "cancel_button": "Anuluj",
+        "delete_button": "Usuń",
+        "delete_title": "Usuń zadanie",
+        "delete_confirm": "To zadanie zostanie trwale usunięte. Kontynuować?",
+        "saved": "Zadanie zapisane",
+        "deleted": "Zadanie usunięte"
+      }
+    },
     "top_sellers": {
       "title": "Najlepsi sprzedawcy",
       "rank": "#",
@@ -240,6 +304,18 @@
       "published": "Opublikowano {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Nadchodzące",
+          "overdue": "Po terminie",
+          "completed": "Ukończone"
+        },
+        "sort": {
+          "due-date": "Termin",
+          "recent": "Ostatnio utworzone",
+          "name": "Zadanie"
+        }
+      },
       "load_failed": {
         "filter": "Nie udało się wczytać filtrów, więc wyświetlana jest pełna lista. Odśwież stronę.",
         "sort": "Nie udało się wczytać opcji sortowania, więc używana jest kolejność domyślna. Odśwież stronę.",
@@ -252,19 +328,28 @@
       }
     },
     "list_sharing": {
-      "share_customers_label": "Klient",
-      "share_customers_placeholder": "Wybierz klienta",
+      "share_customers_label": "Klienci",
+      "share_customers_placeholder": "Szukaj klientów według nazwy",
       "share_customers_error": "Nie udało się wczytać listy klientów. Spróbuj ponownie.",
-      "share_replace_hint": "Wcześniej wybrany klient utraci dostęp do tej listy.",
-      "share_message_label": "Wiadomość",
-      "share_message_placeholder": "Opcjonalna wiadomość",
+      "share_empty_hint": "Pusta lista nie zatrzymuje udostępniania — zmień, kto ma dostęp.",
+      "share_message_label": "Wiadomość (opcjonalnie)",
+      "share_message_placeholder": "Dodaj notatkę dla odbiorców",
+      "share_message_hint": "Nowi odbiorcy otrzymają to w powiadomieniu.",
+      "recipients_title": "Odbiorcy · {count}",
+      "clear_recipients_button": "Wyczyść wszystko",
+      "recipients_cleared": "Wyczyszczono · {count}",
+      "restore_recipients_button": "Cofnij",
+      "show_all_recipients_button": "Pokaż wszystkie ({count})",
+      "show_less_recipients_button": "Pokaż mniej",
+      "remove_recipient_button": "Usuń {name}",
       "share_default_title": "Nowa lista od Twojego przedstawiciela handlowego",
       "share_default_message": "Cześć! Lista „{listName}” jest już dostępna dla Twojej organizacji. Sprawdź ją:",
-      "share_success": "Lista została udostępniona klientowi.",
+      "share_success": "Lista udostępniona {count} klientom. | Lista udostępniona {count} klientowi. | Lista udostępniona {count} klientom. | Lista udostępniona {count} klientom.",
+      "share_saved": "Lista zapisana. Udostępniona {count} klientom. | Lista zapisana. Udostępniona {count} klientowi. | Lista zapisana. Udostępniona {count} klientom. | Lista zapisana. Udostępniona {count} klientom.",
       "share_partial": "Lista została udostępniona, ale nie wszystkie powiadomienia zostały dostarczone.",
-      "share_notify_error": "Lista została zapisana, ale nie udało się powiadomić klienta.",
-      "scope_label": "Klient",
-      "status": "Udostępniona klientowi",
+      "share_notify_error": "Lista została zapisana, ale nie udało się wysłać powiadomienia.",
+      "scope_label": "Wybrani klienci",
+      "status": "Udostępniona {count} klientom | Udostępniona {count} klientowi | Udostępniona {count} klientom | Udostępniona {count} klientom",
       "badge": "Polecane przez Twojego przedstawiciela handlowego"
     }
   }

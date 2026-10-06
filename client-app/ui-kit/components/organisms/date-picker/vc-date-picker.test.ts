@@ -1,5 +1,6 @@
-import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, nextTick } from "vue";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import VcDatePicker from "./vc-date-picker.vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
@@ -9,6 +10,9 @@ import VcInput from "@/ui-kit/components/molecules/input/vc-input.vue";
 import VcPopover from "@/ui-kit/components/molecules/popover/vc-popover.vue";
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (k: string) => k, locale: { value: "en" } }) }));
+
+// A failed assertion skips a trailing unmount(), and the dialog block below reads document.activeElement.
+enableAutoUnmount(afterEach);
 
 // Globally registered in the app; mount() needs the real open/close chain, so only leaf atoms are stubbed.
 function mountPicker(props = {}, options: { attachTo?: Element } = {}) {
@@ -197,5 +201,116 @@ describe("VcDatePicker — the field clear cross touches only the value", () => 
     expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
 
     wrapper.unmount();
+  });
+});
+
+// The shape both filter drawers ship: a picker inside a dialog popover, so Escape really travels from
+// the date field up to the dialog (VCST-5869).
+const DialogHost = defineComponent({
+  components: { VcDatePicker, VcPopover },
+
+  template: `
+    <VcPopover role="dialog" aria-label="Filters">
+      <template #default="{ triggerProps }">
+        <button class="trigger" v-bind="triggerProps">Open</button>
+      </template>
+
+      <template #content>
+        <VcDatePicker label="Start date" />
+      </template>
+    </VcPopover>
+  `,
+});
+
+function mountInDialog() {
+  return mount(DialogHost, {
+    attachTo: document.body,
+    global: {
+      components: { VcDateInput, VcInput, VcInputDetails, VcLabel, VcButton, VcPopover, VcCalendar },
+      stubs: { VcIcon: true, VcTooltip: true },
+      directives: { "html-safe": {} },
+      mocks: { $t: (key: string) => key },
+    },
+  });
+}
+
+type DialogWrapperType = ReturnType<typeof mountInDialog>;
+
+// Named, not positional: once the calendar is open there are two panels on the page.
+function panelIsOpen(wrapper: DialogWrapperType, name: string): boolean {
+  return !wrapper.get(`.vc-popover__body[aria-label="${name}"]`).attributes("style")?.includes("display: none");
+}
+
+const CALENDAR_BUTTON = 'button[aria-label="ui_kit.accessibility.open_calendar"]';
+
+async function openDialog(wrapper: DialogWrapperType) {
+  await wrapper.get("button.trigger").trigger("click");
+  await nextTick();
+}
+
+describe("VcDatePicker inside a dialog popover", () => {
+  it("lets Escape reach the dialog while its calendar is closed", async () => {
+    const wrapper = mountInDialog();
+    await openDialog(wrapper);
+
+    await wrapper.get('input[role="combobox"]').trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    expect(panelIsOpen(wrapper, "Filters")).toBe(false);
+  });
+
+  it("consumes Escape while its calendar is open, leaving the dialog open", async () => {
+    const wrapper = mountInDialog();
+    await openDialog(wrapper);
+
+    await wrapper.get(CALENDAR_BUTTON).trigger("click");
+    await flushPromises();
+    expect(panelIsOpen(wrapper, "ui_kit.accessibility.calendar")).toBe(true);
+
+    await wrapper.get('input[role="combobox"]').trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    expect(panelIsOpen(wrapper, "ui_kit.accessibility.calendar")).toBe(false);
+    expect(panelIsOpen(wrapper, "Filters")).toBe(true);
+  });
+
+  it("consumes Escape from the calendar button too, which sits outside the input's listener", async () => {
+    const wrapper = mountInDialog();
+    await openDialog(wrapper);
+
+    await wrapper.get(CALENDAR_BUTTON).trigger("click");
+    await flushPromises();
+    expect(panelIsOpen(wrapper, "ui_kit.accessibility.calendar")).toBe(true);
+
+    await wrapper.get(CALENDAR_BUTTON).trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    expect(panelIsOpen(wrapper, "ui_kit.accessibility.calendar")).toBe(false);
+    expect(panelIsOpen(wrapper, "Filters")).toBe(true);
+  });
+
+  // The one path where three handlers want the same key: VcCalendar's own `.stop`, the popover's panel
+  // listener, and the picker's focus return. Opening from the calendar button is what makes the owners
+  // disagree — the popover would restore the button, the picker insists on the field.
+  it.each([
+    ["the field", 'input[role="combobox"]'],
+    ["the calendar button", CALENDAR_BUTTON],
+  ])("consumes Escape from inside the grid and puts focus on the field, opened from %s", async (_name, openedFrom) => {
+    const wrapper = mountInDialog();
+    await openDialog(wrapper);
+
+    (wrapper.get(openedFrom).element as HTMLElement).focus();
+    await wrapper.get(CALENDAR_BUTTON).trigger("click");
+    await flushPromises();
+    expect(panelIsOpen(wrapper, "ui_kit.accessibility.calendar")).toBe(true);
+
+    const cell = wrapper.get("[data-reka-calendar-cell-trigger]");
+    (cell.element as HTMLElement).focus();
+    await cell.trigger("keydown", { key: "Escape" });
+    await nextTick();
+
+    expect(panelIsOpen(wrapper, "ui_kit.accessibility.calendar")).toBe(false);
+    expect(panelIsOpen(wrapper, "Filters")).toBe(true);
+    expect(document.activeElement).toBe(wrapper.get('input[role="combobox"]').element);
   });
 });

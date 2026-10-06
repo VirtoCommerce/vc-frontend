@@ -2,7 +2,12 @@ import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { CUSTOMER_NAME_FACET_NAME } from "@/core/constants";
 import { DateFilterId, XApiPermissions } from "@/core/enums";
-import { toEndDateFilterValue, toStartDateFilterValue, toDateISOString } from "@/core/utilities";
+import {
+  escapeFilterSyntaxValue,
+  toEndDateFilterValue,
+  toStartDateFilterValue,
+  toDateISOString,
+} from "@/core/utilities";
 import { useUser } from "./useUser";
 import { facets } from "./useUserOrders";
 import type { DateFilterType } from "@/core/types";
@@ -15,11 +20,11 @@ export function getFilterExpression(keyword: string, filterData: OrdersFilterDat
     filterExpression += `${keyword} `;
   }
   if (filterData.statuses.length) {
-    const statuses = filterData.statuses.map((status) => `"${status}"`);
+    const statuses = filterData.statuses.map((status) => `"${escapeFilterSyntaxValue(status)}"`);
     filterExpression += `status:${statuses.join(",")} `;
   }
   if (filterData.customerNames?.length) {
-    const customerNames = filterData.customerNames.map((name) => `"${name}"`);
+    const customerNames = filterData.customerNames.map((name) => `"${escapeFilterSyntaxValue(name)}"`);
     filterExpression += `customername:${customerNames.join(",")} `;
   }
 

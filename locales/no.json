@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Denne utsjekkingen tilhører en annen konto eller organisasjon. Logg inn med kontoen du bruker i handleassistenten, og prøv igjen.",
+      "expired": "Denne utsjekkingslenken er utløpt, er allerede brukt eller er ikke tilgjengelig i denne fanen. Be handleassistenten om en ny lenke.",
+      "restore_failed": "Vi kunne ikke åpne utsjekkingen. Prøv lenken igjen om et øyeblikk.",
+      "authorization_failed": "Vi kunne ikke fortsette innloggingen",
+      "authorization_retry": "Start tilkoblingen på nytt fra handleassistenten. Kontakt butikkadministratoren hvis problemet vedvarer."
+    },
     "buttons": {
       "home": "Hjem",
       "ok": "OK",
@@ -510,7 +517,13 @@
           "user_is_locked_in_organization": "Din tilgang til denne organisasjonen er blokkert. Kontakt organisasjonens administrator",
           "user_cannot_login_in_store": "Tilgang nektet. Du kan ikke logge inn i denne butikken",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"
+          "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon",
+          "sign_in_not_allowed": "Du kan ikke logge på med denne kontoen. Kontakt administratoren din.",
+          "store_not_found": "Denne butikken finnes ikke.",
+          "duplicate_email_login_attempt": "Flere kontoer bruker denne e-postadressen.",
+          "lockout_disabled": "Denne kontoen kan ikke logge på med en kode.",
+          "invalid_code": "Denne koden fungerte ikke.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -603,6 +616,41 @@
         "click_to_copy": "Klikk for å kopiere",
         "clipboard_success": "Kupong kopiert vellykket",
         "tap_to_copy": "Trykk for å kopiere"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Logg inn med engangskode",
+        "request": {
+          "subtitle": "Vi sender deg en kode på e-post. Du trenger ikke passord.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Fortsett",
+          "switch_to_password_link": "Logg inn med passord i stedet"
+        },
+        "verify": {
+          "header": "Sjekk e-posten din",
+          "subtitle": "Vi sendte en kode til {email}.",
+          "code_label": "Kode",
+          "paste_hint": "Skriv inn eller lim inn koden. På mobil trykker du på den over tastaturet.",
+          "submit_button": "Logg inn",
+          "resend_button": "Send kode på nytt",
+          "use_different_email_link": "Bruk en annen e-post",
+          "live_resent": "Ny kode sendt."
+        },
+        "locked": {
+          "title": "For mange mislykkede forsøk",
+          "title_blocked": "Kontoen er blokkert",
+          "text_countdown": "Prøv igjen om {time}.",
+          "text_ready": "Du kan prøve igjen nå.",
+          "start_over_button": "Prøv igjen"
+        },
+        "disabled": {
+          "title": "Vi kunne ikke logge deg inn",
+          "text": "Prøv med passord i stedet, eller kontakt kontoadministratoren din hvis dette fortsetter.",
+          "text_no_password": "Kontakt kontoadministratoren din hvis dette fortsetter.",
+          "password_button": "Logg inn med passord",
+          "back_link": "Tilbake til innlogging"
+        }
       }
     },
     "company": {
@@ -962,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Antall produkter",
-        "list_edit_button": "Rediger",
-        "remove_list_button": "Fjern",
+        "rename_list_button": "Gi nytt navn",
+        "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
         "share_button": "Del",
         "last_modified_label": "Sist endret: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
-        "list_settings_button": "Listeinnstillinger",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listen din er tom",
         "empty_list_button": "Fortsett å bla",
         "list_icon": "Listeikon"
@@ -994,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Ny liste",
-        "edit_mode_title": "Listeinnstillinger",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
-        "sharing_scope_label": "Delingsalternativer",
-        "sharing_scope_placeholder": "Vennligst velg ett alternativ",
         "sharing_link_label": "Lenke",
         "create_button": "Opprett liste",
         "save_button": "@:common.buttons.save",
@@ -1007,11 +1053,25 @@
         "make_shared": "Gjør delt",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisasjon",
-          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+          "Organization": "Min organisasjon",
+          "AnyoneAnonymous": "Alle med lenken"
         },
         "clipboard_success": "Lenke kopiert",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
+      },
+      "share_wishlist_modal": {
+        "title": "Del «{listName}»",
+        "who_can_access_label": "Hvem har tilgang",
+        "scope_selected": "{label}, valgt"
+      },
+      "stop_sharing_modal": {
+        "title": "Slutte å dele denne listen?",
+        "message": "Alle som listen er delt med, mister tilgangen. Du kan dele den på nytt når som helst.",
+        "confirm_button": "Slutt å dele",
+        "change_title": "Endre hvem som har tilgang?",
+        "change_message": "Lenken forblir den samme. Noen brukere kan miste tilgangen.",
+        "change_confirm_button": "Endre tilgang",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",
@@ -1526,7 +1586,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Legg til i liste",
       "in_the_list_tooltip": "På listen",
-      "variations_button": "{0} varianter",
+      "variations_button": "Ingen varianter | {count} variant | {count} varianter",
       "customize_button": "Tilpass",
       "show_on_a_separate_page": "Vis på en separat side",
       "no_products_message": "Ingen produkter i denne kategorien",
@@ -1577,6 +1637,8 @@
       "title": "Søk",
       "header": "Søket ditt etter {keyword} ga følgende resultater",
       "header_empty": "Beklager, søket ditt etter «{keyword}» ga ingen resultater",
+      "header_barcode": "Søket ditt etter strekkoden {barcode} ga følgende resultater",
+      "header_barcode_empty": "Ingen produkter funnet for strekkoden {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Søket ditt etter <strong>{0}</strong> ga ingen resultater",

@@ -121,8 +121,8 @@ export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { useNavigations } from "@/core/composables/useNavigations";
 export { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 export { usePageHead } from "@/core/composables/usePageHead";
-// A query-string parameter as a writable ref, replacing the current history entry the way the
-// host's own filters do - so a plugin's selection survives a reload and back/forward.
+// A query-string parameter as a writable ref, so a plugin's selection survives a reload and
+// back/forward. Each write pushes a history entry; `updateMethod: "replace"` overwrites it instead.
 export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
@@ -132,6 +132,8 @@ export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWish
 // for the modal to read it.
 export type {
   IWishlistSharingScopeControlsType,
+  IWishlistSharingScopeExposeType,
+  WishlistSharingScopePayloadType,
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 
@@ -166,8 +168,9 @@ export { default as OrderSummary } from "@/shared/checkout/components/order-summ
 export { default as AddressInfo } from "@/shared/common/components/address-info.vue";
 export { default as VendorName } from "@/shared/common/components/vendor-name.vue";
 // The orders `filter` expression the host builds from its filter panel model, and the facet name
-// the status chips read - a plugin listing orders has to speak the same filter grammar.
-export { getFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
+// the status chips read - a plugin listing orders has to speak the same filter grammar. Named for
+// orders here: `getFilterExpression` is the host's generic filter joiner in @/core/utilities.
+export { getFilterExpression as getOrdersFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
 export type { OrdersFilterDataType } from "@/shared/account/types";
 export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
 

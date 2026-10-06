@@ -202,6 +202,70 @@
       "filter_all": "Tutti",
       "load_failed": "Impossibile caricare gli ordini"
     },
+    "tasks": {
+      "title": "Calendario",
+      "widget_title": "Attività e scadenze",
+      "full_calendar": "Calendario completo",
+      "new_task": "Nuova attività",
+      "add_task": "Aggiungi attività",
+      "today": "Oggi",
+      "empty": "Nessuna attività in questa scheda",
+      "empty_day": "Nessuna scadenza in questo giorno",
+      "load_failed": "Impossibile caricare le attività",
+      "day_task_count": "{count} attività | {count} attività",
+      "overdue_total": "{count} attività scaduta | {count} attività scadute",
+      "day_task_count_capped": "{total} attività ({shown} mostrate)",
+      "day_markers": "{count} attività. Contrassegnato: {kinds} | {count} attività. Contrassegnato: {kinds}",
+      "page": {
+        "subtitle": "Le tue attività, i follow-up e le scadenze di tutti gli account — organizzati per giorno."
+      },
+      "table": {
+        "task": "Attività",
+        "status": "Stato",
+        "notes": "Note",
+        "complete_aria": "Segna «{name}» come completata",
+        "reopen_aria": "Riapri «{name}»",
+        "edit_aria": "Modifica «{name}»"
+      },
+      "status": {
+        "upcoming": "In arrivo",
+        "overdue": "Scaduta",
+        "completed": "Completata",
+        "canceled": "Annullata"
+      },
+      "priority": {
+        "lowest": "Minima",
+        "low": "Bassa",
+        "normal": "Normale",
+        "high": "Alta",
+        "highest": "Massima"
+      },
+      "due_relative": {
+        "expired": "Scaduta il {date}",
+        "due": "Scade il {date}"
+      },
+      "legend": {
+        "upcoming": "In arrivo",
+        "overdue": "Scadute",
+        "completed": "Completate"
+      },
+      "form": {
+        "create_title": "Nuova attività",
+        "edit_title": "Modifica attività",
+        "name_label": "Titolo",
+        "due_date_label": "Data di scadenza",
+        "priority_label": "Priorità",
+        "type_label": "Tipo",
+        "description_label": "Note",
+        "save_button": "Salva",
+        "cancel_button": "Annulla",
+        "delete_button": "Elimina",
+        "delete_title": "Elimina attività",
+        "delete_confirm": "Questa attività verrà eliminata definitivamente. Continuare?",
+        "saved": "Attività salvata",
+        "deleted": "Attività eliminata"
+      }
+    },
     "top_sellers": {
       "title": "Top venditori",
       "rank": "#",
@@ -240,6 +304,18 @@
       "published": "Pubblicato {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "In arrivo",
+          "overdue": "Scadute",
+          "completed": "Completate"
+        },
+        "sort": {
+          "due-date": "Data di scadenza",
+          "recent": "Create di recente",
+          "name": "Attività"
+        }
+      },
       "load_failed": {
         "filter": "Non è stato possibile caricare i filtri, quindi viene mostrato l'elenco completo. Aggiorna la pagina.",
         "sort": "Non è stato possibile caricare le opzioni di ordinamento, quindi viene usato l'ordine predefinito. Aggiorna la pagina.",
@@ -252,19 +328,28 @@
       }
     },
     "list_sharing": {
-      "share_customers_label": "Cliente",
-      "share_customers_placeholder": "Seleziona cliente",
+      "share_customers_label": "Clienti",
+      "share_customers_placeholder": "Cerca clienti per nome",
       "share_customers_error": "Non è stato possibile caricare l'elenco dei clienti. Riprova.",
-      "share_replace_hint": "Il cliente selezionato in precedenza perderà l'accesso a questa lista.",
-      "share_message_label": "Messaggio",
-      "share_message_placeholder": "Messaggio facoltativo da includere",
+      "share_empty_hint": "Un elenco vuoto non interrompe la condivisione: modifica invece chi ha accesso.",
+      "share_message_label": "Messaggio (opzionale)",
+      "share_message_placeholder": "Aggiungi una nota per i destinatari",
+      "share_message_hint": "I nuovi destinatari lo riceveranno nella loro notifica.",
+      "recipients_title": "Destinatari · {count}",
+      "clear_recipients_button": "Cancella tutto",
+      "recipients_cleared": "Rimossi · {count}",
+      "restore_recipients_button": "Ripristina",
+      "show_all_recipients_button": "Mostra tutti ({count})",
+      "show_less_recipients_button": "Mostra meno",
+      "remove_recipient_button": "Rimuovi {name}",
       "share_default_title": "Una nuova lista dal tuo rappresentante commerciale",
       "share_default_message": "Ciao! Ho appena condiviso la lista \"{listName}\" con la tua organizzazione. Dai un'occhiata:",
-      "share_success": "Lista condivisa con il cliente.",
+      "share_success": "Lista condivisa con {count} cliente. | Lista condivisa con {count} clienti.",
+      "share_saved": "Lista salvata. Ora condivisa con {count} cliente. | Lista salvata. Ora condivisa con {count} clienti.",
       "share_partial": "Lista condivisa, ma non tutte le notifiche sono state consegnate.",
-      "share_notify_error": "La lista è stata salvata, ma non è stato possibile avvisare il cliente.",
-      "scope_label": "Cliente",
-      "status": "Condivisa con il cliente",
+      "share_notify_error": "La lista è stata salvata, ma non è stato possibile inviare la notifica.",
+      "scope_label": "Clienti specifici",
+      "status": "Condivisa con 1 cliente | Condivisa con {count} clienti",
       "badge": "Consigliato dal tuo rappresentante commerciale"
     }
   }

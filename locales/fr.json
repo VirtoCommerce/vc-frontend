@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Cette commande appartient à un autre compte ou à une autre organisation. Connectez-vous avec le compte utilisé dans votre assistant d’achat, puis réessayez.",
+      "expired": "Ce lien de commande a expiré, a déjà été utilisé ou n’est pas disponible dans cet onglet. Demandez un nouveau lien à votre assistant d’achat.",
+      "restore_failed": "Nous n’avons pas pu ouvrir votre commande. Veuillez réessayer le lien dans un instant.",
+      "authorization_failed": "Nous n’avons pas pu poursuivre la connexion",
+      "authorization_retry": "Veuillez relancer la connexion depuis votre assistant d’achat. Si le problème persiste, contactez l’administrateur de votre boutique."
+    },
     "buttons": {
       "home": "Page d'accueil",
       "ok": "OK",
@@ -510,7 +517,13 @@
           "user_is_locked_in_organization": "Votre accès à cette organisation a été bloqué. Veuillez contacter l'administrateur de votre organisation",
           "user_cannot_login_in_store": "Accès refusé. Vous ne pouvez pas vous connecter au magasin actuel",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations"
+          "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations",
+          "sign_in_not_allowed": "Vous ne pouvez pas vous connecter avec ce compte. Veuillez contacter votre administrateur.",
+          "store_not_found": "Cette boutique n'existe pas.",
+          "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
+          "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",
+          "invalid_code": "Ce code n'a pas fonctionné.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -603,6 +616,41 @@
         "click_to_copy": "Cliquez pour copier",
         "clipboard_success": "Coupon copié avec succès",
         "tap_to_copy": "Appuyez pour copier"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Se connecter avec un code à usage unique",
+        "request": {
+          "subtitle": "Nous vous enverrons un code par e-mail. Aucun mot de passe requis.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Continuer",
+          "switch_to_password_link": "Se connecter avec un mot de passe"
+        },
+        "verify": {
+          "header": "Consultez votre e-mail",
+          "subtitle": "Nous avons envoyé un code à {email}.",
+          "code_label": "Code",
+          "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
+          "submit_button": "Se connecter",
+          "resend_button": "Renvoyer le code",
+          "use_different_email_link": "Utiliser une autre adresse e-mail",
+          "live_resent": "Nouveau code envoyé."
+        },
+        "locked": {
+          "title": "Trop de tentatives échouées",
+          "title_blocked": "Compte bloqué",
+          "text_countdown": "Réessayez dans {time}.",
+          "text_ready": "Vous pouvez réessayer maintenant.",
+          "start_over_button": "Réessayer"
+        },
+        "disabled": {
+          "title": "Impossible de vous connecter",
+          "text": "Essayez plutôt un mot de passe, ou contactez l'administrateur de votre compte si le problème persiste.",
+          "text_no_password": "Contactez l'administrateur de votre compte si le problème persiste.",
+          "password_button": "Se connecter avec un mot de passe",
+          "back_link": "Retour à la connexion"
+        }
       }
     },
     "company": {
@@ -962,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Nombre de produits",
-        "list_edit_button": "Modifier",
-        "remove_list_button": "Supprimer",
+        "rename_list_button": "Renommer",
+        "remove_list_button": "Supprimer la liste",
         "make_private_button": "Rendre privé",
         "share_button": "Partager",
         "last_modified_label": "Dernière modification : {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",
-        "list_settings_button": "Paramètres de la liste",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Votre liste est vide",
         "empty_list_button": "Continuer à naviguer",
         "list_icon": "Icône de liste"
@@ -994,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nouvelle liste",
-        "edit_mode_title": "Paramètres de la liste",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nom de la liste",
         "list_name_placeholder": "Veuillez entrer le nom",
-        "sharing_scope_label": "Options de partage",
-        "sharing_scope_placeholder": "Veuillez choisir une option",
         "sharing_link_label": "Lien",
         "create_button": "Créer une liste",
         "save_button": "@:common.buttons.save",
@@ -1007,11 +1053,25 @@
         "make_shared": "Rendre partagé",
         "sharing_scope": {
           "Private": "Privé(e)",
-          "Organization": "Organisation",
-          "AnyoneAnonymous": "Tout le monde (lecture seule)"
+          "Organization": "Mon organisation",
+          "AnyoneAnonymous": "Toute personne disposant du lien"
         },
         "clipboard_success": "Lien copié",
         "save_error": "La liste n'a pas pu être enregistrée. Veuillez réessayer."
+      },
+      "share_wishlist_modal": {
+        "title": "Partager « {listName} »",
+        "who_can_access_label": "Qui a accès",
+        "scope_selected": "{label}, sélectionné"
+      },
+      "stop_sharing_modal": {
+        "title": "Arrêter de partager cette liste ?",
+        "message": "Toutes les personnes avec qui la liste est partagée perdront l'accès. Vous pourrez la partager à nouveau à tout moment.",
+        "confirm_button": "Arrêter le partage",
+        "change_title": "Modifier qui a accès ?",
+        "change_message": "Le lien reste le même. Certains utilisateurs pourraient perdre l'accès.",
+        "change_confirm_button": "Modifier l'accès",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirmer la suppression",
@@ -1526,7 +1586,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Ajouter à la liste",
       "in_the_list_tooltip": "Dans la liste",
-      "variations_button": "{0} variations",
+      "variations_button": "Aucune variation | {count} variation | {count} variations",
       "customize_button": "Personnaliser",
       "show_on_a_separate_page": "Afficher sur une page séparée",
       "no_products_message": "Il n'y a pas de produits dans cette catégorie",
@@ -1577,6 +1637,8 @@
       "title": "Rechercher",
       "header": "Votre recherche pour {keyword} a donné les résultats suivants",
       "header_empty": "Désolé, votre recherche pour « {keyword} » n’a renvoyé aucun résultat",
+      "header_barcode": "Votre recherche pour le code-barres {barcode} a donné les résultats suivants",
+      "header_barcode_empty": "Aucun produit trouvé pour le code-barres {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Votre requête <strong>{0}</strong> n'a donné aucun résultat",

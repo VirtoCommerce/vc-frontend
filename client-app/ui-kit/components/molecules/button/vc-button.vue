@@ -8,6 +8,7 @@
     :disabled="!enabled"
     :title="title"
     :aria-label="ariaLabel || title"
+    :aria-busy="loading || undefined"
     :tabindex="tabindex"
     :class="[
       'vc-button group',
@@ -473,7 +474,7 @@ defineExpose({
     @apply grid grid-flow-col justify-center items-center min-h-[calc(var(--size)-0.25rem)];
 
     #{$loading} & {
-      @apply invisible;
+      @apply opacity-0;
     }
   }
 

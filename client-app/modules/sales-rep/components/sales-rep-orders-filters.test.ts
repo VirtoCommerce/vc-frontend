@@ -9,11 +9,14 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
   global: {
     renderStubDefaultSlot: false,
     stubs: {
+      // Props declared, so the stub cannot swallow the dialog opt-in this drawer depends on.
       VcPopover: {
+        name: "VcPopover",
+        props: ["role", "ariaLabel", "disabled"],
         template: '<div><slot :trigger-props="{}" /><slot name="content" :close="close" /></div>',
         methods: { close: () => {} },
       },
-      VcDialog: { template: "<div><slot /></div>" },
+      VcDialog: { name: "VcDialog", props: ["autoFocus"], template: "<div><slot /></div>" },
       VcDialogHeader: { template: "<div><slot /></div>" },
       VcDialogContent: { template: "<div><slot /></div>" },
       VcDialogFooter: { template: "<div><slot /></div>" },
@@ -168,5 +171,16 @@ describe("SalesRepOrdersFilters", () => {
     await wrapper.setProps({ statuses: [] });
 
     expect(statuses(wrapper).exists()).toBe(false);
+  });
+});
+
+describe("SalesRepOrdersFilters — the dialog opt-in", () => {
+  it("declares the panel a dialog, names it, and hands it initial focus instead of VcDialog", () => {
+    const wrapper = createWrapper();
+    const popover = wrapper.findComponent({ name: "VcPopover" });
+
+    expect(popover.props("role")).toBe("dialog");
+    expect(popover.props("ariaLabel")).toBe("sales_rep.customer_orders.filters.title");
+    expect(wrapper.findComponent({ name: "VcDialog" }).props("autoFocus")).toBe(false);
   });
 });

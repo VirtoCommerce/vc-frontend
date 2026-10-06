@@ -1,7 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
+import { CUSTOMER_PROFILE_ROUTE_NAME, DASHBOARD_ROUTE_NAME } from "../constants";
 import CustomerOrders from "./customer-orders.vue";
 
 const state = await vi.hoisted(async () => {
@@ -224,6 +224,16 @@ describe("CustomerOrders", () => {
     expect(items.some((item) => item.title === "MERCURY123")).toBe(false);
   });
 
+  it("links the hub breadcrumb to the Sales Rep dashboard", async () => {
+    const wrapper = createWrapper();
+    await flushPromises();
+
+    const items = stub(wrapper, "nav.crumbs").props().items as IBreadcrumb[];
+    const hub = items.find((item) => item.title === "sales_rep.hub.title");
+
+    expect(hub?.route).toEqual({ name: DASHBOARD_ROUTE_NAME });
+  });
+
   it("shows the not-found view instead of the list for a customer the rep does not serve", () => {
     state.notFound.value = true;
 
@@ -279,6 +289,20 @@ describe("CustomerOrders", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.findAll(".chip")).toHaveLength(0);
+  });
+
+  it("keeps the localized status chip label when the result set comes back empty", async () => {
+    state.statusOptions.value = [{ name: "Cancelled", label: "Abgesagt", count: 3 }];
+    state.filters.value = { statuses: ["Cancelled"], customerNames: [], startDate: undefined, endDate: undefined };
+
+    const wrapper = createWrapper();
+    expect(wrapper.findAll(".chip")[0].text()).toBe("Abgesagt");
+
+    // A zero-match response carries no status facet.
+    state.statusOptions.value = [];
+    await flushPromises();
+
+    expect(wrapper.findAll(".chip")[0].text()).toBe("Abgesagt");
   });
 
   it("drops a single filter when its chip is closed", async () => {

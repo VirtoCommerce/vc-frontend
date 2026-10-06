@@ -1,0 +1,23 @@
+mutation UpdateReturn($command: UpdateReturnCommandType!) {
+  updateReturn(command: $command) {
+    id
+    number
+    status
+    customerReference
+    customerComment
+    items {
+      id
+      orderLineItemId
+      quantity
+      reasonCode
+      reasonComment
+      serialNumber
+      attachments {
+        name
+        url
+        mimeType
+        size
+      }
+    }
+  }
+}

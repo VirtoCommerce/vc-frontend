@@ -128,7 +128,9 @@ resolved from the consumer's node_modules, since functions can't be serialized).
 must be self-contained because the package installs as a tarball — it cannot reach
 back into a host checkout. The same guards apply: drift-checked in CI, and a preset
 change (design-token change) auto-bumps `CORE_VERSION` exactly like a contract change —
-the released tarball is immutable per version.
+the released tarball is immutable per version. So does a change to any other file `files` publishes
+(`federation.mjs`, `codegen.mjs`, `testing.mjs` and their `.d.mts`) or to `package.json` itself,
+minus its version; the list is read from `files`, so a newly published file is covered too.
 
 ---
 

@@ -11,7 +11,7 @@
  * --with-vueuse, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
  */
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
@@ -217,8 +217,10 @@ function pinnedReleaseIsMissing() {
 // Derived from GROUPS so the group→packages mapping lives in exactly one place
 // (tailwind's empty `packages` self-excludes).
 const droppedShared = GROUPS.filter((group) => !selected[group.key]).flatMap((group) => group.packages);
+// Keys quoted only where JS requires it, as prettier prints them - the scaffold must pass its own lint.
+const objectKey = (name) => (/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name));
 const droppedSharedLines = droppedShared
-  .map((name) => `          "${name}": false, // not used by this plugin`)
+  .map((name) => `          ${objectKey(name)}: false, // not used by this plugin`)
   .join("\n");
 const sharedOverridesArg = droppedShared.length
   ? `\n        sharedOverrides: {\n${droppedSharedLines}\n        },`
@@ -260,7 +262,8 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
-    lint: "eslint . --fix",
+    lint: "eslint .",
+    "lint:fix": "eslint . --fix",
     format: "prettier --write src/",
     test: "vitest run",
     "test:watch": "vitest",
@@ -362,7 +365,8 @@ const tsconfig = {
     skipLibCheck: true,
     resolveJsonModule: true,
     verbatimModuleSyntax: true,
-    types: ["vite/client"],
+    // The facade is listed so its GlobalComponents declaration loads even when no file imports it.
+    types: ["vite/client", "@vc-frontend/core"],
   },
   include: ["src", "vite.config.ts", "plugin.config.ts"],
   // Off by default an unknown component is accepted silently, props unchecked. The contract
@@ -586,7 +590,7 @@ export default defineConfig({
       },
     ],
   },
-  test: { environment: "jsdom" },
+  test: { environment: "jsdom", passWithNoTests: true },
 });
 `;
 
@@ -613,7 +617,7 @@ export const globals = {
 
 export const useUser = () => ({ checkPermissions: () => true });
 export const useModuleSettings = () => ({ isEnabled: () => true, getModuleSettings: () => undefined });
-export const useModal = () => ({ openModal: () => {}, closeModal: () => {} });
+export const useModal = () => ({ openModal: () => () => {}, closeModal: () => {} });
 export const useNotifications = () => ({ success: () => {}, error: () => {}, warning: () => {}, info: () => {} });
 export const useNavigations = () => ({ mergeMenuSchema: () => {}, registerAccountSection: () => {} });
 export const useExtensionRegistry = () => ({ register: () => {}, registerContribution: () => {} });
@@ -683,7 +687,12 @@ if (selected.apollo) {
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
-writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
+// The host's supply-chain age gate, so a plugin does not install a package the host would refuse.
+const hostAgeGate = readFileSync(resolve(REPO_ROOT, ".yarnrc.yml"), "utf8").match(/^npmMinimalAgeGate:.*$/m)?.[0];
+writeFileSync(
+  join(targetDir, ".yarnrc.yml"),
+  ["nodeLinker: node-modules", hostAgeGate, ""].filter((line) => line !== undefined).join("\n"),
+);
 
 if (pinnedReleaseIsMissing()) {
   console.log(

@@ -202,6 +202,70 @@
       "filter_all": "Todos",
       "load_failed": "Falha ao carregar os pedidos"
     },
+    "tasks": {
+      "title": "Calendário",
+      "widget_title": "Tarefas e prazos",
+      "full_calendar": "Calendário completo",
+      "new_task": "Nova tarefa",
+      "add_task": "Adicionar tarefa",
+      "today": "Hoje",
+      "empty": "Nenhuma tarefa nesta aba",
+      "empty_day": "Nada com prazo neste dia",
+      "load_failed": "Falha ao carregar as tarefas",
+      "day_task_count": "{count} tarefas | {count} tarefa | {count} tarefas",
+      "overdue_total": "{count} tarefa atrasada | {count} tarefas atrasadas",
+      "day_task_count_capped": "{total} tarefas ({shown} exibidas)",
+      "day_markers": "{count} tarefas. Marcado: {kinds} | {count} tarefa. Marcado: {kinds} | {count} tarefas. Marcado: {kinds}",
+      "page": {
+        "subtitle": "Suas tarefas, acompanhamentos e prazos de todas as contas — organizados por dia."
+      },
+      "table": {
+        "task": "Tarefa",
+        "status": "Status",
+        "notes": "Notas",
+        "complete_aria": "Marcar «{name}» como concluída",
+        "reopen_aria": "Reabrir «{name}»",
+        "edit_aria": "Editar «{name}»"
+      },
+      "status": {
+        "upcoming": "Próxima",
+        "overdue": "Atrasada",
+        "completed": "Concluída",
+        "canceled": "Cancelada"
+      },
+      "priority": {
+        "lowest": "Mínima",
+        "low": "Baixa",
+        "normal": "Normal",
+        "high": "Alta",
+        "highest": "Máxima"
+      },
+      "due_relative": {
+        "expired": "Venceu em {date}",
+        "due": "Vence em {date}"
+      },
+      "legend": {
+        "upcoming": "Próximas",
+        "overdue": "Atrasadas",
+        "completed": "Concluídas"
+      },
+      "form": {
+        "create_title": "Nova tarefa",
+        "edit_title": "Editar tarefa",
+        "name_label": "Título",
+        "due_date_label": "Data de vencimento",
+        "priority_label": "Prioridade",
+        "type_label": "Tipo",
+        "description_label": "Notas",
+        "save_button": "Salvar",
+        "cancel_button": "Cancelar",
+        "delete_button": "Excluir",
+        "delete_title": "Excluir tarefa",
+        "delete_confirm": "Esta tarefa será excluída permanentemente. Continuar?",
+        "saved": "Tarefa salva",
+        "deleted": "Tarefa excluída"
+      }
+    },
     "top_sellers": {
       "title": "Mais vendidos",
       "rank": "#",
@@ -240,6 +304,18 @@
       "published": "Publicado em {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Próximas",
+          "overdue": "Atrasadas",
+          "completed": "Concluídas"
+        },
+        "sort": {
+          "due-date": "Data de vencimento",
+          "recent": "Criadas recentemente",
+          "name": "Tarefa"
+        }
+      },
       "load_failed": {
         "filter": "Não foi possível carregar os filtros, por isso é exibida a lista completa. Atualize a página.",
         "sort": "Não foi possível carregar as opções de ordenação, por isso é usada a ordem padrão. Atualize a página.",
@@ -252,19 +328,28 @@
       }
     },
     "list_sharing": {
-      "share_customers_label": "Cliente",
-      "share_customers_placeholder": "Selecionar cliente",
+      "share_customers_label": "Clientes",
+      "share_customers_placeholder": "Pesquisar clientes por nome",
       "share_customers_error": "Não foi possível carregar a lista de clientes. Tente novamente.",
-      "share_replace_hint": "O cliente selecionado anteriormente perderá o acesso a esta lista.",
-      "share_message_label": "Mensagem",
-      "share_message_placeholder": "Mensagem opcional para incluir",
+      "share_empty_hint": "Uma lista vazia não para a partilha — altere quem tem acesso.",
+      "share_message_label": "Mensagem (opcional)",
+      "share_message_placeholder": "Adicione uma nota para os destinatários",
+      "share_message_hint": "Os novos destinatários receberão isto na notificação.",
+      "recipients_title": "Destinatários · {count}",
+      "clear_recipients_button": "Limpar tudo",
+      "recipients_cleared": "Removidos · {count}",
+      "restore_recipients_button": "Desfazer",
+      "show_all_recipients_button": "Mostrar todos ({count})",
+      "show_less_recipients_button": "Mostrar menos",
+      "remove_recipient_button": "Remover {name}",
       "share_default_title": "Uma nova lista do seu representante de vendas",
       "share_default_message": "Olá! Acabei de compartilhar a lista \"{listName}\" com a sua organização. Confira:",
-      "share_success": "Lista compartilhada com o cliente.",
+      "share_success": "Lista compartilhada com {count} clientes. | Lista compartilhada com {count} cliente. | Lista compartilhada com {count} clientes.",
+      "share_saved": "Lista salva. Compartilhada com {count} clientes. | Lista salva. Compartilhada com {count} cliente. | Lista salva. Compartilhada com {count} clientes.",
       "share_partial": "Lista compartilhada, mas nem todas as notificações foram entregues.",
-      "share_notify_error": "A lista foi salva, mas não foi possível notificar o cliente.",
-      "scope_label": "Cliente",
-      "status": "Compartilhada com cliente",
+      "share_notify_error": "A lista foi salva, mas não foi possível enviar a notificação.",
+      "scope_label": "Clientes específicos",
+      "status": "Compartilhada com {count} clientes | Compartilhada com {count} cliente | Compartilhada com {count} clientes",
       "badge": "Recomendado pelo seu representante de vendas"
     }
   }

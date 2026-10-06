@@ -37,13 +37,13 @@ import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
+import { init as initReturns } from "@/modules/returns";
 import { init as initSalesRep } from "@/modules/sales-rep";
 import { init as initSkyflow } from "@/modules/skyflow";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
-import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "@/router/routes/ucp-handoff";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
@@ -53,22 +53,6 @@ import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
-
-async function getUcpHandoffUserId(): Promise<string | undefined> {
-  const ucpSession = new URL(globalThis.location.href).searchParams.get("ucp_session");
-
-  if (!ucpSession) {
-    return;
-  }
-
-  try {
-    const { buyerId } = await restoreUcpHandoffCart(ucpSession);
-    applyUcpHandoffBuyer(buyerId);
-    return buyerId;
-  } catch (error) {
-    Logger.warn("Failed to pre-restore UCP handoff session", error);
-  }
-}
 
 /**
  * The env override skips the query: that list wins in the loader anyway, so asking would cost the
@@ -153,7 +137,7 @@ export default async () => {
   const domain = IS_DEVELOPMENT
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
-  const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
+  const userId = savedUserId.value;
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -280,6 +264,7 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
+  void initReturns(router, i18n);
   void initSkyflow(router, i18n);
 
   // Plugins

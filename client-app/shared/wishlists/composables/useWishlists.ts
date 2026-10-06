@@ -27,6 +27,19 @@ const lists = ref<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
 const listLoading = ref(true);
 
+// Merged rather than swapped in: the mutation selects fewer fields than the list queries, so replacing the entry
+// would blank the card's item count and modified date. `list` is only touched when it holds the same list — it is
+// shared with whatever page is mounted, and a save from the lists page must not put a partial list under it.
+function applySavedList(changedList: WishlistType): void {
+  if (list.value?.id === changedList.id) {
+    list.value = { ...list.value, ...changedList };
+  }
+
+  lists.value = lists.value.map((wishlist) =>
+    wishlist.id === changedList.id ? { ...wishlist, ...changedList } : wishlist,
+  );
+}
+
 export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(payload: CreateWishlistPayloadType): Promise<string | undefined> {
     let newList: WishlistType;
@@ -46,11 +59,16 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     return newList.id;
   }
 
-  async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<void> {
+  // Returns the saved list: the mutation is the only place the server's own sharing key surfaces, and the share
+  // dialog links the customer notification to it.
+  async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<WishlistType> {
     listLoading.value = true;
 
+    let changedList: WishlistType;
+
     try {
-      list.value = await changeWishlist(payload);
+      changedList = await changeWishlist(payload);
+      applySavedList(changedList);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${updateWishlist.name}`, e);
       throw e;
@@ -61,6 +79,8 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     if (options.autoRefetch) {
       await fetchWishlists();
     }
+
+    return changedList;
   }
 
   async function fetchWishlists(): Promise<void> {

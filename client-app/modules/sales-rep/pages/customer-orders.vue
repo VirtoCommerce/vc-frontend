@@ -95,7 +95,7 @@
                     {{ item.number }}
                   </VcLink>
 
-                  <span>{{ item.total }}</span>
+                  <span class="customer-orders__mobile-total">{{ item.total }}</span>
                 </div>
 
                 <div v-if="!hasCustomer" class="customer-orders__mobile-sub">{{ item.organizationName }}</div>
@@ -116,7 +116,13 @@
               {{ item.organizationName }}
             </VcTableColumn>
 
-            <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" sortable>
+            <VcTableColumn
+              id="date"
+              v-slot="{ item }"
+              :title="t('sales_rep.orders.date')"
+              sortable
+              class="customer-orders__value"
+            >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
@@ -130,7 +136,7 @@
               :title="t('sales_rep.orders.total')"
               sortable
               align="right"
-              class="font-bold"
+              class="customer-orders__value font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -149,7 +155,12 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import SalesRepOrdersFilters from "../components/sales-rep-orders-filters.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
-import { CUSTOMER_ORDERS_SORT_FIELDS, CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import {
+  CUSTOMER_ORDERS_SORT_FIELDS,
+  CUSTOMER_PROFILE_ROUTE_NAME,
+  DASHBOARD_ROUTE_NAME,
+  MY_CUSTOMERS_ROUTE_NAME,
+} from "../constants";
 import { salesRepOrderRoute } from "../utils";
 import type { SalesRepCustomerOrderRowType, SalesRepOrdersFilterDataType } from "../types";
 import type { RouteLocationRaw } from "vue-router";
@@ -241,6 +252,21 @@ type FilterChipType = {
   label: string;
 };
 
+// The status facet only lists terms the current result set holds, so a search matching nothing drops the
+// applied status and its chip would fall back to the raw term. Labels seen in earlier responses are kept;
+// they are per culture, and a culture switch reloads the app.
+const statusLabels = ref<Record<string, string>>({});
+
+watch(
+  statusOptions,
+  (options) => {
+    for (const { name, label } of options) {
+      statusLabels.value[name] = label;
+    }
+  },
+  { immediate: true },
+);
+
 const filterChips = computed<FilterChipType[]>(() => {
   const { statuses, customerNames, startDate, endDate } = filters.value;
   const chips: FilterChipType[] = [];
@@ -250,7 +276,7 @@ const filterChips = computed<FilterChipType[]>(() => {
       id: `statuses:${status}`,
       field: "statuses",
       value: status,
-      label: statusOptions.value.find((option) => option.name === status)?.label ?? status,
+      label: statusLabels.value[status] ?? status,
     });
   }
 
@@ -325,7 +351,10 @@ function changePage(newPage: number): void {
 usePageHead({ title: heading });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const trail = [{ title: t("common.links.account"), route: { name: "Account" } }, { title: t("sales_rep.hub.title") }];
+  const trail = [
+    { title: t("common.links.account"), route: { name: "Account" } },
+    { title: t("sales_rep.hub.title"), route: { name: DASHBOARD_ROUTE_NAME } },
+  ];
 
   if (!hasCustomer.value) {
     return [...trail, { title: t("sales_rep.customer_orders.breadcrumb") }];
@@ -366,12 +395,21 @@ const breadcrumbs = useBreadcrumbs(() => {
     @apply text-[--link-color] hover:text-[--link-hover-color];
   }
 
+  // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
+  &__value {
+    @apply whitespace-nowrap;
+  }
+
   &__mobile-item {
     @apply flex flex-col gap-1 border-b px-5 py-4;
   }
 
   &__mobile-row {
-    @apply flex items-center justify-between font-bold;
+    @apply flex items-center justify-between gap-2 font-bold;
+  }
+
+  &__mobile-total {
+    @apply shrink-0 whitespace-nowrap;
   }
 
   &__mobile-sub {

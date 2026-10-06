@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Den här kassan tillhör ett annat konto eller en annan organisation. Logga in med kontot som du använder i din shoppingassistent och försök igen.",
+      "expired": "Den här kassalänken har gått ut, har redan använts eller är inte tillgänglig på den här fliken. Be din shoppingassistent om en ny länk.",
+      "restore_failed": "Vi kunde inte öppna kassan. Försök öppna länken igen om en stund.",
+      "authorization_failed": "Vi kunde inte fortsätta inloggningen",
+      "authorization_retry": "Starta om anslutningen från din shoppingassistent. Kontakta butiksadministratören om problemet kvarstår."
+    },
     "buttons": {
       "home": "Hemsida",
       "ok": "OK",
@@ -510,7 +517,13 @@
           "user_is_locked_in_organization": "Din åtkomst till den här organisationen har blockerats. Kontakta din organisationsadministratör",
           "user_cannot_login_in_store": "Åtkomst nekad. Du kan inte logga in i den aktuella butiken",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information"
+          "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information",
+          "sign_in_not_allowed": "Du kan inte logga in med det här kontot. Kontakta din administratör.",
+          "store_not_found": "Den här butiken finns inte.",
+          "duplicate_email_login_attempt": "Flera konton använder den här e-postadressen.",
+          "lockout_disabled": "Det här kontot kan inte logga in med en kod.",
+          "invalid_code": "Den här koden fungerade inte.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -603,6 +616,41 @@
         "click_to_copy": "Klicka för att kopiera",
         "clipboard_success": "Kupong kopierad",
         "tap_to_copy": "Tryck för att kopiera"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Logga in med engångskod",
+        "request": {
+          "subtitle": "Vi skickar en kod till din e-post. Inget lösenord behövs.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Fortsätt",
+          "switch_to_password_link": "Logga in med lösenord istället"
+        },
+        "verify": {
+          "header": "Kolla din e-post",
+          "subtitle": "Vi skickade en kod till {email}.",
+          "code_label": "Kod",
+          "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
+          "submit_button": "Logga in",
+          "resend_button": "Skicka koden igen",
+          "use_different_email_link": "Använd en annan e-postadress",
+          "live_resent": "Ny kod skickad."
+        },
+        "locked": {
+          "title": "För många misslyckade försök",
+          "title_blocked": "Kontot är blockerat",
+          "text_countdown": "Försök igen om {time}.",
+          "text_ready": "Du kan försöka igen nu.",
+          "start_over_button": "Försök igen"
+        },
+        "disabled": {
+          "title": "Vi kunde inte logga in dig",
+          "text": "Prova med lösenord istället, eller kontakta din kontoadministratör om detta fortsätter.",
+          "text_no_password": "Kontakta din kontoadministratör om detta fortsätter.",
+          "password_button": "Logga in med lösenord",
+          "back_link": "Tillbaka till inloggningen"
+        }
       }
     },
     "company": {
@@ -962,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Antal produkter",
-        "list_edit_button": "Redigera",
-        "remove_list_button": "Radera",
+        "rename_list_button": "Byt namn",
+        "remove_list_button": "Ta bort lista",
         "make_private_button": "Gör privat",
         "share_button": "Dela",
         "last_modified_label": "Senast ändrad: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
-        "list_settings_button": "Listinställningar",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Din lista är tom",
         "empty_list_button": "Fortsätt bläddra",
         "list_icon": "Listikon"
@@ -994,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Ny lista",
-        "edit_mode_title": "Listinställningar",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listnamn",
         "list_name_placeholder": "Ange namn",
-        "sharing_scope_label": "Delningsalternativ",
-        "sharing_scope_placeholder": "Välj ett alternativ",
         "sharing_link_label": "Länk",
         "create_button": "Skapa lista",
         "save_button": "@:common.buttons.save",
@@ -1007,11 +1053,25 @@
         "make_shared": "Gör delad",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisation",
-          "AnyoneAnonymous": "Alla (endast läsning)"
+          "Organization": "Min organisation",
+          "AnyoneAnonymous": "Alla med länken"
         },
         "clipboard_success": "Länk kopierad",
         "save_error": "Listan kunde inte sparas. Försök igen."
+      },
+      "share_wishlist_modal": {
+        "title": "Dela ”{listName}”",
+        "who_can_access_label": "Vem har åtkomst",
+        "scope_selected": "{label}, vald"
+      },
+      "stop_sharing_modal": {
+        "title": "Sluta dela den här listan?",
+        "message": "Alla som listan delas med förlorar åtkomsten. Du kan dela den igen när som helst.",
+        "confirm_button": "Sluta dela",
+        "change_title": "Ändra vem som har åtkomst?",
+        "change_message": "Länken förblir densamma. Vissa användare kan förlora åtkomsten.",
+        "change_confirm_button": "Ändra åtkomst",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",
@@ -1526,7 +1586,7 @@
       "choose_button": "@:common.buttons.choose",
       "add_to_wishlist_tooltip": "Lägg till i lista",
       "in_the_list_tooltip": "I listan",
-      "variations_button": "{0} varianter",
+      "variations_button": "Inga varianter | {count} variant | {count} varianter",
       "customize_button": "Anpassa",
       "show_on_a_separate_page": "Visa på en separat sida",
       "no_products_message": "Det finns inga produkter i denna kategori",
@@ -1577,6 +1637,8 @@
       "title": "Sök",
       "header": "Din sökning efter {keyword} gav följande resultat",
       "header_empty": "Tyvärr, din sökning efter \"{keyword}\" gav inga resultat",
+      "header_barcode": "Din sökning efter streckkoden {barcode} gav följande resultat",
+      "header_barcode_empty": "Inga produkter hittades för streckkoden {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Din sökning efter <strong>{0}</strong> gav inga resultat",

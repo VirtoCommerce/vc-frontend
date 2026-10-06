@@ -59,7 +59,7 @@ my-plugin/
 ├── tsconfig.json            # strict, strictTemplates on
 ├── vite.config.ts
 ├── vitest.config.ts
-└── package.json             # scripts: build, watch, dev, preview, type-check, lint, format, test
+└── package.json             # scripts: build, watch, dev, preview, type-check, lint, lint:fix, format, test
 ```
 
 The lint/format/test half is the host's own stack, pinned to the host's versions, so a plugin is
@@ -157,9 +157,13 @@ Alias the specifier to a mock you own:
 ```ts
 // vitest.config.ts
 resolve: {
-  alias: {
-    "@vc-frontend/core": fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
-  },
+  // A regex: a string key matches by prefix and would send `@vc-frontend/core/testing` to the mock too.
+  alias: [
+    {
+      find: /^@vc-frontend\/core$/,
+      replacement: fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
+    },
+  ],
 },
 ```
 

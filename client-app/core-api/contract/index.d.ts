@@ -1991,10 +1991,27 @@ type SharingSettingType = {
     id: Scalars['String']['output'];
     /** Created by current user */
     isOwner: Scalars['Boolean']['output'];
+    /** Message saved with the share (one for all targets) */
+    message?: Maybe<Scalars['String']['output']>;
     /** Scope (private, organization, etc.) */
     scope?: Maybe<WishlistScopeType>;
-    /** Id of the principal the list is shared with (id space defined by scope); null for non-targeted scopes */
+    /**
+     * Id of the first target the list is shared with; owner only, null for non-targeted scopes
+     * @deprecated Use targets
+     */
     sharedWithId?: Maybe<Scalars['String']['output']>;
+    /** Targets the list is shared with (id space defined by scope); owner only, empty for other viewers and for non-targeted scopes */
+    targets: Array<SharingTargetType>;
+};
+type SharingTargetType = {
+    /** Id the list is shared with (id space defined by scope) */
+    id: Scalars['String']['output'];
+    /** Image URL of the target, when resolved */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** Display name of the target, when the module owning the scope resolves it */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Secondary display line of the target (e.g. city and region), when resolved */
+    subtitle?: Maybe<Scalars['String']['output']>;
 };
 type ShipmentType = {
     /** Text comment */
@@ -2651,6 +2668,21 @@ type AnyAddressType = {
     availabilityType?: string;
 };
 
+type CreateWishlistPayloadType = {
+    listName?: string;
+    description?: string;
+    scope?: string;
+    sharingKey?: string;
+    sharedWithId?: string;
+};
+
+type ChangeWishlistPayloadType = CreateWishlistPayloadType & {
+    listId: string;
+    addSharedWithIds?: string[];
+    removeSharedWithIds?: string[];
+    message?: string;
+};
+
 interface ILanguage {
     cultureName: string;
     nativeName: string;
@@ -2822,21 +2854,45 @@ interface IProps$i {
     flipOptions?: VcPopoverFlipOptionsType;
     offsetOptions?: VcPopoverOffsetOptionsType;
     shiftOptions?: VcPopoverShiftOptionsType;
+    /**
+     * Prevents opening and closes an open popover. For `dialog` panels it also hands focus back to the
+     * trigger once it clears, but only when disabling left focus on the document body.
+     */
     disabled?: boolean;
     shadow?: boolean;
     bgColor?: string;
     radius?: string;
     width?: string;
     zIndex?: number | string;
-    role?: string;
+    /**
+     * ARIA role of the content panel, and the source of the trigger's `aria-haspopup`: a popup kind
+     * (`menu`, `listbox`, `tree`, `grid`, `dialog`) is announced as itself, `tooltip` not at all, and
+     * any other role — including none — keeps the historical `dialog`. `VcDropdownMenu` passes no role
+     * on, so its panels are the known holdouts: their triggers announce a dialog over a list that is
+     * role-less unless the consumer names it itself, as `VcSelect` does. Giving those panels a role
+     * here is a separate change.
+     *
+     * `dialog` additionally enables the non-modal dialog keyboard contract (WAI-ARIA APG): Escape
+     * closes the panel from anywhere in its DOM subtree — teleported content sits outside it and must
+     * handle its own — the panel takes focus when it opens, unless `hover` is set or a consumer claims
+     * focus from `@toggle`, and focus returns to the trigger on close. Pair it with `ariaLabel`:
+     * a dialog needs a name.
+     */
+    role?: VcPopoverRoleType | (string & {});
+    /**
+     * Open on hover and focus instead of click. A hover panel never takes focus — it would close
+     * itself on the trigger's `focusout` — so it cannot carry a dialog the keyboard needs to enter.
+     */
     hover?: boolean;
     disableTriggerEvents?: boolean;
     arrowEnabled?: boolean;
+    /** Accessible name of the content panel. Required when `role` is `dialog`. */
     ariaLabel?: string;
     enableTeleport?: boolean | null;
     teleportSelector?: string;
     lazy?: boolean;
 }
+type HaspopupTokenType = Exclude<VcPopoverRoleType, "tooltip">;
 declare function open(): void;
 declare function close$2(): void;
 declare function toggle(): void;
@@ -2851,8 +2907,8 @@ declare var __VLS_1$2: {
         onFocusin: typeof open | undefined;
         onFocusout: typeof close$2 | undefined;
         onClick: typeof toggle | undefined;
-        onKeyup: (e: KeyboardEvent) => void;
-        "aria-haspopup": "dialog";
+        onKeydown: (e: KeyboardEvent) => void;
+        "aria-haspopup": HaspopupTokenType | undefined;
         "aria-expanded": boolean;
         "aria-controls": string | undefined;
         role: "button";
@@ -2864,7 +2920,7 @@ declare var __VLS_3$2: {
     toggle: typeof toggle;
     opened: boolean;
     triggerProps: {
-        "aria-haspopup": "dialog";
+        "aria-haspopup": HaspopupTokenType | undefined;
         "aria-expanded": boolean;
         "aria-controls": string | undefined;
     };
@@ -2956,7 +3012,7 @@ declare var __VLS_16: {
 declare var __VLS_18: {
     error: boolean;
 };
-declare var __VLS_73: {
+declare var __VLS_76: {
     item: any;
     index: number;
 };
@@ -2965,7 +3021,7 @@ type __VLS_Slots$7 = {} & {
 } & {
     placeholder?: (props: typeof __VLS_18) => any;
 } & {
-    item?: (props: typeof __VLS_73) => any;
+    item?: (props: typeof __VLS_76) => any;
 };
 declare const __VLS_base$7: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: any) => any;
@@ -3663,6 +3719,10 @@ type ExtensionCategoryMapType = {
     cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
         paymentTypeName: string;
     }) => boolean>;
+    /** The order details page. A provider decides from the order whether it has anything to offer. */
+    orderDetails: ExtensionEntryType<{
+        order?: CustomerOrderType;
+    }, never, (order?: CustomerOrderType) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
@@ -3739,6 +3799,9 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly orderPaymentPage: {
         readonly paymentMethods: "payment-methods";
+    };
+    readonly orderDetails: {
+        readonly actions: "actions";
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
@@ -4502,12 +4565,16 @@ declare function useNotifications(): {
     stack: vue.ComputedRef<INotificationExtended[]>;
 };
 
-/** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
+/** A tab of the share dialog's scope strip. Modules contribute their own through `registerSharingScope`. */
 interface IWishlistSharingScopeType {
     scope: string;
     labelKey: string;
     /** Status line for the list owner; falls back to the generic "Shared". */
     statusKey?: string;
+    /** Glyph shown on the scope's tab in the share dialog. */
+    icon?: string;
+    /** Position among the tabs, ascending; scopes that declare none come last. */
+    order?: number;
     supportsLink?: boolean;
     shoppable?: boolean;
     /** Defaults to available. */
@@ -4517,19 +4584,31 @@ interface IWishlistSharingScopeType {
 type WishlistSharingScopeSavedContextType = {
     listName: string;
     sharingLink: string;
+    /** The audience the server persisted, so a scope reports what was saved rather than its own draft. */
+    targets: SharingTargetType[];
 };
+/** What a scope may contribute to the list's write command, mirroring the fields of `changeWishlist`. */
+type WishlistSharingScopePayloadType = Pick<ChangeWishlistPayloadType, "addSharedWithIds" | "removeSharedWithIds" | "message">;
 /**
- * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
- * instance rather than the registration object: the registry is a global filled at module init, while the state these
- * depend on is per-open.
+ * What a scope's `element` passes to `defineExpose`. Typing the raw side is what makes the contract checkable at the
+ * contributor's end; the modal reads it through Vue's expose proxy, which unwraps every ref.
+ */
+interface IWishlistSharingScopeExposeType {
+    canSave?: MaybeRef<boolean>;
+    dirty?: MaybeRef<boolean>;
+    payload?: MaybeRef<WishlistSharingScopePayloadType>;
+    onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
+}
+/**
+ * The same contract as the modal sees it, with the refs already unwrapped. Comes from the rendered instance rather
+ * than the registration object: the registry is a global filled at module init, while the state these depend on is
+ * per-open.
  */
 interface IWishlistSharingScopeControlsType {
     canSave?: boolean;
     /** The core form cannot see per-scope input, so a scope reports its own changes. */
     dirty?: boolean;
-    payload?: {
-        sharedWithId?: string;
-    };
+    payload?: WishlistSharingScopePayloadType;
     /** Must handle its own failures — the list is already persisted by then. */
     onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
 }
@@ -4764,8 +4843,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useUser, useWishlistSharingScopes };
-export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopeSavedContextType };
+export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$v as VcAlert, _default$F as VcBadge, _default$E as VcBreadcrumbs, _default$u as VcButton, _default$D as VcCheckbox, _default$C as VcCheckboxGroup, _default$t as VcChip, _default$e as VcDatePicker, _default$s as VcDialog, _default$r as VcDialogContent, _default$q as VcDialogFooter, _default$p as VcDialogHeader, _default$o as VcEmptyView, _default$B as VcIcon, _default$A as VcImage, _default$n as VcInput, _default$z as VcInputDetails, _default$y as VcLabel, _default$7 as VcLayout, _default$x as VcLink, _default$m as VcLoaderOverlay, _default$w as VcMarkdownRender, _default$l as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$k as VcPopover, _default$j as VcRating, _default$i as VcSelect, _default$h as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$g as VcTextarea, _default$f as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, apolloClient, downloadFile, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useUser, useWishlistSharingScopes };
+export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;
@@ -4834,6 +4913,7 @@ type VcPopoverStrategyType = Strategy;
 type VcPopoverFlipOptionsType = FlipOptions;
 type VcPopoverOffsetOptionsType = OffsetOptions;
 type VcPopoverShiftOptionsType = ShiftOptions;
+type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
 type VcTableAlignType = "center" | "right" | "left";
 type VcTableColumnType = {
@@ -4922,5 +5002,17 @@ declare module "vue" {
     VcTypography: typeof _default$f;
     VcWidget: typeof _default$9;
     VcWidgetSkeleton: typeof _default$8;
+  }
+}
+
+
+// ── directives registered globally by `app.use(uiKit)` ──
+declare module "vue" {
+  export interface GlobalDirectives {
+    vMask: typeof import("maska/vue").vMaska;
+    vOnClickOutside: import("vue").Directive<HTMLElement, (event: PointerEvent) => void>;
+    vHtmlSafe: import("vue").Directive<HTMLElement, string | null | undefined>;
+    vHtmlEscape: import("vue").Directive<HTMLElement, string | null | undefined>;
+    vHtmlRemove: import("vue").Directive<HTMLElement, string | null | undefined>;
   }
 }

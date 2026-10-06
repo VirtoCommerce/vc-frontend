@@ -202,6 +202,70 @@
       "filter_all": "Все",
       "load_failed": "Не удалось загрузить заказы"
     },
+    "tasks": {
+      "title": "Календарь",
+      "widget_title": "Задачи и сроки",
+      "full_calendar": "Весь календарь",
+      "new_task": "Новая задача",
+      "add_task": "Добавить задачу",
+      "today": "Сегодня",
+      "empty": "В этой вкладке нет задач",
+      "empty_day": "На этот день ничего не запланировано",
+      "load_failed": "Не удалось загрузить задачи",
+      "day_task_count": "{count} задач | {count} задача | {count} задачи | {count} задач",
+      "overdue_total": "{count} просроченных задач | {count} просроченная задача | {count} просроченные задачи | {count} просроченных задач",
+      "day_task_count_capped": "{total} задач (показано {shown})",
+      "day_markers": "{count} задач. Отмечено: {kinds} | {count} задача. Отмечено: {kinds} | {count} задачи. Отмечено: {kinds} | {count} задач. Отмечено: {kinds}",
+      "page": {
+        "subtitle": "Ваши задачи, напоминания и сроки по всем клиентам — в разбивке по дням."
+      },
+      "table": {
+        "task": "Задача",
+        "status": "Статус",
+        "notes": "Заметки",
+        "complete_aria": "Отметить «{name}» как выполненную",
+        "reopen_aria": "Возобновить «{name}»",
+        "edit_aria": "Изменить «{name}»"
+      },
+      "status": {
+        "upcoming": "Предстоящая",
+        "overdue": "Просроченная",
+        "completed": "Выполненная",
+        "canceled": "Отменённая"
+      },
+      "priority": {
+        "lowest": "Самый низкий",
+        "low": "Низкий",
+        "normal": "Обычный",
+        "high": "Высокий",
+        "highest": "Самый высокий"
+      },
+      "due_relative": {
+        "expired": "Срок истёк {date}",
+        "due": "Срок {date}"
+      },
+      "legend": {
+        "upcoming": "Предстоящие",
+        "overdue": "Просроченные",
+        "completed": "Выполненные"
+      },
+      "form": {
+        "create_title": "Новая задача",
+        "edit_title": "Изменить задачу",
+        "name_label": "Заголовок",
+        "due_date_label": "Срок выполнения",
+        "priority_label": "Приоритет",
+        "type_label": "Тип",
+        "description_label": "Заметки",
+        "save_button": "Сохранить",
+        "cancel_button": "Отмена",
+        "delete_button": "Удалить",
+        "delete_title": "Удалить задачу",
+        "delete_confirm": "Задача будет удалена безвозвратно. Продолжить?",
+        "saved": "Задача сохранена",
+        "deleted": "Задача удалена"
+      }
+    },
     "top_sellers": {
       "title": "Лучшие продавцы",
       "rank": "№",
@@ -240,6 +304,18 @@
       "published": "Опубликовано {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Предстоящие",
+          "overdue": "Просроченные",
+          "completed": "Выполненные"
+        },
+        "sort": {
+          "due-date": "Срок выполнения",
+          "recent": "Недавно созданные",
+          "name": "Задача"
+        }
+      },
       "load_failed": {
         "filter": "Не удалось загрузить фильтры, поэтому показан полный список. Обновите страницу.",
         "sort": "Не удалось загрузить параметры сортировки, поэтому используется порядок по умолчанию. Обновите страницу.",
@@ -252,19 +328,28 @@
       }
     },
     "list_sharing": {
-      "share_customers_label": "Клиент",
-      "share_customers_placeholder": "Выберите клиента",
+      "share_customers_label": "Клиенты",
+      "share_customers_placeholder": "Поиск клиентов по названию",
       "share_customers_error": "Не удалось загрузить список клиентов. Пожалуйста, попробуйте снова.",
-      "share_replace_hint": "Ранее выбранный клиент потеряет доступ к этому списку.",
-      "share_message_label": "Сообщение",
-      "share_message_placeholder": "Необязательное сообщение",
+      "share_empty_hint": "Пустой список не прекращает доступ — измените, кто имеет доступ.",
+      "share_message_label": "Сообщение (необязательно)",
+      "share_message_placeholder": "Добавьте примечание для получателей",
+      "share_message_hint": "Новые получатели увидят это в уведомлении.",
+      "recipients_title": "Получатели · {count}",
+      "clear_recipients_button": "Очистить всё",
+      "recipients_cleared": "Очищено · {count}",
+      "restore_recipients_button": "Вернуть",
+      "show_all_recipients_button": "Показать все ({count})",
+      "show_less_recipients_button": "Показать меньше",
+      "remove_recipient_button": "Удалить {name}",
       "share_default_title": "Новый список от вашего торгового представителя",
       "share_default_message": "Здравствуйте! Вашей организации доступен список «{listName}». Посмотрите:",
-      "share_success": "Список отправлен клиенту.",
+      "share_success": "Список отправлен {count} клиентам. | Список отправлен {count} клиенту. | Список отправлен {count} клиентам. | Список отправлен {count} клиентам.",
+      "share_saved": "Список сохранён. Доступен {count} клиентам. | Список сохранён. Доступен {count} клиенту. | Список сохранён. Доступен {count} клиентам. | Список сохранён. Доступен {count} клиентам.",
       "share_partial": "Список отправлен, но не все уведомления доставлены.",
-      "share_notify_error": "Список сохранён, но уведомить клиента не удалось.",
-      "scope_label": "Клиент",
-      "status": "Отправлен клиенту",
+      "share_notify_error": "Список сохранён, но отправить уведомление не удалось.",
+      "scope_label": "Выбранные клиенты",
+      "status": "Отправлен {count} клиентам | Отправлен {count} клиенту | Отправлен {count} клиентам | Отправлен {count} клиентам",
       "badge": "Рекомендовано вашим торговым представителем"
     }
   }

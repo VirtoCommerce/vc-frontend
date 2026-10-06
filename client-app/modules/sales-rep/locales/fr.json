@@ -202,6 +202,70 @@
       "filter_all": "Tous",
       "load_failed": "Impossible de charger les commandes"
     },
+    "tasks": {
+      "title": "Calendrier",
+      "widget_title": "Tâches et échéances",
+      "full_calendar": "Calendrier complet",
+      "new_task": "Nouvelle tâche",
+      "add_task": "Ajouter une tâche",
+      "today": "Aujourd'hui",
+      "empty": "Aucune tâche dans cet onglet",
+      "empty_day": "Aucune échéance ce jour-là",
+      "load_failed": "Impossible de charger les tâches",
+      "day_task_count": "{count} tâche | {count} tâche | {count} tâches",
+      "overdue_total": "{count} tâche en retard | {count} tâches en retard",
+      "day_task_count_capped": "{total} tâches ({shown} affichées)",
+      "day_markers": "{count} tâche. Marqué : {kinds} | {count} tâche. Marqué : {kinds} | {count} tâches. Marqué : {kinds}",
+      "page": {
+        "subtitle": "Vos tâches, relances et échéances pour tous les comptes — organisées par jour."
+      },
+      "table": {
+        "task": "Tâche",
+        "status": "Statut",
+        "notes": "Notes",
+        "complete_aria": "Marquer « {name} » comme terminée",
+        "reopen_aria": "Rouvrir « {name} »",
+        "edit_aria": "Modifier « {name} »"
+      },
+      "status": {
+        "upcoming": "À venir",
+        "overdue": "En retard",
+        "completed": "Terminée",
+        "canceled": "Annulée"
+      },
+      "priority": {
+        "lowest": "La plus basse",
+        "low": "Basse",
+        "normal": "Normale",
+        "high": "Haute",
+        "highest": "La plus haute"
+      },
+      "due_relative": {
+        "expired": "Expirée le {date}",
+        "due": "Échéance le {date}"
+      },
+      "legend": {
+        "upcoming": "À venir",
+        "overdue": "En retard",
+        "completed": "Terminées"
+      },
+      "form": {
+        "create_title": "Nouvelle tâche",
+        "edit_title": "Modifier la tâche",
+        "name_label": "Titre",
+        "due_date_label": "Date d'échéance",
+        "priority_label": "Priorité",
+        "type_label": "Type",
+        "description_label": "Notes",
+        "save_button": "Enregistrer",
+        "cancel_button": "Annuler",
+        "delete_button": "Supprimer",
+        "delete_title": "Supprimer la tâche",
+        "delete_confirm": "Cette tâche sera supprimée définitivement. Continuer ?",
+        "saved": "Tâche enregistrée",
+        "deleted": "Tâche supprimée"
+      }
+    },
     "top_sellers": {
       "title": "Meilleures ventes",
       "rank": "#",
@@ -240,6 +304,18 @@
       "published": "Publié le {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "À venir",
+          "overdue": "En retard",
+          "completed": "Terminées"
+        },
+        "sort": {
+          "due-date": "Date d'échéance",
+          "recent": "Créées récemment",
+          "name": "Tâche"
+        }
+      },
       "load_failed": {
         "filter": "Les filtres n'ont pas pu être chargés, la liste complète est donc affichée. Veuillez actualiser la page.",
         "sort": "Les options de tri n'ont pas pu être chargées, l'ordre par défaut est donc utilisé. Veuillez actualiser la page.",
@@ -252,19 +328,28 @@
       }
     },
     "list_sharing": {
-      "share_customers_label": "Client",
-      "share_customers_placeholder": "Sélectionner un client",
+      "share_customers_label": "Clients",
+      "share_customers_placeholder": "Rechercher des clients par nom",
       "share_customers_error": "La liste des clients n'a pas pu être chargée. Veuillez réessayer.",
-      "share_replace_hint": "Le client précédemment sélectionné perdra l'accès à cette liste.",
-      "share_message_label": "Message",
-      "share_message_placeholder": "Message facultatif à inclure",
+      "share_empty_hint": "Une liste vide n'arrête pas le partage : modifiez plutôt qui a accès.",
+      "share_message_label": "Message (facultatif)",
+      "share_message_placeholder": "Ajoutez une note pour les destinataires",
+      "share_message_hint": "Les nouveaux destinataires le recevront dans leur notification.",
+      "recipients_title": "Destinataires · {count}",
+      "clear_recipients_button": "Tout effacer",
+      "recipients_cleared": "Effacés · {count}",
+      "restore_recipients_button": "Restaurer",
+      "show_all_recipients_button": "Afficher les {count}",
+      "show_less_recipients_button": "Afficher moins",
+      "remove_recipient_button": "Supprimer {name}",
       "share_default_title": "Une nouvelle liste de votre commercial",
       "share_default_message": "Bonjour ! Je viens de partager la liste « {listName} » avec votre organisation. Découvrez-la :",
-      "share_success": "Liste partagée avec le client.",
+      "share_success": "Liste partagée avec {count} client. | Liste partagée avec {count} client. | Liste partagée avec {count} clients.",
+      "share_saved": "Liste enregistrée. Partagée avec {count} client. | Liste enregistrée. Partagée avec {count} client. | Liste enregistrée. Partagée avec {count} clients.",
       "share_partial": "Liste partagée, mais toutes les notifications n'ont pas été délivrées.",
-      "share_notify_error": "La liste a été enregistrée, mais le client n'a pas pu être notifié.",
-      "scope_label": "Client",
-      "status": "Partagé avec le client",
+      "share_notify_error": "La liste a été enregistrée, mais la notification n'a pas pu être envoyée.",
+      "scope_label": "Clients spécifiques",
+      "status": "Partagé avec {count} client | Partagé avec {count} client | Partagé avec {count} clients",
       "badge": "Recommandé par votre commercial"
     }
   }
