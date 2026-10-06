@@ -224,11 +224,7 @@ describe("declared contributions in the loader", () => {
       remote: { name: "broken", exposed: "./plugin" },
       contributions: JSON.stringify({
         format: 1,
-        routes: [
-          { path: "/broken", name: "BrokenPage" },
-          { path: "old", parent: "Company", name: "BrokenRedirect", redirect: "BrokenPage" },
-          badRoute,
-        ],
+        routes: [{ path: "/broken", name: "BrokenPage" }, badRoute],
       }),
     };
 
@@ -241,7 +237,6 @@ describe("declared contributions in the loader", () => {
     expect(prepared.result.skipped).toEqual(["broken"]);
     expect(usePluginsStatus().stateOf("broken")).toBe("skipped");
     expect(router.hasRoute("BrokenPage")).toBe(false);
-    expect(router.hasRoute("BrokenRedirect")).toBe(false);
     expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
     expect(router.hasRoute("SalesRepDocuments")).toBe(true);
   });

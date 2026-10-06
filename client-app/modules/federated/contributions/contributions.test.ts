@@ -149,7 +149,6 @@ describe("applyContributions / releaseContributions", () => {
       routes: [
         { path: "/", name: "Home", component: Page },
         { path: "/company", name: "Company", component: Parent, children: [] },
-        { path: "/sign-in", name: "SignIn", component: Page },
       ],
     });
     return { declare, status, navigations, router };
@@ -163,7 +162,6 @@ describe("applyContributions / releaseContributions", () => {
       // @ts-expect-error JSON from a plugin can name a parent this host does not have
       { path: "gone", parent: "Missing", name: "Orphan" },
       { path: "home", name: "Home" },
-      { path: "sign", parent: "Company", name: "SignRedirect", redirect: "SignIn", when: { authenticated: true } },
     ],
     menu: [
       { surface: "header", group: "corporate", id: "docs-link", title: "t", routeName: "SalesRepDocuments" },
@@ -182,7 +180,7 @@ describe("applyContributions / releaseContributions", () => {
     ],
   };
 
-  it("registers placeholders, redirects and menu entries whose `when` holds, and nothing else", async () => {
+  it("registers placeholders and menu entries whose `when` holds, and nothing else", async () => {
     const { declare, status, navigations, router } = await setup();
     status.setPluginStatus("sales-rep", "pending");
 
@@ -193,8 +191,6 @@ describe("applyContributions / releaseContributions", () => {
     expect(router.hasRoute("Hidden")).toBe(false);
     expect(router.hasRoute("Orphan")).toBe(false);
     expect(router.resolve("/company/documents").meta[declare.PLACEHOLDER_META_KEY]).toBe("sales-rep");
-    expect(router.resolve("/company/sign").redirectedFrom).toBeUndefined();
-    expect(router.getRoutes().find((route) => route.name === "SignRedirect")?.redirect).toEqual({ name: "SignIn" });
     expect(router.resolve("/").name).toBe("Home");
     expect(loggerWarnMock).toHaveBeenCalledWith(
       expect.stringContaining('declares route "Home", which is already taken'),
@@ -258,7 +254,6 @@ describe("applyContributions / releaseContributions", () => {
     declare.releaseContributions(applied, router, false);
 
     expect(router.hasRoute("SalesRepDocuments")).toBe(false);
-    expect(router.hasRoute("SignRedirect")).toBe(false);
     const nav = navigations.useNavigations();
     expect(nav.desktopCorporateMenuItems.value?.children?.map((link) => link.id) ?? []).not.toContain("docs-link");
     expect(nav.registeredAccountSections.value).toEqual([]);
@@ -309,33 +304,5 @@ describe("applyContributions / releaseContributions", () => {
     const nav = navigations.useNavigations();
     expect(nav.desktopCorporateMenuItems.value?.children?.map((link) => link.id)).toContain("docs-link");
     expect(nav.registeredAccountSections.value.map((section) => section.id)).toEqual(["hub"]);
-  });
-
-  it("declares a redirect only to an existing route, and drops it once its target is gone", async () => {
-    const { declare, status, router } = await setup();
-    status.setPluginStatus("sales-rep", "pending");
-
-    const applied = declare.applyContributions(
-      "sales-rep",
-      {
-        format: 1,
-        routes: [
-          { path: "docs", parent: "Company", name: "Docs" },
-          { path: "old-docs", parent: "Company", name: "OldDocs", redirect: "Docs" },
-          { path: "nowhere", parent: "Company", name: "Nowhere", redirect: "NotARoute" },
-        ],
-      },
-      context(),
-      router,
-    );
-
-    expect(router.hasRoute("OldDocs")).toBe(true);
-    expect(router.hasRoute("Nowhere")).toBe(false);
-    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining('redirects to "NotARoute"'));
-
-    declare.releaseContributions(applied, router, true);
-
-    expect(router.hasRoute("Docs")).toBe(false);
-    expect(router.hasRoute("OldDocs")).toBe(false);
   });
 });

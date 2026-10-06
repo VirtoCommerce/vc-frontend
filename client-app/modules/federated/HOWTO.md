@@ -525,7 +525,9 @@ What the host does with it, before any of the plugin's code is fetched:
   did or the plugin failed. Your own `beforeEnter` guards still run on the real route; if one is a
   permission check, put it in `when` too so no placeholder exists for a user who cannot pass it.
 - **Menu entries** render before your chunk loads. Register the same `id` from `init()` and yours
-  replaces the declared one; if the plugin fails, the declared ones are withdrawn.
+  replaces the declared one; if the plugin fails, the declared ones are withdrawn. An `id` the menu
+  already has — the host's or another plugin's — is refused, so give yours a plugin-specific one.
+  A link whose route is neither a host route nor declared in `routes` is skipped.
 - **Slots** with `reserve` or `block` hold their box while the plugin is on the way, and reveal
   your component only once the plugin has settled — so it never paints before your locales merged.
 - **Boot does not wait for your code.** It still does for a plugin that declared nothing, exactly as
@@ -543,7 +545,7 @@ import { definePluginManifest, settingEnabled, userCan } from "@vc-frontend/core
 export default definePluginManifest({
   when: settingEnabled("SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
   routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments", when: userCan("sales-rep-documents:read") }],
-  menu: [{ surface: "header", group: "corporate", id: "sales-reps", title: "sales_rep.navigation.link", routeName: "SalesReps" }],
+  menu: [{ surface: "header", group: "corporate", id: "sales-rep-documents", title: "sales_rep.navigation.documents", routeName: "SalesRepDocuments" }],
   slots: [{ at: "sharedList/provenance-note", policy: "reserve", when: (field) => field("scope").eq("Customer") }],
 });
 ```
@@ -553,7 +555,7 @@ export default definePluginManifest({
   "format": 1,
   "when": { "setting": "SalesRep.Enabled" },
   "routes": [{ "path": "documents", "name": "SalesRepDocuments", "parent": "Company", "when": { "can": "sales-rep-documents:read" } }],
-  "menu": [{ "surface": "header", "group": "corporate", "id": "sales-reps", "title": "sales_rep.navigation.link", "routeName": "SalesReps" }],
+  "menu": [{ "surface": "header", "group": "corporate", "id": "sales-rep-documents", "title": "sales_rep.navigation.documents", "routeName": "SalesRepDocuments" }],
   "slots": [{ "at": "sharedList/provenance-note", "policy": "reserve", "when": { "field": "scope", "eq": "Customer" } }]
 }
 ```
@@ -570,14 +572,16 @@ as long as that module imports no facade value.
 Every field is optional, and an empty `definePluginManifest({})` emits `{ "format": 1 }`. A
 malformed declaration fails **your** build — `yarn type-check` for anything the types can see (an
 unknown parent route, slot, menu group or field path, a `field(...)` term outside a slot), `yarn
-build` for the rest (a route name or slot declared twice).
+build` for the rest (a route name or slot declared twice, a root route whose `path` does not start
+with `/`). One that still reaches the host broken costs that plugin alone: it is skipped with the
+reason in `usePluginsStatus()`, and whatever it had declared is withdrawn.
 
 ### What each entry is
 
 | Entry      | Maps to                                                  | Notes                                                                                   |
 | ---------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `when`     | the whole plugin                                         | Global keys only. The cheapest gate there is: false ⇒ no manifest, no `remoteEntry.js`. |
-| `routes[]` | `router.addRoute(parent, …)`                             | `parent` is a host route name (`ROUTES.*.NAME`); absent = a root route. `redirect` makes it a redirect entry — push-messages' "sign in first" case is a second entry with the negated `when`. |
+| `routes[]` | `router.addRoute(parent, …)`                             | `parent` is a host route name (`ROUTES.*.NAME`); absent = a root route, whose `path` must start with `/`. Each becomes a placeholder until your `init()` registers the real route under the same name. |
 | `menu[]`   | `surface: "header"` → `mergeMenuSchema`; `"account"` → `registerAccountSection` | `group` is a header-schema section (`main`, `purchasing`, `marketing`, `user`, `corporate`) — not a route name. An account section carries `children`, each with its own `when`. |
 | `slots[]`  | `useExtensionRegistry().register` / `registerContribution` | `at` is `"<category>/<name>"`. `policy`: `reserve` holds the box, `block` holds a region (payment), `none` is a data contribution into host markup. |
 

@@ -34,8 +34,6 @@ const declaredSlots = shallowRef(new Map<string, IDeclaredSlotType>());
 export interface IAppliedContributionsType {
   plugin: string;
   placeholderRoutes: string[];
-  /** route name -> redirect target */
-  redirects: Record<string, string>;
   /** link id -> route name */
   links: Record<string, string>;
   /** section id -> its children's route names */
@@ -61,15 +59,11 @@ function headerSchema(entry: IHeaderMenuContributionType): DeepPartial<MenuType>
 }
 
 function toRouteRecord(route: IRouteContributionType, plugin: string): RouteRecordRaw {
-  const meta = { [DECLARED_META_KEY]: plugin };
-  if (route.redirect) {
-    return { path: route.path, name: route.name, redirect: { name: route.redirect }, meta };
-  }
   return {
     path: route.path,
     name: route.name,
     component: PluginRoutePlaceholder,
-    meta: { ...meta, [PLACEHOLDER_META_KEY]: plugin },
+    meta: { [DECLARED_META_KEY]: plugin, [PLACEHOLDER_META_KEY]: plugin },
   };
 }
 
@@ -80,9 +74,6 @@ function unroutableReason(route: IRouteContributionType, router: Router): string
   }
   if (router.hasRoute(route.name)) {
     return "which is already taken";
-  }
-  if (route.redirect && !router.hasRoute(route.redirect)) {
-    return `which redirects to "${route.redirect}", not a route`;
   }
   return undefined;
 }
@@ -109,11 +100,7 @@ function declareRoutes(
     } else {
       router.addRoute(route.parent, record);
     }
-    if (route.redirect) {
-      applied.redirects[route.name] = route.redirect;
-    } else {
-      applied.placeholderRoutes.push(route.name);
-    }
+    applied.placeholderRoutes.push(route.name);
   }
 }
 
@@ -199,7 +186,6 @@ export function applyContributions(
   const applied: IAppliedContributionsType = {
     plugin,
     placeholderRoutes: [],
-    redirects: {},
     links: {},
     sections: {},
   };
@@ -215,18 +201,13 @@ export function applyContributions(
 }
 
 /**
- * Drops unclaimed placeholders, slot declarations, and redirects and menu entries that now point
- * nowhere (all of them if the plugin failed). A section with one dead child is withdrawn whole.
+ * Drops unclaimed placeholders, slot declarations, and menu entries that now point nowhere (all of
+ * them if the plugin failed). A section with one dead child is withdrawn whole.
  */
 export function releaseContributions(applied: IAppliedContributionsType, router: Router, loaded: boolean): void {
-  const metaOf = (name: string) => router.getRoutes().find((route) => route.name === name)?.meta;
   for (const name of applied.placeholderRoutes) {
-    if (metaOf(name)?.[PLACEHOLDER_META_KEY] === applied.plugin) {
-      router.removeRoute(name);
-    }
-  }
-  for (const [name, target] of Object.entries(applied.redirects)) {
-    if ((!loaded || !router.hasRoute(target)) && metaOf(name)?.[DECLARED_META_KEY] === applied.plugin) {
+    const record = router.getRoutes().find((route) => route.name === name);
+    if (record?.meta?.[PLACEHOLDER_META_KEY] === applied.plugin) {
       router.removeRoute(name);
     }
   }

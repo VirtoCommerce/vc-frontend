@@ -3874,8 +3874,6 @@ interface IRouteContributionType {
     /** Host parent route; absent = root. */
     parent?: HostRouteNameType;
     name: string;
-    /** Route name to redirect to instead of rendering a page. */
-    redirect?: string;
     when?: ConditionNodeType;
 }
 interface IMenuLinkContributionType {

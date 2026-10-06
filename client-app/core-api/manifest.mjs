@@ -190,9 +190,6 @@ function normalizeRoute(route, index) {
       `a route without \`parent\` needs an absolute \`path\`, got ${JSON.stringify(out.path)}`,
     );
   }
-  if (route.redirect !== undefined) {
-    out.redirect = requireString(route.redirect, where, "`redirect`");
-  }
   return withWhen(out, route.when, where);
 }
 

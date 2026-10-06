@@ -148,8 +148,8 @@ file are cross-referenced, not repeated.
       `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
 - [ ] **E2E**: vc-testing-module has no Sales Rep Hub coverage at all — add a smoke (plugin loaded,
       hub menu visible for a rep) so the plugin path is not manual-only.
-- [ ] **Port #2439 / #2444 into the plugin** once facade `0.1.2` (#2480) is released;
-      `requiredHostVersion: "^0.1.2"`. Also #2468 and #2474, which need no new facade export.
+- [ ] **Port #2439 / #2444 into the plugin** once the facade release from #2480 is out;
+      `requiredHostVersion` = that release. Also #2468 and #2474, which need no new facade export.
       This is the parity gate for the switch-over item at the top.
 - [ ] **Module (backend owners)**: any SalesRep version crashes a platform running
       `ASPNETCORE_ENVIRONMENT=Development` — `ValidateOnBuild` rejects the scoped
@@ -199,7 +199,8 @@ Definition and rationale: *Pilot* section of the discovery spec.
         (`StorePlugin.contributions`). The host reads only the inline declaration, so it needs both.
         Verified end to end on a local platform built from both branches.
   - [ ] **The sales-rep plugin declares nothing yet** — its `plugin.config.ts` in
-        vc-module-sales-rep#13, against facade `0.1.3`. Until then it keeps blocking boot.
+        vc-module-sales-rep#13, against the facade release that carries VCST-5761. Until then it
+        keeps blocking boot.
   - [ ] **Reserved-box sizes** exist for `productCard/card-button` (measured: 0.0082 of CLS from
         the cards without a reservation, none with one) and for `block`; every other slot relies on
         the host fallback it hides, or has none and holds zero height. Size them as plugins start

@@ -250,11 +250,13 @@ prepareFederatedModules()          index.ts — phase A, no plugin code runs
                                    A UX/latency filter, not a boundary (see Security model)
   1b. declaration                  inline in the descriptor's `contributions`, or for an env remote
                                    the optional contributions.json beside its manifest (2s budget,
-                                   same origin rule). Unparseable or an unknown format ⇒ SKIPPED;
-                                   an entry the router rejects ⇒ SKIPPED and withdrawn
+                                   same origin rule). Unparseable or an unknown format ⇒ SKIPPED
   1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
                                    of the plugin is ever fetched
-  1d. applyContributions()         placeholder routes, menu entries, slot declarations
+  1d. applyContributions()         placeholder routes, menu entries, slot declarations. An entry
+                                   whose route, parent or menu id is taken is skipped alone; one
+                                   the router rejects, or a malformed one ⇒ the plugin is SKIPPED
+                                   and what it had declared is withdrawn
   ▼
 loadPreparedModules()              index.ts — phase B, per plugin, concurrently
   2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
@@ -427,6 +429,7 @@ hosted remote.
 | `enabled.ts`      | `isFederationEnabled()`: the theme's `module_federation_enabled`. Shared by `bootstrap.ts` and by `app-runner`'s plugin-list query, so both read one predicate.                                |
 | `index.ts`        | The loader: resolve+validate remotes → version gate → `registerRemotes` → `loadRemote`/`init` (time-budgeted) → report. Contains the `IFederatedPlugin` contract.               |
 | `version-gate.ts` | The CONTRACT GATE: fail-closed semver check of `requiredHostVersion` (version or range) against the facade version.                                                             |
+| `contributions/`  | Declared contributions: `declare.ts` applies and withdraws them, `evaluate.ts` decides `when`, `status.ts` backs `usePluginsStatus()`, `plugin-route-placeholder.vue` is the loader a declared route shows. |
 | `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
 
 **Related files outside this folder:**
@@ -436,6 +439,7 @@ hosted remote.
 | `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults). Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
 | `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`; host entry is `remoteEntry-<hash>.js` so a CDN cannot serve a stale one), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
 | `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
+| `client-app/core-api/manifest.mjs`   | `definePluginManifest` and the condition builders a plugin's `plugin.config.ts` uses, plus `pluginContributions`, the Vite plugin that writes the declaration into `plugin.json` and `contributions.json`. |
 | `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                                                                              |
 
 ---

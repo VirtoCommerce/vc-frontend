@@ -91,13 +91,6 @@ definePluginManifest({
   when: and(themeSetting("push_messages_enabled"), authenticated(), settingValue("Some.Mode").eq("on")),
   routes: [
     { path: "push-messages", parent: "Account", name: "PushMessages", when: themeSetting("push_messages_enabled") },
-    {
-      path: "push-messages",
-      parent: "Account",
-      name: "PushMessagesSignIn",
-      redirect: "SignIn",
-      when: not(authenticated()),
-    },
   ],
   slots: [
     {
@@ -125,7 +118,7 @@ definePluginManifest({
 });
 definePluginManifest({
   // @ts-expect-error a field term in a route, even mixed with a global one
-  routes: [{ path: "p", name: "P", when: and(fieldTerm, authenticated()) }],
+  routes: [{ path: "/p", name: "P", when: and(fieldTerm, authenticated()) }],
 });
 definePluginManifest({
   // @ts-expect-error a host route that does not exist
