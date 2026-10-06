@@ -51,6 +51,7 @@ describe("calculateStepper", () => {
       "negative no max",
     ],
 
+    // Max=0 (ceiling at zero)
     [{ value: 0, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, 0, "zero max"],
     [{ value: 5, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, 0, "above zero max"],
 
@@ -118,9 +119,14 @@ describe("checkIfOperationIsAllowed", () => {
     [{ value: 10, step: 5, min: 0, max: Infinity, allowZero: true, direction: "decrement" as const }, true, "no max"],
     [{ value: 0, step: 5, min: 0, max: Infinity, allowZero: true, direction: "decrement" as const }, false, "at zero"],
 
-    // Max=0 is a real ceiling
+    // Max=0 (ceiling at zero)
     [{ value: 0, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, false, "zero max"],
     [{ value: 5, step: 1, min: 0, max: 0, allowZero: true, direction: "increment" as const }, false, "above zero max"],
+    [
+      { value: 5, step: 1, min: 3, max: 0, allowZero: true, direction: "decrement" as const },
+      false,
+      "zero max below min",
+    ],
 
     // Error conditions
     [{ value: 3, step: 0, min: 1, max: 5, allowZero: true, direction: "increment" as const }, false, "zero step"],
