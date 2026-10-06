@@ -226,6 +226,11 @@ yarn generate:graphql-types
 
 Generates the `types.ts` files separately for `The Core App` and independent modules.
 
+To generate only some of them, pass their names (`Core` or a `name` from `independentModules`) to `--only`:
+```
+yarn generate:graphql-types --only Quotes,Loyalty
+```
+
 Every schema endpoint is probed before generation, and a `404` is the only answer treated as "the module is
 not installed on the target `APP_BACKEND_URL`". Such a module is reported as `skipped, schema not available`,
 its committed `types.ts` is left untouched, the remaining modules are still generated and the command exits

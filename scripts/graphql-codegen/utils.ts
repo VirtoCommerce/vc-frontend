@@ -156,3 +156,27 @@ export function groupByStatus(outcomes: OutcomeType[]): Record<OutcomeStatusType
 export function addExtension(path: string): string {
   return `${path}/**/*.(graphql|gql)`;
 }
+
+/**
+ * Parses the `--only` value into the set of targets to generate; no value means every target.
+ * Throws on an unknown name, so a typo never silently generates nothing.
+ */
+export function selectTargets(only: string | undefined, available: string[]): Set<string> {
+  if (only === undefined) {
+    return new Set(available);
+  }
+
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: undefined is returned above
+  const requested = only
+    .split(",")
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: split() always yields strings
+    .map((name) => name.trim())
+    .filter(Boolean);
+  const unknown = requested.filter((name) => !available.includes(name));
+
+  if (unknown.length || !requested.length) {
+    throw new Error(`Unknown --only value "${only}". Available: ${available.join(", ")}`);
+  }
+
+  return new Set(requested);
+}

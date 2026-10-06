@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { parseArgs } from "node:util";
 import { generate } from "@graphql-codegen/cli";
 // By path, not as "@vc-frontend/core/codegen": this runs under vite-node with the host's vite config,
 // whose `@vc-frontend/core` alias also rewrites every subpath onto core-api/index.ts.
@@ -9,6 +10,7 @@ import {
   groupByStatus,
   isSchemaEndpointAbsent,
   normalizeBackendUrl,
+  selectTargets,
 } from "./utils.js";
 import type { ModuleType, OutcomeType } from "./utils.js";
 
@@ -19,6 +21,8 @@ const BOLD = "\x1b[1m";
 const RESET = "\x1b[0m";
 
 const SUMMARY_WIDTH = 64;
+
+const CORE_NAME = "Core";
 
 const backendUrl = normalizeBackendUrl(process.env.APP_BACKEND_URL);
 
@@ -125,34 +129,41 @@ async function runCodegen() {
     return;
   }
 
-  console.log(`\nGenerating GraphQL types from "${backendUrl}":`);
+  let targets: Set<string>;
 
-  const coreOutcome = await generateTypes({
-    name: "Core",
-    schemaUrl: core.schemaPath,
-    schema: [core.schemaPath, core.clientDirectivesPath],
-    documents: [
-      addExtension(core.apiPath),
-      // exclude independent modules from general modules
-      ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
-      // exclude client-only directive declarations — they are not operations
-      `!${core.clientDirectivesPath}`,
-    ],
-    typesPath: `${core.apiPath}/types.ts`,
-  });
-
-  if (coreOutcome.status !== "generated") {
-    // Without the core schema every module would fail the same way.
-    reportAbortedCore(coreOutcome);
+  try {
+    // A typo in an option or a name must not quietly fall back to generating everything.
+    const { values } = parseArgs({ options: { only: { type: "string" } } });
+    targets = selectTargets(values.only, [CORE_NAME, ...independentModules.map(({ name }) => name)]);
+  } catch (err) {
+    console.error(`${RED}✖ ${err instanceof Error ? err.message : String(err)}${RESET}`);
     process.exitCode = 1;
     return;
   }
 
-  reportOutcome(coreOutcome);
+  const selectedModules = independentModules.filter(({ name }) => targets.has(name));
+
+  console.log(`\nGenerating GraphQL types from "${backendUrl}":`);
+
+  const coreOutcomes: OutcomeType[] = [];
+
+  if (targets.has(CORE_NAME)) {
+    const coreOutcome = await generateCoreTypes();
+
+    if (coreOutcome.status !== "generated") {
+      // Without the core schema every module would fail the same way.
+      reportAbortedCore(coreOutcome);
+      process.exitCode = 1;
+      return;
+    }
+
+    reportOutcome(coreOutcome);
+    coreOutcomes.push(coreOutcome);
+  }
 
   // Reported as each module settles; the array keeps declaration order for the summary.
   const moduleOutcomes = await Promise.all(
-    independentModules.map((module) =>
+    selectedModules.map((module) =>
       generateTypes({
         name: module.name,
         schemaUrl: module.schemaPath,
@@ -167,12 +178,28 @@ async function runCodegen() {
     ),
   );
 
-  printSummary([coreOutcome, ...moduleOutcomes]);
+  printSummary([...coreOutcomes, ...moduleOutcomes]);
 
   // A partially installed environment is normal and stays green; a broken module does not.
   if (moduleOutcomes.some(({ status }) => status === "failed")) {
     process.exitCode = 1;
   }
+}
+
+function generateCoreTypes(): Promise<OutcomeType> {
+  return generateTypes({
+    name: CORE_NAME,
+    schemaUrl: core.schemaPath,
+    schema: [core.schemaPath, core.clientDirectivesPath],
+    documents: [
+      addExtension(core.apiPath),
+      // exclude independent modules from general modules
+      ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
+      // exclude client-only directive declarations — they are not operations
+      `!${core.clientDirectivesPath}`,
+    ],
+    typesPath: `${core.apiPath}/types.ts`,
+  });
 }
 
 async function generateTypes({
