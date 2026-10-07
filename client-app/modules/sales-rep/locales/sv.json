@@ -145,7 +145,7 @@
         "created_date": "Skapat datum",
         "start_date": "Startdatum",
         "end_date": "Slutdatum",
-        "invalid_range": "Ogiltigt datumintervall.",
+        "date_range": "Datumintervall",
         "order_status": "Välj beställningsstatus",
         "customer": "Välj kund",
         "reset": "Återställ",
@@ -154,7 +154,8 @@
         "last_day": "Sista dagen",
         "last_week": "Förra veckan",
         "last_month": "Förra månaden",
-        "last_year": "Förra året"
+        "last_year": "Förra året",
+        "remove_filter": "Ta bort filtret ”{label}”"
       }
     },
     "communication": {

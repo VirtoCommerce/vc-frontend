@@ -224,6 +224,19 @@ describe("VcInput clearable", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "value", clearable: true } });
     expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBeTruthy();
   });
+
+  it("names the clear button with clearButtonAriaLabel when one is given", () => {
+    const wrapper = createInputWrapper({
+      props: { modelValue: "value", clearable: true, clearButtonAriaLabel: "Clear: Start date" },
+    });
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear: Start date");
+  });
+
+  it("falls back to the default name for an empty clearButtonAriaLabel", () => {
+    const wrapper = createInputWrapper({ props: { modelValue: "value", clearable: true, clearButtonAriaLabel: "" } });
+    // The shared test `$t` mock appends its (here empty) arguments after a space.
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")?.trim()).toBe("ui_kit.buttons.clear");
+  });
 });
 
 describe("VcInput seamless", () => {
@@ -242,6 +255,11 @@ describe("VcDateInput passthrough props", () => {
   it("forwards hideDetails to VcInput", () => {
     const wrapper = createDateInputWrapper({ props: { modelValue: "", hideDetails: true } });
     expect(wrapper.findComponent({ name: "VcInputDetails" }).exists()).toBe(false);
+  });
+
+  it("forwards clearButtonAriaLabel to VcInput", () => {
+    const wrapper = createDateInputWrapper({ props: { modelValue: "", clearButtonAriaLabel: "Clear: Start date" } });
+    expect(wrapper.findComponent({ name: "VcInput" }).props("clearButtonAriaLabel")).toBe("Clear: Start date");
   });
 
   it("forwards seamless to VcInput", () => {

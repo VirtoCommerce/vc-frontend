@@ -2405,6 +2405,8 @@ interface IProps$9 {
      | "date";
     size?: VcInputSizeType;
     clearable?: boolean;
+    /** Accessible name of the clear button. Default "Clear"; name the field when two clearable fields sit side by side. */
+    clearButtonAriaLabel?: string;
     browserTooltip?: "enabled" | "disabled";
     selectOnClick?: boolean;
     testIdInput?: string;

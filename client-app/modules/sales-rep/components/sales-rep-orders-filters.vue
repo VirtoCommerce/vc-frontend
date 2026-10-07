@@ -36,37 +36,20 @@
                 @change="applyRange"
               />
 
-              <template v-if="selectedRange.id === CUSTOM_RANGE_ID">
-                <div class="sales-rep-orders-filters__range">
-                  <VcDatePicker
-                    v-model="draft.startDate"
-                    class="sales-rep-orders-filters__date"
-                    :label="t('sales_rep.customer_orders.filters.start_date')"
-                    :error="showRangeError"
-                    mask
-                    enable-teleport
-                    @update:valid="startValid = $event"
-                  />
-
-                  <div class="sales-rep-orders-filters__separator">&mdash;</div>
-
-                  <VcDatePicker
-                    v-model="draft.endDate"
-                    class="sales-rep-orders-filters__date"
-                    :label="t('sales_rep.customer_orders.filters.end_date')"
-                    :error="showRangeError"
-                    mask
-                    enable-teleport
-                    @update:valid="endValid = $event"
-                  />
-                </div>
-
-                <VcInputDetails
-                  show-empty
-                  error
-                  :message="showRangeError ? t('sales_rep.customer_orders.filters.invalid_range') : undefined"
-                />
-              </template>
+              <VcDateRangePicker
+                v-if="selectedRange.id === CUSTOM_RANGE_ID"
+                v-model="draftRange"
+                class="sales-rep-orders-filters__range"
+                :layout="rangeLayout"
+                :label="rangeLabel"
+                :start-label="t('sales_rep.customer_orders.filters.start_date')"
+                :end-label="t('sales_rep.customer_orders.filters.end_date')"
+                mask
+                enable-teleport
+                show-empty-details
+                show-footer
+                @update:valid="rangeValid = $event"
+              />
 
               <div v-if="statuses.length" class="sales-rep-orders-filters__statuses">
                 <VcLabel>{{ t("sales_rep.customer_orders.filters.order_status") }}</VcLabel>
@@ -113,7 +96,7 @@
             </VcButton>
 
             <VcButton
-              :disabled="!isDirty || !isRangeValid"
+              :disabled="!isDirty || !rangeValid"
               @click="
                 apply();
                 close();
@@ -129,9 +112,11 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toLocalDateOnly } from "@/core/utilities/date";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { SalesRepFacetOptionType, SalesRepOrdersFilterDataType } from "../types";
 
 interface IProps {
@@ -206,22 +191,28 @@ const draft = ref<SalesRepOrdersFilterDataType>(emptyFilter());
 const appliedFilter = ref<SalesRepOrdersFilterDataType>(emptyFilter());
 const selectedRange = ref<RangeType>(ranges.value[0]);
 
-const startValid = ref(true);
-const endValid = ref(true);
+// Same split as the account orders filter: two labelled fields on desktop, one combined field on a phone.
+const isMobile = useBreakpoints(BREAKPOINTS).smaller("sm");
+const rangeLayout = computed<VcDateRangePickerLayoutType>(() => (isMobile.value ? "combined" : "split"));
 
-const isRangeOrderValid = computed(() => {
-  const { startDate, endDate } = draft.value;
-  if (!startDate || !endDate) {
-    return true;
-  }
-  return new Date(startDate).getTime() <= new Date(endDate).getTime();
-});
-
-const showRangeError = computed(
-  () => !isRangeOrderValid.value && Boolean(draft.value.startDate) && Boolean(draft.value.endDate),
+// "combined" turns the start/end labels into aria-labels, so its one visible label must name the pair.
+const rangeLabel = computed(() =>
+  rangeLayout.value === "combined" ? t("sales_rep.customer_orders.filters.date_range") : undefined,
 );
 
-const isRangeValid = computed(() => startValid.value && endValid.value && isRangeOrderValid.value);
+const draftRange = computed<VcDateRangeType | undefined>({
+  get() {
+    const { startDate, endDate } = draft.value;
+    return startDate || endDate ? { start: startDate, end: endDate } : undefined;
+  },
+  set(value) {
+    draft.value.startDate = value?.start;
+    draft.value.endDate = value?.end;
+  },
+});
+
+// Outlives the picker, which reports on every mount; empty and partial ranges are valid.
+const rangeValid = ref(true);
 
 const isEmpty = computed(() => {
   const { statuses, customerNames, startDate, endDate } = appliedFilter.value;
@@ -243,8 +234,8 @@ function applyRange(range?: RangeType): void {
 
   draft.value.startDate = range.startDate;
   draft.value.endDate = range.endDate;
-  startValid.value = true;
-  endValid.value = true;
+  // The picker is unmounted and won't report validity again.
+  rangeValid.value = true;
 }
 
 function apply(): void {
@@ -290,26 +281,10 @@ watch(
   }
 
   &__range {
-    @apply mt-3 flex items-end gap-3;
+    @apply mt-3;
 
     @media (width < theme("screens.lg")) {
-      @apply mt-4 flex-col;
-    }
-  }
-
-  &__date {
-    @apply grow;
-
-    @media (width < theme("screens.lg")) {
-      @apply w-full;
-    }
-  }
-
-  &__separator {
-    @apply text-2xl/[2.75rem];
-
-    @media (width < theme("screens.lg")) {
-      @apply hidden;
+      @apply mt-4;
     }
   }
 
