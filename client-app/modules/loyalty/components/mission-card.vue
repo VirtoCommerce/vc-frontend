@@ -101,14 +101,10 @@ function openMission(): void {
 
 <style lang="scss">
 .mission-card {
-  @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50;
-
-  box-shadow:
-    0 4px 6px -1px rgb(from theme("colors.additional.950") r g b / 0.1),
-    0 2px 4px -2px rgb(from theme("colors.additional.950") r g b / 0.1);
+  @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-md;
 
   &__banner {
-    @apply relative h-[210px] shrink-0 overflow-hidden bg-secondary-800;
+    @apply relative h-52 shrink-0 overflow-hidden bg-secondary-800;
   }
 
   &__backdrop {
