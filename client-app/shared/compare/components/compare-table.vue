@@ -196,7 +196,12 @@
             class="compare-table__row"
             :class="{ 'compare-table__row--alt': index % 2 === 1 }"
           >
-            <th class="compare-table__row-label" scope="row" :aria-label="row.label">
+            <th
+              class="compare-table__row-label"
+              scope="row"
+              :aria-label="row.label"
+              :aria-describedby="row.description ? `${rowDescriptionIdPrefix}-${index}` : undefined"
+            >
               <span class="compare-table__row-label-info-wrap">
                 <span class="compare-table__row-label-text">{{ row.label }}</span>
 
@@ -208,7 +213,12 @@
                   enable-teleport
                 >
                   <template #trigger>
-                    <VcIcon name="information-circle" size="xs" :label="row.description" />
+                    <VcIcon
+                      :id="`${rowDescriptionIdPrefix}-${index}`"
+                      name="information-circle"
+                      size="xs"
+                      :label="row.description"
+                    />
                   </template>
 
                   <template #content>
@@ -307,7 +317,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints, useCssVar, useElementBounding } from "@vueuse/core";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, ref, useId, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -360,6 +370,7 @@ const activeTab = ref("all");
 const bodyScrollRef = ref<HTMLElement | null>(null);
 const mobileTabsBarRef = ref<HTMLElement | null>(null);
 const headerRowRef = ref<HTMLElement | null>(null);
+const rowDescriptionIdPrefix = useId();
 
 // Kept live by VcHeader/MobileHeader — the app header's exact current height (it's shorter on
 // mobile), so the table's own header row can stick flush below it instead of under/away from it.
@@ -525,6 +536,9 @@ watch(
   &__product {
     @apply flex min-w-48 max-w-60 flex-1 flex-col gap-3 p-3 text-start font-normal;
 
+    // Keeps content out of the w-fit row's width, so header columns always match the body's.
+    contain: inline-size;
+
     @media (width < theme("screens.md")) {
       @apply w-28 min-w-0 max-w-none flex-none;
     }
@@ -665,6 +679,7 @@ watch(
   &__row-value {
     @apply flex min-w-48 max-w-60 flex-1 items-center px-3 py-2.5 text-sm text-neutral-900;
 
+    contain: inline-size;
     overflow-wrap: anywhere;
 
     @media (width < theme("screens.md")) {

@@ -123,7 +123,7 @@ function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
         VcProductTitle: true,
         VcProductPrice: true,
         VcRating: true,
-        VcTooltip: true,
+        VcTooltip: { template: "<span><slot name='trigger' /></span>" },
         VcIcon: true,
         InStock: true,
       },
@@ -311,6 +311,22 @@ describe("CompareTable — table semantics", () => {
     body.dispatchEvent(new Event("scroll"));
 
     expect(wrapper.get("thead").element.scrollLeft).toBe(120);
+
+    wrapper.unmount();
+  });
+
+  // aria-label names the row header by its label alone, so the explanation has to reach it another way.
+  it("describes a row header by its description, and only when it has one", async () => {
+    tableRows.value = [{ ...row("price", ["$1", "$2"]), description: "Price, excl. VAT" }, row("sku", ["A", "B"])];
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await nextTick();
+
+    const [priceHeader, skuHeader] = wrapper.findAll("th[scope=row]");
+    const describedBy = priceHeader.attributes("aria-describedby");
+
+    expect(describedBy).toBeTruthy();
+    expect(wrapper.get(`[id="${describedBy}"]`).attributes("label")).toBe("Price, excl. VAT");
+    expect(skuHeader.attributes("aria-describedby")).toBeUndefined();
 
     wrapper.unmount();
   });
