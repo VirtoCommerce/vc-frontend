@@ -27,6 +27,7 @@
         :update-on="updateOn"
         :mask="mask"
         :clearable="clearable"
+        :clear-button-aria-label="clearButtonAriaLabel"
         :aria-label="ariaLabel"
         :aria="forwardedAria(triggerProps)"
         :tabindex="tabindex"
@@ -48,7 +49,7 @@
             variant="ghost"
             color="primary"
             :disabled="disabled || readonly"
-            :aria-label="t('ui_kit.accessibility.open_calendar')"
+            :aria-label="calendarButtonAriaLabel || t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
             @keydown.esc="onTriggerEscape($event, opened, close)"
           />
@@ -125,6 +126,10 @@ interface IProps {
   /** Show a clear button in the field. Default false — the field then falls back to the footer Clear
    * (`showFooter`) or a calendar re-click, with the caveats on `preventDeselect`. */
   clearable?: boolean;
+  /** Accessible name of the clear button. Default "Clear". See VcInput. */
+  clearButtonAriaLabel?: string;
+  /** Accessible name of the calendar trigger. Default "Open calendar"; name the field when two pickers sit together. */
+  calendarButtonAriaLabel?: string;
   /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
   /** Keep a re-click on the selected day from clearing it. Default false. See VcCalendar. */

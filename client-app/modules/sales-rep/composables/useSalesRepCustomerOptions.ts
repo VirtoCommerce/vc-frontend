@@ -2,20 +2,25 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOptionsDocument } from "../api/graphql/types";
+import { formatCustomerLocation } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
+import type { OrganizationRowType } from "../types";
 
 // The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
+// Paging them all in waits on server-side search in `VcSelect`; VCST-5923.
 const OPTIONS_LIMIT = 100;
 
-export type SalesRepCustomerOptionType = { organizationId: string; organizationName: string };
+/** A customer the rep may pick in the sharing picker. */
+export type SalesRepCustomerOptionType = OrganizationRowType;
 
 // The rep's served customer organizations, resolved server-side from their claims. Uses its own narrow query rather
-// than the My customers one, which also aggregates order statistics per customer — a lot of work for an id and a name.
+// than the My customers one, which also aggregates order statistics per customer — a lot of work for a name and a city.
 export function useSalesRepCustomerOptions() {
   const variables = computed(() => ({
     storeId: globals.storeId,
     first: OPTIONS_LIMIT,
     after: "0",
+    // Nothing to send: `VcSelect` filters over the items it was given and emits no search text.
     keyword: "",
     sort: "name:asc",
   }));
@@ -38,6 +43,8 @@ export function useSalesRepCustomerOptions() {
     (result.value?.salesRepCustomers?.items ?? []).map((customer) => ({
       organizationId: customer.organizationId,
       organizationName: customer.organizationName ?? customer.organizationId,
+      location: formatCustomerLocation(customer.address),
+      imageUrl: customer.iconUrl ?? "",
     })),
   );
 
@@ -57,5 +64,10 @@ export function useSalesRepCustomerOptions() {
     { immediate: true },
   );
 
-  return { options, loading, failed };
+  /** Resolves an option the picker is no longer showing; the caller falls back to the raw id when it is not there. */
+  function findOption(organizationId: string): SalesRepCustomerOptionType | undefined {
+    return options.value.find((option) => option.organizationId === organizationId);
+  }
+
+  return { options, findOption, loading, failed };
 }
