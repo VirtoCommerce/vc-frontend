@@ -2181,7 +2181,7 @@ export type SalesRepStatisticsPeriodInput = {
 };
 
 export type SalesRepTask = {
-  /** True when finished as done; false or null on a cancelled task. Combine with isActive and dueDate to render the status: active and due before the start of the viewer's today = overdue, active otherwise = upcoming, completed = done. */
+  /** True when finished as done. A reopened task also reports false, so read it with isActive: inactive and not true = cancelled. */
   completed?: Maybe<Scalars['Boolean']['output']>;
   /** When the task was created. */
   createdDate: Scalars['DateTime']['output'];
@@ -2199,7 +2199,7 @@ export type SalesRepTask = {
   name: Scalars['String']['output'];
   /** Priority name: Lowest, Low, Normal, High or Highest. */
   priority?: Maybe<Scalars['String']['output']>;
-  /** Task type - one of the values configured in the TaskManagement.TaskTypes settings dictionary. */
+  /** Task type - free text, typically one of the values salesRepTaskTypes offers. */
   type?: Maybe<Scalars['String']['output']>;
 };
 
