@@ -47,7 +47,14 @@
       </div>
 
       <div v-if="filterChips.length" class="customer-orders__chips">
-        <VcChip v-for="chip in filterChips" :key="chip.id" color="secondary" closable @close="removeFilterChip(chip)">
+        <VcChip
+          v-for="chip in filterChips"
+          :key="chip.id"
+          color="secondary"
+          closable
+          :close-button-aria-label="t('sales_rep.customer_orders.filters.remove_filter', { label: chip.label })"
+          @close="removeFilterChip(chip)"
+        >
           {{ chip.label }}
         </VcChip>
 
@@ -116,7 +123,13 @@
               {{ item.organizationName }}
             </VcTableColumn>
 
-            <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" sortable>
+            <VcTableColumn
+              id="date"
+              v-slot="{ item }"
+              :title="t('sales_rep.orders.date')"
+              sortable
+              class="customer-orders__value"
+            >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
@@ -130,7 +143,7 @@
               :title="t('sales_rep.orders.total')"
               sortable
               align="right"
-              class="font-bold"
+              class="customer-orders__value font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -146,6 +159,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 import { usePageHead } from "@/core/composables/usePageHead";
+import { formatDateLocale, tryParseDate } from "@/ui-kit/utilities";
 import SalesRepOrdersFilters from "../components/sales-rep-orders-filters.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
@@ -166,7 +180,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { t, d } = useI18n();
+const { t, locale } = useI18n();
 
 const {
   customer,
@@ -231,12 +245,9 @@ function applyFilters(value: SalesRepOrdersFilterDataType): void {
   page.value = 1;
 }
 
-// "YYYY-MM-DD" is a calendar day, so it is built in local time - new Date(string) parses it as UTC and
-// renders the previous day west of Greenwich.
-function toLocalDate(value: string): Date {
-  const [year, month, day] = value.split("-").map(Number);
-
-  return new Date(year, month - 1, day);
+// The date fields' own formatter, so a chip reads exactly as the field it was typed into.
+function formatFilterDate(value: string): string {
+  return formatDateLocale(tryParseDate(value), locale.value);
 }
 
 type FilterChipType = {
@@ -245,6 +256,21 @@ type FilterChipType = {
   value?: string;
   label: string;
 };
+
+// The status facet only lists terms the current result set holds, so a search matching nothing drops the
+// applied status and its chip would fall back to the raw term. Labels seen in earlier responses are kept;
+// they are per culture, and a culture switch reloads the app.
+const statusLabels = ref<Record<string, string>>({});
+
+watch(
+  statusOptions,
+  (options) => {
+    for (const { name, label } of options) {
+      statusLabels.value[name] = label;
+    }
+  },
+  { immediate: true },
+);
 
 const filterChips = computed<FilterChipType[]>(() => {
   const { statuses, customerNames, startDate, endDate } = filters.value;
@@ -255,7 +281,7 @@ const filterChips = computed<FilterChipType[]>(() => {
       id: `statuses:${status}`,
       field: "statuses",
       value: status,
-      label: statusOptions.value.find((option) => option.name === status)?.label ?? status,
+      label: statusLabels.value[status] ?? status,
     });
   }
 
@@ -267,12 +293,12 @@ const filterChips = computed<FilterChipType[]>(() => {
     chips.push({
       id: "startDate",
       field: "startDate",
-      label: t("common.labels.starts_from", [d(toLocalDate(startDate))]),
+      label: t("common.labels.starts_from", [formatFilterDate(startDate)]),
     });
   }
 
   if (endDate) {
-    chips.push({ id: "endDate", field: "endDate", label: t("common.labels.ends_to", [d(toLocalDate(endDate))]) });
+    chips.push({ id: "endDate", field: "endDate", label: t("common.labels.ends_to", [formatFilterDate(endDate)]) });
   }
 
   return chips;
@@ -372,6 +398,11 @@ const breadcrumbs = useBreadcrumbs(() => {
 
   &__order-link {
     @apply text-[--link-color] hover:text-[--link-hover-color];
+  }
+
+  // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
+  &__value {
+    @apply whitespace-nowrap;
   }
 
   &__mobile-item {
