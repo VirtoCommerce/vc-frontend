@@ -1009,6 +1009,13 @@ describe("VcSortable — development warnings", () => {
     expect(warnings()).toEqual([expect.stringContaining("`liveRegion` is off and nothing listens to `announce`")]);
   });
 
+  it("counts `.once` listeners as listening", () => {
+    mountList({ liveRegion: false, onAnnounceOnce: vi.fn() });
+    mountList({ name: "once", group: "once", onMoveOnce: vi.fn() });
+
+    expect(warnings()).toEqual([]);
+  });
+
   it("warns when an item does not get its attrs", () => {
     mountWith({}, (_attrs, id) => h("div", id));
 

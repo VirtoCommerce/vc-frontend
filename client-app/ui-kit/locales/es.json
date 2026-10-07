@@ -168,8 +168,8 @@
       "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
     },
     "sortable": {
-      "grabbed": "Seleccionado, posición {position} de {total}. Las flechas lo mueven, Espacio lo suelta, Escape cancela.",
-      "grabbed_lists": "Seleccionado, posición {position} de {total}. Las flechas lo mueven, también a otra lista; Espacio lo suelta, Escape cancela.",
+      "grabbed": "Tomado, posición {position} de {total}. Las flechas lo mueven, Espacio lo suelta, Escape cancela.",
+      "grabbed_lists": "Tomado, posición {position} de {total}. Las flechas lo mueven, también a otra lista; Espacio lo suelta, Escape cancela.",
       "moved": "Posición {position} de {total}",
       "dropped": "Soltado en la posición {position} de {total}",
       "edge": "No se puede mover más",

@@ -336,6 +336,16 @@ const ItemScope = defineComponent({
 <style lang="scss">
 @use "@/ui-kit/styles/focus-ring" as *;
 
+// Held, not only focused: the ring doubles — a change of shape at the ring's own colour and contrast. Not
+// `:focus-visible`: the keyboard moves the item and restores focus a tick later. It reaches offset + 3 × width
+// outside the element (8px at the defaults), a plain ring offset + width.
+@mixin held-ring {
+  @include focus-ring;
+
+  outline-style: double;
+  outline-width: calc(3 * var(--vc-focus-ring-width));
+}
+
 // No box properties: layout is the consumer's, and this class must be safe on a `tbody`. What is here is
 // only the drag affordance, tokenized; the states double the item class so they outrank the consumer's
 // resting styles regardless of stylesheet order.
@@ -364,15 +374,8 @@ const ItemScope = defineComponent({
         cursor: var(--vc-sortable-active-cursor);
       }
 
-      // The keyboard moves the item and restores focus a tick later, so the held ring cannot depend on
-      // `:focus-visible`.
-      // Held, not only focused: the ring doubles. A change of shape, at the ring's own colour and contrast; it
-      // reaches offset + 3 × width outside the item (8px at the defaults), a plain ring offset + width.
       &[aria-pressed="true"] {
-        @include focus-ring;
-
-        outline-style: double;
-        outline-width: calc(3 * var(--vc-focus-ring-width));
+        @include held-ring;
       }
     }
 
@@ -391,13 +394,17 @@ const ItemScope = defineComponent({
     }
   }
 
-  // The handle is the consumer's element — often another kit component — so only the cursor is set here;
-  // the held look is the consumer's, through that component's own knobs.
+  // The handle is the consumer's element — often another kit component — so nothing of its own look is set
+  // here: only the cursor and the held ring, which the global focus ring draws anyway.
   &__handle {
     cursor: var(--vc-sortable-cursor);
 
     &:active {
       cursor: var(--vc-sortable-active-cursor);
+    }
+
+    &[aria-pressed="true"] {
+      @include held-ring;
     }
   }
 }

@@ -474,6 +474,79 @@ describe("useSortableList — moving between lists by keyboard", () => {
 
     expect(source.moves).toEqual([]);
   });
+
+  it("moves focus to the item in the list it was moved into by keyboard", async () => {
+    const make = (name: string, ids: string[]) => {
+      const el = document.createElement("div");
+      for (const id of ids) {
+        const child = document.createElement("div");
+        child.dataset.sortableId = id;
+        child.tabIndex = 0;
+        el.append(child);
+      }
+      document.body.append(el);
+      const scope = effectScope();
+      scopes.push(scope);
+      const list = scope.run(() =>
+        useSortableList(el, {
+          name,
+          group: "focus",
+          listOrder: ["shown", "parked"],
+          orientation: "horizontal",
+          items: () => ids,
+          onReorder: vi.fn(),
+          onMove: vi.fn(),
+        }),
+      )!;
+      return { el, list };
+    };
+    const shown = make("shown", ["a"]);
+    const parked = make("parked", ["a"]);
+
+    const press = (key: string) =>
+      shown.list.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    press(" ");
+    press("ArrowDown");
+    await nextTick();
+
+    expect(document.activeElement).toBe(parked.el.firstElementChild);
+  });
+
+  it("leaves focus where the owner put it after a keyboard move between lists", async () => {
+    const make = (name: string) => {
+      const el = document.createElement("div");
+      const child = document.createElement("div");
+      child.dataset.sortableId = "a";
+      child.tabIndex = 0;
+      el.append(child);
+      document.body.append(el);
+      const scope = effectScope();
+      scopes.push(scope);
+      return scope.run(() =>
+        useSortableList(el, {
+          name,
+          group: "focus-owner",
+          listOrder: ["shown", "parked"],
+          orientation: "horizontal",
+          items: () => ["a"],
+          onReorder: vi.fn(),
+          onMove: () => owned.focus(),
+        }),
+      )!;
+    };
+    const owned = document.createElement("button");
+    document.body.append(owned);
+    const shown = make("shown");
+    make("parked");
+
+    const press = (key: string) =>
+      shown.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    press(" ");
+    press("ArrowDown");
+    await nextTick();
+
+    expect(document.activeElement).toBe(owned);
+  });
 });
 
 describe("useSortableList — attributes", () => {
@@ -725,79 +798,6 @@ describe("useSortableList — pointer", () => {
       "c",
       "p",
     ]);
-  });
-
-  it("moves focus to the item in the list it was moved into by keyboard", async () => {
-    const make = (name: string, ids: string[]) => {
-      const el = document.createElement("div");
-      for (const id of ids) {
-        const child = document.createElement("div");
-        child.dataset.sortableId = id;
-        child.tabIndex = 0;
-        el.append(child);
-      }
-      document.body.append(el);
-      const scope = effectScope();
-      scopes.push(scope);
-      const list = scope.run(() =>
-        useSortableList(el, {
-          name,
-          group: "focus",
-          listOrder: ["shown", "parked"],
-          orientation: "horizontal",
-          items: () => ids,
-          onReorder: vi.fn(),
-          onMove: vi.fn(),
-        }),
-      )!;
-      return { el, list };
-    };
-    const shown = make("shown", ["a"]);
-    const parked = make("parked", ["a"]);
-
-    const press = (key: string) =>
-      shown.list.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
-    press(" ");
-    press("ArrowDown");
-    await nextTick();
-
-    expect(document.activeElement).toBe(parked.el.firstElementChild);
-  });
-
-  it("leaves focus where the owner put it after a keyboard move between lists", async () => {
-    const make = (name: string) => {
-      const el = document.createElement("div");
-      const child = document.createElement("div");
-      child.dataset.sortableId = "a";
-      child.tabIndex = 0;
-      el.append(child);
-      document.body.append(el);
-      const scope = effectScope();
-      scopes.push(scope);
-      return scope.run(() =>
-        useSortableList(el, {
-          name,
-          group: "focus-owner",
-          listOrder: ["shown", "parked"],
-          orientation: "horizontal",
-          items: () => ["a"],
-          onReorder: vi.fn(),
-          onMove: () => owned.focus(),
-        }),
-      )!;
-    };
-    const owned = document.createElement("button");
-    document.body.append(owned);
-    const shown = make("shown");
-    make("parked");
-
-    const press = (key: string) =>
-      shown.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
-    press(" ");
-    press("ArrowDown");
-    await nextTick();
-
-    expect(document.activeElement).toBe(owned);
   });
 
   it("does nothing on the end of a drag that stayed in its list", async () => {

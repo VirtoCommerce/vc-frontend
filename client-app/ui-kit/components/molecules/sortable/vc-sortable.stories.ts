@@ -20,12 +20,16 @@ const meta = {
     name: { control: "text" },
     tag: { control: "text" },
     itemKey: { control: false, table: { type: { summary: "(item: T) => string" } } },
+    listOrder: { control: false, table: { type: { summary: "readonly string[]" } } },
+    accepts: { control: false, table: { type: { summary: "(id: string, from: string) => boolean" } } },
+    filter: { control: false, table: { type: { summary: "string" } } },
+    dropOnListChange: { control: "boolean" },
   },
   parameters: {
     docs: {
       description: {
         component:
-          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The list announces each step in its own localized `aria-live` region; `announce` reports each step unlocalized, and `live-region` off hands the wording to you. A keyboard move into another list keeps the item held unless `drop-on-list-change` is set on the list it leaves. `grab` and `release` report a grab by pointer or keyboard. A keyboard-held whole item shows a double focus ring, so it reads apart from a focused one; that ring reaches `--vc-focus-ring-offset` + 3 × `--vc-focus-ring-width` outside the item (8px at the defaults, against offset + width for a plain focus ring), so leave that much room around whole items and do not clip them with `overflow`. The drag states retheme through `--vc-sortable-cursor`, `--vc-sortable-active-cursor`, `--vc-sortable-accent-color`, `--vc-sortable-grabbed-opacity`, `--vc-sortable-grabbed-shadow` (handle mode only) and `--vc-sortable-ghost-opacity`; in development, a mis-bound item or list warns in the console.",
+          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The list announces each step in its own localized `aria-live` region; `announce` reports each step unlocalized, and `live-region` off hands the wording to you. A keyboard move into another list keeps the item held unless `drop-on-list-change` is set on the list it leaves. `grab` and `release` report a grab by pointer or keyboard. A keyboard-held whole item, or a held handle, shows a double focus ring, so it reads apart from a focused one; that ring reaches `--vc-focus-ring-offset` + 3 × `--vc-focus-ring-width` outside the element (8px at the defaults, against offset + width for a plain focus ring), so leave that much room around whole items and handles and do not clip them with `overflow`. The drag states retheme through `--vc-sortable-cursor`, `--vc-sortable-active-cursor`, `--vc-sortable-accent-color`, `--vc-sortable-grabbed-opacity`, `--vc-sortable-grabbed-shadow` (handle mode only) and `--vc-sortable-ghost-opacity`; in development, a mis-bound item or list warns in the console.",
       },
     },
   },
@@ -65,7 +69,7 @@ export const WholeItem: StoryType = {
       source: {
         code: `<VcSortable v-model="items" class="my-list">
   <template #item="{ item, attrs }">
-    <div v-bind="attrs" :aria-label="\`Reorder \${item}\`" class="my-list__card">{{ item }}</div>
+    <div v-bind="attrs" :aria-label="t('my_list.reorder', { item })" class="my-list__card">{{ item }}</div>
   </template>
 </VcSortable>`,
       },
@@ -174,7 +178,7 @@ export const Handle: StoryType = {
     docs: {
       description: {
         story:
-          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. The held look is that control's own, here through VcButton's icon variable. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`. A `handle` selector is matched against the item's rendered DOM, so make it name markup your template owns. A class inside another kit component is that component's internal and may change without notice. If you must target one, record the coupling next to the selector and cover it with a test that mounts the real component.",
+          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. A held handle shows the double focus ring; anything more is that control's own, here VcButton's icon variable. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`. A `handle` selector is matched against the item's rendered DOM, so make it name markup your template owns. A class inside another kit component is that component's internal and may change without notice. If you must target one, record the coupling next to the selector and cover it with a test that mounts the real component.",
       },
       source: {
         code: `<!-- Dashboard.vue -->
