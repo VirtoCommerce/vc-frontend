@@ -14,8 +14,8 @@ on:
 
 jobs:
   ci:
-    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): every job here is skipped in the private theme mirror (VCST-5970).
-    if: ${{ github.repository_id == '296335982' &&
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: every job here is skipped in the private theme mirror (VCST-5970).
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
@@ -33,7 +33,6 @@ jobs:
       RELEASE_STATUS: 'false'
       DOCKER_URL: ''
       DOCKER_REPOSITORY: 'ghcr.io'
-      DOCKER_IMAGE: 'vc-theme-b2b-vue-storybook'
       DOCKER_TAG: ''
     outputs:
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
@@ -128,7 +127,13 @@ jobs:
       - name: Set URLs
         id: urls
         run: |
-          echo "DOCKER_URL=${{ env.DOCKER_REPOSITORY }}/${GITHUB_REPOSITORY_OWNER,,}/${{ env.DOCKER_IMAGE }}:" >> $GITHUB_OUTPUT
+          # Named after the package, like the zip: vc-theme-b2b-vue-storybook here, <name>-storybook in another repo
+          DOCKER_IMAGE="$(jq -r .name package.json)-storybook"
+          if ! [[ "$DOCKER_IMAGE" =~ ^[a-z0-9]+([._-][a-z0-9]+)*$ ]]; then
+            echo "::error::package.json name gives \"$DOCKER_IMAGE\", not a valid image name."
+            exit 1
+          fi
+          echo "DOCKER_URL=${{ env.DOCKER_REPOSITORY }}/${GITHUB_REPOSITORY_OWNER,,}/${DOCKER_IMAGE}:" >> $GITHUB_OUTPUT
           echo "BLOB_URL=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
@@ -159,7 +164,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Build Info to Jira
-        if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
         uses: VirtoCommerce/jira-upload-build-info@master
         with:

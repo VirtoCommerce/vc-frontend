@@ -6,6 +6,10 @@ name: Verify workflow repository guards
 #
 #   github.repository_id == '296335982'   upstream-only (VirtoCommerce/vc-frontend;
 #                                         the id, unlike the name, survives renames)
+#   (github.repository_id == '296335982' || vars.VC_<KIND> == 'true')
+#                                         upstream, or a repository that opts in by setting
+#                                         the variable. KIND is CI, E2E or RELEASE; the mirror
+#                                         and forks set none, so the job stays off there.
 #   vars.THEME_MIRROR == 'true'            mirror-only
 #
 # and then either end, or continue with `&& <rest>` where <rest> has no top-level `||`
@@ -22,8 +26,8 @@ permissions:
 
 jobs:
   guards:
-    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof).
-    if: github.repository_id == '296335982'
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true.
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -43,9 +47,9 @@ jobs:
             while IFS= read -r row; do
               job=$(jq -r .job <<< "$row")
               cond=$(jq -r .if <<< "$row" | tr '\n' ' ' | sed -E 's/^[[:space:]]*(\$\{\{)?[[:space:]]*//; s/[[:space:]]*(\}\})?[[:space:]]*$//; s/[[:space:]]+/ /g')
-              rest=$(printf '%s' "$cond" | sed -E "s/^(github\.repository_id == '296335982'|vars\.THEME_MIRROR == 'true')//")
+              rest=$(printf '%s' "$cond" | sed -E "s/^(github\.repository_id == '296335982'|\(github\.repository_id == '296335982' \|\| vars\.VC_(CI|E2E|RELEASE) == 'true'\)|vars\.THEME_MIRROR == 'true')//")
               if [ "$rest" = "$cond" ]; then
-                echo "::error file=$file::Job '$job' has no repository guard. Start its if: with github.repository_id == '296335982' (VirtoCommerce/vc-frontend), or vars.THEME_MIRROR == 'true' for mirror-only jobs."
+                echo "::error file=$file::Job '$job' has no repository guard. Start its if: with github.repository_id == '296335982' (VirtoCommerce/vc-frontend), with (github.repository_id == '296335982' || vars.VC_CI == 'true') to let another repository opt in (VC_CI, VC_E2E or VC_RELEASE), or with vars.THEME_MIRROR == 'true' for mirror-only jobs."
                 status=1
                 continue
               fi
