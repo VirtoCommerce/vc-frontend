@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Modo punchout"
+    "mode_label": "Modo punchout",
+    "create_requisition": "Criar requisição",
+    "errors": {
+      "create_requisition_failed": "Não foi possível criar a requisição. Tente novamente."
+    }
   }
 }

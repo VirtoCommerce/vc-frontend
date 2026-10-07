@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Punchout 模式"
+    "mode_label": "Punchout 模式",
+    "create_requisition": "创建采购申请",
+    "errors": {
+      "create_requisition_failed": "无法创建采购申请，请重试。"
+    }
   }
 }

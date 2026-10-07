@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Tryb punchout"
+    "mode_label": "Tryb punchout",
+    "create_requisition": "Utwórz zapotrzebowanie",
+    "errors": {
+      "create_requisition_failed": "Nie udało się utworzyć zapotrzebowania. Spróbuj ponownie."
+    }
   }
 }

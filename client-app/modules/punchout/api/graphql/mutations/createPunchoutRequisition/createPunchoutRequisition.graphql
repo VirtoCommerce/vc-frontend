@@ -1,0 +1,8 @@
+mutation createRequisition($command: CreatePunchoutRequisitionCommandType!) {
+  createPunchoutRequisition(command: $command) {
+    url
+    formField
+    cxml
+    errorCode
+  }
+}

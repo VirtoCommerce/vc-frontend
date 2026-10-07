@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Punchout mode"
+    "mode_label": "Punchout mode",
+    "create_requisition": "Create requisition",
+    "errors": {
+      "create_requisition_failed": "Could not create the requisition. Please try again."
+    }
   }
 }

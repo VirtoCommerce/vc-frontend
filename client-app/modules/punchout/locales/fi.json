@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Punchout-tila"
+    "mode_label": "Punchout-tila",
+    "create_requisition": "Luo ostoehdotus",
+    "errors": {
+      "create_requisition_failed": "Ostoehdotuksen luominen epäonnistui. Yritä uudelleen."
+    }
   }
 }
