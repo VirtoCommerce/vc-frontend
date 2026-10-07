@@ -1,33 +1,35 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
+import {
+  buildStatCards,
+  formatSignedPercent,
+  formatStatCount,
+  formatStatMoney,
+  useStatDataNeeds,
+} from "@/shared/dashboard";
 import { buildActiveCartsCardData } from "../layout/active-carts-card";
 import { newOrdersCardData } from "../layout/stat-card-data";
-import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
-import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
+import { DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
+import { statNeedResults } from "../layout/stat-data-needs";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
-import type { StatWidgetCardType } from "../types/widgets";
+import type { LayoutVisibilityType, StatCardType } from "@/shared/dashboard";
 
 // Shapes three statistics sources into the six dashboard KPI cards.
 // Deltas are either period-over-period % (chevron) or plain "new activity" counts (no chevron).
 //
 // The card set never shrinks — the layout decides what renders, and a card missing while loading would
-// blank its column. What the scope narrows is the fetching: each query asks only for the visible cards'
-// slices, and one whose cards are all hidden does not run.
-export function useSalesRepDashboardWidgets() {
+// blank its column. What the page's layout narrows is the fetching: each query asks only for the visible
+// cards' slices, and one whose cards are all hidden does not run.
+export function useSalesRepDashboardWidgets(layout: LayoutVisibilityType) {
   const { t } = useI18n();
-  const scope = DASHBOARD_LAYOUT_SCOPE;
-  const {
-    statistics: orderStatistics,
-    loading: ordersLoading,
-    error: ordersError,
-  } = useSalesRepOrderStatistics({ scope });
-  const { statistics: cartStatistics, loading: cartsLoading, error: cartsError } = useSalesRepCartStatistics({ scope });
-  const { counts, loading: countsLoading, error: countsError } = useSalesRepCustomerCounts({ scope });
+  const stats = useStatDataNeeds(layout, DASHBOARD_STAT_CARDS);
+  const { statistics: orderStatistics, loading: ordersLoading, error: ordersError } = useSalesRepOrderStatistics(stats);
+  const { statistics: cartStatistics, loading: cartsLoading, error: cartsError } = useSalesRepCartStatistics(stats);
+  const { counts, loading: countsLoading, error: countsError } = useSalesRepCustomerCounts(stats);
 
-  const cards = computed<StatWidgetCardType[]>(() => {
+  const cards = computed<StatCardType[]>(() => {
     const orders = orderStatistics.value;
     const carts = cartStatistics.value;
     const customerCounts = counts.value;
@@ -35,7 +37,7 @@ export function useSalesRepDashboardWidgets() {
     // buildStatCards derives each card's pending/failed state from the card's own `needs`, so a card
     // whose slice already arrived keeps rendering while a sibling's query is still in flight.
     const queries = {
-      sources: { orders, carts, counts: customerCounts },
+      table: statNeedResults({ orders, carts, counts: customerCounts }),
       states: {
         orders: { loading: ordersLoading.value, failed: Boolean(ordersError.value) },
         carts: { loading: cartsLoading.value, failed: Boolean(cartsError.value) },
@@ -57,7 +59,7 @@ export function useSalesRepDashboardWidgets() {
     const mtdDelta = formatSignedPercent(orders?.mtdVsPrevMonth?.countChangePercent);
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
 
-    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    // Caption, icon and color come from the shared table; only what the queries decide is here.
     return buildStatCards(
       DASHBOARD_STAT_CARDS,
       {

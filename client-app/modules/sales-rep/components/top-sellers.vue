@@ -123,16 +123,16 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
-import { useBlockChrome } from "../composables/useBlockChrome";
+import { useBlockChrome } from "@/shared/dashboard";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { selectableFilterRules } from "../utils";
-import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
+import LayoutWidget from "@/shared/dashboard/components/layout-widget.vue";
 
 interface IProps {
   // Widget heading (the caller decides the wording).

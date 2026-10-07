@@ -1,12 +1,11 @@
 import { ApolloClient, ApolloLink, Observable } from "@apollo/client/core";
 import { provideApolloClient } from "@vue/apollo-composable";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { effectScope, nextTick } from "vue";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { effectScope, nextTick, ref } from "vue";
 import { cache } from "@/core/api/graphql/config/cache";
-import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
-import { STAT_CARDS } from "../layout/stat-cards";
+import { useStatDataNeeds } from "@/shared/dashboard";
+import { DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
-import { clearStatVisibility, publishStatVisibility } from "./useStatDataNeeds";
 
 /**
  * Entering layout-edit mode widens `needs` to every card, which changes the document's `@include` flags,
@@ -72,13 +71,16 @@ async function settle(times = 3): Promise<void> {
   }
 }
 
-const everyCard = STAT_CARDS[DASHBOARD_LAYOUT_SCOPE].map((card) => card.key);
+const everyCard = DASHBOARD_STAT_CARDS.map((card) => card.key);
 // Hiding an order-fed card is what makes edit mode widen the flags; a rep with everything visible sees
 // no variable change at all, which is why this only bites the reps the feature is for.
 const withoutWeek = everyCard.filter((key) => key !== "orders_placed_week");
 
-function publish(visible: readonly string[], editing: boolean): void {
-  publishStatVisibility(DASHBOARD_LAYOUT_SCOPE, { settled: true, visible, editing });
+/** The dashboard page's layout, read and showing `visible`; flipping `editing` is the rep opening the editor. */
+function dashboardLayout(visible: readonly string[]) {
+  const editing = ref(false);
+  const layout = { settled: ref(true), editing, visibleIn: () => visible };
+  return { editing, stats: useStatDataNeeds(layout, DASHBOARD_STAT_CARDS) };
 }
 
 beforeEach(async () => {
@@ -88,16 +90,11 @@ beforeEach(async () => {
   provideApolloClient(new ApolloClient({ link, cache }));
 });
 
-afterEach(() => {
-  clearStatVisibility(DASHBOARD_LAYOUT_SCOPE);
-});
-
 describe("entering layout-edit mode", () => {
   it("puts the order statistics back into loading, with the fetched figures still in hand", async () => {
-    publish(withoutWeek, false);
-
     const owner = effectScope();
-    const { statistics, loading } = owner.run(() => useSalesRepOrderStatistics({ scope: DASHBOARD_LAYOUT_SCOPE }))!;
+    const { editing, stats } = owner.run(() => dashboardLayout(withoutWeek))!;
+    const { statistics, loading } = owner.run(() => useSalesRepOrderStatistics(stats))!;
 
     await settle();
     release();
@@ -108,11 +105,11 @@ describe("entering layout-edit mode", () => {
     expect(requestCount).toBe(1);
 
     // The rep opens the layout editor. Same visible set — only `editing` flips.
-    publish(withoutWeek, true);
+    editing.value = true;
     await settle();
 
     // The widened flags are a new cache key, so nothing can be served from cache: the query is in flight,
-    // and stat-widget.vue puts `loading` ahead of the value, so every order-fed card renders "—".
+    // and VcStatCard puts `loading` ahead of the value, so every order-fed card renders "—".
     expect(loading.value).toBe(true);
     expect(requestCount).toBe(2);
 
@@ -129,10 +126,9 @@ describe("entering layout-edit mode", () => {
   });
 
   it("does not refetch for a rep with every card visible", async () => {
-    publish(everyCard, false);
-
     const owner = effectScope();
-    const { loading } = owner.run(() => useSalesRepOrderStatistics({ scope: DASHBOARD_LAYOUT_SCOPE }))!;
+    const { editing, stats } = owner.run(() => dashboardLayout(everyCard))!;
+    const { loading } = owner.run(() => useSalesRepOrderStatistics(stats))!;
 
     await settle();
     release();
@@ -140,7 +136,7 @@ describe("entering layout-edit mode", () => {
     expect(loading.value).toBe(false);
     expect(requestCount).toBe(1);
 
-    publish(everyCard, true);
+    editing.value = true;
     await settle();
 
     // Widening a set that is already complete leaves the flags identical, so apollo sees no new variables.

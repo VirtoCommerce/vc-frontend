@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 import { useSalesRepCustomerWidgets } from "./useSalesRepCustomerWidgets";
 import { useSalesRepDashboardWidgets } from "./useSalesRepDashboardWidgets";
 import type {
@@ -6,7 +7,7 @@ import type {
   SalesRepCustomerCountsQuery,
   SalesRepCustomerOrderStatisticsQuery,
 } from "../api/graphql/types";
-import type { StatWidgetCardType } from "../types/widgets";
+import type { LayoutVisibilityType, StatCardType } from "@/shared/dashboard";
 
 type OrderStatsType = SalesRepCustomerOrderStatisticsQuery["salesRepCustomerOrderStatistics"];
 type CartStatsType = SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"];
@@ -61,6 +62,9 @@ vi.mock("vue-i18n", async () => {
   return { useI18n: () => ({ t: i18n.global.t }) };
 });
 
+// The page's layout; the three query composables are mocked, so which cards it shows changes nothing here.
+const layout: LayoutVisibilityType = { settled: ref(true), editing: ref(false), visibleIn: () => [] };
+
 beforeEach(() => {
   // Reset the data refs too, or a later test silently inherits the previous one's payload.
   sources.orders.value = undefined;
@@ -94,12 +98,12 @@ function emptyOrders(): OrderStatsType {
   };
 }
 
-function allCardText(cards: StatWidgetCardType[]): string[] {
+function allCardText(cards: StatCardType[]): string[] {
   return cards.flatMap((card) => [card.value, card.sub ?? "", card.delta ?? ""]);
 }
 
 /** The renderings VCST-5586 set out to eliminate. `sub`/`delta` may be legitimately absent ("") . */
-function expectNoPlaceholders(cards: StatWidgetCardType[]) {
+function expectNoPlaceholders(cards: StatCardType[]) {
   for (const card of cards) {
     expect(card.value).not.toBe("");
     expect(card.value).not.toBe("—");
@@ -128,7 +132,7 @@ describe("stat cards for a customer with no data", () => {
       thisMonth: { orderingCustomers: 0, newCustomers: 0 },
     } satisfies CountsType;
 
-    const { cards } = useSalesRepDashboardWidgets();
+    const { cards } = useSalesRepDashboardWidgets(layout);
 
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
@@ -150,7 +154,7 @@ describe("stat cards for a customer with no data", () => {
       itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
 
-    const { cards } = useSalesRepCustomerWidgets("org-1");
+    const { cards } = useSalesRepCustomerWidgets(layout, "org-1", true);
 
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
@@ -169,8 +173,8 @@ describe("stat cards for a customer with no data", () => {
     sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 0 } satisfies CountsType;
 
-    const dashboard = useSalesRepDashboardWidgets();
-    const profile = useSalesRepCustomerWidgets("org-1");
+    const dashboard = useSalesRepDashboardWidgets(layout);
+    const profile = useSalesRepCustomerWidgets(layout, "org-1", true);
 
     expectNoPlaceholders(dashboard.cards.value);
     expectNoPlaceholders(profile.cards.value);
@@ -191,13 +195,13 @@ describe("stat cards for a customer with partial data", () => {
     sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 4321 } satisfies CountsType;
 
-    const dashboard = useSalesRepDashboardWidgets();
-    const profile = useSalesRepCustomerWidgets("org-1");
+    const dashboard = useSalesRepDashboardWidgets(layout);
+    const profile = useSalesRepCustomerWidgets(layout, "org-1", true);
 
     expectNoPlaceholders(dashboard.cards.value);
     expectNoPlaceholders(profile.cards.value);
 
-    const byKey = (cards: StatWidgetCardType[], key: string) => cards.find((card) => card.key === key);
+    const byKey = (cards: StatCardType[], key: string) => cards.find((card) => card.key === key);
 
     // Present metrics keep the backend string and gain culture grouping on the count.
     expect(byKey(dashboard.cards.value, "orders_placed_ytd")).toMatchObject({
@@ -236,7 +240,7 @@ describe("stat cards when one statistics query fails", () => {
     sources.counts.value = { assignedCustomers: 9 } satisfies CountsType;
     sources.countsError.value = new Error("counts down");
 
-    const { cards } = useSalesRepDashboardWidgets();
+    const { cards } = useSalesRepDashboardWidgets(layout);
     const failedKeys = cards.value.filter((card) => card.failed).map((card) => card.key);
 
     expect(failedKeys).toEqual(["my_customers"]);
@@ -254,7 +258,7 @@ describe("stat cards when one statistics query fails", () => {
     } satisfies CartStatsType;
     sources.ordersError.value = new Error("orders down");
 
-    const { cards } = useSalesRepCustomerWidgets("org-1");
+    const { cards } = useSalesRepCustomerWidgets(layout, "org-1", true);
 
     expect(cards.value.filter((card) => card.failed).map((card) => card.key)).toEqual([
       "new_orders",
@@ -267,14 +271,14 @@ describe("stat cards when one statistics query fails", () => {
 });
 
 describe("stat cards while one query is still in flight", () => {
-  // <StatWidget> gives loading precedence over the error, so an aggregate loading flag would hold the
+  // <VcStatCard> gives loading precedence over the error, so an aggregate loading flag would hold the
   // failed card at the pending placeholder and hide its error until the slowest query settled.
   it("keeps a failed card in its error state while a sibling query is still loading", () => {
     sources.counts.value = undefined;
     sources.countsError.value = new Error("counts down");
     sources.ordersLoading.value = true;
 
-    const { cards } = useSalesRepDashboardWidgets();
+    const { cards } = useSalesRepDashboardWidgets(layout);
     const byKey = (key: string) => cards.value.find((card) => card.key === key);
 
     expect(byKey("my_customers")).toMatchObject({ loading: false, failed: true });
@@ -290,7 +294,7 @@ describe("stat cards while one query is still in flight", () => {
     } satisfies CartStatsType;
     sources.countsLoading.value = true;
 
-    const { cards } = useSalesRepDashboardWidgets();
+    const { cards } = useSalesRepDashboardWidgets(layout);
 
     expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual(["my_customers"]);
   });
@@ -314,7 +318,7 @@ describe("stat cards while a query the rep already has data for is refetching", 
     } satisfies OrderStatsType;
     sources.ordersLoading.value = true;
 
-    const { cards } = useSalesRepDashboardWidgets();
+    const { cards } = useSalesRepDashboardWidgets(layout);
     const byKey = (key: string) => cards.value.find((card) => card.key === key);
 
     expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual([]);
@@ -331,7 +335,7 @@ describe("stat cards while a query the rep already has data for is refetching", 
     } satisfies OrderStatsType;
     sources.ordersLoading.value = true;
 
-    const { cards } = useSalesRepDashboardWidgets();
+    const { cards } = useSalesRepDashboardWidgets(layout);
     const byKey = (key: string) => cards.value.find((card) => card.key === key);
 
     expect(byKey("orders_placed_mtd")).toMatchObject({ loading: false, value: "5" });
@@ -351,7 +355,7 @@ describe("stat cards while a query the rep already has data for is refetching", 
     } satisfies OrderStatsType;
     sources.ordersLoading.value = true;
 
-    const { cards } = useSalesRepCustomerWidgets("org-1");
+    const { cards } = useSalesRepCustomerWidgets(layout, "org-1", true);
     const byKey = (key: string) => cards.value.find((card) => card.key === key);
 
     expect(byKey("orders_ytd")).toMatchObject({ loading: false, value: "6" });

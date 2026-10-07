@@ -89,6 +89,46 @@ export type {
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 
+// Dashboard layout engine (VCST-6078). A plugin's dashboard page creates a layout controller, renders it with
+// `LayoutSurface`, and contributes blocks with `registerBlock` from its `init()`; its widgets render inside
+// `LayoutWidget`, which reads the block's edit-mode chrome through `useBlockChrome`. The stat helpers turn a
+// card table into blocks, query needs and per-card state. Props of `LayoutSurface` and `LayoutWidget` are
+// contract: renaming or removing one is a breaking change.
+export { default as LayoutSurface } from "@/shared/dashboard/components/layout-surface.vue";
+export { default as LayoutWidget } from "@/shared/dashboard/components/layout-widget.vue";
+export { useBlockChrome } from "@/shared/dashboard/composables/useBlockChrome";
+export { useStatDataNeeds } from "@/shared/dashboard/composables/useStatDataNeeds";
+export { registerBlock, unregisterBlock } from "@/shared/dashboard/registry";
+export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "@/shared/dashboard/settings";
+export { buildStatCards, statBlocks, statCardState, statDataNeeds } from "@/shared/dashboard/stat-cards";
+export {
+  buildStatisticsWindows,
+  formatSignedPercent,
+  formatStatCount,
+  formatStatMoney,
+} from "@/shared/dashboard/statistics";
+export type { ILayoutBlockChromeType } from "@/shared/dashboard/composables/useBlockChrome";
+export type {
+  IStatCardDefType,
+  StatCardDataType,
+  StatNeedResultType,
+  StatQueryStateType,
+} from "@/shared/dashboard/stat-cards";
+export type { SignedPercentType, StatisticsWindowsType } from "@/shared/dashboard/statistics";
+export type {
+  BlockSettingsType,
+  BlockSettingType,
+  BlockType,
+  IStatBlock,
+  IWidgetBlock,
+  LayoutControllerType,
+  LayoutRegionIdType,
+  LayoutStateType,
+  LayoutVisibilityType,
+  StatCardType,
+  StatDataNeedsType,
+} from "@/shared/dashboard/types";
+
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
 // A date-only bound ("YYYY-MM-DD") to the instant a filter needs: local midnight, or the last

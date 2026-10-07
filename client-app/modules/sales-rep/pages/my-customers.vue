@@ -218,6 +218,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { formatStatCount } from "@/shared/dashboard";
 import { useModal } from "@/shared/modal";
 import CustomerCommunicationModal from "../components/customer-communication-modal.vue";
 import SalesRepRuleAlert from "../components/sales-rep-rule-alert.vue";
@@ -226,7 +227,7 @@ import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
-import { formatStatCount, selectableFilterRules } from "../utils";
+import { selectableFilterRules } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();

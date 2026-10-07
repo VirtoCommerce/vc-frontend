@@ -5,6 +5,7 @@ import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import { registerBlock } from "@/shared/dashboard";
 import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import { loadModuleLocale } from "../utils";
 import { useSharedSalesRepCustomersCount } from "./composables/useSalesRepCustomersCount";
@@ -25,9 +26,9 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
+import { registerSalesRepBlocks } from "./layout/blocks";
 import { layoutTypePolicies } from "./layout/cache-policies";
 import { documentsBlock } from "./layout/documents-block";
-import { registerBlock } from "./layout/registry";
 import { tasksBlock } from "./layout/tasks-block";
 import { salesRepMenuSchema } from "./menu";
 import {
@@ -73,6 +74,10 @@ export function init(router: Router, i18n: I18n) {
   // all stay invisible.
   const canReadDocuments = checkPermissions(SALES_REP_ACCESS_PERMISSION, SALES_REP_DOCUMENTS_READ_PERMISSION);
   const tasksEnabled = isSalesRepTasksEnabled();
+
+  // The blocks of both hub surfaces, into the core layout engine. Synchronously here, before the app mounts,
+  // so a surface's first render already knows every block.
+  registerSalesRepBlocks();
 
   // Same one-shot registration seam as the documents widget, and the same caveat: while the tasks module is
   // absent the block is unknown to the layout registry, so a layout SAVED in that state drops its persisted

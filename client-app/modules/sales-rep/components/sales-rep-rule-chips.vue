@@ -35,7 +35,8 @@
 
 <script setup lang="ts">
 import { computed, watch } from "vue";
-import { formatStatCount, selectableFilterRules } from "../utils";
+import { formatStatCount } from "@/shared/dashboard";
+import { selectableFilterRules } from "../utils";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {

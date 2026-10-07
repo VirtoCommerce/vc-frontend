@@ -1,11 +1,12 @@
 import { defineAsyncComponent, markRaw } from "vue";
-import { MIN_ROWS, TASKS_BLOCK_ID, TASKS_DEFAULT_ROWS, TASKS_MAX_ROWS } from "../constants";
-import type { SalesRepBlockType } from "../types/layout";
+import { MIN_ROWS } from "@/shared/dashboard";
+import { TASKS_BLOCK_ID, TASKS_DEFAULT_ROWS, TASKS_MAX_ROWS } from "../constants";
+import type { BlockType } from "@/shared/dashboard";
 
 const SalesRepTasks = markRaw(defineAsyncComponent(() => import("../components/sales-rep-tasks.vue")));
 
 // Registered (via registerBlock in index.ts) only when vc-module-task-management is installed.
-export const tasksBlock: SalesRepBlockType = {
+export const tasksBlock: BlockType = {
   id: TASKS_BLOCK_ID,
   region: "mainRight",
   titleKey: "sales_rep.tasks.widget_title",

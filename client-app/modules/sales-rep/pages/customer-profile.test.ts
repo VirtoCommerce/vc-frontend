@@ -26,6 +26,8 @@ vi.mock("../composables/useSalesRepCustomerWidgets", async () => {
   const { ref } = await import("vue");
   return { useSalesRepCustomerWidgets: () => ({ cards: ref([]) }) };
 });
+// The page owns the layout it hands the surface; the surface is stubbed, so the controller is never read.
+vi.mock("../composables/useSalesRepLayout", () => ({ useSalesRepLayout: () => ({ scope: "customerProfile" }) }));
 vi.mock("@/core/composables", async () => {
   const { computed, unref } = await import("vue");
   return {

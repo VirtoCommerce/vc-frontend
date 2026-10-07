@@ -1,12 +1,10 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, reactive, ref } from "vue";
-import { provideLayoutSettings } from "../composables/useLayoutSettings";
-import LayoutBlock from "./layout-block.vue";
+import { computed, defineComponent, h, nextTick, reactive, ref } from "vue";
+import { provideBlockChrome } from "@/shared/dashboard";
 import SalesRepOrders from "./sales-rep-orders.vue";
-import type { ILayoutSettingsType } from "../composables/useLayoutSettings";
 import type { SalesRepRuleType } from "../types";
-import type { SalesRepBlockSettingsType } from "../types/layout";
+import type { BlockSettingsType } from "@/shared/dashboard";
 import type { PropType } from "vue";
 
 const CATALOG: SalesRepRuleType[] = [
@@ -64,43 +62,50 @@ const global = {
 
 const TABS = ".sales-rep-rule-chips__tab";
 
-/** The settings seam is a provide, so a real `LayoutBlock` has to install it. */
+/**
+ * The widget reads its settings through the chrome a layout block offers it (`useBlockChrome`), so this
+ * offers the same: the draft and the saved values, edit mode and the setter, as a surface would for the
+ * `orders` block.
+ */
 const Surface = defineComponent({
   props: {
-    settings: { type: Object as PropType<ILayoutSettingsType>, required: true },
+    draft: { type: Object as PropType<BlockSettingsType>, required: true },
+    saved: { type: Object as PropType<BlockSettingsType>, required: true },
+
+    update: {
+      type: Function as PropType<(blockId: string, patch: Partial<BlockSettingsType>) => void>,
+      required: true,
+    },
+
     editing: { type: Boolean, default: false },
   },
 
   setup(props) {
-    // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- each mount installs one fixed seam
-    provideLayoutSettings(props.settings);
+    provideBlockChrome({
+      draggable: computed(() => props.editing),
+      grabbed: computed(() => false),
+      title: computed(() => "Recent orders"),
+      hide: () => undefined,
+      handleKeydown: () => undefined,
+      handleBlur: () => undefined,
+      editing: computed(() => props.editing),
+      settings: computed(() => props.draft),
+      savedSettings: computed(() => props.saved),
+      maxRows: computed(() => ({ kind: "maxRows", default: 5, min: 1, max: 20 }) as const),
+      updateSettings: (patch) => props.update("orders", patch),
+    });
 
-    return () =>
-      h(
-        LayoutBlock,
-        { blockId: "orders", title: "Recent orders", editing: props.editing },
-        {
-          default: () => h(SalesRepOrders, { title: "Recent orders", filterable: true }),
-        },
-      );
+    return () => h(SalesRepOrders, { title: "Recent orders", filterable: true });
   },
 });
 
 function mountOrders(options: { editing?: boolean; draft?: string[]; saved?: string[] } = {}) {
-  const draft = reactive<SalesRepBlockSettingsType>({ maxRows: 5, hiddenTabs: options.draft ?? [] });
-  const saved = reactive<SalesRepBlockSettingsType>({ maxRows: 5, hiddenTabs: options.saved ?? [] });
-  const update = vi.fn((_id: string, patch: Partial<SalesRepBlockSettingsType>) => Object.assign(draft, patch));
+  const draft = reactive<BlockSettingsType>({ maxRows: 5, hiddenTabs: options.draft ?? [] });
+  const saved = reactive<BlockSettingsType>({ maxRows: 5, hiddenTabs: options.saved ?? [] });
+  const update = vi.fn((_id: string, patch: Partial<BlockSettingsType>) => Object.assign(draft, patch));
 
   const wrapper = mount(Surface, {
-    props: {
-      settings: {
-        valuesOf: () => draft,
-        savedValuesOf: () => saved,
-        maxRowsOf: () => ({ kind: "maxRows", default: 5, min: 1, max: 20 }) as const,
-        update,
-      },
-      editing: options.editing ?? false,
-    },
+    props: { draft, saved, update, editing: options.editing ?? false },
     global,
   });
 

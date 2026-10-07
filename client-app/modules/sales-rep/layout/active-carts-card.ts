@@ -1,6 +1,6 @@
-import { formatStatCount } from "../utils";
-import type { StatCardDataType } from "./stat-cards";
+import { formatStatCount } from "@/shared/dashboard";
 import type { SalesRepCustomerCartStatisticsQuery } from "../api/graphql/types";
+import type { StatCardDataType } from "@/shared/dashboard";
 import type { ComposerTranslation } from "vue-i18n";
 
 type CartStatisticsType = SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"];

@@ -66,15 +66,15 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBlockChrome } from "../composables/useBlockChrome";
+import { useBlockChrome } from "@/shared/dashboard";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
 import { useSalesRepOverdueTaskCount } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
 import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS, TASKS_OVERDUE_RULE, TASKS_SORT_RULE } from "../constants";
 import { localDayKey, localDayKeyToDate, localDayWindow, taskSubline } from "../tasks";
-import LayoutWidget from "./layout-widget.vue";
 import SalesRepTaskCalendar from "./sales-rep-task-calendar.vue";
 import SalesRepTaskStatus from "./sales-rep-task-status.vue";
+import LayoutWidget from "@/shared/dashboard/components/layout-widget.vue";
 
 interface IProps {
   // Omit inside a layout; LayoutWidget then falls back to the block's titleKey.

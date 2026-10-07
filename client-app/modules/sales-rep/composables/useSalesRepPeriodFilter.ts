@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { buildStatisticsWindows } from "../utils";
+import { buildStatisticsWindows } from "@/shared/dashboard";
 
 export type SalesRepPeriodType = "lifetime" | "month" | "year";
 

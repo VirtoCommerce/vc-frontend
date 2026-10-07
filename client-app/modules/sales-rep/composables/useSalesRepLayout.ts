@@ -1,22 +1,16 @@
 import { useMutation } from "@vue/apollo-composable";
-import { computed, onScopeDispose, readonly, ref, watchEffect } from "vue";
+import { computed, readonly, ref } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { echoMatchesSentBlocks, getBlockRegistry, reconcileLayout, serializeLayout } from "@/shared/dashboard";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
-import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
-import { getBlockRegistry } from "../layout/registry";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
-import { clearStatVisibility, publishStatVisibility } from "./useStatDataNeeds";
-import type {
-  SalesRepBlockSettingsType,
-  SalesRepLayoutRegionIdType,
-  SalesRepLayoutScopeType,
-  SalesRepLayoutStateType,
-} from "../types/layout";
+import type { SalesRepLayoutScopeType } from "../types";
+import type { BlockSettingsType, LayoutControllerType, LayoutRegionIdType, LayoutStateType } from "@/shared/dashboard";
 
-const EMPTY_SETTINGS: SalesRepBlockSettingsType = { hiddenTabs: [] };
+const EMPTY_SETTINGS: BlockSettingsType = { hiddenTabs: [] };
 
-function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
+function cloneState(state: LayoutStateType): LayoutStateType {
   return {
     regions: {
       statistics: { visible: [...state.regions.statistics.visible], hidden: [...state.regions.statistics.hidden] },
@@ -30,12 +24,15 @@ function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
 }
 
 /**
- * Drives one layout surface. `startEdit` snapshots into a draft, every change targets the draft, and
- * `save` writes the whole document in one mutation (the backend replaces, not merges). `reset` refills
- * the draft from registry defaults but still needs a save, so a stray click is recoverable.
+ * Drives one layout surface: the page creates it and hands it to `<LayoutSurface :layout>`. `startEdit`
+ * snapshots into a draft, every change targets the draft, and `save` writes the whole document in one
+ * mutation (the backend replaces, not merges). `reset` refills the draft from registry defaults but still
+ * needs a save, so a stray click is recoverable.
  */
-export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
-  const registry = getBlockRegistry(scope);
+export function useSalesRepLayout(scope: SalesRepLayoutScopeType): LayoutControllerType {
+  // Read where it is used rather than captured once: the registry is reactive, so a block registered after
+  // this ran still reaches the reconciled layout.
+  const registry = () => getBlockRegistry(scope);
 
   // `no-cache` even with layout/cache-policies.ts in place: a save echoes `saveSalesRepLayout`, a
   // different root field, so it never refreshes a cached `salesRepLayout`.
@@ -57,12 +54,12 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const { mutate, loading: saving } = useMutation(SaveSalesRepLayoutDocument, { fetchPolicy: "no-cache" });
 
   // Layout as last persisted (or registry defaults when the rep has never saved this surface).
-  const savedState = ref<SalesRepLayoutStateType | undefined>();
-  const draft = ref<SalesRepLayoutStateType | undefined>();
+  const savedState = ref<LayoutStateType | undefined>();
+  const draft = ref<LayoutStateType | undefined>();
   const editing = computed(() => draft.value !== undefined);
   const saveFailed = ref(false);
 
-  const persisted = computed(() => savedState.value ?? reconcileLayout(result.value?.salesRepLayout, registry));
+  const persisted = computed(() => savedState.value ?? reconcileLayout(result.value?.salesRepLayout, registry()));
   const state = computed(() => draft.value ?? persisted.value);
 
   // Only a read with nothing to show yet blanks the surface. `refetch` sets `loading` true too
@@ -78,46 +75,32 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   // defaults where their own arrangement should be, and no edit button, with nothing explaining either.
   const loadFailed = computed(() => Boolean(error.value));
 
-  function visibleIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
+  function visibleIn(regionId: LayoutRegionIdType): readonly string[] {
     return state.value.regions[regionId].visible;
   }
 
-  function hiddenIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
+  function hiddenIn(regionId: LayoutRegionIdType): readonly string[] {
     return state.value.regions[regionId].hidden;
   }
 
   // Settled = the document has been read, or the read failed and the surface is showing registry
   // defaults. Either way the visible set is now the real one, which is what the statistics queries
-  // wait for. A failed read keeps the cards fed rather than leaving them empty behind an alert.
+  // wait for (`useStatDataNeeds` reads it off this controller). A failed read keeps the cards fed rather
+  // than leaving them empty behind an alert.
   const settled = computed(() => Boolean(result.value) || Boolean(savedState.value) || Boolean(error.value));
 
-  // The statistics composables shape their queries from the cards this surface shows, so a hidden card
-  // costs no buckets and an unneeded query does not fire (VCST-5647). Published rather than returned:
-  // they are created by the PAGE, above the <LayoutSurface> that owns this layout.
-  watchEffect(() => {
-    publishStatVisibility(scope, {
-      settled: settled.value,
-      visible: visibleIn("statistics"),
-      editing: editing.value,
-    });
-  });
-
-  onScopeDispose(() => {
-    clearStatVisibility(scope);
-  });
-
   /** A block with no declared settings has none — the shared empty keeps callers from branching. */
-  function settingsOf(blockId: string): SalesRepBlockSettingsType {
+  function settingsOf(blockId: string): BlockSettingsType {
     return state.value.settings[blockId] ?? EMPTY_SETTINGS;
   }
 
   /** The saved value, ignoring any draft: a row cap is a query variable, so it applies on save
    * rather than refiring the query per keystroke. */
-  function persistedSettingsOf(blockId: string): SalesRepBlockSettingsType {
+  function persistedSettingsOf(blockId: string): BlockSettingsType {
     return persisted.value.settings[blockId] ?? EMPTY_SETTINGS;
   }
 
-  function updateSettings(blockId: string, patch: Partial<SalesRepBlockSettingsType>): void {
+  function updateSettings(blockId: string, patch: Partial<BlockSettingsType>): void {
     // Only a block the registry declared settings for: an unknown id would create an entry
     // `serializeSettings` then drops, so the rep would see a change that never persists.
     if (editable() && draft.value?.settings[blockId]) {
@@ -147,7 +130,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
 
   function reset(): void {
     if (editable()) {
-      draft.value = reconcileLayout(null, registry);
+      draft.value = reconcileLayout(null, registry());
       // Otherwise a previous failure's alert sits over a freshly rebuilt draft.
       saveFailed.value = false;
     }
@@ -155,13 +138,13 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
 
   // Ids are copied, not stored as given: callers read them out of `state`, which is exported
   // `readonly()`, and Vue's readonly arrays are not assignable to a mutable draft.
-  function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
+  function reorderVisible(regionId: LayoutRegionIdType, ids: string[]): void {
     if (editable() && draft.value) {
       draft.value.regions[regionId].visible = [...ids];
     }
   }
 
-  function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
+  function reorderHidden(regionId: LayoutRegionIdType, ids: string[]): void {
     if (editable() && draft.value) {
       draft.value.regions[regionId].hidden = [...ids];
     }
@@ -199,7 +182,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
 
     const pending = draft.value;
-    const command = serializeLayout(pending, scope, registry, globals.storeId);
+    const command = serializeLayout(pending, scope, registry(), globals.storeId);
     try {
       const response = await mutate({ command });
       const saved = response?.data?.saveSalesRepLayout;
@@ -227,7 +210,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
         return false;
       }
 
-      savedState.value = reconcileLayout(saved, registry);
+      savedState.value = reconcileLayout(saved, registry());
       draft.value = undefined;
       saveFailed.value = false;
       return true;
@@ -240,6 +223,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   }
 
   return {
+    scope,
     state: readonly(state),
     loading: initialLoading,
     saving,
@@ -247,6 +231,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     canEdit,
     loadFailed,
     saveFailed: readonly(saveFailed),
+    settled,
     visibleIn,
     hiddenIn,
     settingsOf,

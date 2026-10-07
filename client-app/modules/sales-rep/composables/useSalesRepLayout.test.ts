@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope } from "vue";
+import { registerSalesRepBlocks } from "../layout/blocks";
 import { useSalesRepLayout } from "./useSalesRepLayout";
 import type { EffectScope } from "vue";
 
@@ -39,6 +40,10 @@ vi.mock("@vue/apollo-composable", () => ({
 vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName: "en-US" } }));
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 
+// As init() does: the composable reconciles against the engine's registry, which only knows the blocks the
+// module registered.
+registerSalesRepBlocks();
+
 beforeEach(() => {
   apolloMock.result.value = undefined;
   apolloMock.loading.value = false;
@@ -48,9 +53,7 @@ beforeEach(() => {
   apolloMock.refetch.mockReset();
 });
 
-// The composable registers a watchEffect and an onScopeDispose, so each call needs an owning scope: bare
-// calls make Vue warn, leave the effect running against shared visibility state, and never let
-// clearStatVisibility run — which is also the only way to exercise the publish/clear path.
+// The composable creates computeds and queries, so each call gets an owning scope, stopped after the test.
 let scopes: EffectScope[] = [];
 
 function withLayout(layoutScope: Parameters<typeof useSalesRepLayout>[0]) {
@@ -102,6 +105,37 @@ const sentBlock = (id: string) => {
 };
 
 describe("useSalesRepLayout", () => {
+  // The page hands this object to <LayoutSurface> and to its statistics composables; both read the scope and
+  // `settled` off it rather than finding each other through shared state.
+  it("names the surface it drives", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    expect(withLayout(scope).scope).toBe("customerProfile");
+  });
+
+  it("is not settled while the first read is in flight", () => {
+    apolloMock.loading.value = true;
+
+    expect(withLayout(scope).settled.value).toBe(false);
+  });
+
+  // `null` is the never-saved case: the registry defaults are the arrangement, and the queries may go.
+  it("is settled once the read lands, saved document or not", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    expect(withLayout(scope).settled.value).toBe(true);
+  });
+
+  // The cards stay fed behind the load-failed alert rather than sitting empty forever.
+  it("is settled by a failed read too, over the registry defaults", () => {
+    apolloMock.error.value = new Error("network");
+
+    const { settled, state } = withLayout(scope);
+
+    expect(settled.value).toBe(true);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
+  });
+
   it("falls back to registry defaults when the rep has never saved this surface", () => {
     apolloMock.result.value = { salesRepLayout: null };
 

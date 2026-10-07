@@ -20,7 +20,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
-import LayoutWidget from "./layout-widget.vue";
+import LayoutWidget from "@/shared/dashboard/components/layout-widget.vue";
 
 interface IProps {
   organizationId: string;
