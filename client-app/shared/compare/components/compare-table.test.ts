@@ -320,6 +320,7 @@ describe("CompareTable — table semantics", () => {
     const [priceHeader, skuHeader] = wrapper.findAll("th[scope=row]");
     const describedBy = priceHeader.attributes("aria-describedby");
 
+    expect(priceHeader.attributes("aria-label")).toBe("Label price");
     expect(describedBy).toBeTruthy();
     expect(wrapper.get(`[id="${describedBy}"]`).attributes("label")).toBe("Price, excl. VAT");
     expect(skuHeader.attributes("aria-describedby")).toBeUndefined();
