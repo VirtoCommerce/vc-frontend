@@ -23,9 +23,12 @@
 </template>
 
 <style lang="scss">
-// Mirrors the `mission-card` box sizes, so the grid keeps its height when the real cards replace it.
 .mission-card-skeleton {
-  @apply flex animate-pulse flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-md;
+  @apply flex animate-pulse flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50;
+
+  box-shadow:
+    0 4px 6px -1px rgb(from theme("colors.additional.950") r g b / 0.1),
+    0 2px 4px -2px rgb(from theme("colors.additional.950") r g b / 0.1);
 
   &__banner {
     @apply h-[210px] shrink-0 bg-neutral-100;

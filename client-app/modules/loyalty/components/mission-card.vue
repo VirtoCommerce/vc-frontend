@@ -1,7 +1,7 @@
 <template>
   <div class="mission-card">
     <div class="mission-card__banner">
-      <VcImage class="mission-card__backdrop" :src="view.bannerUrl" alt="" lazy />
+      <VcImage v-if="view.bannerUrl" class="mission-card__backdrop" :src="view.bannerUrl" alt="" lazy />
 
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
@@ -111,8 +111,6 @@ function openMission(): void {
     @apply relative h-[210px] shrink-0 overflow-hidden bg-secondary-800;
   }
 
-  // The artwork is shown whole (a wide one would lose its sides to `cover`), over a blurred copy
-  // of itself that fills the rest of the banner.
   &__backdrop {
     @apply absolute inset-0 size-full scale-110 object-cover opacity-60 blur-lg;
   }

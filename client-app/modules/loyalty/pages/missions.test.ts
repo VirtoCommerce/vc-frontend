@@ -58,8 +58,6 @@ beforeEach(() => {
   state.missions.value = [];
 });
 
-// The card grid used to render empty while GetLoyaltyMissionProgress was in flight, then grow by a
-// full page of cards and push the footer down — a 0.1 layout shift on every page load (VCST-6145).
 describe("Missions card grid", () => {
   it("renders a page of card skeletons while the missions load", () => {
     state.loading.value = true;

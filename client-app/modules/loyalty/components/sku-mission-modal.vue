@@ -106,7 +106,6 @@
           </div>
         </dl>
 
-        <!-- Kept inside the summary card, so it is never left alone below the fold. -->
         <p class="sku-mission-modal__summary-hint">
           {{ $t("pages.account.missions.sku_modal.subtotal_hint") }}
         </p>
@@ -394,7 +393,6 @@ async function addProductsToCart(close: () => void) {
     }
   }
 
-  // Buttons keep their DOM order at every width, so the tab order matches what is on screen.
   &__action {
     @apply w-full;
 
