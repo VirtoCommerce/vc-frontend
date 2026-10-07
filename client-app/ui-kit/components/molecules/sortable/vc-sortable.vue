@@ -319,12 +319,11 @@ const ItemScope = defineComponent({
 <style lang="scss">
 @use "@/ui-kit/styles/focus-ring" as *;
 
-// Doubled = held. Not `:focus-visible`: the keyboard refocuses a tick after the move. Reaches offset + 3 × width.
+// Dashed = held, as the pointer's drop preview is. Not `:focus-visible`: the keyboard refocuses a tick after the move.
 @mixin held-ring {
   @include focus-ring;
 
-  outline-style: double;
-  outline-width: calc(3 * var(--vc-focus-ring-width));
+  outline-style: dashed;
 }
 
 // No box properties: layout is the consumer's, and this class must be safe on a `tbody`. What is here is
