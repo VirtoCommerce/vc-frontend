@@ -1038,6 +1038,32 @@ describe("VcSortable — development warnings", () => {
     );
   });
 
+  it("warns when `listOrder` is set without a `group`", () => {
+    mountWith({ name: "a", listOrder: ["a", "b"] }, (attrs, id) => h("div", attrs, id));
+
+    expect(warnings()).toEqual([expect.stringContaining("`listOrder` needs a `group`")]);
+  });
+
+  it("warns when `listOrder` leaves out the list's own name", () => {
+    mountWith({ name: "shown", group: "order", listOrder: ["shown", "parked"], onMove: vi.fn() }, (attrs, id) =>
+      h("div", attrs, id),
+    );
+    mountWith({ name: "parked", group: "order", listOrder: ["shown", "parkd"], onMove: vi.fn() }, (attrs, id) =>
+      h("div", attrs, id),
+    );
+
+    expect(warnings()).toEqual([expect.stringContaining('does not include this list\'s name "parked"')]);
+  });
+
+  it("warns when two mounted lists share a group and a name", async () => {
+    const props = { name: "twin", group: "twins", onMove: vi.fn() };
+    mountWith(props, (attrs, id) => h("div", attrs, id));
+    mountWith(props, (attrs, id) => h("div", attrs, id));
+    await nextTick();
+
+    expect(warnings()).toEqual([expect.stringContaining('share group "twins" and name "twin"')]);
+  });
+
   it("warns when object items in a group have no `itemKey`", () => {
     mount(VcSortable<{ title: string }>, {
       props: { modelValue: [{ title: "a" }], name: "objects", group: "objects", onMove: vi.fn() },

@@ -432,6 +432,21 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(source.moves).toEqual([{ id: "a", from: "shown", to: "parked" }]);
   });
 
+  it("warns about a name taken over only while both lists stay mounted", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const old = setup({ name: "parked", group: "stats-5" });
+    setup({ name: "parked", group: "stats-5" });
+    old.scope.stop();
+    await nextTick();
+    const silentOnRemount = warn.mock.calls.length;
+
+    setup({ name: "parked", group: "stats-5" });
+    await nextTick();
+
+    expect([silentOnRemount, warn.mock.calls.length]).toEqual([0, 1]);
+    warn.mockRestore();
+  });
+
   // A stale cleanup must not delete the group's map that a newer list has since created.
   it("keeps a list that registered after its group emptied, when an older one goes", () => {
     const order = ["shown", "parked"];
@@ -956,6 +971,27 @@ describe("useSortableList — grab and release events", () => {
     const { key, events, scope } = pointer();
 
     key(" ");
+    scope.stop();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("reports a pointer drag ended by the list unmounting", async () => {
+    const { el, item, events, scope, sortable } = pointer();
+    await nextTick();
+
+    sortable().options.onStart({ item, from: el });
+    scope.stop();
+
+    expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("reports nothing on unmount after a pointer drag has ended", async () => {
+    const { el, item, events, scope, sortable } = pointer();
+    await nextTick();
+
+    sortable().options.onStart({ item, from: el });
+    sortable().options.onEnd({ item, from: el, to: el });
     scope.stop();
 
     expect(events).toEqual(["grab a main", "release a"]);

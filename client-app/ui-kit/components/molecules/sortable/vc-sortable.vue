@@ -244,6 +244,21 @@ if (import.meta.env.DEV) {
     warn("`liveRegion` is off and nothing listens to `announce`: keyboard sorting is silent for screen readers.");
   }
 
+  watch(
+    () => [props.listOrder, props.group, props.name] as const,
+    ([order, group, name]) => {
+      if (!order) {
+        return;
+      }
+      if (!group) {
+        warn("`listOrder` needs a `group`: without one no sibling list can take the item.");
+      } else if (!order.includes(name)) {
+        warn(`\`listOrder\` does not include this list's name "${name}": the cross-axis arrows cannot find it.`);
+      }
+    },
+    { immediate: true },
+  );
+
   // Not `accepts`: an inline function is a new one on every render, though it means the same.
   watch([() => props.handle, () => props.filter], () =>
     warn("`handle` and `filter` are read at mount; changing them later has no effect."),

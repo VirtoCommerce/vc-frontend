@@ -515,7 +515,7 @@ describe("stat row drag and drop", () => {
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {
-    const { wrapper, api } = setup();
+    const { wrapper, api, announce } = setup();
     api.startEdit();
     await nextTick();
 
@@ -529,6 +529,7 @@ describe("stat row drag and drop", () => {
 
     expect(api.visibleIn("statistics")).toEqual(before);
     expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed" }));
   });
 
   // The region is one array and `hidden` is a flag, so without the drop index the card lands wherever
@@ -632,6 +633,14 @@ describe("widget column drag and drop", () => {
 
     expect(api.hiddenIn("mainRight")).toEqual([]);
     expect(handle.attributes("aria-pressed")).toBe("true");
+  });
+
+  it("leaves a widget block unlabelled: its handle carries the name", async () => {
+    const { wrapper, api } = setupColumn();
+    api.startEdit();
+    await nextTick();
+
+    expect(wrapper.find('[data-block-id="actions"]').attributes("aria-label")).toBeUndefined();
   });
 
   it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
