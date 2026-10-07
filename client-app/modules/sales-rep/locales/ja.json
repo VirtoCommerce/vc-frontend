@@ -145,7 +145,7 @@
         "created_date": "作成日",
         "start_date": "開始日",
         "end_date": "終了日",
-        "invalid_range": "無効な日付範囲です。",
+        "date_range": "期間",
         "order_status": "@:common.labels.status",
         "customer": "顧客を選択",
         "reset": "リセット",
@@ -154,7 +154,8 @@
         "last_day": "昨日",
         "last_week": "先週",
         "last_month": "先月",
-        "last_year": "昨年"
+        "last_year": "昨年",
+        "remove_filter": "フィルター「{label}」を削除"
       }
     },
     "communication": {
@@ -329,18 +330,27 @@
     },
     "list_sharing": {
       "share_customers_label": "顧客",
-      "share_customers_placeholder": "顧客を選択",
+      "share_customers_placeholder": "名前で顧客を検索",
       "share_customers_error": "顧客リストを読み込めませんでした。もう一度お試しください。",
-      "share_replace_hint": "以前に選択した顧客はこのリストにアクセスできなくなります。",
-      "share_message_label": "メッセージ",
-      "share_message_placeholder": "任意のメッセージを入力",
+      "share_empty_hint": "リストを空にしても共有は停止しません。アクセスできる範囲を変更してください。",
+      "share_message_label": "メッセージ（任意）",
+      "share_message_placeholder": "受信者へのメモを追加",
+      "share_message_hint": "新しい受信者への通知に表示されます。",
+      "recipients_title": "受信者・{count}",
+      "clear_recipients_button": "すべて解除",
+      "recipients_cleared": "クリア済み・{count}",
+      "restore_recipients_button": "元に戻す",
+      "show_all_recipients_button": "すべて表示（{count}）",
+      "show_less_recipients_button": "表示を減らす",
+      "remove_recipient_button": "{name} を削除",
       "share_default_title": "営業担当者からの新しいリスト",
       "share_default_message": "こんにちは。リスト「{listName}」をあなたの組織と共有しました。ぜひご覧ください：",
-      "share_success": "リストを顧客と共有しました。",
+      "share_success": "リストを {count} 件の顧客と共有しました。",
+      "share_saved": "リストを保存しました。現在 {count} 件の顧客と共有しています。",
       "share_partial": "リストを共有しましたが、一部の通知を配信できませんでした。",
-      "share_notify_error": "リストは保存されましたが、顧客に通知できませんでした。",
-      "scope_label": "顧客",
-      "status": "顧客と共有",
+      "share_notify_error": "リストは保存されましたが、通知を送信できませんでした。",
+      "scope_label": "特定の顧客",
+      "status": "顧客 {count} 件と共有",
       "badge": "営業担当者のおすすめ"
     }
   }

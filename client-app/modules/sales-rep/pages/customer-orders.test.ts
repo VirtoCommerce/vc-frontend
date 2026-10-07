@@ -55,6 +55,24 @@ vi.mock("../composables/useSalesRepColumnSort", async () => {
   };
 });
 vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
+
+const i18nOverrides = vi.hoisted(() => ({ locale: undefined as string | undefined }));
+
+// The shared test i18n has no messages, so a real `t` drops its parameters; keep them visible.
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+
+  return {
+    ...actual,
+    useI18n: () => {
+      const composer = actual.useI18n();
+      const t = (key: string, params?: unknown) => (params ? `${key} ${JSON.stringify(params)}` : composer.t(key));
+      const locale = i18nOverrides.locale ? { value: i18nOverrides.locale } : composer.locale;
+
+      return { ...composer, t, locale };
+    },
+  };
+});
 vi.mock("vue-router", async () => {
   const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
   return {
@@ -86,9 +104,9 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
       VcLink: true,
       VcEmptyView: true,
       VcChip: {
-        props: { closable: Boolean },
+        props: { closable: Boolean, closeButtonAriaLabel: { type: String, default: undefined } },
         emits: ["close", "click"],
-        template: `<span class="chip" @click="$emit('click')"><slot /><button v-if="closable" class="chip-close" @click.stop="$emit('close')" /></span>`,
+        template: `<span class="chip" @click="$emit('click')"><slot /><button v-if="closable" class="chip-close" :aria-label="closeButtonAriaLabel" @click.stop="$emit('close')" /></span>`,
       },
       SalesRepOrdersFilters: true,
       OrderStatus: true,
@@ -285,10 +303,61 @@ describe("CustomerOrders", () => {
     expect(wrapper.text()).toContain("ACME");
   });
 
+  it("writes chip dates the way the date fields show them, zero-padded", () => {
+    state.filters.value = { statuses: [], customerNames: [], startDate: "2026-08-07", endDate: "2026-08-17" };
+
+    const wrapper = createWrapper();
+
+    const labels = wrapper.findAll(".chip").map((chip) => chip.text());
+    expect(labels).toContain('common.labels.starts_from ["08/07/2026"]');
+    expect(labels).toContain('common.labels.ends_to ["08/17/2026"]');
+  });
+
+  it("writes chip dates in the active locale's field format", () => {
+    i18nOverrides.locale = "de";
+    state.filters.value = { statuses: [], customerNames: [], startDate: "2026-08-07", endDate: undefined };
+
+    try {
+      const labels = createWrapper()
+        .findAll(".chip")
+        .map((chip) => chip.text());
+
+      expect(labels).toContain('common.labels.starts_from ["07.08.2026"]');
+    } finally {
+      i18nOverrides.locale = undefined;
+    }
+  });
+
+  it("names every chip's close button after the filter it removes", () => {
+    state.statusOptions.value = [{ name: "New", label: "New", count: 2 }];
+    state.filters.value = { statuses: ["New"], customerNames: ["ACME"], startDate: undefined, endDate: undefined };
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll(".chip-close").map((button) => button.attributes("aria-label"))).toEqual([
+      'sales_rep.customer_orders.filters.remove_filter {"label":"New"}',
+      'sales_rep.customer_orders.filters.remove_filter {"label":"ACME"}',
+    ]);
+  });
+
   it("shows no chips while nothing is filtered", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.findAll(".chip")).toHaveLength(0);
+  });
+
+  it("keeps the localized status chip label when the result set comes back empty", async () => {
+    state.statusOptions.value = [{ name: "Cancelled", label: "Abgesagt", count: 3 }];
+    state.filters.value = { statuses: ["Cancelled"], customerNames: [], startDate: undefined, endDate: undefined };
+
+    const wrapper = createWrapper();
+    expect(wrapper.findAll(".chip")[0].text()).toBe("Abgesagt");
+
+    // A zero-match response carries no status facet.
+    state.statusOptions.value = [];
+    await flushPromises();
+
+    expect(wrapper.findAll(".chip")[0].text()).toBe("Abgesagt");
   });
 
   it("drops a single filter when its chip is closed", async () => {
