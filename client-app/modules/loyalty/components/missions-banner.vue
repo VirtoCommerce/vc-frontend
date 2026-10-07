@@ -56,7 +56,7 @@ defineProps<IProps>();
   }
 
   &__title {
-    @apply text-sm font-extrabold uppercase tracking-wide text-neutral-900;
+    @apply text-sm font-extrabold uppercase tracking-[0.02em] text-neutral-900;
   }
 
   &__subtitle {

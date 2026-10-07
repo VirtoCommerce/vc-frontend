@@ -10,7 +10,7 @@
     <div class="order-mission-modal__content">
       <!-- Meta -->
       <div class="order-mission-modal__meta">
-        <VcChip color="primary" variant="soft" size="sm" rounded>
+        <VcChip color="warning" variant="tonal" size="sm" rounded>
           <VcIcon name="star" variant="solid" />
           {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
         </VcChip>

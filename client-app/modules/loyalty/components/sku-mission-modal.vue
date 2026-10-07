@@ -11,7 +11,7 @@
     <div class="sku-mission-modal__content">
       <!-- Meta -->
       <div class="sku-mission-modal__meta">
-        <VcChip color="primary" variant="soft" size="sm" rounded>
+        <VcChip color="warning" variant="tonal" size="sm" rounded>
           <VcIcon name="star" variant="solid" />
           {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
         </VcChip>
@@ -85,29 +85,32 @@
       </VcLineItems>
 
       <!-- Summary -->
-      <dl class="sku-mission-modal__summary">
-        <div class="sku-mission-modal__summary-row">
-          <dt>{{ $t("pages.account.missions.sku_modal.total_units") }}</dt>
+      <div class="sku-mission-modal__summary">
+        <dl class="sku-mission-modal__summary-list">
+          <div class="sku-mission-modal__summary-row">
+            <dt>{{ $t("pages.account.missions.sku_modal.total_units") }}</dt>
 
-          <dd>{{ totalUnits }}</dd>
-        </div>
+            <dd>{{ totalUnits }}</dd>
+          </div>
 
-        <div class="sku-mission-modal__summary-row">
-          <dt>{{ $t("pages.account.missions.sku_modal.targets_met") }}</dt>
+          <div class="sku-mission-modal__summary-row">
+            <dt>{{ $t("pages.account.missions.sku_modal.targets_met") }}</dt>
 
-          <dd :class="{ 'text-success-600': missionCompleted }">{{ summaryMet }} / {{ summaryTarget }}</dd>
-        </div>
+            <dd :class="{ 'text-success-600': missionCompleted }">{{ summaryMet }} / {{ summaryTarget }}</dd>
+          </div>
 
-        <div class="sku-mission-modal__summary-row sku-mission-modal__summary-row--total">
-          <dt>{{ $t("pages.account.missions.sku_modal.cart_subtotal") }}</dt>
+          <div class="sku-mission-modal__summary-row sku-mission-modal__summary-row--total">
+            <dt>{{ $t("pages.account.missions.sku_modal.cart_subtotal") }}</dt>
 
-          <dd>{{ formatCurrency(cartSubtotal.amount, cartSubtotal.currencyCode) }}</dd>
-        </div>
-      </dl>
+            <dd>{{ formatCurrency(cartSubtotal.amount, cartSubtotal.currencyCode) }}</dd>
+          </div>
+        </dl>
 
-      <VcAlert color="info" variant="soft" size="sm" icon>
-        {{ $t("pages.account.missions.sku_modal.subtotal_hint") }}
-      </VcAlert>
+        <!-- Kept inside the summary card, so it is never left alone below the fold. -->
+        <p class="sku-mission-modal__summary-hint">
+          {{ $t("pages.account.missions.sku_modal.subtotal_hint") }}
+        </p>
+      </div>
     </div>
 
     <template #actions="{ close }">
@@ -122,12 +125,7 @@
           }}
         </span>
 
-        <VcButton
-          class="sku-mission-modal__action sku-mission-modal__action--secondary"
-          color="secondary"
-          variant="outline"
-          @click="close"
-        >
+        <VcButton class="sku-mission-modal__action" color="secondary" variant="outline" @click="close">
           {{ $t("pages.account.missions.sku_modal.close") }}
         </VcButton>
 
@@ -348,7 +346,15 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__summary {
-    @apply flex flex-col gap-1.5 rounded-[--vc-radius] bg-neutral-50 p-4 border-neutral-200 border;
+    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-4 border-neutral-200 border;
+  }
+
+  &__summary-list {
+    @apply flex flex-col gap-1.5;
+  }
+
+  &__summary-hint {
+    @apply text-xs text-neutral-500;
   }
 
   &__summary-row {
@@ -388,21 +394,13 @@ async function addProductsToCart(close: () => void) {
     }
   }
 
+  // Buttons keep their DOM order at every width, so the tab order matches what is on screen.
   &__action {
     @apply w-full;
-
-    // While the buttons are stacked, the primary action goes on top.
-    &--secondary {
-      @apply order-last;
-    }
 
     // Below `md` the buttons share a row of their own, splitting the full width.
     @media (min-width: theme("screens.sm")) {
       @apply w-auto flex-1;
-
-      &--secondary {
-        @apply order-none;
-      }
     }
 
     @media (min-width: theme("screens.md")) {
