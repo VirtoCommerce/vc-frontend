@@ -111,11 +111,18 @@
               v-slot="{ item }"
               :title="t('sales_rep.orders.date')"
               :sortable="isColumnSortable('date')"
+              class="sales-rep-orders__value"
             >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
-            <VcTableColumn v-if="!isCrossCustomer" id="items" v-slot="{ item }" :title="t('sales_rep.orders.items')">
+            <VcTableColumn
+              v-if="!isCrossCustomer"
+              id="items"
+              v-slot="{ item }"
+              :title="t('sales_rep.orders.items')"
+              class="sales-rep-orders__value"
+            >
               {{ item.itemsCount }}
             </VcTableColumn>
 
@@ -129,7 +136,7 @@
               :title="t('sales_rep.orders.total')"
               :sortable="isColumnSortable('total')"
               align="right"
-              class="font-bold"
+              class="sales-rep-orders__value font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -297,6 +304,11 @@ const failed = computed(() => Boolean(error.value));
 
   &__order-link {
     @apply text-[--link-color] hover:text-[--link-hover-color];
+  }
+
+  // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
+  &__value {
+    @apply whitespace-nowrap;
   }
 
   &__mobile-item {
