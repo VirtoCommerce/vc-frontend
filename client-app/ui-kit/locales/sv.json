@@ -5,6 +5,7 @@
       "apply": "Tillämpa",
       "cancel": "Avbryt",
       "clear": "Rensa",
+      "clear_field": "Rensa: {field}",
       "close": "Stäng",
       "copy": "Kopiera",
       "deny": "Neka",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "Stäng varning",
       "open_calendar": "Öppna kalender",
+      "open_calendar_for": "Öppna kalender: {field}",
       "calendar": "Kalender",
       "product_quantity": "Produktantal",
       "decrease_quantity": "Minska antal",

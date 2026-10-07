@@ -301,7 +301,8 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
   await searchResults(params);
 
-  if (products.value.length) {
+  // The search_bar impression is only for products the shopper actually sees in the open dropdown.
+  if (visible.value && products.value.length) {
     analytics("viewItemList", products.value, searchBarListProperties.value);
   }
 }

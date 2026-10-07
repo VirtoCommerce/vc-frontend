@@ -23,6 +23,7 @@ Grep `from "@/` over the module rather than trusting the file lists below.
 | `registerCacheTypePolicies` (`index.ts`) | `@vc-frontend/core` |
 | `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` (`useSalesRepHubQuery.ts`, `useSalesRepCommunication.ts`) | `@vc-frontend/core` — added to the facade for this port. Every hub read runs through `useSalesRepHubQuery`, so this one import carries the whole module |
 | `toStartDateFilterValue` / `toEndDateFilterValue` (`pages/customer-orders.vue`, VCST-5733) | `@vc-frontend/core` — added for this port |
+| `formatDateLocale` / `tryParseDate` from `@/ui-kit/utilities` (`pages/customer-orders.vue`) and `BREAKPOINTS` from `@/ui-kit/constants` (`components/sales-rep-orders-filters.vue` and its spec), VCST-6001 | **Not facade exports yet** — add them before porting. The chips must format dates with the date fields' own formatter, and the filter picks its range layout on our breakpoint scale; copying either into the plugin would let it drift from the host |
 | Direct ui-kit subpath imports — `VcWidget`, `VcButton`, `VcInput`, `VcCheckbox`, `VcWidgetSkeleton`, and the `@/ui-kit/components` barrel | `@vc-frontend/core`, all by name |
 | `VcSortable` (`components/layout-region.vue`) and `useSortableItem` / the `Sortable*` types from `@/ui-kit/composables` (`components/layout-widget.vue`, `components/layout-region.vue`, `types/layout.ts`), VCST-5902 | **Not facade exports yet** — add them, from ONE copy. `useSortableItem` injects what `VcSortable` provides, under a module-private symbol, so a plugin that bundled its own copy of either would find no item context and render no drag handles |
 | `ROUTES` (`index.ts`, `pages/customer-profile.vue`) — the `Company` / `Account` parent route names | `@vc-frontend/core` — added for this port. `router.addRoute(parent, …)` throws on an unknown parent, so these names are contract; hard-coding the strings puts a host rename outside every gate |
@@ -106,9 +107,9 @@ runtime. Miss them and the failure is quiet: `skipLibCheck` degrades the missing
 copy the list. The facade's build fails if that list ever drifts from what its files import.
 
 **The old plugin `package.json` predates the saved-layout work** — it has no `@vueuse/core` for
-`useBreakpoints` in `pages/customer-profile.vue`; add it. It needs no `sortablejs` any more: since
-VCST-5902 the drag-and-drop lives in the ui-kit's `VcSortable`, which the module renders. `@vueuse/integrations`
-is _not_ needed either.
+`useBreakpoints` in `pages/customer-profile.vue` and `components/sales-rep-orders-filters.vue`; add
+it. It needs no `sortablejs` any more: since VCST-5902 the drag-and-drop lives in the ui-kit's
+`VcSortable`, which the module renders. `@vueuse/integrations` is _not_ needed either.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
 

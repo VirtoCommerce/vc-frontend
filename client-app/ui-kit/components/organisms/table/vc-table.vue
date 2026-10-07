@@ -1138,6 +1138,9 @@ watch(
     --vc-table-selected-bg-color,
     var(--vc-table-selected-bg, rgb(from var(--color-primary-500) r g b / var(--selected-bg-alpha)))
   );
+  // Row hover fill, declared once — the dark layer varies only the shade.
+  --row-hover-shade: theme("colors.neutral.200");
+  --row-hover-bg-color: var(--vc-table-row-hover-bg-color, var(--row-hover-shade));
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
   --mobile-border-width: v-bind(mobileBorderWidth);
@@ -1258,7 +1261,7 @@ watch(
     }
 
     &:hover {
-      @apply bg-neutral-200;
+      background-color: var(--row-hover-bg-color);
     }
 
     &--selected {
@@ -1310,7 +1313,7 @@ watch(
       }
 
       #{$row}:hover & {
-        @apply bg-neutral-200;
+        background-color: var(--row-hover-bg-color);
       }
 
       // Keep the highlight on sticky (opaque) cells of a selected row.
