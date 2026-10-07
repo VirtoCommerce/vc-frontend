@@ -5,6 +5,7 @@
       "apply": "適用",
       "cancel": "キャンセル",
       "clear": "クリア",
+      "clear_field": "{field}をクリア",
       "close": "閉じる",
       "copy": "コピー",
       "deny": "拒否",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "アラートを閉じる",
       "open_calendar": "カレンダーを開く",
+      "open_calendar_for": "{field}のカレンダーを開く",
       "calendar": "カレンダー",
       "product_quantity": "製品数量",
       "decrease_quantity": "数量を減らす",
