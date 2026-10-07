@@ -145,7 +145,7 @@
         "created_date": "Erstellungsdatum",
         "start_date": "Startdatum",
         "end_date": "Enddatum",
-        "invalid_range": "Ungültiger Datumsbereich.",
+        "date_range": "Datumsbereich",
         "order_status": "@:common.labels.status",
         "customer": "Kunde auswählen",
         "reset": "Zurücksetzen",
@@ -154,7 +154,8 @@
         "last_day": "Letzter Tag",
         "last_week": "Letzte Woche",
         "last_month": "Letzter Monat",
-        "last_year": "Letztes Jahr"
+        "last_year": "Letztes Jahr",
+        "remove_filter": "Filter „{label}“ entfernen"
       }
     },
     "communication": {

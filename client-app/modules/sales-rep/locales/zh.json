@@ -145,7 +145,7 @@
         "created_date": "创建日期",
         "start_date": "开始日期",
         "end_date": "结束日期",
-        "invalid_range": "日期范围无效。",
+        "date_range": "日期范围",
         "order_status": "@:common.labels.status",
         "customer": "选择客户",
         "reset": "重置",
@@ -154,7 +154,8 @@
         "last_day": "最后一天",
         "last_week": "上周",
         "last_month": "上个月",
-        "last_year": "去年"
+        "last_year": "去年",
+        "remove_filter": "移除筛选条件“{label}”"
       }
     },
     "communication": {
