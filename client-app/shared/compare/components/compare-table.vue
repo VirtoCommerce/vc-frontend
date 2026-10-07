@@ -5,8 +5,7 @@
            there (rather than duplicated) so there's one tabs/differ instance and one activeTab. -->
       <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
 
-      <!-- thead sticks to the page and tbody scrolls sideways; each is its own scroll container, kept in
-           sync, so one native table still ties every cell to its product column. -->
+      <!-- An overflow-x wrapper would trap thead's page sticky, so thead and tbody scroll separately (synced in script). -->
       <table class="compare-table__table" :aria-label="t('pages.compare.title')">
         <thead
           ref="headerRowRef"

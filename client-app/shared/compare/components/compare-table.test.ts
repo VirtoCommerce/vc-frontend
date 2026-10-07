@@ -201,8 +201,6 @@ describe("CompareTable — focus management", () => {
 });
 
 describe("CompareTable — table semantics", () => {
-  // The header row and the body are separate scroll containers, yet one table has to own both,
-  // with every row laid out as the same columns: label, then products.
   function cellRole(cell: DOMWrapper<Element>) {
     if (cell.element.tagName === "TD") {
       return "cell";
@@ -224,7 +222,9 @@ describe("CompareTable — table semantics", () => {
     return tables[0]
       .findAll("tr")
       .map((rowWrapper) =>
-        rowWrapper.findAll("td, th").map((cell) => [cellRole(cell), cell.attributes("aria-label") ?? cell.text()]),
+        rowWrapper
+          .findAll("td, th")
+          .map((cell) => [cellRole(cell), cell.element.tagName === "TH" ? cell.attributes("aria-label") : cell.text()]),
       );
   }
 
@@ -234,7 +234,6 @@ describe("CompareTable — table semantics", () => {
     await nextTick();
 
     expect(wrapper.get("table").attributes("aria-label")).toBe("pages.compare.title");
-    // The corner cell holds the tabs and "Clear category"; each value sits under its own product.
     expect(rowsOf(wrapper)).toEqual([
       [
         ["cell", expect.stringContaining("shared.compare.table.tabs.all")],
@@ -274,8 +273,6 @@ describe("CompareTable — table semantics", () => {
     wrapper.unmount();
   });
 
-  // Below md the tabs move out to a bar above the table. The corner cell they leave must stay, empty,
-  // or every product header would slide one column left of its values.
   it("keeps the corner cell, and the tabs out of the table, on mobile", async () => {
     await setMobile(true);
     tableRows.value = [row("sku", ["SKU-1", "SKU-2"])];
@@ -315,7 +312,6 @@ describe("CompareTable — table semantics", () => {
     wrapper.unmount();
   });
 
-  // aria-label names the row header by its label alone, so the explanation has to reach it another way.
   it("describes a row header by its description, and only when it has one", async () => {
     tableRows.value = [{ ...row("price", ["$1", "$2"]), description: "Price, excl. VAT" }, row("sku", ["A", "B"])];
     const wrapper = mountTable({ products: [product("p1"), product("p2")] });
