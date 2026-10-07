@@ -517,7 +517,13 @@
           "user_is_locked_in_organization": "Your access to this organization has been blocked. Please contact your organization administrator",
           "user_cannot_login_in_store": "Access denied. You cannot sign in to the current store",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "User not found. Ensure you've entered the correct information"
+          "user_not_found": "User not found. Ensure you've entered the correct information",
+          "sign_in_not_allowed": "You can't sign in to this account. Please contact your administrator.",
+          "store_not_found": "This store doesn't exist.",
+          "duplicate_email_login_attempt": "Several accounts use this email.",
+          "lockout_disabled": "This account can't sign in with a code.",
+          "invalid_code": "That code didn't work.",
+          "missing_parameter": "@:common.messages.something_went_wrong"
         }
       },
       "impersonate_form": {
@@ -610,6 +616,41 @@
         "click_to_copy": "Click to copy",
         "clipboard_success": "Coupon copied successfully",
         "tap_to_copy": "Tap to copy"
+      }
+    },
+    "sign_in": {
+      "otp_email_sign_in_form": {
+        "switch_to_otp_link": "Sign in with a one-time code instead",
+        "request": {
+          "subtitle": "We'll email you a code. No password needed.",
+          "email_label": "@:common.labels.email",
+          "continue_button": "Continue",
+          "switch_to_password_link": "Sign in with a password instead"
+        },
+        "verify": {
+          "header": "Check your email",
+          "subtitle": "We sent a code to {email}.",
+          "code_label": "Code",
+          "paste_hint": "Enter or paste the code. On mobile, tap it above your keyboard.",
+          "submit_button": "Sign in",
+          "resend_button": "Resend code",
+          "use_different_email_link": "Use a different email",
+          "live_resent": "New code sent."
+        },
+        "locked": {
+          "title": "Too many failed attempts",
+          "title_blocked": "Account blocked",
+          "text_countdown": "Try again in {time}.",
+          "text_ready": "You can try again now.",
+          "start_over_button": "Try again"
+        },
+        "disabled": {
+          "title": "We couldn't sign you in",
+          "text": "Try a password instead, or contact your account administrator if this keeps happening.",
+          "text_no_password": "Contact your account administrator if this keeps happening.",
+          "password_button": "Sign in with a password",
+          "back_link": "Back to sign in"
+        }
       }
     },
     "company": {
@@ -969,15 +1010,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_edit_button": "Edit",
-        "remove_list_button": "Delete",
+        "rename_list_button": "Rename",
+        "remove_list_button": "Remove list",
         "make_private_button": "Make private",
         "share_button": "Share",
         "last_modified_label": "Last modified: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
-        "list_settings_button": "List settings",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
@@ -1001,11 +1042,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "New List",
-        "edit_mode_title": "List settings",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "List name",
         "list_name_placeholder": "Enter name",
-        "sharing_scope_label": "Sharing options",
-        "sharing_scope_placeholder": "Please select one option",
         "sharing_link_label": "Link",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
@@ -1014,11 +1053,25 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "Private",
-          "Organization": "Organization",
-          "AnyoneAnonymous": "Anyone (readonly)"
+          "Organization": "My organization",
+          "AnyoneAnonymous": "Anyone with link"
         },
         "clipboard_success": "Link copied",
         "save_error": "The list could not be saved. Please try again."
+      },
+      "share_wishlist_modal": {
+        "title": "Share “{listName}”",
+        "who_can_access_label": "Who can access",
+        "scope_selected": "{label}, selected"
+      },
+      "stop_sharing_modal": {
+        "title": "Stop sharing this list?",
+        "message": "Everyone the list is shared with will lose access. You can share it again any time.",
+        "confirm_button": "Stop sharing",
+        "change_title": "Change who can access?",
+        "change_message": "The link stays the same. Some users may lose access.",
+        "change_confirm_button": "Change access",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
@@ -1584,6 +1637,8 @@
       "title": "Search",
       "header": "Your search for {keyword} returned the following",
       "header_empty": "Sorry, your search for \"{keyword}\" didn't return any results",
+      "header_barcode": "Your search for barcode {barcode} returned the following",
+      "header_barcode_empty": "No products found for barcode {barcode}",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Your <strong>{0}</strong> query did not return any results",

@@ -151,6 +151,7 @@ function onContainerClick(event: MouseEvent) {
 
 <style lang="scss">
 @use "@/ui-kit/styles/focus-ring" as *;
+@use "@/ui-kit/styles/hit-area" as *;
 
 .vc-radio-button {
   $self: &;
@@ -236,6 +237,16 @@ function onContainerClick(event: MouseEvent) {
 
     input:focus-visible + & {
       @include focus-ring;
+    }
+
+    // Only where the control is its own target: inside an interactive parent the parent is, and an
+    // overhang there would take clicks from the neighbouring item.
+    label > & {
+      position: relative;
+
+      &::before {
+        @include hit-area(var(--vc-radio-button-hit-area-size, 1.5rem));
+      }
     }
 
     #{$checked} & {

@@ -46,7 +46,7 @@ withDefaults(defineProps<IProps>(), {
     @apply py-4 px-6 min-h-0 h-full max-h-full flex flex-col;
 
     #{$scrollable} & {
-      @apply h-max;
+      @apply h-max max-h-none;
     }
   }
 }
