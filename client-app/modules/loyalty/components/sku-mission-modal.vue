@@ -353,7 +353,7 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__summary-hint {
-    @apply text-xs text-neutral-500;
+    @apply text-xs text-neutral-600;
   }
 
   &__summary-row {

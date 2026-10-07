@@ -109,6 +109,10 @@ function openMission(): void {
 
   &__backdrop {
     @apply absolute inset-0 size-full scale-110 object-cover opacity-60 blur-lg;
+
+    &.vc-image--fallback {
+      @apply hidden;
+    }
   }
 
   &__image {

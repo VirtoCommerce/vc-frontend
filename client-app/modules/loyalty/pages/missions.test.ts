@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import MissionCardSkeleton from "../components/mission-card-skeleton.vue";
 import MissionCard from "../components/mission-card.vue";
@@ -68,10 +69,16 @@ describe("Missions card grid", () => {
     expect(wrapper.findAllComponents(MissionCard)).toHaveLength(0);
   });
 
-  it("replaces the skeletons with the loaded mission cards", () => {
-    state.missions.value = [{ missionId: "1" }, { missionId: "2" }] as MissionDataType[];
+  it("replaces the skeletons with the loaded mission cards", async () => {
+    state.loading.value = true;
 
     const wrapper = createWrapper();
+
+    expect(wrapper.findAllComponents(MissionCardSkeleton)).toHaveLength(DEFAULT_MISSIONS_PER_PAGE);
+
+    state.missions.value = [{ missionId: "1" }, { missionId: "2" }] as MissionDataType[];
+    state.loading.value = false;
+    await nextTick();
 
     expect(wrapper.findAllComponents(MissionCardSkeleton)).toHaveLength(0);
     expect(wrapper.findAllComponents(MissionCard)).toHaveLength(2);

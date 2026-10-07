@@ -63,7 +63,7 @@
   }
 
   &__button {
-    @apply size-8 rounded-[--vc-radius] bg-neutral-100;
+    @apply size-[2.375rem] rounded-[--vc-radius] bg-neutral-100;
   }
 }
 </style>
