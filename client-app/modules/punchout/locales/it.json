@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Modalità punchout"
+    "mode_label": "Modalità punchout",
+    "create_requisition": "Crea richiesta di acquisto",
+    "errors": {
+      "create_requisition_failed": "Impossibile creare la richiesta di acquisto. Riprova."
+    }
   }
 }

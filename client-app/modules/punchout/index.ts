@@ -7,6 +7,7 @@ import { useSignMeOut } from "@/shared/account/composables/useSignMeOut";
 import { useUser } from "@/shared/account/composables/useUser";
 import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { loadModuleLocale } from "../utils";
 import { usePunchoutSession } from "./composables/usePunchoutSession";
 import { MODULE_ID, ENABLED_KEY, PUNCHOUT_MODE_LABEL_ID } from "./constants";
@@ -100,6 +101,13 @@ export function init(router: Router, i18n: I18n) {
     const { register } = useExtensionRegistry();
     register("topHeaderStatus", PUNCHOUT_MODE_LABEL_ID, {
       component: defineAsyncComponent(() => import("./components/punchout-mode-label.vue")),
+    });
+
+    const { isPunchoutMode } = usePunchoutSession();
+    const { isAuthenticated } = useUser();
+    register("checkout", EXTENSION_NAMES.checkout.placeOrder, {
+      component: defineAsyncComponent(() => import("./components/create-requisition-button.vue")),
+      condition: () => isPunchoutMode.value && isAuthenticated.value,
     });
 
     void loadModuleLocale(i18n, "punchout");

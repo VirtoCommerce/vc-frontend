@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Punchout モード"
+    "mode_label": "Punchout モード",
+    "create_requisition": "購買依頼を作成",
+    "errors": {
+      "create_requisition_failed": "購買依頼を作成できませんでした。もう一度お試しください。"
+    }
   }
 }

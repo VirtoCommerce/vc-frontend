@@ -85,6 +85,8 @@ export type ExtensionCategoryMapType = {
     never,
     (sharingSetting?: SharingSettingType) => boolean
   >;
+  /** The cart and checkout review steps. A provider decides on its own state whether it takes over. */
+  checkout: ExtensionEntryType<never, never, () => boolean>;
 };
 
 /** The parameter a category's `condition` accepts. */

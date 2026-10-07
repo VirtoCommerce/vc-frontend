@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Режим punchout"
+    "mode_label": "Режим punchout",
+    "create_requisition": "Создать заявку на закупку",
+    "errors": {
+      "create_requisition_failed": "Не удалось создать заявку на закупку. Попробуйте ещё раз."
+    }
   }
 }
