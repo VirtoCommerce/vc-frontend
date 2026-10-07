@@ -400,8 +400,7 @@ export function useSortableList(
   // Where the dragged node sat, so it goes back between the same neighbours — the index alone lands it
   // outside a v-for's anchors when the list is followed by other content.
   let originSibling: Node | null = null;
-  // Set by a drop outside every list. SortableJS then puts the node back by index alone, which lands the
-  // last item past the v-for's anchors, so it is put back here instead — and nothing is reordered.
+  // Set by a drop outside every list: `restore` puts the node back; nothing reorders.
   let spilled = false;
   // A pointer drag in progress: SortableJS's `destroy` fires no `onEnd`, so an unmount mid-drag ends it here.
   let draggedId: string | undefined;
@@ -423,8 +422,7 @@ export function useSortableList(
 
     return {
       name: group,
-      // A group name belongs to the list and cannot say "some items"; the rule belongs to the item. Its own
-      // group, not `true`: SortableJS takes `true` from a function as "any group".
+      // Its own group, not `true`: SortableJS reads `true` from a function as "any group".
       put: (_to, from, dragEl) =>
         accepts(dragEl.getAttribute(SORTABLE_ITEM_ATTRIBUTE) ?? "", from.el.getAttribute(SORTABLE_NAME_ATTRIBUTE) ?? "")
           ? [group]
@@ -465,10 +463,7 @@ export function useSortableList(
       delayOnTouchOnly: true,
       touchStartThreshold: 5,
 
-      // Sortable captures indices at choose time, so a keyboard grab cancelled mid-drag would reshuffle
-      // the list under them. `release`, not `cancel` — the restore is the reshuffle.
-      // A grab carried out of this list into a sibling would blur-cancel back into it under the press, so
-      // it goes too. Any other grab in the group still cancels, as it touches nothing this press captured.
+      // Indices are captured at choose: end (not cancel) the grab here, and any grab carried out of this list.
       onChoose: () => {
         end();
         siblingsOf()?.forEach((list) => list.releaseFrom(nameOf()));

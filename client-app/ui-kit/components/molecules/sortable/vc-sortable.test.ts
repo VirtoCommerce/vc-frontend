@@ -29,8 +29,6 @@ beforeEach(() => {
   instances.length = 0;
 });
 
-// Records what `useSortableItem` hands a component rendered inside an item, and what one nested inside
-// that component gets.
 const seen: { outer?: ISortableItemContext; inner?: ISortableItemContext }[] = [];
 
 const Inner = defineComponent({
@@ -81,8 +79,6 @@ function mountList(props: Record<string, unknown> = {}, withItemComponent = fals
 }
 
 describe("VcSortable", () => {
-  // SortableJS moves the item element alone. A fragment's anchor text nodes would stay behind, and Vue
-  // would then place and remove the item against anchors that no longer surround it.
   it("renders every item as a plain element, with no anchors of its own around it", () => {
     const { wrapper } = mountList();
     const rows = wrapper.findAll(".row").map((row) => row.element);
@@ -186,12 +182,9 @@ describe("VcSortable", () => {
     expect(model.value[0]).toBe(items[2]);
   });
 
-  // The v-model owner may refuse a reorder (a save in flight); nothing re-renders then, so only the
-  // restore keeps the DOM matching the model.
   it("keeps the DOM on the model's order when the owner refuses a reorder", async () => {
     const model = ref(["a", "b", "c"]);
     const wrapper = mount(VcSortable<string>, {
-      // A listener that ignores the update: the prop stays, as a refusing owner's would.
       props: { modelValue: model.value, name: "main", "onUpdate:modelValue": () => undefined },
       slots: {
         item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) =>
@@ -218,8 +211,6 @@ describe("VcSortable", () => {
     expect(wrapper.findAll(".row").map((row) => row.text())).toEqual(["a", "b", "c"]);
   });
 
-  // By index alone the last item would go back after the v-for's closing anchor, so the next item Vue
-  // inserts would land in front of it.
   it("puts a refused move back inside the list, so later items still render after it", async () => {
     const model = ref(["a", "b", "c"]);
     const wrapper = mount(VcSortable<string>, {
@@ -307,7 +298,6 @@ describe("VcSortable", () => {
     expect(model.value).toEqual(["b", "c", "a"]);
   });
 
-  // Chrome blurs a focused element it removes, mid-patch; a blur-cancel then would put the item back.
   it("lets go of a held item before the render that removes it", async () => {
     const items = ref(["a", "b", "c"]);
     const List = defineComponent({
@@ -366,7 +356,6 @@ describe("VcSortable", () => {
   });
 
   describe("a keyboard grab carried between lists", () => {
-    // The owner of both lists applies every move, as a real consumer does.
     function mountPair(initial: Record<string, string[]> = { shown: ["a", "b", "c"], parked: ["x"] }) {
       const lists = ref<Record<string, string[]>>(initial);
       const order = Object.keys(initial);
@@ -502,8 +491,6 @@ describe("VcSortable", () => {
       expect(document.activeElement).toBe(document.body);
     });
 
-    // SortableJS captures indices at the press; a carried grab blur-cancelling back into the pressed list
-    // would move the wrong item.
     it("lets go of a carried grab when a pointer press starts in the list it was grabbed in", async () => {
       const { lists, key, element, sortableOf } = mountPair();
 
@@ -565,7 +552,6 @@ describe("VcSortable", () => {
     expect(seen).toHaveLength(3);
     expect(seen.map((entry) => entry.outer?.id)).toEqual(["a", "b", "c"]);
     expect(seen[0].outer?.handleAttrs).toMatchObject({ class: "vc-sortable__handle" });
-    // Consumed by the first component, so a nested one renders no second handle.
     expect(seen.every((entry) => entry.inner === undefined)).toBe(true);
   });
 
@@ -617,8 +603,6 @@ describe("VcSortable", () => {
     expect(seen[0].outer?.grabbed).toBe(true);
   });
 
-  // The item leaves one list and renders in the other only once the owner applies the move, so focus has
-  // to follow on the render after it — onto the item itself, or onto its handle in a handle list.
   describe("focus after a keyboard move between lists", () => {
     const Grip = defineComponent({
       setup() {
@@ -768,7 +752,6 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(spokenTexts).toContain('ui_kit.sortable.moved_list {"position":2,"total":3}');
   });
 
-  // A rule closing over state, or swapped after mount, must not go stale on either path.
   it("asks the current `accepts` on the keyboard and the pointer path", async () => {
     const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
     const order = ["shown", "parked"];
@@ -858,7 +841,6 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(item().getAttribute("aria-pressed")).toBe("false");
   });
 
-  // A listener bound only to log must not silence the list.
   it("keeps its own region beside an `announce` listener, which hears every signal", async () => {
     const onAnnounce = vi.fn();
     const { wrapper } = mountList({ onAnnounce });
@@ -870,7 +852,6 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(liveRegion()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
   });
 
-  // The same message twice is two events for a screen reader only if the region changes in between.
   it("announces a repeated message again", async () => {
     const { wrapper } = mountList();
     const press = (key: string) => wrapper.get(".row").element.dispatchEvent(new KeyboardEvent("keydown", { key }));
@@ -1215,7 +1196,6 @@ describe("VcSortable — development warnings", () => {
     expect(warnings()).toContainEqual(expect.stringContaining("read at mount"));
   });
 
-  // `:accepts="acceptsIn(name)"` hands a new function to every render; that is not a change.
   it("stays silent when `accepts` is a fresh inline function on each render", async () => {
     const tick = ref(0);
     mount(

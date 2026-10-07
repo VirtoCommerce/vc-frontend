@@ -57,7 +57,6 @@ function setup({ initial = ["a", "b", "c"], ...overrides }: SetupType = {}) {
     }),
   )!;
 
-  // Keyboard goes through the item itself in a whole-item list, through the handle otherwise.
   const controlOf = (id: string) => (overrides.handle ? list.handleAttrs(id)! : list.itemAttrs(id));
 
   const press = (key: string, id: string, currentTarget?: HTMLElement) => {
@@ -163,8 +162,6 @@ describe("useSortableList — keyboard", () => {
     expect(list.isGrabbed("a")).toBe(false);
   });
 
-  // Chrome and WebKit blur a focused node when Vue's patch moves it, which would otherwise cancel the
-  // grab and snap the item back — arrows appearing to work in one direction only.
   it("ignores the blur its own reorder causes", () => {
     const { list, press, blur, order } = setup();
 
@@ -176,8 +173,6 @@ describe("useSortableList — keyboard", () => {
     expect(list.isGrabbed("a")).toBe(true);
   });
 
-  // Putting the item back moves its node, which blurs it — so Escape without a refocus drops the user at
-  // the top of the page. Blur-cancel must not refocus, or tabbing away would be a trap.
   it("returns focus to the control on Escape but not on blur-cancel", async () => {
     const { list, press, blur, order } = setup();
     const control = document.createElement("button");
@@ -229,7 +224,6 @@ describe("useSortableList — keyboard", () => {
     expect(list.isGrabbed("b")).toBe(true);
   });
 
-  // Space would scroll the page and the arrows would scroll it too, while the list is also acting on them.
   it("takes every key it acts on from the page", () => {
     const { press } = setup({ name: "keys", group: "keys", listOrder: ["keys", "other"] });
     setup({ name: "other", group: "keys", listOrder: ["keys", "other"] });
@@ -314,7 +308,6 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: false });
     expect(list.isGrabbed("b")).toBe(false);
     expect(target.list.isGrabbed("b")).toBe(true);
-    // The owner of both lists applies the move; this list's own order is untouched.
     expect(order()).toEqual(["a", "b", "c"]);
   });
 
@@ -381,7 +374,6 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(list.isGrabbed("b")).toBe(true);
   });
 
-  // The pointer asks the target through SortableJS `put`; the keyboard has to ask the same predicate.
   it("skips a list that refuses the item and moves on to the next one", () => {
     const order = ["shown", "refuser", "parked"];
     const accepts = vi.fn(() => false);
@@ -418,7 +410,6 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals.at(-1)).toEqual({ kind: "noTarget", id: "b" });
   });
 
-  // A list remounting under its own name registers before the one it replaces cleans up.
   it("keeps a list that took over a name when the old one goes", () => {
     const order = ["shown", "parked"];
     const source = setup({ name: "shown", group: "stats-3", listOrder: order, orientation: "horizontal" });
@@ -447,7 +438,6 @@ describe("useSortableList — moving between lists by keyboard", () => {
     warn.mockRestore();
   });
 
-  // A stale cleanup must not delete the group's map that a newer list has since created.
   it("keeps a list that registered after its group emptied, when an older one goes", () => {
     const order = ["shown", "parked"];
     const older = setup({ name: "parked", group: "stats-4", listOrder: order, orientation: "horizontal" });
@@ -628,7 +618,6 @@ describe("useSortableList — pointer", () => {
     return { el, trailing, list, moves, order: () => items, sortable: instances.at(-1)! };
   }
 
-  // A drop names its target by this attribute, so a caller rendering its own container must get it too.
   it("stamps the list's name on the container, and follows a rename", async () => {
     const name = ref("main");
     const { el } = await mounted({ name });
@@ -691,7 +680,6 @@ describe("useSortableList — pointer", () => {
       ghostClass: "vc-sortable__item--ghost",
       dragClass: "vc-sortable__item--drag",
       disabled: false,
-      // Without a touch hold, a swipe starting on an item drags instead of scrolling the page.
       delay: 200,
       delayOnTouchOnly: true,
     });
@@ -712,7 +700,6 @@ describe("useSortableList — pointer", () => {
     expect(accepts).toHaveBeenCalledWith("x", "rail");
   });
 
-  // SortableJS reads `true` from a function-form `put` as "any group", which would let a foreign list drop in.
   it("keeps items from another group out when `accepts` allows them", async () => {
     const { default: RealSortable } = await vi.importActual<{ default: typeof import("sortablejs") }>("sortablejs");
     const { sortable } = await mounted({ group: "g", accepts: () => true });
@@ -739,7 +726,6 @@ describe("useSortableList — pointer", () => {
     expect(instances).toHaveLength(1);
   });
 
-  // A pointer drag and a keyboard grab reordering the same array at once drops the wrong item.
   it("lets go of a keyboard grab when a pointer drag is chosen", async () => {
     const { list, sortable } = await mounted();
 
@@ -749,7 +735,6 @@ describe("useSortableList — pointer", () => {
     expect(list.isGrabbed("b")).toBe(false);
   });
 
-  // Draggable indices, and the DOM put back exactly: the trailing non-item child must stay last.
   it("undoes the DOM move and reports the new order", async () => {
     const { el, trailing, order, sortable } = await mounted();
     const item = el.querySelector('[data-sortable-id="c"]') as HTMLElement;
@@ -784,7 +769,6 @@ describe("useSortableList — pointer", () => {
     expect(other.children).toHaveLength(0);
   });
 
-  // Without the node's original neighbour (no `start` seen), the index is read after the node is removed.
   it("puts the node back by index on a backward move when no start was seen", async () => {
     const { el, sortable } = await mounted();
     const item = el.querySelector('[data-sortable-id="c"]') as HTMLElement;
@@ -852,7 +836,6 @@ describe("useSortableList — grab and release events", () => {
     expect(events).toEqual(["grab a main", "release a"]);
   });
 
-  // Carried, not ended: the grab goes on in the sibling, which reports its end.
   it("reports no release when the grab is carried into a sibling list", async () => {
     const order = ["shown", "parked"];
     const events: string[] = [];
@@ -940,7 +923,6 @@ describe("useSortableList — grab and release events", () => {
     expect(sortable().options.handle).toBe(".vc-sortable__handle, .grip");
   });
 
-  // An empty selector names no grip, so the whole item drags, as it always did.
   it.each([[""], ["  "]])("drags by the whole item with a blank handle selector %j", async (handle) => {
     const { sortable, list } = pointer({ handle });
     await nextTick();
@@ -1008,7 +990,6 @@ describe("useSortableList — grab and release events", () => {
     expect(events).toEqual(["grab a main", "release a"]);
   });
 
-  // A shown list and a parked one; the owner applies a move only when `apply` says so.
   function carry({ apply = true } = {}) {
     const order = ["shown", "parked"];
     const events: string[] = [];
@@ -1075,8 +1056,6 @@ describe("useSortableList — grab and release events", () => {
   });
 });
 
-// Released outside every list, a native drop is a cancel to the browser, which flies the drag image
-// back to its start; the item has to go back there too, not land where the placeholder last showed.
 describe("useSortableList — a pointer drop outside every list", () => {
   it("puts the item back where the drag started", async () => {
     const el = document.createElement("div");

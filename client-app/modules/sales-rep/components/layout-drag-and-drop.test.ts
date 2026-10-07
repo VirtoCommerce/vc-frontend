@@ -225,7 +225,6 @@ describe("stat row drag and drop", () => {
     expect(api.state.value.regions.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
   });
 
-  // A keyboard park is final, as a pointer drop into the zone is: the grab ends there.
   it("keeps a card parked by keyboard parked on Escape", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -248,7 +247,6 @@ describe("stat row drag and drop", () => {
     expect(api.visibleIn("statistics")).toEqual(before.filter((id) => id !== "active_carts"));
   });
 
-  // Clicking Save after a park moves focus first; the park must survive that blur.
   it("keeps a parked card parked when focus leaves it, without pulling focus back", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -275,7 +273,6 @@ describe("stat row drag and drop", () => {
     }
   });
 
-  // The restore direction is final too, so a restored card does not go back to "Hidden stats".
   it("keeps a card restored by keyboard visible on Escape and when focus leaves it, leaving focus there", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -331,8 +328,6 @@ describe("stat row drag and drop", () => {
     expect(wrapper.element.contains(document.activeElement)).toBe(true);
   });
 
-  // A grab left behind would come back with the next edit: the card already held, so Space would drop
-  // rather than grab it.
   it("drops a held card's grab when edit mode ends", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -455,7 +450,6 @@ describe("stat row drag and drop", () => {
     expect(api.visibleIn("statistics")).toEqual(order);
   });
 
-  // The ui-kit reports list moves in its own terms; the stat row words them as hiding and showing.
   it("makes a stat card a named button only while editing", async () => {
     const { wrapper, api } = setup();
     const card = () => wrapper.find('[data-block-id="orders_placed_week"]');
@@ -500,7 +494,6 @@ describe("stat row drag and drop", () => {
     expect(api.visibleIn("statistics")).toContain("active_carts");
   });
 
-  // The surface owns the one region every list speaks through; a list's own would say each step twice.
   it("leaves the announcing to the surface's region, rendering none per list", async () => {
     const { wrapper, api, announce } = setup();
     api.startEdit();
@@ -618,7 +611,6 @@ describe("widget column drag and drop", () => {
     expect(ids).toEqual(["info", "actions"]);
   });
 
-  // Widgets hide with ✕ only; the cross-axis arrows must not park one the way they park a stat card.
   it("gives a widget column no keyboard route into another list", async () => {
     const { wrapper, api, announce } = setupColumn({ hiddenSibling: true });
     api.startEdit();
@@ -626,7 +618,6 @@ describe("widget column drag and drop", () => {
 
     const handle = wrapper.find('[data-block-id="actions"] .layout-widget__handle');
     handle.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
-    // The grab's wording spells the keys out, and a column's must not offer up/down hiding.
     expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed", parkable: false }));
     handle.element.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
     await nextTick();
@@ -659,7 +650,6 @@ describe("widget column drag and drop", () => {
   it("gives Sortable a header handle, and excludes the hide button from it", () => {
     setupColumn();
 
-    // The kit adds its own handle element to the selector's grip.
     expect(zones[0].options).toMatchObject({
       handle: `.vc-sortable__handle, ${WIDGET_DRAG_HANDLE_SELECTOR}`,
       filter: WIDGET_DRAG_FILTER_SELECTOR,

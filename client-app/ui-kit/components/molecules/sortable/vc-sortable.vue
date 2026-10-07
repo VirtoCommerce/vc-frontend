@@ -11,8 +11,6 @@
       :render-item="() => $slots.item?.(scopeOf(item))"
     />
 
-    <!-- Inside the container but not an item — an empty-state hint, a footer. It carries no
-         `data-sortable-id`, so it keeps its place and the indices stay aligned with the model. -->
     <slot name="after" />
 
     <!-- Out of the container, which may be a `tbody`; Teleport leaves only comment anchors here. -->
@@ -99,7 +97,7 @@ export interface IProps<TItem = unknown> {
    * signals yourself, e.g. one region shared by several lists.
    */
   liveRegion?: boolean;
-  /** Container element. Layout stays the consumer's, so the class to style is their own. */
+  /** Container element. */
   tag?: string;
   /**
    * Maps an item to its id, as `move`, `accepts` and the signals report it. Defaults to the item itself for

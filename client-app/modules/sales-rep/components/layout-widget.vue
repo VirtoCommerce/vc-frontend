@@ -84,7 +84,7 @@ const item = useSortableItem();
 const block = item ? useLayoutBlock() : undefined;
 const settings = item ? useBlockSettings() : undefined;
 
-// The whole block is this widget's now, so a content widget nested in its slot reads no block settings.
+// A content widget nested in this one's slot reads no block settings.
 provideBlockSettings(undefined);
 
 // Null outside edit mode, and for stat cards, which drag whole.
@@ -101,11 +101,8 @@ const heading = computed(() => props.title ?? block?.title.value);
 
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
-// Both controls are VcButtons and the drag states come from VcSortable; what is left here is the icon inks,
-// set through VcButton's own variables.
 .layout-widget {
-  // Held: the icon takes the drag accent, as a pointer user's grabbing cursor would. The key follows the
-  // handle's `variant="ghost"` + `color="secondary"`.
+  // Held: the drag accent. The key matches the handle's `variant="ghost"` + `color="secondary"`.
   &__handle[aria-pressed="true"] {
     --vc-button-ghost-secondary-icon: var(--vc-sortable-accent-color);
   }

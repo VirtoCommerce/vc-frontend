@@ -51,7 +51,6 @@ const Surface = defineComponent({
     // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- each mount installs one fixed seam
     provideLayoutSettings(props.settings);
 
-    // A real region: the widget's controls come from the sortable item it renders inside.
     return () =>
       h(
         LayoutRegion,

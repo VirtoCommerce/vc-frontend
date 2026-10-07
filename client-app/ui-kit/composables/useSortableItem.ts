@@ -18,7 +18,7 @@ export function provideSortableItem(context: ISortableItemContext): void {
 
 /**
  * The drag controls of the VcSortable item this component renders inside, so a component deep in the
- * item slot can put the handle in its own header instead of the list overlaying one from outside.
+ * item slot can put the handle in its own header.
  *
  * `undefined` outside a sortable list, which lets one component serve both places. Consumes the offer
  * unless `consume: false`, so a component nested inside another inside the same item gets `undefined`

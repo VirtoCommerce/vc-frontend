@@ -27,7 +27,6 @@ enableAutoUnmount(afterEach);
 // The point of layout-widget.vue: the controls sit in the widget's own header, placed by VcWidget's
 // padding rather than metrics copied outside it. A real VcWidget, because that placement is under test.
 describe("LayoutBlock wrapping a real LayoutWidget", () => {
-  // Through a real region: the controls come from the sortable item the block renders as.
   function mountBlock(editing: boolean, widget: () => unknown, options: { attachTo?: HTMLElement } = {}) {
     return mount(LayoutRegion, {
       ...options,
@@ -106,7 +105,6 @@ describe("LayoutBlock wrapping a real LayoutWidget", () => {
     expect(wrapper.get(".vc-widget__title").text()).toBe("sales_rep.orders.title");
   });
 
-  // Only the widget that renders the block carries its controls; one nested inside it is a plain widget.
   it("renders no second set of controls for a widget nested inside another", () => {
     const wrapper = mountBlock(true, () =>
       h(
@@ -129,7 +127,6 @@ describe("LayoutBlock wrapping a real LayoutWidget", () => {
     expect(wrapper.findAll(".vc-widget__title").map((title) => title.text())).toEqual(["Outer"]);
   });
 
-  // A content widget reads its row cap through `useBlockSettings`; inside another widget it is not a block.
   it("offers the block's settings to no component nested inside its widget", () => {
     let nested: unknown = "unset";
     const Reader = defineComponent({

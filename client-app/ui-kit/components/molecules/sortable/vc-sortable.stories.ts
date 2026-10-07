@@ -148,7 +148,6 @@ export const ReorderMode: StoryType = {
   }),
 };
 
-// The handle is rendered deep inside the item, by the widget itself.
 const HandleWidget = {
   components: { VcWidget, VcButton },
   props: { title: { type: String, required: true } },

@@ -3,7 +3,7 @@ import type { MaxRowsSettingType } from "./useLayoutSettings";
 import type { SalesRepBlockSettingsType } from "../types/layout";
 import type { ComputedRef, InjectionKey } from "vue";
 
-/** A `LayoutBlock`'s edit mode and per-widget settings (VCST-5649), offered to the widget inside it. */
+/** A `LayoutBlock`'s edit mode and per-widget settings, offered to the widget inside it. */
 export interface IBlockSettingsContextType {
   /** Edit mode itself. */
   editing: ComputedRef<boolean>;

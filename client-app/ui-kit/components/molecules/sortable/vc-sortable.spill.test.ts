@@ -137,7 +137,6 @@ describe("VcSortable — a pointer drop outside every list", () => {
     },
   );
 
-  // The spill is the drop's own business: the next drag inside the list reorders as any other.
   it.each(["native", "fallback"] as const)("%s: reorders on the next drag after a spill", async (mode) => {
     const log: unknown[] = [];
     const list = mountList("main", ["a", "b", "c"], false, log);

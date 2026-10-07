@@ -44,7 +44,7 @@ const { t } = useI18n();
 // is resolved here.
 const layoutSettings = useLayoutSettings();
 
-// Offered to whatever the slot renders; `layout-widget.vue` picks both up. Stat cards take neither.
+// Offered to whatever the slot renders; stat cards take neither.
 provideLayoutBlock({
   title: computed(() => props.title),
   hide: () => emit("hide"),
