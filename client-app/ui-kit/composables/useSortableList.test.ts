@@ -448,6 +448,17 @@ describe("useSortableList — moving between lists by keyboard", () => {
     warn.mockRestore();
   });
 
+  it("warns once about a `listOrder` that leaves the list out, however often it changes", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const order = ref<string[]>(["shown", "b"]);
+    setup({ name: "a", group: "order-once", listOrder: order });
+    order.value = ["shown", "c"];
+    await nextTick();
+
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
+  });
+
   it("warns once, also without the component, when `listOrder` cannot work", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     setup({ name: "a", listOrder: ["a", "b"] });
