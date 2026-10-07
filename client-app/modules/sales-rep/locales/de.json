@@ -227,7 +227,7 @@
         "status": "Status",
         "notes": "Notizen",
         "actions": "Aktionen",
-        "mark_complete": "Als erledigt markieren",
+        "mark_complete": "Erledigen",
         "reopen": "Wieder öffnen",
         "action_aria": "{action}: „{name}“",
         "edit_aria": "„{name}“ bearbeiten"

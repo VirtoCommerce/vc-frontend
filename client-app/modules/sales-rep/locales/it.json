@@ -227,7 +227,7 @@
         "status": "Stato",
         "notes": "Note",
         "actions": "Azioni",
-        "mark_complete": "Segna come completata",
+        "mark_complete": "Completa",
         "reopen": "Riapri",
         "action_aria": "{action}: «{name}»",
         "edit_aria": "Modifica «{name}»"

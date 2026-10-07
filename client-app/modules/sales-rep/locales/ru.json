@@ -227,7 +227,7 @@
         "status": "Статус",
         "notes": "Заметки",
         "actions": "Действия",
-        "mark_complete": "Отметить как выполненную",
+        "mark_complete": "Завершить",
         "reopen": "Возобновить",
         "action_aria": "{action}: «{name}»",
         "edit_aria": "Изменить «{name}»"

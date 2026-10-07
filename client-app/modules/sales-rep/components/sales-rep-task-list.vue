@@ -123,7 +123,7 @@ function titleClass(task: SalesRepTaskType) {
   }
 
   &__status-col {
-    @apply w-36;
+    @apply w-40;
   }
 
   &__actions-col {

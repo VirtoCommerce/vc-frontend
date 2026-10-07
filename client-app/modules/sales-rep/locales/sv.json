@@ -227,7 +227,7 @@
         "status": "Status",
         "notes": "Anteckningar",
         "actions": "Åtgärder",
-        "mark_complete": "Markera som slutförd",
+        "mark_complete": "Slutför",
         "reopen": "Återöppna",
         "action_aria": "{action}: ”{name}”",
         "edit_aria": "Redigera ”{name}”"
