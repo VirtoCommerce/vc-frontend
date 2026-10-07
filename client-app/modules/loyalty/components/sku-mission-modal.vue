@@ -3,7 +3,7 @@
     ref="modalRef"
     class="sku-mission-modal"
     :title="view.title"
-    max-width="42rem"
+    max-width="60rem"
     is-mobile-fullscreen
     dividers
     test-id="sku-mission-modal"
@@ -24,72 +24,65 @@
       </p>
 
       <!-- Products -->
-      <ul class="sku-mission-modal__items">
-        <li v-for="row in rows" :key="row.id" class="sku-mission-modal__item">
-          <VcImage class="sku-mission-modal__image" :src="row.image" :alt="row.name" lazy />
-
-          <div class="sku-mission-modal__info">
-            <VcProductTitle
-              class="sku-mission-modal__name"
-              :to="row.route"
-              :title="row.name"
-              :target="browserTarget"
-              :lines-number="1"
-            >
-              {{ row.name }}
-            </VcProductTitle>
-
-            <span v-if="row.sku || row.price" class="sku-mission-modal__subtitle">
-              <span v-if="row.sku">{{ $t("common.labels.sku") }} #{{ row.sku }}</span>
-              ·
-              <VcPriceDisplay v-if="row.price" :value="row.price.actual" />
-            </span>
-
-            <VcChip
-              class="sku-mission-modal__target"
-              size="sm"
-              :variant="row.met ? 'solid' : 'outline'"
-              :color="row.met ? 'success' : 'neutral'"
-              :icon="row.met ? 'check' : undefined"
-              rounded
-            >
-              {{ $t("pages.account.missions.sku_modal.buy_at_least", { count: row.remaining }) }}
-            </VcChip>
+      <VcLineItems
+        class="sku-mission-modal__items"
+        :items="lineItems"
+        :browser-target="browserTarget"
+        with-image
+        with-properties
+        with-price
+        with-total
+      >
+        <template v-if="!isMissionCompleted" #titles>
+          <div class="text-center">
+            {{ $t("common.labels.quantity") }}
           </div>
+        </template>
 
-          <div class="sku-mission-modal__stepper-wrap">
-            <QuantityControl
-              v-if="!isMissionCompleted"
-              mode="stepper"
-              class="sku-mission-modal__stepper"
-              :model-value="row.quantity"
-              :name="row.id"
-              :min-quantity="row.minQuantity"
-              :max-quantity="row.maxQuantity"
-              :available-quantity="row.availableQuantity"
-              :pack-size="row.packSize"
-              :is-active="row.isActive"
-              :is-available="row.isAvailable"
-              :is-buyable="row.isBuyable"
-              :is-in-stock="row.isInStock"
-              allow-zero
-              size="sm"
-              @update:model-value="setQuantity(row.id, $event)"
-              @update:validation="setValidation(row.id, $event)"
-            >
-              <div class="sku-mission-modal__badges">
-                <InStock
-                  :is-in-stock="row.isInStock"
-                  :is-available="row.isAvailable"
-                  :quantity="row.availableQuantity"
-                />
+        <template #after-title="{ item }">
+          <VcChip
+            class="sku-mission-modal__target"
+            size="sm"
+            :variant="rowsById[item.id].met ? 'solid' : 'outline'"
+            :color="rowsById[item.id].met ? 'success' : 'neutral'"
+            :icon="rowsById[item.id].met ? 'check' : undefined"
+            rounded
+          >
+            {{ $t("pages.account.missions.sku_modal.buy_at_least", { count: rowsById[item.id].remaining }) }}
+          </VcChip>
+        </template>
 
-                <CountInCart :product-id="row.id" :currency="row.price?.actual.currency.code" />
-              </div>
-            </QuantityControl>
-          </div>
-        </li>
-      </ul>
+        <template v-if="!isMissionCompleted" #default="{ item }">
+          <QuantityControl
+            mode="stepper"
+            class="sku-mission-modal__stepper"
+            :model-value="rowsById[item.id].quantity"
+            :name="item.id"
+            :min-quantity="rowsById[item.id].minQuantity"
+            :max-quantity="rowsById[item.id].maxQuantity"
+            :available-quantity="rowsById[item.id].availableQuantity"
+            :pack-size="rowsById[item.id].packSize"
+            :is-active="rowsById[item.id].isActive"
+            :is-available="rowsById[item.id].isAvailable"
+            :is-buyable="rowsById[item.id].isBuyable"
+            :is-in-stock="rowsById[item.id].isInStock"
+            allow-zero
+            size="sm"
+            @update:model-value="setQuantity(item.id, $event)"
+            @update:validation="setValidation(item.id, $event)"
+          >
+            <div class="sku-mission-modal__badges">
+              <InStock
+                :is-in-stock="rowsById[item.id].isInStock"
+                :is-available="rowsById[item.id].isAvailable"
+                :quantity="rowsById[item.id].availableQuantity"
+              />
+
+              <CountInCart :product-id="item.id" :currency="rowsById[item.id].price?.actual.currency.code" />
+            </div>
+          </QuantityControl>
+        </template>
+      </VcLineItems>
 
       <!-- Summary -->
       <dl class="sku-mission-modal__summary">
@@ -111,6 +104,10 @@
           <dd>{{ formatCurrency(cartSubtotal.amount, cartSubtotal.currencyCode) }}</dd>
         </div>
       </dl>
+
+      <VcAlert color="info" variant="soft" size="sm" icon>
+        {{ $t("pages.account.missions.sku_modal.subtotal_hint") }}
+      </VcAlert>
     </div>
 
     <template #actions="{ close }">
@@ -161,6 +158,8 @@ import { useNotifications } from "@/shared/notification";
 import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
 import type { MissionDataType } from "../composables";
+import type { MoneyType, Property } from "@/core/api/graphql/types";
+import type { PreparedLineItemType } from "@/core/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IProps {
@@ -213,10 +212,12 @@ const rows = computed(() =>
       maxQuantity: item?.product?.maxQuantity,
       availableQuantity: item?.product?.availabilityData?.availableQuantity,
       packSize: item?.product?.packSize,
-      isActive: item?.product?.availabilityData?.isActive,
-      isAvailable: item?.product?.availabilityData?.isAvailable,
-      isBuyable: item?.product?.availabilityData?.isBuyable,
-      isInStock: item?.product?.availabilityData?.isInStock,
+      // QuantityControl treats a missing flag as "true" while InStock treats it as "false" —
+      // default to false so a product without availability data can't be added.
+      isActive: item?.product?.availabilityData?.isActive ?? false,
+      isAvailable: item?.product?.availabilityData?.isAvailable ?? false,
+      isBuyable: item?.product?.availabilityData?.isBuyable ?? false,
+      isInStock: item?.product?.availabilityData?.isInStock ?? false,
       target,
       // How many units are still needed on top of what's already counted towards the mission.
       remaining: remaining === 0 ? target : remaining,
@@ -224,6 +225,36 @@ const rows = computed(() =>
       // Quantity already sitting in the cart, so we only submit rows the user actually changed.
       inCart,
       met: target > 0 && current + quantity >= target,
+    };
+  }),
+);
+
+const rowsById = computed(() => Object.fromEntries(rows.value.map((row) => [row.id, row])));
+
+// The mission query returns a trimmed price, so the table's money values are built from it here.
+function toMoney(amount: number, currencyCode?: string): MoneyType {
+  return {
+    amount,
+    formattedAmount: formatCurrency(amount, currencyCode),
+    currency: { code: currencyCode },
+  } as MoneyType;
+}
+
+const lineItems = computed<PreparedLineItemType[]>(() =>
+  rows.value.map((row) => {
+    const price = row.price?.actual;
+    const unitPrice = price ? toMoney(price.amount, price.currency.code) : undefined;
+
+    return {
+      id: row.id,
+      name: row.name,
+      imageUrl: row.image,
+      route: row.route,
+      sku: row.sku,
+      properties: row.sku ? [{ name: "sku", label: t("common.labels.sku"), value: row.sku } as Property] : [],
+      listPrice: unitPrice,
+      actualPrice: unitPrice,
+      extendedPrice: price ? toMoney(price.amount * row.quantity, price.currency.code) : undefined,
     };
   }),
 );
@@ -300,49 +331,20 @@ async function addProductsToCart(close: () => void) {
     @apply text-sm text-neutral-600;
   }
 
-  &__items {
-    @apply flex flex-col divide-y divide-neutral-200 border-y border-neutral-200;
-  }
-
-  &__item {
-    @apply flex flex-wrap items-center gap-4 py-4;
-  }
-
-  &__image {
-    @apply size-18 shrink-0 border border-neutral-200 bg-additional-50 object-contain;
-  }
-
-  &__info {
-    @apply flex min-w-0 flex-1 flex-col items-start gap-1 font-semibold;
-  }
-
   &__target {
     @apply mt-2;
+  }
+
+  &__items .vc-line-item__name-actions {
+    @apply block;
   }
 
   &__badges {
     @apply mt-2 flex gap-1.5;
   }
 
-  &__name {
-    --vc-product-title-font-size: theme("fontSize.sm");
-    --vc-product-title-text-color: theme("colors.neutral.900");
-  }
-
-  &__subtitle {
-    @apply flex flex-wrap items-center gap-x-1 text-xs text-neutral-500;
-  }
-
-  &__stepper-wrap {
-    @apply flex shrink-0 basis-full flex-col items-start gap-1 ps-[5.5rem];
-
-    @media (min-width: theme("screens.sm")) {
-      @apply basis-auto items-end ps-0;
-    }
-  }
-
   &__stepper {
-    @apply w-32 shrink-0 mb-1;
+    @apply w-32;
   }
 
   &__summary {
