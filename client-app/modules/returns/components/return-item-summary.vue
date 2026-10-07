@@ -2,14 +2,14 @@
   <div>
     <div>{{ item.name }}</div>
 
-    <div class="text-sm text-neutral-400">
+    <div class="text-sm text-neutral-600">
       {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
     </div>
 
-    <div v-if="item.reasonComment" class="text-sm text-neutral-400">{{ item.reasonComment }}</div>
+    <div v-if="item.reasonComment" class="text-sm text-neutral-600">{{ item.reasonComment }}</div>
 
     <div v-if="item.rejectReason" class="mt-1 text-sm">
-      <div class="text-neutral-400">{{ $t("return_details.reject_reason") }}</div>
+      <div class="text-neutral-600">{{ $t("return_details.reject_reason") }}</div>
 
       <div class="text-danger-700">{{ item.rejectReason }}</div>
     </div>
