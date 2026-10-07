@@ -164,7 +164,6 @@ const HandleWidget = {
           size="xs"
           variant="ghost"
           color="secondary"
-          :style="item.grabbed ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
         />
       </template>
       <div class="text-sm text-neutral-600">Body of {{ title }}</div>
@@ -177,7 +176,7 @@ export const Handle: StoryType = {
     docs: {
       description: {
         story:
-          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. A held handle shows the double focus ring; anything more is that control's own, here VcButton's icon variable. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`. A `handle` selector is matched against the item's rendered DOM, so make it name markup your template owns. A class inside another kit component is that component's internal and may change without notice. If you must target one, record the coupling next to the selector and cover it with a test that mounts the real component.",
+          "With `handle` only the handle starts a pointer drag and takes the keyboard: a component inside the item picks `handleAttrs` up with `useSortableItem()` and binds it to its own control. A held handle shows the double focus ring; anything more is set through that control's own variables from your class, as the snippet does with VcButton's icon colour. A selector instead of `true` adds what it matches to that pointer grip; controls inside it stay clickable when listed in `filter`. A `handle` selector is matched against the item's rendered DOM, so make it name markup your template owns. A class inside another kit component is that component's internal and may change without notice. If you must target one, record the coupling next to the selector and cover it with a test that mounts the real component.",
       },
       source: {
         code: `<!-- Dashboard.vue -->
@@ -191,10 +190,12 @@ export const Handle: StoryType = {
 
 <!-- MyWidget.vue -->
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { useSortableItem } from "@/ui-kit/composables";
 
 defineProps<{ title: string }>();
 
+const { t } = useI18n();
 const item = useSortableItem(); // undefined outside a VcSortable
 </script>
 
@@ -203,15 +204,21 @@ const item = useSortableItem(); // undefined outside a VcSortable
     <template v-if="item?.handleAttrs" #prepend>
       <VcButton
         v-bind="item.handleAttrs"
-        :aria-label="'Reorder ' + title"
+        :aria-label="t('my_widget.reorder', { title })"
         icon="switch-vertical"
         variant="ghost"
         color="secondary"
-        :style="item.grabbed ? { '--vc-button-ghost-secondary-icon': 'var(--vc-sortable-accent-color)' } : undefined"
+        class="my-widget__handle"
       />
     </template>
   </VcWidget>
-</template>`,
+</template>
+
+<style lang="scss">
+.my-widget__handle[aria-pressed="true"] {
+  --vc-button-ghost-secondary-icon: var(--vc-sortable-accent-color);
+}
+</style>`,
       },
     },
   },

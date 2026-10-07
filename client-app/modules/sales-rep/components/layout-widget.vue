@@ -84,7 +84,6 @@ const item = useSortableItem();
 const block = item ? useLayoutBlock() : undefined;
 const settings = item ? useBlockSettings() : undefined;
 
-// A content widget nested in this one's slot reads no block settings.
 provideBlockSettings(undefined);
 
 // Null outside edit mode, and for stat cards, which drag whole.

@@ -242,21 +242,6 @@ if (import.meta.env.DEV) {
     warn("`liveRegion` is off and nothing listens to `announce`: keyboard sorting is silent for screen readers.");
   }
 
-  watch(
-    () => [props.listOrder, props.group, props.name] as const,
-    ([order, group, name]) => {
-      if (!order) {
-        return;
-      }
-      if (!group) {
-        warn("`listOrder` needs a `group`: without one no sibling list can take the item.");
-      } else if (!order.includes(name)) {
-        warn(`\`listOrder\` does not include this list's name "${name}": the cross-axis arrows cannot find it.`);
-      }
-    },
-    { immediate: true },
-  );
-
   // Not `accepts`: an inline function is a new one on every render, though it means the same.
   watch([() => props.handle, () => props.filter], () =>
     warn("`handle` and `filter` are read at mount; changing them later has no effect."),
@@ -334,9 +319,7 @@ const ItemScope = defineComponent({
 <style lang="scss">
 @use "@/ui-kit/styles/focus-ring" as *;
 
-// Held, not only focused: the ring doubles — a change of shape at the ring's own colour and contrast. Not
-// `:focus-visible`: the keyboard moves the item and restores focus a tick later. It reaches offset + 3 × width
-// outside the element (8px at the defaults), a plain ring offset + width.
+// Doubled = held. Not `:focus-visible`: the keyboard refocuses a tick after the move. Reaches offset + 3 × width.
 @mixin held-ring {
   @include focus-ring;
 
@@ -392,8 +375,7 @@ const ItemScope = defineComponent({
     }
   }
 
-  // The handle is the consumer's element — often another kit component — so nothing of its own look is set
-  // here: only the cursor and the held ring, which the global focus ring draws anyway.
+  // The handle is the consumer's element, often a kit component: only the cursor and the held ring are set here.
   &__handle {
     cursor: var(--vc-sortable-cursor);
 

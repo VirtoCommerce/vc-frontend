@@ -438,6 +438,28 @@ describe("useSortableList — moving between lists by keyboard", () => {
     warn.mockRestore();
   });
 
+  it("stays silent when the newer list of a shared name goes before the tick", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    setup({ name: "parked", group: "stats-6" });
+    setup({ name: "parked", group: "stats-6" }).scope.stop();
+    await nextTick();
+
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("warns once, also without the component, when `listOrder` cannot work", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    setup({ name: "a", listOrder: ["a", "b"] });
+    setup({ name: "a", group: "order-headless", listOrder: ["aa", "b"] });
+
+    expect(warn.mock.calls.map(([text]) => String(text))).toEqual([
+      expect.stringContaining("`listOrder` needs a `group`"),
+      expect.stringContaining('does not include this list\'s name "a"'),
+    ]);
+    warn.mockRestore();
+  });
+
   it("keeps a list that registered after its group emptied, when an older one goes", () => {
     const order = ["shown", "parked"];
     const older = setup({ name: "parked", group: "stats-4", listOrder: order, orientation: "horizontal" });
@@ -977,6 +999,24 @@ describe("useSortableList — grab and release events", () => {
     scope.stop();
 
     expect(events).toEqual(["grab a main", "release a"]);
+  });
+
+  it("reports a pointer drag ended by another list unmounting, once", async () => {
+    const source = pointer();
+    const other = pointer({ name: "other" });
+    await nextTick();
+
+    instances[0].options.onStart({ item: source.item, from: source.el });
+    other.scope.stop();
+    const onSiblingUnmount = [...source.events];
+    instances[0].options.onEnd({ item: source.item, from: source.el, to: source.el });
+    source.scope.stop();
+
+    expect([onSiblingUnmount, source.events, other.events]).toEqual([
+      ["grab a main", "release a"],
+      ["grab a main", "release a"],
+      [],
+    ]);
   });
 
   it("reports a grab ended by the held item leaving the list", async () => {

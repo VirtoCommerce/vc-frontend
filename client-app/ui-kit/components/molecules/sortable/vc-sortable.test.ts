@@ -1043,6 +1043,30 @@ describe("VcSortable — development warnings", () => {
     expect(warnings()).toEqual([expect.stringContaining('does not include this list\'s name "parked"')]);
   });
 
+  it("warns once about `listOrder` though an inline array is new on every render", async () => {
+    const tick = ref(0);
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              { modelValue: ["a"], name: "a", listOrder: ["a", "b"], "data-tick": tick.value },
+              { item: ({ attrs }: { attrs: Record<string, unknown> }) => h("div", attrs) },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+
+    tick.value += 1;
+    await nextTick();
+    tick.value += 1;
+    await nextTick();
+
+    expect(warnings()).toEqual([expect.stringContaining("`listOrder` needs a `group`")]);
+  });
+
   it("warns when two mounted lists share a group and a name", async () => {
     const props = { name: "twin", group: "twins", onMove: vi.fn() };
     mountWith(props, (attrs, id) => h("div", attrs, id));

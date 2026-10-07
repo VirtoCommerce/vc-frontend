@@ -122,6 +122,8 @@ type RegisteredListType = {
 // The keyboard has no drop target under a pointer to ask, so a list needs to ask its siblings directly.
 const listsByGroup = new Map<string, Map<string, RegisteredListType>>();
 const mountedLists = new WeakSet<RegisteredListType>();
+// SortableJS keeps one drag for the whole page, and any instance's `destroy` ends it with no `onEnd`.
+const pointerDrags = new Set<() => void>();
 
 // A moved item's control unmounts here and mounts there, which drops focus to <body>; the owner has
 // applied the move by the next render, so focus follows it — unless the owner placed it already.
@@ -131,6 +133,11 @@ function followInto(list: RegisteredListType | undefined, id: string): void {
       list?.focusItem(id);
     }
   });
+}
+
+function warn(text: string): void {
+  // eslint-disable-next-line no-console
+  console.warn(`[useSortableList] ${text}`);
 }
 
 function moveWithin(items: readonly string[], id: string, index: number): string[] {
@@ -402,8 +409,16 @@ export function useSortableList(
   let originSibling: Node | null = null;
   // Set by a drop outside every list: `restore` puts the node back; nothing reorders.
   let spilled = false;
-  // A pointer drag in progress: SortableJS's `destroy` fires no `onEnd`, so an unmount mid-drag ends it here.
   let draggedId: string | undefined;
+
+  function endPointerDrag(): void {
+    const id = draggedId;
+    draggedId = undefined;
+    pointerDrags.delete(endPointerDrag);
+    if (id !== undefined) {
+      options.onRelease?.({ id });
+    }
+  }
 
   function restore(event: Sortable.SortableEvent): void {
     const saved = originSibling?.parentNode === event.from ? originSibling : null;
@@ -474,6 +489,7 @@ export function useSortableList(
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
         if (id) {
           draggedId = id;
+          pointerDrags.add(endPointerDrag);
           options.onGrab?.({ id, from: nameOf() });
         }
       },
@@ -494,7 +510,6 @@ export function useSortableList(
       // Cross-list. `onEnd` fires once per drag, unlike separate onAdd/onRemove, which double-apply.
       onEnd: (event: Sortable.SortableEvent) => {
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
-        draggedId = undefined;
 
         // Without an index change SortableJS fires no update, so `restore` has not run yet.
         if (spilled && originSibling) {
@@ -512,9 +527,7 @@ export function useSortableList(
           }
         }
 
-        if (id) {
-          options.onRelease?.({ id });
-        }
+        endPointerDrag();
       },
     });
   }
@@ -532,10 +545,7 @@ export function useSortableList(
       onCleanup(() => {
         instance.destroy();
         sortable = undefined;
-        if (draggedId !== undefined) {
-          options.onRelease?.({ id: draggedId });
-          draggedId = undefined;
-        }
+        [...pointerDrags].forEach((endDrag) => endDrag());
       });
     },
     // Sync: built the moment the element exists, as an `onMounted` would, whenever that is.
@@ -596,10 +606,7 @@ export function useSortableList(
       if (import.meta.env.DEV && previous) {
         void nextTick(() => {
           if (mountedLists.has(previous) && mountedLists.has(entry)) {
-            // eslint-disable-next-line no-console
-            console.warn(
-              `[useSortableList] two mounted lists share group "${group}" and name "${name}": moves reach only the newer one.`,
-            );
+            warn(`two mounted lists share group "${group}" and name "${name}": moves reach only the newer one.`);
           }
         });
       }
@@ -616,6 +623,26 @@ export function useSortableList(
     },
     { immediate: true },
   );
+
+  if (import.meta.env.DEV) {
+    let warnedOrder = false;
+    watch(
+      [() => toValue<readonly string[] | undefined>(options.listOrder), groupOf, nameOf],
+      ([order, group, name]) => {
+        if (!order || warnedOrder) {
+          return;
+        }
+        if (!group) {
+          warnedOrder = true;
+          warn("`listOrder` needs a `group`: without one no sibling list can take the item.");
+        } else if (!order.includes(name)) {
+          warnedOrder = true;
+          warn(`\`listOrder\` does not include this list's name "${name}": the cross-axis arrows cannot find it.`);
+        }
+      },
+      { immediate: true },
+    );
+  }
 
   // A list unmounting with an item held ends that grab: no blur is coming if focus is elsewhere.
   onScopeDispose(end);
