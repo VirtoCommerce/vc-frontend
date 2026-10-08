@@ -400,14 +400,14 @@ describe("initFederatedModules", () => {
 
   it("backstop invariant: a budget-compliant remote can never trip the boot backstop", async () => {
     const { BOOT_BACKSTOP_MS, DISCOVERY_TIMEOUT_MS } = await import("./bootstrap");
-    const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS } = await import("./index");
+    const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS, runBudgetMs } = await import("./index");
 
     // Every BUDGETED leg, in the order `work` runs them: the plugin list, then one remote's
     // manifest, then its load and its init. Leaving the plugin list out of this sum is what let a
     // compliant remote trip the backstop. What is left over is the headroom the unbudgeted
     // loader-chunk fetch gets — see the BOOT_BACKSTOP_MS comment for why it has no budget.
     expect(BOOT_BACKSTOP_MS).toBeGreaterThan(
-      DISCOVERY_TIMEOUT_MS + DEFAULT_MANIFEST_TIMEOUT_MS + 2 * DEFAULT_LOAD_TIMEOUT_MS,
+      DISCOVERY_TIMEOUT_MS + runBudgetMs(DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS),
     );
   });
 

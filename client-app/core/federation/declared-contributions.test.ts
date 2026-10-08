@@ -281,6 +281,29 @@ describe("declared contributions in the loader", () => {
     },
   );
 
+  it("ignores an env remote's plugin.json that a redirect served from where its source does not allow", async () => {
+    vi.stubEnv(
+      "APP_MODULES_FEDERATION_REMOTES",
+      JSON.stringify({ "sales-rep": "http://localhost:3001/mf-manifest.json" }),
+    );
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          url: "http://evil.example.com/plugin.json",
+          json: () => Promise.resolve({ id: "p", contributions: DECLARED }),
+        }),
+      ),
+    );
+
+    const prepared = await prepareFederatedModules({ conditionContext: context(true) });
+
+    expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+    expect(router.hasRoute("SalesRepDocuments")).toBe(false);
+  });
+
   it("skips a plugin whose inline declaration is not valid JSON, rather than guess at it", async () => {
     const fetchMock = stubFetch();
 
