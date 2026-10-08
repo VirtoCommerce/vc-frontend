@@ -158,10 +158,10 @@ file are cross-referenced, not repeated.
       throw: any plugin with generated GraphQL types fails `yarn build`. 1.23.1 catches it. The
       sales-rep plugin carries a `resolve.alias` workaround until then.
 - [ ] **A declared route cannot carry route meta** ([VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)).
-      Its placeholder takes the parent's meta, so a route that overrides the parent's guard — the Sales
-      Rep Hub pages clear `Company`'s `requiresOrganization` for reps with no organization of their own
-      — sends that user to Account before the plugin arrives. Undeclared, the deep link resolves once
-      `init()` registers the route. The sales-rep plugin therefore declares only its buyer-facing page.
+      The organization gate is handled — the placeholder defers it to the real route (5189e7a22) — but
+      layout meta (`layout`, `hideLeftSidebar`) still comes from the parent until the plugin settles, so
+      a route that changes the layout shows the parent's while the loader is up. Add a meta whitelist to
+      the declaration only if a plugin needs it.
 - [ ] **Module (backend owners)**: any SalesRep version crashes a platform running
       `ASPNETCORE_ENVIRONMENT=Development` — `ValidateOnBuild` rejects the scoped
       `SalesRepRoleResolver` consumed from XCart's singleton `CanAccessCartAuthorizationHandler`.
