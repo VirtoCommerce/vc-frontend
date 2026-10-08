@@ -805,6 +805,17 @@
           "required_section": "此部分为必填项",
           "optional_no_selected": "个性化您的选择（可选）",
           "required_no_selected": "请填写所有必填选项以完成选择",
+          "checklist": {
+            "title": "配置清单",
+            "done": "(已完成)",
+            "selected": "{name} — {value}",
+            "required": "{name} — 必填",
+            "optional": "{name} — 可选",
+            "fill_it_in": "填写",
+            "upload_file": "上传文件",
+            "check_it_out": "查看",
+            "review": "检查"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "自定义选项：{0}",
             "custom_option_empty": "自定义选项：无",

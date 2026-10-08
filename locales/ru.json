@@ -805,6 +805,17 @@
           "required_section": "Раздел обязателен",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
           "required_no_selected": "Завершите выбор, указав все необходимые параметры",
+          "checklist": {
+            "title": "Чек-лист конфигурации",
+            "done": "(выполнено)",
+            "selected": "{name} — {value}",
+            "required": "{name} — обязательно",
+            "optional": "{name} — необязательно",
+            "fill_it_in": "Заполнить",
+            "upload_file": "Загрузить файл",
+            "check_it_out": "Посмотреть",
+            "review": "Проверить"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Настраиваемый параметр: {0}",
             "custom_option_empty": "Настраиваемая опция: пусто",

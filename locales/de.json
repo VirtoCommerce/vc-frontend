@@ -805,6 +805,17 @@
           "required_section": "Abschnitt erforderlich",
           "optional_no_selected": "Personalisieren Sie Ihre Auswahl weiter (optional)",
           "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen.",
+          "checklist": {
+            "title": "Konfigurations-Checkliste",
+            "done": "(abgeschlossen)",
+            "selected": "{name} — {value}",
+            "required": "{name} — erforderlich",
+            "optional": "{name} — optional",
+            "fill_it_in": "Ausfüllen",
+            "upload_file": "Datei hochladen",
+            "check_it_out": "Ansehen",
+            "review": "Überprüfen"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Benutzerdefinierte Option: {0}",
             "custom_option_empty": "Benutzerdefinierte Option: leer",

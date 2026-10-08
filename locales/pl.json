@@ -805,6 +805,17 @@
           "required_section": "Sekcja jest wymagana",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
           "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
+          "checklist": {
+            "title": "Lista kontrolna konfiguracji",
+            "done": "(ukończono)",
+            "selected": "{name} — {value}",
+            "required": "{name} — wymagane",
+            "optional": "{name} — opcjonalne",
+            "fill_it_in": "Wypełnij",
+            "upload_file": "Prześlij plik",
+            "check_it_out": "Zobacz",
+            "review": "Sprawdź"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Opcja niestandardowa: {0}",
             "custom_option_empty": "Opcja niestandardowa: pusta",
