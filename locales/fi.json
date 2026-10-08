@@ -805,6 +805,17 @@
           "required_section": "Osio on pakollinen",
           "optional_no_selected": "Mukauta valintaasi lisää (valinnainen)",
           "required_no_selected": "Täytä kaikki pakolliset vaihtoehdot viimeistelläksesi valintasi",
+          "checklist": {
+            "title": "Määritysten tarkistuslista",
+            "done": "(valmis)",
+            "selected": "{name} — {value}",
+            "required": "{name} — pakollinen",
+            "optional": "{name} — valinnainen",
+            "fill_it_in": "Täytä",
+            "upload_file": "Lataa tiedosto",
+            "check_it_out": "Tutustu",
+            "review": "Tarkista"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Mukautettu vaihtoehto: {0}",
             "custom_option_empty": "Mukautettu vaihtoehto: tyhjä",
@@ -1010,15 +1021,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Tuotteiden määrä",
-        "list_edit_button": "Muokkaa",
-        "remove_list_button": "Poista",
+        "rename_list_button": "Nimeä uudelleen",
+        "remove_list_button": "Poista lista",
         "make_private_button": "Tee yksityiseksi",
         "share_button": "Jaa",
         "last_modified_label": "Viimeksi muokattu: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
-        "list_settings_button": "Listan asetukset",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listasi on tyhjä",
         "empty_list_button": "Jatka selaamista",
         "list_icon": "Listakuvake"
@@ -1042,11 +1053,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Uusi lista",
-        "edit_mode_title": "Listan asetukset",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listan nimi",
         "list_name_placeholder": "Syötä nimi",
-        "sharing_scope_label": "Jakovaihtoehdot",
-        "sharing_scope_placeholder": "Valitse yksi vaihtoehto",
         "sharing_link_label": "Linkki",
         "create_button": "Luo lista",
         "save_button": "@:common.buttons.save",
@@ -1055,11 +1064,25 @@
         "make_shared": "Tee jaetuksi",
         "sharing_scope": {
           "Private": "Yksityinen",
-          "Organization": "Organisaatio",
-          "AnyoneAnonymous": "Kuka tahansa (vain luku)"
+          "Organization": "Oma organisaatio",
+          "AnyoneAnonymous": "Kuka tahansa linkin kanssa"
         },
         "clipboard_success": "Linkki kopioitu",
         "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
+      },
+      "share_wishlist_modal": {
+        "title": "Jaa “{listName}”",
+        "who_can_access_label": "Kenellä on pääsy",
+        "scope_selected": "{label}, valittu"
+      },
+      "stop_sharing_modal": {
+        "title": "Lopetetaanko tämän listan jakaminen?",
+        "message": "Kaikki, joiden kanssa lista on jaettu, menettävät käyttöoikeuden. Voit jakaa sen uudelleen milloin tahansa.",
+        "confirm_button": "Lopeta jakaminen",
+        "change_title": "Muutetaanko käyttöoikeuksia?",
+        "change_message": "Linkki pysyy samana. Jotkut käyttäjät voivat menettää käyttöoikeuden.",
+        "change_confirm_button": "Muuta käyttöoikeuksia",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",
@@ -1804,6 +1827,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Tuotteen saatavilla oleva määrä {availQty} ei riitä pyydettyyn {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Vähimmäistilaus {minQty} tuotetta ei ole saatavilla varastossa",
     "PRODUCT_EXACT_QTY": "Voit tilata {minQty} tuotetta",
+    "PRODUCT_PACK_SIZE_LIMIT": "Tilaa {packSize} kpl:n pakkauksissa",
+    "LINE_ITEM_LIMIT": "Voit tilata enintään {limit} tuotetta",
     "CART_INVALID_PRODUCT": "Virheellinen tuote"
   },
   "file_error": {

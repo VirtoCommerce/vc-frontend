@@ -272,7 +272,8 @@ jobs:
       sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
   
   deploy-cloud:
-    if: ${{ github.repository_id == '296335982' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request') }}
+    # No pull_request: a PR build opened a vc-deploy-dev PR into vcst-qa for every PR, and nobody merged them (VCST-6206).
+    if: ${{ github.repository_id == '296335982' && github.ref == 'refs/heads/dev' }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:

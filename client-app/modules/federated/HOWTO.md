@@ -44,13 +44,30 @@ separate from the host repo:
 ```
 my-plugin/
 ├── public/
-│   └── plugin.json       # tells the platform the expose key (step 5)
+│   └── plugin.json          # tells the platform the expose key (step 5)
 ├── src/
-│   ├── index.ts          # the plugin entry: exports init()
-│   └── pages/my-page.vue
+│   ├── index.ts             # the plugin entry: exports init()
+│   ├── mocks/
+│   │   └── vc-frontend-core.ts   # facade stand-in for specs (see below)
+│   └── pages/
+│       ├── my-page.vue
+│       └── my-page.test.ts
+├── .editorconfig
+├── .prettierrc.json
+├── .vscode/settings.json    # + extensions.json (Volar, eslint, prettier)
+├── eslint.config.js         # the host's flat config, trimmed
+├── tsconfig.json            # strict, strictTemplates on
 ├── vite.config.ts
-└── package.json
+├── vitest.config.ts
+└── package.json             # scripts: build, watch, dev, preview, type-check, lint, lint:fix, format, test
 ```
+
+The lint/format/test half is the host's own stack, pinned to the host's versions, so a plugin is
+reviewed against the same conventions as the storefront. Out of the box `yarn lint`,
+`yarn type-check`, `yarn test` and `yarn build` all pass on the generated project.
+`--with-apollo` adds `codegen.ts`, `.env.example` and a sample document (see
+[**Your own xAPI**](#your-own-xapi-typed-documents)); `--with-tailwind` adds `tailwind.config.cjs`,
+`postcss.config.cjs` and `src/styles.css`.
 
 Version pins below are illustrative — the generator copies the host's own, so read them from the
 output rather than from here.
@@ -131,14 +148,22 @@ The helpers are not enough on their own. Your components import VALUES from the 
 scope — but under vitest there is no host, and the root export carries only a `types` condition.
 So the first spec that mounts such a component dies on module resolution, before any assertion.
 
+`yarn create:plugin` writes both files for you — `vitest.config.ts` with the alias below and a
+`src/mocks/vc-frontend-core.ts` carrying working defaults. What follows is what they contain, for a
+hand-assembled project or when you extend the mock.
+
 Alias the specifier to a mock you own:
 
 ```ts
 // vitest.config.ts
 resolve: {
-  alias: {
-    "@vc-frontend/core": fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
-  },
+  // A regex: a string key matches by prefix and would send `@vc-frontend/core/testing` to the mock too.
+  alias: [
+    {
+      find: /^@vc-frontend\/core$/,
+      replacement: fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
+    },
+  ],
 },
 ```
 
@@ -194,7 +219,7 @@ export default defineConfig({
       createRemoteFederationOptions({
         name: "my-plugin",
         // CONTRACT GATE: the facade version this plugin is built against.
-        requiredHostVersion: "^0.1.0",
+        requiredHostVersion: "^0.2.0",
         // Optional: sharedOverrides / exposes when you need to deviate.
       }),
     ),
@@ -263,6 +288,33 @@ Rules of the road:
   sources, and emits `components` + `utilities` **without `base`** so the host's
   preflight isn't re-applied.
 
+### Your own xAPI: typed documents
+
+A plugin that ships inside a backend module usually queries that module's own GraphQL scope.
+`yarn create:plugin --with-apollo` wires the same codegen the host uses: write `.graphql`
+documents under `src/api/graphql/`, run `yarn generate:graphql-types`, and import the generated
+`TypedDocumentNode` — result and variables types come with it.
+
+```bash
+cp .env.example .env    # APP_BACKEND_URL — the backend to introspect
+yarn generate:graphql-types
+```
+
+```ts
+import { useQuery } from "@vue/apollo-composable";
+import { MyThingDocument } from "../api/graphql/types";
+
+const { result } = useQuery(MyThingDocument, { id });
+```
+
+The generated `src/api/graphql/types.ts` is **committed** — the build must not need a backend. The
+scaffolded `codegen.ts` points at `<APP_BACKEND_URL>/graphql/<plugin-name>`, which is where a module
+registering its own `ScopedSchemaFactory` serves it; change it to plain `/graphql` if you query the
+storefront schema instead. Scalars and codegen plugins come from `@vc-frontend/core/codegen`, the
+same object the host generates with, so a `Decimal` or a `Date` never means one thing in the host
+and another in the plugin. Your Apollo client is the host's — shared singleton, same cache, same
+auth link — so nothing extra is set up for it.
+
 ## Step 4 — run it against the host
 
 ```bash
@@ -271,13 +323,18 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 
 # terminal 2 - the host, pointed at your plugin
 cd vc-frontend
-APP_MODULES_FEDERATION_ENABLED=true \
+# once: the stock theme ships the switch off, so nothing would be built or loaded
+perl -pi -e 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
 APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```
 
 Notes on the host side:
 
+- **Turn the host switch on first.** `module_federation_enabled` in
+  `client-app/config/settings_data.json` ships `false`, and with it off `vite.federation.ts` builds no
+  MF host at all — the remotes override is read by a runtime that is not in the bundle, so you get a
+  storefront with no plugin and no error. Don't commit that flip with your plugin work.
 - **build + preview is the canonical run** — it matches what CI/prod produce, so it is the
   default for _running_ the host. (`yarn dev` also works and additionally gives HMR — see
   [**The dev inner loop**](#the-dev-inner-loop) below — reach for it as the iteration loop.)
@@ -326,14 +383,32 @@ Once the two servers are up, how you iterate depends on which side you're changi
   run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
   injected into the host page, so edits hot-update live across the MF boundary. Verified on
   this harness for route / UI-kit / `useModuleSettings` plugins **and** for a plugin that
-  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client
-  (an older note warned the dev server couldn't prebundle the shared GraphQL facade — that no
-  longer reproduces). `build`+`preview` is still the canonical run because it matches
-  CI/prod; use `yarn dev` when you want the HMR loop.
+  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client.
+  `build`+`preview` is still the canonical run because it matches CI/prod; use `yarn dev`
+  when you want the HMR loop.
+
+  > `yarn dev` only starts because `vite.federation.ts` keeps `@vc-frontend/core` out of
+  > `optimizeDeps`: the MF plugin force-includes every shared key, and prebundling the facade
+  > with esbuild runs no Vite plugins, so its `.graphql` imports have no loader. Remove that
+  > guard and dev dies with `No loader is configured for ".graphql" files`.
 
 **Changing the host** — you only rebuild the host when the **remote list/name** in the env override
 changes (it is inlined at build time) or host source changes; plain plugin edits never need a host
 rebuild.
+
+### Which local setup covers which gap
+
+Plugins and the facade are released separately from the storefront, so most of development happens
+with one half unreleased. What works:
+
+| Situation                                                       | Works | How                                                                                                                                                                              |
+| --------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin not released, host run locally                           | yes   | `APP_MODULES_FEDERATION_REMOTES` (Step 4). It is inlined at build time, so a changed map means rebuilding the host — plugin edits themselves never do.                           |
+| Plugin not released, host already deployed                      | no    | Nothing to point at the local plugin: the override is build-time and the deployed artifact is fixed. Run the host locally instead.                                                |
+| Plugin installed on an environment, host run locally            | yes   | The dev and preview servers proxy `^/modules/.*/plugins/vc-frontend/` to `APP_BACKEND_URL`, so the platform discovery path is exercised against a real backend with no override. |
+| Facade extended but not released                                | yes   | yalc (below). `yarn create:plugin` warns when the version it pinned has no `core-v*` tag yet, because `yarn install` would otherwise fail with a bare 404.                        |
+| Same, but with a `portal:` / `link:` pin instead of yalc        | no    | Both symlink, so the facade's `.d.mts` files resolve their own imports from the HOST's `node_modules`. `@vue/test-utils` then exists twice and `createWrapperFactory(mount, X)` fails on a private-property mismatch. yalc copies files into the plugin, which is why it does not have this problem. |
+| Plugin built against an unreleased facade version, then deployed | no    | The CONTRACT GATE refuses it before any of its code runs. `Logger` is a no-op in production builds, so nothing appears in the console — check the version matrix first.           |
 
 ## Step 5 — ship it
 
@@ -354,22 +429,23 @@ scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dis
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`, `style-src` — your
    stylesheets arrive by URL too).
 
-### The other route: shipping inside a Virto Commerce module
+### The primary path in detail
 
-The platform released a second way for a storefront plugin to reach a browser, on
-2026-08-03 — `vc-module-x-api` **3.1016.0** and `vc-module-x-frontend` **3.1005.0**. Instead
-of its own hosting, the plugin rides in a backend module's artifacts and the platform both
-serves and announces it:
+The platform side shipped on 2026-08-03 — `vc-module-x-api` **3.1016.0** and
+`vc-module-x-frontend` **3.1005.0** — and this host consumes it. The plugin rides in a backend
+module's artifacts, and the platform both serves and announces it:
 
-- the module declares a dependency on x-frontend, and its build writes the bundle to
-  `{MODULE_FOLDER}/plugins/vc-frontend/`;
-- the environment yml routes `- path: /modules  route: platform`;
-- the storefront asks for the list rather than being told at build time:
+- the module declares a dependency on `VirtoCommerce.XFrontend` (that is what makes the platform
+  probe it), and its build writes the bundle to `{MODULE_FOLDER}/plugins/vc-frontend/`;
+- whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
+  `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
+  plugin is skipped: the storefront boots, the feature is simply absent;
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, 2 s budget, fails
+  closed to "no plugins" — an older x-api answers 400 and the visitor sees nothing of it):
 
 ```graphql
-query InitializeApplication($domain: String!) {
+query GetStorePlugins($domain: String!) {
   store(domain: $domain) {
-    storeUrl
     plugins(appId: "vc-frontend") {
       id
       version
@@ -377,39 +453,42 @@ query InitializeApplication($domain: String!) {
       entry {
         type
         path
+        hash
+      }
+      contentFiles {
+        type
+        path
+        hash
       }
       remote {
         name
         exposed
-      }
-      contentFiles {
-        hash
-        path
       }
     }
   }
 }
 ```
 
-Same origin as the storefront, so no per-plugin CSP entry and no external hosting to buy.
+The platform advertises `.../remoteEntry.js`; the loader rewrites that to the sibling
+`mf-manifest.json` and reads `requiredHostVersion` from it before any plugin code runs (the
+contract gate). `createRemoteFederationOptions` emits both files — keep `remoteEntry.js` unhashed,
+the platform synthesizes that exact path. `?v=<entry.hash>` is the only freshness signal: the
+platform sets no `Cache-Control` on these files.
 
-**This host does not consume that yet**, and two things have to move first:
+Same origin as the storefront, so a `'self'` CSP covers it and there is no external hosting to buy.
+The bundle is fetched before the router is installed, so declare `permission` in `plugin.json`
+whenever the plugin serves a subset of users — every other visitor then pays nothing for it
+(VCST-5761 moves the whole load off the boot path). Installing such a module is a code-admission
+decision for the storefront: the plugin runs with the host's full privileges — see the README's
+security model.
 
-1. The loader reads `APP_MODULES_FEDERATION_REMOTES` — the build-time env described above —
-   not `plugins(appId:)`. That is `TODO.md` #2.
-2. The loader **requires a manifest JSON URL** and skips anything else (see the "entry must
-   be a manifest JSON URL" guard in `index.ts`), while the platform advertises
-   `.../remoteEntry.js`. Either the loader learns to take a remoteEntry, or the platform's
-   entry path points at `mf-manifest.json`.
-
-For the packaging half there is a working reference:
-`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` —
-`@module-federation/vite`, remote `name` set to the .NET module id, `outDir` writing straight
-into the discovery folder, and `remoteEntry.js` deliberately left unhashed because the
-platform synthesizes that exact path. Read it for the build config only: that sample is a
-plugin for the **System Operations admin app**, so its `./Module` expose and
-`install(host, ctx)` shape are that app's contract — this host's are `./plugin` and `init()`,
-as in Steps 2 and 3.
+Reference implementation: `vc-module-sales-rep` (`src/VirtoCommerce.SalesRep.Web/StorefrontApp`,
+built into `plugins/vc-frontend/` by the `BuildStorefrontPlugin` / `PublishStorefrontPlugin`
+targets of its `.csproj` under `vc-build Compress`). An older packaging reference is
+`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` — read it for
+the build config only: that sample is a plugin for the **System Operations admin app**, so its
+`./Module` expose and `install(host, ctx)` shape are that app's contract — this host's are
+`./plugin` and `init()`, as in Steps 2 and 3.
 
 ---
 
