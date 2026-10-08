@@ -1,7 +1,14 @@
 <template>
   <div class="mission-card">
     <div class="mission-card__banner">
-      <VcImage v-if="view.bannerUrl" class="mission-card__backdrop" :src="view.bannerUrl" alt="" lazy />
+      <VcImage
+        v-if="view.bannerUrl && !isBackdropFailed"
+        class="mission-card__backdrop"
+        :src="view.bannerUrl"
+        alt=""
+        lazy
+        @error="isBackdropFailed = true"
+      />
 
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
@@ -58,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useModal } from "@/shared/modal";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
@@ -74,6 +81,8 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { view } = useMissionCard(() => props.mission);
+
+const isBackdropFailed = ref(false);
 
 const TYPE_ICONS: Record<MissionType, string> = {
   [MISSION_TYPE.PerSkuAll]: "barcode",
@@ -109,10 +118,6 @@ function openMission(): void {
 
   &__backdrop {
     @apply absolute inset-0 size-full scale-110 object-cover opacity-60 blur-lg;
-
-    &.vc-image--fallback {
-      @apply hidden;
-    }
   }
 
   &__image {

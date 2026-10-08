@@ -35,7 +35,7 @@
   }
 
   &__note {
-    @apply mb-2 w-28 rounded bg-neutral-100 text-sm;
+    @apply mb-2 w-28 rounded-[--vc-radius] bg-neutral-100 text-sm;
   }
 
   &__progress {
@@ -47,11 +47,11 @@
   }
 
   &__percent {
-    @apply w-10 rounded bg-neutral-100 text-sm;
+    @apply w-10 rounded-[--vc-radius] bg-neutral-100 text-sm;
   }
 
   &__title {
-    @apply mb-4 w-3/4 rounded bg-neutral-100 text-base;
+    @apply mb-4 w-3/4 rounded-[--vc-radius] bg-neutral-100 text-base;
   }
 
   &__footer {
@@ -59,7 +59,7 @@
   }
 
   &__date {
-    @apply w-24 rounded bg-neutral-100 text-sm;
+    @apply w-24 rounded-[--vc-radius] bg-neutral-100 text-sm;
   }
 
   &__button {
