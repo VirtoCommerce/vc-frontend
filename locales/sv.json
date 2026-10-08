@@ -616,6 +616,25 @@
         "click_to_copy": "Klicka för att kopiera",
         "clipboard_success": "Kupong kopierad",
         "tap_to_copy": "Tryck för att kopiera"
+      },
+      "dashboard": {
+        "orders_placed_week": "Order denna vecka",
+        "orders_placed_mtd": "Order hittills denna månad",
+        "orders_placed_ytd": "Order hittills i år",
+        "avg_order_value": "Genomsnittligt ordervärde",
+        "per_order": "Genomsnitt per order (hittills)",
+        "vs_last_week": "{delta} vs förra veckan",
+        "vs_last_month": "{delta} vs förra månaden",
+        "vs_last_year": "{delta} vs förra året",
+        "excluded_orders": "{count} beställning i en annan valuta ingår inte | {count} beställningar i andra valutor ingår inte",
+        "recent_orders": {
+          "title": "Mina senaste beställningar",
+          "view_all": "Alla beställningar",
+          "filter_all": "Alla",
+          "empty": "Det finns inga beställningar ännu",
+          "no_results": "Inga beställningar med den här statusen",
+          "load_failed": "Det gick inte att läsa in beställningarna"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Instrumentpanel",
-        "last_orders_card": {
-          "title": "Senaste beställningar",
-          "all_orders_link": "Alla beställningar",
-          "order_number_label": "Beställningsnummer",
-          "purchase_number_label": "Inköpsorder",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Faktura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Inga beställningar",
-          "no_orders_message": "Det finns inga beställningar ännu"
-        },
-        "monthly_report_card": {
-          "title": "Månatlig utgiftsrapport",
-          "budget_title": "Budget",
-          "total_spend_label": "Totalt spenderat",
-          "spend_chart_alt": "Utgiftsdiagram"
-        },
-        "orders_status_card": {
-          "title": "Beställningsstatus"
-        },
-        "bulk_order_card": {
-          "title": "Massbeställningsblock"
-        }
+        "title": "Instrumentpanel"
       },
       "change_password": {
         "meta": {

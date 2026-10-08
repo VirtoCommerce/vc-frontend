@@ -616,6 +616,25 @@
         "click_to_copy": "Click to copy",
         "clipboard_success": "Coupon copied successfully",
         "tap_to_copy": "Tap to copy"
+      },
+      "dashboard": {
+        "orders_placed_week": "Orders placed · WEEK",
+        "orders_placed_mtd": "Orders placed · MTD",
+        "orders_placed_ytd": "Orders placed · YTD",
+        "avg_order_value": "Avg order value",
+        "per_order": "Average per order (YTD)",
+        "vs_last_week": "{delta} vs last week",
+        "vs_last_month": "{delta} vs last month",
+        "vs_last_year": "{delta} vs last year",
+        "excluded_orders": "{count} order in another currency not included | {count} orders in other currencies not included",
+        "recent_orders": {
+          "title": "My recent orders",
+          "view_all": "All orders",
+          "filter_all": "All",
+          "empty": "There are no orders yet",
+          "no_results": "No orders with this status",
+          "load_failed": "Couldn't load orders"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Latest orders",
-          "all_orders_link": "All orders",
-          "order_number_label": "Order number",
-          "purchase_number_label": "Purchase order",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Invoice",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "No orders",
-          "no_orders_message": "There are no orders yet"
-        },
-        "monthly_report_card": {
-          "title": "Monthly spend report",
-          "budget_title": "Budget",
-          "total_spend_label": "Totally spent",
-          "spend_chart_alt": "Spending chart"
-        },
-        "orders_status_card": {
-          "title": "Orders status"
-        },
-        "bulk_order_card": {
-          "title": "Bulk order pad"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {

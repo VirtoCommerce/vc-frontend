@@ -616,6 +616,25 @@
         "click_to_copy": "Cliquez pour copier",
         "clipboard_success": "Coupon copié avec succès",
         "tap_to_copy": "Appuyez pour copier"
+      },
+      "dashboard": {
+        "orders_placed_week": "Commandes cette semaine",
+        "orders_placed_mtd": "Commandes depuis le début du mois",
+        "orders_placed_ytd": "Commandes depuis le début de l'année",
+        "avg_order_value": "Valeur moyenne des commandes",
+        "per_order": "Moyenne par commande (année en cours)",
+        "vs_last_week": "{delta} vs semaine dernière",
+        "vs_last_month": "{delta} vs mois dernier",
+        "vs_last_year": "{delta} vs année dernière",
+        "excluded_orders": "{count} commande dans une autre devise non incluse | {count} commandes dans d'autres devises non incluses",
+        "recent_orders": {
+          "title": "Mes commandes récentes",
+          "view_all": "Toutes les commandes",
+          "filter_all": "Toutes",
+          "empty": "Aucune commande pour le moment",
+          "no_results": "Aucune commande avec ce statut",
+          "load_failed": "Impossible de charger les commandes"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Tableau de bord",
-        "last_orders_card": {
-          "title": "Dernières commandes",
-          "all_orders_link": "Toutes les commandes",
-          "order_number_label": "Numéro de commande",
-          "purchase_number_label": "Numéro de commande d'achat",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Facture",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Aucune commande",
-          "no_orders_message": "Aucune commande pour le moment"
-        },
-        "monthly_report_card": {
-          "title": "Rapport de dépenses mensuel",
-          "budget_title": "Budget",
-          "total_spend_label": "Total dépensé",
-          "spend_chart_alt": "Graphique des dépenses"
-        },
-        "orders_status_card": {
-          "title": "Statut des commandes"
-        },
-        "bulk_order_card": {
-          "title": "Pad de commande en gros"
-        }
+        "title": "Tableau de bord"
       },
       "change_password": {
         "meta": {

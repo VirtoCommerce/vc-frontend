@@ -616,6 +616,25 @@
         "click_to_copy": "Haz clic para copiar",
         "clipboard_success": "Cupón copiado con éxito",
         "tap_to_copy": "Toca para copiar"
+      },
+      "dashboard": {
+        "orders_placed_week": "Pedidos de esta semana",
+        "orders_placed_mtd": "Pedidos del mes en curso",
+        "orders_placed_ytd": "Pedidos del año en curso",
+        "avg_order_value": "Valor medio del pedido",
+        "per_order": "Promedio por pedido (año en curso)",
+        "vs_last_week": "{delta} vs. semana pasada",
+        "vs_last_month": "{delta} vs. mes pasado",
+        "vs_last_year": "{delta} vs. año pasado",
+        "excluded_orders": "{count} pedido en otra moneda no incluido | {count} pedidos en otras monedas no incluidos",
+        "recent_orders": {
+          "title": "Mis pedidos recientes",
+          "view_all": "Todos los pedidos",
+          "filter_all": "Todos",
+          "empty": "Aún no hay pedidos",
+          "no_results": "No hay pedidos con este estado",
+          "load_failed": "No se pudieron cargar los pedidos"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Panel de control",
-        "last_orders_card": {
-          "title": "Últimos pedidos",
-          "all_orders_link": "Todos los pedidos",
-          "order_number_label": "Número de pedido",
-          "purchase_number_label": "Orden de compra",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Factura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Sin pedidos",
-          "no_orders_message": "Aún no hay pedidos"
-        },
-        "monthly_report_card": {
-          "title": "Informe de gastos mensual",
-          "budget_title": "Presupuesto",
-          "total_spend_label": "Totalmente gastado",
-          "spend_chart_alt": "Gráfico de gastos"
-        },
-        "orders_status_card": {
-          "title": "Estado de los pedidos"
-        },
-        "bulk_order_card": {
-          "title": "Bloc de pedidos en masa"
-        }
+        "title": "Panel de control"
       },
       "change_password": {
         "meta": {

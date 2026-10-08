@@ -103,6 +103,7 @@ vi.mock("@/core/plugins", () => ({
 }));
 vi.mock("@/core/globals", () => ({ setGlobals: vi.fn(), globals: {} }));
 vi.mock("@/core/locale-loaders", () => ({ registerLocaleLoader: vi.fn() }));
+vi.mock("@/shared/account/dashboard-blocks", () => ({ registerAccountDashboardBlocks: vi.fn() }));
 vi.mock("@/shared/catalog/components/product", () => ({ default: {} }));
 vi.mock("@/shared/static-content", () => ({ templateBlocks: {} }));
 vi.mock("@/core/api/graphql/types", () => ({ GetSlugInfoDocument: {} }));

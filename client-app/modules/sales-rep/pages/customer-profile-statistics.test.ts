@@ -21,12 +21,12 @@ const state = await vi.hoisted(async () => {
 vi.mock("../composables/useSalesRepCustomer", () => ({ useSalesRepCustomer: () => state }));
 
 // The layout has been read and shows every card, so the customer is the only thing the statistics wait for.
-vi.mock("../composables/useSalesRepLayout", async () => {
+vi.mock("@/shared/dashboard/composables/useLayout", async () => {
   const { computed } = await import("vue");
   const { CUSTOMER_PROFILE_STAT_CARDS } = await import("../layout/stat-cards");
   return {
-    useSalesRepLayout: () => ({
-      scope: "customerProfile",
+    useLayout: () => ({
+      scope: "salesRepCustomerProfile",
       settled: computed(() => true),
       editing: computed(() => false),
       visibleIn: () => CUSTOMER_PROFILE_STAT_CARDS.map((card) => card.key),

@@ -53,10 +53,10 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
+import { LAYOUT_SCOPES, useLayout } from "@/shared/dashboard";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
-import { useSalesRepLayout } from "../composables/useSalesRepLayout";
-import { CUSTOMER_PROFILE_LAYOUT_SCOPE, DASHBOARD_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import { DASHBOARD_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 import LayoutSurface from "@/shared/dashboard/components/layout-surface.vue";
 
 interface IProps {
@@ -72,7 +72,7 @@ const { t } = useI18n();
 const { customer, loading, failed, notFound } = useSalesRepCustomer(() => props.organizationId);
 // The page owns the layout: the surface renders it, and the statistics queries are shaped from it. They also
 // wait for this customer to be found, so a not-found or unserved organization gets no figures fetched.
-const layout = useSalesRepLayout(CUSTOMER_PROFILE_LAYOUT_SCOPE);
+const layout = useLayout(LAYOUT_SCOPES.salesRepCustomerProfile);
 const { cards } = useSalesRepCustomerWidgets(
   layout,
   () => props.organizationId,

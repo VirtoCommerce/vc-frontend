@@ -86,10 +86,9 @@ describe("LayoutSurface block bindings", () => {
 // The skeleton stands in for boxes about to be replaced by real ones, so it uses the kit's own widget
 // skeleton and the real stat card rather than re-drawing them — the only way its height cannot drift.
 describe("LayoutSurface while the layout is read for the first time", () => {
+  // A read that never lands, so the surface stays at its first render.
   function mountLoading() {
-    const layout = createFakeLayout(SCOPE);
-    layout.loading.value = true;
-    return mountSurface(layout);
+    return mountSurface(createFakeLayout(SCOPE, { read: "pending" }));
   }
 
   it("draws each block with the kit's skeleton and the stat card's placeholder, and no blocks of its own", () => {
@@ -137,9 +136,7 @@ describe("LayoutSurface stat row", () => {
 
 describe("LayoutSurface after a failed read", () => {
   it("says the default arrangement is shown, and offers no edit button", async () => {
-    const layout = createFakeLayout(SCOPE);
-    layout.loadFailed.value = true;
-    const wrapper = mountSurface(layout, { editButtonPlacement: "end" });
+    const wrapper = mountSurface(createFakeLayout(SCOPE, { read: "failed" }), { editButtonPlacement: "end" });
     await flushPromises();
 
     expect(wrapper.find("vc-alert-stub").exists()).toBe(true);
@@ -170,12 +167,18 @@ describe("LayoutSurface while saving", () => {
     const layout = createFakeLayout(SCOPE);
     const wrapper = mountSurface(layout);
     await flushPromises();
+    layout.startEdit();
+    await flushPromises();
     expect(wrapper.get(".layout-surface__layout").attributes("inert")).toBeUndefined();
 
-    layout.saving.value = true;
+    const release = layout.holdNextSave();
+    const saving = layout.save();
     await flushPromises();
 
     expect(wrapper.get(".layout-surface__layout").attributes("inert")).toBeDefined();
+
+    release();
+    await saving;
   });
 });
 
@@ -187,7 +190,7 @@ describe("LayoutSurface with an emptied rail", () => {
     const railBlocks = ["side", "extra", PROBE_ID].map((type) => ({ type, hidden: true }));
     const saved: SavedLayoutType = { regions: [{ blocks: railBlocks }] };
 
-    const wrapper = mountSurface(createFakeLayout(SCOPE, saved));
+    const wrapper = mountSurface(createFakeLayout(SCOPE, { saved }));
     await flushPromises();
     await wrapper.find("[data-layout-edit-toggle]").trigger("click");
     await flushPromises();

@@ -1,4 +1,4 @@
-import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { focusBlockControl } from "../composables/_internal/useLayoutFocus";
@@ -64,7 +64,8 @@ beforeEach(() => {
   zones.length = 0;
 });
 
-function setup() {
+// Async because the layout is read first, as on a page: until then it cannot be edited.
+async function setup() {
   const layout = createFakeLayout(SCOPE);
   // Spied as well as applied: a same-list drag must emit no park at all, which surviving state alone
   // cannot show — `setHidden` would no-op on a block already in the half it names.
@@ -98,6 +99,7 @@ function setup() {
     attachTo: document.body,
     global: { components: { VcStatCard }, stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
   });
+  await flushPromises();
   return { wrapper, layout, setHidden };
 }
 
@@ -148,7 +150,7 @@ async function moveWithin(zone: ZoneType, id: string, delta: number) {
   await nextTick();
 }
 
-const blockIds = (wrapper: ReturnType<typeof setup>["wrapper"]) =>
+const blockIds = (wrapper: Awaited<ReturnType<typeof setup>>["wrapper"]) =>
   wrapper.findAll("[data-block-id]").map((el) => el.attributes("data-block-id"));
 
 /** The list with `from` re-inserted at `to` — the expected result of one move, at any list length. */
@@ -165,7 +167,7 @@ describe("stat row drag and drop", () => {
   // LayoutBlock must stay single-root. With a root sibling it renders as a fragment, SortableJS moves
   // only the element, and Vue can no longer unmount it — leaving the card in both zones at once.
   it("parks, reorders and restores without leaving a duplicate node behind", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -184,7 +186,7 @@ describe("stat row drag and drop", () => {
   });
 
   it("keeps a keyboard move that Chrome's focus-loss blur would otherwise cancel", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -202,7 +204,7 @@ describe("stat row drag and drop", () => {
   });
 
   it("moves focus with a stat card that is parked by keyboard", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -223,7 +225,7 @@ describe("stat row drag and drop", () => {
   // `layout-block--grabbed` is not gated on edit mode, so a grab left behind keeps the card at 45%
   // opacity with a drop shadow on the ordinary dashboard, and Space would drop rather than grab it.
   it("drops a held card's grab when edit mode ends", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -245,7 +247,7 @@ describe("stat row drag and drop", () => {
   // Backward is the direction that catches `restore()` reading the child index before removing the
   // node: with the node still in place, the index it reads is one short and the card lands too early.
   it("reorders a card backwards", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -260,7 +262,7 @@ describe("stat row drag and drop", () => {
   // SortableJS fires `end` after `update` for one same-list drop, so `onEnd` sees a gesture that
   // `onUpdate` has already applied. Its `from === to` guard is what stops it acting twice.
   it("does not park a card when a drag ends in the list it started in", async () => {
-    const { layout, setHidden } = setup();
+    const { layout, setHidden } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -273,7 +275,7 @@ describe("stat row drag and drop", () => {
   // Rendered even while cards are present, so CSS can hide it on `:has(.layout-block)` instead. Gated
   // on `entries`, the hint only appeared on drop — dragging the last card out left the zone blank.
   it("keeps the empty-zone hint mounted so it can track the drag rather than the drop", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -285,7 +287,7 @@ describe("stat row drag and drop", () => {
 
   // The hint is a container child, so `restore()` reading `event.from.children` must still line up.
   it("reorders correctly with the hint present as a trailing child", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -301,7 +303,7 @@ describe("stat row drag and drop", () => {
   // The mock swallows every Sortable option, so nothing else in the suite would notice if the wiring
   // that makes dragging possible at all were dropped.
   it("wires the Sortable options the drag behaviour depends on", async () => {
-    const { layout } = setup();
+    const { layout } = await setup();
     const [visible] = zones;
 
     expect(visible.options.draggable).toBe(".layout-block");
@@ -325,7 +327,7 @@ describe("stat row drag and drop", () => {
 
   // A pointer drag and a keyboard grab reordering the same array at once drops the wrong block.
   it("releases a keyboard grab when a pointer drag is chosen", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -344,7 +346,7 @@ describe("stat row drag and drop", () => {
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -363,7 +365,7 @@ describe("stat row drag and drop", () => {
   // The region is one array and `hidden` is a flag, so without the drop index the card lands wherever
   // its old position fell among the other hidden cards — visibly jumping away from where it was let go.
   it("drops a stat card at the position it was released, not its old slot", async () => {
-    const { layout } = setup();
+    const { layout } = await setup();
     layout.startEdit();
     await nextTick();
 
@@ -380,7 +382,7 @@ describe("stat row drag and drop", () => {
 // The stat row is horizontal and drags whole cards; a widget column is vertical and drags by a handle,
 // so it exercises a different branch of the same component.
 describe("widget column drag and drop", () => {
-  function setupColumn() {
+  async function setupColumn() {
     const layout = createFakeLayout(SCOPE);
 
     const Harness = defineComponent({
@@ -418,11 +420,12 @@ describe("widget column drag and drop", () => {
         stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true },
       },
     });
+    await flushPromises();
     return { wrapper, layout };
   }
 
   it("reorders a column and leaves no duplicate node behind", async () => {
-    const { wrapper, layout } = setupColumn();
+    const { wrapper, layout } = await setupColumn();
     layout.startEdit();
     await nextTick();
 
@@ -436,7 +439,7 @@ describe("widget column drag and drop", () => {
   });
 
   it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
-    const { wrapper, layout } = setupColumn();
+    const { wrapper, layout } = await setupColumn();
     layout.startEdit();
     await nextTick();
 
@@ -448,8 +451,8 @@ describe("widget column drag and drop", () => {
 
   // ✕ lives inside the drag surface, so `filter` is the only thing stopping a mousedown on it from
   // starting a drag. Sortable is stubbed here, so this pins the wiring — the gesture is a manual check.
-  it("gives Sortable a header handle, and excludes the hide button from it", () => {
-    setupColumn();
+  it("gives Sortable a header handle, and excludes the hide button from it", async () => {
+    await setupColumn();
 
     expect(zones[0].options).toMatchObject({
       handle: WIDGET_DRAG_HANDLE_SELECTOR,
@@ -459,8 +462,8 @@ describe("widget column drag and drop", () => {
   });
 
   // Stat cards drag whole and carry no ✕, so neither option applies.
-  it("leaves the stat row dragging whole, with no handle or filter", () => {
-    setup();
+  it("leaves the stat row dragging whole, with no handle or filter", async () => {
+    await setup();
 
     expect(zones[0].options.handle).toBeUndefined();
     expect(zones[0].options.filter).toBeUndefined();
@@ -471,7 +474,7 @@ describe("widget column drag and drop", () => {
 // owner's defaults: its ✕ must move it to the hidden half, the tray must offer it back, and the restore
 // must re-render it — the same contract the default widgets get from the suites above.
 describe("rail with a block registered at runtime", () => {
-  function setupRail() {
+  async function setupRail() {
     const layout = createFakeLayout(RAIL_SCOPE);
 
     const Harness = defineComponent({
@@ -520,11 +523,12 @@ describe("rail with a block registered at runtime", () => {
         stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true },
       },
     });
+    await flushPromises();
     return { wrapper, layout };
   }
 
   it("hides the block into the tray with its ✕", async () => {
-    const { wrapper, layout } = setupRail();
+    const { wrapper, layout } = await setupRail();
     layout.startEdit();
     await nextTick();
 
@@ -539,7 +543,7 @@ describe("rail with a block registered at runtime", () => {
   });
 
   it("restores it from the tray", async () => {
-    const { wrapper, layout } = setupRail();
+    const { wrapper, layout } = await setupRail();
     layout.startEdit();
     await nextTick();
 
@@ -558,34 +562,41 @@ describe("rail with a block registered at runtime", () => {
 // without it the card stays where it was dropped and only snaps back on the next unrelated render.
 describe("a drop the draft refuses", () => {
   it("puts the DOM back after a refused reorder", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
     const before = [...layout.visibleIn("statistics")];
 
-    // A save in flight — the draft is not editable, so `reorderVisible` is a no-op.
-    layout.saving.value = true;
+    // A save in flight — the draft is not editable, so `reorderVisible` is a no-op. Asserted before the save
+    // lands, whose re-render would put the DOM back on its own.
+    const release = layout.holdNextSave();
+    const saving = layout.save();
     await moveWithin(zones[0], before[0], 1);
-    layout.saving.value = false;
 
     expect(layout.visibleIn("statistics")).toEqual(before);
     expect(blockIds(wrapper)).toEqual(before);
+
+    release();
+    await saving;
   });
 
   it("puts the DOM back after a refused cross-zone drop", async () => {
-    const { wrapper, layout } = setup();
+    const { wrapper, layout } = await setup();
     layout.startEdit();
     await nextTick();
 
     const before = [...layout.visibleIn("statistics")];
     const [visible, hidden] = zones;
 
-    layout.saving.value = true;
+    const release = layout.holdNextSave();
+    const saving = layout.save();
     await dropInto(visible, hidden, "beta");
-    layout.saving.value = false;
 
     expect(layout.hiddenIn("statistics")).toEqual([]);
     expect(blockIds(wrapper)).toEqual(before);
+
+    release();
+    await saving;
   });
 });

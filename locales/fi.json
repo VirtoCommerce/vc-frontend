@@ -616,6 +616,25 @@
         "click_to_copy": "Kopioi napsauttamalla",
         "clipboard_success": "Kuponki kopioitu onnistuneesti",
         "tap_to_copy": "Napauta kopioidaksesi"
+      },
+      "dashboard": {
+        "orders_placed_week": "Tilaukset tällä viikolla",
+        "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+        "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
+        "avg_order_value": "Keskimääräinen tilausarvo",
+        "per_order": "Keskim. per tilaus (tänä vuonna)",
+        "vs_last_week": "{delta} vs viime viikko",
+        "vs_last_month": "{delta} vs viime kuu",
+        "vs_last_year": "{delta} vs viime vuosi",
+        "excluded_orders": "{count} tilaus muussa valuutassa ei mukana | {count} tilausta muissa valuutoissa ei mukana",
+        "recent_orders": {
+          "title": "Omat viimeisimmät tilaukset",
+          "view_all": "Kaikki tilaukset",
+          "filter_all": "Kaikki",
+          "empty": "Tilauksia ei ole vielä",
+          "no_results": "Ei tilauksia tällä tilalla",
+          "load_failed": "Tilauksia ei voitu ladata"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Hallintapaneeli",
-        "last_orders_card": {
-          "title": "Viimeisimmät tilaukset",
-          "all_orders_link": "Kaikki tilaukset",
-          "order_number_label": "Tilausnumero",
-          "purchase_number_label": "Ostotilaus",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Lasku",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Ei tilauksia",
-          "no_orders_message": "Tilauksia ei ole vielä"
-        },
-        "monthly_report_card": {
-          "title": "Kuukausittainen kuluraportti",
-          "budget_title": "Budjetti",
-          "total_spend_label": "Kokonaiskulutus",
-          "spend_chart_alt": "Kulutuskaavio"
-        },
-        "orders_status_card": {
-          "title": "Tilausten tila"
-        },
-        "bulk_order_card": {
-          "title": "Joukkotilauslohko"
-        }
+        "title": "Hallintapaneeli"
       },
       "change_password": {
         "meta": {

@@ -6,8 +6,6 @@ import { cache } from "@/core/api/graphql/config/cache";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { statDataNeeds } from "@/shared/dashboard";
 import { SalesRepCustomersCountDocument } from "../api/graphql/types";
-import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
-import { registerSalesRepBlocks } from "../layout/blocks";
 import { DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCommunication } from "./useSalesRepCommunication";
@@ -16,7 +14,6 @@ import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepCustomerOptions } from "./useSalesRepCustomerOptions";
 import { useSalesRepCustomers } from "./useSalesRepCustomers";
 import { useSalesRepCustomersCount } from "./useSalesRepCustomersCount";
-import { useSalesRepLayout } from "./useSalesRepLayout";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepRules } from "./useSalesRepRules";
@@ -87,9 +84,6 @@ const everyCard = {
   ready: computed(() => true),
 };
 
-// The saved-layout read below reconciles against the module's blocks, as on a page.
-registerSalesRepBlocks();
-
 beforeEach(async () => {
   requestCount = 0;
   emit.mockClear();
@@ -99,7 +93,8 @@ beforeEach(async () => {
 
 // Every hub read. Each one names its own failure — an inline card error, an empty view, a load-failure page,
 // a degraded-controls notice — so a failing widget must not also raise the page-level error toast. The one
-// exception is the customers-count badge: it just drops the number, deliberately (VCST-5682).
+// exception is the customers-count badge: it just drops the number, deliberately (VCST-5682). The saved layout
+// is read by the core's `useLayout` now; core/api/graphql/dashboard-operations.test.ts pins its read the same way.
 const hubReads: [string, () => unknown][] = [
   ["order statistics", () => useSalesRepOrderStatistics(everyCard)],
   ["cart statistics", () => useSalesRepCartStatistics(everyCard)],
@@ -112,7 +107,6 @@ const hubReads: [string, () => unknown][] = [
   ["share customer picker", () => useSalesRepCustomerOptions()],
   ["sales reps list", () => useSalesReps()],
   ["filter rules", () => useSalesRepRules("order", "filter")],
-  ["saved layout", () => useSalesRepLayout(DASHBOARD_LAYOUT_SCOPE)],
 ];
 
 describe.each(hubReads)("%s", (_name, use) => {

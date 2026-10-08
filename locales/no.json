@@ -616,6 +616,25 @@
         "click_to_copy": "Klikk for å kopiere",
         "clipboard_success": "Kupong kopiert vellykket",
         "tap_to_copy": "Trykk for å kopiere"
+      },
+      "dashboard": {
+        "orders_placed_week": "Ordrer denne uken",
+        "orders_placed_mtd": "Ordrer hittil denne måneden",
+        "orders_placed_ytd": "Ordrer hittil i år",
+        "avg_order_value": "Gjennomsnittlig ordreverdi",
+        "per_order": "Gjennomsnitt per ordre (hittil i år)",
+        "vs_last_week": "{delta} vs forrige uke",
+        "vs_last_month": "{delta} vs forrige måned",
+        "vs_last_year": "{delta} vs i fjor",
+        "excluded_orders": "{count} bestilling i en annen valuta er ikke inkludert | {count} bestillinger i andre valutaer er ikke inkludert",
+        "recent_orders": {
+          "title": "Mine nylige bestillinger",
+          "view_all": "Alle bestillinger",
+          "filter_all": "Alle",
+          "empty": "Ingen bestillinger ennå",
+          "no_results": "Ingen bestillinger med denne statusen",
+          "load_failed": "Kunne ikke laste inn bestillingene"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashbord",
-        "last_orders_card": {
-          "title": "Siste bestillinger",
-          "all_orders_link": "Alle bestillinger",
-          "order_number_label": "Bestillingsnummer",
-          "purchase_number_label": "Innkjøpsordre",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Faktura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Ingen bestillinger",
-          "no_orders_message": "Ingen bestillinger ennå"
-        },
-        "monthly_report_card": {
-          "title": "Månedlig kostnadsrapport",
-          "budget_title": "Budsjett",
-          "total_spend_label": "Totalt forbruk",
-          "spend_chart_alt": "Forbruksgraf"
-        },
-        "orders_status_card": {
-          "title": "Bestillingsstatus"
-        },
-        "bulk_order_card": {
-          "title": "Massebestillingsblokk"
-        }
+        "title": "Dashbord"
       },
       "change_password": {
         "meta": {

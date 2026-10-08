@@ -1,20 +1,14 @@
-// Scaffolding for the engine's own specs: a synthetic dashboard and an in-memory layout controller, so the
-// engine is tested against its contract rather than against one dashboard's tables or one backend's
-// operations. A real controller (the sales-rep module's `useSalesRepLayout`) has its own specs.
-import { computed, defineComponent, h, readonly, ref } from "vue";
+// Scaffolding for the engine's own specs: a synthetic dashboard, and the real layout controller
+// (`createLayoutController`) over in-memory storage — so the engine is tested against its contract rather than
+// against one dashboard's tables or one backend's operations, and every spec drives the one state machine all
+// dashboards run. `useLayout`, which binds the same controller to the backend, has its own spec.
+import { defineComponent, h, ref } from "vue";
 import LayoutWidget from "./components/layout-widget.vue";
-import { reconcileLayout } from "./document";
+import { createLayoutController } from "./composables/useLayout";
 import { getBlockRegistry, registerBlock } from "./registry";
 import { statBlocks } from "./stat-cards";
 import type { IStatCardDefType } from "./stat-cards";
-import type {
-  BlockSettingsType,
-  LayoutControllerType,
-  LayoutRegionIdType,
-  LayoutStateType,
-  SavedLayoutType,
-  StatCardType,
-} from "./types";
+import type { LayoutControllerType, LayoutInputType, SavedLayoutType, StatCardType } from "./types";
 import type { Ref } from "vue";
 
 export type TestNeedType = "count" | "total" | "people";
@@ -84,132 +78,65 @@ export function registerTestDashboard(scope: string): void {
   });
 }
 
-const EMPTY_SETTINGS: BlockSettingsType = { hiddenTabs: [] };
+export type FakeLayoutOptionsType = {
+  /** The stored document; `null`, the default, is a user who never saved this dashboard. */
+  saved?: SavedLayoutType | null;
+  /** How the read goes: `pending` never lands, which holds the surface at its skeleton; `failed` is refused. */
+  read?: "loaded" | "pending" | "failed";
+};
 
-/** The contract with its flags writable, so a spec can put the surface into any state. */
-export type FakeLayoutType = Omit<LayoutControllerType, "loading" | "saving" | "loadFailed" | "settled"> & {
-  loading: Ref<boolean>;
-  saving: Ref<boolean>;
-  loadFailed: Ref<boolean>;
-  settled: Ref<boolean>;
-  /** The next `save` fails as a refused write would: the draft and edit mode stay, `saveFailed` turns on. */
+/** The real controller, plus what a spec needs to put a save into a given state. */
+export type FakeLayoutType = LayoutControllerType & {
+  /** The next save is refused, as a failed write would be: the draft and edit mode stay, `saveFailed` turns on. */
   failNextSave: Ref<boolean>;
-  /** Every document `save` accepted, in order. */
-  savedStates: LayoutStateType[];
+  /** Holds the next save in flight until the returned function is called — the window a save locks the draft. */
+  holdNextSave: () => () => void;
 };
 
 /**
- * An in-memory controller over the registry: reconciles `saved` (null = never saved), keeps the edit draft,
- * and "persists" a save by adopting the draft. The same rules as a real controller — a draft only while
- * editing, nothing changes mid-save, a failed save keeps the draft.
+ * `createLayoutController` over an in-memory document: the read resolves on the next microtask (so a spec awaits
+ * `flushPromises()` before editing, as a page waits for its read), and a save stores the command as sent, so its echo
+ * always agrees.
  */
-export function createFakeLayout(scope: string, saved: SavedLayoutType | null = null): FakeLayoutType {
-  const loading = ref(false);
-  const saving = ref(false);
-  const loadFailed = ref(false);
-  const saveFailed = ref(false);
-  const settled = ref(true);
+export function createFakeLayout(scope: string, options: FakeLayoutOptionsType = {}): FakeLayoutType {
+  const { read = "loaded" } = options;
+  let stored = options.saved ?? null;
+  let held: Promise<void> | undefined;
   const failNextSave = ref(false);
-  const savedStates: LayoutStateType[] = [];
 
-  const registry = () => getBlockRegistry(scope);
-  const accepted = ref<LayoutStateType | undefined>();
-  const draft = ref<LayoutStateType | undefined>();
-  const persisted = computed(() => accepted.value ?? reconcileLayout(saved, registry()));
-  const state = computed(() => draft.value ?? persisted.value);
-  const editing = computed(() => draft.value !== undefined);
-  const canEdit = computed(() => !loading.value && !loadFailed.value);
-
-  function editable(): boolean {
-    return draft.value !== undefined && !saving.value;
+  function load(): Promise<SavedLayoutType | null> {
+    if (read === "pending") {
+      return new Promise(() => {});
+    }
+    if (read === "failed") {
+      return Promise.reject(new Error("The layout could not be read."));
+    }
+    return Promise.resolve(stored);
   }
 
-  // Plain data all the way down, so a JSON round trip is a deep copy that drops the reactive proxies.
-  const copy = (value: LayoutStateType): LayoutStateType => JSON.parse(JSON.stringify(value)) as LayoutStateType;
-
-  function setHidden(id: string, hidden: boolean, index?: number): void {
-    if (!draft.value || !editable()) {
-      return;
-    }
-
-    for (const region of Object.values(draft.value.regions)) {
-      const from = hidden ? region.visible : region.hidden;
-      const at = from.indexOf(id);
-      if (at !== -1) {
-        const to = hidden ? region.hidden : region.visible;
-        from.splice(at, 1);
-        to.splice(index ?? to.length, 0, id);
-        return;
-      }
-    }
-  }
-
-  function reorder(regionId: LayoutRegionIdType, half: "visible" | "hidden", ids: string[]): void {
-    if (editable() && draft.value) {
-      draft.value.regions[regionId][half] = [...ids];
-    }
-  }
-
-  async function save(): Promise<boolean> {
-    if (!draft.value || saving.value) {
-      return false;
-    }
-
-    await Promise.resolve();
+  async function save(command: LayoutInputType): Promise<SavedLayoutType> {
+    const gate = held;
+    held = undefined;
+    await gate;
 
     if (failNextSave.value) {
       failNextSave.value = false;
-      saveFailed.value = true;
-      return false;
+      throw new Error("The layout could not be saved.");
     }
 
-    accepted.value = copy(draft.value);
-    savedStates.push(copy(draft.value));
-    draft.value = undefined;
-    saveFailed.value = false;
-    return true;
+    stored = { regions: command.regions };
+    return stored;
   }
 
-  return {
-    scope,
-    state: readonly(state),
-    loading,
-    saving,
-    editing,
-    canEdit,
-    loadFailed,
-    saveFailed: readonly(saveFailed),
-    settled,
-    failNextSave,
-    savedStates,
-    visibleIn: (regionId) => state.value.regions[regionId].visible,
-    hiddenIn: (regionId) => state.value.regions[regionId].hidden,
-    settingsOf: (blockId) => state.value.settings[blockId] ?? EMPTY_SETTINGS,
-    persistedSettingsOf: (blockId) => persisted.value.settings[blockId] ?? EMPTY_SETTINGS,
-    updateSettings: (blockId, patch) => {
-      if (editable() && draft.value?.settings[blockId]) {
-        draft.value.settings[blockId] = { ...draft.value.settings[blockId], ...patch };
-      }
-    },
-    startEdit: () => {
-      if (canEdit.value) {
-        saveFailed.value = false;
-        draft.value = copy(persisted.value);
-      }
-    },
-    cancel: () => {
-      draft.value = undefined;
-      saveFailed.value = false;
-    },
-    reset: () => {
-      if (editable()) {
-        draft.value = reconcileLayout(null, registry());
-        saveFailed.value = false;
-      }
-    },
-    reorderVisible: (regionId, ids) => reorder(regionId, "visible", ids),
-    reorderHidden: (regionId, ids) => reorder(regionId, "hidden", ids),
-    setHidden,
-    save,
-  };
+  function holdNextSave(): () => void {
+    let release = () => {};
+    held = new Promise((resolve) => {
+      release = resolve;
+    });
+    return release;
+  }
+
+  const layout = createLayoutController({ scope, load, save, defaults: () => getBlockRegistry(scope) });
+
+  return { ...layout, failNextSave, holdNextSave };
 }

@@ -616,6 +616,25 @@
         "click_to_copy": "点击复制",
         "clipboard_success": "优惠券已复制",
         "tap_to_copy": "点击复制"
+      },
+      "dashboard": {
+        "orders_placed_week": "本周下单",
+        "orders_placed_mtd": "本月至今下单",
+        "orders_placed_ytd": "本年至今下单",
+        "avg_order_value": "平均订单金额",
+        "per_order": "平均每笔订单 (今年迄今)",
+        "vs_last_week": "较上周 {delta}",
+        "vs_last_month": "较上月 {delta}",
+        "vs_last_year": "较去年 {delta}",
+        "excluded_orders": "未计入 {count} 笔其他币种的订单",
+        "recent_orders": {
+          "title": "我的最近订单",
+          "view_all": "所有订单",
+          "filter_all": "全部",
+          "empty": "尚无订单",
+          "no_results": "没有此状态的订单",
+          "load_failed": "无法加载订单"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "仪表板",
-        "last_orders_card": {
-          "title": "最新订单",
-          "all_orders_link": "所有订单",
-          "order_number_label": "订单编号",
-          "purchase_number_label": "采购订单",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "发票",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "无订单",
-          "no_orders_message": "尚无订单"
-        },
-        "monthly_report_card": {
-          "title": "月度支出报告",
-          "budget_title": "预算",
-          "total_spend_label": "总支出",
-          "spend_chart_alt": "支出图表"
-        },
-        "orders_status_card": {
-          "title": "订单状态"
-        },
-        "bulk_order_card": {
-          "title": "批量订单板"
-        }
+        "title": "仪表板"
       },
       "change_password": {
         "meta": {

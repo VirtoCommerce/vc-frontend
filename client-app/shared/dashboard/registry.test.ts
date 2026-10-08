@@ -1,17 +1,31 @@
 import { describe, expect, it, vi } from "vitest";
 import { computed } from "vue";
 import { Logger } from "@/core/utilities";
-import { LAYOUT_REGION_IDS, LAYOUT_SCHEMA_VERSION, SETTING_HIDDEN_TAB_PREFIX, SETTING_MAX_ROWS } from "./constants";
+import {
+  LAYOUT_REGION_IDS,
+  LAYOUT_SCHEMA_VERSION,
+  LAYOUT_SCOPES,
+  SETTING_HIDDEN_TAB_PREFIX,
+  SETTING_MAX_ROWS,
+} from "./constants";
 import { getBlock, getBlockRegistry, registerBlock, unregisterBlock } from "./registry";
 import type { BlockType } from "./types";
 
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 
-// Backends type `region.id` as a free-form string and the settings as free-form keys. An unrecognized
-// value does not error — it addresses a different, empty slot of the document. Changing any literal
-// below silently strands every layout already saved under the old one, so they are pinned rather than
-// merely used. (Each dashboard owner pins its own scope literal.)
+// Backends type the scope and `region.id` as free-form strings and the settings as free-form keys. An
+// unrecognized value does not error — it addresses a different, empty document or slot of one. Changing any
+// literal below silently strands every layout already saved under the old one, so they are pinned rather
+// than merely used.
 describe("layout vocabulary", () => {
+  it("pins the dashboard scopes", () => {
+    expect(LAYOUT_SCOPES).toEqual({
+      accountDashboard: "accountDashboard",
+      salesRepDashboard: "salesRepDashboard",
+      salesRepCustomerProfile: "salesRepCustomerProfile",
+    });
+  });
+
   it("pins the region ids and their order", () => {
     expect(LAYOUT_REGION_IDS).toEqual(["statistics", "mainLeft", "mainRight"]);
   });

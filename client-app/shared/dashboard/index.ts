@@ -7,8 +7,9 @@
 // engine's styles into every chunk that imports this file — and module `init()` code loads with the app.
 // Module Federation plugins get the engine through the `@vc-frontend/core` facade (client-app/core-api).
 export { provideBlockChrome, useBlockChrome } from "./composables/useBlockChrome";
+export { createLayoutController, useLayout } from "./composables/useLayout";
 export { useStatDataNeeds } from "./composables/useStatDataNeeds";
-export { MIN_ROWS } from "./constants";
+export { LAYOUT_SCOPES, MIN_ROWS } from "./constants";
 export { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "./document";
 export { getBlock, getBlockRegistry, registerBlock, unregisterBlock } from "./registry";
 export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "./settings";
@@ -31,6 +32,7 @@ export type {
   BlockType,
   IStatBlock,
   IWidgetBlock,
+  LayoutControllerOptionsType,
   LayoutControllerType,
   LayoutInputType,
   LayoutRegionIdType,

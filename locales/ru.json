@@ -616,6 +616,25 @@
         "click_to_copy": "Нажмите, чтобы скопировать",
         "clipboard_success": "Купон успешно скопирован",
         "tap_to_copy": "Нажмите, чтобы скопировать"
+      },
+      "dashboard": {
+        "orders_placed_week": "Заказы за эту неделю",
+        "orders_placed_mtd": "Заказы с начала месяца",
+        "orders_placed_ytd": "Заказы с начала года",
+        "avg_order_value": "Средняя сумма заказа",
+        "per_order": "Среднее за заказ (за год)",
+        "vs_last_week": "{delta} к прошлой неделе",
+        "vs_last_month": "{delta} к прошлому месяцу",
+        "vs_last_year": "{delta} к прошлому году",
+        "excluded_orders": "Не учтено {count} заказов в других валютах | Не учтён {count} заказ в другой валюте | Не учтены {count} заказа в других валютах | Не учтено {count} заказов в других валютах",
+        "recent_orders": {
+          "title": "Мои последние заказы",
+          "view_all": "Все заказы",
+          "filter_all": "Все",
+          "empty": "Еще нет заказов",
+          "no_results": "Нет заказов с этим статусом",
+          "load_failed": "Не удалось загрузить заказы"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Панель управления",
-        "last_orders_card": {
-          "title": "Последние заказы",
-          "all_orders_link": "Все заказы",
-          "order_number_label": "Номер заказа",
-          "purchase_number_label": "Номер закупки",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Счет",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Нет заказов",
-          "no_orders_message": "Еще нет заказов"
-        },
-        "monthly_report_card": {
-          "title": "Отчет о расходах за месяц",
-          "budget_title": "Бюджет",
-          "total_spend_label": "Всего потрачено",
-          "spend_chart_alt": "Диаграмма расходов"
-        },
-        "orders_status_card": {
-          "title": "Статус заказов"
-        },
-        "bulk_order_card": {
-          "title": "Мультизаказ"
-        }
+        "title": "Панель управления"
       },
       "change_password": {
         "meta": {

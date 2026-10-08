@@ -616,6 +616,25 @@
         "click_to_copy": "Kliknij, aby skopiować",
         "clipboard_success": "Kupon pomyślnie skopiowany",
         "tap_to_copy": "Dotknij, aby skopiować"
+      },
+      "dashboard": {
+        "orders_placed_week": "Zamówienia w tym tygodniu",
+        "orders_placed_mtd": "Zamówienia od początku miesiąca",
+        "orders_placed_ytd": "Zamówienia od początku roku",
+        "avg_order_value": "Średnia wartość zamówienia",
+        "per_order": "Średnio na zamówienie (od początku roku)",
+        "vs_last_week": "{delta} vs poprzedni tydzień",
+        "vs_last_month": "{delta} vs poprzedni miesiąc",
+        "vs_last_year": "{delta} vs poprzedni rok",
+        "excluded_orders": "Nie uwzględniono {count} zamówień w innych walutach | Nie uwzględniono {count} zamówienia w innej walucie | Nie uwzględniono {count} zamówień w innych walutach | Nie uwzględniono {count} zamówień w innych walutach",
+        "recent_orders": {
+          "title": "Moje ostatnie zamówienia",
+          "view_all": "Wszystkie zamówienia",
+          "filter_all": "Wszystkie",
+          "empty": "Nie ma jeszcze zamówień",
+          "no_results": "Brak zamówień o tym statusie",
+          "load_failed": "Nie udało się wczytać zamówień"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Panel",
-        "last_orders_card": {
-          "title": "Ostatnie zamówienia",
-          "all_orders_link": "Wszystkie zamówienia",
-          "order_number_label": "Numer zamówienia",
-          "purchase_number_label": "Numer zamówienia",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Faktura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Brak zamówień",
-          "no_orders_message": "Nie ma jeszcze zamówień"
-        },
-        "monthly_report_card": {
-          "title": "Miesięczny raport wydatków",
-          "budget_title": "Budżet",
-          "total_spend_label": "Całkowicie wydane",
-          "spend_chart_alt": "Wykres wydatków"
-        },
-        "orders_status_card": {
-          "title": "Statusy zamówień"
-        },
-        "bulk_order_card": {
-          "title": "Panel dużych zamówień"
-        }
+        "title": "Panel"
       },
       "change_password": {
         "meta": {

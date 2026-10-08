@@ -63,7 +63,7 @@ export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
 // checks for the read permission itself (an admin/writer also carries it through checkPermissions'
 // isAdministrator shortcut or the role that grants access).
 export const SALES_REP_DOCUMENTS_READ_PERMISSION = "sales-rep-documents:read";
-// Layout block id — persisted as block.type in saved layouts, so it is load-bearing (see LAYOUT_SCOPE notes).
+// Layout block id — persisted as block.type in saved layouts, so it is load-bearing (see the saved-layout notes).
 export const DOCUMENTS_BLOCK_ID = "documents";
 export const DOCUMENTS_ROUTE_NAME = "SalesRepDocuments";
 export const DOCUMENTS_ROUTE_SEGMENT = "documents";
@@ -78,7 +78,7 @@ export const TASK_MANAGEMENT_MODULE_ID = "VirtoCommerce.TaskManagement";
 export const CALENDAR_ROUTE_NAME = "SalesRepCalendar";
 export const CALENDAR_ROUTE_SEGMENT = "calendar";
 export const CALENDAR_NAV_LINK_ID = "sales-rep-calendar";
-// Layout block id — persisted as block.type in saved layouts, so it is load-bearing (see LAYOUT_SCOPE notes).
+// Layout block id — persisted as block.type in saved layouts, so it is load-bearing (see the saved-layout notes).
 export const TASKS_BLOCK_ID = "tasks";
 // Page size for the Calendar page's task table (offset-as-cursor, like useSalesRepDocuments).
 export const TASKS_PAGE_SIZE = 15;
@@ -111,12 +111,8 @@ export const TOP_SELLERS_DEFAULT_TAKE = 5;
 // backend caches these criteria. The rule lists in useSalesRepRules stay cache-first: static data.
 export const HUB_FETCH_POLICY: WatchQueryFetchPolicy = "cache-and-network";
 
-// Saved layout (VCST-5367). The backend types `scope` as a free-form `String`, not an enum — an
-// unrecognized value does not error, it silently addresses a different (empty) document. So these
-// literals are load-bearing: changing one strands every layout already saved under the old value.
-// `layout/blocks.test.ts` pins them; the engine's own load-bearing literals live in @/shared/dashboard.
-export const DASHBOARD_LAYOUT_SCOPE = "dashboard";
-export const CUSTOMER_PROFILE_LAYOUT_SCOPE = "customerProfile";
+// Saved layout (VCST-5367): the module's two dashboards are `LAYOUT_SCOPES.salesRepDashboard` and
+// `LAYOUT_SCOPES.salesRepCustomerProfile` in @/shared/dashboard, beside the engine's other load-bearing literals.
 // Default row caps, per the design. Below the widgets' own page sizes, which stay the fallback for a
 // widget rendered outside a layout.
 export const ORDERS_DEFAULT_ROWS = 5;

@@ -27,7 +27,8 @@ vi.mock("../composables/useSalesRepCustomerWidgets", async () => {
   return { useSalesRepCustomerWidgets: () => ({ cards: ref([]) }) };
 });
 // The page owns the layout it hands the surface; the surface is stubbed, so the controller is never read.
-vi.mock("../composables/useSalesRepLayout", () => ({ useSalesRepLayout: () => ({ scope: "customerProfile" }) }));
+const useLayout = vi.hoisted(() => vi.fn(() => ({ scope: "salesRepCustomerProfile" })));
+vi.mock("@/shared/dashboard/composables/useLayout", () => ({ useLayout }));
 vi.mock("@/core/composables", async () => {
   const { computed, unref } = await import("vue");
   return {
@@ -81,6 +82,13 @@ describe("CustomerProfile states", () => {
 
     expect(emptyView(wrapper).exists()).toBe(false);
     expect(wrapper.find("layout-surface-stub").exists()).toBe(true);
+  });
+
+  // The scope names the stored document: another one would show this page the hub's arrangement, or an empty one.
+  it("drives the customer profile's own saved layout", () => {
+    createWrapper();
+
+    expect(useLayout).toHaveBeenCalledWith("salesRepCustomerProfile");
   });
 
   it("words an unserved or unknown organization as not found", () => {

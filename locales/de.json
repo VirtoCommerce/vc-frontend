@@ -616,6 +616,25 @@
         "click_to_copy": "Zum Kopieren anklicken",
         "clipboard_success": "Gutschein erfolgreich kopiert",
         "tap_to_copy": "Zum Kopieren tippen"
+      },
+      "dashboard": {
+        "orders_placed_week": "Bestellungen diese Woche",
+        "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
+        "orders_placed_ytd": "Bestellungen seit Jahresbeginn",
+        "avg_order_value": "Durchschn. Bestellwert",
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)",
+        "vs_last_week": "{delta} ggü. Vorwoche",
+        "vs_last_month": "{delta} ggü. Vormonat",
+        "vs_last_year": "{delta} ggü. Vorjahr",
+        "excluded_orders": "{count} Bestellung in anderer Währung nicht enthalten | {count} Bestellungen in anderen Währungen nicht enthalten",
+        "recent_orders": {
+          "title": "Meine letzten Bestellungen",
+          "view_all": "Alle Bestellungen",
+          "filter_all": "Alle",
+          "empty": "Es liegen noch keine Bestellungen vor",
+          "no_results": "Keine Bestellungen mit diesem Status",
+          "load_failed": "Bestellungen konnten nicht geladen werden"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Neueste Bestellungen",
-          "all_orders_link": "Alle Bestellungen",
-          "order_number_label": "Bestellnummer",
-          "purchase_number_label": "Einkaufsbestellung",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Rechnung",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Keine Bestellungen",
-          "no_orders_message": "Es liegen noch keine Bestellungen vor"
-        },
-        "monthly_report_card": {
-          "title": "Monatlicher Ausgabenbericht",
-          "budget_title": "Budget",
-          "total_spend_label": "Insgesamt ausgegeben",
-          "spend_chart_alt": "Ausgabenübersicht"
-        },
-        "orders_status_card": {
-          "title": "Bestellstatus"
-        },
-        "bulk_order_card": {
-          "title": "Großbestellung"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {

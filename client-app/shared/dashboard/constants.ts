@@ -2,6 +2,13 @@
 // unrecognized value does not error, it silently addresses a different (empty) document. So these literals are
 // load-bearing: changing one strands every layout already saved under the old value. `registry.test.ts` pins them.
 export const LAYOUT_SCHEMA_VERSION = 1;
+// The dashboards that keep a saved layout, one document per user, dashboard and store. A scope is also the
+// registry's name for a dashboard's blocks. Load-bearing like the rest: a renamed scope reads a new, empty document.
+export const LAYOUT_SCOPES = {
+  accountDashboard: "accountDashboard",
+  salesRepDashboard: "salesRepDashboard",
+  salesRepCustomerProfile: "salesRepCustomerProfile",
+} as const;
 // Ordered so serialization always emits regions in a stable sequence.
 export const LAYOUT_REGION_IDS = ["statistics", "mainLeft", "mainRight"] as const;
 

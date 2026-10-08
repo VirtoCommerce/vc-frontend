@@ -616,6 +616,25 @@
         "click_to_copy": "Clique para copiar",
         "clipboard_success": "Cupom copiado com sucesso",
         "tap_to_copy": "Toque para copiar"
+      },
+      "dashboard": {
+        "orders_placed_week": "Pedidos desta semana",
+        "orders_placed_mtd": "Pedidos no mês atual",
+        "orders_placed_ytd": "Pedidos do ano atual",
+        "avg_order_value": "Valor médio do pedido",
+        "per_order": "Média por pedido (ano atual)",
+        "vs_last_week": "{delta} vs semana passada",
+        "vs_last_month": "{delta} vs mês passado",
+        "vs_last_year": "{delta} vs ano passado",
+        "excluded_orders": "{count} pedido em outra moeda não incluído | {count} pedidos em outras moedas não incluídos",
+        "recent_orders": {
+          "title": "Meus pedidos recentes",
+          "view_all": "Todos os pedidos",
+          "filter_all": "Todos",
+          "empty": "Ainda não há pedidos",
+          "no_results": "Nenhum pedido com este status",
+          "load_failed": "Falha ao carregar os pedidos"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Painel",
-        "last_orders_card": {
-          "title": "Últimos pedidos",
-          "all_orders_link": "Todos os pedidos",
-          "order_number_label": "Número do pedido",
-          "purchase_number_label": "Número do pedido de compra",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Fatura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Sem pedidos",
-          "no_orders_message": "Ainda não há pedidos"
-        },
-        "monthly_report_card": {
-          "title": "Relatório de gastos mensais",
-          "budget_title": "Orçamento",
-          "total_spend_label": "Total gasto",
-          "spend_chart_alt": "Gráfico de gastos"
-        },
-        "orders_status_card": {
-          "title": "Status dos Pedidos"
-        },
-        "bulk_order_card": {
-          "title": "Pad de Pedido em Massa"
-        }
+        "title": "Painel"
       },
       "change_password": {
         "meta": {

@@ -2,17 +2,9 @@
 // saved document only adds order and hidden flags; registering here is all a widget needs to join
 // drag-and-drop, hiding and persistence.
 import { defineAsyncComponent, markRaw } from "vue";
-import { MIN_ROWS, registerBlock, statBlocks } from "@/shared/dashboard";
-import {
-  CUSTOMER_PROFILE_LAYOUT_SCOPE,
-  DASHBOARD_LAYOUT_SCOPE,
-  ORDERS_DEFAULT_ROWS,
-  ORDERS_MAX_ROWS,
-  TOP_SELLERS_DEFAULT_ROWS,
-  TOP_SELLERS_MAX_ROWS,
-} from "../constants";
+import { LAYOUT_SCOPES, MIN_ROWS, registerBlock, statBlocks } from "@/shared/dashboard";
+import { ORDERS_DEFAULT_ROWS, ORDERS_MAX_ROWS, TOP_SELLERS_DEFAULT_ROWS, TOP_SELLERS_MAX_ROWS } from "../constants";
 import { CUSTOMER_PROFILE_STAT_CARDS, DASHBOARD_STAT_CARDS } from "./stat-cards";
-import type { SalesRepLayoutScopeType } from "../types";
 import type { BlockSettingType, BlockType } from "@/shared/dashboard";
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
@@ -93,9 +85,9 @@ const CUSTOMER_PROFILE_BLOCKS: readonly BlockType[] = [
   },
 ];
 
-const SALES_REP_BLOCKS: Record<SalesRepLayoutScopeType, readonly BlockType[]> = {
-  [DASHBOARD_LAYOUT_SCOPE]: DASHBOARD_BLOCKS,
-  [CUSTOMER_PROFILE_LAYOUT_SCOPE]: CUSTOMER_PROFILE_BLOCKS,
+const SALES_REP_BLOCKS: Record<string, readonly BlockType[]> = {
+  [LAYOUT_SCOPES.salesRepDashboard]: DASHBOARD_BLOCKS,
+  [LAYOUT_SCOPES.salesRepCustomerProfile]: CUSTOMER_PROFILE_BLOCKS,
 };
 
 /** Every block both surfaces always have. The permission- and module-gated ones are registered by `init()`. */

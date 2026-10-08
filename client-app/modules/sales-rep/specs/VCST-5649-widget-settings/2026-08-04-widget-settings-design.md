@@ -2,6 +2,7 @@
 
 **Jira:** [VCST-5649](https://virtocommerce.atlassian.net/browse/VCST-5649) — "[FE] [Sales Rep] Hub and customer profile. Widget settings: number of rows and order statuses" (epic [VCST-5142](https://virtocommerce.atlassian.net/browse/VCST-5142) Sales Rep Hub).
 **Branch:** `feat/VCST-5649-srh-widget-settings` off `feat/VCST-5367-srh-layout-drag-and-drop` (PR #2400), not off `dev` — this ticket fills in the `settings` key that VCST-5367 deliberately left empty.
+**Superseded in part by VCST-6078 (2026-10-08):** the layout is stored by the core's `useLayout` (`client-app/shared/dashboard`) over x-frontend's `layout`/`saveLayout`, under the scopes `salesRepDashboard` and `salesRepCustomerProfile`. The module's own layout composable, operations and cache policies named below no longer exist; the rest of the design stands.
 
 ## Goal
 

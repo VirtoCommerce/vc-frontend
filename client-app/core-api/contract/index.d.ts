@@ -3934,6 +3934,25 @@ type LayoutControllerType = {
     /** Resolves `false` when the save failed or was refused; the draft is kept either way. */
     save: () => Promise<boolean>;
 };
+/**
+ * What `createLayoutController` drives one dashboard's layout over: where its document lives, and which blocks it is
+ * reconciled against.
+ */
+type LayoutControllerOptionsType = {
+    /** The dashboard; the backend keys the document by it, and its blocks are registered under it. */
+    scope: string;
+    /** Sent with every save: a user keeps one document per dashboard and store. */
+    storeId?: string;
+    /** Reads the saved document; resolves `null` (or `undefined`) when the user never saved this dashboard. */
+    load: () => Promise<SavedLayoutType | null | undefined>;
+    /** Replaces the whole document and resolves to it as stored — the controller trusts only an echo of what it sent. */
+    save: (command: LayoutInputType) => Promise<SavedLayoutType | null | undefined>;
+    /**
+     * The blocks the document is reconciled against; their region, order and `defaultHidden` are what a user who
+     * never saved sees. Called on every use, so a block registered later still joins.
+     */
+    defaults: () => readonly BlockType[];
+};
 /** What the statistics queries read off a layout: whether it is known yet, edit mode, and what is visible. */
 type LayoutVisibilityType = Pick<LayoutControllerType, "settled" | "editing" | "visibleIn">;
 /** What a dashboard's statistics composables take (`useStatDataNeeds`): which slices to ask for, and whether to
@@ -3941,6 +3960,37 @@ type LayoutVisibilityType = Pick<LayoutControllerType, "settled" | "editing" | "
 type StatDataNeedsType<TNeed extends string> = {
     needs: Readonly<Ref<ReadonlySet<TNeed>>>;
     ready: Readonly<Ref<boolean>>;
+};
+type SavedLayoutSettingType = {
+    key: string;
+    value?: unknown;
+};
+type SavedLayoutBlockType = {
+    type: string;
+    hidden: boolean;
+    settings?: readonly SavedLayoutSettingType[];
+};
+type SavedLayoutRegionType = {
+    blocks: readonly SavedLayoutBlockType[];
+};
+type SavedLayoutType = {
+    regions: readonly SavedLayoutRegionType[];
+};
+type LayoutInputBlockType = {
+    id: string;
+    type: string;
+    hidden: boolean;
+    settings: SavedLayoutSettingType[];
+};
+type LayoutInputRegionType = {
+    id: LayoutRegionIdType;
+    blocks: LayoutInputBlockType[];
+};
+type LayoutInputType = {
+    scope: string;
+    storeId?: string;
+    schemaVersion: number;
+    regions: LayoutInputRegionType[];
 };
 /**
  * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
@@ -4040,6 +4090,20 @@ interface ILayoutBlockChromeType {
 declare function useBlockChrome(): ILayoutBlockChromeType | undefined;
 
 /**
+ * One dashboard's layout over whatever stores it: `load` reads the saved document (at once), `save` replaces it, and
+ * `defaults` names the blocks it is reconciled against. `startEdit` snapshots into a draft, every change targets the
+ * draft, and `save` writes the whole document in one call — the backend replaces, not merges. `reset` refills the
+ * draft from the defaults but still needs a save, so a stray click is recoverable.
+ */
+declare function createLayoutController(options: LayoutControllerOptionsType): LayoutControllerType;
+/**
+ * The signed-in user's layout of one dashboard, as the backend stores it: `createLayoutController` over the `layout`
+ * and `saveLayout` operations, for the current store, reconciled against the blocks registered under `scope`. The
+ * page creates it and hands it to `<LayoutSurface :layout>`.
+ */
+declare function useLayout(scope: string): LayoutControllerType;
+
+/**
  * The half of a KPI card no query decides. `TNeed` is the dashboard's own vocabulary of data needs: tokens
  * that name a card's metric, each standing for whatever the dashboard's queries must ask for to show it.
  */
@@ -4107,6 +4171,12 @@ declare function buildStatCards<TNeed extends string, TQuery extends string, TDe
  * while editing, because the parked zone renders the hidden cards too and they would otherwise sit at zero.
  */
 declare function useStatDataNeeds<TNeed extends string>(layout: LayoutVisibilityType, cards: readonly IStatCardDefType<TNeed>[]): StatDataNeedsType<TNeed>;
+
+declare const LAYOUT_SCOPES: {
+    readonly accountDashboard: "accountDashboard";
+    readonly salesRepDashboard: "salesRepDashboard";
+    readonly salesRepCustomerProfile: "salesRepCustomerProfile";
+};
 
 /**
  * Adds a block to a dashboard; the dashboard (`scope`) is created by its first block. Rules for a contributor:
@@ -4336,8 +4406,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, EXTENSION_NAMES, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, _default$2 as OrderStatus, ROUTES, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$g as VcAlert, _default$o as VcBadge, _default$n as VcBreadcrumbs, _default$f as VcButton, _default$m as VcCheckbox, _default$e as VcEmptyView, _default$l as VcIcon, _default$k as VcImage, _default$d as VcInput, _default$j as VcLabel, _default$i as VcLink, _default$c as VcLoaderOverlay, _default$h as VcMarkdownRender, _default$b as VcMenuItem, _default$7 as VcModal, _default$a as VcSelect, _default$6 as VcTable, _default$5 as VcTableColumn, _default$9 as VcTextarea, _default$8 as VcTypography, _default$4 as VcWidget, _default$3 as VcWidgetSkeleton, apolloClient, buildStatCards, buildStatisticsWindows, formatSignedPercent, formatStatCount, formatStatMoney, getProductRoute, globals, graphqlClient, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statCardState, statDataNeeds, toEndDateFilterValue, toStartDateFilterValue, toggleTabRule, uiKit, unregisterBlock, useBlockChrome, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useStatDataNeeds, useUser, useWishlistSharingScopes, visibleTabRules };
-export type { BlockSettingType, BlockSettingsType, BlockType, ExtendedMenuLinkType, I18n, ILanguage, ILayoutBlockChromeType, IStatBlock, IStatCardDefType, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LayoutControllerType, LayoutRegionIdType, LayoutStateType, LayoutVisibilityType, LocaleLoaderType, MenuType, SignedPercentType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { CORE_VERSION, EXTENSION_NAMES, LAYOUT_SCOPES, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, _default$2 as OrderStatus, ROUTES, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$g as VcAlert, _default$o as VcBadge, _default$n as VcBreadcrumbs, _default$f as VcButton, _default$m as VcCheckbox, _default$e as VcEmptyView, _default$l as VcIcon, _default$k as VcImage, _default$d as VcInput, _default$j as VcLabel, _default$i as VcLink, _default$c as VcLoaderOverlay, _default$h as VcMarkdownRender, _default$b as VcMenuItem, _default$7 as VcModal, _default$a as VcSelect, _default$6 as VcTable, _default$5 as VcTableColumn, _default$9 as VcTextarea, _default$8 as VcTypography, _default$4 as VcWidget, _default$3 as VcWidgetSkeleton, apolloClient, buildStatCards, buildStatisticsWindows, createLayoutController, formatSignedPercent, formatStatCount, formatStatMoney, getProductRoute, globals, graphqlClient, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statCardState, statDataNeeds, toEndDateFilterValue, toStartDateFilterValue, toggleTabRule, uiKit, unregisterBlock, useBlockChrome, useBreadcrumbs, useExtensionRegistry, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useStatDataNeeds, useUser, useWishlistSharingScopes, visibleTabRules };
+export type { BlockSettingType, BlockSettingsType, BlockType, ExtendedMenuLinkType, I18n, ILanguage, ILayoutBlockChromeType, IStatBlock, IStatCardDefType, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LayoutControllerOptionsType, LayoutControllerType, LayoutRegionIdType, LayoutStateType, LayoutVisibilityType, LocaleLoaderType, MenuType, SignedPercentType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;

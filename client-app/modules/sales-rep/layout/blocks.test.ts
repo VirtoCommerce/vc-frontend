@@ -1,34 +1,27 @@
 import { describe, expect, it, vi } from "vitest";
 import { Logger } from "@/core/utilities";
-import { getBlock, getBlockRegistry, reconcileLayout, registerBlock, serializeLayout } from "@/shared/dashboard";
 import {
-  CUSTOMER_PROFILE_LAYOUT_SCOPE,
-  DASHBOARD_LAYOUT_SCOPE,
-  DOCUMENTS_BLOCK_ID,
-  DOCUMENTS_DEFAULT_ROWS,
-  DOCUMENTS_MAX_ROWS,
-} from "../constants";
+  getBlock,
+  getBlockRegistry,
+  LAYOUT_SCOPES,
+  reconcileLayout,
+  registerBlock,
+  serializeLayout,
+} from "@/shared/dashboard";
+import { DOCUMENTS_BLOCK_ID, DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_MAX_ROWS } from "../constants";
 import { registerSalesRepBlocks } from "./blocks";
 import { documentsBlock } from "./documents-block";
 import { CUSTOMER_PROFILE_STAT_CARDS, DASHBOARD_STAT_CARDS } from "./stat-cards";
-import type { SalesRepLayoutScopeType } from "../types";
 
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 
 // As init() does. Once per file: the registry is module state, and a second registration would only warn.
 registerSalesRepBlocks();
 
-const SCOPES: SalesRepLayoutScopeType[] = [DASHBOARD_LAYOUT_SCOPE, CUSTOMER_PROFILE_LAYOUT_SCOPE];
-
-// The backend types `scope` as a free-form `String`. An unrecognized value does not error — it addresses a
-// different, empty document. Changing either literal silently strands every layout already saved under the
-// old one, so they are pinned rather than merely used.
-describe("layout vocabulary", () => {
-  it("pins the scope literals", () => {
-    expect(DASHBOARD_LAYOUT_SCOPE).toBe("dashboard");
-    expect(CUSTOMER_PROFILE_LAYOUT_SCOPE).toBe("customerProfile");
-  });
-});
+// The module's two dashboards. Their scope literals are pinned with the engine's (shared/dashboard/registry.test.ts).
+const DASHBOARD = LAYOUT_SCOPES.salesRepDashboard;
+const CUSTOMER_PROFILE = LAYOUT_SCOPES.salesRepCustomerProfile;
+const SCOPES = [DASHBOARD, CUSTOMER_PROFILE];
 
 describe("sales-rep blocks", () => {
   // Ids are persisted as `block.type`; the engine keeps the first of two and warns about the second.
@@ -44,8 +37,8 @@ describe("sales-rep blocks", () => {
   });
 
   it.each([
-    [DASHBOARD_LAYOUT_SCOPE, DASHBOARD_STAT_CARDS],
-    [CUSTOMER_PROFILE_LAYOUT_SCOPE, CUSTOMER_PROFILE_STAT_CARDS],
+    [DASHBOARD, DASHBOARD_STAT_CARDS],
+    [CUSTOMER_PROFILE, CUSTOMER_PROFILE_STAT_CARDS],
   ] as const)("makes a %s stat block of every card, captioned like the card", (scope, cards) => {
     const statBlocks = getBlockRegistry(scope).filter((block) => block.region === "statistics");
 
@@ -55,8 +48,8 @@ describe("sales-rep blocks", () => {
   });
 
   it("puts the profile's quick actions and info in the rail", () => {
-    expect(getBlock(CUSTOMER_PROFILE_LAYOUT_SCOPE, "actions")?.region).toBe("mainRight");
-    expect(getBlock(CUSTOMER_PROFILE_LAYOUT_SCOPE, "info")?.region).toBe("mainRight");
+    expect(getBlock(CUSTOMER_PROFILE, "actions")?.region).toBe("mainRight");
+    expect(getBlock(CUSTOMER_PROFILE, "info")?.region).toBe("mainRight");
   });
 
   // The orders widget's filter chips depend on it; nothing else would notice it going missing.
@@ -88,8 +81,8 @@ describe("documents block", () => {
 // (VCST-5730) — a synthetic registry cannot catch the runtime-registered block drifting out of the
 // persistence contract (id/type, region membership, settings vocabulary).
 describe("documents block persistence", () => {
-  registerBlock(DASHBOARD_LAYOUT_SCOPE, documentsBlock);
-  const dashboardRegistry = getBlockRegistry(DASHBOARD_LAYOUT_SCOPE);
+  registerBlock(DASHBOARD, documentsBlock);
+  const dashboardRegistry = getBlockRegistry(DASHBOARD);
 
   it("reconciles into the visible half of mainRight by default", () => {
     const state = reconcileLayout(null, dashboardRegistry);
@@ -104,7 +97,7 @@ describe("documents block persistence", () => {
     state.regions.mainRight.visible = state.regions.mainRight.visible.filter((id) => id !== DOCUMENTS_BLOCK_ID);
     state.regions.mainRight.hidden.push(DOCUMENTS_BLOCK_ID);
 
-    const payload = serializeLayout(state, DASHBOARD_LAYOUT_SCOPE, dashboardRegistry, "B2B-store");
+    const payload = serializeLayout(state, DASHBOARD, dashboardRegistry, "B2B-store");
     const mainRight = payload.regions.find((region) => region.id === "mainRight");
 
     expect(mainRight?.blocks).toContainEqual({
@@ -120,10 +113,7 @@ describe("documents block persistence", () => {
     state.regions.mainRight.visible = state.regions.mainRight.visible.filter((id) => id !== DOCUMENTS_BLOCK_ID);
     state.regions.mainRight.hidden.push(DOCUMENTS_BLOCK_ID);
 
-    const readBack = reconcileLayout(
-      serializeLayout(state, DASHBOARD_LAYOUT_SCOPE, dashboardRegistry),
-      dashboardRegistry,
-    );
+    const readBack = reconcileLayout(serializeLayout(state, DASHBOARD, dashboardRegistry), dashboardRegistry);
 
     expect(readBack.regions.mainRight.hidden).toContain(DOCUMENTS_BLOCK_ID);
     expect(readBack.regions.mainRight.visible).not.toContain(DOCUMENTS_BLOCK_ID);

@@ -109,6 +109,26 @@ export type LayoutControllerType = {
   save: () => Promise<boolean>;
 };
 
+/**
+ * What `createLayoutController` drives one dashboard's layout over: where its document lives, and which blocks it is
+ * reconciled against.
+ */
+export type LayoutControllerOptionsType = {
+  /** The dashboard; the backend keys the document by it, and its blocks are registered under it. */
+  scope: string;
+  /** Sent with every save: a user keeps one document per dashboard and store. */
+  storeId?: string;
+  /** Reads the saved document; resolves `null` (or `undefined`) when the user never saved this dashboard. */
+  load: () => Promise<SavedLayoutType | null | undefined>;
+  /** Replaces the whole document and resolves to it as stored — the controller trusts only an echo of what it sent. */
+  save: (command: LayoutInputType) => Promise<SavedLayoutType | null | undefined>;
+  /**
+   * The blocks the document is reconciled against; their region, order and `defaultHidden` are what a user who
+   * never saved sees. Called on every use, so a block registered later still joins.
+   */
+  defaults: () => readonly BlockType[];
+};
+
 /** What the statistics queries read off a layout: whether it is known yet, edit mode, and what is visible. */
 export type LayoutVisibilityType = Pick<LayoutControllerType, "settled" | "editing" | "visibleIn">;
 

@@ -1,10 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { computed } from "vue";
-import { getBlockRegistry } from "@/shared/dashboard";
+import { getBlockRegistry, LAYOUT_SCOPES } from "@/shared/dashboard";
 import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
 import { useSalesRepDashboardWidgets } from "../composables/useSalesRepDashboardWidgets";
 import { registerSalesRepBlocks } from "./blocks";
-import type { SalesRepLayoutScopeType } from "../types";
 import type { LayoutVisibilityType } from "@/shared/dashboard";
 
 const apolloMock = await vi.hoisted(async () => {
@@ -34,8 +33,7 @@ const layout: LayoutVisibilityType = {
   visibleIn: () => [],
 };
 
-const statBlocks = (scope: SalesRepLayoutScopeType) =>
-  getBlockRegistry(scope).filter((block) => block.region === "statistics");
+const statBlocks = (scope: string) => getBlockRegistry(scope).filter((block) => block.region === "statistics");
 
 const byKey = (entries: readonly { key: string; label: string }[]) =>
   [...entries].sort((a, b) => a.key.localeCompare(b.key));
@@ -48,8 +46,8 @@ const byKey = (entries: readonly { key: string; label: string }[]) =>
  */
 describe("stat cards and layout registry", () => {
   it.each([
-    ["dashboard", () => useSalesRepDashboardWidgets(layout).cards.value],
-    ["customerProfile", () => useSalesRepCustomerWidgets(layout, () => "org-1", true).cards.value],
+    [LAYOUT_SCOPES.salesRepDashboard, () => useSalesRepDashboardWidgets(layout).cards.value],
+    [LAYOUT_SCOPES.salesRepCustomerProfile, () => useSalesRepCustomerWidgets(layout, () => "org-1", true).cards.value],
   ] as const)("%s: cards and blocks agree on every id and caption", (scope, getCards) => {
     const cards = byKey(getCards().map((card) => ({ key: card.key, label: card.labelKey })));
     const blocks = byKey(statBlocks(scope).map((block) => ({ key: block.id, label: block.titleKey })));
@@ -62,9 +60,11 @@ describe("stat cards and layout registry", () => {
   it("emits every card before any statistics have arrived", () => {
     apolloMock.result.value = undefined;
 
-    expect(useSalesRepDashboardWidgets(layout).cards.value).toHaveLength(statBlocks("dashboard").length);
+    expect(useSalesRepDashboardWidgets(layout).cards.value).toHaveLength(
+      statBlocks(LAYOUT_SCOPES.salesRepDashboard).length,
+    );
     expect(useSalesRepCustomerWidgets(layout, () => "org-1", true).cards.value).toHaveLength(
-      statBlocks("customerProfile").length,
+      statBlocks(LAYOUT_SCOPES.salesRepCustomerProfile).length,
     );
   });
 });

@@ -616,6 +616,25 @@
         "click_to_copy": "Clicca per copiare",
         "clipboard_success": "Coupon copiato con successo",
         "tap_to_copy": "Tocca per copiare"
+      },
+      "dashboard": {
+        "orders_placed_week": "Ordini di questa settimana",
+        "orders_placed_mtd": "Ordini dall’inizio del mese",
+        "orders_placed_ytd": "Ordini dall'inizio dell'anno",
+        "avg_order_value": "Valore medio ordine",
+        "per_order": "Media per ordine (anno in corso)",
+        "vs_last_week": "{delta} vs settimana scorsa",
+        "vs_last_month": "{delta} vs mese scorso",
+        "vs_last_year": "{delta} vs anno scorso",
+        "excluded_orders": "{count} ordine in un'altra valuta non incluso | {count} ordini in altre valute non inclusi",
+        "recent_orders": {
+          "title": "I miei ordini recenti",
+          "view_all": "Tutti gli ordini",
+          "filter_all": "Tutti",
+          "empty": "Non ci sono ancora ordini",
+          "no_results": "Nessun ordine con questo stato",
+          "load_failed": "Impossibile caricare gli ordini"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Ultimi ordini",
-          "all_orders_link": "Tutti gli ordini",
-          "order_number_label": "Numero ordine",
-          "purchase_number_label": "Ordine d'acquisto",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Fattura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Nessun ordine",
-          "no_orders_message": "Non ci sono ancora ordini"
-        },
-        "monthly_report_card": {
-          "title": "Rapporto di spesa mensile",
-          "budget_title": "Budget",
-          "total_spend_label": "Spesa totale",
-          "spend_chart_alt": "Grafico delle spese"
-        },
-        "orders_status_card": {
-          "title": "Stato degli ordini"
-        },
-        "bulk_order_card": {
-          "title": "Blocco ordine all'ingrosso"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {

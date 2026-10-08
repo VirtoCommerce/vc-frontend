@@ -616,6 +616,25 @@
         "click_to_copy": "コピーするにはクリック",
         "clipboard_success": "クーポンをコピーしました",
         "tap_to_copy": "タップしてコピー"
+      },
+      "dashboard": {
+        "orders_placed_week": "今週の注文",
+        "orders_placed_mtd": "今月の注文",
+        "orders_placed_ytd": "今年の注文",
+        "avg_order_value": "平均注文額",
+        "per_order": "平均注文単価 (今年度)",
+        "vs_last_week": "先週比 {delta}",
+        "vs_last_month": "先月比 {delta}",
+        "vs_last_year": "前年比 {delta}",
+        "excluded_orders": "他の通貨の注文 {count} 件は含まれていません",
+        "recent_orders": {
+          "title": "自分の最近の注文",
+          "view_all": "すべての注文",
+          "filter_all": "すべて",
+          "empty": "注文履歴がありません",
+          "no_results": "このステータスの注文はありません",
+          "load_failed": "注文を読み込めませんでした"
+        }
       }
     },
     "sign_in": {
@@ -1328,31 +1347,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "ダッシュボード",
-        "last_orders_card": {
-          "title": "最近の注文",
-          "all_orders_link": "すべての注文",
-          "order_number_label": "注文番号",
-          "purchase_number_label": "発注番号",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "請求書",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "注文なし",
-          "no_orders_message": "注文履歴がありません"
-        },
-        "monthly_report_card": {
-          "title": "月間支出レポート",
-          "budget_title": "予算",
-          "total_spend_label": "総支出額",
-          "spend_chart_alt": "支出チャート"
-        },
-        "orders_status_card": {
-          "title": "注文状況"
-        },
-        "bulk_order_card": {
-          "title": "一括注文パッド"
-        }
+        "title": "ダッシュボード"
       },
       "change_password": {
         "meta": {

@@ -1,3 +1,4 @@
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
 import { createFakeLayout, registerTestDashboard } from "../../layout-test-utils";
@@ -11,13 +12,16 @@ vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 const SCOPE = "pageSpec";
 registerTestDashboard(SCOPE);
 
-// useLayoutPage registers watchers, so each call needs an owning scope, stopped after the test.
+// useLayoutPage registers watchers, so each call needs an owning scope, stopped after the test. Async because the
+// layout is read first, as on a page: until then it cannot be edited.
 let scopes: EffectScope[] = [];
 
-function withPage(layout: FakeLayoutType = createFakeLayout(SCOPE)) {
+async function withPage(layout: FakeLayoutType = createFakeLayout(SCOPE)) {
   const owner = effectScope();
   scopes.push(owner);
-  return { layout, page: owner.run(() => useLayoutPage(layout))! };
+  const page = owner.run(() => useLayoutPage(layout))!;
+  await flushPromises();
+  return { layout, page };
 }
 
 afterEach(() => {
@@ -44,7 +48,7 @@ describe("useLayoutPage", () => {
   // the toggle reclaims it; a failure keeps the bar mounted, so nothing else would.
   it("returns focus to Save when a save fails", async () => {
     renderChrome();
-    const { layout, page } = withPage();
+    const { layout, page } = await withPage();
     layout.failNextSave.value = true;
     page.startEdit();
 
@@ -58,7 +62,7 @@ describe("useLayoutPage", () => {
 
   it("returns focus to the edit toggle when edit mode ends", async () => {
     renderChrome();
-    const { page } = withPage();
+    const { page } = await withPage();
     page.startEdit();
 
     await page.save();
@@ -70,7 +74,7 @@ describe("useLayoutPage", () => {
 
   // Nothing else tells a screen reader the surface changed, or that the arrow keys do anything.
   it("announces edit mode and the keyboard gesture on entry", async () => {
-    const { page } = withPage();
+    const { page } = await withPage();
 
     page.startEdit();
     await nextTick();
@@ -81,7 +85,7 @@ describe("useLayoutPage", () => {
 
   // VcAlert carries no live-region semantics, so without this a failed save is visual only.
   it("announces a failed save", async () => {
-    const { layout, page } = withPage();
+    const { layout, page } = await withPage();
     layout.failNextSave.value = true;
     page.startEdit();
 
@@ -92,8 +96,8 @@ describe("useLayoutPage", () => {
   });
 
   // Both widget columns share one tray, so a page reads them as a single list.
-  it("gathers hidden widgets from both columns", () => {
-    const { page } = withPage();
+  it("gathers hidden widgets from both columns", async () => {
+    const { page } = await withPage();
     page.startEdit();
 
     page.toggleHidden("list", true);
@@ -104,8 +108,8 @@ describe("useLayoutPage", () => {
 
   // The registry is the only place a block's props are declared, and the surface binds them blind. A
   // widget silently losing one (e.g. `filterable` on a list) drops a feature with nothing failing.
-  it("hands a block its registry props, and an empty object when it has none", () => {
-    const { page } = withPage();
+  it("hands a block its registry props, and an empty object when it has none", async () => {
+    const { page } = await withPage();
 
     expect(page.propsOf("list")).toEqual({ filterable: true });
     expect(page.propsOf("notes")).toEqual({});
@@ -114,8 +118,8 @@ describe("useLayoutPage", () => {
     expect(page.propsOf("nonexistent")).toEqual({});
   });
 
-  it("resolves a widget's component from the registry, and none for a stat card or an unknown id", () => {
-    const { page } = withPage();
+  it("resolves a widget's component from the registry, and none for a stat card or an unknown id", async () => {
+    const { page } = await withPage();
 
     expect(page.componentOf("side")).toBeDefined();
     expect(page.componentOf("alpha")).toBeUndefined();

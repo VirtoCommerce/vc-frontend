@@ -1,8 +1,5 @@
 import type { OrdersFilterDataType } from "@/shared/account/types";
 
-/** The module's two layout surfaces. Free-form `String` server-side — the literals live in constants.ts. */
-export type SalesRepLayoutScopeType = "dashboard" | "customerProfile";
-
 // View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
 // Only active reps ever reach the client; filtering is server-side.
 export type SalesRepType = { id: string; name: string; email: string; phone: string };

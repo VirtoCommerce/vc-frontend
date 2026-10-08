@@ -10,14 +10,13 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { LAYOUT_SCOPES, useLayout } from "@/shared/dashboard";
 import { useSalesRepDashboardWidgets } from "../composables/useSalesRepDashboardWidgets";
-import { useSalesRepLayout } from "../composables/useSalesRepLayout";
-import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 import LayoutSurface from "@/shared/dashboard/components/layout-surface.vue";
 
 const { t } = useI18n();
 // The page owns the layout: the surface renders it, and the statistics queries are shaped from it.
-const layout = useSalesRepLayout(DASHBOARD_LAYOUT_SCOPE);
+const layout = useLayout(LAYOUT_SCOPES.salesRepDashboard);
 const { cards } = useSalesRepDashboardWidgets(layout);
 </script>
 

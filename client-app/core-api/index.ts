@@ -89,15 +89,18 @@ export type {
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 
-// Dashboard layout engine (VCST-6078). A plugin's dashboard page creates a layout controller, renders it with
-// `LayoutSurface`, and contributes blocks with `registerBlock` from its `init()`; its widgets render inside
-// `LayoutWidget`, which reads the block's edit-mode chrome through `useBlockChrome`. The stat helpers turn a
-// card table into blocks, query needs and per-card state. Props of `LayoutSurface` and `LayoutWidget` are
-// contract: renaming or removing one is a breaking change.
+// Dashboard layout engine (VCST-6078). A plugin's dashboard page creates a layout controller — `useLayout` over the
+// backend's per-user `layout`/`saveLayout`, keyed by one of `LAYOUT_SCOPES`, or `createLayoutController` over any
+// other storage — renders it with `LayoutSurface`, and contributes blocks with `registerBlock` from its `init()`; its
+// widgets render inside `LayoutWidget`, which reads the block's edit-mode chrome through `useBlockChrome`. The stat
+// helpers turn a card table into blocks, query needs and per-card state. Props of `LayoutSurface` and `LayoutWidget`
+// are contract: renaming or removing one is a breaking change.
 export { default as LayoutSurface } from "@/shared/dashboard/components/layout-surface.vue";
 export { default as LayoutWidget } from "@/shared/dashboard/components/layout-widget.vue";
 export { useBlockChrome } from "@/shared/dashboard/composables/useBlockChrome";
+export { createLayoutController, useLayout } from "@/shared/dashboard/composables/useLayout";
 export { useStatDataNeeds } from "@/shared/dashboard/composables/useStatDataNeeds";
+export { LAYOUT_SCOPES } from "@/shared/dashboard/constants";
 export { registerBlock, unregisterBlock } from "@/shared/dashboard/registry";
 export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "@/shared/dashboard/settings";
 export { buildStatCards, statBlocks, statCardState, statDataNeeds } from "@/shared/dashboard/stat-cards";
@@ -121,6 +124,7 @@ export type {
   BlockType,
   IStatBlock,
   IWidgetBlock,
+  LayoutControllerOptionsType,
   LayoutControllerType,
   LayoutRegionIdType,
   LayoutStateType,
