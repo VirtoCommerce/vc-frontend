@@ -7,6 +7,11 @@ const authorizeWithGrant = vi.fn();
 const startSession = vi.fn();
 const endSession = vi.fn();
 const emit = vi.fn(() => Promise.resolve());
+const replace = vi.fn(() => Promise.resolve());
+
+vi.mock("vue-router", () => ({
+  useRouter: () => ({ replace }),
+}));
 
 vi.mock("@/core/composables/useAuth", () => ({
   useAuth: () => ({ authorizeWithGrant }),
@@ -63,9 +68,10 @@ describe("punchout session page", () => {
     expect(startSession).toHaveBeenCalledOnce();
     expect(emit).toHaveBeenCalledWith("reload-and-open-main-page", null, "others");
     expect(globalThis.location.href).toBe("/");
+    expect(replace).not.toHaveBeenCalled();
   });
 
-  it("keeps the current user and the other tabs untouched when the grant fails", async () => {
+  it("keeps the current user and the other tabs untouched and shows the no-access page when the grant fails", async () => {
     authorizeWithGrant.mockResolvedValue({ error: "invalid_grant" });
 
     mountPage();
@@ -75,6 +81,7 @@ describe("punchout session page", () => {
     expect(startSession).not.toHaveBeenCalled();
     expect(endSession).not.toHaveBeenCalled();
     expect(emit).not.toHaveBeenCalled();
-    expect(globalThis.location.href).toBe("/");
+    expect(globalThis.location.href).toBe("");
+    expect(replace).toHaveBeenCalledWith({ name: "NoAccess" });
   });
 });

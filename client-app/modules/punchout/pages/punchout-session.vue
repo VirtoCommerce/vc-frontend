@@ -4,6 +4,7 @@
 
 <script lang="ts" setup>
 import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useAuth } from "@/core/composables/useAuth";
 import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
@@ -23,10 +24,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { authorizeWithGrant } = useAuth();
 const { startSession } = usePunchoutSession();
 const broadcast = useBroadcast();
-
-function leave() {
-  location.href = "/";
-}
+const router = useRouter();
 
 onMounted(async () => {
   try {
@@ -48,14 +46,18 @@ onMounted(async () => {
 
       // Tokens are already persisted, so other tabs read the new session on reload.
       void broadcast.emit(reloadAndOpenMainPage, null, TabsType.OTHERS);
-    } else {
-      // A failed grant keeps the current tokens/active punchout session
-      Logger.error("punchout/activate", response?.error ?? "The punchout grant returned an incomplete token response");
+
+      // The app has to start over with the new tokens
+      location.href = "/";
+      return;
     }
+
+    Logger.error("punchout/activate", response?.error ?? "The punchout grant returned an incomplete token response");
   } catch (error) {
     Logger.error("punchout/activate", error);
   }
 
-  leave();
+  // Failed grant keeps the current tokens/active punchout session
+  void router.replace({ name: "NoAccess" });
 });
 </script>
