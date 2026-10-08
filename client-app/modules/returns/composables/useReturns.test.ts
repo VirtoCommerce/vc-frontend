@@ -21,6 +21,7 @@ const permissions = ref<string[]>([]);
 
 const ownResult = ref<GetReturnsQuery>();
 const organizationResult = ref<GetOrganizationReturnsQuery>();
+let ownVariables: MaybeRefOrGetter<GetReturnsQueryVariables>;
 let ownEnabled: MaybeRef<boolean> | undefined;
 let organizationVariables: MaybeRefOrGetter<GetOrganizationReturnsQueryVariables>;
 let organizationEnabled: MaybeRef<boolean> | undefined;
@@ -42,7 +43,8 @@ vi.mock("@/shared/account/composables/useUser", () => ({
 }));
 
 vi.mock("@/modules/returns/api/graphql/queries/getReturns", () => ({
-  useGetReturnsQuery: (_: MaybeRefOrGetter<GetReturnsQueryVariables>, enabled?: MaybeRef<boolean>) => {
+  useGetReturnsQuery: (value: MaybeRefOrGetter<GetReturnsQueryVariables>, enabled?: MaybeRef<boolean>) => {
+    ownVariables = value;
     ownEnabled = enabled;
     return { loading: ref(false), result: ownResult };
   },
@@ -114,6 +116,16 @@ describe("useReturns scope", () => {
       first: 10,
       after: "10",
     });
+  });
+
+  it.each(["-1", "0", "first"])("reads page %s from the link as the first page", (value) => {
+    // A hand-edited link: a negative offset reached the database and the list showed "no returns yet".
+    route.query = { page: value };
+
+    const { page } = useReturns();
+
+    expect(page.value).toBe(1);
+    expect(toValue(ownVariables)).toMatchObject({ first: 10, after: "0" });
   });
 
   it("never asks for the organization without the permission, whatever the link says", () => {

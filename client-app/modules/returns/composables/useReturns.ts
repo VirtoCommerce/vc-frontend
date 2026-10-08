@@ -50,7 +50,7 @@ export function useReturns() {
     startDate: asString(route.query.startDate) || undefined,
     endDate: asString(route.query.endDate) || undefined,
     sort: asString(route.query.sort) || DEFAULT_SORT.toString(),
-    page: Number.parseInt(asString(route.query.page), 10) || 1,
+    page: Math.max(Number.parseInt(asString(route.query.page), 10) || 1, 1),
   }));
 
   const scope = computed(() => state.value.scope);
