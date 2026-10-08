@@ -108,3 +108,63 @@ describe("PluginRoutePlaceholder", () => {
     expect(wrapper.find(".loader").exists()).toBe(true);
   });
 });
+
+describe("PluginRoutePlaceholder and the organization gate", () => {
+  beforeEach(() => {
+    resetPluginStatuses();
+  });
+
+  // The host's guard (router/index.ts), with a user who belongs to no organization.
+  async function openAsUserWithoutOrganization(realRouteMeta: Record<string, unknown>) {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: "/account", name: "Account", component: { template: "<p class='account' />" } },
+        {
+          path: "/company",
+          name: "Company",
+          component: Layout,
+          children: [],
+          meta: { requiresOrganization: true },
+        },
+      ],
+    });
+    router.beforeEach((to) => (to.meta.requiresOrganization ? { name: "Account" } : true));
+    setPluginStatus("p", "pending");
+    const applied = applyContributions(
+      "p",
+      { format: 1, routes: [{ path: "dashboard", parent: "Company", name: "HubDashboard" }] },
+      context,
+      router,
+    );
+    await router.push("/company/dashboard");
+    const wrapper = mount(defineComponent({ render: () => h(RouterView) }), {
+      global: { plugins: [router], stubs: { VcLoader: { template: "<i class='loader' />" } } },
+    });
+    await flushPromises();
+    const onPlaceholder = router.currentRoute.value.fullPath;
+
+    router.addRoute("Company", { path: "dashboard", name: "HubDashboard", component: RealPage, meta: realRouteMeta });
+    releaseContributions(applied, router, true);
+    setPluginStatus("p", "loaded");
+    await flushPromises();
+    await flushPromises();
+
+    return { router, wrapper, onPlaceholder };
+  }
+
+  it("keeps the deep link of a route that clears the parent's gate", async () => {
+    const { router, wrapper, onPlaceholder } = await openAsUserWithoutOrganization({ requiresOrganization: false });
+
+    expect(onPlaceholder).toBe("/company/dashboard");
+    expect(router.currentRoute.value.fullPath).toBe("/company/dashboard");
+    expect(wrapper.find(".real-page").exists()).toBe(true);
+  });
+
+  it("still applies the gate, once the plugin settles, to a route that keeps it", async () => {
+    const { router, onPlaceholder } = await openAsUserWithoutOrganization({});
+
+    expect(onPlaceholder).toBe("/company/dashboard");
+    expect(router.currentRoute.value.name).toBe("Account");
+  });
+});

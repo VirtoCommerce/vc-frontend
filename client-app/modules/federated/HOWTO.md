@@ -527,6 +527,9 @@ What the host does with it, before any of the plugin's code is fetched:
   again — to the route your `init()` registered under that name, or to the host's 404 if it never
   did or the plugin failed. Your own `beforeEnter` guards still run on the real route; if one is a
   permission check, put it in `when` too so no placeholder exists for a user who cannot pass it.
+  The parent's organization gate (`requiresOrganization`) is deferred the same way: the placeholder
+  skips it, and the second navigation applies it with your route's own meta — so a route that clears
+  it keeps the deep link of a user with no organization, and one that keeps it redirects them then.
 - **Menu entries** render before your chunk loads. Register the same `id` from `init()` and yours
   replaces the declared one; if the plugin fails, the declared ones are withdrawn. An `id` the menu
   already has — the host's or another plugin's — is refused, so give yours a plugin-specific one; your
