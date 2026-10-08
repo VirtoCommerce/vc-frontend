@@ -128,6 +128,33 @@ describe("useReturns scope", () => {
     expect(toValue(ownVariables)).toMatchObject({ first: 10, after: "0" });
   });
 
+  it("keeps a Draft filter on the contact's own returns, where drafts are", () => {
+    route.query = { status: "Draft" };
+
+    const { filter } = useReturns();
+
+    expect(filter.value.statuses).toEqual(["Draft"]);
+  });
+
+  it("does not carry a Draft filter over to the organization's list, which holds no drafts", () => {
+    route.query = { status: ["Draft", "Requested"] };
+
+    const { applyScope, filter } = useReturns();
+    applyScope(RETURN_SCOPE.ORGANIZATION);
+
+    expect(filter.value.statuses).toEqual(["Requested"]);
+    expect(toValue(organizationVariables)).toMatchObject({ statuses: ["Requested"] });
+  });
+
+  it("ignores a Draft filter in a link to the organization's list", () => {
+    route.query = { scope: RETURN_SCOPE.ORGANIZATION, status: "Draft" };
+
+    const { filter } = useReturns();
+
+    expect(filter.value.statuses).toEqual([]);
+    expect(toValue(organizationVariables)).toMatchObject({ statuses: undefined });
+  });
+
   it("never asks for the organization without the permission, whatever the link says", () => {
     permissions.value = [];
     route.query = { scope: RETURN_SCOPE.ORGANIZATION };

@@ -6,7 +6,7 @@ import { Sort } from "@/core/types";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 import { useGetOrganizationReturnsQuery } from "@/modules/returns/api/graphql/queries/getOrganizationReturns";
 import { useGetReturnsQuery } from "@/modules/returns/api/graphql/queries/getReturns";
-import { RETURN_SCOPE, VIEW_ORGANIZATION_RETURNS_PERMISSION } from "@/modules/returns/constants";
+import { DRAFT_STATUS, RETURN_SCOPE, VIEW_ORGANIZATION_RETURNS_PERMISSION } from "@/modules/returns/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { ISortInfo } from "@/core/types";
 import type { ReturnScopeType, ReturnsFilterDataType } from "@/modules/returns/types";
@@ -39,19 +39,25 @@ export function useReturns() {
     () => !!organization.value && checkPermissions(VIEW_ORGANIZATION_RETURNS_PERMISSION),
   );
 
-  const state = computed<ListStateType>(() => ({
+  const state = computed<ListStateType>(() => {
     // Everyone lands on their own returns; the organization's list opens only when the link asks for it.
-    scope:
+    const scope =
       canViewOrganizationReturns.value && asString(route.query.scope) === RETURN_SCOPE.ORGANIZATION
         ? RETURN_SCOPE.ORGANIZATION
-        : RETURN_SCOPE.OWN,
-    keyword: asString(route.query.keyword),
-    statuses: asArray(route.query.status),
-    startDate: asString(route.query.startDate) || undefined,
-    endDate: asString(route.query.endDate) || undefined,
-    sort: asString(route.query.sort) || DEFAULT_SORT.toString(),
-    page: Math.max(Number.parseInt(asString(route.query.page), 10) || 1, 1),
-  }));
+        : RETURN_SCOPE.OWN;
+    const statuses = asArray(route.query.status);
+
+    return {
+      scope,
+      keyword: asString(route.query.keyword),
+      // The organization's list holds no drafts: a Draft filter brought from the own tab would only empty it.
+      statuses: scope === RETURN_SCOPE.ORGANIZATION ? statuses.filter((x) => x !== DRAFT_STATUS) : statuses,
+      startDate: asString(route.query.startDate) || undefined,
+      endDate: asString(route.query.endDate) || undefined,
+      sort: asString(route.query.sort) || DEFAULT_SORT.toString(),
+      page: Math.max(Number.parseInt(asString(route.query.page), 10) || 1, 1),
+    };
+  });
 
   const scope = computed(() => state.value.scope);
   const keyword = computed(() => state.value.keyword);
