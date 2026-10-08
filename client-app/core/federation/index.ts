@@ -591,8 +591,10 @@ function installRouteGuard(): () => void {
    * builder-preview plugin does exactly that (plugins/builder-preview/builder-preview.plugin.ts).
    * A name added DURING this phase is not in here, so a plugin may still remove its own routes.
    */
-  const placeholderOwner = (name: unknown) =>
-    router.getRoutes().find((route) => route.name === name)?.meta?.[PLACEHOLDER_META_KEY];
+  const placeholderOwner = (name: unknown): string | undefined => {
+    const owner = router.getRoutes().find((route) => route.name === name)?.meta?.[PLACEHOLDER_META_KEY];
+    return typeof owner === "string" ? owner : undefined;
+  };
   // A placeholder is its declaring plugin's to replace, and only from that plugin's own init().
   const hostRouteNames = new Set(
     router
@@ -626,7 +628,7 @@ function installRouteGuard(): () => void {
       Logger.error(
         owner === undefined
           ? `[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`
-          : `[MF] ${who()} tried to take the route "${String(taken)}" declared by "${String(owner)}" - refused; a declared route must be added synchronously from its own plugin's init()`,
+          : `[MF] ${who()} tried to take the route "${String(taken)}" declared by "${owner}" - refused; a declared route must be added synchronously from its own plugin's init()`,
       );
       return () => {};
     }
