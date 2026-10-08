@@ -30,7 +30,7 @@
           </div>
 
           <div v-if="isColleaguesReturn" class="flex flex-col">
-            <span class="text-sm text-neutral-400">{{ $t("return_details.requested_by") }}</span>
+            <span class="text-sm text-neutral-600">{{ $t("return_details.requested_by") }}</span>
 
             <span>{{ orderReturn.customerName }}</span>
           </div>
