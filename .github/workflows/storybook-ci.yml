@@ -59,6 +59,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check per-repository settings
+        # Outside vc-frontend, the archive and image names would otherwise be vc-frontend's and overwrite them.
+        if: ${{ github.repository_id != '296335982' }}
+        run: |
+          if [ "$(jq -er .name package.json)" = 'vc-theme-b2b-vue' ]; then
+            echo "::error::Rename the package in package.json: the archive and the vc-theme-b2b-vue-storybook image would overwrite vc-frontend's."
+            exit 1
+          fi
+
       - name: Get Image Version
         uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
         with:
@@ -128,7 +137,7 @@ jobs:
         id: urls
         run: |
           # Named after the package, like the zip: vc-theme-b2b-vue-storybook here, <name>-storybook in another repo
-          DOCKER_IMAGE="$(jq -r .name package.json)-storybook"
+          DOCKER_IMAGE="$(jq -er .name package.json)-storybook"
           if ! [[ "$DOCKER_IMAGE" =~ ^[a-z0-9]+([._-][a-z0-9]+)*$ ]]; then
             echo "::error::package.json name gives \"$DOCKER_IMAGE\", not a valid image name."
             exit 1

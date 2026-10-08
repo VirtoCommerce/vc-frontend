@@ -62,6 +62,32 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check per-repository settings
+        # Outside vc-frontend, the Sonar key and archive name would otherwise fall back to vc-frontend's and overwrite them.
+        if: ${{ github.repository_id != '296335982' }}
+        env:
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_PROJECT_KEY" ]; then
+            echo "::error::Set the SONAR_PROJECT_KEY repository variable: without it SonarCloud analyses go to vc-frontend's project."
+            exit 1
+          fi
+          if [ "$(jq -er .name package.json)" = 'vc-theme-b2b-vue' ]; then
+            echo "::error::Rename the package in package.json: build archives named vc-theme-b2b-vue-* overwrite vc-frontend's."
+            exit 1
+          fi
+
+      - name: Check E2E_TEST_SUITES
+        if: ${{ vars.E2E_TEST_SUITES != '' }}
+        env:
+          E2E_TEST_SUITES: ${{ vars.E2E_TEST_SUITES }}
+        run: |
+          # A blank value would reach auto-tests as a suite list that matches nothing, and the job would pass with no tests.
+          if [ -z "${E2E_TEST_SUITES//[[:space:],]/}" ]; then
+            echo "::error::E2E_TEST_SUITES is blank. Unset it to run graphql,e2e,restapi, or list the suites."
+            exit 1
+          fi
+
       - name: Get Image Version
         uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
         with:
@@ -170,7 +196,7 @@ jobs:
           name: ${{ steps.image.outputs.prefix }}
           draft: false
           prerelease: false
-          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_vc-frontend)"
+          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_${{ github.event.repository.name }})"
           tag_name: ${{ steps.image.outputs.prefix }}
           files: artifacts/${{ steps.blobRelease.outputs.blobId }}
           target_commitish: ${{ github.ref_name }}
