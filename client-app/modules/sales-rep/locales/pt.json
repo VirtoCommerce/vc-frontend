@@ -89,6 +89,13 @@
         "empty_visible": "Arraste uma métrica para aqui para a mostrar",
         "empty_hidden": "Arraste uma métrica para aqui para a ocultar",
         "max_rows": "Máx. linhas",
+        "restored": "Disposição predefinida reposta.",
+        "empty": {
+          "title": "Todos os blocos estão ocultos",
+          "text": "Todas as métricas e widgets desta página foram movidos para {hidden} nas definições da disposição. Reponha a disposição predefinida para recuperar tudo ou abra {edit} para escolher exatamente o que mostrar.",
+          "hidden": "Ocultos",
+          "restore": "Repor disposição predefinida"
+        },
         "a11y": {
           "reorder": "Reordenar {title}",
           "hide": "Ocultar {title}",
@@ -145,7 +152,7 @@
         "created_date": "Data de criação",
         "start_date": "Data de início",
         "end_date": "Data de término",
-        "invalid_range": "Intervalo de datas inválido.",
+        "date_range": "Intervalo de datas",
         "order_status": "@:common.labels.status",
         "customer": "Selecionar cliente",
         "reset": "Reiniciar",
@@ -154,7 +161,8 @@
         "last_day": "Último dia",
         "last_week": "Última semana",
         "last_month": "Último mês",
-        "last_year": "Último ano"
+        "last_year": "Último ano",
+        "remove_filter": "Remover o filtro «{label}»"
       }
     },
     "communication": {
@@ -203,12 +211,14 @@
       "load_failed": "Falha ao carregar os pedidos"
     },
     "tasks": {
-      "title": "Calendário",
+      "title": "Tarefas",
       "widget_title": "Tarefas e prazos",
-      "full_calendar": "Calendário completo",
+      "view_all": "Todas as tarefas",
       "new_task": "Nova tarefa",
-      "add_task": "Adicionar tarefa",
+      "due_dates": "Prazos",
       "today": "Hoje",
+      "all": "Todas",
+      "clear_day_aria": "Remover {date}",
       "empty": "Nenhuma tarefa nesta aba",
       "empty_day": "Nada com prazo neste dia",
       "load_failed": "Falha ao carregar as tarefas",
@@ -223,8 +233,10 @@
         "task": "Tarefa",
         "status": "Status",
         "notes": "Notas",
-        "complete_aria": "Marcar «{name}» como concluída",
-        "reopen_aria": "Reabrir «{name}»",
+        "actions": "Ações",
+        "mark_complete": "Concluir",
+        "reopen": "Reabrir",
+        "action_aria": "{action}: «{name}»",
         "edit_aria": "Editar «{name}»"
       },
       "status": {

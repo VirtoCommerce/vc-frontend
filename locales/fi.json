@@ -805,6 +805,17 @@
           "required_section": "Osio on pakollinen",
           "optional_no_selected": "Mukauta valintaasi lisää (valinnainen)",
           "required_no_selected": "Täytä kaikki pakolliset vaihtoehdot viimeistelläksesi valintasi",
+          "checklist": {
+            "title": "Määritysten tarkistuslista",
+            "done": "(valmis)",
+            "selected": "{name} — {value}",
+            "required": "{name} — pakollinen",
+            "optional": "{name} — valinnainen",
+            "fill_it_in": "Täytä",
+            "upload_file": "Lataa tiedosto",
+            "check_it_out": "Tutustu",
+            "review": "Tarkista"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Mukautettu vaihtoehto: {0}",
             "custom_option_empty": "Mukautettu vaihtoehto: tyhjä",
@@ -1816,6 +1827,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Tuotteen saatavilla oleva määrä {availQty} ei riitä pyydettyyn {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Vähimmäistilaus {minQty} tuotetta ei ole saatavilla varastossa",
     "PRODUCT_EXACT_QTY": "Voit tilata {minQty} tuotetta",
+    "PRODUCT_PACK_SIZE_LIMIT": "Tilaa {packSize} kpl:n pakkauksissa",
+    "LINE_ITEM_LIMIT": "Voit tilata enintään {limit} tuotetta",
     "CART_INVALID_PRODUCT": "Virheellinen tuote"
   },
   "file_error": {

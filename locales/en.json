@@ -805,6 +805,17 @@
           "required_section": "Section is required",
           "optional_no_selected": "Personalize your selection further (optional)",
           "required_no_selected": "Complete all required options to finalize your selection",
+          "checklist": {
+            "title": "Configuration checklist",
+            "done": "(completed)",
+            "selected": "{name} — {value}",
+            "required": "{name} — required",
+            "optional": "{name} — optional",
+            "fill_it_in": "Fill it in",
+            "upload_file": "Upload a file",
+            "check_it_out": "Check it out",
+            "review": "Review"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Custom option: {0}",
             "custom_option_empty": "Custom option: empty",
@@ -1816,6 +1827,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
     "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Order in packs of {packSize}",
+    "LINE_ITEM_LIMIT": "You can order maximum {limit} item(s)",
     "CART_INVALID_PRODUCT": "Invalid product"
   },
   "file_error": {
