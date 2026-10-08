@@ -130,7 +130,7 @@ describe("customer communication", () => {
     let sent: Promise<unknown> | undefined;
     const stop = mountWidget(() => {
       const { sendCommunication } = useSalesRepCommunication();
-      sent = sendCommunication({ organizationId: "org-a", sendEmail: true, sendPush: false, message: "There" });
+      sent = sendCommunication({ organizationIds: ["org-a"], sendEmail: true, sendPush: false, message: "There" });
     });
     await waitForTheFailureToSettle();
     await sent;

@@ -805,6 +805,17 @@
           "required_section": "此部分为必填项",
           "optional_no_selected": "个性化您的选择（可选）",
           "required_no_selected": "请填写所有必填选项以完成选择",
+          "checklist": {
+            "title": "配置清单",
+            "done": "(已完成)",
+            "selected": "{name} — {value}",
+            "required": "{name} — 必填",
+            "optional": "{name} — 可选",
+            "fill_it_in": "填写",
+            "upload_file": "上传文件",
+            "check_it_out": "查看",
+            "review": "检查"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "自定义选项：{0}",
             "custom_option_empty": "自定义选项：无",
@@ -1010,15 +1021,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "商品数量",
-        "list_edit_button": "编辑",
-        "remove_list_button": "删除",
+        "rename_list_button": "重命名",
+        "remove_list_button": "删除列表",
         "make_private_button": "设为私人",
         "share_button": "分享",
         "last_modified_label": "最后修改：{date}"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
-        "list_settings_button": "清单设置",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "您的清单是空的",
         "empty_list_button": "继续浏览",
         "list_icon": "清单图标"
@@ -1042,11 +1053,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "新清单",
-        "edit_mode_title": "清单设置",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
-        "sharing_scope_label": "分享选项",
-        "sharing_scope_placeholder": "请选择一个选项",
         "sharing_link_label": "链接",
         "create_button": "创建清单",
         "save_button": "@:common.buttons.save",
@@ -1055,11 +1064,25 @@
         "make_shared": "设为共享",
         "sharing_scope": {
           "Private": "私密",
-          "Organization": "组织",
-          "AnyoneAnonymous": "任何人（只读）"
+          "Organization": "我的组织",
+          "AnyoneAnonymous": "任何拥有链接的人"
         },
         "clipboard_success": "链接已复制",
         "save_error": "无法保存列表，请重试。"
+      },
+      "share_wishlist_modal": {
+        "title": "分享“{listName}”",
+        "who_can_access_label": "谁可以访问",
+        "scope_selected": "{label}，已选择"
+      },
+      "stop_sharing_modal": {
+        "title": "停止共享此清单？",
+        "message": "与之共享此清单的所有人都将失去访问权限。您可以随时重新共享。",
+        "confirm_button": "停止共享",
+        "change_title": "更改谁可以访问？",
+        "change_message": "链接保持不变。部分用户可能会失去访问权限。",
+        "change_confirm_button": "更改访问权限",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",
@@ -1804,6 +1827,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "产品可用数量 {availQty} 不足以满足请求的 {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "最小订单 {minQty} 件的库存不足",
     "PRODUCT_EXACT_QTY": "您可以订购 {minQty} 件",
+    "PRODUCT_PACK_SIZE_LIMIT": "请按每包 {packSize} 件订购",
+    "LINE_ITEM_LIMIT": "您最多可以订购 {limit} 件",
     "CART_INVALID_PRODUCT": "无效的产品"
   },
   "file_error": {
