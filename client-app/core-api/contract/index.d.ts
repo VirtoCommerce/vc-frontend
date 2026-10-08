@@ -4099,6 +4099,8 @@ declare const useModuleSettings: _vueuse_core.UseMemoizeReturn<{
     }[] | undefined>;
 }, [moduleId: string]>;
 
+declare function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>): void;
+declare function registerAccountSection(section: AccountNavigationSectionType): void;
 declare function _useNavigations(): {
     setMatchingRouteName: (value: string) => void;
     desktopMainMenuItems: vue.ComputedRef<ExtendedMenuLinkType[]>;
@@ -4122,8 +4124,8 @@ declare function _useNavigations(): {
     fetchPinnedLinks: () => Promise<void>;
     pinnedLinks: vue.ComputedRef<ExtendedMenuLinkType[]>;
     markLinkTree: (link?: ExtendedMenuLinkType, currentRoute?: RouteLocationNormalizedLoaded, type?: "pinned" | "category") => MarkedMenuLinkType | undefined;
-    mergeMenuSchema: (additionalSchema: DeepPartial<MenuType>) => void;
-    registerAccountSection: (section: AccountNavigationSectionType) => void;
+    mergeMenuSchema: typeof mergeMenuSchema;
+    registerAccountSection: typeof registerAccountSection;
     registeredAccountSections: vue.ComputedRef<AccountNavigationSectionType[]>;
 };
 declare const useNavigations: typeof _useNavigations;

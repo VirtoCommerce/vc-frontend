@@ -44,7 +44,7 @@ const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([])
 const declaredLinkIds = new Map<string, string>();
 const declaredSectionIds = new Set<string>();
 
-function mergeIntoMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
   menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
     if (Array.isArray(objValue) && Array.isArray(srcValue)) {
       const incoming = new Set((srcValue as ExtendedMenuLinkType[]).map((link) => link?.id).filter(Boolean));
@@ -55,6 +55,21 @@ function mergeIntoMenuSchema(additionalSchema: DeepPartial<MenuType>) {
     }
   });
   triggerRef(menuSchema);
+}
+
+// Registers an account left-rail section (idempotent by id). Modules call this at init. Replaces a
+// declared section with the same id.
+function registerAccountSection(section: AccountNavigationSectionType) {
+  if (declaredSectionIds.has(section.id)) {
+    declaredSectionIds.delete(section.id);
+    registeredAccountSections.value = registeredAccountSections.value.map((x) => (x.id === section.id ? section : x));
+    return;
+  }
+  if (registeredAccountSections.value.some((x) => x.id === section.id)) {
+    Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
+    return;
+  }
+  registeredAccountSections.value = [...registeredAccountSections.value, section];
 }
 
 function removeLinks(links: ExtendedMenuLinkType[] | undefined, ids: Set<string>): ExtendedMenuLinkType[] | undefined {
@@ -85,7 +100,7 @@ export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly st
     Logger.warn(`[useNavigations] menu link "${taken}" is already in the menu; ignoring the declaration.`);
     return false;
   }
-  mergeIntoMenuSchema(schema);
+  mergeMenuSchema(schema);
   ids.forEach((id) => declaredLinkIds.set(id, plugin));
   return true;
 }
@@ -372,25 +387,6 @@ export function _useNavigations() {
 
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
-  }
-
-  function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
-    mergeIntoMenuSchema(additionalSchema);
-  }
-
-  // Registers an account left-rail section (idempotent by id). Modules call this at init. Replaces a
-  // declared section with the same id.
-  function registerAccountSection(section: AccountNavigationSectionType) {
-    if (declaredSectionIds.has(section.id)) {
-      declaredSectionIds.delete(section.id);
-      registeredAccountSections.value = registeredAccountSections.value.map((x) => (x.id === section.id ? section : x));
-      return;
-    }
-    if (registeredAccountSections.value.some((x) => x.id === section.id)) {
-      Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
-      return;
-    }
-    registeredAccountSections.value = [...registeredAccountSections.value, section];
   }
 
   return {
