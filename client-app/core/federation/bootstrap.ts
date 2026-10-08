@@ -18,14 +18,15 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
 
 /**
  * Outer cap for what the per-phase budgets cannot cover: this loader's own chunk fetch (deliberately
- * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery 2 +
- * manifest 2 + 2×load 3 = 10s — leaving 2s for the chunk fetch. Past it boot proceeds and the loader
+ * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery, an env
+ * remote's plugin.json, then its manifest, load and init — and what is left over is the chunk fetch's
+ * headroom; the backstop invariant test holds the sum. Past it boot proceeds and the loader
  * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
  * Bounds the plugins that set `blocksBoot` only; boot waits for no other plugin's code.
  * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
  */
-// Exported for the invariant test only (backstop > discovery + manifest + 2×load defaults).
-export const BOOT_BACKSTOP_MS = 12_000;
+// Exported for the backstop invariant test only.
+export const BOOT_BACKSTOP_MS = 14_000;
 
 /** Re-resolves the current URL once every plugin settled: a deep link may have hit the catch-all before its route existed. */
 function reResolveOnceSettled(): void {

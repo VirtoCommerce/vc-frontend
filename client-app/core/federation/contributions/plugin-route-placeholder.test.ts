@@ -1,11 +1,9 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import { createMemoryHistory, createRouter, RouterView } from "vue-router";
 import { applyContributions, releaseContributions } from "./declare";
 import { resetPluginStatuses, setPluginStatus } from "./status";
-
-vi.mock("@/pages/404.vue", () => ({ __esModule: true, default: { template: "<h1 class='not-found'>404</h1>" } }));
 
 const Layout = { template: "<div class='company-layout'><router-view /></div>" };
 const RealPage = { template: "<p class='real-page'>documents</p>" };
@@ -16,6 +14,7 @@ async function openDeepLink(extraRoutes: { path: string; parent: "Company"; name
     history: createMemoryHistory(),
     routes: [
       { path: "/company", name: "Company", component: Layout, children: [] },
+      { path: "/404", name: "NotFound", component: { template: "<h1 class='not-found'>404</h1>" } },
       { path: "/:pathMatch(.*)*", name: "Matcher", component: { template: "<div class='matcher' />" } },
     ],
   });
@@ -28,7 +27,11 @@ async function openDeepLink(extraRoutes: { path: string; parent: "Company"; name
   );
   await router.push("/company/documents?tab=all");
   const wrapper = mount(defineComponent({ render: () => h(RouterView) }), {
-    global: { plugins: [router], stubs: { VcLoader: { template: "<i class='loader' />" } } },
+    global: {
+      plugins: [router],
+      stubs: { VcLoader: { template: "<i class='loader' />" } },
+      mocks: { $t: (key: string) => key },
+    },
   });
   await flushPromises();
   return { router, wrapper, applied };
@@ -42,7 +45,10 @@ describe("PluginRoutePlaceholder", () => {
   it("renders a loader inside the declared parent's layout while the plugin is on the way", async () => {
     const { wrapper } = await openDeepLink();
 
-    expect(wrapper.find(".company-layout .plugin-route-placeholder .loader").exists()).toBe(true);
+    const placeholder = wrapper.find(".company-layout [data-test-id='plugin-route-placeholder-section']");
+    expect(placeholder.find(".loader").exists()).toBe(true);
+    expect(placeholder.text()).toBe("common.messages.page_loading");
+    expect(placeholder.attributes()).not.toHaveProperty("aria-busy");
   });
 
   it("becomes the plugin's page, at the same URL, once the plugin claimed its route", async () => {
@@ -139,7 +145,11 @@ describe("PluginRoutePlaceholder and the organization gate", () => {
     );
     await router.push("/company/dashboard");
     const wrapper = mount(defineComponent({ render: () => h(RouterView) }), {
-      global: { plugins: [router], stubs: { VcLoader: { template: "<i class='loader' />" } } },
+      global: {
+        plugins: [router],
+        stubs: { VcLoader: { template: "<i class='loader' />" } },
+        mocks: { $t: (key: string) => key },
+      },
     });
     await flushPromises();
     const onPlaceholder = router.currentRoute.value.fullPath;

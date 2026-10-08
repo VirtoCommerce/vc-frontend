@@ -62,6 +62,14 @@ describe("resolveGlobalTerms", () => {
     expect(resolveGlobalTerms({ or: [{ setting: "Off.Flag" }, field] }, ctx)).toEqual(field);
     expect(resolveGlobalTerms({ not: field }, ctx)).toEqual({ not: field });
     expect(resolveGlobalTerms({ and: [field, { field: "b" }] }, ctx)).toEqual({ and: [field, { field: "b" }] });
+    expect(resolveGlobalTerms({ or: [field, { field: "b" }] }, ctx)).toEqual({ or: [field, { field: "b" }] });
+  });
+
+  it("decides a junction whose every operand was decided without one deciding it", () => {
+    const ctx = context();
+
+    expect(resolveGlobalTerms({ or: [{ setting: "Off.Flag" }, { setting: "Missing" }] }, ctx)).toBe(false);
+    expect(resolveGlobalTerms({ and: [{ setting: "SalesRep.Enabled" }, { authenticated: true }] }, ctx)).toBe(true);
   });
 
   it("rejects an unknown key or a malformed node, also under `not`, rather than read it as false", () => {
@@ -87,6 +95,11 @@ describe("evaluateResidual", () => {
     expect(evaluateResidual({ field: "scope", eq: "Customer" }, undefined)).toBe(false);
     expect(evaluateResidual({ field: "a.b.c" }, { a: null })).toBe(false);
     expect(evaluateResidual(true, undefined)).toBe(true);
+  });
+
+  it("combines field terms with `and` and `or`", () => {
+    expect(evaluateResidual({ and: [{ field: "a" }, { field: "b" }] }, { a: true, b: false })).toBe(false);
+    expect(evaluateResidual({ or: [{ field: "a" }, { field: "b" }] }, { a: false, b: true })).toBe(true);
   });
 });
 

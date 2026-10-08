@@ -6,7 +6,7 @@ exactly what to add/modify in the module's **code** to turn it back into an MF r
 
 It is intentionally **code-only** — it does NOT cover deployment, hosting, remote
 discovery, CSP, or the federation build/runtime plumbing (those live in
-`client-app/modules/federated/` and the plugin repo's build config).
+`client-app/core/federation/` and the plugin repo's build config).
 
 The migration was a facade→host **import remap** plus entry-point rewiring. Re-MF-ifying is
 the same remap in reverse.
@@ -77,7 +77,7 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
   plugin imports the composables from that package too (shared singleton, §1).
 - Re-add `src/mocks/vc-frontend-core.ts` and the vitest alias that makes the (types-only)
   `@vc-frontend/core` specifier resolvable in tests — the mechanics are generic and now live in
-  [`HOWTO.md`](../federated/HOWTO.md) ("Making `@vc-frontend/core` resolvable in specs").
+  [`HOWTO.md`](../../core/federation/HOWTO.md) ("Making `@vc-frontend/core` resolvable in specs").
 - **The remap is not a rename inside `vi.mock`.** 17 specs mock host paths by string —
   `vi.mock("@/core/globals", …)`, `vi.mock("@/core/utilities", …)`, `vi.mock("@/shared/notification", …)`,
   `vi.mock("@/core/composables/useModuleSettings", …)` — and a `from "@/…"` sweep does not touch them.
@@ -87,7 +87,7 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
   `vi.doMock` / `vi.doUnmock` inside a test body need the same rename (`utils.test.ts`).
 - The MF-plumbing tests that were **not** ported (`index.test.ts`, `create-plugin.test.ts`,
   `federation-shared.test.ts`, `version-gate.test.ts`, `contract-versioning.test.ts`) live in
-  the plugin repo / `client-app/modules/federated/` — restore from there, not from this module.
+  the plugin repo / `client-app/core/federation/` — restore from there, not from this module.
 
 ## 4. Standalone scaffolding (from the plugin repo, not the host)
 

@@ -1,4 +1,4 @@
-import { reservationFor } from "@/modules/federated/contributions/declare";
+import { reservationFor } from "@/core/federation/contributions/declare";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 import type { ConditionParamType } from "@/shared/common/types/extensionRegistryMap";

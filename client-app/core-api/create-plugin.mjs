@@ -449,7 +449,7 @@ ${
     ? "- Your xAPI types: write `.graphql` documents under `src/api/graphql/`, then `yarn generate:graphql-types`\n  (needs `APP_BACKEND_URL` - copy `.env.example`). Commit the generated `types.ts`; the build must not need a backend.\n"
     : ""
 }- Full walkthrough (running against the host, shipping, versioning):
-  the host repo's \`client-app/modules/federated/HOWTO.md\`.
+  the host repo's \`client-app/core/federation/HOWTO.md\`.
 
 ## The facade dependency
 

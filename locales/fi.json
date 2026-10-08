@@ -243,7 +243,8 @@
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
       "logo_deleted": "Logo on poistettu.",
       "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota.",
-      "content_failed_to_load": "Osaa sivustosta ei voitu ladata. Lataa sivu uudelleen jatkaaksesi."
+      "content_failed_to_load": "Osaa sivustosta ei voitu ladata. Lataa sivu uudelleen jatkaaksesi.",
+      "page_loading": "Sivua ladataan…"
     },
     "placeholders": {
       "enter_value": "Syötä arvo",

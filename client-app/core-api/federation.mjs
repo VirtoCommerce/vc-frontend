@@ -46,12 +46,12 @@ export const CONTRACT_TYPE_PEERS = {
 const SHARED_DEFAULTS = { singleton: true, strictVersion: true };
 
 // SHARED-DEPENDENCY GATE - the second of the TWO version gates (see "The two version
-// gates" in modules/federated/README.md). Guards INDIVIDUAL shared libraries: "does
+// gates" in core/federation/README.md). Guards INDIVIDUAL shared libraries: "does
 // the host-provided vue/apollo/... satisfy the range this plugin was built against?"
 // strictVersion is what makes it a gate: the MF runtime only WARNS on a singleton
 // range mismatch by default; strict makes it throw at loadRemote() time, which the
 // host loader converts into an isolated per-plugin failure. The facade API contract
-// itself is guarded earlier by the CONTRACT GATE (modules/federated/version-gate.ts),
+// itself is guarded earlier by the CONTRACT GATE (core/federation/version-gate.ts),
 // before any plugin code runs.
 function buildSharedConfig(extra) {
   return Object.fromEntries(

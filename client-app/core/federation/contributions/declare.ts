@@ -18,8 +18,6 @@ import type { RouteRecordRaw, Router } from "vue-router";
 
 /** On a placeholder route: the owning plugin's name. */
 export const PLACEHOLDER_META_KEY = "pluginPlaceholder";
-/** On every route registered from a declaration. */
-export const DECLARED_META_KEY = "declaredByPlugin";
 
 const PluginRoutePlaceholder = () => import("./plugin-route-placeholder.vue");
 
@@ -63,7 +61,6 @@ function toRouteRecord(route: IRouteContributionType, plugin: string): RouteReco
     name: route.name,
     component: PluginRoutePlaceholder,
     meta: {
-      [DECLARED_META_KEY]: plugin,
       [PLACEHOLDER_META_KEY]: plugin,
       // The parent's organization gate is not the plugin route's to inherit: the real route may clear
       // it (the Sales Rep Hub does). The placeholder re-navigates once the plugin settles, and the
@@ -235,34 +232,25 @@ export function releaseContributions(applied: IAppliedContributionsType, router:
   }
 }
 
+/** The slot's declaration while it still holds its box: plugin pending and policy not `none`. */
+function holdingDeclaration(category: string, name: string | undefined): IDeclaredSlotType | undefined {
+  const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;
+  return declared && declared.policy !== "none" && !isPluginSettled(declared.plugin) ? declared : undefined;
+}
+
 /** The policy to hold for this render while the declaring plugin is pending; `none` holds nothing. */
 export function reservationFor(
   category: string,
   name: string | undefined,
   slotContext: unknown,
 ): SlotPolicyType | undefined {
-  if (!name) {
-    return undefined;
-  }
-  const declared = declaredSlots.value.get(`${category}/${name}`);
-  if (!declared || declared.policy === "none" || isPluginSettled(declared.plugin)) {
-    return undefined;
-  }
-  return evaluateResidual(declared.condition, slotContext) ? declared.policy : undefined;
+  const declared = holdingDeclaration(category, name);
+  return declared && evaluateResidual(declared.condition, slotContext) ? declared.policy : undefined;
 }
 
 /** Like `reservationFor`, ignoring field conditions: the call site already gated the slot. */
 export function heldPolicyOf(category: string, name: string | undefined): SlotPolicyType | undefined {
-  const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;
-  if (!declared || declared.policy === "none" || isPluginSettled(declared.plugin)) {
-    return undefined;
-  }
-  return declared.policy;
-}
-
-export function pendingPluginOf(category: string, name: string | undefined): string | undefined {
-  const declared = name ? declaredSlots.value.get(`${category}/${name}`) : undefined;
-  return declared && !isPluginSettled(declared.plugin) ? declared.plugin : undefined;
+  return holdingDeclaration(category, name)?.policy;
 }
 
 export function pendingSlotNames(category: string): string[] {

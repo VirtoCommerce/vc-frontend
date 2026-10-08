@@ -37,7 +37,7 @@ const ref = <T>(value: T) => ({ value });
 // Rejects rather than throwing at the call site: the run must reach `await federatedModulesReady`
 // for the rejection to surface, so deleting that await turns this into an unhandled rejection and
 // the assertion below stops seeing a rejected run.
-vi.mock("@/modules/federated/bootstrap", () => ({
+vi.mock("@/core/federation/bootstrap", () => ({
   startFederatedModules: vi.fn(async (options?: { fetchPlugins?: () => Promise<unknown> }) => {
     order.push("startFederatedModules");
     loaderOptions.current = options;

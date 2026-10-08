@@ -1,22 +1,34 @@
 <template>
   <Error404 v-if="isGone" />
 
-  <output v-else class="plugin-route-placeholder" aria-busy="true">
+  <output v-else class="plugin-route-placeholder" data-test-id="plugin-route-placeholder-section">
     <VcLoader />
+
+    <!-- Filled in after mount: a live region that arrives with its text already in it is not announced. -->
+    <span v-if="isMounted" class="plugin-route-placeholder__label">{{ $t("common.messages.page_loading") }}</span>
   </output>
 </template>
 
 <script setup lang="ts">
+import { useMounted } from "@vueuse/core";
 import { defineAsyncComponent, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PLACEHOLDER_META_KEY } from "./declare";
 import { whenPluginSettled } from "./status";
+import type { Component } from "vue";
 
-const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+const NOT_FOUND_ROUTE = "NotFound";
 
 const route = useRoute();
 const router = useRouter();
+
+// The host's own 404, read off its route: core does not import pages/.
+const Error404 = defineAsyncComponent(async () => {
+  const page = router.resolve({ name: NOT_FOUND_ROUTE }).matched.at(-1)?.components?.default;
+  return (typeof page === "function" ? await (page as () => Promise<Component>)() : page) as Component;
+});
 const isGone = ref(false);
+const isMounted = useMounted();
 let run = 0;
 
 // Once the plugin settles, re-resolve the URL: the plugin's own route, or the host's 404. Per URL, not
@@ -50,5 +62,9 @@ watch(
 <style lang="scss">
 .plugin-route-placeholder {
   @apply flex min-h-64 items-center justify-center;
+
+  &__label {
+    @apply sr-only;
+  }
 }
 </style>

@@ -1,11 +1,11 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { applyContributions, resetDeclaredSlots } from "@/modules/federated/contributions/declare";
-import { resetPluginStatuses, setPluginStatus } from "@/modules/federated/contributions/status";
+import { applyContributions, resetDeclaredSlots } from "@/core/federation/contributions/declare";
+import { resetPluginStatuses, setPluginStatus } from "@/core/federation/contributions/status";
 import ExtensionPointList from "./extension-point-list.vue";
 import ExtensionPoint from "./extension-point.vue";
-import type { IPluginContributionsType } from "@/modules/federated/contributions/types";
+import type { IPluginContributionsType } from "@/core/federation/contributions/types";
 import type { Component } from "vue";
 
 const h = vi.hoisted((): { entries: Record<string, Record<string, { component?: Component }>> } => ({ entries: {} }));
@@ -20,6 +20,9 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
     passesCondition: () => true,
   }),
 }));
+
+const RESERVE = "[data-test-id='extension-point-reserve-section']";
+const FALLBACK = "[data-test-id='extension-point-reserve-fallback-section']";
 
 const Plugin = { template: "<button class='plugin-markup'>plugin</button>" };
 
@@ -53,13 +56,24 @@ describe("ExtensionPoint holding a declared slot", () => {
     declare({ slots: [{ at: "accountMenu/docs", policy: "reserve" }] });
 
     const wrapper = mountPoint("accountMenu", "docs");
-    const box = wrapper.find(".extension-point-reserve");
+    const box = wrapper.find(RESERVE);
 
     expect(box.exists()).toBe(true);
     expect(box.attributes("data-slot")).toBe("accountMenu/docs");
     expect(box.attributes("aria-busy")).toBe("true");
-    expect(box.find(".extension-point-reserve__fallback").attributes()).toHaveProperty("inert");
+    expect(box.find(FALLBACK).attributes()).toHaveProperty("inert");
     expect(box.find(".host-link").exists()).toBe(true);
+  });
+
+  it("keeps the call site's class on the held box, so the host's layout still applies", () => {
+    declare({ slots: [{ at: "accountMenu/docs", policy: "reserve" }] });
+
+    const wrapper = mount(ExtensionPoint, {
+      props: { category: "accountMenu", name: "docs" } as never,
+      attrs: { class: "host-layout" },
+    });
+
+    expect(wrapper.find(RESERVE).classes()).toContain("host-layout");
   });
 
   it("does not reveal a registered component before its plugin settled, then does", async () => {
@@ -72,7 +86,7 @@ describe("ExtensionPoint holding a declared slot", () => {
     setPluginStatus("p", "loaded");
     await flushPromises();
 
-    expect(wrapper.find(".extension-point-reserve").exists()).toBe(false);
+    expect(wrapper.find(RESERVE).exists()).toBe(false);
     expect(wrapper.find(".plugin-markup").exists()).toBe(true);
   });
 
@@ -83,7 +97,7 @@ describe("ExtensionPoint holding a declared slot", () => {
     setPluginStatus("p", "failed");
     await flushPromises();
 
-    expect(wrapper.find(".extension-point-reserve").exists()).toBe(false);
+    expect(wrapper.find(RESERVE).exists()).toBe(false);
     expect(wrapper.find(".host-link").exists()).toBe(true);
   });
 
@@ -92,18 +106,14 @@ describe("ExtensionPoint holding a declared slot", () => {
       slots: [{ at: "sharedList/provenance-note", policy: "reserve", when: { field: "scope", eq: "Customer" } }],
     });
 
-    expect(
-      mountPoint("sharedList", "provenance-note", { scope: "Private" }).find(".extension-point-reserve").exists(),
-    ).toBe(false);
-    expect(
-      mountPoint("sharedList", "provenance-note", { scope: "Customer" }).find(".extension-point-reserve").exists(),
-    ).toBe(true);
+    expect(mountPoint("sharedList", "provenance-note", { scope: "Private" }).find(RESERVE).exists()).toBe(false);
+    expect(mountPoint("sharedList", "provenance-note", { scope: "Customer" }).find(RESERVE).exists()).toBe(true);
   });
 
   it("holds nothing for a `none` contribution", () => {
     declare({ slots: [{ at: "mobileMenu/docs", policy: "none" }] });
 
-    expect(mountPoint("mobileMenu", "docs").find(".extension-point-reserve").exists()).toBe(false);
+    expect(mountPoint("mobileMenu", "docs").find(RESERVE).exists()).toBe(false);
   });
 
   it("holds a whole `block` region, with a loader, in a list that has nothing registered yet", () => {
@@ -119,7 +129,8 @@ describe("ExtensionPoint holding a declared slot", () => {
       props: { category: "cartPayment", conditionParams: { paymentTypeName: "Card" } } as never,
     });
 
-    expect(matching.find(".extension-point-reserve[data-policy='block'] .loader").exists()).toBe(true);
-    expect(other.find(".extension-point-reserve").exists()).toBe(false);
+    expect(matching.find(RESERVE).attributes("data-policy")).toBe("block");
+    expect(matching.find(`${RESERVE} .loader`).exists()).toBe(true);
+    expect(other.find(RESERVE).exists()).toBe(false);
   });
 });

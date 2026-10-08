@@ -85,8 +85,8 @@ export { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
-export { usePluginsStatus } from "@/modules/federated/contributions/status";
-export type { IPluginStatusType, PluginStateType } from "@/modules/federated/contributions/status";
+export { usePluginsStatus } from "@/core/federation/contributions/status";
+export type { IPluginStatusType, PluginStateType } from "@/core/federation/contributions/status";
 export type {
   ComparableConditionType,
   ConditionNodeType,
@@ -109,7 +109,7 @@ export type {
   SlotConditionType,
   SlotDeclarationType,
   SlotPolicyType,
-} from "@/modules/federated/contributions/types";
+} from "@/core/federation/contributions/types";
 
 // GraphQL / Apollo — same client, cache and auth link as the host.
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";

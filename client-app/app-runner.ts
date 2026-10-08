@@ -14,6 +14,8 @@ import {
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
+import { startFederatedModules } from "@/core/federation/bootstrap";
+import { isFederationEnabled } from "@/core/federation/enabled";
 import { setGlobals } from "@/core/globals";
 import { registerLocaleLoader } from "@/core/locale-loaders";
 import {
@@ -29,8 +31,6 @@ import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
-import { startFederatedModules } from "@/modules/federated/bootstrap";
-import { isFederationEnabled } from "@/modules/federated/enabled";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
@@ -311,7 +311,7 @@ export default async () => {
           .find((setting) => setting.name === key)?.value,
       themeSetting: (key) => (themeContext.value.settings as unknown as Record<string, unknown> | undefined)?.[key],
       isAuthenticated: isAuthenticated.value,
-      can: (permission) => checkPermissions(permission),
+      can: checkPermissions,
     },
   });
 

@@ -32,7 +32,7 @@ export interface IProps<C extends ExtensionCategoryType> {
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
 import { computed } from "vue";
-import { pendingSlotNames, reservationFor } from "@/modules/federated/contributions/declare";
+import { pendingSlotNames, reservationFor } from "@/core/federation/contributions/declare";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 
@@ -46,8 +46,13 @@ const { getEntries, passesCondition } = useExtensionRegistry();
 
 // Not cached in a computed: getEntries returns the same readonly proxy after an in-place registration,
 // so a computed holding it never invalidates and a late entry would not be listed.
-const entries = () => getEntries(props.category, props.names) as Record<string, unknown>;
-const entryOf = (name: string) => entries()[name];
+function entries(): Record<string, unknown> {
+  return getEntries(props.category, props.names);
+}
+
+function entryOf(name: string): unknown {
+  return entries()[name];
+}
 
 // Plus pending declared slots, so a `block` region holds its place before registration.
 const listedNames = computed(() => {

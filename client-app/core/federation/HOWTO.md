@@ -257,8 +257,8 @@ Rules of the road:
   something the facade doesn't export, that's a facade extension request (below).
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
-- Keep `init()` fast: it has a time budget (3s — the loader's per-phase `loadTimeoutMs`),
-  and the whole app boot waits for it.
+- Keep `init()` fast: it has a time budget (the loader's per-phase `loadTimeoutMs`), and with
+  `blocksBoot: true` the app boot waits for it.
 - **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
   that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
   loader refuses such a claim for the whole load-and-init phase and logs it — including a name
@@ -440,7 +440,7 @@ module's artifacts, and the platform both serves and announces it:
 - whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
   `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
   plugin is skipped: the storefront boots, the feature is simply absent;
-- at boot the host asks for the list in a query of its own (`GetStorePlugins`, 2 s budget, fails
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, on its own budget, fails
   closed to "no plugins" — an older x-api answers 400 and the visitor sees nothing of it):
 
 ```graphql
@@ -530,6 +530,8 @@ What the host does with it, before any of the plugin's code is fetched:
   The parent's organization gate (`requiresOrganization`) is deferred the same way: the placeholder
   skips it, and the second navigation applies it with your route's own meta — so a route that clears
   it keeps the deep link of a user with no organization, and one that keeps it redirects them then.
+  Add a declared route **synchronously in `init()`**, before any `await`: only then can the host tell
+  the call is yours. A later call, or another plugin's call under that name, is refused.
 - **Menu entries** render before your chunk loads. Register the same `id` from `init()` and yours
   replaces the declared one; if the plugin fails, the declared ones are withdrawn. An `id` the menu
   already has — the host's or another plugin's — is refused, so give yours a plugin-specific one; your
