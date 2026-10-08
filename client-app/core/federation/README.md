@@ -242,7 +242,7 @@ startFederatedModules()            bootstrap.ts
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 prepareFederatedModules()          index.ts — phase A, no plugin code runs
-  0. fetchPlugins()                the platform's list, on its own 2s budget (bootstrap.ts).
+  0. fetchPlugins()                the platform's list, on its own budget (DISCOVERY_TIMEOUT_MS).
                                    Slow or failing ⇒ no plugins, never a stalled boot
   1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
                                    (empty ⇒ done; a name that is not /^[A-Za-z0-9][\w.-]*$/,
@@ -254,7 +254,7 @@ prepareFederatedModules()          index.ts — phase A, no plugin code runs
                                    A UX/latency filter, not a boundary (see Security model)
   1b. declaration                  inline in the descriptor's `contributions`, or for an env remote
                                    `contributions` in the optional plugin.json beside its manifest
-                                   (2s budget, same origin rule). Unparseable or an unknown format
+                                   (manifest budget, same origin rule). Unparseable or an unknown format
                                    ⇒ SKIPPED
   1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
                                    of the plugin is ever fetched
@@ -264,15 +264,16 @@ prepareFederatedModules()          index.ts — phase A, no plugin code runs
                                    and what it had declared is withdrawn
   ▼
 loadPreparedModules()              index.ts — phase B, per plugin, concurrently
-  2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
+  2. isCompatible(remote)          fetch manifest JSON (manifest budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
   3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op
   3a. installRouteGuard()          wraps addRoute/removeRoute while ANY plugin is still running;
-                                   a declared name is the plugin's to replace, a host name is not
+                                   a declared name is its own plugin's to replace, from init()'s
+                                   synchronous part only; a host name is not
   4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
-                                   has one (3s budget each); a module without init() still
+                                   has one (load budget each); a module without init() still
                                    counts as loaded
   5. settle                        status → loaded / failed / skipped; unclaimed placeholders and
                                    dead declared menu entries are withdrawn (all of them on failure)
@@ -332,21 +333,22 @@ Three design points worth calling out:
   against the previous major. While the contract is pre-1.0 the **minor** carries that role
   instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
-  manifest 2s; load and init 3s _each_ — one remote may legally take up to
-  manifest + 2×load ≈ 8s), plus `DISCOVERY_TIMEOUT_MS` (2s) on the plugin-list query in
-  `bootstrap.ts`. Boot awaits this loader, so those budgets are also blank-screen time:
-  a hung remote delays first paint until it is reported `failed`/`skipped` — up to 8s of
-  per-remote budget, 10s counting the discovery leg, 12s for an env remote whose `plugin.json`
-  is read first (manifest budget), and never longer than the backstop below.
-  `bootstrap.ts` adds a
-  14s **backstop** above the budgeted legs (2 + 2 + 2 + 3 + 3 = 12s), covering what the budgets
-  do not: the loader chunk's own fetch, and an inner timeout malfunctioning.
-  **The remaining 2s is all the headroom that unbudgeted chunk fetch gets** — a
-  budget-compliant remote behind a slower one can still trip the cap, so the guarantee is
-  "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
+  the manifest budget, and the load budget that bounds load and init _each_ — so one remote may
+  legally take manifest + 2×load, `runBudgetMs`), plus `DISCOVERY_TIMEOUT_MS` on the plugin-list
+  query in `bootstrap.ts`. The values live in those constants (`DEFAULT_MANIFEST_TIMEOUT_MS`,
+  `DEFAULT_LOAD_TIMEOUT_MS`), not here. Boot awaits this loader for `blocksBoot` plugins, so those
+  budgets are also blank-screen time: a hung remote delays first paint until it is reported
+  `failed`/`skipped` — its run budget, plus the discovery leg, plus for an env remote the
+  `plugin.json` read (manifest budget) — and never longer than the backstop below.
+  `bootstrap.ts` adds a **backstop**, `BOOT_BACKSTOP_MS`, above the sum of those budgeted legs,
+  covering what the budgets do not: the loader chunk's own fetch, and an inner timeout
+  malfunctioning. **What is left above the sum is all the headroom that unbudgeted chunk fetch
+  gets** — a budget-compliant remote behind a slower one can still trip the cap, so the guarantee
+  is "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
   is deliberately left unbudgeted: bounding it is what the backstop is _for_, and a second
   timer would only drop every plugin sooner on a bad connection. Widen the cap, not the
-  promise, if 2s proves tight. Containment
+  promise, if the headroom proves tight; the backstop invariant test in `index.test.ts` holds the
+  sum. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
   `failed`, and any late settlement (success or the real failure cause) is logged as

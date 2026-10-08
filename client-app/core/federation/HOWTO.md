@@ -257,8 +257,8 @@ Rules of the road:
   something the facade doesn't export, that's a facade extension request (below).
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
-- Keep `init()` fast: it has a time budget (3s — the loader's per-phase `loadTimeoutMs`),
-  and the whole app boot waits for it.
+- Keep `init()` fast: it has a time budget (the loader's per-phase `loadTimeoutMs`), and with
+  `blocksBoot: true` the app boot waits for it.
 - **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
   that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
   loader refuses such a claim for the whole load-and-init phase and logs it — including a name
@@ -440,7 +440,7 @@ module's artifacts, and the platform both serves and announces it:
 - whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
   `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
   plugin is skipped: the storefront boots, the feature is simply absent;
-- at boot the host asks for the list in a query of its own (`GetStorePlugins`, 2 s budget, fails
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, on its own budget, fails
   closed to "no plugins" — an older x-api answers 400 and the visitor sees nothing of it):
 
 ```graphql

@@ -22,11 +22,10 @@ import type { RouteRecordRaw, Router } from "vue-router";
  *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
  *   within its budget rather than hanging boot forever. There are TWO budget knobs
  *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
- *   so one remote may legally take up to manifest + 2×load (defaults: 2s + 3s + 3s =
- *   8s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum PLUS its own
- *   DISCOVERY_TIMEOUT_MS and an env remote's plugin.json read (manifest budget) — a true
- *   backstop that fires only when these budgets malfunction or the loader chunk fetch itself
- *   hangs; keep it > discovery + 2×manifest + 2×load when changing the defaults here.
+ *   so one remote may legally take up to manifest + 2×load (`runBudgetMs`). bootstrap.ts
+ *   additionally holds a BOOT_BACKSTOP_MS above that sum PLUS its own DISCOVERY_TIMEOUT_MS and
+ *   an env remote's plugin.json read — a true backstop that fires only when these budgets
+ *   malfunction or the loader chunk fetch itself hangs. The backstop invariant test holds the sum.
  * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
  * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
  * overridden by what the backend serves. The harness ships no built-in remote.
@@ -105,8 +104,8 @@ export interface IFederatedLoaderOptions {
   manifestTimeoutMs?: number;
   /**
    * Budget for the load phase AND (separately) the init phase of one remote;
-   * exceeded => failed. When raising the defaults, keep bootstrap.ts's
-   * BOOT_BACKSTOP_MS above discovery + 2×manifestTimeoutMs + 2×loadTimeoutMs.
+   * exceeded => failed. Raising the defaults may need bootstrap.ts's BOOT_BACKSTOP_MS raised too;
+   * the backstop invariant test says when.
    */
   loadTimeoutMs?: number;
   /** Evaluates declared `when` conditions. Without it, settings read as unset and `can` uses `hasPermission`. */
