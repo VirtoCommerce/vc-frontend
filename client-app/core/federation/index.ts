@@ -118,7 +118,7 @@ export const DEFAULT_MANIFEST_TIMEOUT_MS = 2_000;
 export const DEFAULT_LOAD_TIMEOUT_MS = 3_000;
 
 /** Slack past a pending plugin's run budget before its held boxes are released; the run's own budgets settle it first. */
-const PENDING_GRACE_MS = 2_000;
+export const PENDING_GRACE_MS = 2_000;
 
 /** The longest one remote's run may legally take: its manifest, then load and init, budgeted separately. */
 export function runBudgetMs(manifestTimeoutMs: number, loadTimeoutMs: number): number {

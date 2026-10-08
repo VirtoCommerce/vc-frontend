@@ -4,7 +4,14 @@ import { createMemoryHistory, createRouter } from "vue-router";
 import { Logger } from "@/core/utilities";
 import { PLACEHOLDER_META_KEY, resetDeclaredSlots } from "./contributions/declare";
 import { resetPluginStatuses, usePluginsStatus } from "./contributions/status";
-import { loadPreparedModules, prepareFederatedModules } from "./index";
+import {
+  DEFAULT_LOAD_TIMEOUT_MS,
+  DEFAULT_MANIFEST_TIMEOUT_MS,
+  loadPreparedModules,
+  PENDING_GRACE_MS,
+  prepareFederatedModules,
+  runBudgetMs,
+} from "./index";
 import type { IPlatformPlugin } from "./index";
 import type { Router } from "vue-router";
 
@@ -205,6 +212,25 @@ describe("declared contributions in the loader", () => {
     expect(Logger.error).toHaveBeenCalledWith(
       expect.stringContaining('a plugin tried to take the route "SalesRepDocuments" declared by "sales-rep"'),
     );
+  });
+
+  it("stops a declared plugin holding its boxes once it outlives its run budget, still pending", async () => {
+    vi.useFakeTimers();
+    try {
+      const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(true) });
+      const { isSettled, stateOf } = usePluginsStatus();
+      const deadline = runBudgetMs(DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS) + PENDING_GRACE_MS;
+
+      expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
+      await vi.advanceTimersByTimeAsync(deadline - 1);
+      expect(isSettled("sales-rep")).toBe(false);
+
+      await vi.advanceTimersByTimeAsync(1);
+      expect(isSettled("sales-rep")).toBe(true);
+      expect(stateOf("sales-rep")).toBe("pending");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("does not make boot wait for a plugin that declared nothing", async () => {
