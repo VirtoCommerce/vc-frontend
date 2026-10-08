@@ -62,7 +62,14 @@ function toRouteRecord(route: IRouteContributionType, plugin: string): RouteReco
     path: route.path,
     name: route.name,
     component: PluginRoutePlaceholder,
-    meta: { [DECLARED_META_KEY]: plugin, [PLACEHOLDER_META_KEY]: plugin },
+    meta: {
+      [DECLARED_META_KEY]: plugin,
+      [PLACEHOLDER_META_KEY]: plugin,
+      // The parent's organization gate is not the plugin route's to inherit: the real route may clear
+      // it (the Sales Rep Hub does). The placeholder re-navigates once the plugin settles, and the
+      // gate then runs against the real route's meta.
+      requiresOrganization: false,
+    },
   };
 }
 
