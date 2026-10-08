@@ -21,6 +21,8 @@
         `vc-menu-item__inner--color--${color}`,
         {
           'vc-menu-item__inner--active': active,
+          'vc-menu-item__inner--highlighted': highlighted,
+          'vc-menu-item__inner--highlight-ring': highlighted && highlightRing,
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
@@ -72,6 +74,17 @@ interface IProps {
   role?: string;
   ariaSelected?: boolean;
   optionId?: string;
+  /**
+   * The active option of an `aria-activedescendant` list, where DOM focus stays on the combobox
+   * and cannot provide the usual focus ring.
+   */
+  highlighted?: boolean;
+  /**
+   * Draws the focus ring on a highlighted item. Turn it off for a highlight that follows the pointer.
+   */
+  highlightRing?: boolean;
+  /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
+  tabindex?: number;
 }
 
 defineOptions({
@@ -84,6 +97,8 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
+  tabindex: 0,
+  highlightRing: true,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -130,15 +145,15 @@ provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target, tabindex: 0 };
+    return { to: props.to, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target, tabindex: 0 };
+    return { href: props.externalLink, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "button") {
-    return { type: "button", tabindex: 0 };
+    return { type: "button", tabindex: props.tabindex };
   }
 
   return {};
@@ -189,6 +204,8 @@ onMounted(() => {
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
+  $highlighted: "";
+  $highlightRing: "";
   $truncate: "";
   $maxLines: "";
 
@@ -197,7 +214,10 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full px-3 bg-additional-50 text-start font-normal;
+
+    // A list whose container clips its corners rounds its corner items through this knob.
+    border-radius: var(--vc-menu-item-radius, inherit);
 
     &:not(:disabled) {
       @apply text-neutral-950;
@@ -207,6 +227,16 @@ onMounted(() => {
       $active: &;
 
       @apply font-bold;
+    }
+
+    &--highlight-ring {
+      $highlightRing: &;
+    }
+
+    &--highlighted {
+      $highlighted: &;
+
+      @apply outline-none;
     }
 
     &--truncate {
@@ -251,7 +281,8 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
-        &:hover {
+        &:hover,
+        &#{$highlighted} {
           @apply bg-[--color-#{$color}-50];
         }
 
@@ -261,11 +292,20 @@ onMounted(() => {
       }
     }
 
+    // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
+    &#{$highlightRing} {
+      @include focus-ring($inset: true);
+    }
+
+    // `:where` keeps this at the specificity of the `:focus-visible` rule below, which must still win.
+    &:where(:not(#{$highlighted})):hover,
+    &:where(:not(#{$highlighted})):focus {
+      @apply outline-none ring-0;
+    }
+
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
     // language dropdown), so an outset ring is clipped: invert the shared offset.
     &:focus-visible {
-      @apply rounded-[inherit];
-
       @include focus-ring($inset: true);
     }
 
@@ -299,10 +339,6 @@ onMounted(() => {
 
   &__append {
     @apply flex-none flex items-center h-[--content-height] empty:hidden;
-  }
-
-  .vc-icon {
-    @apply flex-none;
   }
 }
 </style>

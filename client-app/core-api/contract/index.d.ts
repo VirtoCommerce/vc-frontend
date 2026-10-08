@@ -20,7 +20,7 @@ import * as _vue_shared from '@vue/shared';
 
 declare const uiKit: Plugin;
 
-interface IProps$k {
+interface IProps$j {
     color?: VcBadgeColorType;
     size?: VcBadgeSizeType;
     variant?: VcBadgeVariantType;
@@ -31,30 +31,30 @@ interface IProps$k {
     maxWidth?: string;
 }
 declare var __VLS_1$3: {};
-type __VLS_Slots$d = {} & {
+type __VLS_Slots$c = {} & {
     default?: (props: typeof __VLS_1$3) => any;
 };
-declare const __VLS_base$d: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$k> & Readonly<{}>, {
+declare const __VLS_base$c: vue.DefineComponent<IProps$j, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$j> & Readonly<{}>, {
     size: VcBadgeSizeType;
     variant: VcBadgeVariantType;
     color: VcBadgeColorType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$m: __VLS_WithSlots$d<typeof __VLS_base$d, __VLS_Slots$d>;
+declare const __VLS_export$m: __VLS_WithSlots$c<typeof __VLS_base$c, __VLS_Slots$c>;
 declare const _default$m: typeof __VLS_export$m;
 
-type __VLS_WithSlots$d<T, S> = T & {
+type __VLS_WithSlots$c<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$j {
+interface IProps$i {
     items: IBreadcrumb[];
 }
-declare const __VLS_export$l: vue.DefineComponent<IProps$j, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$j> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$l: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$i> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$l: typeof __VLS_export$l;
 
-interface IProps$i {
+interface IProps$h {
     modelValue?: boolean;
     name?: string;
     value?: string | number | object;
@@ -76,21 +76,21 @@ interface IProps$i {
         disabled?: boolean;
     };
 }
-declare var __VLS_16$2: {
+declare var __VLS_16$1: {
     checked: boolean;
 };
 declare var __VLS_19$1: {
     checked: boolean;
 };
-type __VLS_Slots$c = {} & {
-    default?: (props: typeof __VLS_16$2) => any;
+type __VLS_Slots$b = {} & {
+    default?: (props: typeof __VLS_16$1) => any;
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$c: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$b: vue.DefineComponent<IProps$h, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$i> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$h> & Readonly<{
     onChange?: ((value: boolean) => any) | undefined;
     "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
@@ -103,10 +103,10 @@ declare const __VLS_base$c: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.Co
         disabled?: boolean;
     };
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$k: __VLS_WithSlots$c<typeof __VLS_base$c, __VLS_Slots$c>;
+declare const __VLS_export$k: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
 declare const _default$k: typeof __VLS_export$k;
 
-type __VLS_WithSlots$c<T, S> = T & {
+type __VLS_WithSlots$b<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -114,7 +114,7 @@ type __VLS_WithSlots$c<T, S> = T & {
 
 type IconVariantType = "solid" | "outline";
 
-interface IProps$h {
+interface IProps$g {
     name?: string;
     size?: VcIconSizeType;
     color?: string;
@@ -122,13 +122,13 @@ interface IProps$h {
     label?: string;
     strokeWidth?: number;
 }
-declare const __VLS_export$j: vue.DefineComponent<IProps$h, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$h> & Readonly<{}>, {
+declare const __VLS_export$j: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$g> & Readonly<{}>, {
     name: string;
     color: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$j: typeof __VLS_export$j;
 
-interface IProps$g {
+interface IProps$f {
     lazy?: boolean;
     src?: string;
     alt?: string;
@@ -140,44 +140,25 @@ interface IProps$g {
      */
     sizeSuffix?: "sm" | "md" | "lg";
 }
-declare const __VLS_export$i: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$g> & Readonly<{}>, {
+declare const __VLS_export$i: vue.DefineComponent<IProps$f, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$f> & Readonly<{}>, {
     src: string;
     fallbackSrc: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$i: typeof __VLS_export$i;
 
-interface IProps$f {
+interface IProps$e {
     required?: boolean;
     error?: boolean;
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
 declare var __VLS_8$4: {};
-type __VLS_Slots$b = {} & {
+type __VLS_Slots$a = {} & {
     default?: (props: typeof __VLS_8$4) => any;
 };
-declare const __VLS_base$b: vue.DefineComponent<IProps$f, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$f> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$h: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
-declare const _default$h: typeof __VLS_export$h;
-
-type __VLS_WithSlots$b<T, S> = T & {
-    new (): {
-        $slots: S;
-    };
-};
-
-interface IProps$e {
-    to?: RouteLocationRaw;
-    externalLink?: RouteLocationRaw;
-    disabled?: boolean;
-}
-declare var __VLS_8$3: {};
-type __VLS_Slots$a = {} & {
-    default?: (props: typeof __VLS_8$3) => any;
-};
 declare const __VLS_base$a: vue.DefineComponent<IProps$e, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$e> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$g: __VLS_WithSlots$a<typeof __VLS_base$a, __VLS_Slots$a>;
-declare const _default$g: typeof __VLS_export$g;
+declare const __VLS_export$h: __VLS_WithSlots$a<typeof __VLS_base$a, __VLS_Slots$a>;
+declare const _default$h: typeof __VLS_export$h;
 
 type __VLS_WithSlots$a<T, S> = T & {
     new (): {
@@ -186,9 +167,28 @@ type __VLS_WithSlots$a<T, S> = T & {
 };
 
 interface IProps$d {
+    to?: RouteLocationRaw;
+    externalLink?: RouteLocationRaw;
+    disabled?: boolean;
+}
+declare var __VLS_8$3: {};
+type __VLS_Slots$9 = {} & {
+    default?: (props: typeof __VLS_8$3) => any;
+};
+declare const __VLS_base$9: vue.DefineComponent<IProps$d, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$d> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$g: __VLS_WithSlots$9<typeof __VLS_base$9, __VLS_Slots$9>;
+declare const _default$g: typeof __VLS_export$g;
+
+type __VLS_WithSlots$9<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$c {
     src: string;
 }
-declare const __VLS_export$f: vue.DefineComponent<IProps$d, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$d> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$f: vue.DefineComponent<IProps$c, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$c> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$f: typeof __VLS_export$f;
 
 type Maybe<T> = T;
@@ -346,6 +346,241 @@ type Breadcrumb = {
     /** Catalog, category or product */
     typeName: Scalars['String']['output'];
 };
+type CartAddressType = {
+    /** Address type */
+    addressType?: Maybe<Scalars['Int']['output']>;
+    /** City */
+    city?: Maybe<Scalars['String']['output']>;
+    /** Country code */
+    countryCode?: Maybe<Scalars['String']['output']>;
+    /** Country name */
+    countryName?: Maybe<Scalars['String']['output']>;
+    /** Description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Email */
+    email?: Maybe<Scalars['String']['output']>;
+    /** First name */
+    firstName?: Maybe<Scalars['String']['output']>;
+    /** Id */
+    id?: Maybe<Scalars['String']['output']>;
+    /** Id */
+    key?: Maybe<Scalars['String']['output']>;
+    /** Last name */
+    lastName?: Maybe<Scalars['String']['output']>;
+    /** Line1 */
+    line1?: Maybe<Scalars['String']['output']>;
+    /** Line2 */
+    line2?: Maybe<Scalars['String']['output']>;
+    /** Middle name */
+    middleName?: Maybe<Scalars['String']['output']>;
+    /** Name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Company name */
+    organization?: Maybe<Scalars['String']['output']>;
+    /** Outer id */
+    outerId?: Maybe<Scalars['String']['output']>;
+    /** Phone */
+    phone?: Maybe<Scalars['String']['output']>;
+    /** Postal code */
+    postalCode: Scalars['String']['output'];
+    /** Region id */
+    regionId?: Maybe<Scalars['String']['output']>;
+    /** Region name */
+    regionName?: Maybe<Scalars['String']['output']>;
+    /** Zip */
+    zip?: Maybe<Scalars['String']['output']>;
+};
+type CartConfigurationItemFileType = {
+    /** MIME type of the file */
+    contentType?: Maybe<Scalars['String']['output']>;
+    /** Name of the file */
+    name: Scalars['String']['output'];
+    /** Size of the file */
+    size: Scalars['Long']['output'];
+    /** URL of the file */
+    url: Scalars['String']['output'];
+};
+type CartConfigurationItemType = {
+    /** Configuration section that defines this configuration item */
+    configurationSection?: Maybe<ConfigurationSectionType>;
+    /** Custom text for 'Text' configuration item section */
+    customText?: Maybe<Scalars['String']['output']>;
+    /** Extended price */
+    extendedPrice: MoneyType;
+    /** List of files for 'File' configuration item section */
+    files?: Maybe<Array<Maybe<CartConfigurationItemFileType>>>;
+    /** Configuration item ID */
+    id: Scalars['String']['output'];
+    /** Configuration item image URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** List price */
+    listPrice: MoneyType;
+    /** Configuration item name */
+    name?: Maybe<Scalars['String']['output']>;
+    product?: Maybe<Product>;
+    /** Configuration item product ID */
+    productId?: Maybe<Scalars['String']['output']>;
+    /** Configuration item product quantity */
+    quantity?: Maybe<Scalars['Int']['output']>;
+    /** Sale price */
+    salePrice: MoneyType;
+    /** Configuration item section ID */
+    sectionId: Scalars['String']['output'];
+    /** Configuration item section name */
+    sectionName?: Maybe<Scalars['String']['output']>;
+    /** Whether the configuration item is selected for checkout */
+    selectedForCheckout: Scalars['Boolean']['output'];
+    /** Configuration item SKU */
+    sku?: Maybe<Scalars['String']['output']>;
+    /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
+    type: Scalars['String']['output'];
+};
+type CartShipmentItemType = {
+    lineItem?: Maybe<LineItemType>;
+    /** Quantity */
+    quantity: Scalars['Int']['output'];
+};
+type CartTotalType = {
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Is current total in default total currency */
+    isDefaultTotalCurrency: Scalars['Boolean']['output'];
+    /** Cart subtotal */
+    subTotal: MoneyType;
+    /** Total tax */
+    taxTotal: MoneyType;
+    /** Cart total */
+    total: MoneyType;
+};
+type CartType = {
+    /** Addresses */
+    addresses: Array<CartAddressType>;
+    /** Available Gifts */
+    availableGifts: Array<GiftItemType>;
+    /** Available payment methods */
+    availablePaymentMethods: Array<PaymentMethodType>;
+    availableShippingMethods: Array<ShippingMethodType>;
+    /** Cart totals */
+    cartTotals?: Maybe<Array<Maybe<CartTotalType>>>;
+    /** Shopping cart channel ID */
+    channelId?: Maybe<Scalars['String']['output']>;
+    /** Cart checkout ID */
+    checkoutId: Scalars['String']['output'];
+    /** Shopping cart text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Coupons */
+    coupons: Array<CouponType>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Shopping cart user ID */
+    customerId: Scalars['String']['output'];
+    /** Shopping cart user name */
+    customerName?: Maybe<Scalars['String']['output']>;
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Total discount with tax */
+    discountTotalWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Total extended price */
+    extendedPriceTotal: MoneyType;
+    /** Total extended price with tax */
+    extendedPriceTotalWithTax: MoneyType;
+    /** Shopping cart fee */
+    fee: MoneyType;
+    /** Total fee */
+    feeTotal: MoneyType;
+    /** Total fee with tax */
+    feeTotalWithTax: MoneyType;
+    /** Shopping cart fee with tax */
+    feeWithTax: MoneyType;
+    /** Gifts */
+    gifts: Array<GiftItemType>;
+    /** Total handling */
+    handlingTotal: MoneyType;
+    /** Total handling with tax */
+    handlingTotalWithTax: MoneyType;
+    /** Has physical products */
+    hasPhysicalProducts?: Maybe<Scalars['Boolean']['output']>;
+    /** Shopping cart ID */
+    id: Scalars['String']['output'];
+    /** Displays whether the shopping cart is anonymous */
+    isAnonymous: Scalars['Boolean']['output'];
+    /** Displays whether the shopping cart is recurring */
+    isRecuring?: Maybe<Scalars['Boolean']['output']>;
+    /** Items */
+    items: Array<LineItemType>;
+    /** Item count */
+    itemsCount: Scalars['Int']['output'];
+    /** Quantity of items */
+    itemsQuantity: Scalars['Int']['output'];
+    /** Get total points amount */
+    loyaltyPoints?: Maybe<MoneyType>;
+    /** Shopping cart name */
+    name: Scalars['String']['output'];
+    /** Shopping cart organization ID */
+    organizationId?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart organization name */
+    organizationName?: Maybe<Scalars['String']['output']>;
+    /** Payment price */
+    paymentPrice: MoneyType;
+    /** Payment price with tax */
+    paymentPriceWithTax: MoneyType;
+    /** Total payment */
+    paymentTotal: MoneyType;
+    /** Total payment with tax */
+    paymentTotalWithTax: MoneyType;
+    /** Payments */
+    payments: Array<PaymentType>;
+    /** Purchase order number */
+    purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
+    /** Shipments */
+    shipments: Array<ShipmentType>;
+    /** Shipping price */
+    shippingPrice: MoneyType;
+    /** Shipping price with tax */
+    shippingPriceWithTax: MoneyType;
+    /** Total shipping */
+    shippingTotal: MoneyType;
+    /** Total shipping with tax */
+    shippingTotalWithTax: MoneyType;
+    /** Shopping cart status */
+    status?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart store ID */
+    storeId: Scalars['String']['output'];
+    /** Shopping cart subtotal */
+    subTotal: MoneyType;
+    /** Subtotal discount */
+    subTotalDiscount: MoneyType;
+    /** Subtotal discount with tax */
+    subTotalDiscountWithTax: MoneyType;
+    /** Subtotal with tax */
+    subTotalWithTax: MoneyType;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percentage */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Total tax */
+    taxTotal: MoneyType;
+    /** Shipping tax type */
+    taxType: Scalars['String']['output'];
+    /** Shopping cart total */
+    total: MoneyType;
+    /** Shopping cart type */
+    type?: Maybe<Scalars['String']['output']>;
+    /** A set of errors in case the cart is invalid */
+    validationErrors: Array<ValidationErrorType>;
+    /** Shopping cart volumetric weight value */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** A set of temporary warnings for a cart user */
+    warnings: Array<ValidationErrorType>;
+    /** Shopping cart weight value */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Shopping cart weight unit value */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+};
 type CatalogDiscountType = {
     /** Discount amount */
     amount: Scalars['Decimal']['output'];
@@ -419,6 +654,54 @@ type CommonVendor = {
     name: Scalars['String']['output'];
     /** Vendor rating */
     rating?: Maybe<Rating>;
+};
+type ConfigurationLineItemType = {
+    /** Currency */
+    currency?: Maybe<CurrencyType>;
+    /** Total discount amount */
+    discountAmount?: Maybe<MoneyType>;
+    /** Extended price */
+    extendedPrice?: Maybe<MoneyType>;
+    /** The unique identifier */
+    id?: Maybe<Scalars['String']['output']>;
+    /** Whether the option is selected by default */
+    isDefault: Scalars['Boolean']['output'];
+    /** List price */
+    listPrice?: Maybe<MoneyType>;
+    product?: Maybe<Product>;
+    /** The quantity of the option */
+    quantity: Scalars['Int']['output'];
+    /** Sale price */
+    salePrice?: Maybe<MoneyType>;
+    /** The text of the Text-type option */
+    text?: Maybe<Scalars['String']['output']>;
+};
+type ConfigurationSectionType = {
+    /** Is custom text allowed for Text-type section */
+    allowCustomText: Scalars['Boolean']['output'];
+    /** Is predefined text options allowed for Text-type section */
+    allowTextOptions: Scalars['Boolean']['output'];
+    /** If set, this section is only shown when the referenced section has a selection made */
+    dependsOnSectionId?: Maybe<Scalars['String']['output']>;
+    /** Configuration section description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Configuration section id */
+    id: Scalars['String']['output'];
+    /** Is configuration section required */
+    isRequired: Scalars['Boolean']['output'];
+    /** Maximum text length for Text-type section */
+    maxLength?: Maybe<Scalars['Int']['output']>;
+    /** Configuration section name */
+    name?: Maybe<Scalars['String']['output']>;
+    options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
+    /** Configuration section type. Possible values: 'Product', 'Text', 'File' */
+    type: Scalars['String']['output'];
+};
+type CouponType = {
+    /** Coupon code */
+    code?: Maybe<Scalars['String']['output']>;
+    /** Is coupon was applied successfully */
+    isAppliedSuccessfully: Scalars['Boolean']['output'];
 };
 type CurrencyType = {
     /** Currency code may be used ISO 4217 */
@@ -555,6 +838,22 @@ type DictionaryItemType = {
     /** Name */
     name: Scalars['String']['output'];
 };
+type DiscountType = {
+    /** Discount amount */
+    amount: Scalars['Decimal']['output'];
+    /** Discount amount with tax */
+    amountWithTax: Scalars['Decimal']['output'];
+    /** Coupon */
+    coupon?: Maybe<Scalars['String']['output']>;
+    /** Value of discount description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount in the specified currency */
+    moneyAmount: MoneyType;
+    /** Discount amount with tax in the specified currency */
+    moneyAmountWithTax: MoneyType;
+    /** Value of promotion id */
+    promotionId?: Maybe<Scalars['String']['output']>;
+};
 type DynamicPropertyType = {
     dictionaryItems?: Maybe<DictionaryItemConnection>;
     /** The order for the dynamic property to display */
@@ -603,6 +902,33 @@ declare enum DynamicPropertyValueTypes {
     ShortText = "SHORT_TEXT",
     Undefined = "UNDEFINED"
 }
+type ErrorParameterType = {
+    /** key */
+    key: Scalars['String']['output'];
+    /** Value */
+    value: Scalars['String']['output'];
+};
+type GiftItemType = {
+    /** Product category ID */
+    categoryId?: Maybe<Scalars['String']['output']>;
+    /** Artificial ID for this value object */
+    id: Scalars['String']['output'];
+    /** Value of reward image absolute URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** Line item ID in case there is a gift in the cart. If there is no gift, it stays null */
+    lineItemId?: Maybe<Scalars['String']['output']>;
+    /** Measurement unit */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    /** Name of the reward */
+    name: Scalars['String']['output'];
+    product?: Maybe<Product>;
+    /** Product ID */
+    productId?: Maybe<Scalars['String']['output']>;
+    /** Promotion ID */
+    promotionId: Scalars['String']['output'];
+    /** Number of gifts in the reward */
+    quantity: Scalars['Int']['output'];
+};
 type IdentityErrorInfoType = {
     /** Error code */
     code: Scalars['String']['output'];
@@ -695,6 +1021,126 @@ type InventoryInfo = {
     preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
     /** Inventory reserved quantity */
     reservedQuantity: Scalars['Long']['output'];
+};
+type LineItemType = {
+    /** Catalog ID value */
+    catalogId: Scalars['String']['output'];
+    /** Category ID value */
+    categoryId?: Maybe<Scalars['String']['output']>;
+    /** Configuration items for configurable product */
+    configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
+    /** Line item create date */
+    createdDate: Scalars['DateTime']['output'];
+    /** Line item currency code */
+    currencyCode?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Total discount with tax */
+    discountTotalWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart line item dynamic property values */
+    dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+    /** Extended price */
+    extendedPrice: MoneyType;
+    /** Extended price with tax */
+    extendedPriceWithTax: MoneyType;
+    /** Line item fulfillment center ID value */
+    fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+    /** Line item fulfillment center name value */
+    fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+    /** Height value */
+    height?: Maybe<Scalars['Decimal']['output']>;
+    /** Line item ID */
+    id: Scalars['String']['output'];
+    /** Value of line item image absolute URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** In stock quantity */
+    inStockQuantity: Scalars['Int']['output'];
+    /** flag of line item is a gift */
+    isGift: Scalars['Boolean']['output'];
+    /** Shows whether this is read-only */
+    isReadOnly: Scalars['Boolean']['output'];
+    /** Shows whether the line item is recurring */
+    isReccuring: Scalars['Boolean']['output'];
+    /** Shows whether this is valid */
+    isValid: Scalars['Boolean']['output'];
+    /** Culture name in the ISO 3166-1 alpha-3 format */
+    languageCode?: Maybe<Scalars['String']['output']>;
+    /** Length value */
+    length?: Maybe<Scalars['Decimal']['output']>;
+    /** List price */
+    listPrice: MoneyType;
+    /** List price with tax */
+    listPriceWithTax: MoneyType;
+    /** List total */
+    listTotal: MoneyType;
+    /** List total with tax */
+    listTotalWithTax: MoneyType;
+    /** Get points amount */
+    loyaltyPoints?: Maybe<MoneyType>;
+    /** Measurement unit value */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    /** Line item name value */
+    name: Scalars['String']['output'];
+    /** Line item comment */
+    note?: Maybe<Scalars['String']['output']>;
+    /** Line item quantity value */
+    objectType: Scalars['String']['output'];
+    /** Placed price */
+    placedPrice: MoneyType;
+    /** Placed price with tax */
+    placedPriceWithTax: MoneyType;
+    product?: Maybe<Product>;
+    /** Product ID value */
+    productId: Scalars['String']['output'];
+    /** Product outer Id */
+    productOuterId?: Maybe<Scalars['String']['output']>;
+    /** Product type: Physical, Digital, or Subscription */
+    productType?: Maybe<Scalars['String']['output']>;
+    /** Line item quantity value */
+    quantity: Scalars['Int']['output'];
+    /** Requirement for line item shipping */
+    requiredShipping: Scalars['Boolean']['output'];
+    /** Sale price */
+    salePrice: MoneyType;
+    /** Sale price with tax */
+    salePriceWithTax: MoneyType;
+    /** Shows whether the line item is selected for buying */
+    selectedForCheckout: Scalars['Boolean']['output'];
+    /** Line item shipping method code value */
+    shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+    /** Indicates whether the PlacedPrice should be visible to the customer */
+    showPlacedPrice: Scalars['Boolean']['output'];
+    /** Product SKU value */
+    sku: Scalars['String']['output'];
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Total shipping tax amount value */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Shipping tax type value */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Value of line item thumbnail image absolute URL */
+    thumbnailImageUrl?: Maybe<Scalars['String']['output']>;
+    /** Validation errors */
+    validationErrors: Array<ValidationErrorType>;
+    vendor?: Maybe<CommonVendor>;
+    /** Volumetric weight value */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** Warehouse location */
+    warehouseLocation?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart weight value */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Weight unit value */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+    /** Width value */
+    width?: Maybe<Scalars['Decimal']['output']>;
 };
 type MoneyType = {
     /** A decimal with the amount rounded to the significant number of decimal digits. */
@@ -1061,6 +1507,48 @@ type PaymentInType = {
     vendor?: Maybe<CommonVendor>;
     voidedDate?: Maybe<Scalars['DateTime']['output']>;
 };
+type PaymentMethodType = {
+    /** Is payment method available for cart payment */
+    allowCartPayment: Scalars['Boolean']['output'];
+    /** Value of payment gateway code */
+    code: Scalars['String']['output'];
+    /** Currency */
+    currency: CurrencyType;
+    /** Payment method description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Is payment method available for partial payments */
+    isAvailableForPartial: Scalars['Boolean']['output'];
+    /** Value of payment method logo absolute URL */
+    logoUrl?: Maybe<Scalars['String']['output']>;
+    /** Localized name of payment method. */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Value of payment group type */
+    paymentMethodGroupType: Scalars['String']['output'];
+    /** Value of payment method type */
+    paymentMethodType: Scalars['String']['output'];
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Value of payment method priority */
+    priority: Scalars['Int']['output'];
+    /** Tax details */
+    taxDetails?: Maybe<Array<TaxDetailType>>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+};
 type PaymentTransactionType = {
     amount: MoneyType;
     gatewayIpAddress?: Maybe<Scalars['String']['output']>;
@@ -1075,6 +1563,48 @@ type PaymentTransactionType = {
     responseData?: Maybe<Scalars['String']['output']>;
     status?: Maybe<Scalars['String']['output']>;
     type?: Maybe<Scalars['String']['output']>;
+};
+type PaymentType = {
+    /** Amount */
+    amount: MoneyType;
+    /** Billing address */
+    billingAddress?: Maybe<CartAddressType>;
+    /** Text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<Maybe<DiscountType>>;
+    /** Cart payment dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Payment Id */
+    id: Scalars['String']['output'];
+    /** Value of payment outer id */
+    outerId?: Maybe<Scalars['String']['output']>;
+    /** Value of payment gateway code */
+    paymentGatewayCode?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    purpose?: Maybe<Scalars['String']['output']>;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+    vendor?: Maybe<CommonVendor>;
 };
 type PickupAddressType = {
     /** Address type */
@@ -1440,6 +1970,110 @@ type SharingTargetType = {
     /** Secondary display line of the target (e.g. city and region), when resolved */
     subtitle?: Maybe<Scalars['String']['output']>;
 };
+type ShipmentType = {
+    /** Text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Delivery address */
+    deliveryAddress?: Maybe<CartAddressType>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart shipment dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Fee */
+    fee: MoneyType;
+    /** Fee with tax */
+    feeWithTax: MoneyType;
+    /** Fulfillment center id */
+    fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+    /** Value of height */
+    height?: Maybe<Scalars['Decimal']['output']>;
+    /** Shipment Id */
+    id: Scalars['String']['output'];
+    /** Items */
+    items: Array<CartShipmentItemType>;
+    /** Value of length */
+    length?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of measurement units */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    pickupLocation?: Maybe<PickupLocationType>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Shipment method code */
+    shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+    /** Shipment method option */
+    shipmentMethodOption?: Maybe<Scalars['String']['output']>;
+    shippingMethod?: Maybe<ShippingMethodType>;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+    vendor?: Maybe<CommonVendor>;
+    /** Value of volumetric weight */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of weight */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of weight unit */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+    /** Value of width */
+    width?: Maybe<Scalars['Decimal']['output']>;
+};
+type ShippingMethodType = {
+    /** Value of shipping gateway code */
+    code: Scalars['String']['output'];
+    /** Currency */
+    currency: CurrencyType;
+    /** Shipping method description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    id: Scalars['String']['output'];
+    /** Value of shipping method logo absolute URL */
+    logoUrl?: Maybe<Scalars['String']['output']>;
+    /** Shipping method name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Value of shipping method option description */
+    optionDescription?: Maybe<Scalars['String']['output']>;
+    /** Value of shipping method option name */
+    optionName?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Value of shipping method priority */
+    priority: Scalars['Int']['output'];
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+};
+type TaxDetailType = {
+    /** Amount */
+    amount: MoneyType;
+    /** Name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Rate */
+    rate: MoneyType;
+};
 type TierPriceType = {
     /** Price */
     price: MoneyType;
@@ -1447,6 +2081,17 @@ type TierPriceType = {
     priceWithTax: MoneyType;
     /** Quantity */
     quantity: Scalars['Long']['output'];
+};
+type ValidationErrorType = {
+    /** Error code */
+    errorCode?: Maybe<Scalars['String']['output']>;
+    /** Error message */
+    errorMessage?: Maybe<Scalars['String']['output']>;
+    errorParameters?: Maybe<Array<Maybe<ErrorParameterType>>>;
+    /** Object id */
+    objectId?: Maybe<Scalars['String']['output']>;
+    /** Object type */
+    objectType?: Maybe<Scalars['String']['output']>;
 };
 type VariationType = {
     /** Assets */
@@ -1592,7 +2237,7 @@ type GetMeQuery = {
     };
 };
 
-interface IProps$c {
+interface IProps$b {
     color?: VcAlertColorType;
     icon?: boolean | string;
     variant?: VcAlertVariantType;
@@ -1604,32 +2249,32 @@ interface IProps$c {
 declare var __VLS_1$2: {};
 declare var __VLS_8$2: {};
 declare var __VLS_10$1: {};
-type __VLS_Slots$9 = {} & {
+type __VLS_Slots$8 = {} & {
     'main-icon'?: (props: typeof __VLS_1$2) => any;
 } & {
     default?: (props: typeof __VLS_8$2) => any;
 } & {
     'close-icon'?: (props: typeof __VLS_10$1) => any;
 };
-declare const __VLS_base$9: vue.DefineComponent<IProps$c, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$8: vue.DefineComponent<IProps$b, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$c> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$b> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     size: VcAlertSizeType;
     variant: VcAlertVariantType;
     color: VcAlertColorType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$e: __VLS_WithSlots$9<typeof __VLS_base$9, __VLS_Slots$9>;
+declare const __VLS_export$e: __VLS_WithSlots$8<typeof __VLS_base$8, __VLS_Slots$8>;
 declare const _default$e: typeof __VLS_export$e;
 
-type __VLS_WithSlots$9<T, S> = T & {
+type __VLS_WithSlots$8<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$b {
+interface IProps$a {
     color?: VcButtonColorType;
     size?: VcButtonSizeType;
     variant?: VcButtonVariantType;
@@ -1656,12 +2301,12 @@ interface IProps$b {
 }
 declare function focus(): void;
 declare function blur(): void;
-declare var __VLS_16$1: {};
+declare var __VLS_16: {};
 declare var __VLS_23: {};
 declare var __VLS_25: {};
 declare var __VLS_32: {};
-type __VLS_Slots$8 = {} & {
-    prepend?: (props: typeof __VLS_16$1) => any;
+type __VLS_Slots$7 = {} & {
+    prepend?: (props: typeof __VLS_16) => any;
 } & {
     default?: (props: typeof __VLS_23) => any;
 } & {
@@ -1669,13 +2314,13 @@ type __VLS_Slots$8 = {} & {
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
-declare const __VLS_base$8: vue.DefineComponent<IProps$b, {
+declare const __VLS_base$7: vue.DefineComponent<IProps$a, {
     focus: typeof focus;
     blur: typeof blur;
     el: vue.ComputedRef<HTMLElement | null>;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$b> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$a> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     type: VcButtonTypeType;
@@ -1690,10 +2335,10 @@ declare const __VLS_base$8: vue.DefineComponent<IProps$b, {
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$d: __VLS_WithSlots$8<typeof __VLS_base$8, __VLS_Slots$8>;
+declare const __VLS_export$d: __VLS_WithSlots$7<typeof __VLS_base$7, __VLS_Slots$7>;
 declare const _default$d: typeof __VLS_export$d;
 
-type __VLS_WithSlots$8<T, S> = T & {
+type __VLS_WithSlots$7<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -1707,26 +2352,26 @@ interface IProp {
 declare var __VLS_1$1: {};
 declare var __VLS_8$1: {};
 declare var __VLS_10: {};
-type __VLS_Slots$7 = {} & {
+type __VLS_Slots$6 = {} & {
     icon?: (props: typeof __VLS_1$1) => any;
 } & {
     default?: (props: typeof __VLS_8$1) => any;
 } & {
     button?: (props: typeof __VLS_10) => any;
 };
-declare const __VLS_base$7: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
+declare const __VLS_base$6: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
     variant: VcEmptyViewVariantType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$c: __VLS_WithSlots$7<typeof __VLS_base$7, __VLS_Slots$7>;
+declare const __VLS_export$c: __VLS_WithSlots$6<typeof __VLS_base$6, __VLS_Slots$6>;
 declare const _default$c: typeof __VLS_export$c;
 
-type __VLS_WithSlots$7<T, S> = T & {
+type __VLS_WithSlots$6<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$a {
+interface IProps$9 {
     modelModifiers?: Record<string, boolean>;
     autocomplete?: string;
     readonly?: boolean;
@@ -1738,9 +2383,12 @@ interface IProps$a {
     placeholder?: string;
     message?: string;
     singleLineMessage?: boolean;
+    /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
     error?: boolean;
     noBorder?: boolean;
     seamless?: boolean;
+    /** A popup this field controls (a select's list) is open; the field is then drawn with the focus ring. */
+    opened?: boolean;
     hidePasswordSwitcher?: boolean;
     showEmptyDetails?: boolean;
     hideDetails?: boolean;
@@ -1767,8 +2415,8 @@ interface IProps$a {
     tabindex?: string | number;
     mask?: string | MaskOptions;
 }
-declare const __VLS_export$b: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
-    props: vue.PublicProps & __VLS_PrettifyLocal$1<(IProps$a & {
+declare const __VLS_export$b: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$2<(IProps$9 & {
         modelValue?: T;
     }) & {
         onClear?: (() => any) | undefined;
@@ -1801,7 +2449,7 @@ declare const __VLS_export$b: <T extends string | number | null>(__VLS_props: No
 };
 declare const _default$b: typeof __VLS_export$b;
 
-type __VLS_PrettifyLocal$1<T> = (T extends any ? {
+type __VLS_PrettifyLocal$2<T> = (T extends any ? {
     [K in keyof T]: T[K];
 } : {
     [K in keyof T as K]: T[K];
@@ -1883,28 +2531,28 @@ interface IUsePageSeoData {
     meta?: Record<string, MaybeRef<string | undefined>>;
 }
 
-interface IProps$9 {
+interface IProps$8 {
     visible?: boolean;
     fixedSpinner?: boolean;
     noBg?: boolean;
 }
 declare var __VLS_12: {};
-type __VLS_Slots$6 = {} & {
+type __VLS_Slots$5 = {} & {
     default?: (props: typeof __VLS_12) => any;
 };
-declare const __VLS_base$6: vue.DefineComponent<IProps$9, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$9> & Readonly<{}>, {
+declare const __VLS_base$5: vue.DefineComponent<IProps$8, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$8> & Readonly<{}>, {
     visible: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$a: __VLS_WithSlots$6<typeof __VLS_base$6, __VLS_Slots$6>;
+declare const __VLS_export$a: __VLS_WithSlots$5<typeof __VLS_base$5, __VLS_Slots$5>;
 declare const _default$a: typeof __VLS_export$a;
 
-type __VLS_WithSlots$6<T, S> = T & {
+type __VLS_WithSlots$5<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$8 {
+interface IProps$7 {
     color?: VcMenuItemColorType;
     size?: "xs" | "sm" | "md" | "lg";
     to?: RouteLocationRaw;
@@ -1921,98 +2569,159 @@ interface IProps$8 {
     role?: string;
     ariaSelected?: boolean;
     optionId?: string;
+    /**
+     * The active option of an `aria-activedescendant` list, where DOM focus stays on the combobox
+     * and cannot provide the usual focus ring.
+     */
+    highlighted?: boolean;
+    /**
+     * Draws the focus ring on a highlighted item. Turn it off for a highlight that follows the pointer.
+     */
+    highlightRing?: boolean;
+    /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
+    tabindex?: number;
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};
 declare var __VLS_21: {};
-type __VLS_Slots$5 = {} & {
+type __VLS_Slots$4 = {} & {
     prepend?: (props: typeof __VLS_17) => any;
 } & {
     default?: (props: typeof __VLS_19) => any;
 } & {
     append?: (props: typeof __VLS_21) => any;
 };
-declare const __VLS_base$5: vue.DefineComponent<IProps$8, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$4: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$8> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$7> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
+    tabindex: number;
     color: VcMenuItemColorType;
     clickable: boolean;
+    highlightRing: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$9: __VLS_WithSlots$5<typeof __VLS_base$5, __VLS_Slots$5>;
+declare const __VLS_export$9: __VLS_WithSlots$4<typeof __VLS_base$4, __VLS_Slots$4>;
 declare const _default$9: typeof __VLS_export$9;
-
-type __VLS_WithSlots$5<T, S> = T & {
-    new (): {
-        $slots: S;
-    };
-};
-
-interface IProps$7 {
-    modelValue?: object | string | Array<object | string>;
-    label?: string;
-    ariaLabel?: string;
-    required?: boolean;
-    disabled?: boolean;
-    readonly?: boolean;
-    items: any[];
-    size?: "xs" | "sm" | "md" | "auto";
-    itemSize?: "xs" | "sm" | "md" | "lg";
-    textField?: string;
-    valueField?: string;
-    placeholder?: string;
-    showEmptyDetails?: boolean;
-    error?: boolean;
-    message?: string;
-    autocomplete?: boolean;
-    singleLineMessage?: boolean;
-    multiple?: boolean;
-    clearable?: boolean;
-    testIdDropdown?: string;
-    enableTeleport?: boolean;
-    /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
-    lazy?: boolean;
-    /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
-    teleportSelector?: string;
-}
-declare var __VLS_16: {
-    item: any;
-    error: boolean;
-};
-declare var __VLS_18: {
-    error: boolean;
-};
-declare var __VLS_73: {
-    item: any;
-    index: number;
-};
-type __VLS_Slots$4 = {} & {
-    selected?: (props: typeof __VLS_16) => any;
-} & {
-    placeholder?: (props: typeof __VLS_18) => any;
-} & {
-    item?: (props: typeof __VLS_73) => any;
-};
-declare const __VLS_base$4: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
-    change: (value: any) => any;
-    "update:modelValue": (value: any) => any;
-}, string, vue.PublicProps, Readonly<IProps$7> & Readonly<{
-    onChange?: ((value: any) => any) | undefined;
-    "onUpdate:modelValue"?: ((value: any) => any) | undefined;
-}>, {
-    size: "xs" | "sm" | "md" | "auto";
-    itemSize: "xs" | "sm" | "md" | "lg";
-}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$8: __VLS_WithSlots$4<typeof __VLS_base$4, __VLS_Slots$4>;
-declare const _default$8: typeof __VLS_export$8;
 
 type __VLS_WithSlots$4<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
+
+declare const __VLS_export$8: <T, V = T, M extends boolean = false>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$1<{
+        modelValue?: M extends true ? V[] : V;
+        label?: string;
+        ariaLabel?: string;
+        required?: boolean;
+        disabled?: boolean;
+        readonly?: boolean;
+        items: T[];
+        size?: "xs" | "sm" | "md" | "auto";
+        itemSize?: "xs" | "sm" | "md" | "lg";
+        /** Property name, or an accessor, producing the option label. */
+        textField?: VcSelectFieldAccessorType<T, string>;
+        /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
+        valueField?: VcSelectValueKeyType<T, NoInfer<V>> | ((item: T) => V);
+        placeholder?: string;
+        showEmptyDetails?: boolean;
+        error?: boolean;
+        message?: string;
+        autocomplete?: boolean;
+        singleLineMessage?: boolean;
+        /** Allows several values; the model is then an array. */
+        multiple?: M & boolean;
+        clearable?: boolean;
+        /** Adds a Select all row above the options. Multiple mode only. */
+        selectAll?: boolean;
+        /**
+         * Size of the whole set for the counter. Defaults to the number of options currently
+         * rendered; pass it explicitly when the list is paged and `items` holds only one page.
+         * With `server-filter`, it is the number of matches for the current query.
+         */
+        total?: number;
+        /**
+         * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
+         * matches that are not loaded. Defaults to the selected matches that are loaded. Capped at
+         * `total`, except that it never falls below the selected matches that are loaded.
+         */
+        selectedCount?: number;
+        /** Shows a loading indicator inside the list. */
+        loading?: boolean;
+        /**
+         * More options exist beyond `items`. While it is set, the list asks for the next page with
+         * `load-more` whenever it comes to rest at its bottom — including a page too short to scroll.
+         * `loading` must be bound alongside it, or one request becomes many.
+         */
+        hasNextPage?: boolean;
+        /**
+         * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
+         * `search` by replacing `items` or pushing/splicing into it while `loading` is off, or with a
+         * `loading` cycle (changes inside an item do not count): until then the list holds paging back
+         * and ignores Select all.
+         */
+        serverFilter?: boolean;
+        testIdDropdown?: string;
+        enableTeleport?: boolean;
+        /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
+        lazy?: boolean;
+        /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
+        teleportSelector?: string;
+    } & {
+        onSearch?: ((value: string) => any) | undefined;
+        onLoadMore?: (() => any) | undefined;
+        onChange?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
+        "onUpdate:modelValue"?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
+        onSelectAll?: ((payload: {
+            selected: boolean;
+            query: string;
+        }) => any) | undefined;
+    }> & (typeof globalThis extends {
+        __VLS_PROPS_FALLBACK: infer P;
+    } ? P : {});
+    expose: (exposed: {}) => void;
+    attrs: any;
+    slots: {
+        /** The chosen item in single mode, the selected values in multiple mode. */
+        selected?: (props: {
+            item: M extends true ? V[] : T;
+            error?: boolean;
+        }) => unknown;
+        placeholder?: (props: {
+            error?: boolean;
+        }) => unknown;
+        item?: (props: {
+            item: T;
+            index: number;
+        }) => unknown;
+        /** Replaces the loading indicator, for the first page and for every next one. */
+        loading?: () => unknown;
+        /** Replaces the text of the row shown when there are no options or no matches. */
+        empty?: () => unknown;
+    };
+    emit: {
+        (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
+        (event: "change", value: VcSelectEmittedType<V, M>): void;
+        (event: "selectAll", payload: {
+            selected: boolean;
+            query: string;
+        }): void;
+        (event: "loadMore"): void;
+        (event: "search", value: string): void;
+    };
+}>) => vue.VNode & {
+    __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
+};
+declare const _default$8: typeof __VLS_export$8;
+
+type __VLS_PrettifyLocal$1<T> = (T extends any ? {
+    [K in keyof T]: T[K];
+} : {
+    [K in keyof T as K]: T[K];
+}) & {};
 
 interface IProps$6 {
     modelValue?: string;
@@ -2433,6 +3142,14 @@ declare const __VLS_export: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.Comp
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;
 
+interface IPaymentMethodParameters {
+    hidePaymentButton?: boolean;
+    payment?: PaymentType;
+    disabled?: boolean;
+    cart?: CartType;
+    order?: CustomerOrderType;
+}
+
 /** The plugin renders its own markup in place of the host's. */
 type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boolean = never> = {
     component: Component;
@@ -2494,6 +3211,14 @@ type ExtensionCategoryMapType = {
         order: CustomerOrderType;
         paymentTypeName: string;
     }) => boolean>;
+    /** The cart-stage payment step (`shared/payment/components/payment.vue`). */
+    cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
+        paymentTypeName: string;
+    }) => boolean>;
+    /** The order details page. A provider decides from the order whether it has anything to offer. */
+    orderDetails: ExtensionEntryType<{
+        order?: CustomerOrderType;
+    }, never, (order?: CustomerOrderType) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
@@ -2570,6 +3295,9 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly orderPaymentPage: {
         readonly paymentMethods: "payment-methods";
+    };
+    readonly orderDetails: {
+        readonly actions: "actions";
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
@@ -3376,6 +4104,14 @@ type VcEmptyViewVariantType = "empty" | "search" | "error";
 type VcInputSizeType = "xs" | "sm" | "md" | "auto";
 type VcMenuItemColorType = VcMainColorType;
 type VcPopoverPlacementType = Placement;
+type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
+type VcSelectFieldAccessorType<T, R> = Extract<keyof T, string> | ((item: T) => R);
+type VcSelectValueKeyType<T, V> = [V] extends [T]
+    ? Extract<keyof T, string>
+    : Extract<
+        { [K in keyof T]-?: unknown extends T[K] ? K : NonNullable<T[K]> extends V ? K : never }[keyof T],
+        string
+      >;
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
 type VcTableAlignType = "center" | "right" | "left";
 type VcTableColumnType = {
