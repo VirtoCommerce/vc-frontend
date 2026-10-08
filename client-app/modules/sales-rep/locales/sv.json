@@ -89,6 +89,13 @@
         "empty_visible": "Dra ett nyckeltal hit för att visa det",
         "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
         "max_rows": "Max rader",
+        "restored": "Standardlayouten har återställts.",
+        "empty": {
+          "title": "Alla block är dolda",
+          "text": "Alla nyckeltal och widgetar på den här sidan har flyttats till {hidden} i layoutinställningarna. Återställ standardlayouten för att få tillbaka allt, eller öppna {edit} för att välja exakt vad som ska visas.",
+          "hidden": "Dolda",
+          "restore": "Återställ standardlayout"
+        },
         "a11y": {
           "reorder": "Ändra ordning på {title}",
           "hide": "Dölj {title}",

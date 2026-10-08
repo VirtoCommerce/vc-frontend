@@ -89,6 +89,13 @@
         "empty_visible": "Trascina qui una statistica per mostrarla",
         "empty_hidden": "Trascina qui una statistica per nasconderla",
         "max_rows": "Righe massime",
+        "restored": "Layout predefinito ripristinato.",
+        "empty": {
+          "title": "Tutti i blocchi sono nascosti",
+          "text": "Tutte le statistiche e i widget di questa pagina sono stati spostati in {hidden} nelle impostazioni del layout. Ripristina il layout predefinito per riportare tutto, oppure apri {edit} per scegliere esattamente cosa mostrare.",
+          "hidden": "Nascosti",
+          "restore": "Ripristina layout predefinito"
+        },
         "a11y": {
           "reorder": "Riordina {title}",
           "hide": "Nascondi {title}",

@@ -1,16 +1,35 @@
 import { nextTick } from "vue";
 
-/** Edit mode ends with the bar unmounting, taking focus with it. */
+/**
+ * Edit mode ends with the bar unmounting, taking focus with it. With every block hidden the toggle is gone
+ * too, and the empty state's Edit layout button stands in for it — the two never render together.
+ */
 export function focusEditToggle(): void {
   void nextTick(() => {
-    document.querySelector<HTMLElement>("[data-layout-edit-toggle]")?.focus({ preventScroll: true });
+    document
+      .querySelector<HTMLElement>("[data-layout-edit-toggle], [data-layout-empty-edit]")
+      ?.focus({ preventScroll: true });
   });
 }
 
-/** Starting a save makes the wrapper `inert`, blurring Save to `<body>`; on failure nothing reclaims it. */
+/**
+ * The empty state's actions unmount it with their own button, and the edit toggle can sit a page below.
+ * The surface's start is where the rep goes next: the restored blocks, or the edit bar. No `preventScroll`,
+ * so it comes into view if the rep had scrolled.
+ */
+export function focusSurfaceStart(): void {
+  void nextTick(() => {
+    document.querySelector<HTMLElement>("[data-layout-surface]")?.focus();
+  });
+}
+
+/**
+ * Starting a save makes the wrapper `inert`, blurring Save to `<body>`; on failure nothing reclaims it.
+ * No `preventScroll`: a failed restore mounts the edit bar above where Restore was, possibly off screen.
+ */
 export function focusSaveButton(): void {
   void nextTick(() => {
-    document.querySelector<HTMLElement>("[data-layout-save]")?.focus({ preventScroll: true });
+    document.querySelector<HTMLElement>("[data-layout-save]")?.focus();
   });
 }
 

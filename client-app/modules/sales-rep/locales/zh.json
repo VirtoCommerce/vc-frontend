@@ -89,6 +89,13 @@
         "empty_visible": "将指标拖到此处以显示",
         "empty_hidden": "将指标拖到此处以隐藏",
         "max_rows": "最大行数",
+        "restored": "已恢复默认布局。",
+        "empty": {
+          "title": "所有区块均已隐藏",
+          "text": "此页面上的所有指标和小组件已在布局设置中移至{hidden}。恢复默认布局即可全部找回，或打开{edit}精确选择要显示的内容。",
+          "hidden": "已隐藏",
+          "restore": "恢复默认布局"
+        },
         "a11y": {
           "reorder": "重新排序 {title}",
           "hide": "隐藏 {title}",

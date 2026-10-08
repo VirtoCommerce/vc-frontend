@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-surface">
+  <div class="layout-surface" tabindex="-1" data-layout-surface>
     <!-- What renders below is registry defaults, not the rep's layout, and there is no edit button. -->
     <VcAlert v-if="loadFailed" color="danger" size="sm" variant="soft" icon>
       {{ t("sales_rep.hub.layout.load_failed") }}
@@ -13,6 +13,14 @@
     <div v-else class="layout-surface__layout" :inert="saving || undefined">
       <VcLoaderOverlay v-if="saving" />
 
+      <LayoutEmptyState
+        v-if="allHidden"
+        :restoring="saving"
+        :disabled="!canEdit"
+        @restore="restoreDefaults"
+        @edit="editFromEmpty"
+      />
+
       <LayoutEditBar
         v-if="editing"
         :saving="saving"
@@ -24,6 +32,7 @@
 
       <!-- Cards come from the statistics queries; the layout only decides which show, and in what order. -->
       <LayoutStats
+        v-if="!allHidden"
         :scope="scope"
         :visible="visibleIn('statistics')"
         :hidden="hiddenIn('statistics')"
@@ -37,7 +46,7 @@
 
       <!-- The rail exists only while something is visible in `mainRight`; until then the content runs
            full width, matching the skeleton. -->
-      <div class="layout-surface__row">
+      <div v-if="!allHidden" class="layout-surface__row">
         <div class="layout-surface__main-col">
           <LayoutRegion
             class="layout-surface__main"
@@ -93,7 +102,7 @@
       />
 
       <LayoutEditButton
-        v-if="canEdit && editButtonPlacement === 'end'"
+        v-if="canEdit && !allHidden && editButtonPlacement === 'end'"
         :editing="editing"
         @toggle="editing ? cancel() : startEdit()"
       />
@@ -112,6 +121,7 @@ import { getBlock } from "../layout/registry";
 import { maxRowsSetting } from "../layout/settings";
 import LayoutEditBar from "./layout-edit-bar.vue";
 import LayoutEditButton from "./layout-edit-button.vue";
+import LayoutEmptyState from "./layout-empty-state.vue";
 import LayoutHiddenTray from "./layout-hidden-tray.vue";
 import LayoutRegion from "./layout-region.vue";
 import LayoutSkeleton from "./layout-skeleton.vue";
@@ -153,11 +163,14 @@ const {
   visibleIn,
   hiddenIn,
   hiddenWidgets,
+  allHidden,
   componentOf,
   propsOf,
   startEdit,
+  editFromEmpty,
   cancel,
   reset,
+  restoreDefaults,
   reorderVisible,
   reorderHidden,
   toggleHidden,

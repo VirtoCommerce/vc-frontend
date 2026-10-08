@@ -89,6 +89,13 @@
         "empty_visible": "Arrastre una métrica aquí para mostrarla",
         "empty_hidden": "Arrastre una métrica aquí para ocultarla",
         "max_rows": "Filas máximas",
+        "restored": "Se restableció el diseño predeterminado.",
+        "empty": {
+          "title": "Todos los bloques están ocultos",
+          "text": "Todas las métricas y widgets de esta página se han movido a {hidden} en la configuración del diseño. Restablezca el diseño predeterminado para recuperarlo todo o abra {edit} para elegir exactamente qué mostrar.",
+          "hidden": "Ocultos",
+          "restore": "Restablecer diseño predeterminado"
+        },
         "a11y": {
           "reorder": "Reordenar {title}",
           "hide": "Ocultar {title}",
