@@ -1,6 +1,6 @@
 {
   "name": "@vc-frontend/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Curated public API surface of the VC B2B storefront host, consumed by Module Federation plugins. Publish-from-source: type contract only — the running implementation is injected by the host at runtime via MF shared singletons.",
   "type": "module",
   "private": true,
@@ -49,6 +49,7 @@
   "peerDependencies": {
     "@apollo/client": "^3.14.0",
     "@floating-ui/vue": "^2.0.1",
+    "@internationalized/date": "^3.12.2",
     "@intlify/core-base": "^11.4.6",
     "@tailwindcss/container-queries": "^0.1.1",
     "@vue/shared": "^3.5.40",

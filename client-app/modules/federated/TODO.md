@@ -35,11 +35,10 @@ file are cross-referenced, not repeated.
       environment that installs `VirtoCommerce.SalesRep` ≥ 3.1009.0 registers Sales Rep Hub routes
       and menu entries twice — once from the in-repo module, once from the plugin.
 
-      **Do not flip before the plugin reaches parity with the in-repo module.** #2439 (documents
-      library), #2444 (all customer orders), #2468 (focus-ring a11y) and #2474 (rule chips on
-      `VcTabSwitch`) all landed after the plugin's port base — about 7.5 k lines across 70 files,
-      13 locale files included. Switching today is a feature regression on top of the availability
-      risk. See the port item further down.
+      **Do not flip before the plugin reaches parity with the in-repo module.** vc-module-sales-rep#13
+      ports it as of `dev` at 1ae6a0318 (2026-10-08: documents, all customer orders, tasks, focus ring,
+      rule chips, list-sharing rework), against facade 0.2.3. Anything merged into
+      `client-app/modules/sales-rep` after that is again a regression until it is ported too.
 
       Turning the switch on also costs **+159 KB gzip across the build (+9 %), ≈ +67 KB gzip of it on
       the initial payload**, plus one `store.plugins` query awaited during boot — which is why it
@@ -87,25 +86,26 @@ file are cross-referenced, not repeated.
       copy with its own locale state — silent breakage. Answering "yes" for a package the plugin
       never imports leaves a shared entry with `import: false` that nothing ever loads.
 - [ ] **Next-steps output prints a `cd ../../../../../..` path** — print the absolute target instead.
-- [ ] **Consider `vueCompilerOptions.strictTemplates` in the scaffolded tsconfig.** Re-check once #2480
-      lands: it already adds `strictTemplates` to the scaffold. With the
-      GlobalComponents augmentation (#2480) a known component is fully typed, but an unknown one is
-      still accepted silently, so a misspelled tag stays a runtime-only failure. Strict templates
-      also check unknown attributes. The sales-rep plugin uses only facade-exported components
-      (21 of them, all exported), so it would not be held back by this.
+- [ ] **`strictTemplates` in the scaffolded tsconfig rejects the host's own template conventions.**
+      #2480 turned it on. Ported host code fails it dozens of times: strict templates reject every
+      fallthrough attribute on a component — `aria-label`, `data-*`, `@keydown`, `target` — which the
+      host relies on everywhere. The sales-rep plugin uses `checkUnknownComponents` +
+      `checkUnknownDirectives` instead, which keep what strict mode was wanted for (a misspelled tag or
+      directive fails type-check) without the attribute check. Consider the same for the scaffold.
 - [ ] **Module CI does not type-check the storefront plugin.** `vc-build Compress` runs
-      `yarn build` (vite only), so `yarn type-check` never runs and the plugin ships red today:
-      `layout-edit-button.vue` passes `size="xssss"` and `variant="123"` to `VcButton`, and
-      `my-customers.vue` calls `$d(item.lastOrder.createdDate)` with a string where vue-i18n wants
-      `number | Date` (that one only became visible once the contract started typing slot props).
-      Fix the three in vc-module-sales-rep#13 and add the step to `module-ci`.
+      `yarn build` (vite only), so `yarn type-check` never runs. vc-module-sales-rep#13 adds it to the
+      `BuildStorefrontPlugin` target and fixes the one real error, `my-customers.vue` passing an ISO
+      string to `$d`. (The `size="xssss"` / `variant="123"` on `layout-edit-button.vue` reported here
+      before was an uncommitted local edit, never on the branch.)
 - [ ] **Publish the whole ui-kit barrel from the facade, not a hand-picked subset.** `app.use(uiKit)`
       registers **93** components globally, so a plugin template can write any of them unimported;
       only the ones `core-api/index.ts` re-exports reach the contract's `GlobalComponents`
       augmentation. #2480 takes that from 22 to 35 — the ones the sales-rep module actually uses —
       but the list is maintained by hand next to a list it has to equal, which is why it has now
       drifted three times (the host's own augmentations were missing `VcLink` and `VcTableColumn`;
-      the facade's 22 were missing 13). The decided direction is to export the barrel wholesale.
+      the facade's 22 were missing 13). A fourth: the tasks calendar and the orders date filter put
+      `VcCalendar` and `VcDateRangePicker` in the module's templates, untyped in the plugin until 0.2.3
+      exported them. The decided direction is to export the barrel wholesale.
       Measured 2026-09-21 by actually adding `export * from "@/ui-kit/components"` and running
       `yarn build:core-types` — three things block it, none of them the contract's size:
       1. `swiper` becomes a type peer (host is on 12.1.2), and the rolled contract then fails
@@ -149,16 +149,26 @@ file are cross-referenced, not repeated.
       `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
 - [ ] **E2E**: vc-testing-module has no Sales Rep Hub coverage at all — add a smoke (plugin loaded,
       hub menu visible for a rep) so the plugin path is not manual-only.
-- [ ] **Port #2439 / #2444 into the plugin** once the facade carrying #2480 is released (0.2.x after
-      #2481's 0.2.0); `requiredHostVersion` = that version. Also #2468 and #2474, which need no new facade export.
-      This is the parity gate for the switch-over item at the top.
+- [ ] **Port #2439 / #2444 into the plugin** — done in vc-module-sales-rep#13 together with
+      everything else up to `dev` at 1ae6a0318, `requiredHostVersion: "^0.2.3"`. It installs only once
+      `core-v0.2.3` is released, which needs this facade change on `dev` first.
+- [ ] **Bump `@module-federation/vite` to ≥ 1.23.1** (host, and the version `create-plugin` copies).
+      1.18 resolves every import it finds under a remote's exposed module, `import type` included, and
+      a types-only package (`@graphql-typed-document-node/core`, `"main": ""`) makes that resolve
+      throw: any plugin with generated GraphQL types fails `yarn build`. 1.23.1 catches it. The
+      sales-rep plugin carries a `resolve.alias` workaround until then.
+- [ ] **A declared route cannot carry route meta** ([VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)).
+      Its placeholder takes the parent's meta, so a route that overrides the parent's guard — the Sales
+      Rep Hub pages clear `Company`'s `requiresOrganization` for reps with no organization of their own
+      — sends that user to Account before the plugin arrives. Undeclared, the deep link resolves once
+      `init()` registers the route. The sales-rep plugin therefore declares only its buyer-facing page.
 - [ ] **Module (backend owners)**: any SalesRep version crashes a platform running
       `ASPNETCORE_ENVIRONMENT=Development` — `ValidateOnBuild` rejects the scoped
       `SalesRepRoleResolver` consumed from XCart's singleton `CanAccessCartAuthorizationHandler`.
       That is every customer's local platform. Candidate fix: a singleton resolver caching via
       `IPlatformMemoryCache` with `SecurityCacheRegion.CreateChangeToken()`.
 - [ ] The plugin's `useSalesRepsConfig.ts` comment says `SalesRep.Enabled` defaults to `false`;
-      `ModuleConstants` says `true`. Fix with the next plugin PR.
+      `ModuleConstants` says `true`. Fixed in vc-module-sales-rep#13; the in-repo module still says `false`.
 
 Cross-references: prod telemetry for failed/skipped plugins (#6), CSP at the ingress (#4),
 `validate:core-types` back into `yarn validate` (#5 — expect the known false red from vue-tsc's
