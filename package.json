@@ -36,6 +36,7 @@
     "test:unit": "yarn precheck && vitest",
     "test:typing": "yarn precheck && vitest --typecheck",
     "test:coverage": "yarn precheck && vitest --coverage",
+    "test:hooks": "yarn precheck && node --test \".claude/hooks/*.test.mjs\"",
     "generate:certificates": "yarn precheck && vite-node --mode production scripts/generate-certificates.ts",
     "generate:graphql-types": "yarn precheck && vite-node scripts/graphql-codegen/generator.ts",
     "generate:backend-packages": "yarn precheck && vite-node scripts/generate-backend-packages-json.js",

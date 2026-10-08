@@ -9,7 +9,7 @@ export default defineConfig((env) =>
     defineConfig({
       test: {
         environment: "jsdom",
-        exclude: [...configDefaults.exclude, "client-app/e2e/*"],
+        exclude: [...configDefaults.exclude, "client-app/e2e/*", "**/.claude/**"],
         root: fileURLToPath(new URL("./", import.meta.url)),
         // Without an explicit tsconfig, vitest spawns `tsc --noEmit` from the repo root with no
         // `-p`, so it inherits the root tsconfig — `{"files": []}` with project references, which
