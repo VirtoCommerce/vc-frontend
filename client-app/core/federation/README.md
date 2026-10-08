@@ -336,9 +336,10 @@ Three design points worth calling out:
   manifest + 2×load ≈ 8s), plus `DISCOVERY_TIMEOUT_MS` (2s) on the plugin-list query in
   `bootstrap.ts`. Boot awaits this loader, so those budgets are also blank-screen time:
   a hung remote delays first paint until it is reported `failed`/`skipped` — up to 8s of
-  per-remote budget, 10s counting the discovery leg, and never longer than the backstop below.
+  per-remote budget, 10s counting the discovery leg, 12s for an env remote whose `plugin.json`
+  is read first (manifest budget), and never longer than the backstop below.
   `bootstrap.ts` adds a
-  12s **backstop** above the budgeted legs (2 + 2 + 3 + 3 = 10s), covering what the budgets
+  14s **backstop** above the budgeted legs (2 + 2 + 2 + 3 + 3 = 12s), covering what the budgets
   do not: the loader chunk's own fetch, and an inner timeout malfunctioning.
   **The remaining 2s is all the headroom that unbudgeted chunk fetch gets** — a
   budget-compliant remote behind a slower one can still trip the cap, so the guarantee is
