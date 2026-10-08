@@ -670,7 +670,7 @@ if (selected.apollo) {
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 // The host's supply-chain age gate, so a plugin does not install a package the host would refuse.
-const hostAgeGate = readFileSync(resolve(REPO_ROOT, ".yarnrc.yml"), "utf8").match(/^npmMinimalAgeGate:.*$/m)?.[0];
+const hostAgeGate = /^npmMinimalAgeGate:.*$/m.exec(readFileSync(resolve(REPO_ROOT, ".yarnrc.yml"), "utf8"))?.[0];
 writeFileSync(
   join(targetDir, ".yarnrc.yml"),
   ["nodeLinker: node-modules", hostAgeGate, ""].filter((line) => line !== undefined).join("\n"),
