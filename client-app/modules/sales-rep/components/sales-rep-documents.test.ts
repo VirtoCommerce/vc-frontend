@@ -9,6 +9,7 @@ import SalesRepDocuments from "./sales-rep-documents.vue";
 import type { SalesRepDocumentType } from "../types";
 import LayoutSurface from "@/shared/dashboard/components/layout-surface.vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 import VcWidgetSkeleton from "@/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue";
 
@@ -117,7 +118,9 @@ function mountDashboard() {
   return mount(DashboardPage, {
     attachTo: document.body,
     global: {
-      components: { VcButton, VcWidget, VcWidgetSkeleton },
+      // VcEmptyView is real: with every block hidden the layout's empty state renders first, and its buttons live
+      // in slots a stub does not render.
+      components: { VcButton, VcEmptyView, VcWidget, VcWidgetSkeleton },
       stubs: {
         VcIcon: true,
         VcShape: true,
@@ -125,9 +128,11 @@ function mountDashboard() {
         VcLoaderOverlay: true,
         VcLink: true,
         VcImage: true,
-        VcEmptyView: true,
         VcInput: true,
         VcStatCard: true,
+        // `i18n-t` because vue-i18n is mocked down to `useI18n`.
+        VcTypography: true,
+        "i18n-t": true,
       },
     },
   });
@@ -341,8 +346,9 @@ describe("hidden documents widget", () => {
 
     expect(state.useSalesRepDocuments).not.toHaveBeenCalled();
 
-    // Enter edit mode and restore the widget from the tray: only then may the query exist.
-    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    // Enter edit mode and restore the widget from the tray: only then may the query exist. With every
+    // block hidden the surface shows its empty state, whose own button is the way into edit mode.
+    await wrapper.find("[data-layout-empty-edit]").trigger("click");
     await flushPromises();
     expect(state.useSalesRepDocuments).not.toHaveBeenCalled();
 

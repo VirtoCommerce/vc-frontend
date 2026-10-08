@@ -68,6 +68,9 @@ exact pattern ~30 modules already use (GA4, Hotjar, Loyalty, News, …).
   ⚠️ It does **not** replace `APP_MODULES_FEDERATION_ENABLED`'s **build-time** role (the Vite
   `federatedHostPlugin`, `vite.config.ts` / `vite.federation.ts`, which decides whether
   the MF runtime is bundled at all) — see *Review findings* below.
+  **As implemented (#2481):** the key is `module_federation_enabled`, read by a static JSON import, not
+  `useThemeContext`, and it covers both roles: `vite.federation.ts` and `enabled.ts` share one predicate
+  (`switch.ts`), and `APP_MODULES_FEDERATION_ENABLED` is gone. Only a literal `true` enables it.
 - **Runtime per-env** → the store setting (`Enabled` + the list).
 - **Local/dev override & pilot hardcode** → `APP_MODULES_FEDERATION_REMOTES` (kept — lets a frontender
   point at `localhost:3001` with no backend setting, and is how the first plugin is wired
@@ -204,7 +207,8 @@ gaps it found are tracked in `TODO.md`):
 - **`settings_data.json` does not fully replace `APP_MODULES_FEDERATION_ENABLED`:** the build-time bundling
   gate must also read the flag (`vite.federation.ts` — Node can import the JSON), **or** a
   build-time switch survives. Frame the theme flag as *build-time-by-necessity for runtime
-  bundling*; per-env on/off is the store `Enabled` flag.
+  bundling*; per-env on/off is the store `Enabled` flag. *Resolved by the first option:* the
+  Vite config reads the key, and no build-time switch survives.
 - **The registry entry is not `{name,url}`.** It already needs `enabled`, will need `hash`
   (integrity) and `source`, plus AppManifestService fields. Define a **versioned normalized
   descriptor** `{ name, url, enabled, version?, requiredHostVersion?, hash?, source }` with

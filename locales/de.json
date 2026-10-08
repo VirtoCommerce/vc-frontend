@@ -824,6 +824,17 @@
           "required_section": "Abschnitt erforderlich",
           "optional_no_selected": "Personalisieren Sie Ihre Auswahl weiter (optional)",
           "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen.",
+          "checklist": {
+            "title": "Konfigurations-Checkliste",
+            "done": "(abgeschlossen)",
+            "selected": "{name} — {value}",
+            "required": "{name} — erforderlich",
+            "optional": "{name} — optional",
+            "fill_it_in": "Ausfüllen",
+            "upload_file": "Datei hochladen",
+            "check_it_out": "Ansehen",
+            "review": "Überprüfen"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Benutzerdefinierte Option: {0}",
             "custom_option_empty": "Benutzerdefinierte Option: leer",
@@ -1178,6 +1189,13 @@
       "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
       "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
       "max_rows": "Max Zeilen",
+      "restored": "Standardlayout wiederhergestellt.",
+      "empty": {
+        "title": "Alle Blöcke sind ausgeblendet",
+        "text": "Alle Kennzahlen und Widgets auf dieser Seite wurden in den Layout-Einstellungen in den Bereich {hidden} verschoben. Stellen Sie das Standardlayout wieder her, um alles zurückzuholen, oder öffnen Sie {edit}, um genau festzulegen, was angezeigt wird.",
+        "hidden": "Ausgeblendet",
+        "restore": "Standardlayout wiederherstellen"
+      },
       "a11y": {
         "reorder": "{title} umsortieren",
         "hide": "{title} ausblenden",
@@ -1845,6 +1863,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Die verfügbare Produktmenge {availQty} reicht nicht für die angeforderte Menge {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Mindestbestellung von {minQty} Artikel ist nicht auf Lager",
     "PRODUCT_EXACT_QTY": "Sie können {minQty} Artikel bestellen",
+    "PRODUCT_PACK_SIZE_LIMIT": "Bestellen in Packungen von {packSize}",
+    "LINE_ITEM_LIMIT": "Sie können maximal {limit} Artikel bestellen",
     "CART_INVALID_PRODUCT": "Ungültiges Produkt"
   },
   "file_error": {

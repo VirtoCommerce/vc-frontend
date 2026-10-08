@@ -32,7 +32,11 @@
           >
             <span class="recent-orders-widget__label">{{ item.label }}</span>
 
-            <span class="recent-orders-widget__count">{{ formatStatCount(item.count) }}</span>
+            <span
+              :class="['recent-orders-widget__count', { 'recent-orders-widget__count--checked': status === item.term }]"
+            >
+              {{ formatStatCount(item.count) }}
+            </span>
           </VcTabSwitch>
         </div>
 
@@ -190,10 +194,11 @@ watch([rowLimit, status], load, { immediate: true });
   }
 
   // Bold like the label beside it; only the selected chip's count is accented, so the others do not compete with it.
+  // The widget's own selection drives the accent, not the kit's `--checked` class: the kit's classes are not ours.
   &__count {
     @apply font-bold text-neutral-600;
 
-    .vc-tab-switch--checked & {
+    &--checked {
       @apply text-primary-500;
     }
   }

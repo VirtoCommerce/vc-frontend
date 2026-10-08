@@ -35,7 +35,8 @@ function cloneState(state: LayoutStateType): LayoutStateType {
  * One dashboard's layout over whatever stores it: `load` reads the saved document (at once), `save` replaces it, and
  * `defaults` names the blocks it is reconciled against. `startEdit` snapshots into a draft, every change targets the
  * draft, and `save` writes the whole document in one call — the backend replaces, not merges. `reset` refills the
- * draft from the defaults but still needs a save, so a stray click is recoverable.
+ * draft from the defaults but still needs a save, so a stray click is recoverable. `restoreDefaults` is the one write
+ * that skips the draft: the empty state's button saves the defaults at once.
  */
 export function createLayoutController(options: LayoutControllerOptionsType): LayoutControllerType {
   const { scope, storeId, defaults } = options;
@@ -179,14 +180,12 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
     }
   }
 
-  // `saving`, not just `draft`: the draft is only cleared once the first save resolves, so anything holding a
-  // reference could otherwise fire a second full-document replace mid-flight.
-  async function save(): Promise<boolean> {
-    if (!draft.value || saving.value) {
-      return false;
-    }
-
-    const command = serializeLayout(draft.value, scope, defaults(), storeId);
+  /**
+   * Writes `pending` as the whole document. Success adopts the echo and ends edit mode; failure leaves the draft
+   * alone. Neither outcome touches `saveFailed`: each caller decides where the user lands.
+   */
+  async function persist(pending: LayoutStateType): Promise<boolean> {
+    const command = serializeLayout(pending, scope, defaults(), storeId);
     saving.value = true;
 
     try {
@@ -196,34 +195,61 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
       // replace the user's arrangement and report success.
       if (!stored) {
         Logger.error(`[layout] saving the "${scope}" layout returned no document`);
-        saveFailed.value = true;
         return false;
       }
 
       // A contradictory echo means neither side can be trusted: adopting it would revert the user's hides, and
       // adopting the draft would make a document the backend never stored look canonical with no later read to
-      // correct it. So the stored document is read again, and the failure is one the user can retry: the draft
-      // stays, and edit mode with it.
+      // correct it. So the stored document is read again, and the failure is one the user can retry.
       if (!echoMatchesSentBlocks(stored, command)) {
         Logger.error(`[layout] saving the "${scope}" layout echoed a document that disagrees with what was sent`);
+        // Cleared so `persisted` reads the re-read rather than a stale echo.
         savedState.value = undefined;
         read();
-        saveFailed.value = true;
         return false;
       }
 
       savedState.value = reconcileLayout(stored, defaults());
       draft.value = undefined;
-      saveFailed.value = false;
       return true;
     } catch (error) {
-      // Edit mode and the draft stay — the user's arrangement is not thrown away on a failed write.
       Logger.error(`[layout] the "${scope}" layout could not be saved:`, error);
-      saveFailed.value = true;
       return false;
     } finally {
       saving.value = false;
     }
+  }
+
+  // `saving`, not just `draft`: the draft is only cleared once the first save resolves, so anything holding a
+  // reference could otherwise fire a second full-document replace mid-flight.
+  async function save(): Promise<boolean> {
+    if (!draft.value || saving.value) {
+      return false;
+    }
+
+    // A failure keeps edit mode and the draft — the user's arrangement is not thrown away on a failed write.
+    const saved = await persist(draft.value);
+    saveFailed.value = !saved;
+    return saved;
+  }
+
+  /**
+   * The empty state's one-click way back: the defaults are written straight away, with no edit mode in between. A
+   * failed write lands in edit mode on those defaults, so Save in the edit bar retries it.
+   */
+  async function restoreDefaults(): Promise<boolean> {
+    if (!canEdit.value || draft.value || saving.value) {
+      return false;
+    }
+
+    const defaultState = reconcileLayout(null, defaults());
+    const saved = await persist(defaultState);
+    if (!saved) {
+      // Draft first: edit mode's entry announcement must come before the failure's, not over it.
+      draft.value = defaultState;
+    }
+    saveFailed.value = !saved;
+    return saved;
   }
 
   read();
@@ -250,6 +276,7 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
     reorderHidden,
     setHidden,
     save,
+    restoreDefaults,
   };
 }
 

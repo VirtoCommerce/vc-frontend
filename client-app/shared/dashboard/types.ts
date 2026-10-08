@@ -107,6 +107,12 @@ export type LayoutControllerType = {
   setHidden: (id: string, hidden: boolean, index?: number) => void;
   /** Resolves `false` when the save failed or was refused; the draft is kept either way. */
   save: () => Promise<boolean>;
+  /**
+   * Writes the registry defaults at once, outside edit mode — the way back from a layout with every block hidden.
+   * Refused (`false`, nothing written) while editing, saving or not editable; a failed write lands in edit mode on
+   * the defaults with `saveFailed` on, so Save retries it.
+   */
+  restoreDefaults: () => Promise<boolean>;
 };
 
 /**

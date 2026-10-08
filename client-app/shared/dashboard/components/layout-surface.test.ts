@@ -1,12 +1,18 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
+import { createLayoutController } from "../composables/useLayout";
 import { createFakeLayout, registerTestDashboard, TEST_STAT_CARDS } from "../layout-test-utils";
 import { getBlockRegistry, registerBlock } from "../registry";
+import LayoutEditBar from "./_internal/layout-edit-bar.vue";
+import LayoutEditButton from "./_internal/layout-edit-button.vue";
+import LayoutEmptyState from "./_internal/layout-empty-state.vue";
+import LayoutRegion from "./_internal/layout-region.vue";
+import LayoutStats from "./_internal/layout-stats.vue";
 import LayoutSurface from "./layout-surface.vue";
-import type { FakeLayoutType } from "../layout-test-utils";
-import type { SavedLayoutType } from "../types";
+import type { LayoutControllerOptionsType, LayoutControllerType, LayoutInputType, SavedLayoutType } from "../types";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 import VcStatCard from "@/ui-kit/components/molecules/stat-card/vc-stat-card.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 import VcWidgetSkeleton from "@/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue";
@@ -52,17 +58,35 @@ beforeEach(() => {
   seen = {};
 });
 
-function mountSurface(layout: FakeLayoutType, props: Record<string, unknown> = {}) {
+function mountSurface(layout: LayoutControllerType, props: Record<string, unknown> = {}) {
   return mount(LayoutSurface, {
     props: { layout, cards: TEST_STAT_CARDS, ...props },
     attachTo: document.body,
     // The ui-kit plugin registers these globally and no test boots it. VcButton must be the real one —
-    // the edit toggle is a VcButton, and a stub would not carry its click.
+    // the edit toggle is a VcButton, and a stub would not carry its click. VcEmptyView too: the empty
+    // state's buttons live in its slots, which a stub does not render.
     global: {
-      components: { VcButton, VcStatCard, VcWidget, VcWidgetSkeleton },
-      stubs: { VcIcon: true, VcShape: true, VcAlert: true, VcLoaderOverlay: true, VcInput: true },
+      components: { VcButton, VcEmptyView, VcStatCard, VcWidget, VcWidgetSkeleton },
+      stubs: {
+        VcIcon: true,
+        VcShape: true,
+        VcAlert: true,
+        VcLoaderOverlay: true,
+        VcInput: true,
+        VcTypography: true,
+        // vue-i18n is mocked down to `useI18n`, so its global component is never registered.
+        "i18n-t": true,
+      },
     },
   });
+}
+
+/** The real controller over a spec-owned store, for what the fake's always-agreeing storage cannot do. */
+function controllerOver(
+  load: LayoutControllerOptionsType["load"],
+  save: LayoutControllerOptionsType["save"],
+): LayoutControllerType {
+  return createLayoutController({ scope: SCOPE, load, save, defaults: () => getBlockRegistry(SCOPE) });
 }
 
 describe("LayoutSurface block bindings", () => {
@@ -213,5 +237,127 @@ describe("LayoutSurface with an emptied rail", () => {
 
     expect(wrapper.find(".layout-surface__aside").exists()).toBe(true);
     expect(wrapper.find(".layout-surface__aside .probe").exists()).toBe(true);
+  });
+});
+
+// With every block hidden there is nothing to show and nothing to edit from: an empty state stands in for the
+// regions and the edit button, and offers the two ways back.
+describe("LayoutSurface with every block hidden", () => {
+  /** Every registered block hidden — the document the empty state stands in for. */
+  const allHidden = (): SavedLayoutType => ({
+    regions: [{ blocks: getBlockRegistry(SCOPE).map((block) => ({ type: block.id, hidden: true })) }],
+  });
+
+  async function mountAllHidden(
+    layout: LayoutControllerType = createFakeLayout(SCOPE, { saved: allHidden() }),
+    props: Record<string, unknown> = {},
+  ) {
+    const wrapper = mountSurface(layout, props);
+    await flushPromises();
+
+    return wrapper;
+  }
+
+  const restoreButton = (wrapper: Awaited<ReturnType<typeof mountAllHidden>>) =>
+    wrapper.findAllComponents(VcButton).find((button) => button.attributes("data-layout-restore") !== undefined);
+
+  it.each(["mainColumn", "end"])(
+    "shows the empty state instead of the regions and the edit button (%s)",
+    async (placement) => {
+      const wrapper = await mountAllHidden(undefined, { editButtonPlacement: placement });
+
+      expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
+      expect(wrapper.findComponent(LayoutStats).exists()).toBe(false);
+      expect(wrapper.findAllComponents(LayoutRegion)).toHaveLength(0);
+      expect(wrapper.findComponent(LayoutEditButton).exists()).toBe(false);
+    },
+  );
+
+  // A restore whose echo disagrees reads the stored document again, and nothing may be written until that read
+  // lands — Cancel brings the empty state back meanwhile.
+  it("disables both actions while the layout cannot be edited", async () => {
+    let reads = 0;
+    let landReread: (saved: SavedLayoutType) => void = () => {};
+    const layout = controllerOver(
+      () =>
+        reads++ === 0
+          ? Promise.resolve(allHidden())
+          : new Promise((resolve) => {
+              landReread = resolve;
+            }),
+      () => Promise.resolve({ regions: [] }),
+    );
+    const wrapper = await mountAllHidden(layout);
+
+    await wrapper.get("[data-layout-restore]").trigger("click");
+    await flushPromises();
+    const cancel = wrapper
+      .findAll(".layout-edit-bar button")
+      .find((button) => button.text() === "shared.dashboard.cancel");
+    await cancel!.trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
+    expect(wrapper.get("[data-layout-restore]").attributes("disabled")).toBeDefined();
+    expect(wrapper.get("[data-layout-empty-edit]").attributes("disabled")).toBeDefined();
+    expect(restoreButton(wrapper)?.props("loading")).toBe(false);
+
+    landReread(allHidden());
+    await flushPromises();
+
+    expect(wrapper.get("[data-layout-restore]").attributes("disabled")).toBeUndefined();
+    expect(wrapper.get("[data-layout-empty-edit]").attributes("disabled")).toBeUndefined();
+  });
+
+  it("shows Restore loading and locks Edit layout while the write is in flight", async () => {
+    const layout = createFakeLayout(SCOPE, { saved: allHidden() });
+    const wrapper = await mountAllHidden(layout);
+    const release = layout.holdNextSave();
+
+    await wrapper.get("[data-layout-restore]").trigger("click");
+    await flushPromises();
+
+    expect(restoreButton(wrapper)?.props("loading")).toBe(true);
+    expect(wrapper.get("[data-layout-empty-edit]").attributes("disabled")).toBeDefined();
+
+    release();
+    await flushPromises();
+  });
+
+  // In edit mode the empty zones and the tray are the way back, and the empty state would cover them.
+  it("opens edit mode from its own Edit layout button, with every block offered back", async () => {
+    const wrapper = await mountAllHidden();
+
+    await wrapper.get("[data-layout-empty-edit]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(false);
+    expect(wrapper.findComponent(LayoutEditBar).exists()).toBe(true);
+    expect(wrapper.find(`[data-restore-id="${PROBE_ID}"]`).exists()).toBe(true);
+  });
+
+  it("comes back when edit mode is cancelled without restoring anything", async () => {
+    const wrapper = await mountAllHidden();
+
+    await wrapper.get("[data-layout-empty-edit]").trigger("click");
+    await flushPromises();
+    await wrapper.get("[data-layout-edit-toggle]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(true);
+  });
+
+  it("writes the defaults on Restore and renders the blocks again, without edit mode", async () => {
+    // Stores and echoes exactly what was sent: a disagreeing echo is a refused save.
+    const save = vi.fn((command: LayoutInputType) => Promise.resolve({ regions: command.regions }));
+    const wrapper = await mountAllHidden(controllerOver(() => Promise.resolve(allHidden()), save));
+
+    await wrapper.get("[data-layout-restore]").trigger("click");
+    await flushPromises();
+
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(false);
+    expect(wrapper.findComponent(LayoutEditBar).exists()).toBe(false);
+    expect(wrapper.findComponent(Probe).exists()).toBe(true);
   });
 });

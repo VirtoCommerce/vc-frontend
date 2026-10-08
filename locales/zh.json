@@ -824,6 +824,17 @@
           "required_section": "此部分为必填项",
           "optional_no_selected": "个性化您的选择（可选）",
           "required_no_selected": "请填写所有必填选项以完成选择",
+          "checklist": {
+            "title": "配置清单",
+            "done": "(已完成)",
+            "selected": "{name} — {value}",
+            "required": "{name} — 必填",
+            "optional": "{name} — 可选",
+            "fill_it_in": "填写",
+            "upload_file": "上传文件",
+            "check_it_out": "查看",
+            "review": "检查"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "自定义选项：{0}",
             "custom_option_empty": "自定义选项：无",
@@ -1178,6 +1189,13 @@
       "empty_visible": "将指标拖到此处以显示",
       "empty_hidden": "将指标拖到此处以隐藏",
       "max_rows": "最大行数",
+      "restored": "已恢复默认布局。",
+      "empty": {
+        "title": "所有区块均已隐藏",
+        "text": "此页面上的所有指标和小组件已在布局设置中移至{hidden}。恢复默认布局即可全部找回，或打开{edit}精确选择要显示的内容。",
+        "hidden": "已隐藏",
+        "restore": "恢复默认布局"
+      },
       "a11y": {
         "reorder": "重新排序 {title}",
         "hide": "隐藏 {title}",
@@ -1845,6 +1863,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "产品可用数量 {availQty} 不足以满足请求的 {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "最小订单 {minQty} 件的库存不足",
     "PRODUCT_EXACT_QTY": "您可以订购 {minQty} 件",
+    "PRODUCT_PACK_SIZE_LIMIT": "请按每包 {packSize} 件订购",
+    "LINE_ITEM_LIMIT": "您最多可以订购 {limit} 件",
     "CART_INVALID_PRODUCT": "无效的产品"
   },
   "file_error": {

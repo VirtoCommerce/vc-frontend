@@ -565,6 +565,115 @@ describe("createLayoutController: the save", () => {
   });
 });
 
+// The empty state's way back (VCST-5687): with every block hidden there is nothing to edit FROM, so the defaults are
+// written in one go, outside edit mode.
+describe("createLayoutController: restoreDefaults", () => {
+  /** Every registered block hidden — the document behind the empty state. */
+  const allHidden = (): SavedLayoutType => ({
+    regions: [{ blocks: getBlockRegistry(SCOPE).map((block) => ({ type: block.id, hidden: true })) }],
+  });
+
+  it("writes the registry defaults straight away, without entering edit mode", async () => {
+    load.mockResolvedValue(allHidden());
+
+    const { restoreDefaults, editing, saveFailed, visibleIn } = await readController();
+
+    await expect(restoreDefaults()).resolves.toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(sentBlock("side")).toMatchObject({ hidden: false });
+    expect(editing.value).toBe(false);
+    expect(saveFailed.value).toBe(false);
+    expect(visibleIn("statistics")).toEqual(TEST_STAT_IDS);
+    expect(visibleIn("mainRight")).toEqual(["side", "extra"]);
+  });
+
+  // `allHidden()` carries no settings, so the case above cannot tell a reset from a carry-over.
+  it("resets each block's settings to the registry defaults, not only its visibility", async () => {
+    const customised = [
+      { key: "maxRows", value: 12 },
+      { key: "tab.New", value: false },
+    ];
+    load.mockResolvedValue({
+      regions: allHidden().regions.map((region) => ({
+        blocks: region.blocks.map((block) => (block.type === "list" ? { ...block, settings: customised } : block)),
+      })),
+    });
+
+    const { restoreDefaults, settingsOf } = await readController();
+    expect(settingsOf("list")).toMatchObject({ maxRows: 12, hiddenTabs: ["New"] });
+
+    await expect(restoreDefaults()).resolves.toBe(true);
+    expect(sentBlock("list")?.settings).toEqual([{ key: "maxRows", value: 5 }]);
+    expect(settingsOf("list")).toMatchObject({ maxRows: 5, hiddenTabs: [] });
+  });
+
+  // Back in the empty state the user would have no way to tell the click did anything.
+  it("lands in edit mode on the defaults when the write fails, so Save retries it", async () => {
+    load.mockResolvedValue(allHidden());
+    save.mockRejectedValueOnce(new Error("network"));
+
+    const { restoreDefaults, save: saveLayout, editing, saveFailed, visibleIn } = await readController();
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(editing.value).toBe(true);
+    expect(saveFailed.value).toBe(true);
+    expect(visibleIn("mainLeft")).toEqual(["list", "notes"]);
+
+    await expect(saveLayout()).resolves.toBe(true);
+    expect(editing.value).toBe(false);
+    expect(saveFailed.value).toBe(false);
+  });
+
+  // The write shares the save's trust rule: a contradictory echo is a failure, and the stored document is read again.
+  it("treats a disagreeing echo as a failed write: edit mode on the defaults, and the document read again", async () => {
+    load.mockResolvedValue(allHidden());
+    save.mockResolvedValue({ regions: [] });
+
+    const { restoreDefaults, editing, saveFailed, visibleIn } = await readController();
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(editing.value).toBe(true);
+    expect(saveFailed.value).toBe(true);
+    expect(visibleIn("mainRight")).toEqual(["side", "extra"]);
+    expect(load).toHaveBeenCalledTimes(2);
+  });
+
+  // Edit mode has its own Reset, and writing the defaults from under a draft would throw the draft away.
+  it("does nothing while the layout is being edited", async () => {
+    load.mockResolvedValue(allHidden());
+
+    const { startEdit, restoreDefaults } = await readController();
+    startEdit();
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when the read failed, so a full-replace save cannot clobber an unread layout", async () => {
+    load.mockRejectedValue(new Error("boom"));
+
+    const { restoreDefaults, editing } = await readController();
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(save).not.toHaveBeenCalled();
+    expect(editing.value).toBe(false);
+  });
+
+  it("refuses a second write while one is in flight", async () => {
+    load.mockResolvedValue(allHidden());
+    const release = holdSave();
+
+    const { restoreDefaults } = await readController();
+    const first = restoreDefaults();
+
+    await expect(restoreDefaults()).resolves.toBe(false);
+    expect(save).toHaveBeenCalledTimes(1);
+
+    release();
+    await expect(first).resolves.toBe(true);
+  });
+});
+
 // The controller over the backend: what it reads, what it sends, and that neither names a user — the backend takes
 // the user from the token (dashboard-operations.test.ts pins the operations themselves).
 describe("useLayout", () => {

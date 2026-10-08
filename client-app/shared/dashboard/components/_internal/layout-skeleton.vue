@@ -66,7 +66,7 @@ const columns = computed(() =>
   }
 
   &__aside {
-    @apply flex min-w-0 flex-col gap-5 xl:w-96 xl:shrink-0;
+    @apply flex min-w-0 flex-col gap-5 xl:w-[22rem] xl:shrink-0;
   }
 
   // Wraps like layout-region--horizontal; the card pulses on its own.

@@ -824,6 +824,17 @@
           "required_section": "Seksjonen er obligatorisk",
           "optional_no_selected": "Tilpass valget ditt ytterligere (valgfritt)",
           "required_no_selected": "Fyll ut alle obligatoriske alternativer for å fullføre valget ditt",
+          "checklist": {
+            "title": "Sjekkliste for konfigurasjon",
+            "done": "(fullført)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obligatorisk",
+            "optional": "{name} — valgfritt",
+            "fill_it_in": "Fyll ut",
+            "upload_file": "Last opp en fil",
+            "check_it_out": "Se alternativer",
+            "review": "Gå gjennom"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Tilpasset alternativ: {0}",
             "custom_option_empty": "Tilpasset alternativ: tomt",
@@ -1178,6 +1189,13 @@
       "empty_visible": "Dra et nøkkeltall hit for å vise det",
       "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
       "max_rows": "Maks. rader",
+      "restored": "Standardoppsettet er gjenopprettet.",
+      "empty": {
+        "title": "Alle blokker er skjult",
+        "text": "Alle nøkkeltall og moduler på denne siden er flyttet til {hidden} i oppsettinnstillingene. Gjenopprett standardoppsettet for å få alt tilbake, eller åpne {edit} for å velge nøyaktig hva som skal vises.",
+        "hidden": "Skjulte",
+        "restore": "Gjenopprett standardoppsett"
+      },
       "a11y": {
         "reorder": "Endre rekkefølge på {title}",
         "hide": "Skjul {title}",
@@ -1845,6 +1863,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Produktets tilgjengelige antall {availQty} er utilstrekkelig for ønsket {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Minimumsbestilling {minQty} produkt(er) er ikke tilgjengelig på lager",
     "PRODUCT_EXACT_QTY": "Du kan bestille {minQty} produkt(er)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Bestill i pakker med {packSize}",
+    "LINE_ITEM_LIMIT": "Du kan bestille maksimum {limit} produkt(er)",
     "CART_INVALID_PRODUCT": "Ugyldig produkt"
   },
   "file_error": {

@@ -10,7 +10,7 @@ export default defineConfig((env) =>
       test: {
         environment: "jsdom",
         setupFiles: ["./vitest.setup.ts"],
-        exclude: [...configDefaults.exclude, "client-app/e2e/*"],
+        exclude: [...configDefaults.exclude, "client-app/e2e/*", "**/.claude/**"],
         root: fileURLToPath(new URL("./", import.meta.url)),
         // Without an explicit tsconfig, vitest spawns `tsc --noEmit` from the repo root with no
         // `-p`, so it inherits the root tsconfig — `{"files": []}` with project references, which
@@ -33,6 +33,8 @@ export default defineConfig((env) =>
           include: ["client-app/**/*.ts", "client-app/**/*.vue"],
         },
       },
+      // Specs flip the switch through settings_data.json; the constant only strips a switch-off bundle.
+      define: { __MF_HOST__: "true" },
       resolve: {
         alias: {
           "@": path.resolve(__dirname, "client-app"),

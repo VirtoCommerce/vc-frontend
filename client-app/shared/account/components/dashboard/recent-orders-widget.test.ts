@@ -151,6 +151,19 @@ describe("RecentOrdersWidget", () => {
     ]);
   });
 
+  // Driven by the widget's own selection rather than the kit's `--checked` class, which is not ours to select.
+  it("accents the count of the chosen chip only", async () => {
+    const wrapper = mountWidget();
+    await flushPromises();
+    expect(wrapper.find(".recent-orders-widget__count--checked").exists()).toBe(false);
+
+    await wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button")[2].trigger("click");
+    await flushPromises();
+
+    const accented = wrapper.findAll(".recent-orders-widget__count--checked");
+    expect(accented.map((count) => count.text())).toEqual(["1,200"]);
+  });
+
   it("offers no chips while the orders carry no status", async () => {
     getOrders.mockResolvedValue(response([], []));
 
