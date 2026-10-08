@@ -47,9 +47,19 @@ describe("sales-rep blocks", () => {
     );
   });
 
-  it("puts the profile's quick actions and info in the rail", () => {
-    expect(getBlock(CUSTOMER_PROFILE, "actions")?.region).toBe("mainRight");
-    expect(getBlock(CUSTOMER_PROFILE, "info")?.region).toBe("mainRight");
+  it("fills the profile's rail with quick actions, info and the customer's activity, in that order", () => {
+    expect(reconcileLayout(null, getBlockRegistry(CUSTOMER_PROFILE)).regions.mainRight.visible).toEqual([
+      "actions",
+      "info",
+      "customer_activity",
+    ]);
+  });
+
+  // Defaults, not gated in init() like tasks and documents: isAnalyticsAvailable is the activity widgets' signal.
+  it("puts My activity in the dashboard rail, and the customer's activity on the profile only", () => {
+    expect(getBlock(DASHBOARD, "my_activity")?.region).toBe("mainRight");
+    expect(getBlock(DASHBOARD, "customer_activity")).toBeUndefined();
+    expect(getBlock(CUSTOMER_PROFILE, "my_activity")).toBeUndefined();
   });
 
   // The orders widget's filter chips depend on it; nothing else would notice it going missing.
@@ -83,6 +93,15 @@ describe("documents block", () => {
 describe("documents block persistence", () => {
   registerBlock(DASHBOARD, documentsBlock);
   const dashboardRegistry = getBlockRegistry(DASHBOARD);
+
+  // My activity and the documents widget share order 10; registration order breaks the tie — the defaults first,
+  // then what init() adds.
+  it("reconciles the dashboard rail as My activity, then the documents widget", () => {
+    expect(reconcileLayout(null, dashboardRegistry).regions.mainRight.visible).toEqual([
+      "my_activity",
+      DOCUMENTS_BLOCK_ID,
+    ]);
+  });
 
   it("reconciles into the visible half of mainRight by default", () => {
     const state = reconcileLayout(null, dashboardRegistry);

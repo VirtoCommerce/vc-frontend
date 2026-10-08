@@ -14,6 +14,10 @@ const CustomerProfileActions = markRaw(
   defineAsyncComponent(() => import("../components/customer-profile-actions.vue")),
 );
 const CustomerProfileInfo = markRaw(defineAsyncComponent(() => import("../components/customer-profile-info.vue")));
+// Not gated on a frontend module check: isAnalyticsAvailable is the availability signal, and the widget renders
+// its own states. Search and browse history are its sub-views, not blocks of their own.
+const MyActivity = markRaw(defineAsyncComponent(() => import("../components/my-activity.vue")));
+const CustomerActivity = markRaw(defineAsyncComponent(() => import("../components/customer-activity.vue")));
 
 // Both surfaces configure the same two list widgets; the row cap differs per widget, not per scope.
 // Shared arrays rather than repeated literals — nothing mutates a registered block.
@@ -29,8 +33,6 @@ const topSellersSettings: BlockSettingType[] = [
 // component, so they carry none.
 const DASHBOARD_BLOCKS: readonly BlockType[] = [
   ...statBlocks(DASHBOARD_STAT_CARDS),
-  // The dashboard has no right rail of its own — `mainRight` stays empty and the row collapses to one
-  // column until a widget registers into it (tasks, documents: see index.ts).
   {
     id: "orders",
     region: "mainLeft",
@@ -47,6 +49,13 @@ const DASHBOARD_BLOCKS: readonly BlockType[] = [
     order: 20,
     component: TopSellers,
     settings: topSellersSettings,
+  },
+  {
+    id: "my_activity",
+    region: "mainRight",
+    titleKey: "sales_rep.activity.my_activity.title",
+    order: 10,
+    component: MyActivity,
   },
 ];
 
@@ -82,6 +91,13 @@ const CUSTOMER_PROFILE_BLOCKS: readonly BlockType[] = [
     titleKey: "sales_rep.customer_profile.info.title",
     order: 20,
     component: CustomerProfileInfo,
+  },
+  {
+    id: "customer_activity",
+    region: "mainRight",
+    titleKey: "sales_rep.activity.customer.title",
+    order: 30,
+    component: CustomerActivity,
   },
 ];
 

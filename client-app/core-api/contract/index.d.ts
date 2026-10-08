@@ -6,7 +6,7 @@ import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } fr
 import * as vue from 'vue';
 import { Plugin, ComputedRef, MaybeRef, Component, MaybeRefOrGetter, WritableComputedRef, ComponentObjectPropsOptions, Ref, DeepReadonly } from 'vue';
 import * as vue_router from 'vue-router';
-import { RouteLocationRaw, LocationQueryValue, RouteLocationNormalizedLoaded, Router } from 'vue-router';
+import { RouteLocationRaw, RouteLocationNormalizedLoaded, LocationQueryValue, Router } from 'vue-router';
 import { MaskOptions } from 'maska';
 import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient, TypePolicies } from '@apollo/client/core';
@@ -2739,6 +2739,7 @@ type ExtendedMenuLinkType = {
     priority?: number;
     isCatalogItem?: boolean;
     dataTestId?: string;
+    activeWhen?: (route: RouteLocationNormalizedLoaded) => boolean;
 };
 type MarkedMenuLinkType = ExtendedMenuLinkType & {
     isActive?: boolean;
