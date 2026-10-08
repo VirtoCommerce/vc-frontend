@@ -18,6 +18,12 @@ const meta: Meta<typeof VcQuantityStepper> = {
         },
       },
     },
+    aria: {
+      control: false,
+      description:
+        "Extra ARIA attributes for the input; `role`, `aria-label` and `aria-valuemin/max/now` always win. Object, not a control.",
+      table: { type: { summary: "Record<string, string | number | null>" } },
+    },
   },
   render: (args) => ({
     setup: () => {
@@ -55,6 +61,21 @@ export const AllowZeroBelowMin: StoryType = {
     value: 0,
     allowZero: true,
   },
+};
+
+export const DescribedByExternalMessage: StoryType = {
+  args: {
+    min: 2,
+    max: 5,
+    value: 1,
+    allowZero: false,
+    aria: { "aria-invalid": "true", "aria-describedby": "quantity-stepper-story-message" },
+  },
+  decorators: [
+    () => ({
+      template: '<div><story /><p id="quantity-stepper-story-message">You can order from 2 to 5 items</p></div>',
+    }),
+  ],
 };
 
 export const Disabled: StoryType = {

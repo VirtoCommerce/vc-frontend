@@ -54,6 +54,12 @@ function build() {
   return scope.run(() => useSalesRepCustomerOptions())!;
 }
 
+/** Answers the query with a page of customers. */
+async function respondWith(totalCount: number, items: CustomerItemsType) {
+  queryMock.result.value = customersResult(totalCount, items);
+  await nextTick();
+}
+
 function failQuery(error = new Error("boom")) {
   (queryMock.onError.mock.calls[0][0] as (e: Error) => void)(error);
 }
@@ -74,10 +80,10 @@ afterEach(() => {
 });
 
 describe("useSalesRepCustomerOptions", () => {
-  it("queries the caller's served customers, name-sorted, without a keyword filter", () => {
+  it("queries the caller's served customers, name-sorted, one page deep", () => {
     build();
 
-    // No keyword: the picker filters client-side, so the whole (capped) page is fetched once.
+    // No keyword: `VcSelect` filters over the items it was handed and gives the composable no search text to send.
     expect(passedVariables()).toEqual({
       storeId: "test-store",
       first: 100,
@@ -87,26 +93,37 @@ describe("useSalesRepCustomerOptions", () => {
     });
   });
 
-  it("maps items to {organizationId, organizationName} option shape", () => {
+  it("maps items to the option shape, location included", async () => {
     const { options } = build();
 
-    queryMock.result.value = customersResult(2, [
-      { organizationId: "org-1", organizationName: "Acme Inc." },
+    await respondWith(2, [
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        iconUrl: "https://cdn.example/acme.png",
+        address: { city: "Richmond", regionName: "Virginia" },
+      },
       { organizationId: "org-2", organizationName: "Globex" },
     ] as CustomerItemsType);
 
     expect(options.value).toEqual([
-      { organizationId: "org-1", organizationName: "Acme Inc." },
-      { organizationId: "org-2", organizationName: "Globex" },
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "Richmond, Virginia",
+        imageUrl: "https://cdn.example/acme.png",
+      },
+      // No icon set: the avatar falls back to initials rather than to a broken image.
+      { organizationId: "org-2", organizationName: "Globex", location: "", imageUrl: "" },
     ]);
   });
 
-  it("falls back to the organization id when the name is missing, so no option renders blank", () => {
+  it("falls back to the organization id when the name is missing, so no option renders blank", async () => {
     const { options } = build();
 
-    queryMock.result.value = customersResult(1, [{ organizationId: "org-1" }] as CustomerItemsType);
+    await respondWith(1, [{ organizationId: "org-1" }] as CustomerItemsType);
 
-    expect(options.value).toEqual([{ organizationId: "org-1", organizationName: "org-1" }]);
+    expect(options.value).toEqual([{ organizationId: "org-1", organizationName: "org-1", location: "", imageUrl: "" }]);
   });
 
   it("returns an empty list (not undefined) before the query resolves", () => {
@@ -115,26 +132,58 @@ describe("useSalesRepCustomerOptions", () => {
     expect(options.value).toEqual([]);
   });
 
-  it("warns when the rep serves more customers than the picker can list", async () => {
-    build();
+  describe("more customers than one page holds", () => {
+    it("warns that the overflow is unreachable, naming both numbers", async () => {
+      build();
 
-    queryMock.result.value = customersResult(140, [
-      { organizationId: "org-1", organizationName: "Acme" },
-    ] as CustomerItemsType);
-    await nextTick();
+      await respondWith(500, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
 
-    // Client-side filtering would otherwise hide the overflow, reading as a missing customer rather than a cap.
-    expect(loggerMock.warn).toHaveBeenCalledOnce();
-    expect(loggerMock.warn.mock.calls[0][0]).toContain("140");
+      expect(loggerMock.warn).toHaveBeenCalledOnce();
+      expect(loggerMock.warn.mock.calls[0][0]).toContain("100");
+      expect(loggerMock.warn.mock.calls[0][0]).toContain("500");
+    });
+
+    it("says nothing while the whole set fits", async () => {
+      build();
+
+      await respondWith(1, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
+
+      expect(loggerMock.warn).not.toHaveBeenCalled();
+    });
+
+    it("asks for one page and never advances the offset", async () => {
+      build();
+
+      await respondWith(500, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
+
+      expect(passedVariables().after).toBe("0");
+      expect(passedVariables().first).toBe(100);
+    });
   });
 
-  it("stays quiet when the served customers fit within the cap", async () => {
-    build();
+  describe("resolving a name the picker is no longer showing", () => {
+    it("still knows a customer the search box has filtered away", async () => {
+      const { findOption } = build();
 
-    queryMock.result.value = customersResult(100, []);
-    await nextTick();
+      await respondWith(1, [
+        { organizationId: "org-1", organizationName: "Acme Inc.", address: { city: "Richmond" } },
+      ] as CustomerItemsType);
 
-    expect(loggerMock.warn).not.toHaveBeenCalled();
+      expect(findOption("org-1")).toEqual({
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "Richmond",
+        imageUrl: "",
+      });
+    });
+
+    it("knows nothing about a customer the page never carried", async () => {
+      const { findOption } = build();
+
+      await respondWith(1, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
+
+      expect(findOption("org-far")).toBeUndefined();
+    });
   });
 
   it("logs a query failure instead of throwing at the call site", () => {

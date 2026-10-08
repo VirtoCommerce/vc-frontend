@@ -5,6 +5,7 @@
       "apply": "应用",
       "cancel": "取消",
       "clear": "清除",
+      "clear_field": "清除{field}",
       "close": "关闭",
       "copy": "复制",
       "deny": "拒绝",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "关闭提醒",
       "open_calendar": "打开日历",
+      "open_calendar_for": "打开{field}日历",
       "calendar": "日历",
       "product_quantity": "产品数量",
       "decrease_quantity": "减少数量",
@@ -96,7 +98,7 @@
         "out_of_stock": "缺货",
         "positive_number": "值必须是正数",
         "integer_number": "值必须是整数",
-        "pack_size": "按 {0} 的包装订购"
+        "pack_size": "请按每包 {0} 件订购"
       }
     },
     "pagination": {

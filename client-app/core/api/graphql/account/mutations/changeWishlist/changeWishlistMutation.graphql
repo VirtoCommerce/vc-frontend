@@ -14,7 +14,13 @@ mutation ChangeWishlist($command: InputChangeWishlistType!) {
       scope
       access
       isOwner
-      sharedWithId
+      message
+      targets {
+        id
+        name
+        subtitle
+        imageUrl
+      }
     }
   }
 }
