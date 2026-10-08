@@ -3,7 +3,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
 import { version as CORE_VERSION } from "@/core-api/package.json";
-import { applyContributions, DECLARED_META_KEY, releaseContributions } from "./contributions/declare";
+import { applyContributions, PLACEHOLDER_META_KEY, releaseContributions } from "./contributions/declare";
 import { isGloballyTrue } from "./contributions/evaluate";
 import { expirePendingAfter, setPluginStatus } from "./contributions/status";
 import { checkHostCompatibility } from "./version-gate";
@@ -589,13 +589,13 @@ function installRouteGuard(): () => void {
    * builder-preview plugin does exactly that (plugins/builder-preview/builder-preview.plugin.ts).
    * A name added DURING this phase is not in here, so a plugin may still remove its own routes.
    */
-  const isDeclared = (name: unknown) =>
-    router.getRoutes().some((route) => route.name === name && route.meta?.[DECLARED_META_KEY] !== undefined);
-  // Declared placeholders are the plugin's to replace.
+  const placeholderOwner = (name: unknown) =>
+    router.getRoutes().find((route) => route.name === name)?.meta?.[PLACEHOLDER_META_KEY];
+  // A placeholder is its declaring plugin's to replace, and only from that plugin's own init().
   const hostRouteNames = new Set(
     router
       .getRoutes()
-      .filter((route) => route.meta?.[DECLARED_META_KEY] === undefined)
+      .filter((route) => route.meta?.[PLACEHOLDER_META_KEY] === undefined)
       .map((route) => route.name)
       .filter((name) => name !== undefined),
   );
@@ -613,11 +613,19 @@ function installRouteGuard(): () => void {
     // argument count: `addRoute(record, undefined)` passes two arguments but the record is first.
     const [first, second] = args;
     const record = typeof first === "string" || typeof first === "symbol" ? second : first;
+    // An unattributed claim (module scope, or after an await in init) cannot prove it owns a placeholder.
     const taken = claimedRouteNames(record).find(
-      (claimed) => hostRouteNames.has(claimed) || (router.hasRoute(claimed) && !isDeclared(claimed)),
+      (claimed) =>
+        hostRouteNames.has(claimed) ||
+        (router.hasRoute(claimed) && (initingPlugin === undefined || placeholderOwner(claimed) !== initingPlugin)),
     );
     if (taken !== undefined) {
-      Logger.error(`[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`);
+      const owner = placeholderOwner(taken);
+      Logger.error(
+        owner === undefined
+          ? `[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`
+          : `[MF] ${who()} tried to take the route "${String(taken)}" declared by "${String(owner)}" - refused; a declared route must be added synchronously from its own plugin's init()`,
+      );
       return () => {};
     }
     return originalAdd.apply(router, args);

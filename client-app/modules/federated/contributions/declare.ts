@@ -18,8 +18,6 @@ import type { RouteRecordRaw, Router } from "vue-router";
 
 /** On a placeholder route: the owning plugin's name. */
 export const PLACEHOLDER_META_KEY = "pluginPlaceholder";
-/** On every route registered from a declaration. */
-export const DECLARED_META_KEY = "declaredByPlugin";
 
 const PluginRoutePlaceholder = () => import("./plugin-route-placeholder.vue");
 
@@ -63,7 +61,6 @@ function toRouteRecord(route: IRouteContributionType, plugin: string): RouteReco
     name: route.name,
     component: PluginRoutePlaceholder,
     meta: {
-      [DECLARED_META_KEY]: plugin,
       [PLACEHOLDER_META_KEY]: plugin,
       // The parent's organization gate is not the plugin route's to inherit: the real route may clear
       // it (the Sales Rep Hub does). The placeholder re-navigates once the plugin settles, and the

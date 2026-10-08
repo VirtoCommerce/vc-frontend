@@ -1,6 +1,7 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
+import { Logger } from "@/core/utilities";
 import { PLACEHOLDER_META_KEY, resetDeclaredSlots } from "./contributions/declare";
 import { resetPluginStatuses, usePluginsStatus } from "./contributions/status";
 import { loadPreparedModules, prepareFederatedModules } from "./index";
@@ -33,6 +34,15 @@ function plugin(contributions?: unknown): IPlatformPlugin {
     contentFiles: [],
     remote: { name: "sales-rep", exposed: "./plugin" },
     contributions: contributions === undefined ? undefined : JSON.stringify(contributions),
+  };
+}
+
+function otherPlugin(): IPlatformPlugin {
+  return {
+    ...plugin(),
+    id: "VirtoCommerce.Other",
+    entry: { type: "script", path: "/modules/$(VirtoCommerce.Other)/plugins/vc-frontend/remoteEntry.js", hash: "E2" },
+    remote: { name: "other", exposed: "./plugin" },
   };
 }
 
@@ -115,10 +125,12 @@ describe("declared contributions in the loader", () => {
     stubFetch();
     let finishInit!: () => void;
     loadRemoteMock.mockResolvedValue({
-      init: () =>
-        new Promise<void>((resolve) => {
+      init: () => {
+        router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
+        return new Promise<void>((resolve) => {
           finishInit = resolve;
-        }),
+        });
+      },
     });
 
     const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(true) });
@@ -131,13 +143,68 @@ describe("declared contributions in the loader", () => {
     await expect(loading.blocking).resolves.toBeUndefined();
     await flushPromises();
 
-    router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
     finishInit();
     const result = await loading.all;
 
     expect(result.loaded).toEqual(["sales-rep"]);
     expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBeUndefined();
     expect(router.resolve("/company/documents").matched.at(-1)?.components?.default).toBe(Page);
+  });
+
+  it("refuses one plugin's claim on a route another plugin declared, and lets the declaring plugin take it", async () => {
+    stubFetch();
+    const Intruder = { template: "<p />" };
+    let releaseOwner!: () => void;
+    const intruderDone = new Promise<void>((resolve) => {
+      releaseOwner = resolve;
+    });
+    loadRemoteMock.mockImplementation(async (id: string) => {
+      if (id.startsWith("other/")) {
+        return {
+          init: () => {
+            router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Intruder });
+            releaseOwner();
+          },
+        };
+      }
+      await intruderDone;
+      return {
+        init: () => {
+          router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
+        },
+      };
+    });
+
+    const prepared = await prepareFederatedModules({
+      plugins: [otherPlugin(), plugin(DECLARED)],
+      conditionContext: context(true),
+    });
+    const result = await loadPreparedModules(prepared).all;
+
+    expect(result.loaded).toEqual(expect.arrayContaining(["other", "sales-rep"]));
+    expect(router.resolve("/company/documents").matched.at(-1)?.components?.default).toBe(Page);
+    expect(Logger.error).toHaveBeenCalledWith(
+      expect.stringContaining('"other" tried to take the route "SalesRepDocuments" declared by "sales-rep"'),
+    );
+  });
+
+  it("refuses a declared route its own plugin adds after an await in init, and withdraws the placeholder", async () => {
+    stubFetch();
+    loadRemoteMock.mockResolvedValue({
+      init: async () => {
+        await Promise.resolve();
+        router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
+      },
+    });
+
+    const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(true) });
+    const result = await loadPreparedModules(prepared).all;
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(router.hasRoute("SalesRepDocuments")).toBe(false);
+    expect(Logger.error).toHaveBeenCalledWith(
+      expect.stringContaining('a plugin tried to take the route "SalesRepDocuments" declared by "sales-rep"'),
+    );
   });
 
   it("does not make boot wait for a plugin that declared nothing", async () => {

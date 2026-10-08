@@ -491,7 +491,9 @@ decision for the storefront. What the harness enforces today:
   owns, checking every name one call would claim: both `addRoute` overloads and each named entry in
   `children`, since vue-router treats those as root adds too. `removeRoute` is wrapped in the same
   window and refuses a host name, because remove-then-add would otherwise leave the name free by the
-  time the add is checked — a plugin may still remove routes it added itself. One wrapper covers the
+  time the add is checked — a plugin may still remove routes it added itself. A declared placeholder
+  is open only to its own plugin, and only from the synchronous part of that plugin's `init()`, the
+  one span where the call can be attributed. One wrapper covers the
   whole phase, not one per plugin: plugins init concurrently, and a per-plugin save/restore leaks one
   plugin's wrapper onto the host router while the next runs unguarded. The wrapper cannot tell a host
   call from a plugin's, which is why `app-runner` starts the loader only after its own route-mutating
