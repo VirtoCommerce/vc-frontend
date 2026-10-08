@@ -45,7 +45,7 @@
 import { computed, useSlots, watch } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
-import { heldPolicyOf, reservationFor } from "@/modules/federated/contributions/declare";
+import { heldPolicyOf, reservationFor } from "@/core/federation/contributions/declare";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 import type { ConditionParamType, ContributionType } from "@/shared/common/types/extensionRegistryMap";

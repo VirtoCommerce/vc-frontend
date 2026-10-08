@@ -5,7 +5,7 @@ A plugin may import host things (router, Apollo, extension registry, ui-kit…) 
 from here — never from `@/...` host paths.
 
 For the loader / boot side, see
-[`client-app/modules/federated/README.md`](../modules/federated/README.md).
+[`client-app/core/federation/README.md`](../core/federation/README.md).
 This file covers the facade itself: how its type contract is generated, **how to add
 something to the facade** (the day-to-day developer flow), and how plugins get the
 package (releases + local co-dev).
@@ -272,7 +272,7 @@ hands them the live implementation at runtime. The price is the "regenerate + co
 step — which CI enforces so it cannot silently drift.
 
 Distribution has two forms (full walkthrough:
-[`HOWTO.md`](../modules/federated/HOWTO.md)):
+[`HOWTO.md`](../core/federation/HOWTO.md)):
 
 - **Released (what plugins commit):** a versioned tarball, built by `npm pack` from this
   folder (the `files` field keeps it to the distributables) and published as a **GitHub

@@ -1,11 +1,9 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import { createMemoryHistory, createRouter, RouterView } from "vue-router";
 import { applyContributions, releaseContributions } from "./declare";
 import { resetPluginStatuses, setPluginStatus } from "./status";
-
-vi.mock("@/pages/404.vue", () => ({ __esModule: true, default: { template: "<h1 class='not-found'>404</h1>" } }));
 
 const Layout = { template: "<div class='company-layout'><router-view /></div>" };
 const RealPage = { template: "<p class='real-page'>documents</p>" };
@@ -16,6 +14,7 @@ async function openDeepLink(extraRoutes: { path: string; parent: "Company"; name
     history: createMemoryHistory(),
     routes: [
       { path: "/company", name: "Company", component: Layout, children: [] },
+      { path: "/404", name: "NotFound", component: { template: "<h1 class='not-found'>404</h1>" } },
       { path: "/:pathMatch(.*)*", name: "Matcher", component: { template: "<div class='matcher' />" } },
     ],
   });

@@ -3,9 +3,9 @@
 Tracking for **VCST-5159**. Backlog, except where a section says otherwise (#2 has shipped).
 An item that has a work item is a one-line link — its detail lives in Jira. Everything else here
 has no work item.
-Decisions, rationale, and review analysis live in [`specs/`](./specs/)
-(discovery/hosting/enablement: [`2026-07-06-discovery-hosting-decision.md`](./specs/2026-07-06-discovery-hosting-decision.md);
-facade distribution: [`2026-07-06-facade-distribution-design.md`](./specs/2026-07-06-facade-distribution-design.md)).
+Decisions, rationale, and review analysis live in [`core/specs/`](../specs/)
+(discovery/hosting/enablement: [`2026-07-06-discovery-hosting-decision.md`](../specs/VCST-5159-module-federation/2026-07-06-discovery-hosting-decision.md);
+facade distribution: [`2026-07-06-facade-distribution-design.md`](../specs/VCST-5159-module-federation/2026-07-06-facade-distribution-design.md)).
 Roughly in priority order.
 
 ---
@@ -28,7 +28,7 @@ file are cross-referenced, not repeated.
          go red; rewrite them to pin the new shipped value rather than deleting them.
       2. `client-app/app-runner.ts` — comment out the `@/modules/sales-rep` import and the
          `void initSalesRep(router, i18n)` call (leave the module in the tree; its specs keep running).
-      3. `client-app/modules/federated/boot-order.test.ts` — drop the then-unused
+      3. `client-app/core/federation/boot-order.test.ts` — drop the then-unused
          `vi.mock("@/modules/sales-rep", …)`.
 
       **Edits 1 and 2 must ship together.** With the switch on and `initSalesRep` still running, an
@@ -240,7 +240,7 @@ Still open:
       layers](https://virtocommerce.atlassian.net/browse/VCST-5760) (sprint 26-17). Decision,
       measured regression surface and the rejected alternatives (Tailwind `prefix`, `@scope`,
       `<style scoped>` + `@apply`, the PR #2372 prototype that is not landing):
-      [`specs/2026-08-21-plugin-css-cascade-layers.md`](./specs/2026-08-21-plugin-css-cascade-layers.md).
+      [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
 - [x] **Name-collision dedup** — the first descriptor to survive validation wins; a later plugin
       claiming the same name is reported in `skipped` under its own id, since the contested name
       belongs to the winner. Previously both were registered and both loaded, so one plugin's code

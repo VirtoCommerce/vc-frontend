@@ -32,7 +32,7 @@ export interface IProps<C extends ExtensionCategoryType> {
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
 import { computed } from "vue";
-import { pendingSlotNames, reservationFor } from "@/modules/federated/contributions/declare";
+import { pendingSlotNames, reservationFor } from "@/core/federation/contributions/declare";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 

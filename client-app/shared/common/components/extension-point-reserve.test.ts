@@ -1,11 +1,11 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { applyContributions, resetDeclaredSlots } from "@/modules/federated/contributions/declare";
-import { resetPluginStatuses, setPluginStatus } from "@/modules/federated/contributions/status";
+import { applyContributions, resetDeclaredSlots } from "@/core/federation/contributions/declare";
+import { resetPluginStatuses, setPluginStatus } from "@/core/federation/contributions/status";
 import ExtensionPointList from "./extension-point-list.vue";
 import ExtensionPoint from "./extension-point.vue";
-import type { IPluginContributionsType } from "@/modules/federated/contributions/types";
+import type { IPluginContributionsType } from "@/core/federation/contributions/types";
 import type { Component } from "vue";
 
 const h = vi.hoisted((): { entries: Record<string, Record<string, { component?: Component }>> } => ({ entries: {} }));

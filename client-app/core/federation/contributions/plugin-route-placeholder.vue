@@ -11,11 +11,18 @@ import { defineAsyncComponent, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PLACEHOLDER_META_KEY } from "./declare";
 import { whenPluginSettled } from "./status";
+import type { Component } from "vue";
 
-const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+const NOT_FOUND_ROUTE = "NotFound";
 
 const route = useRoute();
 const router = useRouter();
+
+// The host's own 404, read off its route: core does not import pages/.
+const Error404 = defineAsyncComponent(async () => {
+  const page = router.resolve({ name: NOT_FOUND_ROUTE }).matched.at(-1)?.components?.default;
+  return (typeof page === "function" ? await (page as () => Promise<Component>)() : page) as Component;
+});
 const isGone = ref(false);
 let run = 0;
 

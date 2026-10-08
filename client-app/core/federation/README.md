@@ -114,7 +114,7 @@ build can override the host's own on host markup if the presets have drifted. Th
 and scoped as VCST-5760: native cascade layers, `plugin` between the host's component styles and
 the host's utilities, plus a `plugin-overrides` layer for deliberate overrides. Until it lands,
 prefer `<style scoped>` for anything you would be unhappy to see applied outside your own markup.
-See `specs/2026-08-21-plugin-css-cascade-layers.md`.
+See [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
 
 ---
 
