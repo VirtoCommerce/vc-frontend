@@ -1816,6 +1816,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Die verfügbare Produktmenge {availQty} reicht nicht für die angeforderte Menge {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Mindestbestellung von {minQty} Artikel ist nicht auf Lager",
     "PRODUCT_EXACT_QTY": "Sie können {minQty} Artikel bestellen",
+    "PRODUCT_PACK_SIZE_LIMIT": "Bestellen in Packungen von {packSize}",
+    "LINE_ITEM_LIMIT": "Sie können maximal {limit} Artikel bestellen",
     "CART_INVALID_PRODUCT": "Ungültiges Produkt"
   },
   "file_error": {

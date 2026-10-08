@@ -1816,6 +1816,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Produktens tillgängliga antal {availQty} är otillräckligt för begärt {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Minsta beställning {minQty} artikel(ar) är inte tillgänglig i lager",
     "PRODUCT_EXACT_QTY": "Du kan beställa {minQty} artikel(ar)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Beställ i förpackningar om {packSize}",
+    "LINE_ITEM_LIMIT": "Du kan beställa högst {limit} artikel(ar)",
     "CART_INVALID_PRODUCT": "Ogiltig produkt"
   },
   "file_error": {
