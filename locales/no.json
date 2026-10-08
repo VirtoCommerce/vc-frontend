@@ -243,7 +243,8 @@
       "logo_changed": "Logoen er endret.",
       "logo_deleted": "Logoen er slettet.",
       "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt.",
-      "content_failed_to_load": "En del av nettstedet kunne ikke lastes inn. Last inn siden på nytt for å fortsette."
+      "content_failed_to_load": "En del av nettstedet kunne ikke lastes inn. Last inn siden på nytt for å fortsette.",
+      "page_loading": "Laster inn siden…"
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",

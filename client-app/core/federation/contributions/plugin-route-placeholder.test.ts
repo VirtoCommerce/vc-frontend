@@ -27,7 +27,11 @@ async function openDeepLink(extraRoutes: { path: string; parent: "Company"; name
   );
   await router.push("/company/documents?tab=all");
   const wrapper = mount(defineComponent({ render: () => h(RouterView) }), {
-    global: { plugins: [router], stubs: { VcLoader: { template: "<i class='loader' />" } } },
+    global: {
+      plugins: [router],
+      stubs: { VcLoader: { template: "<i class='loader' />" } },
+      mocks: { $t: (key: string) => key },
+    },
   });
   await flushPromises();
   return { router, wrapper, applied };
@@ -41,7 +45,10 @@ describe("PluginRoutePlaceholder", () => {
   it("renders a loader inside the declared parent's layout while the plugin is on the way", async () => {
     const { wrapper } = await openDeepLink();
 
-    expect(wrapper.find(".company-layout .plugin-route-placeholder .loader").exists()).toBe(true);
+    const placeholder = wrapper.find(".company-layout [data-test-id='plugin-route-placeholder-section']");
+    expect(placeholder.find(".loader").exists()).toBe(true);
+    expect(placeholder.text()).toBe("common.messages.page_loading");
+    expect(placeholder.attributes()).not.toHaveProperty("aria-busy");
   });
 
   it("becomes the plugin's page, at the same URL, once the plugin claimed its route", async () => {
@@ -138,7 +145,11 @@ describe("PluginRoutePlaceholder and the organization gate", () => {
     );
     await router.push("/company/dashboard");
     const wrapper = mount(defineComponent({ render: () => h(RouterView) }), {
-      global: { plugins: [router], stubs: { VcLoader: { template: "<i class='loader' />" } } },
+      global: {
+        plugins: [router],
+        stubs: { VcLoader: { template: "<i class='loader' />" } },
+        mocks: { $t: (key: string) => key },
+      },
     });
     await flushPromises();
     const onPlaceholder = router.currentRoute.value.fullPath;

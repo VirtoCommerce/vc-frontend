@@ -243,7 +243,8 @@
       "logo_changed": "Il logo è stato modificato con successo.",
       "logo_deleted": "Il logo è stato eliminato.",
       "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse.",
-      "content_failed_to_load": "Non è stato possibile caricare una parte del sito. Ricarica la pagina per continuare."
+      "content_failed_to_load": "Non è stato possibile caricare una parte del sito. Ricarica la pagina per continuare.",
+      "page_loading": "Caricamento della pagina…"
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",

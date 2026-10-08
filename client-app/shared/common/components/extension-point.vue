@@ -1,23 +1,9 @@
 <template>
-  <!--
-    Held while the plugin that declared this slot is on the way — even once its component is
-    registered, because the plugin merges its locales in init() and revealing earlier would paint raw
-    keys. The host's own fallback keeps the box its exact size, hidden and inert; a slot without one
-    is sized by host CSS on `data-slot`.
-  -->
-  <div
-    v-if="heldPolicy"
-    :class="['extension-point-reserve', $attrs.class]"
-    :data-slot="`${category}/${name}`"
-    :data-policy="heldPolicy"
-    aria-busy="true"
-  >
-    <div v-if="$slots.default" class="extension-point-reserve__fallback" inert>
+  <ExtensionPointReserve v-if="heldPolicy" :class="$attrs.class" :slot-id="`${category}/${name}`" :policy="heldPolicy">
+    <template v-if="$slots.default" #default>
       <slot v-bind="{ extensionProps: undefined }" />
-    </div>
-
-    <VcLoader v-if="heldPolicy === 'block'" class="extension-point-reserve__loader" />
-  </div>
+    </template>
+  </ExtensionPointReserve>
 
   <component
     :is="getComponent(category, name)"
@@ -44,8 +30,8 @@
 <script lang="ts">
 import { computed, useSlots, watch } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { Logger } from "@/core/utilities";
 import { heldPolicyOf, reservationFor } from "@/core/federation/contributions/declare";
+import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 import type { ConditionParamType, ContributionType } from "@/shared/common/types/extensionRegistryMap";
@@ -85,6 +71,7 @@ export interface IProps<C extends ExtensionCategoryType> {
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
 import ExtensionContribution from "@/shared/common/components/extension-contribution.vue";
+import ExtensionPointReserve from "@/shared/common/components/extension-point-reserve.vue";
 
 defineOptions({
   inheritAttrs: false,
@@ -146,25 +133,3 @@ if (IS_DEVELOPMENT) {
   );
 }
 </script>
-
-<style lang="scss">
-.extension-point-reserve {
-  @apply relative;
-
-  &__fallback {
-    @apply invisible;
-  }
-
-  &__loader {
-    @apply absolute inset-0 m-auto;
-  }
-
-  &[data-policy="block"] {
-    @apply min-h-24;
-  }
-
-  &[data-slot="productCard/card-button"] {
-    @apply min-h-9;
-  }
-}
-</style>

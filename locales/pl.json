@@ -243,7 +243,8 @@
       "logo_changed": "Logo zostało pomyślnie zmienione.",
       "logo_deleted": "Logo zostało usunięte.",
       "pending_operations_leaving_page_confirmation": "Niektóre operacje są w toku. Czy na pewno chcesz opuścić tę stronę? Niezapisane zmiany mogą zostać utracone.",
-      "content_failed_to_load": "Nie udało się załadować części witryny. Odśwież stronę, aby kontynuować."
+      "content_failed_to_load": "Nie udało się załadować części witryny. Odśwież stronę, aby kontynuować.",
+      "page_loading": "Ładowanie strony…"
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",
