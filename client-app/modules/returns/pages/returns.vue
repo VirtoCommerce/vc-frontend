@@ -86,6 +86,7 @@
             :page="page"
             :skeleton-rows="itemsPerPage"
             :description="$t('returns.meta.table_description')"
+            mobile-breakpoint="lg"
             @row-click="goToReturn"
             @header-click="applySorting"
             @page-changed="changePage"
@@ -135,7 +136,13 @@
               {{ item.number }}
             </VcTableColumn>
 
-            <VcTableColumn id="createdDate" v-slot="{ item }" :title="$t('returns.list.columns.date')" sortable>
+            <VcTableColumn
+              id="createdDate"
+              v-slot="{ item }"
+              :title="$t('returns.list.columns.date')"
+              sortable
+              class="w-28"
+            >
               {{ $d(new Date(item.createdDate)) }}
             </VcTableColumn>
 
@@ -145,11 +152,18 @@
               v-slot="{ item }"
               :title="$t('common.labels.buyer_name')"
               sortable
+              class="w-32 xl:w-40"
             >
               {{ item.customerName }}
             </VcTableColumn>
 
-            <VcTableColumn id="status" v-slot="{ item }" :title="$t('returns.list.columns.status')" sortable>
+            <VcTableColumn
+              id="status"
+              v-slot="{ item }"
+              :title="$t('returns.list.columns.status')"
+              sortable
+              class="w-36"
+            >
               {{ statusLabel(item.status, item.statusDisplayValue) }}
             </VcTableColumn>
 
