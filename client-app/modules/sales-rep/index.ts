@@ -12,8 +12,8 @@ import { isSalesRepsEnabled, isSalesRepTasksEnabled, isSalesRepUser } from "./co
 import {
   ACTIVITIES_NAV_LINK_ID,
   ACTIVITIES_ROUTE_NAME,
-  CALENDAR_NAV_LINK_ID,
-  CALENDAR_ROUTE_NAME,
+  TASKS_NAV_LINK_ID,
+  TASKS_ROUTE_NAME,
   CUSTOMER_SHARING_SCOPE,
   DASHBOARD_LAYOUT_SCOPE,
   DASHBOARD_NAV_LINK_ID,
@@ -34,8 +34,8 @@ import { tasksBlock } from "./layout/tasks-block";
 import { salesRepMenuSchema } from "./menu";
 import {
   activitiesRoute,
+  tasksRoute,
   allCustomerOrdersRoute,
-  calendarRoute,
   customerOrderRoute,
   customerOrdersRoute,
   customerProfileRoute,
@@ -66,8 +66,8 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute(ROUTES.COMPANY.NAME, allCustomerOrdersRoute);
   // Document library (VCST-5730) -> /company/documents (its own beforeEnter checks documents:read).
   router.addRoute(ROUTES.COMPANY.NAME, documentsRoute);
-  // Calendar (VCST-5732) -> /company/calendar (its own beforeEnter checks the tasks module is installed).
-  router.addRoute(ROUTES.COMPANY.NAME, calendarRoute);
+  // Tasks (VCST-5732) -> /company/tasks (its own beforeEnter checks the tasks module is installed).
+  router.addRoute(ROUTES.COMPANY.NAME, tasksRoute);
   // All-activity feed (VCST-5337) -> /company/activities.
   router.addRoute(ROUTES.COMPANY.NAME, activitiesRoute);
 
@@ -129,15 +129,15 @@ export function init(router: Router, i18n: I18n) {
     condition: (sharingSetting) => (sharingSetting?.scope as string | undefined) === CUSTOMER_SHARING_SCOPE,
   });
 
-  // Calendar sits between My customers and the library, and disappears with the tasks module.
-  const calendarNavLink: ExtendedMenuLinkType[] = tasksEnabled
+  // Tasks sits between My customers and the library, and disappears with the tasks module.
+  const tasksNavLink: ExtendedMenuLinkType[] = tasksEnabled
     ? [
         {
-          id: CALENDAR_NAV_LINK_ID,
-          // The one "Calendar" label — shared by this nav link, the page H1 and the widget's link.
+          id: TASKS_NAV_LINK_ID,
+          // The one "Tasks" label — shared by this nav link, the page H1 and the breadcrumb.
           title: "sales_rep.tasks.title",
           icon: "calendar",
-          route: { name: CALENDAR_ROUTE_NAME },
+          route: { name: TASKS_ROUTE_NAME },
         },
       ]
     : [];
@@ -178,7 +178,7 @@ export function init(router: Router, i18n: I18n) {
         // item lit there — vue-router cannot tell, they are sibling route records.
         activeWhen: isMyCustomersArea,
       },
-      ...calendarNavLink,
+      ...tasksNavLink,
       ...documentsNavLink,
       {
         id: ACTIVITIES_NAV_LINK_ID,

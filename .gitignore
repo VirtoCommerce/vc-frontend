@@ -70,8 +70,15 @@ dist-ssr
 # https certificates
 .certificates/*
 
-# AI tools (local config files only)
+# AI tools: shared Claude Code config is committed; personal skills, local settings and runtime state are not
 *.local.md
+.claude/*
+!.claude/rules/
+!.claude/hooks/
+!.claude/settings.json
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/implement/
 .claude/**/*.local.*
 .serena
 

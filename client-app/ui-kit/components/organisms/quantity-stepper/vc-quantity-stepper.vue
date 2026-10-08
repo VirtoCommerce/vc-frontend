@@ -20,6 +20,7 @@
       center
       :select-on-click="selectOnClick"
       :aria="{
+        ...aria,
         role: 'spinbutton',
         'aria-valuemin': boundMin,
         'aria-valuemax': max ?? null,
@@ -87,6 +88,8 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
+  /** Extra ARIA attributes for the input; `role`, `aria-label` and `aria-valuemin/max/now` always win. */
+  aria?: Record<string, string | number | null>;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

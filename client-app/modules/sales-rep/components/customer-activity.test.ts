@@ -79,7 +79,7 @@ const createWrapper = createWrapperFactory(mount, CustomerActivity, {
 
 // The chip row renders the baseline (Summary) first, then the declared rules in order. The tab class
 // sits on VcTabSwitch's <label>; its inner <button> is what carries the click.
-const chips = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".sales-rep-rule-chips__tab button");
+const chips = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".sales-rep-rule-chip button");
 
 beforeEach(() => {
   state.summary.value = undefined;

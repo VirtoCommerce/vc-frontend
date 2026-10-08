@@ -89,6 +89,13 @@
         "empty_visible": "Arrastre una métrica aquí para mostrarla",
         "empty_hidden": "Arrastre una métrica aquí para ocultarla",
         "max_rows": "Filas máximas",
+        "restored": "Se restableció el diseño predeterminado.",
+        "empty": {
+          "title": "Todos los bloques están ocultos",
+          "text": "Todas las métricas y widgets de esta página se han movido a {hidden} en la configuración del diseño. Restablezca el diseño predeterminado para recuperarlo todo o abra {edit} para elegir exactamente qué mostrar.",
+          "hidden": "Ocultos",
+          "restore": "Restablecer diseño predeterminado"
+        },
         "a11y": {
           "reorder": "Reordenar {title}",
           "hide": "Ocultar {title}",
@@ -145,7 +152,7 @@
         "created_date": "Fecha de creación",
         "start_date": "Fecha de inicio",
         "end_date": "Fecha de finalización",
-        "invalid_range": "Rango de fechas no válido.",
+        "date_range": "Intervalo de fechas",
         "order_status": "@:common.labels.status",
         "customer": "Seleccionar cliente",
         "reset": "Restablecer",
@@ -154,7 +161,8 @@
         "last_day": "Último día",
         "last_week": "Última semana",
         "last_month": "Último mes",
-        "last_year": "Último año"
+        "last_year": "Último año",
+        "remove_filter": "Quitar el filtro «{label}»"
       }
     },
     "communication": {
@@ -203,12 +211,14 @@
       "load_failed": "No se pudieron cargar los pedidos"
     },
     "tasks": {
-      "title": "Calendario",
+      "title": "Tareas",
       "widget_title": "Tareas y vencimientos",
-      "full_calendar": "Calendario completo",
+      "view_all": "Todas las tareas",
       "new_task": "Nueva tarea",
-      "add_task": "Añadir tarea",
+      "due_dates": "Vencimientos",
       "today": "Hoy",
+      "all": "Todas",
+      "clear_day_aria": "Quitar {date}",
       "empty": "No hay tareas en esta pestaña",
       "empty_day": "No vence nada este día",
       "load_failed": "No se pudieron cargar las tareas",
@@ -223,8 +233,10 @@
         "task": "Tarea",
         "status": "Estado",
         "notes": "Notas",
-        "complete_aria": "Marcar «{name}» como completada",
-        "reopen_aria": "Reabrir «{name}»",
+        "actions": "Acciones",
+        "mark_complete": "Completar",
+        "reopen": "Reabrir",
+        "action_aria": "{action}: «{name}»",
         "edit_aria": "Editar «{name}»"
       },
       "status": {

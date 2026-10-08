@@ -89,6 +89,13 @@
         "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
         "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
         "max_rows": "Maksimirivit",
+        "restored": "Oletusasettelu palautettu.",
+        "empty": {
+          "title": "Kaikki lohkot on piilotettu",
+          "text": "Kaikki tämän sivun tunnusluvut ja widgetit on siirretty asetteluasetuksissa kohtaan {hidden}. Palauta oletusasettelu tuodaksesi kaiken takaisin, tai avaa {edit} ja valitse tarkalleen, mitä näytetään.",
+          "hidden": "Piilotetut",
+          "restore": "Palauta oletusasettelu"
+        },
         "a11y": {
           "reorder": "Järjestä {title}",
           "hide": "Piilota {title}",
@@ -145,7 +152,7 @@
         "created_date": "Luontipäivämäärä",
         "start_date": "Aloituspäivämäärä",
         "end_date": "Lopetuspäivämäärä",
-        "invalid_range": "Virheellinen päivämääräväli.",
+        "date_range": "Päivämääräväli",
         "order_status": "Valitse tilauksen tila",
         "customer": "Valitse asiakas",
         "reset": "Nollaa",
@@ -154,7 +161,8 @@
         "last_day": "Viimeinen päivä",
         "last_week": "Viime viikko",
         "last_month": "Viime kuukausi",
-        "last_year": "Viime vuosi"
+        "last_year": "Viime vuosi",
+        "remove_filter": "Poista suodatin ”{label}”"
       }
     },
     "communication": {
@@ -203,12 +211,14 @@
       "load_failed": "Tilauksia ei voitu ladata"
     },
     "tasks": {
-      "title": "Kalenteri",
+      "title": "Tehtävät",
       "widget_title": "Tehtävät ja eräpäivät",
-      "full_calendar": "Koko kalenteri",
+      "view_all": "Kaikki tehtävät",
       "new_task": "Uusi tehtävä",
-      "add_task": "Lisää tehtävä",
+      "due_dates": "Eräpäivät",
       "today": "Tänään",
+      "all": "Kaikki",
+      "clear_day_aria": "Poista {date}",
       "empty": "Tällä välilehdellä ei ole tehtäviä",
       "empty_day": "Tänä päivänä ei eräänny mitään",
       "load_failed": "Tehtäviä ei voitu ladata",
@@ -223,8 +233,10 @@
         "task": "Tehtävä",
         "status": "Tila",
         "notes": "Muistiinpanot",
-        "complete_aria": "Merkitse ”{name}” valmiiksi",
-        "reopen_aria": "Avaa ”{name}” uudelleen",
+        "actions": "Toiminnot",
+        "mark_complete": "Merkitse valmiiksi",
+        "reopen": "Avaa uudelleen",
+        "action_aria": "{action}: ”{name}”",
         "edit_aria": "Muokkaa tehtävää ”{name}”"
       },
       "status": {

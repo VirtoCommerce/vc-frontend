@@ -29,7 +29,7 @@ type UseSalesRepTasksOptionsType = {
   /** Fixed due-date window, e.g. the day a calendar cell selected. */
   period?: Ref<{ from: string; to: string } | undefined>;
   /**
-   * The chosen server filter rule. Passed in by a surface whose `period` depends on it — the calendar page
+   * The chosen server filter rule. Passed in by a surface whose `period` depends on it — the Tasks page
    * drops the day window while a status tab is active, which it cannot express if the ref lives in here.
    */
   filter?: Ref<string | undefined>;
