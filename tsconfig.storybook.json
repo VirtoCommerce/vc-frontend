@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.app.json",
   "include": [".storybook/**/*", "client-app/**/*", "config/*.json", "locales/*.json", "package.json"],
-  "exclude": ["./storybook/main.ts", "client-app/core-api/contract"]
+  "exclude": ["./storybook/main.ts", "client-app/core-api/contract", "client-app/core-api/manifest.d.mts", "client-app/core-api/contract-checks"]
 }

@@ -13,7 +13,10 @@ import {
 } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
+import { startFederatedModules } from "@/core/federation/bootstrap";
+import { isFederationEnabled } from "@/core/federation/enabled";
 import { setGlobals } from "@/core/globals";
 import { registerLocaleLoader } from "@/core/locale-loaders";
 import {
@@ -29,8 +32,6 @@ import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
-import { startFederatedModules } from "@/modules/federated/bootstrap";
-import { isFederationEnabled } from "@/modules/federated/enabled";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
@@ -306,9 +307,15 @@ export default async () => {
   const federatedModulesReady = startFederatedModules({
     fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
     hasPermission: checkPermissions,
+    conditionContext: {
+      setting: (module, key) => useModuleSettings(module).getSettingValue(key),
+      themeSetting: (key) => (themeContext.value.settings as unknown as Record<string, unknown> | undefined)?.[key],
+      isAuthenticated: isAuthenticated.value,
+      can: checkPermissions,
+    },
   });
 
-  // Federated plugin routes must exist before the router is installed. Never rejects.
+  // Undeclared plugins' routes and declared plugins' placeholders must exist before the router is installed.
   await federatedModulesReady;
 
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
