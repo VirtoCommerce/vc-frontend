@@ -107,6 +107,8 @@ Added rules apply from the next click, and `appear` rules rescan the page right 
 ## Triggers
 
 - **click**: one capture-phase listener on `document`. Only a click on a link or a button counts. From it the engine walks up through `data-name` ancestors until a rule sends an event.
-- **appear**: a `MutationObserver` on `body`, plus a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` count as the same entity, so a refetched product does not resend `viewItem`.
+- **appear**: a `MutationObserver` on `body` (added and removed nodes, plus changes to `data-name` and the `data-*` attributes the rules read), and a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` (or `code` when there is no `id`) count as the same entity, so a refetched product does not resend `viewItem`.
+
+A list that empties and comes back with the same products does not resend `viewItemList`: the engine can't tell a finished empty result from a reload, and many lists pass through `[]` on every refetch.
 
 `appear` means "rendered in the DOM", not "scrolled into the viewport": the event fires as soon as the list is rendered.

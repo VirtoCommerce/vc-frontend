@@ -17,6 +17,7 @@
       :to="link"
       :title="product.name"
       :target="browserTarget"
+      @click="$emit('linkClick', $event)"
     >
       {{ product.name }}
     </VcProductTitle>
@@ -59,9 +60,15 @@ import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
+interface IEmits {
+  (event: "linkClick", globalEvent: MouseEvent): void;
+}
+
 interface IProps {
   product: Product;
 }
+
+defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 

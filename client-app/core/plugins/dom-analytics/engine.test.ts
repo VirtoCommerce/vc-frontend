@@ -39,6 +39,19 @@ const SELECT_BY_SKU: RuleType = {
   args: [{ source: "attr", from: "product-card", attr: "sku" }, LIST_PARAMS],
 };
 
+const VIEW_ITEM_LIST_BY_SKU: RuleType = {
+  event: "viewItemList",
+  trigger: "appear",
+  target: "product-list",
+  args: [
+    {
+      source: "collect",
+      target: "product-card",
+      fallback: { source: "object", fields: { code: { attr: "sku" } } },
+    },
+  ],
+};
+
 const ProductList = defineComponent({
   directives: { trackItem: vTrackItem },
   props: { products: { type: Array as () => { id?: string; code: string }[], required: true } },
@@ -170,7 +183,6 @@ describe("dom-analytics engine", () => {
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], expect.any(Object));
 
     document.querySelector<HTMLElement>("[data-name='product-list']")?.setAttribute("data-list-id", "similar");
-    document.body.append(document.createElement("i"));
     await flushPromises();
     expect(analyticsMock).toHaveBeenCalledTimes(4);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], {
@@ -319,23 +331,41 @@ describe("dom-analytics engine", () => {
         <div data-name="product-card" data-sku="A"></div>
         <div data-name="product-card"></div>
       </div>`;
-    stop = startEngine([
-      {
-        event: "viewItemList",
-        trigger: "appear",
-        target: "product-list",
-        args: [
-          {
-            source: "collect",
-            target: "product-card",
-            fallback: { source: "object", fields: { code: { attr: "sku" } } },
-          },
-        ],
-      },
-    ]);
+    stop = startEngine([VIEW_ITEM_LIST_BY_SKU]);
     await flushPromises();
 
     expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItemList", [{ code: "A" }]);
+  });
+
+  it("does not resend viewItemList for markup items without an id", async () => {
+    document.body.innerHTML = `
+      <div data-name="product-list">
+        <div data-name="product-card" data-sku="A"></div>
+      </div>`;
+    stop = startEngine([VIEW_ITEM_LIST_BY_SKU]);
+    await flushPromises();
+
+    document.body.append(document.createElement("i"));
+    await flushPromises();
+
+    expect(analyticsMock).toHaveBeenCalledOnce();
+  });
+
+  it("collects the cards of a nested list into that list only", async () => {
+    document.body.innerHTML = `
+      <div data-name="product-list">
+        <div data-name="product-card" data-sku="A"></div>
+        <div data-name="product-list">
+          <div data-name="product-card" data-sku="B"></div>
+        </div>
+      </div>`;
+    stop = startEngine([VIEW_ITEM_LIST_BY_SKU]);
+    await flushPromises();
+
+    expect(analyticsMock.mock.calls).toEqual([
+      ["viewItemList", [{ code: "A" }]],
+      ["viewItemList", [{ code: "B" }]],
+    ]);
   });
 
   it("does not send viewItemList for a list without cards", async () => {

@@ -1,4 +1,4 @@
-import { set } from "lodash-es";
+import { kebabCase, set } from "lodash-es";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getItem, onItemChange } from "./registry";
 import type { ArgSourceType, AttrFieldType, ObjectSourceType, RuleType } from "./types";
@@ -56,7 +56,10 @@ function resolveArg(el: Element, arg: ArgSourceType): unknown {
     case "object":
       return readObject(scope, arg.fields);
     case "collect": {
+      const scopeName = scope.getAttribute(NAME_ATTR);
       const items = Array.from(scope.querySelectorAll(byName(arg.target)))
+        // Cards of a nested list belong to that list only
+        .filter((child) => !scopeName || child.closest(byName(scopeName)) === scope)
         .map((child) => readItem(child, arg.fallback))
         .filter((item) => item !== undefined);
       return items.length ? items : undefined;
@@ -71,14 +74,37 @@ function resolveArgs(el: Element, rule: RuleType): unknown[] | null {
   return isComplete ? args : null;
 }
 
+// `code` covers items built from markup without `data-product-id`
 function entityId(value: unknown): unknown {
-  return typeof value === "object" && value !== null && "id" in value ? value.id : undefined;
+  if (typeof value !== "object" || value === null) {
+    return undefined;
+  }
+  const { id, code } = value as { id?: unknown; code?: unknown };
+  return id ?? code;
 }
 
 // A refetched entity is a new object with the same id: it must not fire `appear` again
 function isSameValue(a: unknown, b: unknown): boolean {
   const id = entityId(a);
   return a === b || (id !== undefined && id === entityId(b));
+}
+
+function fieldAttrs(arg: ArgSourceType): string[] {
+  switch (arg.source) {
+    case "attr":
+      return [arg.attr];
+    case "object":
+      return Object.values(arg.fields).map((field) => field.attr);
+    case "item":
+    case "collect":
+      return arg.fallback ? fieldAttrs(arg.fallback) : [];
+  }
+}
+
+/** Attributes the rules read: a change to any of them must trigger a rescan */
+function watchedAttributes(rules: RuleType[]): string[] {
+  const keys = new Set(rules.flatMap((rule) => rule.args.flatMap(fieldAttrs)));
+  return [NAME_ATTR, ...Array.from(keys, (key) => `data-${kebabCase(key)}`)];
 }
 
 function isShallowEqual(a: unknown, b: unknown): boolean {
@@ -185,16 +211,30 @@ export function startEngine(rules: RuleType[]): () => void {
   document.addEventListener("click", onClick, true);
 
   const observer = new MutationObserver(scheduleScan);
-  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Called again on rescan: rules added later may read other attributes
+  function observe(): void {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributeFilter: watchedAttributes(rules),
+    });
+  }
+
+  function refresh(): void {
+    observe();
+    scheduleScan();
+  }
+
   const stopItemListener = onItemChange(scheduleScan);
-  scanners.add(scheduleScan);
-  scheduleScan();
+  scanners.add(refresh);
+  refresh();
 
   return () => {
     isStopped = true;
     document.removeEventListener("click", onClick, true);
     observer.disconnect();
     stopItemListener();
-    scanners.delete(scheduleScan);
+    scanners.delete(refresh);
   };
 }

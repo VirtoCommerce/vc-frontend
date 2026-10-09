@@ -10,6 +10,7 @@
   >
     <template #media>
       <VcProductImage
+        :data-name="hasImageCarousel ? undefined : 'product-link'"
         :images="viewMode === 'grid' ? product.images : []"
         :img-src="product.imgSrc"
         :alt="product.name"
@@ -209,6 +210,9 @@ const productId = computed(() => product.value.id);
 
 const catalogBasePath = useCatalogBasePath();
 const link = computed(() => getProductRoute(productId.value, props.product.slug, catalogBasePath.value));
+
+// A carousel image switches slides instead of opening the product, and its arrows are buttons that must not count as a link
+const hasImageCarousel = computed(() => props.viewMode === "grid" && (product.value.images?.length ?? 0) > 1);
 
 const actualPrice = computed(() =>
   product.value.hasVariations
