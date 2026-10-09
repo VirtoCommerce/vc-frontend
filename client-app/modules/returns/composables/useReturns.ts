@@ -33,13 +33,12 @@ export function useReturns() {
 
   const itemsPerPage = ref(DEFAULT_ITEMS_PER_PAGE);
 
-  // organizationReturns answers Forbidden rather than narrowing, so the tab is only offered to a contact
-  // holding the permission.
+  // organizationReturns refuses rather than narrows, so only a permission holder gets the tab.
   const canViewOrganizationReturns = computed(
     () => !!organization.value && checkPermissions(VIEW_ORGANIZATION_RETURNS_PERMISSION),
   );
 
-  // Everyone lands on their own returns; the organization's list opens only when the link asks for it.
+  // Own returns unless the link asks for the organization's.
   const scope = computed<ReturnScopeType>(() =>
     canViewOrganizationReturns.value && asString(route.query.scope) === RETURN_SCOPE.ORGANIZATION
       ? RETURN_SCOPE.ORGANIZATION
@@ -47,7 +46,7 @@ export function useReturns() {
   );
   const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
 
-  // The organization's list holds no drafts, so it neither offers nor applies a Draft filter.
+  // The organization's list holds no drafts, so it has no Draft filter.
   function isStatusInScope(code: string): boolean {
     return !isOrganizationScope.value || code !== DRAFT_STATUS;
   }
@@ -120,7 +119,7 @@ export function useReturns() {
   });
 
   function applyScope(value: ReturnScopeType): void {
-    // The buyer column is only in the organization's list, so a sort by it does not follow into the own one.
+    // The own list has no buyer column to sort by.
     const nextSort =
       value === RETURN_SCOPE.OWN && sort.value.column === BUYER_COLUMN ? DEFAULT_SORT.toString() : state.value.sort;
 

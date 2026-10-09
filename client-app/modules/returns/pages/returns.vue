@@ -239,7 +239,7 @@ const { statusLabel } = useReturnStatusLabel();
 
 const localKeyword = ref(keyword.value);
 
-// Only the organization's list is read by people looking for a colleague, so only it mentions the buyer.
+// Only the organization's list has other buyers to search for.
 const searchPlaceholderKey = computed(() =>
   isOrganizationScope.value ? "returns.search_placeholder_organization" : "returns.search_placeholder",
 );

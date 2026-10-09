@@ -8,7 +8,7 @@ export function useSubmitReturnMutation() {
 
   return useMutation(SubmitReturnDocument, {
     context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
-    // Only the queries on screen: naming one that is not makes Apollo warn, and a list reloads when it is shown.
+    // Mounted queries only: Apollo warns about the others, and a list refetches when it is shown.
     refetchQueries: () =>
       filterActiveQueryNames(client, [
         OperationNames.Query.GetReturns,
