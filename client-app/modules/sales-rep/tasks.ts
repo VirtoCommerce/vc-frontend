@@ -1,11 +1,11 @@
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
-import { eod, iso, local } from "./utils";
+import { eod, iso, local } from "@/shared/dashboard";
 import type { SalesRepTaskStatusType, SalesRepTaskType, SalesRepTaskDayMarkersType } from "./types/tasks";
 import type { ComposerTranslation } from "vue-i18n";
 
 /**
  * Task day maths, on the USER'S calendar rather than UTC — the same rule buildStatisticsWindows follows in
- * utils.ts, and for the same reason: the pills sit next to dates rendered through `$d()`, i.e. in the browser's
+ * @/shared/dashboard, and for the same reason: the pills sit next to dates rendered through `$d()`, i.e. in the browser's
  * zone. A task due 23:00 UTC is "tomorrow" for a UTC+3 rep, so a UTC boundary would put it in a different tab
  * than the date beside it reads.
  *

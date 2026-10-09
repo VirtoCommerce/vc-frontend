@@ -69,46 +69,7 @@
           "items_unit": "article | article | articles",
           "not_for_checkout": "{count} hors paiement",
           "items_this_week": "{count} article cette semaine | {count} article cette semaine | {count} articles cette semaine",
-          "mtd_of_ytd": "{percent}% de l'année",
-          "load_failed": "Échec du chargement"
-        }
-      },
-      "layout": {
-        "edit": "Modifier la disposition",
-        "editing": "Modification de la disposition",
-        "hint": "— faites glisser un bloc par sa poignée pour le réorganiser, ou masquez-le avec ✕.",
-        "hint_keyboard": "Clavier : la barre d'espace saisit un bloc, les flèches le déplacent, espace le dépose, Échap annule.",
-        "save": "Enregistrer la disposition",
-        "cancel": "Annuler",
-        "reset": "Réinitialiser",
-        "save_failed": "La disposition n'a pas pu être enregistrée. Vos modifications sont conservées — réessayez.",
-        "load_failed": "La disposition enregistrée n'a pas pu être chargée, l'agencement par défaut est donc affiché. La modification est indisponible jusqu'au chargement — actualisez la page.",
-        "hidden_widgets": "Widgets masqués",
-        "visible_stats": "Indicateurs visibles",
-        "hidden_stats": "Indicateurs masqués",
-        "empty_visible": "Faites glisser un indicateur ici pour l'afficher",
-        "empty_hidden": "Faites glisser un indicateur ici pour le masquer",
-        "max_rows": "Nombre de lignes max",
-        "restored": "Disposition par défaut restaurée.",
-        "empty": {
-          "title": "Tous les blocs sont masqués",
-          "text": "Tous les indicateurs et widgets de cette page ont été placés dans la section {hidden} des paramètres de disposition. Restaurez la disposition par défaut pour tout récupérer, ou ouvrez {edit} pour choisir précisément ce qui s'affiche.",
-          "hidden": "Masqués",
-          "restore": "Restaurer la disposition par défaut"
-        },
-        "a11y": {
-          "reorder": "Réorganiser {title}",
-          "hide": "Masquer {title}",
-          "show": "Afficher {title}",
-          "grabbed": "{title} saisi. Position {position} sur {total}. Utilisez les flèches pour le déplacer, espace pour le déposer, échap pour annuler.",
-          "grabbed_parkable": "{title} saisi. Position {position} sur {total}. Utilisez les flèches gauche et droite pour le déplacer, haut et bas pour le masquer ou l'afficher, espace pour le déposer, échap pour annuler.",
-          "moved": "{title} déplacé en position {position} sur {total}.",
-          "dropped": "{title} déposé en position {position} sur {total}.",
-          "edge": "{title} est déjà en position {position} sur {total}.",
-          "cancelled": "Déplacement de {title} annulé.",
-          "parked": "{title} masqué.",
-          "restored": "{title} affiché.",
-          "max_rows": "Nombre de lignes max affiché par {title}, entre {min} et {max}"
+          "mtd_of_ytd": "{percent}% de l'année"
         }
       }
     },
@@ -288,6 +249,89 @@
       "no_results": "Aucune vente dans cette catégorie",
       "all_categories": "Toutes catégories",
       "load_failed": "Impossible de charger les meilleures ventes"
+    },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Récents",
+      "analytics_unavailable": "L'activité web n'est pas disponible pour cette boutique pour le moment",
+      "tracked_caveat": "Basé uniquement sur l'activité suivie",
+      "data_as_of": "Données au {date}",
+      "search_history": {
+        "empty": "Aucune recherche suivie sur cette période",
+        "empty_this_year": "Aucune recherche suivie cette année",
+        "count": "{n} recherche | {n} recherches",
+        "last_searched": "Dernière recherche le {date}",
+        "load_failed": "Impossible de charger l'historique de recherche"
+      },
+      "browse_history": {
+        "empty": "Aucune vue de produit suivie sur cette période",
+        "empty_this_year": "Aucune vue de produit suivie cette année",
+        "views": "{n} vue | {n} vues",
+        "load_failed": "Impossible de charger l'historique de navigation"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Mon activité"
+      },
+      "page": {
+        "title": "Mon activité",
+        "customer_title": "Activité de {customer}",
+        "title_fallback": "Activité"
+      },
+      "breadcrumb": "Activité",
+      "tabs": {
+        "all": "Toutes",
+        "orders": "Commandes",
+        "customers": "Clients",
+        "searches": "Recherches",
+        "productViews": "Vues de produit",
+        "logins": "Connexions"
+      },
+      "period": {
+        "all_time": "Toute la période",
+        "month": "Ce mois-ci",
+        "year": "Cette année"
+      },
+      "rows": {
+        "order_placed": "Commande passée",
+        "customer_assigned": "Nouveau client attribué",
+        "searched_for": "A recherché",
+        "viewed_product": "A consulté",
+        "logins": "{count} connexion | {count} connexions",
+        "count_suffix": "×{count}",
+        "unknown": "Activité"
+      },
+      "time": {
+        "during_hour": "{date}, dans l'heure de {time}"
+      },
+      "caveat": "Les recherches, vues de produit et connexions sont basées sur l'activité suivie de la boutique et sont approximatives.",
+      "tracked_hint": "Activité suivie de la boutique : peut mettre jusqu'à 48 heures à apparaître.",
+      "empty": "Aucune activité pour le moment",
+      "empty_period": "Aucune activité suivie sur cette période",
+      "no_results": "Aucune activité dans cette catégorie",
+      "load_failed": "Impossible de charger l'activité",
+      "view_all": "Toute l'activité",
+      "my_activity": {
+        "title": "Mon activité",
+        "empty": "Aucune activité cette année"
+      },
+      "customer": {
+        "title": "Activité du client",
+        "views": {
+          "summary": "Résumé",
+          "searches": "Recherches",
+          "product_views": "Vues de produit"
+        },
+        "created_on": "Créé le",
+        "last_web_login": "Dernière connexion web",
+        "visits": "Total des visites",
+        "last_search_term": "Dernier terme recherché",
+        "last_viewed_product": "Dernier produit consulté",
+        "analytics_unavailable": "L'activité web n'est pas disponible pour le moment — le suivi n'est pas connecté pour cette boutique, ou les données n'ont pas pu être lues.",
+        "empty": "Aucune donnée d'activité",
+        "load_failed": "Impossible de charger l'activité du client"
+      }
     },
     "documents": {
       "title": "Bibliothèque de documents",

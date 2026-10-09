@@ -1,11 +1,13 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h } from "vue";
+import { getBlockRegistry, LAYOUT_SCOPES, registerBlock, useLayout } from "@/shared/dashboard";
 import { DOCUMENTS_BLOCK_ID, DOCUMENTS_DEFAULT_ROWS } from "../constants";
+import { registerSalesRepBlocks } from "../layout/blocks";
 import { documentsBlock } from "../layout/documents-block";
-import { getBlockRegistry, registerBlock } from "../layout/registry";
-import LayoutSurface from "./layout-surface.vue";
 import SalesRepDocuments from "./sales-rep-documents.vue";
 import type { SalesRepDocumentType } from "../types";
+import LayoutSurface from "@/shared/dashboard/components/layout-surface.vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
@@ -39,26 +41,11 @@ vi.mock("@/shared/files", () => ({
   downloadFile: downloadFileMock,
 }));
 
-// The layout query behind <LayoutSurface>; the widget's own data query is the mocked composable above.
-const apolloMock = await vi.hoisted(async () => {
-  const { ref, shallowRef } = await import("vue");
-  return {
-    result: shallowRef<unknown>(undefined),
-    loading: ref(false),
-    error: ref<Error | undefined>(),
-    mutate: vi.fn(),
-  };
-});
+// The layout operations behind the page's `useLayout`; the widget's own data query is the mocked composable above.
+const layoutApi = vi.hoisted(() => ({ getLayout: vi.fn(), saveLayout: vi.fn() }));
 
-vi.mock("@vue/apollo-composable", () => ({
-  useQuery: () => ({
-    result: apolloMock.result,
-    loading: apolloMock.loading,
-    error: apolloMock.error,
-    onError: vi.fn(),
-  }),
-  useMutation: () => ({ mutate: apolloMock.mutate, loading: apolloMock.loading }),
-}));
+vi.mock("@/core/api/graphql/account/queries/getLayout", () => ({ getLayout: layoutApi.getLayout }));
+vi.mock("@/core/api/graphql/account/mutations/saveLayout", () => ({ saveLayout: layoutApi.saveLayout }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName: "en-US" } }));
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", () => ({
@@ -114,6 +101,57 @@ function createWrapper() {
   });
 }
 
+// As init() does for a rep carrying documents:read (VCST-5730): the dashboard's defaults, then the widget.
+const DASHBOARD = LAYOUT_SCOPES.salesRepDashboard;
+registerSalesRepBlocks();
+registerBlock(DASHBOARD, documentsBlock);
+
+// The dashboard page in miniature: the page owns the layout and hands it to the surface.
+const DashboardPage = defineComponent({
+  setup() {
+    const layout = useLayout(DASHBOARD);
+    return () => h(LayoutSurface, { layout, cards: [] });
+  },
+});
+
+function mountDashboard() {
+  return mount(DashboardPage, {
+    attachTo: document.body,
+    global: {
+      // VcEmptyView is real: with every block hidden the layout's empty state renders first, and its buttons live
+      // in slots a stub does not render.
+      components: { VcButton, VcEmptyView, VcWidget, VcWidgetSkeleton },
+      stubs: {
+        VcIcon: true,
+        VcShape: true,
+        VcAlert: true,
+        VcLoaderOverlay: true,
+        VcLink: true,
+        VcImage: true,
+        VcInput: true,
+        VcStatCard: true,
+        // `i18n-t` because vue-i18n is mocked down to `useI18n`.
+        VcTypography: true,
+        "i18n-t": true,
+      },
+    },
+  });
+}
+
+/** A saved dashboard document with every block but the listed ones hidden. */
+function savedWithOnlyVisible(...visible: string[]) {
+  return {
+    regions: [
+      {
+        blocks: getBlockRegistry(DASHBOARD).map(({ id }) => ({
+          type: id,
+          hidden: !visible.includes(id),
+        })),
+      },
+    ],
+  };
+}
+
 enableAutoUnmount(afterEach);
 
 beforeEach(() => {
@@ -127,8 +165,8 @@ beforeEach(() => {
     loading: state.loading,
     error: state.error,
   }));
-  apolloMock.loading.value = false;
-  apolloMock.result.value = { salesRepLayout: null };
+  layoutApi.getLayout.mockReset().mockResolvedValue(null);
+  layoutApi.saveLayout.mockReset();
 });
 
 describe("SalesRepDocuments states", () => {
@@ -294,37 +332,10 @@ describe("SalesRepDocuments non-inline documents", () => {
 // (the only caller of the documents query) never runs while the block is hidden.
 describe("hidden documents widget", () => {
   async function mountDashboardWithEverythingHidden() {
-    // The block registers at init behind the permission check; tests register it themselves.
-    registerBlock("dashboard", documentsBlock);
-
     // Every dashboard block hidden — no widget mounts, so no widget query can fire.
-    apolloMock.result.value = {
-      salesRepLayout: {
-        regions: [{ blocks: getBlockRegistry("dashboard").map(({ id }) => ({ type: id, hidden: true })) }],
-      },
-    };
+    layoutApi.getLayout.mockResolvedValue(savedWithOnlyVisible());
 
-    const wrapper = mount(LayoutSurface, {
-      props: { scope: "dashboard" as const, cards: [] },
-      attachTo: document.body,
-      global: {
-        // VcEmptyView is real here: the layout's empty state renders first, and its buttons live in slots
-        // a stub does not render.
-        components: { VcButton, VcEmptyView, VcWidget, VcWidgetSkeleton },
-        stubs: {
-          VcIcon: true,
-          VcShape: true,
-          VcAlert: true,
-          VcLoaderOverlay: true,
-          VcLink: true,
-          VcImage: true,
-          VcInput: true,
-          // `i18n-t` because vue-i18n is mocked down to `useI18n`.
-          VcTypography: true,
-          "i18n-t": true,
-        },
-      },
-    });
+    const wrapper = mountDashboard();
     await flushPromises();
 
     return wrapper;
@@ -347,5 +358,32 @@ describe("hidden documents widget", () => {
     await flushPromises();
 
     expect(state.useSalesRepDocuments).toHaveBeenCalledTimes(1);
+  });
+});
+
+// SAVE LAYOUT sends the draft as one full-document replace, so a hide only survives if the hidden documents
+// block is in the payload — a block missing from it is simply gone after the save.
+describe("saving the dashboard with the documents widget hidden", () => {
+  it("sends the hidden documents block in the save payload", async () => {
+    // Only the documents widget on screen, so it is the only widget that mounts.
+    layoutApi.getLayout.mockResolvedValue(savedWithOnlyVisible(DOCUMENTS_BLOCK_ID));
+    const wrapper = mountDashboard();
+    await flushPromises();
+
+    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    // Two rounds: the edit mode re-renders, then the async widget chunk resolves and mounts.
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.find(`[data-block-id="${DOCUMENTS_BLOCK_ID}"] .layout-widget__hide`).trigger("click");
+    await wrapper.find("[data-layout-save]").trigger("click");
+
+    const command = layoutApi.saveLayout.mock.calls[0][0] as {
+      regions: { id: string; blocks: { id: string; type: string; hidden: boolean }[] }[];
+    };
+    const mainRight = command.regions.find((region) => region.id === "mainRight");
+    expect(mainRight?.blocks).toContainEqual(
+      expect.objectContaining({ id: DOCUMENTS_BLOCK_ID, type: DOCUMENTS_BLOCK_ID, hidden: true }),
+    );
   });
 });

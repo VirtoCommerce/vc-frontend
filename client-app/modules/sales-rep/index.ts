@@ -1,19 +1,20 @@
 import { computed, defineAsyncComponent } from "vue";
-import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
 import { useNavigations } from "@/core/composables/useNavigations";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import { LAYOUT_SCOPES, registerBlock } from "@/shared/dashboard";
 import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import { loadModuleLocale } from "../utils";
 import { useSharedSalesRepCustomersCount } from "./composables/useSalesRepCustomersCount";
 import { isSalesRepsEnabled, isSalesRepTasksEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
+  ACTIVITIES_NAV_LINK_ID,
+  ACTIVITIES_ROUTE_NAME,
   TASKS_NAV_LINK_ID,
   TASKS_ROUTE_NAME,
   CUSTOMER_SHARING_SCOPE,
-  DASHBOARD_LAYOUT_SCOPE,
   DASHBOARD_NAV_LINK_ID,
   DASHBOARD_ROUTE_NAME,
   DOCUMENTS_NAV_LINK_ID,
@@ -25,12 +26,12 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import { layoutTypePolicies } from "./layout/cache-policies";
+import { registerSalesRepBlocks } from "./layout/blocks";
 import { documentsBlock } from "./layout/documents-block";
-import { registerBlock } from "./layout/registry";
 import { tasksBlock } from "./layout/tasks-block";
 import { salesRepMenuSchema } from "./menu";
 import {
+  activitiesRoute,
   tasksRoute,
   allCustomerOrdersRoute,
   customerOrderRoute,
@@ -38,6 +39,8 @@ import {
   customerProfileRoute,
   dashboardRoute,
   documentsRoute,
+  isMyActivity,
+  isMyCustomersArea,
   myCustomersRoute,
   salesRepsRoute,
 } from "./routes";
@@ -63,6 +66,8 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute(ROUTES.COMPANY.NAME, documentsRoute);
   // Tasks (VCST-5732) -> /company/tasks (its own beforeEnter checks the tasks module is installed).
   router.addRoute(ROUTES.COMPANY.NAME, tasksRoute);
+  // All-activity feed (VCST-5337) -> /company/activities.
+  router.addRoute(ROUTES.COMPANY.NAME, activitiesRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
@@ -74,18 +79,22 @@ export function init(router: Router, i18n: I18n) {
   const canReadDocuments = checkPermissions(SALES_REP_ACCESS_PERMISSION, SALES_REP_DOCUMENTS_READ_PERMISSION);
   const tasksEnabled = isSalesRepTasksEnabled();
 
+  // The blocks of both hub surfaces, into the core layout engine. Synchronously here, before the app mounts,
+  // so a surface's first render already knows every block.
+  registerSalesRepBlocks();
+
   // Same one-shot registration seam as the documents widget, and the same caveat: while the tasks module is
   // absent the block is unknown to the layout registry, so a layout SAVED in that state drops its persisted
   // position/settings and the widget returns at its defaults once the module is back.
   if (tasksEnabled) {
-    registerBlock(DASHBOARD_LAYOUT_SCOPE, tasksBlock);
+    registerBlock(LAYOUT_SCOPES.salesRepDashboard, tasksBlock);
   }
 
   if (canReadDocuments) {
     // Caveat: while the permission is absent the block is unknown to the layout registry, so a layout
     // SAVED in that state drops the block's persisted position/settings (reconcileLayout discards
     // unregistered types); when the permission returns, the widget comes back at its defaults.
-    registerBlock(DASHBOARD_LAYOUT_SCOPE, documentsBlock);
+    registerBlock(LAYOUT_SCOPES.salesRepDashboard, documentsBlock);
   }
 
   // My customers links showing the total-customer count badge. Desktop needs its own
@@ -167,16 +176,23 @@ export function init(router: Router, i18n: I18n) {
         title: "sales_rep.my_customers.navigation.link",
         icon: "users",
         route: { name: MY_CUSTOMERS_ROUTE_NAME },
+        // A customer's profile and their activity are pages about a customer, so the rail keeps this
+        // item lit there — vue-router cannot tell, they are sibling route records.
+        activeWhen: isMyCustomersArea,
       },
       ...tasksNavLink,
       ...documentsNavLink,
+      {
+        id: ACTIVITIES_NAV_LINK_ID,
+        title: "sales_rep.activity.navigation.link",
+        icon: "activity",
+        route: { name: ACTIVITIES_ROUTE_NAME },
+        // The same route scoped to one customer is that customer's page, not the rep's own feed.
+        activeWhen: isMyActivity,
+      },
     ],
     isVisible: computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)),
   });
-
-  // Layout regions and blocks carry ids that repeat across surfaces, so Apollo would normalize them
-  // into entities shared by every scope. See layout/cache-policies.ts.
-  registerCacheTypePolicies(layoutTypePolicies, { owner: "sales-rep" });
 
   void loadModuleLocale(i18n, "sales-rep");
 }

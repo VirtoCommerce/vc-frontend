@@ -1,9 +1,9 @@
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { formatStatCount, formatStatMoney } from "@/shared/dashboard";
 import { SalesRepTopSellersDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, TOP_SELLERS_DEFAULT_TAKE } from "../constants";
-import { formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepTopSellerRowType } from "../types";
 import type { Ref } from "vue";

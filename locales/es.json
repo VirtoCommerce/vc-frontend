@@ -616,6 +616,25 @@
         "click_to_copy": "Haz clic para copiar",
         "clipboard_success": "Cupón copiado con éxito",
         "tap_to_copy": "Toca para copiar"
+      },
+      "dashboard": {
+        "orders_placed_week": "Pedidos de esta semana",
+        "orders_placed_mtd": "Pedidos del mes en curso",
+        "orders_placed_ytd": "Pedidos del año en curso",
+        "avg_order_value": "Valor medio del pedido",
+        "per_order": "Promedio por pedido (año en curso)",
+        "vs_last_week": "{delta} vs. semana pasada",
+        "vs_last_month": "{delta} vs. mes pasado",
+        "vs_last_year": "{delta} vs. año pasado",
+        "excluded_orders": "{count} pedido en otra moneda no incluido | {count} pedidos en otras monedas no incluidos",
+        "recent_orders": {
+          "title": "Mis pedidos recientes",
+          "view_all": "Todos los pedidos",
+          "filter_all": "Todos",
+          "empty": "Aún no hay pedidos",
+          "no_results": "No hay pedidos con este estado",
+          "load_failed": "No se pudieron cargar los pedidos"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "Desfijar “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Editar diseño",
+      "editing": "Editando el diseño",
+      "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+      "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+      "save": "Guardar diseño",
+      "cancel": "Cancelar",
+      "reset": "Restablecer",
+      "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+      "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
+      "hidden_widgets": "Widgets ocultos",
+      "visible_stats": "Métricas visibles",
+      "hidden_stats": "Métricas ocultas",
+      "empty_visible": "Arrastre una métrica aquí para mostrarla",
+      "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+      "max_rows": "Filas máximas",
+      "restored": "Se restableció el diseño predeterminado.",
+      "empty": {
+        "title": "Todos los bloques están ocultos",
+        "text": "Todas las métricas y widgets de esta página se han movido a {hidden} en la configuración del diseño. Restablezca el diseño predeterminado para recuperarlo todo o abra {edit} para elegir exactamente qué mostrar.",
+        "hidden": "Ocultos",
+        "restore": "Restablecer diseño predeterminado"
+      },
+      "a11y": {
+        "reorder": "Reordenar {title}",
+        "hide": "Ocultar {title}",
+        "show": "Mostrar {title}",
+        "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+        "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
+        "moved": "{title} movido a la posición {position} de {total}.",
+        "dropped": "{title} soltado en la posición {position} de {total}.",
+        "edge": "{title} ya está en la posición {position} de {total}.",
+        "cancelled": "Movimiento de {title} cancelado.",
+        "parked": "{title} oculto.",
+        "restored": "{title} visible.",
+        "max_rows": "Filas máximas mostradas por {title}, entre {min} y {max}"
+      },
+      "stats": {
+        "load_failed": "No se pudo cargar"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Panel de control",
-        "last_orders_card": {
-          "title": "Últimos pedidos",
-          "all_orders_link": "Todos los pedidos",
-          "order_number_label": "Número de pedido",
-          "purchase_number_label": "Orden de compra",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Factura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Sin pedidos",
-          "no_orders_message": "Aún no hay pedidos"
-        },
-        "monthly_report_card": {
-          "title": "Informe de gastos mensual",
-          "budget_title": "Presupuesto",
-          "total_spend_label": "Totalmente gastado",
-          "spend_chart_alt": "Gráfico de gastos"
-        },
-        "orders_status_card": {
-          "title": "Estado de los pedidos"
-        },
-        "bulk_order_card": {
-          "title": "Bloc de pedidos en masa"
-        }
+        "title": "Panel de control"
       },
       "change_password": {
         "meta": {

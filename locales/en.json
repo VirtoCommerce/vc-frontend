@@ -616,6 +616,25 @@
         "click_to_copy": "Click to copy",
         "clipboard_success": "Coupon copied successfully",
         "tap_to_copy": "Tap to copy"
+      },
+      "dashboard": {
+        "orders_placed_week": "Orders placed · WEEK",
+        "orders_placed_mtd": "Orders placed · MTD",
+        "orders_placed_ytd": "Orders placed · YTD",
+        "avg_order_value": "Avg order value",
+        "per_order": "Average per order (YTD)",
+        "vs_last_week": "{delta} vs last week",
+        "vs_last_month": "{delta} vs last month",
+        "vs_last_year": "{delta} vs last year",
+        "excluded_orders": "{count} order in another currency not included | {count} orders in other currencies not included",
+        "recent_orders": {
+          "title": "My recent orders",
+          "view_all": "All orders",
+          "filter_all": "All",
+          "empty": "There are no orders yet",
+          "no_results": "No orders with this status",
+          "load_failed": "Couldn't load orders"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "Unpin “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Edit layout",
+      "editing": "Editing layout",
+      "hint": "— drag a block by its handle to reorder it, or hide it with ✕.",
+      "hint_keyboard": "Keyboard: press space on a block to pick it up, arrow keys to move it, space to drop, escape to cancel.",
+      "save": "Save layout",
+      "cancel": "Cancel",
+      "reset": "Reset",
+      "save_failed": "The layout could not be saved. Your changes are still here — try again.",
+      "load_failed": "The saved layout could not be loaded, so the default arrangement is shown. Editing is unavailable until it loads — try refreshing the page.",
+      "hidden_widgets": "Hidden widgets",
+      "visible_stats": "Visible stats",
+      "hidden_stats": "Hidden stats",
+      "empty_visible": "Drag a stat here to show it",
+      "empty_hidden": "Drag a stat here to hide it",
+      "max_rows": "Max rows",
+      "restored": "Default layout restored.",
+      "empty": {
+        "title": "All blocks are hidden",
+        "text": "Every stat and widget on this page has been moved to {hidden} in layout settings. Restore the default layout to bring everything back, or open {edit} to choose exactly what to show.",
+        "hidden": "Hidden",
+        "restore": "Restore default layout"
+      },
+      "a11y": {
+        "reorder": "Reorder {title}",
+        "hide": "Hide {title}",
+        "show": "Show {title}",
+        "grabbed": "{title} grabbed. Position {position} of {total}. Use the arrow keys to move it, space to drop it, escape to cancel.",
+        "grabbed_parkable": "{title} grabbed. Position {position} of {total}. Use the left and right arrow keys to move it, up and down to hide or show it, space to drop it, escape to cancel.",
+        "moved": "{title} moved to position {position} of {total}.",
+        "dropped": "{title} dropped at position {position} of {total}.",
+        "edge": "{title} is already at position {position} of {total}.",
+        "cancelled": "Move of {title} cancelled.",
+        "parked": "{title} hidden.",
+        "restored": "{title} shown.",
+        "max_rows": "Maximum rows shown by {title}, between {min} and {max}"
+      },
+      "stats": {
+        "load_failed": "Couldn't load"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Latest orders",
-          "all_orders_link": "All orders",
-          "order_number_label": "Order number",
-          "purchase_number_label": "Purchase order",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Invoice",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "No orders",
-          "no_orders_message": "There are no orders yet"
-        },
-        "monthly_report_card": {
-          "title": "Monthly spend report",
-          "budget_title": "Budget",
-          "total_spend_label": "Totally spent",
-          "spend_chart_alt": "Spending chart"
-        },
-        "orders_status_card": {
-          "title": "Orders status"
-        },
-        "bulk_order_card": {
-          "title": "Bulk order pad"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {

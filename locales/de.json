@@ -616,6 +616,25 @@
         "click_to_copy": "Zum Kopieren anklicken",
         "clipboard_success": "Gutschein erfolgreich kopiert",
         "tap_to_copy": "Zum Kopieren tippen"
+      },
+      "dashboard": {
+        "orders_placed_week": "Bestellungen diese Woche",
+        "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
+        "orders_placed_ytd": "Bestellungen seit Jahresbeginn",
+        "avg_order_value": "Durchschn. Bestellwert",
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)",
+        "vs_last_week": "{delta} ggü. Vorwoche",
+        "vs_last_month": "{delta} ggü. Vormonat",
+        "vs_last_year": "{delta} ggü. Vorjahr",
+        "excluded_orders": "{count} Bestellung in anderer Währung nicht enthalten | {count} Bestellungen in anderen Währungen nicht enthalten",
+        "recent_orders": {
+          "title": "Meine letzten Bestellungen",
+          "view_all": "Alle Bestellungen",
+          "filter_all": "Alle",
+          "empty": "Es liegen noch keine Bestellungen vor",
+          "no_results": "Keine Bestellungen mit diesem Status",
+          "load_failed": "Bestellungen konnten nicht geladen werden"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "„{label}“ anheften aufheben"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Layout bearbeiten",
+      "editing": "Layout wird bearbeitet",
+      "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
+      "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
+      "save": "Layout speichern",
+      "cancel": "Abbrechen",
+      "reset": "Zurücksetzen",
+      "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
+      "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
+      "hidden_widgets": "Ausgeblendete Widgets",
+      "visible_stats": "Sichtbare Kennzahlen",
+      "hidden_stats": "Ausgeblendete Kennzahlen",
+      "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
+      "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
+      "max_rows": "Max Zeilen",
+      "restored": "Standardlayout wiederhergestellt.",
+      "empty": {
+        "title": "Alle Blöcke sind ausgeblendet",
+        "text": "Alle Kennzahlen und Widgets auf dieser Seite wurden in den Layout-Einstellungen in den Bereich {hidden} verschoben. Stellen Sie das Standardlayout wieder her, um alles zurückzuholen, oder öffnen Sie {edit}, um genau festzulegen, was angezeigt wird.",
+        "hidden": "Ausgeblendet",
+        "restore": "Standardlayout wiederherstellen"
+      },
+      "a11y": {
+        "reorder": "{title} umsortieren",
+        "hide": "{title} ausblenden",
+        "show": "{title} einblenden",
+        "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
+        "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
+        "moved": "{title} auf Position {position} von {total} verschoben.",
+        "dropped": "{title} auf Position {position} von {total} abgelegt.",
+        "edge": "{title} ist bereits an Position {position} von {total}.",
+        "cancelled": "Verschieben von {title} abgebrochen.",
+        "parked": "{title} ausgeblendet.",
+        "restored": "{title} eingeblendet.",
+        "max_rows": "Maximale Zeilen angezeigt von {title}, zwischen {min} und {max}"
+      },
+      "stats": {
+        "load_failed": "Laden fehlgeschlagen"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Neueste Bestellungen",
-          "all_orders_link": "Alle Bestellungen",
-          "order_number_label": "Bestellnummer",
-          "purchase_number_label": "Einkaufsbestellung",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Rechnung",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Keine Bestellungen",
-          "no_orders_message": "Es liegen noch keine Bestellungen vor"
-        },
-        "monthly_report_card": {
-          "title": "Monatlicher Ausgabenbericht",
-          "budget_title": "Budget",
-          "total_spend_label": "Insgesamt ausgegeben",
-          "spend_chart_alt": "Ausgabenübersicht"
-        },
-        "orders_status_card": {
-          "title": "Bestellstatus"
-        },
-        "bulk_order_card": {
-          "title": "Großbestellung"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {

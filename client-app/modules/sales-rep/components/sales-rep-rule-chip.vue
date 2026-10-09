@@ -21,7 +21,7 @@
 
 <script setup lang="ts" generic="T extends string | number | boolean">
 import { computed } from "vue";
-import { formatStatCount } from "../utils";
+import { formatStatCount } from "@/shared/dashboard";
 
 defineEmits<{
   (event: "change", value: T): void;

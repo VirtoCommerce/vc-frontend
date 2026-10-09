@@ -2,6 +2,7 @@
 
 **Jira:** [VCST-5367](https://virtocommerce.atlassian.net/browse/VCST-5367) — "[Sales Rep] Hub and customer profile. Drag and drop and save layout" (epic [VCST-5142](https://virtocommerce.atlassian.net/browse/VCST-5142) Sales Rep Hub).
 **Branch:** `feat/VCST-5367-srh-layout-drag-and-drop` off `dev`.
+**Superseded in part by VCST-6078 (2026-10-08):** the layout is stored by the core's `useLayout` (`client-app/shared/dashboard`) over x-frontend's `layout`/`saveLayout`, under the scopes `salesRepDashboard` and `salesRepCustomerProfile`. The module's own layout composable, operations and cache policies named below no longer exist; the rest of the design stands.
 
 ## Goal
 

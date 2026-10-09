@@ -1,44 +1,58 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { CUSTOMER_PROFILE_LAYOUT_SCOPE } from "../constants";
+import {
+  buildStatCards,
+  formatSignedPercent,
+  formatStatCount,
+  formatStatMoney,
+  useStatDataNeeds,
+} from "@/shared/dashboard";
 import { buildActiveCartsCardData } from "../layout/active-carts-card";
 import { newOrdersCardData } from "../layout/stat-card-data";
-import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
-import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
+import { CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
+import { statNeedResults } from "../layout/stat-data-needs";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
-import type { StatWidgetCardType } from "../types/widgets";
+import type { LayoutVisibilityType, StatCardType } from "@/shared/dashboard";
 import type { MaybeRefOrGetter } from "vue";
 
 // Per-customer KPI cards; shared cards reuse the dashboard's i18n keys (hub.dashboard.*) so both
 // surfaces stay in sync across locales.
 //
-// This surface has no week card and no month-over-month delta, so the scope keeps it from fetching the
-// three buckets behind them — what VCST-5647 found it discarding.
-export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<string>) {
+// This surface has no week card and no month-over-month delta, so its own card table keeps it from
+// fetching the three buckets behind them — what VCST-5647 found it discarding.
+//
+// `customerFound` holds the statistics back as the layout does: until the page has read this customer and
+// found it, so an organization the rep does not serve (or an unknown id) gets no figures fetched.
+export function useSalesRepCustomerWidgets(
+  layout: LayoutVisibilityType,
+  organizationId: MaybeRefOrGetter<string>,
+  customerFound: MaybeRefOrGetter<boolean>,
+) {
   const { t } = useI18n();
-  const scope = CUSTOMER_PROFILE_LAYOUT_SCOPE;
+  const shown = useStatDataNeeds(layout, CUSTOMER_PROFILE_STAT_CARDS);
+  const stats = { needs: shown.needs, ready: computed(() => shown.ready.value && toValue(customerFound)) };
   const orgId = (): string => toValue(organizationId);
 
   const {
     statistics: orderStatistics,
     loading: ordersLoading,
     error: ordersError,
-  } = useSalesRepOrderStatistics({ scope, organizationId: orgId });
+  } = useSalesRepOrderStatistics({ ...stats, organizationId: orgId });
   const {
     statistics: cartStatistics,
     loading: cartsLoading,
     error: cartsError,
-  } = useSalesRepCartStatistics({ scope, organizationId: orgId });
+  } = useSalesRepCartStatistics({ ...stats, organizationId: orgId });
 
-  const cards = computed<StatWidgetCardType[]>(() => {
+  const cards = computed<StatCardType[]>(() => {
     const orders = orderStatistics.value;
     const carts = cartStatistics.value;
 
     // buildStatCards derives each card's pending/failed state from the card's own `needs`, so a card
     // whose slice already arrived keeps rendering while a sibling's query is still in flight.
     const queries = {
-      sources: { orders, carts },
+      table: statNeedResults({ orders, carts }),
       states: {
         orders: { loading: ordersLoading.value, failed: Boolean(ordersError.value) },
         carts: { loading: cartsLoading.value, failed: Boolean(cartsError.value) },
@@ -55,7 +69,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const ytdAmount = ytd?.total.amount ?? 0;
     const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : 0;
 
-    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    // Caption, icon and color come from the shared table; only what the queries decide is here.
     return buildStatCards(
       CUSTOMER_PROFILE_STAT_CARDS,
       {

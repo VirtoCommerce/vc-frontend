@@ -1,12 +1,12 @@
 import { ApolloClient, ApolloLink, Observable } from "@apollo/client/core";
 import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { effectScope, nextTick } from "vue";
+import { computed, effectScope, nextTick } from "vue";
 import { cache } from "@/core/api/graphql/config/cache";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
+import { statDataNeeds } from "@/shared/dashboard";
 import { SalesRepCustomersCountDocument } from "../api/graphql/types";
-import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
-import { STAT_CARDS } from "../layout/stat-cards";
+import { DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCommunication } from "./useSalesRepCommunication";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
@@ -14,13 +14,11 @@ import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepCustomerOptions } from "./useSalesRepCustomerOptions";
 import { useSalesRepCustomers } from "./useSalesRepCustomers";
 import { useSalesRepCustomersCount } from "./useSalesRepCustomersCount";
-import { useSalesRepLayout } from "./useSalesRepLayout";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepRules } from "./useSalesRepRules";
 import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
 import { useSalesReps } from "./useSalesReps";
-import { publishStatVisibility } from "./useStatDataNeeds";
 
 const emit = vi.hoisted(() => vi.fn());
 
@@ -72,36 +70,35 @@ async function waitForTheFailureToSettle(): Promise<void> {
 }
 
 /**
- * Stands in for a mounted <LayoutSurface> whose layout has been read and shows every card. The three
- * statistics reads shape their queries from the visible cards (VCST-5647), so without this they would
- * correctly never fire and the assertions below would have nothing to observe.
+ * Stands in for a page whose layout has been read and needs every card. The three statistics reads shape
+ * their queries from the visible cards (VCST-5647), so without this they would correctly never fire and
+ * the assertions below would have nothing to observe.
  */
-function showEveryCard(): void {
-  publishStatVisibility(DASHBOARD_LAYOUT_SCOPE, {
-    settled: true,
-    visible: STAT_CARDS[DASHBOARD_LAYOUT_SCOPE].map((card) => card.key),
-    editing: false,
-  });
-}
+const everyCard = {
+  needs: computed(() =>
+    statDataNeeds(
+      DASHBOARD_STAT_CARDS,
+      DASHBOARD_STAT_CARDS.map((card) => card.key),
+    ),
+  ),
+  ready: computed(() => true),
+};
 
 beforeEach(async () => {
   requestCount = 0;
   emit.mockClear();
-  showEveryCard();
   await cache.reset({ discardWatches: true });
   provideApolloClient(new ApolloClient({ link: ApolloLink.from([errorHandlerLink, failingLink]), cache }));
-  // The stat reads gate on their surface's published layout (VCST-5647); publish a settled, editing
-  // visibility so every card's figures are needed and the query actually fires to fail.
-  publishStatVisibility(DASHBOARD_LAYOUT_SCOPE, { settled: true, visible: [], editing: true });
 });
 
 // Every hub read. Each one names its own failure — an inline card error, an empty view, a load-failure page,
 // a degraded-controls notice — so a failing widget must not also raise the page-level error toast. The one
-// exception is the customers-count badge: it just drops the number, deliberately (VCST-5682).
+// exception is the customers-count badge: it just drops the number, deliberately (VCST-5682). The saved layout
+// is read by the core's `useLayout` now; core/api/graphql/dashboard-operations.test.ts pins its read the same way.
 const hubReads: [string, () => unknown][] = [
-  ["order statistics", () => useSalesRepOrderStatistics({ scope: DASHBOARD_LAYOUT_SCOPE })],
-  ["cart statistics", () => useSalesRepCartStatistics({ scope: DASHBOARD_LAYOUT_SCOPE })],
-  ["customer counts", () => useSalesRepCustomerCounts({ scope: DASHBOARD_LAYOUT_SCOPE })],
+  ["order statistics", () => useSalesRepOrderStatistics(everyCard)],
+  ["cart statistics", () => useSalesRepCartStatistics(everyCard)],
+  ["customer counts", () => useSalesRepCustomerCounts(everyCard)],
   ["customers count badge", () => useSalesRepCustomersCount()],
   ["my customers list", () => useSalesRepCustomers()],
   ["orders list", () => useSalesRepOrders()],
@@ -110,7 +107,6 @@ const hubReads: [string, () => unknown][] = [
   ["share customer picker", () => useSalesRepCustomerOptions()],
   ["sales reps list", () => useSalesReps()],
   ["filter rules", () => useSalesRepRules("order", "filter")],
-  ["saved layout", () => useSalesRepLayout(DASHBOARD_LAYOUT_SCOPE)],
 ];
 
 describe.each(hubReads)("%s", (_name, use) => {

@@ -616,6 +616,25 @@
         "click_to_copy": "Klicka för att kopiera",
         "clipboard_success": "Kupong kopierad",
         "tap_to_copy": "Tryck för att kopiera"
+      },
+      "dashboard": {
+        "orders_placed_week": "Order denna vecka",
+        "orders_placed_mtd": "Order hittills denna månad",
+        "orders_placed_ytd": "Order hittills i år",
+        "avg_order_value": "Genomsnittligt ordervärde",
+        "per_order": "Genomsnitt per order (hittills)",
+        "vs_last_week": "{delta} vs förra veckan",
+        "vs_last_month": "{delta} vs förra månaden",
+        "vs_last_year": "{delta} vs förra året",
+        "excluded_orders": "{count} beställning i en annan valuta ingår inte | {count} beställningar i andra valutor ingår inte",
+        "recent_orders": {
+          "title": "Mina senaste beställningar",
+          "view_all": "Alla beställningar",
+          "filter_all": "Alla",
+          "empty": "Det finns inga beställningar ännu",
+          "no_results": "Inga beställningar med den här statusen",
+          "load_failed": "Det gick inte att läsa in beställningarna"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "Släpp fästning för “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Redigera layout",
+      "editing": "Redigerar layout",
+      "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
+      "hint_keyboard": "Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
+      "save": "Spara layout",
+      "cancel": "Avbryt",
+      "reset": "Återställ",
+      "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
+      "load_failed": "Den sparade layouten kunde inte läsas in, så standardordningen visas. Redigering är inte tillgänglig förrän den lästs in — uppdatera sidan.",
+      "hidden_widgets": "Dolda widgetar",
+      "visible_stats": "Synliga nyckeltal",
+      "hidden_stats": "Dolda nyckeltal",
+      "empty_visible": "Dra ett nyckeltal hit för att visa det",
+      "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
+      "max_rows": "Max rader",
+      "restored": "Standardlayouten har återställts.",
+      "empty": {
+        "title": "Alla block är dolda",
+        "text": "Alla nyckeltal och widgetar på den här sidan har flyttats till {hidden} i layoutinställningarna. Återställ standardlayouten för att få tillbaka allt, eller öppna {edit} för att välja exakt vad som ska visas.",
+        "hidden": "Dolda",
+        "restore": "Återställ standardlayout"
+      },
+      "a11y": {
+        "reorder": "Ändra ordning på {title}",
+        "hide": "Dölj {title}",
+        "show": "Visa {title}",
+        "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
+        "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
+        "moved": "{title} flyttad till position {position} av {total}.",
+        "dropped": "{title} släppt på position {position} av {total}.",
+        "edge": "{title} är redan på plats {position} av {total}.",
+        "cancelled": "Flytt av {title} avbruten.",
+        "parked": "{title} dold.",
+        "restored": "{title} visas.",
+        "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
+      },
+      "stats": {
+        "load_failed": "Kunde inte läsas in"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Instrumentpanel",
-        "last_orders_card": {
-          "title": "Senaste beställningar",
-          "all_orders_link": "Alla beställningar",
-          "order_number_label": "Beställningsnummer",
-          "purchase_number_label": "Inköpsorder",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Faktura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Inga beställningar",
-          "no_orders_message": "Det finns inga beställningar ännu"
-        },
-        "monthly_report_card": {
-          "title": "Månatlig utgiftsrapport",
-          "budget_title": "Budget",
-          "total_spend_label": "Totalt spenderat",
-          "spend_chart_alt": "Utgiftsdiagram"
-        },
-        "orders_status_card": {
-          "title": "Beställningsstatus"
-        },
-        "bulk_order_card": {
-          "title": "Massbeställningsblock"
-        }
+        "title": "Instrumentpanel"
       },
       "change_password": {
         "meta": {

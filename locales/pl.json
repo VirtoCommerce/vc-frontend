@@ -616,6 +616,25 @@
         "click_to_copy": "Kliknij, aby skopiować",
         "clipboard_success": "Kupon pomyślnie skopiowany",
         "tap_to_copy": "Dotknij, aby skopiować"
+      },
+      "dashboard": {
+        "orders_placed_week": "Zamówienia w tym tygodniu",
+        "orders_placed_mtd": "Zamówienia od początku miesiąca",
+        "orders_placed_ytd": "Zamówienia od początku roku",
+        "avg_order_value": "Średnia wartość zamówienia",
+        "per_order": "Średnio na zamówienie (od początku roku)",
+        "vs_last_week": "{delta} vs poprzedni tydzień",
+        "vs_last_month": "{delta} vs poprzedni miesiąc",
+        "vs_last_year": "{delta} vs poprzedni rok",
+        "excluded_orders": "Nie uwzględniono {count} zamówień w innych walutach | Nie uwzględniono {count} zamówienia w innej walucie | Nie uwzględniono {count} zamówień w innych walutach | Nie uwzględniono {count} zamówień w innych walutach",
+        "recent_orders": {
+          "title": "Moje ostatnie zamówienia",
+          "view_all": "Wszystkie zamówienia",
+          "filter_all": "Wszystkie",
+          "empty": "Nie ma jeszcze zamówień",
+          "no_results": "Brak zamówień o tym statusie",
+          "load_failed": "Nie udało się wczytać zamówień"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "Odpowiedz „{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Edytuj układ",
+      "editing": "Edytowanie układu",
+      "hint": "— przeciągnij blok za uchwyt, aby zmienić kolejność, lub ukryj go przyciskiem ✕.",
+      "hint_keyboard": "Klawiatura: spacja chwyta blok, strzałki go przesuwają, spacja upuszcza, Esc anuluje.",
+      "save": "Zapisz układ",
+      "cancel": "Anuluj",
+      "reset": "Przywróć domyślne",
+      "save_failed": "Nie udało się zapisać układu. Twoje zmiany nie przepadły — spróbuj ponownie.",
+      "load_failed": "Nie udało się wczytać zapisanego układu, więc wyświetlany jest układ domyślny. Edycja jest niedostępna do czasu wczytania — odśwież stronę.",
+      "hidden_widgets": "Ukryte widżety",
+      "visible_stats": "Widoczne wskaźniki",
+      "hidden_stats": "Ukryte wskaźniki",
+      "empty_visible": "Przeciągnij tutaj wskaźnik, aby go pokazać",
+      "empty_hidden": "Przeciągnij tutaj wskaźnik, aby go ukryć",
+      "max_rows": "Maks. wierszy",
+      "restored": "Przywrócono układ domyślny.",
+      "empty": {
+        "title": "Wszystkie bloki są ukryte",
+        "text": "Wszystkie wskaźniki i widżety na tej stronie zostały przeniesione do sekcji {hidden} w ustawieniach układu. Przywróć układ domyślny, aby wszystko wróciło, lub otwórz {edit}, aby wybrać dokładnie, co ma być widoczne.",
+        "hidden": "Ukryte",
+        "restore": "Przywróć układ domyślny"
+      },
+      "a11y": {
+        "reorder": "Zmień kolejność: {title}",
+        "hide": "Ukryj {title}",
+        "show": "Pokaż {title}",
+        "grabbed": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek, aby przenieść, spacji, aby upuścić, Escape, aby anulować.",
+        "grabbed_parkable": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek w lewo i w prawo, aby przenieść, w górę i w dół, aby ukryć lub pokazać, spacji, aby upuścić, Escape, aby anulować.",
+        "moved": "Przeniesiono {title} na pozycję {position} z {total}.",
+        "dropped": "Upuszczono {title} na pozycji {position} z {total}.",
+        "edge": "{title} jest już na pozycji {position} z {total}.",
+        "cancelled": "Anulowano przenoszenie {title}.",
+        "parked": "Ukryto {title}.",
+        "restored": "Pokazano {title}.",
+        "max_rows": "Maksymalna liczba wierszy wyświetlanych przez {title}, od {min} do {max}"
+      },
+      "stats": {
+        "load_failed": "Nie udało się wczytać"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Panel",
-        "last_orders_card": {
-          "title": "Ostatnie zamówienia",
-          "all_orders_link": "Wszystkie zamówienia",
-          "order_number_label": "Numer zamówienia",
-          "purchase_number_label": "Numer zamówienia",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Faktura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Brak zamówień",
-          "no_orders_message": "Nie ma jeszcze zamówień"
-        },
-        "monthly_report_card": {
-          "title": "Miesięczny raport wydatków",
-          "budget_title": "Budżet",
-          "total_spend_label": "Całkowicie wydane",
-          "spend_chart_alt": "Wykres wydatków"
-        },
-        "orders_status_card": {
-          "title": "Statusy zamówień"
-        },
-        "bulk_order_card": {
-          "title": "Panel dużych zamówień"
-        }
+        "title": "Panel"
       },
       "change_password": {
         "meta": {

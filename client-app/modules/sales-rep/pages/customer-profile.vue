@@ -38,9 +38,9 @@
 
       <!-- Below xl the page is one column, so the edit button moves to the very end instead. -->
       <LayoutSurface
-        :scope="SCOPE"
+        :layout="layout"
         :cards="cards"
-        :organization-id="organizationId"
+        :block-props="{ organizationId }"
         :edit-button-placement="isCompact ? 'end' : 'mainColumn'"
       />
     </template>
@@ -53,10 +53,11 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
-import LayoutSurface from "../components/layout-surface.vue";
+import { LAYOUT_SCOPES, useLayout } from "@/shared/dashboard";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
-import { CUSTOMER_PROFILE_LAYOUT_SCOPE, DASHBOARD_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import { DASHBOARD_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import LayoutSurface from "@/shared/dashboard/components/layout-surface.vue";
 
 interface IProps {
   organizationId: string;
@@ -64,14 +65,19 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const SCOPE = CUSTOMER_PROFILE_LAYOUT_SCOPE;
-
 // The aside splits off at xl; below that the page is a single column and the button belongs at its end.
 const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
 
 const { t } = useI18n();
 const { customer, loading, failed, notFound } = useSalesRepCustomer(() => props.organizationId);
-const { cards } = useSalesRepCustomerWidgets(() => props.organizationId);
+// The page owns the layout: the surface renders it, and the statistics queries are shaped from it. They also
+// wait for this customer to be found, so a not-found or unserved organization gets no figures fetched.
+const layout = useLayout(LAYOUT_SCOPES.salesRepCustomerProfile);
+const { cards } = useSalesRepCustomerWidgets(
+  layout,
+  () => props.organizationId,
+  () => customer.value?.organizationId === props.organizationId,
+);
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 

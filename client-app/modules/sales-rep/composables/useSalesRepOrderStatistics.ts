@@ -1,18 +1,17 @@
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { buildStatisticsWindows } from "@/shared/dashboard";
 import { SalesRepCustomerOrderStatisticsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, NEW_ORDERS_FILTER } from "../constants";
 import { needsOrderStatistics, orderStatisticsFlags } from "../layout/stat-data-needs";
-import { buildStatisticsWindows } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
-import { useStatDataNeeds } from "./useStatDataNeeds";
-import type { SalesRepLayoutScopeType } from "../types/layout";
+import type { StatDataNeedType } from "../types/widgets";
+import type { StatDataNeedsType } from "@/shared/dashboard";
 import type { Ref } from "vue";
 
-type UseSalesRepOrderStatisticsOptionsType = {
-  /** The surface whose visible cards decide what this asks for. */
-  scope: SalesRepLayoutScopeType;
+// `needs`/`ready` come from the page's layout (`useStatDataNeeds`): the visible cards decide what this asks for.
+type UseSalesRepOrderStatisticsOptionsType = StatDataNeedsType<StatDataNeedType> & {
   // Scope to one customer (the customer profile); omit for the cross-customer dashboard.
   // Expanded union (not MaybeRefOrGetter<… | undefined>) to avoid the redundant "undefined" — Sonar S4782.
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
@@ -23,7 +22,7 @@ type UseSalesRepOrderStatisticsOptionsType = {
 // comes from the cards the rep can see, so the two surfaces no longer pay for each other's slices
 // (VCST-5647) — and with none of them needed, the query does not run.
 export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOptionsType) {
-  const { needs, ready } = useStatDataNeeds(options.scope);
+  const { needs, ready } = options;
 
   const variables = computed(() => ({
     organizationId: toValue(options.organizationId),

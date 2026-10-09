@@ -616,6 +616,25 @@
         "click_to_copy": "コピーするにはクリック",
         "clipboard_success": "クーポンをコピーしました",
         "tap_to_copy": "タップしてコピー"
+      },
+      "dashboard": {
+        "orders_placed_week": "今週の注文",
+        "orders_placed_mtd": "今月の注文",
+        "orders_placed_ytd": "今年の注文",
+        "avg_order_value": "平均注文額",
+        "per_order": "平均注文単価 (今年度)",
+        "vs_last_week": "先週比 {delta}",
+        "vs_last_month": "先月比 {delta}",
+        "vs_last_year": "前年比 {delta}",
+        "excluded_orders": "他の通貨の注文 {count} 件は含まれていません",
+        "recent_orders": {
+          "title": "自分の最近の注文",
+          "view_all": "すべての注文",
+          "filter_all": "すべて",
+          "empty": "注文履歴がありません",
+          "no_results": "このステータスの注文はありません",
+          "load_failed": "注文を読み込めませんでした"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "「{label}」の固定を解除"
         }
       }
+    },
+    "dashboard": {
+      "edit": "レイアウトを編集",
+      "editing": "レイアウトを編集中",
+      "hint": "— ハンドルをドラッグしてブロックを並べ替えるか、✕ で非表示にします。",
+      "hint_keyboard": "キーボード操作: スペースキーでブロックをつかみ、矢印キーで移動、スペースキーで確定、Esc でキャンセルします。",
+      "save": "レイアウトを保存",
+      "cancel": "キャンセル",
+      "reset": "リセット",
+      "save_failed": "レイアウトを保存できませんでした。変更は保持されています。もう一度お試しください。",
+      "load_failed": "保存されたレイアウトを読み込めませんでした。既定の配置を表示しています。読み込まれるまで編集できません。ページを再読み込みしてください。",
+      "hidden_widgets": "非表示のウィジェット",
+      "visible_stats": "表示中の指標",
+      "hidden_stats": "非表示の指標",
+      "empty_visible": "指標をここにドラッグすると表示されます",
+      "empty_hidden": "指標をここにドラッグすると非表示になります",
+      "max_rows": "最大行数",
+      "restored": "デフォルトのレイアウトに戻しました。",
+      "empty": {
+        "title": "すべてのブロックが非表示です",
+        "text": "このページのすべての指標とウィジェットは、レイアウト設定で{hidden}に移動されています。デフォルトのレイアウトに戻してすべてを再表示するか、{edit}を開いて表示する内容を選択してください。",
+        "hidden": "非表示",
+        "restore": "デフォルトのレイアウトに戻す"
+      },
+      "a11y": {
+        "reorder": "{title} を並べ替え",
+        "hide": "{title} を非表示",
+        "show": "{title} を表示",
+        "grabbed": "{title} をつかみました。{total} 件中 {position} 番目。矢印キーで移動、スペースで配置、Esc でキャンセルします。",
+        "grabbed_parkable": "{title} をつかみました。{total} 件中 {position} 番目。左右の矢印キーで移動、上下キーで非表示または表示、スペースで配置、Esc でキャンセルします。",
+        "moved": "{title} を {total} 件中 {position} 番目に移動しました。",
+        "dropped": "{title} を {total} 件中 {position} 番目に配置しました。",
+        "edge": "{title} はすでに {total} 件中 {position} 番目です。",
+        "cancelled": "{title} の移動をキャンセルしました。",
+        "parked": "{title} を非表示にしました。",
+        "restored": "{title} を表示しました。",
+        "max_rows": "{title}に表示される最大行数。{min}から{max}の間で選択できます"
+      },
+      "stats": {
+        "load_failed": "読み込みに失敗しました"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "ダッシュボード",
-        "last_orders_card": {
-          "title": "最近の注文",
-          "all_orders_link": "すべての注文",
-          "order_number_label": "注文番号",
-          "purchase_number_label": "発注番号",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "請求書",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "注文なし",
-          "no_orders_message": "注文履歴がありません"
-        },
-        "monthly_report_card": {
-          "title": "月間支出レポート",
-          "budget_title": "予算",
-          "total_spend_label": "総支出額",
-          "spend_chart_alt": "支出チャート"
-        },
-        "orders_status_card": {
-          "title": "注文状況"
-        },
-        "bulk_order_card": {
-          "title": "一括注文パッド"
-        }
+        "title": "ダッシュボード"
       },
       "change_password": {
         "meta": {

@@ -1,0 +1,9 @@
+#import "../../../fragments/layoutFields.graphql"
+
+# The signed-in user's own document for one dashboard: the backend takes the user from the token, so there is no
+# user argument to send. Null when the user never saved this dashboard.
+query GetLayout($scope: String!, $storeId: String) {
+  layout(scope: $scope, storeId: $storeId) {
+    ...layoutFields
+  }
+}

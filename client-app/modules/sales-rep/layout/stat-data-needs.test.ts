@@ -1,16 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { STAT_CARDS } from "./stat-cards";
+import { statDataNeeds as cardNeeds } from "@/shared/dashboard";
+import { CUSTOMER_PROFILE_STAT_CARDS, DASHBOARD_STAT_CARDS } from "./stat-cards";
 import {
-  allStatDataNeeds,
   needsCartStatistics,
   needsCustomerCounts,
   needsOrderStatistics,
   orderStatisticsFlags,
-  statDataNeeds,
 } from "./stat-data-needs";
-import type { SalesRepLayoutScopeType } from "../types/layout";
+import type { StatDataNeedType } from "../types/widgets";
+import type { IStatCardDefType } from "@/shared/dashboard";
 
-const everyCard = (scope: SalesRepLayoutScopeType) => STAT_CARDS[scope].map((card) => card.key);
+// The module's two dashboards, named by their card tables.
+type SurfaceType = "dashboard" | "customerProfile";
+
+const STAT_CARDS: Record<SurfaceType, readonly IStatCardDefType<StatDataNeedType>[]> = {
+  dashboard: DASHBOARD_STAT_CARDS,
+  customerProfile: CUSTOMER_PROFILE_STAT_CARDS,
+};
+
+const everyCard = (scope: SurfaceType) => STAT_CARDS[scope].map((card) => card.key);
+
+/** What the engine's `useStatDataNeeds` hands the queries for the named cards of a surface. */
+const statDataNeeds = (scope: SurfaceType, cardIds: readonly string[]) => cardNeeds(STAT_CARDS[scope], cardIds);
+
+/** Every card — what edit mode asks for, since the parked zone renders the hidden cards too. */
+const allStatDataNeeds = (scope: SurfaceType) => statDataNeeds(scope, everyCard(scope));
 
 describe("stat data needs", () => {
   it("asks for nothing when no card is visible, so the queries do not run", () => {

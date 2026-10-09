@@ -69,46 +69,7 @@
           "items_unit": "Artikel",
           "not_for_checkout": "{count} nicht zur Kasse",
           "items_this_week": "{count} Artikel diese Woche",
-          "mtd_of_ytd": "{percent}% des Jahres",
-          "load_failed": "Laden fehlgeschlagen"
-        }
-      },
-      "layout": {
-        "edit": "Layout bearbeiten",
-        "editing": "Layout wird bearbeitet",
-        "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
-        "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
-        "save": "Layout speichern",
-        "cancel": "Abbrechen",
-        "reset": "Zurücksetzen",
-        "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
-        "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
-        "hidden_widgets": "Ausgeblendete Widgets",
-        "visible_stats": "Sichtbare Kennzahlen",
-        "hidden_stats": "Ausgeblendete Kennzahlen",
-        "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
-        "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
-        "max_rows": "Max Zeilen",
-        "restored": "Standardlayout wiederhergestellt.",
-        "empty": {
-          "title": "Alle Blöcke sind ausgeblendet",
-          "text": "Alle Kennzahlen und Widgets auf dieser Seite wurden in den Layout-Einstellungen in den Bereich {hidden} verschoben. Stellen Sie das Standardlayout wieder her, um alles zurückzuholen, oder öffnen Sie {edit}, um genau festzulegen, was angezeigt wird.",
-          "hidden": "Ausgeblendet",
-          "restore": "Standardlayout wiederherstellen"
-        },
-        "a11y": {
-          "reorder": "{title} umsortieren",
-          "hide": "{title} ausblenden",
-          "show": "{title} einblenden",
-          "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
-          "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
-          "moved": "{title} auf Position {position} von {total} verschoben.",
-          "dropped": "{title} auf Position {position} von {total} abgelegt.",
-          "edge": "{title} ist bereits an Position {position} von {total}.",
-          "cancelled": "Verschieben von {title} abgebrochen.",
-          "parked": "{title} ausgeblendet.",
-          "restored": "{title} eingeblendet.",
-          "max_rows": "Maximale Zeilen angezeigt von {title}, zwischen {min} und {max}"
+          "mtd_of_ytd": "{percent}% des Jahres"
         }
       }
     },
@@ -288,6 +249,89 @@
       "no_results": "Keine Verkäufe in dieser Kategorie",
       "all_categories": "Alle Kategorien",
       "load_failed": "Topseller konnten nicht geladen werden"
+    },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Zuletzt",
+      "analytics_unavailable": "Web-Aktivität ist für diesen Shop derzeit nicht verfügbar",
+      "tracked_caveat": "Nur auf Basis erfasster Aktivitäten",
+      "data_as_of": "Datenstand: {date}",
+      "search_history": {
+        "empty": "Keine erfassten Suchanfragen in diesem Zeitraum",
+        "empty_this_year": "Keine erfassten Suchanfragen in diesem Jahr",
+        "count": "{n} Suchanfrage | {n} Suchanfragen",
+        "last_searched": "Zuletzt gesucht am {date}",
+        "load_failed": "Suchverlauf konnte nicht geladen werden"
+      },
+      "browse_history": {
+        "empty": "Keine erfassten Produktansichten in diesem Zeitraum",
+        "empty_this_year": "Keine erfassten Produktansichten in diesem Jahr",
+        "views": "{n} Aufruf | {n} Aufrufe",
+        "load_failed": "Angesehene Produkte konnten nicht geladen werden"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Meine Aktivität"
+      },
+      "page": {
+        "title": "Meine Aktivität",
+        "customer_title": "Aktivität von {customer}",
+        "title_fallback": "Aktivität"
+      },
+      "breadcrumb": "Aktivität",
+      "tabs": {
+        "all": "Alle",
+        "orders": "Bestellungen",
+        "customers": "Kunden",
+        "searches": "Suchanfragen",
+        "productViews": "Produktansichten",
+        "logins": "Anmeldungen"
+      },
+      "period": {
+        "all_time": "Gesamter Zeitraum",
+        "month": "Dieser Monat",
+        "year": "Dieses Jahr"
+      },
+      "rows": {
+        "order_placed": "Bestellung aufgegeben",
+        "customer_assigned": "Neuer Kunde zugewiesen",
+        "searched_for": "Gesucht nach",
+        "viewed_product": "Angesehen",
+        "logins": "{count} Anmeldung | {count} Anmeldungen",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivität"
+      },
+      "time": {
+        "during_hour": "{date}, in der Stunde von {time}"
+      },
+      "caveat": "Suchanfragen, Produktansichten und Anmeldungen basieren auf erfasster Storefront-Aktivität und sind Näherungswerte.",
+      "tracked_hint": "Erfasste Storefront-Aktivität: erscheint mit bis zu 48 Stunden Verzögerung.",
+      "empty": "Noch keine Aktivität",
+      "empty_period": "Keine erfasste Aktivität in diesem Zeitraum",
+      "no_results": "Keine Aktivität in dieser Kategorie",
+      "load_failed": "Aktivität konnte nicht geladen werden",
+      "view_all": "Gesamte Aktivität",
+      "my_activity": {
+        "title": "Meine Aktivität",
+        "empty": "Keine Aktivität in diesem Jahr"
+      },
+      "customer": {
+        "title": "Kundenaktivität",
+        "views": {
+          "summary": "Übersicht",
+          "searches": "Suchanfragen",
+          "product_views": "Produktansichten"
+        },
+        "created_on": "Erstellt am",
+        "last_web_login": "Letzte Web-Anmeldung",
+        "visits": "Besuche insgesamt",
+        "last_search_term": "Letzter Suchbegriff",
+        "last_viewed_product": "Zuletzt angesehenes Produkt",
+        "analytics_unavailable": "Web-Aktivität ist derzeit nicht verfügbar — für diesen Shop ist kein Tracking verbunden, oder die Daten konnten nicht gelesen werden.",
+        "empty": "Keine Aktivitätsdaten",
+        "load_failed": "Kundenaktivität konnte nicht geladen werden"
+      }
     },
     "documents": {
       "title": "Dokumentbibliothek",

@@ -69,46 +69,7 @@
           "items_unit": "artikel | artiklar",
           "not_for_checkout": "{count} inte till kassan",
           "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
-          "mtd_of_ytd": "{percent}% av året",
-          "load_failed": "Kunde inte läsas in"
-        }
-      },
-      "layout": {
-        "edit": "Redigera layout",
-        "editing": "Redigerar layout",
-        "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
-        "hint_keyboard": "Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
-        "save": "Spara layout",
-        "cancel": "Avbryt",
-        "reset": "Återställ",
-        "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
-        "load_failed": "Den sparade layouten kunde inte läsas in, så standardordningen visas. Redigering är inte tillgänglig förrän den lästs in — uppdatera sidan.",
-        "hidden_widgets": "Dolda widgetar",
-        "visible_stats": "Synliga nyckeltal",
-        "hidden_stats": "Dolda nyckeltal",
-        "empty_visible": "Dra ett nyckeltal hit för att visa det",
-        "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
-        "max_rows": "Max rader",
-        "restored": "Standardlayouten har återställts.",
-        "empty": {
-          "title": "Alla block är dolda",
-          "text": "Alla nyckeltal och widgetar på den här sidan har flyttats till {hidden} i layoutinställningarna. Återställ standardlayouten för att få tillbaka allt, eller öppna {edit} för att välja exakt vad som ska visas.",
-          "hidden": "Dolda",
-          "restore": "Återställ standardlayout"
-        },
-        "a11y": {
-          "reorder": "Ändra ordning på {title}",
-          "hide": "Dölj {title}",
-          "show": "Visa {title}",
-          "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
-          "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
-          "moved": "{title} flyttad till position {position} av {total}.",
-          "dropped": "{title} släppt på position {position} av {total}.",
-          "edge": "{title} är redan på plats {position} av {total}.",
-          "cancelled": "Flytt av {title} avbruten.",
-          "parked": "{title} dold.",
-          "restored": "{title} visas.",
-          "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
+          "mtd_of_ytd": "{percent}% av året"
         }
       }
     },
@@ -288,6 +249,89 @@
       "no_results": "Ingen försäljning i denna kategori",
       "all_categories": "Alla kategorier",
       "load_failed": "Kunde inte läsa in bästsäljarna"
+    },
+    "customer_insights": {
+      "top": "Topp",
+      "recent": "Senaste",
+      "analytics_unavailable": "Webbaktivitet är inte tillgänglig för den här butiken just nu",
+      "tracked_caveat": "Baserat endast på spårad aktivitet",
+      "data_as_of": "Data per {date}",
+      "search_history": {
+        "empty": "Inga spårade sökningar under den här perioden",
+        "empty_this_year": "Inga spårade sökningar i år",
+        "count": "{n} sökning | {n} sökningar",
+        "last_searched": "Senast sökt {date}",
+        "load_failed": "Det gick inte att läsa in sökhistoriken"
+      },
+      "browse_history": {
+        "empty": "Inga spårade produktvisningar under den här perioden",
+        "empty_this_year": "Inga spårade produktvisningar i år",
+        "views": "{n} visning | {n} visningar",
+        "load_failed": "Det gick inte att läsa in visningshistoriken"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Min aktivitet"
+      },
+      "page": {
+        "title": "Min aktivitet",
+        "customer_title": "Aktivitet för {customer}",
+        "title_fallback": "Aktivitet"
+      },
+      "breadcrumb": "Aktivitet",
+      "tabs": {
+        "all": "Alla",
+        "orders": "Beställningar",
+        "customers": "Kunder",
+        "searches": "Sökningar",
+        "productViews": "Produktvisningar",
+        "logins": "Inloggningar"
+      },
+      "period": {
+        "all_time": "Hela perioden",
+        "month": "Denna månad",
+        "year": "I år"
+      },
+      "rows": {
+        "order_placed": "Beställning lagd",
+        "customer_assigned": "Ny kund tilldelad",
+        "searched_for": "Sökte efter",
+        "viewed_product": "Visade",
+        "logins": "{count} inloggning | {count} inloggningar",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivitet"
+      },
+      "time": {
+        "during_hour": "{date}, under timmen {time}"
+      },
+      "caveat": "Sökningar, produktvisningar och inloggningar baseras på spårad butiksaktivitet och är ungefärliga.",
+      "tracked_hint": "Spårad butiksaktivitet: kan ta upp till 48 timmar att visas.",
+      "empty": "Ingen aktivitet ännu",
+      "empty_period": "Ingen spårad aktivitet under denna period",
+      "no_results": "Ingen aktivitet i denna kategori",
+      "load_failed": "Kunde inte ladda aktivitet",
+      "view_all": "All aktivitet",
+      "my_activity": {
+        "title": "Min aktivitet",
+        "empty": "Ingen aktivitet i år"
+      },
+      "customer": {
+        "title": "Kundaktivitet",
+        "views": {
+          "summary": "Sammanfattning",
+          "searches": "Sökningar",
+          "product_views": "Produktvisningar"
+        },
+        "created_on": "Skapad",
+        "last_web_login": "Senaste webbinloggning",
+        "visits": "Totalt antal besök",
+        "last_search_term": "Senaste sökterm",
+        "last_viewed_product": "Senast visade produkt",
+        "analytics_unavailable": "Webbaktivitet är inte tillgänglig just nu — spårning är inte ansluten för den här butiken, eller så kunde data inte läsas.",
+        "empty": "Inga aktivitetsdata",
+        "load_failed": "Kunde inte ladda kundaktivitet"
+      }
     },
     "documents": {
       "title": "Dokumentbibliotek",

@@ -616,6 +616,25 @@
         "click_to_copy": "Clicca per copiare",
         "clipboard_success": "Coupon copiato con successo",
         "tap_to_copy": "Tocca per copiare"
+      },
+      "dashboard": {
+        "orders_placed_week": "Ordini di questa settimana",
+        "orders_placed_mtd": "Ordini dall’inizio del mese",
+        "orders_placed_ytd": "Ordini dall'inizio dell'anno",
+        "avg_order_value": "Valore medio ordine",
+        "per_order": "Media per ordine (anno in corso)",
+        "vs_last_week": "{delta} vs settimana scorsa",
+        "vs_last_month": "{delta} vs mese scorso",
+        "vs_last_year": "{delta} vs anno scorso",
+        "excluded_orders": "{count} ordine in un'altra valuta non incluso | {count} ordini in altre valute non inclusi",
+        "recent_orders": {
+          "title": "I miei ordini recenti",
+          "view_all": "Tutti gli ordini",
+          "filter_all": "Tutti",
+          "empty": "Non ci sono ancora ordini",
+          "no_results": "Nessun ordine con questo stato",
+          "load_failed": "Impossibile caricare gli ordini"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "Rimuovi fissaggio “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Modifica layout",
+      "editing": "Modifica del layout",
+      "hint": "— trascina un blocco dalla maniglia per riordinarlo oppure nascondilo con ✕.",
+      "hint_keyboard": "Tastiera: la barra spaziatrice afferra un blocco, le frecce lo spostano, spazio lo rilascia, Esc annulla.",
+      "save": "Salva layout",
+      "cancel": "Annulla",
+      "reset": "Ripristina",
+      "save_failed": "Impossibile salvare il layout. Le modifiche sono ancora qui: riprova.",
+      "load_failed": "Impossibile caricare il layout salvato, quindi è mostrata la disposizione predefinita. La modifica non è disponibile fino al caricamento: aggiorna la pagina.",
+      "hidden_widgets": "Widget nascosti",
+      "visible_stats": "Statistiche visibili",
+      "hidden_stats": "Statistiche nascoste",
+      "empty_visible": "Trascina qui una statistica per mostrarla",
+      "empty_hidden": "Trascina qui una statistica per nasconderla",
+      "max_rows": "Righe massime",
+      "restored": "Layout predefinito ripristinato.",
+      "empty": {
+        "title": "Tutti i blocchi sono nascosti",
+        "text": "Tutte le statistiche e i widget di questa pagina sono stati spostati in {hidden} nelle impostazioni del layout. Ripristina il layout predefinito per riportare tutto, oppure apri {edit} per scegliere esattamente cosa mostrare.",
+        "hidden": "Nascosti",
+        "restore": "Ripristina layout predefinito"
+      },
+      "a11y": {
+        "reorder": "Riordina {title}",
+        "hide": "Nascondi {title}",
+        "show": "Mostra {title}",
+        "grabbed": "{title} preso. Posizione {position} di {total}. Usa le frecce per spostarlo, spazio per rilasciarlo, esc per annullare.",
+        "grabbed_parkable": "{title} preso. Posizione {position} di {total}. Usa le frecce sinistra e destra per spostarlo, su e giù per nasconderlo o mostrarlo, spazio per rilasciarlo, esc per annullare.",
+        "moved": "{title} spostato alla posizione {position} di {total}.",
+        "dropped": "{title} rilasciato alla posizione {position} di {total}.",
+        "edge": "{title} è già in posizione {position} di {total}.",
+        "cancelled": "Spostamento di {title} annullato.",
+        "parked": "{title} nascosto.",
+        "restored": "{title} mostrato.",
+        "max_rows": "Righe massime mostrate da {title}, tra {min} e {max}"
+      },
+      "stats": {
+        "load_failed": "Caricamento non riuscito"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Ultimi ordini",
-          "all_orders_link": "Tutti gli ordini",
-          "order_number_label": "Numero ordine",
-          "purchase_number_label": "Ordine d'acquisto",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Fattura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Nessun ordine",
-          "no_orders_message": "Non ci sono ancora ordini"
-        },
-        "monthly_report_card": {
-          "title": "Rapporto di spesa mensile",
-          "budget_title": "Budget",
-          "total_spend_label": "Spesa totale",
-          "spend_chart_alt": "Grafico delle spese"
-        },
-        "orders_status_card": {
-          "title": "Stato degli ordini"
-        },
-        "bulk_order_card": {
-          "title": "Blocco ordine all'ingrosso"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {

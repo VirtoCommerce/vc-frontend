@@ -616,6 +616,25 @@
         "click_to_copy": "Kopioi napsauttamalla",
         "clipboard_success": "Kuponki kopioitu onnistuneesti",
         "tap_to_copy": "Napauta kopioidaksesi"
+      },
+      "dashboard": {
+        "orders_placed_week": "Tilaukset tällä viikolla",
+        "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+        "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
+        "avg_order_value": "Keskimääräinen tilausarvo",
+        "per_order": "Keskim. per tilaus (tänä vuonna)",
+        "vs_last_week": "{delta} vs viime viikko",
+        "vs_last_month": "{delta} vs viime kuu",
+        "vs_last_year": "{delta} vs viime vuosi",
+        "excluded_orders": "{count} tilaus muussa valuutassa ei mukana | {count} tilausta muissa valuutoissa ei mukana",
+        "recent_orders": {
+          "title": "Omat viimeisimmät tilaukset",
+          "view_all": "Kaikki tilaukset",
+          "filter_all": "Kaikki",
+          "empty": "Tilauksia ei ole vielä",
+          "no_results": "Ei tilauksia tällä tilalla",
+          "load_failed": "Tilauksia ei voitu ladata"
+        }
       }
     },
     "sign_in": {
@@ -1153,6 +1172,47 @@
           "unpin_label": "Irrota “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Muokkaa asettelua",
+      "editing": "Muokataan asettelua",
+      "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+      "hint_keyboard": "Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+      "save": "Tallenna asettelu",
+      "cancel": "Peruuta",
+      "reset": "Palauta oletukset",
+      "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+      "load_failed": "Tallennettua asettelua ei voitu ladata, joten näytössä on oletusjärjestys. Muokkaaminen ei ole käytettävissä ennen latausta — päivitä sivu.",
+      "hidden_widgets": "Piilotetut widgetit",
+      "visible_stats": "Näkyvät tunnusluvut",
+      "hidden_stats": "Piilotetut tunnusluvut",
+      "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
+      "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+      "max_rows": "Maksimirivit",
+      "restored": "Oletusasettelu palautettu.",
+      "empty": {
+        "title": "Kaikki lohkot on piilotettu",
+        "text": "Kaikki tämän sivun tunnusluvut ja widgetit on siirretty asetteluasetuksissa kohtaan {hidden}. Palauta oletusasettelu tuodaksesi kaiken takaisin, tai avaa {edit} ja valitse tarkalleen, mitä näytetään.",
+        "hidden": "Piilotetut",
+        "restore": "Palauta oletusasettelu"
+      },
+      "a11y": {
+        "reorder": "Järjestä {title}",
+        "hide": "Piilota {title}",
+        "show": "Näytä {title}",
+        "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+        "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+        "moved": "{title} siirretty sijaintiin {position}/{total}.",
+        "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+        "edge": "{title} on jo sijainnissa {position}/{total}.",
+        "cancelled": "Kohteen {title} siirto peruutettu.",
+        "parked": "{title} piilotettu.",
+        "restored": "{title} näytetään.",
+        "max_rows": "Näytettävien rivien enimmäismäärä kohteessa {title}, välillä {min} ja {max}"
+      },
+      "stats": {
+        "load_failed": "Lataus epäonnistui"
+      }
     }
   },
   "pages": {
@@ -1305,31 +1365,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Hallintapaneeli",
-        "last_orders_card": {
-          "title": "Viimeisimmät tilaukset",
-          "all_orders_link": "Kaikki tilaukset",
-          "order_number_label": "Tilausnumero",
-          "purchase_number_label": "Ostotilaus",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Lasku",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Ei tilauksia",
-          "no_orders_message": "Tilauksia ei ole vielä"
-        },
-        "monthly_report_card": {
-          "title": "Kuukausittainen kuluraportti",
-          "budget_title": "Budjetti",
-          "total_spend_label": "Kokonaiskulutus",
-          "spend_chart_alt": "Kulutuskaavio"
-        },
-        "orders_status_card": {
-          "title": "Tilausten tila"
-        },
-        "bulk_order_card": {
-          "title": "Joukkotilauslohko"
-        }
+        "title": "Hallintapaneeli"
       },
       "change_password": {
         "meta": {
