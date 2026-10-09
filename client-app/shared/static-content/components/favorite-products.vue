@@ -18,11 +18,28 @@
         </VcTypography>
       </template>
 
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <VcProductCard v-for="item in products" :key="item.id" :view-mode="viewMode" border>
+      <div
+        class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        data-vc-track="product-list"
+        data-list-id="favorite_products"
+        :data-list-name="title?.text"
+      >
+        <VcProductCard
+          v-for="item in products"
+          :key="item.id"
+          v-track-item="item"
+          data-vc-track="product-card"
+          :view-mode="viewMode"
+          border
+        >
           <VcProductImage :img-src="item.imgSrc" :alt="item.name" />
 
-          <VcProductTitle lines-number="2" :to="productsRoutes[item.id]" :title="item.name">
+          <VcProductTitle
+            data-vc-track="product-link"
+            lines-number="2"
+            :to="productsRoutes[item.id]"
+            :title="item.name"
+          >
             {{ item.name }}
           </VcProductTitle>
 

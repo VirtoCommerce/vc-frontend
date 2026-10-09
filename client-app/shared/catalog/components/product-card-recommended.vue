@@ -1,8 +1,9 @@
 <template>
-  <VcProductCard :background="false">
+  <VcProductCard v-track-item="product" data-vc-track="product-card" :background="false">
     <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
 
     <VcProductTitle
+      data-vc-track="product-link"
       lines-number="2"
       fix-height
       :to="link"

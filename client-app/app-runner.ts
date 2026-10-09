@@ -21,6 +21,7 @@ import {
   authPlugin,
   configPlugin,
   contextPlugin,
+  domAnalyticsPlugin,
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
@@ -274,6 +275,7 @@ export default async () => {
   app.use(i18n);
   app.use(permissionsPlugin);
   app.use(extensionPointsPlugin);
+  app.use(domAnalyticsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 

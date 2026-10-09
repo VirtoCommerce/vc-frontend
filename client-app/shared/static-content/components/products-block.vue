@@ -1,5 +1,11 @@
 <template>
-  <div class="products-block py-10 lg:py-24" :class="background">
+  <div
+    class="products-block py-10 lg:py-24"
+    :class="background"
+    data-vc-track="product-list"
+    data-list-id="products_block"
+    :data-list-name="title"
+  >
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <VcTypography tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
         {{ title }}
