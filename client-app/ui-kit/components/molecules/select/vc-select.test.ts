@@ -2733,12 +2733,45 @@ describe("VcSelect", () => {
       expect(wrapper.find(".probe-selected").exists()).toBe(false);
     });
 
-    it.each(["Enter", " "])("opens with %j even with autocomplete, since the button takes no typing", async (key) => {
+    it.each([
+      ["Enter", "both slots", slots],
+      [" ", "both slots", slots],
+      ["Enter", "#selected alone", { selected: slots.selected }],
+      ["Enter", "#placeholder alone", { placeholder: slots.placeholder }],
+    ])("opens with %j and %s even with autocomplete, since the button takes no typing", async (key, _label, given) => {
       vi.spyOn(console, "warn").mockImplementation(() => undefined);
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true }, slots);
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Albania" }, given);
       const trigger = wrapper.get('[role="combobox"]');
 
       await trigger.trigger("keydown", { key });
+
+      expect(trigger.attributes("aria-expanded")).toBe("true");
+    });
+
+    it("follows a slot added after mount when Enter decides between the field and the button", async () => {
+      vi.spyOn(console, "warn").mockImplementation(() => undefined);
+      const slotted = ref(false);
+      const parent = defineComponent({
+        setup: () => () =>
+          h(VcSelect as never, { items: ITEMS, autocomplete: true }, slotted.value ? slots : undefined),
+      });
+      const wrapper = createWrapperFactory(mount, parent, {
+        attachTo: document.body,
+        global: { components: UIKitComponents, directives: { maska: vMaska } },
+      })();
+
+      await wrapper.get("input").trigger("keydown", { key: "Enter" });
+
+      expect(wrapper.get("input").attributes("aria-expanded")).toBe("false");
+
+      slotted.value = true;
+      await nextTick();
+
+      const trigger = wrapper.get('[role="combobox"]');
+
+      expect(trigger.element.tagName).toBe("BUTTON");
+
+      await trigger.trigger("keydown", { key: "Enter" });
 
       expect(trigger.attributes("aria-expanded")).toBe("true");
     });

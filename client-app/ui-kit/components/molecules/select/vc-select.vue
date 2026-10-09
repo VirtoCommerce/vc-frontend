@@ -516,13 +516,16 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
   navigate(key);
 }
 
-// Enter is consumed only when it opens a select-only list or accepts an option; otherwise a form owns it.
-// An editable field leaves Enter to its form; a slotted trigger is a button, whatever `autocomplete` says.
-const isTypable = computed(() => props.autocomplete && !(slots.selected || slots.placeholder));
+// A slotted trigger is a button, whatever `autocomplete` says. A function: slots are not reactive, and a
+// slot added or removed after mount swaps the trigger.
+function isTypable(): boolean {
+  return !!props.autocomplete && !(slots.selected || slots.placeholder);
+}
 
+// Enter is consumed only when it opens a select-only list or accepts an option; otherwise a form owns it.
 function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) {
   if (!isShown.value) {
-    if (isTypable.value || !enabled.value) {
+    if (isTypable() || !enabled.value) {
       return;
     }
 
