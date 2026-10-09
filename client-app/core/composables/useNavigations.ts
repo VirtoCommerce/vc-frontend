@@ -33,14 +33,128 @@ import type {
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 
+// Module scope, so the host-only helpers below share it without widening the published `useNavigations`.
+const menuSchema = shallowRef<MenuType | null>(menuData);
+// Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
+// shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
+const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
+
+// Added from a plugin's declaration; the plugin's own registration under the same id replaces them.
+/** link id -> the plugin that declared it */
+const declaredLinkIds = new Map<string, string>();
+const declaredSectionIds = new Set<string>();
+
+function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+  const replaced = new Set<string>();
+  menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      const incoming = new Set((srcValue as ExtendedMenuLinkType[]).map((link) => link?.id).filter(Boolean));
+      const kept = (objValue as ExtendedMenuLinkType[]).filter((link) => {
+        const isReplaced = Boolean(link?.id && declaredLinkIds.has(link.id) && incoming.has(link.id));
+        if (isReplaced) {
+          replaced.add(link.id as string);
+        }
+        return !isReplaced;
+      });
+      return kept.concat(srcValue);
+    }
+  });
+  // After the merge, not inside it: the other viewport's declared copy is met later in the same merge.
+  replaced.forEach((id) => declaredLinkIds.delete(id));
+  triggerRef(menuSchema);
+}
+
+// Registers an account left-rail section (idempotent by id). Modules call this at init. Replaces a
+// declared section with the same id.
+function registerAccountSection(section: AccountNavigationSectionType) {
+  if (declaredSectionIds.has(section.id)) {
+    declaredSectionIds.delete(section.id);
+    registeredAccountSections.value = registeredAccountSections.value.map((x) => (x.id === section.id ? section : x));
+    return;
+  }
+  if (registeredAccountSections.value.some((x) => x.id === section.id)) {
+    Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
+    return;
+  }
+  registeredAccountSections.value = [...registeredAccountSections.value, section];
+}
+
+function removeLinks(links: ExtendedMenuLinkType[] | undefined, ids: Set<string>): ExtendedMenuLinkType[] | undefined {
+  return links
+    ?.filter((link) => !(link.id && ids.has(link.id)))
+    .map((link) => (link.children ? { ...link, children: removeLinks(link.children, ids) } : link));
+}
+
+function hasLinkId(links: ExtendedMenuLinkType[] | undefined, id: string): boolean {
+  return links?.some((link) => link.id === id || hasLinkId(link.children, id)) ?? false;
+}
+
+function isLinkIdTaken(id: string): boolean {
+  const header = menuSchema.value?.header;
+  const sections = [header?.desktop, header?.mobile].flatMap((viewport) => Object.values(viewport ?? {}));
+  return sections.some((section) =>
+    hasLinkId(Array.isArray(section) ? section : (section as ExtendedMenuLinkType | undefined)?.children, id),
+  );
+}
+
+/**
+ * Host-only. Refuses an id the menu already has unless this plugin declared it, so withdrawing by id
+ * only ever removes the plugin's own links.
+ */
+export function declareMenuLinks(schema: DeepPartial<MenuType>, ids: readonly string[], plugin: string): boolean {
+  const taken = ids.find((id) => declaredLinkIds.get(id) !== plugin && isLinkIdTaken(id));
+  if (taken !== undefined) {
+    Logger.warn(`[useNavigations] menu link "${taken}" is already in the menu; ignoring the declaration.`);
+    return false;
+  }
+  mergeMenuSchema(schema);
+  ids.forEach((id) => declaredLinkIds.set(id, plugin));
+  return true;
+}
+
+/** Host-only. */
+export function declareAccountSection(section: AccountNavigationSectionType): boolean {
+  if (registeredAccountSections.value.some((x) => x.id === section.id)) {
+    Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring the declaration.`);
+    return false;
+  }
+  declaredSectionIds.add(section.id);
+  registeredAccountSections.value = [...registeredAccountSections.value, section];
+  return true;
+}
+
+/** Host-only: drops the declarations the plugin did not register itself. */
+export function withdrawDeclaredNavigation(linkIds: readonly string[], sectionIds: readonly string[]): void {
+  const links = new Set(linkIds.filter((id) => declaredLinkIds.has(id)));
+  if (links.size && menuSchema.value) {
+    const { desktop, mobile } = menuSchema.value.header;
+    const strip = (section: Record<string, ExtendedMenuLinkType | ExtendedMenuLinkType[]>) =>
+      Object.fromEntries(
+        Object.entries(section).map(([key, value]) => [
+          key,
+          Array.isArray(value) ? removeLinks(value, links) : { ...value, children: removeLinks(value.children, links) },
+        ]),
+      );
+    menuSchema.value = {
+      ...menuSchema.value,
+      header: {
+        desktop: strip(desktop) as MenuType["header"]["desktop"],
+        mobile: strip(mobile) as MenuType["header"]["mobile"],
+      },
+    };
+    links.forEach((id) => declaredLinkIds.delete(id));
+  }
+  const sections = new Set(sectionIds.filter((id) => declaredSectionIds.has(id)));
+  if (sections.size) {
+    registeredAccountSections.value = registeredAccountSections.value.filter((x) => !sections.has(x.id));
+    sections.forEach((id) => declaredSectionIds.delete(id));
+  }
+}
+
 export function _useNavigations() {
   const { currentCurrency } = useCurrency();
 
   const matchingRouteName = ref("");
-  const menuSchema = shallowRef<MenuType | null>(menuData);
-  // Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
-  // shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
-  const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
   const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
   const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
   const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -280,24 +394,6 @@ export function _useNavigations() {
 
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
-  }
-
-  function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
-    menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
-      if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-        return objValue.concat(srcValue) as ExtendedMenuLinkType[];
-      }
-    });
-    triggerRef(menuSchema);
-  }
-
-  // Registers an account left-rail section (idempotent by id). Modules call this at init.
-  function registerAccountSection(section: AccountNavigationSectionType) {
-    if (registeredAccountSections.value.some((x) => x.id === section.id)) {
-      Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
-      return;
-    }
-    registeredAccountSections.value = [...registeredAccountSections.value, section];
   }
 
   return {

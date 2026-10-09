@@ -18,6 +18,7 @@ query GetStorePlugins($domain: String!) {
         name
         exposed
       }
+      contributions
     }
   }
 }

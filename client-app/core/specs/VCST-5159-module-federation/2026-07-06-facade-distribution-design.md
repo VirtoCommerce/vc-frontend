@@ -104,7 +104,7 @@ https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-fron
 
 ### 5. Docs
 
-- **`client-app/modules/federated/HOWTO.md`**
+- **`client-app/core/federation/HOWTO.md`**
   - Step 1: dependency example switches `portal:` → the pinned tarball URL, with a
     sentence on what it is (a Release asset of the public host repo; checksum recorded
     in the plugin's lockfile; no token).
@@ -120,9 +120,9 @@ https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-fron
     the actual distribution: committed `.d.ts` for the contract in-repo, tarball Release
     asset (manual workflow) for out-of-repo consumption, yalc for co-dev.
   - Files table: no change needed (workflow lives under `.github/`).
-- **`client-app/modules/federated/README.md`** — no `portal:` references found; verify
+- **`client-app/core/federation/README.md`** — no `portal:` references found; verify
   during implementation and touch only if something contradicts the above.
-- **`client-app/modules/federated/TODO.md`** — in §1 *Facade distribution & local
+- **`client-app/core/federation/TODO.md`** — in §1 *Facade distribution & local
   co-dev*: mark the implementation-details items delivered by this PR, and record the
   trigger decision as **manual `workflow_dispatch`** (the text currently sketches
   "on release/tag").

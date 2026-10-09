@@ -39,6 +39,7 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
     },
   },
   mobileHeader: {},
+  topHeaderStatus: {},
   productCard: {},
   productPage: {},
   paymentPage: {},

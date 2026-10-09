@@ -9,6 +9,9 @@
     // Published artifact, not host source. Its GlobalComponents augmentation would make host
     // templates resolve ui-kit props through the contract's rolled-up copies of those types.
     "client-app/core-api/contract",
+    // Same reason: both import the contract as `@vc-frontend/core`, which pulls it back in.
+    "client-app/core-api/manifest.d.mts",
+    "client-app/core-api/contract-checks",
     "client-app/**/__tests__/*",
     "client-app/**/*.(test|spec).*",
     "storybook-static"
