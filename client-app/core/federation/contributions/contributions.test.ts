@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { evaluateResidual, isGloballyTrue, resolveGlobalTerms } from "./evaluate";
+import { PLACEHOLDER_META_KEY } from "./placeholder";
 import {
   resetPluginStatuses,
   setPluginStatus,
@@ -227,7 +228,7 @@ describe("applyContributions / releaseContributions", () => {
     expect(router.hasRoute("SalesRepDocuments")).toBe(true);
     expect(router.hasRoute("Hidden")).toBe(false);
     expect(router.hasRoute("Orphan")).toBe(false);
-    expect(router.resolve("/company/documents").meta[declare.PLACEHOLDER_META_KEY]).toBe("sales-rep");
+    expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBe("sales-rep");
     expect(router.resolve("/").name).toBe("Home");
     expect(loggerWarnMock).toHaveBeenCalledWith(
       expect.stringContaining('declares route "Home", which is already taken'),
@@ -276,11 +277,47 @@ describe("applyContributions / releaseContributions", () => {
 
     declare.releaseContributions(applied, router, true);
 
-    expect(router.resolve("/company/documents").meta[declare.PLACEHOLDER_META_KEY]).toBeUndefined();
+    expect(router.resolve("/company/documents").meta[PLACEHOLDER_META_KEY]).toBeUndefined();
     expect(router.hasRoute("Unclaimed")).toBe(false);
     const ids = navigations.useNavigations().desktopCorporateMenuItems.value?.children?.map((link) => link.id);
     expect(ids).toContain("docs-link");
     expect(ids).not.toContain("unclaimed-link");
+    expect(navigations.useNavigations().registeredAccountSections.value.map((section) => section.id)).toEqual(["hub"]);
+  });
+
+  it("withdraws a whole section once the plugin loaded without one of its routes", async () => {
+    const { declare, status, navigations, router } = await setup();
+    status.setPluginStatus("sales-rep", "pending");
+    const applied = declare.applyContributions(
+      "sales-rep",
+      {
+        format: 1,
+        routes: [
+          { path: "documents", parent: "Company", name: "SalesRepDocuments" },
+          { path: "unclaimed", parent: "Company", name: "Unclaimed" },
+        ],
+        menu: [
+          {
+            surface: "account",
+            id: "hub",
+            title: "h",
+            children: [
+              { id: "docs", title: "d", routeName: "SalesRepDocuments" },
+              { id: "unclaimed", title: "u", routeName: "Unclaimed" },
+            ],
+          },
+        ],
+      },
+      context(),
+      router,
+    );
+    const nav = navigations.useNavigations();
+    expect(nav.registeredAccountSections.value.map((section) => section.id)).toEqual(["hub"]);
+    router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
+
+    declare.releaseContributions(applied, router, true);
+
+    expect(nav.registeredAccountSections.value).toEqual([]);
   });
 
   it("withdraws every declared entry when the plugin failed", async () => {

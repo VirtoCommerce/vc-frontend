@@ -1,5 +1,5 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { createMemoryHistory, createRouter, RouterView } from "vue-router";
 import { applyContributions, releaseContributions } from "./declare";
@@ -46,6 +46,11 @@ describe("PluginRoutePlaceholder", () => {
     resetPluginStatuses();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
   it("renders a loader inside the declared parent's layout while the plugin is on the way", async () => {
     const { wrapper } = await openDeepLink();
 
@@ -84,7 +89,6 @@ describe("PluginRoutePlaceholder", () => {
     expect(wrapper.text()).toContain("common.messages.content_failed_to_load");
     expect(reload).toHaveBeenCalledOnce();
     expect(router.currentRoute.value.fullPath).toBe("/company/documents?tab=all");
-    vi.unstubAllGlobals();
   });
 
   it("becomes the host's not-found page in place when the plugin was skipped", async () => {
@@ -118,7 +122,6 @@ describe("PluginRoutePlaceholder", () => {
     await flushPromises();
 
     expect(wrapper.find(".company-layout .real-page").exists()).toBe(true);
-    vi.useRealTimers();
   });
 
   it("keeps waiting, not 404, when the plugin outlives its pending deadline", async () => {
@@ -132,7 +135,6 @@ describe("PluginRoutePlaceholder", () => {
 
     expect(wrapper.find(".not-found").exists()).toBe(false);
     expect(wrapper.find(".loader").exists()).toBe(true);
-    vi.useRealTimers();
   });
 
   it("follows the user to another pending route of the plugin and resolves that one when it settles", async () => {

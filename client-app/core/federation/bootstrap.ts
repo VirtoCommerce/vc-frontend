@@ -30,16 +30,20 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
 export const BOOT_BACKSTOP_MS = 30_000;
 
 /** Re-resolves the current URL once every plugin settled: a deep link may have hit the catch-all before its route existed. */
-function reResolveOnceSettled(): void {
+async function reResolveOnceSettled(): Promise<void> {
   const router = globals.router;
   if (!router) {
     return;
   }
-  const current = router.currentRoute.value;
-  // Router not installed yet.
-  if (current.matched.length === 0) {
+  // The first navigation resolves its target before it finishes: until then `currentRoute` is the
+  // start location, and a route added meanwhile is missed by both that navigation and this check.
+  try {
+    await router.isReady();
+  } catch {
+    // A failed first navigation is reported where app-runner awaits the same `isReady()`.
     return;
   }
+  const current = router.currentRoute.value;
   // A declared route's placeholder resolves itself, and a failed plugin's reload offer must not become a 404.
   if (current.matched.at(-1)?.meta?.[PLACEHOLDER_META_KEY] !== undefined) {
     return;

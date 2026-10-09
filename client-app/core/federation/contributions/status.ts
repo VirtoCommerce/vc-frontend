@@ -54,25 +54,31 @@ export function isPluginSettled(name: string): boolean {
   return isFinal(statuses.value.get(name)?.state) || expired.value.has(name) || !statuses.value.has(name);
 }
 
-export function whenPluginSettled(name: string): Promise<IPluginStatusType> {
+function notAdvertised(name: string): IPluginStatusType {
+  return { name, state: "skipped", reason: "not advertised by the platform" };
+}
+
+function waitForPlugin(
+  name: string,
+  queue: Map<string, ((status: IPluginStatusType) => void)[]>,
+  isExpired: boolean,
+): Promise<IPluginStatusType> {
   const current = statuses.value.get(name);
-  if (!current || isFinal(current.state) || expired.value.has(name)) {
-    return Promise.resolve(current ?? { name, state: "skipped", reason: "not advertised by the platform" });
+  if (!current || isFinal(current.state) || isExpired) {
+    return Promise.resolve(current ?? notAdvertised(name));
   }
   return new Promise((resolve) => {
-    waiters.set(name, [...(waiters.get(name) ?? []), resolve]);
+    queue.set(name, [...(queue.get(name) ?? []), resolve]);
   });
+}
+
+export function whenPluginSettled(name: string): Promise<IPluginStatusType> {
+  return waitForPlugin(name, waiters, expired.value.has(name));
 }
 
 /** Like `whenPluginSettled`, but an expired deadline does not count: a slow plugin is still on its way. */
 export function whenPluginFinal(name: string): Promise<IPluginStatusType> {
-  const current = statuses.value.get(name);
-  if (!current || isFinal(current.state)) {
-    return Promise.resolve(current ?? { name, state: "skipped", reason: "not advertised by the platform" });
-  }
-  return new Promise((resolve) => {
-    finalWaiters.set(name, [...(finalWaiters.get(name) ?? []), resolve]);
-  });
+  return waitForPlugin(name, finalWaiters, false);
 }
 
 const plugins: ComputedRef<readonly IPluginStatusType[]> = computed(() => [...statuses.value.values()]);
