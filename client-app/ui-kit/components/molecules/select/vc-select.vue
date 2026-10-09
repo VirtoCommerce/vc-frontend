@@ -155,7 +155,7 @@
             <VcLoadMore
               class="vc-select__more"
               :loading="loading"
-              :has-next-page="hasNextPage && !awaitingServerItems"
+              :has-next-page="pagerHasNextPage"
               :item-count="items.length"
               @load-more="$emit('loadMore')"
             >
@@ -262,10 +262,10 @@ const props = withDefaults(
      */
     hasNextPage?: boolean;
     /**
-     * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-     * `search` by replacing `items` or pushing/splicing into it while `loading` is off, or with a
-     * `loading` cycle (changes inside an item do not count): until then the list holds paging back
-     * and ignores Select all.
+     * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
+     * in the `search` handler and keep it until the new `items` are in: while it is on, Select all
+     * is ignored and no result count is announced. A query the consumer skips (too short, the same
+     * once trimmed) needs nothing — the `items` on screen are taken as its answer.
      */
     serverFilter?: boolean;
     testIdDropdown?: string;
@@ -349,73 +349,31 @@ const activeDescendantId = computed(() =>
   isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
 );
 
-// With `serverFilter` the options on screen belong to the previous query until the consumer
-// answers the query on screen with new items or finishes loading; their count would describe the
-// wrong query. An answer that lands before the current query was even sent is the previous one's.
-const awaitingServerItems = ref(false);
-let searchedQuery = "";
-// The items on screen answer this query; the first ones answer the empty one.
-let answeredQuery = "";
+// With `serverFilter`, typing makes the options on screen the previous query's until the query goes
+// out; after that the consumer's `loading` says whether they are still being replaced. A query the
+// consumer skips leaves its items as the answer.
+const sentQuery = ref("");
+const isQueryPending = computed(() => !!props.serverFilter && filterValue.value !== sentQuery.value);
+const isAnswerPending = computed(() => isQueryPending.value || (!!props.serverFilter && props.loading));
 
-// An answer belongs to the last query sent, whatever was typed since; it only ends the wait when
-// that query is still the one on screen.
-function onServerAnswer(): void {
-  // Filtered locally, the items answer no query but the empty one.
-  answeredQuery = props.serverFilter ? searchedQuery : "";
-
-  if (searchedQuery === filterValue.value) {
-    awaitingServerItems.value = false;
-  }
+function sendSearch(value: string): void {
+  sentQuery.value = value;
+  emit("search", value);
 }
 
-// Switched at runtime, the wait follows: on, the query typed has not been answered by the server;
-// off, the local filter answers it.
+// Switched on, the query typed under the local filter has to reach the server.
 watch(
   () => props.serverFilter,
   (serverFilter) => {
-    awaitingServerItems.value = !!serverFilter && filterValue.value !== answeredQuery;
-  },
-);
-
-// A consumer need not fetch again for a query its items already answer, so sending one is its answer.
-function sendSearch(value: string): void {
-  searchedQuery = value;
-  emit("search", value);
-
-  if (value === answeredQuery) {
-    awaitingServerItems.value = false;
-  }
-}
-
-// Depth 1: an answer pushed or spliced into the same array counts as well as a new one. While
-// `loading`, items emptied for the query are not its answer; the end of loading is.
-watch(
-  () => props.items,
-  () => {
-    if (!props.loading) {
-      onServerAnswer();
-    }
-  },
-  { deep: 1 },
-);
-
-watch(
-  () => props.loading,
-  (loading) => {
-    if (!loading) {
-      onServerAnswer();
+    if (serverFilter && filterValue.value) {
+      sendSearch(filterValue.value);
     }
   },
 );
 
 const liveRegionMessage = computed(() => {
   // An emptied list that is loading has no results to count yet.
-  if (
-    !isShown.value ||
-    !filterValue.value ||
-    awaitingServerItems.value ||
-    (props.loading && !filteredItems.value.length)
-  ) {
+  if (!isShown.value || !filterValue.value || isAnswerPending.value || (props.loading && !filteredItems.value.length)) {
     return "";
   }
 
@@ -684,7 +642,6 @@ watch(filterValue, (value) => {
   if (props.serverFilter) {
     // The options under the highlight stay the previous query's until the consumer answers.
     resetHighlight();
-    awaitingServerItems.value = true;
   }
 
   if (value) {
@@ -737,7 +694,7 @@ if (import.meta.env.DEV) {
     // eslint-disable-next-line no-console
     console.warn(
       "VcSelect: `server-filter` needs a `@search` handler for every query (not `.once`) that answers " +
-        "with new `items` or a `loading` cycle; until then paging and Select all wait.",
+        "with new `items`, holding `loading` while it fetches.",
     );
   }
 }
@@ -811,11 +768,11 @@ if (import.meta.env.DEV) {
 
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
-// The pager owns the spinner for a further page; a query on its way, or an empty first page, is shown
-// here. A next page of the previous query is not asked for while its answer is pending.
-const showLoadingRow = computed(
-  () => props.loading && (awaitingServerItems.value || (!filteredItems.value.length && !props.hasNextPage)),
-);
+// No next page of a query still being typed. The pager shows the spinner while it pages; otherwise
+// the loading row does, so exactly one shows.
+const pagerHasNextPage = computed(() => props.hasNextPage && !isQueryPending.value);
+
+const showLoadingRow = computed(() => props.loading && !pagerHasNextPage.value);
 
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
 
@@ -866,7 +823,7 @@ const selectAllLabel = computed(() =>
 // and the pages it lacks are the consumer's to add on `selectAll`.
 function onSelectAll() {
   // The options on screen still answer the previous query, which the event would misreport.
-  if (awaitingServerItems.value) {
+  if (isAnswerPending.value) {
     return;
   }
 

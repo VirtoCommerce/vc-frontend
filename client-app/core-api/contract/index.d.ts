@@ -3039,10 +3039,10 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
          */
         hasNextPage?: boolean;
         /**
-         * Turns off client-side filtering — the consumer filters and re-supplies `items`. Answer every
-         * `search` by replacing `items` or pushing/splicing into it while `loading` is off, or with a
-         * `loading` cycle (changes inside an item do not count): until then the list holds paging back
-         * and ignores Select all.
+         * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
+         * in the `search` handler and keep it until the new `items` are in: while it is on, Select all
+         * is ignored and no result count is announced. A query the consumer skips (too short, the same
+         * once trimmed) needs nothing — the `items` on screen are taken as its answer.
          */
         serverFilter?: boolean;
         testIdDropdown?: string;

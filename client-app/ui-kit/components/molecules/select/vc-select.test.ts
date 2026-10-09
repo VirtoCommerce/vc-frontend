@@ -1237,12 +1237,32 @@ describe("VcSelect", () => {
         expect(rows(wrapper)).toEqual(["ui_kit.messages.loading_text", ...ITEMS]);
       });
 
-      it("shows one spinner and asks for no next page of the previous query", async () => {
+      it("asks for no next page of a query still being typed", async () => {
+        const wrapper = createWrapper({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          hasNextPage: true,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("bel");
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+      });
+
+      it("shows one spinner, the pager's, while a paged query loads", async () => {
         const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
 
         expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
-        expect(wrapper.find(".vc-load-more").exists()).toBe(false);
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+        expect(wrapper.get(".vc-load-more").find(".vc-loader").exists()).toBe(true);
+        expect(wrapper.emitted("loadMore")).toBeUndefined();
       });
 
       // The first items answer the empty query, so nothing has to be answered again.
@@ -1259,46 +1279,6 @@ describe("VcSelect", () => {
         await input.trigger("click");
         await input.setValue("b");
         await input.setValue("");
-        await vi.advanceTimersByTimeAsync(300);
-
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
-      });
-
-      // Paging stories push into the same array; that is an answer as much as a new one.
-      it("takes an answer spliced into the same items array", async () => {
-        const items = reactive([...ITEMS]);
-        // Through a parent: the mount factory deep-merges props, which would copy the array.
-        const parent = defineComponent({
-          setup: () => () =>
-            h(VcSelect as never, { items, autocomplete: true, serverFilter: true, onSearch: noop, hasNextPage: true }),
-        });
-        const wrapper = createWrapperFactory(mount, parent, {
-          attachTo: document.body,
-          global: { components: UIKitComponents, directives: { maska: vMaska } },
-        })();
-        const input = wrapper.get("input");
-
-        await input.trigger("click");
-        await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
-
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
-
-        items.splice(0, items.length, "Belgium");
-        await nextTick();
-
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
-      });
-
-      // The answer to "bel" lands after "belx" was typed; typing "bel" again needs no new fetch.
-      it("remembers an answer that landed while the user typed on", async () => {
-        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
-        const input = wrapper.get("input");
-
-        await wrapper.setProps({ items: ["Belgium"] });
-        await input.setValue("belx");
-        await wrapper.setProps({ loading: false });
-        await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(300);
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
@@ -1326,14 +1306,11 @@ describe("VcSelect", () => {
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("");
       });
 
-      it.each([
-        ["off, so the local filter answers the query", false, true],
-        ["on, so the query typed waits for the server", true, false],
-      ])("follows server-filter switched %s", async (_label, serverFilter, pagerOn) => {
+      it("hands paging back to the local filter once server-filter is switched off", async () => {
         const wrapper = createWrapper({
           items: ITEMS,
           autocomplete: true,
-          serverFilter: !serverFilter,
+          serverFilter: true,
           onSearch: noop,
           hasNextPage: true,
         });
@@ -1341,23 +1318,22 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("bel");
-        await wrapper.setProps({ serverFilter });
+        await wrapper.setProps({ serverFilter: false });
 
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(pagerOn);
+        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
-      // Items that changed under the local filter answered no query.
-      it("waits for the server once switched on, even after the items changed", async () => {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop, hasNextPage: true });
+      // The query went out while the local filter answered it; the server has not seen it as its own.
+      it("sends the query on screen once server-filter is switched on", async () => {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop });
         const input = wrapper.get("input");
 
         await input.trigger("click");
         await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(300);
-        await wrapper.setProps({ items: [...ITEMS, "Benin"] });
         await wrapper.setProps({ serverFilter: true });
 
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
+        expect(wrapper.emitted("search")).toEqual([["bel"], ["bel"]]);
       });
 
       it("has nothing to wait for when switched on with no query", async () => {
@@ -1369,8 +1345,8 @@ describe("VcSelect", () => {
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
-      // The answer is in; a further page loading must not mute the count of what is listed.
-      it("keeps counting the options while a list that has them loads", async () => {
+      // A load cannot tell a further page from a query's answer, so neither is counted until it lands.
+      it("stays silent while a server-side list loads, whatever it holds", async () => {
         const wrapper = createWrapperWithMessages({
           items: ITEMS,
           autocomplete: true,
@@ -1383,9 +1359,12 @@ describe("VcSelect", () => {
         await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(300);
         await wrapper.setProps({ items: ["Belgium"] });
-        await wrapper.setProps({ loading: true });
 
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("1 results available");
+
+        await wrapper.setProps({ loading: true });
+
+        expect(wrapper.get('[aria-live="polite"]').text()).toBe("");
       });
 
       it("says there are no results once an empty answer has loaded", async () => {
@@ -1404,19 +1383,6 @@ describe("VcSelect", () => {
         await wrapper.setProps({ loading: false });
 
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("No results found");
-      });
-
-      // Emptying the list while loading is the consumer starting the query, not answering it.
-      it("waits through items cleared while the query loads", async () => {
-        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
-
-        await wrapper.setProps({ items: [] });
-
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
-
-        await wrapper.setProps({ items: ["Belgium"], loading: false });
-
-        expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
       // The options on screen still answer the previous query; the event would name the new one.
@@ -1441,44 +1407,41 @@ describe("VcSelect", () => {
         expect(wrapper.emitted("update:modelValue")).toBeUndefined();
 
         await vi.advanceTimersByTimeAsync(300);
-        await wrapper.setProps({ items: ["China"] });
+        await wrapper.setProps({ loading: true });
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("selectAll")).toBeUndefined();
+
+        await wrapper.setProps({ items: ["China"], loading: false });
         await wrapper.get(".vc-select-all input").trigger("change");
 
         expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "chi" }]]);
       });
 
-      // A consumer need not fetch again for the query its items already answer.
-      it.each([
-        ["a query typed and deleted before it went out", ["b", ""]],
-        ["an answered query typed again", ["belx", "bel"]],
-      ])("hands paging back for %s", async (_label, queries) => {
+      // A min-length guard or a trimmed query: the consumer keeps its items, and they answer it.
+      it("keeps paging and Select all for a query the consumer skips", async () => {
         const wrapper = createWrapper({
           items: ITEMS,
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
           hasNextPage: true,
+          multiple: true,
+          selectAll: true,
+          modelValue: [],
+          onSelectAll: () => undefined,
         });
         const input = wrapper.get("input");
 
         await input.trigger("click");
-        await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
-        await wrapper.setProps({ items: ["Belgium"] });
-
-        if (queries[1] === "") {
-          await input.setValue("");
-          await vi.advanceTimersByTimeAsync(300);
-          await wrapper.setProps({ items: [...ITEMS] });
-        }
-
-        for (const query of queries) {
-          await input.setValue(query);
-        }
-
+        await input.setValue("be");
         await vi.advanceTimersByTimeAsync(300);
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
+
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "be" }]]);
       });
 
       it("hands paging back once the answer lands", async () => {
@@ -1515,8 +1478,24 @@ describe("VcSelect", () => {
 
       const announced = (wrapper: VueWrapper) => wrapper.get('[aria-live="polite"]').text();
 
-      it("stays silent until the consumer answers", async () => {
-        expect(announced(await typeQuery())).toBe("");
+      it("stays silent until the query goes out", async () => {
+        const wrapper = createWrapperWithMessages({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("zzz");
+        await vi.advanceTimersByTimeAsync(299);
+
+        expect(announced(wrapper)).toBe("");
+      });
+
+      it("counts the options on screen for a query the consumer skips", async () => {
+        expect(announced(await typeQuery())).toBe("3 results available");
       });
 
       it("stays silent while the consumer is loading", async () => {
