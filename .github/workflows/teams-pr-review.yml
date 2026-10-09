@@ -1,0 +1,51 @@
+name: Notify Teams about PR reviews
+
+# One card per PR in the Teams "PR review" channel, kept in sync with the review state (VCST-6259).
+# The action builds the card, a Teams Workflows flow posts or updates it. Secrets: TEAMS_PR_WEBHOOK
+# (the flow URL) and TEAMS_USERS ({"github-login": "Entra Object ID"}).
+# Without secrets (Dependabot and fork PRs) the action skips the run.
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, converted_to_draft,
+            review_requested, review_request_removed, closed,
+            synchronize, edited, labeled, unlabeled]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+
+jobs:
+  card:
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: skipped in the private theme mirror (VCST-5970).
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true')
+    runs-on: ubuntu-latest
+    # One PR's card runs in order, so a slower run never overwrites the card with an older state and two runs never
+    # post two cards. GitHub cancels queued runs in between, which is fine here: every run rebuilds the whole card.
+    concurrency:
+      group: teams-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      pull-requests: read
+    steps:
+      # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@43188f8cb8d63db38caee688a9e66bd46972160b # vcst-6259-teams-pr-review-notification
+        with:
+          mode: card
+          webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
+          teams-users: ${{ secrets.TEAMS_USERS }}
+
+  ping:
+    # Re-review and review comments messages, one run per event and never queued, so none is cancelled.
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true') && (github.event.action == 'review_requested' || github.event_name == 'pull_request_review')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@43188f8cb8d63db38caee688a9e66bd46972160b # vcst-6259-teams-pr-review-notification
+        with:
+          mode: ping
+          webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
+          teams-users: ${{ secrets.TEAMS_USERS }}
