@@ -14,7 +14,7 @@
 | **`useExtensionRegistry()`**   | Global store + API                                                                                                                               |
 | **`ExtensionPoint`**           | Placeholder component to render registered extension; renders default slot for each unregistered entry                                           |
 | **`ExtensionPointList`**       | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
-| **`$canRenderExtensionPoint`** | Global helper that evaluates `condition`                                                                                                         |
+| **`$canRenderExtensionPoint`** | Global helper that evaluates `condition`; also true while a pending federated plugin's declaration holds the slot                             |
 
 ---
 
@@ -98,8 +98,12 @@ The rules, because they are not obvious:
   That works: the extension point keys the contribution on the FUNCTION it registered, not on the
   name, so the old one is disposed and the new one starts. Keying on the name alone used to leave
   the old contribution running with its query alive while the replacement was never called.
-- **`$canRenderExtensionPoint` is false for a contribution** (it answers "has a component"). Never
-  gate a decorate-capable point on it.
+- **`$canRenderExtensionPoint` is false for a contribution** (it answers "has a component", or "a
+  pending plugin holds this slot"). Never gate a decorate-capable point on it.
+- **A slot a federated plugin declared is held while that plugin loads.** `ExtensionPoint` renders a
+  reserve box (`extension-point-reserve.vue`) instead of the fallback or the component, and
+  `ExtensionPointList` lists the declared name before anything is registered. See "Declaring
+  contributions" in `core/federation/HOWTO.md`.
 
 > **Recommendation**
 >
