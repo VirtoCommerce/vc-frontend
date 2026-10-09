@@ -19,8 +19,8 @@ on:
 
 jobs:
   ci:
-    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): every job here is skipped in the private theme mirror (VCST-5970).
-    if: ${{ github.repository_id == '296335982' &&
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: every job here is skipped in the private theme mirror (VCST-5970).
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
@@ -62,6 +62,32 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check per-repository settings
+        # Outside vc-frontend, the Sonar key and archive name would otherwise fall back to vc-frontend's and overwrite them.
+        if: ${{ github.repository_id != '296335982' }}
+        env:
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_PROJECT_KEY" ]; then
+            echo "::error::Set the SONAR_PROJECT_KEY repository variable: without it SonarCloud analyses go to vc-frontend's project."
+            exit 1
+          fi
+          if [ "$(jq -er .name package.json)" = 'vc-theme-b2b-vue' ]; then
+            echo "::error::Rename the package in package.json: build archives named vc-theme-b2b-vue-* overwrite vc-frontend's."
+            exit 1
+          fi
+
+      - name: Check E2E_TEST_SUITES
+        if: ${{ vars.E2E_TEST_SUITES != '' }}
+        env:
+          E2E_TEST_SUITES: ${{ vars.E2E_TEST_SUITES }}
+        run: |
+          # A blank value would reach auto-tests as a suite list that matches nothing, and the job would pass with no tests.
+          if [ -z "${E2E_TEST_SUITES//[[:space:],]/}" ]; then
+            echo "::error::E2E_TEST_SUITES is blank. Unset it to run graphql,e2e,restapi, or list the suites."
+            exit 1
+          fi
+
       - name: Get Image Version
         uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
         with:
@@ -100,6 +126,8 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+        with:
+          args: ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -168,7 +196,7 @@ jobs:
           name: ${{ steps.image.outputs.prefix }}
           draft: false
           prerelease: false
-          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_vc-frontend)"
+          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_${{ github.event.repository.name }})"
           tag_name: ${{ steps.image.outputs.prefix }}
           files: artifacts/${{ steps.blobRelease.outputs.blobId }}
           target_commitish: ${{ github.ref_name }}
@@ -201,7 +229,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Build Info to Jira
-        if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
         uses: VirtoCommerce/jira-upload-build-info@master
         with:
@@ -226,7 +254,7 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
       - name: Update Jira Tasks with Release Number
-        if: ${{ github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_id == '296335982' && github.ref == 'refs/heads/master' }}
         uses: VirtoCommerce/.github/actions/update-jira-tasks-with-release-number@v3.1000.1
         with:
           ghRepository: ${{ github.repository }}
@@ -254,7 +282,7 @@ jobs:
           Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
   auto-tests:
     needs: ci
-    if: ${{ github.repository_id == '296335982' &&
+    if: ${{ (github.repository_id == '296335982' || vars.VC_E2E == 'true') &&
         (((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
     uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.1000.1
@@ -264,7 +292,7 @@ jobs:
       vctestingRepoBranch: 'dev'
       frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
       customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/${{ needs.ci.outputs.branchName }}/backend-packages.json'
-      testSuites: 'graphql,e2e,restapi'
+      testSuites: ${{ vars.E2E_TEST_SUITES || 'graphql,e2e,restapi' }}
     secrets:
       appInsightsInstrumentationKey: ${{ secrets.E2E_APPINSIGHTSINSTRUMENTATIONKEY }}
       envPAT: ${{ secrets.REPO_TOKEN }}

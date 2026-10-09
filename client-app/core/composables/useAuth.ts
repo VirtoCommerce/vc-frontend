@@ -98,6 +98,27 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
+  //  Signs in with a custom grant.  Existing state is replaced completely.
+  async function authorizeWithGrant(params: URLSearchParams): Promise<ConnectTokenResponseType | null> {
+    getTokenParams.value = params;
+
+    await (getTokenRequest = getToken(true));
+
+    const response = data.value;
+
+    if (response?.access_token && response.token_type && response.expires_in) {
+      state.value = {
+        ...INITIAL_STATE,
+        token_type: response.token_type,
+        access_token: response.access_token,
+        refresh_token: response.refresh_token ?? null,
+        expires_at: new Date(Date.now() + response.expires_in * 1000),
+      };
+    }
+
+    return response;
+  }
+
   async function externalSignInCallback(): Promise<void> {
     getTokenParams.value = new URLSearchParams({
       grant_type: "external_sign_in",
@@ -157,6 +178,11 @@ function _useAuth() {
     state.value = { ...INITIAL_STATE };
   }
 
+  // Drops the stored tokens without revoking them, for tokens the server no longer accepts
+  function resetTokens() {
+    state.value = { ...INITIAL_STATE };
+  }
+
   function isExpired() {
     if (state.value.refresh_token === null || state.value.expires_at === null) {
       return null;
@@ -189,10 +215,12 @@ function _useAuth() {
     lockoutSecondsRemaining,
     isAuthorizing,
     authorize,
+    authorizeWithGrant,
     externalSignInCallback,
     otpSignIn,
     refresh,
     unauthorize,
+    resetTokens,
 
     setTokenType,
     setAccessToken,
