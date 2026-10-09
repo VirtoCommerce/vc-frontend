@@ -329,7 +329,7 @@ export const WithInfiniteScroll: StoryType = {
             </div>
           </div>
 
-          <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
+          <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore" />
         </VcScrollbar>
       </div>
     `,
@@ -363,7 +363,7 @@ async function loadMore() {
       {{ item.name }}
     </div>
 
-    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
+    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore" />
   </VcScrollbar>
 </template>
         `,

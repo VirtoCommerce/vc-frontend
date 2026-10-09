@@ -24,6 +24,12 @@ const meta: Meta<typeof VcLoadMore> = {
       control: "boolean",
       description: "A page is on its way: shows the spinner and holds back further requests.",
     },
+    itemCount: {
+      control: "number",
+      description:
+        "How many items are loaded. Bind it: a request counts as answered once the count grows, so a failed " +
+        "page is not repeated and a filtered list that showed no new row keeps paging.",
+    },
     tag: { control: "text" },
   },
 };
@@ -77,7 +83,13 @@ const listTemplate = (loadMoreMarkup: string) => `
 `;
 
 const DEFAULT_LOAD_MORE = `
-  <VcLoadMore v-bind="args" :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
+  <VcLoadMore
+    v-bind="args"
+    :loading="loading"
+    :has-next-page="hasNextPage"
+    :item-count="items.length"
+    @load-more="loadMore"
+  />
 `;
 
 const STATES = [

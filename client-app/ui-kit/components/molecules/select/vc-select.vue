@@ -156,6 +156,7 @@
               class="vc-select__more"
               :loading="loading"
               :has-next-page="hasNextPage && !awaitingServerItems"
+              :item-count="items.length"
               @load-more="$emit('loadMore')"
             >
               <template v-if="$slots.loading" #loading>

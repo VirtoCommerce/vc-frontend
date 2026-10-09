@@ -105,7 +105,12 @@
         {{ $t("shared.layout.header.top_header.no_results") }}
       </div>
 
-      <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
+      <VcLoadMore
+        :loading="loading"
+        :has-next-page="hasNextPage"
+        :item-count="organizations.length"
+        @load-more="loadOrganizations"
+      />
     </VcScrollbar>
   </div>
 </template>

@@ -43,6 +43,10 @@ type StateType = {
   rowLabel: string;
   imageRows: boolean;
   present: boolean;
+  /** Bound as `item-count` when set. */
+  itemCount: number | undefined;
+  /** A consumer's "No results" row, shown while nothing is loaded and nothing is loading. */
+  emptyRow: boolean;
 };
 
 /**
@@ -58,6 +62,8 @@ function mountList(initial: Partial<StateType> = {}) {
     rowLabel: "row",
     imageRows: false,
     present: true,
+    itemCount: undefined,
+    emptyRow: false,
     ...initial,
   });
   const onLoadMore = vi.fn();
@@ -68,10 +74,12 @@ function mountList(initial: Partial<StateType> = {}) {
         return () =>
           h(VcScrollbar, { vertical: true }, () => [
             ...renderRows(state.rows, state.rowLabel, state.imageRows),
+            state.emptyRow && !state.rows && !state.loading ? h("p", { key: "empty" }, "No results") : null,
             state.present
               ? h(VcLoadMore, {
                   loading: state.loading,
                   hasNextPage: state.hasNextPage,
+                  itemCount: state.itemCount,
                   onLoadMore,
                 })
               : null,
@@ -394,5 +402,98 @@ describe("VcLoadMore", () => {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("VcLoadMore"));
 
     warn.mockRestore();
+  });
+
+  describe("with the item count bound", () => {
+    // The org switcher keeps `hasNextPage` on a failed first page; its empty row gives way to the
+    // spinner while loading, which a rendered-rows reading takes for a rebuilt list.
+    it("asks once for a first page that keeps failing behind an empty state", async () => {
+      const { state, onLoadMore, region } = mountList({ rows: 0, itemCount: 0, emptyRow: true });
+
+      describeFittingContent(region);
+      await afterContentSettles();
+
+      for (let attempt = 0; attempt < 3; attempt++) {
+        state.loading = true;
+        await afterContentSettles();
+        state.loading = false;
+        await afterContentSettles();
+      }
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    // A locally filtered list: the page landed, no new row matched, so nothing visible changed.
+    it("asks again once the count grew though no visible row changed", async () => {
+      const { state, onLoadMore, region } = mountList({ rows: 2, itemCount: 2 });
+
+      describeFittingContent(region);
+      await afterContentSettles();
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      state.loading = true;
+      await afterContentSettles();
+
+      state.itemCount = 4;
+      state.loading = false;
+      region.firstElementChild?.setAttribute("data-probe", "re-measure");
+      await afterContentSettles();
+
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not ask again for a page that added nothing to the count", async () => {
+      const { state, onLoadMore, region } = mountList({ rows: 2, itemCount: 2 });
+
+      describeFittingContent(region);
+      await afterContentSettles();
+
+      state.loading = true;
+      await afterContentSettles();
+
+      state.loading = false;
+      region.firstElementChild?.setAttribute("data-probe", "re-measure");
+      await afterContentSettles();
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it("asks again for a list emptied and rebuilt identical while a search loads", async () => {
+      const { state, onLoadMore, region } = mountList({ rows: 3, itemCount: 3 });
+
+      describeFittingContent(region);
+      await afterContentSettles();
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      state.loading = true;
+      state.rows = 0;
+      state.itemCount = 0;
+      await afterContentSettles();
+
+      state.rows = 3;
+      state.itemCount = 3;
+      state.loading = false;
+      await afterContentSettles();
+
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  // VcSelect turns the next page off for a query typed and deleted within its debounce, then on again
+  // over the same rows: no row changes, so no measurement comes.
+  it("asks when a next page appears on an idle list already at its bottom", async () => {
+    const { state, onLoadMore, region } = mountList({ hasNextPage: false });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).not.toHaveBeenCalled();
+
+    state.hasNextPage = true;
+    await nextTick();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 });

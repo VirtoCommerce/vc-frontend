@@ -339,6 +339,29 @@ describe("TopHeaderOrganizations", () => {
     expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
   });
 
+  // A failed first page keeps `hasNextPage` on, and the empty message gives way to the spinner while
+  // each retry loads: without the item count the pager reads that swap as a new list and asks forever.
+  it("asks once for a first page that keeps failing behind the empty message", async () => {
+    state.organizations.value = [];
+    state.hasNextPage.value = true;
+    const wrapper = mountComponent();
+
+    describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 400,
+      scrollTop: 0,
+    });
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      state.loading.value = true;
+      await new Promise((resolve) => setTimeout(resolve, 160));
+      state.loading.value = false;
+      await new Promise((resolve) => setTimeout(resolve, 160));
+    }
+
+    expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
+  });
+
   it("shows the empty message when nothing was found", async () => {
     state.organizations.value = [];
     const wrapper = mountComponent();

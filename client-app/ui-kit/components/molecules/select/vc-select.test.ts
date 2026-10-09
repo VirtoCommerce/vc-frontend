@@ -1605,6 +1605,32 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("loadMore")).toHaveLength(1);
     });
 
+    // Under a local query the visible rows stay the same when a page brings no match; the pager
+    // must count the loaded items, not the rows, or the later pages that do match are never asked for.
+    it("keeps asking under a local query after a page that brought no visible match", async () => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, autocomplete: true });
+      const input = wrapper.get("input");
+
+      await input.setValue("chi");
+      describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+        clientHeight: 400,
+        scrollHeight: 400,
+        scrollTop: 0,
+      });
+      await wrapper.setProps({ items: [...ITEMS, "Chile"] });
+      await afterContentSettles();
+
+      expect(wrapper.emitted("loadMore")).toHaveLength(1);
+
+      await wrapper.setProps({ loading: true });
+      await afterContentSettles();
+      await wrapper.setProps({ items: [...ITEMS, "Chile", "Denmark", "Estonia"], loading: false });
+      await afterContentSettles();
+
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["China", "Chile"]);
+      expect(wrapper.emitted("loadMore")).toHaveLength(2);
+    });
+
     // Paging appends, so the highlighted option has not moved and the highlight survives.
     it("keeps the highlight when a further page is appended", async () => {
       const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
