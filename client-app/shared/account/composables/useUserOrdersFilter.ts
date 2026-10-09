@@ -7,6 +7,7 @@ import {
   toEndDateFilterValue,
   toStartDateFilterValue,
   toDateISOString,
+  toLocalDateOnly,
 } from "@/core/utilities";
 import { useUser } from "./useUser";
 import { facets } from "./useUserOrders";
@@ -100,15 +101,14 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
 
     const firstDayOfWeek = getFirstDayOfWeek(currentDate);
 
-    const lastWeekStartDate = new Date(currentDate);
+    const lastWeekStartDate = new Date(firstDayOfWeek);
     lastWeekStartDate.setDate(firstDayOfWeek.getDate() - 7);
 
-    const lastWeekEndDate = new Date(currentDate);
-    lastWeekEndDate.setDate(firstDayOfWeek.getDate());
+    const lastWeekEndDate = new Date(firstDayOfWeek);
 
     const lastMonthStartDate = new Date(currentDate);
-    lastMonthStartDate.setMonth(currentDate.getMonth() - 1);
     lastMonthStartDate.setDate(1);
+    lastMonthStartDate.setMonth(currentDate.getMonth() - 1);
 
     const lastMonthEndDate = new Date(currentDate);
     lastMonthEndDate.setDate(1);
@@ -131,26 +131,26 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
       {
         id: DateFilterId.LAST_DAY,
         label: t("common.labels.last_day"),
-        startDate: lastDayStartDate.toISOString(),
-        endDate: currentDate.toISOString(),
+        startDate: toLocalDateOnly(lastDayStartDate),
+        endDate: toLocalDateOnly(currentDate),
       },
       {
         id: DateFilterId.LAST_WEEK,
         label: t("common.labels.last_week"),
-        startDate: lastWeekStartDate.toISOString(),
-        endDate: lastWeekEndDate.toISOString(),
+        startDate: toLocalDateOnly(lastWeekStartDate),
+        endDate: toLocalDateOnly(lastWeekEndDate),
       },
       {
         id: DateFilterId.LAST_MONTH,
         label: t("common.labels.last_month"),
-        startDate: lastMonthStartDate.toISOString(),
-        endDate: lastMonthEndDate.toISOString(),
+        startDate: toLocalDateOnly(lastMonthStartDate),
+        endDate: toLocalDateOnly(lastMonthEndDate),
       },
       {
         id: DateFilterId.LAST_YEAR,
         label: t("common.labels.last_year"),
-        startDate: lastYearStartDate.toISOString(),
-        endDate: lastYearEndDate.toISOString(),
+        startDate: toLocalDateOnly(lastYearStartDate),
+        endDate: toLocalDateOnly(lastYearEndDate),
       },
     ];
   }
