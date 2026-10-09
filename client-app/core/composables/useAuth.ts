@@ -178,6 +178,11 @@ function _useAuth() {
     state.value = { ...INITIAL_STATE };
   }
 
+  // Drops the stored tokens without revoking them, for tokens the server no longer accepts
+  function resetTokens() {
+    state.value = { ...INITIAL_STATE };
+  }
+
   function isExpired() {
     if (state.value.refresh_token === null || state.value.expires_at === null) {
       return null;
@@ -215,6 +220,7 @@ function _useAuth() {
     otpSignIn,
     refresh,
     unauthorize,
+    resetTokens,
 
     setTokenType,
     setAccessToken,

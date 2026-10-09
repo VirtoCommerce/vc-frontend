@@ -2,6 +2,7 @@ import { provideApolloClient } from "@vue/apollo-composable";
 import { useEventListener } from "@vueuse/core";
 import { defineAsyncComponent, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql/client";
+import { useAuth } from "@/core/composables/useAuth";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useSignMeOut } from "@/shared/account/composables/useSignMeOut";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -24,9 +25,15 @@ provideApolloClient(apolloClient);
 // Drops a punchout session. Sign-out reloads the page, so this check is actually ends the session (a watch would be racing the reload)
 function endSessionIfSignedOut() {
   const { isAuthenticated } = useUser();
-  const { endSession } = usePunchoutSession();
+  const { isPunchoutMode, endSession } = usePunchoutSession();
+  const { resetTokens } = useAuth();
 
   if (!isAuthenticated.value) {
+    // The session token expired while no tab was open: the server already rejects it and the grant has no refresh token
+    if (isPunchoutMode.value) {
+      resetTokens();
+    }
+
     endSession();
   }
 }
