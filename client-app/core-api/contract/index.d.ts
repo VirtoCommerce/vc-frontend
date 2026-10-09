@@ -2830,7 +2830,7 @@ interface IProps$i {
      */
     highlightRing?: boolean;
     /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
-    tabindex?: number;
+    tabindex?: number | string;
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};
@@ -2848,7 +2848,7 @@ declare const __VLS_base$8: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.Co
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
-    tabindex: number;
+    tabindex: number | string;
     color: VcMenuItemColorType;
     clickable: boolean;
     highlightRing: boolean;
@@ -3042,7 +3042,8 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
          * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
          * in the `search` handler and keep it until the new `items` are in: while it is on, Select all
          * is ignored and no result count is announced. A query the consumer skips (too short, the same
-         * once trimmed) needs nothing — the `items` on screen are taken as its answer.
+         * once trimmed) needs nothing — the `items` on screen are taken as its answer. An answer to an
+         * older query must not end `loading` early: cancel it, as Apollo does for changed variables.
          */
         serverFilter?: boolean;
         testIdDropdown?: string;

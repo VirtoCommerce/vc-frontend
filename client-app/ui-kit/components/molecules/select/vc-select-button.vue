@@ -114,7 +114,6 @@ defineExpose({
 
   @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-start;
 
-  // `auto` declares none of the three, so each declaration is unset: no minimum, inherited text.
   min-height: var(--min-height);
   font-size: var(--text-size);
   line-height: var(--line-height);
@@ -127,6 +126,14 @@ defineExpose({
         --text-size: #{field-text-size($size)};
         --line-height: #{field-line-height($size)};
       }
+    }
+
+    // Guaranteed-invalid, so each declaration is unset (no minimum, inherited text) rather than
+    // taking an ancestor's same-named property.
+    &--auto {
+      --min-height: initial;
+      --text-size: initial;
+      --line-height: initial;
     }
   }
 

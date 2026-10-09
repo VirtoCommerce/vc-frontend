@@ -225,6 +225,15 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBe("-1");
     });
 
+    // Long dialog content holding a disabled select: the region is still the only way to scroll it.
+    it("stays a tab stop around an interactive role nested deeper than its direct child", async () => {
+      const wrapper = await mountOverflowing(() =>
+        h("div", [h("p", "terms"), h("div", [h("input", { role: "combobox", disabled: true })])]),
+      );
+
+      expect(wrapper.attributes("tabindex")).toBe("0");
+    });
+
     // A popup's list is measured a debounce after it opens; the -1 must already be there.
     it("keeps a listbox region out of the tab order before it overflows", async () => {
       const wrapper = mount(VcScrollbar, {

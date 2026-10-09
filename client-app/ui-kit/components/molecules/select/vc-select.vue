@@ -273,7 +273,8 @@ const props = withDefaults(
      * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
      * in the `search` handler and keep it until the new `items` are in: while it is on, Select all
      * is ignored and no result count is announced. A query the consumer skips (too short, the same
-     * once trimmed) needs nothing — the `items` on screen are taken as its answer.
+     * once trimmed) needs nothing — the `items` on screen are taken as its answer. An answer to an
+     * older query must not end `loading` early: cancel it, as Apollo does for changed variables.
      */
     serverFilter?: boolean;
     testIdDropdown?: string;
@@ -712,7 +713,7 @@ if (import.meta.env.DEV) {
   }
 }
 
-// `multiple` with `valueField` used to store whole items; such a model now matches no option.
+// A `multiple` model holding whole items instead of `valueField` values matches no option, so warn in dev.
 if (import.meta.env.DEV) {
   let warnedItemModel = false;
 
@@ -893,9 +894,13 @@ function onTab(event: KeyboardEvent) {
   // The card is the select's own: VcPopover only places it. May be teleported, so it declares its
   // own tokens.
   &__dropdown {
-    --dropdown-max-height: var(--vc-select-dropdown-max-height, 12rem);
-    --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-radius, 0.5rem));
-    --dropdown-bg-color: var(--vc-select-dropdown-bg-color, var(--color-additional-50));
+    // VcDropdownMenu's tokens style it too, as themes and forks set them for every dropdown list.
+    --dropdown-max-height: var(--vc-select-dropdown-max-height, var(--vc-dropdown-menu-max-height, 12rem));
+    --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem)));
+    --dropdown-bg-color: var(
+      --vc-select-dropdown-bg-color,
+      var(--vc-dropdown-menu-bg-color, var(--color-additional-50))
+    );
 
     @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] shadow-lg select-none;
   }

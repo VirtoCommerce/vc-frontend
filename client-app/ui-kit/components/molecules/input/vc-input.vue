@@ -328,6 +328,14 @@ provide<VcInputContextType>("inputContext", {
       }
     }
 
+    // Guaranteed-invalid, so the declarations reading them are unset rather than taking an
+    // ancestor's same-named property (VcButton declares all three).
+    &--auto {
+      --height: initial;
+      --text-size: initial;
+      --line-height: initial;
+    }
+
     &--xs {
       $sizeXs: &;
     }

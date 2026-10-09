@@ -20,7 +20,7 @@ export function useSalesRepCustomerOptions() {
     storeId: globals.storeId,
     first: OPTIONS_LIMIT,
     after: "0",
-    // Nothing to send: `VcSelect` filters over the items it was given and emits no search text.
+    // Filtered in the picker over the loaded options: it binds no `server-filter`, so no keyword is sent.
     keyword: "",
     sort: "name:asc",
   }));
