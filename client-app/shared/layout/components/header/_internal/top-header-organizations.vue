@@ -330,12 +330,16 @@ async function onSearchClear(): Promise<void> {
     @apply my-1 max-h-60 w-full select-none;
   }
 
+  // The ring goes on the frame, not the listbox: the list is taller than the region scrolling it, so
+  // a ring of its own would be cut off at the region's edge.
   &__listbox {
     $listbox: &;
+
+    &:focus-visible {
+      @apply outline-none;
+    }
   }
 
-  // On the frame, not the listbox: the list is taller than the region scrolling it, so a ring of its
-  // own would be cut off at the region's edge.
   &__frame {
     &:has(#{$listbox}:focus-visible) {
       @include focus-ring($inset: true);
