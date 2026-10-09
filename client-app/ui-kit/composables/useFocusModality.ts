@@ -7,7 +7,7 @@ import type { Ref } from "vue";
  * a text input even for a click, which a read-only select trigger must not ring for. Document-wide,
  * because the focus a closing dropdown hands back is programmatic and looks like a Tab locally.
  */
-const useFocusModalityState = createGlobalState(() => {
+function _useFocusModalityState(): Readonly<Ref<boolean>> {
   const isPointerFocus = ref(false);
 
   // Capture phase: a handler that calls stopPropagation must not be able to hide the modality.
@@ -15,8 +15,13 @@ const useFocusModalityState = createGlobalState(() => {
   useEventListener(globalThis.document, "keydown", () => (isPointerFocus.value = false), { capture: true });
 
   return readonly(isPointerFocus);
-});
+}
+
+// Created on first use, not on import: importing the kit must not call into `@vueuse/core`.
+let useFocusModalityState: (() => Readonly<Ref<boolean>>) | undefined;
 
 export function useFocusModality(): { isPointerFocus: Readonly<Ref<boolean>> } {
+  useFocusModalityState ??= createGlobalState(_useFocusModalityState);
+
   return { isPointerFocus: useFocusModalityState() };
 }
