@@ -17,8 +17,6 @@ import type { ExtendedMenuLinkType, MenuType } from "@/core/types";
 import type { DeepPartial } from "utility-types";
 import type { RouteRecordRaw, Router } from "vue-router";
 
-export { PLACEHOLDER_META_KEY };
-
 const PluginRoutePlaceholder = () => import("./plugin-route-placeholder.vue");
 
 interface IDeclaredSlotType {

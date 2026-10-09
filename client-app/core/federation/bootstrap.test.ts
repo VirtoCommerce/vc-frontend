@@ -330,6 +330,7 @@ describe("startFederatedModules with declared plugins", () => {
       },
       resolve: vi.fn(() => ({ name: "LatePage" })),
       replace,
+      isReady: () => Promise.resolve(),
     };
     vi.doMock("@/core/globals", () => ({ globals: { router } }));
     const all = deferred();
@@ -343,6 +344,65 @@ describe("startFederatedModules with declared plugins", () => {
     await flushPromises();
 
     expect(replace).toHaveBeenCalledWith({ path: "/company/late", query: {}, hash: "", force: true });
+  });
+
+  it("re-checks the URL after the first navigation when every plugin settled during it", async () => {
+    const replace = vi.fn(() => Promise.resolve());
+    const ready = deferred();
+    const currentRoute = {
+      value: {
+        name: undefined as string | undefined,
+        path: "/",
+        query: {},
+        hash: "",
+        fullPath: "/",
+        matched: [] as object[],
+      },
+    };
+    const router = {
+      currentRoute,
+      resolve: vi.fn(() => ({ name: "LatePage" })),
+      replace,
+      isReady: () => ready.promise,
+    };
+    vi.doMock("@/core/globals", () => ({ globals: { router } }));
+    stubLoader(Promise.resolve(), Promise.resolve());
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins: () => Promise.resolve([]) });
+    await flushPromises();
+    expect(replace).not.toHaveBeenCalled();
+
+    currentRoute.value = {
+      name: "Matcher",
+      path: "/company/late",
+      query: {},
+      hash: "",
+      fullPath: "/company/late",
+      matched: [{}],
+    };
+    ready.resolve();
+    await flushPromises();
+
+    expect(replace).toHaveBeenCalledWith({ path: "/company/late", query: {}, hash: "", force: true });
+  });
+
+  it("leaves the URL alone when the first navigation failed", async () => {
+    const replace = vi.fn();
+    const router = {
+      currentRoute: { value: { name: "Matcher", path: "/x", query: {}, hash: "", fullPath: "/x", matched: [{}] } },
+      resolve: vi.fn(() => ({ name: "LatePage" })),
+      replace,
+      isReady: () => Promise.reject(new Error("navigation failed")),
+    };
+    vi.doMock("@/core/globals", () => ({ globals: { router } }));
+    stubLoader(Promise.resolve(), Promise.resolve());
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins: () => Promise.resolve([]) });
+    await flushPromises();
+
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it("leaves a plugin route's placeholder to resolve itself once every plugin settled", async () => {
@@ -360,6 +420,7 @@ describe("startFederatedModules with declared plugins", () => {
       },
       resolve: vi.fn(() => ({ name: "NotFound" })),
       replace,
+      isReady: () => Promise.resolve(),
     };
     vi.doMock("@/core/globals", () => ({ globals: { router } }));
     stubLoader(Promise.resolve(), Promise.resolve());
@@ -377,6 +438,7 @@ describe("startFederatedModules with declared plugins", () => {
       currentRoute: { value: { name: "Home", path: "/", query: {}, hash: "", fullPath: "/", matched: [{}] } },
       resolve: vi.fn(() => ({ name: "Home" })),
       replace,
+      isReady: () => Promise.resolve(),
     };
     vi.doMock("@/core/globals", () => ({ globals: { router } }));
     stubLoader(Promise.resolve(), Promise.resolve());

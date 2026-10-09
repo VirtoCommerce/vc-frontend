@@ -2,7 +2,8 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { Logger } from "@/core/utilities";
-import { PLACEHOLDER_META_KEY, resetDeclaredSlots } from "./contributions/declare";
+import { resetDeclaredSlots } from "./contributions/declare";
+import { PLACEHOLDER_META_KEY } from "./contributions/placeholder";
 import { resetPluginStatuses, usePluginsStatus } from "./contributions/status";
 import {
   DEFAULT_DEFERRED_TIMEOUT_MS,
