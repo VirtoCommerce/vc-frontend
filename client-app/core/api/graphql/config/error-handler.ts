@@ -2,12 +2,22 @@ import { onError } from "@apollo/client/link/error";
 import { errorHandler as serverErrorHandler } from "@/core/api/common";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import { hasErrorCode, toServerError } from "@/core/api/graphql/utils";
+import { getAppInsights } from "@/core/plugins/applicationInsights.plugin";
 import { serializeError } from "@/core/utilities";
 import { TabsType, userLockedEvent, passwordExpiredEvent, useBroadcast, graphqlErrorEvent } from "@/shared/broadcast";
 import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
 
 export const errorHandlerLink = onError(({ operation, networkError, graphQLErrors }) => {
   const broadcast = useBroadcast();
+
+  // `timeoutLink` aborts with `AbortSignal.timeout`, so fetch rejects with a `TimeoutError`, not an `AbortError`.
+  // Variables are left out on purpose: they can carry passwords and personal data.
+  if (networkError?.name === "TimeoutError") {
+    getAppInsights()?.trackException({
+      exception: networkError,
+      properties: { type: "RequestTimeout", operationName: operation.operationName },
+    });
+  }
 
   const userLockedError = hasErrorCode(graphQLErrors, GraphQLErrorCode.UserLocked);
   const passwordExpired = hasErrorCode(graphQLErrors, GraphQLErrorCode.PasswordExpired);

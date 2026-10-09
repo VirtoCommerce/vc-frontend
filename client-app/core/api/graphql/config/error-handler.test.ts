@@ -14,11 +14,16 @@ import { errorHandlerLink } from "./error-handler";
 import type { GraphQLFormattedError } from "graphql";
 
 const emit = vi.hoisted(() => vi.fn());
+const trackException = vi.hoisted(() => vi.fn());
 
 vi.mock("@/shared/broadcast", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/shared/broadcast")>();
   return { ...actual, useBroadcast: () => ({ ...actual.useBroadcast(), emit }) };
 });
+
+vi.mock("@/core/plugins/applicationInsights.plugin", () => ({
+  getAppInsights: () => ({ trackException }),
+}));
 
 const QUERY = gql`
   query TestQuery {
@@ -68,6 +73,7 @@ function graphQLError(code: GraphQLErrorCode): GraphQLFormattedError {
 
 beforeEach(() => {
   emit.mockClear();
+  trackException.mockClear();
 });
 
 describe("errorHandlerLink", () => {
@@ -134,5 +140,26 @@ describe("errorHandlerLink", () => {
     );
 
     expect(emittedEvents()).toEqual([unauthorizedErrorEvent]);
+  });
+
+  it("reports a timed-out request to Application Insights, even when the operation opted out", async () => {
+    const timeoutError = new DOMException("signal timed out", "TimeoutError");
+
+    await run({ networkError: timeoutError });
+    await run({ networkError: timeoutError }, true);
+
+    expect(trackException).toHaveBeenCalledTimes(2);
+    expect(trackException).toHaveBeenLastCalledWith({
+      exception: timeoutError,
+      properties: { type: "RequestTimeout", operationName: "TestQuery" },
+    });
+    expect(emittedEvents()).toEqual([unhandledErrorEvent]);
+  });
+
+  it("does not report an explicitly aborted request or another network failure", async () => {
+    await run({ networkError: new DOMException("This operation was aborted", "AbortError") });
+    await run({ networkError: new Error("Failed to fetch") });
+
+    expect(trackException).not.toHaveBeenCalled();
   });
 });
