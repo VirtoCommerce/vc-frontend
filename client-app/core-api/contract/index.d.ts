@@ -3699,6 +3699,7 @@ type ExtensionCategoryMapType = {
         item: ExtendedMenuLinkType;
     }>;
     mobileHeader: ExtensionEntryType;
+    topHeaderStatus: ExtensionEntryType;
     productCard: ExtensionEntryType<{
         product?: Product;
         isTextShown?: boolean;
