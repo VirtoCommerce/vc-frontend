@@ -3013,7 +3013,10 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
         message?: string;
         autocomplete?: boolean;
         singleLineMessage?: boolean;
-        /** Allows several values; the model is then an array. */
+        /**
+         * Allows several values; the model is then an array. Primitive values are matched by lookup, object
+         * values deeply — for thousands of options over thousands of selections, pick a primitive `value-field`.
+         */
         multiple?: M & boolean;
         clearable?: boolean;
         /** Adds a Select all row above the options. Multiple mode only. */

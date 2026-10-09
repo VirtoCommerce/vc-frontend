@@ -549,6 +549,26 @@ describe("VcSelect", () => {
       await vi.advanceTimersByTimeAsync(300);
     }
 
+    // Nothing to select or clear: an event would report a change that did not happen.
+    it.each([
+      ["an empty list", { items: [] }, ""],
+      ["a query that matches nothing", {}, "zzz"],
+    ])("ignores Select all over %s", async (_label, props, query) => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: ["Albania"], autocomplete: true, ...props });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      if (query) {
+        await input.setValue(query);
+      }
+
+      await wrapper.get(".vc-select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+      expect(wrapper.emitted("selectAll")).toBeUndefined();
+    });
+
     it("is absent unless asked for", () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
 

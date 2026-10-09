@@ -44,73 +44,77 @@
       </VcInput>
     </div>
 
-    <VcScrollbar
-      vertical
-      :edge-threshold="50"
-      class="top-header-organizations__list"
-      @keydown="onListKeydown"
-      @mousedown="onListMousedown"
-    >
-      <!-- Only options may live in a listbox, so the empty state and the pager sit beside it. -->
-      <ul
-        :id="listboxId"
-        ref="listElement"
-        class="top-header-organizations__listbox"
-        role="listbox"
-        data-test-id="organizations-list"
-        :aria-label="$t('common.labels.organizations')"
-        :tabindex="isShowSearch ? undefined : 0"
-        :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
+    <div class="top-header-organizations__frame">
+      <VcScrollbar
+        vertical
+        :edge-threshold="50"
+        class="top-header-organizations__list"
+        @keydown="onListKeydown"
+        @mousedown="onListMousedown"
       >
-        <VcMenuItem
-          v-for="(item, index) in displayedOrganizations"
-          :key="item.id"
-          size="xs"
-          role="option"
-          :option-id="getOptionId(index)"
-          :highlighted="index === highlightedIndex"
-          :highlight-ring="!isPassiveHighlight"
-          :tabindex="-1"
-          :aria-selected="contactOrganizationId === item.id"
-          :disabled="item.isLockedForCurrentUser"
-          :title="
-            item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
-          "
-          @click="selectOrganization(item.id)"
-          @mousemove="highlightPassively(index)"
+        <!-- Only options may live in a listbox, so the empty state and the pager sit beside it. -->
+        <ul
+          :id="listboxId"
+          ref="listElement"
+          class="top-header-organizations__listbox"
+          role="listbox"
+          data-test-id="organizations-list"
+          :aria-label="$t('common.labels.organizations')"
+          :tabindex="isShowSearch ? undefined : 0"
+          :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
         >
-          <VcRadioButton
-            :model-value="contactOrganizationId"
-            :label="item.name"
-            :value="item.id"
-            :max-lines="2"
-            :title="item.name"
-            word-break="break-word"
-            :data-organization-name="item.name"
+          <VcMenuItem
+            v-for="(item, index) in displayedOrganizations"
+            :key="item.id"
+            size="xs"
+            role="option"
+            :option-id="getOptionId(index)"
+            :highlighted="index === highlightedIndex"
+            :highlight-ring="!isPassiveHighlight"
+            :tabindex="-1"
+            :aria-selected="contactOrganizationId === item.id"
             :disabled="item.isLockedForCurrentUser"
-          />
+            :title="
+              item.isLockedForCurrentUser
+                ? $t('shared.layout.header.top_header.organization_locked_tooltip')
+                : undefined
+            "
+            @click="selectOrganization(item.id)"
+            @mousemove="highlightPassively(index)"
+          >
+            <VcRadioButton
+              :model-value="contactOrganizationId"
+              :label="item.name"
+              :value="item.id"
+              :max-lines="2"
+              :title="item.name"
+              word-break="break-word"
+              :data-organization-name="item.name"
+              :disabled="item.isLockedForCurrentUser"
+            />
 
-          <template v-if="item.isLockedForCurrentUser" #append>
-            <VcIcon name="lock-closed" size="xs" />
-          </template>
-        </VcMenuItem>
-      </ul>
+            <template v-if="item.isLockedForCurrentUser" #append>
+              <VcIcon name="lock-closed" size="xs" />
+            </template>
+          </VcMenuItem>
+        </ul>
 
-      <div
-        v-if="organizations.length === 0 && !loading"
-        class="top-header-organizations__empty"
-        data-test-id="organizations-empty-list"
-      >
-        {{ $t("shared.layout.header.top_header.no_results") }}
-      </div>
+        <div
+          v-if="organizations.length === 0 && !loading"
+          class="top-header-organizations__empty"
+          data-test-id="organizations-empty-list"
+        >
+          {{ $t("shared.layout.header.top_header.no_results") }}
+        </div>
 
-      <VcLoadMore
-        :loading="loading"
-        :has-next-page="hasNextPage"
-        :item-count="organizations.length"
-        @load-more="loadOrganizations"
-      />
-    </VcScrollbar>
+        <VcLoadMore
+          :loading="loading"
+          :has-next-page="hasNextPage"
+          :item-count="organizations.length"
+          @load-more="loadOrganizations"
+        />
+      </VcScrollbar>
+    </div>
   </div>
 </template>
 
@@ -302,6 +306,8 @@ async function onSearchClear(): Promise<void> {
 @use "@/ui-kit/styles/focus-ring" as *;
 
 .top-header-organizations {
+  $listbox: "";
+
   @apply rounded-b-md border-t bg-neutral-50;
 
   &__error {
@@ -325,8 +331,13 @@ async function onSearchClear(): Promise<void> {
   }
 
   &__listbox {
-    // The scroll region clips an outset ring.
-    &:focus-visible {
+    $listbox: &;
+  }
+
+  // On the frame, not the listbox: the list is taller than the region scrolling it, so a ring of its
+  // own would be cut off at the region's edge.
+  &__frame {
+    &:has(#{$listbox}:focus-visible) {
       @include focus-ring($inset: true);
     }
   }

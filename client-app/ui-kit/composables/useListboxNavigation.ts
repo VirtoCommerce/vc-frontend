@@ -156,7 +156,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
         return;
       }
 
-      // By length, not truthiness: a key may be `0`, `""` or `false`.
+      // By length too: past the end a key reads `undefined`, as does an option whose key is unset.
       if (index >= previousKeys.length || index >= keys.length || keys[index] !== previousKeys[index]) {
         reset();
       }

@@ -242,7 +242,10 @@ const props = withDefaults(
     message?: string;
     autocomplete?: boolean;
     singleLineMessage?: boolean;
-    /** Allows several values; the model is then an array. */
+    /**
+     * Allows several values; the model is then an array. Primitive values are matched by lookup, object
+     * values deeply — for thousands of options over thousands of selections, pick a primitive `value-field`.
+     */
     // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
     // eslint-disable-next-line sonarjs/no-useless-intersection
     multiple?: M & boolean;
@@ -849,8 +852,9 @@ const selectAllLabel = computed(() =>
 // A partial list whose loaded options are all selected clears too: selecting would change nothing,
 // and the pages it lacks are the consumer's to add on `selectAll`.
 function onSelectAll() {
-  // The options on screen still answer the previous query, which the event would misreport.
-  if (isAnswerPending.value) {
+  // The options on screen still answer the previous query, which the event would misreport; with no
+  // option on screen there is nothing to select or clear.
+  if (isAnswerPending.value || !selectableValues.value.length) {
     return;
   }
 
@@ -915,6 +919,7 @@ function onTab(event: KeyboardEvent) {
   // clip cuts their focus ring at rest. Select all sits above the list, VcLoadMore below it. An
   // option scrolled against a corner is still cut, as in VcDropdownMenu.
   &__list {
+    // Separators between the options, as VcDropdownMenu draws them on its own list.
     @apply w-full divide-y divide-neutral-100;
 
     #{$scroll}:first-child & > :first-child {
@@ -930,6 +935,7 @@ function onTab(event: KeyboardEvent) {
     }
   }
 
+  // VcLoadMore renders only a spinner and has no separator of its own; the list's divider continues on it.
   &__more {
     @apply border-t border-neutral-100;
   }

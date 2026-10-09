@@ -73,6 +73,21 @@ describe("useListboxNavigation", () => {
     expect(list.scrollTop).toBe(0);
   });
 
+  it("scrolls the region back up to an option above its viewport", async () => {
+    const { region } = buildList(10);
+    const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
+
+    // Scrolled to the end: the viewport shows 300-400 and the first option sits at 0-40.
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 400, scrollTop: 300 });
+    setRect(region, 300, 400);
+
+    navigate("home");
+    await nextTick();
+    await nextTick();
+
+    expect(region.scrollTop).toBe(0);
+  });
+
   it("scrolls the listbox itself when it is the box that overflows", async () => {
     const { region, list } = buildList(10);
 
@@ -277,6 +292,22 @@ describe("useListboxNavigation over a changing list", () => {
     const { items, highlightedIndex } = setup(["a", "b", "c"]);
 
     items.value.splice(2, 1, "z");
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(-1);
+  });
+
+  // A key compares equal to the missing one past the end when it is `undefined` (an unset value field).
+  it("drops the highlight on an option without a key when the list is cut short beneath it", async () => {
+    const items = ref([{ value: "a" }, { value: undefined }]);
+    const { highlightedIndex, highlight } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items,
+      getKey: (item) => item.value,
+    });
+
+    highlight(1);
+    items.value = [{ value: "a" }];
     await nextTick();
 
     expect(highlightedIndex.value).toBe(-1);
