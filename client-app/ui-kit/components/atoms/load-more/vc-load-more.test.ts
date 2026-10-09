@@ -43,7 +43,7 @@ type StateType = {
   rowLabel: string;
   imageRows: boolean;
   present: boolean;
-  /** Bound as `item-count` when set. */
+  /** Bound as `item-count`; the rendered row count when unset. */
   itemCount: number | undefined;
   /** A consumer's "No results" row, shown while nothing is loaded and nothing is loading. */
   emptyRow: boolean;
@@ -79,7 +79,7 @@ function mountList(initial: Partial<StateType> = {}) {
               ? h(VcLoadMore, {
                   loading: state.loading,
                   hasNextPage: state.hasNextPage,
-                  itemCount: state.itemCount,
+                  itemCount: state.itemCount ?? state.rows,
                   onLoadMore,
                 })
               : null,
@@ -369,6 +369,33 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
+  // A page that failed is asked again when the user comes back to the end, once per return.
+  it("asks again for a failed page once the list is scrolled away from its end and back", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 20 });
+    const scrollTo = async (scrollTop: number) => {
+      describeScrollBox(region, { clientHeight: 100, scrollHeight: 500, scrollTop });
+      region.dispatchEvent(new Event("scroll"));
+      await afterContentSettles();
+    };
+
+    await scrollTo(400);
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    await afterContentSettles();
+    state.loading = false;
+    await afterContentSettles();
+    await scrollTo(400);
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    await scrollTo(0);
+    await scrollTo(400);
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
   it.each([
     ["a page is on its way", { loading: true, hasNextPage: true }, true],
     ["nothing is being fetched", { loading: false, hasNextPage: true }, false],
@@ -395,7 +422,11 @@ describe("VcLoadMore", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const onLoadMore = vi.fn();
 
-    mount(VcLoadMore, { attachTo: document.body, props: { hasNextPage: true, onLoadMore }, global: GLOBAL });
+    mount(VcLoadMore, {
+      attachTo: document.body,
+      props: { hasNextPage: true, itemCount: 0, onLoadMore },
+      global: GLOBAL,
+    });
     await afterContentSettles();
 
     expect(onLoadMore).not.toHaveBeenCalled();
@@ -404,7 +435,7 @@ describe("VcLoadMore", () => {
     warn.mockRestore();
   });
 
-  describe("with the item count bound", () => {
+  describe("counting the loaded items", () => {
     // The org switcher keeps `hasNextPage` on a failed first page; its empty row gives way to the
     // spinner while loading, which a rendered-rows reading takes for a rebuilt list.
     it("asks once for a first page that keeps failing behind an empty state", async () => {

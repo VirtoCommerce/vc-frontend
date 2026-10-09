@@ -27,8 +27,8 @@ const meta: Meta<typeof VcLoadMore> = {
     itemCount: {
       control: "number",
       description:
-        "How many items are loaded. Bind it: a request counts as answered once the count grows, so a failed " +
-        "page is not repeated and a filtered list that showed no new row keeps paging.",
+        "How many items are loaded. A request counts as answered once the count grows, so a failed page is " +
+        "not repeated while the list rests at its end, and a filtered list that showed no new row keeps paging.",
     },
     tag: { control: "text" },
   },

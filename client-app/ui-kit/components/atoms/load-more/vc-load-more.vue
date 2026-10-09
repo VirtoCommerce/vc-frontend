@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" v-if="showSpinner" ref="rootElement" class="vc-load-more" :data-test-id="testId" :role="role">
+  <component :is="tag" v-if="showSpinner" class="vc-load-more" :data-test-id="testId" :role="role">
     <slot name="loading">
       <VcLoader />
 
@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { vcScrollbarKey } from "../scrollbar/vc-scrollbar-context";
 
 interface IEmits {
@@ -22,12 +22,11 @@ interface IProps {
   /** A page is on its way: blocks a second request and shows the spinner, so a paged list has to bind it. */
   loading?: boolean;
   /**
-   * How many items the list has loaded. Bind it: a request is then answered once the count grows, and
-   * a list rebuilt for a new search is told by the count dropping. Without it both are guessed from the
-   * rendered rows, which cannot tell a failed page from one that added no visible row (a filtered
-   * list) or from a list rebuilt identical to the last.
+   * How many items the list has loaded: a request is answered once the count grows, and a list
+   * rebuilt for a new search is told by the count dropping. The loaded items, not the rendered rows,
+   * which a filter may hide.
    */
-  itemCount?: number;
+  itemCount: number;
   tag?: string;
   testId?: string;
   role?: string;
@@ -56,18 +55,9 @@ const showSpinner = computed(() => props.loading && props.hasNextPage);
 
 type ContentType = { size: number; text: string };
 
-const rootElement = useTemplateRef<HTMLElement>("rootElement");
-
-// `size` is the progress measure: the bound item count, or else the rendered node count, which tells
-// a landed page even of rows without text. The text tells a list rebuilt to the same size. This
-// pager's own nodes are left out, or its spinner would mask a list emptied for a new search.
+// `size` is the progress measure; the text tells a list rebuilt to the same size.
 function readContent(): ContentType {
-  const el = scrollbar?.el.value;
-  const own = rootElement.value;
-  const ownSize = own ? own.getElementsByTagName("*").length + 1 : 0;
-  const size = props.itemCount ?? (el?.getElementsByTagName("*").length ?? 0) - ownSize;
-
-  return { size, text: el?.textContent ?? "" };
+  return { size: props.itemCount, text: scrollbar?.el.value?.textContent ?? "" };
 }
 
 /** What the region held when the last page was asked for; null until something has been asked. */
@@ -82,14 +72,15 @@ function reconsider(): void {
   const content = readContent();
 
   // Content that shrank or no longer starts with what was asked from is a rebuilt list (a new search).
-  // With a bound count, rows swapped while a page loads (an empty state giving way to the spinner)
-  // are not a rebuild: the count watcher below sees a real one at any time.
-  const rowsInFlux = props.itemCount !== undefined && props.loading;
-
+  // Rows swapped while a page loads (an empty state giving way to the spinner) are not a rebuild: the
+  // count watcher below sees a real one at any time. A list scrolled away from its end is asked again
+  // once it is back, so a page that failed is retried by the user's own scroll, never by a loop.
   if (
     askedAt.value &&
-    !rowsInFlux &&
-    (content.size < askedAt.value.size || !content.text.startsWith(askedAt.value.text))
+    !props.loading &&
+    (content.size < askedAt.value.size ||
+      !content.text.startsWith(askedAt.value.text) ||
+      scrollbar?.isAtBottom.value === false)
   ) {
     askedAt.value = null;
   }
@@ -107,7 +98,7 @@ function reconsider(): void {
 watch(
   () => props.itemCount,
   (count) => {
-    if (count !== undefined && askedAt.value && count < askedAt.value.size) {
+    if (askedAt.value && count < askedAt.value.size) {
       askedAt.value = null;
     }
   },
