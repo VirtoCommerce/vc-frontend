@@ -1,7 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, reactive } from "vue";
-import { describeScrollBox } from "@/core/utilities/tests";
+import { describeScrollBox } from "@/ui-kit/test-mocks";
 import VcIcon from "../icon/vc-icon.vue";
 import VcLoader from "../loader/vc-loader.vue";
 import VcScrollbar from "../scrollbar/vc-scrollbar.vue";

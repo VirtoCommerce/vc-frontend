@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
-import { describeScrollBox } from "@/core/utilities/tests";
+import { describeScrollBox } from "@/ui-kit/test-mocks";
 import { useListboxNavigation } from "./useListboxNavigation";
 import type { Ref } from "vue";
 

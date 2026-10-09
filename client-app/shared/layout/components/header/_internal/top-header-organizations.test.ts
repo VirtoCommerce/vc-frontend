@@ -2,8 +2,9 @@ import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
+import { createWrapperFactory } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
+import { describeScrollBox } from "@/ui-kit/test-mocks";
 import TopHeaderOrganizations from "./top-header-organizations.vue";
 
 const state = await vi.hoisted(async () => {
