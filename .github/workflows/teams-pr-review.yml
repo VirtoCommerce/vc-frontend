@@ -30,21 +30,21 @@ jobs:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@213e27d6f0ec9d6e4bdc7e9ddeae2e40a8062831 # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@43188f8cb8d63db38caee688a9e66bd46972160b # vcst-6259-teams-pr-review-notification
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
           teams-users: ${{ secrets.TEAMS_USERS }}
 
   ping:
-    # Re-review messages, one run per request and never queued, so none is cancelled.
-    if: (github.repository_id == '296335982' || vars.VC_CI == 'true') && github.event.action == 'review_requested'
+    # Re-review and review comments messages, one run per event and never queued, so none is cancelled.
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true') && (github.event.action == 'review_requested' || github.event_name == 'pull_request_review')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@213e27d6f0ec9d6e4bdc7e9ddeae2e40a8062831 # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@43188f8cb8d63db38caee688a9e66bd46972160b # vcst-6259-teams-pr-review-notification
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
