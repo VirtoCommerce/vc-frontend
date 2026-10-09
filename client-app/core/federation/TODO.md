@@ -205,11 +205,11 @@ Definition and rationale: *Pilot* section of the discovery spec.
       from this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the
       backstop's late-registration hole, and a switched-off plugin paying the whole load chain.
       What it leaves open:
-  - [ ] **Zero requests for a switched-off plugin, and none for any declaration** — needs the two
-        backend changes to ship: vc-platform (`plugin.json` `contributions` →
-        `PluginDescriptor.Contributions`, covered by the manifest hash) and vc-module-x-api
-        (`StorePlugin.contributions`). The host reads only the inline declaration, so it needs both.
-        Verified end to end on a local platform built from both branches.
+  - [x] **Zero requests for a switched-off plugin, and none for any declaration** — the two
+        backend changes shipped: vc-platform 3.1078.0 (`plugin.json` `contributions` →
+        `PluginDescriptor.Contributions`, covered by the manifest hash) and vc-module-x-api 3.1027.0
+        (`StorePlugin.contributions`). The host reads only the inline declaration, so an environment
+        with federation on needs both.
   - [ ] **The sales-rep plugin's declaration ships with vc-module-sales-rep#13** — its
         `plugin.config.ts` declares the hub routes and `settingEnabled(MODULE_ID, ENABLED_KEY)`
         (a setting condition names its module), against the facade release that carries VCST-5761.
@@ -392,8 +392,8 @@ VCST-5761.)
   programs) or requiring a human minor/major classification on any contract change.
 - **Multi-store vs env granularity** — one env/backend serves many stores → per-store remote
   lists but a per-env ingress CSP that must allowlist the *union* of every store's origins.
-- **Discovery depends on x-api ≥ 3.1016.0** — an older backend cannot answer `store.plugins`, so
-  discovery fails closed to no-remotes. Its own query keeps that failure off the boot store query,
+- **Discovery depends on x-api ≥ 3.1027.0** — the plugin-list query asks for `contributions`, so an
+  older backend rejects it and discovery fails closed to no-remotes. Its own query keeps that failure off the boot store query,
   and `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` keeps it off the user's screen — without that context
   the global handler broadcasts a generic error toast to every open tab.
 
