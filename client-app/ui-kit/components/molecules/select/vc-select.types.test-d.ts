@@ -8,7 +8,6 @@ describe("VcSelectValueKeyType", () => {
     expectTypeOf<VcSelectValueKeyType<ItemType, number>>().toEqualTypeOf<"rank">();
   });
 
-  // Without a model the model type defaults to the item.
   it("offers every key when the model type is the item", () => {
     expectTypeOf<VcSelectValueKeyType<ItemType, ItemType>>().toEqualTypeOf<"id" | "rank" | "code" | "meta">();
   });

@@ -31,7 +31,6 @@ describe("VcMenuItem highlight ring", () => {
 });
 
 describe("VcMenuItem tab order", () => {
-  // The template form `tabindex="-1"` is a string.
   it.each([-1, "-1"] as const)("puts tabindex %j on the inner element and takes it without a warning", (tabindex) => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const wrapper = createWrapper({ props: { tabindex } });

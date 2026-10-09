@@ -35,7 +35,7 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return readField(item, toValue(params.valueField)) as V;
   }
 
-  /** Model entries are always values, in both modes — never whole items. */
+  /** The multiple-mode model: `valueField` values, or the items themselves without `valueField`; empty in single mode. */
   const selectedValues = computed<V[]>(() => {
     if (!toValue(params.multiple)) {
       return [];

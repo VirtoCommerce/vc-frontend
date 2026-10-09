@@ -13,8 +13,8 @@ const meta: Meta<typeof VcLoadMore> = {
           "viewport of its own: it reads where the surrounding `VcScrollbar` is resting, and " +
           "requests a page whenever that is the bottom — including the bottom of a page too short " +
           "to scroll, which is the case a sentinel watching for a crossing can never report. " +
-          "`loading` is what keeps one request from becoming many, and what re-opens the question " +
-          "once a page has landed, so a list that still fits fills itself up rather than stalling.",
+          "`item-count` tells it when a page has landed, so a list that still fits fills itself up " +
+          "rather than stalling; `loading` only holds a second request back while one is on its way.",
       },
     },
   },
@@ -199,8 +199,8 @@ export const ShortFirstPage: StoryType = {
         story:
           "Two rows, and nothing to scroll — the list is at its bottom the moment it renders, so it " +
           "asks for page 2 unprompted, and keeps asking until the rows overflow the viewport or the " +
-          "pages run out. Watch the request counter: one per page, never more, because `loading` is " +
-          "bound. This is the case the old sentinel could not see.",
+          "pages run out. Watch the request counter: one per page, never more — each request waits " +
+          "for the item count to grow.",
       },
       source: {
         code: `

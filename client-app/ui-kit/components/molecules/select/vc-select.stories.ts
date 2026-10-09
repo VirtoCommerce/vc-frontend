@@ -767,8 +767,8 @@ const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuy
         story:
           "`items` stays consumer-owned: open the list and it asks for the next page the moment it " +
           "comes to rest at its bottom — which a two-option first page does immediately, with " +
-          "nothing to scroll. `loading` is not optional here: it is what keeps one request from " +
-          "becoming many, and what asks for the page after the one that just landed. Pair it with " +
+          "nothing to scroll. Bind `loading` too: it holds a second request back while a page is on " +
+          "its way, and the page that lands is what asks for the next one. Pair it with " +
           "`server-filter`, which turns the local filter off: answer the typed text from `@search` " +
           "(debounced 300ms) instead of filtering the one page that happens to be loaded — otherwise " +
           "the search would report no results for anything below the fold.",

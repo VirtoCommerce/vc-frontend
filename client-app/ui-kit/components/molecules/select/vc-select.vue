@@ -313,7 +313,6 @@ const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<{ focus: () => void }>("triggerElement");
 
-// The dropdown matches the trigger's width.
 const popoverElement = useTemplateRef<{ $el: HTMLElement }>("popoverElement");
 const { width: triggerWidth } = useElementBounding(() => popoverElement.value?.$el ?? null);
 const dropdownWidth = computed(() => `${triggerWidth.value}px`);
@@ -433,7 +432,6 @@ const isClearButtonVisible = computed(() => {
   return hasSelection.value;
 });
 
-// Shared by both triggers; each adds its own.
 const triggerBindings = computed(() => ({
   size: props.size,
   opened: isShown.value,
@@ -483,7 +481,6 @@ function select(item: T) {
     return;
   }
 
-  // Re-picking the current value emits nothing.
   if (isActiveItem(item)) {
     return;
   }
@@ -645,7 +642,6 @@ function focusTrigger() {
   triggerElement.value?.focus();
 }
 
-// Clearing is sent at once; typing is debounced.
 const SEARCH_DEBOUNCE_MS = 300;
 
 // A query cleared before its debounce fired must not land after the clear.
@@ -667,10 +663,6 @@ watch(filterValue, (value) => {
     sendSearch("");
   }
 });
-
-// -----------------------------------------------------------------------------
-// Select all
-// -----------------------------------------------------------------------------
 
 if (import.meta.env.DEV && props.selectAll && !props.multiple) {
   // eslint-disable-next-line no-console
@@ -777,8 +769,7 @@ if (import.meta.env.DEV) {
         );
       }
     },
-    // Depth 2: the tuple, then the entries of items and of the model, so a push, a splice or an
-    // index assignment in place re-runs the check.
+    // Depth 2, as above.
     { immediate: true, deep: 2 },
   );
 }

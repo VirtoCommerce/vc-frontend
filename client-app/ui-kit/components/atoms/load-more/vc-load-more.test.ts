@@ -113,7 +113,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // A new search answered with exactly as many rows as the list it replaced, next page still claimed.
   it("asks again for a rebuilt list of the same size", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 3 });
 
@@ -150,7 +149,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  // A new search empties the list and brings back exactly the rows the last request was made from.
   it("asks again for a list rebuilt identical to the one it last asked from", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 3 });
 
@@ -213,7 +211,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).not.toHaveBeenCalled();
   });
 
-  // The page landed and the list still fits: nothing will scroll, so it has to ask again.
   it("asks again once the page has landed and the list still fits", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -232,8 +229,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  // The answer being drawn (a spinner, placeholder rows) changes the content but is not a new
-  // question.
   it("does not ask twice while the answer to the first request is being drawn", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -249,7 +244,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // A failed request brings nothing back; the vanished spinner alone must not ask again.
   it("does not ask again for a page that came back with nothing", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -267,7 +261,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // A rebuilt list may match the old one exactly, so running out resets the record.
   it("counts from scratch once the list has run out", async () => {
     const { state, onLoadMore, region } = mountList();
 
@@ -288,7 +281,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  // An edge genuinely re-reached while a request is in flight is what `loading` guards.
   it("asks for nothing more while the page it asked for is still on its way", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });
 
@@ -312,8 +304,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // The consumer appends rows and drops `loading` in one tick, while the measurement lags a
-  // debounce behind: deciding on that transition would read the pre-append box and ask twice.
   it("does not ask for a second page on the loading flag alone, before the region is re-measured", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });
 
@@ -326,7 +316,6 @@ describe("VcLoadMore", () => {
     state.loading = true;
     await nextTick();
 
-    // The page lands: twice the rows, the bottom is far away now, and nothing scrolled.
     describeScrollBox(region, { clientHeight: 100, scrollHeight: 900, scrollTop: 400 });
     state.rows = 40;
     state.loading = false;
@@ -339,7 +328,6 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // VcSelect's popup mounts onto an already measured list, so no further measurement comes.
   it("asks as soon as it appears in a list that is already resting at its bottom", async () => {
     const { state, onLoadMore, region } = mountList({ present: false });
 
@@ -436,8 +424,6 @@ describe("VcLoadMore", () => {
   });
 
   describe("counting the loaded items", () => {
-    // The org switcher keeps `hasNextPage` on a failed first page; its empty row gives way to the
-    // spinner while loading, which a rendered-rows reading takes for a rebuilt list.
     it("asks once for a first page that keeps failing behind an empty state", async () => {
       const { state, onLoadMore, region } = mountList({ rows: 0, itemCount: 0, emptyRow: true });
 
@@ -454,7 +440,6 @@ describe("VcLoadMore", () => {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    // A locally filtered list: the page landed, no new row matched, so nothing visible changed.
     it("asks again once the count grew though no visible row changed", async () => {
       const { state, onLoadMore, region } = mountList({ rows: 2, itemCount: 2 });
 
@@ -512,8 +497,6 @@ describe("VcLoadMore", () => {
     });
   });
 
-  // VcSelect turns the next page off for a query typed and deleted within its debounce, then on again
-  // over the same rows: no row changes, so no measurement comes.
   it("asks when a next page appears on an idle list already at its bottom", async () => {
     const { state, onLoadMore, region } = mountList({ hasNextPage: false });
 

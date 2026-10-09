@@ -47,7 +47,6 @@ describe("useListboxNavigation", () => {
     document.body.innerHTML = "";
   });
 
-  // An empty list has no index 0 for `aria-activedescendant` to point at.
   it.each(["home", "end", "down", "up"] as const)("has nowhere to go on an empty list: %s", (key) => {
     const { navigate, highlightedIndex, activeDescendantId } = useListboxNavigation({
       componentId: COMPONENT_ID,
@@ -106,7 +105,6 @@ describe("useListboxNavigation", () => {
     expect(region.scrollTop).toBe(0);
   });
 
-  // Scrolling under a still pointer would put another row under it, which highlights and scrolls in turn.
   it("leaves the list where it is for a pointer highlight on a clipped row", async () => {
     const { region } = buildList(10);
     const { highlightPassively } = useListboxNavigation({
@@ -196,7 +194,6 @@ describe("useListboxNavigation passive highlight", () => {
     expect(isPassiveHighlight.value).toBe(false);
   });
 
-  // A row reached by the keyboard stays a keyboard position under a pointer nudged on it.
   it("keeps a keyboard highlight when the pointer moves on the same row", () => {
     const { highlightedIndex, isPassiveHighlight, highlightPassively, navigate } = useListboxNavigation({
       componentId: COMPONENT_ID,
@@ -286,8 +283,6 @@ describe("useListboxNavigation over a changing list", () => {
     expect(highlightedIndex.value).toBe(-1);
   });
 
-  // With no local query the filtered list IS the consumer's array, and a search may be answered
-  // by splicing it.
   it("drops the highlight when the same array is spliced to put another option under it", async () => {
     const { items, highlightedIndex } = setup(["a", "b", "c"]);
 

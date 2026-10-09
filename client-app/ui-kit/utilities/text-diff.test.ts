@@ -22,7 +22,6 @@ describe("insertedText", () => {
     expect(insertedText("Belgium", "Belgiumchi")).toBe("chi");
   });
 
-  // Typing over a selected label replaces it, so nothing on either side is shared.
   it.each([
     ["one character", "c"],
     ["a pasted run", "chi"],
@@ -42,7 +41,6 @@ describe("insertedText", () => {
     expect(insertedText("Belgium", "Belgiu")).toBe("");
   });
 
-  // What a before/after diff cannot tell apart: the typed text matches what it replaced at an edge.
   describe("with the replaced selection", () => {
     it.each([
       ["the label's first character over the whole label", "Belgium", "B", [0, 7], "B"],
@@ -64,8 +62,6 @@ describe("insertedText", () => {
     });
   });
 
-  // A repeated character is where a naive substring search goes wrong: "aa" contains "a" twice,
-  // so removing the first occurrence would be indistinguishable from removing the inserted one.
   it("handles a repeated character", () => {
     expect(insertedText("aa", "aaa")).toBe("a");
   });

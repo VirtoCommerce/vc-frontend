@@ -73,7 +73,6 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.findAll('[role="option"]')).toHaveLength(3);
   });
 
-  // The field controls the list, so it sits outside and above it: a listbox holds only options.
   it("keeps the search field above the list it controls, not inside it", () => {
     const wrapper = mountComponent();
     const field = wrapper.get("[data-test-id='organizations-search']").element;
@@ -84,7 +83,6 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.get("input").attributes("aria-controls")).toBe(list.id);
   });
 
-  // A listbox holds only options, so the empty state and the pager (role="status") sit beside it.
   it("keeps the empty state and the pager out of the listbox", async () => {
     state.organizations.value = [];
     state.hasNextPage.value = true;
@@ -103,7 +101,6 @@ describe("TopHeaderOrganizations", () => {
     expect(list.contains(wrapper.get("[data-test-id='organizations-empty-list']").element)).toBe(false);
   });
 
-  // The whole point of the rewrite: focus stays in the search field while arrowing.
   it("keeps focus in the search field and tracks the option with aria-activedescendant", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -116,7 +113,6 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
   });
 
-  // An editable field needs Home/End for the caret.
   it("leaves Home and End to the caret in the search field", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -174,7 +170,6 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBe(ids[2]);
   });
 
-  // End-to-end selectors target the list container by this id.
   it("names the list for end-to-end tests", () => {
     const wrapper = mountComponent();
 
@@ -242,7 +237,6 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
   });
 
-  // The pointer highlight is the active descendant, so Enter acts on the row under the pointer.
   it("switches to the row the pointer highlighted on Enter", async () => {
     const wrapper = mountComponent();
 
@@ -262,7 +256,6 @@ describe("TopHeaderOrganizations", () => {
     expect(press.defaultPrevented).toBe(true);
   });
 
-  // The scroller takes tabindex -1 in search mode, which makes it focusable by a press.
   it("keeps focus in the search field when the list's scroller is pressed", () => {
     const wrapper = mountComponent();
     const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
@@ -272,7 +265,6 @@ describe("TopHeaderOrganizations", () => {
     expect(press.defaultPrevented).toBe(true);
   });
 
-  // The debounced search has not answered yet, so the highlighted row belongs to the old query.
   it("runs the search on Enter typed right after a highlight, instead of switching", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -301,8 +293,6 @@ describe("TopHeaderOrganizations", () => {
     expect(state.trySwitch).not.toHaveBeenCalled();
   });
 
-  // Un-hoisting the current organization mid-request shifts every option up by one, which
-  // invalidates the keyboard highlight on every page load.
   it("keeps the current organization pinned to the top while a page loads", async () => {
     state.organization.value = { id: "org-3", name: "Initech" };
     const wrapper = mountComponent();
@@ -316,7 +306,6 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.findAll('[role="option"]')[0].text()).toContain("Initech");
   });
 
-  // Paging appends to the list; the highlighted option has not moved, so it must survive.
   it("keeps the highlight when another page is appended", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -360,7 +349,6 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.find(".vc-load-more").exists()).toBe(true);
   });
 
-  // The list is nearly always shorter than its region, so page two is asked for without a scroll.
   it("asks for the next page when the list rests at its bottom", async () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
@@ -378,8 +366,6 @@ describe("TopHeaderOrganizations", () => {
     expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
   });
 
-  // A failed first page keeps `hasNextPage` on, and the empty message gives way to the spinner while
-  // each retry loads: without the item count the pager reads that swap as a new list and asks forever.
   it("asks once for a first page that keeps failing behind the empty message", async () => {
     state.organizations.value = [];
     state.hasNextPage.value = true;
@@ -409,7 +395,6 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.find("[data-test-id='organizations-empty-list']").exists()).toBe(true);
   });
 
-  // Without a search field the options are out of tab order, so the list needs its own tab stop.
   describe("below the search threshold", () => {
     beforeEach(() => {
       state.isShowSearch.value = false;
@@ -443,7 +428,6 @@ describe("TopHeaderOrganizations", () => {
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
     });
 
-    // Without a field the list region takes the keys, so the pressed option has to take focus.
     it("lets a pressed option take focus", () => {
       const wrapper = mountComponent();
       const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });

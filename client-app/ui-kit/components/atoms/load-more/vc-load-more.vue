@@ -46,9 +46,8 @@ if (import.meta.env.DEV && !scrollbar && props.hasNextPage) {
   console.warn("VcLoadMore: no VcScrollbar around it, so nothing can tell it the list reached its end.");
 }
 
-// Read only when a measurement lands (the watcher below): the edges come from a debounced
-// measurement, so reacting to props would read the box from before an append and ask twice.
-// `loading` is a guard, not a trigger.
+// Read when a measurement lands, a next page appears, or on mount, never on `loading`: the edges come
+// from a debounced measurement, so reacting to props would read the box from before an append.
 const wantsMore = computed(() => props.hasNextPage && !props.loading && scrollbar?.isAtBottom.value === true);
 
 const showSpinner = computed(() => props.loading && props.hasNextPage);

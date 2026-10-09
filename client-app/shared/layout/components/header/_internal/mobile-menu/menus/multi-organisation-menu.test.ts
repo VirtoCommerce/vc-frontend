@@ -55,7 +55,6 @@ describe("MultiOrganisationMenu", () => {
     state.loading.value = false;
   });
 
-  // Hiding the current organization for every page request shifts every row up by one.
   it("keeps the current organization on top while a page loads", () => {
     state.loading.value = true;
 

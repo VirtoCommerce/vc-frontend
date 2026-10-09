@@ -37,7 +37,6 @@ describe("VcScrollbar", () => {
   });
 
   describe("edge events", () => {
-    // Content that fits never scrolls, so a reach-bottom pager would stall on page one.
     it("reports the bottom on mount when the content fits", async () => {
       const wrapper = mountScrollbar(1);
 
@@ -48,9 +47,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
     });
 
-    // A collapsed axis measures 0 and so scores as sitting at both of its edges: a closed popover
-    // (VcPopover renders content eagerly and hides it with display:none), a `max-height: 0`
-    // region, a squeezed flex item. One collapsed axis is enough to make the numbers meaningless.
     it.each([
       ["no box at all", undefined],
       ["a height-collapsed region", { clientHeight: 0, scrollHeight: 0, scrollTop: 0, clientWidth: 300 }],
@@ -73,7 +69,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachRight")).toBeUndefined();
     });
 
-    // A gated axis must not latch as "arrived": enabling it later has to announce its edge.
     it("announces the bottom when the vertical axis is turned on after mount", async () => {
       const wrapper = mount(VcScrollbar, {
         attachTo: document.body,
@@ -92,7 +87,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
     });
 
-    // A loaded page moves the bottom edge without any scroll.
     it("re-arms the bottom when content is appended below the viewport", async () => {
       const wrapper = mountScrollbar(1);
       const element = wrapper.element as HTMLElement;
@@ -102,15 +96,12 @@ describe("VcScrollbar", () => {
 
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
 
-      // a page arrives: the box is taller now, and nothing scrolled
       describeBox(element, { clientHeight: 100, scrollHeight: 500, scrollTop: 0 });
       element.appendChild(document.createElement("p"));
       await afterContentSettles();
 
-      // no second emit — the bottom is no longer under the viewport
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
 
-      // scrolling down to it emits again, which the latch would have swallowed before
       describeBox(element, { clientHeight: 100, scrollHeight: 500, scrollTop: 400 });
       element.dispatchEvent(new Event("scroll"));
       await nextTick();
@@ -118,7 +109,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(2);
     });
 
-    // An axis without overflow:auto sits at both edges by definition, so it announces nothing.
     it.each([
       ["a horizontal-only scrollbar", { horizontal: true }],
       ["a disabled scrollbar", { vertical: true, disabled: true }],
@@ -171,7 +161,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
     });
 
-    // `scroll` reports a position, so only an actual scroll emits it.
     it("emits the scroll payload only when something actually scrolled", async () => {
       const wrapper = mountScrollbar(1);
       const element = wrapper.element as HTMLElement;
@@ -209,8 +198,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBe("0");
     });
 
-    // The listbox owns the keyboard entry (aria-activedescendant) whether its role is on the
-    // region or inside it.
     it.each([
       ["on the region itself", () => h("p", "row"), { role: "listbox" }],
       ["on a list inside it", () => h("ul", { role: "listbox" }, [h("li", { role: "option" }, "row")]), {}],
@@ -225,7 +212,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBe("-1");
     });
 
-    // Long dialog content holding a disabled select: the region is still the only way to scroll it.
     it("stays a tab stop around an interactive role nested deeper than its direct child", async () => {
       const wrapper = await mountOverflowing(() =>
         h("div", [h("p", "terms"), h("div", [h("input", { role: "combobox", disabled: true })])]),
@@ -234,7 +220,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBe("0");
     });
 
-    // A popup's list is measured a debounce after it opens; the -1 must already be there.
     it("keeps a listbox region out of the tab order before it overflows", async () => {
       const wrapper = mount(VcScrollbar, {
         attachTo: document.body,
@@ -261,7 +246,6 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBeUndefined();
     });
 
-    // Focusable content keeps the browser from making the region a tab stop, so it needs no -1.
     it("leaves an overflowing listbox with a focusable descendant without a tabindex", async () => {
       const wrapper = await mountOverflowing(() =>
         h("ul", { role: "listbox", tabindex: 0 }, [h("li", { role: "option" }, "row")]),
@@ -306,8 +290,6 @@ describe("VcScrollbar", () => {
         expect(press(wrapper.element).defaultPrevented).toBe(true);
       });
 
-      // Middle-click autoscroll is the browser's; the right, back and forward buttons would still
-      // take focus.
       it("leaves the middle button alone and still guards the right, back and forward ones", async () => {
         const wrapper = await mountOverflowing(listbox);
         const row = wrapper.get(".row").element;
@@ -322,7 +304,6 @@ describe("VcScrollbar", () => {
         expect(press(wrapper.get(".note").element).defaultPrevented).toBe(false);
       });
 
-      // Only a container inside the region counts; an outer menu around it does not.
       it("leaves text beside the container selectable inside an outer interactive container", async () => {
         const outer = document.createElement("div");
         outer.setAttribute("role", "menu");
@@ -341,7 +322,6 @@ describe("VcScrollbar", () => {
         expect(press(wrapper.get(".note").element).defaultPrevented).toBe(false);
       });
 
-      // A consumer's own -1 (a menubar of links) is not the guard's to enforce.
       it("leaves a press alone on a region a consumer took out of the Tab order itself", async () => {
         const wrapper = mount(VcScrollbar, {
           attachTo: document.body,
