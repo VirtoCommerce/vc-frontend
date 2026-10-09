@@ -15,7 +15,7 @@ analytics("addItemToCart", product, quantity, { currency: "USD" });
 
 ## Events From Markup
 
-`selectItem`, `viewItemList` and `viewItem` can be sent from markup by [DOM Analytics](../../plugins/dom-analytics/README.md): a block marks its elements with `data-name` roles instead of calling `analytics()`. Events confirmed by a server response (cart, login, checkout, purchase) are sent by `analytics()` calls. Both paths go through `analytics()`, so trackers receive the same events either way.
+`selectItem`, `viewItemList` and `viewItem` can be sent from markup by [DOM Analytics](../../plugins/dom-analytics/README.md): a block marks its elements with `data-vc-track` roles instead of calling `analytics()`. Events confirmed by a server response (cart, login, checkout, purchase) are sent by `analytics()` calls. Both paths go through `analytics()`, so trackers receive the same events either way.
 
 ## Predefined Events
 

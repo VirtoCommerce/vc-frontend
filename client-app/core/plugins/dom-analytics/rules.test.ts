@@ -36,20 +36,20 @@ describe("dom-analytics rules", () => {
   it("sends viewItemList and selectItem for a product list built from attributes", async () => {
     document.body.innerHTML = `
     <div
-      data-name="product-list"
+      data-vc-track="product-list"
       data-list-id="related_products"
       data-list-name="Related"
       data-related-id="P1"
       data-related-type="product"
     >
       <div
-        data-name="product-card"
+        data-vc-track="product-card"
         data-product-id="1"
         data-product-sku="ABC"
         data-product-name="Laptop"
         data-product-price="999.5"
       >
-        <a data-name="product-link">Laptop</a>
+        <a data-vc-track="product-link">Laptop</a>
       </div>
     </div>`;
     stop = startEngine(rules);
@@ -65,7 +65,7 @@ describe("dom-analytics rules", () => {
 
   it("sends nothing for a card outside a product list", async () => {
     document.body.innerHTML = `
-      <div data-name="product-card" data-product-sku="ABC"><a data-name="product-link">Laptop</a></div>`;
+      <div data-vc-track="product-card" data-product-sku="ABC"><a data-vc-track="product-link">Laptop</a></div>`;
     stop = startEngine(rules);
     await flushPromises();
 
@@ -80,7 +80,7 @@ describe("dom-analytics rules", () => {
       defineComponent({
         directives: { trackItem: vTrackItem },
         setup: () => ({ product }),
-        template: `<div v-track-item="product" data-name="product-details"></div>`,
+        template: `<div v-track-item="product" data-vc-track="product-details"></div>`,
       }),
       { attachTo: document.body },
     );

@@ -10,7 +10,7 @@
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
-    data-name="product-list"
+    data-vc-track="product-list"
     data-list-id="variations"
     :data-list-name="`${$t('shared.catalog.product_details.variations.title')} ${productName}`"
     :data-related-id="productId"

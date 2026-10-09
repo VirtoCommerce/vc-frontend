@@ -18,7 +18,7 @@
           v-for="(variation, variationIndex) in variations"
           :key="variation.code"
           v-track-item="variation"
-          data-name="product-card"
+          data-vc-track="product-card"
           class="variations-table__row"
         >
           <td class="variations-table__col variations-table__col--title">

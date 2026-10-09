@@ -5,7 +5,7 @@
         v-for="variation in variations"
         :key="variation.code"
         v-track-item="variation"
-        data-name="product-card"
+        data-vc-track="product-card"
         :image-url="variation.images[0]?.url"
         :name="variation.name"
         :properties="getProperties(variation)"

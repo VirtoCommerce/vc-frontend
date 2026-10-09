@@ -4,7 +4,7 @@
     :title="title"
     prepend-icon="cube"
     size="lg"
-    data-name="product-list"
+    data-vc-track="product-list"
     :data-list-id="`recommended_products_${model}`"
     :data-list-name="`${title} ${productName}`"
     :data-related-id="productId"

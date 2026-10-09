@@ -2,7 +2,7 @@
   <div
     class="products-block py-10 lg:py-24"
     :class="background"
-    data-name="product-list"
+    data-vc-track="product-list"
     data-list-id="products_block"
     :data-list-name="title"
   >

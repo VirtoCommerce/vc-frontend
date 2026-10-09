@@ -4,7 +4,7 @@ import { getItem, onItemChange } from "./registry";
 import type { ArgSourceType, AttrFieldType, ObjectSourceType, RuleType } from "./types";
 import type { AnalyticsEventMapType } from "@/core/types/analytics";
 
-const NAME_ATTR = "data-name";
+const NAME_ATTR = "data-vc-track";
 const ANY_NAME = `[${NAME_ATTR}]`;
 const INTERACTIVE = "a, button";
 

@@ -2,7 +2,7 @@
   <div
     class="products-carousel"
     :class="background"
-    data-name="product-list"
+    data-vc-track="product-list"
     data-list-id="products_carousel"
     :data-list-name="title"
   >

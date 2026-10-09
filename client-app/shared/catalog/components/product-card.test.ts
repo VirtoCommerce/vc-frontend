@@ -158,8 +158,8 @@ describe("product card analytics roles", () => {
   it("binds the product to the card and marks its links", () => {
     const wrapper = mountCard({ siblings: 0 });
 
-    expect(wrapper.attributes("data-name")).toBe("product-card");
+    expect(wrapper.attributes("data-vc-track")).toBe("product-card");
     expect(getItem(wrapper.element)).toBe(wrapper.props("product"));
-    expect(wrapper.findAll("[data-name='product-link']").length).toBeGreaterThan(0);
+    expect(wrapper.findAll("[data-vc-track='product-link']").length).toBeGreaterThan(0);
   });
 });

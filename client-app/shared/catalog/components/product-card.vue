@@ -1,7 +1,7 @@
 <template>
   <VcProductCard
     v-track-item="product"
-    data-name="product-card"
+    data-vc-track="product-card"
     :view-mode="viewMode"
     :data-product-sku="product.code"
     border
@@ -10,7 +10,7 @@
   >
     <template #media>
       <VcProductImage
-        :data-name="hasImageCarousel ? undefined : 'product-link'"
+        :data-vc-track="hasImageCarousel ? undefined : 'product-link'"
         :images="viewMode === 'grid' ? product.images : []"
         :img-src="product.imgSrc"
         :alt="product.name"
@@ -35,7 +35,7 @@
     </template>
 
     <VcProductTitle
-      data-name="product-link"
+      data-vc-track="product-link"
       :title="product.name"
       :to="link"
       lines-number="2"
@@ -78,7 +78,7 @@
     <VcProductButton
       v-else-if="product.isConfigurable"
       data-test-id="product-card-configurations-button"
-      data-name="product-link"
+      data-vc-track="product-link"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
       :link-to="link"
@@ -102,7 +102,7 @@
 
       <VcProductButton
         class="product-card__variations-link-button"
-        data-name="product-link"
+        data-vc-track="product-link"
         :data-test-id="`variations-${product.code}-button`"
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"

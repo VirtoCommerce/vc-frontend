@@ -20,7 +20,7 @@
 
       <div
         class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        data-name="product-list"
+        data-vc-track="product-list"
         data-list-id="favorite_products"
         :data-list-name="title?.text"
       >
@@ -28,13 +28,18 @@
           v-for="item in products"
           :key="item.id"
           v-track-item="item"
-          data-name="product-card"
+          data-vc-track="product-card"
           :view-mode="viewMode"
           border
         >
           <VcProductImage :img-src="item.imgSrc" :alt="item.name" />
 
-          <VcProductTitle data-name="product-link" lines-number="2" :to="productsRoutes[item.id]" :title="item.name">
+          <VcProductTitle
+            data-vc-track="product-link"
+            lines-number="2"
+            :to="productsRoutes[item.id]"
+            :title="item.name"
+          >
             {{ item.name }}
           </VcProductTitle>
 

@@ -1,6 +1,6 @@
 # DOM Analytics
 
-Sends analytics events described by markup instead of `analytics(...)` calls in component code. An element gets a role in `data-name`, a rule maps the role to an event, and one document-level listener calls `useAnalytics().analytics(...)` when the rule matches.
+Sends analytics events described by markup instead of `analytics(...)` calls in component code. An element gets a role in `data-vc-track`, a rule maps the role to an event, and one document-level listener calls `useAnalytics().analytics(...)` when the rule matches.
 
 It is one more producer on the `useAnalytics` bus, registered by `domAnalyticsPlugin`. Trackers (Google Analytics or your own, see [useAnalytics](../../composables/useAnalytics/README.md#creating-an-analytics-provider-module)) receive the same events as from manual calls and cannot tell them apart.
 
@@ -32,7 +32,7 @@ Rules are in [rules.ts](./rules.ts).
 
 ```vue
 <div
-  data-name="product-list"
+  data-vc-track="product-list"
   data-list-id="recommended_products"
   :data-list-name="title"
   :data-related-id="productId"
@@ -47,8 +47,8 @@ The container attributes become the list parameters: `item_list_id`, `item_list_
 A card built from ui-kit atoms gets the roles by hand (see `favorite-products.vue`):
 
 ```vue
-<VcProductCard v-for="item in products" :key="item.id" v-track-item="item" data-name="product-card">
-  <VcProductTitle data-name="product-link" :to="routes[item.id]" :title="item.name" />
+<VcProductCard v-for="item in products" :key="item.id" v-track-item="item" data-vc-track="product-card">
+  <VcProductTitle data-vc-track="product-link" :to="routes[item.id]" :title="item.name" />
 </VcProductCard>
 ```
 
@@ -57,9 +57,9 @@ A card built from ui-kit atoms gets the roles by hand (see `favorite-products.vu
 `v-track-item` exists only in our templates. Plain HTML describes the product with attributes, and the rule falls back to them when no object is bound:
 
 ```html
-<div data-name="product-list" data-list-id="spring_sale" data-list-name="Spring sale">
-  <div data-name="product-card" data-product-id="123" data-product-sku="ABC-123" data-product-name="Dell XPS 13" data-product-price="999">
-    <a data-name="product-link" href="/product/abc-123">Dell XPS 13</a>
+<div data-vc-track="product-list" data-list-id="spring_sale" data-list-name="Spring sale">
+  <div data-vc-track="product-card" data-product-id="123" data-product-sku="ABC-123" data-product-name="Dell XPS 13" data-product-price="999">
+    <a data-vc-track="product-link" href="/product/abc-123">Dell XPS 13</a>
   </div>
 </div>
 ```
@@ -74,7 +74,7 @@ A rule is plain data:
 {
   event: "selectItem",        // key of the analytics event map
   trigger: "click",           // "click" | "appear"
-  target: "product-link",     // data-name of the element the trigger fires on
+  target: "product-link",     // data-vc-track of the element the trigger fires on
   args: [                     // positional arguments of analytics(event, ...args)
     { source: "item", from: "product-card" },
     { source: "object", from: "product-list", fields: { item_list_id: { attr: "listId" } } },
@@ -87,9 +87,9 @@ Argument sources:
 - `item`: the object bound with `v-track-item`. `fallback` builds it from attributes when nothing is bound.
 - `attr`: one `data-*` attribute (`attr: "listId"` reads `data-list-id`), `type: "number"` casts it.
 - `object`: an object assembled from several attributes; keys may be dot paths (`"price.actual.amount"`).
-- `collect`: an array of `item`s from all descendants with the given `data-name`.
+- `collect`: an array of `item`s from all descendants with the given `data-vc-track`.
 
-Every source accepts `from` (closest ancestor with this `data-name`) and `optional`. When a required argument resolves to nothing, the event is skipped.
+Every source accepts `from` (closest ancestor with this `data-vc-track`) and `optional`. When a required argument resolves to nothing, the event is skipped.
 
 To add rules from a theme, call `addRules` from your module's `init()`, the same way an analytics provider calls `addTracker`. Core files stay untouched:
 
@@ -106,8 +106,8 @@ Added rules apply from the next click, and `appear` rules rescan the page right 
 
 ## Triggers
 
-- **click**: one capture-phase listener on `document`. Only a click on a link or a button counts. From it the engine walks up through `data-name` ancestors until a rule sends an event.
-- **appear**: a `MutationObserver` on `body` (added and removed nodes, plus changes to `data-name` and the `data-*` attributes the rules read), and a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` (or `code` when there is no `id`) count as the same entity, so a refetched product does not resend `viewItem`.
+- **click**: one capture-phase listener on `document`. Only a click on a link or a button counts. From it the engine walks up through `data-vc-track` ancestors until a rule sends an event.
+- **appear**: a `MutationObserver` on `body` (added and removed nodes, plus changes to `data-vc-track` and the `data-*` attributes the rules read), and a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` (or `code` when there is no `id`) count as the same entity, so a refetched product does not resend `viewItem`.
 
 A list that empties and comes back with the same products does not resend `viewItemList`: the engine can't tell a finished empty result from a reload, and many lists pass through `[]` on every refetch.
 

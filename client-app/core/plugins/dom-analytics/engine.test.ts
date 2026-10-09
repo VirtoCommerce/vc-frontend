@@ -57,9 +57,9 @@ const ProductList = defineComponent({
   props: { products: { type: Array as () => { id?: string; code: string }[], required: true } },
 
   template: `
-    <div data-name="product-list" data-list-id="related" data-list-name="Related">
-      <div v-for="product in products" :key="product.code" v-track-item="product" data-name="product-card">
-        <a data-name="product-link" :data-test-id="product.code"><span>{{ product.code }}</span></a>
+    <div data-vc-track="product-list" data-list-id="related" data-list-name="Related">
+      <div v-for="product in products" :key="product.code" v-track-item="product" data-vc-track="product-card">
+        <a data-vc-track="product-link" :data-test-id="product.code"><span>{{ product.code }}</span></a>
       </div>
     </div>
   `,
@@ -93,7 +93,7 @@ describe("dom-analytics engine", () => {
   });
 
   it("does not send when a required argument is missing", () => {
-    document.body.innerHTML = `<div data-name="product-card"><a data-name="product-link">x</a></div>`;
+    document.body.innerHTML = `<div data-vc-track="product-card"><a data-vc-track="product-link">x</a></div>`;
     stop = startEngine([SELECT_ITEM]);
 
     document.querySelector("a")?.click();
@@ -103,8 +103,8 @@ describe("dom-analytics engine", () => {
 
   it("builds the item from attributes when no object is bound", () => {
     document.body.innerHTML = `
-      <div data-name="product-card" data-sku="ABC" data-price="9.5">
-        <a data-name="product-link">x</a>
+      <div data-vc-track="product-card" data-sku="ABC" data-price="9.5">
+        <a data-vc-track="product-link">x</a>
       </div>`;
     stop = startEngine([
       {
@@ -134,8 +134,8 @@ describe("dom-analytics engine", () => {
 
   it("walks up past an ancestor whose rule does not resolve", () => {
     document.body.innerHTML = `
-      <div data-name="banner" data-promo="summer">
-        <div data-name="product-card"><a data-name="product-link">x</a></div>
+      <div data-vc-track="banner" data-promo="summer">
+        <div data-vc-track="product-card"><a data-vc-track="product-link">x</a></div>
       </div>`;
     stop = startEngine([
       SELECT_ITEM,
@@ -182,7 +182,7 @@ describe("dom-analytics engine", () => {
     expect(analyticsMock).toHaveBeenCalledTimes(3);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], expect.any(Object));
 
-    document.querySelector<HTMLElement>("[data-name='product-list']")?.setAttribute("data-list-id", "similar");
+    document.querySelector<HTMLElement>("[data-vc-track='product-list']")?.setAttribute("data-list-id", "similar");
     await flushPromises();
     expect(analyticsMock).toHaveBeenCalledTimes(4);
     expect(analyticsMock).toHaveBeenLastCalledWith("viewItemList", [a, c], {
@@ -206,8 +206,8 @@ describe("dom-analytics engine", () => {
 
   it("applies rules added after start", async () => {
     document.body.innerHTML = `
-      <div data-name="promo" data-term="sale"></div>
-      <div data-name="product-card" data-sku="A"><button data-name="product-link">x</button></div>`;
+      <div data-vc-track="promo" data-term="sale"></div>
+      <div data-vc-track="product-card" data-sku="A"><button data-vc-track="product-link">x</button></div>`;
     const rules: RuleType[] = [];
     stop = startEngine(rules);
     await flushPromises();
@@ -235,7 +235,7 @@ describe("dom-analytics engine", () => {
         directives: { trackItem: vTrackItem },
         setup: () => ({ product }),
         // No text bound to the product: only the directive update can trigger a rescan
-        template: `<div v-track-item="product" data-name="product-details"></div>`,
+        template: `<div v-track-item="product" data-vc-track="product-details"></div>`,
       }),
       { attachTo: document.body },
     );
@@ -258,8 +258,8 @@ describe("dom-analytics engine", () => {
 
   it("ignores a click on the role element outside its link", () => {
     document.body.innerHTML = `
-      <div data-name="product-card" data-sku="A">
-        <div data-name="product-link"><a>x</a><span data-test-id="gap">gap</span></div>
+      <div data-vc-track="product-card" data-sku="A">
+        <div data-vc-track="product-link"><a>x</a><span data-test-id="gap">gap</span></div>
       </div>`;
     stop = startEngine([SELECT_BY_SKU]);
 
@@ -271,7 +271,7 @@ describe("dom-analytics engine", () => {
   });
 
   it("sends even when the link stops propagation", () => {
-    document.body.innerHTML = `<div data-name="product-card" data-sku="A"><a data-name="product-link">x</a></div>`;
+    document.body.innerHTML = `<div data-vc-track="product-card" data-sku="A"><a data-vc-track="product-link">x</a></div>`;
     document.querySelector("a")?.addEventListener("click", (e) => e.stopPropagation());
     stop = startEngine([SELECT_BY_SKU]);
 
@@ -282,8 +282,8 @@ describe("dom-analytics engine", () => {
 
   it("sends only for the innermost matching role", () => {
     document.body.innerHTML = `
-      <div data-name="banner" data-promo="summer">
-        <div data-name="product-card" data-sku="A"><a data-name="product-link">x</a></div>
+      <div data-vc-track="banner" data-promo="summer">
+        <div data-vc-track="product-card" data-sku="A"><a data-vc-track="product-link">x</a></div>
       </div>`;
     stop = startEngine([
       SELECT_BY_SKU,
@@ -297,8 +297,8 @@ describe("dom-analytics engine", () => {
 
   it("drops attributes that are empty or not a number", () => {
     document.body.innerHTML = `
-      <div data-name="product-card" data-sku="A" data-price="abc" data-vendor="" data-stock="">
-        <a data-name="product-link">x</a>
+      <div data-vc-track="product-card" data-sku="A" data-price="abc" data-vendor="" data-stock="">
+        <a data-vc-track="product-link">x</a>
       </div>`;
     stop = startEngine([
       {
@@ -327,9 +327,9 @@ describe("dom-analytics engine", () => {
 
   it("collects only the cards that resolve to an item", async () => {
     document.body.innerHTML = `
-      <div data-name="product-list" data-list-id="related">
-        <div data-name="product-card" data-sku="A"></div>
-        <div data-name="product-card"></div>
+      <div data-vc-track="product-list" data-list-id="related">
+        <div data-vc-track="product-card" data-sku="A"></div>
+        <div data-vc-track="product-card"></div>
       </div>`;
     stop = startEngine([VIEW_ITEM_LIST_BY_SKU]);
     await flushPromises();
@@ -339,8 +339,8 @@ describe("dom-analytics engine", () => {
 
   it("does not resend viewItemList for markup items without an id", async () => {
     document.body.innerHTML = `
-      <div data-name="product-list">
-        <div data-name="product-card" data-sku="A"></div>
+      <div data-vc-track="product-list">
+        <div data-vc-track="product-card" data-sku="A"></div>
       </div>`;
     stop = startEngine([VIEW_ITEM_LIST_BY_SKU]);
     await flushPromises();
@@ -353,10 +353,10 @@ describe("dom-analytics engine", () => {
 
   it("collects the cards of a nested list into that list only", async () => {
     document.body.innerHTML = `
-      <div data-name="product-list">
-        <div data-name="product-card" data-sku="A"></div>
-        <div data-name="product-list">
-          <div data-name="product-card" data-sku="B"></div>
+      <div data-vc-track="product-list">
+        <div data-vc-track="product-card" data-sku="A"></div>
+        <div data-vc-track="product-list">
+          <div data-vc-track="product-card" data-sku="B"></div>
         </div>
       </div>`;
     stop = startEngine([VIEW_ITEM_LIST_BY_SKU]);
@@ -369,7 +369,7 @@ describe("dom-analytics engine", () => {
   });
 
   it("does not send viewItemList for a list without cards", async () => {
-    document.body.innerHTML = `<div data-name="product-list" data-list-id="related"></div>`;
+    document.body.innerHTML = `<div data-vc-track="product-list" data-list-id="related"></div>`;
     stop = startEngine([VIEW_ITEM_LIST]);
     await flushPromises();
 
@@ -379,14 +379,14 @@ describe("dom-analytics engine", () => {
   it("stops appear tracking after dispose", async () => {
     startEngine([{ event: "search", trigger: "appear", target: "promo", args: [{ source: "attr", attr: "term" }] }])();
 
-    document.body.innerHTML = `<div data-name="promo" data-term="sale"></div>`;
+    document.body.innerHTML = `<div data-vc-track="promo" data-term="sale"></div>`;
     await flushPromises();
 
     expect(analyticsMock).not.toHaveBeenCalled();
   });
 
   it("stops listening after dispose", async () => {
-    document.body.innerHTML = `<div data-name="product-card" data-sku="A"><a data-name="product-link">x</a></div>`;
+    document.body.innerHTML = `<div data-vc-track="product-card" data-sku="A"><a data-vc-track="product-link">x</a></div>`;
     startEngine([
       {
         event: "selectItem",

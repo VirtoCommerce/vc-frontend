@@ -5,7 +5,7 @@
     :title="title"
     prepend-icon="cube"
     size="lg"
-    data-name="product-list"
+    data-vc-track="product-list"
     data-list-id="related_products"
     :data-list-name="`${title} ${productName}`"
     :data-related-id="productId"

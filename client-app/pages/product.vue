@@ -3,7 +3,7 @@
     <VcContainer
       ref="productComponentAnchor"
       v-track-item="product"
-      data-name="product-details"
+      data-vc-track="product-details"
       class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
     >
       <FiltersPopupSidebar
