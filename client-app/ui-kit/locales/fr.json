@@ -166,6 +166,17 @@
       "rating_label": "Évaluation {value} sur {maxValue}",
       "read_only_button_aria_label": "Évaluation {value} sur {maxValue}, non disponible pour la sélection",
       "set_rating_aria_label": "Définir l’évaluation à {value} sur {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Saisi, position {position} sur {total}. Les flèches le déplacent, Espace le dépose, Échap annule.",
+      "grabbed_lists": "Saisi, position {position} sur {total}. Les flèches le déplacent, y compris vers une autre liste ; Espace le dépose, Échap annule.",
+      "moved": "Position {position} sur {total}",
+      "dropped": "Déposé en position {position} sur {total}",
+      "edge": "Impossible d'aller plus loin",
+      "cancelled": "Annulé, de retour à sa place",
+      "moved_list": "Déplacé vers la liste {position} sur {total}",
+      "moved_list_dropped": "Déplacé vers la liste {position} sur {total} et déposé",
+      "no_target": "Aucune liste dans cette direction ne l'accepte"
     }
   }
 }

@@ -166,6 +166,17 @@
       "rating_label": "Valutazione {value} su {maxValue}",
       "read_only_button_aria_label": "Valutazione {value} su {maxValue}, non disponibile per la selezione",
       "set_rating_aria_label": "Imposta valutazione a {value} su {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Afferrato, posizione {position} di {total}. Le frecce lo spostano, Spazio lo rilascia, Esc annulla.",
+      "grabbed_lists": "Afferrato, posizione {position} di {total}. Le frecce lo spostano, anche in un altro elenco; Spazio lo rilascia, Esc annulla.",
+      "moved": "Posizione {position} di {total}",
+      "dropped": "Rilasciato in posizione {position} di {total}",
+      "edge": "Impossibile andare oltre",
+      "cancelled": "Annullato, tornato al suo posto",
+      "moved_list": "Spostato nell'elenco {position} di {total}",
+      "moved_list_dropped": "Spostato nell'elenco {position} di {total} e rilasciato",
+      "no_target": "Nessun elenco in quella direzione lo accetta"
     }
   }
 }

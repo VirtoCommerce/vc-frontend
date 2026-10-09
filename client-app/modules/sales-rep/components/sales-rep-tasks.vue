@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBlockChrome } from "../composables/useBlockChrome";
+import { useBlockSettings } from "../composables/useBlockSettings";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
 import { useSalesRepOverdueTaskCount } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
@@ -88,10 +88,10 @@ withDefaults(defineProps<IProps>(), { title: undefined });
 const { t, d } = useI18n();
 
 // Absent when this widget renders outside a layout.
-const chrome = useBlockChrome();
+const blockSettings = useBlockSettings();
 
 // The saved cap, not the draft: it is a query variable, so it applies on save.
-const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? TASKS_DEFAULT_ROWS);
+const rowLimit = computed(() => blockSettings?.savedSettings.value.maxRows ?? TASKS_DEFAULT_ROWS);
 
 const selectedDay = ref(localDayKey(new Date()));
 // Drives the dots query; the calendar owns which month is on screen and reports it back.

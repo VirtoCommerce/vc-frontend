@@ -166,6 +166,17 @@
       "rating_label": "Luokitus {value} / {maxValue}",
       "read_only_button_aria_label": "Luokitus {value} / {maxValue}, ei valittavissa",
       "set_rating_aria_label": "Aseta luokitukseksi {value} / {maxValue}"
+    },
+    "sortable": {
+      "grabbed": "Tartuttu, sijainti {position}/{total}. Nuolinäppäimet siirtävät, välilyönti pudottaa, Esc peruuttaa.",
+      "grabbed_lists": "Tartuttu, sijainti {position}/{total}. Nuolinäppäimet siirtävät, myös toiseen luetteloon; välilyönti pudottaa, Esc peruuttaa.",
+      "moved": "Sijainti {position}/{total}",
+      "dropped": "Pudotettu sijaintiin {position}/{total}",
+      "edge": "Pidemmälle ei pääse",
+      "cancelled": "Peruttu, palautettu alkuperäiselle paikalle",
+      "moved_list": "Siirretty luetteloon {position}/{total}",
+      "moved_list_dropped": "Siirretty luetteloon {position}/{total} ja pudotettu",
+      "no_target": "Mikään luettelo siihen suuntaan ei ota sitä vastaan"
     }
   }
 }
