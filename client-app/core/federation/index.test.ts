@@ -1,5 +1,6 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
 import { initFederatedModules } from "./index";
 
 interface IRouterStub {
@@ -27,22 +28,31 @@ function routerStub(existing: string[] = []) {
   return { addRoute, removeRoute, router };
 }
 
-const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock, globalsMock } =
-  vi.hoisted(() => {
-    const hostGlobals: { router?: IRouterStub } = {};
-    return {
-      loadRemoteMock: vi.fn(),
-      registerRemotesMock: vi.fn(),
-      loggerErrorMock: vi.fn(),
-      loggerWarnMock: vi.fn(),
-      loggerInfoMock: vi.fn(),
-      globalsMock: hostGlobals,
-    };
-  });
+const {
+  loadRemoteMock,
+  registerRemotesMock,
+  registerPluginsMock,
+  loggerErrorMock,
+  loggerWarnMock,
+  loggerInfoMock,
+  globalsMock,
+} = vi.hoisted(() => {
+  const hostGlobals: { router?: IRouterStub } = {};
+  return {
+    loadRemoteMock: vi.fn(),
+    registerRemotesMock: vi.fn(),
+    registerPluginsMock: vi.fn(),
+    loggerErrorMock: vi.fn(),
+    loggerWarnMock: vi.fn(),
+    loggerInfoMock: vi.fn(),
+    globalsMock: hostGlobals,
+  };
+});
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
   registerRemotes: registerRemotesMock,
+  registerPlugins: registerPluginsMock,
 }));
 
 vi.mock("@/core/utilities", () => ({
@@ -166,21 +176,27 @@ describe("initFederatedModules", () => {
     expect(result.loaded).toEqual(["local"]);
   });
 
-  it("resolves with every remote failed (never rejects) when registerRemotes throws", async () => {
+  it("fails only the remote whose registration throws, and never rejects", async () => {
     stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL, loyalty: "https://plugins.example.com/loyalty/mf-manifest.json" });
-    // Once, not persistent: beforeEach's clearAllMocks() does not remove implementations.
-    registerRemotesMock.mockImplementationOnce(() => {
-      throw new Error("runtime not initialized");
+    loadRemoteMock.mockResolvedValue({});
+    registerRemotesMock.mockImplementation((remotes: { name: string }[]) => {
+      if (remotes[0]?.name === "news") {
+        throw new Error("runtime not initialized");
+      }
     });
 
-    const result = await initFederatedModules();
+    try {
+      const result = await initFederatedModules();
 
-    expect(result.failed).toEqual(expect.arrayContaining(["news", "loyalty"]));
-    expect(result.failed).toHaveLength(2);
-    expect(result.loaded).toEqual([]);
-    expect(loadRemoteMock).not.toHaveBeenCalled();
-    expect(loggerErrorMock).toHaveBeenCalledWith("[MF] registerRemotes failed", expect.any(Error));
+      expect(result.failed).toEqual(["news"]);
+      expect(result.loaded).toEqual(["loyalty"]);
+      expect(loadRemoteMock).toHaveBeenCalledTimes(1);
+      expect(loggerErrorMock).toHaveBeenCalledWith('[MF] registerRemotes failed for "news"', expect.any(Error));
+    } finally {
+      // clearAllMocks() in beforeEach does not remove implementations.
+      registerRemotesMock.mockImplementation(() => undefined);
+    }
   });
 
   it("loads a compatible plugin and calls its init()", async () => {
@@ -300,7 +316,7 @@ describe("initFederatedModules", () => {
     );
     stubRemotesEnv({ news: REMOTE_URL });
 
-    const result = await initFederatedModules({ manifestTimeoutMs: 20 });
+    const result = await initFederatedModules({ manifestTimeoutMs: 20, deferredTimeoutMs: 20 });
 
     expect(result.skipped).toEqual(["news"]);
     expect(loggerErrorMock).toHaveBeenCalledWith(
@@ -314,9 +330,65 @@ describe("initFederatedModules", () => {
     stubRemotesEnv({ news: REMOTE_URL });
     loadRemoteMock.mockImplementation(() => new Promise(() => {}));
 
+    const result = await initFederatedModules({ deferredTimeoutMs: 20 });
+
+    expect(result).toEqual({ loaded: [], failed: ["news"], skipped: [] });
+  });
+
+  it("does not cut a plugin boot does not wait for at the boot budgets", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    const initMock = vi.fn();
+    loadRemoteMock.mockImplementation(
+      () => new Promise((resolve) => setTimeout(() => resolve({ init: initMock }), 60)),
+    );
+
+    const result = await initFederatedModules({ manifestTimeoutMs: 20, loadTimeoutMs: 20 });
+
+    expect(result).toEqual({ loaded: ["news"], failed: [], skipped: [] });
+    expect(initMock).toHaveBeenCalledOnce();
+  });
+
+  it("still cuts a blocksBoot plugin at the boot budgets", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation((requested: string) =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          url: requested,
+          json: () =>
+            Promise.resolve(
+              requested.endsWith("plugin.json")
+                ? { contributions: { format: CONTRIBUTIONS_FORMAT, blocksBoot: true } }
+                : COMPATIBLE_MANIFEST,
+            ),
+        }),
+      ),
+    );
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockImplementation(() => new Promise(() => {}));
+
     const result = await initFederatedModules({ loadTimeoutMs: 20 });
 
     expect(result).toEqual({ loaded: [], failed: ["news"], skipped: [] });
+  });
+
+  it("serves the MF runtime the manifest the contract gate already read, once", async () => {
+    vi.resetModules();
+    const { initFederatedModules: freshInit } = await import("./index");
+    const fetchMock = stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+
+    await freshInit();
+    const [[plugins]] = registerPluginsMock.mock.calls as [[{ fetch: (url: string) => unknown }[]]];
+    const served = await (plugins[0].fetch(REMOTE_URL) as Promise<Response>);
+
+    expect(await served.json()).toEqual(COMPATIBLE_MANIFEST);
+    expect(plugins[0].fetch(REMOTE_URL)).toBeUndefined();
+    expect(plugins[0].fetch("https://plugins.example.com/other/mf-manifest.json")).toBeUndefined();
+    expect(fetchMock.mock.calls.filter(([url]) => url === REMOTE_URL)).toHaveLength(1);
   });
 
   it("never calls init() of a plugin whose load resolved only after the budget", async () => {
@@ -331,7 +403,7 @@ describe("initFederatedModules", () => {
         }),
     );
 
-    const result = await initFederatedModules({ loadTimeoutMs: 20 });
+    const result = await initFederatedModules({ deferredTimeoutMs: 20 });
     expect(result.failed).toEqual(["news"]);
 
     resolveLoad?.({ init: initMock });
@@ -354,7 +426,7 @@ describe("initFederatedModules", () => {
         }),
     );
 
-    const result = await initFederatedModules({ loadTimeoutMs: 20 });
+    const result = await initFederatedModules({ deferredTimeoutMs: 20 });
     expect(result.failed).toEqual(["news"]);
 
     const realCause = new Error("shared-dependency gate: vue range mismatch");
@@ -393,15 +465,15 @@ describe("initFederatedModules", () => {
   });
 
   it("backstop invariant: a budget-compliant remote can never trip the boot backstop", async () => {
-    const { BOOT_BACKSTOP_MS, DISCOVERY_TIMEOUT_MS } = await import("./bootstrap");
-    const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS } = await import("./index");
+    const { BOOT_BACKSTOP_MS } = await import("./bootstrap");
+    const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS, runBudgetMs } = await import("./index");
 
-    // Every BUDGETED leg, in the order `work` runs them: the plugin list, then one remote's
-    // manifest, then its load and its init. Leaving the plugin list out of this sum is what let a
-    // compliant remote trip the backstop. What is left over is the headroom the unbudgeted
-    // loader-chunk fetch gets — see the BOOT_BACKSTOP_MS comment for why it has no budget.
+    // Every BUDGETED leg the backstop covers, in the order `work` runs them: an env remote's
+    // plugin.json (read with the manifest budget), then its manifest, its load and its init. The
+    // plugin list is awaited before the backstop starts, so it is not part of the sum. What is left
+    // over is the headroom the unbudgeted loader-chunk fetch gets — see the BOOT_BACKSTOP_MS comment.
     expect(BOOT_BACKSTOP_MS).toBeGreaterThan(
-      DISCOVERY_TIMEOUT_MS + DEFAULT_MANIFEST_TIMEOUT_MS + 2 * DEFAULT_LOAD_TIMEOUT_MS,
+      DEFAULT_MANIFEST_TIMEOUT_MS + runBudgetMs(DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS),
     );
   });
 
@@ -416,7 +488,7 @@ describe("initFederatedModules", () => {
         }),
     });
 
-    const result = await initFederatedModules({ loadTimeoutMs: 20 });
+    const result = await initFederatedModules({ deferredTimeoutMs: 20 });
     expect(result.failed).toEqual(["news"]);
 
     resolveInit?.();

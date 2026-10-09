@@ -80,6 +80,16 @@ describe("platform-served plugin discovery", () => {
     expect(result.loaded).toEqual(["sales-rep"]);
   });
 
+  it("does not carry the entry's own query over to the manifest beside it", async () => {
+    const fetchMock = stubManifestFetch();
+    const path = "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/remoteEntry.js?build=7";
+
+    await initFederatedModules({ plugins: [platformPlugin({ entry: { type: "script", path, hash: "8DBA4F3C" } })] });
+
+    const expected = `${globalThis.location.origin}/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/mf-manifest.json?v=8DBA4F3C`;
+    expect(fetchMock).toHaveBeenCalledWith(expected, expect.anything());
+  });
+
   it("loads the expose key the plugin declares", async () => {
     stubManifestFetch();
 

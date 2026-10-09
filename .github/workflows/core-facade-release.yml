@@ -8,7 +8,7 @@
 # Releases are immutable — re-running for an already-released version fails; bump the
 # contract version instead. Never delete core-v* releases: a deleted release is the only
 # way a plugin's pin can break. See client-app/core-api/README.md and
-# client-app/modules/federated/specs/2026-07-06-facade-distribution-design.md.
+# client-app/core/specs/VCST-5159-module-federation/2026-07-06-facade-distribution-design.md.
 name: Core Facade Release
 
 on:

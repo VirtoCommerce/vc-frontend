@@ -2,11 +2,12 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, inject, nextTick, onScopeDispose } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import ExtensionPointList from "./extension-point-list.vue";
 import ExtensionPoint from "./extension-point.vue";
 
 // Must NOT mock the registry: a stub cannot show that a real register() reaches a mounted component.
 vi.mock("@/shared/common/constants/initialExtensionRegistry", () => ({
-  initialExtensionRegistry: { mobileMenu: {} },
+  initialExtensionRegistry: { mobileMenu: {}, mobileHeader: {} },
 }));
 
 function mountPoint(name: string) {
@@ -93,5 +94,22 @@ describe("ExtensionPoint against the real registry", () => {
     await nextTick();
 
     expect(wrapper.text()).toBe("fallback:");
+  });
+});
+
+describe("ExtensionPointList against the real registry", () => {
+  it("lists an entry registered after it mounted, and drops it when unregistered", async () => {
+    const wrapper = mount(ExtensionPointList, { props: { category: "mobileHeader" } as never });
+    const { register, unregister } = useExtensionRegistry();
+
+    register("mobileHeader", "late-item", {
+      component: defineComponent({ name: "LateItem", template: `<span>late item</span>` }),
+    });
+    await nextTick();
+    expect(wrapper.text()).toBe("late item");
+
+    unregister("mobileHeader", "late-item");
+    await nextTick();
+    expect(wrapper.text()).toBe("");
   });
 });
