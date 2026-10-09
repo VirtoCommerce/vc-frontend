@@ -8244,7 +8244,7 @@ export type StorePluginRemoteType = {
 export type StorePluginType = {
   /** Additional assets the plugin ships */
   contentFiles: Array<StorePluginFileType>;
-  /** The plugin's declared contributions (the contributions object of its plugin.json) as JSON text; null when it declares none */
+  /** The contributions object of the plugin's plugin.json as JSON text; null when not declared */
   contributions?: Maybe<Scalars['String']['output']>;
   /** The plugin's entry asset (its remoteEntry.js) */
   entry?: Maybe<StorePluginFileType>;
