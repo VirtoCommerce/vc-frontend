@@ -89,6 +89,13 @@
         "empty_visible": "Faites glisser un indicateur ici pour l'afficher",
         "empty_hidden": "Faites glisser un indicateur ici pour le masquer",
         "max_rows": "Nombre de lignes max",
+        "restored": "Disposition par défaut restaurée.",
+        "empty": {
+          "title": "Tous les blocs sont masqués",
+          "text": "Tous les indicateurs et widgets de cette page ont été placés dans la section {hidden} des paramètres de disposition. Restaurez la disposition par défaut pour tout récupérer, ou ouvrez {edit} pour choisir précisément ce qui s'affiche.",
+          "hidden": "Masqués",
+          "restore": "Restaurer la disposition par défaut"
+        },
         "a11y": {
           "reorder": "Réorganiser {title}",
           "hide": "Masquer {title}",
@@ -204,12 +211,14 @@
       "load_failed": "Impossible de charger les commandes"
     },
     "tasks": {
-      "title": "Calendrier",
+      "title": "Tâches",
       "widget_title": "Tâches et échéances",
-      "full_calendar": "Calendrier complet",
+      "view_all": "Toutes les tâches",
       "new_task": "Nouvelle tâche",
-      "add_task": "Ajouter une tâche",
+      "due_dates": "Échéances",
       "today": "Aujourd'hui",
+      "all": "Toutes",
+      "clear_day_aria": "Retirer {date}",
       "empty": "Aucune tâche dans cet onglet",
       "empty_day": "Aucune échéance ce jour-là",
       "load_failed": "Impossible de charger les tâches",
@@ -224,8 +233,10 @@
         "task": "Tâche",
         "status": "Statut",
         "notes": "Notes",
-        "complete_aria": "Marquer « {name} » comme terminée",
-        "reopen_aria": "Rouvrir « {name} »",
+        "actions": "Actions",
+        "mark_complete": "Terminer",
+        "reopen": "Rouvrir",
+        "action_aria": "{action} : « {name} »",
         "edit_aria": "Modifier « {name} »"
       },
       "status": {

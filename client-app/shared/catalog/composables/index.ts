@@ -3,6 +3,7 @@ export * from "./useCatalogBasePath";
 export * from "./useCategory";
 export * from "./useConfigurableLineItemId";
 export * from "./useConfigurableProduct";
+export * from "./useConfigurationSectionNavigation";
 export * from "./useLoyaltyCatalogCurrency";
 export * from "./useProduct";
 export * from "./useProductPickupLocations";

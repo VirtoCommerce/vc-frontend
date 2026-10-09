@@ -89,6 +89,13 @@
         "empty_visible": "Trascina qui una statistica per mostrarla",
         "empty_hidden": "Trascina qui una statistica per nasconderla",
         "max_rows": "Righe massime",
+        "restored": "Layout predefinito ripristinato.",
+        "empty": {
+          "title": "Tutti i blocchi sono nascosti",
+          "text": "Tutte le statistiche e i widget di questa pagina sono stati spostati in {hidden} nelle impostazioni del layout. Ripristina il layout predefinito per riportare tutto, oppure apri {edit} per scegliere esattamente cosa mostrare.",
+          "hidden": "Nascosti",
+          "restore": "Ripristina layout predefinito"
+        },
         "a11y": {
           "reorder": "Riordina {title}",
           "hide": "Nascondi {title}",
@@ -204,12 +211,14 @@
       "load_failed": "Impossibile caricare gli ordini"
     },
     "tasks": {
-      "title": "Calendario",
+      "title": "Attività",
       "widget_title": "Attività e scadenze",
-      "full_calendar": "Calendario completo",
+      "view_all": "Tutte le attività",
       "new_task": "Nuova attività",
-      "add_task": "Aggiungi attività",
+      "due_dates": "Scadenze",
       "today": "Oggi",
+      "all": "Tutte",
+      "clear_day_aria": "Rimuovi {date}",
       "empty": "Nessuna attività in questa scheda",
       "empty_day": "Nessuna scadenza in questo giorno",
       "load_failed": "Impossibile caricare le attività",
@@ -224,8 +233,10 @@
         "task": "Attività",
         "status": "Stato",
         "notes": "Note",
-        "complete_aria": "Segna «{name}» come completata",
-        "reopen_aria": "Riapri «{name}»",
+        "actions": "Azioni",
+        "mark_complete": "Completa",
+        "reopen": "Riapri",
+        "action_aria": "{action}: «{name}»",
         "edit_aria": "Modifica «{name}»"
       },
       "status": {
