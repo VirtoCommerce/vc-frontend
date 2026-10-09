@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DateFilterId } from "@/core/enums";
-import { useUserOrdersFilter } from "./useUserOrdersFilter";
+import { getFilterExpression, useUserOrdersFilter } from "./useUserOrdersFilter";
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
@@ -167,5 +167,13 @@ describe("useUserOrdersFilter — applied date filter east of UTC", () => {
     vi.setSystemTime(new Date(2026, 9, 31, 10, 30));
 
     expect(applyPreset(DateFilterId.LAST_MONTH)).toEqual({ startDate: "2026-09-01", endDate: "2026-10-01" });
+  });
+});
+
+describe("getFilterExpression", () => {
+  it("escapes quotes and backslashes inside quoted values", () => {
+    expect(getFilterExpression("", { statuses: ["New"], customerNames: ['Acme "Best" Inc', "C:\\Corp"] })).toBe(
+      String.raw`status:"New" customername:"Acme \"Best\" Inc","C:\\Corp"`,
+    );
   });
 });

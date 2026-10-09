@@ -243,7 +243,9 @@
       "logo_changed": "Il logo è stato modificato con successo.",
       "logo_deleted": "Il logo è stato eliminato.",
       "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse.",
-      "content_failed_to_load": "Non è stato possibile caricare una parte del sito. Ricarica la pagina per continuare."
+      "content_failed_to_load": "Non è stato possibile caricare una parte del sito. Ricarica la pagina per continuare.",
+      "page_loading": "Caricamento della pagina…",
+      "page_loading_slow": "Il caricamento di questa pagina richiede più tempo del solito. Puoi attendere o ricaricare la pagina."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
@@ -805,6 +807,17 @@
           "required_section": "Sezione obbligatoria",
           "optional_no_selected": "Personalizza ulteriormente la tua selezione (opzionale)",
           "required_no_selected": "Completa tutte le opzioni obbligatorie per finalizzare la selezione",
+          "checklist": {
+            "title": "Checklist della configurazione",
+            "done": "(completato)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obbligatorio",
+            "optional": "{name} — opzionale",
+            "fill_it_in": "Compila",
+            "upload_file": "Carica un file",
+            "check_it_out": "Scopri",
+            "review": "Controlla"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Opzione personalizzata: {0}",
             "custom_option_empty": "Opzione personalizzata: vuoto",
@@ -1010,15 +1023,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Conteggio prodotti",
-        "list_edit_button": "Modifica",
-        "remove_list_button": "Elimina",
+        "rename_list_button": "Rinomina",
+        "remove_list_button": "Rimuovi lista",
         "make_private_button": "Rendi privato",
         "share_button": "Condividi",
         "last_modified_label": "Ultima modifica: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Aggiungi tutto al carrello",
-        "list_settings_button": "Impostazioni lista",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "La tua lista è vuota",
         "empty_list_button": "Continua a navigare",
         "list_icon": "Icona lista"
@@ -1042,11 +1055,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nuova lista",
-        "edit_mode_title": "Impostazioni lista",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nome lista",
         "list_name_placeholder": "Inserisci il nome",
-        "sharing_scope_label": "Opzioni di condivisione",
-        "sharing_scope_placeholder": "Seleziona un'opzione",
         "sharing_link_label": "Link",
         "create_button": "Crea lista",
         "save_button": "@:common.buttons.save",
@@ -1055,11 +1066,25 @@
         "make_shared": "Rendi condivisa",
         "sharing_scope": {
           "Private": "Privato",
-          "Organization": "Organizzazione",
-          "AnyoneAnonymous": "Chiunque (sola lettura)"
+          "Organization": "La mia organizzazione",
+          "AnyoneAnonymous": "Chiunque abbia il link"
         },
         "clipboard_success": "Link copiato",
         "save_error": "Impossibile salvare la lista. Riprova."
+      },
+      "share_wishlist_modal": {
+        "title": "Condividi “{listName}”",
+        "who_can_access_label": "Chi ha accesso",
+        "scope_selected": "{label}, selezionato"
+      },
+      "stop_sharing_modal": {
+        "title": "Interrompere la condivisione di questa lista?",
+        "message": "Tutti coloro con cui la lista è condivisa perderanno l'accesso. Puoi condividerla di nuovo in qualsiasi momento.",
+        "confirm_button": "Interrompi condivisione",
+        "change_title": "Modificare chi ha accesso?",
+        "change_message": "Il link resta lo stesso. Alcuni utenti potrebbero perdere l'accesso.",
+        "change_confirm_button": "Modifica accesso",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",
@@ -1804,6 +1829,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "La quantità disponibile del prodotto {availQty} è insufficiente per la richiesta {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Ordine minimo {minQty} articolo(i) non disponibile in magazzino",
     "PRODUCT_EXACT_QTY": "Puoi ordinare {minQty} articolo(i)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Ordina in confezioni da {packSize}",
+    "LINE_ITEM_LIMIT": "Puoi ordinare massimo {limit} articolo(i)",
     "CART_INVALID_PRODUCT": "Prodotto non valido"
   },
   "file_error": {

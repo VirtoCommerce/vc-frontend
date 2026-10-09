@@ -7,15 +7,15 @@ import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
-import { federatedHostPlugin, federatedAlias } from "./vite.federation.js";
+import { federatedHostPlugin, federatedAlias, federatedDefine } from "./vite.federation.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
 
 // Libraries imported only via dynamic import()/defineAsyncComponent; kept out of the eager
 // `vendor` chunk so they stay in their own lazy chunks. `@module-federation/*` is reached
-// only through the flag-gated dynamic import in app-runner, so deferring it keeps the MF
-// runtime out of the default (APP_MODULES_FEDERATION_ENABLED off) eager bundle entirely.
+// only through the switch-gated dynamic import in app-runner, so deferring it keeps the MF
+// runtime out of a `module_federation_enabled: false` eager bundle entirely.
 const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
@@ -82,8 +82,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       vue(),
-      // Module Federation host — empty unless APP_MODULES_FEDERATION_ENABLED is set (see vite.federation.ts).
-      ...federatedHostPlugin(process.env.APP_MODULES_FEDERATION_ENABLED),
+      // Module Federation host — empty when the theme's module_federation_enabled is false (see vite.federation.ts).
+      ...federatedHostPlugin(),
       graphql() as PluginOption,
       isServe
         ? checker({
@@ -115,6 +115,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       // https://vue-i18n.intlify.dev/guide/advanced/optimization.html#reduce-bundle-size-with-feature-build-flags
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
+      ...federatedDefine(),
     },
     build: {
       target: browserslistToEsbuild(),
@@ -156,7 +157,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     // Mirrors server.proxy so a production build can be smoke-tested against the backend
     // via `yarn preview` — the canonical way to run the MF host locally. (`yarn dev` also
     // works, incl. HMR for plugins that share @apollo/client — see
-    // client-app/modules/federated/HOWTO.md "The dev inner loop".)
+    // client-app/core/federation/HOWTO.md "The dev inner loop".)
     preview: {
       port: 3000,
       cors: true,

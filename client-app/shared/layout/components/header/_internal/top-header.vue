@@ -82,6 +82,8 @@
             </span>
           </template>
 
+          <ExtensionPointList category="topHeaderStatus" />
+
           <button
             ref="accountButton"
             type="button"
@@ -92,11 +94,11 @@
             data-test-id="account-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="hidden min-w-0 font-bold xl:inline">
+            <span class="hidden min-w-0 gap-1 font-bold xl:flex">
               <template v-if="isMultiOrganization && organization">
                 <span
                   data-test-id="organization-name-label"
-                  class="min-w-0 truncate xl:max-w-80"
+                  class="min-w-0 truncate xl:max-w-32 2xl:max-w-80"
                   :title="organization.name"
                 >
                   {{ organization.name }}
@@ -106,7 +108,8 @@
 
               <span
                 data-test-id="customer-name-label"
-                class="min-w-0 shrink-0 truncate xl:max-w-80"
+                class="min-w-0 shrink-0 truncate"
+                :class="isMultiOrganization && organization ? 'xl:max-w-32 2xl:max-w-80' : 'xl:max-w-80'"
                 :title="user.contact?.fullName || user.userName"
                 >{{ user.contact?.fullName || user.userName }}</span
               >

@@ -8,7 +8,7 @@
 # Releases are immutable — re-running for an already-released version fails; bump the
 # contract version instead. Never delete core-v* releases: a deleted release is the only
 # way a plugin's pin can break. See client-app/core-api/README.md and
-# client-app/modules/federated/specs/2026-07-06-facade-distribution-design.md.
+# client-app/core/specs/VCST-5159-module-federation/2026-07-06-facade-distribution-design.md.
 name: Core Facade Release
 
 on:
@@ -16,8 +16,8 @@ on:
 
 jobs:
   release:
-    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): skipped in the private theme mirror (VCST-5970).
-    if: github.repository_id == '296335982'
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_RELEASE=true: skipped in the private theme mirror (VCST-5970).
+    if: (github.repository_id == '296335982' || vars.VC_RELEASE == 'true')
     runs-on: ubuntu-latest
     permissions:
       contents: write # create the core-v* tag + release with the built-in GITHUB_TOKEN

@@ -243,7 +243,9 @@
       "logo_changed": "Логотип успешно изменен.",
       "logo_deleted": "Логотип удален.",
       "pending_operations_leaving_page_confirmation": "Некоторые операции еще выполняются. Вы уверены, что хотите покинуть эту страницу? Несохраненные изменения могут быть потеряны.",
-      "content_failed_to_load": "Не удалось загрузить часть сайта. Пожалуйста, обновите страницу, чтобы продолжить."
+      "content_failed_to_load": "Не удалось загрузить часть сайта. Пожалуйста, обновите страницу, чтобы продолжить.",
+      "page_loading": "Загрузка страницы…",
+      "page_loading_slow": "Страница загружается дольше обычного. Можно подождать или перезагрузить страницу."
     },
     "placeholders": {
       "enter_value": "Введите значение",
@@ -805,6 +807,17 @@
           "required_section": "Раздел обязателен",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
           "required_no_selected": "Завершите выбор, указав все необходимые параметры",
+          "checklist": {
+            "title": "Чек-лист конфигурации",
+            "done": "(выполнено)",
+            "selected": "{name} — {value}",
+            "required": "{name} — обязательно",
+            "optional": "{name} — необязательно",
+            "fill_it_in": "Заполнить",
+            "upload_file": "Загрузить файл",
+            "check_it_out": "Посмотреть",
+            "review": "Проверить"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Настраиваемый параметр: {0}",
             "custom_option_empty": "Настраиваемая опция: пусто",
@@ -1010,15 +1023,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Количество товаров",
-        "list_edit_button": "Редактировать",
-        "remove_list_button": "Удалить",
+        "rename_list_button": "Переименовать",
+        "remove_list_button": "Удалить список",
         "make_private_button": "Сделать приватным",
         "share_button": "Поделиться",
         "last_modified_label": "Последнее изменение: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Добавить все в корзину",
-        "list_settings_button": "Настройки списка",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Ваш список пуст",
         "empty_list_button": "Перейти в каталог",
         "list_icon": "Иконка списка"
@@ -1042,11 +1055,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Новый список",
-        "edit_mode_title": "Настройки списка",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Название списка",
         "list_name_placeholder": "Пожалуйста, введите название",
-        "sharing_scope_label": "Поделиться",
-        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
         "sharing_link_label": "Ссылка",
         "create_button": "Создать список",
         "save_button": "@:common.buttons.save",
@@ -1055,11 +1066,25 @@
         "make_shared": "Сделать общим",
         "sharing_scope": {
           "Private": "Приватный",
-          "Organization": "Организация",
-          "AnyoneAnonymous": "Все (только чтение)"
+          "Organization": "Моя организация",
+          "AnyoneAnonymous": "Все, у кого есть ссылка"
         },
         "clipboard_success": "Ссылка скопирована",
         "save_error": "Не удалось сохранить список. Пожалуйста, попробуйте снова."
+      },
+      "share_wishlist_modal": {
+        "title": "Поделиться «{listName}»",
+        "who_can_access_label": "Кто имеет доступ",
+        "scope_selected": "{label}, выбрано"
+      },
+      "stop_sharing_modal": {
+        "title": "Прекратить доступ к этому списку?",
+        "message": "Все, кому открыт доступ к списку, потеряют его. Вы можете открыть доступ снова в любое время.",
+        "confirm_button": "Прекратить доступ",
+        "change_title": "Изменить, у кого есть доступ?",
+        "change_message": "Ссылка останется прежней. Некоторые пользователи могут потерять доступ.",
+        "change_confirm_button": "Изменить доступ",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
@@ -1804,6 +1829,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Доступное количество товара {availQty} недостаточно для запрошенного {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Минимальный заказ {minQty} шт. нет в наличии",
     "PRODUCT_EXACT_QTY": "Вы можете заказать {minQty} шт.",
+    "PRODUCT_PACK_SIZE_LIMIT": "Заказ в упаковках по {packSize}",
+    "LINE_ITEM_LIMIT": "Вы можете заказать максимум {limit} шт.",
     "CART_INVALID_PRODUCT": "Недействительный товар"
   },
   "file_error": {

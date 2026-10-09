@@ -11,7 +11,7 @@
     ]"
     v-bind="attrs"
   >
-    <VcLabel v-if="label" :for="componentId" :required="required" :error="error">
+    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
@@ -27,7 +27,6 @@
       :required="required"
       :maxlength="maxLength"
       :rows="rows"
-      :aria-labelledby="componentId"
       :autocomplete="autocomplete"
       class="vc-textarea__input"
     />

@@ -243,7 +243,9 @@
       "logo_changed": "Logo was successfully changed.",
       "logo_deleted": "Logo was deleted.",
       "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost.",
-      "content_failed_to_load": "Part of the site could not be loaded. Please reload the page to continue."
+      "content_failed_to_load": "Part of the site could not be loaded. Please reload the page to continue.",
+      "page_loading": "Loading page…",
+      "page_loading_slow": "This page is taking longer than usual to load. You can keep waiting or reload the page."
     },
     "placeholders": {
       "enter_value": "Enter a value",
@@ -805,6 +807,17 @@
           "required_section": "Section is required",
           "optional_no_selected": "Personalize your selection further (optional)",
           "required_no_selected": "Complete all required options to finalize your selection",
+          "checklist": {
+            "title": "Configuration checklist",
+            "done": "(completed)",
+            "selected": "{name} — {value}",
+            "required": "{name} — required",
+            "optional": "{name} — optional",
+            "fill_it_in": "Fill it in",
+            "upload_file": "Upload a file",
+            "check_it_out": "Check it out",
+            "review": "Review"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Custom option: {0}",
             "custom_option_empty": "Custom option: empty",
@@ -1010,15 +1023,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_edit_button": "Edit",
-        "remove_list_button": "Delete",
+        "rename_list_button": "Rename",
+        "remove_list_button": "Remove list",
         "make_private_button": "Make private",
         "share_button": "Share",
         "last_modified_label": "Last modified: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
-        "list_settings_button": "List settings",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
@@ -1042,11 +1055,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "New List",
-        "edit_mode_title": "List settings",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "List name",
         "list_name_placeholder": "Enter name",
-        "sharing_scope_label": "Sharing options",
-        "sharing_scope_placeholder": "Please select one option",
         "sharing_link_label": "Link",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
@@ -1055,11 +1066,25 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "Private",
-          "Organization": "Organization",
-          "AnyoneAnonymous": "Anyone (readonly)"
+          "Organization": "My organization",
+          "AnyoneAnonymous": "Anyone with link"
         },
         "clipboard_success": "Link copied",
         "save_error": "The list could not be saved. Please try again."
+      },
+      "share_wishlist_modal": {
+        "title": "Share “{listName}”",
+        "who_can_access_label": "Who can access",
+        "scope_selected": "{label}, selected"
+      },
+      "stop_sharing_modal": {
+        "title": "Stop sharing this list?",
+        "message": "Everyone the list is shared with will lose access. You can share it again any time.",
+        "confirm_button": "Stop sharing",
+        "change_title": "Change who can access?",
+        "change_message": "The link stays the same. Some users may lose access.",
+        "change_confirm_button": "Change access",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
@@ -1804,6 +1829,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
     "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Order in packs of {packSize}",
+    "LINE_ITEM_LIMIT": "You can order maximum {limit} item(s)",
     "CART_INVALID_PRODUCT": "Invalid product"
   },
   "file_error": {

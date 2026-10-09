@@ -243,7 +243,9 @@
       "logo_changed": "Logoen er endret.",
       "logo_deleted": "Logoen er slettet.",
       "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt.",
-      "content_failed_to_load": "En del av nettstedet kunne ikke lastes inn. Last inn siden på nytt for å fortsette."
+      "content_failed_to_load": "En del av nettstedet kunne ikke lastes inn. Last inn siden på nytt for å fortsette.",
+      "page_loading": "Laster inn siden…",
+      "page_loading_slow": "Det tar lengre tid enn vanlig å laste inn denne siden. Du kan vente eller laste inn siden på nytt."
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",
@@ -805,6 +807,17 @@
           "required_section": "Seksjonen er obligatorisk",
           "optional_no_selected": "Tilpass valget ditt ytterligere (valgfritt)",
           "required_no_selected": "Fyll ut alle obligatoriske alternativer for å fullføre valget ditt",
+          "checklist": {
+            "title": "Sjekkliste for konfigurasjon",
+            "done": "(fullført)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obligatorisk",
+            "optional": "{name} — valgfritt",
+            "fill_it_in": "Fyll ut",
+            "upload_file": "Last opp en fil",
+            "check_it_out": "Se alternativer",
+            "review": "Gå gjennom"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Tilpasset alternativ: {0}",
             "custom_option_empty": "Tilpasset alternativ: tomt",
@@ -1010,15 +1023,15 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Antall produkter",
-        "list_edit_button": "Rediger",
-        "remove_list_button": "Fjern",
+        "rename_list_button": "Gi nytt navn",
+        "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
         "share_button": "Del",
         "last_modified_label": "Sist endret: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
-        "list_settings_button": "Listeinnstillinger",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listen din er tom",
         "empty_list_button": "Fortsett å bla",
         "list_icon": "Listeikon"
@@ -1042,11 +1055,9 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Ny liste",
-        "edit_mode_title": "Listeinnstillinger",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
-        "sharing_scope_label": "Delingsalternativer",
-        "sharing_scope_placeholder": "Vennligst velg ett alternativ",
         "sharing_link_label": "Lenke",
         "create_button": "Opprett liste",
         "save_button": "@:common.buttons.save",
@@ -1055,11 +1066,25 @@
         "make_shared": "Gjør delt",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisasjon",
-          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+          "Organization": "Min organisasjon",
+          "AnyoneAnonymous": "Alle med lenken"
         },
         "clipboard_success": "Lenke kopiert",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
+      },
+      "share_wishlist_modal": {
+        "title": "Del «{listName}»",
+        "who_can_access_label": "Hvem har tilgang",
+        "scope_selected": "{label}, valgt"
+      },
+      "stop_sharing_modal": {
+        "title": "Slutte å dele denne listen?",
+        "message": "Alle som listen er delt med, mister tilgangen. Du kan dele den på nytt når som helst.",
+        "confirm_button": "Slutt å dele",
+        "change_title": "Endre hvem som har tilgang?",
+        "change_message": "Lenken forblir den samme. Noen brukere kan miste tilgangen.",
+        "change_confirm_button": "Endre tilgang",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",
@@ -1804,6 +1829,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Produktets tilgjengelige antall {availQty} er utilstrekkelig for ønsket {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Minimumsbestilling {minQty} produkt(er) er ikke tilgjengelig på lager",
     "PRODUCT_EXACT_QTY": "Du kan bestille {minQty} produkt(er)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Bestill i pakker med {packSize}",
+    "LINE_ITEM_LIMIT": "Du kan bestille maksimum {limit} produkt(er)",
     "CART_INVALID_PRODUCT": "Ugyldig produkt"
   },
   "file_error": {
