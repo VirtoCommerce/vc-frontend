@@ -68,7 +68,7 @@ const meta: Meta<IVcSelectStoryArgs> = {
         },
       },
     },
-    modelValue: { table: { type: { summary: "object|string|array" } } },
+    modelValue: { table: { type: { summary: "V | V[] — value-field values, or the items without value-field" } } },
   },
   args: {
     readonly: false,
@@ -745,6 +745,7 @@ export const InfiniteScroll: StoryType = {
         code: `
 <script setup lang="ts">
 const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuyers();
+const selected = ref<string[]>([]);
 </script>
 
 <template>

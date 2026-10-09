@@ -93,13 +93,13 @@ const DEFAULT_LOAD_MORE = `
 `;
 
 const STATES = [
-  { label: "A page is on its way", props: { loading: true, hasNextPage: true } },
-  { label: "More pages, nothing in flight", props: { loading: false, hasNextPage: true } },
-  { label: "No next page", props: { loading: false, hasNextPage: false } },
+  { label: "A page is on its way", props: { loading: true, hasNextPage: true, itemCount: 0 } },
+  { label: "More pages, nothing in flight", props: { loading: false, hasNextPage: true, itemCount: 0 } },
+  { label: "No next page", props: { loading: false, hasNextPage: false, itemCount: 0 } },
 ];
 
 export const Basic: StoryType = {
-  args: { loading: true, hasNextPage: true },
+  args: { loading: true, hasNextPage: true, itemCount: 0 },
   render: (args) => ({
     components: { VcLoadMore },
     setup: () => ({ args }),
@@ -116,7 +116,7 @@ export const Basic: StoryType = {
       source: {
         code: `
 <!-- Standalone, with no VcScrollbar above it: nothing is ever requested, the props draw the state. -->
-<VcLoadMore :loading="loading" :has-next-page="hasNextPage" />
+<VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" />
         `,
       },
     },
@@ -148,9 +148,9 @@ export const States: StoryType = {
       },
       source: {
         code: `
-<VcLoadMore loading has-next-page />   <!-- a page is on its way -->
-<VcLoadMore has-next-page />           <!-- more pages, nothing in flight: renders nothing at all -->
-<VcLoadMore />                         <!-- no next page: renders nothing -->
+<VcLoadMore loading has-next-page :item-count="items.length" /> <!-- a page is on its way -->
+<VcLoadMore has-next-page :item-count="items.length" />         <!-- more pages, nothing in flight: renders nothing at all -->
+<VcLoadMore :item-count="items.length" />                       <!-- no next page: renders nothing -->
         `,
       },
     },
@@ -178,7 +178,7 @@ const { items, loading, hasNextPage, loadMore } = usePagedList();
   <VcScrollbar vertical :edge-threshold="50" class="h-64">
     <div v-for="item in items" :key="item">Item {{ item }}</div>
 
-    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
+    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore" />
   </VcScrollbar>
 </template>
         `,
@@ -208,7 +208,7 @@ export const ShortFirstPage: StoryType = {
 <VcScrollbar vertical :edge-threshold="50" class="h-64">
   <div v-for="item in items" :key="item">Item {{ item }}</div>
 
-  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
+  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore" />
 </VcScrollbar>
         `,
       },
@@ -221,7 +221,13 @@ export const CustomIndicator: StoryType = {
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(15, 15) }),
     template: listTemplate(`
-      <VcLoadMore v-bind="args" :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore">
+      <VcLoadMore
+        v-bind="args"
+        :loading="loading"
+        :has-next-page="hasNextPage"
+        :item-count="items.length"
+        @load-more="loadMore"
+      >
         <template #loading>
           <span class="text-sm text-neutral-600">Loading page {{ page + 1 }}…</span>
         </template>
@@ -238,7 +244,7 @@ export const CustomIndicator: StoryType = {
 <VcScrollbar vertical :edge-threshold="50" class="h-64">
   <div v-for="item in items" :key="item">Item {{ item }}</div>
 
-  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore">
+  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore">
     <template #loading>
       <span class="text-sm text-neutral-600">Loading page {{ page + 1 }}…</span>
     </template>
@@ -267,6 +273,7 @@ export const InsideAList: StoryType = {
             role="none"
             :loading="loading"
             :has-next-page="hasNextPage"
+            :item-count="items.length"
             @load-more="loadMore"
           />
         </VcScrollbar>
@@ -287,7 +294,14 @@ export const InsideAList: StoryType = {
 <VcScrollbar vertical tag="ul" :edge-threshold="50" class="h-64">
   <li v-for="item in items" :key="item" class="border-b border-neutral-200 p-3">Item {{ item }}</li>
 
-  <VcLoadMore tag="li" role="none" :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
+  <VcLoadMore
+    tag="li"
+    role="none"
+    :loading="loading"
+    :has-next-page="hasNextPage"
+    :item-count="items.length"
+    @load-more="loadMore"
+  />
 </VcScrollbar>
         `,
       },

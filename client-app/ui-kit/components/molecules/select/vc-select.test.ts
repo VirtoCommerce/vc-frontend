@@ -761,6 +761,16 @@ describe("VcSelect", () => {
 
         expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
       });
+
+      it("warns about a selected-count that nothing reads", () => {
+        const warn = spyOnWarn();
+        const counted = { items: ITEMS, multiple: true, selectAll: true, modelValue: [], selectedCount: 2 };
+
+        createWrapper(counted);
+        createWrapper({ ...counted, autocomplete: true, serverFilter: true, onSearch: noop, onSelectAll: noop });
+
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("`selected-count`"))).toHaveLength(1);
+      });
     });
 
     it("tells a select from a clear in the selectAll event", async () => {

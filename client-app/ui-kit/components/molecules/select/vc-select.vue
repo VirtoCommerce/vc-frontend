@@ -296,7 +296,9 @@ const props = withDefaults(
 defineSlots<{
   /** The chosen item in single mode, the selected values in multiple mode. */
   selected?: (props: { item: M extends true ? V[] : T; error?: boolean }) => unknown;
+  /** Shown in the slotted trigger while nothing is selected. */
   placeholder?: (props: { error?: boolean }) => unknown;
+  /** Replaces the label of one option. */
   item?: (props: { item: T; index: number }) => unknown;
   /** Replaces the loading indicator, for the first page and for every next one. */
   loading?: () => unknown;
@@ -691,6 +693,13 @@ if (import.meta.env.DEV) {
         }
       },
       { immediate: true },
+    );
+  }
+
+  if (props.selectedCount !== undefined && !(props.serverFilter && props.multiple && props.selectAll)) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcSelect: `selected-count` only counts for `multiple` + `select-all` + `server-filter`; it is ignored here.",
     );
   }
 

@@ -3075,9 +3075,11 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
             item: M extends true ? V[] : T;
             error?: boolean;
         }) => unknown;
+        /** Shown in the slotted trigger while nothing is selected. */
         placeholder?: (props: {
             error?: boolean;
         }) => unknown;
+        /** Replaces the label of one option. */
         item?: (props: {
             item: T;
             index: number;
