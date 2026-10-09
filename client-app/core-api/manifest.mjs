@@ -326,7 +326,7 @@ export function pluginContributions(contributions) {
       const builtPluginJson = resolve(outDir, "plugin.json");
       const pluginJson = readJsonFile(builtPluginJson);
       if (!pluginJson) {
-        return;
+        this.error(`${builtPluginJson} is missing, so the declaration has nowhere to go; keep build.copyPublicDir on`);
       }
       writeFileSync(builtPluginJson, JSON.stringify({ ...pluginJson, contributions }, null, 2) + "\n");
     },

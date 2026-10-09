@@ -213,13 +213,19 @@ describe("pluginContributions", () => {
     mkdirSync(join(dir!, "dist"));
     writeFileSync(join(dir!, "dist", "plugin.json"), JSON.stringify({ id: "p", contentFiles: ["styles.css"] }));
 
-    plugin.closeBundle();
+    plugin.closeBundle.call({ error: vi.fn() });
 
     expect(JSON.parse(readFileSync(join(dir!, "dist", "plugin.json"), "utf8"))).toEqual({
       id: "p",
       contentFiles: ["styles.css"],
       contributions: { format: 1, when: { setting: "X" } },
     });
+  });
+
+  it("fails the build when public/plugin.json did not reach the output", () => {
+    const { plugin, context } = withPluginJson({ id: "p" });
+
+    expect(() => plugin.closeBundle.call(context)).toThrow(/dist\/plugin.json is missing/);
   });
 
   it("fails the build when there is no plugin.json at all", () => {

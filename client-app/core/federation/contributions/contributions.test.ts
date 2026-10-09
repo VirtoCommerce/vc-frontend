@@ -292,6 +292,24 @@ describe("applyContributions / releaseContributions", () => {
     expect(nav.registeredAccountSections.value.map((section) => section.title)).toEqual(["real hub"]);
   });
 
+  it("keeps the plugin's own link once it settled, even when the route it declared never came", async () => {
+    const { declare, status, navigations, router } = await setup();
+    status.setPluginStatus("sales-rep", "pending");
+    const applied = declare.applyContributions("sales-rep", salesRep, context(), router);
+    const nav = navigations.useNavigations();
+    const real = { id: "docs-link", title: "real", route: { name: "Home" } };
+
+    nav.mergeMenuSchema({
+      header: { desktop: { corporate: { children: [real] } }, mobile: { corporate: { children: [real] } } },
+    });
+    declare.releaseContributions(applied, router, true);
+
+    const routesOf = (links: { id?: string; route?: unknown }[] | undefined) =>
+      links?.filter((link) => link.id === "docs-link").map((link) => link.route);
+    expect(routesOf(nav.desktopCorporateMenuItems.value?.children)).toEqual([{ name: "Home" }]);
+    expect(routesOf(nav.mobileCorporateMenuItem.value?.children)).toEqual([{ name: "Home" }]);
+  });
+
   it("refuses a declared link or section id that is already taken, so withdrawing it cannot take another's", async () => {
     const { declare, status, navigations, router } = await setup();
     const nav = navigations.useNavigations();
