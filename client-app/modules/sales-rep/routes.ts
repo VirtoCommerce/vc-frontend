@@ -1,0 +1,162 @@
+import { useUser } from "@/shared/account/composables/useUser";
+import { isSalesRepsEnabled, isSalesRepTasksEnabled } from "./composables/useSalesRepsConfig";
+import {
+  TASKS_ROUTE_NAME,
+  TASKS_ROUTE_SEGMENT,
+  ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  CUSTOMER_ORDER_ROUTE_NAME,
+  CUSTOMER_ORDER_ROUTE_SEGMENT,
+  CUSTOMER_PROFILE_ROUTE_NAME,
+  CUSTOMER_PROFILE_ROUTE_SEGMENT,
+  DASHBOARD_ROUTE_NAME,
+  DASHBOARD_ROUTE_SEGMENT,
+  DOCUMENTS_ROUTE_NAME,
+  DOCUMENTS_ROUTE_SEGMENT,
+  MY_CUSTOMERS_ROUTE_NAME,
+  MY_CUSTOMERS_ROUTE_SEGMENT,
+  ROUTE_NAME,
+  ROUTE_SEGMENT,
+  SALES_REP_ACCESS_PERMISSION,
+  SALES_REP_DOCUMENTS_READ_PERMISSION,
+} from "./constants";
+import type { NavigationGuard, RouteRecordRaw } from "vue-router";
+
+const SalesRepsPage = () => import("./pages/sales-reps.vue");
+const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
+const CustomerOrderDetailsPage = () => import("./pages/customer-order-details.vue");
+const MyCustomersPage = () => import("./pages/my-customers.vue");
+const CustomerProfilePage = () => import("./pages/customer-profile.vue");
+const DashboardPage = () => import("./pages/dashboard.vue");
+const DocumentsPage = () => import("./pages/documents.vue");
+const TasksPage = () => import("./pages/sales-rep-tasks-page.vue");
+
+// Reps only: the My customers gate (SalesRep.Enabled + sales-rep:access) AND every extra permission
+// the page names (checkPermissions is a variadic AND; admins pass), else -> Dashboard.
+function guardSalesRep(next: (to?: { name: string }) => void, ...extraPermissions: string[]): boolean {
+  const { checkPermissions } = useUser();
+  if (isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION, ...extraPermissions)) {
+    return true;
+  }
+  next({ name: "Dashboard" });
+  return false;
+}
+
+// Rep-facing hub pages mount under the "/company" parent (for URL/layout reasons) which carries
+// `requiresOrganization: true`. But a sales rep serves organizations they don't belong to — their
+// access is defined by `sales-rep:access`, not org membership — so a rep with zero org memberships
+// would otherwise be bounced to Dashboard before these pages could mount. Clearing the inherited
+// gate here lets them through (child meta overrides parent meta in vue-router); the `beforeEnter`
+// guards below still enforce reps-only access. VCST-5494.
+const repRouteMeta = { requiresOrganization: false };
+
+const guardCustomerRoute: NavigationGuard = (to, _from, next) => {
+  if (!guardSalesRep(next)) {
+    return;
+  }
+  const id = to.params.organizationId;
+  if (id && typeof id === "string") {
+    next();
+  } else {
+    next({ name: MY_CUSTOMERS_ROUTE_NAME });
+  }
+};
+
+const guardRepRoute: NavigationGuard = (_to, _from, next) => {
+  if (guardSalesRep(next)) {
+    next();
+  }
+};
+
+// Relative path -> mounts under the "Company" parent (/company/sales-reps).
+export const salesRepsRoute: RouteRecordRaw = {
+  path: ROUTE_SEGMENT,
+  name: ROUTE_NAME,
+  component: SalesRepsPage,
+};
+
+// "Dashboard" — Sales Rep hub landing (VCST-5485) -> /company/dashboard.
+export const dashboardRoute: RouteRecordRaw = {
+  path: DASHBOARD_ROUTE_SEGMENT,
+  name: DASHBOARD_ROUTE_NAME,
+  component: DashboardPage,
+  meta: repRouteMeta,
+  beforeEnter: guardRepRoute,
+};
+
+export const myCustomersRoute: RouteRecordRaw = {
+  path: MY_CUSTOMERS_ROUTE_SEGMENT,
+  name: MY_CUSTOMERS_ROUTE_NAME,
+  component: MyCustomersPage,
+  meta: repRouteMeta,
+  beforeEnter: guardRepRoute,
+};
+
+// Document library (VCST-5730) -> /company/documents. Beyond rep access it needs the documents
+// read permission — the same gate that hides the nav link and the dashboard widget.
+export const documentsRoute: RouteRecordRaw = {
+  path: DOCUMENTS_ROUTE_SEGMENT,
+  name: DOCUMENTS_ROUTE_NAME,
+  component: DocumentsPage,
+  meta: repRouteMeta,
+  beforeEnter(_to, _from, next) {
+    if (guardSalesRep(next, SALES_REP_DOCUMENTS_READ_PERMISSION)) {
+      next();
+    }
+  },
+};
+
+// Tasks (VCST-5732) -> /company/tasks. Gated on vc-module-task-management being installed rather than on a
+// permission: with the module absent every task query answers empty, so the page would render a permanent blank.
+export const tasksRoute: RouteRecordRaw = {
+  path: TASKS_ROUTE_SEGMENT,
+  name: TASKS_ROUTE_NAME,
+  component: TasksPage,
+  meta: repRouteMeta,
+  beforeEnter(_to, _from, next) {
+    if (guardSalesRep(next) && isSalesRepTasksEnabled()) {
+      next();
+    } else {
+      next({ name: DASHBOARD_ROUTE_NAME });
+    }
+  },
+};
+
+// Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
+export const customerProfileRoute: RouteRecordRaw = {
+  path: CUSTOMER_PROFILE_ROUTE_SEGMENT,
+  name: CUSTOMER_PROFILE_ROUTE_NAME,
+  component: CustomerProfilePage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter: guardCustomerRoute,
+};
+
+export const customerOrdersRoute: RouteRecordRaw = {
+  path: CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  name: CUSTOMER_ORDERS_ROUTE_NAME,
+  component: CustomerOrdersPage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter: guardCustomerRoute,
+};
+
+export const customerOrderRoute: RouteRecordRaw = {
+  path: CUSTOMER_ORDER_ROUTE_SEGMENT,
+  name: CUSTOMER_ORDER_ROUTE_NAME,
+  component: CustomerOrderDetailsPage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter: guardCustomerRoute,
+};
+
+// No customer in the route, so the page needs no id check — only the reps-only gate.
+export const allCustomerOrdersRoute: RouteRecordRaw = {
+  path: ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  name: ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  component: CustomerOrdersPage,
+  meta: repRouteMeta,
+  beforeEnter: guardRepRoute,
+};

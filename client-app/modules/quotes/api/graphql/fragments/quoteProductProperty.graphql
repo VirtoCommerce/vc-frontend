@@ -1,0 +1,9 @@
+fragment quoteProductProperty on Property {
+  name
+  value
+  propertyType
+  hidden
+  propertyValueType
+  label
+  displayOrder
+}

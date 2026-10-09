@@ -9,27 +9,27 @@ Welcome to the **Modules Guide**! This documentation will help you understand ho
 - **Scalability:** Easily add new features without affecting existing ones.
 - **Maintainability:** Isolated codebases make it easier to manage and debug.
 - Any **Module** in the `/modules` folder can be safely removed without affecting **Core**
-- **Clear Control** by decision-making person. 
+- **Clear Control** by decision-making person.
 
 ### Core
+
 The **Core** is the main application that includes the API, router, builder, and other systems.
 
 ### [Module](#what-is-a-module)
+
 A **Module** is an additional functionality developed with minimal impact on the **Core**.
 
 ### Extension points
+
 **Extension points** are belong to the **Core**. Also called **Holes** or **Sockets**
-### Existing Extension points:
-- `client-app/shared/common/composables/useCustomProductComponents.ts`
-- `client-app/shared/layout/composables/useCustomAccountLinkComponents.ts`
-- `client-app/shared/layout/composables/useCustomHeaderLinkComponents.ts`
-- `client-app/shared/layout/composables/useCustomMobileHeaderComponents.ts`
-- `client-app/shared/layout/composables/useCustomMobileMenuLinkComponents.ts`
+You can read more about them in the [Extension points](../shared/common/composables/extensionRegistry/README.md) documentation.
 
 ### Module Management System
+
 The **Module Management System** is the decision-making point and business logic handler. It is represented as a [settings_data.json](../config/settings_data.json) as a bundle level and an array of `modules` in the `getStore` request as a store level settings. Could be considered as a "Feature Flags".
 
 ### [Type Generation System](#what-is-a-type-generation-system)
+
 The **Type Generation System** handles the generation of types and constants for GraphQL API.
 
 ---
@@ -96,8 +96,14 @@ The `scripts/graphql-codegen/generator.ts` file also plays a crucial role in han
   },
 ```
 
----
+Leave the entry in place even when the backend module is missing from the environment you generate
+against: such an endpoint answers `404`, so the module is reported as skipped, its committed
+`types.ts` is reused untouched and every other module is still generated. Anything else that goes
+wrong — an endpoint that answers but breaks generation, or an endpoint that answers `404` while the
+module has no committed `types.ts` to fall back on — fails the command. See "Types generation" in the root
+`README.md`.
 
+---
 
 ### Registering Routes
 
@@ -157,32 +163,33 @@ To ensure consistency and high quality across all modules, follow these best pra
 
 1. **Consistent Structure:**
 
-  - Adhere to the recommended folder structure.
-  - Keep related files grouped together.
+- Adhere to the recommended folder structure.
+- Keep related files grouped together.
 
 2. **Isolate Module Logic:**
 
-  - Avoid cross-module dependencies unless necessary.
-  - Use the module's `composables` for shared logic.
+- Avoid cross-module dependencies unless necessary.
+- Use the module's `composables` for shared logic.
 
 3. **Type Safety:**
 
-  - Define clear TypeScript types in the `types/` directory.
-  - Ensure all API interactions use generated GraphQL types.
+- Define clear TypeScript types in the `types/` directory.
+- Ensure all API interactions use generated GraphQL types.
 
 4. **Documentation:**
 
-  - Document public APIs, components, and composables.
-  - Keep the `README.md` updated with relevant information.
+- Document public APIs, components, and composables.
+- Keep the `README.md` updated with relevant information.
 
 5. **Naming Conventions:**
 
-  - Use clear and descriptive names for files and functions.
-  - Follow the project's naming guidelines.
+- Use clear and descriptive names for files and functions.
+- Follow the project's naming guidelines.
 
 6. **Testing:**
-  - Write unit and integration tests for module functionalities.
-  - Ensure tests are located alongside the code they test.
+
+- Write unit and integration tests for module functionalities.
+- Ensure tests are located alongside the code they test.
 
 ---
 

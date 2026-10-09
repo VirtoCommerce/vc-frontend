@@ -4,6 +4,8 @@
       "add_to_cart": "Añadir al carrito",
       "apply": "Aplicar",
       "cancel": "Cancelar",
+      "clear": "Borrar",
+      "clear_field": "Borrar: {field}",
       "close": "Cerrar",
       "copy": "Copiar",
       "deny": "Denegar",
@@ -17,6 +19,52 @@
       "show_hide_password": "Mostrar/ocultar contraseña",
       "toggle_dropdown": "Alternar desplegable",
       "update_cart": "Actualizar carrito"
+    },
+    "accessibility": {
+      "close_alert": "Cerrar alerta",
+      "open_calendar": "Abrir calendario",
+      "open_calendar_for": "Abrir calendario: {field}",
+      "calendar": "Calendario",
+      "product_quantity": "Cantidad del producto",
+      "decrease_quantity": "Disminuir cantidad",
+      "increase_quantity": "Aumentar cantidad",
+      "variant_picker_group": "Opciones de variantes",
+      "show_more_button": "Ver más opciones ({count})",
+      "sidebar": "Barra lateral",
+      "close_chip": "Cerrar chip",
+      "carousel_previous": "Diapositiva anterior",
+      "carousel_next": "Diapositiva siguiente",
+      "nav_previous": "Anterior",
+      "nav_next": "Siguiente",
+      "nav_up": "Arriba",
+      "nav_down": "Abajo"
+    },
+    "calendar": {
+      "aria_label": "Calendario",
+      "previous_month": "Mes anterior",
+      "next_month": "Mes siguiente",
+      "previous_year": "Año anterior",
+      "next_year": "Año siguiente",
+      "today": "Hoy",
+      "clear": "Borrar",
+      "outside_suggested_range": "Fuera del rango sugerido"
+    },
+    "date_range_input": {
+      "aria_label": "Rango de fechas",
+      "clear": "Limpiar rango de fechas",
+      "end_date": "Fecha de fin",
+      "invalid_range": "La fecha de fin debe ser igual o posterior a la fecha de inicio",
+      "start_date": "Fecha de inicio"
+    },
+    "date_selector": {
+      "min_date_error": "La fecha debe ser igual o posterior al {min}",
+      "max_date_error": "La fecha debe ser igual o anterior al {max}"
+    },
+    "date_input": {
+      "invalid_format": "Formato de fecha no válido",
+      "min_date_error": "La fecha debe ser igual o posterior al {min}",
+      "max_date_error": "La fecha debe ser igual o anterior al {max}",
+      "unavailable_date": "Esta fecha no está disponible"
     },
     "labels": {
       "not_available": "N/D",
@@ -46,11 +94,11 @@
         "max": "Pedido máximo {0} artículo(s)",
         "min_max": "Pedido de {0} a {1} artículo(s)",
         "min_not_available": "Pedido mínimo {0} artículo(s) no disponible en stock",
+        "exact_qty": "Puedes pedir {0} artículo(s)",
         "out_of_stock": "Agotado",
         "positive_number": "El valor debe ser un número positivo",
         "integer_number": "El valor debe ser un número entero",
-        "pack_size": "Pedir en paquetes de {0}",
-        "exact_qty": "Puedes pedir {0} artículo(s)"
+        "pack_size": "Pedir en paquetes de {0}"
       }
     },
     "pagination": {
@@ -58,11 +106,16 @@
       "next": "Siguiente"
     },
     "select": {
-      "items_selected": "{0} artículos seleccionados"
+      "items_selected": "{0} artículos seleccionados",
+      "results_available": "{0} resultados disponibles",
+      "no_results_found": "No se encontraron resultados",
+      "no_options": "No hay opciones disponibles"
     },
     "file": {
       "progress": "{percent} completado",
-      "uploaded": "Carga completada"
+      "uploaded": "Carga completada",
+      "reload": "Recargar archivo",
+      "remove": "Eliminar archivo"
     },
     "file_uploader": {
       "drag_and_drop": "Arrastra y suelta el archivo aquí o",
@@ -79,6 +132,40 @@
       "end_list": "Has llegado al final de la lista.",
       "page_limit_filters": "No hay más resultados. Intenta cambiar los filtros.",
       "page_limit": "No se pueden mostrar más resultados."
+    },
+    "table": {
+      "empty": "No se encontraron registros",
+      "error": "Error al cargar los datos",
+      "retry": "Intentar de nuevo",
+      "select_row_number": "Select row {number}",
+      "select_all": "Seleccionar todo",
+      "deselect_all": "Deseleccionar todo",
+      "selection_column": "Selección de fila"
+    },
+    "slider": {
+      "tooltip": "{count} artículos",
+      "aria_label": "Control deslizante de {min} a {max}",
+      "legend": "Control deslizante de {min} a {max}",
+      "start_input_label": "Valor inicial (entre {min} y {max})",
+      "end_input_label": "Valor final (entre {min} y {max})",
+      "start_input_aria_label": "Valor inicial, rango de {min} a {max}",
+      "end_input_aria_label": "Valor final, rango de {min} a {max}",
+      "start_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
+      "end_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
+      "column_aria_label": "Columna con {count} artículos, rango de {from} a {to}",
+      "current_value_announcement": "Valor del control deslizante: {start} a {end}, rango {min} a {max}",
+      "start_handle_label": "Control de valor mínimo",
+      "end_handle_label": "Control de valor máximo",
+      "start_handle_aria_label": "Valor inicial {value}, rango de {min} a {max}",
+      "end_handle_aria_label": "Valor final {value}, rango de {min} a {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navegación de migas de pan"
+    },
+    "rating": {
+      "rating_label": "Clasificación {value} de {maxValue}",
+      "read_only_button_aria_label": "Clasificación {value} de {maxValue}, no disponible para seleccionar",
+      "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
     }
   }
 }

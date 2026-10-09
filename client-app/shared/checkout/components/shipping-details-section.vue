@@ -1,18 +1,28 @@
 <template>
-  <VcWidget :title="$t('shared.checkout.shipping_details_section.title')" prepend-icon="truck" size="lg">
-    <div class="flex flex-col flex-wrap gap-4 xs:flex-row xs:gap-y-6 lg:gap-8">
-      <div v-if="hasBOPIS">
+  <VcWidget
+    :title="$t('shared.checkout.shipping_details_section.title')"
+    prepend-icon="truck"
+    size="lg"
+    class="shipping-details-section"
+    data-test-id="shipping-details-section"
+  >
+    <div class="shipping-details-section__content">
+      <div
+        v-if="xPickupEnabled && hasBOPIS && !onlyOneDeliveryMethod"
+        class="shipping-details-section__delivery-option"
+      >
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.delivery_option") }}
         </VcLabel>
 
-        <div class="flex min-h-18 items-center gap-2 rounded border p-4">
+        <div class="shipping-details-section__switcher-container">
           <VcTabSwitch
             v-model="mode"
             :value="SHIPPING_OPTIONS.pickup"
             icon="cube"
             :label="$t('shared.checkout.shipping_details_section.switchers.pickup')"
             :disabled="cartChanging"
+            data-test-id="pickup-switcher"
             @change="switchShippingOptions($event)"
           />
 
@@ -22,22 +32,23 @@
             icon="truck"
             :label="$t('shared.checkout.shipping_details_section.switchers.shipping')"
             :disabled="cartChanging"
+            data-test-id="shipping-switcher"
             @change="switchShippingOptions($event)"
           />
         </div>
       </div>
 
-      <template v-if="mode === SHIPPING_OPTIONS.shipping">
-        <div class="grow">
+      <div v-if="mode === SHIPPING_OPTIONS.shipping" class="shipping-details-section__shipping-section">
+        <div class="shipping-details-section__address-section" data-test-id="shipping-address-section">
           <VcLabel required>
             {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
           </VcLabel>
 
           <div
             :class="[
-              'flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
+              'shipping-details-section__address-container',
               {
-                'cursor-not-allowed bg-neutral-50': disabled,
+                'shipping-details-section__address-container--disabled': disabled,
               },
             ]"
           >
@@ -57,55 +68,61 @@
           :disabled="disabled"
           size="auto"
           item-size="lg"
-          :class="hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
+          class="shipping-details-section__method-select"
           required
-          test-id-dropdown="shipping-method-select"
-          @change="(value) => setShippingMethod(value)"
+          test-id-dropdown="shipping-method-selector"
+          @change="onShipmentMethodChange"
         >
           <template #placeholder>
-            <div class="flex items-center gap-3 p-[0.688rem] text-sm">
-              <VcImage class="size-12 rounded-sm bg-neutral-100" src="select-shipping.svg" />
+            <div class="shipping-details-section__method-item">
+              <VcImage
+                class="shipping-details-section__method-image shipping-details-section__method-image--placeholder"
+                src="select-shipping.svg"
+              />
 
               {{ $t("common.placeholders.select_delivery_method") }}
             </div>
           </template>
 
           <template #selected="{ item }">
-            <div class="flex items-center gap-3 p-[0.688rem] text-sm">
-              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <div class="shipping-details-section__method-item" :data-selected-shipping-method-id="item.id">
+              <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" />
 
-            {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+            <span :data-shipping-method-id="item.id">{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</span>
           </template>
         </VcSelect>
-      </template>
+      </div>
 
-      <div v-else class="grow">
+      <div v-else class="shipping-details-section__pickup-section" data-test-id="pickup-location-section">
         <VcLabel required>
           {{ $t("shared.checkout.shipping_details_section.labels.pickup_point") }}
         </VcLabel>
 
         <div
           :class="[
-            'relative flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
+            'shipping-details-section__pickup-container',
             {
-              'cursor-not-allowed bg-neutral-50': disabled,
+              'shipping-details-section__pickup-container--disabled': disabled,
             },
           ]"
         >
-          <VcLoaderOverlay v-if="isLoadingBopisAddresses" />
+          <VcLoaderOverlay
+            v-if="isLoadingBopisAddresses && isOpeningBopisAddresses"
+            class="shipping-details-section__pickup-loader"
+          />
 
           <AddressSelection
-            :disabled="isLoadingBopisAddresses || disabled"
+            :disabled="!cart || isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_pickup_point')"
-            @change="openSelectAddressModal"
+            @change="openSelectAddressModal(cart!.id)"
           />
         </div>
       </div>
@@ -114,11 +131,16 @@
 </template>
 
 <script setup lang="ts">
+import { omit } from "lodash-es";
 import { computed, ref, watch } from "vue";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
-import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
-import { AddressSelection } from "@/shared/common";
+import { BOPIS_CODE, useBopis } from "@/shared/checkout/composables/useBopis";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
+import { AddressSelection } from "@/shared/common/components";
+import { useShipToLocation } from "@/shared/ship-to-location/composables/useShipToLocation";
+import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
+import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
 
 interface IProps {
   disabled?: boolean;
@@ -133,29 +155,104 @@ const SHIPPING_OPTIONS = {
 
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const {
+  deliveryAddress,
+  shipmentMethod,
+  onDeliveryAddressChange,
+  billingAddressEqualsShipping,
+  initialized: checkoutInitialized,
+} = useCheckout();
 
-const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
+const { cart, availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
+const {
+  hasBOPIS,
+  openSelectAddressModal,
+  loading: isLoadingBopisAddresses,
+  modalOpening: isOpeningBopisAddresses,
+  bopisMethod,
+} = useBopis();
+const { xPickupEnabled } = useXPickup();
 
-const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
-const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
+const { isAuthenticated } = useUser();
+const { selectedAddress } = useShipToLocation();
 
+const mode = ref<ShippingOptionType>(getDefaultMode());
+
+const onlyOneDeliveryMethod = computed(() => availableShippingMethods.value.length === 1);
 const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
 
 function switchShippingOptions(_mode: ShippingOptionType) {
   mode.value = _mode;
 }
 
+function getDefaultMode() {
+  if (shipmentMethod.value?.code) {
+    return shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping";
+  }
+  if (availableShippingMethods.value.length === 1) {
+    return availableShippingMethods.value[0].code === BOPIS_CODE ? "pickup" : "shipping";
+  }
+  return "shipping";
+}
+
 watch(
-  mode,
-  (newMode, previousMode) => {
-    if (!previousMode) {
+  [mode, shipment, checkoutInitialized],
+  (currentValue, previousValue) => {
+    const newMode = currentValue[0];
+    const checkoutInitializedValue = currentValue[2];
+    const [previousMode, previousShipment] = previousValue;
+
+    if (!checkoutInitializedValue || !previousShipment) {
+      return;
+    }
+
+    const isSameMode = newMode === previousMode;
+
+    if (isSameMode) {
+      // trigger watch only if mode changed
       return;
     }
 
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+    const hasSelectedShippingMethod = !!shippingMethod;
 
-    if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
+    if (!hasSelectedShippingMethod) {
+      return;
+    }
+
+    const isBopis = shippingMethod?.code === BOPIS_CODE;
+
+    if (isBopis) {
+      billingAddressEqualsShipping.value = false;
+    }
+
+    const isAnonymous = !isAuthenticated.value;
+    const hasSelectedDeliveryAddress = !!selectedAddress.value;
+    const hasShipmentDeliveryAddress = !!shipment.value?.deliveryAddress;
+    const isShippingMode = newMode === SHIPPING_OPTIONS.shipping;
+    const hasToApplySelectedAddress = !hasShipmentDeliveryAddress || previousMode !== newMode;
+
+    if (
+      isAnonymous &&
+      hasSelectedShippingMethod &&
+      hasSelectedDeliveryAddress &&
+      isShippingMode &&
+      hasToApplySelectedAddress
+    ) {
+      void updateShipment({
+        id: shipment.value?.id,
+        deliveryAddress: omit(selectedAddress.value, ["isDefault", "isFavorite"]),
+        shipmentMethodCode: shippingMethod.code,
+        shipmentMethodOption: shippingMethod.optionName,
+        price: shippingMethod.price?.amount,
+      });
+
+      return;
+    }
+
+    const isSameShippingMethod = shippingMethod?.code === shipment.value?.shipmentMethodCode;
+
+    if (isSameShippingMethod) {
       return;
     }
 
@@ -170,4 +267,96 @@ watch(
     immediate: true,
   },
 );
+
+function onShipmentMethodChange(method: ShippingMethodType) {
+  void updateShipment({
+    id: shipment.value?.id,
+    deliveryAddress: shipment.value?.deliveryAddress,
+    shipmentMethodCode: method.code,
+    shipmentMethodOption: method.optionName,
+    price: method.price.amount,
+  });
+}
 </script>
+
+<style lang="scss">
+.shipping-details-section {
+  @apply @container;
+
+  &__content {
+    @apply flex flex-col flex-wrap gap-4;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply flex-row gap-y-6;
+    }
+
+    @container (min-width: theme("containers.4xl")) {
+      @apply flex-nowrap gap-8;
+    }
+  }
+
+  &__delivery-option {
+    @apply flex-shrink-0;
+  }
+
+  &__switcher-container {
+    @apply flex min-h-18 items-center gap-2 rounded-[--vc-radius] border p-4;
+  }
+
+  &__shipping-section {
+    @apply flex w-full flex-col gap-4;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply flex-row gap-6;
+    }
+  }
+
+  &__address-section {
+    @apply grow;
+  }
+
+  &__address-container {
+    @apply flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5;
+
+    &--disabled {
+      @apply cursor-not-allowed bg-neutral-50;
+    }
+  }
+
+  &__method-select {
+    @apply flex-none;
+
+    @container (min-width: theme("containers.5xl")) {
+      @apply w-4/12;
+    }
+  }
+
+  &__method-item {
+    @apply flex items-center gap-3 p-[0.688rem] text-sm;
+  }
+
+  &__method-image {
+    @apply size-12 rounded;
+
+    &--placeholder {
+      @apply bg-neutral-100;
+    }
+  }
+
+  &__pickup-section {
+    @apply grow;
+  }
+
+  &__pickup-loader {
+    @apply rounded-[--vc-radius];
+  }
+
+  &__pickup-container {
+    @apply relative flex min-h-18 grow flex-col justify-center rounded-[--vc-radius] border px-3 py-1.5;
+
+    &--disabled {
+      @apply cursor-not-allowed bg-neutral-50;
+    }
+  }
+}
+</style>

@@ -22,8 +22,7 @@
         <div class="mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
           <VcInput
             v-model="expirationDate"
-            v-maska
-            data-maska="## / ####"
+            :mask="dateMaskOptions"
             :label="labels.expirationDate"
             :placeholder="labels.datePlaceholder"
             :message="expirationDateErrors"
@@ -51,17 +50,19 @@
   </div>
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
+
   <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
     <PaymentPolicies />
 
     <VcButton
+      v-if="!hidePaymentButton"
       :disabled="!isValidBankCard"
       :loading="loading"
       class="flex-1 md:order-first md:flex-none"
       data-test-id="pay-now-button"
-      @click="sendPaymentData"
+      @click="() => sendPaymentData()"
     >
-      {{ $t("shared.payment.authorize_net.pay_now_button") }}
+      {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>
   </div>
 </template>
@@ -69,28 +70,22 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useScriptTag, useCssVar } from "@vueuse/core";
+import { Mask } from "maska";
 import { useForm } from "vee-validate";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { authorizePayment, initializePayment, initializeCartPayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
+import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
+import { usePayment } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
-import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import type { IPaymentMethodParameters, IPaymentMethodEmits } from "./types";
+import type { AuthorizePaymentResultType, CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
-
-interface IEmits {
-  (event: "success"): void;
-  (event: "fail", message?: string | null): void;
-}
-
-interface IProps {
-  order: CustomerOrderType;
-  disabled?: boolean;
-}
 
 interface IField {
   load(containerId: string): void;
@@ -115,9 +110,8 @@ interface IFlex {
   microform(options: { styles: Record<string, unknown> }): IMicroform;
 }
 
-const emit = defineEmits<IEmits>();
-
-const props = defineProps<IProps>();
+const emit = defineEmits<IPaymentMethodEmits>();
+const props = defineProps<IPaymentMethodParameters>();
 
 declare let Flex: FlexConstructorType;
 
@@ -129,8 +123,11 @@ let microform: IMicroform;
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const notifications = useNotifications();
+const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
 
 const loading = ref(false);
+const dateMaskOptions = { mask: "## / ####" };
+const dateMask = new Mask(dateMaskOptions);
 
 const labels = computed(() => {
   return {
@@ -162,6 +159,14 @@ const validationSchema = toTypedSchema(
             .matches(/^2[0-1]\d\d$/, t("shared.payment.bank_card_form.errors.year"))
             .label(labels.value.yearLabel)
         : schema;
+    }),
+    fulldate: yup.string().test("expDate", t("shared.payment.bank_card_form.errors.expiration_date"), function () {
+      const { month, year } = this.parent as { month?: string; year?: string };
+      // If month/year present, validate via utility; otherwise leave to individual field validators
+      if (month && year) {
+        return isExpirationDateValid(month, year);
+      }
+      return true;
     }),
   }),
 );
@@ -200,58 +205,22 @@ const [month] = defineField("month");
 const [year] = defineField("year");
 
 const expirationDate = computed({
-  get: () =>
-    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
+  get: () => dateMask.masked((month.value || "") + (year.value || "")),
   set: (value) => {
     if (value) {
-      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
-      month.value = rawMonth;
-      year.value = rawYear;
+      const unmasked = dateMask.unmasked(value);
+      month.value = unmasked.slice(0, 2);
+      year.value = unmasked.slice(2, 6);
+    } else {
+      month.value = "";
+      year.value = "";
     }
   },
 });
 
 const expirationDateErrors = computed<string>(() =>
-  [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
+  [formErrors.value.month, formErrors.value.year, formErrors.value.fulldate].filter(Boolean).join(". "),
 );
-
-async function sendPaymentData() {
-  if (!isValidBankCard.value) {
-    return;
-  }
-  loading.value = true;
-  try {
-    const token = await createToken({
-      // cardholderName is optional for cybersource
-      cardholderName: formValues.cardholderName,
-      expirationMonth: formValues.month,
-      expirationYear: formValues.year,
-    });
-
-    const { isSuccess } = await authorizePayment({
-      orderId: props.order.id,
-      paymentId: props.order.inPayments[0].id,
-      parameters: [
-        {
-          key: "token",
-          value: token,
-        },
-      ],
-    });
-
-    if (isSuccess) {
-      analytics("purchase", props.order);
-      emit("success");
-    } else {
-      emit("fail");
-    }
-  } catch (e) {
-    Logger.error(sendPaymentData.name, e);
-    emit("fail");
-  } finally {
-    loading.value = false;
-  }
-}
 
 async function createToken(options: Record<string, unknown>): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -265,16 +234,25 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
   });
 }
 
-onMounted(async () => {
-  await initPayment();
-});
+async function initializeByCartOrOrder() {
+  if (props.cart) {
+    return await initializeCartPayment({
+      cartId: props.cart.id,
+      paymentId: props.payment!.id,
+    });
+  } else if (props.order) {
+    return await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
+  }
+  return { publicParameters: undefined };
+}
 
-async function initPayment() {
+async function initPaymentInternal() {
   loading.value = true;
-  const { publicParameters } = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
-  });
+
+  const { publicParameters } = await initializeByCartOrOrder();
 
   const scriptUrl = getValue(publicParameters, "clientScript");
 
@@ -289,7 +267,55 @@ async function initPayment() {
   await initFlex(getValue(publicParameters, "jwt")!);
   initForm();
 
+  registerPaymentProcessor(sendPaymentData);
+
   loading.value = false;
+}
+
+async function sendPaymentData(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  const order = orderToPay ?? props.order;
+  if (!isValidBankCard.value || !order) {
+    return null;
+  }
+  loading.value = true;
+  try {
+    const token = await createToken({
+      // cardholderName is optional for cybersource
+      cardholderName: formValues.cardholderName,
+      expirationMonth: formValues.month,
+      expirationYear: formValues.year,
+    });
+
+    const result = await authorizePayment({
+      orderId: order?.id,
+      paymentId: order.inPayments[0].id,
+      parameters: [
+        {
+          key: "token",
+          value: token,
+        },
+      ],
+    });
+
+    if (result.isSuccess) {
+      if (!orderToPay) {
+        analytics("purchase", order);
+      }
+      emit("success");
+    } else {
+      emit("fail");
+    }
+
+    return result;
+  } catch (e) {
+    Logger.error(sendPaymentData.name, e);
+    emit("fail");
+    return null;
+  } finally {
+    loading.value = false;
+  }
 }
 
 function initForm() {
@@ -373,23 +399,42 @@ async function useDynamicScript(url: string, integrity?: string): Promise<void> 
 }
 
 function removeScript() {
-  if (scriptTag.value && scriptTag.value.parentNode) {
-    scriptTag.value.parentNode.removeChild(scriptTag.value);
+  if (scriptTag.value) {
+    scriptTag.value.remove();
   }
 }
 
-onUnmounted(removeScript);
+onMounted(async () => {
+  await initPaymentInternal();
+});
+
+watch([isValidBankCard, meta], ([isValidCard, metaFormResult]) => {
+  if (isValidCard && metaFormResult.valid) {
+    setCardDataValid();
+  } else {
+    setCardDataInvalid();
+  }
+});
+
+onUnmounted(() => {
+  removeScript();
+  registerPaymentProcessor(null);
+  setCardDataInvalid();
+});
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .cyber-source-input-wrap {
   --color: var(--vc-input-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--color) r g b / 0.3);
 
   @apply h-11 text-base relative m-px px-3 appearance-none bg-transparent border bg-additional-50 rounded-[3px] leading-none w-full min-w-0;
 
+  // Focus lives inside the iframe, so the host page cannot match it — the SDK's
+  // focused class is the only signal, and the wrapper carries the ring.
   &.flex-microform-focused {
-    @apply ring ring-[--focus-color];
+    @include focus-ring;
   }
 
   &.flex-microform-invalid {

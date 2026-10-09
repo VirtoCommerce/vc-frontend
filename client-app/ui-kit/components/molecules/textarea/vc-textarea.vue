@@ -11,7 +11,7 @@
     ]"
     v-bind="attrs"
   >
-    <VcLabel v-if="label" :for="componentId" :required="required" :error="error">
+    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
@@ -27,7 +27,6 @@
       :required="required"
       :maxlength="maxLength"
       :rows="rows"
-      :aria-labelledby="componentId"
       :autocomplete="autocomplete"
       class="vc-textarea__input"
     />
@@ -96,6 +95,8 @@ const text = useVModel(props, "modelValue", emit);
   $noResize: "";
   $error: "";
 
+  --radius: var(--vc-textarea-radius, var(--vc-radius, 0.5rem));
+
   @apply flex flex-col text-neutral-950 font-normal;
 
   &--readonly {
@@ -119,18 +120,25 @@ const text = useVModel(props, "modelValue", emit);
   }
 
   &__input {
-    @apply p-3 w-full rounded border text-base bg-additional-50;
+    @apply p-3 w-full rounded-[--radius] border text-base bg-additional-50;
 
     #{$noResize} & {
       @apply resize-none;
     }
 
-    &:focus,
-    &:focus-visible {
-      @apply outline-none ring ring-primary-100;
+    &::placeholder {
+      @apply text-neutral-600 font-normal;
 
       #{$error} & {
-        @apply ring-danger-100;
+        @apply text-danger-500;
+      }
+    }
+
+    &:autofill {
+      -webkit-text-fill-color: var(--color-neutral-100);
+
+      &:disabled {
+        -webkit-text-fill-color: var(--color-neutral-500);
       }
     }
 

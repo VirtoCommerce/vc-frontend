@@ -1,0 +1,7 @@
+// Higher alpha than light mode: 8% primary is nearly invisible on dark surfaces. Overriding the
+// alpha alone keeps vc-table.vue the single declaration of the alias chain.
+.vc-table {
+  --selected-bg-alpha: 0.16;
+  // neutral-200 is too strong a lift in dark: neutral-600 text on it drops to 3.4:1 in coffee.
+  --row-hover-shade: theme("colors.neutral.100");
+}

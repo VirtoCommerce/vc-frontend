@@ -3,8 +3,13 @@ import { graphqlClient } from "../../../client";
 import getProductsQueryDocument from "./getProductQuery.graphql";
 import type { GetProductQuery, GetProductQueryVariables, Product } from "@/core/api/graphql/types";
 
-export async function getProduct(id: string, previousOutline: string): Promise<Product | undefined> {
-  const { storeId, cultureName, currencyCode } = globals;
+export async function getProduct(
+  id: string,
+  previousOutline: string,
+  currencyCodeOverride?: string,
+): Promise<Product | undefined> {
+  const { storeId, cultureName, currencyCode: defaultCurrencyCode } = globals;
+  const currencyCode = currencyCodeOverride || defaultCurrencyCode;
 
   const { data } = await graphqlClient.query<GetProductQuery, GetProductQueryVariables>({
     query: getProductsQueryDocument,

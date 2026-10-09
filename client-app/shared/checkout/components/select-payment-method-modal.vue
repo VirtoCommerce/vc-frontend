@@ -23,16 +23,13 @@
         class="flex items-center justify-between space-x-4 px-5 py-6 lg:py-4"
       >
         <VcImage :src="method.logoUrl" class="size-10 object-center" lazy />
+
         <div class="grow overflow-hidden text-ellipsis">
-          {{ $t(`common.methods.payment_by_code.${method.code}`) }}
+          {{ method.name }}
         </div>
+
         <div class="flex w-20 items-center justify-end lg:justify-center">
-          <div
-            v-if="method.code === selectedMethod?.code"
-            class="flex size-6 items-center justify-center rounded-full bg-success-600 text-sm text-additional-50"
-          >
-            <VcIcon :size="16" name="check-bold" />
-          </div>
+          <VcIcon v-if="method.code === selectedMethod?.code" :size="24" class="text-success-600" name="circle-check" />
 
           <VcButton v-else variant="outline" size="sm" class="flex-none" @click="setMethod(method)">
             {{ $t("shared.checkout.payment_method_modal.select_button") }}

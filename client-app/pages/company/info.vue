@@ -51,7 +51,7 @@
             >
               <template v-if="newLogoUrl" #custom="{ openFilePicker }">
                 <div class="flex items-center gap-3">
-                  <div class="flex h-17 grow items-center justify-center rounded border p-2 xs:max-w-56">
+                  <div class="flex h-17 grow items-center justify-center rounded-[--vc-radius] border p-2 xs:max-w-56">
                     <VcImage
                       :alt="$t('pages.company.info.labels.company_logo')"
                       :src="newLogoUrl"
@@ -108,6 +108,7 @@
             @click="openAddOrUpdateCompanyAddressModal()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
+
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
           </VcButton>
         </div>
@@ -124,30 +125,34 @@
           </template>
         </VcEmptyView>
 
-        <div v-else class="flex flex-col md:rounded md:border">
+        <div v-else>
           <VcTable
             :columns="columns"
             :description="$t('pages.company.info.meta.table_description')"
-            :items="paginatedAddresses"
+            :items="addresses"
             :loading="loadingAddresses"
             :page="page"
             :pages="pages"
             :sort="sort"
+            bordered
+            mobile-breakpoint="lg"
             @header-click="applySorting"
             @page-changed="onPageChange"
           >
             <template #mobile-item="{ item }">
-              <div class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0">
+              <div class="relative mb-3 flex items-start rounded-[--vc-radius] border px-3.5 py-4 last:mb-0">
                 <div class="grow space-y-2.5 pe-2">
                   <div>
                     <div class="mb-1 flex gap-1 empty:hidden">
                       <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
                         <VcIcon name="apply" />
+
                         <span>{{ $t("pages.company.info.labels.default") }}</span>
                       </VcBadge>
 
                       <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
                         <VcIcon name="whishlist" />
+
                         <span>{{ $t("pages.company.info.labels.favorite") }}</span>
                       </VcBadge>
                     </div>
@@ -158,7 +163,9 @@
 
                     <div class="text-sm font-bold text-neutral-950">
                       <span>{{ item.line1 }}</span>
+
                       <template v-if="item.city">, {{ item.city }}</template>
+
                       <template v-if="item.regionName">, {{ item.regionName }}</template>
                     </div>
                   </div>
@@ -207,44 +214,8 @@
               </div>
             </template>
 
-            <template #mobile-skeleton>
-              <div
-                v-for="i in paginatedAddresses.length"
-                :key="i"
-                class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0"
-              >
-                <div class="grow space-y-2.5 pe-2">
-                  <div>
-                    <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
-                      {{ $t("pages.company.info.labels.address") }}
-                    </div>
-
-                    <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                  </div>
-
-                  <div class="flex">
-                    <div class="w-1/2 pe-2">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.zip") }}
-                      </div>
-
-                      <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                    </div>
-
-                    <div class="w-1/2 ps-2">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.country") }}
-                      </div>
-
-                      <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-
             <template #desktop-body>
-              <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
+              <tr v-for="address in addresses" :key="address.id" class="even:bg-neutral-50">
                 <td class="px-4 py-3 text-center">
                   <VcTooltip placement="bottom-start" width="max-content">
                     <template #trigger>
@@ -252,8 +223,8 @@
                         :class="[
                           'cursor-pointer',
                           {
-                            'fill-neutral-400': !address.isFavorite,
-                            'fill-primary': address.isFavorite,
+                            'text-neutral-400': !address.isFavorite,
+                            'text-primary': address.isFavorite,
                           },
                         ]"
                         name="whishlist"
@@ -274,7 +245,9 @@
 
                 <td class="px-5 py-3">
                   <span>{{ address.line1 }}</span>
+
                   <template v-if="address.city">, {{ address.city }}</template>
+
                   <template v-if="address.regionName">, {{ address.regionName }}</template>
                 </td>
 
@@ -308,14 +281,6 @@
                 </td>
               </tr>
             </template>
-
-            <template #desktop-skeleton>
-              <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
-                <td v-for="column in columns.length" :key="column" class="px-5 py-4">
-                  <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                </td>
-              </tr>
-            </template>
           </VcTable>
         </div>
       </VcWidget>
@@ -325,7 +290,6 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -335,8 +299,8 @@ import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import {
   AddOrUpdateCompanyAddressModal,
+  useCurrentOrganizationAddresses,
   useOrganization,
-  useOrganizationAddresses,
   useOrganizationLogo,
 } from "@/shared/company";
 import { useFiles } from "@/shared/files";
@@ -347,8 +311,7 @@ import { fileRequirements } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
-const page = ref(1);
-const itemsPerPage = ref(10);
+const ITEMS_PER_PAGE = 10;
 
 const { t } = useI18n();
 
@@ -363,7 +326,7 @@ const {
   fetchOptions: fetchFileOptions,
   options: fileOptions,
   hasFailedFiles,
-} = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
+} = useFiles(DEFAULT_COMPANY_FILES_SCOPE);
 const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded } = useWhiteLabeling();
 const newLogoUrl = ref(isOrganizationLogoUploaded.value ? whiteLabelingLogoUrl.value : "");
 
@@ -381,13 +344,14 @@ const { loading: loadingOrganizationLogo, updateLogo } = useOrganizationLogo();
 const {
   addresses,
   sort,
-  fetchAddresses,
+  page,
+  pages,
   removeAddresses,
   addOrUpdateAddresses,
   addAddressToFavorite,
   removeAddressFromFavorite,
   loading: loadingAddresses,
-} = useOrganizationAddresses(organization.value!.id);
+} = useCurrentOrganizationAddresses(() => organization.value!.id, ITEMS_PER_PAGE);
 const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
 
@@ -399,15 +363,10 @@ const {
 } = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
-const canEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const canEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
-const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed<MemberAddressType[]>(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
-);
-
-const columns = computed<ITableColumn[]>(() => {
-  const result: ITableColumn[] = [
+const columns = computed<VcTableColumnType[]>(() => {
+  const result: VcTableColumnType[] = [
     {
       id: "isFavorite",
       sortable: false,
@@ -462,10 +421,9 @@ function onPageChange(newPage: number): void {
   page.value = newPage;
 }
 
-async function applySorting(sortInfo: ISortInfo): Promise<void> {
+function applySorting(sortInfo: ISortInfo): void {
   sort.value = sortInfo;
   page.value = 1;
-  await fetchAddresses();
 }
 
 async function saveOrganizationName(): Promise<void> {
@@ -536,8 +494,6 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
   });
 }
 
-void fetchAddresses();
-
 async function saveOrganizationLogo(): Promise<void> {
   await updateLogo(organizationId.value, newLogoUrl.value);
   await fetchWhiteLabelingSettings();
@@ -592,7 +548,11 @@ async function onRemoveFiles() {
 
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
   if (addressId) {
-    isFavoriteAddress ? await removeAddressFromFavorite(addressId) : await addAddressToFavorite(addressId);
+    if (isFavoriteAddress) {
+      await removeAddressFromFavorite(addressId);
+    } else {
+      await addAddressToFavorite(addressId);
+    }
   }
 }
 

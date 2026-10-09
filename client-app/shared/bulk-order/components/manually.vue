@@ -2,7 +2,7 @@
   <VcWidget :title="!isMobile ? $t('shared.bulk_order.manually.title') : undefined" size="md">
     <p class="text-sm">
       {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
-      <router-link :to="{ name: 'Cart' }" class="text-[--link-color] hover:text-[--link-hover-color]">
+      <router-link :to="{ name: ROUTES.CART.NAME }" class="text-[--link-color] hover:text-[--link-hover-color]">
         {{ $t("shared.bulk_order.manually.cart_link") }}
       </router-link>
       {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
@@ -12,6 +12,7 @@
       <div class="w-full font-bold">
         {{ $t("shared.bulk_order.manually.product_sku_label") }}
       </div>
+
       <div class="w-1/3 max-w-[164px] font-bold xl:w-1/4">
         {{ $t("shared.bulk_order.manually.quantity_label") }}
       </div>
@@ -40,7 +41,7 @@
 
     <div class="mt-4">
       <button type="button" class="inline-flex appearance-none items-center gap-1.5 py-1.5 md:py-0" @click="increment">
-        <VcIcon class="fill-primary" name="plus" size="sm" />
+        <VcIcon class="text-primary" name="plus" size="sm" />
 
         <span class="border-b border-dashed border-current text-[--link-color] hover:text-[--link-hover-color]">
           {{ $t("shared.bulk_order.manually.add_rows_action_link") }}
@@ -63,6 +64,7 @@
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { ROUTES } from "@/router/routes/constants";
 import { maxQuantity, validateQuantity } from "@/shared/bulk-order/utils";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";

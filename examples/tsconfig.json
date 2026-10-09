@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": ["**/*", "../*.d.ts", "../client-app/**/*.d.ts"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "jsdom"],
+    "baseUrl": "..",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["client-app/*"]
+    }
+  }
+}

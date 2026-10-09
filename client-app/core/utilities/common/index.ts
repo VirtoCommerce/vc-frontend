@@ -1,22 +1,51 @@
-// eslint-disable-next-line import/order
-import uniqBy from "lodash/uniqBy";
+import { uniqBy } from "lodash-es";
+import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
-export function getBaseUrl(supportedLocales: string[]): string {
-  const localeInPath = location.pathname.split("/")[1];
-  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
+const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
+
+/** `null` rather than a throw, so a URL that does not parse is treated like one that is absent. */
+function parseUrl(url: string, base: string): URL | null {
+  try {
+    return new URL(url, base);
+  } catch {
+    return null;
+  }
 }
 
-export function getReturnUrlValue(): string | null {
-  const { searchParams, origin, hostname } = new URL(location.href);
-  const returnUrl = searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
+export function getReturnUrlValue(url?: string): string | null {
+  const { href } = location;
+  const { origin, hostname } = new URL(href);
+  const source = url === undefined ? new URL(href) : parseUrl(url, href);
 
-  if (returnUrl) {
-    const returnUrlObj = new URL(returnUrl, origin);
-    if (returnUrlObj.hostname === hostname) {
+  if (!source) {
+    return null;
+  }
+
+  // Try each return URL key until we find one
+  for (const key of RETURN_URL_KEYS) {
+    const returnUrl = source.searchParams.get(key);
+    if (returnUrl && parseUrl(returnUrl, origin)?.hostname === hostname) {
       return returnUrl;
     }
   }
+
   return null;
+}
+
+export function buildRedirectUrl(
+  route: RouteLocationNormalized,
+): { [key in (typeof RETURN_URL_KEYS)[0]]: string } | null {
+  if (route.matched.some((r) => r.meta?.redirectable === false)) {
+    return null;
+  }
+
+  for (const key of RETURN_URL_KEYS) {
+    if (route.query && key in route.query) {
+      return null;
+    }
+  }
+
+  return { [RETURN_URL_KEYS[0]]: route.fullPath };
 }
 
 export function extractHostname(url: string) {
@@ -83,8 +112,6 @@ export function replaceXFromBeginning(input: string, by: string = "•••• 
   return input.replace(/^X+/, by);
 }
 
-import type { RouteLocationRaw } from "vue-router";
-
 type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object;
 
 export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
@@ -108,6 +135,138 @@ export function getUrlSearchParam(param: string): string | null {
   return urlParams.get(param);
 }
 
-export function toCSV(data?: string[], delimiter = ", "): string {
-  return data?.join(delimiter)?.trim() ?? "";
+export function toCSV(parts?: (string | undefined | null)[], delimiter = ", "): string {
+  return (
+    parts
+      ?.map((part) => (typeof part === "string" ? part.trim() : ""))
+      .filter((part) => part !== "")
+      .join(delimiter) ?? ""
+  );
+}
+
+export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocationNormalizedLoaded) {
+  if (typeof link === "string") {
+    return link === currentRoute.path;
+  }
+
+  if (typeof link === "object") {
+    if ("name" in link) {
+      return (
+        link.name === currentRoute.name &&
+        JSON.stringify(link.params ?? {}) === JSON.stringify(currentRoute.params ?? {})
+      );
+    }
+
+    if ("path" in link) {
+      return link.path === currentRoute.path;
+    }
+  }
+
+  return false;
+}
+
+export function areStringOrNumberEqual(
+  a: string | number | null | undefined,
+  b: string | number | null | undefined,
+): boolean {
+  // assume null and undefined are equal
+  if (a == null && b == null) {
+    return true;
+  }
+
+  return String(a) === String(b);
+}
+
+export function preventNonNumberKeyboard(event: KeyboardEvent) {
+  const isNumber = /^\d$/.test(event.key);
+  if (!isNumber) {
+    event.preventDefault();
+  }
+}
+
+export function preventNonNumberPaste(event: ClipboardEvent) {
+  const text = event.clipboardData?.getData("text");
+  if (text) {
+    const isNumber = /^\d+$/.test(text);
+    console.warn("preventNonNumberPaste", { text, isNumber });
+    if (!isNumber) {
+      event.preventDefault();
+    }
+  }
+}
+
+export function safeDecode(input: string) {
+  try {
+    return decodeURIComponent(input);
+  } catch {
+    try {
+      return decodeURI(input);
+    } catch {
+      return input;
+    }
+  }
+}
+
+export function serializeError(error: Error) {
+  return {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+  };
+}
+
+export function presetNameToFileName(name: string): string {
+  return name.toLowerCase().replaceAll(" ", "-");
+}
+
+/**
+ * Turns a web-safe page / file name into a human-friendly label for display.
+ * Replaces `_` and `-` separators with spaces, collapses whitespace and upper-cases the
+ * first letter while preserving the rest (so acronyms like "ARAS" are not lower-cased).
+ * VCST-5274: the storefront breadcrumb showed the raw name verbatim (underscores).
+ */
+export function humanizeName(name: unknown): string {
+  if (typeof name !== "string") {
+    return "";
+  }
+  const text = name.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+export function isMarkdownWithFrontmatter(content: string): boolean {
+  return content.trimStart().startsWith("---");
+}
+
+/**
+ * Reads a value that is expected to hold a JSON array of strings (a shape several store settings use).
+ * Returns the array only when the value is a string parsing to an array whose every item is a string;
+ * anything else (missing, not a string, malformed JSON, an object, non-string items) yields `undefined`,
+ * so the caller can fall back instead of acting on a half-understood value.
+ */
+export function parseJsonStringArray(value: unknown): string[] | undefined {
+  if (typeof value !== "string" || !value) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+
+    if (Array.isArray(parsed) && parsed.every((item): item is string => typeof item === "string")) {
+      return parsed;
+    }
+  } catch {
+    // an unreadable value is treated like an absent one
+  }
+
+  return undefined;
+}
+
+/**
+ * A route query value is a string, `null` or an array of them (`?q=a&q=b`); code expecting one string
+ * takes the first entry, and anything that is not a string reads as "".
+ */
+export function toFirstString(value: unknown): string {
+  const first: unknown = Array.isArray(value) ? value[0] : value;
+
+  return typeof first === "string" ? first : "";
 }

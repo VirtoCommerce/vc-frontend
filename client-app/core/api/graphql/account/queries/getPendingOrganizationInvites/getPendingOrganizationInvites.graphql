@@ -1,0 +1,18 @@
+query GetPendingOrganizationInvites($after: String, $first: Int, $statuses: [String]) {
+  me {
+    contact {
+      organizations(after: $after, first: $first, statuses: $statuses) {
+        items {
+          id
+          name
+          myStatusInOrganization
+        }
+        totalCount
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}

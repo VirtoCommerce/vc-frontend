@@ -1,21 +1,36 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { createGlobalState } from "@vueuse/core";
+import { computed, readonly, ref } from "vue";
 import { getSearchResults } from "@/core/api/graphql/catalog";
+import { useThemeContext } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
-const loading = ref(false);
-const searchBarVisible = ref(false);
-const searchDropdownVisible = ref(false);
-const searchPhraseOfUploadedResults = ref("");
-const categories = shallowRef<Category[]>([]);
-const products = shallowRef<Product[]>([]);
-const pages = shallowRef<PageType[]>([]);
-const suggestions = shallowRef<{ text: string; label: string }[]>([]);
-const total = ref(0);
+/**
+ * Extracts the display name from a page object.
+ * Handles both PageType (with 'name') and PageDocumentType (with 'title').
+ * Falls back to permalink if neither name nor title is available.
+ */
+function getPageName(item: { title?: string; name?: string; permalink?: string }) {
+  return item.name ?? item.title ?? item.permalink ?? "";
+}
 
-export function useSearchBar() {
+function _useSearchBar() {
+  const { themeContext } = useThemeContext();
+
+  const loading = ref(false);
+  const searchBarVisible = ref(false);
+  const searchDropdownVisible = ref(false);
+  const searchPhraseOfUploadedResults = ref("");
+  const categories = ref<Category[]>([]);
+  const products = ref<Product[]>([]);
+  const pages = ref<PageType[]>([]);
+  const suggestions = ref<{ text: string; label: string }[]>([]);
+  const total = ref(0);
+
+  const maxSearchLength = computed(() => themeContext.value?.settings?.search_max_chars || 999);
+
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
       searchDropdownVisible.value = true;
@@ -44,19 +59,20 @@ export function useSearchBar() {
       keyword: prepareSearchText(params.keyword),
     };
 
-    if (searchPhraseOfUploadedResults.value === preparedParams.keyword) {
-      return;
-    }
-
     loading.value = true;
 
     try {
+      const result = await getSearchResults(preparedParams);
+      if (!result) {
+        return;
+      }
+
       const {
         productSuggestions: { suggestions: suggestionsItems = [] },
         pages: { items: pagesItems = [] },
         categories: { items: categoriesItems = [] },
         products: { items: productsItems = [], totalCount = 0 },
-      } = await getSearchResults(preparedParams);
+      } = result;
 
       suggestions.value = suggestionsItems.map((item) => ({
         text: item,
@@ -65,23 +81,32 @@ export function useSearchBar() {
 
       pages.value = pagesItems.map((item) => ({
         ...item,
-        name: highlightSearchText(item.name ?? "", params.keyword),
-      }));
+        name: highlightSearchText(getPageName(item), params.keyword),
+      })) as PageType[]; // TODO: remove type assertion
 
       categories.value = categoriesItems.map((item) => ({
         ...item,
         name: highlightSearchText(item.name, params.keyword),
-      }));
+      })) as Category[]; // TODO: remove type assertion
 
       total.value = totalCount;
-      products.value = productsItems;
+      products.value = productsItems as Product[]; // TODO: remove type assertion
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
+      loading.value = false;
     } catch (e) {
       Logger.error(`${useSearchBar.name}.${searchResults.name}`, e);
-      throw e;
-    } finally {
       loading.value = false;
+      throw e;
     }
+  }
+
+  function clearSearchResults() {
+    suggestions.value = [];
+    pages.value = [];
+    categories.value = [];
+    total.value = 0;
+    products.value = [];
+    searchPhraseOfUploadedResults.value = "";
   }
 
   return {
@@ -95,9 +120,14 @@ export function useSearchBar() {
     searchBarVisible: readonly(searchBarVisible),
     searchDropdownVisible: readonly(searchDropdownVisible),
     searchPhraseOfUploadedResults: readonly(searchPhraseOfUploadedResults),
+    maxSearchLength,
     categories: computed(() => categories.value),
     products: computed(() => products.value),
     pages: computed(() => pages.value),
     suggestions: computed(() => suggestions.value),
+
+    clearSearchResults,
   };
 }
+
+export const useSearchBar = createGlobalState(_useSearchBar);

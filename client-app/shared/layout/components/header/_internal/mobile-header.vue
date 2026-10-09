@@ -1,17 +1,20 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
+  <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
     <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
 
-    <div class="relative z-[1] bg-[--header-bottom-bg-color]">
+    <div class="relative z-[1]">
       <!-- region Default slot -->
       <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
-        <div v-if="customSlots.default">
+        <div v-if="customSlots.default" class="relative z-20 bg-[--header-bottom-bg-color]">
           <component :is="customSlots.default" />
         </div>
 
-        <div v-else class="relative z-10 flex h-14 w-full items-center justify-between gap-x-2 sm:gap-x-6">
+        <div
+          v-else
+          class="relative z-20 flex h-14 w-full items-center justify-between gap-x-2 border-b bg-[--header-bottom-bg-color] sm:gap-x-6"
+        >
           <!-- region Left slot -->
           <component :is="customSlots.left" v-if="customSlots.left" />
 
@@ -22,7 +25,7 @@
               class="h-full pe-3 ps-5 sm:pe-5"
               @click="mobileMenuVisible = true"
             >
-              <VcIcon class="fill-primary" name="menu" :size="32" />
+              <VcIcon class="text-primary" name="menu" :size="24" />
             </button>
 
             <router-link :to="$context.settings.default_return_url ?? '/'">
@@ -41,7 +44,7 @@
               class="px-1 py-2 xs:px-2"
               :href="`tel:${support_phone_number}`"
             >
-              <VcIcon class="fill-primary" name="phone" :size="28" />
+              <VcIcon class="text-primary" name="phone" :size="24" />
             </a>
 
             <button
@@ -50,14 +53,18 @@
               class="px-1 py-2 xs:px-2"
               @click="toggleSearchBar"
             >
-              <VcIcon class="fill-primary" name="search" :size="28" />
+              <VcIcon class="text-primary" name="search" :size="24" />
             </button>
 
-            <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
+            <ExtensionPointList category="mobileHeader" class="px-1 py-2 xs:px-2" />
 
-            <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
+            <router-link
+              :to="{ name: ROUTES.CART.NAME }"
+              :aria-label="$t('common.links.cart')"
+              class="px-1 py-2 xs:px-2"
+            >
               <span class="relative block">
-                <VcIcon class="fill-primary" name="cart" :size="28" />
+                <VcIcon class="text-primary" name="cart" :size="24" />
 
                 <transition
                   mode="out-in"
@@ -72,6 +79,8 @@
                     size="sm"
                     class="absolute -right-2 -top-2 transition-transform"
                     rounded
+                    nowrap
+                    max-width="none"
                   >
                     {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
                   </VcBadge>
@@ -85,31 +94,10 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
-        <VcInput
-          v-model="searchPhrase"
-          type="search"
-          maxlength="64"
-          :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-          class="mr-4 grow"
-          :clearable="!!searchPhrase"
-          no-border
-          @clear="reset"
-          @keydown.enter="searchPhrase && $router.push(searchPageLink)"
-        >
-          <template #append>
-            <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
-          </template>
-        </VcInput>
-
-        <VcButton :to="searchPhrase && searchPageLink" icon="search" />
-
-        <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-          <VcIcon name="delete-thin" class="fill-additional-50" />
-        </button>
-      </div>
+      <MobileSearchBar :visible="searchBarVisible" />
+      <!-- endregion Mobile Search Bar -->
     </div>
-  </div>
+  </header>
 
   <!-- Height placeholder for mobile header due to fixed position -->
   <div :style="placeholderStyle" class="h-14 print:hidden"></div>
@@ -131,35 +119,29 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
+import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
+import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
-import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
+import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
-import type { RouteLocationRaw } from "vue-router";
-import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
-const router = useRouter();
 
-const { customComponents } = useCustomMobileHeaderComponents();
-const searchPhrase = ref("");
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
+
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
-const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
+const { searchBarVisible, toggleSearchBar } = useSearchBar();
+
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
@@ -168,26 +150,21 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-const searchPageLink = computed<RouteLocationRaw>(() => ({
-  name: ROUTES.SEARCH.NAME,
-  query: {
-    [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
+// Exact app header height, kept live so sticky elements elsewhere (e.g. tables with a sticky
+// header row) can sit flush below this fixed mobile header instead of under it. VcHeader owns
+// this var on desktop (see vc-header.vue).
+const appHeaderHeightVar = useCssVar("--vc-app-header-height");
+
+watch(
+  height,
+  (value) => {
+    appHeaderHeightVar.value = `${value}px`;
   },
-}));
+  { immediate: true },
+);
 
-function reset() {
-  searchPhrase.value = "";
-  void router.push({ name: ROUTES.SEARCH.NAME });
-}
+const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
+const scrollLock = useScrollLock(document.body);
 
-function onBarcodeScanned(value: string) {
-  if (value) {
-    searchPhrase.value = value;
-    void router.push(searchPageLink.value);
-  }
-}
-
-syncRefs(mobileMenuVisible, useScrollLock(document.body));
-
-whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
+syncRefs(isScrollLocked, scrollLock);
 </script>

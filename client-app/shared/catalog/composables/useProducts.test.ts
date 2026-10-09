@@ -3,6 +3,8 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useProducts } from "./useProducts";
 import type { CatalogPaginationModeType } from "../types";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { FacetItemType } from "@/core/types";
 
 // Mock types
 interface Product {
@@ -100,6 +102,7 @@ const mockData = vi.hoisted(() => {
 
   const searchProducts = vi.fn();
   const useThemeContext = vi.fn();
+  const barcodeQueryParam = { value: "" as unknown };
 
   return {
     mockPageInfo,
@@ -108,6 +111,7 @@ const mockData = vi.hoisted(() => {
     mockSearchProductsMoreResponse,
     searchProducts,
     useThemeContext,
+    barcodeQueryParam,
   };
 });
 
@@ -117,9 +121,12 @@ vi.mock("@/core/api/graphql/catalog", () => ({
 
 vi.mock("@/core/composables", () => ({
   useThemeContext: mockData.useThemeContext,
-  useRouteQueryParam: () => ({
-    value: "",
-  }),
+  useRouteQueryParam: (key: string) =>
+    key === "barcode"
+      ? mockData.barcodeQueryParam
+      : {
+          value: "",
+        },
 }));
 
 vi.mock("@/core/composables/useModuleSettings", () => ({
@@ -129,13 +136,14 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
   }),
 }));
 
-vi.mock("@/core/utilities", () => ({
+vi.mock("@/core/utilities", async () => ({
   Logger: {
     error: vi.fn(),
   },
   getFilterExpressionFromFacets: vi.fn(),
   rangeFacetToCommonFacet: vi.fn(),
   termFacetToCommonFacet: vi.fn(),
+  toFirstString: (await import("@/core/utilities/common")).toFirstString,
 }));
 
 vi.mock("@/shared/modal", () => ({
@@ -144,8 +152,13 @@ vi.mock("@/shared/modal", () => ({
   }),
 }));
 
-vi.mock("@vueuse/core", () => {
+// Partial, like the other suites that mock this module: replacing it wholesale breaks as soon as
+// anything in the graph reaches for another export - the logger takes `noop` from here.
+vi.mock("@vueuse/core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@vueuse/core")>();
+
   return {
+    ...actual,
     useLocalStorage: () => ({
       value: [],
     }),
@@ -157,6 +170,7 @@ vi.mock("@vueuse/core", () => {
 describe("useProducts", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockData.barcodeQueryParam.value = "";
     mockData.searchProducts.mockResolvedValue(mockData.mockSearchProductsResponse);
     mockData.useThemeContext.mockReturnValue({
       themeContext: { value: mockData.mockThemeContext },
@@ -290,6 +304,70 @@ describe("useProducts", () => {
       await expect(fetchMoreProducts({ page: 2, itemsPerPage: 2 })).rejects.toThrow(errorMessage);
 
       expect(fetchingMoreProducts.value).toBe(false);
+    });
+  });
+
+  describe("preserveProductsWhileFetching", () => {
+    it("clears products immediately on refetch by default", async () => {
+      const { fetchProducts, products, totalProductsCount, pagesCount } = useProducts();
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+      expect(totalProductsCount.value).toBe(10);
+      expect(pagesCount.value).toBe(5);
+
+      let resolveRefetch!: (value: typeof mockData.mockSearchProductsResponse) => void;
+      mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
+
+      // fetchProducts clears synchronously (before its first await), so this is already true
+      // right after calling it — no need to wait for the request to resolve.
+      const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([]);
+      expect(totalProductsCount.value).toBe(0);
+      expect(pagesCount.value).toBe(1);
+
+      resolveRefetch(mockData.mockSearchProductsResponse);
+      await refetchPromise;
+
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+    });
+
+    it("keeps showing the previous products until a refetch resolves, when enabled", async () => {
+      const { fetchProducts, products } = useProducts({ preserveProductsWhileFetching: true });
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+
+      let resolveRefetch!: (value: typeof mockData.mockSearchProductsMoreResponse) => void;
+      mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
+
+      const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+
+      resolveRefetch(mockData.mockSearchProductsMoreResponse);
+      await refetchPromise;
+
+      expect(products.value).toEqual([{ id: "product3" }, { id: "product4" }]);
+    });
+
+    it("keeps totalProductsCount and pagesCount alongside the preserved products, not just products itself", async () => {
+      const { fetchProducts, totalProductsCount, pagesCount } = useProducts({
+        preserveProductsWhileFetching: true,
+      });
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(totalProductsCount.value).toBe(10);
+      expect(pagesCount.value).toBe(5);
+
+      let resolveRefetch!: (value: typeof mockData.mockSearchProductsMoreResponse) => void;
+      mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
+
+      const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(totalProductsCount.value).toBe(10);
+      expect(pagesCount.value).toBe(5);
+
+      resolveRefetch(mockData.mockSearchProductsMoreResponse);
+      await refetchPromise;
     });
   });
 
@@ -429,6 +507,251 @@ describe("useProducts", () => {
       await fetchProducts({ page: PAGE_LIMIT + 1, itemsPerPage: 2 });
 
       expect(pageHistory.value).toEqual([]);
+    });
+  });
+
+  describe("facetsToHide property", () => {
+    it("should not count hidden facets as selected in hasSelectedFacets", () => {
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet"] });
+
+      // Set up facets
+      facets.value = [
+        {
+          paramName: "hiddenFacet",
+          type: "terms",
+          label: "Hidden Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
+        },
+      ] as unknown as FacetItemType[];
+
+      // Set up filters to make the facet appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "hiddenFacet",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
+      expect(hasSelectedFacets.value).toBe(false);
+    });
+
+    it("should count visible facets as selected in hasSelectedFacets", () => {
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet"] });
+
+      // Set up facets
+      facets.value = [
+        {
+          paramName: "visibleFacet",
+          type: "terms",
+          label: "Visible Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
+        },
+      ] as unknown as FacetItemType[];
+
+      // Set up filters to make the facet appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "visibleFacet",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
+      expect(hasSelectedFacets.value).toBe(true);
+    });
+
+    it("should ignore hidden facets and count visible ones correctly", () => {
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet"] });
+
+      // Set up facets
+      facets.value = [
+        {
+          paramName: "hiddenFacet",
+          type: "terms",
+          label: "Hidden Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
+        },
+        {
+          paramName: "visibleFacet",
+          type: "terms",
+          label: "Visible Facet",
+          values: [{ value: "v2", label: "Value 2", count: 1 }],
+        },
+      ] as unknown as FacetItemType[];
+
+      // Set up filters to make both facets appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "hiddenFacet",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+          {
+            name: "visibleFacet",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "v2", label: "Value 2" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
+      expect(hasSelectedFacets.value).toBe(true);
+    });
+
+    it("should return false when all selected facets are hidden", () => {
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({
+        facetsToHide: ["hiddenFacet", "anotherHidden"],
+      });
+
+      // Set up facets
+      facets.value = [
+        {
+          paramName: "hiddenFacet",
+          type: "terms",
+          label: "Hidden Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
+        },
+        {
+          paramName: "anotherHidden",
+          type: "terms",
+          label: "Another Hidden Facet",
+          values: [{ value: "v2", label: "Value 2", count: 1 }],
+        },
+      ] as unknown as FacetItemType[];
+
+      // Set up filters to make both facets appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "hiddenFacet",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+          {
+            name: "anotherHidden",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "v2", label: "Value 2" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
+      expect(hasSelectedFacets.value).toBe(false);
+    });
+  });
+
+  // Chips, the "Reset filters" button and the facet expression all read the prepared filters.
+  describe("prepared filters", () => {
+    // The names are deliberately outside EXCLUDED_FILTER_NAMES, so only the isGenerated flag can drop them.
+    const generatedAndUserFilters: SearchProductFilterResult[] = [
+      {
+        name: "gtin",
+        filterType: "term",
+        isGenerated: true,
+        termValues: [{ value: "4006381333931", label: "4006381333931" }],
+      },
+      {
+        name: "color",
+        filterType: "term",
+        isGenerated: false,
+        termValues: [{ value: "red", label: "Red" }],
+      },
+    ];
+
+    function prepare(filters: SearchProductFilterResult[]) {
+      const { productsFilters, hasSelectedFilters, updateProductsFilters } = useProducts();
+
+      updateProductsFilters({ filters, facets: [], inStock: false, branches: [], purchasedBefore: false });
+
+      return { names: productsFilters.value.filters.map((filter) => filter.name), hasSelectedFilters };
+    }
+
+    // Intent search marks the filters it infers from the query as generated; they show as chips, and removing
+    // one is how the user keeps their own query.
+    it("keeps server-generated filters in a normal search", () => {
+      const { names, hasSelectedFilters } = prepare(generatedAndUserFilters);
+
+      expect(names).toEqual(["gtin", "color"]);
+      expect(hasSelectedFilters.value).toBe(true);
+    });
+
+    // The barcode expansion is generated from the scanned code, so the user has nothing to remove.
+    it("drops server-generated filters in a barcode lookup and keeps the user's own", () => {
+      mockData.barcodeQueryParam.value = "4006381333931";
+
+      const { names, hasSelectedFilters } = prepare(generatedAndUserFilters);
+
+      expect(names).toEqual(["color"]);
+      expect(hasSelectedFilters.value).toBe(true);
+    });
+
+    // `?barcode=a&barcode=b` reaches the composable as an array.
+    it("treats a repeated barcode param as a barcode lookup", () => {
+      mockData.barcodeQueryParam.value = ["4006381333931", "150701"];
+
+      expect(prepare(generatedAndUserFilters).names).toEqual(["color"]);
+    });
+
+    // An older backend without the barcode middleware echoes the term back as an ordinary filter.
+    it("drops the barcode filter even when it is not marked as generated", () => {
+      const { productsFilters, hasSelectedFilters, updateProductsFilters } = useProducts();
+
+      updateProductsFilters({
+        filters: [
+          {
+            name: "barcode",
+            filterType: "term",
+            isGenerated: false,
+            termValues: [{ value: "150701", label: "150701" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
+      expect(productsFilters.value.filters).toEqual([]);
+      expect(hasSelectedFilters.value).toBe(false);
+    });
+  });
+
+  describe("fetchProducts result", () => {
+    // A caller that navigates on the result (the single barcode hit) must read its own request's response.
+    it("resolves with the items and total count it applied", async () => {
+      const { fetchProducts, products, totalProductsCount } = useProducts();
+
+      const result = await fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      expect(result).toEqual({ items: [{ id: "product1" }, { id: "product2" }], totalCount: 10 });
+      expect(products.value).toEqual(result.items);
+      expect(totalProductsCount.value).toBe(result.totalCount);
     });
   });
 });

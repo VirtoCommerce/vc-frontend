@@ -1,16 +1,39 @@
 import { describe, it, expect } from "vitest";
-import { toStartDateFilterValue, toEndDateFilterValue, toDateISOString, isDateString } from "./index";
+import { toStartDateFilterValue, toEndDateFilterValue, toDateISOString, isDateString, toLocalDateOnly } from "./index";
 
 describe("Date Utility Functions (Timezone Independent Tests)", () => {
+  describe("toLocalDateOnly", () => {
+    // Local midnight catches a UTC+ skew and 23:59 catches a UTC- one, so together they fail in any
+    // timezone but UTC if the formatting ever goes back through toISOString().
+    it.each([
+      { name: "local midnight", hour: 0, minute: 0 },
+      { name: "the last minute of the local day", hour: 23, minute: 59 },
+    ])("keeps the local calendar day at $name", ({ hour, minute }) => {
+      expect(toLocalDateOnly(new Date(2026, 8, 4, hour, minute))).toBe("2026-09-04");
+    });
+
+    it.each([
+      { name: "single-digit month and day", date: new Date(2026, 0, 5), expected: "2026-01-05" },
+      { name: "a leap day", date: new Date(2024, 1, 29), expected: "2024-02-29" },
+      { name: "a year boundary", date: new Date(2022, 11, 31, 23, 59), expected: "2022-12-31" },
+    ])("pads $name", ({ date, expected }) => {
+      expect(toLocalDateOnly(date)).toBe(expected);
+    });
+  });
+
   describe("toStartDateFilterValue", () => {
     it("should return undefined when no date is provided", () => {
       expect(toStartDateFilterValue()).toBeUndefined();
     });
 
-    it("should convert a valid date string to the correct ISO string based on local midnight", () => {
-      const input = "2022-12-13";
+    it.each([
+      { name: "a valid date string", input: "2022-12-13" },
+      { name: "a date string with leading zeros", input: "2022-01-05" },
+      { name: "a leap year date", input: "2024-02-29" },
+      { name: "a year boundary date", input: "2022-12-31" },
+    ])("should convert $name ($input) to the correct ISO string based on local midnight", ({ input }) => {
       // Create a Date object for local midnight
-      const localMidnight = new Date("2022-12-13T00:00:00.000");
+      const localMidnight = new Date(`${input}T00:00:00.000`);
       const expected = localMidnight.toISOString();
       expect(toStartDateFilterValue(input)).toBe(expected);
     });
@@ -19,27 +42,6 @@ describe("Date Utility Functions (Timezone Independent Tests)", () => {
       const invalidInput = "invalid-date";
       expect(() => toStartDateFilterValue(invalidInput)).toThrow();
     });
-
-    it("should handle date strings with leading zeros correctly", () => {
-      const input = "2022-01-05";
-      const localMidnight = new Date("2022-01-05T00:00:00.000");
-      const expected = localMidnight.toISOString();
-      expect(toStartDateFilterValue(input)).toBe(expected);
-    });
-
-    it("should handle leap years correctly", () => {
-      const input = "2024-02-29";
-      const localMidnight = new Date("2024-02-29T00:00:00.000");
-      const expected = localMidnight.toISOString();
-      expect(toStartDateFilterValue(input)).toBe(expected);
-    });
-
-    it("should handle edge cases like year boundaries", () => {
-      const input = "2022-12-31";
-      const localMidnight = new Date("2022-12-31T00:00:00.000");
-      const expected = localMidnight.toISOString();
-      expect(toStartDateFilterValue(input)).toBe(expected);
-    });
   });
 
   describe("toEndDateFilterValue", () => {
@@ -47,66 +49,36 @@ describe("Date Utility Functions (Timezone Independent Tests)", () => {
       expect(toEndDateFilterValue()).toBeUndefined();
     });
 
-    it("should convert a valid date string to the correct ISO string representing the end of day based on local time", () => {
-      const input = "2022-12-13";
-      const localMidnight = new Date("2022-12-13T00:00:00.000");
-      // Compute the end of day: next day midnight minus 1 millisecond
-      const nextDay = new Date(localMidnight.getTime());
-      nextDay.setDate(nextDay.getDate() + 1);
-      const expectedDate = new Date(nextDay.getTime() - 1);
-      const expected = expectedDate.toISOString();
-      expect(toEndDateFilterValue(input)).toBe(expected);
-    });
+    it.each([
+      { name: "a valid date string", input: "2022-12-13" },
+      { name: "a month end date", input: "2022-04-30" },
+      { name: "a year end date", input: "2022-12-31" },
+      { name: "a leap year boundary date", input: "2024-02-29" },
+    ])(
+      "should convert $name ($input) to the correct ISO string representing the end of day based on local time",
+      ({ input }) => {
+        const localMidnight = new Date(`${input}T00:00:00.000`);
+        // Compute the end of day: next day midnight minus 1 millisecond
+        const nextDay = new Date(localMidnight.getTime());
+        nextDay.setDate(nextDay.getDate() + 1);
+        const expectedDate = new Date(nextDay.getTime() - 1);
+        const expected = expectedDate.toISOString();
+        expect(toEndDateFilterValue(input)).toBe(expected);
+      },
+    );
 
     it("should throw an error when an invalid date string is provided", () => {
       const invalidInput = "invalid-date";
       expect(() => toEndDateFilterValue(invalidInput)).toThrow();
     });
-
-    it("should handle month ends correctly", () => {
-      const input = "2022-04-30";
-      const localMidnight = new Date("2022-04-30T00:00:00.000");
-      const nextDay = new Date(localMidnight.getTime());
-      nextDay.setDate(nextDay.getDate() + 1);
-      const expectedDate = new Date(nextDay.getTime() - 1);
-      const expected = expectedDate.toISOString();
-      expect(toEndDateFilterValue(input)).toBe(expected);
-    });
-
-    it("should handle year ends correctly", () => {
-      const input = "2022-12-31";
-      const localMidnight = new Date("2022-12-31T00:00:00.000");
-      const nextDay = new Date(localMidnight.getTime());
-      nextDay.setDate(nextDay.getDate() + 1);
-      const expectedDate = new Date(nextDay.getTime() - 1);
-      const expected = expectedDate.toISOString();
-      expect(toEndDateFilterValue(input)).toBe(expected);
-    });
-
-    it("should handle leap year boundaries correctly", () => {
-      const input = "2024-02-29";
-      const localMidnight = new Date("2024-02-29T00:00:00.000");
-      const nextDay = new Date(localMidnight.getTime());
-      nextDay.setDate(nextDay.getDate() + 1);
-      const expectedDate = new Date(nextDay.getTime() - 1);
-      const expected = expectedDate.toISOString();
-      expect(toEndDateFilterValue(input)).toBe(expected);
-    });
   });
 
   describe("toDateISOString", () => {
-    it("should extract the date portion from an ISO datetime string", () => {
-      const isoDateTime = "2022-12-13T12:34:56.789Z";
-      expect(toDateISOString(isoDateTime)).toBe("2022-12-13");
-    });
-
-    it("should work with an ISO string without milliseconds", () => {
-      const isoDateTime = "2022-12-13T12:34:56Z";
-      expect(toDateISOString(isoDateTime)).toBe("2022-12-13");
-    });
-
-    it("should work with offset timezone ISO strings", () => {
-      const isoDateTime = "2022-12-13T12:34:56+02:00";
+    it.each([
+      { name: "an ISO datetime string", isoDateTime: "2022-12-13T12:34:56.789Z" },
+      { name: "an ISO string without milliseconds", isoDateTime: "2022-12-13T12:34:56Z" },
+      { name: "an offset timezone ISO string", isoDateTime: "2022-12-13T12:34:56+02:00" },
+    ])("should extract the date portion from $name ($isoDateTime)", ({ isoDateTime }) => {
       expect(toDateISOString(isoDateTime)).toBe("2022-12-13");
     });
 

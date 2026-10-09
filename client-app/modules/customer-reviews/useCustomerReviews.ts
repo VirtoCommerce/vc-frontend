@@ -65,7 +65,7 @@ export function useCustomerReviews() {
       const result = await createReview(payload);
       errors.value = result?.validationErrors;
     } catch (e) {
-      Logger.error(`${useCustomerReviews.name}.${createCustomerReview.name}`);
+      Logger.error(`${useCustomerReviews.name}.${createCustomerReview.name}`, e);
     } finally {
       fetching.value = false;
     }

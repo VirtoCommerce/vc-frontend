@@ -18,8 +18,10 @@
           :src="image.url"
           :alt="alt"
           size-suffix="md"
-          :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
-          class="vc-product-image__carousel-img"
+          :class="[
+            'vc-product-image__carousel-img',
+            { 'vc-product-image__carousel-img--clickable': swiperInstance?.allowSlideNext },
+          ]"
           :lazy="lazy || index > 0"
           @click="swiperInstance?.slideNext()"
         />
@@ -31,9 +33,10 @@
           type="button"
           class="vc-product-image__carousel-btn vc-product-image__carousel-btn--prev"
           data-btn="btn-prev"
+          :aria-label="$t('ui_kit.accessibility.carousel_previous')"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="fill-neutral-400" name="chevron-left" size="xs" />
+            <VcIcon name="chevron-left" size="xs" />
           </span>
         </button>
 
@@ -42,9 +45,10 @@
           type="button"
           class="vc-product-image__carousel-btn vc-product-image__carousel-btn--next"
           data-btn="btn-next"
+          :aria-label="$t('ui_kit.accessibility.carousel_next')"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="fill-neutral-400" name="chevron-right" size="xs" />
+            <VcIcon name="chevron-right" size="xs" />
           </span>
         </button>
 
@@ -118,12 +122,16 @@ function slideChanged(swiper: SwiperInstance) {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-product-image {
   $self: &;
   $carouselImg: "";
   $img: "";
 
-  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded;
+  --radius: var(--vc-product-image-radius, var(--vc-radius, 0.5rem));
+
+  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded-[--radius];
 
   &__carousel {
     @apply h-full w-full;
@@ -132,11 +140,23 @@ function slideChanged(swiper: SwiperInstance) {
   &__carousel-img {
     $carouselImg: &;
 
-    @apply w-full aspect-square select-none rounded object-contain object-center;
+    @apply w-full aspect-square select-none rounded-[--radius] object-contain object-center;
+
+    &--clickable {
+      @apply cursor-pointer;
+    }
   }
 
   &__carousel-btn {
     @apply absolute top-0 z-[2] hidden h-full cursor-pointer items-center opacity-0 transition-opacity hover:opacity-100 md:flex;
+
+    // Revealed on hover only, so a keyboard user would land on a fully transparent
+    // control. The swiper clips an outset ring (measured: zero clearance on three sides).
+    &:focus-visible {
+      @apply opacity-100;
+
+      @include focus-ring($inset: true);
+    }
 
     &--prev {
       @apply left-0 pl-1 pr-5;
@@ -149,6 +169,10 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__carousel-arrow {
     @apply flex h-6 w-6 items-center justify-center rounded-full bg-additional-50;
+
+    .vc-icon {
+      @apply text-neutral-400;
+    }
   }
 
   &__carousel-bullets {
@@ -165,7 +189,7 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__img {
     $img: &;
-    @apply w-full aspect-square rounded object-contain object-center;
+    @apply w-full aspect-square rounded-[--radius] object-contain object-center;
   }
 
   &__slot {
@@ -197,7 +221,7 @@ function slideChanged(swiper: SwiperInstance) {
       &--list #{$self} {
         @apply size-[4.5rem];
 
-        @container (min-width: theme("containers.xl")) {
+        @container (min-width: theme("containers.2xl")) {
           @apply me-3 size-[5.375rem];
         }
       }

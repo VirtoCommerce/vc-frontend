@@ -20,7 +20,6 @@
           :required="!hasItems"
           :error="!commentValid"
           :message="commentErrorMessage"
-          :aria-label="$t('quote_details.quote_request_comment')"
           no-resize
           counter
           @input="editComment"
@@ -46,7 +45,7 @@
       <VcWidget :title="$t('quote_details.shipping_address')" prepend-icon="truck" size="lg">
         <VcLabel :required="isShippingAddressRequired">{{ $t("quote_details.shipping_address") }}</VcLabel>
 
-        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
+        <div :class="['mt-2.5 rounded-[--vc-radius] border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <AddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
@@ -64,7 +63,12 @@
       <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <VcLabel required>{{ $t("quote_details.billing_address") }}</VcLabel>
 
-        <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
+        <div
+          :class="[
+            'mt-2.5 space-y-1.5 rounded-[--vc-radius] border p-5',
+            { 'cursor-not-allowed bg-neutral-50': fetching },
+          ]"
+        >
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching || !shippingAddress"
@@ -109,8 +113,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
-import { cloneDeep, every, isEqual, remove } from "lodash";
+import { cloneDeep, every, isEqual, remove } from "lodash-es";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -131,7 +134,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import QuoteLineItems from "../components/quote-line-items.vue";
 import { useUserQuote } from "../useUserQuote";
-import type { MemberAddressType } from "@/core/api/graphql/types";
+import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import type { QuoteAddressType, QuoteItemType, QuoteType } from "@/modules/quotes/api/graphql/types";
 import type { StringSchema } from "yup";
@@ -221,7 +224,7 @@ const canSaveChanges = computed<boolean>(() => {
   const isQuoteChanged = !isEqual(originalQuote.value, quote.value);
   const isCommentChanged = originalQuote.value?.comment !== comment.value;
   const areAddressesChanged =
-    !isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
+    !isEqual(quote.value?.addresses, originalQuote.value?.addresses) ||
     (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value);
 
   const hasChanges = isQuoteChanged || isCommentChanged || areAddressesChanged || anyFilesModified.value;
@@ -251,7 +254,7 @@ const canSubmit = computed<boolean>(() => {
   return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
 });
 
-const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
+const userHasAddresses = computed<boolean>(() => !!accountAddresses.value.length);
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
@@ -314,7 +317,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
     props: {
       address: currentAddress,
 
-      async onResult(updatedAddress: MemberAddressType): Promise<void> {
+      async onResult(updatedAddress: MemberAddressFieldsFragment): Promise<void> {
         const quoteAddress = cloneDeep({ ...updatedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
@@ -344,12 +347,10 @@ function openSelectAddressModal(addressType: AddressType): void {
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
-      currentAddress: cloneDeep(
-        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
-      ) as MemberAddressType,
+      currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
 
-      onResult(selectedAddress: MemberAddressType): void {
+      onResult(selectedAddress: MemberAddressFieldsFragment): void {
         const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
@@ -366,10 +367,10 @@ function openSelectAddressModal(addressType: AddressType): void {
   });
 }
 
-async function onAddFiles(items: INewFile[]) {
+function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
-  await uploadFiles();
+  void uploadFiles();
 }
 
 async function onRemoveFiles(items: FileType[]) {

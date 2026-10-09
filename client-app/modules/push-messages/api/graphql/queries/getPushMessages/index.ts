@@ -16,12 +16,14 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
   result.subscribeToMore({
     document: OnPushMessageCreatedDocument,
     updateQuery: (previousQueryResult, { subscriptionData }) => {
-      if (!subscriptionData.data) {
+      const newPushMessage = subscriptionData.data.pushMessageCreated;
+      const items = previousQueryResult.pushMessages?.items ?? [];
+      const alreadyExists = items.some((item) => item.id === newPushMessage.id);
+
+      if (!subscriptionData.data || alreadyExists) {
         return previousQueryResult;
       }
 
-      const newPushMessage = subscriptionData.data.pushMessageCreated;
-      const items = previousQueryResult.pushMessages?.items ?? [];
       const unreadCount = previousQueryResult.unreadCount?.totalCount;
       const unreadCountWithHidden = previousQueryResult.unreadCountWithHidden?.totalCount;
 

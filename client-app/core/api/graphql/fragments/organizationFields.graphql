@@ -1,0 +1,5 @@
+fragment organizationFields on Organization {
+  id
+  name
+  isLockedForCurrentUser
+}

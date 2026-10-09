@@ -7,12 +7,13 @@
       </VcTypography>
 
       <VcButton
-        v-if="$can($permissions.storefront.CanInviteUsers)"
+        v-if="$can($permissions.xApi.CanInviteUsers)"
         variant="outline"
         class="flex-none"
         @click="openInviteModal"
       >
         <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
+
         <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
       </VcButton>
     </div>
@@ -62,14 +63,7 @@
       </template>
     </VcPopupSidebar>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
-
-    <!-- Page Toolbar -->
-    <PageToolbarBlock
-      :stick="stickyMobileHeaderIsVisible"
-      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
-      shadow
-    >
+    <div class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
@@ -104,7 +98,7 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 w-[27.5rem]"
         >
-          <VcDialog dividers>
+          <VcDialog dividers size="xs">
             <VcDialogHeader @close="hideFilters">
               {{ $t("pages.company.members.filters") }}
             </VcDialogHeader>
@@ -124,7 +118,6 @@
               <VcButton
                 :disabled="!numberOfFacetsApplied && !isFacetsDirty"
                 color="secondary"
-                size="sm"
                 variant="outline"
                 min-width="6.25rem"
                 @click="
@@ -137,7 +130,6 @@
 
               <VcButton
                 :disabled="!numberOfFacetsApplied && !isFacetsDirty"
-                size="sm"
                 variant="outline"
                 min-width="6.25rem"
                 @click="hideFilters()"
@@ -147,7 +139,6 @@
 
               <VcButton
                 :disabled="!isFacetsDirty"
-                size="sm"
                 min-width="6.25rem"
                 @click="
                   applyFilters();
@@ -183,7 +174,7 @@
           </template>
         </VcInput>
       </div>
-    </PageToolbarBlock>
+    </div>
 
     <!-- Filters chips -->
     <div v-if="numberOfFacetsApplied" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
@@ -212,26 +203,29 @@
     <VcEmptyView
       v-if="!contacts.length && !contactsLoading"
       :text="
-        keyword || filter
+        keyword || filter || roleIds.length || statuses.length
           ? $t('pages.company.members.no_results_message')
           : $t('pages.company.members.no_members_message')
       "
       icon="outline-order"
+      :variant="!!keyword || !!filter || !!roleIds.length || !!statuses.length ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton
+          v-if="keyword || filter || roleIds.length || statuses.length"
+          prepend-icon="reset"
+          @click="resetFiltersWithKeyword"
+        >
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <template v-else>
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-            {{ $t("pages.company.members.buttons.no_members") }}
-          </VcButton>
+        <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
 
-          <VcButton v-else to="/">
-            {{ $t("pages.company.members.buttons.no_members") }}
-          </VcButton>
-        </template>
+        <VcButton v-else to="/">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
       </template>
     </VcEmptyView>
 
@@ -246,104 +240,80 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.company.members.meta.table_description')"
+          mobile-breakpoint="lg"
           @header-click="applySorting"
           @page-changed="changePage"
         >
           <template #desktop-body>
             <tr v-for="contact in contacts" :key="contact.id" class="even:bg-neutral-50">
-              <td class="py-2.5 pl-4 pr-0">
-                <RoleIcon :role-id="contact.extended.roles[0]?.id" />
-              </td>
-
-              <td class="px-4 py-2.5">
+              <td class="w-40 truncate px-4 py-2.5" :title="contact.fullName">
                 {{ contact.fullName }}
               </td>
 
-              <td class="px-4 py-2.5">
-                {{ contact.extended.roles[0]?.name }}
+              <td class="max-w-xs truncate px-4 py-2.5" :title="contact.extended.roles.map((r) => r.name).join(', ')">
+                {{ contact.extended.roles.map((r) => r.name).join(", ") }}
               </td>
 
-              <td class="w-1/4 truncate px-4 py-2.5">
+              <td class="w-1/4 max-w-52 truncate px-4 py-2.5" :title="contact.extended.emails[0]">
                 {{ contact.extended.emails[0] }}
               </td>
 
               <td class="px-4 py-3 text-center">
-                <MemberStatus :status="contact.status" />
+                <MemberStatus :status="getDisplayStatus(contact)" />
               </td>
 
-              <td v-if="userCanEditOrganization" class="px-5 text-right">
+              <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
-                  v-if="contact.id !== user.memberId"
-                  :contact-status="contact.status"
+                  v-if="canShowDropdownFor(contact)"
+                  :contact-status="getDisplayStatus(contact)"
+                  :can-edit-organization="userCanEditOrganization"
+                  :can-login-on-behalf="canLoginOnBehalfOf(contact)"
                   class="inline-block"
                   @edit="openEditCustomerRoleModal(contact)"
                   @remove="openDeleteModal(contact)"
                   @lock-or-unlock="openLockOrUnlockModal(contact, $event)"
+                  @login-on-behalf="openLoginOnBehalfModal(contact)"
+                  @revoke-invite="openRevokeInviteModal(contact)"
+                  @resend-invite="handleResendInvite(contact)"
                 />
-              </td>
-            </tr>
-          </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="row in itemsPerPage" :key="row" class="even:bg-neutral-50">
-              <td class="py-2.5 pl-4 pr-0">
-                <div class="size-9 animate-pulse rounded-full bg-neutral-200"></div>
-              </td>
-
-              <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
-                <div class="h-5 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>
 
           <template #mobile-item="{ item }">
             <div class="flex items-center border-b px-5">
-              <div class="py-4.5">
-                <RoleIcon :role-id="item.extended.roles[0]?.id" />
-              </div>
-
-              <div class="grow py-4.5 pl-4 [word-break:break-word]">
+              <div class="grow py-4.5 [word-break:break-word]">
                 <div>
                   <b>{{ item.fullName }}</b>
                 </div>
 
-                <div class="text-sm">
-                  {{ item.extended.roles[0]?.name }}
+                <div class="truncate text-sm" :title="item.extended.roles.map((r) => r.name).join(', ')">
+                  {{ item.extended.roles.map((r) => r.name).join(", ") }}
                 </div>
               </div>
 
               <div class="py-4.5 pr-3">
-                <MemberStatus :status="item.status" />
+                <MemberStatus :status="getDisplayStatus(item)" />
               </div>
 
-              <div v-if="userCanEditOrganization" class="w-7 flex-none">
+              <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
-                  v-if="item.id !== user.memberId"
-                  :contact-status="item.status"
+                  v-if="canShowDropdownFor(item)"
+                  :contact-status="getDisplayStatus(item)"
+                  :can-edit-organization="userCanEditOrganization"
+                  :can-login-on-behalf="canLoginOnBehalfOf(item)"
                   placement="left-start"
                   @edit="openEditCustomerRoleModal(item)"
                   @remove="openDeleteModal(item)"
                   @lock-or-unlock="openLockOrUnlockModal(item, $event)"
+                  @login-on-behalf="openLoginOnBehalfModal(item)"
+                  @revoke-invite="openRevokeInviteModal(item)"
+                  @resend-invite="handleResendInvite(item)"
                 />
               </div>
             </div>
           </template>
 
-          <template #mobile-skeleton>
-            <div
-              v-for="row in itemsPerPage"
-              :key="row"
-              class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-            >
-              <div class="flex flex-col">
-                <div class="animate-pulse bg-neutral-200 py-6 pl-6"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <div class="animate-pulse bg-neutral-200 py-6 pl-4"></div>
-              </div>
-            </div>
-          </template>
           <template #page-limit-message>
             {{ $t("ui_kit.reach_limit.page_limit_filters") }}
           </template>
@@ -354,33 +324,37 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { useRouter } from "vue-router";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { XApiPermissions } from "@/core/enums";
+import { PlatformPermissions, XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
-import { PageToolbarBlock, useUser } from "@/shared/account";
+import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
 import {
   EditCustomerRoleModal,
   InviteMemberModal,
   MemberStatus,
   MembersDropdownMenu,
-  RoleIcon,
+  translateRoleName,
   useOrganizationContacts,
 } from "@/shared/company";
+import { useAssignableCompanyRoles } from "@/shared/company/composables/useAssignableCompanyRoles";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
+import { ContactStatus } from "@/shared/company/types";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
 
-const { t } = useI18n();
+const { t, te } = useI18n();
+const { translate: translateIdentityError } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -395,15 +369,18 @@ const {
   loading: contactsLoading,
   page,
   pages,
-  itemsPerPage,
   sort,
   keyword,
   filter,
+  roleIds,
+  statuses,
   contacts,
   fetchContacts,
   lockContact,
   unlockContact,
   removeMemberFromOrganization,
+  revokeInvite,
+  resendInvite,
   changeContactOrganizationRole,
 } = useOrganizationContacts(organization.value!.id);
 const {
@@ -415,8 +392,10 @@ const {
   applyFacets,
   resetFacets,
   resetFacetItem,
-} = useOrganizationContactsFilterFacets();
+} = useOrganizationContactsFilterFacets(organization.value!.id);
+const { roles: assignableRoles, loading: assignableRolesLoading } = useAssignableCompanyRoles(organization.value!.id);
 const { openModal } = useModal();
+const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -432,18 +411,24 @@ const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(PlatformPermissions.CanImpersonate));
+const canManageMembers = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
 
-const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
+  return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length;
+}
 
-const columns = computed<ITableColumn[]>(() => {
-  const result: ITableColumn[] = [
-    {
-      id: "roleIcon",
-      classes: "w-14",
-    },
+function canShowDropdownFor(contact: ExtendedContactType): boolean {
+  return contact.id !== user.value.memberId && (userCanEditOrganization.value || canLoginOnBehalfOf(contact));
+}
+
+function getDisplayStatus(contact: ExtendedContactType): string | undefined {
+  return contact.isLockedInOrganization ? ContactStatus.Locked : (contact.statusInOrganization ?? contact.status);
+}
+
+const columns = computed<VcTableColumnType[]>(() => {
+  const result: VcTableColumnType[] = [
     {
       id: "name",
       title: t("pages.company.members.content_header.name"),
@@ -465,7 +450,7 @@ const columns = computed<ITableColumn[]>(() => {
     },
   ];
 
-  if (userCanEditOrganization.value) {
+  if (canManageMembers.value) {
     // Add action column
     result.push({
       id: "actions",
@@ -502,16 +487,27 @@ async function resetKeyword() {
   }
 }
 
+function syncFilterFromFacets() {
+  const roleFacet = appliedFacets.value.find((f) => f.paramName === "roleId");
+  roleIds.value = roleFacet?.values.filter((v) => v.selected).map((v) => v.value) ?? [];
+
+  const statusFacet = appliedFacets.value.find((f) => f.paramName === "status");
+  statuses.value = statusFacet?.values.filter((v) => v.selected).map((v) => v.value) ?? [];
+
+  const remainingFacets = appliedFacets.value.filter((f) => f.paramName !== "roleId" && f.paramName !== "status");
+  filter.value = getFilterExpressionFromFacets(remainingFacets);
+}
+
 async function applyFilters() {
   applyFacets();
-  filter.value = getFilterExpressionFromFacets(appliedFacets);
+  syncFilterFromFacets();
   page.value = 1;
   await fetchContacts();
 }
 
 async function resetFilterItem(facet: FacetItemType, facetValue: FacetValueItemType) {
   resetFacetItem({ paramName: facet.paramName, value: facetValue.value });
-  filter.value = getFilterExpressionFromFacets(appliedFacets);
+  syncFilterFromFacets();
   page.value = 1;
   await fetchContacts();
 }
@@ -519,6 +515,8 @@ async function resetFilterItem(facet: FacetItemType, facetValue: FacetValueItemT
 async function resetFilters() {
   resetFacets();
   filter.value = "";
+  roleIds.value = [];
+  statuses.value = [];
   page.value = 1;
   await fetchContacts();
 }
@@ -556,12 +554,45 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
       title: isUnlock ? t("shared.company.unblock_member_modal.title") : t("shared.company.block_member_modal.title"),
       text: isUnlock ? t("shared.company.unblock_member_modal.text") : t("shared.company.block_member_modal.text"),
       async onConfirm() {
-        if (isUnlock) {
-          await unlockContact(contact);
-        } else {
-          await lockContact(contact);
+        try {
+          if (isUnlock) {
+            await unlockContact(contact);
+          } else {
+            await lockContact(contact);
+          }
+        } catch {
+          notifications.error({ duration: 5000, single: true, text: t("common.messages.contact_lock_failed") });
+          return;
         }
+
+        notifications.success({
+          duration: 10000,
+          single: true,
+          text: isUnlock
+            ? t("shared.company.notifications.user_unblocked")
+            : t("shared.company.notifications.user_blocked"),
+        });
         closeLockOrUnlockModal();
+      },
+    },
+  });
+}
+
+function openLoginOnBehalfModal(contact: ExtendedContactType): void {
+  const closeLoginOnBehalfModal = openModal({
+    component: "VcConfirmationModal",
+    props: {
+      variant: "info",
+      title: t("shared.company.login_on_behalf_modal.title"),
+      text: t("shared.company.login_on_behalf_modal.text", {
+        email: contact.extended.emails?.[0] ?? contact.fullName,
+      }),
+      onConfirm() {
+        if (!contact.securityAccounts?.length) {
+          return;
+        }
+        closeLoginOnBehalfModal();
+        void router.push({ name: "Impersonate", params: { userId: contact.securityAccounts[0].id } });
       },
     },
   });
@@ -588,17 +619,73 @@ function openDeleteModal(contact: ExtendedContactType): void {
   });
 }
 
+function openRevokeInviteModal(contact: ExtendedContactType): void {
+  const closeRevokeInviteModal = openModal({
+    component: "VcConfirmationModal",
+    props: {
+      variant: "danger",
+      loading: contactsLoading,
+      title: t("shared.company.revoke_invite_modal.title"),
+      text: t("shared.company.revoke_invite_modal.text", {
+        name: contact.extended.emails[0] ?? contact.fullName,
+      }),
+      async onConfirm() {
+        try {
+          await revokeInvite(contact.id);
+        } catch {
+          notifications.error({ duration: 5000, single: true, text: t("common.messages.invite_revoke_failed") });
+          return;
+        }
+
+        notifications.success({
+          duration: 10000,
+          single: true,
+          text: t("pages.company.members.notifications.invite_revoked"),
+        });
+        closeRevokeInviteModal();
+      },
+    },
+  });
+}
+
+async function handleResendInvite(contact: ExtendedContactType): Promise<void> {
+  const notification: INotification = {
+    duration: 5000,
+    single: true,
+  };
+
+  try {
+    const result = await resendInvite({
+      memberId: contact.id,
+      urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
+    });
+
+    if (result.succeeded) {
+      notifications.success({ ...notification, text: t("pages.company.members.notifications.invite_resent") });
+    } else {
+      notifications.error({ ...notification, text: t("common.messages.invite_resend_failed") });
+    }
+  } catch {
+    notifications.error({ ...notification, text: t("common.messages.invite_resend_failed") });
+  }
+}
+
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
+  const currentRole = contact.extended.roles[0];
+  const currentRoleId =
+    assignableRoles.value.find((role) => role.id === currentRole?.id || role.name === currentRole?.name)?.id ??
+    currentRole?.id;
+
   const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
-      roles: B2B_ROLES,
-      currentRoleId: contact.extended.roles[0].id,
-      loading: contactsLoading,
+      roles: assignableRoles.value.map((role) => ({ ...role, name: translateRoleName(t, te, role) })),
+      currentRoleId,
+      loading: computed(() => contactsLoading.value || assignableRolesLoading.value),
 
       async onConfirm(selectedRoleId: string): Promise<void> {
         const result = await changeContactOrganizationRole({
-          userId: contact.securityAccounts![0].id,
+          memberId: contact.id,
           roleIds: [selectedRoleId],
         });
 
@@ -607,17 +694,23 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
           single: true,
         };
 
-        if (result?.succeeded) {
-          notifications.success({ ...notification, text: t("common.messages.role_update_successful") });
+        if (!result?.succeeded) {
+          const errorText = result?.errors
+            ?.map((error) => error && translateIdentityError(error))
+            .filter((message): message is string => !!message)
+            .join(" ");
 
-          await fetchContacts();
-        } else {
           notifications.error({
             ...notification,
-            text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
+
+            text: errorText || t("common.messages.role_update_failed"),
           });
+          return;
         }
 
+        notifications.success({ ...notification, text: t("common.messages.role_update_successful") });
+
+        await fetchContacts();
         closeEditCustomerRoleModal();
       },
     },

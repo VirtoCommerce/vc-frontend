@@ -20,8 +20,14 @@ query GetProductConfigurations(
       description
       isRequired
       type
+      allowCustomText
+      allowTextOptions
+      dependsOnSectionId
+      maxLength
       options {
         id
+        isDefault
+        text
         quantity
         listPrice {
           ...money

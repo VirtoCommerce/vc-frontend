@@ -2,7 +2,7 @@ import { noop, useScriptTag } from "@vueuse/core";
 import { authorizePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
 import type { AuthorizePaymentResultType } from "@/core/api/graphql/types";
-import type { MaybeRef } from "@vueuse/core";
+import type { MaybeRef } from "vue";
 
 export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
   const { scriptURL, manualScriptLoading = false } = options;
@@ -16,6 +16,9 @@ export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualSc
       Accept.dispatchData(secureData, handler);
     } catch (e) {
       Logger.error(`${useAuthorizeNet.name}.${dispatchData.name}`, e);
+      // Re-throw so callers can settle their pending tokenization promise instead of
+      // hanging forever when Accept.js fails synchronously (handler never fires).
+      throw e;
     }
   }
 

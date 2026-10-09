@@ -7,11 +7,20 @@
       {
         'vc-radio-button--disabled': disabled,
         'vc-radio-button--checked': checked,
+        'vc-radio-button--no-indicator': noIndicator,
       },
     ]"
   >
-    <label class="vc-radio-button__container">
+    <component
+      :is="containerTag"
+      :for="isInsideInteractive ? undefined : inputId"
+      class="vc-radio-button__container"
+      @click="onContainerClick"
+    >
       <input
+        v-if="!isInsideInteractive"
+        :id="inputId"
+        ref="inputRef"
         v-model="model"
         class="vc-radio-button__input"
         type="radio"
@@ -19,19 +28,27 @@
         :value="value"
         :checked="checked"
         :disabled="disabled"
+        :tabindex="tabindex"
         :aria-checked="checked"
+        :aria-label="ariaLabel || label || undefined"
+        :aria-describedby="hasDetails ? detailsId : undefined"
+        :aria-invalid="error || undefined"
+        :data-test-id="testIdInput"
         @change="emit('change', value)"
         @input="emit('input', value)"
       />
+
+      <span class="vc-radio-button__indicator" aria-hidden="true" />
 
       <span class="vc-radio-button__label">
         <slot v-bind="{ checked, value, label }">
           {{ label }}
         </slot>
       </span>
-    </label>
+    </component>
 
     <VcInputDetails
+      :id="detailsId"
       class="vc-radio-button__details"
       :show-empty="showEmptyDetails"
       :message="message"
@@ -42,7 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, inject, ref, useSlots } from "vue";
+import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
   label?: string;
@@ -57,6 +76,15 @@ interface IProps {
   singleLineMessage?: boolean;
   wordBreak?: string;
   maxLines?: number;
+  noIndicator?: boolean;
+  testIdInput?: string;
+  ariaLabel?: string;
+  tabindex?: number;
+}
+
+interface IEmits {
+  (event: "input", value: string): void;
+  (event: "change", value: string): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -68,27 +96,75 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["value"]>();
 
-interface IEmits {
-  (event: "input", value: string): void;
-  (event: "change", value: string): void;
+const inputRef = ref<HTMLInputElement | null>(null);
+
+let forwardExpected = false;
+
+const isInsideInteractive = inject(INTERACTIVE_PARENT_KEY, ref(false));
+
+const slots = useSlots();
+
+// Dev warning for accessibility
+if (import.meta.env.DEV) {
+  if (!props.ariaLabel && !props.label && !slots.default) {
+    // eslint-disable-next-line no-console
+    console.warn("VcRadioButton: Radio button should have ariaLabel, label, or slot content for accessibility");
+  }
 }
 
+const componentId = useComponentId("vc-radio-button");
+const inputId = `${componentId}-input`;
+const detailsId = `${componentId}-details`;
+
 const checked = computed(() => model.value === props.value);
+const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
+const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label"));
+
+// <label> activation forwards a second, identical click to the input, so one pointer press would
+// otherwise reach consumers twice. Drop that duplicate and nothing else: keyboard activation and a
+// click aimed at the input itself must still pass, and a click on slot content is not ours to eat.
+// The flag is cleared on the next task because the forwarded click, when it comes, is dispatched
+// synchronously within this one.
+function onContainerClick(event: MouseEvent) {
+  if (isInsideInteractive.value) {
+    return;
+  }
+
+  // A disabled control surfaces nothing, as its full-bleed input used to guarantee.
+  if (props.disabled) {
+    event.stopPropagation();
+    return;
+  }
+
+  if (event.target !== inputRef.value) {
+    forwardExpected = true;
+    setTimeout(() => (forwardExpected = false));
+    return;
+  }
+
+  if (forwardExpected) {
+    forwardExpected = false;
+    event.stopPropagation();
+  }
+}
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+@use "@/ui-kit/styles/hit-area" as *;
+
 .vc-radio-button {
   $self: &;
   $checked: "";
   $disabled: "";
+  $no-indicator: "";
   $left: "";
   $right: "";
 
-  --props-max-lines: v-bind(props.maxLines ? props.maxLines: null);
-  --props-word-break: v-bind(props.wordBreak ? props.wordBreak: null);
+  --props-max-lines: v-bind(props.maxLines);
+  --props-word-break: v-bind(props.wordBreak);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
   --max-lines: var(--props-max-lines, var(--vc-radio-button-max-lines, initial));
   --word-break: var(--props-word-break, var(--vc-radio-button-word-break, initial));
 
@@ -131,12 +207,16 @@ const checked = computed(() => model.value === props.value);
     $checked: &;
   }
 
+  &--no-indicator {
+    $no-indicator: &;
+  }
+
   &--disabled {
     $disabled: &;
   }
 
   &__container {
-    @apply flex items-center cursor-pointer;
+    @apply relative flex gap-2 cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -144,18 +224,37 @@ const checked = computed(() => model.value === props.value);
   }
 
   &__input {
-    @apply flex-none size-[--size] appearance-none border-2 rounded-full border-neutral-400 bg-additional-50;
+    // Hidden, never stretched: an overlay over the container swallows clicks meant for label content.
+    @apply sr-only;
+  }
 
-    &:checked {
+  &__indicator {
+    @apply flex-none size-[--size] border-2 rounded-full border-neutral-500 bg-additional-50;
+
+    #{$no-indicator} & {
+      @apply hidden;
+    }
+
+    input:focus-visible + & {
+      @include focus-ring;
+    }
+
+    // Only where the control is its own target: inside an interactive parent the parent is, and an
+    // overhang there would take clicks from the neighbouring item.
+    label > & {
+      position: relative;
+
+      &::before {
+        @include hit-area(var(--vc-radio-button-hit-area-size, 1.5rem));
+      }
+    }
+
+    #{$checked} & {
       @apply border-[--base-color] border-[length:var(--border-width)];
     }
 
-    &:focus {
-      @apply outline-none ring ring-[--focus-color];
-    }
-
-    &:disabled {
-      @apply border-neutral-400 bg-neutral-50;
+    #{$disabled} & {
+      @apply border-neutral-300 bg-neutral-50;
     }
   }
 
@@ -163,11 +262,11 @@ const checked = computed(() => model.value === props.value);
     @apply min-w-0 empty:hidden line-clamp-[var(--max-lines)] [word-break:var(--word-break)];
 
     #{$left} & {
-      @apply order-first me-2;
+      @apply order-first;
     }
 
     #{$right} & {
-      @apply order-last ms-2;
+      @apply order-last;
     }
 
     #{$disabled} & {

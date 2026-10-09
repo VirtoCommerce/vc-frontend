@@ -17,7 +17,7 @@ export const useFetch = (() => {
         return context;
       },
       onFetchError: (context) => {
-        errorHandler(toServerError(context.error, context.response?.status));
+        errorHandler(toServerError(context.error, context.response?.status), JSON.stringify(context.error));
         return context;
       },
     },

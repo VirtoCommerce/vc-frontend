@@ -19,7 +19,9 @@ on:
 
 jobs:
   ci:
-    if: ${{ github.actor != 'dependabot[bot]' &&
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: every job here is skipped in the private theme mirror (VCST-5970).
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
+         github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
     runs-on: ubuntu-latest
@@ -38,11 +40,12 @@ jobs:
     outputs:
       artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      branchName: ${{ steps.branch_name.outputs.branchName }}
 
     steps:
 
       - name: Set up Node 22
-        uses: actions/setup-node@v4.2.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '22'
 
@@ -55,19 +58,45 @@ jobs:
         run: |
           echo "RELEASE_STATUS=true" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
+      - name: Check per-repository settings
+        # Outside vc-frontend, the Sonar key and archive name would otherwise fall back to vc-frontend's and overwrite them.
+        if: ${{ github.repository_id != '296335982' }}
+        env:
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_PROJECT_KEY" ]; then
+            echo "::error::Set the SONAR_PROJECT_KEY repository variable: without it SonarCloud analyses go to vc-frontend's project."
+            exit 1
+          fi
+          if [ "$(jq -er .name package.json)" = 'vc-theme-b2b-vue' ]; then
+            echo "::error::Rename the package in package.json: build archives named vc-theme-b2b-vue-* overwrite vc-frontend's."
+            exit 1
+          fi
+
+      - name: Check E2E_TEST_SUITES
+        if: ${{ vars.E2E_TEST_SUITES != '' }}
+        env:
+          E2E_TEST_SUITES: ${{ vars.E2E_TEST_SUITES }}
+        run: |
+          # A blank value would reach auto-tests as a suite list that matches nothing, and the job would pass with no tests.
+          if [ -z "${E2E_TEST_SUITES//[[:space:],]/}" ]; then
+            echo "::error::E2E_TEST_SUITES is blank. Unset it to run graphql,e2e,restapi, or list the suites."
+            exit 1
+          fi
+
       - name: Get Image Version
-        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
         with:
           projectType: theme
         id: image
 
       - name: Get changelog
         id: changelog
-        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
+        uses: VirtoCommerce/.github/actions/changelog-generator@v3.1000.1
 
       - name: Set release VERSION_SUFFIX
         run: |
@@ -96,7 +125,9 @@ jobs:
           yarn install
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@master
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+        with:
+          args: ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -119,7 +150,7 @@ jobs:
           yarn test:coverage
 
       - name: Upload Coverage Report
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: coverage-report
           path: coverage
@@ -143,51 +174,53 @@ jobs:
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
-        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
 
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
+        uses: VirtoCommerce/.github/actions/publish-artifact-link@v3.1000.1
         with:
           artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
           repoOrg: ${{ github.repository_owner }}
           downloadComment: 'Artifact URL:'
 
-      - name: Create Release
-        if: ${{ github.ref == 'refs/heads/master' }}
+      - name: Release
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         id: create_release
-        uses: actions/create-release@v1
+        if: ${{ github.ref == 'refs/heads/master' }}
         with:
-          tag_name: ${{ steps.image.outputs.prefix }}
-          release_name: ${{ steps.image.outputs.prefix }}
+          make_latest: true
+          name: ${{ steps.image.outputs.prefix }}
           draft: false
           prerelease: false
-          body: ${{ steps.changelog.outputs.changelog }}
-
-      - name: Upload Release Asset
-        if: ${{ github.ref == 'refs/heads/master' }}
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/${{ steps.blobRelease.outputs.blobId }}
-          asset_name: ${{ steps.blobRelease.outputs.blobId }}
-          asset_content_type: application/zip
+          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_${{ github.event.repository.name }})"
+          tag_name: ${{ steps.image.outputs.prefix }}
+          files: artifacts/${{ steps.blobRelease.outputs.blobId }}
+          target_commitish: ${{ github.ref_name }}
+          generate_release_notes: true
 
       - name: Set artifactUrl value
         id: artifactUrl
+        env:
+          RELEASE_ASSETS: ${{ steps.create_release.outputs.assets }}
+          PACKAGE_URL: ${{ steps.blobRelease.outputs.packageUrl }}
         run: |
-          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo "download_url=${{ steps.upload-release-asset.outputs.browser_download_url }}" >> $GITHUB_OUTPUT
+          if [ "$GITHUB_REF" = 'refs/heads/master' ]; then
+            download_url=$(echo "$RELEASE_ASSETS" | jq -r '.[0].browser_download_url // empty')
+            if [ -n "$download_url" ]; then
+              echo "download_url=$download_url" >> "$GITHUB_OUTPUT"
+            else
+              echo "download_url=" >> "$GITHUB_OUTPUT"
+            fi
           else
-            echo "download_url=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
-          fi;
+            echo "download_url=$PACKAGE_URL" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.1
         if: always()
         id: jira_keys
         with:
@@ -196,7 +229,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Build Info to Jira
-        if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
         uses: VirtoCommerce/jira-upload-build-info@master
         with:
@@ -220,8 +253,55 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
+      - name: Update Jira Tasks with Release Number
+        if: ${{ github.repository_id == '296335982' && github.ref == 'refs/heads/master' }}
+        uses: VirtoCommerce/.github/actions/update-jira-tasks-with-release-number@v3.1000.1
+        with:
+          ghRepository: ${{ github.repository }}
+          ghReleaseTag: ${{ steps.image.outputs.prefix }}
+          jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
+          jiraCustomFieldValue: "${{ steps.image.outputs.prefix }}"
+          client-id: '${{ secrets.JIRA_USER }}'
+          client-secret: '${{ secrets.JIRA_TOKEN }}'
+
+      - name: Set branch name value
+        if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+          (github.event_name == 'workflow_dispatch') || ((github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
+        id: branch_name
+        shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if ($env:EVENT_NAME -eq 'pull_request'){
+            $branchName = $env:HEAD_REF
+          } else {
+            $branchName = $env:REF_NAME
+          }
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
+  auto-tests:
+    needs: ci
+    if: ${{ (github.repository_id == '296335982' || vars.VC_E2E == 'true') &&
+        (((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+        (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
+    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.1000.1
+    with:
+      installModules: 'false'
+      installCustomModule: 'false'
+      vctestingRepoBranch: 'dev'
+      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
+      customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/${{ needs.ci.outputs.branchName }}/backend-packages.json'
+      testSuites: ${{ vars.E2E_TEST_SUITES || 'graphql,e2e,restapi' }}
+    secrets:
+      appInsightsInstrumentationKey: ${{ secrets.E2E_APPINSIGHTSINSTRUMENTATIONKEY }}
+      envPAT: ${{ secrets.REPO_TOKEN }}
+      testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
+      sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
+  
   deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+    # No pull_request: a PR build opened a vc-deploy-dev PR into vcst-qa for every PR, and nobody merged them (VCST-6206).
+    if: ${{ github.repository_id == '296335982' && github.ref == 'refs/heads/dev' }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
@@ -231,4 +311,9 @@ jobs:
       environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-    secrets: inherit
+    secrets:
+      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      VIRTOCLOUD_KEY_VCPT_VCST: ${{ secrets.VIRTOCLOUD_KEY_VCPT_VCST }}
+      CLOUD_INSTANCE_BASE_URL: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}

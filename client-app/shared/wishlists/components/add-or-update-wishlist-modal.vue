@@ -7,13 +7,16 @@
     "
     dividers
     is-mobile-fullscreen
+    test-id="add-or-update-wishlist-modal"
+    :is-persistent="saving"
   >
     <div class="space-y-4">
       <VcInput
         v-model="name"
+        test-id-input="wishlist-name-input"
         :label="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_label')"
         :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_placeholder')"
-        :disabled="loading"
+        :disabled="saving"
         :message="errors.name"
         :error="!!errors.name && meta.dirty"
         required
@@ -21,28 +24,37 @@
 
       <VcTextarea
         v-model="description"
+        data-test-id="wishlist-description-input"
         :label="$t('common.labels.description')"
-        :disabled="loading"
+        :disabled="saving"
         :message="errors.description"
         :error="!!errors.description && meta.dirty"
         rows="4"
         counter
         :max-length="MAX_DESCRIPTION_LENGTH"
       />
-
-      <div v-if="isCorporateMember">
-        <VcSwitch v-model="isShared" label-position="right">
-          {{ $t("shared.wishlists.add_or_update_wishlist_modal.make_shared") }}
-        </VcSwitch>
-      </div>
     </div>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <!-- `isPersistent` covers Esc, the backdrop and the header X while a write is in flight; this button needs its
+           own guard. -->
+      <VcButton
+        data-test-id="wishlist-settings-cancel-button"
+        color="secondary"
+        variant="outline"
+        :disabled="saving"
+        @click="close"
+      >
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
-      <VcButton :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
+      <VcButton
+        data-test-id="wishlist-settings-save-button"
+        :loading="saving"
+        :disabled="!canSave || saving"
+        class="ms-auto"
+        @click="save(close)"
+      >
         {{
           isEditMode
             ? $t("shared.wishlists.add_or_update_wishlist_modal.save_button")
@@ -56,10 +68,12 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { computed } from "vue";
-import { bool, object, string } from "yup";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import { useUser } from "@/shared/account/composables";
+import { Logger } from "@/core/utilities";
+import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables/useWishlists";
 import type { WishlistType } from "@/core/api/graphql/types";
 
@@ -69,20 +83,29 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { t } = useI18n();
+
+const notifications = useNotifications();
+
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
-const listIsShared = computed<boolean>(() => props.list?.scope === WishlistScopeType.Organization);
 
-const { loading, createWishlist, updateWishlist } = useWishlists();
-const { isCorporateMember } = useUser();
+// `autoRefetch: false`: the composable refetches outside its own try/catch and rethrows, so a refetch hiccup after a
+// successful mutation would look like a failed save. Refreshed explicitly below instead.
+const { createWishlist, updateWishlist, fetchWishlists } = useWishlists({ autoRefetch: false });
+
+// Modal-owned busy flag for the save action. Driven with try/finally so the Save button can never get stuck
+// showing the loader (useWishlists' shared `loading` can leak true on error), and it guards against double-submit.
+const saving = ref(false);
+
+const isEditMode = computed<boolean>(() => !!props.list);
 
 const MAX_DESCRIPTION_LENGTH = 250;
 
 const validationSchema = toTypedSchema(
   object({
-    name: string().required().max(25),
+    name: string().trim().required().max(25),
     description: string().max(MAX_DESCRIPTION_LENGTH),
-    isShared: bool(),
   }),
 );
 
@@ -91,40 +114,51 @@ const { errors, meta } = useForm({
   initialValues: {
     name: listName.value,
     description: listDescription.value ?? "",
-    isShared: listIsShared.value,
   },
   validateOnMount: true,
 });
 
 const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
-const { value: isShared } = useField<boolean | undefined>("isShared");
 
-const isEditMode = computed<boolean>(() => !!props.list);
-const canSave = computed<boolean>(() => meta.value.dirty && meta.value.valid);
+const canSave = computed<boolean>(() => meta.value.valid && meta.value.dirty);
 
 async function save(closeHandle: () => void): Promise<void> {
-  if (!meta.value.valid) {
+  if (!meta.value.valid || saving.value) {
     return;
   }
 
-  const scope = isShared.value ? WishlistScopeType.Organization : WishlistScopeType.Private;
+  saving.value = true;
+  try {
+    const payload = {
+      listName: name.value?.trim(),
+      description: description.value?.trim(),
+    };
 
-  if (isEditMode.value) {
-    await updateWishlist({
-      listId: props.list!.id,
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope,
+    if (isEditMode.value) {
+      // Name and description only — sharing is owned by the share dialog and must not be touched from here.
+      await updateWishlist({ listId: props.list!.id, ...payload });
+    } else {
+      // A new list starts private; it is shared afterwards through the share dialog.
+      await createWishlist({ ...payload, scope: WishlistScopeType.Private, sharingKey: crypto.randomUUID() });
+    }
+
+    // Saved from here on, so the refresh may not surface as a save error. Awaited to keep the loader up.
+    try {
+      await fetchWishlists();
+    } catch (e) {
+      Logger.error("AddOrUpdateWishlistModal: refreshing the lists after save failed", e);
+    }
+
+    closeHandle();
+  } catch {
+    // The underlying mutation already logs; surface a toast and let the user retry (the button resets below).
+    notifications.error({
+      text: t("shared.wishlists.add_or_update_wishlist_modal.save_error"),
+      single: true,
     });
-  } else {
-    await createWishlist({
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope,
-    });
+  } finally {
+    saving.value = false;
   }
-
-  closeHandle();
 }
 </script>

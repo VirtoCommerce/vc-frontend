@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "Tarjetas de crédito guardadas",
+      "no_cards": "Aún no has guardado ninguna tarjeta de crédito",
+      "delete_credit_card_modal": {
+        "title": "Confirmar eliminación",
+        "message": "¿Estás seguro de que deseas eliminar la tarjeta de crédito?"
+      }
+    }
+  }
+}

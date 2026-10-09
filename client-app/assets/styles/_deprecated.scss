@@ -1,22 +1,3 @@
-.polygon-bg {
-  background-image: url(/static/images/common/polygon.webp);
-  background-repeat: no-repeat;
-  background-size: 46%;
-  background-position: var(--polygon-bg-position, right top);
-}
-
-.polygon-gray-bg {
-  background-image: url(/static/images/common/polygon-gray.webp);
-  background-repeat: no-repeat;
-  background-position: right bottom -120px;
-}
-
-@media (max-width: 768px) {
-  .polygon-bg {
-    background-position: right bottom -120px;
-  }
-}
-
 .square {
   padding-bottom: 100%;
 }

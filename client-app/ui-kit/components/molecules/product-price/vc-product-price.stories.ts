@@ -1,10 +1,10 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcProductPrice } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const ALIGNS = ["start", "end"];
 
-export default {
+const meta: Meta<typeof VcProductPrice> = {
   title: "Components/Molecules/VcProductPrice",
   component: VcProductPrice,
   argTypes: {
@@ -19,12 +19,19 @@ export default {
       },
     },
   },
-} as Meta<typeof VcProductPrice>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcProductPrice v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+const renderProductPrice = (template: string) => (args: Record<string, unknown>) => ({
   components: { VcProductPrice },
   setup: () => ({ args }),
-  template: '<VcProductPrice v-bind="args" />',
+  template,
 });
 
 const sharedArgs = {
@@ -32,45 +39,48 @@ const sharedArgs = {
   listPrice: getMoney(1799999999),
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
-  ...sharedArgs,
-};
-
-export const AlignEnd = Template.bind({});
-AlignEnd.args = {
-  ...sharedArgs,
-  align: "end",
-};
-
-export const SingleLine = Template.bind({});
-SingleLine.args = {
-  ...sharedArgs,
-  singleLine: true,
-};
-
-export const Truncate: StoryFn = (args) => ({
-  components: { VcProductPrice },
-  setup: () => ({ args }),
-  template: '<VcProductPrice class="text-lg w-20" v-bind="args" />',
-});
-Truncate.args = {
-  ...sharedArgs,
-  truncate: true,
-};
-
-export const VariationsPrice = Template.bind({});
-VariationsPrice.args = {
-  listPrice: {
-    ...sharedArgs.listPrice,
+export const Basic: StoryType = {
+  args: {
+    ...sharedArgs,
   },
-  withFromLabel: true,
 };
 
-export const UsageExamples: StoryFn = (args) => ({
-  components: { VcProductPrice },
-  setup: () => ({ args }),
-  template: `<div class="space-y-2">
+export const AlignEnd: StoryType = {
+  args: {
+    ...sharedArgs,
+    align: "end",
+  },
+};
+
+export const SingleLine: StoryType = {
+  args: {
+    ...sharedArgs,
+    singleLine: true,
+  },
+};
+
+export const Truncate: StoryType = {
+  args: {
+    ...sharedArgs,
+    truncate: true,
+  },
+  render: renderProductPrice('<VcProductPrice class="text-lg w-20" v-bind="args" />'),
+};
+
+export const VariationsPrice: StoryType = {
+  args: {
+    listPrice: {
+      ...sharedArgs.listPrice,
+    },
+    withFromLabel: true,
+  },
+};
+
+export const UsageExamples: StoryType = {
+  args: {
+    ...sharedArgs,
+  },
+  render: renderProductPrice(`<div class="space-y-2">
     <div>
       <span class="text-xs italic">class="text-sm"</span>
       <VcProductPrice
@@ -94,8 +104,5 @@ export const UsageExamples: StoryFn = (args) => ({
         v-bind="args"
       />
     </div>
-  </div>`,
-});
-UsageExamples.args = {
-  ...sharedArgs,
+  </div>`),
 };

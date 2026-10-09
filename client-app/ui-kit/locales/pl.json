@@ -4,6 +4,8 @@
       "add_to_cart": "Dodaj do koszyka",
       "apply": "Zastosuj",
       "cancel": "Anuluj",
+      "clear": "Wyczyść",
+      "clear_field": "Wyczyść: {field}",
       "close": "Zamknij",
       "copy": "Kopiuj",
       "deny": "Odmów",
@@ -17,6 +19,52 @@
       "show_hide_password": "Pokaż/ukryj hasło",
       "toggle_dropdown": "Przełącz rozwijane",
       "update_cart": "Zaktualizuj koszyk"
+    },
+    "accessibility": {
+      "close_alert": "Zamknij powiadomienie",
+      "open_calendar": "Otwórz kalendarz",
+      "open_calendar_for": "Otwórz kalendarz: {field}",
+      "calendar": "Kalendarz",
+      "product_quantity": "Ilość produktu",
+      "decrease_quantity": "Zmniejsz ilość",
+      "increase_quantity": "Zwiększ ilość",
+      "variant_picker_group": "Warianty produktu",
+      "show_more_button": "Pokaż więcej wariantów ({count})",
+      "sidebar": "Panel boczny",
+      "close_chip": "Zamknij znacznik",
+      "carousel_previous": "Poprzedni slajd",
+      "carousel_next": "Następny slajd",
+      "nav_previous": "Poprzedni",
+      "nav_next": "Następny",
+      "nav_up": "W górę",
+      "nav_down": "W dół"
+    },
+    "calendar": {
+      "aria_label": "Kalendarz",
+      "previous_month": "Poprzedni miesiąc",
+      "next_month": "Następny miesiąc",
+      "previous_year": "Poprzedni rok",
+      "next_year": "Następny rok",
+      "today": "Dzisiaj",
+      "clear": "Wyczyść",
+      "outside_suggested_range": "Poza sugerowanym zakresem"
+    },
+    "date_range_input": {
+      "aria_label": "Zakres dat",
+      "clear": "Wyczyść zakres dat",
+      "end_date": "Data końcowa",
+      "invalid_range": "Data końcowa musi być nie wcześniejsza niż data początkowa",
+      "start_date": "Data początkowa"
+    },
+    "date_selector": {
+      "min_date_error": "Data musi być nie wcześniejsza niż {min}",
+      "max_date_error": "Data musi być nie późniejsza niż {max}"
+    },
+    "date_input": {
+      "invalid_format": "Nieprawidłowy format daty",
+      "min_date_error": "Data musi być nie wcześniejsza niż {min}",
+      "max_date_error": "Data musi być nie późniejsza niż {max}",
+      "unavailable_date": "Ta data jest niedostępna"
     },
     "labels": {
       "not_available": "N/D",
@@ -46,11 +94,11 @@
         "max": "Maksymalne zamówienie {0} sztuk(i)",
         "min_max": "Zamów od {0} do {1} sztuk(i)",
         "min_not_available": "Minimalne zamówienie {0} sztuk(i) nie jest dostępne w magazynie",
+        "exact_qty": "Możesz zamówić {0} przedmiot(ów)",
         "out_of_stock": "Brak w magazynie",
         "positive_number": "Wartość musi być liczbą dodatnią",
         "integer_number": "Wartość musi być liczbą całkowitą",
-        "pack_size": "Zamów w paczkach po {0}",
-        "exact_qty": "Możesz zamówić {0} przedmiot(ów)"
+        "pack_size": "Zamów w paczkach po {0}"
       }
     },
     "pagination": {
@@ -58,11 +106,16 @@
       "next": "Następny"
     },
     "select": {
-      "items_selected": "{0} wybranych przedmiotów"
+      "items_selected": "{0} wybranych przedmiotów",
+      "results_available": "{0} wyników dostępnych",
+      "no_results_found": "Nie znaleziono wyników",
+      "no_options": "Brak dostępnych opcji"
     },
     "file": {
       "progress": "{percent} ukończono",
-      "uploaded": "Przesyłanie zakończone"
+      "uploaded": "Przesyłanie zakończone",
+      "reload": "Załaduj ponownie plik",
+      "remove": "Usuń plik"
     },
     "file_uploader": {
       "drag_and_drop": "Przeciągnij i upuść plik tutaj lub",
@@ -79,6 +132,40 @@
       "end_list": "Osiągnąłeś koniec listy.",
       "page_limit_filters": "Brak dalszych wyników. Spróbuj zmienić filtry.",
       "page_limit": "Nie można wyświetlić więcej wyników."
+    },
+    "table": {
+      "empty": "Nie znaleziono rekordów",
+      "error": "Nie udało się załadować danych",
+      "retry": "Spróbuj ponownie",
+      "select_row_number": "Select row {number}",
+      "select_all": "Zaznacz wszystko",
+      "deselect_all": "Odznacz wszystko",
+      "selection_column": "Wybór wiersza"
+    },
+    "slider": {
+      "tooltip": "{count} przedmiotów",
+      "aria_label": "Suwak zakresu od {min} do {max}",
+      "legend": "Suwak zakresu od {min} do {max}",
+      "start_input_label": "Wartość początkowa (od {min} do {max})",
+      "end_input_label": "Wartość końcowa (od {min} do {max})",
+      "start_input_aria_label": "Wprowadź wartość początkową, zakres od {min} do {max}",
+      "end_input_aria_label": "Wprowadź wartość końcową, zakres od {min} do {max}",
+      "start_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
+      "end_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
+      "column_aria_label": "Kolumna z {count} przedmiotami, zakres od {from} do {to}",
+      "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}",
+      "start_handle_label": "Uchwyt wartości minimalnej",
+      "end_handle_label": "Uchwyt wartości maksymalnej",
+      "start_handle_aria_label": "Wartość początkowa {value}, zakres od {min} do {max}",
+      "end_handle_aria_label": "Wartość końcowa {value}, zakres od {min} do {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Nawigacja okruszkowa"
+    },
+    "rating": {
+      "rating_label": "Ocena {value} na {maxValue}",
+      "read_only_button_aria_label": "Ocena {value} na {maxValue}, niedostępna do wyboru",
+      "set_rating_aria_label": "Ustaw ocenę na {value} z {maxValue}"
     }
   }
 }

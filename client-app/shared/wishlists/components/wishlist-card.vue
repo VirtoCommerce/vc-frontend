@@ -1,50 +1,58 @@
 <template>
-  <div class="relative rounded bg-additional-50 p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5">
-    <div class="flex items-center gap-2 pe-10 md:contents">
-      <router-link
-        :to="{ name: 'ListDetails', params: { listId: list.id } }"
-        class="truncate text-base font-bold text-[--link-color] hover:text-[--link-hover-color]"
-      >
+  <div class="wishlist-card" data-test-id="wishlist-card">
+    <div class="wishlist-card__title-row">
+      <router-link :to="{ name: 'ListDetails', params: { listId: list.id } }" class="wishlist-card__title">
         {{ list.name }}
       </router-link>
 
-      <VcBadge class="md:-ms-4 md:me-auto" variant="outline-dark" color="info" size="lg" rounded>
+      <VcBadge class="wishlist-card__badge" variant="outline-dark" color="info" rounded>
         {{ list.itemsCount }}
       </VcBadge>
     </div>
 
-    <div v-if="list.description" class="truncate pe-10 md:max-w-[30%] md:pe-0">{{ list.description }}</div>
-
-    <div class="flex items-center pt-4 md:contents">
-      <div class="md:whitespace-nowrap">
-        {{ $t("shared.wishlists.list_card.saved") }}: <b>{{ $d(list.modifiedDate) }}</b>
-      </div>
-
-      <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" class="ms-auto md:ms-0" />
+    <div class="wishlist-card__description" :class="{ 'wishlist-card__description--empty': !list.description }">
+      {{ list.description }}
     </div>
 
-    <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
+    <div class="wishlist-card__meta-row">
+      <div
+        class="wishlist-card__date"
+        :aria-label="$t('shared.wishlists.list_card.last_modified_label', { date: $d(list.modifiedDate, 'short') })"
+      >
+        <VcIcon :size="16" name="save-v2" class="text-info-500" />
+
+        <b>{{ $d(list.modifiedDate, "short") }}</b>
+      </div>
+
+      <div class="wishlist-card__status">
+        <WishlistStatus v-if="isCorporateMember && list.sharingSetting" :sharing-setting="list.sharingSetting" />
+      </div>
+    </div>
+
+    <div class="wishlist-card__dropdown">
       <WishlistDropdownMenu
-        :current-scope="list.scope"
-        :is-corporate-member="isCorporateMember"
-        @set-scope="$emit('setScope', $event)"
-        @edit="$emit('settings')"
-        @remove="$emit('remove')"
+        v-if="list.sharingSetting?.access === WishlistAccessType.Write"
+        :shareable="isCorporateMember && !!list.sharingSetting?.isOwner"
+        :removable="!!list.sharingSetting?.isOwner"
+        @edit="$emit('settings', $event)"
+        @share="$emit('share', $event)"
+        @remove="$emit('remove', $event)"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { WishlistAccessType } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account/composables";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import WishlistStatus from "./wishlist-status.vue";
-import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
+import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IEmits {
-  (event: "settings"): void;
-  (event: "remove"): void;
-  (event: "setScope", scope: WishlistScopeType): void;
+  (event: "settings", triggerElement?: HTMLElement): void;
+  (event: "share", triggerElement?: HTMLElement): void;
+  (event: "remove", triggerElement?: HTMLElement): void;
 }
 
 interface IProps {
@@ -57,3 +65,80 @@ defineProps<IProps>();
 
 const { isCorporateMember } = useUser();
 </script>
+
+<style lang="scss">
+.wishlist-card {
+  @apply relative rounded-[--vc-radius] bg-additional-50 p-4 text-sm shadow-md;
+
+  @container (min-width: theme("containers.xl")) {
+    @apply grid items-center gap-x-6 px-5;
+
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+  }
+
+  &__title-row {
+    @apply flex items-center gap-2 pe-10;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply min-w-0 pe-0;
+    }
+  }
+
+  &__title {
+    @apply truncate text-base font-bold text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
+  }
+
+  &__badge {
+    @apply shrink-0;
+  }
+
+  &__description {
+    @apply truncate pe-10;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply pe-0;
+    }
+
+    &--empty {
+      @apply hidden;
+
+      @container (min-width: theme("containers.xl")) {
+        @apply block;
+      }
+    }
+  }
+
+  &__meta-row {
+    @apply flex items-center pt-4;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply contents pt-0;
+    }
+  }
+
+  &__date {
+    @apply flex items-center gap-1.5;
+  }
+
+  &__status {
+    @apply ms-auto;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply ms-0;
+    }
+  }
+
+  &__dropdown {
+    @apply absolute right-4 top-4;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply static;
+    }
+  }
+}
+</style>

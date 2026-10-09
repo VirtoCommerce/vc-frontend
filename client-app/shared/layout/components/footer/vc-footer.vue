@@ -10,7 +10,7 @@
         <VcImage :src="secondaryLogoUrl" :alt="$context.storeName" class="h-11" lazy />
       </div>
 
-      <div class="grid sm:grow sm:grid-cols-2 sm:gap-12 md:grid-cols-3 lg:grid-cols-4 xl:gap-19 2xl:grid-cols-5">
+      <nav class="grid sm:grow sm:grid-cols-2 sm:gap-12 md:grid-cols-3 lg:grid-cols-4 xl:gap-19 2xl:grid-cols-5">
         <template v-if="whiteLabelingFooterLinks?.length">
           <FooterLinks v-for="(footerLink, index) in whiteLabelingFooterLinks" :key="index" :links-block="footerLink" />
         </template>
@@ -18,7 +18,7 @@
         <template v-else>
           <FooterLinks v-for="footerLink in footerLinks" :key="footerLink.id" :links-block="footerLink" />
         </template>
-      </div>
+      </nav>
     </div>
 
     <!-- Bottom footer -->
@@ -47,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import pkg from "../../../../../package.json";
 import FooterLinks from "./_internal/footer-links.vue";
@@ -55,10 +56,16 @@ interface IProps {
   compact?: boolean;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
-const { footerLinks } = useNavigations();
+const { footerLinks, fetchFooterLinks } = useNavigations();
 
 const { version } = pkg;
+
+onMounted(() => {
+  if (!props.compact) {
+    void fetchFooterLinks();
+  }
+});
 </script>

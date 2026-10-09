@@ -1,0 +1,8 @@
+query GetOrganizationContactRoles($id: String!, $userId: String!) {
+  organization(id: $id, userId: $userId) {
+    contactRoles {
+      id
+      name
+    }
+  }
+}

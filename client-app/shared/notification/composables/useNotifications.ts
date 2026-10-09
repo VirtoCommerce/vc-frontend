@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { uniqueId } from "lodash-es";
 import { computed, shallowRef, triggerRef } from "vue";
 import type { CloseNotificationHandleType, INotification, INotificationExtended } from "@/shared/notification";
 
@@ -8,7 +8,7 @@ const stack = shallowRef<INotificationExtended[]>([]);
  * @private
  */
 function open(options: INotificationExtended): CloseNotificationHandleType {
-  const id = _.uniqueId();
+  const id = uniqueId();
   const notification: INotificationExtended = {
     id,
     closeButton: true,
@@ -61,6 +61,17 @@ function clear(group?: string, exclude?: boolean) {
     : [];
 }
 
+function update(id: string, updates: Partial<INotificationExtended>) {
+  const index = stack.value.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return;
+  }
+
+  Object.assign(stack.value[index], updates);
+  triggerRef(stack);
+}
+
 function info(options: INotification) {
   return open(options);
 }
@@ -94,6 +105,7 @@ export function useNotifications() {
     error,
     close,
     clear,
+    update,
     stack: computed(() => /* https://github.com/vuejs/core/issues/8036 */ stack.value.slice()),
   };
 }

@@ -40,7 +40,8 @@ vi.mock("@/core/api/graphql", async () => {
   };
 });
 
-vi.mock("@/core/utilities", () => ({
+vi.mock("@/core/utilities", async (importOriginal) => ({
+  ...(await importOriginal()),
   Logger: { error: vi.fn(), debug: vi.fn() },
   getUrlSearchParam: mocks.getUrlSearchParamMock,
 }));
@@ -108,6 +109,57 @@ describe("useConfigurableProduct", () => {
           productId: "product-1",
           quantity: 1,
           selectedOptionTextValue: "Product 1",
+        },
+      });
+    });
+
+    it("preselects explicit default product option for optional section", async () => {
+      const mockConfiguration = {
+        configurationSections: [
+          createConfigurationSection(1, { isRequired: false, products: [1, 2], defaultProductId: 2 }),
+        ],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        section_1: {
+          files: [],
+          productId: "product-2",
+          quantity: 1,
+          selectedOptionTextValue: "Product 2",
+        },
+      });
+    });
+
+    it("prefers preselected values over defaults", async () => {
+      const mockConfiguration = {
+        configurationSections: [
+          createConfigurationSection(1, { isRequired: true, products: [1, 2], defaultProductId: 1 }),
+        ],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "section_1",
+            productId: "product-2",
+            quantity: 1,
+            type: CONFIGURABLE_SECTION_TYPES.product,
+          },
+        ],
+      });
+      mocks.getUrlSearchParamMock.mockReturnValueOnce("line-item-1");
+
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        section_1: {
+          files: [],
+          productId: "product-2",
+          quantity: 1,
+          selectedOptionTextValue: "Product 2",
         },
       });
     });
@@ -343,6 +395,30 @@ describe("useConfigurableProduct", () => {
   });
 
   describe("text type configuration", () => {
+    it("preselects explicit default predefined text option", async () => {
+      const mockConfiguration = {
+        configurationSections: [
+          createTextConfigurationSection(1, {
+            isRequired: false,
+            options: ["One", "Two"],
+            defaultOptionText: "Two",
+          }),
+        ],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        text_section_1: {
+          files: [],
+          productId: undefined,
+          quantity: undefined,
+          selectedOptionTextValue: "Two",
+        },
+      });
+    });
+
     it("handles text type configuration with predefined value", async () => {
       mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
       const mockConfiguration = {
@@ -444,6 +520,22 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({});
       expect(composable.selectedConfigurationInput.value).toEqual([]);
+    });
+
+    it("does not treat whitespace-only text as selected in a required section", async () => {
+      const mockConfiguration = {
+        configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      composable.selectSectionValue({
+        sectionId: "text_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.text,
+        customText: "   ",
+      });
+
+      expect(composable.selectedConfiguration.value).toEqual({});
     });
 
     it("creates configured line item with text configuration", async () => {
@@ -1179,7 +1271,11 @@ function createProduct(id: number) {
 
 function createConfigurationSection(
   id: number,
-  { isRequired = false, products = [1, 2] }: { isRequired?: boolean; products?: number[] } = {},
+  {
+    isRequired = false,
+    products = [1, 2],
+    defaultProductId,
+  }: { isRequired?: boolean; products?: number[]; defaultProductId?: number } = {},
 ) {
   return {
     id: `section_${id}`,
@@ -1188,19 +1284,34 @@ function createConfigurationSection(
     isRequired,
     options: products.map((prodId) => ({
       id: `option_${prodId}`,
+      isDefault: defaultProductId === prodId,
       product: createProduct(prodId),
       quantity: 1,
     })),
   };
 }
 
-function createTextConfigurationSection(id: number, { isRequired = false }: { isRequired?: boolean } = {}) {
+function createTextConfigurationSection(
+  id: number,
+  {
+    isRequired = false,
+    dependsOnSectionId,
+    options = [],
+    defaultOptionText,
+  }: { isRequired?: boolean; dependsOnSectionId?: string; options?: string[]; defaultOptionText?: string } = {},
+) {
   return {
     id: `text_section_${id}`,
     name: `Text Section ${id}`,
     type: CONFIGURABLE_SECTION_TYPES.text,
     isRequired,
-    options: [],
+    dependsOnSectionId,
+    allowTextOptions: options.length > 0,
+    options: options.map((optionText, index) => ({
+      id: `text_option_${id}_${index + 1}`,
+      text: optionText,
+      isDefault: optionText === defaultOptionText,
+    })),
   };
 }
 
@@ -1219,6 +1330,7 @@ function mockI18n(): void {
     return {
       useI18n: vi.fn().mockReturnValue({
         t: (key: string) => key,
+        te: () => true,
       }),
     };
   });

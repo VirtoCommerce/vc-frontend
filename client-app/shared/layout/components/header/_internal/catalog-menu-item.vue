@@ -5,13 +5,16 @@
       class="catalog-menu-link"
       :href="item.route as string"
       target="_blank"
+      rel="noopener noreferrer"
       @click="select"
     >
       {{ item.title }}
     </a>
+
     <router-link v-else class="catalog-menu-link" :to="item.route ?? '#'" @click="select">
       {{ item.title }}
     </router-link>
+
     <div>
       <template v-for="(child, index) in visibleChildren" :key="index">
         <a
@@ -19,10 +22,12 @@
           class="catalog-menu-child-link"
           :href="child.route as string"
           target="_blank"
+          rel="noopener noreferrer"
           @click="select"
         >
           {{ child.title }}
         </a>
+
         <router-link v-else class="catalog-menu-child-link" :to="child.route ?? '#'" @click="select">
           {{ child.title }}
         </router-link>

@@ -1,0 +1,55 @@
+query SalesRepCustomers(
+  $storeId: String
+  $first: Int
+  $after: String
+  $keyword: String
+  $sort: String
+  $filter: String
+  $cultureName: String
+  $ytdFrom: DateTime
+  $ytdTo: DateTime
+  $lastYearFrom: DateTime
+  $lastYearTo: DateTime
+) {
+  salesRepCustomers(
+    storeId: $storeId
+    first: $first
+    after: $after
+    keyword: $keyword
+    sort: $sort
+    filter: $filter
+    cultureName: $cultureName
+  ) {
+    totalCount
+    items {
+      organizationId
+      organizationName
+      accountType
+      address {
+        postalCode
+        zip
+        city
+        regionName
+      }
+      ytd: orderStatistics(from: $ytdFrom, to: $ytdTo) {
+        total {
+          amount
+          formattedAmount
+        }
+        count
+      }
+      lastYear: orderStatistics(from: $lastYearFrom, to: $lastYearTo) {
+        total {
+          amount
+          formattedAmount
+        }
+        count
+      }
+      lastOrder {
+        id
+        number
+        createdDate
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "Zapisane karty kredytowe",
+      "no_cards": "Nie zapisałeś jeszcze żadnych kart kredytowych",
+      "delete_credit_card_modal": {
+        "title": "Potwierdź usunięcie",
+        "message": "Czy na pewno chcesz usunąć kartę kredytową?"
+      }
+    }
+  }
+}

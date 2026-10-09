@@ -1,0 +1,942 @@
+import { Observable, gql } from "@apollo/client/core";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { AbortReason } from "@/core/api/common/enums";
+import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
+import {
+  createQueuedMutationsLink,
+  createQueuedMutationsController,
+  createQueueTarget,
+  removeCartItemsConfig,
+  DEFAULT_DEBOUNCE_MS,
+} from "./queued-mutations";
+import type { IQueueTargetConfig } from "./types";
+import type { Operation, NextLink, ApolloLink } from "@apollo/client/core";
+
+const MUTATION_QUERY = gql`
+  mutation TestMutation($input: String!) {
+    testMutation(input: $input) {
+      success
+    }
+  }
+`;
+
+const NON_MUTATION_QUERY = gql`
+  query TestQuery {
+    test {
+      id
+    }
+  }
+`;
+
+function createOperation(operationName: string, variables: Record<string, unknown> = {}): Operation {
+  const _context: Record<string, unknown> = {};
+  return {
+    query: MUTATION_QUERY,
+    operationName,
+    variables,
+    extensions: {},
+    setContext: vi.fn((updater: (prev: Record<string, unknown>) => Record<string, unknown>) => {
+      Object.assign(_context, updater(_context));
+    }),
+    getContext: vi.fn(() => _context),
+  } as unknown as Operation;
+}
+
+function createForward(resolveImmediately = true): NextLink {
+  return vi.fn(
+    () =>
+      new Observable((observer) => {
+        if (resolveImmediately) {
+          setTimeout(() => {
+            observer.next({ data: { success: true } });
+            observer.complete();
+          }, 0);
+        }
+      }),
+  ) as unknown as NextLink;
+}
+
+function subscribe(observable: Observable<unknown>) {
+  const next = vi.fn();
+  const error = vi.fn();
+  const complete = vi.fn();
+  const subscription = observable.subscribe({ next, error, complete });
+  return { next, error, complete, subscription };
+}
+
+function enqueue(link: ApolloLink, forward: NextLink, operationName: string, variables: Record<string, unknown>) {
+  const op = createOperation(operationName, variables);
+  const obs = link.request(op, forward)!;
+  return { operation: op, ...subscribe(obs) };
+}
+
+/** Advance past debounce + resolve the setTimeout(0) inside createForward */
+async function flushAndResolve(debounceMs = DEFAULT_DEBOUNCE_MS) {
+  await vi.advanceTimersByTimeAsync(debounceMs);
+  await vi.advanceTimersByTimeAsync(1);
+}
+
+function lineItemPartitionKey(vars: Record<string, unknown>): string {
+  const command = vars.command as { lineItemId?: string } | undefined;
+  return command?.lineItemId ?? "";
+}
+
+function createPartitionedLink() {
+  return createQueuedMutationsLink({
+    targets: [createQueueTarget("TestMutation", { getPartitionKey: lineItemPartitionKey })],
+  });
+}
+
+describe("createQueuedMutationsLink", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    const { setQueuedTotal } = useQueuedMutations();
+    setQueuedTotal(0);
+  });
+
+  afterEach(() => {
+    // #8: defensive reset of global state
+    const { setQueuedTotal } = useQueuedMutations();
+    setQueuedTotal(0);
+    vi.restoreAllMocks();
+  });
+
+  describe("passthrough", () => {
+    it("should forward non-mutation operations unchanged", () => {
+      const link = createQueuedMutationsLink({
+        targets: [{ name: "TestMutation" }],
+      });
+
+      const operation = createOperation("TestQuery");
+      // Override query to be a non-mutation
+      (operation as unknown as { query: unknown }).query = NON_MUTATION_QUERY;
+
+      const forward = vi.fn(() => Observable.of({ data: { test: true } })) as unknown as NextLink;
+      link.request(operation, forward);
+
+      expect(forward).toHaveBeenCalled();
+    });
+
+    it("should forward mutations not in targets list", () => {
+      const link = createQueuedMutationsLink({
+        targets: [{ name: "SomeOtherMutation" }],
+      });
+
+      const forward = vi.fn(() => Observable.of({ data: {} })) as unknown as NextLink;
+      const op = createOperation("UnknownMutation", { a: 1 });
+      link.request(op, forward);
+
+      expect(forward).toHaveBeenCalled();
+    });
+  });
+
+  describe("debouncing", () => {
+    it("should not forward mutation immediately", () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+      enqueue(link, forward, "TestMutation", { a: 1 });
+
+      expect(forward).not.toHaveBeenCalled();
+    });
+
+    it("should forward mutation after debounce expires", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+      enqueue(link, forward, "TestMutation", { a: 1 });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+
+    it("should use custom debounceMs", async () => {
+      const link = createQueuedMutationsLink({
+        targets: [{ name: "TestMutation", config: { debounceMs: 500 } }],
+      });
+      const forward = createForward();
+      enqueue(link, forward, "TestMutation", { a: 1 });
+
+      await vi.advanceTimersByTimeAsync(400);
+      expect(forward).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(100);
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+
+    it("should reset debounce timer on new enqueue", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      await vi.advanceTimersByTimeAsync(800);
+      expect(forward).not.toHaveBeenCalled();
+
+      enqueue(link, forward, "TestMutation", { a: 2 });
+      await vi.advanceTimersByTimeAsync(800);
+      expect(forward).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(200);
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("merging", () => {
+    it("should merge variables with default strategy (spread)", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { a: 1, b: 2 });
+      enqueue(link, forward, "TestMutation", { b: 3, c: 4 });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[0][0].variables).toEqual({ a: 1, b: 3, c: 4 });
+    });
+
+    it("should accumulate correctly across 3+ calls with overlapping keys", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      enqueue(link, forward, "TestMutation", { a: 2 });
+      enqueue(link, forward, "TestMutation", { a: 3 });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[0][0].variables).toEqual({ a: 3 });
+    });
+
+    it("should use custom mergeQueued function", async () => {
+      type Vars = { items: string[] };
+      const config: IQueueTargetConfig<Vars> = {
+        mergeQueued: (a, b) => ({ items: [...a.items, ...b.items] }),
+      };
+
+      const link = createQueuedMutationsLink({
+        targets: [createQueueTarget("TestMutation", config)],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { items: ["a"] });
+      enqueue(link, forward, "TestMutation", { items: ["b", "c"] });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[0][0].variables).toEqual({
+        items: ["a", "b", "c"],
+      });
+    });
+
+    it("should merge many calls into one request", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      for (let i = 0; i < 5; i++) {
+        enqueue(link, forward, "TestMutation", { [`key${i}`]: i });
+      }
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[0][0].variables).toEqual({
+        key0: 0,
+        key1: 1,
+        key2: 2,
+        key3: 3,
+        key4: 4,
+      });
+    });
+  });
+
+  describe("observer notification", () => {
+    it("should notify all queued observers on success", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      const sub1 = enqueue(link, forward, "TestMutation", { a: 1 });
+      const sub2 = enqueue(link, forward, "TestMutation", { a: 2 });
+
+      await flushAndResolve();
+
+      expect(sub1.next).toHaveBeenCalledWith({ data: { success: true } });
+      expect(sub1.complete).toHaveBeenCalled();
+      expect(sub2.next).toHaveBeenCalledWith({ data: { success: true } });
+      expect(sub2.complete).toHaveBeenCalled();
+    });
+
+    it("should notify all queued observers on error", async () => {
+      const networkError = new Error("Network failure");
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = vi.fn(
+        () =>
+          new Observable((observer) => {
+            setTimeout(() => observer.error(networkError), 0);
+          }),
+      ) as unknown as NextLink;
+
+      const sub1 = enqueue(link, forward, "TestMutation", { a: 1 });
+      const sub2 = enqueue(link, forward, "TestMutation", { a: 2 });
+
+      await flushAndResolve();
+
+      expect(sub1.error).toHaveBeenCalledWith(networkError);
+      expect(sub2.error).toHaveBeenCalledWith(networkError);
+    });
+
+    // #12: complete is NOT called on error (Observable contract)
+    it("should not call complete on error path", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = vi.fn(
+        () =>
+          new Observable((observer) => {
+            setTimeout(() => observer.error(new Error("fail")), 0);
+          }),
+      ) as unknown as NextLink;
+
+      const sub = enqueue(link, forward, "TestMutation", { a: 1 });
+
+      await flushAndResolve();
+
+      expect(sub.error).toHaveBeenCalled();
+      expect(sub.complete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("in-flight behavior", () => {
+    it("should queue new mutations while one is in flight and flush after it completes", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+
+      let resolveFirst!: () => void;
+      const forward = vi.fn(
+        () =>
+          new Observable((observer) => {
+            resolveFirst = () => {
+              observer.next({ data: {} });
+              observer.complete();
+            };
+          }),
+      ) as unknown as NextLink;
+
+      // First batch
+      enqueue(link, forward, "TestMutation", { batch: 1 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).toHaveBeenCalledTimes(1);
+
+      // Enqueue while in flight
+      enqueue(link, forward, "TestMutation", { batch: 2 });
+
+      // Resolve first request — triggers scheduleNextFlush for queued batch
+      resolveFirst();
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).toHaveBeenCalledTimes(2);
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[1][0].variables).toEqual({ batch: 2 });
+    });
+
+    it("should not flush while request is in flight", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = vi.fn(() => new Observable(() => {})) as unknown as NextLink; // never resolves
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).toHaveBeenCalledTimes(1);
+
+      // Enqueue while in flight
+      enqueue(link, forward, "TestMutation", { a: 2 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      // Should not send second request while first is in flight
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+
+    // #5: queue works again after an error flush
+    it("should continue processing after error", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+
+      let callCount = 0;
+      const forward = vi.fn(
+        () =>
+          new Observable((observer) => {
+            callCount++;
+            setTimeout(() => {
+              if (callCount === 1) {
+                observer.error(new Error("first fails"));
+              } else {
+                observer.next({ data: { recovered: true } });
+                observer.complete();
+              }
+            }, 0);
+          }),
+      ) as unknown as NextLink;
+
+      // First batch — will error
+      const sub1 = enqueue(link, forward, "TestMutation", { a: 1 });
+      await flushAndResolve();
+      expect(sub1.error).toHaveBeenCalled();
+
+      // Second batch after error — should work
+      const sub2 = enqueue(link, forward, "TestMutation", { a: 2 });
+      await flushAndResolve();
+      expect(sub2.next).toHaveBeenCalledWith({ data: { recovered: true } });
+      expect(sub2.complete).toHaveBeenCalled();
+    });
+  });
+
+  describe("cleanup & cancellation", () => {
+    it("should clear timer on unsubscribe", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      const { subscription } = enqueue(link, forward, "TestMutation", { a: 1 });
+      subscription.unsubscribe();
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).not.toHaveBeenCalled();
+    });
+
+    // #3: assert AbortReason.Explicit
+    it("should abort in-flight request with AbortReason.Explicit on unsubscribe", async () => {
+      const abortSpy = vi.spyOn(AbortController.prototype, "abort");
+
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = vi.fn(() => new Observable(() => {})) as unknown as NextLink; // never resolves
+
+      const { subscription } = enqueue(link, forward, "TestMutation", { a: 1 });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).toHaveBeenCalled();
+
+      subscription.unsubscribe();
+      expect(abortSpy).toHaveBeenCalledWith(AbortReason.Explicit);
+    });
+
+    // #6: abort signal is wired into operation context
+    it("should inject abort signal into operation fetchOptions via setContext", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = vi.fn(() => new Observable(() => {})) as unknown as NextLink; // never resolves
+
+      const { operation } = enqueue(link, forward, "TestMutation", { a: 1 });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect(operation.setContext).toHaveBeenCalled();
+      const context = operation.getContext();
+      expect(context.fetchOptions).toBeDefined();
+      expect(context.fetchOptions.signal).toBeInstanceOf(AbortSignal);
+    });
+
+    // #11: unsubscribe one of many observers
+    it("should clear timer for entire operation when any observer unsubscribes", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      const { subscription: sub2 } = enqueue(link, forward, "TestMutation", { a: 2 });
+
+      // Unsubscribe the second observer — clears the timer for the whole operation
+      sub2.unsubscribe();
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      // Timer was cleared, so flush never fires
+      expect(forward).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("queuedTotal integration", () => {
+    it("should increment queuedTotal when enqueuing", () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+      const { queuedTotal } = useQueuedMutations();
+
+      expect(queuedTotal.value).toBe(0);
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      expect(queuedTotal.value).toBe(1);
+
+      enqueue(link, forward, "TestMutation", { a: 2 });
+      expect(queuedTotal.value).toBe(2);
+    });
+
+    it("should reset queuedTotal to 0 after flush completes", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+      const { queuedTotal } = useQueuedMutations();
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      enqueue(link, forward, "TestMutation", { a: 2 });
+      expect(queuedTotal.value).toBe(2);
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(queuedTotal.value).toBe(0);
+    });
+
+    it("should reflect hasQueuedMutations correctly", async () => {
+      const link = createQueuedMutationsLink({ targets: [{ name: "TestMutation" }] });
+      const forward = createForward();
+      const { hasQueuedMutations } = useQueuedMutations();
+
+      expect(hasQueuedMutations.value).toBe(false);
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      expect(hasQueuedMutations.value).toBe(true);
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(hasQueuedMutations.value).toBe(false);
+    });
+
+    // #7: queuedTotal across multiple operation names
+    it("should sum queuedTotal across different operation names", () => {
+      const link = createQueuedMutationsLink({
+        targets: [{ name: "MutationA" }, { name: "MutationB" }],
+      });
+      const forward = createForward();
+      const { queuedTotal } = useQueuedMutations();
+
+      enqueue(link, forward, "MutationA", { a: 1 });
+      expect(queuedTotal.value).toBe(1);
+
+      enqueue(link, forward, "MutationB", { b: 1 });
+      expect(queuedTotal.value).toBe(2);
+
+      enqueue(link, forward, "MutationA", { a: 2 });
+      expect(queuedTotal.value).toBe(3);
+    });
+  });
+
+  describe("independent operation queues", () => {
+    it("should maintain separate queues per operation name", async () => {
+      const link = createQueuedMutationsLink({
+        targets: [
+          { name: "MutationA", config: { debounceMs: 500 } },
+          { name: "MutationB", config: { debounceMs: 1500 } },
+        ],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "MutationA", { type: "A" });
+      enqueue(link, forward, "MutationB", { type: "B" });
+
+      await vi.advanceTimersByTimeAsync(500);
+      expect(forward).toHaveBeenCalledTimes(1);
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[0][0].variables).toEqual({ type: "A" });
+
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(forward).toHaveBeenCalledTimes(2);
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[1][0].variables).toEqual({ type: "B" });
+    });
+
+    it("should merge independently per operation name", async () => {
+      const link = createQueuedMutationsLink({
+        targets: [{ name: "MutationA" }, { name: "MutationB" }],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "MutationA", { a: 1 });
+      enqueue(link, forward, "MutationA", { a: 2 });
+      enqueue(link, forward, "MutationB", { b: 10 });
+      enqueue(link, forward, "MutationB", { b: 20 });
+
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      expect(forward).toHaveBeenCalledTimes(2);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      const vars = fwd.mock.calls.map((c: unknown[]) => (c[0] as { variables: unknown }).variables);
+      expect(vars).toContainEqual({ a: 2 });
+      expect(vars).toContainEqual({ b: 20 });
+    });
+  });
+
+  // #2: use createQueueTarget helper in tests
+  describe("createQueueTarget", () => {
+    it("should produce a valid target accepted by createQueuedMutationsLink", async () => {
+      type Vars = { count: number };
+      const config: IQueueTargetConfig<Vars> = {
+        debounceMs: 200,
+        mergeQueued: (a, b) => ({ count: a.count + b.count }),
+      };
+
+      const target = createQueueTarget("CountMutation", config);
+      expect(target.name).toBe("CountMutation");
+      expect(target.config).toBeDefined();
+
+      // Verify it works end-to-end through the link
+      const link = createQueuedMutationsLink({ targets: [target] });
+      const forward = createForward();
+
+      enqueue(link, forward, "CountMutation", { count: 1 });
+      enqueue(link, forward, "CountMutation", { count: 2 });
+
+      await vi.advanceTimersByTimeAsync(200);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      expect((forward as unknown as ReturnType<typeof vi.fn>).mock.calls[0][0].variables).toEqual({ count: 3 });
+    });
+  });
+
+  // A module claims its own operation name in init(), so core never has to name it.
+  describe("registerTarget", () => {
+    it("queues an operation claimed after the controller was built", async () => {
+      const { link, registerTarget } = createQueuedMutationsController({ targets: [] });
+      const forward = createForward();
+
+      registerTarget(createQueueTarget<{ count: number }>("LateMutation", { debounceMs: 200 }), { owner: "returns" });
+
+      enqueue(link, forward, "LateMutation", { count: 1 });
+      enqueue(link, forward, "LateMutation", { count: 2 });
+
+      await vi.advanceTimersByTimeAsync(200);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+
+    it("leaves an unclaimed operation alone", async () => {
+      const { link } = createQueuedMutationsController({ targets: [] });
+      const forward = createForward();
+
+      enqueue(link, forward, "UnclaimedMutation", { count: 1 });
+      enqueue(link, forward, "UnclaimedMutation", { count: 2 });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(2);
+    });
+
+    it("refuses a claim on a name the host already owns", () => {
+      const { registerTarget, debug } = createQueuedMutationsController({
+        targets: [createQueueTarget("HostMutation", { debounceMs: 1000 })],
+      });
+
+      const accepted = registerTarget(createQueueTarget("HostMutation", { debounceMs: 5 }), { owner: "returns" });
+
+      expect(accepted).toBe(false);
+      expect(debug.owners.get("HostMutation")?.owner).toBe("host");
+      expect(debug.rejected).toHaveLength(1);
+    });
+
+    it("refuses a second plugin claiming the same name, and records who holds it", () => {
+      const { registerTarget, debug } = createQueuedMutationsController({ targets: [] });
+
+      expect(registerTarget(createQueueTarget("SharedMutation", {}), { owner: "first" })).toBe(true);
+      expect(registerTarget(createQueueTarget("SharedMutation", {}), { owner: "second" })).toBe(false);
+
+      expect(debug.owners.get("SharedMutation")?.owner).toBe("first");
+      expect(debug.rejected[0]).toMatchObject({ owner: "second", operationName: "SharedMutation" });
+    });
+
+    it("lets a higher priority claim take over from a plugin", () => {
+      const { registerTarget, debug } = createQueuedMutationsController({ targets: [] });
+
+      registerTarget(createQueueTarget("SharedMutation", {}), { owner: "first" });
+
+      expect(registerTarget(createQueueTarget("SharedMutation", {}), { owner: "second", priority: 1 })).toBe(true);
+      expect(debug.owners.get("SharedMutation")?.owner).toBe("second");
+    });
+
+    it("does not let a plugin outrank the host, however high it asks", () => {
+      const { registerTarget } = createQueuedMutationsController({
+        targets: [createQueueTarget("HostMutation", {})],
+      });
+
+      expect(registerTarget(createQueueTarget("HostMutation", {}), { owner: "greedy", priority: 9999 })).toBe(false);
+    });
+  });
+
+  describe("heterogeneous targets", () => {
+    it("should support targets with different variable types and custom merge per target", async () => {
+      type VarsA = { items: string[] };
+      type VarsB = { sections: number[] };
+
+      const link = createQueuedMutationsLink({
+        targets: [
+          createQueueTarget<VarsA>("MutationA", {
+            mergeQueued: (a, b) => ({ items: [...a.items, ...b.items] }),
+          }),
+          createQueueTarget<VarsB>("MutationB", {
+            mergeQueued: (a, b) => ({ sections: [...a.sections, ...b.sections] }),
+          }),
+        ],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "MutationA", { items: ["x"] });
+      enqueue(link, forward, "MutationA", { items: ["y"] });
+      enqueue(link, forward, "MutationB", { sections: [1] });
+      enqueue(link, forward, "MutationB", { sections: [2] });
+
+      // #13: consistent flushAndResolve usage
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(2);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      const vars = fwd.mock.calls.map((c: unknown[]) => (c[0] as { variables: unknown }).variables);
+      expect(vars).toContainEqual({ items: ["x", "y"] });
+      expect(vars).toContainEqual({ sections: [1, 2] });
+    });
+  });
+
+  describe("partition key", () => {
+    it("should merge mutations sharing the same partition key into one request", async () => {
+      const link = createPartitionedLink();
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 1 });
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 2 });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      // defaultMergeVariables shallow-merges, so the later value wins
+      expect(fwd.mock.calls[0][0].variables).toEqual({ command: { lineItemId: "A" }, value: 2 });
+    });
+
+    it("should create independent queues for different partition keys", async () => {
+      const link = createPartitionedLink();
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: "alpha" });
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "B" }, value: "beta" });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(2);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      const vars = fwd.mock.calls.map((c: unknown[]) => (c[0] as { variables: unknown }).variables);
+      expect(vars).toContainEqual({ command: { lineItemId: "A" }, value: "alpha" });
+      expect(vars).toContainEqual({ command: { lineItemId: "B" }, value: "beta" });
+    });
+
+    it("should give each partition its own debounce timer", async () => {
+      const link = createPartitionedLink();
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 1 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS / 2);
+
+      // Partition B starts its own timer halfway through partition A's window
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "B" }, value: 2 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS / 2 + 1);
+
+      // Only partition A has fired so far
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[0][0].variables).toEqual({ command: { lineItemId: "A" }, value: 1 });
+
+      await flushAndResolve(DEFAULT_DEBOUNCE_MS / 2);
+      expect(forward).toHaveBeenCalledTimes(2);
+    });
+
+    it("should call getPartitionKey with the mutation variables", () => {
+      const getPartitionKey = vi.fn(lineItemPartitionKey);
+      const link = createQueuedMutationsLink({
+        targets: [createQueueTarget("TestMutation", { getPartitionKey })],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "X" } });
+
+      expect(getPartitionKey).toHaveBeenCalledWith({ command: { lineItemId: "X" } });
+    });
+
+    it("should keep the single-queue behavior when no partition key is declared", async () => {
+      const link = createQueuedMutationsLink({ targets: [createQueueTarget("TestMutation", {})] });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 1 });
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "B" }, value: 2 });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("controller.flushNow", () => {
+    it("should drain a queued mutation immediately without waiting for the debounce", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [createQueueTarget("TestMutation", {})],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      expect(forward).not.toHaveBeenCalled();
+
+      flushNow("TestMutation");
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[0][0].variables).toEqual({ a: 1 });
+    });
+
+    it("should be a no-op when nothing is queued for the operation", () => {
+      const { flushNow } = createQueuedMutationsController({
+        targets: [createQueueTarget("TestMutation", {})],
+      });
+
+      expect(() => flushNow("TestMutation")).not.toThrow();
+      expect(() => flushNow("UnknownMutation")).not.toThrow();
+    });
+
+    it("should drain only the requested partition when a partition key is given", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [
+          createQueueTarget("TestMutation", {
+            getPartitionKey: (vars: Record<string, unknown>) =>
+              String((vars as { lineItemId?: string }).lineItemId ?? ""),
+          }),
+        ],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { lineItemId: "li-1", v: 1 });
+      enqueue(link, forward, "TestMutation", { lineItemId: "li-2", v: 2 });
+      expect(forward).not.toHaveBeenCalled();
+
+      flushNow("TestMutation", "li-1");
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect((fwd.mock.calls[0][0].variables as { lineItemId: string }).lineItemId).toBe("li-1");
+
+      // The li-2 partition still fires on its own debounce
+      await flushAndResolve();
+      expect(forward).toHaveBeenCalledTimes(2);
+      expect((fwd.mock.calls[1][0].variables as { lineItemId: string }).lineItemId).toBe("li-2");
+    });
+
+    it("should not fire a parallel request while one is in flight, then drain immediately on settle", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [createQueueTarget("TestMutation", {})],
+      });
+
+      let resolveFirst!: () => void;
+      const forward = vi.fn(
+        () =>
+          new Observable((observer) => {
+            resolveFirst = () => {
+              observer.next({ data: {} });
+              observer.complete();
+            };
+          }),
+      ) as unknown as NextLink;
+
+      // First batch goes in flight
+      enqueue(link, forward, "TestMutation", { batch: 1 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).toHaveBeenCalledTimes(1);
+
+      // Queue a second batch and request an immediate flush while in flight
+      enqueue(link, forward, "TestMutation", { batch: 2 });
+      flushNow("TestMutation");
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      // Single-flight preserved: no parallel request
+      expect(forward).toHaveBeenCalledTimes(1);
+
+      // Settling the in-flight request drains the queued batch immediately - no
+      // extra debounce (we only advance 0ms, far less than DEFAULT_DEBOUNCE_MS)
+      resolveFirst();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(forward).toHaveBeenCalledTimes(2);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[1][0].variables).toEqual({ batch: 2 });
+    });
+
+    it("should route an empty partition key to the default queue reachable by flushNow(opName)", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [
+          createQueueTarget("TestMutation", {
+            getPartitionKey: (vars: Record<string, unknown>) =>
+              String((vars as { lineItemId?: string }).lineItemId ?? ""),
+          }),
+        ],
+      });
+      const forward = createForward();
+
+      // No lineItemId => empty partition key => must land in the default queue
+      enqueue(link, forward, "TestMutation", { v: 1 });
+      expect(forward).not.toHaveBeenCalled();
+
+      // flushNow without a partition key must reach that queue
+      flushNow("TestMutation");
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[0][0].variables).toEqual({ v: 1 });
+    });
+  });
+});
+
+// Exercises the actual shipped removeCartItemsConfig (not a synthetic stand-in), through
+// a fresh controller per test so state never leaks across cases - unlike the exported
+// queuedMutationsController singleton, which is shared with the running app.
+describe("removeCartItemsConfig (real target)", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function removeItemsVariables(lineItemIds: string[], cartId?: string) {
+    return {
+      command: { lineItemIds, cartId, storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", userId: "u1" },
+      skipQuery: false,
+    };
+  }
+
+  it("should merge and dedupe lineItemIds from calls on the same cart into one request", async () => {
+    const link = createQueuedMutationsLink({ targets: [createQueueTarget("RemoveCartItems", removeCartItemsConfig)] });
+    const forward = createForward();
+
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"]));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["B"]));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"])); // duplicate click on an already-queued id
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+    expect(forward).toHaveBeenCalledTimes(1);
+    const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+    const sentVariables = fwd.mock.calls[0][0].variables as ReturnType<typeof removeItemsVariables>;
+    expect(sentVariables.command.lineItemIds).toEqual(["A", "B"]);
+  });
+
+  it("should never merge removals from two different carts into one request", async () => {
+    const link = createQueuedMutationsLink({ targets: [createQueueTarget("RemoveCartItems", removeCartItemsConfig)] });
+    const forward = createForward();
+
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"], "cart-1"));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["B"], "cart-2"));
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+    expect(forward).toHaveBeenCalledTimes(2);
+    const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+    const sentIdSets = fwd.mock.calls.map(
+      (c: unknown[]) => (c[0] as { variables: ReturnType<typeof removeItemsVariables> }).variables.command.lineItemIds,
+    );
+    expect(sentIdSets).toContainEqual(["A"]);
+    expect(sentIdSets).toContainEqual(["B"]);
+  });
+
+  it("should route the user's own cart (no cartId) to the same default queue regardless of call order", async () => {
+    const link = createQueuedMutationsLink({ targets: [createQueueTarget("RemoveCartItems", removeCartItemsConfig)] });
+    const forward = createForward();
+
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["A"]));
+    enqueue(link, forward, "RemoveCartItems", removeItemsVariables(["B"]));
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+    expect(forward).toHaveBeenCalledTimes(1);
+    const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+    const sentVariables = fwd.mock.calls[0][0].variables as ReturnType<typeof removeItemsVariables>;
+    expect(sentVariables.command.lineItemIds).toEqual(["A", "B"]);
+  });
+});

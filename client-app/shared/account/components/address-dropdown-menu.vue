@@ -1,7 +1,16 @@
 <template>
   <VcDropdownMenu :y-offset="4" :x-offset="0" :placement="placement">
-    <template #trigger>
-      <VcButton :aria-label="$t('common.labels.actions')" icon="cog" color="secondary" variant="outline" size="xs" />
+    <template #trigger="{ triggerProps }">
+      <VcButton
+        :aria-label="$t('common.labels.actions')"
+        icon
+        color="secondary"
+        variant="outline"
+        size="xs"
+        v-bind="triggerProps"
+      >
+        <VcIcon name="cog" variant="solid" />
+      </VcButton>
     </template>
 
     <template #content>
@@ -29,7 +38,7 @@
         color="secondary"
         @click="deleteAddress"
       >
-        <VcIcon :class="address.isDefault ? 'fill-neutral-400' : 'fill-danger'" name="delete-2" />
+        <VcIcon :class="address.isDefault ? 'text-neutral-400' : 'text-danger'" name="delete-2" />
 
         <span>{{ $t("common.buttons.delete") }}</span>
       </VcMenuItem>

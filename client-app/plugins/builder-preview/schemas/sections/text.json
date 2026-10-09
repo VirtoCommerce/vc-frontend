@@ -1,0 +1,14 @@
+{
+  "name": "Text",
+  "icon": "text_snippet",
+  "displayField": "name",
+  "includeShared": ["title"],
+  "settings": [
+    {
+      "id": "text",
+      "label": "Content",
+      "type": "markdown",
+      "default": "Hello, markdown!"
+    }
+  ]
+}

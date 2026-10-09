@@ -4,6 +4,8 @@ on:
 
 jobs:
   ci:
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_RELEASE=true: skipped in the private theme mirror (VCST-5970).
+    if: (github.repository_id == '296335982' || vars.VC_RELEASE == 'true')
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
@@ -12,37 +14,43 @@ jobs:
       VERSION_SUFFIX: ""
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
+      - name: Check per-repository settings
+        # Outside vc-frontend, the Sonar key would otherwise fall back to vc-frontend's project and overwrite its analysis.
+        if: ${{ github.repository_id != '296335982' }}
+        env:
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_PROJECT_KEY" ]; then
+            echo "::error::Set the SONAR_PROJECT_KEY repository variable: without it SonarCloud analyses go to vc-frontend's project."
+            exit 1
+          fi
+
       - name: Set up Node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '22'
 
       - name: Enable corepack
         run: |
           corepack enable
+
       - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@v8
+        uses: warchant/setup-sonar-scanner@911ef81b14b267a261d70ac94e43d3c822a709d5 # v10
 
       - name: Install VirtoCommerce.GlobalTool
-        uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
+        uses: VirtoCommerce/.github/actions/setup-vcbuild@v3.1000.1
 
       - name: Setup Git Credentials
-        uses: VirtoCommerce/vc-github-actions/setup-git-credentials-github@master
+        uses: VirtoCommerce/.github/actions/setup-git-credentials-github@v3.1000.1
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
-      - name: Increment Version
-        run: |
-          vc-build IncrementPatch
-          git add ${{ github.workspace }}/package.json
-          git commit -m "ci: Auto IncrementPatch"
-          git push
       - name: Get Image Version
-        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
         id: image
         with:
           projectType: "theme"
@@ -50,17 +58,23 @@ jobs:
       - name: Set VERSION_SUFFIX variable
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
+
       - name: Set VERSION
         run: |
           echo "VERSION=${{ steps.image.outputs.prefix }}" >> $GITHUB_ENV
+
       - name: Update package.json Version
         run: |
           yarn version ${{ env.VERSION }}
+
       - name: Install dependencies
         run: |
           yarn install
+
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e # master
+        with:
+          args: ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -68,12 +82,15 @@ jobs:
       - name: Build
         run: |
           yarn build
+
       - name: Unit Tests
         run: |
           yarn test:unit --run
+
       - name: Typing Tests
         run: |
           yarn test:typing --run
+
       - name: Add files to zip
         run: |
           mkdir -p ./tmp/default
@@ -82,16 +99,20 @@ jobs:
           cd ./tmp
           # zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
           zip -r ../artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip ./default
+
       - name: Publish to Blob
         id: blobRelease
-        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
 
       - name: Create GH Release
+        env:
+          IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
         run: |
-          gh release create ${{ steps.image.outputs.prefix }} \
+          gh release create "$IMAGE_PREFIX" \
+                --target="$GITHUB_REF_NAME" \
                 --latest=false \
                 --repo="$GITHUB_REPOSITORY" \
-                --title="${GITHUB_REPOSITORY#*/} ${{ steps.image.outputs.prefix }}" \
-                "./artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip#${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip"
+                --title="$IMAGE_PREFIX" \
+                "./artifacts/${GITHUB_REPOSITORY#*/}-${IMAGE_PREFIX}.zip#${GITHUB_REPOSITORY#*/}-${IMAGE_PREFIX}.zip"

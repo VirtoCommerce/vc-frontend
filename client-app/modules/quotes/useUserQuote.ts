@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { cloneDeep, omit, remove } from "lodash";
+import { cloneDeep, omit, remove } from "lodash-es";
 import { computed, ref } from "vue";
 import { AddressType, ProductType } from "@/core/enums";
 import { Logger } from "@/core/utilities";

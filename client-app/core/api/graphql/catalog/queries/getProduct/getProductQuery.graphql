@@ -66,6 +66,7 @@ query GetProduct(
       ...availabilityData
     }
     price {
+      currency
       actual {
         amount
         formattedAmount
@@ -98,6 +99,10 @@ query GetProduct(
     }
     rating {
       ...rating
+    }
+    brand {
+      permalink
+      brandPropertyName
     }
   }
 }

@@ -55,6 +55,7 @@ export const languageToCountryMap: Record<string, string> = {
   pa: "in",
   pl: "pl",
   pt: "pt",
+  "pt-br": "br",
   ro: "ro",
   ru: "ru",
   si: "lk",
@@ -78,3 +79,11 @@ export const languageToCountryMap: Record<string, string> = {
 };
 
 export const FALLBACK_LOCALE = "en";
+
+/**
+ * Plain locale/culture identifier (e.g. "en", "en-US").
+ * The value may originate from user-controlled input (e.g. a `?cultureName=` query param) and is
+ * used as a dynamic object key / bundle-map index, so anything else must be rejected
+ * (CodeQL: remote property injection, unvalidated dynamic method call).
+ */
+export const LOCALE_ID_REGEX = /^[a-zA-Z0-9-]+$/;

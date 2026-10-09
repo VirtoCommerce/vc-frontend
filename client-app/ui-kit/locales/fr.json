@@ -4,6 +4,8 @@
       "add_to_cart": "Ajouter au panier",
       "apply": "Appliquer",
       "cancel": "Annuler",
+      "clear": "Effacer",
+      "clear_field": "Effacer : {field}",
       "close": "Fermer",
       "copy": "Copier",
       "deny": "Refuser",
@@ -17,6 +19,52 @@
       "show_hide_password": "Afficher/masquer le mot de passe",
       "toggle_dropdown": "Basculer le menu déroulant",
       "update_cart": "Mettre à jour le panier"
+    },
+    "accessibility": {
+      "close_alert": "Fermer l'alerte",
+      "open_calendar": "Ouvrir le calendrier",
+      "open_calendar_for": "Ouvrir le calendrier : {field}",
+      "calendar": "Calendrier",
+      "product_quantity": "Quantité du produit",
+      "decrease_quantity": "Diminuer la quantité",
+      "increase_quantity": "Augmenter la quantité",
+      "variant_picker_group": "Options de variantes",
+      "show_more_button": "Voir plus d'options ({count})",
+      "sidebar": "Barre latérale",
+      "close_chip": "Fermer le chip",
+      "carousel_previous": "Diapositive précédente",
+      "carousel_next": "Diapositive suivante",
+      "nav_previous": "Précédent",
+      "nav_next": "Suivant",
+      "nav_up": "Haut",
+      "nav_down": "Bas"
+    },
+    "calendar": {
+      "aria_label": "Calendrier",
+      "previous_month": "Mois précédent",
+      "next_month": "Mois suivant",
+      "previous_year": "Année précédente",
+      "next_year": "Année suivante",
+      "today": "Aujourd'hui",
+      "clear": "Effacer",
+      "outside_suggested_range": "En dehors de la plage suggérée"
+    },
+    "date_range_input": {
+      "aria_label": "Plage de dates",
+      "clear": "Effacer la plage de dates",
+      "end_date": "Date de fin",
+      "invalid_range": "La date de fin doit être postérieure ou égale à la date de début",
+      "start_date": "Date de début"
+    },
+    "date_selector": {
+      "min_date_error": "La date doit être à partir du {min}",
+      "max_date_error": "La date doit être au plus tard le {max}"
+    },
+    "date_input": {
+      "invalid_format": "Format de date invalide",
+      "min_date_error": "La date doit être à partir du {min}",
+      "max_date_error": "La date doit être au plus tard le {max}",
+      "unavailable_date": "Cette date n'est pas disponible"
     },
     "labels": {
       "not_available": "N/A",
@@ -46,11 +94,11 @@
         "max": "Commande max {0} article(s)",
         "min_max": "Commander de {0} à {1} article(s)",
         "min_not_available": "La commande minimale de {0} article(s) n'est pas disponible en stock",
+        "exact_qty": "Vous pouvez commander {0} article(s)",
         "out_of_stock": "En rupture de stock",
         "positive_number": "La valeur doit être un nombre positif",
         "integer_number": "La valeur doit être un entier",
-        "pack_size": "Commander en packs de {0}",
-        "exact_qty": "Vous pouvez commander {0} article(s)"
+        "pack_size": "Commander en packs de {0}"
       }
     },
     "pagination": {
@@ -58,11 +106,16 @@
       "next": "Suivant"
     },
     "select": {
-      "items_selected": "{0} articles sélectionnés"
+      "items_selected": "{0} articles sélectionnés",
+      "results_available": "{0} résultats disponibles",
+      "no_results_found": "Aucun résultat trouvé",
+      "no_options": "Aucune option disponible"
     },
     "file": {
       "progress": "{percent} terminé",
-      "uploaded": "Téléchargement terminé"
+      "uploaded": "Téléchargement terminé",
+      "reload": "Recharger le fichier",
+      "remove": "Supprimer le fichier"
     },
     "file_uploader": {
       "drag_and_drop": "Glissez-déposez le fichier ici ou",
@@ -79,6 +132,40 @@
       "end_list": "Vous avez atteint la fin de la liste.",
       "page_limit_filters": "Pas d'autres résultats. Veuillez essayer de changer les filtres.",
       "page_limit": "Aucun autre résultat ne peut être affiché."
+    },
+    "table": {
+      "empty": "Aucun enregistrement trouvé",
+      "error": "Échec du chargement des données",
+      "retry": "Réessayer",
+      "select_row_number": "Select row {number}",
+      "select_all": "Tout sélectionner",
+      "deselect_all": "Tout désélectionner",
+      "selection_column": "Sélection de ligne"
+    },
+    "slider": {
+      "tooltip": "{count} articles",
+      "aria_label": "Curseur de plage de {min} à {max}",
+      "legend": "Curseur de plage de {min} à {max}",
+      "start_input_label": "Valeur de départ (entre {min} et {max})",
+      "end_input_label": "Valeur finale (entre {min} et {max})",
+      "start_input_aria_label": "Valeur de départ, plage de {min} à {max}",
+      "end_input_aria_label": "Valeur de fin, plage de {min} à {max}",
+      "start_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
+      "end_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
+      "column_aria_label": "Colonne avec {count} articles, de {from} à {to}",
+      "current_value_announcement": "Valeur du curseur : {start} à {end}, plage {min} à {max}",
+      "start_handle_label": "Curseur de valeur minimale",
+      "end_handle_label": "Curseur de valeur maximale",
+      "start_handle_aria_label": "Valeur de départ {value}, plage de {min} à {max}",
+      "end_handle_aria_label": "Valeur finale {value}, plage de {min} à {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigation fil d'Ariane"
+    },
+    "rating": {
+      "rating_label": "Évaluation {value} sur {maxValue}",
+      "read_only_button_aria_label": "Évaluation {value} sur {maxValue}, non disponible pour la sélection",
+      "set_rating_aria_label": "Définir l’évaluation à {value} sur {maxValue}"
     }
   }
 }

@@ -1,50 +1,201 @@
 import { useLocalStorage } from "@vueuse/core";
-import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { v4 as uuidv4 } from "uuid";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import { COMPARE_PRODUCTS_LOCAL_STORAGE, LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE } from "@/core/constants";
 import { truncate } from "@/core/utilities";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/configurations";
 import { useNotifications } from "@/shared/notification";
-import type { Product } from "@/core/api/graphql/types";
+import { COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH } from "../constants";
+import { getProductCategoryKey } from "../utilities";
+import type { ICompareProductEntry, IConfigurationProperty } from "../types";
+import type { ConfigurationSectionInput, Product } from "@/core/api/graphql/types";
+import type { LocalConfigurationType } from "@/shared/catalog/types";
 
-const NOTIFICATIONS_GROUP = "compare-pruducts";
-const DEFAULT_MAX_PRODUCTS = 5;
-const NAME_MAX_LENGTH = 60;
+const NOTIFICATIONS_GROUP = "compare-products";
+const DEFAULT_MAX_PRODUCTS_PER_CATEGORY = 5;
 
-const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
+const products = useLocalStorage<ICompareProductEntry[]>(COMPARE_PRODUCTS_LOCAL_STORAGE, []);
+// Shared with product.vue's configuration preselection (CONFIGURATION_URL_SEARCH_PARAM lookup) —
+// this composable's own storage isn't the only consumer, so it's kept as a separate constant.
+const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
+  [],
+);
+
+// In-memory only (not persisted) — lets "Restore products" bring back whatever was just cleared,
+// but only for the current page load, matching how the empty-state restore button is meant to work.
+const lastRemovedEntries = ref<ICompareProductEntry[]>([]);
+const lastRemovedConfigurations = ref<LocalConfigurationType[]>([]);
+
+function withoutFileSections(configuration?: ConfigurationSectionInput[]): ConfigurationSectionInput[] | undefined {
+  return configuration?.filter((section) => section.type !== CONFIGURABLE_SECTION_TYPES.file);
+}
+
+function findMatchingEntryIndex(product: Product, configuration?: ConfigurationSectionInput[]): number {
+  const normalizedConfiguration = withoutFileSections(configuration);
+
+  if (product.isConfigurable && normalizedConfiguration?.length) {
+    return products.value.findIndex((entry) => {
+      if (
+        entry.productId !== product.id ||
+        entry.configurationSectionInput?.length !== normalizedConfiguration.length
+      ) {
+        return false;
+      }
+
+      return normalizedConfiguration.every((section) => {
+        const matched = entry.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
+        return matched ? compareConfigurationInputs(section, matched) : false;
+      });
+    });
+  }
+
+  return products.value.findIndex((entry) => entry.productId === product.id && !entry.localId);
+}
+
+function isInCompareList(product: Product, configuration?: ConfigurationSectionInput[]): boolean {
+  return findMatchingEntryIndex(product, configuration) !== -1;
+}
+
+function getCategoryEntries(categoryKey: string): ICompareProductEntry[] {
+  return products.value.filter((entry) => entry.categoryKey === categoryKey);
+}
+
+function clearCompareList() {
+  if (!products.value.length) {
+    return;
+  }
+
+  lastRemovedEntries.value = products.value;
+  lastRemovedConfigurations.value = localProductConfigurations.value;
+  products.value = [];
+  localProductConfigurations.value = [];
+}
+
+function clearCategory(categoryKey: string) {
+  const categoryEntries = getCategoryEntries(categoryKey);
+
+  if (!categoryEntries.length) {
+    return;
+  }
+
+  const isLastCategory = categoryEntries.length === products.value.length;
+  const localIds = new Set(categoryEntries.map((entry) => entry.localId).filter(Boolean));
+  const categoryConfigurations = localProductConfigurations.value.filter((config) => localIds.has(config.localId));
+
+  products.value = products.value.filter((entry) => entry.categoryKey !== categoryKey);
+  localProductConfigurations.value = localProductConfigurations.value.filter((config) => !localIds.has(config.localId));
+
+  if (isLastCategory) {
+    lastRemovedEntries.value = categoryEntries;
+    lastRemovedConfigurations.value = categoryConfigurations;
+  }
+}
+
+function restoreProducts() {
+  if (!lastRemovedEntries.value.length) {
+    return;
+  }
+
+  products.value = [...products.value, ...lastRemovedEntries.value];
+  localProductConfigurations.value = [...localProductConfigurations.value, ...lastRemovedConfigurations.value];
+
+  lastRemovedEntries.value = [];
+  lastRemovedConfigurations.value = [];
+}
+
+// Called when the compare page unmounts (see compare-products.vue) — the buffer is meant to
+// offer "undo" only for as long as the user stays on the page that just showed them the empty
+// state, not indefinitely for the rest of the session.
+function clearRestoreBuffer() {
+  lastRemovedEntries.value = [];
+  lastRemovedConfigurations.value = [];
+}
 
 export function useCompareProducts() {
   const { themeContext } = useThemeContext();
   const notifications = useNotifications();
-  const productsLimit = themeContext.value?.settings?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
+  const { t } = useI18n();
 
-  function addToCompareList(product: Product) {
-    if (productsIds.value.includes(product.id)) {
+  const productsLimit = themeContext.value?.settings?.product_compare_limit || DEFAULT_MAX_PRODUCTS_PER_CATEGORY;
+
+  const clampedProducts = computed<ICompareProductEntry[]>(() => {
+    const countByCategory = new Map<string, number>();
+
+    return products.value.filter((entry) => {
+      const count = countByCategory.get(entry.categoryKey) ?? 0;
+
+      if (count >= productsLimit) {
+        return false;
+      }
+
+      countByCategory.set(entry.categoryKey, count + 1);
+      return true;
+    });
+  });
+
+  function addToCompareList(
+    product: Product,
+    configurationSectionInput?: ConfigurationSectionInput[],
+    properties?: IConfigurationProperty[],
+  ) {
+    if (isInCompareList(product, configurationSectionInput)) {
       return;
     }
 
-    if (productsIds.value.length >= productsLimit) {
+    const categoryKey = getProductCategoryKey(product);
+    const categoryProductsCount = getCategoryEntries(categoryKey).length;
+
+    if (categoryProductsCount >= productsLimit) {
       notifications.warning({
         duration: 15000,
         group: NOTIFICATIONS_GROUP,
         singleInGroup: true,
-        text: `Only ${productsLimit} products can be compared`,
+        text: t("shared.compare.notifications.limit_reached", { productsLimit }),
       });
 
       return;
     }
 
-    productsIds.value.push(product.id);
+    const normalizedConfiguration = withoutFileSections(configurationSectionInput);
+
+    if (product.isConfigurable && normalizedConfiguration?.length) {
+      const localId = uuidv4();
+
+      products.value.push({
+        productId: product.id,
+        categoryKey,
+        localId,
+        configurationSectionInput: normalizedConfiguration,
+        properties: properties ?? [],
+      });
+
+      localProductConfigurations.value.push({
+        localId,
+        configuration: normalizedConfiguration.map((section) => ({
+          ...section,
+          ...section.option,
+          id: section.sectionId,
+        })),
+      });
+    } else {
+      products.value.push({ productId: product.id, categoryKey });
+    }
 
     notifications.success({
       duration: 15000,
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
-      html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
-        `is added to compare list ` +
-        `<span class="hidden lg:inline">(${productsLimit - productsIds.value.length} items left)</span>`,
+      html: t("shared.compare.notifications.added_html", {
+        productName: truncate(product.name, COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH),
+        itemsLeft: productsLimit - categoryProductsCount - 1,
+      }),
       button: {
-        text: "Compare",
-        to: { path: "/compare" },
+        text: t("shared.compare.notifications.compare_button"),
+        to: { path: "/compare", query: { category: categoryKey } },
         clickHandler() {
           notifications.clear(NOTIFICATIONS_GROUP);
         },
@@ -52,34 +203,47 @@ export function useCompareProducts() {
     });
   }
 
-  function removeFromCompareList(product: Product) {
-    const index = productsIds.value.indexOf(product.id);
+  function removeFromCompareList(product: Product, configuration?: ConfigurationSectionInput[]) {
+    const index = findMatchingEntryIndex(product, configuration);
 
     if (index === -1) {
       return;
     }
 
-    productsIds.value.splice(index, 1);
+    const { localId } = products.value[index];
+    products.value.splice(index, 1);
+
+    if (localId) {
+      const configurationIndex = localProductConfigurations.value.findIndex((config) => config.localId === localId);
+
+      if (configurationIndex !== -1) {
+        localProductConfigurations.value.splice(configurationIndex, 1);
+      }
+    }
 
     notifications.warning({
       duration: 15000,
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
-      html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
-        `was removed from the compare list`,
+      html: t("shared.compare.notifications.removed_html", {
+        productName: truncate(product.name, COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH),
+      }),
     });
-  }
-
-  function clearCompareList() {
-    productsIds.value = [];
   }
 
   return {
     addToCompareList,
     removeFromCompareList,
+    isInCompareList,
     clearCompareList,
+    clearCategory,
+    restoreProducts,
+    clearRestoreBuffer,
+    canRestoreProducts: computed(() => lastRemovedEntries.value.length > 0),
+
     productsLimit,
-    productsIds: computed(() => productsIds.value.slice(0, productsLimit)),
+    products: clampedProducts,
+    getCategoryProductsCount: (categoryKey: string) =>
+      clampedProducts.value.filter((entry) => entry.categoryKey === categoryKey).length,
   };
 }

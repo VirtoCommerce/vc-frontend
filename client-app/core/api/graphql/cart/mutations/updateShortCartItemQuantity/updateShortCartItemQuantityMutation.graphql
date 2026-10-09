@@ -1,0 +1,12 @@
+#import "./cartId.graphql"
+#import "./shortLineItem.graphql"
+
+mutation UpdateShortCartItemQuantity($command: InputUpdateCartQuantity!) {
+  updateCartQuantity(command: $command) {
+    ...cartId
+    itemsQuantity
+    items {
+      ...shortLineItem
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
-import { useAllGlobalVariables } from "@/core/api/graphql/composables";
+import { globals } from "@/core/globals";
 import { GetPurchaseRequestsDocument } from "@/modules/purchase-requests/api/graphql/types";
 import type { GetPurchaseRequestsQueryVariables } from "@/modules/purchase-requests/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
@@ -11,7 +11,7 @@ export function useGetPurchaseRequestsQuery(
   return useQuery(
     GetPurchaseRequestsDocument,
     computed(() => {
-      const { storeId, userId } = toValue(useAllGlobalVariables());
+      const { storeId, userId } = globals;
       return {
         storeId,
         customerId: userId,

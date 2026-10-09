@@ -1,0 +1,17 @@
+query SalesRepOrderFilterRules(
+  $storeId: String
+  $cultureName: String
+  $organizationId: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+) {
+  salesRepOrderFilterRules(
+    storeId: $storeId
+    cultureName: $cultureName
+    organizationId: $organizationId
+    period: { from: $periodFrom, to: $periodTo }
+  ) {
+    name
+    localizedName
+  }
+}

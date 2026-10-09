@@ -1,0 +1,26 @@
+.vc-menu-item {
+  $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $active: "";
+
+  &__inner {
+    &--active {
+      $active: &;
+    }
+
+    &:not(#{$active}) {
+      @apply bg-[inherit];
+    }
+
+    @each $color in $colors {
+      &--color--#{$color} {
+        &:hover {
+          @apply bg-[--color-#{$color}-100];
+        }
+
+        &#{$active} {
+          @apply bg-[--color-#{$color}-100];
+        }
+      }
+    }
+  }
+}

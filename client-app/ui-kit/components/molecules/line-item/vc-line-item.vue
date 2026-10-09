@@ -1,4 +1,5 @@
 <template>
+  <!--  eslint-disable -->
   <div
     :class="[
       'vc-line-item',
@@ -21,33 +22,44 @@
         v-model="isSelected"
         class="vc-line-item__checkbox"
         :name="$t('ui_kit.labels.toggle_vendor_select')"
-        :disabled="disabled"
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
 
-      <!--  IMAGE -->
-      <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+      <div v-if="hasImageContainer" class="vc-line-item__img-container">
+        <!--  IMAGE -->
+        <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+
+        <div class="vc-line-item__img-actions">
+          <slot name="after-image" />
+        </div>
+      </div>
 
       <div
         :class="[
           'vc-line-item__content',
           {
-            'vc-line-item__content--with-image': withImage,
-            'vc-line-item__content--selectable': !withImage && selectable,
+            'vc-line-item__content--with-image': hasImageContainer,
+            'vc-line-item__content--selectable': !hasImageContainer && selectable,
           },
         ]"
       >
-        <VcProductTitle
-          class="vc-line-item__name"
-          :disabled="disabled || deleted"
-          :to="route"
-          :title="name"
-          :target="browserTarget"
-          @click="$emit('linkClick')"
-        >
-          {{ name }}
-        </VcProductTitle>
+        <div class="vc-line-item__name-container">
+          <VcProductTitle
+            class="vc-line-item__name"
+            :disabled="disabled || deleted"
+            :to="route"
+            :title="name"
+            :target="browserTarget"
+            @click="$emit('linkClick')"
+          >
+            {{ name }}
+          </VcProductTitle>
+
+          <div class="vc-line-item__name-actions">
+            <slot name="after-title" />
+          </div>
+        </div>
 
         <div
           v-if="withProperties || withPrice"
@@ -115,8 +127,9 @@
           class="vc-line-item__remove-button"
           color="neutral"
           size="sm"
-          variant="no-background"
+          variant="ghost"
           icon="delete-thin"
+          data-test-id="remove-item-button"
           :disabled="disabled"
           @click="$emit('remove')"
         />
@@ -130,8 +143,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
-import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
+import { computed, ref, useSlots, watchEffect } from "vue";
+import type { CommonVendor, MoneyType, Property } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -169,6 +182,10 @@ const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
   browserTarget: "_blank",
 });
+
+const slots = useSlots();
+
+const hasImageContainer = computed(() => !!slots["after-image"] || props.withImage);
 
 const isSelected = ref<boolean>(true);
 
@@ -208,7 +225,7 @@ watchEffect(() => {
 
   --bg-color: var(--color-additional-50);
 
-  @apply relative flex flex-col gap-2 p-3 rounded border shadow-md bg-[--bg-color];
+  @apply relative flex flex-col gap-2 p-3 rounded-[--vc-radius] border shadow-md bg-[--bg-color];
 
   @container (width > theme("containers.2xl")) {
     @apply p-4 rounded-none border-0 shadow-none;
@@ -263,15 +280,27 @@ watchEffect(() => {
   }
 
   &__checkbox {
-    @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
+    @apply flex-none z-[1] absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
 
     @container (width > theme("containers.2xl")) {
       @apply static top-auto left-auto -m-2;
     }
   }
 
+  &__img-container {
+    @apply flex flex-col shrink-0 size-16;
+
+    @container (width > theme("containers.2xl")) {
+      @apply size-12;
+    }
+
+    @container (width > theme("containers.4xl")) {
+      @apply size-16;
+    }
+  }
+
   &__img {
-    @apply shrink-0 size-16 rounded border object-contain object-center;
+    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center;
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;
@@ -284,6 +313,16 @@ watchEffect(() => {
     #{$disabled} &,
     #{$deleted} & {
       @apply opacity-50;
+    }
+  }
+
+  &__img-actions {
+    @container (width > theme("containers.2xl")) {
+      @apply hidden;
+    }
+
+    #{$deleted} & {
+      @apply hidden;
     }
   }
 
@@ -303,8 +342,8 @@ watchEffect(() => {
     }
   }
 
-  &__name {
-    @apply text-sm;
+  &__name-container {
+    @apply flex flex-col;
 
     @container (width > theme("containers.2xl")) {
       @apply grow min-h-0;
@@ -316,6 +355,20 @@ watchEffect(() => {
       @container (width > theme("containers.2xl")) {
         @apply pr-0;
       }
+    }
+  }
+
+  &__name {
+    @apply text-sm;
+  }
+
+  &__name-actions {
+    @container (width <= theme("containers.2xl")) {
+      @apply hidden;
+    }
+
+    #{$deleted} & {
+      @apply hidden;
     }
   }
 
@@ -386,13 +439,15 @@ watchEffect(() => {
       @apply w-[6.5rem];
     }
 
+    &:has(.vc-quantity-stepper, * .vc-quantity-stepper) {
+      @apply w-32;
+    }
+
     &:has(
-        .add-to-cart,
-        * .add-to-cart,
-        .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        .vc-product-button
-      ) {
+      .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      .vc-product-button
+    ) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {

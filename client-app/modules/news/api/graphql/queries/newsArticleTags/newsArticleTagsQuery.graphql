@@ -1,0 +1,3 @@
+query NewsArticleTags($languageCode: String!) {
+  newsArticleTags(languageCode: $languageCode)
+}

@@ -10,19 +10,29 @@
         :list-price="variation.price.list"
         :actual-price="variation.price.actual"
         :vendor="$cfg.vendor_enabled ? variation.vendor : undefined"
-        :browser-target="$cfg.details_browser_target"
+        :browser-target="browserTarget"
+        :route="getProductRoute(variation.id, variation.slug)"
+        :data-item-sku="variation.code"
         with-image
         with-price
         with-properties
+        show-placed-price
       >
-        <AddToCart :product="variation">
+        <ExtensionPoint
+          :name="EXTENSION_NAMES.productPage.variationItemButton"
+          category="productPage"
+          :product="variation"
+          v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
+        />
+
+        <AddToCartSimple v-else :product="variation">
           <InStock
             :is-in-stock="variation.availabilityData.isInStock"
             :quantity="variation.availabilityData.availableQuantity"
           />
 
           <CountInCart :product-id="variation.id" />
-        </AddToCart>
+        </AddToCartSimple>
       </VcLineItem>
 
       <VcPagination
@@ -37,14 +47,17 @@
 </template>
 
 <script setup lang="ts">
-import { sortBy } from "lodash";
+import { sortBy } from "lodash-es";
 import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
-import { getPropertiesGroupedByName } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
+import { useBrowserTarget } from "@/core/composables";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (event: "changePage", page: number): void;
@@ -62,13 +75,25 @@ interface IProps {
 
 const pageNumber = toRef(props, "pageNumber");
 
+const { browserTarget } = useBrowserTarget();
+
 function getProperties(variation: Product) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
-  );
+  ).filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME);
 }
 
 function changePage(page: number): void {
   emit("changePage", page);
 }
 </script>
+
+<style lang="scss">
+.variations-default {
+  .vc-line-item {
+    &__slot {
+      @apply lg:min-w-[10.625rem] lg:max-w-[10.625rem];
+    }
+  }
+}
+</style>

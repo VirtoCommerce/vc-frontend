@@ -1,0 +1,20 @@
+{
+  "push_messages": {
+    "title": "Ilmoitukset",
+    "menu_item_name": "Ilmoitukset",
+    "empty_list": "Sinulla ei ole tällä hetkellä uusia ilmoituksia",
+    "options": {
+      "make_all_as_read": "Merkitse kaikki luetuiksi",
+      "make_all_as_unread": "Merkitse kaikki lukemattomiksi"
+    },
+    "empty": {
+      "title": "Ei uusia ilmoituksia juuri nyt.",
+      "description": "Pysy kuulolla päivitysten ja tärkeiden viestien varalta."
+    },
+    "clear_all": "Tyhjennä kaikki",
+    "view_all": "Näytä kaikki ilmoitukset",
+    "show_unread_only": "Näytä vain lukemattomat",
+    "mark_as_read": "Merkitse luetuksi",
+    "mark_as_unread": "Merkitse lukemattomaksi"
+  }
+}

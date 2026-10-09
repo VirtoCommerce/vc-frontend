@@ -10,6 +10,7 @@ export type RelatedProductsSearchParamsType = {
   itemsPerPage?: number;
   group?: string;
   query?: string;
+  currencyCodeOverride?: string;
 };
 
 export async function searchRelatedProducts({
@@ -18,8 +19,10 @@ export async function searchRelatedProducts({
   query,
   page = 1,
   itemsPerPage = DEFAULT_PAGE_SIZE,
+  currencyCodeOverride,
 }: RelatedProductsSearchParamsType): Promise<ProductAssociation[]> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
+  const { storeId, userId, cultureName, currencyCode: defaultCurrencyCode } = globals;
+  const currencyCode = currencyCodeOverride || defaultCurrencyCode;
 
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "product">>,

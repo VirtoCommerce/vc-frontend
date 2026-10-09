@@ -9,6 +9,7 @@
         <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
       </span>
     </div>
+
     <div class="border-y py-2 text-base font-normal">
       <div class="flex justify-between text-base">
         {{ $t("quote_details.discountTotal") }}
@@ -17,6 +18,7 @@
           <VcPriceDisplay :value="quote.totals?.discountTotal" />
         </span>
       </div>
+
       <div class="flex justify-between text-base">
         {{ $t("quote_details.shippingTotal") }}
 
@@ -24,6 +26,7 @@
           <VcPriceDisplay :value="quote.totals?.shippingTotal" />
         </span>
       </div>
+
       <div class="flex justify-between text-base">
         {{ $t("quote_details.taxTotal") }}
 
@@ -32,6 +35,7 @@
         </span>
       </div>
     </div>
+
     <div class="flex justify-between text-base">
       <span class="font-bold">
         {{ $t("quote_details.total") }}

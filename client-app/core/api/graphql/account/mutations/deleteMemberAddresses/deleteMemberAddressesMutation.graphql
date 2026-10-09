@@ -1,5 +1,12 @@
+#import "../../../fragments/memberAddressFields.graphql"
+
 mutation DeleteMemberAddresses($command: InputDeleteMemberAddressType!) {
   deleteMemberAddresses(command: $command) {
     id
+    addresses {
+      items {
+        ...memberAddressFields
+      }
+    }
   }
 }

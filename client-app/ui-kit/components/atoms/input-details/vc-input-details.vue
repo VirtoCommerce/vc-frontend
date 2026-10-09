@@ -1,5 +1,6 @@
 <template>
   <div
+    :id="id"
     :class="[
       'vc-input-details',
       {
@@ -14,7 +15,7 @@
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="!singleLine" v-html-safe="message" class="vc-input-details__message"></div>
 
-      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start">
+      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start" enable-teleport>
         <template #trigger>
           <div class="vc-input-details__message">{{ message }}</div>
         </template>
@@ -26,14 +27,27 @@
     </template>
 
     <!-- Counter -->
-    <div v-if="counter" class="vc-input-details__counter">
+    <div
+      v-if="counter"
+      :class="[
+        'vc-input-details__counter',
+        {
+          'vc-input-details__counter--limit': isAtLimit,
+        },
+      ]"
+      :role="isAtLimit ? 'status' : undefined"
+      :aria-live="isAtLimit ? 'polite' : undefined"
+    >
       {{ textLength }}<template v-if="maxLength"> / {{ maxLength }}</template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IProps {
+  id?: string;
   message?: string;
   singleLine?: boolean;
   error?: boolean;
@@ -43,8 +57,15 @@ interface IProps {
   maxLength?: number | string;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   textLength: 0,
+});
+
+const isAtLimit = computed(() => {
+  if (!props.maxLength) {
+    return false;
+  }
+  return props.textLength >= Number(props.maxLength);
 });
 </script>
 
@@ -79,12 +100,12 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &__tooltip {
-    @apply w-48 rounded-sm bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-md;
-  }
-
   &__counter {
-    @apply text-right whitespace-nowrap;
+    @apply ms-auto text-right whitespace-nowrap;
+
+    &--limit {
+      @apply text-danger;
+    }
   }
 }
 </style>

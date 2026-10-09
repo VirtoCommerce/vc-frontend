@@ -4,6 +4,8 @@
       "add_to_cart": "Добавить в корзину",
       "apply": "Применить",
       "cancel": "Отмена",
+      "clear": "Очистить",
+      "clear_field": "Очистить: {field}",
       "close": "Закрыть",
       "copy": "Копировать",
       "deny": "Отказать",
@@ -17,6 +19,52 @@
       "show_hide_password": "Показать/скрыть пароль",
       "toggle_dropdown": "Переключить выпадающее меню",
       "update_cart": "Обновить корзину"
+    },
+    "accessibility": {
+      "close_alert": "Закрыть уведомление",
+      "open_calendar": "Открыть календарь",
+      "open_calendar_for": "Открыть календарь: {field}",
+      "calendar": "Календарь",
+      "product_quantity": "Количество товара",
+      "decrease_quantity": "Уменьшить количество",
+      "increase_quantity": "Увеличить количество",
+      "variant_picker_group": "Варианты товара",
+      "show_more_button": "Показать ещё варианты ({count})",
+      "sidebar": "Боковая панель",
+      "close_chip": "Закрыть чип",
+      "carousel_previous": "Предыдущий слайд",
+      "carousel_next": "Следующий слайд",
+      "nav_previous": "Назад",
+      "nav_next": "Вперёд",
+      "nav_up": "Вверх",
+      "nav_down": "Вниз"
+    },
+    "calendar": {
+      "aria_label": "Календарь",
+      "previous_month": "Предыдущий месяц",
+      "next_month": "Следующий месяц",
+      "previous_year": "Предыдущий год",
+      "next_year": "Следующий год",
+      "today": "Сегодня",
+      "clear": "Очистить",
+      "outside_suggested_range": "Вне рекомендуемого диапазона"
+    },
+    "date_range_input": {
+      "aria_label": "Диапазон дат",
+      "clear": "Очистить диапазон дат",
+      "end_date": "Дата окончания",
+      "invalid_range": "Дата окончания должна быть не раньше даты начала",
+      "start_date": "Дата начала"
+    },
+    "date_selector": {
+      "min_date_error": "Дата должна быть не ранее {min}",
+      "max_date_error": "Дата должна быть не позднее {max}"
+    },
+    "date_input": {
+      "invalid_format": "Недопустимый формат даты",
+      "min_date_error": "Дата должна быть не ранее {min}",
+      "max_date_error": "Дата должна быть не позднее {max}",
+      "unavailable_date": "Эта дата недоступна"
     },
     "labels": {
       "not_available": "Н/Д",
@@ -46,11 +94,11 @@
         "max": "Максимальный заказ {0} шт.",
         "min_max": "Заказ от {0} до {1} шт.",
         "min_not_available": "Минимальный заказ {0} шт. недоступен на складе",
+        "exact_qty": "Вы можете заказать {0} шт.",
         "out_of_stock": "Нет в наличии",
         "positive_number": "Значение должно быть положительным числом",
         "integer_number": "Значение должно быть целым числом",
-        "pack_size": "Заказ в упаковках по {0}",
-        "exact_qty": "Вы можете заказать {0} шт."
+        "pack_size": "Заказ в упаковках по {0}"
       }
     },
     "pagination": {
@@ -58,11 +106,16 @@
       "next": "Следующий"
     },
     "select": {
-      "items_selected": "{0} выбранных элементов"
+      "items_selected": "{0} выбранных элементов",
+      "results_available": "{0} результатов доступно",
+      "no_results_found": "Результатов не найдено",
+      "no_options": "Нет доступных вариантов"
     },
     "file": {
       "progress": "{percent} выполнено",
-      "uploaded": "Загрузка завершена"
+      "uploaded": "Загрузка завершена",
+      "reload": "Перезагрузить файл",
+      "remove": "Удалить файл"
     },
     "file_uploader": {
       "drag_and_drop": "Перетащите файл сюда или",
@@ -79,6 +132,40 @@
       "end_list": "Вы достигли конца списка.",
       "page_limit_filters": "Больше результатов нет. Попробуйте изменить фильтры.",
       "page_limit": "Больше результатов не может быть показано."
+    },
+    "table": {
+      "empty": "Записи не найдены",
+      "error": "Не удалось загрузить данные",
+      "retry": "Повторить попытку",
+      "select_row_number": "Select row {number}",
+      "select_all": "Выбрать все",
+      "deselect_all": "Снять выбор со всех",
+      "selection_column": "Выбор строки"
+    },
+    "slider": {
+      "tooltip": "{count} элементов",
+      "aria_label": "Ползунок диапазона от {min} до {max}",
+      "legend": "Ползунок диапазона от {min} до {max}",
+      "start_input_label": "Начальное значение (между {min} и {max})",
+      "end_input_label": "Конечное значение (между {min} и {max})",
+      "start_input_aria_label": "Начальное значение, диапазон от {min} до {max}",
+      "end_input_aria_label": "Введите конечное значение, диапазон от {min} до {max}",
+      "start_input_help": "Введите число от {min} до {max}, шаг {step}",
+      "end_input_help": "Введите число от {min} до {max}, шаг {step}",
+      "column_aria_label": "Столбец с {count} товарами, от {from} до {to}",
+      "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}",
+      "start_handle_label": "Ползунок минимального значения",
+      "end_handle_label": "Ползунок максимального значения",
+      "start_handle_aria_label": "Начальное значение {value}, диапазон от {min} до {max}",
+      "end_handle_aria_label": "Конечное значение {value}, диапазон от {min} до {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Навигация хлебными крошками"
+    },
+    "rating": {
+      "rating_label": "Рейтинг: {value} из {maxValue}",
+      "read_only_button_aria_label": "Рейтинг: {value} из {maxValue}, недоступно для выбора",
+      "set_rating_aria_label": "Установить рейтинг {value} из {maxValue}"
     }
   }
 }

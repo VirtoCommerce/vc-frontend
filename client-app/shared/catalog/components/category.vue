@@ -1,278 +1,294 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
-    <!-- Breadcrumbs -->
-    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="category__breadcrumbs" :items="breadcrumbs" />
+  <div ref="categoryComponentAnchor" class="category">
+    <Error404 v-if="isCategoryNotFound" />
 
-    <!-- Popup sidebar for mobile and horizontal desktop view -->
-    <FiltersPopupSidebar
-      v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
-      :is-exist-selected-facets="hasSelectedFacets"
-      :is-popup-sidebar-filter-dirty="isFiltersDirty"
-      :popup-sidebar-filters="productsFilters"
-      :facets-loading="fetchingFacets"
-      :is-mobile="isMobile"
-      :is-visible="isFiltersSidebarVisible"
-      :keyword-query-param="keywordQueryParam"
-      :sort-query-param="sortQueryParam"
-      :loading="fetchingProducts"
-      :hide-controls="hideControls"
-      @hide-popup-sidebar="hideFiltersSidebar"
-      @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="openBranchesModal"
-      @update-popup-sidebar-filters="updateFiltersSidebar"
-      @apply-filters="applyFilters"
-    />
-
-    <VcLayout sticky-sidebar>
-      <template v-if="!hideSidebar && !isMobile && !isHorizontalFilters" #sidebar>
-        <CategorySelector
-          v-if="categoryId || isRoot"
-          :category="currentCategory"
-          :loading="!currentCategory && loadingCategory"
-          class="category__selector"
-        />
-
-        <ProductsFilters
-          :keyword="keywordQueryParam"
-          :filters="productsFilters"
-          :loading="fetchingProducts"
-          class="category__product-filters"
-          @change="applyFilters($event)"
-        />
-      </template>
-
-      <VcTypography tag="h1" class="category__title">
-        <i18n-t v-if="!categoryId && !isRoot" keypath="pages.search.header" tag="span">
-          <template #keyword>
-            <strong>{{ searchParams.keyword }}</strong>
-          </template>
-        </i18n-t>
-
-        <!-- Skeleton -->
-        <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
-
-        <span v-else-if="title">
-          {{ title }}
-        </span>
-
-        <span v-else>
-          {{ currentCategory?.name }}
-        </span>
-
-        <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
-          <b>{{ $n(totalProductsCount, "decimal") }}</b>
-
-          {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
-        </sup>
-      </VcTypography>
-
-      <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
-
-      <div
-        :class="[
-          'category__filters',
-          {
-            'category__filters--sticky': stickyMobileHeaderIsVisible,
-          },
-        ]"
-      >
-        <!-- Popup sidebar filters toggler -->
-        <VcButton
-          v-if="!hideSidebar"
-          class="category__facets-button"
-          icon="filter"
-          size="sm"
-          @click="showFiltersSidebar"
-        />
-
-        <!-- Sorting -->
-        <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
-          <VcLabel class="category__sort-label">
-            {{ $t("pages.catalog.sort_by_label") }}
-          </VcLabel>
-
-          <VcSelect
-            v-model="sortQueryParam"
-            text-field="name"
-            value-field="id"
-            :disabled="fetchingProducts"
-            :items="translatedProductSortingList"
-            class="category__sort-dropdown"
-            size="sm"
-            @change="resetCurrentPage"
-          />
-        </div>
-
-        <!-- View options - horizontal view -->
-        <ViewMode v-if="!hideViewModeSelector" v-model:mode="savedViewMode" class="category__view-mode" />
-
-        <!-- In stock and branches -->
-        <CategoryControls
-          v-if="!hideControls && !isMobile && !isHorizontalFilters"
-          v-model="localStorageInStock"
-          v-model:purchased-before="localStoragePurchasedBefore"
-          :loading="fetchingProducts"
-          :saved-branches="localStorageBranches"
-          class="category__controls"
-          @open-branches-modal="openBranchesModal"
-          @apply-in-stock="resetCurrentPage"
-          @apply-purchased-before="resetCurrentPage"
-        />
-      </div>
-
-      <!-- Horizontal filters -->
-      <CategoryHorizontalFilters
-        v-if="isHorizontalFilters && !isMobile"
+    <template v-else>
+      <!-- Popup sidebar for mobile and horizontal desktop view -->
+      <FiltersPopupSidebar
+        v-if="!hideSidebar && !isBarcodeLookup && (isMobile || isHorizontalFilters)"
+        :is-exist-selected-facets="hasSelectedFacets"
+        :popup-sidebar-filters="filtersToShow"
         :facets-loading="fetchingFacets"
-        :keyword-query-param="keywordQueryParam"
-        :sort-query-param="sortQueryParam"
-        :loading="fetchingProducts || fetchingFacets"
-        :filters="productsFilters"
-        :hide-sorting="hideSorting"
-        :hide-all-filters="hideSidebar"
+        :is-mobile="isMobile"
+        :is-visible="isFiltersSidebarVisible"
+        :loading="fetchingProducts"
+        :hide-controls="hideControls"
+        @hide-popup-sidebar="hideFiltersSidebar"
         @reset-facet-filters="resetFacetFilters"
         @apply-filters="applyFilters"
-        @show-popup-sidebar="showFiltersSidebar"
-        @apply-sort="resetCurrentPage"
       />
 
-      <!-- Filters chips -->
-      <div
-        v-if="
-          hasSelectedFacets ||
-          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1)
-        "
-        class="category__chips"
-      >
-        <template v-for="facet in productsFilters.facets">
-          <template v-for="filterItem in facet.values">
-            <VcChip
-              v-if="filterItem.selected"
-              :key="facet.paramName + filterItem.value"
-              color="secondary"
-              closable
-              truncate
-              @close="
-                removeFacetFilter({
-                  paramName: facet.paramName,
-                  value: filterItem.value,
-                })
-              "
-            >
-              {{ filterItem.label }}
-            </VcChip>
-          </template>
+      <VcLayout sticky>
+        <template v-if="isSidebarVisible" #sidebar>
+          <CategorySelector
+            v-if="categoryId || isRoot"
+            :category="currentCategory"
+            :loading="!currentCategory && loadingCategory"
+            class="category__selector"
+            :category-facets="categoryFacets"
+          />
+
+          <ProductsFilters
+            :filters="filtersToShow"
+            :loading="fetchingProducts"
+            class="category__product-filters"
+            @change:filters="applyFiltersOnly($event)"
+          />
         </template>
 
-        <VcChip
-          v-if="
-            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1
-          "
-          color="secondary"
-          variant="outline"
-          clickable
-          @click="resetPage"
-        >
-          <span>{{ $t("common.buttons.reset_page") }}</span>
+        <VcTypography tag="h1" class="category__title">
+          <!-- The scanned code filters instead of being a keyword, so the heading is the only place it shows. -->
+          <i18n-t
+            v-if="!categoryId && !isRoot && barcodeQueryParam"
+            :keypath="emptyViewSearchOnly ? 'pages.search.header_barcode_empty' : 'pages.search.header_barcode'"
+            tag="span"
+          >
+            <template #barcode>
+              <strong>{{ barcodeQueryParam }}</strong>
+            </template>
+          </i18n-t>
 
-          <VcIcon name="reset" />
-        </VcChip>
+          <i18n-t
+            v-else-if="!categoryId && !isRoot && searchParams.keyword"
+            :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
+            tag="span"
+          >
+            <template #keyword>
+              <strong>{{ searchParams.keyword }}</strong>
+            </template>
+          </i18n-t>
 
-        <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
-          <span>{{ $t("common.buttons.reset_filters") }}</span>
+          <!-- Skeleton -->
+          <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
 
-          <VcIcon name="reset" />
-        </VcChip>
-      </div>
+          <span v-else-if="title">
+            {{ title }}
+          </span>
 
-      <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
+          <span v-else-if="currentCategory && searchQueryParam">
+            {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
+          </span>
 
-      <!-- Products -->
-      <CategoryProducts
-        :card-type="cardType"
-        :columns-amount-desktop="columnsAmountDesktop"
-        :columns-amount-tablet="columnsAmountTablet"
-        :fetching-more-products="fetchingMoreProducts"
-        :fetching-products="fetchingProducts"
-        :fixed-products-count="fixedProductsCount"
-        :has-active-filters="
-          hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
-        "
-        :has-selected-facets="hasSelectedFacets"
-        :items-per-page="itemsPerPage"
-        :pages-count="pagesCount"
-        :page-number="currentPage"
-        :page-history="pageHistory"
-        :products="products"
-        :saved-view-mode="savedViewMode"
-        :search-params="searchParams"
-        :mode="catalogPaginationMode"
-        class="category__products"
-        @change-page="changeProductsPage"
-        @reset-facet-filters="resetFacetFilters"
-        @reset-filter-keyword="resetFilterKeyword"
-        @select-product="selectProduct"
-      />
+          <span v-else>
+            {{ currentCategory?.name }}
+          </span>
 
-      <div class="category__products-bottom">
-        <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
-          {{ $t("pages.catalog.show_all_results") }}
-        </VcButton>
-      </div>
-    </VcLayout>
-  </VcContainer>
+          <sup v-if="showProductsCount" class="category__products-count">
+            <b class="me-1" data-test-id="products-count-label">
+              {{ $n(totalProductsCount, "decimal") }}
+            </b>
+
+            <template v-if="currentCategory && searchQueryParam">
+              {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
+            </template>
+
+            <template v-else>
+              {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+            </template>
+          </sup>
+        </VcTypography>
+
+        <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
+
+        <!-- A barcode lookup applies no facets or in-stock/purchased-before/branch preferences, so it hides them -->
+        <template v-if="!hideAllControls">
+          <div
+            :class="[
+              'category__filters',
+              {
+                'category__filters--sticky': stickyMobileHeaderIsVisible,
+              },
+            ]"
+          >
+            <!-- Popup sidebar filters toggler -->
+            <VcButton
+              v-if="!hideSidebar && !isBarcodeLookup"
+              class="category__facets-button"
+              icon="filter"
+              size="sm"
+              :aria-label="$t('common.accessibility.open_filters')"
+              @click="showFiltersSidebar"
+            />
+
+            <!-- Sorting (also stands in for the horizontal filters' own while a barcode lookup hides them) -->
+            <div v-if="!hideSorting && (!isHorizontalFilters || isBarcodeLookup)" class="category__sort">
+              <VcLabel class="category__sort-label">
+                {{ $t("pages.catalog.sort_by_label") }}
+              </VcLabel>
+
+              <VcSelect
+                v-model="selectedSort"
+                text-field="name"
+                value-field="id"
+                :disabled="fetchingProducts"
+                :items="translatedProductSortingList"
+                class="category__sort-dropdown"
+                size="sm"
+                @change="resetCurrentPage"
+              />
+            </div>
+
+            <!-- View options - horizontal view -->
+            <ViewMode
+              v-if="!hideViewModeSelector"
+              v-model:mode="savedViewMode"
+              class="category__view-mode"
+              data-test-id="view-switcher"
+            />
+
+            <!-- In stock and branches -->
+            <CategoryControls
+              v-if="!hideControls && !isBarcodeLookup && !isMobile && !isHorizontalFilters"
+              v-model="localStorageInStock"
+              v-model:purchased-before="localStoragePurchasedBefore"
+              :loading="fetchingProducts"
+              :saved-branches="localStorageBranches"
+              class="category__controls"
+              @open-branches-modal="openBranchesModal"
+              @apply-in-stock="resetCurrentPage"
+              @apply-purchased-before="resetCurrentPage"
+            />
+          </div>
+
+          <!-- Horizontal filters -->
+          <CategoryHorizontalFilters
+            v-if="isHorizontalFilters && !isMobile && !isBarcodeLookup"
+            :facets-loading="fetchingFacets"
+            :sortings="sortings"
+            :loading="fetchingProducts || fetchingFacets"
+            :filters="filtersToShow"
+            :hide-sorting="hideSorting"
+            :hide-all-filters="hideSidebar"
+            @reset-facet-filters="resetFacetFilters"
+            @change:filters="applyFiltersOnly($event)"
+            @show-popup-sidebar="showFiltersSidebar"
+            @apply-sort="resetCurrentPage"
+          />
+
+          <ActiveFilterChips
+            v-if="hasSelectedFilters || isResetPageButtonShown || activeControls.length"
+            :filters="productsFilters.filters"
+            :facets-to-hide="normalizedFacetsToHide"
+            :controls="activeControls"
+            @apply-filters="applyFiltersOnly"
+            @cancel-control="cancelControl"
+          >
+            <template #actions>
+              <VcChip
+                v-if="hasSelectedFilters || activeControls.length"
+                color="secondary"
+                variant="outline"
+                clickable
+                @click="resetFacetAndControlsFilters"
+              >
+                <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+                <VcIcon name="reset" />
+              </VcChip>
+
+              <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
+                <span>{{ $t("common.buttons.reset_page") }}</span>
+
+                <VcIcon name="reset" />
+              </VcChip>
+            </template>
+          </ActiveFilterChips>
+        </template>
+
+        <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
+
+        <CategoryProducts
+          :card-type="cardType"
+          :columns-amount-desktop="columnsAmountDesktop"
+          :columns-amount-tablet="columnsAmountTablet"
+          :fetching-more-products="fetchingMoreProducts"
+          :fetching-products="fetchingProducts"
+          :fixed-products-count="fixedProductsCount"
+          :has-active-filters="hasActiveFilters"
+          :items-per-page="itemsPerPage"
+          :pages-count="pagesCount"
+          :page-number="currentPage"
+          :page-history="pageHistory"
+          :products="products"
+          :saved-view-mode="savedViewMode"
+          :mode="catalogPaginationMode"
+          :keyword="searchParams.keyword || barcodeQueryParam"
+          class="category__products"
+          @change-page="changeProductsPage"
+          @reset-filter-keyword="handleResetFilterKeyword"
+          @select-product="selectProduct"
+        />
+
+        <div class="category__products-bottom">
+          <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
+            {{ $t("pages.catalog.show_all_results") }}
+          </VcButton>
+        </div>
+      </VcLayout>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {
-  computedEager,
-  useBreakpoints,
-  useElementVisibility,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
-import omit from "lodash/omit";
-import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
+import { omit } from "lodash-es";
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
-import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
+import { useRoute, useRouter } from "vue-router";
+import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
-  buildBreadcrumbs,
   getFilterExpression,
   getFilterExpressionForAvailableIn,
+  getFilterExpressionForBarcode,
   getFilterExpressionForCategorySubtree,
-  getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
-  getFilterExpressionFromFacets,
+  getProductRoute,
 } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
+import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
-import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
-import { useSlugInfo } from "@/shared/common";
+import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
+import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
+import { shouldOpenSingleBarcodeHit, takeUnreportedScan } from "@/shared/layout/composables/useBarcodeSearch";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import type { RouteLocationRaw } from "vue-router";
+import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
-
 const props = defineProps<IProps>();
 
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+
 const viewModes = ["grid", "list"] as const;
+
+const CATEGORY_FACET_PARAM_NAME = "__outline_named";
+
+// Query params that mean the shown result is no longer the plain "what does this code match" answer.
+// `q` is not one: a barcode lookup does not send the keyword (see `searchParams`).
+const NARROWING_QUERY_PARAMS = [QueryParamName.Facets, QueryParamName.Page, QueryParamName.Sort];
+
+// What the empty view's reset clears: both ways a search term reaches this page.
+const SEARCH_QUERY_PARAMS = [QueryParamName.SearchPhrase, QueryParamName.Barcode];
+
 type ViewModeType = (typeof viewModes)[number];
 
 interface IProps {
@@ -280,7 +296,6 @@ interface IProps {
   categoryId?: string;
   title?: string;
   hideTotal?: boolean;
-  hideBreadcrumbs?: boolean;
   hideSidebar?: boolean;
   hideControls?: boolean;
   hideSorting?: boolean;
@@ -295,31 +310,70 @@ interface IProps {
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
+  facetsToHide?: string[];
+  /** Overrides the default store currency when fetching products (e.g. for loyalty catalog). */
+  currencyCodeOverride?: string;
 }
 
 const { allowSetMeta } = toRefs(props);
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
+const facetsToHide = toRef(props, "facetsToHide");
 
-const { catalogId, currencyCode } = globals;
+const { catalogId, currencyCode: defaultCurrencyCode } = globals;
+const currencyCode = computed(() => props.currencyCodeOverride || defaultCurrencyCode);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+
+const isCategoryNotFound = ref(false);
+
+const route = useRoute();
+const router = useRouter();
+
+const { isCategoryScope } = useSearchScore();
+
+const normalizedFacetsToHide = computed(() => {
+  return facetsToHide.value?.map((facet) => String(facet).toLowerCase()) ?? [];
+});
+
+const isResetPageButtonShown = computed(() => {
+  return (
+    catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+    !!route.query.page &&
+    Number(route.query.page) > 1
+  );
+});
 
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
 );
 
+const filtersToShow = computed(() => {
+  if (!facetsToHide.value?.length) {
+    return productsFilters.value;
+  }
+
+  return {
+    ...productsFilters.value,
+    facets: productsFilters.value.facets.filter(
+      (facet) => !normalizedFacetsToHide.value.includes(facet.paramName.toLowerCase()),
+    ),
+  };
+});
+
+const categoryFacets = computed(() => {
+  return filtersToShow.value.facets.find((el) => el.paramName === CATEGORY_FACET_PARAM_NAME)?.values ?? [];
+});
+
 const { themeContext } = useThemeContext();
 const {
-  getFacets,
   facetsQueryParam,
   fetchingMoreProducts,
   fetchingProducts,
   fetchingFacets,
   hasSelectedFacets,
-  isFiltersDirty,
+  hasSelectedFilters,
   isFiltersSidebarVisible,
-  keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
   localStoragePurchasedBefore,
@@ -329,18 +383,23 @@ const {
   productsFilters,
   searchQueryParam,
   sortQueryParam,
+  sortings,
   totalProductsCount,
+  preserveUserQueryQueryParam,
+  barcodeQueryParam,
+  isBarcodeLookup,
 
   applyFilters: _applyFilters,
+  applyFiltersOnly,
   fetchProducts: _fetchProducts,
   fetchMoreProducts,
   hideFiltersSidebar,
   openBranchesModal,
-  removeFacetFilter,
+
   resetFacetFilters,
-  resetFilterKeyword,
+  resetFacetAndControlsFilters,
+  resetSearchKeyword,
   showFiltersSidebar,
-  updateProductsFilters,
 
   currentPage,
   updateCurrentPage,
@@ -350,9 +409,18 @@ const {
   useQueryParams: true,
   withFacets: true,
   catalogPaginationMode: catalogPaginationMode.value,
+  facetsToHide: normalizedFacetsToHide.value,
+  currencyCodeOverride: () => props.currencyCodeOverride,
 });
-const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
+const {
+  loading: loadingCategory,
+  category: currentCategory,
+  fetchCategory,
+} = useCategory({
+  currencyCodeOverride: () => props.currencyCodeOverride,
+});
 const { analytics } = useAnalytics();
+const { updateLocalizedUrl } = useLanguages();
 
 const { selectedAddress } = useShipToLocation();
 
@@ -366,7 +434,7 @@ const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderA
 
 const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 const hideViewModeSelector = computed(() => {
-  return props.viewMode && viewModes.includes(props.viewMode);
+  return !!props.viewMode && viewModes.includes(props.viewMode);
 });
 
 const categoryListProperties = computed(() => ({
@@ -376,40 +444,102 @@ const categoryListProperties = computed(() => ({
   related_type: "category",
 }));
 
+// A lookup ignores `q`, so analytics report the scanned code as its term.
+const searchTerm = computed(() => (isBarcodeLookup.value ? barcodeQueryParam.value : searchQueryParam.value));
+
+const catalogBasePath = useCatalogBasePath();
+const redirectedBarcodes = new Set<string>();
+
+const filteredOnlyBySearch = computed(() => {
+  return !hasSelectedFilters.value && (!!searchQueryParam.value || isBarcodeLookup.value);
+});
+const emptyViewSearchOnly = computed(() => {
+  return filteredOnlyBySearch.value && products.value.length === 0 && !fetchingProducts.value;
+});
+const hideAllControls = computed(() => {
+  return emptyViewSearchOnly.value;
+});
+
+const isSidebarVisible = computed(() => {
+  return (
+    !props.hideSidebar &&
+    !isMobile.value &&
+    !isHorizontalFilters.value &&
+    !emptyViewSearchOnly.value &&
+    !isBarcodeLookup.value
+  );
+});
+const showProductsCount = computed(() => {
+  return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
+});
+
+const activeControls = computed(() => {
+  // A barcode lookup does not apply them, so no chip (nor "Reset filters") may claim one.
+  if (isBarcodeLookup.value) {
+    return [];
+  }
+
+  const controls = [];
+
+  if (localStorageInStock.value) {
+    controls.push({
+      label: t("pages.catalog.instock_filter_card.checkbox_label"),
+      value: CatalogControl.InStock,
+    });
+  }
+  if (localStoragePurchasedBefore.value) {
+    controls.push({
+      label: t("pages.catalog.purchased_before_filter_card.checkbox_label"),
+      value: CatalogControl.PurchasedBefore,
+    });
+  }
+  if (localStorageBranches.value.length) {
+    controls.push({
+      label: `${t("pages.catalog.branch_availability_filter_card.available_in")} ${t("pages.catalog.branch_availability_filter_card.branches", { n: localStorageBranches.value.length })}`,
+      value: CatalogControl.Branches,
+    });
+  }
+
+  return controls;
+});
+
+// A barcode lookup applies none of them (see `searchParams`), so the empty view must not offer a reset.
+const hasActiveFilters = computed(() => {
+  return (
+    !isBarcodeLookup.value &&
+    (hasSelectedFilters.value ||
+      localStorageInStock.value ||
+      localStoragePurchasedBefore.value ||
+      !!localStorageBranches.value.length)
+  );
+});
+
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
-const route = useRoute();
-const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
-
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
-const breadcrumbs = useBreadcrumbs(() =>
-  buildBreadcrumbs(
-    objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
-      ? [
-          {
-            itemId: slugInfo.value.entityInfo.id,
-            semanticUrl: slugInfo.value.entityInfo.semanticUrl,
-            title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
-            typeName: objectType.value,
-          },
-        ]
-      : currentCategory.value?.breadcrumbs,
-  ),
-);
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
 
-function getTranslatedProductSortingList() {
-  return PRODUCT_SORTING_LIST.map((item) => ({
-    ...item,
-    name: t(item.name),
-  }));
-}
+const { sortList: translatedProductSortingList, selectedSort } = useProductSortings(sortings, sortQueryParam);
 
-const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
+function cancelControl(control: CatalogControl) {
+  switch (control) {
+    case CatalogControl.InStock:
+      localStorageInStock.value = false;
+      break;
+    case CatalogControl.PurchasedBefore:
+      localStoragePurchasedBefore.value = false;
+      break;
+    case CatalogControl.Branches:
+      localStorageBranches.value = [];
+      break;
+  }
+
+  void fetchProducts();
+}
 
 function getSelectedAddressArgs(): {
   selectedAddressId: string | undefined;
@@ -427,49 +557,34 @@ function getSelectedAddressArgs(): {
   };
 }
 
-const searchParams = computedEager<ProductsSearchParamsType>(() => ({
+const searchParams = computed<ProductsSearchParamsType>(() => ({
   ...getSelectedAddressArgs(),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: props.keyword || (!props.categoryId && !props.isRoot ? searchQueryParam.value : keywordQueryParam.value),
-  filter: [
-    props.filter,
-    facetsQueryParam.value,
-    getFilterExpressionForInStock(localStorageInStock.value),
-    getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
-    getFilterExpressionForAvailableIn(localStorageBranches.value),
-  ]
+  // A barcode lookup is exact, so the keyword is intentionally not sent: `?q` must neither narrow nor empty it.
+  keyword: isBarcodeLookup.value ? "" : searchQueryParam.value || props.keyword,
+  // A lookup identifies the item the shopper holds, so neither the URL's facets nor the in-stock,
+  // purchased-before and branch preferences may hide it.
+  filter: (isBarcodeLookup.value
+    ? [props.filter, getFilterExpressionForBarcode(barcodeQueryParam.value)]
+    : [
+        props.filter,
+        facetsQueryParam.value,
+        getFilterExpressionForInStockVariations(localStorageInStock.value),
+        getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
+        getFilterExpressionForAvailableIn(localStorageBranches.value),
+      ]
+  )
     .filter(Boolean)
     .join(" "),
+  preserveUserQuery: !!preserveUserQueryQueryParam.value,
 }));
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 function applyFilters(newFilters: ProductsFiltersType): void {
-  _applyFilters(newFilters);
-}
-
-async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<void> {
-  const searchParamsForFacets: ProductsSearchParamsType = {
-    ...searchParams.value,
-    filter: [
-      props.filter,
-      getFilterExpressionFromFacets(newFilters.facets),
-      getFilterExpressionForInStock(newFilters.inStock),
-      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
-      getFilterExpressionForAvailableIn(newFilters.branches),
-    ]
-      .filter(Boolean)
-      .join(" "),
-  };
-
-  updateProductsFilters({
-    branches: newFilters.branches,
-    inStock: newFilters.inStock,
-    purchasedBefore: newFilters.purchasedBefore,
-    facets: await getFacets(searchParamsForFacets),
-  });
+  void _applyFilters(newFilters);
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {
@@ -489,26 +604,68 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
    */
   analytics("viewItemList", products.value, categoryListProperties.value);
 
-  if (searchQueryParam.value) {
+  if (searchTerm.value) {
     trackViewSearchResults();
   }
 }
 
 async function fetchProducts(): Promise<void> {
-  await _fetchProducts(searchParams.value);
+  const requestedBarcode = barcodeQueryParam.value;
+  const wasNarrowed = NARROWING_QUERY_PARAMS.some((paramName) => !!route.query[paramName]);
+  // Taken as the request starts, so a request that fails leaves no report for a later one to send.
+  const reportsScan = takeUnreportedScan(requestedBarcode);
+
+  const result = await _fetchProducts(searchParams.value);
+
+  // The scan's `search` event, with what it found, as the full-text path sends it from the search bar.
+  if (reportsScan) {
+    analytics("search", requestedBarcode, result.items, result.totalCount);
+  }
+
+  // A single hit leaves for the product page, so this list is never seen and must not be reported.
+  if (openSingleBarcodeHit(requestedBarcode, wasNarrowed, result)) {
+    return;
+  }
 
   /**
    * Send Google Analytics event for products.
    */
   analytics("viewItemList", products.value, categoryListProperties.value);
 
-  if (searchQueryParam.value) {
+  if (searchTerm.value) {
     trackViewSearchResults();
   }
 }
 
+function openSingleBarcodeHit(
+  requestedBarcode: string,
+  wasNarrowed: boolean,
+  result: { items: Product[]; totalCount: number },
+): boolean {
+  const canOpen = shouldOpenSingleBarcodeHit({
+    requestedBarcode,
+    currentBarcode: barcodeQueryParam.value,
+    wasNarrowed,
+    redirectedBarcodes,
+    totalCount: result.totalCount,
+    itemCount: result.items.length,
+  });
+
+  if (!canOpen) {
+    return false;
+  }
+
+  redirectedBarcodes.add(requestedBarcode);
+
+  const [product] = result.items;
+
+  void router.replace(getProductRoute(product.id, product.slug, catalogBasePath.value));
+
+  return true;
+}
+
 function trackViewSearchResults(): void {
-  analytics("viewSearchResults", searchQueryParam.value, {
+  analytics("viewSearchResults", searchTerm.value, {
     visible_items: products.value.map((product) => ({ code: product.code })),
     results_count: totalProductsCount.value,
     results_page: currentPage.value,
@@ -524,12 +681,77 @@ function resetPage() {
   void fetchProducts();
 }
 
+async function handleResetFilterKeyword() {
+  const hadKeyword = !!searchQueryParam.value || isBarcodeLookup.value;
+
+  if (isBarcodeLookup.value) {
+    // One navigation: two param writes in a row both start from the old query, so the second restores `q`.
+    await router.push({ hash: route.hash, query: omit(route.query, SEARCH_QUERY_PARAMS) });
+  } else {
+    resetSearchKeyword();
+  }
+
+  await resetFacetAndControlsFilters({ skipPageReset: true });
+
+  if (!hadKeyword) {
+    return;
+  }
+
+  const back = router.options.history.state?.back;
+
+  if (!back || !isRouteLocationRaw(back)) {
+    return;
+  }
+
+  const previousResolvedRoute = router.resolve(back);
+
+  if (previousResolvedRoute.matched.length <= 0) {
+    return;
+  }
+
+  if (isCategoryScope.value) {
+    void router.replace({
+      ...previousResolvedRoute,
+      query: omit(previousResolvedRoute.query, SEARCH_QUERY_PARAMS),
+    });
+  } else {
+    const catalogQuery = router.currentRoute.value.name === ROUTES.SEARCH.NAME ? router.currentRoute.value.query : {};
+    const catalogQueryWithoutSearch = omit(catalogQuery, SEARCH_QUERY_PARAMS);
+
+    void router.replace({ name: ROUTES.CATALOG.NAME, query: catalogQueryWithoutSearch });
+  }
+}
+
+function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
+  if (typeof value === "string") {
+    return true;
+  }
+  if (typeof value === "object" && value !== null) {
+    const record = value as Record<string, unknown>;
+    return "path" in record || "name" in record;
+  }
+  return false;
+}
+
 whenever(() => !isMobile.value, hideFiltersSidebar);
+const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
+
+const { clearSearchResults } = useSearchBar();
+
+const isMobileLg = breakpoints.smaller("lg");
 
 watch(
   () => props.categoryId,
-  (categoryId) => {
+  async (categoryId) => {
     if (categoryId || props.isRoot) {
+      isCategoryNotFound.value = false;
+
+      setQueryScope(searchQueryParam.value);
+
+      if (categoryId) {
+        preparingScope.value = true;
+      }
+
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
@@ -537,16 +759,26 @@ watch(
         ? undefined
         : getFilterExpression([
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
-            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-            getFilterExpressionForInStock(true),
+            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode.value),
+            getFilterExpressionForInStockVariations(true),
           ]);
+      let data;
+      try {
+        data = await fetchCategory({
+          categoryId,
+          maxLevel: 1,
+          onlyActive: true,
+          productFilter,
+        });
+      } finally {
+        preparingScope.value = false;
+      }
 
-      void fetchCategory({
-        categoryId,
-        maxLevel: 1,
-        onlyActive: true,
-        productFilter,
-      });
+      if (!props.isRoot) {
+        isCategoryNotFound.value = !data;
+      }
+
+      updateLocalizedUrl(data?.category?.slug);
     }
   },
   { immediate: true },
@@ -558,12 +790,28 @@ watch(props, ({ viewMode }) => {
   }
 });
 
+watch(
+  () => currentCategory.value?.id,
+  () => {
+    if (currentCategory.value) {
+      changeSearchBarScope(currentCategory.value.id, currentCategory.value.name);
+    }
+  },
+);
+
+watch(searchQueryParam, (value) => {
+  setQueryScope(value);
+  void resetCurrentPage();
+});
+
+// A new scan starts from the first page, as a new keyword does.
+watch(barcodeQueryParam, () => {
+  void resetCurrentPage();
+});
+
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
-    if (categoryProductsAnchor.value) {
-      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
-    }
     void fetchProducts();
   },
   {
@@ -572,6 +820,50 @@ watchDebounced(
     immediate: true,
   },
 );
+
+watchDebounced(
+  computed(() => JSON.stringify(searchParams.value)),
+  () => {
+    if (categoryProductsAnchor.value && (!isHorizontalFilters.value || isMobile.value)) {
+      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
+    }
+  },
+  {
+    debounce: 20,
+  },
+);
+
+function changeSearchBarScope(categoryId: string, label?: string) {
+  clearCategoryScope();
+
+  if (!label) {
+    return;
+  }
+
+  addScopeItem({
+    filter: getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
+    label,
+    id: categoryId,
+    type: "category",
+  });
+}
+
+onBeforeUnmount(() => {
+  clearCategoryScope();
+  document.body.style.overflowAnchor = "auto";
+});
+
+function clearCategoryScope() {
+  removeScopeItemByType("category");
+
+  if (!isMobileLg.value) {
+    clearSearchResults();
+  }
+}
+
+onMounted(() => {
+  document.body.style.overflowAnchor = "none";
+});
 </script>
 
 <style lang="scss">
@@ -662,10 +954,6 @@ watchDebounced(
     @media (width < theme("screens.lg")) and (min-width: theme("screens.md")) {
       @apply order-last w-full;
     }
-  }
-
-  &__chips {
-    @apply flex mb-3 flex-wrap gap-2;
   }
 
   &__products-bottom {

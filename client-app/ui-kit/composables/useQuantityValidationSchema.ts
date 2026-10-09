@@ -10,35 +10,49 @@ export function useQuantityValidationSchema(payload: {
   maxQuantity?: Ref<number | undefined>;
   availableQuantity?: Ref<number | undefined>;
   packSize?: Ref<number | undefined>;
+  allowZero?: Ref<boolean | undefined>;
 }) {
   const { t } = useI18n();
-  const { availableQuantity, minQuantity, maxQuantity, packSize } = payload;
+  const { availableQuantity, minQuantity, maxQuantity, packSize, allowZero } = payload;
 
   function minMaxTest(schema: NumberSchema, min: number, max: number): NumberSchema {
     if (min === max) {
       return schema.test(
         "exactQtyValue",
         t("ui_kit.add_to_cart.errors.exact_qty", [min]),
-        (value) => !!value && value === min,
+        (value) => value !== undefined && (value === min || (allowZero?.value && value === 0)),
       );
     }
-    return schema.test(
-      "minMaxValue",
-      t("ui_kit.add_to_cart.errors.min_max", [min, max]),
-      (value) => !!value && value >= min && value <= max,
-    );
+    return schema.test("minMaxValue", t("ui_kit.add_to_cart.errors.min_max", [min, max]), (value) => {
+      if (allowZero?.value && value === 0) {
+        return true;
+      }
+
+      return value !== undefined && value >= min && value <= max;
+    });
   }
 
   function maxTest(schema: NumberSchema, max: number): NumberSchema {
-    return schema.test("maxValue", t("ui_kit.add_to_cart.errors.max", [max]), (value) => !!value && value <= max);
+    return schema.test(
+      "maxValue",
+      t("ui_kit.add_to_cart.errors.max", [max]),
+      (value) => value !== undefined && value <= max,
+    );
   }
 
   function minTest(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test("minValue", t("ui_kit.add_to_cart.errors.min", [min]), (value) => !!value && value >= min);
+    return schema.test("minValue", t("ui_kit.add_to_cart.errors.min", [min]), (value) => {
+      if (allowZero?.value && value === 0) {
+        return true;
+      }
+      return value !== undefined && value >= min;
+    });
   }
 
   function availableLessThenMinError(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test("incorrectMinValue", t("ui_kit.add_to_cart.errors.min_not_available", [min]), () => false);
+    return schema.test("incorrectMinValue", t("ui_kit.add_to_cart.errors.min_not_available", [min]), (value) => {
+      return allowZero?.value && value === 0;
+    });
   }
 
   function packSizeTest(schema: NumberSchema, size?: number): NumberSchema {
@@ -46,11 +60,12 @@ export function useQuantityValidationSchema(payload: {
       return schema;
     }
 
-    return schema.test(
-      "divisible-by-packSize",
-      t("ui_kit.add_to_cart.errors.pack_size", [size]),
-      (value) => !!value && value % size === 0,
-    );
+    return schema.test("divisible-by-packSize", t("ui_kit.add_to_cart.errors.pack_size", [size]), (value) => {
+      if (allowZero?.value && value === 0) {
+        return true;
+      }
+      return value !== undefined && value % size === 0;
+    });
   }
 
   function withAvailableQuantityTest(schema: NumberSchema, quantity: number): NumberSchema {
@@ -86,10 +101,10 @@ export function useQuantityValidationSchema(payload: {
 
     return schema;
   }
-  const quantitySchema = computed<NumberSchema>(() =>
-    number()
+
+  const quantitySchema = computed<NumberSchema>(() => {
+    const commonSchema = number()
       .typeError(t("ui_kit.add_to_cart.errors.enter_correct_number_message"))
-      .positive(t("ui_kit.add_to_cart.errors.positive_number"))
       .integer(t("ui_kit.add_to_cart.errors.integer_number"))
       .max(LINE_ITEM_QUANTITY_LIMIT, t("ui_kit.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
       .withMutation((schema) => {
@@ -98,8 +113,12 @@ export function useQuantityValidationSchema(payload: {
         } else {
           return packSizeTest(withoutAvailableQuantityTest(schema), packSize?.value);
         }
-      }),
-  );
+      });
+
+    return allowZero?.value
+      ? commonSchema.min(0, t("ui_kit.add_to_cart.errors.positive_number"))
+      : commonSchema.positive(t("ui_kit.add_to_cart.errors.positive_number"));
+  });
 
   return {
     quantitySchema,

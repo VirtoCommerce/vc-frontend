@@ -1,14 +1,18 @@
-import { computed, unref } from "vue";
+import { computed, toValue, unref } from "vue";
 import { getCategoryRoute } from "../utilities";
-import type { CategoryTreeItemType } from "../types";
 import type { Category } from "@/core/api/graphql/types";
-import type { MaybeRef } from "@vueuse/core";
-import type { RouteLocationRaw } from "vue-router";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
+import type { MaybeRef } from "vue";
+import type { LocationQueryRaw, RouteLocationRaw } from "vue-router";
 
-export function useCategoriesRoutes(categories: MaybeRef<(Category | CategoryTreeItemType)[]>) {
+export function useCategoriesRoutes(
+  categories: MaybeRef<Pick<Category, "id" | "slug">[]>,
+  query?: ReadonlyRefOrGetter<LocationQueryRaw>,
+  basePath?: ReadonlyRefOrGetter<string>,
+) {
   return computed(() =>
     unref(categories).reduce<Record<string, RouteLocationRaw>>((result, category) => {
-      result[category.id] = getCategoryRoute(category);
+      result[category.id] = getCategoryRoute(category, toValue(query), toValue(basePath));
       return result;
     }, {}),
   );

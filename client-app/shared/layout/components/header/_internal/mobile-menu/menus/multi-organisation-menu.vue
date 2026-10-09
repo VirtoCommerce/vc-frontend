@@ -1,31 +1,122 @@
 <template>
-  <div v-if="isMultiOrganization" class="mt-4 flex grow flex-col gap-y-1 font-normal">
+  <div ref="scrollContainer" v-if="isMultiOrganization" class="multi-organization-menu">
+    <VcAlert
+      v-if="switchError"
+      class="multi-organization-menu__error"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      {{ switchError }}
+    </VcAlert>
+
     <VcRadioButton
-      v-for="item in allOrganizations"
+      v-if="organization && !loading"
+      :model-value="contactOrganizationId"
+      :value="organization.id"
+      class="multi-organization-menu__radio"
+    >
+      <span class="multi-organization-menu__radio-label">
+        {{ organization.name }}
+      </span>
+    </VcRadioButton>
+
+    <VcRadioButton
+      v-for="item in organizationsWithoutCurrent"
       :key="item.id"
       v-model="contactOrganizationId"
       :value="item.id"
-      class="py-2.5"
+      :disabled="item.isLockedForCurrentUser"
+      class="multi-organization-menu__radio"
       @change="selectOrganization"
     >
-      <span class="uppercase">
-        {{ item.name }}
+      <span
+        class="multi-organization-menu__radio-label flex min-w-0 items-center gap-2"
+        :title="
+          item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
+        "
+      >
+        <span class="min-w-0 truncate">
+          {{ item.name }}
+        </span>
+
+        <VcIcon v-if="item.isLockedForCurrentUser" name="lock-closed" size="xs" class="shrink-0" />
       </span>
     </VcRadioButton>
+
+    <VcInfinityScrollLoader
+      v-if="hasNextPage"
+      :loading="loading"
+      :viewport="scrollContainer"
+      :page-number="currentPage"
+      :pages-count="pagesCount"
+      distance="50"
+      class="multi-organization-menu__loader"
+      @visible="loadOrganizations"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUser } from "@/shared/account";
+import { onMounted, ref, useTemplateRef, computed } from "vue";
+import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 
-const { user, allOrganizations, isMultiOrganization, switchOrganization } = useUser();
+const { organizations, hasNextPage, loading, pagesCount, currentPage, loadOrganizations, search } =
+  useUserOrganizations();
+const { user, isMultiOrganization, organization } = useUser();
+const { switchError, trySwitch } = useOrganizationSwitcher();
+
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
+const scrollContainer = useTemplateRef("scrollContainer");
+
+const organizationsWithoutCurrent = computed(() =>
+  organizations.value.filter((item) => item.id !== organization.value?.id),
+);
+
+// useUserOrganizations fetches only once per session, so a lock applied while this menu was
+// closed would otherwise leave a stale, clickable row. Refresh on every mount to catch that.
+onMounted(() => {
+  void search();
+});
+
 async function selectOrganization(): Promise<void> {
   if (!contactOrganizationId.value) {
     return;
   }
 
-  await switchOrganization(contactOrganizationId.value);
+  const target = organizationsWithoutCurrent.value.find((item) => item.id === contactOrganizationId.value);
+  if (target?.isLockedForCurrentUser) {
+    contactOrganizationId.value = user.value?.contact?.organizationId;
+    return;
+  }
+
+  const succeeded = await trySwitch(contactOrganizationId.value);
+
+  if (!succeeded) {
+    contactOrganizationId.value = user.value?.contact?.organizationId;
+  }
 }
 </script>
+
+<style lang="scss">
+.multi-organization-menu {
+  @apply mt-4 flex grow flex-col gap-y-1 font-normal h-[calc(100vh-224px)] overflow-y-auto;
+
+  &__error {
+    @apply mb-2;
+  }
+
+  &__radio {
+    @apply py-2.5;
+  }
+
+  &__radio-label {
+    @apply uppercase;
+  }
+
+  &__loader {
+    @apply py-2;
+  }
+}
+</style>

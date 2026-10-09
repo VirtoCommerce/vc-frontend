@@ -2,10 +2,9 @@
   <ProductsFilters
     class="category-horizontal-filters"
     orientation="horizontal"
-    :keyword="keywordQueryParam"
     :filters="filters"
     :loading="loading"
-    @change="$emit('applyFilters', $event)"
+    @change:filters="$emit('change:filters', $event)"
   >
     <template #prepend>
       <VcButton
@@ -27,12 +26,13 @@
         width="15rem"
         z-index="3"
       >
-        <template #trigger>
+        <template #trigger="{ triggerProps }">
           <VcButton
             size="sm"
             variant="outline"
             prepend-icon="switch-vertical"
             class="category-horizontal-filters__sorting-trigger"
+            v-bind="triggerProps"
           >
             {{ $t("common.buttons.sort_by") }}
           </VcButton>
@@ -48,18 +48,11 @@
             @click="sortingItemClickHandler(sortingOption.id, close)"
           >
             <VcRadioButton
-              v-model="sortQueryParam"
+              v-model="selectedSort"
               size="sm"
               :value="sortingOption.id"
               :label="sortingOption.name"
               class="category-horizontal-filters__sorting-input"
-              @change="
-                () => {
-                  emit('applySort');
-                  close();
-                }
-              "
-              @click.stop
             />
           </VcMenuItem>
         </template>
@@ -69,54 +62,52 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
+import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
+import type { ProductSortingType, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
 const emit = defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   hideAllFilters: false,
   hideSorting: false,
+  sortings: () => [],
 });
 
 interface IEmits {
-  (event: "applyFilters", filters: ProductsFiltersType): void;
+  (event: "change:filters", filters: SearchProductFilterResult[]): void;
   (event: "applySort"): void;
   (event: "showPopupSidebar"): void;
 }
 
 interface IProps {
   loading: boolean;
-  keywordQueryParam: string;
   filters: ProductsFiltersType;
+  /** "Sort by" options from the owning product grid's search response. */
+  sortings?: ProductSortingType[];
   hideSorting?: boolean;
   hideAllFilters?: boolean;
 }
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
-  validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+  // Sort codes are store-defined (dynamic) and resolved server-side, so accept any token-shaped value.
+  validator: (value) => /^[a-z0-9-_]*$/i.test(value),
 });
+
+const { sortList: translatedProductSortingList, selectedSort } = useProductSortings(
+  () => props.sortings,
+  sortQueryParam,
+);
 
 function sortingItemClickHandler(id: string, close: () => void) {
   sortQueryParam.value = id;
+  emit("applySort");
   close();
 }
-
-const { t } = useI18n();
-
-function getTranslatedProductSortingList() {
-  return PRODUCT_SORTING_LIST.map((item) => ({
-    ...item,
-    name: t(item.name),
-  }));
-}
-
-const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
 </script>
 
 <style lang="scss">

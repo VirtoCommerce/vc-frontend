@@ -1,9 +1,10 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
-import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge, intersection } from "lodash";
+import { createSharedComposable } from "@vueuse/core";
+import { difference, intersection, keyBy, merge } from "lodash-es";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
@@ -11,6 +12,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { handleOptimisticResponseUpdateCartQuantity } from "@/core/api/graphql/config/links/utils";
 import {
   AddBulkItemsCartDocument,
   AddCouponDocument,
@@ -31,17 +33,23 @@ import {
   RemoveShipmentDocument,
   SelectCartItemsDocument,
   UnselectCartItemsDocument,
+  GetShortCartDocument,
+  CreateCartFromWishlistDocument,
+  UpdateShortCartItemQuantityDocument,
+  ShortCartFragmentDoc,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { groupByVendor, Logger } from "@/core/utilities";
+import { groupByVendor, splitLineItemsByCurrency, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
-import { CartValidationErrors } from "../enums";
+import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
+import { CartValidationErrors, LOYALTY_VALIDATION_ERROR_CODES } from "../enums";
 import type {
   InputNewBulkItemType,
   InputNewCartItemType,
@@ -49,12 +57,10 @@ import type {
   CartType,
   InputPaymentType,
   InputShipmentType,
-  AddOrUpdateCartPaymentMutation,
-  AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
-  AddOrUpdateCartPaymentMutationVariables,
   LineItemType,
   ConfigurationSectionInput,
+  BulkLineItemFragment,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 import type { DeepReadonly } from "vue";
@@ -68,6 +74,16 @@ const CartItemsSelectionFragment = gql`
   }
 `;
 
+/**
+ * Reactive shared access to the current cart state using the GetShortCart GraphQL query.
+ *
+ * Notes:
+ * - Ensure that any mutation which modifies the cart returns a CartType object
+ *   matching the shape of the GetShortCart query result.
+ * - If a new mutation is added, explicitly test the scenario where the cart is initially null.
+ *   This is common in lazy-initialization flows where the cart is created only upon user action.
+ * - Consumers of `cart` should gracefully handle `null` values to avoid rendering errors.
+ */
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
@@ -85,55 +101,131 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
-  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   const { analytics } = useAnalytics();
+  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
 
   async function addToCart(
     productId: string,
     quantity: number,
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
-  ): Promise<ShortCartFragment | undefined> {
+  ) {
     try {
-      const result = await _addToCart({
-        command: {
-          productId,
-          quantity,
-          configurationSections: configurationSections as ConfigurationSectionInput[],
-          ...commonVariables,
+      const result = await _addToCart(
+        {
+          command: {
+            productId,
+            quantity,
+            configurationSections: configurationSections as ConfigurationSectionInput[],
+            ...commonVariables,
+          },
         },
-      });
+        {
+          update: (cache, { data }) => {
+            if (data?.addItem) {
+              // Write the new cart to the cache for the GetShortCart query
+              cache.writeQuery({
+                query: GetShortCartDocument,
+                data: { cart: data.addItem },
+                variables: commonVariables,
+              });
+            }
+          },
+        },
+      );
+
       return result?.data?.addItem;
     } catch (err) {
+      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
       Logger.error(err as string);
     }
   }
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
   async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
-    const result = await _addItemsToCart({ command: { cartItems: items, ...commonVariables } });
+    const result = await _addItemsToCart(
+      { command: { cartItems: items, ...commonVariables } },
+      {
+        update: (cache, { data }) => {
+          if (data?.addItemsCart) {
+            cache.writeQuery({
+              query: GetShortCartDocument,
+              data: { cart: data.addItemsCart },
+              variables: commonVariables,
+            });
+          }
+        },
+      },
+    );
     return result?.data?.addItemsCart;
   }
 
   const { mutate: _addBulkItemsToCart, loading: addBulkItemsToCartLoading } = useMutation(AddBulkItemsCartDocument);
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
-    const result = await _addBulkItemsToCart({
-      command: { cartItems: items, ...commonVariables },
-    });
+    const result = await _addBulkItemsToCart(
+      {
+        command: { cartItems: items, ...commonVariables },
+      },
+      {
+        update: (cache, { data }) => {
+          if (data?.addBulkItemsCart?.cart) {
+            cache.writeQuery({
+              query: GetShortCartDocument,
+              data: { cart: data.addBulkItemsCart.cart },
+              variables: commonVariables,
+            });
+          }
+        },
+      },
+    );
 
-    return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
+    const outputItems = items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
       errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
+
+    const itemsQuantityMap = new Map(items.map(({ productSku, quantity }) => [productSku, quantity]));
+
+    const errorSkus = new Set(result?.data?.addBulkItemsCart?.errors?.map((error) => error.objectId) ?? []);
+
+    const successfulItemsToTrack = result?.data?.addBulkItemsCart?.cart?.items
+      ?.map((item) => ({
+        ...item,
+        quantity: itemsQuantityMap.get(item.sku) ?? 0,
+      }))
+      ?.filter((item) => !errorSkus.has(item.sku) && item.quantity > 0);
+
+    trackAddBulkItemsToCart(successfulItemsToTrack);
+
+    return outputItems;
+  }
+
+  function trackAddBulkItemsToCart(items?: BulkLineItemFragment[]) {
+    if (!items?.length) {
+      return;
+    }
+
+    analytics("addBulkItemsToCart", items, { source_order: "/bulk-order" });
   }
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(
     ChangeShortCartItemQuantityDocument,
   );
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+  const {
+    add: changeItemQuantityBatchedMutation,
+    overflowed: changeItemQuantityBatchedOverflowed,
+    loading: changeItemQuantityBatchedLoading,
+  } = useMutationBatcher(_changeItemQuantity);
+  async function changeItemQuantityFunction(
+    lineItemId: string,
+    quantity: number,
+    mutation: typeof _changeItemQuantity | typeof changeItemQuantityBatchedMutation,
+  ) {
     try {
       const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
-      const result = await _changeItemQuantity({
+      const result = await mutation({
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
@@ -147,15 +239,64 @@ export function useShortCart() {
       Logger.error(err as string);
     }
   }
+  async function changeItemQuantity(lineItemId: string, quantity: number) {
+    return changeItemQuantityFunction(lineItemId, quantity, _changeItemQuantity);
+  }
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number) {
+    return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
+  }
 
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items.length) {
-      return 0;
-    }
+  const { mutate: updateItemCartQuantityMutation, loading: updateItemCartQuantityLoading } = useMutation(
+    UpdateShortCartItemQuantityDocument,
+    {
+      update: (cache, { data }) => {
+        const currentCart = cart.value
+          ? cache.readFragment<CartType>({
+              fragmentName: "shortCart",
+              fragment: ShortCartFragmentDoc,
+              id: cache.identify(cart.value),
+            })
+          : undefined;
 
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
+        if (data?.updateCartQuantity) {
+          const cartData = {
+            ...data.updateCartQuantity,
+            shipments: currentCart?.shipments ?? [],
+            validationErrors: currentCart?.validationErrors ?? [],
+          };
 
-    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
+          cache.writeQuery({
+            query: GetShortCartDocument,
+            data: { cart: cartData },
+            variables: commonVariables,
+          });
+        }
+      },
+      optimisticResponse: (vars, { IGNORE }) => {
+        const itemsInput = vars.command?.items;
+
+        if (!Array.isArray(itemsInput) || itemsInput.length === 0 || !cart.value) {
+          return IGNORE;
+        }
+
+        return handleOptimisticResponseUpdateCartQuantity(cart.value as CartType, itemsInput);
+      },
+    },
+  );
+  function updateItemCartQuantity(productId: string, quantity: number, itemCurrencyCode?: string) {
+    return updateItemCartQuantityMutation({
+      command: {
+        items: [{ productId, quantity, itemCurrencyCode }],
+        ...commonVariables,
+        cartId: cart.value?.id,
+      },
+    });
+  }
+
+  const { mutate: _createCartFromWishlist, loading: createCartFromWishlistLoading } =
+    useMutation(CreateCartFromWishlistDocument);
+  async function createCartFromWishlist(wishlistId: string) {
+    return await _createCartFromWishlist({ command: { listId: wishlistId } });
   }
 
   return {
@@ -165,28 +306,35 @@ export function useShortCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    getItemsTotal,
+    changeItemQuantityBatched,
+    createCartFromWishlist,
     loading,
+    addToCartLoading,
+    changeItemQuantityBatchedOverflowed,
+    createCartFromWishlistLoading,
+    updateItemCartQuantity,
     changing: computed(
       () =>
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
-        changeItemQuantityLoading.value,
+        changeItemQuantityLoading.value ||
+        changeItemQuantityBatchedLoading.value ||
+        updateItemCartQuantityLoading.value,
     ),
   };
 }
 
-export function _useFullCart() {
+export function _useFullCart(cartId?: string) {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();
   const { storeId, currencyCode, cultureName, userId } = globals;
-  const commonVariables = { storeId, currencyCode, cultureName, userId };
+  const commonVariables = { storeId, currencyCode, cultureName, userId, cartId };
   const notifications = useNotifications();
   const { t } = useI18n();
 
-  const { result: query, load, refetch, loading } = useGetFullCartQuery();
+  const { result: query, load, refetch, loading } = useGetFullCartQuery(cartId);
 
   const forceFetch = async () => (await load()) || (await refetch());
 
@@ -198,13 +346,23 @@ export function _useFullCart() {
   const availableShippingMethods = computed(() => cart.value?.availableShippingMethods ?? []);
   const availablePaymentMethods = computed(() => cart.value?.availablePaymentMethods ?? []);
 
-  const lineItemsGroupedByVendor = computed(() => groupByVendor(cart.value?.items ?? []));
+  // Vendor grouping and the main products list only cover items in the cart's main currency.
+  // Items priced in other currencies are listed separately, grouped by their currency.
+  const lineItemsByCurrency = computed(() =>
+    splitLineItemsByCurrency(cart.value?.items ?? [], cart.value?.currency?.code),
+  );
+
+  const mainCurrencyLineItems = computed(() => lineItemsByCurrency.value.mainCurrencyItems);
+
+  const otherCurrencyLineItemGroups = computed(() => lineItemsByCurrency.value.otherCurrencyGroups);
+
+  const lineItemsGroupedByVendor = computed(() => groupByVendor(mainCurrencyLineItems.value));
 
   const selectedLineItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout) ?? []);
 
   const selectedLineItemsGroupedByVendor = computed(() => groupByVendor(selectedLineItems.value));
 
-  const hasOnlyUnselectedLineItems = computedEager(() => selectedLineItems.value.length === 0);
+  const hasOnlyUnselectedLineItems = computed(() => selectedLineItems.value.length === 0);
 
   const allItemsAreDigital = computed(() =>
     selectedLineItems.value.length > 0
@@ -218,7 +376,7 @@ export function _useFullCart() {
     (cart.value?.availableGifts ?? []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
   );
 
-  const hasValidationErrors = computedEager(
+  const hasValidationErrors = computed(
     () =>
       cart.value?.validationErrors?.some(
         (error) =>
@@ -229,11 +387,20 @@ export function _useFullCart() {
       ) ?? selectedLineItems.value?.some((item) => item.validationErrors?.length),
   );
 
-  const hasOnlyUnselectedValidationError = computedEager(
+  const hasOnlyUnselectedValidationError = computed(
     () =>
       cart.value?.validationErrors?.length == 1 &&
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
+
+  const loyaltyValidationErrors = computed(
+    () =>
+      cart.value?.validationErrors?.filter((error) =>
+        (LOYALTY_VALIDATION_ERROR_CODES as readonly string[]).includes(error.errorCode ?? ""),
+      ) ?? [],
+  );
+
+  const hasLoyaltyValidationErrors = computed(() => loyaltyValidationErrors.value.length > 0);
 
   const { mutate: _selectCartItemsMutation } = useMutation(SelectCartItemsDocument);
   const { mutate: _unselectCartItemsMutation } = useMutation(UnselectCartItemsDocument);
@@ -354,6 +521,7 @@ export function _useFullCart() {
     loading: changeItemsQuantityLoading,
   } = useMutationBatcher(_changeItemsQuantity, {
     mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
+    debounce: EXTENDED_DEBOUNCE_IN_MS,
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     try {
@@ -421,7 +589,7 @@ export function _useFullCart() {
       {
         optimisticResponse: (vars, { IGNORE }) => {
           if ((vars as AddOrUpdateCartShipmentMutationVariables).command.shipment.id === undefined) {
-            return IGNORE as AddOrUpdateCartShipmentMutation;
+            return IGNORE;
           }
           return {
             addOrUpdateCartShipment: merge({}, cart.value, {
@@ -488,27 +656,7 @@ export function _useFullCart() {
 
   async function updatePayment(value: InputPaymentType): Promise<void> {
     try {
-      await _addOrUpdatePayment(
-        { command: { payment: value, ...commonVariables }, skipQuery: false },
-        {
-          optimisticResponse: (vars, { IGNORE }) => {
-            if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
-              return IGNORE as AddOrUpdateCartPaymentMutation;
-            }
-            return {
-              addOrUpdateCartPayment: merge({}, cart.value!, {
-                payments: [
-                  {
-                    id: value.id,
-                    paymentGatewayCode: value.paymentGatewayCode,
-                    billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
-                  },
-                ],
-              }),
-            };
-          },
-        },
-      );
+      await _addOrUpdatePayment({ command: { payment: value, ...commonVariables }, skipQuery: false });
     } catch (e) {
       Logger.error(updatePayment.name, e);
       notifications.error({ text: t("pages.account.order_payment.failure.title") });
@@ -542,8 +690,9 @@ export function _useFullCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
+          const cartBeforeClear = cart.value!;
           await clearCart();
-          analytics("clearCart", cart.value!);
+          analytics("clearCart", cartBeforeClear);
         },
       },
     });
@@ -557,6 +706,8 @@ export function _useFullCart() {
     availablePaymentMethods,
     selectedItemIds,
     lineItemsGroupedByVendor,
+    mainCurrencyLineItems,
+    otherCurrencyLineItemGroups,
     selectedLineItems,
     selectedLineItemsGroupedByVendor,
     hasOnlyUnselectedLineItems,
@@ -565,6 +716,8 @@ export function _useFullCart() {
     availableExtendedGifts,
     hasValidationErrors,
     hasOnlyUnselectedValidationError,
+    loyaltyValidationErrors,
+    hasLoyaltyValidationErrors,
     load,
     refetch,
     forceFetch,
@@ -610,4 +763,11 @@ export function _useFullCart() {
   };
 }
 
-export const useFullCart = createSharedComposable(_useFullCart);
+const useFullCartShared = createSharedComposableByArgs(_useFullCart, (args) => args?.[0] ?? "");
+
+export function useFullCart() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useFullCartShared(cartId);
+}

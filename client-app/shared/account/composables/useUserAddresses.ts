@@ -3,16 +3,19 @@ import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
-import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
+import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { AnyAddressType, ISortInfo } from "@/core/types";
 
 const loading = ref(false);
-const addresses = shallowRef<MemberAddressType[]>([]);
+const addresses = shallowRef<MemberAddressFieldsFragment[]>([]);
 const sort = ref<ISortInfo>({
   column: "lastName",
   direction: SortDirection.Ascending,
 });
 
+/**
+ * @deprecated use useCustomerAddresses instead
+ */
 export function useUserAddresses() {
   const { user } = useUser();
 
@@ -35,33 +38,35 @@ export function useUserAddresses() {
     }
   }
 
-  async function updateAddresses(items: MemberAddressType[]): Promise<void> {
+  async function updateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
+    if (!user.value.memberId) {
+      return;
+    }
+
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId!, inputAddresses);
+      addresses.value = await updateMemberAddresses(user.value.memberId, inputAddresses);
     } catch (e) {
       Logger.error(`${useUserAddresses.name}.${updateAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-
-    await fetchAddresses();
   }
 
-  async function addOrUpdateAddresses(items: MemberAddressType[]): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
     if (!items.length) {
       return;
     }
 
     loading.value = true;
 
-    const updatedAddresses: MemberAddressType[] = addresses.value.slice();
+    const updatedAddresses: MemberAddressFieldsFragment[] = addresses.value.slice();
 
-    items.forEach((newAddress: MemberAddressType) => {
+    items.forEach((newAddress: MemberAddressFieldsFragment) => {
       const index = updatedAddresses.findIndex((oldAddress) => oldAddress.id === newAddress.id);
 
       if (index === -1) {
@@ -74,7 +79,7 @@ export function useUserAddresses() {
     await updateAddresses(updatedAddresses);
   }
 
-  async function removeAddresses(items: MemberAddressType[]): Promise<void> {
+  async function removeAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
     if (!items.length) {
       return;
     }
@@ -84,15 +89,13 @@ export function useUserAddresses() {
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await deleteMemberAddresses(inputAddresses, user.value.memberId!);
+      addresses.value = await deleteMemberAddresses(inputAddresses, user.value.memberId!);
     } catch (e) {
       Logger.error(`${useUserAddresses.name}.${removeAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-
-    await fetchAddresses();
   }
 
   return {

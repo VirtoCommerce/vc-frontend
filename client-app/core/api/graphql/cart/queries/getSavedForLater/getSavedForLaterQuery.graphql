@@ -1,0 +1,19 @@
+#import "../../fragments/savedForLaterList.graphql"
+
+query GetSavedForLater(
+  $storeId: String!
+  $userId: String!
+  $organizationId: String
+  $currencyCode: String
+  $cultureName: String
+) {
+  getSavedForLater(
+    storeId: $storeId
+    userId: $userId
+    organizationId: $organizationId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+  ) {
+    ...savedForLaterList
+  }
+}

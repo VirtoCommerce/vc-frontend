@@ -55,6 +55,7 @@ describe("useAnalytics", () => {
         addItemToWishList: vi.fn(),
         addItemToCart: vi.fn(),
         addItemsToCart: vi.fn(),
+        addBulkItemsToCart: vi.fn(),
         removeItemsFromCart: vi.fn(),
         viewCart: vi.fn(),
         clearCart: vi.fn(),
@@ -76,6 +77,7 @@ describe("useAnalytics", () => {
         addItemToWishList: vi.fn(),
         addItemToCart: vi.fn(),
         addItemsToCart: vi.fn(),
+        addBulkItemsToCart: vi.fn(),
         removeItemsFromCart: vi.fn(),
         viewCart: vi.fn(),
         clearCart: vi.fn(),
@@ -140,7 +142,7 @@ describe("useAnalytics", () => {
     delete mockTracker1.events.purchase;
 
     const event: AnalyticsEventNameType = "purchase";
-    const args: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, "txn123", arbitraryParam];
+    const args: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, arbitraryParam];
 
     analytics(event, ...args);
 
@@ -181,7 +183,7 @@ describe("useAnalytics", () => {
     expect(Logger.warn).not.toHaveBeenCalled();
 
     const event2: AnalyticsEventNameType = "purchase";
-    const args2: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, "txn123", { someParam: "value2" }];
+    const args2: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, { someParam: "value2" }];
 
     analytics(event2, ...args2);
 
@@ -281,7 +283,7 @@ describe("useAnalytics", () => {
     expect(Logger.warn).not.toHaveBeenCalled();
   });
 
-  it("should not dispatch events and not log warnings when no trackers are added", () => {
+  it("should not dispatch events and not log warnings when no trackers are added after development mode reset", () => {
     const event: AnalyticsEventNameType = "viewItem";
     const args: AnalyticsEventMapType["viewItem"] = [mockedProduct, arbitraryParam];
 

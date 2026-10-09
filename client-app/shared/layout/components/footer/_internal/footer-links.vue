@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { BREAKPOINTS } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import FooterLink from "./footer-link.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
@@ -61,7 +61,7 @@ const isMobile = breakpoints.smaller("sm");
   }
 
   &__title {
-    @apply flex-grow text-base font-bold uppercase text-additional-50 break-words min-w-0;
+    @apply flex-grow text-base font-bold uppercase text-[--footer-top-text-color] break-words min-w-0;
 
     @media (min-width: theme("screens.sm")) {
       @apply text-sm;

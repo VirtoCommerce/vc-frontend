@@ -1,54 +1,84 @@
 <template>
-  <VcWidget :title="$t(`shared.catalog.product_details.price_block.title`)">
-    <slot />
+  <VcWidget class="product-price-block" :title="widgetTitle">
+    <template #default>
+      <ProductPrice
+        v-if="!isMobile"
+        class="product-price-block__product-price"
+        :product="product"
+        :variations="variations"
+        :template-layout="templateLayout"
+      />
+
+      <ProductConfigurationChecklist
+        v-if="product.isConfigurable"
+        class="product-price-block__configuration-checklist"
+        :product-id="product.id"
+      />
+
+      <VcLink
+        v-if="product.isConfigurable && configurableLineItemId"
+        class="product-price-block__create-config"
+        :to="createNewConfigurationRoute"
+      >
+        <VcIcon color="primary" name="cube-transparent" size="xs" />
+
+        {{ $t("shared.catalog.product_details.create_configuration_button") }}
+      </VcLink>
+    </template>
 
     <template #footer-container>
-      <div class="flex select-none divide-x print:hidden">
-        <AddToList class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
+      <div class="product-price-block__actions">
+        <AddToList class="product-price-block__add-to-list" :product="product" :icon-size="20" />
 
-        <AddToCompareCatalog class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
+        <AddToCompareCatalog class="product-price-block__add-to-compare" :product="product" :icon-size="20" />
 
-        <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
-          <template #trigger>
-            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50">
-              <VcIcon
-                name="share"
-                size="sm"
-                :aria-label="$t('common.buttons.share')"
-                :class="{
-                  'fill-primary': !shareProductPopoverShown,
-                  'fill-neutral-400': shareProductPopoverShown,
-                }"
-              />
-            </div>
+        <VcPopover class="product-price-block__share-popover" :offset-options="8" z-index="10" enable-teleport>
+          <template #default="{ triggerProps, opened }">
+            <button
+              type="button"
+              :aria-label="$t('common.buttons.share')"
+              :class="['product-price-block__share-button', { 'product-price-block__share-button--active': opened }]"
+              v-bind="triggerProps"
+            >
+              <VcIcon name="share" size="sm" aria-hidden="true" />
+            </button>
           </template>
 
           <template #content="{ close }">
-            <div class="rounded border bg-additional-50 p-5 shadow-lg">
-              <h3 class="flex justify-between text-lg font-bold">
-                <span class="flex grow">
+            <div class="product-price-block__share-content">
+              <h3 class="product-price-block__share-header">
+                <span class="product-price-block__share-title">
                   {{ $t("shared.catalog.product_details.share_product_label") }}
                 </span>
 
-                <button class="-me-1 flex p-1 text-danger-400 hover:text-danger-700" type="button" @click="close()">
-                  <VcIcon name="delete-thin" size="sm" />
+                <button
+                  class="product-price-block__share-close"
+                  type="button"
+                  :aria-label="$t('ui_kit.buttons.close')"
+                  @click="close()"
+                >
+                  <VcIcon name="delete-thin" size="sm" aria-hidden="true" />
                 </button>
               </h3>
 
-              <div class="mt-5 flex items-center space-x-6">
+              <div class="product-price-block__share-services">
                 <a
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
                   target="_blank"
+                  rel="noopener noreferrer"
                   :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
-                  :aria-label="`Share via ${socialSharingService.name}`"
+                  :aria-label="
+                    $t('common.accessibility.share_via_opens_in_new_window', { service: socialSharingService.name })
+                  "
+                  class="product-price-block__share-service"
                 >
                   <VcImage
-                    class="rounded-sm"
+                    class="product-price-block__share-icon"
                     width="40"
                     height="40"
                     :src="socialSharingService.icon"
-                    :alt="socialSharingService.name"
+                    alt=""
                   />
                 </a>
               </div>
@@ -60,18 +90,19 @@
           :href="mailToLink"
           :aria-label="$t('common.buttons.send_link_email')"
           target="_blank"
-          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
+          rel="noopener noreferrer"
+          class="product-price-block__mail-link"
         >
-          <VcIcon name="mail" size="sm" class="fill-primary" />
+          <VcIcon name="mail" size="sm" aria-hidden="true" />
         </a>
 
         <button
           :aria-label="$t('common.buttons.print')"
-          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
+          class="product-price-block__print-button"
           type="button"
           @click="print()"
         >
-          <VcIcon name="printer" size="sm" class="fill-primary" />
+          <VcIcon name="printer" size="sm" aria-hidden="true" />
         </button>
       </div>
     </template>
@@ -79,32 +110,50 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { stringFormat } from "@/core/utilities";
-import { AddToCompareCatalog } from "@/shared/compare";
+import { useConfigurableLineItemId } from "@/shared/catalog/composables";
+import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
+import ProductConfigurationChecklist from "./configuration/product-configuration-checklist.vue";
+import ProductPrice from "./product-price.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
+  isMobile?: boolean;
+  variations?: Product[];
+  templateLayout?: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  isMobile: false,
+});
 
 const route = useRoute();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 
-const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
+const isMobile = toRef(props, "isMobile");
+const { configurableLineItemId } = useConfigurableLineItemId();
 
-const isMobile = breakpoints.smaller("lg");
+const createNewConfigurationRoute = computed(() => {
+  const query = Object.fromEntries(
+    Object.entries(route.query).filter(([key]) => key !== LINE_ITEM_ID_URL_SEARCH_PARAM),
+  );
+  return { path: route.path, query };
+});
+
+const widgetTitle = computed(() => {
+  return isMobile.value
+    ? t("shared.catalog.product_details.price_block.mobile_title")
+    : t("shared.catalog.product_details.price_block.title");
+});
 
 const pageUrl = computed(() => location.origin + route.path);
-const shareProductPopoverShown = ref(false);
 
 const mailToLink = computed(
   () =>
@@ -120,12 +169,73 @@ function getProductSocialShareUrl(urlTemplate: string, url: string): string {
 function print() {
   window.print();
 }
+</script>
 
-function handleShareProductPopoverToggle(isShown: boolean): void {
-  shareProductPopoverShown.value = isShown;
+<style lang="scss" scoped>
+.product-price-block {
+  &__configuration-checklist:not(:first-child) {
+    @apply mt-4;
+  }
 
-  if (isMobile.value && isShown && divUnderSharedPopover.value) {
-    divUnderSharedPopover.value.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+  &__create-config {
+    @apply flex items-center gap-1 text-xs font-bold;
+
+    color: var(--link-color);
+
+    &:not(:first-child) {
+      @apply mt-3;
+    }
+
+    &:hover {
+      color: var(--link-hover-color);
+    }
+  }
+
+  &__actions {
+    @apply flex select-none divide-x print:hidden;
+  }
+
+  &__add-to-list,
+  &__add-to-compare,
+  &__share-popover {
+    @apply w-1/5 hover:bg-neutral-50;
+  }
+
+  &__share-button {
+    @apply flex size-full cursor-pointer items-center justify-center text-primary hover:bg-neutral-50;
+
+    &--active {
+      @apply text-neutral-400;
+    }
+  }
+
+  &__mail-link,
+  &__print-button {
+    @apply flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 text-primary hover:bg-neutral-50;
+  }
+
+  &__share-content {
+    @apply rounded border bg-additional-50 p-5 shadow-lg;
+  }
+
+  &__share-header {
+    @apply flex justify-between text-lg font-bold;
+  }
+
+  &__share-title {
+    @apply flex grow;
+  }
+
+  &__share-close {
+    @apply -me-1 flex p-1 text-danger-400 hover:text-danger-700;
+  }
+
+  &__share-services {
+    @apply mt-5 flex items-center space-x-6;
+  }
+
+  &__share-icon {
+    @apply rounded-sm;
   }
 }
-</script>
+</style>

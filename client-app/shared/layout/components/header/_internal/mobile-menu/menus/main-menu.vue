@@ -1,4 +1,10 @@
 <template>
+  <Teleport to="body">
+    <VcLoaderOverlay v-if="reverting" fixed-spinner data-test-id="mobile-back-to-operator-loader">
+      {{ $t("shared.layout.header.top_header.switching_back") }}
+    </VcLoaderOverlay>
+  </Teleport>
+
   <section class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
     <ul class="flex flex-col gap-y-2 px-9 py-6">
       <li>
@@ -6,66 +12,118 @@
           {{ menuItem.title }}
         </MobileMenuLink>
       </li>
+
       <li v-for="item in mobileMainMenuItems" :key="item.title">
-        <component
-          :is="(item.id && customLinkComponents[item.id]) || LinkDefault"
+        <ExtensionPoint
+          category="mobileMenu"
+          :name="item.id"
           :item="item"
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
-        />
+        >
+          <template #default="{ extensionProps }">
+            <LinkDefault
+              :item="item"
+              :count="toValue(extensionProps?.count)"
+              @close="$emit('close')"
+              @select-item="$emit('selectItem', item)"
+            />
+          </template>
+        </ExtensionPoint>
       </li>
     </ul>
 
     <div class="flex flex-col gap-y-2 px-9 py-6">
       <template v-if="isAuthenticated">
         <!-- Account -->
-        <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
+        <div class="my-2 flex flex-row gap-4 text-xl">
           <div
             class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
           >
             <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-12" lazy />
+
             <VcIcon v-else name="user" />
           </div>
 
-          <div class="flex flex-col leading-tight">
-            <div class="flex flex-wrap items-center gap-x-1 text-accent-100">
-              <template v-if="operator">
-                <span class="line-clamp-3 font-bold [word-break:break-word]">
-                  {{ operator.contact?.fullName || operator.userName }}
-                </span>
-
-                <span class="text-accent-200">
-                  {{ $t("shared.layout.header.top_header.logged_in_as") }}
-                </span>
-              </template>
-
-              <span class="line-clamp-3 font-bold [word-break:break-word]">
-                {{ user.contact?.fullName || user.userName }}
+          <div
+            class="line-clamp-3 flex flex-wrap items-center gap-x-1 text-[--mobile-menu-text-color] [word-break:break-word]"
+          >
+            <template v-if="operator">
+              <span class="font-bold">
+                {{ operator.contact?.fullName || operator.userName }}
               </span>
-            </div>
 
-            <div>
-              <button type="button" class="font-bold text-[--mobile-menu-navigation-color]" @click="signMeOut">
-                {{ $t("shared.layout.header.link_logout") }}
-              </button>
-            </div>
+              {{ $t("shared.layout.header.top_header.logged_in_as") }}
+            </template>
+
+            <span class="font-bold">
+              {{ user.contact?.fullName || user.userName }}
+            </span>
           </div>
         </div>
 
-        <!-- Account link -->
-        <ul>
-          <li>
-            <MobileMenuLink
-              v-if="mobileAccountMenuItem"
-              :link="mobileAccountMenuItem"
-              class="py-1 text-2xl font-bold"
-              @select="$emit('selectItem', mobileAccountMenuItem!)"
-            >
-              {{ mobileAccountMenuItem.title }}
+        <div class="mb-4 flex justify-between gap-2">
+          <button
+            v-if="operator"
+            type="button"
+            class="flex items-center gap-1 font-bold text-[--mobile-menu-navigation-color]"
+            data-test-id="mobile-back-to-operator-button"
+            @click="onBackToOperator"
+          >
+            <VcIcon name="arrow-left" />
+
+            <span>{{ backToOperatorLabel }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="group flex items-center gap-1 font-bold text-[--mobile-menu-link-color]"
+            data-test-id="mobile-account-menu-logout-row"
+            @click="signMeOut"
+          >
+            <VcIcon name="logout" />
+
+            <span>{{ $t("shared.layout.header.link_logout") }}</span>
+          </button>
+        </div>
+
+        <!-- Account sections -->
+        <ul class="flex flex-col gap-y-2">
+          <!-- Registered sections (e.g. Sales Rep hub) always lead, in registration order. Mobile does
+               NOT honor `priority` (desktop does): the built-ins below are hardcoded blocks, so there's
+               no list to interleave into. Priority-aware mobile is deferred to the mobile-menu redesign.
+               See AccountNavigationSectionType.priority. -->
+          <li v-for="section in mobileRegisteredAccountSections" :key="section.id">
+            <MobileMenuLink :link="section" class="py-1 text-2xl font-bold" @select="$emit('selectItem', section)">
+              {{ section.title }}
             </MobileMenuLink>
           </li>
 
-          <!-- Corporate link -->
+          <!-- Purchasing -->
+          <li>
+            <MobileMenuLink
+              v-if="mobilePurchasingMenuItem"
+              :link="mobilePurchasingMenuItem"
+              class="py-1 text-2xl font-bold"
+              @select="$emit('selectItem', mobilePurchasingMenuItem!)"
+            >
+              {{ mobilePurchasingMenuItem.title }}
+            </MobileMenuLink>
+          </li>
+
+          <!-- Marketing -->
+          <li>
+            <MobileMenuLink
+              v-if="mobileMarketingMenuItem && mobileMarketingMenuItem.children?.length"
+              :link="mobileMarketingMenuItem"
+              class="py-1 text-2xl font-bold"
+              @select="$emit('selectItem', mobileMarketingMenuItem!)"
+            >
+              {{ mobileMarketingMenuItem.title }}
+            </MobileMenuLink>
+          </li>
+
+          <!-- Corporate -->
           <li>
             <MobileMenuLink
               v-if="mobileCorporateMenuItem && isCorporateMember"
@@ -74,6 +132,18 @@
               @select="$emit('selectItem', mobileCorporateMenuItem!)"
             >
               {{ mobileCorporateMenuItem.title }}
+            </MobileMenuLink>
+          </li>
+
+          <!-- User -->
+          <li>
+            <MobileMenuLink
+              v-if="mobileUserMenuItem"
+              :link="mobileUserMenuItem"
+              class="py-1 text-2xl font-bold"
+              @select="$emit('selectItem', mobileUserMenuItem!)"
+            >
+              {{ mobileUserMenuItem.title }}
             </MobileMenuLink>
           </li>
         </ul>
@@ -108,13 +178,12 @@
 </template>
 
 <script setup lang="ts">
+import { toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
-import { useSignMeOut, useUser } from "@/shared/account";
-import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
+import { ROUTES } from "@/router/routes/constants";
+import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import LinkCart from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue";
-import LinkCompare from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-default.vue";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
@@ -132,16 +201,20 @@ defineProps<IProps>();
 
 const { signMeOut } = useSignMeOut();
 const { user, operator, isAuthenticated, isCorporateMember } = useUser();
-const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
+const { reverting, backToOperatorLabel, backToOperator: onBackToOperator } = useImpersonate();
+const {
+  mobileMainMenuItems,
+  mobilePurchasingMenuItem,
+  mobileMarketingMenuItem,
+  mobileUserMenuItem,
+  mobileCorporateMenuItem,
+  mobileRegisteredAccountSections,
+} = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
-const { registerCustomLinkComponent, customLinkComponents } = useCustomMobileMenuLinkComponents();
-
-registerCustomLinkComponent({ id: "cart", component: LinkCart });
-registerCustomLinkComponent({ id: "compare", component: LinkCompare });
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
-  { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
+  { route: { name: ROUTES.SIGN_IN.NAME }, title: t("shared.layout.header.link_sign_in") },
   { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
 ];
 

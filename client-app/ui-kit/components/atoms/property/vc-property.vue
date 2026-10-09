@@ -8,7 +8,9 @@
     ]"
   >
     <div class="vc-property__label">{{ label }}</div>
+
     <div class="vc-property__dots"></div>
+
     <div class="vc-property__value">
       <slot>{{ value }}</slot>
     </div>
@@ -18,7 +20,7 @@
 <script setup lang="ts">
 interface IProps {
   label: string;
-  value?: string | number | boolean | null | undefined;
+  value?: string | number | boolean | null;
   disabled?: boolean;
 }
 

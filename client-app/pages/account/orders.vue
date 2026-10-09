@@ -4,7 +4,7 @@
       {{ $t("pages.account.orders.title") }}
     </VcTypography>
 
-    <Orders with-search with-pagination />
+    <Orders />
   </div>
 </template>
 

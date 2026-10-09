@@ -21,16 +21,25 @@ const moduleEnabled = computed(
 
 const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 
+function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
+  if (moduleEnabled.value) {
+    whiteLabelingSettings.value = payload;
+    emit(whiteLabelingSettings.value);
+  }
+}
+
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
-    if (moduleEnabled.value) {
-      try {
-        whiteLabelingSettings.value = await getGetWhiteLabelingSettings();
-        emit(whiteLabelingSettings.value);
-      } catch (e) {
-        Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
-        throw e;
-      }
+    if (!moduleEnabled.value) {
+      return;
+    }
+
+    try {
+      const settingsData = await getGetWhiteLabelingSettings();
+      setWhiteLabelingSettings(settingsData);
+    } catch (e) {
+      Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
+      throw e;
     }
   }
 
@@ -42,9 +51,13 @@ function _useWhiteLabeling() {
     footerLinks: computed(() =>
       whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item)),
     ),
+    mainMenuLinks: computed(() =>
+      whiteLabelingSettings.value?.mainMenuLinks?.map((item) => convertToExtendedMenuLink(item)),
+    ),
     favIcons: computed(() => whiteLabelingSettings.value?.favicons),
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     fetchWhiteLabelingSettings,
+    setWhiteLabelingSettings,
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),
     isOrganizationLogoUploaded: computed(() => whiteLabelingSettings.value?.isOrganizationLogoUploaded),
   };

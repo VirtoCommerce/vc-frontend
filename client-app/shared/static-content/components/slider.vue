@@ -1,10 +1,12 @@
 <template>
-  <div :data-component-id="componentId" :class="wrapperClasses">
+  <div class="slider-block" :data-component-id="componentId" :class="wrapperClasses">
     <div class="relative mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div v-if="title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">
         {{ title }}
       </div>
+
       <div v-if="subtitle" class="mb-7 text-center text-base">{{ subtitle }}</div>
+
       <div class="relative">
         <Swiper
           :slides-per-view="1"
@@ -26,12 +28,15 @@
                 class="vc-slider__image"
               />
             </component>
+
             <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
+
             <div v-if="item.text" class="text-sm">{{ item.text }}</div>
           </SwiperSlide>
         </Swiper>
+
         <div class="vc-slider__navigation">
           <div class="vc-slider__btn vc-slider__btn--prev">
             <VcIcon class="-ml-px" name="chevron-left" />
@@ -47,12 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core/index";
+import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
-import { BREAKPOINTS } from "@/core/constants";
-import type { BreakpointsType } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 
 // synced with Page builder module config/schemas/sections/slider.json and builder.io builderIOComponents
 type SlideHeightType = "small" | "medium" | "large" | "auto";
@@ -63,8 +67,8 @@ type SlideType = {
   title?: string;
   url?: string;
 };
+
 interface IProps {
-  id?: string;
   height?: SlideHeightType;
   background?: string;
   slides?: SlideType[];
@@ -145,8 +149,7 @@ function getLinkAttr(item: SlideType) {
   --navigation-offset: 0px;
 
   &__btn {
-    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
-    flex items-center justify-center text-primary cursor-pointer;
+    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)] flex items-center justify-center text-primary cursor-pointer;
 
     margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
 
@@ -173,6 +176,12 @@ function getLinkAttr(item: SlideType) {
 
   &__image {
     @apply w-full h-full object-cover object-left;
+  }
+}
+
+.slider-block {
+  &.bg-neutral-800 {
+    color: white;
   }
 }
 </style>

@@ -8,11 +8,12 @@
     },
     "list_details": {
       "empty_list": "Il tuo elenco è vuoto",
+      "no_results_message": "Nessun risultato trovato",
       "empty_list_button": "Continua a sfogliare"
     },
     "messages": {
       "click_to_receive_alert": "Clicca per ricevere un avviso",
-      "notify_me_when_in_stock": "Avvisami quando disponibile",
+      "stock_alert": "Avviso scorte",
       "you_are_subscribed": "Iscritto! Ti avviseremo quando sarà di nuovo disponibile.",
       "you_will_be_notified": "Riceverai una notifica"
     },
@@ -25,7 +26,7 @@
       },
       "reset_search": "Reimposta ricerca",
       "search_button": "Cerca",
-      "search_placeholder": "Ricerca utente"
+      "search_placeholder": "Cerca per nome prodotto"
     }
   }
 }

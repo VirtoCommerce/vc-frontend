@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,sonarjs/cognitive-complexity */
 import { noop, tryOnScopeDispose, useEventListener } from "@vueuse/core";
 import { Logger } from "@/core/utilities";
 
@@ -28,9 +27,9 @@ interface IUseBroadcastReturn {
 
 const CHANNEL_NAME = "vc_cast";
 
-const listeners: Record<string, ((data: any) => void)[]> = {};
+const listeners: Record<string, ((data: unknown) => void)[]> = {};
 
-function off(event: string, listener?: (data: any) => void) {
+function off(event: string, listener?: (data: unknown) => void) {
   if (!listeners[event]) {
     return;
   }
@@ -45,7 +44,7 @@ function off(event: string, listener?: (data: any) => void) {
   }
 }
 
-function on(event: string, listener: (data: any) => void) {
+function on(event: string, listener: (data: unknown) => void) {
   listeners[event] = listeners[event] || [];
   listeners[event].push(listener);
   /** Automatically deleted when unmounted. */
@@ -56,7 +55,7 @@ function isAsync(fn: (...args: unknown[]) => unknown): boolean {
   return fn.constructor.name === "AsyncFunction";
 }
 
-async function broadcast(event: string, data: any) {
+async function broadcast(event: string, data: unknown) {
   Logger.debug("[Broadcast][Event]", event, data);
 
   if (!listeners[event]) {
@@ -93,9 +92,9 @@ function broadcastChannelApiFactory(): IUseBroadcastReturn {
 function localStorageApiFactory(): IUseBroadcastReturn {
   const storage = window.localStorage;
   const prefix = `__${CHANNEL_NAME}:`;
-  const queue: Record<string, any[]> = {};
+  const queue: Record<string, unknown[]> = {};
 
-  function emit(event: string, data: any, includeSelf = false) {
+  function emit(event: string, data: unknown, includeSelf = false) {
     Logger.debug("[Broadcast][Emit]", event, data);
 
     const key = prefix + event;

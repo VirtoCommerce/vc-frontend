@@ -7,7 +7,7 @@ export type NotificationCustomButtonType = {
   text?: string;
   html?: string;
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
-  variant?: "solid" | "outline" | "no-border" | "no-background";
+  variant?: "solid" | "outline" | "surface" | "ghost";
   to?: RouteLocationRaw;
   clickHandler?: (notificationId: string, event: Event) => void;
 };

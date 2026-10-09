@@ -1,31 +1,74 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
-import { apolloClient, getStore } from "@/core/api/graphql";
-import { useCurrency, useThemeContext, useWhiteLabeling, useNavigations } from "@/core/composables";
+import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
+import { GetSlugInfoDocument } from "@/core/api/graphql/types";
+import {
+  useCurrency,
+  useDarkMode,
+  useModules,
+  useThemeContext,
+  useNavigations,
+  useWhiteLabeling,
+} from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
+import { startFederatedModules } from "@/core/federation/bootstrap";
+import { isFederationEnabled } from "@/core/federation/enabled";
 import { setGlobals } from "@/core/globals";
-import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
-import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { registerLocaleLoader } from "@/core/locale-loaders";
+import {
+  applicationInsightsPlugin,
+  authPlugin,
+  configPlugin,
+  contextPlugin,
+  extensionPointsPlugin,
+  permissionsPlugin,
+} from "@/core/plugins";
+import { extractHostname, Logger } from "@/core/utilities";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { init as initLoyalty } from "@/modules/loyalty";
+import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
+import { init as initReturns } from "@/modules/returns";
+import { init as initSalesRep } from "@/modules/sales-rep";
+import { init as initSkyflow } from "@/modules/skyflow";
+import { init as initPunchout } from "@/modules/punchout";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
+import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
+import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { useNotifications } from "@/shared/notification";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
+import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
-import type { StoreResponseType } from "./core/api/graphql/types";
+import type { PageContextResponseType } from "./core/api/graphql/types";
+
+/**
+ * The env override skips the query: that list wins in the loader anyway, so asking would cost the
+ * plugin author's dev loop a round trip per boot, and an error against a backend without the field.
+ */
+const ASK_PLATFORM_FOR_PLUGINS = isFederationEnabled() && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
+
+/** The preview plugins are optional: a failed load leaves the app booting without them. */
+function reportOptionalChunkFailure(error: unknown): undefined {
+  ignoreChunkLoadFailure(error);
+  Logger.error("Failed to load an optional plugin chunk.", error);
+
+  return undefined;
+}
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -56,22 +99,28 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale } = useUser();
+  const { setUser, user, isAuthenticated, savedUserId, checkPermissions } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
-    detectLocale,
     currentLanguage,
-    supportedLocales,
-    initLocale,
+    currentMaybeShortLocale,
+    defaultStoreCulture,
+    supportedLanguages,
+    applyLocale,
     fetchLocaleMessages,
-    getLocaleFromUrl,
-    pinedLocale,
-    mergeLocales,
+    mergeLocalesMessages,
+    resolveLocale,
+    normalizeToSupportedCulture,
+    getUrlWithoutPossibleLocale,
+    resolvePossibleLocale,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
-  const { fetchMenus } = useNavigations();
-  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
+  const { fetchCatalogMenu } = useNavigations();
+  const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
+  const { setActivePreset } = useDarkMode();
+  const { setModules, outdatedModules } = useModules();
+  const notifications = useNotifications();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -81,35 +130,91 @@ export default async () => {
     },
   };
 
-  const storePromise = getStore(
-    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
-  ) as Promise<StoreResponseType>;
+  // get initialization query parameters
+  const pathname = globalThis.location.pathname;
+  const pageBuilderPreview = getPageBuilderPreviewBoot();
+  const possibleCultureName = pageBuilderPreview.cultureName ?? resolvePossibleLocale(pathname);
+  const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
-  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage()]);
+  const domain = IS_DEVELOPMENT
+    ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
+    : globalThis.location.hostname;
+  const userId = savedUserId.value;
+
+  try {
+    const initialStore = await initializeApplication(domain);
+    setModules(initialStore?.settings?.modules);
+  } catch (e) {
+    Logger.warn("Failed to verify backend module versions", e);
+  }
+
+  // Issued here so its round trip overlaps the boot queries instead of following them.
+  const storePluginsPromise = ASK_PLATFORM_FOR_PLUGINS ? getStorePlugins(domain) : undefined;
+  // The loader owns the error log and the degradation to "no plugins", but only attaches its handler
+  // once it runs; until then an unobserved rejection reaches the global handler. Handling it here
+  // does not consume it — the loader still sees and reports the failure.
+  void storePluginsPromise?.catch((error: unknown) => Logger.debug("[MF] the plugin-list query failed", error));
+
+  const getPageContextPromise = getPageContext({
+    domain: domain,
+    userId: userId,
+    permalink: permalink,
+    cultureName: possibleCultureName,
+  }) as Promise<PageContextResponseType>;
+
+  const [pageContext] = await Promise.all([getPageContextPromise, fallback.setMessage()]);
+
+  const store = pageContext.store;
+  const userResult = pageContext.user;
+  const whiteLabelingSetting = pageContext.whiteLabelingSettings;
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
-    throw new Error("Store not found. Check graphql request, GetStore query");
+    throw new Error("Store not found. Check graphql request, PageContext query");
+  }
+
+  if (!userResult) {
+    alert("Error fetching user. Please contact your site administrator.");
+    throw new Error("Error fetching user. Check graphql request, PageContext query");
   }
 
   setThemeContext(store);
-
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  const twoLetterAppLocale = detectLocale([
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  ]);
+  setUser(userResult);
 
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
-  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  await initLocale(i18n, twoLetterAppLocale);
+  // A preview boot carries the edited page's language; tolerate short/differently-cased values
+  // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
+  const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
+  const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+
+  // Plural rules must be registered for every locale key messages can resolve under — full
+  // culture names (global messages) and two-letter codes (module/ui-kit messages) alike.
+  const pluralRuleLocales = supportedLanguages.value.flatMap((language) => [
+    language.cultureName,
+    language.twoLetterLanguageName,
+  ]);
+
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback, pluralRuleLocales);
+
+  // The UI kit loads its locale bundles through the shared locale-loader seam, so boot and any
+  // runtime locale switch (e.g. builder preview, VCST-5219) share one copy of this logic.
+  registerLocaleLoader("ui-kit", async (i18nInstance, language) => {
+    const uiKitMessages = await getUIKitLocales(FALLBACK_LOCALE, language.twoLetterLanguageName);
+    mergeLocalesMessages(i18nInstance, language.twoLetterLanguageName, uiKitMessages.messages);
+    if (language.twoLetterLanguageName !== FALLBACK_LOCALE) {
+      mergeLocalesMessages(i18nInstance, FALLBACK_LOCALE, uiKitMessages.fallbackMessages);
+    }
+  });
+
+  await applyLocale(i18n, currentCultureName, { rewriteUrl: pageBuilderPreview.useLocalePrefix });
+
+  const router = createRouter({
+    base: pageBuilderPreview.useLocalePrefix && !isDefaultLocaleInUse ? currentMaybeShortLocale.value : "",
+  });
 
   /**
    * Setting global variables
@@ -126,12 +231,30 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
+  seedSlugInfoCache({
+    slugInfo: pageContext.slugInfo,
+    permalink,
+    userId: user.value.id,
+    storeId: themeContext.value.storeId,
+    cultureName: currentLanguage.value.cultureName,
+    previewCultureName: pageBuilderPreview.cultureName,
+    resolvedCultureName: currentCultureName,
+  });
+
   /**
    * Other settings
    */
 
-  await Promise.all([fetchMenus(), fetchWhiteLabelingSettings()]);
-  addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+  setWhiteLabelingSettings(whiteLabelingSetting);
+  await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+
+  // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
+  setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
+
+  if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
+    void fetchCatalogMenu();
+  }
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
@@ -140,32 +263,63 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
+  void initNews(router, i18n);
+  void initLoyalty(router, i18n);
+  void initSalesRep(router, i18n);
+  void initReturns(router, i18n);
+  void initSkyflow(router, i18n);
+  void initPunchout(router, i18n);
 
   // Plugins
   app.use(head);
   app.use(i18n);
-  app.use(router);
   app.use(permissionsPlugin);
+  app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
-  const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocales(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
-  if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
-  }
   app.use(uiKit);
 
-  app.use(applicationInsightsPlugin);
+  app.use(applicationInsightsPlugin, { router });
 
-  const builderOrigin = getEpParam();
-  if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
-    const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
-      ?.default;
+  if (pageBuilderPreview.isActive) {
+    const builderPreviewPlugin = (
+      await import("@/plugins/builder-preview/builder-preview.plugin").catch(reportOptionalChunkFailure)
+    )?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, { router, builderOrigin });
+      app.use(builderPreviewPlugin, { router });
     }
   }
+
+  if (isBuilderIoPreviewMode()) {
+    const builderIoPreviewPlugin = (
+      await import("@/plugins/builder-io-preview/builder-io-preview.plugin").catch(reportOptionalChunkFailure)
+    )?.default;
+    if (builderIoPreviewPlugin) {
+      app.use(builderIoPreviewPlugin, { router });
+    }
+  }
+
+  // Started once no host plugin can still touch the router: the loader guards it against route
+  // takeover for the whole phase and cannot tell a host call from a plugin's, so builder-preview's
+  // remove-then-add would be refused. Outside preview mode nothing above awaits, so this costs no
+  // boot time. The user is already set, so a permission-gated plugin sees real claims.
+  const federatedModulesReady = startFederatedModules({
+    fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
+    hasPermission: checkPermissions,
+    conditionContext: {
+      setting: (module, key) => useModuleSettings(module).getSettingValue(key),
+      themeSetting: (key) => (themeContext.value.settings as unknown as Record<string, unknown> | undefined)?.[key],
+      isAuthenticated: isAuthenticated.value,
+      can: checkPermissions,
+    },
+  });
+
+  // Undeclared plugins' routes and declared plugins' placeholders must exist before the router is installed.
+  await federatedModulesReady;
+
+  // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
+  app.use(router);
 
   // Register Page builder components globally
   Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));
@@ -175,14 +329,103 @@ export default async () => {
 
   await router.isReady();
 
-  app.config.warnHandler = (msg, _, trace) => {
+  app.config.warnHandler = (message, _, traceDetails) => {
     // to remove builder.io warnings
-    if (consoleIgnoredErrors.some((err) => msg.includes(err) && trace.includes(BUILDER_IO_TRACE_MARKER))) {
+    if (consoleIgnoredErrors.some((err) => message?.includes(err) && traceDetails?.includes(BUILDER_IO_TRACE_MARKER))) {
       return;
     }
 
-    Logger.warn(msg, trace);
+    Logger.warn(message, traceDetails);
   };
 
   app.mount(appElement);
+
+  notifyOutdatedModules(outdatedModules.value, i18n.global.t, notifications);
 };
+
+function notifyOutdatedModules(
+  outdated: ReturnType<typeof useModules>["outdatedModules"]["value"],
+  t: (key: string, params?: Record<string, unknown>) => string,
+  notifications: ReturnType<typeof useNotifications>,
+): void {
+  if (!outdated.length) {
+    return;
+  }
+
+  const MODULES_PREVIEW_LIMIT = 3;
+  const modulesLines = outdated.map(
+    ({ moduleId, expectedVersion, backendVersion }) => `${moduleId} ${expectedVersion} ≥ ${backendVersion}`,
+  );
+  const previewLines = modulesLines.slice(0, MODULES_PREVIEW_LIMIT);
+  const hiddenCount = modulesLines.length - previewLines.length;
+  const previewHtml = hiddenCount > 0 ? `${previewLines.join("<br>")}<br>…` : previewLines.join("<br>");
+
+  notifications.error({
+    group: "OutdatedBackendModules",
+    singleInGroup: true,
+    html: `${t("common.messages.outdated_backend_modules")}<br><br>${previewHtml}`,
+    duration: DEFAULT_NOTIFICATION_DURATION,
+    variant: "outline-dark",
+    button: {
+      text: t("common.buttons.copy_to_clipboard"),
+      color: "secondary",
+      variant: "outline",
+      clickHandler: (notificationId: string) => {
+        void navigator.clipboard.writeText(modulesLines.join("\n"));
+
+        notifications.update(notificationId, {
+          duration: 5000,
+          type: "success",
+          text: t("common.messages.copied_to_clipboard"),
+          html: undefined,
+          variant: "solid",
+          button: undefined,
+        });
+      },
+    },
+  });
+}
+
+function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string): string {
+  const resolvedPermalink = getUrlWithoutPossibleLocale(permalink) ?? "";
+
+  if (!resolvedPermalink || resolvedPermalink === "/") {
+    return resolvedPermalink;
+  }
+
+  return String(resolvedPermalink).replace(/^\/+/, "");
+}
+
+/**
+ * Seeds the Apollo cache with the slugInfo already returned by pageContext, so the first navigation
+ * doesn't repeat that network call.
+ *
+ * pageContext is fetched with the raw preview `cultureName`. When the app resolves to a different
+ * culture — an unsupported value, or a short form like "fr" normalized to "fr-FR" — that slugInfo
+ * belongs to another culture, so skip seeding rather than cache it under the wrong key (VCST-5219).
+ */
+function seedSlugInfoCache(params: {
+  slugInfo: PageContextResponseType["slugInfo"];
+  permalink: string;
+  userId: string;
+  storeId: string;
+  cultureName: string;
+  previewCultureName?: string;
+  resolvedCultureName: string;
+}) {
+  const { slugInfo, permalink, userId, storeId, cultureName, previewCultureName, resolvedCultureName } = params;
+
+  if (previewCultureName && previewCultureName !== resolvedCultureName) {
+    return;
+  }
+
+  try {
+    apolloClient.writeQuery({
+      query: GetSlugInfoDocument,
+      variables: { userId, storeId, cultureName, permalink },
+      data: { slugInfo },
+    });
+  } catch (e) {
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
+  }
+}

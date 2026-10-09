@@ -1,5 +1,11 @@
 <template>
-  <VcProductCard :view-mode="viewMode" border>
+  <VcProductCard
+    :view-mode="viewMode"
+    :data-product-sku="product.code"
+    border
+    ref="productCard"
+    :class="['product-card', `product-card--${viewMode}`]"
+  >
     <template #media>
       <VcProductImage
         :images="viewMode === 'grid' ? product.images : []"
@@ -9,9 +15,9 @@
         :to="link"
       >
         <BadgesWrapper>
-          <PurchasedBeforeBadge v-if="product.isPurchased" />
+          <PurchasedBeforeBadge v-if="product.isPurchased" :size="badgeSize" square />
 
-          <DiscountBadge v-if="product.price" static :price="product.price" />
+          <DiscountBadge v-if="product.price" static :price="product.price" :size="badgeSize" />
         </BadgesWrapper>
       </VcProductImage>
 
@@ -25,7 +31,13 @@
       </VcProductActions>
     </template>
 
-    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height />
+    <VcProductTitle
+      :title="product.name"
+      :to="link"
+      lines-number="2"
+      fix-height
+      @click="$emit('linkClick', product, $event)"
+    />
 
     <VcProductVendor v-if="$cfg.vendor_enabled">
       {{ product.vendor?.name }}
@@ -45,103 +57,284 @@
     </VcProductProperties>
 
     <VcProductPrice
-      :actual-price="product.minVariationPrice?.actual ?? product.price.actual"
-      :list-price="product.minVariationPrice?.list ?? product.price.list"
+      :actual-price="actualPrice"
+      :list-price="listPrice"
       :with-from-label="product.hasVariations"
       :single-line="viewMode === 'grid'"
     />
 
-    <component
-      :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-      v-if="
-        isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
-      "
+    <ExtensionPoint
+      v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, product)"
+      :name="EXTENSION_NAMES.productCard.cardButton"
+      category="productCard"
       :product="product"
-      v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+      is-text-shown
     />
 
     <VcProductButton
       v-else-if="product.isConfigurable"
-      :to="getProductRoute(product.id, product.slug)"
+      data-test-id="product-card-configurations-button"
+      :to="link"
       :link-text="$t('pages.catalog.customize_button')"
-      :link-to="getProductRoute(product.id, product.slug)"
+      :link-to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
-    <VcProductButton
-      v-else-if="product.hasVariations"
-      :to="link"
-      :link-text="$t('pages.catalog.show_on_a_separate_page')"
-      :link-to="link"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
-      @link-click="$emit('linkClick', product, $event)"
-    />
+    <template v-else-if="product.hasVariations">
+      <VcProductButton
+        class="product-card__variations-button"
+        :data-test-id="`variations-${product.code}-button`"
+        :link-text="$t('pages.catalog.show_on_a_separate_page')"
+        :link-to="link"
+        :button-text="$t('pages.catalog.variations_button', variationsCount)"
+        :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
+        :loading="fetchingVariations"
+        @link-click="handleVariationsClick"
+      />
 
-    <AddToCart v-else :product="product" :reserved-space="viewMode === 'grid'">
+      <VcProductButton
+        class="product-card__variations-link-button"
+        :data-test-id="`variations-${product.code}-button`"
+        :to="link"
+        :link-text="$t('pages.catalog.show_on_a_separate_page')"
+        :link-to="link"
+        :button-text="$t('pages.catalog.variations_button', variationsCount)"
+        :target="browserTarget || browserTargetFromSetting"
+        @link-click="$emit('linkClick', product, $event)"
+      />
+    </template>
+
+    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
       <InStock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
         :quantity="product.availabilityData?.availableQuantity"
       />
 
-      <CountInCart :product-id="product.id" />
-    </AddToCart>
+      <CountInCart :product-id="product.id" :currency="product.price.currency" />
+    </AddToCartSimple>
+
+    <template v-if="viewMode === 'list'" #expanded-content>
+      <div v-show="isExpanded" class="product-card__variants-wrapper">
+        <div
+          v-if="fetchingVariations && (!variations || variations.length === 0)"
+          class="product-card__variants-loader"
+        >
+          <VcLoader />
+        </div>
+
+        <template v-else>
+          <VcTypography tag="h5" class="product-card__variants-title" text-transform="none">
+            {{ $t("pages.catalog.available_variations", variationsCount) }}
+          </VcTypography>
+
+          <VariationsDefault
+            :variations="variations ?? []"
+            :page-number="variationsPageNumber"
+            :pages-count="variationsPagesCount"
+            @change-page="changeVariationsPage"
+          />
+        </template>
+      </div>
+    </template>
   </VcProductCard>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, nextTick, ref, toRef, useTemplateRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { ProductType } from "@/core/enums";
+import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
-  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
 } from "@/modules/customer-reviews/constants";
-import { AddToCart } from "@/shared/cart";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
-import { AddToCompareCatalog } from "@/shared/compare";
+import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
+import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
+import { useProducts } from "@/shared/catalog/composables/useProducts";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
+import { getPurchasableVariationsCount, getVariationsCount } from "@/shared/catalog/utilities/variations";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
+import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
+import VariationsDefault from "./product/variations-default.vue";
 import PurchasedBeforeBadge from "./purchased-before-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { BrowserTargetType } from "@/core/types";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (eventName: "linkClick", product: Product, globalEvent: MouseEvent): void;
 }
 
 interface IProps {
-  loading: boolean;
+  loading?: boolean;
   product: Product;
   viewMode?: "grid" | "list";
   browserTarget?: BrowserTargetType;
   cardType?: "full" | "short";
-  lazy: boolean;
+  lazy?: boolean;
 }
 
 defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  viewMode: "grid",
+  browserTarget: BrowserTargetType.BLANK,
+});
 
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
+const product = toRef(props, "product");
+const isExpanded = ref(false);
+const productCard = useTemplateRef("productCard");
+
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
-const link = computed(() => getProductRoute(props.product.id, props.product.slug));
+const productId = computed(() => product.value.id);
+
+const catalogBasePath = useCatalogBasePath();
+const link = computed(() => getProductRoute(productId.value, props.product.slug, catalogBasePath.value));
+
+const actualPrice = computed(() =>
+  product.value.hasVariations
+    ? (product.value.minVariationPrice?.actual ?? product.value.price.actual)
+    : product.value.price.actual,
+);
+const listPrice = computed(() =>
+  product.value.hasVariations
+    ? (product.value.minVariationPrice?.list ?? product.value.price.list)
+    : product.value.price.list,
+);
 
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+    .slice(0, 3),
+);
+
+const badgeSize = computed(() => {
+  return props.viewMode === "grid" ? "lg" : "md";
+});
+
+const {
+  products: variations,
+  pagesCount: variationsPagesCount,
+  productsFilters,
+  fetchingProducts: fetchingVariations,
+  fetchProducts: fetchVariationsProducts,
+} = useProducts({
+  initialFetchingState: false,
+});
+
+const variationsLoaded = ref(false);
+
+const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
+
+const { variationsSearchParams, updateSearchParams } = useProductVariations({
+  productsFilters,
+  variationsFilterExpression,
+});
+
+const variationsPageNumber = computed(() => variationsSearchParams.value.page ?? 1);
+
+async function loadVariations() {
+  if (!variationsLoaded.value) {
+    await fetchVariationsProducts(variationsSearchParams.value);
+    variationsLoaded.value = true;
+  }
+}
+
+async function changeVariationsPage(pageNumber: number) {
+  updateSearchParams({ page: pageNumber });
+  await fetchVariationsProducts(variationsSearchParams.value);
+}
+
+async function handleVariationsClick() {
+  isExpanded.value = !isExpanded.value;
+
+  if (isExpanded.value && !variationsLoaded.value) {
+    await loadVariations();
+  }
+
+  if (isExpanded.value) {
+    await nextTick();
+    const cardElement = productCard.value?.$el as HTMLElement | null;
+    if (cardElement) {
+      const headerHeightVar = getComputedStyle(document.documentElement).getPropertyValue(
+        "--vc-layout-sidebar-offset-top",
+      );
+      const headerHeight = headerHeightVar ? parseInt(headerHeightVar, 10) : 0;
+
+      const elementPosition = cardElement.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  }
+}
+
+const variationsCount = computed(() =>
+  productsFilters.value.inStock ? getPurchasableVariationsCount(props.product) : getVariationsCount(props.product),
 );
 </script>
+
+<style scoped lang="scss">
+.product-card {
+  $list: "";
+
+  &--list {
+    $list: &;
+  }
+
+  &__variations-button {
+    @apply hidden;
+
+    #{$list} & {
+      @container (min-width: theme("containers.3xl")) {
+        @apply block;
+      }
+    }
+  }
+
+  &__variations-link-button {
+    @apply block;
+
+    #{$list} & {
+      @container (min-width: theme("containers.3xl")) {
+        @apply hidden;
+      }
+    }
+  }
+
+  &__variants-wrapper {
+    @apply border-t border-neutral-200 p-6 pt-4 hidden;
+
+    #{$list} & {
+      @container (min-width: theme("containers.3xl")) {
+        @apply block;
+      }
+    }
+  }
+
+  &__variants-loader {
+    @apply flex justify-center py-8;
+  }
+
+  &__variants-title {
+    @apply pb-3 leading-5;
+  }
+}
+</style>

@@ -1,16 +1,19 @@
 <template>
   <VcProductActionsButton
+    data-test-id="add-to-list-button"
     color="danger"
     :icon-size="iconSize"
-    :active="inWishList"
+    :active="localWishlistStatus"
     :disabled="!isAuthenticated"
-    :tooltip-text="tooltipText"
+    :aria-label="ariaLabel"
+    :aria-pressed="isAuthenticated ? localWishlistStatus : undefined"
+    :tooltip-text="ariaLabel"
     @click="openAddToListModal"
   />
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables";
 import { dataChangedEvent, TabsType, useBroadcast } from "@/shared/broadcast";
@@ -30,17 +33,26 @@ const { openModal } = useModal();
 const { isAuthenticated } = useUser();
 const broadcast = useBroadcast();
 
-const product = toRef(props, "product");
-const inWishList = computed(() => product.value.inWishlist);
+const localWishlistStatus = ref(false);
 
-const tooltipText = computed<string>(() => {
+watch(
+  () => props.product.inWishlist,
+  (newValue) => {
+    if (!props.product.isConfigurable) {
+      localWishlistStatus.value = newValue;
+    }
+  },
+  { immediate: true },
+);
+
+const ariaLabel = computed<string>(() => {
   if (!isAuthenticated.value) {
     return t("common.messages.wishlists_available_for_authorized");
-  } else if (props.product.inWishlist) {
-    return t("pages.catalog.in_the_list_tooltip");
-  } else {
-    return t("pages.catalog.add_to_wishlist_tooltip");
   }
+
+  return localWishlistStatus.value
+    ? t("pages.catalog.in_the_list_tooltip")
+    : t("pages.catalog.add_to_wishlist_tooltip");
 });
 
 function openAddToListModal() {
@@ -53,7 +65,7 @@ function openAddToListModal() {
     props: {
       product: props.product,
       onResult: (inWishLists: boolean) => {
-        product.value.inWishlist = inWishLists;
+        localWishlistStatus.value = inWishLists;
 
         void broadcast.emit(dataChangedEvent, TabsType.ALL);
       },

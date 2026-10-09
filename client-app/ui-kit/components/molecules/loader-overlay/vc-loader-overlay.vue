@@ -2,7 +2,11 @@
   <transition name="fade" appear>
     <div v-if="visible" v-bind="$attrs" :class="['vc-loader-overlay', { 'vc-loader-overlay--with-bg': !noBg }]">
       <div :class="['vc-loader-overlay__spinner', { 'vc-loader-overlay__spinner--fixed': fixedSpinner }]">
-        <VcLoader />
+        <VcLoader class="vc-loader-overlay__loader" />
+
+        <div v-if="$slots.default" class="vc-loader-overlay__content">
+          <slot />
+        </div>
       </div>
     </div>
   </transition>
@@ -33,11 +37,19 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__spinner {
-    @apply absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 text-primary;
+    @apply absolute top-1/2 left-1/2 flex flex-col items-center -translate-y-1/2 -translate-x-1/2 text-primary;
 
     &--fixed {
       @apply fixed;
     }
+  }
+
+  &__loader {
+    @apply h-6 w-6;
+  }
+
+  &__content {
+    @apply mt-3 max-w-[60ch] text-center text-sm text-additional-950;
   }
 }
 </style>

@@ -1,0 +1,54 @@
+$colors: primary, secondary, accent, neutral, success, danger, info, warning;
+$status-colors: info, success, warning, danger;
+$solid-bg: (
+  primary: 200,
+  secondary: 300,
+  accent: 300,
+  neutral: 300,
+  success: 400,
+  danger: 400,
+  info: 400,
+  warning: 400,
+);
+
+@each $color in $colors {
+  .vc-badge--solid--#{$color} {
+    --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+  }
+}
+
+@each $color, $shade in $solid-bg {
+  .vc-badge--solid--#{$color} {
+    --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+    --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+  }
+}
+
+// A dot has no text, so its fill alone carries the status and owes 3:1 (WCAG 1.4.11).
+// Re-stated here because the solid rule above would otherwise win on specificity in dark mode.
+@each $color in $status-colors {
+  .vc-badge--dot.vc-badge--solid--#{$color} {
+    --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-700));
+    --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-700));
+  }
+}
+
+@each $color in $colors {
+  .vc-badge--outline--#{$color} {
+    --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+    --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
+  }
+
+  .vc-badge--soft--#{$color} {
+    --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+    --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
+  }
+
+  .vc-badge--surface--#{$color} {
+    --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
+  }
+
+  .vc-badge--ghost--#{$color} {
+    --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
+  }
+}

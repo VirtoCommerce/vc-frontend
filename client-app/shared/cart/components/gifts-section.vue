@@ -9,7 +9,7 @@
           :image-url="gift.imageUrl"
           :disabled="disabled"
           :selected="gift.isAddedInCart"
-          :browser-target="$cfg.details_browser_target"
+          :browser-target="browserTarget"
           with-image
           selectable
           @select="$emit('toggle:gift', gift)"
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBrowserTarget } from "@/core/composables";
 import type { ExtendedGiftItemType } from "@/shared/cart";
 
 interface IProps {
@@ -39,4 +40,6 @@ defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   gifts: () => [],
 });
+
+const { browserTarget } = useBrowserTarget();
 </script>

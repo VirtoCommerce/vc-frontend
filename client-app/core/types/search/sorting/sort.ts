@@ -1,6 +1,8 @@
-import { SortDirection } from "@/core/enums/sort-direction.enum";
+import { SortDirection } from "@/core/enums";
 import { SearchEntity } from "@/core/types/search/entity";
-import type { ISortInfo } from "./sort-info";
+import type { SortDirectionType, ISortInfo } from "./sort-info";
+
+const VALID_DIRECTIONS = new Set<SortDirectionType>([SortDirection.Ascending, SortDirection.Descending]);
 
 export class Sort extends SearchEntity implements ISortInfo {
   get column() {
@@ -13,12 +15,12 @@ export class Sort extends SearchEntity implements ISortInfo {
 
   constructor(
     public fieldName: string = "createdDate",
-    public direction: SortDirection = SortDirection.Descending,
+    public direction: SortDirectionType = SortDirection.Descending,
   ) {
     super();
   }
 
-  toggle(): SortDirection {
+  toggle(): SortDirectionType {
     return this.direction === SortDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
   }
 
@@ -29,8 +31,8 @@ export class Sort extends SearchEntity implements ISortInfo {
   static fromString(str: string): Sort {
     const [fieldName, direction] = str.split(":");
     let result: Sort;
-    if (fieldName && direction && direction in SortDirection) {
-      result = new Sort(fieldName, direction as SortDirection);
+    if (fieldName && direction && VALID_DIRECTIONS.has(direction as SortDirectionType)) {
+      result = new Sort(fieldName, direction as SortDirectionType);
     } else {
       result = new Sort();
     }

@@ -1,5 +1,5 @@
 declare global {
-  type VcIconSizeType = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number;
+  type VcIconSizeType = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number | (string & {});
 }
 
 export {};

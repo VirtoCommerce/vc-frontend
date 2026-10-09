@@ -1,0 +1,18 @@
+#import "../../../fragments/organizationFields.graphql"
+
+query GetOrganizations($after: String, $first: Int, $sort: String, $searchPhrase: String, $statuses: [String]) {
+  me {
+    contact {
+      organizations(after: $after, first: $first, sort: $sort, searchPhrase: $searchPhrase, statuses: $statuses) {
+        items {
+          ...organizationFields
+        }
+        totalCount
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}

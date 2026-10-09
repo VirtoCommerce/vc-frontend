@@ -7,22 +7,35 @@
     <div class="flex flex-col">
       <!-- Title block -->
       <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
-        <VcTypography v-if="list?.name" tag="h1" truncate>
-          {{ list.name }}
+        <VcTypography v-if="actualListName" tag="h1" truncate>
+          {{ actualListName }}
         </VcTypography>
 
         <!-- Title skeleton -->
-        <div v-else class="w-2/3 bg-neutral-200 text-3xl md:w-1/3">&nbsp;</div>
+        <div v-else class="w-2/3 bg-neutral-200 text-3xl md:w-1/3">{{ props.listName ?? "&nbsp;" }}</div>
 
         <div class="order-last mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:my-0">
           <VcButton
+            data-test-id="add-all-to-cart-button"
             :disabled="loading || !pagedListItems.length"
             size="sm"
+            variant="outline"
             prepend-icon="cart"
             class="w-full md:order-last md:w-auto"
             @click="addAllListItemsToCart"
           >
             {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+          </VcButton>
+
+          <VcButton
+            :disabled="loading || !pagedListItems.length"
+            :loading="createCartFromWishlistLoading"
+            size="sm"
+            prepend-icon="cart-check"
+            class="w-full md:order-last md:w-auto"
+            @click="buyNow"
+          >
+            {{ $t("common.buttons.buy_now") }}
           </VcButton>
 
           <VcButton
@@ -40,29 +53,34 @@
             :disabled="loading || !list"
             size="sm"
             variant="outline"
-            prepend-icon="cog"
+            prepend-icon="settings"
             class="grow"
             @click="openListSettingsModal"
           >
             {{ $t("shared.wishlists.list_details.list_settings_button") }}
           </VcButton>
+
+          <VcButton
+            v-if="canShare"
+            :disabled="loading"
+            size="sm"
+            variant="outline"
+            prepend-icon="users"
+            class="grow"
+            @click="openShareListModal"
+          >
+            {{ $t("shared.wishlists.list_card.share_button") }}
+          </VcButton>
         </div>
       </div>
 
       <div ref="listElement" class="mt-5 w-full">
-        <!-- Skeletons -->
-        <template v-if="listLoading">
-          <div v-if="isMobile" class="grid grid-cols-2 gap-x-4 gap-y-6">
-            <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
-          </div>
-
-          <div v-else class="flex flex-col rounded border bg-additional-50 shadow-sm">
-            <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-neutral-50" />
-          </div>
-        </template>
+        <!-- Skeletons: keyed off this page's own fetch, not the shared `listLoading`, which every `useWishlists`
+             caller raises — a save from the Rename or Share dialog would otherwise swap the whole table for one. -->
+        <WishlistProductsSkeleton v-if="listFetching" :itemsCount="actualPageRowsCount" />
 
         <!-- List details -->
-        <template v-else-if="!listLoading && !!list?.items?.length">
+        <template v-else-if="!!list?.items?.length">
           <VcWidget size="lg">
             <div class="flex flex-col gap-6">
               <WishlistLineItems
@@ -89,7 +107,7 @@
 
         <!-- Empty list -->
         <VcEmptyView
-          v-else-if="!listLoading && list?.items?.length === 0"
+          v-else-if="list?.items?.length === 0"
           :text="$t('shared.wishlists.list_details.empty_list')"
           icon="outline-lists"
         >
@@ -112,19 +130,21 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep, isEqual, keyBy, pick } from "lodash";
+import { cloneDeep, isEqual, keyBy, pick } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
+import { WishlistAccessType } from "@/core/api/graphql/types";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { prepareLineItem } from "@/core/utilities";
+import { prepareLineItem, Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
+import { useUser } from "@/shared/account/composables";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
-import { ProductSkeletonGrid } from "@/shared/catalog";
 import { SaveChangesModal } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -132,8 +152,9 @@ import {
   useWishlists,
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
+  ShareWishlistModal,
   WishlistLineItems,
-  WishlistProductItemSkeleton,
+  WishlistProductsSkeleton,
 } from "@/shared/wishlists";
 import type {
   InputUpdateWishlistItemsType,
@@ -144,11 +165,15 @@ import type {
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+
 interface IProps {
   listId: string;
+  listName?: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  listName: undefined,
+});
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
@@ -157,6 +182,7 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
+const { isCorporateMember } = useUser();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
@@ -165,6 +191,8 @@ const {
   addItemsToCart,
   addToCart,
   changeItemQuantity,
+  createCartFromWishlist,
+  createCartFromWishlistLoading,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
@@ -174,12 +202,17 @@ usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
+const router = useRouter();
+
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
 const itemsPerPage = ref(6);
 const page = ref(1);
+// `list` is module-scoped and survives navigation, so re-entering a list leaves last visit's data in place while
+// this page's own buffer is still empty. Its own flag is the only thing that knows the difference.
+const listFetching = ref(true);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
 const pendingItems = ref<Record<string, boolean>>({});
@@ -206,11 +239,31 @@ const wishlistListProperties = computed(() => ({
   related_type: "wishlist",
 }));
 
+const actualListName = computed(() => props.listName ?? list.value?.name);
+
 const isMobile = breakpoints.smaller("lg");
+
+// `isOwner` as well as write access: the two are independent, and changing the scope revokes an audience a
+// non-owner cannot even see — the backend resolves `targets` for the owner only.
+const canShare = computed(
+  () =>
+    isCorporateMember.value &&
+    !!list.value?.sharingSetting?.isOwner &&
+    list.value?.sharingSetting?.access === WishlistAccessType.Write,
+);
 
 function openListSettingsModal(): void {
   openModal({
     component: AddOrUpdateWishlistModal,
+    props: {
+      list: list.value,
+    },
+  });
+}
+
+function openShareListModal(): void {
+  openModal({
+    component: ShareWishlistModal,
     props: {
       list: list.value,
     },
@@ -222,8 +275,8 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
-  const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
-  await addItemsToCart(items);
+  const newCartItems = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
+  await addItemsToCart(newCartItems);
 
   const products = wishlistItems.value
     .map((item) => item.product)
@@ -236,6 +289,7 @@ async function addAllListItemsToCart(): Promise<void> {
 
   showResultModal(wishlistItems.value);
 }
+
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id,
@@ -292,26 +346,26 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     (listItem) => listItem.productId === item.productId,
   );
 
-  if (!lineItem?.product) {
+  if (!lineItem?.product || pendingItems.value[lineItem.id]) {
     return;
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
-  if (pendingItems.value[lineItem.id]) {
-    return;
-  }
-  pendingItems.value[lineItem.id] = true;
-  if (itemInCart) {
-    if (itemInCart.quantity !== quantity) {
-      await changeItemQuantity(itemInCart.id, quantity);
-    }
-  } else {
-    await addToCart(lineItem.product.id, quantity);
 
-    trackAddItemToCart(lineItem.product, quantity);
-    void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
+  pendingItems.value[lineItem.id] = true;
+  try {
+    if (itemInCart) {
+      if (itemInCart.quantity !== quantity) {
+        await changeItemQuantity(itemInCart.id, quantity);
+      }
+    } else {
+      await addToCart(lineItem.product.id, quantity);
+      trackAddItemToCart(lineItem.product, quantity);
+      void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
+    }
+  } finally {
+    pendingItems.value[lineItem.id] = false;
   }
-  pendingItems.value[lineItem.id] = false;
 
   showResultModal([lineItem]);
 }
@@ -325,15 +379,14 @@ function openDeleteProductModal(values: string[]): void {
       props: {
         listId: list.value?.id,
         listItem: item,
+        loading: loading.value,
 
-        async onResult(): Promise<void> {
+        onResult() {
           const previousPagesCount = pagesCount.value;
 
           void broadcast.emit(dataChangedEvent);
 
           wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
-
-          await fetchWishList(props.listId);
 
           /**
            * If you were on the last page, and after deleting the product
@@ -360,25 +413,58 @@ function selectItemEvent(item: Product | undefined): void {
   analytics("selectItem", item, wishlistListProperties.value);
 }
 
+async function buyNow() {
+  if (!list.value?.id) {
+    return;
+  }
+
+  if (isDirty.value) {
+    await openSaveChangesModal();
+  }
+
+  try {
+    const result = await createCartFromWishlist(list.value.id);
+    if (!result?.data?.createCartFromWishlist?.id) {
+      Logger.error("Can't create cart from wishlist", result);
+      return;
+    }
+
+    void router.push({ name: ROUTES.CART_ID.NAME, params: { cartId: result.data.createCartFromWishlist.id } });
+  } catch (error) {
+    Logger.error("Can't create cart from wishlist", error);
+  }
+}
+
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
-  await fetchWishList(props.listId);
-  page.value = 1;
-  wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+  listFetching.value = true;
+
+  try {
+    await fetchWishList(props.listId);
+    page.value = 1;
+    wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+  } finally {
+    listFetching.value = false;
+  }
 });
 
 /**
  * Send Google Analytics event for related products.
  */
+// Reported once per list: saving from the Rename or Share dialog reassigns `list`, which would otherwise send a
+// second impression for the same items with no navigation in between.
+let reportedListId: string | undefined;
+
 watchEffect(() => {
   const items = list.value?.items
     ?.map((item) => item.product!)
     // filtering of deleted products
     .filter(Boolean);
 
-  if (items?.length) {
+  if (items?.length && list.value?.id !== reportedListId) {
+    reportedListId = list.value?.id;
     analytics("viewItemList", items, wishlistListProperties.value);
   }
 });

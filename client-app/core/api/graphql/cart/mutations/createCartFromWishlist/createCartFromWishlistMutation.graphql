@@ -1,0 +1,5 @@
+mutation CreateCartFromWishlist($command: InputCreateCartFromWishlistType!) {
+  createCartFromWishlist(command: $command) {
+    id
+  }
+}

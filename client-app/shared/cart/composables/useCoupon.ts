@@ -1,62 +1,111 @@
-import { computed, readonly, ref, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
+import { computed, readonly, ref } from "vue";
 import { useFullCart } from "@/shared/cart/composables/useCart";
-import type { CouponType } from "@/core/api/graphql/types";
+import { isSameCouponCode } from "@/shared/cart/utils";
 
-const couponCode = ref("");
-const validationError = ref("");
+type ErrorType = "invalid" | "failed";
+type CouponErrorType = { code: string; type: ErrorType };
+
+const COUPON_ERROR_TIMEOUT = 7000;
+
+const couponError = ref<CouponErrorType>();
+const loadingCouponCode = ref<string>();
+let couponErrorTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 export function useCoupon() {
-  const { t } = useI18n();
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
 
-  const INVALID_COUPON_MESSAGE = t("common.messages.invalid_coupon");
+  const appliedCouponCode = computed(
+    () => cart.value?.coupons?.find((coupon) => coupon.isAppliedSuccessfully)?.code ?? undefined,
+  );
 
-  const firstCouponInCart = computed<CouponType | undefined>(() => cart.value?.coupons?.[0]);
-  const isApplied = computed<boolean>(() => Boolean(firstCouponInCart.value?.isAppliedSuccessfully));
-
-  const trimmedCoupon = computed(() => {
-    return couponCode.value.trim();
-  });
-
-  function clearValidationError() {
-    validationError.value = "";
+  function clearError() {
+    clearTimeout(couponErrorTimeoutId);
+    couponErrorTimeoutId = undefined;
+    couponError.value = undefined;
   }
 
-  async function applyCoupon() {
-    clearValidationError();
+  function setError(error: CouponErrorType) {
+    clearTimeout(couponErrorTimeoutId);
+    couponError.value = error;
+    couponErrorTimeoutId = setTimeout(clearError, COUPON_ERROR_TIMEOUT);
+  }
 
-    if (!trimmedCoupon.value) {
-      return;
+  // Returns this call's own outcome: `couponError` is module-level, so a concurrent operation on
+  // another card can clear or overwrite it before the caller reads it.
+  async function applyCoupon(code: string): Promise<boolean> {
+    clearError();
+
+    const trimmed = code.trim();
+    if (!trimmed) {
+      return false;
     }
 
-    const validationResult = await validateCartCoupon(trimmedCoupon.value);
+    try {
+      loadingCouponCode.value = trimmed;
 
-    if (validationResult) {
-      await addCartCoupon(trimmedCoupon.value);
-    } else {
-      validationError.value = INVALID_COUPON_MESSAGE;
+      // The new coupon is validated BEFORE the applied one is removed, so an invalid code can't
+      // silently drop a working coupon (VCST-5518).
+      const isValid = await validateCartCoupon(trimmed);
+      if (!isValid) {
+        setError({ code: trimmed, type: "invalid" });
+        return false;
+      }
+
+      if (appliedCouponCode.value && !isSameCouponCode(appliedCouponCode.value, trimmed)) {
+        await removeCartCoupon(appliedCouponCode.value);
+      }
+
+      await addCartCoupon(trimmed);
+
+      // The mutation resolving is not proof the coupon applied: a valid reward can yield no
+      // discount (zero amount, gift/shipping rewards), and the cart can drift between the two
+      // round-trips. The cart is the truth; the backend matches codes case-insensitively.
+      if (!isSameCouponCode(appliedCouponCode.value, trimmed)) {
+        setError({ code: trimmed, type: "invalid" });
+
+        return false;
+      }
+
+      return true;
+    } catch {
+      setError({ code: trimmed, type: "failed" });
+
+      return false;
+    } finally {
+      loadingCouponCode.value = undefined;
     }
   }
 
-  async function removeCoupon() {
-    if (!trimmedCoupon.value) {
-      return;
+  async function removeCoupon(code: string): Promise<boolean> {
+    clearError();
+
+    const trimmed = code.trim();
+    if (!trimmed) {
+      return false;
     }
 
-    await removeCartCoupon(trimmedCoupon.value);
-  }
+    try {
+      loadingCouponCode.value = trimmed;
 
-  watchEffect(() => {
-    couponCode.value = firstCouponInCart.value?.code ?? "";
-  });
+      await removeCartCoupon(trimmed);
+
+      // The backend silently no-ops when the code is not in the cart.
+      return !isSameCouponCode(appliedCouponCode.value, trimmed);
+    } catch {
+      setError({ code: trimmed, type: "failed" });
+
+      return false;
+    } finally {
+      loadingCouponCode.value = undefined;
+    }
+  }
 
   return {
-    couponCode,
+    appliedCouponCode,
+    couponError: readonly(couponError),
+    loadingCouponCode: readonly(loadingCouponCode),
     applyCoupon,
     removeCoupon,
-    couponIsApplied: isApplied,
-    clearCouponValidationError: clearValidationError,
-    couponValidationError: readonly(validationError),
+    clearError,
   };
 }

@@ -24,6 +24,7 @@ speed-measure-plugin.json
 .settings/
 *.sublime-workspace
 .idea
+tags
 
 # IDE - VSCode
 .vscode/*
@@ -68,3 +69,23 @@ dist-ssr
 
 # https certificates
 .certificates/*
+
+# AI tools: shared Claude Code config is committed; personal skills, local settings and runtime state are not
+*.local.md
+.claude/*
+!.claude/rules/
+!.claude/hooks/
+!.claude/settings.json
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/implement/
+.claude/**/*.local.*
+.serena
+
+# Playwright MCP
+.playwright-mcp/
+
+# The generated @vc-frontend/core artifacts (contract/index.d.ts, contract/tailwind-preset.cjs)
+# are committed by design ("contract" is deliberately not named dist — it is the versioned
+# type contract, not transient build output). The intermediate declaration emit stays ignored.
+client-app/core-api/.types-build/

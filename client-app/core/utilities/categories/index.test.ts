@@ -16,6 +16,7 @@ function createCategory(overrides: Partial<Category>): Category {
     childCategories: [],
     descriptions: [],
     images: [],
+    assets: [],
     outlines: [],
     properties: [],
     seoInfo: {
@@ -48,11 +49,11 @@ describe("getCategoryRoute", () => {
       slug: "electronics",
     });
 
-    const expectedRoute: RouteLocationRaw = "/electronics";
+    const expectedRoute: RouteLocationRaw = { path: "/electronics" };
 
     const result = getCategoryRoute(category);
 
-    expect(result).toBe(expectedRoute);
+    expect(result).toStrictEqual(expectedRoute);
   });
 
   it("should return named route when category slug is undefined", () => {
@@ -93,11 +94,11 @@ describe("getCategoryRoute", () => {
       slug: "books",
     });
 
-    const expectedRoute: RouteLocationRaw = "/books";
+    const expectedRoute: RouteLocationRaw = { path: "/books" };
 
     const result = getCategoryRoute(category);
 
-    expect(result).toBe(expectedRoute);
+    expect(result).toStrictEqual(expectedRoute);
   });
 
   it("should handle CategoryTreeItemType without slug", () => {
@@ -126,5 +127,136 @@ describe("getCategoryRoute", () => {
     expect(() => {
       getCategoryRoute(undefined as unknown as Category);
     }).toThrowError();
+  });
+
+  it("should return route with slug and query when category has a slug and query is provided", () => {
+    const category: Category = createCategory({
+      id: "1",
+      slug: "electronics",
+    });
+
+    const query = { sort: "price", filter: "brand" };
+    const expectedRoute: RouteLocationRaw = {
+      path: "/electronics",
+      query: { sort: "price", filter: "brand" },
+    };
+
+    const result = getCategoryRoute(category, query);
+
+    expect(result).toStrictEqual(expectedRoute);
+  });
+
+  it("should return named route with query when category slug is undefined and query is provided", () => {
+    const category: Category = createCategory({
+      id: "2",
+      slug: undefined,
+    });
+
+    const query = { page: "2", q: "foo" };
+    const expectedRoute: RouteLocationRaw = {
+      name: "Category",
+      params: { categoryId: "2" },
+      query: { page: "2", q: "foo" },
+    };
+
+    const result = getCategoryRoute(category, query);
+
+    expect(result).toEqual(expectedRoute);
+  });
+
+  it("should return named route with query when category slug is empty string and query is provided", () => {
+    const category: Category = createCategory({
+      id: "4",
+      slug: "",
+    });
+
+    const query = { sort: "name-ascending" };
+    const expectedRoute: RouteLocationRaw = {
+      name: "Category",
+      params: { categoryId: "4" },
+      query: { sort: "name-ascending" },
+    };
+
+    const result = getCategoryRoute(category, query);
+
+    expect(result).toEqual(expectedRoute);
+  });
+
+  it("should handle CategoryTreeItemType with slug and query", () => {
+    const category: CategoryTreeItemType = createCategoryTreeItem({
+      id: "3",
+      slug: "books",
+    });
+
+    const query = { q: "fiction", sort: "name-ascending" };
+    const expectedRoute: RouteLocationRaw = {
+      path: "/books",
+      query: { q: "fiction", sort: "name-ascending" },
+    };
+
+    const result = getCategoryRoute(category, query);
+
+    expect(result).toStrictEqual(expectedRoute);
+  });
+
+  it("should handle CategoryTreeItemType without slug and with query", () => {
+    const category: CategoryTreeItemType = createCategoryTreeItem({
+      id: "4",
+      slug: undefined,
+    });
+
+    const query = { q: "bar" };
+    const expectedRoute: RouteLocationRaw = {
+      name: "Category",
+      params: { categoryId: "4" },
+      query: { q: "bar" },
+    };
+
+    const result = getCategoryRoute(category, query);
+
+    expect(result).toEqual(expectedRoute);
+  });
+
+  it("should return route without query when query is empty object", () => {
+    const category: Category = createCategory({
+      id: "1",
+      slug: "electronics",
+    });
+
+    const expectedRoute: RouteLocationRaw = { path: "/electronics" };
+
+    const result = getCategoryRoute(category, {});
+
+    expect(result).toStrictEqual(expectedRoute);
+  });
+
+  describe("when basePath is provided", () => {
+    it("should prepend the basePath to the slug-based route", () => {
+      const category: Category = createCategory({ id: "1", slug: "electronics" });
+      const result = getCategoryRoute(category, undefined, "/loyalty-catalog");
+      expect(result).toStrictEqual({ path: "/loyalty-catalog/electronics" });
+    });
+
+    it("should normalize a trailing slash in basePath", () => {
+      const category: Category = createCategory({ id: "1", slug: "electronics" });
+      const result = getCategoryRoute(category, undefined, "/loyalty-catalog/");
+      expect(result).toStrictEqual({ path: "/loyalty-catalog/electronics" });
+    });
+
+    it("should fall back to the LoyaltyCategory route when basePath is /loyalty-catalog and slug is missing", () => {
+      const category: Category = createCategory({ id: "2", slug: undefined });
+      const result = getCategoryRoute(category, undefined, "/loyalty-catalog");
+      expect(result).toEqual({ name: "LoyaltyCategory", params: { categoryId: "2" } });
+    });
+
+    it("should keep query on the LoyaltyCategory fallback", () => {
+      const category: Category = createCategory({ id: "2", slug: undefined });
+      const result = getCategoryRoute(category, { sort: "name-ascending" }, "/loyalty-catalog");
+      expect(result).toEqual({
+        name: "LoyaltyCategory",
+        params: { categoryId: "2" },
+        query: { sort: "name-ascending" },
+      });
+    });
   });
 });

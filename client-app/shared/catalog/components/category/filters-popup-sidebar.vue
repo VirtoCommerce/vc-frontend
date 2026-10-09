@@ -3,33 +3,34 @@
     class="filters-popup-sidebar"
     :is-visible="isVisible"
     :title="isMobile ? $t('common.buttons.filters') : $t('common.buttons.allFilters')"
-    @hide="$emit('hidePopupSidebar')"
+    @hide="onCancel"
   >
     <ProductsFilters
-      :keyword="keywordQueryParam"
-      :filters="popupSidebarFilters"
+      v-if="localFilters"
+      :id="productsFiltersId"
+      :filters="localFilters"
       :loading="loading || facetsLoading"
-      @change="$emit('updatePopupSidebarFilters', $event)"
+      @change:filters="onProductsFiltersChange"
     >
       <template #prepend="{ loading: updatingFiltersState }">
         <div class="filters-popup-sidebar__container">
           <VcCheckbox
             v-if="!hideControls && isPurchasedBeforeEnabled"
-            :model-value="popupSidebarFilters.purchasedBefore"
+            :model-value="localFilters.purchasedBefore"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
             data-test-id="purchased-before-checkbox-filter"
-            @change="onChange({ purchasedBefore: $event })"
+            @change="onTopFiltersChange({ purchasedBefore: $event })"
           >
             {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
           </VcCheckbox>
 
           <VcCheckbox
             v-if="!hideControls"
-            :model-value="popupSidebarFilters.inStock"
+            :model-value="localFilters.inStock"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
-            @change="onChange({ inStock: $event })"
+            @change="onTopFiltersChange({ inStock: $event })"
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
@@ -37,17 +38,17 @@
           <VcCheckbox
             v-if="!hideControls"
             class="filters-popup-sidebar__control"
-            :model-value="!!popupSidebarFilters.branches.length"
+            :model-value="!!localFilters.branches.length"
             :disabled="updatingFiltersState"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             prevent-default
-            @change="$emit('openBranchesModal', true)"
+            @change="openBranchesModal"
           >
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
               <span>
                 {{
                   $t("pages.catalog.branch_availability_filter_card.branches", {
-                    n: popupSidebarFilters.branches.length,
+                    n: localFilters.branches.length,
                   })
                 }}
               </span>
@@ -62,23 +63,19 @@
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
         color="secondary"
-        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
         :title="$t('common.buttons.reset')"
         size="sm"
         icon="reset"
-        @click="
-          $emit('resetFacetFilters');
-          $emit('hidePopupSidebar');
-        "
+        :disabled="!isExistSelectedFacets"
+        @click="onReset"
       />
 
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
-        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
         min-width="6.25rem"
         size="sm"
-        @click="$emit('hidePopupSidebar')"
+        @click="onCancel"
       >
         {{ $t("common.buttons.cancel") }}
       </VcButton>
@@ -88,10 +85,7 @@
         :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
-        @click="
-          $emit('applyFilters', popupSidebarFilters);
-          $emit('hidePopupSidebar');
-        "
+        @click="onApply"
       >
         {{ $t("common.buttons.apply") }}
       </VcButton>
@@ -100,43 +94,147 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
+import { cloneDeep, isEqual } from "lodash-es";
+import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
+import { useModal } from "@/shared/modal";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
+import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IEmits {
   (event: "hidePopupSidebar"): void;
-  (event: "updatePopupSidebarFilters", filters: ProductsFiltersType): void;
-  (event: "openBranchesModal", fromPopupSidebarFilter: boolean): void;
   (event: "resetFacetFilters"): void;
   (event: "applyFilters", filters: ProductsFiltersType): void;
 }
 
 interface IProps {
-  isExistSelectedFacets?: boolean;
   isMobile?: boolean;
-  isPopupSidebarFilterDirty?: boolean;
   isVisible?: boolean;
   loading?: boolean;
   facetsLoading?: boolean;
   hideControls?: boolean;
-  keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
+  isExistSelectedFacets: boolean;
 }
+
+const productsFiltersId = useComponentId("products-filters");
+
+const { focusFirst } = useFocusManagement({
+  container: `#${productsFiltersId}`,
+});
+
+const localFilters = ref<ProductsFiltersType>({
+  filters: [],
+  facets: [],
+  branches: [],
+  inStock: false,
+  purchasedBefore: false,
+});
+
+const beforeChangeFilterState = ref<ProductsFiltersType>();
 
 const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
-const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
-  props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
+function onTopFiltersChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) {
+  if (!localFilters.value) {
+    return;
+  }
+  if ("purchasedBefore" in payload) {
+    localFilters.value.purchasedBefore = payload.purchasedBefore;
+  } else {
+    localFilters.value.inStock = payload.inStock;
+  }
+
+  emit("applyFilters", localFilters.value);
+}
+
+watch(
+  () => props.popupSidebarFilters,
+  (filters) => {
+    localFilters.value = cloneDeep(filters);
+  },
+  { immediate: true },
 );
 
-function onChange(payload: Partial<ProductsFiltersType>) {
-  emit("updatePopupSidebarFilters", { ...props.popupSidebarFilters, ...payload });
+watch(
+  () => props.isVisible,
+  async (visible) => {
+    if (visible) {
+      beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
+      await nextTick();
+      focusFirst();
+    }
+  },
+);
+
+const isPopupSidebarFilterDirty = computed(() => {
+  return !isEqual(beforeChangeFilterState.value, localFilters.value);
+});
+
+function onProductsFiltersChange(payload: SearchProductFilterResult[]) {
+  localFilters.value.filters = cloneDeep(payload);
+  emit("applyFilters", localFilters.value);
 }
+
+function onCancel() {
+  if (isPopupSidebarFilterDirty.value && beforeChangeFilterState.value) {
+    emit("applyFilters", cloneDeep(beforeChangeFilterState.value));
+  }
+
+  emit("hidePopupSidebar");
+}
+
+function onReset() {
+  emit("resetFacetFilters");
+  emit("hidePopupSidebar");
+}
+
+function onApply() {
+  if (!localFilters.value) {
+    return;
+  }
+
+  emit("hidePopupSidebar");
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape" && props.isVisible) {
+    event.preventDefault();
+    emit("hidePopupSidebar");
+  }
+}
+
+const { openModal } = useModal();
+function openBranchesModal() {
+  openModal({
+    component: BranchesModal,
+    props: {
+      selectedBranches: localFilters.value?.branches,
+      onSave(branches: string[]) {
+        if (!localFilters.value) {
+          return;
+        }
+        localFilters.value.branches = cloneDeep(branches);
+
+        emit("applyFilters", localFilters.value);
+      },
+    },
+  });
+}
+
+onMounted(() => {
+  document.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <style lang="scss">

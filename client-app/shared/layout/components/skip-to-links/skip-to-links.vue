@@ -1,11 +1,13 @@
 <template>
   <span ref="backToTop" tabindex="-1" />
+
   <ul class="skip-to-links">
     <li class="skip-to-links__item">
       <a ref="skip-to-links__link" href="#main-content" class="skip-link">{{
         $t("common.links.skip_to_main_content")
       }}</a>
     </li>
+
     <li class="skip-to-links__item">
       <a ref="skip-to-links__link" href="#footer" class="skip-link">{{ $t("common.links.skip_to_footer") }}</a>
     </li>

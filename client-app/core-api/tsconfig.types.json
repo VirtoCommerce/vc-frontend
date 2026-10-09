@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // Declaration-emit program for the publish-from-source facade.
+  //
+  // `build-types.mjs` runs this to emit the facade's whole reachable type graph
+  // into `.types-build/`, then rolls it up with rollup-plugin-dts into a single
+  // self-contained `contract/index.d.ts`. It is NOT part of the app typecheck.
+  //
+  // The `include` must keep ALL ambient host declarations in scope: the facade
+  // re-exports ui-kit barrels (dragging in every component .vue, which reference
+  // per-component `declare global` type aliases like VcChipColorType) plus shared/core
+  // code that augments `window` (e.g. VCExtensionRegistry). build-types.mjs fails on
+  // ANY emit diagnostic, so a missing ambient file is a hard build failure — if the
+  // build fails on an unresolved global, add its .d.ts file here.
+  "extends": "../../tsconfig.app.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./.types-build",
+    "rootDir": "..",
+    "composite": false,
+    "incremental": false,
+    "skipLibCheck": true,
+    "noEmitOnError": false
+  },
+  "include": ["../*.d.ts", "../ui-kit/**/*.d.ts", "../shared/common/types/window.d.ts", "./index.ts"],
+  "exclude": []
+}

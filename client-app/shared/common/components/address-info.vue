@@ -2,6 +2,7 @@
   <div class="space-y-2">
     <div class="flex flex-col">
       <span class="font-bold">{{ address.firstName }} {{ address.lastName }}</span>
+
       <AddressLine :address="address" />
     </div>
 
@@ -16,6 +17,8 @@
         {{ address.email }}
       </span>
     </div>
+
+    <slot name="actions" />
   </div>
 </template>
 

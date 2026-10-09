@@ -10,8 +10,12 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Digite a palavra-chave...",
+    "search_placeholder": "Pesquisar por número ou status",
+    "no_quote_message": "Ainda não há solicitações de cotação",
     "no_results_message": "Nenhum resultado encontrado",
+    "buttons": {
+      "reset_search": "Redefinir pesquisa"
+    },
     "request_quote_button": "Solicitar Cotação",
     "search_quote_requests": "Pesquisar solicitações de cotação",
     "reset_search": "Redefinir pesquisa",

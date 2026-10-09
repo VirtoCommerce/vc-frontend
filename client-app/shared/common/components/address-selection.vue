@@ -9,31 +9,36 @@
     ]"
   >
     <template v-if="address">
-      <AddressLine class="vc-address-selection__address" :address="address" />
+      <AddressLine class="vc-address-selection__address" data-test-id="selected-address-label" :address="address" />
 
       <VcButton
         v-if="!readonly"
         :disabled="disabled"
         variant="outline"
-        icon
+        icon="pencil"
         size="xs"
         class="vc-address-selection__button"
+        data-test-id="select-address-button"
         @click="$emit('change')"
-      >
-        <VcIcon name="edit" size="xs" />
-      </VcButton>
+      />
     </template>
 
     <p v-else class="vc-address-selection__no-address">
       {{ $t("common.prefixes.please") }}
+
       <button
+        v-if="!readonly"
         data-test-id="select-address-button"
         type="button"
         class="vc-address-selection__link"
-        @click="!readonly && $emit('change')"
+        @click="$emit('change')"
       >
         {{ placeholder || $t("common.placeholders.select_address") }}
       </button>
+
+      <template v-else>
+        {{ placeholder || $t("common.placeholders.select_address") }}
+      </template>
     </p>
   </div>
 </template>

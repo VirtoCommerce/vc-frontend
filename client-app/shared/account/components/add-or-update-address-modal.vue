@@ -1,5 +1,12 @@
 <template>
-  <VcModal :title="title" max-width="60rem" hide-actions is-mobile-fullscreen>
+  <VcModal
+    class="add-or-update-address-modal"
+    :title="title"
+    max-width="60rem"
+    hide-actions
+    is-mobile-fullscreen
+    test-id="edit-address-modal"
+  >
     <template #default="{ close }">
       <AddressForm
         :model-value="editableAddress"
@@ -8,15 +15,22 @@
         with-personal-info
         required-email
         required-city
+        data-test-id="address-form"
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-wrap items-center justify-between gap-4 pt-2 *:max-xs:flex-1">
-            <VcButton min-width="8rem" color="secondary" variant="outline" @click="close">
+          <div class="add-or-update-address-modal__actions">
+            <VcButton min-width="8rem" color="secondary" variant="outline" data-test-id="cancel-button" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton min-width="8rem" :disabled="!dirty || !valid" :loading="loading" type="submit">
+            <VcButton
+              min-width="8rem"
+              :disabled="!dirty || !valid"
+              :loading="loading"
+              data-test-id="submit-button"
+              type="submit"
+            >
               {{ saveButtonLabel }}
             </VcButton>
           </div>
@@ -27,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";
@@ -71,3 +85,17 @@ watchEffect(() => {
   editableAddress.value = clone(props.address);
 });
 </script>
+
+<style lang="scss">
+.add-or-update-address-modal {
+  &__actions {
+    @apply flex flex-wrap items-center justify-between gap-4 pt-2;
+
+    @media (width < theme("screens.xs")) {
+      & > * {
+        @apply flex-1;
+      }
+    }
+  }
+}
+</style>

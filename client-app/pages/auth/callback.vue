@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useAnalytics, useAuth } from "@/core/composables";
+import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account";
 
 const { signIn, errors } = useSignMeIn();
-const { externalSignInCallback } = useAuth();
+const { externalSignInCallback, errors: authErrors } = useAuth();
 const { analytics } = useAnalytics();
 
 async function externalSignIn(): Promise<void> {
@@ -28,6 +29,11 @@ async function externalSignIn(): Promise<void> {
   }
 
   analytics("login", "external", { success: true });
+
+  const isSignInNotAllowed = authErrors.value?.some((err) => err.code === IdentityErrors.SIGN_IN_NOT_ALLOWED);
+  if (isSignInNotAllowed) {
+    location.href = "/400";
+  }
 }
 
 await externalSignIn();

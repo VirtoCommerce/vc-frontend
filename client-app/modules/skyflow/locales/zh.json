@@ -1,0 +1,12 @@
+{
+  "skyflow": {
+    "saved_credit_cards": {
+      "menu_title": "已保存的信用卡",
+      "no_cards": "您尚未保存任何信用卡",
+      "delete_credit_card_modal": {
+        "title": "确认删除",
+        "message": "您确定要移除信用卡吗？"
+      }
+    }
+  }
+}

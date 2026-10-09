@@ -18,18 +18,6 @@ interface IShipment {
   [key: string]: unknown;
 }
 
-interface IPickupInStoreResult {
-  pickupLocations?: {
-    items: IPickupLocation[];
-  };
-}
-
-interface IPickupLocation {
-  name: string;
-  address: IAddress;
-  [key: string]: unknown;
-}
-
 // Define more complete interfaces for mocking
 interface IModalOptions {
   component: unknown;
@@ -37,27 +25,10 @@ interface IModalOptions {
   [key: string]: unknown;
 }
 
-// Mock the necessary types for Apollo
-interface IApolloLazyQueryReturn {
-  result: Ref<IPickupInStoreResult | undefined>;
-  loading: Ref<boolean>;
-  error: Ref<Error | null>;
-  load: ReturnType<typeof vi.fn>;
-  // Add additional required properties with defaults
-  networkStatus: Ref<number>;
-  start: () => void;
-  stop: () => void;
-  restart: () => void;
-  [key: string]: unknown;
-}
-
 // Mock external dependencies
-vi.mock("@/core/api/graphql/shipment", () => ({
-  getPickupLocations: vi.fn(),
-}));
-
 vi.mock("@/shared/cart/composables", () => ({
   useFullCart: vi.fn(),
+  useCartPickupLocations: vi.fn(),
 }));
 
 vi.mock("@/shared/modal", () => ({
@@ -70,50 +41,87 @@ vi.mock("@/core/globals", () => ({
   },
 }));
 
+vi.mock("@/core/composables/useModuleSettings", () => ({
+  useModuleSettings: vi.fn(),
+}));
+
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string) => (key === "common.links.home" ? "Home" : key),
+  }),
+}));
+
 // Import the mocked functions for later configuration
-import { getPickupLocations } from "@/core/api/graphql/shipment";
-import { useFullCart } from "@/shared/cart/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useCartPickupLocations, useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
 import { useBopis, BOPIS_CODE } from "./useBopis";
+import type { ProductPickupLocation } from "@/core/api/graphql/types";
 import type { Ref, ComputedRef } from "vue";
-import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 describe("useBopis composable", () => {
   // Define variables with appropriate types
-  let resultRef: Ref<IPickupInStoreResult | undefined>;
+  let resultRef: Ref<ProductPickupLocation[]>;
   let loadingRef: Ref<boolean>;
-  let errorRef: Ref<Error | null>;
-  let loadMock: ReturnType<typeof vi.fn>;
+  let loadingMoreRef: Ref<boolean>;
   let availableShippingMethods: Ref<IShippingMethod[]>;
   let shipment: Ref<IShipment | null>;
   let updateShipment: ReturnType<typeof vi.fn>;
   let openModal: ReturnType<typeof vi.fn>;
   let closeModal: ReturnType<typeof vi.fn>;
-  let mockUseLazyQueryReturn: IApolloLazyQueryReturn;
+  let isEnabled: ReturnType<typeof vi.fn>;
+  let getSettingValue: ReturnType<typeof vi.fn>;
+  let fetchPickupLocations: ReturnType<typeof vi.fn>;
+  let loadMorePickupLocations: ReturnType<typeof vi.fn>;
+  let buildFilter: ReturnType<typeof vi.fn>;
+  let filterKeyword: Ref<string>;
+  let hasNextPageRef: Ref<boolean>;
 
   beforeEach(() => {
     // Initialize reactive refs
-    resultRef = ref(undefined);
+    resultRef = ref([]);
     loadingRef = ref(false);
-    errorRef = ref(null);
-    loadMock = vi.fn();
+    loadingMoreRef = ref(false);
+    fetchPickupLocations = vi.fn();
+    loadMorePickupLocations = vi.fn();
+    buildFilter = vi.fn().mockReturnValue("");
+    filterKeyword = ref("");
+    hasNextPageRef = ref(false);
 
-    // Create a more complete mock for the Apollo query
-    mockUseLazyQueryReturn = {
-      result: resultRef,
-      loading: loadingRef,
-      error: errorRef,
-      load: loadMock,
-      networkStatus: ref(7), // 7 typically means ready in Apollo
-      start: vi.fn(),
-      stop: vi.fn(),
-      restart: vi.fn(),
-    };
+    // Setup useModuleSettings mock
+    isEnabled = vi.fn().mockReturnValue(false);
+    getSettingValue = vi.fn().mockReturnValue(undefined);
 
-    // Setup getPickupLocations mock
-    vi.mocked(getPickupLocations).mockReturnValue(
-      mockUseLazyQueryReturn as unknown as ReturnType<typeof getPickupLocations>,
-    );
+    vi.mocked(useModuleSettings).mockReturnValue({
+      isEnabled,
+      getSettingValue,
+      hasModuleSettings: ref(false) as unknown as ComputedRef<boolean>,
+      moduleSettings: ref([]) as unknown as ComputedRef<
+        { name: string; value?: string | number | boolean | null }[] | undefined
+      >,
+      getModuleSettings: vi.fn().mockReturnValue({}),
+    });
+
+    vi.mocked(useCartPickupLocations).mockReturnValue({
+      fetchPickupLocations,
+      loadMorePickupLocations,
+      pickupLocations: resultRef,
+      pickupLocationsLoading: loadingRef,
+      pickupLocationsLoadingMore: loadingMoreRef,
+      pickupLocationsHasNextPage: hasNextPageRef,
+      filterOptionsCountries: ref(),
+      filterOptionsRegions: ref(),
+      filterOptionsCities: ref(),
+      filterKeyword,
+      filterCountries: ref(),
+      filterRegions: ref(),
+      filterCities: ref(),
+      filterIsApplied: ref(false),
+      filterSelectsAreEmpty: ref(false) as unknown as ComputedRef<boolean>,
+      buildFilter,
+      clearFilter: vi.fn(),
+      pickupLocationsTotalCount: ref(0),
+    });
 
     // Setup useFullCart mock
     availableShippingMethods = ref([]);
@@ -158,30 +166,21 @@ describe("useBopis composable", () => {
   });
 
   describe("Computed Properties and State Exposure", () => {
-    it("should return addresses from getPickupLocations result", () => {
-      resultRef.value = {
-        pickupLocations: {
-          items: [
-            { name: "Location 1", address: { id: "address1" } },
-            { name: "Location 2", address: { id: "address2" } },
-          ],
-        },
-      };
+    it("should return addresses from fetchPickupLocations result", () => {
+      resultRef.value = [
+        { id: "ID1", name: "Location 1", address: { id: "address1" }, isActive: true },
+        { id: "ID1", name: "Location 2", address: { id: "address2" }, isActive: true },
+      ];
+
       const { addresses } = useBopis();
       expect(addresses.value).toEqual([
-        { name: "Location 1", address: { id: "address1" } },
-        { name: "Location 2", address: { id: "address2" } },
+        { id: "ID1", name: "Location 1", address: { id: "address1" }, isActive: true },
+        { id: "ID1", name: "Location 2", address: { id: "address2" }, isActive: true },
       ]);
     });
 
     it("should return empty addresses array if result is undefined", () => {
-      resultRef.value = undefined;
-      const { addresses } = useBopis();
-      expect(addresses.value).toEqual([]);
-    });
-
-    it("should return empty addresses array if result does not contain addresses", () => {
-      resultRef.value = {};
+      resultRef.value = [];
       const { addresses } = useBopis();
       expect(addresses.value).toEqual([]);
     });
@@ -190,13 +189,6 @@ describe("useBopis composable", () => {
       loadingRef.value = true;
       const { loading } = useBopis();
       expect(loading.value).toBe(true);
-    });
-
-    it("should expose error state", () => {
-      const testError = new Error("test error");
-      errorRef.value = testError;
-      const { error } = useBopis();
-      expect(error.value).toBe(testError);
     });
 
     it("should compute hasBOPIS as true when availableShippingMethods includes BOPIS_CODE", () => {
@@ -222,103 +214,11 @@ describe("useBopis composable", () => {
     });
   });
 
-  describe("fetchAddresses function", () => {
-    it("should call load with provided keyword and sort", async () => {
-      const { fetchAddresses } = useBopis();
-      await fetchAddresses({ keyword: "test", sort: "asc" });
-      expect(loadMock).toHaveBeenCalledWith(null, {
-        storeId: "test-store-id",
-        keyword: "test",
-        sort: "asc",
-        first: undefined,
-        after: undefined,
-      });
-    });
-
-    it("should call load with undefined parameters when no options provided", async () => {
-      const { fetchAddresses } = useBopis();
-      await fetchAddresses();
-      expect(loadMock).toHaveBeenCalledWith(null, {
-        storeId: "test-store-id",
-        keyword: undefined,
-        sort: undefined,
-        first: undefined,
-        after: undefined,
-      });
-    });
-  });
-
   describe("openSelectAddressModal function", () => {
-    it("should call fetchAddresses if addresses are empty and then open modal", async () => {
-      resultRef.value = { pickupLocations: { items: [] } };
-      const { openSelectAddressModal } = useBopis();
-      await openSelectAddressModal();
-      expect(loadMock).toHaveBeenCalledWith(null, {
-        storeId: "test-store-id",
-        keyword: undefined,
-        sort: undefined,
-        first: 999,
-        after: undefined,
-      });
-      expect(openModal).toHaveBeenCalled();
-
-      const modalCalls = openModal.mock.calls as Array<[IModalOptions]>;
-      const callArg = modalCalls[0][0];
-      expect(callArg.component).toBe(SelectAddressModal);
-      expect(callArg.props.addresses).toEqual([]);
-      expect(callArg.props.currentAddress).toEqual({
-        ...shipment.value?.deliveryAddress,
-        id: shipment.value?.deliveryAddress?.outerId,
-      });
-      expect(callArg.props.isCorporateAddresses).toBe(true);
-      expect(callArg.props.allowAddNewAddress).toBe(false);
-      expect(typeof callArg.props.onResult).toBe("function");
-    });
-
-    it("should open modal directly if addresses exist without calling load", async () => {
-      // Set up the result with existing pickup locations
-      resultRef.value = {
-        pickupLocations: {
-          items: [{ name: "Location 1", address: { id: "address1" } }],
-        },
-      };
-
-      // Reset the loadMock to ensure it's clean before test
-      loadMock.mockClear();
-
-      const { openSelectAddressModal } = useBopis();
-      await openSelectAddressModal();
-
-      // The implementation only calls fetchAddresses if addresses.value.length is 0
-      // Since we've set up the test with an address, loadMock should NOT be called
-      expect(loadMock).not.toHaveBeenCalled();
-
-      expect(openModal).toHaveBeenCalled();
-
-      const modalCalls2 = openModal.mock.calls as Array<[IModalOptions]>;
-      const callArg2 = modalCalls2[0][0];
-      expect(callArg2.component).toBe(SelectAddressModal);
-
-      // Check that normalizedAddresses are passed to the modal
-      expect(callArg2.props.addresses).toEqual([{ id: "address1", description: "Location 1" }]);
-
-      expect(callArg2.props.currentAddress).toEqual({
-        ...shipment.value?.deliveryAddress,
-        id: shipment.value?.deliveryAddress?.outerId,
-      });
-      expect(callArg2.props.isCorporateAddresses).toBe(true);
-      expect(callArg2.props.allowAddNewAddress).toBe(false);
-      expect(typeof callArg2.props.onResult).toBe("function");
-    });
-
     it("should update shipment when onResult callback is called", async () => {
-      resultRef.value = {
-        pickupLocations: {
-          items: [{ name: "Location 1", address: { id: "address1" } }],
-        },
-      };
+      resultRef.value = [{ id: "ID1", name: "Location 1", address: { id: "address1" }, isActive: true }];
       const { openSelectAddressModal } = useBopis();
-      await openSelectAddressModal();
+      await openSelectAddressModal("cartId123");
       expect(openModal).toHaveBeenCalled();
 
       const modalCalls3 = openModal.mock.calls as Array<[IModalOptions]>;
@@ -330,22 +230,15 @@ describe("useBopis composable", () => {
       await onResult(newAddress);
       expect(updateShipment).toHaveBeenCalledWith({
         id: shipment.value?.id,
-        deliveryAddress: {
-          ...newAddress,
-          outerId: newAddress.id,
-        },
+        pickupLocationId: "address2",
       });
     });
 
     it("should handle missing shipment gracefully, passing undefined currentAddress", async () => {
       shipment.value = null;
-      resultRef.value = {
-        pickupLocations: {
-          items: [{ name: "Location 1", address: { id: "address1" } }],
-        },
-      };
+      resultRef.value = [{ id: "ID1", name: "Location 1", address: { id: "address1" }, isActive: true }];
       const { openSelectAddressModal } = useBopis();
-      await openSelectAddressModal();
+      await openSelectAddressModal("cartId123");
       expect(openModal).toHaveBeenCalled();
 
       const modalCalls4 = openModal.mock.calls as Array<[IModalOptions]>;
@@ -362,10 +255,114 @@ describe("useBopis composable", () => {
       await onResult2(sampleAddress);
       expect(updateShipment).toHaveBeenCalledWith({
         id: undefined,
-        deliveryAddress: {
-          ...sampleAddress,
-          outerId: sampleAddress.id,
-        },
+        pickupLocationId: "address3",
+      });
+    });
+  });
+
+  describe("pagination handlers", () => {
+    async function getModalProps(): Promise<Record<string, unknown>> {
+      const { openSelectAddressModal } = useBopis();
+      await openSelectAddressModal("cartId123");
+      const modalCalls = openModal.mock.calls as Array<[IModalOptions]>;
+      return modalCalls[0][0].props;
+    }
+
+    it("should pass server pagination props to the modal", async () => {
+      const props = await getModalProps();
+      expect(props.paginationMode).toBe("server");
+      expect(props.hasNextPage).toBe(hasNextPageRef);
+      expect(props.loadingMore).toBe(loadingMoreRef);
+    });
+
+    it("onLoadMore should call loadMorePickupLocations WITHOUT an after argument", async () => {
+      const props = await getModalProps();
+      const onLoadMore = props.onLoadMore as () => Promise<void>;
+
+      await onLoadMore();
+
+      expect(loadMorePickupLocations).toHaveBeenCalledTimes(1);
+      const callArg = loadMorePickupLocations.mock.calls[0][0] as Record<string, unknown>;
+      expect(callArg).not.toHaveProperty("after");
+      expect(callArg).toMatchObject({
+        cartId: "cartId123",
+        first: 6,
+      });
+    });
+
+    it("onPageChange (list mode, map OFF) should call fetchPickupLocations with an offset-style after", async () => {
+      // map OFF is the default (isEnabled() => false in beforeEach) → select-address-modal.vue → onPageChange
+      filterKeyword.value = "store";
+      const props = await getModalProps();
+      fetchPickupLocations.mockClear();
+
+      const onPageChange = props.onPageChange as (page: number) => Promise<void>;
+      await onPageChange(3);
+
+      expect(fetchPickupLocations).toHaveBeenCalledTimes(1);
+      const callArg = fetchPickupLocations.mock.calls[0][0] as Record<string, unknown>;
+      // pageSize === ADDRESSES_FETCH_LIST_LIMIT (6) in list mode; offset = (page - 1) * pageSize = 12
+      expect(callArg.after).toBe("12");
+      expect(callArg).toMatchObject({
+        cartId: "cartId123",
+        first: 6,
+        keyword: "store",
+        filter: "",
+      });
+    });
+
+    it("onPageChange should produce after='0' for the first page (offset zero)", async () => {
+      const props = await getModalProps();
+      fetchPickupLocations.mockClear();
+
+      const onPageChange = props.onPageChange as (page: number) => Promise<void>;
+      await onPageChange(1);
+
+      const callArg = fetchPickupLocations.mock.calls[0][0] as Record<string, unknown>;
+      expect(callArg.after).toBe("0");
+    });
+
+    it("keyword/filter change (onFilterChange) should call fetchPickupLocations WITHOUT an after argument", async () => {
+      filterKeyword.value = "store";
+      const props = await getModalProps();
+      fetchPickupLocations.mockClear();
+
+      const onFilterChange = props.onFilterChange as () => Promise<void>;
+      await onFilterChange();
+
+      expect(fetchPickupLocations).toHaveBeenCalledTimes(1);
+      const callArg = fetchPickupLocations.mock.calls[0][0] as Record<string, unknown>;
+      expect(callArg).not.toHaveProperty("after");
+      expect(callArg).toMatchObject({
+        cartId: "cartId123",
+        first: 6,
+        keyword: "store",
+      });
+    });
+
+    it("initial open (fetchPickupLocations) should not pass an after argument", async () => {
+      await getModalProps();
+
+      expect(fetchPickupLocations).toHaveBeenCalledTimes(1);
+      const callArg = fetchPickupLocations.mock.calls[0][0] as Record<string, unknown>;
+      expect(callArg).not.toHaveProperty("after");
+    });
+
+    it("selectedAddressId selection should survive an append (onResult resolves an appended id)", async () => {
+      resultRef.value = [{ id: "ID1", name: "Location 1", address: { id: "address1" }, isActive: true }];
+      const props = await getModalProps();
+      const onResult = props.onResult as (id: string) => Promise<void>;
+
+      resultRef.value = [
+        ...resultRef.value,
+        { id: "ID2", name: "Location 2", address: { id: "address2" }, isActive: true },
+      ];
+
+      await onResult("ID2");
+
+      expect(updateShipment).toHaveBeenCalledWith({
+        id: shipment.value?.id,
+        pickupLocationId: "address2",
       });
     });
   });

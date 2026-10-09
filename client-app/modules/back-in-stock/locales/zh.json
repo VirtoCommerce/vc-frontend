@@ -8,11 +8,12 @@
     },
     "list_details": {
       "empty_list": "您的列表为空",
+      "no_results_message": "未找到结果",
       "empty_list_button": "继续浏览"
     },
     "messages": {
       "click_to_receive_alert": "点击接收提醒",
-      "notify_me_when_in_stock": "到货通知我",
+      "stock_alert": "库存提醒",
       "you_are_subscribed": "您已订阅！我们会在商品重新上市时通知您。",
       "you_will_be_notified": "您将收到通知"
     },
@@ -25,7 +26,7 @@
       },
       "reset_search": "重置搜索",
       "search_button": "搜索",
-      "search_placeholder": "用户搜索"
+      "search_placeholder": "按产品名称搜索"
     }
   }
 }

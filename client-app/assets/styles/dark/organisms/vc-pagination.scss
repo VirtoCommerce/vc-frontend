@@ -1,0 +1,7 @@
+.vc-pagination {
+  // `additional-50` inverts to near-black in dark, so the light pairing leaves dark ink on the
+  // brand fill (4.37:1 in red). Lighten the fill rather than flip the ink: the ink token is also
+  // the inactive pages' fill, so the chip's contrast against its siblings equals its own text
+  // contrast. Against the page background it is measured separately — 7.28:1 at worst (coffee).
+  --page-active-bg: var(--vc-pagination-page-active-bg, var(--color-primary-700));
+}

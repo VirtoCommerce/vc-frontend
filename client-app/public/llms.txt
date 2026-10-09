@@ -1,0 +1,23 @@
+# llms.txt
+# Public brief for AI agents about Yourstore
+
+# About
+One or two sentences on what you sell, who you sell to, and any defining context (founded, mission, sustainability stance, etc.).
+
+# Product Categories
+- Category one
+- Category two
+- Category three
+
+# Policies
+- Returns: e.g. 30 days, full refund
+- Shipping: e.g. Free over $30, 3-5 business days
+- Any other policy worth surfacing (cruelty-free, vegan, made-to-order, etc.)
+
+# Agent Capabilities
+- UCP manifest: /.well-known/ucp
+- Supported flows: cart, checkout, tokenized payment, etc.
+- Anything explicitly NOT supported (e.g. "no subscription products via agent")
+
+# Contact
+support@yourstore.com

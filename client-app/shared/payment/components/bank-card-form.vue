@@ -1,9 +1,8 @@
 <template>
   <form class="flex flex-col gap-y-3" autocomplete="off">
     <VcInput
-      v-maska
-      data-maska="#### #### #### #### ###"
-      :model-value="cardNumber"
+      v-model="cardNumber"
+      :mask="cardMaskOptions"
       :label="labels.number"
       :message="formErrors.number || errors.number"
       :error="!!formErrors.number || !!errors.number"
@@ -14,9 +13,7 @@
       maxlength="19"
       required
       test-id-input="card-number-input"
-      @update:model-value="updateValue($event)"
       @input="input"
-      @keypress="checkForNumber($event)"
     />
 
     <VcInput
@@ -34,8 +31,7 @@
     <div class="flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
         v-model="expirationDate"
-        v-maska
-        data-maska="## / ##"
+        :mask="dateMaskOptions"
         :label="labels.expirationDate"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
         :message="expirationDateErrors"
@@ -54,26 +50,24 @@
 
       <VcInput
         v-model="securityCode"
-        v-maska
-        data-maska="####"
+        :mask="securityCodeMaskOptions"
         :label="labels.securityCode"
         :message="formErrors.securityCode || errors.securityCode"
         :error="!!formErrors.securityCode || !!errors.securityCode"
         :readonly="readonly"
         :disabled="disabled"
         type="password"
-        placeholder="111"
+        :placeholder="securityCodePlaceholder"
         name="securityCode"
         autocomplete="off"
-        minlength="3"
-        maxlength="4"
+        :minlength="securityCodeLength"
+        :maxlength="securityCodeLength"
         class="basis-1/4"
         hide-password-switcher
         required
         test-id-input="security-code-input"
         @input="input"
         @keyup.enter="$emit('submit')"
-        @keypress="checkForNumber($event)"
       />
     </div>
   </form>
@@ -81,19 +75,20 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { clone } from "lodash";
-import { vMaska } from "maska";
+import { clone } from "lodash-es";
+import { Mask } from "maska";
 import { useForm } from "vee-validate";
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { isExpirationDateValid } from "@/core/utilities/date";
+import { getCardSchemeFromNumber, getCvvLength } from "@/shared/payment/utils/cvv-validation";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   errors: () => ({}),
 });
-const EXPIRATION_DATE_DIVIDER = " / ";
 
 interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
@@ -119,6 +114,19 @@ const initialValues: BankCardType = {
   securityCode: "",
 };
 
+const cardMaskOptions = { mask: "#### #### #### #### ###" };
+const dateMaskOptions = { mask: "## / ##" };
+
+const cardMask = new Mask(cardMaskOptions);
+const dateMask = new Mask(dateMaskOptions);
+
+// American Express (IIN prefix 34/37) uses a 4-digit CVV; every other brand uses 3. Deriving the
+// required length from the entered card number lets the CVV rule + mask + length + placeholder
+// reflect the detected brand, so a malformed CVV is caught client-side (gating cart "Create order")
+// instead of only later during Accept.js tokenization, after an unpaid order already exists.
+// The brand detection + length decision are shared with the Skyflow form via shared/payment/utils.
+const cvvLengthForNumber = (cardNumber?: string | null) => getCvvLength(getCardSchemeFromNumber(cardNumber));
+
 const labels = computed(() => {
   return {
     number: t("shared.payment.bank_card_form.number_label"),
@@ -134,7 +142,7 @@ const monthYupSchema = yup
   .string()
   .required()
   .length(2)
-  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
+  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.bank_card_form.errors.month"))
   .label(labels.value.monthLabel);
 
 const validationSchema = toTypedSchema(
@@ -143,9 +151,25 @@ const validationSchema = toTypedSchema(
     cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
     year: yup.string().when("month", ([month], schema) => {
-      return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
+      return monthYupSchema.isValidSync(month)
+        ? schema
+            .length(2)
+            .test(
+              "not-expired",
+              t("shared.payment.bank_card_form.errors.expiration_date"),
+              // Only flag a fully-entered year that resolves to a past date, so the form
+              // becomes invalid immediately (gating cart "Create order") instead of failing
+              // later during Accept.js tokenization after the order is already created.
+              (year) => !year || year.length !== 2 || isExpirationDateValid(month, year),
+            )
+            .label(labels.value.yearLabel)
+        : schema;
     }),
-    securityCode: yup.string().required().min(3).max(4).label(labels.value.securityCode),
+    securityCode: yup
+      .string()
+      .required()
+      .when("number", ([cardNumber], schema) => schema.length(cvvLengthForNumber(cardNumber)))
+      .label(labels.value.securityCode),
   }),
 );
 
@@ -165,19 +189,18 @@ const [month] = defineField("month");
 const [year] = defineField("year");
 const [securityCode] = defineField("securityCode");
 
+const securityCodeLength = computed(() => cvvLengthForNumber(number.value));
+const securityCodeMaskOptions = computed(() => ({ mask: "#".repeat(securityCodeLength.value) }));
+const securityCodePlaceholder = computed(() => "1".repeat(securityCodeLength.value));
+
 const expirationDate = computed<string | undefined, string>({
-  get: (previousValue) => {
-    const isMonthComplete = !!month.value && month.value.length === 2;
-    const isRemovingYear = !year.value && previousValue?.includes("/");
-    const showDivider = (isMonthComplete && !isRemovingYear) || year.value;
-    return showDivider ? `${month.value ?? "  "}${EXPIRATION_DATE_DIVIDER}${year.value}` : month.value;
-  },
+  get: () => dateMask.masked((month.value || "") + (year.value || "")),
   set: (value) => {
     if (value) {
-      const rawMonth = value.slice(0, 2);
-      const rawYear = value.includes("/") ? value.split("/")[1].trim() : value.slice(2, 4);
-      month.value = rawMonth;
-      year.value = rawYear;
+      const unmasked = dateMask.unmasked(value);
+      // dateMask.unmasked("12 / 25") -> "1225".
+      month.value = unmasked.slice(0, 2);
+      year.value = unmasked.slice(2, 4);
     } else {
       month.value = "";
       year.value = "";
@@ -189,21 +212,15 @@ const expirationDateErrors = computed<string>(() =>
   [formErrors.value.month, formErrors.value.year, props.errors.month, props.errors.year].filter(Boolean).join(". "),
 );
 
-const cardNumber = computed<string | undefined>(() => (number.value ? number.value.match(/.{1,4}/g)?.join(" ") : ""));
-
-function updateValue(value?: string): void {
-  number.value = value ? value.replace(/ /g, "") : "";
-}
+const cardNumber = computed<string | undefined, string>({
+  get: () => cardMask.masked(number.value || ""),
+  set: (val) => {
+    number.value = cardMask.unmasked(val || "");
+  },
+});
 
 function input() {
   emit("update:modelValue", clone(values));
-}
-
-function checkForNumber(event: KeyboardEvent) {
-  const isNumber = /^\d$/.test(event.key);
-  if (!isNumber) {
-    event.preventDefault();
-  }
 }
 
 watch(

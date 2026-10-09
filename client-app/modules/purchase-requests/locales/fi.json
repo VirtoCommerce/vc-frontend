@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "purchase_requests.title",
+      "table_description": "ostopyyntöjen luettelo"
+    },
+    "title": "Ostopyynnöt",
+    "no_purchase_requests_message": "Ostopyyntöjä ei ole vielä",
+    "no_purchase_requests_img_alt": "Ei tilauksia",
+    "purchase_request_number_label": "Ostopyynnön numero",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Ostopyynnöt"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Ostopyyntö #{0}",
+    "failed_or_used_description": "Pahoittelemme, mutta ostopyyntöä ei voitu luoda tai olet jo käyttänyt sitä tilauksen luomiseen",
+    "try_again": "Yritä uudelleen",
+    "files_section": {
+      "title": "Tiedostot"
+    },
+    "from_file": {
+      "title": "Lataa tiedosto",
+      "upload": {
+        "message": "Lataa valokuvia asiakirjoista, kuvakaappauksia tai käsinkirjoitettuja muistiinpanoja saadaksesi tietoja uudelle tilaukselle.",
+        "examples": {
+          "title": "Esimerkit",
+          "alt": "Esimerkit"
+        }
+      },
+      "processing": {
+        "message": "Voit ladata kuvatiedostoja tai PDF-tiedostoja, joissa on tuoteluetteloita missä tahansa muodossa nopeaa tilaamista varten",
+        "loading_message": "Tunnistetaan ladattu asiakirja...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Jatka tarjoukseen"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Tiedostosta"
+    }
+  }
+}

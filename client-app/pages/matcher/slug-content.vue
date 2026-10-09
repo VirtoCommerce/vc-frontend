@@ -1,24 +1,45 @@
 <template>
-  <div v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent)" class="slug-content">
+  <div
+    v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent || isMarkdownContent)"
+    class="slug-content"
+  >
     <CatalogComponent v-if="objectType === ObjectType.Catalog" />
+
     <CategoryComponent
       v-else-if="objectType === 'Category'"
       :category-id="slugInfo?.entityInfo?.objectId"
       allow-set-meta
     />
-    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+
+    <BrandsPage v-else-if="objectType === ObjectType.Brands" />
+
+    <BrandPage v-else-if="objectType === ObjectType.Brand" :brand-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+
+    <ProductRoute
+      v-else-if="objectType === ObjectType.CatalogProduct"
+      :product-id="slugInfo?.entityInfo?.objectId"
+      allow-set-meta
+    />
+
+    <NewsArticlePage
+      v-else-if="objectType === ObjectType.NewsArticle"
+      :article-id="slugInfo?.entityInfo?.objectId ?? ''"
+    />
+
     <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
+
+    <VPMarkdown v-else-if="isMarkdownContent" :content="markdownContent" />
+
     <StaticPage v-else-if="hasContent" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
-import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
-import type { StateType } from "@/pages/matcher/priorityManager";
+import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 
 interface IProps {
   pathMatch?: string[];
@@ -26,7 +47,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "setState", value: StateType): void;
+  (event: "setState", value: UpdateStateEventArgs): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -35,15 +56,19 @@ const props = defineProps<IProps>();
 
 const CatalogComponent = defineAsyncComponent(() => import("@/pages/catalog.vue"));
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
-const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
+const ProductRoute = defineAsyncComponent(() => import("@/pages/product-route.vue"));
 const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
+const VPMarkdown = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/vp-markdown.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
+const BrandsPage = defineAsyncComponent(() => import("@/pages/brands.vue"));
+const BrandPage = defineAsyncComponent(() => import("@/pages/brand.vue"));
+const NewsArticlePage = defineAsyncComponent(() => import("@/modules/news/pages/news-article.vue"));
 
 const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const seoUrl = computedEager(() => {
+const seoUrl = computed(() => {
   if (!props.pathMatch) {
     return "/";
   }
@@ -62,6 +87,8 @@ const {
   pageContent,
   fetchContent,
   fetchPageDocumentContent,
+  isMarkdownContent,
+  markdownContent,
 } = useSlugInfo(seoUrl);
 
 enum ObjectType {
@@ -70,43 +97,68 @@ enum ObjectType {
   Category = "Category",
   ContentFile = "ContentFile",
   VirtoPages = "Pages",
+  Brands = "Brands",
+  Brand = "Brand",
+  NewsArticle = "NewsArticle",
 }
 
 watchEffect(() => {
   if (loading.value) {
-    emit("setState", "loading");
+    emitState("loading");
   } else if (
-    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)
+    [
+      ObjectType.Catalog,
+      ObjectType.Category,
+      ObjectType.CatalogProduct,
+      ObjectType.Brands,
+      ObjectType.Brand,
+      ObjectType.NewsArticle,
+    ].includes(objectType.value as ObjectType)
   ) {
-    emit("setState", "ready");
+    emitState("ready");
   } else if (pageDocumentContent.value) {
-    emit("setState", "ready");
+    emitState("ready");
+  } else if (isMarkdownContent.value) {
+    emitState("ready");
   } else if (pageContent.value) {
-    emit("setState", "ready");
+    emitState("ready");
+  } else if (slugInfo.value?.redirectUrl) {
+    emitState("redirect", slugInfo.value.redirectUrl);
   } else {
-    emit("setState", "empty");
+    emitState("empty");
   }
 });
 
-watch(slugInfo, () => {
-  const type = slugInfo.value?.entityInfo?.objectType;
-  switch (type) {
-    case ObjectType.CatalogProduct:
-      setMatchingRouteName("Product");
-      break;
-    case ObjectType.Category:
-      setMatchingRouteName("Category");
-      break;
-    case ObjectType.ContentFile:
-      void fetchContent();
-      break;
-    case ObjectType.VirtoPages:
-      void fetchPageDocumentContent();
-      break;
-    default:
-      clearState();
-  }
-});
+function emitState(state: StateType, redirectUrl?: string) {
+  emit("setState", { state, redirectUrl });
+}
+
+watch(
+  slugInfo,
+  () => {
+    const type = slugInfo.value?.entityInfo?.objectType;
+    switch (type) {
+      case ObjectType.CatalogProduct:
+        setMatchingRouteName("Product");
+        break;
+      case ObjectType.Category:
+        setMatchingRouteName("Category");
+        break;
+      case ObjectType.NewsArticle:
+        setMatchingRouteName("NewsArticle");
+        break;
+      case ObjectType.ContentFile:
+        void fetchContent();
+        break;
+      case ObjectType.VirtoPages:
+        void fetchPageDocumentContent();
+        break;
+      default:
+        clearState();
+    }
+  },
+  { immediate: true },
+);
 
 watch(pageContent, (value) => {
   if (value) {

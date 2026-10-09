@@ -1,17 +1,24 @@
 <template>
-  <VcWidget :title="$t('shared.checkout.billing_details_section.title')" prepend-icon="cash" size="lg">
+  <VcWidget
+    :title="$t('shared.checkout.billing_details_section.title')"
+    prepend-icon="cash"
+    class="mt-5"
+    size="lg"
+    data-test-id="payment-details-section"
+  >
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
       <div class="lg:w-3/5">
         <VcLabel required>
           {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
         </VcLabel>
 
-        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
+        <div :class="['grow divide-y rounded-[--vc-radius] border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
           <VcCheckbox
             v-if="!allItemsAreDigital && !isShippingMethodBopis"
             v-model="billingAddressEqualsShipping"
             :disabled="disabled"
             name="billingAddressEqualsShipping"
+            data-test-id="billing-address-equals-shipping-checkbox"
             class="p-3"
           >
             {{ $t("shared.checkout.billing_details_section.labels.same_as_shipping_address") }}
@@ -40,29 +47,29 @@
           :disabled="disabled"
           size="auto"
           required
-          test-id-dropdown="payment-method-select"
+          test-id-dropdown="payment-method-selector"
           @change="(value) => setPaymentMethod(value)"
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="size-12 rounded-sm bg-neutral-100" src="select-payment.svg" />
+              <VcImage class="size-12 rounded bg-neutral-100" src="select-payment.svg" />
 
               {{ $t("common.placeholders.select_payment_method") }}
             </div>
           </template>
 
           <template #selected="{ item }">
-            <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <div class="flex items-center gap-3 p-3 text-sm" :data-selected-payment-method-id="item.code">
+              <VcImage class="size-12 rounded" :src="item.logoUrl" />
 
-              {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+              {{ item.name }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage class="size-12 rounded" :src="item.logoUrl" />
 
-            {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+            <span :data-payment-method-id="item.code">{{ item.name }}</span>
           </template>
         </VcSelect>
 
@@ -78,31 +85,59 @@
       </div>
     </div>
   </VcWidget>
+
+  <VcWidget
+    v-if="paymentCardVisible"
+    :title="$t('shared.checkout.billing_details_section.payment_card')"
+    prepend-icon="cash"
+    size="lg"
+    class="mt-5"
+  >
+    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod!" />
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
+import type { CartType } from "@/core/api/graphql/types";
+import Payment from "@/shared/payment/components/payment.vue";
 
 interface IProps {
   disabled?: boolean;
+  cart?: CartType;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
+const { isAuthenticated } = useUser();
 
 const isShippingMethodBopis = computed(() => {
-  return shipmentMethod.value?.code === BOPIS_CODE;
+  return (
+    shipmentMethod.value?.code === BOPIS_CODE ||
+    (availableShippingMethods.value.length === 1 && availableShippingMethods.value[0].code === BOPIS_CODE)
+  );
 });
 
-const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
+const currentPaymentMethod = computed(() => {
+  const cart = props.cart;
+  return cart && cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
+});
+
+const paymentCardVisible = computed(() => {
+  return isAuthenticated.value && props.cart && canPayFromCart.value && currentPaymentMethod.value;
+});
 
 const {
   billingAddressEqualsShipping,
   billingAddress,
   paymentMethod,
+  canPayFromCart,
   shipmentMethod,
   onBillingAddressChange,
   setPaymentMethod,

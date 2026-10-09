@@ -1,8 +1,5 @@
 import { ApolloError } from "@apollo/client/core";
-import cloneDeep from "lodash/cloneDeep";
-import mergeWith from "lodash/mergeWith";
-import noop from "lodash/noop";
-import uniqueId from "lodash/uniqueId";
+import { cloneDeep, mergeWith, noop, uniqueId } from "lodash-es";
 import { ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import { uniqByLast } from "@/core/utilities/common";
@@ -89,7 +86,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
 
   async function add(
     args: TVariables,
-    overrideOptions?: MutateOverrideOptions<TData> | undefined,
+    overrideOptions?: MutateOverrideOptions<TData>,
     fireAddHandler = true,
   ): Promise<FetchResult<TData> | null> {
     loading.value = true;

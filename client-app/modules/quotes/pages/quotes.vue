@@ -8,48 +8,45 @@
 
       <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
         <span class="hidden sm:inline">{{ $t("quotes.request_quote_button") }}</span>
+
         <span class="sm:hidden">{{ $t("quotes.request_quote_button") }}</span>
       </VcButton>
     </div>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5" />
-
-    <!-- Page toolbar -->
-    <PageToolbarBlock
-      :stick="stickyMobileHeaderIsVisible"
-      class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
-      shadow
+    <VcInput
+      v-model="keyword"
+      :disabled="fetching"
+      :placeholder="$t('quotes.search_placeholder')"
+      clearable
+      maxlength="64"
+      class="w-full"
+      @keydown.enter="applyKeyword"
+      @clear="resetKeyword"
     >
-      <div class="flex grow">
-        <VcInput
-          v-model="keyword"
+      <template #append>
+        <VcButton
+          :aria-label="$t('quotes.search_quote_requests')"
           :disabled="fetching"
-          :placeholder="$t('quotes.search_placeholder')"
-          clearable
-          maxlength="64"
-          class="w-full"
-          @keydown.enter="applyKeyword"
-          @clear="resetKeyword"
-        >
-          <template #append>
-            <VcButton
-              :aria-label="$t('quotes.search_quote_requests')"
-              :disabled="fetching"
-              icon="search"
-              icon-size="1.25rem"
-              @click="applyKeyword"
-            />
-          </template>
-        </VcInput>
-      </div>
-    </PageToolbarBlock>
+          icon="search"
+          icon-size="1.25rem"
+          @click="applyKeyword"
+        />
+      </template>
+    </VcInput>
 
     <!-- Empty view -->
     <VcEmptyView
       v-if="!fetching && !quotes.length"
-      :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quotes_message')"
+      :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quote_message')"
       icon="outline-quotes"
-    />
+      :variant="!!keyword ? 'search' : 'empty'"
+    >
+      <template #button>
+        <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+          {{ $t("quotes.buttons.reset_search") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
 
     <!-- Content block -->
     <VcWidget v-else size="lg">
@@ -110,44 +107,15 @@
             </button>
           </template>
 
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.quote_number_label") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.date_label") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.total_label") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.status_label") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-            </div>
-          </template>
-
           <template #desktop-body>
             <tr
               v-for="quote in quotes"
               :key="quote.id"
-              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+              class="cursor-pointer last:rounded-b-[--vc-radius] even:bg-neutral-50 hover:bg-neutral-200"
+              tabindex="0"
               @click="goToQuoteDetails(quote)"
+              @keydown.enter.prevent="goToQuoteDetails(quote)"
+              @keydown.space.prevent="goToQuoteDetails(quote)"
             >
               <td class="overflow-hidden text-ellipsis p-5">
                 {{ quote.number }}
@@ -166,14 +134,6 @@
               </td>
             </tr>
           </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td v-for="column in columns" :key="column.id" class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-            </tr>
-          </template>
         </VcTable>
       </template>
     </VcWidget>
@@ -182,43 +142,35 @@
 
 <script setup lang="ts">
 import { useMutation } from "@vue/apollo-composable";
-import { useBreakpoints, breakpointsTailwind, useElementVisibility } from "@vueuse/core";
-import { computed, ref, shallowRef, watch } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
-import { QueryParamName } from "@/core/enums";
+import { useRouteQueryParam, usePageHead, useBrowserTarget } from "@/core/composables";
+import { BrowserTargetType, QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
-import { PageToolbarBlock } from "@/shared/account";
 import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
-const { themeContext } = useThemeContext();
 const router = useRouter();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { storeId, userId, currencyCode, cultureName } = globals;
 usePageHead({
   title: t("quotes.meta.title"),
 });
 
-const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
+const { browserTarget } = useBrowserTarget();
+
+const { quotes, fetching, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);
-
-const isMobile = breakpoints.smaller("lg");
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",
 });
 
-const columns = ref<ITableColumn[]>([
+const columns = ref<VcTableColumnType[]>([
   {
     id: "number",
     title: t("quotes.quote_number_label"),
@@ -252,10 +204,10 @@ function goToQuoteDetails(payload: { id: string; status?: string }): void {
   const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
   const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
 
-  if (themeContext.value.settings?.details_browser_target === "_blank") {
-    window.open(quoteRoute.fullPath, "_blank")!.focus();
+  if (browserTarget.value === BrowserTargetType.BLANK) {
+    window.open(quoteRoute.href, "_blank")!.focus();
   } else {
-    window.location.href = quoteRoute.fullPath;
+    window.location.href = quoteRoute.href;
   }
 }
 
@@ -295,6 +247,4 @@ watch(
     immediate: true,
   },
 );
-
-void fetchQuotes();
 </script>

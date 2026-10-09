@@ -1,0 +1,154 @@
+<template>
+  <div
+    :class="[
+      'vc-product-title',
+      {
+        'vc-product-title--link': linkTo,
+        'vc-product-title--disabled': disabled,
+        'vc-product-title--fix-height': fixHeight,
+      },
+    ]"
+  >
+    <component
+      :is="componentType"
+      :to="linkTo"
+      :target="to ? target : null"
+      :title="title"
+      :tabindex="linkTo ? tabindex : -1"
+      class="vc-product-title__text"
+      @click="$emit('click', $event)"
+    >
+      <slot>{{ title }}</slot>
+    </component>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+
+interface IEmits {
+  (event: "click", globalEvent: PointerEvent): void;
+}
+
+interface IProps {
+  to?: RouteLocationRaw | null;
+  target?: BrowserTargetType;
+  title?: string;
+  disabled?: boolean;
+  fixHeight?: boolean;
+  linesNumber?: number | string;
+  tabindex?: number | string;
+}
+
+defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  to: null,
+  linesNumber: 3,
+  tabindex: 0,
+});
+
+const componentType = computed(() => (!props.disabled && props.to ? "router-link" : "div"));
+const linkTo = computed(() => (!props.disabled ? props.to : ""));
+</script>
+
+<style lang="scss">
+.vc-product-title {
+  $self: &;
+  $disabled: "";
+  $link: "";
+
+  --font-size: var(--vc-product-title-font-size);
+  --lines-number: v-bind(linesNumber);
+  --text-color: var(--vc-product-title-text-color, theme("colors.neutral.950"));
+  --link-color: var(--vc-product-title-link-color, theme("colors.accent.600"));
+  --link-hover-color: var(--vc-product-title-link-hover-color, theme("colors.accent.700"));
+
+  @apply text-[length:var(--font-size)] font-bold;
+
+  @apply leading-[1.17em] #{!important};
+
+  &--fix-height {
+    height: calc(1.17em * var(--lines-number));
+  }
+
+  &--disabled {
+    $disabled: &;
+  }
+
+  &--link {
+    $link: &;
+  }
+
+  &__text {
+    @apply line-clamp-[--lines-number] text-[--text-color];
+
+    word-break: break-word;
+
+    #{$link}:not(#{$disabled}) & {
+      @apply text-[--link-color] cursor-pointer;
+
+      &:hover {
+        @apply text-[--link-hover-color];
+      }
+    }
+
+    #{$disabled} & {
+      @apply text-neutral pointer-events-none;
+    }
+  }
+
+  @at-root .vc-product-card {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
+      grid-area: title;
+
+      @apply text-sm;
+    }
+
+    &--view-mode {
+      &--grid #{$wrapperSelector} {
+        @apply order-2;
+      }
+
+      &--list {
+        #{$wrapperSelector} {
+          @apply self-end flex items-center;
+
+          &:only-child {
+            @apply self-center;
+          }
+        }
+
+        @container (min-width: theme("containers.xl")) {
+          &:not(:has(.vc-product-vendor, .vc-product-action)) #{$wrapperSelector} {
+            @apply self-center;
+          }
+        }
+      }
+
+      &--item {
+        #{$wrapperSelector} {
+          @apply self-center;
+        }
+
+        &:has(.vc-product-vendor) #{$wrapperSelector} {
+          @apply self-end;
+        }
+
+        @container (min-width: theme("containers.2xl")) {
+          #{$wrapperSelector} {
+            @apply self-end;
+          }
+
+          &:not(:has(.vc-product-vendor)) #{$wrapperSelector} {
+            @apply self-center;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

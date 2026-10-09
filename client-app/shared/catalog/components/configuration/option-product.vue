@@ -30,7 +30,7 @@
 
     <VcProductPrice
       :with-from-label="product.hasVariations || product.isConfigurable"
-      :actual-price="extendedPrice"
+      :actual-price="salePrice"
       :list-price="listPrice"
     />
 
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { PropertyType } from "@/core/api/graphql/types";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import type { Product, MoneyType, Property } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
@@ -54,8 +55,9 @@ const PRODUCT_PROPERTY_LIMIT = 3;
 interface IProps {
   product: DeepReadonly<Product>;
   quantity?: number;
-  listPrice: MoneyType;
-  extendedPrice: MoneyType;
+  listPrice?: MoneyType;
+  extendedPrice?: MoneyType;
+  salePrice?: MoneyType;
   modelValue?: string;
   name: string;
 }
@@ -65,10 +67,9 @@ interface IEmits {
 }
 
 function getProperties(properties: DeepReadonly<Property[]>) {
-  return Object.values(getPropertiesGroupedByName(properties as Property[], PropertyType.Product)).slice(
-    0,
-    PRODUCT_PROPERTY_LIMIT,
-  );
+  return Object.values(getPropertiesGroupedByName(properties as Property[], PropertyType.Product))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+    .slice(0, PRODUCT_PROPERTY_LIMIT);
 }
 </script>
 

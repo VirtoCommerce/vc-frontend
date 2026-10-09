@@ -1,4 +1,11 @@
-import type { CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/core/api/graphql/types";
+import type {
+  BulkLineItemFragment,
+  CartType,
+  CustomerOrderType,
+  LineItemType,
+  Product,
+  VariationType,
+} from "@/core/api/graphql/types";
 import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
 
 export interface IBasicAnalyticsEventMap {
@@ -13,13 +20,14 @@ export interface IBasicAnalyticsEventMap {
   ];
   updateCartItem: [itemId: string, newQuantity: number, previousQuantity: number, params?: EventParamsType];
   addItemsToCart: [items: (Product | VariationType)[], params?: EventParamsType & AddToCartParamsAdditionalType];
+  addBulkItemsToCart: [items: BulkLineItemFragment[], params?: EventParamsType & AddToCartParamsAdditionalType];
   removeItemsFromCart: [items: LineItemType[], params?: EventParamsType];
   viewCart: [cart: CartType, params?: EventParamsType];
   clearCart: [cart: CartType, params?: EventParamsType];
   beginCheckout: [cart: CartType, params?: EventParamsType];
   addShippingInfo: [cart?: CartType, params?: EventParamsType, shipmentMethodOption?: string];
   addPaymentInfo: [cart?: CartType, params?: EventParamsType, paymentGatewayCode?: string];
-  purchase: [order: CustomerOrderType, transactionId?: string, params?: EventParamsType];
+  purchase: [order: CustomerOrderType, params?: EventParamsType];
   placeOrder: [order: CustomerOrderType, params?: EventParamsType];
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
   viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
@@ -33,7 +41,11 @@ export type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
 
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
 
-export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
+export type AddToCartParamsAdditionalType = {
+  source_route?: string;
+  source_block?: string;
+  search_term?: string;
+};
 export type LoginParamsAdditionalType = { errors?: string; success?: boolean };
 export type SignUpParamsAdditionalType = { type?: string; errors?: string; success?: boolean };
 export type ViewSearchResultsParamsAdditionalType = {

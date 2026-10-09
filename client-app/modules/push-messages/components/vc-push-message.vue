@@ -23,7 +23,7 @@
       class="vc-push-message__button"
       size="xs"
       color="neutral"
-      variant="no-background"
+      variant="ghost"
       icon="delete-thin"
       @click="
         $emit('remove');
@@ -60,7 +60,7 @@ withDefaults(defineProps<IProps>(), {
 
   &--size {
     &--md {
-      @apply ps-3 pe-1 py-2;
+      @apply ps-2 pe-1 py-2;
     }
 
     &--lg {
@@ -75,7 +75,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__badge {
-    @apply mt-1.5 invisible;
+    @apply mt-1 invisible;
 
     #{$unread} & {
       @apply visible;

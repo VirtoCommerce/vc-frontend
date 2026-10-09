@@ -1,5 +1,5 @@
 <template>
-  <VcLayout v-if="placedOrder" sidebar-position="right" sticky-sidebar>
+  <VcLayout v-if="placedOrder" sidebar-position="right" sticky>
     <VcWidget size="lg">
       <template #default-container>
         <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-6">
@@ -10,7 +10,7 @@
               lazy
             />
 
-            <span>{{ $t(`common.methods.payment_by_code.${payment?.paymentMethod?.code}`) }}</span>
+            <span>{{ payment?.paymentMethod?.name }}</span>
           </div>
         </div>
 
@@ -26,15 +26,27 @@
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
-          <PaymentProcessingSkyflow
-            v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
+
+          <PaymentProcessingCyberSource
+            v-else-if="paymentTypeName === 'CyberSourcePaymentMethod'"
             :order="placedOrder"
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
-          <PaymentProcessingCyberSource
-            v-else-if="paymentTypeName === 'CyberSourcePaymentMethod'"
+
+          <PaymentProcessingDatatrans
+            v-else-if="paymentTypeName === 'DatatransPaymentMethod'"
             :order="placedOrder"
+            @success="onPaymentResult(true)"
+            @fail="onPaymentResult(false)"
+          />
+
+          <ExtensionPointList
+            v-else-if="paymentTypeName"
+            category="paymentPage"
+            :condition-params="{ order: placedOrder, paymentTypeName }"
+            :order="placedOrder"
+            :payment-type-name="paymentTypeName"
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
@@ -56,7 +68,7 @@ import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/paymen
 import type { PaymentInType } from "@/core/api/graphql/types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
-import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
 
 const router = useRouter();
 const { placedOrder, allOrderItemsAreDigital } = useCheckout();

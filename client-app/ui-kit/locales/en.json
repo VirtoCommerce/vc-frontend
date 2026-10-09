@@ -4,6 +4,8 @@
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "cancel": "Cancel",
+      "clear": "Clear",
+      "clear_field": "Clear: {field}",
       "close": "Close",
       "copy": "Copy",
       "deny": "Deny",
@@ -11,12 +13,58 @@
       "ok": "OK",
       "remove_all": "Remove all",
       "remove_from_cart": "Remove from cart",
-      "remove_selected": "Remove Selected",
+      "remove_selected": "Remove selected",
       "see_more": "See more",
       "see_less": "See less",
       "show_hide_password": "Show/hide password",
       "toggle_dropdown": "Toggle dropdown",
       "update_cart": "Update cart"
+    },
+    "accessibility": {
+      "close_alert": "Close alert",
+      "open_calendar": "Open calendar",
+      "open_calendar_for": "Open calendar: {field}",
+      "calendar": "Calendar",
+      "product_quantity": "Product quantity",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity",
+      "variant_picker_group": "Variant options",
+      "show_more_button": "See more options ({count})",
+      "sidebar": "Sidebar",
+      "close_chip": "Close chip",
+      "carousel_previous": "Previous slide",
+      "carousel_next": "Next slide",
+      "nav_previous": "Previous",
+      "nav_next": "Next",
+      "nav_up": "Up",
+      "nav_down": "Down"
+    },
+    "calendar": {
+      "aria_label": "Calendar",
+      "previous_month": "Previous month",
+      "next_month": "Next month",
+      "previous_year": "Previous year",
+      "next_year": "Next year",
+      "today": "Today",
+      "clear": "Clear",
+      "outside_suggested_range": "Outside the suggested range"
+    },
+    "date_range_input": {
+      "aria_label": "Date range",
+      "clear": "Clear date range",
+      "end_date": "End date",
+      "invalid_range": "End date must be on or after start date",
+      "start_date": "Start date"
+    },
+    "date_selector": {
+      "min_date_error": "Date must be on or after {min}",
+      "max_date_error": "Date must be on or before {max}"
+    },
+    "date_input": {
+      "invalid_format": "Invalid date format",
+      "min_date_error": "Date must be on or after {min}",
+      "max_date_error": "Date must be on or before {max}",
+      "unavailable_date": "This date is unavailable"
     },
     "labels": {
       "not_available": "N/A",
@@ -58,11 +106,16 @@
       "next": "Next"
     },
     "select": {
-      "items_selected": "{0} items selected"
+      "items_selected": "{0} items selected",
+      "results_available": "{0} results available",
+      "no_results_found": "No results found",
+      "no_options": "No options available"
     },
     "file": {
       "progress": "{percent} done",
-      "uploaded": "Upload completed"
+      "uploaded": "Upload completed",
+      "reload": "Reload file",
+      "remove": "Remove file"
     },
     "file_uploader": {
       "drag_and_drop": "Drag and drop file here or",
@@ -71,7 +124,7 @@
       "any_format": "any",
       "errors": {
         "fix_to_continue": "Fix file upload errors to continue.",
-        "has_max_file_count": "You have uploaded the maximum number of files possible. Futher uploads are not possible.",
+        "has_max_file_count": "You have uploaded the maximum number of files possible. Further uploads are not possible.",
         "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     },
@@ -79,6 +132,40 @@
       "end_list": "You have reached the end of the list.",
       "page_limit_filters": "No more results. Please try to change filters.",
       "page_limit": "No more results could be shown."
+    },
+    "table": {
+      "empty": "No records found",
+      "error": "Failed to load data",
+      "retry": "Try again",
+      "select_row_number": "Select row {number}",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all",
+      "selection_column": "Row selection"
+    },
+    "slider": {
+      "tooltip": "{count} items",
+      "aria_label": "Range slider from {min} to {max}",
+      "legend": "Range slider from {min} to {max}",
+      "start_input_label": "Start value (between {min} and {max})",
+      "end_input_label": "End value (between {min} and {max})",
+      "start_input_aria_label": "Start value input, range {min} to {max}",
+      "end_input_aria_label": "End value input, range {min} to {max}",
+      "start_input_help": "Enter a number between {min} and {max}, step size {step}",
+      "end_input_help": "Enter a number between {min} and {max}, step size {step}",
+      "column_aria_label": "Column with {count} items, range from {from} to {to}",
+      "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}",
+      "start_handle_label": "Minimum value handle",
+      "end_handle_label": "Maximum value handle",
+      "start_handle_aria_label": "Start value {value}, range {min} to {max}",
+      "end_handle_aria_label": "End value {value}, range {min} to {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Breadcrumbs navigation"
+    },
+    "rating": {
+      "rating_label": "Rating {value} out of {maxValue}",
+      "read_only_button_aria_label": "Rating {value} out of {maxValue}, not available for selection",
+      "set_rating_aria_label": "Set rating to {value} out of {maxValue}"
     }
   }
 }

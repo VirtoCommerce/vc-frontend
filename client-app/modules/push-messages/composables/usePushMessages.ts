@@ -1,11 +1,11 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { computed, ref, toValue } from "vue";
 import { apolloClient } from "@/core/api/graphql";
-import { useAllGlobalVariables } from "@/core/api/graphql/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account/composables";
 import { useClearAllPushMessages } from "../api/graphql/mutations/clearAllPushMessages";
 import { useMarkAllPushMessagesRead } from "../api/graphql/mutations/markAllPushMessagesRead";
@@ -55,7 +55,7 @@ function usePushMessages(options?: IUsePushMessagesOptions) {
   const getPushMessagesParams = computed<GetPushMessagesQueryVariables>(() => {
     return {
       withHidden: toValue(options?.withHidden),
-      cultureName: toValue(useAllGlobalVariables()).cultureName,
+      cultureName: globals.cultureName,
       unreadOnly: toValue(options?.showUnreadOnly),
       first: itemsPerPage.value,
       after: String((page.value - 1) * itemsPerPage.value),

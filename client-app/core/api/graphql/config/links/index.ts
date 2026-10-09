@@ -1,17 +1,29 @@
 import { from, split } from "@apollo/client/core";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { getMainDefinition } from "@apollo/client/utilities";
+import settingsData from "@/config/settings_data.json";
 import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
+import { applyGatesLink } from "./apply-gates";
 import { httpLink } from "./http";
+import { operationTypeLink } from "./operation-type-link";
+import { queuedMutationsLink } from "./queued-mutations/queued-mutations";
 import { timeoutLink } from "./timeout";
 import { wsLink } from "./ws";
 
-const sharedLink = from([removeTypenameFromVariables(), timeoutLink, errorHandlerLink]);
+const sharedLink = from([
+  removeTypenameFromVariables(),
+  applyGatesLink,
+  ...(settingsData.settings.graphql_operation_marking_enabled ? [operationTypeLink] : []),
+  timeoutLink,
+  errorHandlerLink,
+]);
 
 // https://www.apollographql.com/docs/react/api/link/introduction/#composing-a-link-chain
 // Tree:
 // removeTypenameLink
+// ↓
+// applyGatesLink
 // ↓
 // errorHandlerLink
 // ↓
@@ -21,6 +33,7 @@ const sharedLink = from([removeTypenameFromVariables(), timeoutLink, errorHandle
 export const link = from([
   sharedLink,
   // Add conditional links here
+  queuedMutationsLink,
   cartLink,
   // Send only subscriptions through web sockets
   split(

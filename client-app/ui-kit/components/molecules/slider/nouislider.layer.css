@@ -1,0 +1,6 @@
+/*
+ * nouislider defaults in a low-priority `nouislider` layer. The slider CSS is lazy-loaded
+ * (vc-slider.vue) so it injects after the app CSS; layering it lets our unlayered
+ * `.noUi-*` overrides win regardless of load order, while structural rules still apply.
+ */
+@import "nouislider/dist/nouislider.css" layer(nouislider);

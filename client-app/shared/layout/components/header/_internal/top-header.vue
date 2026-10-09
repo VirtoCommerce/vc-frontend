@@ -1,68 +1,124 @@
 <template>
-  <div
-    class="flex h-[39px] items-center gap-3 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-5 xl:px-12"
+  <header
+    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
+    data-test-id="top-header"
   >
-    <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+    <Teleport to="body">
+      <VcLoaderOverlay v-if="reverting" fixed-spinner data-test-id="back-to-operator-loader">
+        {{ $t("shared.layout.header.top_header.switching_back") }}
+      </VcLoaderOverlay>
+    </Teleport>
 
-    <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
+    <div class="flex min-w-0 shrink items-center gap-3">
+      <LanguageSelector
+        v-if="$context.availableLanguages && $context.availableLanguages.length > 1"
+        class="flex-none"
+      />
 
-    <ShipToSelector />
+      <CurrencySelector
+        v-if="!isLoyaltyCatalogRoute && $context.availableCurrencies && $context.availableCurrencies.length > 1"
+        class="h-full flex-none"
+      />
 
-    <div class="ms-auto flex items-center">
+      <ShipToSelector />
+    </div>
+
+    <div class="ms-auto flex min-w-0 shrink-0 items-center">
+      <template v-if="isDarkModeAvailable">
+        <DarkModeToggle
+          tooltip
+          test-id="dark-mode-toggle"
+          icon-size="sm"
+          class="p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+        />
+
+        <span class="mx-3 h-5 w-px bg-primary" />
+      </template>
+
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
-        <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
+        <VcIcon class="me-1.5 text-primary" name="phone" size="sm" />
 
-        <span class="mr-1 font-thin">
+        <span class="font-thin">
           {{ $t("shared.layout.header.top_header.call_us_label") }}
         </span>
 
         <a
-          class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
+          class="p-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
+          data-test-id="support-phone-link"
           :href="`tel:${support_phone_number}`"
+          tabindex="0"
         >
           {{ support_phone_number }}
         </a>
 
-        <span class="mx-4 h-5 w-px bg-primary" />
+        <span class="mx-3 h-5 w-px bg-primary" />
       </div>
 
       <!-- Authorized menu items -->
       <template v-if="isAuthenticated">
-        <TopHeaderLink to="/account/dashboard">
+        <TopHeaderLink to="/account/dashboard" data-test-id="dashboard-link">
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
         <span class="mx-2 size-1 rounded-full bg-primary" />
 
-        <TopHeaderLink to="/contacts">
+        <TopHeaderLink to="/contacts" data-test-id="contacts-link">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
-        <span class="mx-4 h-5 w-px bg-primary" />
+        <span class="mx-3 h-5 w-px bg-primary" />
 
         <!-- Account menu -->
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
           <!-- Operator -->
           <template v-if="operator">
-            <span class="font-bold">{{ operator.contact?.fullName || operator.userName }}</span>
-            <span class="text-neutral-400">
+            <span class="whitespace-nowrap font-bold" data-test-id="operator-name-label">
+              {{ operator.contact?.fullName || operator.userName }}
+            </span>
+
+            <span class="whitespace-nowrap text-neutral-400">
               {{ $t("shared.layout.header.top_header.logged_in_as") }}
             </span>
           </template>
 
+          <ExtensionPointList category="topHeaderStatus" />
+
           <button
+            ref="accountButton"
             type="button"
-            class="flex cursor-pointer items-center whitespace-nowrap py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
+            aria-haspopup="true"
+            :aria-expanded="loginMenuVisible"
+            class="flex w-full cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            data-test-id="account-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="font-bold">
-              <template v-if="isMultiOrganization">{{ organization?.name }} /</template>
-              {{ user.contact?.fullName || user.userName }}
+            <span class="hidden min-w-0 gap-1 font-bold xl:flex">
+              <template v-if="isMultiOrganization && organization">
+                <span
+                  data-test-id="organization-name-label"
+                  class="min-w-0 truncate xl:max-w-32 2xl:max-w-80"
+                  :title="organization.name"
+                >
+                  {{ organization.name }}
+                </span>
+                /
+              </template>
+
+              <span
+                data-test-id="customer-name-label"
+                class="min-w-0 shrink-0 truncate"
+                :class="isMultiOrganization && organization ? 'xl:max-w-32 2xl:max-w-80' : 'xl:max-w-80'"
+                :title="user.contact?.fullName || user.userName"
+                >{{ user.contact?.fullName || user.userName }}</span
+              >
             </span>
 
+            <VcIcon class="text-primary xl:hidden" name="user-circle" size="sm" />
+
             <VcIcon
-              class="ms-1.5 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 shrink-0 text-accent-200 [--vc-icon-size:1rem] lg:text-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
@@ -70,14 +126,16 @@
           <div
             v-if="loginMenuVisible"
             class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+            data-test-id="account-menu"
           >
             <div class="flex max-w-full items-center justify-between p-3">
               <router-link
                 to="/account/dashboard"
                 class="flex min-w-0 items-center gap-2 hover:text-primary"
+                data-test-id="dashboard-link"
                 @click="loginMenuVisible = false"
               >
-                <VcIcon class="fill-primary" name="user-circle" />
+                <VcIcon class="text-primary" name="user-circle" />
 
                 <span class="truncate">
                   {{ user.contact?.fullName }}
@@ -90,87 +148,105 @@
                 variant="outline"
                 color="neutral"
                 size="xs"
+                data-test-id="sign-out-button"
                 icon
-                @click="() => signMeOut()"
+                @click="signMeOut"
               >
                 <VcIcon name="logout" />
               </VcButton>
             </div>
 
-            <div v-if="isMultiOrganization" class="border-t py-3">
-              <div class="px-3 py-1 text-xs text-neutral-600">
-                {{ $t("common.labels.organizations") }}
-              </div>
+            <button
+              v-if="operator"
+              type="button"
+              class="flex items-center gap-2 border-t border-neutral-200 p-3 text-start hover:bg-neutral-50"
+              data-test-id="back-to-operator-row"
+              @click="onBackToOperator"
+            >
+              <VcIcon class="text-primary" name="arrow-left" />
 
-              <VcRadioButton
-                v-for="item in user.contact?.organizations?.items"
-                :key="item.id"
-                v-model="contactOrganizationId"
-                :label="item.name"
-                :value="item.id"
-                class="flex px-3 py-1 text-sm"
-                :max-lines="2"
-                :title="item.name"
-                word-break="break-word"
-                @change="selectOrganization"
-              />
-            </div>
+              <span class="truncate">
+                {{ backToOperatorLabel }}
+              </span>
+            </button>
+
+            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>
         </div>
       </template>
 
       <!-- Unauthorized menu items -->
       <template v-else>
-        <TopHeaderLink to="/contacts">
+        <TopHeaderLink to="/contacts" data-test-id="contact-us-link">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
         <span class="mx-4 h-5 w-px bg-primary" />
 
-        <TopHeaderLink to="/sign-in">
+        <TopHeaderLink :to="ROUTES.SIGN_IN.PATH" data-test-id="sign-in-link">
           {{ $t("shared.layout.header.link_sign_in") }}
         </TopHeaderLink>
 
         <span class="mx-3 size-1 rounded-full bg-primary" />
 
-        <TopHeaderLink to="/sign-up">
+        <TopHeaderLink to="/sign-up" data-test-id="sign-up-link">
           {{ $t("shared.layout.header.link_register_now") }}
         </TopHeaderLink>
       </template>
     </div>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import { ref } from "vue";
+import { onClickOutside, onKeyStroke } from "@vueuse/core";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
+import { useDarkMode } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { useSignMeOut, useUser } from "@/shared/account";
+import { ROUTES } from "@/router/routes/constants";
+import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
+import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
+import TopHeaderOrganizations from "./top-header-organizations.vue";
 
-const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
+const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
+const { reverting, backToOperatorLabel, backToOperator } = useImpersonate();
+const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+const route = useRoute();
+const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === ROUTES.LOYALTY_CATALOG.PATH);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
-const contactOrganizationId = ref(user.value?.contact?.organizationId);
+const accountButton = ref<HTMLButtonElement | null>(null);
 
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
-
-async function selectOrganization(): Promise<void> {
-  if (!contactOrganizationId.value) {
-    return;
-  }
-
-  await switchOrganization(contactOrganizationId.value);
-  loginMenuVisible.value = false;
-}
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;
 });
+
+onKeyStroke("Escape", () => {
+  if (!loginMenuVisible.value) {
+    return;
+  }
+
+  closeLoginMenu();
+});
+
+function closeLoginMenu(): void {
+  loginMenuVisible.value = false;
+  accountButton.value?.focus();
+}
+
+async function onBackToOperator(): Promise<void> {
+  loginMenuVisible.value = false;
+  await backToOperator();
+}
 </script>

@@ -1,7 +1,16 @@
+#import "../../../fragments/wishlistLineItemFields.graphql"
+
 mutation AddWishlistBulkItem($command: InputAddWishlistBulkItemType!) {
   addWishlistBulkItem(command: $command) {
     wishlists {
+      name
+      description
+      scope
       id
+      modifiedDate
+      items {
+        ...wishlistLineItemFields
+      }
     }
   }
 }

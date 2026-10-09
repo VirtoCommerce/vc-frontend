@@ -3,7 +3,7 @@
     <component
       :is="isLink ? 'a' : 'button'"
       :href="getHrefValue(href)"
-      :class="['flex min-h-9 items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
+      :class="['flex min-h-9 w-full items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
       @click.prevent="click(navigate)"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
@@ -13,8 +13,8 @@
           :size="32"
           :class="[
             isLink && (isActive || isExactActive)
-              ? 'fill-[--mobile-menu-icon-active-color]'
-              : 'fill-[--mobile-menu-icon-color]',
+              ? 'text-[--mobile-menu-icon-active-color]'
+              : 'text-[--mobile-menu-icon-color]',
           ]"
         />
       </slot>
@@ -30,11 +30,11 @@
         <slot v-bind="{ isActive, isExactActive, formattedText: formatTextFunction(link.title) }" />
       </span>
 
-      <VcBadge v-if="count" variant="solid-light" color="neutral" size="lg" rounded>
+      <VcBadge v-if="count" variant="solid-light" color="neutral" rounded>
         {{ $n(count, { style: "decimal", notation: "compact" }) }}
       </VcBadge>
 
-      <VcIcon v-if="isParent" class="ml-auto fill-[--mobile-menu-navigation-color]" name="chevron-right" />
+      <VcIcon v-if="isParent" class="ml-auto text-[--mobile-menu-navigation-color]" name="chevron-right" />
     </component>
   </router-link>
 </template>

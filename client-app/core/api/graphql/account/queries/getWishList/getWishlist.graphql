@@ -10,5 +10,18 @@ query GetWishlist($listId: String!, $cultureName: String) {
     items {
       ...wishlistLineItemFields
     }
+    sharingSetting {
+      id
+      scope
+      access
+      isOwner
+      message
+      targets {
+        id
+        name
+        subtitle
+        imageUrl
+      }
+    }
   }
 }

@@ -1,0 +1,159 @@
+import type { OrdersFilterDataType } from "@/shared/account/types";
+
+// View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
+// Only active reps ever reach the client; filtering is server-side.
+export type SalesRepType = { id: string; name: string; email: string; phone: string };
+export type SalesRepSortColumnType = "name" | "email" | "phone";
+export type SalesRepSortType = { column: SalesRepSortColumnType; direction: "asc" | "desc" };
+
+// View model for the My Customers table; `lastOrder` is absent when the org has no orders yet.
+export type SalesRepCustomerLastOrderType = { id: string; number: string; createdDate: string };
+export type SalesRepCustomerType = {
+  organizationId: string;
+  organizationName: string;
+  // Business category (Member.accountType), e.g. "Garden Center"; empty when unset.
+  accountType: string;
+  // Default ship-to location, pre-formatted as "#postalCode · City · Region"; empty when no address.
+  location: string;
+  // Inline per-row purchase columns (aliased orderStatistics slices; the backend batches, no N+1).
+  ytdTotal: string;
+  // Stays a number: it is interpolated into a sentence, so vue-i18n needs it for plural selection.
+  ytdCount: number;
+  lastYearTotal: string;
+  lastOrder?: SalesRepCustomerLastOrderType;
+};
+
+export type SalesRepSortDirectionType = "asc" | "desc";
+
+// A server-defined filter/sort rule option surfaced as a chip or dropdown entry (see useSalesRepRules).
+// `defaultDirection`/`supportsDirection` are present on SORT rules only (absent on filter rules).
+export type SalesRepRuleType = {
+  name: string;
+  label: string;
+  // Item count shown as a highlighted counter next to the label (document-category tabs only).
+  count?: number;
+  defaultDirection?: SalesRepSortDirectionType;
+  supportsDirection?: boolean;
+};
+export type SalesRepRuleDomainType = "order" | "customer" | "topSeller" | "task";
+// Column sorting needs only the direction metadata, never the display label, so a list of sort rules
+// defined in code does not have to invent one.
+export type SalesRepSortRuleType = Pick<SalesRepRuleType, "name" | "defaultDirection" | "supportsDirection">;
+
+export type SalesRepRuleKindType = "filter" | "sort";
+
+// View model for a ranked Top Sellers row. `units`/`revenue` are display-ready strings from the shared
+// stat formatters, so this table's figures group the same way as the KPI cards above it (VCST-5586).
+export type SalesRepTopSellerRowType = {
+  rank: number;
+  productId: string;
+  name: string;
+  sku: string;
+  imageUrl: string;
+  units: string;
+  revenue: string;
+};
+
+// Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
+// not entered by the user; recipients (all org members) are resolved backend-side.
+export type SalesRepCommunicationInputType = {
+  // One send reaches every member of every organization listed, each of them once.
+  organizationIds: string[];
+  sendEmail: boolean;
+  sendPush: boolean;
+  message: string;
+  title?: string;
+};
+
+// Per-channel outcome of a broadcast. `warnings` carries stable codes (see the backend's
+// ModuleConstants.Communication.Warnings) that the UI maps to a localized message.
+export type SalesRepCommunicationResultType = {
+  succeeded: boolean;
+  pushSent: boolean;
+  emailSent: boolean;
+  warnings: string[];
+};
+
+// View model for a shared library document (VCST-5730); mapped from the GraphQL SalesRepDocument.
+// `url` is the AUTHORIZED download endpoint (/api/sales-rep/documents/{id}) — the only URL the UI may
+// open or download; raw asset URLs are never constructed client-side. `previewUrl` is the only image
+// source usable in an <img> (the download endpoint needs auth headers a plain <img> cannot send).
+export type SalesRepDocumentType = {
+  id: string;
+  // Raw file name — what downloadFile saves the file as; every visible name renders displayName.
+  name: string;
+  // Human-facing name; falls back to the raw file name on a blank wire value.
+  displayName: string;
+  // Subfolder name under the library root (e.g. "Catalogs"); empty when the file sits at the root.
+  category: string;
+  // The library's single highlighted document — featured by default and badged "Latest release".
+  isPinned: boolean;
+  contentType: string;
+  size: number;
+  createdDate: string;
+  // Falls back to createdDate on the wire's null so "Updated …" always has a date to show.
+  modifiedDate: string;
+  url: string;
+  summary: string;
+  pageCount?: number;
+  previewUrl: string;
+};
+
+// A category tab on the browse-all page: subfolder name + document count.
+export type SalesRepDocumentCategoryType = { name: string; count: number };
+
+// Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
+// the dashboard's Customer column.
+export type SalesRepOrderRowType = {
+  id: string;
+  number: string;
+  organizationId: string;
+  organizationName: string;
+  createdDate: string;
+  status: string;
+  statusDisplayValue: string;
+  itemsCount: string;
+  total: string;
+};
+
+// The storefront's filter shape, but `customerNames` here is the owning organization, not the buyer.
+export type SalesRepOrdersFilterDataType = OrdersFilterDataType;
+
+// A facet option from the list's own term_facets, so every option offered has orders behind it.
+export type SalesRepFacetOptionType = {
+  name: string;
+  label: string;
+  count: number;
+};
+
+export type SalesRepCustomerOrderRowType = {
+  id: string;
+  number: string;
+  organizationId: string;
+  organizationName: string;
+  createdDate: string;
+  status: string;
+  statusDisplayValue: string;
+  total: string;
+  isOwn: boolean;
+};
+
+// What it takes to render one organization as a row: avatar, name, and a line under it. Two unrelated sources fill
+// it — the rep's customer directory and a list's sharing targets — so the shape is declared once and each source
+// keeps its own name for what its rows mean. A field that belongs to only one of them goes on that alias, not here.
+export type OrganizationRowType = {
+  organizationId: string;
+  organizationName: string;
+  /** "City, Region"; empty when there is no address. */
+  location: string;
+  /** The organization's logo; empty when it has none, and the avatar falls back to initials. */
+  imageUrl: string;
+};
+
+/**
+ * A customer the list is, or is about to be, shared with. Identical to the row shape today and kept as its own name
+ * anyway: it is filled from `sharingSetting.targets` rather than from the rep's customer directory, and a field that
+ * only one of the two ever grows belongs here rather than on the shape they share.
+ */
+// eslint-disable-next-line sonarjs/redundant-type-aliases -- the name is the point; see above
+export type WishlistSharingRecipientType = OrganizationRowType;

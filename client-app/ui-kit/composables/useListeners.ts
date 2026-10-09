@@ -1,4 +1,4 @@
-import { pickBy } from "lodash";
+import { pickBy } from "lodash-es";
 import { computed, useAttrs } from "vue";
 import type { ComputedRef } from "vue";
 

@@ -7,7 +7,8 @@ This module implements intelligent document processing — a technology that ext
 Purchase request — feature that allows you to upload orders and order-like documents from other services (or even handwritten ones) to create a new order (shopping cart or quote) in VirtoCommerce.
 
 ## Requirements
-* [VirtoCommece.AIDocumentProcessing](https://github.com/VirtoCommerce/vc-module-ai-document-processing) version 3.800.0 or higher
+
+- [VirtoCommece.AIDocumentProcessing](https://github.com/VirtoCommerce/vc-module-ai-document-processing) version 3.800.0 or higher
 
 ![Purchase request screenshot](https://github.com/VirtoCommerce/vc-module-ai-document-processing/blob/master/docs/media/purchase-request-screenshot.png)
 

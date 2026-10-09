@@ -1,0 +1,42 @@
+#import "./organizationFields.graphql"
+
+fragment userTypeFields on UserType {
+  id
+  memberId
+  userName
+  email
+  emailConfirmed
+  photoUrl
+  phoneNumber
+  permissions
+  isAdministrator
+  passwordExpired
+  passwordExpiryInDays
+  forcePasswordChange
+  lockedState
+  contact {
+    id
+    firstName
+    lastName
+    fullName
+    organizationId
+    defaultLanguage
+    currencyCode
+    selectedAddressId
+    organization {
+      ...organizationFields
+    }
+    organizations {
+      totalCount
+    }
+  }
+  operator {
+    userName
+    contact {
+      fullName
+    }
+  }
+  roles {
+    name
+  }
+}

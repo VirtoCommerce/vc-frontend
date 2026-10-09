@@ -1,0 +1,368 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Säljare"
+    },
+    "page": {
+      "title": "Säljare"
+    },
+    "table": {
+      "name": "Namn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "search_placeholder": "Sök efter namn, e-post eller telefon",
+      "search_aria": "Sök efter säljare",
+      "empty": "Inga säljare hittades",
+      "no_results": "Inga säljare matchar din sökning",
+      "reset_search": "Återställ sökning",
+      "load_failed": "Kunde inte läsa in säljarna"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mina kunder"
+      },
+      "page": {
+        "title": "Mina kunder"
+      },
+      "table": {
+        "customer": "Kund",
+        "last_order": "Min senaste order",
+        "ytd": "Köp hittills",
+        "last_year": "Förra året",
+        "orders_count": "{count} beställning | {count} beställningar",
+        "all_customers": "Alla",
+        "actions": "Åtgärder",
+        "search_placeholder": "Sök efter namn",
+        "search_aria": "Sök kunder",
+        "empty": "Inga kunder hittades",
+        "no_results": "Inga kunder matchar din sökning",
+        "reset_search": "Återställ sökning",
+        "load_failed": "Kunde inte läsa in kunderna"
+      }
+    },
+    "hub": {
+      "title": "Säljrepresentant-hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Instrumentpanel"
+        },
+        "page": {
+          "title": "Instrumentpanel"
+        },
+        "widgets": {
+          "new_orders": "Order med status ”New”",
+          "active_carts": "Aktiva kundvagnar",
+          "orders_placed_week": "Order denna vecka",
+          "orders_placed_mtd": "Order hittills denna månad",
+          "purchased_mtd": "Köp hittills denna månad",
+          "orders_placed_ytd": "Order hittills i år",
+          "my_customers": "Mina kunder"
+        },
+        "stats": {
+          "value_total": "{amount} totalt",
+          "vs_last_week": "{delta} vs förra veckan",
+          "vs_last_month": "{delta} vs förra månaden",
+          "vs_last_year": "{delta} vs förra året",
+          "ordered_this_month": "{count} beställde denna månad",
+          "new_customers": "{count} ny kund | {count} nya kunder",
+          "of_recent_orders": "av {count} skapad de senaste 7 dagarna | av {count} skapade de senaste 7 dagarna",
+          "items_unit": "artikel | artiklar",
+          "not_for_checkout": "{count} inte till kassan",
+          "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunde inte läsas in"
+        }
+      },
+      "layout": {
+        "edit": "Redigera layout",
+        "editing": "Redigerar layout",
+        "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
+        "hint_keyboard": "Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
+        "save": "Spara layout",
+        "cancel": "Avbryt",
+        "reset": "Återställ",
+        "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
+        "load_failed": "Den sparade layouten kunde inte läsas in, så standardordningen visas. Redigering är inte tillgänglig förrän den lästs in — uppdatera sidan.",
+        "hidden_widgets": "Dolda widgetar",
+        "visible_stats": "Synliga nyckeltal",
+        "hidden_stats": "Dolda nyckeltal",
+        "empty_visible": "Dra ett nyckeltal hit för att visa det",
+        "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
+        "max_rows": "Max rader",
+        "restored": "Standardlayouten har återställts.",
+        "empty": {
+          "title": "Alla block är dolda",
+          "text": "Alla nyckeltal och widgetar på den här sidan har flyttats till {hidden} i layoutinställningarna. Återställ standardlayouten för att få tillbaka allt, eller öppna {edit} för att välja exakt vad som ska visas.",
+          "hidden": "Dolda",
+          "restore": "Återställ standardlayout"
+        },
+        "a11y": {
+          "reorder": "Ändra ordning på {title}",
+          "hide": "Dölj {title}",
+          "show": "Visa {title}",
+          "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
+          "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
+          "moved": "{title} flyttad till position {position} av {total}.",
+          "dropped": "{title} släppt på position {position} av {total}.",
+          "edge": "{title} är redan på plats {position} av {total}.",
+          "cancelled": "Flytt av {title} avbruten.",
+          "parked": "{title} dold.",
+          "restored": "{title} visas.",
+          "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
+        }
+      }
+    },
+    "customer_profile": {
+      "loading": "Laddar…",
+      "not_found": "Kunden hittades inte eller finns inte bland dina kunder.",
+      "load_failed": "Den här kunden kunde inte läsas in. Uppdatera sidan.",
+      "back_to_customers": "Tillbaka till mina kunder",
+      "widgets": {
+        "avg_order_value": "Genomsnittligt ordervärde"
+      },
+      "stats": {
+        "per_order": "Genomsnitt per order (hittills)"
+      },
+      "info": {
+        "title": "Kundinformation",
+        "empty": "Ingen information tillgänglig",
+        "primary_contact": "Primär kontakt",
+        "phone": "Telefon",
+        "account_type": "Kontotyp",
+        "ship_to": "Leveransadress"
+      }
+    },
+    "customer_orders": {
+      "page": {
+        "title": "Beställningar för {customer}",
+        "all_title": "Kundorder",
+        "title_fallback": "Beställningar"
+      },
+      "breadcrumb": "Beställningar",
+      "back_to_customer": "Tillbaka till kunden",
+      "back_to_orders": "Tillbaka till order",
+      "order_not_found": "Ordern hittades inte",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Sök efter nummer, namn eller andra uppgifter",
+      "search_aria": "Sök beställningar",
+      "reset_search": "Återställ sökning",
+      "filters": {
+        "button": "Filter",
+        "title": "Filter",
+        "created_date": "Skapat datum",
+        "start_date": "Startdatum",
+        "end_date": "Slutdatum",
+        "date_range": "Datumintervall",
+        "order_status": "Välj beställningsstatus",
+        "customer": "Välj kund",
+        "reset": "Återställ",
+        "apply": "Tillämpa",
+        "custom_date": "Anpassat datum",
+        "last_day": "Sista dagen",
+        "last_week": "Förra veckan",
+        "last_month": "Förra månaden",
+        "last_year": "Förra året",
+        "remove_filter": "Ta bort filtret ”{label}”"
+      }
+    },
+    "communication": {
+      "action": "Skicka e-post",
+      "title": "Skicka ett meddelande",
+      "subtitle": "Når alla medlemmar i {organization}",
+      "title_label": "Titel",
+      "message_label": "Meddelande",
+      "channels_label": "Skicka via",
+      "email_label": "E-post",
+      "push_label": "Push-avisering",
+      "send_button": "Skicka",
+      "cancel_button": "Avbryt",
+      "success_text": "Ditt meddelande har skickats.",
+      "error_text": "Meddelandet kunde inte skickas. Försök igen.",
+      "partial_success_text": "Ditt meddelande skickades, men inte via alla kanaler:",
+      "warnings": {
+        "generic": "Meddelandet kunde inte skickas via en av de valda kanalerna.",
+        "NoRecipients": "Den här organisationen har inga kontakter att meddela.",
+        "EmailUnavailable": "E-post är för närvarande inte tillgängligt. Kontakta din administratör.",
+        "EmailStoreAccessDenied": "E-postmeddelandet kunde inte skickas för den valda butiken.",
+        "EmailNoRecipients": "Ingen av mottagarna har en e-postadress.",
+        "EmailSendFailed": "E-postmeddelandet kunde inte skickas. Försök igen senare.",
+        "PushSendFailed": "Push-aviseringen kunde inte skickas. Försök igen senare."
+      },
+      "quick_actions": {
+        "title": "Snabbåtgärder",
+        "order_on_behalf": "Beställ åt kunden",
+        "send_email": "Skicka e-post",
+        "create_quote": "Skapa offert",
+        "schedule_call": "Boka samtal"
+      }
+    },
+    "orders": {
+      "title": "Mina senaste ordrar",
+      "view_all": "Alla beställningar",
+      "empty": "Inga beställningar ännu",
+      "no_results": "Inga ordrar matchar detta filter",
+      "number": "Ordernr",
+      "customer": "Kund",
+      "date": "Datum",
+      "items": "Artiklar",
+      "status": "Status",
+      "total": "Totalt",
+      "filter_all": "Alla",
+      "load_failed": "Kunde inte läsa in ordrarna"
+    },
+    "tasks": {
+      "title": "Uppgifter",
+      "widget_title": "Uppgifter och förfallodatum",
+      "view_all": "Alla uppgifter",
+      "new_task": "Ny uppgift",
+      "due_dates": "Förfallodatum",
+      "today": "I dag",
+      "all": "Alla",
+      "clear_day_aria": "Rensa {date}",
+      "empty": "Inga uppgifter på den här fliken",
+      "empty_day": "Inget förfaller denna dag",
+      "load_failed": "Kunde inte läsa in uppgifterna",
+      "day_task_count": "{count} uppgift | {count} uppgifter",
+      "overdue_total": "{count} försenad uppgift | {count} försenade uppgifter",
+      "day_task_count_capped": "{total} uppgifter ({shown} visas)",
+      "day_markers": "{count} uppgift. Markerad: {kinds} | {count} uppgifter. Markerad: {kinds}",
+      "page": {
+        "subtitle": "Dina uppgifter, uppföljningar och förfallodatum för alla konton — dag för dag."
+      },
+      "table": {
+        "task": "Uppgift",
+        "status": "Status",
+        "notes": "Anteckningar",
+        "actions": "Åtgärder",
+        "mark_complete": "Slutför",
+        "reopen": "Återöppna",
+        "action_aria": "{action}: ”{name}”",
+        "edit_aria": "Redigera ”{name}”"
+      },
+      "status": {
+        "upcoming": "Kommande",
+        "overdue": "Försenad",
+        "completed": "Slutförd",
+        "canceled": "Avbruten"
+      },
+      "priority": {
+        "lowest": "Lägsta",
+        "low": "Låg",
+        "normal": "Normal",
+        "high": "Hög",
+        "highest": "Högsta"
+      },
+      "due_relative": {
+        "expired": "Förföll {date}",
+        "due": "Förfaller {date}"
+      },
+      "legend": {
+        "upcoming": "Kommande",
+        "overdue": "Försenade",
+        "completed": "Slutförda"
+      },
+      "form": {
+        "create_title": "Ny uppgift",
+        "edit_title": "Redigera uppgift",
+        "name_label": "Titel",
+        "due_date_label": "Förfallodatum",
+        "priority_label": "Prioritet",
+        "type_label": "Typ",
+        "description_label": "Anteckningar",
+        "save_button": "Spara",
+        "cancel_button": "Avbryt",
+        "delete_button": "Radera",
+        "delete_title": "Ta bort uppgift",
+        "delete_confirm": "Den här uppgiften tas bort permanent. Vill du fortsätta?",
+        "saved": "Uppgiften har sparats",
+        "deleted": "Uppgiften har raderats"
+      }
+    },
+    "top_sellers": {
+      "title": "Topp säljare",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Enheter",
+      "revenue": "Intäkter",
+      "empty": "Ingen försäljning under denna period",
+      "no_results": "Ingen försäljning i denna kategori",
+      "all_categories": "Alla kategorier",
+      "load_failed": "Kunde inte läsa in bästsäljarna"
+    },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bläddra bland alla",
+      "open": "Öppna",
+      "empty": "Inga dokument ännu",
+      "load_failed": "Kunde inte läsa in dokumenten",
+      "page": {
+        "subtitle": "Kataloger, lookbooks, prislistor och säljguider — öppna eller ladda ner den senaste publikationen.",
+        "search_placeholder": "Sök efter namn",
+        "search_aria": "Sök dokument",
+        "all_tab": "Alla",
+        "empty": "Inga dokument ännu",
+        "no_results": "Inga dokument matchar din sökning",
+        "reset_search": "Återställ sökning",
+        "load_failed": "Kunde inte läsa in dokumenten"
+      },
+      "details": {
+        "pages_count": "{count} sida | {count} sidor",
+        "open": "Öppna",
+        "download": "Ladda ner",
+        "close": "Stäng detaljer",
+        "not_found": "Det här dokumentet är inte längre tillgängligt.",
+        "latest_publication": "Senaste publikation"
+      },
+      "published": "Publicerad {date}"
+    },
+    "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Kommande",
+          "overdue": "Försenade",
+          "completed": "Slutförda"
+        },
+        "sort": {
+          "due-date": "Förfallodatum",
+          "recent": "Senast skapade",
+          "name": "Uppgift"
+        }
+      },
+      "load_failed": {
+        "filter": "Filtren kunde inte läsas in, så hela listan visas. Uppdatera sidan.",
+        "sort": "Sorteringsalternativen kunde inte läsas in, så standardordningen används. Uppdatera sidan.",
+        "both": "Filtren och sorteringsalternativen kunde inte läsas in, så hela listan visas i standardordningen. Uppdatera sidan."
+      },
+      "customer": {
+        "filter": {
+          "All": "Alla"
+        }
+      }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kunder",
+      "share_customers_placeholder": "Sök kunder efter namn",
+      "share_customers_error": "Kundlistan kunde inte laddas. Försök igen.",
+      "share_empty_hint": "En tom lista avslutar inte delningen – ändra i stället vem som har åtkomst.",
+      "share_message_label": "Meddelande (valfritt)",
+      "share_message_placeholder": "Lägg till ett meddelande till mottagarna",
+      "share_message_hint": "Nya mottagare får detta i sin avisering.",
+      "recipients_title": "Mottagare · {count}",
+      "clear_recipients_button": "Rensa alla",
+      "recipients_cleared": "Rensade · {count}",
+      "restore_recipients_button": "Ångra",
+      "show_all_recipients_button": "Visa alla {count}",
+      "show_less_recipients_button": "Visa mindre",
+      "remove_recipient_button": "Ta bort {name}",
+      "share_default_title": "En ny lista från din säljare",
+      "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
+      "share_success": "Listan har delats med {count} kund. | Listan har delats med {count} kunder.",
+      "share_saved": "Listan har sparats. Nu delad med {count} kund. | Listan har sparats. Nu delad med {count} kunder.",
+      "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
+      "share_notify_error": "Listan sparades, men aviseringen kunde inte skickas.",
+      "scope_label": "Specifika kunder",
+      "status": "Delad med 1 kund | Delad med {count} kunder",
+      "badge": "Rekommenderas av din säljare"
+    }
+  }
+}

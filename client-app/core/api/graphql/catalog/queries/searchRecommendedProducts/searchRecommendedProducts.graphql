@@ -48,6 +48,11 @@ query GetProductRecommendations(
           formattedAmount
         }
       }
+      breadcrumbs {
+        itemId
+        title
+        typeName
+      }
     }
   }
 }

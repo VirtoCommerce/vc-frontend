@@ -1,0 +1,187 @@
+.vc-button {
+  $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $solid-bg: (
+    primary: 200,
+    secondary: 300,
+    accent: 300,
+    neutral: 300,
+    success: 400,
+    danger: 400,
+    info: 400,
+    warning: 400,
+  );
+  $solid-hover: (
+    primary: 300,
+    secondary: 400,
+    accent: 400,
+    neutral: 400,
+    success: 500,
+    danger: 500,
+    info: 500,
+    warning: 500,
+  );
+  $loading: "";
+  $disabled: "";
+
+  &--loading {
+    $loading: &;
+  }
+
+  &--disabled {
+    $disabled: &;
+
+    &:not(#{$loading}) {
+      --text-color: var(--color-neutral-800);
+      --vc-icon-color: var(--color-neutral-600);
+    }
+  }
+
+  // Compound `&.vc-button--solid--#{$color}` keeps the (0,2,0) specificity of the
+  // `[class*=]` selector it replaces, so `--disabled` still wins over it.
+  @each $color in $colors {
+    &.vc-button--solid--#{$color} {
+      --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+    }
+  }
+
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color} {
+      --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+    }
+  }
+
+  @each $color, $shade in $solid-hover {
+    &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      // Darken the rest colour. Fallback stays the `$solid-hover` shade: presets without
+      // the override key have hover shades brighter than their dark rest fill.
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
+        black 8%
+      );
+      --border-color: var(--bg-color);
+    }
+  }
+
+  @each $color in $colors {
+    &--outline--#{$color} {
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
+    }
+  }
+
+  @each $color in $colors {
+    &--surface--#{$color} {
+      --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
+    }
+  }
+
+  @each $color in $colors {
+    &--ghost--#{$color} {
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
+    }
+  }
+
+  @each $color in $colors {
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+    }
+
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+    }
+
+    &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      // Re-assert rest text: masks the light base rule, which darkens a shade-500 fallback.
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
+    }
+  }
+
+  @each $color in $colors {
+    &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      // Derive from the rest colour (white, not black): dark ramps are not monotonic.
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-200)),
+        white 8%
+      );
+    }
+  }
+
+  @each $color in $colors {
+    &--soft--#{$color} {
+      --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+      --border-color: var(--color-vc-border-soft-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --bg-color: color-mix(
+          in srgb,
+          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-200)),
+          white 8%
+        );
+        --border-color: var(--bg-color);
+      }
+    }
+  }
+
+  // Pressed — derived from the REST colour, not from hover: dark hover brightens, so a press
+  // stepped further along the ramp reads as a flash. Darkening from rest keeps the press
+  // distinct from both states, including on touch where hover never happens.
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
+        black 20%
+      );
+      --border-color: var(--bg-color);
+    }
+  }
+
+  // Text is re-asserted wherever the light base rule would otherwise reach in: its `:active`
+  // selector is (0,3,0), higher than the (0,2,1) dark rest rules.
+  @each $color in $colors {
+    &--soft--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100)),
+        black 20%
+      );
+      --border-color: var(--bg-color);
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
+    }
+
+    &--tonal--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100)),
+        black 20%
+      );
+      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-800));
+    }
+
+    // Rest is the page ground here, with nothing below it to darken into, so the press steps
+    // down from the hover fill instead.
+    &--outline--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-100), black 20%);
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+    }
+
+    &--surface--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-100), black 20%);
+      --border-color: var(--bg-color);
+      --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
+    }
+
+    &--ghost--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-100), black 20%);
+      --border-color: var(--bg-color);
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
+    }
+  }
+}

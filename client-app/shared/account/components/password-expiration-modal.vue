@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="$t('common.titles.password_expired')" variant="warning" is-persistent>
+  <VcModal :title="$t('common.titles.password_expired')" variant="warning" icon="warning" is-persistent>
     <template #actions>
       <VcButton @click="$emit('confirm')">
         {{ $t("common.buttons.set_new_password") }}
@@ -10,13 +10,7 @@
       </VcButton>
     </template>
 
-    <div class="flex items-center justify-center gap-4 px-5 py-10">
-      <VcIcon class="fill-warning" name="exclamation-circle" size="lg" />
-
-      <span class="text-lg">
-        {{ $t("common.messages.password_about_expire", { value: expiryInDays }) }}
-      </span>
-    </div>
+    {{ $t("common.messages.password_about_expire", { value: expiryInDays }) }}
   </VcModal>
 </template>
 

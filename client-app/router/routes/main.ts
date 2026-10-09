@@ -1,8 +1,17 @@
+import { useThemeContext } from "@/core/composables";
+import {
+  LOYALTY_CURRENCY_KEY,
+  LOYALTY_ENABLED_KEY,
+  LOYALTY_MODE_KEY,
+  LOYALTY_MODULE_ID,
+} from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
+import { cartRoutes } from "./cart";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
 import type { RouteRecordRaw } from "vue-router";
+import Error400 from "@/pages/400.vue";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
@@ -17,43 +26,78 @@ const ResetPassword = () => import("@/pages/reset-password.vue");
 const ChangePassword = () => import("@/pages/change-password.vue");
 const BlockedPage = () => import("@/pages/blocked.vue");
 const Account = () => import("@/pages/account/index.vue");
+const Impersonate = () => import("@/pages/account/impersonate.vue");
 const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
-const Cart = () => import("@/pages/cart.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
+const LoyaltyCatalog = () => import("@/pages/loyalty-catalog.vue");
 const Category = () => import("@/pages/category.vue");
-const Product = () => import("@/pages/product.vue");
+const ProductRoute = () => import("@/pages/product-route.vue");
+const SharedList = () => import("@/pages/shared-list.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
+const LOYALTY_CATALOG_MODES = new Set(["Mixed Cart", "Loyalty Store"]);
+
+function isLoyaltyCatalogAvailable(): boolean {
+  const { themeContext } = useThemeContext();
+  const loyaltyModule = themeContext.value?.storeSettings?.modules?.find(
+    (module) => module.moduleId === LOYALTY_MODULE_ID,
+  );
+  const settings = loyaltyModule?.settings ?? [];
+  const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
+  const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
+  const mode = settings.find((s) => s.name === LOYALTY_MODE_KEY)?.value as string | undefined;
+  return isEnabled && !!currency && !!mode && LOYALTY_CATALOG_MODES.has(mode);
+}
+
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true } },
-  { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
-  { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
-  { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
-  { path: "/sign-in", name: "SignIn", component: SingInPage, meta: { public: true } },
+  {
+    path: "/oauth/authorize",
+    name: "OAuthAuthorize",
+    component: () => import("@/pages/auth/authorize.vue"),
+    meta: { requiresAuth: true },
+  },
+  { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true, redirectable: false } },
+  { path: "/400", name: "BadRequest", component: Error400, meta: { public: true, redirectable: false } },
+  { path: "/403", name: "NoAccess", component: Error403, meta: { public: true, redirectable: false } },
+  { path: "/404", name: "NotFound", component: Error404, meta: { public: true, redirectable: false } },
+  { path: "/500", name: "InternalError", component: Error500, meta: { public: false, redirectable: false } },
+  { path: ROUTES.SIGN_IN.PATH, name: ROUTES.SIGN_IN.NAME, component: SingInPage, meta: { public: true } },
   { path: "/sign-up", name: "SignUp", component: SignUpPage, meta: { public: true } },
   { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword, meta: { public: true } },
-  { path: "/change-password", name: "ChangePassword", component: ChangePassword, meta: { public: false } },
+  {
+    path: ROUTES.CHANGE_PASSWORD.PATH,
+    name: ROUTES.CHANGE_PASSWORD.NAME,
+    component: ChangePassword,
+    meta: { requiresAuth: true, public: false, redirectable: false },
+  },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
-  { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true } },
+  { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true, redirectable: false } },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
   {
-    path: "/account",
-    name: "Account",
+    path: "/account/impersonate/:userId",
+    name: "Impersonate",
+    props: true,
+    component: Impersonate,
+    meta: { public: true },
+  },
+  {
+    path: ROUTES.ACCOUNT.PATH,
+    name: ROUTES.ACCOUNT.NAME,
     component: Account,
     children: accountRoutes,
     redirect: { name: accountRoutes[0].name },
     meta: { requiresAuth: true },
   },
   {
-    path: "/company",
-    name: "Company",
+    path: ROUTES.COMPANY.PATH,
+    name: ROUTES.COMPANY.NAME,
     component: Company,
     children: corporateRoutes,
     redirect: { name: corporateRoutes[0].name },
@@ -66,17 +110,53 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: ROUTES.SEARCH.PATH, name: ROUTES.SEARCH.NAME, component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
-  { path: "/cart", name: "Cart", component: Cart },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
+  ...cartRoutes,
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
+  {
+    path: ROUTES.LOYALTY_CATALOG.PATH,
+    name: ROUTES.LOYALTY_CATALOG.NAME,
+    component: LoyaltyCatalog,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: ROUTES.LOYALTY_PRODUCT.PATH,
+    name: ROUTES.LOYALTY_PRODUCT.NAME,
+    component: ProductRoute,
+    props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: ROUTES.LOYALTY_CATEGORY.PATH,
+    name: ROUTES.LOYALTY_CATEGORY.NAME,
+    component: Category,
+    props: true,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: `${ROUTES.LOYALTY_CATALOG.PATH}/:pathMatch(.*)*`,
+    name: "LoyaltyCatalogMatcher",
+    component: Matcher,
+    props: true,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   {
     path: "/product/:productId",
     name: "Product",
-    component: Product,
+    component: ProductRoute,
     props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
   },
+  { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },

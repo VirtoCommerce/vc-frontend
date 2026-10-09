@@ -1,12 +1,14 @@
-import { ref, computed, readonly } from "vue";
+import { useLocalStorage } from "@vueuse/core";
+import { ref, computed, readonly, toValue } from "vue";
 import { getProduct } from "@/core/api/graphql/catalog";
+import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
-import { useLocalStorage } from "@vueuse/core";
-import { NAVIGATION_OUTLINE } from "@/core/constants";
 
-export function useProduct() {
+export function useProduct(
+  options: { currencyCodeOverride?: string | Ref<string | undefined> | (() => string | undefined) } = {},
+) {
   const fetching: Ref<boolean> = ref(true);
   const product: Ref<Product | undefined> = ref();
   const navigationOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
@@ -14,7 +16,7 @@ export function useProduct() {
   async function fetchProduct(id: string) {
     fetching.value = true;
     try {
-      product.value = await getProduct(id, navigationOutline.value);
+      product.value = await getProduct(id, navigationOutline.value, toValue(options.currencyCodeOverride));
       navigationOutline.value = product.value?.outline;
     } catch (e) {
       Logger.error(`${useProduct.name}.${fetchProduct.name}`, e);

@@ -1,4 +1,4 @@
-import type { MaybeRef } from "@vueuse/core";
+import type { MaybeRef } from "vue";
 import type { LocationQueryValue } from "vue-router";
 
 export interface IUseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {

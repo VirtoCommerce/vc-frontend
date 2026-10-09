@@ -1,11 +1,13 @@
 <template>
-  <div class="two-column polygon-bg">
+  <div class="two-column">
     <div class="two-column__container" :class="$attrs.class">
       <div :class="['two-column__content', breakpointClassName('flex-row')]">
         <div :class="['two-column__column', 'two-column__column--left', breakpointClassName('w-1/2')]">
           <slot name="left"></slot>
         </div>
+
         <slot></slot>
+
         <div
           :class="[
             'two-column__column',
@@ -22,8 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import type { BreakpointsType } from "@/core/constants";
-
 defineOptions({
   inheritAttrs: false,
 });

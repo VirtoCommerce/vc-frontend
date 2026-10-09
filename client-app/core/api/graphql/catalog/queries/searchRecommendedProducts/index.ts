@@ -8,6 +8,7 @@ export type RecommendedProductsSearchParamsType = {
   model: string;
   maxRecommendations?: number;
   fallbackProductsFilter?: string;
+  currencyCodeOverride?: string;
 };
 
 export async function searchRecommendedProducts({
@@ -15,8 +16,10 @@ export async function searchRecommendedProducts({
   model,
   maxRecommendations = 6,
   fallbackProductsFilter,
+  currencyCodeOverride,
 }: RecommendedProductsSearchParamsType): Promise<GetRecommendationsResponseType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
+  const { storeId, userId, cultureName, currencyCode: defaultCurrencyCode } = globals;
+  const currencyCode = currencyCodeOverride || defaultCurrencyCode;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "recommendations">>, QueryRecommendationsArgs>({
     query: searchRecommendedProductsQueryDocument,

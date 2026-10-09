@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout sidebar-position="right" sticky>
     <BillingDetailsSection />
 
     <template #sidebar>
@@ -8,6 +8,7 @@
           <ProceedTo
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
+            test-id="review-order-button"
             @click="
               analytics('addPaymentInfo', { ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)
             "
@@ -26,6 +27,8 @@
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
+
+          <LoyaltyValidationAlert class="mt-4" />
         </template>
       </OrderSummary>
     </template>
@@ -36,6 +39,7 @@
 import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
 const { isValidPayment } = useCheckout();

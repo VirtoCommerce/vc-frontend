@@ -1,18 +1,21 @@
 <template>
   <VcModal :title="$t('common.titles.change_role')" dividers>
+    <VcAlert v-if="!roles.length && !loading" color="warning" size="sm" variant="solid-light" class="mb-4">
+      {{ $t("common.messages.no_company_roles_available") }}
+    </VcAlert>
+
     <div class="space-y-4">
       <div v-for="role in roles" :key="role.id" class="flex items-start gap-2">
         <div class="pt-0.5">
           <VcRadioButton v-model="selectedRoleId" :value="role.id" />
         </div>
+
         <div class="grow">
           <b>{{ role.name }}</b>
+
           <div v-if="role.description">
             {{ role.description }}
           </div>
-        </div>
-        <div class="pt-0.5">
-          <RoleIcon :role-id="role.id" />
         </div>
       </div>
     </div>
@@ -36,7 +39,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import RoleIcon from "./role-icon.vue";
 import type { ExtendedRoleType } from "@/core/types";
 
 interface IEmits {

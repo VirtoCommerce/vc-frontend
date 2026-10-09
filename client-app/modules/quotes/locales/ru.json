@@ -10,8 +10,12 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Введите ключевое слово...",
+    "search_placeholder": "По номеру или статусу",
+    "no_quote_message": "Запросов квот пока нет",
     "no_results_message": "Результаты не найдены",
+    "buttons": {
+      "reset_search": "Сбросить поиск"
+    },
     "request_quote_button": "Запросить квоту",
     "search_quote_requests": "Поиск запросов квот",
     "reset_search": "Сбросить поиск",

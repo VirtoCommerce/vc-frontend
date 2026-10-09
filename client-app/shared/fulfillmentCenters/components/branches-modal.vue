@@ -35,8 +35,9 @@
 
           <VcEmptyView
             v-else
-            :text="$t('shared.catalog.branches_modal.no_results')"
+            :text="emptyViewText"
             icon="outline-stock"
+            :variant="emptyViewVariant"
             class="h-[23.8rem] max-h-screen-60"
           >
             <template v-if="searchInput.length" #button>
@@ -58,7 +59,7 @@
             </div>
 
             <button type="button" class="flex cursor-pointer items-center pl-2" @click="clearSelection">
-              <VcIcon name="clear" class="fill-primary" :size="16" />
+              <VcIcon name="clear" class="text-primary" :size="16" />
 
               <span class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
                 {{ $t("shared.catalog.branches_modal.clear_selection") }}
@@ -113,7 +114,7 @@
               class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-additional-50 shadow-md"
               @click="clearSelection"
             >
-              <VcIcon name="clear" class="fill-primary" :size="16" />
+              <VcIcon name="clear" class="text-primary" :size="16" />
             </button>
           </template>
         </div>
@@ -134,7 +135,7 @@
           </template>
         </div>
 
-        <VcEmptyView v-else :text="$t('shared.catalog.branches_modal.no_results')" icon="outline-stock">
+        <VcEmptyView v-else :text="emptyViewText" icon="outline-stock" :variant="emptyViewVariant">
           <template v-if="searchInput.length" #button>
             <VcButton prepend-icon="reset" @click="searchInput = ''">
               {{ $t("shared.catalog.branches_modal.reset_search_button") }}
@@ -166,6 +167,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { useFulfillmentCenters } from "../composables";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
@@ -185,12 +187,20 @@ const props = withDefaults(defineProps<IProps>(), {
   selectedBranches: () => [],
 });
 
+const { t } = useI18n();
 const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 
 const showSelectedBranchesMobile = ref(false);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 const selectedBranchesIds = ref<string[]>([]);
+
+const emptyViewVariant = computed(() => (searchInput.value.length ? "search" : "empty"));
+const emptyViewText = computed(() =>
+  searchInput.value.length
+    ? t("shared.catalog.branches_modal.no_results")
+    : t("shared.catalog.branches_modal.no_branches"),
+);
 
 onMounted(async () => {
   await loadFulfillmentCenters();
@@ -206,6 +216,7 @@ function searchFilter(item: IFulfillmentCenter) {
 }
 
 function search(value: string) {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: value is typed as string
   searchInput.value = value.toLocaleLowerCase();
 }
 

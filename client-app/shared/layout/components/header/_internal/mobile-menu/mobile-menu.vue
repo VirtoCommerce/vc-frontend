@@ -2,7 +2,7 @@
   <nav
     class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color]"
   >
-    <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
+    <div class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
         <span
           v-if="organization"
@@ -14,13 +14,21 @@
         <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="max-h-9" lazy />
       </div>
 
+      <!-- Dark mode toggle -->
+      <DarkModeToggle
+        :tooltip="false"
+        :icon-size="22"
+        test-id="mobile-dark-mode-toggle"
+        class="appearance-none p-2 text-[--mobile-menu-navigation-color]"
+      />
+
       <!-- Language block -->
-      <LanguageSelector v-if="supportedLocales.length > 1" />
+      <LanguageSelector v-if="supportedLanguages.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="delete-thin" class="fill-[--mobile-menu-navigation-color]" :size="22" />
+        <VcIcon name="delete-thin" class="text-[--mobile-menu-navigation-color]" :size="22" />
       </button>
-    </header>
+    </div>
 
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
@@ -28,13 +36,16 @@
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
-        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-additional-50">
+        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-[--mobile-menu-text-color]">
           {{ openedItem?.title }}
         </h2>
 
         <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
+
         <SettingsMenu v-else-if="openedItem.id === 'settings'" />
+
         <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+
         <!-- view all catalog link -->
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
@@ -44,10 +55,12 @@
             class="view-all-link"
             :href="openedItem.route as string"
             target="_blank"
+            rel="noopener noreferrer"
             @click="$emit('close')"
           >
             {{ $t("shared.layout.header.mobile.view_all_catalog") }}
           </a>
+
           <router-link v-else class="view-all-link" :to="openedItem.route" @click="$emit('close')">
             {{ $t("shared.layout.header.mobile.view_all_catalog") }}
           </router-link>
@@ -76,6 +89,7 @@ import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
+import DarkModeToggle from "@/shared/layout/components/header/_internal/dark-mode-toggle.vue";
 import DefaultMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/default-menu.vue";
 import MainMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/main-menu.vue";
 import MultiOrganisationMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/multi-organisation-menu.vue";
@@ -90,7 +104,7 @@ defineEmits<IEmits>();
 
 const { t } = useI18n();
 
-const { supportedLocales } = useLanguages();
+const { supportedLanguages } = useLanguages();
 const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
@@ -169,7 +183,7 @@ onMounted(() => {
 }
 
 .view-all-link {
-  @apply text-lg tracking-[0.01em] text-additional-50;
+  @apply text-lg tracking-[0.01em] text-[--mobile-menu-link-active-color];
 }
 
 .mobile-menu__overlay {

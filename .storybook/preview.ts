@@ -1,55 +1,243 @@
-import { setup } from "@storybook/vue3";
-import { vueRouter } from "storybook-vue3-router";
+import { setup } from "@storybook/vue3-vite";
+import { create } from "storybook/theming/create";
+import { darkPresets, presets } from "../client-app/assets/presets";
+import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
+import { a11yConfig } from "./a11y-config";
+import { DocsPage } from "./docs-page";
+import { createStorybookRouter } from "./router";
+import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
-import type { Preview } from "@storybook/vue3";
+import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
+import "../client-app/assets/styles/_ui-kit-tokens.scss";
+import "../client-app/assets/styles/_dark.scss";
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
 
+const docsTheme = create({
+  base: "light",
+  fontBase: "Lato, sans-serif",
+});
+
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
+const router = createStorybookRouter();
 
-setGlobals({ i18n });
+// Remove this after refactoring the VcImage component
+const { setThemeContext } = useThemeContext();
+setThemeContext({
+  storeId: "storybook",
+  storeName: "Storybook",
+  catalogId: "storybook",
+  storeUrl: "https://storybook.example.com",
+  defaultLanguage: {
+    twoLetterLanguageName: "en",
+    threeLetterLanguageName: "eng",
+    cultureName: "en-US",
+    nativeName: "English",
+    twoLetterRegionName: "US",
+    threeLetterRegionName: "USA",
+    isInvariant: false,
+  },
+  defaultCurrency: {
+    code: "USD",
+    symbol: "$",
+    cultureName: "en-US",
+    englishName: "US Dollar",
+    exchangeRate: 1,
+    name: "US Dollar",
+    isInvariant: false,
+  },
+  availableLanguages: [],
+  availableCurrencies: [],
+  graphQLSettings: { keepAliveInterval: 30 },
+  plugins: [],
+  settings: {
+    image_thumbnails_enabled: true,
+    image_thumbnails_suffixes: { sm: "sm", md: "md", lg: "lg" },
+    anonymousUsersAllowed: true,
+    modules: [],
+    authenticationTypes: [],
+    createAnonymousOrderEnabled: true,
+    defaultSelectedForCheckout: true,
+    emailVerificationEnabled: false,
+    emailVerificationRequired: false,
+    environmentName: "storybook",
+    passwordRequirements: {
+      requireLowercase: false,
+      requireUppercase: false,
+      requireDigit: false,
+      requiredLength: 6,
+      requiredUniqueChars: 0,
+      requireNonAlphanumeric: false,
+    },
+    seoLinkType: "short",
+    subscriptionEnabled: false,
+    taxCalculationEnabled: false,
+    isSpa: true,
+    quotesEnabled: false,
+  },
+} as StoreResponseType);
 
-async function configureThemeSettings() {
-  const module = (await import(`@/assets/presets/default.json`)) as {
-    default: IThemeConfigPreset;
-  };
-  const preset = module.default;
+// List of available theme presets
+const PRESETS = Object.keys(presets);
+type PresetNameType = keyof typeof presets;
 
-  if (preset) {
-    const styleElement = document.createElement("style");
-    styleElement.innerText = ":root {";
-    Object.entries(preset).forEach(([key, value]) => {
-      styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
+let currentStyleElement: HTMLStyleElement | null = null;
+let currentPresetName: PresetNameType | null = null;
+let loadingPreset: PresetNameType | null = null;
+let i18nConfigured = false;
+
+// Enable for debugging: track DOM changes (only in dev mode)
+const ENABLE_DOM_MONITORING = import.meta.env.MODE === "development";
+if (ENABLE_DOM_MONITORING && typeof window !== "undefined") {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList" && mutation.target === document.head) {
+        // eslint-disable-next-line no-console
+        console.log("DOM changed in <head>:", {
+          addedNodes: mutation.addedNodes.length,
+          removedNodes: mutation.removedNodes.length,
+          target: mutation.target,
+        });
+      }
     });
-    styleElement.innerText += "}";
-    document.head.prepend(styleElement);
+  });
+
+  observer.observe(document.head, {
+    childList: true,
+    subtree: false,
+  });
+
+  // eslint-disable-next-line no-console
+  console.log("MutationObserver activated for monitoring <head>");
+}
+
+function presetToCssVars(preset: IThemeConfigPreset): string {
+  return (
+    Object.entries(preset)
+      // eslint-disable-next-line sonarjs/null-dereference -- key from Object.entries is always a string
+      .map(([key, value]) => `--${key.replace(/_/g, "-")}: ${value};`)
+      .join("")
+  );
+}
+
+function applyDarkMode(mode: "light" | "dark" | "system") {
+  const isDark = mode === "dark" || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.classList.toggle("dark", isDark);
+}
+
+async function configureThemeSettings(presetName: PresetNameType = "default") {
+  if (currentPresetName === presetName && currentStyleElement) {
+    return;
+  }
+  if (loadingPreset === presetName) {
+    return;
+  }
+
+  loadingPreset = presetName;
+
+  try {
+    const module = (await import(`@/assets/presets/${presetName}.json`)) as {
+      default: IThemeConfigPreset;
+    };
+    const preset = module.default;
+
+    if (preset) {
+      if (currentStyleElement && currentStyleElement.parentNode) {
+        currentStyleElement.parentNode.removeChild(currentStyleElement);
+      }
+
+      currentStyleElement = document.createElement("style");
+      let css = `:root { ${presetToCssVars(preset)} }`;
+
+      const darkPreset = darkPresets[presetName];
+      if (darkPreset) {
+        css += ` html.dark { ${presetToCssVars(darkPreset)} }`;
+      }
+
+      currentStyleElement.textContent = css;
+      document.head.prepend(currentStyleElement);
+      currentPresetName = presetName;
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to load preset "${presetName}":`, error);
+  } finally {
+    if (loadingPreset === presetName) {
+      loadingPreset = null;
+    }
   }
 }
 
 function configureI18N() {
+  if (i18nConfigured) {
+    return;
+  }
+
   i18n.global.setLocaleMessage(DEFAULT_LOCALE, UI_KIT_DEFAULT_MESSAGE);
+  i18nConfigured = true;
 }
 
-setup(async (app) => {
-  await configureThemeSettings();
-  configureI18N();
+setGlobals({ i18n });
 
-  app.use(i18n);
-  app.use(uiKit);
+setup((app) => {
+  if (!app || typeof app.use !== "function") {
+    return;
+  }
+
+  try {
+    app.use(router);
+    app.use(i18n);
+    app.use(uiKit);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Storybook Vue setup error:", error);
+  }
+
+  configureI18N();
 });
 
 const preview: Preview = {
-  decorators: [vueRouter()],
-
+  globalTypes: {
+    darkMode: {
+      description: "Select color mode",
+      defaultValue: "light",
+      toolbar: {
+        icon: "sun",
+        items: [
+          { value: "light", title: "Light", icon: "sun" },
+          { value: "dark", title: "Dark", icon: "moon" },
+        ],
+        dynamicIcon: true,
+      },
+    },
+    themePreset: {
+      description: "Select theme preset",
+      defaultValue: "default",
+      toolbar: {
+        title: "Theme preset",
+        icon: "paintbrush",
+        items: PRESETS.map((preset) => ({
+          value: preset,
+          // eslint-disable-next-line sonarjs/null-dereference -- preset from Object.keys is always a string
+          title: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/-/g, " "),
+        })),
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    darkMode: "light",
+    themePreset: "default",
+  },
   parameters: {
     controls: {
       matchers: {
@@ -63,10 +251,31 @@ const preview: Preview = {
         order: ["*", "Components", ["Atoms", "Molecules", "Organisms", "Templates", "Pages"]],
       },
     },
+    a11y: a11yConfig,
+    docs: {
+      codePanel: true,
+      page: DocsPage,
+      theme: docsTheme,
+    },
   },
+  decorators: [
+    (story, context) => {
+      const presetName = context.globals.themePreset || "default";
+      const darkMode = (context.globals.darkMode || "light") as "light" | "dark" | "system";
 
+      if (presetName !== currentPresetName && presetName !== loadingPreset) {
+        configureThemeSettings(presetName).catch(() => {
+          // eslint-disable-next-line no-console
+          console.error("Storybook theme setup error");
+        });
+      }
+
+      applyDarkMode(darkMode);
+
+      return story();
+    },
+  ],
   tags: ["autodocs"],
 };
 
-// eslint-disable-next-line no-restricted-exports
 export default preview;

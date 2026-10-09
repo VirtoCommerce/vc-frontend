@@ -18,7 +18,7 @@
       </template>
     </VcEmptyView>
 
-    <VcLayout v-else sidebar-position="right" sticky-sidebar>
+    <VcLayout v-else sidebar-position="right" sticky>
       <VcWidget :title="$t('purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           class="h-full"
@@ -28,6 +28,7 @@
           @download="onFileDownload"
         />
       </VcWidget>
+
       <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
         <QuoteLineItems
           v-if="quote?.items?.length"
@@ -36,6 +37,7 @@
           @remove:item="removeQuoteItem"
         />
       </VcWidget>
+
       <template #sidebar>
         <QuoteSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :quote="quote">
           <template #footer>

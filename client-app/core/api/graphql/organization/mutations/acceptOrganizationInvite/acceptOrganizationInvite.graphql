@@ -1,0 +1,5 @@
+mutation AcceptOrganizationInvite($command: InputAcceptRejectOrganizationInviteType!) {
+  acceptOrganizationInvite(command: $command) {
+    id
+  }
+}

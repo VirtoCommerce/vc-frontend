@@ -1,4 +1,5 @@
-import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { useLocalStorage } from "@vueuse/core";
+import { DEFAULT_PAGE_SIZE, NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { graphqlClient } from "../../../client";
@@ -19,6 +20,7 @@ export async function searchProducts(
     productIds,
     selectedAddressId,
     selectedAddress,
+    preserveUserQuery,
   }: Partial<ProductsSearchParamsType>,
   options: {
     /** @default false */
@@ -27,10 +29,14 @@ export async function searchProducts(
     withImages?: boolean;
     /** @default false */
     withZeroPrice?: boolean;
+    /** Overrides the currency code from globals (e.g. for loyalty catalog). */
+    currencyCodeOverride?: string;
   } = {},
 ): Promise<ProductConnection> {
-  const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
-  const { withFacets = false, withImages = true, withZeroPrice = false } = options;
+  const { storeId, catalogId, userId, cultureName, currencyCode: defaultCurrencyCode } = globals;
+  const { withFacets = false, withImages = true, withZeroPrice = false, currencyCodeOverride } = options;
+  const currencyCode = currencyCodeOverride || defaultCurrencyCode;
+  const slugOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
 
   const filterString = [
     getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
@@ -62,6 +68,8 @@ export async function searchProducts(
       productIds,
       selectedAddressId,
       selectedAddress,
+      preserveUserQuery,
+      previousOutline: slugOutline.value,
     },
   });
 

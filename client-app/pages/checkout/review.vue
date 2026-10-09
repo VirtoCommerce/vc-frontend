@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout sidebar-position="right" sticky>
     <VcWidget
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
@@ -96,7 +96,7 @@
                 <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
                   <VcImage class="size-12 rounded-sm print:hidden" :src="item.logoUrl" />
 
-                  {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+                  {{ item.name }}
                 </div>
               </template>
             </VcSelect>
@@ -122,8 +122,8 @@
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>
             <VcActionInput
-              v-if="couponCode"
-              :model-value="couponCode"
+              v-if="appliedCouponCode"
+              :model-value="appliedCouponCode"
               :label="$t('common.labels.promotion_code')"
               class="mt-4"
               disabled
@@ -131,13 +131,15 @@
             />
           </transition>
 
-          <PlaceOrder />
+          <PlaceOrder data-test-id="place-order-button" />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
+
+          <LoyaltyValidationAlert class="mt-4" />
         </template>
       </OrderSummary>
 
@@ -154,9 +156,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
-import { useFullCart, useCoupon } from "@/shared/cart";
-import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { useCoupon, useFullCart } from "@/shared/cart";
+import { AcceptedGifts, OrderCommentSection, OrderSummary, PlaceOrder, useCheckout } from "@/shared/checkout";
 import { AddressSelection, VendorName } from "@/shared/common";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 const {
   cart,
@@ -170,7 +173,7 @@ const {
   allItemsAreDigital,
 } = useFullCart();
 const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
-const { couponCode } = useCoupon();
+const { appliedCouponCode } = useCoupon();
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

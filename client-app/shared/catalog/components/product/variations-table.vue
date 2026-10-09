@@ -8,21 +8,15 @@
       :page="pageNumber"
       :pages="pagesCount"
       :hide-default-footer="!pagesCount"
+      bordered
+      scrollable
       @header-click="applySorting"
       @page-changed="changePage"
     >
-      <template #desktop-skeleton>
-        <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-neutral-50">
-          <td v-for="columnIndex in columns.length" :key="columnIndex" class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200" />
-          </td>
-        </tr>
-      </template>
-
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">
-            <VcProductTitle :lines-number="2">
+            <VcProductTitle :to="getProductRoute(variation.id, variation.slug)" :lines-number="2">
               {{ variation.name }}
             </VcProductTitle>
           </td>
@@ -36,7 +30,7 @@
           </td>
 
           <td class="variations-table__col variations-table__col--in-stock">
-            <VcChip
+            <VcBadge
               v-if="variation.availabilityData?.isInStock"
               color="success"
               size="xs"
@@ -52,9 +46,9 @@
               <template v-else>
                 {{ $t("common.labels.in_stock") }}
               </template>
-            </VcChip>
+            </VcBadge>
 
-            <VcChip
+            <VcBadge
               v-else
               size="xs"
               variant="outline-dark"
@@ -64,7 +58,7 @@
               rounded
             >
               0
-            </VcChip>
+            </VcBadge>
           </td>
 
           <td class="variations-table__col variations-table__col--price">
@@ -72,47 +66,16 @@
           </td>
 
           <td class="variations-table__col variations-table__col--quantity">
-            <VcAddToCart
-              :model-value="mappedLineItems[variation.id]?.quantity ?? 0"
-              :name="variation.id"
-              :disabled="
-                !variation.availabilityData?.isInStock ||
-                !variation.availabilityData?.isAvailable ||
-                !variation.availabilityData?.isBuyable
-              "
-              :error="!!getItemErrors(variation)"
-              hide-button
-              :timeout="DEFAULT_DEBOUNCE_IN_MS"
-              :validate-on-mount="false"
-              :pack-size="variation.packSize"
-              :min-quantity="variation.minQuantity"
-              :max-quantity="variation.maxQuantity"
-              :available-quantity="variation.availabilityData?.availableQuantity"
-              :is-in-stock="variation.availabilityData?.isInStock"
-              :is-active="variation.availabilityData?.isActive"
-              :is-available="variation.availabilityData?.isAvailable"
-              :is-buyable="variation.availabilityData?.isBuyable"
-              @update:model-value="changeCart(variation, $event)"
-              @update:validation="handleClientValidation(variation.id, $event)"
-            >
-              <template v-if="!!getItemErrors(variation)" #append>
-                <VcTooltip placement="bottom-end">
-                  <template #trigger>
-                    <VcIcon class="variations-table__quantity-icon" name="warning" />
-                  </template>
+            <ExtensionPoint
+              :name="EXTENSION_NAMES.productPage.variationItemButton"
+              category="productPage"
+              :product="variation"
+              v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
+            />
 
-                  <template #content>
-                    <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger">
-                      <div v-for="(error, index) in getItemErrors(variation)" :key="index">
-                        {{ error }}
-                      </div>
-                    </div>
-                  </template>
-                </VcTooltip>
-              </template>
-            </VcAddToCart>
-
-            <CountInCart :product-id="variation.id" class="variations-table__in-cart" />
+            <AddToCartSimple v-else :product="variation">
+              <CountInCart :product-id="variation.id" />
+            </AddToCartSimple>
           </td>
         </tr>
       </template>
@@ -121,19 +84,17 @@
 </template>
 
 <script setup lang="ts">
-import { flatten, sortBy, uniqBy } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { flatten, sortBy, uniqBy } from "lodash-es";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
-import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
-import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
-import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
-import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { useShortCart } from "@/shared/cart/composables";
+import { getPropertyValue, getPropertiesGroupedByName, getProductRoute } from "@/core/utilities";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
-import type { Product, ShortLineItemFragment, ValidationErrorType } from "@/core/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;
@@ -159,13 +120,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { cart, addToCart, changeItemQuantity } = useShortCart();
-const { localizedItemsErrors: serverValidationErrors, setErrors } =
-  useErrorsTranslator<ValidationErrorType>("validation_error");
-const { trackAddItemToCart } = useAnalyticsUtils();
-const { pushHistoricalEvent } = useHistoricalEvents();
-
-const clientValidation = ref<Record<string, { isValid: boolean; messages?: string[] }>>({});
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {
@@ -197,7 +151,7 @@ const productProperties = computed<IProductProperties[]>(() => {
   return properties;
 });
 
-const propertiesTitles = computed<ITableColumn[]>(() =>
+const propertiesTitles = computed<VcTableColumnType[]>(() =>
   productProperties.value.map((item) => ({
     id: item.name,
     title: item.label,
@@ -207,7 +161,7 @@ const propertiesTitles = computed<ITableColumn[]>(() =>
   })),
 );
 
-const columns = computed<ITableColumn[]>(() => [
+const columns = computed<VcTableColumnType[]>(() => [
   {
     id: "name",
     title: t("shared.catalog.product_details.variations.columns.item"),
@@ -233,15 +187,9 @@ const columns = computed<ITableColumn[]>(() => [
     id: "quantity",
     title: t("shared.catalog.product_details.variations.columns.quantity"),
     align: "center",
-    classes: "min-w-32 w-32",
+    classes: "min-w-[10.25rem] w-[10.25rem]",
   },
 ]);
-
-const mappedLineItems = computed(() => {
-  const mapped: Record<string, ShortLineItemFragment | undefined> = {};
-  variations.value?.forEach((variation) => (mapped[variation.id] = getLineItem(variation)));
-  return mapped;
-});
 
 function getStockQuantity(variation: Product) {
   return variation.availabilityData.availableQuantity &&
@@ -256,40 +204,6 @@ function getProperties(variation: Product) {
   );
 }
 
-function getLineItem(variation: Product): ShortLineItemFragment | undefined {
-  return cart.value?.items?.find((item) => item.productId === variation.id);
-}
-
-function getItemErrors(variation: Product) {
-  if (clientValidation.value[variation.id]?.isValid === false) {
-    return clientValidation.value[variation.id]?.messages;
-  }
-
-  if (serverValidationErrors.value[variation.id]) {
-    return serverValidationErrors.value[variation.id];
-  }
-
-  const lineItem = getLineItem(variation);
-  if (lineItem?.id) {
-    return serverValidationErrors.value[lineItem.id];
-  }
-}
-
-async function changeCart(variation: Product, quantity: number) {
-  if (!clientValidation.value[variation.id]?.isValid) {
-    return;
-  }
-  const lineItem = getLineItem(variation);
-
-  if (lineItem) {
-    await changeItemQuantity(lineItem.id, quantity);
-  } else {
-    await addToCart(variation.id, quantity);
-    trackAddItemToCart(variation, quantity);
-    void pushHistoricalEvent({ eventType: "addToCart", productId: variation.id });
-  }
-}
-
 function applySorting(sortInfo: ISortInfo): void {
   emit("applySorting", sortInfo);
 }
@@ -297,26 +211,10 @@ function applySorting(sortInfo: ISortInfo): void {
 function changePage(page: number): void {
   emit("changePage", page);
 }
-
-function handleClientValidation(id: string, validation: { isValid: true } | { isValid: false; errorMessage: string }) {
-  if (!validation.isValid) {
-    clientValidation.value[id] = { isValid: false, messages: [validation.errorMessage] };
-  } else {
-    clientValidation.value[id] = { isValid: true };
-  }
-}
-
-watchEffect(() => {
-  if (cart.value?.validationErrors) {
-    setErrors(cart.value?.validationErrors);
-  }
-});
 </script>
 
 <style lang="scss">
 .variations-table {
-  @apply overflow-x-auto rounded border;
-
   &__row {
     @apply even:bg-neutral-50 hover:bg-neutral-100;
   }
@@ -348,7 +246,7 @@ watchEffect(() => {
   }
 
   &__quantity-icon {
-    @apply me-3 size-4 fill-danger;
+    @apply me-3 size-4 text-danger;
   }
 
   &__in-cart {

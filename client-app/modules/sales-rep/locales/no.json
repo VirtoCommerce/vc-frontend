@@ -1,0 +1,368 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Salgsrepresentanter"
+    },
+    "page": {
+      "title": "Salgsrepresentanter"
+    },
+    "table": {
+      "name": "Navn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "search_placeholder": "Søk etter navn, e-post eller telefon",
+      "search_aria": "Søk etter selgere",
+      "empty": "Ingen salgsrepresentanter funnet",
+      "no_results": "Ingen salgsrepresentanter samsvarer med søket ditt",
+      "reset_search": "Tilbakestill søk",
+      "load_failed": "Kunne ikke laste salgsrepresentantene"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mine kunder"
+      },
+      "page": {
+        "title": "Mine kunder"
+      },
+      "table": {
+        "customer": "Kunde",
+        "last_order": "Min siste ordre",
+        "ytd": "Årets kjøp",
+        "last_year": "I fjor",
+        "orders_count": "{count} ordre | {count} ordrer",
+        "all_customers": "Alle",
+        "actions": "Handlinger",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk etter kunder",
+        "empty": "Ingen kunder funnet",
+        "no_results": "Ingen kunder samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste kundene"
+      }
+    },
+    "hub": {
+      "title": "Salgsrepresentant-hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashbord"
+        },
+        "page": {
+          "title": "Dashbord"
+        },
+        "widgets": {
+          "new_orders": "Ordrer med status «New»",
+          "active_carts": "Aktive handlekurver",
+          "orders_placed_week": "Ordrer denne uken",
+          "orders_placed_mtd": "Ordrer hittil denne måneden",
+          "purchased_mtd": "Kjøp hittil denne måneden",
+          "orders_placed_ytd": "Ordrer hittil i år",
+          "my_customers": "Mine kunder"
+        },
+        "stats": {
+          "value_total": "{amount} totalt",
+          "vs_last_week": "{delta} vs forrige uke",
+          "vs_last_month": "{delta} vs forrige måned",
+          "vs_last_year": "{delta} vs i fjor",
+          "ordered_this_month": "{count} bestilte denne måneden",
+          "new_customers": "{count} ny kunde | {count} nye kunder",
+          "of_recent_orders": "av {count} opprettet de siste 7 dagene",
+          "items_unit": "vare | varer",
+          "not_for_checkout": "{count} ikke til kassen",
+          "items_this_week": "{count} vare denne uken | {count} varer denne uken",
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunne ikke laste"
+        }
+      },
+      "layout": {
+        "edit": "Rediger oppsett",
+        "editing": "Redigerer oppsett",
+        "hint": "— dra en blokk etter håndtaket for å endre rekkefølgen, eller skjul den med ✕.",
+        "hint_keyboard": "Tastatur: mellomromstasten tar tak i en blokk, piltastene flytter den, mellomrom slipper den, Esc avbryter.",
+        "save": "Lagre oppsett",
+        "cancel": "Avbryt",
+        "reset": "Tilbakestill",
+        "save_failed": "Oppsettet kunne ikke lagres. Endringene dine er fortsatt her — prøv igjen.",
+        "load_failed": "Det lagrede oppsettet kunne ikke lastes, så standardrekkefølgen vises. Redigering er utilgjengelig til det er lastet — last siden på nytt.",
+        "hidden_widgets": "Skjulte moduler",
+        "visible_stats": "Synlige nøkkeltall",
+        "hidden_stats": "Skjulte nøkkeltall",
+        "empty_visible": "Dra et nøkkeltall hit for å vise det",
+        "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
+        "max_rows": "Maks. rader",
+        "restored": "Standardoppsettet er gjenopprettet.",
+        "empty": {
+          "title": "Alle blokker er skjult",
+          "text": "Alle nøkkeltall og moduler på denne siden er flyttet til {hidden} i oppsettinnstillingene. Gjenopprett standardoppsettet for å få alt tilbake, eller åpne {edit} for å velge nøyaktig hva som skal vises.",
+          "hidden": "Skjulte",
+          "restore": "Gjenopprett standardoppsett"
+        },
+        "a11y": {
+          "reorder": "Endre rekkefølge på {title}",
+          "hide": "Skjul {title}",
+          "show": "Vis {title}",
+          "grabbed": "{title} tatt opp. Posisjon {position} av {total}. Bruk piltastene for å flytte, mellomrom for å slippe, escape for å avbryte.",
+          "grabbed_parkable": "{title} tatt opp. Posisjon {position} av {total}. Bruk venstre og høyre piltast for å flytte, opp og ned for å skjule eller vise, mellomrom for å slippe, escape for å avbryte.",
+          "moved": "{title} flyttet til posisjon {position} av {total}.",
+          "dropped": "{title} sluppet på posisjon {position} av {total}.",
+          "edge": "{title} er allerede på plass {position} av {total}.",
+          "cancelled": "Flytting av {title} avbrutt.",
+          "parked": "{title} skjult.",
+          "restored": "{title} vist.",
+          "max_rows": "Maksimalt antall rader vist av {title}, mellom {min} og {max}"
+        }
+      }
+    },
+    "customer_profile": {
+      "loading": "Laster…",
+      "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
+      "load_failed": "Denne kunden kunne ikke lastes. Last siden på nytt.",
+      "back_to_customers": "Tilbake til mine kunder",
+      "widgets": {
+        "avg_order_value": "Gjennomsnittlig ordreverdi"
+      },
+      "stats": {
+        "per_order": "Gjennomsnitt per ordre (hittil i år)"
+      },
+      "info": {
+        "title": "Kundeinformasjon",
+        "empty": "Ingen informasjon tilgjengelig",
+        "primary_contact": "Primær kontaktperson",
+        "phone": "Telefon",
+        "account_type": "Kontotype",
+        "ship_to": "Leveringsadresse"
+      }
+    },
+    "customer_orders": {
+      "page": {
+        "title": "Bestillinger for {customer}",
+        "all_title": "Kundeordrer",
+        "title_fallback": "Bestillinger"
+      },
+      "breadcrumb": "Bestillinger",
+      "back_to_customer": "Tilbake til kunden",
+      "back_to_orders": "Tilbake til ordrer",
+      "order_not_found": "Ordren ble ikke funnet",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Søk etter nummer, navn eller andre data",
+      "search_aria": "Søk i bestillinger",
+      "reset_search": "Tilbakestill søk",
+      "filters": {
+        "button": "Filtre",
+        "title": "Filtre",
+        "created_date": "Opprettelsesdato",
+        "start_date": "Startdato",
+        "end_date": "Sluttdato",
+        "date_range": "Datointervall",
+        "order_status": "Velg bestillingsstatus",
+        "customer": "Velg kunde",
+        "reset": "Tilbakestill",
+        "apply": "Bruk",
+        "custom_date": "Tilpasset dato",
+        "last_day": "Siste dag",
+        "last_week": "Siste uke",
+        "last_month": "Siste måned",
+        "last_year": "Siste år",
+        "remove_filter": "Fjern filteret «{label}»"
+      }
+    },
+    "communication": {
+      "action": "Send e-post",
+      "title": "Send en melding",
+      "subtitle": "Når alle medlemmer i {organization}",
+      "title_label": "Tittel",
+      "message_label": "Melding",
+      "channels_label": "Send via",
+      "email_label": "E-post",
+      "push_label": "Push-varsel",
+      "send_button": "Send",
+      "cancel_button": "Avbryt",
+      "success_text": "Meldingen din er sendt.",
+      "error_text": "Meldingen kunne ikke sendes. Prøv igjen.",
+      "partial_success_text": "Meldingen din ble sendt, men ikke på alle kanaler:",
+      "warnings": {
+        "generic": "Meldingen kunne ikke sendes på en av de valgte kanalene.",
+        "NoRecipients": "Denne organisasjonen har ingen kontakter å varsle.",
+        "EmailUnavailable": "E-post er for øyeblikket utilgjengelig. Kontakt administratoren din.",
+        "EmailStoreAccessDenied": "E-posten kunne ikke sendes for den valgte butikken.",
+        "EmailNoRecipients": "Ingen av mottakerne har en e-postadresse.",
+        "EmailSendFailed": "E-posten kunne ikke sendes. Prøv igjen senere.",
+        "PushSendFailed": "Push-varselet kunne ikke sendes. Prøv igjen senere."
+      },
+      "quick_actions": {
+        "title": "Hurtighandlinger",
+        "order_on_behalf": "Bestill på vegne av",
+        "send_email": "Send e-post",
+        "create_quote": "Opprett tilbud",
+        "schedule_call": "Planlegg samtale"
+      }
+    },
+    "orders": {
+      "title": "Mine nylige ordrer",
+      "view_all": "Alle bestillinger",
+      "empty": "Ingen bestillinger ennå",
+      "no_results": "Ingen bestillinger samsvarer med dette filteret",
+      "number": "Ordrenr.",
+      "customer": "Kunde",
+      "date": "Dato",
+      "items": "Varer",
+      "status": "Status",
+      "total": "Totalt",
+      "filter_all": "Alle",
+      "load_failed": "Kunne ikke laste ordrene"
+    },
+    "tasks": {
+      "title": "Oppgaver",
+      "widget_title": "Oppgaver og frister",
+      "view_all": "Alle oppgaver",
+      "new_task": "Ny oppgave",
+      "due_dates": "Frister",
+      "today": "I dag",
+      "all": "Alle",
+      "clear_day_aria": "Fjern {date}",
+      "empty": "Ingen oppgaver i denne fanen",
+      "empty_day": "Ingenting har frist denne dagen",
+      "load_failed": "Kunne ikke laste oppgavene",
+      "day_task_count": "{count} oppgave | {count} oppgaver",
+      "overdue_total": "{count} forfalt oppgave | {count} forfalte oppgaver",
+      "day_task_count_capped": "{total} oppgaver ({shown} vist)",
+      "day_markers": "{count} oppgave. Merket: {kinds} | {count} oppgaver. Merket: {kinds}",
+      "page": {
+        "subtitle": "Oppgavene, oppfølgingene og fristene dine på tvers av alle kontoer — fordelt på dager."
+      },
+      "table": {
+        "task": "Oppgave",
+        "status": "Status",
+        "notes": "Notater",
+        "actions": "Handlinger",
+        "mark_complete": "Merk som fullført",
+        "reopen": "Gjenåpne",
+        "action_aria": "{action}: «{name}»",
+        "edit_aria": "Rediger «{name}»"
+      },
+      "status": {
+        "upcoming": "Kommende",
+        "overdue": "Forfalt",
+        "completed": "Fullført",
+        "canceled": "Avbrutt"
+      },
+      "priority": {
+        "lowest": "Lavest",
+        "low": "Lav",
+        "normal": "Normal",
+        "high": "Høy",
+        "highest": "Høyest"
+      },
+      "due_relative": {
+        "expired": "Utløp {date}",
+        "due": "Frist {date}"
+      },
+      "legend": {
+        "upcoming": "Kommende",
+        "overdue": "Forfalt",
+        "completed": "Fullført"
+      },
+      "form": {
+        "create_title": "Ny oppgave",
+        "edit_title": "Rediger oppgave",
+        "name_label": "Tittel",
+        "due_date_label": "Frist",
+        "priority_label": "Prioritet",
+        "type_label": "Type",
+        "description_label": "Notater",
+        "save_button": "Lagre",
+        "cancel_button": "Avbryt",
+        "delete_button": "Slett",
+        "delete_title": "Slett oppgave",
+        "delete_confirm": "Denne oppgaven blir slettet permanent. Vil du fortsette?",
+        "saved": "Oppgaven er lagret",
+        "deleted": "Oppgaven er slettet"
+      }
+    },
+    "top_sellers": {
+      "title": "Toppselgere",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Enheter",
+      "revenue": "Inntekter",
+      "empty": "Ingen salg i denne perioden",
+      "no_results": "Ingen salg i denne kategorien",
+      "all_categories": "Alle kategorier",
+      "load_failed": "Kunne ikke laste bestselgerne"
+    },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bla gjennom alle",
+      "open": "Åpne",
+      "empty": "Ingen dokumenter ennå",
+      "load_failed": "Kunne ikke laste dokumentene",
+      "page": {
+        "subtitle": "Kataloger, lookbooks, prislister og salgsguider — åpne eller last ned den nyeste publikasjonen.",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk i dokumenter",
+        "all_tab": "Alle",
+        "empty": "Ingen dokumenter ennå",
+        "no_results": "Ingen dokumenter samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste dokumentene"
+      },
+      "details": {
+        "pages_count": "{count} side | {count} sider",
+        "open": "Åpne",
+        "download": "Last ned",
+        "close": "Lukk detaljer",
+        "not_found": "Dette dokumentet er ikke lenger tilgjengelig.",
+        "latest_publication": "Nyeste publikasjon"
+      },
+      "published": "Publisert {date}"
+    },
+    "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Kommende",
+          "overdue": "Forfalt",
+          "completed": "Fullført"
+        },
+        "sort": {
+          "due-date": "Frist",
+          "recent": "Nylig opprettet",
+          "name": "Oppgave"
+        }
+      },
+      "load_failed": {
+        "filter": "Filtrene kunne ikke lastes, så hele listen vises. Last siden på nytt.",
+        "sort": "Sorteringsalternativene kunne ikke lastes, så standardrekkefølgen brukes. Last siden på nytt.",
+        "both": "Filtrene og sorteringsalternativene kunne ikke lastes, så hele listen vises i standardrekkefølgen. Last siden på nytt."
+      },
+      "customer": {
+        "filter": {
+          "All": "Alle"
+        }
+      }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kunder",
+      "share_customers_placeholder": "Søk etter kunder på navn",
+      "share_customers_error": "Kundelisten kunne ikke lastes. Prøv igjen.",
+      "share_empty_hint": "En tom liste avslutter ikke delingen – endre i stedet hvem som har tilgang.",
+      "share_message_label": "Melding (valgfritt)",
+      "share_message_placeholder": "Legg til en melding til mottakerne",
+      "share_message_hint": "Nye mottakere får dette i varselet sitt.",
+      "recipients_title": "Mottakere · {count}",
+      "clear_recipients_button": "Fjern alle",
+      "recipients_cleared": "Fjernet · {count}",
+      "restore_recipients_button": "Angre",
+      "show_all_recipients_button": "Vis alle {count}",
+      "show_less_recipients_button": "Vis mindre",
+      "remove_recipient_button": "Fjern {name}",
+      "share_default_title": "En ny liste fra din salgsrepresentant",
+      "share_default_message": "Hei! Jeg har nettopp delt listen «{listName}» med organisasjonen din. Ta en titt:",
+      "share_success": "Listen er delt med {count} kunde. | Listen er delt med {count} kunder.",
+      "share_saved": "Listen er lagret. Nå delt med {count} kunde. | Listen er lagret. Nå delt med {count} kunder.",
+      "share_partial": "Listen er delt, men ikke alle varsler ble levert.",
+      "share_notify_error": "Listen ble lagret, men varselet kunne ikke sendes.",
+      "scope_label": "Bestemte kunder",
+      "status": "Delt med 1 kunde | Delt med {count} kunder",
+      "badge": "Anbefalt av din salgsrepresentant"
+    }
+  }
+}

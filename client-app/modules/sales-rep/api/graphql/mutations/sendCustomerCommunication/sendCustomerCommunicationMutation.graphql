@@ -1,0 +1,8 @@
+mutation SendCustomerCommunication($command: InputSendCustomerCommunicationType!) {
+  sendCustomerCommunication(command: $command) {
+    succeeded
+    pushSent
+    emailSent
+    warnings
+  }
+}

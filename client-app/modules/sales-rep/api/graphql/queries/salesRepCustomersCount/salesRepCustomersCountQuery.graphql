@@ -1,0 +1,5 @@
+query SalesRepCustomersCount($storeId: String) {
+  salesRepCustomers(storeId: $storeId, first: 0) {
+    totalCount
+  }
+}

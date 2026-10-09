@@ -6,12 +6,18 @@ declare module "vue" {
   export interface GlobalComponents {
     VcAddToCart: typeof Components.VcAddToCart;
     VcConfirmationModal: typeof Components.VcConfirmationModal;
+    VcDatePicker: typeof Components.VcDatePicker;
+    VcDateRangePicker: typeof Components.VcDateRangePicker;
     VcModal: typeof Components.VcModal;
     VcPagination: typeof Components.VcPagination;
+    VcPopupSidebar: typeof Components.VcPopupSidebar;
+    VcProductButton: typeof Components.VcProductButton;
     VcProductCard: typeof Components.VcProductCard;
     VcProductImage: typeof Components.VcProductImage;
+    VcQuantityStepper: typeof Components.VcQuantityStepper;
     VcTable: typeof Components.VcTable;
-    TableStatusBadge: typeof Components.TableStatusBadge;
+    VcWidget: typeof Components.VcWidget;
+    VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }
 }
 

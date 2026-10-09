@@ -8,7 +8,7 @@
   <div v-else-if="initialized" class="text-center md:pb-4 md:pt-10">
     <VcImage src="paysafecard.webp" alt="paysafecard" class="mb-2 inline-block md:mb-3" lazy />
 
-    <p v-html-safe="$t('shared.payment.redirection.text', [$t('shared.payment.redirection.pay_now_button')])" />
+    <p v-html-safe="$t('shared.payment.redirection.text', [$t('shared.payment.bank_card_form.pay_now_button')])" />
 
     <VcButton
       :title="redirectUrl ? undefined : $t('shared.payment.redirection.errors.missing_link')"
@@ -16,7 +16,7 @@
       class="mt-3 w-full md:mt-12 md:w-auto"
       @click="redirect"
     >
-      {{ $t("shared.payment.redirection.pay_now_button") }}
+      {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>
   </div>
 

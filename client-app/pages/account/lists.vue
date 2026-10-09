@@ -1,45 +1,54 @@
 <template>
-  <div>
+  <div class="lists">
     <!-- Title block -->
-    <div class="flex items-center justify-between">
+    <div class="lists__header">
       <VcTypography tag="h1">
         {{ $t("shared.account.navigation.links.lists") }}
       </VcTypography>
 
       <VcButton
         v-if="lists.length || loading"
+        data-test-id="create-wishlist-button"
         :disabled="creationButtonDisabled"
         size="sm"
         variant="outline"
         prepend-icon="plus"
         @click="openCreateListModal"
       >
-        <span class="hidden sm:inline">{{ $t("pages.account.lists.create_list_button") }}</span>
-        <span class="sm:hidden">{{ $t("pages.account.lists.create_list_button_mobile") }}</span>
+        <span class="lists__create-button-label lists__create-button-label--full">
+          {{ $t("pages.account.lists.create_list_button") }}
+        </span>
+
+        <span class="lists__create-button-label lists__create-button-label--short">
+          {{ $t("pages.account.lists.create_list_button_mobile") }}
+        </span>
       </VcButton>
     </div>
 
-    <!-- Skeletons -->
-    <div v-if="loading" class="flex flex-col divide-y lg:space-y-3 lg:divide-none">
-      <WishlistCardSkeleton v-for="item in 5" :key="item" />
-    </div>
+    <!-- Lists / Skeletons -->
+    <div v-if="loading || lists.length" class="lists__container">
+      <div class="lists__items">
+        <template v-if="loading">
+          <WishlistCardSkeleton v-for="item in 10" :key="item" />
+        </template>
 
-    <!-- Lists -->
-    <div v-else-if="lists.length" class="space-y-3 md:space-y-2.5">
-      <WishlistCard
-        v-for="list in lists"
-        :key="list.id"
-        :list="list"
-        @set-scope="setScope(list.id, $event)"
-        @settings="openListSettingsModal(list)"
-        @remove="openDeleteListModal(list)"
-      />
+        <template v-else>
+          <WishlistCard
+            v-for="list in lists"
+            :key="list.id"
+            :list="list"
+            @settings="openListSettingsModal(list, $event)"
+            @share="openShareListModal(list, $event)"
+            @remove="openDeleteListModal(list, $event)"
+          />
+        </template>
+      </div>
     </div>
 
     <!-- Empty -->
     <VcEmptyView v-else :text="$t('pages.account.lists.no_lists')" icon="outline-lists">
       <template #button>
-        <VcButton prepend-icon="plus" @click="openCreateListModal">
+        <VcButton data-test-id="create-wishlist-button" prepend-icon="plus" @click="openCreateListModal">
           {{ $t("pages.account.lists.create_list_button") }}
         </VcButton>
       </template>
@@ -56,17 +65,18 @@ import { useModal } from "@/shared/modal";
 import {
   AddOrUpdateWishlistModal,
   DeleteWishlistsModal,
+  ShareWishlistModal,
   UnsuccessfulCreateWishlistModal,
   useWishlists,
   WishlistCard,
   WishlistCardSkeleton,
 } from "@/shared/wishlists";
-import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
+import type { WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
-const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
+const { loading, lists, fetchWishlists } = useWishlists();
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
@@ -88,8 +98,11 @@ function openCreateListModal() {
   }
 }
 
-function openListSettingsModal(list: WishlistType) {
+// `triggerElement` comes from the card's menu: the menu item that was clicked is hidden by the time the modal
+// closes, so focus has to return to the still-visible trigger instead.
+function openListSettingsModal(list: WishlistType, triggerElement?: HTMLElement) {
   openModal({
+    triggerElement,
     component: AddOrUpdateWishlistModal,
     props: {
       list,
@@ -97,8 +110,19 @@ function openListSettingsModal(list: WishlistType) {
   });
 }
 
-function openDeleteListModal(list: WishlistType) {
+function openShareListModal(list: WishlistType, triggerElement?: HTMLElement) {
   openModal({
+    triggerElement,
+    component: ShareWishlistModal,
+    props: {
+      list,
+    },
+  });
+}
+
+function openDeleteListModal(list: WishlistType, triggerElement?: HTMLElement) {
+  openModal({
+    triggerElement,
     component: DeleteWishlistsModal,
     props: {
       list,
@@ -106,9 +130,41 @@ function openDeleteListModal(list: WishlistType) {
   });
 }
 
-function setScope(listId: string, scope: WishlistScopeType) {
-  void updateWishlist({ listId, scope });
-}
-
 void fetchWishlists();
 </script>
+
+<style lang="scss">
+.lists {
+  &__header {
+    @apply flex items-center justify-between;
+  }
+
+  &__create-button-label {
+    &--full {
+      @apply hidden;
+
+      @media (min-width: theme("screens.sm")) {
+        @apply inline;
+      }
+    }
+
+    &--short {
+      @media (min-width: theme("screens.sm")) {
+        @apply hidden;
+      }
+    }
+  }
+
+  &__container {
+    @apply @container;
+  }
+
+  &__items {
+    @apply space-y-3;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply grid grid-cols-[fit-content(40%)_minmax(0,1fr)_auto_auto_auto] gap-y-2.5 space-y-0;
+    }
+  }
+}
+</style>

@@ -1,5 +1,7 @@
 <template>
-  <Category hide-breadcrumbs allow-set-meta />
+  <VcContainer>
+    <Category allow-set-meta :title="$t('pages.search.title')" />
+  </VcContainer>
 </template>
 
 <script setup lang="ts">

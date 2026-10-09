@@ -51,6 +51,7 @@ query SearchRelatedProducts(
           packSize
           inWishlist
           price {
+            currency
             actual {
               amount
               formattedAmount
@@ -67,6 +68,11 @@ query SearchRelatedProducts(
               amount
               formattedAmount
             }
+          }
+          breadcrumbs {
+            itemId
+            title
+            typeName
           }
         }
       }

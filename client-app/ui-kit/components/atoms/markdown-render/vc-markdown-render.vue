@@ -4,8 +4,7 @@
 
 <script setup lang="ts">
 import DOMPurify from "dompurify";
-import { marked } from "marked";
-import { computed } from "vue";
+import { ref, watch } from "vue";
 
 interface IProps {
   src: string;
@@ -13,11 +12,38 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, { USE_PROFILES: { html: true } }));
+const markdown = ref("");
+
+// `marked` (~40 KB) is loaded only when markdown is actually rendered, keeping it off the
+// eager bundle. DOMPurify is already eager (used by image utilities), so it is imported directly.
+watch(
+  () => props.src,
+  async (src, _previousSrc, onCleanup) => {
+    let cancelled = false;
+    onCleanup(() => {
+      cancelled = true;
+    });
+    if (!src) {
+      markdown.value = "";
+      return;
+    }
+    const { marked } = await import("marked");
+    // `src` may have changed while the marked chunk was loading; skip this stale result.
+    if (cancelled) {
+      return;
+    }
+    markdown.value = DOMPurify.sanitize(marked(src) as string, { USE_PROFILES: { html: true } });
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
 .vc-markdown-render {
+  --radius: var(--vc-markdown-render-radius, var(--vc-radius, 0.5rem));
+  --link-color: var(--vc-markdown-render-link-color, var(--color-link, theme("colors.accent.600")));
+  --link-hover-color: var(--vc-markdown-render-link-hover-color, var(--color-link-hover, theme("colors.accent.700")));
+
   font-size: 1rem;
   line-height: 1.5;
 
@@ -158,7 +184,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   blockquote {
     padding: 12px 24px;
     border-left: 4px solid theme("colors.neutral.400");
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
     background-color: theme("colors.neutral.100");
   }
 
@@ -168,12 +194,12 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
     font-size: 85%;
     line-height: 1.45;
     background-color: theme("colors.neutral.100");
-    border-radius: 4px;
+    border-radius: var(--radius);
   }
 
   code {
     background-color: theme("colors.neutral.100");
-    border-radius: 3px;
+    border-radius: var(--radius);
     font-family: monospace;
     padding: 0 3px;
   }
@@ -181,13 +207,13 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   img {
     display: block;
     max-width: 100%;
-    border-radius: 4px;
+    border-radius: var(--radius);
     object-position: 50% 50%;
     object-fit: contain;
   }
 
   table {
-    @apply table-fixed overflow-hidden rounded border-separate border border-spacing-0 w-full text-base;
+    @apply table-fixed overflow-hidden rounded-[--radius] border-separate border border-spacing-0 w-full text-base;
 
     tr {
       @apply even:bg-neutral-50;

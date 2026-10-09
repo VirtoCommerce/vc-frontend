@@ -23,6 +23,21 @@ export function toEndDateFilterValue(dateOnly?: string): string | undefined {
   }
 }
 
+/**
+ * Formats a Date as ISO 8601 date-only (YYYY-MM-DD) in the LOCAL calendar day.
+ * `toISOString()` cannot be used for this: it converts to UTC first, so a local midnight
+ * east of Greenwich formats as the previous day. Inverse of the local-midnight parsing
+ * `toStartDateFilterValue` / `toEndDateFilterValue` already do.
+ * @param date date to format
+ * @returns ISO 8601 date without time (YYYY-MM-DD)
+ */
+export function toLocalDateOnly(date: Date): string {
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 export function toDateISOString(isoDate: string): string {
   return isoDate.split("T")[0];
 }
@@ -43,5 +58,34 @@ function toDateObject(dateOnly: string): Date {
  */
 export function isDateString(str: string): boolean {
   const date = new Date(str);
-  return !isNaN(date.valueOf()) && date.toISOString() === str;
+  return !Number.isNaN(date.valueOf()) && date.toISOString() === str;
+}
+
+/**
+ * Validates credit card expiration date (month/year).
+ * Accepts month as MM and year as YY or YYYY. Checks that the date is not in the past.
+ */
+export function isExpirationDateValid(month?: string, year?: string): boolean {
+  if (!month || !year) {
+    return false;
+  }
+  if (month.length !== 2 || !/^\d{2}$/.test(month)) {
+    return false;
+  }
+  const m = Number(month);
+  if (m < 1 || m > 12) {
+    return false;
+  }
+  if (!(year.length === 2 || year.length === 4) || !/^\d{2,4}$/.test(year)) {
+    return false;
+  }
+  const fullYear = year.length === 2 ? Number(`20${year}`) : Number(year);
+  if (Number.isNaN(fullYear) || fullYear < 2000) {
+    return false;
+  }
+  const expDate = new Date(fullYear, m - 1, 1);
+  const currentDate = new Date();
+  currentDate.setDate(1);
+  currentDate.setHours(0, 0, 0, 0);
+  return expDate >= currentDate;
 }

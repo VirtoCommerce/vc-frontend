@@ -1,19 +1,23 @@
 <template>
   <component
     :is="componentTag"
+    ref="elementRef"
     v-bind="attrs"
-    ref="buttonRef"
     :target="target"
     :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
     :title="title"
+    :aria-label="ariaLabel || title"
+    :aria-busy="loading || undefined"
+    :tabindex="tabindex"
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
       `vc-button--color--${color}`,
-      `vc-button--${variant}--${color}`,
+      `vc-button--${canonicalVariant}--${color}`,
       {
         'vc-button--icon': !!icon,
+        'vc-button--square': square,
         'vc-button--disabled': !enabled,
         'vc-button--loading': loading,
         'vc-button--truncate': truncate,
@@ -24,12 +28,12 @@
     @click="enabled ? $emit('click', $event) : null"
   >
     <span class="vc-button__content">
-      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" />
+      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" :variant="iconVariant" />
 
       <template v-else>
         <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
           <slot name="prepend">
-            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" />
+            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" :variant="iconVariant" />
           </slot>
         </span>
 
@@ -39,7 +43,7 @@
 
         <span v-if="$slots.append || appendIcon" class="vc-button__append">
           <slot name="append">
-            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" />
+            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" :variant="iconVariant" />
           </slot>
         </span>
       </template>
@@ -54,8 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
-import { computed, inject, nextTick, ref, watch } from "vue";
+import { computed, inject, ref } from "vue";
+import { resolveVariant } from "../../../utilities/variant-compat";
+import { vcDialogKey } from "../dialog/vc-dialog-context";
+import type { IconVariantType } from "@/ui-kit/utilities";
+import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -81,12 +88,16 @@ interface IProps {
   appendIcon?: string;
   icon?: boolean | string;
   title?: string;
+  ariaLabel?: string;
   truncate?: boolean;
   fullWidth?: boolean;
   noWrap?: boolean;
   minWidth?: string;
   tag?: string;
   iconSize?: string;
+  iconVariant?: IconVariantType;
+  square?: boolean;
+  tabindex?: string | number;
 }
 
 defineEmits<IEmits>();
@@ -101,13 +112,14 @@ const props = withDefaults(defineProps<IProps>(), {
   truncate: false,
   fullWidth: false,
   noWrap: false,
-  minWidth: "",
   tag: "",
-  iconSize: "",
+  tabindex: 0,
 });
 
+const canonicalVariant = computed(() => resolveVariant("VcButton", props.variant));
+
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
-const buttonRef = ref<HTMLElement | null>(null);
+const dialogContext = inject(vcDialogKey, { size: ref("md") });
 
 const _size = computed(() => {
   if (props.size) {
@@ -115,6 +127,7 @@ const _size = computed(() => {
   }
 
   const inputSize = inputContext?.size.value;
+  const dialogSize = dialogContext?.size.value;
 
   if (inputSize) {
     if (inputSize === "xs") {
@@ -128,12 +141,16 @@ const _size = computed(() => {
     return "sm";
   }
 
+  if (dialogSize) {
+    return dialogSize;
+  }
+
   return "md";
 });
 
-const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
-const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+const enabled = computed<boolean>(() => !props.disabled && !props.loading);
+const isRouterLink = computed<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = computed<boolean>(() => !!props.externalLink && enabled.value);
 
 const target = computed<string | undefined>(() =>
   props.target && (isExternalLink.value || isRouterLink.value) ? props.target : undefined,
@@ -169,12 +186,36 @@ const attrs = computed(() => {
   return attributes;
 });
 
-watch(enabled, async (newValue, oldValue) => {
-  await nextTick();
-  if (newValue && oldValue === false && document.activeElement === document.body) {
-    // return focus after button is enabled if it was focused before
-    buttonRef.value?.focus({ preventScroll: true });
+const elementRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+
+function getElement(): HTMLElement | null {
+  const el = elementRef.value;
+  if (!el) {
+    return null;
   }
+
+  // Native HTML elements (button, a, etc.)
+  if (el instanceof HTMLElement) {
+    return el;
+  }
+
+  // Vue component instances (RouterLink, custom components via tag prop)
+  const rootEl = el.$el;
+  return rootEl instanceof HTMLElement ? rootEl : null;
+}
+
+function focus(): void {
+  getElement()?.focus();
+}
+
+function blur(): void {
+  getElement()?.blur();
+}
+
+defineExpose({
+  focus,
+  blur,
+  el: computed(() => getElement()),
 });
 </script>
 
@@ -182,22 +223,25 @@ watch(enabled, async (newValue, oldValue) => {
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
   --props-icon-size: v-bind(props.iconSize);
+  --radius: var(--vc-button-radius, var(--vc-radius, 0.5rem));
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 
-  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
+  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--icon-size)));
+  --vc-icon-color: currentColor;
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
   $prepend: "";
   $append: "";
   $icon: "";
+  $square: "";
   $truncate: "";
   $disabled: "";
   $loading: "";
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block px-[--px] rounded border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   appearance: button;
 
@@ -219,6 +263,12 @@ watch(enabled, async (newValue, oldValue) => {
     @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
+  &--square {
+    $square: &;
+
+    @apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))];
+  }
+
   &--full-width {
     @apply w-full;
   }
@@ -238,10 +288,10 @@ watch(enabled, async (newValue, oldValue) => {
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
+    @apply block rounded-full animate-spin border-2 size-[--vc-icon-size] border-[--loader-border] border-r-[--loader-border-r];
   }
 
-  &:not(#{$icon}) {
+  &:not(#{$icon}, #{$square}) {
     @apply min-w-[--min-w];
   }
 
@@ -249,6 +299,7 @@ watch(enabled, async (newValue, oldValue) => {
     &--xxs {
       --size: 1.625rem;
       --line-height: 0.875rem;
+      --icon-size: 0.875rem;
       --px: theme("padding[2.5]");
 
       @apply text-xs/[--line-height] font-bold;
@@ -257,6 +308,7 @@ watch(enabled, async (newValue, oldValue) => {
     &--xs {
       --size: 2rem;
       --line-height: 0.875rem;
+      --icon-size: 1rem;
       --px: theme("padding.3");
 
       @apply text-xs/[--line-height] font-bold;
@@ -265,88 +317,126 @@ watch(enabled, async (newValue, oldValue) => {
     &--sm {
       --size: 2.375rem;
       --line-height: 1rem;
+      --icon-size: 1.25rem;
       --px: theme("padding[3.5]");
 
-      @apply text-xs/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-sm/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
 
     &--md {
       --size: 2.75rem;
       --line-height: 1.25rem;
+      --icon-size: 1.5rem;
       --px: theme("padding.4");
 
-      @apply text-sm/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-base/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
 
     &--lg {
       --size: 3.25rem;
       --line-height: 1.5rem;
+      --icon-size: 1.75rem;
       --px: theme("padding.5");
 
-      @apply text-base/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-lg/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
   }
 
+  $variants: solid, soft, outline, surface, ghost, tonal;
+
+  @each $variant in $variants {
+    @each $color in $colors {
+      &--#{$variant}--#{$color} {
+        --bg-color: var(--vc-button-#{$variant}-#{$color}-bg);
+        --border-color: var(--vc-button-#{$variant}-#{$color}-border);
+        --text-color: var(--vc-button-#{$variant}-#{$color}-text);
+        --vc-icon-color: var(--vc-button-#{$variant}-#{$color}-icon);
+        --loader-border: color-mix(in srgb, var(--vc-button-#{$variant}-#{$color}-text), transparent 70%);
+        --loader-border-r: var(--vc-button-#{$variant}-#{$color}-text);
+      }
+    }
+  }
+
+  // Hover — color-mix based, derived from current variant colors. No per-color overrides.
   @each $color in $colors {
-    &--color--#{$color} {
-      &:focus {
-        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
-      }
-
-      &:not([class*="--solid--"]) #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-100);
-        --loader-border-r: var(--color-#{$color}-500);
-      }
+    &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 15%);
+      --border-color: var(--bg-color);
     }
 
-    &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
-      --text-color: var(--color-additional-50);
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-700);
-        --border-color: var(--color-#{$color}-700);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-additional-50);
-      }
+    &--soft--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 8%);
+      --border-color: var(--bg-color);
     }
 
-    &--no-border--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-additional-50);
-      --text-color: var(--color-#{$color}-500);
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-700);
-      }
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
     }
 
-    &--outline {
-      &--#{$color} {
-        --bg-color: var(--color-additional-50);
-        --border-color: currentColor;
-        --text-color: var(--color-#{$color}-500);
-
-        &:hover:not(#{$loading}, #{$disabled}) {
-          --text-color: var(--color-#{$color}-700);
-        }
-      }
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
     }
 
-    &--no-background--#{$color} {
-      --bg-color: transparent;
-      --border-color: transparent;
-      --text-color: var(--color-#{$color}-500);
+    &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 8%);
+    }
 
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-700);
-      }
+    &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-bg), black 8%);
+    }
+  }
+
+  // Pressed — the same mix as hover, one step further. Text takes the step too wherever the
+  // darker fill would otherwise eat its contrast. Must stay after the hover block: same
+  // specificity, source order decides.
+  @each $color in $colors {
+    &--solid--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 30%);
+      --border-color: var(--bg-color);
+    }
+
+    &--soft--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 16%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-text), black 15%);
+    }
+
+    // Pale fills: the darker tint eats text contrast, so the text takes the step too.
+    &--surface--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), black 8%);
+    }
+
+    &--outline--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --text-color: color-mix(in srgb, var(--vc-button-outline-#{$color}-text), black 8%);
+    }
+
+    &--ghost--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 16%);
+    }
+
+    &--tonal--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-bg), black 16%);
+      --text-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-text), black 15%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @apply transition-colors;
+
+    // The press should land at once; the release keeps the base duration.
+    &:active:not(#{$loading}, #{$disabled}) {
+      @apply duration-75;
     }
   }
 
@@ -360,12 +450,22 @@ watch(enabled, async (newValue, oldValue) => {
       --border-color: var(--color-neutral-200);
     }
 
-    &[class*="--no-border--"] {
+    &[class*="--surface--"] {
       --bg-color: var(--color-neutral-200);
       --border-color: var(--color-neutral-200);
     }
 
     &[class*="--outline--"] {
+      --border-color: var(--color-neutral-300);
+    }
+
+    &[class*="--soft--"] {
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-100);
+    }
+
+    &[class*="--tonal--"] {
+      --bg-color: var(--color-neutral-100);
       --border-color: var(--color-neutral-300);
     }
   }
@@ -374,7 +474,7 @@ watch(enabled, async (newValue, oldValue) => {
     @apply grid grid-flow-col justify-center items-center min-h-[calc(var(--size)-0.25rem)];
 
     #{$loading} & {
-      @apply invisible;
+      @apply opacity-0;
     }
   }
 
@@ -399,6 +499,10 @@ watch(enabled, async (newValue, oldValue) => {
   &__prepend {
     $prepend: &;
 
+    // centres whatever the slot holds; an icon smaller than the text line would otherwise
+    // sit on the line box top
+    @apply flex items-center;
+
     &:empty {
       @apply hidden;
     }
@@ -406,6 +510,10 @@ watch(enabled, async (newValue, oldValue) => {
 
   &__append {
     $append: &;
+
+    // centres whatever the slot holds; an icon smaller than the text line would otherwise
+    // sit on the line box top
+    @apply flex items-center;
 
     &:empty {
       @apply hidden;
@@ -420,10 +528,6 @@ watch(enabled, async (newValue, oldValue) => {
     #{$append} & {
       @apply ms-2;
     }
-  }
-
-  &:focus {
-    @apply outline outline-[3px] outline-[--outline-color];
   }
 }
 </style>

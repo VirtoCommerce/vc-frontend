@@ -1,26 +1,27 @@
 <template>
-  <form class="text-start" @submit="onSubmit">
+  <form class="sign-in-form" @submit="onSubmit">
     <!-- Errors block -->
     <VcAlert
       v-for="error in errors"
       :key="error.code"
-      class="mb-4"
+      data-test-id="sign-in-error-alert"
+      class="sign-in-form__error"
       color="danger"
       size="sm"
       variant="outline-dark"
       icon
     >
-      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT">
+      <span v-if="isLockoutError(error?.code)">
         {{ translate(error) }}
         <ContactAdministratorLink />.
       </span>
 
-      <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="flex place-items-center justify-between">
+      <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="sign-in-form__password-expired">
         <span>
           {{ translate(error) }}
         </span>
         <!-- Keep the A tag to reinitialize the app -->
-        <a href="/change-password" class="text-sm font-bold text-accent-700 hover:text-accent">
+        <a :href="ROUTES.CHANGE_PASSWORD.PATH" class="sign-in-form__change-password-link">
           {{ $t("common.buttons.set_new_password") }}
         </a>
       </span>
@@ -33,7 +34,7 @@
     <VcInput
       v-model.trim="email"
       name="email"
-      class="mb-4"
+      class="sign-in-form__input"
       :label="$t('common.labels.email')"
       :placeholder="$t('common.placeholders.email')"
       :disabled="loading"
@@ -41,11 +42,12 @@
       :message="validationErrors.email"
       :error="!!validationErrors.email"
       autocomplete="email"
+      test-id-input="email-input"
     />
 
     <VcInput
       v-model="password"
-      class="mb-4"
+      class="sign-in-form__input"
       :label="$t('common.labels.password')"
       :placeholder="$t('common.placeholders.password')"
       :disabled="loading"
@@ -53,26 +55,34 @@
       required
       :message="validationErrors.password"
       :error="!!validationErrors.password"
-      autocomplete="password"
+      autocomplete="current-password"
+      test-id-input="password-input"
     />
 
-    <div class="flex justify-between">
+    <div class="sign-in-form__options">
       <VcCheckbox v-model="rememberMe" :disabled="loading">
         {{ $t("shared.account.sign_in_form.remember_me_label") }}
       </VcCheckbox>
 
-      <router-link to="/forgot-password" class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
+      <router-link to="/forgot-password" class="sign-in-form__forgot-password-link" data-test-id="forgot-password-link">
         {{ $t("shared.account.sign_in_form.forgot_password_link") }}
       </router-link>
     </div>
 
     <!-- Form actions -->
-    <div class="mt-8 flex flex-wrap gap-4" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap>
+    <div :class="['sign-in-form__actions', { 'sign-in-form__actions--constrained': !props.growButtons }]">
+      <VcButton :loading="loading" type="submit" class="sign-in-form__submit" no-wrap data-test-id="login-button">
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton :to="{ name: 'SignUp' }" :disabled="loading" variant="outline" class="flex-1" no-wrap>
+      <VcButton
+        :to="{ name: 'SignUp' }"
+        :disabled="loading"
+        variant="outline"
+        class="sign-in-form__register"
+        no-wrap
+        data-test-id="sign-in-page.registration-button"
+      >
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>
@@ -86,7 +96,8 @@ import { ref, watch } from "vue";
 import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
-import { Logger } from "@/core/utilities";
+import { isLockoutError, Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -150,3 +161,57 @@ watch(meta, (value) => {
   }
 });
 </script>
+
+<style lang="scss">
+.sign-in-form {
+  @apply text-start;
+
+  &__error {
+    @apply mb-4;
+  }
+
+  &__password-expired {
+    @apply flex place-items-center justify-between;
+  }
+
+  &__change-password-link {
+    @apply text-sm font-bold text-accent-700;
+
+    &:hover {
+      @apply text-accent;
+    }
+  }
+
+  &__input {
+    @apply mb-4;
+  }
+
+  &__options {
+    @apply flex justify-between;
+  }
+
+  &__forgot-password-link {
+    @apply text-sm font-bold text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
+  }
+
+  &__actions {
+    @apply mt-8 flex flex-wrap gap-4;
+
+    &--constrained {
+      @apply max-w-sm;
+    }
+  }
+
+  &__submit {
+    @apply flex-1 shrink;
+  }
+
+  &__register {
+    @apply flex-1;
+  }
+}
+</style>

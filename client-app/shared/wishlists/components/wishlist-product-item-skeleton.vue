@@ -8,6 +8,7 @@
       <div class="grow">
         <!-- Product title -->
         <div class="mb-1.5 h-4 bg-neutral-100"></div>
+
         <div class="h-4 w-3/5 bg-neutral-100"></div>
       </div>
     </div>
@@ -15,6 +16,7 @@
     <!-- Price -->
     <div class="flex w-32 shrink-0 flex-col items-start text-sm">
       <div class="mb-1.5 h-4 w-3/5 bg-neutral-100"></div>
+
       <div class="h-4 w-4/5 bg-neutral-100"></div>
     </div>
 
@@ -22,6 +24,7 @@
     <div class="flex w-48 shrink-0 flex-col justify-center">
       <div class="mb-4 flex">
         <div class="h-9 w-full flex-1 border border-r-0 border-neutral-100"></div>
+
         <div class="w-2/5 bg-neutral-100"></div>
       </div>
 

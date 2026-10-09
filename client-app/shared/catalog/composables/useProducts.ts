@@ -1,22 +1,26 @@
 import { useLocalStorage } from "@vueuse/core";
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
-import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { cloneDeep, isEqual } from "lodash-es";
+import { computed, readonly, ref, toValue } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   FFC_LOCAL_STORAGE,
   IN_STOCK_PRODUCTS_LOCAL_STORAGE,
   PAGE_LIMIT,
   PRODUCT_SORTING_LIST,
   PURCHASED_BEFORE_LOCAL_STORAGE,
+  EXCLUDED_FILTER_NAMES,
+  zeroPriceFilter,
 } from "@/core/constants";
+import { INTENT_SEARCH_MODULE_ID, INTENT_SEARCH_ENABLED_KEY } from "@/core/constants/modules";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
-  getFilterExpressionFromFacets,
+  generateFilterExpressionFromFilters,
   Logger,
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
+  toFirstString,
 } from "@/core/utilities";
 import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
@@ -27,8 +31,14 @@ import type {
   ProductsFiltersType,
   ProductsSearchParamsType,
 } from "../types";
-import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type {
+  Product,
+  RangeFacet,
+  TermFacet,
+  SearchProductFilterResult,
+  ProductSortingType,
+} from "@/core/api/graphql/types";
+import type { FacetItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
@@ -46,6 +56,21 @@ export function useProducts(
     useQueryParams?: boolean;
     /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
     catalogPaginationMode?: CatalogPaginationModeType;
+    facetsToHide?: string[];
+    /** @default true */
+    initialFetchingState?: boolean;
+    /**
+     * Keep showing the previous results while a refetch is in flight instead of clearing to
+     * empty first. Off by default since most consumers use the empty state itself as their
+     * "loading" signal (e.g. a skeleton keyed off `products.length === 0`); opt in where stale
+     * data on screen for a moment is preferable to the list flashing empty on every refetch.
+     * @default false
+     */
+    preserveProductsWhileFetching?: boolean;
+    /** Overrides the default currency code passed to the products query (e.g. for the loyalty catalog). */
+    // The `?` already allows the property to be omitted/undefined; the ref and getter branches still carry
+    // `undefined` (e.g. the loyalty currency computed), so the bare value branch stays `string` to avoid a redundant top-level `undefined`.
+    currencyCodeOverride?: string | Ref<string | undefined> | (() => string | undefined);
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -54,8 +79,13 @@ export function useProducts(
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
+    initialFetchingState = true,
+    preserveProductsWhileFetching = false,
+    currencyCodeOverride,
   } = options;
   const { openModal } = useModal();
+  const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
+  const isIntentSearchEnabled = isEnabled(INTENT_SEARCH_ENABLED_KEY);
 
   const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
@@ -79,14 +109,15 @@ export function useProducts(
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     defaultValue: PRODUCT_SORTING_LIST[0].id,
-    validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+    // Sort codes are store-defined (dynamic) and resolved server-side, so accept any token-shaped value.
+    validator: (value) => /^[a-z0-9-_]*$/i.test(value),
   });
 
   const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
     defaultValue: "",
   });
 
-  const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
+  const preserveUserQueryQueryParam = useRouteQueryParam<string>(QueryParamName.PreserveUserQuery, {
     defaultValue: "",
   });
 
@@ -94,7 +125,15 @@ export function useProducts(
     defaultValue: "",
   });
 
-  const fetchingProducts = ref(true);
+  // A scanned code: the API matches it against the store's configured index fields, as a filter, not a keyword.
+  // A repeated param (`?barcode=a&barcode=b`) arrives as an array, so the lookup takes the first code.
+  const rawBarcodeQueryParam = useRouteQueryParam<string>(QueryParamName.Barcode, {
+    defaultValue: "",
+  });
+  const barcodeQueryParam = computed(() => toFirstString(rawBarcodeQueryParam.value));
+  const isBarcodeLookup = computed(() => !!barcodeQueryParam.value);
+
+  const fetchingProducts = ref(initialFetchingState);
   const fetchingMoreProducts = ref(false);
   const fetchingFacets = ref(false);
   const totalProductsCount = ref(0);
@@ -108,15 +147,20 @@ export function useProducts(
   const pageHistory = ref<number[]>([]);
 
   const products = ref<Product[]>([]);
-  const facets = shallowRef<FacetItemType[]>([]);
+  const facets = ref<FacetItemType[]>([]);
+  // Per-instance "sort by" options from the search response (only fetched when withFacets). Owned by this
+  // useProducts instance — passed to the sort dropdown by the consumer rather than shared via module state.
+  const productSortings = ref<ProductSortingType[]>([]);
 
-  const prevProductsFilters = shallowRef<ProductsFiltersType>();
-  const productsFilters = shallowRef<ProductsFiltersType>({
+  const prevProductsFilters = ref<ProductsFiltersType>();
+  const productsFilters = ref<ProductsFiltersType>({
     branches: localStorageBranches.value,
     inStock: localStorageInStock.value,
     purchasedBefore: localStoragePurchasedBefore.value,
     facets: [],
+    filters: [],
   });
+  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet?.toLowerCase()));
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
   });
@@ -135,7 +179,7 @@ export function useProducts(
     if (options.filtersDisplayOrder?.value?.order?.length) {
       const order = options.filtersDisplayOrder.value.order
         .split(",")
-        .map((item) => item.trim().toLowerCase())
+        .map((item) => item?.trim().toLowerCase())
         .filter(Boolean);
 
       if (!order.length) {
@@ -145,14 +189,14 @@ export function useProducts(
       const sortedFacets: FacetItemType[] = [];
 
       order.forEach((filter) => {
-        const facet = allFacets.find(({ label }) => label.toLowerCase() === filter);
+        const facet = allFacets.find(({ label }) => label?.toLowerCase() === filter);
         if (facet) {
           sortedFacets.push(facet);
         }
       });
 
       return options.filtersDisplayOrder?.value?.showRest
-        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label.toLowerCase()))]
+        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label?.toLowerCase() ?? ""))]
         : sortedFacets;
     }
 
@@ -168,11 +212,12 @@ export function useProducts(
     isFiltersSidebarVisible.value = false;
   }
 
-  function applyFilters(newFilters: ProductsFiltersType): void {
-    const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
+  async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
+    // Generate filter expression from filters only
+    const filterExpression: string = generateFilterExpressionFromFilters(newFilters.filters);
 
-    if (options?.useQueryParams && facetsQueryParam.value !== facetsFilterExpression) {
-      facetsQueryParam.value = facetsFilterExpression;
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
     }
 
     if (localStorageInStock.value !== newFilters.inStock) {
@@ -187,47 +232,111 @@ export function useProducts(
       localStoragePurchasedBefore.value = newFilters.purchasedBefore;
     }
 
+    await preserveUserQuery();
+
     void resetCurrentPage();
   }
 
-  async function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
-    const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
-    const facetValue = facet?.values.find((item) => item.value === payload.value);
+  async function applyFiltersOnly(newFilters: SearchProductFilterResult[]): Promise<void> {
+    // Update only the filters part of productsFilters
+    productsFilters.value = {
+      ...productsFilters.value,
+      filters: newFilters,
+    };
 
-    if (facetValue) {
-      facetValue.selected = false;
-      facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+    // Generate filter expression from filters only and update query param
+    const filterExpression: string = generateFilterExpressionFromFilters(newFilters);
 
-      triggerRef(facets);
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
+    }
+
+    await preserveUserQuery();
+
+    void resetCurrentPage();
+  }
+
+  function applyFacetsOnly(newFacets: FacetItemType[]): void {
+    // Update only the facets part of productsFilters
+    productsFilters.value = {
+      ...productsFilters.value,
+      facets: newFacets,
+    };
+
+    // Generate filter expression from filters only and update query param
+    const filterExpression: string = generateFilterExpressionFromFilters(productsFilters.value.filters);
+
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
+    }
+
+    void resetCurrentPage();
+  }
+
+  async function resetFacetFilters(resetOptions?: { skipPageReset?: boolean }) {
+    const skipPageReset = resetOptions?.skipPageReset ?? false;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+
+    facetsQueryParam.value = "";
+    await preserveUserQuery();
+
+    productsFilters.value.filters = [];
+
+    if (!skipPageReset) {
       void resetCurrentPage();
     }
   }
 
-  async function resetFacetFilters() {
-    facetsQueryParam.value = "";
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+  async function resetControls(resetOptions?: { skipPageReset?: boolean }) {
+    const skipPageReset = resetOptions?.skipPageReset ?? false;
+    localStorageInStock.value = false;
+    localStoragePurchasedBefore.value = false;
+    localStorageBranches.value = [];
 
-    productsFilters.value.facets.forEach((filter) =>
-      filter.values.forEach((filterItem) => (filterItem.selected = false)),
-    );
+    productsFilters.value = {
+      ...productsFilters.value,
+      branches: [],
+      inStock: false,
+      purchasedBefore: false,
+    };
 
-    triggerRef(facets);
-    void resetCurrentPage();
+    await preserveUserQuery();
+
+    if (!skipPageReset) {
+      void resetCurrentPage();
+    }
   }
 
-  function resetFilterKeyword(): void {
-    keywordQueryParam.value = "";
+  async function resetFacetAndControlsFilters(resetOptions?: { skipPageReset?: boolean }) {
+    const skipPageReset = resetOptions?.skipPageReset ?? false;
+    await resetFacetFilters({ skipPageReset: true });
+    await resetControls({ skipPageReset: true });
+    if (!skipPageReset) {
+      void resetCurrentPage();
+    }
+  }
 
-    triggerRef(facets);
+  async function preserveUserQuery() {
+    if (!isIntentSearchEnabled) {
+      preserveUserQueryQueryParam.value = "";
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+    preserveUserQueryQueryParam.value = "yes";
+  }
+
+  function resetSearchKeyword(): void {
+    searchQueryParam.value = "";
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
     productsFilters.value = {
       ...newFilters,
       facets: getSortedFacets(newFilters.facets),
+      filters: prepareFilters(newFilters.filters),
     };
   }
 
@@ -243,6 +352,7 @@ export function useProducts(
               facets: productsFilters.value.facets,
               inStock: productsFilters.value.inStock,
               purchasedBefore: productsFilters.value.purchasedBefore,
+              filters: productsFilters.value.filters,
             };
 
             updateProductsFilters(newFilters);
@@ -256,7 +366,17 @@ export function useProducts(
   }
 
   function hasSelectedFacets(): boolean {
-    return facets.value?.some((facet) => facet.values.some((value) => value.selected));
+    const filteredFacets = facets.value.filter(
+      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
+    );
+    const filteredFilters = productsFilters.value.filters.filter(
+      (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
+    );
+    return !!filteredFacets.length && !!filteredFilters.length;
+  }
+
+  function hasSelectedFilters(): boolean {
+    return !!productsFilters.value.filters.length;
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
@@ -268,12 +388,12 @@ export function useProducts(
     }
 
     facets.value = Array<FacetItemType>().concat(
-      termFacets.map(termFacetToCommonFacet),
       rangeFacets.map(rangeFacetToCommonFacet),
+      termFacets.map((f) => termFacetToCommonFacet(f, false)),
     );
   }
 
-  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceOverride?: boolean) {
     const searchParams = {
       ..._searchParams,
       page:
@@ -283,13 +403,17 @@ export function useProducts(
     };
 
     fetchingProducts.value = true;
-    products.value = [];
-    totalProductsCount.value = 0;
-    pagesCount.value = 1;
+    if (!preserveProductsWhileFetching) {
+      products.value = [];
+      totalProductsCount.value = 0;
+      pagesCount.value = 1;
+    }
 
     if (searchParams.page) {
       updateCurrentPage(Number(searchParams.page));
     }
+
+    const actualWithZeroPrice = withZeroPriceOverride ?? withZeroPrice;
 
     try {
       const {
@@ -297,7 +421,14 @@ export function useProducts(
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
+        filters = [],
+        sortings = [],
+      } = await searchProducts(searchParams, {
+        withFacets,
+        withImages,
+        withZeroPrice: actualWithZeroPrice,
+        currencyCodeOverride: toValue(currencyCodeOverride),
+      });
 
       products.value = items;
       totalProductsCount.value = totalCount;
@@ -309,6 +440,8 @@ export function useProducts(
       addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
+        productSortings.value = sortings;
+
         setFacets({
           termFacets: term_facets,
           rangeFacets: range_facets,
@@ -319,8 +452,12 @@ export function useProducts(
           purchasedBefore: localStoragePurchasedBefore.value,
           branches: localStorageBranches.value.slice(),
           facets: getSortedFacets(facets.value),
+          filters: prepareFilters(filters),
         };
       }
+
+      // The response this call applied, so a caller can act on its own request's result instead of the shared state.
+      return { items, totalCount };
     } catch (e) {
       Logger.error(`useProducts.${fetchProducts.name}`, e);
       throw e;
@@ -333,7 +470,11 @@ export function useProducts(
     fetchingMoreProducts.value = true;
 
     try {
-      const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams, {
+        withImages,
+        withZeroPrice,
+        currencyCodeOverride: toValue(currencyCodeOverride),
+      });
 
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pageHistory.value);
@@ -380,13 +521,14 @@ export function useProducts(
       const { term_facets = [], range_facets = [] } = await searchProducts(_searchParams, {
         withZeroPrice,
         withFacets: true,
+        currencyCodeOverride: toValue(currencyCodeOverride),
       });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
 
       return Array<FacetItemType>().concat(
-        term_facets.map(termFacetToCommonFacet),
+        term_facets.map((f) => termFacetToCommonFacet(f, false)),
         range_facets.map(rangeFacetToCommonFacet),
       );
     } catch (e) {
@@ -401,8 +543,36 @@ export function useProducts(
     currentPage.value = page;
 
     if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && page > Math.max(...pageHistory.value)) {
-      pageQueryParam.value = page.toString();
+      pageQueryParam.value = String(page);
     }
+  }
+
+  function isZeroPriceFilter(value: SearchProductFilterResult): boolean {
+    if (value.rangeValues?.length === 1) {
+      const range = value.rangeValues[0];
+      return (
+        range.lower === zeroPriceFilter.lower &&
+        !range.upper &&
+        range.includeLowerBound === zeroPriceFilter.includeLowerBound &&
+        range.includeUpperBound === zeroPriceFilter.includeUpperBound
+      );
+    }
+    return false;
+  }
+
+  function isExcludedFilter(filter: SearchProductFilterResult): boolean {
+    return EXCLUDED_FILTER_NAMES.includes(filter.name);
+  }
+
+  function prepareFilters(filters: SearchProductFilterResult[]) {
+    return filters.filter(
+      (filter) => !isGeneratedByBarcodeLookup(filter) && !isZeroPriceFilter(filter) && !isExcludedFilter(filter),
+    );
+  }
+
+  // Only a lookup hides generated filters: intent search's inferred ones stay chips, removing one keeps the query.
+  function isGeneratedByBarcodeLookup(filter: SearchProductFilterResult): boolean {
+    return isBarcodeLookup.value && !!filter.isGenerated;
   }
 
   async function resetCurrentPage() {
@@ -422,18 +592,22 @@ export function useProducts(
     fetchingMoreProducts: readonly(fetchingMoreProducts),
     fetchingProducts: readonly(fetchingProducts),
     hasSelectedFacets: computed(() => hasSelectedFacets()),
+    hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
-    keywordQueryParam,
     localStorageBranches,
     localStorageInStock,
     localStoragePurchasedBefore,
     pagesCount: readonly(pagesCount),
     products: computed(() => products.value),
     productsById,
+    sortings: computed(() => productSortings.value),
     productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,
+    preserveUserQueryQueryParam,
+    barcodeQueryParam,
+    isBarcodeLookup,
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
@@ -442,14 +616,17 @@ export function useProducts(
     updateCurrentPage,
 
     applyFilters,
+    applyFiltersOnly,
+    applyFacetsOnly,
     getFacets,
     fetchMoreProducts,
     fetchProducts,
     hideFiltersSidebar,
     openBranchesModal,
-    removeFacetFilter,
+    resetFacetAndControlsFilters,
+    resetControls,
     resetFacetFilters,
-    resetFilterKeyword,
+    resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,
   };

@@ -1,37 +1,34 @@
 <template>
-  <div class="w-[27.5rem]">
-    <VcDialog dividers>
+  <div class="orders-filter">
+    <!-- The popover owns initial focus: it names the panel, while VcDialog autofocuses on mount
+         and this panel remounts on every disabled cycle. -->
+    <VcDialog dividers size="xs" :auto-focus="false">
       <VcDialogHeader @close="$emit('close')">
         {{ $t("shared.account.orders_filter.title") }}
       </VcDialogHeader>
 
       <VcDialogContent>
-        <VcLabel>{{ $t("shared.account.orders_filter.created_date_label") }}</VcLabel>
+        <div class="orders-filter__content">
+          <slot />
 
-        <div class="mb-5 flex flex-col space-y-5">
-          <slot name="dateFilterType" />
-        </div>
+          <div v-if="facets?.length" class="orders-filter__facets">
+            <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
-        <div class="my-4">
-          <slot name="buyerNameFilterType" />
-        </div>
+            <VcCheckboxGroup v-model="filterData.statuses" class="orders-filter__statuses">
+              <VcCheckbox v-for="facet in statusFacet?.items" :key="facet.term" :value="facet.term">
+                <div
+                  :class="[
+                    'orders-filter__status-content',
+                    { 'orders-filter__status-content--selected': isSelectedStatus(facet.term) },
+                  ]"
+                >
+                  <div class="orders-filter__status-label">{{ facet.label }}</div>
 
-        <div v-if="facets?.length">
-          <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
-
-          <VcCheckboxGroup v-model="filterData.statuses" class="mt-2 space-y-3.5">
-            <VcCheckbox
-              v-for="facet in statusFacet?.items"
-              :key="facet.term"
-              :value="facet.term"
-              :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }"
-            >
-              <div class="flex w-full max-w-full gap-1">
-                <div class="min-w-0 truncate">{{ facet.label }}</div>
-                <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
-              </div>
-            </VcCheckbox>
-          </VcCheckboxGroup>
+                  <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
+                </div>
+              </VcCheckbox>
+            </VcCheckboxGroup>
+          </div>
         </div>
       </VcDialogContent>
 
@@ -40,13 +37,12 @@
           color="secondary"
           variant="outline"
           :disabled="isFilterEmpty && !isFilterDirty"
-          size="sm"
           @click="$emit('reset')"
         >
           {{ $t("shared.account.orders_filter.reset_button") }}
         </VcButton>
 
-        <VcButton size="sm" :disabled="!isFilterDirty" @click="$emit('apply')">
+        <VcButton :disabled="!isFilterDirty || !isDateRangeValid" @click="$emit('apply')">
           {{ $t("shared.account.orders_filter.apply_button") }}
         </VcButton>
       </VcDialogFooter>
@@ -57,7 +53,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
-import { useUserOrders, useUserOrdersFilter } from "../composables";
+import { facets } from "../composables/useUserOrders";
+import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 
 interface IEmits {
   (event: "apply"): void;
@@ -65,9 +62,14 @@ interface IEmits {
   (event: "close"): void;
 }
 
+interface IProps {
+  isDateRangeValid?: boolean;
+}
+
 defineEmits<IEmits>();
 
-const { facets } = useUserOrders({});
+withDefaults(defineProps<IProps>(), { isDateRangeValid: true });
+
 const { filterData, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 const statusFacet = computed(() => facets.value?.find((facet) => facet.name === STATUS_ORDERS_FACET_NAME));
@@ -76,3 +78,33 @@ function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
 }
 </script>
+
+<style lang="scss">
+.orders-filter {
+  @apply w-[27.5rem];
+
+  &__content {
+    @apply flex flex-col;
+  }
+
+  &__facets {
+    @apply mt-4;
+  }
+
+  &__statuses {
+    @apply mt-2 space-y-3.5;
+  }
+
+  &__status-content {
+    @apply flex w-full max-w-full gap-1 text-neutral;
+
+    &--selected {
+      @apply font-bold text-inherit;
+    }
+  }
+
+  &__status-label {
+    @apply min-w-0 truncate;
+  }
+}
+</style>

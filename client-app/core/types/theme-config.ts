@@ -1,7 +1,7 @@
-import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
-import type { SortDirection } from "@/core/enums";
-import type { IOrderStatus, IQuoteStatus } from "@/core/types";
+import type { DesktopMenuModeType } from "@/core/constants";
+import type { BrowserTargetType } from "@/core/enums";
+import type { IOrderStatus, IQuoteStatus, SortDirectionType } from "@/core/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 
 export interface IThemeConfigPreset {
@@ -107,6 +107,224 @@ export interface IThemeConfigPreset {
   color_additional_50: string;
   color_additional_950: string;
 
+  color_vc_focus_ring?: string;
+
+  color_vc_background_solid_primary?: string;
+  color_vc_background_solid_secondary?: string;
+  color_vc_background_solid_accent?: string;
+  color_vc_background_solid_neutral?: string;
+  color_vc_background_solid_warning?: string;
+  color_vc_background_solid_danger?: string;
+  color_vc_background_solid_success?: string;
+  color_vc_background_solid_info?: string;
+
+  color_vc_background_soft_primary?: string;
+  color_vc_background_soft_secondary?: string;
+  color_vc_background_soft_accent?: string;
+  color_vc_background_soft_neutral?: string;
+  color_vc_background_soft_warning?: string;
+  color_vc_background_soft_danger?: string;
+  color_vc_background_soft_success?: string;
+  color_vc_background_soft_info?: string;
+
+  color_vc_background_outline_primary?: string;
+  color_vc_background_outline_secondary?: string;
+  color_vc_background_outline_accent?: string;
+  color_vc_background_outline_neutral?: string;
+  color_vc_background_outline_warning?: string;
+  color_vc_background_outline_danger?: string;
+  color_vc_background_outline_success?: string;
+  color_vc_background_outline_info?: string;
+
+  color_vc_background_surface_primary?: string;
+  color_vc_background_surface_secondary?: string;
+  color_vc_background_surface_accent?: string;
+  color_vc_background_surface_neutral?: string;
+  color_vc_background_surface_warning?: string;
+  color_vc_background_surface_danger?: string;
+  color_vc_background_surface_success?: string;
+  color_vc_background_surface_info?: string;
+
+  color_vc_background_ghost_primary?: string;
+  color_vc_background_ghost_secondary?: string;
+  color_vc_background_ghost_accent?: string;
+  color_vc_background_ghost_neutral?: string;
+  color_vc_background_ghost_warning?: string;
+  color_vc_background_ghost_danger?: string;
+  color_vc_background_ghost_success?: string;
+  color_vc_background_ghost_info?: string;
+
+  color_vc_background_tonal_primary?: string;
+  color_vc_background_tonal_secondary?: string;
+  color_vc_background_tonal_accent?: string;
+  color_vc_background_tonal_neutral?: string;
+  color_vc_background_tonal_warning?: string;
+  color_vc_background_tonal_danger?: string;
+  color_vc_background_tonal_success?: string;
+  color_vc_background_tonal_info?: string;
+
+  color_vc_border_solid_primary?: string;
+  color_vc_border_solid_secondary?: string;
+  color_vc_border_solid_accent?: string;
+  color_vc_border_solid_neutral?: string;
+  color_vc_border_solid_warning?: string;
+  color_vc_border_solid_danger?: string;
+  color_vc_border_solid_success?: string;
+  color_vc_border_solid_info?: string;
+
+  color_vc_border_soft_primary?: string;
+  color_vc_border_soft_secondary?: string;
+  color_vc_border_soft_accent?: string;
+  color_vc_border_soft_neutral?: string;
+  color_vc_border_soft_warning?: string;
+  color_vc_border_soft_danger?: string;
+  color_vc_border_soft_success?: string;
+  color_vc_border_soft_info?: string;
+
+  color_vc_border_outline_primary?: string;
+  color_vc_border_outline_secondary?: string;
+  color_vc_border_outline_accent?: string;
+  color_vc_border_outline_neutral?: string;
+  color_vc_border_outline_warning?: string;
+  color_vc_border_outline_danger?: string;
+  color_vc_border_outline_success?: string;
+  color_vc_border_outline_info?: string;
+
+  color_vc_border_surface_primary?: string;
+  color_vc_border_surface_secondary?: string;
+  color_vc_border_surface_accent?: string;
+  color_vc_border_surface_neutral?: string;
+  color_vc_border_surface_warning?: string;
+  color_vc_border_surface_danger?: string;
+  color_vc_border_surface_success?: string;
+  color_vc_border_surface_info?: string;
+
+  color_vc_border_ghost_primary?: string;
+  color_vc_border_ghost_secondary?: string;
+  color_vc_border_ghost_accent?: string;
+  color_vc_border_ghost_neutral?: string;
+  color_vc_border_ghost_warning?: string;
+  color_vc_border_ghost_danger?: string;
+  color_vc_border_ghost_success?: string;
+  color_vc_border_ghost_info?: string;
+
+  color_vc_border_tonal_primary?: string;
+  color_vc_border_tonal_secondary?: string;
+  color_vc_border_tonal_accent?: string;
+  color_vc_border_tonal_neutral?: string;
+  color_vc_border_tonal_warning?: string;
+  color_vc_border_tonal_danger?: string;
+  color_vc_border_tonal_success?: string;
+  color_vc_border_tonal_info?: string;
+
+  color_vc_icon_solid_primary?: string;
+  color_vc_icon_solid_secondary?: string;
+  color_vc_icon_solid_accent?: string;
+  color_vc_icon_solid_neutral?: string;
+  color_vc_icon_solid_warning?: string;
+  color_vc_icon_solid_danger?: string;
+  color_vc_icon_solid_success?: string;
+  color_vc_icon_solid_info?: string;
+
+  color_vc_icon_soft_primary?: string;
+  color_vc_icon_soft_secondary?: string;
+  color_vc_icon_soft_accent?: string;
+  color_vc_icon_soft_neutral?: string;
+  color_vc_icon_soft_warning?: string;
+  color_vc_icon_soft_danger?: string;
+  color_vc_icon_soft_success?: string;
+  color_vc_icon_soft_info?: string;
+
+  color_vc_icon_outline_primary?: string;
+  color_vc_icon_outline_secondary?: string;
+  color_vc_icon_outline_accent?: string;
+  color_vc_icon_outline_neutral?: string;
+  color_vc_icon_outline_warning?: string;
+  color_vc_icon_outline_danger?: string;
+  color_vc_icon_outline_success?: string;
+  color_vc_icon_outline_info?: string;
+
+  color_vc_icon_surface_primary?: string;
+  color_vc_icon_surface_secondary?: string;
+  color_vc_icon_surface_accent?: string;
+  color_vc_icon_surface_neutral?: string;
+  color_vc_icon_surface_warning?: string;
+  color_vc_icon_surface_danger?: string;
+  color_vc_icon_surface_success?: string;
+  color_vc_icon_surface_info?: string;
+
+  color_vc_icon_ghost_primary?: string;
+  color_vc_icon_ghost_secondary?: string;
+  color_vc_icon_ghost_accent?: string;
+  color_vc_icon_ghost_neutral?: string;
+  color_vc_icon_ghost_warning?: string;
+  color_vc_icon_ghost_danger?: string;
+  color_vc_icon_ghost_success?: string;
+  color_vc_icon_ghost_info?: string;
+
+  color_vc_icon_tonal_primary?: string;
+  color_vc_icon_tonal_secondary?: string;
+  color_vc_icon_tonal_accent?: string;
+  color_vc_icon_tonal_neutral?: string;
+  color_vc_icon_tonal_warning?: string;
+  color_vc_icon_tonal_danger?: string;
+  color_vc_icon_tonal_success?: string;
+  color_vc_icon_tonal_info?: string;
+
+  color_vc_text_solid_primary?: string;
+  color_vc_text_solid_secondary?: string;
+  color_vc_text_solid_accent?: string;
+  color_vc_text_solid_neutral?: string;
+  color_vc_text_solid_warning?: string;
+  color_vc_text_solid_danger?: string;
+  color_vc_text_solid_success?: string;
+  color_vc_text_solid_info?: string;
+
+  color_vc_text_soft_primary?: string;
+  color_vc_text_soft_secondary?: string;
+  color_vc_text_soft_accent?: string;
+  color_vc_text_soft_neutral?: string;
+  color_vc_text_soft_warning?: string;
+  color_vc_text_soft_danger?: string;
+  color_vc_text_soft_success?: string;
+  color_vc_text_soft_info?: string;
+
+  color_vc_text_outline_primary?: string;
+  color_vc_text_outline_secondary?: string;
+  color_vc_text_outline_accent?: string;
+  color_vc_text_outline_neutral?: string;
+  color_vc_text_outline_warning?: string;
+  color_vc_text_outline_danger?: string;
+  color_vc_text_outline_success?: string;
+  color_vc_text_outline_info?: string;
+
+  color_vc_text_surface_primary?: string;
+  color_vc_text_surface_secondary?: string;
+  color_vc_text_surface_accent?: string;
+  color_vc_text_surface_neutral?: string;
+  color_vc_text_surface_warning?: string;
+  color_vc_text_surface_danger?: string;
+  color_vc_text_surface_success?: string;
+  color_vc_text_surface_info?: string;
+
+  color_vc_text_ghost_primary?: string;
+  color_vc_text_ghost_secondary?: string;
+  color_vc_text_ghost_accent?: string;
+  color_vc_text_ghost_neutral?: string;
+  color_vc_text_ghost_warning?: string;
+  color_vc_text_ghost_danger?: string;
+  color_vc_text_ghost_success?: string;
+  color_vc_text_ghost_info?: string;
+
+  color_vc_text_tonal_primary?: string;
+  color_vc_text_tonal_secondary?: string;
+  color_vc_text_tonal_accent?: string;
+  color_vc_text_tonal_neutral?: string;
+  color_vc_text_tonal_warning?: string;
+  color_vc_text_tonal_danger?: string;
+  color_vc_text_tonal_success?: string;
+  color_vc_text_tonal_info?: string;
+
   color_body_bg?: string;
   color_body_text?: string;
 
@@ -150,6 +368,8 @@ export interface IThemeConfigPreset {
 }
 
 export interface IThemeConfigSettings {
+  cart_page_browser_target?: BrowserTargetType;
+  product_page_browser_target?: BrowserTargetType;
   details_browser_target?: BrowserTargetType;
 
   search_by_static_content_enabled?: boolean;
@@ -159,12 +379,16 @@ export interface IThemeConfigSettings {
 
   push_messages_enabled?: boolean;
   files_enabled?: boolean;
+  /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Only `true` enables it. */
+  module_federation_enabled?: boolean;
 
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
   product_filters_sorting?: boolean;
-  product_filters_sorting_direction?: SortDirection | string;
+  product_filters_sorting_direction?: SortDirectionType;
+  product_quantity_control?: "stepper" | "button";
+  range_filter_type?: "slider" | "default";
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;
@@ -173,6 +397,8 @@ export interface IThemeConfigSettings {
   store_selector_enabled?: boolean;
   top_header_menu_link_list?: string;
   header_menu_link_list?: string;
+  desktop_menu_mode?: DesktopMenuModeType;
+  icon_variant?: "solid" | "outline";
   products_menu_link_list?: string;
   footer_menu_link_list?: string;
   image_thumbnails_enabled?: boolean;
@@ -209,7 +435,6 @@ export interface IThemeConfigSettings {
 
   wishlists_limit?: number;
 
-  search_min_chars?: number;
   search_max_chars?: number;
   search_static_content_suggestions_enabled?: boolean;
   search_product_phrase_suggestions_enabled?: boolean;
@@ -246,6 +471,8 @@ export interface IThemeConfigSettings {
       [key: string]: number;
     };
   };
+
+  graphql_operation_marking_enabled?: boolean;
 }
 
 export interface IThemeConfig {

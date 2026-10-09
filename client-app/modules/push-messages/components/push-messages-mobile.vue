@@ -1,9 +1,9 @@
 <template>
   <PushMessages>
-    <template #trigger="{ totalCount, unreadCount }">
-      <div class="relative">
+    <template #trigger="{ totalCount, unreadCount, triggerProps }">
+      <button type="button" v-bind="triggerProps" class="relative">
         <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-          <VcIcon :key="totalCount" class="fill-primary" name="notification-v2" :size="28" />
+          <VcIcon :key="totalCount" class="text-primary" name="notification-v2" :size="24" />
         </transition>
 
         <transition mode="out-in" name="scale">
@@ -17,7 +17,7 @@
             {{ unreadCount }}
           </VcBadge>
         </transition>
-      </div>
+      </button>
     </template>
   </PushMessages>
 </template>

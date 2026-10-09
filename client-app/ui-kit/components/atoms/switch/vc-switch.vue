@@ -8,28 +8,37 @@
     ]"
   >
     <!-- Workarounds to fix Firefox label click bug -->
-    <button v-if="$slots.default" :aria-label="ariaLabel" type="button" class="vc-switch__label" @click="change">
-      <slot />
+    <button
+      v-if="$slots.default || label"
+      :aria-label="ariaLabel || name"
+      tabindex="-1"
+      type="button"
+      class="vc-switch__label"
+      @click="onLabelClick"
+    >
+      <slot>{{ label }}</slot>
     </button>
 
-    <button :aria-label="ariaLabel" type="button" class="vc-switch__bg" @click="change">
+    <button ref="switchElement" :aria-label="ariaLabel || name" type="button" class="vc-switch__bg" @click="change">
       <span class="vc-switch__circle" />
     </button>
 
     <input
       :id="componentId"
-      :aria-label="ariaLabel"
+      :aria-label="ariaLabel || name"
       :value="value"
       :checked="modelValue"
       :aria-checked="modelValue"
       :disabled="disabled"
       type="checkbox"
+      :data-test-id="testId"
       @change="change"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 
 export interface IEmits {
@@ -38,7 +47,6 @@ export interface IEmits {
 }
 
 interface IProps {
-  ariaLabel?: string;
   modelValue?: boolean;
   disabled?: boolean;
   name?: string;
@@ -46,6 +54,9 @@ interface IProps {
   color?: VcSwitchColorType;
   size?: "xs" | "sm" | "md" | "lg";
   labelPosition?: "left" | "right";
+  label?: string;
+  ariaLabel?: string;
+  testId?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -55,7 +66,23 @@ const props = withDefaults(defineProps<IProps>(), {
   labelPosition: "left",
 });
 
+const switchElement = useTemplateRef("switchElement");
 const componentId = useComponentId("input");
+
+// Dev warning for accessibility
+if (import.meta.env.DEV) {
+  if (!props.ariaLabel && !props.name) {
+    // eslint-disable-next-line no-console
+    console.warn("VcSwitch: Switch should have ariaLabel or name for accessibility");
+  }
+}
+
+function onLabelClick() {
+  if (switchElement.value) {
+    switchElement.value.focus();
+    change();
+  }
+}
 
 function change() {
   if (props.disabled) {
@@ -70,6 +97,7 @@ function change() {
 
 <style lang="scss">
 .vc-switch {
+  $self: &;
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
   $checked: "";
@@ -147,7 +175,15 @@ function change() {
   }
 
   &__label {
-    @apply text-neutral-950 font-normal cursor-pointer;
+    @apply text-neutral-950 font-normal;
+
+    #{$self}:not(#{$disabled}) & {
+      @apply cursor-pointer;
+    }
+
+    &:focus {
+      @apply outline-none;
+    }
 
     #{$left} & {
       @apply order-first me-2;
@@ -165,7 +201,11 @@ function change() {
   &__bg {
     $bg: &;
 
-    @apply order-1 relative block h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5 cursor-pointer;
+    @apply order-1 relative block h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5;
+
+    #{$self}:not(#{$disabled}) & {
+      @apply cursor-pointer;
+    }
   }
 
   &__circle {

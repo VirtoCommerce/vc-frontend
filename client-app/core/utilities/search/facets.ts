@@ -1,15 +1,30 @@
 import { unref } from "vue";
-import { globals } from "@/core/globals";
-import { isDateString } from "@/core/utilities/date";
+import { getFormattedLabel } from "./common";
 import type { FacetItemType, FacetValueItemType } from "../../types";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
-import type { MaybeRef } from "@vueuse/core";
+import type {
+  FacetRangeType,
+  FacetTermType,
+  RangeFacet,
+  TermFacet,
+  SearchProductFilterResult,
+} from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
 /**
  * Learn more about filter syntax:
  * - {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/filter-syntax.md#filters}
  * - {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/x-catalog-reference.md#filter-by-price}
  */
+
+/**
+ * Escapes backslashes and double quotes per the filter syntax's escaping rules, for embedding
+ * a value inside a filter-syntax expression (a facet filter clause or a quoted search phrase).
+ * Backslashes must be escaped first, otherwise the backslash added for the quote gets re-escaped.
+ * {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/filter-syntax.md#escaping-special-characters}
+ */
+export function escapeFilterSyntaxValue(value: string): string {
+  return value.replaceAll("\\", "\\\\").replaceAll('"', String.raw`\"`);
+}
 
 /**
  * Generates a filter expression for category subtree filtering
@@ -38,7 +53,11 @@ export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>, curren
  * @returns A string representing the availability filter expression
  */
 export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
-  return unref(value) ? "availability:InStock" : "";
+  return unref(value) ? "inStock:true" : "";
+}
+
+export function getFilterExpressionForInStockVariations(value: MaybeRef<boolean>): string {
+  return unref(value) ? "inStock_variations:true" : "";
 }
 
 /**
@@ -57,7 +76,27 @@ export function getFilterExpressionForPurchasedBefore(value: MaybeRef<boolean>):
  */
 export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): string {
   const branches = unref(value);
-  return branches.length ? `available_in:"${branches.join('","')}"` : "";
+  return branches.length ? `available_in:"${branches.map(escapeFilterSyntaxValue).join('","')}"` : "";
+}
+
+/**
+ * Generates a filter expression for brand filtering
+ * @param brandName - A string or reactive string value representing the brand name
+ * @returns A string representing the brand filter expression
+ */
+export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): string {
+  const brand = unref(brandName);
+  return brand ? `"BRAND":"${escapeFilterSyntaxValue(brand)}"` : "";
+}
+
+/**
+ * `barcode` is a virtual filter name: the API expands it into the product index fields configured
+ * for the store (`Catalog.Search.BarcodeSearchFields`).
+ * A scanned payload is arbitrary text, so it is escaped to keep quotes and backslashes inside the term.
+ */
+export function getFilterExpressionForBarcode(value?: MaybeRef<string>): string {
+  const barcode = unref(value);
+  return barcode ? `barcode:"${escapeFilterSyntaxValue(barcode)}"` : "";
 }
 
 /**
@@ -71,12 +110,7 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
   for (const facet of unref(facets)) {
     const selectedValues: string[] = facet.values
       .filter((item) => item.selected)
-      .map((item) =>
-        item.value
-          // https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/filter-syntax.md#escaping-special-characters
-          .replace(/\\/g, "\\\\")
-          .replace(/"/g, '\\"'),
-      );
+      .map((item) => escapeFilterSyntaxValue(item.value));
 
     if (!selectedValues.length) {
       continue;
@@ -91,6 +125,38 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
   }
 
   return result.join(" ");
+}
+
+/**
+ * Generates a filter expression from prepared filters (SearchProductFilterResult array)
+ * @param filters - Array of SearchProductFilterResult objects
+ * @returns A string representing the combined filter expression from all filters
+ */
+export function generateFilterExpressionFromFilters(filters: SearchProductFilterResult[]): string {
+  const filterExpressions: string[] = [];
+
+  filters.forEach((filter) => {
+    if (filter.termValues?.length) {
+      // Handle term filters
+      const escapedTerms = filter.termValues.map((term) => escapeFilterSyntaxValue(term.value));
+      filterExpressions.push(`"${filter.name}":"${escapedTerms.join('","')}"`);
+    } else if (filter.rangeValues?.length) {
+      // Handle range filters
+      const rangeExpressions = filter.rangeValues.map((range) => {
+        const { lower, upper, includeLowerBound, includeUpperBound } = range;
+        const firstBracket = includeLowerBound ? "[" : "(";
+        const lastBracket = includeUpperBound ? "]" : ")";
+
+        const fromStr = lower ? `${lower} ` : "";
+        const toStr = upper ? ` ${upper}` : "";
+
+        return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
+      });
+      filterExpressions.push(`"${filter.name}":${rangeExpressions.join(",")}`);
+    }
+  });
+
+  return filterExpressions.join(" ");
 }
 
 /**
@@ -117,19 +183,23 @@ export function getFilterExpressionFromFacetRange(
  * @param termFacet - The term facet to convert
  * @returns A FacetItemType object representing the converted term facet
  */
-export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
+export function termFacetToCommonFacet(termFacet: TermFacet, sortValues: boolean = true): FacetItemType {
+  const facetValues = termFacet.terms.map<FacetValueItemType>((facetTerm: FacetTermType) => ({
+    count: facetTerm.count,
+    label: getFormattedLabel(facetTerm.label),
+    value: facetTerm.term,
+    selected: facetTerm.isSelected,
+  }));
+
+  if (sortValues) {
+    facetValues.sort((a, b) => a.label.localeCompare(b.label));
+  }
+
   return {
     type: "terms",
     label: termFacet.label,
     paramName: termFacet.name,
-    values: termFacet.terms
-      .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
-        count: facetTerm.count,
-        label: getFacetLabel(facetTerm.label),
-        value: facetTerm.term,
-        selected: facetTerm.isSelected,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label)),
+    values: facetValues,
   };
 }
 
@@ -145,31 +215,14 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     paramName: rangeFacet.name,
     values: rangeFacet.ranges.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
-      label: getFacetLabel(facetRange.label),
+      label: getFormattedLabel(facetRange.label),
       value: getFilterExpressionFromFacetRange(facetRange),
       selected: facetRange.isSelected,
+      from: facetRange.from,
+      includeFrom: facetRange.includeFrom,
+      to: facetRange.to,
+      includeTo: facetRange.includeTo,
     })),
+    statistics: rangeFacet.statistics,
   };
-}
-
-/**
- * Formats a facet label based on its type
- * @param label - The label to format
- * @returns A formatted string representing the facet label
- */
-function getFacetLabel(label: string): string {
-  const { d, t } = globals.i18n.global;
-
-  if (isDateString(label)) {
-    return d(new Date(label));
-  }
-
-  switch (label.toLowerCase()) {
-    case "true":
-      return t("common.labels.true_property");
-    case "false":
-      return t("common.labels.false_property");
-    default:
-      return label;
-  }
 }

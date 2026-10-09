@@ -14,9 +14,11 @@
 
         <div>
           <span class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</span>
+
           <a v-if="fulfillmentCenter?.phone" :href="`tel:${fulfillmentCenter?.phone}`" class="hover:underline">
             {{ fulfillmentCenter?.phone }}
           </a>
+
           <span v-else>&ndash;</span>
         </div>
       </VcWidget>
@@ -42,7 +44,9 @@
 
               <div class="text-sm text-neutral-900">
                 <b>{{ $t("pages.branch.phone") }}</b>
+
                 <a v-if="branch.phone" :href="`tel:${branch.phone}`" class="hover:underline">{{ branch.phone }}</a>
+
                 <span v-else>&ndash;</span>
               </div>
             </VcListItem>

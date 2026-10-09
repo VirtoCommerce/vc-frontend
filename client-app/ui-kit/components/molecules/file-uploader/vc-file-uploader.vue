@@ -20,6 +20,7 @@
       :allowed-extensions="allowedExtensions"
       :files="files"
       :requirements="requirements"
+      :disabled="hasMaxFileCount"
       class="vc-file-uploader__drop-container"
       @add-files="addFiles"
     />
@@ -111,6 +112,8 @@ function onFileDownload(file: FileType) {
 
 <style lang="scss">
 .vc-file-uploader {
+  --radius: var(--vc-file-uploader-radius, var(--vc-radius, 0.5rem));
+
   $horizontal: &;
   $vertical: &;
 
@@ -135,7 +138,7 @@ function onFileDownload(file: FileType) {
   }
 
   &__list-container {
-    @apply px-3 py-4 border border-neutral-200 rounded empty:hidden;
+    @apply px-3 py-4 border border-neutral-200 rounded-[--radius] empty:hidden;
 
     #{$horizontal} & {
       @apply md:flex-1 md:shrink;

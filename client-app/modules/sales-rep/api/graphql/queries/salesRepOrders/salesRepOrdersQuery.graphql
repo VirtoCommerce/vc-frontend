@@ -1,0 +1,40 @@
+query SalesRepOrders(
+  $organizationId: String
+  $storeId: String
+  $cultureName: String
+  $first: Int
+  $sort: String
+  $filter: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+) {
+  salesRepOrders(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    first: $first
+    sort: $sort
+    filter: $filter
+    period: { from: $periodFrom, to: $periodTo }
+  ) {
+    totalCount
+    items {
+      id
+      number
+      organizationId
+      organizationName
+      createdDate
+      status
+      statusDisplayValue
+      itemsCount
+      total {
+        amount
+        formattedAmount
+        currency {
+          code
+          symbol
+        }
+      }
+    }
+  }
+}

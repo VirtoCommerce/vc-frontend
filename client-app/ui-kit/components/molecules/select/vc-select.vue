@@ -12,27 +12,44 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :required="required" :error="error">
+    <VcLabel v-if="label" :for-id="triggerId" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
     <VcDropdownMenu
       class="vc-select__container"
-      width="100%"
       :disabled="!enabled"
-      disable-trigger-events
+      :lazy="lazy"
+      :teleport-selector="teleportSelector"
       :data-test-id="testIdDropdown"
+      tabindex="-1"
+      width="trigger"
+      :list-id="listboxId"
+      list-role="listbox"
+      :list-label="accessibleLabel"
       @toggle="toggled"
     >
-      <template #trigger="{ open, close, toggle }">
+      <template #trigger="{ open, toggle, close }">
         <div
           v-if="$slots.selected || $slots.placeholder"
+          :id="triggerId"
+          ref="triggerElement"
           tabindex="0"
           role="button"
+          :aria-label="accessibleLabel"
+          :aria-expanded="isShown"
+          aria-haspopup="listbox"
+          :aria-controls="isShown ? listboxId : undefined"
+          :aria-activedescendant="activeDescendantId"
+          :aria-invalid="error || undefined"
+          :aria-required="required || undefined"
+          :aria-disabled="disabled || undefined"
+          :aria-describedby="detailsId"
           class="vc-select__button"
           @click="toggle"
           @keydown.enter="toggle"
-          @keydown.down.prevent="next(-1)"
+          @keydown.esc="onTriggerEscape($event, close)"
+          @keydown.down.prevent="openByKeyboard($event, open, true)"
         >
           <div class="vc-select__button-content">
             <slot v-if="selected" name="selected" v-bind="{ item: selected, error }" />
@@ -45,8 +62,22 @@
 
         <VcInput
           v-else
+          ref="triggerElement"
           v-model="search"
           class="vc-select__input"
+          :aria-label="accessibleLabel"
+          :aria="{
+            id: triggerId,
+            role: 'combobox',
+            'aria-expanded': String(isShown),
+            'aria-haspopup': 'listbox',
+            'aria-controls': isShown ? listboxId : null,
+            'aria-activedescendant': activeDescendantId ?? null,
+            'aria-invalid': error ? 'true' : null,
+            'aria-required': required ? 'true' : null,
+            'aria-autocomplete': autocomplete ? 'list' : null,
+            'aria-describedby': detailsId,
+          }"
           :required="required"
           :size="size"
           :placeholder="placeholderText"
@@ -54,21 +85,42 @@
           :readonly="readonly || !autocomplete"
           :error="error"
           truncate
-          @keydown.down.prevent="next(-1)"
+          disable-autocomplete
+          @keydown.down.prevent="openByKeyboard($event, open, true)"
+          @keydown.enter="onTriggerEnter($event, open)"
           @focus="open"
-          @clear="clear"
-          @click="(autocomplete && open) || (!autocomplete && toggle)"
+          @click="open"
+          @keydown.esc="onTriggerEscape($event, close)"
         >
           <template #append>
-            <button
-              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
+            <VcButton
+              v-if="isClearButtonVisible"
+              :aria-label="$t('ui_kit.buttons.clear')"
+              :disabled="disabled"
               type="button"
+              icon="delete-thin"
+              color="neutral"
+              variant="ghost"
+              class="vc-select__clear"
+              :icon-size="getInputClearIconSize(size)"
+              @keydown.esc="onTriggerEscape($event, close)"
+              @keydown.enter.stop.prevent
+              @keyup.enter.stop.prevent="clear"
+              @click.stop="clear"
+            />
+
+            <VcButton
+              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
+              :disabled="disabled"
+              :icon="isShown ? 'chevron-up' : 'chevron-down'"
+              type="button"
+              color="neutral"
+              variant="ghost"
               tabindex="-1"
               class="vc-select__arrow"
-              @click="handleArrowClick($event, close)"
-            >
-              <VcIcon :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
-            </button>
+              @keydown.esc="onTriggerEscape($event, close)"
+              @click="handleArrowClick($event, toggle)"
+            />
           </template>
         </VcInput>
       </template>
@@ -77,50 +129,59 @@
         <VcMenuItem
           v-for="(item, index) in filteredItems"
           :key="index"
+          :option-id="getOptionId(index)"
+          :data-vc-select-option="componentId"
           :active="isActiveItem(item)"
           :aria-selected="isActiveItem(item)"
           role="option"
           :size="itemSize"
-          @click="
-            select(item);
-            !multiple && close();
-          "
-          @keyup.esc="close()"
+          @click="onItemClick(item, close)"
+          @keydown.esc="onItemEscape($event, close)"
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
+          @keydown.tab.prevent="handleTab($event, index)"
         >
-          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" tabindex="-1" />
+          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" :aria-label="getItemText(item)" tabindex="-1" />
 
           <slot name="item" v-bind="{ item, index }">
             {{ getItemText(item) }}
           </slot>
         </VcMenuItem>
 
-        <VcMenuItem v-if="filterValue && !filteredItems.length" disabled>
-          {{ $t("ui_kit.messages.no_results") }}
+        <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled>
+          {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
         </VcMenuItem>
       </template>
     </VcDropdownMenu>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
+    <VcInputDetails
+      :id="detailsId"
+      :show-empty="showEmptyDetails"
+      :message="message"
+      :error="error"
+      :single-line="singleLineMessage"
+    />
+
+    <span aria-live="polite" class="sr-only">{{ liveRegionMessage }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 // TODO: https://virtocommerce.atlassian.net/browse/ST-5117
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { union, lowerCase, isEqual } from "lodash";
-import { computed, ref } from "vue";
+
+import { isEqual, union } from "lodash-es";
+import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
 
 interface IProps {
   modelValue?: object | string | Array<object | string>;
   label?: string;
+  ariaLabel?: string;
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
@@ -138,6 +199,11 @@ interface IProps {
   multiple?: boolean;
   clearable?: boolean;
   testIdDropdown?: string;
+  enableTeleport?: boolean;
+  /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
+  lazy?: boolean;
+  /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
+  teleportSelector?: string;
 }
 
 interface IEmits {
@@ -152,11 +218,33 @@ const props = withDefaults(defineProps<IProps>(), {
   itemSize: "sm",
 });
 
+provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? false) });
+
 const { t } = useI18n();
 const componentId = useComponentId("select");
+const triggerId = componentId + "-trigger";
+const detailsId = componentId + "-details";
+const listboxId = componentId + "-listbox";
+const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");
+
+const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
 const filterValue = ref("");
+const focusedOptionIndex = ref(-1);
+
+function getOptionId(index: number) {
+  return `${componentId}-option-${index}`;
+}
+
+const activeDescendantId = computed(() => {
+  if (isShown.value && focusedOptionIndex.value >= 0) {
+    return getOptionId(focusedOptionIndex.value);
+  }
+  return undefined;
+});
+
+const liveRegionMessage = ref("");
 
 const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
 const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
@@ -185,6 +273,26 @@ const selected = computed(() => {
   return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
 });
 
+const hasSelection = computed(() => {
+  if (props.multiple && Array.isArray(props.modelValue)) {
+    return props.modelValue.length > 0;
+  }
+  return props.modelValue !== undefined && props.modelValue !== null;
+});
+
+const isClearButtonVisible = computed(() => {
+  if (!props.clearable || props.disabled || props.readonly) {
+    return false;
+  }
+
+  // In autocomplete mode when dropdown is open - show if there's filterValue or selection
+  if (props.autocomplete && isShown.value) {
+    return !!filterValue.value || hasSelection.value;
+  }
+
+  return hasSelection.value;
+});
+
 const search = computed({
   get() {
     if (props.autocomplete && isShown.value) {
@@ -203,12 +311,33 @@ const filteredItems = computed(() => {
     return props.items;
   }
 
-  const searching = lowerCase(filterValue.value);
-  const items = props.items.filter((item) => lowerCase(getItemText(item)).includes(searching));
+  const searching = filterValue.value.toLowerCase();
+  const items = props.items.filter((item) =>
+    String(getItemText(item) ?? "")
+      .toLowerCase()
+      .includes(searching),
+  );
 
-  const first = items.filter((item) => lowerCase(getItemText(item)).indexOf(searching) === 0);
+  const first = items.filter(
+    (item) =>
+      String(getItemText(item) ?? "")
+        .toLowerCase()
+        .indexOf(searching) === 0,
+  );
 
   return union(first, items);
+});
+
+watch(filteredItems, (items) => {
+  focusedOptionIndex.value = -1;
+
+  if (isShown.value && filterValue.value) {
+    liveRegionMessage.value = items.length
+      ? t("ui_kit.select.results_available", [items.length])
+      : t("ui_kit.select.no_results_found");
+  } else {
+    liveRegionMessage.value = "";
+  }
 });
 
 function isActiveItem(item: any) {
@@ -252,7 +381,7 @@ function select(item?: any) {
 }
 
 function getItemsElements() {
-  return Array.from(document.querySelectorAll(`#${componentId} [role='option'] [tabindex='0']`));
+  return Array.from(document.querySelectorAll(`[data-vc-select-option="${componentId}"] [tabindex='0']`));
 }
 
 function next(index: number) {
@@ -260,6 +389,7 @@ function next(index: number) {
 
   if (elements?.length) {
     const focusItemIndex = index === elements?.length - 1 ? 0 : index + 1;
+    focusedOptionIndex.value = focusItemIndex;
     const nextElement = elements[focusItemIndex];
 
     if (nextElement instanceof HTMLElement) {
@@ -273,6 +403,7 @@ function prev(index: number) {
 
   if (elements?.length) {
     const focusItemIndex = index === 0 ? elements?.length - 1 : index - 1;
+    focusedOptionIndex.value = focusItemIndex;
     const prevElement = elements[focusItemIndex];
 
     if (prevElement instanceof HTMLElement) {
@@ -281,33 +412,122 @@ function prev(index: number) {
   }
 }
 
+// The trigger keeps focus after the list closes and only opens on focus, so the keyboard had no way
+// back in: Enter had no handler, and ArrowDown called next(-1), whose focus() is a no-op on options
+// inside a display:none list.
+function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOption: boolean) {
+  if (isShown.value) {
+    if (moveToFirstOption) {
+      next(-1);
+    }
+
+    return;
+  }
+
+  // Nothing to open, so Enter stays the page's. ArrowDown is prevented by its own binding either way.
+  if (!enabled.value) {
+    return;
+  }
+
+  // Consumed only because it opens the list; Enter on an already open one still reaches the form.
+  event.preventDefault();
+  open();
+
+  if (moveToFirstOption) {
+    void nextTick(() => next(-1));
+  }
+}
+
+// An editable combobox leaves Enter to its form; a select-only one consumes it to open the list (APG).
+function onTriggerEnter(event: KeyboardEvent, open: () => void) {
+  if (props.autocomplete) {
+    return;
+  }
+
+  openByKeyboard(event, open, false);
+}
+
+// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog. Focus is
+// pulled back to the trigger first: the clear button unmounts when closing empties the filter, and
+// focusing before `close()` keeps the trigger's own `@focus="open"` from resurrecting the list.
+function onTriggerEscape(event: KeyboardEvent, close: () => void) {
+  if (!isShown.value) {
+    return;
+  }
+
+  event.stopPropagation();
+  focusTrigger();
+  close();
+}
+
+// Closing hides the panel with the focused option still inside it, so focus goes back to the trigger
+// first — the order the Escape paths already use, which also swallows the trigger's reopen on focus.
+function onItemClick(item: any, close: () => void) {
+  select(item);
+
+  if (props.multiple) {
+    return;
+  }
+
+  focusTrigger();
+  close();
+}
+
+// From an option the dropdown is always open, and focus lives inside the list — hand it back.
+function onItemEscape(event: KeyboardEvent, close: () => void) {
+  event.stopPropagation();
+  focusTrigger();
+  close();
+}
+
 function toggled(value: boolean) {
   isShown.value = value;
 
   if (!isShown.value) {
     filterValue.value = "";
+    focusedOptionIndex.value = -1;
   }
 }
 
 function clear() {
-  if (
-    ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
-    props.multiple &&
-    Array.isArray(props.modelValue) &&
-    props.modelValue.length
-  ) {
-    emit("update:modelValue", []);
-  } else if (filterValue.value) {
+  // In autocomplete mode - clear search first, then selection
+  if (props.autocomplete && filterValue.value) {
     filterValue.value = "";
-  } else if (!props.multiple && !isShown.value) {
+    return;
+  }
+
+  // Clear selection
+  if (props.multiple && Array.isArray(props.modelValue) && props.modelValue.length) {
+    emit("update:modelValue", []);
+    emit("change", []);
+  } else if (!props.multiple && hasSelection.value) {
     emit("update:modelValue", undefined);
+    emit("change", undefined);
   }
 }
 
-function handleArrowClick(event: MouseEvent, close: () => void) {
-  if (isShown.value) {
-    event.stopPropagation();
-    close();
+function handleArrowClick(event: MouseEvent, toggle: () => void) {
+  event.stopPropagation();
+  toggle();
+}
+
+function focusTrigger() {
+  const el = triggerElement.value;
+
+  if (!el) {
+    return;
+  }
+
+  const element = "$el" in el ? el.$el : el;
+  const focusable = element.querySelector<HTMLElement>("[tabindex='0'], input") ?? element;
+  focusable.focus();
+}
+
+function handleTab(event: KeyboardEvent, index: number) {
+  if (event.shiftKey) {
+    prev(index);
+  } else {
+    next(index);
   }
 }
 </script>
@@ -319,6 +539,8 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   $autocomplete: "";
   $opened: "";
   $error: "";
+
+  --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
   @apply flex flex-col;
 
@@ -343,11 +565,11 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__container {
-    @apply relative;
+    @apply relative rounded-[--radius];
   }
 
   &__button {
-    @apply relative flex items-center w-full rounded border bg-additional-50 appearance-none text-left;
+    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
 
     #{$disabled} &,
     &:disabled {
@@ -362,9 +584,8 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
       @apply border-danger;
     }
 
-    &--opened,
-    &:focus {
-      @apply outline-none ring-[3px] ring-primary-100;
+    #{$opened} & {
+      @apply ring-[3px] ring-primary-100;
     }
   }
 
@@ -388,44 +609,22 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
     }
   }
 
-  &__clear {
-    @apply flex items-center h-full px-1 text-primary;
-
-    &:hover {
-      @apply text-primary-600;
-    }
-  }
-
   &__arrow {
-    @apply flex items-center h-full pe-3 ps-1 text-neutral-900;
-
-    &:hover {
-      @apply text-neutral;
-    }
-
-    #{$disabled} & {
-      @apply text-neutral;
-    }
-  }
-
-  &__icon {
-    @apply shrink-0 mr-3 fill-neutral-900;
-
-    #{$disabled} & {
-      @apply fill-neutral-400;
-    }
-
     #{$readonly} & {
       @apply hidden;
     }
   }
 
-  &__dropdown {
-    @apply z-10 overflow-hidden absolute mt-1 w-full bg-additional-50 rounded border border-neutral-100 shadow-lg;
-  }
+  &__icon {
+    @apply shrink-0 mr-3 text-neutral-900;
 
-  &__list {
-    @apply overflow-auto max-h-60;
+    #{$disabled} & {
+      @apply text-neutral-400;
+    }
+
+    #{$readonly} & {
+      @apply hidden;
+    }
   }
 }
 </style>

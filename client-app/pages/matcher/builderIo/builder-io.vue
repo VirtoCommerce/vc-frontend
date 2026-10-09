@@ -10,13 +10,16 @@ import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-import { usePageTitle } from "@/core/composables";
+import { usePageTitle, useSeoKeywords } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
+import { globals } from "@/core/globals";
+import { useUser } from "@/shared/account";
 import { builderIOComponents } from "./customComponents";
-import type { StateType } from "../priorityManager";
+import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
 
 interface IEmits {
-  (event: "setState", value: StateType): void;
+  (event: "setState", value: UpdateStateEventArgs): void;
 }
 
 interface IProps {
@@ -31,6 +34,10 @@ const props = defineProps<IProps>();
 const canShowContent = ref(false);
 const content = ref<BuilderContent | null>(null);
 const isLoading = ref(false);
+const { storeId, cultureName: currentCultureName, organizationId } = globals;
+const { isAuthenticated, userGroups } = useUser();
+
+const { getUrlWithoutLocale } = useLanguages();
 
 function clearState() {
   content.value = null;
@@ -53,14 +60,22 @@ async function tryLoadContent(urlPath: string) {
   if (props.apiKey) {
     isLoading.value = true;
 
-    emit("setState", "loading");
+    emitState("loading");
+
+    const url = getUrlWithoutLocale(urlPath);
 
     content.value = await fetchOneEntry({
       model: "page",
       apiKey: props.apiKey,
       options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {
-        urlPath,
+        urlPath: url,
+        // Additional targeting attributes for Builder.io content delivery
+        locale: currentCultureName,
+        organizationId,
+        isAuthenticated: isAuthenticated.value,
+        storeId,
+        groupName: userGroups.value,
       },
     });
 
@@ -69,11 +84,15 @@ async function tryLoadContent(urlPath: string) {
     canShowContent.value = !!content.value || isPreviewing();
 
     if (canShowContent.value) {
-      emit("setState", "ready");
+      emitState("ready");
     } else {
-      emit("setState", "empty");
+      emitState("empty");
     }
   }
+}
+
+function emitState(state: StateType) {
+  emit("setState", { state });
 }
 
 const builderIoAnchor = shallowRef<HTMLElement | null>(null);
@@ -84,9 +103,10 @@ const pageTitle = computed(() => usePageTitle(content.value?.data?.title).title.
 
 useSeoMeta({
   title: () => (canSetMeta.value ? pageTitle.value : undefined),
-  keywords: () => (canSetMeta.value ? (content.value?.data?.keywords as string) : undefined),
   description: () => (canSetMeta.value ? (content.value?.data?.description as string) : undefined),
 });
+
+useSeoKeywords(() => (canSetMeta.value ? (content.value?.data?.keywords as string) : undefined));
 
 const getRegisteredComponents = () => {
   return builderIOComponents;

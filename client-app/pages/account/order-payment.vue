@@ -114,22 +114,22 @@
     <template v-else>
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <VcTypography tag="h1" class="mb-5 mt-3">
+      <VcTypography tag="h1">
         {{ $t("pages.account.order_payment.title") }}
       </VcTypography>
 
       <VcLayout sidebar-position="right">
         <VcWidget size="lg">
           <!-- region Billing address -->
-          <h5 class="mb-1 font-black">
+          <VcLabel>
             {{ $t("pages.account.order_payment.billing_address_label") }}
-          </h5>
+          </VcLabel>
 
-          <div class="mb-6 rounded border">
-            <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
+          <VcWidget :shadow="false">
+            <div class="flex flex-row justify-between space-x-3">
               <!-- TODO: create an atom component to display address -->
               <div class="min-w-0 text-sm">
-                <span class="line-clamp-2 font-black">
+                <span class="line-clamp-2 font-bold">
                   {{ payment?.billingAddress?.firstName }}
                   {{ payment?.billingAddress?.lastName }}
                 </span>
@@ -144,16 +144,10 @@
                 </p>
 
                 <p class="truncate">
-                  <span class="font-black">
-                    {{ $t("pages.account.order_payment.phone_label") }}
-                  </span>
                   {{ payment?.billingAddress?.phone }}
                 </p>
 
                 <p class="truncate">
-                  <span class="font-black">
-                    {{ $t("pages.account.order_payment.email_label") }}
-                  </span>
                   {{ payment?.billingAddress?.email }}
                 </p>
               </div>
@@ -164,7 +158,7 @@
                   :loading="changeAddressLoading"
                   size="sm"
                   variant="outline"
-                  class="!hidden self-start md:!inline-flex"
+                  class="hidden self-start md:inline-flex"
                   @click="showEditAddressModal"
                 >
                   {{ $t("pages.account.order_payment.edit_button") }}
@@ -172,7 +166,7 @@
 
                 <VcButton
                   :disabled="loading"
-                  class="md:!hidden"
+                  class="md:hidden"
                   size="sm"
                   icon="edit"
                   variant="outline"
@@ -180,96 +174,114 @@
                 />
               </div>
             </div>
-          </div>
+          </VcWidget>
           <!-- endregion Billing address -->
 
           <!-- region Payment method -->
-          <h5 class="mb-1 font-black">
+          <VcLabel class="mt-5">
             {{ $t("pages.account.order_payment.payment_method_label") }}
-          </h5>
+          </VcLabel>
 
-          <div class="rounded border">
-            <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
-              <div class="min-w-0 truncate">
-                <template v-if="isPaymentAvailable && payment?.paymentMethod">
-                  <VcImage
-                    :src="payment.paymentMethod.logoUrl"
-                    class="mr-3.5 inline-block size-8 object-center md:size-9"
-                    lazy
+          <VcWidget :shadow="false">
+            <template #default-container>
+              <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-md md:p-6">
+                <div class="min-w-0 truncate">
+                  <template v-if="isPaymentAvailable && payment?.paymentMethod">
+                    <VcImage
+                      :src="payment.paymentMethod.logoUrl"
+                      class="mr-3.5 inline-block size-8 object-center md:size-9"
+                      lazy
+                    />
+
+                    <span>{{ payment.paymentMethod.name }}</span>
+                  </template>
+
+                  <template v-else>
+                    <VcImage
+                      src="select-payment.svg"
+                      class="mr-3.5 inline-block size-10 object-center md:size-12"
+                      lazy
+                    />
+
+                    <span>{{ $t("common.placeholders.select_payment_method") }}</span>
+                  </template>
+                </div>
+
+                <div>
+                  <VcButton
+                    :disabled="loading"
+                    :loading="changeMethodLoading"
+                    size="sm"
+                    variant="outline"
+                    class="hidden self-start md:inline-flex"
+                    @click="showChangePaymentMethodModal"
+                  >
+                    {{ $t("pages.account.order_payment.edit_button") }}
+                  </VcButton>
+
+                  <VcButton
+                    :disabled="loading"
+                    class="md:hidden"
+                    size="sm"
+                    icon="edit"
+                    variant="outline"
+                    @click="loading ? null : showChangePaymentMethodModal()"
+                  />
+                </div>
+              </div>
+
+              <div class="p-5 md:p-6">
+                <PaymentProcessingRedirection
+                  v-if="paymentMethodType === PaymentActionType.Redirection"
+                  :order="order"
+                  :disabled="loading"
+                />
+
+                <template v-else-if="isPaymentAvailable">
+                  <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
+
+                  <PaymentProcessingAuthorizeNet
+                    v-else-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
+                    :order="order"
+                    :disabled="loading"
+                    @success="success = true"
+                    @fail="failure = true"
                   />
 
-                  <span>{{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}</span>
+                  <PaymentProcessingCyberSource
+                    v-else-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
+                    :order="order"
+                    @success="success = true"
+                    @fail="failure = true"
+                  />
+
+                  <PaymentProcessingDatatrans
+                    v-else-if="paymentMethodCode === 'DatatransPaymentMethod'"
+                    :order="order"
+                    @success="success = true"
+                    @fail="failure = true"
+                  />
+
+                  <ExtensionPointList
+                    v-else-if="paymentMethodCode"
+                    category="orderPaymentPage"
+                    :condition-params="{ order: order, paymentTypeName: paymentMethodCode }"
+                    :order="order"
+                    :payment-type-name="paymentMethodCode"
+                    @success="success = true"
+                    @fail="failure = true"
+                  />
                 </template>
+
                 <template v-else>
-                  <VcImage src="select-payment.svg" class="mr-3.5 inline-block size-10 object-center md:size-12" lazy />
-
-                  <span>{{ $t("common.placeholders.select_payment_method") }}</span>
+                  {{ $t("pages.account.order_payment.failure.title") }}
+                  <ContactAdministratorLink />.
                 </template>
               </div>
-
-              <div>
-                <VcButton
-                  :disabled="loading"
-                  :loading="changeMethodLoading"
-                  size="sm"
-                  variant="outline"
-                  class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
-                  @click="showChangePaymentMethodModal"
-                >
-                  {{ $t("pages.account.order_payment.edit_button") }}
-                </VcButton>
-
-                <VcButton
-                  :disabled="loading"
-                  class="md:!hidden"
-                  size="sm"
-                  icon="edit"
-                  variant="outline"
-                  @click="loading ? null : showChangePaymentMethodModal()"
-                />
-              </div>
-            </div>
-
-            <div class="p-5 md:p-6">
-              <PaymentProcessingRedirection
-                v-if="paymentMethodType === PaymentActionType.Redirection"
-                :order="order"
-                :disabled="loading"
-              />
-
-              <template v-else-if="isPaymentAvailable">
-                <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
-
-                <PaymentProcessingAuthorizeNet
-                  v-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
-                  :order="order"
-                  :disabled="loading"
-                  @success="success = true"
-                  @fail="failure = true"
-                />
-
-                <PaymentProcessingSkyflow
-                  v-if="paymentMethodCode === 'SkyflowPaymentMethod'"
-                  :order="order"
-                  @success="success = true"
-                  @fail="failure = true"
-                />
-
-                <PaymentProcessingCyberSource
-                  v-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
-                  :order="order"
-                  @success="success = true"
-                  @fail="failure = true"
-                />
-              </template>
-              <template v-else>
-                {{ $t("pages.account.order_payment.failure.title") }}
-                <ContactAdministratorLink />.
-              </template>
-            </div>
-          </div>
-          <!-- endregion Payment method -->
+            </template>
+          </VcWidget>
         </VcWidget>
+        <!-- endregion Payment method -->
 
         <!-- Sidebar -->
         <template #sidebar>
@@ -281,7 +293,7 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -298,13 +310,13 @@ import type { Optional } from "utility-types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
-import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
+
+const props = defineProps<IProps>();
 
 interface IProps {
   orderId: string;
 }
-
-const props = defineProps<IProps>();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -351,6 +363,9 @@ const paymentMethodType = computed<number | undefined>(() => payment.value?.paym
 const paymentMethodCode = computed<string | undefined>(() => payment.value?.paymentMethod?.code);
 
 function tryAgain() {
+  const url = new URL(globalThis.location.href);
+  url.search = "";
+  globalThis.history.replaceState({}, document.title, url.toString());
   location.reload();
 }
 

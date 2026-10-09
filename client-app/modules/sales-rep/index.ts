@@ -1,0 +1,182 @@
+import { computed, defineAsyncComponent } from "vue";
+import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
+import { useNavigations } from "@/core/composables/useNavigations";
+import { ROUTES } from "@/router/routes/constants";
+import { useUser } from "@/shared/account/composables/useUser";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+import { loadModuleLocale } from "../utils";
+import { useSharedSalesRepCustomersCount } from "./composables/useSalesRepCustomersCount";
+import { isSalesRepsEnabled, isSalesRepTasksEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
+import {
+  TASKS_NAV_LINK_ID,
+  TASKS_ROUTE_NAME,
+  CUSTOMER_SHARING_SCOPE,
+  DASHBOARD_LAYOUT_SCOPE,
+  DASHBOARD_NAV_LINK_ID,
+  DASHBOARD_ROUTE_NAME,
+  DOCUMENTS_NAV_LINK_ID,
+  DOCUMENTS_ROUTE_NAME,
+  HUB_NAV_PRIORITY,
+  HUB_SECTION_ID,
+  MY_CUSTOMERS_NAV_LINK_ID,
+  MY_CUSTOMERS_ROUTE_NAME,
+  SALES_REP_ACCESS_PERMISSION,
+  SALES_REP_DOCUMENTS_READ_PERMISSION,
+} from "./constants";
+import { layoutTypePolicies } from "./layout/cache-policies";
+import { documentsBlock } from "./layout/documents-block";
+import { registerBlock } from "./layout/registry";
+import { tasksBlock } from "./layout/tasks-block";
+import { salesRepMenuSchema } from "./menu";
+import {
+  tasksRoute,
+  allCustomerOrdersRoute,
+  customerOrderRoute,
+  customerOrdersRoute,
+  customerProfileRoute,
+  dashboardRoute,
+  documentsRoute,
+  myCustomersRoute,
+  salesRepsRoute,
+} from "./routes";
+import type { ExtendedMenuLinkType } from "@/core/types";
+import type { I18n } from "@/i18n";
+import type { Router } from "vue-router";
+
+export function init(router: Router, i18n: I18n) {
+  if (!isSalesRepsEnabled()) {
+    return;
+  }
+
+  // Relative routes -> mount under the Company parent (/company/sales-reps, /company/dashboard, /company/my-customers).
+  router.addRoute(ROUTES.COMPANY.NAME, salesRepsRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, dashboardRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, myCustomersRoute);
+  // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
+  router.addRoute(ROUTES.COMPANY.NAME, customerProfileRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, customerOrdersRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, customerOrderRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, allCustomerOrdersRoute);
+  // Document library (VCST-5730) -> /company/documents (its own beforeEnter checks documents:read).
+  router.addRoute(ROUTES.COMPANY.NAME, documentsRoute);
+  // Tasks (VCST-5732) -> /company/tasks (its own beforeEnter checks the tasks module is installed).
+  router.addRoute(ROUTES.COMPANY.NAME, tasksRoute);
+
+  const { mergeMenuSchema, registerAccountSection } = useNavigations();
+  const { checkPermissions } = useUser();
+
+  // The user is resolved before module init (app-runner sets it first) and permissions only change
+  // with a re-login, so a one-shot check here is the module's registration seam for permission-gated
+  // surfaces (VCST-5730): without documents:read the widget, the page route guard and the nav link
+  // all stay invisible.
+  const canReadDocuments = checkPermissions(SALES_REP_ACCESS_PERMISSION, SALES_REP_DOCUMENTS_READ_PERMISSION);
+  const tasksEnabled = isSalesRepTasksEnabled();
+
+  // Same one-shot registration seam as the documents widget, and the same caveat: while the tasks module is
+  // absent the block is unknown to the layout registry, so a layout SAVED in that state drops its persisted
+  // position/settings and the widget returns at its defaults once the module is back.
+  if (tasksEnabled) {
+    registerBlock(DASHBOARD_LAYOUT_SCOPE, tasksBlock);
+  }
+
+  if (canReadDocuments) {
+    // Caveat: while the permission is absent the block is unknown to the layout registry, so a layout
+    // SAVED in that state drops the block's persisted position/settings (reconcileLayout discards
+    // unregistered types); when the permission returns, the widget comes back at its defaults.
+    registerBlock(DASHBOARD_LAYOUT_SCOPE, documentsBlock);
+  }
+
+  // My customers links showing the total-customer count badge. Desktop needs its own
+  // component for the sibling-route highlight; mobile only contributes the count, so the
+  // host renders its own menu link with it.
+  const { register, registerContribution } = useExtensionRegistry();
+  register("accountMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+    component: defineAsyncComponent(() => import("./components/link-my-customers.vue")),
+  });
+  registerContribution("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+    use: useSharedSalesRepCustomersCount,
+  });
+
+  // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.
+  mergeMenuSchema(salesRepMenuSchema);
+
+  // Publishing a list to a customer (VCST-5332): core only learns that another sharing option exists.
+  useWishlistSharingScopes().registerSharingScope({
+    scope: CUSTOMER_SHARING_SCOPE,
+    labelKey: "sales_rep.list_sharing.scope_label",
+    statusKey: "sales_rep.list_sharing.status",
+    icon: "user-plus",
+    order: 30,
+    supportsLink: true,
+    shoppable: true,
+    isAvailable: isSalesRepUser,
+    element: defineAsyncComponent(() => import("./components/wishlist-customer-sharing.vue")),
+  });
+
+  // Gated on the scope alone: the viewer is the customer, not a rep.
+  register("sharedList", EXTENSION_NAMES.sharedList.provenanceNote, {
+    component: defineAsyncComponent(() => import("./components/wishlist-rep-provenance.vue")),
+    // Compared as a plain string: this module owns the value, not core's generated enum.
+    condition: (sharingSetting) => (sharingSetting?.scope as string | undefined) === CUSTOMER_SHARING_SCOPE,
+  });
+
+  // Tasks sits between My customers and the library, and disappears with the tasks module.
+  const tasksNavLink: ExtendedMenuLinkType[] = tasksEnabled
+    ? [
+        {
+          id: TASKS_NAV_LINK_ID,
+          // The one "Tasks" label — shared by this nav link, the page H1 and the breadcrumb.
+          title: "sales_rep.tasks.title",
+          icon: "calendar",
+          route: { name: TASKS_ROUTE_NAME },
+        },
+      ]
+    : [];
+
+  // The Documents link exists only for reps who may read the library — dropped from the section
+  // outright (both menus render section children), the same one-shot gate as the widget above.
+  const documentsNavLink: ExtendedMenuLinkType[] = canReadDocuments
+    ? [
+        {
+          id: DOCUMENTS_NAV_LINK_ID,
+          // The one "Document library" label — shared by this nav link, the page H1 and the widget.
+          title: "sales_rep.documents.title",
+          icon: "document-text",
+          route: { name: DOCUMENTS_ROUTE_NAME },
+        },
+      ]
+    : [];
+
+  // "Sales Rep hub" left-rail widget — visible only when the user is a Sales Rep (VCST-5469).
+  registerAccountSection({
+    id: HUB_SECTION_ID,
+    title: "sales_rep.hub.title",
+    icon: "users",
+    priority: HUB_NAV_PRIORITY,
+    children: [
+      {
+        id: DASHBOARD_NAV_LINK_ID,
+        title: "sales_rep.hub.dashboard.navigation.link",
+        icon: "view-grid",
+        route: { name: DASHBOARD_ROUTE_NAME },
+      },
+      {
+        id: MY_CUSTOMERS_NAV_LINK_ID,
+        title: "sales_rep.my_customers.navigation.link",
+        icon: "users",
+        route: { name: MY_CUSTOMERS_ROUTE_NAME },
+      },
+      ...tasksNavLink,
+      ...documentsNavLink,
+    ],
+    isVisible: computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)),
+  });
+
+  // Layout regions and blocks carry ids that repeat across surfaces, so Apollo would normalize them
+  // into entities shared by every scope. See layout/cache-policies.ts.
+  registerCacheTypePolicies(layoutTypePolicies, { owner: "sales-rep" });
+
+  void loadModuleLocale(i18n, "sales-rep");
+}

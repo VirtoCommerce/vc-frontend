@@ -1,0 +1,90 @@
+{
+  "name": "Demo products list",
+  "icon": "inventory_2",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    },
+    {
+      "id": "content",
+      "label": "Promo text",
+      "type": "markdown",
+      "resultType": "markdown"
+    },
+    {
+      "id": "products",
+      "label": "Products",
+      "type": "list",
+      "default": [],
+      "displayField": "product.name",
+      "element": [
+        {
+          "id": "culture",
+          "label": "Culture",
+          "type": "select",
+          "default": "en-US",
+          "request": {
+            "url": "/graphql",
+            "method": "post",
+            "body": {
+              "operationName": null,
+              "variables": {},
+              "query": "{store(storeId:\"{{location.params.storeId}}\"){availableLanguages{cultureName}}}"
+            },
+            "cacheable": true,
+            "response": {
+              "result": "data.store.availableLanguages"
+            },
+            "label": "cultureName",
+            "value": "cultureName"
+          }
+        },
+        {
+          "id": "currency",
+          "label": "Currency",
+          "type": "select",
+          "default": "USD",
+          "request": {
+            "url": "/graphql",
+            "method": "post",
+            "body": {
+              "operationName": null,
+              "variables": {},
+              "query": "{store(storeId:\"{{location.params.storeId}}\"){availableCurrencies{code}}}"
+            },
+            "cacheable": true,
+            "response": {
+              "result": "data.store.availableCurrencies"
+            },
+            "label": "code",
+            "value": "code"
+          }
+        },
+        {
+          "id": "product",
+          "label": "Product",
+          "type": "select",
+          "equalKey": "id",
+          "searchable": true,
+          "request": {
+            "url": "/graphql",
+            "method": "post",
+            "body": {
+              "operationName": null,
+              "variables": {},
+              "query": "{products(storeId:\"{{location.params.storeId}}\",cultureName:\"{{element.culture}}\",currencyCode:\"{{element.currency}}\",query:\"{{__searchQuery}}\"){items{id,code,name,imgSrc,prices{currency,list{formattedAmount}}}}}"
+            },
+            "cacheable": true,
+            "response": {
+              "result": "data.products.items"
+            },
+            "label": "name"
+          }
+        }
+      ]
+    }
+  ]
+}

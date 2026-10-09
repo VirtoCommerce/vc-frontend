@@ -1,0 +1,7 @@
+mutation CreateReturn($command: CreateReturnCommandType!) {
+  createReturn(command: $command) {
+    id
+    number
+    status
+  }
+}

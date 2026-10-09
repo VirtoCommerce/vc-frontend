@@ -1,7 +1,6 @@
 import type { DeepPartial, DeepRequired } from "utility-types";
 
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/ban-types */
 type _DeepOmitByType<T, U extends DeepPartial<T>> =
   T extends Array<infer E>
     ? U extends Array<infer UE>

@@ -33,7 +33,7 @@
           {{ $t("ui_kit.labels.price_per_item") }}
         </div>
 
-        <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
+        <div v-if="$slots.titles" class="vc-line-items__slot" :style="{ width: slotWidth }">
           <slot name="titles" />
         </div>
 
@@ -69,6 +69,7 @@
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
             :show-placed-price="item.showPlacedPrice"
+            :data-product-sku="item.sku"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
@@ -86,9 +87,18 @@
             <template #after>
               <slot name="after-content" v-bind="{ item }" />
             </template>
+
+            <template #after-image>
+              <slot name="after-image" v-bind="{ item }" />
+            </template>
+
+            <template #after-title>
+              <slot name="after-title" v-bind="{ item }" />
+            </template>
           </VcLineItem>
         </slot>
       </div>
+
       <slot name="after-items" />
 
       <!-- table footer -->
@@ -118,7 +128,15 @@
 
         <div v-if="withSubtotal" class="vc-line-items__subtotal">
           <span class="vc-line-items__subtotal-label">{{ $t("ui_kit.labels.subtotal") }}:</span>
-          <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
+
+          <span class="vc-line-items__subtotal-sum">
+            {{
+              $n(
+                calculatedSubtotal,
+                subtotalCurrencyCode ? { key: "currency", currency: subtotalCurrencyCode } : "currency",
+              )
+            }}
+          </span>
         </div>
       </div>
     </div>
@@ -126,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { intersection, map, sumBy } from "lodash";
+import { intersection, map, sumBy } from "lodash-es";
 import { computed, ref, watchEffect } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -150,6 +168,8 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
+  /** Currency code used to format the subtotal (e.g. for foreign-currency groups). Defaults to the app currency. */
+  subtotalCurrencyCode?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -170,7 +190,7 @@ const showTotal = computed(() => props.withTotal && hasTotal.value);
 
 const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 
-const subtotal = computed<number>(() =>
+const calculatedSubtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
         props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
@@ -219,7 +239,7 @@ watchEffect(() => {
 
   &__container {
     @container (width > theme("containers.2xl")) {
-      @apply border rounded divide-y;
+      @apply border rounded-[--vc-radius] divide-y;
     }
   }
 
@@ -284,11 +304,11 @@ watchEffect(() => {
       @apply gap-0 space-y-0 divide-y;
 
       &:first-child {
-        @apply rounded-t;
+        @apply rounded-t-[inherit];
       }
 
       &:last-child {
-        @apply rounded-b;
+        @apply rounded-b-[inherit];
       }
     }
   }

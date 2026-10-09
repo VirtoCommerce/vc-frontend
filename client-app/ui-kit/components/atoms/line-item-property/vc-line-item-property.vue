@@ -1,7 +1,9 @@
 <template>
   <div class="vc-line-item-property">
     <div class="vc-line-item-property__label">{{ label }}</div>
+
     <div class="vc-line-item-property__dots"></div>
+
     <div class="vc-line-item-property__value">
       <slot />
     </div>
@@ -16,6 +18,11 @@ interface IProps {
 withDefaults(defineProps<IProps>(), {
   label: () => "",
 });
+
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn("[VcLineItemProperty] This component is deprecated. Use VcProperty or VcProductProperties instead.");
+}
 </script>
 
 <style lang="scss">

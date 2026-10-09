@@ -1,12 +1,13 @@
 <template>
-  <div class="space-y-4 lg:space-y-5">
+  <div class="products-filters">
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
       <template v-if="!isHorizontal">
         <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head />
       </template>
-      <div v-else class="flex gap-3">
-        <div v-for="i in 6" :key="i" class="h-8 w-36 animate-pulse rounded-sm bg-neutral-200" />
+
+      <div v-else class="products-filters__skeleton-row">
+        <div v-for="i in 6" :key="i" class="products-filters__skeleton" />
       </div>
     </template>
 
@@ -14,24 +15,25 @@
     <template v-else>
       <div
         ref="facetFiltersContainer"
+        class="products-filters__container"
         :class="[
-          'flex gap-3',
-          {
-            'flex-row items-start': isHorizontal,
-            'flex-col items-stretch lg:gap-5': !isHorizontal,
-            '[&>*:last-child]:invisible': isHorizontal && filterCalculationInProgress,
-          },
+          isHorizontal ? 'products-filters__container--horizontal' : 'products-filters__container--vertical',
+          { 'products-filters__container--calculating': isHorizontal && filterCalculationInProgress },
         ]"
       >
         <slot name="prepend" :loading="loading" />
 
         <template v-for="facet in filtersToShow" :key="facet.paramName">
-          <FacetFilter
-            :mode="isHorizontal ? 'dropdown' : 'collapsable'"
-            :facet="facet"
-            :loading="loading"
-            @update:facet="onFacetFilterChanged"
-          />
+          <div data-facet-filter :data-test-id="`filter-${facet.paramName}`">
+            <component
+              :is="facetHasBounce(facet.statistics) && isSliderFilterEnabled() ? SliderFilter : FacetFilter"
+              :mode="isHorizontal ? 'dropdown' : 'collapsable'"
+              :loading="loading"
+              :facet="facet"
+              :filter="getFiltersByParamName(facet.paramName)"
+              @update:filter="onFacetFilterChanged"
+            />
+          </div>
         </template>
       </div>
     </template>
@@ -39,19 +41,17 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  orientation: "vertical",
-});
-import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
-import { cloneDeep } from "lodash";
-import { watch, shallowReactive, shallowRef, ref, nextTick, computed } from "vue";
+import { useElementBounding, watchDebounced } from "@vueuse/core";
+import { cloneDeep } from "lodash-es";
+import { computed, nextTick, ref, shallowRef, watch } from "vue";
+import { useThemeContext } from "@/core/composables";
 import FacetFilter from "./facet-filter.vue";
-import type { FacetItemType } from "@/core/types";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
+import SliderFilter from "@/shared/catalog/components/product/slider-filter.vue";
 
 interface IEmits {
-  (event: "change", value: ProductsFiltersType): void;
+  (event: "change:filters", value: SearchProductFilterResult[]): void;
 }
 
 interface IProps {
@@ -60,98 +60,177 @@ interface IProps {
   orientation?: "vertical" | "horizontal";
 }
 
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  orientation: "vertical",
+});
+
 const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
-const localFilters = shallowReactive<ProductsFiltersType>({
+const localFilters = ref<ProductsFiltersType>({
   facets: [],
   inStock: false,
   branches: [],
   purchasedBefore: false,
+  filters: [],
 });
 const isHorizontal = props.orientation === "horizontal";
 
 const filterCalculationInProgress = ref(false);
 const filtersCountToShow = ref(1);
-const filtersToShow = computed(() =>
-  props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
-    ? localFilters.facets
-    : localFilters.facets.slice(0, filtersCountToShow.value),
-);
+
+const filtersToShow = computed(() => {
+  return props.orientation === "horizontal"
+    ? localFilters.value.facets.slice(0, filtersCountToShow.value)
+    : localFilters.value.facets;
+});
+
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
 
 watchDebounced(
-  [containerRight, () => localFilters.facets],
-  async () => {
-    if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
-      return;
+  [containerRight, () => localFilters.value.facets],
+  () => {
+    if (props.orientation === "horizontal") {
+      void calculateFiltersCountToShow();
     }
-    async function calculateFiltersCountToShow() {
-      filterCalculationInProgress.value = true;
-      const facetsElements =
-        (facetFiltersContainer?.value?.querySelectorAll("[data-facet-filter-dropdown]") as NodeListOf<HTMLElement>) ||
-        [];
-      let filtersCount = 1;
-      for (let i = 0; i < localFilters.facets.length; i++) {
-        const facetFilter = facetsElements[i];
-        if (!facetFilter) {
-          filtersCountToShow.value++;
-          await nextTick();
-          await calculateFiltersCountToShow();
-          return;
-        }
-        if (useElementBounding(facetFilter, { windowScroll: false }).right.value > containerRight.value) {
-          filtersCount--;
-          break;
-        }
-        filtersCount++;
-      }
-      filtersCountToShow.value = filtersCount;
-      filterCalculationInProgress.value = false;
-    }
-    await calculateFiltersCountToShow();
   },
-  { debounce: 500, maxWait: 1000, immediate: true },
+  { debounce: 300, immediate: true, maxWait: 1000 },
 );
+
+async function calculateFiltersCountToShow() {
+  filterCalculationInProgress.value = true;
+
+  await nextTick();
+
+  const container = facetFiltersContainer.value;
+  if (!container) {
+    filterCalculationInProgress.value = false;
+    return;
+  }
+
+  const allFacets = localFilters.value.facets;
+
+  for (let i = 0; i < allFacets.length; i++) {
+    filtersCountToShow.value = i + 1;
+
+    await nextTick();
+
+    const renderedFacetsFilters = getFacetWrapperChildren();
+
+    const lastEl = renderedFacetsFilters?.[renderedFacetsFilters.length - 1];
+
+    if (lastEl) {
+      // add offset to avoid flickering when screen width changes slightly
+      const safeRight = Math.floor(containerRight.value || 0) - 4;
+      const elementRight = Math.ceil(lastEl.getBoundingClientRect().right);
+
+      if (elementRight > safeRight) {
+        filtersCountToShow.value = i;
+        break;
+      }
+    } else {
+      filtersCountToShow.value = i;
+      break;
+    }
+  }
+
+  filterCalculationInProgress.value = false;
+}
+
+function getFacetWrapperChildren() {
+  return facetFiltersContainer.value?.querySelectorAll("[data-facet-filter]");
+}
 
 watch(
   () => props.filters.facets,
-  (newFacets) => (localFilters.facets = cloneDeep(newFacets)),
+  (newFacets) => (localFilters.value.facets = cloneDeep(newFacets)),
   { immediate: true },
 );
 
 watch(
   () => props.filters.inStock,
-  (newValue) => (localFilters.inStock = newValue),
+  (newValue) => (localFilters.value.inStock = newValue),
   { immediate: true },
 );
 
 watch(
   () => props.filters.purchasedBefore,
-  (newValue) => (localFilters.purchasedBefore = newValue),
+  (newValue) => (localFilters.value.purchasedBefore = newValue),
   { immediate: true },
 );
 
 watch(
   () => props.filters.branches,
-  (newValue) => (localFilters.branches = newValue.slice()),
+  (newValue) => (localFilters.value.branches = newValue.slice()),
   { immediate: true },
 );
 
-function onFacetFilterChanged(facet: FacetItemType): void {
-  const existingFacet = localFilters.facets.find((item) => item.paramName === facet.paramName);
-  if (existingFacet) {
-    existingFacet.values = facet.values;
-    emit("change", localFilters);
+function onFacetFilterChanged(newFilter: SearchProductFilterResult): void {
+  // Remove existing filter with the same name
+  const updatedFilters = props.filters.filters.filter((f) => f.name !== newFilter.name);
+
+  // Only add the new filter if it is not empty
+  if (
+    (newFilter.termValues && newFilter.termValues.length > 0) ||
+    (newFilter.rangeValues && newFilter.rangeValues.length > 0)
+  ) {
+    updatedFilters.push(newFilter);
   }
+
+  emit("change:filters", updatedFilters);
+}
+
+function facetHasBounce(statistics?: { min?: number; max?: number }) {
+  return typeof statistics?.min === "number" && typeof statistics?.max === "number";
+}
+
+function getFiltersByParamName(paramName: string) {
+  return props.filters.filters.find((el) => el.name === paramName);
+}
+
+const { themeContext } = useThemeContext();
+
+function isSliderFilterEnabled() {
+  return themeContext.value.settings.range_filter_type === "slider";
 }
 </script>
 
-<style scoped lang="scss">
-:deep(.facet-filter--dropdown:last-child) {
-  .vc-popover__content {
-    @apply right-0 left-auto #{!important};
+<style lang="scss">
+.products-filters {
+  @apply space-y-4;
+
+  @media (width >= theme("screens.lg")) {
+    @apply space-y-5;
+  }
+
+  &__skeleton-row {
+    @apply flex gap-3;
+  }
+
+  &__skeleton {
+    @apply h-8 w-36 animate-pulse rounded-sm bg-neutral-200;
+  }
+
+  &__container {
+    @apply flex gap-3;
+
+    &--horizontal {
+      @apply flex-row items-start;
+    }
+
+    &--vertical {
+      @apply flex-col items-stretch;
+
+      @media (width >= theme("screens.lg")) {
+        @apply gap-5;
+      }
+    }
+
+    &--calculating {
+      > :last-child {
+        @apply invisible;
+      }
+    }
   }
 }
 </style>

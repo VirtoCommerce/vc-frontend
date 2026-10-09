@@ -1,0 +1,643 @@
+<template>
+  <CalendarRoot
+    ref="calendarRootRef"
+    v-slot="{ weekDays, grid }"
+    role="group"
+    :calendar-label="t('ui_kit.calendar.aria_label')"
+    :model-value="parsedModelValue"
+    :placeholder="placeholderRef"
+    :locale="resolvedLocale"
+    :weekday-format="weekdayFormat"
+    :week-starts-on="firstDayOfWeek"
+    :min-value="minDateValue"
+    :max-value="maxDateValue"
+    :is-date-unavailable="isDateUnavailable"
+    fixed-weeks
+    :prevent-deselect="preventDeselect"
+    :class="rootClasses"
+    :data-test-id="dataTestId"
+    @update:model-value="onUpdate"
+    @update:placeholder="onPlaceholderUpdate"
+    @keydown="onCalendarKeydown"
+  >
+    <div class="vc-calendar__header">
+      <button
+        type="button"
+        class="vc-calendar__nav vc-calendar__nav--year-prev"
+        :aria-label="t('ui_kit.calendar.previous_year')"
+        :disabled="prevYearDisabled"
+        :aria-disabled="prevYearDisabled || undefined"
+        @click="goToPreviousYear"
+      >
+        <VcIcon name="chevron-double-left" />
+      </button>
+
+      <CalendarPrev
+        class="vc-calendar__nav vc-calendar__nav--month-prev"
+        :aria-label="t('ui_kit.calendar.previous_month')"
+      >
+        <VcIcon name="chevron-left" />
+      </CalendarPrev>
+
+      <CalendarHeading class="vc-calendar__heading" />
+
+      <CalendarNext class="vc-calendar__nav vc-calendar__nav--month-next" :aria-label="t('ui_kit.calendar.next_month')">
+        <VcIcon name="chevron-right" />
+      </CalendarNext>
+
+      <button
+        type="button"
+        class="vc-calendar__nav vc-calendar__nav--year-next"
+        :aria-label="t('ui_kit.calendar.next_year')"
+        :disabled="nextYearDisabled"
+        :aria-disabled="nextYearDisabled || undefined"
+        @click="goToNextYear"
+      >
+        <VcIcon name="chevron-double-right" />
+      </button>
+    </div>
+
+    <CalendarGrid v-for="month in grid" :key="month.value.toString()" class="vc-calendar__grid-wrapper">
+      <CalendarGridHead>
+        <CalendarGridRow class="vc-calendar__weekrow">
+          <CalendarHeadCell v-for="day in weekDays" :key="day" class="vc-calendar__weekday">
+            {{ day }}
+          </CalendarHeadCell>
+        </CalendarGridRow>
+      </CalendarGridHead>
+
+      <CalendarGridBody class="vc-calendar__grid">
+        <CalendarGridRow v-for="(weekDates, weekIndex) in month.rows" :key="weekIndex" class="vc-calendar__weekrow">
+          <CalendarCell
+            v-for="weekDate in weekDates"
+            :key="weekDate.toString()"
+            :date="weekDate"
+            class="vc-calendar__cell"
+          >
+            <CalendarCellTrigger
+              :day="weekDate"
+              :month="month.value"
+              class="vc-calendar__day"
+              v-bind="dayAttrs(weekDate)"
+            >
+              <template v-if="hasDayContent" #default="dayProps">
+                {{ dayProps.dayValue }}
+
+                <slot name="day" v-bind="dayProps" :date="weekDate.toString()" />
+
+                <span v-if="getDayDescriptionId(weekDate)" :id="getDayDescriptionId(weekDate)" class="sr-only">
+                  {{ getDayDescription(weekDate) }}
+                </span>
+              </template>
+            </CalendarCellTrigger>
+          </CalendarCell>
+        </CalendarGridRow>
+      </CalendarGridBody>
+    </CalendarGrid>
+
+    <span v-if="softMin || softMax" :id="softBoundHintId" class="sr-only">
+      {{ t("ui_kit.calendar.outside_suggested_range") }}
+    </span>
+
+    <div v-if="showFooter" class="vc-calendar__footer">
+      <button
+        type="button"
+        class="vc-calendar__footer-btn"
+        :disabled="todayDisabled"
+        :aria-disabled="todayDisabled || undefined"
+        @click="onTodayClick"
+      >
+        {{ t("ui_kit.calendar.today") }}
+      </button>
+
+      <button type="button" class="vc-calendar__footer-btn vc-calendar__footer-btn--ghost" @click="onClearClick">
+        {{ t("ui_kit.calendar.clear") }}
+      </button>
+    </div>
+  </CalendarRoot>
+</template>
+
+<script setup lang="ts">
+import { uniqueId } from "lodash-es";
+import {
+  CalendarCell,
+  CalendarCellTrigger,
+  CalendarGrid,
+  CalendarGridBody,
+  CalendarGridHead,
+  CalendarGridRow,
+  CalendarHeadCell,
+  CalendarHeading,
+  CalendarNext,
+  CalendarPrev,
+  CalendarRoot,
+} from "reka-ui";
+import { computed, toRef, useSlots, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useComponentId } from "@/ui-kit/composables";
+import { tryParseDate } from "@/ui-kit/utilities/date";
+import { dateValueToIso, isToday, todayDate, useCalendarBase } from "./use-calendar-base";
+import type { DateValue } from "@internationalized/date";
+import type { ComponentPublicInstance } from "vue";
+
+interface IProps {
+  modelValue?: string;
+  size?: VcCalendarSizeType;
+  min?: string;
+  max?: string;
+  /**
+   * Displayed month, as any ISO `YYYY-MM-DD` date inside it. Optional: left unset, the calendar
+   * keeps owning the month and only reports it through `update:month`.
+   */
+  month?: string;
+  /**
+   * Advisory lower bound. Days before it are marked as out of the suggested range but stay
+   * selectable, and month/year navigation is not gated. Use `min` for a boundary that must hold.
+   */
+  softMin?: string;
+  /** Advisory upper bound. See `softMin`. */
+  softMax?: string;
+  /**
+   * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
+   * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
+   */
+  disabledDate?: VcCalendarDisabledDateType;
+  /**
+   * Keep a re-click on the selected day from clearing it. Default false: in a single-date FIELD
+   * (VcDatePicker) with no `clearable` and no `showFooter` that click is the only pointer route back
+   * to empty — and only while the selected day is selectable, since a disabled or unavailable one
+   * ignores it. Set true where emptying would be data loss, such as a range endpoint.
+   */
+  preventDeselect?: boolean;
+  showFooter?: boolean;
+  locale?: string;
+  firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
+  weekdayFormat?: VcCalendarWeekdayFormatType;
+  /**
+   * Screen-reader text per day, keyed by ISO `YYYY-MM-DD`. Rendered as a visually hidden span and
+   * referenced with `aria-describedby` — a prop rather than markup because reka's own `aria-label`
+   * on the cell keeps anything rendered inside it out of the accessible name.
+   */
+  dayDescriptions?: Record<string, string>;
+  dataTestId?: string;
+}
+
+interface IEmits {
+  (event: "update:modelValue", value: string | undefined): void;
+  /**
+   * First day of the displayed month, ISO `YYYY-MM-DD`. Fires once on mount with the starting
+   * month, then on every month change: header arrows, year arrows, keyboard paging, or a
+   * `modelValue` / `month` change that lands in another month. Day moves inside a month are silent.
+   */
+  (event: "update:month", value: string): void;
+  /** The footer Clear button was pressed, even when the date was already empty. */
+  (event: "clear"): void;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  modelValue: undefined,
+  size: "md",
+  min: undefined,
+  max: undefined,
+  month: undefined,
+  softMin: undefined,
+  softMax: undefined,
+  disabledDate: undefined,
+  preventDeselect: false,
+  showFooter: false,
+  locale: undefined,
+  firstDayOfWeek: undefined,
+  weekdayFormat: "short",
+  dayDescriptions: undefined,
+  dataTestId: undefined,
+});
+
+function getInitialPlaceholder(): DateValue {
+  return tryParseDate(props.month) ?? tryParseDate(props.modelValue) ?? todayDate();
+}
+
+const { t } = useI18n();
+
+// reka's CalendarRoot forwards its root element via `$el`.
+const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
+
+const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
+
+const base = useCalendarBase({
+  locale: toRef(props, "locale"),
+  min: toRef(props, "min"),
+  max: toRef(props, "max"),
+  softMin: toRef(props, "softMin"),
+  softMax: toRef(props, "softMax"),
+  disabledDate: toRef(props, "disabledDate"),
+  firstDayOfWeek: toRef(props, "firstDayOfWeek"),
+  initialPlaceholder: getInitialPlaceholder,
+  getRoot: () => calendarRootRef.value?.$el as Element | null | undefined,
+  getSelectedIso: () => parsedModelValue.value?.toString(),
+});
+
+const {
+  placeholderRef,
+  resolvedLocale,
+  minDateValue,
+  maxDateValue,
+  isDateUnavailable,
+  isOutsideSoftBounds,
+  prevYearDisabled,
+  nextYearDisabled,
+  onPlaceholderUpdate,
+  goToPreviousYear,
+  goToNextYear,
+  clampToBounds,
+  onCalendarKeydown,
+  focusActiveCell,
+} = base;
+
+const slots = useSlots();
+
+// --mode--single carries no rule in here any more, but it is a published class: a fork styling
+// `.vc-calendar--mode--single …` would lose its rule silently if this stopped being emitted.
+const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
+
+const softBoundHintId = useComponentId("vc-calendar-soft-hint");
+
+// reka owns the cell's aria-label, so the reason goes into the description; `title` alone is hover-only.
+// aria-current marks today, which reka only exposes as a data attribute.
+function dayAttrs(date: DateValue): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  if (isToday(date)) {
+    attrs["aria-current"] = "date";
+  }
+  // aria-describedby takes a LIST: a day can be both outside the suggested range (VCST-5097) and carry
+  // a day description (VCST-5732), so the two ids compose instead of one overwriting the other.
+  const describedBy: string[] = [];
+  if (isOutsideSoftBounds(date)) {
+    attrs["data-soft-out-of-bounds"] = "true";
+    attrs.title = t("ui_kit.calendar.outside_suggested_range");
+    describedBy.push(softBoundHintId);
+  }
+  const descriptionId = getDayDescriptionId(date);
+  if (descriptionId) {
+    describedBy.push(descriptionId);
+  }
+  if (describedBy.length > 0) {
+    attrs["aria-describedby"] = describedBy.join(" ");
+  }
+  return attrs;
+}
+
+// Day cell composition. `day` renders after the day number, which the calendar keeps drawing itself
+// so the size/selected/today typography stays owned here; `.vc-calendar__day` is positioned, so
+// decorations can be placed absolutely. A description cannot be slot content: reka's explicit
+// aria-label on the trigger excludes everything inside it from the accessible name, so the text is
+// rendered visually hidden and referenced with aria-describedby instead. Reka's cell slot is handed
+// over only when one of the two is in use, keeping an undecorated calendar's DOM byte-identical.
+const hasDayContent = computed<boolean>(() => !!slots.day || Object.keys(props.dayDescriptions ?? {}).length > 0);
+
+const dayDescriptionIdPrefix = uniqueId("vc-calendar-day-");
+
+function getDayDescription(date: DateValue): string | undefined {
+  return props.dayDescriptions?.[date.toString()] || undefined;
+}
+
+function getDayDescriptionId(date: DateValue): string | undefined {
+  // The grid renders one month, so an ISO date appears at most once and is a safe id suffix.
+  return getDayDescription(date) ? `${dayDescriptionIdPrefix}-${date.toString()}` : undefined;
+}
+
+function onUpdate(value: DateValue | DateValue[] | undefined): void {
+  const single = Array.isArray(value) ? value[0] : value;
+  const iso = dateValueToIso(single);
+  emit("update:modelValue", iso);
+}
+
+const todayDisabled = computed<boolean>(() => {
+  const now = todayDate();
+  if (minDateValue.value && now.compare(minDateValue.value) < 0) {
+    return true;
+  }
+  if (maxDateValue.value && now.compare(maxDateValue.value) > 0) {
+    return true;
+  }
+  const predicate = isDateUnavailable.value;
+  if (predicate && predicate(now)) {
+    return true;
+  }
+  return false;
+});
+
+function onTodayClick(): void {
+  if (todayDisabled.value) {
+    return;
+  }
+  const now = todayDate();
+  placeholderRef.value = now;
+  onUpdate(now);
+}
+
+function onClearClick(): void {
+  emit("update:modelValue", undefined);
+  // An already-empty field emits no model change, but the shell still has to see the action.
+  emit("clear");
+}
+
+// Sync placeholder to incoming model value so external state changes scroll the view. Clamped so an
+// out-of-bounds seed (e.g. today after a past max) cannot open a fully-disabled month. A cleared selection
+// falls back to today only while the calendar owns its month; a consumer driving `month` keeps the view (and
+// the focusable cell) where it is.
+watch(
+  () => props.modelValue,
+  (next) => {
+    const parsed = tryParseDate(next);
+    if (parsed) {
+      placeholderRef.value = clampToBounds(parsed);
+    } else if (!tryParseDate(props.month)) {
+      placeholderRef.value = clampToBounds(getInitialPlaceholder());
+    }
+  },
+);
+
+// Same for a consumer-driven month.
+watch(
+  () => props.month,
+  (next) => {
+    const parsed = tryParseDate(next);
+    if (parsed) {
+      placeholderRef.value = parsed;
+    }
+  },
+);
+
+// Every way of changing the view — header arrows, year arrows, keyboard paging, a modelValue or
+// month jump — lands on the placeholder, so one watcher reports them all. Keyed on the month start
+// so day-level moves within a month stay silent.
+watch(
+  () => placeholderRef.value.set({ day: 1 }).toString(),
+  (monthStart) => {
+    emit("update:month", monthStart);
+  },
+  { immediate: true },
+);
+
+defineExpose({
+  focusActiveCell,
+});
+</script>
+
+<style lang="scss">
+.vc-calendar {
+  --radius: var(--vc-calendar-radius, var(--vc-radius, 0.75rem));
+  --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
+
+  // Component key, then the palette — deliberately NOT the shared --color-vc-*-solid-primary keys,
+  // which would override this contrast choice with the theme's own pair. 700 not 500: white ink on
+  // primary-500 is 2.11 : 1 in default/mercury, on primary-700 it clears AA in all 14 combinations
+  // (5.02 watermelon to 18.27 black-gold). A fork retints via --vc-calendar-selected-bg / -text.
+  --selected-bg: var(--vc-calendar-selected-bg, var(--color-primary-700));
+  --selected-text: var(--vc-calendar-selected-text, var(--color-additional-50));
+
+  --bg-color: var(--color-additional-50);
+  --border-color: var(--color-neutral-200);
+  --text-color: var(--color-neutral-800);
+
+  --border-width: var(--vc-calendar-border-width, 1px);
+  // Each size sets only its own default below; the public token overrides all of them here.
+  --size-padding: theme("padding.3");
+  --padding: var(--vc-calendar-padding, var(--size-padding));
+
+  @apply inline-flex flex-col gap-2 bg-[--bg-color] text-[--text-color] border-[--border-color] rounded-[--radius];
+
+  border-width: var(--border-width);
+  padding: var(--padding);
+  max-width: 100%;
+
+  &--size {
+    &--md {
+      --cell-size: 2.5rem;
+      --cell-text: 0.875rem;
+      --heading-text: 1rem;
+      --weekday-text: 0.75rem;
+      --grid-gap: 0.125rem;
+    }
+
+    &--sm {
+      --cell-size: 2rem;
+      --cell-text: 0.75rem;
+      --heading-text: 0.875rem;
+      --weekday-text: 0.625rem;
+      --grid-gap: 0.125rem;
+      --size-padding: theme("padding.2");
+
+      @apply gap-1.5;
+    }
+
+    &--xs {
+      --cell-size: 1.75rem;
+      --cell-text: 0.6875rem;
+      --heading-text: 0.8125rem;
+      --weekday-text: 0.625rem;
+      --grid-gap: 0.0625rem;
+      --size-padding: theme("padding[1.5]");
+
+      @apply gap-1;
+    }
+  }
+
+  // The four nav buttons keep their cell width; the heading takes whatever is left instead of a fixed three
+  // cells, which is not enough for a long month name at the smaller sizes ("September 2026" ellipsized at `sm`).
+  &__header {
+    @apply grid items-center;
+
+    grid-template-columns: var(--cell-size) var(--cell-size) 1fr var(--cell-size) var(--cell-size);
+    gap: var(--grid-gap);
+  }
+
+  &__nav {
+    @apply inline-flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-[--day-radius] text-neutral-700;
+
+    --vc-icon-size: 0.625rem;
+
+    width: var(--cell-size);
+    height: var(--cell-size);
+    transition:
+      background 120ms ease,
+      color 120ms ease;
+
+    &:hover {
+      @apply bg-primary-50 text-primary-700;
+    }
+
+    &[disabled],
+    &[aria-disabled="true"],
+    &[data-disabled] {
+      @apply text-neutral-300 bg-transparent cursor-not-allowed pointer-events-none;
+    }
+  }
+
+  &__heading {
+    @apply text-center font-bold text-neutral-900;
+
+    grid-column: 3;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--heading-text);
+    letter-spacing: 0.01em;
+  }
+
+  &__grid-wrapper {
+    @apply flex flex-col gap-[--grid-gap];
+
+    border-collapse: collapse;
+  }
+
+  &__weekrow {
+    @apply grid;
+
+    grid-template-columns: repeat(7, var(--cell-size));
+    gap: var(--grid-gap);
+    // The box is as wide as its widest row, and a long month name can make that the header ("September 2026"
+    // at `sm` is ~6px wider than seven columns). Fixed tracks would then pack to the start, all slack on one side.
+    justify-content: center;
+  }
+
+  &__weekday {
+    @apply flex items-center justify-center text-neutral-700 font-bold uppercase tracking-wider;
+
+    height: 1.5rem;
+    font-size: var(--weekday-text);
+  }
+
+  &__grid {
+    @apply flex flex-col gap-[--grid-gap];
+  }
+
+  &__cell {
+    @apply p-0;
+
+    width: var(--cell-size);
+    height: var(--cell-size);
+  }
+
+  &__day {
+    @apply relative inline-flex items-center justify-center bg-transparent border-0 cursor-pointer select-none rounded-[--day-radius] text-neutral-800 font-normal;
+
+    width: var(--cell-size);
+    height: var(--cell-size);
+    font-size: var(--cell-text);
+    transition:
+      background 120ms ease,
+      color 120ms ease;
+
+    &:hover {
+      @apply bg-primary-50 text-primary-700;
+    }
+
+    /* inset ring so it doesn't shift layout */
+    &[data-today] {
+      @apply font-bold;
+
+      box-shadow: inset 0 0 0 2px var(--color-primary-500);
+    }
+
+    &[data-outside-view] {
+      @apply text-neutral-500 font-normal;
+
+      &:hover {
+        @apply bg-neutral-100 text-neutral-600;
+      }
+    }
+
+    /* softMin/softMax — advisory: dimmed and underlined, but selectable, and navigation stays free */
+    &[data-soft-out-of-bounds] {
+      @apply text-neutral-500;
+
+      // currentcolor: the underline is a state cue, so it must clear the same bar as its digits.
+      text-decoration: underline dotted currentcolor;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+
+      &:hover {
+        @apply bg-neutral-100 text-neutral-700;
+      }
+    }
+
+    &[data-disabled] {
+      @apply text-neutral-500 cursor-not-allowed pointer-events-none bg-transparent;
+
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+      text-decoration-color: var(--color-neutral-400);
+    }
+
+    /* disabledDate predicate — visually distinct from min/max */
+    &[data-unavailable] {
+      @apply text-neutral-500 cursor-not-allowed pointer-events-none;
+
+      background: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 4px,
+        var(--color-neutral-200) 4px,
+        var(--color-neutral-200) 5px
+      );
+    }
+
+    &:focus-visible {
+      z-index: 1;
+    }
+  }
+
+  &__footer {
+    @apply flex justify-between items-center pt-2 mt-1 border-t border-neutral-200;
+  }
+
+  &__footer-btn {
+    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-primary-700 text-xs font-black tracking-wider;
+
+    font-family: inherit;
+    padding: 0.375rem 0.625rem;
+    transition: background 120ms ease;
+
+    &:hover {
+      @apply bg-primary-50;
+    }
+
+    &--ghost {
+      @apply text-neutral-600;
+
+      &:hover {
+        @apply bg-neutral-100 text-neutral-800;
+      }
+    }
+
+    &[disabled],
+    &[aria-disabled="true"] {
+      @apply text-neutral-400 cursor-not-allowed;
+
+      &:hover {
+        @apply bg-transparent text-neutral-400;
+      }
+    }
+  }
+
+  // Kept last: this ties with the :hover and state rules inside __day, so source order decides.
+  // The nested hovers outspecify [data-outside-view]:hover, which would repaint a selected day.
+  &__day[data-selected] {
+    @apply font-bold;
+
+    background: var(--selected-bg);
+    color: var(--selected-text);
+    box-shadow: none;
+
+    &:hover,
+    &[data-outside-view]:hover {
+      background: var(--selected-bg);
+      color: var(--selected-text);
+    }
+  }
+}
+</style>

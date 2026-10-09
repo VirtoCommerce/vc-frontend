@@ -4,12 +4,13 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
     with-total
     with-subtotal
+    :subtotal-currency-code="subtotalCurrencyCode"
     removable
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
@@ -23,16 +24,27 @@
     </template>
 
     <template #default="{ item }">
-      <VcAddToCart
+      <QuantityControl
+        :mode="$cfg.product_quantity_control"
+        :min-quantity="item.minQuantity"
+        :max-quantity="item.maxQuantity"
+        :pack-size="item.packSize"
+        :count-in-cart="item.countInCart"
+        :available-quantity="item.availabilityData?.availableQuantity"
+        :is-in-stock="item.availabilityData?.isInStock"
+        :is-buyable="item.availabilityData?.isBuyable"
+        :is-available="item.availabilityData?.isAvailable"
         hide-button
         :model-value="item.quantity"
         :name="item.id"
         :disabled="disabled"
         :readonly="readonly"
+        disable-validation
+        :aria="getQuantityAria(item.id)"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
-      <div v-if="item.availabilityData?.isInStock" class="mt-0.5 text-center">
+      <div v-if="item.availabilityData?.isInStock" class="mt-2 text-center">
         <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
@@ -51,7 +63,11 @@
         :route="item.route"
       />
 
-      <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
+      <div
+        v-if="localizedItemsErrors[item.id]"
+        :id="getErrorsId(item.id)"
+        class="flex flex-col gap-1 [&:not(:first-child)]:mt-2"
+      >
         <VcAlert
           v-for="(validationError, index) in localizedItemsErrors[item.id]"
           :key="index"
@@ -64,18 +80,44 @@
         </VcAlert>
       </div>
     </template>
+
+    <template #after-image="{ item }">
+      <CartItemActions
+        icons
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        data-test-id="cart-item-actions-after-image"
+        @save-for-later="$emit('saveForLater', [item.id])"
+      />
+    </template>
+
+    <template #after-title="{ item }">
+      <CartItemActions
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        data-test-id="cart-item-actions-after-title"
+        @save-for-later="$emit('saveForLater', [item.id])"
+      />
+    </template>
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
 import { computed, toRef, watchEffect } from "vue";
-import { useErrorsTranslator } from "@/core/composables";
+import { useBrowserTarget, useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
+import { useComponentId } from "@/ui-kit/composables";
+import { QUANTITY_VALIDATION_ERROR_CODES } from "../enums";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import type { RouteLocationRaw } from "vue-router";
+import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IProps {
   disabled?: boolean;
@@ -84,6 +126,8 @@ interface IProps {
   validationErrors?: ValidationErrorType[];
   selectable?: boolean;
   sharedSelectedItemIds?: string[];
+  hideControls?: string[];
+  subtotalCurrencyCode?: string;
 }
 
 interface IEmits {
@@ -91,6 +135,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: LineItemType | undefined): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -103,11 +148,50 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const validationErrors = toRef(props, "validationErrors");
 
+const { browserTarget } = useBrowserTarget();
+
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
-const preparedLineItems = computed(() => prepareLineItems(props.items));
+function withLineItemId(route: RouteLocationRaw, lineItemId: string): RouteLocationRaw {
+  if (typeof route === "string") {
+    return { path: route, query: { lineItemId } };
+  }
+  return { ...route, query: { ...("query" in route ? route.query : {}), lineItemId } };
+}
+
+const preparedLineItems = computed(() =>
+  prepareLineItems(props.items).map((item) => {
+    if (!item.isConfigurable || !item.route) {
+      return item;
+    }
+    return { ...item, route: withLineItemId(item.route, item.id) };
+  }),
+);
 
 watchEffect(() => setErrors(validationErrors.value));
+
+const componentId = useComponentId("cart-line-items");
+
+function getErrorsId(itemId: string): string {
+  return `${componentId}-${itemId}-errors`;
+}
+
+function getQuantityAria(itemId: string): Record<string, string> | undefined {
+  if (!localizedItemsErrors.value[itemId]) {
+    return undefined;
+  }
+
+  const hasQuantityError = validationErrors.value.some(
+    (error) =>
+      error.objectId === itemId &&
+      (QUANTITY_VALIDATION_ERROR_CODES as readonly string[]).includes(error.errorCode ?? ""),
+  );
+
+  return {
+    "aria-describedby": getErrorsId(itemId),
+    ...(hasQuantityError && { "aria-invalid": "true" }),
+  };
+}
 
 const handleLinkClick = (item: PreparedLineItemType) => {
   const lineItem = props.items.find((cartLineItem) => cartLineItem.id === item.id);

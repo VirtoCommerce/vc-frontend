@@ -15,6 +15,7 @@
       :message="message"
       :show-empty-details="showEmptyDetails"
       :readonly="readonly"
+      :aria="aria"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -56,7 +57,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -91,7 +92,9 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
-  size?: "xs" | "sm" | "md";
+  size?: "sm" | "md";
+  /** Extra ARIA attributes forwarded to the quantity input. */
+  aria?: Record<string, string | number | null>;
 }
 
 const emit = defineEmits<IEmits>();
@@ -249,7 +252,7 @@ watchEffect(async () => {
   }
 
   &__badges {
-    @apply mt-2 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
+    @apply mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
   }
 
   @at-root .vc-product-card {
@@ -269,15 +272,11 @@ watchEffect(async () => {
           @apply mt-3;
 
           @container (min-width: theme("containers.sm")) {
-            @apply w-72;
+            @apply w-60;
           }
 
-          @container (min-width: theme("containers.xl")) {
-            @apply mt-0 ms-3 w-44;
-          }
-
-          @container (min-width: theme("containers.4xl")) {
-            @apply mt-0 ms-3 w-60;
+          @container (min-width: theme("containers.2xl")) {
+            @apply mt-0 ms-3 w-[10.625rem];
           }
         }
       }

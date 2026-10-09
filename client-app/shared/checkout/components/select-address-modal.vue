@@ -1,19 +1,24 @@
 <template>
-  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
+  <VcModal
+    :title="$t('shared.checkout.select_address_modal.title')"
+    max-width="60rem"
+    is-mobile-fullscreen
+    dividers
+    test-id="select-address-modal"
+  >
+    <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
+      {{ $t("shared.checkout.select_address_modal.message") }}
+    </VcAlert>
+
     <template #actions="{ close }">
-      <div class="flex w-full flex-wrap items-center gap-3">
-        <div v-if="pages > 1" class="w-full sm:w-auto sm:grow">
-          <VcPagination
-            v-model:page="page"
-            class="flex justify-center sm:block"
-            :pages="Math.min(pages, PAGE_LIMIT)"
-            compact
-          />
+      <div class="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-end">
+        <div v-if="pages > 1" class="flex w-full min-w-0 flex-col items-center md:items-start">
+          <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" compact @update:page="onPageChange" />
 
           <VcInputDetails v-if="page >= PAGE_LIMIT" :message="$t('ui_kit.reach_limit.page_limit')" />
         </div>
 
-        <div class="flex w-full flex-wrap gap-3 max-xs:*:grow sm:ms-auto sm:w-auto">
+        <div class="flex gap-3 *:flex-1">
           <VcButton
             v-if="allowAddNewAddress && (!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization))"
             variant="outline"
@@ -34,6 +39,7 @@
             color="secondary"
             variant="outline"
             class="flex-none max-md:!hidden"
+            data-test-id="close-button"
             @click="close"
           >
             {{ $t("shared.checkout.select_address_modal.cancel_button") }}
@@ -42,8 +48,8 @@
           <VcButton
             no-wrap
             :disabled="!selectedAddress"
-            class="ms-auto sm:ms-3"
             min-width="8rem"
+            data-test-id="confirm-button"
             @click="
               save();
               close();
@@ -59,173 +65,240 @@
       </div>
     </template>
 
-    <div class="rounded border">
-      <VcTable
-        :columns="columns"
-        :items="paginatedAddresses"
-        :description="$t('shared.checkout.select_address_modal.meta.table_description')"
-        @page-changed="onPageChange"
-      >
-        <template #mobile-item="itemData">
-          <div class="flex items-center space-x-3 border-b p-4 last:border-none">
-            <div class="w-2/3 grow truncate">
-              <VcBadge v-if="itemData.item.isFavorite" size="sm" variant="outline-dark" rounded>
+    <SelectAddressFilter v-if="showFilters" @applyFilter="applyFilter" />
+
+    <VcTable
+      :columns="columns"
+      :items="paginatedAddresses"
+      :description="$t('shared.checkout.select_address_modal.meta.table_description')"
+      :loading="loading"
+      :sort="sort"
+      bordered
+      @page-changed="onPageChange"
+      @header-click="onSortChange"
+    >
+      <template #mobile-item="{ item }">
+        <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
+          <div class="w-2/3 grow">
+            <div class="mb-2.5 flex items-center gap-2 empty:hidden">
+              <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded color="warning">
                 <VcIcon name="whishlist" />
+
                 <span>{{ $t("pages.company.info.labels.favorite") }}</span>
               </VcBadge>
 
-              <p class="text-base font-bold">
-                <span v-if="isCorporateAddresses" class="text-base font-bold">
-                  {{ itemData.item.line1 }}<br />
-                  <template v-if="itemData.item.line2">{{ itemData.item.line2 }}<br /></template>
-                  {{ itemData.item.city }},
-                  <template v-if="itemData.item.regionId">{{ itemData.item.regionId }}, </template>
-                  {{ itemData.item.postalCode }}
-                </span>
-                <span v-else>{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
-              </p>
+              <VcBadge
+                v-if="isEqualAddresses(item, currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare })"
+                size="sm"
+                variant="outline-dark"
+                rounded
+                color="success"
+              >
+                <VcIcon name="check" />
 
-              <p class="text-sm">
-                <span v-if="isCorporateAddresses">
-                  {{ isMemberAddressType(itemData.item) ? itemData.item.description : "" }}
-                </span>
-                <span v-else>
-                  {{ itemData.item.line1 }}<br />
-                  <template v-if="itemData.item.line2">{{ itemData.item.line2 }}<br /></template>
-                  {{ itemData.item.city }},
-                  <template v-if="itemData.item.regionId">{{ itemData.item.regionId }}, </template>
-                  {{ itemData.item.postalCode }}
-                </span>
-              </p>
-
-              <p class="text-sm text-neutral-400">
-                <span v-if="!isCorporateAddresses && !!itemData.item.phone">
-                  <span class="font-bold">{{ $t("common.labels.phone") }}: </span>
-                  {{ itemData.item.phone }}
-                </span>
-              </p>
-
-              <p class="text-sm text-neutral-400">
-                <span v-if="isCorporateAddresses">{{ itemData.item.countryName }}</span>
-                <span v-else-if="!!itemData.item.email">
-                  <span class="font-bold">{{ $t("common.labels.email") }}: </span>
-                  {{ itemData.item.email }}
-                </span>
-              </p>
+                <span>{{ $t("common.labels.active_address") }}</span>
+              </VcBadge>
             </div>
 
-            <div class="w-1/3 max-w-24 text-center">
-              <VcIcon v-if="itemData.item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
+            <div class="text-sm font-bold">
+              <span v-if="isCorporateAddresses">
+                {{ getFormattedAddress(item) }}
+              </span>
 
-              <VcButton v-else variant="outline" size="sm" full-width truncate @click="setAddress(itemData.item)">
-                {{ $t("shared.checkout.select_address_modal.select_button") }}
+              <span v-else>{{ item.firstName }} {{ item.lastName }}</span>
+            </div>
+
+            <div class="text-sm">
+              <span v-if="isCorporateAddresses">
+                {{ isMemberAddressType(item) ? item.description : "" }}
+              </span>
+
+              <span v-else>
+                {{ getFormattedAddress(item) }}
+              </span>
+            </div>
+
+            <div class="text-sm text-neutral-400">
+              <span v-if="!isCorporateAddresses && !!item.phone">
+                <span class="font-bold">{{ $t("common.labels.phone") }}: </span>
+                {{ item.phone }}
+              </span>
+            </div>
+
+            <div class="text-sm text-neutral-400">
+              <span v-if="isCorporateAddresses" class="text-xs">{{ item.countryName }}</span>
+
+              <span v-else-if="!!item.email">
+                <span class="font-bold">{{ $t("common.labels.email") }}: </span>
+                {{ item.email }}
+              </span>
+            </div>
+
+            <PickupAvailabilityInfo
+              v-if="showAvailability"
+              :availability-type="item.availabilityType"
+              :availability-note="item.availabilityNote"
+            />
+          </div>
+
+          <div class="w-10 flex-none text-center">
+            <VcIcon v-if="isSelected(item)" class="text-secondary" name="check-circle" :size="20" />
+          </div>
+
+          <button
+            v-if="!isSelected(item)"
+            type="button"
+            class="absolute inset-0 opacity-0"
+            @click="setAddress(item)"
+          ></button>
+        </div>
+      </template>
+
+      <template #mobile-empty>
+        <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
+          <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
+
+          <VcButton
+            v-if="showFilters && filterContext?.filterIsApplied.value"
+            icon="reset"
+            @click="resetFilter"
+            :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+          />
+        </div>
+      </template>
+
+      <template #desktop-item="{ item }">
+        <tr
+          :data-test-id="`customer-address-${item.id}`"
+          :class="['group border-b last:border-none hover:bg-secondary-50', { 'cursor-pointer': !isSelected(item) }]"
+          tabindex="0"
+          @click="setAddress(item)"
+          @keydown.enter.prevent="setAddress(item)"
+          @keydown.space.prevent="setAddress(item)"
+        >
+          <td class="px-4 py-3.5">
+            <span class="line-clamp-2">
+              <VcIcon
+                v-if="hasFavoriteAddresses && item.isFavorite"
+                class="me-1.5 text-accent"
+                name="whishlist"
+                :size="16"
+              />
+
+              <span v-if="isCorporateAddresses">
+                {{ getFormattedAddress(item) }}
+              </span>
+
+              <span v-else> {{ item.firstName }} {{ item.lastName }} </span>
+            </span>
+          </td>
+
+          <td class="px-4 py-3.5 [word-break:break-word]">
+            <span v-if="isCorporateAddresses" class="line-clamp-2">
+              {{ isMemberAddressType(item) ? item.description : "" }}
+            </span>
+
+            <span v-else class="line-clamp-2">
+              {{ getFormattedAddress(item) }}
+            </span>
+          </td>
+
+          <td v-if="!isCorporateAddresses" class="truncate px-4 py-3.5">
+            {{ item.phone }}
+          </td>
+
+          <td class="truncate px-4 py-3.5">
+            <span v-if="isCorporateAddresses">
+              {{ item.countryName }}
+            </span>
+
+            <span v-else>
+              {{ item.email }}
+            </span>
+          </td>
+
+          <td v-if="showAvailability" class="truncate px-4 py-3.5">
+            <PickupAvailabilityInfo
+              :availability-type="item.availabilityType"
+              :availability-note="item.availabilityNote"
+            />
+          </td>
+
+          <td class="h-[3.75rem] py-2.5 text-center">
+            <VcIcon v-if="isSelected(item)" class="text-success" name="check-circle" />
+
+            <VcButton v-else class="invisible group-hover:lg:visible" variant="outline" size="xs">
+              {{ $t("shared.checkout.select_address_modal.select_button") }}
+            </VcButton>
+          </td>
+        </tr>
+      </template>
+
+      <template #desktop-empty>
+        <tr>
+          <td :colspan="showAvailability ? 5 : 4">
+            <div class="flex flex-col items-center p-5">
+              <span class="text-base">
+                {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
+              </span>
+
+              <VcButton
+                v-if="showFilters && filterContext?.filterIsApplied.value"
+                class="mt-5"
+                prepend-icon="reset"
+                @click="resetFilter"
+              >
+                {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
               </VcButton>
             </div>
-          </div>
-        </template>
-
-        <template #mobile-empty>
-          <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
-          </div>
-        </template>
-
-        <template #desktop-body>
-          <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-neutral-50': index % 2 }">
-            <td v-if="hasFavoriteAddresses" class="truncate p-5">
-              <VcIcon v-if="address.isFavorite" class="fill-primary" name="whishlist" size="md" />
-            </td>
-
-            <td class="truncate p-5">
-              <span v-if="isCorporateAddresses">
-                {{ address.line1 }}<br />
-                <template v-if="address.line2">{{ address.line2 }}<br /></template>
-                {{ address.city }},
-                <template v-if="address.regionId">{{ address.regionId }}, </template>
-                {{ address.postalCode }}
-              </span>
-              <span v-else> {{ address.firstName }} {{ address.lastName }} </span>
-            </td>
-
-            <td class="truncate p-5">
-              <span v-if="isCorporateAddresses">
-                {{ isMemberAddressType(address) ? address.description : "" }}
-              </span>
-              <span v-else>
-                {{ address.line1 }}<br />
-                <template v-if="address.line2">{{ address.line2 }}<br /></template>
-                {{ address.city }},
-                <template v-if="address.regionId">{{ address.regionId }}, </template>
-                {{ address.postalCode }}
-              </span>
-            </td>
-
-            <td v-if="!isCorporateAddresses" class="truncate p-5">
-              {{ address.phone }}
-            </td>
-
-            <td class="truncate p-5">
-              <span v-if="isCorporateAddresses">
-                {{ address.countryName }}
-              </span>
-              <span v-else>
-                {{ address.email }}
-              </span>
-            </td>
-
-            <td class="p-5 text-center">
-              <VcIcon v-if="address.id === selectedAddress?.id" class="fill-success" name="check-circle" />
-
-              <VcButton v-else variant="outline" size="sm" min-width="6.25rem" @click="setAddress(address)">
-                {{ $t("shared.checkout.select_address_modal.select_button") }}
-              </VcButton>
-            </td>
-          </tr>
-        </template>
-
-        <template #desktop-empty>
-          <!-- Workaround for using colspan -->
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <div class="flex items-center border-b border-neutral-200 p-5">
-                <span class="text-base">
-                  {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </template>
-      </VcTable>
-    </div>
+          </td>
+        </tr>
+      </template>
+    </VcTable>
   </VcModal>
 </template>
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, watchEffect, ref } from "vue";
+import { sortBy } from "lodash-es";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import type { AnyAddressType } from "@/core/types";
+import { providePickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
+import type { MemberAddressType } from "@/core/api/graphql/types";
+import type { AnyAddressType, ISortInfo } from "@/core/types";
+import type { IPickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
+import SelectAddressFilter from "@/shared/checkout/components/select-address-filter.vue";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
+
+type PaginationModeType = "client" | "server";
 
 interface IProps {
   currentAddress?: AnyAddressType;
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
-  omitFieldsOnCompare?: (keyof AnyAddressType)[];
+  showAvailability?: boolean;
+  emptyText?: string;
+  omitFieldsOnCompare?: (keyof MemberAddressType)[];
+  showFilters?: boolean;
+  filterContext?: IPickupFilterContext;
+  pageSize?: number;
+  paginationMode?: PaginationModeType;
+  loading?: boolean;
+  totalCount?: number;
+  sort?: ISortInfo;
+  sortableColumns?: string[];
 }
 
 interface IEmits {
   (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
+  (event: "filterChange"): void;
+  (event: "resetFilter"): void;
+  (event: "pageChange", page: number): void;
+  (event: "updateSort", value: ISortInfo): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -233,30 +306,65 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
+  showAvailability: false,
+  showFilters: false,
   omitFieldsOnCompare: () => [],
+  pageSize: 6,
+  paginationMode: "client",
+  loading: false,
+  totalCount: 0,
+  sortableColumns: () => [],
 });
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
+if (props.filterContext) {
+  providePickupFilterContext(props.filterContext);
+}
+
+function applyFilter() {
+  page.value = 1;
+  emit("filterChange");
+}
+
+function resetFilter() {
+  emit("resetFilter");
+  applyFilter();
+}
+
 const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);
-const itemsPerPage = ref(4);
+const itemsPerPage = computed(() => props.pageSize);
 
-const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.value));
+const pages = computed(() => {
+  const itemsTotal = props.paginationMode === "server" ? props.totalCount : props.addresses.length;
+  return Math.max(1, Math.ceil(itemsTotal / itemsPerPage.value));
+});
+
+const sortedAddresses = computed<AnyAddressType[]>(() => {
+  if (props.paginationMode === "server" || !props.sort) {
+    return props.addresses;
+  }
+  const sorted = sortBy(props.addresses, props.sort.column);
+  return props.sort.direction === "desc" ? sorted.reverse() : sorted;
+});
+
 const paginatedAddresses = computed(() =>
-  props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+  props.paginationMode === "server"
+    ? props.addresses
+    : sortedAddresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
-const columns = computed<ITableColumn[]>(() => {
-  const cols: ITableColumn[] = props.isCorporateAddresses
+const columns = computed<VcTableColumnType[]>(() => {
+  const cols: VcTableColumnType[] = props.isCorporateAddresses
     ? [
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
-        { id: "countryName", title: t("common.labels.country") },
-        { id: "id", title: t("common.labels.active_address"), align: "center" },
+        { id: "countryName", title: t("common.labels.country"), classes: "w-40" },
+        { id: "id", title: t("common.labels.active_address"), align: "center", classes: "w-40" },
       ]
     : [
         { id: "firstName", title: t("common.labels.recipient_name") },
@@ -266,15 +374,37 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ];
 
-  if (hasFavoriteAddresses.value) {
-    return [{ id: "isFavorite", classes: "w-12" } as ITableColumn].concat(cols);
+  if (props.showAvailability) {
+    cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
   }
 
-  return cols;
+  return cols.map((col) => ({ ...col, sortable: props.sortableColumns.includes(col.id) }));
 });
 
-function onPageChange(newPage: number): void {
-  page.value = newPage;
+function getFormattedAddress(address: AnyAddressType): string {
+  if (!address) {
+    return "";
+  }
+
+  const parts = [address.line1, address.line2, address.city, address.regionId, address.postalCode].filter(
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: typeof guard ensures part is a string
+    (part) => typeof part === "string" && part.trim() !== "",
+  );
+
+  return parts.join(", ");
+}
+
+function onPageChange(): void {
+  emit("pageChange", page.value);
+}
+
+function onSortChange(info: VcTableSortInfoType): void {
+  page.value = 1;
+  emit("updateSort", info);
+}
+
+function isSelected(address: AnyAddressType): boolean {
+  return !!selectedAddress.value && isEqualAddresses(address, selectedAddress.value);
 }
 
 function setAddress(address: AnyAddressType): void {
@@ -287,9 +417,13 @@ function save(): void {
   }
 }
 
-watchEffect(() => {
-  selectedAddress.value = props.addresses.find((item) =>
-    isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
-  );
+onMounted(() => {
+  if (props.paginationMode === "server") {
+    selectedAddress.value = props.currentAddress;
+  } else {
+    selectedAddress.value = props.addresses.find((item) =>
+      isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
+    );
+  }
 });
 </script>

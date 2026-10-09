@@ -29,5 +29,8 @@ declare module "vue-router" {
 
     /** Hides the right sidebar of the route component. */
     hideRightSidebar?: boolean;
+
+    /**  Whether this route can be saved as returnUrl (default: true) */
+    redirectable?: boolean;
   }
 }

@@ -3,6 +3,7 @@
     <nav
       ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
+      :aria-label="$t('shared.layout.header.bottom_header.main_menu')"
     >
       <router-link :to="$context.settings.default_return_url ?? '/'">
         <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
@@ -18,10 +19,13 @@
 
       <!-- Catalog button -->
       <a
+        v-if="isMenuShown"
         ref="showCatalogMenuButton"
         :href="catalogLink"
         type="button"
         class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
+        :aria-label="$t('shared.layout.header.bottom_header.catalog_menu_button')"
+        aria-haspopup="menu"
         @click="toggleCatalogDropdown"
         @keydown.enter="toggleCatalogDropdown"
         @keydown.space="toggleCatalogDropdown"
@@ -31,21 +35,23 @@
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
         </span>
 
-        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 fill-primary" />
+        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 text-primary" />
       </a>
 
       <SearchBar />
 
       <ul class="-mx-2 flex items-center">
-        <li v-for="item in desktopMainMenuItems" :key="item.id">
-          <component :is="(item.id && customLinkComponents[item.id]) || LinkDefault" :item="item" />
+        <li v-for="item in desktopMainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
+          <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
+            <LinkDefault :item="item" />
+          </ExtensionPoint>
         </li>
       </ul>
     </nav>
 
     <!-- Catalog dropdown -->
     <transition
-      v-if="catalogMenuItems.length"
+      v-if="isMenuShown && catalogMenuItems.length"
       enter-from-class="-translate-y-full"
       leave-to-class="-translate-y-full"
       enter-active-class="will-change-transform"
@@ -74,17 +80,21 @@ import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { SearchBar } from "@/shared/layout";
-import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import CatalogMenu from "./catalog-menu.vue";
+import SearchBar from "./search-bar/search-bar.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
+
+interface IProps {
+  isMenuShown?: boolean;
+}
+
+defineProps<IProps>();
 
 const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
-const { customLinkComponents } = useCustomHeaderLinkComponents();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
@@ -111,7 +121,6 @@ onClickOutside(
 
 syncRefs(catalogMenuVisible, useScrollLock(document.body));
 
-// TODO: Redirect to localized catalog path if catalogMenuItems has not items
 async function toggleCatalogDropdown(event: Event) {
   if (!catalogMenuItems.value.length) {
     return;

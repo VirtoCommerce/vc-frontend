@@ -1,12 +1,14 @@
 <template>
   <div>
-    <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" />
+    <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" :name="liveName" />
+
     <VPBuilderIO v-if="isBulderIOContent" :content="pageDocument?.content" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useLanguages } from "@/core/composables/useLanguages";
 import VPBuilderIO from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 import VPPageBuilder from "@/pages/matcher/virto-pages/vp-page-builder.vue";
 
@@ -22,5 +24,19 @@ const isBulderIOContent = computed(() => {
 
 const isPageBuilderContent = computed(() => {
   return props.pageDocument?.source === "page-builder";
+});
+
+const permalink = computed(() => {
+  return props.pageDocument?.permalink;
+});
+
+// VCST-5274: the page document's baked `settings.name` is never updated on rename, so derive
+// the breadcrumb leaf from the live permalink (its last segment) instead of the stored name.
+const liveName = computed(() => permalink.value?.split("/").filter(Boolean).pop());
+
+const { updateLocalizedUrl } = useLanguages();
+
+watch(permalink, () => {
+  updateLocalizedUrl(permalink.value);
 });
 </script>

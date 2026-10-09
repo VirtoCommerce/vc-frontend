@@ -1,30 +1,36 @@
 {
   "current": "default",
   "settings": {
+    "cart_page_browser_target": "_blank",
+    "product_page_browser_target": "_self",
     "details_browser_target": "_blank",
 
     "files_enabled": true,
 
     "push_messages_enabled": true,
 
+    "module_federation_enabled": false,
+
     "product_compare_enabled": true,
     "product_compare_limit": 5,
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
+    "product_quantity_control": "stepper",
+
+    "range_filter_type": "slider",
 
     "vendor_enabled": true,
     "vendor_rating_enabled": true,
     "categories_limit": 499,
     "wishlists_limit": 10,
 
-    "search_min_chars": 2,
     "search_max_chars": 400,
     "search_static_content_suggestions_enabled": true,
     "search_product_phrase_suggestions_enabled": false,
 
     "zero_price_product_enabled": false,
 
-    "checkout_multistep_enabled": true,
+    "checkout_multistep_enabled": false,
     "checkout_comment_enabled": true,
     "checkout_purchase_order_enabled": true,
     "checkout_coupon_enabled": true,
@@ -39,6 +45,8 @@
     "favicon_image": "/static/icons/favicon-32x32.png",
     "homepage_background_image": "main-banner.webp",
     "catalog_pagination_mode": "infinite_scroll",
+    "desktop_menu_mode": "horizontal",
+    "icon_variant": "outline",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,
@@ -89,8 +97,8 @@
       {
         "code": "Ready for pickup",
         "color": "success",
-        "variant": "outline",
-        "icon": "circle-solid"
+        "variant": "solid",
+        "icon": "cube"
       }
     ],
 
@@ -174,6 +182,7 @@
         "slugContent": 2,
         "internal": 3
       }
-    }
+    },
+    "graphql_operation_marking_enabled": true
   }
 }

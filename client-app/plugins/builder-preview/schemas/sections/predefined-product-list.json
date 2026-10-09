@@ -1,0 +1,34 @@
+{
+  "name": "Predefined products",
+  "icon": "local_mall",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "skus",
+      "label": "SKUs",
+      "type": "list",
+      "tab": "Content",
+      "default": [],
+      "element": [
+        {
+          "id": "sku",
+          "label": "Product SKU",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

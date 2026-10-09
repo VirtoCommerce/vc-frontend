@@ -19,16 +19,17 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead, useThemeContext } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
 const router = useRouter();
 const route = useRoute();
+
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart();
@@ -41,8 +42,8 @@ const {
   initialize,
 } = useCheckout();
 
-const loading = computedEager(() => loadingCart.value || loadingCheckout.value);
-const changing = computedEager(() => changingCart.value || changingCheckout.value);
+const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const changing = computed(() => changingCart.value || changingCheckout.value);
 
 const steps = computed<IStepsItem[]>(() => {
   const result: IStepsItem[] = [];
@@ -53,10 +54,16 @@ const steps = computed<IStepsItem[]>(() => {
       route: { name: "OrderDetails", params: { orderId: placedOrder.value.id }, replace: true },
       text: t("common.buttons.back_to_order_details"),
     });
+  } else if (route.params.cartId) {
+    result.push({
+      icon: "arrow-left-bold",
+      route: { name: ROUTES.CART_ID.NAME, params: { cartId: route.params.cartId }, replace: true },
+      text: t("common.buttons.back_to_cart"),
+    });
   } else {
     result.push({
       icon: "arrow-left-bold",
-      route: { name: "Cart", replace: true },
+      route: { name: ROUTES.CART.NAME, replace: true },
       text: t("common.buttons.back_to_cart"),
     });
   }

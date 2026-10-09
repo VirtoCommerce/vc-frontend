@@ -1,0 +1,22 @@
+#import "../../common/fragments/money.graphql"
+#import "../../common/fragments/commonVendor.graphql"
+
+fragment bulkLineItem on LineItemType {
+  id
+  sku
+  name
+  quantity
+  productId
+  listPrice {
+    ...money
+  }
+  salePrice {
+    ...money
+  }
+  discountAmount {
+    ...money
+  }
+  vendor {
+    ...commonVendor
+  }
+}

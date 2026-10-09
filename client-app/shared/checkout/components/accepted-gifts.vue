@@ -7,7 +7,7 @@
           :key="gift.id"
           :name="gift.name"
           :image-url="gift.imageUrl"
-          :browser-target="$cfg.details_browser_target"
+          :browser-target="browserTarget"
           with-image
         >
           <VcAddToCart v-model="gift.quantity" hide-button disabled />
@@ -18,6 +18,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBrowserTarget } from "@/core/composables";
 import type { GiftItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -25,4 +26,6 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+const { browserTarget } = useBrowserTarget();
 </script>

@@ -4,10 +4,12 @@
       <VcChip
         :variant="orderStatus?.variant"
         :color="orderStatus?.color || defaultColor"
-        :icon="icon ?? orderStatus?.icon"
         :truncate="truncate"
+        size="sm"
         rounded
       >
+        <VcIcon v-if="icon ?? orderStatus?.icon" variant="solid" :name="icon ?? orderStatus?.icon" />
+
         <span>{{ displayValue || status }}</span>
       </VcChip>
     </template>
@@ -37,9 +39,18 @@ const props = withDefaults(defineProps<IProps>(), {
 const { themeContext } = useThemeContext();
 
 const defaultColor = "neutral";
-const statuses = themeContext.value?.settings?.orders_statuses || [];
 
-const orderStatus = computed(() => statuses.find((s: IOrderStatus) => props.status === s.code));
+const statusMap = computed(() => {
+  const map = new Map<string, IOrderStatus>();
+
+  themeContext.value?.settings?.orders_statuses?.forEach((status) => {
+    map.set(String(status.code).toLowerCase(), status);
+  });
+
+  return map;
+});
+
+const orderStatus = computed(() => statusMap.value.get(String(props.status).toLowerCase()));
 </script>
 
 <style lang="scss">

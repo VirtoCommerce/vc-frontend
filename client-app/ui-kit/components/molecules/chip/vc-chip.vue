@@ -1,13 +1,12 @@
 <template>
-  <component
-    :is="clickable ? 'button' : 'span'"
-    :disabled="disabled"
+  <span
     :draggable="draggable && !disabled"
+    :data-test-id="dataTestId"
     :class="[
       'vc-chip',
       `vc-chip--size--${size}`,
       `vc-chip--color--${color}`,
-      `vc-chip--${variant}--${color}`,
+      `vc-chip--${canonicalVariant}--${color}`,
       {
         'vc-chip--disabled': disabled,
         'vc-chip--clickable': clickable,
@@ -18,31 +17,52 @@
       },
     ]"
   >
-    <span class="vc-chip__content">
-      <VcIcon v-if="icon" :color="_iconColor" :name="icon" class="vc-chip__icon" />
+    <component
+      :is="componentTag"
+      v-bind="rootAttrs"
+      class="vc-chip__content"
+      :disabled="clickable && disabled"
+      @click="clickable && !disabled ? $emit('click') : null"
+    >
+      <VcIcon v-if="icon" :name="icon" class="vc-chip__icon" />
 
       <slot />
-    </span>
+    </component>
 
     <button
       v-if="closable"
       :disabled="disabled"
       type="button"
       class="vc-chip__close-button"
-      @click.stop="disabled ? null : $emit('close')"
+      :aria-label="closeAriaLabel"
+      @click.stop="$emit('close')"
     >
       <slot name="close-icon">
         <VcIcon name="delete-2" />
       </slot>
     </button>
-  </component>
+  </span>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { getColorValue } from "@/ui-kit/utilities";
+import { resolveVariant } from "../../../utilities/variant-compat";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
+  (event: "click"): void;
   (event: "close"): void;
+}
+
+interface IRootAttrs {
+  type?: string;
+  disabled?: boolean;
+  tabindex?: string | number;
+  to?: RouteLocationRaw | null;
+  href?: string;
+  target?: "_self" | "_blank";
 }
 
 interface IProps {
@@ -51,6 +71,7 @@ interface IProps {
   size?: VcChipSizeType;
   clickable?: boolean;
   closable?: boolean;
+  closeButtonAriaLabel?: string;
   disabled?: boolean;
   draggable?: boolean;
   rounded?: boolean;
@@ -58,6 +79,11 @@ interface IProps {
   nowrap?: boolean;
   icon?: string;
   iconColor?: string;
+  tabindex?: string | number;
+  dataTestId?: string;
+  to?: RouteLocationRaw | null;
+  externalLink?: string;
+  target?: "_self" | "_blank";
 }
 
 defineEmits<IEmits>();
@@ -67,28 +93,92 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   size: "md",
   nowrap: true,
-  iconColor: "",
+  tabindex: 0,
+  to: null,
 });
 
-const _iconColor = computed(() =>
-  props.variant === "solid" ? "--color-additional-50" : (props.iconColor ?? props.color),
-);
+const { t } = useI18n();
+
+const DEFAULT_CHIP_VARIANT: VcChipVariantType = "solid";
+const CANONICAL_CHIP_VARIANTS: readonly VcChipVariantType[] = [
+  DEFAULT_CHIP_VARIANT,
+  "soft",
+  "outline",
+  "surface",
+  "ghost",
+  "tonal",
+];
+
+const canonicalVariant = computed<VcChipVariantType>(() => {
+  const resolved = resolveVariant("VcChip", props.variant);
+  return (CANONICAL_CHIP_VARIANTS as readonly string[]).includes(resolved)
+    ? (resolved as VcChipVariantType)
+    : DEFAULT_CHIP_VARIANT;
+});
+
+const isRouterLink = computed(() => !!props.to && props.clickable && !props.disabled);
+const isExternalLink = computed(() => !!props.externalLink && props.clickable && !props.disabled);
+
+const componentTag = computed<string>(() => {
+  if (isRouterLink.value) {
+    return "router-link";
+  }
+
+  if (isExternalLink.value) {
+    return "a";
+  }
+
+  return props.clickable ? "button" : "span";
+});
+
+const rootAttrs = computed<IRootAttrs>(() => {
+  const attributes: IRootAttrs = {};
+
+  if (componentTag.value === "button") {
+    attributes.type = "button";
+    attributes.disabled = props.disabled;
+    attributes.tabindex = props.tabindex;
+  }
+
+  if (componentTag.value === "router-link") {
+    attributes.to = props.to;
+    attributes.tabindex = props.tabindex;
+  }
+
+  if (componentTag.value === "a") {
+    attributes.href = props.externalLink;
+    attributes.tabindex = props.tabindex;
+    attributes.target = props.target;
+  }
+
+  return attributes;
+});
+
+const closeAriaLabel = computed(() => props.closeButtonAriaLabel ?? t("ui_kit.accessibility.close_chip"));
+
+const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
 <style lang="scss">
 .vc-chip {
-  --props-icon-color: v-bind(props.iconColor);
-  --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
+  --props-icon-color: v-bind(_iconColor);
+  --icon-color: var(--props-icon-color, var(--vc-icon-color));
+  --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
+  --close-button-icon-color: var(--text-color);
 
-  $colors: primary, secondary, success, info, warning, danger, neutral;
+  $colors: primary, secondary, success, info, neutral, warning, danger, accent;
+  $variants: solid, soft, outline, surface, ghost, tonal;
 
   $truncate: "";
   $clickable: "";
+  $closable: "";
+  $disabled: "";
+  $contentEl: "";
 
-  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center px-[--padding-x] py-[--padding-y] text-neutral-800;
+  @apply relative inline-flex max-w-full min-h-[--min-h] rounded-[--radius];
 
-  &--clickable {
-    $clickable: &;
+  &--closable {
+    $closable: &;
   }
 
   &--truncate {
@@ -103,108 +193,54 @@ const _iconColor = computed(() =>
     @apply rounded-full;
   }
 
+  &--disabled {
+    $disabled: &;
+  }
+
+  &--clickable:not(#{$disabled}) {
+    $clickable: &;
+  }
+
   &--size {
-    &--xs {
-      --vc-icon-size: 0.5rem;
-      --padding-y: 0;
-      --padding-x: 0.25rem;
-
-      @apply gap-1 text-[0.625rem]/[0.875rem];
-    }
-
     &--sm {
-      --vc-icon-size: 0.625rem;
-      --padding-y: 0.125rem;
-      --padding-x: 0.5rem;
+      --icon-size: 0.625rem;
+      --close-button-icon-size: 0.5rem;
+      --padding-x: 0.438rem;
+      --min-h: 1.5rem;
 
-      @apply gap-1 text-xs/[1rem];
+      @apply gap-1.5 text-xs/[0.75rem];
     }
 
     &--md {
-      --vc-icon-size: 0.75rem;
-      --padding-y: 0.25rem;
-      --padding-x: 0.625rem;
+      --icon-size: 0.75rem;
+      --close-button-icon-size: 0.6rem;
+      --padding-x: 0.438rem;
+      --min-h: 1.75rem;
 
       @apply gap-1.5 text-sm/[1.125rem];
     }
 
     &--lg {
-      --vc-icon-size: 0.875rem;
-      --padding-y: 0.375rem;
-      --padding-x: 0.625rem;
+      --icon-size: 0.875rem;
+      --close-button-icon-size: 0.7rem;
+      --padding-x: 0.563rem;
+      --min-h: 2rem;
 
-      @apply gap-1.5 text-sm/[1.25rem];
+      @apply gap-2 text-sm/[1.25rem];
     }
-  }
-
-  @each $color in $colors {
-    &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500];
-
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-700] border-[--color-#{$color}-700];
-        }
-      }
-    }
-
-    &--solid-light--#{$color} {
-      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50];
-
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-100];
-        }
-      }
-    }
-
-    &--outline--#{$color} {
-      @apply border-[--color-#{$color}-500];
-
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-50];
-        }
-      }
-    }
-
-    &--outline-dark--#{$color} {
-      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-500];
-
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-100];
-        }
-      }
-    }
-
-    &--color--#{$color} {
-      &#{$clickable} {
-        &:focus {
-          @apply ring-[3px] ring-[--color-#{$color}-100];
-        }
-      }
-    }
-
-    &[class*="--#{$color}"] {
-      --vc-icon-color: var(--icon-color, var(--color-#{$color}-500));
-      --close-button-icon-color: var(--color-#{$color}-700);
-    }
-  }
-
-  &[class*="--solid--"] {
-    --vc-icon-color: var(--icon-color, var(--color-additional-50));
-    --close-button-icon-color: var(--color-additional-50);
-
-    @apply text-additional-50;
-  }
-
-  &[class*="--outline--"] {
-    @apply bg-additional-50;
   }
 
   &__content {
-    @apply grow flex items-center justify-center gap-[inherit] max-w-full;
+    $contentEl: &;
+
+    --vc-icon-color: var(--icon-color);
+    --vc-icon-size: var(--icon-size);
+
+    @apply grow flex items-center justify-center gap-[inherit] max-w-full px-[--padding-x] py-0.5 rounded-[inherit] bg-[--bg-color] border border-[--border-color] font-bold text-center text-[--text-color];
+
+    #{$closable} & {
+      @apply pe-[--min-h];
+    }
 
     #{$truncate} &,
     #{$truncate} & > * {
@@ -212,24 +248,101 @@ const _iconColor = computed(() =>
     }
   }
 
-  &__close-button {
-    --vc-icon-color: var(--close-button-icon-color);
-
-    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
+  @each $variant in $variants {
+    @each $color in $colors {
+      &--#{$variant}--#{$color} {
+        --bg-color: var(--vc-chip-#{$variant}-#{$color}-bg);
+        --border-color: var(--vc-chip-#{$variant}-#{$color}-border);
+        --text-color: var(--vc-chip-#{$variant}-#{$color}-text);
+        --vc-icon-color: var(--vc-chip-#{$variant}-#{$color}-icon);
+      }
+    }
   }
 
-  .vc-icon {
-    @apply flex-none;
+  // Hover — color-mix based, mirrors VcButton. Applied on the content element when clickable.
+  @each $color in $colors {
+    &--solid--#{$color}#{$clickable} #{$contentEl}:hover {
+      --bg-color: color-mix(in srgb, var(--vc-chip-solid-#{$color}-bg), black 15%);
+      --border-color: var(--bg-color);
+    }
+
+    &--soft--#{$color}#{$clickable} #{$contentEl}:hover {
+      --bg-color: color-mix(in srgb, var(--vc-chip-soft-#{$color}-bg), black 8%);
+      --border-color: var(--bg-color);
+    }
+
+    &--surface--#{$color}#{$clickable} #{$contentEl}:hover {
+      --bg-color: color-mix(in srgb, var(--vc-chip-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
+    }
+
+    &--outline--#{$color}#{$clickable} #{$contentEl}:hover {
+      --bg-color: color-mix(in srgb, var(--vc-chip-surface-#{$color}-text), white 80%);
+    }
+
+    &--ghost--#{$color}#{$clickable} #{$contentEl}:hover {
+      --bg-color: color-mix(in srgb, var(--vc-chip-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-chip-ghost-#{$color}-text), black 8%);
+    }
+
+    &--tonal--#{$color}#{$clickable} #{$contentEl}:hover {
+      --bg-color: color-mix(in srgb, var(--vc-chip-tonal-#{$color}-bg), black 8%);
+    }
+  }
+
+  &__close-button {
+    --vc-icon-size: var(--close-button-icon-size);
+    --vc-icon-color: var(--close-button-icon-color);
+
+    @apply self-stretch absolute inset-y-0 end-0 flex items-center justify-center size-[--min-h] rounded-[inherit];
+
+    .vc-icon {
+      @apply transition-transform duration-200 ease-in-out;
+    }
+
+    &:hover .vc-icon {
+      @apply rotate-90;
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed;
+    }
   }
 
   &:disabled,
-  &--disabled {
-    &[class*="--solid-"] {
-      @apply bg-neutral-100 border-neutral-100 text-neutral-400;
+  &#{$disabled} {
+    // Override `--icon-color` directly (not `--vc-icon-color`) so the disabled shade wins even when an
+    // explicit `icon-color` prop is set — the prop feeds `--props-icon-color`, which short-circuits the
+    // `--icon-color` fallback, so targeting `--icon-color` is the only lever that beats it.
+    --icon-color: var(--color-neutral-400);
+    --text-color: var(--color-neutral-600);
+    --close-button-icon-color: var(--color-neutral-400);
+
+    @apply cursor-not-allowed;
+
+    &[class*="--solid--"] {
+      --bg-color: var(--color-neutral-200);
+      --border-color: var(--color-neutral-200);
     }
 
-    &[class*="--outline-"] {
-      @apply text-neutral-400 border-current;
+    &[class*="--surface--"] {
+      --bg-color: var(--color-neutral-200);
+      --border-color: var(--color-neutral-200);
+    }
+
+    &[class*="--outline--"] {
+      --border-color: var(--color-neutral-300);
+    }
+
+    &[class*="--soft--"] {
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-100);
+    }
+
+    &[class*="--tonal--"] {
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-300);
     }
   }
 }

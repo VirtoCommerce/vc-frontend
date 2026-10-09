@@ -1,5 +1,12 @@
+#import "../../../fragments/memberAddressFields.graphql"
+
 mutation UpdateMemberAddresses($command: InputUpdateMemberAddressType!) {
   updateMemberAddresses(command: $command) {
     id
+    addresses {
+      items {
+        ...memberAddressFields
+      }
+    }
   }
 }

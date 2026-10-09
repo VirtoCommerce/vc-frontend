@@ -4,6 +4,8 @@
       "add_to_cart": "Aggiungi al carrello",
       "apply": "Applica",
       "cancel": "Annulla",
+      "clear": "Cancella",
+      "clear_field": "Cancella: {field}",
       "close": "Chiudi",
       "copy": "Copia",
       "deny": "Nega",
@@ -17,6 +19,52 @@
       "show_hide_password": "Mostra/nascondi password",
       "toggle_dropdown": "Attiva/disattiva menu a tendina",
       "update_cart": "Aggiorna carrello"
+    },
+    "accessibility": {
+      "close_alert": "Chiudi avviso",
+      "open_calendar": "Apri calendario",
+      "open_calendar_for": "Apri calendario: {field}",
+      "calendar": "Calendario",
+      "product_quantity": "Quantità del prodotto",
+      "decrease_quantity": "Diminuisci quantità",
+      "increase_quantity": "Aumenta quantità",
+      "variant_picker_group": "Opzioni di variante",
+      "show_more_button": "Vedi altre opzioni ({count})",
+      "sidebar": "Barra laterale",
+      "close_chip": "Chiudi chip",
+      "carousel_previous": "Immagine precedente",
+      "carousel_next": "Immagine successiva",
+      "nav_previous": "Precedente",
+      "nav_next": "Successivo",
+      "nav_up": "Su",
+      "nav_down": "Giù"
+    },
+    "calendar": {
+      "aria_label": "Calendario",
+      "previous_month": "Mese precedente",
+      "next_month": "Mese successivo",
+      "previous_year": "Anno precedente",
+      "next_year": "Anno successivo",
+      "today": "Oggi",
+      "clear": "Cancella",
+      "outside_suggested_range": "Fuori dall'intervallo suggerito"
+    },
+    "date_range_input": {
+      "aria_label": "Intervallo di date",
+      "clear": "Cancella intervallo di date",
+      "end_date": "Data di fine",
+      "invalid_range": "La data di fine deve essere successiva o uguale alla data di inizio",
+      "start_date": "Data di inizio"
+    },
+    "date_selector": {
+      "min_date_error": "La data deve essere successiva o uguale a {min}",
+      "max_date_error": "La data deve essere precedente o uguale a {max}"
+    },
+    "date_input": {
+      "invalid_format": "Formato data non valido",
+      "min_date_error": "La data deve essere successiva o uguale a {min}",
+      "max_date_error": "La data deve essere precedente o uguale a {max}",
+      "unavailable_date": "Questa data non è disponibile"
     },
     "labels": {
       "not_available": "N/D",
@@ -46,11 +94,11 @@
         "max": "Ordine massimo {0} articolo(i)",
         "min_max": "Ordine da {0} a {1} articolo(i)",
         "min_not_available": "Ordine minimo {0} articolo(i) non disponibile in magazzino",
+        "exact_qty": "Puoi ordinare {0} articolo/i",
         "out_of_stock": "Esaurito",
         "positive_number": "Il valore deve essere un numero positivo",
         "integer_number": "Il valore deve essere un numero intero",
-        "pack_size": "Ordina in pacchi da {0}",
-        "exact_qty": "Puoi ordinare {0} articolo/i"
+        "pack_size": "Ordina in confezioni da {0}"
       }
     },
     "pagination": {
@@ -58,11 +106,16 @@
       "next": "Successivo"
     },
     "select": {
-      "items_selected": "{0} articoli selezionati"
+      "items_selected": "{0} articoli selezionati",
+      "results_available": "{0} risultati disponibili",
+      "no_results_found": "Nessun risultato trovato",
+      "no_options": "Nessuna opzione disponibile"
     },
     "file": {
       "progress": "{percent} completato",
-      "uploaded": "Caricamento completato"
+      "uploaded": "Caricamento completato",
+      "reload": "Ricarica file",
+      "remove": "Rimuovi file"
     },
     "file_uploader": {
       "drag_and_drop": "Trascina e rilascia il file qui o",
@@ -79,6 +132,40 @@
       "end_list": "Hai raggiunto la fine della lista.",
       "page_limit_filters": "Nessun altro risultato. Prova a cambiare i filtri.",
       "page_limit": "Non è possibile mostrare altri risultati."
+    },
+    "table": {
+      "empty": "Nessun record trovato",
+      "error": "Impossibile caricare i dati",
+      "retry": "Riprova",
+      "select_row_number": "Select row {number}",
+      "select_all": "Seleziona tutto",
+      "deselect_all": "Deseleziona tutto",
+      "selection_column": "Selezione riga"
+    },
+    "slider": {
+      "tooltip": "{count} articoli",
+      "aria_label": "Slider da {min} a {max}",
+      "legend": "Slider da {min} a {max}",
+      "start_input_label": "Valore iniziale (compreso tra {min} e {max})",
+      "end_input_label": "Valore finale (tra {min} e {max})",
+      "start_input_aria_label": "Inserisci il valore iniziale, intervallo da {min} a {max}",
+      "end_input_aria_label": "Valore finale, intervallo da {min} a {max}",
+      "start_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
+      "end_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
+      "column_aria_label": "Colonna con {count} articoli, da {from} a {to}",
+      "current_value_announcement": "Valore slider: {start} a {end}, intervallo {min} a {max}",
+      "start_handle_label": "Cursore valore minimo",
+      "end_handle_label": "Cursore valore massimo",
+      "start_handle_aria_label": "Valore iniziale {value}, intervallo da {min} a {max}",
+      "end_handle_aria_label": "Valore finale {value}, intervallo da {min} a {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigazione breadcrumb"
+    },
+    "rating": {
+      "rating_label": "Valutazione {value} su {maxValue}",
+      "read_only_button_aria_label": "Valutazione {value} su {maxValue}, non disponibile per la selezione",
+      "set_rating_aria_label": "Imposta valutazione a {value} su {maxValue}"
     }
   }
 }

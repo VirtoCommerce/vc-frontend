@@ -21,7 +21,7 @@
 
 --header-bottom-bg-color: var(--color-header-bottom-bg, var(--color-additional-50));
 --header-bottom-text-color: var(--color-header-bottom-text, var(--color-neutral-900));
---header-bottom-link-color: var(--color-header-bottom-link, var(--color-neutral-500));
+--header-bottom-link-color: var(--color-header-bottom-link, var(--color-secondary-700));
 --header-bottom-link-hover-color: var(--color-header-bottom-link-hover, var(--color-neutral-900));
 --header-bottom-link-active-color: var(--color-header-bottom-link-active, var(--color-neutral-900));
 
@@ -37,7 +37,7 @@
 --footer-bottom-link-hover-color: var(--color-footer-bottom-link-hover, var(--color-additional-50));
 --footer-bottom-link-active-color: var(--color-footer-bottom-link-active, var(--color-additional-50));
 
---mobile-search-bar-bg: var(--color-mobile-search-bar-bg, var(--color-secondary-800));
+--mobile-search-bar-bg: var(--color-mobile-search-bar-bg, var(--color-additional-50));
 
 --mobile-menu-bg-color: var(--color-mobile-menu-bg, var(--color-secondary-900));
 --mobile-menu-text-color: var(--color-mobile-menu-text, var(--color-additional-50));
@@ -49,7 +49,7 @@
 --mobile-menu-control-color: var(--color-mobile-menu-control, var(--color-primary-500));
 
 // Customize UI-Kit colors
---vc-radio-button-focus-color: var(--focus-color);
+--vc-product-title-text-color: var(--body-text-color);
 --vc-product-title-link-color: var(--link-color);
 --vc-product-title-link-hover-color: var(--link-hover-color);
 --vc-product-button-link-color: var(--link-color);
@@ -57,4 +57,6 @@
 --vc-shape-bg-color: var(--shape-icon-bg-color);
 --vc-shape-color: var(--shape-icon-color);
 --vc-container-bg-color: var(--body-bg-color);
+--vc-file-link-color: var(--link-color);
+--vc-file-link-hover-color: var(--link-hover-color);
 }

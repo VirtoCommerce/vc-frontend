@@ -1,0 +1,42 @@
+<template>
+  <VcTooltip v-if="availabilityNote" placement="bottom">
+    <template #trigger>
+      <VcChip
+        size="sm"
+        :variant="variant"
+        :color="chipColor"
+        icon="truck"
+        truncate
+        data-test-id="pickup-availability-chip"
+      >
+        <span>{{ availabilityNote }}</span>
+      </VcChip>
+    </template>
+
+    <template #content>
+      {{ availabilityNote }}
+    </template>
+  </VcTooltip>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { ProductPickupAvailabilityType } from "@/core/api/graphql/types";
+
+interface IProps {
+  availabilityType?: string;
+  availabilityNote?: string;
+  variant?: VcChipVariantType;
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  variant: "solid-light",
+});
+
+const chipColor = computed<VcChipColorType>(() => {
+  if (props.availabilityType === ProductPickupAvailabilityType.Today) {
+    return "success";
+  }
+  return "accent";
+});
+</script>

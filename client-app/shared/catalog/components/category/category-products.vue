@@ -3,11 +3,11 @@
     <template v-if="products.length || fetchingProducts">
       <div
         v-if="mode === CATALOG_PAGINATION_MODES.loadMore && minVisitedPage > 1"
-        class="-mt-2 mb-6 flex justify-center"
+        class="category-products__pagination category-products__pagination--previous"
       >
         <VcButton
           v-if="products.length"
-          class="mt-4"
+          class="category-products__load-button"
           size="sm"
           :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
           prepend-icon="arrow-left"
@@ -18,13 +18,8 @@
       </div>
 
       <div
-        :class="[
-          'category-products__list',
-          {
-            'category-products__list--list': savedViewMode === 'list',
-            'category-products__list--grid': savedViewMode === 'grid',
-          },
-        ]"
+        :class="`category-products__list category-products__list--${savedViewMode}`"
+        :data-test-id="`products-${savedViewMode}-view`"
       >
         <template v-if="fetchingProducts">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />
@@ -33,12 +28,12 @@
         <template v-else>
           <ProductCard
             v-for="(item, index) in products"
-            :key="index"
+            :key="item.id"
             :loading="fetchingProducts"
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
-            :browser-target="$cfg.details_browser_target"
+            :browser-target="browserTarget"
             :card-type="cardType"
             @link-click="sendGASelectItemEvent"
           />
@@ -51,6 +46,7 @@
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
+        test-id="category-endless-scroll-loader"
         distance="400"
         class="category-products__infinity"
         @visible="$emit('changePage', pageNumber + 1)"
@@ -58,7 +54,7 @@
 
       <div
         v-if="mode === CATALOG_PAGINATION_MODES.loadMore && maxVisitedPage < pagesCount"
-        class="mt-6 flex justify-center"
+        class="category-products__pagination category-products__pagination--next"
       >
         <VcButton
           :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
@@ -77,13 +73,14 @@
     <VcEmptyView
       v-else
       :text="
-        hasActiveFilters || keywordQueryParam
+        hasActiveFilters || keyword
           ? $t('pages.catalog.no_products_filtered_message')
           : $t('pages.catalog.no_products_message')
       "
       icon="outline-stock"
+      :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
     >
-      <template v-if="hasSelectedFacets || keywordQueryParam" #button>
+      <template v-if="hasActiveFilters || keyword" #button>
         <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
@@ -94,12 +91,12 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { toRef, computed } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
-import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
-import { QueryParamName } from "@/core/enums";
+import { computed, toRef } from "vue";
+import { useBrowserTarget } from "@/core/composables";
+import { DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { Product } from "@/core/api/graphql/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 
@@ -121,7 +118,7 @@ interface IProps {
   fetchingProducts: boolean;
   fixedProductsCount?: number;
   hasActiveFilters: boolean;
-  hasSelectedFacets: boolean;
+  keyword?: string;
   itemsPerPage?: number;
   pagesCount: number;
   pageHistory: Readonly<number[]>;
@@ -132,15 +129,12 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "resetFacetFilters"): void;
   (event: "changePage", pageNumber: number): void;
   (event: "selectProduct", product: Product): void;
   (event: "resetFilterKeyword"): void;
 }
 
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
-  defaultValue: "",
-});
+const { browserTarget } = useBrowserTarget();
 
 function loadPreviousPage() {
   emit("changePage", minVisitedPage.value - 1);
@@ -248,6 +242,22 @@ function sendGASelectItemEvent(product: Product): void {
         @apply divide-y-0 mx-0 space-y-3.5;
       }
     }
+  }
+
+  &__pagination {
+    @apply flex justify-center;
+
+    &--previous {
+      @apply -mt-2 mb-6;
+    }
+
+    &--next {
+      @apply mt-6;
+    }
+  }
+
+  &__load-button {
+    @apply mt-4;
   }
 
   &__infinity {

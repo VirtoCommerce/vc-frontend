@@ -7,9 +7,11 @@
 <script setup lang="ts">
 import { provide, ref, watch, toRefs } from "vue";
 
+type CheckboxGroupValueType = string | number | object;
+
 interface IEmits {
-  (event: "update:modelValue", value: (string | number | object)[]): void;
-  (event: "change", value: (string | number | object)[]): void;
+  (event: "update:modelValue", value: CheckboxGroupValueType[]): void;
+  (event: "change", value: CheckboxGroupValueType[]): void;
 }
 
 interface IProps {

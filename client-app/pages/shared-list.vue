@@ -1,0 +1,223 @@
+<template>
+  <VcContainer class="shared-list">
+    <VcTypography v-if="list?.name" tag="h1" class="shared-list__name">
+      {{ list.name }}
+    </VcTypography>
+
+    <ExtensionPoint
+      v-if="$canRenderExtensionPoint('sharedList', EXTENSION_NAMES.sharedList.provenanceNote, list?.sharingSetting)"
+      :name="EXTENSION_NAMES.sharedList.provenanceNote"
+      category="sharedList"
+      class="shared-list__provenance"
+    />
+
+    <div ref="listElement" class="shared-list__content">
+      <!-- Skeletons -->
+      <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
+
+      <!-- List details -->
+      <template v-else-if="!listLoading && !!list?.items?.length">
+        <VcLayout sidebar-position="right" sticky>
+          <VcWidget size="lg">
+            <div class="shared-list__items">
+              <WishlistLineItems
+                :items="pagedListItems"
+                :pending-items="pendingItems"
+                :editable="false"
+                :addable-to-cart="isShoppable"
+                :navigatable="false"
+                @update:cart-item="addOrUpdateCartItem"
+                @link-click="selectItemEvent"
+              />
+
+              <p v-if="page >= PAGE_LIMIT" class="shared-list__page-limit">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+
+              <VcPagination
+                v-if="pagesCount > 1"
+                v-model:page="page"
+                :pages="Math.min(pagesCount, PAGE_LIMIT)"
+                :scroll-target="listElement"
+                :scroll-offset="60"
+              />
+            </div>
+          </VcWidget>
+
+          <template #sidebar>
+            <WishlistSummary :list="list" />
+          </template>
+        </VcLayout>
+      </template>
+
+      <!-- Empty list -->
+      <VcEmptyView
+        v-else-if="!listLoading && list?.items?.length === 0"
+        :text="$t('shared.wishlists.list_details.empty_list')"
+        icon="outline-lists"
+      >
+        <template #button>
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("shared.wishlists.list_details.empty_list_button") }}
+          </VcButton>
+
+          <VcButton v-else to="/">
+            {{ $t("shared.wishlists.list_details.empty_list_button") }}
+          </VcButton>
+        </template>
+      </VcEmptyView>
+
+      <Error404 v-else-if="!listLoading && !list" />
+    </div>
+  </VcContainer>
+</template>
+
+<script setup lang="ts">
+import { cloneDeep, keyBy } from "lodash-es";
+import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { PAGE_LIMIT } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { prepareLineItem } from "@/core/utilities";
+import { useShortCart } from "@/shared/cart";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import {
+  useWishlists,
+  useWishlistSharingScopes,
+  WishlistLineItems,
+  WishlistProductsSkeleton,
+  WishlistSummary,
+} from "@/shared/wishlists";
+import type { LineItemType, Product } from "@/core/api/graphql/types";
+import type { PreparedLineItemType } from "@/core/types";
+
+const props = defineProps<IProps>();
+
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+
+interface IProps {
+  sharingKey: string;
+}
+
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+const { analytics } = useAnalytics();
+const { trackAddItemToCart } = useAnalyticsUtils();
+const { pushHistoricalEvent } = useHistoricalEvents();
+const { t } = useI18n();
+const { listLoading, list, fetchSharedWishList } = useWishlists();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { getSharingScope } = useWishlistSharingScopes();
+
+// Declared by the scope's provider; the list itself stays read-only either way.
+const isShoppable = computed(() => !!getSharingScope(list.value?.sharingSetting?.scope)?.shoppable);
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
+
+usePageHead({
+  title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
+});
+
+const wishlistListProperties = computed(() => ({
+  item_list_id: "wishlist",
+  item_list_name: `Wishlist "${list.value?.name}"`,
+  related_id: list.value?.id,
+  related_type: "wishlist",
+}));
+
+const listElement = ref<HTMLElement | undefined>();
+const pendingItems = ref<Record<string, boolean>>({});
+const itemsPerPage = ref(6);
+const page = ref(1);
+const wishlistItems = ref<LineItemType[]>([]);
+const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
+const preparedLineItems = computed<PreparedLineItemType[]>(() =>
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku]?.quantity)),
+);
+const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
+const pagedListItems = computed<PreparedLineItemType[]>(() =>
+  preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+);
+const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
+
+function selectItemEvent(item: Product | undefined): void {
+  if (!item) {
+    return;
+  }
+
+  analytics("selectItem", item, wishlistListProperties.value);
+}
+
+// Follows list-details' addOrUpdateCartItem, minus the result modal. The list is not the viewer's, so this only
+// touches the cart, never a list quantity.
+async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
+  const lineItem = wishlistItems.value.find((listItem) => listItem.productId === item.productId);
+
+  if (!lineItem?.product || pendingItems.value[lineItem.id]) {
+    return;
+  }
+
+  const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
+
+  pendingItems.value[lineItem.id] = true;
+  try {
+    if (itemInCart) {
+      if (itemInCart.quantity !== quantity) {
+        await changeItemQuantity(itemInCart.id, quantity);
+      }
+    } else {
+      await addToCart(lineItem.product.id, quantity);
+      // Only a genuine add is a conversion; a quantity change on an existing line is not.
+      trackAddItemToCart(lineItem.product, quantity);
+      void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
+    }
+  } finally {
+    pendingItems.value[lineItem.id] = false;
+  }
+}
+
+watchEffect(async () => {
+  await fetchSharedWishList(props.sharingKey);
+  page.value = 1;
+  wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+});
+
+/**
+ * Send Google Analytics event for related products.
+ */
+watchEffect(() => {
+  const itemsWithProduct = list.value?.items?.map((item) => item.product).filter((prod): prod is Product => !!prod);
+
+  if (itemsWithProduct?.length) {
+    analytics("viewItemList", itemsWithProduct, wishlistListProperties.value);
+  }
+});
+</script>
+
+<style lang="scss">
+.shared-list {
+  @apply relative max-lg:pb-12;
+
+  &__name {
+    @apply mb-5;
+  }
+
+  &__provenance {
+    @apply mb-5;
+  }
+
+  &__content {
+    @apply mt-5 w-full;
+  }
+
+  &__items {
+    @apply flex flex-col gap-6;
+  }
+
+  &__page-limit {
+    @apply my-3 text-center;
+  }
+}
+</style>

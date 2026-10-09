@@ -1,0 +1,20 @@
+{
+  "push_messages": {
+    "title": "Meddelanden",
+    "menu_item_name": "Meddelanden",
+    "empty_list": "Du har inga nya meddelanden för närvarande",
+    "options": {
+      "make_all_as_read": "Markera alla som lästa",
+      "make_all_as_unread": "Markera alla som olästa"
+    },
+    "empty": {
+      "title": "Inga nya meddelanden just nu.",
+      "description": "Håll dig uppdaterad med uppdateringar och viktiga meddelanden."
+    },
+    "clear_all": "Rensa alla",
+    "view_all": "Visa alla meddelanden",
+    "show_unread_only": "Visa endast olästa",
+    "mark_as_read": "Markera som läst",
+    "mark_as_unread": "Markera som oläst"
+  }
+}

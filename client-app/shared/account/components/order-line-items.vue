@@ -1,12 +1,13 @@
 <template>
   <VcLineItems
     :items="preparedLineItems"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
     with-total
     with-subtotal
+    :subtotal-currency-code="subtotalCurrencyCode"
   >
     <template #titles>
       <div class="text-center">
@@ -24,6 +25,7 @@
         disabled
       />
     </template>
+
     <template #after-content="{ item }">
       <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
     </template>
@@ -32,16 +34,21 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { prepareLineItems } from "@/core/utilities";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
+
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
+  subtotalCurrencyCode?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
+
+const { browserTarget } = useBrowserTarget();
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>

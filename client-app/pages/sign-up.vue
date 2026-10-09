@@ -13,6 +13,7 @@
             :value="RegistrationKind.personal"
             :label="$t('pages.sign_up.personal_registration_kind_label')"
             :disabled="loading"
+            test-id-input="sign-up-personal-registration-radio-button"
           />
 
           <VcRadioButton
@@ -21,6 +22,7 @@
             :value="RegistrationKind.organization"
             :label="$t('pages.sign_up.organization_registration_kind_label')"
             :disabled="loading"
+            test-id-input="sign-up-organization-registration-radio-button"
           />
         </div>
 
@@ -36,6 +38,7 @@
           name="firstName"
           required
           autocomplete="given-name"
+          test-id-input="sign-up-first-name-input"
         />
 
         <VcInput
@@ -50,6 +53,7 @@
           name="lastName"
           required
           autocomplete="family-name"
+          test-id-input="sign-up-last-name-input"
         />
 
         <VcInput
@@ -64,6 +68,7 @@
           name="email"
           required
           autocomplete="email"
+          test-id-input="sign-up-email-input"
           @input="emailValidationData.isChecked = false"
         />
 
@@ -80,6 +85,7 @@
           required
           name="organizationName"
           autocomplete="off"
+          test-id-input="sign-up-organization-name-input"
         />
 
         <div class="block justify-between lg:flex lg:space-x-6">
@@ -95,6 +101,7 @@
             type="password"
             autocomplete="new-password"
             required
+            test-id-input="sign-up-password-input"
           />
 
           <VcInput
@@ -109,6 +116,7 @@
             type="password"
             autocomplete="off"
             required
+            test-id-input="sign-up-confirm-password-input"
           />
         </div>
 
@@ -118,6 +126,7 @@
           <VcAlert
             v-for="error in commonErrors"
             :key="error"
+            :data-test-id="`sign-up-error-${error}-alert`"
             color="danger"
             size="sm"
             variant="solid-light"
@@ -127,7 +136,12 @@
             {{ error }}
           </VcAlert>
 
-          <VcButton :loading="loading" type="submit" class="mt-6 w-full lg:mt-3 lg:w-48">
+          <VcButton
+            :loading="loading"
+            type="submit"
+            class="mt-6 w-full lg:mt-3 lg:w-48"
+            data-test-id="sign-up-submit-button"
+          >
             {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>

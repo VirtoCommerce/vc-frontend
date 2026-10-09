@@ -4,6 +4,8 @@
       "add_to_cart": "加入购物车",
       "apply": "应用",
       "cancel": "取消",
+      "clear": "清除",
+      "clear_field": "清除{field}",
       "close": "关闭",
       "copy": "复制",
       "deny": "拒绝",
@@ -17,6 +19,52 @@
       "show_hide_password": "显示/隐藏密码",
       "toggle_dropdown": "切换下拉菜单",
       "update_cart": "更新购物车"
+    },
+    "accessibility": {
+      "close_alert": "关闭提醒",
+      "open_calendar": "打开日历",
+      "open_calendar_for": "打开{field}日历",
+      "calendar": "日历",
+      "product_quantity": "产品数量",
+      "decrease_quantity": "减少数量",
+      "increase_quantity": "增加数量",
+      "variant_picker_group": "商品变体选项",
+      "show_more_button": "查看更多选项（{count}）",
+      "sidebar": "侧边栏",
+      "close_chip": "关闭标签",
+      "carousel_previous": "上一张",
+      "carousel_next": "下一张",
+      "nav_previous": "上一个",
+      "nav_next": "下一个",
+      "nav_up": "向上",
+      "nav_down": "向下"
+    },
+    "calendar": {
+      "aria_label": "日历",
+      "previous_month": "上个月",
+      "next_month": "下个月",
+      "previous_year": "上一年",
+      "next_year": "下一年",
+      "today": "今天",
+      "clear": "清除",
+      "outside_suggested_range": "超出建议范围"
+    },
+    "date_range_input": {
+      "aria_label": "日期范围",
+      "clear": "清除日期范围",
+      "end_date": "结束日期",
+      "invalid_range": "结束日期必须在开始日期或之后",
+      "start_date": "开始日期"
+    },
+    "date_selector": {
+      "min_date_error": "日期必须在{min}或之后",
+      "max_date_error": "日期必须在{max}或之前"
+    },
+    "date_input": {
+      "invalid_format": "日期格式无效",
+      "min_date_error": "日期必须在{min}或之后",
+      "max_date_error": "日期必须在{max}或之前",
+      "unavailable_date": "此日期不可用"
     },
     "labels": {
       "not_available": "不可用",
@@ -46,11 +94,11 @@
         "max": "最大订单 {0} 件",
         "min_max": "订单从 {0} 到 {1} 件",
         "min_not_available": "最小订单 {0} 件库存不足",
+        "exact_qty": "您可以订购 {0} 件商品",
         "out_of_stock": "缺货",
         "positive_number": "值必须是正数",
         "integer_number": "值必须是整数",
-        "pack_size": "按 {0} 的包装订购",
-        "exact_qty": "您可以订购 {0} 件商品"
+        "pack_size": "请按每包 {0} 件订购"
       }
     },
     "pagination": {
@@ -58,11 +106,16 @@
       "next": "下一页"
     },
     "select": {
-      "items_selected": "已选择 {0} 件商品"
+      "items_selected": "已选择 {0} 件商品",
+      "results_available": "{0} 个结果可用",
+      "no_results_found": "未找到结果",
+      "no_options": "没有可用选项"
     },
     "file": {
       "progress": "{percent} 完成",
-      "uploaded": "上传完成"
+      "uploaded": "上传完成",
+      "reload": "重新加载文件",
+      "remove": "删除文件"
     },
     "file_uploader": {
       "drag_and_drop": "拖放文件到此处或",
@@ -79,6 +132,40 @@
       "end_list": "您已到达列表末尾。",
       "page_limit_filters": "没有更多结果。请尝试更改筛选条件。",
       "page_limit": "无法显示更多结果。"
+    },
+    "table": {
+      "empty": "未找到记录",
+      "error": "加载数据失败",
+      "retry": "重试",
+      "select_row_number": "Select row {number}",
+      "select_all": "全选",
+      "deselect_all": "取消全选",
+      "selection_column": "行选择"
+    },
+    "slider": {
+      "tooltip": "{count} 件商品",
+      "aria_label": "范围滑块，从 {min} 到 {max}",
+      "legend": "范围滑块，从 {min} 到 {max}",
+      "start_input_label": "起始值（介于 {min} 和 {max} 之间）",
+      "end_input_label": "结束值（介于 {min} 和 {max} 之间）",
+      "start_input_aria_label": "起始值输入，范围 {min} 到 {max}",
+      "end_input_aria_label": "结束值输入，范围 {min} 到 {max}",
+      "start_input_help": "请输入介于 {min} 和 {max} 之间的数字，步长为 {step}",
+      "end_input_help": "请输入介于 {min} 和 {max} 之间的数字，步长为 {step}",
+      "column_aria_label": "包含 {count} 个项目的列，范围从 {from} 到 {to}",
+      "current_value_announcement": "滑块值：{start} 到 {end}，范围 {min} 到 {max}",
+      "start_handle_label": "最小值滑块",
+      "end_handle_label": "最大值滑块",
+      "start_handle_aria_label": "起始值 {value}，范围 {min} 到 {max}",
+      "end_handle_aria_label": "结束值 {value}，范围 {min} 到 {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "面包屑导航"
+    },
+    "rating": {
+      "rating_label": "评分 {value}，满分 {maxValue}",
+      "read_only_button_aria_label": "评分 {value}，满分 {maxValue}，不可选择",
+      "set_rating_aria_label": "将评分设置为 {value}，满分 {maxValue}"
     }
   }
 }

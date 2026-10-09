@@ -13,11 +13,18 @@
             <div class="mb-4 text-2xl font-bold lg:text-5xl">
               {{ $t("pages.demo_landing.primary_block.primary_text") }}
             </div>
+
             <div class="text-lg">
               {{ $t("pages.demo_landing.primary_block.secondary_text") }}
             </div>
+
             <div class="mt-6 flex gap-6 lg:mt-14">
-              <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com" target="_blank">
+              <VcButton
+                class="flex-1 lg:flex-none"
+                external-link="https://virtocommerce.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {{ $t("pages.demo_landing.primary_block.first_button") }}
               </VcButton>
 
@@ -26,6 +33,7 @@
               </VcButton>
             </div>
           </div>
+
           <div class="order-1 aspect-video rounded bg-neutral-200 lg:order-2">
             <VcImage src="note.webp" :alt="$t('pages.demo_landing.primary_block.image_alt')" />
           </div>
@@ -38,6 +46,7 @@
         <div class="mb-6 text-center text-2xl font-bold lg:text-4xl">
           {{ $t("pages.demo_landing.secondary_block.primary_text") }}
         </div>
+
         <div class="text-center text-base">
           {{ $t("pages.demo_landing.secondary_block.secondary_text") }}
         </div>
@@ -49,33 +58,43 @@
         <div class="mb-6 text-center text-2xl font-bold lg:text-5xl">
           {{ $t("pages.demo_landing.features_block.primary_text") }}
         </div>
+
         <div class="text-center text-base">
           {{ $t("pages.demo_landing.features_block.secondary_text") }}
         </div>
+
         <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-10 px-8 lg:grid-cols-3 lg:px-0">
           <div class="text-center">
             <VcImage src="feat-1.svg" class="mx-auto mb-9 h-24" lazy />
+
             <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_1.title") }}
             </div>
+
             <div class="text-sm">
               {{ $t("pages.demo_landing.features_block.feature_1.text") }}
             </div>
           </div>
+
           <div class="text-center">
             <VcImage src="feat-2.svg" class="mx-auto mb-9 h-24" lazy />
+
             <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_2.title") }}
             </div>
+
             <div class="text-sm">
               {{ $t("pages.demo_landing.features_block.feature_2.text") }}
             </div>
           </div>
+
           <div class="text-center">
             <VcImage src="feat-3.svg" class="mx-auto mb-9 h-24" lazy />
+
             <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_3.title") }}
             </div>
+
             <div class="text-sm">
               {{ $t("pages.demo_landing.features_block.feature_3.text") }}
             </div>
@@ -90,6 +109,7 @@
           <div class="text-center text-2xl font-bold text-additional-50 lg:text-3xl">
             {{ $t("pages.demo_landing.booking_block.message") }}
           </div>
+
           <div class="flex w-full justify-center gap-6">
             <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com">
               {{ $t("pages.demo_landing.booking_block.first_button") }}
@@ -113,17 +133,19 @@
           {{ $t("pages.demo_landing.products_block.message") }}
         </div>
 
-        <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
-          <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
-            <template #cart-handler>
-              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
-                {{ $t("pages.demo_landing.products_block.choose_button") }}
-              </VcButton>
-
-              <AddToCart v-else :product="item" />
-            </template>
-          </ProductCardGrid>
-        </div>
+        <VcProductsGrid
+          :columns="{
+            default: 1,
+            xs: 2,
+            sm: 2,
+            md: 3,
+            lg: 4,
+            xl: 4,
+            '2xl': 4,
+          }"
+        >
+          <ProductCard v-for="(item, index) in products" :key="index" :product="item" lazy />
+        </VcProductsGrid>
       </div>
     </div>
 
@@ -132,6 +154,7 @@
         <div class="mb-6 text-center text-2xl font-bold lg:text-4xl">
           {{ $t("pages.demo_landing.after_products_block.primary_text") }}
         </div>
+
         <div class="text-center text-base">
           {{ $t("pages.demo_landing.after_products_block.secondary_text") }}
         </div>
@@ -143,13 +166,16 @@
         <div class="mb-4 text-center text-2xl font-bold lg:text-4xl">
           {{ $t("pages.demo_landing.subscription_block.primary_text") }}
         </div>
+
         <div class="mb-8 text-center text-lg font-bold">
           {{ $t("pages.demo_landing.subscription_block.secondary_text") }}
         </div>
+
         <VcInput
           class="mx-auto max-w-lg"
           :placeholder="$t('pages.demo_landing.subscription_block.input_placeholder')"
         />
+
         <div class="text-center">
           <div class="mt-4">
             <VcCheckbox class="inline-flex">
@@ -175,15 +201,12 @@ import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { onMounted, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, useProductsRoutes, usePageTitle } from "@/core/composables";
-import { AddToCart } from "@/shared/cart";
-import { ProductCardGrid, useProducts } from "@/shared/catalog";
+import { useBreadcrumbs, usePageTitle } from "@/core/composables";
+import { ProductCard, useProducts } from "@/shared/catalog";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();
 const { title: pageTitle } = usePageTitle(t("pages.demo_landing.meta.title"));
-
-const productsRoutes = useProductsRoutes(products);
 
 const demoPageAnchor = shallowRef<HTMLElement | null>(null);
 const demoPageAnchorIsVisible = useElementVisibility(demoPageAnchor);

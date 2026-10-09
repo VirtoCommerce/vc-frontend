@@ -6,10 +6,15 @@ import {
   APP_INSIGHTS_MODULE_ID,
 } from "../constants/modules";
 import type { App, Plugin } from "vue";
+import type { Router } from "vue-router";
 import type { AppInsightsPluginOptions } from "vue3-application-insights";
 
-export const applicationInsightsPlugin: Plugin = {
-  install: (app: App) => {
+export interface IApplicationInsightsPluginOptions {
+  router?: Router;
+}
+
+export const applicationInsightsPlugin: Plugin<[IApplicationInsightsPluginOptions?]> = {
+  install: (app: App, pluginOptions?: IApplicationInsightsPluginOptions) => {
     const { getSettingValue, isEnabled } = useModuleSettings(APP_INSIGHTS_MODULE_ID);
 
     if (isEnabled(APP_INSIGHTS_ENABLE_STATE)) {
@@ -22,6 +27,7 @@ export const applicationInsightsPlugin: Plugin = {
               instrumentationKey,
             },
           },
+          router: pluginOptions?.router,
           trackAppErrors: true,
           trackInitialPageView: true,
         };

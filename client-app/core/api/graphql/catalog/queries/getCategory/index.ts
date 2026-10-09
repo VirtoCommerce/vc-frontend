@@ -76,8 +76,15 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
 
 export type ExtendedQueryCategoryArgsType = QueryChildCategoriesArgs;
 
-export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
-  const { storeId, userId, cultureName, currencyCode } = globals;
+export async function getCategory(
+  payload: Omit<ExtendedQueryCategoryArgsType, "storeId">,
+  options: {
+    /** Overrides the currency code from globals (e.g. for loyalty catalog). */
+    currencyCodeOverride?: string;
+  } = {},
+) {
+  const { storeId, userId, cultureName, currencyCode: defaultCurrencyCode } = globals;
+  const currencyCode = options.currencyCodeOverride || defaultCurrencyCode;
   const navigationOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
 
   const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel);

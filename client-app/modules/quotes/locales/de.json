@@ -10,8 +10,12 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Stichwort eingeben...",
+    "search_placeholder": "Nach Nummer oder Status",
+    "no_quote_message": "Es gibt noch keine Angebotsanfragen",
     "no_results_message": "Keine Ergebnisse gefunden",
+    "buttons": {
+      "reset_search": "Suche zurücksetzen"
+    },
     "request_quote_button": "Angebot anfordern",
     "search_quote_requests": "Angebotsanfragen suchen",
     "reset_search": "Suche zurücksetzen",

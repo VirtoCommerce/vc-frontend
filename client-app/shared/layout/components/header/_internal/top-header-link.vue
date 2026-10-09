@@ -1,5 +1,5 @@
 <template>
-  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to">
+  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to" tabindex="0">
     <slot />
   </router-link>
 </template>
@@ -16,7 +16,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .top-header-link {
-  @apply py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
+  @apply p-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
 
   &--active {
     @apply text-[--header-top-link-active-color];

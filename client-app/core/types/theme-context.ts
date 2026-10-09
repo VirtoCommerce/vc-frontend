@@ -6,6 +6,8 @@ import type { GetStoreQuery } from "../api/graphql/types";
 export interface IThemeContext {
   storeId: string;
   storeName: string;
+  /** Store's configured public url. */
+  storeUrl?: string;
   catalogId: string;
   defaultLanguage: ILanguage;
   defaultCurrency: ICurrency;
@@ -14,5 +16,6 @@ export interface IThemeContext {
   settings: IThemeConfigSettings;
   preset?: IThemeConfigPreset;
   defaultPresetName: string;
+  activePresetName?: string;
   storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
 }

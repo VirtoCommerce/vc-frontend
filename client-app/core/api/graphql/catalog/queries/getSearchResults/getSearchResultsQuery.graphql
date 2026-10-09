@@ -5,9 +5,11 @@ query GetSearchResults(
   $cultureName: String
   $query: String!
   $filter: String
+  $categoriesFilter: String
   $withProducts: Boolean!
   $withCategories: Boolean!
   $withPages: Boolean!
+  $withVirtoPages: Boolean!
   $withSuggestions: Boolean!
   $productsAfter: String
   $productsFirst: Int
@@ -36,13 +38,22 @@ query GetSearchResults(
     }
   }
 
+  pageDocuments(storeId: $storeId, keyword: $query, cultureName: $cultureName, first: $pagesFirst, after: $pagesAfter)
+    @include(if: $withVirtoPages) {
+    totalCount
+    items {
+      title
+      permalink
+    }
+  }
+
   categories(
     storeId: $storeId
     userId: $userId
     currencyCode: $currencyCode
     cultureName: $cultureName
     query: $query
-    filter: $filter
+    filter: $categoriesFilter
     after: $categoriesAfter
     first: $categoriesFirst
     sort: $categoriesSort
@@ -116,6 +127,11 @@ query GetSearchResults(
           amount
           formattedAmount
         }
+      }
+      breadcrumbs {
+        itemId
+        title
+        typeName
       }
     }
   }

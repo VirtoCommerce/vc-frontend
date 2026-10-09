@@ -1,10 +1,20 @@
 <template>
-  <component :is="componentTag" v-bind="$attrs" ref="currentElement" class="vc-menu-item">
+  <component
+    :is="componentTag"
+    :id="componentId"
+    v-bind="$attrs"
+    ref="currentElement"
+    class="vc-menu-item"
+    :role="wrapperRole"
+  >
     <component
       :is="innerTag"
+      :id="optionId"
       v-bind="attrs"
       :disabled="disabled"
       :title="title"
+      :role="role"
+      :aria-selected="computedAriaSelected"
       :class="[
         'vc-menu-item__inner',
         `vc-menu-item__inner--size--${size}`,
@@ -14,6 +24,7 @@
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
+          'vc-menu-item__inner--max-lines': maxLines,
         },
       ]"
       @click="enabled ? $emit('click', $event) : null"
@@ -34,8 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, provide, onMounted } from "vue";
+import { getLinkAttr } from "@/core/utilities/common";
+import { useComponentId } from "@/ui-kit/composables";
+import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -45,7 +58,7 @@ interface IEmits {
 interface IProps {
   color?: VcMenuItemColorType;
   size?: "xs" | "sm" | "md" | "lg";
-  to?: RouteLocationRaw | null;
+  to?: RouteLocationRaw;
   externalLink?: string;
   target?: "_self" | "_blank";
   title?: string;
@@ -53,8 +66,12 @@ interface IProps {
   disabled?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  maxLines?: number | string;
   tag?: string;
   clickable?: boolean;
+  role?: string;
+  ariaSelected?: boolean;
+  optionId?: string;
 }
 
 defineOptions({
@@ -71,9 +88,12 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const currentElement = ref<HTMLElement>();
 const parentTag = ref("");
-const enabled = eagerComputed<boolean>(() => !props.disabled);
-const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+const enabled = computed<boolean>(() => !props.disabled);
+const isRouterLink = computed<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = computed<boolean>(
+  () => ("externalLink" in getLinkAttr(props.to) || !!props.externalLink) && enabled.value,
+);
+const componentId = useComponentId("menu-item");
 
 const componentTag = computed(() => {
   if (props.tag) {
@@ -88,12 +108,12 @@ const componentTag = computed(() => {
 });
 
 const innerTag = computed(() => {
-  if (isRouterLink.value) {
-    return "router-link";
-  }
-
   if (isExternalLink.value) {
     return "a";
+  }
+
+  if (isRouterLink.value) {
+    return "router-link";
   }
 
   if (props.clickable) {
@@ -102,6 +122,11 @@ const innerTag = computed(() => {
 
   return "span";
 });
+
+const isInteractive = computed(
+  () => innerTag.value === "button" || innerTag.value === "a" || innerTag.value === "router-link",
+);
+provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
@@ -119,27 +144,63 @@ const attrs = computed(() => {
   return {};
 });
 
+/**
+ * Roles that support the `aria-selected` attribute per WAI-ARIA spec.
+ */
+const ARIA_SELECTED_ROLES = new Set(["option", "tab", "gridcell", "row", "treeitem", "columnheader", "rowheader"]);
+
+/**
+ * Only render `aria-selected` when the inner element has a role that supports it.
+ * Plain buttons (implicit role="button") must not have `aria-selected`.
+ */
+const computedAriaSelected = computed(() => {
+  if (props.role && ARIA_SELECTED_ROLES.has(props.role)) {
+    return props.ariaSelected;
+  }
+  return undefined;
+});
+
+/**
+ * The outer wrapper role:
+ * - When the inner element carries its own ARIA role (e.g. "option" inside a listbox),
+ *   the wrapper is purely presentational → role="none".
+ * - Otherwise, omit the role so that <li> keeps its natural "listitem" semantics
+ *   inside a <ul>, satisfying the "list" a11y rule.
+ */
+const wrapperRole = computed(() => {
+  if (props.role) {
+    return "none";
+  }
+  return undefined;
+});
+
 onMounted(() => {
   parentTag.value = currentElement.value?.parentElement?.tagName.toLowerCase() ?? "";
 });
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-menu-item {
+  --props-max-lines: v-bind(maxLines);
+  --max-lines: var(--props-max-lines, 2);
+
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
   $truncate: "";
+  $maxLines: "";
 
   @apply list-none select-none;
 
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
+    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
 
     &:not(:disabled) {
-      @apply bg-additional-50 text-neutral-950;
+      @apply text-neutral-950;
     }
 
     &--active {
@@ -156,44 +217,42 @@ onMounted(() => {
       @apply whitespace-nowrap #{!important};
     }
 
+    &--max-lines {
+      $maxLines: &;
+    }
+
     &--size {
       &--xs {
-        --content-height: 0.875rem;
+        --content-height: 1rem;
 
-        @apply gap-1.5 py-1.5;
+        @apply gap-1.5 py-1 text-xs/[0.875rem];
       }
 
       &--sm {
         --content-height: 1rem;
 
-        @apply gap-1.5 py-2.5;
+        @apply gap-1.5 py-2.5 text-sm/[0.875rem];
       }
 
       &--md {
         --content-height: 1.25rem;
 
-        @apply gap-1.5 py-2.5;
+        @apply gap-1.5 py-2.5 text-sm/[0.875rem];
       }
 
       &--lg {
         --content-height: 2rem;
 
-        @apply gap-2 py-2;
+        @apply gap-2 py-2 text-sm/[0.875rem];
       }
     }
 
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
-        --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
 
         &:hover {
-          @apply bg-[--color-#{$color}-50] outline-none;
-        }
-
-        &:focus,
-        &:focus-visible {
-          @apply outline-[--focus-color] -outline-offset-1;
+          @apply bg-[--color-#{$color}-50];
         }
 
         &#{$active} {
@@ -202,11 +261,19 @@ onMounted(() => {
       }
     }
 
+    // Menu lists render inside a VcScrollbar with zero clearance (measured in the
+    // language dropdown), so an outset ring is clipped: invert the shared offset.
+    &:focus-visible {
+      @apply rounded-[inherit];
+
+      @include focus-ring($inset: true);
+    }
+
     &:disabled,
     &--disabled {
       --vc-icon-color: var(--color-neutral-400);
 
-      @apply bg-additional-50 text-neutral-400 cursor-not-allowed;
+      @apply text-neutral-400 cursor-not-allowed;
     }
   }
 
@@ -223,6 +290,10 @@ onMounted(() => {
 
     #{$truncate} & > * {
       @apply min-w-0 truncate;
+    }
+
+    #{$maxLines} & {
+      @apply line-clamp-[var(--max-lines)];
     }
   }
 

@@ -1,48 +1,36 @@
 import { onError } from "@apollo/client/link/error";
-import { useAppInsights } from "vue3-application-insights";
-import { errorHandler } from "@/core/api/common";
+import { errorHandler as serverErrorHandler } from "@/core/api/common";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import { hasErrorCode, toServerError } from "@/core/api/graphql/utils";
-import { Logger } from "@/core/utilities";
+import { serializeError } from "@/core/utilities";
 import { TabsType, userLockedEvent, passwordExpiredEvent, useBroadcast, graphqlErrorEvent } from "@/shared/broadcast";
+import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
 
-export const errorHandlerLink = onError(({ networkError, graphQLErrors, operation }) => {
+export const errorHandlerLink = onError(({ operation, networkError, graphQLErrors }) => {
   const broadcast = useBroadcast();
-  const appInsights = useAppInsights();
-
-  errorHandler(toServerError(networkError, graphQLErrors));
-
-  if (networkError instanceof Error && networkError.name === "AbortError" && networkError.message.includes("timeout")) {
-    const errorDetails = {
-      name: "RequestTimeout",
-      message: networkError.message,
-      operation: operation.operationName,
-      variables: operation.variables,
-      timestamp: new Date().toISOString(),
-    };
-
-    Logger.error("Request timeout:", errorDetails);
-
-    if (appInsights) {
-      appInsights.trackException({
-        error: networkError,
-        properties: {
-          operationName: operation.operationName,
-          variables: JSON.stringify(operation.variables),
-          type: "RequestTimeout",
-        },
-      });
-    }
-  }
 
   const userLockedError = hasErrorCode(graphQLErrors, GraphQLErrorCode.UserLocked);
   const passwordExpired = hasErrorCode(graphQLErrors, GraphQLErrorCode.PasswordExpired);
+  // See SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT: only the generic toasts are opt-out, the auth outcomes below are not.
+  const { suppressErrorNotifications } = operation.getContext() as ErrorNotificationsContextType;
 
-  if (userLockedError) {
+  // Both inputs that only ever mean `Unhandled` are dropped for an opted-out operation — a network error, and
+  // the `""`-coded errors `toServerError` resolves ahead of the auth codes — so an auth code still gets through.
+  const serverError = suppressErrorNotifications
+    ? toServerError(
+        undefined,
+        graphQLErrors?.filter(({ extensions }) => extensions?.code !== GraphQLErrorCode.Unhandled),
+      )
+    : toServerError(networkError, graphQLErrors);
+
+  if (serverError !== undefined) {
+    const errorData = networkError ? serializeError(networkError) : graphQLErrors;
+    serverErrorHandler(serverError, JSON.stringify(errorData));
+  } else if (userLockedError) {
     void broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
   } else if (passwordExpired) {
     void broadcast.emit(passwordExpiredEvent, undefined, TabsType.CURRENT);
-  } else if (graphQLErrors?.length) {
+  } else if (graphQLErrors?.length && !suppressErrorNotifications) {
     graphQLErrors.forEach((error) => {
       void broadcast.emit(graphqlErrorEvent, error, TabsType.ALL);
     });

@@ -1,11 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["client-app/**/*", "client-app/**/*.vue", "config/*.json", "locales/*.json", "package.json"],
+  "include": ["client-app/**/*", "config/*.json", "locales/*.json", "package.json", "backend-packages.json"],
   "exclude": [
     "artifacts",
     "assets",
     "content",
+    // Published artifact, not host source. Its GlobalComponents augmentation would make host
+    // templates resolve ui-kit props through the contract's rolled-up copies of those types.
+    "client-app/core-api/contract",
+    // Same reason: both import the contract as `@vc-frontend/core`, which pulls it back in.
+    "client-app/core-api/manifest.d.mts",
+    "client-app/core-api/contract-checks",
     "client-app/**/__tests__/*",
     "client-app/**/*.(test|spec).*",
     "storybook-static"
@@ -13,11 +19,13 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
-    "resolvePackageJsonExports": false,
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["./client-app/*"]
-    },
-    "types": ["@types/gtag.js"]
+    }
   }
 }

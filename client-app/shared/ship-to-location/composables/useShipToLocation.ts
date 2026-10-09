@@ -1,19 +1,18 @@
 import { useLocalStorage } from "@vueuse/core";
-import isEqual from "lodash/isEqual";
-import omit from "lodash/omit";
+import { isEqual, omit } from "lodash-es";
 import { computed, ref } from "vue";
 import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
 import { Logger, stringifyAddress } from "@/core/utilities";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, useShortCart } from "@/shared/cart";
-import { SelectAddressModal } from "@/shared/checkout";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddOrUpdateCompanyAddressModal, useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
+import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 export const MAX_ADDRESSES_NUMBER = 6;
 export const USER_TYPE = {
@@ -58,12 +57,7 @@ export function useShipToLocation() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(organization.value?.id ?? "");
 
-  const {
-    updateShipment: updateShipmentCart,
-    availableShippingMethods,
-    shipment: currentShipment,
-    forceFetch: forceFetchCart,
-  } = useFullCart();
+  const { updateShipment: updateShipmentCart, shipment: currentShipment, forceFetch: forceFetchCart } = useFullCart();
   const { cart: shortCart } = useShortCart();
   const cartShipmentId = computed(() => shortCart.value?.shipments[0]?.id);
 
@@ -224,21 +218,7 @@ export function useShipToLocation() {
         id: cartShipmentId.value,
         deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
       });
-      return;
     }
-
-    const firstNotBopisShippingMethod = availableShippingMethods.value.find((method) => method.code !== BOPIS_CODE);
-    if (!firstNotBopisShippingMethod) {
-      return;
-    }
-
-    await updateShipmentCart({
-      id: cartShipmentId.value,
-      deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
-      shipmentMethodCode: firstNotBopisShippingMethod?.code,
-      shipmentMethodOption: firstNotBopisShippingMethod?.optionName,
-      price: firstNotBopisShippingMethod?.price?.amount,
-    });
   }
 
   function openSelectAddressModal() {

@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import path from "path";
 import { mergeConfig, defineConfig, configDefaults } from "vitest/config";
-import viteConfig from "./vite.config";
+import viteConfig from "./vite.config.js";
 
 export default defineConfig((env) =>
   mergeConfig(
@@ -9,8 +9,14 @@ export default defineConfig((env) =>
     defineConfig({
       test: {
         environment: "jsdom",
-        exclude: [...configDefaults.exclude, "client-app/e2e/*"],
+        exclude: [...configDefaults.exclude, "client-app/e2e/*", "**/.claude/**"],
         root: fileURLToPath(new URL("./", import.meta.url)),
+        // Without an explicit tsconfig, vitest spawns `tsc --noEmit` from the repo root with no
+        // `-p`, so it inherits the root tsconfig — `{"files": []}` with project references, which
+        // --noEmit does not follow. Zero files were checked and every .test-d.ts reported green
+        // regardless of content. The Build step's `vue-tsc --build` caught them; the step named
+        // after typing did not.
+        typecheck: { tsconfig: "./tsconfig.typecheck.json" },
         coverage: {
           provider: "v8",
           reporter: ["text", "json", "html"],
@@ -26,6 +32,8 @@ export default defineConfig((env) =>
           include: ["client-app/**/*.ts", "client-app/**/*.vue"],
         },
       },
+      // Specs flip the switch through settings_data.json; the constant only strips a switch-off bundle.
+      define: { __MF_HOST__: "true" },
       resolve: {
         alias: {
           "@": path.resolve(__dirname, "client-app"),

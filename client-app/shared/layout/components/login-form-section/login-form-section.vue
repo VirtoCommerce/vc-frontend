@@ -1,50 +1,95 @@
 <template>
-  <div class="banner flex items-center" :style="{ backgroundImage: `url(${bgImage})` }">
+  <section class="banner flex items-center" :style="{ backgroundImage: `url(${bgImage})` }">
     <div class="container mx-auto flex flex-col items-center space-y-10 p-6 md:p-12 lg:flex-row lg:space-x-24">
       <div v-if="!isAuthenticated" class="w-full rounded bg-additional-50 p-6 shadow-lg md:p-10 lg:w-2/5">
-        <VcTypography tag="h1" class="mb-8">
-          {{ $t("pages.home.sign_in_form_title") }}
+        <VcTypography tag="h2" variant="h1" class="mb-8">
+          {{ sectionTitle }}
         </VcTypography>
 
-        <SignInForm grow-buttons />
+        <OtpEmailSignInForm
+          v-if="showOtpEmailForm"
+          :has-password-authentication="hasPasswordAuthentication"
+          @switch-to-password="switchToPassword"
+          @step-changed="otpStep = $event"
+        />
+
+        <template v-else>
+          <SignInForm grow-buttons />
+
+          <button
+            v-if="hasOtpEmailAuthentication"
+            type="button"
+            class="mt-4 block text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
+            data-test-id="otp-email-switch-to-otp-link"
+            @click="switchToOtp"
+          >
+            {{ $t("shared.sign_in.otp_email_sign_in_form.switch_to_otp_link") }}
+          </button>
+        </template>
       </div>
-      <div
-        class="w-full select-none text-center text-3xl font-bold text-additional-50 drop-shadow-lg md:text-5xl lg:w-3/5 lg:text-left"
-      >
-        <div v-html-safe="$t('pages.home.main_banner_block.message')" class="mb-8 uppercase leading-tight"></div>
+
+      <div class="w-full select-none text-center font-bold text-additional-50 drop-shadow-lg lg:w-3/5 lg:text-left">
+        <i18n-t
+          keypath="pages.home.main_banner_block.message"
+          tag="h1"
+          class="mb-8 text-3xl uppercase leading-tight md:text-5xl"
+        >
+          <template #br><br /></template>
+        </i18n-t>
+
         <div
           class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-x-7 md:space-y-0 md:text-2xl lg:justify-start"
         >
           <div>
             {{ $t("pages.home.main_banner_block.key_feature_1") }}
           </div>
-          <div class="size-2.5 rounded-full bg-primary" />
+
+          <span class="size-2 shrink-0 rounded-full bg-primary" />
+
           <div>
             {{ $t("pages.home.main_banner_block.key_feature_2") }}
           </div>
-          <div class="size-2.5 rounded-full bg-primary" />
+
+          <span class="size-2 shrink-0 rounded-full bg-primary" />
+
           <div>
             {{ $t("pages.home.main_banner_block.key_feature_3") }}
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useThemeContext } from "@/core/composables";
 import { SignInForm, useUser } from "@/shared/account";
+import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
+import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
+import { OtpStep } from "@/shared/sign-in/enums";
 import { getImageUrl } from "@/ui-kit/utilities";
+import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 
+const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
+const { hasPasswordAuthentication } = useIdentityProviders();
+const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
+const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
 
 const bgImage = computed(() =>
   themeContext.value.settings.homepage_background_image
     ? getImageUrl(themeContext.value.settings.homepage_background_image)
     : "none",
+);
+
+const sectionTitle = computed(() =>
+  showOtpEmailForm.value && otpStep.value === OtpStep.Verify
+    ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
+    : t("pages.home.sign_in_form_title"),
 );
 </script>
 

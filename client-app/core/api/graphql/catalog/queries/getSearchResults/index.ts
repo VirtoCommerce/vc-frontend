@@ -1,14 +1,18 @@
+import { ApolloError } from "@apollo/client/core";
+import { AbortReason } from "@/core/api/common/enums";
+import { graphqlClient } from "@/core/api/graphql/client";
+import { GetSearchResultsDocument } from "@/core/api/graphql/types";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { MODULE_ID_VIRTOPAGES, VIRTOPAGES_ENABLED_KEY } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import searchQueryDocument from "./getSearchResultsQuery.graphql";
-import type { GetSearchResultsQueryVariables, Query } from "@/core/api/graphql/types";
-
-export type SearchResultsType = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
+import { Logger } from "@/core/utilities/logger";
+import type { GetSearchResultsQueryVariables } from "@/core/api/graphql/types";
 
 export type GetSearchResultsParamsType = {
   keyword: string;
   filter?: string;
+  categoriesFilter?: string;
 
   productSuggestions?: {
     suggestionsSize?: number;
@@ -38,17 +42,23 @@ export type GetSearchResultsParamsType = {
 
 let abortController: AbortController | undefined;
 
-export async function getSearchResults(params: GetSearchResultsParamsType): Promise<SearchResultsType> {
+const { isEnabled: virtoPagesEnabled } = useModuleSettings(MODULE_ID_VIRTOPAGES);
+
+export async function getSearchResults(params: GetSearchResultsParamsType) {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
+  const isVirtoPagesEnabled = virtoPagesEnabled(VIRTOPAGES_ENABLED_KEY);
+
   const withSuggestions = !!params.productSuggestions;
-  const withPages = !!params.pages;
+  const withPages = !!params.pages && !isVirtoPagesEnabled;
+  const withVirtoPages = !!params.pages && isVirtoPagesEnabled;
   const withCategories = !!params.categories;
   const withProducts = !!params.products;
 
   const {
     keyword,
     filter,
+    categoriesFilter,
 
     productSuggestions: { suggestionsSize: productSuggestionsSize = DEFAULT_PAGE_SIZE } = {},
 
@@ -79,6 +89,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
     withProducts,
     withCategories,
     withPages,
+    withVirtoPages,
     withSuggestions,
     query: keyword,
     filter,
@@ -90,7 +101,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
     });
   }
 
-  if (withPages) {
+  if (withPages || withVirtoPages) {
     Object.assign(variables, <GetSearchResultsQueryVariables>{
       pagesFirst: staticContentItemsPerPage,
       pagesAfter: String((staticContentPage - 1) * staticContentItemsPerPage),
@@ -99,6 +110,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
 
   if (withCategories) {
     Object.assign(variables, <GetSearchResultsQueryVariables>{
+      categoriesFilter,
       categoriesSort,
       categoriesFuzzy,
       categoriesFuzzyLevel,
@@ -118,27 +130,32 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
   }
 
   if (abortController) {
-    abortController.abort();
+    abortController.abort(AbortReason.Explicit);
   }
 
   abortController = new AbortController();
   const { signal } = abortController;
 
-  const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
-    query: searchQueryDocument,
-    variables,
-    context: {
-      fetchOptions: { signal },
-    },
-  });
+  try {
+    const { data } = await graphqlClient.query({
+      query: GetSearchResultsDocument,
+      variables,
+      context: {
+        fetchOptions: { signal },
+      },
+    });
 
-  return Object.assign(
-    {
-      productSuggestions: {},
-      pages: {},
-      categories: {},
-      products: {},
-    },
-    data,
-  );
+    return {
+      productSuggestions: data.productSuggestions ?? {},
+      pages: data.pages ?? data.pageDocuments ?? {},
+      categories: data.categories ?? {},
+      products: data.products ?? {},
+    };
+  } catch (e) {
+    if (e instanceof ApolloError && e.networkError?.toString() === (AbortReason.Explicit as string)) {
+      return;
+    }
+    Logger.error(`${getSearchResults.name}`, e);
+    throw e;
+  }
 }

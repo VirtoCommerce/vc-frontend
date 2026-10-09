@@ -1,0 +1,705 @@
+<template>
+  <div>
+    <template v-if="skyflowCards?.length">
+      <VcSelect
+        :model-value="selectedSkyflowCard"
+        :label="$t('common.labels.saved_cards')"
+        :items="creditCards"
+        size="auto"
+        item-size="lg"
+        class="mb-4 lg:w-2/5"
+        @change="(value) => selectSkyflowCard(value)"
+      >
+        <template #placeholder>
+          <div class="flex items-center gap-3 p-3 text-sm">
+            <VcIcon class="text-neutral" name="credit-card" size="xl" />
+
+            {{ $t("common.placeholders.select_credit_card") }}
+          </div>
+        </template>
+
+        <template #selected="{ item }">
+          <div class="flex items-center gap-3 p-3 text-sm">
+            <VcIcon v-if="item.skyflowId.length" class="text-neutral" name="credit-card" size="xl" />
+
+            <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+
+            {{ item.cardNumber }}
+
+            <template v-if="item.cardExpiration">({{ item.cardExpiration }})</template>
+          </div>
+        </template>
+
+        <template #item="{ item }">
+          <VcIcon v-if="item.skyflowId.length" class="text-neutral" name="credit-card" size="xl" />
+
+          <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+
+          {{ item.cardNumber }}
+
+          <template v-if="item.cardExpiration">({{ item.cardExpiration }})</template>
+        </template>
+      </VcSelect>
+    </template>
+
+    <VcLoaderWithText v-if="skyflowFormLoading" />
+
+    <div ref="skyflowContainer" class="-mx-1 w-full max-w-2xl bg-additional-50"></div>
+
+    <div v-if="(addNewCardSelected || !skyflowCards?.length) && newCardFormInitialized">
+      <div class="mt-6 flex">
+        <VcCheckbox v-model="saveCreditCard">
+          {{ $t("common.labels.save_card_for_future_payments") }}
+        </VcCheckbox>
+      </div>
+
+      <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+        <PaymentPolicies />
+
+        <VcButton
+          v-if="!hidePaymentButton"
+          data-test-id="pay-now-button"
+          :disabled="disabled || hasInvalid"
+          :loading="loading"
+          class="flex-1 md:order-first md:flex-none"
+          @click="() => payWithNewCreditCard()"
+        >
+          {{ $t("shared.payment.bank_card_form.pay_now_button") }}
+        </VcButton>
+      </div>
+    </div>
+
+    <div v-else-if="selectedSkyflowCard && skyflowCards?.length && !addNewCardSelected">
+      <div class="mt-6 flex justify-center md:justify-start">
+        <VcButton
+          v-if="!hidePaymentButton"
+          :disabled="disabled || isSavedCardPayBtnDisabled"
+          :loading="loading"
+          class="shrink"
+          @click="() => payWithSavedCreditCard()"
+        >
+          {{ $t("shared.payment.bank_card_form.pay_now_button") }}
+        </VcButton>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import Skyflow from "skyflow-js";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { authorizePayment, initializeCartPayment, initializePayment } from "@/core/api/graphql";
+import { useAnalytics, useThemeContext } from "@/core/composables";
+import { IS_DEVELOPMENT } from "@/core/constants";
+import { Logger, replaceXFromBeginning } from "@/core/utilities";
+import { useUser } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
+import { usePayment } from "@/shared/payment";
+import { useSkyflowCards, useSkyflowStyles } from "../composables";
+import { getCardSchemeFromNumber, getCvvValidation } from "../utils/skyflow-cvv-validation";
+import type {
+  AuthorizePaymentResultType,
+  CustomerOrderType,
+  InitializeCartPaymentResultType,
+  InitializePaymentResultType,
+  InputKeyValueType,
+  KeyValueType,
+} from "@/core/api/graphql/types";
+import type { IPaymentMethodEmits, IPaymentMethodParameters } from "@/shared/payment/components/types";
+import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
+import type ComposableElement from "skyflow-js/types/core/external/collect/compose-collect-element";
+import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
+import PaymentPolicies from "@/shared/payment/components/payment-policies.vue";
+
+const emit = defineEmits<IPaymentMethodEmits>();
+
+const props = defineProps<IPaymentMethodParameters>();
+
+type FieldsType = { [key: string]: string };
+
+// Builds the brand-conditional CVV REGEX_MATCH_RULE for the Skyflow element from the detected
+// (or saved) card scheme. Amex requires 4 digits, every other brand 3 (VCST-5202).
+function buildCvvValidations(cardScheme?: string | null) {
+  return [
+    {
+      type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
+      params: {
+        regex: getCvvValidation(cardScheme).regex,
+        error: t("shared.payment.bank_card_form.errors.security_code"),
+      },
+    },
+  ];
+}
+
+const { t } = useI18n();
+const { user, isAuthenticated } = useUser();
+const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
+const { analytics } = useAnalytics();
+const { themeContext } = useThemeContext();
+const {
+  containerStyles,
+  containerErrorTextStyles,
+  newCardCollectStyles,
+  newCardCvvCollectStyles,
+  cvvOnlyCollectStyles,
+} = useSkyflowStyles();
+const notifications = useNotifications();
+const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
+
+const loading = ref(false);
+const skyflowContainer = ref<HTMLElement | string>("");
+const saveCreditCard = ref(false);
+const selectedSkyflowCard = ref<{
+  cardNumber: string;
+  cardExpiration?: string;
+  skyflowId: string;
+  cardScheme?: string | null;
+  cardType?: string | null;
+}>();
+
+const creditCards = computed(() => {
+  const cards =
+    skyflowCards.value
+      ?.map((el) => {
+        return {
+          ...el,
+          cardNumber: replaceXFromBeginning(el.cardNumber),
+        };
+      })
+      .filter((el) => el.active) || [];
+
+  return cards.concat([
+    {
+      cardNumber: t("common.labels.add_new_card"),
+      skyflowId: "",
+      active: false,
+    },
+  ]);
+});
+const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
+
+const skyflowFormLoading = computed(() => {
+  if (!skyflowCards.value?.length) {
+    return !newCardFormInitialized.value;
+  }
+  if (addNewCardSelected.value) {
+    return !newCardFormInitialized.value;
+  }
+  if (selectedSkyflowCard.value && isSavedCardCvvRequired.value) {
+    return !cvvCollectorStatus.value.ready;
+  }
+  return false;
+});
+
+function selectSkyflowCard(skyflowCard: {
+  cardNumber: string;
+  cardExpiration?: string;
+  skyflowId: string;
+  cardScheme?: string | null;
+  cardType?: string | null;
+}): void {
+  selectedSkyflowCard.value = skyflowCard;
+  if (isNewCard(skyflowCard)) {
+    void initNewCardForm();
+  } else {
+    void initCvvForm();
+  }
+}
+
+let skyflowClient: Skyflow,
+  skyflowTableName: string,
+  fullCardCollector: ComposableContainer,
+  cvvCollector: ComposableContainer | null,
+  cvvElement: ComposableElement | null;
+
+// Guards against late async init completing after the component was torn down
+// (e.g. the shopper switched payment method while the vault was still initializing).
+let isActive = true;
+
+// Bumped on every CVV-form teardown. A fire-and-forget initCvvForm run captures the token
+// before its async init and bails if a newer selection superseded it, so a slow init for an
+// earlier card can't mount a duplicate collector or bind the CVV field to the wrong record.
+let cvvInitToken = 0;
+
+// Last CVV regex applied to the new-card CVV element, so the brand-driven update only fires
+// when the detected scheme actually changes the rule (not on every card-number keystroke).
+let currentNewCardCvvRegex = getCvvValidation().regex;
+
+// NEW CARD START
+type ElementType =
+  | typeof Skyflow.ElementType.CARD_NUMBER
+  | typeof Skyflow.ElementType.CARDHOLDER_NAME
+  | typeof Skyflow.ElementType.EXPIRATION_DATE
+  | typeof Skyflow.ElementType.INPUT_FIELD;
+
+const newCardFormElementsStatus = ref<{
+  [key in ElementType]: {
+    valid: boolean;
+    ready: boolean;
+  };
+}>({
+  [Skyflow.ElementType.CARD_NUMBER]: { valid: false, ready: false },
+  [Skyflow.ElementType.CARDHOLDER_NAME]: { valid: false, ready: false },
+  [Skyflow.ElementType.EXPIRATION_DATE]: { valid: false, ready: false },
+  [Skyflow.ElementType.INPUT_FIELD]: { valid: false, ready: false },
+});
+
+function updateValidationStatus({ elementType, isValid }: { elementType: ElementType; isValid: boolean }) {
+  newCardFormElementsStatus.value[elementType].valid = isValid;
+}
+function setReadyState({ elementType }: { elementType: ElementType }) {
+  newCardFormElementsStatus.value[elementType].ready = true;
+}
+
+const hasInvalid = computed(() => {
+  return Object.values(newCardFormElementsStatus.value).some((el) => !el.valid);
+});
+
+const newCardFormInitialized = computed(() => {
+  return Object.values(newCardFormElementsStatus.value).every((el) => el.ready);
+});
+
+async function initNewCardForm(): Promise<void> {
+  clearCvv();
+
+  if (newCardFormInitialized.value) {
+    fullCardCollector.mount(skyflowContainer.value);
+    return;
+  }
+
+  await initPayment();
+
+  const containerOptions = {
+    layout: [1, 1, 2],
+    styles: { base: containerStyles },
+    errorTextStyles: containerErrorTextStyles,
+  };
+
+  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
+
+  container.on(Skyflow.EventName.SUBMIT, () => {
+    if (!props.hidePaymentButton && !hasInvalid.value) {
+      void payWithNewCreditCard();
+    }
+  });
+
+  const cardName = container.create(
+    {
+      table: skyflowTableName,
+      column: "card_number",
+      ...newCardCollectStyles,
+      placeholder: "1111 1111 1111 1111",
+      label: t("shared.payment.bank_card_form.number_label"),
+      type: Skyflow.ElementType.CARD_NUMBER,
+    },
+    {
+      enableCardIcon: true,
+      required: true,
+    },
+  );
+
+  const cardholderName = container.create(
+    {
+      table: skyflowTableName,
+      column: "cardholder_name",
+      ...newCardCollectStyles,
+      label: t("shared.payment.bank_card_form.cardholder_name_label"),
+      type: Skyflow.ElementType.CARDHOLDER_NAME,
+    },
+    {
+      required: true,
+    },
+  );
+
+  const cardExpiration = container.create(
+    {
+      table: skyflowTableName,
+      column: "card_expiration",
+      ...newCardCollectStyles,
+      placeholder: t("shared.payment.bank_card_form.expiration_date_placeholder"),
+      label: t("shared.payment.bank_card_form.expiration_date_label"),
+      type: Skyflow.ElementType.EXPIRATION_DATE,
+    },
+    {
+      required: true,
+    },
+  );
+
+  const { placeholder: cvvPlaceholder } = getCvvValidation();
+  const CVV = container.create(
+    {
+      table: skyflowTableName,
+      column: "cvv",
+      ...newCardCvvCollectStyles,
+      placeholder: cvvPlaceholder,
+      label: t("shared.payment.bank_card_form.security_code_label"),
+      type: Skyflow.ElementType.INPUT_FIELD,
+      validations: buildCvvValidations(),
+    },
+    {
+      required: true,
+      masking: true,
+      format: "XXXX",
+    },
+  );
+
+  // Re-derive the CVV rule + placeholder from the brand Skyflow detects on the card number,
+  // updating the mounted CVV element in place so an Amex card requires a 4-digit CVV (VCST-5202).
+  // `selectedCardScheme` is only populated on an explicit card-brand-choice selection (co-badged
+  // cards), so for an auto-detected single-scheme card such as Amex it is empty — fall back to the
+  // IIN prefix of the card number `value` (the SDK keeps the leading digits unmasked, even in PROD).
+  cardName.on(
+    Skyflow.EventName.CHANGE,
+    ({ selectedCardScheme, value }: { selectedCardScheme?: string; value?: string }) => {
+      const cardScheme = selectedCardScheme || getCardSchemeFromNumber(value);
+      const { regex, placeholder } = getCvvValidation(cardScheme);
+      if (regex === currentNewCardCvvRegex) {
+        return;
+      }
+      currentNewCardCvvRegex = regex;
+      // The required CVV length just changed (e.g. a late Amex number after a 3-digit CVV was
+      // already typed). `update({ validations })` swaps the rule but does NOT re-emit a CHANGE for
+      // the value already in the field, so the CVV element keeps its stale `isValid` from the old
+      // rule — which would leave Place order enabled with a now-wrong-length CVV. Drop the tracked
+      // CVV validity now; it is restored only when the element emits a fresh valid CHANGE under the
+      // new rule (VCST-5202).
+      updateValidationStatus({ elementType: Skyflow.ElementType.INPUT_FIELD, isValid: false });
+      CVV.update({ validations: buildCvvValidations(cardScheme), placeholder });
+    },
+  );
+
+  [cardName, cardholderName, cardExpiration, CVV].forEach((el) => {
+    el.on(Skyflow.EventName.CHANGE, updateValidationStatus);
+    el.on(Skyflow.EventName.READY, setReadyState);
+  });
+
+  container.mount(skyflowContainer.value);
+
+  fullCardCollector = container;
+}
+
+function isNewCard(card: { skyflowId: string }) {
+  return !card.skyflowId;
+}
+// NEW CARD END
+
+// CVV only START
+const isSavedCardCvvRequired = computed(() => {
+  return themeContext.value.settings.isCVVinSkyflowRequired;
+});
+
+const isSavedCardPayBtnDisabled = computed(() => {
+  return !selectedSkyflowCard.value || (isSavedCardCvvRequired.value && !cvvCollectorStatus.value.valid);
+});
+
+const cvvCollectorStatus = ref({ valid: false, ready: false });
+
+async function initCvvForm() {
+  fullCardCollector?.unmount();
+
+  if (!isSavedCardCvvRequired.value) {
+    return;
+  }
+
+  clearCvv();
+  const token = cvvInitToken;
+  await initPayment();
+
+  // A newer card selection (or teardown) ran clearCvv while the vault was initializing.
+  if (!isActive || token !== cvvInitToken) {
+    return;
+  }
+
+  const containerOptions = {
+    layout: [1],
+    styles: { base: containerStyles },
+    errorTextStyles: containerErrorTextStyles,
+  };
+
+  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
+
+  // The saved card's brand is already known, so the per-brand CVV rule is derived once at
+  // creation (no card-number element to detect it from here) — Amex saved cards require 4
+  // digits, others 3 (VCST-5202).
+  const savedCardScheme = selectedSkyflowCard.value?.cardScheme ?? selectedSkyflowCard.value?.cardType;
+  const { placeholder: savedCvvPlaceholder } = getCvvValidation(savedCardScheme);
+
+  const CVV = container.create(
+    {
+      table: skyflowTableName,
+      column: "cvv",
+      // Bind the saved card's record id at element creation so collect() issues a PUT (update)
+      // on the existing record. Without skyflowID, collect() inserts a new bare-CVV record (POST).
+      skyflowID: selectedSkyflowCard.value?.skyflowId,
+      ...cvvOnlyCollectStyles,
+      placeholder: savedCvvPlaceholder,
+      label: t("shared.payment.bank_card_form.security_code_label"),
+      type: Skyflow.ElementType.INPUT_FIELD,
+      validations: buildCvvValidations(savedCardScheme),
+    },
+    {
+      required: true,
+      masking: true,
+      format: "XXXX",
+    },
+  );
+
+  CVV.on(Skyflow.EventName.CHANGE, ({ isValid }: { isValid: boolean }) => {
+    cvvCollectorStatus.value.valid = isValid;
+  });
+  container.mount(skyflowContainer.value);
+
+  cvvCollectorStatus.value.ready = true;
+
+  cvvCollector = container;
+  cvvElement = CVV;
+}
+
+function clearCvv() {
+  cvvInitToken++;
+  cvvCollector?.unmount();
+  cvvCollector = null;
+  cvvElement = null;
+  cvvCollectorStatus.value.valid = false;
+  cvvCollectorStatus.value.ready = false;
+}
+
+async function updateCvvInVault(): Promise<void> {
+  if (!cvvCollector || !cvvElement) {
+    return;
+  }
+
+  // The record id (skyflowID) is bound to the CVV element at creation in initCvvForm,
+  // so collect() updates the existing card record rather than inserting a new one.
+  await cvvCollector.collect();
+}
+// CVV only END
+
+// PAYMENT START
+async function initializeByCartOrOrder(): Promise<InitializePaymentResultType | InitializeCartPaymentResultType> {
+  if (props.cart && props.payment) {
+    return await initializeCartPayment({
+      cartId: props.cart.id,
+      paymentId: props.payment.id,
+    });
+  }
+
+  if (props.order) {
+    return await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
+  }
+
+  throw new Error("Skyflow payment requires either cart+payment or order context");
+}
+
+async function initPayment(): Promise<boolean> {
+  if (skyflowClient) {
+    return true;
+  }
+
+  try {
+    const { publicParameters, errorMessage } = await initializeByCartOrOrder();
+
+    if (errorMessage || !publicParameters) {
+      showError(t("shared.payment.bank_card_form.payment_unavailable"));
+      return false;
+    }
+
+    skyflowTableName = getParameter(publicParameters, "tableName");
+
+    skyflowClient = Skyflow.init({
+      vaultID: getParameter(publicParameters, "vaultID"),
+      vaultURL: getParameter(publicParameters, "vaultURL"),
+      getBearerToken: () => Promise.resolve(getParameter(publicParameters, "accessToken")),
+      options: {
+        env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
+      },
+    });
+
+    return true;
+  } catch {
+    showError(t("shared.payment.bank_card_form.payment_unavailable"));
+    return false;
+  }
+}
+
+function getAdditionalRecords(): IInsertRecordInput | undefined {
+  if (!isAuthenticated.value || !saveCreditCard.value) {
+    return;
+  }
+
+  return {
+    records: [
+      {
+        table: skyflowTableName,
+        fields: {
+          user_id: user.value.id,
+        },
+      },
+    ],
+  };
+}
+
+async function pay(
+  parameters: InputKeyValueType[],
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  const order = orderToPay ?? props.order;
+  if (!order) {
+    return null;
+  }
+
+  const result = await authorizePayment({
+    orderId: order.id,
+    paymentId: order.inPayments[0].id,
+    parameters,
+  });
+
+  if (result.isSuccess) {
+    if (!orderToPay) {
+      analytics("purchase", order);
+    }
+    emit("success");
+  } else {
+    emit("fail");
+  }
+
+  return result;
+}
+
+async function payWithNewCreditCard(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  loading.value = true;
+
+  try {
+    const res = (await fullCardCollector.collect({
+      additionalFields: getAdditionalRecords(),
+    })) as IInsertResponse;
+
+    if (!res?.records) {
+      emit("fail");
+      return null;
+    }
+
+    return await pay(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType), orderToPay);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function payWithSavedCreditCard(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  loading.value = true;
+
+  try {
+    if (!selectedSkyflowCard.value) {
+      return null;
+    }
+
+    if (isSavedCardCvvRequired.value) {
+      await updateCvvInVault();
+    }
+
+    return await pay(
+      [
+        {
+          key: "skyflow_id",
+          value: selectedSkyflowCard.value.skyflowId,
+        },
+      ],
+      orderToPay,
+    );
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function sendPaymentData(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  if (addNewCardSelected.value || !skyflowCards.value?.length) {
+    return await payWithNewCreditCard(orderToPay);
+  }
+
+  return await payWithSavedCreditCard(orderToPay);
+}
+// PAYMENT END
+
+function showError(message: string) {
+  notifications.error({
+    text: message,
+    duration: 10000,
+    single: true,
+  });
+}
+
+onMounted(async () => {
+  try {
+    await fetchSkyflowCards();
+  } catch (e) {
+    Logger.error(onMounted.name, e);
+  }
+
+  const initialized = await initPayment();
+
+  // Register the shared cart payment processor only after a successful init and only while the
+  // component is still mounted. Otherwise a failed init (the payment-unavailable toast is shown)
+  // or a method switch during async init could leave a processor that cart checkout would still
+  // run via finalizePayment after the order is created.
+  if (initialized && isActive) {
+    registerPaymentProcessor(sendPaymentData);
+  }
+
+  if (!skyflowCards.value?.length) {
+    void initNewCardForm();
+  }
+});
+
+onUnmounted(() => {
+  isActive = false;
+  registerPaymentProcessor(null);
+  setCardDataInvalid();
+});
+
+const isPaymentDataValid = computed(() => {
+  if (addNewCardSelected.value || !skyflowCards.value?.length) {
+    return newCardFormInitialized.value && !hasInvalid.value;
+  }
+
+  return !isSavedCardPayBtnDisabled.value;
+});
+
+watch(
+  isPaymentDataValid,
+  (isValid) => {
+    if (isValid) {
+      setCardDataValid();
+    } else {
+      setCardDataInvalid();
+    }
+  },
+  { immediate: true },
+);
+
+// utils
+function getParameter(data: KeyValueType[], key: string): string {
+  const param = data.find((el) => el.key === key);
+  if (!param?.value) {
+    throw new Error(`Missed parameter ${key}`);
+  }
+
+  return param.value;
+}
+
+function objectToKeyValue(object: { [key: string]: string }): KeyValueType[] {
+  return Object.keys(object).map((key) => ({
+    key,
+    value: object[key],
+  }));
+}
+</script>

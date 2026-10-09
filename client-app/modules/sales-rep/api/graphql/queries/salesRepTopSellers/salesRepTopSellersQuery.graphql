@@ -1,0 +1,37 @@
+query SalesRepTopSellers(
+  $organizationId: String
+  $storeId: String
+  $filter: String
+  $sort: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+  $take: Int
+  $currencyCode: String
+  $cultureName: String
+) {
+  salesRepTopSellers(
+    organizationId: $organizationId
+    storeId: $storeId
+    filter: $filter
+    sort: $sort
+    period: { from: $periodFrom, to: $periodTo }
+    take: $take
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+  ) {
+    rank
+    productId
+    name
+    sku
+    imageUrl
+    categoryId
+    units
+    revenue {
+      amount
+      formattedAmount
+      currency {
+        code
+      }
+    }
+  }
+}

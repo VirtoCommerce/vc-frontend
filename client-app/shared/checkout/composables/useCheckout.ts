@@ -1,20 +1,22 @@
-import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
-import { omit } from "lodash";
+import { createGlobalState, useDebounceFn } from "@vueuse/core";
+import { omit } from "lodash-es";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
-import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { useOrganizationAddresses } from "@/shared/company";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
+import { useCustomerAddresses, useUser } from "@/shared/account";
+import { useFullCart, getLoyaltyValidationMessages, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
+import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { PaymentMethodGroupType } from "@/shared/payment";
+import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
+import { createAddressFilterContext } from "./usePickupFilterContext";
 import type {
   CartAddressType,
   CustomerOrderType,
@@ -22,14 +24,16 @@ import type {
   InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
-  ShippingMethodType,
 } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { AnyAddressType, ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
+const ADDRESSES_PER_PAGE = 6;
+
 const useGlobalCheckout = createGlobalState(() => {
   const loading = ref(false);
+  const initialized = ref(false);
   const billingAddressEqualsShipping = ref(true);
   const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
@@ -50,28 +54,54 @@ const useGlobalCheckout = createGlobalState(() => {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    initialized,
     clearState,
   };
 });
 
-export function _useCheckout() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
+  const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
   const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
-  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
-    fetchAddresses: fetchPersonalAddresses,
+    loading: personalAddressesLoading,
+    totalCount: personalAddressesTotalCount,
+    page: personalAddressesPage,
+    keyword: personalAddressesKeyword,
+    filterCountryCodes: personalFilterCountryCodes,
+    filterRegionIds: personalFilterRegionIds,
+    filterCities: personalFilterCities,
+    termFacets: personalTermFacets,
+    sort: personalAddressesSort,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-  } = useUserAddresses();
+  } = useCustomerAddresses(
+    ADDRESSES_PER_PAGE,
+    computed(() => isAuthenticated.value && !isCorporateMember.value),
+  );
   const {
     addresses: organizationsAddresses,
-    fetchAddresses: fetchOrganizationAddresses,
+    loading: organizationAddressesLoading,
+    totalCount: organizationAddressesTotalCount,
+    page: organizationAddressesPage,
+    keyword: organizationAddressesKeyword,
+    filterCountryCodes: organizationFilterCountryCodes,
+    filterRegionIds: organizationFilterRegionIds,
+    filterCities: organizationFilterCities,
+    termFacets: organizationTermFacets,
+    sort: organizationAddressesSort,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-  } = useOrganizationAddresses(user.value.contact?.organizationId || "");
+  } = useCurrentOrganizationAddresses(
+    () => user.value.contact?.organizationId ?? "",
+    ADDRESSES_PER_PAGE,
+    computed(() => isAuthenticated.value && isCorporateMember.value),
+  );
+
   const {
     refetch: refetchCart,
     cart,
@@ -82,6 +112,8 @@ export function _useCheckout() {
     availableShippingMethods,
     availablePaymentMethods,
     hasValidationErrors,
+    loyaltyValidationErrors,
+    hasLoyaltyValidationErrors,
     allItemsAreDigital,
     updateShipment,
     removeShipment,
@@ -98,9 +130,18 @@ export function _useCheckout() {
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
     clearState: clearGlobalCheckoutState,
+    initialized,
   } = useGlobalCheckout();
+  const addressFilterContext = createAddressFilterContext({
+    loading: computed(() =>
+      isCorporateMember.value ? organizationAddressesLoading.value : personalAddressesLoading.value,
+    ),
+    termFacets: computed(() => (isCorporateMember.value ? organizationTermFacets.value : personalTermFacets.value)),
+  });
+
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
+  const { finalizePayment } = usePayment();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const isShippingMethodBopis = computed(() => shipment.value?.shipmentMethodCode === BOPIS_CODE);
@@ -122,6 +163,13 @@ export function _useCheckout() {
     availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
   );
 
+  // Cart payment (paying the card from the cart during order placement) is only supported in
+  // single-page checkout. Multistep checkout defers payment to the dedicated CheckoutPayment step
+  // after the order is placed, so the cart-payment processor and card form must stay disabled there.
+  const canPayFromCart = computed(
+    () => !themeContext.value?.settings?.checkout_multistep_enabled && !!paymentMethod.value?.allowCartPayment,
+  );
+
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
       await changeComment(value);
@@ -141,7 +189,7 @@ export function _useCheckout() {
     set: (value: string) => {
       commentChanging.value = true;
       _comment.value = value;
-      void changeCommentDebounced(value.trim());
+      void changeCommentDebounced((value ?? "").trim());
     },
   });
 
@@ -183,11 +231,7 @@ export function _useCheckout() {
   );
 
   const addresses = computed<AnyAddressType[]>(() => {
-    const { firstName, lastName } = user.value.contact ?? {};
-
-    return isCorporateMember.value
-      ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
-      : personalAddresses.value;
+    return isCorporateMember.value ? organizationsAddresses.value : personalAddresses.value;
   });
 
   const isPurchaseOrderNumberEnabled = computed<boolean>(
@@ -199,19 +243,6 @@ export function _useCheckout() {
   const allOrderItemsAreDigital = computed(() =>
     placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital),
   );
-
-  function isExistAddress(address: AnyAddressType): boolean {
-    return addresses.value.some((item) => isEqualAddresses(item, address));
-  }
-
-  async function setShippingMethod(method: ShippingMethodType): Promise<void> {
-    await updateShipment({
-      id: shipment.value?.id,
-      price: method.price?.amount,
-      shipmentMethodCode: method.code,
-      shipmentMethodOption: method.optionName,
-    });
-  }
 
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
     await updatePayment({
@@ -228,43 +259,31 @@ export function _useCheckout() {
   });
 
   async function setCheckoutDefaults(): Promise<void> {
-    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
-    const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
-    const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
-
     if (allItemsAreDigital.value && shipment.value) {
       await removeShipment(shipment.value.id);
     }
 
     // Create at initialization to prevent duplication due to lack of id
-    if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
-      if (shippingMethodId && defaultShippingMethod) {
-        await setShippingMethod(defaultShippingMethod);
-      } else if (!shipment.value) {
-        await updateShipment({});
-      }
+    if (!allItemsAreDigital.value && !shipment.value) {
+      await updateShipment({});
     }
 
-    if (!payment.value?.paymentGatewayCode) {
-      if (paymentMethodCode && defaultPaymentMethod) {
-        await setPaymentMethod(defaultPaymentMethod);
-      } else if (!payment.value) {
-        await updatePayment({});
-      }
+    if (!payment.value) {
+      await updatePayment({});
     }
   }
 
   async function initialize(): Promise<void> {
+    initialized.value = false;
     placedOrder.value = null;
     loading.value = true;
 
     await setCheckoutDefaults();
 
-    void fetchAddresses();
-
     analytics("beginCheckout", { ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
+    initialized.value = true;
   }
 
   async function updateBillingOrDeliveryAddress(
@@ -314,14 +333,62 @@ export function _useCheckout() {
   }
 
   function openSelectAddressModal(addressType: AddressType): void {
+    if (isCorporateMember.value) {
+      organizationAddressesPage.value = 1;
+    } else {
+      personalAddressesPage.value = 1;
+    }
+
     openModal({
       component: SelectAddressModal,
 
       props: {
-        addresses: addresses.value,
+        addresses,
         currentAddress:
           addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
         isCorporateAddresses: isCorporateMember.value,
+        paginationMode: "server",
+        loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
+        totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+        sort: isCorporateMember.value ? organizationAddressesSort : personalAddressesSort,
+        filterContext: addressFilterContext,
+        showFilters: true,
+        sortableColumns: ["name"],
+        onPageChange(newPage: number) {
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = newPage;
+          } else {
+            personalAddressesPage.value = newPage;
+          }
+        },
+        onUpdateSort(newSort: ISortInfo) {
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = 1;
+            organizationAddressesSort.value = newSort;
+          } else {
+            personalAddressesPage.value = 1;
+            personalAddressesSort.value = newSort;
+          }
+        },
+        onFilterChange() {
+          const keyword = addressFilterContext.filterKeyword.value;
+          const countryCodes = addressFilterContext.filterCountries.value?.termValues?.map((v) => v.value) ?? [];
+          const regionIds = addressFilterContext.filterRegions.value?.termValues?.map((v) => v.value) ?? [];
+          const cities = addressFilterContext.filterCities.value?.termValues?.map((v) => v.value) ?? [];
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = 1;
+            organizationAddressesKeyword.value = keyword;
+            organizationFilterCountryCodes.value = countryCodes;
+            organizationFilterRegionIds.value = regionIds;
+            organizationFilterCities.value = cities;
+          } else {
+            personalAddressesPage.value = 1;
+            personalAddressesKeyword.value = keyword;
+            personalFilterCountryCodes.value = countryCodes;
+            personalFilterRegionIds.value = regionIds;
+            personalFilterCities.value = cities;
+          }
+        },
 
         async onResult(address?: MemberAddressType) {
           if (!address) {
@@ -345,28 +412,26 @@ export function _useCheckout() {
     });
   }
 
-  async function fetchAddresses(): Promise<void> {
-    if (!isAuthenticated.value) {
-      return;
-    }
-
-    if (isCorporateMember.value) {
-      await fetchOrganizationAddresses();
-    } else {
-      await fetchPersonalAddresses();
-    }
-  }
-
   function onDeliveryAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Shipping)
-      : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+    const totalCount = isCorporateMember.value
+      ? organizationAddressesTotalCount.value
+      : personalAddressesTotalCount.value;
+    if (totalCount > 0) {
+      openSelectAddressModal(AddressType.Shipping);
+    } else {
+      openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+    }
   }
 
   function onBillingAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Billing)
-      : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+    const totalCount = isCorporateMember.value
+      ? organizationAddressesTotalCount.value
+      : personalAddressesTotalCount.value;
+    if (totalCount > 0) {
+      openSelectAddressModal(AddressType.Billing);
+    } else {
+      openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+    }
   }
 
   function getNewAddresses(payload: {
@@ -375,7 +440,7 @@ export function _useCheckout() {
   }): MemberAddressType[] {
     const newAddresses: MemberAddressType[] = [];
 
-    if (payload.shippingAddress && !isExistAddress(payload.shippingAddress)) {
+    if (payload.shippingAddress) {
       newAddresses.push({
         ...payload.shippingAddress,
         isDefault: false,
@@ -385,7 +450,6 @@ export function _useCheckout() {
     }
     if (
       payload.billingAddress &&
-      !isExistAddress(payload.billingAddress) &&
       (!payload.shippingAddress || !isEqualAddresses(payload.shippingAddress, payload.billingAddress))
     ) {
       newAddresses.push({
@@ -444,35 +508,94 @@ export function _useCheckout() {
     }
   }
 
+  // Safety net for AC-6 (parity): the Place Order / Go to checkout buttons are already
+  // disabled while any loyalty validation error is active, but if submission is somehow
+  // reached we surface the SAME message the cart shows for that error code — never a
+  // generic "Error when creating an order" toast.
+  function notifyLoyaltyValidationErrors(): void {
+    const messages = getLoyaltyValidationMessages(loyaltyValidationErrors.value, {
+      translate: (key, params) => t(key, params),
+      hasTranslation: (key) => te(key),
+    });
+
+    // Show every active loyalty error. Only the first toast replaces the previous attempt's loyalty
+    // toasts (singleInGroup, scoped to the loyalty group so unrelated toasts survive); the rest are
+    // appended. Using `single: true` per toast would clear the whole stack, leaving only the last.
+    messages.forEach(({ text }, index) => {
+      notifications.error({
+        text,
+        duration: 15000,
+        group: "loyalty-validation",
+        singleInGroup: index === 0,
+      });
+    });
+  }
+
+  async function completePlacedOrder(order: CustomerOrderType): Promise<void> {
+    let orderPayed = false;
+
+    try {
+      // Only run the registered cart payment processor when the selected method actually
+      // supports cart payment. Otherwise a processor left over from a previously selected
+      // cart-payment method (e.g. the shopper switched to a manual method, which unmounts
+      // the card form without clearing the shared processor) could charge the card for an
+      // order that should not be paid from the cart.
+      const result = canPayFromCart.value ? await finalizePayment(order) : undefined;
+      orderPayed = result?.isSuccess ?? false;
+    } catch (e) {
+      Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
+      placedOrder.value = null;
+      notifications.error({
+        text: t("common.messages.payment_processing_error"),
+        duration: 15000,
+        single: true,
+      });
+      return;
+    }
+
+    await refetchCart();
+
+    if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
+      selectCartItems(cart.value.items.map((item) => item.id));
+    }
+
+    clearState();
+
+    analytics("placeOrder", order);
+    void pushHistoricalEvent({
+      eventType: "placeOrder",
+      sessionId: order.id,
+      productIds: order.items?.map((item) => item.productId),
+      storeId: globals.storeId,
+    });
+
+    if (orderPayed) {
+      analytics("purchase", order);
+    }
+
+    await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
+  }
+
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     loading.value = true;
 
     await prepareOrderData();
 
+    if (hasLoyaltyValidationErrors.value) {
+      notifyLoyaltyValidationErrors();
+      loading.value = false;
+      return null;
+    }
+
     try {
+      // TODO remove as CustomerOrderType. Infer it from API
       placedOrder.value = (await _createOrderFromCart(cart.value!.id)) as CustomerOrderType;
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
     if (placedOrder.value) {
-      await refetchCart();
-
-      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
-        selectCartItems(cart.value.items.map((item) => item.id));
-      }
-
-      clearState();
-
-      analytics("placeOrder", placedOrder.value);
-      void pushHistoricalEvent({
-        eventType: "placeOrder",
-        sessionId: placedOrder.value.id,
-        productIds: placedOrder.value.items?.map((item) => item.productId),
-        storeId: globals.storeId,
-      });
-
-      await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
+      await completePlacedOrder(placedOrder.value);
     } else {
       notifications.error({
         text: t("common.messages.creating_order_error"),
@@ -490,11 +613,14 @@ export function _useCheckout() {
     clearGlobalCheckoutState();
   }
 
+  watch(() => route.params.cartId, clearState);
+
   return {
     deliveryAddress,
     shipmentMethod,
     billingAddress,
     paymentMethod,
+    canPayFromCart,
     comment,
     billingAddressEqualsShipping,
     purchaseOrderNumber,
@@ -511,14 +637,21 @@ export function _useCheckout() {
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
-    setShippingMethod,
     setPaymentMethod,
     createOrderFromCart,
     loading: readonly(loading),
     changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
     placedOrder: computed(() => placedOrder.value),
+    initialized: readonly(initialized),
     allOrderItemsAreDigital,
   };
 }
 
-export const useCheckout = createSharedComposable(_useCheckout);
+const useCheckoutShared = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
+
+export function useCheckout() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useCheckoutShared(cartId);
+}

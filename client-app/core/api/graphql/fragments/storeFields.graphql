@@ -1,0 +1,48 @@
+#import "./allCurrencyFields.graphql"
+#import "./allLanguageFields.graphql"
+
+fragment storeResponseTypeFields on StoreResponseType {
+  storeId
+  storeName
+  catalogId
+  storeUrl
+  defaultLanguage {
+    ...allLanguageFields
+  }
+  availableLanguages {
+    ...allLanguageFields
+  }
+  defaultCurrency {
+    ...allCurrencyFields
+  }
+  availableCurrencies {
+    ...allCurrencyFields
+  }
+  settings {
+    authenticationTypes
+    subscriptionEnabled
+    taxCalculationEnabled
+    anonymousUsersAllowed
+    environmentName
+    emailVerificationEnabled
+    emailVerificationRequired
+    createAnonymousOrderEnabled
+    seoLinkType
+    defaultSelectedForCheckout
+    passwordRequirements {
+      requireLowercase
+      requireUppercase
+      requireDigit
+      requiredLength
+      requiredUniqueChars
+      requireNonAlphanumeric
+    }
+    modules {
+      moduleId
+      settings {
+        name
+        value
+      }
+    }
+  }
+}

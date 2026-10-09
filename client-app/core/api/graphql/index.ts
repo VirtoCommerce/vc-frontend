@@ -7,6 +7,7 @@ export * from "./fulfillmentCenters";
 export * from "./orders";
 export * from "./organization";
 export * from "./page";
+export * from "./pageContext";
 export * from "./payment";
 export * from "./slugInfo";
 export * from "./store";

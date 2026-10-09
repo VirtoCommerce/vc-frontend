@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout sidebar-position="right" sticky>
     <ShippingDetailsSection />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
@@ -10,6 +10,7 @@
           <ProceedTo
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
+            test-id="billing-button"
             @click="
               analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
             "
@@ -28,6 +29,8 @@
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
+
+          <LoyaltyValidationAlert class="mt-4" />
         </template>
       </OrderSummary>
     </template>
@@ -38,6 +41,7 @@
 import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
 const { comment, isValidShipment } = useCheckout();

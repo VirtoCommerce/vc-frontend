@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "purchase_requests.title",
+      "table_description": "lista över inköpsförfrågningar"
+    },
+    "title": "Inköpsförfrågningar",
+    "no_purchase_requests_message": "Det finns inga inköpsförfrågningar ännu",
+    "no_purchase_requests_img_alt": "Inga beställningar",
+    "purchase_request_number_label": "Inköpsförfrågans nummer",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Inköpsförfrågningar"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Inköpsförfrågning #{0}",
+    "failed_or_used_description": "Vi beklagar, men vi kunde inte skapa inköpsförfrågningen eller så har du redan använt den för att skapa en beställning",
+    "try_again": "Försök igen",
+    "files_section": {
+      "title": "Filer"
+    },
+    "from_file": {
+      "title": "Ladda upp fil",
+      "upload": {
+        "message": "Ladda upp foton av dokument, skärmdumpar eller handskrivna anteckningar för att få data för en ny beställning.",
+        "examples": {
+          "title": "Exempel",
+          "alt": "Exempel"
+        }
+      },
+      "processing": {
+        "message": "Du kan ladda upp bildfiler eller PDF-filer med produktlistor i valfritt format för snabb beställning av artiklar",
+        "loading_message": "Identifierar det uppladdade dokumentet...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Fortsätt till offert"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Från fil"
+    }
+  }
+}

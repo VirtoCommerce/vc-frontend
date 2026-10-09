@@ -8,15 +8,12 @@
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
+        'vc-input--seamless': seamless,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
     ]"
     v-bind="attrs"
-    tabindex="-1"
-    role="button"
-    @keyup="handleContainerClick($event)"
-    @click="handleContainerClick($event)"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -24,14 +21,15 @@
 
     <div class="vc-input__container">
       <div v-if="$slots.prepend" class="vc-input__decorator">
-        <slot name="prepend" />
+        <slot name="prepend" :focus-input="focusInput" />
       </div>
 
       <input
         :id="componentId"
         ref="inputElement"
         v-model="model"
-        v-bind="listeners"
+        v-bind="{ ...listeners, ...aria }"
+        v-maska="mask"
         :type="inputType"
         :name="name"
         :placeholder="placeholder"
@@ -42,24 +40,32 @@
         :minlength="minlength"
         :maxlength="maxlength"
         :step="stepValue"
-        :autocomplete="autocomplete"
+        :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
+        :aria-describedby="describedById"
+        :aria-invalid="invalid"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
+        :tabindex="tabindex"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
-        @click.prevent.stop="inputClick()"
+        @click.stop="inputClick"
+        @blur="$emit('blur', $event)"
+        @focus="$emit('focus', $event)"
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <VcButton
           :disabled="disabled"
+          :aria-label="clearButtonAriaLabel || $t('ui_kit.buttons.clear')"
           type="button"
           icon="delete-thin"
           color="neutral"
-          variant="no-background"
+          variant="ghost"
           class="vc-input__clear"
-          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          :icon-size="getInputClearIconSize(size)"
+          @keydown.enter.stop.prevent
+          @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
         />
       </div>
@@ -70,7 +76,7 @@
           :aria-label="$t('ui_kit.buttons.show_hide_password')"
           type="button"
           :icon="passwordVisibilityIcon"
-          variant="no-border"
+          variant="surface"
           :icon-size="size === 'md' ? '1.5rem' : '1.25rem'"
           class="vc-input__password-button"
           @click="togglePasswordVisibility"
@@ -78,17 +84,31 @@
       </div>
 
       <div v-if="$slots.append" class="vc-input__decorator">
-        <slot name="append" />
+        <slot name="append" :focus-input="focusInput" />
       </div>
     </div>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
+    <VcInputDetails
+      v-if="!hideDetails"
+      :id="counter || message ? detailsId : undefined"
+      :show-empty="showEmptyDetails"
+      :counter="counter"
+      :message="message"
+      :error="error"
+      :text-length="textLength"
+      :max-length="maxlength"
+      :single-line="singleLineMessage"
+    />
   </div>
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { provide, computed, ref } from "vue";
+import { vMaska } from "maska/vue";
+import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
+import type { MaskOptions } from "maska";
+import type { AriaAttributes } from "vue";
 
 export interface IProps {
   modelModifiers?: Record<string, boolean>;
@@ -102,10 +122,14 @@ export interface IProps {
   placeholder?: string;
   message?: string;
   singleLineMessage?: boolean;
+  /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
   error?: boolean;
   noBorder?: boolean;
+  seamless?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
+  hideDetails?: boolean;
+  counter?: boolean;
   min?: string | number;
   max?: string | number;
   step?: string | number;
@@ -113,36 +137,90 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email" | "search";
-  size?: "xs" | "sm" | "md" | "auto";
+  type?:
+    | "text"
+    | "password"
+    | "number"
+    | "email"
+    | "search"
+    /** @deprecated Use VcDatePicker (or VcDateInput for input-only) instead. */
+    | "date";
+  size?: VcInputSizeType;
   clearable?: boolean;
+  /** Accessible name of the clear button. Default "Clear"; name the field when two clearable fields sit side by side. */
+  clearButtonAriaLabel?: string;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
-}
-
-interface IEmits {
-  (event: "clear"): void;
+  aria?: Record<string, string | number | null>;
+  disableAutocomplete?: boolean;
+  tabindex?: string | number;
+  mask?: string | MaskOptions;
 }
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const emit = defineEmits<IEmits>();
+const emit = defineEmits<{
+  (event: "clear"): void;
+  (event: "blur", blurEvent: FocusEvent): void;
+  (event: "focus", focusEvent: FocusEvent): void;
+}>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
   browserTooltip: "disabled",
+  tabindex: 0,
+  hideDetails: false,
+  seamless: false,
 });
 
+if (import.meta.env.DEV && props.type === "date") {
+  // eslint-disable-next-line no-console
+  console.warn('VcInput: type="date" is deprecated. Use VcDatePicker (or VcDateInput for input-only) instead.');
+}
+
+const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
+
 const componentId = useComponentId("input");
+const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-const inputElement = ref<HTMLInputElement>();
+// mergeProps assigns unconditionally, so this later binding would erase a forwarded aria-describedby.
+const describedById = computed<string | undefined>(() => {
+  const forwarded = props.aria?.["aria-describedby"];
+  const forwardedId = typeof forwarded === "string" ? forwarded : undefined;
+  const ownId = !props.hideDetails && (props.counter || props.message) ? detailsId : undefined;
+  return [ownId, forwardedId].filter(Boolean).join(" ") || undefined;
+});
+
+// Per ARIA an empty aria-invalid means NOT invalid, so treat it as no override; any other
+// unrecognised token means "true".
+const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
+  const override = props.aria?.["aria-invalid"];
+
+  if (override == null || override === "") {
+    return props.error ? "true" : undefined;
+  }
+
+  return override === "false" || override === "grammar" || override === "spelling" ? override : "true";
+});
+
+const computedAutocomplete = computed(() => {
+  if (props.disableAutocomplete) {
+    return "none";
+  }
+
+  return props.autocomplete;
+});
+
+const inputElement = useTemplateRef("inputElement");
 const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
+
+defineExpose({ inputElement });
 
 const model = defineModel<T>({
   set(value) {
@@ -154,10 +232,12 @@ const model = defineModel<T>({
   },
 });
 
+const textLength = computed(() => String(model.value ?? "").length);
+
 const _size = computed(() => props.size);
 
-const minValue = computed(() => (props.type === "number" ? props.min : undefined));
-const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
+const minValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.min : undefined));
+const maxValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
 const isPasswordVisible = ref<boolean>(false);
@@ -165,30 +245,34 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
+  focusInput();
 }
 
-function handleContainerClick(event: Event) {
-  if (event instanceof KeyboardEvent && event.key === "Tab") {
-    return;
-  }
-
+function focusInput() {
   if (inputElement.value) {
     inputElement.value.focus();
+    setTimeout(() => {
+      if (inputElement.value?.type !== "date") {
+        const len = inputElement.value?.value.length ?? 0;
+        inputElement.value?.setSelectionRange(len, len);
+      }
+    }, 0);
   }
 }
 
 function clear() {
   model.value = undefined;
-  inputElement.value?.focus();
+  focusInput();
   emit("clear");
 }
 
 // Workaround to fix Safari bug
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
-    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
-
-    return !event.key.match(allowedCharacter) && event.preventDefault();
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown)/;
+    if (!allowedCharacter.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 
@@ -204,6 +288,8 @@ provide<VcInputContextType>("inputContext", {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-input {
   $sizeXs: "";
   $sizeSm: "";
@@ -213,11 +299,14 @@ provide<VcInputContextType>("inputContext", {
   $disabled: "";
   $error: "";
   $noBorder: "";
+  $seamless: "";
   $center: "";
   $truncate: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
-  --focus-color: rgb(from var(--color) r g b / 0.3);
+
+  --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
+  --vc-button-radius: calc(var(--radius) - 2px);
 
   @apply flex flex-col;
 
@@ -253,6 +342,10 @@ provide<VcInputContextType>("inputContext", {
     $noBorder: &;
   }
 
+  &--seamless {
+    $seamless: &;
+  }
+
   &--center {
     $center: &;
   }
@@ -262,22 +355,22 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__container {
-    @apply flex items-stretch p-0.5 border border-neutral-400 rounded bg-additional-50 select-none;
+    @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
     #{$sizeXs} & {
       @apply h-8 text-sm;
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem] text-sm;
+      @apply h-[2.375rem] text-base;
     }
 
     #{$sizeMd} & {
       @apply h-11 text-base;
     }
 
-    &:has(input:focus) {
-      @apply ring ring-[--focus-color];
+    &:has(input:focus-visible) {
+      @include focus-ring;
     }
 
     #{$error} & {
@@ -292,6 +385,26 @@ provide<VcInputContextType>("inputContext", {
     #{$noBorder} & {
       @apply border-none;
     }
+
+    #{$seamless} & {
+      @apply border-0 bg-transparent p-0;
+
+      // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
+      &:has(input:focus-visible) {
+        @apply outline-none;
+      }
+
+      // Outspecifies the disabled fill above: :has() lands at (0,2,1), a bare seamless rule at (0,2,0).
+      &:has(input:disabled) {
+        @apply bg-transparent;
+      }
+    }
+
+    #{$seamless}#{$sizeXs} &,
+    #{$seamless}#{$sizeSm} &,
+    #{$seamless}#{$sizeMd} & {
+      height: auto;
+    }
   }
 
   &__decorator {
@@ -304,20 +417,26 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
+
+    padding-inline: var(--vc-input-padding-x, theme("padding.2"));
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
     }
 
-    &:autofill {
-      &:disabled {
-        box-shadow: 0 0 0 1000px #f9fafb inset;
-      }
+    &::-webkit-calendar-picker-indicator {
+      @apply hidden;
+    }
 
-      &:not(:disabled) {
-        box-shadow: 0 0 0 1000px #fff inset;
-      }
+    &::-moz-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &[type="date"] {
+      @apply -me-8;
+
+      clip-path: inset(0 2rem 0 0);
     }
 
     &:focus {
@@ -329,11 +448,22 @@ provide<VcInputContextType>("inputContext", {
       @apply text-neutral-500 cursor-not-allowed;
     }
 
+    &:autofill {
+      &:disabled {
+        box-shadow: 0 0 0 1000px var(--color-neutral-200) inset;
+        opacity: 0.6;
+      }
+
+      &:not(:disabled) {
+        box-shadow: 0 0 0 1000px var(--color-additional-50) inset;
+      }
+    }
+
     &::placeholder {
-      @apply text-neutral-400;
+      @apply text-neutral-500 font-normal;
 
       #{$error} & {
-        @apply text-danger-400;
+        @apply text-danger-500;
       }
     }
 

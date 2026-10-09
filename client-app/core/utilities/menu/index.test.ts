@@ -6,7 +6,6 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 // Mock the getCategoryRoute function
 vi.mock("@/core/utilities/categories", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   getCategoryRoute: vi.fn().mockImplementation((category) => `/category/${category.id}`),
 }));
 
@@ -96,6 +95,7 @@ describe("Menu Utilities", () => {
         id: "123",
         name: "Test Category",
         priority: 1,
+        assets: [],
         breadcrumbs: [],
         childCategories: [],
         code: "test-code",
@@ -134,12 +134,14 @@ describe("Menu Utilities", () => {
         id: "123",
         name: "Parent Category",
         priority: 1,
+        assets: [],
         breadcrumbs: [],
         childCategories: [
           {
             id: "456",
             name: "Child Category",
             priority: 2,
+            assets: [],
             breadcrumbs: [],
             childCategories: [],
             code: "child-code",
@@ -206,6 +208,7 @@ describe("Menu Utilities", () => {
         id: "123",
         name: "Test Category",
         priority: 1,
+        assets: [],
         breadcrumbs: [],
         childCategories: [],
         code: "test-code",
@@ -282,6 +285,28 @@ describe("Menu Utilities", () => {
           },
         ],
       });
+    });
+
+    it("does not share the route object with the input", () => {
+      const menuLink: ExtendedMenuLinkType = { title: "test_key", route: { name: "Quotes", params: { id: "1" } } };
+
+      const result = getTranslatedMenuLink(menuLink);
+
+      expect(result.route).toEqual(menuLink.route);
+      expect(result.route).not.toBe(menuLink.route);
+      expect((result.route as { params: object }).params).not.toBe((menuLink.route as { params: object }).params);
+    });
+
+    it("leaves the input untouched so it can be translated again", () => {
+      const child: ExtendedMenuLinkType = { title: "child_key", route: "/child-route" };
+      const menuLink: ExtendedMenuLinkType = { title: "test_key", route: "/test-route", children: [child] };
+
+      const result = getTranslatedMenuLink(menuLink);
+
+      expect(menuLink.title).toBe("test_key");
+      expect(child.title).toBe("child_key");
+      expect(result).not.toBe(menuLink);
+      expect(result.children?.[0]).not.toBe(child);
     });
   });
 });

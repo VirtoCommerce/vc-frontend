@@ -1,28 +1,30 @@
 <template>
   <VcChip
     v-if="countInCart > 0"
+    class="count-in-cart"
     :size="size"
     variant="outline-dark"
     color="neutral"
     rounded
     :title="$t('shared.cart.add_to_cart.errors.in_cart')"
   >
-    <VcIcon name="cart" />
+    <VcIcon name="cart" variant="solid" />
 
-    <span class="inline-block min-w-3 text-center">
+    <span class="count-in-cart__label" data-test-id="count-in-cart-label">
       {{ countInCart }}
     </span>
   </VcChip>
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
 import { computed } from "vue";
 import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;
-  size?: "xs" | "sm" | "md" | "lg";
+  currency?: string;
+  lineItemId?: string;
+  size?: VcChipSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -31,6 +33,24 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { cart } = useShortCart();
 
-const lineItemInCart = computed(() => cart.value?.items.find((item) => item.productId === props.productId));
-const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity ?? 0);
+const lineItemInCart = computed(() => {
+  const matchesCurrency = (item: { currencyCode?: string | null }) =>
+    !props.currency || item.currencyCode === props.currency;
+
+  if (props.lineItemId) {
+    return cart.value?.items.find((item) => item.id === props.lineItemId && matchesCurrency(item));
+  }
+
+  return cart.value?.items.find((item) => item.productId === props.productId && matchesCurrency(item));
+});
+
+const countInCart = computed<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>
+
+<style lang="scss">
+.count-in-cart {
+  &__label {
+    @apply inline-block min-w-3 text-center;
+  }
+}
+</style>

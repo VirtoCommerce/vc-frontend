@@ -10,6 +10,7 @@
         class="vc-product-skeleton-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-3 lg:gap-3"
       >
         <div class="size-5 rounded-full bg-neutral-100 lg:size-4"></div>
+
         <div class="size-5 rounded-full bg-neutral-100 lg:size-4"></div>
       </div>
     </div>
@@ -17,7 +18,9 @@
     <!-- Product title -->
     <div class="vc-product-skeleton-list__name flex w-full grow flex-col gap-1 lg:mt-1 2xl:pr-2">
       <div class="h-4 bg-neutral-100"></div>
+
       <div class="h-4 bg-neutral-100"></div>
+
       <div class="h-4 w-2/3 bg-neutral-100"></div>
     </div>
 
@@ -26,30 +29,37 @@
       <div class="pb-px pt-0.5">
         <div class="h-2.5 w-1/3 bg-neutral-100"></div>
       </div>
+
       <div class="relative">
         <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-2/3 bg-neutral-100"></div>
         </div>
       </div>
+
       <div class="pb-px pt-0.5">
         <div class="h-2.5 w-4/5 bg-neutral-100"></div>
       </div>
+
       <div class="relative">
         <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-1/2 bg-neutral-100"></div>
         </div>
       </div>
+
       <div class="pb-px pt-0.5">
         <div class="h-2.5 w-3/5 bg-neutral-100"></div>
       </div>
+
       <div class="relative">
         <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-full bg-neutral-100"></div>
         </div>
       </div>
+
       <div class="pb-px pt-0.5">
         <div class="h-2.5 w-full bg-neutral-100"></div>
       </div>
+
       <div class="relative">
         <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-1/4 bg-neutral-100"></div>
@@ -59,6 +69,7 @@
 
     <div class="vc-product-skeleton-list__price mt-3.5 flex w-full items-end gap-2 sm:mt-0 lg:flex-col 2xl:pr-2">
       <div class="h-4 w-7 bg-neutral-100"></div>
+
       <div class="h-7 w-20 bg-neutral-100"></div>
     </div>
 
@@ -68,6 +79,7 @@
         <div class="flex w-1/2 items-center justify-center">
           <div class="h-4 w-1/5 bg-neutral-100"></div>
         </div>
+
         <div class="flex w-1/2 items-center justify-center bg-neutral-100"></div>
       </div>
 

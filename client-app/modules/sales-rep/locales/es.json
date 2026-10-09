@@ -1,0 +1,368 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Representantes de ventas"
+    },
+    "page": {
+      "title": "Representantes de ventas"
+    },
+    "table": {
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "search_placeholder": "Buscar por nombre, correo electrónico o teléfono",
+      "search_aria": "Buscar representantes de ventas",
+      "empty": "No se encontraron representantes de ventas",
+      "no_results": "No hay representantes de ventas que coincidan con tu búsqueda",
+      "reset_search": "Restablecer búsqueda",
+      "load_failed": "No se pudieron cargar los representantes de ventas"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mis clientes"
+      },
+      "page": {
+        "title": "Mis clientes"
+      },
+      "table": {
+        "customer": "Cliente",
+        "last_order": "Mi último pedido",
+        "ytd": "Compras del año",
+        "last_year": "Año pasado",
+        "orders_count": "{count} pedido | {count} pedidos",
+        "all_customers": "Todos",
+        "actions": "Acciones",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar clientes",
+        "empty": "No se encontraron clientes",
+        "no_results": "Ningún cliente coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda",
+        "load_failed": "No se pudieron cargar los clientes"
+      }
+    },
+    "hub": {
+      "title": "Centro del representante de ventas",
+      "dashboard": {
+        "navigation": {
+          "link": "Panel de control"
+        },
+        "page": {
+          "title": "Panel de control"
+        },
+        "widgets": {
+          "new_orders": "Pedidos en estado «New»",
+          "active_carts": "Carritos activos",
+          "orders_placed_week": "Pedidos de esta semana",
+          "orders_placed_mtd": "Pedidos del mes en curso",
+          "purchased_mtd": "Compras del mes en curso",
+          "orders_placed_ytd": "Pedidos del año en curso",
+          "my_customers": "Mis clientes"
+        },
+        "stats": {
+          "value_total": "{amount} en total",
+          "vs_last_week": "{delta} vs. semana pasada",
+          "vs_last_month": "{delta} vs. mes pasado",
+          "vs_last_year": "{delta} vs. año pasado",
+          "ordered_this_month": "{count} compró este mes | {count} compraron este mes",
+          "new_customers": "{count} cliente nuevo | {count} clientes nuevos",
+          "of_recent_orders": "de {count} creado en los últimos 7 días | de {count} creados en los últimos 7 días",
+          "items_unit": "artículo | artículos",
+          "not_for_checkout": "{count} fuera del pago",
+          "items_this_week": "{count} artículo esta semana | {count} artículos esta semana",
+          "mtd_of_ytd": "{percent}% del año",
+          "load_failed": "No se pudo cargar"
+        }
+      },
+      "layout": {
+        "edit": "Editar diseño",
+        "editing": "Editando el diseño",
+        "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+        "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+        "save": "Guardar diseño",
+        "cancel": "Cancelar",
+        "reset": "Restablecer",
+        "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+        "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
+        "hidden_widgets": "Widgets ocultos",
+        "visible_stats": "Métricas visibles",
+        "hidden_stats": "Métricas ocultas",
+        "empty_visible": "Arrastre una métrica aquí para mostrarla",
+        "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+        "max_rows": "Filas máximas",
+        "restored": "Se restableció el diseño predeterminado.",
+        "empty": {
+          "title": "Todos los bloques están ocultos",
+          "text": "Todas las métricas y widgets de esta página se han movido a {hidden} en la configuración del diseño. Restablezca el diseño predeterminado para recuperarlo todo o abra {edit} para elegir exactamente qué mostrar.",
+          "hidden": "Ocultos",
+          "restore": "Restablecer diseño predeterminado"
+        },
+        "a11y": {
+          "reorder": "Reordenar {title}",
+          "hide": "Ocultar {title}",
+          "show": "Mostrar {title}",
+          "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+          "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
+          "moved": "{title} movido a la posición {position} de {total}.",
+          "dropped": "{title} soltado en la posición {position} de {total}.",
+          "edge": "{title} ya está en la posición {position} de {total}.",
+          "cancelled": "Movimiento de {title} cancelado.",
+          "parked": "{title} oculto.",
+          "restored": "{title} visible.",
+          "max_rows": "Filas máximas mostradas por {title}, entre {min} y {max}"
+        }
+      }
+    },
+    "customer_profile": {
+      "loading": "Cargando…",
+      "not_found": "Cliente no encontrado o no está en tus clientes.",
+      "load_failed": "No se pudo cargar este cliente. Actualice la página.",
+      "back_to_customers": "Volver a mis clientes",
+      "widgets": {
+        "avg_order_value": "Valor medio del pedido"
+      },
+      "stats": {
+        "per_order": "Promedio por pedido (año en curso)"
+      },
+      "info": {
+        "title": "Información del cliente",
+        "empty": "No hay información disponible",
+        "primary_contact": "Contacto principal",
+        "phone": "Teléfono",
+        "account_type": "Tipo de cuenta",
+        "ship_to": "Envío a"
+      }
+    },
+    "customer_orders": {
+      "page": {
+        "title": "Pedidos de {customer}",
+        "all_title": "Pedidos de clientes",
+        "title_fallback": "Pedidos"
+      },
+      "breadcrumb": "Pedidos",
+      "back_to_customer": "Volver al cliente",
+      "back_to_orders": "Volver a los pedidos",
+      "order_not_found": "Pedido no encontrado",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Buscar por número, nombre u otros datos",
+      "search_aria": "Buscar pedidos",
+      "reset_search": "Restablecer búsqueda",
+      "filters": {
+        "button": "Filtros",
+        "title": "Filtros",
+        "created_date": "Fecha de creación",
+        "start_date": "Fecha de inicio",
+        "end_date": "Fecha de finalización",
+        "date_range": "Intervalo de fechas",
+        "order_status": "@:common.labels.status",
+        "customer": "Seleccionar cliente",
+        "reset": "Restablecer",
+        "apply": "Aplicar",
+        "custom_date": "Fecha personalizada",
+        "last_day": "Último día",
+        "last_week": "Última semana",
+        "last_month": "Último mes",
+        "last_year": "Último año",
+        "remove_filter": "Quitar el filtro «{label}»"
+      }
+    },
+    "communication": {
+      "action": "Enviar correo",
+      "title": "Enviar un mensaje",
+      "subtitle": "Llega a todos los miembros de {organization}",
+      "title_label": "Título",
+      "message_label": "Mensaje",
+      "channels_label": "Enviar por",
+      "email_label": "Correo electrónico",
+      "push_label": "Notificación push",
+      "send_button": "Enviar",
+      "cancel_button": "Cancelar",
+      "success_text": "Su mensaje ha sido enviado.",
+      "error_text": "No se pudo enviar el mensaje. Inténtelo de nuevo.",
+      "partial_success_text": "Su mensaje se envió, pero no por todos los canales:",
+      "warnings": {
+        "generic": "El mensaje no se pudo enviar por uno de los canales seleccionados.",
+        "NoRecipients": "Esta organización no tiene contactos a los que notificar.",
+        "EmailUnavailable": "El correo electrónico no está disponible en este momento. Póngase en contacto con su administrador.",
+        "EmailStoreAccessDenied": "No se pudo enviar el correo electrónico para la tienda seleccionada.",
+        "EmailNoRecipients": "Ninguno de los destinatarios tiene una dirección de correo electrónico.",
+        "EmailSendFailed": "No se pudo enviar el correo electrónico. Inténtelo de nuevo más tarde.",
+        "PushSendFailed": "No se pudo enviar la notificación push. Inténtelo de nuevo más tarde."
+      },
+      "quick_actions": {
+        "title": "Acciones rápidas",
+        "order_on_behalf": "Pedir en nombre de",
+        "send_email": "Enviar correo",
+        "create_quote": "Crear presupuesto",
+        "schedule_call": "Programar llamada"
+      }
+    },
+    "orders": {
+      "title": "Mis pedidos recientes",
+      "view_all": "Todos los pedidos",
+      "empty": "Aún no hay pedidos",
+      "no_results": "Ningún pedido coincide con este filtro",
+      "number": "N.º de pedido",
+      "customer": "Cliente",
+      "date": "Fecha",
+      "items": "Artículos",
+      "status": "Estado",
+      "total": "Total",
+      "filter_all": "Todos",
+      "load_failed": "No se pudieron cargar los pedidos"
+    },
+    "tasks": {
+      "title": "Tareas",
+      "widget_title": "Tareas y vencimientos",
+      "view_all": "Todas las tareas",
+      "new_task": "Nueva tarea",
+      "due_dates": "Vencimientos",
+      "today": "Hoy",
+      "all": "Todas",
+      "clear_day_aria": "Quitar {date}",
+      "empty": "No hay tareas en esta pestaña",
+      "empty_day": "No vence nada este día",
+      "load_failed": "No se pudieron cargar las tareas",
+      "day_task_count": "{count} tarea | {count} tareas",
+      "overdue_total": "{count} tarea vencida | {count} tareas vencidas",
+      "day_task_count_capped": "{total} tareas ({shown} mostradas)",
+      "day_markers": "{count} tarea. Marcado: {kinds} | {count} tareas. Marcado: {kinds}",
+      "page": {
+        "subtitle": "Sus tareas, seguimientos y vencimientos de todas las cuentas: organizados por día."
+      },
+      "table": {
+        "task": "Tarea",
+        "status": "Estado",
+        "notes": "Notas",
+        "actions": "Acciones",
+        "mark_complete": "Completar",
+        "reopen": "Reabrir",
+        "action_aria": "{action}: «{name}»",
+        "edit_aria": "Editar «{name}»"
+      },
+      "status": {
+        "upcoming": "Próxima",
+        "overdue": "Vencida",
+        "completed": "Completada",
+        "canceled": "Cancelada"
+      },
+      "priority": {
+        "lowest": "Mínima",
+        "low": "Baja",
+        "normal": "Normal",
+        "high": "Alta",
+        "highest": "Máxima"
+      },
+      "due_relative": {
+        "expired": "Venció {date}",
+        "due": "Vence {date}"
+      },
+      "legend": {
+        "upcoming": "Próximas",
+        "overdue": "Vencidas",
+        "completed": "Completadas"
+      },
+      "form": {
+        "create_title": "Nueva tarea",
+        "edit_title": "Editar tarea",
+        "name_label": "Título",
+        "due_date_label": "Fecha de vencimiento",
+        "priority_label": "Prioridad",
+        "type_label": "Tipo",
+        "description_label": "Notas",
+        "save_button": "Guardar",
+        "cancel_button": "Cancelar",
+        "delete_button": "Eliminar",
+        "delete_title": "Eliminar tarea",
+        "delete_confirm": "Esta tarea se eliminará de forma permanente. ¿Continuar?",
+        "saved": "Tarea guardada",
+        "deleted": "Tarea eliminada"
+      }
+    },
+    "top_sellers": {
+      "title": "Top vendedores",
+      "rank": "#",
+      "product": "Producto",
+      "units": "Unidades",
+      "revenue": "Ingresos",
+      "empty": "Sin ventas en este período",
+      "no_results": "Sin ventas en esta categoría",
+      "all_categories": "Todas las categorías",
+      "load_failed": "No se pudieron cargar los más vendidos"
+    },
+    "documents": {
+      "title": "Biblioteca de documentos",
+      "browse_all": "Ver todos",
+      "open": "Abrir",
+      "empty": "Aún no hay documentos",
+      "load_failed": "No se pudieron cargar los documentos",
+      "page": {
+        "subtitle": "Catálogos, lookbooks, listas de precios y guías de ventas: abra o descargue la última publicación.",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar documentos",
+        "all_tab": "Todos",
+        "empty": "Aún no hay documentos",
+        "no_results": "Ningún documento coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda",
+        "load_failed": "No se pudieron cargar los documentos"
+      },
+      "details": {
+        "pages_count": "{count} página | {count} páginas",
+        "open": "Abrir",
+        "download": "Descargar",
+        "close": "Cerrar detalles",
+        "not_found": "Este documento ya no está disponible.",
+        "latest_publication": "Última publicación"
+      },
+      "published": "Publicado {date}"
+    },
+    "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Próximas",
+          "overdue": "Vencidas",
+          "completed": "Completadas"
+        },
+        "sort": {
+          "due-date": "Fecha de vencimiento",
+          "recent": "Creadas recientemente",
+          "name": "Tarea"
+        }
+      },
+      "load_failed": {
+        "filter": "No se pudieron cargar los filtros, por lo que se muestra la lista completa. Actualice la página.",
+        "sort": "No se pudieron cargar las opciones de ordenación, por lo que se usa el orden predeterminado. Actualice la página.",
+        "both": "No se pudieron cargar los filtros ni las opciones de ordenación, por lo que se muestra la lista completa en el orden predeterminado. Actualice la página."
+      },
+      "customer": {
+        "filter": {
+          "All": "Todos"
+        }
+      }
+    },
+    "list_sharing": {
+      "share_customers_label": "Clientes",
+      "share_customers_placeholder": "Buscar clientes por nombre",
+      "share_customers_error": "No se pudo cargar la lista de clientes. Inténtelo de nuevo.",
+      "share_empty_hint": "Una lista vacía no deja de compartir: cambie quién tiene acceso.",
+      "share_message_label": "Mensaje (opcional)",
+      "share_message_placeholder": "Añade una nota para los destinatarios",
+      "share_message_hint": "Los nuevos destinatarios recibirán esto en su notificación.",
+      "recipients_title": "Destinatarios · {count}",
+      "clear_recipients_button": "Borrar todo",
+      "recipients_cleared": "Borrados · {count}",
+      "restore_recipients_button": "Deshacer",
+      "show_all_recipients_button": "Mostrar todos ({count})",
+      "show_less_recipients_button": "Mostrar menos",
+      "remove_recipient_button": "Eliminar {name}",
+      "share_default_title": "Una nueva lista de tu representante de ventas",
+      "share_default_message": "¡Hola! Acabo de compartir la lista «{listName}» con tu organización. Échale un vistazo:",
+      "share_success": "Lista compartida con {count} cliente. | Lista compartida con {count} clientes.",
+      "share_saved": "Lista guardada. Ahora compartida con {count} cliente. | Lista guardada. Ahora compartida con {count} clientes.",
+      "share_partial": "Lista compartida, pero no se entregaron todas las notificaciones.",
+      "share_notify_error": "La lista se guardó, pero no se pudo enviar la notificación.",
+      "scope_label": "Clientes específicos",
+      "status": "Compartida con 1 cliente | Compartida con {count} clientes",
+      "badge": "Recomendado por tu representante de ventas"
+    }
+  }
+}

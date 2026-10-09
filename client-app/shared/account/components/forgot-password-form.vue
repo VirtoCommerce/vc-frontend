@@ -1,8 +1,8 @@
 <template>
-  <form class="text-start" @submit="onSubmit">
+  <form class="forgot-password-form" @submit="onSubmit">
     <VcInput
       v-model.trim="email"
-      class="mb-4"
+      class="forgot-password-form__input"
       :label="$t('common.labels.email')"
       :placeholder="$t('common.placeholders.email')"
       type="email"
@@ -13,15 +13,15 @@
       :maxlength="64"
     />
 
-    <div class="mt-8 md:mt-9">
-      <VcAlert v-if="isError" color="danger" size="sm" variant="solid-light" class="mb-4 text-xs" icon>
+    <div class="forgot-password-form__actions">
+      <VcAlert v-if="isError" color="danger" size="sm" variant="solid-light" class="forgot-password-form__error" icon>
         {{ $t("shared.account.forgot_password_form.error_alert") }}
         <ContactAdministratorLink />
       </VcAlert>
 
       <VcButton
         type="submit"
-        class="mt-6 w-full lg:mt-3 lg:w-48"
+        class="forgot-password-form__submit"
         :loading="loading"
         :disabled="!meta.valid || meta.pending"
       >
@@ -86,3 +86,33 @@ watch(email, () => {
   isError.value = false;
 });
 </script>
+
+<style lang="scss">
+.forgot-password-form {
+  @apply text-start;
+
+  &__input {
+    @apply mb-4;
+  }
+
+  &__actions {
+    @apply mt-8;
+
+    @media (width >= theme("screens.md")) {
+      @apply mt-9;
+    }
+  }
+
+  &__error {
+    @apply mb-4 text-xs;
+  }
+
+  &__submit {
+    @apply mt-6 w-full;
+
+    @media (width >= theme("screens.lg")) {
+      @apply mt-3 w-48;
+    }
+  }
+}
+</style>

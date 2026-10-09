@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref } from "vue";
 import {
   addWishlist,
   addWishlistBulkItem,
@@ -6,24 +6,39 @@ import {
   deleteWishlist,
   deleteWishlistItem,
   getWishList,
+  getSharedWishList,
   getWishlists,
   updateWishlistItems,
 } from "@/core/api/graphql/account";
 import { SortDirection } from "@/core/enums";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
+  ConfigurationSectionInput,
   InputAddWishlistBulkItemType,
   InputRemoveWishlistItemType,
   InputUpdateWishlistItemsType,
   WishlistType,
 } from "@/core/api/graphql/types";
 import type { ChangeWishlistPayloadType, CreateWishlistPayloadType } from "@/core/types";
-import type { Ref } from "vue";
+import type { DeepReadonly, Ref } from "vue";
 
 const loading = ref(true);
-const lists = shallowRef<WishlistType[]>([]);
+const lists = ref<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
 const listLoading = ref(true);
+
+// Merged rather than swapped in: the mutation selects fewer fields than the list queries, so replacing the entry
+// would blank the card's item count and modified date. `list` is only touched when it holds the same list — it is
+// shared with whatever page is mounted, and a save from the lists page must not put a partial list under it.
+function applySavedList(changedList: WishlistType): void {
+  if (list.value?.id === changedList.id) {
+    list.value = { ...list.value, ...changedList };
+  }
+
+  lists.value = lists.value.map((wishlist) =>
+    wishlist.id === changedList.id ? { ...wishlist, ...changedList } : wishlist,
+  );
+}
 
 export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(payload: CreateWishlistPayloadType): Promise<string | undefined> {
@@ -44,11 +59,16 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     return newList.id;
   }
 
-  async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<void> {
+  // Returns the saved list: the mutation is the only place the server's own sharing key surfaces, and the share
+  // dialog links the customer notification to it.
+  async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<WishlistType> {
     listLoading.value = true;
 
+    let changedList: WishlistType;
+
     try {
-      list.value = await changeWishlist(payload);
+      changedList = await changeWishlist(payload);
+      applySavedList(changedList);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${updateWishlist.name}`, e);
       throw e;
@@ -59,6 +79,8 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     if (options.autoRefetch) {
       await fetchWishlists();
     }
+
+    return changedList;
   }
 
   async function fetchWishlists(): Promise<void> {
@@ -89,6 +111,19 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
   }
 
+  async function fetchSharedWishList(sharingKey: string) {
+    listLoading.value = true;
+
+    try {
+      list.value = await getSharedWishList(sharingKey);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${fetchSharedWishList.name}`, e);
+      throw e;
+    } finally {
+      listLoading.value = false;
+    }
+  }
+
   async function removeWishlist(listId: string): Promise<boolean> {
     let result = false;
 
@@ -108,26 +143,67 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     return result;
   }
 
-  async function addItemsToWishlists(payloads: InputAddWishlistBulkItemType) {
+  async function addItemsToWishlists(
+    payloads: Omit<InputAddWishlistBulkItemType, "configurationSections"> & {
+      configurationSections?: DeepReadonly<ConfigurationSectionInput[]>;
+    },
+  ) {
     loading.value = true;
 
     try {
-      await addWishlistBulkItem(payloads);
+      const result = await addWishlistBulkItem({
+        ...payloads,
+        configurationSections: payloads.configurationSections as ConfigurationSectionInput[] | undefined,
+      });
+      if (result.wishlists) {
+        lists.value = result.wishlists;
+      }
+
+      return result;
     } catch (e) {
       Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
       throw e;
+    } finally {
+      loading.value = false;
     }
+  }
 
-    loading.value = false;
+  function removeItemFromLists(listId: string, productId?: string, lineItemId?: string) {
+    const newLists = lists.value.map((wishlist) =>
+      wishlist.id === listId ? filterListItems(wishlist, productId, lineItemId) : wishlist,
+    );
+    lists.value = newLists;
+
+    if (list.value?.id === listId) {
+      list.value = filterListItems(list.value, productId, lineItemId);
+    }
+  }
+
+  function filterListItems(_list: WishlistType, productId?: string, lineItemId?: string) {
+    const filteredItems = _list.items?.filter((item) => {
+      if (lineItemId) {
+        return item.id !== lineItemId;
+      }
+      return item.productId !== productId;
+    });
+
+    return {
+      ..._list,
+      items: filteredItems,
+    };
   }
 
   async function removeItemsFromWishlists(payload: InputRemoveWishlistItemType[]) {
     loading.value = true;
 
-    // TODO: Use single query
-    await asyncForEach(payload, async (item) => {
+    await asyncForEach(payload, async (payloadItem) => {
       try {
-        await deleteWishlistItem(item);
+        const result = await deleteWishlistItem(payloadItem);
+        const isInResultList = result.items?.some((item) => item.productId === payloadItem.productId);
+
+        if (result.id && !isInResultList) {
+          removeItemFromLists(payloadItem.listId, payloadItem.productId, payloadItem.lineItemId);
+        }
       } catch (e) {
         Logger.error(`${useWishlists.name}.${removeItemsFromWishlists.name}`, e);
         throw e;
@@ -153,6 +229,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
   return {
     fetchWishlists,
     fetchWishList,
+    fetchSharedWishList,
     createWishlist,
     removeWishlist,
     addItemsToWishlists,

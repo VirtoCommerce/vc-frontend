@@ -1,0 +1,12 @@
+query CustomerSalesReps($storeId: String, $first: Int, $after: String, $keyword: String, $sort: String) {
+  customerSalesReps(storeId: $storeId, first: $first, after: $after, keyword: $keyword, sort: $sort) {
+    totalCount
+    items {
+      id
+      name
+      fullName
+      emails
+      phones
+    }
+  }
+}

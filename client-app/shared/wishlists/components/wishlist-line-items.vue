@@ -1,10 +1,10 @@
 <template>
   <VcLineItems
     :items="items"
+    :removable="editable"
     with-image
     with-properties
     with-price
-    removable
     @remove:items="$emit('remove:items', $event)"
   >
     <template #default />
@@ -19,36 +19,43 @@
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
-        :route="item.route"
+        :route="navigatable ? item.route : undefined"
         :properties="item.properties"
         :list-price="item.listPrice"
         :actual-price="item.actualPrice"
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
-        :browser-target="$cfg.details_browser_target"
+        :browser-target="browserTarget"
+        :removable="editable"
+        :data-product-sku="item.sku"
         with-image
         with-properties
         with-price
-        removable
         @remove="() => removeSingleItem(item.id)"
         @link-click="$emit('linkClick', item.product)"
       >
-        <div v-if="!item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
+        <div
+          v-if="(editable || addableToCart) && !item.deleted"
+          ref="itemDefaultSlot"
+          :style="{ width: itemDefaultSlotWidth }"
+        >
           <VcProductButton
             v-if="item.isConfigurable"
             no-wrap
-            :to="item.route"
+            :to="navigatable ? item.route : undefined"
             :button-text="$t('pages.catalog.customize_button')"
             icon="cube-transparent"
-            :target="$cfg.details_browser_target"
+            :target="browserTarget"
           />
+
           <VcProductButton
             v-else-if="item.hasVariations"
-            :to="item.route"
-            :target="$cfg.details_browser_target"
-            :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
+            :to="navigatable ? item.route : undefined"
+            :target="browserTarget"
+            :button-text="$t('pages.catalog.variations_button', getVariationsCount(item))"
           />
+
           <VcAddToCart
             v-else
             class="w-full"
@@ -69,6 +76,7 @@
                 ? $t('validation_error.CART_PRODUCT_UNAVAILABLE')
                 : undefined
             "
+            data-test-id="add-to-cart-component"
             @update:model-value="changeItemQuantity(item, $event)"
             @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
             @update:validation="setValidationStatus(item, $event)"
@@ -89,7 +97,7 @@
             {{ $t("validation_error.CART_PRODUCT_UNAVAILABLE") }}
           </VcAlert>
 
-          <div v-if="validationErrors.length" class="flex flex-col gap-1">
+          <div v-if="(editable || addableToCart) && validationErrors.length" class="flex flex-col gap-1">
             <template v-for="(validationError, index) in validationErrors" :key="index">
               <VcAlert
                 v-if="validationError.objectId === item.id && !!validationError.errorMessage"
@@ -110,7 +118,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import { getVariationsCount } from "@/shared/catalog/utilities/variations";
 import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
@@ -126,12 +136,21 @@ interface IEmits {
 interface IProps {
   items: PreparedLineItemType[];
   pendingItems?: Record<string, boolean>;
+  editable?: boolean;
+  // Lets a read-only shared list stay shoppable: the add-to-cart control without list editing (VCST-5332).
+  addableToCart?: boolean;
+  navigatable?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   pendingItems: () => ({}),
+  editable: true,
+  addableToCart: false,
+  navigatable: true,
 });
+
+const { browserTarget } = useBrowserTarget();
 
 const validationErrors = ref<ValidationErrorType[]>([]);
 const itemDefaultSlot = ref<HTMLElement[] | null>(null);

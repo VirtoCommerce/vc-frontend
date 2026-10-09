@@ -1,4 +1,5 @@
 import type { fileSizeUnits, COLORS, MAIN_COLORS } from "@/ui-kit/constants";
+import type { BREAKPOINTS } from "@/ui-kit/constants";
 import type { SwiperOptions } from "swiper";
 import type { SwiperEvents } from "swiper/types";
 import type { Ref } from "vue";
@@ -8,14 +9,14 @@ declare global {
   type VcColorType = (typeof COLORS)[number];
   type VcMainColorType = (typeof MAIN_COLORS)[number];
 
-  type NonNullableSwiperOptions = {
+  type NonNullableSwiperOptionsType = {
     [prop in keyof Omit<
       SwiperOptions,
       "navigation" | "pagination" | "createElements" | "onAny" | "swipeHandler" | "_emitClasses"
     >]?: NonNullable<SwiperOptions[prop]>;
   };
 
-  interface CarouselOptions extends NonNullableSwiperOptions {
+  interface ICarouselOptions extends NonNullableSwiperOptionsType {
     swipeHandler?: boolean;
     on?: SwiperEvents;
   }
@@ -35,14 +36,6 @@ declare global {
     route?: RouteLocationRaw;
     disabled?: boolean;
     hidden?: boolean;
-  }
-
-  interface ITableColumn {
-    id: string;
-    title?: string;
-    sortable?: boolean;
-    align?: "center" | "right" | "left";
-    classes?: string;
   }
 
   type TProvidedObjectOfExpansionPanels = {
@@ -113,5 +106,16 @@ declare global {
     line2?: string;
     postalCode?: string;
     regionName?: string;
+  };
+
+  type BreakpointsType = keyof typeof BREAKPOINTS;
+
+  /** Border side type for components */
+  type VcBorderSideType = "top" | "bottom" | "left" | "right" | "x" | "y";
+
+  /** Table item type */
+  type VcTableItemType = {
+    id?: string | number;
+    [key: string]: unknown;
   };
 }

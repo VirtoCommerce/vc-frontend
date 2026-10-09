@@ -1,8 +1,12 @@
 <template>
   <div class="card-labels">
     <VcImage class="card-labels__item" src="visa.svg" alt="" />
+
     <VcImage class="card-labels__item" src="maestro.svg" alt="" />
+
     <VcImage class="card-labels__item" src="mastercard.svg" alt="" />
+
+    <VcImage class="card-labels__item" src="american-express.svg" alt="" />
   </div>
 </template>
 

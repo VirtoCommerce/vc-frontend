@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { ref, toRef, watch } from "vue";
 import type { FacetItemType } from "@/core/types";
 

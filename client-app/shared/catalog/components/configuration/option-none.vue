@@ -1,6 +1,12 @@
 <template>
   <div class="option-none">
-    <VcRadioButton :name="name" :model-value="selected ? 'none' : ''" value="none" @input="$emit('input')">
+    <VcRadioButton
+      data-test-id="none-option"
+      :name="name"
+      :model-value="selected ? 'none' : ''"
+      value="none"
+      @input="$emit('input')"
+    >
       <span class="option-none__label">
         {{ $t("shared.catalog.product_details.product_configuration.none") }}
       </span>
