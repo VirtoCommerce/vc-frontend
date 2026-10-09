@@ -1,5 +1,6 @@
 {
   "name": "Image",
+  "description": "Standalone image block on a tinted background — single image with alt text, no copy. Use when: inline illustration, screenshot, or visual break between text sections. Skip when: image with text/buttons (use `call-to-action-with-image`), multiple images (use `slider` or `features`), or a hero heading (use `title`). `image` is the image URL — leave empty if the user did not supply one. `alttext` is the `alt` attribute — generate a brief description from page context for accessibility/SEO.",
   "icon": "image",
   "displayField": "name",
   "settings": [
