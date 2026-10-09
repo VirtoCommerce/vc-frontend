@@ -244,7 +244,8 @@
       "logo_deleted": "Das Logo wurde gelöscht.",
       "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren.",
       "content_failed_to_load": "Ein Teil der Website konnte nicht geladen werden. Bitte laden Sie die Seite neu, um fortzufahren.",
-      "page_loading": "Seite wird geladen…"
+      "page_loading": "Seite wird geladen…",
+      "page_loading_slow": "Das Laden dieser Seite dauert länger als üblich."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",

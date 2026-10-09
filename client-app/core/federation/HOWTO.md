@@ -259,8 +259,9 @@ Rules of the road:
 - `init()` runs before the host installs the router only with `blocksBoot: true`. Otherwise it runs
   alongside the app: declare your routes (see "Declaring contributions") so a direct deep link
   shows a loader and then your page, instead of the host's 404 until `init()` has run.
-- Keep `init()` fast: it has a time budget (the loader's per-phase `loadTimeoutMs`), and with
-  `blocksBoot: true` the app boot waits for it.
+- Keep `init()` fast. With `blocksBoot: true` the app boot waits for it, within the loader's
+  per-phase `loadTimeoutMs`. Without it nobody waits, and each step only has the `deferredTimeoutMs`
+  cap against a request that never settles.
 - **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
   that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
   loader refuses such a claim for the whole load-and-init phase and logs it — including a name
@@ -529,7 +530,8 @@ What the host does with it, before any of the plugin's code is fetched:
 - **Routes** get a placeholder under their `parent`, so a deep link resolves on first paint inside
   the parent's layout and guards and shows a loader. When the plugin settles the same URL resolves
   again — to the route your `init()` registered under that name, or to the host's 404 if it never
-  did or the plugin failed. Your own `beforeEnter` guards still run on the real route; if one is a
+  did or the plugin was skipped. A slow plugin keeps the loader, which says so and offers a reload
+  after `PLACEHOLDER_SLOW_NOTICE_MS`; a failed one leaves that reload offer instead of a 404. Your own `beforeEnter` guards still run on the real route; if one is a
   permission check, put it in `when` too so no placeholder exists for a user who cannot pass it.
   The parent's organization gate (`requiresOrganization`) is deferred the same way: the placeholder
   skips it, and the second navigation applies it with your route's own meta — so a route that clears

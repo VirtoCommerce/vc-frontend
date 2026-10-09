@@ -1,4 +1,4 @@
-import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
+import { loadRemote, registerPlugins, registerRemotes } from "@module-federation/enhanced/runtime";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
@@ -18,14 +18,14 @@ import type { RouteRecordRaw, Router } from "vue-router";
  * call `init()`. Plugins bind to the host's live services via the shared facade.
  * - Version safety: an incompatible remote is skipped before any of its code runs.
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
- * - Every network step is time-budgeted: the app-runner awaits this loader before
- *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
- *   within its budget rather than hanging boot forever. There are TWO budget knobs
- *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
- *   so one remote may legally take up to manifest + 2×load (`runBudgetMs`). bootstrap.ts
- *   additionally holds a BOOT_BACKSTOP_MS above that sum PLUS its own DISCOVERY_TIMEOUT_MS and
- *   an env remote's plugin.json read — a true backstop that fires only when these budgets
- *   malfunction or the loader chunk fetch itself hangs. The backstop invariant test holds the sum.
+ * - Every network step is time-budgeted, and the budget follows who waits. Boot waits only for a
+ *   `blocksBoot` plugin, so only those get the tight knobs (manifestTimeoutMs, loadTimeoutMs — the
+ *   latter bounds load and init separately; one such remote may take up to `runBudgetMs`).
+ *   bootstrap.ts holds a BOOT_BACKSTOP_MS above that sum PLUS its own DISCOVERY_TIMEOUT_MS and an
+ *   env remote's plugin.json read — a backstop that fires only when these budgets malfunction or the
+ *   loader chunk fetch itself hangs. The backstop invariant test holds the sum. Every other plugin
+ *   loads after boot with nobody waiting, so a slow network must not cost it: its steps get only
+ *   deferredTimeoutMs, a cap against a request that never settles.
  * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
  * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
  * overridden by what the backend serves. The harness ships no built-in remote.
@@ -100,14 +100,23 @@ export interface IFederatedLoaderOptions {
    * No callback + declared permission => skipped.
    */
   hasPermission?: (permission: string) => boolean;
-  /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
+  /**
+   * Budget for reading one remote's manifest JSON, and an env remote's plugin.json; exceeded =>
+   * skipped (fail closed). Applies to a `blocksBoot` plugin's manifest; deferred plugins use
+   * deferredTimeoutMs.
+   */
   manifestTimeoutMs?: number;
   /**
-   * Budget for the load phase AND (separately) the init phase of one remote;
+   * Budget for the load phase AND (separately) the init phase of one `blocksBoot` remote;
    * exceeded => failed. Raising the defaults may need bootstrap.ts's BOOT_BACKSTOP_MS raised too;
    * the backstop invariant test says when.
    */
   loadTimeoutMs?: number;
+  /**
+   * Cap on each step (manifest, load, init) of a plugin boot does not wait for. Not a latency
+   * budget: it only stops a request that never settles from holding the plugin pending forever.
+   */
+  deferredTimeoutMs?: number;
   /** Evaluates declared `when` conditions. Without it, settings read as unset and `can` uses `hasPermission`. */
   conditionContext?: IConditionContextType;
 }
@@ -115,6 +124,7 @@ export interface IFederatedLoaderOptions {
 // Exported for the invariant test only (bootstrap's backstop must exceed their sum).
 export const DEFAULT_MANIFEST_TIMEOUT_MS = 2_000;
 export const DEFAULT_LOAD_TIMEOUT_MS = 3_000;
+export const DEFAULT_DEFERRED_TIMEOUT_MS = 30_000;
 
 /** Slack past a pending plugin's run budget before its held boxes are released; the run's own budgets settle it first. */
 export const PENDING_GRACE_MS = 2_000;
@@ -712,6 +722,41 @@ async function fetchRemoteJson(
   return await withTimeout(read(), timeoutMs, `${file} fetch for "${remote.name}"`);
 }
 
+/** Manifests the contract gate has read, by entry URL, until the MF runtime asks for them. */
+const gatedManifests = new Map<string, unknown>();
+let isManifestReuseInstalled = false;
+
+/**
+ * The runtime fetches the manifest again on loadRemote. The platform sets no Cache-Control on it, so
+ * that second request is a full round-trip on the critical path, and it would skip the response-origin
+ * check fetchRemoteJson makes. Serve it the copy the gate already read instead.
+ */
+function installManifestReuse(): void {
+  if (isManifestReuseInstalled) {
+    return;
+  }
+  isManifestReuseInstalled = true;
+  try {
+    registerPlugins([
+      {
+        name: "vc-gated-manifest-reuse",
+        fetch(url: string) {
+          if (!gatedManifests.has(url)) {
+            return undefined;
+          }
+          const manifest = gatedManifests.get(url);
+          gatedManifests.delete(url);
+          return Promise.resolve(
+            new Response(JSON.stringify(manifest), { headers: { "content-type": "application/json" } }),
+          );
+        },
+      },
+    ]);
+  } catch (error) {
+    Logger.warn("[MF] could not install the manifest reuse hook - the runtime will fetch manifests again", error);
+  }
+}
+
 /**
  * CONTRACT GATE (version gate 1 of 2 — see version-gate.ts and the README). Fetches
  * the remote manifest (plain JSON — no code execution) and checks its declared
@@ -729,6 +774,7 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
       Logger.warn(`[MF] Skipping "${remote.name}": ${compatibility.reason}`);
       return false;
     }
+    gatedManifests.set(remote.entry, manifest);
     return true;
   } catch (error) {
     Logger.error(`[MF] Could not read/validate manifest for "${remote.name}" (${remote.entry})`, error);
@@ -821,9 +867,15 @@ async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): 
   }
 }
 
+interface IRunBudgetsType {
+  manifestTimeoutMs: number;
+  loadTimeoutMs: number;
+}
+
 interface IPreparedRemoteType {
   remote: IRemoteDescriptor;
   applied?: IAppliedContributionsType;
+  budgets: IRunBudgetsType;
 }
 
 export interface IPreparedFederationType {
@@ -833,8 +885,6 @@ export interface IPreparedFederationType {
   blocking: IPreparedRemoteType[];
   /** Everything else; boot does not wait for their code. */
   deferred: IPreparedRemoteType[];
-  manifestTimeoutMs: number;
-  loadTimeoutMs: number;
 }
 
 function skip(result: IFederatedLoadResult, name: string, reason: string): void {
@@ -872,15 +922,18 @@ function declareContributions(
 /** Phase A: permission → declarations → plugin-level `when`, before any plugin code. Never rejects. */
 export async function prepareFederatedModules(options?: IFederatedLoaderOptions): Promise<IPreparedFederationType> {
   const manifestTimeoutMs = options?.manifestTimeoutMs ?? DEFAULT_MANIFEST_TIMEOUT_MS;
-  const loadTimeoutMs = options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS;
+  const blockingBudgets: IRunBudgetsType = {
+    manifestTimeoutMs,
+    loadTimeoutMs: options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS,
+  };
+  const deferredTimeoutMs = options?.deferredTimeoutMs ?? DEFAULT_DEFERRED_TIMEOUT_MS;
+  const deferredBudgets: IRunBudgetsType = { manifestTimeoutMs: deferredTimeoutMs, loadTimeoutMs: deferredTimeoutMs };
   const result: IFederatedLoadResult = { loaded: [], failed: [], skipped: [] };
   const prepared: IPreparedFederationType = {
     result,
     versions: new Map(),
     blocking: [],
     deferred: [],
-    manifestTimeoutMs,
-    loadTimeoutMs,
   };
 
   const { remotes, invalidNames } = resolveRemotes(options?.plugins ?? []);
@@ -929,10 +982,12 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
       skip(result, remote.name, declared.skipReason);
       continue;
     }
+    const blocksBoot = read.contributions?.blocksBoot === true;
+    const budgets = blocksBoot ? blockingBudgets : deferredBudgets;
     setPluginStatus(remote.name, "pending");
-    expirePendingAfter(remote.name, runBudgetMs(manifestTimeoutMs, loadTimeoutMs) + PENDING_GRACE_MS);
-    const entry = { remote, applied: declared.applied };
-    if (read.contributions?.blocksBoot === true) {
+    expirePendingAfter(remote.name, runBudgetMs(budgets.manifestTimeoutMs, budgets.loadTimeoutMs) + PENDING_GRACE_MS);
+    const entry = { remote, applied: declared.applied, budgets };
+    if (blocksBoot) {
       prepared.blocking.push(entry);
     } else {
       prepared.deferred.push(entry);
@@ -944,7 +999,8 @@ export async function prepareFederatedModules(options?: IFederatedLoaderOptions)
 /** CONTRACT GATE → `init()` for one plugin. Never rejects. */
 async function runRemote(entry: IPreparedRemoteType, prepared: IPreparedFederationType): Promise<void> {
   const { remote, applied } = entry;
-  const { result, manifestTimeoutMs, loadTimeoutMs } = prepared;
+  const { manifestTimeoutMs, loadTimeoutMs } = entry.budgets;
+  const { result } = prepared;
   const settle = (state: "loaded" | "failed" | "skipped", reason?: string) => {
     result[state].push(remote.name);
     if (applied && globals.router) {
@@ -957,6 +1013,7 @@ async function runRemote(entry: IPreparedRemoteType, prepared: IPreparedFederati
     settle("skipped", "its manifest failed the contract gate or could not be read");
     return;
   }
+  installManifestReuse();
   try {
     // No `force`: re-registering a known name is already a silent no-op in the MF runtime, while
     // `force` tears the remote down first (module cache, global entry name, share scope) and a

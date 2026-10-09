@@ -1,6 +1,7 @@
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
+import { PLACEHOLDER_META_KEY } from "./contributions/placeholder";
 import { isFederationEnabled } from "./enabled";
 import type { IFederatedLoaderOptions, IPlatformPlugin } from "./index";
 
@@ -37,6 +38,10 @@ function reResolveOnceSettled(): void {
   const current = router.currentRoute.value;
   // Router not installed yet.
   if (current.matched.length === 0) {
+    return;
+  }
+  // A declared route's placeholder resolves itself, and a failed plugin's reload offer must not become a 404.
+  if (current.matched.at(-1)?.meta?.[PLACEHOLDER_META_KEY] !== undefined) {
     return;
   }
   const next = router.resolve(current.fullPath);

@@ -244,7 +244,8 @@
       "logo_deleted": "Logo zostało usunięte.",
       "pending_operations_leaving_page_confirmation": "Niektóre operacje są w toku. Czy na pewno chcesz opuścić tę stronę? Niezapisane zmiany mogą zostać utracone.",
       "content_failed_to_load": "Nie udało się załadować części witryny. Odśwież stronę, aby kontynuować.",
-      "page_loading": "Ładowanie strony…"
+      "page_loading": "Ładowanie strony…",
+      "page_loading_slow": "Ładowanie tej strony trwa dłużej niż zwykle."
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",

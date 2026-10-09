@@ -244,7 +244,8 @@
       "logo_deleted": "ロゴが削除されました。",
       "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。",
       "content_failed_to_load": "サイトの一部を読み込めませんでした。続行するにはページを再読み込みしてください。",
-      "page_loading": "ページを読み込んでいます…"
+      "page_loading": "ページを読み込んでいます…",
+      "page_loading_slow": "このページの読み込みにいつもより時間がかかっています。"
     },
     "placeholders": {
       "enter_value": "入力してください",

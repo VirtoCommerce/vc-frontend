@@ -1,5 +1,6 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { PLACEHOLDER_META_KEY } from "./contributions/placeholder";
 
 const { initFederatedModulesMock, loggerErrorMock, loggerWarnMock } = vi.hoisted(() => ({
   initFederatedModulesMock: vi.fn(),
@@ -328,6 +329,32 @@ describe("startFederatedModules with declared plugins", () => {
     await flushPromises();
 
     expect(replace).toHaveBeenCalledWith({ path: "/company/late", query: {}, hash: "", force: true });
+  });
+
+  it("leaves a plugin route's placeholder to resolve itself once every plugin settled", async () => {
+    const replace = vi.fn();
+    const router = {
+      currentRoute: {
+        value: {
+          name: "SalesRepDashboard",
+          path: "/company/dashboard",
+          query: {},
+          hash: "",
+          fullPath: "/company/dashboard",
+          matched: [{ meta: {} }, { meta: { [PLACEHOLDER_META_KEY]: "sales-rep" } }],
+        },
+      },
+      resolve: vi.fn(() => ({ name: "NotFound" })),
+      replace,
+    };
+    vi.doMock("@/core/globals", () => ({ globals: { router } }));
+    stubLoader(Promise.resolve(), Promise.resolve());
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins: () => Promise.resolve([]) });
+    await flushPromises();
+
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it("leaves the URL alone when it still resolves to the same route", async () => {

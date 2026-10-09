@@ -244,7 +244,8 @@
       "logo_deleted": "Logo was deleted.",
       "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost.",
       "content_failed_to_load": "Part of the site could not be loaded. Please reload the page to continue.",
-      "page_loading": "Loading page…"
+      "page_loading": "Loading page…",
+      "page_loading_slow": "This page is taking longer than usual to load."
     },
     "placeholders": {
       "enter_value": "Enter a value",

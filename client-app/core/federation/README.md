@@ -266,16 +266,17 @@ prepareFederatedModules()          index.ts — phase A, no plugin code runs
                                    and what it had declared is withdrawn
   ▼
 loadPreparedModules()              index.ts — phase B, per plugin, concurrently
-  2. isCompatible(remote)          fetch manifest JSON (manifest budget), evaluate
+  2. isCompatible(remote)          fetch manifest JSON (its run's manifest budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op
+  3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op.
+                                   The runtime is served the manifest step 2 read, not a second fetch
   3a. installRouteGuard()          wraps addRoute/removeRoute while ANY plugin is still running;
                                    a declared name is its own plugin's to replace, from init()'s
                                    synchronous part only; a host name is not
   4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
-                                   has one (load budget each); a module without init() still
+                                   has one (its run's load budget each); a module without init() still
                                    counts as loaded
   5. settle                        status → loaded / failed / skipped; unclaimed placeholders and
                                    dead declared menu entries are withdrawn (all of them on failure)
@@ -293,8 +294,9 @@ before a byte of plugin code is fetched.
 - **Phase B, only for plugins that set `blocksBoot`**: boot waits for their `init()`, bounded by
   `BOOT_BACKSTOP_MS` — which stays for that reason alone.
 - **Never for any other plugin's code**, declared or not. A declared route's placeholder renders a
-  loader inside the parent's layout and guards and becomes the plugin's page when it settles, or the
-  host's 404 in place if it failed. An undeclared route resolves to the catch-all first and is
+  loader inside the parent's layout and guards and becomes the plugin's page when it settles. Past
+  `PLACEHOLDER_SLOW_NOTICE_MS` it says the page is slow and offers a reload while it keeps waiting; a
+  failed plugin leaves that reload offer in place, a skipped one the host's 404. An undeclared route resolves to the catch-all first and is
   followed once it appears (below). Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
   of ~3.3s, and the page arrives at the same URL.
 
@@ -336,11 +338,14 @@ Three design points worth calling out:
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
   against the previous major. While the contract is pre-1.0 the **minor** carries that role
   instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
-- **Every network step is time-budgeted** (two knobs via `prepareFederatedModules(options)`:
-  the manifest budget, and the load budget that bounds load and init _each_ — so one remote may
-  legally take manifest + 2×load, `runBudgetMs`), plus `DISCOVERY_TIMEOUT_MS` on the plugin-list
-  query in `bootstrap.ts`. The values live in those constants (`DEFAULT_MANIFEST_TIMEOUT_MS`,
-  `DEFAULT_LOAD_TIMEOUT_MS`), not here. Boot awaits this loader for `blocksBoot` plugins, so those
+- **Every network step is time-budgeted, and the budget follows who waits.** A `blocksBoot`
+  plugin gets two knobs via `prepareFederatedModules(options)`: the manifest budget, and the load
+  budget that bounds load and init _each_ — so one remote may legally take manifest + 2×load,
+  `runBudgetMs` — plus `DISCOVERY_TIMEOUT_MS` on the plugin-list query in `bootstrap.ts`. The values
+  live in those constants (`DEFAULT_MANIFEST_TIMEOUT_MS`, `DEFAULT_LOAD_TIMEOUT_MS`), not here.
+  Every other plugin loads with nobody waiting, so a slow network must not cost it: each of its steps
+  gets only `DEFAULT_DEFERRED_TIMEOUT_MS` (`deferredTimeoutMs`), a cap against a request that never
+  settles rather than a latency budget. Boot awaits this loader for `blocksBoot` plugins, so their
   budgets are also blank-screen time: a hung remote delays first paint until it is reported
   `failed`/`skipped` — its run budget, plus the discovery leg, plus for an env remote the
   `plugin.json` read (manifest budget) — and never longer than the backstop below.
@@ -560,7 +565,7 @@ already read makes validated bytes == executed bytes **and** removes the extra r
   hand-written structural type and nothing else guards its shape — a non-string `permission` or
   `entry.type` used to throw out of the loader and lose every plugin instead of skipping one.
   The loader never rejects; a failing plugin is
-  logged and reported, others still load. A hung remote is cut off by the time budgets.
+  logged and reported, others still load. A hung remote is cut off by its run's budgets.
 - **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
 - **The `.d.ts` is generated and drift-guarded.** After any facade change, run
   `yarn build:core-types` and commit `client-app/core-api/contract/index.d.ts` (zero `@/`
