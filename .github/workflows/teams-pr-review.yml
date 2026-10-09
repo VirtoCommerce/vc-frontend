@@ -29,7 +29,7 @@ jobs:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@d3c891293467327609f7d7eaabc0dc0402c7f18d # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@9ee00776225a0d083565c5e6c79451e0a82f7148 # feat/teams-pr-review-notification
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
@@ -43,7 +43,7 @@ jobs:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@d3c891293467327609f7d7eaabc0dc0402c7f18d # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@9ee00776225a0d083565c5e6c79451e0a82f7148 # feat/teams-pr-review-notification
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
