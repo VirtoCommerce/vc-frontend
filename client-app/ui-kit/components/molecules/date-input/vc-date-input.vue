@@ -17,6 +17,7 @@
     :aria="aria"
     :tabindex="tabindex"
     :clearable="clearable"
+    :clear-button-aria-label="clearButtonAriaLabel"
     :test-id-input="dataTestId"
     :seamless="seamless"
     :hide-details="hideDetails"
@@ -76,6 +77,8 @@ interface IProps {
   /** Apply a locale-aware input mask. Default false. Paste of ISO or locale-short dates is reformatted; other paste flows through the mask. */
   mask?: boolean;
   clearable?: boolean;
+  /** Accessible name of the clear button. Default "Clear". See VcInput. */
+  clearButtonAriaLabel?: string;
   ariaLabel?: string;
   /** Additional ARIA attributes forwarded to the underlying input element. */
   aria?: Record<string, string | number | null>;

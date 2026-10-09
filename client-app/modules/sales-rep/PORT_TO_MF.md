@@ -23,6 +23,7 @@ Grep `from "@/` over the module rather than trusting the file lists below.
 | `registerCacheTypePolicies` (`index.ts`) | `@vc-frontend/core` |
 | `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` (`useSalesRepHubQuery.ts`, `useSalesRepCommunication.ts`) | `@vc-frontend/core` — added to the facade for this port. Every hub read runs through `useSalesRepHubQuery`, so this one import carries the whole module |
 | `toStartDateFilterValue` / `toEndDateFilterValue` (`pages/customer-orders.vue`, VCST-5733) | `@vc-frontend/core` — added for this port |
+| `formatDateLocale` / `tryParseDate` from `@/ui-kit/utilities` (`pages/customer-orders.vue`) and `BREAKPOINTS` from `@/ui-kit/constants` (`components/sales-rep-orders-filters.vue` and its spec), VCST-6001 | **Not facade exports yet** — add them before porting. The chips must format dates with the date fields' own formatter, and the filter picks its range layout on our breakpoint scale; copying either into the plugin would let it drift from the host |
 | Direct ui-kit subpath imports — `VcWidget`, `VcButton`, `VcInput`, `VcCheckbox`, `VcWidgetSkeleton`, and the `@/ui-kit/components` barrel | `@vc-frontend/core`, all by name |
 | `ROUTES` (`index.ts`, `pages/customer-profile.vue`) — the `Company` / `Account` parent route names | `@vc-frontend/core` — added for this port. `router.addRoute(parent, …)` throws on an unknown parent, so these names are contract; hard-coding the strings puts a host rename outside every gate |
 | Real ui-kit components in specs — `VcButton`, `VcWidget`, `VcWidgetSkeleton`, `VcCheckbox`, `VcInput` mounted through `@/ui-kit/...` paths in `layout-surface.test.ts`, `layout-block-widget.test.ts`, `layout-widget-settings.test.ts`, `layout-drag-and-drop.test.ts` | **Accepted fidelity loss.** The facade's root export is types-only, so a plugin's specs cannot mount the real components; they resolve to the facade mock (§3) and become stubs. `layout-surface.test.ts` says why it matters — the edit toggle is a real `VcButton` and a stub would not carry its click. Keep those assertions on the host side, or drive the toggle through the component's own emit |
@@ -106,9 +107,10 @@ copy the list. The facade's build fails if that list ever drifts from what its f
 
 **The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
 (+`@types/sortablejs`), which `components/layout-region.vue` imports directly, nor `@vueuse/core`
-for `useBreakpoints` in `pages/customer-profile.vue`. Add both, and decide whether `sortablejs` is
-bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is _not_ needed —
-the layout used `useSortable` at one point and no longer does.
+for `useBreakpoints` in `pages/customer-profile.vue` and `components/sales-rep-orders-filters.vue`.
+Add both, and decide whether `sortablejs` is bundled into the remote or listed as federation
+`shared`. `@vueuse/integrations` is _not_ needed — the layout used `useSortable` at one point and no
+longer does.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
 

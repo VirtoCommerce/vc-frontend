@@ -89,6 +89,13 @@
         "empty_visible": "Przeciągnij tutaj wskaźnik, aby go pokazać",
         "empty_hidden": "Przeciągnij tutaj wskaźnik, aby go ukryć",
         "max_rows": "Maks. wierszy",
+        "restored": "Przywrócono układ domyślny.",
+        "empty": {
+          "title": "Wszystkie bloki są ukryte",
+          "text": "Wszystkie wskaźniki i widżety na tej stronie zostały przeniesione do sekcji {hidden} w ustawieniach układu. Przywróć układ domyślny, aby wszystko wróciło, lub otwórz {edit}, aby wybrać dokładnie, co ma być widoczne.",
+          "hidden": "Ukryte",
+          "restore": "Przywróć układ domyślny"
+        },
         "a11y": {
           "reorder": "Zmień kolejność: {title}",
           "hide": "Ukryj {title}",
@@ -145,7 +152,7 @@
         "created_date": "Data utworzenia",
         "start_date": "Data rozpoczęcia",
         "end_date": "Data zakończenia",
-        "invalid_range": "Nieprawidłowy zakres dat.",
+        "date_range": "Zakres dat",
         "order_status": "@:common.labels.status",
         "customer": "Wybierz klienta",
         "reset": "Resetuj",
@@ -154,7 +161,8 @@
         "last_day": "Ostatni dzień",
         "last_week": "Ostatni tydzień",
         "last_month": "Ostatni miesiąc",
-        "last_year": "Ostatni rok"
+        "last_year": "Ostatni rok",
+        "remove_filter": "Usuń filtr „{label}”"
       }
     },
     "communication": {
@@ -203,12 +211,14 @@
       "load_failed": "Nie udało się wczytać zamówień"
     },
     "tasks": {
-      "title": "Kalendarz",
+      "title": "Zadania",
       "widget_title": "Zadania i terminy",
-      "full_calendar": "Pełny kalendarz",
+      "view_all": "Wszystkie zadania",
       "new_task": "Nowe zadanie",
-      "add_task": "Dodaj zadanie",
+      "due_dates": "Terminy",
       "today": "Dziś",
+      "all": "Wszystkie",
+      "clear_day_aria": "Usuń {date}",
       "empty": "Brak zadań na tej karcie",
       "empty_day": "Brak terminów w tym dniu",
       "load_failed": "Nie udało się wczytać zadań",
@@ -223,8 +233,10 @@
         "task": "Zadanie",
         "status": "Status",
         "notes": "Notatki",
-        "complete_aria": "Oznacz „{name}” jako ukończone",
-        "reopen_aria": "Otwórz ponownie „{name}”",
+        "actions": "Akcje",
+        "mark_complete": "Ukończ",
+        "reopen": "Otwórz ponownie",
+        "action_aria": "{action}: „{name}”",
         "edit_aria": "Edytuj „{name}”"
       },
       "status": {

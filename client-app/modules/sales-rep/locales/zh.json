@@ -89,6 +89,13 @@
         "empty_visible": "将指标拖到此处以显示",
         "empty_hidden": "将指标拖到此处以隐藏",
         "max_rows": "最大行数",
+        "restored": "已恢复默认布局。",
+        "empty": {
+          "title": "所有区块均已隐藏",
+          "text": "此页面上的所有指标和小组件已在布局设置中移至{hidden}。恢复默认布局即可全部找回，或打开{edit}精确选择要显示的内容。",
+          "hidden": "已隐藏",
+          "restore": "恢复默认布局"
+        },
         "a11y": {
           "reorder": "重新排序 {title}",
           "hide": "隐藏 {title}",
@@ -145,7 +152,7 @@
         "created_date": "创建日期",
         "start_date": "开始日期",
         "end_date": "结束日期",
-        "invalid_range": "日期范围无效。",
+        "date_range": "日期范围",
         "order_status": "@:common.labels.status",
         "customer": "选择客户",
         "reset": "重置",
@@ -154,7 +161,8 @@
         "last_day": "最后一天",
         "last_week": "上周",
         "last_month": "上个月",
-        "last_year": "去年"
+        "last_year": "去年",
+        "remove_filter": "移除筛选条件“{label}”"
       }
     },
     "communication": {
@@ -203,12 +211,14 @@
       "load_failed": "无法加载订单"
     },
     "tasks": {
-      "title": "日历",
+      "title": "任务",
       "widget_title": "任务与截止日期",
-      "full_calendar": "完整日历",
+      "view_all": "所有任务",
       "new_task": "新建任务",
-      "add_task": "添加任务",
+      "due_dates": "截止日期",
       "today": "今天",
+      "all": "全部",
+      "clear_day_aria": "清除 {date}",
       "empty": "此标签页没有任务",
       "empty_day": "当天没有到期事项",
       "load_failed": "无法加载任务",
@@ -223,8 +233,10 @@
         "task": "任务",
         "status": "状态",
         "notes": "备注",
-        "complete_aria": "将“{name}”标记为已完成",
-        "reopen_aria": "重新打开“{name}”",
+        "actions": "操作",
+        "mark_complete": "标记为已完成",
+        "reopen": "重新打开",
+        "action_aria": "{action}：“{name}”",
         "edit_aria": "编辑“{name}”"
       },
       "status": {

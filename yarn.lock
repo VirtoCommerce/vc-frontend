@@ -14665,6 +14665,7 @@ __metadata:
     "@graphql-codegen/typed-document-node": "npm:5.1.2"
     "@graphql-codegen/typescript": "npm:4.1.6"
     "@graphql-codegen/typescript-operations": "npm:4.6.1"
+    "@graphql-typed-document-node/core": "npm:^3.2.0"
     "@headlessui/vue": "npm:^1.7.23"
     "@internationalized/date": "npm:^3.12.2"
     "@module-federation/enhanced": "npm:2.8.0"
