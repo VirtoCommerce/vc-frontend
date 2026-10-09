@@ -21,6 +21,7 @@ export { VcWidget } from "@/ui-kit/components";
 export {
   VcAlert,
   VcButton,
+  VcCalendar,
   VcChip,
   VcDialog,
   VcDialogContent,
@@ -55,6 +56,7 @@ export {
 } from "@/ui-kit/components/atoms";
 export {
   VcDatePicker,
+  VcDateRangePicker,
   VcModal,
   VcPagination,
   VcTable,
@@ -179,16 +181,26 @@ export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
 export { useFetch } from "@/core/api/common/composables/useFetch";
 export { downloadFile } from "@/shared/files/utils";
 export { getFileSize } from "@/ui-kit/utilities/file-size";
+// The date fields' own display format, so a plugin echoing a picked date shows it the way the field did.
+export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities/date";
+// The host's breakpoint scale, for a plugin that switches layout in script (`useBreakpoints(BREAKPOINTS)`).
+export { BREAKPOINTS } from "@/ui-kit/constants/tailwind";
 export { ContentType } from "@/core/enums/content-type.enum";
 
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
 export type { ILanguage } from "@/core/types";
 export type { ExtendedMenuLinkType, MenuType } from "@/core/types";
+// What a plugin template reads as `$cfg` / `$context` / `$permissions`: the host sets them as global
+// properties of the app instance the plugin renders in.
+export type { IThemeConfigSettings, IThemeContext } from "@/core/types";
+export type { PlatformPermissions, XApiPermissions } from "@/core/enums";
 // Already load-bearing in the contract: useOrderView, OrderLineItems and OrderSummary all
 // take one, and rollup names it only internally — so a plugin could pass an order but not
 // declare the variable it passed.
 export type { CustomerOrderType } from "@/core/api/graphql/types";
+// Already in the contract through `WishlistSharingScopePayloadType.targets`.
+export type { SharingTargetType } from "@/core/api/graphql/types";
 
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
