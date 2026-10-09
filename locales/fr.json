@@ -245,7 +245,7 @@
       "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues.",
       "content_failed_to_load": "Une partie du site n'a pas pu être chargée. Veuillez recharger la page pour continuer.",
       "page_loading": "Chargement de la page…",
-      "page_loading_slow": "Le chargement de cette page prend plus de temps que d'habitude."
+      "page_loading_slow": "Le chargement de cette page prend plus de temps que d'habitude. Vous pouvez patienter ou recharger la page."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",

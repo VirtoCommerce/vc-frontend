@@ -245,7 +245,7 @@
       "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota.",
       "content_failed_to_load": "Osaa sivustosta ei voitu ladata. Lataa sivu uudelleen jatkaaksesi.",
       "page_loading": "Sivua ladataan…",
-      "page_loading_slow": "Sivun lataaminen kestää tavallista kauemmin."
+      "page_loading_slow": "Sivun lataaminen kestää tavallista kauemmin. Voit odottaa tai ladata sivun uudelleen."
     },
     "placeholders": {
       "enter_value": "Syötä arvo",

@@ -245,7 +245,7 @@
       "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse.",
       "content_failed_to_load": "Non è stato possibile caricare una parte del sito. Ricarica la pagina per continuare.",
       "page_loading": "Caricamento della pagina…",
-      "page_loading_slow": "Il caricamento di questa pagina richiede più tempo del solito."
+      "page_loading_slow": "Il caricamento di questa pagina richiede più tempo del solito. Puoi attendere o ricaricare la pagina."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",

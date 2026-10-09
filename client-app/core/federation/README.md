@@ -241,9 +241,10 @@ app-runner.ts
   ▼
 startFederatedModules()            bootstrap.ts
   │  if (!isFederationEnabled()) return;   ← module_federation_enabled: false ⇒ instant no-op
-  │  fetchPlugins()                         ← the platform's list, on its own budget
-  │                                           (DISCOVERY_TIMEOUT_MS); slow or failing ⇒ no plugins
+  │  fetchPlugins()                         ← the platform's list, an ordinary boot request awaited
+  │                                           with no budget; failing ⇒ no plugins
   │  dynamic import("./index")              ← in parallel; keeps MF runtime out of non-MF builds
+  │  BOOT_BACKSTOP_MS starts                ← once the list is in
   ▼
 prepareFederatedModules()          index.ts — phase A, no plugin code runs
   1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
@@ -338,16 +339,17 @@ Three design points worth calling out:
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
   against the previous major. While the contract is pre-1.0 the **minor** carries that role
   instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
-- **Every network step is time-budgeted, and the budget follows who waits.** A `blocksBoot`
+- **Every plugin step is time-budgeted, and the budget follows who waits.** A `blocksBoot`
   plugin gets two knobs via `prepareFederatedModules(options)`: the manifest budget, and the load
   budget that bounds load and init _each_ — so one remote may legally take manifest + 2×load,
-  `runBudgetMs` — plus `DISCOVERY_TIMEOUT_MS` on the plugin-list query in `bootstrap.ts`. The values
+  `runBudgetMs`. The plugin list itself has no budget: it is a boot request like the store and page
+  context, started with them and awaited the same way. The values
   live in those constants (`DEFAULT_MANIFEST_TIMEOUT_MS`, `DEFAULT_LOAD_TIMEOUT_MS`), not here.
   Every other plugin loads with nobody waiting, so a slow network must not cost it: each of its steps
   gets only `DEFAULT_DEFERRED_TIMEOUT_MS` (`deferredTimeoutMs`), a cap against a request that never
   settles rather than a latency budget. Boot awaits this loader for `blocksBoot` plugins, so their
   budgets are also blank-screen time: a hung remote delays first paint until it is reported
-  `failed`/`skipped` — its run budget, plus the discovery leg, plus for an env remote the
+  `failed`/`skipped` — its run budget, plus for an env remote the
   `plugin.json` read (manifest budget) — and never longer than the backstop below.
   `bootstrap.ts` adds a **backstop**, `BOOT_BACKSTOP_MS`, above the sum of those budgeted legs,
   covering what the budgets do not: the loader chunk's own fetch, and an inner timeout

@@ -217,21 +217,33 @@ describe("startFederatedModules", () => {
     expect(initFederatedModulesMock).toHaveBeenCalledWith({ plugins: undefined, hasPermission: undefined });
     expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("plugin list"), expect.anything());
   });
-  it("budgets the plugin list, so a stalled discovery query cannot eat the boot backstop", async () => {
+  it("waits for the plugin list like any other boot request, and only then starts the backstop", async () => {
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
-    const { startFederatedModules, DISCOVERY_TIMEOUT_MS } = await loadBootstrap();
+    const plugins = [{ id: "VirtoCommerce.SalesRep" }];
+    const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
     vi.useFakeTimers();
     try {
-      // Never settles - the cold-backend case the backstop used to absorb.
-      const started = startFederatedModules({ fetchPlugins: () => new Promise(() => {}) });
-      await vi.advanceTimersByTimeAsync(DISCOVERY_TIMEOUT_MS);
+      let answer!: (list: typeof plugins) => void;
+      let settled = false;
+      const started = startFederatedModules({
+        fetchPlugins: () =>
+          new Promise((resolve) => {
+            answer = resolve;
+          }),
+      }).then(() => {
+        settled = true;
+      });
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS * 2);
+      expect(settled).toBe(false);
+
+      answer(plugins);
       await started;
     } finally {
       vi.useRealTimers();
     }
 
-    expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins: undefined }));
-    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("did not answer within"));
+    expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins }));
+    expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
   });
 });
 

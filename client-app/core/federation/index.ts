@@ -18,12 +18,11 @@ import type { RouteRecordRaw, Router } from "vue-router";
  * call `init()`. Plugins bind to the host's live services via the shared facade.
  * - Version safety: an incompatible remote is skipped before any of its code runs.
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
- * - Every network step is time-budgeted, and the budget follows who waits. Boot waits only for a
+ * - Every plugin step is time-budgeted, and the budget follows who waits. Boot waits only for a
  *   `blocksBoot` plugin, so only those get the tight knobs (manifestTimeoutMs, loadTimeoutMs — the
  *   latter bounds load and init separately; one such remote may take up to `runBudgetMs`).
- *   bootstrap.ts holds a BOOT_BACKSTOP_MS above that sum PLUS its own DISCOVERY_TIMEOUT_MS and an
- *   env remote's plugin.json read — a backstop that fires only when these budgets malfunction or the
- *   loader chunk fetch itself hangs. The backstop invariant test holds the sum. Every other plugin
+ *   bootstrap.ts holds a BOOT_BACKSTOP_MS above that sum PLUS an env remote's plugin.json read — a
+ *   backstop that fires only when these budgets malfunction or the loader chunk fetch itself hangs. The backstop invariant test holds the sum. Every other plugin
  *   loads after boot with nobody waiting, so a slow network must not cost it: its steps get only
  *   deferredTimeoutMs, a cap against a request that never settles.
  * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the

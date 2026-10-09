@@ -245,7 +245,7 @@
       "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。",
       "content_failed_to_load": "网站的部分内容无法加载。请重新加载页面以继续。",
       "page_loading": "正在加载页面…",
-      "page_loading_slow": "此页面的加载时间比平常更长。"
+      "page_loading_slow": "此页面的加载时间比平常更长。您可以继续等待或重新加载页面。"
     },
     "placeholders": {
       "enter_value": "请输入值",
