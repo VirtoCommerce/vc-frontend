@@ -5,9 +5,13 @@
       "table_description": "lista zwrotów"
     },
     "title": "Zwroty",
+    "scope": {
+      "own": "Moje zwroty"
+    },
     "no_returns_message": "Nie ma jeszcze żadnych zwrotów",
     "no_results_message": "Żadne zwroty nie pasują do wyszukiwania",
     "search_placeholder": "Szukaj według RMA, zamówienia, referencji lub produktu",
+    "search_placeholder_organization": "Szukaj według RMA, zamówienia, referencji, produktu lub kupującego",
     "search_aria": "Szukaj zwrotów",
     "filters": {
       "title": "Filtry",
@@ -101,7 +105,8 @@
     "summary_section": "Podsumowanie",
     "items_section": "Produkty",
     "order_number": "Numer zamówienia",
-    "customer_reference": "Twój numer zamówienia",
+    "requested_by": "Zgłoszone przez",
+    "customer_reference": "Numer zamówienia",
     "customer_comment": "Komentarz",
     "cancel_reason": "Powód anulowania",
     "reject_reason": "Powód odrzucenia",
