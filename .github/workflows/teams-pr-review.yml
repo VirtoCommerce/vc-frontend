@@ -2,13 +2,14 @@ name: Notify Teams about PR reviews
 
 # One card per PR in the Teams "PR review" channel, kept in sync with the review state (VCST-6259).
 # The action builds the card, a Teams Workflows flow posts or updates it. Secrets: TEAMS_PR_WEBHOOK
-# (the flow URL) and TEAMS_USERS ({"core": [logins], "ids": {login: Entra Object ID}}).
+# (the flow URL) and TEAMS_USERS ({"github-login": "Entra Object ID"}).
 # Without secrets (Dependabot and fork PRs) the action skips the run.
 
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, converted_to_draft,
-            review_requested, review_request_removed, closed]
+            review_requested, review_request_removed, closed,
+            synchronize, edited, labeled, unlabeled]
   pull_request_review:
     types: [submitted, dismissed]
 
@@ -29,21 +30,21 @@ jobs:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@6b65ebf00b94aac344838d2d816a14dfcd68e478 # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@213e27d6f0ec9d6e4bdc7e9ddeae2e40a8062831 # feat/teams-pr-review-notification
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
           teams-users: ${{ secrets.TEAMS_USERS }}
 
   ping:
-    # Re-review and new reviewer messages, one run per request and never queued, so none is cancelled.
+    # Re-review messages, one run per request and never queued, so none is cancelled.
     if: (github.repository_id == '296335982' || vars.VC_CI == 'true') && github.event.action == 'review_requested'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@6b65ebf00b94aac344838d2d816a14dfcd68e478 # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@213e27d6f0ec9d6e4bdc7e9ddeae2e40a8062831 # feat/teams-pr-review-notification
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
