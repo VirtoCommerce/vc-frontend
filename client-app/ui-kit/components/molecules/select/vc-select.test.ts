@@ -660,6 +660,25 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("false");
     });
 
+    // A local filter is unknown to `total`, which still counts the whole set.
+    it("counts only the matches under a local query, whatever the total", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        total: 30,
+        modelValue: ["Belgium"],
+        onSelectAll: noop,
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("bel");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 1");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("true");
+    });
+
     it("clears the whole selection, loaded or not, when nothing narrows the list", async () => {
       const wrapper = createWrapper({ ...selectAllProps, total: 5, modelValue: [...ITEMS, "Denmark", "Egypt"] });
 
@@ -1079,6 +1098,23 @@ describe("VcSelect", () => {
 
       expect(event.defaultPrevented).toBe(true);
       expect(document.activeElement).toBe(wrapper.get(".vc-select-all input").element);
+    });
+
+    it("leaves Tab to the browser once the list is closed", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+      await input.trigger("click");
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+
+      const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      input.element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(document.activeElement).toBe(input.element);
     });
   });
 
@@ -1523,6 +1559,17 @@ describe("VcSelect", () => {
         expect(rows(wrapper)).toEqual(["Belgium"]);
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
+    });
+
+    it("announces nothing while a locally filtered list with no match is loading", async () => {
+      const wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, hasNextPage: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("zzz");
+      await wrapper.setProps({ loading: true });
+
+      expect(wrapper.get('[aria-live="polite"]').text()).toBe("");
     });
 
     describe("result count announced for a server-side query", () => {
