@@ -2830,7 +2830,7 @@ interface IProps$i {
      */
     highlightRing?: boolean;
     /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
-    tabindex?: number | string;
+    tabindex?: number | `${number}`;
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};
@@ -2848,7 +2848,7 @@ declare const __VLS_base$8: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.Co
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
-    tabindex: number | string;
+    tabindex: number | `${number}`;
     color: VcMenuItemColorType;
     clickable: boolean;
     highlightRing: boolean;
