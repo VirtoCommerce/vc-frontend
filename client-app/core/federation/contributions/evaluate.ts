@@ -2,8 +2,8 @@ import { Logger } from "@/core/utilities";
 import type { ConditionNodeType } from "./types";
 
 export interface IConditionContextType {
-  /** A store module setting, by name. */
-  setting(key: string): unknown;
+  /** A setting of the store module `module`, by name. */
+  setting(module: string, key: string): unknown;
   /** A `settings_data.json` key. */
   themeSetting(key: string): unknown;
   isAuthenticated: boolean;
@@ -34,7 +34,10 @@ function malformed(node: unknown): never {
 
 function resolveLeaf(node: ConditionNodeType, context: IConditionContextType): ResidualConditionType | undefined {
   if ("setting" in node) {
-    return settingMatches(context.setting(node.setting), node);
+    if (typeof node.module !== "string") {
+      return malformed(node);
+    }
+    return settingMatches(context.setting(node.module, node.setting), node);
   }
   if ("themeSetting" in node) {
     return settingMatches(context.themeSetting(node.themeSetting), node);

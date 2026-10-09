@@ -5,8 +5,7 @@ import { Logger } from "@/core/utilities";
 import { PLACEHOLDER_META_KEY, resetDeclaredSlots } from "./contributions/declare";
 import { resetPluginStatuses, usePluginsStatus } from "./contributions/status";
 import {
-  DEFAULT_LOAD_TIMEOUT_MS,
-  DEFAULT_MANIFEST_TIMEOUT_MS,
+  DEFAULT_DEFERRED_TIMEOUT_MS,
   loadPreparedModules,
   PENDING_GRACE_MS,
   prepareFederatedModules,
@@ -55,7 +54,7 @@ function otherPlugin(): IPlatformPlugin {
 
 const DECLARED = {
   format: 1,
-  when: { setting: "SalesRep.Enabled" },
+  when: { setting: "SalesRep.Enabled", module: "VirtoCommerce.SalesRep" },
   routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments" }],
 };
 
@@ -74,7 +73,8 @@ function stubFetch() {
 
 function context(enabled: boolean) {
   return {
-    setting: (key: string) => (key === "SalesRep.Enabled" ? enabled : undefined),
+    setting: (module: string, key: string) =>
+      module === "VirtoCommerce.SalesRep" && key === "SalesRep.Enabled" ? enabled : undefined,
     themeSetting: () => undefined,
     isAuthenticated: true,
     can: () => true,
@@ -219,7 +219,7 @@ describe("declared contributions in the loader", () => {
     try {
       const prepared = await prepareFederatedModules({ plugins: [plugin(DECLARED)], conditionContext: context(true) });
       const { isSettled, stateOf } = usePluginsStatus();
-      const deadline = runBudgetMs(DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS) + PENDING_GRACE_MS;
+      const deadline = runBudgetMs(DEFAULT_DEFERRED_TIMEOUT_MS, DEFAULT_DEFERRED_TIMEOUT_MS) + PENDING_GRACE_MS;
 
       expect(prepared.deferred.map((entry) => entry.remote.name)).toEqual(["sales-rep"]);
       await vi.advanceTimersByTimeAsync(deadline - 1);
@@ -275,7 +275,13 @@ describe("declared contributions in the loader", () => {
     });
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(prepared.deferred).toEqual([{ remote: expect.objectContaining({ name: "sales-rep" }), applied: undefined }]);
+    expect(prepared.deferred).toEqual([
+      {
+        remote: expect.objectContaining({ name: "sales-rep" }),
+        applied: undefined,
+        budgets: { manifestTimeoutMs: DEFAULT_DEFERRED_TIMEOUT_MS, loadTimeoutMs: DEFAULT_DEFERRED_TIMEOUT_MS },
+      },
+    ]);
     expect(router.hasRoute("SalesRepDocuments")).toBe(false);
   });
 

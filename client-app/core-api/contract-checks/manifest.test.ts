@@ -17,7 +17,10 @@ import {
 
 describe("condition builders", () => {
   it("serialise to the plain AST", () => {
-    expect(settingEnabled("SalesRep.Enabled")).toEqual({ setting: "SalesRep.Enabled" });
+    expect(settingEnabled("VirtoCommerce.SalesRep", "SalesRep.Enabled")).toEqual({
+      setting: "SalesRep.Enabled",
+      module: "VirtoCommerce.SalesRep",
+    });
     expect(authenticated()).toEqual({ authenticated: true });
     expect(userCan("a")).toEqual({ can: "a" });
     expect(userCan("a", "b")).toEqual({ and: [{ can: "a" }, { can: "b" }] });
@@ -27,18 +30,19 @@ describe("condition builders", () => {
   });
 
   it("keep `eq` off the JSON until it is called", () => {
-    const mode = settingValue("Mode");
+    const mode = settingValue("M", "Mode");
 
-    expect(JSON.parse(JSON.stringify(mode))).toEqual({ setting: "Mode" });
-    expect(mode.eq("on")).toEqual({ setting: "Mode", eq: "on" });
+    expect(JSON.parse(JSON.stringify(mode))).toEqual({ setting: "Mode", module: "M" });
+    expect(mode.eq("on")).toEqual({ setting: "Mode", module: "M", eq: "on" });
     expect(JSON.parse(JSON.stringify(themeSetting("t").eq(3)))).toEqual({ themeSetting: "t", eq: 3 });
   });
 
   it("reject what cannot be serialised or evaluated", () => {
     expect(() => userCan()).toThrow(/at least one permission/);
     expect(() => and()).toThrow(/at least one condition/);
-    expect(() => settingEnabled("")).toThrow(/non-empty string/);
-    expect(() => settingValue("x").eq({})).toThrow(/string, number, boolean or null/);
+    expect(() => settingEnabled("M", "")).toThrow(/non-empty string/);
+    expect(() => settingEnabled("", "x")).toThrow(/the module id must be a non-empty string/);
+    expect(() => settingValue("M", "x").eq({})).toThrow(/string, number, boolean or null/);
   });
 });
 
@@ -47,7 +51,7 @@ describe("definePluginManifest", () => {
     const access = userCan("sales-rep:access");
 
     const contributions = definePluginManifest({
-      when: settingEnabled("SalesRep.Enabled"),
+      when: settingEnabled("VirtoCommerce.SalesRep", "SalesRep.Enabled"),
       routes: [
         { path: "sales-reps", parent: "Company", name: "SalesReps" },
         { path: "documents", parent: "Company", name: "SalesRepDocuments", when: userCan("a", "b") },
@@ -80,7 +84,7 @@ describe("definePluginManifest", () => {
 
     expect(contributions).toEqual({
       format: 1,
-      when: { setting: "SalesRep.Enabled" },
+      when: { setting: "SalesRep.Enabled", module: "VirtoCommerce.SalesRep" },
       routes: [
         { path: "sales-reps", name: "SalesReps", parent: "Company" },
         {
@@ -121,7 +125,7 @@ describe("definePluginManifest", () => {
 
   it("is JSON-stable: nothing in the result is a function or survives only by reference", () => {
     const contributions = definePluginManifest({
-      when: settingValue("Mode"),
+      when: settingValue("M", "Mode"),
       slots: [{ at: "productCard/card-button", policy: "reserve", when: (field) => not(field("hasVariations")) }],
     });
 
@@ -176,7 +180,11 @@ describe("definePluginManifest", () => {
     expect(() => definePluginManifest({ menu: [{ surface: "account", id: "a", title: "t" }] })).toThrow(
       /menu\[0\]: an account section needs `children`/,
     );
-    expect(() => definePluginManifest({ when: { setting: "a", can: "b" } })).toThrow(/unknown condition/);
+    expect(() => definePluginManifest({ when: { setting: "a", module: "M", can: "b" } })).toThrow(/unknown condition/);
+    expect(() => definePluginManifest({ when: { setting: "a" } })).toThrow(/`module` must be a non-empty string/);
+    expect(() => definePluginManifest({ when: { can: "b", module: "M" } })).toThrow(
+      /`module` is only valid on a `setting`/,
+    );
     expect(() => definePluginManifest({ when: { can: "b", eq: 1 } })).toThrow(/`eq` is not valid on a `can`/);
     expect(() => definePluginManifest({ when: { and: [] } })).toThrow(/non-empty list/);
   });
@@ -195,7 +203,7 @@ describe("pluginContributions", () => {
   function withPluginJson(pluginJson: unknown) {
     dir = mkdtempSync(join(tmpdir(), "vc-contributions-"));
     writeFileSync(join(dir, "plugin.json"), JSON.stringify(pluginJson));
-    const plugin = pluginContributions({ format: 1, when: { setting: "X" } });
+    const plugin = pluginContributions({ format: 1, when: { setting: "X", module: "M" } });
     plugin.configResolved({ publicDir: dir, root: dir, build: { outDir: "dist" } });
     const context = { error: vi.fn((message: string) => { throw new Error(message); }) };
     return { plugin, context };
@@ -213,13 +221,19 @@ describe("pluginContributions", () => {
     mkdirSync(join(dir!, "dist"));
     writeFileSync(join(dir!, "dist", "plugin.json"), JSON.stringify({ id: "p", contentFiles: ["styles.css"] }));
 
-    plugin.closeBundle();
+    plugin.closeBundle.call({ error: vi.fn() });
 
     expect(JSON.parse(readFileSync(join(dir!, "dist", "plugin.json"), "utf8"))).toEqual({
       id: "p",
       contentFiles: ["styles.css"],
-      contributions: { format: 1, when: { setting: "X" } },
+      contributions: { format: 1, when: { setting: "X", module: "M" } },
     });
+  });
+
+  it("fails the build when public/plugin.json did not reach the output", () => {
+    const { plugin, context } = withPluginJson({ id: "p" });
+
+    expect(() => plugin.closeBundle.call(context)).toThrow(/dist\/plugin.json is missing/);
   });
 
   it("fails the build when there is no plugin.json at all", () => {

@@ -2,6 +2,7 @@ import { shallowRef } from "vue";
 import { declareAccountSection, declareMenuLinks, withdrawDeclaredNavigation } from "@/core/composables/useNavigations";
 import { Logger } from "@/core/utilities";
 import { evaluateResidual, isGloballyTrue, resolveGlobalTerms } from "./evaluate";
+import { PLACEHOLDER_META_KEY } from "./placeholder";
 import { isPluginSettled } from "./status";
 import type { IConditionContextType, ResidualConditionType } from "./evaluate";
 import type {
@@ -16,8 +17,7 @@ import type { ExtendedMenuLinkType, MenuType } from "@/core/types";
 import type { DeepPartial } from "utility-types";
 import type { RouteRecordRaw, Router } from "vue-router";
 
-/** On a placeholder route: the owning plugin's name. */
-export const PLACEHOLDER_META_KEY = "pluginPlaceholder";
+export { PLACEHOLDER_META_KEY };
 
 const PluginRoutePlaceholder = () => import("./plugin-route-placeholder.vue");
 

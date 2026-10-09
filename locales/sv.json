@@ -244,7 +244,8 @@
       "logo_deleted": "Logotypen har raderats.",
       "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade.",
       "content_failed_to_load": "En del av webbplatsen kunde inte laddas. Ladda om sidan för att fortsätta.",
-      "page_loading": "Laddar sidan…"
+      "page_loading": "Laddar sidan…",
+      "page_loading_slow": "Det tar längre tid än vanligt att läsa in sidan. Du kan vänta eller läsa in sidan igen."
     },
     "placeholders": {
       "enter_value": "Ange ett värde",

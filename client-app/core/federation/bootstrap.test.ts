@@ -1,5 +1,6 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { PLACEHOLDER_META_KEY } from "./contributions/placeholder";
 
 const { initFederatedModulesMock, loggerErrorMock, loggerWarnMock } = vi.hoisted(() => ({
   initFederatedModulesMock: vi.fn(),
@@ -112,10 +113,10 @@ describe("startFederatedModules", () => {
       // Simulates an inner-budget malfunction (the loader never settles) — the one
       // in-loader case the backstop exists for.
       initFederatedModulesMock.mockImplementation(() => new Promise(() => {}));
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
 
       await expect(boot).resolves.toBeUndefined();
       expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
@@ -130,17 +131,19 @@ describe("startFederatedModules", () => {
       // Chunk fetch stalls past the backstop, then errors: the failure must still be
       // logged — otherwise the backstop's "late plugins" warning is the only (and
       // misleading) signal for a loader that actually died.
+      let failAfterMs = 0;
       vi.doMock(
         "./index",
         () =>
           new Promise((_, reject) => {
-            setTimeout(() => reject(new Error("chunk error after backstop")), 25_000);
+            setTimeout(() => reject(new Error("chunk error after backstop")), failAfterMs);
           }),
       );
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
+      failAfterMs = BOOT_BACKSTOP_MS + 5_000;
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
       await expect(boot).resolves.toBeUndefined();
       expect(loggerErrorMock).not.toHaveBeenCalled();
 
@@ -156,10 +159,10 @@ describe("startFederatedModules", () => {
     try {
       // A stalled (never-settling) chunk fetch: the import promise neither resolves nor rejects.
       vi.doMock("./index", () => new Promise(() => {}));
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
 
       await expect(boot).resolves.toBeUndefined();
       expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
@@ -172,12 +175,12 @@ describe("startFederatedModules", () => {
     vi.useFakeTimers();
     try {
       initFederatedModulesMock.mockResolvedValue({ loaded: ["news"], failed: [], skipped: [] });
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
 
       await startFederatedModules();
       // Advance PAST the backstop: a leaked (uncleared) timer would fire its
       // misleading warning long after a perfectly normal boot.
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
 
       expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
     } finally {
@@ -216,21 +219,33 @@ describe("startFederatedModules", () => {
     expect(initFederatedModulesMock).toHaveBeenCalledWith({ plugins: undefined, hasPermission: undefined });
     expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("plugin list"), expect.anything());
   });
-  it("budgets the plugin list, so a stalled discovery query cannot eat the boot backstop", async () => {
+  it("waits for the plugin list like any other boot request, and only then starts the backstop", async () => {
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
-    const { startFederatedModules, DISCOVERY_TIMEOUT_MS } = await loadBootstrap();
+    const plugins = [{ id: "VirtoCommerce.SalesRep" }];
+    const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
     vi.useFakeTimers();
     try {
-      // Never settles - the cold-backend case the backstop used to absorb.
-      const started = startFederatedModules({ fetchPlugins: () => new Promise(() => {}) });
-      await vi.advanceTimersByTimeAsync(DISCOVERY_TIMEOUT_MS);
+      let answer!: (list: typeof plugins) => void;
+      let settled = false;
+      const started = startFederatedModules({
+        fetchPlugins: () =>
+          new Promise((resolve) => {
+            answer = resolve;
+          }),
+      }).then(() => {
+        settled = true;
+      });
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS * 2);
+      expect(settled).toBe(false);
+
+      answer(plugins);
       await started;
     } finally {
       vi.useRealTimers();
     }
 
-    expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins: undefined }));
-    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("did not answer within"));
+    expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins }));
+    expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
   });
 });
 
@@ -328,6 +343,32 @@ describe("startFederatedModules with declared plugins", () => {
     await flushPromises();
 
     expect(replace).toHaveBeenCalledWith({ path: "/company/late", query: {}, hash: "", force: true });
+  });
+
+  it("leaves a plugin route's placeholder to resolve itself once every plugin settled", async () => {
+    const replace = vi.fn();
+    const router = {
+      currentRoute: {
+        value: {
+          name: "SalesRepDashboard",
+          path: "/company/dashboard",
+          query: {},
+          hash: "",
+          fullPath: "/company/dashboard",
+          matched: [{ meta: {} }, { meta: { [PLACEHOLDER_META_KEY]: "sales-rep" } }],
+        },
+      },
+      resolve: vi.fn(() => ({ name: "NotFound" })),
+      replace,
+    };
+    vi.doMock("@/core/globals", () => ({ globals: { router } }));
+    stubLoader(Promise.resolve(), Promise.resolve());
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins: () => Promise.resolve([]) });
+    await flushPromises();
+
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it("leaves the URL alone when it still resolves to the same route", async () => {

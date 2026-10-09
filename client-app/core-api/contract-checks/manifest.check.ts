@@ -17,7 +17,7 @@ const ACCESS = "sales-rep:access";
 const DOCUMENTS_READ = "sales-rep-documents:read";
 
 export const salesRep: IPluginContributionsType = definePluginManifest({
-  when: settingEnabled("SalesRep.Enabled"),
+  when: settingEnabled("VirtoCommerce.SalesRep", "SalesRep.Enabled"),
   routes: [
     { path: "sales-reps", parent: "Company", name: "SalesReps" },
     { path: "dashboard", parent: "Company", name: "SalesRepDashboard", when: userCan(ACCESS) },
@@ -88,7 +88,11 @@ export const salesRep: IPluginContributionsType = definePluginManifest({
 // ── Other conditions and slot contexts ──
 
 definePluginManifest({
-  when: and(themeSetting("push_messages_enabled"), authenticated(), settingValue("Some.Mode").eq("on")),
+  when: and(
+    themeSetting("push_messages_enabled"),
+    authenticated(),
+    settingValue("VirtoCommerce.Some", "Some.Mode").eq("on"),
+  ),
   routes: [
     { path: "push-messages", parent: "Account", name: "PushMessages", when: themeSetting("push_messages_enabled") },
   ],

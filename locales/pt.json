@@ -244,7 +244,8 @@
       "logo_deleted": "O logotipo foi excluído.",
       "pending_operations_leaving_page_confirmation": "Algumas operações ainda estão em andamento. Tem certeza de que deseja sair desta página? As alterações não salvas podem ser perdidas.",
       "content_failed_to_load": "Não foi possível carregar parte do site. Recarregue a página para continuar.",
-      "page_loading": "Carregando a página…"
+      "page_loading": "Carregando a página…",
+      "page_loading_slow": "Esta página está a demorar mais do que o habitual a carregar. Pode continuar a aguardar ou recarregar a página."
     },
     "placeholders": {
       "enter_value": "Por favor, insira um valor",

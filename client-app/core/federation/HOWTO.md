@@ -57,6 +57,7 @@ my-plugin/
 ├── .vscode/settings.json    # + extensions.json (Volar, eslint, prettier)
 ├── eslint.config.js         # the host's flat config, trimmed
 ├── tsconfig.json            # strict, strictTemplates on
+├── plugin.config.ts         # what the storefront knows before your code runs ("Declaring contributions")
 ├── vite.config.ts
 ├── vitest.config.ts
 └── package.json             # scripts: build, watch, dev, preview, type-check, lint, lint:fix, format, test
@@ -255,10 +256,12 @@ Rules of the road:
 
 - **No `@/...` imports** — host source paths don't exist in your build. If you need
   something the facade doesn't export, that's a facade extension request (below).
-- `init()` runs **before the host installs the router**, so routes you add here work
-  even on a direct deep link.
-- Keep `init()` fast: it has a time budget (the loader's per-phase `loadTimeoutMs`), and with
-  `blocksBoot: true` the app boot waits for it.
+- `init()` runs before the host installs the router only with `blocksBoot: true`. Otherwise it runs
+  alongside the app: declare your routes (see "Declaring contributions") so a direct deep link
+  shows a loader and then your page, instead of the host's 404 until `init()` has run.
+- Keep `init()` fast. With `blocksBoot: true` the app boot waits for it, within the loader's
+  per-phase `loadTimeoutMs`. Without it nobody waits, and each step only has the `deferredTimeoutMs`
+  cap against a request that never settles.
 - **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
   that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
   loader refuses such a claim for the whole load-and-init phase and logs it — including a name
@@ -440,8 +443,9 @@ module's artifacts, and the platform both serves and announces it:
 - whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
   `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
   plugin is skipped: the storefront boots, the feature is simply absent;
-- at boot the host asks for the list in a query of its own (`GetStorePlugins`, on its own budget, fails
-  closed to "no plugins" — an older x-api answers 400 and the visitor sees nothing of it):
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, awaited like the
+  other boot requests, fails closed to "no plugins" — an x-api without `store.plugins` or its `contributions` field answers 400
+  and the visitor sees nothing of it):
 
 ```graphql
 query GetStorePlugins($domain: String!) {
@@ -464,6 +468,7 @@ query GetStorePlugins($domain: String!) {
         name
         exposed
       }
+      contributions
     }
   }
 }
@@ -476,9 +481,9 @@ the platform synthesizes that exact path. `?v=<entry.hash>` is the only freshnes
 platform sets no `Cache-Control` on these files.
 
 Same origin as the storefront, so a `'self'` CSP covers it and there is no external hosting to buy.
-The bundle is fetched before the router is installed, so declare `permission` in `plugin.json`
-whenever the plugin serves a subset of users — every other visitor then pays nothing for it
-(VCST-5761 moves the whole load off the boot path). Installing such a module is a code-admission
+Without `blocksBoot` the bundle loads alongside the app, off the boot path. Still declare
+`permission` in `plugin.json` whenever the plugin serves a subset of users: every other visitor then
+does not download it at all. Installing such a module is a code-admission
 decision for the storefront: the plugin runs with the host's full privileges — see the README's
 security model.
 
@@ -525,7 +530,8 @@ What the host does with it, before any of the plugin's code is fetched:
 - **Routes** get a placeholder under their `parent`, so a deep link resolves on first paint inside
   the parent's layout and guards and shows a loader. When the plugin settles the same URL resolves
   again — to the route your `init()` registered under that name, or to the host's 404 if it never
-  did or the plugin failed. Your own `beforeEnter` guards still run on the real route; if one is a
+  did or the plugin was skipped. A slow plugin keeps the loader, which says so and offers a reload
+  after `PLACEHOLDER_SLOW_NOTICE_MS`; a failed one leaves that reload offer instead of a 404. Your own `beforeEnter` guards still run on the real route; if one is a
   permission check, put it in `when` too so no placeholder exists for a user who cannot pass it.
   The parent's organization gate (`requiresOrganization`) is deferred the same way: the placeholder
   skips it, and the second navigation applies it with your route's own meta — so a route that clears
@@ -554,7 +560,7 @@ build puts there (`yarn dev` does not), and treats a missing one as "declares no
 import { definePluginManifest, settingEnabled, userCan } from "@vc-frontend/core/manifest";
 
 export default definePluginManifest({
-  when: settingEnabled("SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
+  when: settingEnabled("VirtoCommerce.SalesRep", "SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
   routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments", when: userCan("sales-rep-documents:read") }],
   menu: [{ surface: "header", group: "corporate", id: "sales-rep-documents", title: "sales_rep.navigation.documents", routeName: "SalesRepDocuments" }],
   slots: [{ at: "sharedList/provenance-note", policy: "reserve", when: (field) => field("scope").eq("Customer") }],
@@ -564,7 +570,7 @@ export default definePluginManifest({
 ```json
 {
   "format": 1,
-  "when": { "setting": "SalesRep.Enabled" },
+  "when": { "setting": "SalesRep.Enabled", "module": "VirtoCommerce.SalesRep" },
   "routes": [{ "path": "documents", "name": "SalesRepDocuments", "parent": "Company", "when": { "can": "sales-rep-documents:read" } }],
   "menu": [{ "surface": "header", "group": "corporate", "id": "sales-rep-documents", "title": "sales_rep.navigation.documents", "routeName": "SalesRepDocuments" }],
   "slots": [{ "at": "sharedList/provenance-note", "policy": "reserve", "when": { "field": "scope", "eq": "Customer" } }]
@@ -604,16 +610,16 @@ type policies, service-worker registration, module-local registries, wishlist sh
 
 | Builder                              | Emits                        | Namespace | Accepted on                  | True when                                          |
 | ------------------------------------ | ---------------------------- | --------- | ---------------------------- | -------------------------------------------------- |
-| `settingEnabled(key)`                | `{ setting }`                | global    | plugin, route, menu, slot    | the store's module setting `key` is `true` — what `useModuleSettings().isEnabled` checks |
-| `settingValue(key).eq(v)`            | `{ setting, eq }`            | global    | plugin, route, menu, slot    | that setting equals `v` (bare: is `true`)          |
+| `settingEnabled(module, key)`        | `{ setting, module }`        | global    | plugin, route, menu, slot    | setting `key` of store module `module` is `true` — what `useModuleSettings(module).isEnabled(key)` checks |
+| `settingValue(module, key).eq(v)`    | `{ setting, module, eq }`    | global    | plugin, route, menu, slot    | that setting equals `v` (bare: is `true`)          |
 | `themeSetting(key)` / `.eq(v)`       | `{ themeSetting[, eq] }`     | global    | plugin, route, menu, slot    | `settings_data.json` key `key` is `true` / equals `v` |
 | `authenticated()`                    | `{ authenticated: true }`    | global    | plugin, route, menu, slot    | the user is signed in                              |
 | `userCan(p, …)`                      | `{ can }` (several: `and`)   | global    | plugin, route, menu, slot    | the user holds every permission                    |
 | `field(path)` / `.eq(v)`             | `{ field[, eq] }`            | slot      | slot only                    | `path` in the slot's context is truthy / equals `v` |
 | `and(…)`, `or(…)`, `not(c)`          | `{ and }`, `{ or }`, `{ not }` | either  | wherever their operands are  | as named                                           |
 
-**Two evaluation phases.** Global keys are read once, after the user is resolved and before the
-plugin is fetched — the moment `init()` runs today; a sign-in mid-session does not re-evaluate them.
+**Two evaluation phases.** Global keys are read once per boot, after the user is resolved and
+before the plugin is fetched; a sign-in mid-session does not re-evaluate them.
 Slot keys are read per render, per item (true for one product card, false for the next), so they
 can never gate a fetch. `field` is not an import: it is the argument of a slot's `when` callback,
 typed against that slot's context, so a path that does not exist there — or any `field` term on the
@@ -653,8 +659,8 @@ broken one there.
 
 ### One ordering constraint to know about
 
-Once the host stops waiting for plugins before it mounts, `init()` can finish after the first
-queries have run. `registerCacheTypePolicies` is order-sensitive in a way that hides today: a type
+The host does not wait for your `init()` before it mounts (unless you set `blocksBoot`), so it can
+finish after the first queries have run. `registerCacheTypePolicies` is order-sensitive in a way that hides today: a type
 policy added **after** a query normalised data does not apply to what is already in the cache.
 Policies on your own types, queried from your own pages, are unaffected — sales-rep's and
 push-messages' are that kind. A policy that patches `keyFields` on a **host** type would silently

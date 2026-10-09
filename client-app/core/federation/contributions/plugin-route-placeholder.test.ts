@@ -1,9 +1,10 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { createMemoryHistory, createRouter, RouterView } from "vue-router";
 import { applyContributions, releaseContributions } from "./declare";
-import { resetPluginStatuses, setPluginStatus } from "./status";
+import { PLACEHOLDER_SLOW_NOTICE_MS } from "./placeholder";
+import { expirePendingAfter, resetPluginStatuses, setPluginStatus } from "./status";
 
 const Layout = { template: "<div class='company-layout'><router-view /></div>" };
 const RealPage = { template: "<p class='real-page'>documents</p>" };
@@ -29,7 +30,10 @@ async function openDeepLink(extraRoutes: { path: string; parent: "Company"; name
   const wrapper = mount(defineComponent({ render: () => h(RouterView) }), {
     global: {
       plugins: [router],
-      stubs: { VcLoader: { template: "<i class='loader' />" } },
+      stubs: {
+        VcLoader: { template: "<i class='loader' />" },
+        VcButton: { template: "<button class='reload'><slot /></button>" },
+      },
       mocks: { $t: (key: string) => key },
     },
   });
@@ -64,17 +68,71 @@ describe("PluginRoutePlaceholder", () => {
     expect(router.currentRoute.value.fullPath).toBe("/company/documents?tab=all");
   });
 
-  it("becomes the host's not-found page in place when the plugin failed — not an endless loader", async () => {
+  it("offers a reload in place when the plugin failed — not an endless loader, not a 404", async () => {
     const { router, wrapper, applied } = await openDeepLink();
+    const reload = vi.fn();
+    vi.stubGlobal("location", { ...location, reload });
 
     releaseContributions(applied, router, false);
     setPluginStatus("p", "failed");
     await flushPromises();
     await flushPromises();
+    await wrapper.find(".reload").trigger("click");
+
+    expect(wrapper.find(".not-found").exists()).toBe(false);
+    expect(wrapper.find(".loader").exists()).toBe(false);
+    expect(wrapper.text()).toContain("common.messages.content_failed_to_load");
+    expect(reload).toHaveBeenCalledOnce();
+    expect(router.currentRoute.value.fullPath).toBe("/company/documents?tab=all");
+    vi.unstubAllGlobals();
+  });
+
+  it("becomes the host's not-found page in place when the plugin was skipped", async () => {
+    const { router, wrapper, applied } = await openDeepLink();
+
+    releaseContributions(applied, router, false);
+    setPluginStatus("p", "skipped");
+    await flushPromises();
+    await flushPromises();
 
     expect(wrapper.find(".not-found").exists()).toBe(true);
     expect(wrapper.find(".loader").exists()).toBe(false);
-    expect(router.currentRoute.value.fullPath).toBe("/company/documents?tab=all");
+  });
+
+  it("says the page is slow, with a reload, once the plugin is late — and keeps waiting for it", async () => {
+    vi.useFakeTimers();
+    const { router, wrapper, applied } = await openDeepLink();
+    expect(wrapper.text()).toBe("common.messages.page_loading");
+
+    vi.advanceTimersByTime(PLACEHOLDER_SLOW_NOTICE_MS);
+    await flushPromises();
+
+    expect(wrapper.find(".loader").exists()).toBe(true);
+    expect(wrapper.text()).toContain("common.messages.page_loading_slow");
+    expect(wrapper.find(".reload").exists()).toBe(true);
+
+    router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: RealPage });
+    releaseContributions(applied, router, true);
+    setPluginStatus("p", "loaded");
+    await flushPromises();
+    await flushPromises();
+
+    expect(wrapper.find(".company-layout .real-page").exists()).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("keeps waiting, not 404, when the plugin outlives its pending deadline", async () => {
+    vi.useFakeTimers();
+    const { wrapper } = await openDeepLink();
+
+    expirePendingAfter("p", 0);
+    vi.runAllTimers();
+    await flushPromises();
+    await flushPromises();
+
+    expect(wrapper.find(".not-found").exists()).toBe(false);
+    expect(wrapper.find(".loader").exists()).toBe(true);
+    vi.useRealTimers();
   });
 
   it("follows the user to another pending route of the plugin and resolves that one when it settles", async () => {
@@ -104,7 +162,7 @@ describe("PluginRoutePlaceholder", () => {
       router,
     );
     releaseContributions(applied, router, false);
-    setPluginStatus("p", "failed");
+    setPluginStatus("p", "skipped");
     await flushPromises();
     expect(wrapper.find(".not-found").exists()).toBe(true);
 

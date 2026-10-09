@@ -1,6 +1,7 @@
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
+import { PLACEHOLDER_META_KEY } from "./contributions/placeholder";
 import { isFederationEnabled } from "./enabled";
 import type { IFederatedLoaderOptions, IPlatformPlugin } from "./index";
 
@@ -18,15 +19,15 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
 
 /**
  * Outer cap for what the per-phase budgets cannot cover: this loader's own chunk fetch (deliberately
- * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery, an env
- * remote's plugin.json, then its manifest, load and init — and what is left over is the chunk fetch's
- * headroom; the backstop invariant test holds the sum. Past it boot proceeds and the loader
+ * unbudgeted) and a malfunctioning inner timeout. Starts once the plugin list is in. Must exceed the
+ * budgeted legs — an env remote's plugin.json, then its manifest, load and init — and what is left
+ * over is the chunk fetch's headroom; the backstop invariant test holds the sum. Past it boot proceeds and the loader
  * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
  * Bounds the plugins that set `blocksBoot` only; boot waits for no other plugin's code.
- * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
+ * Full reasoning: README, "The load sequence" -> "Every plugin step is time-budgeted".
  */
 // Exported for the backstop invariant test only.
-export const BOOT_BACKSTOP_MS = 14_000;
+export const BOOT_BACKSTOP_MS = 30_000;
 
 /** Re-resolves the current URL once every plugin settled: a deep link may have hit the catch-all before its route existed. */
 function reResolveOnceSettled(): void {
@@ -39,40 +40,33 @@ function reResolveOnceSettled(): void {
   if (current.matched.length === 0) {
     return;
   }
+  // A declared route's placeholder resolves itself, and a failed plugin's reload offer must not become a 404.
+  if (current.matched.at(-1)?.meta?.[PLACEHOLDER_META_KEY] !== undefined) {
+    return;
+  }
   const next = router.resolve(current.fullPath);
   if (next.name !== current.name) {
     void router.replace({ path: current.path, query: current.query, hash: current.hash, force: true });
   }
 }
 
-/** Budget for the plugin list; without one it was the only unbudgeted leg inside the backstop. */
-export const DISCOVERY_TIMEOUT_MS = 2_000;
-
 /**
- * Resolves to `undefined` (no plugins) rather than rejecting when the list is slow — a discovery
- * stall must cost the plugins, never the boot. Kept local: bootstrap stays free of ./index imports
- * so a non-MF build bundles neither the loader nor the MF runtime.
+ * The plugin list is an ordinary boot request, started with the store and page context and awaited
+ * like them, with no budget of its own: cutting it short would drop every plugin on a slow network.
+ * Never rejects — an unreadable list degrades to no plugins.
  */
-async function withDiscoveryBudget(
+async function readPluginList(
   fetchPlugins: IStartOptions["fetchPlugins"],
 ): Promise<readonly IPlatformPlugin[] | undefined> {
   if (!fetchPlugins) {
     Logger.warn("[MF] no plugin-list source was passed - platform discovery is off");
     return undefined;
   }
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const budget = new Promise<undefined>((resolve) => {
-    timer = setTimeout(() => {
-      Logger.warn(
-        `[MF] the platform's plugin list did not answer within ${DISCOVERY_TIMEOUT_MS}ms - continuing without plugins`,
-      );
-      resolve(undefined);
-    }, DISCOVERY_TIMEOUT_MS);
-  });
   try {
-    return await Promise.race([fetchPlugins(), budget]);
-  } finally {
-    clearTimeout(timer);
+    return await fetchPlugins();
+  } catch (error) {
+    Logger.error("[MF] Could not read the platform's plugin list", error);
+    return undefined;
   }
 }
 
@@ -80,9 +74,15 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
   if (!__MF_HOST__ || !isFederationEnabled()) {
     return;
   }
+  // Fetched alongside the plugin list. Settled by `work`; the no-op catch only keeps a rejection that
+  // lands before `work` awaits it from being reported as unhandled.
+  const loader = import("./index");
+  void loader.catch(() => undefined);
+  const plugins = await readPluginList(options?.fetchPlugins);
+
   let timer: ReturnType<typeof setTimeout> | undefined;
-  // Started BEFORE the dynamic import so the backstop covers the loader-chunk fetch
-  // too — a stalled (never-settling) chunk request must not hold boot past the cap.
+  // Started after the list, which the backstop does not bound, and before the loader chunk is awaited,
+  // so a stalled chunk request still cannot hold boot past the cap.
   const backstop = new Promise<void>((resolve) => {
     timer = setTimeout(() => {
       Logger.warn(
@@ -97,13 +97,7 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
   // degrades to "no plugins" and can never break boot.
   const work = (async () => {
     try {
-      const [plugins, { prepareFederatedModules, loadPreparedModules }] = await Promise.all([
-        withDiscoveryBudget(options?.fetchPlugins).catch((error) => {
-          Logger.error("[MF] Could not read the platform's plugin list", error);
-          return undefined;
-        }),
-        import("./index"),
-      ]);
+      const { prepareFederatedModules, loadPreparedModules } = await loader;
       const prepared = await prepareFederatedModules({
         plugins,
         hasPermission: options?.hasPermission,

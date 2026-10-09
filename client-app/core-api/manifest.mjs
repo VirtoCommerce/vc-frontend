@@ -52,12 +52,18 @@ function comparable(node) {
   return node;
 }
 
-export function settingEnabled(key) {
-  return { setting: requireString(key, "settingEnabled()", "the setting key") };
+export function settingEnabled(module, key) {
+  return {
+    setting: requireString(key, "settingEnabled()", "the setting key"),
+    module: requireString(module, "settingEnabled()", "the module id"),
+  };
 }
 
-export function settingValue(key) {
-  return comparable({ setting: requireString(key, "settingValue()", "the setting key") });
+export function settingValue(module, key) {
+  return comparable({
+    setting: requireString(key, "settingValue()", "the setting key"),
+    module: requireString(module, "settingValue()", "the module id"),
+  });
 }
 
 export function themeSetting(key) {
@@ -100,28 +106,41 @@ function field(path) {
 
 const CONDITION_KEYS = new Set(["setting", "themeSetting", "authenticated", "can", "field", "and", "or", "not"]);
 
+// `eq` and `module` ride on a leaf; returns the `eq` part to spread back.
+function leafModifiers(condition, kind, where) {
+  const hasEq = Object.prototype.propertyIsEnumerable.call(condition, "eq");
+  if (hasEq && !["setting", "themeSetting", "field"].includes(kind)) {
+    throw new ManifestError(where, `\`eq\` is not valid on a \`${kind}\` condition`);
+  }
+  if (hasEq && !isScalar(condition.eq)) {
+    throw new ManifestError(where, `\`eq\` expects a scalar, got ${JSON.stringify(condition.eq)}`);
+  }
+  if (Object.hasOwn(condition, "module") && kind !== "setting") {
+    throw new ManifestError(where, `\`module\` is only valid on a \`setting\` condition`);
+  }
+  return hasEq ? { eq: condition.eq } : {};
+}
+
 // Validates hand-written literals and drops the `eq` method.
 function normalizeCondition(condition, where, allowField) {
   if (condition === null || typeof condition !== "object" || Array.isArray(condition)) {
     throw new ManifestError(where, `a condition must be an object, got ${JSON.stringify(condition)}`);
   }
-  const keys = Object.keys(condition).filter((key) => key !== "eq");
+  const keys = Object.keys(condition).filter((key) => key !== "eq" && key !== "module");
   const [kind, ...extra] = keys;
   if (!CONDITION_KEYS.has(kind) || extra.length) {
     throw new ManifestError(where, `unknown condition ${JSON.stringify(condition)}; use the builders`);
   }
-  const hasEq = Object.prototype.propertyIsEnumerable.call(condition, "eq");
-  if (hasEq && !["setting", "themeSetting", "field"].includes(kind)) {
-    throw new ManifestError(where, `\`eq\` is not valid on a \`${kind}\` condition`);
-  }
-  const eq = hasEq ? { eq: condition.eq } : {};
-  if (hasEq && !isScalar(condition.eq)) {
-    throw new ManifestError(where, `\`eq\` expects a scalar, got ${JSON.stringify(condition.eq)}`);
-  }
+  const eq = leafModifiers(condition, kind, where);
   switch (kind) {
     case "setting":
+      return {
+        setting: requireString(condition.setting, where, "`setting`"),
+        module: requireString(condition.module, where, "`module`"),
+        ...eq,
+      };
     case "themeSetting":
-      return { [kind]: requireString(condition[kind], where, `\`${kind}\``), ...eq };
+      return { themeSetting: requireString(condition.themeSetting, where, "`themeSetting`"), ...eq };
     case "field":
       if (!allowField) {
         throw new ManifestError(where, "a field(...) condition is only valid on a slot — nothing is rendered yet here");
@@ -326,7 +345,7 @@ export function pluginContributions(contributions) {
       const builtPluginJson = resolve(outDir, "plugin.json");
       const pluginJson = readJsonFile(builtPluginJson);
       if (!pluginJson) {
-        return;
+        this.error(`${builtPluginJson} is missing, so the declaration has nowhere to go; keep build.copyPublicDir on`);
       }
       writeFileSync(builtPluginJson, JSON.stringify({ ...pluginJson, contributions }, null, 2) + "\n");
     },

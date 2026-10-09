@@ -45,15 +45,22 @@ const declaredLinkIds = new Map<string, string>();
 const declaredSectionIds = new Set<string>();
 
 function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+  const replaced = new Set<string>();
   menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
     if (Array.isArray(objValue) && Array.isArray(srcValue)) {
       const incoming = new Set((srcValue as ExtendedMenuLinkType[]).map((link) => link?.id).filter(Boolean));
-      const kept = (objValue as ExtendedMenuLinkType[]).filter(
-        (link) => !(link?.id && declaredLinkIds.has(link.id) && incoming.has(link.id)),
-      );
+      const kept = (objValue as ExtendedMenuLinkType[]).filter((link) => {
+        const isReplaced = Boolean(link?.id && declaredLinkIds.has(link.id) && incoming.has(link.id));
+        if (isReplaced) {
+          replaced.add(link.id as string);
+        }
+        return !isReplaced;
+      });
       return kept.concat(srcValue);
     }
   });
+  // After the merge, not inside it: the other viewport's declared copy is met later in the same merge.
+  replaced.forEach((id) => declaredLinkIds.delete(id));
   triggerRef(menuSchema);
 }
 

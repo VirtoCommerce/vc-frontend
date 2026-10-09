@@ -13,6 +13,7 @@ import {
 } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { startFederatedModules } from "@/core/federation/bootstrap";
 import { isFederationEnabled } from "@/core/federation/enabled";
@@ -305,10 +306,7 @@ export default async () => {
     fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
     hasPermission: checkPermissions,
     conditionContext: {
-      setting: (key) =>
-        themeContext.value.storeSettings?.modules
-          ?.flatMap((module) => module.settings ?? [])
-          .find((setting) => setting.name === key)?.value,
+      setting: (module, key) => useModuleSettings(module).getSettingValue(key),
       themeSetting: (key) => (themeContext.value.settings as unknown as Record<string, unknown> | undefined)?.[key],
       isAuthenticated: isAuthenticated.value,
       can: checkPermissions,

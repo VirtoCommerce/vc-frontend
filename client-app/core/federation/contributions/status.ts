@@ -13,6 +13,7 @@ const statuses = shallowRef(new Map<string, IPluginStatusType>());
 /** Still pending, but past their deadline: no longer hold boxes. */
 const expired = shallowRef(new Set<string>());
 const waiters = new Map<string, ((status: IPluginStatusType) => void)[]>();
+const finalWaiters = new Map<string, ((status: IPluginStatusType) => void)[]>();
 
 const isFinal = (state: PluginStateType | undefined) => state !== undefined && state !== "pending";
 
@@ -26,10 +27,11 @@ export function setPluginStatus(name: string, state: PluginStateType, reason?: s
   statuses.value.set(name, status);
   triggerRef(statuses);
   if (isFinal(state)) {
-    for (const resolve of waiters.get(name) ?? []) {
+    for (const resolve of [...(waiters.get(name) ?? []), ...(finalWaiters.get(name) ?? [])]) {
       resolve(status);
     }
     waiters.delete(name);
+    finalWaiters.delete(name);
   }
 }
 
@@ -62,6 +64,17 @@ export function whenPluginSettled(name: string): Promise<IPluginStatusType> {
   });
 }
 
+/** Like `whenPluginSettled`, but an expired deadline does not count: a slow plugin is still on its way. */
+export function whenPluginFinal(name: string): Promise<IPluginStatusType> {
+  const current = statuses.value.get(name);
+  if (!current || isFinal(current.state)) {
+    return Promise.resolve(current ?? { name, state: "skipped", reason: "not advertised by the platform" });
+  }
+  return new Promise((resolve) => {
+    finalWaiters.set(name, [...(finalWaiters.get(name) ?? []), resolve]);
+  });
+}
+
 const plugins: ComputedRef<readonly IPluginStatusType[]> = computed(() => [...statuses.value.values()]);
 
 /** Each federated plugin's state, reactively; the only production signal, as `Logger` is a no-op there. */
@@ -79,4 +92,5 @@ export function resetPluginStatuses(): void {
   statuses.value = new Map();
   expired.value = new Set();
   waiters.clear();
+  finalWaiters.clear();
 }
