@@ -1,0 +1,35 @@
+name: Notify Teams about PR reviews
+
+# One card per PR in the Teams "PR review" channel, kept in sync with the review state (VCST-6259).
+# The action builds the card, a Teams Workflows flow posts or updates it. Secrets: TEAMS_PR_WEBHOOK
+# (the flow URL) and TEAMS_USERS ({"core": [logins], "ids": {login: Entra Object ID}}).
+# Without secrets (Dependabot and fork PRs) the action skips the run.
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, converted_to_draft,
+            review_requested, review_request_removed, closed]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+# One PR's events in order, so a slower run never overwrites the card with an older state.
+concurrency:
+  group: teams-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: skipped in the private theme mirror (VCST-5970).
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@6f712bc5003b5c7cc82dc086f88117505dd57ea9 # feat/teams-pr-review-notification
+        with:
+          webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
+          teams-users: ${{ secrets.TEAMS_USERS }}
