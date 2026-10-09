@@ -784,10 +784,11 @@ describe("VcSelect", () => {
         const placeholder = { placeholder: () => h("span", "Pick") };
 
         createWrapper({ items: ITEMS, autocomplete: true }, placeholder);
+        createWrapper({ items: ITEMS, autocomplete: true }, { selected: () => h("span", "Picked") });
         createWrapper({ items: ITEMS }, placeholder);
         createWrapper({ items: ITEMS, autocomplete: true });
 
-        expect(warn.mock.calls.filter(([message]) => String(message).includes("has no input"))).toHaveLength(1);
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("has no input"))).toHaveLength(2);
       });
 
       it("warns about a selected-count that nothing reads", () => {
@@ -2730,6 +2731,16 @@ describe("VcSelect", () => {
 
       expect(wrapper.find(".probe-placeholder").exists()).toBe(true);
       expect(wrapper.find(".probe-selected").exists()).toBe(false);
+    });
+
+    it.each(["Enter", " "])("opens with %j even with autocomplete, since the button takes no typing", async (key) => {
+      vi.spyOn(console, "warn").mockImplementation(() => undefined);
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true }, slots);
+      const trigger = wrapper.get('[role="combobox"]');
+
+      await trigger.trigger("keydown", { key });
+
+      expect(trigger.attributes("aria-expanded")).toBe("true");
     });
 
     it("renders the button branch instead of the input", () => {

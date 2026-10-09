@@ -60,7 +60,10 @@ function readContent(): ContentType {
   return { size: props.itemCount, text: scrollbar?.el.value?.textContent ?? "" };
 }
 
-/** What the region held when the last page was asked for; null until asked, and again once the list is rebuilt or left. */
+/**
+ * What the region held when the last page was asked for; null until asked, and again once the list is
+ * rebuilt, left or runs out.
+ */
 const askedAt = ref<ContentType | null>(null);
 
 /**
