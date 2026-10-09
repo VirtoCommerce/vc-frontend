@@ -805,6 +805,17 @@
           "required_section": "Secção obrigatória",
           "optional_no_selected": "Personalize ainda mais a sua seleção (opcional)",
           "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção",
+          "checklist": {
+            "title": "Lista de verificação da configuração",
+            "done": "(concluído)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obrigatório",
+            "optional": "{name} — opcional",
+            "fill_it_in": "Preencher",
+            "upload_file": "Enviar um arquivo",
+            "check_it_out": "Ver opções",
+            "review": "Revisar"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Opção personalizada: {0}",
             "custom_option_empty": "Opção personalizada: vazio",
@@ -1816,6 +1827,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "A quantidade disponível do produto {availQty} é insuficiente para o solicitado {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Pedido mínimo de {minQty} item(s) não está disponível em estoque",
     "PRODUCT_EXACT_QTY": "Você pode encomendar {minQty} item(s)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Peça em pacotes de {packSize}",
+    "LINE_ITEM_LIMIT": "Você pode encomendar no máximo {limit} item(s)",
     "CART_INVALID_PRODUCT": "Produto inválido"
   },
   "file_error": {

@@ -522,6 +522,22 @@ describe("useConfigurableProduct", () => {
       expect(composable.selectedConfigurationInput.value).toEqual([]);
     });
 
+    it("does not treat whitespace-only text as selected in a required section", async () => {
+      const mockConfiguration = {
+        configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      composable.selectSectionValue({
+        sectionId: "text_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.text,
+        customText: "   ",
+      });
+
+      expect(composable.selectedConfiguration.value).toEqual({});
+    });
+
     it("creates configured line item with text configuration", async () => {
       const mockConfiguration = {
         configurationSections: [createTextConfigurationSection(1)],

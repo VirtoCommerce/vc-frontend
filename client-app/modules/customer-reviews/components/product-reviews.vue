@@ -134,7 +134,6 @@
           :label="$t('common.labels.comments')"
           required
           class="product-reviews__comments"
-          :aria-label="$t('common.labels.comments')"
         />
 
         <VcTypography tag="span" class="product-reviews__note">

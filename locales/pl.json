@@ -805,6 +805,17 @@
           "required_section": "Sekcja jest wymagana",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
           "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
+          "checklist": {
+            "title": "Lista kontrolna konfiguracji",
+            "done": "(ukończono)",
+            "selected": "{name} — {value}",
+            "required": "{name} — wymagane",
+            "optional": "{name} — opcjonalne",
+            "fill_it_in": "Wypełnij",
+            "upload_file": "Prześlij plik",
+            "check_it_out": "Zobacz",
+            "review": "Sprawdź"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Opcja niestandardowa: {0}",
             "custom_option_empty": "Opcja niestandardowa: pusta",
@@ -1816,6 +1827,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Dostępna ilość produktu {availQty} jest niewystarczająca dla żądanej {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Minimalne zamówienie {minQty} szt. jest niedostępne w magazynie",
     "PRODUCT_EXACT_QTY": "Możesz zamówić {minQty} szt.",
+    "PRODUCT_PACK_SIZE_LIMIT": "Zamów w paczkach po {packSize}",
+    "LINE_ITEM_LIMIT": "Możesz zamówić maksymalnie {limit} szt.",
     "CART_INVALID_PRODUCT": "Nieprawidłowy produkt"
   },
   "file_error": {

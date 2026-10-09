@@ -33,6 +33,7 @@ function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
  * Drives one layout surface. `startEdit` snapshots into a draft, every change targets the draft, and
  * `save` writes the whole document in one mutation (the backend replaces, not merges). `reset` refills
  * the draft from registry defaults but still needs a save, so a stray click is recoverable.
+ * `restoreDefaults` is the one write that skips the draft: the empty state's button saves defaults at once.
  */
 export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const registry = getBlockRegistry(scope);
@@ -190,15 +191,11 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
   }
 
-  // `saving`, not just `draft`: the draft is only cleared once the first save resolves, so anything
-  // holding a reference could otherwise fire a second full-document replace mid-flight. The pages'
-  // `inert` covers the buttons; this covers the programmatic paths an attribute cannot.
-  async function save(): Promise<boolean> {
-    if (!draft.value || saving.value) {
-      return false;
-    }
-
-    const pending = draft.value;
+  /**
+   * Writes `pending` as the whole document. Success adopts the echo and ends edit mode; failure leaves the
+   * draft alone. Neither outcome touches `saveFailed`: each caller decides where the rep lands.
+   */
+  async function persist(pending: SalesRepLayoutStateType): Promise<boolean> {
     const command = serializeLayout(pending, scope, registry, globals.storeId);
     try {
       const response = await mutate({ command });
@@ -208,7 +205,6 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
       // defaults, which would silently replace the rep's arrangement and report success.
       if (!saved) {
         Logger.error("[sales-rep] saveSalesRepLayout returned no document");
-        saveFailed.value = true;
         return false;
       }
 
@@ -217,26 +213,54 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
       // with no later read to correct it. So refetch, and report a failure the rep can retry.
       if (!echoMatchesSentBlocks(saved, command)) {
         Logger.error("[sales-rep] saveSalesRepLayout echoed a document that disagrees with what was sent");
-        // Cleared so `persisted` reads the refetch rather than a stale echo. The draft stays, so the
-        // rep keeps their arrangement and edit mode.
+        // Cleared so `persisted` reads the refetch rather than a stale echo.
         savedState.value = undefined;
         refetch()?.catch((refetchError: unknown) => {
           Logger.error("[sales-rep] salesRepLayout refetch after a disagreeing echo failed:", refetchError);
         });
-        saveFailed.value = true;
         return false;
       }
 
       savedState.value = reconcileLayout(saved, registry);
       draft.value = undefined;
-      saveFailed.value = false;
       return true;
     } catch (mutationError) {
-      // Keep edit mode and the draft — the rep's arrangement is not thrown away on a failed write.
       Logger.error("[sales-rep] saveSalesRepLayout failed:", mutationError);
-      saveFailed.value = true;
       return false;
     }
+  }
+
+  // `saving`, not just `draft`: the draft is only cleared once the first save resolves, so anything
+  // holding a reference could otherwise fire a second full-document replace mid-flight. The pages'
+  // `inert` covers the buttons; this covers the programmatic paths an attribute cannot.
+  async function save(): Promise<boolean> {
+    if (!draft.value || saving.value) {
+      return false;
+    }
+
+    // A failure keeps edit mode and the draft — the rep's arrangement is not thrown away on a failed write.
+    const saved = await persist(draft.value);
+    saveFailed.value = !saved;
+    return saved;
+  }
+
+  /**
+   * The empty state's one-click way back: registry defaults are written straight away, with no edit mode
+   * in between. A failed write lands in edit mode on those defaults, so Save in the edit bar retries it.
+   */
+  async function restoreDefaults(): Promise<boolean> {
+    if (!canEdit.value || draft.value || saving.value) {
+      return false;
+    }
+
+    const defaults = reconcileLayout(null, registry);
+    const saved = await persist(defaults);
+    if (!saved) {
+      // Draft first: edit mode's entry announcement must come before the failure's, not over it.
+      draft.value = defaults;
+    }
+    saveFailed.value = !saved;
+    return saved;
   }
 
   return {
@@ -259,5 +283,6 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     reorderHidden,
     setHidden,
     save,
+    restoreDefaults,
   };
 }

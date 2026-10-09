@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { decideVersionAction, extractExportNames } from "@/core-api/contract-versioning.mjs";
+import {
+  decideVersionAction,
+  extractExportNames,
+  packageJsonShape,
+  toLf,
+  versionedSourceFiles,
+} from "@/core-api/contract-versioning.mjs";
 
 describe("extractExportNames", () => {
   it("reads a single-line export statement", () => {
@@ -231,5 +237,26 @@ describe("decideVersionAction", () => {
         removedExports: ["VcButton"],
       }),
     ).toEqual({ action: "require-major", removedExports: ["VcButton"] });
+  });
+});
+
+describe("the change check's inputs", () => {
+  it("versions every published hand-written file, and leaves the generated contract to its own check", () => {
+    expect(
+      versionedSourceFiles(["contract/index.d.ts", "contract/tailwind-preset.cjs", "federation.mjs", "manifest.mjs"]),
+    ).toEqual(["federation.mjs", "manifest.mjs"]);
+  });
+
+  it("reads a CRLF checkout as the LF text git and the generator produce", () => {
+    expect(toLf("a\r\nb\n")).toBe("a\nb\n");
+  });
+
+  it("sees an exports change in package.json, and not a version bump alone", () => {
+    const base = JSON.stringify({ version: "0.1.0", exports: { ".": {} } }, null, 2);
+
+    expect(packageJsonShape(JSON.stringify({ version: "0.1.1", exports: { ".": {} } }))).toBe(packageJsonShape(base));
+    expect(packageJsonShape(JSON.stringify({ version: "0.1.0", exports: { ".": {}, "./x": {} } }))).not.toBe(
+      packageJsonShape(base),
+    );
   });
 });

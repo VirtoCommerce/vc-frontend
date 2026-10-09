@@ -143,3 +143,18 @@ export function decideVersionAction({ changed, baseVersion, currentVersion, remo
   }
   return { action: `bump-${policyFor(currentVersion).additive}` };
 }
+
+/** The hand-written files a package's `files` publishes, i.e. all but the generated contract and preset. */
+export function versionedSourceFiles(files) {
+  return files.filter((file) => !file.startsWith("contract/"));
+}
+
+/** Git on Windows checks text out with CRLF (`text=auto`), while `git show` and the generator emit LF. */
+export function toLf(text) {
+  return text.replaceAll("\r\n", "\n");
+}
+
+/** package.json minus its version: the exports map and peers ship too, the version is what moves. */
+export function packageJsonShape(json) {
+  return JSON.stringify({ ...JSON.parse(json), version: undefined });
+}

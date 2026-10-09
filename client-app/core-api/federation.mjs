@@ -4,8 +4,7 @@
  * - the host build (vite.federation.ts) via createHostShared();
  * - plugin builds (node vite configs) via `@vc-frontend/core/federation` ->
  *   createRemoteFederationOptions() / createRemoteShared().
- * Mirrors vc-shell's @vc-shell/mf-config package. Plain .mjs with no node APIs so the
- * flag helper is also importable from browser code (bootstrap.ts).
+ * Mirrors vc-shell's @vc-shell/mf-config package.
  *
  * A package is listed only if a second copy breaks correctness (framework identity,
  * @vueuse global state, one Apollo cache + graphql, the live facade). Ranges must stay
@@ -139,23 +138,4 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
     // Types come from the committed contract (contract/index.d.ts), not MF codegen.
     dts: false,
   };
-}
-
-/**
- * Env-flag normalization shared by the vite config (node) and bootstrap (browser).
- * ALLOWLIST semantics: only an explicit affirmative ("true", "1", "yes", "on") enables
- * Module Federation — every other string ("false", "0", "off", "no", "disabled",
- * typos, ...) fails toward OFF. Enabling a code-loading feature is the dangerous
- * direction, so unrecognized values must never enable it.
- */
-const ON_FLAG_VALUES = new Set(["true", "1", "yes", "on"]);
-
-export function isMfFlagEnabled(value) {
-  if (value === true) {
-    return true;
-  }
-  if (typeof value !== "string") {
-    return false;
-  }
-  return ON_FLAG_VALUES.has(value.trim().toLowerCase());
 }
