@@ -633,6 +633,9 @@ function onSearchInput(value: string, open: () => void): void {
 }
 
 function clear() {
+  // Before the commit: the clear button may unmount with what it cleared, dropping focus to <body>.
+  focusTrigger();
+
   // In autocomplete mode - clear search first, then selection
   if (props.autocomplete && filterValue.value) {
     filterValue.value = "";

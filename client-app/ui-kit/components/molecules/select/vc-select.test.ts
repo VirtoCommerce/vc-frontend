@@ -1014,6 +1014,19 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
 
+    // The button unmounts with the selection it cleared; focus left on it would fall to <body>.
+    it("keeps the focus in the field when clearing takes the clear button away", async () => {
+      const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania" });
+      const clearButton = wrapper.get<HTMLButtonElement>(".vc-select-field__clear");
+      clearButton.element.focus();
+
+      await clearButton.trigger("click");
+      await wrapper.setProps({ modelValue: undefined });
+
+      expect(wrapper.find(".vc-select-field__clear").exists()).toBe(false);
+      expect(document.activeElement).toBe(wrapper.get("input").element);
+    });
+
     it("hides the clear button when disabled", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania", disabled: true });
 
@@ -2379,6 +2392,18 @@ describe("VcSelect", () => {
       selected: () => h("span", { class: "probe-selected" }, "chosen"),
       placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
     };
+
+    it("keeps the focus on the slotted trigger when clearing takes the clear button away", async () => {
+      const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania" }, slots);
+      const clearButton = wrapper.get<HTMLButtonElement>(".vc-select-button__clear");
+      clearButton.element.focus();
+
+      await clearButton.trigger("click");
+      await wrapper.setProps({ modelValue: undefined });
+
+      expect(wrapper.find(".vc-select-button__clear").exists()).toBe(false);
+      expect(document.activeElement).toBe(wrapper.get(".vc-select-button__control").element);
+    });
 
     it("drops the chevron of a read-only slotted trigger", () => {
       expect(createWrapper({ items: ITEMS }, slots).find(".vc-select-button__icon").exists()).toBe(true);
