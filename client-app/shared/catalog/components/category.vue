@@ -734,7 +734,7 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, prepareScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
 
@@ -742,15 +742,14 @@ const isMobileLg = breakpoints.smaller("lg");
 
 watch(
   () => props.categoryId,
-  async (categoryId) => {
+  async (categoryId, _previous, onCleanup) => {
     if (categoryId || props.isRoot) {
       isCategoryNotFound.value = false;
 
       setQueryScope(searchQueryParam.value);
 
-      if (categoryId) {
-        preparingScope.value = true;
-      }
+      const finishPreparing = categoryId ? prepareScope() : undefined;
+      onCleanup(() => finishPreparing?.());
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -771,7 +770,7 @@ watch(
           productFilter,
         });
       } finally {
-        preparingScope.value = false;
+        finishPreparing?.();
       }
 
       if (!props.isRoot) {

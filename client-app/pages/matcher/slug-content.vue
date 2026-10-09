@@ -35,9 +35,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 
@@ -127,6 +128,38 @@ watchEffect(() => {
   } else {
     emitState("empty");
   }
+});
+
+const { preparingScope, holdScope } = useSearchScore();
+
+let endScopeHold: (() => void) | undefined;
+
+// The async category page prepares its scope a moment after this shows; hold it until then.
+watch(
+  () =>
+    props.isVisible &&
+    !loading.value &&
+    objectType.value === ObjectType.Category &&
+    // Without an id the category never prepares, so nothing would end the hold.
+    Boolean(slugInfo.value?.entityInfo?.objectId),
+  (isCategory, _previous, onCleanup) => {
+    if (!isCategory) {
+      return;
+    }
+    const release = holdScope();
+    const stopWaiting = watch(preparingScope, release, { once: true });
+    endScopeHold = () => {
+      stopWaiting();
+      release();
+    };
+    onCleanup(endScopeHold);
+  },
+  { immediate: true },
+);
+
+// A category page that fails to load or set up never starts preparing, so nothing else would end the hold.
+onErrorCaptured(() => {
+  endScopeHold?.();
 });
 
 function emitState(state: StateType, redirectUrl?: string) {
