@@ -42,6 +42,28 @@ describe("insertedText", () => {
     expect(insertedText("Belgium", "Belgiu")).toBe("");
   });
 
+  // What a before/after diff cannot tell apart: the typed text matches what it replaced at an edge.
+  describe("with the replaced selection", () => {
+    it.each([
+      ["the label's first character over the whole label", "Belgium", "B", [0, 7], "B"],
+      ["the label's last character over the whole label", "Germany", "y", [0, 7], "y"],
+      ["a pasted run over the whole label", "Belgium", "Bel", [0, 7], "Bel"],
+      ["a character over part of the label", "Belgium", "Bxium", [1, 4], "x"],
+      ["a character at a caret inside the label", "Belgium", "Belgxium", [4, 4], "x"],
+      ["a character at the caret after the label", "Belgium", "Belgiumm", [7, 7], "m"],
+    ] as const)("returns %s", (_label, previous, next, replaced, inserted) => {
+      expect(insertedText(previous, next, replaced)).toBe(inserted);
+    });
+
+    it.each([
+      ["Backspace at the end", "Belgium", "Belgiu", [7, 7]],
+      ["Delete over the whole label", "Belgium", "", [0, 7]],
+      ["Delete over part of the label", "Belgium", "Bgium", [1, 3]],
+    ] as const)("returns nothing for %s", (_label, previous, next, replaced) => {
+      expect(insertedText(previous, next, replaced)).toBe("");
+    });
+  });
+
   // A repeated character is where a naive substring search goes wrong: "aa" contains "a" twice,
   // so removing the first occurrence would be indistinguishable from removing the inserted one.
   it("handles a repeated character", () => {

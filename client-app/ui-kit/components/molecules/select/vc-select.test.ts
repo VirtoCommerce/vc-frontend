@@ -2340,6 +2340,43 @@ describe("VcSelect", () => {
       expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["China"]);
     });
 
+    // Tab selects the whole label, so the keystroke replaces it. A typed character equal to the
+    // label's first or last one leaves a value a before/after diff reads as a deletion.
+    it.each([
+      ["Belgium", "B", ["Belgium", "Albania"]],
+      ["Albania", "a", ["Albania", "China"]],
+    ] as const)("keeps the first character typed over the whole selected label %s", async (label, typed, options) => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: label });
+      const input = wrapper.get<HTMLInputElement>("input");
+
+      input.element.setSelectionRange(0, label.length);
+      input.element.dispatchEvent(
+        new InputEvent("beforeinput", { data: typed, inputType: "insertText", bubbles: true }),
+      );
+      await input.setValue(typed);
+      await nextTick();
+
+      expect(input.element.value).toBe(typed);
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(options);
+    });
+
+    it("forgets the replaced selection once the list has opened", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Belgium" });
+      const input = wrapper.get<HTMLInputElement>("input");
+
+      input.element.setSelectionRange(0, 7);
+      input.element.dispatchEvent(new InputEvent("beforeinput", { data: "B", inputType: "insertText", bubbles: true }));
+      await input.setValue("B");
+      await input.trigger("keydown", { key: "Escape" });
+      await nextTick();
+
+      // An edit with no selection reported falls back to the diff, not to the stale whole-label range.
+      await input.setValue("Belgiumc");
+      await nextTick();
+
+      expect(input.element.value).toBe("c");
+    });
+
     it("describes the trigger with the details element", () => {
       const wrapper = createWrapper({ items: ITEMS, message: "Pick one" });
 

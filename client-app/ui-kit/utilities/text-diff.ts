@@ -9,10 +9,20 @@ function charFromEnd(text: string, offset: number): string {
 /**
  * The text inserted into a field that held `previous` and now holds `next`, wherever the caret sat
  * (a field showing "Belgium" delivers "Belgiumc" for a typed "c"). "" when nothing was inserted.
+ *
+ * Pass `replaced`, the selection `[start, end]` in `previous` just before the edit, whenever it is
+ * known: without it a character typed over a whole selected label that equals the label's first or
+ * last character ("B" over "Belgium") reads as a deletion.
  */
-export function insertedText(previous: string, next: string): string {
+export function insertedText(previous: string, next: string, replaced?: readonly [number, number]): string {
   if (!previous) {
     return next;
+  }
+
+  if (replaced) {
+    const [start, end] = replaced;
+    // A deletion gives a length of zero or less, which slices to "".
+    return next.slice(start, start + next.length - (previous.length - (end - start)));
   }
 
   let start = 0;

@@ -68,6 +68,7 @@
           @confirm="onConfirm($event, toggle, close)"
           @tab="onTab"
           @update:search="onSearchInput($event, open)"
+          @beforeinput="onBeforeSearchInput"
           @focusout="onFocusOut($event, close)"
         />
       </template>
@@ -573,6 +574,7 @@ function toggled(value: boolean) {
     highlight(openedByKeyboard ? filteredItems.value.findIndex((item) => isActiveItem(item)) : -1);
 
     openedByKeyboard = false;
+    replacedRange = undefined;
     return;
   }
 
@@ -629,7 +631,20 @@ function onSearchInput(value: string, open: () => void): void {
   }
 
   open();
-  filterValue.value = insertedText(selectedText.value ?? "", value);
+  filterValue.value = insertedText(selectedText.value ?? "", value, replacedRange);
+}
+
+// The selection a keystroke is about to replace; Tab selects the whole label. Kept until the list
+// opens, not read once: one keystroke can deliver the value twice before the open lands.
+let replacedRange: [number, number] | undefined;
+
+function onBeforeSearchInput(event: Event): void {
+  const { target } = event;
+
+  replacedRange =
+    target instanceof HTMLInputElement && target.selectionStart !== null && target.selectionEnd !== null
+      ? [target.selectionStart, target.selectionEnd]
+      : undefined;
 }
 
 function clear() {
