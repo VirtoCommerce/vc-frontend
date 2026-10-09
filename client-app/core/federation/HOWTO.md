@@ -554,7 +554,7 @@ build puts there (`yarn dev` does not), and treats a missing one as "declares no
 import { definePluginManifest, settingEnabled, userCan } from "@vc-frontend/core/manifest";
 
 export default definePluginManifest({
-  when: settingEnabled("SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
+  when: settingEnabled("VirtoCommerce.SalesRep", "SalesRep.Enabled"), // plugin-level: false ⇒ nothing else is fetched
   routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments", when: userCan("sales-rep-documents:read") }],
   menu: [{ surface: "header", group: "corporate", id: "sales-rep-documents", title: "sales_rep.navigation.documents", routeName: "SalesRepDocuments" }],
   slots: [{ at: "sharedList/provenance-note", policy: "reserve", when: (field) => field("scope").eq("Customer") }],
@@ -564,7 +564,7 @@ export default definePluginManifest({
 ```json
 {
   "format": 1,
-  "when": { "setting": "SalesRep.Enabled" },
+  "when": { "setting": "SalesRep.Enabled", "module": "VirtoCommerce.SalesRep" },
   "routes": [{ "path": "documents", "name": "SalesRepDocuments", "parent": "Company", "when": { "can": "sales-rep-documents:read" } }],
   "menu": [{ "surface": "header", "group": "corporate", "id": "sales-rep-documents", "title": "sales_rep.navigation.documents", "routeName": "SalesRepDocuments" }],
   "slots": [{ "at": "sharedList/provenance-note", "policy": "reserve", "when": { "field": "scope", "eq": "Customer" } }]
@@ -604,8 +604,8 @@ type policies, service-worker registration, module-local registries, wishlist sh
 
 | Builder                              | Emits                        | Namespace | Accepted on                  | True when                                          |
 | ------------------------------------ | ---------------------------- | --------- | ---------------------------- | -------------------------------------------------- |
-| `settingEnabled(key)`                | `{ setting }`                | global    | plugin, route, menu, slot    | the store's module setting `key` is `true` — what `useModuleSettings().isEnabled` checks |
-| `settingValue(key).eq(v)`            | `{ setting, eq }`            | global    | plugin, route, menu, slot    | that setting equals `v` (bare: is `true`)          |
+| `settingEnabled(module, key)`        | `{ setting, module }`        | global    | plugin, route, menu, slot    | setting `key` of store module `module` is `true` — what `useModuleSettings(module).isEnabled(key)` checks |
+| `settingValue(module, key).eq(v)`    | `{ setting, module, eq }`    | global    | plugin, route, menu, slot    | that setting equals `v` (bare: is `true`)          |
 | `themeSetting(key)` / `.eq(v)`       | `{ themeSetting[, eq] }`     | global    | plugin, route, menu, slot    | `settings_data.json` key `key` is `true` / equals `v` |
 | `authenticated()`                    | `{ authenticated: true }`    | global    | plugin, route, menu, slot    | the user is signed in                              |
 | `userCan(p, …)`                      | `{ can }` (several: `and`)   | global    | plugin, route, menu, slot    | the user holds every permission                    |

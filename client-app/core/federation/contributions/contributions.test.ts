@@ -19,12 +19,14 @@ vi.mock("@/core/utilities", async (importOriginal) => ({
   Logger: { warn: loggerWarnMock, error: loggerErrorMock, info: vi.fn(), debug: vi.fn() },
 }));
 
+const MODULE = "VirtoCommerce.SalesRep";
+
 function context(overrides: Partial<IConditionContextType> = {}): IConditionContextType {
   const settings: Record<string, unknown> = { "SalesRep.Enabled": true, "Mode.Name": "on", "Off.Flag": false };
   const theme: Record<string, unknown> = { push_messages_enabled: true };
   const permissions = new Set(["sales-rep:access"]);
   return {
-    setting: (key) => settings[key],
+    setting: (module, key) => (module === MODULE ? settings[key] : undefined),
     themeSetting: (key) => theme[key],
     isAuthenticated: true,
     can: (permission) => permissions.has(permission),
@@ -36,30 +38,34 @@ describe("resolveGlobalTerms", () => {
   it("decides every global key", () => {
     const ctx = context();
 
-    expect(resolveGlobalTerms({ setting: "SalesRep.Enabled" }, ctx)).toBe(true);
-    expect(resolveGlobalTerms({ setting: "Off.Flag" }, ctx)).toBe(false);
-    expect(resolveGlobalTerms({ setting: "Missing" }, ctx)).toBe(false);
-    expect(resolveGlobalTerms({ setting: "Mode.Name", eq: "on" }, ctx)).toBe(true);
-    expect(resolveGlobalTerms({ setting: "Mode.Name", eq: "off" }, ctx)).toBe(false);
+    expect(resolveGlobalTerms({ setting: "SalesRep.Enabled", module: MODULE }, ctx)).toBe(true);
+    expect(resolveGlobalTerms({ setting: "Off.Flag", module: MODULE }, ctx)).toBe(false);
+    expect(resolveGlobalTerms({ setting: "Missing", module: MODULE }, ctx)).toBe(false);
+    expect(resolveGlobalTerms({ setting: "Mode.Name", module: MODULE, eq: "on" }, ctx)).toBe(true);
+    expect(resolveGlobalTerms({ setting: "Mode.Name", module: MODULE, eq: "off" }, ctx)).toBe(false);
     expect(resolveGlobalTerms({ themeSetting: "push_messages_enabled" }, ctx)).toBe(true);
     expect(resolveGlobalTerms({ authenticated: true }, context({ isAuthenticated: false }))).toBe(false);
     expect(resolveGlobalTerms({ can: "sales-rep:access" }, ctx)).toBe(true);
     expect(resolveGlobalTerms({ can: "nope" }, ctx)).toBe(false);
   });
 
+  it("reads a setting only from the module it names", () => {
+    expect(resolveGlobalTerms({ setting: "SalesRep.Enabled", module: "VirtoCommerce.Other" }, context())).toBe(false);
+  });
+
   it("reads a setting as the host's own isEnabled does: only `true` is on", () => {
-    expect(resolveGlobalTerms({ setting: "X" }, context({ setting: () => "true" }))).toBe(false);
-    expect(resolveGlobalTerms({ setting: "X" }, context({ setting: () => 1 }))).toBe(false);
+    expect(resolveGlobalTerms({ setting: "X", module: MODULE }, context({ setting: () => "true" }))).toBe(false);
+    expect(resolveGlobalTerms({ setting: "X", module: MODULE }, context({ setting: () => 1 }))).toBe(false);
   });
 
   it("leaves field terms standing and folds what the global terms decide", () => {
     const ctx = context();
     const field: ConditionNodeType = { field: "hasVariations" };
 
-    expect(resolveGlobalTerms({ and: [{ setting: "SalesRep.Enabled" }, field] }, ctx)).toEqual(field);
-    expect(resolveGlobalTerms({ and: [{ setting: "Off.Flag" }, field] }, ctx)).toBe(false);
-    expect(resolveGlobalTerms({ or: [{ setting: "SalesRep.Enabled" }, field] }, ctx)).toBe(true);
-    expect(resolveGlobalTerms({ or: [{ setting: "Off.Flag" }, field] }, ctx)).toEqual(field);
+    expect(resolveGlobalTerms({ and: [{ setting: "SalesRep.Enabled", module: MODULE }, field] }, ctx)).toEqual(field);
+    expect(resolveGlobalTerms({ and: [{ setting: "Off.Flag", module: MODULE }, field] }, ctx)).toBe(false);
+    expect(resolveGlobalTerms({ or: [{ setting: "SalesRep.Enabled", module: MODULE }, field] }, ctx)).toBe(true);
+    expect(resolveGlobalTerms({ or: [{ setting: "Off.Flag", module: MODULE }, field] }, ctx)).toEqual(field);
     expect(resolveGlobalTerms({ not: field }, ctx)).toEqual({ not: field });
     expect(resolveGlobalTerms({ and: [field, { field: "b" }] }, ctx)).toEqual({ and: [field, { field: "b" }] });
     expect(resolveGlobalTerms({ or: [field, { field: "b" }] }, ctx)).toEqual({ or: [field, { field: "b" }] });
@@ -68,17 +74,31 @@ describe("resolveGlobalTerms", () => {
   it("decides a junction whose every operand was decided without one deciding it", () => {
     const ctx = context();
 
-    expect(resolveGlobalTerms({ or: [{ setting: "Off.Flag" }, { setting: "Missing" }] }, ctx)).toBe(false);
-    expect(resolveGlobalTerms({ and: [{ setting: "SalesRep.Enabled" }, { authenticated: true }] }, ctx)).toBe(true);
+    expect(
+      resolveGlobalTerms(
+        {
+          or: [
+            { setting: "Off.Flag", module: MODULE },
+            { setting: "Missing", module: MODULE },
+          ],
+        },
+        ctx,
+      ),
+    ).toBe(false);
+    expect(
+      resolveGlobalTerms({ and: [{ setting: "SalesRep.Enabled", module: MODULE }, { authenticated: true }] }, ctx),
+    ).toBe(true);
   });
 
   it("rejects an unknown key or a malformed node, also under `not`, rather than read it as false", () => {
     const unknown = { future: "x" } as unknown as ConditionNodeType;
     const malformed = { and: "x" } as unknown as ConditionNodeType;
+    const moduleless = { setting: "SalesRep.Enabled" } as unknown as ConditionNodeType;
 
     expect(() => resolveGlobalTerms(unknown, context())).toThrow(/unknown condition key "future"/);
     expect(() => resolveGlobalTerms({ not: unknown }, context())).toThrow(/unknown condition key "future"/);
     expect(() => resolveGlobalTerms({ not: malformed }, context())).toThrow(/malformed condition/);
+    expect(() => resolveGlobalTerms(moduleless, context())).toThrow(/malformed condition/);
     expect(() => resolveGlobalTerms({ not: null as unknown as ConditionNodeType }, context())).toThrow(
       /malformed condition/,
     );
@@ -107,7 +127,7 @@ describe("isGloballyTrue", () => {
   it("does not gate on a field term it cannot decide", () => {
     expect(isGloballyTrue(undefined, context())).toBe(true);
     expect(isGloballyTrue({ field: "x" }, context())).toBe(true);
-    expect(isGloballyTrue({ setting: "Off.Flag" }, context())).toBe(false);
+    expect(isGloballyTrue({ setting: "Off.Flag", module: MODULE }, context())).toBe(false);
   });
 });
 

@@ -55,7 +55,7 @@ function otherPlugin(): IPlatformPlugin {
 
 const DECLARED = {
   format: 1,
-  when: { setting: "SalesRep.Enabled" },
+  when: { setting: "SalesRep.Enabled", module: "VirtoCommerce.SalesRep" },
   routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments" }],
 };
 
@@ -74,7 +74,8 @@ function stubFetch() {
 
 function context(enabled: boolean) {
   return {
-    setting: (key: string) => (key === "SalesRep.Enabled" ? enabled : undefined),
+    setting: (module: string, key: string) =>
+      module === "VirtoCommerce.SalesRep" && key === "SalesRep.Enabled" ? enabled : undefined,
     themeSetting: () => undefined,
     isAuthenticated: true,
     can: () => true,

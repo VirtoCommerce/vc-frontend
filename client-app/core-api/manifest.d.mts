@@ -9,10 +9,10 @@ import type {
 
 export declare const CONTRIBUTIONS_FORMAT: 1;
 
-/** A store module setting is `true`. */
-export declare function settingEnabled(key: string): GlobalConditionType;
-/** A store module setting is `true`, or `.eq(value)`. */
-export declare function settingValue(key: string): ComparableConditionType<"global">;
+/** The setting `key` of the store module `module` (e.g. "VirtoCommerce.SalesRep") is `true`. */
+export declare function settingEnabled(module: string, key: string): GlobalConditionType;
+/** The setting `key` of the store module `module` is `true`, or `.eq(value)`. */
+export declare function settingValue(module: string, key: string): ComparableConditionType<"global">;
 /** A `settings_data.json` key is `true`, or `.eq(value)`. */
 export declare function themeSetting(key: string): ComparableConditionType<"global">;
 export declare function authenticated(): GlobalConditionType;
