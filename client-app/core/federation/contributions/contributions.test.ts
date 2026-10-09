@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
+import { CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
 import { evaluateResidual, isGloballyTrue, resolveGlobalTerms } from "./evaluate";
 import { PLACEHOLDER_META_KEY } from "./placeholder";
 import {
@@ -423,5 +424,12 @@ describe("applyContributions / releaseContributions", () => {
 
     expect(nav.desktopCorporateMenuItems.value?.children?.map((item) => item.id) ?? []).not.toContain("docs-link");
     expect(nav.desktopMainMenuItems.value.map((item) => item.id)).not.toContain("docs-link");
+  });
+});
+
+describe("IPluginContributionsType", () => {
+  it("carries the format the host reads", () => {
+    expectTypeOf(CONTRIBUTIONS_FORMAT).toEqualTypeOf<IPluginContributionsType["format"]>();
+    expect(CONTRIBUTIONS_FORMAT).toBe(1 satisfies IPluginContributionsType["format"]);
   });
 });
