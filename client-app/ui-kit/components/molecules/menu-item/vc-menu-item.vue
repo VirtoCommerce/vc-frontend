@@ -84,7 +84,7 @@ interface IProps {
    */
   highlightRing?: boolean;
   /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
-  tabindex?: number | string;
+  tabindex?: number | `${number}`;
 }
 
 defineOptions({

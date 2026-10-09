@@ -80,7 +80,7 @@ provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measured
 // A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but a tab stop
 // on an `aria-activedescendant` listbox would break the combobox pattern, so it yields to an
 // interactive container role on the region or its direct child (a list holding only options).
-const INTERACTIVE_CONTAINER_SELECTOR = [
+const INTERACTIVE_CONTAINER_ROLES = [
   "listbox",
   "menu",
   "menubar",
@@ -90,13 +90,11 @@ const INTERACTIVE_CONTAINER_SELECTOR = [
   "tablist",
   "combobox",
   "radiogroup",
-]
-  .map((role) => `[role="${role}"]`)
-  .join(", ");
+];
 
-const INTERACTIVE_CHILD_SELECTOR = INTERACTIVE_CONTAINER_SELECTOR.split(", ")
-  .map((selector) => `:scope > ${selector}`)
-  .join(", ");
+const INTERACTIVE_CONTAINER_SELECTOR = INTERACTIVE_CONTAINER_ROLES.map((role) => `[role="${role}"]`).join(", ");
+
+const INTERACTIVE_CHILD_SELECTOR = INTERACTIVE_CONTAINER_ROLES.map((role) => `:scope > [role="${role}"]`).join(", ");
 
 const FOCUSABLE_SELECTORS = [
   "a[href]",
