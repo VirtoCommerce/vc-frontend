@@ -1100,6 +1100,20 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(wrapper.get(".vc-select-all input").element);
     });
 
+    it("publishes no active option once the list is closed", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.trigger("keydown", { key: "ArrowDown" });
+
+      expect(input.attributes("aria-activedescendant")).toBeDefined();
+
+      await input.trigger("keydown", { key: "Escape" });
+
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
+    });
+
     it("leaves Tab to the browser once the list is closed", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");
@@ -1126,6 +1140,12 @@ describe("VcSelect", () => {
   });
 
   describe("clearable", () => {
+    it("hides the clear button for a null model", () => {
+      const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: null });
+
+      expect(wrapper.find(".vc-select-field__clear").exists()).toBe(false);
+    });
+
     it("hides the clear button when there is no selection", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true });
 

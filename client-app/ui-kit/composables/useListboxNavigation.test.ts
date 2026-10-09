@@ -256,6 +256,21 @@ describe("useListboxNavigation over a changing list", () => {
     return { items, ...navigation };
   }
 
+  it("keeps the highlight when the options are rebuilt as new objects with the same keys", async () => {
+    const items = ref([{ id: "a" }, { id: "b" }]);
+    const { highlightedIndex, highlight } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items,
+      getKey: (item) => item.id,
+    });
+
+    highlight(1);
+    items.value = [{ id: "a" }, { id: "b" }];
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(1);
+  });
+
   it("keeps the highlight when a page is appended to a new array", async () => {
     const { items, highlightedIndex } = setup(["a", "b", "c"]);
 

@@ -69,6 +69,21 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachRight")).toBeUndefined();
     });
 
+    it.each([
+      ["vertical only", { vertical: true }, { reachBottom: 1, reachRight: 0 }],
+      ["horizontal only", { horizontal: true }, { reachBottom: 0, reachRight: 1 }],
+      ["disabled", { vertical: true, horizontal: true, disabled: true }, { reachBottom: 0, reachRight: 0 }],
+    ])("announces only the edges of the axes it scrolls: %s", async (_label, props, expected) => {
+      const wrapper = mount(VcScrollbar, { attachTo: document.body, props, slots: { default: () => h("p", "row") } });
+
+      describeBox(wrapper.element as HTMLElement, { clientHeight: 400, scrollHeight: 400, scrollTop: 0 });
+      await nextTick();
+      await afterContentSettles();
+
+      expect(wrapper.emitted("reachBottom")?.length ?? 0).toBe(expected.reachBottom);
+      expect(wrapper.emitted("reachRight")?.length ?? 0).toBe(expected.reachRight);
+    });
+
     it("announces the bottom when the vertical axis is turned on after mount", async () => {
       const wrapper = mount(VcScrollbar, {
         attachTo: document.body,
