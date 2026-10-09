@@ -14,7 +14,7 @@ const meta: Meta<typeof VcLoadMore> = {
           "requests a page whenever that is the bottom — including the bottom of a page too short " +
           "to scroll, which is the case a sentinel watching for a crossing can never report. " +
           "`item-count` tells it when a page has landed, so a list that still fits fills itself up " +
-          "rather than stalling; `loading` only holds a second request back while one is on its way.",
+          "rather than stalling; `loading` shows the spinner and holds a second request back while one is on its way.",
       },
     },
   },
@@ -27,8 +27,9 @@ const meta: Meta<typeof VcLoadMore> = {
     itemCount: {
       control: "number",
       description:
-        "How many items are loaded. A request counts as answered once the count grows, so a failed page is " +
-        "not repeated while the list rests at its end, and a filtered list that showed no new row keeps paging.",
+        "How many items are loaded — the loaded items, not the rendered rows. A request counts as answered once " +
+        "the count grows, and a count that drops is a list rebuilt for a new search. A failed page is not " +
+        "repeated while the list rests at its end; scrolling away and back retries it.",
     },
     tag: { control: "text" },
   },

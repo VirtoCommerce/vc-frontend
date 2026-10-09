@@ -24,7 +24,8 @@ interface IProps {
   /**
    * How many items the list has loaded: a request is answered once the count grows, and a list
    * rebuilt for a new search is told by the count dropping. The loaded items, not the rendered rows,
-   * which a filter may hide.
+   * which a filter may hide. A page that fails is not asked for again while the list rests at its end;
+   * scrolling away and back retries it, and a list too short to scroll is retried by the consumer.
    */
   itemCount: number;
   tag?: string;
@@ -47,7 +48,7 @@ if (import.meta.env.DEV && !scrollbar && props.hasNextPage) {
 }
 
 // Read when a measurement lands, a next page appears, or on mount, never on `loading`: the edges come
-// from a debounced measurement, so reacting to props would read the box from before an append.
+// from a debounced measurement, so reacting to `loading` would read the box from before an append.
 const wantsMore = computed(() => props.hasNextPage && !props.loading && scrollbar?.isAtBottom.value === true);
 
 const showSpinner = computed(() => props.loading && props.hasNextPage);
@@ -59,13 +60,14 @@ function readContent(): ContentType {
   return { size: props.itemCount, text: scrollbar?.el.value?.textContent ?? "" };
 }
 
-/** What the region held when the last page was asked for; null until something has been asked. */
+/** What the region held when the last page was asked for; null until asked, and again once the list is rebuilt or left. */
 const askedAt = ref<ContentType | null>(null);
 
 /**
  * Asks again only once the last request changed what the list holds. A short list is never
  * scrolled, so the landed page is what re-opens the question; a failed fetch leaves the list as
- * it was and is not repeated — the consumer recovers by changing `items` or `has-next-page`.
+ * it was and is not repeated while the list rests at its end — the user scrolling away and back asks
+ * once more, as does the consumer changing `items` or `has-next-page`.
  */
 function reconsider(): void {
   const content = readContent();

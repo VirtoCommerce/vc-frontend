@@ -536,7 +536,6 @@ describe("VcSelect", () => {
       await vi.advanceTimersByTimeAsync(300);
     }
 
-    // Nothing to select or clear: an event would report a change that did not happen.
     it.each([
       ["an empty list", { items: [] }, ""],
       ["a query that matches nothing", {}, "zzz"],
@@ -660,7 +659,6 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("false");
     });
 
-    // A local filter is unknown to `total`, which still counts the whole set.
     it("counts only the matches under a local query, whatever the total", async () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
@@ -781,14 +779,29 @@ describe("VcSelect", () => {
         expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
       });
 
+      it("warns about autocomplete over a slotted trigger, which has no input", () => {
+        const warn = spyOnWarn();
+        const placeholder = { placeholder: () => h("span", "Pick") };
+
+        createWrapper({ items: ITEMS, autocomplete: true }, placeholder);
+        createWrapper({ items: ITEMS }, placeholder);
+        createWrapper({ items: ITEMS, autocomplete: true });
+
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("has no input"))).toHaveLength(1);
+      });
+
       it("warns about a selected-count that nothing reads", () => {
         const warn = spyOnWarn();
         const counted = { items: ITEMS, multiple: true, selectAll: true, modelValue: [], selectedCount: 2 };
 
-        createWrapper(counted);
-        createWrapper({ ...counted, autocomplete: true, serverFilter: true, onSearch: noop, onSelectAll: noop });
+        const serverSide = { autocomplete: true, serverFilter: true, onSearch: noop, onSelectAll: noop };
 
-        expect(warn.mock.calls.filter(([message]) => String(message).includes("`selected-count`"))).toHaveLength(1);
+        createWrapper(counted);
+        createWrapper({ ...counted, ...serverSide, multiple: false, modelValue: undefined });
+        createWrapper({ ...counted, ...serverSide, selectAll: false });
+        createWrapper({ ...counted, ...serverSide });
+
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("`selected-count`"))).toHaveLength(3);
       });
     });
 
@@ -1309,7 +1322,6 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-loader").exists()).toBe(false);
     });
 
-    // A tabbable row would make VcScrollbar drop the region's tabindex="-1".
     it.each([
       ["loading", { items: [], loading: true }],
       ["empty", { items: [] }],

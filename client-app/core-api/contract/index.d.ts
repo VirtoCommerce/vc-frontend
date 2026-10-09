@@ -3014,7 +3014,7 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
         autocomplete?: boolean;
         singleLineMessage?: boolean;
         /**
-         * Allows several values; the model is then an array. Primitive values are matched by lookup, object
+         * Allows several values; the model is then an array. Rows look primitive values up and compare object
          * values deeply — for thousands of options over thousands of selections, pick a primitive `value-field`.
          */
         multiple?: M & boolean;
@@ -3038,7 +3038,9 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
         /**
          * More options exist beyond `items`. While it is set, the list asks for the next page with
          * `load-more` whenever it comes to rest at its bottom — including a page too short to scroll.
-         * `loading` must be bound alongside it, or one request becomes many.
+         * `loading` must be bound alongside it, or one request becomes many. A page that fails is not
+         * asked for again while the list rests at its end: scrolling away and back retries it, or call
+         * the loader again yourself (a short list cannot scroll).
          */
         hasNextPage?: boolean;
         /**
@@ -3070,12 +3072,15 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
     expose: (exposed: {}) => void;
     attrs: any;
     slots: {
-        /** The chosen item in single mode, the selected values in multiple mode. */
+        /**
+         * The chosen item in single mode, the selected values in multiple mode. With this slot or
+         * `#placeholder` the trigger is a button, not a typable field, so `autocomplete` has no input.
+         */
         selected?: (props: {
             item: M extends true ? V[] : T;
             error?: boolean;
         }) => unknown;
-        /** Shown in the slotted trigger while nothing is selected. */
+        /** Shown in the slotted trigger while nothing is selected; like `#selected`, it makes the trigger a button. */
         placeholder?: (props: {
             error?: boolean;
         }) => unknown;

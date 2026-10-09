@@ -357,7 +357,25 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
-  // A page that failed is asked again when the user comes back to the end, once per return.
+  it("does not re-ask a failing page whose spinner pushed the list off its end", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 20 });
+
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 500, scrollTop: 400 });
+    region.dispatchEvent(new Event("scroll"));
+    await afterContentSettles();
+
+    for (let attempt = 0; attempt < 4; attempt++) {
+      state.loading = true;
+      describeScrollBox(region, { clientHeight: 100, scrollHeight: 540, scrollTop: 400 });
+      await afterContentSettles();
+      state.loading = false;
+      describeScrollBox(region, { clientHeight: 100, scrollHeight: 500, scrollTop: 400 });
+      await afterContentSettles();
+    }
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
   it("asks again for a failed page once the list is scrolled away from its end and back", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });
     const scrollTo = async (scrollTop: number) => {

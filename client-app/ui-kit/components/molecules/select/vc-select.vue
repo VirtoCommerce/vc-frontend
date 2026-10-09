@@ -243,7 +243,7 @@ const props = withDefaults(
     autocomplete?: boolean;
     singleLineMessage?: boolean;
     /**
-     * Allows several values; the model is then an array. Primitive values are matched by lookup, object
+     * Allows several values; the model is then an array. Rows look primitive values up and compare object
      * values deeply — for thousands of options over thousands of selections, pick a primitive `value-field`.
      */
     // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
@@ -269,7 +269,9 @@ const props = withDefaults(
     /**
      * More options exist beyond `items`. While it is set, the list asks for the next page with
      * `load-more` whenever it comes to rest at its bottom — including a page too short to scroll.
-     * `loading` must be bound alongside it, or one request becomes many.
+     * `loading` must be bound alongside it, or one request becomes many. A page that fails is not
+     * asked for again while the list rests at its end: scrolling away and back retries it, or call
+     * the loader again yourself (a short list cannot scroll).
      */
     hasNextPage?: boolean;
     /**
@@ -293,10 +295,13 @@ const props = withDefaults(
   },
 );
 
-defineSlots<{
-  /** The chosen item in single mode, the selected values in multiple mode. */
+const slots = defineSlots<{
+  /**
+   * The chosen item in single mode, the selected values in multiple mode. With this slot or
+   * `#placeholder` the trigger is a button, not a typable field, so `autocomplete` has no input.
+   */
   selected?: (props: { item: M extends true ? V[] : T; error?: boolean }) => unknown;
-  /** Shown in the slotted trigger while nothing is selected. */
+  /** Shown in the slotted trigger while nothing is selected; like `#selected`, it makes the trigger a button. */
   placeholder?: (props: { error?: boolean }) => unknown;
   /** Replaces the label of one option. */
   item?: (props: { item: T; index: number }) => unknown;
@@ -703,6 +708,13 @@ if (import.meta.env.DEV) {
     );
   }
 
+  if (props.autocomplete && (slots.selected || slots.placeholder)) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcSelect: `autocomplete` has no input with a `#selected` or `#placeholder` trigger; nothing can be typed.",
+    );
+  }
+
   if (props.serverFilter && !props.autocomplete) {
     // eslint-disable-next-line no-console
     console.warn("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
@@ -935,7 +947,7 @@ function onTab(event: KeyboardEvent) {
     }
   }
 
-  // VcLoadMore renders only a spinner and has no separator of its own; the list's divider continues on it.
+  // VcLoadMore has no separator of its own; the list's divider continues on it.
   &__more {
     @apply border-t border-neutral-100;
   }

@@ -76,7 +76,6 @@ describe("useListboxNavigation", () => {
     const { region } = buildList(10);
     const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
 
-    // Scrolled to the end: the viewport shows 300-400 and the first option sits at 0-40.
     describeScrollBox(region, { clientHeight: 100, scrollHeight: 400, scrollTop: 300 });
     setRect(region, 300, 400);
 
@@ -307,7 +306,6 @@ describe("useListboxNavigation over a changing list", () => {
     expect(highlightedIndex.value).toBe(-1);
   });
 
-  // A key compares equal to the missing one past the end when it is `undefined` (an unset value field).
   it("drops the highlight on an option without a key when the list is cut short beneath it", async () => {
     const items = ref([{ value: "a" }, { value: undefined }]);
     const { highlightedIndex, highlight } = useListboxNavigation({
