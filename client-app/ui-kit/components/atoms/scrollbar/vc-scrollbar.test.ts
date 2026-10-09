@@ -69,7 +69,7 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachRight")).toBeUndefined();
     });
 
-    it.each([
+    it.each<[string, { vertical?: boolean; horizontal?: boolean; disabled?: boolean }, Record<string, number>]>([
       ["vertical only", { vertical: true }, { reachBottom: 1, reachRight: 0 }],
       ["horizontal only", { horizontal: true }, { reachBottom: 0, reachRight: 1 }],
       ["disabled", { vertical: true, horizontal: true, disabled: true }, { reachBottom: 0, reachRight: 0 }],
