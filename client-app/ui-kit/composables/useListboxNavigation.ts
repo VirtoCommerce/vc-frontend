@@ -134,25 +134,23 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     }
   }
 
-  // Paging appends, so the highlight survives; a rebuilt list puts another option under it.
-  watch(params.items, (items, previous) => {
-    const index = highlightedIndex.value;
+  // Paging appends, so the highlight survives; a rebuilt list puts another option under it. Keys, not
+  // the array: a consumer may splice or push into the same array, which its reference never shows.
+  watch(
+    () => params.items.value.map(getItemKey),
+    (keys, previousKeys) => {
+      const index = highlightedIndex.value;
 
-    if (index < 0) {
-      return;
-    }
+      if (index < 0) {
+        return;
+      }
 
-    // By length, not truthiness: an option may be `0`, `""` or `false`. Past either end there is no
-    // option for `getKey` to read.
-    if (index >= previous.length || index >= items.length) {
-      reset();
-      return;
-    }
-
-    if (getItemKey(items[index]) !== getItemKey(previous[index])) {
-      reset();
-    }
-  });
+      // By length, not truthiness: a key may be `0`, `""` or `false`.
+      if (index >= previousKeys.length || index >= keys.length || keys[index] !== previousKeys[index]) {
+        reset();
+      }
+    },
+  );
 
   // Only the keyboard scrolls: a row under a still pointer that scrolled would hand the pointer the
   // next row, which would highlight and scroll in turn. The flag is watched too, so a key that keeps

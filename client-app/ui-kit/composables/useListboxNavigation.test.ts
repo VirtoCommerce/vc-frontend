@@ -215,3 +215,62 @@ describe("useListboxNavigation passive highlight", () => {
     list.remove();
   });
 });
+
+describe("useListboxNavigation over a changing list", () => {
+  function setup(initial: string[]) {
+    const items = ref([...initial]);
+    const navigation = useListboxNavigation({ componentId: COMPONENT_ID, items });
+
+    navigation.navigate("end");
+
+    return { items, ...navigation };
+  }
+
+  it("keeps the highlight when a page is appended to a new array", async () => {
+    const { items, highlightedIndex } = setup(["a", "b", "c"]);
+
+    items.value = [...items.value, "d"];
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(2);
+  });
+
+  it("keeps the highlight when a page is pushed into the same array", async () => {
+    const { items, highlightedIndex } = setup(["a", "b", "c"]);
+
+    items.value.push("d");
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(2);
+  });
+
+  it("drops the highlight when a new array puts another option under it", async () => {
+    const { items, highlightedIndex } = setup(["a", "b", "c"]);
+
+    items.value = ["a", "b", "z"];
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(-1);
+  });
+
+  // With no local query the filtered list IS the consumer's array, and a search may be answered
+  // by splicing it.
+  it("drops the highlight when the same array is spliced to put another option under it", async () => {
+    const { items, highlightedIndex } = setup(["a", "b", "c"]);
+
+    items.value.splice(2, 1, "z");
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(-1);
+  });
+
+  it("drops the highlight when the same array is cut short beneath it", async () => {
+    const { items, highlightedIndex, activeDescendantId } = setup(["a", "b", "c"]);
+
+    items.value.splice(1);
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(-1);
+    expect(activeDescendantId.value).toBeUndefined();
+  });
+});
