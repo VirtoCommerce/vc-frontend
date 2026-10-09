@@ -6,8 +6,8 @@ on:
 
 jobs:
   release:
-    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): skipped in the private theme mirror (VCST-5970).
-    if: github.repository_id == '296335982'
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_RELEASE=true: skipped in the private theme mirror (VCST-5970).
+    if: (github.repository_id == '296335982' || vars.VC_RELEASE == 'true')
     uses: VirtoCommerce/.github/.github/workflows/release.yml@v3.1000.1
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
