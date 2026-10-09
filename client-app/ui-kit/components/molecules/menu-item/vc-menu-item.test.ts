@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import VcMenuItem from "./vc-menu-item.vue";
 
@@ -27,5 +27,18 @@ describe("VcMenuItem highlight ring", () => {
     const wrapper = createWrapper();
 
     expect(inner(wrapper).classes()).not.toContain("vc-menu-item__inner--highlight-ring");
+  });
+});
+
+describe("VcMenuItem tab order", () => {
+  // The template form `tabindex="-1"` is a string.
+  it.each([-1, "-1"])("puts tabindex %j on the inner element and takes it without a warning", (tabindex) => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const wrapper = createWrapper({ props: { tabindex } });
+
+    expect(inner(wrapper).attributes("tabindex")).toBe("-1");
+    expect(wrapper.attributes("tabindex")).toBeUndefined();
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
   });
 });

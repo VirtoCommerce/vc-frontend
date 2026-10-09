@@ -1,16 +1,16 @@
-import { isEqual, union } from "lodash-es";
-import { computed, shallowRef, watch } from "vue";
-import type { Ref } from "vue";
+import { isEqual, isObject, union } from "lodash-es";
+import { computed, shallowRef, toValue, watch } from "vue";
+import type { MaybeRefOrGetter } from "vue";
 
 type ParamsType<T, V> = {
-  items: Ref<T[]>;
-  modelValue: Ref<V | V[] | undefined>;
-  multiple: Ref<boolean | undefined>;
-  filterValue: Ref<string>;
+  items: MaybeRefOrGetter<T[]>;
+  modelValue: MaybeRefOrGetter<V | V[] | undefined>;
+  multiple: MaybeRefOrGetter<boolean | undefined>;
+  filterValue: MaybeRefOrGetter<string>;
   /** When true the list is filtered by the consumer (server-side) and must pass through untouched. */
-  serverFilter?: Ref<boolean | undefined>;
-  textField?: Ref<VcSelectFieldAccessorType<T, string> | undefined>;
-  valueField?: Ref<VcSelectFieldAccessorType<T, V> | undefined>;
+  serverFilter?: MaybeRefOrGetter<boolean | undefined>;
+  textField?: MaybeRefOrGetter<VcSelectFieldAccessorType<T, string> | undefined>;
+  valueField?: MaybeRefOrGetter<VcSelectFieldAccessorType<T, V> | undefined>;
 };
 
 // `!item`, not a null check: a falsy option (0, "", false) resolves to itself.
@@ -28,26 +28,28 @@ function readField<T, R>(item: T, accessor: VcSelectFieldAccessorType<T, R> | un
 
 export function useSelect<T, V>(params: ParamsType<T, V>) {
   function getItemText(item: T): unknown {
-    return readField(item, params.textField?.value);
+    return readField(item, toValue(params.textField));
   }
 
   function getItemValue(item: T): V {
-    return readField(item, params.valueField?.value) as V;
+    return readField(item, toValue(params.valueField)) as V;
   }
 
   /** Model entries are always values, in both modes — never whole items. */
   const selectedValues = computed<V[]>(() => {
-    if (!params.multiple.value) {
+    if (!toValue(params.multiple)) {
       return [];
     }
 
-    return Array.isArray(params.modelValue.value) ? params.modelValue.value : [];
+    const model = toValue(params.modelValue);
+
+    return Array.isArray(model) ? model : [];
   });
 
   const foundItem = computed<T | undefined>(() =>
-    params.multiple.value
+    toValue(params.multiple)
       ? undefined
-      : params.items.value.find((item) => getItemValue(item) === params.modelValue.value),
+      : toValue(params.items).find((item) => getItemValue(item) === toValue(params.modelValue)),
   );
 
   // Paging and server-filter replace `items`, and the next page may not carry the selection; its last
@@ -67,27 +69,34 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
   // Without `valueField` the model is the item, so an unmatched value is still handed back.
   const selectedItem = computed<T | undefined>(() => {
     const remembered =
-      !params.multiple.value && rememberedItem.value?.value === params.modelValue.value
+      !toValue(params.multiple) && rememberedItem.value?.value === toValue(params.modelValue)
         ? rememberedItem.value?.item
         : undefined;
 
-    const rawModelIsTheItem = !params.multiple.value && params.valueField?.value === undefined;
+    const rawModelIsTheItem = !toValue(params.multiple) && toValue(params.valueField) === undefined;
 
     return (
-      foundItem.value ?? remembered ?? (rawModelIsTheItem ? (params.modelValue.value as T | undefined) : undefined)
+      foundItem.value ?? remembered ?? (rawModelIsTheItem ? (toValue(params.modelValue) as T | undefined) : undefined)
     );
   });
+
+  // A primitive is looked up, so a long list over a long selection stays linear; only objects are
+  // compared deeply.
+  const selectedPrimitives = computed(() => new Set<unknown>(selectedValues.value.filter((value) => !isObject(value))));
+  const selectedObjects = computed(() => selectedValues.value.filter(isObject));
 
   // Multiple compares deeply, single by identity: date-filter-select.vue rebuilds its ranges and
   // relies on re-picking an equal range still emitting.
   function isActiveItem(item: T): boolean {
     const itemValue = getItemValue(item);
 
-    if (params.multiple.value) {
-      return selectedValues.value.some((selectedValue) => isEqual(selectedValue, itemValue));
+    if (toValue(params.multiple)) {
+      return isObject(itemValue)
+        ? selectedObjects.value.some((selectedValue) => isEqual(selectedValue, itemValue))
+        : selectedPrimitives.value.has(itemValue);
     }
 
-    return itemValue === params.modelValue.value;
+    return itemValue === toValue(params.modelValue);
   }
 
   // An uninitialised model counts as empty.
@@ -103,11 +112,11 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
   }
 
   const hasSelection = computed<boolean>(() => {
-    if (params.multiple.value) {
+    if (toValue(params.multiple)) {
       return selectedValues.value.length > 0;
     }
 
-    return params.modelValue.value != null;
+    return toValue(params.modelValue) != null;
   });
 
   // Only a primitive has text to match; an unlabelled object would stringify to "[object Object]".
@@ -127,12 +136,12 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
 
   /** Substring match, with prefix matches hoisted to the top. */
   const filteredItems = computed<T[]>(() => {
-    if (!params.filterValue.value || params.serverFilter?.value) {
-      return params.items.value;
+    if (!toValue(params.filterValue) || toValue(params.serverFilter)) {
+      return toValue(params.items);
     }
 
-    const searching = params.filterValue.value.toLowerCase();
-    const matched = params.items.value.filter((item) => getFilterText(item).includes(searching));
+    const searching = toValue(params.filterValue).toLowerCase();
+    const matched = toValue(params.items).filter((item) => getFilterText(item).includes(searching));
     const prefixMatched = matched.filter((item) => getFilterText(item).startsWith(searching));
 
     return union(prefixMatched, matched);

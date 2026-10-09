@@ -1,7 +1,8 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import { describeScrollBox } from "@/core/utilities/tests";
 import { useListboxNavigation } from "./useListboxNavigation";
+import type { Ref } from "vue";
 
 const COMPONENT_ID = "test-select";
 
@@ -180,16 +181,33 @@ describe("useListboxNavigation passive highlight", () => {
     expect(isPassiveHighlight.value).toBe(false);
   });
 
-  it("clears the mark on a direct write to the index", () => {
-    const { highlightedIndex, isPassiveHighlight, highlightPassively } = useListboxNavigation({
+  // A row reached by the keyboard stays a keyboard position under a pointer nudged on it.
+  it("keeps a keyboard highlight when the pointer moves on the same row", () => {
+    const { highlightedIndex, isPassiveHighlight, highlightPassively, navigate } = useListboxNavigation({
       componentId: COMPONENT_ID,
       items: ref(["a", "b", "c"]),
     });
 
+    navigate("down");
     highlightPassively(0);
-    highlightedIndex.value = 2;
 
+    expect(highlightedIndex.value).toBe(0);
     expect(isPassiveHighlight.value).toBe(false);
+  });
+
+  it("hands its state out read-only, so it moves only through its functions", () => {
+    const { highlightedIndex, isPassiveHighlight } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(["a", "b", "c"]),
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    (highlightedIndex as Ref<number>).value = 2;
+    (isPassiveHighlight as Ref<boolean>).value = true;
+
+    expect(highlightedIndex.value).toBe(-1);
+    expect(isPassiveHighlight.value).toBe(false);
+    warn.mockRestore();
   });
 
   it("drops only a passive highlight when the pointer leaves the list", () => {
@@ -272,5 +290,54 @@ describe("useListboxNavigation over a changing list", () => {
 
     expect(highlightedIndex.value).toBe(-1);
     expect(activeDescendantId.value).toBeUndefined();
+  });
+});
+
+describe("useListboxNavigation at the ends of the list", () => {
+  it.each([
+    ["down", "end", 2],
+    ["up", "home", 0],
+  ] as const)("stays put on %s past the %s without wrap", (key, end, index) => {
+    const { highlightedIndex, navigate } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(["a", "b", "c"]),
+      wrap: false,
+    });
+
+    navigate(end);
+    navigate(key);
+
+    expect(highlightedIndex.value).toBe(index);
+  });
+
+  it.each([
+    ["down", "end", 0],
+    ["up", "home", 2],
+  ] as const)("wraps on %s past the %s by default", (key, end, index) => {
+    const { highlightedIndex, navigate } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(["a", "b", "c"]),
+    });
+
+    navigate(end);
+    navigate(key);
+
+    expect(highlightedIndex.value).toBe(index);
+  });
+
+  it("follows wrap given as a getter", () => {
+    const wrap = ref(true);
+    const items = ["a", "b", "c"];
+    const { highlightedIndex, navigate } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: () => items,
+      wrap: () => wrap.value,
+    });
+
+    navigate("end");
+    wrap.value = false;
+    navigate("down");
+
+    expect(highlightedIndex.value).toBe(2);
   });
 });

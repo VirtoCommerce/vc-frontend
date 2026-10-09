@@ -99,7 +99,14 @@
               :aria-multiselectable="multiple || undefined"
             >
               <!-- First, so a query being answered shows it above the previous query's options. -->
-              <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
+              <VcMenuItem
+                v-if="showLoadingRow"
+                role="option"
+                :aria-selected="false"
+                disabled
+                :size="itemSize"
+                :tabindex="-1"
+              >
                 <span class="vc-select__loading">
                   <slot name="loading">
                     <VcLoader />
@@ -114,10 +121,10 @@
                 :key="index"
                 :option-id="getOptionId(index)"
                 :data-vc-select-option="componentId"
-                :active="isActiveItem(item)"
+                :active="activeRows[index]"
                 :highlighted="index === highlightedIndex"
                 :highlight-ring="!isPassiveHighlight"
-                :aria-selected="isActiveItem(item)"
+                :aria-selected="activeRows[index]"
                 role="option"
                 :size="itemSize"
                 :tabindex="-1"
@@ -129,7 +136,7 @@
               >
                 <VcCheckbox
                   v-if="multiple"
-                  :model-value="isActiveItem(item)"
+                  :model-value="activeRows[index]"
                   :aria-label="toLabel(getItemText(item))"
                   tabindex="-1"
                 />
@@ -145,6 +152,7 @@
                 :aria-selected="false"
                 disabled
                 :size="itemSize"
+                :tabindex="-1"
               >
                 <slot name="empty">
                   {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
@@ -182,7 +190,7 @@
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
 import { useDebounceFn, useElementBounding } from "@vueuse/core";
-import { isEqual } from "lodash-es";
+import { differenceWith, isEqual, unionWith } from "lodash-es";
 import { computed, getCurrentInstance, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
@@ -320,18 +328,23 @@ const {
   hasSelection,
   filteredItems,
 } = useSelect<T, V>({
-  items: toRef(() => props.items),
-  modelValue: toRef(() => props.modelValue),
-  multiple: toRef(() => props.multiple),
+  items: () => props.items,
+  modelValue: () => props.modelValue,
+  multiple: () => props.multiple,
   filterValue,
-  serverFilter: toRef(() => props.serverFilter),
-  textField: toRef(() => props.textField),
-  valueField: toRef(() => props.valueField),
+  serverFilter: () => props.serverFilter,
+  textField: () => props.textField,
+  valueField: () => props.valueField,
 });
+
+// Once per change of the list or the selection, not per row and render: a pointer highlight
+// re-renders every row.
+const activeRows = computed(() => filteredItems.value.map((item) => isActiveItem(item)));
 
 const {
   highlightedIndex,
   isPassiveHighlight,
+  activeDescendantId: highlightedOptionId,
   getOptionId,
   navigate,
   highlight,
@@ -342,12 +355,12 @@ const {
   items: filteredItems,
   getKey: getItemValue,
   list: useTemplateRef<HTMLElement>("listElement"),
+  // Past the last loaded option comes the next page, not the first option.
+  wrap: () => !props.hasNextPage,
 });
 
 // Only announce an active option while the list is on screen.
-const activeDescendantId = computed(() =>
-  isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
-);
+const activeDescendantId = computed(() => (isShown.value ? highlightedOptionId.value : undefined));
 
 // With `serverFilter`, typing makes the options on screen the previous query's until the query goes
 // out; after that the consumer's `loading` says whether they are still being replaced. A query the
@@ -776,29 +789,42 @@ const showLoadingRow = computed(() => props.loading && !pagerHasNextPage.value);
 
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
 
-const selectedVisibleCount = computed(
-  () =>
-    selectableValues.value.filter((value) => selectedValues.value.some((current) => isEqual(current, value))).length,
-);
+const selectedVisibleCount = computed(() => activeRows.value.filter(Boolean).length);
 
 // While a query narrows the list, only the matching options count: a local filter is unknown to
-// `total`, and with `server-filter` the consumer's `total` counts the matches.
-const isNarrowed = computed(() => !!filterValue.value);
+// `total`, and with `server-filter` the consumer's `total` counts the matches. A server-side query
+// narrows only once answered: until then `total` and the options describe the previous one.
+const answeredFilterValue = ref(filterValue.value);
+
+watch(
+  [filterValue, isAnswerPending],
+  ([value, pending]) => {
+    if (!pending) {
+      answeredFilterValue.value = value;
+    }
+  },
+  { flush: "sync" },
+);
+
+const isNarrowed = computed(() => !!(props.serverFilter ? answeredFilterValue.value : filterValue.value));
 
 const totalCount = computed(() =>
   isNarrowed.value && !props.serverFilter ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
 );
 
+// Never below what is visibly selected. Without `total` nothing beyond the loaded options can be
+// counted; with it, model values past it are ones no option carries.
 const countedSelected = computed(() => {
   if (!isNarrowed.value) {
-    return selectedValues.value.length;
+    return props.total === undefined
+      ? selectedVisibleCount.value
+      : Math.max(Math.min(selectedValues.value.length, props.total), selectedVisibleCount.value);
   }
 
   if (!props.serverFilter || !Number.isFinite(props.selectedCount)) {
     return selectedVisibleCount.value;
   }
 
-  // Capped at the number of matches, but never below what is visibly selected.
   return Math.max(Math.min(props.selectedCount!, totalCount.value), selectedVisibleCount.value);
 });
 
@@ -831,20 +857,9 @@ function onSelectAll() {
 
   if (clearing) {
     // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
-    const visible = selectableValues.value;
-    commit(
-      isNarrowed.value ? selectedValues.value.filter((value) => !visible.some((item) => isEqual(item, value))) : [],
-    );
+    commit(isNarrowed.value ? differenceWith(selectedValues.value, selectableValues.value, isEqual) : []);
   } else {
-    const merged = [...selectedValues.value];
-
-    selectableValues.value.forEach((value) => {
-      if (!merged.some((current) => isEqual(current, value))) {
-        merged.push(value);
-      }
-    });
-
-    commit(merged);
+    commit(unionWith(selectedValues.value, selectableValues.value, isEqual));
   }
 
   emit("selectAll", { selected: !clearing, query: filterValue.value });

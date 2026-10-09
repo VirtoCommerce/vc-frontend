@@ -1,16 +1,18 @@
 import { useEventListener } from "@vueuse/core";
-import { computed, nextTick, ref, watch } from "vue";
-import type { Ref } from "vue";
+import { computed, nextTick, readonly, ref, toValue, watch } from "vue";
+import type { MaybeRefOrGetter } from "vue";
 
 type ParamsType<T> = {
   /** Prefix for generated option ids; pass a component id so ids stay unique on the page. */
   componentId: string;
   /** The options currently rendered, in render order. */
-  items: Ref<readonly T[]>;
+  items: MaybeRefOrGetter<readonly T[]>;
   /** Identity of an option. Defaults to the item itself; pass one when the list is rebuilt. */
   getKey?: (item: T) => unknown;
   /** The listbox element; when given, a pointer highlight is dropped as the pointer leaves it. */
-  list?: Readonly<Ref<HTMLElement | null>>;
+  list?: MaybeRefOrGetter<HTMLElement | null>;
+  /** Arrows past either end go round to the other. Default true; a paged list turns it off. */
+  wrap?: MaybeRefOrGetter<boolean>;
 };
 
 export type ListboxNavigationKeyType = "up" | "down" | "home" | "end";
@@ -37,13 +39,11 @@ function getScrollBox(list: HTMLElement): HTMLElement {
  */
 export function useListboxNavigation<T>(params: ParamsType<T>) {
   const highlightedIndex = ref(-1);
-  const count = computed(() => params.items.value.length);
+  const count = computed(() => toValue(params.items).length);
 
   // A highlight the pointer put there is not a keyboard position: it keeps its background but
-  // draws no ring until the keyboard moves it. Any other change of index makes it a keyboard position.
+  // draws no ring until the keyboard moves it.
   const isPassiveHighlight = ref(false);
-
-  watch(highlightedIndex, () => (isPassiveHighlight.value = false), { flush: "sync" });
 
   function highlight(index: number): void {
     highlightedIndex.value = index;
@@ -51,6 +51,11 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   }
 
   function highlightPassively(index: number): void {
+    // A keyboard position stays one under a pointer nudged on the same row.
+    if (index === highlightedIndex.value && !isPassiveHighlight.value) {
+      return;
+    }
+
     highlightedIndex.value = index;
     isPassiveHighlight.value = true;
   }
@@ -90,7 +95,13 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
       return;
     }
 
-    highlightedIndex.value = (current + delta + count.value) % count.value;
+    const next = current + delta;
+
+    if (toValue(params.wrap) ?? true) {
+      highlightedIndex.value = (next + count.value) % count.value;
+    } else {
+      highlightedIndex.value = Math.min(Math.max(next, 0), count.value - 1);
+    }
   }
 
   function navigate(key: ListboxNavigationKeyType): void {
@@ -137,7 +148,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   // Paging appends, so the highlight survives; a rebuilt list puts another option under it. Keys, not
   // the array: a consumer may splice or push into the same array, which its reference never shows.
   watch(
-    () => params.items.value.map(getItemKey),
+    () => toValue(params.items).map(getItemKey),
     (keys, previousKeys) => {
       const index = highlightedIndex.value;
 
@@ -164,13 +175,13 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   });
 
   return {
-    highlightedIndex,
+    highlightedIndex: readonly(highlightedIndex),
     activeDescendantId,
     getOptionId,
     navigate,
     highlight,
     highlightPassively,
-    isPassiveHighlight,
+    isPassiveHighlight: readonly(isPassiveHighlight),
     reset,
   };
 }

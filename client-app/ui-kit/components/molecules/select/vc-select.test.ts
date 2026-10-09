@@ -7,7 +7,7 @@ import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests"
 import * as UIKitComponents from "@/ui-kit/components";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
-import type { VueWrapper } from "@vue/test-utils";
+import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
 
 const ITEMS = ["Albania", "Belgium", "China"];
 
@@ -224,6 +224,26 @@ describe("VcSelect", () => {
       });
 
       expect(wrapper.findAll('[role="option"] .vc-checkbox')).toHaveLength(ITEMS.length);
+    });
+
+    it.each([
+      ["primitive values by value", ITEMS, ["Belgium"], ["false", "true", "false"]],
+      [
+        "object values deeply",
+        [{ code: "al" }, { code: "be" }, { code: "cn" }],
+        [{ code: "be" }],
+        ["false", "true", "false"],
+      ],
+      [
+        "a mixed model by kind",
+        [{ code: "al" }, "Belgium", { code: "cn" }],
+        [{ code: "al" }, "Belgium"],
+        ["true", "true", "false"],
+      ],
+    ])("checks the rows the model holds, matching %s", (_label, items, modelValue, expected) => {
+      const wrapper = createWrapper({ items, multiple: true, modelValue, textField: (item: unknown) => String(item) });
+
+      expect(wrapper.findAll('[role="option"]').map((option) => option.attributes("aria-selected"))).toEqual(expected);
     });
 
     it("adds an item to the array", async () => {
@@ -518,6 +538,16 @@ describe("VcSelect", () => {
   describe("select all", () => {
     const selectAllProps = { items: ITEMS, multiple: true, selectAll: true };
 
+    // A server-side query counts as narrowing once it has gone out.
+    async function typeAnsweredQuery(input: Pick<DOMWrapper<HTMLInputElement>, "setValue">, query: string) {
+      vi.useFakeTimers();
+      onTestFinished(() => {
+        vi.useRealTimers();
+      });
+      await input.setValue(query);
+      await vi.advanceTimersByTimeAsync(300);
+    }
+
     it("is absent unless asked for", () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
 
@@ -647,7 +677,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 5");
@@ -756,7 +786,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
@@ -777,7 +807,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("2 of 5");
@@ -810,7 +840,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 5");
@@ -862,7 +892,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 5");
@@ -881,10 +911,43 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 1");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("true");
+    });
+
+    it.each([
+      ["no total: only the loaded rows count", { modelValue: [...ITEMS, "x1", "x2"] }, "3 of 3"],
+      ["model values no row carries, without a total", { modelValue: ["stale"] }, "0 of 3"],
+      ["a total: capped at it", { modelValue: [...ITEMS, "x1", "x2"], total: 4 }, "4 of 4"],
+      ["a total: never below the checked rows", { modelValue: [...ITEMS], total: 2 }, "3 of 2"],
+    ])("counts an unnarrowed selection with %s", (_label, props, count) => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, hasNextPage: true, ...props });
+
+      expect(wrapper.get(".vc-select-all__count").text()).toBe(count);
+    });
+
+    // `total` and `selected-count` still describe the query the options on screen answer.
+    it("keeps counting the answered query while a server-side query is pending", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        total: 500,
+        modelValue: ["Albania", ...Array.from({ length: 39 }, (_, index) => `x${index}`)],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("40 of 500");
+
+      await input.setValue("a");
+
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("40 of 500");
     });
 
     it("never counts more than the matches of a server-side query", async () => {
@@ -900,7 +963,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("a");
+      await typeAnsweredQuery(input, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
@@ -936,7 +999,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await input.setValue("bel");
+      await typeAnsweredQuery(input, "bel");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 3000");
@@ -1183,6 +1246,16 @@ describe("VcSelect", () => {
 
       expect(wrapper.findAll(".probe-loading")).toHaveLength(1);
       expect(wrapper.find(".vc-loader").exists()).toBe(false);
+    });
+
+    // A tabbable row would make VcScrollbar drop the region's own tab stop.
+    it.each([
+      ["loading", { items: [], loading: true }],
+      ["empty", { items: [] }],
+    ])("keeps the %s row out of the tab order", (_label, props) => {
+      const wrapper = createWrapper(props);
+
+      expect(wrapper.get('[role="option"]').attributes("tabindex")).toBe("-1");
     });
 
     it("names the loading row", () => {
@@ -1629,6 +1702,44 @@ describe("VcSelect", () => {
 
       expect(input.attributes("aria-activedescendant")).toBe(highlighted);
       expect(wrapper.findAll('[role="option"]')).toHaveLength(5);
+    });
+
+    // An IME (ja, zh) commits a composition with Enter and walks its candidates with the arrows.
+    it("leaves the keys of an IME composition to the IME", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      const highlighted = input.attributes("aria-activedescendant");
+
+      await input.trigger("keydown", { key: "ArrowDown", isComposing: true });
+      await input.trigger("keydown", { key: "Enter", keyCode: 229 });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(highlighted);
+      expect(input.attributes("aria-expanded")).toBe("true");
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
+
+    it.each([
+      ["stays on the last loaded option while a next page exists", true, 2],
+      ["wraps to the first option once the list is complete", false, 0],
+    ])("on ArrowDown past the end %s", async (_label, hasNextPage, index) => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "End" });
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(
+        wrapper.findAll('[role="option"]')[index].attributes("id"),
+      );
     });
 
     // A replaced list (a new search answer) puts another option under the index.

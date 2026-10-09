@@ -157,6 +157,44 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBe(ids[0]);
   });
 
+  it("stays on the last loaded organization with ArrowDown while a next page exists", async () => {
+    state.hasNextPage.value = true;
+
+    const wrapper = mountComponent();
+    const input = wrapper.get("input");
+    const ids = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+    for (let press = 0; press < 4; press++) {
+      await input.trigger("keydown", { key: "ArrowDown" });
+    }
+
+    await nextTick();
+
+    expect(input.attributes("aria-activedescendant")).toBe(ids[2]);
+  });
+
+  // End-to-end selectors target the list container by this id.
+  it("names the list for end-to-end tests", () => {
+    const wrapper = mountComponent();
+
+    expect(wrapper.get("[data-test-id='organizations-list']").attributes("role")).toBe("listbox");
+  });
+
+  it("leaves the keys of an IME composition to the IME", async () => {
+    const wrapper = mountComponent();
+    const input = wrapper.get("input");
+
+    state.search.mockClear();
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await input.trigger("keydown", { key: "ArrowDown", isComposing: true });
+    await input.trigger("keydown", { key: "Enter", keyCode: 229 });
+    await nextTick();
+
+    expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
+    expect(state.trySwitch).not.toHaveBeenCalled();
+    expect(state.search).not.toHaveBeenCalled();
+  });
+
   it("switches to the highlighted organization on Enter", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");

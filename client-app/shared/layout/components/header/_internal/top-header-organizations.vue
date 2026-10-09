@@ -34,9 +34,7 @@
           'aria-controls': listboxId,
           'aria-activedescendant': activeDescendantId ?? null,
         }"
-        @keydown.enter="onEnter"
-        @keydown.down.prevent="navigate('down')"
-        @keydown.up.prevent="navigate('up')"
+        @keydown="onSearchKeydown"
         @input="onSearchInput"
         @clear="onSearchClear"
       >
@@ -59,6 +57,7 @@
         ref="listElement"
         class="top-header-organizations__listbox"
         role="listbox"
+        data-test-id="organizations-list"
         :aria-label="$t('common.labels.organizations')"
         :tabindex="isShowSearch ? undefined : 0"
         :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
@@ -120,6 +119,7 @@ import { useDebounceFn } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
+import { isComposingKey } from "@/ui-kit/utilities";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
@@ -177,6 +177,7 @@ const {
   items: displayedOrganizations,
   getKey: (item) => item.id,
   list: useTemplateRef<HTMLElement>("listElement"),
+  wrap: () => !hasNextPage.value,
 });
 
 async function selectOrganization(organizationId: string): Promise<void> {
@@ -241,6 +242,20 @@ function onListKeydown(event: KeyboardEvent): void {
   if (highlighted) {
     event.preventDefault();
     void selectOrganization(highlighted.id);
+  }
+}
+
+function onSearchKeydown(event: KeyboardEvent): void {
+  // The keys of an IME composition pick and commit its candidates, not an organization.
+  if (isComposingKey(event)) {
+    return;
+  }
+
+  if (event.key === "Enter") {
+    void onEnter();
+  } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    navigate(event.key === "ArrowDown" ? "down" : "up");
   }
 }
 
@@ -309,13 +324,11 @@ async function onSearchClear(): Promise<void> {
     @apply my-1 max-h-60 w-full select-none;
   }
 
-  // The scroll region clips an outset ring.
-  &__listbox:focus-visible {
-    @include focus-ring($inset: true);
-  }
-
-  &__radio {
-    @apply flex px-3 py-1 text-sm;
+  &__listbox {
+    // The scroll region clips an outset ring.
+    &:focus-visible {
+      @include focus-ring($inset: true);
+    }
   }
 
   &__empty {

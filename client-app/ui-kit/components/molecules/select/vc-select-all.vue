@@ -20,18 +20,22 @@
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
 
-defineEmits<{
+interface IEmits {
   (event: "change"): void;
-}>();
+}
 
-defineProps<{
+interface IProps {
   checked: boolean;
   indeterminate: boolean;
   /** Full label with the counts; the visible text is shorter. */
   accessibleLabel: string;
   /** Visible `n of m` counter. */
   count: string;
-}>();
+}
+
+defineEmits<IEmits>();
+
+defineProps<IProps>();
 
 const checkboxComponent = useTemplateRef<{ $el: HTMLElement }>("checkboxComponent");
 

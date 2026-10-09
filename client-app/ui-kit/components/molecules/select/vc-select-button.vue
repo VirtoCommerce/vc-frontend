@@ -44,19 +44,12 @@
       </span>
     </button>
 
-    <VcButton
+    <VcSelectClear
       v-if="clearVisible"
-      :aria-label="$t('ui_kit.buttons.clear')"
+      :size="size"
       :disabled="disabled"
-      type="button"
-      icon="delete-thin"
-      color="neutral"
-      variant="ghost"
       class="vc-select-button__clear"
-      :icon-size="getInputClearIconSize(size)"
-      @keydown.enter.stop.prevent
-      @keyup.enter.stop.prevent="$emit('clear')"
-      @click.stop="$emit('clear')"
+      @clear="$emit('clear')"
     />
 
     <VcIcon v-if="!readonly" class="vc-select-button__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
@@ -65,7 +58,7 @@
 
 <script setup lang="ts" generic="T">
 import { useTemplateRef } from "vue";
-import { getInputClearIconSize } from "@/ui-kit/utilities";
+import VcSelectClear from "./vc-select-clear.vue";
 
 defineEmits<{
   (event: "toggle"): void;

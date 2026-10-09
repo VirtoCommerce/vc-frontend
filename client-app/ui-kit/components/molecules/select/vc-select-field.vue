@@ -26,30 +26,17 @@
     truncate
     disable-autocomplete
     @update:model-value="$emit('update:search', String($event ?? ''))"
-    @keydown.down.prevent="$emit('navigate', 'down')"
-    @keydown.up.prevent="$emit('navigate', 'up')"
-    @keydown.home="onHome"
-    @keydown.end="onEnd"
-    @keydown.enter="$emit('confirm', $event)"
-    @keydown.space="onSpace"
+    @keydown="onKeydown"
     @click="onClick"
-    @keydown.tab="$emit('tab', $event)"
     @focusout="$emit('focusout', $event)"
   >
     <template #append>
-      <VcButton
+      <VcSelectClear
         v-if="clearVisible"
-        :aria-label="$t('ui_kit.buttons.clear')"
+        :size="size"
         :disabled="disabled"
-        type="button"
-        icon="delete-thin"
-        color="neutral"
-        variant="ghost"
         class="vc-select-field__clear"
-        :icon-size="getInputClearIconSize(size)"
-        @keydown.enter.stop.prevent
-        @keyup.enter.stop.prevent="$emit('clear')"
-        @click.stop="$emit('clear')"
+        @clear="$emit('clear')"
         @focusout="$emit('focusout', $event)"
       />
 
@@ -72,9 +59,10 @@
 
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
-import { getInputClearIconSize } from "@/ui-kit/utilities";
+import { isComposingKey } from "@/ui-kit/utilities";
+import VcSelectClear from "./vc-select-clear.vue";
 
-const emit = defineEmits<{
+interface IEmits {
   (event: "toggle"): void;
   (event: "open"): void;
   (event: "clear"): void;
@@ -84,9 +72,9 @@ const emit = defineEmits<{
   (event: "update:search", value: string): void;
   /** From the input and both buttons: VcInput hands its listeners to the input alone. */
   (event: "focusout", payload: FocusEvent): void;
-}>();
+}
 
-const props = defineProps<{
+interface IProps {
   search: string;
   placeholderText?: string;
   size: "xs" | "sm" | "md" | "auto";
@@ -102,7 +90,41 @@ const props = defineProps<{
   listboxId: string;
   detailsId: string;
   activeDescendantId?: string;
-}>();
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+function onKeydown(event: KeyboardEvent): void {
+  // The keys of an IME composition pick and commit its candidates, not the options.
+  if (isComposingKey(event)) {
+    return;
+  }
+
+  switch (event.key) {
+    case "ArrowDown":
+    case "ArrowUp":
+      event.preventDefault();
+      emit("navigate", event.key === "ArrowDown" ? "down" : "up");
+      break;
+    case "Home":
+      onHome(event);
+      break;
+    case "End":
+      onEnd(event);
+      break;
+    case "Enter":
+      emit("confirm", event);
+      break;
+    case " ":
+      onSpace(event);
+      break;
+    case "Tab":
+      emit("tab", event);
+      break;
+  }
+}
 
 // Focus never opens the list (APG). A plain select toggles on click; autocomplete only opens,
 // since a click in the field places the caret.
