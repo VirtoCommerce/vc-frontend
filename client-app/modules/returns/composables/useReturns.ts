@@ -39,27 +39,29 @@ export function useReturns() {
     () => !!organization.value && checkPermissions(VIEW_ORGANIZATION_RETURNS_PERMISSION),
   );
 
-  const state = computed<ListStateType>(() => {
-    // Everyone lands on their own returns; the organization's list opens only when the link asks for it.
-    const scope =
-      canViewOrganizationReturns.value && asString(route.query.scope) === RETURN_SCOPE.ORGANIZATION
-        ? RETURN_SCOPE.ORGANIZATION
-        : RETURN_SCOPE.OWN;
-    const statuses = asArray(route.query.status);
+  // Everyone lands on their own returns; the organization's list opens only when the link asks for it.
+  const scope = computed<ReturnScopeType>(() =>
+    canViewOrganizationReturns.value && asString(route.query.scope) === RETURN_SCOPE.ORGANIZATION
+      ? RETURN_SCOPE.ORGANIZATION
+      : RETURN_SCOPE.OWN,
+  );
+  const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
 
-    return {
-      scope,
-      keyword: asString(route.query.keyword),
-      // The organization's list holds no drafts: a Draft filter brought from the own tab would only empty it.
-      statuses: scope === RETURN_SCOPE.ORGANIZATION ? statuses.filter((x) => x !== DRAFT_STATUS) : statuses,
-      startDate: asString(route.query.startDate) || undefined,
-      endDate: asString(route.query.endDate) || undefined,
-      sort: asString(route.query.sort) || DEFAULT_SORT.toString(),
-      page: Math.max(Number.parseInt(asString(route.query.page), 10) || 1, 1),
-    };
-  });
+  // The organization's list holds no drafts, so it neither offers nor applies a Draft filter.
+  function isStatusInScope(code: string): boolean {
+    return !isOrganizationScope.value || code !== DRAFT_STATUS;
+  }
 
-  const scope = computed(() => state.value.scope);
+  const state = computed<ListStateType>(() => ({
+    scope: scope.value,
+    keyword: asString(route.query.keyword),
+    statuses: asArray(route.query.status).filter(isStatusInScope),
+    startDate: asString(route.query.startDate) || undefined,
+    endDate: asString(route.query.endDate) || undefined,
+    sort: asString(route.query.sort) || DEFAULT_SORT.toString(),
+    page: Math.max(Number.parseInt(asString(route.query.page), 10) || 1, 1),
+  }));
+
   const keyword = computed(() => state.value.keyword);
   const page = computed(() => state.value.page);
   const sort = computed(() => Sort.fromString(state.value.sort));
@@ -85,8 +87,6 @@ export function useReturns() {
     startDate: toStartDateFilterValue(state.value.startDate),
     endDate: toEndDateFilterValue(state.value.endDate),
   }));
-
-  const isOrganizationScope = computed(() => scope.value === RETURN_SCOPE.ORGANIZATION);
 
   const ownReturnsQuery = useGetReturnsQuery(
     listVariables,
@@ -172,6 +172,7 @@ export function useReturns() {
     canViewOrganizationReturns,
     scope,
     isOrganizationScope,
+    isStatusInScope,
     page,
     pages,
     sort,

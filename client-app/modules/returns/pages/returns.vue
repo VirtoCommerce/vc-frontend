@@ -190,7 +190,7 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatuses";
 import { useReturns } from "@/modules/returns/composables/useReturns";
-import { DRAFT_STATUS, RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
+import { RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { ReturnsFilterDataType } from "@/modules/returns/types";
 import ReturnsFilters from "@/modules/returns/components/returns-filters.vue";
@@ -222,6 +222,7 @@ const {
   canViewOrganizationReturns,
   scope,
   isOrganizationScope,
+  isStatusInScope,
   applyScope,
   applyKeyword,
   applyFilter,
@@ -233,10 +234,7 @@ const {
 const { organization } = useUser();
 const { statuses } = useReturnStatuses();
 
-// The organization's list holds no drafts, so it offers no Draft filter.
-const filterStatuses = computed(() =>
-  isOrganizationScope.value ? statuses.value.filter((x) => x.code !== DRAFT_STATUS) : statuses.value,
-);
+const filterStatuses = computed(() => statuses.value.filter((x) => isStatusInScope(x.code)));
 const { statusLabel } = useReturnStatusLabel();
 
 const localKeyword = ref(keyword.value);
