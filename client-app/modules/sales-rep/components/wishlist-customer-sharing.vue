@@ -1,7 +1,7 @@
 <template>
   <div class="wishlist-customer-sharing">
     <VcSelect
-      :model-value="selected"
+      :model-value="selectedIdList"
       test-id-dropdown="wishlist-share-customer-select"
       :label="t('sales_rep.list_sharing.share_customers_label')"
       :placeholder="t('sales_rep.list_sharing.share_customers_placeholder')"
@@ -96,7 +96,8 @@ const selected = ref<WishlistSharingRecipientType[]>(props.targets.map(toRecipie
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- see `selected`
 const shareMessage = ref(props.message);
 
-const selectedIds = computed(() => new Set(selected.value.map((recipient) => recipient.organizationId)));
+const selectedIdList = computed(() => selected.value.map((recipient) => recipient.organizationId));
+const selectedIds = computed(() => new Set(selectedIdList.value));
 
 const addedIds = computed(() => [...selectedIds.value].filter((id) => !persistedIds.value.has(id)));
 const removedIds = computed(() => [...persistedIds.value].filter((id) => !selectedIds.value.has(id)));
@@ -184,15 +185,22 @@ function deselect(organizationId: string): void {
 // The kit hands back an empty array both for its own clear button and for unticking the last option, so both go
 // through `clearSelection` — otherwise emptying the audience from the field would leave no way back. Any other
 // change is the rep moving on, which is what retires the offer.
-function onPickerChange(next: WishlistSharingRecipientType[]): void {
-  if (!next.length && selected.value.length) {
+// The picker speaks ids. The current rows resolve them too, so a recipient no longer among the loaded options stays.
+function onPickerChange(nextIds: string[]): void {
+  if (!nextIds.length && selected.value.length) {
     clearSelection();
 
     return;
   }
 
+  const known = new Map(
+    [...pickerOptions.value, ...selected.value].map((recipient) => [recipient.organizationId, recipient]),
+  );
+
   clearedRecipients.value = [];
-  selected.value = next;
+  selected.value = nextIds
+    .map((organizationId) => known.get(organizationId))
+    .filter((recipient): recipient is WishlistSharingRecipientType => !!recipient);
 }
 
 function localizeWarning(code: string): string | undefined {
