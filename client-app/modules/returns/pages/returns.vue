@@ -141,18 +141,18 @@
               v-slot="{ item }"
               :title="$t('returns.list.columns.date')"
               sortable
-              class="w-28"
+              class="returns-list__date-col"
             >
               {{ $d(new Date(item.createdDate)) }}
             </VcTableColumn>
 
             <VcTableColumn
               v-if="isOrganizationScope"
-              id="customerName"
+              :id="BUYER_COLUMN_ID"
               v-slot="{ item }"
               :title="$t('common.labels.buyer_name')"
               sortable
-              class="w-32 xl:w-40"
+              class="returns-list__buyer-col"
             >
               {{ item.customerName }}
             </VcTableColumn>
@@ -162,7 +162,7 @@
               v-slot="{ item }"
               :title="$t('returns.list.columns.status')"
               sortable
-              class="w-36"
+              class="returns-list__status-col"
             >
               {{ statusLabel(item.status, item.statusDisplayValue) }}
             </VcTableColumn>
@@ -190,7 +190,7 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatuses";
 import { useReturns } from "@/modules/returns/composables/useReturns";
-import { RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
+import { BUYER_COLUMN_ID, RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { ReturnsFilterDataType } from "@/modules/returns/types";
 import ReturnsFilters from "@/modules/returns/components/returns-filters.vue";
@@ -356,6 +356,22 @@ watch(keyword, (value) => {
 
   &__chips {
     @apply mb-4 flex flex-wrap gap-2;
+  }
+
+  &__date-col {
+    @apply w-28;
+  }
+
+  &__buyer-col {
+    @apply w-32;
+
+    @media (width >= theme("screens.xl")) {
+      @apply w-40;
+    }
+  }
+
+  &__status-col {
+    @apply w-36;
   }
 
   &__mobile-item {

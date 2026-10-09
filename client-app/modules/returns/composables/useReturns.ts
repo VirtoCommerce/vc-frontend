@@ -6,14 +6,18 @@ import { Sort } from "@/core/types";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 import { useGetOrganizationReturnsQuery } from "@/modules/returns/api/graphql/queries/getOrganizationReturns";
 import { useGetReturnsQuery } from "@/modules/returns/api/graphql/queries/getReturns";
-import { DRAFT_STATUS, RETURN_SCOPE, VIEW_ORGANIZATION_RETURNS_PERMISSION } from "@/modules/returns/constants";
+import {
+  BUYER_COLUMN_ID,
+  DRAFT_STATUS,
+  RETURN_SCOPE,
+  VIEW_ORGANIZATION_RETURNS_PERMISSION,
+} from "@/modules/returns/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { ISortInfo } from "@/core/types";
 import type { ReturnScopeType, ReturnsFilterDataType } from "@/modules/returns/types";
 import type { LocationQueryRaw, LocationQueryValue } from "vue-router";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
-const BUYER_COLUMN = "customerName";
 
 type ListStateType = {
   scope: ReturnScopeType;
@@ -121,7 +125,7 @@ export function useReturns() {
   function applyScope(value: ReturnScopeType): void {
     // The own list has no buyer column to sort by.
     const nextSort =
-      value === RETURN_SCOPE.OWN && sort.value.column === BUYER_COLUMN ? DEFAULT_SORT.toString() : state.value.sort;
+      value === RETURN_SCOPE.OWN && sort.value.column === BUYER_COLUMN_ID ? DEFAULT_SORT.toString() : state.value.sort;
 
     write({ scope: value, sort: nextSort, page: 1 });
   }
