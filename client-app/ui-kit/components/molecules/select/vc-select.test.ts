@@ -173,6 +173,37 @@ describe("VcSelect", () => {
       expect(wrapper.get("input").attributes("placeholder")).toBe("Pick one");
     });
 
+    // Paging and server-filter replace `items`: closing a filtered list re-sends "" and page one may
+    // not carry the option picked from the results.
+    it("keeps the label of a valueField selection that the next items no longer carry", async () => {
+      const wrapper = createWrapper({
+        items: OBJECT_ITEMS,
+        textField: "name",
+        valueField: "id",
+        modelValue: "2",
+        placeholder: "Pick one",
+      });
+
+      await wrapper.setProps({ items: [{ id: "3", name: "China" }] });
+
+      expect(wrapper.get<HTMLInputElement>("input").element.value).toBe("Belgium");
+    });
+
+    it("drops the remembered label once the model moves to a value the items do not carry", async () => {
+      const wrapper = createWrapper({
+        items: OBJECT_ITEMS,
+        textField: "name",
+        valueField: "id",
+        modelValue: "2",
+        placeholder: "Pick one",
+      });
+
+      await wrapper.setProps({ items: [{ id: "3", name: "China" }], modelValue: "does-not-exist" });
+
+      expect(wrapper.get<HTMLInputElement>("input").element.value).toBe("");
+      expect(wrapper.get("input").attributes("placeholder")).toBe("Pick one");
+    });
+
     it("marks the selected option with aria-selected", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
 

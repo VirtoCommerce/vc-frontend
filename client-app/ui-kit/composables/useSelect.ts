@@ -1,5 +1,5 @@
 import { isEqual, union } from "lodash-es";
-import { computed } from "vue";
+import { computed, shallowRef, watch } from "vue";
 import type { Ref } from "vue";
 
 type ParamsType<T, V> = {
@@ -44,15 +44,38 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return Array.isArray(params.modelValue.value) ? params.modelValue.value : [];
   });
 
+  const foundItem = computed<T | undefined>(() =>
+    params.multiple.value
+      ? undefined
+      : params.items.value.find((item) => getItemValue(item) === params.modelValue.value),
+  );
+
+  // Paging and server-filter replace `items`, and the next page may not carry the selection; its last
+  // match keeps labelling it for as long as the model still holds its value.
+  const rememberedItem = shallowRef<{ value: V; item: T }>();
+
+  watch(
+    foundItem,
+    (item) => {
+      if (item !== undefined) {
+        rememberedItem.value = { value: getItemValue(item), item };
+      }
+    },
+    { immediate: true, flush: "sync" },
+  );
+
   // Without `valueField` the model is the item, so an unmatched value is still handed back.
   const selectedItem = computed<T | undefined>(() => {
-    const found = params.multiple.value
-      ? undefined
-      : params.items.value.find((item) => getItemValue(item) === params.modelValue.value);
+    const remembered =
+      !params.multiple.value && rememberedItem.value?.value === params.modelValue.value
+        ? rememberedItem.value?.item
+        : undefined;
 
     const rawModelIsTheItem = !params.multiple.value && params.valueField?.value === undefined;
 
-    return found ?? (rawModelIsTheItem ? (params.modelValue.value as T | undefined) : undefined);
+    return (
+      foundItem.value ?? remembered ?? (rawModelIsTheItem ? (params.modelValue.value as T | undefined) : undefined)
+    );
   });
 
   // Multiple compares deeply, single by identity: date-filter-select.vue rebuilds its ranges and
