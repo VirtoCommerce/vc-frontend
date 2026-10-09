@@ -271,10 +271,12 @@ describe("selectTargets", () => {
   });
 
   it("throws on an unknown name and lists the available ones", () => {
-    expect(() => selectTargets("Quotes,quotes", available)).toThrow("Available: Core, Quotes, Loyalty");
+    expect(() => selectTargets("Quotes,quotes", available)).toThrow(
+      "Unknown --only name(s): quotes. Available: Core, Quotes, Loyalty",
+    );
   });
 
   it("throws on an empty value", () => {
-    expect(() => selectTargets("", available)).toThrow();
+    expect(() => selectTargets(" , ", available)).toThrow("--only needs at least one name");
   });
 });

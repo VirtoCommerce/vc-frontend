@@ -173,9 +173,14 @@ export function selectTargets(only: string | undefined, available: string[]): Se
     .map((name) => name.trim())
     .filter(Boolean);
   const unknown = requested.filter((name) => !available.includes(name));
+  const availableList = `Available: ${available.join(", ")}`;
 
-  if (unknown.length || !requested.length) {
-    throw new Error(`Unknown --only value "${only}". Available: ${available.join(", ")}`);
+  if (!requested.length) {
+    throw new Error(`--only needs at least one name. ${availableList}`);
+  }
+
+  if (unknown.length) {
+    throw new Error(`Unknown --only name(s): ${unknown.join(", ")}. ${availableList}`);
   }
 
   return new Set(requested);
