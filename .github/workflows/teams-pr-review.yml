@@ -12,24 +12,39 @@ on:
   pull_request_review:
     types: [submitted, dismissed]
 
-# One PR's events in order, so a slower run never overwrites the card with an older state.
-concurrency:
-  group: teams-pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
 
 jobs:
-  notify:
+  card:
     # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: skipped in the private theme mirror (VCST-5970).
     if: (github.repository_id == '296335982' || vars.VC_CI == 'true')
+    runs-on: ubuntu-latest
+    # One PR's card runs in order, so a slower run never overwrites the card with an older state and two runs never
+    # post two cards. GitHub cancels queued runs in between, which is fine here: every run rebuilds the whole card.
+    concurrency:
+      group: teams-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      pull-requests: read
+    steps:
+      # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@1d9d11c1e51adb24d680e953ba9af2047ee8183c # feat/teams-pr-review-notification
+        with:
+          mode: card
+          webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
+          teams-users: ${{ secrets.TEAMS_USERS }}
+
+  ping:
+    # Re-review and new reviewer messages, one run per request and never queued, so none is cancelled.
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true') && github.event.action == 'review_requested'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@6f712bc5003b5c7cc82dc086f88117505dd57ea9 # feat/teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@1d9d11c1e51adb24d680e953ba9af2047ee8183c # feat/teams-pr-review-notification
         with:
+          mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
           teams-users: ${{ secrets.TEAMS_USERS }}
