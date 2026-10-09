@@ -210,10 +210,11 @@ Definition and rationale: *Pilot* section of the discovery spec.
         `PluginDescriptor.Contributions`, covered by the manifest hash) and vc-module-x-api
         (`StorePlugin.contributions`). The host reads only the inline declaration, so it needs both.
         Verified end to end on a local platform built from both branches.
-  - [ ] **The sales-rep plugin declares nothing yet** — its `plugin.config.ts` in
-        vc-module-sales-rep#13, against the facade release that carries VCST-5761, with
-        `settingEnabled(MODULE_ID, ENABLED_KEY)` (a setting condition names its module). Until then
-        its deep links show the 404 until it loads.
+  - [ ] **The sales-rep plugin's declaration ships with vc-module-sales-rep#13** — its
+        `plugin.config.ts` declares the hub routes and `settingEnabled(MODULE_ID, ENABLED_KEY)`
+        (a setting condition names its module), against the facade release that carries VCST-5761.
+        Until #13 is released, the installed plugin declares nothing and its deep links show the 404
+        until it loads.
   - [ ] **Reserved-box sizes** exist for `productCard/card-button` (measured: 0.0082 of CLS from
         the cards without a reservation, none with one) and for `block`; every other slot relies on
         the host fallback it hides, or has none and holds zero height. Size them as plugins start
