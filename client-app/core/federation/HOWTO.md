@@ -443,8 +443,8 @@ module's artifacts, and the platform both serves and announces it:
 - whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
   `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
   plugin is skipped: the storefront boots, the feature is simply absent;
-- at boot the host asks for the list in a query of its own (`GetStorePlugins`, on its own budget, fails
-  closed to "no plugins" — an x-api without `store.plugins` or its `contributions` field answers 400
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, awaited like the
+  other boot requests, fails closed to "no plugins" — an x-api without `store.plugins` or its `contributions` field answers 400
   and the visitor sees nothing of it):
 
 ```graphql

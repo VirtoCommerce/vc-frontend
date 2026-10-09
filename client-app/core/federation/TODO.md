@@ -140,7 +140,8 @@ file are cross-referenced, not repeated.
       ~115 KB raw on the critical path, the manifest fetched twice (gate + runtime), about six
       sequential round trips to the platform on a cold cache — measured ≈ 150 ms warm and
       ≈ 1.5–2 s cold at ~350 ms RTT. [VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)
-      (#1, #2504) takes a declared plugin's code off that path; the fetch-hook seeding (#3) is the rest.
+      (#1, #2504) takes a declared plugin's code off that path and seeds the runtime with the
+      manifest the gate read (#3), so the second manifest fetch is gone too.
       For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
       (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
 - [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off and the
@@ -252,12 +253,13 @@ Still open:
 
 Remotes load over https from trusted hosting, but there is no integrity/signature check
 on the manifest or chunks (MF has no native SRI story). This also covers the known
-**TOCTOU** window: the gate fetches the manifest, then the MF runtime independently
-fetches it again for loading — a redeploy between the two requests means validated ≠ executed,
-plus a second round trip per remote.
+**TOCTOU** window: the gate fetched the manifest, then the MF runtime independently
+fetched it again for loading — a redeploy between the two requests meant validated ≠ executed,
+plus a second round trip per remote. Closed for the manifest (below); the code it points at is
+still fetched by URL.
 
-- [ ] **Seed the validated manifest through the runtime's `fetch` loader hook.** Worth doing on its
-      own, independent of integrity. `SnapshotHandler.getManifestJson` emits
+- [x] **Seed the validated manifest through the runtime's `fetch` loader hook** — #2504
+      (`installManifestReuse` in `index.ts`). Worth doing on its own, independent of integrity. `SnapshotHandler.getManifestJson` emits
       `loaderHook.lifecycle.fetch` before its own `fetch` and uses a returned `Response`, so an MF
       host plugin that replies with the body the gate already read makes validated bytes == executed
       bytes and removes the second round trip per remote. Earlier notes here claimed the cache was
@@ -290,7 +292,7 @@ change does NOT cover:
       injected `<script>`, so the executed bytes are never ours to hash, and `entry.hash`
       (`8DBA4F3C`) is a cache-buster, not an SRI digest. If plugins ever come from a host other
       than our own backend, revisit — immutable **versioned URLs** are then the cheapest form
-      (they make both fetches return the same bytes, though the second fetch remains).
+      (the manifest is already read once and reused; they would pin the code it points at).
 
 ## 4. CSP at the vc-deploy ingress (prod prerequisite)
 

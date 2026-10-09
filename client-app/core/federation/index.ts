@@ -121,8 +121,8 @@ export interface IFederatedLoaderOptions {
 }
 
 // Exported for the invariant test only (bootstrap's backstop must exceed their sum).
-export const DEFAULT_MANIFEST_TIMEOUT_MS = 2_000;
-export const DEFAULT_LOAD_TIMEOUT_MS = 3_000;
+export const DEFAULT_MANIFEST_TIMEOUT_MS = 5_000;
+export const DEFAULT_LOAD_TIMEOUT_MS = 8_000;
 export const DEFAULT_DEFERRED_TIMEOUT_MS = 30_000;
 
 /** Slack past a pending plugin's run budget before its held boxes are released; the run's own budgets settle it first. */

@@ -27,7 +27,7 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
  * Full reasoning: README, "The load sequence" -> "Every plugin step is time-budgeted".
  */
 // Exported for the backstop invariant test only.
-export const BOOT_BACKSTOP_MS = 14_000;
+export const BOOT_BACKSTOP_MS = 30_000;
 
 /** Re-resolves the current URL once every plugin settled: a deep link may have hit the catch-all before its route existed. */
 function reResolveOnceSettled(): void {

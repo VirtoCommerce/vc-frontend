@@ -113,10 +113,10 @@ describe("startFederatedModules", () => {
       // Simulates an inner-budget malfunction (the loader never settles) — the one
       // in-loader case the backstop exists for.
       initFederatedModulesMock.mockImplementation(() => new Promise(() => {}));
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
 
       await expect(boot).resolves.toBeUndefined();
       expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
@@ -131,17 +131,19 @@ describe("startFederatedModules", () => {
       // Chunk fetch stalls past the backstop, then errors: the failure must still be
       // logged — otherwise the backstop's "late plugins" warning is the only (and
       // misleading) signal for a loader that actually died.
+      let failAfterMs = 0;
       vi.doMock(
         "./index",
         () =>
           new Promise((_, reject) => {
-            setTimeout(() => reject(new Error("chunk error after backstop")), 25_000);
+            setTimeout(() => reject(new Error("chunk error after backstop")), failAfterMs);
           }),
       );
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
+      failAfterMs = BOOT_BACKSTOP_MS + 5_000;
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
       await expect(boot).resolves.toBeUndefined();
       expect(loggerErrorMock).not.toHaveBeenCalled();
 
@@ -157,10 +159,10 @@ describe("startFederatedModules", () => {
     try {
       // A stalled (never-settling) chunk fetch: the import promise neither resolves nor rejects.
       vi.doMock("./index", () => new Promise(() => {}));
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
 
       await expect(boot).resolves.toBeUndefined();
       expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
@@ -173,12 +175,12 @@ describe("startFederatedModules", () => {
     vi.useFakeTimers();
     try {
       initFederatedModulesMock.mockResolvedValue({ loaded: ["news"], failed: [], skipped: [] });
-      const { startFederatedModules } = await loadBootstrap();
+      const { startFederatedModules, BOOT_BACKSTOP_MS } = await loadBootstrap();
 
       await startFederatedModules();
       // Advance PAST the backstop: a leaked (uncleared) timer would fire its
       // misleading warning long after a perfectly normal boot.
-      await vi.advanceTimersByTimeAsync(20_000);
+      await vi.advanceTimersByTimeAsync(BOOT_BACKSTOP_MS);
 
       expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
     } finally {
