@@ -70,6 +70,7 @@ vi.mock("./events", () => ({ events: {} }));
 
 const { init } = await import("./index");
 const { USER_PROPERTY_NAMES } = await import("./user-properties");
+const { deferLogin } = await import("./pending-login");
 
 const SIGNED_IN: FakeUserType = {
   contact: { id: "contact-1", organization: { id: "org-1", name: "Acme" } },
@@ -90,20 +91,23 @@ function indexOfGtagCall(command: string, target?: string): number {
   return layer().findIndex(([first, second]) => first === command && (target === undefined || second === target));
 }
 
-function lastUserProperties(): Record<string, string | undefined> {
+function lastUserProperties(): Record<string, string | null> {
   const calls = layer().filter(([first, second]) => first === "set" && second === "user_properties");
 
-  return calls[calls.length - 1][2] as Record<string, string | undefined>;
+  return calls[calls.length - 1][2] as Record<string, string | null>;
 }
 
 /**
- * A cleared property has to be *present* and undefined. Reading the key and finding `undefined` proves
- * nothing — an empty payload reads the same way, and an empty payload is exactly the bug: gtag `set`
- * merges, so it leaves the previous value untouched.
+ * A cleared property has to be *present* and null. An absent or `undefined` one is exactly the bug: gtag `set`
+ * merges, and GA keeps the browser's most recent value, so the previous identity stays in place.
  */
-function expectCleared(properties: Record<string, string | undefined>, name: string): void {
+function expectCleared(properties: Record<string, string | null>, name: string): void {
   expect(Object.prototype.hasOwnProperty.call(properties, name)).toBe(true);
-  expect(properties[name]).toBeUndefined();
+  expect(properties[name]).toBeNull();
+}
+
+function loginEvents(): unknown[][] {
+  return layer().filter(([first, second]) => first === "event" && second === "login");
 }
 
 describe("google-analytics init", () => {
@@ -127,6 +131,7 @@ describe("google-analytics init", () => {
     hoisted.addTrackerMock.mockReset();
     hoisted.useScriptTagMock.mockReset();
     window.dataLayer = [];
+    sessionStorage.clear();
   });
 
   afterEach(() => {
@@ -161,6 +166,31 @@ describe("google-analytics init", () => {
 
     expect(indexOfGtagCall("set", "user_properties")).toBeGreaterThanOrEqual(0);
     expectCleared(lastUserProperties(), USER_PROPERTY_NAMES.contactId);
+    expect(lastUserProperties()[USER_PROPERTY_NAMES.sessionKind]).toBe("anonymous");
+  });
+
+  // The page a sign-in lands on sends its login: after `config`, under the identity it has just applied.
+  it("sends a pending login after config, as the signed-in user", async () => {
+    deferLogin("password", { success: true });
+
+    await initInScope();
+
+    const [login] = loginEvents();
+    expect(login?.[2]).toEqual({ success: true, method: "password" });
+    expect(layer().findIndex(([first, second]) => first === "event" && second === "login")).toBeGreaterThan(
+      indexOfGtagCall("config"),
+    );
+  });
+
+  it("sends nothing for a pending login when the page it lands on is signed out", async () => {
+    deferLogin("password", { success: true });
+    hoisted.userRef.value = undefined;
+
+    await initInScope();
+    hoisted.userRef.value = SIGNED_IN;
+    await initInScope();
+
+    expect(loginEvents()).toHaveLength(0);
   });
 
   it("clears the identity when another tab signs the user out", async () => {

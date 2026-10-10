@@ -7,6 +7,7 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
+import { sendPendingLogin } from "./pending-login";
 import { buildUserProperties, userPropertiesKey } from "./user-properties";
 import {
   sendEvent as sendEventFunction,
@@ -94,6 +95,9 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
 
     window.gtag("config", String(trackId), config);
   }
+
+  // Last, so it follows `config` and goes out under the identity applied above: the new user's, after a sign-in.
+  sendPendingLogin(isAuthenticated.value);
 }
 
 /**

@@ -58,16 +58,22 @@ describe("buildUserProperties", () => {
     hoisted.state.user = undefined;
   });
 
-  // gtag `set` merges, so "no identity" has to be stated as every property cleared. Returning a subset
-  // would leave whoever signed out attached to the anonymous session that follows.
-  it("clears every property for an anonymous visitor", () => {
+  // GA keeps the most recent value per browser, and neither an omitted key nor an `undefined` one replaces it:
+  // anything short of explicit values left whoever signed out attached to the anonymous session that follows.
+  it("tags an anonymous visitor with explicit values for every property", () => {
     const properties = buildUserProperties();
 
     const names = Object.values(USER_PROPERTY_NAMES);
 
     expect(Object.keys(properties)).toHaveLength(names.length);
     expect(Object.keys(properties)).toEqual(expect.arrayContaining([...names]));
-    expect(Object.values(properties).every((value) => value === undefined)).toBe(true);
+    expect(properties).toEqual({
+      [USER_PROPERTY_NAMES.contactId]: null,
+      [USER_PROPERTY_NAMES.organizationId]: null,
+      [USER_PROPERTY_NAMES.organizationName]: null,
+      [USER_PROPERTY_NAMES.isSalesRep]: "false",
+      [USER_PROPERTY_NAMES.sessionKind]: "anonymous",
+    });
   });
 
   it("does not throw before the user has loaded", () => {
@@ -95,15 +101,15 @@ describe("buildUserProperties", () => {
     expect(buildUserProperties()[USER_PROPERTY_NAMES.sessionKind]).toBe("impersonated");
   });
 
-  // Present-but-empty, not absent: an omitted key would leave the previous customer's organization in GA.
+  // Null, not absent or undefined: either of those would leave the previous customer's organization in GA.
   it("clears the organization for a customer with none", () => {
     signIn({ contact: { id: "contact-2" } });
 
     const properties = buildUserProperties();
 
     expect(properties).toHaveProperty(USER_PROPERTY_NAMES.organizationId);
-    expect(properties[USER_PROPERTY_NAMES.organizationId]).toBeUndefined();
-    expect(properties[USER_PROPERTY_NAMES.organizationName]).toBeUndefined();
+    expect(properties[USER_PROPERTY_NAMES.organizationId]).toBeNull();
+    expect(properties[USER_PROPERTY_NAMES.organizationName]).toBeNull();
     expect(properties[USER_PROPERTY_NAMES.contactId]).toBe("contact-2");
   });
 

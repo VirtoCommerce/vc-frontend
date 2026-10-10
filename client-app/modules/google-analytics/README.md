@@ -112,7 +112,7 @@ reporting purposes.
 | `contact_id`        | `contact_id`        | Contact id — the join key back to the platform     |
 | `organization_id`   | `organization_id`   | Organization id                                    |
 | `organization_name` | `organization_name` | Organization name, for readable reports            |
-| `session_kind`      | `session_kind`      | `self`, or `impersonated` while an operator drives |
+| `session_kind`      | `session_kind`      | `self`, `impersonated` while an operator drives, or `anonymous` when signed out |
 | `is_sales_rep`      | `is_sales_rep`      | `true` when the account holds `sales-rep:access`   |
 
 > [!IMPORTANT]
@@ -131,6 +131,13 @@ reporting purposes.
 `session_kind` exists because a sales rep impersonating a customer produces events under that customer's
 identity. Reporting on a customer's own behaviour means filtering to `session_kind = self`; without it a
 rep's browsing shows up as the customer's.
+
+A signed-out visitor is tagged with explicit values — `session_kind = anonymous`, the ids `null` — because GA keeps
+the most recent value it saw for a browser and the GA client id survives a sign-out: an omitted or `undefined`
+property leaves the previous customer attached to everything the next anonymous visitor does. For the same reason a
+successful `login` is not sent from the sign-in page, which is about to reload and is still tagged as signed out:
+[`pending-login.ts`](./pending-login.ts) keeps it for the page the sign-in lands on, which sends it once, under the
+new identity.
 
 To rename a property (a collision with an existing property on the client's GA4 property, for example),
 change `USER_PROPERTY_NAMES` in [`user-properties.ts`](./user-properties.ts) and re-register the dimension

@@ -18,24 +18,25 @@ export const USER_PROPERTY_NAMES = {
  */
 const SALES_REP_PERMISSION = "sales-rep:access";
 
-/** Whether the person driving the session is the account owner or someone impersonating them. */
-export type SessionKindType = "self" | "impersonated";
+/** Who drives the session: the account owner, someone impersonating them, or nobody signed in. */
+export type SessionKindType = "self" | "impersonated" | "anonymous";
 
-/** Every name in `USER_PROPERTY_NAMES`, `undefined` meaning "clear whatever GA holds for this one". */
-export type UserPropertiesType = Record<string, string | undefined>;
+/** Every name in `USER_PROPERTY_NAMES`; `null` clears the value GA holds for this browser. */
+export type UserPropertiesType = Record<string, string | null>;
 
 // GA4 silently truncates a user-property value past this length; truncating here keeps it predictable.
 const VALUE_MAX_LENGTH = 36;
 
 /**
- * Every property, every time: gtag `set` MERGES, so an omitted key keeps the previous user's value; `undefined`
- * is how GA drops one. `useUser().user` throws before the user loads, so every read sits behind `isAuthenticated`.
+ * Every property, every time, each with a value: gtag `set` MERGES, so an omitted key keeps the previous user's value
+ * — and so does an `undefined` one, since GA keeps the most recent value it saw for the browser. `useUser().user`
+ * throws before the user loads, so every read sits behind `isAuthenticated`.
  */
 export function buildUserProperties(): UserPropertiesType {
   const { isAuthenticated, user, organization, operator } = useUser();
 
   if (!isAuthenticated.value) {
-    return clearedProperties();
+    return anonymousProperties();
   }
 
   const sessionKind: SessionKindType = operator.value ? "impersonated" : "self";
@@ -55,14 +56,25 @@ export function userPropertiesKey(): string {
   return JSON.stringify(buildUserProperties());
 }
 
-/** Every property present and empty — what an anonymous visitor is tagged with, i.e. nothing. */
-function clearedProperties(): UserPropertiesType {
-  return Object.fromEntries(Object.values(USER_PROPERTY_NAMES).map((name) => [name, undefined]));
+/**
+ * A signed-out visitor, stated outright: the GA client id outlives a sign-out, and without these the visitor's searches
+ * and views landed on the last customer's organization. `anonymous` is what a reader's `session_kind = self` leaves out.
+ */
+function anonymousProperties(): UserPropertiesType {
+  const sessionKind: SessionKindType = "anonymous";
+
+  return {
+    [USER_PROPERTY_NAMES.contactId]: null,
+    [USER_PROPERTY_NAMES.organizationId]: null,
+    [USER_PROPERTY_NAMES.organizationName]: null,
+    [USER_PROPERTY_NAMES.isSalesRep]: "false",
+    [USER_PROPERTY_NAMES.sessionKind]: sessionKind,
+  };
 }
 
-function capped(value: string | undefined): string | undefined {
+function capped(value: string | undefined): string | null {
   if (!value) {
-    return undefined;
+    return null;
   }
 
   return value.slice(0, VALUE_MAX_LENGTH);
