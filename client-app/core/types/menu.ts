@@ -1,5 +1,5 @@
 import type { ComputedRef } from "vue";
-import type { RouteLocationRaw } from "vue-router";
+import type { RouteLocationNormalizedLoaded, RouteLocationRaw } from "vue-router";
 
 // A whole account left-rail section registered by a module (e.g. the Sales Rep hub). Rendered as a
 // VcWidget on desktop (priority-ordered among the built-in sections) and a drill-down on mobile.
@@ -50,6 +50,9 @@ export type ExtendedMenuLinkType = {
   priority?: number;
   isCatalogItem?: boolean;
   dataTestId?: string;
+  // Overrides the account rail's active state for a link that owns pages beyond its route record (siblings, a
+  // rule on the query): vue-router matches by record. Without it the record match stands.
+  activeWhen?: (route: RouteLocationNormalizedLoaded) => boolean;
 };
 
 export type MarkedMenuLinkType = ExtendedMenuLinkType & {

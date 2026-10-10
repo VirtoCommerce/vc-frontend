@@ -1,31 +1,38 @@
 <template>
   <div class="sales-rep-rule-chips">
-    <!-- Baseline tab: active when no rule is chosen; clicking it clears the filter. Its value is a
-         boolean so no non-empty rule name can collide with it (a rule named "" would still match,
-         but every surface here already reads a falsy filter as the baseline).
-         `Boolean(true)`, not `:value="true"`: the latter trips vue/prefer-true-attribute-shorthand,
-         and the shorthand it asks for passes "" instead — same reason as variations.vue. -->
-    <!-- A surface whose "no rule" state has more than one view (the Tasks page: Today / a day / All) draws its
-         own baseline chips here, inside the row so they share its layout. -->
-    <slot name="baseline">
-      <SalesRepRuleChip
-        :value="Boolean(true)"
-        :model-value="!modelValue"
-        :label="allLabel ?? ''"
-        :count="allCount"
-        @change="modelValue = undefined"
-      />
-    </slot>
+    <!-- The baseline (no rule name) renders in the same loop as the rules, so it can sit at either end. Its value is
+         `Boolean(true)`: `:value="true"` trips vue/prefer-true-attribute-shorthand, whose shorthand passes "".
+         A surface whose "no rule" state has more than one view (the Tasks page: Today / a day / All) draws its own
+         baseline chips through #baseline, inside the row so they share its layout. -->
+    <template v-for="tab in tabs" :key="tab.name ?? ''">
+      <slot v-if="!tab.name" name="baseline">
+        <SalesRepRuleChip
+          :value="Boolean(true)"
+          :model-value="!modelValue"
+          :label="tab.label"
+          :count="tab.count"
+          @change="modelValue = undefined"
+        >
+          <!-- Adornments belong to whoever knows what a tab means: the baseline arrives with no name. -->
+          <template #append>
+            <slot name="suffix" :tab="tab" />
+          </template>
+        </SalesRepRuleChip>
+      </slot>
 
-    <SalesRepRuleChip
-      v-for="rule in selectableRules"
-      :key="rule.name"
-      :value="rule.name"
-      :model-value="modelValue"
-      :label="rule.label"
-      :count="rule.count"
-      @change="modelValue = $event"
-    />
+      <SalesRepRuleChip
+        v-else
+        :value="tab.name"
+        :model-value="modelValue"
+        :label="tab.label"
+        :count="tab.count"
+        @change="modelValue = $event"
+      >
+        <template #append>
+          <slot name="suffix" :tab="tab" />
+        </template>
+      </SalesRepRuleChip>
+    </template>
   </div>
 </template>
 
@@ -35,6 +42,9 @@ import { selectableFilterRules } from "../utils";
 import SalesRepRuleChip from "./sales-rep-rule-chip.vue";
 import type { SalesRepRuleType } from "../types";
 
+// A rendered tab: one of the rules, or the baseline, which has no rule name.
+type TabType = Omit<SalesRepRuleType, "name"> & { name?: string };
+
 interface IProps {
   // The server-defined filter rules to offer as tabs.
   rules: SalesRepRuleType[];
@@ -42,13 +52,15 @@ interface IProps {
   allLabel?: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
+  // Baseline last, for a progression ("This month, This year, All time"); a set of alternatives keeps it first.
+  allLast?: boolean;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
   loading?: boolean;
 }
 
 const props = defineProps<IProps>();
 
-// undefined = baseline (first tab); single source of this convention across all rule-tab surfaces.
+// undefined = the baseline tab; single source of this convention across all rule-tab surfaces.
 const modelValue = defineModel<string | undefined>();
 
 // Data-derived vocabularies change with the scope (period, customer), so a selected rule can stop being offered — e.g.
@@ -70,6 +82,15 @@ watch(
 
 // A backend "All" passthrough rule (customer segments carry one) would duplicate the baseline tab — drop it.
 const selectableRules = computed(() => selectableFilterRules(props.rules));
+
+const tabs = computed<TabType[]>(() => {
+  const baseline: TabType = {
+    label: props.allLabel ?? "",
+    count: props.allCount,
+  };
+
+  return props.allLast ? [...selectableRules.value, baseline] : [baseline, ...selectableRules.value];
+});
 </script>
 
 <style lang="scss">

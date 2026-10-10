@@ -1,4 +1,5 @@
 import { useScriptTag } from "@vueuse/core";
+import { watch } from "vue";
 import { useCurrency } from "@/core/composables";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -6,6 +7,8 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
+import { sendPendingLogin } from "./pending-login";
+import { buildUserProperties, userPropertiesKey } from "./user-properties";
 import {
   sendEvent as sendEventFunction,
   productToGtagItem as productToGtagItemFunction,
@@ -37,6 +40,12 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     window.dataLayer.push(arguments);
   };
 
+  const usesDataLayerVariables = Boolean(gtmContainerId);
+
+  // Before GTM's `gtm.js` entry and the `config` call below: the data layer is processed in order, so the
+  // first page_view sees only what was pushed ahead of it — and GA never backfills an untagged event.
+  applyUserProperties(usesDataLayerVariables);
+
   // Initialize GTM if GTMContainerId is provided (loaded before GA4)
   if (gtmContainerId) {
     window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -44,6 +53,10 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     // Inject GTM head script
     useScriptTag(`https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`);
   }
+
+  // Not redundant: besides full navigations, `setUser` replaces the user in place when another tab signs in,
+  // and a one-shot read would keep tagging later events with the previous identity.
+  watch(userPropertiesKey, () => applyUserProperties(usesDataLayerVariables));
 
   // Register analytics event tracker (works for both GTM-only and GA4)
   const { addTracker } = useAnalytics();
@@ -81,5 +94,24 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     }
 
     window.gtag("config", String(trackId), config);
+  }
+
+  // Last, so it follows `config` and goes out under the identity applied above: the new user's, after a sign-in.
+  sendPendingLogin(isAuthenticated.value);
+}
+
+/**
+ * Tags later events with the customer identity (`user_id` is not a reportable dimension). Called for anonymous
+ * visitors too: skipping it would leave the previous identity in place instead of clearing it.
+ */
+function applyUserProperties(pushToDataLayer: boolean): void {
+  const userProperties = buildUserProperties();
+
+  window.gtag("set", "user_properties", userProperties);
+
+  // GTM reads the data layer, not gtag's internal state, and a GTM-only store configures no measurement id
+  // — so without this it never reaches the `config` branch and never sees the identity at all.
+  if (pushToDataLayer) {
+    window.dataLayer.push({ ...userProperties });
   }
 }

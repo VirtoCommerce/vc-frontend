@@ -1,5 +1,6 @@
-import { ContentType } from "@/core/enums";
+import { ContentType, QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
+import { ROUTES } from "@/router/routes/constants";
 import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
 import type { MoneyType, SalesRepCustomerOrdersQuery, SalesRepOrdersQuery } from "./api/graphql/types";
 import type {
@@ -157,6 +158,94 @@ export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | nul
   }
 
   return new Intl.NumberFormat(globals.cultureName, { style: "currency", currency }).format(0);
+}
+
+// Icon per activity category (canonical Lucide names); unknown categories get a neutral mark so a
+// backend-added category renders instead of breaking the row.
+const ACTIVITY_CATEGORY_ICONS: Readonly<Record<string, string>> = {
+  orders: "file-text",
+  customers: "user-plus",
+  searches: "search",
+  productViews: "eye",
+  logins: "log-in",
+};
+
+export function activityCategoryIcon(category: string): string {
+  return ACTIVITY_CATEGORY_ICONS[category] ?? "activity";
+}
+
+// Relative "time ago" for the compact activity rows, in the active culture. Coarse on purpose:
+// analytics rows are hour-buckets, so anything finer than minutes would imply precision they lack.
+const TIME_AGO_UNITS: readonly { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
+  { unit: "year", seconds: 31536000 },
+  { unit: "month", seconds: 2592000 },
+  { unit: "week", seconds: 604800 },
+  { unit: "day", seconds: 86400 },
+  { unit: "hour", seconds: 3600 },
+  { unit: "minute", seconds: 60 },
+];
+
+// Intl formatters cost more to construct than to use, and these run once per rendered row — up to a
+// full page of them on every tab switch. One per culture, kept for the life of the tab.
+const timeAgoFormatters = new Map<string, Intl.RelativeTimeFormat>();
+const hourFormatters = new Map<string, Intl.DateTimeFormat>();
+
+function formatterFor<T>(cache: Map<string, T>, create: (cultureName: string) => T): T {
+  const cultureName = globals.cultureName;
+  let formatter = cache.get(cultureName);
+
+  if (!formatter) {
+    formatter = create(cultureName);
+    cache.set(cultureName, formatter);
+  }
+
+  return formatter;
+}
+
+export function formatTimeAgo(isoDate: string): string {
+  const elapsedSeconds = Math.max(0, Math.round((Date.now() - new Date(isoDate).getTime()) / 1000));
+  const formatter = formatterFor(
+    timeAgoFormatters,
+    (cultureName) => new Intl.RelativeTimeFormat(cultureName, { numeric: "auto" }),
+  );
+
+  const match = TIME_AGO_UNITS.find(({ seconds }) => elapsedSeconds >= seconds);
+  if (!match) {
+    // Sub-minute — "now"-style wording comes from numeric: "auto".
+    return formatter.format(0, "minute");
+  }
+
+  return formatter.format(-Math.floor(elapsedSeconds / match.seconds), match.unit);
+}
+
+// Wall-clock hour label ("2:00 PM") for the honest "during the hour of …" phrasing on hour-bucket rows.
+export function formatHourLabel(isoDate: string): string {
+  return formatterFor(
+    hourFormatters,
+    (cultureName) => new Intl.DateTimeFormat(cultureName, { hour: "numeric", minute: "2-digit" }),
+  ).format(new Date(isoDate));
+}
+
+// The freshest of a set of dates, absent ones skipped; undefined when none carries one. Parsed rather
+// than compared as strings: the wire format is the backend's to choose, and offsets would sort wrong.
+export function latestDate(dates: readonly (string | undefined)[]): string | undefined {
+  let latest: string | undefined;
+  let latestTime = -Infinity;
+
+  for (const date of dates) {
+    const time = date ? new Date(date).getTime() : Number.NaN;
+    if (Number.isFinite(time) && time > latestTime) {
+      latestTime = time;
+      latest = date;
+    }
+  }
+
+  return latest;
+}
+
+// The catalog search results page for a tracked term, exactly as the header search navigates (VCST-5731).
+export function searchResultsRoute(term: string): RouteLocationRaw {
+  return { name: ROUTES.SEARCH.NAME, query: { [QueryParamName.SearchPhrase]: term } };
 }
 
 // Document library display helpers.
