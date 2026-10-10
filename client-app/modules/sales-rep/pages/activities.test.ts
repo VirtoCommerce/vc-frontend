@@ -362,22 +362,22 @@ describe("Activities page", () => {
     expect(rules[2].label).toContain("(0)");
   });
 
-  // The counts request carries no category filter, so its own totalCount is the All figure. Summing
-  // the per-category badges would be a second way to compute the same number, free to disagree.
-  it("takes the All badge from the counts request, on every tab", async () => {
+  // The badges count events, the counts request's totalCount counts rows — one hour bucket of 4 sign-ins is 4 on
+  // the Logins tab and 1 row — so All adds up the tabs it sits beside, on every tab.
+  it("adds the All badge up from the tab badges, on every tab", async () => {
     counts.categoryCounts.value = [
       { category: "orders", count: 2 },
-      { category: "logins", count: 1 },
+      { category: "logins", count: 4 },
     ];
     counts.totalCount.value = 3;
     // Category-scoped once a tab filters the rows — it must never reach a badge.
     state.totalCount.value = 99;
 
     const wrapper = createWrapper();
-    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (3)");
+    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (6)");
 
     await openTab(wrapper, "orders");
-    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (3)");
+    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (6)");
   });
 
   // One source per figure: reading the selected tab's badge off the rows request instead made the

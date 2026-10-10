@@ -253,7 +253,6 @@ const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepA
 // tab or the page. take: 0 asks for counts only.
 const {
   categoryCounts,
-  totalCount: countsTotal,
   loading: countsLoading,
   error: countsError,
   analyticsUnavailable: countsAnalyticsUnavailable,
@@ -267,8 +266,9 @@ const {
 // Every badge reads the counts request, the selected tab included: one figure, one source.
 const countOf = (name: string) => categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0;
 
-// The counts request carries no category filter, so its own totalCount IS the "All" figure.
-const allCount = computed(() => countsTotal.value);
+// The badges count events and the counts request's totalCount counts rows (an analytics row is an hour bucket of
+// several events), so "All" adds up the tabs — the figure it has to agree with.
+const allCount = computed(() => categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0));
 
 // keepPreviousResult keeps the badges' last figures through a refetch. A first load has none to keep, and a
 // customer switch is one (the held figures are the previous customer's), so the tabs show no figures.
