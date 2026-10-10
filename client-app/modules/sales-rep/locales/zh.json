@@ -348,6 +348,7 @@
       "tracked_hint": "店面跟踪数据：最多可能需要 48 小时才会显示。",
       "empty": "暂无活动",
       "empty_period": "此期间没有跟踪到的活动",
+      "incomplete": "部分跟踪到的活动无法加载，因此这些数据可能不完整。",
       "no_results": "此类别暂无活动",
       "load_failed": "无法加载活动",
       "view_all": "全部活动",

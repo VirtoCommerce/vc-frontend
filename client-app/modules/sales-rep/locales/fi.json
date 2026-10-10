@@ -348,6 +348,7 @@
       "tracked_hint": "Verkkokaupasta kerätty aktiivisuus: voi kestää jopa 48 tuntia ennen kuin se näkyy.",
       "empty": "Ei vielä aktiviteettia",
       "empty_period": "Ei seurattua aktiviteettia tällä ajanjaksolla",
+      "incomplete": "Osaa seuratusta toiminnasta ei voitu ladata, joten nämä luvut voivat olla puutteellisia.",
       "no_results": "Ei aktiviteettia tässä kategoriassa",
       "load_failed": "Aktiviteettia ei voitu ladata",
       "view_all": "Kaikki aktiviteetti",

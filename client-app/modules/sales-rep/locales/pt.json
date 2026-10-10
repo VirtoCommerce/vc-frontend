@@ -348,6 +348,7 @@
       "tracked_hint": "Atividade rastreada da loja: pode levar até 48 horas para aparecer.",
       "empty": "Ainda não há atividade",
       "empty_period": "Nenhuma atividade monitorada neste período",
+      "incomplete": "Não foi possível carregar parte da atividade monitorada, por isso estes números podem estar incompletos.",
       "no_results": "Nenhuma atividade nesta categoria",
       "load_failed": "Não foi possível carregar a atividade",
       "view_all": "Toda a atividade",

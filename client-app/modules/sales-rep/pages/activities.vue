@@ -47,6 +47,13 @@
           />
         </div>
 
+        <!-- The badges and the rows are separate reads, and either can come back without analytics while the other
+             shows tracked figures: say so, rather than leave a "–" beside listed rows to explain itself. -->
+        <p v-if="showIncompleteNotice" class="activities__notice" role="status">
+          <VcIcon class="activities__notice-icon" name="circle-alert" :size="15" aria-hidden="true" />
+          {{ t("sales_rep.activity.incomplete") }}
+        </p>
+
         <!-- A failure gets its own view — it must not read as "no activity" (VCST-5586). -->
         <VcEmptyView v-if="viewFailed && !viewLoading" :text="failedText" variant="error" />
 
@@ -278,7 +285,7 @@ const countsPending = computed(
 const countsFailed = computed(() => Boolean(countsError.value));
 
 // A tracked tab shows "–" when analytics did not answer: a "(0)" in the tab row reads as "they searched
-// nothing". Orders, Customers and All keep real counts; a failed counts request dashes every tab.
+// nothing". Orders and Customers keep real counts; a failed counts request dashes every tab.
 const UNMEASURED_BADGE = "–";
 const badgeFor = (name: string) =>
   countsFailed.value || (countsAnalyticsUnavailable.value && TRACKED_ACTIVITY_CATEGORIES.has(name))
@@ -293,7 +300,10 @@ const categoryRules = computed<SalesRepRuleType[]>(() =>
   }),
 );
 
-const allBadge = computed(() => (countsFailed.value ? UNMEASURED_BADGE : formatStatCount(allCount.value)));
+// All adds every tab up, so a dashed tab dashes it too: QA read a partial sum beside "–" tabs as the whole.
+const allBadge = computed(() =>
+  countsFailed.value || countsAnalyticsUnavailable.value ? UNMEASURED_BADGE : formatStatCount(allCount.value),
+);
 
 const allTabLabel = computed(() =>
   countsPending.value ? t("sales_rep.activity.tabs.all") : `${t("sales_rep.activity.tabs.all")} (${allBadge.value})`,
@@ -343,6 +353,14 @@ const topUnavailable = computed(() => (onSearchesTab.value ? topSearchesUnavaila
 const viewLoading = computed(() => (topMode.value ? topLoading.value : loading.value));
 const viewFailed = computed(() => (topMode.value ? topFailed.value : failed.value));
 const viewEmpty = computed(() => (topMode.value ? topUnavailable.value || !topRowCount.value : !items.value.length));
+
+// Only beside rows: an empty view already says why it is empty.
+const figuresIncomplete = computed(
+  () => countsFailed.value || countsAnalyticsUnavailable.value || analyticsUnavailable.value,
+);
+const showIncompleteNotice = computed(
+  () => figuresIncomplete.value && !viewLoading.value && !viewFailed.value && !viewEmpty.value,
+);
 
 // Match the rows being replaced so the page height holds during a refetch; a handful on first load.
 const FIRST_LOAD_SKELETON_ROWS = 5;
@@ -511,6 +529,14 @@ const breadcrumbs = useBreadcrumbs(() => {
 
   &__caveat {
     @apply flex items-center gap-1.5 text-xs text-neutral-500;
+  }
+
+  &__notice {
+    @apply flex items-start gap-2 text-sm text-neutral-600;
+  }
+
+  &__notice-icon {
+    @apply mt-0.5 shrink-0 text-warning;
   }
 }
 </style>

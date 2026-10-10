@@ -348,6 +348,7 @@
       "tracked_hint": "Erfasste Storefront-Aktivität: erscheint mit bis zu 48 Stunden Verzögerung.",
       "empty": "Noch keine Aktivität",
       "empty_period": "Keine erfasste Aktivität in diesem Zeitraum",
+      "incomplete": "Ein Teil der erfassten Aktivität konnte nicht geladen werden, daher sind diese Zahlen möglicherweise unvollständig.",
       "no_results": "Keine Aktivität in dieser Kategorie",
       "load_failed": "Aktivität konnte nicht geladen werden",
       "view_all": "Gesamte Aktivität",

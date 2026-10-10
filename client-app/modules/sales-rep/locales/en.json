@@ -348,6 +348,7 @@
       "tracked_hint": "Tracked storefront activity: can take up to 48 hours to appear.",
       "empty": "No activity yet",
       "empty_period": "No tracked activity in this period",
+      "incomplete": "Some tracked activity couldn't be loaded, so these figures may be incomplete.",
       "no_results": "No activity in this category",
       "load_failed": "Couldn't load activity",
       "view_all": "All activity",

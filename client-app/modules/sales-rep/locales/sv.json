@@ -348,6 +348,7 @@
       "tracked_hint": "Spårad butiksaktivitet: kan ta upp till 48 timmar att visas.",
       "empty": "Ingen aktivitet ännu",
       "empty_period": "Ingen spårad aktivitet under denna period",
+      "incomplete": "En del av den spårade aktiviteten kunde inte läsas in, så de här siffrorna kan vara ofullständiga.",
       "no_results": "Ingen aktivitet i denna kategori",
       "load_failed": "Kunde inte ladda aktivitet",
       "view_all": "All aktivitet",

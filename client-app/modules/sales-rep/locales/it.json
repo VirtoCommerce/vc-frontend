@@ -348,6 +348,7 @@
       "tracked_hint": "Attività tracciata dello store: può richiedere fino a 48 ore per comparire.",
       "empty": "Ancora nessuna attività",
       "empty_period": "Nessuna attività tracciata in questo periodo",
+      "incomplete": "Non è stato possibile caricare parte dell'attività tracciata, quindi questi dati potrebbero essere incompleti.",
       "no_results": "Nessuna attività in questa categoria",
       "load_failed": "Impossibile caricare l'attività",
       "view_all": "Tutta l'attività",

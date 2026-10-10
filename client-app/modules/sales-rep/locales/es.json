@@ -348,6 +348,7 @@
       "tracked_hint": "Actividad registrada de la tienda: puede tardar hasta 48 horas en aparecer.",
       "empty": "Aún no hay actividad",
       "empty_period": "No hay actividad registrada en este período",
+      "incomplete": "No se pudo cargar parte de la actividad registrada, por lo que estas cifras pueden estar incompletas.",
       "no_results": "No hay actividad en esta categoría",
       "load_failed": "No se pudo cargar la actividad",
       "view_all": "Toda la actividad",

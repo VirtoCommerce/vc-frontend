@@ -348,6 +348,7 @@
       "tracked_hint": "Śledzona aktywność w sklepie: może pojawić się z opóźnieniem do 48 godzin.",
       "empty": "Brak aktywności",
       "empty_period": "Brak śledzonej aktywności w tym okresie",
+      "incomplete": "Nie udało się wczytać części śledzonej aktywności, więc te dane mogą być niepełne.",
       "no_results": "Brak aktywności w tej kategorii",
       "load_failed": "Nie udało się załadować aktywności",
       "view_all": "Cała aktywność",

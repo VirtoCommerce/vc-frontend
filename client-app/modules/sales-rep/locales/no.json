@@ -348,6 +348,7 @@
       "tracked_hint": "Sporet butikkaktivitet: kan bruke opptil 48 timer på å vises.",
       "empty": "Ingen aktivitet ennå",
       "empty_period": "Ingen sporet aktivitet i denne perioden",
+      "incomplete": "Noe av den sporede aktiviteten kunne ikke lastes inn, så disse tallene kan være ufullstendige.",
       "no_results": "Ingen aktivitet i denne kategorien",
       "load_failed": "Kunne ikke laste aktivitet",
       "view_all": "All aktivitet",

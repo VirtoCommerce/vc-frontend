@@ -524,6 +524,51 @@ describe("Activities page", () => {
     expect(chips.props("allLabel")).toContain("(–)");
   });
 
+  // All adds every tab up: QA read "All (31)" beside dashed tracked tabs as the whole feed.
+  it("dashes the All badge along with the tracked ones when the counts lack analytics", () => {
+    counts.categoryCounts.value = [
+      { category: "orders", count: 24 },
+      { category: "customers", count: 5 },
+    ];
+    counts.totalCount.value = 31;
+    counts.analyticsUnavailable.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(findChips(wrapper)[0].props("allLabel")).toContain("(–)");
+  });
+
+  // QA's case: the counts read lost analytics while the rows read kept it, so tracked rows were listed beside
+  // dashed badges with nothing saying why.
+  it("says the figures are incomplete beside rows when either read lacks analytics", () => {
+    state.items.value = [{ category: "searches", type: "search" }];
+    counts.analyticsUnavailable.value = true;
+
+    const wrapper = createWrapper();
+    const notice = wrapper.find(".activities__notice");
+
+    expect(notice.exists()).toBe(true);
+    expect(notice.text()).toContain("sales_rep.activity.incomplete");
+  });
+
+  it("says nothing extra when both reads have analytics", () => {
+    state.items.value = [{ category: "searches", type: "search" }];
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".activities__notice").exists()).toBe(false);
+  });
+
+  // The empty view already names the unavailable state; a second message beside it would only repeat it.
+  it("leaves the notice out of an empty view", () => {
+    state.analyticsUnavailable.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(emptyViews(wrapper)).toHaveLength(1);
+    expect(wrapper.find(".activities__notice").exists()).toBe(false);
+  });
+
   // Same route, new query: the instance is reused, so the previous customer's page, tab and mode
   // carried over.
   it("starts over when the customer changes", async () => {
