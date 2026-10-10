@@ -75,6 +75,17 @@ type ActivityOptionsType = {
 };
 
 const activityCalls = vi.hoisted(() => ({ options: [] as ActivityOptionsType[] }));
+// The viewport as useBreakpoints reports it; jsdom has no matchMedia to ask.
+const viewport = await vi.hoisted(async () => {
+  const { ref } = await import("vue");
+  return { isPhone: ref(false) };
+});
+
+vi.mock("@vueuse/core", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@vueuse/core")>()),
+  useBreakpoints: () => ({ smaller: () => viewport.isPhone }),
+}));
+
 vi.mock("../composables/useSalesRepActivities", () => ({
   useSalesRepActivities: (options: ActivityOptionsType = {}) => {
     activityCalls.options.push(options);
@@ -223,7 +234,7 @@ const createWrapper = createWrapperFactory(mount, Activities, {
       // Slot-rendering stub: the heading text is asserted below.
       VcTypography: { name: "VcTypographyStub", template: "<h1><slot /></h1>" },
       // Props-exposing stub: the page's own page-count arithmetic is what these tests assert.
-      VcPagination: { name: "VcPaginationStub", props: ["pages", "page"], template: "<nav />" },
+      VcPagination: { name: "VcPaginationStub", props: ["pages", "page", "compact"], template: "<nav />" },
       // Keeps the auto-stub's element name (the assertions below read its attributes) but renders the
       // `button` slot, where the dead-end view puts its way back.
       VcEmptyView: {
@@ -261,6 +272,7 @@ async function switchToTop(wrapper: ReturnType<typeof createWrapper>): Promise<v
 }
 
 beforeEach(() => {
+  viewport.isPhone.value = false;
   customerState.organizationName.value = undefined;
   activityCalls.options.length = 0;
   state.items.value = [];
@@ -669,6 +681,26 @@ describe("Activities page", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.findComponent({ name: "VcPaginationStub" }).props("pages")).toBe(3);
+  });
+
+  // With its labels, a two-page pager needed ~350 px and QA's 320 px screen scrolled sideways.
+  it("drops the pager's button labels on a phone", () => {
+    viewport.isPhone.value = true;
+    state.items.value = [{ category: "orders", type: "orderPlaced" }];
+    state.totalCount.value = ACTIVITY_PAGE_SIZE * 2;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findComponent({ name: "VcPaginationStub" }).props("compact")).toBe(true);
+  });
+
+  it("keeps the pager's button labels on a wider screen", () => {
+    state.items.value = [{ category: "orders", type: "orderPlaced" }];
+    state.totalCount.value = ACTIVITY_PAGE_SIZE * 2;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findComponent({ name: "VcPaginationStub" }).props("compact")).toBe(false);
   });
 });
 

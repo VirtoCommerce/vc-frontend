@@ -123,6 +123,7 @@
                 v-if="pages > 1"
                 v-model:page="page"
                 :pages="pages"
+                :compact="isPhone"
                 class="activities__pagination"
                 @update:page="scrollToTop"
               />
@@ -140,10 +141,12 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities/product";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import ActivityRow from "../components/activity-row.vue";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import TrackedMetricHint from "../components/tracked-metric-hint.vue";
@@ -406,6 +409,10 @@ const emptyIcon = computed(() => {
   }
   return onSearchesTab.value ? "search" : "eye";
 });
+
+// Icon-only Prev/Next on a phone: with their labels, two pages need ~350 px, wider than a 320 px screen leaves the
+// card, and QA saw the page scroll sideways.
+const isPhone = useBreakpoints(BREAKPOINTS).smaller("sm");
 
 // totalCount counts rows the backend will not serve past its skip cap (see ACTIVITY_MAX_SKIP), so the
 // pager stops at the deepest page that still comes back with rows.
