@@ -29,6 +29,11 @@ const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 // Maximum number of simultaneous uploads
 const MAX_CONCURRENT_UPLOADS = 3;
 
+// Browsers percent-encode these characters in a multipart filename, and the server returns the encoded name
+function toMultipartFileName(name: string): string {
+  return name.replaceAll('"', "%22").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
+}
+
 /**
  * File management
  * @param scope Scope files belongs to.
@@ -158,7 +163,11 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   // Helper function to process upload results
   function processUploadResults(results: FileUploadResultType[] | undefined, filesToProcess: IUploadingFile[]) {
     results?.forEach((result) => {
-      const uploadedFile = filesToProcess.find((fileInfo) => fileInfo.name === result.name);
+      const uploadedFile =
+        filesToProcess.find((fileInfo) => isUploadingFile(fileInfo) && fileInfo.name === result.name) ??
+        filesToProcess.find(
+          (fileInfo) => isUploadingFile(fileInfo) && toMultipartFileName(fileInfo.name) === result.name,
+        );
       if (uploadedFile) {
         if (result.succeeded) {
           toUploadedFile(uploadedFile, result.id, result.url);
@@ -168,20 +177,18 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       }
     });
 
-    // Results are matched to files by name, and a rejected upload can come back without one —
-    // INVALID_SCOPE, for instance, names the scope rather than the file. Anything the response did
-    // not account for must still be failed here: a file left in "uploading" is never terminal, and
-    // uploadFiles() retries such a file for as long as the page is open.
-    const unnamedError = results?.find((result): result is IFailedFileUpload => !result.succeeded && !result.name);
+    // Some errors (e.g. INVALID_SCOPE) name no file, and a file left "uploading" keeps uploadFiles looping
+    const unreportedFiles = filesToProcess.filter(isUploadingFile);
+    if (unreportedFiles.length === 0) {
+      return;
+    }
 
-    filesToProcess.filter(isUploadingFile).forEach((file) => {
-      toFailedFile(
-        file,
-        unnamedError
-          ? getErrorMessage(unnamedError.errorCode, unnamedError.errorParameter, unnamedError.errorMessage)
-          : t("file_error.UPLOAD_FAILED"),
-      );
-    });
+    const unnamedError = results?.find((result): result is IFailedFileUpload => !result.succeeded && !result.name);
+    const unreportedFileError = unnamedError
+      ? getErrorMessage(unnamedError.errorCode, unnamedError.errorParameter, unnamedError.errorMessage)
+      : getErrorMessage("EXCEPTION");
+
+    unreportedFiles.forEach((file) => toFailedFile(file, unreportedFileError));
   }
 
   async function uploadFiles(): Promise<void> {
@@ -264,7 +271,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       filesToUpload.forEach((file) => {
         const uploadingFile = uploadingFiles.value.find((f) => f.name === file.name);
         if (uploadingFile) {
-          toFailedFile(uploadingFile, t("file_error.UPLOAD_FAILED"));
+          toFailedFile(uploadingFile, getErrorMessage("EXCEPTION"));
         }
       });
     } finally {
