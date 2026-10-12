@@ -289,12 +289,16 @@ const pkgJson = {
 
 const viteConfig = `import { federation } from "@module-federation/vite";
 import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
+import { pluginContributions } from "@vc-frontend/core/manifest";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import contributions from "./plugin.config";
 
 export default defineConfig({
   plugins: [
     vue(),
+    // Writes plugin.config.ts into the built plugin.json.
+    pluginContributions(contributions),
     // Wiring conventions (expose key, shared singletons, manifest metadata) come from
     // the host - client-app/core-api/federation.mjs in the host checkout owns them.
     federation(
@@ -364,7 +368,7 @@ const tsconfig = {
     // The facade is listed so its GlobalComponents declaration loads even when no file imports it.
     types: ["vite/client", "@vc-frontend/core"],
   },
-  include: ["src", "vite.config.ts"],
+  include: ["src", "vite.config.ts", "plugin.config.ts"],
   // Off by default an unknown component is accepted silently, props unchecked. The contract
   // declares the ui-kit components the facade exports, so host tags survive the strictness.
   vueCompilerOptions: { strictTemplates: true },
@@ -386,6 +390,19 @@ export function init(): void {
   : `${stylesImport}export function init(): void {
   // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
 }
+`;
+
+const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
+
+// What the storefront knows before running this plugin. It does not replace the registrations in
+// src/index.ts — see HOWTO "Declaring contributions".
+export default definePluginManifest({${
+  selected.router
+    ? `
+  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],
+`
+    : ""
+}});
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
@@ -432,7 +449,7 @@ ${
     ? "- Your xAPI types: write `.graphql` documents under `src/api/graphql/`, then `yarn generate:graphql-types`\n  (needs `APP_BACKEND_URL` - copy `.env.example`). Commit the generated `types.ts`; the build must not need a backend.\n"
     : ""
 }- Full walkthrough (running against the host, shipping, versioning):
-  the host repo's \`client-app/modules/federated/HOWTO.md\`.
+  the host repo's \`client-app/core/federation/HOWTO.md\`.
 
 ## The facade dependency
 
@@ -631,6 +648,7 @@ mkdirSync(join(targetDir, "public"), { recursive: true });
 writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "index.html"), indexHtml);
 writeFileSync(join(targetDir, "vite.config.ts"), viteConfig);
+writeFileSync(join(targetDir, "plugin.config.ts"), pluginConfigTs);
 writeFileSync(join(targetDir, "tsconfig.json"), JSON.stringify(tsconfig, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "index.ts"), indexTs);
 if (selected.router) {
