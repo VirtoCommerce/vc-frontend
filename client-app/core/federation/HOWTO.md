@@ -178,10 +178,10 @@ Then keep it to **one `vi.mock("@vc-frontend/core", …)` per spec file**, listi
 symbol the subject's whole module graph imports. Two `vi.mock` calls on the same specifier
 override each other, and a partial facade mock silently breaks the imports it left out.
 
-Two consequences worth planning for: a spec cannot mount a REAL `Vc*` component (it resolves to
-your mock, so it is a stub — assertions that depend on a real component's behaviour, like a click
-landing on a `VcButton`, belong on the host side), and neither `OrderStatus` nor `VcImage` renders
-standalone at all, since both read the host's theme context.
+Two consequences worth planning for: a spec cannot mount a REAL `Vc*` component — it gets what
+your mock exports, so mirror in the mock only the markup and events your specs read, and keep
+assertions on a component's own behaviour on the host side — and neither `OrderStatus` nor
+`VcImage` renders standalone at all, since both read the host's theme context.
 
 ### Everything else is just your dependency
 
