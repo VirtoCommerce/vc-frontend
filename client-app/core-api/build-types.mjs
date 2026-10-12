@@ -457,6 +457,45 @@ function localNamesByExport(source) {
   return locals;
 }
 
+/** Value names one top-level statement exports; none for a type-only export or an interface/type alias. */
+function valueNamesOf(statement, fileName) {
+  if (ts.isExportDeclaration(statement)) {
+    if (!statement.exportClause) {
+      fail(`${fileName} has an \`export *\`; its value exports cannot be checked against the contract.`);
+    }
+    if (statement.isTypeOnly || !ts.isNamedExports(statement.exportClause)) {
+      return [];
+    }
+    return statement.exportClause.elements.filter((element) => !element.isTypeOnly).map((e) => e.name.text);
+  }
+  if (!statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
+    return [];
+  }
+  if (ts.isVariableStatement(statement)) {
+    return statement.declarationList.declarations.map((declaration) => declaration.name.getText());
+  }
+  const isType = ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement);
+  return !isType && statement.name ? [statement.name.text] : [];
+}
+
+/** Names `source` exports as values — what a plugin's `import { X }` finds at runtime, or what a contract promises it will. */
+function valueExportsOf(fileName, source) {
+  const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  return new Set(file.statements.flatMap((statement) => valueNamesOf(statement, fileName)));
+}
+
+// Guard: rollup-plugin-dts lists an enum or class re-exported with `export type` among the contract's
+// values, so a plugin type-checks `import { X }` and reads `undefined` at runtime.
+const facadeValues = valueExportsOf(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"));
+const contractValues = valueExportsOf("contract.d.ts", code);
+const typeOnlyValues = [...contractValues].filter((name) => !facadeValues.has(name));
+if (typeOnlyValues.length) {
+  fail(
+    `the contract exports ${typeOnlyValues.join(", ")} as a value, but core-api/index.ts exports it type-only — ` +
+      "a plugin importing it gets undefined at runtime. Drop the `type` modifier from its re-export.",
+  );
+}
+
 const globalComponents = [...uiKitComponentExports()].sort(byCodepoint);
 const localNames = localNamesByExport(code);
 const unrolled = globalComponents.filter((name) => !localNames.has(name));
@@ -568,6 +607,12 @@ const undeclaredProperties = hostGlobalProperties.filter(
 if (undeclaredProperties.length) {
   fail(
     `client-app/vue.d.ts declares ${undeclaredProperties.join(", ")}, which GLOBAL_PROPERTIES in build-types.mjs does not type.`,
+  );
+}
+const staleProperties = Object.keys(GLOBAL_PROPERTIES).filter((name) => !hostGlobalProperties.includes(name));
+if (staleProperties.length) {
+  fail(
+    `GLOBAL_PROPERTIES in build-types.mjs types ${staleProperties.join(", ")}, which client-app/vue.d.ts no longer declares.`,
   );
 }
 const propertyLocalName = (name) => {

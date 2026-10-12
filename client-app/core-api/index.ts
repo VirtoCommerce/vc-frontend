@@ -194,7 +194,7 @@ export type { ExtendedMenuLinkType, MenuType } from "@/core/types";
 // What a plugin template reads as `$cfg` / `$context` / `$permissions`: the host sets them as global
 // properties of the app instance the plugin renders in.
 export type { IThemeConfigSettings, IThemeContext } from "@/core/types";
-export type { PlatformPermissions, XApiPermissions } from "@/core/enums";
+export { PlatformPermissions, XApiPermissions } from "@/core/enums";
 // Already load-bearing in the contract: useOrderView, OrderLineItems and OrderSummary all
 // take one, and rollup names it only internally — so a plugin could pass an order but not
 // declare the variable it passed.
