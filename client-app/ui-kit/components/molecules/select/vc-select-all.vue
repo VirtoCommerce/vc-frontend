@@ -37,12 +37,12 @@ defineEmits<IEmits>();
 
 defineProps<IProps>();
 
-const checkboxComponent = useTemplateRef<{ $el: HTMLElement }>("checkboxComponent");
+const checkboxComponent = useTemplateRef<{ inputElement: HTMLInputElement | null }>("checkboxComponent");
 
 defineExpose({
   // The checkbox is outside the listbox and possibly teleported, so Tab hands focus over explicitly.
   focus(): boolean {
-    const input = checkboxComponent.value?.$el?.querySelector<HTMLElement>("input");
+    const input = checkboxComponent.value?.inputElement;
 
     if (!input) {
       return false;

@@ -87,7 +87,10 @@ type __VLS_Slots$l = {} & {
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$l: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$l: vue.DefineComponent<IProps$y, {
+    /** The native input, for a parent that hands focus to it; null inside an interactive parent, which renders none. */
+    inputElement: vue.Ref<HTMLInputElement | null, HTMLInputElement | null>;
+}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
 }, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{
