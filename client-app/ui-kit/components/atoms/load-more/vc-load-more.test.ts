@@ -278,6 +278,24 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
+  it("asks for nothing while its region is collapsed, as in a closed dropdown", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 3 });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.hasNextPage = false;
+    await nextTick();
+    describeScrollBox(region, { clientHeight: 0, scrollHeight: 0, scrollTop: 0, clientWidth: 0, scrollWidth: 0 });
+    state.rows = 2;
+    state.hasNextPage = true;
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
   it("asks for nothing more while the page it asked for is still on its way", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });
 

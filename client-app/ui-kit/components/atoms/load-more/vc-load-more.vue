@@ -75,7 +75,7 @@ function readContent(): ContentType {
  */
 const askedAt = ref<ContentType | null>(null);
 
-/** Asks once per list content; leaving the end or running out re-opens the question. */
+/** Asks once per list content. */
 function reconsider(): void {
   const content = readContent();
 
@@ -90,7 +90,8 @@ function reconsider(): void {
     askedAt.value = null;
   }
 
-  if (!wantsMore.value || content.size === askedAt.value?.size) {
+  // A collapsed region (a closed dropdown) keeps the edges of its last measurement; it asks for nothing.
+  if (!wantsMore.value || content.size === askedAt.value?.size || !scrollbar?.el.value?.clientHeight) {
     return;
   }
 
