@@ -93,10 +93,13 @@
             <dd>{{ totalUnits }}</dd>
           </div>
 
-          <div class="sku-mission-modal__summary-row">
+          <div
+            class="sku-mission-modal__summary-row"
+            :class="{ 'sku-mission-modal__summary-row--met': missionCompleted }"
+          >
             <dt>{{ $t("pages.account.missions.sku_modal.targets_met") }}</dt>
 
-            <dd :class="{ 'text-success-600': missionCompleted }">{{ summaryMet }} / {{ summaryTarget }}</dd>
+            <dd>{{ summaryMet }} / {{ summaryTarget }}</dd>
           </div>
 
           <div class="sku-mission-modal__summary-row sku-mission-modal__summary-row--total">
@@ -361,6 +364,10 @@ async function addProductsToCart(close: () => void) {
 
     dd {
       @apply font-bold text-neutral-800;
+    }
+
+    &--met dd {
+      @apply text-success-700;
     }
 
     &--total {
