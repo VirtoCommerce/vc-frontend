@@ -62,6 +62,7 @@
           :aria-label="$t('common.labels.organizations')"
           :tabindex="isShowSearch ? undefined : 0"
           :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
+          @focus="onListboxFocus"
         >
           <VcMenuItem
             v-for="(item, index) in displayedOrganizations"
@@ -174,6 +175,7 @@ const {
   activeDescendantId,
   getOptionId,
   navigate,
+  highlight,
   highlightPassively,
   reset: resetHighlight,
 } = useListboxNavigation({
@@ -222,6 +224,17 @@ const NAVIGATION_KEYS: Record<string, ListboxNavigationKeyType> = {
   Home: "home",
   End: "end",
 };
+
+// A listbox taking focus starts on its selected option, or on the first (APG).
+function onListboxFocus(): void {
+  if (highlightedIndex.value !== -1 || !displayedOrganizations.value.length) {
+    return;
+  }
+
+  const selectedIndex = displayedOrganizations.value.findIndex((item) => item.id === contactOrganizationId.value);
+
+  highlight(Math.max(selectedIndex, 0));
+}
 
 // Without a search field the list is the tab stop and takes the keys; with one, the field does.
 function onListKeydown(event: KeyboardEvent): void {

@@ -58,6 +58,7 @@ beforeEach(() => {
     { id: "org-3", name: "Initech" },
   ];
   state.organization.value = undefined;
+  state.user.value = { contact: { organizationId: "org-1" } };
   state.loading.value = false;
   state.hasNextPage.value = false;
   state.searchPhrase.value = "";
@@ -306,6 +307,15 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.findAll('[role="option"]')[0].text()).toContain("Initech");
   });
 
+  it("leaves the current organization off an empty result", () => {
+    state.organization.value = { id: "org-3", name: "Initech" };
+    state.organizations.value = [];
+
+    const wrapper = mountComponent();
+
+    expect(wrapper.findAll('[role="option"]')).toHaveLength(0);
+  });
+
   it("keeps the highlight when another page is appended", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
@@ -428,6 +438,31 @@ describe("TopHeaderOrganizations", () => {
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
     });
 
+    it.each([
+      ["the selected organization", "org-2", 1],
+      ["the first organization when none is selected", "org-9", 0],
+    ])("starts on %s when the list takes focus", async (_label, organizationId, index) => {
+      state.user.value = { contact: { organizationId } };
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await list.trigger("focus");
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[index]);
+    });
+
+    it("keeps the keyboard's position when the list takes focus again", async () => {
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await list.trigger("keydown", { key: "End" });
+      await list.trigger("focus");
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
+    });
+
     it("lets a pressed option take focus", () => {
       const wrapper = mountComponent();
       const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
@@ -463,8 +498,8 @@ describe("TopHeaderOrganizations", () => {
       const input = wrapper.get("input");
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
-      // The field is outside the scroll region, whose handler returns early: one press, one step.
       await input.trigger("keydown", { key: "ArrowDown" });
+      await wrapper.get(".top-header-organizations__list").trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
       expect(input.attributes("aria-activedescendant")).toBe(optionIds[0]);
