@@ -3,7 +3,7 @@
     :data-test-id="testId"
     :to="to"
     :disabled="disabled"
-    :loading="loading"
+    :loading="isLoading"
     full-width
     class="mt-4 print:!hidden"
   >
@@ -32,10 +32,14 @@ const props = withDefaults(defineProps<IProps>(), {
 const { loading: loadingCart, changing: changingCart, hasValidationErrors, hasLoyaltyValidationErrors } = useFullCart();
 const { loading: loadingCheckout, changing: changingCheckout } = useCheckout();
 
-const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const isLoading = computed(() => props.loading || loadingCart.value || loadingCheckout.value);
 const changing = computed(() => changingCart.value || changingCheckout.value);
 const disabled = computed(
   () =>
-    props.disabled || loading.value || changing.value || hasValidationErrors.value || hasLoyaltyValidationErrors.value,
+    props.disabled ||
+    isLoading.value ||
+    changing.value ||
+    hasValidationErrors.value ||
+    hasLoyaltyValidationErrors.value,
 );
 </script>
