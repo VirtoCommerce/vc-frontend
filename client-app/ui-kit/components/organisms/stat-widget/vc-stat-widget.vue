@@ -42,14 +42,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 interface IProps {
   /** Metric caption. Every string prop arrives already localized and formatted: the card translates nothing. */
   label: string;
-  /** The figure itself, pre-formatted ("$12,480.00", "34"). */
-  value: string;
+  /** The figure itself, pre-formatted ("$12,480.00", "34"). Not needed while `loading` or on `errorText`. */
+  value?: string;
   /** Icon before the label, in the accent color. */
   icon?: string;
   /** Accent of the start-edge bar, the icon and the `prepend` slot. */
@@ -77,11 +77,23 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
+// Empty on the first render: a live region that appears together with its text is not reliably
+// announced, so a card mounted already loading or failed fills it in only after mount.
+const isMounted = ref(false);
+
+// Names the metric: a row of cards going busy at once would otherwise read "Loading..." with no hint which.
 const statusText = computed(() => {
-  if (props.loading) {
-    return t("ui_kit.messages.loading_text");
+  if (!isMounted.value) {
+    return "";
   }
-  return props.errorText ?? "";
+  if (props.loading) {
+    return t("ui_kit.stat_widget.loading", { label: props.label });
+  }
+  return props.errorText ? t("ui_kit.stat_widget.error", { label: props.label, error: props.errorText }) : "";
+});
+
+onMounted(() => {
+  isMounted.value = true;
 });
 </script>
 
@@ -90,12 +102,13 @@ const statusText = computed(() => {
   $colors: primary, secondary, neutral, accent, info, success, warning, danger;
 
   --accent-color: var(--color-neutral-500);
+  --bg-color: var(--vc-stat-widget-bg-color, var(--color-additional-50));
+  --border-color: var(--vc-stat-widget-border-color, var(--color-neutral-200));
   --radius: var(--vc-stat-widget-radius, var(--vc-radius, 0.5rem));
 
-  @apply relative flex min-h-full flex-col gap-1.5 rounded-[--radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
-
-  // Logical property, so the accent bar flips in RTL.
-  border-inline-start: 0.25rem solid var(--accent-color);
+  // `isolate` keeps the loader overlay's z-index inside the card; `border-s-4` is logical, so the
+  // accent bar flips in RTL.
+  @apply relative isolate flex min-w-0 flex-col gap-1.5 rounded-[--radius] border border-[--border-color] border-s-4 border-s-[--accent-color] bg-[--bg-color] p-4 shadow-sm;
 
   &--color {
     @each $color in $colors {
@@ -116,7 +129,7 @@ const statusText = computed(() => {
   }
 
   &__label {
-    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-wide text-neutral-600;
+    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-wide text-neutral-600 [overflow-wrap:anywhere];
   }
 
   &__status {
@@ -124,7 +137,7 @@ const statusText = computed(() => {
   }
 
   &__value {
-    @apply text-3xl font-bold leading-tight text-neutral-900;
+    @apply text-3xl font-bold leading-tight text-neutral-900 [overflow-wrap:anywhere];
 
     &--pending {
       @apply text-neutral-300;
@@ -132,7 +145,7 @@ const statusText = computed(() => {
   }
 
   &__error {
-    @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-600;
+    @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-700;
   }
 
   &__unit {
@@ -144,14 +157,14 @@ const statusText = computed(() => {
   }
 
   &__delta {
-    --delta-color: var(--color-neutral-600);
+    --delta-color: var(--color-neutral-700);
 
     @apply mt-auto flex items-center gap-1 pt-1.5 text-sm font-bold text-[--delta-color];
 
     &--color {
       @each $color in $colors {
         &--#{$color} {
-          --delta-color: var(--color-#{$color}-600);
+          --delta-color: var(--color-#{$color}-700);
         }
       }
     }

@@ -56,8 +56,9 @@ export const Colors: StoryType = {
 };
 
 export const DeltaColors: StoryType = {
-  render: renderStats(`<div class="grid grid-cols-3 gap-4">
+  render: renderStats(`<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
     <VcStatWidget v-bind="args" label="Higher" delta="+12% vs last week" delta-color="success" delta-icon="chevron-up" />
+    <VcStatWidget v-bind="args" label="Watch" delta="3 overdue" delta-color="warning" delta-icon="exclamation-circle" />
     <VcStatWidget v-bind="args" label="Lower" delta="-8% vs last week" delta-color="danger" delta-icon="chevron-down" />
     <VcStatWidget v-bind="args" label="Unchanged" delta="0% vs last week" delta-color="neutral" delta-icon="minus" />
   </div>`),
