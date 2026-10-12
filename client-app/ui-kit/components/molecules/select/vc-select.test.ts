@@ -796,6 +796,7 @@ describe("VcSelect", () => {
         ["a select-all handler", { onSelectAll: noop }, true],
         ["both, with the row", { total: 30, onSelectAll: noop, selectAll: true }, false],
         ["both, with the row bound off for now", { total: 30, onSelectAll: noop, selectAll: false }, false],
+        ["both, with the row in kebab case", { total: 30, onSelectAll: noop, "select-all": "" }, false],
       ])("warns about %s that no Select all row reads accordingly", (_label, props, warns) => {
         const warn = spyOnWarn();
 

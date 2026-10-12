@@ -40,4 +40,13 @@ describe("VcMenuItem tab order", () => {
     expect(warn).not.toHaveBeenCalled();
     warn.mockRestore();
   });
+
+  it.each([
+    ["a router link", { to: "/somewhere" }],
+    ["an external link", { externalLink: "https://example.com" }],
+  ])("puts tabindex on the inner element of %s", (_label, link) => {
+    const wrapper = createWrapper({ props: { tabindex: -1, ...link }, global: { stubs: { RouterLink: true } } });
+
+    expect(inner(wrapper).attributes("tabindex")).toBe("-1");
+  });
 });

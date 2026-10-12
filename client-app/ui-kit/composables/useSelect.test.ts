@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { ref } from "vue";
 import { useSelect } from "./useSelect";
 
 type OptionType = { id?: string; name: string };
@@ -86,5 +87,26 @@ describe("useSelect with an empty multiple model", () => {
     });
 
     expect(isActiveItem(ITEMS[0])).toBe(false);
+  });
+});
+
+describe("useSelect remembering the selected item", () => {
+  it("labels a value picked and paged away from within one tick", () => {
+    const items = ref<OptionType[]>(ITEMS);
+    const modelValue = ref<string | undefined>(undefined);
+    const { selectedItem } = useSelect<OptionType, string | undefined>({
+      items,
+      modelValue,
+      multiple: false,
+      filterValue: "",
+      serverFilter: false,
+      textField: "name",
+      valueField: "id",
+    });
+
+    modelValue.value = "a";
+    items.value = [];
+
+    expect(selectedItem.value).toEqual(ITEMS[1]);
   });
 });
