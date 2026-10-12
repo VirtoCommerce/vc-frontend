@@ -34,7 +34,6 @@ function buildList(optionCount: number) {
     return option;
   });
 
-  // The region is 100px tall over 40px rows; the list inside it is as tall as its content.
   describeScrollBox(region, { clientHeight: 100, scrollHeight: optionCount * 40, scrollTop: 0 });
   describeScrollBox(list, { clientHeight: optionCount * 40, scrollHeight: optionCount * 40, scrollTop: 0 });
   setRect(region, 0, 100);
@@ -149,6 +148,32 @@ describe("useListboxNavigation", () => {
     expect(clipper.scrollTop).toBe(0);
     expect(region.scrollTop).toBe(0);
   });
+
+  it.each(["auto", "scroll", "overlay"])(
+    "passes a region with nothing to scroll for the overflow-y: %s box above it",
+    async (overflowY) => {
+      const { region } = buildList(10);
+
+      describeScrollBox(region, { clientHeight: 400, scrollHeight: 400, scrollTop: 0 });
+
+      const scroller = document.createElement("div");
+
+      scroller.style.overflowY = overflowY;
+      region.before(scroller);
+      scroller.append(region);
+      describeScrollBox(scroller, { clientHeight: 100, scrollHeight: 400, scrollTop: 0 });
+      setRect(scroller, 0, 100);
+
+      const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
+
+      navigate("end");
+      await nextTick();
+      await nextTick();
+
+      expect(scroller.scrollTop).toBe(300);
+      expect(region.scrollTop).toBe(0);
+    },
+  );
 
   it("leaves the list where it is for a pointer highlight on a clipped row", async () => {
     const { region } = buildList(10);
