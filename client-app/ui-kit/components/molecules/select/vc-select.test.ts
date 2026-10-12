@@ -2751,9 +2751,10 @@ describe("VcSelect", () => {
     it("follows a slot added after mount when Enter decides between the field and the button", async () => {
       vi.spyOn(console, "warn").mockImplementation(() => undefined);
       const slotted = ref(false);
+      // A copy: h() stamps `_ctx` on a raw slots object, and the shared one would carry it into every later mount.
       const parent = defineComponent({
         setup: () => () =>
-          h(VcSelect as never, { items: ITEMS, autocomplete: true }, slotted.value ? slots : undefined),
+          h(VcSelect as never, { items: ITEMS, autocomplete: true }, slotted.value ? { ...slots } : undefined),
       });
       const wrapper = createWrapperFactory(mount, parent, {
         attachTo: document.body,
