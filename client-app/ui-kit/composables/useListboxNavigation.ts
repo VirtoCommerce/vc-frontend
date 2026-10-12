@@ -17,12 +17,14 @@ type ParamsType<T> = {
 
 export type ListboxNavigationKeyType = "up" | "down" | "home" | "end";
 
-// The listbox itself, or the scroll region wrapping it; never the page.
+const SCROLLING_OVERFLOWS = new Set(["auto", "scroll", "overlay"]);
+
+// The listbox itself, or the scroll region wrapping it; never the page, nor a box that only clips.
 function getScrollBox(list: HTMLElement): HTMLElement {
   let node: HTMLElement | null = list;
 
   while (node && node !== document.body) {
-    if (node.scrollHeight > node.clientHeight) {
+    if (node.scrollHeight > node.clientHeight && SCROLLING_OVERFLOWS.has(getComputedStyle(node).overflowY)) {
       return node;
     }
 

@@ -19,6 +19,7 @@ function buildList(optionCount: number) {
   const list = document.createElement("ul");
 
   list.setAttribute("role", "listbox");
+  region.style.overflowY = "auto";
   region.append(list);
   document.body.append(region);
 
@@ -91,6 +92,7 @@ describe("useListboxNavigation", () => {
 
     describeScrollBox(region, { clientHeight: 400, scrollHeight: 400, scrollTop: 0 });
     setRect(region, 0, 400);
+    list.style.overflowY = "auto";
     describeScrollBox(list, { clientHeight: 100, scrollHeight: 400, scrollTop: 0 });
     setRect(list, 0, 100);
 
@@ -101,6 +103,50 @@ describe("useListboxNavigation", () => {
     await nextTick();
 
     expect(list.scrollTop).toBe(300);
+    expect(region.scrollTop).toBe(0);
+  });
+
+  it.each(["hidden", "clip"])("never scrolls an overflow-y: %s clipper the list sits in", async (overflowY) => {
+    const { region } = buildList(10);
+
+    region.style.overflowY = overflowY;
+
+    const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
+
+    navigate("end");
+    await nextTick();
+    await nextTick();
+
+    expect(region.scrollTop).toBe(0);
+  });
+
+  it("scrolls the region above a clipper the list sits in", async () => {
+    const { region } = buildList(10);
+    const clipper = document.createElement("div");
+
+    clipper.style.overflowY = "hidden";
+    region.before(clipper);
+    clipper.append(region);
+    region.style.overflowY = "visible";
+    describeScrollBox(clipper, { clientHeight: 100, scrollHeight: 400, scrollTop: 0 });
+    setRect(clipper, 0, 100);
+
+    const scroller = document.createElement("div");
+
+    scroller.style.overflowY = "scroll";
+    clipper.before(scroller);
+    scroller.append(clipper);
+    describeScrollBox(scroller, { clientHeight: 100, scrollHeight: 400, scrollTop: 0 });
+    setRect(scroller, 0, 100);
+
+    const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
+
+    navigate("end");
+    await nextTick();
+    await nextTick();
+
+    expect(scroller.scrollTop).toBe(300);
+    expect(clipper.scrollTop).toBe(0);
     expect(region.scrollTop).toBe(0);
   });
 
