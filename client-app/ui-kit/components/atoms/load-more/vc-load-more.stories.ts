@@ -94,6 +94,13 @@ const DEFAULT_LOAD_MORE = `
   />
 `;
 
+// The list drives these; the Controls table keeps their descriptions only.
+const LIST_DRIVEN_ARG_TYPES = {
+  loading: { control: false },
+  hasNextPage: { control: false },
+  itemCount: { control: false },
+} as const;
+
 const STATES = [
   { label: "A page is on its way", props: { loading: true, hasNextPage: true, itemCount: 0 } },
   { label: "More pages, nothing in flight", props: { loading: false, hasNextPage: true, itemCount: 0 } },
@@ -101,8 +108,7 @@ const STATES = [
 ];
 
 export const Paging: StoryType = {
-  // The list drives these; the Controls table keeps their descriptions only.
-  argTypes: { loading: { control: false }, hasNextPage: { control: false }, itemCount: { control: false } },
+  argTypes: LIST_DRIVEN_ARG_TYPES,
   render: (args) => ({
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(15, 15) }),
@@ -174,6 +180,8 @@ export const States: StoryType = {
     `,
   }),
   parameters: {
+    // Every state is drawn from its own props, not from the controls.
+    controls: { disable: true },
     docs: {
       description: {
         story:
@@ -192,6 +200,7 @@ export const States: StoryType = {
 };
 
 export const ShortFirstPage: StoryType = {
+  argTypes: LIST_DRIVEN_ARG_TYPES,
   render: (args) => ({
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(2, 3) }),
@@ -221,6 +230,7 @@ export const ShortFirstPage: StoryType = {
 };
 
 export const CustomIndicator: StoryType = {
+  argTypes: LIST_DRIVEN_ARG_TYPES,
   render: (args) => ({
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(15, 15) }),
@@ -261,6 +271,7 @@ export const CustomIndicator: StoryType = {
 };
 
 export const InsideAList: StoryType = {
+  argTypes: LIST_DRIVEN_ARG_TYPES,
   render: (args) => ({
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(15, 15) }),

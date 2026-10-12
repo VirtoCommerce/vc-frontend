@@ -387,7 +387,6 @@ describe("TopHeaderOrganizations", () => {
       scrollHeight: 400,
       scrollTop: 0,
     });
-    state.organizations.value = [...state.organizations.value];
     await new Promise((resolve) => setTimeout(resolve, 160));
 
     expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
