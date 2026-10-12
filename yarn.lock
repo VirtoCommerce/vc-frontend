@@ -5032,6 +5032,7 @@ __metadata:
   peerDependencies:
     "@apollo/client": ^3.14.0
     "@floating-ui/vue": ^2.0.1
+    "@internationalized/date": ^3.12.2
     "@intlify/core-base": ^11.4.6
     "@tailwindcss/container-queries": ^0.1.1
     "@vue/shared": ^3.5.40

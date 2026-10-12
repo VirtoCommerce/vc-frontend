@@ -43,7 +43,7 @@ export const accountRoutes: RouteRecordRaw[] = [
         children: [
           {
             path: "",
-            name: "OrderDetails",
+            name: ROUTES.ORDER_DETAILS.NAME,
             component: OrderDetails,
             props: true,
           },
