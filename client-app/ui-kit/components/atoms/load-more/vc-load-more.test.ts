@@ -282,31 +282,28 @@ describe("VcLoadMore", () => {
     ["to nothing", { clientHeight: 0, scrollHeight: 0, clientWidth: 0, scrollWidth: 0 }],
     ["to no width", { clientHeight: 400, scrollHeight: 400, clientWidth: 0, scrollWidth: 0 }],
     ["to no height", { clientHeight: 0, scrollHeight: 0, clientWidth: 300, scrollWidth: 300 }],
-  ])(
-    "asks for nothing while its region is collapsed %s, as in a closed dropdown, and asks once it reopens",
-    async (_label, box) => {
-      const { state, onLoadMore, region } = mountList({ rows: 3 });
+  ])("asks for nothing while its region is collapsed %s, and asks once it reopens", async (_label, box) => {
+    const { state, onLoadMore, region } = mountList({ rows: 3 });
 
-      describeFittingContent(region);
-      await afterContentSettles();
+    describeFittingContent(region);
+    await afterContentSettles();
 
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      state.hasNextPage = false;
-      await nextTick();
-      describeScrollBox(region, { ...box, scrollTop: 0 });
-      state.hasNextPage = true;
-      await afterContentSettles();
+    state.hasNextPage = false;
+    await nextTick();
+    describeScrollBox(region, { ...box, scrollTop: 0 });
+    state.hasNextPage = true;
+    await afterContentSettles();
 
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      describeFittingContent(region);
-      region.dispatchEvent(new Event("scroll"));
-      await afterContentSettles();
+    describeFittingContent(region);
+    region.dispatchEvent(new Event("scroll"));
+    await afterContentSettles();
 
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
-    },
-  );
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
 
   it("asks for nothing more while the page it asked for is still on its way", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 20 });

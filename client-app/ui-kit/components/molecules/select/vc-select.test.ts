@@ -1751,9 +1751,6 @@ describe("VcSelect", () => {
         scrollHeight: 400,
         scrollTop: 0,
       });
-
-      // jsdom has no ResizeObserver, so a landed row provokes the measurement instead.
-      await wrapper.setProps({ items: [...ITEMS, "Denmark"] });
       await afterContentSettles();
 
       expect(wrapper.emitted("loadMore")).toHaveLength(1);
