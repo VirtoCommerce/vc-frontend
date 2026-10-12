@@ -8,10 +8,10 @@ and the delivery status below).
 > (x-api 3.1016.0 / x-frontend 3.1005.0) and the loader consumes it — so the central
 > `ModuleFederation.Remotes` store setting decided below, its dedicated platform module, and the
 > "`AppManifestService` only later, as an additional source" call were all dropped. Current state:
-> [`../TODO.md`](../TODO.md) #2. Everything below is kept for the *why* and for review
+> [`TODO.md`](../../federation/TODO.md) #2. Everything below is kept for the *why* and for review
 > traceability; read it as history, not as the plan.
 
-Open work items live in [`../TODO.md`](../TODO.md); this file is the *why and what was
+Open work items live in [`TODO.md`](../../federation/TODO.md); this file is the *why and what was
 decided*, kept for context and review traceability.
 
 ---

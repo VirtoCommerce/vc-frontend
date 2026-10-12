@@ -1,7 +1,13 @@
 <template>
+  <ExtensionPointReserve v-if="heldPolicy" :class="$attrs.class" :slot-id="`${category}/${name}`" :policy="heldPolicy">
+    <template v-if="$slots.default" #default>
+      <slot v-bind="{ extensionProps: undefined }" />
+    </template>
+  </ExtensionPointReserve>
+
   <component
     :is="getComponent(category, name)"
-    v-if="name && isRegistered(category, name)"
+    v-else-if="name && isRegistered(category, name)"
     v-bind="{ ...getProps(category, name), ...$attrs }"
   />
 
@@ -24,6 +30,7 @@
 <script lang="ts">
 import { computed, useSlots, watch } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { heldPolicyOf, reservationFor } from "@/core/federation/contributions/declare";
 import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
@@ -64,6 +71,7 @@ export interface IProps<C extends ExtensionCategoryType> {
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
 import ExtensionContribution from "@/shared/common/components/extension-contribution.vue";
+import ExtensionPointReserve from "@/shared/common/components/extension-point-reserve.vue";
 
 defineOptions({
   inheritAttrs: false,
@@ -80,13 +88,20 @@ const { getComponent, getContribution, getProps, isRegistered, passesCondition }
 
 const slots = useSlots();
 
+// Without a slot context, the call site already gated this with `$canRenderExtensionPoint`.
+const heldPolicy = computed(() => {
+  const { category, name, conditionParameter } = props;
+  return conditionParameter === undefined
+    ? heldPolicyOf(category, name)
+    : reservationFor(category, name, conditionParameter);
+});
+
 // A computed so the template tracks the registry as well as the props: an entry registered after
 // this point starts its contribution instead of staying dark until the next remount.
 const contribution = computed(() => {
   const { category, name, conditionParameter } = props;
 
-  // A component replaces the fallback, so nothing would read a contribution.
-  if (!name || isRegistered(category, name)) {
+  if (!name || heldPolicy.value || isRegistered(category, name)) {
     return undefined;
   }
 

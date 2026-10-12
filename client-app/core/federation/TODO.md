@@ -3,9 +3,9 @@
 Tracking for **VCST-5159**. Backlog, except where a section says otherwise (#2 has shipped).
 An item that has a work item is a one-line link — its detail lives in Jira. Everything else here
 has no work item.
-Decisions, rationale, and review analysis live in [`specs/`](./specs/)
-(discovery/hosting/enablement: [`2026-07-06-discovery-hosting-decision.md`](./specs/2026-07-06-discovery-hosting-decision.md);
-facade distribution: [`2026-07-06-facade-distribution-design.md`](./specs/2026-07-06-facade-distribution-design.md)).
+Decisions, rationale, and review analysis live in [`core/specs/`](../specs/)
+(discovery/hosting/enablement: [`2026-07-06-discovery-hosting-decision.md`](../specs/VCST-5159-module-federation/2026-07-06-discovery-hosting-decision.md);
+facade distribution: [`2026-07-06-facade-distribution-design.md`](../specs/VCST-5159-module-federation/2026-07-06-facade-distribution-design.md)).
 Roughly in priority order.
 
 ---
@@ -28,7 +28,7 @@ file are cross-referenced, not repeated.
          go red; rewrite them to pin the new shipped value rather than deleting them.
       2. `client-app/app-runner.ts` — comment out the `@/modules/sales-rep` import and the
          `void initSalesRep(router, i18n)` call (leave the module in the tree; its specs keep running).
-      3. `client-app/modules/federated/boot-order.test.ts` — drop the then-unused
+      3. `client-app/core/federation/boot-order.test.ts` — drop the then-unused
          `vi.mock("@/modules/sales-rep", …)`.
 
       **Edits 1 and 2 must ship together.** With the switch on and `initSalesRep` still running, an
@@ -71,10 +71,10 @@ file are cross-referenced, not repeated.
 
 **Plugin developer experience (walked end to end 2026-09-14)**
 
-- [ ] **Toolchain parity for a scaffolded plugin** — #2480 (open): eslint, prettier, editorconfig, vitest
+- [x] **Toolchain parity for a scaffolded plugin** — #2480: eslint, prettier, editorconfig, vitest
       (with the facade alias and a mock), `.vscode`, `packageManager`, `strictTemplates`, the
       lint/format/test scripts, and a warning when the pinned facade version has no release tag.
-- [ ] **GraphQL codegen for a plugin with its own xAPI** — #2480 (open): `--with-apollo` emits `codegen.ts`,
+- [x] **GraphQL codegen for a plugin with its own xAPI** — #2480: `--with-apollo` emits `codegen.ts`,
       `.env.example` and a sample document, and the scalars live in `@vc-frontend/core/codegen`,
       which the host's own generator now imports too.
 - [ ] **Ship the facade mock from the package instead of copying it per plugin**, with a
@@ -139,8 +139,9 @@ file are cross-referenced, not repeated.
       serves buyer-facing widgets), so every visitor loads it before the router is installed:
       ~115 KB raw on the critical path, the manifest fetched twice (gate + runtime), about six
       sequential round trips to the platform on a cold cache — measured ≈ 150 ms warm and
-      ≈ 1.5–2 s cold at ~350 ms RTT. The fixes are [VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)
-      (#1) and the fetch-hook seeding (#3).
+      ≈ 1.5–2 s cold at ~350 ms RTT. [VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)
+      (#1, #2504) takes a declared plugin's code off that path and seeds the runtime with the
+      manifest the gate read (#3), so the second manifest fetch is gone too.
       For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
       (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
 - [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off and the
@@ -189,10 +190,27 @@ Definition and rationale: *Pilot* section of the discovery spec.
       `removeRoute` of a host name, so remove-then-add cannot launder a squat. That covers
       takeover, not authorization, and only inside the window: a claim made after the phase settles
       is unguarded.
-- [ ] [**VCST-5761** — declare plugin contributions so boot stops blocking and nothing shifts when
-      a plugin lands](https://virtocommerce.atlassian.net/browse/VCST-5761). It also absorbs, from
-      this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the backstop's
-      late-registration hole, and a switched-off plugin paying the whole load chain.
+- [x] [**VCST-5761** — declare plugin contributions so boot stops blocking and nothing shifts when
+      a plugin lands](https://virtocommerce.atlassian.net/browse/VCST-5761) — #2504. It also absorbs,
+      from this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the
+      backstop's late-registration hole, and a switched-off plugin paying the whole load chain.
+      What it leaves open:
+  - [x] **Zero requests for a switched-off plugin, and none for any declaration** — the two
+        backend changes shipped: vc-platform 3.1078.0 (`plugin.json` `contributions` →
+        `PluginDescriptor.Contributions`, covered by the manifest hash) and vc-module-x-api 3.1027.0
+        (`StorePlugin.contributions`). The host reads only the inline declaration, so an environment
+        with federation on needs both.
+  - [ ] **The sales-rep plugin's declaration ships with vc-module-sales-rep#13** — its
+        `plugin.config.ts` declares the hub routes and `settingEnabled(MODULE_ID, ENABLED_KEY)`
+        (a setting condition names its module), against the facade release that carries VCST-5761.
+        Until #13 is released, the installed plugin declares nothing and its deep links show the 404
+        until it loads.
+  - [ ] **Reserved-box sizes** exist for `productCard/card-button` (measured: 0.0082 of CLS from
+        the cards without a reservation, none with one) and for `block`; every other slot relies on
+        the host fallback it hides, or has none and holds zero height. Size them as plugins start
+        declaring them.
+  - [ ] Global conditions are read once at boot; a sign-in mid-session does not re-declare
+        (out of scope in the ticket, as for module `init()` today).
 - [ ] [**VCST-5762** — extension-registry precedence: the host must win regardless of
       order](https://virtocommerce.atlassian.net/browse/VCST-5762). Changes a facade-exported
       signature, so it carries a contract rebuild.
@@ -225,7 +243,7 @@ Still open:
       layers](https://virtocommerce.atlassian.net/browse/VCST-5760) (sprint 26-17). Decision,
       measured regression surface and the rejected alternatives (Tailwind `prefix`, `@scope`,
       `<style scoped>` + `@apply`, the PR #2372 prototype that is not landing):
-      [`specs/2026-08-21-plugin-css-cascade-layers.md`](./specs/2026-08-21-plugin-css-cascade-layers.md).
+      [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
 - [x] **Name-collision dedup** — the first descriptor to survive validation wins; a later plugin
       claiming the same name is reported in `skipped` under its own id, since the contested name
       belongs to the winner. Previously both were registered and both loaded, so one plugin's code
@@ -236,12 +254,13 @@ Still open:
 
 Remotes load over https from trusted hosting, but there is no integrity/signature check
 on the manifest or chunks (MF has no native SRI story). This also covers the known
-**TOCTOU** window: the gate fetches the manifest, then the MF runtime independently
-fetches it again for loading — a redeploy between the two requests means validated ≠ executed,
-plus a second round trip per remote.
+**TOCTOU** window: the gate fetched the manifest, then the MF runtime independently
+fetched it again for loading — a redeploy between the two requests meant validated ≠ executed,
+plus a second round trip per remote. Closed for the manifest (below); the code it points at is
+still fetched by URL.
 
-- [ ] **Seed the validated manifest through the runtime's `fetch` loader hook.** Worth doing on its
-      own, independent of integrity. `SnapshotHandler.getManifestJson` emits
+- [x] **Seed the validated manifest through the runtime's `fetch` loader hook** — #2504
+      (`installManifestReuse` in `index.ts`). Worth doing on its own, independent of integrity. `SnapshotHandler.getManifestJson` emits
       `loaderHook.lifecycle.fetch` before its own `fetch` and uses a returned `Response`, so an MF
       host plugin that replies with the body the gate already read makes validated bytes == executed
       bytes and removes the second round trip per remote. Earlier notes here claimed the cache was
@@ -274,7 +293,7 @@ change does NOT cover:
       injected `<script>`, so the executed bytes are never ours to hash, and `entry.hash`
       (`8DBA4F3C`) is a cache-buster, not an SRI digest. If plugins ever come from a host other
       than our own backend, revisit — immutable **versioned URLs** are then the cheapest form
-      (they make both fetches return the same bytes, though the second fetch remains).
+      (the manifest is already read once and reused; they would pin the code it points at).
 
 ## 4. CSP at the vc-deploy ingress (prod prerequisite)
 
@@ -363,8 +382,8 @@ VCST-5761.)
   programs) or requiring a human minor/major classification on any contract change.
 - **Multi-store vs env granularity** — one env/backend serves many stores → per-store remote
   lists but a per-env ingress CSP that must allowlist the *union* of every store's origins.
-- **Discovery depends on x-api ≥ 3.1016.0** — an older backend cannot answer `store.plugins`, so
-  discovery fails closed to no-remotes. Its own query keeps that failure off the boot store query,
+- **Discovery depends on x-api ≥ 3.1027.0** — the plugin-list query asks for `contributions`, so an
+  older backend rejects it and discovery fails closed to no-remotes. Its own query keeps that failure off the boot store query,
   and `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` keeps it off the user's screen — without that context
   the global handler broadcasts a generic error toast to every open tab.
 

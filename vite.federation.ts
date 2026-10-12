@@ -3,13 +3,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { federation } from "@module-federation/vite";
 import { createHostShared } from "./client-app/core-api/federation.mjs";
-import { isFederationSwitchOn } from "./client-app/modules/federated/switch.js";
+import { isFederationSwitchOn } from "./client-app/core/federation/switch.js";
 import type { PluginOption } from "vite";
 
 /**
  * Build-side Module Federation HOST config.
  * Build-time tooling (imports the @module-federation/vite dev dep), so it lives at
- * build scope, not in client-app. The runtime loader lives in client-app/modules/federated.
+ * build scope, not in client-app. The runtime loader lives in client-app/core/federation.
  *
  * The shared-singleton contract itself (which packages, which version ranges) lives in
  * client-app/core-api/federation.mjs — the single source of truth that plugin builds
@@ -20,7 +20,7 @@ const require = createRequire(import.meta.url);
 const FACADE_PACKAGE = "@vc-frontend/core";
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
 const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", import.meta.url));
-/** The theme's settings; the runtime reads the same key through the same predicate (client-app/modules/federated/enabled.ts). */
+/** The theme's settings; the runtime reads the same key through the same predicate (client-app/core/federation/enabled.ts). */
 const themeSettings = (require("./client-app/config/settings_data.json") as { settings: Record<string, unknown> })
   .settings;
 
