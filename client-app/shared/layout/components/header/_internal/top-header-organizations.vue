@@ -123,7 +123,7 @@
 import { useDebounceFn } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
-import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
+import { useComponentId, useFocusModality, useListboxNavigation } from "@/ui-kit/composables";
 import { isComposingKey } from "@/ui-kit/utilities";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
@@ -169,6 +169,9 @@ const displayedOrganizations = computed(() => {
   return withoutCurrent;
 });
 
+const listElement = useTemplateRef<HTMLElement>("listElement");
+const { isPointerFocus } = useFocusModality();
+
 const {
   highlightedIndex,
   isPassiveHighlight,
@@ -182,7 +185,7 @@ const {
   componentId,
   items: displayedOrganizations,
   getKey: (item) => item.id,
-  list: useTemplateRef<HTMLElement>("listElement"),
+  list: listElement,
   wrap: () => !hasNextPage.value,
 });
 
@@ -225,9 +228,14 @@ const NAVIGATION_KEYS: Record<string, ListboxNavigationKeyType> = {
   End: "end",
 };
 
-// Without a keyboard position, a listbox taking focus starts on its selected option, or the first (APG).
+// Without a keyboard position, a listbox the keyboard focuses starts on its selected option, or the first
+// (APG); a press keeps the pointer's highlight.
 function onListboxFocus(): void {
-  if ((highlightedIndex.value !== -1 && !isPassiveHighlight.value) || !displayedOrganizations.value.length) {
+  if (
+    isPointerFocus.value ||
+    (highlightedIndex.value !== -1 && !isPassiveHighlight.value) ||
+    !displayedOrganizations.value.length
+  ) {
     return;
   }
 
@@ -235,6 +243,16 @@ function onListboxFocus(): void {
 
   highlight(Math.max(selectedIndex, 0));
 }
+
+// A list focused while its first page loads starts once the page lands.
+watch(
+  () => displayedOrganizations.value.length > 0,
+  (filled) => {
+    if (filled && document.activeElement === listElement.value) {
+      onListboxFocus();
+    }
+  },
+);
 
 // Without a search field the list is the tab stop and takes the keys; with one, the field does.
 function onListKeydown(event: KeyboardEvent): void {

@@ -376,6 +376,28 @@ describe("TopHeaderOrganizations", () => {
     expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
   });
 
+  it("asks again after each page that lands while the list still rests at its bottom", async () => {
+    state.hasNextPage.value = true;
+    const wrapper = mountComponent();
+
+    describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 400,
+      scrollTop: 0,
+    });
+
+    for (const [index, id] of ["org-4", "org-5"].entries()) {
+      state.loading.value = true;
+      await nextTick();
+      state.organizations.value = [...state.organizations.value, { id, name: id }];
+      state.loading.value = false;
+      await new Promise((resolve) => setTimeout(resolve, 160));
+
+      // The first page, resting at the bottom, asked once already.
+      expect(state.loadOrganizations).toHaveBeenCalledTimes(index + 2);
+    }
+  });
+
   it("asks once for a first page that keeps failing behind the empty message", async () => {
     state.organizations.value = [];
     state.hasNextPage.value = true;
@@ -475,6 +497,21 @@ describe("TopHeaderOrganizations", () => {
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[1]);
     });
 
+    it("keeps the pointer's highlight when a press focuses the list", async () => {
+      state.user.value = { contact: { organizationId: "org-2" } };
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await wrapper.findAll(".vc-menu-item")[2].trigger("mousemove");
+      document.dispatchEvent(new PointerEvent("pointerdown"));
+      await list.trigger("focus");
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[2]);
+
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    });
+
     it("points at no option when an empty list takes focus", async () => {
       state.organizations.value = [];
       const wrapper = mountComponent();
@@ -483,6 +520,51 @@ describe("TopHeaderOrganizations", () => {
       await list.trigger("focus");
 
       expect(list.attributes("aria-activedescendant")).toBeUndefined();
+    });
+
+    it.each([
+      ["starts on the selected organization once the first page lands", true, 1],
+      ["leaves an unfocused list alone when the first page lands", false, undefined],
+    ])("%s", async (_label, focused, index) => {
+      state.user.value = { contact: { organizationId: "org-2" } };
+      const loaded = state.organizations.value;
+      state.organizations.value = [];
+      const wrapper = mountComponent();
+      const list = wrapper.get<HTMLElement>('[role="listbox"]');
+
+      if (focused) {
+        list.element.focus();
+      }
+
+      state.organizations.value = loaded;
+      await nextTick();
+
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      expect(list.attributes("aria-activedescendant")).toBe(index === undefined ? undefined : optionIds[index]);
+    });
+
+    it("picks the highlighted organization on Space", async () => {
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+
+      await list.trigger("keydown", { key: "End" });
+      await list.trigger("keydown", { key: " " });
+
+      expect(state.trySwitch).toHaveBeenCalledWith("org-3");
+    });
+
+    it("keeps the highlight when the organizations come back as new objects", async () => {
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+
+      await list.trigger("keydown", { key: "End" });
+      state.organizations.value = state.organizations.value.map((item) => ({ ...item }));
+      await nextTick();
+
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[2]);
     });
 
     it("lets a pressed option take focus", () => {
