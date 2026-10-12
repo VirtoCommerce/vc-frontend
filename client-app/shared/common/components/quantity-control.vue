@@ -21,6 +21,7 @@
     :show-empty-details="showEmptyDetails"
     :message="message"
     :validate-on-mount="validateOnMount"
+    :aria="aria"
     data-test-id="add-to-cart-button"
     @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
     @update:validation="emit('update:validation', $event)"
@@ -44,6 +45,7 @@
     :message="errorMessage"
     :step="packSize"
     :allow-zero="allowZero"
+    :aria="aria"
     data-test-id="quantity-stepper"
   >
     <slot />
@@ -87,6 +89,8 @@ interface IProps {
   allowZero?: boolean;
   emitUpdateOnStepperChange?: boolean;
   disableValidation?: boolean;
+  /** Forwarded to the quantity input in both modes. */
+  aria?: Record<string, string | number | null>;
 }
 
 const emit = defineEmits<IEmits>();
@@ -185,7 +189,8 @@ const handleStepperChange = debounce(async () => {
 }, timeout.value ?? 0);
 
 onMounted(async () => {
-  if (mode.value === "stepper" && value.value === 0) {
+  // Untouched 0 = not in cart; the max rule would reject it on negative stock.
+  if (mode.value === "stepper" && allowZero.value && value.value === 0) {
     return;
   }
 

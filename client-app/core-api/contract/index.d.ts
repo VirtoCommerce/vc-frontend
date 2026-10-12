@@ -4,9 +4,9 @@
 
 import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } from "@floating-ui/vue";
 import * as vue from 'vue';
-import { Plugin, ComputedRef, MaybeRef, Component, MaybeRefOrGetter, ComponentObjectPropsOptions } from 'vue';
+import { Plugin, ComputedRef, MaybeRef, Component, MaybeRefOrGetter, WritableComputedRef, ComponentObjectPropsOptions } from 'vue';
 import * as vue_router from 'vue-router';
-import { RouteLocationRaw, RouteLocationNormalizedLoaded, Router } from 'vue-router';
+import { RouteLocationRaw, LocationQueryValue, RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import { MaskOptions } from 'maska';
 import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient, TypePolicies } from '@apollo/client/core';
@@ -17,10 +17,11 @@ import { LocaleMessage } from '@intlify/core-base';
 import * as vue_i18n from 'vue-i18n';
 import { IntlNumberFormat } from 'vue-i18n';
 import * as _vue_shared from '@vue/shared';
+import { CalendarDate } from '@internationalized/date';
 
 declare const uiKit: Plugin;
 
-interface IProps$k {
+interface IProps$D {
     color?: VcBadgeColorType;
     size?: VcBadgeSizeType;
     variant?: VcBadgeVariantType;
@@ -30,31 +31,31 @@ interface IProps$k {
     square?: boolean;
     maxWidth?: string;
 }
-declare var __VLS_1$3: {};
-type __VLS_Slots$d = {} & {
-    default?: (props: typeof __VLS_1$3) => any;
+declare var __VLS_1$9: {};
+type __VLS_Slots$o = {} & {
+    default?: (props: typeof __VLS_1$9) => any;
 };
-declare const __VLS_base$d: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$k> & Readonly<{}>, {
+declare const __VLS_base$o: vue.DefineComponent<IProps$D, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{}>, {
     size: VcBadgeSizeType;
     variant: VcBadgeVariantType;
     color: VcBadgeColorType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$m: __VLS_WithSlots$d<typeof __VLS_base$d, __VLS_Slots$d>;
-declare const _default$m: typeof __VLS_export$m;
+declare const __VLS_export$H: __VLS_WithSlots$o<typeof __VLS_base$o, __VLS_Slots$o>;
+declare const _default$H: typeof __VLS_export$H;
 
-type __VLS_WithSlots$d<T, S> = T & {
+type __VLS_WithSlots$o<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$j {
+interface IProps$C {
     items: IBreadcrumb[];
 }
-declare const __VLS_export$l: vue.DefineComponent<IProps$j, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$j> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$l: typeof __VLS_export$l;
+declare const __VLS_export$G: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$G: typeof __VLS_export$G;
 
-interface IProps$i {
+interface IProps$B {
     modelValue?: boolean;
     name?: string;
     value?: string | number | object;
@@ -76,21 +77,21 @@ interface IProps$i {
         disabled?: boolean;
     };
 }
-declare var __VLS_16$2: {
+declare var __VLS_16$3: {
     checked: boolean;
 };
 declare var __VLS_19$1: {
     checked: boolean;
 };
-type __VLS_Slots$c = {} & {
-    default?: (props: typeof __VLS_16$2) => any;
+type __VLS_Slots$n = {} & {
+    default?: (props: typeof __VLS_16$3) => any;
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$c: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$n: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$i> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{
     onChange?: ((value: boolean) => any) | undefined;
     "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
@@ -103,18 +104,51 @@ declare const __VLS_base$c: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.Co
         disabled?: boolean;
     };
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$k: __VLS_WithSlots$c<typeof __VLS_base$c, __VLS_Slots$c>;
-declare const _default$k: typeof __VLS_export$k;
+declare const __VLS_export$F: __VLS_WithSlots$n<typeof __VLS_base$n, __VLS_Slots$n>;
+declare const _default$F: typeof __VLS_export$F;
 
-type __VLS_WithSlots$c<T, S> = T & {
+type __VLS_WithSlots$n<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
+type CheckboxGroupValueType = string | number | object;
+interface IProps$A {
+    modelValue?: (string | number | object)[];
+}
+declare var __VLS_1$8: {};
+type __VLS_Slots$m = {} & {
+    default?: (props: typeof __VLS_1$8) => any;
+};
+declare const __VLS_base$m: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    change: (value: CheckboxGroupValueType[]) => any;
+    "update:modelValue": (value: CheckboxGroupValueType[]) => any;
+}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{
+    onChange?: ((value: CheckboxGroupValueType[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((value: CheckboxGroupValueType[]) => any) | undefined;
+}>, {
+    modelValue: (string | number | object)[];
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$E: __VLS_WithSlots$m<typeof __VLS_base$m, __VLS_Slots$m>;
+declare const _default$E: typeof __VLS_export$E;
+
+type __VLS_WithSlots$m<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+/** Parses ISO YYYY-MM-DD; ISO datetime strings are accepted and truncated to the date portion. */
+declare function tryParseDate(value: string | undefined): CalendarDate | undefined;
+/** Formats a CalendarDate in the locale's short layout with explicit 4-digit year so output round-trips through parseDateInput. Returns "" for null/undefined. */
+declare function formatDateLocale(value: CalendarDate | null | undefined, locale: string): string;
+
+declare function getFileSize(bytes?: number): IFileSize;
+
 type IconVariantType = "solid" | "outline";
 
-interface IProps$h {
+interface IProps$z {
     name?: string;
     size?: VcIconSizeType;
     color?: string;
@@ -122,13 +156,13 @@ interface IProps$h {
     label?: string;
     strokeWidth?: number;
 }
-declare const __VLS_export$j: vue.DefineComponent<IProps$h, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$h> & Readonly<{}>, {
+declare const __VLS_export$D: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{}>, {
     name: string;
     color: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$j: typeof __VLS_export$j;
+declare const _default$D: typeof __VLS_export$D;
 
-interface IProps$g {
+interface IProps$y {
     lazy?: boolean;
     src?: string;
     alt?: string;
@@ -140,56 +174,71 @@ interface IProps$g {
      */
     sizeSuffix?: "sm" | "md" | "lg";
 }
-declare const __VLS_export$i: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$g> & Readonly<{}>, {
+declare const __VLS_export$C: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{}>, {
     src: string;
     fallbackSrc: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$i: typeof __VLS_export$i;
+declare const _default$C: typeof __VLS_export$C;
 
-interface IProps$f {
+interface IProps$x {
+    id?: string;
+    message?: string;
+    singleLine?: boolean;
+    error?: boolean;
+    counter?: boolean;
+    showEmpty?: boolean;
+    textLength?: number;
+    maxLength?: number | string;
+}
+declare const __VLS_export$B: vue.DefineComponent<IProps$x, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$x> & Readonly<{}>, {
+    textLength: number;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$B: typeof __VLS_export$B;
+
+interface IProps$w {
     required?: boolean;
     error?: boolean;
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
-declare var __VLS_8$4: {};
-type __VLS_Slots$b = {} & {
-    default?: (props: typeof __VLS_8$4) => any;
+declare var __VLS_8$7: {};
+type __VLS_Slots$l = {} & {
+    default?: (props: typeof __VLS_8$7) => any;
 };
-declare const __VLS_base$b: vue.DefineComponent<IProps$f, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$f> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$h: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
-declare const _default$h: typeof __VLS_export$h;
+declare const __VLS_base$l: vue.DefineComponent<IProps$w, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$w> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$A: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;
+declare const _default$A: typeof __VLS_export$A;
 
-type __VLS_WithSlots$b<T, S> = T & {
+type __VLS_WithSlots$l<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$e {
+interface IProps$v {
     to?: RouteLocationRaw;
     externalLink?: RouteLocationRaw;
     disabled?: boolean;
 }
-declare var __VLS_8$3: {};
-type __VLS_Slots$a = {} & {
-    default?: (props: typeof __VLS_8$3) => any;
+declare var __VLS_8$6: {};
+type __VLS_Slots$k = {} & {
+    default?: (props: typeof __VLS_8$6) => any;
 };
-declare const __VLS_base$a: vue.DefineComponent<IProps$e, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$e> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$g: __VLS_WithSlots$a<typeof __VLS_base$a, __VLS_Slots$a>;
-declare const _default$g: typeof __VLS_export$g;
+declare const __VLS_base$k: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$v> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$z: __VLS_WithSlots$k<typeof __VLS_base$k, __VLS_Slots$k>;
+declare const _default$z: typeof __VLS_export$z;
 
-type __VLS_WithSlots$a<T, S> = T & {
+type __VLS_WithSlots$k<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$d {
+interface IProps$u {
     src: string;
 }
-declare const __VLS_export$f: vue.DefineComponent<IProps$d, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$d> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$f: typeof __VLS_export$f;
+declare const __VLS_export$y: vue.DefineComponent<IProps$u, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$u> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$y: typeof __VLS_export$y;
 
 type Maybe<T> = T;
 type InputMaybe<T> = T;
@@ -346,6 +395,241 @@ type Breadcrumb = {
     /** Catalog, category or product */
     typeName: Scalars['String']['output'];
 };
+type CartAddressType = {
+    /** Address type */
+    addressType?: Maybe<Scalars['Int']['output']>;
+    /** City */
+    city?: Maybe<Scalars['String']['output']>;
+    /** Country code */
+    countryCode?: Maybe<Scalars['String']['output']>;
+    /** Country name */
+    countryName?: Maybe<Scalars['String']['output']>;
+    /** Description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Email */
+    email?: Maybe<Scalars['String']['output']>;
+    /** First name */
+    firstName?: Maybe<Scalars['String']['output']>;
+    /** Id */
+    id?: Maybe<Scalars['String']['output']>;
+    /** Id */
+    key?: Maybe<Scalars['String']['output']>;
+    /** Last name */
+    lastName?: Maybe<Scalars['String']['output']>;
+    /** Line1 */
+    line1?: Maybe<Scalars['String']['output']>;
+    /** Line2 */
+    line2?: Maybe<Scalars['String']['output']>;
+    /** Middle name */
+    middleName?: Maybe<Scalars['String']['output']>;
+    /** Name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Company name */
+    organization?: Maybe<Scalars['String']['output']>;
+    /** Outer id */
+    outerId?: Maybe<Scalars['String']['output']>;
+    /** Phone */
+    phone?: Maybe<Scalars['String']['output']>;
+    /** Postal code */
+    postalCode: Scalars['String']['output'];
+    /** Region id */
+    regionId?: Maybe<Scalars['String']['output']>;
+    /** Region name */
+    regionName?: Maybe<Scalars['String']['output']>;
+    /** Zip */
+    zip?: Maybe<Scalars['String']['output']>;
+};
+type CartConfigurationItemFileType = {
+    /** MIME type of the file */
+    contentType?: Maybe<Scalars['String']['output']>;
+    /** Name of the file */
+    name: Scalars['String']['output'];
+    /** Size of the file */
+    size: Scalars['Long']['output'];
+    /** URL of the file */
+    url: Scalars['String']['output'];
+};
+type CartConfigurationItemType = {
+    /** Configuration section that defines this configuration item */
+    configurationSection?: Maybe<ConfigurationSectionType>;
+    /** Custom text for 'Text' configuration item section */
+    customText?: Maybe<Scalars['String']['output']>;
+    /** Extended price */
+    extendedPrice: MoneyType;
+    /** List of files for 'File' configuration item section */
+    files?: Maybe<Array<Maybe<CartConfigurationItemFileType>>>;
+    /** Configuration item ID */
+    id: Scalars['String']['output'];
+    /** Configuration item image URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** List price */
+    listPrice: MoneyType;
+    /** Configuration item name */
+    name?: Maybe<Scalars['String']['output']>;
+    product?: Maybe<Product>;
+    /** Configuration item product ID */
+    productId?: Maybe<Scalars['String']['output']>;
+    /** Configuration item product quantity */
+    quantity?: Maybe<Scalars['Int']['output']>;
+    /** Sale price */
+    salePrice: MoneyType;
+    /** Configuration item section ID */
+    sectionId: Scalars['String']['output'];
+    /** Configuration item section name */
+    sectionName?: Maybe<Scalars['String']['output']>;
+    /** Whether the configuration item is selected for checkout */
+    selectedForCheckout: Scalars['Boolean']['output'];
+    /** Configuration item SKU */
+    sku?: Maybe<Scalars['String']['output']>;
+    /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
+    type: Scalars['String']['output'];
+};
+type CartShipmentItemType = {
+    lineItem?: Maybe<LineItemType>;
+    /** Quantity */
+    quantity: Scalars['Int']['output'];
+};
+type CartTotalType = {
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Is current total in default total currency */
+    isDefaultTotalCurrency: Scalars['Boolean']['output'];
+    /** Cart subtotal */
+    subTotal: MoneyType;
+    /** Total tax */
+    taxTotal: MoneyType;
+    /** Cart total */
+    total: MoneyType;
+};
+type CartType = {
+    /** Addresses */
+    addresses: Array<CartAddressType>;
+    /** Available Gifts */
+    availableGifts: Array<GiftItemType>;
+    /** Available payment methods */
+    availablePaymentMethods: Array<PaymentMethodType>;
+    availableShippingMethods: Array<ShippingMethodType>;
+    /** Cart totals */
+    cartTotals?: Maybe<Array<Maybe<CartTotalType>>>;
+    /** Shopping cart channel ID */
+    channelId?: Maybe<Scalars['String']['output']>;
+    /** Cart checkout ID */
+    checkoutId: Scalars['String']['output'];
+    /** Shopping cart text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Coupons */
+    coupons: Array<CouponType>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Shopping cart user ID */
+    customerId: Scalars['String']['output'];
+    /** Shopping cart user name */
+    customerName?: Maybe<Scalars['String']['output']>;
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Total discount with tax */
+    discountTotalWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Total extended price */
+    extendedPriceTotal: MoneyType;
+    /** Total extended price with tax */
+    extendedPriceTotalWithTax: MoneyType;
+    /** Shopping cart fee */
+    fee: MoneyType;
+    /** Total fee */
+    feeTotal: MoneyType;
+    /** Total fee with tax */
+    feeTotalWithTax: MoneyType;
+    /** Shopping cart fee with tax */
+    feeWithTax: MoneyType;
+    /** Gifts */
+    gifts: Array<GiftItemType>;
+    /** Total handling */
+    handlingTotal: MoneyType;
+    /** Total handling with tax */
+    handlingTotalWithTax: MoneyType;
+    /** Has physical products */
+    hasPhysicalProducts?: Maybe<Scalars['Boolean']['output']>;
+    /** Shopping cart ID */
+    id: Scalars['String']['output'];
+    /** Displays whether the shopping cart is anonymous */
+    isAnonymous: Scalars['Boolean']['output'];
+    /** Displays whether the shopping cart is recurring */
+    isRecuring?: Maybe<Scalars['Boolean']['output']>;
+    /** Items */
+    items: Array<LineItemType>;
+    /** Item count */
+    itemsCount: Scalars['Int']['output'];
+    /** Quantity of items */
+    itemsQuantity: Scalars['Int']['output'];
+    /** Get total points amount */
+    loyaltyPoints?: Maybe<MoneyType>;
+    /** Shopping cart name */
+    name: Scalars['String']['output'];
+    /** Shopping cart organization ID */
+    organizationId?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart organization name */
+    organizationName?: Maybe<Scalars['String']['output']>;
+    /** Payment price */
+    paymentPrice: MoneyType;
+    /** Payment price with tax */
+    paymentPriceWithTax: MoneyType;
+    /** Total payment */
+    paymentTotal: MoneyType;
+    /** Total payment with tax */
+    paymentTotalWithTax: MoneyType;
+    /** Payments */
+    payments: Array<PaymentType>;
+    /** Purchase order number */
+    purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
+    /** Shipments */
+    shipments: Array<ShipmentType>;
+    /** Shipping price */
+    shippingPrice: MoneyType;
+    /** Shipping price with tax */
+    shippingPriceWithTax: MoneyType;
+    /** Total shipping */
+    shippingTotal: MoneyType;
+    /** Total shipping with tax */
+    shippingTotalWithTax: MoneyType;
+    /** Shopping cart status */
+    status?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart store ID */
+    storeId: Scalars['String']['output'];
+    /** Shopping cart subtotal */
+    subTotal: MoneyType;
+    /** Subtotal discount */
+    subTotalDiscount: MoneyType;
+    /** Subtotal discount with tax */
+    subTotalDiscountWithTax: MoneyType;
+    /** Subtotal with tax */
+    subTotalWithTax: MoneyType;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percentage */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Total tax */
+    taxTotal: MoneyType;
+    /** Shipping tax type */
+    taxType: Scalars['String']['output'];
+    /** Shopping cart total */
+    total: MoneyType;
+    /** Shopping cart type */
+    type?: Maybe<Scalars['String']['output']>;
+    /** A set of errors in case the cart is invalid */
+    validationErrors: Array<ValidationErrorType>;
+    /** Shopping cart volumetric weight value */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** A set of temporary warnings for a cart user */
+    warnings: Array<ValidationErrorType>;
+    /** Shopping cart weight value */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Shopping cart weight unit value */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+};
 type CatalogDiscountType = {
     /** Discount amount */
     amount: Scalars['Decimal']['output'];
@@ -419,6 +703,54 @@ type CommonVendor = {
     name: Scalars['String']['output'];
     /** Vendor rating */
     rating?: Maybe<Rating>;
+};
+type ConfigurationLineItemType = {
+    /** Currency */
+    currency?: Maybe<CurrencyType>;
+    /** Total discount amount */
+    discountAmount?: Maybe<MoneyType>;
+    /** Extended price */
+    extendedPrice?: Maybe<MoneyType>;
+    /** The unique identifier */
+    id?: Maybe<Scalars['String']['output']>;
+    /** Whether the option is selected by default */
+    isDefault: Scalars['Boolean']['output'];
+    /** List price */
+    listPrice?: Maybe<MoneyType>;
+    product?: Maybe<Product>;
+    /** The quantity of the option */
+    quantity: Scalars['Int']['output'];
+    /** Sale price */
+    salePrice?: Maybe<MoneyType>;
+    /** The text of the Text-type option */
+    text?: Maybe<Scalars['String']['output']>;
+};
+type ConfigurationSectionType = {
+    /** Is custom text allowed for Text-type section */
+    allowCustomText: Scalars['Boolean']['output'];
+    /** Is predefined text options allowed for Text-type section */
+    allowTextOptions: Scalars['Boolean']['output'];
+    /** If set, this section is only shown when the referenced section has a selection made */
+    dependsOnSectionId?: Maybe<Scalars['String']['output']>;
+    /** Configuration section description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Configuration section id */
+    id: Scalars['String']['output'];
+    /** Is configuration section required */
+    isRequired: Scalars['Boolean']['output'];
+    /** Maximum text length for Text-type section */
+    maxLength?: Maybe<Scalars['Int']['output']>;
+    /** Configuration section name */
+    name?: Maybe<Scalars['String']['output']>;
+    options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
+    /** Configuration section type. Possible values: 'Product', 'Text', 'File' */
+    type: Scalars['String']['output'];
+};
+type CouponType = {
+    /** Coupon code */
+    code?: Maybe<Scalars['String']['output']>;
+    /** Is coupon was applied successfully */
+    isAppliedSuccessfully: Scalars['Boolean']['output'];
 };
 type CurrencyType = {
     /** Currency code may be used ISO 4217 */
@@ -555,6 +887,22 @@ type DictionaryItemType = {
     /** Name */
     name: Scalars['String']['output'];
 };
+type DiscountType = {
+    /** Discount amount */
+    amount: Scalars['Decimal']['output'];
+    /** Discount amount with tax */
+    amountWithTax: Scalars['Decimal']['output'];
+    /** Coupon */
+    coupon?: Maybe<Scalars['String']['output']>;
+    /** Value of discount description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount in the specified currency */
+    moneyAmount: MoneyType;
+    /** Discount amount with tax in the specified currency */
+    moneyAmountWithTax: MoneyType;
+    /** Value of promotion id */
+    promotionId?: Maybe<Scalars['String']['output']>;
+};
 type DynamicPropertyType = {
     dictionaryItems?: Maybe<DictionaryItemConnection>;
     /** The order for the dynamic property to display */
@@ -603,6 +951,33 @@ declare enum DynamicPropertyValueTypes {
     ShortText = "SHORT_TEXT",
     Undefined = "UNDEFINED"
 }
+type ErrorParameterType = {
+    /** key */
+    key: Scalars['String']['output'];
+    /** Value */
+    value: Scalars['String']['output'];
+};
+type GiftItemType = {
+    /** Product category ID */
+    categoryId?: Maybe<Scalars['String']['output']>;
+    /** Artificial ID for this value object */
+    id: Scalars['String']['output'];
+    /** Value of reward image absolute URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** Line item ID in case there is a gift in the cart. If there is no gift, it stays null */
+    lineItemId?: Maybe<Scalars['String']['output']>;
+    /** Measurement unit */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    /** Name of the reward */
+    name: Scalars['String']['output'];
+    product?: Maybe<Product>;
+    /** Product ID */
+    productId?: Maybe<Scalars['String']['output']>;
+    /** Promotion ID */
+    promotionId: Scalars['String']['output'];
+    /** Number of gifts in the reward */
+    quantity: Scalars['Int']['output'];
+};
 type IdentityErrorInfoType = {
     /** Error code */
     code: Scalars['String']['output'];
@@ -695,6 +1070,126 @@ type InventoryInfo = {
     preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
     /** Inventory reserved quantity */
     reservedQuantity: Scalars['Long']['output'];
+};
+type LineItemType = {
+    /** Catalog ID value */
+    catalogId: Scalars['String']['output'];
+    /** Category ID value */
+    categoryId?: Maybe<Scalars['String']['output']>;
+    /** Configuration items for configurable product */
+    configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
+    /** Line item create date */
+    createdDate: Scalars['DateTime']['output'];
+    /** Line item currency code */
+    currencyCode?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Total discount */
+    discountTotal: MoneyType;
+    /** Total discount with tax */
+    discountTotalWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart line item dynamic property values */
+    dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+    /** Extended price */
+    extendedPrice: MoneyType;
+    /** Extended price with tax */
+    extendedPriceWithTax: MoneyType;
+    /** Line item fulfillment center ID value */
+    fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+    /** Line item fulfillment center name value */
+    fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+    /** Height value */
+    height?: Maybe<Scalars['Decimal']['output']>;
+    /** Line item ID */
+    id: Scalars['String']['output'];
+    /** Value of line item image absolute URL */
+    imageUrl?: Maybe<Scalars['String']['output']>;
+    /** In stock quantity */
+    inStockQuantity: Scalars['Int']['output'];
+    /** flag of line item is a gift */
+    isGift: Scalars['Boolean']['output'];
+    /** Shows whether this is read-only */
+    isReadOnly: Scalars['Boolean']['output'];
+    /** Shows whether the line item is recurring */
+    isReccuring: Scalars['Boolean']['output'];
+    /** Shows whether this is valid */
+    isValid: Scalars['Boolean']['output'];
+    /** Culture name in the ISO 3166-1 alpha-3 format */
+    languageCode?: Maybe<Scalars['String']['output']>;
+    /** Length value */
+    length?: Maybe<Scalars['Decimal']['output']>;
+    /** List price */
+    listPrice: MoneyType;
+    /** List price with tax */
+    listPriceWithTax: MoneyType;
+    /** List total */
+    listTotal: MoneyType;
+    /** List total with tax */
+    listTotalWithTax: MoneyType;
+    /** Get points amount */
+    loyaltyPoints?: Maybe<MoneyType>;
+    /** Measurement unit value */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    /** Line item name value */
+    name: Scalars['String']['output'];
+    /** Line item comment */
+    note?: Maybe<Scalars['String']['output']>;
+    /** Line item quantity value */
+    objectType: Scalars['String']['output'];
+    /** Placed price */
+    placedPrice: MoneyType;
+    /** Placed price with tax */
+    placedPriceWithTax: MoneyType;
+    product?: Maybe<Product>;
+    /** Product ID value */
+    productId: Scalars['String']['output'];
+    /** Product outer Id */
+    productOuterId?: Maybe<Scalars['String']['output']>;
+    /** Product type: Physical, Digital, or Subscription */
+    productType?: Maybe<Scalars['String']['output']>;
+    /** Line item quantity value */
+    quantity: Scalars['Int']['output'];
+    /** Requirement for line item shipping */
+    requiredShipping: Scalars['Boolean']['output'];
+    /** Sale price */
+    salePrice: MoneyType;
+    /** Sale price with tax */
+    salePriceWithTax: MoneyType;
+    /** Shows whether the line item is selected for buying */
+    selectedForCheckout: Scalars['Boolean']['output'];
+    /** Line item shipping method code value */
+    shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+    /** Indicates whether the PlacedPrice should be visible to the customer */
+    showPlacedPrice: Scalars['Boolean']['output'];
+    /** Product SKU value */
+    sku: Scalars['String']['output'];
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Total shipping tax amount value */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Shipping tax type value */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Value of line item thumbnail image absolute URL */
+    thumbnailImageUrl?: Maybe<Scalars['String']['output']>;
+    /** Validation errors */
+    validationErrors: Array<ValidationErrorType>;
+    vendor?: Maybe<CommonVendor>;
+    /** Volumetric weight value */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** Warehouse location */
+    warehouseLocation?: Maybe<Scalars['String']['output']>;
+    /** Shopping cart weight value */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Weight unit value */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+    /** Width value */
+    width?: Maybe<Scalars['Decimal']['output']>;
 };
 type MoneyType = {
     /** A decimal with the amount rounded to the significant number of decimal digits. */
@@ -1061,6 +1556,48 @@ type PaymentInType = {
     vendor?: Maybe<CommonVendor>;
     voidedDate?: Maybe<Scalars['DateTime']['output']>;
 };
+type PaymentMethodType = {
+    /** Is payment method available for cart payment */
+    allowCartPayment: Scalars['Boolean']['output'];
+    /** Value of payment gateway code */
+    code: Scalars['String']['output'];
+    /** Currency */
+    currency: CurrencyType;
+    /** Payment method description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Is payment method available for partial payments */
+    isAvailableForPartial: Scalars['Boolean']['output'];
+    /** Value of payment method logo absolute URL */
+    logoUrl?: Maybe<Scalars['String']['output']>;
+    /** Localized name of payment method. */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Value of payment group type */
+    paymentMethodGroupType: Scalars['String']['output'];
+    /** Value of payment method type */
+    paymentMethodType: Scalars['String']['output'];
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Value of payment method priority */
+    priority: Scalars['Int']['output'];
+    /** Tax details */
+    taxDetails?: Maybe<Array<TaxDetailType>>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+};
 type PaymentTransactionType = {
     amount: MoneyType;
     gatewayIpAddress?: Maybe<Scalars['String']['output']>;
@@ -1075,6 +1612,48 @@ type PaymentTransactionType = {
     responseData?: Maybe<Scalars['String']['output']>;
     status?: Maybe<Scalars['String']['output']>;
     type?: Maybe<Scalars['String']['output']>;
+};
+type PaymentType = {
+    /** Amount */
+    amount: MoneyType;
+    /** Billing address */
+    billingAddress?: Maybe<CartAddressType>;
+    /** Text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<Maybe<DiscountType>>;
+    /** Cart payment dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Payment Id */
+    id: Scalars['String']['output'];
+    /** Value of payment outer id */
+    outerId?: Maybe<Scalars['String']['output']>;
+    /** Value of payment gateway code */
+    paymentGatewayCode?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    purpose?: Maybe<Scalars['String']['output']>;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+    vendor?: Maybe<CommonVendor>;
 };
 type PickupAddressType = {
     /** Address type */
@@ -1440,6 +2019,110 @@ type SharingTargetType = {
     /** Secondary display line of the target (e.g. city and region), when resolved */
     subtitle?: Maybe<Scalars['String']['output']>;
 };
+type ShipmentType = {
+    /** Text comment */
+    comment?: Maybe<Scalars['String']['output']>;
+    /** Currency */
+    currency: CurrencyType;
+    /** Delivery address */
+    deliveryAddress?: Maybe<CartAddressType>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    /** Discounts */
+    discounts: Array<DiscountType>;
+    /** Cart shipment dynamic property values */
+    dynamicProperties: Array<DynamicPropertyValueType>;
+    /** Fee */
+    fee: MoneyType;
+    /** Fee with tax */
+    feeWithTax: MoneyType;
+    /** Fulfillment center id */
+    fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+    /** Value of height */
+    height?: Maybe<Scalars['Decimal']['output']>;
+    /** Shipment Id */
+    id: Scalars['String']['output'];
+    /** Items */
+    items: Array<CartShipmentItemType>;
+    /** Value of length */
+    length?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of measurement units */
+    measureUnit?: Maybe<Scalars['String']['output']>;
+    pickupLocation?: Maybe<PickupLocationType>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Shipment method code */
+    shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+    /** Shipment method option */
+    shipmentMethodOption?: Maybe<Scalars['String']['output']>;
+    shippingMethod?: Maybe<ShippingMethodType>;
+    /** Tax details */
+    taxDetails: Array<TaxDetailType>;
+    /** Tax percent rate */
+    taxPercentRate: Scalars['Decimal']['output'];
+    /** Tax total */
+    taxTotal: MoneyType;
+    /** Tax type */
+    taxType?: Maybe<Scalars['String']['output']>;
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+    vendor?: Maybe<CommonVendor>;
+    /** Value of volumetric weight */
+    volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of weight */
+    weight?: Maybe<Scalars['Decimal']['output']>;
+    /** Value of weight unit */
+    weightUnit?: Maybe<Scalars['String']['output']>;
+    /** Value of width */
+    width?: Maybe<Scalars['Decimal']['output']>;
+};
+type ShippingMethodType = {
+    /** Value of shipping gateway code */
+    code: Scalars['String']['output'];
+    /** Currency */
+    currency: CurrencyType;
+    /** Shipping method description */
+    description?: Maybe<Scalars['String']['output']>;
+    /** Discount amount */
+    discountAmount: MoneyType;
+    /** Discount amount with tax */
+    discountAmountWithTax: MoneyType;
+    id: Scalars['String']['output'];
+    /** Value of shipping method logo absolute URL */
+    logoUrl?: Maybe<Scalars['String']['output']>;
+    /** Shipping method name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Value of shipping method option description */
+    optionDescription?: Maybe<Scalars['String']['output']>;
+    /** Value of shipping method option name */
+    optionName?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Price with tax */
+    priceWithTax: MoneyType;
+    /** Value of shipping method priority */
+    priority: Scalars['Int']['output'];
+    /** Total */
+    total: MoneyType;
+    /** Total with tax */
+    totalWithTax: MoneyType;
+};
+type TaxDetailType = {
+    /** Amount */
+    amount: MoneyType;
+    /** Name */
+    name?: Maybe<Scalars['String']['output']>;
+    /** Price */
+    price: MoneyType;
+    /** Rate */
+    rate: MoneyType;
+};
 type TierPriceType = {
     /** Price */
     price: MoneyType;
@@ -1447,6 +2130,17 @@ type TierPriceType = {
     priceWithTax: MoneyType;
     /** Quantity */
     quantity: Scalars['Long']['output'];
+};
+type ValidationErrorType = {
+    /** Error code */
+    errorCode?: Maybe<Scalars['String']['output']>;
+    /** Error message */
+    errorMessage?: Maybe<Scalars['String']['output']>;
+    errorParameters?: Maybe<Array<Maybe<ErrorParameterType>>>;
+    /** Object id */
+    objectId?: Maybe<Scalars['String']['output']>;
+    /** Object type */
+    objectType?: Maybe<Scalars['String']['output']>;
 };
 type VariationType = {
     /** Assets */
@@ -1591,8 +2285,77 @@ type GetMeQuery = {
         }>;
     };
 };
+type GetStoreQuery = {
+    store?: {
+        storeId: string;
+        storeName: string;
+        catalogId: string;
+        storeUrl?: string;
+        defaultLanguage: {
+            isInvariant: boolean;
+            cultureName: string;
+            nativeName: string;
+            threeLetterLanguageName: string;
+            twoLetterLanguageName: string;
+            twoLetterRegionName: string;
+            threeLetterRegionName: string;
+        };
+        availableLanguages: Array<{
+            isInvariant: boolean;
+            cultureName: string;
+            nativeName: string;
+            threeLetterLanguageName: string;
+            twoLetterLanguageName: string;
+            twoLetterRegionName: string;
+            threeLetterRegionName: string;
+        }>;
+        defaultCurrency: {
+            code: string;
+            symbol: string;
+            exchangeRate: number;
+            customFormatting?: string;
+            englishName: string;
+            cultureName: string;
+        };
+        availableCurrencies: Array<{
+            code: string;
+            symbol: string;
+            exchangeRate: number;
+            customFormatting?: string;
+            englishName: string;
+            cultureName: string;
+        }>;
+        settings: {
+            authenticationTypes: Array<string>;
+            subscriptionEnabled: boolean;
+            taxCalculationEnabled: boolean;
+            anonymousUsersAllowed: boolean;
+            environmentName: string;
+            emailVerificationEnabled: boolean;
+            emailVerificationRequired: boolean;
+            createAnonymousOrderEnabled: boolean;
+            seoLinkType: string;
+            defaultSelectedForCheckout: boolean;
+            passwordRequirements?: {
+                requireLowercase: boolean;
+                requireUppercase: boolean;
+                requireDigit: boolean;
+                requiredLength: number;
+                requiredUniqueChars: number;
+                requireNonAlphanumeric: boolean;
+            };
+            modules: Array<{
+                moduleId: string;
+                settings: Array<{
+                    name: string;
+                    value?: string | number | boolean | null;
+                }>;
+            }>;
+        };
+    };
+};
 
-interface IProps$c {
+interface IProps$t {
     color?: VcAlertColorType;
     icon?: boolean | string;
     variant?: VcAlertVariantType;
@@ -1601,35 +2364,35 @@ interface IProps$c {
     shadow?: boolean;
     closable?: boolean;
 }
-declare var __VLS_1$2: {};
-declare var __VLS_8$2: {};
-declare var __VLS_10$1: {};
-type __VLS_Slots$9 = {} & {
-    'main-icon'?: (props: typeof __VLS_1$2) => any;
+declare var __VLS_1$7: {};
+declare var __VLS_8$5: {};
+declare var __VLS_10$2: {};
+type __VLS_Slots$j = {} & {
+    'main-icon'?: (props: typeof __VLS_1$7) => any;
 } & {
-    default?: (props: typeof __VLS_8$2) => any;
+    default?: (props: typeof __VLS_8$5) => any;
 } & {
-    'close-icon'?: (props: typeof __VLS_10$1) => any;
+    'close-icon'?: (props: typeof __VLS_10$2) => any;
 };
-declare const __VLS_base$9: vue.DefineComponent<IProps$c, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$j: vue.DefineComponent<IProps$t, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$c> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$t> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     size: VcAlertSizeType;
     variant: VcAlertVariantType;
     color: VcAlertColorType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$e: __VLS_WithSlots$9<typeof __VLS_base$9, __VLS_Slots$9>;
-declare const _default$e: typeof __VLS_export$e;
+declare const __VLS_export$x: __VLS_WithSlots$j<typeof __VLS_base$j, __VLS_Slots$j>;
+declare const _default$x: typeof __VLS_export$x;
 
-type __VLS_WithSlots$9<T, S> = T & {
+type __VLS_WithSlots$j<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$b {
+interface IProps$s {
     color?: VcButtonColorType;
     size?: VcButtonSizeType;
     variant?: VcButtonVariantType;
@@ -1656,12 +2419,12 @@ interface IProps$b {
 }
 declare function focus(): void;
 declare function blur(): void;
-declare var __VLS_16$1: {};
+declare var __VLS_16$2: {};
 declare var __VLS_23: {};
 declare var __VLS_25: {};
 declare var __VLS_32: {};
-type __VLS_Slots$8 = {} & {
-    prepend?: (props: typeof __VLS_16$1) => any;
+type __VLS_Slots$i = {} & {
+    prepend?: (props: typeof __VLS_16$2) => any;
 } & {
     default?: (props: typeof __VLS_23) => any;
 } & {
@@ -1669,13 +2432,13 @@ type __VLS_Slots$8 = {} & {
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
-declare const __VLS_base$8: vue.DefineComponent<IProps$b, {
+declare const __VLS_base$i: vue.DefineComponent<IProps$s, {
     focus: typeof focus;
     blur: typeof blur;
     el: vue.ComputedRef<HTMLElement | null>;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$b> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$s> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     type: VcButtonTypeType;
@@ -1690,10 +2453,250 @@ declare const __VLS_base$8: vue.DefineComponent<IProps$b, {
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$d: __VLS_WithSlots$8<typeof __VLS_base$8, __VLS_Slots$8>;
-declare const _default$d: typeof __VLS_export$d;
+declare const __VLS_export$w: __VLS_WithSlots$i<typeof __VLS_base$i, __VLS_Slots$i>;
+declare const _default$w: typeof __VLS_export$w;
 
-type __VLS_WithSlots$8<T, S> = T & {
+type __VLS_WithSlots$i<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$r {
+    modelValue?: string;
+    size?: VcCalendarSizeType;
+    min?: string;
+    max?: string;
+    /**
+     * Displayed month, as any ISO `YYYY-MM-DD` date inside it. Optional: left unset, the calendar
+     * keeps owning the month and only reports it through `update:month`.
+     */
+    month?: string;
+    /**
+     * Advisory lower bound. Days before it are marked as out of the suggested range but stay
+     * selectable, and month/year navigation is not gated. Use `min` for a boundary that must hold.
+     */
+    softMin?: string;
+    /** Advisory upper bound. See `softMin`. */
+    softMax?: string;
+    /**
+     * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
+     * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
+     */
+    disabledDate?: VcCalendarDisabledDateType;
+    /**
+     * Keep a re-click on the selected day from clearing it. Default false: in a single-date FIELD
+     * (VcDatePicker) with no `clearable` and no `showFooter` that click is the only pointer route back
+     * to empty — and only while the selected day is selectable, since a disabled or unavailable one
+     * ignores it. Set true where emptying would be data loss, such as a range endpoint.
+     */
+    preventDeselect?: boolean;
+    showFooter?: boolean;
+    locale?: string;
+    firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
+    weekdayFormat?: VcCalendarWeekdayFormatType;
+    /**
+     * Screen-reader text per day, keyed by ISO `YYYY-MM-DD`. Rendered as a visually hidden span and
+     * referenced with `aria-describedby` — a prop rather than markup because reka's own `aria-label`
+     * on the cell keeps anything rendered inside it out of the accessible name.
+     */
+    dayDescriptions?: Record<string, string>;
+    dataTestId?: string;
+}
+declare var __VLS_99: {
+    date: string;
+    dayValue: string;
+    disabled: boolean;
+    selected: boolean;
+    today: boolean;
+    outsideView: boolean;
+    outsideVisibleView: boolean;
+    unavailable: boolean;
+};
+type __VLS_Slots$h = {} & {
+    day?: (props: typeof __VLS_99) => any;
+};
+declare const __VLS_base$h: vue.DefineComponent<IProps$r, {
+    focusActiveCell: () => void;
+}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    clear: () => any;
+    "update:modelValue": (value: string | undefined) => any;
+    "update:month": (value: string) => any;
+}, string, vue.PublicProps, Readonly<IProps$r> & Readonly<{
+    onClear?: (() => any) | undefined;
+    "onUpdate:modelValue"?: ((value: string | undefined) => any) | undefined;
+    "onUpdate:month"?: ((value: string) => any) | undefined;
+}>, {
+    size: VcCalendarSizeType;
+    min: string;
+    max: string;
+    locale: string;
+    dataTestId: string;
+    modelValue: string;
+    month: string;
+    disabledDate: VcCalendarDisabledDateType;
+    showFooter: boolean;
+    firstDayOfWeek: VcCalendarFirstDayOfWeekType;
+    weekdayFormat: VcCalendarWeekdayFormatType;
+    preventDeselect: boolean;
+    softMin: string;
+    softMax: string;
+    dayDescriptions: Record<string, string>;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$v: __VLS_WithSlots$h<typeof __VLS_base$h, __VLS_Slots$h>;
+declare const _default$v: typeof __VLS_export$v;
+
+type __VLS_WithSlots$h<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$q {
+    color?: VcChipColorType;
+    variant?: VcChipVariantType;
+    size?: VcChipSizeType;
+    clickable?: boolean;
+    closable?: boolean;
+    closeButtonAriaLabel?: string;
+    disabled?: boolean;
+    draggable?: boolean;
+    rounded?: boolean;
+    truncate?: boolean;
+    nowrap?: boolean;
+    icon?: string;
+    iconColor?: string;
+    tabindex?: string | number;
+    dataTestId?: string;
+    to?: RouteLocationRaw | null;
+    externalLink?: string;
+    target?: "_self" | "_blank";
+}
+declare var __VLS_14: {};
+declare var __VLS_16$1: {};
+type __VLS_Slots$g = {} & {
+    default?: (props: typeof __VLS_14) => any;
+} & {
+    'close-icon'?: (props: typeof __VLS_16$1) => any;
+};
+declare const __VLS_base$g: vue.DefineComponent<IProps$q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    click: () => any;
+    close: () => any;
+}, string, vue.PublicProps, Readonly<IProps$q> & Readonly<{
+    onClick?: (() => any) | undefined;
+    onClose?: (() => any) | undefined;
+}>, {
+    size: VcChipSizeType;
+    to: RouteLocationRaw | null;
+    variant: VcChipVariantType;
+    tabindex: string | number;
+    color: VcChipColorType;
+    nowrap: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$u: __VLS_WithSlots$g<typeof __VLS_base$g, __VLS_Slots$g>;
+declare const _default$u: typeof __VLS_export$u;
+
+type __VLS_WithSlots$g<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+type VcDateFieldUpdateOnType = "blur" | "enter";
+
+interface IProps$p {
+    dividers?: boolean;
+    width?: string;
+    maxHeight?: string;
+    size?: VcDialogSizeType;
+    autoFocus?: boolean;
+    trapFocus?: boolean;
+}
+declare var __VLS_1$6: {};
+type __VLS_Slots$f = {} & {
+    default?: (props: typeof __VLS_1$6) => any;
+};
+declare const __VLS_base$f: vue.DefineComponent<IProps$p, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$p> & Readonly<{}>, {
+    size: VcDialogSizeType;
+    autoFocus: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$t: __VLS_WithSlots$f<typeof __VLS_base$f, __VLS_Slots$f>;
+declare const _default$t: typeof __VLS_export$t;
+
+type __VLS_WithSlots$f<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$o {
+    scrollable?: boolean;
+}
+declare var __VLS_8$4: {};
+declare var __VLS_10$1: {};
+type __VLS_Slots$e = {} & {
+    container?: (props: typeof __VLS_8$4) => any;
+} & {
+    default?: (props: typeof __VLS_10$1) => any;
+};
+declare const __VLS_base$e: vue.DefineComponent<IProps$o, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$o> & Readonly<{}>, {
+    scrollable: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$s: __VLS_WithSlots$e<typeof __VLS_base$e, __VLS_Slots$e>;
+declare const _default$s: typeof __VLS_export$s;
+
+type __VLS_WithSlots$e<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+declare var __VLS_1$5: {};
+declare var __VLS_3$3: {};
+type __VLS_Slots$d = {} & {
+    container?: (props: typeof __VLS_1$5) => any;
+} & {
+    default?: (props: typeof __VLS_3$3) => any;
+};
+declare const __VLS_base$d: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    close: () => any;
+}, string, vue.PublicProps, Readonly<{}> & Readonly<{
+    onClose?: (() => any) | undefined;
+}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const __VLS_export$r: __VLS_WithSlots$d<typeof __VLS_base$d, __VLS_Slots$d>;
+declare const _default$r: typeof __VLS_export$r;
+
+type __VLS_WithSlots$d<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$n {
+    color?: VcMainColorType;
+    icon?: string;
+    closable?: boolean;
+    size?: VcDialogSizeType;
+}
+declare var __VLS_1$4: {};
+declare var __VLS_8$3: {};
+type __VLS_Slots$c = {} & {
+    main?: (props: typeof __VLS_1$4) => any;
+} & {
+    default?: (props: typeof __VLS_8$3) => any;
+};
+declare const __VLS_base$c: vue.DefineComponent<IProps$n, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    close: () => any;
+}, string, vue.PublicProps, Readonly<IProps$n> & Readonly<{
+    onClose?: (() => any) | undefined;
+}>, {
+    color: VcMainColorType;
+    closable: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$q: __VLS_WithSlots$c<typeof __VLS_base$c, __VLS_Slots$c>;
+declare const _default$q: typeof __VLS_export$q;
+
+type __VLS_WithSlots$c<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -1704,29 +2707,29 @@ interface IProp {
     icon?: string;
     variant?: VcEmptyViewVariantType;
 }
-declare var __VLS_1$1: {};
-declare var __VLS_8$1: {};
+declare var __VLS_1$3: {};
+declare var __VLS_8$2: {};
 declare var __VLS_10: {};
-type __VLS_Slots$7 = {} & {
-    icon?: (props: typeof __VLS_1$1) => any;
+type __VLS_Slots$b = {} & {
+    icon?: (props: typeof __VLS_1$3) => any;
 } & {
-    default?: (props: typeof __VLS_8$1) => any;
+    default?: (props: typeof __VLS_8$2) => any;
 } & {
     button?: (props: typeof __VLS_10) => any;
 };
-declare const __VLS_base$7: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
+declare const __VLS_base$b: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
     variant: VcEmptyViewVariantType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$c: __VLS_WithSlots$7<typeof __VLS_base$7, __VLS_Slots$7>;
-declare const _default$c: typeof __VLS_export$c;
+declare const __VLS_export$p: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
+declare const _default$p: typeof __VLS_export$p;
 
-type __VLS_WithSlots$7<T, S> = T & {
+type __VLS_WithSlots$b<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$a {
+interface IProps$m {
     modelModifiers?: Record<string, boolean>;
     autocomplete?: string;
     readonly?: boolean;
@@ -1738,6 +2741,7 @@ interface IProps$a {
     placeholder?: string;
     message?: string;
     singleLineMessage?: boolean;
+    /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
     error?: boolean;
     noBorder?: boolean;
     seamless?: boolean;
@@ -1767,8 +2771,8 @@ interface IProps$a {
     tabindex?: string | number;
     mask?: string | MaskOptions;
 }
-declare const __VLS_export$b: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
-    props: vue.PublicProps & __VLS_PrettifyLocal$1<(IProps$a & {
+declare const __VLS_export$o: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$2<(IProps$m & {
         modelValue?: T;
     }) & {
         onClear?: (() => any) | undefined;
@@ -1799,13 +2803,37 @@ declare const __VLS_export$b: <T extends string | number | null>(__VLS_props: No
 }>) => vue.VNode & {
     __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
 };
-declare const _default$b: typeof __VLS_export$b;
+declare const _default$o: typeof __VLS_export$o;
 
-type __VLS_PrettifyLocal$1<T> = (T extends any ? {
+type __VLS_PrettifyLocal$2<T> = (T extends any ? {
     [K in keyof T]: T[K];
 } : {
     [K in keyof T as K]: T[K];
 }) & {};
+
+type AnyAddressType = {
+    city?: string;
+    countryCode?: string;
+    countryName?: string;
+    description?: string;
+    email?: string;
+    firstName?: string;
+    id?: string;
+    isDefault?: boolean;
+    isFavorite?: boolean;
+    lastName?: string;
+    line1?: string;
+    line2?: string;
+    phone?: string;
+    postalCode?: string;
+    regionId?: string;
+    regionName?: string;
+    name?: string;
+    geoLocation?: string;
+    workingHours?: string;
+    availabilityNote?: string;
+    availabilityType?: string;
+};
 
 type CreateWishlistPayloadType = {
     listName?: string;
@@ -1822,6 +2850,15 @@ type ChangeWishlistPayloadType = CreateWishlistPayloadType & {
     message?: string;
 };
 
+interface ICurrency {
+    code: string;
+    symbol: string;
+    cultureName: string;
+    englishName: string;
+    exchangeRate: unknown;
+    customFormatting?: string;
+}
+
 interface ILanguage {
     cultureName: string;
     nativeName: string;
@@ -1830,6 +2867,15 @@ interface ILanguage {
     twoLetterRegionName: string;
     threeLetterRegionName: string;
 }
+
+type VendorGroupType<T> = {
+    items: T[];
+    vendor?: CommonVendor;
+};
+type CurrencyGroupType<T> = {
+    currencyCode: string;
+    items: T[];
+};
 
 type AccountNavigationSectionType = {
     id: string;
@@ -1858,6 +2904,9 @@ type MenuType = {
     };
     footer: ExtendedMenuLinkType[];
 };
+type MobileMenuSectionType = Exclude<keyof MenuType["header"]["mobile"], "main">;
+type DesktopMenuSectionType = Exclude<keyof MenuType["header"]["desktop"], "main">;
+type MenuSecionType = MobileMenuSectionType | DesktopMenuSectionType;
 type ExtendedMenuLinkType = {
     id?: string;
     title?: string;
@@ -1874,6 +2923,18 @@ type MarkedMenuLinkType = ExtendedMenuLinkType & {
     children?: MarkedMenuLinkType[];
 };
 
+interface IUseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {
+    defaultValue?: T;
+    /** @default true */
+    removeFalsyValue?: boolean;
+    /** @default true */
+    removeNullishValue?: boolean;
+    /** @default true */
+    removeDefaultValue?: boolean;
+    /** @default push */
+    updateMethod?: "push" | "replace";
+    validator?: (queryValue: NonNullable<T>) => boolean;
+}
 interface IUsePageSeoData {
     /**
      * input chunks: ["title_part_1", "title_part_2"]
@@ -1883,28 +2944,534 @@ interface IUsePageSeoData {
     meta?: Record<string, MaybeRef<string | undefined>>;
 }
 
-interface IProps$9 {
+declare const OrderStatusCode: {
+    readonly CANCELLED: "Cancelled";
+    readonly NEW: "New";
+    readonly PROCESSING: "Processing";
+    readonly PENDING: "Pending";
+    readonly COMPLETED: "Completed";
+    readonly PAYMENT_REQUIRED: "Payment required";
+    readonly READY_FOR_PICKUP: "Ready for pickup";
+};
+type OrderStatusCodeType = (typeof OrderStatusCode)[keyof typeof OrderStatusCode];
+
+interface IOrderStatus {
+    code: OrderStatusCodeType;
+    color: VcChipColorType;
+    variant: VcChipVariantType;
+    icon?: string;
+}
+
+interface IQuoteStatus {
+    code: string;
+    color: VcChipColorType;
+    variant: VcChipVariantType;
+    icon?: string;
+}
+
+type SortDirectionType = "asc" | "desc";
+
+interface ISocialSharingService {
+    name: string;
+    icon?: string;
+    url_template: string;
+}
+
+declare const DESKTOP_MENU_MODES: {
+    readonly fullscreen: "fullscreen";
+    readonly horizontal: "horizontal";
+};
+type DesktopMenuModeType = keyof typeof DESKTOP_MENU_MODES;
+
+declare const STATUS_ORDERS_FACET_NAME = "status";
+
+declare enum BrowserTargetType {
+    BLANK = "_blank",
+    SELF = "_self"
+}
+
+declare enum ContentType {
+    "image/jpeg" = "image/jpeg",
+    "image/png" = "image/png",
+    "application/pdf" = "application/pdf",
+    "application/msword" = "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = "application/msword",
+    "application/vnd.ms-excel" = "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = "application/vnd.ms-excel",
+    "application/zip" = "application/zip"
+}
+
+declare enum PlatformPermissions {
+    CanImpersonate = "platform:security:loginOnBehalf"
+}
+declare enum XApiPermissions {
+    CanEditOrganization = "xapi:my_organization:edit",
+    CanInviteUsers = "xapi:my_organization:user:invite",
+    CanViewOrganizationOrders = "xapi:my_organization:order:view"
+}
+
+declare const CATALOG_PAGINATION_MODES: {
+    readonly loadMore: "load_more";
+    readonly infiniteScroll: "infinite_scroll";
+};
+
+type CatalogPaginationModeType = (typeof CATALOG_PAGINATION_MODES)[keyof typeof CATALOG_PAGINATION_MODES];
+
+interface IThemeConfigPreset {
+    primary_font_family?: string;
+    secondary_font_family?: string;
+    color_primary_50: string;
+    color_primary_100: string;
+    color_primary_200: string;
+    color_primary_300: string;
+    color_primary_400: string;
+    color_primary_500: string;
+    color_primary_600: string;
+    color_primary_700: string;
+    color_primary_800: string;
+    color_primary_900: string;
+    color_primary_950: string;
+    color_secondary_50: string;
+    color_secondary_100: string;
+    color_secondary_200: string;
+    color_secondary_300: string;
+    color_secondary_400: string;
+    color_secondary_500: string;
+    color_secondary_600: string;
+    color_secondary_700: string;
+    color_secondary_800: string;
+    color_secondary_900: string;
+    color_secondary_950: string;
+    color_accent_50: string;
+    color_accent_100: string;
+    color_accent_200: string;
+    color_accent_300: string;
+    color_accent_400: string;
+    color_accent_500: string;
+    color_accent_600: string;
+    color_accent_700: string;
+    color_accent_800: string;
+    color_accent_900: string;
+    color_accent_950: string;
+    color_neutral_50: string;
+    color_neutral_100: string;
+    color_neutral_200: string;
+    color_neutral_300: string;
+    color_neutral_400: string;
+    color_neutral_500: string;
+    color_neutral_600: string;
+    color_neutral_700: string;
+    color_neutral_800: string;
+    color_neutral_900: string;
+    color_neutral_950: string;
+    color_warning_50: string;
+    color_warning_100: string;
+    color_warning_200: string;
+    color_warning_300: string;
+    color_warning_400: string;
+    color_warning_500: string;
+    color_warning_600: string;
+    color_warning_700: string;
+    color_warning_800: string;
+    color_warning_900: string;
+    color_warning_950: string;
+    color_danger_50: string;
+    color_danger_100: string;
+    color_danger_200: string;
+    color_danger_300: string;
+    color_danger_400: string;
+    color_danger_500: string;
+    color_danger_600: string;
+    color_danger_700: string;
+    color_danger_800: string;
+    color_danger_900: string;
+    color_danger_950: string;
+    color_success_50: string;
+    color_success_100: string;
+    color_success_200: string;
+    color_success_300: string;
+    color_success_400: string;
+    color_success_500: string;
+    color_success_600: string;
+    color_success_700: string;
+    color_success_800: string;
+    color_success_900: string;
+    color_success_950: string;
+    color_info_50: string;
+    color_info_100: string;
+    color_info_200: string;
+    color_info_300: string;
+    color_info_400: string;
+    color_info_500: string;
+    color_info_600: string;
+    color_info_700: string;
+    color_info_800: string;
+    color_info_900: string;
+    color_info_950: string;
+    color_additional_50: string;
+    color_additional_950: string;
+    color_vc_focus_ring?: string;
+    color_vc_background_solid_primary?: string;
+    color_vc_background_solid_secondary?: string;
+    color_vc_background_solid_accent?: string;
+    color_vc_background_solid_neutral?: string;
+    color_vc_background_solid_warning?: string;
+    color_vc_background_solid_danger?: string;
+    color_vc_background_solid_success?: string;
+    color_vc_background_solid_info?: string;
+    color_vc_background_soft_primary?: string;
+    color_vc_background_soft_secondary?: string;
+    color_vc_background_soft_accent?: string;
+    color_vc_background_soft_neutral?: string;
+    color_vc_background_soft_warning?: string;
+    color_vc_background_soft_danger?: string;
+    color_vc_background_soft_success?: string;
+    color_vc_background_soft_info?: string;
+    color_vc_background_outline_primary?: string;
+    color_vc_background_outline_secondary?: string;
+    color_vc_background_outline_accent?: string;
+    color_vc_background_outline_neutral?: string;
+    color_vc_background_outline_warning?: string;
+    color_vc_background_outline_danger?: string;
+    color_vc_background_outline_success?: string;
+    color_vc_background_outline_info?: string;
+    color_vc_background_surface_primary?: string;
+    color_vc_background_surface_secondary?: string;
+    color_vc_background_surface_accent?: string;
+    color_vc_background_surface_neutral?: string;
+    color_vc_background_surface_warning?: string;
+    color_vc_background_surface_danger?: string;
+    color_vc_background_surface_success?: string;
+    color_vc_background_surface_info?: string;
+    color_vc_background_ghost_primary?: string;
+    color_vc_background_ghost_secondary?: string;
+    color_vc_background_ghost_accent?: string;
+    color_vc_background_ghost_neutral?: string;
+    color_vc_background_ghost_warning?: string;
+    color_vc_background_ghost_danger?: string;
+    color_vc_background_ghost_success?: string;
+    color_vc_background_ghost_info?: string;
+    color_vc_background_tonal_primary?: string;
+    color_vc_background_tonal_secondary?: string;
+    color_vc_background_tonal_accent?: string;
+    color_vc_background_tonal_neutral?: string;
+    color_vc_background_tonal_warning?: string;
+    color_vc_background_tonal_danger?: string;
+    color_vc_background_tonal_success?: string;
+    color_vc_background_tonal_info?: string;
+    color_vc_border_solid_primary?: string;
+    color_vc_border_solid_secondary?: string;
+    color_vc_border_solid_accent?: string;
+    color_vc_border_solid_neutral?: string;
+    color_vc_border_solid_warning?: string;
+    color_vc_border_solid_danger?: string;
+    color_vc_border_solid_success?: string;
+    color_vc_border_solid_info?: string;
+    color_vc_border_soft_primary?: string;
+    color_vc_border_soft_secondary?: string;
+    color_vc_border_soft_accent?: string;
+    color_vc_border_soft_neutral?: string;
+    color_vc_border_soft_warning?: string;
+    color_vc_border_soft_danger?: string;
+    color_vc_border_soft_success?: string;
+    color_vc_border_soft_info?: string;
+    color_vc_border_outline_primary?: string;
+    color_vc_border_outline_secondary?: string;
+    color_vc_border_outline_accent?: string;
+    color_vc_border_outline_neutral?: string;
+    color_vc_border_outline_warning?: string;
+    color_vc_border_outline_danger?: string;
+    color_vc_border_outline_success?: string;
+    color_vc_border_outline_info?: string;
+    color_vc_border_surface_primary?: string;
+    color_vc_border_surface_secondary?: string;
+    color_vc_border_surface_accent?: string;
+    color_vc_border_surface_neutral?: string;
+    color_vc_border_surface_warning?: string;
+    color_vc_border_surface_danger?: string;
+    color_vc_border_surface_success?: string;
+    color_vc_border_surface_info?: string;
+    color_vc_border_ghost_primary?: string;
+    color_vc_border_ghost_secondary?: string;
+    color_vc_border_ghost_accent?: string;
+    color_vc_border_ghost_neutral?: string;
+    color_vc_border_ghost_warning?: string;
+    color_vc_border_ghost_danger?: string;
+    color_vc_border_ghost_success?: string;
+    color_vc_border_ghost_info?: string;
+    color_vc_border_tonal_primary?: string;
+    color_vc_border_tonal_secondary?: string;
+    color_vc_border_tonal_accent?: string;
+    color_vc_border_tonal_neutral?: string;
+    color_vc_border_tonal_warning?: string;
+    color_vc_border_tonal_danger?: string;
+    color_vc_border_tonal_success?: string;
+    color_vc_border_tonal_info?: string;
+    color_vc_icon_solid_primary?: string;
+    color_vc_icon_solid_secondary?: string;
+    color_vc_icon_solid_accent?: string;
+    color_vc_icon_solid_neutral?: string;
+    color_vc_icon_solid_warning?: string;
+    color_vc_icon_solid_danger?: string;
+    color_vc_icon_solid_success?: string;
+    color_vc_icon_solid_info?: string;
+    color_vc_icon_soft_primary?: string;
+    color_vc_icon_soft_secondary?: string;
+    color_vc_icon_soft_accent?: string;
+    color_vc_icon_soft_neutral?: string;
+    color_vc_icon_soft_warning?: string;
+    color_vc_icon_soft_danger?: string;
+    color_vc_icon_soft_success?: string;
+    color_vc_icon_soft_info?: string;
+    color_vc_icon_outline_primary?: string;
+    color_vc_icon_outline_secondary?: string;
+    color_vc_icon_outline_accent?: string;
+    color_vc_icon_outline_neutral?: string;
+    color_vc_icon_outline_warning?: string;
+    color_vc_icon_outline_danger?: string;
+    color_vc_icon_outline_success?: string;
+    color_vc_icon_outline_info?: string;
+    color_vc_icon_surface_primary?: string;
+    color_vc_icon_surface_secondary?: string;
+    color_vc_icon_surface_accent?: string;
+    color_vc_icon_surface_neutral?: string;
+    color_vc_icon_surface_warning?: string;
+    color_vc_icon_surface_danger?: string;
+    color_vc_icon_surface_success?: string;
+    color_vc_icon_surface_info?: string;
+    color_vc_icon_ghost_primary?: string;
+    color_vc_icon_ghost_secondary?: string;
+    color_vc_icon_ghost_accent?: string;
+    color_vc_icon_ghost_neutral?: string;
+    color_vc_icon_ghost_warning?: string;
+    color_vc_icon_ghost_danger?: string;
+    color_vc_icon_ghost_success?: string;
+    color_vc_icon_ghost_info?: string;
+    color_vc_icon_tonal_primary?: string;
+    color_vc_icon_tonal_secondary?: string;
+    color_vc_icon_tonal_accent?: string;
+    color_vc_icon_tonal_neutral?: string;
+    color_vc_icon_tonal_warning?: string;
+    color_vc_icon_tonal_danger?: string;
+    color_vc_icon_tonal_success?: string;
+    color_vc_icon_tonal_info?: string;
+    color_vc_text_solid_primary?: string;
+    color_vc_text_solid_secondary?: string;
+    color_vc_text_solid_accent?: string;
+    color_vc_text_solid_neutral?: string;
+    color_vc_text_solid_warning?: string;
+    color_vc_text_solid_danger?: string;
+    color_vc_text_solid_success?: string;
+    color_vc_text_solid_info?: string;
+    color_vc_text_soft_primary?: string;
+    color_vc_text_soft_secondary?: string;
+    color_vc_text_soft_accent?: string;
+    color_vc_text_soft_neutral?: string;
+    color_vc_text_soft_warning?: string;
+    color_vc_text_soft_danger?: string;
+    color_vc_text_soft_success?: string;
+    color_vc_text_soft_info?: string;
+    color_vc_text_outline_primary?: string;
+    color_vc_text_outline_secondary?: string;
+    color_vc_text_outline_accent?: string;
+    color_vc_text_outline_neutral?: string;
+    color_vc_text_outline_warning?: string;
+    color_vc_text_outline_danger?: string;
+    color_vc_text_outline_success?: string;
+    color_vc_text_outline_info?: string;
+    color_vc_text_surface_primary?: string;
+    color_vc_text_surface_secondary?: string;
+    color_vc_text_surface_accent?: string;
+    color_vc_text_surface_neutral?: string;
+    color_vc_text_surface_warning?: string;
+    color_vc_text_surface_danger?: string;
+    color_vc_text_surface_success?: string;
+    color_vc_text_surface_info?: string;
+    color_vc_text_ghost_primary?: string;
+    color_vc_text_ghost_secondary?: string;
+    color_vc_text_ghost_accent?: string;
+    color_vc_text_ghost_neutral?: string;
+    color_vc_text_ghost_warning?: string;
+    color_vc_text_ghost_danger?: string;
+    color_vc_text_ghost_success?: string;
+    color_vc_text_ghost_info?: string;
+    color_vc_text_tonal_primary?: string;
+    color_vc_text_tonal_secondary?: string;
+    color_vc_text_tonal_accent?: string;
+    color_vc_text_tonal_neutral?: string;
+    color_vc_text_tonal_warning?: string;
+    color_vc_text_tonal_danger?: string;
+    color_vc_text_tonal_success?: string;
+    color_vc_text_tonal_info?: string;
+    color_body_bg?: string;
+    color_body_text?: string;
+    color_link?: string;
+    color_link_hover?: string;
+    color_price?: string;
+    color_hexagon_icon_bg?: string;
+    color_hexagon_icon?: string;
+    color_header_top_bg?: string;
+    color_header_top_text?: string;
+    color_header_top_link?: string;
+    color_header_top_link_hover?: string;
+    color_header_bottom_bg?: string;
+    color_header_bottom_text?: string;
+    color_header_bottom_link?: string;
+    color_header_bottom_link_hover?: string;
+    color_header_bottom_link_active?: string;
+    color_footer_top_bg?: string;
+    color_footer_top_text?: string;
+    color_footer_top_link?: string;
+    color_footer_top_link_hover?: string;
+    color_footer_top_link_active?: string;
+    color_footer_bottom_bg?: string;
+    color_footer_bottom_text?: string;
+    color_footer_bottom_link?: string;
+    color_footer_bottom_link_hover?: string;
+    color_mobile_search_bar_bg?: string;
+    color_mobile_menu_bg?: string;
+    color_mobile_menu_text?: string;
+    color_mobile_menu_link?: string;
+    color_mobile_menu_link_active?: string;
+    color_mobile_menu_icon?: string;
+    color_mobile_menu_icon_active?: string;
+}
+interface IThemeConfigSettings {
+    cart_page_browser_target?: BrowserTargetType;
+    product_page_browser_target?: BrowserTargetType;
+    details_browser_target?: BrowserTargetType;
+    search_by_static_content_enabled?: boolean;
+    anonymous_price_enabled?: boolean;
+    anonymous_checkout?: boolean;
+    push_messages_enabled?: boolean;
+    files_enabled?: boolean;
+    /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Only `true` enables it. */
+    module_federation_enabled?: boolean;
+    bulk_order_enabled?: boolean;
+    product_compare_enabled?: boolean;
+    product_compare_limit?: number;
+    product_filters_sorting?: boolean;
+    product_filters_sorting_direction?: SortDirectionType;
+    product_quantity_control?: "stepper" | "button";
+    range_filter_type?: "slider" | "default";
+    out_of_stock_order_enabled?: boolean;
+    search_suggestions_category_enabled?: boolean;
+    search_suggestions_category_limit?: number;
+    search_suggestions_product_limit?: number;
+    sticky_header_enabled?: boolean;
+    store_selector_enabled?: boolean;
+    top_header_menu_link_list?: string;
+    header_menu_link_list?: string;
+    desktop_menu_mode?: DesktopMenuModeType;
+    icon_variant?: "solid" | "outline";
+    products_menu_link_list?: string;
+    footer_menu_link_list?: string;
+    image_thumbnails_enabled?: boolean;
+    image_thumbnails_original_fallback_enabled?: boolean;
+    image_thumbnails_suffixes?: {
+        sm: string;
+        md: string;
+        lg: string;
+    };
+    image_carousel_in_product_card_enabled?: boolean;
+    registration_enabled?: boolean;
+    social_auth_google?: boolean;
+    social_auth_twitter?: boolean;
+    social_auth_ad?: boolean;
+    social_auth_facebook?: boolean;
+    catalog_items_limit?: number;
+    catalog_items_selector?: number[];
+    catalog_pagination_mode?: CatalogPaginationModeType;
+    infinite_scrolling_enabled?: boolean;
+    in_stock_count_enabled?: boolean;
+    zero_price_product_enabled?: boolean;
+    sort_by_price_enabled?: boolean;
+    sort_by_name_enabled?: boolean;
+    sort_by_featured_enabled?: boolean;
+    show_unavailable_variations?: boolean;
+    show_unavailable_products?: boolean;
+    show_related_products?: boolean;
+    related_products_group_name?: string;
+    related_products_limit?: number;
+    product_image_zoom_enabled?: boolean;
+    product_share_enabled?: boolean;
+    show_prices_with_taxes?: boolean;
+    default_delivery_method?: string;
+    categories_limit?: number;
+    wishlists_limit?: number;
+    search_max_chars?: number;
+    search_static_content_suggestions_enabled?: boolean;
+    search_product_phrase_suggestions_enabled?: boolean;
+    vendor_enabled?: boolean;
+    vendor_rating_enabled?: boolean;
+    checkout_multistep_enabled?: boolean;
+    checkout_comment_enabled?: boolean;
+    checkout_purchase_order_enabled?: boolean;
+    checkout_coupon_enabled?: boolean;
+    checkout_gifts_enabled?: boolean;
+    checkout_shipping_address_creation_enabled?: boolean;
+    checkout_billing_address_creation_enabled?: boolean;
+    orders_default_sorting?: string;
+    orders_search_enabled?: boolean;
+    orders_filter_enabled?: boolean;
+    orders_reorder_enabled?: boolean;
+    orders_statuses?: IOrderStatus[];
+    quote_statuses?: IQuoteStatus[];
+    line_items_group_by_vendor_enabled?: boolean;
+    social_sharing_services?: ISocialSharingService[];
+    logo_image?: string;
+    logo_inverted_image?: string;
+    favicon_image?: string;
+    homepage_background_image?: string;
+    isCVVinSkyflowRequired?: boolean;
+    default_return_url?: string;
+    previewers_settings?: {
+        priorities?: {
+            [key: string]: number;
+        };
+    };
+    graphql_operation_marking_enabled?: boolean;
+}
+
+interface IThemeContext {
+    storeId: string;
+    storeName: string;
+    /** Store's configured public url. */
+    storeUrl?: string;
+    catalogId: string;
+    defaultLanguage: ILanguage;
+    defaultCurrency: ICurrency;
+    availableLanguages: ILanguage[];
+    availableCurrencies: ICurrency[];
+    settings: IThemeConfigSettings;
+    preset?: IThemeConfigPreset;
+    defaultPresetName: string;
+    activePresetName?: string;
+    storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
+}
+
+interface IProps$l {
     visible?: boolean;
     fixedSpinner?: boolean;
     noBg?: boolean;
 }
 declare var __VLS_12: {};
-type __VLS_Slots$6 = {} & {
+type __VLS_Slots$a = {} & {
     default?: (props: typeof __VLS_12) => any;
 };
-declare const __VLS_base$6: vue.DefineComponent<IProps$9, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$9> & Readonly<{}>, {
+declare const __VLS_base$a: vue.DefineComponent<IProps$l, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$l> & Readonly<{}>, {
     visible: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$a: __VLS_WithSlots$6<typeof __VLS_base$6, __VLS_Slots$6>;
-declare const _default$a: typeof __VLS_export$a;
+declare const __VLS_export$n: __VLS_WithSlots$a<typeof __VLS_base$a, __VLS_Slots$a>;
+declare const _default$n: typeof __VLS_export$n;
 
-type __VLS_WithSlots$6<T, S> = T & {
+type __VLS_WithSlots$a<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$8 {
+interface IProps$k {
     color?: VcMenuItemColorType;
     size?: "xs" | "sm" | "md" | "lg";
     to?: RouteLocationRaw;
@@ -1925,32 +3492,162 @@ interface IProps$8 {
 declare var __VLS_17: {};
 declare var __VLS_19: {};
 declare var __VLS_21: {};
-type __VLS_Slots$5 = {} & {
+type __VLS_Slots$9 = {} & {
     prepend?: (props: typeof __VLS_17) => any;
 } & {
     default?: (props: typeof __VLS_19) => any;
 } & {
     append?: (props: typeof __VLS_21) => any;
 };
-declare const __VLS_base$5: vue.DefineComponent<IProps$8, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$9: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$8> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$k> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
     color: VcMenuItemColorType;
     clickable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$9: __VLS_WithSlots$5<typeof __VLS_base$5, __VLS_Slots$5>;
-declare const _default$9: typeof __VLS_export$9;
+declare const __VLS_export$m: __VLS_WithSlots$9<typeof __VLS_base$9, __VLS_Slots$9>;
+declare const _default$m: typeof __VLS_export$m;
 
-type __VLS_WithSlots$5<T, S> = T & {
+type __VLS_WithSlots$9<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$7 {
+interface IProps$j {
+    placement?: VcPopoverPlacementType;
+    strategy?: VcPopoverStrategyType;
+    flipOptions?: VcPopoverFlipOptionsType;
+    offsetOptions?: VcPopoverOffsetOptionsType;
+    shiftOptions?: VcPopoverShiftOptionsType;
+    /**
+     * Prevents opening and closes an open popover. For `dialog` panels it also hands focus back to the
+     * trigger once it clears, but only when disabling left focus on the document body.
+     */
+    disabled?: boolean;
+    shadow?: boolean;
+    bgColor?: string;
+    radius?: string;
+    width?: string;
+    zIndex?: number | string;
+    /**
+     * ARIA role of the content panel, and the source of the trigger's `aria-haspopup`: a popup kind
+     * (`menu`, `listbox`, `tree`, `grid`, `dialog`) is announced as itself, `tooltip` not at all, and
+     * any other role — including none — keeps the historical `dialog`. `VcDropdownMenu` passes no role
+     * on, so its panels are the known holdouts: their triggers announce a dialog over a list that is
+     * role-less unless the consumer names it itself, as `VcSelect` does. Giving those panels a role
+     * here is a separate change.
+     *
+     * `dialog` additionally enables the non-modal dialog keyboard contract (WAI-ARIA APG): Escape
+     * closes the panel from anywhere in its DOM subtree — teleported content sits outside it and must
+     * handle its own — the panel takes focus when it opens, unless `hover` is set or a consumer claims
+     * focus from `@toggle`, and focus returns to the trigger on close. Pair it with `ariaLabel`:
+     * a dialog needs a name.
+     */
+    role?: VcPopoverRoleType | (string & {});
+    /**
+     * Open on hover and focus instead of click. A hover panel never takes focus — it would close
+     * itself on the trigger's `focusout` — so it cannot carry a dialog the keyboard needs to enter.
+     */
+    hover?: boolean;
+    disableTriggerEvents?: boolean;
+    arrowEnabled?: boolean;
+    /** Accessible name of the content panel. Required when `role` is `dialog`. */
+    ariaLabel?: string;
+    enableTeleport?: boolean | null;
+    teleportSelector?: string;
+    lazy?: boolean;
+}
+type HaspopupTokenType = Exclude<VcPopoverRoleType, "tooltip">;
+declare function open(): void;
+declare function close$2(): void;
+declare function toggle(): void;
+declare var __VLS_1$2: {
+    open: typeof open;
+    close: typeof close$2;
+    toggle: typeof toggle;
+    opened: boolean;
+    triggerProps: {
+        onMouseenter: typeof open | undefined;
+        onMouseleave: typeof close$2 | undefined;
+        onFocusin: typeof open | undefined;
+        onFocusout: typeof close$2 | undefined;
+        onClick: typeof toggle | undefined;
+        onKeydown: (e: KeyboardEvent) => void;
+        "aria-haspopup": HaspopupTokenType | undefined;
+        "aria-expanded": boolean;
+        "aria-controls": string | undefined;
+        role: "button";
+    };
+};
+declare var __VLS_3$2: {
+    open: typeof open;
+    close: typeof close$2;
+    toggle: typeof toggle;
+    opened: boolean;
+    triggerProps: {
+        "aria-haspopup": HaspopupTokenType | undefined;
+        "aria-expanded": boolean;
+        "aria-controls": string | undefined;
+    };
+};
+declare var __VLS_11$2: {
+    close: typeof close$2;
+};
+type __VLS_Slots$8 = {} & {
+    default?: (props: typeof __VLS_1$2) => any;
+} & {
+    trigger?: (props: typeof __VLS_3$2) => any;
+} & {
+    content?: (props: typeof __VLS_11$2) => any;
+};
+declare const __VLS_base$8: vue.DefineComponent<IProps$j, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    toggle: (value: boolean) => any;
+}, string, vue.PublicProps, Readonly<IProps$j> & Readonly<{
+    onToggle?: ((value: boolean) => any) | undefined;
+}>, {
+    placement: VcPopoverPlacementType;
+    zIndex: number | string;
+    teleportSelector: string;
+    enableTeleport: boolean | null;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$l: __VLS_WithSlots$8<typeof __VLS_base$8, __VLS_Slots$8>;
+declare const _default$l: typeof __VLS_export$l;
+
+type __VLS_WithSlots$8<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$i {
+    mode?: "mini" | "full";
+    readOnly?: boolean;
+    reviewCount?: number;
+    size?: "xs" | "sm" | "md";
+    value?: number;
+    maxValue?: number;
+    withText?: boolean;
+    label?: string;
+    buttonAriaLabel?: (index: number) => string;
+}
+declare const __VLS_export$k: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    setRating: (value: number) => any;
+}, string, vue.PublicProps, Readonly<IProps$i> & Readonly<{
+    onSetRating?: ((value: number) => any) | undefined;
+}>, {
+    size: "xs" | "sm" | "md";
+    value: number;
+    mode: "mini" | "full";
+    maxValue: number;
+    withText: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$k: typeof __VLS_export$k;
+
+interface IProps$h {
     modelValue?: object | string | Array<object | string>;
     label?: string;
     ariaLabel?: string;
@@ -1984,37 +3681,88 @@ declare var __VLS_16: {
 declare var __VLS_18: {
     error: boolean;
 };
-declare var __VLS_73: {
+declare var __VLS_76: {
     item: any;
     index: number;
 };
-type __VLS_Slots$4 = {} & {
+type __VLS_Slots$7 = {} & {
     selected?: (props: typeof __VLS_16) => any;
 } & {
     placeholder?: (props: typeof __VLS_18) => any;
 } & {
-    item?: (props: typeof __VLS_73) => any;
+    item?: (props: typeof __VLS_76) => any;
 };
-declare const __VLS_base$4: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$7: vue.DefineComponent<IProps$h, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: any) => any;
     "update:modelValue": (value: any) => any;
-}, string, vue.PublicProps, Readonly<IProps$7> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$h> & Readonly<{
     onChange?: ((value: any) => any) | undefined;
     "onUpdate:modelValue"?: ((value: any) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "auto";
     itemSize: "xs" | "sm" | "md" | "lg";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$8: __VLS_WithSlots$4<typeof __VLS_base$4, __VLS_Slots$4>;
-declare const _default$8: typeof __VLS_export$8;
+declare const __VLS_export$j: __VLS_WithSlots$7<typeof __VLS_base$7, __VLS_Slots$7>;
+declare const _default$j: typeof __VLS_export$j;
 
-type __VLS_WithSlots$4<T, S> = T & {
+type __VLS_WithSlots$7<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$6 {
+declare const __VLS_export$i: <T extends string | number | boolean>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$1<({
+        label?: string;
+        name?: string;
+        value: T;
+        icon?: string;
+        color?: string;
+        hoverColor?: string;
+        disabled?: boolean;
+        size?: "sm" | "md";
+        labelPosition?: "start" | "end";
+        ariaLabel?: string;
+    } & {
+        modelValue?: T;
+    }) & {
+        onInput?: ((value: T) => any) | undefined;
+        onChange?: ((value: T) => any) | undefined;
+        "onUpdate:modelValue"?: ((value: T | undefined) => any) | undefined;
+    }> & (typeof globalThis extends {
+        __VLS_PROPS_FALLBACK: infer P;
+    } ? P : {});
+    expose: (exposed: {}) => void;
+    attrs: any;
+    slots: {
+        icon?: (props: {
+            checked: boolean;
+            value: T;
+            label: string | undefined;
+        }) => any;
+    } & {
+        default?: (props: {
+            checked: boolean;
+            value: T;
+            label: string | undefined;
+        }) => any;
+    };
+    emit: {
+        (event: "input", value: T): void;
+        (event: "change", value: T): void;
+    } & ((event: "update:modelValue", value: T | undefined) => void);
+}>) => vue.VNode & {
+    __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
+};
+declare const _default$i: typeof __VLS_export$i;
+
+type __VLS_PrettifyLocal$1<T> = (T extends any ? {
+    [K in keyof T]: T[K];
+} : {
+    [K in keyof T as K]: T[K];
+}) & {};
+
+interface IProps$g {
     modelValue?: string;
     modelModifiers?: Record<string, boolean>;
     autocomplete?: string;
@@ -2034,17 +3782,17 @@ interface IProps$6 {
     rows?: number | string;
     ariaLabel?: string;
 }
-declare const __VLS_export$7: vue.DefineComponent<IProps$6, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$h: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     "update:modelValue": (value: string) => any;
-}, string, vue.PublicProps, Readonly<IProps$6> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$g> & Readonly<{
     "onUpdate:modelValue"?: ((value: string) => any) | undefined;
 }>, {
     modelModifiers: Record<string, boolean>;
     rows: number | string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$7: typeof __VLS_export$7;
+declare const _default$h: typeof __VLS_export$h;
 
-interface IProps$5 {
+interface IProps$f {
     tag?: string;
     variant?: VcTypographyVariantType;
     truncate?: boolean;
@@ -2053,23 +3801,201 @@ interface IProps$5 {
     textTransform?: string;
     color?: string;
 }
-declare var __VLS_8: {};
-type __VLS_Slots$3 = {} & {
-    default?: (props: typeof __VLS_8) => any;
+declare var __VLS_8$1: {};
+type __VLS_Slots$6 = {} & {
+    default?: (props: typeof __VLS_8$1) => any;
 };
-declare const __VLS_base$3: vue.DefineComponent<IProps$5, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$5> & Readonly<{}>, {
+declare const __VLS_base$6: vue.DefineComponent<IProps$f, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$f> & Readonly<{}>, {
     tag: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$6: __VLS_WithSlots$3<typeof __VLS_base$3, __VLS_Slots$3>;
-declare const _default$6: typeof __VLS_export$6;
+declare const __VLS_export$g: __VLS_WithSlots$6<typeof __VLS_base$6, __VLS_Slots$6>;
+declare const _default$g: typeof __VLS_export$g;
 
-type __VLS_WithSlots$3<T, S> = T & {
+type __VLS_WithSlots$6<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$4 {
+type AriaAttributesType = Record<string, string | number | null>;
+interface IProps$e {
+    /** ISO YYYY-MM-DD canonical value. */
+    modelValue?: string;
+    size?: VcInputSizeType;
+    label?: string;
+    placeholder?: string;
+    name?: string;
+    disabled?: boolean;
+    readonly?: boolean;
+    required?: boolean;
+    message?: string;
+    error?: boolean;
+    /** ISO YYYY-MM-DD min boundary. */
+    min?: string;
+    /** ISO YYYY-MM-DD max boundary. */
+    max?: string;
+    /**
+     * Advisory calendar-only lower bound. Earlier days are marked as out of the suggested range but stay
+     * selectable and navigable — the range picker hints at the opposite endpoint without blocking a pick.
+     */
+    calendarSoftMin?: string;
+    /** Advisory calendar-only upper bound. See `calendarSoftMin`. */
+    calendarSoftMax?: string;
+    /**
+     * Predicate that returns true to mark a date unavailable (greyed out).
+     * Read once at mount: reka takes the predicate by value, so swapping it later re-filters typed input but not the grid.
+     */
+    disabledDate?: VcCalendarDisabledDateType;
+    /** Override locale; defaults to active i18n locale. */
+    locale?: string;
+    /** When to commit user input on the text input. Default "blur". Enter always commits. */
+    updateOn?: VcDateFieldUpdateOnType;
+    /** Apply a locale-aware input mask on the text input. See VcDateInput for semantics. */
+    mask?: boolean;
+    /** Show a clear button in the field. Default false — the field then falls back to the footer Clear
+     * (`showFooter`) or a calendar re-click, with the caveats on `preventDeselect`. */
+    clearable?: boolean;
+    /** Accessible name of the clear button. Default "Clear". See VcInput. */
+    clearButtonAriaLabel?: string;
+    /** Accessible name of the calendar trigger. Default "Open calendar"; name the field when two pickers sit together. */
+    calendarButtonAriaLabel?: string;
+    /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
+    enableTeleport?: boolean;
+    /** Keep a re-click on the selected day from clearing it. Default false. See VcCalendar. */
+    preventDeselect?: boolean;
+    /** Show the calendar footer (Today / Clear buttons). */
+    showFooter?: boolean;
+    firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
+    weekdayFormat?: VcCalendarWeekdayFormatType;
+    /** Close the popover when a date is PICKED in the calendar. Default true. Emptying the value never
+     * closes it, whichever route did it: the footer Clear, the field cross, or a deselect. */
+    closeOnSelect?: boolean;
+    /** Popover placement relative to the input. Default "bottom-end". */
+    placement?: VcPopoverPlacementType;
+    ariaLabel?: string;
+    /** Extra ARIA attributes for the underlying input, merged under the combobox wiring this picker owns. */
+    aria?: AriaAttributesType;
+    tabindex?: string | number;
+    /** Drop the details row (message/error text) so a parent can render one for a group of fields. */
+    hideDetails?: boolean;
+    dataTestId?: string;
+}
+declare const __VLS_export$f: vue.DefineComponent<IProps$e, {
+    inputElement: vue.ComputedRef<HTMLInputElement | null>;
+    /** Drops uncommitted text and re-reads the model; for shells that commit on this field's behalf. */
+    reset: () => void | undefined;
+}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    clear: () => any;
+    blur: (focusEvent: FocusEvent) => any;
+    focus: (focusEvent: FocusEvent) => any;
+    "update:modelValue": (value: string | undefined) => any;
+    "update:valid": (value: boolean) => any;
+    "update:errorText": (value: string | undefined) => any;
+}, string, vue.PublicProps, Readonly<IProps$e> & Readonly<{
+    onClear?: (() => any) | undefined;
+    onBlur?: ((focusEvent: FocusEvent) => any) | undefined;
+    onFocus?: ((focusEvent: FocusEvent) => any) | undefined;
+    "onUpdate:modelValue"?: ((value: string | undefined) => any) | undefined;
+    "onUpdate:valid"?: ((value: boolean) => any) | undefined;
+    "onUpdate:errorText"?: ((value: string | undefined) => any) | undefined;
+}>, {
+    size: VcInputSizeType;
+    hideDetails: boolean;
+    clearable: boolean;
+    placement: VcPopoverPlacementType;
+    updateOn: VcDateFieldUpdateOnType;
+    showFooter: boolean;
+    closeOnSelect: boolean;
+    preventDeselect: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$f: typeof __VLS_export$f;
+
+interface IProps$d {
+    /** Both endpoints as ISO YYYY-MM-DD. Either side may be undefined — a partial range is valid. */
+    modelValue?: VcDateRangeType;
+    size?: VcInputSizeType;
+    /** Group label. In "split" it labels the pair; in "combined" it labels the single field. */
+    label?: string;
+    /** Start field label. Visible text in "split"; an aria-label on the segment in "combined". */
+    startLabel?: string;
+    /** End field label. Visible text in "split"; an aria-label on the segment in "combined". */
+    endLabel?: string;
+    /** Override the auto-derived locale hint on the start field (e.g. "MM/DD/YYYY"). */
+    startPlaceholder?: string;
+    /** Override the auto-derived locale hint on the end field. */
+    endPlaceholder?: string;
+    /** Base form name; the two fields get `-start` / `-end` suffixes. */
+    name?: string;
+    disabled?: boolean;
+    readonly?: boolean;
+    required?: boolean;
+    /** Info/help text for the shared details row. Shown when no validation error is active. Rendered as plain text on one line, with the full string in a tooltip. */
+    message?: string;
+    /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
+    error?: boolean;
+    /** ISO YYYY-MM-DD min boundary. Gates both fields and the calendar behind them, in either layout. */
+    min?: string;
+    /** ISO YYYY-MM-DD max boundary. See `min`. */
+    max?: string;
+    /**
+     * Marks a date unavailable (greyed out). Receives ISO YYYY-MM-DD. Read once at mount: swapping it
+     * later re-filters typed input but not the grid. An unavailable day cannot be an endpoint, but a
+     * range may span one.
+     */
+    disabledDate?: VcCalendarDisabledDateType;
+    /** Override locale; defaults to active i18n locale. */
+    locale?: string;
+    /** When to commit typed input. Default "blur". Enter always commits. */
+    updateOn?: VcDateFieldUpdateOnType;
+    /** Apply a locale-aware input mask on the text inputs. See VcDateInput for semantics. */
+    mask?: boolean;
+    /** "combined" gets one button resetting both endpoints; "split" gives each field its own. */
+    clearable?: boolean;
+    /** Keep the details row's height reserved while it has no message, so the layout below never shifts. */
+    showEmptyDetails?: boolean;
+    /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
+    enableTeleport?: boolean;
+    /** Show the calendar footer: Clear in "combined", Today + Clear in "split"'s single-date calendars. */
+    showFooter?: boolean;
+    firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
+    weekdayFormat?: VcCalendarWeekdayFormatType;
+    /** Close on calendar PICK. Default true; "combined" waits for BOTH endpoints. Emptying the range
+     * never closes it, whichever route did it: the footer Clear or the field cross. */
+    closeOnSelect?: boolean;
+    /** Default "bottom-end". In "split" a top/bottom placement is start-aligned for the start field. */
+    placement?: VcPopoverPlacementType;
+    /**
+     * "combined" (default) = one field, two segments, one range calendar; `startLabel`/`endLabel` become
+     * accessible names. "split" = two labelled VcDatePickers. The orders filter ships combined on mobile,
+     * split on desktop.
+     */
+    layout?: VcDateRangePickerLayoutType;
+    dataTestId?: string;
+}
+declare const __VLS_export$e: vue.DefineComponent<IProps$d, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    clear: () => any;
+    blur: (focusEvent: FocusEvent) => any;
+    focus: (focusEvent: FocusEvent) => any;
+    "update:modelValue": (value: VcDateRangeType | undefined) => any;
+    "update:valid": (value: boolean) => any;
+    "update:errorText": (value: string | undefined) => any;
+}, string, vue.PublicProps, Readonly<IProps$d> & Readonly<{
+    onClear?: (() => any) | undefined;
+    onBlur?: ((focusEvent: FocusEvent) => any) | undefined;
+    onFocus?: ((focusEvent: FocusEvent) => any) | undefined;
+    "onUpdate:modelValue"?: ((value: VcDateRangeType | undefined) => any) | undefined;
+    "onUpdate:valid"?: ((value: boolean) => any) | undefined;
+    "onUpdate:errorText"?: ((value: string | undefined) => any) | undefined;
+}>, {
+    size: VcInputSizeType;
+    placement: VcPopoverPlacementType;
+    layout: VcDateRangePickerLayoutType;
+    updateOn: VcDateFieldUpdateOnType;
+    closeOnSelect: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$e: typeof __VLS_export$e;
+
+interface IProps$c {
     show?: boolean;
     hideActions?: boolean;
     isPersistent?: boolean;
@@ -2095,7 +4021,7 @@ declare var __VLS_67: {
 declare var __VLS_77: {
     close: typeof close$1;
 };
-type __VLS_Slots$2 = {} & {
+type __VLS_Slots$5 = {} & {
     title?: (props: typeof __VLS_56) => any;
 } & {
     container?: (props: typeof __VLS_65) => any;
@@ -2104,27 +4030,45 @@ type __VLS_Slots$2 = {} & {
 } & {
     actions?: (props: typeof __VLS_77) => any;
 };
-declare const __VLS_base$2: vue.DefineComponent<IProps$4, {
+declare const __VLS_base$5: vue.DefineComponent<IProps$c, {
     close: typeof close$1;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$4> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$c> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     show: boolean;
     variant: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
     scrollable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$5: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
-declare const _default$5: typeof __VLS_export$5;
+declare const __VLS_export$d: __VLS_WithSlots$5<typeof __VLS_base$5, __VLS_Slots$5>;
+declare const _default$d: typeof __VLS_export$d;
 
-type __VLS_WithSlots$2<T, S> = T & {
+type __VLS_WithSlots$5<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+interface IProps$b {
+    page?: number;
+    pages?: number;
+    scrollTarget?: HTMLElement;
+    scrollOffset?: number;
+    compact?: boolean;
+}
+declare const __VLS_export$c: vue.DefineComponent<IProps$b, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    "update:page": (page: number) => any;
+}, string, vue.PublicProps, Readonly<IProps$b> & Readonly<{
+    "onUpdate:page"?: ((page: number) => any) | undefined;
+}>, {
+    page: number;
+    pages: number;
+    scrollOffset: number;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$c: typeof __VLS_export$c;
+
+declare const __VLS_export$b: <T extends VcTableItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: vue.PublicProps & __VLS_PrettifyLocal<{
         columns?: VcTableColumnType[];
         items?: T[];
@@ -2258,7 +4202,7 @@ declare const __VLS_export$4: <T extends VcTableItemType>(__VLS_props: NonNullab
 }>) => vue.VNode & {
     __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
 };
-declare const _default$4: typeof __VLS_export$4;
+declare const _default$b: typeof __VLS_export$b;
 
 type __VLS_PrettifyLocal<T> = (T extends any ? {
     [K in keyof T]: T[K];
@@ -2303,7 +4247,7 @@ type __VLS_PrettifyLocal<T> = (T extends any ? {
  *   </template>
  * </VcTable>
  */
-interface IProps$3 {
+interface IProps$a {
     /** Unique identifier for the column */
     id: string;
     /** Column header title */
@@ -2317,10 +4261,10 @@ interface IProps$3 {
     /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
     fixed?: "start" | "end";
 }
-declare const __VLS_export$3: vue.DefineComponent<IProps$3, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$3: typeof __VLS_export$3;
+declare const __VLS_export$a: vue.DefineComponent<IProps$a, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$a> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$a: typeof __VLS_export$a;
 
-interface IProps$2 {
+interface IProps$9 {
     title?: string;
     prependIcon?: string;
     appendIcon?: string;
@@ -2348,7 +4292,7 @@ declare var __VLS_34: {};
 declare var __VLS_36: {};
 declare var __VLS_38: {};
 declare var __VLS_40: {};
-type __VLS_Slots$1 = {} & {
+type __VLS_Slots$4 = {} & {
     'header-container'?: (props: typeof __VLS_9$1) => any;
 } & {
     header?: (props: typeof __VLS_11$1) => any;
@@ -2367,42 +4311,42 @@ type __VLS_Slots$1 = {} & {
 } & {
     footer?: (props: typeof __VLS_40) => any;
 };
-declare const __VLS_base$1: vue.DefineComponent<IProps$2, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$4: vue.DefineComponent<IProps$9, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     toggleCollapse: (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$2> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$9> & Readonly<{
     onToggleCollapse?: ((value: boolean) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
     shadow: boolean;
     border: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$2: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
-declare const _default$2: typeof __VLS_export$2;
+declare const __VLS_export$9: __VLS_WithSlots$4<typeof __VLS_base$4, __VLS_Slots$4>;
+declare const _default$9: typeof __VLS_export$9;
 
-type __VLS_WithSlots$1<T, S> = T & {
+type __VLS_WithSlots$4<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$1 {
+interface IProps$8 {
     head?: boolean;
     foot?: boolean;
     noShadow?: boolean;
     size?: "xs" | "sm" | "md" | "lg";
 }
-declare var __VLS_1: {};
-declare var __VLS_3: {};
-declare var __VLS_5: {};
+declare var __VLS_1$1: {};
+declare var __VLS_3$1: {};
+declare var __VLS_5$1: {};
 declare var __VLS_7: {};
 declare var __VLS_9: {};
 declare var __VLS_11: {};
-type __VLS_Slots = {} & {
-    'header-container'?: (props: typeof __VLS_1) => any;
+type __VLS_Slots$3 = {} & {
+    'header-container'?: (props: typeof __VLS_1$1) => any;
 } & {
-    header?: (props: typeof __VLS_3) => any;
+    header?: (props: typeof __VLS_3$1) => any;
 } & {
-    'default-container'?: (props: typeof __VLS_5) => any;
+    'default-container'?: (props: typeof __VLS_5$1) => any;
 } & {
     default?: (props: typeof __VLS_7) => any;
 } & {
@@ -2410,28 +4354,63 @@ type __VLS_Slots = {} & {
 } & {
     footer?: (props: typeof __VLS_11) => any;
 };
-declare const __VLS_base: vue.DefineComponent<IProps$1, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$1> & Readonly<{}>, {
+declare const __VLS_base$3: vue.DefineComponent<IProps$8, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$8> & Readonly<{}>, {
     size: "xs" | "sm" | "md" | "lg";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$1: __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;
-declare const _default$1: typeof __VLS_export$1;
+declare const __VLS_export$8: __VLS_WithSlots$3<typeof __VLS_base$3, __VLS_Slots$3>;
+declare const _default$8: typeof __VLS_export$8;
 
-type __VLS_WithSlots<T, S> = T & {
+type __VLS_WithSlots$3<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps {
+interface IProps$7 {
+    sidebarPosition?: "left" | "right";
+    sticky?: boolean;
+    sidebarAriaLabel?: string;
+}
+declare var __VLS_1: {};
+declare var __VLS_3: {};
+declare var __VLS_5: {};
+type __VLS_Slots$2 = {} & {
+    sidebar?: (props: typeof __VLS_1) => any;
+} & {
+    default?: (props: typeof __VLS_3) => any;
+} & {
+    sidebar?: (props: typeof __VLS_5) => any;
+};
+declare const __VLS_base$2: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$7> & Readonly<{}>, {
+    sidebarPosition: "left" | "right";
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$7: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
+declare const _default$7: typeof __VLS_export$7;
+
+type __VLS_WithSlots$2<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$6 {
     status?: string;
     displayValue?: string;
     icon?: string;
     truncate?: boolean;
 }
-declare const __VLS_export: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps> & Readonly<{}>, {
+declare const __VLS_export$6: vue.DefineComponent<IProps$6, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$6> & Readonly<{}>, {
     truncate: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default: typeof __VLS_export;
+declare const _default$6: typeof __VLS_export$6;
+
+interface IPaymentMethodParameters {
+    hidePaymentButton?: boolean;
+    payment?: PaymentType;
+    disabled?: boolean;
+    cart?: CartType;
+    order?: CustomerOrderType;
+}
 
 /** The plugin renders its own markup in place of the host's. */
 type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boolean = never> = {
@@ -2472,6 +4451,7 @@ type ExtensionCategoryMapType = {
         item: ExtendedMenuLinkType;
     }>;
     mobileHeader: ExtensionEntryType;
+    topHeaderStatus: ExtensionEntryType;
     productCard: ExtensionEntryType<{
         product?: Product;
         isTextShown?: boolean;
@@ -2494,6 +4474,14 @@ type ExtensionCategoryMapType = {
         order: CustomerOrderType;
         paymentTypeName: string;
     }) => boolean>;
+    /** The cart-stage payment step (`shared/payment/components/payment.vue`). */
+    cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
+        paymentTypeName: string;
+    }) => boolean>;
+    /** The order details page. A provider decides from the order whether it has anything to offer. */
+    orderDetails: ExtensionEntryType<{
+        order?: CustomerOrderType;
+    }, never, (order?: CustomerOrderType) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
@@ -2571,11 +4559,237 @@ declare const CUSTOM_EXTENSION_NAMES: {
     readonly orderPaymentPage: {
         readonly paymentMethods: "payment-methods";
     };
+    readonly orderDetails: {
+        readonly actions: "actions";
+    };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
     };
 };
 declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;
+
+type NamedCategoryType = keyof typeof EXTENSION_NAMES;
+type SlotNameType<C extends ExtensionCategoryType> = C extends NamedCategoryType ? (typeof EXTENSION_NAMES)[C][keyof (typeof EXTENSION_NAMES)[C]] : string;
+/** `"<category>/<name>"` */
+type SlotIdType = {
+    [C in ExtensionCategoryType]: `${C}/${SlotNameType<C>}`;
+}[ExtensionCategoryType];
+type CategoryOfType<Id extends string> = Id extends `${infer C}/${string}` ? C extends ExtensionCategoryType ? C : never : never;
+/** Each slot's context: its extension point's `conditionParameter`, derived from the registry. */
+type SlotContextMapType = {
+    [C in ExtensionCategoryType as `${C}/${SlotNameType<C>}`]: ConditionParamType<C>;
+};
+type SlotContextOfType<Id extends SlotIdType> = ConditionParamType<CategoryOfType<Id>>;
+
+type PluginStateType = "pending" | "loaded" | "failed" | "skipped";
+interface IPluginStatusType {
+    name: string;
+    state: PluginStateType;
+    reason?: string;
+}
+/** Settled, expired, or never seen. */
+declare function isPluginSettled(name: string): boolean;
+declare function whenPluginSettled(name: string): Promise<IPluginStatusType>;
+/** Each federated plugin's state, reactively; the only production signal, as `Logger` is a no-op there. */
+declare function usePluginsStatus(): {
+    plugins: Readonly<vue.Ref<readonly {
+        readonly name: string;
+        readonly state: PluginStateType;
+        readonly reason?: string | undefined;
+    }[], readonly {
+        readonly name: string;
+        readonly state: PluginStateType;
+        readonly reason?: string | undefined;
+    }[]>>;
+    stateOf: (name: string) => PluginStateType | undefined;
+    isSettled: typeof isPluginSettled;
+    whenSettled: typeof whenPluginSettled;
+};
+
+declare const ROUTES: {
+    readonly CATALOG: {
+        readonly NAME: "Catalog";
+        readonly PATH: "/catalog";
+    };
+    readonly LOYALTY_CATALOG: {
+        readonly NAME: "LoyaltyCatalog";
+        readonly PATH: "/loyalty-catalog";
+    };
+    readonly LOYALTY_PRODUCT: {
+        readonly NAME: "LoyaltyProduct";
+        readonly PATH: "/loyalty-catalog/product/:productId";
+    };
+    readonly LOYALTY_CATEGORY: {
+        readonly NAME: "LoyaltyCategory";
+        readonly PATH: "/loyalty-catalog/category/:categoryId";
+    };
+    readonly SEARCH: {
+        readonly NAME: "Search";
+        readonly PATH: "/search";
+    };
+    readonly SIGN_IN: {
+        readonly NAME: "SignIn";
+        readonly PATH: "/sign-in";
+    };
+    readonly CART: {
+        readonly NAME: "Cart";
+        readonly PATH: "/cart";
+    };
+    readonly CART_ID: {
+        readonly NAME: "CartId";
+        readonly PATH: "/cart/:cartId";
+    };
+    readonly CHANGE_PASSWORD: {
+        readonly NAME: "ChangePassword";
+        readonly PATH: "/change-password";
+    };
+    readonly SAVED_FOR_LATER: {
+        readonly NAME: "SavedForLater";
+    };
+    readonly ORDER_DETAILS: {
+        readonly NAME: "OrderDetails";
+    };
+    readonly PROMOTION_COUPONS: {
+        readonly NAME: "PromotionCoupons";
+        readonly PATH: "coupons";
+    };
+    readonly ACCOUNT: {
+        readonly NAME: "Account";
+        readonly PATH: "/account";
+    };
+    readonly COMPANY: {
+        readonly NAME: "Company";
+        readonly PATH: "/company";
+    };
+};
+
+type ConditionScalarType = string | number | boolean | null;
+/**
+ * A serialised condition; never parsed or executed.
+ *
+ * - `setting` — a setting of the store module `module`; `true`, or equal to `eq`.
+ * - `themeSetting` — a `settings_data.json` key; `true`, or equal to `eq`.
+ * - `authenticated` — the user is signed in.
+ * - `can` — the user holds that permission.
+ * - `field` — a dot path into the slot's context; truthy, or equal to `eq`. Slots only.
+ */
+type ConditionNodeType = {
+    setting: string;
+    module: string;
+    eq?: ConditionScalarType;
+} | {
+    themeSetting: string;
+    eq?: ConditionScalarType;
+} | {
+    authenticated: true;
+} | {
+    can: string;
+} | {
+    field: string;
+    eq?: ConditionScalarType;
+} | {
+    and: ConditionNodeType[];
+} | {
+    or: ConditionNodeType[];
+} | {
+    not: ConditionNodeType;
+};
+type HostRouteNameType = (typeof ROUTES)[keyof typeof ROUTES]["NAME"];
+interface IRouteContributionType {
+    path: string;
+    /** Host parent route; absent = root. */
+    parent?: HostRouteNameType;
+    name: string;
+    when?: ConditionNodeType;
+}
+interface IMenuLinkContributionType {
+    id: string;
+    title: string;
+    icon?: string;
+    priority?: number;
+    routeName: string;
+    when?: ConditionNodeType;
+}
+interface IHeaderMenuContributionType extends IMenuLinkContributionType {
+    surface: "header";
+    group: MenuGroupType;
+}
+interface IAccountMenuContributionType {
+    surface: "account";
+    id: string;
+    title: string;
+    icon?: string;
+    priority?: number;
+    when?: ConditionNodeType;
+    children: IMenuLinkContributionType[];
+}
+type MenuContributionType = IHeaderMenuContributionType | IAccountMenuContributionType;
+/**
+ * - `reserve` — hold the slot's box until the plugin settles.
+ * - `block` — hold a whole region, with a loader (e.g. payment).
+ * - `none` — hold nothing; the plugin only decorates host markup.
+ */
+type SlotPolicyType = "reserve" | "block" | "none";
+interface ISlotContributionType {
+    at: SlotIdType;
+    policy: SlotPolicyType;
+    when?: ConditionNodeType;
+}
+interface IPluginContributionsType {
+    /** The host refuses a format it does not know. */
+    format: 1;
+    /** False: the host fetches nothing of the plugin. */
+    when?: ConditionNodeType;
+    /** Boot waits for this plugin's `init()`; without it the plugin loads alongside the app. */
+    blocksBoot?: true;
+    routes?: IRouteContributionType[];
+    menu?: MenuContributionType[];
+    slots?: ISlotContributionType[];
+}
+type MenuGroupType = MenuSecionType | "main";
+declare const conditionScope: unique symbol;
+/** The phantom scope makes a `field(...)` term a compile error outside a slot. */
+type ConditionType<S extends "global" | "slot"> = ConditionNodeType & {
+    readonly [conditionScope]?: S;
+};
+type GlobalConditionType = ConditionType<"global">;
+type SlotConditionType = ConditionType<"global" | "slot">;
+type ComparableConditionType<S extends "global" | "slot", V = ConditionScalarType> = ConditionType<S> & {
+    eq(value: V): ConditionType<S>;
+};
+type DepthType = [never, 0, 1, 2, 3];
+/** Dot paths to scalars, four levels deep; arrays are not traversed. */
+type FieldPathType<T, D extends number = 4> = [D] extends [never] ? never : T extends ConditionScalarType ? never : T extends readonly unknown[] ? never : T extends object ? {
+    [K in Extract<keyof T, string>]: NonNullable<T[K]> extends ConditionScalarType ? K : NonNullable<T[K]> extends readonly unknown[] ? never : `${K}.${FieldPathType<NonNullable<T[K]>, DepthType[D]>}`;
+}[Extract<keyof T, string>] : never;
+type FieldValueType<T, P extends string> = P extends `${infer H}.${infer R}` ? H extends keyof T ? FieldValueType<NonNullable<T[H]>, R> : never : P extends keyof T ? NonNullable<T[P]> : never;
+/** Enums widen: a plugin may own values the host's generated enum lacks. */
+type WidenedType<V> = V extends string ? string : V extends number ? number : V extends boolean ? boolean : never;
+type FieldBuilderType<Ctx> = <P extends FieldPathType<NonNullable<Ctx>>>(path: P) => ComparableConditionType<"slot", WidenedType<FieldValueType<NonNullable<Ctx>, P>>>;
+type WithGlobalWhenType<T> = Omit<T, "when"> & {
+    when?: GlobalConditionType;
+};
+type RouteDeclarationType = WithGlobalWhenType<IRouteContributionType>;
+type MenuLinkDeclarationType = WithGlobalWhenType<IMenuLinkContributionType>;
+type MenuDeclarationType = WithGlobalWhenType<IHeaderMenuContributionType> | (WithGlobalWhenType<Omit<IAccountMenuContributionType, "children">> & {
+    children: MenuLinkDeclarationType[];
+});
+type SlotDeclarationType = {
+    [Id in SlotIdType]: {
+        at: Id;
+        policy: SlotPolicyType;
+        /** A global condition, or a callback receiving `field` typed against this slot's context. */
+        when?: GlobalConditionType | ((field: FieldBuilderType<SlotContextOfType<Id>>) => SlotConditionType);
+    };
+}[SlotIdType];
+interface IPluginManifestConfigType {
+    when?: GlobalConditionType;
+    /** Make boot wait for `init()`, e.g. for something that must be in place before the first render. */
+    blocksBoot?: boolean;
+    routes?: RouteDeclarationType[];
+    menu?: MenuDeclarationType[];
+    slots?: SlotDeclarationType[];
+}
 
 /**
  * Non-cached version of Apollo Client
@@ -2642,6 +4856,8 @@ declare const useModuleSettings: _vueuse_core.UseMemoizeReturn<{
     }[] | undefined>;
 }, [moduleId: string]>;
 
+declare function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>): void;
+declare function registerAccountSection(section: AccountNavigationSectionType): void;
 declare function _useNavigations(): {
     setMatchingRouteName: (value: string) => void;
     desktopMainMenuItems: vue.ComputedRef<ExtendedMenuLinkType[]>;
@@ -2665,8 +4881,8 @@ declare function _useNavigations(): {
     fetchPinnedLinks: () => Promise<void>;
     pinnedLinks: vue.ComputedRef<ExtendedMenuLinkType[]>;
     markLinkTree: (link?: ExtendedMenuLinkType, currentRoute?: RouteLocationNormalizedLoaded, type?: "pinned" | "category") => MarkedMenuLinkType | undefined;
-    mergeMenuSchema: (additionalSchema: DeepPartial<MenuType>) => void;
-    registerAccountSection: (section: AccountNavigationSectionType) => void;
+    mergeMenuSchema: typeof mergeMenuSchema;
+    registerAccountSection: typeof registerAccountSection;
     registeredAccountSections: vue.ComputedRef<AccountNavigationSectionType[]>;
 };
 declare const useNavigations: typeof _useNavigations;
@@ -2689,6 +4905,8 @@ declare const useNavigations: typeof _useNavigations;
 declare function useBreadcrumbs(sources: (() => IBreadcrumb[]) | MaybeRef<IBreadcrumb[]>): ComputedRef<IBreadcrumb[]>;
 
 declare function usePageHead(data?: IUsePageSeoData): void;
+
+declare function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(key: string, options?: IUseRouteQueryParamOptions<T>): WritableComputedRef<T>;
 
 type UserType = GetMeQuery["me"];
 
@@ -2727,6 +4945,12 @@ type UserPersonalDataType = {
     lastName: string;
     defaultLanguage?: string;
     currencyCode?: string;
+};
+type OrdersFilterDataType = {
+    statuses: string[];
+    startDate?: string;
+    endDate?: string;
+    customerNames?: string[];
 };
 
 declare function _useUser(): {
@@ -3173,6 +5397,15 @@ declare function toStartDateFilterValue(dateOnly?: string): string | undefined;
  * @returns ISO 8601 date with time (YYYY-MM-DDTHH:mm:ss.sssZ) + 1 day - 1 millisecond (means full day of 13 Dec)
  */
 declare function toEndDateFilterValue(dateOnly?: string): string | undefined;
+/**
+ * Formats a Date as ISO 8601 date-only (YYYY-MM-DD) in the LOCAL calendar day.
+ * `toISOString()` cannot be used for this: it converts to UTC first, so a local midnight
+ * east of Greenwich formats as the previous day. Inverse of the local-midnight parsing
+ * `toStartDateFilterValue` / `toEndDateFilterValue` already do.
+ * @param date date to format
+ * @returns ISO 8601 date without time (YYYY-MM-DD)
+ */
+declare function toLocalDateOnly(date: Date): string;
 
 type LoggerType = {
     debug: (message: unknown, ...args: unknown[]) => void;
@@ -3241,58 +5474,115 @@ type LocaleLoaderType = (i18n: I18n, language: ILanguage) => Promise<void>;
  */
 declare function registerLocaleLoader(key: string, loader: LocaleLoaderType): void;
 
-declare const ROUTES: {
-    readonly CATALOG: {
-        readonly NAME: "Catalog";
-        readonly PATH: "/catalog";
+declare function useOrderView(source: MaybeRefOrGetter<CustomerOrderType | undefined>): {
+    allItemsAreDigital: vue.ComputedRef<boolean>;
+    giftItems: vue.ComputedRef<OrderLineItemType[]>;
+    orderItems: vue.ComputedRef<OrderLineItemType[]>;
+    mainCurrencyOrderItems: vue.ComputedRef<OrderLineItemType[]>;
+    otherCurrencyOrderItemGroups: vue.ComputedRef<CurrencyGroupType<OrderLineItemType>[]>;
+    orderItemsGroupedByVendor: vue.ComputedRef<VendorGroupType<OrderLineItemType>[]>;
+    deliveryAddress: vue.ComputedRef<OrderAddressType | undefined>;
+    pickupLocation: vue.ComputedRef<PickupLocationType | undefined>;
+    billingAddress: vue.ComputedRef<OrderAddressType | undefined>;
+    shipment: vue.ComputedRef<OrderShipmentType | undefined>;
+    payment: vue.ComputedRef<PaymentInType | undefined>;
+    isCancelled: vue.ComputedRef<boolean>;
+    shipmentMethodName: vue.ComputedRef<string>;
+    paymentMethodName: vue.ComputedRef<string | undefined>;
+    shipToTitle: vue.ComputedRef<string>;
+};
+
+interface IProps$5 {
+    items?: OrderLineItemType[] | LineItemType[];
+    subtotalCurrencyCode?: string;
+}
+declare const __VLS_export$5: vue.DefineComponent<IProps$5, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$5> & Readonly<{}>, {
+    items: OrderLineItemType[] | LineItemType[];
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$5: typeof __VLS_export$5;
+
+interface IProps$4 {
+    items: (GiftItemType | OrderLineItemType)[];
+}
+declare const __VLS_export$4: vue.DefineComponent<IProps$4, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$4> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$4: typeof __VLS_export$4;
+
+interface IProps$3 {
+    disabled?: boolean;
+    readonly?: boolean;
+    comment?: string;
+}
+declare const __VLS_export$3: vue.DefineComponent<IProps$3, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    "update:comment": (value: string) => any;
+}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{
+    "onUpdate:comment"?: ((value: string) => any) | undefined;
+}>, {
+    comment: string;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$3: typeof __VLS_export$3;
+
+interface IProps$2 {
+    cart: CartType | CustomerOrderType;
+    selectedItems?: LineItemType[];
+    noShipping?: boolean;
+    footnote?: boolean;
+}
+declare var __VLS_8: {};
+declare var __VLS_83: {};
+declare var __VLS_85: {};
+type __VLS_Slots$1 = {} & {
+    header?: (props: typeof __VLS_8) => any;
+} & {
+    footer?: (props: typeof __VLS_83) => any;
+} & {
+    footnote?: (props: typeof __VLS_85) => any;
+};
+declare const __VLS_base$1: vue.DefineComponent<IProps$2, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$2> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$2: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
+declare const _default$2: typeof __VLS_export$2;
+
+type __VLS_WithSlots$1<T, S> = T & {
+    new (): {
+        $slots: S;
     };
-    readonly LOYALTY_CATALOG: {
-        readonly NAME: "LoyaltyCatalog";
-        readonly PATH: "/loyalty-catalog";
+};
+
+interface IProps$1 {
+    address: AnyAddressType;
+}
+declare var __VLS_6: {};
+type __VLS_Slots = {} & {
+    actions?: (props: typeof __VLS_6) => any;
+};
+declare const __VLS_base: vue.DefineComponent<IProps$1, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$1> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$1: __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;
+declare const _default$1: typeof __VLS_export$1;
+
+type __VLS_WithSlots<T, S> = T & {
+    new (): {
+        $slots: S;
     };
-    readonly LOYALTY_PRODUCT: {
-        readonly NAME: "LoyaltyProduct";
-        readonly PATH: "/loyalty-catalog/product/:productId";
-    };
-    readonly LOYALTY_CATEGORY: {
-        readonly NAME: "LoyaltyCategory";
-        readonly PATH: "/loyalty-catalog/category/:categoryId";
-    };
-    readonly SEARCH: {
-        readonly NAME: "Search";
-        readonly PATH: "/search";
-    };
-    readonly SIGN_IN: {
-        readonly NAME: "SignIn";
-        readonly PATH: "/sign-in";
-    };
-    readonly CART: {
-        readonly NAME: "Cart";
-        readonly PATH: "/cart";
-    };
-    readonly CART_ID: {
-        readonly NAME: "CartId";
-        readonly PATH: "/cart/:cartId";
-    };
-    readonly CHANGE_PASSWORD: {
-        readonly NAME: "ChangePassword";
-        readonly PATH: "/change-password";
-    };
-    readonly SAVED_FOR_LATER: {
-        readonly NAME: "SavedForLater";
-    };
-    readonly PROMOTION_COUPONS: {
-        readonly NAME: "PromotionCoupons";
-        readonly PATH: "coupons";
-    };
-    readonly ACCOUNT: {
-        readonly NAME: "Account";
-        readonly PATH: "/account";
-    };
-    readonly COMPANY: {
-        readonly NAME: "Company";
-        readonly PATH: "/company";
-    };
+};
+
+interface IProps {
+    name?: string;
+}
+declare const __VLS_export: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default: typeof __VLS_export;
+
+declare function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string;
+
+declare const useFetch: typeof _vueuse_core.useFetch;
+
+declare function downloadFile(fileUrl: string, fileName: string): Promise<void>;
+
+declare const BREAKPOINTS: {
+    readonly xs: "480px";
+    readonly sm: "640px";
+    readonly md: "768px";
+    readonly lg: "1024px";
+    readonly xl: "1280px";
+    readonly "2xl": "1500px";
 };
 
 type GlobalVariablesType = {
@@ -3327,8 +5617,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, ROUTES, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
-export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LocaleLoaderType, MenuType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_NAMES, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$6 as OrderStatus, _default$2 as OrderSummary, PlatformPermissions, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$x as VcAlert, _default$H as VcBadge, _default$G as VcBreadcrumbs, _default$w as VcButton, _default$v as VcCalendar, _default$F as VcCheckbox, _default$E as VcCheckboxGroup, _default$u as VcChip, _default$f as VcDatePicker, _default$e as VcDateRangePicker, _default$t as VcDialog, _default$s as VcDialogContent, _default$r as VcDialogFooter, _default$q as VcDialogHeader, _default$p as VcEmptyView, _default$D as VcIcon, _default$C as VcImage, _default$o as VcInput, _default$B as VcInputDetails, _default$A as VcLabel, _default$7 as VcLayout, _default$z as VcLink, _default$n as VcLoaderOverlay, _default$y as VcMarkdownRender, _default$m as VcMenuItem, _default$d as VcModal, _default$c as VcPagination, _default$l as VcPopover, _default$k as VcRating, _default$j as VcSelect, _default$i as VcTabSwitch, _default$b as VcTable, _default$a as VcTableColumn, _default$h as VcTextarea, _default$g as VcTypography, _default$9 as VcWidget, _default$8 as VcWidgetSkeleton, _default as VendorName, XApiPermissions, apolloClient, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, tryParseDate, uiKit, useBreadcrumbs, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useUser, useWishlistSharingScopes };
+export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SharingTargetType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;
@@ -3372,11 +5662,36 @@ type VcButtonVariantType =
     | "no-background";
 type VcButtonTypeType = "button" | "reset" | "submit";
 type VcButtonSizeType = "xxs" | "xs" | "sm" | "md" | "lg";
+type VcCalendarSizeType = "xs" | "sm" | "md";
+type VcCalendarFirstDayOfWeekType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type VcCalendarWeekdayFormatType = "narrow" | "short";
+type VcCalendarDisabledDateType = (date: string) => boolean;
+type VcDateRangeType = { start?: string; end?: string };
+type VcChipColorType = VcMainColorType;
+type VcChipVariantType =
+    | "solid"
+    | "soft"
+    | "outline"
+    | "surface"
+    | "ghost"
+    | "tonal"
+    /** @deprecated Use "soft" instead. */
+    | "solid-light"
+    /** @deprecated Use "tonal" instead. */
+    | "outline-dark";
+type VcChipSizeType = "sm" | "md" | "lg";
+type VcDialogSizeType = "xs" | "sm" | "md";
 type VcEmptyViewVariantType = "empty" | "search" | "error";
 type VcInputSizeType = "xs" | "sm" | "md" | "auto";
 type VcMenuItemColorType = VcMainColorType;
 type VcPopoverPlacementType = Placement;
+type VcPopoverStrategyType = Strategy;
+type VcPopoverFlipOptionsType = FlipOptions;
+type VcPopoverOffsetOptionsType = OffsetOptions;
+type VcPopoverShiftOptionsType = ShiftOptions;
+type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
+type VcDateRangePickerLayoutType = "combined" | "split";
 type VcTableAlignType = "center" | "right" | "left";
 type VcTableColumnType = {
     id: string;
@@ -3406,6 +5721,7 @@ type VcTableSelectionColumnAttrsType = {
 type VcTableHeadAttrsType = {
     class: string;
   };
+type VcMainColorType = "primary" | "secondary" | "neutral" | "accent" | "info" | "success" | "warning" | "danger";
 interface IBreadcrumb {
     title: string;
     /**
@@ -3413,10 +5729,83 @@ interface IBreadcrumb {
      */
     route?: RouteLocationRaw;
   }
+interface IFileSize {
+    value: number;
+    unit: FileSizeUnitsType;
+  }
 type BreakpointsType = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 type VcTableItemType = {
     id?: string | number;
     [key: string]: unknown;
   };
 type VcTableSortDirectionType = "asc" | "desc";
-type VcMainColorType = "primary" | "secondary" | "neutral" | "accent" | "info" | "success" | "warning" | "danger";
+type FileSizeUnitsType = "byte" | "kilobyte" | "megabyte" | "gigabyte" | "terabyte" | "petabyte";
+
+// ── registered globally by `app.use(uiKit)`: usable in a plugin template unimported ──
+declare module "vue" {
+  export interface GlobalComponents {
+    VcAlert: typeof _default$x;
+    VcBadge: typeof _default$H;
+    VcBreadcrumbs: typeof _default$G;
+    VcButton: typeof _default$w;
+    VcCalendar: typeof _default$v;
+    VcCheckbox: typeof _default$F;
+    VcCheckboxGroup: typeof _default$E;
+    VcChip: typeof _default$u;
+    VcDatePicker: typeof _default$f;
+    VcDateRangePicker: typeof _default$e;
+    VcDialog: typeof _default$t;
+    VcDialogContent: typeof _default$s;
+    VcDialogFooter: typeof _default$r;
+    VcDialogHeader: typeof _default$q;
+    VcEmptyView: typeof _default$p;
+    VcIcon: typeof _default$D;
+    VcImage: typeof _default$C;
+    VcInput: typeof _default$o;
+    VcInputDetails: typeof _default$B;
+    VcLabel: typeof _default$A;
+    VcLayout: typeof _default$7;
+    VcLink: typeof _default$z;
+    VcLoaderOverlay: typeof _default$n;
+    VcMarkdownRender: typeof _default$y;
+    VcMenuItem: typeof _default$m;
+    VcModal: typeof _default$d;
+    VcPagination: typeof _default$c;
+    VcPopover: typeof _default$l;
+    VcRating: typeof _default$k;
+    VcSelect: typeof _default$j;
+    VcTabSwitch: typeof _default$i;
+    VcTable: typeof _default$b;
+    VcTableColumn: typeof _default$a;
+    VcTextarea: typeof _default$h;
+    VcTypography: typeof _default$g;
+    VcWidget: typeof _default$9;
+    VcWidgetSkeleton: typeof _default$8;
+  }
+}
+
+
+// ── directives registered globally by `app.use(uiKit)` ──
+declare module "vue" {
+  export interface GlobalDirectives {
+    vMask: typeof import("maska/vue").vMaska;
+    vOnClickOutside: import("vue").Directive<HTMLElement, (event: PointerEvent) => void>;
+    vHtmlSafe: import("vue").Directive<HTMLElement, string | null | undefined>;
+    vHtmlEscape: import("vue").Directive<HTMLElement, string | null | undefined>;
+    vHtmlRemove: import("vue").Directive<HTMLElement, string | null | undefined>;
+  }
+}
+
+
+// ── global properties the host sets on its app instance ──
+declare module "vue" {
+  export interface ComponentCustomProperties {
+    $cfg: IThemeConfigSettings;
+    $context: IThemeContext;
+    $permissions: { xApi: typeof XApiPermissions; platform: typeof PlatformPermissions };
+    $can: (...permissions: string[]) => boolean;
+    $router: import("vue-router").Router;
+    $route: import("vue-router").RouteLocationNormalizedLoaded;
+    $canRenderExtensionPoint: ReturnType<typeof useExtensionRegistry>["canRender"];
+  }
+}
