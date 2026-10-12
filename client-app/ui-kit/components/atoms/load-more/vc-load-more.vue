@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, inject, onMounted, ref, watch } from "vue";
-import { vcScrollbarKey } from "../scrollbar/vc-scrollbar-context";
+import { isCollapsedBox, vcScrollbarKey } from "../scrollbar/vc-scrollbar-context";
 
 interface IEmits {
   (event: "loadMore"): void;
@@ -91,7 +91,12 @@ function reconsider(): void {
   }
 
   // A collapsed region (a closed dropdown) keeps the edges of its last measurement; it asks for nothing.
-  if (!wantsMore.value || content.size === askedAt.value?.size || !scrollbar?.el.value?.clientHeight) {
+  if (
+    !wantsMore.value ||
+    content.size === askedAt.value?.size ||
+    !scrollbar?.el.value ||
+    isCollapsedBox(scrollbar.el.value)
+  ) {
     return;
   }
 

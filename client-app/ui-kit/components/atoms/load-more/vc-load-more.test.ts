@@ -278,7 +278,7 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  it("asks for nothing while its region is collapsed, as in a closed dropdown", async () => {
+  it("asks for nothing while its region is collapsed, as in a closed dropdown, and asks once it reopens", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 3 });
 
     describeFittingContent(region);
@@ -289,11 +289,16 @@ describe("VcLoadMore", () => {
     state.hasNextPage = false;
     await nextTick();
     describeScrollBox(region, { clientHeight: 0, scrollHeight: 0, scrollTop: 0, clientWidth: 0, scrollWidth: 0 });
-    state.rows = 2;
     state.hasNextPage = true;
     await afterContentSettles();
 
     expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    describeFittingContent(region);
+    region.dispatchEvent(new Event("scroll"));
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
   it("asks for nothing more while the page it asked for is still on its way", async () => {

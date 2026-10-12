@@ -24,13 +24,16 @@
 import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
 import { computed, nextTick, onMounted, provide, ref, useTemplateRef, watch } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
-import { vcScrollbarKey } from "./vc-scrollbar-context";
+import { isCollapsedBox, vcScrollbarKey } from "./vc-scrollbar-context";
 
-// reach-* announce an arrival at an edge, after a scroll, mount, resize or content change; enabled axes only.
 interface IEmits {
+  /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
   (event: "reachTop"): void;
+  /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
   (event: "reachBottom"): void;
+  /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
   (event: "reachLeft"): void;
+  /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
   (event: "reachRight"): void;
   (event: "scroll", payload: VcScrollbarPayloadType): void;
 }
@@ -223,8 +226,7 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
     isAtRight: scrollLeft + clientWidth >= scrollWidth - threshold,
   };
 
-  // A collapsed box (a closed popover's display:none content) sits at every edge; ignore it.
-  if (!clientHeight || !clientWidth) {
+  if (isCollapsedBox(target)) {
     return measured;
   }
 
