@@ -101,6 +101,8 @@ const STATES = [
 ];
 
 export const Paging: StoryType = {
+  // The list drives these; the Controls table keeps their descriptions only.
+  argTypes: { loading: { control: false }, hasNextPage: { control: false }, itemCount: { control: false } },
   render: (args) => ({
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(15, 15) }),
