@@ -729,7 +729,10 @@ if (import.meta.env.DEV) {
     console.warn("VcSelect: `has-next-page` needs `loading` bound, or a page still loading is asked for again.");
   }
 
-  if (!props.selectAll && (props.total !== undefined || vnodeProps.onSelectAll)) {
+  if (
+    !("select-all" in vnodeProps || "selectAll" in vnodeProps) &&
+    (props.total !== undefined || vnodeProps.onSelectAll)
+  ) {
     // eslint-disable-next-line no-console
     console.warn("VcSelect: `total` and `@select-all` belong to the Select all row; add `select-all`.");
   }
@@ -958,7 +961,7 @@ function onTab(event: KeyboardEvent) {
     }
 
     // The divider continues onto VcLoadMore below.
-    &:not(:last-child) {
+    &:where(:not(:last-child)) {
       @apply border-b border-neutral-100;
     }
   }

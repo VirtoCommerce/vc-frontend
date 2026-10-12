@@ -49,7 +49,9 @@ describe("useSelect with an empty single model", () => {
     expect(isActiveItem(ITEMS[1])).toBe(true);
     expect(isActiveItem(ITEMS[0])).toBe(false);
   });
+});
 
+describe("useSelect with a null-valued option", () => {
   it("selects an option whose value is null for a null model", () => {
     const items = [
       { id: null, name: "Any" },

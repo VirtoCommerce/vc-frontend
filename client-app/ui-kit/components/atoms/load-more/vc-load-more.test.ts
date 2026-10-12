@@ -440,6 +440,7 @@ describe("VcLoadMore", () => {
 
   it.each([
     ["without loading", { hasNextPage: true }, true],
+    ["in kebab case without loading", { "has-next-page": true }, true],
     ["with loading", { hasNextPage: true, loading: false }, false],
   ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});

@@ -75,11 +75,11 @@ function readContent(): ContentType {
  */
 const askedAt = ref<ContentType | null>(null);
 
-/** One request per change of what the list holds. */
+/** Asks once per list content; leaving the end or running out re-opens the question. */
 function reconsider(): void {
   const content = readContent();
 
-  // Shrunk or re-prefixed: rebuilt. Not while loading: a row swapped for the spinner is no rebuild.
+  // Shrunk, re-prefixed or left: ask afresh. Not while loading: a row swapped for the spinner is no rebuild.
   if (
     askedAt.value &&
     !props.loading &&

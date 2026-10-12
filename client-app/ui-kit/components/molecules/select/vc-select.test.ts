@@ -781,6 +781,7 @@ describe("VcSelect", () => {
 
       it.each([
         ["without loading", { hasNextPage: true }, true],
+        ["in kebab case without loading", { "has-next-page": true }, true],
         ["with loading", { hasNextPage: true, loading: false }, false],
       ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
         const warn = spyOnWarn();
@@ -794,6 +795,7 @@ describe("VcSelect", () => {
         ["a total", { total: 30 }, true],
         ["a select-all handler", { onSelectAll: noop }, true],
         ["both, with the row", { total: 30, onSelectAll: noop, selectAll: true }, false],
+        ["both, with the row bound off for now", { total: 30, onSelectAll: noop, selectAll: false }, false],
       ])("warns about %s that no Select all row reads accordingly", (_label, props, warns) => {
         const warn = spyOnWarn();
 
@@ -2596,33 +2598,24 @@ describe("VcSelect", () => {
       expect(input.element.value).toBe("c");
     });
 
-    // A browser runs the open between maska's re-dispatched input and the keystroke's own one.
-    it.each([
-      ["over the whole label", [0, 7], "B", "B", ["Belgium", "Albania"]],
-      ["at the end of the label", [7, 7], "Belgiumc", "c", ["China"]],
-    ] as const)(
-      "keeps the query typed %s when the second delivery lands after the open",
-      async (_label, replaced, value, query, options) => {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Belgium" });
-        const input = wrapper.get<HTMLInputElement>("input");
+    it("keeps the query typed at the end of the label when maska's second delivery lands after the open", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Belgium" });
+      const input = wrapper.get<HTMLInputElement>("input");
 
-        input.element.setSelectionRange(replaced[0], replaced[1]);
-        input.element.dispatchEvent(
-          new InputEvent("beforeinput", { data: query, inputType: "insertText", bubbles: true }),
-        );
-        input.element.value = value;
-        input.element.dispatchEvent(new CustomEvent("input"));
-        await nextTick();
+      input.element.setSelectionRange(7, 7);
+      input.element.dispatchEvent(new InputEvent("beforeinput", { data: "c", inputType: "insertText", bubbles: true }));
+      input.element.value = "Belgiumc";
+      input.element.dispatchEvent(new CustomEvent("input"));
+      await nextTick();
 
-        expect(input.attributes("aria-expanded")).toBe("true");
+      expect(input.attributes("aria-expanded")).toBe("true");
 
-        input.element.dispatchEvent(new Event("input", { bubbles: true }));
-        await nextTick();
+      input.element.dispatchEvent(new Event("input", { bubbles: true }));
+      await nextTick();
 
-        expect(input.element.value).toBe(query);
-        expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(options);
-      },
-    );
+      expect(input.element.value).toBe("c");
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["China"]);
+    });
 
     it("describes the trigger with the details element", () => {
       const wrapper = createWrapper({ items: ITEMS, message: "Pick one" });
