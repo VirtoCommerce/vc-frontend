@@ -3025,8 +3025,8 @@ declare const __VLS_export$i: <T, V = T, M extends boolean = false>(__VLS_props:
         /** Adds a Select all row above the options. Multiple mode only. */
         selectAll?: boolean;
         /**
-         * Size of the whole set for the counter. Defaults to the number of options currently
-         * rendered; pass it explicitly when the list is paged and `items` holds only one page.
+         * With `select-all`: the size of the whole set for the row's counter. Defaults to the number of
+         * options currently rendered; pass it explicitly when the list is paged and `items` holds only one page.
          * With `server-filter`, it is the number of matches for the current query.
          */
         total?: number;
