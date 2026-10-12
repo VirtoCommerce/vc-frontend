@@ -651,8 +651,10 @@ const contractPropertyType = (member) => {
   const [type] = ts.transform(member.type, [toContractNames]).transformed;
   return typePrinter
     .printNode(ts.EmitHint.Unspecified, type, hostGlobalsSource)
-    .replace(/\s*\n\s*/g, " ")
-    .replace(/; }/g, " }");
+    .split("\n")
+    .map((line) => line.trim())
+    .join(" ")
+    .replaceAll("; }", " }");
 };
 code +=
   "\n" +
