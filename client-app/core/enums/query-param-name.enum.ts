@@ -5,4 +5,5 @@ export enum QueryParamName {
   ItemsPerPage = "size",
   SearchPhrase = "q",
   PreserveUserQuery = "preserveUserQuery",
+  Barcode = "barcode",
 }

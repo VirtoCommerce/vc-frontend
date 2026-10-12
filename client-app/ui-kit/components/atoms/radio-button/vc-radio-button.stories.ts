@@ -442,3 +442,34 @@ export const CustomColor: StoryType = {
     },
   },
 };
+
+export const CustomHitArea: StoryType = {
+  render: (args) => ({
+    components: { VcRadioButton },
+    setup: () => ({ args }),
+    template: '<VcRadioButton v-bind="args" class="[--vc-radio-button-hit-area-size:2.75rem]" />',
+  }),
+  args: {
+    value: "value",
+    size: "sm",
+    ariaLabel: "Select row",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The pointer target around the circle is at least `--vc-radio-button-hit-area-size` (default `1.5rem`) square, invisible and taking no layout. Not applied inside a clickable or linked `VcMenuItem`, where the item is the target.",
+      },
+      source: {
+        code: `
+          <VcRadioButton
+            value="value"
+            size="sm"
+            aria-label="Select row"
+            class="[--vc-radio-button-hit-area-size:2.75rem]"
+          />
+        `,
+      },
+    },
+  },
+};

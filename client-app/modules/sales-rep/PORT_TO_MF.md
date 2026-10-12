@@ -6,7 +6,7 @@ exactly what to add/modify in the module's **code** to turn it back into an MF r
 
 It is intentionally **code-only** — it does NOT cover deployment, hosting, remote
 discovery, CSP, or the federation build/runtime plumbing (those live in
-`client-app/modules/federated/` and the plugin repo's build config).
+`client-app/core/federation/` and the plugin repo's build config).
 
 The migration was a facade→host **import remap** plus entry-point rewiring. Re-MF-ifying is
 the same remap in reverse.
@@ -23,6 +23,7 @@ Grep `from "@/` over the module rather than trusting the file lists below.
 | `registerCacheTypePolicies` (`index.ts`) | `@vc-frontend/core` |
 | `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` (`useSalesRepHubQuery.ts`, `useSalesRepCommunication.ts`) | `@vc-frontend/core` — added to the facade for this port. Every hub read runs through `useSalesRepHubQuery`, so this one import carries the whole module |
 | `toStartDateFilterValue` / `toEndDateFilterValue` (`pages/customer-orders.vue`, VCST-5733) | `@vc-frontend/core` — added for this port |
+| `formatDateLocale` / `tryParseDate` from `@/ui-kit/utilities` (`pages/customer-orders.vue`) and `BREAKPOINTS` from `@/ui-kit/constants` (`components/sales-rep-orders-filters.vue` and its spec), VCST-6001 | **Not facade exports yet** — add them before porting. The chips must format dates with the date fields' own formatter, and the filter picks its range layout on our breakpoint scale; copying either into the plugin would let it drift from the host |
 | Direct ui-kit subpath imports — `VcWidget`, `VcButton`, `VcInput`, `VcCheckbox`, `VcWidgetSkeleton`, and the `@/ui-kit/components` barrel | `@vc-frontend/core`, all by name |
 | `ROUTES` (`index.ts`, `pages/customer-profile.vue`) — the `Company` / `Account` parent route names | `@vc-frontend/core` — added for this port. `router.addRoute(parent, …)` throws on an unknown parent, so these names are contract; hard-coding the strings puts a host rename outside every gate |
 | Real ui-kit components in specs — `VcButton`, `VcWidget`, `VcWidgetSkeleton`, `VcCheckbox`, `VcInput` mounted through `@/ui-kit/...` paths in `layout-surface.test.ts`, `layout-block-widget.test.ts`, `layout-widget-settings.test.ts`, `layout-drag-and-drop.test.ts` | **Accepted fidelity loss.** The facade's root export is types-only, so a plugin's specs cannot mount the real components; they resolve to the facade mock (§3) and become stubs. `layout-surface.test.ts` says why it matters — the edit toggle is a real `VcButton` and a stub would not carry its click. Keep those assertions on the host side, or drive the toggle through the component's own emit |
@@ -69,7 +70,7 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
   plugin imports the composables from that package too (shared singleton, §1).
 - Re-add `src/mocks/vc-frontend-core.ts` and the vitest alias that makes the (types-only)
   `@vc-frontend/core` specifier resolvable in tests — the mechanics are generic and now live in
-  [`HOWTO.md`](../federated/HOWTO.md) ("Making `@vc-frontend/core` resolvable in specs").
+  [`HOWTO.md`](../../core/federation/HOWTO.md) ("Making `@vc-frontend/core` resolvable in specs").
 - **The remap is not a rename inside `vi.mock`.** 17 specs mock host paths by string —
   `vi.mock("@/core/globals", …)`, `vi.mock("@/core/utilities", …)`, `vi.mock("@/shared/notification", …)`,
   `vi.mock("@/core/composables/useModuleSettings", …)` — and a `from "@/…"` sweep does not touch them.
@@ -79,7 +80,7 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
   `vi.doMock` / `vi.doUnmock` inside a test body need the same rename (`utils.test.ts`).
 - The MF-plumbing tests that were **not** ported (`index.test.ts`, `create-plugin.test.ts`,
   `federation-shared.test.ts`, `version-gate.test.ts`, `contract-versioning.test.ts`) live in
-  the plugin repo / `client-app/modules/federated/` — restore from there, not from this module.
+  the plugin repo / `client-app/core/federation/` — restore from there, not from this module.
 
 ## 4. Standalone scaffolding (from the plugin repo, not the host)
 
@@ -106,9 +107,10 @@ copy the list. The facade's build fails if that list ever drifts from what its f
 
 **The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
 (+`@types/sortablejs`), which `components/layout-region.vue` imports directly, nor `@vueuse/core`
-for `useBreakpoints` in `pages/customer-profile.vue`. Add both, and decide whether `sortablejs` is
-bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is _not_ needed —
-the layout used `useSortable` at one point and no longer does.
+for `useBreakpoints` in `pages/customer-profile.vue` and `components/sales-rep-orders-filters.vue`.
+Add both, and decide whether `sortablejs` is bundled into the remote or listed as federation
+`shared`. `@vueuse/integrations` is _not_ needed — the layout used `useSortable` at one point and no
+longer does.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
 

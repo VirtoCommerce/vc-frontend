@@ -1,0 +1,94 @@
+name: Verify workflow repository guards
+
+# Every job must say which repository it runs in (VCST-5970). This repo is also synced
+# into a private theme mirror, where upstream CI, releases and deploys must not run and
+# only the mirror's own build/sync jobs may. A job's `if:` has to start with one of:
+#
+#   github.repository_id == '296335982'   upstream-only (VirtoCommerce/vc-frontend;
+#                                         the id, unlike the name, survives renames)
+#   (github.repository_id == '296335982' || vars.VC_<KIND> == 'true')
+#                                         upstream, or a repository that opts in by setting
+#                                         the variable. KIND is CI, E2E or RELEASE; the mirror
+#                                         and forks set none, so the job stays off there.
+#   vars.THEME_MIRROR == 'true'            mirror-only
+#
+# and then either end, or continue with `&& <rest>` where <rest> has no top-level `||`
+# (wrap it in parentheses otherwise): `guard && a || b` would still run `b` in the wrong
+# repository, and `guard != true` would invert the guard.
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+jobs:
+  guards:
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true.
+    if: (github.repository_id == '296335982' || vars.VC_CI == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check every job has a repository guard
+        run: |
+          status=0
+          for file in .github/workflows/*.yml .github/workflows/*.yaml; do
+            [ -e "$file" ] || continue
+            # Captured first: in `done < <(yq ...)` a yq failure would pass the file silently.
+            if ! rows=$(yq -o=json -I=0 '.jobs | to_entries | .[] | {"job": .key, "if": (.value.if // "")}' "$file"); then
+              echo "::error file=$file::yq could not read this workflow."
+              status=1
+              continue
+            fi
+            [ -n "$rows" ] || continue
+            while IFS= read -r row; do
+              job=$(jq -r .job <<< "$row")
+              cond=$(jq -r .if <<< "$row" | tr '\n' ' ' | sed -E 's/^[[:space:]]*(\$\{\{)?[[:space:]]*//; s/[[:space:]]*(\}\})?[[:space:]]*$//; s/[[:space:]]+/ /g')
+              rest=$(printf '%s' "$cond" | sed -E "s/^(github\.repository_id == '296335982'|\(github\.repository_id == '296335982' \|\| vars\.VC_(CI|E2E|RELEASE) == 'true'\)|vars\.THEME_MIRROR == 'true')//")
+              if [ "$rest" = "$cond" ]; then
+                echo "::error file=$file::Job '$job' has no repository guard. Start its if: with github.repository_id == '296335982' (VirtoCommerce/vc-frontend), with (github.repository_id == '296335982' || vars.VC_CI == 'true') to let another repository opt in (VC_CI, VC_E2E or VC_RELEASE), or with vars.THEME_MIRROR == 'true' for mirror-only jobs."
+                status=1
+                continue
+              fi
+              if [ -n "$rest" ] && ! [[ "$rest" =~ ^\ *\&\& ]]; then
+                echo "::error file=$file::Job '$job': the repository guard must be followed by && or nothing (got: ...${rest})."
+                status=1
+                continue
+              fi
+              rest=$(printf '%s' "$rest" | sed -E 's/^ *&& *//')
+              # Outside '...' string literals, reject: a `||` outside parentheses (exit 1),
+              # and any dollar-brace-brace or }} left after the outer pair was stripped
+              # (exit 2) - GitHub would join such an if: into one string, and a non-empty
+              # string is always true. The string goes in through ENVIRON: `awk -v` would
+              # decode escapes like \x27.
+              # Never write dollar-brace-brace as one piece anywhere in this file, comments
+              # included: GitHub parses it as an expression and rejects the whole workflow.
+              REST="$rest" awk 'BEGIN {
+                  s = ENVIRON["REST"]; d = 0; q = 0
+                  for (i = 1; i <= length(s); i++) {
+                    c = substr(s, i, 1)
+                    if (c == "\047") q = !q
+                    else if (!q && (substr(s, i, 3) == ("$" "{{") || substr(s, i, 2) == "}}")) exit 2
+                    else if (!q && c == "(") d++
+                    else if (!q && c == ")") d--
+                    else if (!q && d == 0 && substr(s, i, 2) == "||") exit 1
+                  }
+                  if (q) exit 3
+                }' && code=0 || code=$?
+              if [ "$code" -eq 3 ]; then
+                echo "::error file=$file::Job '$job': unbalanced ' quotes in the condition after the repository guard."
+                status=1
+              elif [ "$code" -eq 2 ]; then
+                open='$''{{'
+                echo "::error file=$file::Job '$job': use a single ${open} ... }} around the whole if:, or none. Anything outside it makes the condition always true."
+                status=1
+              elif [ "$code" -ne 0 ]; then
+                echo "::error file=$file::Job '$job': the condition after the repository guard has a top-level ||. Wrap it in parentheses: guard && ( ... )."
+                status=1
+              fi
+            done <<< "$rows"
+          done
+          exit $status

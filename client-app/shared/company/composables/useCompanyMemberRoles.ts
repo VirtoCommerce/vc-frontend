@@ -2,6 +2,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { ALL_ROLES, ORGANIZATION_EMPLOYEE, ORGANIZATION_MAINTAINER, PURCHASING_AGENT } from "@/core/constants";
+import { parseJsonStringArray } from "@/core/utilities";
 import type { ExtendedRoleType } from "@/core/types/role";
 
 const CUSTOMER_MODULE_ID = "VirtoCommerce.Customer";
@@ -53,20 +54,10 @@ export function useCompanyMemberRoles() {
   const { t, te } = useI18n();
   const { getSettingValue } = useModuleSettings(CUSTOMER_MODULE_ID);
   const roles = computed<ExtendedRoleType[]>(() => {
-    const rawValue = getSettingValue(COMPANY_MEMBER_ROLES_SETTING);
+    const roleIds = parseJsonStringArray(getSettingValue(COMPANY_MEMBER_ROLES_SETTING));
 
-    if (typeof rawValue === "string" && rawValue.length) {
-      try {
-        const roleIds = JSON.parse(rawValue) as unknown;
-        if (Array.isArray(roleIds) && roleIds.every((id) => typeof id === "string")) {
-          return dedupeById(roleIds.map((id) => toRole(id, t, te)));
-        }
-      } catch {
-        // fall through to the default list below
-      }
-    }
-
-    return DEFAULT_ROLES;
+    // An unreadable whitelist falls back to the defaults; an explicitly empty one allows no role.
+    return roleIds ? dedupeById(roleIds.map((id) => toRole(id, t, te))) : DEFAULT_ROLES;
   });
 
   return { roles };

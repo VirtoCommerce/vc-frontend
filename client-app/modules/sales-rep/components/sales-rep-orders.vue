@@ -71,7 +71,7 @@
                     {{ item.number }}
                   </VcLink>
 
-                  <span>{{ item.total }}</span>
+                  <span class="sales-rep-orders__mobile-total">{{ item.total }}</span>
                 </div>
 
                 <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
@@ -111,11 +111,18 @@
               v-slot="{ item }"
               :title="t('sales_rep.orders.date')"
               :sortable="isColumnSortable('date')"
+              class="sales-rep-orders__value"
             >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
-            <VcTableColumn v-if="!isCrossCustomer" id="items" v-slot="{ item }" :title="t('sales_rep.orders.items')">
+            <VcTableColumn
+              v-if="!isCrossCustomer"
+              id="items"
+              v-slot="{ item }"
+              :title="t('sales_rep.orders.items')"
+              class="sales-rep-orders__value"
+            >
               {{ item.itemsCount }}
             </VcTableColumn>
 
@@ -129,7 +136,7 @@
               :title="t('sales_rep.orders.total')"
               :sortable="isColumnSortable('total')"
               align="right"
-              class="font-bold"
+              class="sales-rep-orders__value font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -299,12 +306,21 @@ const failed = computed(() => Boolean(error.value));
     @apply text-[--link-color] hover:text-[--link-hover-color];
   }
 
+  // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
+  &__value {
+    @apply whitespace-nowrap;
+  }
+
   &__mobile-item {
     @apply flex flex-col gap-1 border-b px-5 py-4;
   }
 
   &__mobile-row {
-    @apply flex items-center justify-between font-bold;
+    @apply flex items-center justify-between gap-2 font-bold;
+  }
+
+  &__mobile-total {
+    @apply shrink-0 whitespace-nowrap;
   }
 
   &__mobile-customer {

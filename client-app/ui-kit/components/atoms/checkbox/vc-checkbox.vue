@@ -189,6 +189,7 @@ function onClick(event: MouseEvent) {
 
 <style lang="scss">
 @use "@/ui-kit/styles/focus-ring" as *;
+@use "@/ui-kit/styles/hit-area" as *;
 
 .vc-checkbox {
   $disabled: "";
@@ -262,6 +263,16 @@ function onClick(event: MouseEvent) {
     // Focus styles via sibling selector (when hidden input is focused)
     input:focus-visible + & {
       @include focus-ring;
+    }
+
+    // Only where the control is its own target: inside an interactive parent the parent is, and an
+    // overhang there would take clicks from the neighbouring item.
+    label > & {
+      position: relative;
+
+      &::before {
+        @include hit-area(var(--vc-checkbox-hit-area-size, 1.5rem));
+      }
     }
 
     #{$checked} & {

@@ -5,6 +5,7 @@
       "apply": "Применить",
       "cancel": "Отмена",
       "clear": "Очистить",
+      "clear_field": "Очистить: {field}",
       "close": "Закрыть",
       "copy": "Копировать",
       "deny": "Отказать",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "Закрыть уведомление",
       "open_calendar": "Открыть календарь",
+      "open_calendar_for": "Открыть календарь: {field}",
       "calendar": "Календарь",
       "product_quantity": "Количество товара",
       "decrease_quantity": "Уменьшить количество",

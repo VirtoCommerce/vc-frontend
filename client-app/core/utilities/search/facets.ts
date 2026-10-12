@@ -90,6 +90,16 @@ export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): strin
 }
 
 /**
+ * `barcode` is a virtual filter name: the API expands it into the product index fields configured
+ * for the store (`Catalog.Search.BarcodeSearchFields`).
+ * A scanned payload is arbitrary text, so it is escaped to keep quotes and backslashes inside the term.
+ */
+export function getFilterExpressionForBarcode(value?: MaybeRef<string>): string {
+  const barcode = unref(value);
+  return barcode ? `barcode:"${escapeFilterSyntaxValue(barcode)}"` : "";
+}
+
+/**
  * Generates a filter expression from selected facet values
  * @param facets - A reactive array of facet items
  * @returns A string representing the combined filter expression from all selected facets

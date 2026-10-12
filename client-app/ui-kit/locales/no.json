@@ -5,6 +5,7 @@
       "apply": "Bruk",
       "cancel": "Avbryt",
       "clear": "Tøm",
+      "clear_field": "Tøm: {field}",
       "close": "Lukk",
       "copy": "Kopier",
       "deny": "Nekt",
@@ -22,6 +23,7 @@
     "accessibility": {
       "close_alert": "Lukk varsel",
       "open_calendar": "Åpne kalender",
+      "open_calendar_for": "Åpne kalender: {field}",
       "calendar": "Kalender",
       "product_quantity": "Produktantall",
       "decrease_quantity": "Reduser antall",

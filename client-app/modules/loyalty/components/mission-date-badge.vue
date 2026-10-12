@@ -1,6 +1,6 @@
 <template>
   <span class="mission-date-badge">
-    <VcBadge :color="severity" />
+    <VcBadge class="mission-date-badge__dot" :color="severity" />
 
     {{ label }}
   </span>

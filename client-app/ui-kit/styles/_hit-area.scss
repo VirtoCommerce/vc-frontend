@@ -1,0 +1,12 @@
+// Invisible pointer target around a control smaller than `$size`, centred on it and taking no
+// layout. Mixins only — a rule here would be emitted once per consumer. Include it in the host's
+// `::before`: the area belongs to the host, so a click on it lands wherever a click on the host
+// would. The host must be `position: relative` — unpositioned, the area would stretch over the
+// nearest positioned ancestor.
+
+@mixin hit-area($size) {
+  content: "";
+  position: absolute;
+  // Symmetric, so it needs no inline-direction variant; `min` keeps a host larger than `$size` as is.
+  inset: min(0px, calc(50% - #{$size} / 2));
+}

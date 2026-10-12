@@ -2,6 +2,13 @@ import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
+import {
+  BARCODE_SCANNER_ENABLED_SETTING,
+  BARCODE_SCANNER_SELECTOR,
+  SEARCH_PHRASE_SELECTOR,
+  routeQuery,
+  searchBarStubs,
+} from "./search-bar-test-utils";
 import SearchBar from "./search-bar.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
@@ -26,14 +33,26 @@ vi.mock("@/core/globals", () => ({
   globals: { catalogId: "catalog-1", currencyCode: "USD" },
 }));
 
-vi.mock("@/core/composables", () => ({
-  useRouteQueryParam: () => ref(""),
-  useThemeContext: () => ({ themeContext: ref({ settings: {} }) }),
-}));
+vi.mock("@/core/composables", async () => {
+  const { createRouteQueryParamMock } = await import("./search-bar-test-utils");
+  return {
+    ...createRouteQueryParamMock(),
+    useAnalytics: () => ({ analytics: vi.fn() }),
+    useThemeContext: () => ({ themeContext: ref({ settings: {} }) }),
+  };
+});
 
-vi.mock("@/core/composables/useModuleSettings", () => ({
-  useModuleSettings: () => ({ getSettingValue: () => undefined }),
-}));
+const { settingValues } = vi.hoisted(() => ({ settingValues: new Map<string, unknown>() }));
+
+vi.mock("@/core/composables/useModuleSettings", async () => {
+  const { createModuleSettingsMock } = await import("./search-bar-test-utils");
+  return createModuleSettingsMock(settingValues);
+});
+
+vi.mock("vue-router", async () => {
+  const { createRouterMock } = await import("./search-bar-test-utils");
+  return createRouterMock();
+});
 
 vi.mock("@/shared/layout/composables/useSearchBar", () => ({
   useSearchBar: () => ({
@@ -61,29 +80,9 @@ vi.mock("../search-dropdown.vue", () => ({
     },
   }),
 }));
-vi.mock("./barcode-scanner.vue", () => ({ default: { name: "BarcodeScanner", render: () => null } }));
-
-/** Renders the `prepend` slot (where the scope indicators live) and the `placeholder` attr passed to VcInput. */
-const VcInputStub = defineComponent({
-  name: "VcInput",
-  inheritAttrs: false,
-
-  setup(_props, { slots, attrs }) {
-    return () =>
-      h("div", { class: "input" }, [
-        h("span", { "data-testid": "placeholder" }, attrs.placeholder as string),
-        slots.prepend?.(),
-      ]);
-  },
-});
-
-const VcButtonStub = defineComponent({
-  name: "VcButton",
-  inheritAttrs: false,
-
-  setup(_props, { slots, attrs }) {
-    return () => h("button", { ...attrs }, slots.default?.());
-  },
+vi.mock("./barcode-scanner.vue", async () => {
+  const { createBarcodeScannerMock } = await import("./search-bar-test-utils");
+  return createBarcodeScannerMock();
 });
 
 const LOADING_INDICATOR_SELECTOR = '[aria-label="shared.layout.search_bar.scope_loading_label"]';
@@ -104,10 +103,7 @@ let mountedWrapper: VueWrapper | undefined;
 function createComponent() {
   mountedWrapper = mount(SearchBar, {
     global: {
-      stubs: {
-        VcInput: VcInputStub,
-        VcButton: VcButtonStub,
-      },
+      stubs: searchBarStubs,
       mocks: { $t: mockTranslate },
     },
   });
@@ -116,6 +112,8 @@ function createComponent() {
 }
 
 beforeEach(() => {
+  settingValues.clear();
+  routeQuery.value = {};
   searchScopeData.value = { queryScope: "", searchScope: [] };
   preparingScope.value = false;
 });
@@ -169,6 +167,68 @@ describe("SearchBar scope indicators", () => {
     const chips = wrapper.findAll("[data-search-scope]");
     expect(chips).toHaveLength(1);
     expect(chips[0].text()).toBe("Parent category");
+  });
+});
+
+describe("SearchBar barcode scanner", () => {
+  // The store setting is public but optional: a backend that does not know it yet must keep the
+  // scanner, so only an explicit `false` hides the button.
+  it("shows the scanner when the store setting is missing", () => {
+    const wrapper = createComponent();
+
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(1);
+  });
+
+  it("hides the scanner when the store disabled it", () => {
+    settingValues.set(BARCODE_SCANNER_ENABLED_SETTING, false);
+
+    const wrapper = createComponent();
+
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(0);
+  });
+});
+
+// A barcode lookup ignores `q` (the results page does not send it), so the box must not show a leftover one:
+// it would hide the scanner, and Enter would search the ignored keyword instead of the code.
+describe("SearchBar phrase from the URL", () => {
+  it("leaves the box empty and shows the scanner for a barcode lookup with a leftover q", async () => {
+    routeQuery.value = { barcode: "150701", q: "hat" };
+
+    const wrapper = createComponent();
+    await nextTick();
+
+    expect(wrapper.get(SEARCH_PHRASE_SELECTOR).text()).toBe("");
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(1);
+  });
+
+  it("fills the box from q when no barcode is set", async () => {
+    routeQuery.value = { q: "hat" };
+
+    const wrapper = createComponent();
+    await nextTick();
+
+    expect(wrapper.get(SEARCH_PHRASE_SELECTOR).text()).toBe("hat");
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(0);
+  });
+
+  it("leaves the box empty when a navigation opens a barcode lookup with a leftover q", async () => {
+    const wrapper = createComponent();
+
+    routeQuery.value = { barcode: "150701", q: "hat" };
+    await nextTick();
+
+    expect(wrapper.get(SEARCH_PHRASE_SELECTOR).text()).toBe("");
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(1);
+  });
+
+  it("fills the box from the q a navigation brings when no barcode is set", async () => {
+    const wrapper = createComponent();
+
+    routeQuery.value = { q: "hat" };
+    await nextTick();
+
+    expect(wrapper.get(SEARCH_PHRASE_SELECTOR).text()).toBe("hat");
+    expect(wrapper.findAll(BARCODE_SCANNER_SELECTOR)).toHaveLength(0);
   });
 });
 

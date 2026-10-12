@@ -2,6 +2,7 @@ fragment filter on SearchProductFilterResult {
   name
   label
   filterType
+  isGenerated
   rangeValues {
     includeLowerBound
     includeUpperBound

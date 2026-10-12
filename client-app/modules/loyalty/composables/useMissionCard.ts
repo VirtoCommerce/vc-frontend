@@ -40,8 +40,11 @@ export type MissionCardViewType = {
 
 const CARD_I18N = "pages.account.missions.card";
 
-/** Below this many days left the date indicator turns red (unless the mission is completed). */
-const DATE_DANGER_DAYS = 10;
+/** At or below this many days left the date indicator turns red (unless the mission is completed). */
+const DATE_DANGER_DAYS = 15;
+
+/** At or below this many days left the date indicator turns orange. */
+const DATE_WARNING_DAYS = 30;
 
 type MissionPresenterType = (mission: MissionDataType) => {
   typeLabelKey: string;
@@ -108,11 +111,11 @@ function resolveDateSeverity(mission: MissionDataType, daysLeft: number | null):
     return "success";
   }
 
-  if (daysLeft !== null && daysLeft < DATE_DANGER_DAYS) {
-    return "danger";
+  if (daysLeft === null || daysLeft > DATE_WARNING_DAYS) {
+    return "success";
   }
 
-  return "warning";
+  return daysLeft <= DATE_DANGER_DAYS ? "danger" : "warning";
 }
 
 export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {

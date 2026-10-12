@@ -49,6 +49,7 @@
           class="quote-line-items__quantity"
           :model-value="item.selectedTierPrice?.quantity"
           :name="item.id"
+          :validate-on-mount="$cfg.product_quantity_control === 'stepper'"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
 
