@@ -240,7 +240,7 @@ onMounted(() => {
   }
 
   &__placeholder {
-    @apply font-bold text-[--header-top-link-color];
+    @apply truncate font-bold text-[--header-top-link-color];
 
     &:hover {
       @apply text-[--header-top-link-hover-color];

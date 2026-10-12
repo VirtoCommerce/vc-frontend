@@ -22,6 +22,11 @@ const meta: Meta<typeof VcAddToCart> = {
     disabled: { control: "boolean" },
     readonly: { control: "boolean" },
     hideButton: { control: "boolean" },
+    aria: {
+      control: false,
+      description: "Extra ARIA attributes forwarded to the quantity input. Object, not a control.",
+      table: { type: { summary: "Record<string, string | number | null>" } },
+    },
   },
   args: {
     readonly: false,

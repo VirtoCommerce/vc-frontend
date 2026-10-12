@@ -12,44 +12,44 @@
       <VcWidget :title="$t('return_details.summary_section')" size="lg">
         <div class="grid grid-cols-2 gap-y-4 lg:grid-cols-4">
           <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.status") }}</span>
+            <span class="text-sm text-neutral-600">{{ $t("returns.list.columns.status") }}</span>
 
             <span>{{ statusLabel(orderReturn.status, orderReturn.statusDisplayValue) }}</span>
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">{{ $t("returns.list.columns.date") }}</span>
+            <span class="text-sm text-neutral-600">{{ $t("returns.list.columns.date") }}</span>
 
             <span>{{ $d(new Date(orderReturn.createdDate)) }}</span>
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">{{ $t("return_details.order_number") }}</span>
+            <span class="text-sm text-neutral-600">{{ $t("return_details.order_number") }}</span>
 
             <span>{{ orderReturn.orderNumber }}</span>
           </div>
 
           <div v-if="orderReturn.customerReference" class="flex flex-col">
-            <span class="text-sm text-neutral-400">{{ $t("return_details.customer_reference") }}</span>
+            <span class="text-sm text-neutral-600">{{ $t("return_details.customer_reference") }}</span>
 
             <span>{{ orderReturn.customerReference }}</span>
           </div>
         </div>
 
         <div v-if="orderReturn.customerComment" class="mt-5 flex flex-col">
-          <span class="text-sm text-neutral-400">{{ $t("return_details.customer_comment") }}</span>
+          <span class="text-sm text-neutral-600">{{ $t("return_details.customer_comment") }}</span>
 
           <span>{{ orderReturn.customerComment }}</span>
         </div>
 
         <div v-if="orderReturn.cancelReason" class="mt-5 flex flex-col">
-          <span class="text-sm text-neutral-400">{{ $t("return_details.cancel_reason") }}</span>
+          <span class="text-sm text-neutral-600">{{ $t("return_details.cancel_reason") }}</span>
 
           <span>{{ orderReturn.cancelReason }}</span>
         </div>
 
         <div v-if="orderReturn.rejectReason" class="mt-5 flex flex-col">
-          <span class="text-sm text-neutral-400">{{ $t("return_details.reject_reason") }}</span>
+          <span class="text-sm text-neutral-600">{{ $t("return_details.reject_reason") }}</span>
 
           <span>{{ orderReturn.rejectReason }}</span>
         </div>
@@ -86,15 +86,15 @@
                 <ReturnItemSummary :item="item" @download="onDownload" />
 
                 <div class="return-details__card-row">
-                  <span class="text-sm text-neutral-400">{{ $t("return_details.columns.requested") }}</span>
+                  <span class="text-sm text-neutral-600">{{ $t("return_details.columns.requested") }}</span>
 
                   <span>{{ item.quantity }}</span>
                 </div>
 
                 <div class="return-details__card-row">
-                  <span class="text-sm text-neutral-400">{{ $t("return_details.columns.approved") }}</span>
+                  <span class="text-sm text-neutral-600">{{ $t("return_details.columns.approved") }}</span>
 
-                  <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
+                  <span v-if="!isDecided(item.itemState)" class="text-neutral-600">&mdash;</span>
 
                   <span v-else>{{ item.approvedQuantity }}</span>
                 </div>
@@ -115,7 +115,7 @@
             </VcTableColumn>
 
             <VcTableColumn id="approved" v-slot="{ item }" :title="$t('return_details.columns.approved')" align="right">
-              <span v-if="!isDecided(item.itemState)" class="text-neutral-400">&mdash;</span>
+              <span v-if="!isDecided(item.itemState)" class="text-neutral-600">&mdash;</span>
 
               <span v-else>{{ item.approvedQuantity }}</span>
             </VcTableColumn>

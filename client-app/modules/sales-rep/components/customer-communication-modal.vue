@@ -96,7 +96,7 @@ const { value: message } = useField<string>("message", toTypedSchema(string().tr
 
 const send = handleSubmit(async (data) => {
   const result = await sendCommunication({
-    organizationId: props.organizationId,
+    organizationIds: [props.organizationId],
     sendEmail: sendEmail.value,
     sendPush: sendPush.value,
     title: data.title.trim() || undefined,

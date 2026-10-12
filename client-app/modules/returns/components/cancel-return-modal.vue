@@ -65,7 +65,7 @@ async function onConfirm(): Promise<void> {
 <style lang="scss">
 .cancel-return-modal {
   &__text {
-    @apply mb-4 text-sm text-neutral-500;
+    @apply mb-4 text-sm text-neutral-600;
   }
 }
 </style>

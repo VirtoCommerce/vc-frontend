@@ -116,3 +116,24 @@ describe("VcQuantityStepper bounds", () => {
     });
   });
 });
+
+describe("VcQuantityStepper aria passthrough", () => {
+  it("forwards consumer ARIA attributes to the input", () => {
+    const input = createWrapper({
+      props: { modelValue: 1, aria: { "aria-describedby": "line-errors", "aria-invalid": "true" } },
+    }).get("input");
+
+    expect(input.attributes("aria-describedby")).toBe("line-errors");
+    expect(input.attributes("aria-invalid")).toBe("true");
+  });
+
+  it("keeps its own spinbutton semantics over the consumer's", () => {
+    const input = createWrapper({
+      props: { modelValue: 4, min: 2, aria: { role: "textbox", "aria-valuenow": 99, "aria-valuemin": 7 } },
+    }).get("input");
+
+    expect(input.attributes("role")).toBe("spinbutton");
+    expect(input.attributes("aria-valuenow")).toBe("4");
+    expect(input.attributes("aria-valuemin")).toBe("0");
+  });
+});

@@ -4,6 +4,11 @@ query SalesRepCustomerOptions($storeId: String, $first: Int, $after: String, $ke
     items {
       organizationId
       organizationName
+      iconUrl
+      address {
+        city
+        regionName
+      }
     }
   }
 }

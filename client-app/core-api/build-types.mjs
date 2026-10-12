@@ -12,14 +12,21 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative as relativePath, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { rollup } from "rollup";
 import dts from "rollup-plugin-dts";
 import { intersects, satisfies } from "semver";
 import ts from "typescript";
 import { bumpContractVersion } from "./bump-version.mjs";
-import { decideVersionAction, extractExportNames } from "./contract-versioning.mjs";
+import { gitIn } from "./git.mjs";
+import {
+  decideVersionAction,
+  extractExportNames,
+  packageJsonShape,
+  toLf,
+  versionedSourceFiles,
+} from "./contract-versioning.mjs";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
 const CHECK_MODE = process.argv.includes("--check");
@@ -405,6 +412,264 @@ if (inlinedDeclarations.length) {
   step(`inlined ${inlinedDeclarations.length} ambient declaration(s).`);
 }
 
+// 2a2 ── declare the globally registered components ───────────────────────────
+// `app.use(uiKit)` registers them globally, so a plugin template uses `<VcButton>` unimported —
+// and vue-tsc accepts an unknown component silently, leaving every prop unchecked. Generated from
+// the facade's ui-kit re-exports: rollup-plugin-dts cannot inline the host's own augmentations,
+// and those are hand-maintained and already missing `VcLink` and `VcTableColumn`.
+step("declaring the host's global components…");
+
+const FACADE_ENTRY = resolve(CORE_API_DIR, "index.ts");
+const UI_KIT_COMPONENTS_MODULE = "@/ui-kit/components";
+
+/** Public names the facade re-exports from the ui-kit barrel, any tier. */
+function uiKitComponentExports() {
+  const source = ts.createSourceFile(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"), ts.ScriptTarget.Latest, true);
+  const names = new Set();
+  for (const statement of source.statements) {
+    const specifier = ts.isExportDeclaration(statement) ? statement.moduleSpecifier : undefined;
+    if (!specifier || !ts.isStringLiteral(specifier) || !specifier.text.startsWith(UI_KIT_COMPONENTS_MODULE)) {
+      continue;
+    }
+    if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) {
+        names.add(element.name.text);
+      }
+    }
+  }
+  return names;
+}
+
+/** Public export name -> the local declaration it aliases, as rollup renamed it. */
+function localNamesByExport(source) {
+  const file = ts.createSourceFile("contract.d.ts", source, ts.ScriptTarget.Latest, true);
+  const locals = new Map();
+  for (const statement of file.statements) {
+    if (!ts.isExportDeclaration(statement) || statement.moduleSpecifier || !statement.exportClause) {
+      continue;
+    }
+    if (ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) {
+        locals.set(element.name.text, (element.propertyName ?? element.name).text);
+      }
+    }
+  }
+  return locals;
+}
+
+/** Value names one top-level statement exports; none for a type-only export or an interface/type alias. */
+function valueNamesOf(statement, fileName) {
+  if (ts.isExportDeclaration(statement)) {
+    if (!statement.exportClause) {
+      fail(`${fileName} has an \`export *\`; its value exports cannot be checked against the contract.`);
+    }
+    if (statement.isTypeOnly || !ts.isNamedExports(statement.exportClause)) {
+      return [];
+    }
+    return statement.exportClause.elements.filter((element) => !element.isTypeOnly).map((e) => e.name.text);
+  }
+  if (!statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
+    return [];
+  }
+  if (ts.isVariableStatement(statement)) {
+    return statement.declarationList.declarations.map((declaration) => declaration.name.getText());
+  }
+  const isType = ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement);
+  return !isType && statement.name ? [statement.name.text] : [];
+}
+
+/** Names `source` exports as values — what a plugin's `import { X }` finds at runtime, or what a contract promises it will. */
+function valueExportsOf(fileName, source) {
+  const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  return new Set(file.statements.flatMap((statement) => valueNamesOf(statement, fileName)));
+}
+
+// Guard: rollup-plugin-dts lists an enum or class re-exported with `export type` among the contract's
+// values, so a plugin type-checks `import { X }` and reads `undefined` at runtime.
+const facadeValues = valueExportsOf(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"));
+const contractValues = valueExportsOf("contract.d.ts", code);
+const typeOnlyValues = [...contractValues].filter((name) => !facadeValues.has(name));
+if (typeOnlyValues.length) {
+  fail(
+    `the contract exports ${typeOnlyValues.join(", ")} as a value, but core-api/index.ts exports it type-only — ` +
+      "a plugin importing it gets undefined at runtime. Drop the `type` modifier from its re-export.",
+  );
+}
+
+const globalComponents = [...uiKitComponentExports()].sort(byCodepoint);
+const localNames = localNamesByExport(code);
+const unrolled = globalComponents.filter((name) => !localNames.has(name));
+if (unrolled.length) {
+  fail(`${unrolled.join(", ")} is re-exported from the ui-kit barrel but absent from the rolled contract.`);
+}
+if (globalComponents.length) {
+  code +=
+    "\n" +
+    [
+      "",
+      "// ── registered globally by `app.use(uiKit)`: usable in a plugin template unimported ──",
+      'declare module "vue" {',
+      "  export interface GlobalComponents {",
+      ...globalComponents.map((name) => `    ${name}: typeof ${localNames.get(name)};`),
+      "  }",
+      "}",
+      "",
+    ].join("\n");
+  step(`declared ${globalComponents.length} global component(s).`);
+}
+
+// 2a3 ── declare the globally registered directives ───────────────────────────
+// strictTemplates (the scaffold's default) rejects an unknown directive, so `v-html-safe` in a plugin
+// template failed type-check. Types are spelled here because two of the three sources are untyped
+// or not a contract peer; the guard below keeps the list in step with what ui-kit registers.
+step("declaring the host's global directives…");
+
+const UI_KIT_ENTRY = resolve(REPO_ROOT, "client-app/ui-kit/index.ts");
+const anyHtml = 'import("vue").Directive<HTMLElement, string | null | undefined>';
+/** Registered by `app.use(uiKit)`: its own `app.directive(...)` calls, plus vue-html-secure's three. */
+const GLOBAL_DIRECTIVES = {
+  mask: 'typeof import("maska/vue").vMaska',
+  onClickOutside: 'import("vue").Directive<HTMLElement, (event: PointerEvent) => void>',
+  htmlSafe: anyHtml,
+  htmlEscape: anyHtml,
+  htmlRemove: anyHtml,
+};
+
+const registeredDirectives = [
+  ...readFileSync(UI_KIT_ENTRY, "utf8").matchAll(/app\.directive\(\s*["']([^"']+)["']/g),
+].map((match) => match[1]);
+const undeclaredDirectives = registeredDirectives.filter((name) => !(name in GLOBAL_DIRECTIVES));
+if (undeclaredDirectives.length) {
+  fail(
+    `ui-kit registers ${undeclaredDirectives.join(", ")}, which GLOBAL_DIRECTIVES in build-types.mjs does not type.`,
+  );
+}
+const directiveKey = (name) => `v${name[0].toUpperCase()}${name.slice(1)}`;
+code +=
+  "\n" +
+  [
+    "",
+    "// ── directives registered globally by `app.use(uiKit)` ──",
+    'declare module "vue" {',
+    "  export interface GlobalDirectives {",
+    ...Object.entries(GLOBAL_DIRECTIVES).map(([name, type]) => `    ${directiveKey(name)}: ${type};`),
+    "  }",
+    "}",
+    "",
+  ].join("\n");
+step(`declared ${Object.keys(GLOBAL_DIRECTIVES).length} global directive(s).`);
+
+// 2a4 ── declare the host's global properties ────────────────────────────────
+// A plugin renders inside the host's app instance, so its templates see everything the host puts on
+// `app.config.globalProperties` — `$cfg` is the only way a plugin reads the theme's settings. Each
+// property is copied from the host's augmentation in client-app/vue.d.ts, its `@/…` names swapped for
+// the contract's local ones, so the two cannot drift.
+step("declaring the host's global properties…");
+
+const HOST_GLOBAL_PROPERTIES_DTS = resolve(REPO_ROOT, "client-app/vue.d.ts");
+const hostGlobalsSource = ts.createSourceFile(
+  HOST_GLOBAL_PROPERTIES_DTS,
+  readFileSync(HOST_GLOBAL_PROPERTIES_DTS, "utf8"),
+  ts.ScriptTarget.Latest,
+  true,
+);
+// vue-i18n declares these on the same interface, and a second declaration of another type is TS2717.
+// Its `$d(value)` / `$d(value, options)` take no ISO string where the host's do; pass a `Date` there.
+const VUE_I18N_PROPERTIES = new Set(["$t", "$d", "$n"]);
+
+/** Imported name → its module specifier. */
+const hostImports = new Map();
+const hostGlobalProperties = [];
+(function collect(node) {
+  if (ts.isImportDeclaration(node)) {
+    for (const element of node.importClause?.namedBindings?.elements ?? []) {
+      hostImports.set(element.name.text, node.moduleSpecifier.text);
+    }
+  }
+  if (ts.isInterfaceDeclaration(node) && node.name.text === "ComponentCustomProperties") {
+    for (const member of node.members) {
+      if (!ts.isPropertySignature(member) || !member.type) {
+        fail(`client-app/vue.d.ts: ComponentCustomProperties member "${member.getText()}" is not a typed property.`);
+      }
+      if (!VUE_I18N_PROPERTIES.has(member.name.text)) {
+        hostGlobalProperties.push(member);
+      }
+    }
+  }
+  ts.forEachChild(node, collect);
+})(hostGlobalsSource);
+if (!hostGlobalProperties.length) {
+  fail("found no ComponentCustomProperties members in client-app/vue.d.ts.");
+}
+
+const propertyLocalName = (name) => {
+  const local = localNames.get(name);
+  if (!local) {
+    fail(`client-app/vue.d.ts types a global property with ${name}, which the facade does not export.`);
+  }
+  return local;
+};
+// A name imported from `@/…` becomes the facade's local name; one from a package becomes `import("pkg").Name`,
+// since a bare name could bind to a facade export of the same name (vue-i18n's `I18n` vs the host's).
+const toContractNames = (context) => {
+  const { factory } = context;
+  const rename = (name, specifier, isTypeOf, typeArguments) => {
+    if (specifier.startsWith("@/")) {
+      const local = factory.createIdentifier(propertyLocalName(name));
+      return isTypeOf ? factory.createTypeQueryNode(local) : factory.createTypeReferenceNode(local, typeArguments);
+    }
+    return factory.createImportTypeNode(
+      factory.createLiteralTypeNode(factory.createStringLiteral(specifier)),
+      undefined,
+      factory.createIdentifier(name),
+      typeArguments,
+      isTypeOf,
+    );
+  };
+  const visit = (node) => {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName) && hostImports.has(node.typeName.text)) {
+      const typeArguments = node.typeArguments?.map((arg) => ts.visitNode(arg, visit));
+      return rename(node.typeName.text, hostImports.get(node.typeName.text), false, typeArguments);
+    }
+    if (ts.isTypeQueryNode(node) && ts.isIdentifier(node.exprName) && hostImports.has(node.exprName.text)) {
+      return rename(node.exprName.text, hostImports.get(node.exprName.text), true);
+    }
+    if (
+      ts.isImportTypeNode(node) &&
+      node.argument.literal.text.startsWith("@/") &&
+      node.qualifier &&
+      ts.isIdentifier(node.qualifier)
+    ) {
+      return rename(node.qualifier.text, node.argument.literal.text, node.isTypeOf, node.typeArguments);
+    }
+    return ts.visitEachChild(node, visit, context);
+  };
+  return (node) => ts.visitNode(node, visit);
+};
+const typePrinter = ts.createPrinter({ removeComments: true });
+const contractPropertyType = (member) => {
+  const [type] = ts.transform(member.type, [toContractNames]).transformed;
+  return typePrinter
+    .printNode(ts.EmitHint.Unspecified, type, hostGlobalsSource)
+    .split("\n")
+    .map((line) => line.trim())
+    .join(" ")
+    .replaceAll("; }", " }");
+};
+code +=
+  "\n" +
+  [
+    "",
+    "// ── global properties the host sets on its app instance ──",
+    'declare module "vue" {',
+    "  export interface ComponentCustomProperties {",
+    ...hostGlobalProperties.map((member) => `    ${member.name.text}: ${contractPropertyType(member)};`),
+    "  }",
+    "}",
+    "",
+  ].join("\n");
+step(`declared ${hostGlobalProperties.length} global properties.`);
+
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(
@@ -438,13 +703,16 @@ if (unlisted.length) {
  * create-plugin installs both, so a scaffolded plugin is unaffected by the split.
  */
 const KNOWN_RANGES = { ...MF_SHARED_RANGES, ...CONTRACT_TYPE_PEERS };
-/** `from "x"`, `require("x")` and the `import("x")` form the .d.mts files use for type-only refs. */
+// `from "x"`, `require("x")` and `import("x")`; `node:` built-ins are not packages.
 const externalsIn = (source) =>
   [
     ...source.matchAll(/from ['"]([^'".][^'"]*)['"]/g),
     ...source.matchAll(/require\(['"]([^'".][^'"]*)['"]\)/g),
     ...source.matchAll(/import\(['"]([^'".][^'"]*)['"]\)/g),
-  ].map((match) => packageNameOf(match[1]));
+  ]
+    .map((match) => match[1])
+    .filter((specifier) => !specifier.startsWith("node:"))
+    .map(packageNameOf);
 
 const requiredPeers = new Set(externals.map(packageNameOf));
 const optionalPeers = new Set();
@@ -564,6 +832,46 @@ step(
     : "contract is self-contained (0 unresolved names).",
 );
 
+// 2b2 ── type-check the manifest API against the contract ────
+// A guarantee that stops holding surfaces as an unused `@ts-expect-error` (TS2578).
+step("type-checking the manifest API against the contract…");
+const MANIFEST_CHECK_FILE = resolve(CORE_API_DIR, "contract-checks", "manifest.check.ts");
+const MANIFEST_TYPES_FILE = resolve(CORE_API_DIR, "manifest.d.mts");
+const MANIFEST_GATE_FILE = resolve(CONTRACT_DIR, "__manifest-check.d.ts");
+writeFileSync(MANIFEST_GATE_FILE, contract, "utf8");
+let manifestDiagnostics;
+try {
+  const program = ts.createProgram([MANIFEST_CHECK_FILE], {
+    strict: true,
+    noEmit: true,
+    skipLibCheck: false,
+    target: ts.ScriptTarget.ES2020,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    types: [],
+    paths: {
+      [corePkg.name]: [MANIFEST_GATE_FILE],
+      [`${corePkg.name}/manifest`]: [MANIFEST_TYPES_FILE],
+    },
+  });
+  const checked = new Set([MANIFEST_CHECK_FILE, MANIFEST_TYPES_FILE].map((file) => file.replaceAll("\\", "/")));
+  manifestDiagnostics = ts
+    .getPreEmitDiagnostics(program)
+    .filter((diagnostic) => checked.has(diagnostic.file?.fileName));
+} finally {
+  rmSync(MANIFEST_GATE_FILE, { force: true });
+}
+if (manifestDiagnostics.length) {
+  for (const diagnostic of manifestDiagnostics) {
+    const { line } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, " ");
+    const where = `${relativePath(CORE_API_DIR, diagnostic.file.fileName)}:${line + 1}`;
+    console.error(`  ${where} TS${diagnostic.code}: ${message}`);
+  }
+  fail(`${manifestDiagnostics.length} type error(s) in the manifest API check (above).`);
+}
+step("manifest API types hold (contract-checks/manifest.check.ts).");
+
 // 2b ── tailwind preset snapshot ──────────────────────────────────────────────
 // The host's Tailwind design system for PLUGIN builds (`@vc-frontend/core/tailwind-preset`).
 // Must be SELF-CONTAINED: the package installs as a tarball, so it cannot reach back into
@@ -635,26 +943,14 @@ function generateTailwindPreset() {
 
 const tailwindPreset = generateTailwindPreset();
 
-/**
- * Compares the freshly generated contract to the one committed on the base branch.
- * Returns null when no baseline is available (no git, no base ref, contract absent
- * at base) — callers then skip versioning logic quietly.
- */
-// S4036: never resolve `git` through PATH - use well-known absolute locations only,
-// same stance as the vue-tsc spawn above. Exotic installs simply skip the (optional)
-// versioning automation; CI runs on a standard image where /usr/bin/git exists.
-const GIT_BIN = [
-  "/usr/bin/git",
-  "/usr/local/bin/git",
-  "/opt/homebrew/bin/git",
-  String.raw`C:\Program Files\Git\cmd\git.exe`,
-].find((candidate) => existsSync(candidate));
+const git = gitIn(REPO_ROOT);
 
-// maxBuffer: node's 1MB default would KILL the child once a committed artifact
-// outgrows it (status becomes null) — indistinguishable from "no baseline" below,
-// silently disabling the auto-bump and the require-major gate. Size the buffer so
-// that can't happen before anyone notices.
-const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+/**
+ * Every hand-written file the tarball ships, read from `files` so a newly published one is covered
+ * without touching this list. Like the preset, an edit to one ships only under a new version.
+ */
+const VERSIONED_SOURCES = versionedSourceFiles(corePkg.files);
+const readText = (file) => toLf(readFileSync(file, "utf8"));
 
 /**
  * The newest published contract tag, or "" when nothing has been released yet (or tags were not
@@ -662,17 +958,16 @@ const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8
  * the RELEASE check has to judge a version level against.
  */
 function lastReleasedContractTag() {
-  if (!GIT_BIN) {
-    return "";
-  }
   const described = git(["describe", "--tags", "--match", "core-v*", "--abbrev=0"]);
   return described.status === 0 ? described.stdout.trim() : "";
 }
 
+/**
+ * Compares the freshly generated contract to the one committed on the base branch.
+ * Returns null when no baseline is available (no git, no base ref, contract absent
+ * at base) — callers then skip versioning logic quietly.
+ */
 function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT_BASE_REF) {
-  if (!GIT_BIN) {
-    return null;
-  }
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/contract/index.d.ts`]) : { status: 1 };
@@ -695,11 +990,18 @@ function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT
   const basePreset = baseSha
     ? git(["show", `${baseSha}:client-app/core-api/contract/tailwind-preset.cjs`])
     : { status: 1 };
-  const presetChanged = basePreset.status === 0 && basePreset.stdout !== currentPreset;
+  const presetChanged = basePreset.status === 0 && toLf(basePreset.stdout) !== currentPreset;
+  // Absent at base = newly published, which is a change.
+  const sourceChanged = VERSIONED_SOURCES.some((file) => {
+    const baseSource = git(["show", `${baseSha}:client-app/core-api/${file}`]);
+    return baseSource.status !== 0 || toLf(baseSource.stdout) !== readText(join(CORE_API_DIR, file));
+  });
+  const manifestChanged =
+    packageJsonShape(basePkgJson.stdout) !== packageJsonShape(readFileSync(join(CORE_API_DIR, "package.json"), "utf8"));
   return {
     baseRef,
     baseSha,
-    changed: baseContract.stdout !== currentContract || presetChanged,
+    changed: toLf(baseContract.stdout) !== currentContract || presetChanged || sourceChanged || manifestChanged,
     baseVersion,
     removedExports,
   };
@@ -732,17 +1034,17 @@ function autoBumpIfContractChanged(currentContract, currentPreset, currentVersio
     const level = levelOf(decision.action);
     const { current, next } = bumpContractVersion(level);
     step(
-      `contract or tailwind preset changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (${level}; commit package.json too).`,
+      `contract or another file the facade ships changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (${level}; commit package.json too).`,
     );
   }
 }
 
 if (CHECK_MODE) {
-  const committed = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, "utf8") : "";
+  const committed = existsSync(OUT_FILE) ? readText(OUT_FILE) : "";
   if (committed !== contract) {
     fail("committed contract/index.d.ts is stale — run `yarn build:core-types` and commit the result.");
   }
-  const committedPreset = existsSync(PRESET_OUT_FILE) ? readFileSync(PRESET_OUT_FILE, "utf8") : "";
+  const committedPreset = existsSync(PRESET_OUT_FILE) ? readText(PRESET_OUT_FILE) : "";
   if (committedPreset !== tailwindPreset) {
     fail("committed contract/tailwind-preset.cjs is stale — run `yarn build:core-types` and commit the result.");
   }
@@ -779,7 +1081,7 @@ if (CHECK_MODE) {
     }
     if (decision.action.startsWith("bump-")) {
       fail(
-        `the public contract or tailwind preset changed relative to ${base.baseRef}, but CORE_VERSION is still ` +
+        `the public contract or another file the facade ships changed relative to ${base.baseRef}, but CORE_VERSION is still ` +
           `${base.baseVersion}. Run \`yarn build:core-types\` (auto-bumps ${levelOf(decision.action)}).`,
       );
     }

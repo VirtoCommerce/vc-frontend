@@ -58,7 +58,13 @@
               </div>
             </template>
 
-            <VcTableColumn id="rank" v-slot="{ item }" :title="t('sales_rep.top_sellers.rank')" align="center">
+            <VcTableColumn
+              id="rank"
+              v-slot="{ item }"
+              :title="t('sales_rep.top_sellers.rank')"
+              align="center"
+              class="top-sellers__number"
+            >
               {{ item.rank }}
             </VcTableColumn>
 
@@ -91,6 +97,7 @@
               :title="t('sales_rep.top_sellers.units')"
               :sortable="isColumnSortable('units')"
               align="right"
+              class="top-sellers__number"
             >
               {{ item.units }}
             </VcTableColumn>
@@ -101,7 +108,7 @@
               :title="t('sales_rep.top_sellers.revenue')"
               :sortable="isColumnSortable('revenue')"
               align="right"
-              class="font-bold"
+              class="top-sellers__number font-bold"
             >
               {{ item.revenue }}
             </VcTableColumn>
@@ -232,6 +239,11 @@ const failed = computed(() => Boolean(error.value));
 
   &__rank {
     @apply font-bold;
+  }
+
+  // VcTable breaks cell text at any character; a long product name would otherwise split the numbers mid-digit.
+  &__number {
+    @apply whitespace-nowrap;
   }
 
   &__mobile-item {

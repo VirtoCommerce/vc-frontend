@@ -58,6 +58,7 @@ export const ICON_ALIASES: Readonly<Record<string, string>> = {
   process: "refresh-cw",
   profile: "id-card",
   "purchase-request": "receipt",
+  "receipt-refund": "undo-2",
   "receipt-tax": "ticket-percent",
   reset: "rotate-ccw",
   "round-check": "circle-check",

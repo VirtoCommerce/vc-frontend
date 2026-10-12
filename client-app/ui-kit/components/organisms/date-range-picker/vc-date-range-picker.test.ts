@@ -311,7 +311,7 @@ describe("VcDateRangePicker", () => {
     await startInput.trigger("blur");
     expect(startInput.element.value).toBe("99/99/9999");
 
-    const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    const [startTrigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
     await startTrigger.trigger("click");
     await flushPromises();
     await clickDay("2026-08-10");
@@ -606,7 +606,7 @@ describe("VcDateRangePicker", () => {
       startInput.element.focus();
       expect(wrapper.emitted("focus")).toHaveLength(1);
 
-      const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+      const [startTrigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
       (startTrigger.element as HTMLButtonElement).focus();
       await startTrigger.trigger("click");
       await flushPromises();
@@ -641,7 +641,7 @@ describe("VcDateRangePicker", () => {
       const [startInput] = wrapper.findAll("input");
       startInput.element.focus();
 
-      const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+      const [startTrigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
       (startTrigger.element as HTMLButtonElement).focus();
       await startTrigger.trigger("click");
       await flushPromises();
@@ -723,7 +723,7 @@ describe("VcDateRangePicker — hosted inside a popover body", () => {
   }
 
   async function expectNoBlurWhenOpeningOwnCalendar(wrapper: MountedType): Promise<void> {
-    const [trigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    const [trigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
     (trigger.element as HTMLButtonElement).focus();
     await trigger.trigger("click");
     await flushPromises();
@@ -792,7 +792,7 @@ describe("VcDateRangePicker — focus moving into an unrelated popover", () => {
   }
 
   async function expectBlur(wrapper: ReturnType<typeof mountSplit>, option: HTMLElement): Promise<void> {
-    const [trigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    const [trigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
     await trigger.trigger("click");
     await flushPromises();
 
@@ -846,7 +846,7 @@ describe("VcDateRangePicker — split layout", () => {
 
   it("renders one calendar trigger per field", () => {
     const wrapper = mountSplit();
-    const triggers = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    const triggers = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
     expect(triggers).toHaveLength(2);
   });
 
@@ -891,7 +891,7 @@ describe("VcDateRangePicker — split layout", () => {
     await startInput.trigger("keydown", { key: "Escape" });
     expect(onEscape).toHaveBeenCalledTimes(1);
 
-    const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    const [startTrigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
     await startTrigger.trigger("click");
     await flushPromises();
     await startInput.trigger("keydown", { key: "Escape" });
@@ -1169,7 +1169,7 @@ describe("VcDateRangePicker — split layout", () => {
       endInput.element.focus();
       await endInput.setValue("08/20/2026");
 
-      const [clearButton] = wrapper.findAll('button[aria-label="ui_kit.buttons.clear"]');
+      const [clearButton] = wrapper.findAll('button[aria-label="ui_kit.buttons.clear_field"]');
       await clearButton.trigger("click");
       await flushPromises();
 
@@ -1281,7 +1281,7 @@ describe("VcDateRangePicker — split layout", () => {
     it("emits nothing when focus moves from a field to its own calendar trigger", () => {
       const wrapper = mountSplit({}, { attachTo: document.body });
       const [startInput] = wrapper.findAll("input");
-      const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+      const [startTrigger] = wrapper.findAll('button[aria-label^="ui_kit.accessibility.open_calendar"]');
 
       startInput.element.focus();
       (startTrigger.element as HTMLButtonElement).focus();
