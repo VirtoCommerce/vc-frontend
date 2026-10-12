@@ -225,9 +225,9 @@ const NAVIGATION_KEYS: Record<string, ListboxNavigationKeyType> = {
   End: "end",
 };
 
-// A listbox taking focus starts on its selected option, or on the first (APG).
+// Without a keyboard position, a listbox taking focus starts on its selected option, or the first (APG).
 function onListboxFocus(): void {
-  if (highlightedIndex.value !== -1 || !displayedOrganizations.value.length) {
+  if ((highlightedIndex.value !== -1 && !isPassiveHighlight.value) || !displayedOrganizations.value.length) {
     return;
   }
 

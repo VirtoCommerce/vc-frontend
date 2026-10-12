@@ -463,6 +463,28 @@ describe("TopHeaderOrganizations", () => {
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
     });
 
+    it("starts on the selected organization over a row the pointer rests on", async () => {
+      state.user.value = { contact: { organizationId: "org-2" } };
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await wrapper.findAll(".vc-menu-item")[2].trigger("mousemove");
+      await list.trigger("focus");
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[1]);
+    });
+
+    it("points at no option when an empty list takes focus", async () => {
+      state.organizations.value = [];
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+
+      await list.trigger("focus");
+
+      expect(list.attributes("aria-activedescendant")).toBeUndefined();
+    });
+
     it("lets a pressed option take focus", () => {
       const wrapper = mountComponent();
       const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
@@ -499,7 +521,7 @@ describe("TopHeaderOrganizations", () => {
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
       await input.trigger("keydown", { key: "ArrowDown" });
-      await wrapper.get(".top-header-organizations__list").trigger("keydown", { key: "ArrowDown" });
+      await wrapper.get('[role="listbox"]').trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
       expect(input.attributes("aria-activedescendant")).toBe(optionIds[0]);
