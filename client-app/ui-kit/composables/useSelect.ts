@@ -8,9 +8,9 @@ type ParamsType<T, V> = {
   multiple: MaybeRefOrGetter<boolean | undefined>;
   filterValue: MaybeRefOrGetter<string>;
   /** When true the list is filtered by the consumer (server-side) and must pass through untouched. */
-  serverFilter?: MaybeRefOrGetter<boolean | undefined>;
-  textField?: MaybeRefOrGetter<VcSelectFieldAccessorType<T, string> | undefined>;
-  valueField?: MaybeRefOrGetter<VcSelectFieldAccessorType<T, V> | undefined>;
+  serverFilter: MaybeRefOrGetter<boolean | undefined>;
+  textField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, string> | undefined>;
+  valueField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, V> | undefined>;
 };
 
 // `!item`, not a null check: a falsy option (0, "", false) resolves to itself.
@@ -46,11 +46,12 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return Array.isArray(model) ? model : [];
   });
 
-  // An empty model matches nothing, not an option that lacks `valueField` and so reads `undefined`.
+  // An unset model matches nothing, not an option that lacks `valueField` and so reads `undefined`;
+  // `null` is a value an option may carry.
   function isSingleModel(value: unknown): boolean {
     const model = toValue(params.modelValue);
 
-    return model != null && value === model;
+    return model !== undefined && value === model;
   }
 
   const foundItem = computed<T | undefined>(() =>
@@ -104,7 +105,6 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return isSingleModel(itemValue);
   }
 
-  // An uninitialised model counts as empty.
   function getToggledValues(item: T): V[] {
     const itemValue = getItemValue(item);
     const existingIndex = selectedValues.value.findIndex((selectedValue) => isEqual(selectedValue, itemValue));

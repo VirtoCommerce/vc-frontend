@@ -12,6 +12,8 @@ describe("useSelect with an empty single model", () => {
       modelValue,
       multiple: false,
       filterValue: "",
+      serverFilter: false,
+      textField: "name",
       valueField: "id",
     });
 
@@ -24,6 +26,8 @@ describe("useSelect with an empty single model", () => {
       modelValue,
       multiple: false,
       filterValue: "",
+      serverFilter: false,
+      textField: "name",
       valueField: "id",
     });
 
@@ -36,12 +40,34 @@ describe("useSelect with an empty single model", () => {
       modelValue: "a",
       multiple: false,
       filterValue: "",
+      serverFilter: false,
+      textField: "name",
       valueField: "id",
     });
 
     expect(selectedItem.value).toBe(ITEMS[1]);
     expect(isActiveItem(ITEMS[1])).toBe(true);
     expect(isActiveItem(ITEMS[0])).toBe(false);
+  });
+
+  it("selects an option whose value is null for a null model", () => {
+    const items = [
+      { id: null, name: "Any" },
+      { id: "a", name: "A" },
+    ];
+    const { selectedItem, isActiveItem } = useSelect<{ id: string | null; name: string }, string | null>({
+      items,
+      modelValue: null,
+      multiple: false,
+      filterValue: "",
+      serverFilter: false,
+      textField: "name",
+      valueField: "id",
+    });
+
+    expect(selectedItem.value).toBe(items[0]);
+    expect(isActiveItem(items[0])).toBe(true);
+    expect(isActiveItem(items[1])).toBe(false);
   });
 });
 
@@ -52,6 +78,8 @@ describe("useSelect with an empty multiple model", () => {
       modelValue,
       multiple: true,
       filterValue: "",
+      serverFilter: false,
+      textField: "name",
       valueField: "id",
     });
 
