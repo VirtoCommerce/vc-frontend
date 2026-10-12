@@ -561,66 +561,98 @@ step(`declared ${Object.keys(GLOBAL_DIRECTIVES).length} global directive(s).`);
 
 // 2a4 ── declare the host's global properties ────────────────────────────────
 // A plugin renders inside the host's app instance, so its templates see everything the host puts on
-// `app.config.globalProperties` — `$cfg` is the only way a plugin reads the theme's settings. Spelled
-// after the host's augmentation in client-app/vue.d.ts; the guard below keeps the two in step.
+// `app.config.globalProperties` — `$cfg` is the only way a plugin reads the theme's settings. Each
+// property is copied from the host's augmentation in client-app/vue.d.ts, its `@/…` names swapped for
+// the contract's local ones, so the two cannot drift.
 step("declaring the host's global properties…");
 
 const HOST_GLOBAL_PROPERTIES_DTS = resolve(REPO_ROOT, "client-app/vue.d.ts");
-/** Facade exports a property's type names; resolved to their rolled local names below. */
-const GLOBAL_PROPERTIES = {
-  $cfg: (local) => local("IThemeConfigSettings"),
-  $context: (local) => local("IThemeContext"),
-  $permissions: (local) =>
-    `{ xApi: typeof ${local("XApiPermissions")}; platform: typeof ${local("PlatformPermissions")} }`,
-  $can: () => "(...permissions: string[]) => boolean",
-  $router: () => 'import("vue-router").Router',
-  $route: () => 'import("vue-router").RouteLocationNormalizedLoaded',
-  $canRenderExtensionPoint: (local) => `ReturnType<typeof ${local("useExtensionRegistry")}>["canRender"]`,
-};
-
 const hostGlobalsSource = ts.createSourceFile(
   HOST_GLOBAL_PROPERTIES_DTS,
   readFileSync(HOST_GLOBAL_PROPERTIES_DTS, "utf8"),
   ts.ScriptTarget.Latest,
   true,
 );
+// vue-i18n declares these on the same interface, and a second declaration of another type is TS2717.
+// Its `$d(value)` / `$d(value, options)` take no ISO string where the host's do; pass a `Date` there.
+const VUE_I18N_PROPERTIES = new Set(["$t", "$d", "$n"]);
+
+/** Imported name → its module specifier. */
+const hostImports = new Map();
 const hostGlobalProperties = [];
 (function collect(node) {
+  if (ts.isImportDeclaration(node)) {
+    for (const element of node.importClause?.namedBindings?.elements ?? []) {
+      hostImports.set(element.name.text, node.moduleSpecifier.text);
+    }
+  }
   if (ts.isInterfaceDeclaration(node) && node.name.text === "ComponentCustomProperties") {
     for (const member of node.members) {
-      if (member.name && (ts.isIdentifier(member.name) || ts.isStringLiteral(member.name))) {
-        hostGlobalProperties.push(member.name.text);
+      if (!ts.isPropertySignature(member) || !member.type) {
+        fail(`client-app/vue.d.ts: ComponentCustomProperties member "${member.getText()}" is not a typed property.`);
+      }
+      if (!VUE_I18N_PROPERTIES.has(member.name.text)) {
+        hostGlobalProperties.push(member);
       }
     }
   }
   ts.forEachChild(node, collect);
 })(hostGlobalsSource);
 if (!hostGlobalProperties.length) {
-  fail("found no ComponentCustomProperties members in client-app/vue.d.ts; the guard below would check nothing.");
+  fail("found no ComponentCustomProperties members in client-app/vue.d.ts.");
 }
-// vue-i18n declares these on the same interface, and a second declaration of another type is TS2717.
-// Its `$d` takes no ISO string where the host's does, so a plugin passes a `Date`.
-const VUE_I18N_PROPERTIES = new Set(["$t", "$d", "$n"]);
-const undeclaredProperties = hostGlobalProperties.filter(
-  (name) => !(name in GLOBAL_PROPERTIES) && !VUE_I18N_PROPERTIES.has(name),
-);
-if (undeclaredProperties.length) {
-  fail(
-    `client-app/vue.d.ts declares ${undeclaredProperties.join(", ")}, which GLOBAL_PROPERTIES in build-types.mjs does not type.`,
-  );
-}
-const staleProperties = Object.keys(GLOBAL_PROPERTIES).filter((name) => !hostGlobalProperties.includes(name));
-if (staleProperties.length) {
-  fail(
-    `GLOBAL_PROPERTIES in build-types.mjs types ${staleProperties.join(", ")}, which client-app/vue.d.ts no longer declares.`,
-  );
-}
+
 const propertyLocalName = (name) => {
   const local = localNames.get(name);
   if (!local) {
-    fail(`GLOBAL_PROPERTIES needs ${name}, which the facade does not export.`);
+    fail(`client-app/vue.d.ts types a global property with ${name}, which the facade does not export.`);
   }
   return local;
+};
+// A name imported from `@/…` becomes the facade's local name; one from a package becomes `import("pkg").Name`,
+// since a bare name could bind to a facade export of the same name (vue-i18n's `I18n` vs the host's).
+const toContractNames = (context) => {
+  const { factory } = context;
+  const rename = (name, specifier, isTypeOf, typeArguments) => {
+    if (specifier.startsWith("@/")) {
+      const local = factory.createIdentifier(propertyLocalName(name));
+      return isTypeOf ? factory.createTypeQueryNode(local) : factory.createTypeReferenceNode(local, typeArguments);
+    }
+    return factory.createImportTypeNode(
+      factory.createLiteralTypeNode(factory.createStringLiteral(specifier)),
+      undefined,
+      factory.createIdentifier(name),
+      typeArguments,
+      isTypeOf,
+    );
+  };
+  const visit = (node) => {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName) && hostImports.has(node.typeName.text)) {
+      const typeArguments = node.typeArguments?.map((arg) => ts.visitNode(arg, visit));
+      return rename(node.typeName.text, hostImports.get(node.typeName.text), false, typeArguments);
+    }
+    if (ts.isTypeQueryNode(node) && ts.isIdentifier(node.exprName) && hostImports.has(node.exprName.text)) {
+      return rename(node.exprName.text, hostImports.get(node.exprName.text), true);
+    }
+    if (
+      ts.isImportTypeNode(node) &&
+      node.argument.literal.text.startsWith("@/") &&
+      node.qualifier &&
+      ts.isIdentifier(node.qualifier)
+    ) {
+      return rename(node.qualifier.text, node.argument.literal.text, node.isTypeOf, node.typeArguments);
+    }
+    return ts.visitEachChild(node, visit, context);
+  };
+  return (node) => ts.visitNode(node, visit);
+};
+const typePrinter = ts.createPrinter({ removeComments: true });
+const contractPropertyType = (member) => {
+  const [type] = ts.transform(member.type, [toContractNames]).transformed;
+  return typePrinter
+    .printNode(ts.EmitHint.Unspecified, type, hostGlobalsSource)
+    .replace(/\s*\n\s*/g, " ")
+    .replace(/; }/g, " }");
 };
 code +=
   "\n" +
@@ -629,12 +661,12 @@ code +=
     "// ── global properties the host sets on its app instance ──",
     'declare module "vue" {',
     "  export interface ComponentCustomProperties {",
-    ...Object.entries(GLOBAL_PROPERTIES).map(([name, type]) => `    ${name}: ${type(propertyLocalName)};`),
+    ...hostGlobalProperties.map((member) => `    ${member.name.text}: ${contractPropertyType(member)};`),
     "  }",
     "}",
     "",
   ].join("\n");
-step(`declared ${Object.keys(GLOBAL_PROPERTIES).length} global properties.`);
+step(`declared ${hostGlobalProperties.length} global properties.`);
 
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.

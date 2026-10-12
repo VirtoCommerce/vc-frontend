@@ -199,7 +199,7 @@ export { PlatformPermissions, XApiPermissions } from "@/core/enums";
 // take one, and rollup names it only internally — so a plugin could pass an order but not
 // declare the variable it passed.
 export type { CustomerOrderType } from "@/core/api/graphql/types";
-// Already in the contract through `WishlistSharingScopePayloadType.targets`.
+// Already reachable through the list-sharing types; exported so a plugin can name it.
 export type { SharingTargetType } from "@/core/api/graphql/types";
 
 import { version } from "./package.json";

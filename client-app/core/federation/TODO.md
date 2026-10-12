@@ -95,17 +95,14 @@ file are cross-referenced, not repeated.
 - [ ] **Module CI does not type-check the storefront plugin.** `vc-build Compress` runs
       `yarn build` (vite only), so `yarn type-check` never runs. vc-module-sales-rep#13 adds it to the
       `BuildStorefrontPlugin` target and fixes the one real error, `my-customers.vue` passing an ISO
-      string to `$d`. (The `size="xssss"` / `variant="123"` on `layout-edit-button.vue` reported here
-      before was an uncommitted local edit, never on the branch.)
+      string to `$d`.
 - [ ] **Publish the whole ui-kit barrel from the facade, not a hand-picked subset.** `app.use(uiKit)`
       registers **93** components globally, so a plugin template can write any of them unimported;
       only the ones `core-api/index.ts` re-exports reach the contract's `GlobalComponents`
       augmentation. #2480 takes that from 22 to 35 — the ones the sales-rep module actually uses —
-      but the list is maintained by hand next to a list it has to equal, which is why it has now
-      drifted three times (the host's own augmentations were missing `VcLink` and `VcTableColumn`;
-      the facade's 22 were missing 13). A fourth: the tasks calendar and the orders date filter put
-      `VcCalendar` and `VcDateRangePicker` in the module's templates, untyped in the plugin until 0.2.3
-      exported them. The decided direction is to export the barrel wholesale.
+      but the list is maintained by hand next to a list it has to equal, so it keeps drifting — most
+      recently `VcCalendar` and `VcDateRangePicker`, untyped in the plugin until 0.2.3 exported them.
+      The decided direction is to export the barrel wholesale.
       Measured 2026-09-21 by actually adding `export * from "@/ui-kit/components"` and running
       `yarn build:core-types` — three things block it, none of them the contract's size:
       1. `swiper` becomes a type peer (host is on 12.1.2), and the rolled contract then fails
@@ -150,16 +147,16 @@ file are cross-referenced, not repeated.
       `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
 - [ ] **E2E**: vc-testing-module has no Sales Rep Hub coverage at all — add a smoke (plugin loaded,
       hub menu visible for a rep) so the plugin path is not manual-only.
-- [ ] **Port #2439 / #2444 into the plugin** — done in vc-module-sales-rep#13 together with
-      everything else up to `dev` at 1ae6a0318, `requiredHostVersion: "^0.2.3"`. It installs only once
-      `core-v0.2.3` is released, which needs this facade change on `dev` first.
+- [ ] **Release `core-v0.2.3` for the plugin's port of #2439 / #2444.** The port itself is done in
+      vc-module-sales-rep#13, together with everything else up to `dev` at 1ae6a0318
+      (`requiredHostVersion: "^0.2.3"`); it installs only once that facade is released.
 - [ ] **Bump `@module-federation/vite` to ≥ 1.23.1** (host, and the version `create-plugin` copies).
       1.18 resolves every import it finds under a remote's exposed module, `import type` included, and
       a types-only package (`@graphql-typed-document-node/core`, `"main": ""`) makes that resolve
       throw: any plugin with generated GraphQL types fails `yarn build`. 1.23.1 catches it. The
       sales-rep plugin carries a `resolve.alias` workaround until then.
 - [ ] **A declared route cannot carry route meta** ([VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)).
-      The organization gate is handled — the placeholder defers it to the real route (5189e7a22) — but
+      The organization gate is handled — the placeholder defers it to the real route — but
       layout meta (`layout`, `hideLeftSidebar`) still comes from the parent until the plugin settles, so
       a route that changes the layout shows the parent's while the loader is up. Add a meta whitelist to
       the declaration only if a plugin needs it.
