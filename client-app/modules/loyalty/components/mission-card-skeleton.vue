@@ -51,7 +51,7 @@
   }
 
   &__title {
-    @apply mb-4 w-3/4 rounded-[--vc-radius] bg-neutral-100 text-base;
+    @apply mb-4 w-3/4 rounded-[--vc-radius] bg-neutral-100 text-base/normal;
   }
 
   &__footer {

@@ -61,6 +61,7 @@ beforeEach(() => {
 
 describe("Missions card grid", () => {
   it("renders a page of card skeletons while the missions load", () => {
+    state.missions.value = [{ missionId: "1" }] as MissionDataType[];
     state.loading.value = true;
 
     const wrapper = createWrapper();
