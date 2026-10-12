@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
@@ -13,6 +13,16 @@ describe("VcCheckbox exposed input", () => {
     const wrapper = createWrapper({ props: { modelValue: false } });
 
     expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
+  });
+
+  it("keeps the exposed input read-only for a parent", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const wrapper = createWrapper({ props: { modelValue: false } });
+
+    (wrapper.vm as { inputElement: HTMLInputElement | null }).inputElement = null;
+
+    expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
+    warn.mockRestore();
   });
 
   it("exposes null inside an interactive parent, which renders no input", () => {
