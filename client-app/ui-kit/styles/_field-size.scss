@@ -1,8 +1,7 @@
 @use "sass:map";
 
-// The field size scale: VcInput's height and text per size, which VcSelectButton, VcDateRangeInput
-// and VcDateRangePicker read from here to sit beside a field. Functions only — each caller puts the values in its own
-// properties or private variables, so nothing leaks into a nested component.
+// VcInput's field scale, shared by fields that sit beside it. Functions only: nothing leaks into a
+// nested component.
 
 $-sizes: (
   xs: (

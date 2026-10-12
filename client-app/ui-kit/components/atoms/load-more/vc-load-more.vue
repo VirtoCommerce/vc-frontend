@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, getCurrentInstance, inject, onMounted, ref, watch } from "vue";
 import { vcScrollbarKey } from "../scrollbar/vc-scrollbar-context";
 
 interface IEmits {
@@ -47,6 +47,15 @@ if (import.meta.env.DEV && !scrollbar && props.hasNextPage) {
   console.warn("VcLoadMore: no VcScrollbar around it, so nothing can tell it the list reached its end.");
 }
 
+if (import.meta.env.DEV) {
+  const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
+
+  if (("has-next-page" in vnodeProps || "hasNextPage" in vnodeProps) && !("loading" in vnodeProps)) {
+    // eslint-disable-next-line no-console
+    console.warn("VcLoadMore: `has-next-page` needs `loading` bound, or a page still loading is asked for again.");
+  }
+}
+
 // Read when a measurement lands, a next page appears, or on mount, never on `loading`: the edges come
 // from a debounced measurement, so reacting to `loading` would read the box from before an append.
 const wantsMore = computed(() => props.hasNextPage && !props.loading && scrollbar?.isAtBottom.value === true);
@@ -66,19 +75,11 @@ function readContent(): ContentType {
  */
 const askedAt = ref<ContentType | null>(null);
 
-/**
- * Asks again only once the last request changed what the list holds. A short list is never
- * scrolled, so the landed page is what re-opens the question; a failed fetch leaves the list as
- * it was and is not repeated while the list rests at its end — the user scrolling away and back asks
- * once more, as does the consumer changing `items` or `has-next-page`.
- */
+/** One request per change of what the list holds. */
 function reconsider(): void {
   const content = readContent();
 
-  // Content that shrank or no longer starts with what was asked from is a rebuilt list (a new search).
-  // Rows swapped while a page loads (an empty state giving way to the spinner) are not a rebuild: the
-  // count watcher below sees a real one at any time. A list scrolled away from its end is asked again
-  // once it is back, so a page that failed is retried by the user's own scroll, never by a loop.
+  // Shrunk or re-prefixed: rebuilt. Not while loading: a row swapped for the spinner is no rebuild.
   if (
     askedAt.value &&
     !props.loading &&

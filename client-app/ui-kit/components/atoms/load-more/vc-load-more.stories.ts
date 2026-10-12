@@ -150,9 +150,9 @@ export const States: StoryType = {
       },
       source: {
         code: `
-<VcLoadMore loading has-next-page :item-count="items.length" /> <!-- a page is on its way -->
-<VcLoadMore has-next-page :item-count="items.length" />         <!-- more pages, nothing in flight: renders nothing at all -->
-<VcLoadMore :item-count="items.length" />                       <!-- no next page: renders nothing -->
+<VcLoadMore loading has-next-page :item-count="items.length" />          <!-- a page is on its way -->
+<VcLoadMore :loading="false" has-next-page :item-count="items.length" /> <!-- more pages, nothing in flight: renders nothing at all -->
+<VcLoadMore :item-count="items.length" />                                <!-- no next page: renders nothing -->
         `,
       },
     },

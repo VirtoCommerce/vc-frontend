@@ -161,7 +161,6 @@
             </ul>
 
             <VcLoadMore
-              class="vc-select__more"
               :loading="loading"
               :has-next-page="pagerHasNextPage"
               :item-count="items.length"
@@ -369,7 +368,6 @@ const {
   wrap: () => !props.hasNextPage,
 });
 
-// Only announce an active option while the list is on screen.
 const activeDescendantId = computed(() => (isShown.value ? highlightedOptionId.value : undefined));
 
 // With `serverFilter`, typing makes the options on screen the previous query's until the query goes
@@ -621,7 +619,7 @@ function onSearchInput(value: string, open: () => void): void {
 }
 
 // The selection a keystroke is about to replace; Tab selects the whole label. Kept until the list
-// opens, not read once: one keystroke can deliver the value twice before the open lands.
+// opens, not read once: maska delivers each keystroke twice, and the open may land in between.
 let replacedRange: [number, number] | undefined;
 
 function onBeforeSearchInput(event: Event): void {
@@ -726,6 +724,16 @@ if (import.meta.env.DEV) {
     console.warn("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
   }
 
+  if (("has-next-page" in vnodeProps || "hasNextPage" in vnodeProps) && !("loading" in vnodeProps)) {
+    // eslint-disable-next-line no-console
+    console.warn("VcSelect: `has-next-page` needs `loading` bound, or a page still loading is asked for again.");
+  }
+
+  if (!props.selectAll && (props.total !== undefined || vnodeProps.onSelectAll)) {
+    // eslint-disable-next-line no-console
+    console.warn("VcSelect: `total` and `@select-all` belong to the Select all row; add `select-all`.");
+  }
+
   if (props.serverFilter && !vnodeProps.onSearch) {
     // eslint-disable-next-line no-console
     console.warn(
@@ -796,7 +804,6 @@ if (import.meta.env.DEV) {
         );
       }
     },
-    // Depth 2, as above.
     { immediate: true, deep: 2 },
   );
 }
@@ -933,9 +940,7 @@ function onTab(event: KeyboardEvent) {
     @apply max-h-[--dropdown-max-height] w-full;
   }
 
-  // The dropdown clips its rounded corners, so the first and last options take its radius, or the
-  // clip cuts their focus ring at rest. Select all sits above the list, VcLoadMore below it. An
-  // option scrolled against a corner is still cut, as in VcDropdownMenu.
+  // The dropdown clips its corners, so corner options take its radius or their ring is cut.
   &__list {
     // Separators between the options, as VcDropdownMenu draws them on its own list.
     @apply w-full divide-y divide-neutral-100;
@@ -951,11 +956,11 @@ function onTab(event: KeyboardEvent) {
     #{$scroll}:first-child &:last-child > :only-child {
       --vc-menu-item-radius: var(--dropdown-radius);
     }
-  }
 
-  // VcLoadMore has no separator of its own; the list's divider continues on it.
-  &__more {
-    @apply border-t border-neutral-100;
+    // The divider continues onto VcLoadMore below.
+    &:not(:last-child) {
+      @apply border-b border-neutral-100;
+    }
   }
 
   &__loading {

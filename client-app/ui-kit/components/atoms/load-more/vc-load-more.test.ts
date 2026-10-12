@@ -272,10 +272,7 @@ describe("VcLoadMore", () => {
     state.hasNextPage = false;
     await afterContentSettles();
 
-    // A list identical to the one last asked from; the flag alone changes nothing, so a
-    // measurement is provoked.
     state.hasNextPage = true;
-    region.firstElementChild?.setAttribute("role", "none");
     await afterContentSettles();
 
     expect(onLoadMore).toHaveBeenCalledTimes(2);
@@ -437,6 +434,19 @@ describe("VcLoadMore", () => {
 
     expect(onLoadMore).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("VcLoadMore"));
+
+    warn.mockRestore();
+  });
+
+  it.each([
+    ["without loading", { hasNextPage: true }, true],
+    ["with loading", { hasNextPage: true, loading: false }, false],
+  ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    mount(VcLoadMore, { props: { itemCount: 0, ...props }, global: GLOBAL });
+
+    expect(warn.mock.calls.some(([message]) => String(message).includes("needs `loading` bound"))).toBe(warns);
 
     warn.mockRestore();
   });

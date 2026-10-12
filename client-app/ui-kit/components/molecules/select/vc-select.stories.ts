@@ -620,8 +620,8 @@ export const SelectAllWithTotal: StoryType = {
       const items = ref(allIds.slice(0, 6));
       const selected = ref<string[]>([]);
 
-      // The select can only add what is loaded; the rest of the set is the consumer's to add. A query
-      // means the row acted on the matches only, which a server-filtered list answers itself.
+      // The select can only add what is loaded; the rest of the set is the consumer's to add. With a
+      // query the row acted on the loaded matches only; the rest of the selection stays.
       function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
         if (!query) {
           selected.value = all ? [...allIds] : [];
@@ -703,7 +703,6 @@ export const InfiniteScroll: StoryType = {
     label: "Buyer name",
     placeholder: "Select buyers",
     multiple: true,
-    total: 3000,
   },
   render: (args) => ({
     setup: () => {
@@ -744,7 +743,7 @@ export const InfiniteScroll: StoryType = {
       source: {
         code: `
 <script setup lang="ts">
-const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuyers();
+const { items, loading, hasNextPage, loadNextPage, search } = useBuyers();
 const selected = ref<string[]>([]);
 </script>
 
@@ -754,7 +753,6 @@ const selected = ref<string[]>([]);
     :items="items"
     :loading="loading"
     :has-next-page="hasNextPage"
-    :total="totalCount"
     multiple
     autocomplete
     server-filter

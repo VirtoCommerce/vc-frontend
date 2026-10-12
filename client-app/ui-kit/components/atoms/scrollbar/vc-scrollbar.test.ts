@@ -150,10 +150,7 @@ describe("VcScrollbar", () => {
 
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
 
-      // A second measurement has to be provoked, or this asserts nothing: describeBox is not a
-      // mutation and the ResizeObserver is stubbed, so without this the check never runs again and
-      // the test stays green even with the latch deleted. An attribute is watched but is not
-      // growth, which is exactly the "nothing arrived" case.
+      // Provoke a re-measurement (a role change is not growth); without it this passes with the latch deleted.
       element.firstElementChild?.setAttribute("role", "none");
       await afterContentSettles();
 

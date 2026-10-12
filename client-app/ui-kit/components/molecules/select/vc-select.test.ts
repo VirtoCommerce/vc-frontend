@@ -779,6 +779,31 @@ describe("VcSelect", () => {
         expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
       });
 
+      it.each([
+        ["without loading", { hasNextPage: true }, true],
+        ["with loading", { hasNextPage: true, loading: false }, false],
+      ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: ITEMS, ...props });
+
+        expect(warn.mock.calls.some(([message]) => String(message).includes("needs `loading` bound"))).toBe(warns);
+      });
+
+      it.each([
+        ["a total", { total: 30 }, true],
+        ["a select-all handler", { onSelectAll: noop }, true],
+        ["both, with the row", { total: 30, onSelectAll: noop, selectAll: true }, false],
+      ])("warns about %s that no Select all row reads accordingly", (_label, props, warns) => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: ITEMS, multiple: true, modelValue: [], ...props });
+
+        expect(warn.mock.calls.some(([message]) => String(message).includes("belong to the Select all row"))).toBe(
+          warns,
+        );
+      });
+
       it("warns about autocomplete over a slotted trigger, which has no input", () => {
         const warn = spyOnWarn();
         const placeholder = { placeholder: () => h("span", "Pick") };
@@ -2570,6 +2595,34 @@ describe("VcSelect", () => {
 
       expect(input.element.value).toBe("c");
     });
+
+    // A browser runs the open between maska's re-dispatched input and the keystroke's own one.
+    it.each([
+      ["over the whole label", [0, 7], "B", "B", ["Belgium", "Albania"]],
+      ["at the end of the label", [7, 7], "Belgiumc", "c", ["China"]],
+    ] as const)(
+      "keeps the query typed %s when the second delivery lands after the open",
+      async (_label, replaced, value, query, options) => {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Belgium" });
+        const input = wrapper.get<HTMLInputElement>("input");
+
+        input.element.setSelectionRange(replaced[0], replaced[1]);
+        input.element.dispatchEvent(
+          new InputEvent("beforeinput", { data: query, inputType: "insertText", bubbles: true }),
+        );
+        input.element.value = value;
+        input.element.dispatchEvent(new CustomEvent("input"));
+        await nextTick();
+
+        expect(input.attributes("aria-expanded")).toBe("true");
+
+        input.element.dispatchEvent(new Event("input", { bubbles: true }));
+        await nextTick();
+
+        expect(input.element.value).toBe(query);
+        expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(options);
+      },
+    );
 
     it("describes the trigger with the details element", () => {
       const wrapper = createWrapper({ items: ITEMS, message: "Pick one" });

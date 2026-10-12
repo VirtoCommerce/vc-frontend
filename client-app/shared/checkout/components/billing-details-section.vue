@@ -145,7 +145,6 @@ const {
   purchaseOrderNumber,
 } = useCheckout();
 
-// VcSelect emits undefined when cleared; the domain call takes a method, not a maybe-method.
 function onPaymentMethodChange(value?: PaymentMethodType): void {
   if (!value) {
     return;
