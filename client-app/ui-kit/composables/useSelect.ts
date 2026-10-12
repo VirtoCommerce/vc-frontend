@@ -46,10 +46,15 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return Array.isArray(model) ? model : [];
   });
 
+  // An empty model matches nothing, not an option that lacks `valueField` and so reads `undefined`.
+  function isSingleModel(value: unknown): boolean {
+    const model = toValue(params.modelValue);
+
+    return model != null && value === model;
+  }
+
   const foundItem = computed<T | undefined>(() =>
-    toValue(params.multiple)
-      ? undefined
-      : toValue(params.items).find((item) => getItemValue(item) === toValue(params.modelValue)),
+    toValue(params.multiple) ? undefined : toValue(params.items).find((item) => isSingleModel(getItemValue(item))),
   );
 
   // Paging and server-filter replace `items`, and the next page may not carry the selection; its last
@@ -96,7 +101,7 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
         : selectedPrimitives.value.has(itemValue);
     }
 
-    return itemValue === toValue(params.modelValue);
+    return isSingleModel(itemValue);
   }
 
   // An uninitialised model counts as empty.
