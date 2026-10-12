@@ -18,7 +18,7 @@ file are cross-referenced, not repeated.
 
 **Before the theme release**
 
-- [ ] **Switch the storefront over to the plugin.** Cut out of #2481, so that PR lands the MF host
+- [x] **Switch the storefront over to the plugin** — done here: the switch ships `true`, `initSalesRep` is gone from `app-runner.ts`, and the two shipped-config specs now pin the plugin path. Cut out of #2481, so that PR lands the MF host
       harness and changes nothing at runtime: `module_federation_enabled` ships `false` and the
       in-repo `client-app/modules/sales-rep` still initializes and still serves the hub. Three edits,
       all here, once the items below are done on the target environment:
