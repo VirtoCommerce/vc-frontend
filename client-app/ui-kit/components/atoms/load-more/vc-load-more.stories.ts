@@ -100,6 +100,36 @@ const STATES = [
   { label: "No next page", props: { loading: false, hasNextPage: false, itemCount: 0 } },
 ];
 
+export const Paging: StoryType = {
+  render: (args) => ({
+    components: { VcLoadMore, VcScrollbar },
+    setup: () => ({ args, ...usePagedList(15, 15) }),
+    template: listTemplate(DEFAULT_LOAD_MORE),
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: "The usual case: the first page overflows, and scrolling to the bottom asks for the next one.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const { items, loading, hasNextPage, loadMore } = usePagedList();
+</script>
+
+<template>
+  <VcScrollbar vertical :edge-threshold="50" class="h-64">
+    <div v-for="item in items" :key="item">Item {{ item }}</div>
+
+    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore" />
+  </VcScrollbar>
+</template>
+        `,
+      },
+    },
+  },
+};
+
 export const Basic: StoryType = {
   args: { loading: true, hasNextPage: true, itemCount: 0 },
   render: (args) => ({
@@ -153,36 +183,6 @@ export const States: StoryType = {
 <VcLoadMore loading has-next-page :item-count="items.length" />          <!-- a page is on its way -->
 <VcLoadMore :loading="false" has-next-page :item-count="items.length" /> <!-- more pages, nothing in flight: renders nothing at all -->
 <VcLoadMore :item-count="items.length" />                                <!-- no next page: renders nothing -->
-        `,
-      },
-    },
-  },
-};
-
-export const Paging: StoryType = {
-  render: (args) => ({
-    components: { VcLoadMore, VcScrollbar },
-    setup: () => ({ args, ...usePagedList(15, 15) }),
-    template: listTemplate(DEFAULT_LOAD_MORE),
-  }),
-  parameters: {
-    docs: {
-      description: {
-        story: "The usual case: the first page overflows, and scrolling to the bottom asks for the next one.",
-      },
-      source: {
-        code: `
-<script setup lang="ts">
-const { items, loading, hasNextPage, loadMore } = usePagedList();
-</script>
-
-<template>
-  <VcScrollbar vertical :edge-threshold="50" class="h-64">
-    <div v-for="item in items" :key="item">Item {{ item }}</div>
-
-    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore" />
-  </VcScrollbar>
-</template>
         `,
       },
     },

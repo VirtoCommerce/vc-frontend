@@ -79,6 +79,17 @@ const meta: Meta<IVcSelectStoryArgs> = {
     size: "md",
   },
   parameters: {
+    docs: {
+      description: {
+        component:
+          "A combobox (WAI-ARIA APG): focus stays on the trigger and the active option is announced through " +
+          "`aria-activedescendant`. Down / Up open the list on the first / last option, then move through it; " +
+          "Home / End jump to the ends (with `autocomplete` they move the caret instead). Enter or Space opens a " +
+          "select-only list on its selection and picks the active option; with `autocomplete`, Space types and a " +
+          "closed list leaves Enter to the form. Tab moves to Select all when the row is shown, otherwise it leaves " +
+          "the select and closes the list. Escape closes only the list.",
+      },
+    },
     a11y: {
       config: {
         rules: [

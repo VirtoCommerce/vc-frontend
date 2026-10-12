@@ -26,6 +26,7 @@ import { computed, nextTick, onMounted, provide, ref, useTemplateRef, watch } fr
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
 
+// reach-* announce an arrival at an edge, after a scroll, mount, resize or content change; enabled axes only.
 interface IEmits {
   (event: "reachTop"): void;
   (event: "reachBottom"): void;

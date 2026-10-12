@@ -7,7 +7,7 @@ import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { OrganizationRowType } from "../types";
 
 // The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
-// Paging them all in waits on server-side search in `VcSelect`; VCST-5923.
+// Paging them all in means moving the picker onto VcSelect's `server-filter` paging.
 const OPTIONS_LIMIT = 100;
 
 /** A customer the rep may pick in the sharing picker. */

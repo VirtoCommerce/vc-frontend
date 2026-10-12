@@ -17,7 +17,7 @@ function _useFocusModalityState(): Readonly<Ref<boolean>> {
   return readonly(isPointerFocus);
 }
 
-// Created on first use, not on import: importing the kit must not call into `@vueuse/core`.
+// Created on first use, not on import: importing the kit stays free of side effects.
 let useFocusModalityState: (() => Readonly<Ref<boolean>>) | undefined;
 
 export function useFocusModality(): { isPointerFocus: Readonly<Ref<boolean>> } {
