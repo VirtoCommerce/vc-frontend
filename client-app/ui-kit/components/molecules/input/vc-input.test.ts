@@ -134,6 +134,37 @@ describe("VcInput focus modality", () => {
     expect(wrapper.classes()).toContain("vc-input--pointer-focus");
     expect(wrapper.emitted("blur")).toHaveLength(1);
   });
+
+  it("reads the modality even when a handler stops the event", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+    const stopper = document.createElement("div");
+
+    stopper.addEventListener("pointerdown", (event) => event.stopPropagation());
+    stopper.addEventListener("keydown", (event) => event.stopPropagation());
+    document.body.append(stopper);
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+
+    stopper.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-focus");
+
+    stopper.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+
+    stopper.remove();
+  });
+
+  it("leaves an editable field unmarked", async () => {
+    const wrapper = createInputWrapper();
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+  });
 });
 
 describe("VcInput opened", () => {

@@ -5,7 +5,7 @@
       `vc-input--size--${size}`,
       {
         'vc-input--readonly': readonly,
-        'vc-input--pointer-focus': pointerFocus,
+        'vc-input--pointer-focus': readonly && pointerFocus,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
