@@ -244,7 +244,7 @@ function onListboxFocus(): void {
   highlight(Math.max(selectedIndex, 0));
 }
 
-// A list focused while its first page loads starts once the page lands.
+// A keyboard-focused list that was empty starts once its first page lands.
 watch(
   () => displayedOrganizations.value.length > 0,
   (filled) => {

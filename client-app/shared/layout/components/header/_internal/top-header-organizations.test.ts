@@ -63,6 +63,8 @@ beforeEach(() => {
   state.hasNextPage.value = false;
   state.searchPhrase.value = "";
   state.isShowSearch.value = true;
+  // The focus modality is document-wide; each test starts from the keyboard.
+  document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
   vi.clearAllMocks();
 });
 
@@ -385,6 +387,10 @@ describe("TopHeaderOrganizations", () => {
       scrollHeight: 400,
       scrollTop: 0,
     });
+    state.organizations.value = [...state.organizations.value];
+    await new Promise((resolve) => setTimeout(resolve, 160));
+
+    expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
 
     for (const [index, id] of ["org-4", "org-5"].entries()) {
       state.loading.value = true;
@@ -393,7 +399,6 @@ describe("TopHeaderOrganizations", () => {
       state.loading.value = false;
       await new Promise((resolve) => setTimeout(resolve, 160));
 
-      // The first page, resting at the bottom, asked once already.
       expect(state.loadOrganizations).toHaveBeenCalledTimes(index + 2);
     }
   });
@@ -508,8 +513,6 @@ describe("TopHeaderOrganizations", () => {
       await list.trigger("focus");
 
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[2]);
-
-      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
     });
 
     it("points at no option when an empty list takes focus", async () => {
