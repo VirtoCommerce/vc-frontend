@@ -370,9 +370,6 @@ describe("TopHeaderOrganizations", () => {
       scrollHeight: 400,
       scrollTop: 0,
     });
-
-    // jsdom has no layout or ResizeObserver: a content change triggers the measurement.
-    state.organizations.value = [...state.organizations.value, { id: "org-4", name: "Hooli" }];
     await new Promise((resolve) => setTimeout(resolve, 160));
 
     expect(state.loadOrganizations).toHaveBeenCalledTimes(1);

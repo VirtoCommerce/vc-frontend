@@ -281,6 +281,7 @@ describe("VcLoadMore", () => {
   it.each([
     ["to nothing", { clientHeight: 0, scrollHeight: 0, clientWidth: 0, scrollWidth: 0 }],
     ["to no width", { clientHeight: 400, scrollHeight: 400, clientWidth: 0, scrollWidth: 0 }],
+    ["to no height", { clientHeight: 0, scrollHeight: 0, clientWidth: 300, scrollWidth: 300 }],
   ])(
     "asks for nothing while its region is collapsed %s, as in a closed dropdown, and asks once it reopens",
     async (_label, box) => {

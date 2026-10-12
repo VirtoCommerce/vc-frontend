@@ -271,7 +271,7 @@ export const CustomIndicator: StoryType = {
 };
 
 export const InsideAList: StoryType = {
-  argTypes: LIST_DRIVEN_ARG_TYPES,
+  argTypes: { ...LIST_DRIVEN_ARG_TYPES, tag: { control: false } },
   render: (args) => ({
     components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, ...usePagedList(15, 15) }),
