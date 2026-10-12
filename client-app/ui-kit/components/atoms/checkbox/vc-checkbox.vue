@@ -107,7 +107,7 @@ const inputRef = ref<HTMLInputElement | null>(null);
 
 defineExpose({
   /** The native input, for a parent that hands focus to it; null inside an interactive parent, which renders none. */
-  inputElement: inputRef,
+  inputElement: computed(() => inputRef.value),
 });
 
 let forwardExpected = false;
