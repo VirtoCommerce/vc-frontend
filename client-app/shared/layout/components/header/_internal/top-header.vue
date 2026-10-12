@@ -82,6 +82,8 @@
             </span>
           </template>
 
+          <ExtensionPointList category="topHeaderStatus" />
+
           <button
             ref="accountButton"
             type="button"

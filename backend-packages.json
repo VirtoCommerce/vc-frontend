@@ -1,8 +1,8 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1076.0",
+  "PlatformVersion": "3.1078.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1076.0",
+  "PlatformImageTag": "3.1078.0",
   "PlatformAssetUrl": "",
   "Sources": [
     {
@@ -341,7 +341,7 @@
         },
         {
           "Id": "VirtoCommerce.Xapi",
-          "Version": "3.1026.0"
+          "Version": "3.1027.0"
         },
         {
           "Id": "VirtoCommerce.ElasticSearch8",

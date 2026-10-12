@@ -89,6 +89,13 @@
         "empty_visible": "Dra ett nyckeltal hit för att visa det",
         "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
         "max_rows": "Max rader",
+        "restored": "Standardlayouten har återställts.",
+        "empty": {
+          "title": "Alla block är dolda",
+          "text": "Alla nyckeltal och widgetar på den här sidan har flyttats till {hidden} i layoutinställningarna. Återställ standardlayouten för att få tillbaka allt, eller öppna {edit} för att välja exakt vad som ska visas.",
+          "hidden": "Dolda",
+          "restore": "Återställ standardlayout"
+        },
         "a11y": {
           "reorder": "Ändra ordning på {title}",
           "hide": "Dölj {title}",
@@ -204,12 +211,14 @@
       "load_failed": "Kunde inte läsa in ordrarna"
     },
     "tasks": {
-      "title": "Kalender",
+      "title": "Uppgifter",
       "widget_title": "Uppgifter och förfallodatum",
-      "full_calendar": "Hela kalendern",
+      "view_all": "Alla uppgifter",
       "new_task": "Ny uppgift",
-      "add_task": "Lägg till uppgift",
+      "due_dates": "Förfallodatum",
       "today": "I dag",
+      "all": "Alla",
+      "clear_day_aria": "Rensa {date}",
       "empty": "Inga uppgifter på den här fliken",
       "empty_day": "Inget förfaller denna dag",
       "load_failed": "Kunde inte läsa in uppgifterna",
@@ -224,8 +233,10 @@
         "task": "Uppgift",
         "status": "Status",
         "notes": "Anteckningar",
-        "complete_aria": "Markera ”{name}” som slutförd",
-        "reopen_aria": "Återöppna ”{name}”",
+        "actions": "Åtgärder",
+        "mark_complete": "Slutför",
+        "reopen": "Återöppna",
+        "action_aria": "{action}: ”{name}”",
         "edit_aria": "Redigera ”{name}”"
       },
       "status": {

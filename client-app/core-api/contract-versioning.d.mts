@@ -29,3 +29,7 @@ export type VersionActionType =
     };
 
 export declare function decideVersionAction(facts: IVersionFacts): VersionActionType;
+
+export declare function versionedSourceFiles(files: readonly string[]): string[];
+export declare function toLf(text: string): string;
+export declare function packageJsonShape(json: string): string;

@@ -1,6 +1,6 @@
 {
   "name": "@vc-frontend/core",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "Curated public API surface of the VC B2B storefront host, consumed by Module Federation plugins. Publish-from-source: type contract only — the running implementation is injected by the host at runtime via MF shared singletons.",
   "type": "module",
   "private": true,
@@ -9,6 +9,12 @@
     "contract/tailwind-preset.cjs",
     "federation.mjs",
     "federation.d.mts",
+    "manifest.mjs",
+    "manifest.d.mts",
+    "manifest-format.mjs",
+    "manifest-format.d.mts",
+    "codegen.mjs",
+    "codegen.d.mts",
     "testing.mjs",
     "testing.d.mts",
     "tailwind-preset.d.cts"
@@ -21,6 +27,14 @@
     "./federation": {
       "types": "./federation.d.mts",
       "import": "./federation.mjs"
+    },
+    "./manifest": {
+      "types": "./manifest.d.mts",
+      "import": "./manifest.mjs"
+    },
+    "./codegen": {
+      "types": "./codegen.d.mts",
+      "import": "./codegen.mjs"
     },
     "./testing": {
       "types": "./testing.d.mts",
@@ -35,6 +49,7 @@
   "peerDependencies": {
     "@apollo/client": "^3.14.0",
     "@floating-ui/vue": "^2.0.1",
+    "@internationalized/date": "^3.12.2",
     "@intlify/core-base": "^11.4.6",
     "@tailwindcss/container-queries": "^0.1.1",
     "@vue/shared": "^3.5.40",
@@ -61,6 +76,9 @@
     "tw-elements": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "vitest": "^3.2.7"
   },
   "scripts": {
     "build:types": "node build-types.mjs"

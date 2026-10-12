@@ -5032,6 +5032,7 @@ __metadata:
   peerDependencies:
     "@apollo/client": ^3.14.0
     "@floating-ui/vue": ^2.0.1
+    "@internationalized/date": ^3.12.2
     "@intlify/core-base": ^11.4.6
     "@tailwindcss/container-queries": ^0.1.1
     "@vue/shared": ^3.5.40
@@ -14665,6 +14666,7 @@ __metadata:
     "@graphql-codegen/typed-document-node": "npm:5.1.2"
     "@graphql-codegen/typescript": "npm:4.1.6"
     "@graphql-codegen/typescript-operations": "npm:4.6.1"
+    "@graphql-typed-document-node/core": "npm:^3.2.0"
     "@headlessui/vue": "npm:^1.7.23"
     "@internationalized/date": "npm:^3.12.2"
     "@module-federation/enhanced": "npm:2.8.0"

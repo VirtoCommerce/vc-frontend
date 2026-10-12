@@ -243,7 +243,9 @@
       "logo_changed": "El logo se cambió correctamente.",
       "logo_deleted": "El logo fue eliminado.",
       "pending_operations_leaving_page_confirmation": "Algunas operaciones aún están en curso. ¿Seguro que quieres salir de esta página? Los cambios no guardados podrían perderse.",
-      "content_failed_to_load": "No se pudo cargar una parte del sitio. Vuelva a cargar la página para continuar."
+      "content_failed_to_load": "No se pudo cargar una parte del sitio. Vuelva a cargar la página para continuar.",
+      "page_loading": "Cargando la página…",
+      "page_loading_slow": "Esta página está tardando más de lo habitual en cargarse. Puede seguir esperando o recargar la página."
     },
     "placeholders": {
       "enter_value": "Por favor, introduce un valor",
@@ -805,6 +807,17 @@
           "required_section": "La sección es obligatoria",
           "optional_no_selected": "Personaliza aún más tu selección (opcional)",
           "required_no_selected": "Completa todas las opciones obligatorias para finalizar tu selección",
+          "checklist": {
+            "title": "Lista de verificación de la configuración",
+            "done": "(completado)",
+            "selected": "{name} — {value}",
+            "required": "{name} — obligatorio",
+            "optional": "{name} — opcional",
+            "fill_it_in": "Rellenar",
+            "upload_file": "Subir un archivo",
+            "check_it_out": "Ver opciones",
+            "review": "Revisar"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Opción personalizada: {0}",
             "custom_option_empty": "Opción personalizada: vacío",
@@ -1816,6 +1829,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
     "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)",
+    "PRODUCT_PACK_SIZE_LIMIT": "Pedir en paquetes de {packSize}",
+    "LINE_ITEM_LIMIT": "Puedes pedir un máximo de {limit} artículo(s)",
     "CART_INVALID_PRODUCT": "Invalid product"
   },
   "file_error": {
