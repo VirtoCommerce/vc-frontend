@@ -59,6 +59,9 @@ export default defineConfigWithVueTs(
       "dist/",
       // Generated, self-contained @vc-frontend/core type contract (see client-app/core-api/README.md).
       "client-app/core-api/contract/",
+      // Outside the host tsconfig projects; build-types.mjs type-checks them against the contract.
+      "client-app/core-api/manifest.d.mts",
+      "client-app/core-api/contract-checks/",
       ".certificates/",
       "artifacts/",
       "storybook-static/",
@@ -394,7 +397,7 @@ export default defineConfigWithVueTs(
 
   // Type-aware configuration for Node.js scripts and config files
   {
-    files: ["*.config.js", "*.config.ts", "scripts/**/*.ts", ".storybook/main.ts"],
+    files: ["*.config.js", "*.config.ts", "vite.federation*.ts", "scripts/**/*.ts", ".storybook/main.ts"],
     languageOptions: {
       parserOptions: {
         tsconfigRootDir,

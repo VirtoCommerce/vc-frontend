@@ -4,8 +4,8 @@ on:
 
 jobs:
   ci:
-    # Upstream-only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): skipped in the private theme mirror (VCST-5970).
-    if: github.repository_id == '296335982'
+    # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_RELEASE=true: skipped in the private theme mirror (VCST-5970).
+    if: (github.repository_id == '296335982' || vars.VC_RELEASE == 'true')
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
@@ -17,6 +17,17 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
+
+      - name: Check per-repository settings
+        # Outside vc-frontend, the Sonar key would otherwise fall back to vc-frontend's project and overwrite its analysis.
+        if: ${{ github.repository_id != '296335982' }}
+        env:
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_PROJECT_KEY" ]; then
+            echo "::error::Set the SONAR_PROJECT_KEY repository variable: without it SonarCloud analyses go to vc-frontend's project."
+            exit 1
+          fi
 
       - name: Set up Node 22
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
@@ -62,6 +73,8 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e # master
+        with:
+          args: ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

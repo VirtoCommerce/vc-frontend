@@ -32,7 +32,7 @@ jobs:
     name: Semgrep (SAST)
     # Skip Dependabot and PRs from forks (no access to upload SARIF / secrets), and
     # the private theme mirror (VCST-5970; repo id 296335982 = VirtoCommerce/vc-frontend).
-    if: ${{ github.repository_id == '296335982' &&
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}
@@ -101,7 +101,7 @@ jobs:
 
   osv-scanner:
     name: OSV-Scanner (SCA)
-    if: ${{ github.repository_id == '296335982' &&
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}

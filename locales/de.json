@@ -243,7 +243,9 @@
       "logo_changed": "Das Logo wurde erfolgreich geändert.",
       "logo_deleted": "Das Logo wurde gelöscht.",
       "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren.",
-      "content_failed_to_load": "Ein Teil der Website konnte nicht geladen werden. Bitte laden Sie die Seite neu, um fortzufahren."
+      "content_failed_to_load": "Ein Teil der Website konnte nicht geladen werden. Bitte laden Sie die Seite neu, um fortzufahren.",
+      "page_loading": "Seite wird geladen…",
+      "page_loading_slow": "Das Laden dieser Seite dauert länger als üblich. Sie können warten oder die Seite neu laden."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -805,6 +807,17 @@
           "required_section": "Abschnitt erforderlich",
           "optional_no_selected": "Personalisieren Sie Ihre Auswahl weiter (optional)",
           "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen.",
+          "checklist": {
+            "title": "Konfigurations-Checkliste",
+            "done": "(abgeschlossen)",
+            "selected": "{name} — {value}",
+            "required": "{name} — erforderlich",
+            "optional": "{name} — optional",
+            "fill_it_in": "Ausfüllen",
+            "upload_file": "Datei hochladen",
+            "check_it_out": "Ansehen",
+            "review": "Überprüfen"
+          },
           "section-text-fieldset": {
             "custom_option_with_input": "Benutzerdefinierte Option: {0}",
             "custom_option_empty": "Benutzerdefinierte Option: leer",
@@ -1816,6 +1829,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "Die verfügbare Produktmenge {availQty} reicht nicht für die angeforderte Menge {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Mindestbestellung von {minQty} Artikel ist nicht auf Lager",
     "PRODUCT_EXACT_QTY": "Sie können {minQty} Artikel bestellen",
+    "PRODUCT_PACK_SIZE_LIMIT": "Bestellen in Packungen von {packSize}",
+    "LINE_ITEM_LIMIT": "Sie können maximal {limit} Artikel bestellen",
     "CART_INVALID_PRODUCT": "Ungültiges Produkt"
   },
   "file_error": {
