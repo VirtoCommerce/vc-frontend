@@ -4,12 +4,12 @@ function charFromEnd(text: string, offset: number): string {
   return text.charAt(text.length - 1 - offset);
 }
 
-function isHighSurrogate(code: number): boolean {
-  return code >= 0xd800 && code <= 0xdbff;
+function isHighSurrogate(char: string): boolean {
+  return char >= "\uD800" && char <= "\uDBFF";
 }
 
-function isLowSurrogate(code: number): boolean {
-  return code >= 0xdc00 && code <= 0xdfff;
+function isLowSurrogate(char: string): boolean {
+  return char >= "\uDC00" && char <= "\uDFFF";
 }
 
 /**
@@ -39,7 +39,7 @@ export function insertedText(previous: string, next: string, replaced?: readonly
   }
 
   // The halves of an astral character (an emoji) compare one by one; never cut between them.
-  if (start > 0 && isHighSurrogate(next.charCodeAt(start - 1))) {
+  if (start > 0 && isHighSurrogate(next.charAt(start - 1))) {
     start--;
   }
 
@@ -53,7 +53,7 @@ export function insertedText(previous: string, next: string, replaced?: readonly
     end++;
   }
 
-  if (end > 0 && isLowSurrogate(next.charCodeAt(next.length - end))) {
+  if (end > 0 && isLowSurrogate(next.charAt(next.length - end))) {
     end--;
   }
 
