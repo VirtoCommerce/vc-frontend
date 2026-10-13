@@ -10,9 +10,8 @@
  ├─ in a backend module that already exists ─────────────────────▶ S1a
  └─ together with a new backend module ──────────────────────────▶ S1b
 
- Change a plugin
- ├─ the facade already exports what you need ────────────────────▶ S2
- └─ you need something the facade does not export ───────────────▶ S3
+ Work on a plugin on your machine ───────────────────────────────▶ S2
+ Release a facade extension a plugin needs ──────────────────────▶ S3
 
  Move a plugin to a new storefront / facade version ─────────────▶ S4
  Move an in-repo module (client-app/modules/*) into a plugin ────▶ S5
@@ -27,8 +26,8 @@
 | --- | ----------------------------------------------------------------------------- | ------- |
 | S1a | [Plugin in an existing backend module](./s1a-plugin-in-an-existing-module.md) | Written |
 | S1b | Plugin with a new backend module                                              | Planned |
-| S2  | Change a plugin, the facade has it                                            | Planned |
-| S3  | Change a plugin, the facade must grow                                         | Planned |
+| S2  | [Develop a plugin locally](./s2-develop-locally.md)                           | Written |
+| S3  | Extend the facade and release it                                              | Planned |
 | S4  | Upgrade a plugin to a new host / facade                                       | Planned |
 | S5  | Move an in-repo module into a plugin                                          | Planned |
 | S6  | Enable a plugin on an environment                                             | Planned |

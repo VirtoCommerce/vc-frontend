@@ -86,7 +86,8 @@
 2. **A declared route shows a 404.** `init()` registered it after an `await`. Register declared routes first,
    before any `await`.
 3. **`yarn install` fails with a 404 on `@vc-frontend/core`.** The facade version the scaffold pinned is not
-   released yet. Link a local facade with yalc (S3), or scaffold from a released `vc-frontend` commit.
+   released yet. Link a local facade with yalc ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)),
+   or scaffold from a released `vc-frontend` commit.
 
 ---
 
