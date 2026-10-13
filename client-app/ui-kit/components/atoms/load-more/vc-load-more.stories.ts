@@ -306,7 +306,8 @@ export const InsideAList: StoryType = {
         story:
           "`tag` keeps the markup valid inside a list: a `<div>` is not allowed as a child of `<ul>`, " +
           'and `role="none"` replaces the default `role="status"`, which would otherwise be read as ' +
-          'a live region announcing every page. A `role="listbox"` is different again — it may own ' +
+          "a live region announcing every page; in any role but `status` the item is in the list only while a " +
+          'page loads. A `role="listbox"` is different again — it may own ' +
           "options and nothing else, so put the list inside the scroll region and the pager after it.",
       },
       source: {
