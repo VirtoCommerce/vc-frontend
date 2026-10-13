@@ -243,6 +243,17 @@ describe("useListboxNavigation", () => {
     expect(region.scrollTop).toBe(300);
   });
 
+  it("brings a row set as the keyboard position into view", async () => {
+    const { region } = buildList(10);
+    const { highlight } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
+
+    highlight(9);
+    await nextTick();
+    await nextTick();
+
+    expect(region.scrollTop).toBe(300);
+  });
+
   it.each([
     ["0", [0, 1, 2], [0, 1, 2, 3]],
     ["an empty string", ["", "b"], ["", "b", "c"]],
