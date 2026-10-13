@@ -41,6 +41,8 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
   <Target Name="BuildStorefrontPlugin" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <!-- A runner's global yarn is 1.x; package.json pins yarn 4. -->
     <Exec Command="corepack enable" ContinueOnError="true" />
+    <!-- vc-build Clean deletes every bin folder, those inside node_modules too, and yarn would not restore them. -->
+    <RemoveDir Directories="$(StorefrontAppDir)node_modules" />
     <Exec Command="yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
     <Exec Command="yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
     <Exec Command="yarn build" WorkingDirectory="$(StorefrontAppDir)" />
