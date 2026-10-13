@@ -37,7 +37,8 @@ file are cross-referenced, not repeated.
 
       **Do not flip before the plugin reaches parity with the in-repo module.** vc-module-sales-rep#13
       ports it as of `dev` at 1ae6a0318 (2026-10-08: documents, all customer orders, tasks, focus ring,
-      rule chips, list-sharing rework), against facade 0.2.3. Anything merged into
+      rule chips, list-sharing rework), against facade 0.2.3 — and needs the 0.3.0 move below before it
+      loads on this host. Anything merged into
       `client-app/modules/sales-rep` after that is again a regression until it is ported too.
 
       Turning the switch on also costs **+159 KB gzip across the build (+9 %), ≈ +67 KB gzip of it on

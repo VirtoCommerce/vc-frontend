@@ -15,7 +15,7 @@
       {{ $t("common.labels.organizations") }}
     </div>
 
-    <div v-if="isShowSearch" class="top-header-organizations__search">
+    <div v-else class="top-header-organizations__search">
       <div class="top-header-organizations__label">
         {{ $t("common.labels.organizations") }}
       </div>

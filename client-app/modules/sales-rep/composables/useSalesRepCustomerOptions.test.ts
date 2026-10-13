@@ -83,7 +83,7 @@ describe("useSalesRepCustomerOptions", () => {
   it("queries the caller's served customers, name-sorted, one page deep", () => {
     build();
 
-    // No keyword: `VcSelect` filters over the items it was handed and gives the composable no search text to send.
+    // No keyword: the picker binds no `server-filter`, so it filters the loaded options itself.
     expect(passedVariables()).toEqual({
       storeId: "test-store",
       first: 100,

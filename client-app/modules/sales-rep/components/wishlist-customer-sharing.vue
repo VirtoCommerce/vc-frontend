@@ -182,10 +182,7 @@ function deselect(organizationId: string): void {
   selected.value = selected.value.filter((recipient) => recipient.organizationId !== organizationId);
 }
 
-// The kit hands back an empty array both for its own clear button and for unticking the last option, so both go
-// through `clearSelection` — otherwise emptying the audience from the field would leave no way back. Any other
-// change is the rep moving on, which is what retires the offer.
-// The picker speaks ids. The current rows resolve them too, so a recipient no longer among the loaded options stays.
+// An emptied picker clears through `clearSelection`; current rows resolve ids, so an off-page recipient stays.
 function onPickerChange(nextIds: string[]): void {
   if (!nextIds.length && selected.value.length) {
     clearSelection();
