@@ -21,7 +21,7 @@ interface IEmits {
 }
 
 interface IProps {
-  size: "xs" | "sm" | "md" | "auto";
+  size: VcInputSizeType;
   disabled?: boolean;
 }
 

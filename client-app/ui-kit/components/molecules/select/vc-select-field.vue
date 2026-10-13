@@ -77,7 +77,7 @@ interface IEmits {
 interface IProps {
   search: string;
   placeholderText?: string;
-  size: "xs" | "sm" | "md" | "auto";
+  size: VcInputSizeType;
   opened: boolean;
   clearVisible: boolean;
   autocomplete?: boolean;

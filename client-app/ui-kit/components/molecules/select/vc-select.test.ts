@@ -2760,6 +2760,16 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(wrapper.get(".vc-select-button__control").element);
     });
 
+    it("keeps a disabled slotted trigger closed when it is clicked", async () => {
+      const wrapper = createWrapper({ items: ITEMS, disabled: true }, slots);
+      const control = wrapper.get(".vc-select-button__control");
+
+      await control.trigger("click");
+
+      expect(control.attributes("aria-expanded")).toBe("false");
+      expect(wrapper.find('[role="listbox"]').exists()).toBe(false);
+    });
+
     it("drops the chevron of a read-only slotted trigger", () => {
       expect(createWrapper({ items: ITEMS }, slots).find(".vc-select-button__icon").exists()).toBe(true);
       expect(createWrapper({ items: ITEMS, readonly: true }, slots).find(".vc-select-button__icon").exists()).toBe(

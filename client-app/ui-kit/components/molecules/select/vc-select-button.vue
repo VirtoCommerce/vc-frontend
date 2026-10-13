@@ -72,7 +72,7 @@ defineProps<{
   /** What the `selected` slot receives: the resolved item, or the selected values in multiple mode. */
   selectedItem?: T;
   hasSelection: boolean;
-  size: "xs" | "sm" | "md" | "auto";
+  size: VcInputSizeType;
   opened: boolean;
   clearVisible: boolean;
   disabled?: boolean;
@@ -112,7 +112,7 @@ defineExpose({
 
   --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
-  @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-start;
+  @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50;
 
   min-height: var(--min-height);
   font-size: var(--text-size);
@@ -140,7 +140,8 @@ defineExpose({
   &--disabled {
     $disabled: &;
 
-    @apply bg-neutral cursor-not-allowed pointer-events-none;
+    // Hit-testable, unlike read-only, so the cursor shows as on VcInput; VcPopover ignores the click.
+    @apply bg-neutral cursor-not-allowed;
   }
 
   &--readonly {
@@ -157,6 +158,10 @@ defineExpose({
     $control: &;
 
     @apply grow flex self-stretch min-w-0 text-start;
+
+    #{$disabled} & {
+      @apply cursor-not-allowed;
+    }
 
     &:focus-visible {
       @apply outline-none;
