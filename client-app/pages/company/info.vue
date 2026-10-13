@@ -43,7 +43,13 @@
             </div>
 
             <VcFilePicker
-              :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || loadingOrganizationLogo"
+              :disabled="
+                loadingOrganizationLogo ||
+                uploadingOrganizationLogo ||
+                loadingUser ||
+                loadingOrganizationLogo ||
+                !isUploadAvailable
+              "
               :files="files"
               class="xs:w-6/12 xs:flex-none"
               v-bind="fileOptions"
@@ -89,6 +95,10 @@
           <div class="mt-1.5 empty:hidden">
             <VcAlert v-if="hasFailedFiles" color="danger" variant="solid-light" size="sm" icon>
               {{ files[0].errorMessage }}
+            </VcAlert>
+
+            <VcAlert v-else-if="!isUploadAvailable" color="warning" variant="soft" size="sm" icon>
+              {{ $t("ui_kit.file_uploader.errors.unavailable") }}
             </VcAlert>
           </div>
         </VcWidget>
@@ -325,6 +335,7 @@ const {
   removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
+  isUploadAvailable,
   hasFailedFiles,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE);
 const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded } = useWhiteLabeling();

@@ -4,6 +4,7 @@
       data-test-id="file-option"
       :files="files"
       v-bind="fileOptions"
+      :unavailable="!isUploadAvailable"
       removable
       @add-files="onAddFiles"
       @remove-files="onRemoveFiles"
@@ -47,6 +48,7 @@ const {
   uploadFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
+  isUploadAvailable,
 } = useFiles(DEFAULT_FILES_SCOPE, initialFiles);
 
 async function onAddFiles(items: INewFile[]) {

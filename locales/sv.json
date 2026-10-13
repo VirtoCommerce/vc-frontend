@@ -1836,10 +1836,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Kan inte ladda upp fil med samma namn",
     "INVALID_CONTENT": "Kan inte läsa filen",
+    "INVALID_CONTENT_TYPE": "Kan inte ladda upp filen",
     "EXCEPTION": "Misslyckades vid uppladdning av fil. Vänligen försök igen.",
-    "INVALID_SCOPE": "Okänt omfång '{0}'.",
+    "INVALID_SCOPE": "Filuppladdning är inte tillgänglig.",
     "INVALID_EXTENSION": "Filformatet är inte tillåtet",
     "INVALID_SIZE": "Filstorleken överskrider den tillåtna {0}",
+    "INVALID_MIN_SIZE": "Filstorleken understiger den tillåtna minimistorleken {0}",
     "CANNOT_DELETE": "Misslyckades vid radering av fil"
   }
 }

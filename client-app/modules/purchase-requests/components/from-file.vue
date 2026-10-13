@@ -39,7 +39,13 @@
         </aside>
 
         <section class="items-stretch">
-          <VcFileUploader class="h-full" v-bind="fileOptions" :files="files" @add-files="onAddFiles" />
+          <VcFileUploader
+            class="h-full"
+            v-bind="fileOptions"
+            :files="files"
+            :unavailable="!isUploadAvailable"
+            @add-files="onAddFiles"
+          />
         </section>
       </template>
     </div>
@@ -57,8 +63,14 @@ const isMobile = breakpoints.smaller("lg");
 
 const router = useRouter();
 
-const { files, fileOptions, fetchFileOptions, creatingPurchaseRequest, createPurchaseRequestFromDocuments } =
-  useNewPurchaseRequest();
+const {
+  files,
+  fileOptions,
+  isUploadAvailable,
+  fetchFileOptions,
+  creatingPurchaseRequest,
+  createPurchaseRequestFromDocuments,
+} = useNewPurchaseRequest();
 
 async function onAddFiles(items: INewFile[]) {
   const purchaseRequestId = await createPurchaseRequestFromDocuments(items);

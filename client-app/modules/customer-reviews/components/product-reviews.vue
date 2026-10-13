@@ -145,6 +145,7 @@
           <VcFileUploader
             v-bind="imageOptions"
             :files="files"
+            :unavailable="!isImageUploadAvailable"
             removable
             @add-files="onAddFiles"
             @remove-files="onRemoveFiles"
@@ -203,6 +204,7 @@ const { isAuthenticated } = useUser();
 const {
   files,
   options: imageOptions,
+  isUploadAvailable: isImageUploadAvailable,
   uploadedFiles: uploadedReviewImages,
   fetchOptions: fetchImageUploadOptions,
   addFiles,

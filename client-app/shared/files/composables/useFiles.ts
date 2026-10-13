@@ -1,6 +1,6 @@
 import { isDefined, useMemoize } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
-import { computed, onUnmounted, ref, unref, watch } from "vue";
+import { computed, onUnmounted, readonly, ref, unref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "@/core/api/common/composables/useAxios";
 import { deleteFile, getFileUploadOptions } from "@/core/api/graphql/files";
@@ -28,6 +28,8 @@ const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 
 // Maximum number of simultaneous uploads
 const MAX_CONCURRENT_UPLOADS = 3;
+
+const FILE_SIZE_ERROR_CODES = ["INVALID_SIZE", "INVALID_MIN_SIZE"];
 
 // Browsers percent-encode these characters in a multipart filename, and the server returns the encoded name
 function toMultipartFileName(name: string): string {
@@ -67,9 +69,12 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   };
 
   const options = ref<IFileOptions>(defaultOptions);
+  const isUploadAvailable = ref(true);
 
   async function fetchOptions() {
     const result = await getFileUploadOptionsMemoized(unref(scope));
+    // The server returns no options only for a scope that is not configured, where every upload fails
+    isUploadAvailable.value = !!result;
     if (result) {
       options.value = {
         ...defaultOptions,
@@ -192,6 +197,11 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   async function uploadFiles(): Promise<void> {
+    if (!isUploadAvailable.value) {
+      newFiles.value.forEach((file) => toFailedFile(file, getErrorMessage("INVALID_SCOPE")));
+      return;
+    }
+
     // Calculate how many more uploads we can start
     const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
 
@@ -326,28 +336,22 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   function getErrorMessage(errorCode: string, errorParameter?: unknown, errorMessage?: string): string | undefined {
-    let parameters: string[];
-    if (errorCode === "INVALID_SIZE") {
-      const fileSize = getFileSize(errorParameter as number);
-      parameters = [
-        n(fileSize.value, {
-          notation: "compact",
-          style: "unit",
-          unit: fileSize.unit,
-          unitDisplay: "narrow",
-        }),
-      ];
-    } else {
-      parameters = [errorParameter as string];
-    }
+    const parameter = FILE_SIZE_ERROR_CODES.includes(errorCode)
+      ? formatFileSize(errorParameter as number)
+      : (errorParameter as string);
 
-    return translate({
-      errorCode,
-      errorMessage,
-      errorParameters: parameters.map((item, index) => ({
-        key: index.toString(),
-        value: item,
-      })),
+    // A single `parameter` reaches `t()` as a list, which is what the `{0}` placeholders read
+    return translate({ errorCode, errorMessage, parameter });
+  }
+
+  function formatFileSize(bytes: number): string {
+    const fileSize = getFileSize(bytes);
+
+    return n(fileSize.value, {
+      notation: "compact",
+      style: "unit",
+      unit: fileSize.unit,
+      unitDisplay: "narrow",
     });
   }
 
@@ -371,6 +375,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     allFilesAttachedOrUploaded,
 
     options,
+    isUploadAvailable: readonly(isUploadAvailable),
 
     addFiles,
     validateFiles,

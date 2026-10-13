@@ -1,6 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
+import { getFileUploadOptions } from "@/core/api/graphql/files";
 import { createI18n } from "@/i18n";
 import { uiKit } from "@/ui-kit";
 import uiKitMessages from "@/ui-kit/locales/en.json";
@@ -8,6 +9,8 @@ import enMessages from "../../../../../../locales/en.json";
 import OptionFile from "../option-file.vue";
 import type { CartConfigurationItemFileType } from "@/core/api/graphql/types";
 import type { VueWrapper } from "@vue/test-utils";
+import VcFile from "@/ui-kit/components/molecules/file/vc-file.vue";
+import VcFileUploader from "@/ui-kit/components/molecules/file-uploader/vc-file-uploader.vue";
 
 // Stands in for `POST /api/files/{scope}`: each test sets how the server answers the files of a request.
 const server = vi.hoisted(() => ({
@@ -51,6 +54,8 @@ enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   server.respond.mockReset();
+  // The scope is configured unless a test says otherwise.
+  vi.mocked(getFileUploadOptions).mockResolvedValue({ maxFileSize: 1024 * 1024, allowedExtensions: [] });
 });
 
 // Hosts OptionFile the way product-configuration.vue does: the files it reports on `input` become the section's
@@ -102,7 +107,7 @@ describe("OptionFile", () => {
 
     const file = wrapper.get(".vc-file");
     expect(file.text()).toContain("drawing.txt");
-    expect(file.get(".vc-file__message--error").text()).toMatch(/^Unknown scope '.*'\./);
+    expect(file.get(".vc-file__message--error").text()).toMatch(/^File upload is not available\./);
     expect(wrapper.text()).toContain("Fix file upload errors to continue.");
   });
 
@@ -162,7 +167,25 @@ describe("OptionFile", () => {
     const files = wrapper.findAll(".vc-file");
     expect(files).toHaveLength(1);
     expect(files[0].text()).toContain("failed.txt");
-    expect(files[0].get(".vc-file__message--error").text()).toMatch(/^Unknown scope '.*'\./);
+    expect(files[0].get(".vc-file__message--error").text()).toMatch(/^File upload is not available\./);
+  });
+
+  it("disables the field and sends nothing when the scope is not configured", async () => {
+    // The server has upload options only for a configured scope.
+    vi.mocked(getFileUploadOptions).mockResolvedValue(undefined);
+    const { wrapper } = mountOptionFile();
+    await flushPromises();
+
+    expect(wrapper.findComponent(VcFileUploader).props("unavailable")).toBe(true);
+
+    await attach(wrapper, "drawing.txt");
+
+    expect(server.respond).not.toHaveBeenCalled();
+    expect(wrapper.findComponent(VcFile).props("file")).toMatchObject({
+      name: "drawing.txt",
+      status: "error",
+      errorMessage: "File upload is not available.",
+    });
   });
 
   it("clears the field when the selection is cleared from outside", async () => {

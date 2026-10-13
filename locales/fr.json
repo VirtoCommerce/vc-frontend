@@ -1836,10 +1836,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Impossible de télécharger un fichier avec le même nom.",
     "INVALID_CONTENT": "Impossible de lire le fichier.",
+    "INVALID_CONTENT_TYPE": "Impossible de télécharger le fichier.",
     "EXCEPTION": "Échec lors du téléchargement du fichier. Veuillez réessayer.",
-    "INVALID_SCOPE": "Portée inconnue '{0}'.",
+    "INVALID_SCOPE": "Le téléchargement de fichiers n'est pas disponible.",
     "INVALID_EXTENSION": "Le format de fichier n'est pas autorisé.",
     "INVALID_SIZE": "La taille du fichier dépasse la limite autorisée de {0}.",
+    "INVALID_MIN_SIZE": "La taille du fichier est inférieure au minimum autorisé de {0}.",
     "CANNOT_DELETE": "Échec lors de la suppression du fichier."
   }
 }

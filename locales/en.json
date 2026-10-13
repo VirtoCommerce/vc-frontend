@@ -1836,10 +1836,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name",
     "INVALID_CONTENT": "Cannot read file",
+    "INVALID_CONTENT_TYPE": "Cannot upload file",
     "EXCEPTION": "Failure while uploading file. Please try again.",
-    "INVALID_SCOPE": "Unknown scope '{0}'.",
+    "INVALID_SCOPE": "File upload is not available.",
     "INVALID_EXTENSION": "File format is not allowed",
     "INVALID_SIZE": "File size exceeds the allowed {0}",
+    "INVALID_MIN_SIZE": "File size is below the allowed minimum {0}",
     "CANNOT_DELETE": "Failure while deleting file"
   }
 }

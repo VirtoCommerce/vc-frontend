@@ -1,6 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
+import { getFileUploadOptions } from "@/core/api/graphql/files";
 import { createI18n } from "@/i18n";
 import { toNewFile } from "@/ui-kit/utilities";
 import enMessages from "../../../../locales/en.json";
@@ -52,6 +53,7 @@ enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   server.respond.mockReset();
+  vi.mocked(getFileUploadOptions).mockReset();
 });
 
 // Mounted rather than called bare: useFiles registers onUnmounted and takes i18n from the app.
@@ -115,12 +117,75 @@ describe("useFiles uploadFiles", () => {
 
     await expect(upload(composable)).resolves.toBeUndefined();
 
-    // The INVALID_SCOPE translation, not the server's own text (no trailing period). The quoted scope goes
-    // unchecked: getErrorMessage hands it to the list placeholder {0} as a named value, which vue-i18n doesn't
-    // read — pre-existing, and the same for an error that names its file.
+    // The INVALID_SCOPE translation, not the server's own text: the shopper can't act on a scope name.
     expect(outcome(composable)).toEqual([
-      { name: "spec.pdf", status: "error", errorMessage: expect.stringMatching(/^Unknown scope '.*'\.$/) },
+      { name: "spec.pdf", status: "error", errorMessage: "File upload is not available." },
     ]);
+  });
+
+  it("shows the size limit when a file is larger than allowed", async () => {
+    // With no options loaded the field allows the default 1 MB. The check runs before any request.
+    const composable = mountUseFiles();
+    composable.addFiles([toNewFile(new File([new Uint8Array(2 * 1024 * 1024)], "large.pdf"))]);
+    composable.validateFiles();
+
+    await expect(upload(composable)).resolves.toBeUndefined();
+
+    expect(server.respond).not.toHaveBeenCalled();
+    expect(outcome(composable)).toEqual([
+      { name: "large.pdf", status: "error", errorMessage: "File size exceeds the allowed 1MB" },
+    ]);
+  });
+
+  it("shows the minimum size the server requires", async () => {
+    // The server's size errors carry the limit in bytes.
+    server.respond.mockImplementation((fileNames) =>
+      fileNames.map((name) => ({
+        succeeded: false,
+        name,
+        errorCode: "INVALID_MIN_SIZE",
+        errorMessage: "Minimum allowed file size: 1024",
+        errorParameter: 1024,
+      })),
+    );
+    const composable = mountUseFiles();
+    attach(composable, ["tiny.txt"]);
+
+    await expect(upload(composable)).resolves.toBeUndefined();
+
+    expect(outcome(composable)).toEqual([
+      { name: "tiny.txt", status: "error", errorMessage: "File size is below the allowed minimum 1kB" },
+    ]);
+  });
+
+  it("does not send a file when the scope is not configured", async () => {
+    // The server has upload options only for a configured scope.
+    vi.mocked(getFileUploadOptions).mockResolvedValue(undefined);
+    const composable = mountUseFiles();
+    await composable.fetchOptions();
+    attach(composable, ["spec.pdf"]);
+
+    await expect(upload(composable)).resolves.toBeUndefined();
+
+    expect(composable.isUploadAvailable.value).toBe(false);
+    expect(server.respond).not.toHaveBeenCalled();
+    expect(outcome(composable)).toEqual([
+      { name: "spec.pdf", status: "error", errorMessage: "File upload is not available." },
+    ]);
+  });
+
+  it("uploads when the scope is configured", async () => {
+    // Control: loaded options keep the upload available.
+    vi.mocked(getFileUploadOptions).mockResolvedValue({ maxFileSize: 1024 * 1024, allowedExtensions: [] });
+    server.respond.mockImplementation((fileNames) => fileNames.map((name) => saved(name)));
+    const composable = mountUseFiles();
+    await composable.fetchOptions();
+    attach(composable, ["spec.pdf"]);
+
+    await expect(upload(composable)).resolves.toBeUndefined();
+
+    expect(composable.isUploadAvailable.value).toBe(true);
+    expect(outcome(composable)).toEqual([{ name: "spec.pdf", status: "uploaded", errorMessage: undefined }]);
   });
 
   it("fails the file the server broke off at and keeps the files it saved before", async () => {
