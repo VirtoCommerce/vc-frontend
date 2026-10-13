@@ -125,6 +125,8 @@ describe("create-plugin scaffolder", () => {
     expectParseableTs(join(dir, "src", "pages", "my-page.test.ts"));
 
     expect(readFileSync(join(dir, ".yarnrc.yml"), "utf8")).toMatch(/^npmMinimalAgeGate: /m);
+    // Its own Yarn project even under a parent package.json; `yarn install` fills it.
+    expect(readFileSync(join(dir, "yarn.lock"), "utf8")).toBe("");
     // yarn 1 ignores the .yarnrc.yml this writes and knows no `portal:`/`link:` protocol.
     expect(pkg.packageManager).toMatch(/^yarn@/);
     expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));

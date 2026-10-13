@@ -915,6 +915,9 @@ if (webDir) {
 }
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
+// An empty lockfile makes this folder its own Yarn project. Without it, Yarn refuses to install under a parent
+// package.json, which a module's *.Web often has for its admin UI.
+writeFileSync(join(targetDir, "yarn.lock"), "");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 // The host's supply-chain age gate, so a plugin does not install a package the host would refuse.
 const hostAgeGate = /^npmMinimalAgeGate:.*$/m.exec(readFileSync(resolve(REPO_ROOT, ".yarnrc.yml"), "utf8"))?.[0];
