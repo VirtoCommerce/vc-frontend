@@ -29,7 +29,7 @@ _Checked against `dev` on 2026-10-13._
       `mf-manifest.json`, `plugin.json`. Also: the storefront ingress must not cache 404s.
 - [ ] **The platform caches its plugin list for the process lifetime**, so a newly installed plugin needs a
       platform restart.
-- [ ] **Gate 2 does not gate.** A plugin built for `vue-router ^5` loads on the host's 4.x: the runtime only logs
+- [ ] [VCST-6330](https://virtocommerce.atlassian.net/browse/VCST-6330): **gate 2 does not gate.** A plugin built for `vue-router ^5` loads on the host's 4.x: the runtime only logs
       `Failed to bridge … shared module`, so `strictVersion` in `federation.mjs` never fails a plugin.
 - [ ] **A guard for routes a plugin registers itself** (declared routes have `when`; the rest have nothing).
 - [ ] **A declared route cannot carry layout meta**: the parent's layout shows until the plugin settles.
