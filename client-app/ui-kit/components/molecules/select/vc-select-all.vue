@@ -74,17 +74,14 @@ defineExpose({
 
   &__text {
     @apply text-sm font-bold text-neutral-950;
-
-    #{$disabled} & {
-      @apply text-neutral-400;
-    }
   }
 
   &__count {
     @apply shrink-0 text-sm text-neutral-600;
 
+    // Dimmed as VcCheckbox dims its own label, the text beside it.
     #{$disabled} & {
-      @apply text-neutral-400;
+      @apply opacity-60;
     }
   }
 }
