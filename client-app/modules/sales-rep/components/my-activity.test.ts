@@ -20,6 +20,15 @@ const state = await vi.hoisted(async () => {
 
 vi.mock("../composables/useSalesRepActivities", () => ({ useSalesRepActivities: state.useSalesRepActivities }));
 
+const customersCount = await vi.hoisted(async () => {
+  const { ref } = await import("vue");
+  return { hasNoCustomers: ref(false) };
+});
+
+vi.mock("../composables/useSalesRepCustomersCount", () => ({
+  useSharedSalesRepCustomersCount: () => ({ hasNoCustomers: customersCount.hasNoCustomers }),
+}));
+
 const createWrapper = createWrapperFactory(mount, MyActivity, {
   global: {
     renderStubDefaultSlot: false,
@@ -37,6 +46,7 @@ const createWrapper = createWrapperFactory(mount, MyActivity, {
 const emptyViews = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll("vc-empty-view-stub");
 
 beforeEach(() => {
+  customersCount.hasNoCustomers.value = false;
   state.items.value = [];
   state.analyticsUnavailable.value = false;
   state.loading.value = false;
@@ -74,6 +84,16 @@ describe("MyActivity states", () => {
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBeUndefined(); // still not an error
     expect(views[0].attributes("text")).toBe("sales_rep.customer_insights.analytics_unavailable");
+  });
+
+  // A rep with no customers has no activity to show, which a quiet-year wording misreads.
+  it("says the rep has no customers yet instead of a quiet year", () => {
+    customersCount.hasNoCustomers.value = true;
+
+    const views = emptyViews(createWrapper());
+
+    expect(views).toHaveLength(1);
+    expect(views[0].attributes("text")).toBe("sales_rep.activity.no_customers");
   });
 
   // The GA-backed query can run for seconds on a cold read — a blank card reads as broken.

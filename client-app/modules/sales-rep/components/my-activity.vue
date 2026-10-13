@@ -33,6 +33,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepActivities } from "../composables/useSalesRepActivities";
+import { useSharedSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { ACTIVITIES_ROUTE_NAME, MY_ACTIVITY_TAKE } from "../constants";
 import ActivityRow from "./activity-row.vue";
@@ -50,11 +51,17 @@ const { items, loading, error, analyticsUnavailable } = useSalesRepActivities({
   withCategoryCounts: false,
 });
 
-const emptyText = computed(() =>
-  analyticsUnavailable.value
+const { hasNoCustomers } = useSharedSalesRepCustomersCount();
+
+const emptyText = computed(() => {
+  // "No activity this year" read as quiet customers when there are none.
+  if (hasNoCustomers.value) {
+    return t("sales_rep.activity.no_customers");
+  }
+  return analyticsUnavailable.value
     ? t("sales_rep.customer_insights.analytics_unavailable")
-    : t("sales_rep.activity.my_activity.empty"),
-);
+    : t("sales_rep.activity.my_activity.empty");
+});
 
 // As many skeleton rows as the widget will show, so the height holds when data arrives.
 const skeletonRows = MY_ACTIVITY_TAKE;

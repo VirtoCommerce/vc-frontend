@@ -156,6 +156,7 @@ import TrackedMetricHint from "../components/tracked-metric-hint.vue";
 import { useSalesRepActivities } from "../composables/useSalesRepActivities";
 import { useSalesRepBrowseHistory } from "../composables/useSalesRepBrowseHistory";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
+import { useSharedSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
 import {
@@ -388,8 +389,14 @@ const failedText = computed(() => {
 // The caveat concerns tracked (GA-sourced) rows, so it shows for those tabs and for the mixed "All" view.
 const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES.has(category.value));
 
+const { hasNoCustomers } = useSharedSalesRepCustomersCount();
+
 // Top mode reuses the customer panels' "No tracked …" wording and their unavailable state.
 const emptyText = computed(() => {
+  // Nothing to show on any tab or period of a rep's own feed: "no activity in this period" read as quiet customers.
+  if (!props.organizationId && hasNoCustomers.value) {
+    return t("sales_rep.activity.no_customers");
+  }
   if (topMode.value) {
     if (topUnavailable.value) {
       return t("sales_rep.customer_insights.analytics_unavailable");

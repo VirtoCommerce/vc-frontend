@@ -86,6 +86,16 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
   useBreakpoints: () => ({ smaller: () => viewport.isPhone }),
 }));
 
+// Whether the count of the rep's customers answered zero.
+const customersCount = await vi.hoisted(async () => {
+  const { ref } = await import("vue");
+  return { hasNoCustomers: ref(false) };
+});
+
+vi.mock("../composables/useSalesRepCustomersCount", () => ({
+  useSharedSalesRepCustomersCount: () => ({ hasNoCustomers: customersCount.hasNoCustomers }),
+}));
+
 vi.mock("../composables/useSalesRepActivities", () => ({
   useSalesRepActivities: (options: ActivityOptionsType = {}) => {
     activityCalls.options.push(options);
@@ -272,6 +282,7 @@ async function switchToTop(wrapper: ReturnType<typeof createWrapper>): Promise<v
 }
 
 beforeEach(() => {
+  customersCount.hasNoCustomers.value = false;
   viewport.isPhone.value = false;
   customerState.organizationName.value = undefined;
   activityCalls.options.length = 0;
@@ -667,6 +678,26 @@ describe("Activities page", () => {
     await nextTick();
 
     expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty");
+  });
+
+  // QA: a rep with no customers read "No tracked activity in this period", as if the customers were quiet.
+  it("says the rep has no customers yet on their own feed", async () => {
+    customersCount.hasNoCustomers.value = true;
+
+    const wrapper = createWrapper();
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.no_customers");
+
+    await openTab(wrapper, "searches");
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.no_customers");
+  });
+
+  // An administrator passes every customer check, so they can open a customer's feed with no customers of their own.
+  it("keeps one customer's feed on its own empty wording", () => {
+    customersCount.hasNoCustomers.value = true;
+
+    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
+
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty_period");
   });
 
   it("renders a row per event with the customer named on the cross-customer feed", () => {

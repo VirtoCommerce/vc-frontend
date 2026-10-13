@@ -4,7 +4,7 @@ import { useSalesRepCustomersCount, useSharedSalesRepCustomersCount } from "./us
 // vi.hoisted runs before this file's imports, so it must import vue itself.
 const queryMock = await vi.hoisted(async () => {
   const { ref } = await import("vue");
-  const useQuery = vi.fn(() => ({ result: ref(undefined), loading: ref(false), onError: vi.fn() }));
+  const useQuery = vi.fn(() => ({ result: ref<unknown>(undefined), loading: ref(false), onError: vi.fn() }));
   return { useQuery };
 });
 
@@ -38,5 +38,22 @@ describe("useSalesRepCustomersCount", () => {
 
     expect(first.count.value).toBe(0);
     expect(second.count.value).toBe(0);
+  });
+
+  // The badge reads an unanswered count as 0; "no customers" must not, or a rep with customers would see the
+  // no-customers text while the count loads.
+  it("says the rep has no customers only once the count answered zero", async () => {
+    const { ref } = await import("vue");
+    const result = ref<{ salesRepCustomers?: { totalCount: number } }>();
+    queryMock.useQuery.mockImplementationOnce(() => ({ result, loading: ref(true), onError: vi.fn() }));
+
+    const { hasNoCustomers } = useSalesRepCustomersCount();
+    expect(hasNoCustomers.value).toBe(false);
+
+    result.value = { salesRepCustomers: { totalCount: 0 } };
+    expect(hasNoCustomers.value).toBe(true);
+
+    result.value = { salesRepCustomers: { totalCount: 3 } };
+    expect(hasNoCustomers.value).toBe(false);
   });
 });
