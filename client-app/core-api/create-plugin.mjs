@@ -3,6 +3,11 @@
  * vc-shell's create-vc-app for this harness.
  *
  *   yarn create:plugin <plugin-name> <target-dir> [flags]
+ *   yarn create:plugin <plugin-name> --module <path-to-*.Web> [flags]
+ *
+ * --module scaffolds into a backend module (`<Web>/StorefrontApp/`, built into the folder the
+ * platform probes, plus the MSBuild targets that package it). It only creates files: the edits to
+ * the module's own files are printed, and check:plugin-module verifies them.
  *
  * All dependency versions are read from THIS host checkout's package.json at
  * generation time, so the plugin compiles against exactly what the host runs -
@@ -11,13 +16,22 @@
  * --with-vueuse, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
 import { fileURLToPath } from "node:url";
+import { lt, minVersion } from "semver";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 import { gitIn } from "./git.mjs";
+import {
+  PLUGIN_OUT_DIR,
+  STOREFRONT_APP_DIR,
+  STOREFRONT_PLUGIN_TARGETS,
+  TARGETS_FILE,
+  checkModuleFiles,
+  formatResults,
+} from "./plugin-module.mjs";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
@@ -34,22 +48,42 @@ const corePkg = require("./package.json");
 const typePeerNames = Object.keys(MF_SHARED_RANGES).filter((name) => name !== "@vc-frontend/core");
 
 // ── input ─────────────────────────────────────────────────────────────────────
-const args = process.argv.slice(2);
-const flags = new Set(args.filter((arg) => arg.startsWith("--")));
-const positional = args.filter((arg) => !arg.startsWith("--"));
-const [pluginName, targetDirArg] = positional;
+const USAGE_FLAGS = "[--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router]";
+const USAGE =
+  `Usage: yarn create:plugin <plugin-name> <target-dir> ${USAGE_FLAGS}\n` +
+  `       yarn create:plugin <plugin-name> --module <path-to-*.Web> ${USAGE_FLAGS}`;
 
-if (!pluginName || !targetDirArg) {
-  console.error(
-    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router]",
-  );
+const args = process.argv.slice(2);
+const flags = new Set();
+const positional = [];
+let moduleArg;
+for (let index = 0; index < args.length; index++) {
+  const arg = args[index];
+  if (arg === "--module" || arg.startsWith("--module=")) {
+    moduleArg = arg === "--module" ? args[++index] : arg.slice("--module=".length);
+    if (!moduleArg || moduleArg.startsWith("--")) {
+      console.error(`--module needs the path of the module's *.Web project.\n${USAGE}`);
+      process.exit(1);
+    }
+  } else if (arg.startsWith("--")) {
+    flags.add(arg);
+  } else {
+    positional.push(arg);
+  }
+}
+const [pluginName, targetDirArg] = positional;
+const expectedPositional = moduleArg ? 1 : 2;
+
+if (!pluginName || (!moduleArg && !targetDirArg)) {
+  console.error(USAGE);
   process.exit(1);
 }
-// Same fail-on-typos stance as the flag validation below: a stray third argument is
-// a mistake (a mistyped flag, a forgotten quote), not something to silently ignore.
-if (positional.length > 2) {
+// Same fail-on-typos stance as the flag validation below: a stray argument is a mistake
+// (a mistyped flag, a forgotten quote), not something to silently ignore.
+if (positional.length > expectedPositional) {
+  const expected = moduleArg ? "<plugin-name> --module <path>" : "<plugin-name> <target-dir>";
   console.error(
-    `Unexpected argument(s): ${positional.slice(2).join(", ")} — expected <plugin-name> <target-dir> only.`,
+    `Unexpected argument(s): ${positional.slice(expectedPositional).join(", ")} — expected ${expected} only.`,
   );
   process.exit(1);
 }
@@ -57,7 +91,21 @@ if (!/^[a-z][a-z0-9-]*$/.test(pluginName)) {
   console.error(`Plugin name "${pluginName}" must be kebab-case ([a-z][a-z0-9-]*) - it becomes the MF remote name.`);
   process.exit(1);
 }
-const targetDir = resolve(process.cwd(), targetDirArg);
+
+const webDir = moduleArg ? resolve(process.cwd(), moduleArg) : undefined;
+if (webDir) {
+  const isModuleWebProject =
+    existsSync(join(webDir, "module.manifest")) && readdirSync(webDir).some((name) => name.endsWith(".csproj"));
+  if (!isModuleWebProject) {
+    console.error(`${webDir} is not a module's *.Web project: it needs module.manifest and a .csproj.`);
+    process.exit(1);
+  }
+}
+const targetDir = webDir ? join(webDir, STOREFRONT_APP_DIR) : resolve(process.cwd(), targetDirArg);
+if (webDir && existsSync(targetDir)) {
+  console.error(`${targetDir} already exists - refusing to overwrite.`);
+  process.exit(1);
+}
 if (existsSync(join(targetDir, "package.json"))) {
   console.error(`Target ${targetDir} already contains a package.json - refusing to overwrite.`);
   process.exit(1);
@@ -287,7 +335,35 @@ const pkgJson = {
   ),
 };
 
-const viteConfig = `import { federation } from "@module-federation/vite";
+// Below this version @module-federation/vite resolves `import type` sources under the exposed module
+// and throws on a types-only package, which the generated GraphQL types import.
+const MF_VITE_TYPE_IMPORT_FIX = "1.23.1";
+const needsTypedDocumentAlias =
+  selected.apollo && lt(minVersion(hostVersion("@module-federation/vite")), MF_VITE_TYPE_IMPORT_FIX);
+const typedDocumentAlias = needsTypedDocumentAlias
+  ? `
+  resolve: {
+    alias: {
+      // @module-federation/vite below ${MF_VITE_TYPE_IMPORT_FIX} resolves \`import type\` sources too and throws on this
+      // types-only package; nothing loads it at runtime. Drop it once the host moves past that version.
+      "@graphql-typed-document-node/core": fileURLToPath(
+        new URL("./node_modules/@graphql-typed-document-node/core/typings/index.d.ts", import.meta.url),
+      ),
+    },
+  },`
+  : "";
+const buildConfig = webDir
+  ? `
+  build: {
+    target: "esnext", // MF entry uses top-level await
+    // The platform probes {moduleRoot}/plugins/vc-frontend/ of every installed module.
+    outDir: "${PLUGIN_OUT_DIR}",
+    emptyOutDir: true,
+  },`
+  : `
+  build: { target: "esnext" }, // MF entry uses top-level await`;
+
+const viteConfig = `${needsTypedDocumentAlias ? 'import { fileURLToPath } from "node:url";\n' : ""}import { federation } from "@module-federation/vite";
 import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
 import { pluginContributions } from "@vc-frontend/core/manifest";
 import vue from "@vitejs/plugin-vue";
@@ -311,8 +387,7 @@ export default defineConfig({
         requiredHostVersion: "^${corePkg.version}",${sharedOverridesArg}
       }),
     ),
-  ],
-  build: { target: "esnext" }, // MF entry uses top-level await
+  ],${typedDocumentAlias}${buildConfig}
   server: { port: 3001, cors: true, origin: "http://localhost:3001" },
   preview: { cors: true },
 });
@@ -450,7 +525,18 @@ ${
     : ""
 }- Full walkthrough (running against the host, shipping, versioning):
   the host repo's \`client-app/core/federation/HOWTO.md\`.
+${
+  webDir
+    ? `
+## Shipping
 
+This plugin ships inside its backend module. \`yarn build\` writes it to \`${PLUGIN_OUT_DIR}/\`, the folder the
+platform probes, and the module build runs that through \`${TARGETS_FILE}\` (imported by the module's
+.csproj). Verify the module from a vc-frontend checkout:
+\`yarn check:plugin-module <path-to-*.Web> [--artifact <module.zip>] [--env <storefront-url>]\`.
+`
+    : ""
+}
 ## The facade dependency
 
 \`@vc-frontend/core\` is pinned to a versioned tarball URL (a Release asset of the host
@@ -684,6 +770,9 @@ if (selected.apollo) {
   writeFileSync(join(targetDir, ".env.example"), envExample);
   writeFileSync(join(targetDir, "src", "api", "graphql", "queries", "ping", "pingQuery.graphql"), sampleDocument);
 }
+if (webDir) {
+  writeFileSync(join(targetDir, TARGETS_FILE), STOREFRONT_PLUGIN_TARGETS);
+}
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
@@ -711,6 +800,13 @@ console.log(`\nScaffolded "${pluginName}" at ${targetDir}`);
 console.log(`  deps pinned from host: ${runtimeDeps.join(", ")}`);
 if (droppedShared.length) {
   console.log(`  dropped from MF shared (unused at runtime): ${droppedShared.join(", ")}`);
+}
+if (webDir) {
+  const pending = checkModuleFiles(webDir).filter((result) => result.status !== "pass");
+  console.log(
+    `\nThe module's own files are not edited. Still to do there (yarn check:plugin-module ${relative(process.cwd(), webDir)}):\n` +
+      formatResults(pending),
+  );
 }
 console.log(`\nNext steps:
   cd ${relative(process.cwd(), targetDir) || "."}

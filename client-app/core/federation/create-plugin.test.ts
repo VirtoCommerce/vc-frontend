@@ -1,10 +1,12 @@
 // @vitest-environment node
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { lt, minVersion } from "semver";
 import ts from "typescript";
 import { afterEach, describe, expect, it } from "vitest";
+import { STOREFRONT_PLUGIN_TARGETS, TARGETS_IMPORT } from "@/core-api/plugin-module.mjs";
 
 /**
  * Smoke test for the scaffolder (core-api/create-plugin.mjs). The generated project's
@@ -25,6 +27,24 @@ function runScaffolder(name: string, flags: string[]): { dir: string; status: nu
   const dir = join(parent, name);
   const { status, stderr } = spawnSync(process.execPath, [SCRIPT, name, dir, ...flags], { encoding: "utf8" });
   return { dir, status, stderr };
+}
+
+const MODULE_MANIFEST = "<module><id>VirtoCommerce.Foo</id><platformVersion>3.1048.0</platformVersion></module>";
+const MODULE_CSPROJ = '<Project Sdk="Microsoft.NET.Sdk.Web" />';
+
+/** A backend module's *.Web project as the scaffolder finds it: a manifest and a .csproj. */
+function createModuleWebDir(): string {
+  const parent = mkdtempSync(join(tmpdir(), "mf-module-"));
+  tempDirs.push(parent);
+  const webDir = join(parent, "Foo.Web");
+  mkdirSync(webDir);
+  writeFileSync(join(webDir, "module.manifest"), MODULE_MANIFEST);
+  writeFileSync(join(webDir, "Foo.Web.csproj"), MODULE_CSPROJ);
+  return webDir;
+}
+
+function runScaffolderInModule(name: string, webDir: string, flags: string[]) {
+  return spawnSync(process.execPath, [SCRIPT, name, "--module", webDir, ...flags], { encoding: "utf8" });
 }
 
 function scaffoldExpectingSuccess(name: string, flags: string[]): string {
@@ -196,6 +216,25 @@ describe("create-plugin scaffolder", () => {
     expect(stderr).toContain("Unexpected argument");
   });
 
+  it("adds the typed-document alias only to a plugin with GraphQL, and only on a host that needs it", () => {
+    const hostMfVite = (
+      JSON.parse(readFileSync(resolve(__dirname, "../../../package.json"), "utf8")) as {
+        devDependencies: Record<string, string>;
+      }
+    ).devDependencies["@module-federation/vite"];
+    const hostNeedsAlias = lt(minVersion(hostMfVite) ?? "0.0.0", "1.23.1");
+
+    const withApollo = readFileSync(
+      join(scaffoldExpectingSuccess("gql", ["--yes", "--with-apollo"]), "vite.config.ts"),
+      "utf8",
+    );
+    const plain = readFileSync(join(scaffoldExpectingSuccess("plain", ["--yes"]), "vite.config.ts"), "utf8");
+
+    expect(withApollo.includes('"@graphql-typed-document-node/core": fileURLToPath(')).toBe(hostNeedsAlias);
+    expect(plain).not.toContain("@graphql-typed-document-node/core");
+    expectParseableTs(join(scaffoldExpectingSuccess("gql-parse", ["--yes", "--with-apollo"]), "vite.config.ts"));
+  });
+
   it("rejects a non-kebab-case plugin name", () => {
     const { status, stderr } = runScaffolder("My_Plugin", ["--yes"]);
     expect(status).not.toBe(0);
@@ -215,5 +254,63 @@ describe("create-plugin scaffolder", () => {
     // died on `Cannot find module` - the subpath was unusable by the only consumer it exists for.
     expect(Object.keys(pkg.devDependencies)).toEqual(expect.arrayContaining(Object.keys(facadePeers.peerDependencies)));
     expect(pkg.devDependencies["lodash-es"]).toBeTruthy();
+  });
+});
+
+describe("create-plugin --module", () => {
+  it("scaffolds into StorefrontApp/, builds into the folder the platform probes and writes the MSBuild targets", () => {
+    const webDir = createModuleWebDir();
+    const { status, stderr, stdout } = runScaffolderInModule("foo-plugin", webDir, ["--yes"]);
+    expect(status, stderr).toBe(0);
+
+    const appDir = join(webDir, "StorefrontApp");
+    expect(readFileSync(join(appDir, "storefront-plugin.targets"), "utf8")).toBe(STOREFRONT_PLUGIN_TARGETS);
+    const viteConfig = readFileSync(join(appDir, "vite.config.ts"), "utf8");
+    expect(viteConfig).toContain('outDir: "../plugins/vc-frontend"');
+    expectParseableTs(join(appDir, "vite.config.ts"));
+    expect(readFileSync(join(appDir, "README.md"), "utf8")).toContain("yarn check:plugin-module");
+    // The edits it leaves to a person or a skill are printed with their exact lines.
+    expect(stdout).toContain(TARGETS_IMPORT);
+    expect(stdout).toContain('<dependency id="VirtoCommerce.XFrontend"');
+  });
+
+  it("never edits the module's own files", () => {
+    const webDir = createModuleWebDir();
+    runScaffolderInModule("foo-plugin", webDir, ["--yes"]);
+
+    expect(readFileSync(join(webDir, "module.manifest"), "utf8")).toBe(MODULE_MANIFEST);
+    expect(readFileSync(join(webDir, "Foo.Web.csproj"), "utf8")).toBe(MODULE_CSPROJ);
+  });
+
+  it("refuses a module that already has a StorefrontApp, and changes nothing in it", () => {
+    const webDir = createModuleWebDir();
+    mkdirSync(join(webDir, "StorefrontApp"));
+    writeFileSync(join(webDir, "StorefrontApp", "storefront-plugin.targets"), "hand-tuned");
+
+    const { status, stderr } = runScaffolderInModule("foo-plugin", webDir, ["--yes"]);
+
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("refusing to overwrite");
+    expect(readFileSync(join(webDir, "StorefrontApp", "storefront-plugin.targets"), "utf8")).toBe("hand-tuned");
+  });
+
+  it("refuses a path that is not a module's *.Web project", () => {
+    const parent = mkdtempSync(join(tmpdir(), "mf-not-module-"));
+    tempDirs.push(parent);
+
+    const { status, stderr } = runScaffolderInModule("foo-plugin", parent, ["--yes"]);
+
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("module.manifest");
+    expect(existsSync(join(parent, "StorefrontApp"))).toBe(false);
+  });
+
+  it("rejects a target directory next to --module", () => {
+    const webDir = createModuleWebDir();
+
+    const { status, stderr } = runScaffolderInModule("foo-plugin", webDir, ["--yes", "extra-dir"]);
+
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("Unexpected argument");
   });
 });
