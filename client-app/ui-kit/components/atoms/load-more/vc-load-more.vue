@@ -1,7 +1,8 @@
 <template>
-  <!-- Always mounted: a live region inserted together with its text may go unannounced. -->
+  <!-- A live region stays mounted: inserted together with its text it may go unannounced. -->
   <component
     :is="tag"
+    v-if="role === 'status' || showSpinner"
     :class="['vc-load-more', { 'vc-load-more--loading': showSpinner }]"
     :data-test-id="testId"
     :role="role"

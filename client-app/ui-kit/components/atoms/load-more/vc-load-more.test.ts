@@ -509,6 +509,23 @@ describe("VcLoadMore", () => {
     expect(wrapper.get('[role="status"]').text()).toBe("");
   });
 
+  it.each([
+    ["a page is on its way", true, true],
+    ["nothing is being fetched", false, false],
+  ])("renders a pager without a live region only while %s", (_label, loading, rendered) => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(VcScrollbar, { vertical: true, tag: "ul" }, () =>
+            h(VcLoadMore, { tag: "li", role: "none", loading, hasNextPage: true, itemCount: 1 }),
+          ),
+      }),
+      { attachTo: document.body, global: GLOBAL },
+    );
+
+    expect(wrapper.find("li").exists()).toBe(rendered);
+  });
+
   it("asks for nothing, and says why, with no scroll region around it", async () => {
     const warn = spyOnWarn();
     const onLoadMore = vi.fn();
