@@ -23,8 +23,10 @@ Creating the module itself is the platform's job; the full guide is
 
 3. **Add the plugin:** [S1a](./s1a-plugin-in-an-existing-module.md) from step 1, with the module's
    `src/VirtoCommerce.Foo.Web` folder.
-4. **Need your own GraphQL?** The module registers its own xAPI schema (`ScopedSchemaFactory`). Plugins scaffolded
-   with `--with-apollo` read it from `/graphql/<plugin-name>`, so give the scope the plugin's name.
+4. **Need your own GraphQL?** The module registers its own xAPI schema with `ScopedSchemaFactory`; the worked
+   example is `vc-module-sales-rep`'s
+   `src/VirtoCommerce.SalesRep.ExperienceApi/Extensions/ServiceCollectionExtensions.cs`. Plugins scaffolded with
+   `--with-apollo` read it from `/graphql/<plugin-name>`, so give the scope the plugin's name.
 
 ## ✅ Done when
 

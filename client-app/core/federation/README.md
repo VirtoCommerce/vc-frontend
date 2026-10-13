@@ -179,7 +179,8 @@ How the facade itself is versioned and released: [`core-api/README.md`](../../co
 4. Any other library a plugin uses is bundled into the plugin. That is fine unless the library shares state
    through `provide`/`inject` across the host/plugin line; then it must join the shared list first.
 
-What is exported and how to add to it: [`core-api/README.md`](../../core-api/README.md).
+What is exported: [`core-api/index.ts`](../../core-api/index.ts), grouped and commented; the types are in
+`core-api/contract/index.d.ts`. How to add to it: [`core-api/README.md`](../../core-api/README.md).
 
 ## 8. Shipping a plugin
 
