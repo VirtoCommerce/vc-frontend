@@ -149,7 +149,8 @@ file are cross-referenced, not repeated.
       hub menu visible for a rep) so the plugin path is not manual-only.
 - [ ] **Release `core-v0.2.3` for the plugin's port of #2439 / #2444.** The port itself is done in
       vc-module-sales-rep#13, together with everything else up to `dev` at 1ae6a0318
-      (`requiredHostVersion: "^0.2.3"`); it installs only once that facade is released.
+      (`requiredHostVersion: "^0.2.3"`); it installs only once that facade is released. VCST-5923 then
+      breaks the VcSelect model (0.3.0): the port moves to `^0.3.0` with its sharing picker redone (`PORT_TO_MF.md`).
 - [ ] **Bump `@module-federation/vite` to ≥ 1.23.1** (host, and the version `create-plugin` copies).
       1.18 resolves every import it finds under a remote's exposed module, `import type` included, and
       a types-only package (`@graphql-typed-document-node/core`, `"main": ""`) makes that resolve

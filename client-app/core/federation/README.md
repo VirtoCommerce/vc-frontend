@@ -391,7 +391,7 @@ A plugin is its own build. It must:
    federation(
      createRemoteFederationOptions({
        name: "news",
-       requiredHostVersion: "^0.2.0", // CONTRACT GATE input, stamped into the manifest
+       requiredHostVersion: "^0.3.0", // CONTRACT GATE input, stamped into the manifest
      }),
    );
    ```
@@ -411,8 +411,8 @@ A plugin is its own build. It must:
 
    ```jsonc
    // mf-manifest.json (excerpt)
-   { "metaData": { "requiredHostVersion": "^0.2.0" } }
-   // a bare "0.2.0" means the same thing (normalized to ^0.2.0);
+   { "metaData": { "requiredHostVersion": "^0.3.0" } }
+   // a bare "0.3.0" means the same thing (normalized to ^0.3.0);
    // anything semver can't parse is rejected (fail closed)
    ```
 
