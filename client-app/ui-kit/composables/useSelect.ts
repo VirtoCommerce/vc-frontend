@@ -71,8 +71,8 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
     toValue(params.multiple) ? undefined : toValue(params.items).find((item) => isSingleModel(getItemValue(item))),
   );
 
-  // Paging and server-filter replace `items`, and the new ones may not carry the selection; its last
-  // match keeps labelling it, and counting it as selected, for as long as the model still holds its value.
+  // A server-filter answer or a reset list replaces `items`, and the new ones may not carry the selection;
+  // its last match keeps labelling it, and counting it as selected, for as long as the model holds its value.
   const rememberedItem = shallowRef<{ value: V; item: T }>();
 
   watch(
