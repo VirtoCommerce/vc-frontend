@@ -42,8 +42,12 @@ S1a is done: `check:plugin-module` passes with `--artifact` and `--env`.
    kebab-case name such as `foo`. `check:plugin-module` reads each from its own file.
 3. **The module's CI must have Node** to build the plugin. Copy the CI setup from another module that ships one
    (`vc-module-sales-rep`).
+4. **Template 3.1002.0 fails its first restore** with `NU1903`: its MySQL project pulls a vulnerable
+   `System.Security.Cryptography.Xml`, and `Directory.Build.props` treats warnings as errors. Reference a fixed
+   version of that package. (The walk switched `NuGetAudit` off in a throwaway copy instead.)
 
 ---
 
 _Walked on 2026-10-13 with `VirtoCommerce.Module.Template` 3.1002.0: step 1, then S1a steps 1–5 on the new module.
-**Not verified:** step 2 (`vc-build`, .NET 10) and step 4._
+Step 2 ran in the .NET 10 SDK image, and the package installed on a local platform rendered the plugin. **Not
+verified:** step 4._

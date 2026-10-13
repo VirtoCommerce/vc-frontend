@@ -40,6 +40,17 @@
    yarn check:plugin-module ../vc-module-foo/src/VirtoCommerce.Foo.Web --env https://<storefront>
    ```
 
+## On a local platform
+
+The same steps, with nothing to deploy:
+
+1. **Install the module** from its zip (S1a step 6) in the platform admin, under Modules, then restart the platform.
+   It reads the plugin list once, at startup.
+2. **Skip the ingress:** the local storefront's server proxies `/modules` to `APP_BACKEND_URL` itself.
+3. **Run the storefront against it:** [S2.2](./s2-develop-locally.md#22-the-module-is-already-on-the-environment), with
+   `APP_BACKEND_URL` set to the platform.
+4. **Check:** `--env` takes the platform's URL as it is (`--env http://localhost:8090`).
+
 ## ✅ Done when
 
 `--env` passes, and the plugin's page or widget shows for a user who should see it.
@@ -54,4 +65,6 @@
 
 ---
 
-_Source-checked on 2026-10-13. `--env`, with its module-version check, was run against vcptcore-dev and vcst-qa._
+_Source-checked on 2026-10-13. `--env`, with its module-version check, was run against vcptcore-dev and vcst-qa. The
+local-platform section was walked on 2026-10-13: a template module with a plugin, built with `vc-build compress`,
+installed through the platform API, found by a local storefront through `store.plugins` and rendered._

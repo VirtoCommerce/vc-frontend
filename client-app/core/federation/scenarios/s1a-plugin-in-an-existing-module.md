@@ -63,7 +63,8 @@
 
    ✅ `https://localhost:3000/my-plugin` shows the plugin's page. The console says `[MF] plugins loaded=[my-plugin]`.
 
-6. **Build the module and check its package.** Push; the module CI builds the package. Download it, then 📁
+6. **Build the module and check its package.** Push; the module CI builds the package. Or build it yourself: 📁 module
+   repo `vc-build compress`, with the .NET SDK the module targets and Node; the zip lands in `artifacts/`. Then 📁
    `vc-frontend`:
 
    ```bash
@@ -73,7 +74,7 @@
    ✅ `plugins/vc-frontend/ sits at the zip root`.
 
 7. **Install it on an environment**, then add `--env https://<storefront>` to the same command. What the
-   environment needs: S6.
+   environment needs: S6. A local platform works the same way: [S6 → On a local platform](./s6-enable-on-an-environment.md#on-a-local-platform).
 
 ## ✅ Done when
 
@@ -88,6 +89,8 @@
 3. **`yarn install` fails with a 404 on `@vc-frontend/core`.** The facade version the scaffold pinned is not
    released yet. Link a local facade with yalc ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)),
    or scaffold from a released `vc-frontend` commit.
+4. **`yarn: not found` in a local `vc-build`.** The build runs `corepack enable`, which needs write access to Node's
+   folder; in a container as a non-root user it fails. Run `corepack enable --install-directory <dir on PATH>` first.
 
 ---
 

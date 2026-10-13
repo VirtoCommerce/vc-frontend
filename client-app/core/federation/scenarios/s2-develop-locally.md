@@ -89,8 +89,8 @@ Run the host from your branch (2.1) and link its facade (2.3). Releasing needs a
 
 ## 2.5 The module's backend changes too
 
-1. Run a backend that has the change: a local platform with the module, or the module's PR package installed on
-   an environment. Point `APP_BACKEND_URL` at it, in `vc-frontend/.env.local` and in `StorefrontApp/.env`.
+1. Run a backend that has the change: a local platform with the module ([S6 → On a local platform](./s6-enable-on-an-environment.md#on-a-local-platform)),
+   or the module's PR package installed on an environment. Point `APP_BACKEND_URL` at it, in `vc-frontend/.env.local` and in `StorefrontApp/.env`.
 2. 📁 `StorefrontApp`: `yarn generate:graphql-types`. It reads the module's schema at `/graphql/<plugin-name>`.
    Commit the generated `types.ts`.
 
