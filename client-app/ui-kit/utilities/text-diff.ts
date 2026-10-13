@@ -1,9 +1,15 @@
-// sonarjs/null-dereference misreads `.length` on these non-optional string parameters.
-/* eslint-disable sonarjs/null-dereference */
-
 /** Character at `offset` counted from the end; total, so an out-of-range offset gives "". */
 function charFromEnd(text: string, offset: number): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- misreads `.length` on a non-optional string
   return text.charAt(text.length - 1 - offset);
+}
+
+function isHighSurrogate(code: number): boolean {
+  return code >= 0xd800 && code <= 0xdbff;
+}
+
+function isLowSurrogate(code: number): boolean {
+  return code >= 0xdc00 && code <= 0xdfff;
 }
 
 /**
@@ -22,6 +28,7 @@ export function insertedText(previous: string, next: string, replaced?: readonly
   if (replaced) {
     const [start, end] = replaced;
     // A deletion gives a length of zero or less, which slices to "".
+    // eslint-disable-next-line sonarjs/null-dereference -- misreads `.length` on non-optional strings
     return next.slice(start, start + next.length - (previous.length - (end - start)));
   }
 
@@ -29,6 +36,11 @@ export function insertedText(previous: string, next: string, replaced?: readonly
 
   while (start < previous.length && start < next.length && previous.charAt(start) === next.charAt(start)) {
     start++;
+  }
+
+  // The halves of an astral character (an emoji) compare one by one; never cut between them.
+  if (start > 0 && isHighSurrogate(next.charCodeAt(start - 1))) {
+    start--;
   }
 
   let end = 0;
@@ -39,6 +51,10 @@ export function insertedText(previous: string, next: string, replaced?: readonly
     charFromEnd(previous, end) === charFromEnd(next, end)
   ) {
     end++;
+  }
+
+  if (end > 0 && isLowSurrogate(next.charCodeAt(next.length - end))) {
+    end--;
   }
 
   return next.slice(start, next.length - end);

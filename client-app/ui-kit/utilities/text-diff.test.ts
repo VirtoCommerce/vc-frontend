@@ -65,4 +65,12 @@ describe("insertedText", () => {
   it("handles a repeated character", () => {
     expect(insertedText("aa", "aaa")).toBe("a");
   });
+
+  it.each([
+    ["sharing a leading surrogate with the next one", "😀😀", "😀😃😀", "😃"],
+    ["replacing one that shares its leading surrogate", "a😀", "a😃", "😃"],
+    ["replacing one that shares its trailing surrogate", "a😀", "a\u{1FA00}", "\u{1FA00}"],
+  ])("returns a whole emoji %s", (_label, previous, next, inserted) => {
+    expect(insertedText(previous, next)).toBe(inserted);
+  });
 });
