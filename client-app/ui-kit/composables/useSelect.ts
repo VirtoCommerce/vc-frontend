@@ -132,8 +132,9 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
       return false;
     }
 
-    // An unset GraphQL value arrives as null, which is a selection only when an option carries it.
-    return model != null || foundItem.value !== undefined;
+    // An unset GraphQL value arrives as null, which is a selection only when an option carries it, on
+    // this page or remembered from an earlier one.
+    return model != null || foundItem.value !== undefined || rememberedItem.value?.value === model;
   });
 
   // Only a primitive has text to match; an unlabelled object would stringify to "[object Object]".

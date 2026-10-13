@@ -148,4 +148,21 @@ describe("useSelect hasSelection in single mode", () => {
   it("counts a value no loaded option carries as a selection", () => {
     expect(hasSelectionFor(CHOICES, "off-page")).toBe(true);
   });
+
+  it("keeps counting a null-valued option once a new page no longer carries it", () => {
+    const items = ref(CHOICES);
+    const { hasSelection } = useSelect<ChoiceType, string | null>({
+      items,
+      modelValue: null,
+      multiple: false,
+      filterValue: "",
+      serverFilter: true,
+      textField: "label",
+      valueField: "value",
+    });
+
+    items.value = [{ value: "b", label: "B" }];
+
+    expect(hasSelection.value).toBe(true);
+  });
 });

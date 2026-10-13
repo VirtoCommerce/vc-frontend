@@ -52,7 +52,7 @@ interface IProps {
   tag?: string;
   trackColor?: string;
   thumbColor?: string;
-  /** Pixels from an edge that already count as reaching it; a gap under a pixel always does. */
+  /** Pixels from an edge that already count as reaching it; a gap of up to a pixel always does. */
   edgeThreshold?: number;
   testId?: string;
 }
