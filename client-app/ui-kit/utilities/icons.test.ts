@@ -45,6 +45,7 @@ describe("resolveIcon", () => {
   it.each([
     ["information-circle", true],
     ["cube", true],
+    ["receipt-refund", true],
     ["credit-card", true],
     ["outline-security", false],
   ])("resolves %s to a loader with isOutline=%s", (name, expectedOutline) => {

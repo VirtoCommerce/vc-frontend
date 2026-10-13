@@ -57,7 +57,8 @@ export type SalesRepTopSellerRowType = {
 // Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
 // not entered by the user; recipients (all org members) are resolved backend-side.
 export type SalesRepCommunicationInputType = {
-  organizationId: string;
+  // One send reaches every member of every organization listed, each of them once.
+  organizationIds: string[];
   sendEmail: boolean;
   sendPush: boolean;
   message: string;
@@ -136,3 +137,23 @@ export type SalesRepCustomerOrderRowType = {
   total: string;
   isOwn: boolean;
 };
+
+// What it takes to render one organization as a row: avatar, name, and a line under it. Two unrelated sources fill
+// it — the rep's customer directory and a list's sharing targets — so the shape is declared once and each source
+// keeps its own name for what its rows mean. A field that belongs to only one of them goes on that alias, not here.
+export type OrganizationRowType = {
+  organizationId: string;
+  organizationName: string;
+  /** "City, Region"; empty when there is no address. */
+  location: string;
+  /** The organization's logo; empty when it has none, and the avatar falls back to initials. */
+  imageUrl: string;
+};
+
+/**
+ * A customer the list is, or is about to be, shared with. Identical to the row shape today and kept as its own name
+ * anyway: it is filled from `sharingSetting.targets` rather than from the rep's customer directory, and a field that
+ * only one of the two ever grows belongs here rather than on the shape they share.
+ */
+// eslint-disable-next-line sonarjs/redundant-type-aliases -- the name is the point; see above
+export type WishlistSharingRecipientType = OrganizationRowType;

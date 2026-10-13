@@ -226,7 +226,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
           : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.file: {
-        const isValid = !section.isRequired || !!value?.files?.length;
+        const isValid = !section.isRequired || !!value?.files?.some((file) => file.size > 0);
         return isValid
           ? { isValid }
           : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };

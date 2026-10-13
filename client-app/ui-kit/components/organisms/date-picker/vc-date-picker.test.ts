@@ -32,6 +32,32 @@ function selectedDay(wrapper: ReturnType<typeof mountPicker>, iso: string) {
   return wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`);
 }
 
+describe("VcDatePicker — button names", () => {
+  it("keeps the generic names by default", () => {
+    const wrapper = mountPicker({ clearable: true });
+
+    expect(wrapper.find('button[aria-label="ui_kit.accessibility.open_calendar"]').exists()).toBe(true);
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("ui_kit.buttons.clear");
+  });
+
+  it("names the calendar trigger and the clear button as the caller asks", () => {
+    const wrapper = mountPicker({
+      clearable: true,
+      calendarButtonAriaLabel: "Open calendar: Start date",
+      clearButtonAriaLabel: "Clear: Start date",
+    });
+
+    expect(wrapper.find('button[aria-label="Open calendar: Start date"]').exists()).toBe(true);
+    expect(wrapper.find(".vc-input__clear").attributes("aria-label")).toBe("Clear: Start date");
+  });
+
+  it("falls back to the default trigger name for an empty calendarButtonAriaLabel", () => {
+    const wrapper = mountPicker({ calendarButtonAriaLabel: "" });
+
+    expect(wrapper.find('button[aria-label="ui_kit.accessibility.open_calendar"]').exists()).toBe(true);
+  });
+});
+
 describe("VcDatePicker — preventDeselect", () => {
   // A lone field carries no clear control of its own, so the re-click is the only pointer route out.
   it("clears the value on a re-click by default", async () => {

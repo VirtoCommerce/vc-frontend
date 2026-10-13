@@ -1,0 +1,219 @@
+// @vitest-environment node
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import ts from "typescript";
+import { afterEach, describe, expect, it } from "vitest";
+
+/**
+ * Smoke test for the scaffolder (core-api/create-plugin.mjs). The generated project's
+ * sources exist only as template strings, so the repo's own eslint/vue-tsc never check
+ * them — this is the guard against shipping a scaffold with a syntax error or a broken
+ * flag. It runs the real script in a child process (non-TTY => no prompts) against a
+ * temp dir; no `yarn install`/build, so it stays fast.
+ */
+
+const SCRIPT = resolve(__dirname, "../../core-api/create-plugin.mjs");
+
+const tempDirs: string[] = [];
+
+/** Runs the real scaffolder against a fresh temp dir; callers assert on status/stderr/dir. */
+function runScaffolder(name: string, flags: string[]): { dir: string; status: number | null; stderr: string } {
+  const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
+  tempDirs.push(parent);
+  const dir = join(parent, name);
+  const { status, stderr } = spawnSync(process.execPath, [SCRIPT, name, dir, ...flags], { encoding: "utf8" });
+  return { dir, status, stderr };
+}
+
+function scaffoldExpectingSuccess(name: string, flags: string[]): string {
+  const { dir, status, stderr } = runScaffolder(name, flags);
+  expect(status, stderr).toBe(0);
+  return dir;
+}
+
+function expectParseableTs(filePath: string): void {
+  const source = readFileSync(filePath, "utf8");
+  const result = ts.transpileModule(source, {
+    compilerOptions: { target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.ESNext },
+    reportDiagnostics: true,
+  });
+  expect(result.diagnostics ?? []).toEqual([]);
+}
+
+afterEach(() => {
+  for (const dir of tempDirs.splice(0)) {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+describe("create-plugin scaffolder", () => {
+  it("scaffolds a default plugin whose generated TS parses and whose JSON is valid", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+
+    for (const file of [
+      "package.json",
+      "vite.config.ts",
+      "plugin.config.ts",
+      "tsconfig.json",
+      "src/index.ts",
+      "index.html",
+      "public/plugin.json",
+      "eslint.config.js",
+      "vitest.config.ts",
+      "src/mocks/vc-frontend-core.ts",
+      ".prettierrc.json",
+      ".editorconfig",
+      ".vscode/settings.json",
+    ]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+
+    // The platform reads this to learn the expose key; without it it assumes "./Module" and the
+    // host would loadRemote a key this plugin does not export.
+    const descriptor = JSON.parse(readFileSync(join(dir, "public", "plugin.json"), "utf8")) as {
+      id: string;
+      remote: { name: string; exposed: string };
+    };
+    expect(descriptor).toEqual({
+      id: "my-plugin",
+      remote: { name: "my-plugin", exposed: "./plugin" },
+    });
+
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      name: string;
+      packageManager: string;
+      scripts: Record<string, string>;
+      dependencies: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    expect(pkg.name).toBe("my-plugin");
+    expect(pkg.dependencies["@vc-frontend/core"]).toContain("releases/download/core-v");
+    // Type-peers are unconditional — without them facade types silently resolve to `any`.
+    expect(pkg.devDependencies).toHaveProperty("@vueuse/core");
+    JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8"));
+
+    expectParseableTs(join(dir, "vite.config.ts"));
+    expectParseableTs(join(dir, "plugin.config.ts"));
+    expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain("pluginContributions(contributions)");
+    expect(JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")).include).toContain("plugin.config.ts");
+    expectParseableTs(join(dir, "src", "index.ts"));
+    expectParseableTs(join(dir, "vitest.config.ts"));
+    expectParseableTs(join(dir, "eslint.config.js"));
+    expectParseableTs(join(dir, "src", "mocks", "vc-frontend-core.ts"));
+    expectParseableTs(join(dir, "src", "pages", "my-page.test.ts"));
+
+    expect(readFileSync(join(dir, ".yarnrc.yml"), "utf8")).toMatch(/^npmMinimalAgeGate: /m);
+    // yarn 1 ignores the .yarnrc.yml this writes and knows no `portal:`/`link:` protocol.
+    expect(pkg.packageManager).toMatch(/^yarn@/);
+    expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));
+
+    // Default = router on: the route page and the addRoute init must be generated.
+    expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(true);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("globals.router.addRoute");
+    // Unused optional groups must be dropped from MF shared (spurious-gate protection).
+    const viteConfig = readFileSync(join(dir, "vite.config.ts"), "utf8");
+    expect(viteConfig).toContain('"@apollo/client": false');
+    // Quoting a valid identifier fails the scaffold's own prettier rule.
+    expect(viteConfig).toContain(" graphql: false");
+  });
+
+  it("wires the test and type-check config the generated specs and templates depend on", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+
+    // A string key matches by prefix and would send @vc-frontend/core/testing to the mock too.
+    expect(readFileSync(join(dir, "vitest.config.ts"), "utf8")).toContain(String.raw`find: /^@vc-frontend\/core$/`);
+
+    const tsconfig = JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")) as {
+      compilerOptions: { types: string[] };
+      vueCompilerOptions: { strictTemplates: boolean };
+    };
+    expect(tsconfig.vueCompilerOptions.strictTemplates).toBe(true);
+    // Under strictTemplates every ui-kit tag is an error unless the facade's GlobalComponents load.
+    expect(tsconfig.compilerOptions.types).toContain("@vc-frontend/core");
+
+    const { scripts } = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+    };
+    // A fixing `lint` passes CI on every auto-fixable error.
+    expect(scripts.lint).toBe("eslint .");
+    expect(scripts["lint:fix"]).toBe("eslint . --fix");
+  });
+
+  it("scaffolds the --no-router variant without a page, and its test run still passes", () => {
+    const dir = scaffoldExpectingSuccess("bare-plugin", ["--yes", "--no-router"]);
+
+    expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(false);
+    expect(existsSync(join(dir, "src", "pages", "my-page.test.ts"))).toBe(false);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).not.toContain("addRoute");
+    // With no spec, `vitest run` exits 1.
+    expect(readFileSync(join(dir, "vitest.config.ts"), "utf8")).toContain("passWithNoTests: true");
+  });
+
+  it("scaffolds the apollo variant with codegen wired to the facade's config", () => {
+    const dir = scaffoldExpectingSuccess("gql-plugin", ["--yes", "--with-apollo"]);
+
+    for (const file of ["codegen.ts", ".env.example", "src/api/graphql/queries/ping/pingQuery.graphql"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    expectParseableTs(join(dir, "codegen.ts"));
+
+    const codegen = readFileSync(join(dir, "codegen.ts"), "utf8");
+    // Scalars must come from the host, or the same backend value gets two TypeScript types.
+    expect(codegen).toContain('from "@vc-frontend/core/codegen"');
+    expect(codegen).toContain("/graphql/gql-plugin");
+
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    expect(pkg.scripts).toHaveProperty("generate:graphql-types");
+    // The generated types.ts imports it; the host resolves it transitively, a plugin must not.
+    expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
+  });
+
+  it("scaffolds the tailwind variant with the config/styles files", () => {
+    const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
+
+    for (const file of ["tailwind.config.cjs", "postcss.config.cjs", "src/styles.css"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain('import "./styles.css"');
+  });
+
+  it("rejects unknown flags instead of silently ignoring them", () => {
+    // "--tailwind" is the natural typo for "--with-tailwind"; silently ignoring it would
+    // scaffold WITHOUT tailwind in CI/non-TTY runs where no prompt can catch the mistake.
+    const { status, stderr } = runScaffolder("typo-plugin", ["--yes", "--tailwind"]);
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("Unknown flag");
+  });
+
+  it("rejects stray positional arguments instead of silently ignoring them", () => {
+    const { status, stderr } = runScaffolder("my-plugin", ["--yes", "stray-token"]);
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("Unexpected argument");
+  });
+
+  it("rejects a non-kebab-case plugin name", () => {
+    const { status, stderr } = runScaffolder("My_Plugin", ["--yes"]);
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("kebab-case");
+  });
+  it("installs every package the facade's published files import, so its subpaths resolve", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      devDependencies: Record<string, string>;
+    };
+    const facadePeers = JSON.parse(readFileSync(resolve(__dirname, "../../core-api/package.json"), "utf8")) as {
+      peerDependencies: Record<string, string>;
+    };
+
+    // A package manager installs none of these on its own. lodash-es is the one that bit: it is
+    // imported at runtime by @vc-frontend/core/testing, so the first spec in a scaffolded plugin
+    // died on `Cannot find module` - the subpath was unusable by the only consumer it exists for.
+    expect(Object.keys(pkg.devDependencies)).toEqual(expect.arrayContaining(Object.keys(facadePeers.peerDependencies)));
+    expect(pkg.devDependencies["lodash-es"]).toBeTruthy();
+  });
+});
