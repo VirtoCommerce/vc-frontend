@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { DASHBOARD_ROUTE_NAME } from "./constants";
 import {
   allCustomerOrdersRoute,
   customerOrderRoute,
@@ -8,13 +9,32 @@ import {
   documentsRoute,
   myCustomersRoute,
   salesRepsRoute,
+  tasksRoute,
 } from "./routes";
 import type { NavigationGuard, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 
+const access = vi.hoisted(() => ({ isRep: true, tasksEnabled: true }));
+
 vi.mock("@/shared/account/composables/useUser", () => ({
-  useUser: () => ({ checkPermissions: () => true }),
+  useUser: () => ({ checkPermissions: () => access.isRep }),
 }));
-vi.mock("./composables/useSalesRepsConfig", () => ({ isSalesRepsEnabled: () => true }));
+vi.mock("./composables/useSalesRepsConfig", () => ({
+  isSalesRepsEnabled: () => true,
+  isSalesRepTasksEnabled: () => access.tasksEnabled,
+}));
+
+const to = { params: { organizationId: "org-1", orderId: "o-1" } } as unknown as RouteLocationNormalized;
+
+function runGuard(route: RouteRecordRaw) {
+  const next = vi.fn();
+  (route.beforeEnter as NavigationGuard)(to, to, next);
+  return next;
+}
+
+afterEach(() => {
+  access.isRep = true;
+  access.tasksEnabled = true;
+});
 
 // The rep-facing hub pages mount under the org-gated "/company" parent but must stay reachable for a
 // sales rep with zero org memberships (their access is `sales-rep:access`, not org membership). They
@@ -54,14 +74,40 @@ describe("sales-rep routes", () => {
     ["customer orders", customerOrdersRoute],
     ["customer order", customerOrderRoute],
     ["all customer orders", allCustomerOrdersRoute],
+    ["documents", documentsRoute],
+    ["tasks", tasksRoute],
   ])("lets a sales rep through the %s route", (_name, route: RouteRecordRaw) => {
-    const next = vi.fn();
-    const to = { params: { organizationId: "org-1", orderId: "o-1" } } as unknown as RouteLocationNormalized;
-
-    (route.beforeEnter as NavigationGuard)(to, to, next);
+    const next = runGuard(route);
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledWith();
+  });
+
+  it.each([
+    ["dashboard", dashboardRoute],
+    ["my customers", myCustomersRoute],
+    ["customer profile", customerProfileRoute],
+    ["customer orders", customerOrdersRoute],
+    ["customer order", customerOrderRoute],
+    ["all customer orders", allCustomerOrdersRoute],
+    ["documents", documentsRoute],
+    ["tasks", tasksRoute],
+  ])("resolves the %s route exactly once, to the account Dashboard, for a non-rep", (_name, route: RouteRecordRaw) => {
+    access.isRep = false;
+
+    const next = runGuard(route);
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith({ name: "Dashboard" });
+  });
+
+  it("sends a sales rep to the hub dashboard when task management is not installed", () => {
+    access.tasksEnabled = false;
+
+    const next = runGuard(tasksRoute);
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith({ name: DASHBOARD_ROUTE_NAME });
   });
 
   // No `requiresOrganization: false` override -> it keeps the "/company" parent's org gate.

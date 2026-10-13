@@ -116,7 +116,10 @@ export const tasksRoute: RouteRecordRaw = {
   component: TasksPage,
   meta: repRouteMeta,
   beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next) && isSalesRepTasksEnabled()) {
+    if (!guardSalesRep(next)) {
+      return;
+    }
+    if (isSalesRepTasksEnabled()) {
       next();
     } else {
       next({ name: DASHBOARD_ROUTE_NAME });
