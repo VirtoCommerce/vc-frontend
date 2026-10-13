@@ -285,7 +285,7 @@ jobs:
     if: ${{ (github.repository_id == '296335982' || vars.VC_E2E == 'true') &&
         (((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
-    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.1000.1
+    uses: VirtoCommerce/.github/.github/workflows/playwright-tests.yml@v3.1000.3
     with:
       installModules: 'false'
       installCustomModule: 'false'

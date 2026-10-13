@@ -32,6 +32,7 @@ export const MF_SHARED_RANGES = {
  */
 export const CONTRACT_TYPE_PEERS = {
   "@floating-ui/vue": "^2.0.1",
+  "@internationalized/date": "^3.12.2",
   "@intlify/core-base": "^11.4.6",
   "@unhead/vue": "^3.2.1",
   "@vue/shared": "^3.5.40",
