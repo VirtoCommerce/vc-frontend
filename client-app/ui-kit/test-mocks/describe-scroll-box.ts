@@ -8,7 +8,8 @@ type ScrollBoxType = {
 
 /**
  * Hand-written scroll geometry for jsdom, which has no layout. Throws on a box no browser can
- * produce: `scrollHeight`/`scrollWidth` are never below `clientHeight`/`clientWidth`.
+ * produce: `scrollHeight`/`scrollWidth` are never below `clientHeight`/`clientWidth`, and
+ * `scrollTop` stays within `0..scrollHeight - clientHeight`.
  */
 export function describeScrollBox(element: HTMLElement, box: ScrollBoxType): void {
   const clientWidth = box.clientWidth ?? 300;
@@ -16,6 +17,10 @@ export function describeScrollBox(element: HTMLElement, box: ScrollBoxType): voi
 
   if (box.scrollHeight < box.clientHeight) {
     throw new Error(`impossible box: scrollHeight ${box.scrollHeight} < clientHeight ${box.clientHeight}`);
+  }
+
+  if (box.scrollTop < 0 || box.scrollTop > box.scrollHeight - box.clientHeight) {
+    throw new Error(`impossible box: scrollTop ${box.scrollTop} outside 0..${box.scrollHeight - box.clientHeight}`);
   }
 
   if (scrollWidth < clientWidth) {

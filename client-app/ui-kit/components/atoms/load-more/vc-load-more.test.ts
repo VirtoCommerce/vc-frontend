@@ -22,7 +22,14 @@ enableAutoUnmount(afterEach);
 const CONTENT_DEBOUNCE_MS = 100;
 
 async function afterContentSettles() {
-  await new Promise((resolve) => setTimeout(resolve, CONTENT_DEBOUNCE_MS + 60));
+  await vi.advanceTimersByTimeAsync(CONTENT_DEBOUNCE_MS + 60);
+}
+
+function spyOnWarn() {
+  const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  onTestFinished(() => warn.mockRestore());
+
+  return warn;
 }
 
 // Globally registered in the app, and `$t` comes from the i18n plugin; a bare mount has neither.
@@ -101,6 +108,10 @@ function describeFittingContent(region: HTMLElement) {
 
 describe("VcLoadMore", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
     vi.useRealTimers();
   });
 
@@ -479,20 +490,18 @@ describe("VcLoadMore", () => {
   });
 
   it("asks for nothing, and says why, with no scroll region around it", async () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = spyOnWarn();
     const onLoadMore = vi.fn();
 
     mount(VcLoadMore, {
       attachTo: document.body,
-      props: { hasNextPage: true, itemCount: 0, onLoadMore },
+      props: { hasNextPage: true, loading: false, itemCount: 0, onLoadMore },
       global: GLOBAL,
     });
     await afterContentSettles();
 
     expect(onLoadMore).not.toHaveBeenCalled();
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining("VcLoadMore"));
-
-    warn.mockRestore();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("no VcScrollbar around it"));
   });
 
   it.each([
@@ -500,13 +509,11 @@ describe("VcLoadMore", () => {
     ["in kebab case without loading", { "has-next-page": true }, true],
     ["with loading", { hasNextPage: true, loading: false }, false],
   ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = spyOnWarn();
 
     mount(VcLoadMore, { props: { itemCount: 0, ...props }, global: GLOBAL });
 
     expect(warn.mock.calls.some(([message]) => String(message).includes("needs `loading` bound"))).toBe(warns);
-
-    warn.mockRestore();
   });
 
   describe("counting the loaded items", () => {
@@ -537,9 +544,9 @@ describe("VcLoadMore", () => {
       state.loading = true;
       await afterContentSettles();
 
+      // Dropping the spinner is the content change VcScrollbar re-measures on.
       state.itemCount = 4;
       state.loading = false;
-      region.firstElementChild?.setAttribute("data-probe", "re-measure");
       await afterContentSettles();
 
       expect(onLoadMore).toHaveBeenCalledTimes(2);
@@ -554,8 +561,8 @@ describe("VcLoadMore", () => {
       state.loading = true;
       await afterContentSettles();
 
+      // Dropping the spinner is the content change VcScrollbar re-measures on.
       state.loading = false;
-      region.firstElementChild?.setAttribute("data-probe", "re-measure");
       await afterContentSettles();
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);

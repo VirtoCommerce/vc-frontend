@@ -20,7 +20,7 @@ enableAutoUnmount(afterEach);
 const CONTENT_DEBOUNCE_MS = 100;
 
 async function afterContentSettles() {
-  await new Promise((resolve) => setTimeout(resolve, CONTENT_DEBOUNCE_MS + 60));
+  await vi.advanceTimersByTimeAsync(CONTENT_DEBOUNCE_MS + 60);
 }
 
 function mountScrollbar(rows: number) {
@@ -33,6 +33,10 @@ function mountScrollbar(rows: number) {
 
 describe("VcScrollbar", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
     vi.useRealTimers();
   });
 
