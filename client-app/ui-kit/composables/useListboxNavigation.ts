@@ -2,7 +2,7 @@ import { useEventListener } from "@vueuse/core";
 import { computed, nextTick, readonly, ref, toValue, watch } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
-type ParamsType<T> = {
+export interface IUseListboxNavigationOptions<T> {
   /** Prefix for generated option ids; pass a component id so ids stay unique on the page. */
   componentId: string;
   /** The options currently rendered, in render order. */
@@ -13,7 +13,7 @@ type ParamsType<T> = {
   list?: MaybeRefOrGetter<HTMLElement | null>;
   /** Arrows past either end go round to the other. Default true; a paged list turns it off. */
   wrap?: MaybeRefOrGetter<boolean>;
-};
+}
 
 export type ListboxNavigationKeyType = "up" | "down" | "home" | "end";
 
@@ -39,7 +39,7 @@ function getScrollBox(list: HTMLElement): HTMLElement {
  * or search field, and the active option is published by id and styled with a `highlighted` flag.
  * Bind VcMenuItem's `highlight-ring` to `!isPassiveHighlight` so only a keyboard position rings.
  */
-export function useListboxNavigation<T>(params: ParamsType<T>) {
+export function useListboxNavigation<T>(params: IUseListboxNavigationOptions<T>) {
   const highlightedIndex = ref(-1);
   const count = computed(() => toValue(params.items).length);
 

@@ -2,7 +2,7 @@ import { isEqual, isObject, union } from "lodash-es";
 import { computed, shallowRef, toValue, watch } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
-type ParamsType<T, V> = {
+export interface IUseSelectOptions<T, V> {
   items: MaybeRefOrGetter<T[]>;
   modelValue: MaybeRefOrGetter<V | V[] | undefined>;
   multiple: MaybeRefOrGetter<boolean | undefined>;
@@ -11,7 +11,7 @@ type ParamsType<T, V> = {
   serverFilter: MaybeRefOrGetter<boolean | undefined>;
   textField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, string> | undefined>;
   valueField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, V> | undefined>;
-};
+}
 
 // `!item`, not a null check: a falsy option (0, "", false) resolves to itself.
 function readField<T, R>(item: T, accessor: VcSelectFieldAccessorType<T, R> | undefined): unknown {
@@ -26,7 +26,11 @@ function readField<T, R>(item: T, accessor: VcSelectFieldAccessorType<T, R> | un
   return (item as Record<string, unknown>)[accessor];
 }
 
-export function useSelect<T, V>(params: ParamsType<T, V>) {
+/**
+ * Selection state of VcSelect: reads labels and values through `textField` / `valueField`, matches
+ * options against a single or multiple model, and filters the options locally unless `serverFilter`.
+ */
+export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
   function getItemText(item: T): unknown {
     return readField(item, toValue(params.textField));
   }
@@ -123,9 +127,13 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
 
     const model = toValue(params.modelValue);
 
-    // A clear commits `undefined`. An unset GraphQL value arrives as null, which is a selection
-    // only when an option carries it.
-    return model === null ? foundItem.value !== undefined : model !== undefined;
+    // A clear commits `undefined`.
+    if (model === undefined) {
+      return false;
+    }
+
+    // An unset GraphQL value arrives as null, which is a selection only when an option carries it.
+    return model != null || foundItem.value !== undefined;
   });
 
   // Only a primitive has text to match; an unlabelled object would stringify to "[object Object]".
@@ -157,13 +165,20 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
   });
 
   return {
+    /** The option's label, read through `textField`. */
     getItemText,
+    /** The option's model value, read through `valueField`; the item itself without one. */
     getItemValue,
+    /** Whether the option is selected. */
     isActiveItem,
+    /** The multiple-mode model with the option added, or removed when it was selected. */
     getToggledValues,
+    /** Single mode: the selected option, remembered across paging; the model itself without `valueField`. */
     selectedItem,
     selectedValues,
+    /** Whether the model holds a selection, so there is something to clear. */
     hasSelection,
+    /** The options to render: substring matches with prefix matches first, or `items` as given. */
     filteredItems,
   };
 }
