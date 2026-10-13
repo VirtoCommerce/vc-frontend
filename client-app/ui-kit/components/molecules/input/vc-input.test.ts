@@ -105,12 +105,12 @@ describe("VcInput focus modality", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
     await nextTick();
 
-    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
 
     document.dispatchEvent(new PointerEvent("pointerdown"));
     await nextTick();
 
-    expect(wrapper.classes()).toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
   });
 
   it("drops the mark as soon as a key is pressed", async () => {
@@ -121,7 +121,7 @@ describe("VcInput focus modality", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
     await nextTick();
 
-    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
   });
 
   it.each([
@@ -138,7 +138,7 @@ describe("VcInput focus modality", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", init));
     await nextTick();
 
-    expect(wrapper.classes()).toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
   });
 
   it("drops the mark on a modified navigation key such as Shift+Tab", async () => {
@@ -148,7 +148,7 @@ describe("VcInput focus modality", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }));
     await nextTick();
 
-    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
   });
 
   it("keeps the mark across a blur, since the pointer is still what is driving", async () => {
@@ -158,7 +158,7 @@ describe("VcInput focus modality", () => {
     await nextTick();
     await wrapper.get("input").trigger("blur");
 
-    expect(wrapper.classes()).toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
     expect(wrapper.emitted("blur")).toHaveLength(1);
   });
 
@@ -174,12 +174,12 @@ describe("VcInput focus modality", () => {
     stopper.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
     await nextTick();
 
-    expect(wrapper.classes()).toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
 
     stopper.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
     await nextTick();
 
-    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
 
     stopper.remove();
   });
@@ -190,7 +190,7 @@ describe("VcInput focus modality", () => {
     document.dispatchEvent(new PointerEvent("pointerdown"));
     await nextTick();
 
-    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
   });
 });
 

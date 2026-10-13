@@ -5,7 +5,7 @@
       `vc-input--size--${size}`,
       {
         'vc-input--readonly': readonly,
-        'vc-input--pointer-focus': readonly && pointerFocus,
+        'vc-input--pointer-modality': readonly && pointerModality,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
@@ -191,7 +191,7 @@ const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
-const { isPointerFocus: pointerFocus } = useFocusModality();
+const { isPointerFocus: pointerModality } = useFocusModality();
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
@@ -303,7 +303,7 @@ provide<VcInputContextType>("inputContext", {
   $sizeMd: "";
 
   $readonly: "";
-  $pointerFocus: "";
+  $pointerModality: "";
   $disabled: "";
   $error: "";
   $noBorder: "";
@@ -329,7 +329,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     // Guaranteed-invalid, so the declarations reading them are unset rather than taking an
-    // ancestor's same-named property (VcButton declares `--line-height`).
+    // ancestor's same-named property: `--height` and `--line-height` are generic names.
     &--auto {
       --height: initial;
       --text-size: initial;
@@ -353,8 +353,8 @@ provide<VcInputContextType>("inputContext", {
     $readonly: &;
   }
 
-  &--pointer-focus {
-    $pointerFocus: &;
+  &--pointer-modality {
+    $pointerModality: &;
   }
 
   &--disabled {
@@ -403,7 +403,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     // A read-only field takes no typing, so a mouse click on it is not a reason to ring.
-    #{$readonly}#{$pointerFocus}:not(#{$opened}) & {
+    #{$readonly}#{$pointerModality}:not(#{$opened}) & {
       @apply outline-none;
     }
 
