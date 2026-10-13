@@ -27,12 +27,12 @@
 | S1a | [Plugin in an existing backend module](./s1a-plugin-in-an-existing-module.md) | Written |
 | S1b | Plugin with a new backend module                                              | Planned |
 | S2  | [Develop a plugin locally](./s2-develop-locally.md)                           | Written |
-| S3  | Extend the facade and release it                                              | Planned |
+| S3  | [Extend the facade and release it](./s3-extend-the-facade.md)                 | Written |
 | S4  | Upgrade a plugin to a new host / facade                                       | Planned |
 | S5  | Move an in-repo module into a plugin                                          | Planned |
 | S6  | [Enable a plugin on an environment](./s6-enable-on-an-environment.md)         | Written |
 | S7  | [A plugin is missing or broken](./s7-missing-or-broken.md)                    | Written |
-| S8  | Add a new extension point to the host                                         | Planned |
+| S8  | [Add a new extension point to the host](./s8-new-extension-point.md)          | Written |
 
 Until a scenario is written, [`HOWTO.md`](../HOWTO.md) covers it.
 

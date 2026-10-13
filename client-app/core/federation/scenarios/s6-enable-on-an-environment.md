@@ -19,22 +19,9 @@
 ## Steps
 
 1. **Backend versions.** The platform, `VirtoCommerce.Xapi` and `VirtoCommerce.XFrontend` must be at least what
-   `BACKEND_REQUIREMENTS` lists. The module's own `module.manifest` declares the same floors, so the platform will
-   not load the module on an older backend. To see what an environment runs (no sign-in needed):
-
-   ```graphql
-   {
-     store(domain: "<storefront host>") {
-       settings {
-         modules {
-           moduleId
-           version
-         }
-       }
-     }
-   }
-   ```
-
+   `BACKEND_REQUIREMENTS` lists. The module's own `module.manifest` declares the same floors. The `--env` check in
+   step 6 reads the installed x-api and x-frontend versions and flags one that is too old; the platform version it
+   cannot see.
 2. **Install the module.** On our dev environments: add its package to `backend/packages.json` on that
    environment's branch of `vc-deploy-dev`.
 3. **Route `/modules` to the platform** in the ingress. In `vc-deploy-dev`, add this to the environment's yml:
@@ -67,4 +54,4 @@
 
 ---
 
-_Source-checked on 2026-10-13. `--env` and the module-version query were run against vcptcore-dev._
+_Source-checked on 2026-10-13. `--env`, with its module-version check, was run against vcptcore-dev and vcst-qa._
