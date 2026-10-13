@@ -131,7 +131,7 @@ Full syntax (conditions, slot contexts, examples): [`declarations.md`](./declara
                          • placeholders, menu entries, slots from the declarations
  3. Per plugin, in parallel:
       a. fetch mf-manifest.json ─▶ GATE 1: facade version   (no ⇒ skipped)
-      b. load the code ────────── ▶ GATE 2: shared libraries (no ⇒ failed)
+      b. load the code ────────── ▶ GATE 2: shared libraries (no ⇒ logged, still loads)
       c. call init()
  4. Settle ───────────── each plugin: loaded / failed / skipped. Unused placeholders are removed.
 ```
@@ -156,14 +156,17 @@ Per-step budgets: `DEFAULT_MANIFEST_TIMEOUT_MS` and `DEFAULT_LOAD_TIMEOUT_MS` fo
 
 ## 6. Compatibility: two gates
 
-| Gate                     | Compares                                                        | When                              | On a mismatch                     |
-| ------------------------ | --------------------------------------------------------------- | --------------------------------- | --------------------------------- |
-| **1 · Facade version**   | the plugin's `requiredHostVersion` vs the host's `CORE_VERSION` | before any plugin code is fetched | **skipped**: none of its code ran |
-| **2 · Shared libraries** | the plugin's ranges for Vue, Apollo… vs the host's versions     | while the code loads              | **failed**, that plugin only      |
+| Gate                     | Compares                                                        | When                              | On a mismatch                                          |
+| ------------------------ | --------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
+| **1 · Facade version**   | the plugin's `requiredHostVersion` vs the host's `CORE_VERSION` | before any plugin code is fetched | **skipped**: none of its code ran                      |
+| **2 · Shared libraries** | the plugin's ranges for Vue, Apollo… vs the host's versions     | while the code loads              | **logged only**: it still loads, on the host's version |
 
 1. Gate 1 fails closed: a missing, broken or unreadable requirement counts as "no".
-2. A bare `"0.2.3"` means `^0.2.3`. On 0.x a new **minor** is breaking, so `^0.2.3` refuses `0.3.0`.
-3. **Neither gate proves the plugin works.** They compare version numbers, not behaviour. `requiredHostVersion` is
+2. **Gate 2 does not stop a plugin today.** The Module Federation runtime logs
+   `Failed to bridge … shared module` and hands the plugin the host's copy anyway ([TODO](./TODO.md)). Gate 1
+   is the one that holds.
+3. A bare `"0.2.3"` means `^0.2.3`. On 0.x a new **minor** is breaking, so `^0.2.3` refuses `0.3.0`.
+4. **Neither gate proves the plugin works.** They compare version numbers, not behaviour. `requiredHostVersion` is
    the plugin author's claim.
 
 How the facade itself is versioned and released: [`core-api/README.md`](../../core-api/README.md).
@@ -232,7 +235,7 @@ Step by step, with every console message: [scenario S7](./scenarios/s7-missing-o
 | No plugin ever loads                   | switch off, or the override is set                                                | `settings_data.json`; the build's env                                  |
 | One plugin missing on an environment   | module not installed, plugin not in the package, no `/modules` route, old backend | `check:plugin-module … --artifact` / `--env`                           |
 | Plugin skipped                         | gate 1, its `when`, or a missing permission                                       | `usePluginsStatus()` (gives the reason); dev console `[MF] Skipping …` |
-| Plugin failed                          | gate 2, or its `init()` threw or timed out                                        | dev console `[MF] Failed to load …`                                    |
+| Plugin failed                          | its `init()` threw or timed out, or a chunk failed                                | dev console `[MF] Failed to load …`                                    |
 | "Loaded" but its page is a 404         | declared route registered after an `await`                                        | move `addRoute` before the first `await` in `init()`                   |
 | Blank page in a local production build | the store resolves from `localhost`                                               | build with `--mode=development`                                        |
 

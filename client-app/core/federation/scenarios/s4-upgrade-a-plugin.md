@@ -29,7 +29,7 @@ From 1.0.0 on, read "minor" for the additions and "major" for breaking.
    is on, so a renamed or removed prop on a host component fails `type-check`.
 4. **Shared library on a new major** (Vue, Apollo…)? Move the plugin's own copies in `devDependencies` to the
    host's versions. They only compile the plugin, but the plugin should be compiled for the runtime it meets.
-   (Gate 2 uses the ranges that came with the facade in step 2.)
+   The plugin gets the host's copy whatever its ranges say: gate 2 only logs a mismatch today.
 5. **Check and try it.** 📁 `vc-frontend`: `yarn check:plugin-module <*.Web>`, then run against a local storefront
    on the new version ([S2.1](./s2-develop-locally.md#21-the-main-loop)).
 6. **Release in order:** the storefront with the new facade reaches the environment first, then the module. After

@@ -89,5 +89,5 @@ A plugin can use the new extension point through the released facade, and the ho
 
 ---
 
-_Source-checked on 2026-10-13 against `extensionRegistry/README.md`, `extensionRegistryMap.ts` and
-`core-api/README.md`._
+_Walked on 2026-10-13 for A: a new category rendered in the footer, a plugin declaring and filling it through a
+yalc-linked facade, and the host fallback without the plugin. **Not verified:** B and C._

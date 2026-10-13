@@ -9,7 +9,8 @@
 > - The build writes it into `plugin.json` as `contributions`; the platform serves it with the plugin list.
 > - It **announces**, it does not register: `init()` still adds every route, menu entry and component itself.
 
-_Source-checked against `dev` @ `8c788b038`, facade 0.2.3, on 2026-10-13._
+_Source-checked against `dev` @ `8c788b038`, facade 0.2.3, on 2026-10-13. Section 5 was walked: each build and
+`type-check` error named there was reproduced, and so were the console lines of a plugin skipped at runtime._
 
 ## 1. Example
 
@@ -90,13 +91,14 @@ sharing scopes, anything the plugin keeps to itself.
 
 **What `field` sees, per slot:**
 
-| Slots                                                             | Data                            |
-| ----------------------------------------------------------------- | ------------------------------- |
-| `productCard/*`, `productPage/*`                                  | the `Product`                   |
-| `paymentPage/*`, `orderPaymentPage/*`                             | `{ order, paymentTypeName }`    |
-| `cartPayment/*`                                                   | `{ paymentTypeName }`           |
-| `sharedList/*`                                                    | the list's `SharingSettingType` |
-| `headerMenu/*`, `mobileMenu/*`, `accountMenu/*`, `mobileHeader/*` | nothing: global conditions only |
+| Slots                                                                                  | Data                            |
+| -------------------------------------------------------------------------------------- | ------------------------------- |
+| `productCard/*`, `productPage/*`                                                       | the `Product`                   |
+| `paymentPage/*`, `orderPaymentPage/*`                                                  | `{ order, paymentTypeName }`    |
+| `cartPayment/*`                                                                        | `{ paymentTypeName }`           |
+| `orderDetails/*`                                                                       | the `CustomerOrderType`         |
+| `sharedList/*`                                                                         | the list's `SharingSettingType` |
+| `headerMenu/*`, `mobileMenu/*`, `accountMenu/*`, `mobileHeader/*`, `topHeaderStatus/*` | nothing: global conditions only |
 
 Paths go four levels deep and do not enter arrays. The exact types: `SlotContextMapType` in the contract.
 

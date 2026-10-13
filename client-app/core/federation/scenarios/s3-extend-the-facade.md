@@ -33,7 +33,8 @@ contribution the host renders, or a component only when its look is the contract
 
 3. **Removed or renamed an export?** That is breaking: the build refuses to bump on its own. Run
    `yarn bump:core minor` (on 0.x), update the `@vc-frontend/core` range in `core-api/federation.mjs`, then
-   `yarn build:core-types` again.
+   `yarn build:core-types` again. It refuses until the range includes the new version. When the removal drops the facade's
+   last import of a library, it also prints the `peerDependencies` to write into `core-api/package.json`.
 4. **Verify, because no PR check does it for you:** 📁 `vc-frontend`: `yarn validate:core-types`.
 5. **Commit together** `index.ts`, the `contract/` files and `core-api/package.json`. Open the PR.
 6. Meanwhile, develop the plugin against your checkout with yalc ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
@@ -57,4 +58,5 @@ The `core-v<version>` release exists, the plugin pins it, and `check:plugin-modu
 
 ---
 
-_Source-checked on 2026-10-13 against `core-api/README.md`, `bump-version.mjs` and the release workflow._
+_Walked on 2026-10-13 up to the PR, steps 1–4: an added export, a removed one through `bump:core minor`, and a
+renamed prop for ⚠️ 2. **Not verified:** steps 7–9, the release._

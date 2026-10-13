@@ -12,10 +12,12 @@ Creating the module itself is the platform's job; the full guide is
 
    ```bash
    dotnet new install VirtoCommerce.Module.Template
-   dotnet new vc-module --ModuleName Foo --CompanyName VirtoCommerce --Author "Your Name" --PlatformVersion <version>
+   dotnet new vc-module-dba --ModuleName Foo --CompanyName "Virto Commerce" --Author "Your Name" --PlatformVersion <version>
    ```
 
-   Use the platform floor from `BACKEND_REQUIREMENTS` for `--PlatformVersion`. The template's default is older.
+   It creates `vc-module-foo/` with `src/VirtoCommerce.Foo.Web`. Use the platform floor from `BACKEND_REQUIREMENTS`
+   for `--PlatformVersion`; the template's default is older. Write the company name with its space: `VirtoCommerce`
+   becomes `Virtocommerce.Foo`. `vc-module-xapi` and `vc-module-dba-xapi` add an xAPI project (step 4).
 
 2. **Build it once.** 📁 the new module: `vc-build Compress`.
 
@@ -43,4 +45,5 @@ S1a is done: `check:plugin-module` passes with `--artifact` and `--env`.
 
 ---
 
-_Source-checked on 2026-10-13 against the platform docs. **Not verified:** steps 1–2 were not run for this guide._
+_Walked on 2026-10-13 with `VirtoCommerce.Module.Template` 3.1002.0: step 1, then S1a steps 1–5 on the new module.
+**Not verified:** step 2 (`vc-build`, .NET 10) and step 4._

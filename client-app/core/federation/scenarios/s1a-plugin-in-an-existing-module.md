@@ -93,5 +93,5 @@
 
 _Walked on 2026-10-13 with a scratch module, steps 1–6: the scaffold, `yarn install`, `dotnet publish`
 (.NET 8), `preview` serving the built plugin, then the package check. Step 7's `--env` was run against
-vcptcore-dev with the sales-rep plugin. **Not verified:** a real module's CI build (net10), and step 5's host side
-with a `--module` scaffold._
+vcptcore-dev with the sales-rep plugin. Steps 1–5, the host side of step 5 included, were walked again on a module from the platform
+template, whose `*.Web` has its own `package.json`. **Not verified:** a real module's CI build (net10)._
