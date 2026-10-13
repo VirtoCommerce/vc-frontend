@@ -510,14 +510,15 @@ describe("VcLoadMore", () => {
   });
 
   it.each([
-    ["a page is on its way", true, true],
-    ["nothing is being fetched", false, false],
-  ])("renders a pager without a live region only while %s", (_label, loading, rendered) => {
+    ["a page is on its way", true, true, true],
+    ["nothing is being fetched", false, true, false],
+    ["the list loads with no next page", true, false, false],
+  ])("renders a pager in another role only while %s", (_label, loading, hasNextPage, rendered) => {
     const wrapper = mount(
       defineComponent({
         setup: () => () =>
           h(VcScrollbar, { vertical: true, tag: "ul" }, () =>
-            h(VcLoadMore, { tag: "li", role: "none", loading, hasNextPage: true, itemCount: 1 }),
+            h(VcLoadMore, { tag: "li", role: "none", loading, hasNextPage, itemCount: 1 }),
           ),
       }),
       { attachTo: document.body, global: GLOBAL },

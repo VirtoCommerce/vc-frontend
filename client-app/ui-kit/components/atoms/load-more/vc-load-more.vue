@@ -1,5 +1,5 @@
 <template>
-  <!-- A live region stays mounted: inserted together with its text it may go unannounced. -->
+  <!-- The status region stays mounted: inserted together with its text it may go unannounced. -->
   <component
     :is="tag"
     v-if="role === 'status' || showSpinner"
@@ -37,6 +37,7 @@ interface IProps {
   itemCount: number;
   tag?: string;
   testId?: string;
+  /** `status` by default, a live region that stays mounted; any other role renders only while a page loads. */
   role?: string;
 }
 
