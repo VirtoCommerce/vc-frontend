@@ -3718,8 +3718,8 @@ declare const __VLS_export$j: <T, V = T, M extends boolean = false>(__VLS_props:
         hasNextPage?: boolean;
         /**
          * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
-         * in the `search` handler and keep it until the new `items` are in: while it is on, Select all
-         * is ignored and no result count is announced. A query the consumer skips (too short, the same
+         * in the `search` handler and keep it until the new `items` are in: while `loading` is on, Select all
+         * is disabled and no result count is announced. A query the consumer skips (too short, the same
          * once trimmed) needs nothing — the `items` on screen are taken as its answer. An answer to an
          * older query must not end `loading` early: cancel it, as Apollo does for changed variables.
          */
