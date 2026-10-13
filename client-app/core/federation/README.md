@@ -12,7 +12,7 @@
 > - A plugin talks to the host only through **`@vc-frontend/core`** (the _facade_).
 
 **How to read the claims below:** everything is implemented on `dev` unless it is marked **Planned** or **Not
-verified**. Each section ends with the code and tests that hold it.
+verified**.
 _Source-checked against `dev` @ `8c788b038`, facade 0.2.3, on 2026-10-13._
 
 ---
@@ -44,20 +44,7 @@ A plugin can:
 | In-repo module | The feature ships with the storefront release. (`client-app/modules/*`, see `modules/README.md`) |
 | Plugin         | The feature ships with a **backend module**, on that module's release cadence.                   |
 
-## 2. Status
-
-| Area                                              | State                                                                                   |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Loading, version gates, declared contributions    | Implemented                                                                             |
-| Platform discovery (`store.plugins`)              | Implemented; needs the backend floors in `BACKEND_REQUIREMENTS`                         |
-| Plugin inside a backend module (scaffold + check) | Implemented (`create:plugin --module`, `check:plugin-module`)                           |
-| CSS isolation between plugin and host             | **Planned** (VCST-5760). Until then, see [section 10](#10-security-and-trust)           |
-| Integrity check of plugin files                   | **Deferred on purpose** while plugins come from our own backend                         |
-| Production logging of plugin failures             | **Planned**. Production logs nothing today; see [section 11](#11-when-it-does-not-work) |
-
-Open work lives in [`TODO.md`](./TODO.md).
-
-## 3. Turning it on
+## 2. Turning it on
 
 1. Set `"module_federation_enabled": true` in `client-app/config/settings_data.json`.
 2. Rebuild the storefront.
@@ -68,11 +55,7 @@ Open work lives in [`TODO.md`](./TODO.md).
 
 With the switch off, the build contains no federation code at all and sends no plugin request.
 
-_Source:_ `switch.ts` (`isFederationSwitchOn`), `vite.federation.ts`, `enabled.ts`.
-_Tests:_ `bootstrap.test.ts` "is a no-op with the theme config as shipped"; `boot-order.test.ts` "issues nothing
-when the theme turns federation off".
-
-## 4. How the storefront finds plugins
+## 3. How the storefront finds plugins
 
 There are two sources, and **only one is used**:
 
@@ -100,11 +83,7 @@ There are two sources, and **only one is used**:
 Locally, the dev and preview servers proxy `/modules/*/plugins/vc-frontend/` to `APP_BACKEND_URL`. So a
 plugin installed on a backend also works against a locally run storefront, with no override.
 
-_Source:_ `index.ts` (`resolveRemotes`), `app-runner.ts` (`ASK_PLATFORM_FOR_PLUGINS`).
-_Tests:_ `platform-discovery.test.ts` "lets the env override win over the platform list", "registers the
-manifest that sits next to the platform's entry…"; `index.test.ts` "rejects non-https remote URLs…".
-
-## 5. Declare, then implement
+## 4. Declare, then implement
 
 A plugin tells the host about itself in **two layers**:
 
@@ -142,12 +121,7 @@ What a declaration buys:
 
 Full syntax (conditions, slot contexts, examples): [`HOWTO.md` → Declaring contributions](./HOWTO.md#declaring-contributions).
 
-_Source:_ `core-api/manifest.mjs` (`definePluginManifest`, `pluginContributions`), `contributions/declare.ts`.
-_Tests:_ `declared-contributions.test.ts` "refuses a declared route its own plugin adds after an await in
-init…", "fetches nothing of a plugin whose declared `when` is false…", "declares a plugin's routes before its
-code loads and does not make boot wait for it".
-
-## 6. What happens at startup
+## 5. What happens at startup
 
 ```
  1. Get the list ─────── platform query (or the override). Failing ⇒ no plugins, the app still starts.
@@ -180,13 +154,7 @@ code loads and does not make boot wait for it".
 Per-step budgets: `DEFAULT_MANIFEST_TIMEOUT_MS` and `DEFAULT_LOAD_TIMEOUT_MS` for `blocksBoot` plugins,
 `DEFAULT_DEFERRED_TIMEOUT_MS` for the rest (`index.ts`).
 
-_Source:_ `bootstrap.ts` (`startFederatedModules`), `index.ts` (`prepareFederatedModules`, `loadPreparedModules`).
-_Tests:_ `bootstrap.test.ts` "waits for the plugin list like any other boot request, and only then starts the
-backstop", "does not wait for the code of a plugin that did not ask for it"; `index.test.ts` "reports failed on
-an overrunning init()…", "counts a plugin without init() as loaded", "isolates a failing plugin from the
-others"; `index.test.ts` "backstop invariant…".
-
-## 7. Compatibility: two gates
+## 6. Compatibility: two gates
 
 | Gate                     | Compares                                                        | When                              | On a mismatch                     |
 | ------------------------ | --------------------------------------------------------------- | --------------------------------- | --------------------------------- |
@@ -200,12 +168,7 @@ others"; `index.test.ts` "backstop invariant…".
 
 How the facade itself is versioned and released: [`core-api/README.md`](../../core-api/README.md).
 
-_Source:_ `version-gate.ts` (`checkHostCompatibility`), `core-api/federation.mjs` (`strictVersion`).
-_Tests:_ `version-gate.test.ts`; `index.test.ts` "skips an incompatible plugin before loading any of its code",
-"skips (fail closed) a manifest that declares no requiredHostVersion"; `federation-shared.test.ts` "every shared
-dep is a strict singleton with a real version range".
-
-## 8. The facade and shared libraries
+## 7. The facade and shared libraries
 
 1. **Host APIs come only from `@vc-frontend/core`.** Never `@/…`: those paths do not exist in a plugin's build.
    Importing a library itself (`vue-router`, `@vue/apollo-composable`) is fine.
@@ -218,10 +181,7 @@ dep is a strict singleton with a real version range".
 
 What is exported and how to add to it: [`core-api/README.md`](../../core-api/README.md).
 
-_Tests:_ `federation-shared.test.ts` "host and remote configs cover exactly the same packages", "remote config
-never bundles fallback copies".
-
-## 9. Shipping a plugin
+## 8. Shipping a plugin
 
 | Way                         | How it reaches the storefront                                     | Storefront rebuild? |
 | --------------------------- | ----------------------------------------------------------------- | ------------------- |
@@ -234,10 +194,7 @@ What every environment needs (backend floors, the `/modules` route): [scenario S
 `yarn check:plugin-module <module *.Web> [--artifact <zip>] [--env <storefront-url>]` checks the module, its
 package and an environment.
 
-_Source:_ `core-api/plugin-module.mjs`, `core-api/backend-requirements.mjs` (`BACKEND_REQUIREMENTS`).
-_Tests:_ `plugin-module.test.ts`, `create-plugin.test.ts` "create-plugin --module".
-
-## 10. Security and trust
+## 9. Security and trust
 
 A plugin runs with the **storefront's full rights**: same origin, same session, same Apollo client. Installing a
 module that ships a plugin means letting its code into every visitor's browser.
@@ -262,11 +219,7 @@ What the host does **not** do:
 What an environment must provide: a CSP (`'self'` covers platform plugins), and trusted hosting for anything
 loaded through the override.
 
-_Source:_ `index.ts` (`installRouteGuard`, `resolveRemotes`).
-_Tests:_ `index.test.ts` "route squatting"; `platform-discovery.test.ts` "skips a plugin whose manifest is served
-from another origin", "skips a plugin whose remote name could swallow another remote's loadRemote id".
-
-## 11. When it does not work
+## 10. When it does not work
 
 > ⚠️ **Production logs nothing**, not even errors (`Logger` is a no-op there). Diagnose with a development build,
 > `usePluginsStatus()`, or `yarn check:plugin-module`.
@@ -280,7 +233,7 @@ from another origin", "skips a plugin whose remote name could swallow another re
 | "Loaded" but its page is a 404         | declared route registered after an `await`                                        | move `addRoute` before the first `await` in `init()`                   |
 | Blank page in a local production build | the store resolves from `localhost`                                               | build with `--mode=development`                                        |
 
-## 12. Reference
+## 11. Reference
 
 **Commands** (run in this repo):
 
@@ -322,3 +275,7 @@ from another origin", "skips a plugin whose remote name could swallow another re
 - **`plugin.json`:** the plugin's descriptor for the platform: id, expose key, `contributions`.
 - **Contributions:** the declarations from `plugin.config.ts`.
 - **Extension point / slot:** a place in a host page a plugin can fill.
+
+---
+
+Open work and known limits: [`TODO.md`](./TODO.md).
