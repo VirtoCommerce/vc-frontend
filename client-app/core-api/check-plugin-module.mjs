@@ -14,6 +14,7 @@ import {
   checkEnvironment,
   checkModuleFiles,
   formatResults,
+  parseModuleManifest,
 } from "./plugin-module.mjs";
 
 const USAGE = "Usage: yarn check:plugin-module <path-to-*.Web> [--artifact <module.zip>] [--env <storefront-url>]";
@@ -44,6 +45,15 @@ if (positional.length !== 1) {
   process.exit(1);
 }
 
+/** The source check above already reports a missing or broken file; here it only means "unknown". */
+function readOrUndefined(read) {
+  try {
+    return read();
+  } catch {
+    return undefined;
+  }
+}
+
 const webDir = resolve(process.cwd(), positional[0]);
 const sections = [{ title: "Module sources", results: checkModuleFiles(webDir) }];
 
@@ -51,16 +61,14 @@ if (options.artifact) {
   sections.push({ title: "Module package", results: checkArtifact(resolve(process.cwd(), options.artifact)) });
 }
 if (options.env) {
-  let pluginId;
-  try {
-    pluginId = JSON.parse(readFileSync(join(webDir, STOREFRONT_APP_DIR, "public", "plugin.json"), "utf8")).id;
-  } catch {
-    pluginId = undefined;
-  }
+  const pluginId = readOrUndefined(
+    () => JSON.parse(readFileSync(join(webDir, STOREFRONT_APP_DIR, "public", "plugin.json"), "utf8")).id,
+  );
+  const moduleId = readOrUndefined(() => parseModuleManifest(readFileSync(join(webDir, "module.manifest"), "utf8")).id);
   sections.push({
     title: `Environment ${options.env}`,
     results: pluginId
-      ? await checkEnvironment(options.env, pluginId)
+      ? await checkEnvironment(options.env, { pluginId, moduleId })
       : [{ status: "fail", message: "no plugin id: public/plugin.json is missing or not JSON" }],
   });
 }

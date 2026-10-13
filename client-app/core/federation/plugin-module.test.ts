@@ -279,47 +279,103 @@ describe("checkArtifact", () => {
 });
 
 describe("checkEnvironment", () => {
+  const SHOP = "https://shop.example.com";
   const ENTRY = "/modules/VirtoCommerce.Foo/plugins/vc-frontend/remoteEntry.js";
+  const PLUGIN = { pluginId: "foo", moduleId: "VirtoCommerce.Foo" };
+  const atFloors = Object.entries(BACKEND_REQUIREMENTS.modules).map(([moduleId, version]) => ({ moduleId, version }));
+  const installed = (modules: { moduleId: string; version: string }[]) =>
+    Response.json({ data: { store: { settings: { modules } } } });
   const listing = (plugins: unknown[]) => Response.json({ data: { store: { plugins } } });
+  const graphqlError = (message: string) => Response.json({ errors: [{ message }] });
 
-  it("finds the plugin and fetches the manifest beside its entry", async () => {
-    const request = vi
-      .fn()
-      .mockResolvedValueOnce(listing([{ id: "foo", remote: { name: "foo" }, entry: { path: ENTRY } }]))
-      .mockResolvedValueOnce(Response.json({ name: "foo" }));
+  /** Answers the three requests in the order the check makes them: module versions, plugins, manifest. */
+  function environment(...responses: Response[]) {
+    const request = vi.fn();
+    for (const response of responses) {
+      request.mockResolvedValueOnce(response);
+    }
+    return request;
+  }
 
-    const results = await checkEnvironment("https://shop.example.com", "foo", request);
+  it("passes an environment that serves the plugin, and fetches the manifest beside its entry", async () => {
+    const request = environment(
+      installed([...atFloors, { moduleId: "VirtoCommerce.Foo", version: "3.1000.0" }]),
+      listing([{ id: "foo", remote: { name: "foo" }, entry: { path: ENTRY } }]),
+      Response.json({ name: "foo" }),
+    );
+
+    const results = await checkEnvironment(SHOP, PLUGIN, request);
 
     expect(failures(results)).toEqual([]);
-    expect(String(request.mock.calls[1][0])).toBe(
-      "https://shop.example.com/modules/VirtoCommerce.Foo/plugins/vc-frontend/mf-manifest.json",
+    expect(String(request.mock.calls[2][0])).toBe(
+      `${SHOP}/modules/VirtoCommerce.Foo/plugins/vc-frontend/mf-manifest.json`,
     );
     expect(JSON.parse(request.mock.calls[0][1].body).variables).toEqual({ domain: "shop.example.com" });
   });
 
-  it("fails when the plugin query errors, pointing at the x-api floor", async () => {
-    const request = vi.fn().mockResolvedValue(Response.json({ errors: [{ message: "contributions not found" }] }));
+  it("fails a backend module below its floor and the plugin's own module when it is not installed", async () => {
+    const request = environment(
+      installed(
+        atFloors.map((module) => (module.moduleId === XAPI ? { moduleId: XAPI, version: "3.1020.0" } : module)),
+      ),
+      listing([{ id: "foo", entry: { path: ENTRY } }]),
+      Response.json({ name: "foo" }),
+    );
 
-    expect(await checkEnvironment("https://shop.example.com", "foo", request)).toEqual([
-      expect.objectContaining({ status: "fail", fix: expect.stringContaining(BACKEND_REQUIREMENTS.modules[XAPI]) }),
+    expect(failures(await checkEnvironment(SHOP, PLUGIN, request))).toEqual([
+      expect.objectContaining({ message: `${XAPI} is 3.1020.0, below ${BACKEND_REQUIREMENTS.modules[XAPI]}` }),
+      expect.objectContaining({ message: "VirtoCommerce.Foo is not installed" }),
+    ]);
+  });
+
+  it("only warns when the module versions cannot be read, and goes on to the plugin list", async () => {
+    const request = environment(
+      graphqlError("settings unavailable"),
+      listing([{ id: "foo", entry: { path: ENTRY } }]),
+      Response.json({ name: "foo" }),
+    );
+
+    const results = await checkEnvironment(SHOP, PLUGIN, request);
+
+    expect(failures(results)).toEqual([]);
+    expect(withStatus(results, "warn")).toHaveLength(1);
+  });
+
+  it("fails when the plugin query errors, pointing at the x-api floor", async () => {
+    const request = environment(installed(atFloors), graphqlError("contributions not found"));
+
+    expect(failures(await checkEnvironment(SHOP, { pluginId: "foo" }, request))).toEqual([
+      expect.objectContaining({ fix: expect.stringContaining(BACKEND_REQUIREMENTS.modules[XAPI]) }),
     ]);
   });
 
   it("fails when the plugin is not listed", async () => {
-    const request = vi.fn().mockResolvedValue(listing([{ id: "other" }]));
+    const request = environment(installed(atFloors), listing([{ id: "other" }]));
 
-    expect(await checkEnvironment("https://shop.example.com", "foo", request)).toEqual([
-      expect.objectContaining({ status: "fail", message: expect.stringContaining("listed: other") }),
+    expect(failures(await checkEnvironment(SHOP, { pluginId: "foo" }, request))).toEqual([
+      expect.objectContaining({ message: expect.stringContaining("listed: other") }),
+    ]);
+  });
+
+  it("blames the package when the module is installed but its plugin is not listed", async () => {
+    const request = environment(
+      installed([...atFloors, { moduleId: "VirtoCommerce.Foo", version: "3.1000.0" }]),
+      listing([]),
+    );
+
+    expect(failures(await checkEnvironment(SHOP, PLUGIN, request))).toEqual([
+      expect.objectContaining({ fix: expect.stringContaining("The module is installed, so its package") }),
     ]);
   });
 
   it("fails a listed plugin whose manifest is not routed, pointing at /modules", async () => {
-    const request = vi
-      .fn()
-      .mockResolvedValueOnce(listing([{ id: "foo", entry: { path: ENTRY } }]))
-      .mockResolvedValueOnce(new Response("not found", { status: 404 }));
+    const request = environment(
+      installed(atFloors),
+      listing([{ id: "foo", entry: { path: ENTRY } }]),
+      new Response("not found", { status: 404 }),
+    );
 
-    expect(failures(await checkEnvironment("https://shop.example.com", "foo", request))).toEqual([
+    expect(failures(await checkEnvironment(SHOP, { pluginId: "foo" }, request))).toEqual([
       expect.objectContaining({ fix: expect.stringContaining("/modules") }),
     ]);
   });

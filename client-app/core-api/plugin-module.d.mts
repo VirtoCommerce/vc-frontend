@@ -26,7 +26,8 @@ export declare function listZipEntries(buffer: Buffer): string[];
 export declare function checkArtifact(zipPath: string): ICheckResult[];
 export declare function checkEnvironment(
   storefrontUrl: string,
-  pluginId: string,
+  /** `moduleId` (from module.manifest) adds a check that the plugin's own module is installed. */
+  plugin: { pluginId: string; moduleId?: string },
   request?: (input: URL, init?: RequestInit) => Promise<Response>,
 ): Promise<ICheckResult[]>;
 export declare function formatResults(results: ICheckResult[]): string;

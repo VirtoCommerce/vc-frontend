@@ -342,61 +342,102 @@ export function checkArtifact(zipPath) {
   return results;
 }
 
+const MODULE_VERSIONS_QUERY = `query CheckModuleVersions($domain: String!) {
+  store(domain: $domain) {
+    settings { modules { moduleId version } }
+  }
+}`;
+
 const STORE_PLUGINS_QUERY = `query CheckStorePlugins($domain: String!) {
   store(domain: $domain) {
     plugins(appId: "${PLUGIN_APP_ID}") { id remote { name } entry { path } contributions }
   }
 }`;
 
+/** The response body, or an Error carrying the first GraphQL error or the HTTP status. */
+async function queryStore(origin, query, request) {
+  const response = await request(new URL("/graphql", origin), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ query, variables: { domain: origin.hostname } }),
+    signal: AbortSignal.timeout(ENV_REQUEST_TIMEOUT_MS),
+  });
+  const body = await response.json().catch(() => undefined);
+  if (!response.ok || body?.errors?.length || !body?.data?.store) {
+    throw new Error(body?.errors?.[0]?.message ?? `HTTP ${response.status}`);
+  }
+  return body.data.store;
+}
+
+/** The backend floors, and whether the plugin's own module is installed at all. Readable anonymously. */
+async function checkInstalledModules(origin, moduleId, request) {
+  let installed;
+  try {
+    const store = await queryStore(origin, MODULE_VERSIONS_QUERY, request);
+    installed = new Map((store.settings?.modules ?? []).map((module) => [module?.moduleId, module?.version]));
+  } catch (error) {
+    return { results: [warn(`could not read the installed module versions: ${error.message}`)] };
+  }
+  const results = Object.entries(BACKEND_REQUIREMENTS.modules).map(([id, floor]) => {
+    const version = installed.get(id);
+    if (version && meetsFloor(version, floor)) {
+      return pass(`${id} ${version} installed`);
+    }
+    const state = version ? `${version}, below ${floor}` : "not installed";
+    return fail(`${id} is ${state}`, `Install ${id} ${floor} or later.`);
+  });
+  if (!moduleId) {
+    return { results };
+  }
+  const version = installed.get(moduleId);
+  results.push(
+    version
+      ? pass(`${moduleId} ${version} installed`)
+      : fail(`${moduleId} is not installed`, "Install the module's package on this environment."),
+  );
+  return { results, isModuleInstalled: Boolean(version) };
+}
+
 /** The host's own discovery, replayed against a storefront URL. */
-export async function checkEnvironment(storefrontUrl, pluginId, request = fetch) {
+export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, request = fetch) {
   let origin;
   try {
     origin = new URL(storefrontUrl);
   } catch {
     return [fail(`"${storefrontUrl}" is not a URL`)];
   }
-  const signal = () => AbortSignal.timeout(ENV_REQUEST_TIMEOUT_MS);
+  const { results, isModuleInstalled } = await checkInstalledModules(origin, moduleId, request);
 
   let plugins;
   try {
-    const response = await request(new URL("/graphql", origin), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ query: STORE_PLUGINS_QUERY, variables: { domain: origin.hostname } }),
-      signal: signal(),
-    });
-    const body = await response.json().catch(() => undefined);
-    if (!response.ok || body?.errors?.length || !Array.isArray(body?.data?.store?.plugins)) {
-      const reason = body?.errors?.[0]?.message ?? `HTTP ${response.status}`;
-      return [
-        fail(
-          `store.plugins failed: ${reason}`,
-          `The host asks for the same fields, so its discovery fails too. Needs VirtoCommerce.Xapi >= ${BACKEND_REQUIREMENTS.modules["VirtoCommerce.Xapi"]}.`,
-        ),
-      ];
-    }
-    plugins = body.data.store.plugins;
+    plugins = (await queryStore(origin, STORE_PLUGINS_QUERY, request)).plugins;
   } catch (error) {
-    return [fail(`store.plugins request failed: ${error.message}`)];
+    return [
+      ...results,
+      fail(
+        `store.plugins failed: ${error.message}`,
+        `The host asks for the same fields, so its discovery fails too. Needs VirtoCommerce.Xapi >= ${BACKEND_REQUIREMENTS.modules["VirtoCommerce.Xapi"]}.`,
+      ),
+    ];
+  }
+  if (!Array.isArray(plugins)) {
+    return [...results, fail("store.plugins did not return a list")];
   }
 
   const plugin = plugins.find((candidate) => candidate?.id === pluginId || candidate?.remote?.name === pluginId);
   if (!plugin) {
     const listed = plugins.map((candidate) => candidate?.id).join(", ") || "none";
-    return [
-      fail(
-        `store.plugins does not list "${pluginId}" (listed: ${listed})`,
-        `Is the module installed, and does its package carry plugins/${PLUGIN_APP_ID}/ at the root (--artifact)?`,
-      ),
-    ];
+    const fix = isModuleInstalled
+      ? `The module is installed, so its package has no plugins/${PLUGIN_APP_ID}/ at the root: check it with --artifact.`
+      : `Is the module installed, and does its package carry plugins/${PLUGIN_APP_ID}/ at the root (--artifact)?`;
+    return [...results, fail(`store.plugins does not list "${pluginId}" (listed: ${listed})`, fix)];
   }
-  const results = [pass(`store.plugins lists "${pluginId}"`)];
+  results.push(pass(`store.plugins lists "${pluginId}"`));
 
   const entry = new URL(plugin.entry?.path ?? "", origin);
   const manifestUrl = new URL("mf-manifest.json", entry);
   try {
-    const response = await request(manifestUrl, { signal: signal() });
+    const response = await request(manifestUrl, { signal: AbortSignal.timeout(ENV_REQUEST_TIMEOUT_MS) });
     const manifest = response.ok ? await response.json().catch(() => undefined) : undefined;
     const notJson = response.ok ? " but is not JSON" : "";
     results.push(
