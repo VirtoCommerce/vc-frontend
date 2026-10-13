@@ -59,7 +59,23 @@ const warn = (message, fix) => ({ status: "warn", message, fix });
 const fail = (message, fix) => ({ status: "fail", message, fix });
 
 /** An unterminated comment runs to the end, as an XML parser reads it. */
-const stripXmlComments = (xml) => xml.split(/<!--[\s\S]*?(?:-->|$)/).join("");
+function stripXmlComments(xml) {
+  let kept = "";
+  let index = 0;
+  while (index < xml.length) {
+    const start = xml.indexOf("<!--", index);
+    if (start < 0) {
+      return kept + xml.slice(index);
+    }
+    kept += xml.slice(index, start);
+    const end = xml.indexOf("-->", start + "<!--".length);
+    if (end < 0) {
+      return kept;
+    }
+    index = end + "-->".length;
+  }
+  return kept;
+}
 
 function readText(path) {
   return existsSync(path) ? readFileSync(path, "utf8") : undefined;

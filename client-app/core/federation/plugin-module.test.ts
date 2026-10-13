@@ -95,6 +95,18 @@ describe("parseModuleManifest", () => {
     expect(facts.platformVersion).toBe("3.1078.0");
     expect(facts.dependencies).toEqual({ [XAPI]: "3.1027.0" });
   });
+
+  it("reads nothing after a comment that is never closed", () => {
+    const facts = parseModuleManifest(
+      manifestXml(
+        "3.1078.0",
+        `<dependency id="${XAPI}" version="3.1027.0" />\n<!-- <dependency id="${XFRONTEND}" version="3.1005.0" />`,
+      ),
+    );
+
+    expect(facts.dependencies).toEqual({ [XAPI]: "3.1027.0" });
+    expect(facts.platformVersion).toBe("3.1078.0");
+  });
 });
 
 describe("checkModuleFiles", () => {
