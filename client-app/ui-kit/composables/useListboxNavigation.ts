@@ -50,6 +50,7 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   function highlight(index: number): void {
     highlightedIndex.value = index;
     isPassiveHighlight.value = false;
+    scrollIntoViewSoon();
   }
 
   function highlightPassively(index: number): void {
@@ -121,14 +122,27 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
     } else {
       move(key === "down" ? 1 : -1);
     }
+
+    scrollIntoViewSoon();
   }
 
   function reset(): void {
     highlight(-1);
   }
 
+  // Only the keyboard scrolls: a row under a still pointer that scrolled would hand the pointer the
+  // next row, which would highlight and scroll in turn. Every key does, even one that keeps the row
+  // (Home on the first): the list may have been wheeled away from it.
+  function scrollIntoViewSoon(): void {
+    void nextTick(() => scrollHighlightedIntoView(highlightedIndex.value));
+  }
+
   // Not `scrollIntoView`, which also scrolls the page.
   function scrollHighlightedIntoView(index: number): void {
+    if (index < 0) {
+      return;
+    }
+
     const option = document.getElementById(getOptionId(index));
     const list = option?.closest<HTMLElement>('[role="listbox"]');
 
@@ -164,17 +178,6 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
       }
     },
   );
-
-  // Only the keyboard scrolls: a row under a still pointer that scrolled would hand the pointer the
-  // next row, which would highlight and scroll in turn. The flag is watched too, so a key that keeps
-  // a pointer-highlighted row (End on the last one) still brings it into view.
-  watch([highlightedIndex, isPassiveHighlight], ([index, passive]) => {
-    if (index < 0 || passive) {
-      return;
-    }
-
-    void nextTick(() => scrollHighlightedIntoView(index));
-  });
 
   return {
     highlightedIndex: readonly(highlightedIndex),

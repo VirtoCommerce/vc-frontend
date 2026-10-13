@@ -206,6 +206,43 @@ describe("useListboxNavigation", () => {
     expect(region.scrollTop).toBe(20);
   });
 
+  it("brings row 0 back into view on Home when it is already highlighted", async () => {
+    const { region } = buildList(10);
+    const { navigate } = useListboxNavigation({ componentId: COMPONENT_ID, items: ref(Array.from({ length: 10 })) });
+
+    navigate("home");
+    await nextTick();
+    await nextTick();
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 400, scrollTop: 300 });
+    setRect(region, 300, 400);
+
+    navigate("home");
+    await nextTick();
+    await nextTick();
+
+    expect(region.scrollTop).toBe(0);
+  });
+
+  it("brings the last row back into view on ArrowDown when it stays there without wrap", async () => {
+    const { region } = buildList(10);
+    const { navigate } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items: ref(Array.from({ length: 10 })),
+      wrap: false,
+    });
+
+    navigate("end");
+    await nextTick();
+    await nextTick();
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 400, scrollTop: 0 });
+
+    navigate("down");
+    await nextTick();
+    await nextTick();
+
+    expect(region.scrollTop).toBe(300);
+  });
+
   it.each([
     ["0", [0, 1, 2], [0, 1, 2, 3]],
     ["an empty string", ["", "b"], ["", "b", "c"]],
