@@ -71,9 +71,10 @@ const showSpinner = computed(() => props.loading && props.hasNextPage);
 
 type ContentType = { size: number; text: string };
 
-// `size` is the progress measure; the text tells a list rebuilt to the same size.
-function readContent(): ContentType {
-  return { size: props.itemCount, text: scrollbar?.el.value?.textContent ?? "" };
+// `size` is the progress measure; the text tells a list rebuilt to the same size. Read only when
+// needed: it serialises the whole region.
+function readText(): string {
+  return scrollbar?.el.value?.textContent ?? "";
 }
 
 /**
@@ -84,30 +85,23 @@ const askedAt = ref<ContentType | null>(null);
 
 /** Asks once per list content. */
 function reconsider(): void {
-  const content = readContent();
+  const size = props.itemCount;
 
-  // Shrunk, re-prefixed or left: ask afresh. Not while loading: a row swapped for the spinner is no rebuild.
+  // Shrunk, left or re-prefixed: ask afresh. Not while loading: a row swapped for the spinner is no rebuild.
   if (
     askedAt.value &&
     !props.loading &&
-    (content.size < askedAt.value.size ||
-      !content.text.startsWith(askedAt.value.text) ||
-      scrollbar?.isAtBottom.value === false)
+    (size < askedAt.value.size || scrollbar?.isAtBottom.value === false || !readText().startsWith(askedAt.value.text))
   ) {
     askedAt.value = null;
   }
 
   // A collapsed region (a closed dropdown) keeps the edges of its last measurement; it asks for nothing.
-  if (
-    !wantsMore.value ||
-    content.size === askedAt.value?.size ||
-    !scrollbar?.el.value ||
-    isCollapsedBox(scrollbar.el.value)
-  ) {
+  if (!wantsMore.value || size === askedAt.value?.size || !scrollbar?.el.value || isCollapsedBox(scrollbar.el.value)) {
     return;
   }
 
-  askedAt.value = content;
+  askedAt.value = { size, text: readText() };
   emit("loadMore");
 }
 

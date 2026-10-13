@@ -1,5 +1,5 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick, reactive } from "vue";
 import { describeScrollBox } from "@/ui-kit/test-mocks";
 import VcIcon from "../icon/vc-icon.vue";
@@ -111,6 +111,22 @@ describe("VcLoadMore", () => {
     await afterContentSettles();
 
     expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves the region's text unread while the list scrolls short of its bottom", async () => {
+    const { region } = mountList({ rows: 20 });
+    const textContent = vi.spyOn(Node.prototype, "textContent", "get");
+
+    onTestFinished(() => textContent.mockRestore());
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 2000, scrollTop: 0 });
+
+    for (const scrollTop of [100, 200, 300]) {
+      describeScrollBox(region, { clientHeight: 100, scrollHeight: 2000, scrollTop });
+      region.dispatchEvent(new Event("scroll"));
+      await afterContentSettles();
+    }
+
+    expect(textContent.mock.contexts.filter((context) => context === region)).toHaveLength(0);
   });
 
   it("asks again for a rebuilt list of the same size", async () => {
