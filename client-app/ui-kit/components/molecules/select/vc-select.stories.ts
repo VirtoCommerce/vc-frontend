@@ -1,8 +1,9 @@
+import { escapeRegExp } from "lodash-es";
 import { computed, ref } from "vue";
 import { VcSelect } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["xs", "sm", "md"];
+const SIZES = ["xs", "sm", "md", "auto"];
 const ITEM_SIZES = ["xs", "sm", "md", "lg"];
 
 const ITEMS = ["Albania", "Belgium", "China", "India"];
@@ -678,7 +679,7 @@ const selected = ref<string[]>([]);
 
 function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
   if (!query) {
-    selected.value = all ? allIds.value : [];
+    selected.value = all ? [...allIds.value] : [];
   }
 }
 </script>
@@ -735,7 +736,15 @@ export const InfiniteScroll: StoryType = {
         loading.value = false;
       }
 
-      return { args, items, loading, page, hasNextPage: computed(() => page.value < TOTAL_PAGES), loadNextPage };
+      return {
+        args,
+        items,
+        loading,
+        page,
+        totalPages: TOTAL_PAGES,
+        hasNextPage: computed(() => page.value < TOTAL_PAGES),
+        loadNextPage,
+      };
     },
     template: `
       <div class="mb-32">
@@ -748,7 +757,112 @@ export const InfiniteScroll: StoryType = {
           @load-more="loadNextPage"
         />
 
-        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} loaded, page {{ page }}/4</div>
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} loaded, page {{ page }}/{{ totalPages }}</div>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<script setup lang="ts">
+const { items, loading, hasNextPage, loadNextPage } = useBuyers();
+const selected = ref<string[]>([]);
+</script>
+
+<template>
+  <VcSelect
+    v-model="selected"
+    :items="items"
+    :loading="loading"
+    :has-next-page="hasNextPage"
+    multiple
+    @load-more="loadNextPage"
+  />
+</template>
+        `,
+      },
+      description: {
+        story:
+          "`items` stays consumer-owned: open the list and it asks for the next page the moment it " +
+          "comes to rest at its bottom — which a two-option first page does immediately, with " +
+          "nothing to scroll. Bind `loading` too: it holds a second request back while a page is on " +
+          "its way, and the page that lands is what asks for the next one. To search a paged list, see " +
+          "Server Filter: a local filter would only search the pages that happen to be loaded.",
+      },
+    },
+  },
+};
+
+export const ServerFilter: StoryType = {
+  args: {
+    items: [],
+    label: "Buyer name",
+    placeholder: "Type to search buyers",
+    multiple: true,
+  },
+  render: (args) => ({
+    setup: () => {
+      const ALL = Array.from({ length: 40 }, (_, index) => `Buyer ${index + 1}`);
+      const PAGE_SIZE = 8;
+      const items = ref<string[]>([]);
+      const matchCount = ref(0);
+      const loading = ref(false);
+      let query = "";
+      let latestRequest = 0;
+
+      // A newer request supersedes an older one, which must not end `loading` early.
+      async function fetchPage(append: boolean) {
+        const request = ++latestRequest;
+        loading.value = true;
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        if (request !== latestRequest) {
+          return;
+        }
+
+        const pattern = new RegExp(escapeRegExp(query), "i");
+        const matches = ALL.filter((buyer) => pattern.test(buyer));
+        const start = append ? items.value.length : 0;
+        const page = matches.slice(start, start + PAGE_SIZE);
+
+        items.value = append ? [...items.value, ...page] : page;
+        matchCount.value = matches.length;
+        loading.value = false;
+      }
+
+      function search(value: string) {
+        query = value;
+        void fetchPage(false);
+      }
+
+      void fetchPage(false);
+
+      return {
+        args,
+        items,
+        loading,
+        matchCount,
+        hasNextPage: computed(() => items.value.length < matchCount.value),
+        loadNextPage: () => fetchPage(true),
+        search,
+      };
+    },
+    template: `
+      <div class="mb-32">
+        <VcSelect
+          v-bind="args"
+          v-model="args.modelValue"
+          :items="items"
+          :loading="loading"
+          :has-next-page="hasNextPage"
+          autocomplete
+          server-filter
+          @load-more="loadNextPage"
+          @search="search"
+        />
+
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} of {{ matchCount }} matches loaded</div>
       </div>
     `,
   }),
@@ -778,13 +892,11 @@ const selected = ref<string[]>([]);
       },
       description: {
         story:
-          "`items` stays consumer-owned: open the list and it asks for the next page the moment it " +
-          "comes to rest at its bottom — which a two-option first page does immediately, with " +
-          "nothing to scroll. Bind `loading` too: it holds a second request back while a page is on " +
-          "its way, and the page that lands is what asks for the next one. Pair it with " +
-          "`server-filter`, which turns the local filter off: answer the typed text from `@search` " +
-          "(debounced 300ms) instead of filtering the one page that happens to be loaded — otherwise " +
-          "the search would report no results for anything below the fold.",
+          "`server-filter` turns the local filter off: answer the typed text from `@search` (debounced " +
+          "300ms) with the first page of its matches, holding `loading` while it fetches, and page on " +
+          "through `@load-more` as before. Filtering only the loaded page instead would report no " +
+          "results for anything below the fold. A query typed while an older one is still loading " +
+          "supersedes it: drop the older answer rather than letting it end `loading` early.",
       },
     },
   },
@@ -825,6 +937,8 @@ export const ObjectItems: StoryType = {
 // =============================================================================
 
 export const SizeVariants: StoryType = {
+  // Each select sets its own size and label.
+  argTypes: { size: { control: false }, label: { control: false } },
   render: (args) => ({
     setup: () => ({ args }),
     template: `<div class="flex flex-col gap-4 mb-32">
@@ -853,6 +967,8 @@ export const SizeVariants: StoryType = {
 };
 
 export const ItemSizeVariants: StoryType = {
+  // Each select sets its own item size and label.
+  argTypes: { itemSize: { control: false }, label: { control: false } },
   render: (args) => ({
     setup: () => ({ args }),
     template: `<div class="flex flex-col gap-4 mb-32">
@@ -947,6 +1063,35 @@ export const EmptyItems: StoryType = {
         code: `
 <VcSelect v-model="selected" :items="[]" label="Country" placeholder="No options available" />
         `,
+      },
+    },
+  },
+};
+
+export const EmptySlot: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Country",
+    placeholder: "Type a country",
+    autocomplete: true,
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
+    <template #empty>No country matches. Check the spelling.</template>
+  </VcSelect>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect v-model="selected" :items="countries" label="Country" placeholder="Type a country" autocomplete>
+  <template #empty>No country matches. Check the spelling.</template>
+</VcSelect>
+        `,
+      },
+      description: {
+        story: "`#empty` replaces the text of the no-options and no-results row. Type a name that is not listed.",
       },
     },
   },
