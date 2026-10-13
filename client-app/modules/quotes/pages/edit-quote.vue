@@ -30,7 +30,6 @@
         <VcFileUploader
           v-bind="fileOptions"
           :files="files"
-          :unavailable="!isUploadAvailable"
           removable
           @add-files="onAddFiles"
           @remove-files="onRemoveFiles"
@@ -193,7 +192,6 @@ const {
   removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
-  isUploadAvailable,
 } = useFiles(quoteFilesScope ? String(quoteFilesScope) : DEFAULT_QUOTE_FILES_SCOPE, attachedFiles);
 const notifications = useNotifications();
 

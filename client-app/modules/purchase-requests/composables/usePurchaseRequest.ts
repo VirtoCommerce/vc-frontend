@@ -23,7 +23,6 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
     files,
     fetchFileOptions,
     fileOptions,
-    isUploadAvailable,
     processing: changing,
     processDocuments,
   } = usePurchaseRequestDocuments(sourceFiles);
@@ -85,7 +84,6 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
     sourceFiles,
     files,
     fileOptions,
-    isUploadAvailable,
     quote,
     refetch,
     fetchFileOptions,

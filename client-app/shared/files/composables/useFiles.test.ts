@@ -167,7 +167,7 @@ describe("useFiles uploadFiles", () => {
 
     await expect(upload(composable)).resolves.toBeUndefined();
 
-    expect(composable.isUploadAvailable.value).toBe(false);
+    expect(composable.options.value.unavailable).toBe(true);
     expect(server.respond).not.toHaveBeenCalled();
     expect(outcome(composable)).toEqual([
       { name: "spec.pdf", status: "error", errorMessage: "File upload is not available." },
@@ -184,7 +184,6 @@ describe("useFiles uploadFiles", () => {
 
     await expect(upload(composable)).resolves.toBeUndefined();
 
-    expect(composable.isUploadAvailable.value).toBe(true);
     expect(outcome(composable)).toEqual([{ name: "spec.pdf", status: "uploaded", errorMessage: undefined }]);
   });
 

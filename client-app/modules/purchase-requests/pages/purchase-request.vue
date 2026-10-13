@@ -24,7 +24,6 @@
           class="h-full"
           v-bind="fileOptions"
           :files="files"
-          :unavailable="!isUploadAvailable"
           @add-files="onAddFiles"
           @download="onFileDownload"
         />
@@ -82,7 +81,6 @@ const {
   purchaseRequest,
   files,
   fileOptions,
-  isUploadAvailable,
   changing,
   quote,
   fetchFileOptions,

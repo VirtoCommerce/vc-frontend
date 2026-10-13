@@ -1,8 +1,8 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import { createI18n } from "vue-i18n";
-import { uiKit } from "@/ui-kit";
 import enMessages from "../../../locales/en.json";
+import VcAlert from "../alert/vc-alert.vue";
 import VcFilePicker from "../file-picker/vc-file-picker.vue";
 import VcFileUploader from "./vc-file-uploader.vue";
 
@@ -11,7 +11,11 @@ const i18n = createI18n({ locale: "en", legacy: false, messages: { en: enMessage
 function mountUploader(unavailable?: boolean) {
   return mount(VcFileUploader, {
     props: { maxFileCount: 5, maxFileSize: 1024 * 1024, allowedExtensions: [], files: [], unavailable },
-    global: { plugins: [i18n, uiKit], stubs: { VcIcon: true } },
+    global: {
+      plugins: [i18n],
+      components: { VcAlert, VcFilePicker },
+      stubs: { VcFile: true, VcFilePicker: true, VcIcon: true },
+    },
   });
 }
 

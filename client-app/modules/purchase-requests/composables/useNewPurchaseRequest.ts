@@ -4,8 +4,7 @@ import { CreatePurchaseRequestFromDocumentsDocument } from "../api/graphql/types
 import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 
 export function useNewPurchaseRequest() {
-  const { files, fetchFileOptions, fileOptions, isUploadAvailable, processing, processDocuments } =
-    usePurchaseRequestDocuments();
+  const { files, fetchFileOptions, fileOptions, processing, processDocuments } = usePurchaseRequestDocuments();
   const { storeId, cultureName, currencyCode, userId } = globals;
 
   const { mutate: _createPurchaseRequestFromDocuments } = useMutation(CreatePurchaseRequestFromDocumentsDocument);
@@ -23,7 +22,6 @@ export function useNewPurchaseRequest() {
     creatingPurchaseRequest: processing,
     files,
     fileOptions,
-    isUploadAvailable,
     fetchFileOptions,
     createPurchaseRequestFromDocuments,
   };

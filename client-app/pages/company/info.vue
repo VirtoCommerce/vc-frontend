@@ -37,19 +37,13 @@
                 {{ $t("pages.company.info.labels.company_logo") }}
               </VcLabel>
 
-              <div class="mt-2 text-xxs text-neutral">
+              <div v-if="!fileOptions.unavailable" class="mt-2 text-xxs text-neutral">
                 {{ logoRequirements }}
               </div>
             </div>
 
             <VcFilePicker
-              :disabled="
-                loadingOrganizationLogo ||
-                uploadingOrganizationLogo ||
-                loadingUser ||
-                loadingOrganizationLogo ||
-                !isUploadAvailable
-              "
+              :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || fileOptions.unavailable"
               :files="files"
               class="xs:w-6/12 xs:flex-none"
               v-bind="fileOptions"
@@ -97,7 +91,7 @@
               {{ files[0].errorMessage }}
             </VcAlert>
 
-            <VcAlert v-else-if="!isUploadAvailable" color="warning" variant="soft" size="sm" icon>
+            <VcAlert v-else-if="fileOptions.unavailable" color="warning" variant="soft" size="sm" icon>
               {{ $t("ui_kit.file_uploader.errors.unavailable") }}
             </VcAlert>
           </div>
@@ -335,7 +329,6 @@ const {
   removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
-  isUploadAvailable,
   hasFailedFiles,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE);
 const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded } = useWhiteLabeling();

@@ -16,7 +16,6 @@ export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedF
     uploadFiles,
     fetchOptions: fetchFileOptions,
     options: fileOptions,
-    isUploadAvailable,
   } = useFiles(filesScope ? String(filesScope) : DEFAULT_FILES_SCOPE, sourceFiles);
 
   const processing = ref(false);
@@ -40,7 +39,6 @@ export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedF
     processing,
     files,
     fileOptions,
-    isUploadAvailable,
     fetchFileOptions,
     processDocuments,
   };

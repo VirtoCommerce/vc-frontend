@@ -1,6 +1,6 @@
 import { isDefined, useMemoize } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
-import { computed, onUnmounted, readonly, ref, unref, watch } from "vue";
+import { computed, onUnmounted, ref, unref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "@/core/api/common/composables/useAxios";
 import { deleteFile, getFileUploadOptions } from "@/core/api/graphql/files";
@@ -69,17 +69,17 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   };
 
   const options = ref<IFileOptions>(defaultOptions);
-  const isUploadAvailable = ref(true);
 
   async function fetchOptions() {
     const result = await getFileUploadOptionsMemoized(unref(scope));
-    // The server returns no options only for a scope that is not configured, where every upload fails
-    isUploadAvailable.value = !!result;
     if (result) {
       options.value = {
         ...defaultOptions,
         ...result,
       };
+    } else {
+      // The server returns no options only for a scope that is not configured, where every upload fails
+      options.value = { ...defaultOptions, unavailable: true };
     }
   }
 
@@ -145,6 +145,12 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       return;
     }
 
+    if (options.value.unavailable) {
+      const errorMessage = getErrorMessage("INVALID_SCOPE");
+      newFiles.value.forEach((newFile) => toFailedFile(newFile, errorMessage));
+      return;
+    }
+
     newFiles.value.forEach((newFile) => {
       if (files.value.some((file) => file.name === newFile.name && file !== newFile)) {
         toFailedFile(newFile, getErrorMessage("ALREADY_EXISTS"));
@@ -197,11 +203,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   async function uploadFiles(): Promise<void> {
-    if (!isUploadAvailable.value) {
-      newFiles.value.forEach((file) => toFailedFile(file, getErrorMessage("INVALID_SCOPE")));
-      return;
-    }
-
     // Calculate how many more uploads we can start
     const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
 
@@ -375,7 +376,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     allFilesAttachedOrUploaded,
 
     options,
-    isUploadAvailable: readonly(isUploadAvailable),
 
     addFiles,
     validateFiles,
