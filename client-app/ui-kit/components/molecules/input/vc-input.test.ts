@@ -129,6 +129,7 @@ describe("VcInput focus modality", () => {
     ["Meta alone", { key: "Meta", metaKey: true }],
     ["Control alone", { key: "Control", ctrlKey: true }],
     ["Alt alone", { key: "Alt", altKey: true }],
+    ["AltGraph alone", { key: "AltGraph" }],
     ["a Cmd+C copy", { key: "c", metaKey: true }],
     ["a Ctrl+C copy", { key: "c", ctrlKey: true }],
   ])("keeps the mark on %s, which moves no focus", async (_label, init) => {

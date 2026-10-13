@@ -70,6 +70,10 @@ describe("insertedText", () => {
     ["sharing a leading surrogate with the next one", "😀😀", "😀😃😀", "😃"],
     ["replacing one that shares its leading surrogate", "a😀", "a😃", "😃"],
     ["replacing one that shares its trailing surrogate", "a😀", "a\u{1FA00}", "\u{1FA00}"],
+    ["at the bottom of the leading-surrogate range", "a\u{10000}", "a\u{10001}", "\u{10001}"],
+    ["at the top of the leading-surrogate range", "a\u{10FFFC}", "a\u{10FFFD}", "\u{10FFFD}"],
+    ["at the bottom of the trailing-surrogate range", "a\u{10000}", "a\u{10400}", "\u{10400}"],
+    ["at the top of the trailing-surrogate range", "a\u{103FF}", "a\u{107FF}", "\u{107FF}"],
   ])("returns a whole emoji %s", (_label, previous, next, inserted) => {
     expect(insertedText(previous, next)).toBe(inserted);
   });

@@ -140,6 +140,25 @@ describe("VcLoadMore", () => {
     expect(textContent.mock.contexts.filter((context) => context === region)).toHaveLength(0);
   });
 
+  it("leaves the region's text unread when the list scrolls away from a page it asked for", async () => {
+    const { region, onLoadMore } = mountList({ rows: 20 });
+
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 2000, scrollTop: 1900 });
+    region.dispatchEvent(new Event("scroll"));
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    const textContent = vi.spyOn(Node.prototype, "textContent", "get");
+
+    onTestFinished(() => textContent.mockRestore());
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 2000, scrollTop: 1000 });
+    region.dispatchEvent(new Event("scroll"));
+    await afterContentSettles();
+
+    expect(textContent.mock.contexts.filter((context) => context === region)).toHaveLength(0);
+  });
+
   it("asks again for a rebuilt list of the same size", async () => {
     const { state, onLoadMore, region } = mountList({ rows: 3 });
 

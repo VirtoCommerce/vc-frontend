@@ -195,6 +195,33 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")?.length ?? 0).toBe(emitted);
     });
 
+    it.each<[string, "reachTop" | "reachLeft" | "reachRight", number, number, number, number]>([
+      ["top", "reachTop", 100, 0.55, 0, 0],
+      ["left", "reachLeft", 0, 0, 100, 0.55],
+      ["right", "reachRight", 0, 0, 0, 299.45],
+    ])("counts the %s as reached under a pixel short", async (_label, event, top, nextTop, left, nextLeft) => {
+      const wrapper = mount(VcScrollbar, {
+        attachTo: document.body,
+        props: { vertical: true, horizontal: true },
+        slots: { default: () => h("p", "row") },
+      });
+      const element = wrapper.element as HTMLElement;
+      const box = { clientHeight: 100, scrollHeight: 400, clientWidth: 300, scrollWidth: 600 };
+
+      describeBox(element, { ...box, scrollTop: top });
+      Object.defineProperty(element, "scrollLeft", { value: left, writable: true, configurable: true });
+      await afterContentSettles();
+
+      const before = wrapper.emitted(event)?.length ?? 0;
+
+      describeBox(element, { ...box, scrollTop: nextTop });
+      Object.defineProperty(element, "scrollLeft", { value: nextLeft, writable: true, configurable: true });
+      element.dispatchEvent(new Event("scroll"));
+      await nextTick();
+
+      expect(wrapper.emitted(event)?.length ?? 0).toBe(before + 1);
+    });
+
     it("emits the scroll payload only when something actually scrolled", async () => {
       const wrapper = mountScrollbar(1);
       const element = wrapper.element as HTMLElement;
