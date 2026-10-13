@@ -1481,6 +1481,29 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
     });
 
+    it("keeps the pager's status region mounted while a server-side query is typed and answered", async () => {
+      useFakeTimersInTest();
+
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        serverFilter: true,
+        hasNextPage: true,
+        onSearch: noop,
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      const region = wrapper.get('.vc-load-more[role="status"]').element;
+
+      await input.setValue("bel");
+      await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+      await wrapper.setProps({ loading: true });
+
+      expect(wrapper.get('.vc-load-more[role="status"]').element).toBe(region);
+    });
+
     describe("a server-side query being answered", () => {
       beforeEach(useFakeTimersInTest);
 

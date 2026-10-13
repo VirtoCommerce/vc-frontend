@@ -486,7 +486,8 @@ describe("VcLoadMore", () => {
     describeFittingContent(region);
     await afterContentSettles();
 
-    expect(wrapper.find(".vc-load-more").exists()).toBe(false);
+    expect(wrapper.find(".vc-load-more--loading").exists()).toBe(false);
+    expect(wrapper.get('[role="status"]').text()).toBe("");
   });
 
   it("asks for nothing, and says why, with no scroll region around it", async () => {

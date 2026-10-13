@@ -1,8 +1,7 @@
 <template>
-  <!-- Mounted ahead of its content: a live region inserted together with its text may go unannounced. -->
+  <!-- Always mounted: a live region inserted together with its text may go unannounced. -->
   <component
     :is="tag"
-    v-if="hasNextPage"
     :class="['vc-load-more', { 'vc-load-more--loading': showSpinner }]"
     :data-test-id="testId"
     :role="role"
