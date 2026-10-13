@@ -1090,6 +1090,61 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("false");
     });
 
+    it.each([
+      ["disables", [], true],
+      ["enables", ITEMS, false],
+    ])("%s the checkbox by whether there is an option to act on", (_label, items, disabled) => {
+      const checkbox = createWrapper({ ...selectAllProps, items }).get<HTMLInputElement>(".vc-select-all input");
+
+      expect(checkbox.element.disabled).toBe(disabled);
+    });
+
+    it("disables the checkbox while a server-side answer is pending", async () => {
+      const wrapper = createWrapper({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        modelValue: [],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("a");
+
+      expect(wrapper.get<HTMLInputElement>(".vc-select-all input").element.disabled).toBe(true);
+    });
+
+    it("hands focus to the trigger when the focused checkbox becomes disabled", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, serverFilter: true, onSearch: noop, modelValue: [] });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      (wrapper.get(".vc-select-all input").element as HTMLInputElement).focus();
+      await wrapper.setProps({ loading: true });
+
+      expect(document.activeElement).toBe(input.element);
+    });
+
+    it("leaves Tab to the browser while the checkbox is disabled", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, items: [], modelValue: [] });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+
+      const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      input.element.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it("hides the visible counter from assistive tech, as the label reads it out", () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+
+      expect(wrapper.get(".vc-select-all__count").attributes("aria-hidden")).toBe("true");
+    });
+
     it("hands focus back to the trigger on ArrowDown from the checkbox", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");

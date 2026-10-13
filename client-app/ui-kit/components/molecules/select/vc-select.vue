@@ -82,6 +82,7 @@
             :indeterminate="isSomeSelected"
             :accessible-label="selectAllLabel"
             :count="selectedOfTotal"
+            :disabled="isSelectAllDisabled"
             @change="onSelectAll"
             @keydown.esc.stop="close()"
             @keydown.down.prevent="focusTrigger()"
@@ -877,12 +878,25 @@ const selectAllLabel = computed(() =>
   t("ui_kit.select.select_all_label", { selected: countedSelected.value, total: totalCount.value }),
 );
 
+const selectAllElement = useTemplateRef<{ focus: () => boolean; $el: HTMLElement }>("selectAllElement");
+
+// The options on screen still answer the previous query, which a `selectAll` event would misreport;
+// with no option on screen there is nothing to select or clear.
+const isSelectAllDisabled = computed(() => isAnswerPending.value || !selectableValues.value.length);
+
+// A disabled control drops focus to <body>; the trigger keeps it inside the select instead.
+watch(isSelectAllDisabled, (disabled) => {
+  const active = document.activeElement;
+
+  if (disabled && active && selectAllElement.value?.$el.contains(active)) {
+    focusTrigger();
+  }
+});
+
 // A partial list whose loaded options are all selected clears too: selecting would change nothing,
 // and the pages it lacks are the consumer's to add on `selectAll`.
 function onSelectAll() {
-  // The options on screen still answer the previous query, which the event would misreport; with no
-  // option on screen there is nothing to select or clear.
-  if (isAnswerPending.value || !selectableValues.value.length) {
+  if (isSelectAllDisabled.value) {
     return;
   }
 
@@ -897,8 +911,6 @@ function onSelectAll() {
 
   emit("selectAll", { selected: !clearing, query: filterValue.value });
 }
-
-const selectAllElement = useTemplateRef<{ focus: () => boolean }>("selectAllElement");
 
 function onTab(event: KeyboardEvent) {
   if (!showSelectAll.value || !isShown.value || event.shiftKey) {

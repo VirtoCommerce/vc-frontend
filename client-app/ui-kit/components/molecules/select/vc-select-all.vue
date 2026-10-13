@@ -1,11 +1,12 @@
 <template>
-  <div class="vc-select-all">
+  <div :class="['vc-select-all', { 'vc-select-all--disabled': disabled }]">
     <VcCheckbox
       ref="checkboxComponent"
       size="sm"
       class="vc-select-all__control"
       :model-value="checked"
       :indeterminate="indeterminate"
+      :disabled="disabled"
       :aria-label="accessibleLabel"
       prevent-default
       @change="$emit('change')"
@@ -13,7 +14,8 @@
       <span class="vc-select-all__text">{{ $t("ui_kit.select.select_all") }}</span>
     </VcCheckbox>
 
-    <span class="vc-select-all__count">{{ count }}</span>
+    <!-- The label already reads the counts out. -->
+    <span class="vc-select-all__count" aria-hidden="true">{{ count }}</span>
   </div>
 </template>
 
@@ -31,11 +33,13 @@ interface IProps {
   accessibleLabel: string;
   /** Visible `n of m` counter. */
   count: string;
+  /** Nothing to act on: no options, or the options on screen still answer an earlier query. */
+  disabled?: boolean;
 }
 
 defineEmits<IEmits>();
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const checkboxComponent = useTemplateRef<{ inputElement: HTMLInputElement | null }>("checkboxComponent");
 
@@ -44,7 +48,7 @@ defineExpose({
   focus(): boolean {
     const input = checkboxComponent.value?.inputElement;
 
-    if (!input) {
+    if (!input || props.disabled) {
       return false;
     }
 
@@ -56,7 +60,13 @@ defineExpose({
 
 <style lang="scss">
 .vc-select-all {
+  $disabled: "";
+
   @apply flex shrink-0 items-center gap-3 border-b border-neutral-100 px-3 py-2.5;
+
+  &--disabled {
+    $disabled: &;
+  }
 
   &__control {
     @apply grow;
@@ -64,10 +74,18 @@ defineExpose({
 
   &__text {
     @apply text-sm font-bold text-neutral-950;
+
+    #{$disabled} & {
+      @apply text-neutral-400;
+    }
   }
 
   &__count {
     @apply shrink-0 text-sm text-neutral-600;
+
+    #{$disabled} & {
+      @apply text-neutral-400;
+    }
   }
 }
 </style>
