@@ -4,7 +4,7 @@
 
 **Before you start:** check that the need fits the facade. Prefer a composable or function (`useModal`), a data
 contribution the host renders, or a component only when its look is the contract. The rules:
-[`core-api/README.md` → What belongs in the facade](../../../core-api/README.md#what-belongs-in-the-facade).
+[`core-api/README.md` → What belongs in the facade](../../../core-api/README.md#2-what-belongs-in-the-facade).
 
 ## The order things must happen in
 
