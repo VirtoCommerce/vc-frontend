@@ -275,7 +275,12 @@ describe("create-plugin --module", () => {
     const viteConfig = readFileSync(join(appDir, "vite.config.ts"), "utf8");
     expect(viteConfig).toContain('outDir: "../plugins/vc-frontend"');
     expectParseableTs(join(appDir, "vite.config.ts"));
-    expect(readFileSync(join(appDir, "README.md"), "utf8")).toContain("yarn check:plugin-module");
+    const readme = readFileSync(join(appDir, "README.md"), "utf8");
+    expect(readme).toContain("yarn check:plugin-module");
+    // The top is the author's, about the feature; the generated part sits under its own heading.
+    expect(readme.startsWith("# foo-plugin: storefront plugin of VirtoCommerce.Foo\n")).toBe(true);
+    expect(readme).toContain("\n## Working on this plugin\n");
+    expect(readme).not.toMatch(/^## (First run|Files|Rules)$/m);
     // The edits it leaves to a person or a skill are printed with their exact lines.
     expect(stdout).toContain(TARGETS_IMPORT);
     expect(stdout).toContain('<dependency id="VirtoCommerce.XFrontend"');
