@@ -562,7 +562,8 @@ describe("VcSelect", () => {
         await input.setValue(query);
       }
 
-      await wrapper.get(".vc-select-all input").trigger("change");
+      // A disabled checkbox fires no change, so the guard behind it is reached through the event itself.
+      wrapper.findComponent({ name: "VcSelectAll" }).vm.$emit("change");
 
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
       expect(wrapper.emitted("selectAll")).toBeUndefined();
@@ -1695,14 +1696,14 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("chi");
-        await wrapper.get(".vc-select-all input").trigger("change");
+        wrapper.findComponent({ name: "VcSelectAll" }).vm.$emit("change");
 
         expect(wrapper.emitted("selectAll")).toBeUndefined();
         expect(wrapper.emitted("update:modelValue")).toBeUndefined();
 
         await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ loading: true });
-        await wrapper.get(".vc-select-all input").trigger("change");
+        wrapper.findComponent({ name: "VcSelectAll" }).vm.$emit("change");
 
         expect(wrapper.emitted("selectAll")).toBeUndefined();
 
