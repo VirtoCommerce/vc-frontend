@@ -14,4 +14,5 @@ export enum IdentityErrors {
   INVALID_TWO_FACTOR_TOKEN = "invalid_two_factor_token",
   LOCKOUT_DISABLED = "lockout_disabled",
   MFA_PROVIDER_NOT_AVAILABLE = "mfa_provider_not_available",
+  RESEND_TOO_SOON = "resend_too_soon",
 }

@@ -1,5 +1,5 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import SignInCodeForm from "./sign-in-code-form.vue";
 
 vi.mock("@/core/composables", () => ({
@@ -33,6 +33,10 @@ async function typeCode(wrapper: ReturnType<typeof mountForm>, code: string) {
 }
 
 describe("SignInCodeForm", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("shows the subtitle and leaves the heading to the page", () => {
     const wrapper = mountForm();
 
@@ -91,6 +95,21 @@ describe("SignInCodeForm", () => {
     await wrapper.find('[data-test-id="test-resend-button"]').trigger("click");
 
     expect(wrapper.emitted("resend")).toHaveLength(1);
+  });
+
+  it("offers the resend only once the resend is available", async () => {
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    const wrapper = mountForm({ resendAvailableAt: Date.now() + 30_000 });
+    const resendButton = wrapper.find('[data-test-id="test-resend-button"]');
+
+    expect(resendButton.attributes("disabled")).toBeDefined();
+    expect(resendButton.text()).toBe("shared.sign_in.sign_in_code_form.resend_countdown");
+
+    vi.advanceTimersByTime(30_000);
+    await flushPromises();
+
+    expect(resendButton.attributes("disabled")).toBeUndefined();
+    expect(resendButton.text()).toBe("shared.sign_in.sign_in_code_form.resend_button");
   });
 
   it("clears the code and announces the message on reset", async () => {

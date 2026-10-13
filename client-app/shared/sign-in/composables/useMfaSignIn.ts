@@ -7,7 +7,7 @@ import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { ConnectTokenResponseType } from "@/core/types";
 
 export type MfaResendResponseType = ICodeSignInResponse &
-  Pick<ConnectTokenResponseType, "twoFactorToken" | "provider" | "providers">;
+  Pick<ConnectTokenResponseType, "twoFactorToken" | "provider" | "providers" | "resendSecondsRemaining">;
 
 interface IMfaErrorEmits {
   (event: "failed", error: IdentityErrorType): void;
@@ -27,6 +27,7 @@ const FINAL_ERRORS: string[] = [
   IdentityErrors.SIGN_IN_NOT_ALLOWED,
   IdentityErrors.LOCKOUT_DISABLED,
   IdentityErrors.MFA_PROVIDER_NOT_AVAILABLE,
+  IdentityErrors.LOGIN_FAILED,
 ];
 
 export function useMfaSignIn() {
@@ -51,12 +52,14 @@ export function useMfaSignIn() {
   }
 
   function handleError(result: ICodeSignInResponse | undefined, emit: IMfaErrorEmits) {
-    if (result?.error?.code && FINAL_ERRORS.includes(result.error.code)) {
-      emit("failed", result.error);
+    const error = result?.error;
+
+    if (error && (result.tokensDiscarded || (error.code && FINAL_ERRORS.includes(error.code)))) {
+      emit("failed", error);
       return;
     }
 
-    showError(result?.error);
+    showError(error);
   }
 
   return {

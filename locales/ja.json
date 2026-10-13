@@ -667,6 +667,7 @@
         "paste_hint": "コードを入力するか貼り付けてください。モバイルでは、キーボードの上に表示されるコードをタップしてください。",
         "submit_button": "サインイン",
         "resend_button": "コードを再送信",
+        "resend_countdown": "{seconds} 秒後にコードを再送信できます",
         "live_resent": "新しいコードを送信しました。"
       }
     },

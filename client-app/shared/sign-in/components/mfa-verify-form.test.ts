@@ -1,5 +1,5 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import MfaVerifyForm from "./mfa-verify-form.vue";
 import type { ICodeSignInResponse } from "@/shared/sign-in/composables/useCodeSignIn";
@@ -90,6 +90,10 @@ describe("MfaVerifyForm", () => {
     handleError.mockReset();
     resetSignInErrors.mockClear();
     signInErrors.value = undefined;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("shows where the code was sent", () => {
@@ -183,6 +187,52 @@ describe("MfaVerifyForm", () => {
 
     expect(resendCode).toHaveBeenNthCalledWith(1, "token-1", "Sms");
     expect(resendCode).toHaveBeenNthCalledWith(2, "token-2", "Sms");
+  });
+
+  it("counts down the resend interval of the challenge", async () => {
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    const wrapper = mountForm({ resendSecondsRemaining: 30 });
+    const resendButton = wrapper.find('[data-test-id="mfa-resend-button"]');
+
+    expect(resendButton.attributes("disabled")).toBeDefined();
+    expect(resendButton.text()).toBe('shared.sign_in.sign_in_code_form.resend_countdown {"seconds":30}');
+
+    vi.advanceTimersByTime(30_000);
+    await flushPromises();
+
+    expect(resendButton.attributes("disabled")).toBeUndefined();
+  });
+
+  it("restarts the countdown after a resend", async () => {
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    resendCode.mockResolvedValue({
+      succeeded: true,
+      twoFactorToken: "token-2",
+      provider: "Email",
+      resendSecondsRemaining: 30,
+    });
+
+    const wrapper = mountForm();
+    await wrapper.find('[data-test-id="mfa-resend-button"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="mfa-resend-button"]').text()).toBe(
+      'shared.sign_in.sign_in_code_form.resend_countdown {"seconds":30}',
+    );
+  });
+
+  it("only waits for the resend when a code has just been sent", async () => {
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    resendCode.mockResolvedValue({ succeeded: false, error: { code: "resend_too_soon" }, resendSecondsRemaining: 12 });
+
+    const wrapper = mountForm();
+    await wrapper.find('[data-test-id="mfa-resend-button"]').trigger("click");
+    await flushPromises();
+
+    expect(handleError).not.toHaveBeenCalled();
+    expect(wrapper.find('[data-test-id="mfa-resend-button"]').text()).toBe(
+      'shared.sign_in.sign_in_code_form.resend_countdown {"seconds":12}',
+    );
   });
 
   it("emits back when the customer returns to the password form", async () => {

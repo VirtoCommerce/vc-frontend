@@ -667,6 +667,7 @@
         "paste_hint": "Skriv inn eller lim inn koden. På mobil trykker du på den over tastaturet.",
         "submit_button": "Logg inn",
         "resend_button": "Send kode på nytt",
+        "resend_countdown": "Send koden på nytt om {seconds} s",
         "live_resent": "Ny kode sendt."
       }
     },

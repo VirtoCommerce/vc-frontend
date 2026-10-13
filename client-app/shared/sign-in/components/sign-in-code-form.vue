@@ -61,11 +61,17 @@
       <button
         type="button"
         class="sign-in-code-form__link"
-        :disabled="loading"
+        :disabled="loading || resendSecondsLeft > 0"
         :data-test-id="`${idPrefix}-resend-button`"
         @click="emit('resend')"
       >
-        {{ $t("shared.sign_in.sign_in_code_form.resend_button") }}
+        <template v-if="resendSecondsLeft > 0">
+          {{ $t("shared.sign_in.sign_in_code_form.resend_countdown", { seconds: resendSecondsLeft }) }}
+        </template>
+
+        <template v-else>
+          {{ $t("shared.sign_in.sign_in_code_form.resend_button") }}
+        </template>
       </button>
 
       <button
@@ -84,6 +90,7 @@
 </template>
 
 <script setup lang="ts">
+import { useNow } from "@vueuse/core";
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { isLockoutError } from "@/core/utilities";
@@ -97,6 +104,7 @@ interface IProps {
   backLabel: string;
   loading?: boolean;
   errors?: IdentityErrorType[];
+  resendAvailableAt?: number;
 }
 
 interface IEmits {
@@ -110,6 +118,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   loading: false,
   errors: undefined,
+  resendAvailableAt: undefined,
 });
 
 const CODE_LENGTH = 6;
@@ -126,6 +135,11 @@ const hintId = computed(() => `${props.idPrefix}-hint`);
 
 const isCodeComplete = computed(() => isComplete(code.value));
 const hasError = computed(() => !!props.errors?.length);
+
+const now = useNow({ interval: 1000 });
+const resendSecondsLeft = computed(() =>
+  Math.max(0, Math.ceil(((props.resendAvailableAt ?? 0) - now.value.getTime()) / 1000)),
+);
 
 onMounted(() => {
   codeInputRef.value?.focus();

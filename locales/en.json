@@ -667,6 +667,7 @@
         "paste_hint": "Enter or paste the code. On mobile, tap it above your keyboard.",
         "submit_button": "Sign in",
         "resend_button": "Resend code",
+        "resend_countdown": "Resend code in {seconds} s",
         "live_resent": "New code sent."
       }
     },

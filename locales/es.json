@@ -667,6 +667,7 @@
         "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
         "submit_button": "Iniciar sesión",
         "resend_button": "Reenviar código",
+        "resend_countdown": "Reenviar código en {seconds} s",
         "live_resent": "Nuevo código enviado."
       }
     },

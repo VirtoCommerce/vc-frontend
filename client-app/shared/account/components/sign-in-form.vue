@@ -179,7 +179,9 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  analytics("login", "password", { success: true });
+  if (!signInError) {
+    analytics("login", "password", { success: true });
+  }
 });
 
 function backToPassword(error?: IdentityErrorType) {

@@ -78,7 +78,7 @@ export function useSignMeIn() {
       void broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
     },
     null,
-    { immediate: false },
+    { immediate: false, throwError: true },
   );
 
   const errors = ref<IdentityErrorType[]>();

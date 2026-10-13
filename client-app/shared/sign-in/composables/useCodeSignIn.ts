@@ -10,6 +10,7 @@ export interface ICodeSignInResponse {
   succeeded: boolean;
   error?: IdentityErrorType;
   lockoutSecondsRemaining?: number;
+  tokensDiscarded?: boolean;
 }
 
 interface IExchangeCodeOptions {
@@ -20,7 +21,7 @@ interface IExchangeCodeOptions {
 export function useCodeSignIn(loginMethod: string) {
   const loading = ref(false);
   const { t } = useI18n();
-  const { errors: authErrors, lockoutSecondsRemaining } = useAuth();
+  const { errors: authErrors, lockoutSecondsRemaining, resetTokens } = useAuth();
   const { signIn, errors: signInErrors, resetErrors: resetSignInErrors } = useSignMeIn();
   const { analytics } = useAnalytics();
 
@@ -83,7 +84,14 @@ export function useCodeSignIn(loginMethod: string) {
         throw tokenExchangeError;
       }
 
-      await onExchanged();
+      try {
+        await onExchanged();
+      } catch (e) {
+        resetTokens();
+        Logger.error(`${useCodeSignIn.name}.${exchangeCode.name}`, e);
+        track(false, e instanceof Error ? e.message : String(e));
+        return { succeeded: false, error: getGenericError(), tokensDiscarded: true };
+      }
 
       track(true);
       return { succeeded: true };
@@ -97,8 +105,12 @@ export function useCodeSignIn(loginMethod: string) {
     }
   }
 
+  function getGenericError(): IdentityErrorType {
+    return { description: t("common.messages.something_went_wrong") };
+  }
+
   function showError(error?: IdentityErrorType) {
-    signInErrors.value = [error ?? { description: t("common.messages.something_went_wrong") }];
+    signInErrors.value = [error ?? getGenericError()];
   }
 
   return {

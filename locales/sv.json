@@ -667,6 +667,7 @@
         "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
         "submit_button": "Logga in",
         "resend_button": "Skicka koden igen",
+        "resend_countdown": "Skicka koden igen om {seconds} s",
         "live_resent": "Ny kod skickad."
       }
     },

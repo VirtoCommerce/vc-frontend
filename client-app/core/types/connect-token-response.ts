@@ -7,6 +7,7 @@ export type TwoFactorChallengeType = {
   twoFactorToken: string;
   provider?: string;
   providers?: Array<TwoFactorProviderType>;
+  resendSecondsRemaining?: number;
 };
 
 type IdentityErrorType = {
@@ -25,4 +26,5 @@ export type ConnectTokenResponseType = {
   twoFactorToken?: string;
   provider?: string;
   providers?: Array<TwoFactorProviderType>;
+  resendSecondsRemaining?: number;
 };

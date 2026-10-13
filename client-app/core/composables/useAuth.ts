@@ -39,7 +39,12 @@ function _useAuth() {
     const isTwoFactorRequired = errors.value?.some((error) => error.code === IdentityErrors.TWO_FACTOR_REQUIRED);
 
     return isTwoFactorRequired && twoFactorToken
-      ? { twoFactorToken, provider: data.value?.provider, providers: data.value?.providers }
+      ? {
+          twoFactorToken,
+          provider: data.value?.provider,
+          providers: data.value?.providers,
+          resendSecondsRemaining: data.value?.resendSecondsRemaining,
+        }
       : undefined;
   });
 

@@ -667,6 +667,7 @@
         "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
         "submit_button": "登录",
         "resend_button": "重新发送验证码",
+        "resend_countdown": "{seconds} 秒后可重新发送验证码",
         "live_resent": "已发送新验证码。"
       }
     },

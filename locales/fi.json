@@ -667,6 +667,7 @@
         "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
         "submit_button": "Kirjaudu sisään",
         "resend_button": "Lähetä koodi uudelleen",
+        "resend_countdown": "Lähetä koodi uudelleen {seconds} s kuluttua",
         "live_resent": "Uusi koodi lähetetty."
       }
     },

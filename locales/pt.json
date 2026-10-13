@@ -667,6 +667,7 @@
         "paste_hint": "Digite ou cole o código. No celular, toque nele acima do teclado.",
         "submit_button": "Entrar",
         "resend_button": "Reenviar código",
+        "resend_countdown": "Reenviar código em {seconds} s",
         "live_resent": "Novo código enviado."
       }
     },

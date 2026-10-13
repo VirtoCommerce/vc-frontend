@@ -5,12 +5,13 @@ vi.mock("@/core/composables", () => {
   const mfaSignIn = vi.fn<(params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
   const lockoutSecondsRemaining = ref<number>();
+  const resetTokens = vi.fn();
   const analytics = vi.fn();
 
   return {
-    __mockAuthState: { mfaSignIn, authErrors },
+    __mockAuthState: { mfaSignIn, authErrors, resetTokens },
     __mockAnalyticsState: { analytics },
-    useAuth: () => ({ mfaSignIn, errors: authErrors, lockoutSecondsRemaining }),
+    useAuth: () => ({ mfaSignIn, errors: authErrors, lockoutSecondsRemaining, resetTokens }),
     useAnalytics: () => ({ analytics }),
   };
 });
@@ -64,6 +65,7 @@ type IdentityErrorMockType = { code?: string; description?: string };
 type AuthMockStateType = {
   mfaSignIn: ReturnType<typeof vi.fn>;
   authErrors: { value: IdentityErrorMockType[] | undefined };
+  resetTokens: ReturnType<typeof vi.fn>;
 };
 
 type SignMeInMockStateType = {
@@ -117,6 +119,7 @@ describe("useMfaSignIn", () => {
     auth.mfaSignIn.mockReset();
     auth.mfaSignIn.mockResolvedValue(undefined);
     auth.authErrors.value = undefined;
+    auth.resetTokens.mockReset();
 
     const signMeIn = await getSignMeInState();
     signMeIn.signIn.mockReset();
@@ -238,6 +241,36 @@ describe("useMfaSignIn", () => {
     expect(loading.value).toBe(false);
   });
 
+  it("verifyCode discards the tokens when the sign-in can't be completed after the code is accepted", async () => {
+    const auth = await getAuthState();
+    const analytics = await getAnalytics();
+
+    const { verifyCode, loading } = await getComposable();
+    const result = await verifyCode("buyer@acme.com", "token-1", "123456", {
+      onVerified: () => Promise.reject(new Error("me query failed")),
+    });
+
+    expect(auth.resetTokens).toHaveBeenCalledOnce();
+    expect(result).toEqual({
+      succeeded: false,
+      error: { description: "common.messages.something_went_wrong" },
+      tokensDiscarded: true,
+    });
+    expect(analytics).toHaveBeenCalledWith("login", "password", { success: false, errors: "me query failed" });
+    expect(analytics).not.toHaveBeenCalledWith("login", "password", { success: true });
+    expect(loading.value).toBe(false);
+  });
+
+  it("handleError emits failed when the tokens were discarded, since the two-factor token is used up", async () => {
+    const emit = vi.fn();
+    const error = { description: "common.messages.something_went_wrong" };
+
+    const { handleError } = await getComposable();
+    handleError({ succeeded: false, error, tokensDiscarded: true }, emit);
+
+    expect(emit).toHaveBeenCalledWith("failed", error);
+  });
+
   it.each([
     "invalid_two_factor_token",
     "user_is_locked_out",
@@ -245,6 +278,7 @@ describe("useMfaSignIn", () => {
     "sign_in_not_allowed",
     "lockout_disabled",
     "mfa_provider_not_available",
+    "login_failed",
   ])("handleError emits failed on %s, which another code can't fix", async (code) => {
     const emit = vi.fn();
     const signMeIn = await getSignMeInState();

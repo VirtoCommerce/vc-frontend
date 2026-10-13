@@ -667,6 +667,7 @@
         "paste_hint": "Inserisci o incolla il codice. Su dispositivo mobile, toccalo sopra la tastiera.",
         "submit_button": "Accedi",
         "resend_button": "Invia di nuovo il codice",
+        "resend_countdown": "Invia di nuovo il codice tra {seconds} s",
         "live_resent": "Nuovo codice inviato."
       }
     },

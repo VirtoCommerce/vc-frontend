@@ -6,6 +6,7 @@
     :back-label="backLabel ?? $t('shared.sign_in.mfa_verify_form.back_link')"
     :loading="loading"
     :errors="signInErrors"
+    :resend-available-at="resendAvailableAt"
     @submit="onSubmit"
     @resend="onResend"
     @clear-errors="resetSignInErrors"
@@ -14,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { IdentityErrors } from "@/core/enums";
 import { useMfaSignIn } from "@/shared/sign-in/composables/useMfaSignIn";
 import SignInCodeForm from "./sign-in-code-form.vue";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -47,6 +49,7 @@ const { loading, verifyCode, resendCode, signInErrors, resetSignInErrors, handle
 const codeFormRef = ref<InstanceType<typeof SignInCodeForm>>();
 
 const resent = ref<MfaResendResponseType>();
+const resendAvailableAt = ref<number>();
 
 const currentToken = computed(() => resent.value?.twoFactorToken ?? props.challenge.twoFactorToken);
 const currentProvider = computed(() => resent.value?.provider ?? props.challenge.provider);
@@ -54,6 +57,14 @@ const currentProviders = computed(() => resent.value?.providers ?? props.challen
 
 const destination = computed(
   () => currentProviders.value.find((x) => x.name === currentProvider.value)?.destination ?? props.email,
+);
+
+watch(
+  () => props.challenge.resendSecondsRemaining,
+  (seconds) => {
+    resendAvailableAt.value = toResendAvailableAt(seconds);
+  },
+  { immediate: true },
 );
 
 async function onSubmit(code: string) {
@@ -72,8 +83,20 @@ async function onSubmit(code: string) {
   await codeFormRef.value?.reset();
 }
 
+function toResendAvailableAt(seconds?: number) {
+  return seconds ? Date.now() + seconds * 1000 : undefined;
+}
+
 async function onResend() {
   const result = await resendCode(currentToken.value, currentProvider.value);
+
+  if (result?.resendSecondsRemaining) {
+    resendAvailableAt.value = toResendAvailableAt(result.resendSecondsRemaining);
+  }
+
+  if (result?.error?.code === IdentityErrors.RESEND_TOO_SOON) {
+    return;
+  }
 
   if (!result?.succeeded || !result.twoFactorToken) {
     handleError(result, emit);

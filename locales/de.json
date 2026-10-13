@@ -667,6 +667,7 @@
         "paste_hint": "Geben Sie den Code ein oder fügen Sie ihn ein. Auf dem Smartphone tippen Sie ihn über der Tastatur an.",
         "submit_button": "Anmelden",
         "resend_button": "Code erneut senden",
+        "resend_countdown": "Code erneut senden in {seconds} s",
         "live_resent": "Neuer Code gesendet."
       }
     },

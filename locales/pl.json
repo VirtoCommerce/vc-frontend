@@ -667,6 +667,7 @@
         "paste_hint": "Wpisz lub wklej kod. Na telefonie dotknij go nad klawiaturą.",
         "submit_button": "Zaloguj się",
         "resend_button": "Wyślij kod ponownie",
+        "resend_countdown": "Wyślij kod ponownie za {seconds} s",
         "live_resent": "Wysłano nowy kod."
       }
     },
