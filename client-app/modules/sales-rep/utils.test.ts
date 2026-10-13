@@ -254,6 +254,17 @@ describe("formatTimeAgo", () => {
     expect(formatTimeAgo(ago(2 * 86400 + 5 * 3600))).toBe("2 days ago");
   });
 
+  // QA: 26 hours back from 1 AM is two calendar days back, and read "yesterday".
+  it("counts days by the calendar, not in 24-hour spans", () => {
+    vi.setSystemTime(new Date(2026, 8, 15, 1, 0, 0));
+
+    expect(formatTimeAgo(new Date(2026, 8, 13, 23, 0, 0).toISOString())).toBe("2 days ago");
+  });
+
+  it("calls the previous calendar day yesterday", () => {
+    expect(formatTimeAgo(new Date(2026, 8, 14, 10, 0, 0).toISOString())).toBe("yesterday");
+  });
+
   it("names anything under a minute without a number", () => {
     expect(formatTimeAgo(ago(30))).toBe("this minute");
   });

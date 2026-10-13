@@ -202,8 +202,19 @@ function formatterFor<T>(cache: Map<string, T>, create: (cultureName: string) =>
   return formatter;
 }
 
+const MS_PER_DAY = 86400000;
+
+// Calendar days between two instants on the user's clock. Rounded, so the 23- and 25-hour days of a DST switch
+// still count as one.
+function calendarDaysBetween(earlier: Date, later: Date): number {
+  const dayStart = (date: Date) => local(date.getFullYear(), date.getMonth(), date.getDate());
+  return Math.round((dayStart(later) - dayStart(earlier)) / MS_PER_DAY);
+}
+
 export function formatTimeAgo(isoDate: string): string {
-  const elapsedSeconds = Math.max(0, Math.round((Date.now() - new Date(isoDate).getTime()) / 1000));
+  const occurredAt = new Date(isoDate);
+  const now = new Date();
+  const elapsedSeconds = Math.max(0, Math.round((now.getTime() - occurredAt.getTime()) / 1000));
   const formatter = formatterFor(
     timeAgoFormatters,
     (cultureName) => new Intl.RelativeTimeFormat(cultureName, { numeric: "auto" }),
@@ -213,6 +224,12 @@ export function formatTimeAgo(isoDate: string): string {
   if (!match) {
     // Sub-minute — "now"-style wording comes from numeric: "auto".
     return formatter.format(0, "minute");
+  }
+
+  // Days by the calendar, as "yesterday" reads: 26 hours back from 1 AM is the day before yesterday (QA saw
+  // "~yesterday" on a two-day-old row).
+  if (match.unit === "day") {
+    return formatter.format(-calendarDaysBetween(occurredAt, now), "day");
   }
 
   return formatter.format(-Math.floor(elapsedSeconds / match.seconds), match.unit);
