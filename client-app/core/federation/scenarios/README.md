@@ -30,8 +30,8 @@
 | S3  | Extend the facade and release it                                              | Planned |
 | S4  | Upgrade a plugin to a new host / facade                                       | Planned |
 | S5  | Move an in-repo module into a plugin                                          | Planned |
-| S6  | Enable a plugin on an environment                                             | Planned |
-| S7  | A plugin is missing or broken                                                 | Planned |
+| S6  | [Enable a plugin on an environment](./s6-enable-on-an-environment.md)         | Written |
+| S7  | [A plugin is missing or broken](./s7-missing-or-broken.md)                    | Written |
 | S8  | Add a new extension point to the host                                         | Planned |
 
 Until a scenario is written, [`HOWTO.md`](../HOWTO.md) covers it.

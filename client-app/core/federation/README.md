@@ -189,7 +189,7 @@ What is exported and how to add to it: [`core-api/README.md`](../../core-api/REA
 | Hosted elsewhere            | its manifest URL goes into `APP_MODULES_FEDERATION_REMOTES`       | Yes                 |
 
 The backend-module path, step by step: [scenario S1a](./scenarios/s1a-plugin-in-an-existing-module.md).
-What every environment needs (backend floors, the `/modules` route): [scenario S6](./scenarios/README.md).
+What every environment needs (backend floors, the `/modules` route): [scenario S6](./scenarios/s6-enable-on-an-environment.md).
 
 `yarn check:plugin-module <module *.Web> [--artifact <zip>] [--env <storefront-url>]` checks the module, its
 package and an environment.
@@ -220,6 +220,8 @@ What an environment must provide: a CSP (`'self'` covers platform plugins), and 
 loaded through the override.
 
 ## 10. When it does not work
+
+Step by step, with every console message: [scenario S7](./scenarios/s7-missing-or-broken.md).
 
 > ⚠️ **Production logs nothing**, not even errors (`Logger` is a no-op there). Diagnose with a development build,
 > `usePluginsStatus()`, or `yarn check:plugin-module`.
