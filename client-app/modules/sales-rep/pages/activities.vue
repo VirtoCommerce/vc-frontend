@@ -271,19 +271,21 @@ const countOf = (name: string) => categoryCounts.value.find((entry) => entry.cat
 const allCount = computed(() => categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0));
 
 // keepPreviousResult keeps the badges' last figures through a refetch. A first load has none to keep, and a
-// customer switch is one (the held figures are the previous customer's), so the tabs show no figures.
+// customer or period switch is one (the held figures are another customer's, or another window's), so the tabs
+// show no figures until the new counts land.
+const countsKey = computed(() => `${props.organizationId ?? ""}|${period.value}`);
 const countsFor = ref<string>();
 watch(
   countsLoading,
   (isLoading) => {
     if (!isLoading) {
-      countsFor.value = props.organizationId;
+      countsFor.value = countsKey.value;
     }
   },
   { immediate: true },
 );
 const countsPending = computed(
-  () => (countsLoading.value && !categoryCounts.value.length) || countsFor.value !== props.organizationId,
+  () => (countsLoading.value && !categoryCounts.value.length) || countsFor.value !== countsKey.value,
 );
 const countsFailed = computed(() => Boolean(countsError.value));
 

@@ -462,8 +462,8 @@ describe("Activities page", () => {
     expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all");
   });
 
-  // Only the very first load hides the figures; a refetch (tab/period switch, page turn) holds the
-  // last-known counts instead of blanking every badge.
+  // A refetch of the same counts holds the last-known figures instead of blanking every badge; only a first load,
+  // or a switch to another customer or period (below), hides them. Tabs and pages never refetch the counts.
   it("holds the last-known counts on the tabs while a refetch runs", async () => {
     counts.categoryCounts.value = [{ category: "orders", count: 7 }];
     counts.totalCount.value = 7;
@@ -613,6 +613,28 @@ describe("Activities page", () => {
 
     await wrapper.setProps({ organizationId: "org-2" });
     expect(ordersLabel()).toBe("sales_rep.activity.tabs.orders");
+
+    counts.loading.value = true;
+    await nextTick();
+    counts.loading.value = false;
+    await nextTick();
+
+    expect(ordersLabel()).toContain("(7)");
+  });
+
+  // QA: a newly pressed period chip showed the previous window's badges, held by keepPreviousResult, until the
+  // counts for the new window answered — seconds on a cold analytics read.
+  it("withholds the previous period's counts until the new ones land", async () => {
+    counts.categoryCounts.value = [{ category: "orders", count: 7 }];
+    const wrapper = createWrapper();
+    const ordersLabel = () => (findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label;
+
+    expect(ordersLabel()).toContain("(7)");
+
+    findChips(wrapper)[1].vm.$emit("update:modelValue", "month");
+    await nextTick();
+    expect(ordersLabel()).toBe("sales_rep.activity.tabs.orders");
+    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all");
 
     counts.loading.value = true;
     await nextTick();
