@@ -1503,6 +1503,10 @@ describe("VcSelect", () => {
       await wrapper.setProps({ loading: true });
 
       expect(wrapper.get('.vc-load-more[role="status"]').element).toBe(region);
+
+      await wrapper.setProps({ items: ["Belgium"], loading: false });
+
+      expect(wrapper.get('.vc-load-more[role="status"]').element).toBe(region);
     });
 
     describe("a server-side query being answered", () => {

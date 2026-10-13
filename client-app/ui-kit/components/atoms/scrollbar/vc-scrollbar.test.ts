@@ -195,11 +195,14 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")?.length ?? 0).toBe(emitted);
     });
 
-    it.each<[string, "reachTop" | "reachLeft" | "reachRight", number, number, number, number]>([
-      ["top", "reachTop", 100, 0.55, 0, 0],
-      ["left", "reachLeft", 0, 0, 100, 0.55],
-      ["right", "reachRight", 0, 0, 0, 299.45],
-    ])("counts the %s as reached under a pixel short", async (_label, event, top, nextTop, left, nextLeft) => {
+    it.each<[string, "reachTop" | "reachLeft" | "reachRight", number, number, number, number, number]>([
+      ["top reached, under a pixel short", "reachTop", 100, 0.55, 0, 0, 1],
+      ["top not reached, two pixels short", "reachTop", 100, 2, 0, 0, 0],
+      ["left reached, under a pixel short", "reachLeft", 0, 0, 100, 0.55, 1],
+      ["left not reached, two pixels short", "reachLeft", 0, 0, 100, 2, 0],
+      ["right reached, under a pixel short", "reachRight", 0, 0, 0, 299.45, 1],
+      ["right not reached, two pixels short", "reachRight", 0, 0, 0, 298, 0],
+    ])("counts the %s", async (_label, event, top, nextTop, left, nextLeft, emitted) => {
       const wrapper = mount(VcScrollbar, {
         attachTo: document.body,
         props: { vertical: true, horizontal: true },
@@ -219,7 +222,7 @@ describe("VcScrollbar", () => {
       element.dispatchEvent(new Event("scroll"));
       await nextTick();
 
-      expect(wrapper.emitted(event)?.length ?? 0).toBe(before + 1);
+      expect(wrapper.emitted(event)?.length ?? 0).toBe(before + emitted);
     });
 
     it("emits the scroll payload only when something actually scrolled", async () => {

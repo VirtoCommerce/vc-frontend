@@ -3,9 +3,12 @@ import { computed, shallowRef, toValue, watch } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseSelectOptions<T, V> {
-  /** The options, in render order. */
+  /** The options, in the order given. */
   items: MaybeRefOrGetter<T[]>;
-  /** The selected value, or the selected values in multiple mode; `undefined` is no selection. */
+  /**
+   * The selected value, or the values in multiple mode; `undefined` is no selection, nor is a `null`
+   * that no option carries.
+   */
   modelValue: MaybeRefOrGetter<V | V[] | undefined>;
   /** Several values instead of one. */
   multiple: MaybeRefOrGetter<boolean | undefined>;
@@ -69,7 +72,7 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
   );
 
   // Paging and server-filter replace `items`, and the next page may not carry the selection; its last
-  // match keeps labelling it for as long as the model still holds its value.
+  // match keeps labelling it, and counting it as selected, for as long as the model still holds its value.
   const rememberedItem = shallowRef<{ value: V; item: T }>();
 
   watch(
