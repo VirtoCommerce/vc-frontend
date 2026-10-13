@@ -86,7 +86,7 @@ export const ZeroMax: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "`max: 0` caps the value at 0. For no limit, omit `max`.",
+        story: "`max: 0` is a ceiling of 0: `+` is disabled and `aria-valuemax` is 0. For no limit, omit `max`.",
       },
     },
   },
