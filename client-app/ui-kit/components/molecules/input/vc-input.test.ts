@@ -124,6 +124,33 @@ describe("VcInput focus modality", () => {
     expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
   });
 
+  it.each([
+    ["Shift alone", { key: "Shift", shiftKey: true }],
+    ["Meta alone", { key: "Meta", metaKey: true }],
+    ["Control alone", { key: "Control", ctrlKey: true }],
+    ["Alt alone", { key: "Alt", altKey: true }],
+    ["a Cmd+C copy", { key: "c", metaKey: true }],
+    ["a Ctrl+C copy", { key: "c", ctrlKey: true }],
+  ])("keeps the mark on %s, which moves no focus", async (_label, init) => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    document.dispatchEvent(new KeyboardEvent("keydown", init));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-focus");
+  });
+
+  it("drops the mark on a modified navigation key such as Shift+Tab", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-focus");
+  });
+
   it("keeps the mark across a blur, since the pointer is still what is driving", async () => {
     const wrapper = createInputWrapper({ props: { readonly: true } });
 
