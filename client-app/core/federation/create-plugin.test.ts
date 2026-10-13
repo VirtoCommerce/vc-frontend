@@ -135,6 +135,12 @@ describe("create-plugin scaffolder", () => {
     expect(readme).not.toContain("## GraphQL");
     expect(readme).not.toContain("storefront-plugin.targets");
 
+    // CLAUDE.md imports the README rather than repeating it, and names only the chosen options' steps.
+    const claudeMd = readFileSync(join(dir, "CLAUDE.md"), "utf8");
+    expect(claudeMd).toContain("@README.md");
+    expect(claudeMd).not.toContain("check:plugin-module");
+    expect(claudeMd).not.toContain("generate:graphql-types");
+
     // Default = router on: the route page and the addRoute init must be generated.
     expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(true);
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("globals.router.addRoute");
@@ -196,6 +202,7 @@ describe("create-plugin scaffolder", () => {
     };
     expect(pkg.scripts).toHaveProperty("generate:graphql-types");
     expect(readFileSync(join(dir, "README.md"), "utf8")).toContain("## GraphQL");
+    expect(readFileSync(join(dir, "CLAUDE.md"), "utf8")).toContain("generate:graphql-types");
     // The generated types.ts imports it; the host resolves it transitively, a plugin must not.
     expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
   });
@@ -277,6 +284,7 @@ describe("create-plugin --module", () => {
     expectParseableTs(join(appDir, "vite.config.ts"));
     const readme = readFileSync(join(appDir, "README.md"), "utf8");
     expect(readme).toContain("yarn check:plugin-module");
+    expect(readFileSync(join(appDir, "CLAUDE.md"), "utf8")).toContain("yarn check:plugin-module");
     // The top is the author's, about the feature; the generated part sits under its own heading.
     expect(readme.startsWith("# foo-plugin: storefront plugin of VirtoCommerce.Foo\n")).toBe(true);
     expect(readme).toContain("\n## Working on this plugin\n");

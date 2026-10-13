@@ -562,7 +562,8 @@ More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENAR
 | \`plugin.config.ts\` | what the storefront knows before the code loads: routes, menu entries, slots, \`when\` |
 | \`public/plugin.json\` | the plugin's id and expose key, read by the platform |
 | \`vite.config.ts\` | the build, and \`requiredHostVersion\`: the facade versions this plugin claims to work with |
-| \`src/mocks/vc-frontend-core.ts\` | stand-in for the facade in tests |`,
+| \`src/mocks/vc-frontend-core.ts\` | stand-in for the facade in tests |
+| \`CLAUDE.md\` | for AI agents: this README, plus what to run and never do |`,
   webDir && `| \`${TARGETS_FILE}\` | the module build: builds this plugin and puts it in the module package |`,
   selected.apollo && "| `codegen.ts`, `src/api/graphql/` | your GraphQL documents and their generated types |",
   selected.tailwind && "| `tailwind.config.cjs`, `src/styles.css` | Tailwind with the storefront's design tokens |",
@@ -651,6 +652,40 @@ commits.** To use an unreleased facade, link it with yalc and restore the pin be
 `,
 ];
 const readme = `${readmeHeader}\n${readmeSections.filter(Boolean).join("\n").replaceAll(/^## /gm, "### ")}`;
+
+// Loaded by Claude Code for any work in this folder. It imports the README instead of restating it.
+const claudeMd = [
+  `# CLAUDE.md
+
+A storefront plugin: a Module Federation remote that runs inside the Virto Commerce storefront (vc-frontend).
+How it plugs in, its files, rules and commands: @README.md
+
+## Before a change is done
+
+1. \`yarn type-check\`, \`yarn lint\` and \`yarn test\` pass. Changed \`plugin.config.ts\`? \`yarn build\` too: it validates
+   the declarations.`,
+  webDir && `2. From a vc-frontend checkout, \`yarn check:plugin-module\` on the module passes.`,
+  `
+## Never
+
+1. Import from a storefront path (\`@/…\`). A symbol the facade lacks is either added to it in vc-frontend
+   ([S3](${SCENARIOS_URL}/s3-extend-the-facade.md)) or copied here, small.
+2. Edit \`@vc-frontend/core\` types, or commit its pin as \`portal:\`, \`link:\` or a yalc path.`,
+  selected.apollo && "3. Edit `src/api/graphql/types.ts` by hand: run `yarn generate:graphql-types`.",
+  `
+## Where each task is described
+
+| Task | Doc |
+| --- | --- |
+| Run it in a local storefront | [S2](${SCENARIOS_URL}/s2-develop-locally.md) |
+| Add a route, menu entry or slot | [declarations](${DOCS_URL}/declarations.md) |
+| Move to a new facade version | [S4](${SCENARIOS_URL}/s4-upgrade-a-plugin.md) |
+| It does not show up, or fails | [S7](${SCENARIOS_URL}/s7-missing-or-broken.md) |
+| Anything else | [the scenarios](${SCENARIOS_URL}/README.md) |
+`,
+]
+  .filter(Boolean)
+  .join("\n");
 
 // Platform discovery descriptor. Without it AppManifestService assumes its own defaults —
 // remote name = the .NET module id and expose "./Module" — and the host would loadRemote a key this
@@ -852,6 +887,7 @@ if (selected.tailwind) {
 writeFileSync(join(targetDir, "public", "plugin.json"), JSON.stringify(pluginJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);
+writeFileSync(join(targetDir, "CLAUDE.md"), claudeMd);
 writeFileSync(join(targetDir, "eslint.config.js"), eslintConfig);
 writeFileSync(join(targetDir, ".prettierrc.json"), JSON.stringify(prettierRc, null, 2) + "\n");
 writeFileSync(
