@@ -173,6 +173,24 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
     });
 
+    // Measured in Chrome at 125% device pixels and 110% zoom: the end of the scroll sits 0.55px short.
+    it.each([
+      ["reached, under a pixel short", 165.4545, 1],
+      ["not reached, two pixels short", 164, 0],
+    ])("counts the bottom as %s", async (_label, scrollTop, emitted) => {
+      const wrapper = mountScrollbar(20);
+      const element = wrapper.element as HTMLElement;
+
+      describeBox(element, { clientHeight: 192, scrollHeight: 358, scrollTop: 0 });
+      await afterContentSettles();
+
+      describeBox(element, { clientHeight: 192, scrollHeight: 358, scrollTop });
+      element.dispatchEvent(new Event("scroll"));
+      await nextTick();
+
+      expect(wrapper.emitted("reachBottom")?.length ?? 0).toBe(emitted);
+    });
+
     it("emits the scroll payload only when something actually scrolled", async () => {
       const wrapper = mountScrollbar(1);
       const element = wrapper.element as HTMLElement;

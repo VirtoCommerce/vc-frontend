@@ -52,6 +52,7 @@ interface IProps {
   tag?: string;
   trackColor?: string;
   thumbColor?: string;
+  /** Pixels from an edge that already count as reaching it; a gap under a pixel always does. */
   edgeThreshold?: number;
   testId?: string;
 }
@@ -213,11 +214,15 @@ useMutationObserver(el, scheduleContentUpdate, {
 });
 useEventListener(el, "load", scheduleContentUpdate, { capture: true });
 
+const SUBPIXEL_TOLERANCE = 1;
+
 // Measured on content changes as well as on scroll: content that fits never scrolls. Emits
 // arrivals only; whether to ask for more is the caller's decision.
 function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollTop" | "scrollLeft"> {
   const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
-  const threshold = props.edgeThreshold;
+  // At a zoom or device pixel ratio other than 1, scrollTop is fractional against whole-pixel sizes
+  // and the end of a scroll may stop short of them by a fraction of a pixel.
+  const threshold = props.edgeThreshold + SUBPIXEL_TOLERANCE;
 
   const measured = {
     isAtTop: scrollTop <= threshold,
