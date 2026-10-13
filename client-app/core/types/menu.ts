@@ -50,8 +50,8 @@ export type ExtendedMenuLinkType = {
   priority?: number;
   isCatalogItem?: boolean;
   dataTestId?: string;
-  // Overrides the account rail's active state for a link that owns pages beyond its route record (siblings, a
-  // rule on the query): vue-router matches by record. Without it the record match stands.
+  // Overrides the active state on the account rail and in the mobile menu for a link that owns pages beyond its
+  // route record (siblings, a rule on the query): vue-router matches by record. Without it the record match stands.
   activeWhen?: (route: RouteLocationNormalizedLoaded) => boolean;
 };
 
