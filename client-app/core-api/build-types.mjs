@@ -695,7 +695,7 @@ if (unlisted.length) {
  * `files`, importing lodash-es at RUNTIME — went unchecked and the /testing subpath threw
  * `Cannot find module` for the only consumer it exists for. And peerDependencies is the only list
  * a package manager reads: MF_SHARED_RANGES and CONTRACT_TYPE_PEERS are build-time JS objects, so
- * a consumer installing the tarball by hand (a supported path — see PORT_TO_MF.md) got neither,
+ * a consumer installing the tarball by hand got neither,
  * and `skipLibCheck: true` in the scaffold's own tsconfig made the type half of that silent.
  *
  * Required vs optional follows reachability: a package the ROOT contract imports is needed by

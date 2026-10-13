@@ -5,8 +5,6 @@
 **Before you start:** the backend module repo, and S1a done up to step 4, which gives you an empty plugin in it.
 Pick the scaffold flags the module needs: `--with-i18n`, `--with-apollo`, `--with-vueuse`, `--with-tailwind`.
 
-A full worked example, sales-rep: [`modules/sales-rep/PORT_TO_MF.md`](../../../modules/sales-rep/PORT_TO_MF.md).
-
 ## Steps
 
 1. **Size the job first.** 📁 `vc-frontend`: list what the module takes from the host.
@@ -53,4 +51,4 @@ feature behaves as before.
 
 ---
 
-_Source-checked on 2026-10-13 against `PORT_TO_MF.md` and the sales-rep port (`vc-module-sales-rep`, PR 13)._
+_Source-checked on 2026-10-13 against the sales-rep port (`vc-module-sales-rep`, PR 13)._
