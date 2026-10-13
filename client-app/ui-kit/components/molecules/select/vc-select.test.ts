@@ -12,9 +12,21 @@ import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
 
 const ITEMS = ["Albania", "Belgium", "China"];
 
+// vc-select.vue's SEARCH_DEBOUNCE_MS: a `<script setup>` constant cannot be imported.
+const SEARCH_DEBOUNCE_MS = 300;
+
 // VcScrollbar debounces its edge measurement by 100 ms.
+const SCROLLBAR_SETTLE_MS = 160;
+
+function useFakeTimersInTest() {
+  vi.useFakeTimers();
+  onTestFinished(() => {
+    vi.useRealTimers();
+  });
+}
+
 async function afterContentSettles() {
-  await new Promise((resolve) => setTimeout(resolve, 160));
+  await vi.advanceTimersByTimeAsync(SCROLLBAR_SETTLE_MS);
 }
 
 const OBJECT_ITEMS = [
@@ -53,10 +65,12 @@ enableAutoUnmount(afterEach);
 // Integration mount on purpose: the trigger, popover, list and checkbox are not stubbed.
 // Components go in as an object, not the uiKit plugin, which would duplicate html-safe under
 // lodash.merge; only maska is needed. i18n has empty messages, so t() returns keys.
-const mountSelect = createWrapperFactory(mount, VcSelect, {
+const MOUNT_OPTIONS = {
   attachTo: document.body,
   global: { components: UIKitComponents, directives: { maska: vMaska } },
-});
+};
+
+const mountSelect = createWrapperFactory(mount, VcSelect, MOUNT_OPTIONS);
 
 type MountOptionsType = NonNullable<Parameters<typeof mount<typeof VcSelect>>[1]>;
 
@@ -86,13 +100,13 @@ function spyOnWarn() {
 
 // Mounted through a parent so reactive arrays reach the select as they are: the mount factory
 // deep-merges props, which would copy them.
-function mountWithReactiveProps(props: () => Record<string, unknown>) {
-  const parent = defineComponent({ setup: () => () => h(VcSelect as never, props()) });
+function mountWithReactiveProps(
+  props: () => Record<string, unknown>,
+  slots?: () => Record<string, unknown> | undefined,
+) {
+  const parent = defineComponent({ setup: () => () => h(VcSelect as never, props(), slots?.()) });
 
-  return createWrapperFactory(mount, parent, {
-    attachTo: document.body,
-    global: { components: UIKitComponents, directives: { maska: vMaska } },
-  })();
+  return createWrapperFactory(mount, parent, MOUNT_OPTIONS)();
 }
 
 describe("VcSelect", () => {
@@ -108,6 +122,12 @@ describe("VcSelect", () => {
       const wrapper = createWrapper({ items: [] });
 
       expect(wrapper.get('[role="option"]').text()).toBe("ui_kit.select.no_options");
+    });
+
+    it("labels a falsy option with itself under textField", () => {
+      const wrapper = createWrapper({ items: [0, 1], textField: "name" });
+
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["0", ""]);
     });
   });
 
@@ -344,14 +364,8 @@ describe("VcSelect", () => {
         const warn = spyOnWarn();
         const items = reactive<unknown[]>(["Other"]);
         const model = ref<unknown>("1");
-        const parent = defineComponent({
-          setup: () => () => h(VcSelect as never, { items, modelValue: model.value }),
-        });
 
-        createWrapperFactory(mount, parent, {
-          attachTo: document.body,
-          global: { components: UIKitComponents, directives: { maska: vMaska } },
-        })();
+        mountWithReactiveProps(() => ({ items, modelValue: model.value }));
         await nextTick();
 
         expect(warned(warn)).toBe(false);
@@ -524,16 +538,15 @@ describe("VcSelect", () => {
   });
 
   describe("select all", () => {
-    const selectAllProps = { items: ITEMS, multiple: true, selectAll: true };
+    // With a handler, as a paged Select all needs one; the warnings below go without it.
+    const unhandledSelectAllProps = { items: ITEMS, multiple: true, selectAll: true };
+    const selectAllProps = { ...unhandledSelectAllProps, onSelectAll: noop };
 
     // A server-side query counts as narrowing once it has gone out.
     async function typeAnsweredQuery(input: Pick<DOMWrapper<HTMLInputElement>, "setValue">, query: string) {
-      vi.useFakeTimers();
-      onTestFinished(() => {
-        vi.useRealTimers();
-      });
+      useFakeTimersInTest();
       await input.setValue(query);
-      await vi.advanceTimersByTimeAsync(300);
+      await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
     }
 
     it.each([
@@ -561,10 +574,12 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-select-all").exists()).toBe(false);
     });
 
-    it("is ignored in single mode", () => {
+    it("is ignored in single mode, with a warning", () => {
+      const warn = spyOnWarn();
       const wrapper = createWrapper({ items: ITEMS, selectAll: true });
 
       expect(wrapper.find(".vc-select-all").exists()).toBe(false);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining("only applies to `multiple`"));
     });
 
     it("selects every visible option and announces itself", async () => {
@@ -723,7 +738,7 @@ describe("VcSelect", () => {
       ])("warns about a paged select-all with no handler, paged by %s", (_label, props) => {
         const warn = spyOnWarn();
 
-        createWrapper({ ...selectAllProps, modelValue: [], ...props });
+        createWrapper({ ...unhandledSelectAllProps, modelValue: [], ...props });
 
         expect(warn).toHaveBeenCalledWith(pagedWarning);
       });
@@ -734,7 +749,7 @@ describe("VcSelect", () => {
       ])("treats a handler %s accordingly", (_label, listener, warns) => {
         const warn = spyOnWarn();
 
-        createWrapper({ ...selectAllProps, modelValue: [], total: 30, ...listener });
+        createWrapper({ ...unhandledSelectAllProps, modelValue: [], total: 30, ...listener });
 
         expect(warn.mock.calls.some(([message]) => String(message).includes("without a `@select-all` handler"))).toBe(
           warns,
@@ -744,7 +759,7 @@ describe("VcSelect", () => {
       it("stays quiet for a paged select-all with a handler", () => {
         const warn = spyOnWarn();
 
-        createWrapper({ ...selectAllProps, modelValue: [], total: 30, onSelectAll: () => undefined });
+        createWrapper({ ...selectAllProps, modelValue: [], total: 30 });
 
         expect(warn).not.toHaveBeenCalledWith(pagedWarning);
       });
@@ -752,43 +767,9 @@ describe("VcSelect", () => {
       it("stays quiet for a select-all over the whole set", () => {
         const warn = spyOnWarn();
 
-        createWrapper({ ...selectAllProps, modelValue: [] });
+        createWrapper({ ...unhandledSelectAllProps, modelValue: [] });
 
         expect(warn).not.toHaveBeenCalledWith(pagedWarning);
-      });
-
-      it.each([
-        ["no handler", {}, true],
-        ["a handler bound to undefined", { onSearch: undefined }, true],
-        ["a once handler, gone after the first query", { onSearchOnce: () => undefined }, true],
-        ["a handler", { onSearch: () => undefined }, false],
-      ])("warns about server-filter with %s accordingly", (_label, listener, warns) => {
-        const warn = spyOnWarn();
-
-        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, ...listener });
-
-        expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@search` handler"))).toBe(warns);
-      });
-
-      it("warns about server-filter without autocomplete", () => {
-        const warn = spyOnWarn();
-
-        createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop });
-        createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, autocomplete: true });
-
-        expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
-      });
-
-      it.each([
-        ["without loading", { hasNextPage: true }, true],
-        ["in kebab case without loading", { "has-next-page": true }, true],
-        ["with loading", { hasNextPage: true, loading: false }, false],
-      ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
-        const warn = spyOnWarn();
-
-        createWrapper({ items: ITEMS, ...props });
-
-        expect(warn.mock.calls.some(([message]) => String(message).includes("needs `loading` bound"))).toBe(warns);
       });
 
       it.each([
@@ -805,18 +786,6 @@ describe("VcSelect", () => {
         expect(warn.mock.calls.some(([message]) => String(message).includes("belong to the Select all row"))).toBe(
           warns,
         );
-      });
-
-      it("warns about autocomplete over a slotted trigger, which has no input", () => {
-        const warn = spyOnWarn();
-        const placeholder = { placeholder: () => h("span", "Pick") };
-
-        createWrapper({ items: ITEMS, autocomplete: true }, placeholder);
-        createWrapper({ items: ITEMS, autocomplete: true }, { selected: () => h("span", "Picked") });
-        createWrapper({ items: ITEMS }, placeholder);
-        createWrapper({ items: ITEMS, autocomplete: true });
-
-        expect(warn.mock.calls.filter(([message]) => String(message).includes("has no input"))).toHaveLength(2);
       });
 
       it("warns about a selected-count that nothing reads", () => {
@@ -852,6 +821,7 @@ describe("VcSelect", () => {
         serverFilter: true,
         onSearch: noop,
         hasNextPage: true,
+        loading: false,
         total: 5,
         selectedCount: 5,
         modelValue: [...ITEMS, "Denmark", "Egypt"],
@@ -873,6 +843,7 @@ describe("VcSelect", () => {
         serverFilter: true,
         onSearch: noop,
         hasNextPage: true,
+        loading: false,
         total: 5,
         selectedCount: 2,
         modelValue: ["Denmark", "Egypt"],
@@ -890,6 +861,7 @@ describe("VcSelect", () => {
     it("ignores the consumer's selected count when no query narrows the list", () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
+        autocomplete: true,
         serverFilter: true,
         onSearch: noop,
         total: 5,
@@ -921,6 +893,7 @@ describe("VcSelect", () => {
     });
 
     it("ignores the consumer's selected count under a local filter", async () => {
+      const warn = spyOnWarn();
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         autocomplete: true,
@@ -934,9 +907,11 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 1");
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining("`selected-count` only counts"));
     });
 
     it("counts only the visible selection under a local filter that leaves several matches", async () => {
+      const warn = spyOnWarn();
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         autocomplete: true,
@@ -950,6 +925,7 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 2");
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining("`selected-count` only counts"));
     });
 
     it("ignores a selected count that is not a number", async () => {
@@ -997,7 +973,7 @@ describe("VcSelect", () => {
       ["a total: capped at it", { modelValue: [...ITEMS, "x1", "x2"], total: 4 }, "4 of 4"],
       ["a total: never below the checked rows", { modelValue: [...ITEMS], total: 2 }, "3 of 2"],
     ])("counts an unnarrowed selection with %s", (_label, props, count) => {
-      const wrapper = createWrapperWithMessages({ ...selectAllProps, hasNextPage: true, ...props });
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, hasNextPage: true, loading: false, ...props });
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe(count);
     });
@@ -1042,9 +1018,16 @@ describe("VcSelect", () => {
     });
 
     it("names the checkbox with its count and keeps the name when it is checked", async () => {
-      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS] });
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [] });
+      const checkbox = wrapper.get(".vc-select-all input");
 
-      expect(wrapper.get(".vc-select-all input").attributes("aria-label")).toBe("Select all, 3 of 3");
+      expect(checkbox.attributes("aria-checked")).toBe("false");
+      expect(checkbox.attributes("aria-label")).toBe("Select all, 0 of 3");
+
+      await wrapper.setProps({ modelValue: [...ITEMS] });
+
+      expect(checkbox.attributes("aria-checked")).toBe("true");
+      expect(checkbox.attributes("aria-label")).toBe("Select all, 3 of 3");
     });
 
     it("keeps the native checkbox in step when a click changes nothing", async () => {
@@ -1116,7 +1099,13 @@ describe("VcSelect", () => {
     });
 
     it("hands focus to the trigger when the focused checkbox becomes disabled", async () => {
-      const wrapper = createWrapper({ ...selectAllProps, serverFilter: true, onSearch: noop, modelValue: [] });
+      const wrapper = createWrapper({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        modelValue: [],
+      });
       const input = wrapper.get("input");
 
       await input.trigger("click");
@@ -1197,20 +1186,6 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(wrapper.get(".vc-select-all input").element);
     });
 
-    it("publishes no active option once the list is closed", async () => {
-      const wrapper = createWrapper({ items: ITEMS });
-      const input = wrapper.get("input");
-
-      await input.trigger("click");
-      await input.trigger("keydown", { key: "ArrowDown" });
-
-      expect(input.attributes("aria-activedescendant")).toBeDefined();
-
-      await input.trigger("keydown", { key: "Escape" });
-
-      expect(input.attributes("aria-activedescendant")).toBeUndefined();
-    });
-
     it("leaves Tab to the browser once the list is closed", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");
@@ -1226,6 +1201,54 @@ describe("VcSelect", () => {
 
       expect(event.defaultPrevented).toBe(false);
       expect(document.activeElement).toBe(input.element);
+    });
+  });
+
+  describe("development warnings", () => {
+    it.each([
+      ["no handler", {}, true],
+      ["a handler bound to undefined", { onSearch: undefined }, true],
+      ["a once handler, gone after the first query", { onSearchOnce: () => undefined }, true],
+      ["a handler", { onSearch: () => undefined }, false],
+    ])("warns about server-filter with %s accordingly", (_label, listener, warns) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, ...listener });
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@search` handler"))).toBe(warns);
+    });
+
+    it("warns about server-filter without autocomplete", () => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop });
+      createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, autocomplete: true });
+
+      expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
+    });
+
+    it.each([
+      ["without loading", { hasNextPage: true }, true],
+      ["in kebab case without loading", { "has-next-page": true }, true],
+      ["with loading", { hasNextPage: true, loading: false }, false],
+    ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, ...props });
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("needs `loading` bound"))).toBe(warns);
+    });
+
+    it("warns about autocomplete over a slotted trigger, which has no input", () => {
+      const warn = spyOnWarn();
+      const placeholder = { placeholder: () => h("span", "Pick") };
+
+      createWrapper({ items: ITEMS, autocomplete: true }, placeholder);
+      createWrapper({ items: ITEMS, autocomplete: true }, { selected: () => h("span", "Picked") });
+      createWrapper({ items: ITEMS }, placeholder);
+      createWrapper({ items: ITEMS, autocomplete: true });
+
+      expect(warn.mock.calls.filter(([message]) => String(message).includes("has no input"))).toHaveLength(2);
     });
   });
 
@@ -1325,12 +1348,6 @@ describe("VcSelect", () => {
       await wrapper.get("input").setValue("1");
 
       expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["10", "31"]);
-    });
-
-    it("labels a falsy option with itself under textField", () => {
-      const wrapper = createWrapper({ items: [0, 1], textField: "name" });
-
-      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["0", ""]);
     });
 
     it("matches case-insensitively", async () => {
@@ -1455,7 +1472,7 @@ describe("VcSelect", () => {
       await input.trigger("click");
       await input.trigger("keydown", { key: "ArrowDown" });
 
-      expect(input.attributes("aria-activedescendant")).toBeDefined();
+      expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
 
       await input.setValue("chi");
       await input.trigger("keydown", { key: "Enter" });
@@ -1465,21 +1482,15 @@ describe("VcSelect", () => {
     });
 
     describe("a server-side query being answered", () => {
-      beforeEach(() => {
-        vi.useFakeTimers();
-      });
+      beforeEach(useFakeTimersInTest);
 
-      afterEach(() => {
-        vi.useRealTimers();
-      });
-
-      async function typeQuery(props: HarnessPropsType = { items: ITEMS }) {
+      async function typeQueryThenLoad(props: HarnessPropsType = { items: ITEMS }) {
         const wrapper = createWrapper({ autocomplete: true, serverFilter: true, onSearch: noop, ...props });
         const input = wrapper.get("input");
 
         await input.trigger("click");
         await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ loading: true });
 
         return wrapper;
@@ -1488,7 +1499,7 @@ describe("VcSelect", () => {
       const rows = (wrapper: VueWrapper) => wrapper.findAll('[role="option"]').map((option) => option.text());
 
       it("shows the loading row above the previous query's options", async () => {
-        const wrapper = await typeQuery();
+        const wrapper = await typeQueryThenLoad();
 
         expect(rows(wrapper)).toEqual(["ui_kit.messages.loading_text", ...ITEMS]);
       });
@@ -1500,6 +1511,7 @@ describe("VcSelect", () => {
           serverFilter: true,
           onSearch: noop,
           hasNextPage: true,
+          loading: false,
         });
         const input = wrapper.get("input");
 
@@ -1508,13 +1520,13 @@ describe("VcSelect", () => {
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(false);
 
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
       it("shows one spinner, the pager's, while a paged query loads", async () => {
-        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
+        const wrapper = await typeQueryThenLoad({ items: ITEMS, hasNextPage: true, loading: false });
 
         expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
         expect(wrapper.get(".vc-load-more").find(".vc-loader").exists()).toBe(true);
@@ -1528,13 +1540,14 @@ describe("VcSelect", () => {
           serverFilter: true,
           onSearch: noop,
           hasNextPage: true,
+          loading: false,
         });
         const input = wrapper.get("input");
 
         await input.trigger("click");
         await input.setValue("b");
         await input.setValue("");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
@@ -1550,11 +1563,11 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ items: ["Belgium"] });
         await input.setValue("belx");
         await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ loading: true, items: [] });
 
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("");
@@ -1567,6 +1580,7 @@ describe("VcSelect", () => {
           serverFilter: true,
           onSearch: noop,
           hasNextPage: true,
+          loading: false,
         });
         const input = wrapper.get("input");
 
@@ -1583,14 +1597,20 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ serverFilter: true });
 
         expect(wrapper.emitted("search")).toEqual([["bel"], ["bel"]]);
       });
 
       it("has nothing to wait for when switched on with no query", async () => {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop, hasNextPage: true });
+        const wrapper = createWrapper({
+          items: ITEMS,
+          autocomplete: true,
+          onSearch: noop,
+          hasNextPage: true,
+          loading: false,
+        });
 
         await wrapper.get("input").trigger("click");
         await wrapper.setProps({ serverFilter: true });
@@ -1609,7 +1629,7 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ items: ["Belgium"] });
 
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("1 results available");
@@ -1630,7 +1650,7 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ items: [], loading: true });
         await wrapper.setProps({ loading: false });
 
@@ -1657,7 +1677,7 @@ describe("VcSelect", () => {
         expect(wrapper.emitted("selectAll")).toBeUndefined();
         expect(wrapper.emitted("update:modelValue")).toBeUndefined();
 
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ loading: true });
         await wrapper.get(".vc-select-all input").trigger("change");
 
@@ -1676,6 +1696,7 @@ describe("VcSelect", () => {
           serverFilter: true,
           onSearch: noop,
           hasNextPage: true,
+          loading: false,
           multiple: true,
           selectAll: true,
           modelValue: [],
@@ -1685,7 +1706,7 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("be");
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
 
@@ -1695,7 +1716,7 @@ describe("VcSelect", () => {
       });
 
       it("hands paging back once the answer lands", async () => {
-        const wrapper = await typeQuery({ items: ITEMS, hasNextPage: true });
+        const wrapper = await typeQueryThenLoad({ items: ITEMS, hasNextPage: true, loading: false });
 
         await wrapper.setProps({ items: ["Belgium"], loading: false });
 
@@ -1705,7 +1726,12 @@ describe("VcSelect", () => {
     });
 
     it("announces nothing while a locally filtered list with no match is loading", async () => {
-      const wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, hasNextPage: true });
+      const wrapper = createWrapperWithMessages({
+        items: ITEMS,
+        autocomplete: true,
+        hasNextPage: true,
+        loading: false,
+      });
       const input = wrapper.get("input");
 
       await input.trigger("click");
@@ -1716,15 +1742,9 @@ describe("VcSelect", () => {
     });
 
     describe("result count announced for a server-side query", () => {
-      beforeEach(() => {
-        vi.useFakeTimers();
-      });
+      beforeEach(useFakeTimersInTest);
 
-      afterEach(() => {
-        vi.useRealTimers();
-      });
-
-      async function typeQuery(
+      async function typeQueryInto(
         wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop }),
         query = "zzz",
       ) {
@@ -1732,7 +1752,7 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue(query);
-        await vi.advanceTimersByTimeAsync(300);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
         return wrapper;
       }
@@ -1750,17 +1770,17 @@ describe("VcSelect", () => {
 
         await input.trigger("click");
         await input.setValue("zzz");
-        await vi.advanceTimersByTimeAsync(299);
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS - 1);
 
         expect(announced(wrapper)).toBe("");
       });
 
       it("counts the options on screen for a query the consumer skips", async () => {
-        expect(announced(await typeQuery())).toBe("3 results available");
+        expect(announced(await typeQueryInto())).toBe("3 results available");
       });
 
       it("stays silent while the consumer is loading", async () => {
-        const wrapper = await typeQuery();
+        const wrapper = await typeQueryInto();
 
         await wrapper.setProps({ loading: true });
 
@@ -1768,7 +1788,7 @@ describe("VcSelect", () => {
       });
 
       it("counts the items the consumer answered with", async () => {
-        const wrapper = await typeQuery();
+        const wrapper = await typeQueryInto();
 
         await wrapper.setProps({ items: ["Albania"] });
 
@@ -1776,7 +1796,7 @@ describe("VcSelect", () => {
       });
 
       it("counts the options once loading finishes", async () => {
-        const wrapper = await typeQuery();
+        const wrapper = await typeQueryInto();
 
         await wrapper.setProps({ loading: true });
         await wrapper.setProps({ loading: false });
@@ -1785,7 +1805,7 @@ describe("VcSelect", () => {
       });
 
       it("stays silent for an answer to a query that is no longer on screen", async () => {
-        const wrapper = await typeQuery(undefined, "a");
+        const wrapper = await typeQueryInto(undefined, "a");
 
         await wrapper.setProps({ loading: true });
         await wrapper.get("input").setValue("ab");
@@ -1795,7 +1815,7 @@ describe("VcSelect", () => {
       });
 
       it("stays silent for the answer to a cleared query", async () => {
-        const wrapper = await typeQuery(undefined, "a");
+        const wrapper = await typeQueryInto(undefined, "a");
         const input = wrapper.get("input");
 
         await wrapper.setProps({ items: ["Albania"] });
@@ -1809,7 +1829,7 @@ describe("VcSelect", () => {
     });
 
     it("shows no spinner while nothing is being fetched", () => {
-      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: false });
 
       expect(wrapper.find(".vc-loader").exists()).toBe(false);
     });
@@ -1824,7 +1844,9 @@ describe("VcSelect", () => {
     });
 
     it("asks for the next page when the open list rests at its bottom", async () => {
-      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+      useFakeTimersInTest();
+
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: false });
 
       await wrapper.get("input").trigger("keydown", { key: "ArrowDown" });
 
@@ -1839,7 +1861,9 @@ describe("VcSelect", () => {
     });
 
     it("keeps asking under a local query after a page that brought no visible match", async () => {
-      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, autocomplete: true });
+      useFakeTimersInTest();
+
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: false, autocomplete: true });
       const input = wrapper.get("input");
 
       await input.setValue("chi");
@@ -1863,7 +1887,7 @@ describe("VcSelect", () => {
     });
 
     it("keeps the highlight when a further page is appended", async () => {
-      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: false });
       const input = wrapper.get("input");
 
       await input.trigger("focus");
@@ -1905,7 +1929,7 @@ describe("VcSelect", () => {
       ["stays on the last loaded option while a next page exists", true, 2],
       ["wraps to the first option once the list is complete", false, 0],
     ])("on ArrowDown past the end %s", async (_label, hasNextPage, index) => {
-      const wrapper = createWrapper({ items: ITEMS, hasNextPage });
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage, loading: false });
       const input = wrapper.get("input");
 
       await input.trigger("focus");
@@ -1920,7 +1944,7 @@ describe("VcSelect", () => {
     });
 
     it("drops the highlight when the list is replaced", async () => {
-      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: false });
       const input = wrapper.get("input");
 
       await input.trigger("focus");
@@ -1960,61 +1984,49 @@ describe("VcSelect", () => {
     });
 
     it("debounces the search text and clears it immediately", async () => {
-      vi.useFakeTimers();
+      useFakeTimersInTest();
 
-      try {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
 
-        await wrapper.get("input").trigger("focus");
-        await wrapper.get("input").setValue("bel");
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("bel");
 
-        expect(wrapper.emitted("search")).toBeUndefined();
+      expect(wrapper.emitted("search")).toBeUndefined();
 
-        await vi.advanceTimersByTimeAsync(300);
+      await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
-        expect(wrapper.emitted("search")).toEqual([["bel"]]);
+      expect(wrapper.emitted("search")).toEqual([["bel"]]);
 
-        await wrapper.get("input").setValue("");
+      await wrapper.get("input").setValue("");
 
-        expect(wrapper.emitted("search")).toEqual([["bel"], [""]]);
-      } finally {
-        vi.useRealTimers();
-      }
+      expect(wrapper.emitted("search")).toEqual([["bel"], [""]]);
     });
 
     it("drops a query that was cleared before it went out", async () => {
-      vi.useFakeTimers();
+      useFakeTimersInTest();
 
-      try {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
 
-        await wrapper.get("input").trigger("focus");
-        await wrapper.get("input").setValue("bel");
-        await vi.advanceTimersByTimeAsync(200);
-        await wrapper.get("input").setValue("");
-        await vi.advanceTimersByTimeAsync(300);
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("bel");
+      await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS - 1);
+      await wrapper.get("input").setValue("");
+      await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
-        expect(wrapper.emitted("search")).toEqual([[""]]);
-      } finally {
-        vi.useRealTimers();
-      }
+      expect(wrapper.emitted("search")).toEqual([[""]]);
     });
 
     it("reports the query while still filtering locally", async () => {
-      vi.useFakeTimers();
+      useFakeTimersInTest();
 
-      try {
-        const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
 
-        await wrapper.get("input").trigger("focus");
-        await wrapper.get("input").setValue("bel");
-        await vi.advanceTimersByTimeAsync(300);
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("bel");
+      await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
 
-        expect(wrapper.emitted("search")).toEqual([["bel"]]);
-        expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["Belgium"]);
-      } finally {
-        vi.useRealTimers();
-      }
+      expect(wrapper.emitted("search")).toEqual([["bel"]]);
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["Belgium"]);
     });
   });
 
@@ -2165,6 +2177,7 @@ describe("VcSelect", () => {
     it("leaves focus alone when it has already moved outside", async () => {
       const outside = document.createElement("input");
       document.body.appendChild(outside);
+      onTestFinished(() => outside.remove());
 
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
@@ -2179,8 +2192,6 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(document.activeElement).toBe(outside);
-
-      outside.remove();
     });
 
     it("keeps focus on the trigger when an option is pressed with the mouse", async () => {
@@ -2197,6 +2208,7 @@ describe("VcSelect", () => {
       await input.trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
+      // jsdom moves no focus on mousedown, so the cancelled press is what keeps it on the trigger.
       expect(press.defaultPrevented).toBe(true);
       expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
     });
@@ -2218,6 +2230,7 @@ describe("VcSelect", () => {
       const host = document.createElement("div");
       host.id = "popover-host";
       document.body.appendChild(host);
+      onTestFinished(() => host.remove());
 
       const wrapper = createWrapper({ items: ITEMS, enableTeleport: true });
       const input = wrapper.get("input");
@@ -2230,9 +2243,6 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(document.activeElement).toBe(input.element);
-
-      wrapper.unmount();
-      host.remove();
     });
 
     it("draws the field as opened only while the list is open", async () => {
@@ -2725,21 +2735,35 @@ describe("VcSelect", () => {
       expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
       expect(wrapper.get("input").attributes("aria-required")).toBe("true");
     });
-  });
 
-  it("keeps the container focusable, so a modal's autofocus lands on it", () => {
-    const wrapper = createWrapper({ items: ITEMS });
-    const container = wrapper.get(".vc-select__container");
+    it("publishes no active option once the list is closed", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
 
-    expect(container.attributes("tabindex")).toBe("-1");
+      await input.trigger("click");
+      await input.trigger("keydown", { key: "ArrowDown" });
 
-    const returned = focusFirstElement(document.body, {
-      ignoreSelector: ".vc-select input",
-      extendSelector: ".vc-select__container",
+      expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
+
+      await input.trigger("keydown", { key: "Escape" });
+
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
     });
 
-    expect(returned).toBe(true);
-    expect(document.activeElement).toBe(container.element);
+    it("keeps the container focusable, so a modal's autofocus lands on it", () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const container = wrapper.get(".vc-select__container");
+
+      expect(container.attributes("tabindex")).toBe("-1");
+
+      const returned = focusFirstElement(document.body, {
+        ignoreSelector: ".vc-select input",
+        extendSelector: ".vc-select__container",
+      });
+
+      expect(returned).toBe(true);
+      expect(document.activeElement).toBe(container.element);
+    });
   });
 
   describe("custom trigger slot", () => {
@@ -2875,27 +2899,23 @@ describe("VcSelect", () => {
       ["Enter", "#selected alone", { selected: slots.selected }],
       ["Enter", "#placeholder alone", { placeholder: slots.placeholder }],
     ])("opens with %j and %s even with autocomplete, since the button takes no typing", async (key, _label, given) => {
-      vi.spyOn(console, "warn").mockImplementation(() => undefined);
+      const warn = spyOnWarn();
       const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Albania" }, given);
       const trigger = wrapper.get('[role="combobox"]');
 
       await trigger.trigger("keydown", { key });
 
       expect(trigger.attributes("aria-expanded")).toBe("true");
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining("has no input"));
     });
 
     it("follows a slot added after mount when Enter decides between the field and the button", async () => {
-      vi.spyOn(console, "warn").mockImplementation(() => undefined);
       const slotted = ref(false);
       // A copy: h() stamps `_ctx` on a raw slots object, and the shared one would carry it into every later mount.
-      const parent = defineComponent({
-        setup: () => () =>
-          h(VcSelect as never, { items: ITEMS, autocomplete: true }, slotted.value ? { ...slots } : undefined),
-      });
-      const wrapper = createWrapperFactory(mount, parent, {
-        attachTo: document.body,
-        global: { components: UIKitComponents, directives: { maska: vMaska } },
-      })();
+      const wrapper = mountWithReactiveProps(
+        () => ({ items: ITEMS, autocomplete: true }),
+        () => (slotted.value ? { ...slots } : undefined),
+      );
 
       await wrapper.get("input").trigger("keydown", { key: "Enter" });
 
@@ -3084,10 +3104,7 @@ const DialogHost = defineComponent({
   `,
 });
 
-const mountDialogHost = createWrapperFactory(mount, DialogHost, {
-  attachTo: document.body,
-  global: { components: UIKitComponents, directives: { maska: vMaska } },
-});
+const mountDialogHost = createWrapperFactory(mount, DialogHost, MOUNT_OPTIONS);
 
 const DIALOG_NAME = "Filters";
 
@@ -3214,7 +3231,7 @@ describe("VcSelect inside a dialog popover", () => {
     expect(document.activeElement).toBe(input.element);
   });
 
-  // Enter is consumed only by a select-only combobox (APG). An editable one keeps it for its form —
+  // Enter is consumed only by a select-only combobox (APG). An editable one leaves it to its form.
   it.each([
     [false, true],
     [true, false],
