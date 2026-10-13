@@ -141,8 +141,8 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
       return false;
     }
 
-    // An unset GraphQL value arrives as null, which is a selection only when an option carries it, on
-    // this page or remembered from an earlier one.
+    // An unset GraphQL value arrives as null, which is a selection only when an option carries it, in
+    // `items` or remembered from an earlier `items`.
     return model != null || foundItem.value !== undefined || rememberedItem.value?.value === model;
   });
 
@@ -182,7 +182,7 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
     isActiveItem,
     /** The multiple-mode model with the option added, or removed when it was selected. */
     getToggledValues,
-    /** Single mode: the selected option, remembered across paging; the model itself without `valueField`. */
+    /** Single mode: the selected option, remembered across `items` swaps; the model itself without `valueField`. */
     selectedItem,
     selectedValues,
     /** Whether the model holds a selection, so there is something to clear. */
