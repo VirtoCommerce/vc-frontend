@@ -59,7 +59,7 @@
           ref="triggerElement"
           v-bind="triggerBindings"
           :search="search"
-          :placeholder-text="placeholderText ?? undefined"
+          :placeholder-text="placeholderText"
           :autocomplete="autocomplete"
           @toggle="toggle"
           @open="open"
@@ -129,10 +129,7 @@
                 role="option"
                 :size="itemSize"
                 :tabindex="-1"
-                @click="
-                  select(item);
-                  !multiple && close();
-                "
+                @click="pick(item, close)"
                 @mousemove="highlightPassively(index)"
               >
                 <VcCheckbox
@@ -189,13 +186,13 @@
 </template>
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
-import { useDebounceFn, useElementBounding } from "@vueuse/core";
+import { useDebounceFn, useElementSize } from "@vueuse/core";
 import { differenceWith, isEqual, unionWith } from "lodash-es";
 import { computed, getCurrentInstance, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
-import { insertedText } from "@/ui-kit/utilities/text-diff";
+import { insertedText } from "@/ui-kit/utilities";
 import VcSelectAll from "./vc-select-all.vue";
 import VcSelectButton from "./vc-select-button.vue";
 import VcSelectField from "./vc-select-field.vue";
@@ -276,8 +273,8 @@ const props = withDefaults(
     hasNextPage?: boolean;
     /**
      * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
-     * in the `search` handler and keep it until the new `items` are in: while it is on, Select all
-     * is ignored and no result count is announced. A query the consumer skips (too short, the same
+     * in the `search` handler and keep it until the new `items` are in: while `loading` is on,
+     * Select all is disabled and no result count is announced. A query the consumer skips (too short, the same
      * once trimmed) needs nothing — the `items` on screen are taken as its answer. An answer to an
      * older query must not end `loading` early: cancel it, as Apollo does for changed variables.
      */
@@ -321,12 +318,29 @@ const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<{ focus: () => void }>("triggerElement");
 
 const popoverElement = useTemplateRef<{ $el: HTMLElement }>("popoverElement");
-const { width: triggerWidth } = useElementBounding(() => popoverElement.value?.$el ?? null);
+// A ResizeObserver only: unlike useElementBounding, no window scroll listener per select.
+const { width: triggerWidth } = useElementSize(() => popoverElement.value?.$el ?? null, undefined, {
+  box: "border-box",
+});
 const dropdownWidth = computed(() => `${triggerWidth.value}px`);
 
 const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
+
+// Plain variables, not refs: nothing renders them.
+// Set when Enter or Space opens the list, which then starts on the selection. Any other open (the
+// pointer, typing) starts on nothing; the arrow keys and Home/End set their own start.
+let openedByKeyboard = false;
+
+// Set while the list closes behind departing focus: activeElement is still <body> then, which
+// `holdsFocus` would read as "ours" and pull focus back.
+let focusLeft = false;
+
+// The selection a keystroke is about to replace; Tab selects the whole label. Kept until the list
+// opens, not read once: maska delivers each keystroke twice, and the open may land in between.
+let replacedRange: [number, number] | undefined;
+
 const filterValue = ref("");
 const {
   getItemText,
@@ -541,16 +555,17 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
   }
 
   event.preventDefault();
+  pick(item, close);
+}
+
+// A single select closes on its pick; a multiple one stays open for the next.
+function pick(item: T, close: () => void): void {
   select(item);
 
   if (!props.multiple) {
     close();
   }
 }
-
-// Set when Enter or Space opens the list, which then starts on the selection. Any other open (the
-// pointer, typing) starts on nothing; the arrow keys and Home/End set their own start.
-let openedByKeyboard = false;
 
 function toggled(value: boolean) {
   isShown.value = value;
@@ -592,10 +607,6 @@ function owns(node: Node): boolean {
   return document.getElementById(componentId)?.contains(node) === true || dropdown?.contains(node) === true;
 }
 
-// Set while the list closes behind departing focus: activeElement is still <body> then, which
-// `holdsFocus` would read as "ours" and pull focus back.
-let focusLeft = false;
-
 // Options are not tab stops, so Tab walks focus out of the select; the list closes behind it
 // (APG). Focus that goes nowhere keeps it open: a click on the page is click-outside's to close.
 function onFocusOut(event: FocusEvent, close: () => void): void {
@@ -618,10 +629,6 @@ function onSearchInput(value: string, open: () => void): void {
   open();
   filterValue.value = insertedText(selectedText.value ?? "", value, replacedRange);
 }
-
-// The selection a keystroke is about to replace; Tab selects the whole label. Kept until the list
-// opens, not read once: maska delivers each keystroke twice, and the open may land in between.
-let replacedRange: [number, number] | undefined;
 
 function onBeforeSearchInput(event: Event): void {
   const { target } = event;
@@ -856,11 +863,13 @@ const countedSelected = computed(() => {
       : Math.max(Math.min(selectedValues.value.length, props.total), selectedVisibleCount.value);
   }
 
-  if (!props.serverFilter || !Number.isFinite(props.selectedCount)) {
+  const { selectedCount } = props;
+
+  if (!props.serverFilter || selectedCount === undefined || !Number.isFinite(selectedCount)) {
     return selectedVisibleCount.value;
   }
 
-  return Math.max(Math.min(props.selectedCount!, totalCount.value), selectedVisibleCount.value);
+  return Math.max(Math.min(selectedCount, totalCount.value), selectedVisibleCount.value);
 });
 
 const isEveryOptionSelected = computed(
