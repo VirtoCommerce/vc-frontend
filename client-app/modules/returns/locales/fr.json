@@ -5,9 +5,13 @@
       "table_description": "liste des retours"
     },
     "title": "Retours",
+    "scope": {
+      "own": "Mes retours"
+    },
     "no_returns_message": "Il n'y a pas encore de retours",
     "no_results_message": "Aucun retour ne correspond à votre recherche",
     "search_placeholder": "Rechercher par RMA, commande, référence ou produit",
+    "search_placeholder_organization": "Rechercher par RMA, commande, référence, produit ou acheteur",
     "search_aria": "Rechercher des retours",
     "filters": {
       "title": "Filtres",
@@ -101,7 +105,8 @@
     "summary_section": "Résumé",
     "items_section": "Articles",
     "order_number": "Numéro de commande",
-    "customer_reference": "Votre référence de commande",
+    "requested_by": "Demandé par",
+    "customer_reference": "Référence de commande",
     "customer_comment": "Commentaire",
     "cancel_reason": "Motif d'annulation",
     "reject_reason": "Motif du refus",
