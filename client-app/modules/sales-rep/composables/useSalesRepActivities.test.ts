@@ -26,13 +26,12 @@ function activityEvent(overrides: Partial<ActivityEventType> = {}): ActivityEven
     occurredAt: "2026-08-20T10:15:00Z",
     precision: "exact",
     count: 1,
-    organizationId: "org1",
     organizationName: "Acme",
     orderId: "ord1",
     orderNumber: "CU0001",
     orderStatus: "New",
     orderStatusDisplayValue: "New",
-    orderTotal: { amount: 100, formattedAmount: "$100.00" },
+    orderTotal: { formattedAmount: "$100.00" },
     ...overrides,
   };
 }
@@ -142,5 +141,19 @@ describe("useSalesRepActivities", () => {
     const { error } = useSalesRepActivities();
 
     expect(error).toBe(queryMock.error);
+  });
+
+  // Held by default, so a tab switch keeps the outgoing rows until the new ones land; the badges opt out.
+  it("holds the previous result unless asked not to", () => {
+    const keepPreviousResult = () => {
+      const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
+      return (call[2] as { keepPreviousResult?: boolean } | undefined)?.keepPreviousResult;
+    };
+
+    useSalesRepActivities();
+    expect(keepPreviousResult()).toBe(true);
+
+    useSalesRepActivities({ keepPreviousResult: false });
+    expect(keepPreviousResult()).toBe(false);
   });
 });

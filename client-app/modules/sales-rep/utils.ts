@@ -1,3 +1,4 @@
+import { useMemoize } from "@vueuse/core";
 import { ContentType, QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { ROUTES } from "@/router/routes/constants";
@@ -185,22 +186,11 @@ const TIME_AGO_UNITS: readonly { unit: Intl.RelativeTimeFormatUnit; seconds: num
   { unit: "minute", seconds: 60 },
 ];
 
-// Intl formatters cost more to construct than to use, and these run once per rendered row — up to a
-// full page of them on every tab switch. One per culture, kept for the life of the tab.
-const timeAgoFormatters = new Map<string, Intl.RelativeTimeFormat>();
-const hourFormatters = new Map<string, Intl.DateTimeFormat>();
-
-function formatterFor<T>(cache: Map<string, T>, create: (cultureName: string) => T): T {
-  const cultureName = globals.cultureName;
-  let formatter = cache.get(cultureName);
-
-  if (!formatter) {
-    formatter = create(cultureName);
-    cache.set(cultureName, formatter);
-  }
-
-  return formatter;
-}
+// Intl formatters cost more to construct than to use, and this runs once per rendered row — up to a full page
+// of them on every tab switch. One per culture, kept for the life of the tab.
+const timeAgoFormatterFor = useMemoize(
+  (cultureName: string) => new Intl.RelativeTimeFormat(cultureName, { numeric: "auto" }),
+);
 
 const MS_PER_DAY = 86400000;
 
@@ -215,10 +205,7 @@ export function formatTimeAgo(isoDate: string): string {
   const occurredAt = new Date(isoDate);
   const now = new Date();
   const elapsedSeconds = Math.max(0, Math.round((now.getTime() - occurredAt.getTime()) / 1000));
-  const formatter = formatterFor(
-    timeAgoFormatters,
-    (cultureName) => new Intl.RelativeTimeFormat(cultureName, { numeric: "auto" }),
-  );
+  const formatter = timeAgoFormatterFor(globals.cultureName);
 
   const match = TIME_AGO_UNITS.find(({ seconds }) => elapsedSeconds >= seconds);
   if (!match) {
@@ -233,14 +220,6 @@ export function formatTimeAgo(isoDate: string): string {
   }
 
   return formatter.format(-Math.floor(elapsedSeconds / match.seconds), match.unit);
-}
-
-// Wall-clock hour label ("2:00 PM") for the honest "during the hour of …" phrasing on hour-bucket rows.
-export function formatHourLabel(isoDate: string): string {
-  return formatterFor(
-    hourFormatters,
-    (cultureName) => new Intl.DateTimeFormat(cultureName, { hour: "numeric", minute: "2-digit" }),
-  ).format(new Date(isoDate));
 }
 
 // The catalog search results page for a tracked term, exactly as the header search navigates (VCST-5731).

@@ -26,7 +26,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
         lastSearchTerm: "gloves",
         lastSearchedDate: "2026-08-19T09:00:00Z",
         isAnalyticsAvailable: true,
-        lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
+        lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves" },
         lastViewedDate: "2026-08-18T15:00:00Z",
       },
     } satisfies SalesRepCustomerActivitySummaryQuery;
@@ -40,7 +40,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
       lastSearchTerm: "gloves",
       lastSearchedDate: "2026-08-19T09:00:00Z",
       isAnalyticsAvailable: true,
-      lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
+      lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves" },
       lastViewedDate: "2026-08-18T15:00:00Z",
     });
   });

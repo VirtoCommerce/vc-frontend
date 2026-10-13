@@ -24,6 +24,9 @@ type UseSalesRepActivitiesOptionsType = {
   withCategoryCounts?: boolean;
   // Pause the read while another view replaces these rows.
   enabled?: boolean | Ref<boolean> | (() => boolean);
+  // Hold the last result while new variables load (default). False drops it: the new variables show their
+  // cached result, or nothing until they answer.
+  keepPreviousResult?: boolean;
 };
 
 // The salesRepActivities op: order/customer events (exact) merged with GA hour buckets, newest first. An
@@ -47,7 +50,7 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
   const enabled = computed(() => toValue(options.enabled) ?? true);
 
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepActivitiesDocument, variables, {
-    keepPreviousResult: true,
+    keepPreviousResult: options.keepPreviousResult ?? true,
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
   });
@@ -64,7 +67,6 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
       occurredAt: event.occurredAt as string,
       precision: event.precision === "hour" ? "hour" : "exact",
       count: event.count ?? 1,
-      organizationId: event.organizationId ?? "",
       organizationName: event.organizationName ?? "",
       orderId: event.orderId ?? "",
       orderNumber: event.orderNumber ?? "",
@@ -76,7 +78,6 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
       productId: event.productId ?? "",
       productCode: event.productCode ?? "",
       productName: event.productName ?? "",
-      productImageUrl: event.productImageUrl ?? "",
     })),
   );
 

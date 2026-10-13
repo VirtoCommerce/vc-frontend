@@ -149,6 +149,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities/product";
+import { ROUTES } from "@/router/routes/constants";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import ActivityRow from "../components/activity-row.vue";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
@@ -164,6 +165,7 @@ import {
   ACTIVITY_MAX_SKIP,
   ACTIVITY_PAGE_SIZE,
   CUSTOMER_PROFILE_ROUTE_NAME,
+  HUB_ACTIVITY_PERIOD,
   INSIGHTS_MAX_ROWS,
   INSIGHTS_SORT_BY_COUNT,
   RANKED_ACTIVITY_CATEGORIES,
@@ -187,9 +189,9 @@ const { t } = useI18n();
 const category = ref<string | undefined>(undefined);
 const page = ref(1);
 
-// Opens on This year, the window of the widgets that link here, so "View all" never shows less than they did.
-// All time (no bounds) would read GA from 2015 to render a page; it stays one chip away.
-const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
+// Opens on the widgets' window (HUB_ACTIVITY_PERIOD). All time (no bounds) would read GA from 2015 to render a
+// page; it stays one chip away.
+const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter(HUB_ACTIVITY_PERIOD);
 
 // Chips speak "rule name | undefined"; undefined is the lifetime baseline.
 const periodRule = computed<string | undefined>({
@@ -254,7 +256,8 @@ const { items, totalCount, loading, error, analyticsUnavailable } = useSalesRepA
 });
 
 // The badges in their own request: counting every category is the slow half, and it does not change with the
-// tab or the page. take: 0 asks for counts only.
+// tab or the page. take: 0 asks for counts only. No previous result is held: across a customer or period
+// switch the held figures are another customer's, or another window's.
 const {
   categoryCounts,
   loading: countsLoading,
@@ -265,6 +268,7 @@ const {
   periodFrom,
   periodTo,
   take: 0,
+  keepPreviousResult: false,
 });
 
 // Every badge reads the counts request, the selected tab included: one figure, one source.
@@ -274,23 +278,8 @@ const countOf = (name: string) => categoryCounts.value.find((entry) => entry.cat
 // several events), so "All" adds up the tabs — the figure it has to agree with.
 const allCount = computed(() => categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0));
 
-// keepPreviousResult keeps the badges' last figures through a refetch. A first load has none to keep, and a
-// customer or period switch is one (the held figures are another customer's, or another window's), so the tabs
-// show no figures until the new counts land.
-const countsKey = computed(() => `${props.organizationId ?? ""}|${period.value}`);
-const countsFor = ref<string>();
-watch(
-  countsLoading,
-  (isLoading) => {
-    if (!isLoading) {
-      countsFor.value = countsKey.value;
-    }
-  },
-  { immediate: true },
-);
-const countsPending = computed(
-  () => (countsLoading.value && !categoryCounts.value.length) || countsFor.value !== countsKey.value,
-);
+// The tabs show no figures until the counts for this customer and window land.
+const countsPending = computed(() => countsLoading.value && !categoryCounts.value.length);
 const countsFailed = computed(() => Boolean(countsError.value));
 
 // A tracked tab shows "–" when analytics did not answer: a "(0)" in the tab row reads as "they searched
@@ -471,7 +460,10 @@ function scrollToTop(): void {
 usePageHead({ title: heading });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const trail = [{ title: t("common.links.account"), route: { name: "Account" } }, { title: t("sales_rep.hub.title") }];
+  const trail = [
+    { title: t("common.links.account"), route: { name: ROUTES.ACCOUNT.NAME } },
+    { title: t("sales_rep.hub.title") },
+  ];
 
   // The customer segment waits for the name — a crumb with an empty title is worse than no crumb.
   if (!props.organizationId || !customerName.value) {

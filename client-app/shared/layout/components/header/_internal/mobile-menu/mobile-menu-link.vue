@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { getLinkAttr } from "@/core/utilities";
+import { getLinkAttr, isMenuLinkActive } from "@/core/utilities";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { NavigationFailure } from "vue-router";
 
@@ -68,10 +68,9 @@ const route = useRoute();
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route || !!props.link.isCatalogItem);
 
-// A link that owns pages beyond its route record says so itself, as on the account rail; every other link keeps
-// vue-router's match.
+// The same rule as the account rail.
 function isHighlighted(isActive: boolean, isExactActive: boolean): boolean {
-  return props.link.activeWhen?.(route) ?? (isActive || isExactActive);
+  return isMenuLinkActive(props.link, route, isActive || isExactActive);
 }
 
 function click(navigate: () => Promise<void | NavigationFailure>) {

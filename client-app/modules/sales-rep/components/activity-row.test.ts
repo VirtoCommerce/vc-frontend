@@ -13,7 +13,6 @@ function item(overrides: Partial<SalesRepActivityItemType> = {}): SalesRepActivi
     occurredAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
     precision: "exact",
     count: 1,
-    organizationId: "org1",
     organizationName: "Acme",
     orderId: "ord1",
     orderNumber: "CU0001",
@@ -24,7 +23,6 @@ function item(overrides: Partial<SalesRepActivityItemType> = {}): SalesRepActivi
     productId: "",
     productCode: "",
     productName: "",
-    productImageUrl: "",
     ...overrides,
   };
 }

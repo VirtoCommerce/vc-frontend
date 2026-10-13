@@ -5,28 +5,17 @@ import { SalesRepCustomerActivitySummaryDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepCustomerActivitySummaryType } from "../types";
-import type { MaybeRefOrGetter, Ref } from "vue";
-
-// Expanded unions (not MaybeRefOrGetter<… | undefined>) to avoid the redundant "undefined" — Sonar S4782.
-type UseSalesRepCustomerActivitySummaryOptionsType = {
-  // Bounds the period-scoped figures (visitsCount); omit for lifetime.
-  periodFrom?: string | Ref<string | undefined> | (() => string | undefined);
-  periodTo?: string | Ref<string | undefined> | (() => string | undefined);
-};
+import type { MaybeRefOrGetter } from "vue";
 
 // An unauthorized organizationId nulls the whole field; unavailable analytics is `isAnalyticsAvailable: false`
 // with the GA fields null/0 and `createdOn` (DB data) intact — never an error.
-export function useSalesRepCustomerActivitySummary(
-  organizationId: MaybeRefOrGetter<string>,
-  options: UseSalesRepCustomerActivitySummaryOptionsType = {},
-) {
+// Lifetime: no period, so visitsCount counts every visit.
+export function useSalesRepCustomerActivitySummary(organizationId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({
     organizationId: toValue(organizationId),
     // storeId scopes the analytics data and resolves lastViewedProduct's tracked code.
     storeId: globals.storeId,
     cultureName: globals.cultureName,
-    periodFrom: toValue(options.periodFrom),
-    periodTo: toValue(options.periodTo),
   }));
 
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerActivitySummaryDocument, variables, {
@@ -52,7 +41,6 @@ export function useSalesRepCustomerActivitySummary(
                 code: node.lastViewedProduct.code,
                 productId: node.lastViewedProduct.productId ?? "",
                 name: node.lastViewedProduct.name ?? "",
-                imageUrl: node.lastViewedProduct.imageUrl ?? "",
               }
             : undefined,
           lastViewedDate: (node.lastViewedDate as string | undefined) ?? undefined,

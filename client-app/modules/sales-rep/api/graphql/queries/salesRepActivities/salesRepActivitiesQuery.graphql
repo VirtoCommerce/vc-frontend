@@ -30,21 +30,18 @@ query SalesRepActivities(
       occurredAt
       precision
       count
-      organizationId
       organizationName
       orderId
       orderNumber
       orderStatus
       orderStatusDisplayValue
       orderTotal {
-        amount
         formattedAmount
       }
       searchTerm
       productId
       productCode
       productName
-      productImageUrl
     }
   }
 }

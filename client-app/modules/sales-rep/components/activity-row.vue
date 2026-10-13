@@ -12,7 +12,7 @@
           <VcLink
             v-if="item.orderId"
             class="activity-row__link"
-            :to="{ name: 'OrderDetails', params: { orderId: item.orderId } }"
+            :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.orderId } }"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -97,7 +97,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
-import { activityCategoryIcon, formatHourLabel, formatStatCount, formatTimeAgo, searchResultsRoute } from "../utils";
+import { BUYER_ORDER_ROUTE_NAME } from "../constants";
+import { activityCategoryIcon, formatStatCount, formatTimeAgo, searchResultsRoute } from "../utils";
 import type { SalesRepActivityItemType } from "../types";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
@@ -138,7 +139,8 @@ const timeLabel = computed(() => {
     ? t("sales_rep.activity.time.during_hour", {
         // "short" so the date reads like the exact rows' "long" one ("Aug 27, 2026"); only the hour wording differs.
         date: d(occurredAt, "short"),
-        time: formatHourLabel(props.item.occurredAt),
+        // The wall-clock hour ("2:00 PM"): the bucket's start, read as "during the hour of".
+        time: d(occurredAt, { hour: "numeric", minute: "2-digit" }),
       })
     : d(occurredAt, "long");
 });

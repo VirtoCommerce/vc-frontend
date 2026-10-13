@@ -1,13 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
-import {
-  buildStatisticsWindows,
-  formatHourLabel,
-  formatStatCount,
-  formatStatMoney,
-  formatTimeAgo,
-  salesRepOrderRoute,
-} from "./utils";
+import { buildStatisticsWindows, formatStatCount, formatStatMoney, formatTimeAgo, salesRepOrderRoute } from "./utils";
 import type { SalesRepCustomerOrderRowType } from "./types";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
@@ -272,13 +265,5 @@ describe("formatTimeAgo", () => {
   // Clock skew between server and browser must not read as an event still to come.
   it("treats a timestamp slightly ahead of the clock as now", () => {
     expect(formatTimeAgo(ago(-90))).toBe("this minute");
-  });
-});
-
-describe("formatHourLabel", () => {
-  // Built from local-time parts, like the windows above, so the label holds in any zone. Whitespace is
-  // normalized: some ICU versions put a narrow no-break space before the day period.
-  it("labels the bucket's wall-clock hour", () => {
-    expect(formatHourLabel(localIso(2026, 8, 15, 14)).replace(/\s/g, " ")).toBe("2:00 PM");
   });
 });

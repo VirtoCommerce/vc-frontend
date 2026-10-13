@@ -25,7 +25,7 @@ vi.mock("@/shared/account/composables/useUser", () => ({
 }));
 vi.mock("./composables/useSalesRepsConfig", () => ({ isSalesRepsEnabled: () => true }));
 
-const at = (name: string, query: Record<string, string> = {}) =>
+const at = (name: string, query: Record<string, string | string[]> = {}) =>
   ({ name, query }) as unknown as RouteLocationNormalizedLoaded;
 
 // The rep-facing hub pages mount under the org-gated "/company" parent but must stay reachable for a
@@ -111,5 +111,11 @@ describe("sales-rep account rail areas", () => {
   it("treats an empty organizationId as the rep's own feed", () => {
     expect(isCustomerScopedActivity(at("SalesRepActivities", { organizationId: "" }))).toBe(false);
     expect(isMyActivity(at("SalesRepActivities", { organizationId: "" }))).toBe(true);
+  });
+
+  // The page prop takes no repeated value (above), so the navigation must not light My customers for one either.
+  it("treats a repeated organizationId as the rep's own feed, as the page does", () => {
+    expect(isCustomerScopedActivity(at("SalesRepActivities", { organizationId: ["a", "b"] }))).toBe(false);
+    expect(isMyActivity(at("SalesRepActivities", { organizationId: ["a", "b"] }))).toBe(true);
   });
 });

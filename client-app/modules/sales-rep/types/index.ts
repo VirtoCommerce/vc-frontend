@@ -84,7 +84,6 @@ export type SalesRepActivityItemType = {
   precision: "exact" | "hour";
   // Occurrences this row aggregates (1 for exact rows; the bucket size for analytics hour rows).
   count: number;
-  organizationId: string;
   organizationName: string;
   orderId: string;
   orderNumber: string;
@@ -95,7 +94,6 @@ export type SalesRepActivityItemType = {
   productId: string;
   productCode: string;
   productName: string;
-  productImageUrl: string;
 };
 
 export type SalesRepActivityCategoryCountType = { category: string; count: number };
@@ -107,7 +105,6 @@ export type SalesRepActivityProductType = {
   // Empty when the tracked code matched no product; gates the deep link.
   productId: string;
   name: string;
-  imageUrl: string;
 };
 export type SalesRepCustomerActivitySummaryType = {
   createdOn?: string;

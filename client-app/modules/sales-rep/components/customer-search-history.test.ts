@@ -151,17 +151,4 @@ describe("CustomerSearchHistory states", () => {
 
     expect(toValue(searchOptions.last?.sort)).toBe("date");
   });
-
-  // Mounted hidden, it waits. Once shown it stays subscribed: stopping on hide restarted the query on the
-  // way back — the round trip the gate was there to avoid.
-  it("queries from first show and stays subscribed after", async () => {
-    const wrapper = createWrapper({ props: { organizationId: "org-1", active: false } });
-    expect(toValue(searchOptions.last?.enabled)).toBe(false);
-
-    await wrapper.setProps({ active: true });
-    expect(toValue(searchOptions.last?.enabled)).toBe(true);
-
-    await wrapper.setProps({ active: false });
-    expect(toValue(searchOptions.last?.enabled)).toBe(true);
-  });
 });

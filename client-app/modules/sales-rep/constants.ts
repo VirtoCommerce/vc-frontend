@@ -1,3 +1,4 @@
+import type { SalesRepPeriodType } from "./composables/useSalesRepPeriodFilter";
 import type { WatchQueryFetchPolicy } from "@apollo/client/core";
 
 export const MODULE_ID = "VirtoCommerce.SalesRep";
@@ -69,13 +70,15 @@ export const ACTIVITY_PAGE_SIZE = 20;
 export const ACTIVITY_MAX_SKIP = 500;
 // Compact "My activity" dashboard widget shows the latest few events across all assigned accounts.
 export const MY_ACTIVITY_TAKE = 5;
+// The window the hub's activity surfaces show and the Activities page opens on: one window, so "View all" never
+// shows less than a widget did, and the widget's analytics read is the page's first one. Labels say "this year".
+export const HUB_ACTIVITY_PERIOD: SalesRepPeriodType = "year";
 // Category vocabulary of salesRepActivities (the backend types it as free-form String). Ordered —
 // the page renders its tabs in this order, whatever order categoryCounts arrives in.
 export const ACTIVITY_CATEGORIES = ["orders", "customers", "searches", "productViews", "logins"] as const;
-// Categories sourced from tracked analytics (hour-precision buckets), named by the caveat line.
-export const GA_ACTIVITY_CATEGORIES = ["searches", "productViews", "logins"] as const;
-// Membership sets built once for the module. The arrays above stay: they carry the tab order.
-export const TRACKED_ACTIVITY_CATEGORIES = new Set<string>(GA_ACTIVITY_CATEGORIES);
+// Categories sourced from tracked analytics (hour-precision buckets), named by the caveat line. Membership
+// sets, built once for the module; the array above carries the tab order.
+export const TRACKED_ACTIVITY_CATEGORIES = new Set<string>(["searches", "productViews", "logins"]);
 // The categories salesRepCustomerInsights can rank by count — only their tabs offer Top | Recent.
 export const RANKED_ACTIVITY_CATEGORIES = new Set<string>(["searches", "productViews"]);
 

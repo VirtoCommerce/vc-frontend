@@ -35,7 +35,7 @@ import { useI18n } from "vue-i18n";
 import { useSalesRepActivities } from "../composables/useSalesRepActivities";
 import { useSharedSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
-import { ACTIVITIES_ROUTE_NAME, MY_ACTIVITY_TAKE } from "../constants";
+import { ACTIVITIES_ROUTE_NAME, HUB_ACTIVITY_PERIOD, MY_ACTIVITY_TAKE } from "../constants";
 import ActivityRow from "./activity-row.vue";
 import LayoutWidget from "./layout-widget.vue";
 
@@ -43,7 +43,7 @@ const { t } = useI18n();
 
 // Latest events across ALL assigned accounts, this year only (the window the Activities page opens on).
 // No badges, so no counts are selected: the widget waits only for its own rows.
-const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
+const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter(HUB_ACTIVITY_PERIOD);
 const { items, loading, error, analyticsUnavailable } = useSalesRepActivities({
   take: MY_ACTIVITY_TAKE,
   periodFrom,

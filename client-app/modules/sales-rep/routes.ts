@@ -24,7 +24,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import type { NavigationGuard, RouteLocationNormalizedLoaded, RouteRecordRaw } from "vue-router";
+import type { LocationQuery, NavigationGuard, RouteLocationNormalizedLoaded, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
@@ -111,6 +111,12 @@ export const documentsRoute: RouteRecordRaw = {
   },
 };
 
+// The page and the navigation read the narrowing alike: one non-empty value, anything else is the rep's own feed.
+function getActivityOrganizationId(query: LocationQuery): string | undefined {
+  const { organizationId } = query;
+  return typeof organizationId === "string" && organizationId ? organizationId : undefined;
+}
+
 // All-activity feed (VCST-5337) -> /company/activities; ?organizationId= narrows to one customer.
 export const activitiesRoute: RouteRecordRaw = {
   path: ACTIVITIES_ROUTE_SEGMENT,
@@ -118,15 +124,9 @@ export const activitiesRoute: RouteRecordRaw = {
   component: ActivitiesPage,
   meta: repRouteMeta,
   // The optional narrowing arrives as a query param; unknown/foreign orgs null server-side.
-  props: (route) => ({
-    organizationId: typeof route.query.organizationId === "string" ? route.query.organizationId : undefined,
-  }),
+  props: (route) => ({ organizationId: getActivityOrganizationId(route.query) }),
   // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
-  beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next)) {
-      next();
-    }
-  },
+  beforeEnter: guardRepRoute,
 };
 
 // Tasks (VCST-5732) -> /company/tasks. Gated on vc-module-task-management being installed rather than on a
@@ -185,7 +185,7 @@ export const allCustomerOrdersRoute: RouteRecordRaw = {
 // One route, two pages: the rep's own "my activity", and one customer's activity (?organizationId=), which
 // belongs to that customer.
 export function isCustomerScopedActivity(route: RouteLocationNormalizedLoaded): boolean {
-  return route.name === ACTIVITIES_ROUTE_NAME && Boolean(route.query.organizationId);
+  return route.name === ACTIVITIES_ROUTE_NAME && Boolean(getActivityOrganizationId(route.query));
 }
 
 // The pages of "My customers": the list, a profile and that customer's activity — sibling route records, so

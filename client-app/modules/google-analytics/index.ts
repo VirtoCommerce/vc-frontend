@@ -42,9 +42,11 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
 
   const usesDataLayerVariables = Boolean(gtmContainerId);
 
-  // Before GTM's `gtm.js` entry and the `config` call below: the data layer is processed in order, so the
-  // first page_view sees only what was pushed ahead of it — and GA never backfills an untagged event.
-  applyUserProperties(usesDataLayerVariables);
+  // Immediate, so the first application lands before GTM's `gtm.js` entry and the `config` call below: the data
+  // layer is processed in order, so the first page_view sees only what was pushed ahead of it — and GA never
+  // backfills an untagged event. Watched after that: besides full navigations, `setUser` replaces the user in
+  // place when another tab signs in, and a one-shot read would keep tagging later events with the previous identity.
+  watch(userPropertiesKey, () => applyUserProperties(usesDataLayerVariables), { immediate: true });
 
   // Initialize GTM if GTMContainerId is provided (loaded before GA4)
   if (gtmContainerId) {
@@ -53,10 +55,6 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     // Inject GTM head script
     useScriptTag(`https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`);
   }
-
-  // Not redundant: besides full navigations, `setUser` replaces the user in place when another tab signs in,
-  // and a one-shot read would keep tagging later events with the previous identity.
-  watch(userPropertiesKey, () => applyUserProperties(usesDataLayerVariables));
 
   // Register analytics event tracker (works for both GTM-only and GA4)
   const { addTracker } = useAnalytics();

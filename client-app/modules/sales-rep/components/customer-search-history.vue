@@ -76,19 +76,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
-import { INSIGHTS_DEFAULT_ROWS, INSIGHTS_SORT_BY_COUNT, INSIGHTS_SORT_BY_DATE } from "../constants";
+import {
+  HUB_ACTIVITY_PERIOD,
+  INSIGHTS_DEFAULT_ROWS,
+  INSIGHTS_SORT_BY_COUNT,
+  INSIGHTS_SORT_BY_DATE,
+} from "../constants";
 import { searchResultsRoute } from "../utils";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {
   organizationId: string;
-  // False while hidden; the panel subscribes on its first show (absent means visible).
-  active?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -102,20 +105,8 @@ const sortChipRules = computed<SalesRepRuleType[]>(() => [
 ]);
 const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_DATE);
 
-// Stays subscribed once shown: stopping on hide is what made a revisit refire its query.
-const visited = ref(false);
-watch(
-  () => props.active,
-  (active) => {
-    if (active !== false) {
-      visited.value = true;
-    }
-  },
-  { immediate: true },
-);
-
 // This year, like the hub's other activity surfaces; the label and the empty text above name it.
-const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
+const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter(HUB_ACTIVITY_PERIOD);
 
 const { items, unavailable, loading, error } = useSalesRepSearchHistory({
   organizationId: () => props.organizationId,
@@ -123,7 +114,6 @@ const { items, unavailable, loading, error } = useSalesRepSearchHistory({
   periodFrom,
   periodTo,
   take: INSIGHTS_DEFAULT_ROWS,
-  enabled: visited,
 });
 
 const failed = computed(() => Boolean(error.value));

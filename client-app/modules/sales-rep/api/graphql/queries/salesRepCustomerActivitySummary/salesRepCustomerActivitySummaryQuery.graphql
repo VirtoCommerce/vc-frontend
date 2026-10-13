@@ -21,7 +21,6 @@ query SalesRepCustomerActivitySummary(
       code
       productId
       name
-      imageUrl
     }
     lastViewedDate
   }

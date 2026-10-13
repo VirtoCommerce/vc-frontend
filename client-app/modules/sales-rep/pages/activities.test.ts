@@ -72,6 +72,7 @@ type ActivityOptionsType = {
   withCategoryCounts?: boolean;
   periodFrom?: Ref<string | undefined> | (() => string | undefined);
   enabled?: () => boolean;
+  keepPreviousResult?: boolean;
 };
 
 const activityCalls = vi.hoisted(() => ({ options: [] as ActivityOptionsType[] }));
@@ -466,7 +467,7 @@ describe("Activities page", () => {
   });
 
   // A refetch of the same counts holds the last-known figures instead of blanking every badge; only a first load,
-  // or a switch to another customer or period (below), hides them. Tabs and pages never refetch the counts.
+  // or a switch to another customer or period (below), leaves none. Tabs and pages never refetch the counts.
   it("holds the last-known counts on the tabs while a refetch runs", async () => {
     counts.categoryCounts.value = [{ category: "orders", count: 7 }];
     counts.totalCount.value = 7;
@@ -605,46 +606,14 @@ describe("Activities page", () => {
     expect(toValue(rows?.enabled)).toBe(true); // out of Top mode
   });
 
-  // keepPreviousResult held the previous customer's counts under the new heading until the request for
-  // the new one answered.
-  it("withholds the previous customer's counts until the new ones land", async () => {
-    counts.categoryCounts.value = [{ category: "orders", count: 7 }];
-    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
-    const ordersLabel = () => (findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label;
+  // QA: a newly pressed period chip, or another customer, showed the previous window's or customer's badges,
+  // held by keepPreviousResult, until the counts for the new ones answered — seconds on a cold analytics read.
+  // The counts request holds nothing across a switch, so the tabs show no figures until the new counts land.
+  it("asks the counts request not to hold the previous customer's or period's figures", () => {
+    createWrapper();
 
-    expect(ordersLabel()).toContain("(7)");
-
-    await wrapper.setProps({ organizationId: "org-2" });
-    expect(ordersLabel()).toBe("sales_rep.activity.tabs.orders");
-
-    counts.loading.value = true;
-    await nextTick();
-    counts.loading.value = false;
-    await nextTick();
-
-    expect(ordersLabel()).toContain("(7)");
-  });
-
-  // QA: a newly pressed period chip showed the previous window's badges, held by keepPreviousResult, until the
-  // counts for the new window answered — seconds on a cold analytics read.
-  it("withholds the previous period's counts until the new ones land", async () => {
-    counts.categoryCounts.value = [{ category: "orders", count: 7 }];
-    const wrapper = createWrapper();
-    const ordersLabel = () => (findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label;
-
-    expect(ordersLabel()).toContain("(7)");
-
-    findChips(wrapper)[1].vm.$emit("update:modelValue", "month");
-    await nextTick();
-    expect(ordersLabel()).toBe("sales_rep.activity.tabs.orders");
-    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all");
-
-    counts.loading.value = true;
-    await nextTick();
-    counts.loading.value = false;
-    await nextTick();
-
-    expect(ordersLabel()).toContain("(7)");
+    expect(activityCalls.options.find((options) => options.take === 0)?.keepPreviousResult).toBe(false);
+    expect(activityCalls.options.find((options) => options.take !== 0)?.keepPreviousResult).toBeUndefined();
   });
 
   // In Top mode the ranked list replaces the feed, so the feed's GA-backed request has nobody to answer.

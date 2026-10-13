@@ -48,7 +48,7 @@ function summaryFixture(
     lastSearchTerm: "gloves",
     // A year apart, and mid-day UTC so no timezone moves either into another year.
     lastSearchedDate: "2025-11-03T14:00:00Z",
-    lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "" },
+    lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves" },
     lastViewedDate: "2024-10-02T14:00:00Z",
     isAnalyticsAvailable: true,
     ...overrides,
@@ -171,7 +171,7 @@ describe("CustomerActivity summary states", () => {
   // An unresolvable product code still identifies the product by its code alone.
   it("renders the bare code, unlinked, when the product could not be resolved", () => {
     state.summary.value = summaryFixture({
-      lastViewedProduct: { code: "GONE-1", productId: "", name: "", imageUrl: "" },
+      lastViewedProduct: { code: "GONE-1", productId: "", name: "" },
     });
 
     const wrapper = createWrapper();

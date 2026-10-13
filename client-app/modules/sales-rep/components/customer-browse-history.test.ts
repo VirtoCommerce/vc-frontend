@@ -1,6 +1,5 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import CustomerBrowseHistory from "./customer-browse-history.vue";
 
@@ -126,17 +125,5 @@ describe("CustomerBrowseHistory states", () => {
     });
     expect(unresolved.find("a").exists()).toBe(false);
     expect(unresolved.text()).toContain("Mystery");
-  });
-
-  // Same contract as the searches panel: wait while hidden, then stay subscribed once shown.
-  it("queries from first show and stays subscribed after", async () => {
-    const wrapper = createWrapper({ props: { organizationId: "org-1", active: false } });
-    expect(toValue(browseOptions.last?.enabled)).toBe(false);
-
-    await wrapper.setProps({ active: true });
-    expect(toValue(browseOptions.last?.enabled)).toBe(true);
-
-    await wrapper.setProps({ active: false });
-    expect(toValue(browseOptions.last?.enabled)).toBe(true);
   });
 });
