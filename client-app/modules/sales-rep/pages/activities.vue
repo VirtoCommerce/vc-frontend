@@ -93,15 +93,18 @@
                 <!-- Only a row resolved to a real product links; an unresolved one stays plain text. -->
                 <VcLink
                   v-if="item.isResolved"
-                  class="activities__top-link"
+                  class="activities__top-link activities__top-product"
                   :to="getProductRoute(item.productId)"
+                  :title="item.name || item.sku"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {{ item.name || item.sku }}
                 </VcLink>
 
-                <span v-else class="activities__top-name">{{ item.name || item.sku }}</span>
+                <span v-else class="activities__top-name activities__top-product" :title="item.name || item.sku">
+                  {{ item.name || item.sku }}
+                </span>
 
                 <span class="activities__top-count">
                   {{ t("sales_rep.customer_insights.browse_history.views", item.viewCount) }}
@@ -518,6 +521,11 @@ const breadcrumbs = useBreadcrumbs(() => {
 
   &__top-name {
     @apply min-w-0 text-sm font-medium [word-break:break-word];
+  }
+
+  // Two lines at most; the full name stays in the title.
+  &__top-product {
+    @apply line-clamp-2;
   }
 
   &__top-count {

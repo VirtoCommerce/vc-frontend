@@ -88,7 +88,12 @@
                 </dd>
               </div>
 
-              <div class="customer-activity__row">
+              <!-- A product goes under its label: beside it, a long name got a ~150 px column and ran to 8 lines
+                   (QA). The dash stays in line with the other rows' values. -->
+              <div
+                class="customer-activity__row"
+                :class="{ 'customer-activity__row--stacked': summary.lastViewedProduct }"
+              >
                 <dt class="customer-activity__label">
                   <VcIcon class="customer-activity__icon" name="eye" :size="15" />
                   {{ t("sales_rep.activity.customer.last_viewed_product") }}
@@ -99,15 +104,16 @@
                   <template v-if="summary.lastViewedProduct">
                     <VcLink
                       v-if="productRoute"
-                      class="customer-activity__link"
+                      class="customer-activity__link customer-activity__product"
                       :to="productRoute"
+                      :title="productLabel"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       {{ productLabel }}
                     </VcLink>
 
-                    <template v-else>{{ productLabel }}</template>
+                    <span v-else class="customer-activity__product" :title="productLabel">{{ productLabel }}</span>
                   </template>
 
                   <template v-else>—</template>
@@ -237,6 +243,10 @@ const productLabel = computed(() => {
 
   &__row {
     @apply flex items-baseline justify-between gap-4 border-b border-neutral-100 py-3 last:border-b-0;
+
+    &--stacked {
+      @apply flex-col items-stretch gap-1;
+    }
   }
 
   &__label {
@@ -251,8 +261,17 @@ const productLabel = computed(() => {
     @apply min-w-0 text-end text-sm font-medium text-neutral-900 [word-break:break-word];
   }
 
+  &__row--stacked &__value {
+    @apply text-start;
+  }
+
   &__link {
     @apply text-[--link-color] hover:underline;
+  }
+
+  // Two lines at most; the full name stays in the title.
+  &__product {
+    @apply line-clamp-2;
   }
 
   // Under the value, so a long product name keeps the whole first line.

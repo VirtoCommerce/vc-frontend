@@ -61,6 +61,7 @@
                 <VcLink
                   v-if="item.isResolved"
                   :to="getProductRoute(item.productId)"
+                  :title="item.name"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="customer-browse-history__name"
@@ -68,7 +69,9 @@
                   {{ item.name }}
                 </VcLink>
 
-                <span v-else class="customer-browse-history__name">{{ item.name || item.sku }}</span>
+                <span v-else class="customer-browse-history__name" :title="item.name || item.sku">
+                  {{ item.name || item.sku }}
+                </span>
 
                 <span v-if="item.sku && item.name" class="customer-browse-history__sku">{{ item.sku }}</span>
 
@@ -190,8 +193,9 @@ const caveat = useInsightsCaveat(dataAsOf);
     @apply flex min-w-0 flex-col;
   }
 
+  // Two lines at most; the full name stays in the title.
   &__name {
-    @apply text-sm font-medium [word-break:break-word];
+    @apply line-clamp-2 text-sm font-medium [word-break:break-word];
   }
 
   &__sku {

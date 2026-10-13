@@ -53,15 +53,18 @@
 
           <VcLink
             v-if="productRoute"
-            class="activity-row__link"
+            class="activity-row__link activity-row__product"
             :to="productRoute"
+            :title="productLabel"
             target="_blank"
             rel="noopener noreferrer"
           >
             {{ productLabel }}
           </VcLink>
 
-          <span v-else class="activity-row__emphasis">{{ productLabel }}</span>
+          <span v-else class="activity-row__emphasis activity-row__product" :title="productLabel">
+            {{ productLabel }}
+          </span>
         </template>
 
         <template v-else-if="item.type === 'login'">
@@ -165,6 +168,11 @@ const timeLabel = computed(() => {
   &__emphasis,
   &__total {
     @apply font-medium;
+  }
+
+  // Two lines at most; the full name stays in the title.
+  &__product {
+    @apply line-clamp-2 min-w-0;
   }
 
   &__count {

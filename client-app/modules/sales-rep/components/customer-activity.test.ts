@@ -181,6 +181,15 @@ describe("CustomerActivity summary states", () => {
     expect(productRow.findComponent({ name: "VcLinkStub" }).exists()).toBe(false);
   });
 
+  // The label is clamped to two lines, so the whole of it stays in the title.
+  it("keeps the whole product label in the title", () => {
+    state.summary.value = summaryFixture();
+
+    const productRow = createWrapper().findAll(".customer-activity__row")[4];
+
+    expect(productRow.findComponent({ name: "VcLinkStub" }).attributes("title")).toBe("SKU-1 · Gloves");
+  });
+
   // Lifetime figures, so a "last" fact may be years old — undated, "last viewed X" beside an empty
   // this-year tab would read as a contradiction.
   it("dates the last search and the last viewed product", () => {
