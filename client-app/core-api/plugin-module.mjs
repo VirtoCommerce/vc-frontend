@@ -77,6 +77,16 @@ function stripXmlComments(xml) {
   return kept;
 }
 
+function checkLockfile(appDir) {
+  const lockfile = readText(join(appDir, "yarn.lock"));
+  const install = `cd ${STOREFRONT_APP_DIR} && yarn install, then commit yarn.lock`;
+  if (lockfile === undefined) {
+    return fail("yarn.lock is missing", install);
+  }
+  // The scaffold writes it empty; the module build installs with --immutable, which refuses that.
+  return lockfile.includes("__metadata:") ? pass("yarn.lock is present") : fail("yarn.lock is empty", install);
+}
+
 function readText(path) {
   return existsSync(path) ? readFileSync(path, "utf8") : undefined;
 }
@@ -230,9 +240,7 @@ function checkStorefrontApp(webDir) {
     pkg.packageManager?.startsWith("yarn@")
       ? pass(`packageManager ${pkg.packageManager.split("+")[0]}`)
       : fail("package.json has no yarn packageManager", "A runner's global yarn 1 cannot install this project."),
-    existsSync(join(appDir, "yarn.lock"))
-      ? pass("yarn.lock is present")
-      : fail("yarn.lock is missing", `cd ${STOREFRONT_APP_DIR} && yarn install, then commit yarn.lock`),
+    checkLockfile(appDir),
   ];
 
   const viteConfig = readText(join(appDir, "vite.config.ts")) ?? "";

@@ -66,7 +66,7 @@ function createModule(): { root: string; webDir: string; write: (path: string, c
       },
     }),
   );
-  write("StorefrontApp/yarn.lock", "");
+  write("StorefrontApp/yarn.lock", "__metadata:\n  version: 10\n");
   write(
     "StorefrontApp/vite.config.ts",
     `federation(createRemoteFederationOptions({ name: "foo", requiredHostVersion: "^${PIN}" }));
@@ -167,6 +167,17 @@ describe("checkModuleFiles", () => {
     expect(failures(checkModuleFiles(webDir))).toEqual([
       expect.objectContaining({ fix: expect.stringContaining("/src/Foo.Web/plugins/") }),
     ]);
+  });
+
+  it("fails a missing yarn.lock and the empty one the scaffold writes", () => {
+    const { webDir, write } = createModule();
+    write("StorefrontApp/yarn.lock", "");
+    expect(failures(checkModuleFiles(webDir))).toEqual([
+      expect.objectContaining({ message: "yarn.lock is empty", fix: expect.stringContaining("yarn install") }),
+    ]);
+
+    rmSync(join(webDir, "StorefrontApp", "yarn.lock"));
+    expect(failures(checkModuleFiles(webDir))).toEqual([expect.objectContaining({ message: "yarn.lock is missing" })]);
   });
 
   it("fails a local facade link left in package.json", () => {
