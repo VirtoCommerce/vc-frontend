@@ -119,7 +119,7 @@ What a declaration buys:
 5. **`blocksBoot: true`:** the first render waits for this plugin. Use it only when something must exist before the
    first paint.
 
-Full syntax (conditions, slot contexts, examples): [`HOWTO.md` → Declaring contributions](./HOWTO.md#declaring-contributions).
+Full syntax (conditions, slot contexts, examples): [`declarations.md`](./declarations.md).
 
 ## 5. What happens at startup
 
