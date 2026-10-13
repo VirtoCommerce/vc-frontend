@@ -21,6 +21,7 @@ export { VcWidget } from "@/ui-kit/components";
 export {
   VcAlert,
   VcButton,
+  VcCalendar,
   VcChip,
   VcDialog,
   VcDialogContent,
@@ -55,6 +56,7 @@ export {
 } from "@/ui-kit/components/atoms";
 export {
   VcDatePicker,
+  VcDateRangePicker,
   VcModal,
   VcPagination,
   VcTable,
@@ -81,6 +83,33 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
 export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+// Declared contributions (`@vc-frontend/core/manifest`).
+export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
+export { usePluginsStatus } from "@/core/federation/contributions/status";
+export type { IPluginStatusType, PluginStateType } from "@/core/federation/contributions/status";
+export type {
+  ComparableConditionType,
+  ConditionNodeType,
+  ConditionScalarType,
+  ConditionType,
+  FieldBuilderType,
+  GlobalConditionType,
+  HostRouteNameType,
+  IAccountMenuContributionType,
+  IHeaderMenuContributionType,
+  IMenuLinkContributionType,
+  IPluginContributionsType,
+  IPluginManifestConfigType,
+  IRouteContributionType,
+  ISlotContributionType,
+  MenuContributionType,
+  MenuDeclarationType,
+  MenuLinkDeclarationType,
+  RouteDeclarationType,
+  SlotConditionType,
+  SlotDeclarationType,
+  SlotPolicyType,
+} from "@/core/federation/contributions/types";
 
 // GraphQL / Apollo — same client, cache and auth link as the host.
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
@@ -152,16 +181,26 @@ export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
 export { useFetch } from "@/core/api/common/composables/useFetch";
 export { downloadFile } from "@/shared/files/utils";
 export { getFileSize } from "@/ui-kit/utilities/file-size";
+// The date fields' own display format, so a plugin echoing a picked date shows it the way the field did.
+export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities/date";
+// The host's breakpoint scale, for a plugin that switches layout in script (`useBreakpoints(BREAKPOINTS)`).
+export { BREAKPOINTS } from "@/ui-kit/constants/tailwind";
 export { ContentType } from "@/core/enums/content-type.enum";
 
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
 export type { ILanguage } from "@/core/types";
 export type { ExtendedMenuLinkType, MenuType } from "@/core/types";
+// What a plugin template reads as `$cfg` / `$context` / `$permissions`: the host sets them as global
+// properties of the app instance the plugin renders in.
+export type { IThemeConfigSettings, IThemeContext } from "@/core/types";
+export { PlatformPermissions, XApiPermissions } from "@/core/enums";
 // Already load-bearing in the contract: useOrderView, OrderLineItems and OrderSummary all
 // take one, and rollup names it only internally — so a plugin could pass an order but not
 // declare the variable it passed.
 export type { CustomerOrderType } from "@/core/api/graphql/types";
+// Already reachable through the list-sharing types; exported so a plugin can name it.
+export type { SharingTargetType } from "@/core/api/graphql/types";
 
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */

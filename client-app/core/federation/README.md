@@ -73,13 +73,13 @@ That's the whole operator surface. Everything below is _why_ and _how_.
 │   app-runner.ts ──▶ startFederatedModules()  (bootstrap.ts)           │
 │                          │                                            │
 │                          ▼                                            │
-│                     initFederatedModules()  (index.ts)                │
+│   prepareFederatedModules() ─▶ loadPreparedModules()  (index.ts)      │
 │                          │                                            │
 │         ┌────────────────┼────────────────┐                          │
 │         ▼                ▼                 ▼                          │
-│   resolveRemotes()  version gate      loadRemote()                    │
-│   (platform list or  (isCompatible)   + plugin.init()                 │
-│    the env override)                                                  │
+│   resolveRemotes()  declarations      version gate ─▶ loadRemote()    │
+│   (platform list or  (when, routes,   (isCompatible)  + plugin.init() │
+│    the env override)  menu, slots)                                    │
 │                                                                       │
 │   exposes the shared facade  ▶  @vc-frontend/core  (live instance)    │
 └───────────────────────────────────────────────┬───────────────────────┘
@@ -114,7 +114,7 @@ build can override the host's own on host markup if the presets have drifted. Th
 and scoped as VCST-5760: native cascade layers, `plugin` between the host's component styles and
 the host's utilities, plus a `plugin-overrides` layer for deliberate overrides. Until it lands,
 prefer `<style scoped>` for anything you would be unhappy to see applied outside your own markup.
-See `specs/2026-08-21-plugin-css-cascade-layers.md`.
+See [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
 
 ---
 
@@ -151,6 +151,8 @@ host. No second Vue, no second router, no duplicate Apollo cache.
   theme context, so it renders inside the host and nowhere else); and `uiKit`, the plugin that
   registers every `Vc*` globally (all `Vc*` are already registered inside the host)
 - Extension points: `useExtensionRegistry`, `EXTENSION_NAMES`
+- Declared contributions: `usePluginsStatus` and the declaration types (`IPluginContributionsType`,
+  `ConditionType`, `SlotIdType`, `SlotContextMapType`, …); the builders live in `/manifest`
 - Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`,
   `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT`
 - Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
@@ -170,7 +172,7 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Meta: `CORE_VERSION`, and the types `I18n`, `ILanguage`, `LocaleLoaderType`, `MenuType`,
   `ExtendedMenuLinkType`, `IWishlistSharingScopeControlsType`,
   `WishlistSharingScopeSavedContextType`
-- Separate subpaths: `@vc-frontend/core/federation`, `/tailwind-preset`, `/testing`, `/codegen`
+- Separate subpaths: `@vc-frontend/core/federation`, `/manifest`, `/tailwind-preset`, `/testing`, `/codegen`
 
 > **Rule of thumb:** keep the facade **small and additive**. The level depends on the
 > release line: on 0.x a new export ⇒ **patch** and removing/renaming ⇒ **minor**; from
@@ -234,16 +236,17 @@ that skew — it makes it loud and isolated instead of silently corrupting.
 app-runner.ts
   │  getStorePlugins(domain)                  // issued early, alongside the other boot queries
   │  … other boot work …
-  │  const ready = startFederatedModules({ fetchPlugins, hasPermission });
-  │  await ready;                             // BEFORE app.use(router)
+  │  const ready = startFederatedModules({ fetchPlugins, hasPermission, conditionContext });
+  │  await ready;                             // BEFORE app.use(router) — see "What boot waits for"
   ▼
 startFederatedModules()            bootstrap.ts
   │  if (!isFederationEnabled()) return;   ← module_federation_enabled: false ⇒ instant no-op
-  │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
+  │  fetchPlugins()                         ← the platform's list, an ordinary boot request awaited
+  │                                           with no budget; failing ⇒ no plugins
+  │  dynamic import("./index")              ← in parallel; keeps MF runtime out of non-MF builds
+  │  BOOT_BACKSTOP_MS starts                ← once the list is in
   ▼
-initFederatedModules()             index.ts
-  0. fetchPlugins()                the platform's list, on its own 2s budget (bootstrap.ts).
-                                   Slow or failing ⇒ no plugins, never a stalled boot
+prepareFederatedModules()          index.ts — phase A, no plugin code runs
   1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
                                    (empty ⇒ done; a name that is not /^[A-Za-z0-9][\w.-]*$/,
                                    a non-string / non-https / non-".json" env entry, a
@@ -252,22 +255,63 @@ initFederatedModules()             index.ts
   1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
                                    before any fetch — the platform serves one list to everyone.
                                    A UX/latency filter, not a boundary (see Security model)
-  2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
+  1b. declaration                  inline in the descriptor's `contributions`, or for an env remote
+                                   `contributions` in the optional plugin.json beside its manifest
+                                   (manifest budget, same origin rule). Unparseable or an unknown format
+                                   ⇒ SKIPPED
+  1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
+                                   of the plugin is ever fetched
+  1d. applyContributions()         placeholder routes, menu entries, slot declarations. An entry
+                                   whose route, parent or menu id is taken is skipped alone; one
+                                   the router rejects, or a malformed one ⇒ the plugin is SKIPPED
+                                   and what it had declared is withdrawn
+  ▼
+loadPreparedModules()              index.ts — phase B, per plugin, concurrently
+  2. isCompatible(remote)          fetch manifest JSON (its run's manifest budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes(compatible)   no force: a known name is already a no-op in the runtime
-  3a. installRouteGuard()          wraps addRoute/removeRoute for the whole phase below
+  3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op.
+                                   The runtime is served the manifest step 2 read, not a second fetch
+  3a. installRouteGuard()          wraps addRoute/removeRoute while ANY plugin is still running;
+                                   a declared name is its own plugin's to replace, from init()'s
+                                   synchronous part only; a host name is not
   4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
-                                   has one (3s budget each); a module without init() still
+                                   has one (its run's load budget each); a module without init() still
                                    counts as loaded
-  5. Promise.allSettled            one bad plugin cannot abort the others
+  5. settle                        status → loaded / failed / skipped; unclaimed placeholders and
+                                   dead declared menu entries are withdrawn (all of them on failure)
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
 
+Evaluation order, end to end: `permission` (the platform descriptor) → plugin-level `when` →
+manifest → CONTRACT GATE → load → SHARED-DEPENDENCY GATE → `init()`. Three chances to say no
+before a byte of plugin code is fetched.
+
+### What boot waits for
+
+- **Phase A, always**: the plugin list, which carries each plugin's declaration. Placeholders, declared
+  menu entries and reserved slots must exist before the router resolves the first URL.
+- **Phase B, only for plugins that set `blocksBoot`**: boot waits for their `init()`, bounded by
+  `BOOT_BACKSTOP_MS` — which stays for that reason alone.
+- **Never for any other plugin's code**, declared or not. A declared route's placeholder renders a
+  loader inside the parent's layout and guards and becomes the plugin's page when it settles. Past
+  `PLACEHOLDER_SLOW_NOTICE_MS` it says the page is slow and offers a reload while it keeps waiting; a
+  failed plugin leaves that reload offer in place, a skipped one the host's 404. An undeclared route resolves to the catch-all first and is
+  followed once it appears (below). Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
+  of ~3.3s, and the page arrives at the same URL.
+
+After every plugin settled, a URL that landed on the catch-all is resolved again and followed if a
+late route now matches it — the backstop's old "late plugins may register routes after the first
+navigation" hole.
+
+`usePluginsStatus()` (facade) exposes each plugin's `pending` / `loaded` / `failed` / `skipped` and
+the reason, reactively.
+
 In production `Logger` is a no-op for **every** level, `error` included, and
 `startFederatedModules` discards the loader's result and returns `void`. So a plugin that is
-skipped, failed or lost to the backstop produces no production signal at all — the operator's only
+skipped, failed or lost to the backstop produces no production log line — `usePluginsStatus()` is
+the only thing code can ask, and nothing reports it anywhere yet; the operator's only
 symptom is that the feature is absent. Reporting
 outcomes to Application Insights (`trackException` for **failed** — something broke; a
 `trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
@@ -278,15 +322,15 @@ unusable from a loader that runs before the plugin installs).
 
 Three design points worth calling out:
 
-- **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
-  `init()` is registered _before_ the initial navigation resolves — deep links to
-  plugin routes work on first paint. It is also why the budgets below are blank-screen time for
-  the **whole storefront**, not just for a plugin's own page. VCST-5761 removes that wait: a plugin
-  declares its routes in `plugin.json`, the host registers a placeholder and mounts immediately, so
-  only a visitor opening a plugin page waits — and sees a loader instead of a blank page.
+- **Awaited before `app.use(router)` only as far as it has to be** — see "What boot waits for".
+  Only a `blocksBoot` plugin makes the budgets below blank-screen time for the whole storefront.
+  Any other plugin loads alongside the app; one that declared its routes gets placeholders, so
+  only a visitor opening its page waits — on a loader, inside the page's layout.
 - **Started only after every host plugin has installed.** The route guard covers the whole
   load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
-  remove-then-add would be refused. Outside preview mode nothing between costs boot time.
+  remove-then-add would be refused. Outside preview mode nothing between costs boot time. The phase
+  ends when every plugin settled, so with a non-blocking plugin the guard is still on after the app
+  mounted.
 - **Version gate runs before any remote code executes.** We fetch the manifest (plain
   JSON, no execution), read `metaData.requiredHostVersion`, and only `loadRemote` the
   ones this host can satisfy. Missing, unreadable, or unparseable ⇒ treated as
@@ -295,21 +339,27 @@ Three design points worth calling out:
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
   against the previous major. While the contract is pre-1.0 the **minor** carries that role
   instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
-- **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
-  manifest 2s; load and init 3s _each_ — one remote may legally take up to
-  manifest + 2×load ≈ 8s), plus `DISCOVERY_TIMEOUT_MS` (2s) on the plugin-list query in
-  `bootstrap.ts`. Boot awaits this loader, so those budgets are also blank-screen time:
-  a hung remote delays first paint until it is reported `failed`/`skipped` — up to 8s of
-  per-remote budget, 10s counting the discovery leg, and never longer than the backstop below.
-  `bootstrap.ts` adds a
-  12s **backstop** above the budgeted legs (2 + 2 + 3 + 3 = 10s), covering what the budgets
-  do not: the loader chunk's own fetch, and an inner timeout malfunctioning.
-  **The remaining 2s is all the headroom that unbudgeted chunk fetch gets** — a
-  budget-compliant remote behind a slower one can still trip the cap, so the guarantee is
-  "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
+- **Every plugin step is time-budgeted, and the budget follows who waits.** A `blocksBoot`
+  plugin gets two knobs via `prepareFederatedModules(options)`: the manifest budget, and the load
+  budget that bounds load and init _each_ — so one remote may legally take manifest + 2×load,
+  `runBudgetMs`. The plugin list itself has no budget: it is a boot request like the store and page
+  context, started with them and awaited the same way. The values
+  live in those constants (`DEFAULT_MANIFEST_TIMEOUT_MS`, `DEFAULT_LOAD_TIMEOUT_MS`), not here.
+  Every other plugin loads with nobody waiting, so a slow network must not cost it: each of its steps
+  gets only `DEFAULT_DEFERRED_TIMEOUT_MS` (`deferredTimeoutMs`), a cap against a request that never
+  settles rather than a latency budget. Boot awaits this loader for `blocksBoot` plugins, so their
+  budgets are also blank-screen time: a hung remote delays first paint until it is reported
+  `failed`/`skipped` — its run budget, plus for an env remote the
+  `plugin.json` read (manifest budget) — and never longer than the backstop below.
+  `bootstrap.ts` adds a **backstop**, `BOOT_BACKSTOP_MS`, above the sum of those budgeted legs,
+  covering what the budgets do not: the loader chunk's own fetch, and an inner timeout
+  malfunctioning. **What is left above the sum is all the headroom that unbudgeted chunk fetch
+  gets** — a budget-compliant remote behind a slower one can still trip the cap, so the guarantee
+  is "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
   is deliberately left unbudgeted: bounding it is what the backstop is _for_, and a second
   timer would only drop every plugin sooner on a bad connection. Widen the cap, not the
-  promise, if 2s proves tight. Containment
+  promise, if the headroom proves tight; the backstop invariant test in `index.test.ts` holds the
+  sum. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
   `failed`, and any late settlement (success or the real failure cause) is logged as
@@ -395,8 +445,9 @@ hosted remote.
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bootstrap.ts`    | App-runner entry. Switch check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
 | `enabled.ts`      | `isFederationEnabled()`: the theme's `module_federation_enabled`, through `switch.ts` (the predicate `vite.federation.ts` uses too). Shared by `bootstrap.ts` and `app-runner`'s plugin-list query. |
-| `index.ts`        | The loader: resolve+validate remotes → version gate → `registerRemotes` → `loadRemote`/`init` (time-budgeted) → report. Contains the `IFederatedPlugin` contract.               |
+| `index.ts`        | The loader: phase A (resolve+validate remotes → permission → declarations) and phase B (version gate → `registerRemotes` → `loadRemote`/`init`, time-budgeted → report). Contains the `IFederatedPlugin` contract. |
 | `version-gate.ts` | The CONTRACT GATE: fail-closed semver check of `requiredHostVersion` (version or range) against the facade version.                                                             |
+| `contributions/`  | Declared contributions: `declare.ts` applies and withdraws them, `evaluate.ts` decides `when`, `status.ts` backs `usePluginsStatus()`, `plugin-route-placeholder.vue` is the loader a declared route shows. |
 | `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
 
 **Related files outside this folder:**
@@ -406,7 +457,8 @@ hosted remote.
 | `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults). Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
 | `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`; host entry is `remoteEntry-<hash>.js` so a CDN cannot serve a stale one), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
 | `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
-| `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                                                                              |
+| `client-app/core-api/manifest.mjs`   | `definePluginManifest` and the condition builders a plugin's `plugin.config.ts` uses, plus `pluginContributions`, the Vite plugin that writes the declaration into the built `plugin.json`. |
+| `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it — phase A and any `blocksBoot` plugin — before `app.use(router)`.                                                                                                                                       |
 
 ---
 
@@ -453,15 +505,18 @@ decision for the storefront. What the harness enforces today:
   owns, checking every name one call would claim: both `addRoute` overloads and each named entry in
   `children`, since vue-router treats those as root adds too. `removeRoute` is wrapped in the same
   window and refuses a host name, because remove-then-add would otherwise leave the name free by the
-  time the add is checked — a plugin may still remove routes it added itself. One wrapper covers the
+  time the add is checked — a plugin may still remove routes it added itself. A declared placeholder
+  is open only to its own plugin, and only from the synchronous part of that plugin's `init()`, the
+  one span where the call can be attributed. One wrapper covers the
   whole phase, not one per plugin: plugins init concurrently, and a per-plugin save/restore leaks one
   plugin's wrapper onto the host router while the next runs unguarded. The wrapper cannot tell a host
   call from a plugin's, which is why `app-runner` starts the loader only after its own route-mutating
   installs (builder-preview does remove-then-add) — inside the window those would be refused and
   logged against a plugin. It covers takeover, not authorization, and only inside that window — a
   claim made from a continuation after the phase ends is outside it, and the name it is refused under
-  cannot be attributed to a single plugin. The window is not bounded by the backstop either: boot may
-  proceed at the cap with the wrapper still installed, since the loader keeps running detached.
+  cannot be attributed to a single plugin. The window outlasts boot: it closes when every plugin
+  settled, so a non-blocking plugin keeps the wrapper installed after the app mounted, and the
+  backstop does not bound it either.
 - **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
   whatever modules are installed, so a platform administrator with install rights decides which
   plugins the storefront loads; the env override stays build-time, and the theme's
@@ -511,14 +566,15 @@ already read makes validated bytes == executed bytes **and** removes the extra r
   a string guard and the list itself is checked for arrayness, because the projection is a
   hand-written structural type and nothing else guards its shape — a non-string `permission` or
   `entry.type` used to throw out of the loader and lose every plugin instead of skipping one.
-  `initFederatedModules()` never rejects; a failing plugin is
-  logged and reported, others still load. A hung remote is cut off by the time budgets.
+  The loader never rejects; a failing plugin is
+  logged and reported, others still load. A hung remote is cut off by its run's budgets.
 - **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
 - **The `.d.ts` is generated and drift-guarded.** After any facade change, run
   `yarn build:core-types` and commit `client-app/core-api/contract/index.d.ts` (zero `@/`
-  references, checked). `yarn validate` (and therefore CI `yarn build`) runs
-  `validate:core-types`, which regenerates the contract and **fails if the committed
-  file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift.
+  references, checked). `yarn validate:core-types` regenerates the contract and **fails if the
+  committed file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift. It
+  runs in the Core Facade Release workflow, not in `yarn validate` or any PR check, so run it by
+  hand before review (`core-api/README.md`).
 - **`CORE_VERSION` is single-sourced** from `core-api/package.json` and managed by
   the contract build: additive facade changes auto-bump (patch on 0.x, minor from 1.0.0);
   breaking ones require an explicit `yarn bump:core <breaking level>` (minor on 0.x, major

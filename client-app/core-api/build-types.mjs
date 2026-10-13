@@ -12,7 +12,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative as relativePath, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { rollup } from "rollup";
 import dts from "rollup-plugin-dts";
@@ -457,6 +457,45 @@ function localNamesByExport(source) {
   return locals;
 }
 
+/** Value names one top-level statement exports; none for a type-only export or an interface/type alias. */
+function valueNamesOf(statement, fileName) {
+  if (ts.isExportDeclaration(statement)) {
+    if (!statement.exportClause) {
+      fail(`${fileName} has an \`export *\`; its value exports cannot be checked against the contract.`);
+    }
+    if (statement.isTypeOnly || !ts.isNamedExports(statement.exportClause)) {
+      return [];
+    }
+    return statement.exportClause.elements.filter((element) => !element.isTypeOnly).map((e) => e.name.text);
+  }
+  if (!statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
+    return [];
+  }
+  if (ts.isVariableStatement(statement)) {
+    return statement.declarationList.declarations.map((declaration) => declaration.name.getText());
+  }
+  const isType = ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement);
+  return !isType && statement.name ? [statement.name.text] : [];
+}
+
+/** Names `source` exports as values — what a plugin's `import { X }` finds at runtime, or what a contract promises it will. */
+function valueExportsOf(fileName, source) {
+  const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  return new Set(file.statements.flatMap((statement) => valueNamesOf(statement, fileName)));
+}
+
+// Guard: rollup-plugin-dts lists an enum or class re-exported with `export type` among the contract's
+// values, so a plugin type-checks `import { X }` and reads `undefined` at runtime.
+const facadeValues = valueExportsOf(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"));
+const contractValues = valueExportsOf("contract.d.ts", code);
+const typeOnlyValues = [...contractValues].filter((name) => !facadeValues.has(name));
+if (typeOnlyValues.length) {
+  fail(
+    `the contract exports ${typeOnlyValues.join(", ")} as a value, but core-api/index.ts exports it type-only — ` +
+      "a plugin importing it gets undefined at runtime. Drop the `type` modifier from its re-export.",
+  );
+}
+
 const globalComponents = [...uiKitComponentExports()].sort(byCodepoint);
 const localNames = localNamesByExport(code);
 const unrolled = globalComponents.filter((name) => !localNames.has(name));
@@ -520,6 +559,117 @@ code +=
   ].join("\n");
 step(`declared ${Object.keys(GLOBAL_DIRECTIVES).length} global directive(s).`);
 
+// 2a4 ── declare the host's global properties ────────────────────────────────
+// A plugin renders inside the host's app instance, so its templates see everything the host puts on
+// `app.config.globalProperties` — `$cfg` is the only way a plugin reads the theme's settings. Each
+// property is copied from the host's augmentation in client-app/vue.d.ts, its `@/…` names swapped for
+// the contract's local ones, so the two cannot drift.
+step("declaring the host's global properties…");
+
+const HOST_GLOBAL_PROPERTIES_DTS = resolve(REPO_ROOT, "client-app/vue.d.ts");
+const hostGlobalsSource = ts.createSourceFile(
+  HOST_GLOBAL_PROPERTIES_DTS,
+  readFileSync(HOST_GLOBAL_PROPERTIES_DTS, "utf8"),
+  ts.ScriptTarget.Latest,
+  true,
+);
+// vue-i18n declares these on the same interface, and a second declaration of another type is TS2717.
+// Its `$d(value)` / `$d(value, options)` take no ISO string where the host's do; pass a `Date` there.
+const VUE_I18N_PROPERTIES = new Set(["$t", "$d", "$n"]);
+
+/** Imported name → its module specifier. */
+const hostImports = new Map();
+const hostGlobalProperties = [];
+(function collect(node) {
+  if (ts.isImportDeclaration(node)) {
+    for (const element of node.importClause?.namedBindings?.elements ?? []) {
+      hostImports.set(element.name.text, node.moduleSpecifier.text);
+    }
+  }
+  if (ts.isInterfaceDeclaration(node) && node.name.text === "ComponentCustomProperties") {
+    for (const member of node.members) {
+      if (!ts.isPropertySignature(member) || !member.type) {
+        fail(`client-app/vue.d.ts: ComponentCustomProperties member "${member.getText()}" is not a typed property.`);
+      }
+      if (!VUE_I18N_PROPERTIES.has(member.name.text)) {
+        hostGlobalProperties.push(member);
+      }
+    }
+  }
+  ts.forEachChild(node, collect);
+})(hostGlobalsSource);
+if (!hostGlobalProperties.length) {
+  fail("found no ComponentCustomProperties members in client-app/vue.d.ts.");
+}
+
+const propertyLocalName = (name) => {
+  const local = localNames.get(name);
+  if (!local) {
+    fail(`client-app/vue.d.ts types a global property with ${name}, which the facade does not export.`);
+  }
+  return local;
+};
+// A name imported from `@/…` becomes the facade's local name; one from a package becomes `import("pkg").Name`,
+// since a bare name could bind to a facade export of the same name (vue-i18n's `I18n` vs the host's).
+const toContractNames = (context) => {
+  const { factory } = context;
+  const rename = (name, specifier, isTypeOf, typeArguments) => {
+    if (specifier.startsWith("@/")) {
+      const local = factory.createIdentifier(propertyLocalName(name));
+      return isTypeOf ? factory.createTypeQueryNode(local) : factory.createTypeReferenceNode(local, typeArguments);
+    }
+    return factory.createImportTypeNode(
+      factory.createLiteralTypeNode(factory.createStringLiteral(specifier)),
+      undefined,
+      factory.createIdentifier(name),
+      typeArguments,
+      isTypeOf,
+    );
+  };
+  const visit = (node) => {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName) && hostImports.has(node.typeName.text)) {
+      const typeArguments = node.typeArguments?.map((arg) => ts.visitNode(arg, visit));
+      return rename(node.typeName.text, hostImports.get(node.typeName.text), false, typeArguments);
+    }
+    if (ts.isTypeQueryNode(node) && ts.isIdentifier(node.exprName) && hostImports.has(node.exprName.text)) {
+      return rename(node.exprName.text, hostImports.get(node.exprName.text), true);
+    }
+    if (
+      ts.isImportTypeNode(node) &&
+      node.argument.literal.text.startsWith("@/") &&
+      node.qualifier &&
+      ts.isIdentifier(node.qualifier)
+    ) {
+      return rename(node.qualifier.text, node.argument.literal.text, node.isTypeOf, node.typeArguments);
+    }
+    return ts.visitEachChild(node, visit, context);
+  };
+  return (node) => ts.visitNode(node, visit);
+};
+const typePrinter = ts.createPrinter({ removeComments: true });
+const contractPropertyType = (member) => {
+  const [type] = ts.transform(member.type, [toContractNames]).transformed;
+  return typePrinter
+    .printNode(ts.EmitHint.Unspecified, type, hostGlobalsSource)
+    .split("\n")
+    .map((line) => line.trim())
+    .join(" ")
+    .replaceAll("; }", " }");
+};
+code +=
+  "\n" +
+  [
+    "",
+    "// ── global properties the host sets on its app instance ──",
+    'declare module "vue" {',
+    "  export interface ComponentCustomProperties {",
+    ...hostGlobalProperties.map((member) => `    ${member.name.text}: ${contractPropertyType(member)};`),
+    "  }",
+    "}",
+    "",
+  ].join("\n");
+step(`declared ${hostGlobalProperties.length} global properties.`);
+
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(
@@ -553,13 +703,16 @@ if (unlisted.length) {
  * create-plugin installs both, so a scaffolded plugin is unaffected by the split.
  */
 const KNOWN_RANGES = { ...MF_SHARED_RANGES, ...CONTRACT_TYPE_PEERS };
-/** `from "x"`, `require("x")` and the `import("x")` form the .d.mts files use for type-only refs. */
+// `from "x"`, `require("x")` and `import("x")`; `node:` built-ins are not packages.
 const externalsIn = (source) =>
   [
     ...source.matchAll(/from ['"]([^'".][^'"]*)['"]/g),
     ...source.matchAll(/require\(['"]([^'".][^'"]*)['"]\)/g),
     ...source.matchAll(/import\(['"]([^'".][^'"]*)['"]\)/g),
-  ].map((match) => packageNameOf(match[1]));
+  ]
+    .map((match) => match[1])
+    .filter((specifier) => !specifier.startsWith("node:"))
+    .map(packageNameOf);
 
 const requiredPeers = new Set(externals.map(packageNameOf));
 const optionalPeers = new Set();
@@ -678,6 +831,46 @@ step(
         .join("; ")}.`
     : "contract is self-contained (0 unresolved names).",
 );
+
+// 2b2 ── type-check the manifest API against the contract ────
+// A guarantee that stops holding surfaces as an unused `@ts-expect-error` (TS2578).
+step("type-checking the manifest API against the contract…");
+const MANIFEST_CHECK_FILE = resolve(CORE_API_DIR, "contract-checks", "manifest.check.ts");
+const MANIFEST_TYPES_FILE = resolve(CORE_API_DIR, "manifest.d.mts");
+const MANIFEST_GATE_FILE = resolve(CONTRACT_DIR, "__manifest-check.d.ts");
+writeFileSync(MANIFEST_GATE_FILE, contract, "utf8");
+let manifestDiagnostics;
+try {
+  const program = ts.createProgram([MANIFEST_CHECK_FILE], {
+    strict: true,
+    noEmit: true,
+    skipLibCheck: false,
+    target: ts.ScriptTarget.ES2020,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    types: [],
+    paths: {
+      [corePkg.name]: [MANIFEST_GATE_FILE],
+      [`${corePkg.name}/manifest`]: [MANIFEST_TYPES_FILE],
+    },
+  });
+  const checked = new Set([MANIFEST_CHECK_FILE, MANIFEST_TYPES_FILE].map((file) => file.replaceAll("\\", "/")));
+  manifestDiagnostics = ts
+    .getPreEmitDiagnostics(program)
+    .filter((diagnostic) => checked.has(diagnostic.file?.fileName));
+} finally {
+  rmSync(MANIFEST_GATE_FILE, { force: true });
+}
+if (manifestDiagnostics.length) {
+  for (const diagnostic of manifestDiagnostics) {
+    const { line } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, " ");
+    const where = `${relativePath(CORE_API_DIR, diagnostic.file.fileName)}:${line + 1}`;
+    console.error(`  ${where} TS${diagnostic.code}: ${message}`);
+  }
+  fail(`${manifestDiagnostics.length} type error(s) in the manifest API check (above).`);
+}
+step("manifest API types hold (contract-checks/manifest.check.ts).");
 
 // 2b ── tailwind preset snapshot ──────────────────────────────────────────────
 // The host's Tailwind design system for PLUGIN builds (`@vc-frontend/core/tailwind-preset`).

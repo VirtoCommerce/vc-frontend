@@ -1,8 +1,16 @@
-import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
+import { loadRemote, registerPlugins, registerRemotes } from "@module-federation/enhanced/runtime";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { CONTRIBUTIONS_FORMAT } from "@/core-api/manifest-format.mjs";
 import { version as CORE_VERSION } from "@/core-api/package.json";
+import { applyContributions, releaseContributions } from "./contributions/declare";
+import { isGloballyTrue } from "./contributions/evaluate";
+import { PLACEHOLDER_META_KEY } from "./contributions/placeholder";
+import { expirePendingAfter, setPluginStatus } from "./contributions/status";
 import { checkHostCompatibility } from "./version-gate";
+import type { IAppliedContributionsType } from "./contributions/declare";
+import type { IConditionContextType } from "./contributions/evaluate";
+import type { IPluginContributionsType } from "./contributions/types";
 import type { RouteRecordRaw, Router } from "vue-router";
 
 /**
@@ -11,15 +19,13 @@ import type { RouteRecordRaw, Router } from "vue-router";
  * call `init()`. Plugins bind to the host's live services via the shared facade.
  * - Version safety: an incompatible remote is skipped before any of its code runs.
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
- * - Every network step is time-budgeted: the app-runner awaits this loader before
- *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
- *   within its budget rather than hanging boot forever. There are TWO budget knobs
- *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
- *   so one remote may legally take up to manifest + 2×load (defaults: 2s + 3s + 3s =
- *   8s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum PLUS its own
- *   DISCOVERY_TIMEOUT_MS — a true backstop that fires only when these budgets malfunction
- *   or the loader chunk fetch itself hangs; keep it > discovery + manifest + 2×load when
- *   changing the defaults here.
+ * - Every plugin step is time-budgeted, and the budget follows who waits. Boot waits only for a
+ *   `blocksBoot` plugin, so only those get the tight knobs (manifestTimeoutMs, loadTimeoutMs — the
+ *   latter bounds load and init separately; one such remote may take up to `runBudgetMs`).
+ *   bootstrap.ts holds a BOOT_BACKSTOP_MS above that sum PLUS an env remote's plugin.json read — a
+ *   backstop that fires only when these budgets malfunction or the loader chunk fetch itself hangs. The backstop invariant test holds the sum. Every other plugin
+ *   loads after boot with nobody waiting, so a slow network must not cost it: its steps get only
+ *   deferredTimeoutMs, a cap against a request that never settles.
  * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
  * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
  * overridden by what the backend serves. The harness ships no built-in remote.
@@ -46,6 +52,10 @@ interface IRemoteDescriptor {
   allowCrossOrigin?: boolean;
   /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
   version?: string;
+  /** Env remotes only: the built `plugin.json` beside the manifest, whose `contributions` are optional. */
+  pluginJsonUrl?: string;
+  /** Platform remotes only: served inline by `store.plugins`. */
+  inlineContributions?: string;
 }
 
 /**
@@ -61,6 +71,8 @@ export interface IPlatformPlugin {
   entry?: { type?: string | null; path?: string | null; hash?: string | null } | null;
   contentFiles?: readonly ({ type?: string | null; path?: string | null; hash?: string | null } | null)[] | null;
   remote?: { name?: string | null; exposed?: string | null } | null;
+  /** JSON text. */
+  contributions?: string | null;
 }
 
 /** Subset of the MF manifest the host reads before executing plugin code. */
@@ -88,19 +100,39 @@ export interface IFederatedLoaderOptions {
    * No callback + declared permission => skipped.
    */
   hasPermission?: (permission: string) => boolean;
-  /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
+  /**
+   * Budget for reading one remote's manifest JSON, and an env remote's plugin.json; exceeded =>
+   * skipped (fail closed). Applies to a `blocksBoot` plugin's manifest; deferred plugins use
+   * deferredTimeoutMs.
+   */
   manifestTimeoutMs?: number;
   /**
-   * Budget for the load phase AND (separately) the init phase of one remote;
-   * exceeded => failed. When raising the defaults, keep bootstrap.ts's
-   * BOOT_BACKSTOP_MS above manifestTimeoutMs + 2×loadTimeoutMs.
+   * Budget for the load phase AND (separately) the init phase of one `blocksBoot` remote;
+   * exceeded => failed. Raising the defaults may need bootstrap.ts's BOOT_BACKSTOP_MS raised too;
+   * the backstop invariant test says when.
    */
   loadTimeoutMs?: number;
+  /**
+   * Cap on each step (manifest, load, init) of a plugin boot does not wait for. Not a latency
+   * budget: it only stops a request that never settles from holding the plugin pending forever.
+   */
+  deferredTimeoutMs?: number;
+  /** Evaluates declared `when` conditions. Without it, settings read as unset and `can` uses `hasPermission`. */
+  conditionContext?: IConditionContextType;
 }
 
 // Exported for the invariant test only (bootstrap's backstop must exceed their sum).
-export const DEFAULT_MANIFEST_TIMEOUT_MS = 2_000;
-export const DEFAULT_LOAD_TIMEOUT_MS = 3_000;
+export const DEFAULT_MANIFEST_TIMEOUT_MS = 5_000;
+export const DEFAULT_LOAD_TIMEOUT_MS = 8_000;
+export const DEFAULT_DEFERRED_TIMEOUT_MS = 30_000;
+
+/** Slack past a pending plugin's run budget before its held boxes are released; the run's own budgets settle it first. */
+export const PENDING_GRACE_MS = 2_000;
+
+/** The longest one remote's run may legally take: its manifest, then load and init, budgeted separately. */
+export function runBudgetMs(manifestTimeoutMs: number, loadTimeoutMs: number): number {
+  return manifestTimeoutMs + 2 * loadTimeoutMs;
+}
 
 /** Distinguishes a budget expiry from the work's own failure (see raceWithLateLogging). */
 class TimeoutError extends Error {}
@@ -180,6 +212,7 @@ const SAFE_REMOTE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 const SCAFFOLD_EXPOSE_KEY = "./plugin";
 const PLATFORM_EXPOSE_KEY = "./Module";
 const MF_MANIFEST_FILE = "mf-manifest.json";
+const PLUGIN_JSON_FILE = "plugin.json";
 const PLATFORM_SCRIPT_ENTRY_TYPE = "script";
 const PLATFORM_STYLE_FILE_TYPE = "style";
 
@@ -235,7 +268,14 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
       resolved.invalidNames.push(name);
       continue;
     }
-    resolved.remotes.push({ name, entry: value, exposed: SCAFFOLD_EXPOSE_KEY, styles: [], allowCrossOrigin: true });
+    resolved.remotes.push({
+      name,
+      entry: value,
+      exposed: SCAFFOLD_EXPOSE_KEY,
+      styles: [],
+      allowCrossOrigin: true,
+      pluginJsonUrl: siblingUrl(value, PLUGIN_JSON_FILE),
+    });
   }
   return resolved;
 }
@@ -271,10 +311,12 @@ function toAbsoluteUrl(path: string): string | undefined {
   }
 }
 
-function toManifestUrl(entryUrl: string): string {
-  const url = new URL(entryUrl);
+/** The file beside `fileUrl`. The query is dropped: it belongs to the other file. */
+function siblingUrl(fileUrl: string, fileName: string): string {
+  const url = new URL(fileUrl);
   const path = url.pathname;
-  url.pathname = path.slice(0, path.lastIndexOf("/") + 1) + MF_MANIFEST_FILE;
+  url.pathname = path.slice(0, path.lastIndexOf("/") + 1) + fileName;
+  url.search = "";
   return url.toString();
 }
 
@@ -295,6 +337,26 @@ function withCacheBuster(url: string, hash?: unknown): string {
   return result.toString();
 }
 
+/**
+ * `true` for a stylesheet, otherwise the kind to report. No kind falls back to the extension, the
+ * way no entry.type falls back to "script": the platform declares the field optional and a dropped
+ * stylesheet is invisible - the plugin loads and renders unstyled with nothing to point at. Blank
+ * counts as no kind; a non-string is a declaration we cannot read, so it stays a drop.
+ */
+function styleKindOf(filePath: string, rawType: unknown): true | string {
+  const isDeclared = rawType != null && !(typeof rawType === "string" && rawType.trim() === "");
+  const isStyle = isDeclared
+    ? asString(rawType)?.trim().toLowerCase() === PLATFORM_STYLE_FILE_TYPE
+    : filePath.toLowerCase().endsWith(".css");
+  if (isStyle) {
+    return true;
+  }
+  if (!isDeclared) {
+    return "(none declared)";
+  }
+  return `"${typeof rawType === "string" ? rawType : JSON.stringify(rawType)}"`;
+}
+
 function collectStyles(plugin: IPlatformPlugin): string[] {
   const styles: string[] = [];
   for (const file of Array.isArray(plugin.contentFiles) ? plugin.contentFiles : []) {
@@ -303,17 +365,8 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
       Logger.error(`[MF] Plugin "${String(plugin?.id)}": ignoring a content file with no usable path`);
       continue;
     }
-    // No kind falls back to the extension, the way no entry.type falls back to "script": the
-    // platform declares the field optional and a dropped stylesheet is invisible - the plugin
-    // loads and renders unstyled with nothing to point at. Blank counts as no kind; a non-string
-    // is a declaration we cannot read, so it stays a drop.
-    const rawType = file?.type;
-    const isDeclared = rawType != null && !(typeof rawType === "string" && rawType.trim() === "");
-    const isStyle = isDeclared
-      ? asString(rawType)?.trim().toLowerCase() === PLATFORM_STYLE_FILE_TYPE
-      : filePath.toLowerCase().endsWith(".css");
-    if (!isStyle) {
-      const kind = isDeclared ? `"${String(rawType)}"` : "(none declared)";
+    const kind = styleKindOf(filePath, file?.type);
+    if (kind !== true) {
       Logger.info(`[MF] Plugin "${String(plugin?.id)}": ignoring content file "${filePath}" of kind ${kind}`);
       continue;
     }
@@ -383,7 +436,7 @@ function toPlatformManifestUrl(path: string, name: string): string | undefined {
     Logger.error(`[MF] Skipping plugin "${name}": entry "${path}" is not same-origin`);
     return undefined;
   }
-  const manifestUrl = toManifestUrl(entryUrl);
+  const manifestUrl = siblingUrl(entryUrl, MF_MANIFEST_FILE);
   if (!/^https?:$/.test(new URL(manifestUrl).protocol)) {
     Logger.error(`[MF] Skipping plugin "${name}": entry "${path}" is not an http(s) URL`);
     return undefined;
@@ -473,6 +526,7 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       permission: asString(plugin?.permission),
       styles: collectStyles(plugin),
       version: asString(plugin?.version),
+      inlineContributions: asString(plugin?.contributions),
     });
   }
   return resolved;
@@ -546,9 +600,15 @@ function installRouteGuard(): () => void {
    * builder-preview plugin does exactly that (plugins/builder-preview/builder-preview.plugin.ts).
    * A name added DURING this phase is not in here, so a plugin may still remove its own routes.
    */
+  const placeholderOwner = (name: unknown): string | undefined => {
+    const owner = router.getRoutes().find((route) => route.name === name)?.meta?.[PLACEHOLDER_META_KEY];
+    return typeof owner === "string" ? owner : undefined;
+  };
+  // A placeholder is its declaring plugin's to replace, and only from that plugin's own init().
   const hostRouteNames = new Set(
     router
       .getRoutes()
+      .filter((route) => route.meta?.[PLACEHOLDER_META_KEY] === undefined)
       .map((route) => route.name)
       .filter((name) => name !== undefined),
   );
@@ -566,9 +626,19 @@ function installRouteGuard(): () => void {
     // argument count: `addRoute(record, undefined)` passes two arguments but the record is first.
     const [first, second] = args;
     const record = typeof first === "string" || typeof first === "symbol" ? second : first;
-    const taken = claimedRouteNames(record).find((claimed) => router.hasRoute(claimed) || hostRouteNames.has(claimed));
+    // An unattributed claim (module scope, or after an await in init) cannot prove it owns a placeholder.
+    const taken = claimedRouteNames(record).find(
+      (claimed) =>
+        hostRouteNames.has(claimed) ||
+        (router.hasRoute(claimed) && (initingPlugin === undefined || placeholderOwner(claimed) !== initingPlugin)),
+    );
     if (taken !== undefined) {
-      Logger.error(`[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`);
+      const owner = placeholderOwner(taken);
+      Logger.error(
+        owner === undefined
+          ? `[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`
+          : `[MF] ${who()} tried to take the route "${String(taken)}" declared by "${owner}" - refused; a declared route must be added synchronously from its own plugin's init()`,
+      );
       return () => {};
     }
     return originalAdd.apply(router, args);
@@ -619,6 +689,75 @@ function isResponseOriginAllowed(remote: IRemoteDescriptor, url: string): boolea
 }
 
 /**
+ * GETs one of a remote's JSON files within `timeoutMs`. Throws on a timeout, a non-2xx status, a body
+ * that is not JSON, or a response served from where the remote's source does not allow.
+ */
+async function fetchRemoteJson(
+  remote: IRemoteDescriptor,
+  url: string,
+  timeoutMs: number,
+  file: string,
+): Promise<unknown> {
+  const read = async (): Promise<unknown> => {
+    const response = await fetch(url, {
+      headers: { accept: "application/json" },
+      // Aborts the actual network request; withTimeout below bounds the whole step
+      // even if a fetch implementation ignores the signal.
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    // The descriptor was checked, the response was not: redirects are followed, so an entry can
+    // still land somewhere its source does not allow. Each source keeps ITS OWN rule — a
+    // platform entry must stay same-origin, an env entry must stay https (or loopback http) —
+    // because demanding same-origin here would kill the env override, whose whole purpose is
+    // cross-origin. A redirect within the source's own rule stays allowed.
+    const servedFrom = asString(response.url);
+    if (servedFrom && !isResponseOriginAllowed(remote, servedFrom)) {
+      throw new Error(`${file} for "${remote.name}" was served from ${servedFrom}, which its source does not allow`);
+    }
+    if (!response.ok) {
+      throw new Error(`${file} HTTP ${response.status}`);
+    }
+    return (await response.json()) as unknown;
+  };
+  return await withTimeout(read(), timeoutMs, `${file} fetch for "${remote.name}"`);
+}
+
+/** Manifests the contract gate has read, by entry URL, until the MF runtime asks for them. */
+const gatedManifests = new Map<string, unknown>();
+let isManifestReuseInstalled = false;
+
+/**
+ * The runtime fetches the manifest again on loadRemote. The platform sets no Cache-Control on it, so
+ * that second request is a full round-trip on the critical path, and it would skip the response-origin
+ * check fetchRemoteJson makes. Serve it the copy the gate already read instead.
+ */
+function installManifestReuse(): void {
+  if (isManifestReuseInstalled) {
+    return;
+  }
+  isManifestReuseInstalled = true;
+  try {
+    registerPlugins([
+      {
+        name: "vc-gated-manifest-reuse",
+        fetch(url: string) {
+          if (!gatedManifests.has(url)) {
+            return undefined;
+          }
+          const manifest = gatedManifests.get(url);
+          gatedManifests.delete(url);
+          return Promise.resolve(
+            new Response(JSON.stringify(manifest), { headers: { "content-type": "application/json" } }),
+          );
+        },
+      },
+    ]);
+  } catch (error) {
+    Logger.warn("[MF] could not install the manifest reuse hook - the runtime will fetch manifests again", error);
+  }
+}
+
+/**
  * CONTRACT GATE (version gate 1 of 2 — see version-gate.ts and the README). Fetches
  * the remote manifest (plain JSON — no code execution) and checks its declared
  * `requiredHostVersion` (semver version or range) against the host's core version.
@@ -628,34 +767,14 @@ function isResponseOriginAllowed(remote: IRemoteDescriptor, url: string): boolea
  */
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {
-    const readManifest = async (): Promise<IRemoteManifest> => {
-      const response = await fetch(remote.entry, {
-        headers: { accept: "application/json" },
-        // Aborts the actual network request; withTimeout below bounds the whole step
-        // even if a fetch implementation ignores the signal.
-        signal: AbortSignal.timeout(manifestTimeoutMs),
-      });
-      // The descriptor was checked, the response was not: redirects are followed, so an entry can
-      // still land somewhere its source does not allow. Each source keeps ITS OWN rule — a
-      // platform entry must stay same-origin, an env entry must stay https (or loopback http) —
-      // because demanding same-origin here would kill the env override, whose whole purpose is
-      // cross-origin. A redirect within the source's own rule stays allowed.
-      const servedFrom = asString(response.url);
-      if (servedFrom && !isResponseOriginAllowed(remote, servedFrom)) {
-        throw new Error(`manifest for "${remote.name}" was served from ${servedFrom}, which its source does not allow`);
-      }
-      if (!response.ok) {
-        throw new Error(`manifest HTTP ${response.status}`);
-      }
-      return (await response.json()) as IRemoteManifest;
-    };
-    const manifest = await withTimeout(readManifest(), manifestTimeoutMs, `manifest fetch for "${remote.name}"`);
+    const manifest = (await fetchRemoteJson(remote, remote.entry, manifestTimeoutMs, "manifest")) as IRemoteManifest;
 
     const compatibility = checkHostCompatibility(CORE_VERSION, manifest.metaData?.requiredHostVersion);
     if (!compatibility.ok) {
       Logger.warn(`[MF] Skipping "${remote.name}": ${compatibility.reason}`);
       return false;
     }
+    gatedManifests.set(remote.entry, manifest);
     return true;
   } catch (error) {
     Logger.error(`[MF] Could not read/validate manifest for "${remote.name}" (${remote.entry})`, error);
@@ -690,24 +809,148 @@ function reportOutcome(result: IFederatedLoadResult, versions?: ReadonlyMap<stri
   );
 }
 
-/**
- * Registers and initializes every configured, compatible federated plugin. Resolves
- * once all have settled and returns the outcome. Never rejects — isolation is total.
- */
-export async function initFederatedModules(options?: IFederatedLoaderOptions): Promise<IFederatedLoadResult> {
-  const manifestTimeoutMs = options?.manifestTimeoutMs ?? DEFAULT_MANIFEST_TIMEOUT_MS;
-  const loadTimeoutMs = options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS;
+type ContributionsReadType = { ok: true; contributions?: IPluginContributionsType } | { ok: false; reason: string };
 
+function toContributions(
+  body: unknown,
+  readOptional: (reason: string) => ContributionsReadType,
+): ContributionsReadType {
+  if (body === null || typeof body !== "object" || Array.isArray(body)) {
+    return readOptional("not a JSON object");
+  }
+  const { format } = body as { format?: unknown };
+  if (format === undefined) {
+    return readOptional("the file carries no `format`");
+  }
+  if (format !== CONTRIBUTIONS_FORMAT) {
+    // Not optional even for an env remote: it declared, in a format this host cannot read.
+    return {
+      ok: false,
+      reason: `its contributions are format ${JSON.stringify(format)}, this host reads ${CONTRIBUTIONS_FORMAT}`,
+    };
+  }
+  return { ok: true, contributions: body as IPluginContributionsType };
+}
+
+function readInlineContributions(json: string): ContributionsReadType {
+  let body: unknown;
+  try {
+    body = JSON.parse(json);
+  } catch {
+    return { ok: false, reason: "its inline contributions are not valid JSON" };
+  }
+  return toContributions(body, (reason) => ({ ok: false, reason: `its inline contributions are unusable: ${reason}` }));
+}
+
+/** An env remote's `plugin.json` is optional: a missing one, or one without `contributions`, declares nothing. */
+async function readContributions(remote: IRemoteDescriptor, timeoutMs: number): Promise<ContributionsReadType> {
+  if (remote.inlineContributions !== undefined) {
+    return readInlineContributions(remote.inlineContributions);
+  }
+  const url = remote.pluginJsonUrl;
+  if (!url) {
+    return { ok: true };
+  }
+  const readOptional = (reason: string): ContributionsReadType => {
+    Logger.info(`[MF] "${remote.name}": no declared contributions (${reason})`);
+    return { ok: true };
+  };
+  try {
+    const body = await fetchRemoteJson(remote, url, timeoutMs, "plugin.json");
+    const contributions = (body as { contributions?: unknown } | null)?.contributions;
+    if (contributions === undefined) {
+      return readOptional("its plugin.json declares none");
+    }
+    return toContributions(contributions, readOptional);
+  } catch (error) {
+    return readOptional(error instanceof Error ? error.message : String(error));
+  }
+}
+
+interface IRunBudgetsType {
+  manifestTimeoutMs: number;
+  loadTimeoutMs: number;
+}
+
+interface IPreparedRemoteType {
+  remote: IRemoteDescriptor;
+  applied?: IAppliedContributionsType;
+  budgets: IRunBudgetsType;
+}
+
+export interface IPreparedFederationType {
+  result: IFederatedLoadResult;
+  versions: ReadonlyMap<string, string>;
+  /** Asked for it with `blocksBoot`; boot waits for their `init()`. */
+  blocking: IPreparedRemoteType[];
+  /** Everything else; boot does not wait for their code. */
+  deferred: IPreparedRemoteType[];
+}
+
+function skip(result: IFederatedLoadResult, name: string, reason: string): void {
+  result.skipped.push(name);
+  setPluginStatus(name, "skipped", reason);
+}
+
+type DeclaredType = { applied?: IAppliedContributionsType } | { skipReason: string };
+
+/** The plugin-level `when`, then the entries. Never throws: one bad declaration costs its own plugin only. */
+function declareContributions(
+  name: string,
+  contributions: IPluginContributionsType | undefined,
+  context: IConditionContextType,
+  router: Router | undefined,
+): DeclaredType {
+  if (!contributions) {
+    return {};
+  }
+  try {
+    if (!isGloballyTrue(contributions.when, context)) {
+      const skipReason = `its declared \`when\` is false (${JSON.stringify(contributions.when)})`;
+      Logger.info(`[MF] Skipping "${name}": ${skipReason}`);
+      return { skipReason };
+    }
+    return { applied: router ? applyContributions(name, contributions, context, router) : undefined };
+  } catch (error) {
+    // Only `format` is checked before this, so a malformed entry or a path the router rejects lands here.
+    Logger.error(`[MF] Skipping "${name}": its contributions could not be applied`, error);
+    const message = error instanceof Error ? error.message : String(error);
+    return { skipReason: `its contributions could not be applied: ${message}` };
+  }
+}
+
+/** Phase A: permission → declarations → plugin-level `when`, before any plugin code. Never rejects. */
+export async function prepareFederatedModules(options?: IFederatedLoaderOptions): Promise<IPreparedFederationType> {
+  const manifestTimeoutMs = options?.manifestTimeoutMs ?? DEFAULT_MANIFEST_TIMEOUT_MS;
+  const blockingBudgets: IRunBudgetsType = {
+    manifestTimeoutMs,
+    loadTimeoutMs: options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS,
+  };
+  const deferredTimeoutMs = options?.deferredTimeoutMs ?? DEFAULT_DEFERRED_TIMEOUT_MS;
+  const deferredBudgets: IRunBudgetsType = { manifestTimeoutMs: deferredTimeoutMs, loadTimeoutMs: deferredTimeoutMs };
   const result: IFederatedLoadResult = { loaded: [], failed: [], skipped: [] };
+  const prepared: IPreparedFederationType = {
+    result,
+    versions: new Map(),
+    blocking: [],
+    deferred: [],
+  };
+
   const { remotes, invalidNames } = resolveRemotes(options?.plugins ?? []);
   // Config-invalid remotes count as skipped so they surface through the same loud
   // summary log as version-gate skips — never a silent drop.
-  result.skipped.push(...invalidNames);
-  const versions = new Map(
+  invalidNames.forEach((name) => skip(result, name, "its descriptor is invalid"));
+  prepared.versions = new Map(
     remotes.filter((remote) => remote.version).map((remote) => [remote.name, remote.version as string]),
   );
 
-  // Before the manifest fetch: a plugin the user may not run should cost no network at all.
+  const context: IConditionContextType = options?.conditionContext ?? {
+    setting: () => undefined,
+    themeSetting: () => undefined,
+    isAuthenticated: false,
+    can: (permission) => options?.hasPermission?.(permission) ?? false,
+  };
+
   const permitted = remotes.filter((remote) => {
     const permission = remote.permission?.trim();
     try {
@@ -715,95 +958,141 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
         return true;
       }
       Logger.info(`[MF] Skipping "${remote.name}": requires permission "${permission}"`);
+      skip(result, remote.name, `requires permission "${permission}"`);
     } catch (error) {
       // Host-supplied callback: one bad evaluation must cost one plugin, not the batch.
       Logger.error(`[MF] Skipping "${remote.name}": the permission check threw`, error);
+      skip(result, remote.name, "the permission check threw");
     }
-    result.skipped.push(remote.name);
     return false;
   });
 
-  if (permitted.length === 0) {
-    if (result.skipped.length > 0) {
-      reportOutcome(result, versions);
-    }
-    return result;
-  }
-
-  // Version-gate everything before registering/executing any remote code.
-  const compatibility = await Promise.all(
-    permitted.map(async (remote) => ({ remote, ok: await isCompatible(remote, manifestTimeoutMs) })),
+  const reads = await Promise.all(
+    permitted.map(async (remote) => ({ remote, read: await readContributions(remote, manifestTimeoutMs) })),
   );
-  const compatible = compatibility.filter((entry) => entry.ok).map((entry) => entry.remote);
-  compatibility.filter((entry) => !entry.ok).forEach((entry) => result.skipped.push(entry.remote.name));
-
-  if (compatible.length === 0) {
-    reportOutcome(result, versions);
-    return result;
+  const router: Router | undefined = globals.router;
+  for (const { remote, read } of reads) {
+    if (!read.ok) {
+      Logger.error(`[MF] Skipping "${remote.name}": ${read.reason}`);
+      skip(result, remote.name, read.reason);
+      continue;
+    }
+    const declared = declareContributions(remote.name, read.contributions, context, router);
+    if ("skipReason" in declared) {
+      skip(result, remote.name, declared.skipReason);
+      continue;
+    }
+    const blocksBoot = read.contributions?.blocksBoot === true;
+    const budgets = blocksBoot ? blockingBudgets : deferredBudgets;
+    setPluginStatus(remote.name, "pending");
+    expirePendingAfter(remote.name, runBudgetMs(budgets.manifestTimeoutMs, budgets.loadTimeoutMs) + PENDING_GRACE_MS);
+    const entry = { remote, applied: declared.applied, budgets };
+    if (blocksBoot) {
+      prepared.blocking.push(entry);
+    } else {
+      prepared.deferred.push(entry);
+    }
   }
+  return prepared;
+}
 
+/** CONTRACT GATE → `init()` for one plugin. Never rejects. */
+async function runRemote(entry: IPreparedRemoteType, prepared: IPreparedFederationType): Promise<void> {
+  const { remote, applied } = entry;
+  const { manifestTimeoutMs, loadTimeoutMs } = entry.budgets;
+  const { result } = prepared;
+  const settle = (state: "loaded" | "failed" | "skipped", reason?: string) => {
+    result[state].push(remote.name);
+    if (applied && globals.router) {
+      releaseContributions(applied, globals.router, state === "loaded");
+    }
+    setPluginStatus(remote.name, state, reason);
+  };
+
+  if (!(await isCompatible(remote, manifestTimeoutMs))) {
+    settle("skipped", "its manifest failed the contract gate or could not be read");
+    return;
+  }
+  installManifestReuse();
   try {
     // No `force`: re-registering a known name is already a silent no-op in the MF runtime, while
     // `force` tears the remote down first (module cache, global entry name, share scope) and a
     // second boot would then re-run the plugin's module scope and its init().
-    registerRemotes(compatible.map((remote) => ({ name: remote.name, entry: remote.entry })));
+    registerRemotes([{ name: remote.name, entry: remote.entry }]);
   } catch (error) {
-    // registerRemotes registers one remote at a time, so a throw can leave earlier ones registered;
-    // every compatible remote is still reported failed, and this must resolve (not reject) to keep
-    // the "never rejects" contract.
-    compatible.forEach((remote) => result.failed.push(remote.name));
-    Logger.error("[MF] registerRemotes failed", error);
-    reportOutcome(result, versions);
-    return result;
+    Logger.error(`[MF] registerRemotes failed for "${remote.name}"`, error);
+    settle("failed", "it could not be registered");
+    return;
   }
-
-  // One guard for the whole phase — see installRouteGuard on why it must not be per plugin.
-  const releaseRouteGuard = installRouteGuard();
   try {
-    await Promise.allSettled(
-      compatible.map(async (remote) => {
-        try {
-          // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
-          // invoked - the timeout is real containment for the init phase. Neither phase
-          // can be CANCELLED though: a loadRemote that resolves after its budget has
-          // still executed the remote's module scope (top-level side effects like a CSS
-          // import), and an init() that started keeps running — raceWithLateLogging logs
-          // both late settlements so the "failed" outcome is never silently contradicted.
-          const plugin = await raceWithLateLogging(
-            loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),
-            loadTimeoutMs,
-            `plugin "${remote.name}" load`,
-            "its module scope has executed (init() is NOT called); state is indeterminate",
-          );
-          // loadRemote is declared `Promise<T | null>`. Today the runtime only resolves a truthy
-          // errorLoadRemote failover and re-throws otherwise, but "no module delivered" must never
-          // count as loaded if that changes.
-          if (plugin === null) {
-            throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
-          }
-          // BEFORE init(), not after: a timeout does not cancel init(), so whatever it registered
-          // synchronously stays. Withholding the sheets then left the plugin's page live and
-          // UNSTYLED - strictly worse than an orphan <link> on a plugin that never renders. The
-          // plugin's own chunk CSS already arrived during loadRemote and could not be withheld either.
-          injectStyles(remote.styles);
-          if (plugin.init) {
-            await runInit(remote.name, plugin, loadTimeoutMs);
-          } else {
-            // Most likely the platform's default "./Module" expose against the admin-shell
-            // contract; its module scope ran, but nothing registered anything.
-            Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
-          }
-          result.loaded.push(remote.name);
-        } catch (error) {
-          result.failed.push(remote.name);
-          Logger.error(`[MF] Failed to load federated plugin "${remote.name}"`, error);
-        }
-      }),
+    // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
+    // invoked - the timeout is real containment for the init phase. Neither phase
+    // can be CANCELLED though: a loadRemote that resolves after its budget has
+    // still executed the remote's module scope (top-level side effects like a CSS
+    // import), and an init() that started keeps running — raceWithLateLogging logs
+    // both late settlements so the "failed" outcome is never silently contradicted.
+    const plugin = await raceWithLateLogging(
+      loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),
+      loadTimeoutMs,
+      `plugin "${remote.name}" load`,
+      "its module scope has executed (init() is NOT called); state is indeterminate",
     );
-  } finally {
-    releaseRouteGuard();
+    // loadRemote is declared `Promise<T | null>`. Today the runtime only resolves a truthy
+    // errorLoadRemote failover and re-throws otherwise, but "no module delivered" must never
+    // count as loaded if that changes.
+    if (plugin === null) {
+      throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
+    }
+    // BEFORE init(), not after: a timeout does not cancel init(), so whatever it registered
+    // synchronously stays. Withholding the sheets then left the plugin's page live and
+    // UNSTYLED - strictly worse than an orphan <link> on a plugin that never renders. The
+    // plugin's own chunk CSS already arrived during loadRemote and could not be withheld either.
+    injectStyles(remote.styles);
+    if (plugin.init) {
+      await runInit(remote.name, plugin, loadTimeoutMs);
+    } else {
+      // Most likely the platform's default "./Module" expose against the admin-shell
+      // contract; its module scope ran, but nothing registered anything.
+      Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
+    }
+    settle("loaded");
+  } catch (error) {
+    Logger.error(`[MF] Failed to load federated plugin "${remote.name}"`, error);
+    settle("failed", error instanceof Error ? error.message : String(error));
   }
+}
 
-  reportOutcome(result, versions);
-  return result;
+export interface ILoadingFederationType {
+  /** The `blocksBoot` plugins settled: what boot waits for. */
+  blocking: Promise<void>;
+  /** Every plugin settled. Never rejects. */
+  all: Promise<IFederatedLoadResult>;
+}
+
+/** Phase B: manifest gate, `loadRemote`, `init()`, concurrently under one route guard (see installRouteGuard). */
+export function loadPreparedModules(prepared: IPreparedFederationType): ILoadingFederationType {
+  if (prepared.blocking.length + prepared.deferred.length === 0) {
+    if (prepared.result.skipped.length > 0) {
+      reportOutcome(prepared.result, prepared.versions);
+    }
+    return { blocking: Promise.resolve(), all: Promise.resolve(prepared.result) };
+  }
+  const releaseRouteGuard = installRouteGuard();
+  const blockingRuns = prepared.blocking.map((entry) => runRemote(entry, prepared));
+  const deferredRuns = prepared.deferred.map((entry) => runRemote(entry, prepared));
+  const blocking = Promise.all(blockingRuns).then(() => undefined);
+  const all = Promise.allSettled([...blockingRuns, ...deferredRuns]).then(() => {
+    releaseRouteGuard();
+    reportOutcome(prepared.result, prepared.versions);
+    return prepared.result;
+  });
+  return { blocking, all };
+}
+
+/**
+ * Registers and initializes every configured, compatible federated plugin. Resolves
+ * once all have settled and returns the outcome. Never rejects — isolation is total.
+ */
+export async function initFederatedModules(options?: IFederatedLoaderOptions): Promise<IFederatedLoadResult> {
+  return loadPreparedModules(await prepareFederatedModules(options)).all;
 }

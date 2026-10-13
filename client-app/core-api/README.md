@@ -5,7 +5,7 @@ A plugin may import host things (router, Apollo, extension registry, ui-kit…) 
 from here — never from `@/...` host paths.
 
 For the loader / boot side, see
-[`client-app/modules/federated/README.md`](../modules/federated/README.md).
+[`client-app/core/federation/README.md`](../core/federation/README.md).
 This file covers the facade itself: how its type contract is generated, **how to add
 something to the facade** (the day-to-day developer flow), and how plugins get the
 package (releases + local co-dev).
@@ -37,6 +37,8 @@ Files in this folder:
 | `contract/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
 | `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. Its `types` condition points at the hand-written `tailwind-preset.d.cts` — without one a plugin whose `tailwind.config.ts` is TypeScript fails with TS7016, which `skipLibCheck` does not suppress. |
 | `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
+| `manifest.mjs`             | `definePluginManifest`, the condition builders and `pluginContributions` (`@vc-frontend/core/manifest`) — what a plugin's `plugin.config.ts` uses; plain JS, it runs in the plugin's node build. Types in `manifest.d.mts`; the format number in `manifest-format.mjs`, shared with the host loader. |
+| `contract-checks/`         | `manifest.check.ts`, compiled by `build-types.mjs` against the fresh contract (every `@ts-expect-error` must still fire), and the builders' unit tests. |
 | `codegen.mjs`              | graphql-codegen scalars + plugins (`@vc-frontend/core/codegen`), shared by the host's generator and by a plugin that types its own xAPI scope; types in `codegen.d.mts`. |
 | `bump-version.mjs`         | `yarn bump:core <level>` — manual bump for a BREAKING change (`minor` on 0.x, `major` from 1.0.0); additive bumps are automatic. |
 | `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
@@ -272,7 +274,7 @@ hands them the live implementation at runtime. The price is the "regenerate + co
 step — which CI enforces so it cannot silently drift.
 
 Distribution has two forms (full walkthrough:
-[`HOWTO.md`](../modules/federated/HOWTO.md)):
+[`HOWTO.md`](../core/federation/HOWTO.md)):
 
 - **Released (what plugins commit):** a versioned tarball, built by `npm pack` from this
   folder (the `files` field keeps it to the distributables) and published as a **GitHub
