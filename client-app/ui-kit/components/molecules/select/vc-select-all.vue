@@ -33,7 +33,7 @@ interface IProps {
   accessibleLabel: string;
   /** Visible `n of m` counter. */
   count: string;
-  /** Nothing to act on: no options, or the options on screen still answer an earlier query. */
+  /** Nothing to act on: no options, or a server-filtered list still loading its answer or a page. */
   disabled?: boolean;
 }
 

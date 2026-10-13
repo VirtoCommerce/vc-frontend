@@ -558,7 +558,6 @@ function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) 
   pick(item, close);
 }
 
-// A single select closes on its pick; a multiple one stays open for the next.
 function pick(item: T, close: () => void): void {
   select(item);
 
@@ -891,8 +890,8 @@ const selectAllLabel = computed(() =>
 
 const selectAllElement = useTemplateRef<{ focus: () => boolean; $el: HTMLElement }>("selectAllElement");
 
-// The options on screen still answer the previous query, which a `selectAll` event would misreport;
-// with no option on screen there is nothing to select or clear.
+// A server-filtered list that is loading (an answer or a page) or still holds the previous query's
+// options would have a `selectAll` event misreport it; with no option on screen there is nothing to do.
 const isSelectAllDisabled = computed(() => isAnswerPending.value || !selectableValues.value.length);
 
 // A disabled control drops focus to <body>; the trigger keeps it inside the select instead.

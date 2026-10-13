@@ -1,6 +1,6 @@
 /** Character at `offset` counted from the end; total, so an out-of-range offset gives "". */
 function charFromEnd(text: string, offset: number): string {
-  // eslint-disable-next-line sonarjs/null-dereference -- misreads `.length` on a non-optional string
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: reads the string parameter as nullable
   return text.charAt(text.length - 1 - offset);
 }
 
@@ -28,7 +28,7 @@ export function insertedText(previous: string, next: string, replaced?: readonly
   if (replaced) {
     const [start, end] = replaced;
     // A deletion gives a length of zero or less, which slices to "".
-    // eslint-disable-next-line sonarjs/null-dereference -- misreads `.length` on non-optional strings
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: reads the string parameters as nullable
     return next.slice(start, start + next.length - (previous.length - (end - start)));
   }
 

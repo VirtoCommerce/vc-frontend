@@ -158,7 +158,6 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
     return "";
   }
 
-  /** Substring match, with prefix matches hoisted to the top. */
   const filteredItems = computed<T[]>(() => {
     if (!toValue(params.filterValue) || toValue(params.serverFilter)) {
       return toValue(params.items);
@@ -172,7 +171,7 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
   });
 
   return {
-    /** The option's label, read through `textField`. */
+    /** The option's label, read through `textField`; the item itself without one. */
     getItemText,
     /** The option's model value, read through `valueField`; the item itself without one. */
     getItemValue,

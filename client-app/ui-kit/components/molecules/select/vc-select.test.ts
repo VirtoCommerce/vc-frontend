@@ -3255,7 +3255,7 @@ describe("VcSelect inside a dialog popover", () => {
     expect(document.activeElement).toBe(input.element);
   });
 
-  // Enter is consumed only by a select-only combobox (APG). An editable one leaves it to its form.
+  // APG: an editable combobox leaves Enter to its form.
   it.each([
     [false, true],
     [true, false],
