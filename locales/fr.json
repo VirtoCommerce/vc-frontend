@@ -523,7 +523,10 @@
           "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
           "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",
           "invalid_code": "Ce code n'a pas fonctionné.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Votre session de connexion a expiré. Connectez-vous à nouveau.",
+          "mfa_provider_not_available": "Nous ne pouvons pas envoyer de code de connexion à ce compte. Veuillez contacter votre administrateur.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -543,7 +546,12 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Vérification réussie, mais le basculement vers le compte client a échoué. Veuillez réessayer.",
-          "generic": "Une erreur s'est produite. Veuillez réessayer."
+          "generic": "Une erreur s'est produite. Veuillez réessayer.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },
       "forgot_password_form": {
@@ -630,12 +638,7 @@
         "verify": {
           "header": "Consultez votre e-mail",
           "subtitle": "Nous avons envoyé un code à {email}.",
-          "code_label": "Code",
-          "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
-          "submit_button": "Se connecter",
-          "resend_button": "Renvoyer le code",
-          "use_different_email_link": "Utiliser une autre adresse e-mail",
-          "live_resent": "Nouveau code envoyé."
+          "use_different_email_link": "Utiliser une autre adresse e-mail"
         },
         "locked": {
           "title": "Trop de tentatives échouées",
@@ -651,6 +654,18 @@
           "password_button": "Se connecter avec un mot de passe",
           "back_link": "Retour à la connexion"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Saisissez le code de connexion",
+        "subtitle": "Nous avons envoyé un code à {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Code",
+        "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
+        "submit_button": "Se connecter",
+        "resend_button": "Renvoyer le code",
+        "live_resent": "Nouveau code envoyé."
       }
     },
     "company": {

@@ -2,9 +2,10 @@ import { createGlobalState, useLocalStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
+import { IdentityErrors } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
-import type { ConnectTokenResponseType } from "../types";
+import type { ConnectTokenResponseType, TwoFactorChallengeType } from "../types";
 import type { AfterFetchContext } from "@vueuse/core";
 
 function _useAuth() {
@@ -33,6 +34,14 @@ function _useAuth() {
 
   const errors = computed(() => data.value?.errors);
   const lockoutSecondsRemaining = computed(() => data.value?.lockoutSecondsRemaining);
+  const twoFactorChallenge = computed<TwoFactorChallengeType | undefined>(() => {
+    const twoFactorToken = data.value?.twoFactorToken;
+    const isTwoFactorRequired = errors.value?.some((error) => error.code === IdentityErrors.TWO_FACTOR_REQUIRED);
+
+    return isTwoFactorRequired && twoFactorToken
+      ? { twoFactorToken, provider: data.value?.provider, providers: data.value?.providers }
+      : undefined;
+  });
 
   function resetErrors() {
     data.value = null;
@@ -76,6 +85,14 @@ function _useAuth() {
     return context;
   }
 
+  function setLastSelectedOrganization(params: URLSearchParams, userName: string): void {
+    const organizationId = localStorage.getItem(`organization-id-${userName}`);
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+  }
+
   async function authorize(username: string, password: string): Promise<void> {
     const { storeId } = globals;
 
@@ -87,11 +104,7 @@ function _useAuth() {
       password,
     });
 
-    const organizationId = localStorage.getItem(`organization-id-${username}`);
-
-    if (organizationId) {
-      params.set("organization_id", organizationId);
-    }
+    setLastSelectedOrganization(params, username);
 
     getTokenParams.value = params;
 
@@ -116,11 +129,33 @@ function _useAuth() {
       code,
     });
 
-    const organizationId = localStorage.getItem(`organization-id-${email}`);
+    setLastSelectedOrganization(params, email);
 
-    if (organizationId) {
-      params.set("organization_id", organizationId);
-    }
+    getTokenParams.value = params;
+
+    await (getTokenRequest = getToken(true));
+  }
+
+  async function mfaSignIn({
+    email,
+    twoFactorToken,
+    code,
+    storeId,
+  }: {
+    email: string;
+    twoFactorToken: string;
+    code: string;
+    storeId: string;
+  }): Promise<void> {
+    const params = new URLSearchParams({
+      grant_type: "mfa",
+      scope: "offline_access",
+      storeId,
+      two_factor_token: twoFactorToken,
+      code,
+    });
+
+    setLastSelectedOrganization(params, email);
 
     getTokenParams.value = params;
 
@@ -187,10 +222,12 @@ function _useAuth() {
     errors,
     resetErrors,
     lockoutSecondsRemaining,
+    twoFactorChallenge,
     isAuthorizing,
     authorize,
     externalSignInCallback,
     otpSignIn,
+    mfaSignIn,
     refresh,
     unauthorize,
 

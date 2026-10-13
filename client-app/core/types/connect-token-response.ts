@@ -1,3 +1,14 @@
+export type TwoFactorProviderType = {
+  name: string;
+  destination?: string;
+};
+
+export type TwoFactorChallengeType = {
+  twoFactorToken: string;
+  provider?: string;
+  providers?: Array<TwoFactorProviderType>;
+};
+
 type IdentityErrorType = {
   code?: string;
   description?: string;
@@ -11,4 +22,7 @@ export type ConnectTokenResponseType = {
   error?: string;
   token_type?: string;
   lockoutSecondsRemaining?: number;
+  twoFactorToken?: string;
+  provider?: string;
+  providers?: Array<TwoFactorProviderType>;
 };

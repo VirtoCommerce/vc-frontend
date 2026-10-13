@@ -1,0 +1,143 @@
+<template>
+  <div
+    class="sign-in-code-input"
+    :class="{
+      'sign-in-code-input--focused': isFocused,
+      'sign-in-code-input--error': error,
+      'sign-in-code-input--busy': busy,
+    }"
+  >
+    <input
+      :id="inputId"
+      ref="inputRef"
+      v-model="code"
+      class="sign-in-code-input__input"
+      type="text"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      pattern="[0-9]*"
+      :aria-invalid="error"
+      :aria-describedby="describedBy"
+      :data-test-id="testId"
+      @paste="onPaste"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
+    />
+
+    <div class="sign-in-code-input__cells" :style="{ '--code-length': length }" aria-hidden="true">
+      <div
+        v-for="index in length"
+        :key="index"
+        class="sign-in-code-input__cell"
+        :class="{
+          'sign-in-code-input__cell--active': isFocused && index - 1 === code.length,
+        }"
+      >
+        {{ code[index - 1] }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+
+interface IProps {
+  inputId: string;
+  testId?: string;
+  describedBy?: string;
+  length: number;
+  error?: boolean;
+  busy?: boolean;
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  testId: undefined,
+  describedBy: undefined,
+  error: false,
+  busy: false,
+});
+
+const code = defineModel<string>({
+  required: true,
+  set: (value) => value.replace(/\D/g, "").slice(0, props.length),
+});
+
+const inputRef = ref<HTMLInputElement>();
+const isFocused = ref(false);
+
+function onPaste(event: ClipboardEvent) {
+  const pasted = event.clipboardData?.getData("text") ?? "";
+  if (!/\d/.test(pasted)) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const standaloneCode = new RegExp(`(?<!\\d)\\d{${props.length}}(?!\\d)`).exec(pasted)?.[0];
+  code.value = standaloneCode ?? pasted;
+}
+
+function focus() {
+  inputRef.value?.focus();
+}
+
+defineExpose({ focus });
+</script>
+
+<style lang="scss">
+.sign-in-code-input {
+  @apply relative mb-3 rounded-md;
+
+  &:focus-within {
+    @apply ring-2 ring-accent-700 ring-offset-2;
+  }
+
+  &__input {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: transparent;
+    background: transparent;
+    caret-color: transparent;
+    border: 0;
+
+    &:focus {
+      outline: none;
+    }
+
+    // Browsers force selected text to be visible regardless of `color`, so a plain
+    // color:transparent above still lets input.select() paint the raw digits on top of the cells.
+    &::selection {
+      color: transparent;
+      background: transparent;
+    }
+  }
+
+  &__cells {
+    @apply grid gap-2;
+
+    grid-template-columns: repeat(var(--code-length), minmax(0, 1fr));
+  }
+
+  &__cell {
+    @apply flex h-14 items-center justify-center rounded-md border border-neutral-300 bg-additional-50 text-lg font-semibold tabular-nums;
+  }
+
+  &--focused &__cell--active {
+    @apply border-accent-700 ring-1 ring-accent-700;
+  }
+
+  &--error &__cell {
+    @apply border-danger-600;
+  }
+
+  &--busy &__cells {
+    @apply opacity-60;
+  }
+}
+</style>

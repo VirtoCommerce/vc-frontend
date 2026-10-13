@@ -1,5 +1,14 @@
 <template>
-  <form class="sign-in-form" @submit="onSubmit">
+  <MfaVerifyForm
+    v-if="twoFactorChallenge"
+    :email="email"
+    :challenge="twoFactorChallenge"
+    :on-verified="signIn"
+    @back="backToPassword"
+    @failed="backToPassword"
+  />
+
+  <form v-else class="sign-in-form" @submit="onSubmit">
     <!-- Errors block -->
     <VcAlert
       v-for="error in errors"
@@ -92,7 +101,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
@@ -100,11 +109,16 @@ import { isLockoutError, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
+import { PasswordStep } from "@/shared/sign-in/enums";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
+import type { TwoFactorChallengeType } from "@/core/types";
+import MfaVerifyForm from "@/shared/sign-in/components/mfa-verify-form.vue";
+
+const emit = defineEmits<{ (event: "stepChanged", step: PasswordStep): void }>();
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
-const { authorize } = useAuth();
+const { authorize, twoFactorChallenge: authTwoFactorChallenge } = useAuth();
 const { analytics } = useAnalytics();
 
 const schema = toTypedSchema(
@@ -129,18 +143,31 @@ const { value: password } = useField<string>("password");
 
 const rememberMe = ref(false);
 
+const twoFactorChallenge = ref<TwoFactorChallengeType>();
+
 const { errors, loading, signIn, resetErrors } = useSignMeIn();
 
 const onSubmit = handleSubmit(async () => {
+  let signInError: Error | undefined;
+
   try {
     await authorize(email.value, password.value);
     await signIn();
   } catch (err) {
-    const error = err instanceof Error ? err : new Error(String(err));
-    Logger.error("SignInForm", error);
+    signInError = err instanceof Error ? err : new Error(String(err));
+  }
+
+  twoFactorChallenge.value = authTwoFactorChallenge.value;
+  if (twoFactorChallenge.value) {
+    resetErrors();
+    return;
+  }
+
+  if (signInError) {
+    Logger.error("SignInForm", signInError);
     analytics("login", "password", {
       success: false,
-      errors: error?.message,
+      errors: signInError.message,
     });
   }
 
@@ -153,6 +180,25 @@ const onSubmit = handleSubmit(async () => {
   }
 
   analytics("login", "password", { success: true });
+});
+
+function backToPassword(error?: IdentityErrorType) {
+  twoFactorChallenge.value = undefined;
+  resetErrors();
+
+  if (error) {
+    errors.value = [error];
+  }
+}
+
+watch(twoFactorChallenge, (value) => {
+  emit("stepChanged", value ? PasswordStep.TwoFactor : PasswordStep.Password);
+});
+
+onBeforeUnmount(() => {
+  if (twoFactorChallenge.value) {
+    emit("stepChanged", PasswordStep.Password);
+  }
 });
 
 watch(meta, (value) => {
