@@ -510,10 +510,10 @@ describe("VcLoadMore", () => {
   });
 
   it.each([
-    ["a page is on its way", true, true, true],
-    ["nothing is being fetched", false, true, false],
-    ["the list loads with no next page", true, false, false],
-  ])("renders a pager in another role only while %s", (_label, loading, hasNextPage, rendered) => {
+    ["a next page is on its way", true, true, true],
+    ["nothing is being fetched", false, false, true],
+    ["the list loads with no next page", false, true, false],
+  ])("renders a pager in another role when %s: %s", (_label, rendered, loading, hasNextPage) => {
     const wrapper = mount(
       defineComponent({
         setup: () => () =>

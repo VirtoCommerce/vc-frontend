@@ -37,7 +37,7 @@ interface IProps {
   itemCount: number;
   tag?: string;
   testId?: string;
-  /** `status` by default, a live region that stays mounted; any other role renders only while a page loads. */
+  /** `status` by default, a live region that stays mounted; any other role renders only while a next page loads. */
   role?: string;
 }
 

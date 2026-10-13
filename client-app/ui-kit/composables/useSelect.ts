@@ -7,7 +7,7 @@ export interface IUseSelectOptions<T, V> {
   items: MaybeRefOrGetter<T[]>;
   /**
    * The selected value, or the values in multiple mode; `undefined` is no selection, nor is a `null`
-   * that neither an option nor the last matched one carries.
+   * that neither an option nor the one last matched on an earlier page carries.
    */
   modelValue: MaybeRefOrGetter<V | V[] | undefined>;
   /** Several values instead of one. */
