@@ -62,7 +62,7 @@ vi.mock("@/shared/layout/composables/useSearchScore", async () => {
   return {
     useSearchScore: () => ({
       isCategoryScope: ref(false),
-      preparingScope: ref(false),
+      prepareScope: vi.fn(() => vi.fn()),
       addScopeItem: vi.fn(),
       removeScopeItemByType: vi.fn(),
       setQueryScope: vi.fn(),
