@@ -353,12 +353,12 @@ describe("TopHeaderOrganizations", () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
 
-    expect(wrapper.find(".vc-load-more").exists()).toBe(false);
+    expect(wrapper.find(".vc-load-more--loading").exists()).toBe(false);
 
     state.loading.value = true;
     await nextTick();
 
-    expect(wrapper.find(".vc-load-more").exists()).toBe(true);
+    expect(wrapper.find(".vc-load-more--loading").exists()).toBe(true);
   });
 
   it("asks for the next page when the list rests at its bottom", async () => {

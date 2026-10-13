@@ -94,7 +94,7 @@
             <ul
               :id="listboxId"
               ref="listElement"
-              class="vc-select__list"
+              :class="['vc-select__list', { 'vc-select__list--paging': showPagerSpinner }]"
               role="listbox"
               :aria-label="accessibleLabel"
               :aria-multiselectable="multiple || undefined"
@@ -820,6 +820,8 @@ const pagerHasNextPage = computed(() => props.hasNextPage && !isQueryPending.val
 
 const showLoadingRow = computed(() => props.loading && !pagerHasNextPage.value);
 
+const showPagerSpinner = computed(() => props.loading && pagerHasNextPage.value);
+
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
 
 const selectedVisibleCount = computed(() => activeRows.value.filter(Boolean).length);
@@ -957,23 +959,30 @@ function onTab(event: KeyboardEvent) {
 
   // The dropdown clips its corners, so corner options take its radius or their ring is cut.
   &__list {
+    $paging: "";
+
     // Separators between the options, as VcDropdownMenu draws them on its own list.
     @apply w-full divide-y divide-neutral-100;
+
+    // The pager's spinner shows below the list; the pager itself stays mounted while pages remain.
+    &--paging {
+      $paging: &;
+    }
 
     #{$scroll}:first-child & > :first-child {
       --vc-menu-item-radius: var(--dropdown-radius) var(--dropdown-radius) 0 0;
     }
 
-    &:last-child > :last-child {
+    &:not(#{$paging}) > :last-child {
       --vc-menu-item-radius: 0 0 var(--dropdown-radius) var(--dropdown-radius);
     }
 
-    #{$scroll}:first-child &:last-child > :only-child {
+    #{$scroll}:first-child &:not(#{$paging}) > :only-child {
       --vc-menu-item-radius: var(--dropdown-radius);
     }
 
-    // The divider continues onto VcLoadMore below.
-    &:where(:not(:last-child)) {
+    // The divider continues onto the spinner below.
+    &:where(#{$paging}) {
       @apply border-b border-neutral-100;
     }
   }

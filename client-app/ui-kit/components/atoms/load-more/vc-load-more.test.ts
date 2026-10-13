@@ -436,7 +436,21 @@ describe("VcLoadMore", () => {
     describeFittingContent(region);
     await afterContentSettles();
 
-    expect(wrapper.find(".vc-load-more").exists()).toBe(visible);
+    expect(wrapper.find(".vc-load-more--loading").exists()).toBe(visible);
+    expect(wrapper.find(".vc-loader").exists()).toBe(visible);
+  });
+
+  it("keeps the status region mounted before a page loads, so the loading text lands in a live region", async () => {
+    const { wrapper, state } = mountList({ loading: false, hasNextPage: true });
+    const region = wrapper.get('[role="status"]').element;
+
+    expect(region.textContent).toBe("");
+
+    state.loading = true;
+    await nextTick();
+
+    expect(wrapper.get('[role="status"]').element).toBe(region);
+    expect(region.textContent).toBe("ui_kit.messages.loading_text");
   });
 
   it("says nothing once no next page is left", async () => {

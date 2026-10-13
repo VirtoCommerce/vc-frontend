@@ -1405,6 +1405,16 @@ describe("VcSelect", () => {
       expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
     });
 
+    it.each([
+      ["a further page is on its way", { loading: true, hasNextPage: true }, true],
+      ["a further page waits to be asked for", { loading: false, hasNextPage: true }, false],
+      ["no further page is left", { loading: false, hasNextPage: false }, false],
+    ])("draws the divider under the list only while %s", (_label, props, paging) => {
+      const wrapper = createWrapper({ items: ITEMS, ...props });
+
+      expect(wrapper.get(".vc-select__list").classes("vc-select__list--paging")).toBe(paging);
+    });
+
     it("leaves the empty-list spinner to the pager while a further page is coming", () => {
       const wrapper = createWrapper({ items: [], loading: true, hasNextPage: true });
 

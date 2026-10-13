@@ -1,6 +1,13 @@
 <template>
-  <component :is="tag" v-if="showSpinner" class="vc-load-more" :data-test-id="testId" :role="role">
-    <slot name="loading">
+  <!-- Mounted ahead of its content: a live region inserted together with its text may go unannounced. -->
+  <component
+    :is="tag"
+    v-if="hasNextPage"
+    :class="['vc-load-more', { 'vc-load-more--loading': showSpinner }]"
+    :data-test-id="testId"
+    :role="role"
+  >
+    <slot v-if="showSpinner" name="loading">
       <VcLoader />
 
       <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
@@ -137,6 +144,8 @@ onMounted(reconsider);
 
 <style lang="scss">
 .vc-load-more {
-  @apply flex items-center justify-center gap-2 p-2 text-base;
+  &--loading {
+    @apply flex items-center justify-center gap-2 p-2 text-base;
+  }
 }
 </style>
