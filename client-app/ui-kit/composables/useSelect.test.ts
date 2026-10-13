@@ -91,7 +91,7 @@ describe("useSelect with an empty multiple model", () => {
 });
 
 describe("useSelect remembering the selected item", () => {
-  it("labels a value picked and paged away from within one tick", () => {
+  it("labels a value picked and then dropped from a reset list within one tick", () => {
     const items = ref<OptionType[]>(ITEMS);
     const modelValue = ref<string | undefined>(undefined);
     const { selectedItem } = useSelect<OptionType, string | undefined>({
@@ -168,7 +168,7 @@ describe("useSelect hasSelection in single mode", () => {
     expect(hasSelection.value).toBe(false);
   });
 
-  it("keeps counting a null-valued option once a new page no longer carries it", () => {
+  it("keeps counting a null-valued option once a server-filter answer no longer carries it", () => {
     const items = ref(CHOICES);
     const { hasSelection } = useSelect<ChoiceType, string | null>({
       items,
