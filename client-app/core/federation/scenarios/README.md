@@ -28,8 +28,8 @@
 | S1b | Plugin with a new backend module                                              | Planned |
 | S2  | [Develop a plugin locally](./s2-develop-locally.md)                           | Written |
 | S3  | [Extend the facade and release it](./s3-extend-the-facade.md)                 | Written |
-| S4  | Upgrade a plugin to a new host / facade                                       | Planned |
-| S5  | Move an in-repo module into a plugin                                          | Planned |
+| S4  | [Upgrade a plugin to a new host / facade](./s4-upgrade-a-plugin.md)           | Written |
+| S5  | [Move an in-repo module into a plugin](./s5-move-a-module-into-a-plugin.md)   | Written |
 | S6  | [Enable a plugin on an environment](./s6-enable-on-an-environment.md)         | Written |
 | S7  | [A plugin is missing or broken](./s7-missing-or-broken.md)                    | Written |
 | S8  | [Add a new extension point to the host](./s8-new-extension-point.md)          | Written |
