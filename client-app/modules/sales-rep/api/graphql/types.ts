@@ -1825,7 +1825,7 @@ export type Rating = {
 export type SalesRepActivityCategoryCount = {
   /** Activity category (orders, customers, searches, productViews, logins). */
   category: Scalars['String']['output'];
-  /** Total number of activity rows in this category for the applied filters. */
+  /** Events in this category for the applied filters. An analytics row stands for every event in its hour bucket, so this can exceed the rows the category lists; totalCount counts rows. */
   count: Scalars['Int']['output'];
 };
 
@@ -1836,7 +1836,7 @@ export type SalesRepActivityConnection = {
   isAnalyticsAvailable: Scalars['Boolean']['output'];
   /** The requested activity page, newest first. */
   items: Array<SalesRepActivityEvent>;
-  /** Total number of activity rows matching the filters (across all requested categories). */
+  /** Activity rows matching the filters across all requested categories: what a pager pages. categoryCounts count events instead. */
   totalCount: Scalars['Int']['output'];
 };
 
