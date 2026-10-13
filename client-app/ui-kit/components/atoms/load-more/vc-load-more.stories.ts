@@ -141,22 +141,26 @@ const { items, loading, hasNextPage, loadMore } = usePagedList();
 export const Basic: StoryType = {
   args: { loading: true, hasNextPage: true, itemCount: 0 },
   render: (args) => ({
-    components: { VcLoadMore },
+    components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args }),
-    template: '<div class="rounded border border-dashed border-neutral-300"><VcLoadMore v-bind="args" /></div>',
+    template:
+      '<VcScrollbar vertical class="rounded border border-dashed border-neutral-300"><VcLoadMore v-bind="args" /></VcScrollbar>',
   }),
   parameters: {
     docs: {
       description: {
         story:
-          "The component on its own, with no list around it — every state is driven by the controls. " +
+          "The component with no list around it, only the `VcScrollbar` it reads — every state is driven by the " +
+          "controls, and the `load-more` it emits at rest has no listener here. " +
           "It renders nothing at all while more pages exist and nothing is being fetched: the empty " +
           "dashed box is that state, and it is the one a paged list spends most of its life in.",
       },
       source: {
         code: `
-<!-- Standalone, with no VcScrollbar above it: nothing is ever requested, the props draw the state. -->
-<VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" />
+<!-- No list: the props draw the state, and nobody listens to load-more. -->
+<VcScrollbar vertical>
+  <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" />
+</VcScrollbar>
         `,
       },
     },
@@ -165,16 +169,16 @@ export const Basic: StoryType = {
 
 export const States: StoryType = {
   render: (args) => ({
-    components: { VcLoadMore },
+    components: { VcLoadMore, VcScrollbar },
     setup: () => ({ args, states: STATES }),
     template: `
       <div class="flex flex-col gap-3">
         <div v-for="state in states" :key="state.label" class="flex items-center gap-4">
           <div class="w-64 shrink-0 text-sm text-neutral-600">{{ state.label }}</div>
 
-          <div class="grow rounded border border-dashed border-neutral-300">
+          <VcScrollbar vertical class="grow rounded border border-dashed border-neutral-300">
             <VcLoadMore v-bind="state.props" />
-          </div>
+          </VcScrollbar>
         </div>
       </div>
     `,
