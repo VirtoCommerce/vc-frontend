@@ -7,11 +7,12 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs, watch } from "vue";
+import { nextTick, onBeforeUnmount, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import Category from "@/shared/catalog/components/category.vue";
 
 interface IProps {
@@ -26,6 +27,15 @@ const { category: currentCategory, fetchCategory } = useCategory();
 const loyaltyCurrencyOverride = useLoyaltyCatalogCurrency();
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
+
+const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
+
+// Runs before the child drops its scope or preparation; held a tick for a matcher mounting in its place.
+onBeforeUnmount(() => {
+  if (isCategoryScope.value || isScopePending.value) {
+    void nextTick(holdScope());
+  }
+});
 
 watch(
   categoryId,
