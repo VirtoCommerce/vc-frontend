@@ -112,6 +112,12 @@ if (existsSync(join(targetDir, "package.json"))) {
   process.exit(1);
 }
 
+/** Relative to where the command ran, unless the absolute path is shorter. */
+function shownPath(path) {
+  const fromHere = relative(process.cwd(), path) || ".";
+  return fromHere.length <= path.length ? fromHere : path;
+}
+
 function hostVersion(name) {
   const version = hostPkg.dependencies?.[name] ?? hostPkg.devDependencies?.[name];
   if (!version) {
@@ -914,7 +920,7 @@ if (webDir) {
   writeFileSync(join(targetDir, TARGETS_FILE), STOREFRONT_PLUGIN_TARGETS);
 }
 // yalc artifacts (local facade co-dev) must never be committed - see README.
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
+writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n");
 // An empty lockfile makes this folder its own Yarn project. Without it, Yarn refuses to install under a parent
 // package.json, which a module's *.Web often has for its admin UI.
 writeFileSync(join(targetDir, "yarn.lock"), "");
@@ -947,12 +953,12 @@ if (droppedShared.length) {
 if (webDir) {
   const pending = checkModuleFiles(webDir).filter((result) => result.status !== "pass");
   console.log(
-    `\nThe module's own files are not edited. Still to do there (yarn check:plugin-module ${relative(process.cwd(), webDir)}):\n` +
+    `\nThe module's own files are not edited. Still to do there (yarn check:plugin-module ${shownPath(webDir)}):\n` +
       formatResults(pending),
   );
 }
 console.log(`\nNext steps:
-  cd ${relative(process.cwd(), targetDir) || "."}
+  cd ${shownPath(targetDir)}
   yarn install
   yarn build && yarn preview   # serves mf-manifest.json on :3001
 
@@ -961,10 +967,4 @@ The stock theme ships module_federation_enabled: false, which builds no MF host 
 in the host's client-app/config/settings_data.json first (and don't commit that):
   perl -pi -e 's/"module_federation_enabled": false/"module_federation_enabled": true/' client-app/config/settings_data.json
   APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview
-
-@vc-frontend/core is pinned to the core-v${corePkg.version} release asset. If that release
-has not been published yet, yarn install will 404 - either run the "Core Facade Release"
-workflow in the host repo once, or work purely locally with yalc:
-  (host)   yarn build:core-types && cd client-app/core-api && yalc publish --private
-  (plugin) yalc add @vc-frontend/core
 `);
