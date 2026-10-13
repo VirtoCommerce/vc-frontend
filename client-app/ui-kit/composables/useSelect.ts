@@ -121,7 +121,11 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
       return selectedValues.value.length > 0;
     }
 
-    return toValue(params.modelValue) != null;
+    const model = toValue(params.modelValue);
+
+    // A clear commits `undefined`. An unset GraphQL value arrives as null, which is a selection
+    // only when an option carries it.
+    return model === null ? foundItem.value !== undefined : model !== undefined;
   });
 
   // Only a primitive has text to match; an unlabelled object would stringify to "[object Object]".

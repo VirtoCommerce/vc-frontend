@@ -1188,6 +1188,23 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-select-field__clear").exists()).toBe(false);
     });
 
+    it("clears an option whose value is null", async () => {
+      const wrapper = createWrapper({
+        items: [
+          { value: null, label: "Any" },
+          { value: "a", label: "A" },
+        ],
+        textField: "label",
+        valueField: "value",
+        clearable: true,
+        modelValue: null,
+      });
+
+      await wrapper.get(".vc-select-field__clear").trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
+    });
+
     it("hides the clear button when there is no selection", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true });
 
