@@ -6,6 +6,7 @@ import {
   groupByStatus,
   isSchemaEndpointAbsent,
   normalizeBackendUrl,
+  selectTargets,
   stripCodegenHint,
   truncate,
 } from "./utils.js";
@@ -255,5 +256,27 @@ describe("addExtension", () => {
     expect(addExtension("client-app/modules/news/api/graphql")).toBe(
       "client-app/modules/news/api/graphql/**/*.(graphql|gql)",
     );
+  });
+});
+
+describe("selectTargets", () => {
+  const available = ["Core", "Quotes", "Loyalty"];
+
+  it("selects every target without --only", () => {
+    expect(selectTargets(undefined, available)).toEqual(new Set(available));
+  });
+
+  it("selects only the listed targets, ignoring spaces and empty items", () => {
+    expect(selectTargets(" Quotes, ,Loyalty ", available)).toEqual(new Set(["Quotes", "Loyalty"]));
+  });
+
+  it("throws on an unknown name and lists the available ones", () => {
+    expect(() => selectTargets("Quotes,quotes", available)).toThrow(
+      "Unknown --only name(s): quotes. Available: Core, Quotes, Loyalty",
+    );
+  });
+
+  it("throws on an empty value", () => {
+    expect(() => selectTargets(" , ", available)).toThrow("--only needs at least one name");
   });
 });

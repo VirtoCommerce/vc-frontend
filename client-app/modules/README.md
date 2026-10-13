@@ -86,6 +86,12 @@ yarn generate:graphql-types
 
 This command triggers the execution of the generator.ts script, which is responsible for generating the types.ts files for both the core application and the independent modules.
 
+To generate only some of them, pass their names (`Core` or a `name` from `independentModules`) to `--only`:
+
+```bash
+yarn generate:graphql-types --only Quotes,Loyalty
+```
+
 The `scripts/graphql-codegen/generator.ts` file also plays a crucial role in handling standalone GraphQL schemas. It includes an array called `independentModules`, where each object represents a separate GraphQL schema that needs to be generated independently.
 
 ```typescript
