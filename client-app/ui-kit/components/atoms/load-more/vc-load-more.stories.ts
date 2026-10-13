@@ -152,8 +152,9 @@ export const Basic: StoryType = {
         story:
           "The component with no list around it, only the `VcScrollbar` it reads — every state is driven by the " +
           "controls, and the `load-more` it emits at rest has no listener here. " +
-          "It renders nothing at all while more pages exist and nothing is being fetched: the empty " +
-          "dashed box is that state, and it is the one a paged list spends most of its life in.",
+          "Unless a page is on its way it shows nothing — only an empty status region, kept mounted so the " +
+          "loading text is announced: the empty dashed box is that state, and it is the one a paged list " +
+          "spends most of its life in.",
       },
       source: {
         code: `
@@ -190,13 +191,13 @@ export const States: StoryType = {
       description: {
         story:
           "Every state the bottom of a paged list can be in. Only a page on its way is drawn; the rest " +
-          "render nothing.",
+          "leave an empty status region, kept mounted so the loading text is announced.",
       },
       source: {
         code: `
 <VcLoadMore loading has-next-page :item-count="items.length" />          <!-- a page is on its way -->
-<VcLoadMore :loading="false" has-next-page :item-count="items.length" /> <!-- more pages, nothing in flight: renders nothing at all -->
-<VcLoadMore :item-count="items.length" />                                <!-- no next page: renders nothing -->
+<VcLoadMore :loading="false" has-next-page :item-count="items.length" /> <!-- more pages, nothing in flight: an empty status region -->
+<VcLoadMore :item-count="items.length" />                                <!-- no next page: an empty status region -->
         `,
       },
     },

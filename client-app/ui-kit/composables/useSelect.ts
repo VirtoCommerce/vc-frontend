@@ -3,13 +3,19 @@ import { computed, shallowRef, toValue, watch } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseSelectOptions<T, V> {
+  /** The options, in render order. */
   items: MaybeRefOrGetter<T[]>;
+  /** The selected value, or the selected values in multiple mode; `undefined` is no selection. */
   modelValue: MaybeRefOrGetter<V | V[] | undefined>;
+  /** Several values instead of one. */
   multiple: MaybeRefOrGetter<boolean | undefined>;
+  /** The typed query the options are filtered by. */
   filterValue: MaybeRefOrGetter<string>;
   /** When true the list is filtered by the consumer (server-side) and must pass through untouched. */
   serverFilter: MaybeRefOrGetter<boolean | undefined>;
+  /** The option's label: a key or a getter; the option itself without one. */
   textField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, string> | undefined>;
+  /** The option's model value: a key or a getter; the option itself without one. */
   valueField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, V> | undefined>;
 }
 
