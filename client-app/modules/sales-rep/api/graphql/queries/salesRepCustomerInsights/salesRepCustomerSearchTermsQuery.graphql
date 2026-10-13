@@ -14,7 +14,6 @@ query SalesRepCustomerSearchTerms(
     period: { from: $periodFrom, to: $periodTo }
   ) {
     isAnalyticsAvailable
-    dataAsOf
     searchTerms(take: $take, sort: $sort) {
       term
       count

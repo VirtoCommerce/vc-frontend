@@ -9,7 +9,6 @@ const state = await vi.hoisted(async () => {
   return {
     items: ref<Record<string, unknown>[]>([]),
     unavailable: ref(false),
-    dataAsOf: ref<string | undefined>(undefined),
     loading: ref(false),
     error: ref<Error | null>(null),
   };
@@ -55,7 +54,6 @@ const rows = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".cu
 beforeEach(() => {
   state.items.value = [];
   state.unavailable.value = false;
-  state.dataAsOf.value = undefined;
   state.loading.value = false;
   state.error.value = null;
   periodFilter.initial = undefined;

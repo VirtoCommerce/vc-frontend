@@ -294,7 +294,6 @@
       "recent": "最近",
       "analytics_unavailable": "このストアのウェブ活動は現在利用できません",
       "tracked_caveat": "トラッキングされたアクティビティのみに基づいています",
-      "data_as_of": "{date} 時点のデータ",
       "search_history": {
         "empty": "この期間にトラッキングされた検索はありません",
         "empty_this_year": "今年トラッキングされた検索はありません",

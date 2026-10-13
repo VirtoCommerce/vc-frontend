@@ -67,7 +67,9 @@
           </template>
         </ul>
 
-        <p v-if="items.length" class="customer-search-history__caveat">{{ caveat }}</p>
+        <p v-if="items.length" class="customer-search-history__caveat">
+          {{ t("sales_rep.customer_insights.tracked_caveat") }}
+        </p>
       </template>
     </div>
   </div>
@@ -76,7 +78,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useInsightsCaveat } from "../composables/useInsightsCaveat";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
 import { INSIGHTS_DEFAULT_ROWS, INSIGHTS_SORT_BY_COUNT, INSIGHTS_SORT_BY_DATE } from "../constants";
@@ -116,7 +117,7 @@ watch(
 // This year, like the hub's other activity surfaces; the label and the empty text above name it.
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
-const { items, unavailable, dataAsOf, loading, error } = useSalesRepSearchHistory({
+const { items, unavailable, loading, error } = useSalesRepSearchHistory({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   periodFrom,
@@ -130,8 +131,6 @@ const failed = computed(() => Boolean(error.value));
 function lastSearchedLabel(date: string): string {
   return t("sales_rep.customer_insights.search_history.last_searched", { date: d(new Date(date), "short") });
 }
-
-const caveat = useInsightsCaveat(dataAsOf);
 </script>
 
 <style lang="scss">

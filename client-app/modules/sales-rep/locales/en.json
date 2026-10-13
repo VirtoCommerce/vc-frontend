@@ -294,7 +294,6 @@
       "recent": "Recent",
       "analytics_unavailable": "Web activity isn't available for this store right now",
       "tracked_caveat": "Based on tracked activity only",
-      "data_as_of": "Data as of {date}",
       "search_history": {
         "empty": "No tracked searches in this period",
         "empty_this_year": "No tracked searches this year",

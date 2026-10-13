@@ -294,7 +294,6 @@
       "recent": "Récents",
       "analytics_unavailable": "L'activité web n'est pas disponible pour cette boutique pour le moment",
       "tracked_caveat": "Basé uniquement sur l'activité suivie",
-      "data_as_of": "Données au {date}",
       "search_history": {
         "empty": "Aucune recherche suivie sur cette période",
         "empty_this_year": "Aucune recherche suivie cette année",

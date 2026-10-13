@@ -27,7 +27,6 @@ describe("useSalesRepBrowseHistory", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
         isAnalyticsAvailable: true,
-        dataAsOf: "2026-08-20T00:00:00Z",
         browsedProducts: [
           { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "img", viewCount: 4 },
           // GA row the backend could not resolve: no productId.
@@ -103,23 +102,6 @@ describe("useSalesRepBrowseHistory", () => {
     const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
     const options = call[2] as { fetchPolicy?: string } | undefined;
     expect(options?.fetchPolicy).toBe("no-cache");
-  });
-
-  it("dates the list from its own rows", () => {
-    queryMock.result.value = {
-      salesRepCustomerInsights: {
-        isAnalyticsAvailable: true,
-        dataAsOf: "2026-08-31T00:00:00Z",
-        browsedProducts: [
-          { productId: "p1", sku: "SKU-1", viewCount: 4, lastViewedDate: "2026-08-19T10:00:00Z" },
-          { productId: "p2", sku: "SKU-2", viewCount: 2, lastViewedDate: "2026-08-22T08:00:00Z" },
-        ],
-      },
-    } satisfies SalesRepCustomerBrowsedProductsQuery;
-
-    const { dataAsOf } = useSalesRepBrowseHistory({ organizationId: "org-1" });
-
-    expect(dataAsOf.value).toBe("2026-08-22T08:00:00Z");
   });
 
   it("surfaces the query error so the widget can show a failure state", () => {

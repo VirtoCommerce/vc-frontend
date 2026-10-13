@@ -294,7 +294,6 @@
       "recent": "最近",
       "analytics_unavailable": "此商店的网站活动当前不可用",
       "tracked_caveat": "仅基于已跟踪的活动",
-      "data_as_of": "数据截至 {date}",
       "search_history": {
         "empty": "此时间段内没有已跟踪的搜索",
         "empty_this_year": "今年没有已跟踪的搜索",

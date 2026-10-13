@@ -3,7 +3,6 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerBrowsedProductsDocument } from "../api/graphql/types";
 import { INSIGHTS_DEFAULT_ROWS } from "../constants";
-import { latestDate } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepBrowsedProductRowType } from "../types/insights";
 import type { Ref } from "vue";
@@ -61,7 +60,5 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
     })),
   );
 
-  const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastViewedDate)));
-
-  return { items, unavailable, dataAsOf, loading, error };
+  return { items, unavailable, loading, error };
 }

@@ -294,7 +294,6 @@
       "recent": "Viimeisimmät",
       "analytics_unavailable": "Verkkotoiminta ei ole juuri nyt saatavilla tälle kaupalle",
       "tracked_caveat": "Perustuu vain seurattuun toimintaan",
-      "data_as_of": "Tiedot: {date}",
       "search_history": {
         "empty": "Ei seurattuja hakuja tällä ajanjaksolla",
         "empty_this_year": "Ei seurattuja hakuja tänä vuonna",

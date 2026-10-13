@@ -27,7 +27,6 @@ describe("useSalesRepSearchHistory", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
         isAnalyticsAvailable: true,
-        dataAsOf: "2026-08-20T00:00:00Z",
         searchTerms: [{ term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" }],
       },
     } satisfies SalesRepCustomerSearchTermsQuery;
@@ -46,39 +45,6 @@ describe("useSalesRepSearchHistory", () => {
     const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
     const options = call[2] as { fetchPolicy?: string } | undefined;
     expect(options?.fetchPolicy).toBe("no-cache");
-  });
-
-  it("dates the list from its own rows", () => {
-    queryMock.result.value = {
-      salesRepCustomerInsights: {
-        isAnalyticsAvailable: true,
-        dataAsOf: "2026-08-31T00:00:00Z",
-        searchTerms: [
-          { term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" },
-          { term: "bolts", count: 3, lastSearchedDate: "2026-08-21T09:00:00Z" },
-        ],
-      },
-    } satisfies SalesRepCustomerSearchTermsQuery;
-
-    const { dataAsOf } = useSalesRepSearchHistory({ organizationId: "org-1" });
-
-    expect(dataAsOf.value).toBe("2026-08-21T09:00:00Z");
-  });
-
-  // Sort "count" returns aggregate rows that carry no dates at all, so there is no date to show —
-  // and borrowing the other list's would misdate this one.
-  it("reports no date when the rows carry none", () => {
-    queryMock.result.value = {
-      salesRepCustomerInsights: {
-        isAnalyticsAvailable: true,
-        dataAsOf: "2026-08-31T00:00:00Z",
-        searchTerms: [{ term: "gloves", count: 12 }],
-      },
-    } satisfies SalesRepCustomerSearchTermsQuery;
-
-    const { dataAsOf } = useSalesRepSearchHistory({ organizationId: "org-1" });
-
-    expect(dataAsOf.value).toBeUndefined();
   });
 
   it("flags unavailable from the backend flag, but never before a result arrives", () => {

@@ -119,36 +119,28 @@ vi.mock("../composables/useSalesRepActivities", () => ({
         };
   },
 }));
-vi.mock("../composables/useSalesRepSearchHistory", async () => {
-  const { ref } = await import("vue");
-  return {
-    useSalesRepSearchHistory: (options: InsightsOptionsType) => {
-      insights.searchOptions = options;
-      return {
-        items: insights.searchItems,
-        unavailable: insights.searchUnavailable,
-        dataAsOf: ref(undefined),
-        loading: insights.searchLoading,
-        error: insights.searchError,
-      };
-    },
-  };
-});
-vi.mock("../composables/useSalesRepBrowseHistory", async () => {
-  const { ref } = await import("vue");
-  return {
-    useSalesRepBrowseHistory: (options: InsightsOptionsType) => {
-      insights.browseOptions = options;
-      return {
-        items: insights.browseItems,
-        unavailable: insights.browseUnavailable,
-        dataAsOf: ref(undefined),
-        loading: insights.browseLoading,
-        error: insights.browseError,
-      };
-    },
-  };
-});
+vi.mock("../composables/useSalesRepSearchHistory", () => ({
+  useSalesRepSearchHistory: (options: InsightsOptionsType) => {
+    insights.searchOptions = options;
+    return {
+      items: insights.searchItems,
+      unavailable: insights.searchUnavailable,
+      loading: insights.searchLoading,
+      error: insights.searchError,
+    };
+  },
+}));
+vi.mock("../composables/useSalesRepBrowseHistory", () => ({
+  useSalesRepBrowseHistory: (options: InsightsOptionsType) => {
+    insights.browseOptions = options;
+    return {
+      items: insights.browseItems,
+      unavailable: insights.browseUnavailable,
+      loading: insights.browseLoading,
+      error: insights.browseError,
+    };
+  },
+}));
 // The heading and the breadcrumb both name the customer, so tests need to control when the name resolves.
 const customerState = await vi.hoisted(async () => {
   const { ref } = await import("vue");

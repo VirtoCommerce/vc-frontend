@@ -294,7 +294,6 @@
       "recent": "Nylige",
       "analytics_unavailable": "Nettaktivitet er ikke tilgjengelig for denne butikken akkurat nå",
       "tracked_caveat": "Basert kun på sporet aktivitet",
-      "data_as_of": "Data per {date}",
       "search_history": {
         "empty": "Ingen sporede søk i denne perioden",
         "empty_this_year": "Ingen sporede søk i år",

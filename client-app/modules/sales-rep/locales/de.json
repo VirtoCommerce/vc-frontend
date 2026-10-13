@@ -294,7 +294,6 @@
       "recent": "Zuletzt",
       "analytics_unavailable": "Web-Aktivität ist für diesen Shop derzeit nicht verfügbar",
       "tracked_caveat": "Nur auf Basis erfasster Aktivitäten",
-      "data_as_of": "Datenstand: {date}",
       "search_history": {
         "empty": "Keine erfassten Suchanfragen in diesem Zeitraum",
         "empty_this_year": "Keine erfassten Suchanfragen in diesem Jahr",

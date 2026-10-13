@@ -81,7 +81,9 @@
           </template>
         </ul>
 
-        <p v-if="items.length" class="customer-browse-history__caveat">{{ caveat }}</p>
+        <p v-if="items.length" class="customer-browse-history__caveat">
+          {{ t("sales_rep.customer_insights.tracked_caveat") }}
+        </p>
       </template>
     </div>
   </div>
@@ -91,7 +93,6 @@
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
-import { useInsightsCaveat } from "../composables/useInsightsCaveat";
 import { useSalesRepBrowseHistory } from "../composables/useSalesRepBrowseHistory";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { INSIGHTS_DEFAULT_ROWS, INSIGHTS_SORT_BY_COUNT, INSIGHTS_SORT_BY_DATE } from "../constants";
@@ -131,7 +132,7 @@ watch(
 // This year, like the hub's other activity surfaces; the label and the empty text above name it.
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
-const { items, unavailable, dataAsOf, loading, error } = useSalesRepBrowseHistory({
+const { items, unavailable, loading, error } = useSalesRepBrowseHistory({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   periodFrom,
@@ -149,8 +150,6 @@ function rowMeta(item: SalesRepBrowsedProductRowType): string {
   }
   return parts.join(" · ");
 }
-
-const caveat = useInsightsCaveat(dataAsOf);
 </script>
 
 <style lang="scss">

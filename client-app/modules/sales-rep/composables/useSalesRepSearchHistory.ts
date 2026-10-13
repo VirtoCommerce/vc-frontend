@@ -3,7 +3,6 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerSearchTermsDocument } from "../api/graphql/types";
 import { INSIGHTS_DEFAULT_ROWS } from "../constants";
-import { latestDate } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepSearchTermRowType } from "../types/insights";
 import type { Ref } from "vue";
@@ -57,7 +56,5 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
     })),
   );
 
-  const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastSearchedDate)));
-
-  return { items, unavailable, dataAsOf, loading, error };
+  return { items, unavailable, loading, error };
 }

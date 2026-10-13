@@ -9,7 +9,6 @@ const state = await vi.hoisted(async () => {
   return {
     items: ref<Record<string, unknown>[]>([]),
     unavailable: ref(false),
-    dataAsOf: ref<string | undefined>(undefined),
     loading: ref(false),
     error: ref<Error | null>(null),
   };
@@ -54,7 +53,6 @@ const rows = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".cu
 beforeEach(() => {
   state.items.value = [];
   state.unavailable.value = false;
-  state.dataAsOf.value = undefined;
   state.loading.value = false;
   state.error.value = null;
   periodFilter.initial = undefined;
@@ -122,16 +120,15 @@ describe("CustomerSearchHistory states", () => {
     expect(emptyViews(wrapper)).toHaveLength(0);
   });
 
-  // GA sees only tracked activity (§4.7 of the design doc); a list without the caveat reads as a record.
-  it("shows the tracked-activity caveat with the data-freshness date when the payload carries one", () => {
-    state.items.value = [{ term: "gloves", count: 3 }];
-    state.dataAsOf.value = "2026-08-20T00:00:00Z";
+  // GA sees only tracked activity (§4.7 of the design doc); a list without the caveat reads as a record. No date
+  // beside it: the newest row's date read as the data's freshness (QA: "Data as of Sep 25" on Oct 7).
+  it("shows the tracked-activity caveat beside the rows, with no date", () => {
+    state.items.value = [{ term: "gloves", count: 3, lastSearchedDate: "2026-08-20T00:00:00Z" }];
 
     const caveat = createWrapper().find(".customer-search-history__caveat");
 
     expect(caveat.exists()).toBe(true);
-    expect(caveat.text()).toContain("sales_rep.customer_insights.tracked_caveat");
-    expect(caveat.text()).toContain("sales_rep.customer_insights.data_as_of");
+    expect(caveat.text()).toBe("sales_rep.customer_insights.tracked_caveat");
   });
 
   // VCST-5731: "clicking a search term opens catalog search results for that term".
