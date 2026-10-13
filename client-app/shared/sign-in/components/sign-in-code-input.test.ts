@@ -73,4 +73,21 @@ describe("SignInCodeInput", () => {
     const cells = wrapper.findAll(".sign-in-code-input__cell").map((cell) => cell.text());
     expect(cells).toEqual(["1", "2", "", "", "", ""]);
   });
+
+  it("marks the cell of the next digit while focused, and the last cell once the code is complete", async () => {
+    const { wrapper } = mountInput();
+    const input = wrapper.find("input");
+    const activeCells = () =>
+      wrapper.findAll(".sign-in-code-input__cell").map((cell) => cell.classes("sign-in-code-input__cell--active"));
+
+    await input.trigger("focus");
+    await input.setValue("12");
+    expect(activeCells()).toEqual([false, false, true, false, false, false]);
+
+    await input.setValue("123456");
+    expect(activeCells()).toEqual([false, false, false, false, false, true]);
+
+    await input.trigger("blur");
+    expect(activeCells()).not.toContain(true);
+  });
 });

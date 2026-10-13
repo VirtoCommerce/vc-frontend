@@ -30,7 +30,7 @@
         :key="index"
         class="sign-in-code-input__cell"
         :class="{
-          'sign-in-code-input__cell--active': isFocused && index - 1 === code.length,
+          'sign-in-code-input__cell--active': isFocused && index - 1 === activeIndex,
         }"
       >
         {{ code[index - 1] }}
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 interface IProps {
   inputId: string;
@@ -65,6 +65,7 @@ const code = defineModel<string>({
 
 const inputRef = ref<HTMLInputElement>();
 const isFocused = ref(false);
+const activeIndex = computed(() => Math.min(code.value.length, props.length - 1));
 
 function onPaste(event: ClipboardEvent) {
   const pasted = event.clipboardData?.getData("text") ?? "";
@@ -88,10 +89,6 @@ defineExpose({ focus });
 <style lang="scss">
 .sign-in-code-input {
   @apply relative mb-3 rounded-md;
-
-  &:focus-within {
-    @apply ring-2 ring-accent-700 ring-offset-2;
-  }
 
   &__input {
     position: absolute;
