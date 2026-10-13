@@ -45,10 +45,10 @@ if (positional.length !== 1) {
 }
 
 const webDir = resolve(process.cwd(), positional[0]);
-const sections = [["Module sources", checkModuleFiles(webDir)]];
+const sections = [{ title: "Module sources", results: checkModuleFiles(webDir) }];
 
 if (options.artifact) {
-  sections.push(["Module package", checkArtifact(resolve(process.cwd(), options.artifact))]);
+  sections.push({ title: "Module package", results: checkArtifact(resolve(process.cwd(), options.artifact)) });
 }
 if (options.env) {
   let pluginId;
@@ -57,17 +57,17 @@ if (options.env) {
   } catch {
     pluginId = undefined;
   }
-  sections.push([
-    `Environment ${options.env}`,
-    pluginId
+  sections.push({
+    title: `Environment ${options.env}`,
+    results: pluginId
       ? await checkEnvironment(options.env, pluginId)
       : [{ status: "fail", message: "no plugin id: public/plugin.json is missing or not JSON" }],
-  ]);
+  });
 }
 
-for (const [title, results] of sections) {
+for (const { title, results } of sections) {
   console.log(`\n${title}\n${formatResults(results)}`);
 }
-const failed = sections.some(([, results]) => results.some((result) => result.status === "fail"));
+const failed = sections.some(({ results }) => results.some((result) => result.status === "fail"));
 console.log(failed ? "\nSome checks failed." : "\nAll checks passed.");
 process.exit(failed ? 1 : 0);
