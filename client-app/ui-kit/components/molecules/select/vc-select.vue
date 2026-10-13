@@ -972,7 +972,7 @@ function onTab(event: KeyboardEvent) {
     // Separators between the options, as VcDropdownMenu draws them on its own list.
     @apply w-full divide-y divide-neutral-100;
 
-    // The pager's spinner shows below the list; the pager itself stays mounted while pages remain.
+    // The pager's spinner shows below the list; the pager itself stays mounted without it.
     &--paging {
       $paging: &;
     }

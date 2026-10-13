@@ -149,6 +149,25 @@ describe("useSelect hasSelection in single mode", () => {
     expect(hasSelectionFor(CHOICES, "off-page")).toBe(true);
   });
 
+  it("counts a null model as no selection when the remembered option carries another value", () => {
+    const items = ref(CHOICES.slice(1));
+    const modelValue = ref<string | null>("a");
+    const { hasSelection } = useSelect<ChoiceType, string | null>({
+      items,
+      modelValue,
+      multiple: false,
+      filterValue: "",
+      serverFilter: true,
+      textField: "label",
+      valueField: "value",
+    });
+
+    items.value = [{ value: "b", label: "B" }];
+    modelValue.value = null;
+
+    expect(hasSelection.value).toBe(false);
+  });
+
   it("keeps counting a null-valued option once a new page no longer carries it", () => {
     const items = ref(CHOICES);
     const { hasSelection } = useSelect<ChoiceType, string | null>({
