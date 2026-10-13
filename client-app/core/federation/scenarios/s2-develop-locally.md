@@ -31,13 +31,14 @@
    yarn build-only --mode=development && yarn preview
    ```
 
-3. Iterate. 📁 `StorefrontApp`: `yarn watch` rebuilds on save; reload the page with the browser cache disabled.
-   The host needs a rebuild only when the override changes.
+3. Iterate. 📁 `StorefrontApp`: `yarn watch` rebuilds on save; reload the page. The host needs a rebuild only when
+   the override changes.
 
 ✅ The plugin shows in `https://localhost:3000`, and the console says `[MF] plugins loaded=[my-plugin]`.
 
 **With hot reload instead:** run `yarn dev` in both folders instead of build + preview. Edits appear without a
-reload. Not when you change `plugin.config.ts` (2.6).
+reload. Not when you change `plugin.config.ts` (2.6). The first load after starting the servers can show a 404 on the
+plugin's page: with no declarations, the route exists only once the plugin's `init()` has run. Reload.
 
 ## 2.2 The module is already on the environment
 
@@ -61,7 +62,7 @@ APP_MODULES_FEDERATION_REMOTES='{
 ```
 
 Take each path from the environment's `store.plugins` entry, with `remoteEntry.js` changed to
-`mf-manifest.json`. _Not verified._
+`mf-manifest.json`.
 
 ⚠️ A plugin loaded through the override ignores its `permission`: it loads for every user.
 
@@ -102,7 +103,8 @@ sees no declarations. Use `yarn build` (or `yarn watch`) with `yarn preview`.
 
 ## 2.7 Several plugins at once
 
-Serve each plugin on its own port and list each one in the override:
+Serve each plugin on its own port (`yarn preview --port 3002`, or `yarn dev --port 3002`) and list each one in the
+override:
 
 ```bash
 APP_MODULES_FEDERATION_REMOTES='{"a":"http://localhost:3001/mf-manifest.json","b":"http://localhost:3002/mf-manifest.json"}'
@@ -118,5 +120,6 @@ APP_MODULES_FEDERATION_REMOTES='{"a":"http://localhost:3001/mf-manifest.json","b
 
 ---
 
-_Source-checked on 2026-10-13. Build + preview and hot reload were verified on this harness earlier.
-**Not verified:** the mixed override in 2.2, and several plugins in 2.7._
+_Walked on 2026-10-13 against vcptcore-dev: 2.1 (build + preview, watch, hot reload), 2.2 (the environment's list
+and the mixed override), 2.3 with 2.4, 2.5's codegen, 2.6, 2.7 (preview and dev). **Not verified:** 2.5 with a
+local platform, and that an override ignores `permission`._
