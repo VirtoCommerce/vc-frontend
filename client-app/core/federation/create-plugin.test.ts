@@ -129,6 +129,12 @@ describe("create-plugin scaffolder", () => {
     expect(pkg.packageManager).toMatch(/^yarn@/);
     expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));
 
+    // The README carries only the sections of the options chosen.
+    const readme = readFileSync(join(dir, "README.md"), "utf8");
+    expect(readme).toContain("https://localhost:3000/my-plugin");
+    expect(readme).not.toContain("## GraphQL");
+    expect(readme).not.toContain("storefront-plugin.targets");
+
     // Default = router on: the route page and the addRoute init must be generated.
     expect(existsSync(join(dir, "src", "pages", "my-page.vue"))).toBe(true);
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("globals.router.addRoute");
@@ -189,6 +195,7 @@ describe("create-plugin scaffolder", () => {
       devDependencies: Record<string, string>;
     };
     expect(pkg.scripts).toHaveProperty("generate:graphql-types");
+    expect(readFileSync(join(dir, "README.md"), "utf8")).toContain("## GraphQL");
     // The generated types.ts imports it; the host resolves it transitively, a plugin must not.
     expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
   });

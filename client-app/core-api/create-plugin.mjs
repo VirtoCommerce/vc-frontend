@@ -242,7 +242,7 @@ if (selected.tailwind) {
 // GitHub Release asset of the (public) host repo by the "Core Facade Release"
 // workflow. No registry, token, or account — any package manager can install it,
 // and the consumer's lockfile records the tarball checksum (tamper-evident pin).
-// Local co-dev against an unpushed facade uses yalc instead (see HOWTO.md).
+// Local co-dev against an unpushed facade uses yalc instead (scenario S2.3).
 const HOST_REPO = "VirtoCommerce/vc-frontend";
 const coreTarballUrl = `https://github.com/${HOST_REPO}/releases/download/core-v${corePkg.version}/vc-frontend-core-${corePkg.version}.tgz`;
 
@@ -307,7 +307,7 @@ const pkgJson = {
     watch: "vite build --watch",
     preview: "vite preview --port 3001",
     // HMR remote: run the plugin as its own dev server so edits hot-update live inside
-    // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
+    // a host that is itself running `yarn dev` (scenario S2.1).
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
     lint: "eslint .",
@@ -470,7 +470,7 @@ export function init(): void {
 const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
 
 // What the storefront knows before running this plugin. It does not replace the registrations in
-// src/index.ts — see HOWTO "Declaring contributions".
+// src/index.ts — see core/federation/declarations.md.
 export default definePluginManifest({${
   selected.router
     ? `
@@ -511,42 +511,133 @@ const indexHtml = `<!doctype html>
 </html>
 `;
 
-const readme = `# ${pluginName}
+const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
+const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
+const optionNames = GROUPS.map((group) => `${group.key} ${selected[group.key] ? "yes" : "no"}`).join(" · ");
+const successCheck = selected.router
+  ? `\`https://localhost:3000/${pluginName}\` shows the plugin's page.`
+  : `The browser console says \`[MF] plugins loaded=[${pluginName}]\`.`;
 
-A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:plugin\`.
+const readmeSections = [
+  `# ${pluginName}
 
-- Build: \`yarn build\` - Serve for the host: \`yarn preview\` (port 3001)
-- Check it: \`yarn lint\`, \`yarn type-check\`, \`yarn test\` - the host's own stack, pinned to the
-  host's versions. Templates are type-checked strictly, and the facade declares every ui-kit
-  component it exports, so \`<VcButton>\` is checked without importing it.
-${
-  selected.apollo
-    ? "- Your xAPI types: write `.graphql` documents under `src/api/graphql/`, then `yarn generate:graphql-types`\n  (needs `APP_BACKEND_URL` - copy `.env.example`). Commit the generated `types.ts`; the build must not need a backend.\n"
-    : ""
-}- Full walkthrough (running against the host, shipping, versioning):
-  the host repo's \`client-app/core/federation/HOWTO.md\`.
-${
+A storefront plugin, scaffolded by \`yarn create:plugin\` in vc-frontend. Built against \`@vc-frontend/core\`
+${corePkg.version}; it loads in storefronts whose facade satisfies \`^${corePkg.version}\`.
+
+Options: ${optionNames}.
+
+## First run
+
+1. 📁 here: \`yarn install\`, then \`yarn build && yarn preview\`. The plugin is served on port 3001.
+2. 📁 a vc-frontend checkout: set \`"module_federation_enabled": true\` in
+   \`client-app/config/settings_data.json\` (don't commit it), then
+
+   \`\`\`bash
+   APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' \\
+   yarn build-only --mode=development && yarn preview
+   \`\`\`
+
+3. ✅ ${successCheck}
+
+More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENARIOS_URL}/s2-develop-locally.md).
+
+## Files
+
+| File | What it is |
+| --- | --- |
+| \`src/index.ts\` | \`init()\`, called by the storefront once the plugin's code loads |
+| \`plugin.config.ts\` | what the storefront knows before the code loads: routes, menu entries, slots, \`when\` |
+| \`public/plugin.json\` | the plugin's id and expose key, read by the platform |
+| \`vite.config.ts\` | the build, and \`requiredHostVersion\`: the facade versions this plugin claims to work with |
+| \`src/mocks/vc-frontend-core.ts\` | stand-in for the facade in tests |`,
+  webDir && `| \`${TARGETS_FILE}\` | the module build: builds this plugin and puts it in the module package |`,
+  selected.apollo && "| `codegen.ts`, `src/api/graphql/` | your GraphQL documents and their generated types |",
+  selected.tailwind && "| `tailwind.config.cjs`, `src/styles.css` | Tailwind with the storefront's design tokens |",
+  `
+## Rules
+
+1. **Host APIs come only from \`@vc-frontend/core\`.** Never \`@/…\`: those paths do not exist here.
+2. **Register a declared route before the first \`await\` in \`init()\`.** A later call is refused.
+3. **Give routes and menu ids names the storefront cannot already have.** A host name is refused.
+4. **The backend authorizes every query.** A \`permission\` in \`plugin.json\` only decides whether a browser loads
+   the plugin; its files are public by URL.
+5. **\`requiredHostVersion\` is a promise.** Set it to the facade version that added what you use.
+
+## Commands
+
+| Command | Does |
+| --- | --- |
+| \`yarn build\` / \`yarn watch\` | build once / on every save |
+| \`yarn preview\` | serve the build on port 3001 |
+| \`yarn dev\` | dev server with hot reload. It does not write \`plugin.json\`, so the storefront sees no declarations |
+| \`yarn type-check\`, \`yarn lint\`, \`yarn test\` | the storefront's own checks, at its versions |`,
+  selected.apollo && "| `yarn generate:graphql-types` | regenerate `src/api/graphql/types.ts` |",
+  `
+## Tests
+
+The facade has no runtime code outside the storefront, so tests import a stand-in: \`vitest.config.ts\` points
+\`@vc-frontend/core\` at \`src/mocks/vc-frontend-core.ts\`. Add the symbols your code uses there, and override them
+in a spec with one \`vi.mock\` that spreads the original:
+
+\`\`\`ts
+vi.mock("@vc-frontend/core", async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  globals: { storeId: "test-store" },
+}));
+\`\`\`
+
+Mount helpers come from \`@vc-frontend/core/testing\`. In tests a \`Vc*\` component is whatever the stand-in
+gives; test its own behaviour in the storefront, not here.`,
+  selected.apollo &&
+    `
+## GraphQL
+
+1. Copy \`.env.example\` to \`.env\` and set \`APP_BACKEND_URL\`.
+2. Write documents under \`src/api/graphql/\`, then \`yarn generate:graphql-types\`. It reads the module's schema at
+   \`/graphql/${pluginName}\`.
+3. Commit the generated \`types.ts\`: the build must not need a backend.`,
+  `
+## Styling
+
+Plugin CSS applies to the whole storefront page: nothing fences it yet. Prefer \`<style scoped>\`, and colour with
+the storefront's CSS variables (\`var(--color-…)\`), not fixed values, so dark mode and the theme presets work.`,
+  selected.tailwind &&
+    "\nTailwind here uses the storefront's preset and emits only components and utilities, never its base reset.",
   webDir
     ? `
 ## Shipping
 
 This plugin ships inside its backend module. \`yarn build\` writes it to \`${PLUGIN_OUT_DIR}/\`, the folder the
-platform probes, and the module build runs that through \`${TARGETS_FILE}\` (imported by the module's
-.csproj). Verify the module from a vc-frontend checkout:
-\`yarn check:plugin-module <path-to-*.Web> [--artifact <module.zip>] [--env <storefront-url>]\`.
-`
-    : ""
-}
+platform serves, and the module build runs that through \`${TARGETS_FILE}\`. From a vc-frontend checkout:
+
+\`\`\`bash
+yarn check:plugin-module <path-to-the-module's-*.Web> [--artifact <module.zip>] [--env <storefront-url>]
+\`\`\`
+
+Steps: [S1a](${SCENARIOS_URL}/s1a-plugin-in-an-existing-module.md); on an environment:
+[S6](${SCENARIOS_URL}/s6-enable-on-an-environment.md).`
+    : `
+## Shipping
+
+Ship it inside a backend module ([S1a](${SCENARIOS_URL}/s1a-plugin-in-an-existing-module.md)): installing the
+module installs the plugin, with no storefront rebuild. \`yarn create:plugin <name> --module <path>\` scaffolds
+straight into one.`,
+  `
 ## The facade dependency
 
-\`@vc-frontend/core\` is pinned to a versioned tarball URL (a Release asset of the host
-repo) - the lockfile records its checksum. **Keep it that way in commits.** For local
-co-development against an unpushed facade, use yalc (\`yalc add @vc-frontend/core\`);
-run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing - never
-commit a \`file:.yalc/...\` dependency. A \`portal:\`/\`link:\` pin is not an alternative: it
-symlinks, so the facade's types resolve their own imports from the host's node_modules and
-\`@vue/test-utils\` ends up with two identities.
-`;
+\`@vc-frontend/core\` is pinned to a release tarball, and the lockfile records its checksum. **Keep it pinned in
+commits.** To use an unreleased facade, link it with yalc and restore the pin before pushing
+([S2.3](${SCENARIOS_URL}/s2-develop-locally.md#23-the-facade-is-extended-but-not-released)). Not \`portal:\` or
+\`link:\`: they symlink, and the test helpers break.
+
+## More
+
+- How plugins work: [the guide](${DOCS_URL}/README.md)
+- Every task, step by step: [the scenarios](${SCENARIOS_URL}/README.md)
+- Not showing up? [S7](${SCENARIOS_URL}/s7-missing-or-broken.md)
+`,
+];
+const readme = readmeSections.filter(Boolean).join("\n");
 
 // Platform discovery descriptor. Without it AppManifestService assumes its own defaults —
 // remote name = the .NET module id and expose "./Module" — and the host would loadRemote a key this
