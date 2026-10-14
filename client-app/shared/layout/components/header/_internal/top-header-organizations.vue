@@ -70,6 +70,7 @@
             size="xs"
             role="option"
             :option-id="getOptionId(index)"
+            :data-vc-organization-option="componentId"
             :highlighted="index === highlightedIndex"
             :highlight-ring="!isPassiveHighlight"
             :tabindex="-1"

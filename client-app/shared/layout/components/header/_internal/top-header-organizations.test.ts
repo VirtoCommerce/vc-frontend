@@ -179,6 +179,12 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.get("[data-test-id='organizations-list']").attributes("role")).toBe("listbox");
   });
 
+  it("marks each option for end-to-end tests", () => {
+    const wrapper = mountComponent();
+
+    expect(wrapper.findAll("[data-vc-organization-option] [role='option']")).toHaveLength(3);
+  });
+
   it("leaves the keys of an IME composition to the IME", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
