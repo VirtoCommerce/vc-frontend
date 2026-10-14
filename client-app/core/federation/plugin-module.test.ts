@@ -279,10 +279,24 @@ describe("STOREFRONT_PLUGIN_TARGETS", () => {
     const build = /<Target Name="BuildStorefrontPlugin"[\s\S]*?<\/Target>/.exec(STOREFRONT_PLUGIN_TARGETS)?.[0] ?? "";
     const commands = [...build.matchAll(/<Exec Command="([^"]+)"/g)].map(([, command]) => command);
 
-    expect(commands).toEqual(["corepack yarn install --immutable", "corepack yarn type-check", "corepack yarn build"]);
+    expect(commands).toEqual([
+      "corepack --version",
+      "corepack yarn install --immutable",
+      "corepack yarn type-check",
+      "corepack yarn build",
+    ]);
     expect(build).toContain(
       `<RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\\vite\\bin\\vite.js')" />`,
     );
+  });
+
+  it("stops with a readable error, before any yarn call, when corepack is missing", () => {
+    const build = /<Target Name="BuildStorefrontPlugin"[\s\S]*?<\/Target>/.exec(STOREFRONT_PLUGIN_TARGETS)?.[0] ?? "";
+    const error = /<Error Condition="'\$\(StorefrontCorepackExitCode\)' != '0'" Text="([^"]+)" \/>/.exec(build);
+
+    expect(build).toContain('<Output TaskParameter="ExitCode" PropertyName="StorefrontCorepackExitCode" />');
+    expect(error?.[1]).toContain("-p:SkipStorefrontPlugin=true");
+    expect(build.indexOf("<Error ")).toBeLessThan(build.indexOf("corepack yarn"));
   });
 
   it("skips building and copying under SkipStorefrontPlugin, and says the package has no plugin", () => {

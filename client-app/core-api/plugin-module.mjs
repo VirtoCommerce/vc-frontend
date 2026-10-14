@@ -42,6 +42,11 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <Message Importance="high" Text="SkipStorefrontPlugin=true: the storefront plugin is neither built nor copied into the package." />
   </Target>
   <Target Name="BuildStorefrontPlugin" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' != 'true'">
+    <!-- Node 25+ no longer bundles corepack; without this, the first yarn call fails with a bare exit code. -->
+    <Exec Command="corepack --version" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ExitCode" PropertyName="StorefrontCorepackExitCode" />
+    </Exec>
+    <Error Condition="'$(StorefrontCorepackExitCode)' != '0'" Text="The storefront plugin builds with Node.js and corepack, and corepack was not found. Use Node 22 or 24, which bundle it, or run npm install -g corepack. To build the module without the plugin: -p:SkipStorefrontPlugin=true." />
     <!-- vc-build Clean deletes every bin folder, those inside node_modules too, and yarn would not restore them. -->
     <RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\vite\bin\vite.js')" />
     <!-- Through corepack, for the yarn that package.json pins: a runner's global yarn is 1.x, and corepack enable
