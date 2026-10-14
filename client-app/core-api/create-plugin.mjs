@@ -874,63 +874,59 @@ describe("${pluginName} page", () => {
 `;
 
 // ── write ─────────────────────────────────────────────────────────────────────
-mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
-mkdirSync(join(targetDir, "public"), { recursive: true });
-writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
-writeFileSync(join(targetDir, "index.html"), indexHtml);
-writeFileSync(join(targetDir, "vite.config.ts"), viteConfig);
-writeFileSync(join(targetDir, "plugin.config.ts"), pluginConfigTs);
-writeFileSync(join(targetDir, "tsconfig.json"), JSON.stringify(tsconfig, null, 2) + "\n");
-writeFileSync(join(targetDir, "src", "index.ts"), indexTs);
-if (selected.router) {
-  writeFileSync(join(targetDir, "src", "pages", "my-page.vue"), myPageVue);
-}
-if (selected.tailwind) {
-  writeFileSync(join(targetDir, "tailwind.config.cjs"), tailwindConfig);
-  writeFileSync(join(targetDir, "postcss.config.cjs"), postcssConfig);
-  writeFileSync(join(targetDir, "src", "styles.css"), stylesCss);
-}
-writeFileSync(join(targetDir, "public", "plugin.json"), JSON.stringify(pluginJson, null, 2) + "\n");
-writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
-writeFileSync(join(targetDir, "README.md"), readme);
-writeFileSync(join(targetDir, "CLAUDE.md"), claudeMd);
-writeFileSync(join(targetDir, "eslint.config.js"), eslintConfig);
-writeFileSync(join(targetDir, ".prettierrc.json"), JSON.stringify(prettierRc, null, 2) + "\n");
-writeFileSync(
-  join(targetDir, ".prettierignore"),
-  "dist/\nnode_modules/\n.yalc/\nyarn.lock\nsrc/api/graphql/types.ts\n",
-);
-writeFileSync(join(targetDir, ".editorconfig"), editorConfig);
-mkdirSync(join(targetDir, ".vscode"), { recursive: true });
-writeFileSync(join(targetDir, ".vscode", "settings.json"), JSON.stringify(vscodeSettings, null, 2) + "\n");
-writeFileSync(join(targetDir, ".vscode", "extensions.json"), JSON.stringify(vscodeExtensions, null, 2) + "\n");
-writeFileSync(join(targetDir, "vitest.config.ts"), vitestConfig);
-mkdirSync(join(targetDir, "src", "mocks"), { recursive: true });
-writeFileSync(join(targetDir, FACADE_MOCK_PATH), facadeMock);
-if (selected.router) {
-  writeFileSync(join(targetDir, "src", "pages", `${samplePage}.test.ts`), sampleSpec);
-}
-if (selected.apollo) {
-  mkdirSync(join(targetDir, "src", "api", "graphql", "queries", "ping"), { recursive: true });
-  writeFileSync(join(targetDir, "codegen.ts"), codegenConfig);
-  writeFileSync(join(targetDir, ".env.example"), envExample);
-  writeFileSync(join(targetDir, "src", "api", "graphql", "queries", "ping", "pingQuery.graphql"), sampleDocument);
-}
-if (webDir) {
-  writeFileSync(join(targetDir, TARGETS_FILE), STOREFRONT_PLUGIN_TARGETS);
-}
-// yalc artifacts (local facade co-dev) must never be committed - see README.
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n");
-// An empty lockfile makes this folder its own Yarn project. Without it, Yarn refuses to install under a parent
-// package.json, which a module's *.Web often has for its admin UI.
-writeFileSync(join(targetDir, "yarn.lock"), "");
-// Standalone project: keep Yarn out of the host's workspace/PnP context.
 // The host's supply-chain age gate, so a plugin does not install a package the host would refuse.
 const hostAgeGate = /^npmMinimalAgeGate:.*$/m.exec(readFileSync(resolve(REPO_ROOT, ".yarnrc.yml"), "utf8"))?.[0];
-writeFileSync(
-  join(targetDir, ".yarnrc.yml"),
-  ["nodeLinker: node-modules", hostAgeGate, ""].filter((line) => line !== undefined).join("\n"),
-);
+const json = (value) => JSON.stringify(value, null, 2) + "\n";
+/** Every file the scaffold creates, relative to the target. None is written while any of them exists. */
+const outputs = [
+  ["package.json", json(pkgJson)],
+  ["index.html", indexHtml],
+  ["vite.config.ts", viteConfig],
+  ["plugin.config.ts", pluginConfigTs],
+  ["tsconfig.json", json(tsconfig)],
+  ["src/index.ts", indexTs],
+  selected.router && ["src/pages/my-page.vue", myPageVue],
+  selected.tailwind && ["tailwind.config.cjs", tailwindConfig],
+  selected.tailwind && ["postcss.config.cjs", postcssConfig],
+  selected.tailwind && ["src/styles.css", stylesCss],
+  ["public/plugin.json", json(pluginJson)],
+  ["src/shims-vue.d.ts", shimsVue],
+  ["README.md", readme],
+  ["CLAUDE.md", claudeMd],
+  ["eslint.config.js", eslintConfig],
+  [".prettierrc.json", json(prettierRc)],
+  [".prettierignore", "dist/\nnode_modules/\n.yalc/\nyarn.lock\nsrc/api/graphql/types.ts\n"],
+  [".editorconfig", editorConfig],
+  [".vscode/settings.json", json(vscodeSettings)],
+  [".vscode/extensions.json", json(vscodeExtensions)],
+  ["vitest.config.ts", vitestConfig],
+  [FACADE_MOCK_PATH, facadeMock],
+  selected.router && [`src/pages/${samplePage}.test.ts`, sampleSpec],
+  selected.apollo && ["codegen.ts", codegenConfig],
+  selected.apollo && [".env.example", envExample],
+  selected.apollo && ["src/api/graphql/queries/ping/pingQuery.graphql", sampleDocument],
+  webDir && [TARGETS_FILE, STOREFRONT_PLUGIN_TARGETS],
+  // yalc artifacts (local facade co-dev) must never be committed - see README.
+  [".gitignore", "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n"],
+  // An empty lockfile makes this folder its own Yarn project. Without it, Yarn refuses to install under a parent
+  // package.json, which a module's *.Web often has for its admin UI.
+  ["yarn.lock", ""],
+  // Standalone project: keep Yarn out of the host's workspace/PnP context.
+  [".yarnrc.yml", ["nodeLinker: node-modules", hostAgeGate, ""].filter((line) => line !== undefined).join("\n")],
+].filter(Boolean);
+
+const taken = outputs.map(([file]) => file).filter((file) => existsSync(join(targetDir, file)));
+if (taken.length) {
+  console.error(
+    `${targetDir} already has ${taken.join(", ")} - refusing to overwrite. Scaffold into a folder without them.`,
+  );
+  process.exit(1);
+}
+mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
+for (const [file, content] of outputs) {
+  mkdirSync(dirname(join(targetDir, file)), { recursive: true });
+  writeFileSync(join(targetDir, file), content, { flag: "wx" });
+}
 
 if (pinnedReleaseIsMissing()) {
   console.log(

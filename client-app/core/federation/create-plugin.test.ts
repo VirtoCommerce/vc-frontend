@@ -253,6 +253,37 @@ describe("create-plugin scaffolder", () => {
     expectParseableTs(join(scaffoldExpectingSuccess("gql-parse", ["--yes", "--with-apollo"]), "vite.config.ts"));
   });
 
+  it("refuses a folder that already has one of its files, and writes nothing", () => {
+    const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
+    tempDirs.push(parent);
+    const dir = join(parent, "repo");
+    mkdirSync(dir);
+    writeFileSync(join(dir, "README.md"), "my repo");
+    writeFileSync(join(dir, "LICENSE"), "MIT");
+
+    const { status, stderr } = spawnSync(process.execPath, [SCRIPT, "foo-plugin", dir, "--yes"], { encoding: "utf8" });
+
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("README.md");
+    expect(stderr).toContain("refusing to overwrite");
+    expect(readFileSync(join(dir, "README.md"), "utf8")).toBe("my repo");
+    expect(existsSync(join(dir, "package.json"))).toBe(false);
+  });
+
+  it("scaffolds into a folder that holds only files it does not write", () => {
+    const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
+    tempDirs.push(parent);
+    const dir = join(parent, "repo");
+    mkdirSync(dir);
+    writeFileSync(join(dir, "LICENSE"), "MIT");
+
+    const { status, stderr } = spawnSync(process.execPath, [SCRIPT, "foo-plugin", dir, "--yes"], { encoding: "utf8" });
+
+    expect(status, stderr).toBe(0);
+    expect(readFileSync(join(dir, "LICENSE"), "utf8")).toBe("MIT");
+    expect(existsSync(join(dir, "package.json"))).toBe(true);
+  });
+
   it("rejects a non-kebab-case plugin name", () => {
     const { status, stderr } = runScaffolder("My_Plugin", ["--yes"]);
     expect(status).not.toBe(0);
