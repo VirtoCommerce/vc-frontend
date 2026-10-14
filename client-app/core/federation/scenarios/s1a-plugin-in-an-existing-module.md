@@ -53,8 +53,7 @@
 
    📁 `StorefrontApp`: `yarn build && yarn preview` (serves the plugin on port 3001).
 
-   📁 `vc-frontend`: set `"module_federation_enabled": true` in `client-app/config/settings_data.json` (don't
-   commit it), then:
+   📁 `vc-frontend` (with `"module_federation_enabled": true`, the default):
 
    ```bash
    APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \

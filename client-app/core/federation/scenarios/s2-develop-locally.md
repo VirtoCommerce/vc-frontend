@@ -5,7 +5,7 @@
 **Before you start (every setup below):**
 
 1. A `vc-frontend` checkout with `yarn install` done, and a backend in `.env.local` (`APP_BACKEND_URL`).
-2. `"module_federation_enabled": true` in `client-app/config/settings_data.json`. **Don't commit it.**
+2. `"module_federation_enabled": true` in `client-app/config/settings_data.json` (the default).
 3. Build the host with `--mode=development`. A production build looks the store up by `localhost` and shows a blank
    page.
 
@@ -115,8 +115,7 @@ APP_MODULES_FEDERATION_REMOTES='{"a":"http://localhost:3001/mf-manifest.json","b
 1. **A local plugin cannot go into a deployed storefront.** The override is read when the host is built, so run the
    host locally.
 2. **`when` conditions are read once, at startup.** After you sign in, reload the page.
-3. **Don't commit the switch or a yalc link.** `check:plugin-module` catches the yalc link; nothing catches the
-   switch.
+3. **Don't commit a yalc link.** `check:plugin-module` catches it.
 
 ---
 
