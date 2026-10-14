@@ -1,0 +1,27 @@
+<svg width="236" height="168" display="block" viewBox="0 0 236 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Colours are theme tokens, so this only follows presets and dark mode when inlined (`?raw`), not as an <img>. -->
+  <rect x="6" y="8" width="224" height="152" rx="15" fill="var(--color-secondary-200)" />
+  <rect x="6.5" y="8.5" width="223" height="151" rx="14.5" stroke="var(--color-secondary-100)" />
+
+  <!-- Two stat cards and a widget, all set aside -->
+  <rect x="22" y="26" width="84" height="42" rx="8" fill="var(--color-additional-50)" stroke="var(--color-secondary-300)" stroke-width="1.5" stroke-dasharray="5 5" />
+  <rect x="33" y="37" width="28" height="7" rx="3.5" fill="var(--color-secondary-500)" opacity="0.32" />
+  <rect x="33" y="50" width="48" height="10" rx="4" fill="var(--color-secondary-100)" />
+  <rect x="130" y="26" width="84" height="42" rx="8" fill="var(--color-additional-50)" stroke="var(--color-secondary-300)" stroke-width="1.5" stroke-dasharray="5 5" />
+  <rect x="141" y="37" width="28" height="7" rx="3.5" fill="var(--color-secondary-500)" opacity="0.32" />
+  <rect x="141" y="50" width="48" height="10" rx="4" fill="var(--color-secondary-100)" />
+  <rect x="22" y="80" width="192" height="62" rx="8" fill="var(--color-additional-50)" stroke="var(--color-secondary-300)" stroke-width="1.5" stroke-dasharray="5 5" />
+  <rect x="35" y="92" width="56" height="8" rx="4" fill="var(--color-secondary-500)" opacity="0.32" />
+  <rect x="35" y="108" width="146" height="6" rx="3" fill="var(--color-secondary-100)" />
+  <rect x="35" y="120" width="116" height="6" rx="3" fill="var(--color-secondary-100)" />
+
+  <!-- Eye-off badge -->
+  <circle cx="192" cy="124" r="28" fill="var(--color-additional-50)" />
+  <circle cx="192" cy="124" r="24" fill="var(--color-primary-500)" />
+  <g stroke="var(--color-additional-50)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(192 124) scale(1.15) translate(-12 -12)">
+    <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+    <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+    <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
+    <path d="m2 2 20 20" />
+  </g>
+</svg>
