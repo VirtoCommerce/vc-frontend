@@ -4,7 +4,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { coerce, gte, minVersion, validRange } from "semver";
+import { coerce, gte, minVersion, subset, validRange } from "semver";
 import { BACKEND_REQUIREMENTS } from "./backend-requirements.mjs";
 import { gitIn } from "./git.mjs";
 
@@ -234,7 +234,21 @@ function checkFacadePin(appDir, pkg) {
       ),
     ];
   }
-  const floor = minVersion(range).version;
+  const floor = minVersion(range)?.version;
+  if (!floor) {
+    return [
+      fail(`vite.config.ts: requiredHostVersion "${range}" admits no version`, `requiredHostVersion: "^${pinned}"`),
+    ];
+  }
+  // Past ^pin lies the next breaking facade line, which this plugin was never built against.
+  if (gte(floor, pinned) && !subset(range, `^${pinned}`)) {
+    return [
+      fail(
+        `requiredHostVersion ${range} also admits facades past ^${pinned}, whose breaking changes this plugin was not built for`,
+        `requiredHostVersion: "^${pinned}"`,
+      ),
+    ];
+  }
   if (floor === pinned) {
     return [pass(`requiredHostVersion ${range} matches the facade pin ${pinned}`)];
   }

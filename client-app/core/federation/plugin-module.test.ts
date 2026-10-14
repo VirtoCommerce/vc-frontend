@@ -209,6 +209,19 @@ describe("checkModuleFiles", () => {
     expect(withStatus(results, "warn")).toHaveLength(1);
   });
 
+  it("fails a contract range that reaches past the facade's breaking line, or admits nothing", () => {
+    const { webDir, write } = createModule();
+    const viteConfig = (range: string) =>
+      `createRemoteFederationOptions({ name: "foo", requiredHostVersion: "${range}" });\noutDir: "../plugins/vc-frontend"`;
+
+    for (const range of [`>=${PIN}`, `${PIN} - 1.0.0`, ">1.0.0 <1.0.0"]) {
+      write("StorefrontApp/vite.config.ts", viteConfig(range));
+      expect(failures(checkModuleFiles(webDir)), range).toEqual([
+        expect.objectContaining({ fix: `requiredHostVersion: "^${PIN}"` }),
+      ]);
+    }
+  });
+
   it("fails a plugin.json whose remote name is not the federation name", () => {
     const { webDir, write } = createModule();
     write(
