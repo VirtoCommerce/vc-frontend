@@ -264,6 +264,25 @@ describe("create-plugin scaffolder", () => {
     expect(readFileSync(join(dir, "README.md"), "utf8")).not.toContain("is not shared.");
   });
 
+  it("scaffolds --with-i18n with messages under one key, merged into the storefront's i18n", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes", "--with-i18n"]);
+
+    expect(JSON.parse(readFileSync(join(dir, "src", "locales", "en.json"), "utf8"))).toHaveProperty("my_plugin.title");
+    expectParseableTs(join(dir, "src", "i18n.ts"));
+    expect(readFileSync(join(dir, "src", "i18n.ts"), "utf8")).toContain('registerLocaleLoader("plugin:my-plugin"');
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("loadLocales();");
+    expect(readFileSync(join(dir, "src", "pages", "my-page.vue"), "utf8")).toContain('$t("my_plugin.title")');
+    expect(readFileSync(join(dir, "README.md"), "utf8")).toContain("## Translations");
+  });
+
+  it("writes no translations without --with-i18n", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+
+    expect(existsSync(join(dir, "src", "i18n.ts"))).toBe(false);
+    expect(existsSync(join(dir, "src", "locales"))).toBe(false);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).not.toContain("loadLocales");
+  });
+
   it("refuses a folder that already has one of its files, and writes nothing", () => {
     const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
     tempDirs.push(parent);

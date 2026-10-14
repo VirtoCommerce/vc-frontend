@@ -141,7 +141,7 @@ const GROUPS = [
     key: "i18n",
     flag: "--with-i18n",
     defaultOn: false,
-    prompt: "vue-i18n (plugin-local translations)",
+    prompt: "vue-i18n (its own messages, merged into the storefront's i18n)",
     packages: ["vue-i18n"],
   },
   {
@@ -458,9 +458,11 @@ const tsconfig = {
 };
 
 const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
+const i18nImport = selected.i18n ? 'import { loadLocales } from "./i18n";\n' : "";
+const i18nCall = selected.i18n ? "  loadLocales();\n" : "";
 const indexTs = selected.router
   ? `${stylesImport}import { globals } from "@vc-frontend/core";
-import type { RouteRecordRaw } from "vue-router";
+${i18nImport}import type { RouteRecordRaw } from "vue-router";
 
 const MyPage = () => import("./pages/my-page.vue");
 
@@ -468,10 +470,54 @@ const route: RouteRecordRaw = { path: "/${pluginName}", name: "${pluginName}", c
 
 export function init(): void {
   globals.router.addRoute(route);
-}
+${i18nCall}}
 `
-  : `${stylesImport}export function init(): void {
-  // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
+  : `${stylesImport}${i18nImport}export function init(): void {
+${i18nCall}  // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
+}
+`;
+
+// All of the plugin's messages live under one top-level key, so they cannot clash with the storefront's.
+const messagesNamespace = pluginName.replaceAll("-", "_");
+const localeMessages = {
+  [messagesNamespace]: {
+    title: pluginName,
+    description: "Served by Module Federation - built and deployed separately from the host.",
+  },
+};
+const i18nTs = `import { globals, registerLocaleLoader } from "@vc-frontend/core";
+import type { I18n, ILanguage } from "@vc-frontend/core";
+
+const FALLBACK_LOCALE = "en";
+const LOCALE_FILES = import.meta.glob<{ default: Record<string, unknown> }>("./locales/*.json");
+
+async function loadFile(locale: string): Promise<Record<string, unknown>> {
+  const load = LOCALE_FILES[\`./locales/\${locale}.json\`];
+  return load ? (await load()).default : {};
+}
+
+/**
+ * Merges this plugin's messages for a locale, and the \`en\` fallback, into the storefront's i18n.
+ * setLocaleMessage on a fresh object, never mergeLocaleMessage: the host's messages can be frozen.
+ */
+async function mergeLocale(i18n: I18n, locale: string): Promise<void> {
+  const locales = locale === FALLBACK_LOCALE ? [FALLBACK_LOCALE] : [FALLBACK_LOCALE, locale];
+  const messages = await Promise.all(locales.map(loadFile));
+  locales.forEach((name, index) => {
+    const existing = i18n.global.getLocaleMessage(name) as Record<string, unknown>;
+    i18n.global.setLocaleMessage(name, { ...existing, ...messages[index] });
+  });
+}
+
+/** Merges the current locale now, and again on every language switch. */
+export function loadLocales(): void {
+  registerLocaleLoader("plugin:${pluginName}", (i18n: I18n, language: ILanguage) =>
+    mergeLocale(i18n, language?.twoLetterLanguageName || FALLBACK_LOCALE),
+  );
+  const { locale } = globals.i18n.global;
+  // i18n holds the full culture ("en-US"); the message files are two-letter, like the host's.
+  const current = typeof locale === "object" ? locale.value : locale;
+  void mergeLocale(globals.i18n, current?.split("-")[0] || FALLBACK_LOCALE);
 }
 `;
 
@@ -489,7 +535,15 @@ export default definePluginManifest({${
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
-const myPageVue = `<template>
+const myPageVue = selected.i18n
+  ? `<template>
+  <div${pageClass}>
+    <h1>{{ $t("${messagesNamespace}.title") }}</h1>
+    <p>{{ $t("${messagesNamespace}.description") }}</p>
+  </div>
+</template>
+`
+  : `<template>
   <div${pageClass}>
     <h1>${pluginName}</h1>
     <p>Served by Module Federation - built and deployed separately from the host.</p>
@@ -617,6 +671,14 @@ vi.mock("@vc-frontend/core", async (importOriginal) => ({
 
 Mount helpers come from \`@vc-frontend/core/testing\`. In tests a \`Vc*\` component is whatever the stand-in
 gives; test its own behaviour in the storefront, not here.`,
+  selected.i18n &&
+    `
+## Translations
+
+Messages live in \`src/locales/<two-letter locale>.json\`, all under one top-level key, \`${messagesNamespace}\`, so they
+cannot clash with the storefront's. \`src/i18n.ts\` merges them into the storefront's i18n at startup and again on
+every language switch; a locale without a file falls back to \`en\`. Use them as \`$t("${messagesNamespace}.…")\`. A
+declared menu title in \`plugin.config.ts\` is such a key too.`,
   selected.apollo &&
     `
 ## GraphQL
@@ -879,7 +941,7 @@ const createWrapper = createWrapperFactory(mount, MyPage);
 
 describe("${pluginName} page", () => {
   it("renders", () => {
-    expect(createWrapper().text()).toContain("${pluginName}");
+    expect(createWrapper().text()).toContain("${selected.i18n ? `${messagesNamespace}.title` : pluginName}");
   });
 });
 `;
@@ -897,6 +959,8 @@ const outputs = [
   ["tsconfig.json", json(tsconfig)],
   ["src/index.ts", indexTs],
   selected.router && ["src/pages/my-page.vue", myPageVue],
+  selected.i18n && ["src/i18n.ts", i18nTs],
+  selected.i18n && ["src/locales/en.json", json(localeMessages)],
   selected.tailwind && ["tailwind.config.cjs", tailwindConfig],
   selected.tailwind && ["postcss.config.cjs", postcssConfig],
   selected.tailwind && ["src/styles.css", stylesCss],
