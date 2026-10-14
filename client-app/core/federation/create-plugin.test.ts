@@ -117,7 +117,9 @@ describe("create-plugin scaffolder", () => {
     expectParseableTs(join(dir, "vite.config.ts"));
     expectParseableTs(join(dir, "plugin.config.ts"));
     expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain("pluginContributions(contributions)");
-    expect(JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")).include).toContain("plugin.config.ts");
+    const tsconfig = JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8"));
+    expect(tsconfig.include).toContain("plugin.config.ts");
+    expect(tsconfig.compilerOptions.lib).toContain("DOM.Iterable");
     expectParseableTs(join(dir, "src", "index.ts"));
     expectParseableTs(join(dir, "vitest.config.ts"));
     expectParseableTs(join(dir, "eslint.config.js"));

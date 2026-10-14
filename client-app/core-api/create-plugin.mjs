@@ -441,7 +441,8 @@ const tsconfig = {
     target: "ESNext",
     module: "ESNext",
     moduleResolution: "Bundler",
-    lib: ["ESNext", "DOM"],
+    // DOM.Iterable: spreading a NodeList or FormData, as host code does, fails type-check without it.
+    lib: ["ESNext", "DOM", "DOM.Iterable"],
     strict: true,
     noEmit: true,
     skipLibCheck: true,
