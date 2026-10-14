@@ -567,17 +567,24 @@ export function loadLocales(): void {
 const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
 const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
 
+const moduleId = webDir ? parseModuleManifest(readFileSync(join(webDir, "module.manifest"), "utf8")).id : undefined;
+const switchModule = moduleId ?? "<module id>";
+const switchSetting = `${moduleId?.split(".").at(-1) ?? "<Module>"}.StorefrontPlugin.Enabled`;
+
 const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
 
 // What the storefront knows before running this plugin. It does not replace the registrations in
 // src/index.ts. Reference: ${DOCS_URL}/declarations.md
-export default definePluginManifest({${
-  selected.router
-    ? `
-  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],
-`
-    : ""
-}});
+export default definePluginManifest({
+  // An off switch per store, without a release: add a public store setting to the module, import settingEnabled
+  // above, and uncomment. While the setting is missing or false, nothing of the plugin loads.
+  // when: settingEnabled("${switchModule}", "${switchSetting}"),${
+    selected.router
+      ? `
+  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],`
+      : ""
+  }
+});
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
@@ -626,7 +633,6 @@ const successCheck = selected.router
 
 // The top is the author's: what the plugin does. Everything generated sits under one heading below it, so the
 // two are never confused.
-const moduleId = webDir ? parseModuleManifest(readFileSync(join(webDir, "module.manifest"), "utf8")).id : undefined;
 const readmeTitle = moduleId
   ? `# ${pluginName}: storefront plugin of ${moduleId}`
   : `# ${pluginName}: storefront plugin`;
@@ -783,6 +789,9 @@ commits.** To use an unreleased facade, link it with yalc and restore the pin be
 ];
 const readme = `${readmeHeader}\n${readmeSections.filter(Boolean).join("\n").replaceAll(/^## /gm, "### ")}`;
 
+const SKILL_NAME = "`mf-new-plugin`";
+const SKILL_SOURCE = "the `vc-frontend` plugin of the VirtoCommerce/ai-tools marketplace";
+
 // Loaded by Claude Code for any work in this folder. It imports the README instead of restating it.
 const claudeMd = [
   `# CLAUDE.md
@@ -806,7 +815,12 @@ How it plugs in, its files, rules and commands: @README.md
 ## Where each task is described
 
 | Task | Doc |
-| --- | --- |
+| --- | --- |${
+    webDir
+      ? `
+| Wire it into the module, before the first commit | [S1a](${SCENARIOS_URL}/s1a-plugin-in-an-existing-module.md), or the ${SKILL_NAME} skill (${SKILL_SOURCE}) |`
+      : ""
+  }
 | Run it in a local storefront | [S2](${SCENARIOS_URL}/s2-develop-locally.md) |
 | Add a route, menu entry or slot | [declarations](${DOCS_URL}/declarations.md) |
 | Move to a new facade version | [S4](${SCENARIOS_URL}/s4-upgrade-a-plugin.md) |
@@ -1076,7 +1090,8 @@ if (webDir) {
   const pending = checkModuleFiles(webDir).filter((result) => result.status !== "pass");
   console.log(
     `\nThe module's own files are not edited. Still to do there (yarn check:plugin-module ${shownPath(webDir)}):\n` +
-      formatResults(pending),
+      formatResults(pending) +
+      `\nIn Claude Code, the ${SKILL_NAME} skill makes these edits and stops for your decisions: ${SKILL_SOURCE}.`,
   );
 }
 console.log(`\nNext steps:

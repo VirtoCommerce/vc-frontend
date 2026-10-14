@@ -76,6 +76,8 @@ if (options.env) {
 for (const { title, results } of sections) {
   console.log(`\n${title}\n${formatResults(results)}`);
 }
-const failed = sections.some(({ results }) => results.some((result) => result.status === "fail"));
-console.log(failed ? "\nSome checks failed." : "\nAll checks passed.");
+const statuses = new Set(sections.flatMap(({ results }) => results.map((result) => result.status)));
+const failed = statuses.has("fail");
+const summary = statuses.has("warn") ? "All checks passed, but read the ⚠️ lines above." : "All checks passed.";
+console.log(failed ? "\nSome checks failed." : `\n${summary}`);
 process.exit(failed ? 1 : 0);
