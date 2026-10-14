@@ -89,7 +89,15 @@ const LOADING_INDICATOR_SELECTOR = '[aria-label="shared.layout.search_bar.scope_
 const PLACEHOLDER_SELECTOR = '[data-testid="placeholder"]';
 const DROPDOWN_SELECTOR = '[data-testid="search-dropdown"]';
 
-const { searchScopeData, preparingScope } = useSearchScore();
+const { searchScopeData, preparingScope, holdScope } = useSearchScore();
+
+let scopeReleases: (() => void)[] = [];
+
+function holdTestScope() {
+  const release = holdScope();
+  scopeReleases.push(release);
+  return release;
+}
 
 function setCategoryScope(id: string, label: string) {
   searchScopeData.value = {
@@ -121,6 +129,8 @@ beforeEach(() => {
 afterEach(() => {
   mountedWrapper?.unmount();
   mountedWrapper = undefined;
+  scopeReleases.forEach((release) => release());
+  scopeReleases = [];
 });
 
 describe("SearchBar scope indicators", () => {
@@ -167,6 +177,76 @@ describe("SearchBar scope indicators", () => {
     const chips = wrapper.findAll("[data-search-scope]");
     expect(chips).toHaveLength(1);
     expect(chips[0].text()).toBe("Parent category");
+  });
+});
+
+describe("SearchBar scope slot geometry", () => {
+  it("keeps the replaced chip's label inside the loading indicator while the scope is held", async () => {
+    setCategoryScope("child-category", "Child category");
+
+    const wrapper = createComponent();
+
+    holdTestScope();
+    searchScopeData.value = { queryScope: "", searchScope: [] };
+    await nextTick();
+
+    const indicators = wrapper.findAll(LOADING_INDICATOR_SELECTOR);
+    expect(indicators).toHaveLength(1);
+    expect(indicators[0].text()).toBe("Child category");
+  });
+
+  it("forgets the replaced label once the scope is released with nothing in it", async () => {
+    setCategoryScope("child-category", "Child category");
+
+    const wrapper = createComponent();
+
+    const release = holdTestScope();
+    searchScopeData.value = { queryScope: "", searchScope: [] };
+    await nextTick();
+
+    release();
+    await nextTick();
+
+    expect(wrapper.findAll(LOADING_INDICATOR_SELECTOR)).toHaveLength(0);
+
+    preparingScope.value = true;
+    await nextTick();
+
+    const indicators = wrapper.findAll(LOADING_INDICATOR_SELECTOR);
+    expect(indicators).toHaveLength(1);
+    expect(indicators[0].text()).toBe("");
+  });
+
+  it("shows the loading indicator for as long as any hold is active", async () => {
+    const wrapper = createComponent();
+
+    const first = holdTestScope();
+    const second = holdTestScope();
+    await nextTick();
+
+    first();
+    first();
+    await nextTick();
+
+    expect(wrapper.findAll(LOADING_INDICATOR_SELECTOR)).toHaveLength(1);
+
+    second();
+    await nextTick();
+
+    expect(wrapper.findAll(LOADING_INDICATOR_SELECTOR)).toHaveLength(0);
+  });
+
+  it("gives the chip and the loading indicator the same minimum width", async () => {
+    setCategoryScope("child-category", "Child category");
+
+    const wrapper = createComponent();
+    const chipMinWidth = wrapper.get("[data-search-scope]").attributes("min-width");
+
+    preparingScope.value = true;
+    await nextTick();
+
+    expect(chipMinWidth).toBeTruthy();
+    expect(wrapper.get(LOADING_INDICATOR_SELECTOR).attributes("min-width")).toBe(chipMinWidth);
   });
 });
 

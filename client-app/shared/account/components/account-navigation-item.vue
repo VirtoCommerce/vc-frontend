@@ -4,7 +4,7 @@
       <VcIcon size="sm" :name="item.icon" />
     </template>
 
-    {{ formatTextFunction(item?.title) }}
+    <span class="account-navigation-item__title">{{ formatTextFunction(item?.title) }}</span>
 
     <template v-if="$slots.append" #append>
       <slot name="append" />
@@ -36,5 +36,12 @@ interface IProps {
 <style lang="scss">
 .account-navigation-item {
   @apply rounded-md;
+
+  // VcMenuItem breaks its content at any character; sidebar labels wrap at spaces and split a word only if it can't fit.
+  &__title {
+    @apply break-normal;
+
+    overflow-wrap: anywhere;
+  }
 }
 </style>

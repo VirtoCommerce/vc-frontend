@@ -30,7 +30,7 @@
           :text="product.code"
           :notification="$t('pages.product.sku_copied_message')"
         >
-          <span class="text-base text-secondary-900">
+          <span class="text-base text-neutral-900">
             {{ $t("pages.product.sku_label") }}
             <span class="font-black">#{{ product.code }}</span>
           </span>
