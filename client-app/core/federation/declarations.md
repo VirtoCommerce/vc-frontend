@@ -7,7 +7,8 @@
 >
 > - `plugin.config.ts` tells the storefront what a plugin adds **before its code loads**.
 > - The build writes it into `plugin.json` as `contributions`; the platform serves it with the plugin list.
-> - It **announces**, it does not register: `init()` still adds every route, menu entry and component itself.
+> - It **announces**, it does not register: `init()` still adds every route and component itself. Menu entries are
+>   the exception: a declared one stays once the plugin loads, so `init()` adds one only to change it.
 
 _Source-checked against `dev` @ `4b7a22d23` plus the plugin tooling (VCST-6320), facade 0.2.3,
 on 2026-10-14. Section 5 was walked on 2026-10-13: each build and `type-check` error named there was
@@ -85,7 +86,8 @@ sharing scopes, anything the plugin keeps to itself.
 1. **Global conditions are read once, at startup**, after the user is known. Signing in or out reloads the page, so
    they follow; a role or setting changed while the tab stays open applies on the next page load.
 2. **Slot conditions are read on every render, per item**: true for one product card, false for the next. So they
-   never stop a download.
+   never stop a download. They only hold the place while the plugin loads; after that, the `condition` the
+   component was registered with decides where it shows. Give both the same rule.
 3. **`field` is the argument of a slot's `when` callback**, typed against that slot's data. A path that does not
    exist, or `field` outside a slot, does not compile.
 4. **These are loading rules, not security.** Settings are public and so is the plugin's code; the backend
