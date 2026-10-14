@@ -242,8 +242,10 @@ function getUrlWithoutPossibleLocale(fullPath: string): string {
  * other languages are prefixed with their (short when unambiguous) locale, e.g. `/nl/over-ons`.
  */
 function getLocalizedPath(cultureName: string, permalink: string): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
   const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
 
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
   if (cultureName.toLowerCase() === defaultStoreCulture.value?.toLowerCase()) {
     return normalizedPermalink;
   }

@@ -31,6 +31,7 @@ export function buildAlternateLinks(
   }));
 
   const defaultAlternate = alternates.find(
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
     (alternate) => alternate.cultureName.toLowerCase() === defaultCultureName.toLowerCase(),
   );
 

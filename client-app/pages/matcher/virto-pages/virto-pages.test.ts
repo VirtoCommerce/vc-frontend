@@ -8,6 +8,7 @@ vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({
     updateLocalizedUrl,
     getLocalizedPath: (cultureName: string, permalink: string) =>
+      // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
       cultureName === "en-US" ? permalink : `/${cultureName.slice(0, 2)}${permalink}`,
     defaultStoreCulture: { value: "en-US" },
   }),

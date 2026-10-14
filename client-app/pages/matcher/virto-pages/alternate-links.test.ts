@@ -3,6 +3,7 @@ import { buildAlternateLinks } from "./alternate-links";
 
 const origin = "https://store.com";
 const getLocalizedPath = (cultureName: string, permalink: string) =>
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
   cultureName === "en-US" ? permalink : `/${cultureName.slice(0, 2)}${permalink}`;
 
 describe("buildAlternateLinks", () => {
