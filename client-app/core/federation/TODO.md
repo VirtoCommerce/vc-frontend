@@ -30,7 +30,8 @@ _Checked against `dev` on 2026-10-14._
       platform restart.
 - [ ] [VCST-6330](https://virtocommerce.atlassian.net/browse/VCST-6330): **gate 2 does not gate.** A plugin built for `vue-router ^5` loads on the host's 4.x: the runtime only logs
       `Failed to bridge … shared module`, so `strictVersion` in `federation.mjs` never fails a plugin. Its comment
-      there still says it throws: fix it with the next facade change, since any edit to that file bumps the facade.
+      there still says it throws, and points at a README heading that is now "Compatibility: two gates": fix both with
+      the next facade change, since any edit to that file bumps the facade.
 - [ ] **A guard for routes a plugin registers itself** (declared routes have `when`; the rest have nothing).
 - [ ] **A declared route cannot carry layout meta**: the parent's layout shows until the plugin settles.
 - [ ] **Reserved-box sizes** for slots other than `productCard/card-button` and `block`.
@@ -48,7 +49,8 @@ _Checked against `dev` on 2026-10-14._
 
 ## Plugin tooling
 
-- [ ] **Bump `@module-federation/vite` to ≥ 1.23.1**, then drop the scaffold's typed-document alias.
+- [ ] **Bump `@module-federation/vite` past `MF_VITE_TYPE_IMPORT_FIX`** (`create-plugin.mjs`), then drop the scaffold's
+      typed-document alias.
 - [ ] **Ship the facade mock from the package**, with a guard that every export has a mock entry.
 - [ ] **Scaffold defaults:** vue-i18n and @vueuse/core on; `checkUnknownComponents` instead of `strictTemplates`;
       pre-commit hooks; print the absolute target path in the next steps.
