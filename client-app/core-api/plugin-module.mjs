@@ -474,7 +474,7 @@ export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, re
   if (!plugin) {
     const listed = plugins.map((candidate) => candidate?.id).join(", ") || "none";
     const fix = isModuleInstalled
-      ? `The module is installed, so its package has no plugins/${PLUGIN_APP_ID}/ at the root: check it with --artifact.`
+      ? `The module is installed. Either its package has no plugins/${PLUGIN_APP_ID}/ at the root (check it with --artifact), or the platform has not restarted since: it reads the plugin list once, at startup.`
       : `Is the module installed, and does its package carry plugins/${PLUGIN_APP_ID}/ at the root (--artifact)?`;
     return [...results, fail(`store.plugins does not list "${pluginId}" (listed: ${listed})`, fix)];
   }

@@ -415,14 +415,14 @@ describe("checkEnvironment", () => {
     ]);
   });
 
-  it("blames the package when the module is installed but its plugin is not listed", async () => {
+  it("points at the package and a platform restart when the module is installed but its plugin is not listed", async () => {
     const request = environment(
       installed([...atFloors, { moduleId: "VirtoCommerce.Foo", version: "3.1000.0" }]),
       listing([]),
     );
 
     expect(failures(await checkEnvironment(SHOP, PLUGIN, request))).toEqual([
-      expect.objectContaining({ fix: expect.stringContaining("The module is installed, so its package") }),
+      expect.objectContaining({ fix: expect.stringMatching(/The module is installed.*--artifact.*restarted/) }),
     ]);
   });
 
