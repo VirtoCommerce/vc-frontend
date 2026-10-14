@@ -12,43 +12,50 @@
 
     <output class="vc-stat-widget__status">{{ statusText }}</output>
 
-    <div v-if="loading" class="vc-stat-widget__value vc-stat-widget__value--pending" aria-hidden="true">—</div>
+    <div v-if="loading" class="vc-stat-widget__value vc-stat-widget__value--pending" aria-hidden="true">
+      —
+
+      <VcLoader />
+    </div>
 
     <div v-else-if="errorText" class="vc-stat-widget__error" aria-hidden="true">
-      <VcIcon name="exclamation-circle" :size="16" />
+      <span class="vc-stat-widget__line-icon">
+        <VcIcon name="exclamation-circle" :size="16" />
+      </span>
 
       <span>{{ errorText }}</span>
     </div>
 
     <template v-else>
-      <div class="vc-stat-widget__value">
+      <div v-if="!hasValue" class="vc-stat-widget__value vc-stat-widget__value--pending" aria-hidden="true">—</div>
+
+      <div v-else class="vc-stat-widget__value">
         {{ value }}
 
-        <span v-if="valueSuffix" class="vc-stat-widget__unit">{{ valueSuffix }}</span>
+        <span v-if="valueSuffix" class="vc-stat-widget__value-suffix">{{ valueSuffix }}</span>
       </div>
 
-      <div v-if="sub" class="vc-stat-widget__sub">{{ sub }}</div>
+      <div v-if="description" class="vc-stat-widget__description">{{ description }}</div>
 
       <div v-if="delta" class="vc-stat-widget__delta" :class="`vc-stat-widget__delta--color--${deltaColor}`">
-        <VcIcon v-if="deltaIcon" :name="deltaIcon" :size="14" />
+        <span v-if="deltaIcon" class="vc-stat-widget__line-icon">
+          <VcIcon :name="deltaIcon" :size="14" />
+        </span>
 
         <span>{{ delta }}</span>
       </div>
     </template>
-
-    <!-- No backdrop: the figures are already replaced by the dash, so there is nothing to veil. -->
-    <VcLoaderOverlay v-if="loading" no-bg />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 interface IProps {
-  /** Metric caption. Every string prop arrives already localized and formatted: the card translates nothing. */
+  /** Metric caption. Every string prop arrives already localized and formatted; the card translates none of them. */
   label: string;
-  /** The figure itself, pre-formatted ("$12,480.00", "34"). Not needed while `loading` or on `errorText`. */
+  /** The figure itself, pre-formatted ("$12,480.00", "34"). Without it the card shows a dash. */
   value?: string;
   /** Icon before the label, in the accent color. */
   icon?: string;
@@ -57,14 +64,14 @@ interface IProps {
   /** De-emphasized unit after the value ("items"), so the number stays the focal point. */
   valueSuffix?: string;
   /** Secondary line under the value. */
-  sub?: string;
+  description?: string;
   /** Comparison line, pinned to the bottom of the card. */
   delta?: string;
   /** Color of `delta`, e.g. `success` for growth and `danger` for a drop. */
   deltaColor?: VcStatWidgetColorType;
   /** Icon before `delta`, e.g. `chevron-up`. */
   deltaIcon?: string;
-  /** Data in flight: a dash replaces the figures and a loader covers the card. Outranks `errorText`. */
+  /** Data in flight: a dash and a spinner replace the figures. Outranks `errorText`. */
   loading?: boolean;
   /** Load failure message; when set, it replaces the figures. */
   errorText?: string;
@@ -75,40 +82,33 @@ const props = withDefaults(defineProps<IProps>(), {
   deltaColor: "neutral",
 });
 
+defineSlots<{
+  /** Content before the icon (added next to it, not instead of it), painted in the accent color, e.g. a drag handle. */
+  prepend?: () => unknown;
+}>();
+
 const { t } = useI18n();
 
-// Empty on the first render: a live region that appears together with its text is not reliably
-// announced, so a card mounted already loading or failed fills it in only after mount.
-const isMounted = ref(false);
+const hasValue = computed(() => props.value !== undefined && props.value !== "");
 
-// Names the metric: a row of cards going busy at once would otherwise read "Loading..." with no hint which.
 const statusText = computed(() => {
-  if (!isMounted.value) {
-    return "";
-  }
   if (props.loading) {
     return t("ui_kit.stat_widget.loading", { label: props.label });
   }
   return props.errorText ? t("ui_kit.stat_widget.error", { label: props.label, error: props.errorText }) : "";
 });
-
-onMounted(() => {
-  isMounted.value = true;
-});
 </script>
 
 <style lang="scss">
 .vc-stat-widget {
-  $colors: primary, secondary, neutral, accent, info, success, warning, danger;
+  $colors: primary, secondary, accent, info, success, warning, danger;
 
   --accent-color: var(--color-neutral-500);
   --bg-color: var(--vc-stat-widget-bg-color, var(--color-additional-50));
   --border-color: var(--vc-stat-widget-border-color, var(--color-neutral-200));
   --radius: var(--vc-stat-widget-radius, var(--vc-radius, 0.5rem));
 
-  // `isolate` keeps the loader overlay's z-index inside the card; `border-s-4` is logical, so the
-  // accent bar flips in RTL.
-  @apply relative isolate flex min-w-0 flex-col gap-1.5 rounded-[--radius] border border-[--border-color] border-s-4 border-s-[--accent-color] bg-[--bg-color] p-4 shadow-sm;
+  @apply flex flex-col gap-1.5 rounded-[--radius] border border-[--border-color] border-s-4 border-s-[--accent-color] bg-[--bg-color] p-4 shadow-sm;
 
   &--color {
     @each $color in $colors {
@@ -129,7 +129,7 @@ onMounted(() => {
   }
 
   &__label {
-    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-wide text-neutral-600 [overflow-wrap:anywhere];
+    @apply block min-h-[2lh] min-w-0 content-center text-xs font-bold uppercase tracking-wide text-neutral-600 [overflow-wrap:break-word];
   }
 
   &__status {
@@ -137,29 +137,33 @@ onMounted(() => {
   }
 
   &__value {
-    @apply text-3xl font-bold leading-tight text-neutral-900 [overflow-wrap:anywhere];
+    --value-color: var(--color-neutral-900);
+
+    @apply text-3xl font-bold leading-tight text-[--value-color];
 
     &--pending {
-      @apply text-neutral-300;
+      --value-color: var(--color-neutral-300);
+
+      @apply flex items-center gap-3;
     }
   }
 
-  &__error {
-    @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-700;
-  }
-
-  &__unit {
+  &__value-suffix {
     @apply text-sm font-normal text-neutral-600;
   }
 
-  &__sub {
+  &__description {
     @apply text-xs text-neutral-600;
+  }
+
+  &__error {
+    @apply mt-auto flex items-start gap-1.5 pt-1.5 text-sm font-bold text-danger-700;
   }
 
   &__delta {
     --delta-color: var(--color-neutral-700);
 
-    @apply mt-auto flex items-center gap-1 pt-1.5 text-sm font-bold text-[--delta-color];
+    @apply mt-auto flex items-start gap-1 pt-1.5 text-sm font-bold text-[--delta-color];
 
     &--color {
       @each $color in $colors {
@@ -168,6 +172,10 @@ onMounted(() => {
         }
       }
     }
+  }
+
+  &__line-icon {
+    @apply inline-flex h-[1lh] shrink-0 items-center;
   }
 }
 </style>

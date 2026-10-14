@@ -7,7 +7,6 @@ import uiKitMessages from "@/ui-kit/locales/en.json";
 import VcStatWidget from "./vc-stat-widget.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
-// Real kit messages: the status text is built from them, and the label must reach it.
 const i18n = createI18n({ locale: "en", legacy: false, messages: { en: uiKitMessages }, missingWarn: false });
 
 const createWrapper = createWrapperFactory(mount, VcStatWidget, {
@@ -15,25 +14,26 @@ const createWrapper = createWrapperFactory(mount, VcStatWidget, {
     plugins: [i18n],
     stubs: {
       VcIcon: true,
-      VcLoaderOverlay: true,
+      VcLoader: true,
     },
   },
 });
 
-// Every text distinct from the others, so finding one in the card can't be a match inside another.
+type PropsType = InstanceType<typeof VcStatWidget>["$props"];
+
+const LABEL = "Orders in “New” status";
+const ERROR_TEXT = "Couldn't load";
+
 const READY_PROPS = {
-  label: "Orders in “New” status",
+  label: LABEL,
   value: "128",
   icon: "cart",
-  sub: "$3,150.00 total",
+  description: "$3,150.00 total",
   delta: "of 21 created in the last 7 days",
 };
 
-const ERROR_TEXT = "Couldn't load";
-
-// The status region is filled after mount, so wait a tick before reading it.
-async function mountSettled(props: InstanceType<typeof VcStatWidget>["$props"]) {
-  const wrapper = createWrapper({ props });
+async function mountSettled(props: PropsType, slots?: Record<string, string>) {
+  const wrapper = createWrapper({ props, slots });
   await nextTick();
   return wrapper;
 }
@@ -42,7 +42,10 @@ function statusOf(wrapper: VueWrapper) {
   return wrapper.find("output").text();
 }
 
-// Visible text screen readers must skip, because the status region already says it.
+function visibleText(wrapper: VueWrapper) {
+  return wrapper.text().replace(statusOf(wrapper), "");
+}
+
 function hiddenText(wrapper: VueWrapper) {
   return wrapper
     .findAll('[aria-hidden="true"]')
@@ -50,64 +53,85 @@ function hiddenText(wrapper: VueWrapper) {
     .join(" ");
 }
 
-describe("VcStatWidget", () => {
-  it("shows the value, unit, sub and delta once the data has arrived", async () => {
-    const wrapper = await mountSettled({ ...READY_PROPS, valueSuffix: "items" });
+function iconNames(wrapper: VueWrapper) {
+  return wrapper.findAllComponents({ name: "VcIcon" }).map((icon) => icon.attributes("name"));
+}
 
-    expect(wrapper.text()).toContain(READY_PROPS.value);
-    expect(wrapper.text()).toContain("items");
-    expect(wrapper.text()).toContain(READY_PROPS.sub);
-    expect(wrapper.text()).toContain(READY_PROPS.delta);
+function hasLoader(wrapper: VueWrapper) {
+  return wrapper.findComponent({ name: "VcLoader" }).exists();
+}
+
+describe("VcStatWidget", () => {
+  it("shows every figure once the data has arrived, with no spinner and an empty status", async () => {
+    const wrapper = await mountSettled({ ...READY_PROPS, valueSuffix: "items", deltaIcon: "chevron-up" });
+
+    expect(visibleText(wrapper)).toContain(READY_PROPS.value);
+    expect(visibleText(wrapper)).toContain("items");
+    expect(visibleText(wrapper)).toContain(READY_PROPS.description);
+    expect(visibleText(wrapper)).toContain(READY_PROPS.delta);
+    expect(iconNames(wrapper)).toEqual(["cart", "chevron-up"]);
+    expect(hasLoader(wrapper)).toBe(false);
     expect(statusOf(wrapper)).toBe("");
   });
 
-  // The caller can't always tell "no data" from "not fetched yet", so the card owns the distinction.
+  it("renders only the label and value when every optional prop is left out", async () => {
+    const wrapper = await mountSettled({ label: LABEL, value: "128" });
+
+    expect(visibleText(wrapper).replace(/\s+/g, "")).toBe(`${LABEL}128`.replace(/\s+/g, ""));
+    expect(iconNames(wrapper)).toEqual([]);
+  });
+
   it("announces loading for its own metric and hides every figure, so a pending metric never reads as 0", async () => {
     const wrapper = await mountSettled({ ...READY_PROPS, value: "0", loading: true });
 
-    expect(statusOf(wrapper)).toContain(READY_PROPS.label);
-    expect(wrapper.findComponent({ name: "VcLoaderOverlay" }).exists()).toBe(true);
+    expect(statusOf(wrapper)).toBe(`${LABEL}: loading`);
+    expect(hasLoader(wrapper)).toBe(true);
     expect(hiddenText(wrapper)).toContain("—");
-    expect(wrapper.text()).not.toContain(READY_PROPS.sub);
-    expect(wrapper.text()).not.toContain(READY_PROPS.delta);
-    expect(wrapper.text().replace(READY_PROPS.label, "")).not.toMatch(/\b0\b/);
+    expect(visibleText(wrapper)).not.toMatch(/\b0\b/);
+    expect(visibleText(wrapper)).not.toContain(READY_PROPS.description);
+    expect(visibleText(wrapper)).not.toContain(READY_PROPS.delta);
   });
 
   it("announces the error with its metric instead of the figures, and the visible row is not read twice", async () => {
     const wrapper = await mountSettled({ ...READY_PROPS, errorText: ERROR_TEXT });
 
-    expect(statusOf(wrapper)).toContain(READY_PROPS.label);
-    expect(statusOf(wrapper)).toContain(ERROR_TEXT);
+    expect(statusOf(wrapper)).toBe(`${LABEL}: ${ERROR_TEXT}`);
     expect(hiddenText(wrapper)).toContain(ERROR_TEXT);
-    expect(wrapper.text()).not.toContain(READY_PROPS.value);
-    expect(wrapper.text()).not.toContain(READY_PROPS.sub);
-    expect(wrapper.text()).not.toContain(READY_PROPS.delta);
+    expect(iconNames(wrapper)).toEqual(["cart", "exclamation-circle"]);
+    expect(hasLoader(wrapper)).toBe(false);
+    expect(visibleText(wrapper)).not.toContain(READY_PROPS.value);
+    expect(visibleText(wrapper)).not.toContain(READY_PROPS.description);
+    expect(visibleText(wrapper)).not.toContain(READY_PROPS.delta);
   });
 
   it("prefers the loading state over a stale error while a retry is in flight", async () => {
     const wrapper = await mountSettled({ ...READY_PROPS, loading: true, errorText: ERROR_TEXT });
 
-    expect(statusOf(wrapper)).not.toContain(ERROR_TEXT);
+    expect(statusOf(wrapper)).toBe(`${LABEL}: loading`);
     expect(wrapper.text()).not.toContain(ERROR_TEXT);
   });
 
   it("keeps the label visible in every state so a failed card is still identifiable", async () => {
-    const loading = await mountSettled({ label: READY_PROPS.label, loading: true });
-    const failed = await mountSettled({ label: READY_PROPS.label, errorText: ERROR_TEXT });
+    const ready = await mountSettled(READY_PROPS);
+    const loading = await mountSettled({ label: LABEL, loading: true });
+    const failed = await mountSettled({ label: LABEL, errorText: ERROR_TEXT });
 
-    expect(loading.text()).toContain(READY_PROPS.label);
-    expect(failed.text()).toContain(READY_PROPS.label);
+    expect(visibleText(ready)).toContain(LABEL);
+    expect(visibleText(loading)).toContain(LABEL);
+    expect(visibleText(failed)).toContain(LABEL);
   });
 
-  // A region that appears together with its text is not reliably announced.
-  it("mounts the status region empty and fills it only after mount", async () => {
-    const wrapper = createWrapper({ props: { ...READY_PROPS, errorText: ERROR_TEXT } });
+  it("shows the placeholder dash instead of a blank figure when a ready card has no value", async () => {
+    const missing = await mountSettled({ label: LABEL, valueSuffix: "items" });
+    const empty = await mountSettled({ label: LABEL, value: "", valueSuffix: "items" });
+    const zero = await mountSettled({ label: LABEL, value: "0" });
 
-    expect(statusOf(wrapper)).toBe("");
-
-    await nextTick();
-
-    expect(statusOf(wrapper)).toContain(ERROR_TEXT);
+    for (const wrapper of [missing, empty]) {
+      expect(hiddenText(wrapper)).toBe("—");
+      expect(visibleText(wrapper)).not.toContain("items");
+    }
+    expect(visibleText(zero)).toContain("0");
+    expect(hiddenText(zero)).toBe("");
   });
 
   it("keeps the same status region mounted across every state", async () => {
@@ -120,13 +144,22 @@ describe("VcStatWidget", () => {
     expect(wrapper.find("output").element).toBe(region);
   });
 
-  it("renders the prepend slot", async () => {
-    const wrapper = createWrapper({
-      props: READY_PROPS,
-      slots: { prepend: '<span data-test-id="drag-handle"></span>' },
-    });
-    await nextTick();
+  it("applies the accent and delta colors, neutral by default", async () => {
+    const neutral = await mountSettled(READY_PROPS);
+    const colored = await mountSettled({ ...READY_PROPS, color: "info", deltaColor: "danger" });
+    const deltaOf = (wrapper: VueWrapper) =>
+      wrapper.findAll("div").find((node) => node.text().trim() === READY_PROPS.delta);
+
+    expect(neutral.classes()).toContain("vc-stat-widget--color--neutral");
+    expect(deltaOf(neutral)?.classes()).toContain("vc-stat-widget__delta--color--neutral");
+    expect(colored.classes()).toContain("vc-stat-widget--color--info");
+    expect(deltaOf(colored)?.classes()).toContain("vc-stat-widget__delta--color--danger");
+  });
+
+  it("renders the prepend slot next to the icon, not instead of it", async () => {
+    const wrapper = await mountSettled(READY_PROPS, { prepend: '<span data-test-id="drag-handle"></span>' });
 
     expect(wrapper.find('[data-test-id="drag-handle"]').exists()).toBe(true);
+    expect(iconNames(wrapper)).toContain("cart");
   });
 });

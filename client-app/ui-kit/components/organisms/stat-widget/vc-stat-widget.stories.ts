@@ -28,7 +28,7 @@ const meta: Meta<typeof VcStatWidget> = {
     value: "$12,480.00",
     icon: "cash",
     color: "info",
-    sub: "48 orders",
+    description: "48 orders",
     delta: "+12% vs last week",
     deltaColor: "success",
     deltaIcon: "chevron-up",
@@ -50,13 +50,13 @@ const renderStats = (template: string) => (args: Record<string, unknown>) => ({
 export const Basic: StoryType = {};
 
 export const Colors: StoryType = {
-  render: renderStats(`<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+  render: renderStats(`<div class="grid grid-cols-1 gap-4 xs:grid-cols-2 lg:grid-cols-4">
     <VcStatWidget v-for="color in colors" :key="color" v-bind="args" :color="color" :label="color" />
   </div>`),
 };
 
 export const DeltaColors: StoryType = {
-  render: renderStats(`<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+  render: renderStats(`<div class="grid grid-cols-1 gap-4 xs:grid-cols-2 lg:grid-cols-4">
     <VcStatWidget v-bind="args" label="Higher" delta="+12% vs last week" delta-color="success" delta-icon="chevron-up" />
     <VcStatWidget v-bind="args" label="Watch" delta="3 overdue" delta-color="warning" delta-icon="exclamation-circle" />
     <VcStatWidget v-bind="args" label="Lower" delta="-8% vs last week" delta-color="danger" delta-icon="chevron-down" />
@@ -71,7 +71,7 @@ export const WithSuffix: StoryType = {
     valueSuffix: "items",
     icon: "cart",
     color: "success",
-    sub: "$2,310.00 in carts",
+    description: "$2,310.00 in carts",
     delta: "5 abandoned for over 7 days",
     deltaColor: "neutral",
     deltaIcon: undefined,
@@ -106,7 +106,7 @@ const ROW_CARDS = [
     value: "7",
     icon: "exclamation-circle",
     color: "warning",
-    sub: "$3,150.00 total",
+    description: "$3,150.00 total",
     delta: "of 21 created in the last 7 days",
     deltaColor: "neutral",
   },
@@ -115,7 +115,7 @@ const ROW_CARDS = [
     value: "21",
     icon: "cart",
     color: "success",
-    sub: "$9,870.00 total",
+    description: "$9,870.00 total",
     delta: "+12%",
     deltaColor: "success",
     deltaIcon: "chevron-up",
@@ -142,13 +142,11 @@ const ROW_CARDS = [
   { label: "Customers", value: "128", icon: "users", errorText: "Couldn't load" },
 ];
 
-// The row the cards are built for: wrapping, equal heights, and figures aligned across short and long
-// labels. The cards are the flex items themselves; nothing has to wrap them to stretch.
 export const Row: StoryType = {
   render: () => ({
     setup: () => ({ cards: ROW_CARDS }),
     template: `<div class="flex flex-wrap gap-4">
-      <VcStatWidget v-for="card in cards" :key="card.label" v-bind="card" class="min-w-0 grow basis-44" />
+      <VcStatWidget v-for="card in cards" :key="card.label" v-bind="card" class="grow basis-44" />
     </div>`,
   }),
 };
