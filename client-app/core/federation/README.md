@@ -189,7 +189,7 @@ How the facade itself is versioned and released: [`core-api/README.md`](../../co
 1. **Host APIs come only from `@vc-frontend/core`.** Never `@/…`: those paths do not exist in a plugin's build.
    Importing a library itself (`vue-router`, `@vue/apollo-composable`) is fine.
 2. **At compile time** `@vc-frontend/core` gives **types only** (`core-api/contract/index.d.ts`); its subpaths
-   (`/federation`, `/manifest`, `/codegen`, `/testing`) carry code for the plugin's build and tests.
+   (`/federation`, `/manifest`, `/codegen`, `/testing`, `/tailwind-preset`) carry code for the plugin's build and tests.
    **At runtime** the host hands over its **live objects**: one Vue, one router, one Apollo cache.
 3. The libraries that must exist once (Vue, vue-router, vue-i18n, VueUse, the Apollo client and composable,
    GraphQL, the facade) are listed in **one place**, `MF_SHARED_RANGES` in `core-api/federation.mjs`. A plugin borrows them and never bundles a copy.
