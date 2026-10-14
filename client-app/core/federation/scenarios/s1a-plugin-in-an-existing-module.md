@@ -20,8 +20,10 @@
    yarn create:plugin my-plugin --module ../vc-module-foo/src/VirtoCommerce.Foo.Web
    ```
 
-   Add `--with-apollo` for your own GraphQL, `--with-tailwind` for Tailwind. This creates
-   `StorefrontApp/`, and touches nothing else in the module. It ends with a list of what is still to do there.
+   In a terminal it asks which libraries the plugin uses. Elsewhere (an agent, CI) it asks nothing, so pass `--yes`
+   plus the flags you want: `--with-i18n`, `--with-apollo` (your own GraphQL, from the module's scoped schema: S1b
+   step 4), `--with-vueuse`, `--with-tailwind`, `--no-router`. This creates `StorefrontApp/`, and touches nothing
+   else in the module. It ends with a list of what is still to do there.
 
 2. **Wire the module.** 📁 module repo
 
