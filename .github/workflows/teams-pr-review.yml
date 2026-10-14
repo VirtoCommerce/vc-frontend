@@ -30,11 +30,12 @@ jobs:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@43188f8cb8d63db38caee688a9e66bd46972160b # vcst-6259-teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@6679560b6dd15bdda77e7effb35de9033e4b24bd # vcst-6259-teams-pr-review-notification
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
           teams-users: ${{ secrets.TEAMS_USERS }}
+          jira-projects: VCST
 
   ping:
     # Re-review and review comments messages, one run per event and never queued, so none is cancelled.
@@ -44,7 +45,7 @@ jobs:
       pull-requests: read
     steps:
       # TODO(VCST-6259): switch to VirtoCommerce/.github/actions/teams-pr-review-notification@<release> once the action is merged
-      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@43188f8cb8d63db38caee688a9e66bd46972160b # vcst-6259-teams-pr-review-notification
+      - uses: vas11yev1work/.github/actions/teams-pr-review-notification@6679560b6dd15bdda77e7effb35de9033e4b24bd # vcst-6259-teams-pr-review-notification
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
