@@ -8,6 +8,8 @@
 2. `"module_federation_enabled": true` in `client-app/config/settings_data.json` (the default).
 3. Build the host with `--mode=development`. A production build looks the store up by `localhost` and shows a blank
    page.
+4. The commands below set `APP_MODULES_FEDERATION_REMOTES` the bash way. In PowerShell or cmd, put the same line in
+   `.env.local` instead, and take it out afterwards: it replaces the platform's plugin list.
 
 ## Pick your setup
 
