@@ -9,7 +9,9 @@ _Checked against `dev` on 2026-10-14._
       with `yarn check:plugin-module … --artifact`.
 - [ ] **`/modules → platform` route on every environment** that runs the theme (S6).
 - [ ] **Release notes**: MF is a preview; the backend floors (`BACKEND_REQUIREMENTS`), the `/modules` route, the
-      build-time switch, and that an installed plugin runs with the storefront's full rights.
+      build-time switch, and that an installed plugin runs with the storefront's full rights. With a SalesRep that
+      ships no plugin and the default `sales_rep_builtin_enabled: false`, the Sales Rep Hub and the buyers' Sales
+      reps page are gone.
 - [ ] **The module's own README**: a "Storefront plugin" section that links the scenarios.
 - [ ] **Delete `client-app/modules/sales-rep`** once QA signs the plugin off, with its `sales_rep_builtin_enabled`
       theme setting and its `independentModules` entry in `scripts/graphql-codegen/generator.ts`.

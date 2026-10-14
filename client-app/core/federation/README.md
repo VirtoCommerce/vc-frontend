@@ -6,8 +6,8 @@
 > **TL;DR**
 >
 > - A **plugin** is a bundle built and deployed apart from the storefront. The storefront loads it at startup.
-> - It is **on in the stock theme** (`module_federation_enabled: true` in the theme settings). Set it to `false` and
->   rebuild to ship a storefront without it.
+> - It is **on in the stock theme** from release 2.60 (`module_federation_enabled: true` in the theme settings).
+>   Earlier releases have no plugin support. Set it to `false` and rebuild to ship a storefront without it.
 > - Plugins usually ship **inside a backend module**. Installing the module installs the plugin; the storefront is
 >   not rebuilt.
 > - A plugin talks to the host only through **`@vc-frontend/core`** (the _facade_).
@@ -52,8 +52,14 @@ A plugin can:
 2. To build a storefront without it, set it to `false` and rebuild. That build has no federation code, so no plugin
    loads.
 3. `sales_rep_builtin_enabled` (same file, ships `false`, temporary) runs the Sales Rep Hub built into the theme
-   instead of its plugin. Turn it on only where the installed SalesRep module ships no plugin: with both, the hub
-   registers twice.
+   instead of its plugin. It is read at build time too, so one build decides for every environment it goes to:
+
+   | Installed SalesRep | `false` (default)                                                       | `true`                  |
+   | ------------------ | ----------------------------------------------------------------------- | ----------------------- |
+   | ships the plugin   | the plugin's hub                                                        | the hub registers twice |
+   | ships no plugin    | **no hub, and buyers lose the Sales reps page**, with no error anywhere | the built-in hub        |
+
+   **Planned:** no released SalesRep ships the plugin yet ([TODO](./TODO.md)).
 
 > ⚠️ Only a literal `true` turns it on. A missing key, `"true"` or `1` all mean **off**.
 >

@@ -37,8 +37,8 @@
    A CDN in front must not cache `remoteEntry.js`, `mf-manifest.json` or `plugin.json` under `/modules`:
    `remoteEntry.js` keeps its name across module versions, so a cached copy asks for chunks that are gone.
 
-4. **Deploy a storefront built with the switch on** (`module_federation_enabled: true`). A storefront built with it
-   off has no plugin code at all, whatever the backend serves.
+4. **Deploy a storefront built with the switch on** (`module_federation_enabled: true`, release 2.60 or later). A
+   storefront built with it off has no plugin code at all, whatever the backend serves.
 5. **CSP**, if the environment sets one: `'self'` covers plugins served by the platform.
 6. **Check.** 📁 `vc-frontend`:
 
@@ -67,7 +67,8 @@ The same steps, with nothing to deploy:
 2. **The storefront's facade must satisfy the plugin's `requiredHostVersion`.** If it does not, the plugin is
    skipped without a word: production logs nothing. Compare the plugin's range with the storefront release's
    `client-app/core-api/package.json` version.
-3. **An automated update can swap the module package** for a build without the plugin. Run `--env` again after one.
+3. **An automated update can swap the module package** for a build without the plugin, and the feature is gone with no
+   error. SalesRep does exactly that until a SalesRep release ships the plugin. Run `--env` again after an update.
 
 ---
 
