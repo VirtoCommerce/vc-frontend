@@ -527,6 +527,7 @@
           "invalid_code": "Denne koden fungerte ikke.",
           "missing_parameter": "@:common.messages.something_went_wrong",
           "invalid_two_factor_token": "Påloggingsøkten er utløpt. Logg på igjen.",
+          "code_attempts_exceeded": "For mange feil koder. Vent noen minutter og logg på igjen.",
           "mfa_provider_not_available": "Vi kan ikke sende en påloggingskode til denne kontoen. Kontakt administratoren din.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
@@ -550,6 +551,7 @@
           "impersonate_failed": "Verifiseringen lyktes, men byttet til kundekontoen mislyktes. Prøv igjen.",
           "generic": "Noe gikk galt. Prøv igjen.",
           "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",

@@ -527,6 +527,7 @@
           "invalid_code": "该验证码无法使用。",
           "missing_parameter": "@:common.messages.something_went_wrong",
           "invalid_two_factor_token": "您的登录会话已过期，请重新登录。",
+          "code_attempts_exceeded": "错误的验证码过多，请等待几分钟后重新登录。",
           "mfa_provider_not_available": "无法向此帐户发送登录验证码，请联系您的管理员。",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
@@ -550,6 +551,7 @@
           "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
           "generic": "出错了。请重试。",
           "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",

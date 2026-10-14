@@ -527,6 +527,7 @@
           "invalid_code": "Ce code n'a pas fonctionné.",
           "missing_parameter": "@:common.messages.something_went_wrong",
           "invalid_two_factor_token": "Votre session de connexion a expiré. Connectez-vous à nouveau.",
+          "code_attempts_exceeded": "Trop de codes incorrects. Patientez quelques minutes, puis reconnectez-vous.",
           "mfa_provider_not_available": "Nous ne pouvons pas envoyer de code de connexion à ce compte. Veuillez contacter votre administrateur.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
@@ -550,6 +551,7 @@
           "impersonate_failed": "Vérification réussie, mais le basculement vers le compte client a échoué. Veuillez réessayer.",
           "generic": "Une erreur s'est produite. Veuillez réessayer.",
           "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",

@@ -27,6 +27,7 @@ const FINAL_ERRORS: string[] = [
   IdentityErrors.SIGN_IN_NOT_ALLOWED,
   IdentityErrors.LOCKOUT_DISABLED,
   IdentityErrors.MFA_PROVIDER_NOT_AVAILABLE,
+  IdentityErrors.CODE_ATTEMPTS_EXCEEDED,
   IdentityErrors.LOGIN_FAILED,
 ];
 

@@ -278,6 +278,7 @@ describe("useMfaSignIn", () => {
     "sign_in_not_allowed",
     "lockout_disabled",
     "mfa_provider_not_available",
+    "code_attempts_exceeded",
     "login_failed",
   ])("handleError emits failed on %s, which another code can't fix", async (code) => {
     const emit = vi.fn();
