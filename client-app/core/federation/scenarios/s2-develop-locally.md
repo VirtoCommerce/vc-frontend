@@ -60,7 +60,8 @@ environment's list, so its other plugins disappear. Keep them by listing them to
 APP_MODULES_FEDERATION_REMOTES='{
   "my-plugin": "http://localhost:3001/mf-manifest.json",
   "sales-rep": "https://localhost:3000/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/mf-manifest.json"
-}'
+}' \
+yarn build-only --mode=development && yarn preview
 ```
 
 Take each path from the environment's `store.plugins` entry, with `remoteEntry.js` changed to
@@ -109,7 +110,8 @@ Serve each plugin on its own port (`yarn preview --port 3002`, or `yarn dev --po
 override:
 
 ```bash
-APP_MODULES_FEDERATION_REMOTES='{"a":"http://localhost:3001/mf-manifest.json","b":"http://localhost:3002/mf-manifest.json"}'
+APP_MODULES_FEDERATION_REMOTES='{"a":"http://localhost:3001/mf-manifest.json","b":"http://localhost:3002/mf-manifest.json"}' \
+yarn build-only --mode=development && yarn preview
 ```
 
 ## ⚠️ Watch out
