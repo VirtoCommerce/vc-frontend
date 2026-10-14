@@ -789,6 +789,9 @@ commits.** To use an unreleased facade, link it with yalc and restore the pin be
 ];
 const readme = `${readmeHeader}\n${readmeSections.filter(Boolean).join("\n").replaceAll(/^## /gm, "### ")}`;
 
+const SKILL_NAME = "`mf-new-plugin`";
+const SKILL_SOURCE = "the `vc-frontend` plugin of the VirtoCommerce/ai-tools marketplace";
+
 // Loaded by Claude Code for any work in this folder. It imports the README instead of restating it.
 const claudeMd = [
   `# CLAUDE.md
@@ -812,7 +815,12 @@ How it plugs in, its files, rules and commands: @README.md
 ## Where each task is described
 
 | Task | Doc |
-| --- | --- |
+| --- | --- |${
+    webDir
+      ? `
+| Wire it into the module, before the first commit | [S1a](${SCENARIOS_URL}/s1a-plugin-in-an-existing-module.md), or the ${SKILL_NAME} skill (${SKILL_SOURCE}) |`
+      : ""
+  }
 | Run it in a local storefront | [S2](${SCENARIOS_URL}/s2-develop-locally.md) |
 | Add a route, menu entry or slot | [declarations](${DOCS_URL}/declarations.md) |
 | Move to a new facade version | [S4](${SCENARIOS_URL}/s4-upgrade-a-plugin.md) |
@@ -1082,7 +1090,8 @@ if (webDir) {
   const pending = checkModuleFiles(webDir).filter((result) => result.status !== "pass");
   console.log(
     `\nThe module's own files are not edited. Still to do there (yarn check:plugin-module ${shownPath(webDir)}):\n` +
-      formatResults(pending),
+      formatResults(pending) +
+      `\nIn Claude Code, the ${SKILL_NAME} skill makes these edits and stops for your decisions: ${SKILL_SOURCE}.`,
   );
 }
 console.log(`\nNext steps:

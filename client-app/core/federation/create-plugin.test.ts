@@ -359,7 +359,11 @@ describe("create-plugin --module", () => {
     expectParseableTs(join(appDir, "vite.config.ts"));
     const readme = readFileSync(join(appDir, "README.md"), "utf8");
     expect(readme).toContain("yarn check:plugin-module");
-    expect(readFileSync(join(appDir, "CLAUDE.md"), "utf8")).toContain("yarn check:plugin-module");
+    const claudeMd = readFileSync(join(appDir, "CLAUDE.md"), "utf8");
+    expect(claudeMd).toContain("yarn check:plugin-module");
+    // The skill that makes the module edits is named where a person or an agent looks next.
+    expect(claudeMd).toContain("`mf-new-plugin` skill");
+    expect(stdout).toContain("`mf-new-plugin` skill");
     // The top is the author's, about the feature; the generated part sits under its own heading.
     expect(readme.startsWith("# foo-plugin: storefront plugin of VirtoCommerce.Foo\n")).toBe(true);
     expect(readme).toContain("\n## Working on this plugin\n");
