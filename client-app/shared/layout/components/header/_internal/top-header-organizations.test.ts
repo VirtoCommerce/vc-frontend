@@ -182,7 +182,16 @@ describe("TopHeaderOrganizations", () => {
   it("marks each option for end-to-end tests", () => {
     const wrapper = mountComponent();
 
+    const marked = wrapper.findAll("[data-vc-organization-option]");
+    const listboxId = wrapper.get("[role='listbox']").attributes("id");
+
     expect(wrapper.findAll("[data-vc-organization-option] [role='option']")).toHaveLength(3);
+    expect(marked).toHaveLength(3);
+    for (const item of marked) {
+      expect(item.classes()).toContain("vc-menu-item");
+      expect(item.find("[role='option']").exists()).toBe(true);
+      expect(`${item.attributes("data-vc-organization-option")}-listbox`).toBe(listboxId);
+    }
   });
 
   it("leaves the keys of an IME composition to the IME", async () => {
