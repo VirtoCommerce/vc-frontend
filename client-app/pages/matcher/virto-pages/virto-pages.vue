@@ -44,9 +44,15 @@ const liveName = computed(() => permalink.value?.split("/").filter(Boolean).pop(
 
 const { updateLocalizedUrl, getLocalizedPath, defaultStoreCulture } = useLanguages();
 
-watch(permalink, () => {
-  updateLocalizedUrl(permalink.value);
-});
+// Immediate: the document may already be loaded on mount, e.g. the translation resolved for the previous
+// language's permalink after a language switch; the URL must still move to its own permalink.
+watch(
+  permalink,
+  () => {
+    updateLocalizedUrl(permalink.value);
+  },
+  { immediate: true },
+);
 
 // Translations of the page for search engines (hreflang) when it is published in several languages.
 useHead({
