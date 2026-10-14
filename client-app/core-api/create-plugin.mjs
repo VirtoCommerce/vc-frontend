@@ -982,7 +982,7 @@ const outputs = [
   selected.apollo && ["src/api/graphql/queries/ping/pingQuery.graphql", sampleDocument],
   webDir && [TARGETS_FILE, STOREFRONT_PLUGIN_TARGETS],
   // yalc artifacts (local facade co-dev) must never be committed - see README.
-  [".gitignore", "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n"],
+  [".gitignore", "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n*.local\n"],
   // An empty lockfile makes this folder its own Yarn project. Without it, Yarn refuses to install under a parent
   // package.json, which a module's *.Web often has for its admin UI.
   ["yarn.lock", ""],

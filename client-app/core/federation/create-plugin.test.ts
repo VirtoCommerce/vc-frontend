@@ -130,7 +130,9 @@ describe("create-plugin scaffolder", () => {
     // Its own Yarn project even under a parent package.json; `yarn install` fills it.
     expect(readFileSync(join(dir, "yarn.lock"), "utf8")).toBe("");
     // `yarn install` writes it beside the lockfile; it must not ride along when StorefrontApp/ is committed.
-    expect(readFileSync(join(dir, ".gitignore"), "utf8").split("\n")).toContain(".yarn/install-state.gz");
+    expect(readFileSync(join(dir, ".gitignore"), "utf8").split("\n")).toEqual(
+      expect.arrayContaining([".yarn/install-state.gz", ".env", "*.local"]),
+    );
     // yarn 1 ignores the .yarnrc.yml this writes and knows no `portal:`/`link:` protocol.
     expect(pkg.packageManager).toMatch(/^yarn@/);
     expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));
