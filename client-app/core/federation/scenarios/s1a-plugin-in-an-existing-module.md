@@ -69,7 +69,7 @@
    `vc-frontend`:
 
    ```bash
-   yarn check:plugin-module ../vc-module-foo/src/VirtoCommerce.Foo.Web --artifact VirtoCommerce.Foo_x.y.z.zip
+   yarn check:plugin-module ../vc-module-foo/src/VirtoCommerce.Foo.Web --artifact ../vc-module-foo/artifacts/VirtoCommerce.Foo_x.y.z.zip
    ```
 
    ✅ `plugins/vc-frontend/ sits at the zip root`.
@@ -90,12 +90,14 @@
 3. **`yarn install` fails with a 404 on `@vc-frontend/core`.** The facade version the scaffold pinned is not
    released yet. Link a local facade with yalc ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)),
    or scaffold from a released `vc-frontend` commit.
-4. **`yarn: not found` in a local `vc-build`.** The build runs `corepack enable`, which needs write access to Node's
-   folder; in a container as a non-root user it fails. Run `corepack enable --install-directory <dir on PATH>` first.
+4. **`corepack: not found` in the module build.** The targets run yarn through corepack, which Node 25 and later no
+   longer bundle. Build with Node 22 or 24, or install it with `npm i -g corepack`.
 
 ---
 
 _Walked on 2026-10-13 with a scratch module, steps 1–6: the scaffold, `yarn install`, `dotnet publish`
 (.NET 8), `preview` serving the built plugin, then the package check. Step 7's `--env` was run against
 vcptcore-dev with the sales-rep plugin. Steps 1–5, the host side of step 5 included, were walked again on a module from the platform
-template, whose `*.Web` has its own `package.json`. **Not verified:** a real module's CI build (net10)._
+template, whose `*.Web` has its own `package.json`. On 2026-10-14 the current targets went through
+`dotnet publish -o <module>/bin` again: the plugin at the package root, no `StorefrontApp` file in `bin/`.
+**Not verified:** a real module's CI build (net10)._
