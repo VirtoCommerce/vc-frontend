@@ -184,6 +184,9 @@ How the facade itself is versioned and released: [`core-api/README.md`](../../co
    **At runtime** the host hands over its **live objects**: one Vue, one router, one Apollo cache.
 3. The libraries that must exist once (Vue, vue-router, vue-i18n, VueUse, the Apollo client and composable,
    GraphQL, the facade) are listed in **one place**, `MF_SHARED_RANGES` in `core-api/federation.mjs`. A plugin borrows them and never bundles a copy.
+   ⚠️ Except what its `vite.config.ts` sets to `false` in `sharedOverrides`: the scaffold does that for every group
+   not picked. Delete the line before importing that library, or the plugin bundles a copy that does not see the
+   host's (no i18n messages, no Apollo client).
 4. Any other library a plugin uses is bundled into the plugin. That is fine unless the library shares state
    through `provide`/`inject` across the host/plugin line; then it must join the shared list first.
 
