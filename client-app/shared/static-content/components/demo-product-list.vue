@@ -13,7 +13,7 @@
             :src="item.product.imgSrc"
             :alt="item.product.name"
             size-suffix="md"
-            class="size-full select-none space-x-4 rounded object-cover object-center"
+            class="size-full select-none space-x-4 rounded [--vc-image-object-fit:cover]"
           />
 
           <div class="flex flex-row space-x-4">

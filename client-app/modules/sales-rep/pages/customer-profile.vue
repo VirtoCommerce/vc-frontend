@@ -111,7 +111,9 @@ const breadcrumbs = useBreadcrumbs(() => [
   }
 
   &__logo-img {
-    @apply size-full object-contain;
+    --vc-image-object-fit: contain;
+
+    @apply size-full;
   }
 
   &__title {

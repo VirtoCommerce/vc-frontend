@@ -29,6 +29,7 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
+import { getDesign, loadDesignStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
@@ -79,6 +80,11 @@ export default async () => {
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
+
+  const design = getDesign();
+  setDesignAttribute(design);
+  // Awaited before mount, so a soft storefront never paints classic first.
+  const designStylesReady = loadDesignStyles(design);
 
   /**
    * Create and mount application
@@ -339,6 +345,8 @@ export default async () => {
 
     Logger.warn(message, traceDetails);
   };
+
+  await designStylesReady;
 
   app.mount(appElement);
 

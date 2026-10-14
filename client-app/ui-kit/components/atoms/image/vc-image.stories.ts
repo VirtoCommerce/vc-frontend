@@ -25,7 +25,7 @@ const meta: Meta<typeof VcImage> = {
   },
   render: (args) => ({
     setup: () => ({ args }),
-    template: '<VcImage v-bind="args" class="w-64 h-64 object-cover" />',
+    template: '<VcImage v-bind="args" class="size-64" />',
   }),
 };
 
@@ -76,6 +76,89 @@ export const WithFallback: StoryType = {
       source: {
         code: `
           <VcImage src="non-existent-image.webp" alt="Product image" fallback-src="product-example-1.webp" />
+        `,
+      },
+    },
+  },
+};
+
+export const ObjectFit: StoryType = {
+  render: (args) => ({
+    components: { VcImage },
+    setup: () => ({ args }),
+    template: `
+      <div class="flex gap-4">
+        <VcImage v-bind="args" class="size-64 border" />
+        <VcImage v-bind="args" class="size-64 border [--vc-image-object-fit:contain]" />
+        <VcImage v-bind="args" class="size-64 border [--vc-image-object-fit:cover] [--vc-image-object-position:left]" />
+      </div>
+    `,
+  }),
+  args: {
+    src: "product-example-1.webp",
+    alt: "Product image",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Set how the image fills its box with `--vc-image-object-fit` (default `fill`, first image) and `--vc-image-object-position` (default `50% 50%`). For the fallback image see Fallback Fit.",
+      },
+      source: {
+        code: `
+<VcImage src="product-example-1.webp" alt="Product image" class="size-64" />
+<VcImage src="product-example-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:contain]" />
+<VcImage src="product-example-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:cover] [--vc-image-object-position:left]" />
+        `,
+      },
+    },
+  },
+};
+
+export const WithoutSrc: StoryType = {
+  args: {
+    alt: "No image",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Without `src` the fallback image is shown, `scale-down` unless a fit token says otherwise.",
+      },
+      source: {
+        code: `
+<VcImage alt="No image" />
+        `,
+      },
+    },
+  },
+};
+
+export const FallbackFit: StoryType = {
+  render: (args) => ({
+    components: { VcImage },
+    setup: () => ({ args }),
+    template: `
+      <div class="flex gap-4">
+        <VcImage v-bind="args" class="size-64 border" />
+        <VcImage v-bind="args" class="size-64 border [--vc-image-object-fit:cover]" />
+        <VcImage v-bind="args" class="size-64 border [--vc-image-object-fit:cover] [--vc-image-fallback-object-fit:scale-down]" />
+      </div>
+    `,
+  }),
+  args: {
+    alt: "No image",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The fallback image fits by `--vc-image-fallback-object-fit`, else by `--vc-image-object-fit`, else `scale-down`; its position follows `--vc-image-object-position`.",
+      },
+      source: {
+        code: `
+<VcImage alt="No image" class="size-64" />
+<VcImage alt="No image" class="size-64 [--vc-image-object-fit:cover]" />
+<VcImage alt="No image" class="size-64 [--vc-image-object-fit:cover] [--vc-image-fallback-object-fit:scale-down]" />
         `,
       },
     },

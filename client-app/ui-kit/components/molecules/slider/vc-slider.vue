@@ -389,7 +389,7 @@ onMounted(async () => {
   }
 
   // Lazy-loaded to keep nouislider (~94 KB) off the eager bundle. CSS goes through a
-  // `nouislider` cascade layer (nouislider.layer.css) so this late chunk can't override our styles.
+  // `vc.vendor` cascade layer (nouislider.layer.css) so this late chunk can't override our styles.
   const [{ create }] = await Promise.all([import("nouislider"), import("./nouislider.layer.css")]);
 
   if (!sliderRef.value) {

@@ -108,12 +108,15 @@ plugin, in turn, reaches back into the host **only** through the shared `@vc-fro
 facade — never by importing host source directly.
 
 **Plugin CSS is not fenced by the host yet.** A plugin's stylesheet is linked into `document.head`
-as-is, so it hits every page and whether it beats a lazily-loaded host route's CSS depends on where
-the user has been — and the copy of the host's utility classes that Tailwind generates inside your
-build can override the host's own on host markup if the presets have drifted. The fix is decided
-and scoped as VCST-5760: native cascade layers, `plugin` between the host's component styles and
-the host's utilities, plus a `plugin-overrides` layer for deliberate overrides. Until it lands,
-prefer `<style scoped>` for anything you would be unhappy to see applied outside your own markup.
+as-is, unlayered, so it hits every page. The host's own CSS sits in cascade layers
+([`assets/styles/README.md`](../../assets/styles/README.md)), so a plugin rule beats every host
+component, dark and print rule it matches, except a layered `!important`; the host's Tailwind
+utilities, `_custom.scss` and its other unlayered CSS (listed in that README) compete with it as
+equals, and there the later sheet wins — and the copy of the host's utility
+classes that Tailwind generates inside your build can override the host's own on host markup if the
+presets have drifted. The host reserves a `plugins` layer for plugin CSS, between its component
+layers and its utilities; moving plugin sheets into it is VCST-5760. Until it lands, prefer
+`<style scoped>` for anything you would be unhappy to see applied outside your own markup.
 See [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
 
 ---

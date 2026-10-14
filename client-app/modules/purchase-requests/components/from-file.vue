@@ -32,7 +32,7 @@
               id="example"
               src="documents-example.webp"
               :alt="$t('purchase_request.from_file.upload.examples.alt')"
-              class="h-[230px] md:object-cover md:object-left"
+              class="h-[230px] md:[--vc-image-object-fit:cover] md:[--vc-image-object-position:left]"
               lazy
             />
           </figure>

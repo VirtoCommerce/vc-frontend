@@ -1,0 +1,6 @@
+@use "sass:meta";
+
+html.dark {
+  @include meta.load-css("dark/shared/catalog/product-pickup-locations");
+  @include meta.load-css("dark/shared/checkout/select-address-map-view");
+}

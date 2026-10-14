@@ -22,13 +22,16 @@ const record = (name: string) =>
 
 const LOADER_REACHED = new Error("loader reached - nothing past this point is under test");
 
-const { getStorePluginsMock, loaderOptions, previewBoot } = vi.hoisted(() => {
+const { getStorePluginsMock, loaderOptions, previewBoot, loader, designStyles } = vi.hoisted(() => {
   // The options app-runner hands the loader, so the discovery wiring itself is assertable.
   const captured: { current?: { fetchPlugins?: () => Promise<unknown> } } = {};
   return {
     getStorePluginsMock: vi.fn(),
     loaderOptions: captured,
     previewBoot: { isActive: false },
+    // Only the mount case lets the run continue past the loader.
+    loader: { stopsTheRun: true },
+    designStyles: { ready: Promise.resolve() },
   };
 });
 
@@ -41,7 +44,9 @@ vi.mock("@/core/federation/bootstrap", () => ({
   startFederatedModules: vi.fn(async (options?: { fetchPlugins?: () => Promise<unknown> }) => {
     order.push("startFederatedModules");
     loaderOptions.current = options;
-    throw LOADER_REACHED;
+    if (loader.stopsTheRun) {
+      throw LOADER_REACHED;
+    }
   }),
 }));
 
@@ -81,8 +86,19 @@ vi.mock("@/router", () => ({
     },
   }),
 }));
-vi.mock("./App.vue", () => ({ default: {} }));
-vi.mock("@/App.vue", () => ({ default: {} }));
+const App = {
+  render: () => null,
+  mounted: () => {
+    order.push("mount");
+  },
+};
+vi.mock("./App.vue", () => ({ default: App }));
+vi.mock("@/App.vue", () => ({ default: App }));
+vi.mock("@/core/utilities/design", () => ({
+  getDesign: () => "soft",
+  setDesignAttribute: record("setDesignAttribute"),
+  loadDesignStyles: vi.fn(() => designStyles.ready),
+}));
 vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
 vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn() }));
 vi.mock("@/ui-kit/utilities/getLocales", () => ({
@@ -190,6 +206,8 @@ describe("app-runner boot order", () => {
     order.length = 0;
     loaderOptions.current = undefined;
     previewBoot.isActive = false;
+    loader.stopsTheRun = true;
+    designStyles.ready = Promise.resolve();
     getStorePluginsMock.mockResolvedValue([]);
   });
 
@@ -297,5 +315,31 @@ describe("app-runner boot order", () => {
     const installedAt = order.indexOf("builderPreview.install");
     expect(installedAt, `preview plugin never installed; order was ${order.join(" -> ")}`).toBeGreaterThan(-1);
     expect(installedAt).toBeLessThan(order.indexOf("startFederatedModules"));
+  });
+
+  it("writes data-design first and mounts only after the design styles settle", async () => {
+    loader.stopsTheRun = false;
+    let settle = () => {};
+    designStyles.ready = new Promise<void>((resolve) => {
+      settle = () => {
+        order.push("design styles settled");
+        resolve();
+      };
+    });
+    document.body.innerHTML = '<div id="app"></div>';
+    const run = (await import("@/app-runner")).default();
+
+    await vi.waitFor(() => expect(order).toContain("app.use(router)"));
+    expect(order, `order was ${order.join(" -> ")}`).not.toContain("mount");
+
+    settle();
+    await run;
+
+    expect(order[0], `order was ${order.join(" -> ")}`).toBe("setDesignAttribute");
+    const design = await import("@/core/utilities/design");
+    expect(design.setDesignAttribute).toHaveBeenCalledWith("soft");
+    expect(design.loadDesignStyles).toHaveBeenCalledWith("soft");
+    expect(order.indexOf("design styles settled")).toBeGreaterThan(-1);
+    expect(order.indexOf("design styles settled")).toBeLessThan(order.indexOf("mount"));
   });
 });

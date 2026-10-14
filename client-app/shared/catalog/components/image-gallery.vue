@@ -249,7 +249,10 @@ onUnmounted(() => {
   }
 
   &__img {
-    @apply relative w-full h-full rounded-[--radius] object-center object-contain cursor-zoom-in;
+    --vc-image-object-fit: contain;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply relative w-full h-full rounded-[--radius] cursor-zoom-in;
   }
 
   &__badges {
@@ -273,7 +276,10 @@ onUnmounted(() => {
   }
 
   &__thumb-img {
-    @apply border rounded-[--radius] w-full aspect-square object-center object-contain;
+    --vc-image-object-fit: contain;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply border rounded-[--radius] w-full aspect-square;
 
     &--active {
       @apply border-primary outline outline-1 outline-primary;

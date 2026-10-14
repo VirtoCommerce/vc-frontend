@@ -1,38 +1,43 @@
+@use "../client-app/assets/styles/layers";
 @use "../client-app/ui-kit/styles/focus-ring" as *;
 
-@tailwind base;
-
-@layer base {
-  body {
-    background-color: var(--color-additional-50);
-
-    *:focus-visible {
-      @include focus-ring;
-    }
+@layer theme {
+  :root {
+    --vc-radius: 0.5rem;
   }
 }
 
-.docs-story {
-  background: var(--color-additional-50);
-}
+@layer base.tw {
+  @tailwind base;
 
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+  @layer base {
+    body {
+      background-color: var(--color-additional-50);
 
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
+      *:focus-visible {
+        @include focus-ring;
+      }
+    }
+  }
 
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
-}
+  .docs-story {
+    background: var(--color-additional-50);
+  }
 
-:root {
-  --vc-radius: 0.5rem;
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
 }

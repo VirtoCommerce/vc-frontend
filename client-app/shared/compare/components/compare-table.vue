@@ -560,7 +560,10 @@ watch(
   }
 
   &__product-image {
-    @apply size-full object-cover;
+    --vc-image-object-fit: cover;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply size-full;
   }
 
   &__product-remove {
@@ -590,7 +593,10 @@ watch(
   }
 
   &__product-summary-image {
-    @apply size-full object-cover;
+    --vc-image-object-fit: cover;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply size-full;
   }
 
   &__product-summary-title {

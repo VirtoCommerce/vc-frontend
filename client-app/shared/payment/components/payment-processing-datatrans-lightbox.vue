@@ -27,13 +27,7 @@
     </p>
 
     <!-- Pay button with amount -->
-    <VcButton
-      :loading="loading"
-      :disabled="!ready"
-      class="min-w-52"
-      data-test-id="pay-now-button"
-      @click="openLightbox"
-    >
+    <VcButton :loading="loading" :disabled="!ready" data-test-id="pay-now-button" @click="openLightbox">
       {{ $t("shared.payment.bank_card_form.pay_now_button") }}
       <template v-if="orderTotal"> &middot; {{ orderTotal }} </template>
     </VcButton>
