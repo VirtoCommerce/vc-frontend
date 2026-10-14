@@ -22,9 +22,12 @@
    `BACKEND_REQUIREMENTS` lists. The module's own `module.manifest` declares the same floors. The `--env` check in
    step 6 reads the installed x-api and x-frontend versions and flags one that is too old; the platform version it
    cannot see.
-2. **Install the module.** On our dev environments: add its package to `backend/packages.json` on that
-   environment's branch of `vc-deploy-dev`.
-3. **Route `/modules` to the platform** in the ingress. In `vc-deploy-dev`, add this to the environment's yml:
+2. **Install the module** the way the environment installs modules (the platform's Modules page, or your
+   deployment), then restart the platform: it reads the plugin list once, at startup. On our dev environments: add
+   its package to `backend/packages.json` on that environment's branch of `vc-deploy-dev`.
+3. **Route `/modules` to the platform** in whatever sits in front of the storefront (an ingress, a reverse proxy),
+   on the storefront's own origin: the storefront refuses plugin files served from another one. In `vc-deploy-dev`,
+   add this to the environment's yml:
 
    ```yaml
    - path: /modules
