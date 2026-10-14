@@ -1,6 +1,7 @@
 import { computed, defineAsyncComponent } from "vue";
 import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
 import { useNavigations } from "@/core/composables/useNavigations";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
@@ -10,6 +11,7 @@ import { loadModuleLocale } from "../utils";
 import { useSharedSalesRepCustomersCount } from "./composables/useSalesRepCustomersCount";
 import { isSalesRepsEnabled, isSalesRepTasksEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
+  BUILTIN_ENABLED_THEME_SETTING,
   TASKS_NAV_LINK_ID,
   TASKS_ROUTE_NAME,
   CUSTOMER_SHARING_SCOPE,
@@ -46,7 +48,9 @@ import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
 
 export function init(router: Router, i18n: I18n) {
-  if (!isSalesRepsEnabled()) {
+  const { themeContext } = useThemeContext();
+  const themeSettings = themeContext.value?.settings as Record<string, unknown> | undefined;
+  if (themeSettings?.[BUILTIN_ENABLED_THEME_SETTING] !== true || !isSalesRepsEnabled()) {
     return;
   }
 

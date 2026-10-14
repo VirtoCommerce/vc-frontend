@@ -37,15 +37,18 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <EmbeddedResource Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
     <None Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
   </ItemGroup>
-  <!-- -p:SkipStorefrontPlugin=true builds the module without Node. -->
+  <!-- -p:SkipStorefrontPlugin=true (or the env var) builds the module without Node, and without the plugin. -->
+  <Target Name="ReportStorefrontPluginSkipped" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' == 'true'">
+    <Message Importance="high" Text="SkipStorefrontPlugin=true: this package carries no storefront plugin." />
+  </Target>
   <Target Name="BuildStorefrontPlugin" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' != 'true'">
-    <!-- A runner's global yarn is 1.x; package.json pins yarn 4. -->
-    <Exec Command="corepack enable" ContinueOnError="true" />
     <!-- vc-build Clean deletes every bin folder, those inside node_modules too, and yarn would not restore them. -->
-    <RemoveDir Directories="$(StorefrontAppDir)node_modules" />
-    <Exec Command="yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="yarn build" WorkingDirectory="$(StorefrontAppDir)" />
+    <RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\vite\bin\vite.js')" />
+    <!-- Through corepack, for the yarn that package.json pins: a runner's global yarn is 1.x, and corepack enable
+         needs write access to Node's own folder. -->
+    <Exec Command="corepack yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
+    <Exec Command="corepack yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
+    <Exec Command="corepack yarn build" WorkingDirectory="$(StorefrontAppDir)" />
   </Target>
   <Target Name="PublishStorefrontPlugin" AfterTargets="Publish" DependsOnTargets="BuildStorefrontPlugin" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <ItemGroup>
@@ -164,7 +167,12 @@ function checkManifest(webDir) {
 function checkCsproj(webDir) {
   const projects = readdirSync(webDir).filter((name) => name.endsWith(".csproj"));
   if (projects.length !== 1) {
-    return [fail(`expected one .csproj in ${webDir}, found ${projects.length}`)];
+    return [
+      fail(
+        `expected one .csproj in ${webDir}, found ${projects.length}`,
+        "Pass the *.Web project folder that the module build packages: it holds module.manifest and one .csproj.",
+      ),
+    ];
   }
   const [project] = projects;
   const source = stripXmlComments(readFileSync(join(webDir, project), "utf8"));
@@ -174,13 +182,18 @@ function checkCsproj(webDir) {
   if (imports.includes(`${STOREFRONT_APP_DIR}/${TARGETS_FILE}`)) {
     return existsSync(targetsPath)
       ? [pass(`${project} imports ${STOREFRONT_APP_DIR}/${TARGETS_FILE}`)]
-      : [fail(`${project} imports ${STOREFRONT_APP_DIR}/${TARGETS_FILE}, which does not exist`)];
+      : [
+          fail(
+            `${project} imports ${STOREFRONT_APP_DIR}/${TARGETS_FILE}, which does not exist`,
+            `Restore ${STOREFRONT_APP_DIR}/${TARGETS_FILE} from git, or remove the Import line.`,
+          ),
+        ];
   }
   if (source.includes('Name="BuildStorefrontPlugin"') && source.includes('Name="PublishStorefrontPlugin"')) {
     return [
       warn(
         `${project} builds the plugin with its own inline targets`,
-        `Replace them with ${TARGETS_IMPORT} so fixes to the generated targets reach this module.`,
+        `The check cannot verify inline targets. To use the generated ones instead, take ${TARGETS_FILE} from a new scaffold and add ${TARGETS_IMPORT}.`,
       ),
     ];
   }
@@ -214,7 +227,12 @@ function checkFacadePin(appDir, pkg) {
     ];
   }
   if (!range || !validRange(range)) {
-    return [fail(`vite.config.ts: requiredHostVersion "${range ?? "missing"}" is not a semver range`)];
+    return [
+      fail(
+        `vite.config.ts: requiredHostVersion "${range ?? "missing"}" is not a semver range`,
+        `requiredHostVersion: "^${pinned}"`,
+      ),
+    ];
   }
   const floor = minVersion(range).version;
   if (floor === pinned) {
@@ -241,7 +259,10 @@ function checkStorefrontApp(webDir) {
   const results = [
     pkg.packageManager?.startsWith("yarn@")
       ? pass(`packageManager ${pkg.packageManager.split("+")[0]}`)
-      : fail("package.json has no yarn packageManager", "A runner's global yarn 1 cannot install this project."),
+      : fail(
+          "package.json has no yarn packageManager",
+          'Add the "packageManager": "yarn@…" line a new scaffold writes: a runner\'s global yarn 1 cannot install this project.',
+        ),
     checkLockfile(appDir),
   ];
 
@@ -261,14 +282,18 @@ function checkStorefrontApp(webDir) {
   const remoteName = /createRemoteFederationOptions\(\s*\{[\s\S]*?\bname:\s*["']([^"']+)["']/.exec(viteConfig)?.[1];
   if (!descriptor) {
     results.push(
-      fail("public/plugin.json is missing or not JSON", "The platform then assumes the expose key ./Module."),
+      fail(
+        "public/plugin.json is missing or not JSON",
+        `Restore it: { "id": "${remoteName ?? "<plugin-name>"}", "remote": { "name": "${remoteName ?? "<plugin-name>"}", "exposed": "${PLUGIN_EXPOSE}" } }. Without it the platform assumes the expose key ./Module.`,
+      ),
     );
   } else if (descriptor.remote?.exposed !== PLUGIN_EXPOSE) {
-    results.push(fail(`public/plugin.json: remote.exposed is not "${PLUGIN_EXPOSE}"`));
+    results.push(fail(`public/plugin.json: remote.exposed is not "${PLUGIN_EXPOSE}"`, `"exposed": "${PLUGIN_EXPOSE}"`));
   } else if (descriptor.remote?.name !== remoteName) {
     results.push(
       fail(
         `public/plugin.json: remote.name "${descriptor.remote?.name}" differs from the federation name "${remoteName}"`,
+        `"name": "${remoteName}"`,
       ),
     );
   } else {
@@ -388,6 +413,17 @@ async function checkInstalledModules(origin, moduleId, request) {
   } catch (error) {
     return { results: [warn(`could not read the installed module versions: ${error.message}`)] };
   }
+  // x-api returns empty versions, and leaves out modules without public settings, while
+  // XAPI.Security.ReturnModuleVersion is off. Nothing here can then tell "not installed" apart.
+  if (![...installed.values()].some(Boolean)) {
+    return {
+      results: [
+        warn(
+          "the installed module versions are hidden (XAPI.Security.ReturnModuleVersion is off), so the floors and the plugin's module were not checked",
+        ),
+      ],
+    };
+  }
   const results = Object.entries(BACKEND_REQUIREMENTS.modules).map(([id, floor]) => {
     const version = installed.get(id);
     if (version && meetsFloor(version, floor)) {
@@ -438,7 +474,7 @@ export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, re
   if (!plugin) {
     const listed = plugins.map((candidate) => candidate?.id).join(", ") || "none";
     const fix = isModuleInstalled
-      ? `The module is installed, so its package has no plugins/${PLUGIN_APP_ID}/ at the root: check it with --artifact.`
+      ? `The module is installed. Either its package has no plugins/${PLUGIN_APP_ID}/ at the root (check it with --artifact), or the platform has not restarted since: it reads the plugin list once, at startup.`
       : `Is the module installed, and does its package carry plugins/${PLUGIN_APP_ID}/ at the root (--artifact)?`;
     return [...results, fail(`store.plugins does not list "${pluginId}" (listed: ${listed})`, fix)];
   }
@@ -459,7 +495,9 @@ export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, re
           ),
     );
   } catch (error) {
-    results.push(fail(`${manifestUrl.pathname}: ${error.message}`));
+    results.push(
+      fail(`${manifestUrl.pathname}: ${error.message}`, "The storefront ingress must route /modules to the platform."),
+    );
   }
   return results;
 }

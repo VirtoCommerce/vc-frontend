@@ -1,9 +1,18 @@
 <template>
   <div class="mission-card">
     <div class="mission-card__banner">
+      <VcImage
+        v-if="view.bannerUrl && !isBackdropFailed"
+        class="mission-card__backdrop"
+        :src="view.bannerUrl"
+        alt=""
+        lazy
+        @error="isBackdropFailed = true"
+      />
+
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
-      <div v-if="view.isCompleted" class="mission-card__done">
+      <div v-if="view.isCompleted" class="mission-card__done" aria-hidden="true">
         <VcIcon name="circle-check" :size="56" />
       </div>
 
@@ -56,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useModal } from "@/shared/modal";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
@@ -72,6 +81,8 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { view } = useMissionCard(() => props.mission);
+
+const isBackdropFailed = ref(false);
 
 const TYPE_ICONS: Record<MissionType, string> = {
   [MISSION_TYPE.PerSkuAll]: "barcode",
@@ -102,17 +113,21 @@ function openMission(): void {
   @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-md;
 
   &__banner {
-    @apply relative h-52 shrink-0 bg-secondary-800;
+    @apply relative h-52 shrink-0 overflow-hidden bg-secondary-800;
+  }
+
+  &__backdrop {
+    @apply absolute inset-0 size-full scale-110 object-cover opacity-60 blur-lg;
   }
 
   &__image {
-    @apply size-full object-cover;
+    @apply relative size-full object-contain;
   }
 
   &__done {
     @apply absolute inset-0 flex items-center justify-center text-additional-50;
 
-    background: rgb(from theme("colors.success.400") r g b / 0.75);
+    background: rgb(from theme("colors.success.600") r g b / 0.55);
   }
 
   &__badges {

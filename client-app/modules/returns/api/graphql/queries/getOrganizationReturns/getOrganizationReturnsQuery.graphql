@@ -1,0 +1,31 @@
+#import "../../fragments/returnListItem.graphql"
+
+query GetOrganizationReturns(
+  $storeId: String!
+  $organizationId: String!
+  $first: Int
+  $after: String
+  $sort: String
+  $keyword: String
+  $statuses: [String]
+  $startDate: DateTime
+  $endDate: DateTime
+  $cultureName: String
+) {
+  organizationReturns(
+    storeId: $storeId
+    organizationId: $organizationId
+    first: $first
+    after: $after
+    sort: $sort
+    keyword: $keyword
+    statuses: $statuses
+    startDate: $startDate
+    endDate: $endDate
+  ) {
+    totalCount
+    items {
+      ...returnListItem
+    }
+  }
+}

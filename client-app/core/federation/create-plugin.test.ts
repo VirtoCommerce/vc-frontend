@@ -153,6 +153,8 @@ describe("create-plugin scaffolder", () => {
     expect(viteConfig).toContain('"@apollo/client": false');
     // Quoting a valid identifier fails the scaffold's own prettier rule.
     expect(viteConfig).toContain(" graphql: false");
+    // Importing a library left out of shared bundles a second copy; the README says to delete its line first.
+    expect(readme).toContain("is not shared.** Delete its line");
   });
 
   it("wires the test and type-check config the generated specs and templates depend on", () => {
@@ -251,6 +253,44 @@ describe("create-plugin scaffolder", () => {
     expect(withApollo.includes('"@graphql-typed-document-node/core": fileURLToPath(')).toBe(hostNeedsAlias);
     expect(plain).not.toContain("@graphql-typed-document-node/core");
     expectParseableTs(join(scaffoldExpectingSuccess("gql-parse", ["--yes", "--with-apollo"]), "vite.config.ts"));
+  });
+
+  it("shares every library when every group is picked, and its README has no sharedOverrides rule", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes", "--with-i18n", "--with-apollo", "--with-vueuse"]);
+
+    expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).not.toContain("sharedOverrides");
+    expect(readFileSync(join(dir, "README.md"), "utf8")).not.toContain("is not shared.");
+  });
+
+  it("refuses a folder that already has one of its files, and writes nothing", () => {
+    const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
+    tempDirs.push(parent);
+    const dir = join(parent, "repo");
+    mkdirSync(dir);
+    writeFileSync(join(dir, "README.md"), "my repo");
+    writeFileSync(join(dir, "LICENSE"), "MIT");
+
+    const { status, stderr } = spawnSync(process.execPath, [SCRIPT, "foo-plugin", dir, "--yes"], { encoding: "utf8" });
+
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("README.md");
+    expect(stderr).toContain("refusing to overwrite");
+    expect(readFileSync(join(dir, "README.md"), "utf8")).toBe("my repo");
+    expect(existsSync(join(dir, "package.json"))).toBe(false);
+  });
+
+  it("scaffolds into a folder that holds only files it does not write", () => {
+    const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
+    tempDirs.push(parent);
+    const dir = join(parent, "repo");
+    mkdirSync(dir);
+    writeFileSync(join(dir, "LICENSE"), "MIT");
+
+    const { status, stderr } = spawnSync(process.execPath, [SCRIPT, "foo-plugin", dir, "--yes"], { encoding: "utf8" });
+
+    expect(status, stderr).toBe(0);
+    expect(readFileSync(join(dir, "LICENSE"), "utf8")).toBe("MIT");
+    expect(existsSync(join(dir, "package.json"))).toBe(true);
   });
 
   it("rejects a non-kebab-case plugin name", () => {
