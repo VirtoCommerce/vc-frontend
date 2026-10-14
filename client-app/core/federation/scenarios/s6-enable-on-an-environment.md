@@ -13,7 +13,7 @@
 ```
  Browser ── https://<storefront> ──▶ ingress ─┬─ /            ─▶ storefront (switch ON)
                                               ├─ /graphql     ─▶ platform: store.plugins
-                                              └─ /modules/<id>/plugins/vc-frontend/ ─▶ platform: plugin files ← often missing
+                                              └─ /modules     ─▶ platform: plugin files ← often missing
 ```
 
 ## Steps
@@ -26,10 +26,10 @@
    deployment), then restart the platform: it reads the plugin list once, at startup. On our dev environments: add
    its package to `backend/packages.json` on that environment's branch of `vc-deploy-dev`.
 3. **Route the plugin files to the platform** in whatever sits in front of the storefront (an ingress, a reverse
-   proxy), on the storefront's own origin: the storefront refuses plugin files served from another one. Where the
-   proxy takes patterns, route only `/modules/<module id>/plugins/vc-frontend/` (nginx:
-   `location ~ ^/modules/[^/]+/plugins/vc-frontend/`). A proxy that takes only prefixes has to route all of
-   `/modules`, which also puts every module's admin files on the storefront's origin. `vc-deploy-dev` is such a proxy;
+   proxy), on the storefront's own origin: the storefront refuses plugin files served from another one. Routing all
+   of `/modules` is the simplest; it also puts every module's admin files on the storefront's origin. To route only
+   the plugin files, use a pattern (nginx: `location ~ ^/modules/[^/]+/plugins/vc-frontend/`): the platform names a
+   module's folder `$(<module id>)`, literally, so a plain module id in the path matches nothing. On `vc-deploy-dev`,
    add this to the environment's yml:
 
    ```yaml
@@ -57,7 +57,7 @@ The same steps, with nothing to deploy:
 
 1. **Install the module** from its zip (S1a step 6) in the platform admin, under Modules, then restart the platform.
    It reads the plugin list once, at startup.
-2. **Skip the ingress:** the local storefront's server proxies `/modules/<module id>/plugins/vc-frontend/` to
+2. **Skip the ingress:** the local storefront's server proxies `/modules/*/plugins/vc-frontend/` to
    `APP_BACKEND_URL` itself.
 3. **Run the storefront against it:** [S2.2](./s2-develop-locally.md#22-the-module-is-already-on-the-environment), with
    `APP_BACKEND_URL` set to the platform.
