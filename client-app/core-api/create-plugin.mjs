@@ -275,7 +275,7 @@ const droppedShared = GROUPS.filter((group) => !selected[group.key]).flatMap((gr
 // Keys quoted only where JS requires it, as prettier prints them - the scaffold must pass its own lint.
 const objectKey = (name) => (/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name));
 const droppedSharedLines = droppedShared
-  .map((name) => `          ${objectKey(name)}: false, // not used by this plugin`)
+  .map((name) => `          ${objectKey(name)}: false, // not shared: delete this line before importing it`)
   .join("\n");
 const sharedOverridesArg = droppedShared.length
   ? `\n        sharedOverrides: {\n${droppedSharedLines}\n        },`
@@ -583,7 +583,13 @@ More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENAR
    the plugin; its files are public by URL.
 5. **\`requiredHostVersion\` is \`^\` the facade you pin.** A lower floor would claim storefronts that may lack
    what the plugin compiled against, so \`check:plugin-module\` fails it. To reach storefronts on an older facade,
-   pin that facade's release instead.
+   pin that facade's release instead.${
+     droppedShared.length
+       ? `
+6. **A library set to \`false\` in \`sharedOverrides\` (vite.config.ts) is not shared.** Delete its line before you
+   import it. Otherwise the plugin bundles its own copy, which does not see the storefront's i18n or Apollo client.`
+       : ""
+   }
 
 ## Commands
 
