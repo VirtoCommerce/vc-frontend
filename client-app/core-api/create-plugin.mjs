@@ -642,12 +642,15 @@ const readmeSections = [
 
 1. 📁 here: \`yarn install\`, then \`yarn build && yarn preview\`. The plugin is served on port 3001.
 2. 📁 a vc-frontend checkout, with \`"module_federation_enabled": true\` in \`client-app/config/settings_data.json\`
-   (the default):
+   (the default) and a backend in \`.env.local\` (\`APP_BACKEND_URL\`):
 
    \`\`\`bash
    APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' \\
    yarn build-only --mode=development && yarn preview
    \`\`\`
+
+   PowerShell or cmd: put the \`APP_MODULES_FEDERATION_REMOTES=…\` line in that \`.env.local\` instead (take it out
+   afterwards: it replaces the platform's plugin list), and run the two commands one after the other.
 
 3. ✅ ${successCheck}
 
@@ -1073,6 +1076,9 @@ console.log(`\nNext steps:
   yarn build && yarn preview   # serves mf-manifest.json on :3001
 
 Then point the host at it (--mode=development so the store resolves from APP_BACKEND_URL, not the hostname).
-The host needs module_federation_enabled: true in client-app/config/settings_data.json (the default):
+The host needs module_federation_enabled: true in client-app/config/settings_data.json (the default)
+and a backend in .env.local (APP_BACKEND_URL):
   APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview
+PowerShell or cmd: put the APP_MODULES_FEDERATION_REMOTES line in .env.local instead (take it out afterwards),
+then run yarn build-only --mode=development and yarn preview one after the other.
 `);
