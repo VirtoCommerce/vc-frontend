@@ -18,13 +18,17 @@ contribution the host renders, or a component only when its look is the contract
 > ⚠️ If the plugin reaches an environment **before** a storefront with the new facade, gate 1 skips it there, and
 > production logs nothing.
 
+> **Not on the VirtoCommerce team?** Only `VirtoCommerce/vc-frontend` releases the facade. Open the PR there and work
+> against it with yalc meanwhile (S2.3); the plugin ships once the release and a storefront that carries it are out.
+> If the need is small, copy the code into the plugin instead.
+
 ## Steps
 
 1. **Add the export.** 📁 `vc-frontend`: one re-export line in `client-app/core-api/index.ts`.
 2. **Regenerate the contract.** 📁 `vc-frontend`:
 
    ```bash
-   git merge origin/dev     # first: another PR may have taken the next version already
+   git fetch origin && git merge origin/dev   # first: another PR may have taken the next version already
    yarn build:core-types
    ```
 
