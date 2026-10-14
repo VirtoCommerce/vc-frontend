@@ -225,7 +225,7 @@ describe("app-runner boot order", () => {
       });
     }
 
-    // The stock theme ships the switch OFF, so the cases about the query itself have to turn it on.
+    // Pinned rather than read from the shipped theme, so these cases do not move with it.
     beforeEach(() => stubFederation(true));
 
     it("issues the plugin-list query and hands its result to the loader", async () => {
@@ -248,16 +248,17 @@ describe("app-runner boot order", () => {
       await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
     });
 
-    // Reads client-app/config/settings_data.json itself: the shipped theme must not query the
-    // platform for plugins until the Sales Rep Hub plugin is released.
-    it("issues nothing with the theme config as shipped", async () => {
+    // Reads client-app/config/settings_data.json itself: the Sales Rep Hub ships as a plugin, so the
+    // shipped theme has to ask the platform for it.
+    it("issues the plugin-list query with the theme config as shipped", async () => {
       vi.doUnmock("@/config/settings_data.json");
       vi.resetModules();
+      getStorePluginsMock.mockResolvedValue(PLUGINS);
 
       await runBoot();
 
-      expect(getStorePluginsMock).not.toHaveBeenCalled();
-      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
+      expect(getStorePluginsMock).toHaveBeenCalledTimes(1);
+      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBe(PLUGINS);
     });
 
     it("starts the query before it awaits the page context, so the round trips overlap", async () => {

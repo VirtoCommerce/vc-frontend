@@ -29,6 +29,13 @@ const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 // Maximum number of simultaneous uploads
 const MAX_CONCURRENT_UPLOADS = 3;
 
+const FILE_SIZE_ERROR_CODES = new Set(["INVALID_SIZE", "INVALID_MIN_SIZE"]);
+
+// Browsers percent-encode these characters in a multipart filename, and the server returns the encoded name
+function toMultipartFileName(name: string): string {
+  return name.replaceAll('"', "%22").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
+}
+
 /**
  * File management
  * @param scope Scope files belongs to.
@@ -70,6 +77,9 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
         ...defaultOptions,
         ...result,
       };
+    } else {
+      // The server returns no options only for a scope that is not configured, where every upload fails
+      options.value = { ...defaultOptions, unavailable: true };
     }
   }
 
@@ -135,6 +145,12 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       return;
     }
 
+    if (options.value.unavailable) {
+      const errorMessage = getErrorMessage("INVALID_SCOPE");
+      newFiles.value.forEach((newFile) => toFailedFile(newFile, errorMessage));
+      return;
+    }
+
     newFiles.value.forEach((newFile) => {
       if (files.value.some((file) => file.name === newFile.name && file !== newFile)) {
         toFailedFile(newFile, getErrorMessage("ALREADY_EXISTS"));
@@ -158,7 +174,11 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   // Helper function to process upload results
   function processUploadResults(results: FileUploadResultType[] | undefined, filesToProcess: IUploadingFile[]) {
     results?.forEach((result) => {
-      const uploadedFile = filesToProcess.find((fileInfo) => fileInfo.name === result.name);
+      const uploadedFile =
+        filesToProcess.find((fileInfo) => isUploadingFile(fileInfo) && fileInfo.name === result.name) ??
+        filesToProcess.find(
+          (fileInfo) => isUploadingFile(fileInfo) && toMultipartFileName(fileInfo.name) === result.name,
+        );
       if (uploadedFile) {
         if (result.succeeded) {
           toUploadedFile(uploadedFile, result.id, result.url);
@@ -168,20 +188,18 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       }
     });
 
-    // Results are matched to files by name, and a rejected upload can come back without one —
-    // INVALID_SCOPE, for instance, names the scope rather than the file. Anything the response did
-    // not account for must still be failed here: a file left in "uploading" is never terminal, and
-    // uploadFiles() retries such a file for as long as the page is open.
-    const unnamedError = results?.find((result): result is IFailedFileUpload => !result.succeeded && !result.name);
+    // Some errors (e.g. INVALID_SCOPE) name no file, and a file left "uploading" keeps uploadFiles looping
+    const unreportedFiles = filesToProcess.filter(isUploadingFile);
+    if (unreportedFiles.length === 0) {
+      return;
+    }
 
-    filesToProcess.filter(isUploadingFile).forEach((file) => {
-      toFailedFile(
-        file,
-        unnamedError
-          ? getErrorMessage(unnamedError.errorCode, unnamedError.errorParameter, unnamedError.errorMessage)
-          : t("file_error.UPLOAD_FAILED"),
-      );
-    });
+    const unnamedError = results?.find((result): result is IFailedFileUpload => !result.succeeded && !result.name);
+    const unreportedFileError = unnamedError
+      ? getErrorMessage(unnamedError.errorCode, unnamedError.errorParameter, unnamedError.errorMessage)
+      : getErrorMessage("EXCEPTION");
+
+    unreportedFiles.forEach((file) => toFailedFile(file, unreportedFileError));
   }
 
   async function uploadFiles(): Promise<void> {
@@ -264,7 +282,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       filesToUpload.forEach((file) => {
         const uploadingFile = uploadingFiles.value.find((f) => f.name === file.name);
         if (uploadingFile) {
-          toFailedFile(uploadingFile, t("file_error.UPLOAD_FAILED"));
+          toFailedFile(uploadingFile, getErrorMessage("EXCEPTION"));
         }
       });
     } finally {
@@ -319,28 +337,22 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   function getErrorMessage(errorCode: string, errorParameter?: unknown, errorMessage?: string): string | undefined {
-    let parameters: string[];
-    if (errorCode === "INVALID_SIZE") {
-      const fileSize = getFileSize(errorParameter as number);
-      parameters = [
-        n(fileSize.value, {
-          notation: "compact",
-          style: "unit",
-          unit: fileSize.unit,
-          unitDisplay: "narrow",
-        }),
-      ];
-    } else {
-      parameters = [errorParameter as string];
-    }
+    const parameter = FILE_SIZE_ERROR_CODES.has(errorCode)
+      ? formatFileSize(errorParameter as number)
+      : (errorParameter as string);
 
-    return translate({
-      errorCode,
-      errorMessage,
-      errorParameters: parameters.map((item, index) => ({
-        key: index.toString(),
-        value: item,
-      })),
+    // A single `parameter` reaches `t()` as a list, which is what the `{0}` placeholders read
+    return translate({ errorCode, errorMessage, parameter });
+  }
+
+  function formatFileSize(bytes: number): string {
+    const fileSize = getFileSize(bytes);
+
+    return n(fileSize.value, {
+      notation: "compact",
+      style: "unit",
+      unit: fileSize.unit,
+      unitDisplay: "narrow",
     });
   }
 
