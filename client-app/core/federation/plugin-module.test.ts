@@ -369,12 +369,19 @@ describe("checkEnvironment", () => {
     const request = environment(
       installed([...atFloors, { moduleId: "VirtoCommerce.Foo", version: "3.1000.0" }]),
       listing([{ id: "foo", remote: { name: "foo" }, entry: { path: ENTRY } }]),
-      Response.json({ name: "foo" }),
+      Response.json({ name: "foo", metaData: { requiredHostVersion: `^${PIN}` } }),
     );
 
     const results = await checkEnvironment(SHOP, PLUGIN, request);
 
     expect(failures(results)).toEqual([]);
+    // Gate 1 is the storefront's to evaluate; the check prints the range to compare with.
+    expect(results).toContainEqual(
+      expect.objectContaining({
+        status: "pass",
+        message: expect.stringContaining(`requires @vc-frontend/core ^${PIN}`),
+      }),
+    );
     expect(String(request.mock.calls[2][0])).toBe(
       `${SHOP}/modules/VirtoCommerce.Foo/plugins/vc-frontend/mf-manifest.json`,
     );
@@ -459,7 +466,7 @@ describe("checkEnvironment", () => {
     );
 
     expect(failures(await checkEnvironment(SHOP, { pluginId: "foo" }, request))).toEqual([
-      expect.objectContaining({ fix: expect.stringContaining("/modules") }),
+      expect.objectContaining({ fix: expect.stringContaining("/modules/VirtoCommerce.Foo/plugins/vc-frontend/") }),
     ]);
   });
 });

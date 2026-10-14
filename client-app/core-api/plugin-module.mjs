@@ -503,22 +503,21 @@ export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, re
 
   const entry = new URL(plugin.entry?.path ?? "", origin);
   const manifestUrl = new URL("mf-manifest.json", entry);
+  const routeFix = `Route ${new URL(".", entry).pathname} (or all of /modules) to the platform, on the storefront's origin.`;
   try {
     const response = await request(manifestUrl, { signal: AbortSignal.timeout(ENV_REQUEST_TIMEOUT_MS) });
     const manifest = response.ok ? await response.json().catch(() => undefined) : undefined;
     const notJson = response.ok ? " but is not JSON" : "";
+    // Gate 1 compares this range with the storefront's facade; this check cannot see that version.
+    const required = manifest?.metaData?.requiredHostVersion;
+    const requires = typeof required === "string" ? `, requires @vc-frontend/core ${required}` : "";
     results.push(
       manifest
-        ? pass(`${manifestUrl.pathname} answers ${response.status}`)
-        : fail(
-            `${manifestUrl.pathname} answers ${response.status}${notJson}`,
-            "The storefront ingress must route /modules to the platform.",
-          ),
+        ? pass(`${manifestUrl.pathname} answers ${response.status}${requires}`)
+        : fail(`${manifestUrl.pathname} answers ${response.status}${notJson}`, routeFix),
     );
   } catch (error) {
-    results.push(
-      fail(`${manifestUrl.pathname}: ${error.message}`, "The storefront ingress must route /modules to the platform."),
-    );
+    results.push(fail(`${manifestUrl.pathname}: ${error.message}`, routeFix));
   }
   return results;
 }
