@@ -581,7 +581,9 @@ More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENAR
 3. **Give routes and menu ids names the storefront cannot already have.** A host name is refused.
 4. **The backend authorizes every query.** A \`permission\` in \`plugin.json\` only decides whether a browser loads
    the plugin; its files are public by URL.
-5. **\`requiredHostVersion\` is a promise.** Set it to the facade version that added what you use.
+5. **\`requiredHostVersion\` is \`^\` the facade you pin.** A lower floor would claim storefronts that may lack
+   what the plugin compiled against, so \`check:plugin-module\` fails it. To reach storefronts on an older facade,
+   pin that facade's release instead.
 
 ## Commands
 
