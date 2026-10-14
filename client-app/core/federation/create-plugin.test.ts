@@ -275,7 +275,8 @@ describe("create-plugin scaffolder", () => {
     const hostLocales = readdirSync(resolve(__dirname, "../../../locales")).filter((name) =>
       /^[a-z]{2}\.json$/.test(name),
     );
-    expect(readdirSync(join(dir, "src", "locales")).sort()).toEqual(hostLocales.sort());
+    expect(readdirSync(join(dir, "src", "locales"))).toEqual(expect.arrayContaining(hostLocales));
+    expect(readdirSync(join(dir, "src", "locales"))).toHaveLength(hostLocales.length);
     expect(JSON.parse(readFileSync(join(dir, "src", "locales", "en.json"), "utf8"))).toHaveProperty("my_plugin.title");
     expectParseableTs(join(dir, "src", "i18n.ts"));
     expect(readFileSync(join(dir, "src", "i18n.ts"), "utf8")).toContain('registerLocaleLoader("plugin:my-plugin"');

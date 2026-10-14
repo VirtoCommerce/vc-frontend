@@ -43,7 +43,7 @@ const corePkg = require("./package.json");
 const HOST_LOCALES = readdirSync(resolve(REPO_ROOT, "locales"))
   .filter((name) => /^[a-z]{2}\.json$/.test(name))
   .map((name) => name.slice(0, -".json".length))
-  .sort();
+  .sort((a, b) => a.localeCompare(b));
 
 // The facade's type-peers: every MF shared singleton (federation.mjs) is also referenced
 // by the contract's own types (e.g. useModuleSettings -> @vueuse/core, apolloClient ->
