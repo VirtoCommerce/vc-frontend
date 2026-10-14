@@ -237,6 +237,38 @@ describe("STOREFRONT_PLUGIN_TARGETS", () => {
     expect(comments.length).toBeGreaterThan(0);
     expect(comments.filter((body) => body.includes("--"))).toEqual([]);
   });
+
+  it("copies the bundle beside the publish dir, where the platform probes, not into bin/", () => {
+    expect(STOREFRONT_PLUGIN_TARGETS).toContain('DestinationFiles="$(PublishDir)\\..\\plugins\\%(RecursiveDir)');
+  });
+
+  it("keeps the plugin sources and the built bundle out of every default item type", () => {
+    for (const itemType of ["Compile", "Content", "EmbeddedResource", "None"]) {
+      expect(STOREFRONT_PLUGIN_TARGETS).toContain(
+        `<${itemType} Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />`,
+      );
+    }
+  });
+
+  it("installs, type-checks and builds through corepack, and reinstalls only when Clean broke node_modules", () => {
+    const build = /<Target Name="BuildStorefrontPlugin"[\s\S]*?<\/Target>/.exec(STOREFRONT_PLUGIN_TARGETS)?.[0] ?? "";
+    const commands = [...build.matchAll(/<Exec Command="([^"]+)"/g)].map(([, command]) => command);
+
+    expect(commands).toEqual(["corepack yarn install --immutable", "corepack yarn type-check", "corepack yarn build"]);
+    expect(build).toContain(
+      `<RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\\vite\\bin\\vite.js')" />`,
+    );
+  });
+
+  it("skips building and copying under SkipStorefrontPlugin, and says the package has no plugin", () => {
+    const targets = [...STOREFRONT_PLUGIN_TARGETS.matchAll(/<Target Name="(\w+)"[^>]*Condition="([^"]+)"/g)];
+
+    expect(Object.fromEntries(targets.map(([, name, condition]) => [name, condition]))).toEqual({
+      ReportStorefrontPluginSkipped: "'$(SkipStorefrontPlugin)' == 'true'",
+      BuildStorefrontPlugin: "'$(SkipStorefrontPlugin)' != 'true'",
+      PublishStorefrontPlugin: "'$(SkipStorefrontPlugin)' != 'true'",
+    });
+  });
 });
 
 /** A zip reduced to what listZipEntries reads: central directory records and the end record. */

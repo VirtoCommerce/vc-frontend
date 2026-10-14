@@ -37,15 +37,18 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <EmbeddedResource Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
     <None Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
   </ItemGroup>
-  <!-- -p:SkipStorefrontPlugin=true builds the module without Node. -->
+  <!-- -p:SkipStorefrontPlugin=true (or the env var) builds the module without Node, and without the plugin. -->
+  <Target Name="ReportStorefrontPluginSkipped" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' == 'true'">
+    <Message Importance="high" Text="SkipStorefrontPlugin=true: this package carries no storefront plugin." />
+  </Target>
   <Target Name="BuildStorefrontPlugin" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' != 'true'">
-    <!-- A runner's global yarn is 1.x; package.json pins yarn 4. -->
-    <Exec Command="corepack enable" ContinueOnError="true" />
     <!-- vc-build Clean deletes every bin folder, those inside node_modules too, and yarn would not restore them. -->
-    <RemoveDir Directories="$(StorefrontAppDir)node_modules" />
-    <Exec Command="yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="yarn build" WorkingDirectory="$(StorefrontAppDir)" />
+    <RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\vite\bin\vite.js')" />
+    <!-- Through corepack, for the yarn that package.json pins: a runner's global yarn is 1.x, and corepack enable
+         needs write access to Node's own folder. -->
+    <Exec Command="corepack yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
+    <Exec Command="corepack yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
+    <Exec Command="corepack yarn build" WorkingDirectory="$(StorefrontAppDir)" />
   </Target>
   <Target Name="PublishStorefrontPlugin" AfterTargets="Publish" DependsOnTargets="BuildStorefrontPlugin" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <ItemGroup>
