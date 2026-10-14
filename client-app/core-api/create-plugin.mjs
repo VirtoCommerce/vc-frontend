@@ -13,7 +13,7 @@
  * generation time, so the plugin compiles against exactly what the host runs -
  * nothing is hardcoded to drift. Optional dependency groups are picked
  * interactively (or via flags: --yes takes defaults, --with-i18n, --with-apollo,
- * --with-vueuse, --no-router). Unselected groups are also dropped from the
+ * --with-vueuse, --with-tailwind, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -107,8 +107,46 @@ if (webDir && existsSync(targetDir)) {
   console.error(`${targetDir} already exists - refusing to overwrite.`);
   process.exit(1);
 }
-if (existsSync(join(targetDir, "package.json"))) {
-  console.error(`Target ${targetDir} already contains a package.json - refusing to overwrite.`);
+// Every file any option can write: refusing here spares a human the questions below. The check
+// on the exact plan, after them, stays the one that guarantees nothing is overwritten.
+const ANY_SCAFFOLD_FILE = [
+  "package.json",
+  "index.html",
+  "vite.config.ts",
+  "plugin.config.ts",
+  "tsconfig.json",
+  "src/index.ts",
+  "src/i18n.ts",
+  "src/locales/en.json",
+  "src/pages/my-page.vue",
+  "src/pages/my-page.test.ts",
+  "src/styles.css",
+  "src/shims-vue.d.ts",
+  "src/mocks/vc-frontend-core.ts",
+  "src/api/graphql/queries/ping/pingQuery.graphql",
+  "public/plugin.json",
+  "tailwind.config.cjs",
+  "postcss.config.cjs",
+  "codegen.ts",
+  ".env.example",
+  "README.md",
+  "CLAUDE.md",
+  "eslint.config.js",
+  "vitest.config.ts",
+  ".prettierrc.json",
+  ".prettierignore",
+  ".editorconfig",
+  ".vscode/settings.json",
+  ".vscode/extensions.json",
+  ".gitignore",
+  "yarn.lock",
+  ".yarnrc.yml",
+];
+const takenUpFront = ANY_SCAFFOLD_FILE.filter((file) => existsSync(join(targetDir, file)));
+if (takenUpFront.length) {
+  console.error(
+    `${targetDir} already has ${takenUpFront.join(", ")} - refusing to overwrite. Scaffold into a folder without them.`,
+  );
   process.exit(1);
 }
 
@@ -141,7 +179,7 @@ const GROUPS = [
     key: "i18n",
     flag: "--with-i18n",
     defaultOn: false,
-    prompt: "vue-i18n (plugin-local translations)",
+    prompt: "vue-i18n (its own messages, merged into the storefront's i18n)",
     packages: ["vue-i18n"],
   },
   {
@@ -267,8 +305,8 @@ function pinnedReleaseIsMissing() {
 }
 
 // Optional groups the plugin does not USE at runtime are dropped from its MF shared config.
-// (They may still be installed as type-peers via typePeerNames, but declaring an unused
-// singleton as shared only risks a spurious version-gate failure at load — so drop it.)
+// (They may still be installed as type-peers via typePeerNames.) This keeps the shared config to
+// what the plugin imports; a version mismatch on a shared entry is only logged at load (VCST-6330).
 // Derived from GROUPS so the group→packages mapping lives in exactly one place
 // (tailwind's empty `packages` self-excludes).
 const droppedShared = GROUPS.filter((group) => !selected[group.key]).flatMap((group) => group.packages);
@@ -352,7 +390,8 @@ const typedDocumentAlias = needsTypedDocumentAlias
   resolve: {
     alias: {
       // @module-federation/vite below ${MF_VITE_TYPE_IMPORT_FIX} resolves \`import type\` sources too and throws on this
-      // types-only package; nothing loads it at runtime. Drop it once the host moves past that version.
+      // types-only package; nothing loads it at runtime. Drop it once this plugin's own
+      // @module-federation/vite is past that version.
       "@graphql-typed-document-node/core": fileURLToPath(
         new URL("./node_modules/@graphql-typed-document-node/core/typings/index.d.ts", import.meta.url),
       ),
@@ -387,16 +426,15 @@ export default defineConfig({
     federation(
       createRemoteFederationOptions({
         name: "${pluginName}",
-        // CONTRACT GATE: the facade version this plugin is built against. The loader takes this
-        // range at face value, so widening it is a claim of compatibility, not a request for one:
-        // a host whose version falls INSIDE the range still loads you even if you never tested
-        // against it. A host OUTSIDE the range is refused before any of your code runs.
+        // CONTRACT GATE: the facade versions this plugin runs on. A host OUTSIDE the range is
+        // refused before any of your code runs. Keep it ^ the facade you pin: check:plugin-module
+        // fails a range that reaches below the pin or past its breaking line (README, rule 5).
         requiredHostVersion: "^${corePkg.version}",${sharedOverridesArg}
       }),
     ),
   ],${typedDocumentAlias}${buildConfig}
-  server: { port: 3001, cors: true, origin: "http://localhost:3001" },
-  preview: { cors: true },
+  // No cors option: Vite's default lets in localhost origins only, which is where a local storefront runs.
+  server: { port: 3001, origin: "http://localhost:3001" },
 });
 `;
 
@@ -441,7 +479,8 @@ const tsconfig = {
     target: "ESNext",
     module: "ESNext",
     moduleResolution: "Bundler",
-    lib: ["ESNext", "DOM"],
+    // DOM.Iterable: spreading a NodeList or FormData, as host code does, fails type-check without it.
+    lib: ["ESNext", "DOM", "DOM.Iterable"],
     strict: true,
     noEmit: true,
     skipLibCheck: true,
@@ -457,9 +496,11 @@ const tsconfig = {
 };
 
 const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
+const i18nImport = selected.i18n ? 'import { loadLocales } from "./i18n";\n' : "";
+const i18nCall = selected.i18n ? "  loadLocales();\n" : "";
 const indexTs = selected.router
   ? `${stylesImport}import { globals } from "@vc-frontend/core";
-import type { RouteRecordRaw } from "vue-router";
+${i18nImport}import type { RouteRecordRaw } from "vue-router";
 
 const MyPage = () => import("./pages/my-page.vue");
 
@@ -467,17 +508,64 @@ const route: RouteRecordRaw = { path: "/${pluginName}", name: "${pluginName}", c
 
 export function init(): void {
   globals.router.addRoute(route);
-}
+${i18nCall}}
 `
-  : `${stylesImport}export function init(): void {
-  // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
+  : `${stylesImport}${i18nImport}export function init(): void {
+${i18nCall}  // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
 }
 `;
+
+// All of the plugin's messages live under one top-level key, so they cannot clash with the storefront's.
+const messagesNamespace = pluginName.replaceAll("-", "_");
+const localeMessages = {
+  [messagesNamespace]: {
+    title: pluginName,
+    description: "Served by Module Federation - built and deployed separately from the host.",
+  },
+};
+const i18nTs = `import { globals, registerLocaleLoader } from "@vc-frontend/core";
+import type { I18n, ILanguage } from "@vc-frontend/core";
+
+const FALLBACK_LOCALE = "en";
+const LOCALE_FILES = import.meta.glob<{ default: Record<string, unknown> }>("./locales/*.json");
+
+async function loadFile(locale: string): Promise<Record<string, unknown>> {
+  const load = LOCALE_FILES[\`./locales/\${locale}.json\`];
+  return load ? (await load()).default : {};
+}
+
+/**
+ * Merges this plugin's messages for a locale, and the \`en\` fallback, into the storefront's i18n.
+ * setLocaleMessage on a fresh object, never mergeLocaleMessage: the host's messages can be frozen.
+ */
+async function mergeLocale(i18n: I18n, locale: string): Promise<void> {
+  const locales = locale === FALLBACK_LOCALE ? [FALLBACK_LOCALE] : [FALLBACK_LOCALE, locale];
+  const messages = await Promise.all(locales.map(loadFile));
+  locales.forEach((name, index) => {
+    const existing = i18n.global.getLocaleMessage(name) as Record<string, unknown>;
+    i18n.global.setLocaleMessage(name, { ...existing, ...messages[index] });
+  });
+}
+
+/** Merges the current locale now, and again on every language switch. */
+export function loadLocales(): void {
+  registerLocaleLoader("plugin:${pluginName}", (i18n: I18n, language: ILanguage) =>
+    mergeLocale(i18n, language?.twoLetterLanguageName || FALLBACK_LOCALE),
+  );
+  const { locale } = globals.i18n.global;
+  // i18n holds the full culture ("en-US"); the message files are two-letter, like the host's.
+  const current = typeof locale === "object" ? locale.value : locale;
+  void mergeLocale(globals.i18n, current?.split("-")[0] || FALLBACK_LOCALE);
+}
+`;
+
+const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
+const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
 
 const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
 
 // What the storefront knows before running this plugin. It does not replace the registrations in
-// src/index.ts — see core/federation/declarations.md.
+// src/index.ts. Reference: ${DOCS_URL}/declarations.md
 export default definePluginManifest({${
   selected.router
     ? `
@@ -488,7 +576,15 @@ export default definePluginManifest({${
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
-const myPageVue = `<template>
+const myPageVue = selected.i18n
+  ? `<template>
+  <div${pageClass}>
+    <h1>{{ $t("${messagesNamespace}.title") }}</h1>
+    <p>{{ $t("${messagesNamespace}.description") }}</p>
+  </div>
+</template>
+`
+  : `<template>
   <div${pageClass}>
     <h1>${pluginName}</h1>
     <p>Served by Module Federation - built and deployed separately from the host.</p>
@@ -518,8 +614,6 @@ const indexHtml = `<!doctype html>
 </html>
 `;
 
-const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
-const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
 const optionNames = GROUPS.map((group) => `${group.key} ${selected[group.key] ? "yes" : "no"}`).join(" · ");
 const successCheck = selected.router
   ? `\`https://localhost:3000/${pluginName}\` shows the plugin's page.`
@@ -549,12 +643,15 @@ const readmeSections = [
 
 1. 📁 here: \`yarn install\`, then \`yarn build && yarn preview\`. The plugin is served on port 3001.
 2. 📁 a vc-frontend checkout, with \`"module_federation_enabled": true\` in \`client-app/config/settings_data.json\`
-   (the default):
+   (the default) and a backend in \`.env.local\` (\`APP_BACKEND_URL\`):
 
    \`\`\`bash
    APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' \\
    yarn build-only --mode=development && yarn preview
    \`\`\`
+
+   PowerShell or cmd: put the \`APP_MODULES_FEDERATION_REMOTES=…\` line in that \`.env.local\` instead (take it out
+   afterwards: it replaces the platform's plugin list), and run the two commands one after the other.
 
 3. ✅ ${successCheck}
 
@@ -587,7 +684,8 @@ More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENAR
      droppedShared.length
        ? `
 6. **A library set to \`false\` in \`sharedOverrides\` (vite.config.ts) is not shared.** Delete its line before you
-   import it. Otherwise the plugin bundles its own copy, which does not see the storefront's i18n or Apollo client.`
+   import it. Otherwise the plugin bundles its own copy, which does not see the storefront's router, i18n or Apollo
+   client.`
        : ""
    }
 
@@ -616,6 +714,14 @@ vi.mock("@vc-frontend/core", async (importOriginal) => ({
 
 Mount helpers come from \`@vc-frontend/core/testing\`. In tests a \`Vc*\` component is whatever the stand-in
 gives; test its own behaviour in the storefront, not here.`,
+  selected.i18n &&
+    `
+## Translations
+
+Messages live in \`src/locales/<two-letter locale>.json\`, all under one top-level key, \`${messagesNamespace}\`, so they
+cannot clash with the storefront's. \`src/i18n.ts\` merges them into the storefront's i18n at startup and again on
+every language switch; a locale without a file falls back to \`en\`. Use them as \`$t("${messagesNamespace}.…")\`. A
+declared menu title in \`plugin.config.ts\` is such a key too.`,
   selected.apollo &&
     `
 ## GraphQL
@@ -878,7 +984,7 @@ const createWrapper = createWrapperFactory(mount, MyPage);
 
 describe("${pluginName} page", () => {
   it("renders", () => {
-    expect(createWrapper().text()).toContain("${pluginName}");
+    expect(createWrapper().text()).toContain("${selected.i18n ? `${messagesNamespace}.title` : pluginName}");
   });
 });
 `;
@@ -896,6 +1002,8 @@ const outputs = [
   ["tsconfig.json", json(tsconfig)],
   ["src/index.ts", indexTs],
   selected.router && ["src/pages/my-page.vue", myPageVue],
+  selected.i18n && ["src/i18n.ts", i18nTs],
+  selected.i18n && ["src/locales/en.json", json(localeMessages)],
   selected.tailwind && ["tailwind.config.cjs", tailwindConfig],
   selected.tailwind && ["postcss.config.cjs", postcssConfig],
   selected.tailwind && ["src/styles.css", stylesCss],
@@ -917,7 +1025,7 @@ const outputs = [
   selected.apollo && ["src/api/graphql/queries/ping/pingQuery.graphql", sampleDocument],
   webDir && [TARGETS_FILE, STOREFRONT_PLUGIN_TARGETS],
   // yalc artifacts (local facade co-dev) must never be committed - see README.
-  [".gitignore", "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n"],
+  [".gitignore", "node_modules/\ndist/\n.yarn/install-state.gz\n.yalc/\nyalc.lock\n.env\n*.local\n"],
   // An empty lockfile makes this folder its own Yarn project. Without it, Yarn refuses to install under a parent
   // package.json, which a module's *.Web often has for its admin UI.
   ["yarn.lock", ""],
@@ -969,6 +1077,9 @@ console.log(`\nNext steps:
   yarn build && yarn preview   # serves mf-manifest.json on :3001
 
 Then point the host at it (--mode=development so the store resolves from APP_BACKEND_URL, not the hostname).
-The host needs module_federation_enabled: true in client-app/config/settings_data.json (the default):
+The host needs module_federation_enabled: true in client-app/config/settings_data.json (the default)
+and a backend in .env.local (APP_BACKEND_URL):
   APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview
+PowerShell or cmd: put the APP_MODULES_FEDERATION_REMOTES line in .env.local instead (take it out afterwards),
+then run yarn build-only --mode=development and yarn preview one after the other.
 `);

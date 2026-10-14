@@ -117,7 +117,9 @@ describe("create-plugin scaffolder", () => {
     expectParseableTs(join(dir, "vite.config.ts"));
     expectParseableTs(join(dir, "plugin.config.ts"));
     expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain("pluginContributions(contributions)");
-    expect(JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8")).include).toContain("plugin.config.ts");
+    const tsconfig = JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8"));
+    expect(tsconfig.include).toContain("plugin.config.ts");
+    expect(tsconfig.compilerOptions.lib).toContain("DOM.Iterable");
     expectParseableTs(join(dir, "src", "index.ts"));
     expectParseableTs(join(dir, "vitest.config.ts"));
     expectParseableTs(join(dir, "eslint.config.js"));
@@ -128,7 +130,9 @@ describe("create-plugin scaffolder", () => {
     // Its own Yarn project even under a parent package.json; `yarn install` fills it.
     expect(readFileSync(join(dir, "yarn.lock"), "utf8")).toBe("");
     // `yarn install` writes it beside the lockfile; it must not ride along when StorefrontApp/ is committed.
-    expect(readFileSync(join(dir, ".gitignore"), "utf8").split("\n")).toContain(".yarn/install-state.gz");
+    expect(readFileSync(join(dir, ".gitignore"), "utf8").split("\n")).toEqual(
+      expect.arrayContaining([".yarn/install-state.gz", ".env", "*.local"]),
+    );
     // yarn 1 ignores the .yarnrc.yml this writes and knows no `portal:`/`link:` protocol.
     expect(pkg.packageManager).toMatch(/^yarn@/);
     expect(Object.keys(pkg.scripts)).toEqual(expect.arrayContaining(["lint", "format", "test", "type-check"]));
@@ -153,6 +157,8 @@ describe("create-plugin scaffolder", () => {
     expect(viteConfig).toContain('"@apollo/client": false');
     // Quoting a valid identifier fails the scaffold's own prettier rule.
     expect(viteConfig).toContain(" graphql: false");
+    // cors: true would let any web page read the dev server's sources; Vite's default allows localhost only.
+    expect(viteConfig).not.toContain("cors:");
     // Importing a library left out of shared bundles a second copy; the README says to delete its line first.
     expect(readme).toContain("is not shared.** Delete its line");
   });
@@ -260,6 +266,25 @@ describe("create-plugin scaffolder", () => {
 
     expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).not.toContain("sharedOverrides");
     expect(readFileSync(join(dir, "README.md"), "utf8")).not.toContain("is not shared.");
+  });
+
+  it("scaffolds --with-i18n with messages under one key, merged into the storefront's i18n", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes", "--with-i18n"]);
+
+    expect(JSON.parse(readFileSync(join(dir, "src", "locales", "en.json"), "utf8"))).toHaveProperty("my_plugin.title");
+    expectParseableTs(join(dir, "src", "i18n.ts"));
+    expect(readFileSync(join(dir, "src", "i18n.ts"), "utf8")).toContain('registerLocaleLoader("plugin:my-plugin"');
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain("loadLocales();");
+    expect(readFileSync(join(dir, "src", "pages", "my-page.vue"), "utf8")).toContain('$t("my_plugin.title")');
+    expect(readFileSync(join(dir, "README.md"), "utf8")).toContain("## Translations");
+  });
+
+  it("writes no translations without --with-i18n", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+
+    expect(existsSync(join(dir, "src", "i18n.ts"))).toBe(false);
+    expect(existsSync(join(dir, "src", "locales"))).toBe(false);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).not.toContain("loadLocales");
   });
 
   it("refuses a folder that already has one of its files, and writes nothing", () => {

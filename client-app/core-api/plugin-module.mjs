@@ -4,7 +4,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { coerce, gte, minVersion, validRange } from "semver";
+import { coerce, gte, minVersion, subset, validRange } from "semver";
 import { BACKEND_REQUIREMENTS } from "./backend-requirements.mjs";
 import { gitIn } from "./git.mjs";
 
@@ -37,9 +37,9 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <EmbeddedResource Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
     <None Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
   </ItemGroup>
-  <!-- -p:SkipStorefrontPlugin=true (or the env var) builds the module without Node, and without the plugin. -->
+  <!-- -p:SkipStorefrontPlugin=true (or the env var) builds the module without Node: the plugin is neither built nor copied. -->
   <Target Name="ReportStorefrontPluginSkipped" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' == 'true'">
-    <Message Importance="high" Text="SkipStorefrontPlugin=true: this package carries no storefront plugin." />
+    <Message Importance="high" Text="SkipStorefrontPlugin=true: the storefront plugin is neither built nor copied into the package." />
   </Target>
   <Target Name="BuildStorefrontPlugin" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <!-- vc-build Clean deletes every bin folder, those inside node_modules too, and yarn would not restore them. -->
@@ -193,7 +193,7 @@ function checkCsproj(webDir) {
     return [
       warn(
         `${project} builds the plugin with its own inline targets`,
-        `The check cannot verify inline targets. To use the generated ones instead, take ${TARGETS_FILE} from a new scaffold and add ${TARGETS_IMPORT}.`,
+        `The check cannot verify inline targets. To use the generated ones instead: copy STOREFRONT_PLUGIN_TARGETS from client-app/core-api/plugin-module.mjs in a vc-frontend checkout into ${STOREFRONT_APP_DIR}/${TARGETS_FILE}, delete the inline targets, and add ${TARGETS_IMPORT}.`,
       ),
     ];
   }
@@ -222,7 +222,7 @@ function checkFacadePin(appDir, pkg) {
     return [
       fail(
         `@vc-frontend/core is "${pin ?? "missing"}", not a released tarball`,
-        "Pin the core-v<version> release asset (yalc/file:/link: are for local work only).",
+        "Pin the core-v<version> release asset. A yalc link is for local work only, never portal:, link: or file:.",
       ),
     ];
   }
@@ -234,7 +234,21 @@ function checkFacadePin(appDir, pkg) {
       ),
     ];
   }
-  const floor = minVersion(range).version;
+  const floor = minVersion(range)?.version;
+  if (!floor) {
+    return [
+      fail(`vite.config.ts: requiredHostVersion "${range}" admits no version`, `requiredHostVersion: "^${pinned}"`),
+    ];
+  }
+  // Past ^pin lies the next breaking facade line, which this plugin was never built against.
+  if (gte(floor, pinned) && !subset(range, `^${pinned}`)) {
+    return [
+      fail(
+        `requiredHostVersion ${range} also admits facades past ^${pinned}, whose breaking changes this plugin was not built for`,
+        `requiredHostVersion: "^${pinned}"`,
+      ),
+    ];
+  }
   if (floor === pinned) {
     return [pass(`requiredHostVersion ${range} matches the facade pin ${pinned}`)];
   }
@@ -289,6 +303,13 @@ function checkStorefrontApp(webDir) {
     );
   } else if (descriptor.remote?.exposed !== PLUGIN_EXPOSE) {
     results.push(fail(`public/plugin.json: remote.exposed is not "${PLUGIN_EXPOSE}"`, `"exposed": "${PLUGIN_EXPOSE}"`));
+  } else if (!remoteName) {
+    results.push(
+      warn(
+        "vite.config.ts: the federation name is not a string literal in createRemoteFederationOptions, so it was not compared with plugin.json",
+        `Make sure it equals "${descriptor.remote?.name}".`,
+      ),
+    );
   } else if (descriptor.remote?.name !== remoteName) {
     results.push(
       fail(
@@ -482,22 +503,21 @@ export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, re
 
   const entry = new URL(plugin.entry?.path ?? "", origin);
   const manifestUrl = new URL("mf-manifest.json", entry);
+  const routeFix = `Route ${new URL(".", entry).pathname} (or all of /modules) to the platform, on the storefront's origin.`;
   try {
     const response = await request(manifestUrl, { signal: AbortSignal.timeout(ENV_REQUEST_TIMEOUT_MS) });
     const manifest = response.ok ? await response.json().catch(() => undefined) : undefined;
     const notJson = response.ok ? " but is not JSON" : "";
+    // Gate 1 compares this range with the storefront's facade; this check cannot see that version.
+    const required = manifest?.metaData?.requiredHostVersion;
+    const requires = typeof required === "string" ? `, requires @vc-frontend/core ${required}` : "";
     results.push(
       manifest
-        ? pass(`${manifestUrl.pathname} answers ${response.status}`)
-        : fail(
-            `${manifestUrl.pathname} answers ${response.status}${notJson}`,
-            "The storefront ingress must route /modules to the platform.",
-          ),
+        ? pass(`${manifestUrl.pathname} answers ${response.status}${requires}`)
+        : fail(`${manifestUrl.pathname} answers ${response.status}${notJson}`, routeFix),
     );
   } catch (error) {
-    results.push(
-      fail(`${manifestUrl.pathname}: ${error.message}`, "The storefront ingress must route /modules to the platform."),
-    );
+    results.push(fail(`${manifestUrl.pathname}: ${error.message}`, routeFix));
   }
   return results;
 }

@@ -209,6 +209,31 @@ describe("checkModuleFiles", () => {
     expect(withStatus(results, "warn")).toHaveLength(1);
   });
 
+  it("fails a contract range that reaches past the facade's breaking line, or admits nothing", () => {
+    const { webDir, write } = createModule();
+    const viteConfig = (range: string) =>
+      `createRemoteFederationOptions({ name: "foo", requiredHostVersion: "${range}" });\noutDir: "../plugins/vc-frontend"`;
+
+    for (const range of [`>=${PIN}`, `${PIN} - 1.0.0`, ">1.0.0 <1.0.0"]) {
+      write("StorefrontApp/vite.config.ts", viteConfig(range));
+      expect(failures(checkModuleFiles(webDir)), range).toEqual([
+        expect.objectContaining({ fix: `requiredHostVersion: "^${PIN}"` }),
+      ]);
+    }
+  });
+
+  it("only warns when the federation name is not a literal it can compare", () => {
+    const { webDir, write } = createModule();
+    write(
+      "StorefrontApp/vite.config.ts",
+      `createRemoteFederationOptions({ name: PLUGIN_NAME, requiredHostVersion: "^${PIN}" });\noutDir: "../plugins/vc-frontend"`,
+    );
+
+    const results = checkModuleFiles(webDir);
+    expect(failures(results)).toEqual([]);
+    expect(withStatus(results, "warn")).toEqual([expect.objectContaining({ fix: 'Make sure it equals "foo".' })]);
+  });
+
   it("fails a plugin.json whose remote name is not the federation name", () => {
     const { webDir, write } = createModule();
     write(
@@ -344,12 +369,19 @@ describe("checkEnvironment", () => {
     const request = environment(
       installed([...atFloors, { moduleId: "VirtoCommerce.Foo", version: "3.1000.0" }]),
       listing([{ id: "foo", remote: { name: "foo" }, entry: { path: ENTRY } }]),
-      Response.json({ name: "foo" }),
+      Response.json({ name: "foo", metaData: { requiredHostVersion: `^${PIN}` } }),
     );
 
     const results = await checkEnvironment(SHOP, PLUGIN, request);
 
     expect(failures(results)).toEqual([]);
+    // Gate 1 is the storefront's to evaluate; the check prints the range to compare with.
+    expect(results).toContainEqual(
+      expect.objectContaining({
+        status: "pass",
+        message: expect.stringContaining(`requires @vc-frontend/core ^${PIN}`),
+      }),
+    );
     expect(String(request.mock.calls[2][0])).toBe(
       `${SHOP}/modules/VirtoCommerce.Foo/plugins/vc-frontend/mf-manifest.json`,
     );
@@ -434,7 +466,7 @@ describe("checkEnvironment", () => {
     );
 
     expect(failures(await checkEnvironment(SHOP, { pluginId: "foo" }, request))).toEqual([
-      expect.objectContaining({ fix: expect.stringContaining("/modules") }),
+      expect.objectContaining({ fix: expect.stringContaining("/modules/VirtoCommerce.Foo/plugins/vc-frontend/") }),
     ]);
   });
 });
