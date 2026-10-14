@@ -31,6 +31,9 @@
      route: platform
    ```
 
+   A CDN in front must not cache `remoteEntry.js`, `mf-manifest.json` or `plugin.json` under `/modules`:
+   `remoteEntry.js` keeps its name across module versions, so a cached copy asks for chunks that are gone.
+
 4. **Deploy a storefront built with the switch on** (`module_federation_enabled: true`). A storefront built with it
    off has no plugin code at all, whatever the backend serves.
 5. **CSP**, if the environment sets one: `'self'` covers plugins served by the platform.
