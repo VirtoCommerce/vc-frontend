@@ -18,7 +18,7 @@ file are cross-referenced, not repeated.
 
 **Before the theme release**
 
-- [x] **Switch the storefront over to the plugin** — done here: the switch ships `true`, `initSalesRep` is gone from `app-runner.ts`, and the two shipped-config specs now pin the plugin path. Cut out of #2481, so that PR lands the MF host
+- [x] **Switch the storefront over to the plugin** — done here: the switch ships `true`, the in-repo hub runs only with `sales_rep_builtin_enabled: true` (ships `false`, for themes not ready to switch), and the two shipped-config specs now pin the plugin path. Cut out of #2481, so that PR lands the MF host
       harness and changes nothing at runtime: `module_federation_enabled` ships `false` and the
       in-repo `client-app/modules/sales-rep` still initializes and still serves the hub. Three edits,
       all here, once the items below are done on the target environment:
@@ -141,7 +141,8 @@ file are cross-referenced, not repeated.
       manifest the gate read (#3), so the second manifest fetch is gone too.
       For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
       (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
-- [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off and the
+- [ ] **Delete the in-repo `client-app/modules/sales-rep`**, with its `sales_rep_builtin_enabled`
+      setting, once QA signs the plugin off and the
       switch above is flipped — until then it is the live implementation, not dead code, so this is
       strictly the step after it. Take `PORT_TO_MF.md`, the `independentModules` entry in
       `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
