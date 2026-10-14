@@ -3,6 +3,9 @@
 **For:** anyone who wants to get a job done with a storefront plugin. How the system works is in the
 [general guide](../README.md).
 
+_Source-checked against `dev` @ `4b7a22d23` plus the plugin tooling (VCST-6320), facade 0.2.3,
+on 2026-10-14. Each scenario ends with what was walked, and when._
+
 ## What do you want to do?
 
 ```

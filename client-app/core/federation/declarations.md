@@ -9,8 +9,9 @@
 > - The build writes it into `plugin.json` as `contributions`; the platform serves it with the plugin list.
 > - It **announces**, it does not register: `init()` still adds every route, menu entry and component itself.
 
-_Source-checked against `dev` @ `8c788b038`, facade 0.2.3, on 2026-10-13. Section 5 was walked: each build and
-`type-check` error named there was reproduced, and so were the console lines of a plugin skipped at runtime._
+_Source-checked against `dev` @ `4b7a22d23` plus the plugin tooling (VCST-6320), facade 0.2.3,
+on 2026-10-14. Section 5 was walked on 2026-10-13: each build and `type-check` error named there was
+reproduced, and so were the console lines of a plugin skipped at runtime._
 
 ## 1. Example
 

@@ -11,7 +11,8 @@
 > - Removing or renaming anything breaks every plugin: bump by hand (`yarn bump:core`).
 > - Releases are tarballs on GitHub (`core-v<version>`), never npm. Never delete one.
 
-_Source-checked against `dev` @ `8c788b038`, facade 0.2.3, on 2026-10-13._
+_Source-checked against `dev` @ `4b7a22d23` plus the plugin tooling (VCST-6320), facade 0.2.3,
+on 2026-10-14._
 
 ---
 

@@ -1,7 +1,7 @@
 # Module Federation: open work
 
 Open items only, one line each. What is done is in git history; decisions are in [`core/specs/`](../specs/).
-_Checked against `dev` on 2026-10-13._
+_Checked against `dev` on 2026-10-14._
 
 ## Releasing sales-rep as a plugin
 
