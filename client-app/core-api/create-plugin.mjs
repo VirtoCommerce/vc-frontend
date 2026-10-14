@@ -305,8 +305,8 @@ function pinnedReleaseIsMissing() {
 }
 
 // Optional groups the plugin does not USE at runtime are dropped from its MF shared config.
-// (They may still be installed as type-peers via typePeerNames, but declaring an unused
-// singleton as shared only risks a spurious version-gate failure at load — so drop it.)
+// (They may still be installed as type-peers via typePeerNames.) This keeps the shared config to
+// what the plugin imports; a version mismatch on a shared entry is only logged at load (VCST-6330).
 // Derived from GROUPS so the group→packages mapping lives in exactly one place
 // (tailwind's empty `packages` self-excludes).
 const droppedShared = GROUPS.filter((group) => !selected[group.key]).flatMap((group) => group.packages);
