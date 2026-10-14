@@ -42,8 +42,9 @@ Pick the first tier that fits. A need that fits none is a change to the host, no
 3. **Never export from an `_internal/` folder.** It freezes markup the host must keep free; use tier 2.
 4. **Tier 2 needs the host first:** a fallback slot in the host page, then the contributed shape in
    `extensionRegistryMap.ts`. In the other order the contribution renders nothing.
-5. **A new export that needs one shared instance** (global state, `provide`/`inject`) also goes into
-   `MF_SHARED_RANGES` in `federation.mjs`. Otherwise each plugin gets its own copy.
+5. **Facade exports are always one shared instance:** plugins get the host's `@vc-frontend/core`. `MF_SHARED_RANGES`
+   in `federation.mjs` is for a library plugins import directly, not through the facade, that keeps global state or
+   uses `provide`/`inject`. Left out, each plugin gets its own copy of it.
 
 ## 3. Versions
 
