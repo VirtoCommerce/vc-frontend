@@ -37,9 +37,9 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <EmbeddedResource Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
     <None Remove="$(StorefrontAppDir)**;$(StorefrontPluginOutDir)**" />
   </ItemGroup>
-  <!-- -p:SkipStorefrontPlugin=true (or the env var) builds the module without Node, and without the plugin. -->
+  <!-- -p:SkipStorefrontPlugin=true (or the env var) builds the module without Node: the plugin is neither built nor copied. -->
   <Target Name="ReportStorefrontPluginSkipped" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' == 'true'">
-    <Message Importance="high" Text="SkipStorefrontPlugin=true: this package carries no storefront plugin." />
+    <Message Importance="high" Text="SkipStorefrontPlugin=true: the storefront plugin is neither built nor copied into the package." />
   </Target>
   <Target Name="BuildStorefrontPlugin" BeforeTargets="Publish" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <!-- vc-build Clean deletes every bin folder, those inside node_modules too, and yarn would not restore them. -->
