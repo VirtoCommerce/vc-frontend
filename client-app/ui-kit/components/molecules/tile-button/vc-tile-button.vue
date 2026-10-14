@@ -7,7 +7,7 @@
     :class="['vc-tile-button', `vc-tile-button--${variant}--${color}`, { 'vc-tile-button--disabled': disabled }]"
     @click="onClick"
   >
-    <VcIcon v-if="icon" class="vc-tile-button__icon" :name="icon" :size="24" />
+    <VcIcon v-if="icon" class="vc-tile-button__icon" :name="icon" />
 
     <span class="vc-tile-button__label">
       <slot />
@@ -96,6 +96,8 @@ function onClick(event: MouseEvent): void {
 
   --radius: var(--vc-tile-button-radius, var(--vc-radius, 0.5rem));
   --min-height: var(--vc-tile-button-min-height, 6rem);
+
+  --vc-icon-size: var(--vc-tile-button-icon-size, 1.5rem);
 
   // Solid primary is the base, so an unknown variant or color still renders a filled tile.
   --bg-color: var(--vc-tile-button-solid-primary-bg);
