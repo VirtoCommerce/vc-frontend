@@ -193,7 +193,7 @@ function checkCsproj(webDir) {
     return [
       warn(
         `${project} builds the plugin with its own inline targets`,
-        `The check cannot verify inline targets. To use the generated ones instead, take ${TARGETS_FILE} from a new scaffold and add ${TARGETS_IMPORT}.`,
+        `The check cannot verify inline targets. To use the generated ones instead: copy STOREFRONT_PLUGIN_TARGETS from client-app/core-api/plugin-module.mjs in a vc-frontend checkout into ${STOREFRONT_APP_DIR}/${TARGETS_FILE}, delete the inline targets, and add ${TARGETS_IMPORT}.`,
       ),
     ];
   }
