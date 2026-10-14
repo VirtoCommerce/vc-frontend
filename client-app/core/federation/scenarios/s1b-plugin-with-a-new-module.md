@@ -40,8 +40,9 @@ S1a is done: `check:plugin-module` passes with `--artifact` and `--env`.
    the floor from the start.
 2. **Module id and plugin name are different things.** The module is `VirtoCommerce.Foo`; the plugin is a
    kebab-case name such as `foo`. `check:plugin-module` reads each from its own file.
-3. **The module's CI must have Node** to build the plugin. Copy the CI setup from another module that ships one
-   (`vc-module-sales-rep`).
+3. **The module's CI must have Node** to build the plugin. The standard `module-ci.yml` sets it up, and VirtoCommerce
+   updates it centrally: check that it is there, and do not edit it by hand. A module outside VirtoCommerce owns its
+   CI: add Node 22 or 24 with corepack.
 4. **Template 3.1002.0 fails its first restore** with `NU1903`: its MySQL project pulls a vulnerable
    `System.Security.Cryptography.Xml`, and `Directory.Build.props` treats warnings as errors. Reference a fixed
    version of that package. (The walk switched `NuGetAudit` off in a throwaway copy instead.)
