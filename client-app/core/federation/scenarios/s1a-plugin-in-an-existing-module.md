@@ -2,6 +2,9 @@
 
 **Your case:** a backend module exists, and you want it to ship a storefront plugin.
 
+**With Claude Code:** the `mf-new-plugin` skill runs these steps and stops for your decisions. It comes with the
+`vc-frontend` plugin of the [VirtoCommerce/ai-tools](https://github.com/VirtoCommerce/ai-tools) marketplace.
+
 **Before you start:**
 
 1. A `vc-frontend` checkout with `yarn install` done. Its facade version (`client-app/core-api/package.json`)
@@ -51,7 +54,7 @@
    yarn check:plugin-module ../vc-module-foo/src/VirtoCommerce.Foo.Web
    ```
 
-   ✅ `All checks passed.` A ❌ prints the line to change.
+   ✅ `All checks passed`. A ❌ prints the line to change; a ⚠️ is something it could not check, so read it.
 
 5. **See it in the storefront.**
 
