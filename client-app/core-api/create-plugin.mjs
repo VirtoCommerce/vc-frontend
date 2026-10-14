@@ -621,8 +621,10 @@ gives; test its own behaviour in the storefront, not here.`,
 ## GraphQL
 
 1. Copy \`.env.example\` to \`.env\` and set \`APP_BACKEND_URL\`.
-2. Write documents under \`src/api/graphql/\`, then \`yarn generate:graphql-types\`. It reads the module's schema at
-   \`/graphql/${pluginName}\`.
+2. Write documents under \`src/api/graphql/\`, then \`yarn generate:graphql-types\`. It reads
+   \`/graphql/${pluginName}\`, the schema the module registers under that name
+   (\`appBuilder.UseScopedSchema<…>("${pluginName}")\` in its \`Module.cs\`). If the module extends the storefront
+   schema instead, set \`schema\` in \`codegen.ts\` to \`/graphql\`.
 3. Commit the generated \`types.ts\`: the build must not need a backend.`,
   `
 ## Styling
@@ -788,8 +790,8 @@ if (!env.APP_BACKEND_URL) {
 }
 
 const codegen: CodegenConfig = {
-  // A backend module that registers its own schema (ScopedSchemaFactory) serves it under its
-  // scope name; plain \`/graphql\` is the storefront schema.
+  // The schema the module registers under this name: appBuilder.UseScopedSchema<…>("${pluginName}")
+  // in its Module.cs. A module that extends the storefront schema instead: plain \`/graphql\`.
   schema: \`\${env.APP_BACKEND_URL}/graphql/${pluginName}\`,
   documents: "src/api/graphql/**/*.graphql",
   // Scalars and plugins come from the host so the same backend value never gets two different
