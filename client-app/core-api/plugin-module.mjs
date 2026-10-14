@@ -167,7 +167,12 @@ function checkManifest(webDir) {
 function checkCsproj(webDir) {
   const projects = readdirSync(webDir).filter((name) => name.endsWith(".csproj"));
   if (projects.length !== 1) {
-    return [fail(`expected one .csproj in ${webDir}, found ${projects.length}`)];
+    return [
+      fail(
+        `expected one .csproj in ${webDir}, found ${projects.length}`,
+        "Pass the *.Web project folder that the module build packages: it holds module.manifest and one .csproj.",
+      ),
+    ];
   }
   const [project] = projects;
   const source = stripXmlComments(readFileSync(join(webDir, project), "utf8"));
@@ -177,13 +182,18 @@ function checkCsproj(webDir) {
   if (imports.includes(`${STOREFRONT_APP_DIR}/${TARGETS_FILE}`)) {
     return existsSync(targetsPath)
       ? [pass(`${project} imports ${STOREFRONT_APP_DIR}/${TARGETS_FILE}`)]
-      : [fail(`${project} imports ${STOREFRONT_APP_DIR}/${TARGETS_FILE}, which does not exist`)];
+      : [
+          fail(
+            `${project} imports ${STOREFRONT_APP_DIR}/${TARGETS_FILE}, which does not exist`,
+            `Restore ${STOREFRONT_APP_DIR}/${TARGETS_FILE} from git, or remove the Import line.`,
+          ),
+        ];
   }
   if (source.includes('Name="BuildStorefrontPlugin"') && source.includes('Name="PublishStorefrontPlugin"')) {
     return [
       warn(
         `${project} builds the plugin with its own inline targets`,
-        `Replace them with ${TARGETS_IMPORT} so fixes to the generated targets reach this module.`,
+        `The check cannot verify inline targets. To use the generated ones instead, take ${TARGETS_FILE} from a new scaffold and add ${TARGETS_IMPORT}.`,
       ),
     ];
   }
@@ -217,7 +227,12 @@ function checkFacadePin(appDir, pkg) {
     ];
   }
   if (!range || !validRange(range)) {
-    return [fail(`vite.config.ts: requiredHostVersion "${range ?? "missing"}" is not a semver range`)];
+    return [
+      fail(
+        `vite.config.ts: requiredHostVersion "${range ?? "missing"}" is not a semver range`,
+        `requiredHostVersion: "^${pinned}"`,
+      ),
+    ];
   }
   const floor = minVersion(range).version;
   if (floor === pinned) {
@@ -244,7 +259,10 @@ function checkStorefrontApp(webDir) {
   const results = [
     pkg.packageManager?.startsWith("yarn@")
       ? pass(`packageManager ${pkg.packageManager.split("+")[0]}`)
-      : fail("package.json has no yarn packageManager", "A runner's global yarn 1 cannot install this project."),
+      : fail(
+          "package.json has no yarn packageManager",
+          'Add the "packageManager": "yarn@…" line a new scaffold writes: a runner\'s global yarn 1 cannot install this project.',
+        ),
     checkLockfile(appDir),
   ];
 
@@ -264,14 +282,18 @@ function checkStorefrontApp(webDir) {
   const remoteName = /createRemoteFederationOptions\(\s*\{[\s\S]*?\bname:\s*["']([^"']+)["']/.exec(viteConfig)?.[1];
   if (!descriptor) {
     results.push(
-      fail("public/plugin.json is missing or not JSON", "The platform then assumes the expose key ./Module."),
+      fail(
+        "public/plugin.json is missing or not JSON",
+        `Restore it: { "id": "${remoteName ?? "<plugin-name>"}", "remote": { "name": "${remoteName ?? "<plugin-name>"}", "exposed": "${PLUGIN_EXPOSE}" } }. Without it the platform assumes the expose key ./Module.`,
+      ),
     );
   } else if (descriptor.remote?.exposed !== PLUGIN_EXPOSE) {
-    results.push(fail(`public/plugin.json: remote.exposed is not "${PLUGIN_EXPOSE}"`));
+    results.push(fail(`public/plugin.json: remote.exposed is not "${PLUGIN_EXPOSE}"`, `"exposed": "${PLUGIN_EXPOSE}"`));
   } else if (descriptor.remote?.name !== remoteName) {
     results.push(
       fail(
         `public/plugin.json: remote.name "${descriptor.remote?.name}" differs from the federation name "${remoteName}"`,
+        `"name": "${remoteName}"`,
       ),
     );
   } else {
@@ -473,7 +495,9 @@ export async function checkEnvironment(storefrontUrl, { pluginId, moduleId }, re
           ),
     );
   } catch (error) {
-    results.push(fail(`${manifestUrl.pathname}: ${error.message}`));
+    results.push(
+      fail(`${manifestUrl.pathname}: ${error.message}`, "The storefront ingress must route /modules to the platform."),
+    );
   }
   return results;
 }
