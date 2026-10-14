@@ -28,9 +28,10 @@
 3. **Route the plugin files to the platform** in whatever sits in front of the storefront (an ingress, a reverse
    proxy), on the storefront's own origin: the storefront refuses plugin files served from another one. Routing all
    of `/modules` is the simplest; it also puts every module's admin files on the storefront's origin. To route only
-   the plugin files, use a pattern (nginx: `location ~ ^/modules/[^/]+/plugins/vc-frontend/`): the platform names a
-   module's folder `$(<module id>)`, literally, so a plain module id in the path matches nothing. On `vc-deploy-dev`,
-   add this to the environment's yml:
+   the plugin files, use a pattern (nginx: `location ~ ^/modules/[^/]+/plugins/vc-frontend/`) or one prefix per
+   plugin module (`/modules/$(VirtoCommerce.Foo)/plugins/vc-frontend/`). The `$( )` is literal: that is how the
+   platform names a module's folder, so a path with the bare module id matches nothing. On `vc-deploy-dev`, add
+   this to the environment's yml:
 
    ```yaml
    - path: /modules
