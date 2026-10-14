@@ -37,8 +37,10 @@
      route: platform
    ```
 
-   A CDN in front must not cache `remoteEntry.js`, `mf-manifest.json` or `plugin.json` under `/modules`:
-   `remoteEntry.js` keeps its name across module versions, so a cached copy asks for chunks that are gone.
+   Send `Cache-Control: no-cache` for `remoteEntry.js`, `mf-manifest.json` and `plugin.json` there, and keep a CDN
+   from caching them. `remoteEntry.js` keeps its name across module versions, and the platform sends no
+   `Cache-Control`, so browsers keep a copy by guesswork; after an upgrade that copy asks for chunks that are gone,
+   and purging the CDN does not reach it.
 
 4. **Deploy a storefront built with the switch on** (`module_federation_enabled: true`, release 2.60 or later). A
    storefront built with it off has no plugin code at all, whatever the backend serves.
