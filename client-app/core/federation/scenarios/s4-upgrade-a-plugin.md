@@ -25,7 +25,7 @@ From 1.0.0 on, read "minor" for the additions and "major" for breaking.
 2. **Pin the new facade.** 📁 `StorefrontApp`: point `@vc-frontend/core` in `package.json` at the new release
    tarball, set `requiredHostVersion` to `^<new version>`, then `yarn install`. The plugin's shared-library ranges
    come with the facade package, so they move too. This raises the plugin's floor: storefronts on an older facade
-   skip it from then on, so upgrade once the storefronts you serve run the new version.
+   skip it from then on. So the code can change any time, but the module is released by step 6.
 3. **Fix what broke.** 📁 `StorefrontApp`: `yarn type-check`, `yarn test`, `yarn build`. Strict template checking
    is on, so a renamed or removed prop on a host component fails `type-check`.
 4. **Shared library on a new major** (Vue, Apollo…)? Move the plugin's own copies in `devDependencies` to the
@@ -33,8 +33,9 @@ From 1.0.0 on, read "minor" for the additions and "major" for breaking.
    The plugin gets the host's copy whatever its ranges say: gate 2 only logs a mismatch today.
 5. **Check and try it.** 📁 `vc-frontend`: `yarn check:plugin-module <*.Web>`, then run against a local storefront
    on the new version ([S2.1](./s2-develop-locally.md#21-the-main-loop)).
-6. **Release in order:** the storefront with the new facade reaches the environment first, then the module. After
-   a breaking release, ship both to an environment together; in between, the plugin is skipped there.
+6. **Release in order.** After a patch: the storefront with the new facade reaches the environment first, then the
+   module. After a breaking release: deploy both to an environment together. In between, the new storefront skips
+   the old plugin, or the old storefront the new one.
 
 ## ✅ Done when
 
@@ -44,7 +45,7 @@ that version.
 ## ⚠️ Watch out
 
 1. **A breaking facade release silently drops every plugin that was not upgraded**, on every storefront that runs
-   it. Upgrade the plugins before that storefront ships.
+   it. Have the upgraded module ready before that storefront ships, and release the two together (step 6).
 2. **A changed prop can arrive as a patch.** The version check compares export names only, so read the contract
    diff (step 1) even for a patch.
 3. **`storefront-plugin.targets` is not upgraded by any command.** When `STOREFRONT_PLUGIN_TARGETS` in
