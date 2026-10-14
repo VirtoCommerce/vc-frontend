@@ -64,6 +64,9 @@
    yarn build-only --mode=development && yarn preview
    ```
 
+   PowerShell or cmd: put the `APP_MODULES_FEDERATION_REMOTES=…` line in `.env.local` instead (take it out
+   afterwards), and run the two commands one after the other.
+
    ✅ `https://localhost:3000/my-plugin` shows the plugin's page. The console says `[MF] plugins loaded=[my-plugin]`.
 
 6. **Build the module and check its package.** Push; the module CI builds the package. Or build it yourself: 📁 module
