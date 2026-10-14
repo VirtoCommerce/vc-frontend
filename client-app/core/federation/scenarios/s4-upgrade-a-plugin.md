@@ -24,7 +24,8 @@ From 1.0.0 on, read "minor" for the additions and "major" for breaking.
 
 2. **Pin the new facade.** 📁 `StorefrontApp`: point `@vc-frontend/core` in `package.json` at the new release
    tarball, set `requiredHostVersion` to `^<new version>`, then `yarn install`. The plugin's shared-library ranges
-   come with the facade package, so they move too.
+   come with the facade package, so they move too. This raises the plugin's floor: storefronts on an older facade
+   skip it from then on, so upgrade once the storefronts you serve run the new version.
 3. **Fix what broke.** 📁 `StorefrontApp`: `yarn type-check`, `yarn test`, `yarn build`. Strict template checking
    is on, so a renamed or removed prop on a host component fails `type-check`.
 4. **Shared library on a new major** (Vue, Apollo…)? Move the plugin's own copies in `devDependencies` to the

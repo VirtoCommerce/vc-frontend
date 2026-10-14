@@ -4,8 +4,10 @@
 
 **Before you start:**
 
-1. A `vc-frontend` checkout with `yarn install` done. Its facade version must be released (a `core-v<version>` tag).
-   If it is not, see ⚠️ 3.
+1. A `vc-frontend` checkout with `yarn install` done. Its facade version (`client-app/core-api/package.json`)
+   becomes the plugin's floor, `requiredHostVersion: ^<version>`: it must not be newer than the facade of the
+   storefronts the plugin is for, or they skip it. It must also be released (a `core-v<version>` tag); if it is
+   not, see ⚠️ 3.
 2. Node 22 with corepack (`corepack enable`).
 3. The module repo, and its `*.Web` project folder (the one holding `module.manifest`).
 4. A backend in `.env.local` (`APP_BACKEND_URL`) for step 5.
