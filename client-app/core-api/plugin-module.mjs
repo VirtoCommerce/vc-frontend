@@ -209,6 +209,11 @@ function checkGitignore(webDir) {
     const top = gitIn(webDir)(["rev-parse", "--show-prefix"]).stdout.trim();
     return [fail("the built plugins/ folder is not gitignored", `Add to the repo's .gitignore: /${top}plugins/`)];
   }
+  if (probe.status === null) {
+    return [
+      warn("git was not found, so .gitignore was not checked", "Make sure the repo's .gitignore covers plugins/."),
+    ];
+  }
   return [warn("not a git checkout, so .gitignore was not checked")];
 }
 
