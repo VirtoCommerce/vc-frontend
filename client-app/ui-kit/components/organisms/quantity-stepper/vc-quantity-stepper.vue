@@ -77,7 +77,7 @@ interface IProps {
   step?: number;
   /** Step floor for positive values. With `allowZero`, 0 stays reachable below it. */
   min?: number;
-  /** Upper bound. Omit it (`undefined`) for no limit — nothing is announced to assistive tech. `0` is a ceiling of 0: `+` is disabled there, and a typed value above it is flagged as out of range, not clamped. */
+  /** Upper bound. Omit it (`undefined`) for no limit — nothing is announced to assistive tech. `0` is a ceiling of 0: `+` is disabled there. A typed value above it is kept, not clamped: it sets the input's native `validity.rangeOverflow`, and the stepper sets no `aria-invalid` or error style on its own. */
   max?: number;
   error?: boolean;
   message?: string;

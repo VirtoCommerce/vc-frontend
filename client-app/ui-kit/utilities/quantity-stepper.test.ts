@@ -127,6 +127,7 @@ describe("checkIfOperationIsAllowed", () => {
       false,
       "zero max below min",
     ],
+    [{ value: 3, step: 1, min: 3, max: 3, allowZero: true, direction: "decrement" as const }, true, "min = max"],
 
     // Error conditions
     [{ value: 3, step: 0, min: 1, max: 5, allowZero: true, direction: "increment" as const }, false, "zero step"],
