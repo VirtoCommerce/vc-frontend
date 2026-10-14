@@ -74,8 +74,10 @@ Never edit `contract/` by hand. The output is deterministic, so its diff in a PR
 ## 5. Releasing
 
 1. Run the **Core Facade Release** workflow from `dev`. It validates, packs this folder and publishes the tarball
-   as a GitHub Release on tag `core-v<version>`.
-2. It refuses a version whose release or tag already exists: a new contract needs a new version.
+   as a GitHub Release on tag `core-v<version>`. Plugins pin its URL:
+   `https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<version>/vc-frontend-core-<version>.tgz`.
+2. It refuses a version whose release or tag already exists: a new contract needs a new version. It runs only in
+   `VirtoCommerce/vc-frontend`, or in a fork with the `VC_RELEASE=true` repository variable.
 3. **Never delete a `core-v*` release or tag.** Plugins pin the tarball URL, and their lockfiles its checksum.
 4. Before a release exists, plugins link the local facade with yalc: `yarn core:yalc-push`
    ([S2.3](../core/federation/scenarios/s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
