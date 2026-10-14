@@ -388,6 +388,17 @@ async function checkInstalledModules(origin, moduleId, request) {
   } catch (error) {
     return { results: [warn(`could not read the installed module versions: ${error.message}`)] };
   }
+  // x-api returns empty versions, and leaves out modules without public settings, while
+  // XAPI.Security.ReturnModuleVersion is off. Nothing here can then tell "not installed" apart.
+  if (![...installed.values()].some(Boolean)) {
+    return {
+      results: [
+        warn(
+          "the installed module versions are hidden (XAPI.Security.ReturnModuleVersion is off), so the floors and the plugin's module were not checked",
+        ),
+      ],
+    };
+  }
   const results = Object.entries(BACKEND_REQUIREMENTS.modules).map(([id, floor]) => {
     const version = installed.get(id);
     if (version && meetsFloor(version, floor)) {

@@ -339,6 +339,21 @@ describe("checkEnvironment", () => {
     ]);
   });
 
+  it("only warns when the environment hides module versions, instead of calling the modules not installed", async () => {
+    const request = environment(
+      installed(atFloors.map(({ moduleId }) => ({ moduleId, version: "" }))),
+      listing([{ id: "foo", entry: { path: ENTRY } }]),
+      Response.json({ name: "foo" }),
+    );
+
+    const results = await checkEnvironment(SHOP, PLUGIN, request);
+
+    expect(failures(results)).toEqual([]);
+    expect(results).toContainEqual(
+      expect.objectContaining({ status: "warn", message: expect.stringContaining("ReturnModuleVersion") }),
+    );
+  });
+
   it("only warns when the module versions cannot be read, and goes on to the plugin list", async () => {
     const request = environment(
       graphqlError("settings unavailable"),
