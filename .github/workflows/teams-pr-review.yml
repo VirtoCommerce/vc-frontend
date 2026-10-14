@@ -29,8 +29,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      # TODO(VCST-6259): pin to a release once VirtoCommerce/.github#115 is merged; until then the PR head commit
-      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@04b4b2f912369c5b744b35937296821885cb27a5 # VirtoCommerce/.github#115 head
+      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@v3.1000.5
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
@@ -44,8 +43,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      # TODO(VCST-6259): pin to a release once VirtoCommerce/.github#115 is merged; until then the PR head commit
-      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@04b4b2f912369c5b744b35937296821885cb27a5 # VirtoCommerce/.github#115 head
+      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@v3.1000.5
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
