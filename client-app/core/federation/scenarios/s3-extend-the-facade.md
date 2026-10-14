@@ -47,7 +47,8 @@ contribution the host renders, or a component only when its look is the contract
 
 ## ✅ Done when
 
-The `core-v<version>` release exists, the plugin pins it, and `check:plugin-module` passes with `--env`.
+The `core-v<version>` release exists, the plugin pins it, `check:plugin-module` passes with `--env`, and the plugin's
+page or widget shows on that environment: `--env` does not see gate 1.
 
 ## ⚠️ Watch out
 

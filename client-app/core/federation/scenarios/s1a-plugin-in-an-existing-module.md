@@ -51,7 +51,7 @@
    yarn check:plugin-module ../vc-module-foo/src/VirtoCommerce.Foo.Web
    ```
 
-   ✅ `All checks passed.` Every ❌ prints the line to change.
+   ✅ `All checks passed.` A ❌ prints the line to change.
 
 5. **See it in the storefront.**
 

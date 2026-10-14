@@ -54,10 +54,12 @@ The facade has its own version, in this folder's `package.json`. It is not the s
 | An export removed or renamed                   | minor        | major      | you: `yarn bump:core <level>`   |
 | A shared library (Vue, Apollo…) to a new major | minor        | major      | you                             |
 
-1. **The automatic check sees export names only.** A changed prop or signature on a kept export is breaking, yet it
-   bumps a patch. Bump by hand.
-2. **A plugin's `requiredHostVersion` is the version that added what it uses** (`^0.2.4`), not the start of the
-   line (`^0.2.0`). Older storefronts then refuse it.
+1. **The automatic check sees the root contract's export names only.** A changed prop or signature on a kept
+   export is breaking, yet it bumps a patch; so does a removal from `/federation`, `/manifest`, `/codegen` or
+   `/testing`. Bump by hand.
+2. **A plugin's `requiredHostVersion` is `^` the facade it pins** (`^0.2.4`), not the start of the line
+   (`^0.2.0`): it compiled against everything up to its pin, and `check:plugin-module` fails a lower floor.
+   Older storefronts then refuse it.
 3. **Two PRs can take the same version.** Merge `dev` before `yarn build:core-types`.
 
 ## 4. Changing the facade

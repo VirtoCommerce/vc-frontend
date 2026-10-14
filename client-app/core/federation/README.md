@@ -154,7 +154,8 @@ Full syntax (conditions, slot contexts, examples): [`declarations.md`](./declara
 2. A timeout stops **waiting**. It does not cancel code that already runs, and an `init()` that started keeps
    going.
 3. **"Loaded" does not mean "working".** A module without `init()` still counts as loaded, with a warning.
-4. A plugin's errors never take down the storefront or other plugins.
+4. An error while a plugin loads or runs `init()` never stops the storefront or other plugins. After that, its code
+   runs with the storefront's full rights ([§9](#9-security-and-trust)): a throwing router guard breaks navigation.
 
 Per-step budgets: `DEFAULT_MANIFEST_TIMEOUT_MS` and `DEFAULT_LOAD_TIMEOUT_MS` for `blocksBoot` plugins,
 `DEFAULT_DEFERRED_TIMEOUT_MS` for the rest (`index.ts`).
@@ -180,7 +181,8 @@ How the facade itself is versioned and released: [`core-api/README.md`](../../co
 
 1. **Host APIs come only from `@vc-frontend/core`.** Never `@/…`: those paths do not exist in a plugin's build.
    Importing a library itself (`vue-router`, `@vue/apollo-composable`) is fine.
-2. **At compile time** the facade gives **types only** (`core-api/contract/index.d.ts`).
+2. **At compile time** `@vc-frontend/core` gives **types only** (`core-api/contract/index.d.ts`); its subpaths
+   (`/federation`, `/manifest`, `/codegen`, `/testing`) carry code for the plugin's build and tests.
    **At runtime** the host hands over its **live objects**: one Vue, one router, one Apollo cache.
 3. The libraries that must exist once (Vue, vue-router, vue-i18n, VueUse, the Apollo client and composable,
    GraphQL, the facade) are listed in **one place**, `MF_SHARED_RANGES` in `core-api/federation.mjs`. A plugin borrows them and never bundles a copy.
@@ -235,17 +237,17 @@ loaded through the override.
 
 Step by step, with every console message: [scenario S7](./scenarios/s7-missing-or-broken.md).
 
-> ⚠️ **Production logs nothing**, not even errors (`Logger` is a no-op there). Diagnose with a development build,
-> `usePluginsStatus()`, or `yarn check:plugin-module`.
+> ⚠️ **The storefront logs nothing in production**, not even errors (`Logger` is a no-op there); only the browser's
+> own and the MF runtime's messages show. Diagnose with a development build or `yarn check:plugin-module`.
 
-| Symptom                                | Likely cause                                                                      | Check                                                                  |
-| -------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| No plugin ever loads                   | switch off, or the override is set                                                | `settings_data.json`; the build's env                                  |
-| One plugin missing on an environment   | module not installed, plugin not in the package, no `/modules` route, old backend | `check:plugin-module … --artifact` / `--env`                           |
-| Plugin skipped                         | gate 1, its `when`, or a missing permission                                       | `usePluginsStatus()` (gives the reason); dev console `[MF] Skipping …` |
-| Plugin failed                          | its `init()` threw or timed out, or a chunk failed                                | dev console `[MF] Failed to load …`                                    |
-| "Loaded" but its page is a 404         | declared route registered after an `await`                                        | move `addRoute` before the first `await` in `init()`                   |
-| Blank page in a local production build | the store resolves from `localhost`                                               | build with `--mode=development`                                        |
+| Symptom                                | Likely cause                                                                      | Check                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| No plugin ever loads                   | switch off, or the override is set                                                | `settings_data.json`; the build's env                                         |
+| One plugin missing on an environment   | module not installed, plugin not in the package, no `/modules` route, old backend | `check:plugin-module … --artifact` / `--env`                                  |
+| Plugin skipped                         | gate 1, its `when`, or a missing permission                                       | dev console `[MF] Skipping …` (`usePluginsStatus()` gives a plugin its state) |
+| Plugin failed                          | its `init()` threw or timed out, or a chunk failed                                | dev console `[MF] Failed to load …`                                           |
+| "Loaded" but its page is a 404         | declared route registered after an `await`                                        | move `addRoute` before the first `await` in `init()`                          |
+| Blank page in a local production build | the store resolves from `localhost`                                               | build with `--mode=development`                                               |
 
 ## 11. Reference
 

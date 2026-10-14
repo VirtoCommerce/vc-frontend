@@ -2,9 +2,9 @@
 
 **Your case:** a plugin does not show up, or shows up wrong.
 
-> ⚠️ **Production logs nothing**, not even errors. To see why a plugin was skipped or failed, run a development
-> build of the storefront against the same backend ([S2.2](./s2-develop-locally.md#22-the-module-is-already-on-the-environment))
-> and read the console.
+> ⚠️ **The storefront logs nothing in production**, not even errors. To see why a plugin was skipped or failed,
+> run a development build of the storefront against the same backend
+> ([S2.2](./s2-develop-locally.md#22-the-module-is-already-on-the-environment)) and read the console.
 
 ## Steps
 
@@ -14,7 +14,7 @@
    yarn check:plugin-module ../vc-module-foo/src/VirtoCommerce.Foo.Web --artifact <package.zip> --env https://<storefront>
    ```
 
-   Fix every ❌ first: each one prints the fix. Then go on.
+   Fix every ❌ first, with the fix it prints. Then go on.
 
 2. **Get the reason from the loader.** Run the storefront locally against that backend (S2.2) and open the page.
    When something was skipped or failed, the console sums it up in one line:
