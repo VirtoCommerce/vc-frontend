@@ -40,6 +40,8 @@ _Checked against `dev` on 2026-10-13._
 - [ ] **Export the whole ui-kit barrel.** Blocked by: swiper's subpath types, the file-uploader `status` type
       clash, and the generator not resolving `export *`.
 - [ ] **Detect breaking changes beyond export names** (signatures, props), or require a human classification.
+- [ ] **Watch the subpaths' exports too**: a removal from `/federation`, `/manifest`, `/codegen` or `/testing`
+      gets an automatic patch bump today.
 - [ ] **Put `validate:core-types` back into `yarn validate`**, with the `dev` baseline fetched in CI.
 
 ## Plugin tooling
