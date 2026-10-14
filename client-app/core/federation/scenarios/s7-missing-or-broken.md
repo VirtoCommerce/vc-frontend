@@ -92,7 +92,8 @@ When a plugin breaks the storefront in production, from the cheapest way out:
 
 1. **Its plugin-level `when` setting** (`settingEnabled(<module>, <key>)` in `plugin.config.ts`): switch the setting
    off in the platform admin. Page loads after that skip the plugin, with no rebuild and no module change. Only a
-   plugin that declares one has this, so declare it.
+   plugin that declares one has this, so declare it: the scaffold leaves it commented out in `plugin.config.ts`,
+   and the module needs a public store setting for it.
 2. **Its `permission`**: take the permission away from the roles. Only for a plugin that declares one.
 3. **Uninstall or downgrade the module**, then restart the platform. Its backend feature goes too.
 4. **Rebuild the storefront with `module_federation_enabled: false`.** Every plugin goes.
