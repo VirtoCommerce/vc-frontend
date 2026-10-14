@@ -453,6 +453,23 @@
 - Types: vc-product-actions-button.types.d.ts
 - Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/product-actions-button/vc-product-actions-button.stories.ts)
 
+**VcTileButton** (`client-app/ui-kit/components/molecules/tile-button/vc-tile-button.vue`)
+- Props:
+  - icon?: string (icon above the label)
+  - variant?: "solid" | "outline" (default: "solid") — solid fills the tile with color; outline keeps a neutral surface and paints only the icon
+  - color?: VcMainColorType (default: "primary")
+  - disabled?: boolean (renders a disabled <button>, even with to / externalLink)
+  - to?: RouteLocationRaw | null (router-link navigation)
+  - externalLink?: string (external URL)
+  - target?: "_self" | "_blank" (for to / externalLink; "_blank" adds rel="noopener noreferrer")
+- Slots: default (label)
+- Events: click (MouseEvent)
+- Features: square-ish action tile with the icon over the label, for grids of quick actions; grows with a long label (pair with `auto-rows-fr` to keep rows equal); `title` / `aria-label` fall through to the control
+- CSS vars: --vc-tile-button-radius, --vc-tile-button-min-height, --vc-tile-button-{solid|outline}-{color}-{bg|border|text|icon}
+- Types: vc-tile-button.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/tile-button/vc-tile-button.stories.ts)
+- Usage: `<VcTileButton icon="mail" variant="outline" @click="openCommunication">{{ $t("...") }}</VcTileButton>`
+
 ### DISPLAY
 
 **VcAlert** (`client-app/ui-kit/components/molecules/alert/vc-alert.vue`)
