@@ -7,13 +7,21 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from "@unhead/vue";
 import { computed, watch } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { buildAlternateLinks } from "@/pages/matcher/virto-pages/alternate-links";
 import VPBuilderIO from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 import VPPageBuilder from "@/pages/matcher/virto-pages/vp-page-builder.vue";
 
 interface IProps {
-  pageDocument: { id: string; source?: string; permalink?: string; content: string } | null;
+  pageDocument: {
+    id: string;
+    source?: string;
+    permalink?: string;
+    content: string;
+    alternates?: { cultureName: string; permalink: string }[];
+  } | null;
 }
 
 const props = defineProps<IProps>();
@@ -34,9 +42,20 @@ const permalink = computed(() => {
 // the breadcrumb leaf from the live permalink (its last segment) instead of the stored name.
 const liveName = computed(() => permalink.value?.split("/").filter(Boolean).pop());
 
-const { updateLocalizedUrl } = useLanguages();
+const { updateLocalizedUrl, getLocalizedPath, defaultStoreCulture } = useLanguages();
 
 watch(permalink, () => {
   updateLocalizedUrl(permalink.value);
+});
+
+// Translations of the page for search engines (hreflang) when it is published in several languages.
+useHead({
+  link: () =>
+    buildAlternateLinks(
+      props.pageDocument?.alternates ?? [],
+      location.origin,
+      defaultStoreCulture.value,
+      getLocalizedPath,
+    ),
 });
 </script>
