@@ -114,7 +114,8 @@ function checkInstalledAgainstPin(source, name, range, consequence) {
 }
 
 // The shared-singleton ranges (federation.mjs) must stay compatible with what the
-// host actually installs — otherwise the MF runtime would reject the host's own deps.
+// host actually installs — otherwise every plugin runs on a version outside the range it was
+// built for (the MF runtime only logs that, VCST-6330).
 for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
   if (name === "@vc-frontend/core") {
     if (!satisfies(corePkg.version, range)) {
