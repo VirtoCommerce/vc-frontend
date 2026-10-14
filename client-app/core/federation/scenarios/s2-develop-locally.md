@@ -64,7 +64,7 @@ APP_MODULES_FEDERATION_REMOTES='{
 ```
 
 Take each path from the environment's `store.plugins` entry, with `remoteEntry.js` changed to
-`mf-manifest.json`.
+`mf-manifest.json`. The `$(VirtoCommerce.SalesRep)` part is literal: that is how the platform names a module's folder.
 
 ⚠️ A plugin loaded through the override ignores its `permission`: it loads for every user.
 

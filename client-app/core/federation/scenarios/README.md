@@ -44,3 +44,19 @@ on 2026-10-14. Each scenario ends with what was walked, and when._
 3. **Steps:** numbered. 📁 says which folder to run each one in.
 4. **✅ Done when:** how you know it worked.
 5. **⚠️ Watch out:** at most three traps.
+
+## Words used here
+
+| Word                      | Means                                                                                                                               |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| facade                    | `@vc-frontend/core`, the only package a plugin imports host code from. Its version is not the storefront's                          |
+| `requiredHostVersion`     | the facade versions a plugin runs on, set in its `vite.config.ts`; `^` the facade it pins                                           |
+| gate 1 / gate 2           | gate 1 skips a plugin whose `requiredHostVersion` the storefront's facade does not meet; gate 2 only logs a shared-library mismatch |
+| the switch                | `module_federation_enabled` in the theme settings, read at build time                                                               |
+| the override              | `APP_MODULES_FEDERATION_REMOTES`, a build-time list of plugin URLs that replaces the platform's list                                |
+| `permission`              | set in the plugin's `public/plugin.json`: a user without it never downloads the plugin                                              |
+| expose key                | the module name a plugin's federation build exports; it must be `./plugin`                                                          |
+| scoped schema             | the GraphQL schema a backend module serves under `/graphql/<scope>` (`UseScopedSchema` in its `Module.cs`)                          |
+| `BACKEND_REQUIREMENTS`    | the minimum platform, x-api and x-frontend versions, in `client-app/core-api/backend-requirements.mjs`; the check prints them       |
+| ingress                   | whatever sits in front of the storefront and routes paths to it or to the platform (a reverse proxy)                                |
+| `$(<module id>)` in a URL | literal: the platform serves a module's files under `/modules/$(<module id>)/`                                                      |
