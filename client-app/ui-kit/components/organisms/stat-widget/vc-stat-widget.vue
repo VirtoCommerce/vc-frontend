@@ -12,11 +12,7 @@
 
     <output class="vc-stat-widget__status">{{ statusText }}</output>
 
-    <div v-if="loading" class="vc-stat-widget__value vc-stat-widget__value--pending" aria-hidden="true">
-      —
-
-      <VcLoader />
-    </div>
+    <div v-if="loading" class="vc-stat-widget__value vc-stat-widget__value--pending" aria-hidden="true">—</div>
 
     <div v-else-if="errorText" class="vc-stat-widget__error" aria-hidden="true">
       <span class="vc-stat-widget__line-icon">
@@ -45,6 +41,8 @@
         <span>{{ delta }}</span>
       </div>
     </template>
+
+    <VcLoaderOverlay v-if="loading" no-bg />
   </div>
 </template>
 
@@ -71,7 +69,7 @@ interface IProps {
   deltaColor?: VcStatWidgetColorType;
   /** Icon before `delta`, e.g. `chevron-up`. */
   deltaIcon?: string;
-  /** Data in flight: a dash and a spinner replace the figures. Outranks `errorText`. */
+  /** Data in flight: a dash replaces the figures and a loader covers the card. Outranks `errorText`. */
   loading?: boolean;
   /** Load failure message; when set, it replaces the figures. */
   errorText?: string;
@@ -108,7 +106,7 @@ const statusText = computed(() => {
   --border-color: var(--vc-stat-widget-border-color, var(--color-neutral-200));
   --radius: var(--vc-stat-widget-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex flex-col gap-1.5 rounded-[--radius] border border-[--border-color] border-s-4 border-s-[--accent-color] bg-[--bg-color] p-4 shadow-sm;
+  @apply relative isolate flex flex-col gap-1.5 rounded-[--radius] border border-[--border-color] border-s-4 border-s-[--accent-color] bg-[--bg-color] p-4 shadow-sm;
 
   &--color {
     @each $color in $colors {
@@ -143,8 +141,6 @@ const statusText = computed(() => {
 
     &--pending {
       --value-color: var(--color-neutral-300);
-
-      @apply flex items-center gap-3;
     }
   }
 

@@ -533,7 +533,7 @@
   - delta?: string
   - deltaColor?: VcMainColorType (default: "neutral") — e.g. "success" for growth, "danger" for a drop
   - deltaIcon?: string
-  - loading?: boolean (dash + inline spinner replace the figures; outranks errorText)
+  - loading?: boolean (dash placeholder + loader overlay; outranks errorText)
   - errorText?: string (its presence is the error state; hides the figures)
 - Slots: prepend (added before the icon, not instead of it; painted in the accent color — e.g. a drag handle)
 - Features: KPI/metric card; equal heights and value baselines across a row when the cards are the row's flex items and labels fit in two lines (when a wrapper is the flex item, give the card `class="h-full"` or make the wrapper `grid`); loading and error announced, with the metric's label, through one always-mounted <output> live region

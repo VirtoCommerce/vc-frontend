@@ -14,7 +14,7 @@ const createWrapper = createWrapperFactory(mount, VcStatWidget, {
     plugins: [i18n],
     stubs: {
       VcIcon: true,
-      VcLoader: true,
+      VcLoaderOverlay: true,
     },
   },
 });
@@ -58,7 +58,7 @@ function iconNames(wrapper: VueWrapper) {
 }
 
 function hasLoader(wrapper: VueWrapper) {
-  return wrapper.findComponent({ name: "VcLoader" }).exists();
+  return wrapper.findComponent({ name: "VcLoaderOverlay" }).exists();
 }
 
 describe("VcStatWidget", () => {
