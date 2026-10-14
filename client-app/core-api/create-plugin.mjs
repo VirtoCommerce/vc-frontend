@@ -39,6 +39,11 @@ const REPO_ROOT = resolve(CORE_API_DIR, "../..");
 const require = createRequire(import.meta.url);
 const hostPkg = require(resolve(REPO_ROOT, "package.json"));
 const corePkg = require("./package.json");
+// The storefront's languages, read from its own locales/: a language the host adds reaches every new plugin.
+const HOST_LOCALES = readdirSync(resolve(REPO_ROOT, "locales"))
+  .filter((name) => /^[a-z]{2}\.json$/.test(name))
+  .map((name) => name.slice(0, -".json".length))
+  .sort();
 
 // The facade's type-peers: every MF shared singleton (federation.mjs) is also referenced
 // by the contract's own types (e.g. useModuleSettings -> @vueuse/core, apolloClient ->
@@ -117,7 +122,7 @@ const ANY_SCAFFOLD_FILE = [
   "tsconfig.json",
   "src/index.ts",
   "src/i18n.ts",
-  "src/locales/en.json",
+  ...HOST_LOCALES.map((locale) => `src/locales/${locale}.json`),
   "src/pages/my-page.vue",
   "src/pages/my-page.test.ts",
   "src/styles.css",
@@ -719,9 +724,12 @@ gives; test its own behaviour in the storefront, not here.`,
 ## Translations
 
 Messages live in \`src/locales/<two-letter locale>.json\`, all under one top-level key, \`${messagesNamespace}\`, so they
-cannot clash with the storefront's. \`src/i18n.ts\` merges them into the storefront's i18n at startup and again on
-every language switch; a locale without a file falls back to \`en\`. Use them as \`$t("${messagesNamespace}.…")\`. A
-declared menu title in \`plugin.config.ts\` is such a key too.`,
+cannot clash with the storefront's. The scaffold wrote one file per storefront language, each in English:
+translate them. Languages: ${HOST_LOCALES.join(", ")}.
+
+\`src/i18n.ts\` merges them into the storefront's i18n at startup and again on every language switch. A language
+without a file (one the storefront adds later, say) falls back to \`en\`. Use them as \`$t("${messagesNamespace}.…")\`;
+a declared menu title in \`plugin.config.ts\` is such a key too.`,
   selected.apollo &&
     `
 ## GraphQL
@@ -1003,7 +1011,7 @@ const outputs = [
   ["src/index.ts", indexTs],
   selected.router && ["src/pages/my-page.vue", myPageVue],
   selected.i18n && ["src/i18n.ts", i18nTs],
-  selected.i18n && ["src/locales/en.json", json(localeMessages)],
+  ...(selected.i18n ? HOST_LOCALES.map((locale) => [`src/locales/${locale}.json`, json(localeMessages)]) : []),
   selected.tailwind && ["tailwind.config.cjs", tailwindConfig],
   selected.tailwind && ["postcss.config.cjs", postcssConfig],
   selected.tailwind && ["src/styles.css", stylesCss],
