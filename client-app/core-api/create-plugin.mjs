@@ -107,8 +107,46 @@ if (webDir && existsSync(targetDir)) {
   console.error(`${targetDir} already exists - refusing to overwrite.`);
   process.exit(1);
 }
-if (existsSync(join(targetDir, "package.json"))) {
-  console.error(`Target ${targetDir} already contains a package.json - refusing to overwrite.`);
+// Every file any option can write: refusing here spares a human the questions below. The check
+// on the exact plan, after them, stays the one that guarantees nothing is overwritten.
+const ANY_SCAFFOLD_FILE = [
+  "package.json",
+  "index.html",
+  "vite.config.ts",
+  "plugin.config.ts",
+  "tsconfig.json",
+  "src/index.ts",
+  "src/i18n.ts",
+  "src/locales/en.json",
+  "src/pages/my-page.vue",
+  "src/pages/my-page.test.ts",
+  "src/styles.css",
+  "src/shims-vue.d.ts",
+  "src/mocks/vc-frontend-core.ts",
+  "src/api/graphql/queries/ping/pingQuery.graphql",
+  "public/plugin.json",
+  "tailwind.config.cjs",
+  "postcss.config.cjs",
+  "codegen.ts",
+  ".env.example",
+  "README.md",
+  "CLAUDE.md",
+  "eslint.config.js",
+  "vitest.config.ts",
+  ".prettierrc.json",
+  ".prettierignore",
+  ".editorconfig",
+  ".vscode/settings.json",
+  ".vscode/extensions.json",
+  ".gitignore",
+  "yarn.lock",
+  ".yarnrc.yml",
+];
+const takenUpFront = ANY_SCAFFOLD_FILE.filter((file) => existsSync(join(targetDir, file)));
+if (takenUpFront.length) {
+  console.error(
+    `${targetDir} already has ${takenUpFront.join(", ")} - refusing to overwrite. Scaffold into a folder without them.`,
+  );
   process.exit(1);
 }
 
