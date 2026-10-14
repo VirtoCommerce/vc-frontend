@@ -303,6 +303,13 @@ function checkStorefrontApp(webDir) {
     );
   } else if (descriptor.remote?.exposed !== PLUGIN_EXPOSE) {
     results.push(fail(`public/plugin.json: remote.exposed is not "${PLUGIN_EXPOSE}"`, `"exposed": "${PLUGIN_EXPOSE}"`));
+  } else if (!remoteName) {
+    results.push(
+      warn(
+        "vite.config.ts: the federation name is not a string literal in createRemoteFederationOptions, so it was not compared with plugin.json",
+        `Make sure it equals "${descriptor.remote?.name}".`,
+      ),
+    );
   } else if (descriptor.remote?.name !== remoteName) {
     results.push(
       fail(

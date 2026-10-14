@@ -222,6 +222,18 @@ describe("checkModuleFiles", () => {
     }
   });
 
+  it("only warns when the federation name is not a literal it can compare", () => {
+    const { webDir, write } = createModule();
+    write(
+      "StorefrontApp/vite.config.ts",
+      `createRemoteFederationOptions({ name: PLUGIN_NAME, requiredHostVersion: "^${PIN}" });\noutDir: "../plugins/vc-frontend"`,
+    );
+
+    const results = checkModuleFiles(webDir);
+    expect(failures(results)).toEqual([]);
+    expect(withStatus(results, "warn")).toEqual([expect.objectContaining({ fix: 'Make sure it equals "foo".' })]);
+  });
+
   it("fails a plugin.json whose remote name is not the federation name", () => {
     const { webDir, write } = createModule();
     write(
