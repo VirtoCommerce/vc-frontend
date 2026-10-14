@@ -116,7 +116,8 @@ APP_MODULES_FEDERATION_REMOTES='{"a":"http://localhost:3001/mf-manifest.json","b
 
 1. **A local plugin cannot go into a deployed storefront.** The override is read when the host is built, so run the
    host locally.
-2. **`when` conditions are read once, at startup.** After you sign in, reload the page.
+2. **Plugin and route `when` conditions are read once, at startup.** Change a setting or a role, then reload the
+   page. Slot conditions are read on every render.
 3. **Don't commit a yalc link.** `check:plugin-module` catches it.
 
 ---

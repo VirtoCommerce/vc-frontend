@@ -82,7 +82,8 @@ sharing scopes, anything the plugin keeps to itself.
 | `field(path)` / `.eq(v)`          | `path` in the slot's data is truthy / equals `v`    | **slots only**           |
 | `and(…)`, `or(…)`, `not(c)`       | as named                                            | wherever their parts are |
 
-1. **Global conditions are read once, at startup**, after the user is known. Signing in later does not re-read them.
+1. **Global conditions are read once, at startup**, after the user is known. Signing in or out reloads the page, so
+   they follow; a role or setting changed while the tab stays open applies on the next page load.
 2. **Slot conditions are read on every render, per item**: true for one product card, false for the next. So they
    never stop a download.
 3. **`field` is the argument of a slot's `when` callback**, typed against that slot's data. A path that does not
