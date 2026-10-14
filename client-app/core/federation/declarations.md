@@ -131,6 +131,11 @@ const { plugins } = usePluginsStatus();
 // [{ name: "sales-rep", state: "skipped", reason: "its declared `when` is false (…)" }]
 ```
 
+3. **An entry this storefront cannot place costs that entry alone**: a route whose `parent` does not exist here or
+   whose name is taken, a menu link to a route that does not exist, a slot another plugin holds. The console warns
+   `[MF] "<plugin>" declares … - skipped`, and the plugin still loads, so `usePluginsStatus()` shows it `loaded`
+   ([S7](./scenarios/s7-missing-or-broken.md)).
+
 ## 6. Locally
 
 A plugin loaded through `APP_MODULES_FEDERATION_REMOTES` is read the same way, from the `plugin.json` beside its
