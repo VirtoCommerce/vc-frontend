@@ -5,6 +5,7 @@
     :title="title"
     prepend-icon="cube"
     size="lg"
+    v-track-item="relatedProducts"
     data-vc-track="product-list"
     data-list-id="related_products"
     :data-list-name="`${title} ${productName}`"

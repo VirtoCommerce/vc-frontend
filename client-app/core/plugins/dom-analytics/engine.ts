@@ -1,4 +1,4 @@
-import { kebabCase, set } from "lodash-es";
+import { isEqual, isPlainObject, kebabCase, set } from "lodash-es";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getItem, onItemChange } from "./registry";
 import type { ArgSourceType, AttrFieldType, ObjectSourceType, RuleType } from "./types";
@@ -56,6 +56,11 @@ function resolveArg(el: Element, arg: ArgSourceType): unknown {
     case "object":
       return readObject(scope, arg.fields);
     case "collect": {
+      // An array bound to the scope is the whole list, cards hidden at this width included
+      const bound = getItem(scope);
+      if (Array.isArray(bound)) {
+        return bound.length ? bound : undefined;
+      }
       const scopeName = scope.getAttribute(NAME_ATTR);
       const items = Array.from(scope.querySelectorAll(byName(arg.target)))
         // Cards of a nested list belong to that list only
@@ -83,10 +88,17 @@ function entityId(value: unknown): unknown {
   return id ?? code;
 }
 
-// A refetched entity is a new object with the same id: it must not fire `appear` again
+// A refetched entity is a new object with the same id: it must not fire `appear` again.
+// An object without an id (built from markup attributes) is rebuilt on every scan, so it is compared by value.
 function isSameValue(a: unknown, b: unknown): boolean {
+  if (a === b) {
+    return true;
+  }
   const id = entityId(a);
-  return a === b || (id !== undefined && id === entityId(b));
+  if (id !== undefined) {
+    return id === entityId(b);
+  }
+  return isPlainObject(a) && isEqual(a, b);
 }
 
 function fieldAttrs(arg: ArgSourceType): string[] {

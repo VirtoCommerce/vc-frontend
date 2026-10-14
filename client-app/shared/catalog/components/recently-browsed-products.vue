@@ -4,6 +4,7 @@
     :title="title"
     prepend-icon="cursor-click"
     size="lg"
+    v-track-item="products"
     data-vc-track="product-list"
     data-list-id="recently_browsed_products"
     :data-list-name="title"

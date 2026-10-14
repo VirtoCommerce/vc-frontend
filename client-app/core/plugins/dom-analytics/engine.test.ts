@@ -351,6 +351,65 @@ describe("dom-analytics engine", () => {
     expect(analyticsMock).toHaveBeenCalledOnce();
   });
 
+  it("does not resend viewItemList for markup items with neither id nor code", async () => {
+    document.body.innerHTML = `
+      <div data-vc-track="product-list">
+        <div data-vc-track="product-card" data-name="A"></div>
+      </div>`;
+    stop = startEngine([
+      {
+        ...VIEW_ITEM_LIST_BY_SKU,
+        args: [
+          {
+            source: "collect",
+            target: "product-card",
+            fallback: { source: "object", fields: { name: { attr: "name" } } },
+          },
+        ],
+      },
+    ]);
+    await flushPromises();
+
+    document.body.append(document.createElement("i"));
+    await flushPromises();
+
+    expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItemList", [{ name: "A" }]);
+  });
+
+  it("sends the array bound to the list, not only the rendered cards", async () => {
+    const products = ref([
+      { id: "1", code: "A" },
+      { id: "2", code: "B" },
+    ]);
+    const visible = ref(2);
+    const wrapper = mount(
+      defineComponent({
+        directives: { trackItem: vTrackItem },
+        setup: () => ({ products, visible }),
+
+        template: `
+          <div v-track-item="products" data-vc-track="product-list" data-list-id="related">
+            <div v-for="product in products.slice(0, visible)" :key="product.code" v-track-item="product" data-vc-track="product-card" />
+          </div>
+        `,
+      }),
+      { attachTo: document.body },
+    );
+    stop = startEngine([VIEW_ITEM_LIST]);
+    await flushPromises();
+
+    // A narrower screen renders fewer cards: the list must not be resent
+    visible.value = 1;
+    await flushPromises();
+    visible.value = 2;
+    await flushPromises();
+
+    expect(analyticsMock).toHaveBeenCalledExactlyOnceWith("viewItemList", products.value, {
+      item_list_id: "related",
+    });
+    wrapper.unmount();
+  });
+
   it("collects the cards of a nested list into that list only", async () => {
     document.body.innerHTML = `
       <div data-vc-track="product-list">

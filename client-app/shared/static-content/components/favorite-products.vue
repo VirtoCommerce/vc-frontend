@@ -20,6 +20,7 @@
 
       <div
         class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        v-track-item="products"
         data-vc-track="product-list"
         data-list-id="favorite_products"
         :data-list-name="title?.text"

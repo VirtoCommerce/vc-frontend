@@ -21,7 +21,7 @@ Rules are in [rules.ts](./rules.ts).
 | Event | Trigger | Markup |
 | --- | --- | --- |
 | `selectItem` | click on `product-link` | inside a `product-card`, inside a `product-list` |
-| `viewItemList` | `product-list` appears | items are collected from its `product-card` descendants |
+| `viewItemList` | `product-list` appears | the products array bound to the list with `v-track-item`; without one, items are collected from its `product-card` descendants |
 | `viewItem` | `product-details` appears | the product is bound with `v-track-item` |
 
 `selectItem` and `viewItemList` need a `product-list` container with at least one list attribute (`data-list-id`, `data-list-name`, `data-related-id`, `data-related-type`). A card outside a list sends nothing, so a list that calls `analytics()` itself simply has no container.
@@ -87,7 +87,7 @@ Argument sources:
 - `item`: the object bound with `v-track-item`. `fallback` builds it from attributes when nothing is bound.
 - `attr`: one `data-*` attribute (`attr: "listId"` reads `data-list-id`), `type: "number"` casts it.
 - `object`: an object assembled from several attributes; keys may be dot paths (`"price.actual.amount"`).
-- `collect`: an array of `item`s from all descendants with the given `data-vc-track`.
+- `collect`: the array bound with `v-track-item` to the scope element itself; without one, an array of `item`s from all descendants with the given `data-vc-track`. Bind the array when the list renders only part of its products (a short grid or a carousel at a narrow width), otherwise every resize that changes the rendered cards resends the list.
 
 Every source accepts `from` (closest ancestor with this `data-vc-track`) and `optional`. When a required argument resolves to nothing, the event is skipped.
 
@@ -107,7 +107,7 @@ Added rules apply from the next click, and `appear` rules rescan the page right 
 ## Triggers
 
 - **click**: one capture-phase listener on `document`. Only a click on a link or a button counts. From it the engine walks up through `data-vc-track` ancestors until a rule sends an event.
-- **appear**: a `MutationObserver` on `body` (added and removed nodes, plus changes to `data-vc-track` and the `data-*` attributes the rules read), and a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` (or `code` when there is no `id`) count as the same entity, so a refetched product does not resend `viewItem`.
+- **appear**: a `MutationObserver` on `body` (added and removed nodes, plus changes to `data-vc-track` and the `data-*` attributes the rules read), and a rescan when a `v-track-item` value changes. An element sends again only with different arguments. Objects with the same `id` (or `code` when there is no `id`) count as the same entity, so a refetched product does not resend `viewItem`. Objects with neither are compared by value.
 
 A list that empties and comes back with the same products does not resend `viewItemList`: the engine can't tell a finished empty result from a reload, and many lists pass through `[]` on every refetch.
 
