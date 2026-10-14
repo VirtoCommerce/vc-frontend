@@ -155,6 +155,8 @@ describe("create-plugin scaffolder", () => {
     expect(viteConfig).toContain('"@apollo/client": false');
     // Quoting a valid identifier fails the scaffold's own prettier rule.
     expect(viteConfig).toContain(" graphql: false");
+    // cors: true would let any web page read the dev server's sources; Vite's default allows localhost only.
+    expect(viteConfig).not.toContain("cors:");
     // Importing a library left out of shared bundles a second copy; the README says to delete its line first.
     expect(readme).toContain("is not shared.** Delete its line");
   });

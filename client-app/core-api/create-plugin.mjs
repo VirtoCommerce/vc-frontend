@@ -395,8 +395,8 @@ export default defineConfig({
       }),
     ),
   ],${typedDocumentAlias}${buildConfig}
-  server: { port: 3001, cors: true, origin: "http://localhost:3001" },
-  preview: { cors: true },
+  // No cors option: Vite's default lets in localhost origins only, which is where a local storefront runs.
+  server: { port: 3001, origin: "http://localhost:3001" },
 });
 `;
 
