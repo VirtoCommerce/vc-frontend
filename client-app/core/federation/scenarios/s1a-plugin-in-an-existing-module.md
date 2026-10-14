@@ -93,7 +93,9 @@
    released yet. Link a local facade with yalc ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)),
    or scaffold from a released `vc-frontend` commit.
 4. **`corepack: not found` in the module build.** The targets run yarn through corepack, which Node 25 and later no
-   longer bundle. Build with Node 22 or 24, or install it with `npm i -g corepack`.
+   longer bundle. Build with Node 22 or 24, or install it with `npm i -g corepack`. To build the module without Node
+   at all, pass `-p:SkipStorefrontPlugin=true` (or set it as an environment variable for vc-build): the plugin is
+   then neither built nor copied.
 
 ---
 
