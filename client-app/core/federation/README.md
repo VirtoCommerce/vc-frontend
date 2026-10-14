@@ -7,7 +7,8 @@
 >
 > - A **plugin** is a bundle built and deployed apart from the storefront. The storefront loads it at startup.
 > - It is **on in the stock theme** from release 2.60 (`module_federation_enabled: true` in the theme settings).
->   Earlier releases have no plugin support. Set it to `false` and rebuild to ship a storefront without it.
+>   Set it to `false` and rebuild to ship a storefront without it. Before 2.60 it was off unless the build set
+>   `APP_MODULES_FEDERATION_ENABLED`; from 2.60 that variable is ignored and the setting decides.
 > - Plugins usually ship **inside a backend module**. Installing the module installs the plugin; the storefront is
 >   not rebuilt.
 > - A plugin talks to the host only through **`@vc-frontend/core`** (the _facade_).
