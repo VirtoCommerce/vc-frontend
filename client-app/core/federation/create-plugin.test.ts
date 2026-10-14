@@ -369,6 +369,20 @@ describe("create-plugin --module", () => {
     expect(stdout).toContain('<dependency id="VirtoCommerce.XFrontend"');
   });
 
+  it("leaves a commented-out off switch on the module's own setting in plugin.config.ts", () => {
+    const webDir = createModuleWebDir();
+    const { status, stderr } = runScaffolderInModule("foo-plugin", webDir, ["--yes"]);
+    expect(status, stderr).toBe(0);
+
+    const config = readFileSync(join(webDir, "StorefrontApp", "plugin.config.ts"), "utf8");
+    expect(config).toContain('  // when: settingEnabled("VirtoCommerce.Foo", "Foo.StorefrontPlugin.Enabled"),\n');
+    const switchedOn = config
+      .replace("{ definePluginManifest }", "{ definePluginManifest, settingEnabled }")
+      .replace("// when:", "when:");
+    const result = ts.transpileModule(switchedOn, { reportDiagnostics: true });
+    expect(result.diagnostics ?? []).toEqual([]);
+  });
+
   it("never edits the module's own files", () => {
     const webDir = createModuleWebDir();
     runScaffolderInModule("foo-plugin", webDir, ["--yes"]);

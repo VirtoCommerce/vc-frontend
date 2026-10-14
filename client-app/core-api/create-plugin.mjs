@@ -567,17 +567,24 @@ export function loadLocales(): void {
 const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
 const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
 
+const moduleId = webDir ? parseModuleManifest(readFileSync(join(webDir, "module.manifest"), "utf8")).id : undefined;
+const switchModule = moduleId ?? "<module id>";
+const switchSetting = `${moduleId?.split(".").at(-1) ?? "<Module>"}.StorefrontPlugin.Enabled`;
+
 const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
 
 // What the storefront knows before running this plugin. It does not replace the registrations in
 // src/index.ts. Reference: ${DOCS_URL}/declarations.md
-export default definePluginManifest({${
-  selected.router
-    ? `
-  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],
-`
-    : ""
-}});
+export default definePluginManifest({
+  // An off switch per store, without a release: add a public store setting to the module, import settingEnabled
+  // above, and uncomment. While the setting is missing or false, nothing of the plugin loads.
+  // when: settingEnabled("${switchModule}", "${switchSetting}"),${
+    selected.router
+      ? `
+  routes: [{ path: "/${pluginName}", name: "${pluginName}" }],`
+      : ""
+  }
+});
 `;
 
 const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
@@ -626,7 +633,6 @@ const successCheck = selected.router
 
 // The top is the author's: what the plugin does. Everything generated sits under one heading below it, so the
 // two are never confused.
-const moduleId = webDir ? parseModuleManifest(readFileSync(join(webDir, "module.manifest"), "utf8")).id : undefined;
 const readmeTitle = moduleId
   ? `# ${pluginName}: storefront plugin of ${moduleId}`
   : `# ${pluginName}: storefront plugin`;
