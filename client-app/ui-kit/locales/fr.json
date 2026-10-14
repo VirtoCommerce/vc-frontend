@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Corrigez les erreurs de téléchargement pour continuer.",
         "has_max_file_count": "Vous avez téléchargé le nombre maximum de fichiers possible. D'autres téléchargements ne sont pas possibles.",
-        "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés."
+        "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés.",
+        "unavailable": "Le téléchargement de fichiers n'est pas disponible."
       }
     },
     "reach_limit": {
