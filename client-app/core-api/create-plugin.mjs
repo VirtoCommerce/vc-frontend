@@ -559,10 +559,13 @@ export function loadLocales(): void {
 }
 `;
 
+const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
+const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
+
 const pluginConfigTs = `import { definePluginManifest } from "@vc-frontend/core/manifest";
 
 // What the storefront knows before running this plugin. It does not replace the registrations in
-// src/index.ts — see core/federation/declarations.md.
+// src/index.ts. Reference: ${DOCS_URL}/declarations.md
 export default definePluginManifest({${
   selected.router
     ? `
@@ -611,8 +614,6 @@ const indexHtml = `<!doctype html>
 </html>
 `;
 
-const DOCS_URL = `https://github.com/${HOST_REPO}/blob/dev/client-app/core/federation`;
-const SCENARIOS_URL = `${DOCS_URL}/scenarios`;
 const optionNames = GROUPS.map((group) => `${group.key} ${selected[group.key] ? "yes" : "no"}`).join(" · ");
 const successCheck = selected.router
   ? `\`https://localhost:3000/${pluginName}\` shows the plugin's page.`
