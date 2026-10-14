@@ -29,7 +29,7 @@ const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 // Maximum number of simultaneous uploads
 const MAX_CONCURRENT_UPLOADS = 3;
 
-const FILE_SIZE_ERROR_CODES = ["INVALID_SIZE", "INVALID_MIN_SIZE"];
+const FILE_SIZE_ERROR_CODES = new Set(["INVALID_SIZE", "INVALID_MIN_SIZE"]);
 
 // Browsers percent-encode these characters in a multipart filename, and the server returns the encoded name
 function toMultipartFileName(name: string): string {
@@ -337,7 +337,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   function getErrorMessage(errorCode: string, errorParameter?: unknown, errorMessage?: string): string | undefined {
-    const parameter = FILE_SIZE_ERROR_CODES.includes(errorCode)
+    const parameter = FILE_SIZE_ERROR_CODES.has(errorCode)
       ? formatFileSize(errorParameter as number)
       : (errorParameter as string);
 
