@@ -222,7 +222,7 @@ function checkFacadePin(appDir, pkg) {
     return [
       fail(
         `@vc-frontend/core is "${pin ?? "missing"}", not a released tarball`,
-        "Pin the core-v<version> release asset (yalc/file:/link: are for local work only).",
+        "Pin the core-v<version> release asset. A yalc link is for local work only, never portal:, link: or file:.",
       ),
     ];
   }

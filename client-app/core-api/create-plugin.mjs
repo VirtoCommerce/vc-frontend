@@ -13,7 +13,7 @@
  * generation time, so the plugin compiles against exactly what the host runs -
  * nothing is hardcoded to drift. Optional dependency groups are picked
  * interactively (or via flags: --yes takes defaults, --with-i18n, --with-apollo,
- * --with-vueuse, --no-router). Unselected groups are also dropped from the
+ * --with-vueuse, --with-tailwind, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -390,7 +390,8 @@ const typedDocumentAlias = needsTypedDocumentAlias
   resolve: {
     alias: {
       // @module-federation/vite below ${MF_VITE_TYPE_IMPORT_FIX} resolves \`import type\` sources too and throws on this
-      // types-only package; nothing loads it at runtime. Drop it once the host moves past that version.
+      // types-only package; nothing loads it at runtime. Drop it once this plugin's own
+      // @module-federation/vite is past that version.
       "@graphql-typed-document-node/core": fileURLToPath(
         new URL("./node_modules/@graphql-typed-document-node/core/typings/index.d.ts", import.meta.url),
       ),
@@ -425,10 +426,9 @@ export default defineConfig({
     federation(
       createRemoteFederationOptions({
         name: "${pluginName}",
-        // CONTRACT GATE: the facade version this plugin is built against. The loader takes this
-        // range at face value, so widening it is a claim of compatibility, not a request for one:
-        // a host whose version falls INSIDE the range still loads you even if you never tested
-        // against it. A host OUTSIDE the range is refused before any of your code runs.
+        // CONTRACT GATE: the facade versions this plugin runs on. A host OUTSIDE the range is
+        // refused before any of your code runs. Keep it ^ the facade you pin: check:plugin-module
+        // fails a range that reaches below the pin or past its breaking line (README, rule 5).
         requiredHostVersion: "^${corePkg.version}",${sharedOverridesArg}
       }),
     ),
@@ -680,7 +680,8 @@ More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENAR
      droppedShared.length
        ? `
 6. **A library set to \`false\` in \`sharedOverrides\` (vite.config.ts) is not shared.** Delete its line before you
-   import it. Otherwise the plugin bundles its own copy, which does not see the storefront's i18n or Apollo client.`
+   import it. Otherwise the plugin bundles its own copy, which does not see the storefront's router, i18n or Apollo
+   client.`
        : ""
    }
 
