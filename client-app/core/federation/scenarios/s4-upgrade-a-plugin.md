@@ -47,8 +47,8 @@ that version.
    it. Upgrade the plugins before that storefront ships.
 2. **A changed prop can arrive as a patch.** The version check compares export names only, so read the contract
    diff (step 1) even for a patch.
-3. **`storefront-plugin.targets` is not upgraded by any command.** Diff it against a fresh `create:plugin --module`
-   scaffold when the scaffold's notes mention a change.
+3. **`storefront-plugin.targets` is not upgraded by any command.** When `STOREFRONT_PLUGIN_TARGETS` in
+   `client-app/core-api/plugin-module.mjs` changed since your scaffold, copy it over your module's file.
 
 ---
 
