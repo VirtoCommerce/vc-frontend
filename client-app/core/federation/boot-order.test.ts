@@ -98,6 +98,7 @@ vi.mock("@/core/plugins", () => ({
   authPlugin: vuePlugin(),
   configPlugin: vuePlugin(),
   contextPlugin: vuePlugin(),
+  domAnalyticsPlugin: vuePlugin(),
   extensionPointsPlugin: vuePlugin(),
   permissionsPlugin: vuePlugin(),
 }));
