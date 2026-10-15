@@ -425,6 +425,13 @@ scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dis
 { "id": "my-plugin", "remote": { "name": "my-plugin", "exposed": "./plugin" } }
 ```
 
+Scaffold straight into the module with `yarn create:plugin <name> --module <path-to-*.Web>`: it writes
+`StorefrontApp/` (built into `../plugins/vc-frontend/`) and `StorefrontApp/storefront-plugin.targets`,
+the MSBuild that builds and packages it. It never edits the module's own files; it prints the lines
+they still need. `yarn check:plugin-module <path-to-*.Web> [--artifact <module.zip>] [--env <storefront-url>]`
+then checks the module, its package and an environment, with the fix for each failure. The backend
+floors both use are `BACKEND_REQUIREMENTS` (`core-api/backend-requirements.mjs`).
+
 **Externally hosted alternative.**
 
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
@@ -438,8 +445,9 @@ The platform side shipped on 2026-08-03 — `vc-module-x-api` **3.1016.0** and
 `vc-module-x-frontend` **3.1005.0** — and this host consumes it. The plugin rides in a backend
 module's artifacts, and the platform both serves and announces it:
 
-- the module declares a dependency on `VirtoCommerce.XFrontend` (that is what makes the platform
-  probe it), and its build writes the bundle to `{MODULE_FOLDER}/plugins/vc-frontend/`;
+- the platform probes `{MODULE_FOLDER}/plugins/vc-frontend/` of every installed module, and the
+  module's build writes the bundle there. Its `VirtoCommerce.XFrontend` dependency is about install
+  order, not discovery: it guarantees the `vc-frontend` app exists;
 - whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
   `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
   plugin is skipped: the storefront boots, the feature is simply absent;
