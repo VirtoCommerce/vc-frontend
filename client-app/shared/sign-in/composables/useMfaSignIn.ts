@@ -20,17 +20,6 @@ interface IVerifyCodeOptions {
 
 const ANALYTICS_LOGIN_METHOD = "password";
 
-const FINAL_ERRORS: string[] = [
-  IdentityErrors.INVALID_TWO_FACTOR_TOKEN,
-  IdentityErrors.USER_IS_LOCKED_OUT,
-  IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT,
-  IdentityErrors.SIGN_IN_NOT_ALLOWED,
-  IdentityErrors.LOCKOUT_DISABLED,
-  IdentityErrors.MFA_PROVIDER_NOT_AVAILABLE,
-  IdentityErrors.CODE_ATTEMPTS_EXCEEDED,
-  IdentityErrors.LOGIN_FAILED,
-];
-
 export function useMfaSignIn() {
   const { mfaSignIn } = useAuth();
   const { loading, signInErrors, resetSignInErrors, sendCode, exchangeCode, showError } =
@@ -54,8 +43,9 @@ export function useMfaSignIn() {
 
   function handleError(result: ICodeSignInResponse | undefined, emit: IMfaErrorEmits) {
     const error = result?.error;
+    const isWrongCode = error?.code === IdentityErrors.INVALID_CODE;
 
-    if (error && (result.tokensDiscarded || (error.code && FINAL_ERRORS.includes(error.code)))) {
+    if (error && (result.tokensDiscarded || (error.code && !isWrongCode))) {
       emit("failed", error);
       return;
     }

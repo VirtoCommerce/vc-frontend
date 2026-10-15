@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { IdentityErrors } from "@/core/enums";
 import { useMfaSignIn } from "@/shared/sign-in/composables/useMfaSignIn";
@@ -46,7 +46,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 const { loading, verifyCode, resendCode, signInErrors, resetSignInErrors, handleError } = useMfaSignIn();
 
-const codeFormRef = ref<InstanceType<typeof SignInCodeForm>>();
+const codeFormRef = useTemplateRef<InstanceType<typeof SignInCodeForm>>("codeFormRef");
 
 const resent = ref<MfaResendResponseType>();
 const resendAvailableAt = ref<number>();

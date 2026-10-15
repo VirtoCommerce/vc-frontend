@@ -110,6 +110,16 @@ describe("ImpersonateForm", () => {
     expect(wrapper.emitted("success")).toHaveLength(1);
   });
 
+  it("rejects the verified code when the impersonation fails, so the operator's tokens are discarded", async () => {
+    requireSecondFactor();
+    impersonateAuthenticated.mockRejectedValue(new Error("impersonation failed"));
+
+    const wrapper = mountForm();
+
+    await expect(wrapper.findComponent({ name: "MfaVerifyForm" }).props("onVerified")()).rejects.toThrow();
+    expect(wrapper.emitted("success")).toBeUndefined();
+  });
+
   it("closes the dialog when the operator cancels the code step", async () => {
     requireSecondFactor();
 

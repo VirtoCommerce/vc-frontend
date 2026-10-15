@@ -10,37 +10,40 @@
 
   <form v-else class="sign-in-form" @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert
-      v-for="error in errors"
-      :key="error.code"
-      data-test-id="sign-in-error-alert"
-      class="sign-in-form__error"
-      color="danger"
-      size="sm"
-      variant="outline-dark"
-      icon
-    >
-      <span v-if="isLockoutError(error?.code)">
-        {{ translate(error) }}
-        <ContactAdministratorLink />.
-      </span>
+    <div role="alert">
+      <VcAlert
+        v-for="error in errors"
+        :key="error.code"
+        data-test-id="sign-in-error-alert"
+        class="sign-in-form__error"
+        color="danger"
+        size="sm"
+        variant="outline-dark"
+        icon
+      >
+        <span v-if="isLockoutError(error?.code)">
+          {{ translate(error) }}
+          <ContactAdministratorLink />.
+        </span>
 
-      <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="sign-in-form__password-expired">
-        <span>
+        <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="sign-in-form__password-expired">
+          <span>
+            {{ translate(error) }}
+          </span>
+          <!-- Keep the A tag to reinitialize the app -->
+          <a :href="ROUTES.CHANGE_PASSWORD.PATH" class="sign-in-form__change-password-link">
+            {{ $t("common.buttons.set_new_password") }}
+          </a>
+        </span>
+
+        <span v-else>
           {{ translate(error) }}
         </span>
-        <!-- Keep the A tag to reinitialize the app -->
-        <a :href="ROUTES.CHANGE_PASSWORD.PATH" class="sign-in-form__change-password-link">
-          {{ $t("common.buttons.set_new_password") }}
-        </a>
-      </span>
-
-      <span v-else>
-        {{ translate(error) }}
-      </span>
-    </VcAlert>
+      </VcAlert>
+    </div>
 
     <VcInput
+      ref="emailInput"
       v-model.trim="email"
       name="email"
       class="sign-in-form__input"
@@ -101,7 +104,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { onBeforeUnmount, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
 import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
@@ -142,6 +145,8 @@ const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 
 const rememberMe = ref(false);
+
+const emailInput = useTemplateRef<{ inputElement: HTMLInputElement | null }>("emailInput");
 
 const twoFactorChallenge = ref<TwoFactorChallengeType>();
 
@@ -184,13 +189,16 @@ const onSubmit = handleSubmit(async () => {
   }
 });
 
-function backToPassword(error?: IdentityErrorType) {
+async function backToPassword(error?: IdentityErrorType): Promise<void> {
   twoFactorChallenge.value = undefined;
   resetErrors();
 
   if (error) {
     errors.value = [error];
   }
+
+  await nextTick();
+  emailInput.value?.inputElement?.focus();
 }
 
 watch(twoFactorChallenge, (value) => {

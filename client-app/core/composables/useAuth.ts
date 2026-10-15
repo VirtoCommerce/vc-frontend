@@ -214,6 +214,10 @@ function _useAuth() {
 
   async function unauthorize() {
     await broadcast.emit(userBeforeUnauthorizeEvent, undefined, TabsType.CURRENT);
+    await revokeTokens();
+  }
+
+  async function revokeTokens() {
     await useFetch("/revoke/token").post();
     state.value = { ...INITIAL_STATE };
   }
@@ -262,6 +266,7 @@ function _useAuth() {
     mfaSignIn,
     refresh,
     unauthorize,
+    revokeTokens,
     resetTokens,
 
     setTokenType,

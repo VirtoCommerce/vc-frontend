@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { IdentityErrors } from "@/core/enums";
 
 vi.mock("@/core/composables", async () => {
   const { computed, ref } = await import("vue");
@@ -339,14 +338,14 @@ describe("useImpersonate", () => {
     const { impersonate, failTwoFactor, step, errors, twoFactorChallenge } = useImpersonate();
 
     await impersonate("support@acme.com", "secret", "target-user");
-    failTwoFactor({ code: IdentityErrors.INVALID_TWO_FACTOR_TOKEN });
+    failTwoFactor({ code: "invalid_two_factor_token" });
 
     expect(step.value).toBe("idle");
     expect(twoFactorChallenge.value).toBeUndefined();
     expect(errors.value).toEqual([{ code: "invalid_two_factor_token" }]);
   });
 
-  it("stays on the code step while the impersonation completes, and leaves it once that fails", async () => {
+  it("stays on the code step while the impersonation completes, and rejects once that fails", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
 
@@ -372,9 +371,31 @@ describe("useImpersonate", () => {
     }));
     setFailedImpersonateResponse(fetchState);
 
-    await impersonateAuthenticated("target-user");
+    await expect(impersonateAuthenticated("target-user")).rejects.toThrow();
 
     expect(twoFactorChallengeWhileImpersonating).toBeDefined();
+    expect(step.value).toBe("idle");
+    expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
+  });
+
+  it("failTwoFactor keeps the impersonation error when the impersonation failed after the code", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    auth.authorize.mockImplementation(() => {
+      auth.authErrors.value = [{ code: "two_factor_required" }];
+      auth.twoFactorToken.value = "token-1";
+      return Promise.reject(new Error("400"));
+    });
+    setFailedImpersonateResponse(fetchState);
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, impersonateAuthenticated, failTwoFactor, step, errors, twoFactorChallenge } = useImpersonate();
+
+    await impersonate("support@acme.com", "secret", "target-user");
+    await expect(impersonateAuthenticated("target-user")).rejects.toThrow();
+    failTwoFactor({ description: "common.messages.something_went_wrong" });
+
     expect(step.value).toBe("idle");
     expect(twoFactorChallenge.value).toBeUndefined();
     expect(errors.value).toEqual([{ code: "impersonate_failed" }]);

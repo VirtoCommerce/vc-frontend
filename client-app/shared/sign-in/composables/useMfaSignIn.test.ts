@@ -5,13 +5,13 @@ vi.mock("@/core/composables", () => {
   const mfaSignIn = vi.fn<(params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
   const lockoutSecondsRemaining = ref<number>();
-  const resetTokens = vi.fn();
+  const revokeTokens = vi.fn();
   const analytics = vi.fn();
 
   return {
-    __mockAuthState: { mfaSignIn, authErrors, resetTokens },
+    __mockAuthState: { mfaSignIn, authErrors, revokeTokens },
     __mockAnalyticsState: { analytics },
-    useAuth: () => ({ mfaSignIn, errors: authErrors, lockoutSecondsRemaining, resetTokens }),
+    useAuth: () => ({ mfaSignIn, errors: authErrors, lockoutSecondsRemaining, revokeTokens }),
     useAnalytics: () => ({ analytics }),
   };
 });
@@ -65,7 +65,7 @@ type IdentityErrorMockType = { code?: string; description?: string };
 type AuthMockStateType = {
   mfaSignIn: ReturnType<typeof vi.fn>;
   authErrors: { value: IdentityErrorMockType[] | undefined };
-  resetTokens: ReturnType<typeof vi.fn>;
+  revokeTokens: ReturnType<typeof vi.fn>;
 };
 
 type SignMeInMockStateType = {
@@ -119,7 +119,7 @@ describe("useMfaSignIn", () => {
     auth.mfaSignIn.mockReset();
     auth.mfaSignIn.mockResolvedValue(undefined);
     auth.authErrors.value = undefined;
-    auth.resetTokens.mockReset();
+    auth.revokeTokens.mockReset();
 
     const signMeIn = await getSignMeInState();
     signMeIn.signIn.mockReset();
@@ -250,7 +250,7 @@ describe("useMfaSignIn", () => {
       onVerified: () => Promise.reject(new Error("me query failed")),
     });
 
-    expect(auth.resetTokens).toHaveBeenCalledOnce();
+    expect(auth.revokeTokens).toHaveBeenCalledOnce();
     expect(result).toEqual({
       succeeded: false,
       error: { description: "common.messages.something_went_wrong" },
@@ -273,14 +273,12 @@ describe("useMfaSignIn", () => {
 
   it.each([
     "invalid_two_factor_token",
-    "user_is_locked_out",
     "user_is_temporary_locked_out",
-    "sign_in_not_allowed",
-    "lockout_disabled",
-    "mfa_provider_not_available",
     "code_attempts_exceeded",
-    "login_failed",
-  ])("handleError emits failed on %s, which another code can't fix", async (code) => {
+    "user_is_locked_in_organization",
+    "duplicate_email_login_attempt",
+    "an_error_added_later",
+  ])("handleError emits failed on %s, since only a wrong code can be fixed with another code", async (code) => {
     const emit = vi.fn();
     const signMeIn = await getSignMeInState();
     const error = { code, description: code };

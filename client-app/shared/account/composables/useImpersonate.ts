@@ -40,8 +40,9 @@ export function useImpersonate() {
   }
 
   function failTwoFactor(error: IdentityErrorType): void {
+    const impersonationErrors = errors.value;
     resetState();
-    errors.value = [error];
+    errors.value = impersonationErrors.length > 0 ? impersonationErrors : [error];
   }
 
   async function requestImpersonateToken(userId: string, redirectTo: string = "/"): Promise<void> {
@@ -155,7 +156,7 @@ export function useImpersonate() {
     await requestImpersonateToken(targetUserId);
 
     if (step.value !== "success") {
-      twoFactorChallenge.value = undefined;
+      throw new Error("The impersonation failed after the sign-in code was accepted");
     }
   }
 

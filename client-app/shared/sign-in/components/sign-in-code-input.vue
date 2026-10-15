@@ -20,7 +20,10 @@
       :aria-describedby="describedBy"
       :data-test-id="testId"
       @paste="onPaste"
-      @focus="isFocused = true"
+      @keydown="onKeydown"
+      @click="moveCaretToEnd"
+      @select="moveCaretToEnd"
+      @focus="onFocus"
       @blur="isFocused = false"
     />
 
@@ -40,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 
 interface IProps {
   inputId: string;
@@ -63,11 +66,31 @@ const code = defineModel<string>({
   set: (value) => value.replace(/\D/g, "").slice(0, props.length),
 });
 
-const inputRef = ref<HTMLInputElement>();
+const CARET_KEYS = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"]);
+
+const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
 const isFocused = ref(false);
 const activeIndex = computed(() => Math.min(code.value.length, props.length - 1));
 
-function onPaste(event: ClipboardEvent) {
+function onFocus(): void {
+  isFocused.value = true;
+  moveCaretToEnd();
+}
+
+function onKeydown(event: KeyboardEvent): void {
+  if (CARET_KEYS.has(event.key)) {
+    event.preventDefault();
+  }
+}
+
+function moveCaretToEnd(): void {
+  const input = inputRef.value;
+  if (input) {
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+}
+
+function onPaste(event: ClipboardEvent): void {
   const pasted = event.clipboardData?.getData("text") ?? "";
   if (!/\d/.test(pasted)) {
     return;
@@ -79,7 +102,7 @@ function onPaste(event: ClipboardEvent) {
   code.value = standaloneCode ?? pasted;
 }
 
-function focus() {
+function focus(): void {
   inputRef.value?.focus();
 }
 

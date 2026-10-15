@@ -21,7 +21,7 @@ interface IExchangeCodeOptions {
 export function useCodeSignIn(loginMethod: string) {
   const loading = ref(false);
   const { t } = useI18n();
-  const { errors: authErrors, lockoutSecondsRemaining, resetTokens } = useAuth();
+  const { errors: authErrors, lockoutSecondsRemaining, revokeTokens } = useAuth();
   const { signIn, errors: signInErrors, resetErrors: resetSignInErrors } = useSignMeIn();
   const { analytics } = useAnalytics();
 
@@ -87,7 +87,7 @@ export function useCodeSignIn(loginMethod: string) {
       try {
         await onExchanged();
       } catch (e) {
-        resetTokens();
+        await revokeTokens();
         Logger.error(`${useCodeSignIn.name}.${exchangeCode.name}`, e);
         track(false, e instanceof Error ? e.message : String(e));
         return { succeeded: false, error: getGenericError(), tokensDiscarded: true };

@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 import { useNow } from "@vueuse/core";
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref, useTemplateRef } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { isLockoutError } from "@/core/utilities";
 import { ContactAdministratorLink } from "@/shared/common";
@@ -125,7 +125,7 @@ const CODE_LENGTH = 6;
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
-const codeInputRef = ref<InstanceType<typeof SignInCodeInput>>();
+const codeInputRef = useTemplateRef<InstanceType<typeof SignInCodeInput>>("codeInputRef");
 const code = ref("");
 const liveMessage = ref("");
 

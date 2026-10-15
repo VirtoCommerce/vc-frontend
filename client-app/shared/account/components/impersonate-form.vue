@@ -145,10 +145,7 @@ const onSubmit = handleSubmit(async () => {
 
 async function onTwoFactorVerified(): Promise<void> {
   await impersonateAuthenticated(props.targetUserId);
-
-  if (step.value === "success") {
-    emit("success");
-  }
+  emit("success");
 }
 
 function onCancel(): void {

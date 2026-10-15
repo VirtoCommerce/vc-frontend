@@ -5,13 +5,13 @@ vi.mock("@/core/composables", () => {
   const otpSignIn = vi.fn<(params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
   const lockoutSecondsRemaining = ref<number>();
-  const resetTokens = vi.fn();
+  const revokeTokens = vi.fn();
   const analytics = vi.fn();
 
   return {
-    __mockAuthState: { otpSignIn, authErrors, lockoutSecondsRemaining, resetTokens },
+    __mockAuthState: { otpSignIn, authErrors, lockoutSecondsRemaining, revokeTokens },
     __mockAnalyticsState: { analytics },
-    useAuth: () => ({ otpSignIn, errors: authErrors, lockoutSecondsRemaining, resetTokens }),
+    useAuth: () => ({ otpSignIn, errors: authErrors, lockoutSecondsRemaining, revokeTokens }),
     useAnalytics: () => ({ analytics }),
   };
 });
@@ -77,7 +77,7 @@ type AuthMockStateType = {
   otpSignIn: ReturnType<typeof vi.fn>;
   authErrors: { value: IdentityErrorMockType[] | undefined };
   lockoutSecondsRemaining: { value: number | undefined };
-  resetTokens: ReturnType<typeof vi.fn>;
+  revokeTokens: ReturnType<typeof vi.fn>;
 };
 
 type AnalyticsMockStateType = {
@@ -135,7 +135,7 @@ describe("useOtpSignIn", () => {
 
     const auth = await getAuthState();
     auth.otpSignIn.mockReset();
-    auth.resetTokens.mockReset();
+    auth.revokeTokens.mockReset();
     auth.otpSignIn.mockResolvedValue(undefined);
     auth.authErrors.value = undefined;
     auth.lockoutSecondsRemaining.value = undefined;
@@ -278,7 +278,7 @@ describe("useOtpSignIn", () => {
 
     const result = await verifyCode("buyer@acme.com", "123456");
 
-    expect(auth.resetTokens).toHaveBeenCalledOnce();
+    expect(auth.revokeTokens).toHaveBeenCalledOnce();
     expect(result).toEqual({
       succeeded: false,
       error: { description: "common.messages.something_went_wrong" },
