@@ -7,7 +7,11 @@
     :class="['vc-tile-button', `vc-tile-button--${variant}--${color}`, { 'vc-tile-button--disabled': disabled }]"
     @click="onClick"
   >
-    <VcIcon v-if="icon" class="vc-tile-button__icon" :name="icon" />
+    <span v-if="$slots.icon || icon" class="vc-tile-button__icon">
+      <slot name="icon">
+        <VcIcon v-if="icon" :name="icon" />
+      </slot>
+    </span>
 
     <span class="vc-tile-button__label">
       <slot />
@@ -50,6 +54,8 @@ const props = withDefaults(defineProps<IProps>(), {
 defineSlots<{
   /** Tile label. */
   default?: () => unknown;
+  /** Content above the label in place of the `icon` prop's icon; `--vc-icon-size` and `--vc-icon-color` still reach a VcIcon put here. */
+  icon?: () => unknown;
 }>();
 
 const componentTag = computed(() => {
@@ -130,6 +136,10 @@ function onClick(event: MouseEvent): void {
 
   @media (prefers-reduced-motion: no-preference) {
     @apply transition-shadow;
+  }
+
+  &__icon {
+    @apply flex items-center justify-center;
   }
 
   &__label {

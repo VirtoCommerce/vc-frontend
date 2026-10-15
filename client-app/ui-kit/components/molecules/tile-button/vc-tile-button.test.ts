@@ -27,6 +27,16 @@ describe("VcTileButton", () => {
     expect(wrapper.findComponent({ name: "VcIcon" }).exists()).toBe(false);
   });
 
+  it("renders the icon slot in place of the icon prop", () => {
+    const wrapper = mountTile({
+      props: { icon: "mail" },
+      slots: { icon: '<img data-test-id="custom-icon" alt="" />' },
+    });
+
+    expect(wrapper.find('[data-test-id="custom-icon"]').exists()).toBe(true);
+    expect(wrapper.findComponent({ name: "VcIcon" }).exists()).toBe(false);
+  });
+
   it("defaults to the solid primary tile", () => {
     const wrapper = mountTile();
 

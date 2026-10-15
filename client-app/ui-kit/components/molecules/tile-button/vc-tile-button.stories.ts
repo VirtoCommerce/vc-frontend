@@ -80,6 +80,30 @@ export const Links: StoryType = {
   </div>`),
 };
 
+export const IconSlot: StoryType = {
+  render: renderTiles(`<div class="grid max-w-96 grid-cols-2 gap-3">
+    <VcTileButton v-bind="args">
+      <template #icon>
+        <span class="relative inline-flex">
+          <VcIcon name="bell" />
+
+          <VcBadge class="absolute -end-2 -top-2" color="danger" size="sm" rounded>3</VcBadge>
+        </span>
+      </template>
+
+      Notifications
+    </VcTileButton>
+
+    <VcTileButton v-bind="args" variant="outline">
+      <template #icon>
+        <VcIcon name="mail" variant="solid" />
+      </template>
+
+      Send email
+    </VcTileButton>
+  </div>`),
+};
+
 export const LongLabel: StoryType = {
   render: renderTiles(`<div class="grid max-w-96 grid-cols-2 gap-3">
     <VcTileButton v-bind="args" icon="shopping-bag">Im Auftrag des Kunden bestellen</VcTileButton>
