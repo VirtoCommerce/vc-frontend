@@ -15,7 +15,7 @@ const VcMenuItem = defineComponent({
   template: "<div><slot /></div>",
 });
 
-// The Sales Rep hub's case: one route is the rep's own feed, and with ?organizationId= a customer's page.
+// A rule a route record cannot express: the same route, with ?organizationId=, is another link's page.
 const isCustomerActivity = (route: RouteLocationNormalizedLoaded) =>
   route.name === "Activities" && Boolean(route.query.organizationId);
 

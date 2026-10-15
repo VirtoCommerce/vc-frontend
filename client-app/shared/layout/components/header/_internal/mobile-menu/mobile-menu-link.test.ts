@@ -8,7 +8,7 @@ import type { RouteLocationNormalizedLoaded, Router } from "vue-router";
 
 const Page = { template: "<div />" };
 
-// The Sales Rep hub's case: one route is the rep's own feed, and with ?organizationId= a customer's page.
+// A rule a route record cannot express: the same route, with ?organizationId=, is another link's page.
 const isCustomerActivity = (route: RouteLocationNormalizedLoaded) =>
   route.name === "Activities" && Boolean(route.query.organizationId);
 
@@ -45,7 +45,7 @@ describe("MobileMenuLink highlight", () => {
     expect(isLit(wrapper)).toBe(true);
   });
 
-  // One customer's activity page belongs to My customers: the account rail lights it, so the mobile menu must too.
+  // A page a link's rule claims: the account rail lights it, so the mobile menu must too.
   it("lights a link its rule claims, though vue-router matches another route", async () => {
     const wrapper = await mountLink(
       { title: "My customers", route: { name: "MyCustomers" }, activeWhen: isCustomerActivity },
