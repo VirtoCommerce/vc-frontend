@@ -7,7 +7,7 @@ import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
-import { federatedHostPlugin, federatedAlias, federatedDefine } from "./vite.federation.js";
+import { federatedHostPlugin, federatedAlias, federatedDefine, isFederatedHost } from "./vite.federation.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
@@ -17,6 +17,18 @@ const graphql = graphqlImport.default ?? graphqlImport;
 // only through the switch-gated dynamic import in app-runner, so deferring it keeps the MF
 // runtime out of a `module_federation_enabled: false` eager bundle entirely.
 const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
+
+// Everything else from node_modules goes to a single shared eager `vendor` chunk.
+function getVendorChunk(id = ""): string | undefined {
+  if (!id.includes("node_modules")) {
+    return;
+  }
+  const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
+  if (isDeferredLib) {
+    return;
+  }
+  return "vendor";
+}
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
@@ -127,17 +139,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
       assetsInlineLimit: (filePath) => (filePath.includes("/ui-kit/icons/") ? false : undefined),
       rollupOptions: {
         output: {
-          manualChunks(id = "") {
-            if (!id.includes("node_modules")) {
-              return;
-            }
-            const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
-            if (isDeferredLib) {
-              return;
-            }
-            // Everything else goes to a single shared eager `vendor` chunk.
-            return "vendor";
-          },
+          // No `vendor` chunk in an MF host: vendor modules import shared packages through MF
+          // `loadShare` wrappers while the packages' fallbacks and their deps sit in `vendor`, a
+          // vendor → wrapper → vendor cycle that throws "Cannot access … before initialization" at boot.
+          manualChunks: isFederatedHost() ? undefined : getVendorChunk,
         },
       },
     },
