@@ -23,7 +23,7 @@ export function deferLogin(method: string, params?: Gtag.CustomParams): void {
     sessionStorage.setItem(PENDING_LOGIN_KEY, JSON.stringify(pending));
   } catch {
     // No storage to carry it across the reload: the old race is still better than no event at all.
-    sendEvent("login", { ...params, method });
+    send(pending);
     return;
   }
 
