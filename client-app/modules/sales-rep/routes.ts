@@ -1,8 +1,6 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled, isSalesRepTasksEnabled } from "./composables/useSalesRepsConfig";
 import {
-  ACTIVITIES_ROUTE_NAME,
-  ACTIVITIES_ROUTE_SEGMENT,
   TASKS_ROUTE_NAME,
   TASKS_ROUTE_SEGMENT,
   ALL_CUSTOMER_ORDERS_ROUTE_NAME,
@@ -24,7 +22,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import type { LocationQuery, NavigationGuard, RouteLocationNormalizedLoaded, RouteRecordRaw } from "vue-router";
+import type { NavigationGuard, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
@@ -32,7 +30,6 @@ const CustomerOrderDetailsPage = () => import("./pages/customer-order-details.vu
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
-const ActivitiesPage = () => import("./pages/activities.vue");
 const DocumentsPage = () => import("./pages/documents.vue");
 const TasksPage = () => import("./pages/sales-rep-tasks-page.vue");
 
@@ -111,24 +108,6 @@ export const documentsRoute: RouteRecordRaw = {
   },
 };
 
-// The page and the navigation read the narrowing alike: one non-empty value, anything else is the rep's own feed.
-function getActivityOrganizationId(query: LocationQuery): string | undefined {
-  const { organizationId } = query;
-  return typeof organizationId === "string" && organizationId ? organizationId : undefined;
-}
-
-// All-activity feed (VCST-5337) -> /company/activities; ?organizationId= narrows to one customer.
-export const activitiesRoute: RouteRecordRaw = {
-  path: ACTIVITIES_ROUTE_SEGMENT,
-  name: ACTIVITIES_ROUTE_NAME,
-  component: ActivitiesPage,
-  meta: repRouteMeta,
-  // The optional narrowing arrives as a query param; unknown/foreign orgs null server-side.
-  props: (route) => ({ organizationId: getActivityOrganizationId(route.query) }),
-  // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
-  beforeEnter: guardRepRoute,
-};
-
 // Tasks (VCST-5732) -> /company/tasks. Gated on vc-module-task-management being installed rather than on a
 // permission: with the module absent every task query answers empty, so the page would render a permanent blank.
 export const tasksRoute: RouteRecordRaw = {
@@ -184,24 +163,3 @@ export const allCustomerOrdersRoute: RouteRecordRaw = {
   meta: repRouteMeta,
   beforeEnter: guardRepRoute,
 };
-
-// One route, two pages: the rep's own "my activity", and one customer's activity (?organizationId=), which
-// belongs to that customer.
-export function isCustomerScopedActivity(route: RouteLocationNormalizedLoaded): boolean {
-  return route.name === ACTIVITIES_ROUTE_NAME && Boolean(getActivityOrganizationId(route.query));
-}
-
-// The pages of "My customers": the list, a profile and that customer's activity — sibling route records, so
-// vue-router cannot see they are one area.
-export function isMyCustomersArea(route: RouteLocationNormalizedLoaded): boolean {
-  return (
-    route.name === MY_CUSTOMERS_ROUTE_NAME ||
-    route.name === CUSTOMER_PROFILE_ROUTE_NAME ||
-    isCustomerScopedActivity(route)
-  );
-}
-
-// "My activity" owns the feed only while it really is the rep's own.
-export function isMyActivity(route: RouteLocationNormalizedLoaded): boolean {
-  return route.name === ACTIVITIES_ROUTE_NAME && !isCustomerScopedActivity(route);
-}

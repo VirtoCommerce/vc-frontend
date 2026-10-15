@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
-import { buildStatisticsWindows, formatStatCount, formatStatMoney, formatTimeAgo, salesRepOrderRoute } from "./utils";
+import { buildStatisticsWindows, formatStatCount, formatStatMoney, salesRepOrderRoute } from "./utils";
 import type { SalesRepCustomerOrderRowType } from "./types";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
@@ -212,58 +212,5 @@ describe("salesRepOrderRoute", () => {
       name: CUSTOMER_ORDER_ROUTE_NAME,
       params: { organizationId: "org-of-the-order", orderId: "o-1" },
     });
-  });
-});
-
-describe("formatTimeAgo", () => {
-  const NOW = new Date(2026, 8, 15, 12, 0, 0);
-  const ago = (seconds: number): string => new Date(NOW.getTime() - seconds * 1000).toISOString();
-
-  beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(NOW);
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("speaks in the past tense", () => {
-    expect(formatTimeAgo(ago(3 * 3600))).toBe("3 hours ago");
-  });
-
-  // At a unit's threshold the row is already that unit.
-  it("switches unit exactly at its threshold", () => {
-    expect(formatTimeAgo(ago(60))).toBe("1 minute ago");
-    expect(formatTimeAgo(ago(3600))).toBe("1 hour ago");
-  });
-
-  // Floored, not rounded up: 119 seconds is still one minute.
-  it("rounds down within a unit", () => {
-    expect(formatTimeAgo(ago(119))).toBe("1 minute ago");
-  });
-
-  it("picks the largest unit that fits", () => {
-    expect(formatTimeAgo(ago(2 * 86400 + 5 * 3600))).toBe("2 days ago");
-  });
-
-  // QA: 26 hours back from 1 AM is two calendar days back, and read "yesterday".
-  it("counts days by the calendar, not in 24-hour spans", () => {
-    vi.setSystemTime(new Date(2026, 8, 15, 1, 0, 0));
-
-    expect(formatTimeAgo(new Date(2026, 8, 13, 23, 0, 0).toISOString())).toBe("2 days ago");
-  });
-
-  it("calls the previous calendar day yesterday", () => {
-    expect(formatTimeAgo(new Date(2026, 8, 14, 10, 0, 0).toISOString())).toBe("yesterday");
-  });
-
-  it("names anything under a minute without a number", () => {
-    expect(formatTimeAgo(ago(30))).toBe("this minute");
-  });
-
-  // Clock skew between server and browser must not read as an event still to come.
-  it("treats a timestamp slightly ahead of the clock as now", () => {
-    expect(formatTimeAgo(ago(-90))).toBe("this minute");
   });
 });

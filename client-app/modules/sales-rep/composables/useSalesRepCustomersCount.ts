@@ -26,15 +26,11 @@ export function useSalesRepCustomersCount() {
       Logger.error("[sales-rep] salesRepCustomers count failed:", error);
     });
 
-    return {
-      count: computed(() => result.value?.salesRepCustomers?.totalCount ?? 0),
-      // Only an answered zero: a count still loading, or one that failed, says nothing about the rep's customers.
-      hasNoCustomers: computed(() => result.value?.salesRepCustomers?.totalCount === 0),
-    };
+    return { count: computed(() => result.value?.salesRepCustomers?.totalCount ?? 0) };
   } catch (error) {
     Logger.error("[sales-rep] salesRepCustomers count could not start:", error);
 
-    return { count: computed(() => 0), hasNoCustomers: computed(() => false) };
+    return { count: computed(() => 0) };
   }
 }
 

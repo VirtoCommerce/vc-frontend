@@ -1,7 +1,9 @@
 <template>
-  <!-- VcMenuItem directly, not AccountNavigationItem, to carry the count badge (same class, same styling).
-       The highlight follows the link's own area rule, written once in routes.ts. -->
-  <VcMenuItem color="secondary" :active="isActive" :to="item.route" class="account-navigation-item">
+  <!-- Renders VcMenuItem directly (instead of the shared AccountNavigationItem) so the highlight
+       logic stays inside the module: reuse the same `account-navigation-item` class for identical
+       styling, but keep the link active on the customer profile too — a sibling detail route that
+       useLink alone wouldn't match. -->
+  <VcMenuItem color="secondary" :active="isCurrent || isActive" :to="item.route" class="account-navigation-item">
     <template #prepend>
       <VcIcon size="sm" :name="item.icon" />
     </template>
@@ -20,8 +22,8 @@
 import { capitalize } from "lodash-es";
 import { computed, toRef } from "vue";
 import { useLink, useRoute } from "vue-router";
-import { isMenuLinkActive } from "@/core/utilities/menu";
 import { useSharedSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
+import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IProps {
@@ -34,7 +36,9 @@ const item = toRef(props, "item");
 
 const { count } = useSharedSalesRepCustomersCount();
 
-const { isActive: isRouteRecordActive } = useLink({ to: item.value?.route ?? {} });
+// Route-based highlight for the link's own route, kept active on the customer profile (its detail
+// page is a sibling route, so useLink wouldn't mark it active on its own).
+const { isActive } = useLink({ to: item.value?.route ?? {} });
 const route = useRoute();
-const isActive = computed(() => isMenuLinkActive(item.value, route, isRouteRecordActive.value));
+const isCurrent = computed(() => route.name === CUSTOMER_PROFILE_ROUTE_NAME);
 </script>
