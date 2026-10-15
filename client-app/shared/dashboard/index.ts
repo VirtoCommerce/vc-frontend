@@ -5,8 +5,8 @@
 // The two public components are NOT re-exported: code that renders them imports them by file
 // (`components/layout-surface.vue`, `components/layout-widget.vue`). A `.vue` re-export would pull the
 // engine's styles into every chunk that imports this file — and module `init()` code loads with the app.
-// A Module Federation plugin gets the engine through the `@vc-frontend/core` facade once the facade exports it;
-// until then a plugin carries its own copy (the sales-rep hub does).
+// A Module Federation plugin gets the engine through the `@vc-frontend/core` facade (`core-api/index.ts` exports
+// the same surface from these files), never through this barrel; the Sales Rep Hub plugin runs on it.
 export { provideBlockChrome, useBlockChrome } from "./composables/useBlockChrome";
 export { createLayoutController, useLayout } from "./composables/useLayout";
 export { useStatDataNeeds } from "./composables/useStatDataNeeds";
