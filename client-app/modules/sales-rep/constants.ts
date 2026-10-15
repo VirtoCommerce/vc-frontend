@@ -175,3 +175,6 @@ export const INSIGHTS_DEFAULT_ROWS = 5;
 export const INSIGHTS_MAX_ROWS = 20;
 export const INSIGHTS_SORT_BY_COUNT = "count";
 export const INSIGHTS_SORT_BY_DATE = "date";
+
+/** `settings_data.json` key that runs this built-in hub. Off by default; goes away with this module. */
+export const BUILTIN_ENABLED_THEME_SETTING = "sales_rep_builtin_enabled";

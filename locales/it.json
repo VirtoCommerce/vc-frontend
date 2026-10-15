@@ -1836,10 +1836,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Impossibile caricare il file con lo stesso nome.",
     "INVALID_CONTENT": "Impossibile leggere il file.",
+    "INVALID_CONTENT_TYPE": "Impossibile caricare il file.",
     "EXCEPTION": "Errore durante il caricamento del file. Riprova.",
-    "INVALID_SCOPE": "Ambito sconosciuto '{0}'.",
+    "INVALID_SCOPE": "Il caricamento dei file non è disponibile.",
     "INVALID_EXTENSION": "Formato file non consentito.",
     "INVALID_SIZE": "La dimensione del file supera il limite consentito di {0}.",
+    "INVALID_MIN_SIZE": "La dimensione del file è inferiore al minimo consentito di {0}.",
     "CANNOT_DELETE": "Errore durante l'eliminazione del file."
   }
 }
