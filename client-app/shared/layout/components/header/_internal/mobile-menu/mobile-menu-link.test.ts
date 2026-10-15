@@ -45,8 +45,7 @@ describe("MobileMenuLink highlight", () => {
     expect(isLit(wrapper)).toBe(true);
   });
 
-  // QA (VCST-5337): on one customer's activity page the mobile menu lit My activity, where the account rail lights
-  // My customers.
+  // One customer's activity page belongs to My customers: the account rail lights it, so the mobile menu must too.
   it("lights a link its rule claims, though vue-router matches another route", async () => {
     const wrapper = await mountLink(
       { title: "My customers", route: { name: "MyCustomers" }, activeWhen: isCustomerActivity },
