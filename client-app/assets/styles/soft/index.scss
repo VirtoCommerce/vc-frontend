@@ -9,6 +9,5 @@
     @include meta.load-css("tokens");
   }
 
-  @layer vc.design.app {
-  }
+  // Soft rules of the blocks go into `@layer vc.design.app` here.
 }

@@ -26,7 +26,7 @@ function parseLayerOrder(source, file) {
 // (the federation build links one ahead of index.css), and its first `@layer` would fix the order.
 const LAYER_ORDER = parseLayerOrder(readFileSync(LAYERS_FILE, "utf-8"), LAYERS_FILE);
 
-module.exports = () => ({
+const sfcLayers = () => ({
   postcssPlugin: "vc-sfc-layers",
   Once(root, { result, AtRule }) {
     const id = result.opts.from ?? "";
@@ -54,5 +54,7 @@ module.exports = () => ({
   },
 });
 
-module.exports.postcss = true;
-module.exports.parseLayerOrder = parseLayerOrder;
+sfcLayers.postcss = true;
+sfcLayers.parseLayerOrder = parseLayerOrder;
+
+module.exports = sfcLayers;

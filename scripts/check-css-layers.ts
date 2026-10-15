@@ -10,14 +10,14 @@ import type { AtRule, Root } from "postcss";
  * `_layers.scss`. Reads layer names in order of first appearance, statements and blocks alike,
  * not the statement text.
  *
- * Usage: vite-node scripts/check-css-layers.ts [dist]
+ * Usage: vite-node scripts/check-css-layers.ts
  */
 
 const LAYERS_FILE = "client-app/assets/styles/_layers.scss";
 const STYLESHEET_LINK = /<link\b[^>]*\brel=["']?stylesheet["']?[^>]*>/g;
 const HREF = /\bhref=["']?([^"'\s>]+)/;
 
-const distDir = process.argv[2] ?? "dist";
+const distDir = "dist";
 const errors: string[] = [];
 
 function parentOf(name: string): string {

@@ -142,7 +142,7 @@ yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/,
   `color` or `bg`, in any soft file. `check-soft-styles` catches the common ways a soft rule
   can reach outside its block; unusual `:has` forms (selector lists, nesting inside `:is`/`:where`)
   are not covered and are a review matter.
-- `scripts/check-css-layers.ts [dist]`: every layer name in the built CSS is declared in
+- `scripts/check-css-layers.ts` (built CSS in `dist/`): every layer name is declared in
   `_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
   declared layer, and its names follow the declared order per parent.
 
