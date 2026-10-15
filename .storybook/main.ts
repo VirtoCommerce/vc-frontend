@@ -30,7 +30,8 @@ const storybookConfig: StorybookConfig = {
           },
       resolve(__dirname, "../vite.config.ts"),
     ))!;
-    // Same rule as the storefront build: an MF host gets no `vendor` chunk (see vite.config.ts).
+    // An MF host gets no `vendor` chunk, as in vite.config.ts. See
+    // https://github.com/module-federation/vite#%EF%B8%8F-codesplitting-is-managed-by-the-plugin
     const isFederatedHost = config.define?.__MF_HOST__ === "true";
     return mergeConfig(storybookViteConfig, {
       mode: "development",

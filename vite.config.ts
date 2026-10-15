@@ -139,9 +139,9 @@ export default defineConfig(({ command, mode }): UserConfig => {
       assetsInlineLimit: (filePath) => (filePath.includes("/ui-kit/icons/") ? false : undefined),
       rollupOptions: {
         output: {
-          // No `vendor` chunk in an MF host: vendor modules import shared packages through MF
-          // `loadShare` wrappers while the packages' fallbacks and their deps sit in `vendor`, a
-          // vendor → wrapper → vendor cycle that throws "Cannot access … before initialization" at boot.
+          // In an MF host the plugin owns chunking of shared packages and their fallbacks; a catch-all
+          // `vendor` chunk would pull them in and create a load cycle. See
+          // https://github.com/module-federation/vite#%EF%B8%8F-codesplitting-is-managed-by-the-plugin
           manualChunks: isFederatedHost() ? undefined : getVendorChunk,
         },
       },
