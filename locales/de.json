@@ -1854,10 +1854,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Kann Datei mit demselben Namen nicht hochladen.",
     "INVALID_CONTENT": "Kann Datei nicht lesen.",
+    "INVALID_CONTENT_TYPE": "Kann Datei nicht hochladen.",
     "EXCEPTION": "Fehler beim Hochladen der Datei. Bitte versuchen Sie es erneut.",
-    "INVALID_SCOPE": "Unbekannter Bereich '{0}'.",
+    "INVALID_SCOPE": "Das Hochladen von Dateien ist nicht verfügbar.",
     "INVALID_EXTENSION": "Dateiformat ist nicht erlaubt.",
     "INVALID_SIZE": "Dateigröße überschreitet die erlaubte {0}.",
+    "INVALID_MIN_SIZE": "Dateigröße unterschreitet das erlaubte Minimum von {0}.",
     "CANNOT_DELETE": "Fehler beim Löschen der Datei."
   }
 }

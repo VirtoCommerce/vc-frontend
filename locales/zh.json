@@ -1854,10 +1854,12 @@
   "file_error": {
     "ALREADY_EXISTS": "无法上传具有相同名称的文件。",
     "INVALID_CONTENT": "无法读取文件。",
+    "INVALID_CONTENT_TYPE": "无法上传文件。",
     "EXCEPTION": "上传文件时出错。请再试一次。",
-    "INVALID_SCOPE": "未知的范围 '{0}'。",
+    "INVALID_SCOPE": "文件上传不可用。",
     "INVALID_EXTENSION": "不允许的文件格式。",
     "INVALID_SIZE": "文件大小超过允许的 {0}。",
+    "INVALID_MIN_SIZE": "文件大小低于允许的最小值 {0}。",
     "CANNOT_DELETE": "删除文件时出错。"
   }
 }

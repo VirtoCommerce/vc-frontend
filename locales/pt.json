@@ -1854,10 +1854,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Não é possível enviar um arquivo com o mesmo nome.",
     "INVALID_CONTENT": "Não é possível ler o arquivo.",
+    "INVALID_CONTENT_TYPE": "Não é possível enviar o arquivo.",
     "EXCEPTION": "Falha ao enviar o arquivo. Por favor, tente novamente.",
-    "INVALID_SCOPE": "Escopo desconhecido '{0}'.",
+    "INVALID_SCOPE": "O envio de arquivos não está disponível.",
     "INVALID_EXTENSION": "Formato de arquivo não é permitido.",
     "INVALID_SIZE": "O tamanho do arquivo excede o permitido {0}.",
+    "INVALID_MIN_SIZE": "O tamanho do arquivo é menor que o mínimo permitido de {0}.",
     "CANNOT_DELETE": "Falha ao excluir o arquivo."
   }
 }
