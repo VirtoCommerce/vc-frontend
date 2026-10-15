@@ -1,6 +1,6 @@
 <template>
   <ProceedTo
-    :disabled="hasOnlyUnselectedLineItems"
+    :disabled="hasOnlyUnselectedLineItems || hasIncompleteSections"
     :loading="submitting"
     test-id="create-requisition-button"
     @click="createRequisition"
@@ -14,13 +14,15 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 import { useFullCart } from "@/shared/cart";
+import { useCheckoutSections } from "@/shared/checkout";
 import { useNotifications } from "@/shared/notification";
 import { createPunchoutRequisition } from "../api/graphql";
 import { submitPunchoutOrderMessage } from "../utils/submitPunchoutOrderMessage";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 
-// Shipping and payment are the procurement system's part, so only the cart itself has to be valid
+// Only the sections punchout keeps on the checkout have to be complete, the rest is the procurement system's part
 const { hasOnlyUnselectedLineItems } = useFullCart();
+const { hasIncompleteSections } = useCheckoutSections();
 const notifications = useNotifications();
 const { t } = useI18n();
 

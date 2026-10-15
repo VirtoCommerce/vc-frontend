@@ -7,11 +7,12 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useSignMeOut } from "@/shared/account/composables/useSignMeOut";
 import { useUser } from "@/shared/account/composables/useUser";
 import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
+import { useExternalCheckout } from "@/shared/checkout/composables/useExternalCheckout";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { loadModuleLocale } from "../utils";
 import { usePunchoutSession } from "./composables/usePunchoutSession";
-import { MODULE_ID, ENABLED_KEY, PUNCHOUT_MODE_LABEL_ID } from "./constants";
+import { MODULE_ID, ENABLED_KEY, PUNCHOUT_CHECKOUT_SECTIONS, PUNCHOUT_MODE_LABEL_ID } from "./constants";
 import type { I18n } from "@/i18n";
 import type { Router, RouteRecordRaw } from "vue-router";
 
@@ -116,6 +117,7 @@ export function init(router: Router, i18n: I18n) {
       component: defineAsyncComponent(() => import("./components/create-requisition-button.vue")),
       condition: () => isPunchoutMode.value && isAuthenticated.value,
     });
+    useExternalCheckout().setSections(PUNCHOUT_CHECKOUT_SECTIONS);
 
     void loadModuleLocale(i18n, "punchout");
   }
