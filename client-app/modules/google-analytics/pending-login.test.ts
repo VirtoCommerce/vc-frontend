@@ -14,6 +14,8 @@ describe("pending login", () => {
   beforeEach(() => {
     hoisted.sendEventMock.mockReset();
     sessionStorage.clear();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-10-09T10:00:00Z"));
   });
 
   afterEach(() => {
@@ -63,17 +65,46 @@ describe("pending login", () => {
     expect(sessionStorage).toHaveLength(0);
   });
 
-  // "Reopen closed tab" restores session storage: an old sign-in must not be replayed as a new one.
-  it("is dropped when it is older than a sign-in's own reload", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-10-09T10:00:00Z"));
+  it("is sent by a page that loads two minutes after the sign-in", () => {
     deferLogin("password", { success: true });
 
-    vi.setSystemTime(new Date("2026-10-09T10:05:00Z"));
+    vi.setSystemTime(new Date("2026-10-09T10:02:00Z"));
+    sendPendingLogin(true);
+
+    expect(hoisted.sendEventMock).toHaveBeenCalledTimes(1);
+  });
+
+  // "Reopen closed tab" restores session storage: an old sign-in must not be replayed as a new one.
+  it("is dropped by a page that loads later than that", () => {
+    deferLogin("password", { success: true });
+
+    vi.setSystemTime(new Date("2026-10-09T10:02:00.001Z"));
     sendPendingLogin(true);
 
     expect(hoisted.sendEventMock).not.toHaveBeenCalled();
     expect(sessionStorage).toHaveLength(0);
+  });
+
+  // A step after the token can fail and leave the visitor on the form: no reload comes to send it.
+  it("is sent by the sign-in page itself when no reload comes within ten seconds", () => {
+    deferLogin("password", { success: true });
+
+    vi.advanceTimersByTime(9_999);
+    expect(hoisted.sendEventMock).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1);
+    expect(hoisted.sendEventMock).toHaveBeenCalledTimes(1);
+    expect(hoisted.sendEventMock).toHaveBeenCalledWith("login", { success: true, method: "password" });
+    expect(sessionStorage).toHaveLength(0);
+  });
+
+  it("is not sent again by the sign-in page once the next page has sent it", () => {
+    deferLogin("password", { success: true });
+
+    sendPendingLogin(true);
+    vi.advanceTimersByTime(10_000);
+
+    expect(hoisted.sendEventMock).toHaveBeenCalledTimes(1);
   });
 
   it("sends nothing when there is nothing pending", () => {
@@ -88,7 +119,9 @@ describe("pending login", () => {
     });
 
     deferLogin("password", { success: true });
+    vi.advanceTimersByTime(10_000);
 
+    expect(hoisted.sendEventMock).toHaveBeenCalledTimes(1);
     expect(hoisted.sendEventMock).toHaveBeenCalledWith("login", { success: true, method: "password" });
   });
 });
