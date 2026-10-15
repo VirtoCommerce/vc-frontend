@@ -18,7 +18,7 @@ and the design never changes the preset.
 `_layers.scss` is the single source of the order:
 
 ```css
-@layer theme, base, vc, components, plugins, utilities;
+@layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
 @layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset;
 @layer vc.design.kit, vc.design.app;
@@ -29,9 +29,11 @@ and the design never changes the preset.
   resolve, as in `storybook-styles/`), and the entries can never disagree.
 - Every layer name used anywhere is in this statement. `yarn check:css-layers` fails otherwise
   (it reads the app build; Storybook is not checked).
-- Top-level names are Tailwind v4's own, in its own relative order, so moving to v4 does not move
-  our layers. `plugins` is reserved for Module Federation plugin CSS: above every host component
-  layer, below the host utilities.
+- Top-level names other than `vc`, `plugins-vendor` and `plugins` are Tailwind v4's own, in its
+  own relative order, so moving to v4 does not move our layers. `plugins` is reserved for Module
+  Federation plugin CSS: above every host component layer, below the host utilities.
+  `plugins-vendor` is reserved for third-party CSS a plugin bundles: above host preflight, below
+  every host component layer and below the plugin's own `plugins` rules.
 - **The order is public API for forks: layers are only ever appended**, never reordered or renamed.
 
 > **Tailwind 3 trap.** A block named exactly `@layer base`, `components` or `utilities` is a
@@ -44,6 +46,7 @@ and the design never changes the preset.
 | --- | --- |
 | `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); soft hook tokens (`soft/_tokens.scss` on both sides). No soft colour tokens |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the focus ring), the number-input and `::-ms-reveal` rules |
+| `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
 | `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss`, `_print-kit.scss` |
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss`, `_print-app.scss` |

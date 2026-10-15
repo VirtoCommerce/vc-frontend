@@ -115,8 +115,10 @@ utilities, `_custom.scss` and its other unlayered CSS (listed in that README) co
 equals, and there the later sheet wins — and the copy of the host's utility
 classes that Tailwind generates inside your build can override the host's own on host markup if the
 presets have drifted. The host reserves a `plugins` layer for plugin CSS, between its component
-layers and its utilities; moving plugin sheets into it is VCST-5760. Until it lands, prefer
-`<style scoped>` for anything you would be unhappy to see applied outside your own markup.
+layers and its utilities, and a `plugins-vendor` layer for third-party CSS a plugin bundles,
+between host preflight and its component layers; moving plugin sheets into them is VCST-5760.
+Until it lands, prefer `<style scoped>` for anything you would be unhappy to see applied outside
+your own markup.
 See [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
 
 ---
