@@ -162,7 +162,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     // Mirrors server.proxy so a production build can be smoke-tested against the backend
     // via `yarn preview` — the canonical way to run the MF host locally. (`yarn dev` also
     // works, incl. HMR for plugins that share @apollo/client — see
-    // client-app/core/federation/HOWTO.md "The dev inner loop".)
+    // client-app/core/federation/scenarios/s2-develop-locally.md, 2.1.)
     preview: {
       port: 3000,
       cors: true,

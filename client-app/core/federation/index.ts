@@ -586,7 +586,7 @@ let initingPlugin: string | undefined;
  * before any init() is called.
  *
  * Both overloads add at root level: `addRoute(record)` and `addRoute(parentName, record)`. What it
- * still does not cover is a claim made after the phase ends — see the README's security model.
+ * still does not cover is a claim made after the phase ends — see "Security and trust" in the README.
  */
 function installRouteGuard(): () => void {
   const router: Router | undefined = globals.router;
@@ -762,8 +762,8 @@ function installManifestReuse(): void {
  * the remote manifest (plain JSON — no code execution) and checks its declared
  * `requiredHostVersion` (semver version or range) against the host's core version.
  * Skips on incompatibility, malformed requirement, manifest read failure, or
- * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are guarded
- * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
+ * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are compared
+ * separately by the SHARED-DEPENDENCY GATE at loadRemote() time, which today only logs a mismatch (VCST-6330).
  */
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {
