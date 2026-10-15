@@ -6194,6 +6194,7 @@ export type Query = {
   organization?: Maybe<Organization>;
   organizationContracts?: Maybe<ContractConnection>;
   organizationOrders?: Maybe<CustomerOrderConnection>;
+  organizationReturns?: Maybe<ReturnConnection>;
   organizations?: Maybe<OrganizationConnection>;
   page?: Maybe<PageType>;
   pageContext?: Maybe<PageContextResponseType>;
@@ -6689,6 +6690,19 @@ export type QueryOrganizationOrdersArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryOrganizationReturnsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  organizationId: Scalars['String']['input'];
+  sort?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId: Scalars['String']['input'];
 };
 
 
@@ -7616,6 +7630,10 @@ export type ReturnType = {
   cancelReason?: Maybe<Scalars['String']['output']>;
   createdDate: Scalars['DateTime']['output'];
   customerComment?: Maybe<Scalars['String']['output']>;
+  /** User who raised the return; the only one who may change it. */
+  customerId?: Maybe<Scalars['String']['output']>;
+  /** Who raised the return, as the order names them. */
+  customerName?: Maybe<Scalars['String']['output']>;
   /** Buyer's own purchase order reference. */
   customerReference?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -7625,6 +7643,8 @@ export type ReturnType = {
   number: Scalars['String']['output'];
   orderId?: Maybe<Scalars['String']['output']>;
   orderNumber?: Maybe<Scalars['String']['output']>;
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
   rejectReason?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
   /** Status as the Return.Status dictionary spells it in the requested culture. */
