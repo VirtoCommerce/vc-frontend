@@ -7,7 +7,6 @@ import { useUser } from "@/shared/account";
 export const USER_PROPERTY_NAMES = {
   contactId: "contact_id",
   organizationId: "organization_id",
-  organizationName: "organization_name",
   isSalesRep: "is_sales_rep",
   sessionKind: "session_kind",
 } as const;
@@ -44,7 +43,6 @@ export function buildUserProperties(): UserPropertiesType {
   return {
     [USER_PROPERTY_NAMES.contactId]: capped(user.value.contact?.id),
     [USER_PROPERTY_NAMES.organizationId]: capped(organization.value?.id),
-    [USER_PROPERTY_NAMES.organizationName]: capped(organization.value?.name),
     // A flag, not the role list: a joined list overflows the 36-character cap after one or two role names.
     [USER_PROPERTY_NAMES.isSalesRep]: String(user.value.permissions?.includes(SALES_REP_PERMISSION) ?? false),
     [USER_PROPERTY_NAMES.sessionKind]: sessionKind,
@@ -66,7 +64,6 @@ function anonymousProperties(): UserPropertiesType {
   return {
     [USER_PROPERTY_NAMES.contactId]: null,
     [USER_PROPERTY_NAMES.organizationId]: null,
-    [USER_PROPERTY_NAMES.organizationName]: null,
     [USER_PROPERTY_NAMES.isSalesRep]: "false",
     [USER_PROPERTY_NAMES.sessionKind]: sessionKind,
   };

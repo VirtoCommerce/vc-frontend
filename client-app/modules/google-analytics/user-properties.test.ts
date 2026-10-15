@@ -70,7 +70,6 @@ describe("buildUserProperties", () => {
     expect(properties).toEqual({
       [USER_PROPERTY_NAMES.contactId]: null,
       [USER_PROPERTY_NAMES.organizationId]: null,
-      [USER_PROPERTY_NAMES.organizationName]: null,
       [USER_PROPERTY_NAMES.isSalesRep]: "false",
       [USER_PROPERTY_NAMES.sessionKind]: "anonymous",
     });
@@ -89,7 +88,6 @@ describe("buildUserProperties", () => {
     expect(buildUserProperties()).toEqual({
       [USER_PROPERTY_NAMES.contactId]: "contact-1",
       [USER_PROPERTY_NAMES.organizationId]: "org-1",
-      [USER_PROPERTY_NAMES.organizationName]: "Acme Industrial",
       [USER_PROPERTY_NAMES.isSalesRep]: "false",
       [USER_PROPERTY_NAMES.sessionKind]: "self",
     });
@@ -109,7 +107,6 @@ describe("buildUserProperties", () => {
 
     expect(properties).toHaveProperty(USER_PROPERTY_NAMES.organizationId);
     expect(properties[USER_PROPERTY_NAMES.organizationId]).toBeNull();
-    expect(properties[USER_PROPERTY_NAMES.organizationName]).toBeNull();
     expect(properties[USER_PROPERTY_NAMES.contactId]).toBe("contact-2");
   });
 
@@ -133,10 +130,17 @@ describe("buildUserProperties", () => {
     expect(buildUserProperties()[USER_PROPERTY_NAMES.isSalesRep]).toBe("false");
   });
 
-  it("truncates a long organization name to GA4's value limit", () => {
-    signIn({ contact: { id: "contact-4", organization: { id: "org-2", name: "N".repeat(50) } } });
+  // Free text, and it can be a person's name (a sole trader's company): GA forbids personal data in a dimension.
+  it("does not send the organization name", () => {
+    signIn(CONTACT);
 
-    expect(buildUserProperties()[USER_PROPERTY_NAMES.organizationName]).toBe("N".repeat(36));
+    expect(Object.values(buildUserProperties())).not.toContain("Acme Industrial");
+  });
+
+  it("truncates a value to GA4's value limit", () => {
+    signIn({ contact: { id: "C".repeat(50) } });
+
+    expect(buildUserProperties()[USER_PROPERTY_NAMES.contactId]).toBe("C".repeat(36));
   });
 });
 

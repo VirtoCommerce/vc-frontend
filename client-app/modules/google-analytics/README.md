@@ -107,13 +107,15 @@ None of this is reportable until each name below is registered in **GA4 Admin �
 **User-scoped** dimension, against the exact same string. Collected-but-unregistered data is discarded for
 reporting purposes.
 
-| Dimension name      | User property       | Value                                              |
-| ------------------- | ------------------- | -------------------------------------------------- |
-| `contact_id`        | `contact_id`        | Contact id — the join key back to the platform     |
-| `organization_id`   | `organization_id`   | Organization id                                    |
-| `organization_name` | `organization_name` | Organization name, for readable reports            |
-| `session_kind`      | `session_kind`      | `self`, `impersonated` while an operator drives, or `anonymous` when signed out |
-| `is_sales_rep`      | `is_sales_rep`      | `true` when the account holds `sales-rep:access`   |
+| Dimension name    | User property     | Value                                                                           |
+| ----------------- | ----------------- | ------------------------------------------------------------------------------- |
+| `contact_id`      | `contact_id`      | Contact id — the join key back to the platform                                  |
+| `organization_id` | `organization_id` | Organization id                                                                 |
+| `session_kind`    | `session_kind`    | `self`, `impersonated` while an operator drives, or `anonymous` when signed out |
+| `is_sales_rep`    | `is_sales_rep`    | `true` when the account holds `sales-rep:access`                                |
+
+The organization's name is not sent: it is free text, which can be a person's name (a sole trader), and GA does not
+allow personal data in custom dimensions. Reports join on `organization_id`.
 
 > [!IMPORTANT]
 >
@@ -123,9 +125,8 @@ reporting purposes.
 > [!WARNING]
 >
 > A user-property value is capped at **36 characters** and GA truncates silently.
-> `user-properties.ts` truncates first so the stored value stays predictable — `organization_name` may be
-> cut, which is why `organization_id` is the join key and never a name. It is also why the sales-rep signal
-> is a flag: real role names run 18-20 characters, so a joined role list overflows after one or two and
+> `user-properties.ts` truncates first so the stored value stays predictable. It is also why the sales-rep
+> signal is a flag: real role names run 18-20 characters, so a joined role list overflows after one or two and
 > silently drops the rest, including the role worth reporting.
 
 `session_kind` exists because a sales rep impersonating a customer produces events under that customer's
