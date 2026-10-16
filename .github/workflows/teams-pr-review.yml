@@ -29,7 +29,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@v3.1000.5
+      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@vcst-6259-teams-comments-debounce
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
@@ -37,13 +37,18 @@ jobs:
           jira-projects: VCST
 
   ping:
-    # Re-review and review comments messages, one run per event and never queued, so none is cancelled.
+    # Re-review and review comments messages. A comment review waits 2 minutes before its message, so comment reviews get
+    # a group per PR and reviewer: a newer comment cancels the waiting run and the last one sends the message. Every other
+    # run gets its own group (run_id), so a re-review message or an approval never cancels a waiting comment message.
     if: (github.repository_id == '296335982' || vars.VC_CI == 'true') && (github.event.action == 'review_requested' || github.event_name == 'pull_request_review')
     runs-on: ubuntu-latest
+    concurrency:
+      group: teams-ping-${{ github.event.pull_request.number }}-${{ contains(fromJSON('["commented","changes_requested"]'), github.event.review.state) && github.event.review.user.login || github.run_id }}
+      cancel-in-progress: true
     permissions:
       pull-requests: read
     steps:
-      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@v3.1000.5
+      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@vcst-6259-teams-comments-debounce
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
