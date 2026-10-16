@@ -1,3 +1,5 @@
+import type { RETURN_SCOPE } from "@/modules/returns/constants";
+
 export type ReturnAttachmentFragmentType = {
   name: string;
   url: string;
@@ -17,6 +19,8 @@ export type ReturnDraftLineType = {
   attachments: ReturnAttachmentFragmentType[];
   attachmentUrls: string[];
 };
+
+export type ReturnScopeType = (typeof RETURN_SCOPE)[keyof typeof RETURN_SCOPE];
 
 export type ReturnsFilterDataType = {
   statuses: string[];

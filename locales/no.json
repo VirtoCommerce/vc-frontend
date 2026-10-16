@@ -1836,10 +1836,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Kan ikke laste opp fil med samme navn",
     "INVALID_CONTENT": "Kan ikke lese filen",
+    "INVALID_CONTENT_TYPE": "Kan ikke laste opp filen",
     "EXCEPTION": "Feil under opplasting av fil. Vennligst prøv igjen.",
-    "INVALID_SCOPE": "Ukjent omfang '{0}'.",
+    "INVALID_SCOPE": "Filopplasting er ikke tilgjengelig.",
     "INVALID_EXTENSION": "Filformatet er ikke tillatt",
     "INVALID_SIZE": "Filstørrelsen overstiger det tillatte {0}",
+    "INVALID_MIN_SIZE": "Filstørrelsen er under det tillatte minimum {0}",
     "CANNOT_DELETE": "Feil under sletting av fil"
   }
 }
