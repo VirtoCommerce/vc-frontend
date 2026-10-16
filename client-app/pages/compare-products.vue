@@ -317,10 +317,6 @@ onUnmounted(() => {
     @apply flex size-14 items-center justify-center rounded-[--vc-radius] bg-neutral-100 text-neutral-400;
   }
 
-  &__empty-heading {
-    @apply outline-none;
-  }
-
   &__empty-description {
     @apply max-w-md text-sm text-neutral-500;
   }

@@ -49,7 +49,7 @@
             {{ $t("pages.account.order_payment.back_to_order_button") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'Orders', replace: true }" class="sm:min-w-40">
+          <VcButton :to="{ name: 'Orders', replace: true }">
             {{ $t("pages.account.order_payment.orders_list_button") }}
           </VcButton>
 

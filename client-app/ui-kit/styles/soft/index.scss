@@ -1,0 +1,13 @@
+@use "@/assets/styles/layers";
+@use "sass:meta";
+
+// Soft design of ui-kit blocks, loaded only when `design` is `soft`. Screen only, so print
+// keeps the classic print rules. One file per BEM block, named after it; folders mirror
+// the component structure, like `assets/styles/dark/`.
+@media screen {
+  @layer theme {
+    @include meta.load-css("tokens");
+  }
+
+  // Soft rules of the blocks go into `@layer vc.design.kit` here.
+}

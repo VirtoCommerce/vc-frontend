@@ -383,10 +383,9 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
 const STYLE_MARKER = "data-mf-plugin-style";
 
 /**
- * No cascade fence here yet: containment needs the HOST's own CSS layered too, so the plugin layer
- * can sit below the host's utilities and above its component styles (VCST-5760). Unlayered beats
- * layered, so wrapping only the plugin's sheet would put it below all host CSS instead. The marker
- * attribute doubles as the dedupe key, so a second boot adds nothing.
+ * No cascade fence here yet: the host's CSS is layered and reserves `plugins` for this sheet
+ * (VCST-5760), but it is still linked unlayered, so it beats every layered host style except a
+ * layered `!important`. The marker attribute doubles as the dedupe key, so a second boot adds nothing.
  */
 function injectStyles(urls: string[]): void {
   const present = new Set(

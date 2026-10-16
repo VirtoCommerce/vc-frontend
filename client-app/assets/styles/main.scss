@@ -1,22 +1,36 @@
+@use "layers";
 @use "sass:meta";
-@tailwind components;
 
-@include meta.load-css("helpers");
-@include meta.load-css("deprecated");
-@include meta.load-css("colors");
-@include meta.load-css("ui-kit-tokens");
-
-:root {
-  //Recommended maximum border-radius: 10px (0.625rem)
-  --vc-radius: 0.5rem;
+@layer components.tw {
+  @tailwind components;
 }
 
-html {
-  scroll-padding-top: var(--vc-app-header-height, 0px);
+@layer theme {
+  @include meta.load-css("colors");
+  @include meta.load-css("ui-kit-tokens");
+
+  :root {
+    //Recommended maximum border-radius: 10px (0.625rem)
+    --vc-radius: 0.5rem;
+  }
 }
 
-@include meta.load-css("print");
-@include meta.load-css("dark");
+@layer vc.app {
+  @include meta.load-css("helpers");
+  @include meta.load-css("deprecated");
+
+  html {
+    scroll-padding-top: var(--vc-app-header-height, 0px);
+  }
+
+  @include meta.load-css("print-app");
+  @include meta.load-css("dark-app");
+}
+
+@layer vc.kit {
+  @include meta.load-css("print-kit");
+  @include meta.load-css("dark-kit");
+}
 
 /* Use for custom themes only */
 @include meta.load-css("custom");

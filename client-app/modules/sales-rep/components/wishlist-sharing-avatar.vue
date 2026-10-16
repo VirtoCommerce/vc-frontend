@@ -49,7 +49,9 @@ const initials = computed(() =>
   @apply flex shrink-0 items-center justify-center size-8 rounded-full bg-secondary-500 text-xs font-black text-additional-50 overflow-clip;
 
   &__image {
-    @apply size-full object-cover;
+    --vc-image-object-fit: cover;
+
+    @apply size-full;
   }
 }
 </style>

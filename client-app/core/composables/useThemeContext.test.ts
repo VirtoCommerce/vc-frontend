@@ -317,6 +317,7 @@ describe("useThemeContext - preset loading functions", () => {
   afterEach(() => {
     vi.clearAllMocks();
     globalThis.fetch = originalFetch;
+    delete document.documentElement.dataset.preset;
   });
 
   describe("getPredefinedPreset", () => {
@@ -464,6 +465,24 @@ describe("useThemeContext - preset loading functions", () => {
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
       expect(globalThis.fetch).not.toHaveBeenCalled();
+      expect(document.documentElement.dataset.preset).toBe("coffee");
+    });
+
+    it("writes the resolved file name, not the requested name, to data-preset", async () => {
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, addPresetToThemeContext } = useThemeContext();
+
+      globalThis.fetch = vi.fn();
+
+      setThemeContext({
+        id: "test-store",
+        name: "Test Store",
+        settings: {},
+      } as unknown as StoreResponseType);
+
+      await addPresetToThemeContext("Coffee");
+
+      expect(document.documentElement.dataset.preset).toBe("coffee");
     });
 
     it("falls back to current preset when requested preset is not found", async () => {
@@ -487,6 +506,7 @@ describe("useThemeContext - preset loading functions", () => {
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#default");
       expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/non-existent-preset.json");
+      expect(document.documentElement.dataset.preset).toBe("default");
     });
 
     it("falls back to default preset when both requested and current presets are not found", async () => {
