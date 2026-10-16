@@ -1,591 +1,309 @@
-# Federated Modules (Module Federation host)
+# Module Federation in the storefront
 
-This folder is the **host side** of Module Federation (MF) for the storefront — the
-code that discovers, version-checks, and loads **remote plugins** at runtime.
+**For:** anyone who touches the storefront host, or needs to know how plugins get into it.
+**Want to do something specific?** Start at the [scenarios](./scenarios/README.md) instead.
 
-A "remote plugin" is a _separately built, separately deployed_ bundle (its own repo,
-its own CI) that the storefront pulls in over HTTP at startup. It is **not** one of the
-in-repo modules in `client-app/modules/*` — those ship inside the host bundle. The point
-of MF is exactly that separation: a plugin team can build and release on their own cadence
-without touching or rebuilding this repo.
+> **TL;DR**
+>
+> - A **plugin** is a bundle built and deployed apart from the storefront. The storefront loads it at startup.
+> - It is **on in the stock theme** from release 2.60 (`module_federation_enabled: true` in the theme settings).
+>   Set it to `false` and rebuild to ship a storefront without it. Before 2.60 it was off unless the build set
+>   `APP_MODULES_FEDERATION_ENABLED`; from 2.60 that variable is ignored and the setting decides.
+> - Plugins usually ship **inside a backend module**. Installing the module installs the plugin; the storefront is
+>   not rebuilt.
+> - A plugin talks to the host only through **`@vc-frontend/core`** (the _facade_).
 
-> Jira: **VCST-5159**. Everything here hangs on one switch, `module_federation_enabled` in
-> `client-app/config/settings_data.json`, and is a **no-op when it is `false`** — the harness ships with
-> **zero built-in remotes**. The stock theme ships it **`false`**: until a plugin is actually released
-> there is nothing to load, and an MF host costs bundle size and a boot round trip either way. Set it to
-> `true`, next to the theme's other feature toggles, and rebuild to load whatever the platform advertises.
-> Only a literal `true` enables it: a missing key or any other value means off.
-
-> **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
-> [`HOWTO.md`](./HOWTO.md). This file is the reference for how the host side works.
-
----
-
-## TL;DR
-
-```bash
-# Serve the host WITH federation enabled, pointing at one or more remotes.
-# `module_federation_enabled` ships `false`, so flip it in client-app/config/settings_data.json
-# first — otherwise no MF host is built and the override below is read by nothing.
-# build + preview is the canonical run (matches CI/prod); `yarn dev` also works and adds
-# HMR (verified even for @apollo/client-sharing plugins) — use it as the iteration loop
-# (HOWTO.md "The dev inner loop"). Use `--mode=development` locally so the store resolves
-# from APP_BACKEND_URL — a prod-mode build resolves it from `localhost` and renders an
-# empty page. See HOWTO.md step 4.
-APP_MODULES_FEDERATION_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
-yarn build-only --mode=development && yarn preview
-```
-
-- `module_federation_enabled` in `client-app/config/settings_data.json` → the host switch. `vite.federation.ts`
-  reads it to decide whether the MF host plugin (and so the MF runtime, `remoteEntry-<hash>.js`, `mf-manifest.json`)
-  is built at all; `enabled.ts` reads it at runtime to decide whether to ask the platform for plugins and
-  start the loader. Anything but `true` ⇒ neither, and the stock theme ships `false`.
-- `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
-  override**. URLs must be **https** (http is allowed for localhost only). When set it replaces
-  the platform list entirely, so a local remote is never mixed with the deployed ones.
-
-Without that override the list comes from the **platform** at runtime: every installed module
-that ships `plugins/vc-frontend/` is advertised through `store.plugins(appId: "vc-frontend")`.
-Installing a module is therefore enough to add a plugin — no host rebuild.
-
-That list has its own query, issued only by a host built as a federation host. Keeping it out of
-the boot store query is deliberate: `store.plugins` needs x-api 3.1016.0, and a single unknown
-field fails the whole GraphQL document — which would take `settings.modules` down with it.
-
-Only a `script` entry is loaded; the platform advertising any other `entry.type` is skipped rather
-than fed to the MF runtime. Locally the plugin folder is proxied to `APP_BACKEND_URL`
-(`^/modules/.*/plugins/vc-frontend/` in `vite.config.ts`, dev and preview alike), so the platform
-path works in `yarn dev` and `yarn preview` — not just against a deployed host.
-
-> `settings_data.json` is imported statically, so the switch is baked into a build — turning federation
-> on or off is a rebuild; which plugins the host then loads is not.
-
-That's the whole operator surface. Everything below is _why_ and _how_.
+**How to read the claims below:** everything is implemented on `dev` unless it is marked **Planned** or **Not
+verified**.
+_Source-checked against `dev` @ `4b7a22d23` plus the plugin tooling (VCST-6320), facade 0.2.3,
+on 2026-10-14._
 
 ---
 
-## The big picture
+## 1. What a plugin is
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  STOREFRONT HOST  (this repo)                                         │
-│                                                                       │
-│   app-runner.ts ──▶ startFederatedModules()  (bootstrap.ts)           │
-│                          │                                            │
-│                          ▼                                            │
-│   prepareFederatedModules() ─▶ loadPreparedModules()  (index.ts)      │
-│                          │                                            │
-│         ┌────────────────┼────────────────┐                          │
-│         ▼                ▼                 ▼                          │
-│   resolveRemotes()  declarations      version gate ─▶ loadRemote()    │
-│   (platform list or  (when, routes,   (isCompatible)  + plugin.init() │
-│    the env override)  menu, slots)                                    │
-│                                                                       │
-│   exposes the shared facade  ▶  @vc-frontend/core  (live instance)    │
-└───────────────────────────────────────────────┬───────────────────────┘
-                                                 │  HTTP  (mf-manifest.json,
-                                                 │        remoteEntry.js, chunks)
-                    ┌────────────────────────────┴───────────────┐
-                    ▼                                             ▼
-        ┌────────────────────────┐                  ┌────────────────────────┐
-        │  REMOTE PLUGIN "news"  │                  │  REMOTE PLUGIN "foo"   │
-        │  exposes ./plugin      │                  │  exposes ./plugin      │
-        │  init() { addRoute…}   │                  │  init() { … }          │
-        │                        │                  │                        │
-        │  imports host services │                  │  imports host services │
-        │  via @vc-frontend/core │                  │  via @vc-frontend/core │
-        └────────────────────────┘                  └────────────────────────┘
+  Storefront (host)                          Plugin (its own project, its own release)
+ ┌───────────────────────────┐   at startup  ┌───────────────────────────┐
+ │ Vue, router, Apollo,      │ ◀──── HTTP ── │ init()  ← called by host  │
+ │ UI kit, user, settings    │               │ pages, menu items,        │
+ │                           │ ── facade ──▶ │ widgets                   │
+ │ hands over LIVE objects   │               │ borrows them, bundles     │
+ └───────────────────────────┘               │ none of them              │
+                                             └───────────────────────────┘
 ```
 
-**How host and remotes find each other:** the host gets a list of remotes — from the platform
-(`store.plugins(appId: "vc-frontend")`) or, when set, from `APP_MODULES_FEDERATION_REMOTES`. Either
-way it resolves to the plugin's `mf-manifest.json`, a small JSON index that tells the MF runtime
-where the plugin's code (`remoteEntry.js` + chunks) lives; platform entries point at
-`remoteEntry.js`, so the host rewrites the last segment to reach the manifest beside it. The host
-reads that manifest, checks compatibility, then loads the expose key the descriptor declares
-(`./plugin` for our scaffold, `./Module` by the platform's default) and calls its `init()`. The
-plugin, in turn, reaches back into the host **only** through the shared `@vc-frontend/core`
-facade — never by importing host source directly.
+A plugin can:
 
-**Plugin CSS is not fenced by the host yet.** A plugin's stylesheet is linked into `document.head`
-as-is, unlayered, so it hits every page. The host's own CSS sits in cascade layers
-([`assets/styles/README.md`](../../assets/styles/README.md)), so a plugin rule beats every host
-component, dark and print rule it matches, except a layered `!important`; the host's Tailwind
-utilities, `_custom.scss` and its other unlayered CSS (listed in that README) compete with it as
-equals, and there the later sheet wins — and the copy of the host's utility
-classes that Tailwind generates inside your build can override the host's own on host markup if the
-presets have drifted. The host reserves a `plugins` layer for plugin CSS, between its component
-layers and its utilities, and a `plugins-vendor` layer for third-party CSS a plugin bundles,
-between host preflight and its component layers; moving plugin sheets into them is VCST-5760.
-Until it lands, prefer `<style scoped>` for anything you would be unhappy to see applied outside
-your own markup.
-See [`2026-08-21-plugin-css-cascade-layers.md`](../specs/VCST-5760-plugin-css-cascade-layers/2026-08-21-plugin-css-cascade-layers.md).
+1. add **pages** (routes),
+2. add **menu items** (header, account menu),
+3. fill **places in host pages** (the extension registry: product card, payment step, order page…),
+4. use **host services**: the router, the Apollo client, the user, module settings, notifications, modals.
 
----
+**Plugin or in-repo module?**
 
-## The shared facade — the only bridge
+| Choose         | When                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| In-repo module | The feature ships with the storefront release. (`client-app/modules/*`, see `modules/README.md`) |
+| Plugin         | The feature ships with a **backend module**, on that module's release cadence.                   |
 
-A plugin must not `import "@/..."` from the host — those paths don't exist in the
-plugin's build. Instead, the host publishes a **curated public surface** as the package
-`@vc-frontend/core` (source: `client-app/core-api/`). This is the _single_ seam between
-host and plugin.
+## 2. Turning it on
 
-Two halves, and they are deliberately different:
+1. The stock theme ships `"module_federation_enabled": true` in `client-app/config/settings_data.json`.
+2. To build a storefront without it, set it to `false` and rebuild. That build has no federation code, so no plugin
+   loads.
+3. `sales_rep_builtin_enabled` (same file, ships `false`, temporary) runs the Sales Rep Hub built into the theme
+   instead of its plugin. It is read at build time too, so one build decides for every environment it goes to:
 
-|                              | Plugin gets…                                                                | From…                                             |
-| ---------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------- |
-| **At build/type-check time** | **Types only** — a self-contained `contract/index.d.ts`                         | `yarn build:core-types` output, committed         |
-| **At runtime**               | The host's **live singleton instance** (real router, real Apollo client, …) | MF shared scope (`shareStrategy: "loaded-first"`) |
+   | Installed SalesRep | `false` (default)                                                       | `true`                  |
+   | ------------------ | ----------------------------------------------------------------------- | ----------------------- |
+   | ships the plugin   | the plugin's hub                                                        | the hub registers twice |
+   | ships no plugin    | **no hub, and buyers lose the Sales reps page**, with no error anywhere | the built-in hub        |
 
-This is "publish from source": the plugin compiles against a frozen type contract and
-gets zero host coupling, while at runtime it shares the exact same live objects as the
-host. No second Vue, no second router, no duplicate Apollo cache.
+   **Planned:** no released SalesRep ships the plugin yet ([TODO](./TODO.md)).
 
-**Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
+> ⚠️ Only a literal `true` turns it on. A missing key, `"true"` or `1` all mean **off**.
+>
+> ⚠️ The switch is read **at build time**. Flipping it on a built storefront does nothing.
 
-- UI (35 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
-  `VcCheckboxGroup`, `VcChip`, `VcDatePicker`, `VcDialog`, `VcDialogContent`, `VcDialogFooter`,
-  `VcDialogHeader`, `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcInputDetails`, `VcLabel`,
-  `VcLayout`, `VcLink`, `VcLoaderOverlay`, `VcMarkdownRender`, `VcMenuItem`, `VcModal`,
-  `VcPagination`, `VcPopover`, `VcRating`, `VcSelect`, `VcTable`, `VcTableColumn`, `VcTabSwitch`,
-  `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton` (`VcImage` is host-bound too —
-  its thumbnail logic reads theme settings through a getter that throws until the host sets the
-  theme context, so only a filename-only `src` renders standalone); the themed `OrderStatus`
-  (host-only — its colours come from the THEME's `orders_statuses` in
-  `config/settings_data.json`, which no query serves, and it throws until the host has set the
-  theme context, so it renders inside the host and nowhere else); and `uiKit`, the plugin that
-  registers every `Vc*` globally (all `Vc*` are already registered inside the host)
-- Extension points: `useExtensionRegistry`, `EXTENSION_NAMES`
-- Declared contributions: `usePluginsStatus` and the declaration types (`IPluginContributionsType`,
-  `ConditionType`, `SlotIdType`, `SlotContextMapType`, …); the builders live in `/manifest`
-- Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`,
-  `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT`
-- Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
-  `usePageHead`, `useWishlistSharingScopes`, `useRouteQueryParam`, `useFetch` (the host's fetch
-  with its auth interceptors, so a plugin can read a protected file URL as the signed-in user)
-- Order rendering: `useOrderView` (the host's order view-model — gift vs regular items,
-  per-currency groups, BOPIS) and the components its details page composes: `OrderLineItems`,
-  `OrderSummary`, `OrderCommentSection`, `AcceptedGifts`, `AddressInfo`, `VendorName`
-  (`OrderSummary` also runs the host's `useFullCart`, `useCheckout` and `useSavedForLater` for
-  its loading state, exactly as on the host's own order page)
-- Order filtering: `getOrdersFilterExpression`, `STATUS_ORDERS_FACET_NAME`, `OrdersFilterDataType` —
-  the filter grammar a plugin listing orders has to speak
-- Files: `downloadFile`, `getFileSize`, `ContentType`
-- Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`,
-  `toStartDateFilterValue`, `toEndDateFilterValue`, `toLocalDateOnly`, `registerLocaleLoader`,
-  `ROUTES` (the host route names a plugin mounts under or links to)
-- Meta: `CORE_VERSION`, and the types `I18n`, `ILanguage`, `LocaleLoaderType`, `MenuType`,
-  `ExtendedMenuLinkType`, `IWishlistSharingScopeControlsType`,
-  `WishlistSharingScopeSavedContextType`
-- Separate subpaths: `@vc-frontend/core/federation`, `/manifest`, `/tailwind-preset`, `/testing`, `/codegen`
+With the switch off, the build contains no federation code at all and sends no plugin request.
 
-> **Rule of thumb:** keep the facade **small and additive**. The level depends on the
-> release line: on 0.x a new export ⇒ **patch** and removing/renaming ⇒ **minor**; from
-> 1.0.0 it is the ordinary minor/major. Either way, removing/renaming breaks _every_ plugin.
-> **How to add an export, and how the `.d.ts` generation works:**
-> [`client-app/core-api/README.md`](../../core-api/README.md).
+## 3. How the storefront finds plugins
 
-The shared **singletons** (what must be one-instance-only across host+plugins) live in
-`client-app/core-api/federation.mjs` — the **single source of truth for both sides**:
-`vue`, `vue-router`, `vue-i18n`, `@vueuse/core`, `@apollo/client`,
-`@vue/apollo-composable`, `graphql`, and `@vc-frontend/core` itself, each with a real
-semver `requiredVersion` range (kept consistent with the host `package.json` by a
-build-types guard) and `strictVersion: true` — a range mismatch makes MF **throw at
-`loadRemote()`** (isolated to that plugin) instead of the default console warning.
-The host build consumes `createHostShared()` (via `vite.federation.ts`); a plugin
-build calls `createRemoteShared()` from `@vc-frontend/core/federation` — its
-`import: false` stops the remote from bundling multi-MB fallback copies. Both accept
-per-package **overrides** (adjust a range, add a package, drop one with `false`), so
-the defaults never lock a consumer in. Mirrors vc-shell's `@vc-shell/mf-config`
-package.
-
-> The package root is **types-only** — there is deliberately no runtime entry. A plugin
-> build that forgot to mark it shared, or node tooling resolving it directly, fails
-> immediately at resolution time (`ERR_PACKAGE_PATH_NOT_EXPORTED`); only the type
-> contract and `./federation` are directly consumable.
-
----
-
-## The two version gates
-
-There are deliberately **two** version checks, guarding **different failure classes** —
-don't "simplify" one away:
-
-|            | 1 · CONTRACT GATE                                         | 2 · SHARED-DEPENDENCY GATE                                            |
-| ---------- | --------------------------------------------------------- | --------------------------------------------------------------------- |
-| Guards     | the **facade API contract** (`@vc-frontend/core` surface) | **each shared library** (vue, @apollo/client, …)                      |
-| Question   | "was this plugin built against a compatible host API?"    | "do the host-provided singletons satisfy the plugin's ranges?"        |
-| Input      | manifest `metaData.requiredHostVersion` vs `CORE_VERSION` | plugin's shared config (`createRemoteShared` ranges) vs host versions |
-| When       | **before any plugin code executes** (manifest JSON only)  | during `loadRemote()`, MF shared-scope negotiation                    |
-| On failure | remote **skipped** (fail closed)                          | remote **failed** (MF throws via `strictVersion`; isolated)           |
-| Code       | `version-gate.ts` (+ `isCompatible` in `index.ts`)        | `core-api/federation.mjs` (`strictVersion: true`)                     |
-
-One can pass while the other fails: a plugin can require the right facade version yet
-be built against a different Vue major (gate 1 passes, gate 2 throws), or ship the
-right Vue range but use a facade export this host doesn't have (gate 2 passes, gate 1
-skips). vc-shell has **neither** as a hard stop (its shared mismatches only warn) —
-it can afford that because everything flows through published npm semver; we can't.
-
-How can a plugin even disagree with the host about Vue, when it borrows the host's
-Vue at runtime? Because **borrowing happens at runtime only**: at build time the
-plugin compiles, type-checks and SFC-compiles against its **own** installed packages,
-and separate build cadences (the whole point of MF) mean a year-old plugin artifact
-can meet a host that upgraded a shared dependency yesterday. The gate doesn't prevent
-that skew — it makes it loud and isolated instead of silently corrupting.
-
----
-
-## The load sequence (what actually happens at boot)
+There are two sources, and **only one is used**:
 
 ```
-app-runner.ts
-  │  getStorePlugins(domain)                  // issued early, alongside the other boot queries
-  │  … other boot work …
-  │  const ready = startFederatedModules({ fetchPlugins, hasPermission, conditionContext });
-  │  await ready;                             // BEFORE app.use(router) — see "What boot waits for"
-  ▼
-startFederatedModules()            bootstrap.ts
-  │  if (!isFederationEnabled()) return;   ← module_federation_enabled: false ⇒ instant no-op
-  │  fetchPlugins()                         ← the platform's list, an ordinary boot request awaited
-  │                                           with no budget; failing ⇒ no plugins
-  │  dynamic import("./index")              ← in parallel; keeps MF runtime out of non-MF builds
-  │  BOOT_BACKSTOP_MS starts                ← once the list is in
-  ▼
-prepareFederatedModules()          index.ts — phase A, no plugin code runs
-  1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
-                                   (empty ⇒ done; a name that is not /^[A-Za-z0-9][\w.-]*$/,
-                                   a non-string / non-https / non-".json" env entry, a
-                                   platform entry that is not same-origin http(s), or a
-                                   non-string field anywhere ⇒ SKIPPED, never silently dropped)
-  1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
-                                   before any fetch — the platform serves one list to everyone.
-                                   A UX/latency filter, not a boundary (see Security model)
-  1b. declaration                  inline in the descriptor's `contributions`, or for an env remote
-                                   `contributions` in the optional plugin.json beside its manifest
-                                   (manifest budget, same origin rule). Unparseable or an unknown format
-                                   ⇒ SKIPPED
-  1c. plugin-level `when`          false ⇒ SKIPPED with the condition as the reason — nothing else
-                                   of the plugin is ever fetched
-  1d. applyContributions()         placeholder routes, menu entries, slot declarations. An entry
-                                   whose route, parent or menu id is taken is skipped alone; one
-                                   the router rejects, or a malformed one ⇒ the plugin is SKIPPED
-                                   and what it had declared is withdrawn
-  ▼
-loadPreparedModules()              index.ts — phase B, per plugin, concurrently
-  2. isCompatible(remote)          fetch manifest JSON (its run's manifest budget), evaluate
-                                   requiredHostVersion (semver version or RANGE) against
-                                   CORE_VERSION. Incompatible, malformed, unreadable or
-                                   timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes([remote])     one per plugin; no force: a known name is already a no-op.
-                                   The runtime is served the manifest step 2 read, not a second fetch
-  3a. installRouteGuard()          wraps addRoute/removeRoute while ANY plugin is still running;
-                                   a declared name is its own plugin's to replace, from init()'s
-                                   synchronous part only; a host name is not
-  4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
-                                   has one (its run's load budget each); a module without init() still
-                                   counts as loaded
-  5. settle                        status → loaded / failed / skipped; unclaimed placeholders and
-                                   dead declared menu entries are withdrawn (all of them on failure)
-  6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
+        APP_MODULES_FEDERATION_REMOTES set at build time?
+                         │
+              yes ───────┴─────── no
+               │                   │
+   use ONLY that list        ask the platform:
+   (local work, or a         store.plugins(appId: "vc-frontend")
+   plugin hosted elsewhere)  = every installed module that ships
+               │               plugins/vc-frontend/
+               └──────┬────────────┘
+                      ▼
+       one mf-manifest.json URL per plugin
 ```
 
-Evaluation order, end to end: `permission` (the platform descriptor) → plugin-level `when` →
-manifest → CONTRACT GATE → load → SHARED-DEPENDENCY GATE → `init()`. Three chances to say no
-before a byte of plugin code is fetched.
+> ⚠️ The override **replaces** the platform list. `{}` or broken JSON still replaces it, so nothing loads.
 
-### What boot waits for
+| Source   | URL rules                                                                                                              |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Override | JSON map `{ "<remote name>": "<…/mf-manifest.json>" }`; https, http only for localhost                                 |
+| Platform | The entry must be on the storefront's own origin. The host swaps `remoteEntry.js` for the `mf-manifest.json` beside it |
 
-- **Phase A, always**: the plugin list, which carries each plugin's declaration. Placeholders, declared
-  menu entries and reserved slots must exist before the router resolves the first URL.
-- **Phase B, only for plugins that set `blocksBoot`**: boot waits for their `init()`, bounded by
-  `BOOT_BACKSTOP_MS` — which stays for that reason alone.
-- **Never for any other plugin's code**, declared or not. A declared route's placeholder renders a
-  loader inside the parent's layout and guards and becomes the plugin's page when it settles. Past
-  `PLACEHOLDER_SLOW_NOTICE_MS` it says the page is slow and offers a reload while it keeps waiting; a
-  failed plugin leaves that reload offer in place, a skipped one the host's 404. An undeclared route resolves to the catch-all first and is
-  followed once it appears (below). Measured locally with a plugin whose `init()` takes 2.5s: the app mounts at ~1.8s instead
-  of ~3.3s, and the page arrives at the same URL.
+Locally, the dev and preview servers proxy `/modules/*/plugins/vc-frontend/` to `APP_BACKEND_URL`. So a
+plugin installed on a backend also works against a locally run storefront, with no override.
 
-After every plugin settled, a URL that landed on the catch-all is resolved again and followed if a
-late route now matches it — the backstop's old "late plugins may register routes after the first
-navigation" hole.
+## 4. Declare, then implement
 
-`usePluginsStatus()` (facade) exposes each plugin's `pending` / `loaded` / `failed` / `skipped` and
-the reason, reactively.
+A plugin tells the host about itself in **two layers**:
 
-In production `Logger` is a no-op for **every** level, `error` included, and
-`startFederatedModules` discards the loader's result and returns `void`. So a plugin that is
-skipped, failed or lost to the backstop produces no production log line — `usePluginsStatus()` is
-the only thing code can ask, and nothing reports it anywhere yet; the operator's only
-symptom is that the feature is absent. Reporting
-outcomes to Application Insights (`trackException` for **failed** — something broke; a
-`trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
-so it cannot drown real failures) is an open follow-up in `TODO.md`, not yet ticketed; the
-harness fails closed and ships without it. It requires bridging the AppInsights
-instance to boot-time code (the library's `useAppInsights()` is inject-based and
-unusable from a loader that runs before the plugin installs).
+| Layer         | File                      | When the host reads it            | What it is for                                     |
+| ------------- | ------------------------- | --------------------------------- | -------------------------------------------------- |
+| **Declare**   | `plugin.config.ts`        | before any plugin code is fetched | placeholders, menu entries, reserved space, `when` |
+| **Implement** | `src/index.ts` → `init()` | after the plugin code loads       | the real routes, components and logic              |
 
-Three design points worth calling out:
-
-- **Awaited before `app.use(router)` only as far as it has to be** — see "What boot waits for".
-  Only a `blocksBoot` plugin makes the budgets below blank-screen time for the whole storefront.
-  Any other plugin loads alongside the app; one that declared its routes gets placeholders, so
-  only a visitor opening its page waits — on a loader, inside the page's layout.
-- **Started only after every host plugin has installed.** The route guard covers the whole
-  load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
-  remove-then-add would be refused. Outside preview mode nothing between costs boot time. The phase
-  ends when every plugin settled, so with a non-blocking plugin the guard is still on after the app
-  mounted.
-- **Version gate runs before any remote code executes.** We fetch the manifest (plain
-  JSON, no execution), read `metaData.requiredHostVersion`, and only `loadRemote` the
-  ones this host can satisfy. Missing, unreadable, or unparseable ⇒ treated as
-  incompatible (fail closed) — a plugin must declare `requiredHostVersion` to run
-  (`createRemoteFederationOptions` makes it mandatory). A bare version like `"1.0.0"` is
-  normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
-  against the previous major. While the contract is pre-1.0 the **minor** carries that role
-  instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
-- **Every plugin step is time-budgeted, and the budget follows who waits.** A `blocksBoot`
-  plugin gets two knobs via `prepareFederatedModules(options)`: the manifest budget, and the load
-  budget that bounds load and init _each_ — so one remote may legally take manifest + 2×load,
-  `runBudgetMs`. The plugin list itself has no budget: it is a boot request like the store and page
-  context, started with them and awaited the same way. The values
-  live in those constants (`DEFAULT_MANIFEST_TIMEOUT_MS`, `DEFAULT_LOAD_TIMEOUT_MS`), not here.
-  Every other plugin loads with nobody waiting, so a slow network must not cost it: each of its steps
-  gets only `DEFAULT_DEFERRED_TIMEOUT_MS` (`deferredTimeoutMs`), a cap against a request that never
-  settles rather than a latency budget. Boot awaits this loader for `blocksBoot` plugins, so their
-  budgets are also blank-screen time: a hung remote delays first paint until it is reported
-  `failed`/`skipped` — its run budget, plus for an env remote the
-  `plugin.json` read (manifest budget) — and never longer than the backstop below.
-  `bootstrap.ts` adds a **backstop**, `BOOT_BACKSTOP_MS`, above the sum of those budgeted legs,
-  covering what the budgets do not: the loader chunk's own fetch, and an inner timeout
-  malfunctioning. **What is left above the sum is all the headroom that unbudgeted chunk fetch
-  gets** — a budget-compliant remote behind a slower one can still trip the cap, so the guarantee
-  is "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
-  is deliberately left unbudgeted: bounding it is what the backstop is _for_, and a second
-  timer would only drop every plugin sooner on a bad connection. Widen the cap, not the
-  promise, if the headroom proves tight; the backstop invariant test in `index.test.ts` holds the
-  sum. Containment
-  semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
-  called; an `init()` that already started cannot be cancelled — the plugin is reported
-  `failed`, and any late settlement (success or the real failure cause) is logged as
-  **indeterminate** so the outcome is never silently contradicted.
-
----
-
-## Writing a plugin (remote side)
-
-A plugin is its own build. It must:
-
-1. **Expose `./plugin`** resolving to a module shaped like:
-
-   ```ts
-   // the contract the host expects (see IFederatedPlugin in index.ts)
-   export function init(): void | Promise<void> {
-     // register routes, extension points, etc. — using @vc-frontend/core
-   }
-   ```
-
-2. **Depend on `@vc-frontend/core` for anything host-provided**, and reuse the host's
-   shared-singleton map instead of hand-maintaining one — a forgotten entry silently
-   ships a second Vue:
-
-   ```ts
-   // plugin vite.config.ts - one call, conventions owned by the host
-   import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
-
-   federation(
-     createRemoteFederationOptions({
-       name: "news",
-       requiredHostVersion: "^0.2.0", // CONTRACT GATE input, stamped into the manifest
-     }),
-   );
-   ```
-
-   The defaults are overridable per package — adjust a field, add a plugin-provided
-   shared lib, or drop an entry with `false`:
-
-   ```ts
-   shared: createRemoteShared({
-     vue: { requiredVersion: "^3.6.0" },            // adjust a default
-     "my-chart-lib": { requiredVersion: "^5.0.0" }, // add (plugin provides it)
-     graphql: false,                                // remove
-   }),
-   ```
-
-3. **Declare the host version it needs** in its manifest — a semver **version or range**:
-
-   ```jsonc
-   // mf-manifest.json (excerpt)
-   { "metaData": { "requiredHostVersion": "^0.2.0" } }
-   // a bare "0.2.0" means the same thing (normalized to ^0.2.0);
-   // anything semver can't parse is rejected (fail closed)
-   ```
-
-### Sketch of a plugin `init()`
-
-Conceptually identical to an in-repo module's `init()` (compare `modules/news/index.ts`),
-except imports come from the facade:
+The build turns `plugin.config.ts` into a `contributions` field in the built `plugin.json`. The platform serves
+that field in `store.plugins`.
 
 ```ts
-import { useExtensionRegistry, apolloClient } from "@vc-frontend/core";
-// note: NO `@/...` imports — those don't exist in the plugin build
+// plugin.config.ts: what the host knows up front
+export default definePluginManifest({
+  routes: [{ path: "documents", parent: "Company", name: "SalesRepDocuments" }],
+});
 
-const MyPage = () => import("./pages/MyPage.vue");
-
-export function init() {
-  // add a route, register into an extension point, wire data, …
-  useExtensionRegistry().register(/* … */);
+// src/index.ts: the real thing
+export function init(): void {
+  globals.router.addRoute("Company", { path: "documents", name: "SalesRepDocuments", component: Page });
 }
 ```
 
-Ship the build inside a backend module under `plugins/vc-frontend/` and the platform advertises it —
-see *Environment variables* above. `APP_MODULES_FEDERATION_REMOTES` stays for a local or externally
-hosted remote.
+> ⚠️ **Register a declared route before the first `await` in `init()`.** A later call is refused, yet the plugin
+> is still reported as loaded.
+
+What a declaration buys:
+
+1. **`when` false** on the plugin: nothing of it is fetched, not even the manifest.
+2. **Routes:** a deep link shows a loader inside the parent's layout, then the page, instead of a 404.
+3. **Menu entries** render before the plugin code arrives.
+4. **Slots** (`reserve` / `block`) hold their space, so the page does not jump when the plugin lands.
+5. **`blocksBoot: true`:** the first render waits for this plugin. Use it only when something must exist before the
+   first paint.
+
+Full syntax (conditions, slot contexts, examples): [`declarations.md`](./declarations.md).
+
+## 5. What happens at startup
+
+```
+ 1. Get the list ─────── platform query (or the override). Failing ⇒ no plugins, the app still starts.
+ 2. Prepare ──────────── no plugin code yet:
+                         • permission check   (user lacks it ⇒ skipped, nothing fetched)
+                         • plugin-level when  (false ⇒ skipped, nothing fetched)
+                         • placeholders, menu entries, slots from the declarations
+ 3. Per plugin, in parallel:
+      a. fetch mf-manifest.json ─▶ GATE 1: facade version   (no ⇒ skipped)
+      b. load the code ────────── ▶ GATE 2: shared libraries (no ⇒ logged, still loads)
+      c. call init()
+ 4. Settle ───────────── each plugin: loaded / failed / skipped. Unused placeholders are removed.
+```
+
+**What the first render waits for:**
+
+1. Always: steps 1–2 (the list and the declarations).
+2. Only for plugins with `blocksBoot: true`: their `init()`, capped by `BOOT_BACKSTOP_MS`.
+3. Never for any other plugin's code. A declared route shows a loader until its plugin settles; past
+   `PLACEHOLDER_SLOW_NOTICE_MS` the loader offers a reload.
+
+**Limits to know:**
+
+1. `BOOT_BACKSTOP_MS` starts **after** step 1, not at page load.
+2. A timeout stops **waiting**. It does not cancel code that already runs, and an `init()` that started keeps
+   going.
+3. **"Loaded" does not mean "working".** A module without `init()` still counts as loaded, with a warning.
+4. An error while a plugin loads or runs `init()` never stops the storefront or other plugins. After that, its code
+   runs with the storefront's full rights ([§9](#9-security-and-trust)): a throwing router guard breaks navigation.
+
+Per-step budgets: `DEFAULT_MANIFEST_TIMEOUT_MS` and `DEFAULT_LOAD_TIMEOUT_MS` for `blocksBoot` plugins,
+`DEFAULT_DEFERRED_TIMEOUT_MS` for the rest (`index.ts`).
+
+## 6. Compatibility: two gates
+
+| Gate                     | Compares                                                        | When                              | On a mismatch                                          |
+| ------------------------ | --------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
+| **1 · Facade version**   | the plugin's `requiredHostVersion` vs the host's `CORE_VERSION` | before any plugin code is fetched | **skipped**: none of its code ran                      |
+| **2 · Shared libraries** | the plugin's ranges for Vue, Apollo… vs the host's versions     | while the code loads              | **logged only**: it still loads, on the host's version |
+
+1. Gate 1 fails closed: a missing, broken or unreadable requirement counts as "no".
+2. **Gate 2 does not stop a plugin today.** The Module Federation runtime logs
+   `Failed to bridge … shared module` and hands the plugin the host's copy anyway ([TODO](./TODO.md)). Gate 1
+   is the one that holds.
+3. A bare `"0.2.3"` means `^0.2.3`. On 0.x a new **minor** is breaking, so `^0.2.3` refuses `0.3.0`.
+4. **Neither gate proves the plugin works.** They compare version numbers, not behaviour. `requiredHostVersion` is
+   the plugin author's claim.
+
+How the facade itself is versioned and released: [`core-api/README.md`](../../core-api/README.md).
+
+## 7. The facade and shared libraries
+
+1. **Host APIs come only from `@vc-frontend/core`.** Never `@/…`: those paths do not exist in a plugin's build.
+   Importing a library itself (`vue-router`, `@vue/apollo-composable`) is fine.
+2. **At compile time** `@vc-frontend/core` gives **types only** (`core-api/contract/index.d.ts`); its subpaths
+   (`/federation`, `/manifest`, `/codegen`, `/testing`, `/tailwind-preset`) carry code for the plugin's build and tests.
+   **At runtime** the host hands over its **live objects**: one Vue, one router, one Apollo cache.
+3. The libraries that must exist once (Vue, vue-router, vue-i18n, VueUse, the Apollo client and composable,
+   GraphQL, the facade) are listed in **one place**, `MF_SHARED_RANGES` in `core-api/federation.mjs`. A plugin borrows them and never bundles a copy.
+   ⚠️ Except what its `vite.config.ts` sets to `false` in `sharedOverrides`: the scaffold does that for every group
+   not picked. Delete the line before importing that library, or the plugin bundles a copy that does not see the
+   host's (no i18n messages, no Apollo client).
+4. Any other library a plugin uses is bundled into the plugin. That is fine unless the library shares state
+   through `provide`/`inject` across the host/plugin line; then it must join the shared list first.
+
+What is exported: [`core-api/index.ts`](../../core-api/index.ts), grouped and commented; the types are in
+`core-api/contract/index.d.ts`. How to add to it: [`core-api/README.md`](../../core-api/README.md).
+
+## 8. Shipping a plugin
+
+| Way                         | How it reaches the storefront                                     | Storefront rebuild? |
+| --------------------------- | ----------------------------------------------------------------- | ------------------- |
+| **Inside a backend module** | the module carries `plugins/vc-frontend/`; the platform serves it | No                  |
+| Hosted elsewhere            | its manifest URL goes into `APP_MODULES_FEDERATION_REMOTES`       | Yes                 |
+
+The backend-module path, step by step: [scenario S1a](./scenarios/s1a-plugin-in-an-existing-module.md).
+What every environment needs (backend floors, the `/modules` route): [scenario S6](./scenarios/s6-enable-on-an-environment.md).
+
+`yarn check:plugin-module <module *.Web> [--artifact <zip>] [--env <storefront-url>]` checks the module, its
+package and an environment.
+
+## 9. Security and trust
+
+A plugin runs with the **storefront's full rights**: same origin, same session, same Apollo client. Installing a
+module that ships a plugin means letting its code into every visitor's browser.
+
+What the host enforces:
+
+1. **Fail closed.** A manifest that cannot be fetched, read or version-matched never runs.
+2. **Same origin** for platform plugins. Only the build-time override can load code from another origin, over
+   https (http only for localhost).
+3. **No route takeover.** While plugins load, a plugin cannot replace or remove a host route by name.
+4. **Safe remote names**, so one plugin cannot capture another's code request.
+
+What the host does **not** do:
+
+1. **Permissions are not a security boundary.** A plugin's `permission` only decides whether a browser loads it.
+   Its files are public by URL. **The backend must authorize every query.**
+2. **The manifest's contents are not checked.** A same-origin manifest may point its chunks anywhere.
+3. **No CSS fence yet** (**Planned**, VCST-5760). A plugin's stylesheet applies to the whole page, unlayered,
+   so it beats every layered host rule it matches except a layered `!important`
+   ([`assets/styles/README.md`](../../assets/styles/README.md)). The host reserves a `plugins` layer
+   (before its utilities) and a `plugins-vendor` layer (after its preflight) for plugin and bundled
+   third-party CSS; VCST-5760 moves plugin sheets into them. Prefer `<style scoped>`.
+4. **No integrity check** of plugin files. Deferred while plugins come from our own backend.
+
+What an environment must provide: a CSP (`'self'` covers platform plugins), and trusted hosting for anything
+loaded through the override.
+
+## 10. When it does not work
+
+Step by step, with every console message: [scenario S7](./scenarios/s7-missing-or-broken.md).
+
+> ⚠️ **The storefront logs nothing in production**, not even errors (`Logger` is a no-op there); only the browser's
+> own and the MF runtime's messages show. Diagnose with a development build or `yarn check:plugin-module`.
+
+| Symptom                                | Likely cause                                                                      | Check                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| No plugin ever loads                   | switch off, or the override is set                                                | `settings_data.json`; the build's env                                         |
+| One plugin missing on an environment   | module not installed, plugin not in the package, no `/modules` route, old backend | `check:plugin-module … --artifact` / `--env`                                  |
+| Plugin skipped                         | gate 1, its `when`, or a missing permission                                       | dev console `[MF] Skipping …` (`usePluginsStatus()` gives a plugin its state) |
+| Plugin failed                          | its `init()` threw or timed out, or a chunk failed                                | dev console `[MF] Failed to load …`                                           |
+| "Loaded" but its page is a 404         | declared route registered after an `await`                                        | move `addRoute` before the first `await` in `init()`                          |
+| Blank page in a local production build | the store resolves from `localhost`                                               | build with `--mode=development`                                               |
+
+## 11. Reference
+
+**Commands** (run in this repo):
+
+| Command                                                             | Does                                                |
+| ------------------------------------------------------------------- | --------------------------------------------------- |
+| `yarn create:plugin <name> <dir>`                                   | scaffold a standalone plugin                        |
+| `yarn create:plugin <name> --module <*.Web>`                        | scaffold a plugin inside a backend module           |
+| `yarn check:plugin-module <*.Web> [--artifact <zip>] [--env <url>]` | check a module, its package, an environment         |
+| `yarn build:core-types`                                             | regenerate the facade contract (facade maintainers) |
+| `yarn validate:core-types`                                          | fail if the committed contract is stale             |
+| `yarn core:yalc-push`                                               | push an unreleased facade to linked plugins         |
+
+**Settings:**
+
+| Setting                          | Where                                  | Read at    |
+| -------------------------------- | -------------------------------------- | ---------- |
+| `module_federation_enabled`      | `client-app/config/settings_data.json` | build time |
+| `sales_rep_builtin_enabled`      | `client-app/config/settings_data.json` | build time |
+| `APP_MODULES_FEDERATION_REMOTES` | environment                            | build time |
+
+**Files:**
+
+| File                              | Role                                                           |
+| --------------------------------- | -------------------------------------------------------------- |
+| `core/federation/bootstrap.ts`    | startup entry, the backstop                                    |
+| `core/federation/index.ts`        | the loader: discovery, gates, load, `init()`                   |
+| `core/federation/version-gate.ts` | gate 1                                                         |
+| `core/federation/contributions/`  | declarations: apply, evaluate `when`, status, placeholder page |
+| `core-api/`                       | the facade, its contract, the scaffolder and the module check  |
+| `core-api/federation.mjs`         | shared libraries and plugin build options, for both sides      |
+| `vite.federation.ts`              | the host's federation build                                    |
+
+**Glossary:**
+
+- **Host:** this storefront.
+- **Plugin / remote:** a separately built bundle the host loads.
+- **Facade:** `@vc-frontend/core`, the only API a plugin may use.
+- **Contract:** the facade's types, `core-api/contract/index.d.ts`.
+- **`mf-manifest.json`:** the plugin's build index; carries `requiredHostVersion`.
+- **`plugin.json`:** the plugin's descriptor for the platform: id, expose key, `contributions`.
+- **Contributions:** the declarations from `plugin.config.ts`.
+- **Extension point / slot:** a place in a host page a plugin can fill.
 
 ---
 
-## Files in this folder
-
-| File              | Role                                                                                                                                                                            |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bootstrap.ts`    | App-runner entry. Switch check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
-| `enabled.ts`      | `isFederationEnabled()`: the theme's `module_federation_enabled`, through `switch.ts` (the predicate `vite.federation.ts` uses too). Shared by `bootstrap.ts` and `app-runner`'s plugin-list query. |
-| `index.ts`        | The loader: phase A (resolve+validate remotes → permission → declarations) and phase B (version gate → `registerRemotes` → `loadRemote`/`init`, time-budgeted → report). Contains the `IFederatedPlugin` contract. |
-| `version-gate.ts` | The CONTRACT GATE: fail-closed semver check of `requiredHostVersion` (version or range) against the facade version.                                                             |
-| `contributions/`  | Declared contributions: `declare.ts` applies and withdraws them, `evaluate.ts` decides `when`, `status.ts` backs `usePluginsStatus()`, `plugin-route-placeholder.vue` is the loader a declared route shows. |
-| `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
-
-**Related files outside this folder:**
-
-| File                                 | Role                                                                                                                                                                                                                                                 |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults). Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
-| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`; host entry is `remoteEntry-<hash>.js` so a CDN cannot serve a stale one), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
-| `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
-| `client-app/core-api/manifest.mjs`   | `definePluginManifest` and the condition builders a plugin's `plugin.config.ts` uses, plus `pluginContributions`, the Vite plugin that writes the declaration into the built `plugin.json`. |
-| `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it — phase A and any `blocksBoot` plugin — before `app.use(router)`.                                                                                                                                       |
-
----
-
-## Configuration
-
-| Setting                                                              | Scope                        | Meaning                                                                                                                                                                                                                                                                              |
-| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `module_federation_enabled` (`client-app/config/settings_data.json`) | build time (static import)   | The host switch. `false` ⇒ no MF host plugin in the Vite build (no MF runtime, `remoteEntry.js` or `mf-manifest.json`), no plugin-list query, no loader — a complete no-op. Missing ⇒ off too.                                                                                     |
-| `APP_MODULES_FEDERATION_REMOTES` (env)                               | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
-
----
-
-## Security model (read before enabling in production)
-
-A federated plugin executes with **full application privileges** — same origin, same
-session, same Apollo client. Installing a platform module is therefore a code-admission
-decision for the storefront. What the harness enforces today:
-
-- **https-only env remotes** (http for loopback only: `localhost` / `127.0.0.1` / `[::1]`). This
-  covers the *manifest* URL; the `remoteEntry.js` and chunk URLs that manifest declares are
-  fetched as delivered and never re-validated.
-- **Fail-closed gating** — a manifest that can't be fetched, parsed or version-matched
-  never gets its code executed.
-- **Same-origin platform entries** — a platform descriptor may only name the storefront's own
-  origin; an absolute or protocol-relative URL pointing elsewhere is skipped, entries and
-  stylesheets alike. It must also resolve to an **http(s)** URL after the rewrite to
-  `mf-manifest.json`: a `blob:` URL shares this origin and has an opaque path, which makes the
-  path rewrite a no-op, so the entry would carry no `.json` and the MF runtime would script-load
-  it as code. The env override is the only way to load cross-origin code, and it is build-time.
-  The manifest *response* is re-checked too, since `fetch` follows redirects and an entry could
-  otherwise land somewhere its source does not allow — **each source keeps its own rule**: a
-  platform response must stay same-origin, an env response must still satisfy the https/loopback
-  rule. Demanding same-origin for both would kill the env override, whose whole purpose is
-  cross-origin. What none of this bounds is the manifest's *contents*: a same-origin manifest may
-  still declare chunk URLs on another host, and the MF runtime fetches those unchecked.
-- **Remote names are validated** (`/^[A-Za-z0-9][A-Za-z0-9._-]*$/`, both discovery paths). MF
-  resolves a `loadRemote` id by PREFIX, so with remotes `a` and `a/plugin` the request meant for
-  the second matches the first and is served out of *its* bundle — one plugin's code never runs
-  while both are reported loaded. Exact-name deduplication cannot see that, in this loader or in
-  MF itself.
-- **No silent host-route takeover** — `router.addRoute` evicts whatever root-level route already
-  carries the new record's name, and vue-router's warning for it is dev-only. For the span of the
-  load-and-init phase the loader wraps the router and refuses a claim on a name the host already
-  owns, checking every name one call would claim: both `addRoute` overloads and each named entry in
-  `children`, since vue-router treats those as root adds too. `removeRoute` is wrapped in the same
-  window and refuses a host name, because remove-then-add would otherwise leave the name free by the
-  time the add is checked — a plugin may still remove routes it added itself. A declared placeholder
-  is open only to its own plugin, and only from the synchronous part of that plugin's `init()`, the
-  one span where the call can be attributed. One wrapper covers the
-  whole phase, not one per plugin: plugins init concurrently, and a per-plugin save/restore leaks one
-  plugin's wrapper onto the host router while the next runs unguarded. The wrapper cannot tell a host
-  call from a plugin's, which is why `app-runner` starts the loader only after its own route-mutating
-  installs (builder-preview does remove-then-add) — inside the window those would be refused and
-  logged against a plugin. It covers takeover, not authorization, and only inside that window — a
-  claim made from a continuation after the phase ends is outside it, and the name it is refused under
-  cannot be attributed to a single plugin. The window outlasts boot: it closes when every plugin
-  settled, so a non-blocking plugin keeps the wrapper installed after the app mounted, and the
-  backstop does not bound it either.
-- **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
-  whatever modules are installed, so a platform administrator with install rights decides which
-  plugins the storefront loads; the env override stays build-time, and the theme's
-  `module_federation_enabled` is all-or-nothing, not a pick list. It is still backend-supplied
-  data, so whoever controls the GraphQL response controls the list — bounded, since that origin
-  also serves the host bundle.
-
-- **The permission filter is not a security boundary.** It decides what a user's browser bothers
-  to load, nothing more. The MF runtime fetches a remote with an injected `<script>`, which carries
-  no credentials, so any visitor can read a plugin's code and stylesheets straight from their URLs;
-  and the plugin list itself — ids, entry paths, the permission strings — is served to anonymous
-  visitors too. Treat it as latency and clutter control. **Every plugin must have its data access
-  authorized by the backend independently**; a plugin that relies on the host skipping it for the
-  wrong user is not protected.
-
-What **you** must provide when enabling MF in an environment:
-
-- **CSP**: same-origin platform plugins fit a `self` policy — code and stylesheets alike, since both
-  arrive by URL. An externally hosted remote needs its origin in `script-src`, `connect-src` and
-  `style-src`. Without CSP, any XSS can `import()` arbitrary code anyway — CSP is what makes an
-  origin restriction mean anything.
-- **Trusted hosting** for plugin artifacts at the host bundle's trust level — including
-  `contentFiles` stylesheets, linked into `document.head` once the plugin loads, with no integrity
-  check and no cascade fence. Integrity checking was reviewed and deliberately left out while
-  plugins are served by our own backend (`TODO.md` #3).
-
-Known limitation (documented, accepted for now): the gate fetches the manifest itself,
-and the MF runtime fetches it **again** for loading — a remote redeployed between the
-two requests means the manifest that was validated is not guaranteed to be the one
-executed (TOCTOU), and remote boot pays a second round trip. Both are fixable and neither is done
-yet: the runtime's `fetch` loader hook is emitted before it fetches a manifest and takes a
-`Response` in reply (`runtime-core/.../SnapshotHandler.js`), so handing back the body the gate
-already read makes validated bytes == executed bytes **and** removes the extra request. Tracked in
-`TODO.md` #3.
-
----
-
-## Gotchas & guarantees
-
-- **One switch, shipped off.** `module_federation_enabled: false` in
-  `client-app/config/settings_data.json` ⇒ no MF host build, no plugin-list query, and the loader
-  isn't even imported — zero cost, which is what the stock theme ships. A missing key, or anything
-  but a literal `true`, is off as well. Turned on, the harness itself
-  costs **+67 KB gzip on the initial payload and +159 KB gzip across the whole build (+9 %)**,
-  measured federation on vs off at the same commit — before any plugin is installed.
-- **Isolation is total**, malformed descriptors included. Every descriptor field is read through
-  a string guard and the list itself is checked for arrayness, because the projection is a
-  hand-written structural type and nothing else guards its shape — a non-string `permission` or
-  `entry.type` used to throw out of the loader and lose every plugin instead of skipping one.
-  The loader never rejects; a failing plugin is
-  logged and reported, others still load. A hung remote is cut off by its run's budgets.
-- **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
-- **The `.d.ts` is generated and drift-guarded.** After any facade change, run
-  `yarn build:core-types` and commit `client-app/core-api/contract/index.d.ts` (zero `@/`
-  references, checked). `yarn validate:core-types` regenerates the contract and **fails if the
-  committed file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift. It
-  runs in the Core Facade Release workflow, not in `yarn validate` or any PR check, so run it by
-  hand before review (`core-api/README.md`).
-- **`CORE_VERSION` is single-sourced** from `core-api/package.json` and managed by
-  the contract build: additive facade changes auto-bump (patch on 0.x, minor from 1.0.0);
-  breaking ones require an explicit `yarn bump:core <breaking level>` (minor on 0.x, major
-  from 1.0.0) — **including a major bump of a shared singleton** (vue,
-  @apollo/client, …): plugins pin against the facade version, so a breaking shared
-  dep must surface there.
-
-See [`TODO.md`](./TODO.md) for what's intentionally deferred (a CSP at the ingress, per-plugin
-route authorization, a reference plugin in CI, etc.).
+Open work and known limits: [`TODO.md`](./TODO.md).

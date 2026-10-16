@@ -102,8 +102,8 @@ The rules, because they are not obvious:
   pending plugin holds this slot"). Never gate a decorate-capable point on it.
 - **A slot a federated plugin declared is held while that plugin loads.** `ExtensionPoint` renders a
   reserve box (`extension-point-reserve.vue`) instead of the fallback or the component, and
-  `ExtensionPointList` lists the declared name before anything is registered. See "Declaring
-  contributions" in `core/federation/HOWTO.md`.
+  `ExtensionPointList` lists the declared name before anything is registered. See
+  [`core/federation/declarations.md`](../../../../core/federation/declarations.md).
 
 > **Recommendation**
 >

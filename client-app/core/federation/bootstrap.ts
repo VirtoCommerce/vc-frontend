@@ -24,7 +24,7 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission" | 
  * over is the chunk fetch's headroom; the backstop invariant test holds the sum. Past it boot proceeds and the loader
  * finishes detached; `reResolveOnceSettled` then moves a user off a 404 onto a route that appeared.
  * Bounds the plugins that set `blocksBoot` only; boot waits for no other plugin's code.
- * Full reasoning: README, "The load sequence" -> "Every plugin step is time-budgeted".
+ * Full reasoning: README, "What happens at startup".
  */
 // Exported for the backstop invariant test only.
 export const BOOT_BACKSTOP_MS = 30_000;
