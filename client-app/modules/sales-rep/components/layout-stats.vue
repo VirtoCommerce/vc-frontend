@@ -163,6 +163,11 @@ function cardProps(id: string) {
       var(--color-neutral-100) 9px,
       var(--color-neutral-100) 18px
     );
+
+    // The zone unfades while one of its cards is keyboard-held, or that ring drops below 3:1 with it.
+    &:has([aria-pressed="true"]) {
+      @apply opacity-100;
+    }
   }
 }
 </style>

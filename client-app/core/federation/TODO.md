@@ -15,6 +15,9 @@ _Checked against `dev` on 2026-10-14._
 - [ ] **The module's own README**: a "Storefront plugin" section that links the scenarios.
 - [ ] **Delete `client-app/modules/sales-rep`** once QA signs the plugin off, with its `sales_rep_builtin_enabled`
       theme setting and its `independentModules` entry in `scripts/graphql-codegen/generator.ts`.
+- [ ] **Export `VcSortable`, `useSortableItem` and the `Sortable*` types from the facade**, from one copy, before the
+      plugin moves onto VCST-5902's layout: `useSortableItem` injects what `VcSortable` provides under a module-private
+      symbol, so a plugin bundling its own copy of either gets no drag handles.
 - [ ] **E2E smoke** in vc-testing-module: the plugin loads, a rep sees the hub menu.
 - [ ] **Backend:** any SalesRep version crashes a platform running `ASPNETCORE_ENVIRONMENT=Development`
       (`ValidateOnBuild` rejects a scoped resolver in a singleton). Every local platform hits it.
