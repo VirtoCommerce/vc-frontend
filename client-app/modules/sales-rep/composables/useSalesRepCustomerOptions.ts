@@ -6,8 +6,8 @@ import { formatCustomerLocation } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { OrganizationRowType } from "../types";
 
-// The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
-// Paging them all in waits on server-side search in `VcSelect`; VCST-5923.
+// TODO(VCST-6273): page customers through VcSelect `server-filter`; until then the picker filters client-side,
+// so a rep serving more customers than this cannot reach the overflow (warned below).
 const OPTIONS_LIMIT = 100;
 
 /** A customer the rep may pick in the sharing picker. */
@@ -20,7 +20,7 @@ export function useSalesRepCustomerOptions() {
     storeId: globals.storeId,
     first: OPTIONS_LIMIT,
     after: "0",
-    // Nothing to send: `VcSelect` filters over the items it was given and emits no search text.
+    // Filtered in the picker over the loaded options: it binds no `server-filter`, so no keyword is sent.
     keyword: "",
     sort: "name:asc",
   }));
