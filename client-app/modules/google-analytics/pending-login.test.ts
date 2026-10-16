@@ -98,6 +98,21 @@ describe("pending login", () => {
     expect(sessionStorage).toHaveLength(0);
   });
 
+  // A retry soon after a failed step: the first attempt's timer must not take the retry's login, under the signed-out
+  // identity, while the retry's reload is on the way.
+  it("waits ten seconds from the latest attempt, not the first", () => {
+    deferLogin("password", { success: true });
+    vi.advanceTimersByTime(8_000);
+    deferLogin("password", { success: true });
+
+    vi.advanceTimersByTime(2_000);
+    expect(hoisted.sendEventMock).not.toHaveBeenCalled();
+    expect(sessionStorage).toHaveLength(1);
+
+    vi.advanceTimersByTime(8_000);
+    expect(hoisted.sendEventMock).toHaveBeenCalledTimes(1);
+  });
+
   it("is not sent again by the sign-in page once the next page has sent it", () => {
     deferLogin("password", { success: true });
 

@@ -11,6 +11,10 @@ const RELOAD_WAIT_MS = 10 * 1000;
 
 type PendingLoginType = { method: string; params?: Gtag.CustomParams; savedAt: number };
 
+// One wait, for the latest attempt: a retry restarts it, so an earlier attempt's timer cannot take the retry's login
+// while its reload is still on the way.
+let stalledLoginTimer: ReturnType<typeof setTimeout> | undefined;
+
 /**
  * A successful sign-in reloads the page right after reporting it, so a `login` sent now races the unload — and carries
  * the signed-out identity, because the new user's properties are applied by the next page. That page sends it; when no
@@ -27,7 +31,8 @@ export function deferLogin(method: string, params?: Gtag.CustomParams): void {
     return;
   }
 
-  setTimeout(sendStalledLogin, RELOAD_WAIT_MS);
+  clearTimeout(stalledLoginTimer);
+  stalledLoginTimer = setTimeout(sendStalledLogin, RELOAD_WAIT_MS);
 }
 
 /**
