@@ -128,7 +128,8 @@
       "errors": {
         "fix_to_continue": "修复文件上传错误以继续。",
         "has_max_file_count": "您已上传最大数量的文件。无法进行更多上传。",
-        "tried_more_than_max_file_count": "您尝试上传超过允许的最大文件数。"
+        "tried_more_than_max_file_count": "您尝试上传超过允许的最大文件数。",
+        "unavailable": "文件上传不可用。"
       }
     },
     "reach_limit": {

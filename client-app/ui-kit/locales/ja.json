@@ -128,7 +128,8 @@
       "errors": {
         "fix_to_continue": "ファイルアップロードエラーを修正して続行してください。",
         "has_max_file_count": "アップロード可能な最大数のファイルをアップロードしました。これ以上のアップロードはできません。",
-        "tried_more_than_max_file_count": "許可されている最大数を超えるファイルをアップロードしようとしました。"
+        "tried_more_than_max_file_count": "許可されている最大数を超えるファイルをアップロードしようとしました。",
+        "unavailable": "ファイルのアップロードは利用できません。"
       }
     },
     "reach_limit": {

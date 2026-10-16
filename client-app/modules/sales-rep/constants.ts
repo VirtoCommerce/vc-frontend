@@ -145,3 +145,6 @@ export const TOP_SELLERS_MAX_ROWS = 10;
 export const DOCUMENTS_DEFAULT_ROWS = 5;
 export const DOCUMENTS_MAX_ROWS = 10;
 export const MIN_ROWS = 1;
+
+/** `settings_data.json` key that runs this built-in hub. Off by default; goes away with this module. */
+export const BUILTIN_ENABLED_THEME_SETTING = "sales_rep_builtin_enabled";
