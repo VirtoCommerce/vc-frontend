@@ -3,9 +3,10 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 
 const tokenParams: { value?: Ref<URLSearchParams | undefined> } = {};
+const tokenResponse = ref<unknown>(null);
 
 function tokenRequest() {
-  return { data: ref(null), execute: vi.fn().mockResolvedValue(undefined), isFetching: ref(false) };
+  return { data: tokenResponse, execute: vi.fn().mockResolvedValue(undefined), isFetching: ref(false) };
 }
 
 vi.mock("@/core/api/common", () => ({
@@ -41,6 +42,7 @@ async function getUseAuth() {
 describe("useAuth", () => {
   afterEach(() => {
     localStorage.clear();
+    tokenResponse.value = null;
   });
 
   describe("otpSignIn", () => {
@@ -65,6 +67,60 @@ describe("useAuth", () => {
       await otpSignIn({ email: "buyer@acme.com", code: "123456", storeId: "store-1" });
 
       expect(tokenParams.value!.value!.get("organization_id")).toBe("org-b");
+    });
+  });
+
+  describe("mfaSignIn", () => {
+    it("requests a token with the mfa grant", async () => {
+      const { mfaSignIn } = await getUseAuth();
+
+      await mfaSignIn({ email: "buyer@acme.com", twoFactorToken: "token-1", code: "123456", storeId: "store-1" });
+
+      expect(Object.fromEntries(tokenParams.value!.value!)).toEqual({
+        grant_type: "mfa",
+        scope: "offline_access",
+        storeId: "store-1",
+        two_factor_token: "token-1",
+        code: "123456",
+      });
+    });
+
+    it("signs in to the organization last selected for this email", async () => {
+      localStorage.setItem("organization-id-buyer@acme.com", "org-b");
+      const { mfaSignIn } = await getUseAuth();
+
+      await mfaSignIn({ email: "buyer@acme.com", twoFactorToken: "token-1", code: "123456", storeId: "store-1" });
+
+      expect(tokenParams.value!.value!.get("organization_id")).toBe("org-b");
+    });
+  });
+
+  describe("twoFactorChallenge", () => {
+    it("returns the second factor challenge when the password sign-in requires it", async () => {
+      tokenResponse.value = {
+        errors: [{ code: "two_factor_required" }],
+        twoFactorToken: "token-1",
+        provider: "Email",
+        providers: [{ name: "Email", destination: "b•••r@acme.com" }],
+      };
+      const { twoFactorChallenge } = await getUseAuth();
+
+      expect(twoFactorChallenge.value).toEqual({
+        twoFactorToken: "token-1",
+        provider: "Email",
+        providers: [{ name: "Email", destination: "b•••r@acme.com" }],
+      });
+    });
+
+    it.each([
+      ["another error", { errors: [{ code: "login_failed" }], twoFactorToken: "token-1" }],
+      ["no token", { errors: [{ code: "two_factor_required" }] }],
+      ["no response", null],
+    ])("returns nothing for %s", async (_case, response) => {
+      tokenResponse.value = response;
+      const { twoFactorChallenge } = await getUseAuth();
+
+      expect(twoFactorChallenge.value).toBeUndefined();
     });
   });
 });

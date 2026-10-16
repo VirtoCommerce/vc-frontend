@@ -11,6 +11,17 @@
       {{ $t("shared.account.impersonate_form.success") }}
     </VcAlert>
 
+    <MfaVerifyForm
+      v-else-if="twoFactorChallenge"
+      :email="email"
+      :challenge="twoFactorChallenge"
+      :on-verified="onTwoFactorVerified"
+      :back-label="$t('shared.account.impersonate_form.cancel_button')"
+      :track-analytics="false"
+      @back="onCancel"
+      @failed="failTwoFactor"
+    />
+
     <form v-else class="impersonate-form__form" @submit="onSubmit">
       <VcAlert
         v-for="(message, index) in translatedErrors"
@@ -80,6 +91,7 @@ import { object, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { useImpersonate } from "@/shared/account/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
+import MfaVerifyForm from "@/shared/sign-in/components/mfa-verify-form.vue";
 
 interface IEmits {
   (event: "success"): void;
@@ -111,7 +123,8 @@ const {
 const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 
-const { impersonate, loading, step, errors, resetState } = useImpersonate();
+const { impersonate, impersonateAuthenticated, loading, step, errors, twoFactorChallenge, resetState, failTwoFactor } =
+  useImpersonate();
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
 
@@ -129,6 +142,11 @@ const onSubmit = handleSubmit(async () => {
     emit("success");
   }
 });
+
+async function onTwoFactorVerified(): Promise<void> {
+  await impersonateAuthenticated(props.targetUserId);
+  emit("success");
+}
 
 function onCancel(): void {
   emit("cancel");

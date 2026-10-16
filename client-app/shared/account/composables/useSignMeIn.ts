@@ -16,7 +16,7 @@ export function useSignMeIn() {
   const { errors: authErrors, resetErrors: resetAuthErrors } = useAuth();
   const broadcast = useBroadcast();
   const { cart } = useShortCart();
-  const { result: me, load: getMe } = useGetMeQuery();
+  const { result: me, load: loadMe, refetch: refetchMe } = useGetMeQuery();
   const { mutate: mergeCart } = useMutation(MergeCartDocument);
   const { unpinLocale, removeLocaleFromUrl } = useLanguages();
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
@@ -32,7 +32,8 @@ export function useSignMeIn() {
       removeLocaleFromUrl();
 
       // get user that will be applied after reload.
-      await getMe();
+      const firstLoad = loadMe();
+      await (firstLoad === false ? refetchMe() : firstLoad);
 
       const currencyCode = me.value?.me?.contact?.currencyCode;
 
@@ -78,7 +79,7 @@ export function useSignMeIn() {
       void broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
     },
     null,
-    { immediate: false },
+    { immediate: false, throwError: true },
   );
 
   const errors = ref<IdentityErrorType[]>();
