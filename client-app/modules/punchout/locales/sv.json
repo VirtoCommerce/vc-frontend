@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Punchout-läge"
+    "mode_label": "Punchout-läge",
+    "create_requisition": "Skapa inköpsrekvisition",
+    "errors": {
+      "create_requisition_failed": "Det gick inte att skapa inköpsrekvisitionen. Försök igen."
+    }
   }
 }

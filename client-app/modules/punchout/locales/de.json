@@ -1,5 +1,9 @@
 {
   "punchout": {
-    "mode_label": "Punchout-Modus"
+    "mode_label": "Punchout-Modus",
+    "create_requisition": "Bestellanforderung erstellen",
+    "errors": {
+      "create_requisition_failed": "Die Bestellanforderung konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
+    }
   }
 }
