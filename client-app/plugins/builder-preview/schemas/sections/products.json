@@ -1,6 +1,7 @@
 {
   "icon": "local_mall",
   "name": "Products",
+  "description": "Simple products grid — title + subtitle + query + count, basic centered grid layout without filters or view-mode controls. Use when: a lightweight 'shop now' / 'browse our collection' section pulling products by keyword. Skip when: filters and sorting are needed (use `category`), specific SKUs (use `predefined-product-list`), carousel display (use `products-carousel`), or styled with a custom widget background (use `favorite-products`). `title` and `subtitle` head the grid. `query` is the search keyword used to fetch products; `count` caps how many to show — pick a sensible 4–8 if the user did not specify.",
   "displayField": "name",
   "settings": [
     {
