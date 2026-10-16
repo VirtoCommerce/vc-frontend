@@ -114,7 +114,8 @@ function checkInstalledAgainstPin(source, name, range, consequence) {
 }
 
 // The shared-singleton ranges (federation.mjs) must stay compatible with what the
-// host actually installs — otherwise the MF runtime would reject the host's own deps.
+// host actually installs — otherwise every plugin runs on a version outside the range it was
+// built for (the MF runtime only logs that, VCST-6330).
 for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
   if (name === "@vc-frontend/core") {
     if (!satisfies(corePkg.version, range)) {
@@ -131,14 +132,14 @@ for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
   }
   // `intersects` compares two RANGES, so a pin raised above what the lockfile resolved still
   // passes it (^3.16.0 intersects a declared ^3.14.1). At runtime the host provides the
-  // INSTALLED version and strictVersion turns a miss into a thrown loadRemote() — for every
-  // plugin at once. Same check the @vc-frontend/core branch above already does.
+  // INSTALLED version, and every plugin built against the range gets it: the MF runtime only logs
+  // the miss (VCST-6330). Same check the @vc-frontend/core branch above already does.
   checkInstalledAgainstPin(
     "federation.mjs",
     name,
     range,
-    "the host provides that copy to plugins as the MF singleton, and strictVersion makes every " +
-      "plugin built against this range fail to load. Update the pin in federation.mjs (or the host dependency).",
+    "the host provides that copy to plugins as the MF singleton, so every plugin built against this range " +
+      "runs on a version it was not built for. Update the pin in federation.mjs (or the host dependency).",
   );
 }
 // Where the host declares a type-peer too, the pinned range must not drift from it.
@@ -457,6 +458,45 @@ function localNamesByExport(source) {
   return locals;
 }
 
+/** Value names one top-level statement exports; none for a type-only export or an interface/type alias. */
+function valueNamesOf(statement, fileName) {
+  if (ts.isExportDeclaration(statement)) {
+    if (!statement.exportClause) {
+      fail(`${fileName} has an \`export *\`; its value exports cannot be checked against the contract.`);
+    }
+    if (statement.isTypeOnly || !ts.isNamedExports(statement.exportClause)) {
+      return [];
+    }
+    return statement.exportClause.elements.filter((element) => !element.isTypeOnly).map((e) => e.name.text);
+  }
+  if (!statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
+    return [];
+  }
+  if (ts.isVariableStatement(statement)) {
+    return statement.declarationList.declarations.map((declaration) => declaration.name.getText());
+  }
+  const isType = ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement);
+  return !isType && statement.name ? [statement.name.text] : [];
+}
+
+/** Names `source` exports as values — what a plugin's `import { X }` finds at runtime, or what a contract promises it will. */
+function valueExportsOf(fileName, source) {
+  const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  return new Set(file.statements.flatMap((statement) => valueNamesOf(statement, fileName)));
+}
+
+// Guard: rollup-plugin-dts lists an enum or class re-exported with `export type` among the contract's
+// values, so a plugin type-checks `import { X }` and reads `undefined` at runtime.
+const facadeValues = valueExportsOf(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"));
+const contractValues = valueExportsOf("contract.d.ts", code);
+const typeOnlyValues = [...contractValues].filter((name) => !facadeValues.has(name));
+if (typeOnlyValues.length) {
+  fail(
+    `the contract exports ${typeOnlyValues.join(", ")} as a value, but core-api/index.ts exports it type-only — ` +
+      "a plugin importing it gets undefined at runtime. Drop the `type` modifier from its re-export.",
+  );
+}
+
 const globalComponents = [...uiKitComponentExports()].sort(byCodepoint);
 const localNames = localNamesByExport(code);
 const unrolled = globalComponents.filter((name) => !localNames.has(name));
@@ -520,6 +560,117 @@ code +=
   ].join("\n");
 step(`declared ${Object.keys(GLOBAL_DIRECTIVES).length} global directive(s).`);
 
+// 2a4 ── declare the host's global properties ────────────────────────────────
+// A plugin renders inside the host's app instance, so its templates see everything the host puts on
+// `app.config.globalProperties` — `$cfg` is the only way a plugin reads the theme's settings. Each
+// property is copied from the host's augmentation in client-app/vue.d.ts, its `@/…` names swapped for
+// the contract's local ones, so the two cannot drift.
+step("declaring the host's global properties…");
+
+const HOST_GLOBAL_PROPERTIES_DTS = resolve(REPO_ROOT, "client-app/vue.d.ts");
+const hostGlobalsSource = ts.createSourceFile(
+  HOST_GLOBAL_PROPERTIES_DTS,
+  readFileSync(HOST_GLOBAL_PROPERTIES_DTS, "utf8"),
+  ts.ScriptTarget.Latest,
+  true,
+);
+// vue-i18n declares these on the same interface, and a second declaration of another type is TS2717.
+// Its `$d(value)` / `$d(value, options)` take no ISO string where the host's do; pass a `Date` there.
+const VUE_I18N_PROPERTIES = new Set(["$t", "$d", "$n"]);
+
+/** Imported name → its module specifier. */
+const hostImports = new Map();
+const hostGlobalProperties = [];
+(function collect(node) {
+  if (ts.isImportDeclaration(node)) {
+    for (const element of node.importClause?.namedBindings?.elements ?? []) {
+      hostImports.set(element.name.text, node.moduleSpecifier.text);
+    }
+  }
+  if (ts.isInterfaceDeclaration(node) && node.name.text === "ComponentCustomProperties") {
+    for (const member of node.members) {
+      if (!ts.isPropertySignature(member) || !member.type) {
+        fail(`client-app/vue.d.ts: ComponentCustomProperties member "${member.getText()}" is not a typed property.`);
+      }
+      if (!VUE_I18N_PROPERTIES.has(member.name.text)) {
+        hostGlobalProperties.push(member);
+      }
+    }
+  }
+  ts.forEachChild(node, collect);
+})(hostGlobalsSource);
+if (!hostGlobalProperties.length) {
+  fail("found no ComponentCustomProperties members in client-app/vue.d.ts.");
+}
+
+const propertyLocalName = (name) => {
+  const local = localNames.get(name);
+  if (!local) {
+    fail(`client-app/vue.d.ts types a global property with ${name}, which the facade does not export.`);
+  }
+  return local;
+};
+// A name imported from `@/…` becomes the facade's local name; one from a package becomes `import("pkg").Name`,
+// since a bare name could bind to a facade export of the same name (vue-i18n's `I18n` vs the host's).
+const toContractNames = (context) => {
+  const { factory } = context;
+  const rename = (name, specifier, isTypeOf, typeArguments) => {
+    if (specifier.startsWith("@/")) {
+      const local = factory.createIdentifier(propertyLocalName(name));
+      return isTypeOf ? factory.createTypeQueryNode(local) : factory.createTypeReferenceNode(local, typeArguments);
+    }
+    return factory.createImportTypeNode(
+      factory.createLiteralTypeNode(factory.createStringLiteral(specifier)),
+      undefined,
+      factory.createIdentifier(name),
+      typeArguments,
+      isTypeOf,
+    );
+  };
+  const visit = (node) => {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName) && hostImports.has(node.typeName.text)) {
+      const typeArguments = node.typeArguments?.map((arg) => ts.visitNode(arg, visit));
+      return rename(node.typeName.text, hostImports.get(node.typeName.text), false, typeArguments);
+    }
+    if (ts.isTypeQueryNode(node) && ts.isIdentifier(node.exprName) && hostImports.has(node.exprName.text)) {
+      return rename(node.exprName.text, hostImports.get(node.exprName.text), true);
+    }
+    if (
+      ts.isImportTypeNode(node) &&
+      node.argument.literal.text.startsWith("@/") &&
+      node.qualifier &&
+      ts.isIdentifier(node.qualifier)
+    ) {
+      return rename(node.qualifier.text, node.argument.literal.text, node.isTypeOf, node.typeArguments);
+    }
+    return ts.visitEachChild(node, visit, context);
+  };
+  return (node) => ts.visitNode(node, visit);
+};
+const typePrinter = ts.createPrinter({ removeComments: true });
+const contractPropertyType = (member) => {
+  const [type] = ts.transform(member.type, [toContractNames]).transformed;
+  return typePrinter
+    .printNode(ts.EmitHint.Unspecified, type, hostGlobalsSource)
+    .split("\n")
+    .map((line) => line.trim())
+    .join(" ")
+    .replaceAll("; }", " }");
+};
+code +=
+  "\n" +
+  [
+    "",
+    "// ── global properties the host sets on its app instance ──",
+    'declare module "vue" {',
+    "  export interface ComponentCustomProperties {",
+    ...hostGlobalProperties.map((member) => `    ${member.name.text}: ${contractPropertyType(member)};`),
+    "  }",
+    "}",
+    "",
+  ].join("\n");
+step(`declared ${hostGlobalProperties.length} global properties.`);
+
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(
@@ -545,7 +696,7 @@ if (unlisted.length) {
  * `files`, importing lodash-es at RUNTIME — went unchecked and the /testing subpath threw
  * `Cannot find module` for the only consumer it exists for. And peerDependencies is the only list
  * a package manager reads: MF_SHARED_RANGES and CONTRACT_TYPE_PEERS are build-time JS objects, so
- * a consumer installing the tarball by hand (a supported path — see PORT_TO_MF.md) got neither,
+ * a consumer installing the tarball by hand got neither,
  * and `skipLibCheck: true` in the scaffold's own tsconfig made the type half of that silent.
  *
  * Required vs optional follows reachability: a package the ROOT contract imports is needed by

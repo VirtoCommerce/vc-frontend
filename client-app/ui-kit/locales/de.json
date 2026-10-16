@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Beheben Sie die Fehler beim Datei-Upload, um fortzufahren.",
         "has_max_file_count": "Sie haben die maximale Anzahl an Dateien hochgeladen. Weitere Uploads sind nicht möglich.",
-        "tried_more_than_max_file_count": "Sie haben versucht, mehr als die maximal erlaubte Anzahl an Dateien hochzuladen."
+        "tried_more_than_max_file_count": "Sie haben versucht, mehr als die maximal erlaubte Anzahl an Dateien hochzuladen.",
+        "unavailable": "Das Hochladen von Dateien ist nicht verfügbar."
       }
     },
     "reach_limit": {

@@ -2,8 +2,8 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { federation } from "@module-federation/vite";
-import { createHostShared } from "./client-app/core-api/federation.mjs";
 import { isFederationSwitchOn } from "./client-app/core/federation/switch.js";
+import { createHostShared } from "./client-app/core-api/federation.mjs";
 import type { PluginOption } from "vite";
 
 /**
@@ -31,6 +31,11 @@ const themeSettings = (require("./client-app/config/settings_data.json") as { se
  */
 export function federatedAlias(rootDir: string): Record<string, string> {
   return { [FACADE_PACKAGE]: path.resolve(rootDir, "client-app/core-api/index.ts") };
+}
+
+/** Whether this build is an MF host: the theme sets `module_federation_enabled: true`. */
+export function isFederatedHost(settings: Record<string, unknown> = themeSettings): boolean {
+  return isFederationSwitchOn(settings);
 }
 
 /**

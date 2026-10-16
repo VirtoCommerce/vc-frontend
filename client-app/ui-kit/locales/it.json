@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Correggi gli errori di caricamento dei file per continuare.",
         "has_max_file_count": "Hai caricato il numero massimo di file possibile. Ulteriori caricamenti non sono possibili.",
-        "tried_more_than_max_file_count": "Hai provato a caricare più del numero massimo di file consentiti."
+        "tried_more_than_max_file_count": "Hai provato a caricare più del numero massimo di file consentiti.",
+        "unavailable": "Il caricamento dei file non è disponibile."
       }
     },
     "reach_limit": {

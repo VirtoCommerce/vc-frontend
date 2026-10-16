@@ -1836,10 +1836,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Nie można przesłać pliku o tej samej nazwie.",
     "INVALID_CONTENT": "Nie można odczytać pliku.",
+    "INVALID_CONTENT_TYPE": "Nie można przesłać pliku.",
     "EXCEPTION": "Błąd podczas przesyłania pliku. Proszę spróbować ponownie.",
-    "INVALID_SCOPE": "Nieznany zakres '{0}'.",
+    "INVALID_SCOPE": "Przesyłanie plików jest niedostępne.",
     "INVALID_EXTENSION": "Format pliku nie jest dozwolony.",
     "INVALID_SIZE": "Rozmiar pliku przekracza dozwolone {0}.",
+    "INVALID_MIN_SIZE": "Rozmiar pliku jest mniejszy niż dozwolone minimum {0}.",
     "CANNOT_DELETE": "Błąd podczas usuwania pliku."
   }
 }

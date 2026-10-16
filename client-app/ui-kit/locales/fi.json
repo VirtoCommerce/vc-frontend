@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Korjaa tiedostojen latausvirheet jatkaaksesi.",
         "has_max_file_count": "Olet ladannut enimmäismäärän tiedostoja. Lisälataukset eivät ole mahdollisia.",
-        "tried_more_than_max_file_count": "Yritit ladata enemmän tiedostoja kuin sallittu enimmäismäärä."
+        "tried_more_than_max_file_count": "Yritit ladata enemmän tiedostoja kuin sallittu enimmäismäärä.",
+        "unavailable": "Tiedostojen lataaminen ei ole käytettävissä."
       }
     },
     "reach_limit": {

@@ -19,13 +19,25 @@
       :max-file-size="maxFileSize"
       :allowed-extensions="allowedExtensions"
       :files="files"
-      :requirements="requirements"
-      :disabled="hasMaxFileCount"
+      :requirements="unavailable ? undefined : requirements"
+      :disabled="unavailable || hasMaxFileCount"
       class="vc-file-uploader__drop-container"
       @add-files="addFiles"
     />
 
     <slot name="after">
+      <VcAlert
+        v-if="unavailable"
+        data-test-id="file-uploader-unavailable"
+        class="vc-file-uploader__alert"
+        color="warning"
+        variant="soft"
+        size="sm"
+        icon
+      >
+        {{ $t("ui_kit.file_uploader.errors.unavailable") }}
+      </VcAlert>
+
       <VcAlert
         v-if="hasMaxFileCount || triedMoreThanMaxFileCount"
         class="vc-file-uploader__alert"
@@ -69,6 +81,8 @@ interface IProps {
   files: FileType[];
   removable?: boolean;
   nativeDownload?: boolean;
+  /** Uploading is not possible (e.g. the upload scope is not configured): the picker is disabled and a notice replaces the requirements. */
+  unavailable?: boolean;
 }
 
 interface IEmits {

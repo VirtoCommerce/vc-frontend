@@ -9,7 +9,9 @@
 
     "push_messages_enabled": true,
 
-    "module_federation_enabled": false,
+    "module_federation_enabled": true,
+
+    "sales_rep_builtin_enabled": false,
 
     "product_compare_enabled": true,
     "product_compare_limit": 5,

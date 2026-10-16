@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Napraw błędy przesyłania plików, aby kontynuować.",
         "has_max_file_count": "Przesłałeś maksymalną liczbę możliwych plików. Dalsze przesyłanie nie jest możliwe.",
-        "tried_more_than_max_file_count": "Próbowałeś przesłać więcej niż maksymalna liczba dozwolonych plików."
+        "tried_more_than_max_file_count": "Próbowałeś przesłać więcej niż maksymalna liczba dozwolonych plików.",
+        "unavailable": "Przesyłanie plików jest niedostępne."
       }
     },
     "reach_limit": {

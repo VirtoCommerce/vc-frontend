@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-// Imported, not global: this module's specs mount it without the ui-kit plugin (see PORT_TO_MF.md).
+// Imported, not global: this module's specs mount it without the ui-kit plugin.
 import { VcSortable } from "@/ui-kit/components";
 import { useBlockTitle } from "../composables/useBlockTitle";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
