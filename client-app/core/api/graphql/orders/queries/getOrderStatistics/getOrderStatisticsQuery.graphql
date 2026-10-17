@@ -1,0 +1,77 @@
+# The account dashboard's cards: the signed-in user's OWN orders, a scope the backend takes from the token — so the
+# operation has no user, customer or organization argument to send.
+#
+# Every slice is gated on the cards the user can see (shared/account/composables/useAccountDashboard.ts), so a
+# hidden card costs nothing: an excluded `period` is a bucket the backend never aggregates. A `comparison` reuses
+# the bucket its `current` range already selected, so it costs only its baseline. `average` rides inside its own
+# bucket and is gated for bytes. The flags are required rather than defaulted: a forgotten one is a compile error,
+# not a card quietly fetching nothing.
+query GetOrderStatistics(
+  $storeId: String
+  $currencyCode: String
+  $cultureName: String
+  $weekFrom: DateTime
+  $weekTo: DateTime
+  $prevWeekFrom: DateTime
+  $prevWeekTo: DateTime
+  $mtdFrom: DateTime
+  $mtdTo: DateTime
+  $prevFrom: DateTime
+  $prevTo: DateTime
+  $ytdFrom: DateTime
+  $ytdTo: DateTime
+  $lastYearFrom: DateTime
+  $lastYearTo: DateTime
+  $withWeek: Boolean!
+  $withMtd: Boolean!
+  $withMonthOverMonth: Boolean!
+  $withYtd: Boolean!
+  $withYearOverYear: Boolean!
+  $withAverageOrderValue: Boolean!
+) {
+  orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    currencyCode
+    week: period(from: $weekFrom, to: $weekTo) @include(if: $withWeek) {
+      count
+      total {
+        formattedAmount
+      }
+      excludedCount
+    }
+    mtd: period(from: $mtdFrom, to: $mtdTo) @include(if: $withMtd) {
+      count
+      total {
+        formattedAmount
+      }
+      excludedCount
+    }
+    ytd: period(from: $ytdFrom, to: $ytdTo) @include(if: $withYtd) {
+      count
+      total {
+        formattedAmount
+      }
+      excludedCount
+      average @include(if: $withAverageOrderValue) {
+        formattedAmount
+      }
+    }
+    # Order COUNT is what every card compares on, so its percent is the only delta selected. The week card's
+    # baseline rides on `week`, like its own bucket.
+    weekOverWeek: comparison(
+      current: { from: $weekFrom, to: $weekTo }
+      previous: { from: $prevWeekFrom, to: $prevWeekTo }
+    ) @include(if: $withWeek) {
+      countChangePercent
+    }
+    monthOverMonth: comparison(current: { from: $mtdFrom, to: $mtdTo }, previous: { from: $prevFrom, to: $prevTo })
+      @include(if: $withMonthOverMonth) {
+      countChangePercent
+    }
+    yearOverYear: comparison(
+      current: { from: $ytdFrom, to: $ytdTo }
+      previous: { from: $lastYearFrom, to: $lastYearTo }
+    ) @include(if: $withYearOverYear) {
+      countChangePercent
+    }
+  }
+}
