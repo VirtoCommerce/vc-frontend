@@ -237,6 +237,23 @@ function getUrlWithoutPossibleLocale(fullPath: string): string {
   return fullPath;
 }
 
+/**
+ * Storefront path of a permalink in the given language: the default store language has no locale prefix,
+ * other languages are prefixed with their (short when unambiguous) locale, e.g. `/nl/over-ons`.
+ */
+function getLocalizedPath(cultureName: string, permalink: string): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
+  const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
+
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
+  if (cultureName.toLowerCase() === defaultStoreCulture.value?.toLowerCase()) {
+    return normalizedPermalink;
+  }
+
+  const localePrefix = `/${tryShortLocale(cultureName)}`;
+  return normalizedPermalink === "/" ? localePrefix : `${localePrefix}${normalizedPermalink}`;
+}
+
 function pinLocale(locale: string) {
   pinnedLocale.value = locale;
 }
@@ -344,6 +361,7 @@ export function useLanguages() {
     getPossibleLocaleFromUrl,
     getUrlWithoutLocale,
     getUrlWithoutPossibleLocale,
+    getLocalizedPath,
     removeLocaleFromUrl,
     removeFacetsFromUrl,
     updateLocalizedUrl,

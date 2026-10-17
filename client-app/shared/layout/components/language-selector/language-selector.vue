@@ -68,7 +68,8 @@ const broadcast = useBroadcast();
 
 async function select(cultureName: string) {
   pinLocale(cultureName);
-  const permalink = location.pathname.slice(1);
+  // Without the current locale prefix: slug resolvers match the permalink itself (e.g. "veelgestelde-vragen", not "nl/veelgestelde-vragen").
+  const permalink = getUrlWithoutLocale(location.pathname).slice(1);
 
   if (cultureName === currentLanguage.value?.cultureName) {
     return;
