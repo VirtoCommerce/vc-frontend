@@ -23,7 +23,9 @@ export function useCheckoutSections() {
 
   const isShippingSectionVisible = computed(() => !allItemsAreDigital.value && isVisible("shipping"));
   const isPaymentSectionVisible = computed(() => isVisible("payment"));
-  const isCommentSectionVisible = computed(() => isVisible("comment"));
+  const isCommentSectionVisible = computed(
+    () => !!themeContext.value?.settings?.checkout_comment_enabled && isVisible("comment"),
+  );
 
   // A hidden section is someone else's part, so only the shown ones have to be complete
   const hasIncompleteSections = computed(

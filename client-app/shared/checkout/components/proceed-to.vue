@@ -3,7 +3,7 @@
     :data-test-id="testId"
     :to="to"
     :disabled="disabled"
-    :loading="isLoading"
+    :loading="props.loading"
     full-width
     class="mt-4 print:!hidden"
   >

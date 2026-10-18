@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
   allItemsAreDigital: { value: false },
   isValidShipment: { value: false },
   isValidPayment: { value: false },
-  themeContext: { value: { settings: { checkout_multistep_enabled: false } } },
+  themeContext: { value: { settings: { checkout_multistep_enabled: false, checkout_comment_enabled: true } } },
 }));
 
 vi.mock("@/core/composables", () => ({
@@ -32,7 +32,7 @@ describe("useCheckoutSections", () => {
     mocks.allItemsAreDigital = ref(false);
     mocks.isValidShipment = ref(false);
     mocks.isValidPayment = ref(false);
-    mocks.themeContext = ref({ settings: { checkout_multistep_enabled: false } });
+    mocks.themeContext = ref({ settings: { checkout_multistep_enabled: false, checkout_comment_enabled: true } });
   });
 
   it("shows every section and checks shipping and payment in a store checkout", () => {
@@ -46,6 +46,15 @@ describe("useCheckoutSections", () => {
     expect(sections.hasIncompleteSections.value).toBe(true);
   });
 
+  it("reports incomplete sections when only the payment is invalid", () => {
+    mocks.isValidShipment.value = true;
+
+    const sections = useCheckoutSections();
+
+    expect(sections.isPaymentSectionVisible.value).toBe(true);
+    expect(sections.hasIncompleteSections.value).toBe(true);
+  });
+
   it("hides the shipping section when all items are digital", () => {
     mocks.allItemsAreDigital.value = true;
     mocks.isValidPayment.value = true;
@@ -54,6 +63,24 @@ describe("useCheckoutSections", () => {
 
     expect(sections.isShippingSectionVisible.value).toBe(false);
     expect(sections.hasIncompleteSections.value).toBe(false);
+  });
+
+  it("hides the comment section when the comment setting is off", () => {
+    mocks.themeContext.value.settings.checkout_comment_enabled = false;
+
+    const sections = useCheckoutSections();
+
+    expect(sections.isCommentSectionVisible.value).toBe(false);
+  });
+
+  it("hides the comment section when the comment setting is off even if an external checkout keeps it", () => {
+    mocks.themeContext.value.settings.checkout_comment_enabled = false;
+    mocks.isExternalCheckout.value = true;
+    mocks.sections.value = { comment: true };
+
+    const sections = useCheckoutSections();
+
+    expect(sections.isCommentSectionVisible.value).toBe(false);
   });
 
   it("hides the sections an external checkout turns off and does not check them", () => {
@@ -79,6 +106,12 @@ describe("useCheckoutSections", () => {
 
     mocks.isValidShipment.value = true;
     expect(sections.hasIncompleteSections.value).toBe(false);
+  });
+
+  it("is single-page in a store checkout with multistep disabled", () => {
+    const { isSinglePageCheckout } = useCheckoutSections();
+
+    expect(isSinglePageCheckout.value).toBe(true);
   });
 
   it("follows the multistep setting in a store checkout", () => {

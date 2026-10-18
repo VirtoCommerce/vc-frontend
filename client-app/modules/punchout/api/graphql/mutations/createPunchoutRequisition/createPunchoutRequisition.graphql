@@ -1,4 +1,4 @@
-mutation createRequisition($command: CreatePunchoutRequisitionCommandType!) {
+mutation CreatePunchoutRequisition($command: CreatePunchoutRequisitionCommandType!) {
   createPunchoutRequisition(command: $command) {
     url
     formField

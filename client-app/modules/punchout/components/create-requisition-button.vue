@@ -1,35 +1,45 @@
 <template>
   <ProceedTo
     :disabled="hasOnlyUnselectedLineItems || hasIncompleteSections"
-    :loading="submitting"
+    :loading="isSubmitting"
     test-id="create-requisition-button"
-    @click="createRequisition"
+    @click="createAndSubmitPunchoutRequisition"
   >
     {{ $t("punchout.create_requisition") }}
   </ProceedTo>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 import { useFullCart } from "@/shared/cart";
 import { useCheckoutSections } from "@/shared/checkout";
 import { useNotifications } from "@/shared/notification";
 import { createPunchoutRequisition } from "../api/graphql";
+import { usePunchoutRequisition } from "../composables/usePunchoutRequisition";
+import {
+  isKnownRequisitionErrorCode,
+  REQUISITION_ERROR_MESSAGE_KEYS,
+  REQUISITION_FAILED_MESSAGE_KEY,
+} from "../constants";
 import { submitPunchoutOrderMessage } from "../utils/submitPunchoutOrderMessage";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 
-// Only the sections punchout keeps on the checkout have to be complete, the rest is the procurement system's part
 const { hasOnlyUnselectedLineItems } = useFullCart();
+// Only the sections punchout keeps on the checkout have to be complete, the rest is the procurement system's part
 const { hasIncompleteSections } = useCheckoutSections();
 const notifications = useNotifications();
 const { t } = useI18n();
 
-const submitting = ref(false);
+const { isSubmitting, setSubmitting } = usePunchoutRequisition();
 
-async function createRequisition() {
-  submitting.value = true;
+async function createAndSubmitPunchoutRequisition() {
+  if (isSubmitting.value) {
+    return;
+  }
+
+  setSubmitting(true);
+  let errorMessageKey: string = REQUISITION_FAILED_MESSAGE_KEY;
 
   try {
     const response = await createPunchoutRequisition();
@@ -41,16 +51,21 @@ async function createRequisition() {
       return;
     }
 
-    Logger.error("createRequisition: punchout requisition failed", errorCode);
+    if (isKnownRequisitionErrorCode(errorCode)) {
+      errorMessageKey = REQUISITION_ERROR_MESSAGE_KEYS[errorCode];
+    }
+
+    Logger.error("createAndSubmitPunchoutRequisition: punchout requisition failed", errorCode);
   } catch (e) {
-    Logger.error("createRequisition", e);
+    Logger.error("createAndSubmitPunchoutRequisition", e);
   }
 
   notifications.error({
-    text: t("punchout.errors.create_requisition_failed"),
+    text: t(errorMessageKey),
     duration: 15000,
-    single: true,
+    singleInGroup: true,
+    group: "punchout",
   });
-  submitting.value = false;
+  setSubmitting(false);
 }
 </script>

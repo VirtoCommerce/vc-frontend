@@ -114,11 +114,7 @@
 
           <BillingDetailsSection v-if="isPaymentSectionVisible" :cart="cart" />
 
-          <OrderCommentSection
-            v-if="$cfg.checkout_comment_enabled && isCommentSectionVisible"
-            v-model:comment="comment"
-            class="mt-5"
-          />
+          <OrderCommentSection v-if="isCommentSectionVisible" v-model:comment="comment" class="mt-5" />
         </template>
 
         <CartForLater
