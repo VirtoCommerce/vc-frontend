@@ -2,7 +2,11 @@ import { shallowMount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import VirtoPages from "./virto-pages.vue";
 
-const { updateLocalizedUrl, useHead } = vi.hoisted(() => ({ updateLocalizedUrl: vi.fn(), useHead: vi.fn() }));
+const { updateLocalizedUrl, useHead, themeContext } = vi.hoisted(() => ({
+  updateLocalizedUrl: vi.fn(),
+  useHead: vi.fn(),
+  themeContext: { value: { storeUrl: "" } },
+}));
 
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({
@@ -15,6 +19,24 @@ vi.mock("@/core/composables/useLanguages", () => ({
 }));
 
 vi.mock("@unhead/vue", () => ({ useHead }));
+
+vi.mock("@/core/composables/useThemeContext", () => ({ useThemeContext: () => ({ themeContext }) }));
+
+const pageDocument = {
+  id: "en",
+  source: "page-builder",
+  permalink: "/faq",
+  content: "{}",
+  alternates: [
+    { cultureName: "en-US", permalink: "/faq" },
+    { cultureName: "fr-FR", permalink: "/questions" },
+  ],
+};
+
+function getAlternateLinks() {
+  const { link } = useHead.mock.calls.at(-1)![0] as { link: () => { hreflang: string; href: string }[] };
+  return link();
+}
 
 describe("virto-pages", () => {
   it("moves the URL to the permalink of a document that is already loaded on mount", () => {
@@ -42,5 +64,18 @@ describe("virto-pages", () => {
       "fr-FR /fr/questions",
       "x-default /faq",
     ]);
+  });
+
+  it("links translations on the configured store host, not the visitor's", () => {
+    themeContext.value.storeUrl = "https://shop.example.com/";
+
+    shallowMount(VirtoPages, { props: { pageDocument } });
+
+    expect(getAlternateLinks().map((x) => new URL(x.href).origin)).toEqual([
+      "https://shop.example.com",
+      "https://shop.example.com",
+      "https://shop.example.com",
+    ]);
+    themeContext.value.storeUrl = "";
   });
 });
