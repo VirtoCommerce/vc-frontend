@@ -56,11 +56,31 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts" generic="T">
 import { useTemplateRef } from "vue";
 import VcSelectClear from "./vc-select-clear.vue";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
+defineEmits<IEmits>();
+
+defineProps<IProps<T>>();
+
+// `selected` renders only behind `hasSelection`, so its item is never undefined.
+defineSlots<{
+  selected?: (props: { item: T; error?: boolean }) => unknown;
+  placeholder?: (props: { error?: boolean }) => unknown;
+}>();
+
+const controlElement = useTemplateRef<HTMLButtonElement>("controlElement");
+
+defineExpose({
+  focus(): void {
+    controlElement.value?.focus();
+  },
+});
+</script>
+
+<script lang="ts">
 // `generic` makes the generated component type reference these interfaces, and <script setup>
 // cannot carry ES exports.
 export interface IEmits {
@@ -88,26 +108,6 @@ export interface IProps<T> {
   detailsId: string;
   activeDescendantId?: string;
 }
-</script>
-
-<script setup lang="ts" generic="T">
-defineEmits<IEmits>();
-
-defineProps<IProps<T>>();
-
-// `selected` renders only behind `hasSelection`, so its item is never undefined.
-defineSlots<{
-  selected?: (props: { item: T; error?: boolean }) => unknown;
-  placeholder?: (props: { error?: boolean }) => unknown;
-}>();
-
-const controlElement = useTemplateRef<HTMLButtonElement>("controlElement");
-
-defineExpose({
-  focus(): void {
-    controlElement.value?.focus();
-  },
-});
 </script>
 
 <style lang="scss">
