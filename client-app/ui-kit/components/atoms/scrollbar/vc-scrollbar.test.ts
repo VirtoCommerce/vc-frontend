@@ -154,7 +154,7 @@ describe("VcScrollbar", () => {
 
       expect(wrapper.emitted("reachBottom")).toHaveLength(1);
 
-      // Provoke a re-measurement (a role change is not growth); without it this passes with the latch deleted.
+      // Provoke a re-measurement (a role change is not growth); without it this passes with the `!isAtBottom` arrival check deleted.
       element.firstElementChild?.setAttribute("role", "none");
       await afterContentSettles();
 

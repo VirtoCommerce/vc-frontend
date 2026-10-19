@@ -65,7 +65,7 @@ vi.mock("../composables/useSalesRepCustomerOptions", () => ({
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
 
-/* Multiple mode carries values, never whole items: with `value-field` the real VcSelect reads and emits ids. */
+/* With `value-field` the real VcSelect reads and emits ids. */
 const VcSelect = defineComponent({
   props: {
     modelValue: { type: Array as PropType<string[]>, default: () => [] },

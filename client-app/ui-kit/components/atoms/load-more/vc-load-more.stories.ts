@@ -29,7 +29,8 @@ const meta: Meta<typeof VcLoadMore> = {
       description:
         "How many items are loaded — the loaded items, not the rendered rows. A request counts as answered once " +
         "the count grows, and a count that drops is a list rebuilt for a new search. A failed page is not " +
-        "repeated while the list rests at its end; scrolling away and back retries it, and a list too short " +
+        "repeated while the list rests unchanged at its end; scrolling away and back, a smaller count or a " +
+        "rewrite of the rows it asked from retries it (rows added after them do not), and a list too short " +
         "to scroll is retried by the consumer.",
     },
     tag: { control: "text" },
@@ -222,7 +223,7 @@ export const ShortFirstPage: StoryType = {
       },
       source: {
         code: `
-<!-- Same markup as above; only the data differs — a first page of two rows and three per page. -->
+<!-- Same markup as Paging; only the data differs — a first page of two rows and three per page. -->
 <VcScrollbar vertical :edge-threshold="50" class="h-64">
   <div v-for="item in items" :key="item">Item {{ item }}</div>
 

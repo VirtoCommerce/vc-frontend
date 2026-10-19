@@ -626,7 +626,6 @@ export const SelectAllWithTotal: StoryType = {
     placeholder: "Select buyers",
     multiple: true,
     selectAll: true,
-    autocomplete: true,
   },
   render: (args) => ({
     setup: () => {
@@ -652,6 +651,7 @@ export const SelectAllWithTotal: StoryType = {
           v-model="selected"
           :items="items"
           :total="total"
+          :selected-count="selected.length"
           @select-all="onSelectAll"
         />
 
@@ -668,8 +668,9 @@ export const SelectAllWithTotal: StoryType = {
           "consumer's cue to select the rest of the set — every id from the server — and " +
           "`selected: false` the cue to clear it. With a `query` the row acted on the matching options " +
           "only: leave the rest of the selection alone, or, with `server-filter`, add or clear the " +
-          "query's matches. A click on a row whose loaded options are all selected clears, so the row " +
-          "never gets stuck on a partial selection.",
+          "query's matches. Bind `selected-count` too: with it a mixed row selects even when every loaded " +
+          "option is already selected, so the consumer adds the rest. Without it the row cannot tell a " +
+          "fully selected page from the whole selection, shows it checked and clears it on a press.",
       },
       source: {
         code: `
@@ -689,8 +690,8 @@ function onSelectAll({ selected: all, query }: { selected: boolean; query: strin
     v-model="selected"
     :items="items"
     :total="total"
+    :selected-count="selected.length"
     multiple
-    autocomplete
     select-all
     @select-all="onSelectAll"
   />

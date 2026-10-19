@@ -56,11 +56,7 @@ type StateType = {
   emptyRow: boolean;
 };
 
-/**
- * The component under test decides nothing on its own — it reads the scroll region it sits in — so
- * every case here mounts the real VcScrollbar around it. A stubbed context would only prove that
- * the two files agree about a mock.
- */
+/** Inside a real VcScrollbar: a stubbed context would only test the mock. */
 function mountList(initial: Partial<StateType> = {}) {
   const state = reactive<StateType>({
     loading: false,

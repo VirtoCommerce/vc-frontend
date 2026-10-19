@@ -31,8 +31,9 @@ interface IProps {
   /**
    * How many items the list has loaded: a request is answered once the count grows, and a list
    * rebuilt for a new search is told by the count dropping. The loaded items, not the rendered rows,
-   * which a filter may hide. A page that fails is not asked for again while the list rests at its end;
-   * scrolling away and back retries it, and a list too short to scroll is retried by the consumer.
+   * which a filter may hide. A page that fails is not asked for again while the list rests unchanged at
+   * its end; scrolling away and back, a smaller count or a rewrite of the rows it asked from retries it
+   * (rows added after them do not), and a list too short to scroll is retried by the consumer.
    */
   itemCount: number;
   tag?: string;
@@ -133,7 +134,7 @@ watch(
 
 watch(() => scrollbar?.measuredAt.value, reconsider);
 
-// A list already at rest at its bottom on mount gets no further measurement.
+// Without this, it waits a debounce for the measurement its own insertion triggers.
 onMounted(reconsider);
 </script>
 

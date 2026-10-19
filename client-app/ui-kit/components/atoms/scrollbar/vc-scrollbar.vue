@@ -27,11 +27,11 @@ import { getColorValue } from "@/ui-kit/utilities";
 import { isCollapsedBox, vcScrollbarKey } from "./vc-scrollbar-context";
 
 interface IEmits {
-  /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
+  /** An arrival at the edge: after a scroll, resize, content change, or an axis turned back on after it left this edge; enabled axes only. Not on mount or an axis's first enabling: the region opens at this edge. */
   (event: "reachTop"): void;
   /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
   (event: "reachBottom"): void;
-  /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
+  /** An arrival at the edge: after a scroll, resize, content change, or an axis turned back on after it left this edge; enabled axes only. Not on mount or an axis's first enabling: the region opens at this edge. */
   (event: "reachLeft"): void;
   /** An arrival at the edge: after a scroll, mount, resize, content change or an axis being enabled; enabled axes only. */
   (event: "reachRight"): void;
@@ -52,7 +52,7 @@ interface IProps {
   tag?: string;
   trackColor?: string;
   thumbColor?: string;
-  /** Pixels from an edge that already count as reaching it; a gap of up to a pixel always does. */
+  /** Pixels from an edge that already count as reaching it; with 0 or more, a gap of up to a pixel always does. */
   edgeThreshold?: number;
   testId?: string;
 }
