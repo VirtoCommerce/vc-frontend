@@ -201,6 +201,56 @@ describe("useSortableList — keyboard", () => {
     expect(document.activeElement).toBe(elsewhere);
   });
 
+  it("keeps a control the keyboard moved in view: focus, then scroll, once the move has rendered", async () => {
+    const { press } = setup();
+    const control = document.createElement("button");
+    const calls: unknown[] = [];
+    control.focus = (options) => calls.push(["focus", options]);
+    control.scrollIntoView = (options) => calls.push(["scroll", options]);
+    document.body.append(control);
+
+    press(" ", "b", control);
+    press("ArrowDown", "b", control);
+    expect(calls).toEqual([]);
+    await nextTick();
+
+    expect(calls).toEqual([
+      ["focus", { preventScroll: true }],
+      ["scroll", { block: "nearest" }],
+    ]);
+  });
+
+  it("leaves focus where the owner put it during a keyboard move, and keeps a control that kept it in view", async () => {
+    const owned = document.createElement("button");
+    let takeFocus = false;
+    const { press } = setup({
+      onReorder: () => {
+        if (takeFocus) {
+          owned.focus();
+        }
+      },
+    });
+    const control = document.createElement("button");
+    const scroll = vi.fn();
+    control.scrollIntoView = scroll;
+    document.body.append(control, owned);
+    control.focus();
+
+    press(" ", "b", control);
+    press("ArrowDown", "b", control);
+    await nextTick();
+
+    expect(document.activeElement).toBe(control);
+    expect(scroll).toHaveBeenCalledTimes(1);
+
+    takeFocus = true;
+    press("ArrowDown", "b", control);
+    await nextTick();
+
+    expect(document.activeElement).toBe(owned);
+    expect(scroll).toHaveBeenCalledTimes(1);
+  });
+
   it("releases a grab without moving the item back", () => {
     const { list, press, signals, order } = setup();
 
@@ -725,6 +775,8 @@ describe("useSortableList — moving between lists by keyboard", () => {
     };
     const shown = make("shown", ["a"]);
     const parked = make("parked", ["a"]);
+    const arrived = parked.el.firstElementChild as HTMLElement;
+    arrived.scrollIntoView = vi.fn();
 
     const press = (key: string) =>
       shown.list.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
@@ -733,7 +785,8 @@ describe("useSortableList — moving between lists by keyboard", () => {
     await nextTick();
     await nextTick();
 
-    expect(document.activeElement).toBe(parked.el.firstElementChild);
+    expect(document.activeElement).toBe(arrived);
+    expect(arrived.scrollIntoView).toHaveBeenCalledWith({ block: "nearest" });
   });
 
   it("leaves focus where the owner put it after a keyboard move between lists", async () => {

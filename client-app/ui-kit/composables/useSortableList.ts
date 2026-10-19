@@ -133,14 +133,25 @@ const mountedLists = new WeakSet<RegisteredListType>();
 // SortableJS keeps one drag for the whole page, and any instance's `destroy` ends it with no `onEnd`.
 const pointerDrags = new Set<() => void>();
 
+function isFocusFree(): boolean {
+  return !document.activeElement || document.activeElement === document.body;
+}
+
 // A moved item's control unmounts here and mounts there, which drops focus to <body>; the owner has
 // applied the move by the next render, so focus follows it — unless the owner placed it already.
 function followInto(list: RegisteredListType | undefined, id: string): void {
   void nextTick(() => {
-    if (!document.activeElement || document.activeElement === document.body) {
+    if (isFocusFree()) {
       list?.focusItem(id);
     }
   });
+}
+
+// A keyboard move carries the control; the browser does not scroll after an element it already focused, nor
+// after `preventScroll`. Optional: jsdom, where consumers test their lists, has no `scrollIntoView`.
+function focusInView(target: HTMLElement | null | undefined): void {
+  target?.focus({ preventScroll: true });
+  target?.scrollIntoView?.({ block: "nearest" });
 }
 
 function warn(text: string): void {
@@ -205,12 +216,15 @@ export function useSortableList(
 
   // Vue's `insertBefore` blurs the moved node in Chrome and WebKit, and blur cancels a grab — so an
   // unguarded move snaps straight back. Ignore that self-inflicted blur until the refocus has run.
+  // Focus the owner moved elsewhere stays there, as after a move between lists.
   let refocusing = false;
 
   function refocus(target: HTMLElement | null): void {
     refocusing = true;
     void nextTick(() => {
-      target?.focus();
+      if (isFocusFree() || document.activeElement === target) {
+        focusInView(target);
+      }
       refocusing = false;
     });
   }
@@ -336,7 +350,7 @@ export function useSortableList(
       (candidate) => candidate.getAttribute(SORTABLE_ITEM_ATTRIBUTE) === id,
     );
     const target = whole ? item : item?.querySelector<HTMLElement>(HANDLE_SELECTOR);
-    target?.focus({ preventScroll: true });
+    focusInView(target);
   }
 
   function onKeydown(event: KeyboardEvent, id: string): void {
