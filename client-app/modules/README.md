@@ -19,6 +19,9 @@ The **Core** is the main application that includes the API, router, builder, and
 
 A **Module** is an additional functionality developed with minimal impact on the **Core**.
 
+A feature that should ship with its backend module rather than with the storefront can be a Module Federation
+plugin instead: see [`core/federation/README.md`](../core/federation/README.md).
+
 ### Extension points
 
 **Extension points** are belong to the **Core**. Also called **Holes** or **Sockets**

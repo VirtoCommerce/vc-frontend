@@ -246,13 +246,14 @@ module.exports = {
     },
   ],
   options: {
-    // The generated @vc-frontend/core type contract, its build/versioning scripts and
-    // the /testing entry never run in the storefront. The contract legitimately imports
-    // peer packages (vue, @apollo/client, …), the scripts import the rollup toolchain and
-    // semver, and /testing imports vue-i18n as a consumer peer — all resolved from the
-    // ROOT package.json, not the facade's, and none of it is in the app dependency graph.
+    // The generated @vc-frontend/core type contract, its build/versioning scripts, the
+    // plugin scaffolder and module check, and the /testing entry never run in the storefront.
+    // The contract legitimately imports peer packages (vue, @apollo/client, …), the scripts
+    // import the rollup toolchain and semver, and /testing imports vue-i18n as a consumer
+    // peer — all resolved from the ROOT package.json, not the facade's, and none of it is in
+    // the app dependency graph.
     exclude: {
-      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$|contract-versioning\\.mjs$|testing\\.mjs$)",
+      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$|contract-versioning\\.mjs$|create-plugin\\.mjs$|plugin-module\\.mjs$|testing\\.mjs$)",
     },
     doNotFollow: {
       path: "node_modules",

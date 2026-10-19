@@ -114,7 +114,8 @@ function checkInstalledAgainstPin(source, name, range, consequence) {
 }
 
 // The shared-singleton ranges (federation.mjs) must stay compatible with what the
-// host actually installs — otherwise the MF runtime would reject the host's own deps.
+// host actually installs — otherwise every plugin runs on a version outside the range it was
+// built for (the MF runtime only logs that, VCST-6330).
 for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
   if (name === "@vc-frontend/core") {
     if (!satisfies(corePkg.version, range)) {
@@ -131,14 +132,14 @@ for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
   }
   // `intersects` compares two RANGES, so a pin raised above what the lockfile resolved still
   // passes it (^3.16.0 intersects a declared ^3.14.1). At runtime the host provides the
-  // INSTALLED version and strictVersion turns a miss into a thrown loadRemote() — for every
-  // plugin at once. Same check the @vc-frontend/core branch above already does.
+  // INSTALLED version, and every plugin built against the range gets it: the MF runtime only logs
+  // the miss (VCST-6330). Same check the @vc-frontend/core branch above already does.
   checkInstalledAgainstPin(
     "federation.mjs",
     name,
     range,
-    "the host provides that copy to plugins as the MF singleton, and strictVersion makes every " +
-      "plugin built against this range fail to load. Update the pin in federation.mjs (or the host dependency).",
+    "the host provides that copy to plugins as the MF singleton, so every plugin built against this range " +
+      "runs on a version it was not built for. Update the pin in federation.mjs (or the host dependency).",
   );
 }
 // Where the host declares a type-peer too, the pinned range must not drift from it.
@@ -695,7 +696,7 @@ if (unlisted.length) {
  * `files`, importing lodash-es at RUNTIME — went unchecked and the /testing subpath threw
  * `Cannot find module` for the only consumer it exists for. And peerDependencies is the only list
  * a package manager reads: MF_SHARED_RANGES and CONTRACT_TYPE_PEERS are build-time JS objects, so
- * a consumer installing the tarball by hand (a supported path — see PORT_TO_MF.md) got neither,
+ * a consumer installing the tarball by hand got neither,
  * and `skipLibCheck: true` in the scaffold's own tsconfig made the type half of that silent.
  *
  * Required vs optional follows reachability: a package the ROOT contract imports is needed by
