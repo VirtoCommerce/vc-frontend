@@ -78,6 +78,20 @@ export const DescribedByExternalMessage: StoryType = {
   ],
 };
 
+export const ZeroMax: StoryType = {
+  args: {
+    max: 0,
+    value: 0,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "`max: 0` is a ceiling of 0: `+` is disabled and `aria-valuemax` is 0. For no limit, omit `max`.",
+      },
+    },
+  },
+};
+
 export const Disabled: StoryType = {
   args: {
     disabled: true,

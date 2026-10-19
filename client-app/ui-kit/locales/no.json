@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Rett opp feil ved opplasting av filer for å fortsette.",
         "has_max_file_count": "Du har lastet opp maksimum antall filer. Flere opplastinger er ikke mulig.",
-        "tried_more_than_max_file_count": "Du prøvde å laste opp flere filer enn det maksimale antallet tillatt."
+        "tried_more_than_max_file_count": "Du prøvde å laste opp flere filer enn det maksimale antallet tillatt.",
+        "unavailable": "Filopplasting er ikke tilgjengelig."
       }
     },
     "reach_limit": {

@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Åtgärda fel vid filuppladdning för att fortsätta.",
         "has_max_file_count": "Du har laddat upp maximalt antal filer. Ytterligare uppladdningar är inte möjliga.",
-        "tried_more_than_max_file_count": "Du försökte ladda upp fler filer än det maximalt tillåtna antalet."
+        "tried_more_than_max_file_count": "Du försökte ladda upp fler filer än det maximalt tillåtna antalet.",
+        "unavailable": "Filuppladdning är inte tillgänglig."
       }
     },
     "reach_limit": {

@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Corrija os erros de upload de arquivos para continuar.",
         "has_max_file_count": "Você carregou o número máximo de arquivos possível. Mais uploads não são possíveis.",
-        "tried_more_than_max_file_count": "Você tentou carregar mais do que o número máximo de arquivos permitidos."
+        "tried_more_than_max_file_count": "Você tentou carregar mais do que o número máximo de arquivos permitidos.",
+        "unavailable": "O envio de arquivos não está disponível."
       }
     },
     "reach_limit": {

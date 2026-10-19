@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Corrige los errores de carga de archivos para continuar.",
         "has_max_file_count": "Has subido el número máximo de archivos posible. No se pueden realizar más cargas.",
-        "tried_more_than_max_file_count": "Intentaste subir más del número máximo de archivos permitidos."
+        "tried_more_than_max_file_count": "Intentaste subir más del número máximo de archivos permitidos.",
+        "unavailable": "La carga de archivos no está disponible."
       }
     },
     "reach_limit": {
