@@ -25,15 +25,15 @@ export interface IUseSelectAllOptions<V> {
   selectedCount: MaybeRefOrGetter<number | undefined>;
 }
 
-/**
- * The Select all row of a multiple select: its `selected of total` counter, its checked and
- * indeterminate states, and the selection a press produces.
- */
 /** A consumer's `selected-count` that counts: a finite number. Anything else leaves the set uncounted. */
 export function isSelectedCountKnown(count: number | undefined): count is number {
   return count !== undefined && Number.isFinite(count);
 }
 
+/**
+ * The Select all row of a multiple select: its `selected of total` counter, its checked and
+ * indeterminate states, and the selection a press produces.
+ */
 export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
   // While a query narrows the list, only the matching options count: a local filter is unknown to
   // `total`, and with `serverFilter` the consumer's `total` counts the matches. A server-side query
