@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
 import SignInCodeForm from "./sign-in-code-form.vue";
@@ -37,7 +37,7 @@ const props = defineProps<IProps>();
 const { t } = useI18n();
 const { loading, verifyCode, requestCode, signInErrors, resetSignInErrors, handleError } = useOtpSignIn();
 
-const codeFormRef = ref<InstanceType<typeof SignInCodeForm>>();
+const codeFormRef = useTemplateRef<InstanceType<typeof SignInCodeForm>>("codeFormRef");
 
 async function onSubmit(code: string) {
   resetSignInErrors();
