@@ -6,6 +6,7 @@ import { createWrapperFactory } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
 import { describeScrollBox } from "@/ui-kit/test-mocks";
 import TopHeaderOrganizations from "./top-header-organizations.vue";
+import type { VueWrapper } from "@vue/test-utils";
 
 const state = await vi.hoisted(async () => {
   const { ref } = await import("vue");
@@ -45,6 +46,16 @@ vi.mock("@/shared/account", () => ({
 }));
 
 enableAutoUnmount(afterEach);
+
+const { VcLoadMore, VcMenuItem, VcScrollbar } = UIKitComponents;
+
+function isHighlighted(wrapper: VueWrapper): boolean {
+  return wrapper.findAllComponents(VcMenuItem).some((item) => item.props("highlighted"));
+}
+
+function isRinged(wrapper: VueWrapper): boolean {
+  return wrapper.findAllComponents(VcMenuItem).some((item) => item.props("highlighted") && item.props("highlightRing"));
+}
 
 const mountComponent = createWrapperFactory(mount, TopHeaderOrganizations, {
   attachTo: document.body,
@@ -93,10 +104,10 @@ describe("TopHeaderOrganizations", () => {
 
     const wrapper = mountComponent();
     const list = wrapper.get('[role="listbox"]').element;
-    const pager = wrapper.get(".vc-load-more").element;
+    const pager = wrapper.getComponent(VcLoadMore).element;
 
     expect(list.contains(pager)).toBe(false);
-    expect(wrapper.get(".vc-scrollbar").element.contains(pager)).toBe(true);
+    expect(wrapper.getComponent(VcScrollbar).element.contains(pager)).toBe(true);
 
     state.loading.value = false;
     await nextTick();
@@ -233,32 +244,32 @@ describe("TopHeaderOrganizations", () => {
   it("rings the highlight moved by the keyboard, not the one moved by the pointer", async () => {
     const wrapper = mountComponent();
 
-    await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+    await wrapper.findAllComponents(VcMenuItem)[1].trigger("mousemove");
 
-    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(true);
-    expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(false);
+    expect(isHighlighted(wrapper)).toBe(true);
+    expect(isRinged(wrapper)).toBe(false);
 
     await wrapper.get("input").trigger("keydown", { key: "ArrowDown" });
 
-    expect(wrapper.find(".vc-menu-item__inner--highlight-ring").exists()).toBe(true);
+    expect(isRinged(wrapper)).toBe(true);
   });
 
   it("drops a pointer highlight when the pointer leaves the list", async () => {
     const wrapper = mountComponent();
 
-    await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+    await wrapper.findAllComponents(VcMenuItem)[1].trigger("mousemove");
 
-    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(true);
+    expect(isHighlighted(wrapper)).toBe(true);
 
     await wrapper.get('[role="listbox"]').trigger("mouseleave");
 
-    expect(wrapper.find(".vc-menu-item__inner--highlighted").exists()).toBe(false);
+    expect(isHighlighted(wrapper)).toBe(false);
   });
 
   it("switches to the row the pointer highlighted on Enter", async () => {
     const wrapper = mountComponent();
 
-    await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+    await wrapper.findAllComponents(VcMenuItem)[1].trigger("mousemove");
     await wrapper.get("input").trigger("keydown", { key: "Enter" });
     await nextTick();
 
@@ -364,23 +375,24 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBeUndefined();
   });
 
-  it("shows the load-more indicator only while a page is on its way", async () => {
+  it("tells the pager a page is on its way only while one loads", async () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
+    const pager = wrapper.getComponent(VcLoadMore);
 
-    expect(wrapper.find(".vc-load-more--loading").exists()).toBe(false);
+    expect(pager.props()).toMatchObject({ loading: false, hasNextPage: true });
 
     state.loading.value = true;
     await nextTick();
 
-    expect(wrapper.find(".vc-load-more--loading").exists()).toBe(true);
+    expect(pager.props()).toMatchObject({ loading: true, hasNextPage: true });
   });
 
   it("asks for the next page when the list rests at its bottom", async () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
 
-    describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+    describeScrollBox(wrapper.getComponent(VcScrollbar).element as HTMLElement, {
       clientHeight: 400,
       scrollHeight: 400,
       scrollTop: 0,
@@ -394,7 +406,7 @@ describe("TopHeaderOrganizations", () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
 
-    describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+    describeScrollBox(wrapper.getComponent(VcScrollbar).element as HTMLElement, {
       clientHeight: 400,
       scrollHeight: 400,
       scrollTop: 0,
@@ -419,7 +431,7 @@ describe("TopHeaderOrganizations", () => {
     state.hasNextPage.value = true;
     const wrapper = mountComponent();
 
-    describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+    describeScrollBox(wrapper.getComponent(VcScrollbar).element as HTMLElement, {
       clientHeight: 400,
       scrollHeight: 400,
       scrollTop: 0,
@@ -507,7 +519,7 @@ describe("TopHeaderOrganizations", () => {
       const list = wrapper.get('[role="listbox"]');
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
-      await wrapper.findAll(".vc-menu-item")[2].trigger("mousemove");
+      await wrapper.findAllComponents(VcMenuItem)[2].trigger("mousemove");
       await list.trigger("focus");
 
       expect(list.attributes("aria-activedescendant")).toBe(optionIds[1]);
@@ -519,7 +531,7 @@ describe("TopHeaderOrganizations", () => {
       const list = wrapper.get('[role="listbox"]');
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
-      await wrapper.findAll(".vc-menu-item")[2].trigger("mousemove");
+      await wrapper.findAllComponents(VcMenuItem)[2].trigger("mousemove");
       document.dispatchEvent(new PointerEvent("pointerdown"));
       await list.trigger("focus");
 
@@ -593,7 +605,7 @@ describe("TopHeaderOrganizations", () => {
     it("picks the row the pointer highlighted on Enter", async () => {
       const wrapper = mountComponent();
 
-      await wrapper.findAll(".vc-menu-item")[1].trigger("mousemove");
+      await wrapper.findAllComponents(VcMenuItem)[1].trigger("mousemove");
       await wrapper.get('[role="listbox"]').trigger("keydown", { key: "Enter" });
 
       expect(state.trySwitch).toHaveBeenCalledWith("org-2");

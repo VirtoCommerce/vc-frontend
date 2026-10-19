@@ -128,7 +128,7 @@ export interface IProps {
   error?: boolean;
   noBorder?: boolean;
   seamless?: boolean;
-  /** A popup this field controls (a select's list) is open; the field is then drawn with the focus ring. */
+  /** A popup this field controls (a select's list) is open; the field then draws the focus ring (none when `seamless`). */
   opened?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;

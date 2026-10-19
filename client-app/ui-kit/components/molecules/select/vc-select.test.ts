@@ -86,7 +86,6 @@ function createWrapperWithMessages(props: HarnessPropsType) {
   return mountSelect({ props: props as MountOptionsType["props"], global: { plugins: [countingI18n] } });
 }
 
-// For fixtures that bind server-filter, which warns without a search handler.
 function noop() {
   return undefined;
 }
@@ -542,7 +541,7 @@ describe("VcSelect", () => {
     const unhandledSelectAllProps = { items: ITEMS, multiple: true, selectAll: true };
     const selectAllProps = { ...unhandledSelectAllProps, onSelectAll: noop };
 
-    // A server-side query counts as narrowing once it has gone out.
+    // A fixture not holding `loading` takes the sent query as answered.
     async function typeAnsweredQuery(input: Pick<DOMWrapper<HTMLInputElement>, "setValue">, query: string) {
       useFakeTimersInTest();
       await input.setValue(query);
@@ -624,32 +623,59 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 3");
     });
 
-    it("stays partial while a fully selected page is only part of the set", () => {
-      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
+    it("stays partial while a fully selected page is only part of a counted set", () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        modelValue: [...ITEMS],
+        total: 3000,
+        selectedCount: 3,
+      });
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 3000");
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
     });
 
-    it("clears a fully selected page with pages still to come", async () => {
-      const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS], total: 3000 });
+    it("asks for the rest when a fully selected page is only part of a counted set", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS], total: 100, selectedCount: 3 });
 
       await wrapper.get(".vc-select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "" }]]);
+    });
+
+    it("shows a fully selected page of an uncounted set as checked, and clears it on a press", async () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: [...ITEMS], total: 100 });
+      const checkbox = wrapper.get(".vc-select-all input");
+
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 100");
+      expect(checkbox.attributes("aria-checked")).toBe("true");
+
+      await checkbox.trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
       expect(wrapper.emitted("selectAll")).toEqual([[{ selected: false, query: "" }]]);
     });
 
-    it("selects the loaded page, then clears it, when the consumer adds no other page", async () => {
-      const wrapper = createWrapper({ ...selectAllProps, modelValue: [], total: 3000 });
-      const checkbox = wrapper.get(".vc-select-all input");
+    it("asks for the rest of a server-side query's counted matches when only the loaded ones are selected", async () => {
+      const wrapper = createWrapper({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        total: 20,
+        selectedCount: 3,
+        modelValue: [...ITEMS],
+      });
+      const input = wrapper.get("input");
 
-      await checkbox.trigger("change");
-      await wrapper.setProps({ modelValue: [...ITEMS] });
-      await checkbox.trigger("change");
+      await input.trigger("click");
+      await typeAnsweredQuery(input, "a");
+      await nextTick();
+      await wrapper.get(".vc-select-all input").trigger("change");
 
-      expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]], [[]]]);
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "" }], [{ selected: false, query: "" }]]);
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "a" }]]);
     });
 
     it("acts on the filtered subset only", async () => {
@@ -701,14 +727,14 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
 
-    it("counts only the loaded matches while a server-side query narrows the list", async () => {
+    it("clears an uncounted server-side query whose matches the consumer has all selected", async () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
-        total: 5,
-        modelValue: [...ITEMS, "Denmark", "Egypt"],
+        total: 20,
+        modelValue: [...ITEMS, ...Array.from({ length: 17 }, (_, index) => `Match ${index}`)],
       });
       const input = wrapper.get("input");
 
@@ -716,8 +742,12 @@ describe("VcSelect", () => {
       await typeAnsweredQuery(input, "a");
       await nextTick();
 
-      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 5");
-      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
+      expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 20");
+      expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("true");
+
+      await wrapper.get(".vc-select-all input").trigger("change");
+
+      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: false, query: "a" }]]);
     });
 
     it("tells the consumer which query narrowed the options it acted on", async () => {
@@ -765,6 +795,45 @@ describe("VcSelect", () => {
         expect(warn).not.toHaveBeenCalledWith(pagedWarning);
       });
 
+      it.each([
+        ["a single select", { multiple: false, modelValue: undefined }, 1, false],
+        ["a multiple select", {}, 0, false],
+        ["a single select paged past its items", { multiple: false, modelValue: undefined, total: 30 }, 1, false],
+        ["a total equal to the loaded options", { total: ITEMS.length }, 0, false],
+      ])("warns about select-all on %s accordingly", (_label, props, singleWarnings, paged) => {
+        const warn = spyOnWarn();
+
+        createWrapper({ ...unhandledSelectAllProps, modelValue: [], ...props });
+
+        expect(
+          warn.mock.calls.filter(([message]) => String(message).includes("only applies to `multiple`")),
+        ).toHaveLength(singleWarnings);
+        expect(warn.mock.calls.some(([message]) => String(message).includes("without a `@select-all` handler"))).toBe(
+          paged,
+        );
+      });
+
+      it("warns about a select-all with no handler once a total pages it", async () => {
+        const warn = spyOnWarn();
+        const wrapper = createWrapper({ ...unhandledSelectAllProps, modelValue: [] });
+
+        await wrapper.setProps({ total: 30 });
+
+        expect(warn).toHaveBeenCalledWith(pagedWarning);
+      });
+
+      it("warns about a paged select-all with no handler once", async () => {
+        const warn = spyOnWarn();
+        const wrapper = createWrapper({ ...unhandledSelectAllProps, modelValue: [], total: 30 });
+
+        await wrapper.setProps({ total: 3 });
+        await wrapper.setProps({ total: 30 });
+
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("without a `@select-all`"))).toHaveLength(
+          1,
+        );
+      });
+
       it("stays quiet for a select-all over the whole set", () => {
         const warn = spyOnWarn();
 
@@ -800,7 +869,36 @@ describe("VcSelect", () => {
         createWrapper({ ...counted, ...serverSide, selectAll: false });
         createWrapper({ ...counted, ...serverSide });
 
-        expect(warn.mock.calls.filter(([message]) => String(message).includes("`selected-count`"))).toHaveLength(3);
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("`selected-count`"))).toHaveLength(2);
+      });
+
+      it.each([
+        ["a total beyond the loaded options", { total: 30 }, true],
+        ["a total and a selected count", { total: 30, selectedCount: 0 }, false],
+        ["a total and a selected count that is not a number", { total: 30, selectedCount: Number.NaN }, true],
+        ["a server filter with a total", { autocomplete: true, serverFilter: true, onSearch: noop, total: 3 }, true],
+        ["a server filter without a total", { autocomplete: true, serverFilter: true, onSearch: noop }, false],
+        ["the whole set loaded", { total: ITEMS.length }, false],
+        ["a single select", { multiple: false, modelValue: undefined, total: 30 }, false],
+      ])("warns about a select-all over %s with nothing counting the set accordingly", (_label, props, warns) => {
+        const warn = spyOnWarn();
+
+        createWrapper({ ...selectAllProps, modelValue: [], ...props });
+
+        expect(warn.mock.calls.some(([message]) => String(message).includes("needs `selected-count`"))).toBe(warns);
+      });
+
+      it("warns about an uncounted select-all once a total pages it", async () => {
+        const warn = spyOnWarn();
+        const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+
+        await wrapper.setProps({ total: 30 });
+        await wrapper.setProps({ total: 3 });
+        await wrapper.setProps({ total: 30 });
+
+        expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `selected-count`"))).toHaveLength(
+          1,
+        );
       });
     });
 
@@ -908,7 +1006,7 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 1");
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining("`selected-count` only counts"));
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining("`selected-count` only counts"));
     });
 
     it("counts only the visible selection under a local filter that leaves several matches", async () => {
@@ -926,7 +1024,7 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 2");
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining("`selected-count` only counts"));
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining("`selected-count` only counts"));
     });
 
     it("ignores a selected count that is not a number", async () => {
@@ -1032,7 +1130,7 @@ describe("VcSelect", () => {
     });
 
     it("keeps the native checkbox in step when a click changes nothing", async () => {
-      const wrapper = createWrapper({ ...selectAllProps, total: 3000, modelValue: [...ITEMS] });
+      const wrapper = createWrapper({ ...selectAllProps, total: 3000, selectedCount: 3, modelValue: [...ITEMS] });
       const checkbox = wrapper.get(".vc-select-all input").element as HTMLInputElement;
 
       checkbox.click();
@@ -1041,6 +1139,30 @@ describe("VcSelect", () => {
       expect(checkbox.checked).toBe(false);
       expect(checkbox.indeterminate).toBe(true);
     });
+
+    it.each([
+      ["selects", ["Albania"], { checked: true, indeterminate: false }],
+      ["clears", [...ITEMS], { checked: false, indeterminate: false }],
+    ])(
+      "shows the new state after a click that %s, once the browser restores the cancelled one",
+      async (_label, modelValue, state) => {
+        const wrapper = createWrapper({
+          ...selectAllProps,
+          modelValue,
+          "onUpdate:modelValue": (value: string[]) => void wrapper.setProps({ modelValue: value }),
+        });
+        const checkbox = wrapper.get(".vc-select-all input").element as HTMLInputElement;
+        const before = { checked: checkbox.checked, indeterminate: checkbox.indeterminate };
+
+        checkbox.click();
+        await nextTick();
+        // A browser renders the new state before it restores the cancelled click's old one.
+        Object.assign(checkbox, before);
+        await new Promise((resolve) => setTimeout(resolve));
+
+        expect({ checked: checkbox.checked, indeterminate: checkbox.indeterminate }).toEqual(state);
+      },
+    );
 
     it("counts against the consumer's total while a server-side filter is on", async () => {
       const wrapper = createWrapperWithMessages({
@@ -1187,6 +1309,77 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(wrapper.get(".vc-select-all input").element);
     });
 
+    it("hands Shift+Tab from the checkbox back to the trigger", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      const checkbox = wrapper.get<HTMLInputElement>(".vc-select-all input").element;
+      checkbox.focus();
+      const event = new KeyboardEvent("keydown", { key: "Tab", shiftKey: true, bubbles: true, cancelable: true });
+      checkbox.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(document.activeElement).toBe(input.element);
+    });
+
+    it.each([
+      ["a teleported list past the select", true],
+      ["an inline list to the browser", false],
+    ])("hands Tab from the checkbox of %s, to the next tab stop", async (_label, enableTeleport) => {
+      const host = document.createElement("div");
+      host.id = "popover-host";
+      document.body.appendChild(host);
+      onTestFinished(() => host.remove());
+
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [], enableTeleport });
+      const skipped = document.createElement("button");
+      skipped.tabIndex = -1;
+      const hidden = document.createElement("input");
+      hidden.type = "hidden";
+      const after = document.createElement("button");
+      const later = document.createElement("button");
+      wrapper.element.after(skipped, hidden, after, later);
+      onTestFinished(() => [skipped, hidden, after, later].forEach((element) => element.remove()));
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      const checkbox = document.querySelector<HTMLInputElement>(".vc-select-all input")!;
+      checkbox.focus();
+      const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      checkbox.dispatchEvent(event);
+      await nextTick();
+
+      expect(event.defaultPrevented).toBe(enableTeleport);
+      expect(document.activeElement).toBe(enableTeleport ? after : checkbox);
+      expect(input.attributes("aria-expanded")).toBe(String(!enableTeleport));
+    });
+
+    it("leaves Tab to the browser when no tab stop follows a teleported list", async () => {
+      const host = document.createElement("div");
+      host.id = "popover-host";
+      document.body.appendChild(host);
+      onTestFinished(() => host.remove());
+
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [], enableTeleport: true });
+      const skipped = document.createElement("button");
+      skipped.tabIndex = -1;
+      wrapper.element.after(skipped);
+      onTestFinished(() => skipped.remove());
+
+      await wrapper.get("input").trigger("click");
+
+      const checkbox = document.querySelector<HTMLInputElement>(".vc-select-all input")!;
+      checkbox.focus();
+      const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      checkbox.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(document.activeElement).toBe(checkbox);
+    });
+
     it("leaves Tab to the browser once the list is closed", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");
@@ -1238,6 +1431,83 @@ describe("VcSelect", () => {
       createWrapper({ items: ITEMS, ...props });
 
       expect(warn.mock.calls.some(([message]) => String(message).includes("needs `loading` bound"))).toBe(warns);
+    });
+
+    it.each([
+      ["no handler", { loading: false }, true],
+      ["a handler bound to undefined", { loading: false, onLoadMore: undefined }, true],
+      ["a handler", { loading: false, onLoadMore: noop }, false],
+    ])("warns about has-next-page with %s accordingly", (_label, props, warns) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, hasNextPage: true, ...props });
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@load-more` handler"))).toBe(warns);
+    });
+
+    it.each([
+      ["a next page", { hasNextPage: true, loading: false, onLoadMore: noop }, true],
+      ["a total beyond the loaded options", { multiple: true, selectAll: true, onSelectAll: noop, total: 30 }, true],
+      [
+        "a server filter",
+        { hasNextPage: true, loading: false, onLoadMore: noop, serverFilter: true, onSearch: noop },
+        false,
+      ],
+      ["the whole set loaded", {}, false],
+      [
+        "a total equal to the loaded options",
+        { multiple: true, selectAll: true, onSelectAll: noop, total: ITEMS.length },
+        false,
+      ],
+      ["no autocomplete", { hasNextPage: true, loading: false, onLoadMore: noop, autocomplete: false }, false],
+    ])("warns about autocomplete over a list paged by %s accordingly", (_label, props, warns) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, autocomplete: true, ...props });
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("filters on the client"))).toBe(warns);
+    });
+
+    it("warns about autocomplete once a next page appears", async () => {
+      const warn = spyOnWarn();
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        hasNextPage: false,
+        loading: false,
+        onLoadMore: noop,
+      });
+
+      await wrapper.setProps({ hasNextPage: true });
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("filters on the client"))).toBe(true);
+    });
+
+    it.each([
+      ["#placeholder", { placeholder: () => h("span", "Pick") }],
+      ["#selected", { selected: () => h("span", "Picked") }],
+    ])("leaves a paged list under a %s trigger alone, since nothing can be typed there", (_label, slots) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, autocomplete: true, hasNextPage: true, loading: false, onLoadMore: noop }, slots);
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("filters on the client"))).toBe(false);
+    });
+
+    it("warns about autocomplete over a paged list once", async () => {
+      const warn = spyOnWarn();
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        hasNextPage: true,
+        loading: false,
+        onLoadMore: noop,
+      });
+
+      await wrapper.setProps({ hasNextPage: false });
+      await wrapper.setProps({ hasNextPage: true });
+
+      expect(warn.mock.calls.filter(([message]) => String(message).includes("filters on the client"))).toHaveLength(1);
     });
 
     it("warns about autocomplete over a slotted trigger, which has no input", () => {

@@ -56,19 +56,22 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="T">
+<script lang="ts">
 import { useTemplateRef } from "vue";
 import VcSelectClear from "./vc-select-clear.vue";
+import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
-defineEmits<{
+// `generic` makes the generated component type reference these interfaces, and <script setup>
+// cannot carry ES exports.
+export interface IEmits {
   (event: "toggle"): void;
   (event: "clear"): void;
-  (event: "navigate", key: "up" | "down" | "home" | "end"): void;
+  (event: "navigate", key: ListboxNavigationKeyType): void;
   (event: "confirm", payload: KeyboardEvent): void;
   (event: "tab", payload: KeyboardEvent): void;
-}>();
+}
 
-defineProps<{
+export interface IProps<T> {
   /** What the `selected` slot receives: the resolved item, or the selected values in multiple mode. */
   selectedItem?: T;
   hasSelection: boolean;
@@ -84,7 +87,13 @@ defineProps<{
   listboxId: string;
   detailsId: string;
   activeDescendantId?: string;
-}>();
+}
+</script>
+
+<script setup lang="ts" generic="T">
+defineEmits<IEmits>();
+
+defineProps<IProps<T>>();
 
 // `selected` renders only behind `hasSelection`, so its item is never undefined.
 defineSlots<{

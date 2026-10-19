@@ -214,10 +214,12 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-start font-normal;
+    @apply flex items-center w-full px-3 text-start font-normal;
 
     // A list whose container clips its corners rounds its corner items through this knob.
     border-radius: var(--vc-menu-item-radius, inherit);
+    // A list painting its own surface hands its color to the items through this knob.
+    background-color: var(--vc-menu-item-bg-color, var(--color-additional-50));
 
     &:not(:disabled) {
       @apply text-neutral-950;

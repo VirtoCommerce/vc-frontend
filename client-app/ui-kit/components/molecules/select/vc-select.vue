@@ -86,6 +86,7 @@
             @change="onSelectAll"
             @keydown.esc.stop="close()"
             @keydown.down.prevent="focusTrigger()"
+            @keydown.tab="onSelectAllTab"
           />
 
           <!-- Pointer use inside the list, the scrollbar included, keeps focus on the trigger. -->
@@ -187,14 +188,14 @@
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
 import { useDebounceFn, useElementSize } from "@vueuse/core";
-import { differenceWith, isEqual, unionWith } from "lodash-es";
-import { computed, getCurrentInstance, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
-import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
-import { insertedText } from "@/ui-kit/utilities";
+import { useComponentId, useListboxNavigation, useSelect, useSelectAll } from "@/ui-kit/composables";
+import { FOCUSABLE_SELECTOR, insertedText } from "@/ui-kit/utilities";
 import VcSelectAll from "./vc-select-all.vue";
 import VcSelectButton from "./vc-select-button.vue";
+import { useSelectDevWarnings } from "./vc-select-dev-warnings";
 import VcSelectField from "./vc-select-field.vue";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
@@ -256,9 +257,12 @@ const props = withDefaults(
      */
     total?: number;
     /**
-     * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
-     * matches that are not loaded. Defaults to the selected matches that are loaded. Capped at
-     * `total`, except that it never falls below the selected matches that are loaded.
+     * The consumer's count of selected options, for a paged `select-all` (`total` above the loaded
+     * options, or `server-filter`). Bind it for a partial row to select the rest: without it a fully
+     * selected page shows checked and a press clears, since the row cannot tell it from the whole
+     * selection. The counter reads it while a `server-filter` query narrows the list (the selected
+     * matches among `total`, loaded or not); unfiltered it counts the model, which holds every value.
+     * Capped at `total`, never below the selected matches that are loaded.
      */
     selectedCount?: number;
     /** Shows a loading indicator inside the list. */
@@ -682,140 +686,8 @@ watch(filterValue, (value) => {
   }
 });
 
-if (import.meta.env.DEV && props.selectAll && !props.multiple) {
-  // eslint-disable-next-line no-console
-  console.warn("VcSelect: `select-all` only applies to `multiple` selects and is ignored here.");
-}
-
 if (import.meta.env.DEV) {
-  const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
-
-  // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
-  // Truthy, not present: `@select-all="undefined"` handles nothing. `.once` is not exempt either — a
-  // paged list needs the handler on every press.
-  if (props.selectAll && props.multiple && !vnodeProps.onSelectAll) {
-    let warnedPaged = false;
-
-    watch(
-      () => props.hasNextPage || (props.total ?? 0) > props.items.length,
-      (paged) => {
-        if (paged && !warnedPaged) {
-          warnedPaged = true;
-          // eslint-disable-next-line no-console
-          console.warn(
-            "VcSelect: a paged `select-all` without a `@select-all` handler selects only the loaded " +
-              "options; add the rest of the set in `@select-all`.",
-          );
-        }
-      },
-      { immediate: true },
-    );
-  }
-
-  if (props.selectedCount !== undefined && !(props.serverFilter && props.multiple && props.selectAll)) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "VcSelect: `selected-count` only counts for `multiple` + `select-all` + `server-filter`; it is ignored here.",
-    );
-  }
-
-  if (props.autocomplete && (slots.selected || slots.placeholder)) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "VcSelect: `autocomplete` has no input with a `#selected` or `#placeholder` trigger; nothing can be typed.",
-    );
-  }
-
-  if (props.serverFilter && !props.autocomplete) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
-  }
-
-  if (("has-next-page" in vnodeProps || "hasNextPage" in vnodeProps) && !("loading" in vnodeProps)) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `has-next-page` needs `loading` bound, or a page still loading is asked for again.");
-  }
-
-  if (
-    !("select-all" in vnodeProps || "selectAll" in vnodeProps) &&
-    (props.total !== undefined || vnodeProps.onSelectAll)
-  ) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `total` and `@select-all` belong to the Select all row; add `select-all`.");
-  }
-
-  if (props.serverFilter && !vnodeProps.onSearch) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "VcSelect: `server-filter` needs a `@search` handler for every query (not `.once`) that answers " +
-        "with new `items`, holding `loading` while it fetches.",
-    );
-  }
-}
-
-// A `multiple` model holding whole items instead of `valueField` values matches no option, so warn in dev.
-if (import.meta.env.DEV) {
-  let warnedItemModel = false;
-
-  watch(
-    () => [props.multiple, props.valueField, props.modelValue, props.items] as const,
-    ([multiple, valueField, modelValue, items]) => {
-      if (warnedItemModel || !multiple || valueField === undefined || !Array.isArray(modelValue)) {
-        return;
-      }
-
-      // An off-page selection matches no loaded item, but still carries a string value field as a key.
-      const holdsItems = modelValue.some(
-        (value) =>
-          (typeof valueField === "string" && typeof value === "object" && value !== null && valueField in value) ||
-          items.some((item) => isEqual(item, value) && !isEqual(getItemValue(item), value)),
-      );
-
-      if (holdsItems) {
-        warnedItemModel = true;
-        // eslint-disable-next-line no-console
-        console.warn(
-          "VcSelect: with `multiple` and `value-field` the model holds values, not items. " +
-            "Map the items to their `value-field`, or drop `value-field` to keep whole items.",
-        );
-      }
-    },
-    // Depth 2: the tuple, then the entries of items and of the model, so a push, a splice or an
-    // index assignment in place re-runs the check.
-    { immediate: true, deep: 2 },
-  );
-}
-
-// Without `valueField` the model is the item itself, so a primitive model over object items matches
-// no option and the whole item is what a pick writes into it.
-if (import.meta.env.DEV) {
-  let warnedPrimitiveModel = false;
-
-  watch(
-    () => [props.valueField, props.modelValue, props.items] as const,
-    ([valueField, modelValue, items]) => {
-      if (warnedPrimitiveModel || valueField !== undefined) {
-        return;
-      }
-
-      const values = Array.isArray(modelValue) ? modelValue : [modelValue];
-      // A primitive that is itself one of the items (mixed items) is a valid model.
-      const holdsPrimitive = values.some(
-        (value) => value !== null && value !== undefined && typeof value !== "object" && !items.includes(value),
-      );
-      const offersObjects = items.some((item) => typeof item === "object" && item !== null);
-
-      if (holdsPrimitive && offersObjects) {
-        warnedPrimitiveModel = true;
-        // eslint-disable-next-line no-console
-        console.warn(
-          "VcSelect: the model holds a primitive but the items are objects, and without `value-field` " +
-            "the model is the item. Set `value-field` to the key the model holds.",
-        );
-      }
-    },
-    { immediate: true, deep: 2 },
-  );
+  useSelectDevWarnings(props, slots, getItemValue);
 }
 
 const showSelectAll = computed(() => props.selectAll && props.multiple);
@@ -828,57 +700,23 @@ const showLoadingRow = computed(() => props.loading && !pagerHasNextPage.value);
 
 const showPagerSpinner = computed(() => props.loading && pagerHasNextPage.value);
 
-const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
-
-const selectedVisibleCount = computed(() => activeRows.value.filter(Boolean).length);
-
-// While a query narrows the list, only the matching options count: a local filter is unknown to
-// `total`, and with `server-filter` the consumer's `total` counts the matches. A server-side query
-// narrows only once answered: until then `total` and the options describe the previous one.
-const answeredFilterValue = ref(filterValue.value);
-
-watch(
-  [filterValue, isAnswerPending],
-  ([value, pending]) => {
-    if (!pending) {
-      answeredFilterValue.value = value;
-    }
-  },
-  { flush: "sync" },
-);
-
-const isNarrowed = computed(() => !!(props.serverFilter ? answeredFilterValue.value : filterValue.value));
-
-const totalCount = computed(() =>
-  isNarrowed.value && !props.serverFilter ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
-);
-
-// Never below what is visibly selected. Without `total` nothing beyond the loaded options can be
-// counted; with it, model values past it are ones no option carries.
-const countedSelected = computed(() => {
-  if (!isNarrowed.value) {
-    return props.total === undefined
-      ? selectedVisibleCount.value
-      : Math.max(Math.min(selectedValues.value.length, props.total), selectedVisibleCount.value);
-  }
-
-  const { selectedCount } = props;
-
-  if (!props.serverFilter || selectedCount === undefined || !Number.isFinite(selectedCount)) {
-    return selectedVisibleCount.value;
-  }
-
-  return Math.max(Math.min(selectedCount, totalCount.value), selectedVisibleCount.value);
+const {
+  totalCount,
+  selectedCount: countedSelected,
+  isAllSelected,
+  isSomeSelected,
+  isDisabled: isSelectAllDisabled,
+  toggle: toggleAll,
+} = useSelectAll<V>({
+  values: () => filteredItems.value.map((item) => getItemValue(item)),
+  activeRows,
+  selectedValues,
+  filterValue,
+  serverFilter: () => props.serverFilter,
+  answerPending: isAnswerPending,
+  total: () => props.total,
+  selectedCount: () => props.selectedCount,
 });
-
-const isEveryOptionSelected = computed(
-  () => selectableValues.value.length > 0 && selectedVisibleCount.value === selectableValues.value.length,
-);
-
-// Checked means `n of n`: a fully selected page of a longer list is still partial.
-const isAllSelected = computed(() => isEveryOptionSelected.value && countedSelected.value >= totalCount.value);
-
-const isSomeSelected = computed(() => countedSelected.value > 0 && !isAllSelected.value);
 
 const selectedOfTotal = computed(() =>
   t("ui_kit.select.selected_of_total", { selected: countedSelected.value, total: totalCount.value }),
@@ -890,10 +728,6 @@ const selectAllLabel = computed(() =>
 
 const selectAllElement = useTemplateRef<{ focus: () => boolean; $el: HTMLElement }>("selectAllElement");
 
-// A server-filtered list that is loading (an answer or a page) or still holds the previous query's
-// options would have a `selectAll` event misreport it; with no option on screen there is nothing to do.
-const isSelectAllDisabled = computed(() => isAnswerPending.value || !selectableValues.value.length);
-
 // A disabled control drops focus to <body>; the trigger keeps it inside the select instead.
 watch(isSelectAllDisabled, (disabled) => {
   const active = document.activeElement;
@@ -903,23 +737,49 @@ watch(isSelectAllDisabled, (disabled) => {
   }
 });
 
-// A partial list whose loaded options are all selected clears too: selecting would change nothing,
-// and the pages it lacks are the consumer's to add on `selectAll`.
 function onSelectAll() {
   if (isSelectAllDisabled.value) {
     return;
   }
 
-  const clearing = isEveryOptionSelected.value;
+  const { values, selected: selecting } = toggleAll();
 
-  if (clearing) {
-    // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
-    commit(isNarrowed.value ? differenceWith(selectedValues.value, selectableValues.value, isEqual) : []);
-  } else {
-    commit(unionWith(selectedValues.value, selectableValues.value, isEqual));
+  commit(values);
+  emit("selectAll", { selected: selecting, query: filterValue.value });
+}
+
+// Back to the trigger it came from; forward past the select. A teleported list sits outside the select,
+// where the browser's own Tab would leave from.
+function onSelectAllTab(event: KeyboardEvent): void {
+  if (event.shiftKey) {
+    event.preventDefault();
+    focusTrigger();
+    return;
   }
 
-  emit("selectAll", { selected: !clearing, query: filterValue.value });
+  const root = document.getElementById(componentId);
+
+  if (!root || root.contains(event.target as Node)) {
+    return;
+  }
+
+  const candidates = [...document.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)].filter(
+    (element) =>
+      element.tabIndex >= 0 &&
+      !element.closest("[inert]") &&
+      !owns(element) &&
+      !!(root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING),
+  );
+
+  // The first one that takes focus: a hidden match does not.
+  for (const element of candidates) {
+    element.focus();
+
+    if (document.activeElement === element) {
+      event.preventDefault();
+      return;
+    }
+  }
 }
 
 function onTab(event: KeyboardEvent) {
@@ -968,6 +828,9 @@ function onTab(event: KeyboardEvent) {
   // The dropdown clips its corners, so corner options take its radius or their ring is cut.
   &__list {
     $paging: "";
+
+    // The options take the dropdown's surface, so its token tints them too.
+    --vc-menu-item-bg-color: var(--dropdown-bg-color);
 
     // Separators between the options, as VcDropdownMenu draws them on its own list.
     @apply w-full divide-y divide-neutral-100;

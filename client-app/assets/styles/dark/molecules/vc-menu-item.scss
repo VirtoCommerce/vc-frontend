@@ -13,7 +13,7 @@
     }
 
     &:not(#{$active}) {
-      @apply bg-[inherit];
+      background-color: var(--vc-menu-item-bg-color, inherit);
     }
 
     @each $color in $colors {

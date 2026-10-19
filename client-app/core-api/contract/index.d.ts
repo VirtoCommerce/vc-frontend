@@ -2748,7 +2748,7 @@ interface IProps$l {
     error?: boolean;
     noBorder?: boolean;
     seamless?: boolean;
-    /** A popup this field controls (a select's list) is open; the field is then drawn with the focus ring. */
+    /** A popup this field controls (a select's list) is open; the field then draws the focus ring (none when `seamless`). */
     opened?: boolean;
     hidePasswordSwitcher?: boolean;
     showEmptyDetails?: boolean;
@@ -3701,9 +3701,12 @@ declare const __VLS_export$j: <T, V = T, M extends boolean = false>(__VLS_props:
          */
         total?: number;
         /**
-         * Selected matches among `total` while a `server-filter` query narrows a paged list, counting
-         * matches that are not loaded. Defaults to the selected matches that are loaded. Capped at
-         * `total`, except that it never falls below the selected matches that are loaded.
+         * The consumer's count of selected options, for a paged `select-all` (`total` above the loaded
+         * options, or `server-filter`). Bind it for a partial row to select the rest: without it a fully
+         * selected page shows checked and a press clears, since the row cannot tell it from the whole
+         * selection. The counter reads it while a `server-filter` query narrows the list (the selected
+         * matches among `total`, loaded or not); unfiltered it counts the model, which holds every value.
+         * Capped at `total`, never below the selected matches that are loaded.
          */
         selectedCount?: number;
         /** Shows a loading indicator inside the list. */

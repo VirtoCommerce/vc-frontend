@@ -188,6 +188,15 @@ function onClick(event: MouseEvent) {
   if (props.preventDefault) {
     event.preventDefault();
     handleChange();
+    // The browser restores the cancelled click's old state after Vue may already have rendered the new one.
+    setTimeout(syncInput);
+  }
+}
+
+function syncInput() {
+  if (inputRef.value) {
+    inputRef.value.checked = isChecked.value;
+    inputRef.value.indeterminate = props.indeterminate;
   }
 }
 </script>

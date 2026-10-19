@@ -10,5 +10,6 @@ export * from "./useListboxNavigation";
 export * from "./useListeners";
 export * from "./useQuantityValidationSchema";
 export * from "./useSelect";
+export * from "./useSelectAll";
 export * from "./useShellFocusEvents";
 export * from "./useSmartSticky";

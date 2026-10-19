@@ -61,12 +61,13 @@
 import { useTemplateRef } from "vue";
 import { isComposingKey } from "@/ui-kit/utilities";
 import VcSelectClear from "./vc-select-clear.vue";
+import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "toggle"): void;
   (event: "open"): void;
   (event: "clear"): void;
-  (event: "navigate", key: "up" | "down" | "home" | "end"): void;
+  (event: "navigate", key: ListboxNavigationKeyType): void;
   (event: "confirm", payload: KeyboardEvent): void;
   (event: "tab", payload: KeyboardEvent): void;
   (event: "update:search", value: string): void;
