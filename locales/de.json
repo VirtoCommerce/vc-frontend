@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "Ihre Anmeldesitzung ist abgelaufen. Melden Sie sich erneut an.",
           "code_attempts_exceeded": "Zu viele falsche Codes. Warten Sie einige Minuten und melden Sie sich erneut an.",
           "mfa_provider_not_available": "Wir können an dieses Konto keinen Anmeldecode senden. Bitte wenden Sie sich an Ihren Administrator.",
+          "two_factor_unavailable": "Für dieses Konto ist ein zweiter Anmeldeschritt erforderlich, der jedoch nicht verfügbar ist. Wenden Sie sich an Ihren Administrator.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

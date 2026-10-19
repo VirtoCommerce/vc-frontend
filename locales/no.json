@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "Påloggingsøkten er utløpt. Logg på igjen.",
           "code_attempts_exceeded": "For mange feil koder. Vent noen minutter og logg på igjen.",
           "mfa_provider_not_available": "Vi kan ikke sende en påloggingskode til denne kontoen. Kontakt administratoren din.",
+          "two_factor_unavailable": "Denne kontoen krever et ekstra påloggingstrinn, men det er ikke tilgjengelig. Kontakt administratoren.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

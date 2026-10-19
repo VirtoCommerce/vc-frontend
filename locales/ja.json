@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "サインインのセッションが期限切れになりました。もう一度サインインしてください。",
           "code_attempts_exceeded": "誤ったコードの入力が多すぎます。数分待ってから、もう一度サインインしてください。",
           "mfa_provider_not_available": "このアカウントにはサインインコードを送信できません。管理者にお問い合わせください。",
+          "two_factor_unavailable": "このアカウントには 2 段階目のサインインが必要ですが、利用できません。管理者にお問い合わせください。",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "A sua sessão de início de sessão expirou. Inicie sessão novamente.",
           "code_attempts_exceeded": "Demasiados códigos incorretos. Aguarde alguns minutos e inicie sessão novamente.",
           "mfa_provider_not_available": "Não é possível enviar um código de acesso para esta conta. Contacte o seu administrador.",
+          "two_factor_unavailable": "Esta conta exige uma segunda etapa de início de sessão, mas ela não está disponível. Entre em contato com o administrador.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

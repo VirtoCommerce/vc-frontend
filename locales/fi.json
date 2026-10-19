@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "Kirjautumisistuntosi on vanhentunut. Kirjaudu uudelleen.",
           "code_attempts_exceeded": "Liian monta virheellistä koodia. Odota muutama minuutti ja kirjaudu uudelleen.",
           "mfa_provider_not_available": "Tälle tilille ei voi lähettää kirjautumiskoodia. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_unavailable": "Tämä tili vaatii toisen kirjautumisvaiheen, mutta se ei ole käytettävissä. Ota yhteyttä järjestelmänvalvojaan.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

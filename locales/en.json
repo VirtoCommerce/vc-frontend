@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "Your sign-in session has expired. Sign in again.",
           "code_attempts_exceeded": "Too many incorrect codes. Wait a few minutes and sign in again.",
           "mfa_provider_not_available": "We can't send a sign-in code to this account. Please contact your administrator.",
+          "two_factor_unavailable": "This account requires a second sign-in step, but it is not available. Contact your administrator.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

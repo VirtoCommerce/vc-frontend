@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "Sesja logowania wygasła. Zaloguj się ponownie.",
           "code_attempts_exceeded": "Zbyt wiele nieprawidłowych kodów. Odczekaj kilka minut i zaloguj się ponownie.",
           "mfa_provider_not_available": "Nie możemy wysłać kodu logowania na to konto. Skontaktuj się z administratorem.",
+          "two_factor_unavailable": "To konto wymaga drugiego kroku logowania, ale jest on niedostępny. Skontaktuj się z administratorem.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

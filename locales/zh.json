@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "您的登录会话已过期，请重新登录。",
           "code_attempts_exceeded": "错误的验证码过多，请等待几分钟后重新登录。",
           "mfa_provider_not_available": "无法向此帐户发送登录验证码，请联系您的管理员。",
+          "two_factor_unavailable": "此账户需要第二步登录验证，但该功能不可用。请联系管理员。",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "La sessione di accesso è scaduta. Accedi di nuovo.",
           "code_attempts_exceeded": "Troppi codici errati. Attendi qualche minuto e accedi di nuovo.",
           "mfa_provider_not_available": "Non è possibile inviare un codice di accesso a questo account. Contatta il tuo amministratore.",
+          "two_factor_unavailable": "Questo account richiede un secondo passaggio di accesso, ma non è disponibile. Contatta l'amministratore.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },

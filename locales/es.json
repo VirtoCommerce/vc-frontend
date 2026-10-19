@@ -529,6 +529,7 @@
           "invalid_two_factor_token": "Su sesión de inicio de sesión ha caducado. Inicie sesión de nuevo.",
           "code_attempts_exceeded": "Demasiados códigos incorrectos. Espere unos minutos y vuelva a iniciar sesión.",
           "mfa_provider_not_available": "No podemos enviar un código de inicio de sesión a esta cuenta. Póngase en contacto con su administrador.",
+          "two_factor_unavailable": "Esta cuenta requiere un segundo paso de inicio de sesión, pero no está disponible. Póngase en contacto con su administrador.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -555,6 +556,7 @@
           "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
           "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
           "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
           "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },
