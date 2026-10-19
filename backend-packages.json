@@ -9,7 +9,20 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
+      "Modules": [
+        {
+          "Id": "VirtoCommerce.Pages",
+          "BlobName": "VirtoCommerce.Pages_3.1011.0-alpha.88-vcst-4935.zip"
+        },
+        {
+          "Id": "VirtoCommerce.PageBuilderModule",
+          "BlobName": "VirtoCommerce.PageBuilderModule_3.1036.0-pr-175-6a83.zip"
+        },
+        {
+          "Id": "VirtoCommerce.XCMS",
+          "BlobName": "VirtoCommerce.XCMS_3.1009.0-pr-27-a7f0.zip"
+        }
+      ]
     },
     {
       "Name": "GithubReleases",
@@ -204,10 +217,6 @@
           "Version": "3.1006.0"
         },
         {
-          "Id": "VirtoCommerce.Pages",
-          "Version": "3.1010.0"
-        },
-        {
           "Id": "VirtoCommerce.Pricing",
           "Version": "3.1008.0"
         },
@@ -242,10 +251,6 @@
         {
           "Id": "VirtoCommerce.AvalaraTax",
           "Version": "3.1005.0"
-        },
-        {
-          "Id": "VirtoCommerce.XCMS",
-          "Version": "3.1008.0"
         },
         {
           "Id": "VirtoCommerce.Marketing",
@@ -306,10 +311,6 @@
         {
           "Id": "VirtoCommerce.SqlQueries",
           "Version": "3.1006.0"
-        },
-        {
-          "Id": "VirtoCommerce.PageBuilderModule",
-          "Version": "3.1034.0"
         },
         {
           "Id": "VirtoCommerce.ImageTools",
