@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCommentVNode, defineComponent, h, nextTick, ref, shallowRef } from "vue";
 import { useSortableItem, useSortableList } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
-import type { ISortableItemContext, SortableMovePayloadType } from "@/ui-kit/composables";
+import type { ISortableItemContext, SortableMovePayloadType, SortableSignalType } from "@/ui-kit/composables";
 import type { Ref, VNode } from "vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's option and event objects
@@ -140,6 +140,43 @@ describe("VcSortable", () => {
     expect(model.value).toEqual(["c", "a", "b"]);
     expect(wrapper.findAll(".row").map((row) => row.text())).toEqual(["c", "a", "b"]);
     expect(container.lastElementChild?.className).toBe("hint");
+  });
+
+  it("reads a reorder by draggable indices, which a `#before` header shifts apart from plain ones", async () => {
+    const model = ref(["a", "b", "c"]);
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              VcSortable<string>,
+              {
+                modelValue: model.value,
+                "onUpdate:modelValue": (value: string[]) => {
+                  model.value = value;
+                },
+                name: "main",
+              },
+              {
+                before: () => h("p", { class: "head" }),
+                item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) =>
+                  h("div", { ...attrs, class: ["row", attrs.class] }, item),
+              },
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const container = wrapper.get(".vc-sortable").element as HTMLElement;
+    const item = wrapper.findAll(".row")[2].element as HTMLElement;
+    const { options } = instances.at(-1)!;
+
+    options.onStart({ item });
+    container.insertBefore(item, wrapper.findAll(".row")[0].element);
+    options.onUpdate({ from: container, to: container, item, oldIndex: 3, oldDraggableIndex: 2, newDraggableIndex: 0 });
+    await nextTick();
+
+    expect(model.value).toEqual(["c", "a", "b"]);
   });
 
   it("maps a reorder of object items back to the same objects through `itemKey`", async () => {
@@ -673,6 +710,118 @@ describe("VcSortable", () => {
   });
 });
 
+const renderPlainItem = ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item);
+
+function recordInto(announced: Record<string, string[]>, name: string) {
+  return (signal: SortableSignalType) => {
+    announced[name] ??= [];
+    announced[name].push(signal.kind);
+  };
+}
+
+// Mounts lists by name; the owner may send a move elsewhere, and a list may unmount once empty.
+function mountGroup(
+  lists: Ref<Record<string, string[]>>,
+  {
+    redirect = {},
+    hideEmpty = false,
+    late = false,
+  }: { redirect?: Record<string, string>; hideEmpty?: boolean; late?: boolean } = {},
+) {
+  const names = Object.keys(lists.value);
+  const announced: Record<string, string[]> = {};
+  const apply = ({ id, from, to }: SortableMovePayloadType) => {
+    const landing = redirect[to] ?? to;
+    lists.value[from] = lists.value[from].filter((item) => item !== id);
+    lists.value[landing] = [...lists.value[landing], id];
+  };
+  const onMove = (payload: SortableMovePayloadType) => (late ? setTimeout(() => apply(payload)) : apply(payload));
+  const list = (name: string) =>
+    h(
+      VcSortable<string>,
+      {
+        key: name,
+        modelValue: lists.value[name],
+        name,
+        group: "landing",
+        listOrder: names,
+        liveRegion: false,
+        onMove,
+        onAnnounce: recordInto(announced, name),
+      },
+      { item: renderPlainItem },
+    );
+  mount(
+    defineComponent({
+      setup() {
+        return () => names.filter((name) => !hideEmpty || lists.value[name].length).map(list);
+      },
+    }),
+    { attachTo: document.body },
+  );
+  return announced;
+}
+
+describe("VcSortable — the cross-list contract (story docs table)", () => {
+  const item = () => document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
+  const key = (name: string) => item().dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+  const ticks = async () => {
+    await nextTick();
+    await nextTick();
+    await nextTick();
+  };
+
+  it("cross-axis arrow, owner applies late: counts as refused, and the late move is not announced", async () => {
+    vi.useFakeTimers();
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    const announced = mountGroup(lists, { late: true });
+
+    key(" ");
+    key("ArrowRight");
+    await ticks();
+    expect(announced).toEqual({ shown: ["grabbed", "cancelled"] });
+    expect(item().getAttribute("aria-pressed")).toBe("false");
+
+    vi.runAllTimers();
+    await ticks();
+    vi.useRealTimers();
+    expect(lists.value).toEqual({ shown: [], parked: ["a"] });
+    expect(announced).toEqual({ shown: ["grabbed", "cancelled"] });
+    expect(item().getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("Space/Enter on a carried item: drops it in the list it is in", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: ["x"] });
+    const announced = mountGroup(lists);
+
+    key(" ");
+    key("ArrowRight");
+    await ticks();
+    key("Enter");
+    await ticks();
+
+    expect(lists.value).toEqual({ shown: [], parked: ["x", "a"] });
+    expect(announced.parked).toEqual(["movedList", "dropped"]);
+    expect(item().getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("blur on a carried item: takes it home like Escape, without pulling focus back", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    const announced = mountGroup(lists);
+    item().focus();
+
+    key(" ");
+    key("ArrowRight");
+    await ticks();
+    item().blur();
+    await ticks();
+
+    expect(lists.value).toEqual({ shown: ["a"], parked: [] });
+    expect(announced.shown).toEqual(["grabbed", "cancelled"]);
+    expect(document.activeElement).toBe(document.body);
+  });
+});
+
 describe("VcSortable — what a consumer gets without wiring it", () => {
   const liveRegion = () => document.body.querySelector<HTMLElement>('[aria-live="polite"]');
 
@@ -747,6 +896,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     item.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
     await nextTick();
     await nextTick();
+    await nextTick();
 
     const spokenTexts = [...document.querySelectorAll('[aria-live="polite"]')].map((region) => region.textContent);
     expect(spokenTexts).toContain('ui_kit.sortable.moved_list {"position":2,"total":3}');
@@ -799,6 +949,79 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(lists.value).toEqual({ shown: [], parked: ["a"] });
   });
 
+  it("carries a keyboard grab into another list without reporting a release on the way", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    const order = ["shown", "parked"];
+    const onMove = ({ id, from, to }: SortableMovePayloadType) => {
+      lists.value[from] = lists.value[from].filter((item) => item !== id);
+      lists.value[to] = [...lists.value[to], id];
+    };
+    const onRelease = vi.fn();
+    mount(
+      defineComponent({
+        setup() {
+          return () =>
+            order.map((name) =>
+              h(
+                VcSortable<string>,
+                {
+                  key: name,
+                  modelValue: lists.value[name],
+                  name,
+                  group: "carried",
+                  listOrder: order,
+                  onMove,
+                  onRelease,
+                },
+                { item: ({ item, attrs }: { item: string; attrs: Record<string, unknown> }) => h("div", attrs, item) },
+              ),
+            );
+        },
+      }),
+      { attachTo: document.body },
+    );
+    const item = () => document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
+
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
+    await nextTick();
+
+    expect(lists.value).toEqual({ shown: [], parked: ["a"] });
+    expect(onRelease).not.toHaveBeenCalled();
+    expect(item().getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("announces a move from the list it landed in, though the list it left is gone", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: ["x"] });
+    const announced = mountGroup(lists, { hideEmpty: true });
+    const item = document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
+
+    item.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    item.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
+    await nextTick();
+
+    expect(announced.parked).toEqual(["movedList"]);
+  });
+
+  it("follows an item the owner put in another list than asked, with focus and the announcement", async () => {
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [], archive: [] });
+    const announced = mountGroup(lists, { redirect: { parked: "archive" } });
+    const item = () => document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
+    item().focus();
+
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    item().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(lists.value.archive).toEqual(["a"]);
+    expect(announced.archive).toEqual(["movedList"]);
+    expect(document.activeElement).toBe(item());
+  });
+
   it("says the item was dropped when the move to another list ends the grab", async () => {
     const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
     const order = ["shown", "parked"];
@@ -833,6 +1056,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
 
     item().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     item().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
     await nextTick();
     await nextTick();
 
@@ -1012,7 +1236,25 @@ describe("VcSortable — development warnings", () => {
   it("warns when a handle list's item binds no handle", () => {
     mountWith({ handle: true }, (attrs, id) => h("div", attrs, id));
 
-    expect(warnings()).toContainEqual(expect.stringContaining('item "a" has no handle'));
+    expect(warnings()).toContainEqual(expect.stringContaining('item "a" had no handle'));
+  });
+
+  it("suggests `consume: false` when a component between the item and the handle took it", () => {
+    const Handle = defineComponent({
+      setup() {
+        const item = useSortableItem();
+        return () => (item?.handleAttrs ? h("button", item.handleAttrs) : null);
+      },
+    });
+    const Card = defineComponent({
+      setup(_props, { attrs }) {
+        useSortableItem();
+        return () => h("div", attrs, [h(Handle)]);
+      },
+    });
+    mountWith({ handle: true }, (attrs) => h(Card, attrs));
+
+    expect(warnings()).toContainEqual(expect.stringContaining("`useSortableItem({ consume: false })`"));
   });
 
   it("warns when a list in a group has no name, or no move listener", () => {

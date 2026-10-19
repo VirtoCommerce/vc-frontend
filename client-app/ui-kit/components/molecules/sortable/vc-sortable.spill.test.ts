@@ -1,7 +1,8 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import Sortable from "sortablejs";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, ref } from "vue";
+import { defineComponent, effectScope, h, nextTick, ref } from "vue";
+import { useSortableList } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
 import type { SortableMovePayloadType } from "@/ui-kit/composables";
 
@@ -22,7 +23,14 @@ type ModeType = "native" | "fallback";
 
 // A drag released over `at`. `during` stands in for SortableJS moving the node under the pointer before
 // the release — the placeholder the user saw. The mouse uses native drag and drop; touch the fallback.
-async function drag(mode: ModeType, list: HTMLElement, item: HTMLElement, at: Element, during: () => void) {
+async function drag(
+  mode: ModeType,
+  list: HTMLElement,
+  item: HTMLElement,
+  at: Element,
+  during: () => void,
+  rendered = false,
+) {
   Object.defineProperty(document, "elementFromPoint", { configurable: true, value: () => at });
   if (mode === "native") {
     const point = { bubbles: true, cancelable: true, button: 0, clientX: 1, clientY: 1 };
@@ -31,6 +39,9 @@ async function drag(mode: ModeType, list: HTMLElement, item: HTMLElement, at: El
     item.dispatchEvent(new Event("dragstart", { bubbles: true, cancelable: true }));
     await wait(30);
     during();
+    if (rendered) {
+      await nextTick();
+    }
     item.dispatchEvent(new MouseEvent("dragend", { bubbles: true, cancelable: true, clientX: 500, clientY: 500 }));
   } else {
     (Sortable.get(list) as unknown as { nativeDraggable: boolean }).nativeDraggable = false;
@@ -41,6 +52,9 @@ async function drag(mode: ModeType, list: HTMLElement, item: HTMLElement, at: El
     document.dispatchEvent(new MouseEvent("pointermove", point(80)));
     await wait(30);
     during();
+    if (rendered) {
+      await nextTick();
+    }
     document.dispatchEvent(new MouseEvent("pointerup", point(500)));
   }
   await nextTick();
@@ -82,13 +96,109 @@ function mountList(name: string, initial: string[], footer: boolean, log: unknow
     await nextTick();
     return order();
   };
-  return { el, item, order, appended };
+  const remove = (id: string) => {
+    rows.value = rows.value.filter((row) => row !== id);
+  };
+  return { el, item, order, appended, remove, unmount: () => wrapper.unmount() };
 }
 
 const CASES = (["native", "fallback"] as const).flatMap((mode) => [
   [mode, false],
   [mode, true],
 ]) as [ModeType, boolean][];
+
+describe("VcSortable — a pointer drag cut short by another list unmounting", () => {
+  it.each(["native", "fallback"] as const)(
+    "%s: puts the dragged node back, so the next render shows each item once",
+    async (mode) => {
+      const log: unknown[] = [];
+      const list = mountList("main", ["a1", "a2", "a3", "a4"], false, log);
+      const other = mountList("other", ["b1"], false, log);
+
+      await drag(mode, list.el, list.item("a3"), list.el, () => {
+        list.el.insertBefore(list.item("a3"), list.item("a1"));
+        other.unmount();
+      });
+
+      expect(list.item("a3").className).toBe("vc-sortable__item vc-sortable__item--whole");
+      expect(list.item("a3").getAttribute("draggable")).not.toBe("true");
+      expect(await list.appended("a5")).toBe("a1,a2,a3,a4,a5");
+    },
+  );
+});
+
+describe("useSortableList — a bare container's drag cut short", () => {
+  function bareList(name: string, ids: string[]) {
+    const el = document.createElement("div");
+    for (const id of ids) {
+      const child = document.createElement("div");
+      child.dataset.sortableId = id;
+      el.append(child);
+    }
+    document.body.append(el);
+    const scope = effectScope();
+    scope.run(() =>
+      useSortableList(el, { name, group: "bare", items: () => ids, onReorder: vi.fn(), onMove: vi.fn() }),
+    );
+    const order = () => [...el.children].map((node) => (node as HTMLElement).dataset.sortableId).join(",");
+    return { el, scope, order, item: (id: string) => el.querySelector<HTMLElement>(`[data-sortable-id="${id}"]`)! };
+  }
+
+  it.each(["native", "fallback"] as const)("%s: puts its last item back from the end of another list", async (mode) => {
+    const source = bareList("source", ["x1", "x2"]);
+    const other = bareList("other", ["y1"]);
+    const third = bareList("third", ["z1"]);
+
+    await drag(mode, source.el, source.item("x2"), other.el, () => {
+      other.el.append(source.item("x2"));
+      third.scope.stop();
+    });
+
+    expect([source.order(), other.order()]).toEqual(["x1,x2", "y1"]);
+    source.scope.stop();
+    other.scope.stop();
+    source.el.remove();
+    other.el.remove();
+    third.el.remove();
+  });
+});
+
+describe("VcSortable — a pointer drag that ends where it started", () => {
+  // Native only: SortableJS's fallback drop takes focus off the item itself; this list moves no node there.
+  it("native: leaves focus on the item", async () => {
+    const list = mountList("main", ["a1", "a2", "a3"], false, []);
+    const node = list.item("a2");
+    node.focus();
+
+    await drag("native", list.el, node, list.el, () => undefined);
+
+    expect(document.activeElement).toBe(node);
+  });
+});
+
+describe("VcSortable — the owner removes the dragged item mid-drag", () => {
+  it.each(["native", "fallback"] as const)("%s: nothing brings the node back", async (mode) => {
+    const log: unknown[] = [];
+    const list = mountList("main", ["a1", "a2", "a3", "a4"], false, log);
+    const node = list.item("a3");
+
+    await drag(
+      mode,
+      list.el,
+      node,
+      list.el,
+      () => {
+        list.el.insertBefore(node, list.item("a1"));
+        list.remove("a3");
+      },
+      true,
+    );
+    await nextTick();
+
+    expect([list.order(), log]).toEqual(["a1,a2,a4", []]);
+    expect(await list.appended("a5")).toBe("a1,a2,a4,a5");
+  });
+});
 
 describe("VcSortable — a pointer drop outside every list", () => {
   it.each(CASES)(

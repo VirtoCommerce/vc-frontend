@@ -7,7 +7,8 @@ export type SortableOrientationType = "vertical" | "horizontal";
 /**
  * An item leaving this list for another one in its group. `index` is absent for a keyboard move — it appends —
  * except when a cancelled grab (Escape or blur) sends the item back to the list it was grabbed in, at the place
- * it left.
+ * it left. A list that is disabled, unmounted or refuses the item by then gets no move: the item is dropped
+ * where it is.
  */
 export type SortableMovePayloadType = {
   id: string;
@@ -22,10 +23,11 @@ export type SortableSignalType =
   | { kind: "grabbed"; id: string; index: number; total: number; canChangeList: boolean }
   /** `edge` reports a move that could not happen: silence leaves a screen-reader user unable to tell why. */
   | { kind: "moved" | "dropped" | "edge"; id: string; index: number; total: number }
+  /** The grab ended with the item back where it was grabbed. */
   | { kind: "cancelled"; id: string }
   /** A cross-axis arrow found no list in that direction that accepts the item. */
   | { kind: "noTarget"; id: string }
-  /** `dropped`: the move ended the grab (`dropOnListChange`); otherwise the item is still held in `to`. */
+  /** `dropped`: the grab ended; otherwise the item is still held in `to`. */
   | { kind: "movedList"; id: string; from: string; to: string; dropped: boolean };
 
 /**
@@ -94,8 +96,8 @@ export interface IUseSortableListOptions {
   disabled?: MaybeRefOrGetter<boolean>;
   /** Same-list reorder, as the full new order. */
   onReorder: (ids: string[]) => void;
-  /** Cross-list move. Whoever owns both arrays applies it — never this list alone — and synchronously, or
-   * focus cannot follow the item into the other list. */
+  /** Cross-list move. Whoever owns both arrays applies it — never this list alone — and synchronously: a move
+   * not applied by the next render counts as refused, and focus cannot follow the item into the other list. */
   onMove?: (payload: SortableMovePayloadType) => void;
   onAnnounce?: (signal: SortableSignalType) => void;
   onGrab?: (payload: SortableGrabPayloadType) => void;
@@ -106,13 +108,19 @@ export const SORTABLE_ITEM_ATTRIBUTE = "data-sortable-id";
 export const SORTABLE_NAME_ATTRIBUTE = "data-sortable-name";
 export const HANDLE_SELECTOR = ".vc-sortable__handle";
 
-// Where a keyboard grab began, so Escape can undo every move it made, across lists too.
+// Picked from the item type, so the keyboard contract cannot grow a key the item type lacks.
+type KeyboardAttrsType = Required<Pick<SortableItemAttrsType, "tabindex" | "aria-pressed" | "onKeydown" | "onBlur">>;
+
+// Where a keyboard grab began, so Escape can undo every move it made, across lists too — while that list takes it.
 type GrabOriginType = { list: string; index: number };
 
 type RegisteredListType = {
   accepts?: (id: string, from: string) => boolean;
   isEnabled: () => boolean;
   focusItem: (id: string) => void;
+  items: () => readonly string[];
+  isGrabbed: (id: string) => boolean;
+  announce: (signal: SortableSignalType) => void;
   /** Takes over a grab that a sibling's cross-axis arrow carried into this list. */
   adopt: (id: string, origin: GrabOriginType) => void;
   /** Lets go of a grab that came from `list`, whose indices a pointer press there has just captured. */
@@ -153,8 +161,8 @@ function moveWithin(items: readonly string[], id: string, index: number): string
  * Keyboard: Space/Enter grabs and drops, arrows along `orientation` move, Escape puts it back, blur
  * cancels, and the cross-axis arrows move the item along `listOrder`. The grab travels with the item, so it is
  * held until dropped whichever list it is in, and Escape or blur returns it to where it was grabbed — unless
- * `dropOnListChange` ends it on arrival. Focus follows it into the sibling list unless the owner has already
- * moved focus elsewhere.
+ * `dropOnListChange` ends it on arrival, or the list it was grabbed in no longer takes it, which drops it
+ * where it is. Focus follows it into the sibling list unless the owner has already moved focus elsewhere.
  */
 export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
@@ -167,7 +175,9 @@ export function useSortableList(
 
   const nameOf = () => toValue(options.name);
   const groupOf = () => toValue<string | undefined>(options.group);
+  const orderOf = () => toValue<readonly string[] | undefined>(options.listOrder);
   const isEnabled = () => !toValue(options.disabled);
+  const canChangeList = () => (orderOf()?.length ?? 0) > 1;
 
   function announce(signal: SortableSignalType): void {
     options.onAnnounce?.(signal);
@@ -177,16 +187,15 @@ export function useSortableList(
     return grabbedId.value === id;
   }
 
-  // Let go without moving anything back or reporting it: the grab is handed to another list.
-  function release(): void {
+  // Silent: each caller reports the release itself, or hands the grab on.
+  function clearGrab(): void {
     grabbedId.value = undefined;
     origin = undefined;
   }
 
-  // The grab is over here: the UI is going away, a pointer press is taking over, or the item left.
   function end(): void {
     const id = grabbedId.value;
-    release();
+    clearGrab();
     if (id !== undefined) {
       options.onRelease?.({ id });
     }
@@ -215,8 +224,7 @@ export function useSortableList(
     grabbedId.value = id;
     origin = { list: nameOf(), index };
     options.onGrab?.({ id, from: nameOf() });
-    const order = toValue<readonly string[] | undefined>(options.listOrder);
-    announce({ kind: "grabbed", id, index, total: items.length, canChangeList: Boolean(order && order.length > 1) });
+    announce({ kind: "grabbed", id, index, total: items.length, canChangeList: canChangeList() });
   }
 
   function drop(id: string): void {
@@ -225,19 +233,46 @@ export function useSortableList(
     announce({ kind: "dropped", id, index: items.indexOf(id), total: items.length });
   }
 
+  // A keyboard move between lists is announced once the owner's render shows where the item is, by the list
+  // holding it, from its place there — whatever the owner did with the move. No list of the group: silence.
+  function announceLanding(id: string, start: GrabOriginType | undefined, follow: boolean): void {
+    const from = nameOf();
+    void nextTick(() => {
+      const landed = [...(siblingsOf() ?? [])].find(([, entry]) => entry.items().includes(id));
+      if (!landed) {
+        return;
+      }
+      const [to, list] = landed;
+      const ids = list.items();
+      const index = ids.indexOf(id);
+      const held = list.isGrabbed(id);
+      if (!held && to === start?.list && index === start.index) {
+        list.announce({ kind: "cancelled", id });
+      } else if (to === from) {
+        list.announce({ kind: "dropped", id, index, total: ids.length });
+      } else {
+        list.announce({ kind: "movedList", id, from, to, dropped: !held });
+      }
+      if (follow) {
+        followInto(list, id);
+      }
+    });
+  }
+
   // `target` only from Escape: putting the item back blurs it, so focus needs restoring. Blur-cancel
   // passes none — the user is tabbing away, and pulling focus back would trap them.
   function cancel(id: string, target?: HTMLElement | null): void {
     const from = origin;
-    release();
+    clearGrab();
 
     if (from && from.list !== nameOf()) {
-      options.onMove?.({ id, from: nameOf(), to: from.list, index: from.index });
-      options.onRelease?.({ id });
-      announce({ kind: "cancelled", id });
-      if (target) {
-        followInto(siblingsOf()?.get(from.list), id);
+      const home = siblingsOf()?.get(from.list);
+      // Refused, or gone, as a keyboard move there would find it: the item stays where it is.
+      if (home?.isEnabled() && home.accepts?.(id, nameOf()) !== false) {
+        options.onMove?.({ id, from: nameOf(), to: from.list, index: from.index });
       }
+      options.onRelease?.({ id });
+      announceLanding(id, from, Boolean(target));
       return;
     }
 
@@ -267,7 +302,7 @@ export function useSortableList(
   }
 
   function stepList(id: string, delta: number): void {
-    const order = toValue<readonly string[] | undefined>(options.listOrder) ?? [];
+    const order = orderOf() ?? [];
     const name = nameOf();
     const siblings = siblingsOf();
 
@@ -280,17 +315,16 @@ export function useSortableList(
       }
       const carried = origin ?? { list: name, index: options.items().indexOf(id) };
       const dropped = Boolean(toValue(options.dropOnListChange));
-      release();
+      clearGrab();
       options.onMove?.({ id, from: name, to: target });
       if (dropped) {
         options.onRelease?.({ id });
       }
-      announce({ kind: "movedList", id, from: name, to: target, dropped });
       // Otherwise the grab travels with the item: the sibling holds it from here, so the next key acts there.
       if (!dropped) {
         sibling.adopt(id, carried);
       }
-      followInto(sibling, id);
+      announceLanding(id, carried, true);
       return;
     }
 
@@ -349,8 +383,7 @@ export function useSortableList(
       return;
     }
 
-    const order = toValue<readonly string[] | undefined>(options.listOrder);
-    if (order && order.length > 1 && (event.key === listBack || event.key === listForward)) {
+    if (canChangeList() && (event.key === listBack || event.key === listForward)) {
       event.preventDefault();
       stepList(id, event.key === listBack ? -1 : 1);
     }
@@ -360,6 +393,15 @@ export function useSortableList(
     if (!refocusing && isGrabbed(id)) {
       cancel(id);
     }
+  }
+
+  function keyboardAttrs(id: string): KeyboardAttrsType {
+    return {
+      tabindex: "0",
+      "aria-pressed": isGrabbed(id) ? "true" : "false",
+      onKeydown: (event) => onKeydown(event, id),
+      onBlur: () => onBlur(id),
+    };
   }
 
   function itemAttrs(id: string): SortableItemAttrsType {
@@ -377,15 +419,7 @@ export function useSortableList(
 
     const attrs: SortableItemAttrsType = { [SORTABLE_ITEM_ATTRIBUTE]: id, class: classes.join(" ") };
 
-    if (whole) {
-      attrs.tabindex = "0";
-      attrs.role = "button";
-      attrs["aria-pressed"] = isGrabbed(id) ? "true" : "false";
-      attrs.onKeydown = (event) => onKeydown(event, id);
-      attrs.onBlur = () => onBlur(id);
-    }
-
-    return attrs;
+    return whole ? { ...attrs, role: "button", ...keyboardAttrs(id) } : attrs;
   }
 
   /** Null while the list is disabled, and for a list that drags by the whole item. */
@@ -395,37 +429,43 @@ export function useSortableList(
       return null;
     }
 
-    return {
-      class: "vc-sortable__handle",
-      tabindex: "0",
-      "aria-pressed": isGrabbed(id) ? "true" : "false",
-      onKeydown: (event) => onKeydown(event, id),
-      onBlur: () => onBlur(id),
-    };
+    return { class: "vc-sortable__handle", ...keyboardAttrs(id) };
   }
 
   // Where the dragged node sat, so it goes back between the same neighbours — the index alone lands it
   // outside a v-for's anchors when the list is followed by other content.
-  let originSibling: Node | null = null;
+  // `undefined` once the node is back.
+  let originSibling: Node | null | undefined;
   // Set by a drop outside every list: `restore` puts the node back; nothing reorders.
   let spilled = false;
-  let draggedId: string | undefined;
+  let dragged: { id: string; item: HTMLElement; from: HTMLElement; oldIndex: number } | undefined;
 
+  // A drag cut short by any list's `destroy` gets no `onEnd`, and SortableJS's cleanup skips the node: it goes
+  // back, without its drag-state classes — unless the owner has unmounted it meanwhile.
   function endPointerDrag(): void {
-    const id = draggedId;
-    draggedId = undefined;
+    const drag = dragged;
+    dragged = undefined;
     pointerDrags.delete(endPointerDrag);
-    if (id !== undefined) {
-      options.onRelease?.({ id });
+    const misplaced = drag?.item.parentNode !== drag?.from || drag?.item.nextSibling !== originSibling;
+    if (drag?.item.isConnected) {
+      // Only a node that moved: re-inserting one in place would drop its focus.
+      if (originSibling !== undefined && misplaced) {
+        restore(drag.item, drag.from, drag.oldIndex);
+      }
+      drag.item.classList.remove("sortable-chosen", "vc-sortable__item--ghost");
+      drag.item.removeAttribute("draggable");
+    }
+    if (drag) {
+      options.onRelease?.({ id: drag.id });
     }
   }
 
-  function restore(event: Sortable.SortableEvent): void {
-    const saved = originSibling?.parentNode === event.from ? originSibling : null;
-    originSibling = null;
+  function restore(item: HTMLElement, from: HTMLElement, oldIndex: number): void {
+    const saved = originSibling?.parentNode === from ? originSibling : null;
+    originSibling = undefined;
     // Removed before the fallback index is read: with the item still in place, a backward move reads one short.
-    event.item.remove();
-    event.from.insertBefore(event.item, saved ?? event.from.children[event.oldIndex ?? 0] ?? null);
+    item.remove();
+    from.insertBefore(item, saved ?? from.children[oldIndex] ?? null);
   }
 
   // eslint-disable-next-line sonarjs/function-return-type -- SortableJS takes a group name or a group object
@@ -488,7 +528,7 @@ export function useSortableList(
         originSibling = event.item.nextSibling;
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
         if (id) {
-          draggedId = id;
+          dragged = { id, item: event.item, from: event.from, oldIndex: event.oldIndex ?? 0 };
           pointerDrags.add(endPointerDrag);
           options.onGrab?.({ id, from: nameOf() });
         }
@@ -496,7 +536,7 @@ export function useSortableList(
 
       // Draggable indices, never plain ones: other children of the container would shift them.
       onUpdate: (event: Sortable.SortableEvent) => {
-        restore(event);
+        restore(event.item, event.from, event.oldIndex ?? 0);
         if (spilled) {
           return;
         }
@@ -512,14 +552,14 @@ export function useSortableList(
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
 
         // Without an index change SortableJS fires no update, so `restore` has not run yet.
-        if (spilled && originSibling) {
-          restore(event);
+        if (spilled && originSibling !== undefined) {
+          restore(event.item, event.from, event.oldIndex ?? 0);
         }
         spilled = false;
 
         if (event.from !== event.to) {
           // Back into the source list — state is what moves the item across.
-          restore(event);
+          restore(event.item, event.from, event.oldIndex ?? 0);
 
           const to = event.to.getAttribute(SORTABLE_NAME_ATTRIBUTE);
           if (id && to) {
@@ -543,7 +583,10 @@ export function useSortableList(
       const instance = create(el);
       sortable = instance;
       onCleanup(() => {
+        // `destroy` ends whatever drag is on the page, any list's, and leaves a fallback drag's ghost behind.
+        const ghost = Sortable.ghost;
         instance.destroy();
+        ghost?.remove();
         sortable = undefined;
         [...pointerDrags].forEach((endDrag) => endDrag());
       });
@@ -599,7 +642,16 @@ export function useSortableList(
           end();
         }
       };
-      const entry: RegisteredListType = { accepts: options.accepts, isEnabled, focusItem, adopt, releaseFrom };
+      const entry: RegisteredListType = {
+        accepts: options.accepts,
+        isEnabled,
+        focusItem,
+        items: options.items,
+        isGrabbed,
+        announce,
+        adopt,
+        releaseFrom,
+      };
       const previous = lists.get(name);
       lists.set(name, entry);
       mountedLists.add(entry);
@@ -627,7 +679,7 @@ export function useSortableList(
   if (import.meta.env.DEV) {
     let warnedOrder = false;
     watch(
-      [() => toValue<readonly string[] | undefined>(options.listOrder), groupOf, nameOf],
+      [orderOf, groupOf, nameOf],
       ([order, group, name]) => {
         if (!order || warnedOrder) {
           return;

@@ -265,18 +265,62 @@ describe("useSortableList — keyboard", () => {
 });
 
 describe("useSortableList — moving between lists by keyboard", () => {
-  function setupPair(targetAccepts?: (id: string, from: string) => boolean) {
+  function setupPair(
+    targetAccepts?: (id: string, from: string) => boolean,
+    {
+      apply = () => true,
+      source: sourceOptions = {},
+      target: targetOptions = {},
+      third = false,
+    }: {
+      apply?: (payload: SortableMovePayloadType) => boolean | string;
+      source?: SetupType;
+      target?: SetupType;
+      third?: boolean;
+    } = {},
+  ) {
     const order = ["shown", "parked", "archived"];
-    const source = setup({ name: "shown", group: "stats", listOrder: order, orientation: "horizontal" });
+    const lists: Record<string, string[]> = { shown: ["a", "b", "c"], parked: ["x"] };
+    const moves: SortableMovePayloadType[] = [];
+    const own = (name: string) => ({
+      items: () => lists[name],
+      onReorder: (ids: string[]) => {
+        lists[name] = ids;
+      },
+      onMove: (payload: SortableMovePayloadType) => {
+        moves.push(payload);
+        const applied = apply(payload);
+        if (applied) {
+          const to = typeof applied === "string" ? applied : payload.to;
+          lists[payload.from] = lists[payload.from].filter((id) => id !== payload.id);
+          const next = [...(lists[to] ?? [])];
+          next.splice(payload.index ?? next.length, 0, payload.id);
+          lists[to] = next;
+        }
+      },
+    });
+    const source = setup({
+      name: "shown",
+      group: "stats",
+      listOrder: order,
+      orientation: "horizontal",
+      ...own("shown"),
+      ...sourceOptions,
+    });
     const target = setup({
       name: "parked",
       group: "stats",
       listOrder: order,
       orientation: "horizontal",
       accepts: targetAccepts,
-      initial: ["x"],
+      ...own("parked"),
+      ...targetOptions,
     });
-    return { ...source, target };
+    lists.archived = [];
+    const archived = third
+      ? setup({ name: "archived", group: "stats", listOrder: order, orientation: "horizontal", ...own("archived") })
+      : undefined;
+    return { ...source, moves, order: () => lists.shown, target: { ...target, order: () => lists.parked }, archived };
   }
 
   it("announces that the grab can change lists", () => {
@@ -298,69 +342,225 @@ describe("useSortableList — moving between lists by keyboard", () => {
     expect(signals).toEqual([]);
   });
 
-  it("moves the item to the next list in the list order and hands the grab over with it", () => {
-    const { list, press, moves, signals, order, target } = setupPair();
-
-    press(" ", "b");
-    press("ArrowDown", "b");
-
-    expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
-    expect(signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: false });
-    expect(list.isGrabbed("b")).toBe(false);
-    expect(target.list.isGrabbed("b")).toBe(true);
-    expect(order()).toEqual(["a", "b", "c"]);
-  });
-
-  it("ends the grab on arrival when the list the item leaves drops on a list change", () => {
-    const order = ["shown", "parked"];
-    const releases: string[] = [];
-    const source = setup({
-      name: "shown",
-      group: "drop",
-      listOrder: order,
-      orientation: "horizontal",
-      dropOnListChange: true,
-      onRelease: ({ id }) => releases.push(id),
-    });
-    const target = setup({ name: "parked", group: "drop", listOrder: order, orientation: "horizontal", initial: [] });
-
-    source.press(" ", "b");
-    source.press("ArrowDown", "b");
-
-    expect(source.moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
-    expect(source.signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: true });
-    expect(releases).toEqual(["b"]);
-    expect(target.list.isGrabbed("b")).toBe(false);
-  });
-
-  it("carries the grab out of a list that does not drop, even into one that does", () => {
-    const order = ["shown", "parked"];
-    const source = setup({ name: "shown", group: "drop-2", listOrder: order, orientation: "horizontal" });
-    const target = setup({
-      name: "parked",
-      group: "drop-2",
-      listOrder: order,
-      orientation: "horizontal",
-      dropOnListChange: true,
-      initial: [],
-    });
-
-    source.press(" ", "b");
-    source.press("ArrowDown", "b");
-
-    expect(source.signals.at(-1)).toMatchObject({ kind: "movedList", dropped: false });
-    expect(target.list.isGrabbed("b")).toBe(true);
-  });
-
-  it("lets the grab go when the owner does not apply the move", async () => {
-    const { press, target } = setupPair();
+  it("moves the item to the next list in the list order and hands the grab over with it", async () => {
+    const { list, press, moves, order, target } = setupPair();
 
     press(" ", "b");
     press("ArrowDown", "b");
     await nextTick();
 
-    // This harness's owner records moves without applying them, so "parked" never receives the item.
+    expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+    expect(target.signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: false });
+    expect(list.isGrabbed("b")).toBe(false);
+    expect(target.list.isGrabbed("b")).toBe(true);
+    expect([order(), target.order()]).toEqual([
+      ["a", "c"],
+      ["x", "b"],
+    ]);
+  });
+
+  it("ignores the blur of the item it is moving out to another list", async () => {
+    const { press, blur, signals, order, target } = setupPair();
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    blur("b");
+    await nextTick();
+
+    expect([order(), target.order()]).toEqual([
+      ["a", "c"],
+      ["x", "b"],
+    ]);
+    expect(signals.some(({ kind }) => kind === "cancelled")).toBe(false);
+    expect(target.list.isGrabbed("b")).toBe(true);
+  });
+
+  it("says the grab was cancelled, and lets go, when the owner refuses a carried move", async () => {
+    const { list, press, signals, target } = setupPair(undefined, { apply: () => false });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(signals.some(({ kind }) => kind === "movedList")).toBe(false);
+    expect(signals.at(-1)).toEqual({ kind: "cancelled", id: "b" });
+    expect([list.isGrabbed("b"), target.list.isGrabbed("b")]).toEqual([false, false]);
+  });
+
+  it("says the grab was cancelled when the owner refuses a move that drops on arrival", async () => {
+    const { press, signals } = setupPair(undefined, { apply: () => false, source: { dropOnListChange: true } });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(signals.some(({ kind }) => kind === "movedList")).toBe(false);
+    expect(signals.at(-1)).toEqual({ kind: "cancelled", id: "b" });
+  });
+
+  it("says a carried item moved, not cancelled, when it is carried back to where it was grabbed", async () => {
+    const { press, target, signals } = setupPair();
+
+    press(" ", "c");
+    press("ArrowDown", "c");
+    await nextTick();
+    target.press("ArrowUp", "c");
+    await nextTick();
+
+    expect(signals.at(-1)).toEqual({ kind: "movedList", id: "c", from: "parked", to: "shown", dropped: false });
+  });
+
+  it("says where a refused move left the item, not where the grab began", async () => {
+    const { press, signals } = setupPair(undefined, { apply: () => false });
+
+    press(" ", "b");
+    press("ArrowRight", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(signals.at(-1)).toEqual({ kind: "dropped", id: "b", index: 2, total: 3 });
+  });
+
+  it("names the list the owner put the item in, when it is not the one asked for", async () => {
+    const { press, archived } = setupPair(undefined, { apply: () => "archived", third: true });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(archived!.signals).toEqual([{ kind: "movedList", id: "b", from: "shown", to: "archived", dropped: true }]);
+  });
+
+  it("says nothing when the owner puts the moved item in no list of the group", async () => {
+    const { press, signals } = setupPair(undefined, { apply: () => "archived" });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(signals.at(-1)).toMatchObject({ kind: "grabbed" });
+  });
+
+  it("ends the grab on arrival when the list the item leaves drops on a list change", async () => {
+    const releases: string[] = [];
+    const { press, moves, target } = setupPair(undefined, {
+      source: { dropOnListChange: true, onRelease: ({ id }) => releases.push(id) },
+    });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+    expect(target.signals.at(-1)).toEqual({ kind: "movedList", id: "b", from: "shown", to: "parked", dropped: true });
+    expect(releases).toEqual(["b"]);
     expect(target.list.isGrabbed("b")).toBe(false);
+  });
+
+  it("carries the grab out of a list that does not drop, even into one that does", async () => {
+    const { press, target } = setupPair(undefined, { target: { dropOnListChange: true } });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+
+    expect(target.signals.at(-1)).toMatchObject({ kind: "movedList", dropped: false });
+    expect(target.list.isGrabbed("b")).toBe(true);
+  });
+
+  it("drops the item where it is when Escape cannot take it back to a list now disabled", async () => {
+    const disabled = ref(false);
+    const releases: string[] = [];
+    const { press, moves, target } = setupPair(undefined, {
+      source: { disabled },
+      target: { onRelease: ({ id }) => releases.push(id) },
+    });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+    disabled.value = true;
+    await nextTick();
+    target.press("Escape", "b");
+    await nextTick();
+
+    expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+    expect(target.order()).toEqual(["x", "b"]);
+    expect(target.signals.at(-1)).toEqual({ kind: "dropped", id: "b", index: 1, total: 2 });
+    expect(target.list.isGrabbed("b")).toBe(false);
+    expect(releases).toEqual(["b"]);
+  });
+
+  it("drops the item where it is when Escape cannot take it back to a list that now refuses it", async () => {
+    const accepts = vi.fn((id: string, from: string) => !(id === "b" && from === "parked"));
+    const { press, moves, target } = setupPair(undefined, { source: { accepts } });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+    target.press("Escape", "b");
+    await nextTick();
+
+    expect(accepts).toHaveBeenCalledWith("b", "parked");
+    expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+    expect(target.signals.at(-1)).toEqual({ kind: "dropped", id: "b", index: 1, total: 2 });
+  });
+
+  it("drops the item where it is when Escape finds the list it came from gone", async () => {
+    const { press, moves, target, scope } = setupPair();
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+    scope.stop();
+    target.press("Escape", "b");
+    await nextTick();
+
+    expect(moves).toEqual([{ id: "b", from: "shown", to: "parked" }]);
+    expect(target.signals.at(-1)).toEqual({ kind: "dropped", id: "b", index: 1, total: 2 });
+  });
+
+  it("takes the item home on Escape, and says so once the owner has applied it", async () => {
+    const { press, moves, order, signals, target } = setupPair();
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+    target.press("Escape", "b");
+
+    expect(moves.at(-1)).toEqual({ id: "b", from: "parked", to: "shown", index: 1 });
+    expect(order()).toContain("b");
+    expect(signals.at(-1)).toMatchObject({ kind: "grabbed" });
+    await nextTick();
+    expect(signals.at(-1)).toEqual({ kind: "cancelled", id: "b" });
+  });
+
+  it("names the list the owner sent the item to instead of home on Escape", async () => {
+    const { press, target, archived } = setupPair(undefined, {
+      apply: ({ to }) => (to === "parked" ? true : "archived"),
+      third: true,
+    });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+    target.press("Escape", "b");
+    await nextTick();
+
+    expect(archived!.signals).toEqual([{ kind: "movedList", id: "b", from: "parked", to: "archived", dropped: true }]);
+  });
+
+  it("says the item was dropped where it is when the owner refuses the way home", async () => {
+    const { press, target } = setupPair(undefined, { apply: ({ to }) => to === "parked" });
+
+    press(" ", "b");
+    press("ArrowDown", "b");
+    await nextTick();
+    target.press("Escape", "b");
+    await nextTick();
+
+    expect(target.order()).toEqual(["x", "b"]);
+    expect(target.signals.at(-1)).toEqual({ kind: "dropped", id: "b", index: 1, total: 2 });
   });
 
   it("does not wrap past the start of the list order", () => {
@@ -518,7 +718,7 @@ describe("useSortableList — moving between lists by keyboard", () => {
           orientation: "horizontal",
           items: () => ids,
           onReorder: vi.fn(),
-          onMove: vi.fn(),
+          onMove: ({ id }) => ids.splice(ids.indexOf(id), 1),
         }),
       )!;
       return { el, list };
@@ -530,6 +730,7 @@ describe("useSortableList — moving between lists by keyboard", () => {
       shown.list.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
     press(" ");
     press("ArrowDown");
+    await nextTick();
     await nextTick();
 
     expect(document.activeElement).toBe(parked.el.firstElementChild);
@@ -566,6 +767,8 @@ describe("useSortableList — moving between lists by keyboard", () => {
       shown.itemAttrs("a").onKeydown!({ key, preventDefault: vi.fn() } as unknown as KeyboardEvent);
     press(" ");
     press("ArrowDown");
+    // The landing announcement waits a tick, and the focus it hands on one more.
+    await nextTick();
     await nextTick();
 
     expect(document.activeElement).toBe(owned);
@@ -597,12 +800,28 @@ describe("useSortableList — attributes", () => {
     const { list, press } = setup({ handle: ".grip" });
 
     expect(list.itemAttrs("a")).toEqual({ "data-sortable-id": "a", class: "vc-sortable__item" });
-    expect(list.handleAttrs("a")).toMatchObject({ class: "vc-sortable__handle", "aria-pressed": "false" });
+    expect(list.handleAttrs("a")).toMatchObject({
+      class: "vc-sortable__handle",
+      tabindex: "0",
+      "aria-pressed": "false",
+    });
 
     press(" ", "a");
 
     expect(list.itemAttrs("a").class).toBe("vc-sortable__item vc-sortable__item--grabbed");
     expect(list.handleAttrs("a")).toMatchObject({ "aria-pressed": "true" });
+  });
+
+  it("cancels on the handle's blur in a list that has one", async () => {
+    const { list, press, blur, order } = setup({ handle: ".grip" });
+
+    press(" ", "a");
+    press("ArrowDown", "a");
+    await nextTick();
+    blur("a");
+
+    expect(order()).toEqual(["a", "b", "c"]);
+    expect(list.isGrabbed("a")).toBe(false);
   });
 
   it("is inert while disabled, and lets go of a grab when it becomes disabled", async () => {

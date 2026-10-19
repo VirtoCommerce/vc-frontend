@@ -13,7 +13,7 @@
 
     <slot name="after" />
 
-    <!-- Out of the container, which may be a `tbody`; Teleport leaves only comment anchors here. -->
+    <!-- Out of the container, which may be a `tbody`; Teleport leaves only non-element anchors here. -->
     <Teleport to="body">
       <span v-if="liveRegion" aria-live="polite" class="sr-only">{{ message }}</span>
     </Teleport>
@@ -49,11 +49,18 @@ import type {
 import type { PropType, VNode } from "vue";
 
 export interface IEmits {
-  /** An item left this list for another one in its group. The owner of both lists applies it, synchronously. */
+  /**
+   * An item left this list for another one in its group. The owner of both lists applies it, synchronously: a
+   * move not applied by the next render counts as refused. The owner may put the item in another list of the
+   * group instead; that list then announces `movedList` with `dropped: true`.
+   * The contract table in the VcSortable docs lists every case.
+   */
   (event: "move", payload: SortableMovePayloadType): void;
   /**
-   * Every keyboard state change, unlocalized. A notification only: the list keeps announcing in its own region
-   * unless `liveRegion` is false, so a listener that renders its own region must turn that off, or both speak.
+   * Every keyboard state change, unlocalized. A move between lists is reported once it lands, by the list the
+   * item is in then, so bind one listener to every list of a group. A notification only: the list keeps
+   * announcing in its own region unless `liveRegion` is false, so a listener that renders its own region must
+   * turn that off, or both speak.
    */
   (event: "announce", signal: SortableSignalType): void;
   /** A grab started, by pointer drag or by keyboard, in this list. */
@@ -67,7 +74,10 @@ export interface IProps<TItem = unknown> {
   name?: string;
   /** Lists sharing a group exchange items. */
   group?: string;
-  /** Ordered names of this list and its siblings, walked by the cross-axis arrows. Ends do not wrap. */
+  /**
+   * Ordered names of this list and its siblings, walked by the cross-axis arrows. Ends do not wrap. Pass the same
+   * order to every list of the group: an announcement names a list by its place in it.
+   */
   listOrder?: readonly string[];
   /**
    * Per-item acceptance for items arriving from `from`, asked on the pointer AND the keyboard path. Called on
@@ -322,8 +332,7 @@ const ItemScope = defineComponent({
 // Dashed = held, as the pointer's drop preview is. Not `:focus-visible`: the keyboard refocuses a tick after the move.
 @mixin held-ring {
   @include focus-ring;
-
-  outline-style: dashed;
+  @apply outline-dashed;
 }
 
 // No box properties: layout is the consumer's, and this class must be safe on a `tbody`. What is here is
@@ -337,8 +346,7 @@ const ItemScope = defineComponent({
 
     // Before `--whole`: a held whole item shows the focus ring, not the accent, on its outline.
     &#{$item}--grabbed {
-      opacity: var(--vc-sortable-grabbed-opacity);
-      outline-color: var(--vc-sortable-accent-color);
+      @apply opacity-[--vc-sortable-grabbed-opacity] outline-[color:--vc-sortable-accent-color];
     }
 
     // Handle mode only: there the ring is on the handle, inside the item. Under a whole item a shadow fills
@@ -348,10 +356,10 @@ const ItemScope = defineComponent({
     }
 
     &--whole {
-      cursor: var(--vc-sortable-cursor);
+      @apply cursor-[--vc-sortable-cursor];
 
       &:active {
-        cursor: var(--vc-sortable-active-cursor);
+        @apply cursor-[--vc-sortable-active-cursor];
       }
 
       &[aria-pressed="true"] {
@@ -362,24 +370,21 @@ const ItemScope = defineComponent({
     // SortableJS moves the dragged element to the insertion point, so this previews what lands there. No
     // radius: the item's shape is the consumer's.
     &#{$item}--ghost {
-      @apply outline-dashed outline-1 outline-offset-2;
-
-      opacity: var(--vc-sortable-ghost-opacity);
-      outline-color: var(--vc-sortable-accent-color);
+      @apply outline-dashed outline-1 outline-offset-2 opacity-[--vc-sortable-ghost-opacity] outline-[color:--vc-sortable-accent-color];
     }
 
     // The clone under the pointer stays solid, so what is carried reads as the real item.
     &#{$item}--drag {
-      opacity: 1;
+      @apply opacity-100;
     }
   }
 
   // The handle is the consumer's element, often a kit component: only the cursor and the held ring are set here.
   &__handle {
-    cursor: var(--vc-sortable-cursor);
+    @apply cursor-[--vc-sortable-cursor];
 
     &:active {
-      cursor: var(--vc-sortable-active-cursor);
+      @apply cursor-[--vc-sortable-active-cursor];
     }
 
     &[aria-pressed="true"] {

@@ -580,7 +580,7 @@ describe("widget column drag and drop", () => {
             slots,
           );
 
-        // A paired hidden zone gives a keyboard ring somewhere to go, so its absence becomes observable.
+        // A paired hidden zone gives the cross-axis arrows somewhere to go, so its absence becomes observable.
         return () => (hiddenSibling ? h("div", [region(false), region(true)]) : region(false));
       },
     });
