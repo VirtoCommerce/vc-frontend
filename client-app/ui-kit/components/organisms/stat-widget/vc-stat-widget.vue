@@ -14,7 +14,7 @@
 
     <div v-if="loading" class="vc-stat-widget__value vc-stat-widget__value--pending" aria-hidden="true">—</div>
 
-    <div v-else-if="errorText" class="vc-stat-widget__error" aria-hidden="true">
+    <div v-else-if="hasError" class="vc-stat-widget__error" aria-hidden="true">
       <span class="vc-stat-widget__line-icon">
         <VcIcon name="exclamation-circle" :size="16" />
       </span>
@@ -87,13 +87,14 @@ defineSlots<{
 
 const { t } = useI18n();
 
-const hasValue = computed(() => props.value !== undefined && props.value !== "");
+const hasValue = computed(() => !!props.value?.trim());
+const hasError = computed(() => !!props.errorText?.trim());
 
 const statusText = computed(() => {
   if (props.loading) {
     return t("ui_kit.stat_widget.loading", { label: props.label });
   }
-  return props.errorText ? t("ui_kit.stat_widget.error", { label: props.label, error: props.errorText }) : "";
+  return hasError.value ? t("ui_kit.stat_widget.error", { label: props.label, error: props.errorText }) : "";
 });
 </script>
 

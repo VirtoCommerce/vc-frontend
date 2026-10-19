@@ -124,14 +124,23 @@ describe("VcStatWidget", () => {
   it("shows the placeholder dash instead of a blank figure when a ready card has no value", async () => {
     const missing = await mountSettled({ label: LABEL, valueSuffix: "items" });
     const empty = await mountSettled({ label: LABEL, value: "", valueSuffix: "items" });
+    const blank = await mountSettled({ label: LABEL, value: " ", valueSuffix: "items" });
     const zero = await mountSettled({ label: LABEL, value: "0" });
 
-    for (const wrapper of [missing, empty]) {
+    for (const wrapper of [missing, empty, blank]) {
       expect(hiddenText(wrapper)).toBe("—");
       expect(visibleText(wrapper)).not.toContain("items");
     }
     expect(visibleText(zero)).toContain("0");
     expect(hiddenText(zero)).toBe("");
+  });
+
+  it("treats a blank error text as no error and keeps showing the figures", async () => {
+    const wrapper = await mountSettled({ ...READY_PROPS, errorText: " " });
+
+    expect(statusOf(wrapper)).toBe("");
+    expect(iconNames(wrapper)).not.toContain("exclamation-circle");
+    expect(visibleText(wrapper)).toContain(READY_PROPS.value);
   });
 
   it("keeps the same status region mounted across every state", async () => {

@@ -525,7 +525,7 @@
 **VcStatWidget** (`client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue`)
 - Props:
   - label: string (required, already localized)
-  - value?: string (pre-formatted; without it the card shows a dash; never wraps mid-figure)
+  - value?: string (pre-formatted; without it, or when blank, the card shows a dash; never wraps mid-figure, so give the card a cell at least as wide as its figure: flex-wrap, or grid with `auto` columns — `grid-cols-N` (minmax(0, 1fr)) can squeeze a long figure past the border)
   - icon?: string
   - color?: VcMainColorType (default: "neutral") — accent bar, icon and prepend color
   - valueSuffix?: string (de-emphasized unit after the value, e.g. "items")
@@ -534,7 +534,7 @@
   - deltaColor?: VcMainColorType (default: "neutral") — e.g. "success" for growth, "danger" for a drop
   - deltaIcon?: string
   - loading?: boolean (dash placeholder + loader overlay; outranks errorText)
-  - errorText?: string (its presence is the error state; hides the figures)
+  - errorText?: string (a non-blank value is the error state; hides the figures)
 - Slots: prepend (added before the icon, not instead of it; painted in the accent color — e.g. a drag handle)
 - Features: KPI/metric card; equal heights and value baselines across a row when the cards are the row's flex items and labels fit in two lines (when a wrapper is the flex item, give the card `class="h-full"` or make the wrapper `grid`); loading and error announced, with the metric's label, through one always-mounted <output> live region
 - CSS vars: --vc-stat-widget-bg-color, --vc-stat-widget-border-color, --vc-stat-widget-radius
