@@ -66,6 +66,13 @@ describe("QuantityControl in stepper mode", () => {
     expect(input.attributes("aria-valuemax")).toBeUndefined();
   });
 
+  it("announces no ceiling when the product maximum and stock are both zero", async () => {
+    const input = createWrapper({ props: { ...stepperRow, maxQuantity: 0, availableQuantity: 0 } }).get("input");
+    await nextTick();
+
+    expect(input.attributes("aria-valuemax")).toBeUndefined();
+  });
+
   it("announces available stock as the ceiling when the product has it", async () => {
     const input = createWrapper({ props: { ...stepperRow, availableQuantity: 7 } }).get("input");
     await nextTick();
