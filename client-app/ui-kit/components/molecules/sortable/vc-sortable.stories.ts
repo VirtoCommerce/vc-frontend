@@ -29,7 +29,23 @@ const meta = {
     docs: {
       description: {
         component:
-          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape puts the item back, and leaving the item cancels. The list announces each step in its own localized `aria-live` region; `announce` reports each step unlocalized, and `live-region` off hands the wording to you. A keyboard move into another list keeps the item held unless `drop-on-list-change` is set on the list it leaves. `grab` and `release` report a grab by pointer or keyboard. A keyboard-held whole item, or a held handle, shows the focus ring dashed, as the pointer's drop preview is, so it reads apart from a focused one. The drag states retheme through `--vc-sortable-cursor`, `--vc-sortable-active-cursor`, `--vc-sortable-accent-color`, `--vc-sortable-grabbed-opacity`, `--vc-sortable-grabbed-shadow` (handle mode only) and `--vc-sortable-ghost-opacity`; in development, a mis-bound item or list warns in the console.",
+          "Reorders a list by pointer and by keyboard. The layout, the item markup and its look stay the consumer's: bind the slot's `attrs` to the item's single root element and style the container with your own class. Keyboard: Space/Enter grabs and drops, the arrows along `orientation` move, Escape, or leaving the item, puts it back (or drops it in place when the list it was grabbed in no longer takes it). The list announces each step in its own localized `aria-live` region; `announce` reports each step unlocalized, and `live-region` off hands the wording to you. A keyboard move into another list keeps the item held unless `drop-on-list-change` is set on the list it leaves; a move the `move` owner leaves in place drops the item where it is. `grab` and `release` report a grab by pointer or keyboard. A keyboard-held whole item, or a held handle, shows the focus ring dashed, as the pointer's drop preview is, so it reads apart from a focused one. The drag states retheme through `--vc-sortable-cursor`, `--vc-sortable-active-cursor`, `--vc-sortable-accent-color`, `--vc-sortable-grabbed-opacity`, `--vc-sortable-grabbed-shadow` (handle mode only) and `--vc-sortable-ghost-opacity`; in development, a mis-bound item or list warns in the console.\n\n" +
+          "**Keyboard and pointer contract.** Moves between lists are announced once the owner's render shows where the item is; apply `move` synchronously.\n\n" +
+          "| In list S, the user… | The item ends | Focus | `announce` (from the list holding the item) | Emits |\n" +
+          "| --- | --- | --- | --- | --- |\n" +
+          "| Space/Enter on an item | where it is, held | stays | `grabbed` | `grab` |\n" +
+          "| arrow along `orientation` | one place on (at an end: stays) | stays on it | `moved` (`edge`) | `update:modelValue` |\n" +
+          "| cross-axis arrow; list T next in `listOrder` is enabled and `accepts` it | in T, held — or not, with `drop-on-list-change` on S | follows into T | `movedList` (`dropped`) | `move`; `release` if dropped |\n" +
+          "| cross-axis arrow; no list that way takes it (disabled, refusing and unmounted lists are skipped) | where it is, held | stays | `noTarget` | — |\n" +
+          "| cross-axis arrow; the owner refuses `move`, or applies it after the next render | where it is (a late move lands silently) | stays | `cancelled` at its start, else `dropped` | `move`, `release` |\n" +
+          "| cross-axis arrow; the owner puts it in another list R of the group | in R | follows into R | `movedList` to R, `dropped` | `move`, `release` |\n" +
+          "| Space/Enter on the held item | where it is | stays | `dropped` | `release` |\n" +
+          "| Escape, still in the list it was grabbed in | back at its start | stays on it | `cancelled` | `update:modelValue`, `release` |\n" +
+          "| Escape after a move into T; the home list takes it back | back at its start | follows home | `cancelled` | `move`, `release` |\n" +
+          "| Escape after a move into T; home disabled, refusing, unmounted, or the owner refuses | in T | stays | `dropped` | `release` (`move` only if home was asked) |\n" +
+          "| blur (tabbing away) while held | as Escape | not pulled back | as Escape | as Escape |\n" +
+          "| the list turns disabled or unmounts, the owner removes the item, a pointer press, or `release()` | where the owner has it | — | — | `release` |\n" +
+          "| pointer drag within S / into T / dropped outside every list, over one that refuses, or cut short by another list of the same app unmounting | dropped spot / T at the drop index / back at its start | — | — | `grab`, then `update:modelValue` / `move` / nothing, then `release` |\n",
       },
     },
   },
@@ -64,7 +80,7 @@ export const WholeItem: StoryType = {
     docs: {
       description: {
         story:
-          "Without a `handle` the whole item drags and is itself the keyboard control. Nothing else is needed for screen readers: the list announces every step itself.",
+          "Without a `handle` the whole item drags and is itself the keyboard control. The list announces every step itself; the snippet's `aria-label` tells a screen-reader user what the item does before it is grabbed.",
       },
       source: {
         code: `<VcSortable v-model="items" class="my-list">
