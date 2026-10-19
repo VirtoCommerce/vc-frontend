@@ -1856,10 +1856,12 @@
   "file_error": {
     "ALREADY_EXISTS": "同じ名前のファイルをアップロードできません",
     "INVALID_CONTENT": "ファイルを読み込めません",
+    "INVALID_CONTENT_TYPE": "ファイルをアップロードできません",
     "EXCEPTION": "ファイルのアップロード中にエラーが発生しました。もう一度お試しください",
-    "INVALID_SCOPE": "不明なスコープ '{0}' です",
+    "INVALID_SCOPE": "ファイルのアップロードは利用できません",
     "INVALID_EXTENSION": "このファイル形式は許可されていません",
     "INVALID_SIZE": "ファイルサイズが許容サイズ{0}を超えています",
+    "INVALID_MIN_SIZE": "ファイルサイズが最小サイズ{0}を下回っています",
     "CANNOT_DELETE": "ファイルの削除中にエラーが発生しました"
   }
 }

@@ -61,18 +61,19 @@ describe("startFederatedModules", () => {
     expect(fetchPlugins).not.toHaveBeenCalled();
   });
 
-  // Reads client-app/config/settings_data.json itself: the shipped theme must stay a no-op until
-  // the Sales Rep Hub plugin is released, so nobody pays the MF runtime for a plugin nobody serves.
-  it("is a no-op with the theme config as shipped", async () => {
+  // Reads client-app/config/settings_data.json itself: the Sales Rep Hub ships as a plugin, so the
+  // shipped theme has to run the loader.
+  it("runs the loader with the theme config as shipped", async () => {
     vi.doUnmock("@/config/settings_data.json");
     vi.resetModules();
-    const fetchPlugins = vi.fn();
+    initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
+    const fetchPlugins = vi.fn(() => Promise.resolve([]));
     const { startFederatedModules } = await loadBootstrap();
 
     await startFederatedModules({ fetchPlugins });
 
-    expect(initFederatedModulesMock).not.toHaveBeenCalled();
-    expect(fetchPlugins).not.toHaveBeenCalled();
+    expect(initFederatedModulesMock).toHaveBeenCalledOnce();
+    expect(fetchPlugins).toHaveBeenCalledOnce();
   });
 
   it.each([{}, { module_federation_enabled: "true" }, { module_federation_enabled: 1 }])(

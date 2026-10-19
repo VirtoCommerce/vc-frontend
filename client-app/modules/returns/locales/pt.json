@@ -5,9 +5,13 @@
       "table_description": "lista de devoluções"
     },
     "title": "Devoluções",
+    "scope": {
+      "own": "Minhas devoluções"
+    },
     "no_returns_message": "Ainda não há devoluções",
     "no_results_message": "Nenhuma devolução corresponde à sua pesquisa",
     "search_placeholder": "Pesquisar por RMA, encomenda, referência ou produto",
+    "search_placeholder_organization": "Pesquisar por RMA, encomenda, referência, produto ou comprador",
     "search_aria": "Pesquisar devoluções",
     "filters": {
       "title": "Filtros",
@@ -101,7 +105,8 @@
     "summary_section": "Resumo",
     "items_section": "Itens",
     "order_number": "Número do pedido",
-    "customer_reference": "Sua referência de pedido",
+    "requested_by": "Solicitada por",
+    "customer_reference": "Referência do pedido",
     "customer_comment": "Comentário",
     "cancel_reason": "Motivo do cancelamento",
     "reject_reason": "Motivo da recusa",

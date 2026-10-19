@@ -1856,10 +1856,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",
     "INVALID_CONTENT": "Cannot read file.",
+    "INVALID_CONTENT_TYPE": "No se puede cargar el archivo.",
     "EXCEPTION": "Failure while uploading file. Please try again.",
-    "INVALID_SCOPE": "Unknown scope '{0}'.",
+    "INVALID_SCOPE": "La carga de archivos no está disponible.",
     "INVALID_EXTENSION": "File format is not allowed.",
     "INVALID_SIZE": "File size exceeds the allowed {0}.",
+    "INVALID_MIN_SIZE": "El tamaño del archivo es inferior al mínimo permitido de {0}.",
     "CANNOT_DELETE": "Failure while deleting file."
   }
 }

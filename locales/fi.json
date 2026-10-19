@@ -1856,10 +1856,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Samannimistä tiedostoa ei voi ladata",
     "INVALID_CONTENT": "Tiedostoa ei voi lukea",
+    "INVALID_CONTENT_TYPE": "Tiedostoa ei voi ladata",
     "EXCEPTION": "Virhe tiedoston latauksessa. Yritä uudelleen.",
-    "INVALID_SCOPE": "Tuntematon laajuus '{0}'.",
+    "INVALID_SCOPE": "Tiedostojen lataaminen ei ole käytettävissä.",
     "INVALID_EXTENSION": "Tiedostomuoto ei ole sallittu",
     "INVALID_SIZE": "Tiedoston koko ylittää sallitun {0}",
+    "INVALID_MIN_SIZE": "Tiedoston koko alittaa sallitun vähimmäiskoon {0}",
     "CANNOT_DELETE": "Virhe tiedoston poistossa"
   }
 }

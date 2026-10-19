@@ -125,7 +125,8 @@
       "errors": {
         "fix_to_continue": "Fix file upload errors to continue.",
         "has_max_file_count": "You have uploaded the maximum number of files possible. Further uploads are not possible.",
-        "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
+        "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed.",
+        "unavailable": "File upload is not available."
       }
     },
     "reach_limit": {
