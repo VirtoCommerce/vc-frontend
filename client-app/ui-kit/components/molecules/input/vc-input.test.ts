@@ -193,7 +193,13 @@ describe("VcInput aria-required", () => {
     expect(wrapper.get("input").attributes("aria-required")).toBe("false");
   });
 
-  it.each([null, ""])("treats the consumer value %j as unset", (value) => {
+  it.each(["TRUE", true])("maps the consumer value %j to true on an optional field", (value) => {
+    const wrapper = createInputWrapper({ props: { aria: { "aria-required": value as string } } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it.each([null, "", "0", "no", "off", "yes", 0, 1])("treats the consumer value %j as unset", (value) => {
     const required = createInputWrapper({ props: { required: true, aria: { "aria-required": value } } });
     const optional = createInputWrapper({ props: { aria: { "aria-required": value } } });
 

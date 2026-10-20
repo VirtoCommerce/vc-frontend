@@ -48,6 +48,7 @@ interface IProps {
    */
   isDisabled?: boolean;
 
+  /** Draws the label's asterisk and exposes `aria-required` on the input. No native validation. */
   required?: boolean;
   disabled?: boolean;
   modelValue?: string;

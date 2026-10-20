@@ -213,13 +213,14 @@ const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
 
 // Not native `required`: forms validate through their schema, and the browser's own bubbles must not appear.
 const ariaRequired = computed<AriaAttributes["aria-required"]>(() => {
-  const override = props.aria?.["aria-required"];
+  const override = String(props.aria?.["aria-required"]).toLowerCase();
 
-  if (override == null || override === "") {
-    return props.required ? "true" : undefined;
+  // aria-required takes only true/false; any other value is ignored, so `required` decides.
+  if (override === "true" || override === "false") {
+    return override;
   }
 
-  return String(override).toLowerCase() === "false" ? "false" : "true";
+  return props.required ? "true" : undefined;
 });
 
 const computedAutocomplete = computed(() => {

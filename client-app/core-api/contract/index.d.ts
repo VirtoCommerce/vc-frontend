@@ -3656,7 +3656,10 @@ interface IProps$h {
     modelValue?: object | string | Array<object | string>;
     label?: string;
     ariaLabel?: string;
-    /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */
+    /**
+     * Draws the label's asterisk and exposes `aria-required` on the input trigger. A `selected`/`placeholder` slot
+     * trigger is a `role="button"`, which cannot carry it, so there only the label's asterisk shows it. No native validation.
+     */
     required?: boolean;
     disabled?: boolean;
     readonly?: boolean;

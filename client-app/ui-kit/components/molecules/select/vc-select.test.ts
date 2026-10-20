@@ -466,6 +466,8 @@ describe("VcSelect required", () => {
     const label = wrapper.get(".vc-label");
 
     expect(wrapper.find(".vc-select__button").exists()).toBe(true);
+    // role="button" does not allow aria-required.
+    expect(wrapper.get(".vc-select__button").attributes("aria-required")).toBeUndefined();
     expect(label.element.tagName).toBe("DIV");
     expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBeUndefined();
   });
