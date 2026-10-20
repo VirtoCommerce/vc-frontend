@@ -1,15 +1,19 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
+import { createI18n } from "vue-i18n";
+import { VcChip } from "@/ui-kit/components/molecules";
 import ProductsSection from "./products-section.vue";
 import type { LineItemType } from "@/core/api/graphql/types";
 
 const items = [{ id: "line-1" }, { id: "line-2" }] as LineItemType[];
 
 const global = {
+  plugins: [createI18n({ locale: "en", legacy: false, messages: {}, missingWarn: false })],
+  components: { VcChip },
   stubs: {
     VcWidget: { template: "<div><slot /></div>" },
-    VcChip: { template: "<span><slot /></span>" },
     VcButton: true,
+    VcIcon: true,
     VcRating: true,
     CartLineItems: true,
   },
@@ -19,15 +23,15 @@ const global = {
   },
 };
 
-function groupNames(wrapper: ReturnType<typeof mount>) {
-  return wrapper.findAll("[role='group']").map((group) => {
-    const labelId = group.attributes("aria-labelledby");
-    return wrapper.find(`[id='${labelId}']`).text();
-  });
+function describeGroups(wrapper: ReturnType<typeof mount>) {
+  return wrapper.findAll("[role='group']").map((group) => ({
+    name: wrapper.find(`[id='${group.attributes("aria-labelledby")}']`).text(),
+    containsList: group.find("cart-line-items-stub").exists(),
+  }));
 }
 
 describe("ProductsSection groups", () => {
-  it("names each vendor group and each other-currency group after its heading", () => {
+  it("wraps each vendor and other-currency list in a group named after its heading", () => {
     const wrapper = mount(ProductsSection, {
       props: {
         grouped: true,
@@ -40,16 +44,17 @@ describe("ProductsSection groups", () => {
       global,
     });
 
-    expect(groupNames(wrapper)).toEqual([
-      "common.labels.vendor_name:Acme",
-      "common.labels.vendor_name:Globex",
-      "common.labels.products_in_currency:EUR",
+    expect(describeGroups(wrapper)).toEqual([
+      { name: "common.labels.vendor_name:Acme", containsList: true },
+      { name: "common.labels.vendor_name:Globex", containsList: true },
+      { name: "common.labels.products_in_currency:EUR", containsList: true },
     ]);
   });
 
   it("keeps the ungrouped list out of any group", () => {
     const wrapper = mount(ProductsSection, { props: { grouped: false, items }, global });
 
+    expect(wrapper.find("cart-line-items-stub").exists()).toBe(true);
     expect(wrapper.findAll("[role='group']")).toHaveLength(0);
   });
 });
