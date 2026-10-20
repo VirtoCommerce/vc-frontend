@@ -81,7 +81,7 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
 
 // Plain mount (not createWrapperFactory): this file mocks the vue-i18n module, and the shared factory's
 // defaults build a real i18n plugin from it.
-// `realFields` mounts the real VcInput and VcDatePicker: only they turn `required` into an attribute.
+// `realFields` mounts the real VcInput and VcDatePicker: only they turn `required` into `aria-required`.
 function createWrapper(props: Record<string, unknown> = {}, { realFields = false } = {}) {
   return mount(SalesRepTaskModal, {
     props,
