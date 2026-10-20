@@ -59,12 +59,12 @@ function getThemeConfig() {
 
   if (typeof data.settings === "object" && data.settings !== null) {
     data.settings.design = resolveDesign(data.settings.design);
-  }
 
-  if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
-    data.settings.details_browser_target = BrowserTargetType.SELF;
-    data.settings.product_page_browser_target = BrowserTargetType.SELF;
-    data.settings.cart_page_browser_target = BrowserTargetType.SELF;
+    if (IS_DEVELOPMENT) {
+      data.settings.details_browser_target = BrowserTargetType.SELF;
+      data.settings.product_page_browser_target = BrowserTargetType.SELF;
+      data.settings.cart_page_browser_target = BrowserTargetType.SELF;
+    }
   }
 
   return data;

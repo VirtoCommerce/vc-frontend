@@ -229,6 +229,18 @@ describe("check-soft-styles", () => {
       expect(errors).toEqual([expect.stringContaining("names .vc-link, a block of the ui-kit side")]);
     });
 
+    it("names the first side that defines a block both sides define", () => {
+      const { errors } = checkSides(
+        sides({
+          ...BASE,
+          "app/fade.scss": ".vc-card { margin: 0; }",
+          "app/soft/cart-page.scss": `${SOFT} .cart-page:has(.vc-card) { padding: 0; }`,
+        }),
+      );
+
+      expect(errors).toEqual([expect.stringContaining("names .vc-card, a block of the ui-kit side")]);
+    });
+
     it.each([
       ["kit/soft/vc-card.scss", `${SOFT} .vc-button .vc-card { padding: 0; }`, "vc-button", "ui-kit"],
       ["kit/soft/vc-card.scss", `${SOFT} .vc-card:has(.vc-button) { padding: 0; }`, "vc-button", "ui-kit"],

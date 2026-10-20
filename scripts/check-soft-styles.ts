@@ -408,7 +408,26 @@ function checkCompiledFile(css: Root, file: string, role: FileRoleType, checkedR
   return errors;
 }
 
-function fileRole(file: string, side: ISideType, sides: ISideType[], errors: string[]): FileRoleType {
+/** Each block of every side, mapped to the first side that owns it. */
+function blockOwners(sides: ISideType[]): Map<string, string> {
+  const owners = new Map<string, string>();
+
+  for (const side of sides) {
+    for (const block of sideBlocks(side)) {
+      owners.set(block, owners.get(block) ?? side.name);
+    }
+  }
+
+  return owners;
+}
+
+function fileRole(
+  file: string,
+  side: ISideType,
+  sides: ISideType[],
+  owners: Map<string, string>,
+  errors: string[],
+): FileRoleType {
   const name = path.basename(file, ".scss");
 
   if (name === "_tokens") {
@@ -431,15 +450,7 @@ function fileRole(file: string, side: ISideType, sides: ISideType[], errors: str
     errors.push(`${file}  .${name} is not a block of the ${side.name} side`);
   }
 
-  const blocks = new Map<string, string>();
-
-  for (const other of sides) {
-    for (const block of sideBlocks(other)) {
-      blocks.set(block, blocks.get(block) ?? other.name);
-    }
-  }
-
-  return (selector) => checkBlockSelector(selector, name) ?? checkForeignBlocks(selector, name, blocks);
+  return (selector) => checkBlockSelector(selector, name) ?? checkForeignBlocks(selector, name, owners);
 }
 
 function compileOrReport(file: string, softDir: string, errors: string[]): Root | undefined {
@@ -515,7 +526,7 @@ function checkEntry(
   return errors;
 }
 
-function checkSide(side: ISideType, sides: ISideType[], errors: string[]): number {
+function checkSide(side: ISideType, sides: ISideType[], owners: Map<string, string>, errors: string[]): number {
   // A moved or renamed folder would otherwise leave nothing to check, and the check would pass.
   if (!existsSync(`${side.softDir}/index.scss`)) {
     errors.push(`${side.softDir}/index.scss is missing; the ${side.name} soft styles are not where this check looks`);
@@ -526,7 +537,7 @@ function checkSide(side: ISideType, sides: ISideType[], errors: string[]): numbe
   const files = globSync(`${side.softDir}/**/*.scss`, { dot: true }).sort((a, b) => a.localeCompare(b));
   const compiled: ICompiledType[] = files.map((file) => ({
     file,
-    role: fileRole(file, side, sides, errors),
+    role: fileRole(file, side, sides, owners, errors),
     css: compileOrReport(file, side.softDir, errors),
   }));
   // The layer an entry loads each checked rule into: tokens are hooks in `theme`, blocks go in the side's layer.
@@ -553,7 +564,8 @@ function checkSide(side: ISideType, sides: ISideType[], errors: string[]): numbe
 
 export function checkSides(sides: ISideType[]): { errors: string[]; fileCount: number } {
   const errors: string[] = [];
-  const fileCount = sides.reduce((count, side) => count + checkSide(side, sides, errors), 0);
+  const owners = blockOwners(sides);
+  const fileCount = sides.reduce((count, side) => count + checkSide(side, sides, owners, errors), 0);
 
   // A problem in a block file that an entry loads is reported once, at the line that wrote it.
   return { errors: [...new Set(errors)], fileCount };
