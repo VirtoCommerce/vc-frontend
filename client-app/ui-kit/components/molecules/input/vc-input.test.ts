@@ -162,6 +162,39 @@ describe("VcInput aria-invalid", () => {
   });
 });
 
+// VCST-6215: `required` only drew the label's asterisk, which VcLabel now hides from assistive tech.
+describe("VcInput aria-required", () => {
+  it("is exposed when the field is required", () => {
+    const wrapper = createInputWrapper({ props: { label: "Email", required: true } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it("is absent on an optional field", () => {
+    const wrapper = createInputWrapper({ props: { label: "Email" } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBeUndefined();
+  });
+
+  it("does not switch on native validation", () => {
+    const wrapper = createInputWrapper({ props: { required: true } });
+
+    expect(wrapper.get("input").attributes("required")).toBeUndefined();
+  });
+
+  it("keeps a consumer-supplied value on an optional field", () => {
+    const wrapper = createInputWrapper({ props: { aria: { "aria-required": "true" } } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it("treats a null consumer value as unset", () => {
+    const wrapper = createInputWrapper({ props: { required: true, aria: { "aria-required": null } } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+});
+
 describe("VcInput clearable", () => {
   it("gives the clear button an accessible name", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "value", clearable: true } });

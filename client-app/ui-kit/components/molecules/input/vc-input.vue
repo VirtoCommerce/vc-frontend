@@ -44,6 +44,7 @@
         :aria-label="ariaLabel ?? label"
         :aria-describedby="describedById"
         :aria-invalid="invalid"
+        :aria-required="ariaRequired"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -208,6 +209,9 @@ const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
 
   return override === "false" || override === "grammar" || override === "spelling" ? override : "true";
 });
+
+// Not native `required`: forms validate through their schema, and the browser's own bubbles must not appear.
+const ariaRequired = computed(() => props.aria?.["aria-required"] ?? (props.required ? "true" : undefined));
 
 const computedAutocomplete = computed(() => {
   if (props.disableAutocomplete) {

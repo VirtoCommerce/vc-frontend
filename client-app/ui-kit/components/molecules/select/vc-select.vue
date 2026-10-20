@@ -12,7 +12,13 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :for-id="triggerId" :required="required" :error="error">
+    <!-- A slot trigger is a div, which a <label for> cannot name, so the label keeps its asterisk audible. -->
+    <VcLabel
+      v-if="label"
+      :for-id="$slots.selected || $slots.placeholder ? undefined : triggerId"
+      :required="required"
+      :error="error"
+    >
       {{ label }}
     </VcLabel>
 

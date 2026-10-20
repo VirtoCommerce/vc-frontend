@@ -423,3 +423,44 @@ describe("VcSelect inside a dialog popover", () => {
     },
   );
 });
+
+const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
+  attachTo: document.body,
+  props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true },
+  global: {
+    components: {
+      VcButton,
+      VcCheckbox,
+      VcDropdownMenu,
+      VcIcon,
+      VcInput,
+      VcInputDetails,
+      VcLabel,
+      VcMenuItem,
+      VcPopover,
+      VcScrollbar,
+      VcTooltip,
+    },
+  },
+});
+
+// VCST-6215: VcLabel hides the asterisk of a bound label, so it must bind only a control that says "required".
+describe("VcSelect required", () => {
+  it("binds the label to the input trigger, which carries aria-required", () => {
+    const wrapper = createSelectWrapper();
+    const label = wrapper.get(".vc-label");
+    const input = wrapper.get("input");
+
+    expect(label.attributes("for")).toBe(input.attributes("id"));
+    expect(input.attributes("aria-required")).toBe("true");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+  });
+
+  it("keeps the asterisk audible for a slotted trigger, which a label cannot name", () => {
+    const wrapper = createSelectWrapper({ slots: { placeholder: "Select" } });
+    const label = wrapper.get(".vc-label");
+
+    expect(label.element.tagName).toBe("DIV");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBeUndefined();
+  });
+});
