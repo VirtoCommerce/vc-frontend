@@ -41,7 +41,7 @@ describe("VcCheckbox accessible name", () => {
   ])("follows the slot label when it is %s after the first render", async (_, withLabel) => {
     const showLabel = ref(withLabel);
     const Host = defineComponent({
-      render: () => h(VcCheckbox, { name: "terms" }, showLabel.value ? { default: () => "Accept terms" } : {}),
+      setup: () => () => h(VcCheckbox, { name: "terms" }, showLabel.value ? { default: () => "Accept terms" } : {}),
     });
     const wrapper = mount(Host, {
       global: { stubs: { VcInputDetails: true, VcTooltip: { template: "<span><slot name='trigger' /></span>" } } },
