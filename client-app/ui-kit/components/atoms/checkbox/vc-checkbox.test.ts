@@ -4,16 +4,13 @@ import { defineComponent, h, nextTick, ref } from "vue";
 import VcCheckbox from "./vc-checkbox.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
 
+const stubs = {
+  VcInputDetails: true,
+  VcTooltip: { template: "<span><slot name='trigger' /></span>" },
+};
+
 function mountCheckbox(options: ComponentMountingOptions<typeof VcCheckbox> = {}) {
-  return mount(VcCheckbox, {
-    ...options,
-    global: {
-      stubs: {
-        VcInputDetails: true,
-        VcTooltip: { template: "<span><slot name='trigger' /></span>" },
-      },
-    },
-  });
+  return mount(VcCheckbox, { ...options, global: { stubs } });
 }
 
 describe("VcCheckbox accessible name", () => {
@@ -43,9 +40,7 @@ describe("VcCheckbox accessible name", () => {
     const Host = defineComponent({
       setup: () => () => h(VcCheckbox, { name: "terms" }, showLabel.value ? { default: () => "Accept terms" } : {}),
     });
-    const wrapper = mount(Host, {
-      global: { stubs: { VcInputDetails: true, VcTooltip: { template: "<span><slot name='trigger' /></span>" } } },
-    });
+    const wrapper = mount(Host, { global: { stubs } });
 
     showLabel.value = !withLabel;
     await nextTick();
