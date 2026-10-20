@@ -58,6 +58,22 @@ describe("VcDatePicker — button names", () => {
   });
 });
 
+// VCST-6215: VcLabel hides the asterisk of a bound label, so the input itself must say "required".
+describe("VcDatePicker — required", () => {
+  it("exposes aria-required on its input", () => {
+    const wrapper = mountPicker({ label: "Due date", required: true });
+
+    expect(wrapper.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it("leaves aria-required off an optional picker", () => {
+    const wrapper = mountPicker({ label: "Due date" });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBeUndefined();
+  });
+});
+
 describe("VcDatePicker — preventDeselect", () => {
   // A lone field carries no clear control of its own, so the re-click is the only pointer route out.
   it("clears the value on a re-click by default", async () => {
