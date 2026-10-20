@@ -45,18 +45,19 @@ const VcModalStub = {
 
 // One stub for every field: they differ only in which value they carry, and the label identifies them.
 const FieldStub = {
-  props: ["modelValue", "label", "items", "clearable", "maxLength", "aria"],
-  emits: ["update:modelValue"],
-  computed: {
-    // Read through a computed so the template needs no nested quotes.
-    ariaRequired(): unknown {
-      return (this as unknown as { aria?: Record<string, unknown> }).aria?.["aria-required"];
-    },
+  props: {
+    modelValue: null,
+    label: null,
+    items: null,
+    clearable: null,
+    maxLength: null,
+    required: Boolean,
   },
+  emits: ["update:modelValue"],
   template:
     '<input class="field" :data-label="label" :value="modelValue"' +
     ' :data-clearable="String(!!clearable)" :data-max-length="maxLength"' +
-    ' :data-aria-required="ariaRequired"' +
+    ' :data-required="String(required)"' +
     " @input=\"$emit('update:modelValue', $event.target.value)\" />",
 };
 
@@ -301,13 +302,12 @@ describe("SalesRepTaskModal edit", () => {
 });
 
 describe("SalesRepTaskModal accessibility", () => {
-  // `required` only draws VcLabel's asterisk — it reaches neither the control nor assistive tech, so the
-  // requirement was exposed by no route at all (QA A-7).
-  it("marks the required controls as required, not just with an asterisk", () => {
+  // QA A-7: VcInput and VcDatePicker turn `required` into `aria-required` on the control they render.
+  it("marks the required controls as required", () => {
     const wrapper = createWrapper({ defaultDay: "2026-10-15" });
 
-    expect(field(wrapper, "name_label").attributes("data-aria-required")).toBe("true");
-    expect(field(wrapper, "due_date_label").attributes("data-aria-required")).toBe("true");
+    expect(field(wrapper, "name_label").attributes("data-required")).toBe("true");
+    expect(field(wrapper, "due_date_label").attributes("data-required")).toBe("true");
   });
 
   // Product decision over QA A-18 (advisory): Save is disabled until the form is valid. The requirement is

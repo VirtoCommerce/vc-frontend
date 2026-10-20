@@ -16,7 +16,6 @@
         :maxlength="MAX_NAME_LENGTH"
         :message="meta.dirty ? errors.name : undefined"
         :error="!!errors.name && meta.dirty"
-        :aria="REQUIRED_ARIA"
         required
       />
 
@@ -27,7 +26,6 @@
         :disabled="loading"
         :message="meta.dirty ? errors.dueDate : undefined"
         :error="!!errors.dueDate && meta.dirty"
-        :aria="REQUIRED_ARIA"
         enable-teleport
         required
       />
@@ -130,11 +128,6 @@ const MAX_NAME_LENGTH = 256;
 // validation rule would also invalidate a longer description written in the admin task UI and lock the rep
 // out of editing that task at all.
 const MAX_DESCRIPTION_LENGTH = 1000;
-
-// `required` only draws VcLabel's asterisk; it reaches neither the control nor assistive tech, so the
-// requirement was exposed by no route at all (QA A-7). Both VcInput and VcDatePicker merge an `aria` map
-// onto the control they render, so this is fixable here without touching the ui-kit.
-const REQUIRED_ARIA = { "aria-required": "true" };
 
 const PRIORITIES = ["Lowest", "Low", "Normal", "High", "Highest"] as const;
 

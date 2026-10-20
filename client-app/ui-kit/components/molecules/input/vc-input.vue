@@ -116,6 +116,7 @@ export interface IProps {
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
+  /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` overrides it. No native validation. */
   required?: boolean;
   name?: string;
   ariaLabel?: string;
@@ -218,7 +219,7 @@ const ariaRequired = computed<AriaAttributes["aria-required"]>(() => {
     return props.required ? "true" : undefined;
   }
 
-  return override === "false" ? "false" : "true";
+  return String(override).toLowerCase() === "false" ? "false" : "true";
 });
 
 const computedAutocomplete = computed(() => {

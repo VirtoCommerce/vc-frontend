@@ -88,7 +88,7 @@
 - Props:
   - required?: boolean
   - error?: boolean
-  - forId?: string (renders as <label for="..."> or <div>)
+  - forId?: string (renders as <label for="..."> or <div>; a bound label hides the asterisk from assistive tech, so the control must expose required itself)
   - size?: "xs" | "sm" | "md" | "lg" (auto-inherits from inputContext)
 - Slots: default (label text)
 - Features: required indicator (*), error state styling, dynamic size from parent input

@@ -188,8 +188,8 @@ describe("VcInput aria-required", () => {
     expect(wrapper.get("input").attributes("aria-required")).toBe("true");
   });
 
-  it("lets a consumer-supplied false win over required", () => {
-    const wrapper = createInputWrapper({ props: { required: true, aria: { "aria-required": "false" } } });
+  it.each(["false", "False"])("lets a consumer-supplied %s win over required", (value) => {
+    const wrapper = createInputWrapper({ props: { required: true, aria: { "aria-required": value } } });
 
     expect(wrapper.get("input").attributes("aria-required")).toBe("false");
   });

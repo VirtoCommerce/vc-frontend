@@ -23,6 +23,10 @@ import { computed, inject } from "vue";
 interface IProps {
   required?: boolean;
   error?: boolean;
+  /**
+   * Renders a `<label for>` bound to this id instead of a `<div>`. A bound label hides the required asterisk from
+   * assistive tech, so the control must expose `required` or `aria-required` itself.
+   */
   forId?: string;
   size?: "xs" | "sm" | "md" | "lg";
 }

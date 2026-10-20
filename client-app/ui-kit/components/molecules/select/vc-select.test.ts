@@ -456,10 +456,17 @@ describe("VcSelect required", () => {
     expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
   });
 
-  it("keeps the asterisk audible for a slotted trigger, which a label cannot name", () => {
-    const wrapper = createSelectWrapper({ slots: { placeholder: "Select" } });
+  it.each([
+    ["placeholder", { placeholder: "Select" }, ""],
+    ["selected", { selected: "Picked" }, "Pickup"],
+  ])("keeps the asterisk audible for a %s-slot trigger, which a label cannot name", (_, slots, modelValue) => {
+    const wrapper = createSelectWrapper({
+      props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true, modelValue },
+      slots,
+    });
     const label = wrapper.get(".vc-label");
 
+    expect(wrapper.find(".vc-select__button").exists()).toBe(true);
     expect(label.element.tagName).toBe("DIV");
     expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBeUndefined();
   });
