@@ -5,13 +5,13 @@
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
         <fieldset
           v-if="group.items.length"
-          :aria-labelledby="`${groupId}-vendor-${vendorId}`"
+          :aria-labelledby="getVendorHeadingId(vendorId)"
           class="products-section__group"
         >
           <!-- Vendor -->
           <div class="products-section__vendor">
             <VendorName
-              :id="`${groupId}-vendor-${vendorId}`"
+              :id="getVendorHeadingId(vendorId)"
               :name="group.vendor?.name"
               class="products-section__vendor-name"
             />
@@ -60,10 +60,10 @@
     <template v-for="group in otherCurrencyGroups" :key="group.currencyCode">
       <fieldset
         v-if="group.items.length"
-        :aria-labelledby="`${groupId}-currency-${group.currencyCode}`"
+        :aria-labelledby="getCurrencyHeadingId(group.currencyCode)"
         class="products-section__currency-group"
       >
-        <h4 :id="`${groupId}-currency-${group.currencyCode}`" class="products-section__currency-title">
+        <h4 :id="getCurrencyHeadingId(group.currencyCode)" class="products-section__currency-title">
           {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
         </h4>
 
@@ -136,6 +136,14 @@ withDefaults(defineProps<IProps>(), {
 });
 
 const groupId = useId();
+
+function getVendorHeadingId(index: number) {
+  return `${groupId}-vendor-${index}`;
+}
+
+function getCurrencyHeadingId(currencyCode: string) {
+  return `${groupId}-currency-${currencyCode}`;
+}
 </script>
 
 <style lang="scss">
