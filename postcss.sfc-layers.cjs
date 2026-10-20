@@ -1,4 +1,4 @@
-const { readFileSync, statSync } = require("node:fs");
+const { closeSync, fstatSync, openSync, readFileSync } = require("node:fs");
 const path = require("node:path");
 
 /**
@@ -35,10 +35,16 @@ let cached = { mtimeMs: -1, order: [] };
 // Each wrapped module restates the order: a chunk may load before the entry CSS that declares it
 // (the federation build links one ahead of index.css), and its first `@layer` would fix the order.
 function layerOrder() {
-  const { mtimeMs } = statSync(LAYERS_FILE);
+  const fd = openSync(LAYERS_FILE, "r");
 
-  if (mtimeMs !== cached.mtimeMs) {
-    cached = { mtimeMs, order: parseLayerOrder(readFileSync(LAYERS_FILE, "utf-8"), LAYERS_FILE) };
+  try {
+    const { mtimeMs } = fstatSync(fd);
+
+    if (mtimeMs !== cached.mtimeMs) {
+      cached = { mtimeMs, order: parseLayerOrder(readFileSync(fd, "utf-8"), LAYERS_FILE) };
+    }
+  } finally {
+    closeSync(fd);
   }
 
   return cached.order;
