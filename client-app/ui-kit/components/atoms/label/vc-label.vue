@@ -12,7 +12,7 @@
   >
     <slot />
 
-    <!-- A bound control announces "required" itself; the asterisk would only add "star" to its name. -->
+    <!-- A bound control announces "required" itself; a voiced asterisk would only repeat it. -->
     <span v-if="required" class="vc-label__asterisk" :aria-hidden="forId ? 'true' : undefined">*</span>
   </component>
 </template>

@@ -302,7 +302,6 @@ describe("SalesRepTaskModal edit", () => {
 });
 
 describe("SalesRepTaskModal accessibility", () => {
-  // QA A-7: VcInput and VcDatePicker turn `required` into `aria-required` on the control they render.
   it("marks the required controls as required", () => {
     const wrapper = createWrapper({ defaultDay: "2026-10-15" });
 

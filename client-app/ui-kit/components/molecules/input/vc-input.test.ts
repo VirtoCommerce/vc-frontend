@@ -162,7 +162,6 @@ describe("VcInput aria-invalid", () => {
   });
 });
 
-// VCST-6215: `required` only drew the label's asterisk, which VcLabel now hides from assistive tech.
 describe("VcInput aria-required", () => {
   it("is exposed when the field is required", () => {
     const wrapper = createInputWrapper({ props: { label: "Email", required: true } });

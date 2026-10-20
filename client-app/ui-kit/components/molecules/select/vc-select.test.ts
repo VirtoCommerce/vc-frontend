@@ -444,7 +444,6 @@ const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
   },
 });
 
-// VCST-6215: VcLabel hides the asterisk of a bound label, so it must bind only a control that says "required".
 describe("VcSelect required", () => {
   it("binds the label to the input trigger, which carries aria-required", () => {
     const wrapper = createSelectWrapper();

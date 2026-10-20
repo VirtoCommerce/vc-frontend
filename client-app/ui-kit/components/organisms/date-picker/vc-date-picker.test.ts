@@ -58,7 +58,6 @@ describe("VcDatePicker — button names", () => {
   });
 });
 
-// VCST-6215: VcLabel hides the asterisk of a bound label, so the input itself must say "required".
 describe("VcDatePicker — required", () => {
   it("exposes aria-required on its input", () => {
     const wrapper = mountPicker({ label: "Due date", required: true });

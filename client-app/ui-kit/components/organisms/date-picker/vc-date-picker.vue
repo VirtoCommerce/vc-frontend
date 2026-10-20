@@ -98,7 +98,7 @@ interface IProps {
   name?: string;
   disabled?: boolean;
   readonly?: boolean;
-  /** Draws the label's asterisk and exposes `aria-required` on the input. No native validation. */
+  /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` overrides it. No native validation. */
   required?: boolean;
   message?: string;
   error?: boolean;

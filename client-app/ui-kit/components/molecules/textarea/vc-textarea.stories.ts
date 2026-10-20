@@ -31,7 +31,7 @@ const meta: Meta<typeof VcTextarea> = {
     },
     required: {
       control: "boolean",
-      description: "Marks the field as required",
+      description: "Draws the label's asterisk and sets native `required` on the textarea",
     },
   },
   args: {
