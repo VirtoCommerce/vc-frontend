@@ -45,6 +45,14 @@ export const Selectable: StoryType = {
   },
 };
 
+export const SelectableWithCheckboxAriaLabel: StoryType = {
+  args: {
+    ...basicArgs,
+    selectable: true,
+    checkboxAriaLabel: `Select ${lineItem.name} for checkout`,
+  },
+};
+
 export const Removable: StoryType = {
   args: {
     ...basicArgs,

@@ -37,7 +37,9 @@
       "nav_previous": "Forrige",
       "nav_next": "Neste",
       "nav_up": "Opp",
-      "nav_down": "Ned"
+      "nav_down": "Ned",
+      "select_item": "Velg {name}",
+      "select_all_items": "Velg alle varer"
     },
     "calendar": {
       "aria_label": "Kalender",

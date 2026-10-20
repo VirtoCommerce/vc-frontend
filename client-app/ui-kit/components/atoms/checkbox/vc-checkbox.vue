@@ -18,7 +18,7 @@
         ref="inputRef"
         type="checkbox"
         class="vc-checkbox__input"
-        :aria-label="ariaLabel || name"
+        :aria-label="inputAriaLabel"
         :name="name"
         :value="value"
         :disabled="disabled"
@@ -126,6 +126,9 @@ const isChecked = computed(() => {
     return props.modelValue;
   }
 });
+
+// `name` is the form-field name: it may only stand in for a missing label, never override the slot.
+const inputAriaLabel = computed(() => props.ariaLabel || (slots.default ? undefined : props.name));
 
 const ariaCheckedValue = computed(() => (props.indeterminate ? "mixed" : isChecked.value));
 
