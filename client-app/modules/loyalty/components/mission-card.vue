@@ -33,14 +33,9 @@
       <span class="mission-card__note">{{ view.progressLabel }}</span>
 
       <div class="mission-card__progress">
-        <div
-          class="mission-card__track"
-          role="progressbar"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          :aria-valuenow="view.percent"
-          :aria-labelledby="titleId"
-        >
+        <progress class="sr-only" :value="view.percent" max="100" :aria-labelledby="titleId" />
+
+        <div class="mission-card__track" aria-hidden="true">
           <div
             class="mission-card__bar"
             :class="{ 'mission-card__bar--completed': view.isCompleted }"

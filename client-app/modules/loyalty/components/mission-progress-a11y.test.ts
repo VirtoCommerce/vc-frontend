@@ -60,27 +60,27 @@ vi.mock("vue-i18n", async (importOriginal) => ({
   useI18n: () => ({ t: (key: string) => key }),
 }));
 
-function expectProgressbar(root: HTMLElement) {
-  const bar = root.querySelector<HTMLElement>('[role="progressbar"]');
+function expectProgress(root: HTMLElement) {
+  const progress = root.querySelector<HTMLProgressElement>("progress");
 
-  expect(bar).not.toBeNull();
-  expect(bar!.getAttribute("aria-valuenow")).toBe("30");
-  expect(bar!.getAttribute("aria-valuemin")).toBe("0");
-  expect(bar!.getAttribute("aria-valuemax")).toBe("100");
+  expect(progress).not.toBeNull();
+  expect(progress!.value).toBe(30);
+  expect(progress!.max).toBe(100);
+  expect(root.querySelector('[class$="__track"]')?.getAttribute("aria-hidden")).toBe("true");
 
-  return bar!;
+  return progress!;
 }
 
-describe("VCST-6143: mission progress bars expose progressbar semantics", () => {
-  it("mission card bar is a progressbar named by the mission title", () => {
+describe("VCST-6143: mission progress bars expose a native progress element", () => {
+  it("mission card progress is a native progress named by the mission title", () => {
     const wrapper = mount(MissionCard, {
       props: { mission: { missionId: "1", missionType: "OrderCount" } as never },
       global,
       attachTo: document.body,
     });
 
-    const bar = expectProgressbar(wrapper.element as HTMLElement);
-    const labelledBy = bar.getAttribute("aria-labelledby");
+    const progress = expectProgress(wrapper.element as HTMLElement);
+    const labelledBy = progress.getAttribute("aria-labelledby");
 
     expect(labelledBy).toBeTruthy();
     expect(document.getElementById(labelledBy!)?.textContent?.trim()).toBe("Spring mission");
@@ -88,15 +88,15 @@ describe("VCST-6143: mission progress bars expose progressbar semantics", () => 
     wrapper.unmount();
   });
 
-  it("order mission modal bar is a progressbar named by the mission title", () => {
+  it("order mission modal progress is a native progress named by the mission title", () => {
     const wrapper = mount(OrderMissionModal, {
       props: { mission: { missionId: "1", missionType: "OrderCount", targetValue: 10 } as never },
       global,
     });
 
-    const bar = expectProgressbar(wrapper.element as HTMLElement);
+    const progress = expectProgress(wrapper.element as HTMLElement);
 
-    expect(bar.getAttribute("aria-label")).toBe("Spring mission");
+    expect(progress.getAttribute("aria-label")).toBe("Spring mission");
   });
 
   it("gives each mission card on one page its own title id", () => {
@@ -106,7 +106,7 @@ describe("VCST-6143: mission progress bars expose progressbar semantics", () => 
     });
     const wrapper = mount(MissionList, { global });
 
-    const ids = wrapper.findAll('[role="progressbar"]').map((bar) => bar.attributes("aria-labelledby"));
+    const ids = wrapper.findAll("progress").map((progress) => progress.attributes("aria-labelledby"));
 
     expect(ids).toHaveLength(2);
     expect(ids[0]).toBeTruthy();

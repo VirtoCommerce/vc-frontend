@@ -35,14 +35,9 @@
         </div>
 
         <div class="order-mission-modal__progress">
-          <div
-            class="order-mission-modal__track"
-            role="progressbar"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            :aria-valuenow="view.percent"
-            :aria-label="view.title"
-          >
+          <progress class="sr-only" :value="view.percent" max="100" :aria-label="view.title" />
+
+          <div class="order-mission-modal__track" aria-hidden="true">
             <div
               class="order-mission-modal__bar"
               :class="{ 'order-mission-modal__bar--completed': view.isCompleted }"
