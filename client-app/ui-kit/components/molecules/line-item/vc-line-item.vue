@@ -21,7 +21,7 @@
         v-if="selectable"
         v-model="isSelected"
         class="vc-line-item__checkbox"
-        :aria-label="checkboxAriaLabel || $t('ui_kit.accessibility.select_item', { name })"
+        :aria-label="$t('ui_kit.accessibility.select_item', { name })"
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
@@ -174,7 +174,6 @@ interface IProps {
   vendor?: CommonVendor;
   browserTarget?: BrowserTargetType;
   showPlacedPrice?: boolean;
-  checkboxAriaLabel?: string;
 }
 
 defineEmits<IEmits>();
