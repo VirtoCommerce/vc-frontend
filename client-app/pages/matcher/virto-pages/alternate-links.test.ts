@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { buildAlternateLinks } from "./alternate-links";
+import { fakeGetLocalizedPath as getLocalizedPath } from "./test-utils";
 
 const origin = "https://store.com";
-const getLocalizedPath = (cultureName: string, permalink: string) =>
-  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
-  cultureName === "en-US" ? permalink : `/${cultureName.slice(0, 2)}${permalink}`;
 
 describe("buildAlternateLinks", () => {
   it("links every translation and the default language as x-default", () => {
@@ -23,6 +21,20 @@ describe("buildAlternateLinks", () => {
       { rel: "alternate", hreflang: "nl-NL", href: "https://store.com/nl/veelgestelde-vragen" },
       { rel: "alternate", hreflang: "x-default", href: "https://store.com/faq" },
     ]);
+  });
+
+  it("matches the default language regardless of letter case", () => {
+    const links = buildAlternateLinks(
+      [
+        { cultureName: "en-US", permalink: "/faq" },
+        { cultureName: "nl-NL", permalink: "/veelgestelde-vragen" },
+      ],
+      origin,
+      "en-us",
+      getLocalizedPath,
+    );
+
+    expect(links.at(-1)).toEqual({ rel: "alternate", hreflang: "x-default", href: "https://store.com/faq" });
   });
 
   it("omits x-default when the default language has no version", () => {

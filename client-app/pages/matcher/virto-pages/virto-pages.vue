@@ -9,9 +9,10 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed, watch } from "vue";
+import { useBrandProfile } from "@/core/composables/useBrandProfile";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { useThemeContext } from "@/core/composables/useThemeContext";
 import { buildAlternateLinks } from "@/pages/matcher/virto-pages/alternate-links";
+import type { IPageAlternate } from "@/pages/matcher/virto-pages/alternate-links";
 import VPBuilderIO from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 import VPPageBuilder from "@/pages/matcher/virto-pages/vp-page-builder.vue";
 
@@ -21,7 +22,7 @@ interface IProps {
     source?: string;
     permalink?: string;
     content: string;
-    alternates?: { cultureName: string; permalink: string }[];
+    alternates?: IPageAlternate[];
   } | null;
 }
 
@@ -44,13 +45,10 @@ const permalink = computed(() => {
 const liveName = computed(() => permalink.value?.split("/").filter(Boolean).pop());
 
 const { updateLocalizedUrl, getLocalizedPath, defaultStoreCulture } = useLanguages();
-const { themeContext } = useThemeContext();
+const { storeUrl } = useBrandProfile();
 
 // Search engines get the store's own host, not the one the visitor came through (a secondary domain, a preview host).
-const storeOrigin = computed(() => {
-  const storeUrl = themeContext.value?.storeUrl?.trim();
-  return storeUrl && /^https?:\/\//i.test(storeUrl) ? new URL(storeUrl).origin : location.origin;
-});
+const storeOrigin = computed(() => new URL(storeUrl.value).origin);
 
 // Immediate: the document may already be loaded on mount, e.g. the translation resolved for the previous
 // language's permalink after a language switch; the URL must still move to its own permalink.

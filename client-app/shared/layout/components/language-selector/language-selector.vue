@@ -80,7 +80,7 @@ async function select(cultureName: string) {
   if (!slugInfo?.entityInfo) {
     previousCultureSlug.value = {
       cultureName: currentLanguage.value?.cultureName,
-      slug: getUrlWithoutLocale(location.pathname).slice(1),
+      slug: permalink,
     };
   } else {
     previousCultureSlug.value = {

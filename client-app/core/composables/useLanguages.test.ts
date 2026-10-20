@@ -200,6 +200,12 @@ describe("useLanguages", () => {
     it.each([
       { condition: "default language has no prefix", cultureName: "en-US", permalink: "/faq", expected: "/faq" },
       {
+        condition: "default language matches regardless of letter case",
+        cultureName: "en-us",
+        permalink: "/faq",
+        expected: "/faq",
+      },
+      {
         condition: "unambiguous language uses short prefix",
         cultureName: "fr-FR",
         permalink: "a-propos",
