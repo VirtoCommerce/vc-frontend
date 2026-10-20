@@ -125,6 +125,7 @@ describe("VcSortable", () => {
     const container = wrapper.get(".vc-sortable").element as HTMLElement;
     const item = wrapper.findAll(".row")[2].element as HTMLElement;
 
+    await vi.dynamicImportSettled();
     sortable().options.onStart({ item });
     container.insertBefore(item, container.firstElementChild);
     sortable().options.onUpdate({
@@ -169,6 +170,7 @@ describe("VcSortable", () => {
     );
     const container = wrapper.get(".vc-sortable").element as HTMLElement;
     const item = wrapper.findAll(".row")[2].element as HTMLElement;
+    await vi.dynamicImportSettled();
     const { options } = instances.at(-1)!;
 
     options.onStart({ item });
@@ -209,6 +211,7 @@ describe("VcSortable", () => {
 
     expect(item.getAttribute("data-sortable-id")).toBe("c");
 
+    await vi.dynamicImportSettled();
     const { options } = instances.at(-1)!;
     options.onStart({ item });
     container.insertBefore(item, container.firstElementChild);
@@ -232,6 +235,7 @@ describe("VcSortable", () => {
     const container = wrapper.element as HTMLElement;
     const item = wrapper.findAll(".row")[0].element as HTMLElement;
 
+    await vi.dynamicImportSettled();
     instances.at(-1)!.options.onStart({ item });
     container.append(item);
     instances.at(-1)!.options.onUpdate({
@@ -262,6 +266,7 @@ describe("VcSortable", () => {
     const container = wrapper.element as HTMLElement;
     const item = wrapper.findAll(".row")[2].element as HTMLElement;
 
+    await vi.dynamicImportSettled();
     instances.at(-1)!.options.onStart({ item });
     container.insertBefore(item, container.firstElementChild);
     instances.at(-1)!.options.onUpdate({
@@ -286,6 +291,7 @@ describe("VcSortable", () => {
     const item = wrapper.findAll(".row")[0].element as HTMLElement;
 
     other.append(item);
+    await vi.dynamicImportSettled();
     sortable().options.onEnd({ from: container, to: other, item, oldIndex: 0, newDraggableIndex: 0 });
     await nextTick();
 
@@ -533,6 +539,7 @@ describe("VcSortable", () => {
 
       await key("b", " ");
       await key("b", "ArrowDown");
+      await vi.dynamicImportSettled();
       sortableOf("shown").options.onChoose();
       element("b").dispatchEvent(new FocusEvent("blur"));
       await nextTick();
@@ -549,6 +556,7 @@ describe("VcSortable", () => {
 
       await key("b", " ");
       await key("b", "ArrowDown");
+      await vi.dynamicImportSettled();
       sortableOf("parked").options.onChoose();
       element("b").dispatchEvent(new FocusEvent("blur"));
       await nextTick();
@@ -562,6 +570,7 @@ describe("VcSortable", () => {
 
       await key("b", " ");
       await key("b", "ArrowDown");
+      await vi.dynamicImportSettled();
       sortableOf("archive").options.onChoose();
       element("b").dispatchEvent(new FocusEvent("blur"));
       await nextTick();
@@ -574,6 +583,7 @@ describe("VcSortable", () => {
 
       await key("b", " ");
       await key("b", "ArrowRight");
+      await vi.dynamicImportSettled();
       sortableOf("parked").options.onChoose();
       element("b").dispatchEvent(new FocusEvent("blur"));
       await nextTick();
@@ -726,7 +736,13 @@ function mountGroup(
     redirect = {},
     hideEmpty = false,
     late = false,
-  }: { redirect?: Record<string, string>; hideEmpty?: boolean; late?: boolean } = {},
+    propsOf = () => ({}),
+  }: {
+    redirect?: Record<string, string>;
+    hideEmpty?: boolean;
+    late?: boolean;
+    propsOf?: (name: string) => Record<string, unknown>;
+  } = {},
 ) {
   const names = Object.keys(lists.value);
   const announced: Record<string, string[]> = {};
@@ -748,6 +764,7 @@ function mountGroup(
         liveRegion: false,
         onMove,
         onAnnounce: recordInto(announced, name),
+        ...propsOf(name),
       },
       { item: renderPlainItem },
     );
@@ -819,6 +836,84 @@ describe("VcSortable — the cross-list contract (story docs table)", () => {
     expect(lists.value).toEqual({ shown: ["a"], parked: [] });
     expect(announced.shown).toEqual(["grabbed", "cancelled"]);
     expect(document.activeElement).toBe(document.body);
+  });
+
+  // Chrome runs microtasks between a Tab's blur and its focus, with focus on <body>; jsdom moves focus first.
+  // This replays Chrome's order, then lands the Tab unless something has taken focus meanwhile.
+  async function tabInto(control: HTMLElement) {
+    const from = document.activeElement as HTMLElement;
+    from.dispatchEvent(new FocusEvent("blur", { relatedTarget: control }));
+    from.blur();
+    await ticks();
+    if (document.activeElement === document.body && control.isConnected) {
+      control.focus();
+    }
+  }
+
+  async function carryThenTab(
+    options: Parameters<typeof mountGroup>[1] = {},
+    inItem = true,
+    initial: Record<string, string[]> = { shown: ["a"], parked: [] },
+  ) {
+    const lists = ref<Record<string, string[]>>(initial);
+    mountGroup(lists, options);
+    item().focus();
+    key(" ");
+    key("ArrowRight");
+    await ticks();
+    const control = document.createElement("button");
+    (inItem ? item() : document.body).append(control);
+    await tabInto(control);
+    return { lists, control };
+  }
+
+  it("Tab into a control of a carried item: takes it home, and focus follows the item there", async () => {
+    const { lists } = await carryThenTab();
+
+    expect(lists.value).toEqual({ shown: ["a"], parked: [] });
+    expect(document.activeElement).toBe(item());
+  });
+
+  it("Tab into a control of a carried item its home refuses: focus stays on that control", async () => {
+    const { lists, control } = await carryThenTab({
+      propsOf: (name) => (name === "shown" ? { accepts: () => false } : {}),
+    });
+
+    expect(lists.value).toEqual({ shown: [], parked: ["a"] });
+    expect(document.activeElement).toBe(control);
+  });
+
+  it("Tab into a control of a carried item whose home is disabled: focus stays on that control", async () => {
+    const disabled = ref(false);
+    const lists = ref<Record<string, string[]>>({ shown: ["a"], parked: [] });
+    mountGroup(lists, { propsOf: (name) => (name === "shown" ? { disabled: disabled.value } : {}) });
+    item().focus();
+    key(" ");
+    key("ArrowRight");
+    await ticks();
+    disabled.value = true;
+    await ticks();
+    const control = document.createElement("button");
+    item().append(control);
+    await tabInto(control);
+
+    expect(lists.value).toEqual({ shown: [], parked: ["a"] });
+    expect(document.activeElement).toBe(control);
+  });
+
+  it("Tab into a control of a carried item whose home is gone: focus stays on that control", async () => {
+    const { lists, control } = await carryThenTab({ hideEmpty: true }, true, { shown: ["a"], parked: ["x"] });
+
+    expect(lists.value).toEqual({ shown: [], parked: ["x", "a"] });
+    expect(document.activeElement).toBe(control);
+  });
+
+  it("Tab to a control outside a carried item: takes it home, and focus stays on that control", async () => {
+    const { lists, control } = await carryThenTab({}, false);
+
+    expect(lists.value).toEqual({ shown: ["a"], parked: [] });
+    expect(document.activeElement).toBe(control);
+    control.remove();
   });
 });
 
@@ -933,6 +1028,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
       }),
       { attachTo: document.body },
     );
+    await vi.dynamicImportSettled();
     const parked = instances.find((instance) => instance.el.getAttribute("data-sortable-name") === "parked")!;
     const shownEl = document.querySelector('[data-sortable-name="shown"]');
     const item = () => document.querySelector<HTMLElement>('[data-sortable-id="a"]')!;
@@ -1113,7 +1209,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(liveRegion()).not.toBeNull();
   });
 
-  it("reorders objects without an `itemKey`, keeping every one of them", () => {
+  it("reorders objects without an `itemKey`, keeping every one of them", async () => {
     const items = [{ name: "a" }, { name: "b" }, { name: "c" }];
     const model = ref(items);
     const wrapper = mount(
@@ -1139,6 +1235,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     );
     const ids = wrapper.findAll(".row").map((row) => row.attributes("data-sortable-id"));
 
+    await vi.dynamicImportSettled();
     instances.at(-1)!.options.onUpdate({
       item: wrapper.findAll(".row")[0].element,
       from: wrapper.get(".vc-sortable").element,
@@ -1164,9 +1261,10 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     expect(onRelease).toHaveBeenCalledWith({ id: "a" });
   });
 
-  it("drags by the handle element with a bare `handle`", () => {
+  it("drags by the handle element with a bare `handle`", async () => {
     mountList({ handle: true }, true);
 
+    await vi.dynamicImportSettled();
     expect(instances.at(-1)!.options.handle).toBe(".vc-sortable__handle");
   });
 });

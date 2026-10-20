@@ -6,13 +6,13 @@ import { useSortableList } from "@/ui-kit/composables";
 import VcSortable from "./vc-sortable.vue";
 import type { SortableMovePayloadType } from "@/ui-kit/composables";
 
-// The real SortableJS, unlike the sibling suite: what is under test is how its revert plugin and this
-// list's own node restore meet.
+// The real SortableJS, unlike the sibling suite: what is under test is how its drop and this list's own
+// spill decision and node restore meet.
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
 enableAutoUnmount(afterEach);
 
-// jsdom has no layout, so no `elementFromPoint`; SortableJS asks it where a drop landed.
+// jsdom has no layout, so no `elementFromPoint`; the list asks it where a drop landed.
 afterEach(() => {
   Reflect.deleteProperty(document, "elementFromPoint");
 });
@@ -31,6 +31,7 @@ async function drag(
   during: () => void,
   rendered = false,
 ) {
+  await vi.dynamicImportSettled();
   Object.defineProperty(document, "elementFromPoint", { configurable: true, value: () => at });
   if (mode === "native") {
     const point = { bubbles: true, cancelable: true, button: 0, clientX: 1, clientY: 1 };
@@ -41,6 +42,10 @@ async function drag(
     during();
     if (rendered) {
       await nextTick();
+    }
+    // Every list cancels dragover, so a release over one sends the browser's `drop` before the `dragend`.
+    if (at !== document.body) {
+      at.dispatchEvent(new MouseEvent("drop", { bubbles: true, cancelable: true, clientX: 500, clientY: 500 }));
     }
     item.dispatchEvent(new MouseEvent("dragend", { bubbles: true, cancelable: true, clientX: 500, clientY: 500 }));
   } else {
@@ -256,5 +261,39 @@ describe("VcSortable — a pointer drop outside every list", () => {
     await drag(mode, list.el, list.item("c"), list.el, toTop);
 
     expect(log).toEqual([["reorder", "main", ["c", "a", "b"]]]);
+  });
+});
+
+describe("VcSortable — a pointer drop on another list of the group", () => {
+  it.each(["native", "fallback"] as const)(
+    "%s: moves the item to its placeholder in the other list when released over the source list",
+    async (mode) => {
+      const log: unknown[] = [];
+      const source = mountList("source", ["a", "b", "c"], false, log);
+      const target = mountList("target", ["x", "y"], false, log);
+
+      await drag(mode, source.el, source.item("c"), source.el, () =>
+        target.el.insertBefore(source.item("c"), target.item("x")),
+      );
+
+      expect([source.order(), target.order(), log]).toEqual([
+        "a,b,c",
+        "x,y",
+        [["move", { id: "c", from: "source", to: "target", index: 0 }]],
+      ]);
+    },
+  );
+
+  // Native only: the fallback drag asks `elementFromPoint` on every move, so it would carry the item into the other list.
+  it("native: reorders the item to its placeholder in its own list when released over the other list", async () => {
+    const log: unknown[] = [];
+    const source = mountList("source", ["a", "b", "c"], false, log);
+    const target = mountList("target", ["x", "y"], false, log);
+
+    await drag("native", source.el, source.item("c"), target.el, () =>
+      source.el.insertBefore(source.item("c"), source.item("a")),
+    );
+
+    expect([target.order(), log]).toEqual(["x,y", [["reorder", "source", ["c", "a", "b"]]]]);
   });
 });

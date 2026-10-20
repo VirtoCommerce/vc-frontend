@@ -191,6 +191,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
+    await vi.dynamicImportSettled();
     const [visible, hidden] = zones;
 
     // Visible half first, then the parked one — the two zones render in that order.
@@ -356,6 +357,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
 
     const before = [...api.visibleIn("statistics")];
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], before[2], -1);
 
     const after = movedTo(before, 2, 1);
@@ -370,6 +372,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], api.visibleIn("statistics")[0], 1);
 
     expect(setHidden).not.toHaveBeenCalled();
@@ -396,6 +399,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
 
     const before = [...api.visibleIn("statistics")];
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], before.at(-1), -1);
 
     const expected = [...before.slice(0, -2), before.at(-1), before.at(-2)];
@@ -407,6 +411,7 @@ describe("stat row drag and drop", () => {
   // that makes dragging possible at all were dropped.
   it("wires the Sortable options the drag behaviour depends on", async () => {
     const { api } = setup();
+    await vi.dynamicImportSettled();
     const [visible] = zones;
 
     expect(visible.options.draggable).toBe("[data-sortable-id]");
@@ -440,6 +445,7 @@ describe("stat row drag and drop", () => {
     expect(card.element.className).toContain("vc-sortable__item--grabbed");
 
     const order = api.visibleIn("statistics");
+    await vi.dynamicImportSettled();
     zones[0].options.onChoose({ item: card.element });
     await nextTick();
 
@@ -532,6 +538,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
+    await vi.dynamicImportSettled();
     const [visible, hidden] = zones;
 
     // active_carts sits at array index 1, my_customers at 3.
@@ -604,6 +611,7 @@ describe("widget column drag and drop", () => {
 
     expect(api.visibleIn("mainRight")).toEqual(["actions", "info"]);
 
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], "actions", 1);
 
     expect(api.visibleIn("mainRight")).toEqual(["info", "actions"]);
@@ -647,9 +655,10 @@ describe("widget column drag and drop", () => {
 
   // ✕ now lives inside the drag surface, so `filter` is the only thing stopping a mousedown on it from
   // starting a drag. Sortable is stubbed here, so this pins the wiring — the gesture is a manual check.
-  it("gives Sortable a header handle, and excludes the hide button from it", () => {
+  it("gives Sortable a header handle, and excludes the hide button from it", async () => {
     setupColumn();
 
+    await vi.dynamicImportSettled();
     expect(zones[0].options).toMatchObject({
       handle: `.vc-sortable__handle, ${WIDGET_DRAG_HANDLE_SELECTOR}`,
       filter: WIDGET_DRAG_FILTER_SELECTOR,
@@ -658,9 +667,10 @@ describe("widget column drag and drop", () => {
   });
 
   // Stat cards drag whole and carry no ✕, so neither option applies.
-  it("leaves the stat row dragging whole, with no handle or filter", () => {
+  it("leaves the stat row dragging whole, with no handle or filter", async () => {
     setup();
 
+    await vi.dynamicImportSettled();
     expect(zones[0].options.handle).toBeUndefined();
     expect(zones[0].options.filter).toBeUndefined();
   });
@@ -791,6 +801,7 @@ describe("a drop the draft refuses", () => {
 
     // A save in flight — `editable()` is false, so `reorderVisible` is a no-op.
     apolloMock.loading.value = true;
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], before[0], 1);
     apolloMock.loading.value = false;
 
@@ -804,6 +815,7 @@ describe("a drop the draft refuses", () => {
     await nextTick();
 
     const before = [...api.visibleIn("statistics")];
+    await vi.dynamicImportSettled();
     const [visible, hidden] = zones;
 
     apolloMock.loading.value = true;

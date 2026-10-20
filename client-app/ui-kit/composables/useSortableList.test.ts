@@ -919,7 +919,7 @@ describe("useSortableList — pointer", () => {
       }),
     )!;
     container.value = el;
-    await nextTick();
+    await vi.dynamicImportSettled();
     return { el, trailing, list, moves, order: () => items, sortable: instances.at(-1)! };
   }
 
@@ -933,6 +933,44 @@ describe("useSortableList — pointer", () => {
     await nextTick();
 
     expect(el.dataset.sortableName).toBe("rail");
+  });
+
+  it("builds SortableJS only once the library has loaded", async () => {
+    const container = ref<HTMLElement | null>(document.createElement("div"));
+    const scope = effectScope();
+    scopes.push(scope);
+    scope.run(() => useSortableList(container, { name: "main", items: () => [], onReorder: vi.fn() }));
+
+    expect(instances).toHaveLength(0);
+
+    await vi.dynamicImportSettled();
+
+    expect(instances).toHaveLength(1);
+  });
+
+  it("builds nothing for a list unmounted before the library loaded", async () => {
+    const container = ref<HTMLElement | null>(document.createElement("div"));
+    const scope = effectScope();
+    scope.run(() => useSortableList(container, { name: "main", items: () => [], onReorder: vi.fn() }));
+    scope.stop();
+
+    await vi.dynamicImportSettled();
+
+    expect(instances).toHaveLength(0);
+  });
+
+  it("builds only on the container that is there once the library loaded", async () => {
+    const first = document.createElement("div");
+    const second = document.createElement("div");
+    const container = ref<HTMLElement | null>(first);
+    const scope = effectScope();
+    scopes.push(scope);
+    scope.run(() => useSortableList(container, { name: "main", items: () => [], onReorder: vi.fn() }));
+    container.value = second;
+
+    await vi.dynamicImportSettled();
+
+    expect(instances.map((instance) => instance.el)).toEqual([second]);
   });
 
   it("destroys the SortableJS instance with its scope", async () => {
@@ -1056,6 +1094,36 @@ describe("useSortableList — pointer", () => {
       "p",
     ]);
     expect(el.lastChild).toBe(trailing);
+  });
+
+  it("moves the dragged item, not the one at its old index, when the items changed during the drag", async () => {
+    let items = ["a", "b", "c"];
+    const { el, sortable } = await mounted({
+      items: () => items,
+      onReorder: (ids) => {
+        items = ids;
+      },
+    });
+    const item = el.querySelector('[data-sortable-id="c"]') as HTMLElement;
+
+    sortable.options.onStart({ item });
+    items = ["z", "a", "b", "c"];
+    sortable.options.onUpdate({ from: el, to: el, item, oldIndex: 2, oldDraggableIndex: 2, newDraggableIndex: 0 });
+
+    expect(items).toEqual(["c", "z", "a", "b"]);
+  });
+
+  it("reorders nothing when the dragged item left the list during the drag", async () => {
+    let items = ["a", "b", "c"];
+    const onReorder = vi.fn();
+    const { el, sortable } = await mounted({ items: () => items, onReorder });
+    const item = el.querySelector('[data-sortable-id="c"]') as HTMLElement;
+
+    sortable.options.onStart({ item });
+    items = ["a", "b"];
+    sortable.options.onUpdate({ from: el, to: el, item, oldIndex: 2, oldDraggableIndex: 2, newDraggableIndex: 0 });
+
+    expect(onReorder).not.toHaveBeenCalled();
   });
 
   it("reports a move to another list at the index it was dropped at, and puts the node back", async () => {
@@ -1205,7 +1273,7 @@ describe("useSortableList — grab and release events", () => {
 
   it("reports a pointer drag from its start to its end", async () => {
     const { el, item, events, sortable } = pointer();
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     sortable().options.onStart({ item, from: el });
     expect(events).toEqual(["grab a main"]);
@@ -1216,28 +1284,28 @@ describe("useSortableList — grab and release events", () => {
 
   it("drags by the handle element itself with `handle: true`", async () => {
     const { sortable } = pointer({ handle: true });
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     expect(sortable().options.handle).toBe(".vc-sortable__handle");
   });
 
   it("adds what a handle selector matches to the handle element's grip", async () => {
     const { sortable } = pointer({ handle: ".grip" });
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     expect(sortable().options.handle).toBe(".vc-sortable__handle, .grip");
   });
 
   it.each([[""], ["  "]])("drags by the whole item with a blank handle selector %j", async (handle) => {
     const { sortable, list } = pointer({ handle });
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     expect([sortable().options.handle, list.itemAttrs("a").tabindex]).toEqual([undefined, "0"]);
   });
 
   it("reports a keyboard grab ended by a pointer press", async () => {
     const { key, events, sortable } = pointer();
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     key(" ");
     sortable().options.onChoose();
@@ -1265,7 +1333,7 @@ describe("useSortableList — grab and release events", () => {
 
   it("reports a pointer drag ended by the list unmounting", async () => {
     const { el, item, events, scope, sortable } = pointer();
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     sortable().options.onStart({ item, from: el });
     scope.stop();
@@ -1275,7 +1343,7 @@ describe("useSortableList — grab and release events", () => {
 
   it("reports nothing on unmount after a pointer drag has ended", async () => {
     const { el, item, events, scope, sortable } = pointer();
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     sortable().options.onStart({ item, from: el });
     sortable().options.onEnd({ item, from: el, to: el });
@@ -1287,7 +1355,7 @@ describe("useSortableList — grab and release events", () => {
   it("reports a pointer drag ended by another list unmounting, once", async () => {
     const source = pointer();
     const other = pointer({ name: "other" });
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     instances[0].options.onStart({ item: source.item, from: source.el });
     other.scope.stop();
@@ -1345,7 +1413,7 @@ describe("useSortableList — grab and release events", () => {
 
   it("reports a carried grab cancelled back home from the list holding it", async () => {
     const { shown, target, events } = carry();
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     shown.key(" ");
     shown.key("ArrowDown");
@@ -1357,7 +1425,7 @@ describe("useSortableList — grab and release events", () => {
 
   it("reports a carried grab the owner refused", async () => {
     const { shown, events } = carry({ apply: false });
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     shown.key(" ");
     shown.key("ArrowDown");
@@ -1368,7 +1436,7 @@ describe("useSortableList — grab and release events", () => {
 
   it("reports a carried grab ended by a press in the list it came from", async () => {
     const { shown, events } = carry();
-    await nextTick();
+    await vi.dynamicImportSettled();
 
     shown.key(" ");
     shown.key("ArrowDown");
@@ -1380,15 +1448,236 @@ describe("useSortableList — grab and release events", () => {
 });
 
 describe("useSortableList — a pointer drop outside every list", () => {
-  it("puts the item back where the drag started", async () => {
-    const el = document.createElement("div");
-    document.body.append(el);
-    const container = ref<HTMLElement | null>(el);
+  afterEach(() => {
+    Reflect.deleteProperty(document, "elementFromPoint");
+  });
+
+  // Two lists of one group — the source holds two items, the target one — replayed through their SortableJS handlers.
+  async function pair() {
+    const lists = [
+      ["source", ["source-item", "source-second"]],
+      ["target", ["target-item"]],
+    ].map(([name, initial]) => {
+      const el = document.createElement("div");
+      for (const id of initial) {
+        const node = document.createElement("div");
+        node.dataset.sortableId = id;
+        el.append(node);
+      }
+      document.body.append(el);
+      let ids = [...initial];
+      const moves: SortableMovePayloadType[] = [];
+      const reorders: string[][] = [];
+      const scope = effectScope();
+      scopes.push(scope);
+      scope.run(() =>
+        useSortableList(ref(el), {
+          name: name as string,
+          group: "drop",
+          items: () => ids,
+          onReorder: (next) => {
+            ids = next;
+            reorders.push(next);
+          },
+          onMove: (payload) => moves.push(payload),
+        }),
+      );
+      return { el, item: el.firstElementChild as HTMLElement, moves, reorders };
+    });
+    await vi.dynamicImportSettled();
+    const [source, target] = lists;
+    return { source, target, sortable: instances.find((instance) => instance.el === source.el)! };
+  }
+
+  type PairType = Awaited<ReturnType<typeof pair>>;
+
+  const mouseUp = () => new MouseEvent("mouseup", { clientX: 7, clientY: 9 });
+
+  // Into the other list: SortableJS fires only `end`.
+  function dropAcross({ source, target, sortable }: PairType, originalEvent: Event = mouseUp()) {
+    sortable.options.onStart({ item: source.item, from: source.el });
+    target.el.append(source.item);
+    sortable.options.onEnd({
+      item: source.item,
+      from: source.el,
+      to: target.el,
+      oldIndex: 0,
+      newDraggableIndex: 1,
+      originalEvent,
+    });
+  }
+
+  // Within the source list, past its second item: `update`, then `end`.
+  function dropWithin({ source, sortable }: PairType, originalEvent: Event = mouseUp()) {
+    sortable.options.onStart({ item: source.item, from: source.el });
+    source.el.append(source.item);
+    const event = {
+      item: source.item,
+      from: source.el,
+      to: source.el,
+      oldIndex: 0,
+      oldDraggableIndex: 0,
+      newDraggableIndex: 1,
+      originalEvent,
+    };
+    sortable.options.onUpdate(event);
+    sortable.options.onEnd(event);
+  }
+
+  // Where the release lands, and what the test saw asked about it.
+  function releaseOver(node: Element | null) {
+    const asked: number[][] = [];
+    Object.defineProperty(document, "elementFromPoint", {
+      configurable: true,
+      value: (x: number, y: number) => {
+        asked.push([x, y]);
+        return node;
+      },
+    });
+    return asked;
+  }
+
+  it("moves an item whose placeholder is in another list when released on the source list's padding", async () => {
+    const lists = await pair();
+    releaseOver(lists.source.el);
+
+    dropAcross(lists);
+
+    expect(lists.source.moves).toEqual([{ id: "source-item", from: "source", to: "target", index: 1 }]);
+    expect(lists.source.el.firstChild).toBe(lists.source.item);
+  });
+
+  it("reorders an item whose placeholder is in its own list when released on another list's padding", async () => {
+    const lists = await pair();
+    releaseOver(lists.target.el);
+
+    dropWithin(lists);
+
+    expect(lists.source.reorders).toEqual([["source-second", "source-item"]]);
+  });
+
+  // The node going back reflows the lists, which can move a band out from under the release point.
+  describe("asks where the release landed before putting the node back", () => {
+    async function overTargetWhileAway() {
+      const lists = await pair();
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: () => (lists.source.el.firstChild === lists.source.item ? document.body : lists.target.el),
+      });
+      return lists;
+    }
+
+    it("into another list", async () => {
+      const lists = await overTargetWhileAway();
+
+      dropAcross(lists);
+
+      expect(lists.source.moves).toEqual([{ id: "source-item", from: "source", to: "target", index: 1 }]);
+    });
+
+    it("within its own list", async () => {
+      const lists = await overTargetWhileAway();
+
+      dropWithin(lists);
+
+      expect(lists.source.reorders).toEqual([["source-second", "source-item"]]);
+    });
+  });
+
+  it.each([
+    // By id and source list, so a refusal that mixed the two up would let the item through.
+    [
+      "refuses the item from that list",
+      { accepts: (id: string, from: string) => id !== "source-item" || from !== "source" },
+    ],
+    ["is disabled", { disabled: true }],
+  ])("reorders nothing when released on a sibling that %s", async (_, refusal) => {
+    const lists = await pair();
+    const closed = document.createElement("div");
+    document.body.append(closed);
     const scope = effectScope();
     scopes.push(scope);
-    scope.run(() => useSortableList(container, { name: "main", items: () => ["a"], onReorder: vi.fn() }));
-    await nextTick();
+    scope.run(() =>
+      useSortableList(ref(closed), { name: "closed", group: "drop", items: () => [], onReorder: vi.fn(), ...refusal }),
+    );
+    releaseOver(closed);
 
-    expect(instances.at(-1)!.options.revertOnSpill).toBe(true);
+    dropWithin(lists);
+
+    expect(lists.source.reorders).toEqual([]);
+    expect(lists.source.el.firstChild).toBe(lists.source.item);
+  });
+
+  it("reorders a list without a group when released on its own padding", async () => {
+    const el = document.createElement("div");
+    const items = ["a", "b"].map((id) => {
+      const item = document.createElement("div");
+      item.dataset.sortableId = id;
+      el.append(item);
+      return item;
+    });
+    document.body.append(el);
+    const onReorder = vi.fn();
+    const scope = effectScope();
+    scopes.push(scope);
+    scope.run(() => useSortableList(ref(el), { name: "solo", items: () => ["a", "b"], onReorder }));
+    await vi.dynamicImportSettled();
+    const sortable = instances.find((instance) => instance.el === el)!;
+    releaseOver(el);
+
+    sortable.options.onStart({ item: items[0], from: el });
+    el.append(items[0]);
+    const event = { item: items[0], from: el, to: el, oldIndex: 0, oldDraggableIndex: 0, newDraggableIndex: 1 };
+    sortable.options.onUpdate({ ...event, originalEvent: mouseUp() });
+    sortable.options.onEnd({ ...event, originalEvent: mouseUp() });
+
+    expect(onReorder).toHaveBeenCalledWith(["b", "a"]);
+  });
+
+  it.each([
+    ["into another list", dropAcross],
+    ["within its own list", dropWithin],
+  ])("moves and reorders nothing when released outside every list %s, and puts the node back", async (_, drop) => {
+    const lists = await pair();
+    releaseOver(document.body);
+
+    drop(lists);
+
+    expect([lists.source.moves, lists.source.reorders]).toEqual([[], []]);
+    expect(lists.source.el.firstChild).toBe(lists.source.item);
+  });
+
+  // Escape: no `drop`, only a `dragend`, here over a list that would take the item.
+  it.each([
+    ["into another list", dropAcross],
+    ["within its own list", dropWithin],
+  ])("moves and reorders nothing when a native drag %s ends without a drop", async (_, drop) => {
+    const lists = await pair();
+    releaseOver(lists.target.el);
+
+    drop(lists, new MouseEvent("dragend", { clientX: 7, clientY: 9 }));
+
+    expect([lists.source.moves, lists.source.reorders]).toEqual([[], []]);
+    expect(lists.source.el.firstChild).toBe(lists.source.item);
+  });
+
+  it("moves nothing when released past the viewport's edge, where no element is", async () => {
+    const lists = await pair();
+    releaseOver(null);
+
+    dropAcross(lists);
+
+    expect(lists.source.moves).toEqual([]);
+  });
+
+  it("reads a touch release from `changedTouches`", async () => {
+    const lists = await pair();
+    const asked = releaseOver(document.body);
+    const touchEnd = new TouchEvent("touchend");
+    Object.defineProperty(touchEnd, "changedTouches", { value: [{ clientX: 31, clientY: 47 }] });
+
+    dropAcross(lists, touchEnd);
+
+    expect([asked, lists.source.moves]).toEqual([[[31, 47]], []]);
   });
 });

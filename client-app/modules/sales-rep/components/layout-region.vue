@@ -129,16 +129,18 @@ function onAnnounce(signal: SortableSignalType): void {
     }
   }
 
-  // Frame drawn entirely outside the box model — `box-shadow` fills the band, `outline` rules its edge,
-  // and neither affects layout. Padding and a border would narrow the row by 26px on entering edit
-  // mode, which is enough to wrap the sixth stat card (six need 1136px, five 944px) and shift the rest.
+  // The band is padding, so a release on it hits the zone: one outside every list is reverted. The
+  // negative margin gives it back — the row would otherwise narrow by 24px on entering edit mode, which
+  // is enough to wrap the sixth stat card (six need 1136px, five 944px) and shift the rest. A consumer's
+  // background image starts at the content box, and the inset shadow paints the band over it, so a
+  // hatched zone looks as it did with the band outside.
   &--zone {
     --layout-zone-band: theme("padding.3");
 
-    @apply rounded-[--vc-radius] bg-neutral-50 outline-dashed outline-1 outline-neutral-300;
+    @apply m-[calc(-1*var(--layout-zone-band))] p-[--layout-zone-band] rounded-[calc(var(--vc-radius)+var(--layout-zone-band))] bg-neutral-50 outline-dashed outline-1 outline-neutral-300;
 
-    outline-offset: var(--layout-zone-band);
-    box-shadow: 0 0 0 var(--layout-zone-band) var(--color-neutral-50);
+    background-origin: content-box;
+    box-shadow: inset 0 0 0 var(--layout-zone-band) var(--color-neutral-50);
   }
 
   &__empty {

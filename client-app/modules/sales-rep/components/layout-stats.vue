@@ -132,8 +132,8 @@ function cardProps(id: string) {
 
 <style lang="scss">
 .layout-stats {
-  // Zone frames are painted 12px outside their box, so the gap has to clear that band before it reads
-  // as space: 20px here plus the label's 4px margin leaves the same 12px the padded frame used to.
+  // Zone frames overhang their slot by 12px (a negative margin), so the gap has to clear that band before
+  // it reads as space: 20px here plus the label's 4px margin leaves 12px between a frame and the label below it.
   @apply flex flex-col gap-5;
 
   &__label {
@@ -156,7 +156,7 @@ function cardProps(id: string) {
   &__parked-zone {
     @apply opacity-70;
 
-    background: repeating-linear-gradient(
+    background-image: repeating-linear-gradient(
       45deg,
       var(--color-neutral-50),
       var(--color-neutral-50) 9px,
