@@ -188,10 +188,18 @@ describe("VcInput aria-required", () => {
     expect(wrapper.get("input").attributes("aria-required")).toBe("true");
   });
 
-  it("treats a null consumer value as unset", () => {
-    const wrapper = createInputWrapper({ props: { required: true, aria: { "aria-required": null } } });
+  it("lets a consumer-supplied false win over required", () => {
+    const wrapper = createInputWrapper({ props: { required: true, aria: { "aria-required": "false" } } });
 
-    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+    expect(wrapper.get("input").attributes("aria-required")).toBe("false");
+  });
+
+  it.each([null, ""])("treats the consumer value %j as unset", (value) => {
+    const required = createInputWrapper({ props: { required: true, aria: { "aria-required": value } } });
+    const optional = createInputWrapper({ props: { aria: { "aria-required": value } } });
+
+    expect(required.get("input").attributes("aria-required")).toBe("true");
+    expect(optional.get("input").attributes("aria-required")).toBeUndefined();
   });
 });
 
