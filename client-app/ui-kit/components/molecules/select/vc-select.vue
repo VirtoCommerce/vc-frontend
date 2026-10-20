@@ -188,6 +188,7 @@ interface IProps {
   modelValue?: object | string | Array<object | string>;
   label?: string;
   ariaLabel?: string;
+  /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
