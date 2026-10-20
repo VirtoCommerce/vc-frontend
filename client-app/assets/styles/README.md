@@ -76,9 +76,8 @@ CSS keeps working against utilities as before.
 Vue SFC `<style>` module: `client-app/ui-kit/**` → `vc.kit`, every other component → `vc.app`. It
 hoists `@charset`/`@import`, restates the `_layers.scss` order in front of each module (a component
 chunk can load before the entry CSS, as in the federation build), and skips `App.vue` and every
-`.scss`/`.css` entry. **Never hand-wrap an SFC style in `@layer`.** The repeated statement is a
-known cost (about 0.6 KB gzip on the CSS every page loads, about 75 B per lazy chunk); an identical
-re-declaration changes nothing.
+`.scss`/`.css` entry. **Never hand-wrap an SFC style in `@layer`.** Each SFC module carries one
+copy of the order statements; an identical re-declaration changes nothing.
 
 ### Entry stylesheets
 
@@ -102,7 +101,14 @@ never downloads them). Everything sits inside `@media screen`, so print keeps th
 | `client-app/assets/styles/soft/` | app blocks | `vc.design.app` |
 
 - **One BEM block per file, file name = block name**; folders mirror the component structure, like
-  `dark/`. Add each file to its side's `index.scss`.
+  `dark/`. Add each file to its side's `index.scss` with `@include meta.load-css(…)` inside
+  `@media screen { @layer vc.design.kit { … } }` (`vc.design.app` on the app side).
+- **BEM SCSS as in any component:** nest under the soft prefix and capture states with `$x: &`,
+  as rule 13 of `.claude/rules/styles.md` describes; the check reads the compiled selectors. A
+  capture holds the soft prefix, so compound it on the block (`&--disabled:not(#{$loading})`); read
+  as an ancestor (`#{$x} &`) it repeats the prefix and never matches. For an element under a block
+  state, nest the element in the state: `&--disabled { .vc-button__icon { … } }`. Typing the block
+  name again here is the one exception to rule 13: its `#{$x} &__icon` form repeats the soft prefix.
 - **Selector:** `html[data-design="soft"] .block__el`. Dark soft goes in the same file under
   `html.dark[data-design="soft"]`: a soft rule beats the base block's dark rules too, so each soft
   file restates its own dark values.
@@ -120,7 +126,8 @@ never downloads them). Everything sits inside `@media screen`, so print keeps th
 - **No colour tokens.** Colour belongs to presets.
 - No `opacity` / `transform` / `transition` on elements that carry a Vue `<Transition>` class, such
   as the `.fade-*` helpers used by VcLoaderOverlay and VcPopupSidebar.
-- **App soft files never target a kit block.**
+- **A soft file restyles only its own block.** The element each rule styles is its block or one of
+  its elements, and it names no other block of either side outside `:not()`.
 - **BEM, not utilities.** A soft rule can never beat a Tailwind utility in a template. Every element
   a soft file overrides must be BEM with no utility for that property, including utilities passed
   onto kit components. Convert such an element in that component's design task.
@@ -130,21 +137,33 @@ never downloads them). Everything sits inside `@media screen`, so print keeps th
 ## Checks
 
 ```bash
-yarn check:soft-styles   # soft files: block naming, side, no colour tokens (source, any time)
+yarn check:soft-styles   # soft files, compiled with Sass: block naming, side, no colour tokens (no build needed)
 yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/, lazy chunks too)
 ```
 
-- `scripts/check-soft-styles.ts`: in `soft/**/<block>.scss` every rule that styles its selector
-  (declarations, `@apply`/`@include`/`@extend`, directly or inside a conditional or Sass
-  control-flow at-rule) starts with the
-  `html[data-design="soft"]` prefix and names `<block>`, either in its subject (`.x`, `.x__*`,
-  `.x--*`), in an ancestor compound (not a `~`/`+` sibling), or inside a `:has()` of the subject;
-  `<block>` is defined in a stylesheet on that directory's side, comments excluded (keyed on block
-  + directory, not on the `vc-` prefix). `_tokens.scss` rules target `html[data-design="soft"]`
-  itself; `index.scss` and other partials hold no rules. No custom property whose name contains
-  `color` or `bg`, in any soft file. `check-soft-styles` catches the common ways a soft rule
-  can reach outside its block; unusual `:has` forms (selector lists, nesting inside `:is`/`:where`)
-  are not covered and are a review matter.
+- `scripts/check-soft-styles.ts` compiles every `.scss` file in each side's `soft/`, hidden ones
+  too, with Sass and checks the CSS it emits, so nesting, `$x: &` captures, interpolation,
+  `@extend` and mixins are read as Sass resolves them. A problem is reported at the source line
+  that wrote it. Each rule below is covered by tests.
+
+  | Rule | Rejected | Why |
+  |---|---|---|
+  | `soft/**/<name>.scss`: `<name>` is a block of that side (a component file of that name, or the leading class of a rule outside any other rule), `_tokens`, `index` or another `_partial` | any other name; an app file named after a kit block | blocks are per side |
+  | each side's `soft/index.scss` exists | a missing entry | otherwise a moved folder passes with nothing checked |
+  | a soft file loads only `.scss` files of its side's `soft/`, `sass:` modules and `client-app/assets/styles/_layers.scss` (`@use`, `@forward`, `@import`, `meta.load-css`) | any other stylesheet, or a path that matches several files | the check reads only the files it compiles |
+  | every rule a block file emits starts with `html[data-design="soft"]` (`.dark` allowed), and names `html` nowhere else outside a pseudo-class | any other start; `html` in a later compound, as a capture read as an ancestor (`#{$x} &`) writes it | soft rules apply only under the switch; `html` below the root never matches |
+  | its last compound, the element it styles, has a class `.<block>`, `.<block>__*` or `.<block>--*` | `.<block> button`, `.<block> > *`, `.x:has(.<block>)` | a soft file restyles its own block |
+  | it names no other block of either side outside `:not()`; `[class="…"]` and `[class~="…"]` count as classes, also with the `i` flag | another block, also as an ancestor or in `:has()`; `[class]` by presence, `^=`, `*=`, `$=` or `\|=` | components never restyle each other |
+  | `_tokens.scss` rules target `html[data-design="soft"]` itself | anything below `<html>` | tokens are hooks on `<html>` |
+  | `index.scss` and other partials emit only rules a block file or `_tokens.scss` emits, as that file emits them (`meta.load-css` of the file) | a rule of their own, a mixin's rules, a loaded file nested under a selector | rules live in block files, where they are checked |
+  | the side's `soft/index.scss` ships each block file's rules inside `@media screen > @layer vc.design.kit` (`vc.design.app`) and the `_tokens.scss` rules inside `@media screen > @layer theme`, and loads every block file and `_tokens.scss` that emits rules; below these two wrappers a block keeps its own `@media`, `@supports` and `@container` (only the outer two are checked, so one the entry adds inside the layer passes too) | another outer wrapper or none (`@use` of a block file emits it unlayered), the other side's layer, `@media print`, an `@layer` below the side's layer; a file whose rules it does not ship | soft is screen only and sits in its layer; an unloaded file never ships |
+  | no custom property whose name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`, read with escapes resolved | such a property | colour belongs to presets; the kit names its public colour tokens so (its private `--loader-border-r` and `--row-hover-shade` are not caught) |
+  | at-rules in the emitted CSS: `@media`, `@supports`, `@container`, `@layer`, `@starting-style` | any other, e.g. `@apply`, `@keyframes`, `@import`, `@scope`, `@property` | they ship CSS the check does not read; `@apply` variants add selectors |
+
+  Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`,
+  and `*-move`) and state classes (`is-*`, `has-*`) are never blocks, so a block file may use them
+  on its own elements: `html[data-design="soft"] .vc-popover.is-visible`.
+
 - `scripts/check-css-layers.ts` (built CSS in `dist/`): every layer name is declared in
   `_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
   declared layer, and its names follow the declared order per parent.

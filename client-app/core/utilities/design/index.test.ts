@@ -1,8 +1,10 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { getDesign, loadDesignStyles, resolveDesign, setDesignAttribute, setPresetAttribute } from "./index";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getDesign, resolveDesign, setDesignAttribute, setPresetAttribute } from "./index";
+import type { DesignType } from "@/core/constants/design";
 
 const settings = vi.hoisted((): { value: Record<string, unknown> } => ({ value: {} }));
-const loadedStyles = vi.hoisted((): string[] => []);
+const kitLoaded = vi.fn();
+const appLoaded = vi.fn();
 
 vi.mock("@/config/settings_data.json", () => ({
   default: {
@@ -12,16 +14,6 @@ vi.mock("@/config/settings_data.json", () => ({
     },
   },
 }));
-
-vi.mock("@/ui-kit/styles/soft/index.scss", () => {
-  loadedStyles.push("kit");
-  return {};
-});
-
-vi.mock("@/assets/styles/soft/index.scss", () => {
-  loadedStyles.push("app");
-  return {};
-});
 
 describe("design", () => {
   afterEach(() => {
@@ -74,17 +66,37 @@ describe("design", () => {
   });
 
   describe("loadDesignStyles", () => {
+    async function loadDesignStyles(design: DesignType): Promise<void> {
+      const module = await import("./index");
+      await module.loadDesignStyles(design);
+    }
+
+    beforeEach(() => {
+      vi.resetModules();
+      kitLoaded.mockClear();
+      appLoaded.mockClear();
+      vi.doMock("@/ui-kit/styles/soft/index.scss", () => {
+        kitLoaded();
+        return {};
+      });
+      vi.doMock("@/assets/styles/soft/index.scss", () => {
+        appLoaded();
+        return {};
+      });
+    });
+
     it("downloads nothing for classic", async () => {
       await loadDesignStyles("classic");
 
-      expect(loadedStyles).toEqual([]);
+      expect(kitLoaded).not.toHaveBeenCalled();
+      expect(appLoaded).not.toHaveBeenCalled();
     });
 
     it("loads the kit and the app soft styles for soft", async () => {
       await loadDesignStyles("soft");
 
-      expect(loadedStyles).toEqual(expect.arrayContaining(["app", "kit"]));
-      expect(loadedStyles).toHaveLength(2);
+      expect(kitLoaded).toHaveBeenCalledOnce();
+      expect(appLoaded).toHaveBeenCalledOnce();
     });
   });
 });

@@ -62,7 +62,13 @@
     />
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
-      <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
+      <VcNavButton
+        v-show="canSlideThumbs"
+        :label="$t('common.buttons.previous')"
+        size="xs"
+        direction="left"
+        data-nav-prev
+      />
 
       <Swiper
         class="image-gallery__thumbs"
@@ -73,7 +79,7 @@
           prevEl: `#${componentId} [data-nav-prev]`,
           nextEl: `#${componentId} [data-nav-next]`,
         }"
-        :loop="showThumbs && images.length > THUMBS_PER_VIEW"
+        :loop="showThumbs && canSlideThumbs"
         watch-slides-progress
         @swiper="setThumbsSwiper"
         tabindex="0"
@@ -99,7 +105,13 @@
         </SwiperSlide>
       </Swiper>
 
-      <VcNavButton :label="$t('common.buttons.next')" size="xs" direction="right" data-nav-next />
+      <VcNavButton
+        v-show="canSlideThumbs"
+        :label="$t('common.buttons.next')"
+        size="xs"
+        direction="right"
+        data-nav-next
+      />
     </div>
   </div>
 </template>
@@ -152,6 +164,9 @@ const focusedElementBeforeLightboxId = ref<string | null>(null);
 const modules = [Pagination, Navigation, Thumbs];
 
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
+
+// When every thumb fits, Swiper locks the strip and its buttons do nothing.
+const canSlideThumbs = computed(() => props.images.length > THUMBS_PER_VIEW);
 
 const showPagination = computed(() => !isDesktop.value && props.images?.length > 1);
 

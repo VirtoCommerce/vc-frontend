@@ -158,7 +158,7 @@
     "postcss": "^8.5.26",
     "postcss-import": "^16.1.1",
     "postcss-scss": "^4.0.9",
-    "postcss-selector-parser": "^7.1.6",
+    "postcss-selector-parser": "^7.1.4",
     "prettier": "^3.9.5",
     "rollup-plugin-dts": "^6.4.1",
     "rollup-plugin-visualizer": "^7.0.1",

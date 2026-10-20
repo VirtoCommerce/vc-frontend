@@ -13,10 +13,10 @@ const sfcLayers = require("./postcss.sfc-layers.cjs") as PluginCreator<void> & {
 const ROOT = "/repo/client-app";
 const CSS = '@charset "utf-8"; @import "a.css"; .x { color: red; } @media print { .y { margin: 0; } }';
 
-const ORDER = readFileSync("client-app/assets/styles/_layers.scss", "utf-8")
-  .match(/^@layer [^{;]+;/gm)!
-  .join("")
-  .replaceAll(/\s+/g, "");
+const ORDER = sfcLayers
+  .parseLayerOrder(readFileSync("client-app/assets/styles/_layers.scss", "utf-8"), "_layers.scss")
+  .map((names) => `@layer${names.replaceAll(/\s+/g, "")};`)
+  .join("");
 
 function run(from: string, css = CSS): string {
   return postcss([sfcLayers()]).process(css, { from }).css.replaceAll(/\s+/g, "");
@@ -58,5 +58,26 @@ describe("postcss.sfc-layers", () => {
       /_layers\.scss: no layer order found; expected lines of the form "@layer/,
     );
     expect(sfcLayers.parseLayerOrder("@layer a, b;\n@layer a.x;\n", "_layers.scss")).toEqual(["a, b", "a.x"]);
+  });
+
+  it.each(["@layer a,\n  // note\n  b;", "@layer a, /* note */ b;", "@layer a.#{$x};", "@layer a { .x { b: c; } }"])(
+    "fails on a comment, interpolation or block in a statement: %j",
+    (source) => {
+      expect(() => sfcLayers.parseLayerOrder(source, "_layers.scss")).toThrow(
+        /_layers\.scss: ".*" must hold layer names only/s,
+      );
+    },
+  );
+
+  it("makes the layer order file a dependency of the module", () => {
+    const from = `${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`;
+    const { messages } = postcss([sfcLayers()]).process(CSS, { from });
+
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        type: "dependency",
+        file: expect.stringMatching(/client-app\/assets\/styles\/_layers\.scss$/),
+      }),
+    );
   });
 });

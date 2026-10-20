@@ -7,8 +7,8 @@ import type { AtRule, Root } from "postcss";
 
 /**
  * Checks the built CSS (`yarn build` output, lazy chunks included) against the order in
- * `_layers.scss`. Reads layer names in order of first appearance, statements and blocks alike,
- * not the statement text.
+ * `_layers.scss`. Reads layer names in order of first appearance, statements, blocks and
+ * `@import … layer(…)` alike, not the statement text.
  *
  * Usage: vite-node scripts/check-css-layers.ts
  */
@@ -16,6 +16,8 @@ import type { AtRule, Root } from "postcss";
 const LAYERS_FILE = "client-app/assets/styles/_layers.scss";
 const STYLESHEET_LINK = /<link\b[^>]*\brel=["']?stylesheet["']?[^>]*>/g;
 const HREF = /\bhref=["']?([^"'\s>]+)/;
+const IMPORT_URL = /url\([^)]*\)|"[^"]*"|'[^']*'/gi;
+const IMPORT_LAYER = /(?:^|\s)layer(?:\(([^)]*)\))?(?![\w-])/i;
 
 const distDir = "dist";
 const errors: string[] = [];
@@ -44,13 +46,33 @@ function enclosingLayer(rule: AtRule): string {
   return names.join(".");
 }
 
-/** Layer names in order of first appearance; statement names and block names, by full dotted name. */
+/** The layer names a rule declares, `[""]` for an anonymous layer, none for a rule that is no layer. */
+function declaredLayers(rule: AtRule): string[] {
+  if (rule.name === "layer") {
+    return rule.params.split(",").map((param) => param.trim());
+  }
+
+  if (rule.name === "import") {
+    const layer = IMPORT_LAYER.exec(rule.params.replaceAll(IMPORT_URL, ""));
+
+    return layer ? [(layer[1] ?? "").trim()] : [];
+  }
+
+  return [];
+}
+
+/** Layer names in order of first appearance; statement, block and import names, by full dotted name. */
 function layerNames(root: Root, file: string): string[] {
   const names: string[] = [];
 
-  root.walkAtRules("layer", (rule: AtRule) => {
+  root.walkAtRules((rule: AtRule) => {
+    const params = declaredLayers(rule);
+
+    if (!params.length) {
+      return;
+    }
+
     const prefix = enclosingLayer(rule);
-    const params = rule.params.split(",").map((param) => param.trim());
 
     if (!params[0]) {
       errors.push(`${file}: an anonymous layer is not in the declared order`);

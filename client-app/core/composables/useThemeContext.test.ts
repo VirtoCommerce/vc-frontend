@@ -101,6 +101,7 @@ const hoisted = vi.hoisted(() => {
   return {
     dynamicPresetsCache,
     mockPreset,
+    settings: {},
   };
 });
 
@@ -296,7 +297,9 @@ vi.mock("@/assets/presets", () => ({
 vi.mock("@/config/settings_data.json", () => ({
   default: {
     current: "default",
-    settings: {},
+    get settings() {
+      return hoisted.settings;
+    },
   },
 }));
 
@@ -318,6 +321,23 @@ describe("useThemeContext - preset loading functions", () => {
     vi.clearAllMocks();
     globalThis.fetch = originalFetch;
     delete document.documentElement.dataset.preset;
+    hoisted.settings = {};
+  });
+
+  describe("setThemeContext", () => {
+    it.each([
+      ["soft", "soft"],
+      ["Soft", "classic"],
+      [undefined, "classic"],
+    ])("hands the design %j on as %j, as <html data-design> gets it", async (design, expected) => {
+      hoisted.settings = { design };
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, themeContext } = useThemeContext();
+
+      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
+
+      expect(themeContext.value.settings.design).toBe(expected);
+    });
   });
 
   describe("getPredefinedPreset", () => {

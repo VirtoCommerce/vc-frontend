@@ -36,12 +36,13 @@ describe("loadDesignStyles with failing chunks", () => {
     loadedStyles.length = 0;
   });
 
-  it("resolves, still loads the other chunk and claims the failure", async () => {
+  it("resolves, still loads the other chunk and claims the very error it caught", async () => {
     const { Logger, ignoreChunkLoadFailure } = await loadWithFailing(["kit"]);
 
     expect(loadedStyles).toEqual(["app"]);
     expect(ignoreChunkLoadFailure).toHaveBeenCalledTimes(1);
     expect(Logger.error).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(ignoreChunkLoadFailure).mock.calls[0][0]).toBe(vi.mocked(Logger.error).mock.calls[0][1]);
   });
 
   it("resolves and claims each failure when both chunks fail", async () => {
@@ -50,5 +51,8 @@ describe("loadDesignStyles with failing chunks", () => {
     expect(loadedStyles).toEqual([]);
     expect(ignoreChunkLoadFailure).toHaveBeenCalledTimes(2);
     expect(Logger.error).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(ignoreChunkLoadFailure).mock.calls.map(([error]) => error)).toEqual(
+      vi.mocked(Logger.error).mock.calls.map(([, error]) => error),
+    );
   });
 });

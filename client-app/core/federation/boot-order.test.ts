@@ -8,10 +8,12 @@ import type { IPlatformPlugin } from "./index";
  * MAINTENANCE: a module added to app-runner needs a mock added below, or every case here fails with
  * whatever that module breaks first - "Theme context is missing." - which points nowhere near it.
  *
- * Three invariants, all load-bearing. Plugins resolve store settings through the facade's
+ * Among the load-bearing invariants pinned below: plugins resolve store settings through the facade's
  * useModuleSettings and the permission gate reads user.value at call time, so setThemeContext and
- * setUser must precede the loader. And the router must not be installed until the loader settles,
- * or a deep link to a plugin route resolves before the plugin registered it.
+ * setUser must precede the loader. The router must not be installed until the loader settles,
+ * or a deep link to a plugin route resolves before the plugin registered it. And data-design is
+ * written first and the app mounts only after the design styles settle, so the first paint is
+ * already in that design.
  */
 
 const order: string[] = [];
