@@ -256,6 +256,9 @@ cross-zone drop. Construction moved inside `onMounted` for the same reason: ever
 and `useSortable` captured them at setup. `@vueuse/integrations` stays a dependency for `useAxios`;
 `sortablejs` (+ `@types/sortablejs`) is what this feature adds.
 
+*As built (VCST-5902):* `useSortableList` loads `sortablejs` with a dynamic `import()` when the first list
+mounts, so it stays out of the boot bundle; the keyboard works before the load ends.
+
 - One sortable per region container, plus one for the stats parked zone.
 - **`mainLeft` and `mainRight` get different `group` names**, making cross-column drags impossible
   by construction rather than by the prototype's runtime guard.
