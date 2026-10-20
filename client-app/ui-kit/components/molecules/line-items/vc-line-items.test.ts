@@ -30,14 +30,15 @@ describe("VcLineItems selection checkboxes", () => {
   it("names the header checkbox as select-all and each row checkbox after its item", () => {
     const wrapper = mount(VcLineItems, { props: { items, selectable: true }, global });
 
-    expect(wrapper.get("[data-test-id='vc-line-items-head-checkbox']").attributes("aria-label")).toBe(
-      "ui_kit.accessibility.select_all_items",
-    );
-    expect(
-      wrapper.findAll("[data-test-id='vc-line-item-checkbox']").map((input) => input.attributes("aria-label")),
-    ).toEqual([
-      "ui_kit.accessibility.select_item:Fanta Mango Soda 6x330ml",
-      "ui_kit.accessibility.select_item:Coca-Cola Zero 6x330ml",
+    const checkboxes = wrapper.findAll("[data-test-id^='vc-line-item']").map((input) => ({
+      ariaLabel: input.attributes("aria-label"),
+      name: input.attributes("name"),
+    }));
+
+    expect(checkboxes).toEqual([
+      { ariaLabel: "ui_kit.accessibility.select_all_items", name: undefined },
+      { ariaLabel: "ui_kit.accessibility.select_item:Fanta Mango Soda 6x330ml", name: undefined },
+      { ariaLabel: "ui_kit.accessibility.select_item:Coca-Cola Zero 6x330ml", name: undefined },
     ]);
   });
 });
