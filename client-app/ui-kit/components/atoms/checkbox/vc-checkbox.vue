@@ -69,6 +69,7 @@ interface IEmits {
 
 interface IProps {
   modelValue?: boolean;
+  /** Form field name. Used as the accessible name only when there is neither `ariaLabel` nor slot content. */
   name?: string;
   value?: string | number | object;
   disabled?: boolean;
@@ -82,6 +83,7 @@ interface IProps {
   testId?: string;
   preventDefault?: boolean;
   tabindex?: string;
+  /** Accessible name; overrides the slot label. */
   ariaLabel?: string;
   tooltip?: {
     placement?: VcPopoverPlacementType;
