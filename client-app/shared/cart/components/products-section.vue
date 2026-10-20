@@ -3,10 +3,19 @@
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="products-section__groups">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
-        <div v-if="group.items.length" class="products-section__group">
+        <div
+          v-if="group.items.length"
+          role="group"
+          :aria-labelledby="`${groupId}-vendor-${vendorId}`"
+          class="products-section__group"
+        >
           <!-- Vendor -->
           <div class="products-section__vendor">
-            <VendorName :name="group.vendor?.name" class="products-section__vendor-name" />
+            <VendorName
+              :id="`${groupId}-vendor-${vendorId}`"
+              :name="group.vendor?.name"
+              class="products-section__vendor-name"
+            />
 
             <VcRating
               v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
@@ -50,8 +59,13 @@
 
     <!-- Items in other currencies (always flat, never grouped by vendor) -->
     <template v-for="group in otherCurrencyGroups" :key="group.currencyCode">
-      <div v-if="group.items.length" class="products-section__currency-group">
-        <h4 class="products-section__currency-title">
+      <div
+        v-if="group.items.length"
+        role="group"
+        :aria-labelledby="`${groupId}-currency-${group.currencyCode}`"
+        class="products-section__currency-group"
+      >
+        <h4 :id="`${groupId}-currency-${group.currencyCode}`" class="products-section__currency-title">
           {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
         </h4>
 
@@ -88,6 +102,7 @@
 </template>
 
 <script setup lang="ts">
+import { useId } from "vue";
 import { VendorName } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { CurrencyGroupType, VendorGroupType } from "@/core/types";
@@ -121,6 +136,8 @@ withDefaults(defineProps<IProps>(), {
   otherCurrencyGroups: () => [],
   validationErrors: () => [],
 });
+
+const groupId = useId();
 </script>
 
 <style lang="scss">
