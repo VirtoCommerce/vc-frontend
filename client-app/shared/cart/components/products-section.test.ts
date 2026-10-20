@@ -24,7 +24,7 @@ const global = {
 };
 
 function describeGroups(wrapper: ReturnType<typeof mount>) {
-  return wrapper.findAll("[role='group']").map((group) => ({
+  return wrapper.findAll("fieldset, [role='group']").map((group) => ({
     name: wrapper.find(`[id='${group.attributes("aria-labelledby")}']`).text(),
     containsList: group.find("cart-line-items-stub").exists(),
   }));
@@ -55,6 +55,6 @@ describe("ProductsSection groups", () => {
     const wrapper = mount(ProductsSection, { props: { grouped: false, items }, global });
 
     expect(wrapper.find("cart-line-items-stub").exists()).toBe(true);
-    expect(wrapper.findAll("[role='group']")).toHaveLength(0);
+    expect(wrapper.findAll("fieldset, [role='group']")).toHaveLength(0);
   });
 });
