@@ -71,43 +71,33 @@ const SlottedHost = defineComponent({
   `,
 });
 
+// VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
+// on the host.
+const KIT_COMPONENTS = {
+  VcButton,
+  VcCheckbox,
+  VcDropdownMenu,
+  VcIcon,
+  VcInput,
+  VcInputDetails,
+  VcLabel,
+  VcMenuItem,
+  VcPopover,
+  VcScrollbar,
+  VcTooltip,
+};
+
 const createWrapper = createWrapperFactory(mount, Host, {
   attachTo: document.body,
   global: {
-    // VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
-    // on the host.
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
+    components: KIT_COMPONENTS,
   },
 });
 
 const createSlottedWrapper = createWrapperFactory(mount, SlottedHost, {
   attachTo: document.body,
   global: {
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
+    components: KIT_COMPONENTS,
   },
 });
 
@@ -428,19 +418,7 @@ const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
   attachTo: document.body,
   props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true },
   global: {
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
+    components: KIT_COMPONENTS,
   },
 });
 

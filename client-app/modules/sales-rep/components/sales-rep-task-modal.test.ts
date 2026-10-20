@@ -53,18 +53,11 @@ const VcModalStub = {
 
 // One stub for every field: they differ only in which value they carry, and the label identifies them.
 const FieldStub = {
-  props: ["modelValue", "label", "items", "clearable", "maxLength", "aria"],
+  props: ["modelValue", "label", "items", "clearable", "maxLength"],
   emits: ["update:modelValue"],
-  computed: {
-    // Read through a computed so the template needs no nested quotes.
-    ariaRequired(): unknown {
-      return (this as unknown as { aria?: Record<string, unknown> }).aria?.["aria-required"];
-    },
-  },
   template:
     '<input class="field" :data-label="label" :value="modelValue"' +
     ' :data-clearable="String(!!clearable)" :data-max-length="maxLength"' +
-    ' :data-aria-required="ariaRequired"' +
     " @input=\"$emit('update:modelValue', $event.target.value)\" />",
 };
 
@@ -88,21 +81,26 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
 
 // Plain mount (not createWrapperFactory): this file mocks the vue-i18n module, and the shared factory's
 // defaults build a real i18n plugin from it.
-function createWrapper(props: Record<string, unknown> = {}) {
+// `realFields` mounts the real VcInput and VcDatePicker: only they turn `required` into an attribute.
+function createWrapper(props: Record<string, unknown> = {}, { realFields = false } = {}) {
   return mount(SalesRepTaskModal, {
     props,
     global: {
       renderStubDefaultSlot: false,
       stubs: {
         VcModal: VcModalStub,
-        VcInput: FieldStub,
-        VcDatePicker: FieldStub,
+        ...(realFields ? {} : { VcInput: FieldStub, VcDatePicker: FieldStub }),
         VcSelect: FieldStub,
         VcTextarea: FieldStub,
         VcIcon: true,
+        VcTooltip: true,
       },
       // Real buttons: the actions are genuine <button>s the tests click, and Save reads its own disabled state.
-      components: { VcButton },
+      components: realFields
+        ? { VcButton, VcCalendar, VcDateInput, VcDatePicker, VcInput, VcInputDetails, VcLabel, VcPopover }
+        : { VcButton },
+      directives: { "html-safe": {}, maska: {} },
+      mocks: { $t: (key: string) => key },
     },
   });
 }
@@ -309,17 +307,8 @@ describe("SalesRepTaskModal edit", () => {
 });
 
 describe("SalesRepTaskModal accessibility", () => {
-  // QA A-7: the real fields, because only they turn `required` into an attribute assistive tech reads.
   it("marks the required controls as required, not just with an asterisk", async () => {
-    const wrapper = mount(SalesRepTaskModal, {
-      props: { defaultDay: "2026-10-15" },
-      global: {
-        stubs: { VcModal: VcModalStub, VcSelect: FieldStub, VcTextarea: FieldStub, VcIcon: true, VcTooltip: true },
-        components: { VcButton, VcCalendar, VcDateInput, VcDatePicker, VcInput, VcInputDetails, VcLabel, VcPopover },
-        directives: { "html-safe": {}, maska: {} },
-        mocks: { $t: (key: string) => key },
-      },
-    });
+    const wrapper = createWrapper({ defaultDay: "2026-10-15" }, { realFields: true });
     await flushPromises();
 
     const input = (key: string) => wrapper.get(`input[aria-label$="${key}"]`);
