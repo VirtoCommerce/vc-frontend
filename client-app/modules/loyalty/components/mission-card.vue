@@ -33,7 +33,14 @@
       <span class="mission-card__note">{{ view.progressLabel }}</span>
 
       <div class="mission-card__progress">
-        <div class="mission-card__track">
+        <div
+          class="mission-card__track"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          :aria-valuenow="view.percent"
+          :aria-labelledby="titleId"
+        >
           <div
             class="mission-card__bar"
             :class="{ 'mission-card__bar--completed': view.isCompleted }"
@@ -44,7 +51,7 @@
         <span class="mission-card__percent">{{ view.percent }}%</span>
       </div>
 
-      <VcTypography text-transform="none" class="mission-card__title" tag="h3" variant="h5">
+      <VcTypography :id="titleId" text-transform="none" class="mission-card__title" tag="h3" variant="h5">
         {{ view.title }}
       </VcTypography>
 
@@ -65,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, useId } from "vue";
 import { useModal } from "@/shared/modal";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
@@ -83,6 +90,8 @@ const props = defineProps<IProps>();
 const { view } = useMissionCard(() => props.mission);
 
 const isBackdropFailed = ref(false);
+
+const titleId = useId();
 
 const TYPE_ICONS: Record<MissionType, string> = {
   [MISSION_TYPE.PerSkuAll]: "barcode",
