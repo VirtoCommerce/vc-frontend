@@ -65,7 +65,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   --link-color: var(--vc-product-title-link-color, theme("colors.accent.600"));
   --link-hover-color: var(--vc-product-title-link-hover-color, theme("colors.accent.700"));
 
-  @apply text-[length:var(--font-size)] font-bold leading-[1.17em];
+  @apply text-[length:var(--font-size)] font-bold;
 
   &--fix-height {
     height: calc(1.17em * var(--lines-number));
@@ -80,7 +80,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   &__text {
-    @apply line-clamp-[--lines-number] text-[--text-color];
+    @apply line-clamp-[--lines-number] text-[--text-color] leading-[1.17em];
 
     word-break: break-word;
 
