@@ -12,8 +12,8 @@
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
           :maxlength="MAX_NAME_LENGTH"
-          :message="errors.firstName"
-          :error="!!errors.firstName"
+          :message="errors.firstName || serverErrors.firstName"
+          :error="!!errors.firstName || !!serverErrors.firstName"
           name="firstName"
           class="mb-5"
           required
@@ -25,8 +25,8 @@
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
           :maxlength="MAX_NAME_LENGTH"
-          :message="errors.lastName"
-          :error="!!errors.lastName"
+          :message="errors.lastName || serverErrors.lastName"
+          :error="!!errors.lastName || !!serverErrors.lastName"
           name="lastName"
           class="mb-5"
           required
@@ -67,7 +67,7 @@
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
-            :disabled="!meta.dirty || !meta.valid || meta.pending"
+            :disabled="!meta.dirty || !meta.valid || meta.pending || hasServerErrors"
             :loading="isSubmitting"
             type="submit"
             class="w-full lg:w-48"
@@ -84,17 +84,20 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useMutation } from "@vue/apollo-composable";
 import { useForm } from "vee-validate";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals } from "@/core/globals";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
+import { useFieldErrors } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 const MAX_NAME_LENGTH = 64;
+const NAME_FIELD_NAMES = ["firstName", "lastName"];
 
 const { t } = useI18n();
 const { user, updateUser } = useUser();
@@ -104,6 +107,7 @@ const { currentLanguage, removeLocaleFromUrl, unpinLocale } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
+const { showSaveErrors } = useFieldErrors();
 const { storeId, cultureName } = globals;
 
 usePageHead({
@@ -138,6 +142,19 @@ const [lastName] = defineField("lastName");
 const [defaultLanguage] = defineField("defaultLanguage");
 const [currencyCode] = defineField("currencyCode");
 
+// Kept apart from the form's errors: the schema re-validates every field on any edit, which would drop them all.
+// Each one clears when its own input changes.
+const serverErrors = ref<Record<string, string>>({});
+const hasServerErrors = computed(() => Object.keys(serverErrors.value).length > 0);
+
+watch(firstName, () => {
+  delete serverErrors.value.firstName;
+});
+
+watch(lastName, () => {
+  delete serverErrors.value.lastName;
+});
+
 function applyLanguage(): void {
   unpinLocale();
   removeLocaleFromUrl();
@@ -164,7 +181,12 @@ async function applyCurrency(): Promise<void> {
 }
 
 const onSubmit = handleSubmit(async (data) => {
-  await updateUser(data);
+  try {
+    await updateUser(data, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT);
+  } catch (e) {
+    serverErrors.value = showSaveErrors(e, NAME_FIELD_NAMES);
+    return;
+  }
 
   resetForm({ values: initialValues() });
   openModal({

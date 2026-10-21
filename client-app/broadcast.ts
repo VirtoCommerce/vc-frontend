@@ -1,6 +1,6 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
-import { filterActiveQueryNames } from "@/core/api/graphql";
+import { filterActiveQueryNames, getFieldValidationErrors } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
 import { useReturnUrl, useSupportReports } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
@@ -23,8 +23,10 @@ import {
   graphqlErrorEvent,
   dataChangedEvent,
 } from "@/shared/broadcast";
+import { useFieldErrors } from "@/shared/common/composables/useFieldErrors";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
+import type { GraphQLFormattedError } from "graphql";
 
 let installed = false;
 
@@ -45,6 +47,7 @@ export function setupBroadcastGlobalListeners() {
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
+  const { getErrorNotificationText } = useFieldErrors();
 
   function createReportButton(error: unknown): NotificationCustomButtonType {
     return {
@@ -107,15 +110,17 @@ export function setupBroadcastGlobalListeners() {
     }
   });
   on(graphqlErrorEvent, (error) => {
+    const fieldErrors = getFieldValidationErrors(error ? [error as GraphQLFormattedError] : undefined);
     const notification: INotification = {
       duration: DEFAULT_NOTIFICATION_DURATION,
       variant: "outline-dark",
       group: "GenericError",
       singleInGroup: true,
-      text: t("common.messages.something_went_wrong"),
+      text: getErrorNotificationText(fieldErrors),
     };
 
-    if (error) {
+    // Rejected input is for the user to correct, not a problem to report
+    if (error && !fieldErrors.length) {
       notification.button = createReportButton(error);
     }
 
