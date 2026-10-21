@@ -498,7 +498,7 @@ watchEffect(() => {
     @apply shrink-0;
 
     @container (width <= theme("containers.2xl")) {
-      @apply top-0.5 right-0.5 absolute #{!important};
+      @apply top-0.5 right-0.5 absolute;
     }
 
     @container (width > theme("containers.2xl")) {

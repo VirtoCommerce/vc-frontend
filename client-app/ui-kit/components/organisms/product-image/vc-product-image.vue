@@ -6,7 +6,7 @@
       :navigation="{
         nextEl: '[data-btn=btn-next]',
         prevEl: '[data-btn=btn-prev]',
-        lockClass: '!hidden',
+        lockClass: 'hidden',
       }"
       class="vc-product-image__carousel"
       rewind

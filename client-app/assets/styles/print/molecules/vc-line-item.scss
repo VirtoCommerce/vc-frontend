@@ -30,10 +30,6 @@
     @apply flex flex-col #{!important};
   }
 
-  &__deleted &__price {
-    @apply block invisible;
-  }
-
   &__slot {
     @apply flex-shrink-0 items-center gap-2 mt-0 w-[13rem] empty:block;
   }

@@ -65,9 +65,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   --link-color: var(--vc-product-title-link-color, theme("colors.accent.600"));
   --link-hover-color: var(--vc-product-title-link-hover-color, theme("colors.accent.700"));
 
-  @apply text-[length:var(--font-size)] font-bold;
-
-  @apply leading-[1.17em] #{!important};
+  @apply text-[length:var(--font-size)] font-bold leading-[1.17em];
 
   &--fix-height {
     height: calc(1.17em * var(--lines-number));
@@ -103,9 +101,9 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
     $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
 
     #{$wrapperSelector} {
-      grid-area: title;
+      --vc-product-title-font-size: theme("fontSize.sm");
 
-      @apply text-sm;
+      grid-area: title;
     }
 
     &--view-mode {

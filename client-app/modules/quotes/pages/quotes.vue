@@ -185,7 +185,7 @@ const columns = ref<VcTableColumnType[]>([
     id: "status",
     title: t("quotes.status_label"),
     sortable: true,
-    classes: "!px-3",
+    classes: "px-3",
   },
   {
     id: "total",

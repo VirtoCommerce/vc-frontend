@@ -295,7 +295,7 @@ watch(
       $icon: &;
     }
 
-    #{$self} {
+    &:not(#{$icon}) #{$self} {
       &:first-child:not(:last-child) {
         @apply me-2;
       }
@@ -313,10 +313,6 @@ watch(
       }
 
       #{$icon} & {
-        & > #{$self} {
-          @apply mx-0 #{!important};
-        }
-
         & > *:not(#{$self}) {
           @apply hidden;
         }
