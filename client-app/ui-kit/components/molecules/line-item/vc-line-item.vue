@@ -96,14 +96,14 @@
           </VcProperty>
         </div>
 
-        <VcProductPrice
-          v-if="withPrice"
-          class="vc-line-item__price"
-          :list-price="listPrice"
-          :actual-price="showPlacedPrice ? actualPrice : listPrice"
-          :disabled="disabled"
-          align="end"
-        />
+        <div v-if="withPrice" class="vc-line-item__price">
+          <VcProductPrice
+            :list-price="listPrice"
+            :actual-price="showPlacedPrice ? actualPrice : listPrice"
+            :disabled="disabled"
+            align="end"
+          />
+        </div>
 
         <div class="vc-line-item__mobile-row">
           <div class="vc-line-item__slot">
@@ -410,7 +410,7 @@ watchEffect(() => {
     --vc-product-price-font-size: theme(fontSize.sm);
 
     @container (width <= theme("containers.4xl")) {
-      @apply hidden #{!important};
+      @apply hidden;
     }
 
     @container (width > theme("containers.4xl")) {

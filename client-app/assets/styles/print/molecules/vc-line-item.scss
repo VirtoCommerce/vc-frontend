@@ -26,8 +26,7 @@
   }
 
   &__price {
-    @apply flex-none text-right;
-    @apply flex flex-col #{!important};
+    @apply block flex-none text-right;
   }
 
   &__slot {
