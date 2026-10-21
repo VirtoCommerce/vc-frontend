@@ -181,7 +181,7 @@ Both run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SC
 - **Tailwind utilities** in templates are unlayered and still beat our layers.
 - **`!important` inverts across layers**: a layered `!important` beats an unlayered one. A fork's
   `!important` cannot override an `!important` inside a layer: swiper's and nouislider's in
-  `vc.vendor`, and any still left in our own layers. Never add `!important` to our layered styles.
+  `vc.vendor`. Never add `!important` to our layered styles.
 - **Plugin stylesheets** stay unlayered until they move into `plugins`, so for now they beat our
   layered components.
 
