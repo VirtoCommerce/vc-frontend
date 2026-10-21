@@ -16,6 +16,7 @@ export const PUNCHOUT_CHECKOUT_SECTIONS = {
 export const REQUISITION_ERROR_MESSAGE_KEYS = {
   SessionNotFound: "punchout.errors.session_not_found",
   SessionExpired: "punchout.errors.session_expired",
+  SessionReturned: "punchout.errors.session_returned",
   StoreNotConfigured: "punchout.errors.store_not_configured",
   ConfigurationError: "punchout.errors.configuration_error",
   MessageError: "punchout.errors.message_error",

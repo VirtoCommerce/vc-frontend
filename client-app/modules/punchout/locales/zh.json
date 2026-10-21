@@ -10,7 +10,8 @@
       "configuration_error": "Punchout 连接配置不正确。请联系商店管理员。",
       "message_error": "无法为您的采购系统准备采购申请。请联系商店管理员。",
       "cart_not_found": "未找到购物车。请刷新页面并检查购物车。",
-      "cart_is_empty": "请在购物车中至少选择一件商品以创建采购申请。"
+      "cart_is_empty": "请在购物车中至少选择一件商品以创建采购申请。",
+      "session_returned": "采购申请已发送。"
     }
   }
 }

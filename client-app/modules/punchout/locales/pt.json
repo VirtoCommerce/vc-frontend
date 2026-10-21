@@ -10,7 +10,8 @@
       "configuration_error": "A ligação de punchout não está configurada corretamente. Contacte o administrador da loja.",
       "message_error": "Não foi possível preparar a requisição para o seu sistema de compras. Contacte o administrador da loja.",
       "cart_not_found": "O seu carrinho não foi encontrado. Recarregue a página e verifique o carrinho.",
-      "cart_is_empty": "Selecione pelo menos um artigo no carrinho para criar uma requisição."
+      "cart_is_empty": "Selecione pelo menos um artigo no carrinho para criar uma requisição.",
+      "session_returned": "Requisição já enviada."
     }
   }
 }

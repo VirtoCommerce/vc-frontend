@@ -10,7 +10,8 @@
       "configuration_error": "Punchout-anslutningen är inte korrekt konfigurerad. Kontakta butiksadministratören.",
       "message_error": "Inköpsanmodan kunde inte förberedas för inköpssystemet. Kontakta butiksadministratören.",
       "cart_not_found": "Varukorgen hittades inte. Ladda om sidan och kontrollera varukorgen.",
-      "cart_is_empty": "Välj minst en artikel i varukorgen för att skapa en inköpsanmodan."
+      "cart_is_empty": "Välj minst en artikel i varukorgen för att skapa en inköpsanmodan.",
+      "session_returned": "Inköpsanmodan har redan skickats."
     }
   }
 }

@@ -10,7 +10,8 @@
       "configuration_error": "Połączenie punchout nie jest poprawnie skonfigurowane. Skontaktuj się z administratorem sklepu.",
       "message_error": "Nie udało się przygotować zapotrzebowania dla systemu zakupowego. Skontaktuj się z administratorem sklepu.",
       "cart_not_found": "Nie znaleziono koszyka. Odśwież stronę i sprawdź koszyk.",
-      "cart_is_empty": "Wybierz co najmniej jeden produkt w koszyku, aby utworzyć zapotrzebowanie."
+      "cart_is_empty": "Wybierz co najmniej jeden produkt w koszyku, aby utworzyć zapotrzebowanie.",
+      "session_returned": "Zapotrzebowanie zostało już wysłane."
     }
   }
 }

@@ -10,7 +10,8 @@
       "configuration_error": "La connexion punchout n’est pas configurée correctement. Veuillez contacter l’administrateur de la boutique.",
       "message_error": "La demande d’achat n’a pas pu être préparée pour votre système d’achat. Veuillez contacter l’administrateur de la boutique.",
       "cart_not_found": "Votre panier est introuvable. Rechargez la page et vérifiez votre panier.",
-      "cart_is_empty": "Sélectionnez au moins un article dans votre panier pour créer une demande d’achat."
+      "cart_is_empty": "Sélectionnez au moins un article dans votre panier pour créer une demande d’achat.",
+      "session_returned": "Demande d’achat déjà envoyée."
     }
   }
 }

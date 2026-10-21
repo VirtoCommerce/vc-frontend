@@ -10,7 +10,8 @@
       "configuration_error": "La connessione punchout non è configurata correttamente. Contatta l’amministratore del negozio.",
       "message_error": "Non è stato possibile preparare la richiesta d’acquisto per il sistema di approvvigionamento. Contatta l’amministratore del negozio.",
       "cart_not_found": "Il carrello non è stato trovato. Ricarica la pagina e controlla il carrello.",
-      "cart_is_empty": "Seleziona almeno un articolo nel carrello per creare una richiesta d’acquisto."
+      "cart_is_empty": "Seleziona almeno un articolo nel carrello per creare una richiesta d’acquisto.",
+      "session_returned": "Richiesta d’acquisto già inviata."
     }
   }
 }

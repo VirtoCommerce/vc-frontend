@@ -10,7 +10,8 @@
       "configuration_error": "The punchout connection is not configured correctly. Please contact the store administrator.",
       "message_error": "The requisition could not be prepared for your procurement system. Please contact the store administrator.",
       "cart_not_found": "Your cart could not be found. Reload the page and check your cart.",
-      "cart_is_empty": "Select at least one item in your cart to create a requisition."
+      "cart_is_empty": "Select at least one item in your cart to create a requisition.",
+      "session_returned": "Requisition already sent."
     }
   }
 }

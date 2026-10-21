@@ -10,7 +10,8 @@
       "configuration_error": "Punchout-yhteyttä ei ole määritetty oikein. Ota yhteyttä kaupan ylläpitäjään.",
       "message_error": "Ostoehdotusta ei voitu valmistella hankintajärjestelmääsi varten. Ota yhteyttä kaupan ylläpitäjään.",
       "cart_not_found": "Ostoskoria ei löytynyt. Lataa sivu uudelleen ja tarkista ostoskori.",
-      "cart_is_empty": "Valitse ostoskorista vähintään yksi tuote luodaksesi ostoehdotuksen."
+      "cart_is_empty": "Valitse ostoskorista vähintään yksi tuote luodaksesi ostoehdotuksen.",
+      "session_returned": "Ostoehdotus on jo lähetetty."
     }
   }
 }

@@ -61,6 +61,7 @@ const ORDER_MESSAGE = { url: "https://procurement.example/receive", formField: "
 const FALLBACK_TEXT = "Could not create the requisition. Please try again.";
 const SESSION_EXPIRED_TEXT =
   "Your punchout session has expired. Return to your procurement system and start a new session.";
+const SESSION_RETURNED_TEXT = "Requisition already sent";
 
 function mountButton() {
   return mount(CreateRequisitionButton, {
@@ -112,14 +113,17 @@ describe("create requisition button", () => {
     expect(createPunchoutRequisition).toHaveBeenCalledOnce();
   });
 
-  it("shows the message of a known error code and re-enables the button", async () => {
-    createPunchoutRequisition.mockResolvedValue({ errorCode: "SessionExpired" });
+  it.each([
+    ["SessionExpired", SESSION_EXPIRED_TEXT],
+    ["SessionReturned", SESSION_RETURNED_TEXT],
+  ])("shows the message of the known error code %s and re-enables the button", async (errorCode, text) => {
+    createPunchoutRequisition.mockResolvedValue({ errorCode });
     const wrapper = mountButton();
 
     await clickButton(wrapper);
 
     expect(submitPunchoutOrderMessage).not.toHaveBeenCalled();
-    expect(notificationsError).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ text: SESSION_EXPIRED_TEXT }));
+    expect(notificationsError).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ text }));
     expect(isBusy(wrapper)).toBe(false);
   });
 
