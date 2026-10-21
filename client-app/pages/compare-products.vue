@@ -26,7 +26,7 @@
 
       <div class="compare-products__actions">
         <VcButton
-          class="hidden md:inline-flex"
+          class="hidden md:inline-flex print:hidden"
           variant="outline"
           size="sm"
           :disabled="isEmpty"

@@ -158,7 +158,7 @@
                   :loading="changeAddressLoading"
                   size="sm"
                   variant="outline"
-                  class="hidden self-start md:inline-flex"
+                  class="hidden self-start md:inline-flex print:hidden"
                   @click="showEditAddressModal"
                 >
                   {{ $t("pages.account.order_payment.edit_button") }}
@@ -213,7 +213,7 @@
                     :loading="changeMethodLoading"
                     size="sm"
                     variant="outline"
-                    class="hidden self-start md:inline-flex"
+                    class="hidden self-start md:inline-flex print:hidden"
                     @click="showChangePaymentMethodModal"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}
