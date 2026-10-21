@@ -295,7 +295,7 @@ watch(
       $icon: &;
     }
 
-    &:not(#{$icon}) #{$self} {
+    &:where(:not(#{$icon})) #{$self} {
       &:first-child:not(:last-child) {
         @apply me-2;
       }
