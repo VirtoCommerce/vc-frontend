@@ -340,6 +340,10 @@ watchEffect(() => {
       @container (width > theme("containers.2xl")) {
         @apply inline-block;
       }
+
+      @media print {
+        @apply hidden;
+      }
     }
   }
 

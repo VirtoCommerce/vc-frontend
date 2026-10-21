@@ -249,6 +249,10 @@ watchEffect(async () => {
     @container (width > theme("containers.xxs")) {
       @apply block;
     }
+
+    @media print {
+      @apply hidden;
+    }
   }
 
   &__badges {
