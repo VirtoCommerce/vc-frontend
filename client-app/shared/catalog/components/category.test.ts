@@ -388,6 +388,7 @@ beforeEach(() => {
   mocks.analytics.mockClear();
   mocks.paginationMode = "infinite_scroll";
   mocks.response = { items: [PRODUCT, OTHER_PRODUCT], totalCount: 2 };
+  mocks.moreResponse = { items: [], totalCount: 0 };
   mocks.stallNextRequest = false;
   mocks.requests = [];
 });
