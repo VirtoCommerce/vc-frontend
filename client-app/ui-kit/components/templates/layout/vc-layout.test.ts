@@ -45,6 +45,7 @@ describe("VcLayout print", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
 
@@ -63,7 +64,28 @@ describe("VcLayout print", () => {
     await settle();
 
     expect(positionOf(wrapper, "sidebar")).toBe("static");
-    expect(positionOf(wrapper, "content")).not.toBe("sticky");
+  });
+
+  it("sticks the shorter content block, resets on beforeprint and restores on afterprint", async () => {
+    const heights = { sidebar: 600, content: 300 };
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+      const height = heights[this.dataset.testId as keyof typeof heights] ?? 0;
+      return { x: 0, y: 0, top: 0, left: 0, right: 0, bottom: height, width: 0, height, toJSON: () => ({}) };
+    });
+    const wrapper = createWrapper({ props: { sticky: true } });
+    await settle();
+
+    expect(positionOf(wrapper, "content")).toBe("sticky");
+
+    window.dispatchEvent(new Event("beforeprint"));
+    await settle();
+
+    expect(positionOf(wrapper, "content")).toBe("static");
+
+    window.dispatchEvent(new Event("afterprint"));
+    await settle();
+
+    expect(positionOf(wrapper, "content")).toBe("sticky");
   });
 
   it("sticks again on afterprint", async () => {
@@ -78,7 +100,7 @@ describe("VcLayout print", () => {
     expect(positionOf(wrapper, "sidebar")).toBe("sticky");
   });
 
-  it("resets to static when the print media query matches", async () => {
+  it("starts static when the print media query matches", async () => {
     printMatches = true;
     const wrapper = createWrapper({ props: { sticky: true } });
     await settle();
@@ -88,12 +110,6 @@ describe("VcLayout print", () => {
 
   it("never sticks without the sticky prop", async () => {
     const wrapper = createWrapper({ props: { sticky: false } });
-    await settle();
-
-    expect(positionOf(wrapper, "sidebar")).not.toBe("sticky");
-    expect(positionOf(wrapper, "content")).not.toBe("sticky");
-
-    window.dispatchEvent(new Event("afterprint"));
     await settle();
 
     expect(positionOf(wrapper, "sidebar")).not.toBe("sticky");
