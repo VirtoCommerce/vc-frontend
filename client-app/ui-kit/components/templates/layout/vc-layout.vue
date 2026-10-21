@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, useElementBounding, useMediaQuery } from "@vueuse/core";
+import { useBreakpoints, useElementBounding, useEventListener, useMediaQuery } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/ui-kit/constants";
@@ -54,7 +54,16 @@ const { t } = useI18n();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
-const isPrint = useMediaQuery("print");
+const isPrintMedia = useMediaQuery("print");
+const isPrinting = ref(false);
+const isPrint = computed(() => isPrintMedia.value || isPrinting.value);
+
+useEventListener(window, "beforeprint", () => {
+  isPrinting.value = true;
+});
+useEventListener(window, "afterprint", () => {
+  isPrinting.value = false;
+});
 
 const sidebarLabel = computed(() => props.sidebarAriaLabel || t("ui_kit.accessibility.sidebar"));
 
