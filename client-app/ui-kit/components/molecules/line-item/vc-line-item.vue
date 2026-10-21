@@ -399,12 +399,10 @@ watchEffect(() => {
   }
 
   &__property-price {
+    --vc-product-price-line-height: 1.5;
+
     @container (width > theme("containers.4xl")) {
       @apply hidden;
-    }
-
-    * {
-      @apply leading-[inherit] #{!important};
     }
   }
 
