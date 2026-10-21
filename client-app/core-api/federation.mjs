@@ -19,7 +19,7 @@ export const MF_SHARED_RANGES = {
   "@apollo/client": "^3.14.0",
   "@vue/apollo-composable": "^4.2.0",
   graphql: "^16.14.0",
-  "@vc-frontend/core": "^0.2.0",
+  "@vc-frontend/core": "^0.3.0",
 };
 
 /**
@@ -105,7 +105,7 @@ export const REMOTE_SHARED = /* @__PURE__ */ createRemoteShared();
 
 /**
  * One-call federation() options for a PLUGIN build:
- *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.2.0" }))
+ *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.3.0" }))
  * The harness owns the wiring conventions (expose key, manifest metadata, shared
  * singletons, entry filename), so plugins pick convention changes up by updating
  * their host checkout instead of hand-editing config. Pure data - deliberately

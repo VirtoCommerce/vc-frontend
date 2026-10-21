@@ -14,10 +14,12 @@ declare module "vue" {
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
     VcImage: typeof Components.VcImage;
+    /** Watches the window, its `viewport`, or the enclosing `VcScrollbar`; inside a `VcScrollbar` prefer `VcLoadMore`, which also refills a short page. */
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
     /** @deprecated Use VcProperty or VcProductProperties instead */
     VcLineItemProperty: typeof Components.VcLineItemProperty;
+    VcLoadMore: typeof Components.VcLoadMore;
     VcLoader: typeof Components.VcLoader;
     VcMarkdownRender: typeof Components.VcMarkdownRender;
     VcPriceDisplay: typeof Components.VcPriceDisplay;

@@ -65,10 +65,10 @@ vi.mock("../composables/useSalesRepCustomerOptions", () => ({
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
 
-/* Multiple mode carries whole items, not ids — the real VcSelect pushes the item it was given. */
+/* With `value-field` the real VcSelect reads and emits ids. */
 const VcSelect = defineComponent({
   props: {
-    modelValue: { type: Array as PropType<Record<string, string>[]>, default: () => [] },
+    modelValue: { type: Array as PropType<string[]>, default: () => [] },
     items: { type: Array as PropType<Record<string, string>[]>, default: () => [] },
     textField: { type: String, default: "" },
     valueField: { type: String, default: "" },
@@ -82,21 +82,18 @@ const VcSelect = defineComponent({
   },
   emits: ["update:modelValue", "change"],
   setup(props, { emit }) {
-    const isPicked = (item: Record<string, string>) =>
-      props.modelValue.some((picked) => picked[props.valueField] === item[props.valueField]);
+    const isPicked = (item: Record<string, string>) => props.modelValue.includes(item[props.valueField]);
 
     // The kit raises both events together on every path that changes the selection, its own clear button included.
-    function commit(next: Record<string, string>[]) {
+    function commit(next: string[]) {
       emit("update:modelValue", next);
       emit("change", next);
     }
 
     function toggle(item: Record<string, string>) {
-      commit(
-        isPicked(item)
-          ? props.modelValue.filter((picked) => picked[props.valueField] !== item[props.valueField])
-          : [...props.modelValue, item],
-      );
+      const value = item[props.valueField];
+
+      commit(isPicked(item) ? props.modelValue.filter((picked) => picked !== value) : [...props.modelValue, value]);
     }
 
     return () =>
@@ -370,6 +367,17 @@ describe("WishlistCustomerSharing", () => {
 
       expect(recipientList().getByText("Acme Inc.")).toBeInTheDocument();
       expect(recipientList().getByText("Richmond, Virginia")).toBeInTheDocument();
+    });
+
+    it("keeps a picked customer whom the reloaded options no longer carry", async () => {
+      renderSharing();
+      await pick("org-1");
+
+      mocks.options.value = [{ organizationId: "org-2", organizationName: "Globex", location: "", imageUrl: "" }];
+      await pick("org-2");
+
+      expect(recipientList().getByText("Acme Inc.")).toBeInTheDocument();
+      expect(controls.payload).toMatchObject({ addSharedWithIds: ["org-1", "org-2"] });
     });
 
     it("keeps the customers already there when another one is picked", async () => {

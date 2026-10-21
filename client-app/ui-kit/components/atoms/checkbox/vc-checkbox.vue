@@ -105,6 +105,11 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
+defineExpose({
+  /** The native input, for a parent that hands focus to it; null inside an interactive parent, which renders none. */
+  inputElement: computed(() => inputRef.value),
+});
+
 let forwardExpected = false;
 
 const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
@@ -183,6 +188,15 @@ function onClick(event: MouseEvent) {
   if (props.preventDefault) {
     event.preventDefault();
     handleChange();
+    // The browser restores the cancelled click's old state after Vue may already have rendered the new one.
+    setTimeout(syncInput);
+  }
+}
+
+function syncInput() {
+  if (inputRef.value) {
+    inputRef.value.checked = isChecked.value;
+    inputRef.value.indeterminate = props.indeterminate;
   }
 }
 </script>

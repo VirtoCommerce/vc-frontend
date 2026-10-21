@@ -268,7 +268,11 @@ watch(
   },
 );
 
-function onShipmentMethodChange(method: ShippingMethodType) {
+function onShipmentMethodChange(method?: ShippingMethodType) {
+  if (!method) {
+    return;
+  }
+
   void updateShipment({
     id: shipment.value?.id,
     deliveryAddress: shipment.value?.deliveryAddress,

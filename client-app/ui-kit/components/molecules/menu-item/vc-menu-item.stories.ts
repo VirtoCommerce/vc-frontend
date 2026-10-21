@@ -48,6 +48,52 @@ export const Active: StoryType = {
   },
 };
 
+export const Highlighted: StoryType = {
+  args: {
+    highlighted: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The active option of an `aria-activedescendant` list, which keeps DOM focus on its combobox: " +
+          "`highlighted` draws the hover background and a focus ring in place of real focus.",
+      },
+    },
+  },
+};
+
+export const HighlightStates: StoryType = {
+  render: () => ({
+    template: `<ul role="listbox" aria-label="Highlight states" class="w-64 space-y-1">
+      <VcMenuItem role="option" :aria-selected="false" :tabindex="-1" highlighted>Highlighted</VcMenuItem>
+      <VcMenuItem role="option" :aria-selected="false" :tabindex="-1" highlighted :highlight-ring="false">
+        Highlighted, no ring
+      </VcMenuItem>
+      <VcMenuItem role="option" :aria-selected="true" :tabindex="-1" highlighted active>Highlighted and active</VcMenuItem>
+      <VcMenuItem role="option" :aria-selected="false" :tabindex="-1">Not highlighted</VcMenuItem>
+    </ul>`,
+  }),
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Options of a listbox the way VcSelect renders them: `tabindex="-1"` keeps them out of the Tab order, ' +
+          "and `highlight-ring` is off for a highlight that follows the pointer, which needs no ring.",
+      },
+      source: {
+        code: `
+<VcMenuItem role="option" :tabindex="-1" highlighted>Highlighted</VcMenuItem>
+<VcMenuItem role="option" :tabindex="-1" highlighted :highlight-ring="false">Highlighted, no ring</VcMenuItem>
+<VcMenuItem role="option" :tabindex="-1" highlighted active>Highlighted and active</VcMenuItem>
+<VcMenuItem role="option" :tabindex="-1">Not highlighted</VcMenuItem>
+        `,
+      },
+    },
+  },
+};
+
 export const Link: StoryType = {
   args: {
     to: "/some/link",

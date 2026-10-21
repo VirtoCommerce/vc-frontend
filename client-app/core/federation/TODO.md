@@ -7,6 +7,9 @@ _Checked against `dev` on 2026-10-14._
 
 - [ ] **Release `vc-module-sales-rep`** with the plugin (un-draft vc-module-sales-rep#13), and check its package
       with `yarn check:plugin-module … --artifact`.
+- [ ] **Release `core-v0.3.0` and move the port to it** (VCST-5923 breaks the VcSelect model, so a 0.3.0 host
+      refuses `^0.2.3`): tarball pin and `requiredHostVersion` together, and the sharing picker
+      (`wishlist-customer-sharing.vue`) binds the `value-field` ids and maps the emitted ids back to recipients.
 - [ ] **`/modules → platform` route on every environment** that runs the theme (S6).
 - [ ] **Release notes**: MF is a preview; the backend floors (`BACKEND_REQUIREMENTS`), the `/modules` route, the
       build-time switch, and that an installed plugin runs with the storefront's full rights. With a SalesRep that

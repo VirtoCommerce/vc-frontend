@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
+import { nextTick } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import VcDateInput from "../date-input/vc-date-input.vue";
@@ -94,6 +95,115 @@ describe("VcInput aria-describedby", () => {
     describedBy.forEach((id) => {
       expect(wrapper.find(`#${id}`).exists()).toBe(true);
     });
+  });
+});
+
+describe("VcInput focus modality", () => {
+  it("marks pointer-driven focus", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+  });
+
+  it("drops the mark as soon as a key is pressed", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+  });
+
+  it.each([
+    ["Shift alone", { key: "Shift", shiftKey: true }],
+    ["Meta alone", { key: "Meta", metaKey: true }],
+    ["Control alone", { key: "Control", ctrlKey: true }],
+    ["Alt alone", { key: "Alt", altKey: true }],
+    ["AltGraph alone", { key: "AltGraph" }],
+    ["a Cmd+C copy", { key: "c", metaKey: true }],
+    ["a Ctrl+C copy", { key: "c", ctrlKey: true }],
+  ])("keeps the mark on %s, which moves no focus", async (_label, init) => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    document.dispatchEvent(new KeyboardEvent("keydown", init));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+  });
+
+  it("drops the mark on a modified navigation key such as Shift+Tab", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+  });
+
+  it("keeps the mark across a blur, since the pointer is still what is driving", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+    await wrapper.get("input").trigger("blur");
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+    expect(wrapper.emitted("blur")).toHaveLength(1);
+  });
+
+  it("reads the modality even when a handler stops the event", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+    const stopper = document.createElement("div");
+
+    stopper.addEventListener("pointerdown", (event) => event.stopPropagation());
+    stopper.addEventListener("keydown", (event) => event.stopPropagation());
+    document.body.append(stopper);
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+
+    stopper.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+
+    stopper.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+
+    stopper.remove();
+  });
+
+  it("leaves an editable field unmarked", async () => {
+    const wrapper = createInputWrapper();
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+  });
+});
+
+describe("VcInput opened", () => {
+  it("marks the field while a popup it controls is open", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    expect(wrapper.classes()).not.toContain("vc-input--opened");
+
+    await wrapper.setProps({ opened: true });
+
+    expect(wrapper.classes()).toContain("vc-input--opened");
   });
 });
 

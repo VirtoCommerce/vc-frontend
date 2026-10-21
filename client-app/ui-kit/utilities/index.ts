@@ -7,6 +7,8 @@ export * from "./file-size";
 export * from "./focus";
 export * from "./icons";
 export * from "./images";
+export * from "./keyboard";
 export * from "./price";
 export * from "./string-array";
+export * from "./text-diff";
 export * from "./variant-compat";

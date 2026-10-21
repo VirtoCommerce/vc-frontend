@@ -1,7 +1,9 @@
+import { escapeRegExp } from "lodash-es";
+import { computed, ref } from "vue";
 import { VcSelect } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["xs", "sm", "md"];
+const SIZES = ["xs", "sm", "md", "auto"];
 const ITEM_SIZES = ["xs", "sm", "md", "lg"];
 
 const ITEMS = ["Albania", "Belgium", "China", "India"];
@@ -12,9 +14,40 @@ const OBJECT_ITEMS = [
   { id: 4, name: "India" },
 ];
 
-const meta: Meta<typeof VcSelect> = {
+// Generic SFCs with several type parameters break `Meta<typeof Component>` inference,
+// so the args are described explicitly — same approach as vc-table.stories.ts.
+interface IVcSelectStoryArgs {
+  items: unknown[];
+  modelValue?: unknown;
+  label?: string;
+  ariaLabel?: string;
+  placeholder?: string;
+  message?: string;
+  size?: "xs" | "sm" | "md" | "auto";
+  itemSize?: "xs" | "sm" | "md" | "lg";
+  textField?: string;
+  valueField?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  error?: boolean;
+  autocomplete?: boolean;
+  multiple?: boolean;
+  selectAll?: boolean;
+  total?: number;
+  selectedCount?: number;
+  loading?: boolean;
+  hasNextPage?: boolean;
+  serverFilter?: boolean;
+  clearable?: boolean;
+  showEmptyDetails?: boolean;
+  singleLineMessage?: boolean;
+}
+
+const meta: Meta<IVcSelectStoryArgs> = {
   title: "Components/Molecules/VcSelect",
-  component: VcSelect,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcSelect as any,
   argTypes: {
     size: {
       control: "radio",
@@ -36,7 +69,7 @@ const meta: Meta<typeof VcSelect> = {
         },
       },
     },
-    modelValue: { table: { type: { summary: "object|string|array" } } },
+    modelValue: { table: { type: { summary: "V | V[] — value-field values, or the items without value-field" } } },
   },
   args: {
     readonly: false,
@@ -47,6 +80,20 @@ const meta: Meta<typeof VcSelect> = {
     size: "md",
   },
   parameters: {
+    docs: {
+      description: {
+        component:
+          "Picks one value, or several with `multiple`, from `items`. Bind `v-model`, name the fields of object " +
+          "items with `text-field` / `value-field`, and give it a `label` or an `aria-label`. It is a combobox " +
+          "(WAI-ARIA APG): focus stays on the trigger and the active option is announced through " +
+          "`aria-activedescendant`. Down / Up open the list on the first / last option, then move through it; " +
+          "Home / End jump to the ends. Enter or Space opens a closed list on its selection and picks the active " +
+          "option. In a typable field (`autocomplete` without a `#selected` / `#placeholder` slot) Home / End " +
+          "move the caret, Space types and a closed list leaves Enter to the form. Tab moves to Select all when " +
+          "the row is shown; otherwise it moves on (to Clear when it is shown, with the list still open), and the " +
+          "list closes once focus leaves the select. Escape closes only the list.",
+      },
+    },
     a11y: {
       config: {
         rules: [
@@ -546,6 +593,316 @@ export const MultipleSelectAutocompleteClearable: StoryType = {
   },
 };
 
+export const SelectAll: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Label",
+    placeholder: "Select multiple items",
+    multiple: true,
+    selectAll: true,
+    modelValue: [],
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect v-model="selected" :items="items" multiple select-all label="Label" />
+        `,
+      },
+      description: {
+        story:
+          "`select-all` adds a row above the options with a real checkbox, so partial selection " +
+          'can report `aria-checked="mixed"`. The counter shows the selection against the whole ' +
+          "set — pass `total` when the list is paged and `items` holds one page. With a filter " +
+          "active, Select all applies to the filtered subset and leaves the rest of the selection alone.",
+      },
+    },
+  },
+};
+
+export const SelectAllWithTotal: StoryType = {
+  args: {
+    label: "Buyer name",
+    placeholder: "Select buyers",
+    multiple: true,
+    selectAll: true,
+  },
+  render: (args) => ({
+    setup: () => {
+      const TOTAL = 30;
+      const allIds = Array.from({ length: TOTAL }, (_, index) => `Buyer ${index + 1}`);
+      const items = ref(allIds.slice(0, 6));
+      const selected = ref<string[]>([]);
+
+      // The select can only add what is loaded; the rest of the set is the consumer's to add. With a
+      // query the row acted on the loaded matches only; the rest of the selection stays.
+      function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
+        if (!query) {
+          selected.value = all ? [...allIds] : [];
+        }
+      }
+
+      return { args, items, selected, total: TOTAL, onSelectAll };
+    },
+    template: `
+      <div class="mb-32">
+        <VcSelect
+          v-bind="args"
+          v-model="selected"
+          :items="items"
+          :total="total"
+          :selected-count="selected.length"
+          @select-all="onSelectAll"
+        />
+
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} of {{ total }} loaded, {{ selected.length }} selected</div>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A paged list holds one page, so `total` carries the size of the whole set for the counter, " +
+          "and Select all can only add the options that are loaded. `@select-all` with `selected: true` is the " +
+          "consumer's cue to select the rest of the set — every id from the server — and " +
+          "`selected: false` the cue to clear it. With a `query` the row acted on the matching options " +
+          "only: leave the rest of the selection alone, or, with `server-filter`, add or clear the " +
+          "query's matches. Bind `selected-count` too: with it a mixed row selects even when every loaded " +
+          "option is already selected, so the consumer adds the rest. Without it the row cannot tell a " +
+          "fully selected page from the whole selection, shows it checked and clears it on a press.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const { items, total, allIds } = useBuyers();
+const selected = ref<string[]>([]);
+
+function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
+  if (!query) {
+    selected.value = all ? [...allIds.value] : [];
+  }
+}
+</script>
+
+<template>
+  <VcSelect
+    v-model="selected"
+    :items="items"
+    :total="total"
+    :selected-count="selected.length"
+    multiple
+    select-all
+    @select-all="onSelectAll"
+  />
+</template>
+        `,
+      },
+    },
+  },
+};
+
+export const Loading: StoryType = {
+  args: { items: [], label: "Country", loading: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "With nothing loaded yet a spinner takes the place of the empty row.",
+      },
+    },
+  },
+};
+
+export const InfiniteScroll: StoryType = {
+  args: {
+    items: [],
+    label: "Buyer name",
+    placeholder: "Select buyers",
+    multiple: true,
+  },
+  render: (args) => ({
+    setup: () => {
+      const TOTAL_PAGES = 4;
+      const items = ref(["Buyer 1", "Buyer 2"]);
+      const page = ref(1);
+      const loading = ref(false);
+
+      async function loadNextPage() {
+        loading.value = true;
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        const start = items.value.length;
+        items.value.push(...Array.from({ length: 6 }, (_, index) => `Buyer ${start + index + 1}`));
+        page.value++;
+        loading.value = false;
+      }
+
+      return {
+        args,
+        items,
+        loading,
+        page,
+        totalPages: TOTAL_PAGES,
+        hasNextPage: computed(() => page.value < TOTAL_PAGES),
+        loadNextPage,
+      };
+    },
+    template: `
+      <div class="mb-32">
+        <VcSelect
+          v-bind="args"
+          v-model="args.modelValue"
+          :items="items"
+          :loading="loading"
+          :has-next-page="hasNextPage"
+          @load-more="loadNextPage"
+        />
+
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} loaded, page {{ page }}/{{ totalPages }}</div>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<script setup lang="ts">
+const { items, loading, hasNextPage, loadNextPage } = useBuyers();
+const selected = ref<string[]>([]);
+</script>
+
+<template>
+  <VcSelect
+    v-model="selected"
+    :items="items"
+    :loading="loading"
+    :has-next-page="hasNextPage"
+    multiple
+    @load-more="loadNextPage"
+  />
+</template>
+        `,
+      },
+      description: {
+        story:
+          "`items` stays consumer-owned: open the list and it asks for the next page the moment it " +
+          "comes to rest at its bottom — which a two-option first page does immediately, with " +
+          "nothing to scroll. Bind `loading` too: it holds a second request back while a page is on " +
+          "its way, and the page that lands is what asks for the next one. To search a paged list, see " +
+          "Server Filter: a local filter would only search the pages that happen to be loaded.",
+      },
+    },
+  },
+};
+
+export const ServerFilter: StoryType = {
+  args: {
+    items: [],
+    label: "Buyer name",
+    placeholder: "Type to search buyers",
+    multiple: true,
+  },
+  render: (args) => ({
+    setup: () => {
+      const ALL = Array.from({ length: 40 }, (_, index) => `Buyer ${index + 1}`);
+      const PAGE_SIZE = 8;
+      const items = ref<string[]>([]);
+      const matchCount = ref(0);
+      const loading = ref(false);
+      let query = "";
+      let latestRequest = 0;
+
+      // A newer request supersedes an older one, which must not end `loading` early.
+      async function fetchPage(append: boolean) {
+        const request = ++latestRequest;
+        loading.value = true;
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        if (request !== latestRequest) {
+          return;
+        }
+
+        const pattern = new RegExp(escapeRegExp(query), "i");
+        const matches = ALL.filter((buyer) => pattern.test(buyer));
+        const start = append ? items.value.length : 0;
+        const page = matches.slice(start, start + PAGE_SIZE);
+
+        items.value = append ? [...items.value, ...page] : page;
+        matchCount.value = matches.length;
+        loading.value = false;
+      }
+
+      function search(value: string) {
+        query = value;
+        void fetchPage(false);
+      }
+
+      void fetchPage(false);
+
+      return {
+        args,
+        items,
+        loading,
+        matchCount,
+        hasNextPage: computed(() => items.value.length < matchCount.value),
+        loadNextPage: () => fetchPage(true),
+        search,
+      };
+    },
+    template: `
+      <div class="mb-32">
+        <VcSelect
+          v-bind="args"
+          v-model="args.modelValue"
+          :items="items"
+          :loading="loading"
+          :has-next-page="hasNextPage"
+          autocomplete
+          server-filter
+          @load-more="loadNextPage"
+          @search="search"
+        />
+
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} of {{ matchCount }} matches loaded</div>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<script setup lang="ts">
+const { items, loading, hasNextPage, loadNextPage, search } = useBuyers();
+const selected = ref<string[]>([]);
+</script>
+
+<template>
+  <VcSelect
+    v-model="selected"
+    :items="items"
+    :loading="loading"
+    :has-next-page="hasNextPage"
+    multiple
+    autocomplete
+    server-filter
+    @load-more="loadNextPage"
+    @search="search"
+  />
+</template>
+        `,
+      },
+      description: {
+        story:
+          "`server-filter` turns the local filter off: answer the typed text from `@search` (debounced " +
+          "300ms) with the first page of its matches, holding `loading` while it fetches, and page on " +
+          "through `@load-more` as before. Filtering only the loaded page instead would report no " +
+          "results for anything below the fold. A query typed while an older one is still loading " +
+          "supersedes it: drop the older answer rather than letting it end `loading` early.",
+      },
+    },
+  },
+};
+
 // =============================================================================
 // Group 5: Object items
 // =============================================================================
@@ -581,6 +938,8 @@ export const ObjectItems: StoryType = {
 // =============================================================================
 
 export const SizeVariants: StoryType = {
+  // Each select sets its own size and label.
+  argTypes: { size: { control: false }, label: { control: false } },
   render: (args) => ({
     setup: () => ({ args }),
     template: `<div class="flex flex-col gap-4 mb-32">
@@ -609,6 +968,8 @@ export const SizeVariants: StoryType = {
 };
 
 export const ItemSizeVariants: StoryType = {
+  // Each select sets its own item size and label.
+  argTypes: { itemSize: { control: false }, label: { control: false } },
   render: (args) => ({
     setup: () => ({ args }),
     template: `<div class="flex flex-col gap-4 mb-32">
@@ -703,6 +1064,74 @@ export const EmptyItems: StoryType = {
         code: `
 <VcSelect v-model="selected" :items="[]" label="Country" placeholder="No options available" />
         `,
+      },
+    },
+  },
+};
+
+export const EmptySlot: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Country",
+    placeholder: "Type a country",
+    autocomplete: true,
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
+    <template #empty>No country matches. Check the spelling.</template>
+  </VcSelect>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect v-model="selected" :items="countries" label="Country" placeholder="Type a country" autocomplete>
+  <template #empty>No country matches. Check the spelling.</template>
+</VcSelect>
+        `,
+      },
+      description: {
+        story: "`#empty` replaces the text of the no-options and no-results row. Type a name that is not listed.",
+      },
+    },
+  },
+};
+
+export const CustomClearable: StoryType = {
+  args: {
+    items: ITEMS,
+    modelValue: "Belgium",
+    clearable: true,
+    ariaLabel: "Select an item",
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
+    <template #placeholder>
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="w-8 h-8 rounded-full bg-neutral-200"></div>
+        Select an item
+      </div>
+    </template>
+
+    <template #selected="{ item }">
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="flex items-center justify-center w-8 h-8 rounded-full text-additional-50 bg-danger">{{ item[0] }}</div>
+
+        {{ item }}
+      </div>
+    </template>
+  </VcSelect>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The configuration that decides the trigger's DOM: the clear control is a `VcButton`, " +
+          "and a button may not nest inside another, so the trigger is a real `<button>` sibling " +
+          "that stretches over the whole box with a pseudo-element. Clicking the chevron or the " +
+          "empty space opens the list; clicking the cross clears without opening it.",
       },
     },
   },

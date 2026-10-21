@@ -34,8 +34,7 @@
           'aria-controls': listboxId,
           'aria-activedescendant': activeDescendantId ?? null,
         }"
-        @keydown.enter="onSearch"
-        @keydown.down.prevent="next(-1)"
+        @keydown="onSearchKeydown"
         @input="onSearchInput"
         @clear="onSearchClear"
       >
@@ -45,72 +44,89 @@
       </VcInput>
     </div>
 
-    <VcScrollbar
-      :id="listboxId"
-      vertical
-      role="listbox"
-      :aria-label="$t('common.labels.organizations')"
-      class="top-header-organizations__list"
-      test-id="organizations-list"
-    >
-      <VcMenuItem
-        v-for="(item, index) in displayedOrganizations"
-        :key="item.id"
-        size="xs"
-        role="option"
-        :option-id="getOptionId(index)"
-        :data-vc-organization-option="componentId"
-        :aria-selected="contactOrganizationId === item.id"
-        :disabled="item.isLockedForCurrentUser"
-        :title="
-          item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
-        "
-        @click="selectOrganization(item.id)"
-        @keydown.up.prevent="prev(index)"
-        @keydown.down.prevent="next(index)"
+    <div class="top-header-organizations__frame">
+      <VcScrollbar
+        vertical
+        :edge-threshold="50"
+        class="top-header-organizations__list"
+        @keydown="onListKeydown"
+        @mousedown="onListMousedown"
       >
-        <VcRadioButton
-          :model-value="contactOrganizationId"
-          :label="item.name"
-          :value="item.id"
-          :max-lines="2"
-          :title="item.name"
-          word-break="break-word"
-          :data-organization-name="item.name"
-          :disabled="item.isLockedForCurrentUser"
+        <!-- Only options may live in a listbox, so the empty state and the pager sit beside it. -->
+        <ul
+          :id="listboxId"
+          ref="listElement"
+          class="top-header-organizations__listbox"
+          role="listbox"
+          data-test-id="organizations-list"
+          :aria-label="$t('common.labels.organizations')"
+          :tabindex="isShowSearch ? undefined : 0"
+          :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
+          @focus="onListboxFocus"
+        >
+          <VcMenuItem
+            v-for="(item, index) in displayedOrganizations"
+            :key="item.id"
+            size="xs"
+            role="option"
+            :option-id="getOptionId(index)"
+            :data-vc-organization-option="componentId"
+            :highlighted="index === highlightedIndex"
+            :highlight-ring="!isPassiveHighlight"
+            :tabindex="-1"
+            :aria-selected="contactOrganizationId === item.id"
+            :disabled="item.isLockedForCurrentUser"
+            :title="
+              item.isLockedForCurrentUser
+                ? $t('shared.layout.header.top_header.organization_locked_tooltip')
+                : undefined
+            "
+            @click="selectOrganization(item.id)"
+            @mousemove="highlightPassively(index)"
+          >
+            <VcRadioButton
+              :model-value="contactOrganizationId"
+              :label="item.name"
+              :value="item.id"
+              :max-lines="2"
+              :title="item.name"
+              word-break="break-word"
+              :data-organization-name="item.name"
+              :disabled="item.isLockedForCurrentUser"
+            />
+
+            <template v-if="item.isLockedForCurrentUser" #append>
+              <VcIcon name="lock-closed" size="xs" />
+            </template>
+          </VcMenuItem>
+        </ul>
+
+        <div
+          v-if="organizations.length === 0 && !loading"
+          class="top-header-organizations__empty"
+          data-test-id="organizations-empty-list"
+        >
+          {{ $t("shared.layout.header.top_header.no_results") }}
+        </div>
+
+        <VcLoadMore
+          :loading="loading"
+          :has-next-page="hasNextPage"
+          :item-count="organizations.length"
+          @load-more="loadOrganizations"
         />
-
-        <template v-if="item.isLockedForCurrentUser" #append>
-          <VcIcon name="lock-closed" size="xs" />
-        </template>
-      </VcMenuItem>
-
-      <div
-        v-if="organizations.length === 0 && !loading"
-        class="top-header-organizations__empty"
-        data-test-id="organizations-empty-list"
-      >
-        {{ $t("shared.layout.header.top_header.no_results") }}
-      </div>
-
-      <VcInfinityScrollLoader
-        v-if="hasNextPage"
-        :loading="loading"
-        :page-number="currentPage"
-        :pages-count="pagesCount"
-        distance="50"
-        class="top-header-organizations__loader"
-        @visible="loadOrganizations"
-      />
-    </VcScrollbar>
+      </VcScrollbar>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
-import { useComponentId } from "@/ui-kit/composables";
+import { useComponentId, useFocusModality, useListboxNavigation } from "@/ui-kit/composables";
+import { isComposingKey } from "@/ui-kit/utilities";
+import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
   organizationSelected: [];
@@ -119,18 +135,8 @@ const emit = defineEmits<{
 const SEARCH_DEBOUNCE_MS = 300;
 
 const { user, organization } = useUser();
-const {
-  searchPhrase,
-  organizations,
-  loading,
-  hasNextPage,
-  pagesCount,
-  currentPage,
-  loadOrganizations,
-  search,
-  reset,
-  isShowSearch,
-} = useUserOrganizations();
+const { searchPhrase, organizations, loading, hasNextPage, loadOrganizations, search, reset, isShowSearch } =
+  useUserOrganizations();
 const { switchError, trySwitch } = useOrganizationSwitcher();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
@@ -146,7 +152,6 @@ watch(
 
 const componentId = useComponentId("organizations");
 const listboxId = componentId + "-listbox";
-const focusedOptionIndex = ref(-1);
 
 // useUserOrganizations fetches only once per session, so a lock applied while this menu was
 // closed would otherwise leave a stale, clickable row. Refresh on every mount to catch that.
@@ -157,58 +162,33 @@ onMounted(() => {
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
 
-  if (organization.value && !loading.value && organizations.value.length > 0) {
+  // Not gated on `loading`: that un-hoists the current organization on every page request.
+  if (organization.value && organizations.value.length > 0) {
     return [organization.value, ...withoutCurrent];
   }
 
   return withoutCurrent;
 });
 
-watch(displayedOrganizations, () => {
-  focusedOptionIndex.value = -1;
+const listElement = useTemplateRef<HTMLElement>("listElement");
+const { isPointerFocus } = useFocusModality();
+
+const {
+  highlightedIndex,
+  isPassiveHighlight,
+  activeDescendantId,
+  getOptionId,
+  navigate,
+  highlight,
+  highlightPassively,
+  reset: resetHighlight,
+} = useListboxNavigation({
+  componentId,
+  items: displayedOrganizations,
+  getKey: (item) => item.id,
+  list: listElement,
+  wrap: () => !hasNextPage.value,
 });
-
-function getOptionId(index: number): string {
-  return `${componentId}-option-${index}`;
-}
-
-const activeDescendantId = computed(() => {
-  if (focusedOptionIndex.value >= 0) {
-    return getOptionId(focusedOptionIndex.value);
-  }
-  return undefined;
-});
-
-function getOptionElements(): HTMLElement[] {
-  const elements = document.querySelectorAll<HTMLElement>(
-    `[data-vc-organization-option="${componentId}"] [tabindex='0']`,
-  );
-  return Array.from(elements);
-}
-
-function next(index: number): void {
-  const elements = getOptionElements();
-
-  if (!elements.length) {
-    return;
-  }
-
-  const nextIndex = index >= elements.length - 1 ? 0 : index + 1;
-  focusedOptionIndex.value = nextIndex;
-  elements[nextIndex]?.focus();
-}
-
-function prev(index: number): void {
-  const elements = getOptionElements();
-
-  if (!elements.length) {
-    return;
-  }
-
-  const prevIndex = index <= 0 ? elements.length - 1 : index - 1;
-  focusedOptionIndex.value = prevIndex;
-  elements[prevIndex]?.focus();
-}
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {
@@ -242,9 +222,104 @@ async function onSearch(): Promise<void> {
   await search();
 }
 
+const NAVIGATION_KEYS: Record<string, ListboxNavigationKeyType> = {
+  ArrowDown: "down",
+  ArrowUp: "up",
+  Home: "home",
+  End: "end",
+};
+
+// Without a keyboard position, a listbox the keyboard focuses starts on its selected option, or the first
+// (APG); a press keeps the pointer's highlight.
+function onListboxFocus(): void {
+  if (
+    isPointerFocus.value ||
+    (highlightedIndex.value !== -1 && !isPassiveHighlight.value) ||
+    !displayedOrganizations.value.length
+  ) {
+    return;
+  }
+
+  const selectedIndex = displayedOrganizations.value.findIndex((item) => item.id === contactOrganizationId.value);
+
+  highlight(Math.max(selectedIndex, 0));
+}
+
+// A keyboard-focused list that was empty starts once its first page lands.
+watch(
+  () => displayedOrganizations.value.length > 0,
+  (filled) => {
+    if (filled && document.activeElement === listElement.value) {
+      onListboxFocus();
+    }
+  },
+);
+
+// Without a search field the list is the tab stop and takes the keys; with one, the field does.
+function onListKeydown(event: KeyboardEvent): void {
+  if (isShowSearch.value) {
+    return;
+  }
+
+  const direction = NAVIGATION_KEYS[event.key];
+
+  if (direction) {
+    event.preventDefault();
+    navigate(direction);
+    return;
+  }
+
+  if (event.key !== "Enter" && event.key !== " ") {
+    return;
+  }
+
+  const highlighted = displayedOrganizations.value[highlightedIndex.value];
+
+  if (highlighted) {
+    event.preventDefault();
+    void selectOrganization(highlighted.id);
+  }
+}
+
+function onSearchKeydown(event: KeyboardEvent): void {
+  // The keys of an IME composition pick and commit its candidates, not an organization.
+  if (isComposingKey(event)) {
+    return;
+  }
+
+  if (event.key === "Enter") {
+    void onEnter();
+  } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    navigate(event.key === "ArrowDown" ? "down" : "up");
+  }
+}
+
+async function onEnter(): Promise<void> {
+  const highlighted = displayedOrganizations.value[highlightedIndex.value];
+
+  if (highlighted) {
+    await selectOrganization(highlighted.id);
+    return;
+  }
+
+  await onSearch();
+}
+
 const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
 
+// With a search field the keys belong to it, so a press in the list, its scrollbar included, must
+// not move focus off it.
+function onListMousedown(event: MouseEvent): void {
+  if (isShowSearch.value) {
+    event.preventDefault();
+  }
+}
+
+// The results only change after the debounced search lands; until then Enter must search, not pick.
 async function onSearchInput(): Promise<void> {
+  resetHighlight();
+
   if (!searchPhrase.value.trim()) {
     await search();
   } else {
@@ -253,13 +328,18 @@ async function onSearchInput(): Promise<void> {
 }
 
 async function onSearchClear(): Promise<void> {
+  resetHighlight();
   reset();
   await search();
 }
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .top-header-organizations {
+  $listbox: "";
+
   @apply rounded-b-md border-t bg-neutral-50;
 
   &__error {
@@ -279,15 +359,23 @@ async function onSearchClear(): Promise<void> {
   }
 
   &__list {
-    @apply my-1 max-h-60;
+    @apply my-1 max-h-60 w-full select-none;
   }
 
-  &__radio {
-    @apply flex px-3 py-1 text-sm;
+  // The ring goes on the frame, not the listbox: the list can be taller than the region scrolling it, so
+  // a ring of its own would be cut off at the region's edge.
+  &__listbox {
+    $listbox: &;
+
+    &:focus-visible {
+      @apply outline-none;
+    }
   }
 
-  &__loader {
-    @apply py-2;
+  &__frame {
+    &:has(#{$listbox}:focus-visible) {
+      @include focus-ring($inset: true);
+    }
   }
 
   &__empty {
