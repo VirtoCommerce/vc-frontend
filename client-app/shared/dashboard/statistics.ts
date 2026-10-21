@@ -1,3 +1,4 @@
+import { useMemoize } from "@vueuse/core";
 import { globals } from "@/core/globals";
 import type { MoneyType } from "@/core/api/graphql/types";
 
@@ -97,8 +98,11 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
 // matching fallbacks; one that sends none assumes the backend converted to the same currency.
 const EMPTY_STAT_VALUE = "0";
 
+// Built once per culture: a feed formats a count per row and per badge (the Sales Rep Hub's activity surfaces).
+const statCountFormatterFor = useMemoize((cultureName: string) => new Intl.NumberFormat(cultureName));
+
 export function formatStatCount(value?: number | null): string {
-  return new Intl.NumberFormat(globals.cultureName).format(value ?? 0);
+  return statCountFormatterFor(globals.cultureName).format(value ?? 0);
 }
 
 // Client-side currency formatting follows <VcTotalDisplay>, so an absent amount reads as a currency
