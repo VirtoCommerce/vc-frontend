@@ -93,13 +93,13 @@ describe("useFieldErrors", () => {
   });
 
   // The global error toast uses it for errors no form shows
-  describe("getErrorNotificationText", () => {
+  describe("getErrorNotification", () => {
     it("names addresses, other data, or nothing", () => {
-      const { getErrorNotificationText } = useFieldErrors();
+      const { getErrorNotification } = useFieldErrors();
 
-      expect(getErrorNotificationText([{ field: "addresses[2].lastName" }])).toBe("common.messages.invalid_addresses");
-      expect(getErrorNotificationText([{ field: "name" }])).toBe("common.messages.invalid_data");
-      expect(getErrorNotificationText([])).toBe("common.messages.something_went_wrong");
+      expect(getErrorNotification([{ field: "addresses[2].lastName" }]).text).toBe("common.messages.invalid_addresses");
+      expect(getErrorNotification([{ field: "name" }]).text).toBe("common.messages.invalid_data");
+      expect(getErrorNotification([]).text).toBe("common.messages.something_went_wrong");
     });
   });
 });

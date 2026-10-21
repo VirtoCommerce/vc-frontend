@@ -143,7 +143,6 @@ const [defaultLanguage] = defineField("defaultLanguage");
 const [currencyCode] = defineField("currencyCode");
 
 // Kept apart from the form's errors: the schema re-validates every field on any edit, which would drop them all.
-// Each one clears when its own input changes.
 const serverErrors = ref<Record<string, string>>({});
 const hasServerErrors = computed(() => Object.keys(serverErrors.value).length > 0);
 

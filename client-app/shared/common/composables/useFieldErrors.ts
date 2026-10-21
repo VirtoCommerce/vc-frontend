@@ -3,6 +3,7 @@ import { getFieldValidationErrors } from "@/core/api/graphql/utils";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { useNotifications } from "@/shared/notification";
 import type { FieldValidationErrorType } from "@/core/types";
+import type { INotification } from "@/shared/notification";
 import type { ApolloError } from "@apollo/client/core";
 
 const ADDRESSES_FIELD_PREFIX = "addresses[";
@@ -21,10 +22,6 @@ export function useFieldErrors() {
     return t(FIELD_ERROR_MESSAGE_KEYS.get(errorCode ?? "") ?? "common.messages.invalid_value");
   }
 
-  /**
-   * Text of an error toast: for rejected input, which kind of data was rejected; for anything else, the generic
-   * message.
-   */
   function getErrorNotificationText(fieldErrors: FieldValidationErrorType[]): string {
     if (!fieldErrors.length) {
       return t("common.messages.something_went_wrong");
@@ -33,6 +30,19 @@ export function useFieldErrors() {
     return fieldErrors.some((fieldError) => fieldError.field.startsWith(ADDRESSES_FIELD_PREFIX))
       ? t("common.messages.invalid_addresses")
       : t("common.messages.invalid_data");
+  }
+
+  /**
+   * The generic error toast. For rejected input, its text says which kind of data was rejected.
+   */
+  function getErrorNotification(fieldErrors: FieldValidationErrorType[]): INotification {
+    return {
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      variant: "outline-dark",
+      group: "GenericError",
+      singleInGroup: true,
+      text: getErrorNotificationText(fieldErrors),
+    };
   }
 
   /**
@@ -45,9 +55,9 @@ export function useFieldErrors() {
     const otherFieldErrors: FieldValidationErrorType[] = [];
 
     for (const fieldError of fieldErrors) {
-      const name = fieldError.field.startsWith(fieldPrefix) ? fieldError.field.slice(fieldPrefix.length) : "";
+      const name = fieldError.field.slice(fieldPrefix.length);
 
-      if (fieldNames.includes(name)) {
+      if (fieldError.field.startsWith(fieldPrefix) && fieldNames.includes(name)) {
         messages[name] ??= getFieldErrorMessage(fieldError.errorCode);
       } else {
         otherFieldErrors.push(fieldError);
@@ -55,20 +65,14 @@ export function useFieldErrors() {
     }
 
     if (!fieldErrors.length || otherFieldErrors.length) {
-      notifications.error({
-        duration: DEFAULT_NOTIFICATION_DURATION,
-        variant: "outline-dark",
-        group: "GenericError",
-        singleInGroup: true,
-        text: getErrorNotificationText(otherFieldErrors),
-      });
+      notifications.error(getErrorNotification(otherFieldErrors));
     }
 
     return messages;
   }
 
   return {
-    getErrorNotificationText,
+    getErrorNotification,
     showSaveErrors,
   };
 }
