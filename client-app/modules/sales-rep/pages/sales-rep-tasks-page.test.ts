@@ -1,5 +1,5 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import SalesRepTaskModal from "../components/sales-rep-task-modal.vue";
 import { localDayKey, localDayWindow } from "../tasks";
 import TasksPage from "./sales-rep-tasks-page.vue";
@@ -200,6 +200,9 @@ async function pickTab(wrapper: WrapperType, name: string) {
 }
 
 beforeEach(() => {
+  // Pin "today" inside the grid's October and off every day the tests pick, so they never land on today.
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date(2026, 9, 12, 10, 30));
   state.items.value = [];
   state.loading.value = false;
   state.error.value = null;
@@ -230,6 +233,10 @@ beforeEach(() => {
     totalCount: state.totalCount,
     refetch: state.refetch,
   }));
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 describe("Tasks page tabs", () => {
