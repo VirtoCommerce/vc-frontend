@@ -6,7 +6,7 @@ import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } fr
 import * as vue from 'vue';
 import { Plugin, ComputedRef, MaybeRef, Component, MaybeRefOrGetter, WritableComputedRef, ComponentObjectPropsOptions, Ref, DeepReadonly } from 'vue';
 import * as vue_router from 'vue-router';
-import { RouteLocationRaw, LocationQueryValue, RouteLocationNormalizedLoaded, Router } from 'vue-router';
+import { RouteLocationRaw, RouteLocationNormalizedLoaded, LocationQueryValue, Router } from 'vue-router';
 import { MaskOptions } from 'maska';
 import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient, TypePolicies } from '@apollo/client/core';
@@ -21,7 +21,7 @@ import { CalendarDate } from '@internationalized/date';
 
 declare const uiKit: Plugin;
 
-interface IProps$F {
+interface IProps$G {
     color?: VcBadgeColorType;
     size?: VcBadgeSizeType;
     variant?: VcBadgeVariantType;
@@ -32,30 +32,30 @@ interface IProps$F {
     maxWidth?: string;
 }
 declare var __VLS_1$9: {};
-type __VLS_Slots$p = {} & {
+type __VLS_Slots$q = {} & {
     default?: (props: typeof __VLS_1$9) => any;
 };
-declare const __VLS_base$p: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$F> & Readonly<{}>, {
+declare const __VLS_base$q: vue.DefineComponent<IProps$G, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$G> & Readonly<{}>, {
     size: VcBadgeSizeType;
     variant: VcBadgeVariantType;
     color: VcBadgeColorType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$J: __VLS_WithSlots$p<typeof __VLS_base$p, __VLS_Slots$p>;
-declare const _default$J: typeof __VLS_export$J;
+declare const __VLS_export$K: __VLS_WithSlots$q<typeof __VLS_base$q, __VLS_Slots$q>;
+declare const _default$K: typeof __VLS_export$K;
 
-type __VLS_WithSlots$p<T, S> = T & {
+type __VLS_WithSlots$q<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$E {
+interface IProps$F {
     items: IBreadcrumb[];
 }
-declare const __VLS_export$I: vue.DefineComponent<IProps$E, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$E> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$I: typeof __VLS_export$I;
+declare const __VLS_export$J: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$F> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$J: typeof __VLS_export$J;
 
-interface IProps$D {
+interface IProps$E {
     modelValue?: boolean;
     name?: string;
     value?: string | number | object;
@@ -83,15 +83,15 @@ declare var __VLS_16$3: {
 declare var __VLS_19$1: {
     checked: boolean;
 };
-type __VLS_Slots$o = {} & {
+type __VLS_Slots$p = {} & {
     default?: (props: typeof __VLS_16$3) => any;
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$o: vue.DefineComponent<IProps$D, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$p: vue.DefineComponent<IProps$E, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$E> & Readonly<{
     onChange?: ((value: boolean) => any) | undefined;
     "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
@@ -104,36 +104,36 @@ declare const __VLS_base$o: vue.DefineComponent<IProps$D, {}, {}, {}, {}, vue.Co
         disabled?: boolean;
     };
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$H: __VLS_WithSlots$o<typeof __VLS_base$o, __VLS_Slots$o>;
-declare const _default$H: typeof __VLS_export$H;
+declare const __VLS_export$I: __VLS_WithSlots$p<typeof __VLS_base$p, __VLS_Slots$p>;
+declare const _default$I: typeof __VLS_export$I;
 
-type __VLS_WithSlots$o<T, S> = T & {
+type __VLS_WithSlots$p<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
 type CheckboxGroupValueType = string | number | object;
-interface IProps$C {
+interface IProps$D {
     modelValue?: (string | number | object)[];
 }
 declare var __VLS_1$8: {};
-type __VLS_Slots$n = {} & {
+type __VLS_Slots$o = {} & {
     default?: (props: typeof __VLS_1$8) => any;
 };
-declare const __VLS_base$n: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$o: vue.DefineComponent<IProps$D, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: CheckboxGroupValueType[]) => any;
     "update:modelValue": (value: CheckboxGroupValueType[]) => any;
-}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{
     onChange?: ((value: CheckboxGroupValueType[]) => any) | undefined;
     "onUpdate:modelValue"?: ((value: CheckboxGroupValueType[]) => any) | undefined;
 }>, {
     modelValue: (string | number | object)[];
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$G: __VLS_WithSlots$n<typeof __VLS_base$n, __VLS_Slots$n>;
-declare const _default$G: typeof __VLS_export$G;
+declare const __VLS_export$H: __VLS_WithSlots$o<typeof __VLS_base$o, __VLS_Slots$o>;
+declare const _default$H: typeof __VLS_export$H;
 
-type __VLS_WithSlots$n<T, S> = T & {
+type __VLS_WithSlots$o<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -148,7 +148,7 @@ declare function getFileSize(bytes?: number): IFileSize;
 
 type IconVariantType = "solid" | "outline";
 
-interface IProps$B {
+interface IProps$C {
     name?: string;
     size?: VcIconSizeType;
     color?: string;
@@ -156,13 +156,13 @@ interface IProps$B {
     label?: string;
     strokeWidth?: number;
 }
-declare const __VLS_export$F: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{}>, {
+declare const __VLS_export$G: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{}>, {
     name: string;
     color: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$F: typeof __VLS_export$F;
+declare const _default$G: typeof __VLS_export$G;
 
-interface IProps$A {
+interface IProps$B {
     lazy?: boolean;
     src?: string;
     alt?: string;
@@ -174,13 +174,13 @@ interface IProps$A {
      */
     sizeSuffix?: "sm" | "md" | "lg";
 }
-declare const __VLS_export$E: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{}>, {
+declare const __VLS_export$F: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{}>, {
     src: string;
     fallbackSrc: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$E: typeof __VLS_export$E;
+declare const _default$F: typeof __VLS_export$F;
 
-interface IProps$z {
+interface IProps$A {
     id?: string;
     message?: string;
     singleLine?: boolean;
@@ -190,20 +190,39 @@ interface IProps$z {
     textLength?: number;
     maxLength?: number | string;
 }
-declare const __VLS_export$D: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{}>, {
+declare const __VLS_export$E: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{}>, {
     textLength: number;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$D: typeof __VLS_export$D;
+declare const _default$E: typeof __VLS_export$E;
 
-interface IProps$y {
+interface IProps$z {
     required?: boolean;
     error?: boolean;
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
 declare var __VLS_8$7: {};
-type __VLS_Slots$m = {} & {
+type __VLS_Slots$n = {} & {
     default?: (props: typeof __VLS_8$7) => any;
+};
+declare const __VLS_base$n: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$D: __VLS_WithSlots$n<typeof __VLS_base$n, __VLS_Slots$n>;
+declare const _default$D: typeof __VLS_export$D;
+
+type __VLS_WithSlots$n<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$y {
+    to?: RouteLocationRaw;
+    externalLink?: RouteLocationRaw;
+    disabled?: boolean;
+}
+declare var __VLS_8$6: {};
+type __VLS_Slots$m = {} & {
+    default?: (props: typeof __VLS_8$6) => any;
 };
 declare const __VLS_base$m: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$C: __VLS_WithSlots$m<typeof __VLS_base$m, __VLS_Slots$m>;
@@ -216,29 +235,10 @@ type __VLS_WithSlots$m<T, S> = T & {
 };
 
 interface IProps$x {
-    to?: RouteLocationRaw;
-    externalLink?: RouteLocationRaw;
-    disabled?: boolean;
-}
-declare var __VLS_8$6: {};
-type __VLS_Slots$l = {} & {
-    default?: (props: typeof __VLS_8$6) => any;
-};
-declare const __VLS_base$l: vue.DefineComponent<IProps$x, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$x> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$B: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;
-declare const _default$B: typeof __VLS_export$B;
-
-type __VLS_WithSlots$l<T, S> = T & {
-    new (): {
-        $slots: S;
-    };
-};
-
-interface IProps$w {
     src: string;
 }
-declare const __VLS_export$A: vue.DefineComponent<IProps$w, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$w> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$A: typeof __VLS_export$A;
+declare const __VLS_export$B: vue.DefineComponent<IProps$x, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$x> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$B: typeof __VLS_export$B;
 
 type Maybe<T> = T;
 type InputMaybe<T> = T;
@@ -2355,6 +2355,63 @@ type GetStoreQuery = {
     };
 };
 
+interface IProps$w {
+    placement?: VcTooltipPlacementType;
+    strategy?: VcTooltipStrategyType;
+    flipOptions?: VcTooltipFlipOptionsType;
+    offsetOptions?: VcTooltipOffsetOptionsType;
+    shiftOptions?: VcTooltipShiftOptionsType;
+    disabled?: boolean;
+    hover?: boolean;
+    width?: string;
+    enableTeleport?: boolean;
+    teleportSelector?: string;
+}
+declare var __VLS_9$2: {
+    opened: boolean;
+    triggerProps: {
+        'aria-describedby': string;
+        onMouseenter: (() => void) | undefined;
+        onMouseleave: (() => void) | undefined;
+        onFocusin: (() => void) | undefined;
+        onFocusout: (() => void) | undefined;
+        onClick: (() => void) | undefined;
+        onKeydown: (e: KeyboardEvent) => void;
+        "aria-haspopup": ("menu" | "dialog" | "grid" | "listbox" | "tree") | undefined;
+        "aria-expanded": boolean;
+        "aria-controls": string | undefined;
+        role: "button";
+    };
+    tooltipId: string;
+};
+declare var __VLS_12$1: {};
+declare var __VLS_15: {};
+type __VLS_Slots$l = {} & {
+    default?: (props: typeof __VLS_9$2) => any;
+} & {
+    trigger?: (props: typeof __VLS_12$1) => any;
+} & {
+    content?: (props: typeof __VLS_15) => any;
+};
+declare const __VLS_base$l: vue.DefineComponent<IProps$w, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    shown: (isShown: boolean) => any;
+}, string, vue.PublicProps, Readonly<IProps$w> & Readonly<{
+    onShown?: ((isShown: boolean) => any) | undefined;
+}>, {
+    width: string;
+    placement: VcTooltipPlacementType;
+    offsetOptions: VcTooltipOffsetOptionsType;
+    hover: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$A: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;
+declare const _default$A: typeof __VLS_export$A;
+
+type __VLS_WithSlots$l<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
 interface IProps$v {
     color?: VcAlertColorType;
     icon?: boolean | string;
@@ -2916,6 +2973,7 @@ type ExtendedMenuLinkType = {
     priority?: number;
     isCatalogItem?: boolean;
     dataTestId?: string;
+    activeWhen?: (route: RouteLocationNormalizedLoaded) => boolean;
 };
 type MarkedMenuLinkType = ExtendedMenuLinkType & {
     isActive?: boolean;
@@ -3008,6 +3066,16 @@ declare enum XApiPermissions {
     CanEditOrganization = "xapi:my_organization:edit",
     CanInviteUsers = "xapi:my_organization:user:invite",
     CanViewOrganizationOrders = "xapi:my_organization:order:view"
+}
+
+declare enum QueryParamName {
+    Page = "page",
+    Sort = "sort",
+    Facets = "facets",
+    ItemsPerPage = "size",
+    SearchPhrase = "q",
+    PreserveUserQuery = "preserveUserQuery",
+    Barcode = "barcode"
 }
 
 declare const CATALOG_PAGINATION_MODES: {
@@ -5416,6 +5484,12 @@ type LoggerType = {
 
 declare const Logger: LoggerType;
 
+/**
+ * Whether a menu link is the current page's. A link that owns pages beyond its route record declares the rule
+ * itself (`activeWhen`); every other link keeps vue-router's record match.
+ */
+declare function isMenuLinkActive(link: ExtendedMenuLinkType, route: RouteLocationNormalizedLoaded, isRecordActive: boolean): boolean;
+
 declare function getProductRoute(productId: string, productSlug?: string, basePath?: string): RouteLocationRaw;
 
 declare function createI18n(locale: string, currency: string, fallback?: {
@@ -5969,7 +6043,7 @@ declare const MIN_ROWS = 1;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$6 as AcceptedGifts, _default$3 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_NAMES, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$5 as OrderCommentSection, _default$7 as OrderLineItems, _default$8 as OrderStatus, _default$4 as OrderSummary, PlatformPermissions, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$z as VcAlert, _default$J as VcBadge, _default$I as VcBreadcrumbs, _default$y as VcButton, _default$x as VcCalendar, _default$H as VcCheckbox, _default$G as VcCheckboxGroup, _default$w as VcChip, _default$h as VcDatePicker, _default$g as VcDateRangePicker, _default$v as VcDialog, _default$u as VcDialogContent, _default$t as VcDialogFooter, _default$s as VcDialogHeader, _default$r as VcEmptyView, _default$F as VcIcon, _default$E as VcImage, _default$q as VcInput, _default$D as VcInputDetails, _default$C as VcLabel, _default$9 as VcLayout, _default$B as VcLink, _default$p as VcLoaderOverlay, _default$A as VcMarkdownRender, _default$o as VcMenuItem, _default$f as VcModal, _default$e as VcPagination, _default$n as VcPopover, _default$m as VcRating, _default$l as VcSelect, _default$k as VcTabSwitch, _default$d as VcTable, _default$c as VcTableColumn, _default$j as VcTextarea, _default$i as VcTypography, _default$b as VcWidget, _default$a as VcWidgetSkeleton, _default$2 as VendorName, XApiPermissions, apolloClient, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useBlockChrome, useBreadcrumbs, useExtensionRegistry, useFetch, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useStatDataNeeds, useUser, useWishlistSharingScopes, visibleTabRules };
+export { _default$6 as AcceptedGifts, _default$3 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_NAMES, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$5 as OrderCommentSection, _default$7 as OrderLineItems, _default$8 as OrderStatus, _default$4 as OrderSummary, PlatformPermissions, QueryParamName, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$z as VcAlert, _default$K as VcBadge, _default$J as VcBreadcrumbs, _default$y as VcButton, _default$x as VcCalendar, _default$I as VcCheckbox, _default$H as VcCheckboxGroup, _default$w as VcChip, _default$h as VcDatePicker, _default$g as VcDateRangePicker, _default$v as VcDialog, _default$u as VcDialogContent, _default$t as VcDialogFooter, _default$s as VcDialogHeader, _default$r as VcEmptyView, _default$G as VcIcon, _default$F as VcImage, _default$q as VcInput, _default$E as VcInputDetails, _default$D as VcLabel, _default$9 as VcLayout, _default$C as VcLink, _default$p as VcLoaderOverlay, _default$B as VcMarkdownRender, _default$o as VcMenuItem, _default$f as VcModal, _default$e as VcPagination, _default$n as VcPopover, _default$m as VcRating, _default$l as VcSelect, _default$k as VcTabSwitch, _default$d as VcTable, _default$c as VcTableColumn, _default$j as VcTextarea, _default$A as VcTooltip, _default$i as VcTypography, _default$b as VcWidget, _default$a as VcWidgetSkeleton, _default$2 as VendorName, XApiPermissions, apolloClient, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useBlockChrome, useBreadcrumbs, useExtensionRegistry, useFetch, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useStatDataNeeds, useUser, useWishlistSharingScopes, visibleTabRules };
 export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SharingTargetType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
@@ -5987,6 +6061,11 @@ type VcBadgeVariantType =
     | "outline-dark";
 type VcBadgeSizeType = "xs" | "sm" | "md" | "lg";
 type VcIconSizeType = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number | (string & {});
+type VcTooltipPlacementType = VcPopoverPlacementType;
+type VcTooltipStrategyType = VcPopoverStrategyType;
+type VcTooltipFlipOptionsType = VcPopoverFlipOptionsType;
+type VcTooltipOffsetOptionsType = VcPopoverOffsetOptionsType;
+type VcTooltipShiftOptionsType = VcPopoverShiftOptionsType;
 type VcAlertColorType = "info" | "success" | "warning" | "danger";
 type VcAlertVariantType =
     | "solid"
@@ -6099,12 +6178,12 @@ type FileSizeUnitsType = "byte" | "kilobyte" | "megabyte" | "gigabyte" | "teraby
 declare module "vue" {
   export interface GlobalComponents {
     VcAlert: typeof _default$z;
-    VcBadge: typeof _default$J;
-    VcBreadcrumbs: typeof _default$I;
+    VcBadge: typeof _default$K;
+    VcBreadcrumbs: typeof _default$J;
     VcButton: typeof _default$y;
     VcCalendar: typeof _default$x;
-    VcCheckbox: typeof _default$H;
-    VcCheckboxGroup: typeof _default$G;
+    VcCheckbox: typeof _default$I;
+    VcCheckboxGroup: typeof _default$H;
     VcChip: typeof _default$w;
     VcDatePicker: typeof _default$h;
     VcDateRangePicker: typeof _default$g;
@@ -6113,15 +6192,15 @@ declare module "vue" {
     VcDialogFooter: typeof _default$t;
     VcDialogHeader: typeof _default$s;
     VcEmptyView: typeof _default$r;
-    VcIcon: typeof _default$F;
-    VcImage: typeof _default$E;
+    VcIcon: typeof _default$G;
+    VcImage: typeof _default$F;
     VcInput: typeof _default$q;
-    VcInputDetails: typeof _default$D;
-    VcLabel: typeof _default$C;
+    VcInputDetails: typeof _default$E;
+    VcLabel: typeof _default$D;
     VcLayout: typeof _default$9;
-    VcLink: typeof _default$B;
+    VcLink: typeof _default$C;
     VcLoaderOverlay: typeof _default$p;
-    VcMarkdownRender: typeof _default$A;
+    VcMarkdownRender: typeof _default$B;
     VcMenuItem: typeof _default$o;
     VcModal: typeof _default$f;
     VcPagination: typeof _default$e;
@@ -6132,6 +6211,7 @@ declare module "vue" {
     VcTable: typeof _default$d;
     VcTableColumn: typeof _default$c;
     VcTextarea: typeof _default$j;
+    VcTooltip: typeof _default$A;
     VcTypography: typeof _default$i;
     VcWidget: typeof _default$b;
     VcWidgetSkeleton: typeof _default$a;

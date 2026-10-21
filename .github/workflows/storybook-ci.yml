@@ -135,6 +135,8 @@ jobs:
 
       - name: Set URLs
         id: urls
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           # Named after the package, like the zip: vc-theme-b2b-vue-storybook here, <name>-storybook in another repo
           DOCKER_IMAGE="$(jq -er .name package.json)-storybook"
@@ -144,6 +146,14 @@ jobs:
           fi
           echo "DOCKER_URL=${{ env.DOCKER_REPOSITORY }}/${GITHUB_REPOSITORY_OWNER,,}/${DOCKER_IMAGE}:" >> $GITHUB_OUTPUT
           echo "BLOB_URL=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
+          # The floating tag, as the platform images get it: linux-latest from master, <branch>-linux-latest from any
+          # other branch (dev-linux-latest), so a branch build never moves the tag of master or dev.
+          if [ "$BRANCH" = 'master' ]; then
+            FLOATING_TAG='linux-latest'
+          else
+            FLOATING_TAG="$(printf '%s' "$BRANCH" | tr -c 'A-Za-z0-9_.-' '_')-linux-latest"
+          fi
+          echo "FLOATING_TAG=$FLOATING_TAG" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
@@ -161,7 +171,7 @@ jobs:
           push: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
           context: .
           file: .storybook/Dockerfile
-          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
+          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ steps.urls.outputs.FLOATING_TAG }}
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.1
