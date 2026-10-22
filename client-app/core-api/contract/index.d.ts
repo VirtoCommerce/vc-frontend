@@ -5658,11 +5658,15 @@ declare const _default$2: typeof __VLS_export$2;
 
 interface IProps$1 {
     coupon: PromotionCouponType;
+    /**
+     * Layout for narrow containers (e.g. a widget column): name, description and expiry stack between the label and
+     * the code, and the card switches layouts on its own width, not the viewport's.
+     */
     compact?: boolean;
 }
 declare var __VLS_9: {};
 type __VLS_Slots = {} & {
-    'description-append'?: (props: typeof __VLS_9) => any;
+    'after-description'?: (props: typeof __VLS_9) => any;
 };
 declare const __VLS_base: vue.DefineComponent<IProps$1, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$1> & Readonly<{}>, {
     compact: boolean;
@@ -5676,15 +5680,16 @@ type __VLS_WithSlots<T, S> = T & {
     };
 };
 
+declare function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string;
+
 interface IProps {
+    /** Matches CouponItem's compact layout, so the placeholder has the shape of the card that replaces it. */
     compact?: boolean;
 }
 declare const __VLS_export: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps> & Readonly<{}>, {
     compact: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;
-
-declare function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string;
 
 declare const useFetch: typeof _vueuse_core.useFetch;
 
