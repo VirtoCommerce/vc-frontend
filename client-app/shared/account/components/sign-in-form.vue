@@ -152,14 +152,16 @@ const twoFactorChallenge = ref<TwoFactorChallengeType>();
 
 const { errors, loading, signIn, resetErrors } = useSignMeIn();
 
+// One login event per attempt. A wrong password both throws and fills `errors`, whose codes say more than the
+// thrown message; a throw without them still failed, so it never falls through to a success.
 const onSubmit = handleSubmit(async () => {
-  let signInError: Error | undefined;
+  let thrown: Error | undefined;
 
   try {
     await authorize(email.value, password.value);
     await signIn();
   } catch (err) {
-    signInError = err instanceof Error ? err : new Error(String(err));
+    thrown = err instanceof Error ? err : new Error(String(err));
   }
 
   twoFactorChallenge.value = authTwoFactorChallenge.value;
@@ -168,12 +170,8 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  if (signInError) {
-    Logger.error("SignInForm", signInError);
-    analytics("login", "password", {
-      success: false,
-      errors: signInError.message,
-    });
+  if (thrown) {
+    Logger.error("SignInForm", thrown);
   }
 
   if (errors.value?.length) {
@@ -184,9 +182,12 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  if (!signInError) {
-    analytics("login", "password", { success: true });
+  if (thrown) {
+    analytics("login", "password", { success: false, errors: thrown.message });
+    return;
   }
+
+  analytics("login", "password", { success: true });
 });
 
 async function backToPassword(error?: IdentityErrorType): Promise<void> {

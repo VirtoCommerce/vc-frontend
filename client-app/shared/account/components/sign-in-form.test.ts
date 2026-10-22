@@ -195,4 +195,38 @@ describe("SignInForm", () => {
     expect(wrapper.find('[data-test-id="mfa-verify-form"]').exists()).toBe(false);
     expect(wrapper.find('[data-test-id="sign-in-error-alert"]').text()).toBe("login_failed");
   });
+
+  // One login event per attempt: GA counts these, and the Sales Rep hub counts the successes as sign-ins.
+  describe("login event", () => {
+    // The token request both throws and fills the identity errors on a 400.
+    it("reports a wrong password once, with the identity errors", async () => {
+      authorize.mockImplementation(async () => {
+        await flushPromises();
+        errors.value = [{ code: "invalid_grant", description: "The login or password is incorrect." }];
+        throw new Error("Bad Request");
+      });
+
+      await submit(mountForm());
+
+      expect(analytics.mock.calls).toEqual([
+        ["login", "password", { success: false, errors: "invalid_grant: The login or password is incorrect." }],
+      ]);
+    });
+
+    it("reports a sign-in that threw once, as a failure", async () => {
+      authorize.mockRejectedValue(new Error("Failed to fetch"));
+
+      await submit(mountForm());
+
+      expect(analytics.mock.calls).toEqual([["login", "password", { success: false, errors: "Failed to fetch" }]]);
+    });
+
+    it("reports a sign-in that went through as a success", async () => {
+      authorize.mockResolvedValue(undefined);
+
+      await submit(mountForm());
+
+      expect(analytics.mock.calls).toEqual([["login", "password", { success: true }]]);
+    });
+  });
 });
