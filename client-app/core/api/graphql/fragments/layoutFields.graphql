@@ -1,0 +1,16 @@
+# What both layout operations read back: a save's echo is checked against what was sent and reconciled exactly
+# like a read (shared/dashboard/composables/useLayout.ts), so the two selections must not drift apart.
+fragment layoutFields on Layout {
+  regions {
+    id
+    blocks {
+      id
+      type
+      hidden
+      settings {
+        key
+        value
+      }
+    }
+  }
+}
