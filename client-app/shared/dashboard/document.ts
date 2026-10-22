@@ -131,7 +131,8 @@ export function echoMatchesSentBlocks(saved: SavedLayoutType | null | undefined,
 
 /**
  * Build the mutation payload. A save is a full-document replace, so every region, block and setting
- * goes out, hidden ones included — anything omitted is gone.
+ * goes out, hidden ones included — anything omitted is gone. That includes a saved block that is not
+ * registered right now: `reconcileLayout` has already left it out of the state (see `registerBlock`).
  */
 export function serializeLayout(
   state: LayoutStateType,

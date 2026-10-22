@@ -19,6 +19,10 @@ const useBlockRegistries = createGlobalState(() => shallowRef<Readonly<Record<st
  *   same id into one dashboard collide in every saved document;
  * - pick `order` in multiples of 10, so a later block can slot in between.
  *
+ * A block registered only while its feature is on (a setting, a permission, an optional module) is unknown to
+ * a layout saved while it is off: that save drops the block's position, hidden flag and settings, and once
+ * registered again the block comes back at its defaults, at the end of its region.
+ *
  * A second block with a taken id is ignored with a warning.
  */
 export function registerBlock(scope: string, block: BlockType): void {
