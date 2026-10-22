@@ -13,7 +13,7 @@ import LayoutSurface from "./layout-surface.vue";
 import type { LayoutControllerOptionsType, LayoutControllerType, LayoutInputType, SavedLayoutType } from "../types";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
-import VcStatCard from "@/ui-kit/components/molecules/stat-card/vc-stat-card.vue";
+import VcStatWidget from "@/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 import VcWidgetSkeleton from "@/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue";
 
@@ -66,7 +66,7 @@ function mountSurface(layout: LayoutControllerType, props: Record<string, unknow
     // the edit toggle is a VcButton, and a stub would not carry its click. VcEmptyView too: the empty
     // state's buttons live in its slots, which a stub does not render.
     global: {
-      components: { VcButton, VcEmptyView, VcStatCard, VcWidget, VcWidgetSkeleton },
+      components: { VcButton, VcEmptyView, VcStatWidget, VcWidget, VcWidgetSkeleton },
       stubs: {
         VcIcon: true,
         VcShape: true,
@@ -108,42 +108,33 @@ describe("LayoutSurface block bindings", () => {
 });
 
 // The skeleton stands in for boxes about to be replaced by real ones, so it uses the kit's own widget
-// skeleton and the real stat card rather than re-drawing them — the only way its height cannot drift.
+// skeleton and the real stat card, loading, rather than re-drawing them — the only way its height cannot drift.
 describe("LayoutSurface while the layout is read for the first time", () => {
   // A read that never lands, so the surface stays at its first render.
   function mountLoading() {
     return mountSurface(createFakeLayout(SCOPE, { read: "pending" }));
   }
 
-  it("draws each block with the kit's skeleton and the stat card's placeholder, and no blocks of its own", () => {
+  it("draws each block with the kit's skeleton and a loading stat card, and no blocks of its own", () => {
     const wrapper = mountLoading();
     const registered = getBlockRegistry(SCOPE);
     const widgets = registered.filter((block) => block.region !== "statistics" && !block.defaultHidden);
     const stats = registered.filter((block) => block.region === "statistics" && !block.defaultHidden);
 
     expect(wrapper.findAll(".layout-skeleton .vc-widget-skeleton")).toHaveLength(widgets.length);
-    expect(wrapper.findAll(".layout-skeleton .vc-stat-card--placeholder")).toHaveLength(stats.length);
+    expect(wrapper.findAll(".layout-skeleton .vc-stat-widget")).toHaveLength(stats.length);
     // Nothing sortable renders until the saved arrangement is known.
     expect(wrapper.find("[data-block-id]").exists()).toBe(false);
-  });
-
-  // The tile was `stat-widget` before it moved into the ui-kit; selectors outside this repository may still
-  // wait on it, skeleton included.
-  it("keeps the tile's previous class on every placeholder card", () => {
-    const wrapper = mountLoading();
-
-    expect(wrapper.findAll(".layout-skeleton .stat-widget.stat-widget--neutral")).toHaveLength(TEST_STAT_CARDS.length);
   });
 });
 
 describe("LayoutSurface stat row", () => {
-  it("renders each visible card as a VcStatCard that still carries the tile's previous classes", async () => {
+  it("renders each visible card as the kit's VcStatWidget in the card's color", async () => {
     const wrapper = mountSurface(createFakeLayout(SCOPE));
     await flushPromises();
 
-    const beta = wrapper.get('[data-block-id="beta"] .vc-stat-card');
-    expect(beta.classes()).toEqual(expect.arrayContaining(["stat-widget", "stat-widget--success"]));
-    expect(beta.classes()).toContain("vc-stat-card--color--success");
+    const beta = wrapper.get('[data-block-id="beta"] .vc-stat-widget');
+    expect(beta.classes()).toContain("vc-stat-widget--color--success");
   });
 
   it("marks only the cards whose query failed, with the engine's own message", async () => {
@@ -151,10 +142,10 @@ describe("LayoutSurface stat row", () => {
     const wrapper = mountSurface(createFakeLayout(SCOPE), { cards });
     await flushPromises();
 
-    expect(wrapper.get('[data-block-id="gamma"] .vc-stat-card__error').text()).toBe(
+    expect(wrapper.get('[data-block-id="gamma"] .vc-stat-widget__error').text()).toBe(
       "shared.dashboard.stats.load_failed",
     );
-    expect(wrapper.find('[data-block-id="alpha"] .vc-stat-card__error').exists()).toBe(false);
+    expect(wrapper.find('[data-block-id="alpha"] .vc-stat-widget__error').exists()).toBe(false);
   });
 });
 

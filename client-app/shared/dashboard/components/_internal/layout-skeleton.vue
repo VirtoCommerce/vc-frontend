@@ -1,8 +1,8 @@
 <template>
   <div class="layout-skeleton">
     <div class="layout-skeleton__stats">
-      <!-- The card's own placeholder, so no metric of it is restated here. -->
-      <VcStatCard v-for="card in statCount" :key="card" placeholder class="layout-skeleton__card" />
+      <!-- The kit's card in its loading state, captioned from the registry: the card it stands in for. -->
+      <VcStatWidget v-for="id in statIds" :key="id" :label="titleOf(id)" loading class="layout-skeleton__card" />
     </div>
 
     <div class="layout-skeleton__row">
@@ -19,8 +19,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { reconcileLayout } from "../../document";
-import { getBlockRegistry } from "../../registry";
+import { getBlock, getBlockRegistry } from "../../registry";
 
 interface IProps {
   scope: string;
@@ -34,7 +35,13 @@ const BLOCK_ROWS = 5;
 // A never-saved layout's arrangement: the saved one is exactly what is not known yet.
 const defaults = computed(() => reconcileLayout(null, getBlockRegistry(props.scope)).regions);
 
-const statCount = computed(() => defaults.value.statistics.visible.length);
+const statIds = computed(() => defaults.value.statistics.visible);
+
+const { t } = useI18n();
+const titleOf = (id: string): string => {
+  const titleKey = getBlock(props.scope, id)?.titleKey;
+  return titleKey ? t(titleKey) : "";
+};
 
 const columns = computed(() =>
   [

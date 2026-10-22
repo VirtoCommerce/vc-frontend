@@ -178,24 +178,27 @@ export type LayoutInputType = {
  * pre-formatted strings owned by the dashboard that builds the card. Delta tone: `positive` = higher than the
  * previous period (green), `negative` = lower (red), `neutral` = unchanged or a plain informational count.
  */
+/** `positive` = up on the previous period, `negative` = down, `neutral` = unchanged or a plain count. */
+export type StatDeltaToneType = "positive" | "negative" | "neutral";
+
 export type StatCardType = {
   /** The `statistics` block id this card renders as. */
   key: string;
   labelKey: string;
   icon: string;
   value: string;
-  // Optional to match <VcStatCard>'s contract: color and deltaTone have defaults, and sub/delta/deltaIcon are
+  // Optional, as on <VcStatWidget>: color and deltaTone have defaults, and sub/delta/deltaIcon are
   // v-if-guarded, so a card can omit any of them.
-  color?: VcStatCardColorType;
+  color?: VcStatWidgetColorType;
   /** De-emphasized unit rendered right after `value` (e.g. "items" in "34 items"). */
   valueSuffix?: string;
   sub?: string;
   delta?: string;
-  deltaTone?: VcStatCardToneType;
+  deltaTone?: StatDeltaToneType;
   deltaIcon?: string;
   // Both per-card, because each card is fed by exactly one statistics query (VCST-5586): one query failing must
   // not blank the cards whose data arrived, and one query still in flight must not hold every card at the
-  // pending placeholder — which would also hide a sibling card's error, since <VcStatCard> puts loading first.
+  // pending placeholder — which would also hide a sibling card's error, since <VcStatWidget> puts loading first.
   loading?: boolean;
   failed?: boolean;
 };

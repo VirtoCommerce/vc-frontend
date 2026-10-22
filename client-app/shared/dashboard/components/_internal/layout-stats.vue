@@ -23,14 +23,14 @@
       @announce="$emit('announce', $event)"
     >
       <template #default="{ id }">
-        <VcStatCard v-if="propsById.get(id)" v-bind="propsById.get(id)">
-          <template v-if="editing" #leading>
+        <VcStatWidget v-if="propsById[id]" v-bind="propsById[id]">
+          <template v-if="editing" #prepend>
             <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
             <span class="layout-stats__handle" aria-hidden="true">
               <VcIcon name="switch-vertical" :size="16" />
             </span>
           </template>
-        </VcStatCard>
+        </VcStatWidget>
       </template>
     </LayoutRegion>
 
@@ -58,14 +58,14 @@
         @announce="$emit('announce', $event)"
       >
         <template #default="{ id }">
-          <VcStatCard v-if="propsById.get(id)" v-bind="propsById.get(id)">
-            <template #leading>
+          <VcStatWidget v-if="propsById[id]" v-bind="propsById[id]">
+            <template #prepend>
               <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
               <span class="layout-stats__handle" aria-hidden="true">
                 <VcIcon name="switch-vertical" :size="16" />
               </span>
             </template>
-          </VcStatCard>
+          </VcStatWidget>
         </template>
       </LayoutRegion>
     </template>
@@ -76,7 +76,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import LayoutRegion from "./layout-region.vue";
-import type { KeyboardSortSignalType, StatCardType } from "../../types";
+import type { KeyboardSortSignalType, StatCardType, StatDeltaToneType } from "../../types";
 
 interface IProps {
   scope: string;
@@ -103,9 +103,16 @@ const group = computed(() => `layout-stats-${props.scope}`);
 
 // Keyed by id and built once per cards change, not per lookup: the row re-renders on every drag step. The
 // template's `v-if` skips an id with no card.
-const propsById = computed(() => new Map(props.cards.map((card) => [card.key, cardProps(card)])));
+const propsById = computed(() => Object.fromEntries(props.cards.map((card) => [card.key, cardProps(card)])));
 
-// Explicit, not spread: `key` and `labelKey` are not VcStatCard props and would leak onto its root.
+// A rise reads as good news, a fall as bad; the widget only knows colors.
+const DELTA_COLORS: Record<StatDeltaToneType, VcStatWidgetColorType> = {
+  positive: "success",
+  negative: "danger",
+  neutral: "neutral",
+};
+
+// Explicit, not spread: `key` and `labelKey` are not VcStatWidget props and would leak onto its root.
 function cardProps(card: StatCardType) {
   return {
     label: t(card.labelKey),
@@ -113,9 +120,9 @@ function cardProps(card: StatCardType) {
     valueSuffix: card.valueSuffix,
     icon: card.icon,
     color: card.color,
-    sub: card.sub,
+    description: card.sub,
     delta: card.delta,
-    deltaTone: card.deltaTone,
+    deltaColor: DELTA_COLORS[card.deltaTone ?? "positive"],
     deltaIcon: card.deltaIcon,
     // Per card, not per row: each is fed by exactly one statistics query (VCST-5586), so a slow or
     // failed query must only mark its own cards.
@@ -139,12 +146,10 @@ function cardProps(card: StatCardType) {
     }
   }
 
-  // Decorative only — the card itself is the control. Colored with the card's public accent variable, so it
-  // matches the card's edge bar.
+  // Decorative only — the card itself is the control. The widget's `prepend` slot paints it in the card's
+  // accent, so it matches the edge bar.
   &__handle {
     @apply -me-0.5 inline-flex;
-
-    color: var(--vc-stat-card-accent);
   }
 
   // Hatching marks the zone as set aside; the cards in it stay rendered and draggable.

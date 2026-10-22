@@ -5799,18 +5799,20 @@ type StatDataNeedsType<TNeed extends string> = {
  * pre-formatted strings owned by the dashboard that builds the card. Delta tone: `positive` = higher than the
  * previous period (green), `negative` = lower (red), `neutral` = unchanged or a plain informational count.
  */
+/** `positive` = up on the previous period, `negative` = down, `neutral` = unchanged or a plain count. */
+type StatDeltaToneType = "positive" | "negative" | "neutral";
 type StatCardType = {
     /** The `statistics` block id this card renders as. */
     key: string;
     labelKey: string;
     icon: string;
     value: string;
-    color?: VcStatCardColorType;
+    color?: VcStatWidgetColorType;
     /** De-emphasized unit rendered right after `value` (e.g. "items" in "34 items"). */
     valueSuffix?: string;
     sub?: string;
     delta?: string;
-    deltaTone?: VcStatCardToneType;
+    deltaTone?: StatDeltaToneType;
     deltaIcon?: string;
     loading?: boolean;
     failed?: boolean;
@@ -5907,7 +5909,7 @@ interface IStatCardDefType<TNeed extends string = string> {
     key: string;
     labelKey: string;
     icon: string;
-    color: VcStatCardColorType;
+    color: VcStatWidgetColorType;
     /**
      * Everything the card's own figures come from, so the statistics queries can be shaped from the visible
      * cards instead of a hand-kept union. Declare what the card *renders*: a token is not implied by another,
@@ -6017,7 +6019,7 @@ declare function formatStatCount(value?: number | null): string;
 declare function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | null): string;
 type SignedPercentType = {
     text: string;
-    tone: VcStatCardToneType;
+    tone: StatDeltaToneType;
     icon: string;
 };
 declare function formatSignedPercent(percent?: number | null): SignedPercentType | undefined;
@@ -6121,10 +6123,9 @@ type VcPopoverFlipOptionsType = FlipOptions;
 type VcPopoverOffsetOptionsType = OffsetOptions;
 type VcPopoverShiftOptionsType = ShiftOptions;
 type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
-type VcStatCardColorType = VcMainColorType;
-type VcStatCardToneType = "positive" | "negative" | "neutral";
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
 type VcDateRangePickerLayoutType = "combined" | "split";
+type VcStatWidgetColorType = VcMainColorType;
 type VcTableAlignType = "center" | "right" | "left";
 type VcTableColumnType = {
     id: string;

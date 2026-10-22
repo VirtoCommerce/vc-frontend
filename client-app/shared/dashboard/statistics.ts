@@ -1,4 +1,5 @@
 import { globals } from "@/core/globals";
+import type { StatDeltaToneType } from "./types";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 // ISO date windows shared by the statistics ops: current bounds end at the END of the user's current day
@@ -92,7 +93,7 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
 }
 
 // The one formatting seam for every stat figure (VCST-5586): an absent metric reads as 0, never as a
-// blank or a dash. Loading and error aren't values, so <VcStatCard> owns those, not this.
+// blank or a dash. Loading and error aren't values, so <VcStatWidget> owns those, not this.
 // Fallbacks format in globals' culture/currency. A statistics query that sends that same currencyCode gets
 // matching fallbacks; one that sends none assumes the backend converted to the same currency.
 const EMPTY_STAT_VALUE = "0";
@@ -124,7 +125,7 @@ export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | nul
 
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state
 // tone: up = green, down = red, unchanged = neutral.
-export type SignedPercentType = { text: string; tone: VcStatCardToneType; icon: string };
+export type SignedPercentType = { text: string; tone: StatDeltaToneType; icon: string };
 
 // eslint-disable-next-line sonarjs/function-return-type -- the signed delta or undefined (no baseline) by design
 export function formatSignedPercent(percent?: number | null): SignedPercentType | undefined {

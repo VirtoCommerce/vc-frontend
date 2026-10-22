@@ -17,7 +17,7 @@ import LayoutStats from "./_internal/layout-stats.vue";
 import LayoutWidget from "./layout-widget.vue";
 import type { Mock } from "vitest";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
-import VcStatCard from "@/ui-kit/components/molecules/stat-card/vc-stat-card.vue";
+import VcStatWidget from "@/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
@@ -97,7 +97,7 @@ async function setup() {
   // but the compiler hoists their resolution above that branch.
   const wrapper = mount(Harness, {
     attachTo: document.body,
-    global: { components: { VcStatCard }, stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
+    global: { components: { VcStatWidget }, stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
   });
   await flushPromises();
   return { wrapper, layout, setHidden };

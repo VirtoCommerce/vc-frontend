@@ -14,7 +14,7 @@ export interface IStatCardDefType<TNeed extends string = string> {
   key: string;
   labelKey: string;
   icon: string;
-  color: VcStatCardColorType;
+  color: VcStatWidgetColorType;
   /**
    * Everything the card's own figures come from, so the statistics queries can be shaped from the visible
    * cards instead of a hand-kept union. Declare what the card *renders*: a token is not implied by another,
