@@ -761,7 +761,7 @@ function mountGroup(
         name,
         group: "landing",
         listOrder: names,
-        liveRegion: false,
+        withLiveRegion: false,
         onMove,
         onAnnounce: recordInto(announced, name),
         ...propsOf(name),
@@ -918,7 +918,7 @@ describe("VcSortable — the cross-list contract (story docs table)", () => {
 });
 
 describe("VcSortable — what a consumer gets without wiring it", () => {
-  const liveRegion = () => document.body.querySelector<HTMLElement>('[aria-live="polite"]');
+  const liveRegionEl = () => document.body.querySelector<HTMLElement>('[aria-live="polite"]');
 
   it("announces a keyboard grab in its own live region", async () => {
     const { wrapper } = mountList();
@@ -926,7 +926,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     await wrapper.get(".row").trigger("keydown", { key: " " });
     await nextTick();
 
-    expect(liveRegion()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
+    expect(liveRegionEl()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
   });
 
   // Every signal kind, with what it is told: a swapped key or an off-by-one place is otherwise invisible.
@@ -938,7 +938,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
       await nextTick();
       await nextTick();
     }
-    return liveRegion()?.textContent;
+    return liveRegionEl()?.textContent;
   }
 
   it.each([
@@ -1169,7 +1169,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     await nextTick();
 
     expect(onAnnounce).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
-    expect(liveRegion()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
+    expect(liveRegionEl()?.textContent).toBe('ui_kit.sortable.grabbed {"position":1,"total":3}');
   });
 
   it("announces a repeated message again", async () => {
@@ -1180,25 +1180,25 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     press("ArrowUp");
     await nextTick();
     await nextTick();
-    texts.push(liveRegion()!.textContent);
+    texts.push(liveRegionEl()!.textContent);
 
     press("ArrowUp");
     await nextTick();
-    texts.push(liveRegion()!.textContent);
+    texts.push(liveRegionEl()!.textContent);
     await nextTick();
-    texts.push(liveRegion()!.textContent);
+    texts.push(liveRegionEl()!.textContent);
 
     expect(texts).toEqual(["ui_kit.sortable.edge", "", "ui_kit.sortable.edge"]);
   });
 
-  it("renders no region with `liveRegion` off, leaving the wording to an `announce` listener", async () => {
+  it("renders no region with `withLiveRegion` off, leaving the wording to an `announce` listener", async () => {
     const onAnnounce = vi.fn();
-    const { wrapper } = mountList({ liveRegion: false, onAnnounce });
+    const { wrapper } = mountList({ withLiveRegion: false, onAnnounce });
 
     await wrapper.get(".row").trigger("keydown", { key: " " });
     await nextTick();
 
-    expect(liveRegion()).toBeNull();
+    expect(liveRegionEl()).toBeNull();
     expect(onAnnounce).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
   });
 
@@ -1206,7 +1206,7 @@ describe("VcSortable — what a consumer gets without wiring it", () => {
     const { wrapper } = mountList({ tag: "tbody" });
 
     expect(wrapper.get(".vc-sortable").element.querySelector("[aria-live]")).toBeNull();
-    expect(liveRegion()).not.toBeNull();
+    expect(liveRegionEl()).not.toBeNull();
   });
 
   it("reorders objects without an `itemKey`, keeping every one of them", async () => {
@@ -1306,14 +1306,14 @@ describe("VcSortable — development warnings", () => {
   });
 
   it("warns when the live region is off and nothing listens to `announce`", () => {
-    mountList({ liveRegion: false });
-    mountList({ liveRegion: false, onAnnounce: vi.fn() });
+    mountList({ withLiveRegion: false });
+    mountList({ withLiveRegion: false, onAnnounce: vi.fn() });
 
-    expect(warnings()).toEqual([expect.stringContaining("`liveRegion` is off and nothing listens to `announce`")]);
+    expect(warnings()).toEqual([expect.stringContaining("`withLiveRegion` is off and nothing listens to `announce`")]);
   });
 
   it("counts `.once` listeners as listening", () => {
-    mountList({ liveRegion: false, onAnnounceOnce: vi.fn() });
+    mountList({ withLiveRegion: false, onAnnounceOnce: vi.fn() });
     mountList({ name: "once", group: "once", onMoveOnce: vi.fn() });
 
     expect(warnings()).toEqual([]);

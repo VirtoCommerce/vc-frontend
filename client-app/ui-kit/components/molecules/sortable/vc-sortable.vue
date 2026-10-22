@@ -15,7 +15,7 @@
 
     <!-- Out of the container, which may be a `tbody`; Teleport leaves only non-element anchors here. -->
     <Teleport to="body">
-      <span v-if="liveRegion" aria-live="polite" class="sr-only">{{ message }}</span>
+      <span v-if="withLiveRegion" aria-live="polite" class="sr-only">{{ message }}</span>
     </Teleport>
   </component>
 </template>
@@ -59,7 +59,7 @@ export interface IEmits {
   /**
    * Every keyboard state change, unlocalized. A move between lists is reported once it lands, by the list the
    * item is in then, so bind one listener to every list of a group. A notification only: the list keeps
-   * announcing in its own region unless `liveRegion` is false, so a listener that renders its own region must
+   * announcing in its own region unless `withLiveRegion` is false, so a listener that renders its own region must
    * turn that off, or both speak.
    */
   (event: "announce", signal: SortableSignalType): void;
@@ -106,7 +106,7 @@ export interface IProps<TItem = unknown> {
    * Renders the list's own localized, polite `aria-live` region. Turn it off only when you announce `announce`
    * signals yourself, e.g. one region shared by several lists.
    */
-  liveRegion?: boolean;
+  withLiveRegion?: boolean;
   /** Container element. */
   tag?: string;
   /**
@@ -129,7 +129,7 @@ const props = withDefaults(defineProps<IProps<T>>(), {
   filter: undefined,
   orientation: "vertical",
   disabled: false,
-  liveRegion: true,
+  withLiveRegion: true,
   tag: "div",
   itemKey: undefined,
 });
@@ -199,7 +199,7 @@ function describe(signal: SortableSignalType): string {
 
 function onAnnounce(signal: SortableSignalType): void {
   emit("announce", signal);
-  if (!props.liveRegion) {
+  if (!props.withLiveRegion) {
     return;
   }
   // Cleared first, so a repeated message ("No further to go" twice) is announced again.
@@ -248,8 +248,8 @@ if (import.meta.env.DEV) {
   if (props.group && !hasListener("onMove")) {
     warn(`list in group "${props.group}" has no \`@move\` listener: an item dragged across snaps back.`);
   }
-  if (!props.liveRegion && !hasListener("onAnnounce")) {
-    warn("`liveRegion` is off and nothing listens to `announce`: keyboard sorting is silent for screen readers.");
+  if (!props.withLiveRegion && !hasListener("onAnnounce")) {
+    warn("`withLiveRegion` is off and nothing listens to `announce`: keyboard sorting is silent for screen readers.");
   }
 
   // Not `accepts`: an inline function is a new one on every render, though it means the same.
@@ -258,15 +258,15 @@ if (import.meta.env.DEV) {
   );
 
   // Watched, not read once: object data usually arrives after mount.
-  let warnedObjects = false;
+  let hasWarnedObjects = false;
   watch(
     () => model.value.some((item) => typeof item === "object"),
     (hasObjects) => {
-      if (warnedObjects || !(props.group || props.accepts) || props.itemKey) {
+      if (hasWarnedObjects || !(props.group || props.accepts) || props.itemKey) {
         return;
       }
       if (hasObjects) {
-        warnedObjects = true;
+        hasWarnedObjects = true;
         warn("object items need an `itemKey` here: `move` and `accepts` would get generated ids you cannot map back.");
       }
     },
@@ -308,16 +308,18 @@ const ItemScope = defineComponent({
     if (import.meta.env.DEV) {
       const scope = getCurrentInstance();
       // One warning per mistake: with several roots the attrs check would blame the wrong one.
-      onMounted(() => warnedRoots || checkItem(scope?.proxy?.$el, scopeProps.itemId, scopeProps.handleAttrs !== null));
+      onMounted(
+        () => hasWarnedRoots || checkItem(scope?.proxy?.$el, scopeProps.itemId, scopeProps.handleAttrs !== null),
+      );
     }
 
-    let warnedRoots = false;
+    let hasWarnedRoots = false;
 
     return () => {
       // Development builds keep template comments as vnodes; they must not turn the item into a fragment.
       const nodes = (scopeProps.renderItem() ?? []).filter((node) => node.type !== Comment);
-      if (import.meta.env.DEV && nodes.length !== 1 && !warnedRoots) {
-        warnedRoots = true;
+      if (import.meta.env.DEV && nodes.length !== 1 && !hasWarnedRoots) {
+        hasWarnedRoots = true;
         warn(`item "${scopeProps.itemId}" renders ${nodes.length} root nodes; the #item slot needs exactly one.`);
       }
       return nodes.length === 1 ? nodes[0] : nodes;

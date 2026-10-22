@@ -8,13 +8,14 @@
     :list-order="listOrder"
     :orientation="orientation"
     :disabled="!editing"
-    :live-region="false"
+    :with-live-region="false"
     drop-on-list-change
     :handle="dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR"
     :filter="dragWhole ? undefined : WIDGET_DRAG_FILTER_SELECTOR"
     @update:model-value="$emit('reorder', $event)"
     @move="onMove"
     @announce="onAnnounce"
+    @release="onRelease"
   >
     <template #item="{ item: id, attrs }">
       <LayoutBlock
@@ -45,7 +46,7 @@ import { useBlockTitle } from "../composables/useBlockTitle";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import LayoutBlock from "./layout-block.vue";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
-import type { SortableMovePayloadType, SortableSignalType } from "@/ui-kit/composables";
+import type { SortableMovePayloadType, SortableReleasePayloadType, SortableSignalType } from "@/ui-kit/composables";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
@@ -70,6 +71,8 @@ interface IEmits {
   (event: "reorder", ids: string[]): void;
   (event: "setHidden", id: string, hidden: boolean, index?: number): void;
   (event: "announce", signal: KeyboardSortSignalType): void;
+  /** A card of this half is keyboard-held, or no longer is. A pointer drag does not count. */
+  (event: "heldChange", held: boolean): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -80,6 +83,9 @@ const { titleOf } = useBlockTitle(() => props.scope);
 const VISIBLE_ZONE = "visible";
 const HIDDEN_ZONE = "hidden";
 
+// Set by the keyboard grab only: `announce` reports keyboard steps, while `grab` fires for a pointer drag too.
+let heldId: string | undefined;
+
 const zoneName = computed(() => (props.dropHidden ? HIDDEN_ZONE : VISIBLE_ZONE));
 
 // Only the stat row can park a block with the arrow keys; widget columns hide via the ✕ button.
@@ -89,9 +95,18 @@ function onMove({ id, to, index }: SortableMovePayloadType): void {
   emit("setHidden", id, to === HIDDEN_ZONE, index);
 }
 
+function onRelease({ id }: SortableReleasePayloadType): void {
+  if (id === heldId) {
+    heldId = undefined;
+    emit("heldChange", false);
+  }
+}
+
 function onAnnounce(signal: SortableSignalType): void {
   switch (signal.kind) {
     case "grabbed":
+      heldId = signal.id;
+      emit("heldChange", true);
       emit("announce", {
         kind: "grabbed",
         id: signal.id,

@@ -349,6 +349,107 @@ describe("stat row drag and drop", () => {
     );
   });
 
+  describe("the parked zone's held state", () => {
+    const parkedZone = (wrapper: ReturnType<typeof setup>["wrapper"]) => wrapper.find(".layout-stats__parked-zone");
+    const isHeld = (wrapper: ReturnType<typeof setup>["wrapper"]) =>
+      parkedZone(wrapper).classes("layout-stats__parked-zone--held");
+    const press = async (wrapper: ReturnType<typeof setup>["wrapper"], id: string, key: string) => {
+      wrapper.find(`[data-block-id="${id}"]`).element.dispatchEvent(new KeyboardEvent("keydown", { key }));
+      await nextTick();
+      await nextTick();
+    };
+
+    function setupParked() {
+      const harness = setup();
+      harness.api.startEdit();
+      harness.api.setHidden("active_carts", true);
+      return harness;
+    }
+
+    it("is on while a parked card is keyboard-held, and off once it is let go", async () => {
+      const { wrapper } = setupParked();
+      await nextTick();
+      expect(isHeld(wrapper)).toBe(false);
+
+      await press(wrapper, "active_carts", " ");
+      expect(isHeld(wrapper)).toBe(true);
+
+      await press(wrapper, "active_carts", "Escape");
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("is off once a held card leaves the zone", async () => {
+      const { wrapper, api } = setupParked();
+      await nextTick();
+
+      await press(wrapper, "active_carts", " ");
+      await press(wrapper, "active_carts", "ArrowUp");
+
+      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("stays off while a card of the visible zone is held", async () => {
+      const { wrapper } = setupParked();
+      await nextTick();
+
+      await press(wrapper, "orders_placed_week", " ");
+
+      expect(wrapper.find('[data-block-id="orders_placed_week"]').attributes("aria-pressed")).toBe("true");
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("stays off for a pointer drag, as the old `aria-pressed` match did", async () => {
+      const { wrapper } = setupParked();
+      await nextTick();
+      await vi.dynamicImportSettled();
+      const [, hidden] = zones;
+      const item = wrapper.find('[data-block-id="active_carts"]').element;
+
+      hidden.options.onChoose({ item });
+      hidden.options.onStart({ item, from: hidden.el, oldIndex: 0 });
+      await nextTick();
+
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("stays on when a pointer drag of another card ends while one is keyboard-held", async () => {
+      const { wrapper, api } = setupParked();
+      api.setHidden("new_orders", true);
+      await nextTick();
+      await vi.dynamicImportSettled();
+      const [, hidden] = zones;
+      const dragged = wrapper.find('[data-block-id="new_orders"]').element;
+
+      hidden.options.onChoose({ item: dragged });
+      hidden.options.onStart({ item: dragged, from: hidden.el, oldIndex: 1 });
+      await press(wrapper, "active_carts", " ");
+      expect(isHeld(wrapper)).toBe(true);
+
+      hidden.options.onEnd({ item: dragged, from: hidden.el, to: hidden.el, oldIndex: 1, newIndex: 1 });
+      await nextTick();
+
+      expect(wrapper.find('[data-block-id="active_carts"]').attributes("aria-pressed")).toBe("true");
+      expect(isHeld(wrapper)).toBe(true);
+    });
+
+    it("is off again when edit mode ends with a card held and starts over", async () => {
+      const { wrapper, api } = setupParked();
+      await nextTick();
+      await press(wrapper, "active_carts", " ");
+      expect(isHeld(wrapper)).toBe(true);
+
+      api.cancel();
+      await nextTick();
+      api.startEdit();
+      api.setHidden("active_carts", true);
+      await nextTick();
+
+      expect(parkedZone(wrapper).exists()).toBe(true);
+      expect(isHeld(wrapper)).toBe(false);
+    });
+  });
+
   // Backward is the direction that catches `restore()` reading the child index before removing the
   // node: with the node still in place, the index it reads is one short and the card lands too early.
   it("reorders a card backwards", async () => {

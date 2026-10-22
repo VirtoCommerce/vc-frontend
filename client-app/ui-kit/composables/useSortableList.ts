@@ -164,6 +164,7 @@ function loadSortable(): Promise<typeof Sortable> {
     (module) => module.default,
     (error: unknown) => {
       sortableClass = undefined;
+      warn(`failed to load sortablejs: ${String(error)}`);
       throw error;
     },
   );
@@ -206,7 +207,7 @@ export function useSortableList(
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
   options: IUseSortableListOptions,
 ) {
-  const whole = typeof options.handle === "string" ? !options.handle.trim() : !options.handle;
+  const isWholeItemDrag = typeof options.handle === "string" ? !options.handle.trim() : !options.handle;
 
   const grabbedId = ref<string>();
   let origin: GrabOriginType | undefined;
@@ -244,15 +245,15 @@ export function useSortableList(
   // Vue's `insertBefore` blurs the moved node in Chrome and WebKit, and blur cancels a grab — so an
   // unguarded move snaps straight back. Ignore that self-inflicted blur until the refocus has run.
   // Focus the owner moved elsewhere stays there, as after a move between lists.
-  let refocusing = false;
+  let isRefocusing = false;
 
   function refocus(target: HTMLElement | null): void {
-    refocusing = true;
+    isRefocusing = true;
     void nextTick(() => {
       if (isFocusFree() || document.activeElement === target) {
         focusInView(target);
       }
-      refocusing = false;
+      isRefocusing = false;
     });
   }
 
@@ -287,13 +288,13 @@ export function useSortableList(
       const [to, list] = landed;
       const ids = list.items();
       const index = ids.indexOf(id);
-      const held = list.isGrabbed(id);
-      if (!held && to === start?.list && index === start.index) {
+      const isHeld = list.isGrabbed(id);
+      if (!isHeld && to === start?.list && index === start.index) {
         list.announce({ kind: "cancelled", id });
       } else if (to === from) {
         list.announce({ kind: "dropped", id, index, total: ids.length });
       } else {
-        list.announce({ kind: "movedList", id, from, to, dropped: !held });
+        list.announce({ kind: "movedList", id, from, to, dropped: !isHeld });
       }
       if (follow instanceof Node ? !follow.isConnected : follow) {
         followInto(list, id);
@@ -357,14 +358,13 @@ export function useSortableList(
         continue;
       }
       const carried = origin ?? { list: name, index: options.items().indexOf(id) };
-      const dropped = Boolean(toValue(options.dropOnListChange));
+      const isDropped = Boolean(toValue(options.dropOnListChange));
       clearGrab();
       options.onMove?.({ id, from: name, to: target });
-      if (dropped) {
+      if (isDropped) {
         options.onRelease?.({ id });
-      }
-      // Otherwise the grab travels with the item: the sibling holds it from here, so the next key acts there.
-      if (!dropped) {
+      } else {
+        // The grab travels with the item: the sibling holds it from here, so the next key acts there.
         sibling.adopt(id, carried);
       }
       announceLanding(id, carried, true);
@@ -378,14 +378,14 @@ export function useSortableList(
     const item = [...(toValue(container)?.querySelectorAll<HTMLElement>(`[${SORTABLE_ITEM_ATTRIBUTE}]`) ?? [])].find(
       (candidate) => candidate.getAttribute(SORTABLE_ITEM_ATTRIBUTE) === id,
     );
-    const target = whole ? item : item?.querySelector<HTMLElement>(HANDLE_SELECTOR);
+    const target = isWholeItemDrag ? item : item?.querySelector<HTMLElement>(HANDLE_SELECTOR);
     focusInView(target);
   }
 
   function onKeydown(event: KeyboardEvent, id: string): void {
     // The item's or handle's listener also hears keys bubbling from controls inside it, which keep their own.
-    const fromDescendant = event.target instanceof Node && event.target !== event.currentTarget;
-    if (!isEnabled() || fromDescendant) {
+    const isFromDescendant = event.target instanceof Node && event.target !== event.currentTarget;
+    if (!isEnabled() || isFromDescendant) {
       return;
     }
 
@@ -433,7 +433,7 @@ export function useSortableList(
   }
 
   function onBlur(id: string, event?: FocusEvent): void {
-    if (!refocusing && isGrabbed(id)) {
+    if (!isRefocusing && isGrabbed(id)) {
       cancel(id, undefined, event?.relatedTarget instanceof Node ? event.relatedTarget : undefined);
     }
   }
@@ -453,7 +453,7 @@ export function useSortableList(
     }
 
     const classes = ["vc-sortable__item"];
-    if (whole) {
+    if (isWholeItemDrag) {
       classes.push("vc-sortable__item--whole");
     }
     if (isGrabbed(id)) {
@@ -462,13 +462,13 @@ export function useSortableList(
 
     const attrs: SortableItemAttrsType = { [SORTABLE_ITEM_ATTRIBUTE]: id, class: classes.join(" ") };
 
-    return whole ? { ...attrs, role: "button", ...keyboardAttrs(id) } : attrs;
+    return isWholeItemDrag ? { ...attrs, role: "button", ...keyboardAttrs(id) } : attrs;
   }
 
   /** Null while the list is disabled, and for a list that drags by the whole item. */
   // eslint-disable-next-line sonarjs/function-return-type -- false positive: the rule exempts null returns
   function handleAttrs(id: string): SortableHandleAttrsType | null {
-    if (whole || !isEnabled()) {
+    if (isWholeItemDrag || !isEnabled()) {
       return null;
     }
 
@@ -487,10 +487,10 @@ export function useSortableList(
     const drag = dragged;
     dragged = undefined;
     pointerDrags.delete(endPointerDrag);
-    const misplaced = drag?.item.parentNode !== drag?.from || drag?.item.nextSibling !== originSibling;
+    const isMisplaced = drag?.item.parentNode !== drag?.from || drag?.item.nextSibling !== originSibling;
     if (drag?.item.isConnected) {
       // Only a node that moved: re-inserting one in place would drop its focus.
-      if (originSibling !== undefined && misplaced) {
+      if (originSibling !== undefined && isMisplaced) {
         restore(drag.item, drag.from, drag.oldIndex);
       }
       drag.item.classList.remove("sortable-chosen", "vc-sortable__item--ghost");
@@ -604,9 +604,9 @@ export function useSortableList(
       // Draggable indices, never plain ones: other children of the container would shift them.
       onUpdate: (event: Sortable.SortableEvent) => {
         // Asked before the restore, which reflows the lists under the release point.
-        const outside = releasedOutside(event);
+        const isOutside = releasedOutside(event);
         restore(event.item, event.from, event.oldIndex ?? 0);
-        if (outside) {
+        if (isOutside) {
           return;
         }
 
@@ -623,12 +623,12 @@ export function useSortableList(
         const id = event.item.getAttribute(SORTABLE_ITEM_ATTRIBUTE);
 
         if (event.from !== event.to) {
-          const outside = releasedOutside(event);
+          const isOutside = releasedOutside(event);
           // Back into the source list — state is what moves the item across.
           restore(event.item, event.from, event.oldIndex ?? 0);
 
           const to = event.to.getAttribute(SORTABLE_NAME_ATTRIBUTE);
-          if (id && to && !outside) {
+          if (id && to && !isOutside) {
             options.onMove?.({ id, from: nameOf(), to, index: event.newDraggableIndex ?? undefined });
           }
         }
@@ -659,20 +659,21 @@ export function useSortableList(
       if (!el) {
         return;
       }
-      let gone = false;
+      let isGone = false;
       let teardown: (() => void) | undefined;
       onCleanup(() => {
-        gone = true;
+        isGone = true;
         teardown?.();
       });
       // The keyboard needs none of it: it works before the load ends, and after a failed one, which leaves
       // this list without the pointer and lets the next list to mount try again.
-      loadSortable().then(
+      void loadSortable().then(
         (SortableClass) => {
-          if (!gone) {
+          if (!isGone) {
             teardown = build(SortableClass, el);
           }
         },
+        // Warned once by `loadSortable`, not once per list waiting on it.
         () => undefined,
       );
     },
@@ -763,18 +764,18 @@ export function useSortableList(
   );
 
   if (import.meta.env.DEV) {
-    let warnedOrder = false;
+    let hasWarnedOrder = false;
     watch(
       [orderOf, groupOf, nameOf],
       ([order, group, name]) => {
-        if (!order || warnedOrder) {
+        if (!order || hasWarnedOrder) {
           return;
         }
         if (!group) {
-          warnedOrder = true;
+          hasWarnedOrder = true;
           warn("`listOrder` needs a `group`: without one no sibling list can take the item.");
         } else if (!order.includes(name)) {
-          warnedOrder = true;
+          hasWarnedOrder = true;
           warn(`\`listOrder\` does not include this list's name "${name}": the cross-axis arrows cannot find it.`);
         }
       },

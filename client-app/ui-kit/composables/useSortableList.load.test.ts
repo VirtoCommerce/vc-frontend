@@ -34,10 +34,15 @@ function mountList(el: HTMLElement) {
 }
 
 describe("useSortableList — a failed SortableJS load", () => {
-  it("keeps the keyboard, and lets the next list load it again", async () => {
+  it("keeps the keyboard, warns once for the lists waiting on it, and lets the next list load it again", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const first = document.createElement("div");
     const list = mountList(first);
+    mountList(document.createElement("div"));
     await vi.dynamicImportSettled();
+    expect(warn).toHaveBeenCalledOnce();
+    // vitest wraps the factory's error in its own message, so only the prefix is the composable's.
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[useSortableList\] failed to load sortablejs: Error: /));
 
     list.itemAttrs("a").onKeydown!({ key: " ", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(list.isGrabbed("a")).toBe(true);
@@ -48,5 +53,7 @@ describe("useSortableList — a failed SortableJS load", () => {
     await vi.dynamicImportSettled();
 
     expect(loads.built).toEqual([second]);
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
   });
 });
