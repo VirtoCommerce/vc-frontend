@@ -5,6 +5,11 @@ const hoisted = vi.hoisted(() => ({
   currentCurrencyRef: { value: { code: "USD" } },
   themeContextRef: { value: { storeName: "Test Store" } },
   sendEventMock: vi.fn(),
+  deferLoginMock: vi.fn(),
+}));
+
+vi.mock("./pending-login", () => ({
+  deferLogin: hoisted.deferLoginMock,
 }));
 
 vi.mock("@/core/composables/useCurrency", () => ({
@@ -86,6 +91,7 @@ function buildProduct(overrides: Partial<Product> = {}): Product {
 describe("google-analytics events", () => {
   beforeEach(() => {
     hoisted.sendEventMock.mockReset();
+    hoisted.deferLoginMock.mockReset();
     hoisted.currentCurrencyRef.value = { code: "USD" };
     hoisted.themeContextRef.value = { storeName: "Test Store" };
   });
@@ -197,6 +203,31 @@ describe("google-analytics events", () => {
       expect(payload.value).toBe(100);
       expect(payload.value).not.toBe(150);
       expect(payload.transaction_id).toBe("order-uuid-1");
+    });
+  });
+
+  describe("login", () => {
+    // Sent now, it would race the reload a sign-in starts and carry the signed-out identity.
+    it("leaves a successful sign-in to the page it lands on", async () => {
+      const { events } = await import("./events");
+
+      void events.login!("password", { success: true });
+
+      expect(hoisted.deferLoginMock).toHaveBeenCalledWith("password", { success: true });
+      expect(hoisted.sendEventMock).not.toHaveBeenCalled();
+    });
+
+    it("sends a failed attempt at once: the page stays, and so does the signed-out visitor", async () => {
+      const { events } = await import("./events");
+
+      void events.login!("password", { success: false, errors: "invalid_grant" });
+
+      expect(hoisted.sendEventMock).toHaveBeenCalledWith("login", {
+        success: false,
+        errors: "invalid_grant",
+        method: "password",
+      });
+      expect(hoisted.deferLoginMock).not.toHaveBeenCalled();
     });
   });
 });

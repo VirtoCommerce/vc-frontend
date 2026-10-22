@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { computed, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -114,7 +114,7 @@ const notification = useNotifications();
 const router = useRouter();
 
 usePageHead({
-  title: t("quote_details.title", [quote.value?.number]),
+  title: computed(() => t("quote_details.title", [quote.value?.number])),
 });
 
 async function approve() {
