@@ -61,7 +61,7 @@ describe("VcLayout print", () => {
     await settle();
 
     window.dispatchEvent(new Event("beforeprint"));
-    await settle();
+    await nextTick();
 
     expect(positionOf(wrapper, "sidebar")).toBe("static");
   });
@@ -78,7 +78,7 @@ describe("VcLayout print", () => {
     expect(positionOf(wrapper, "content")).toBe("sticky");
 
     window.dispatchEvent(new Event("beforeprint"));
-    await settle();
+    await nextTick();
 
     expect(positionOf(wrapper, "content")).toBe("static");
 
@@ -92,7 +92,9 @@ describe("VcLayout print", () => {
     const wrapper = createWrapper({ props: { sticky: true } });
     await settle();
     window.dispatchEvent(new Event("beforeprint"));
-    await settle();
+    await nextTick();
+
+    expect(positionOf(wrapper, "sidebar")).toBe("static");
 
     window.dispatchEvent(new Event("afterprint"));
     await settle();
