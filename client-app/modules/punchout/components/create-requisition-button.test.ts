@@ -61,7 +61,7 @@ const ORDER_MESSAGE = { url: "https://procurement.example/receive", formField: "
 const FALLBACK_TEXT = "Could not create the requisition. Please try again.";
 const SESSION_EXPIRED_TEXT =
   "Your punchout session has expired. Return to your procurement system and start a new session.";
-const SESSION_RETURNED_TEXT = "Requisition already sent";
+const SESSION_RETURNED_TEXT = "Requisition already sent.";
 
 function mountButton() {
   return mount(CreateRequisitionButton, {
