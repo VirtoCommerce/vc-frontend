@@ -12,8 +12,8 @@
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
           :maxlength="MAX_NAME_LENGTH"
-          :message="errors.firstName || serverErrors.firstName"
-          :error="!!errors.firstName || !!serverErrors.firstName"
+          :message="errors.firstName"
+          :error="!!errors.firstName"
           name="firstName"
           class="mb-5"
           required
@@ -25,8 +25,8 @@
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
           :maxlength="MAX_NAME_LENGTH"
-          :message="errors.lastName || serverErrors.lastName"
-          :error="!!errors.lastName || !!serverErrors.lastName"
+          :message="errors.lastName"
+          :error="!!errors.lastName"
           name="lastName"
           class="mb-5"
           required
@@ -67,7 +67,7 @@
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
-            :disabled="!meta.dirty || !meta.valid || meta.pending || hasServerErrors"
+            :disabled="!meta.dirty || !meta.valid || meta.pending"
             :loading="isSubmitting"
             type="submit"
             class="w-full lg:w-48"
@@ -83,8 +83,8 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useMutation } from "@vue/apollo-composable";
-import { useForm } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { useField, useForm } from "vee-validate";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
@@ -114,15 +114,6 @@ usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
 });
 
-const validationSchema = toTypedSchema(
-  yup.object({
-    firstName: yup.string().trim().required().max(MAX_NAME_LENGTH),
-    lastName: yup.string().trim().required().max(MAX_NAME_LENGTH),
-    defaultLanguage: yup.string(),
-    currencyCode: yup.string(),
-  }),
-);
-
 function initialValues() {
   return {
     firstName: user.value.contact?.firstName ?? "",
@@ -132,27 +123,17 @@ function initialValues() {
   };
 }
 
-const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
-  validationSchema,
+const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm, setErrors } = useForm({
   initialValues: initialValues(),
 });
 
-const [firstName] = defineField("firstName");
-const [lastName] = defineField("lastName");
+// Rules per field, not a form schema: a schema re-validates every field on any edit, which would drop the server's
+// messages on the other fields
+const nameRules = toTypedSchema(yup.string().trim().required().max(MAX_NAME_LENGTH));
+const { value: firstName } = useField("firstName", nameRules);
+const { value: lastName } = useField("lastName", nameRules);
 const [defaultLanguage] = defineField("defaultLanguage");
 const [currencyCode] = defineField("currencyCode");
-
-// Kept apart from the form's errors: the schema re-validates every field on any edit, which would drop them all.
-const serverErrors = ref<Record<string, string>>({});
-const hasServerErrors = computed(() => Object.keys(serverErrors.value).length > 0);
-
-watch(firstName, () => {
-  delete serverErrors.value.firstName;
-});
-
-watch(lastName, () => {
-  delete serverErrors.value.lastName;
-});
 
 function applyLanguage(): void {
   unpinLocale();
@@ -183,7 +164,7 @@ const onSubmit = handleSubmit(async (data) => {
   try {
     await updateUser(data, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT);
   } catch (e) {
-    serverErrors.value = showSaveErrors(e, NAME_FIELD_NAMES);
+    setErrors(showSaveErrors(e, NAME_FIELD_NAMES));
     return;
   }
 

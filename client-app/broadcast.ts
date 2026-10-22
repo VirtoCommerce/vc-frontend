@@ -108,13 +108,14 @@ export function setupBroadcastGlobalListeners() {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query });
     }
   });
-  on(graphqlErrorEvent, (error) => {
-    const fieldErrors = getFieldValidationErrors(error ? [error as GraphQLFormattedError] : undefined);
+  on(graphqlErrorEvent, (errors) => {
+    const graphQLErrors = errors as GraphQLFormattedError[];
+    const fieldErrors = getFieldValidationErrors(graphQLErrors);
     const notification = getErrorNotification(fieldErrors);
 
-    // Rejected input is for the user to correct, not a problem to report
-    if (error && !fieldErrors.length) {
-      notification.button = createReportButton(error);
+    // Rejected input is for the user to correct; any other error is a problem to report
+    if (fieldErrors.length < graphQLErrors.length) {
+      notification.button = createReportButton(graphQLErrors);
     }
 
     notifications.error({

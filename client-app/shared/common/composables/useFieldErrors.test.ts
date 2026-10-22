@@ -24,14 +24,15 @@ describe("useFieldErrors", () => {
     it("returns a translated message for each input of the form and shows no toast", () => {
       const { showSaveErrors } = useFieldErrors();
 
-      const messages = showSaveErrors(apolloError(invalid("firstName"), invalid("lastName", "HtmlTagsNotAllowed")), [
-        "firstName",
-        "lastName",
-      ]);
+      const messages = showSaveErrors(
+        apolloError(invalid("firstName"), invalid("lastName", "HtmlTagsNotAllowed"), invalid("email", "InvalidEmail")),
+        ["firstName", "lastName", "email"],
+      );
 
       expect(messages).toEqual({
         firstName: "common.messages.invalid_characters",
         lastName: "common.messages.html_tags_not_allowed",
+        email: "common.messages.email_is_not_correct",
       });
       expect(h.notifyError).not.toHaveBeenCalled();
     });

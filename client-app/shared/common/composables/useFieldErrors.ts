@@ -12,6 +12,7 @@ const FIELD_ERROR_MESSAGE_KEYS = new Map<string, string>([
   ["InvalidCharacters", "common.messages.invalid_characters"],
   ["HtmlTagsNotAllowed", "common.messages.html_tags_not_allowed"],
   ["UnsafeContent", "common.messages.unsafe_content"],
+  ["InvalidEmail", "common.messages.email_is_not_correct"],
 ]);
 
 export function useFieldErrors() {
