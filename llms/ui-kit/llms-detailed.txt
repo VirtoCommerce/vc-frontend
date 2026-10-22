@@ -793,7 +793,7 @@ Base container component for displaying product cards with three adaptive layout
      - disabled?: boolean - disabled state
      - withFromLabel?: boolean - show "from" prefix for variations
    - Features: VcPriceDisplay for formatting, strikethrough for list price, responsive sizing
-   - CSS variable: --vc-product-price-font-size
+   - CSS variables: --vc-product-price-font-size, --vc-product-price-line-height (default 1.335)
 
 7. **VcProductButton** (`client-app/ui-kit/components/molecules/product-button/vc-product-button.vue`)
    - Props:

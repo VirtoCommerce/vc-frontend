@@ -241,7 +241,6 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 ## Legacy — don't flag, don't copy
 
 - Utility-only templates, `print:hidden` and `max-lg:` in them.
-- Existing `!important` and template `!mt-*` utilities — don't copy, don't extend.
 - `<style scoped>` blocks; plain CSS with px sizes.
 - `vc-`-prefixed blocks outside the UI kit.
 - `.vc-typography--variant--h1` overrides outside the kit.

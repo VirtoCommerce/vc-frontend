@@ -72,7 +72,7 @@ export const RouterNavigation: StoryType = {
     template: `
     <div class="space-y-4 p-6">
       <h2 class="text-xl font-bold">Router Navigation Test</h2>
-      <p class="text-gray-600">Click the product titles below to test navigation:</p>
+      <p class="text-neutral-600">Click the product titles below to test navigation:</p>
 
       <div class="space-y-3">
         <VcProductTitle to="/some/link" class="[--vc-product-title-font-size:theme(fontSize.lg)]">
@@ -87,12 +87,12 @@ export const RouterNavigation: StoryType = {
         <VcProductTitle to="/nonexistent" class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Non-existent Product
         </VcProductTitle>
-        <VcProductTitle disabled class="[--vc-product-title-font-size:theme(fontSize.lg)] text-gray-400">
+        <VcProductTitle disabled class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Disabled Product Title
         </VcProductTitle>
       </div>
 
-      <div class="mt-6 p-4 bg-gray-100 rounded">
+      <div class="mt-6 p-4 bg-neutral-100 rounded">
         <h3 class="font-semibold mb-2">Current URL:</h3>
         <code class="text-sm">{{ $route.path }}</code>
       </div>
@@ -106,7 +106,7 @@ export const RouterNavigation: StoryType = {
           <VcProductTitle to="/some/link" class="[--vc-product-title-font-size:theme(fontSize.lg)]">Product Title with Link</VcProductTitle>
           <VcProductTitle to="/catalog" class="[--vc-product-title-font-size:theme(fontSize.lg)]">Catalog Product</VcProductTitle>
           <VcProductTitle to="/product/123" class="[--vc-product-title-font-size:theme(fontSize.lg)]">Product #123</VcProductTitle>
-          <VcProductTitle disabled class="[--vc-product-title-font-size:theme(fontSize.lg)] text-gray-400">Disabled Product Title</VcProductTitle>
+          <VcProductTitle disabled class="[--vc-product-title-font-size:theme(fontSize.lg)]">Disabled Product Title</VcProductTitle>
         `,
       },
     },
