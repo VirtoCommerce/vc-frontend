@@ -142,7 +142,7 @@
 
 <script setup lang="ts">
 import { useMutation } from "@vue/apollo-composable";
-import { ref, watch } from "vue";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useRouteQueryParam, usePageHead, useBrowserTarget } from "@/core/composables";
@@ -158,7 +158,7 @@ const { t } = useI18n();
 const router = useRouter();
 const { storeId, userId, currencyCode, cultureName } = globals;
 usePageHead({
-  title: t("quotes.meta.title"),
+  title: computed(() => t("quotes.meta.title")),
 });
 
 const { browserTarget } = useBrowserTarget();
@@ -170,7 +170,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",
 });
 
-const columns = ref<VcTableColumnType[]>([
+const columns = computed<VcTableColumnType[]>(() => [
   {
     id: "number",
     title: t("quotes.quote_number_label"),
