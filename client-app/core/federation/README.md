@@ -198,7 +198,10 @@ How the facade itself is versioned and released: [`core-api/README.md`](../../co
    not picked. Delete the line before importing that library, or the plugin bundles a copy that does not see the
    host's (no i18n messages, no Apollo client).
 4. Any other library a plugin uses is bundled into the plugin. That is fine unless the library shares state
-   through `provide`/`inject` across the host/plugin line; then it must join the shared list first.
+   across the host/plugin line, through `provide`/`inject` or module-level state such as a registry; then it must
+   join the shared list first. Host code with such state comes from the facade instead: a plugin bundling its own
+   `VcSortable` (and `sortablejs` under it) gets lists that cannot exchange items with the host's
+   ([open item](TODO.md#releasing-sales-rep-as-a-plugin)).
 
 What is exported: [`core-api/index.ts`](../../core-api/index.ts), grouped and commented; the types are in
 `core-api/contract/index.d.ts`. How to add to it: [`core-api/README.md`](../../core-api/README.md).

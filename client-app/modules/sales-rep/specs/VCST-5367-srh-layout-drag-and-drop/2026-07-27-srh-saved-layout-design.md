@@ -256,6 +256,9 @@ cross-zone drop. Construction moved inside `onMounted` for the same reason: ever
 and `useSortable` captured them at setup. `@vueuse/integrations` stays a dependency for `useAxios`;
 `sortablejs` (+ `@types/sortablejs`) is what this feature adds.
 
+*As built (VCST-5902):* `useSortableList` loads `sortablejs` with a dynamic `import()` when the first list
+mounts, so it stays out of the boot bundle; the keyboard works before the load ends.
+
 - One sortable per region container, plus one for the stats parked zone.
 - **`mainLeft` and `mainRight` get different `group` names**, making cross-column drags impossible
   by construction rather than by the prototype's runtime guard.
@@ -285,6 +288,9 @@ update, leaving SortableJS's edit in place happens to converge anyway, so nothin
 
 One shared composable so every region behaves identically. The handle is a real `<button>` — a
 `VcButton`, which renders one and lets `keydown` / `blur` fall through to it.
+
+*As built (VCST-5902):* `useKeyboardSort.ts` is gone; the ui-kit's `VcSortable` (`useSortableList`) now
+does the keyboard sorting, and `layout-region.vue` wires each region onto it.
 
 - **Space/Enter** grabs; **Space/Enter** drops; **Escape** cancels and restores; tab-out cancels.
 - **Stats row is horizontal:** ←/→ reorder within the row, ↑/↓ move between the visible and parked zones.
@@ -345,6 +351,9 @@ Three states the prototype could not specify, decided here:
   moves to the insertion point), `.sortable-drag` (the clone under the pointer) and
   `.sortable-chosen`. The ghost shows **the card itself at `.45`** under a dashed `primary-500`
   outline; the clone stays solid.
+  *As built (VCST-5902):* `VcSortable` sets `ghostClass` / `dragClass`, so the classes are now
+  `.vc-sortable__item--ghost` (themed by `--vc-sortable-ghost-opacity` / `--vc-sortable-accent-color`) and
+  `.vc-sortable__item--drag`; `.sortable-chosen` is unchanged.
 
   *Corrected 2026-07-29:* this originally read the prototype's `.45` fade as a workaround for native
   HTML5 DnD having no placeholder, and replaced it with an empty `bg-primary-50` slot. That was the
@@ -384,7 +393,9 @@ Following the module's existing `*.test.ts`-beside-source convention:
 - `useSalesRepLayout` with a mocked API: `null` → defaults; save emits a complete document including
   hidden blocks; mutation failure keeps the draft and stays in edit mode; query error disables editing.
 - `useKeyboardSort`: grab/move/drop/cancel transitions, the end-of-list clamps, blur-cancels, and
-  the horizontal region's park/restore on ↑/↓.
+  the horizontal region's park/restore on ↑/↓. *As built (VCST-5902):* these moved with the code into
+  the ui-kit's `useSortableList.test.ts` and `vc-sortable.test.ts`; `layout-drag-and-drop.test.ts`
+  keeps the park/restore wiring.
 - A test pinning the literal `scope` and region id strings, since the backend accepts any string and
   a typo would silently strand every saved layout.
 

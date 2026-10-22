@@ -9,3 +9,17 @@ export * from "./useListeners";
 export * from "./useQuantityValidationSchema";
 export * from "./useShellFocusEvents";
 export * from "./useSmartSticky";
+// By name: the item provider and the attribute names stay the kit's own.
+export { useSortableItem } from "./useSortableItem";
+export type { ISortableItemContext } from "./useSortableItem";
+export { useSortableList } from "./useSortableList";
+export type {
+  IUseSortableListOptions,
+  SortableGrabPayloadType,
+  SortableHandleAttrsType,
+  SortableItemAttrsType,
+  SortableMovePayloadType,
+  SortableOrientationType,
+  SortableReleasePayloadType,
+  SortableSignalType,
+} from "./useSortableList";

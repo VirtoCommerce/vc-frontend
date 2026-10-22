@@ -1,6 +1,7 @@
 // Saved dashboard / customer-profile layout (VCST-5367). The backend stores a per-rep document of
 // block order + hidden flags; see ../specs/VCST-5367-srh-layout-drag-and-drop/.
 import type { SalesRepRuleDomainType } from "./index";
+import type { SortableOrientationType } from "@/ui-kit/composables";
 import type { Component } from "vue";
 
 /** Layout surface. Free-form `String` server-side — the literals live in constants.ts. */
@@ -73,7 +74,7 @@ export type SalesRepLayoutStateType = {
 };
 
 /** Stat rows read left-to-right; widget columns read top-to-bottom. */
-export type KeyboardSortOrientationType = "horizontal" | "vertical";
+export type KeyboardSortOrientationType = SortableOrientationType;
 
 /** What a keyboard sort just did; the caller localizes it for the `aria-live` region. */
 export type KeyboardSortSignalType =

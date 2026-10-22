@@ -43,7 +43,7 @@
       <LayoutRegion
         role="group"
         :aria-labelledby="`${scope}-parked-stats`"
-        class="layout-stats__parked-zone"
+        :class="['layout-stats__parked-zone', { 'layout-stats__parked-zone--held': isParkedHeld }]"
         :scope="scope"
         :entries="hidden"
         orientation="horizontal"
@@ -56,6 +56,7 @@
         @reorder="$emit('reorderHidden', $event)"
         @set-hidden="(id, isHidden, index) => $emit('setHidden', id, isHidden, index)"
         @announce="$emit('announce', $event)"
+        @held-change="isParkedHeld = $event"
       >
         <template #default="{ id }">
           <StatWidget v-if="cardOf(id)" v-bind="cardProps(id)">
@@ -73,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import LayoutRegion from "./layout-region.vue";
 import StatWidget from "./stat-widget.vue";
@@ -102,6 +103,8 @@ const { t } = useI18n();
 // One group name per surface, shared by both zones — that shared name is what makes a card
 // draggable from visible to hidden and back.
 const group = computed(() => `sales-rep-stats-${props.scope}`);
+
+const isParkedHeld = ref(false);
 
 // Keyed lookup rather than a find per card: the row re-renders on every drag step.
 const byKey = computed(() => new Map(props.cards.map((card) => [card.key, card])));
@@ -132,8 +135,8 @@ function cardProps(id: string) {
 
 <style lang="scss">
 .layout-stats {
-  // Zone frames are painted 12px outside their box, so the gap has to clear that band before it reads
-  // as space: 20px here plus the label's 4px margin leaves the same 12px the padded frame used to.
+  // Zone frames overhang their slot by 12px (a negative margin), so the gap has to clear that band before
+  // it reads as space: 20px here plus the label's 4px margin leaves 12px between a frame and the label below it.
   @apply flex flex-col gap-5;
 
   &__label {
@@ -156,13 +159,18 @@ function cardProps(id: string) {
   &__parked-zone {
     @apply opacity-70;
 
-    background: repeating-linear-gradient(
+    background-image: repeating-linear-gradient(
       45deg,
       var(--color-neutral-50),
       var(--color-neutral-50) 9px,
       var(--color-neutral-100) 9px,
       var(--color-neutral-100) 18px
     );
+
+    // The zone unfades while one of its cards is keyboard-held, or that ring drops below 3:1 with it.
+    &--held {
+      @apply opacity-100;
+    }
   }
 }
 </style>

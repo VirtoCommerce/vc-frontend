@@ -83,6 +83,7 @@ function setup() {
   // Spied as well as applied: a same-list drag must emit no park at all, which surviving state alone
   // cannot show — `setHidden` would no-op on a block already in the half it names.
   const setHidden = vi.fn();
+  const announce = vi.fn();
 
   const Harness = defineComponent({
     setup() {
@@ -106,6 +107,7 @@ function setup() {
           editing: layout.editing.value,
           onReorder: (ids: string[]) => layout.reorderVisible("statistics", ids),
           onSetHidden: toggleHidden,
+          onAnnounce: announce,
         });
     },
   });
@@ -116,7 +118,7 @@ function setup() {
     attachTo: document.body,
     global: { stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
   });
-  return { wrapper, api, setHidden };
+  return { wrapper, api, setHidden, announce };
 }
 
 /** Replay a drop into another zone: SortableJS's DOM move, then the handler it fires. */
@@ -189,6 +191,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
+    await vi.dynamicImportSettled();
     const [visible, hidden] = zones;
 
     // Visible half first, then the parked one — the two zones render in that order.
@@ -197,6 +200,8 @@ describe("stat row drag and drop", () => {
 
     await moveWithin(visible, "new_orders", 1);
     await dropInto(hidden, visible, "active_carts");
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(api.visibleIn("statistics")).toContain("active_carts");
 
     const ids = blockIds(wrapper);
     expect(new Set(ids).size).toBe(ids.length);
@@ -221,6 +226,90 @@ describe("stat row drag and drop", () => {
     expect(api.state.value.regions.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
   });
 
+  it("keeps a card parked by keyboard parked on Escape", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+    const before = [...api.visibleIn("statistics")];
+    const key = async (name: string) => {
+      wrapper.find('[data-block-id="active_carts"]').element.dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+      await nextTick();
+      await nextTick();
+    };
+
+    await key(" ");
+    await key("ArrowDown");
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+    expect(wrapper.find('[data-block-id="active_carts"]').attributes("aria-pressed")).toBe("false");
+
+    await key("Escape");
+
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+    expect(api.visibleIn("statistics")).toEqual(before.filter((id) => id !== "active_carts"));
+  });
+
+  it("keeps a parked card parked when focus leaves it, without pulling focus back", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+    const outside = document.body.appendChild(document.createElement("button"));
+    const card = () => wrapper.find('[data-block-id="active_carts"]').element as HTMLElement;
+
+    try {
+      card().focus();
+      card().dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+      card().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+      await nextTick();
+      await nextTick();
+      expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+
+      outside.focus();
+      await nextTick();
+      await nextTick();
+
+      expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+      expect(document.activeElement).toBe(outside);
+    } finally {
+      outside.remove();
+    }
+  });
+
+  it("keeps a card restored by keyboard visible on Escape and when focus leaves it, leaving focus there", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+    const outside = document.body.appendChild(document.createElement("button"));
+    const card = () => wrapper.find('[data-block-id="active_carts"]').element as HTMLElement;
+    const key = async (name: string) => {
+      card().dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+      await nextTick();
+      await nextTick();
+    };
+
+    try {
+      await key(" ");
+      await key("ArrowDown");
+      expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+      await key(" ");
+      await key("ArrowUp");
+      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(card().getAttribute("aria-pressed")).toBe("false");
+
+      await key("Escape");
+      expect(api.hiddenIn("statistics")).toEqual([]);
+
+      outside.focus();
+      await nextTick();
+      await nextTick();
+
+      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(api.visibleIn("statistics")).toContain("active_carts");
+      expect(document.activeElement).toBe(outside);
+    } finally {
+      outside.remove();
+    }
+  });
+
   it("moves focus with a stat card that is parked by keyboard", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -240,8 +329,6 @@ describe("stat row drag and drop", () => {
     expect(wrapper.element.contains(document.activeElement)).toBe(true);
   });
 
-  // `layout-block--grabbed` is not gated on edit mode, so a grab left behind keeps the card at 45%
-  // opacity with a drop shadow on the ordinary dashboard, and Space would drop rather than grab it.
   it("drops a held card's grab when edit mode ends", async () => {
     const { wrapper, api } = setup();
     api.startEdit();
@@ -250,20 +337,117 @@ describe("stat row drag and drop", () => {
     const card = wrapper.find('[data-block-id="orders_placed_week"]');
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     await nextTick();
-    expect(card.element.className).toContain("layout-block--grabbed");
+    expect(card.element.className).toContain("vc-sortable__item--grabbed");
 
     api.cancel();
     await nextTick();
 
-    expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "layout-block--grabbed",
-    );
-
     api.startEdit();
     await nextTick();
     expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "layout-block--grabbed",
+      "vc-sortable__item--grabbed",
     );
+  });
+
+  describe("the parked zone's held state", () => {
+    const parkedZone = (wrapper: ReturnType<typeof setup>["wrapper"]) => wrapper.find(".layout-stats__parked-zone");
+    const isHeld = (wrapper: ReturnType<typeof setup>["wrapper"]) =>
+      parkedZone(wrapper).classes("layout-stats__parked-zone--held");
+    const press = async (wrapper: ReturnType<typeof setup>["wrapper"], id: string, key: string) => {
+      wrapper.find(`[data-block-id="${id}"]`).element.dispatchEvent(new KeyboardEvent("keydown", { key }));
+      await nextTick();
+      await nextTick();
+    };
+
+    function setupParked() {
+      const harness = setup();
+      harness.api.startEdit();
+      harness.api.setHidden("active_carts", true);
+      return harness;
+    }
+
+    it("is on while a parked card is keyboard-held, and off once it is let go", async () => {
+      const { wrapper } = setupParked();
+      await nextTick();
+      expect(isHeld(wrapper)).toBe(false);
+
+      await press(wrapper, "active_carts", " ");
+      expect(isHeld(wrapper)).toBe(true);
+
+      await press(wrapper, "active_carts", "Escape");
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("is off once a held card leaves the zone", async () => {
+      const { wrapper, api } = setupParked();
+      await nextTick();
+
+      await press(wrapper, "active_carts", " ");
+      await press(wrapper, "active_carts", "ArrowUp");
+
+      expect(api.hiddenIn("statistics")).toEqual([]);
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("stays off while a card of the visible zone is held", async () => {
+      const { wrapper } = setupParked();
+      await nextTick();
+
+      await press(wrapper, "orders_placed_week", " ");
+
+      expect(wrapper.find('[data-block-id="orders_placed_week"]').attributes("aria-pressed")).toBe("true");
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("stays off for a pointer drag, as the old `aria-pressed` match did", async () => {
+      const { wrapper } = setupParked();
+      await nextTick();
+      await vi.dynamicImportSettled();
+      const [, hidden] = zones;
+      const item = wrapper.find('[data-block-id="active_carts"]').element;
+
+      hidden.options.onChoose({ item });
+      hidden.options.onStart({ item, from: hidden.el, oldIndex: 0 });
+      await nextTick();
+
+      expect(isHeld(wrapper)).toBe(false);
+    });
+
+    it("stays on when a pointer drag of another card ends while one is keyboard-held", async () => {
+      const { wrapper, api } = setupParked();
+      api.setHidden("new_orders", true);
+      await nextTick();
+      await vi.dynamicImportSettled();
+      const [, hidden] = zones;
+      const dragged = wrapper.find('[data-block-id="new_orders"]').element;
+
+      hidden.options.onChoose({ item: dragged });
+      hidden.options.onStart({ item: dragged, from: hidden.el, oldIndex: 1 });
+      await press(wrapper, "active_carts", " ");
+      expect(isHeld(wrapper)).toBe(true);
+
+      hidden.options.onEnd({ item: dragged, from: hidden.el, to: hidden.el, oldIndex: 1, newIndex: 1 });
+      await nextTick();
+
+      expect(wrapper.find('[data-block-id="active_carts"]').attributes("aria-pressed")).toBe("true");
+      expect(isHeld(wrapper)).toBe(true);
+    });
+
+    it("is off again when edit mode ends with a card held and starts over", async () => {
+      const { wrapper, api } = setupParked();
+      await nextTick();
+      await press(wrapper, "active_carts", " ");
+      expect(isHeld(wrapper)).toBe(true);
+
+      api.cancel();
+      await nextTick();
+      api.startEdit();
+      api.setHidden("active_carts", true);
+      await nextTick();
+
+      expect(parkedZone(wrapper).exists()).toBe(true);
+      expect(isHeld(wrapper)).toBe(false);
+    });
   });
 
   // Backward is the direction that catches `restore()` reading the child index before removing the
@@ -274,6 +458,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
 
     const before = [...api.visibleIn("statistics")];
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], before[2], -1);
 
     const after = movedTo(before, 2, 1);
@@ -288,6 +473,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], api.visibleIn("statistics")[0], 1);
 
     expect(setHidden).not.toHaveBeenCalled();
@@ -314,6 +500,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
 
     const before = [...api.visibleIn("statistics")];
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], before.at(-1), -1);
 
     const expected = [...before.slice(0, -2), before.at(-1), before.at(-2)];
@@ -325,10 +512,11 @@ describe("stat row drag and drop", () => {
   // that makes dragging possible at all were dropped.
   it("wires the Sortable options the drag behaviour depends on", async () => {
     const { api } = setup();
+    await vi.dynamicImportSettled();
     const [visible] = zones;
 
-    expect(visible.options.draggable).toBe(".layout-block");
-    expect(visible.options.group).toBe("sales-rep-stats-dashboard");
+    expect(visible.options.draggable).toBe("[data-sortable-id]");
+    expect(visible.options.group).toMatchObject({ name: "sales-rep-stats-dashboard" });
     // Whole-card drag for stats, so no handle selector narrows it.
     expect(visible.options.handle).toBeUndefined();
     // Disabled until edit mode, and enabled by the watch rather than a rebuild.
@@ -355,21 +543,79 @@ describe("stat row drag and drop", () => {
     const card = wrapper.find('[data-block-id="orders_placed_week"]');
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     await nextTick();
-    expect(card.element.className).toContain("layout-block--grabbed");
+    expect(card.element.className).toContain("vc-sortable__item--grabbed");
 
     const order = api.visibleIn("statistics");
+    await vi.dynamicImportSettled();
     zones[0].options.onChoose({ item: card.element });
     await nextTick();
 
     expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
-      "layout-block--grabbed",
+      "vc-sortable__item--grabbed",
     );
     // Released, not cancelled — a cancel would reshuffle the list mid-drag.
     expect(api.visibleIn("statistics")).toEqual(order);
   });
 
-  it("ignores the park key for a card already in the zone that key leads to", async () => {
+  it("makes a stat card a named button only while editing", async () => {
     const { wrapper, api } = setup();
+    const card = () => wrapper.find('[data-block-id="orders_placed_week"]');
+
+    expect(card().attributes("role")).toBeUndefined();
+    expect(card().attributes("aria-label")).toBeUndefined();
+
+    api.startEdit();
+    await nextTick();
+
+    expect(card().attributes("role")).toBe("button");
+    expect(card().attributes("aria-label")).toBe("sales_rep.hub.layout.a11y.reorder");
+  });
+
+  it("announces a grab, a park and a restore in the stat row's own words, and a no-op not at all", async () => {
+    const { wrapper, api, announce } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const key = (id: string, name: string) =>
+      wrapper.find(`[data-block-id="${id}"]`).element.dispatchEvent(new KeyboardEvent("keydown", { key: name }));
+
+    key("active_carts", " ");
+    expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed", parkable: true }));
+
+    key("active_carts", "ArrowDown");
+    await nextTick();
+    expect(announce).toHaveBeenLastCalledWith({ kind: "parked", id: "active_carts" });
+
+    // The park ended the grab: an arrow alone does nothing, and a restore needs a new grab.
+    await nextTick();
+    announce.mockClear();
+    key("active_carts", "ArrowUp");
+    expect(announce).not.toHaveBeenCalled();
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+
+    key("active_carts", " ");
+    key("active_carts", "ArrowUp");
+    await nextTick();
+    expect(announce).toHaveBeenLastCalledWith({ kind: "restored", id: "active_carts" });
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(api.visibleIn("statistics")).toContain("active_carts");
+  });
+
+  it("leaves the announcing to the surface's region, rendering none per list", async () => {
+    const { wrapper, api, announce } = setup();
+    api.startEdit();
+    await nextTick();
+
+    wrapper.find('[data-block-id="active_carts"]').element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    await nextTick();
+    await nextTick();
+
+    expect(announce).toHaveBeenCalledWith(expect.objectContaining({ kind: "grabbed" }));
+    expect(document.querySelectorAll('[aria-live="polite"]')).toHaveLength(0);
+  });
+
+  it("ignores the park key for a card already in the zone that key leads to", async () => {
+    const { wrapper, api, announce } = setup();
     api.startEdit();
     await nextTick();
 
@@ -383,6 +629,7 @@ describe("stat row drag and drop", () => {
 
     expect(api.visibleIn("statistics")).toEqual(before);
     expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed" }));
   });
 
   // The region is one array and `hidden` is a flag, so without the drop index the card lands wherever
@@ -392,6 +639,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
+    await vi.dynamicImportSettled();
     const [visible, hidden] = zones;
 
     // active_carts sits at array index 1, my_customers at 3.
@@ -405,7 +653,8 @@ describe("stat row drag and drop", () => {
 // The stat row is horizontal and drags whole cards; a widget column is vertical and drags by a handle,
 // so it exercises a different branch of the same component.
 describe("widget column drag and drop", () => {
-  function setupColumn() {
+  function setupColumn({ hiddenSibling = false } = {}) {
+    const announce = vi.fn();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the composable's full surface
     let api: any;
 
@@ -422,20 +671,25 @@ describe("widget column drag and drop", () => {
         // a stand-in would leave the button this suite clicks unrendered.
         const slots = { default: () => h(LayoutWidget, { title: "widget" }, { default: () => "body" }) };
 
-        return () =>
+        const region = (dropHidden: boolean) =>
           h(
             LayoutRegion,
             {
               scope: "customerProfile",
-              entries: layout.visibleIn("mainRight"),
+              entries: dropHidden ? layout.hiddenIn("mainRight") : layout.visibleIn("mainRight"),
               orientation: "vertical",
               group: "sales-rep-customer-main-right",
               editing: layout.editing.value,
+              dropHidden,
               onReorder,
               onSetHidden,
+              onAnnounce: announce,
             },
             slots,
           );
+
+        // A paired hidden zone gives the cross-axis arrows somewhere to go, so its absence becomes observable.
+        return () => (hiddenSibling ? h("div", [region(false), region(true)]) : region(false));
       },
     });
 
@@ -448,7 +702,7 @@ describe("widget column drag and drop", () => {
         stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true },
       },
     });
-    return { wrapper, api };
+    return { wrapper, api, announce };
   }
 
   it("reorders a column and leaves no duplicate node behind", async () => {
@@ -458,11 +712,35 @@ describe("widget column drag and drop", () => {
 
     expect(api.visibleIn("mainRight")).toEqual(["actions", "info"]);
 
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], "actions", 1);
 
     expect(api.visibleIn("mainRight")).toEqual(["info", "actions"]);
     const ids = blockIds(wrapper);
     expect(ids).toEqual(["info", "actions"]);
+  });
+
+  it("gives a widget column no keyboard route into another list", async () => {
+    const { wrapper, api, announce } = setupColumn({ hiddenSibling: true });
+    api.startEdit();
+    await nextTick();
+
+    const handle = wrapper.find('[data-block-id="actions"] .layout-widget__handle');
+    handle.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    expect(announce).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "grabbed", parkable: false }));
+    handle.element.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    await nextTick();
+
+    expect(api.hiddenIn("mainRight")).toEqual([]);
+    expect(handle.attributes("aria-pressed")).toBe("true");
+  });
+
+  it("leaves a widget block unlabelled: its handle carries the name", async () => {
+    const { wrapper, api } = setupColumn();
+    api.startEdit();
+    await nextTick();
+
+    expect(wrapper.find('[data-block-id="actions"]').attributes("aria-label")).toBeUndefined();
   });
 
   it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
@@ -478,20 +756,22 @@ describe("widget column drag and drop", () => {
 
   // ✕ now lives inside the drag surface, so `filter` is the only thing stopping a mousedown on it from
   // starting a drag. Sortable is stubbed here, so this pins the wiring — the gesture is a manual check.
-  it("gives Sortable a header handle, and excludes the hide button from it", () => {
+  it("gives Sortable a header handle, and excludes the hide button from it", async () => {
     setupColumn();
 
+    await vi.dynamicImportSettled();
     expect(zones[0].options).toMatchObject({
-      handle: WIDGET_DRAG_HANDLE_SELECTOR,
+      handle: `.vc-sortable__handle, ${WIDGET_DRAG_HANDLE_SELECTOR}`,
       filter: WIDGET_DRAG_FILTER_SELECTOR,
       preventOnFilter: false,
     });
   });
 
   // Stat cards drag whole and carry no ✕, so neither option applies.
-  it("leaves the stat row dragging whole, with no handle or filter", () => {
+  it("leaves the stat row dragging whole, with no handle or filter", async () => {
     setup();
 
+    await vi.dynamicImportSettled();
     expect(zones[0].options.handle).toBeUndefined();
     expect(zones[0].options.filter).toBeUndefined();
   });
@@ -622,6 +902,7 @@ describe("a drop the draft refuses", () => {
 
     // A save in flight — `editable()` is false, so `reorderVisible` is a no-op.
     apolloMock.loading.value = true;
+    await vi.dynamicImportSettled();
     await moveWithin(zones[0], before[0], 1);
     apolloMock.loading.value = false;
 
@@ -635,6 +916,7 @@ describe("a drop the draft refuses", () => {
     await nextTick();
 
     const before = [...api.visibleIn("statistics")];
+    await vi.dynamicImportSettled();
     const [visible, hidden] = zones;
 
     apolloMock.loading.value = true;

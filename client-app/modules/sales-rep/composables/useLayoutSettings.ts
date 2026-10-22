@@ -1,7 +1,7 @@
 // The surface-level settings seam (VCST-5649). `layout-surface.vue` owns the draft and the registry,
 // so it is the only component that can answer both "what did the rep choose for this block" and
-// "what is this block allowed to choose from"; `layout-block.vue` injects this and folds each block's
-// slice into the chrome it already provides.
+// "what is this block allowed to choose from"; `layout-block.vue` injects this and offers each block's
+// slice through `provideBlockSettings`.
 import { inject, provide } from "vue";
 import type { SalesRepBlockSettingsType, SalesRepBlockSettingType } from "../types/layout";
 import type { InjectionKey } from "vue";
