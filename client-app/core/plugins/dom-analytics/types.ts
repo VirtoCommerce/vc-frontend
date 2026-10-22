@@ -15,10 +15,22 @@ export type AttrFieldType = {
   type?: "number";
 };
 
+export type PositionFieldType = {
+  /**
+   * `data-vc-track` of the item whose zero-based position in the scope is read: the closest one around the
+   * trigger element. Its place in the array bound to the scope, else among the scope's own items in DOM order,
+   * the order `collect` reports them in.
+   */
+  position: string;
+};
+
 export type ObjectSourceType = ScopeType & {
   source: "object";
-  /** Target path (dot notation allowed) → attribute to read it from */
-  fields: Record<string, AttrFieldType>;
+  /**
+   * Target path (dot notation allowed) → attribute to read it from, or a position.
+   * A position alone never makes the object: at least one attribute must resolve.
+   */
+  fields: Record<string, AttrFieldType | PositionFieldType>;
 };
 
 export type ItemSourceType = ScopeType & {

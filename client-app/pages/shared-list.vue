@@ -79,7 +79,7 @@ import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { prepareLineItem } from "@/core/utilities";
+import { getProductListIndex, prepareLineItem } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import {
@@ -142,12 +142,18 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
 
+// The products reported in the list's view_item_list: a selected product's position is its position there
+let reportedProducts: { id: string }[] = [];
+
 function selectItemEvent(item: Product | undefined): void {
   if (!item) {
     return;
   }
 
-  analytics("selectItem", item, wishlistListProperties.value);
+  analytics("selectItem", item, {
+    ...wishlistListProperties.value,
+    index: getProductListIndex(reportedProducts, item.id),
+  });
 }
 
 // Follows list-details' addOrUpdateCartItem, minus the result modal. The list is not the viewer's, so this only
@@ -191,6 +197,7 @@ watchEffect(() => {
   const itemsWithProduct = list.value?.items?.map((item) => item.product).filter((prod): prod is Product => !!prod);
 
   if (itemsWithProduct?.length) {
+    reportedProducts = itemsWithProduct;
     analytics("viewItemList", itemsWithProduct, wishlistListProperties.value);
   }
 });

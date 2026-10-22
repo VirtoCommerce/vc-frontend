@@ -19,7 +19,7 @@
         :saved-for-later-list="savedForLaterList"
         :background="false"
         :loading="loading"
-        @link-click="selectItemEvent(item.product)"
+        @link-click="selectItemEvent(item.product, index)"
         @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)"
       />
     </VcProductsGrid>
@@ -74,12 +74,12 @@ const listProperties = computed(() => ({
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 
-function selectItemEvent(item?: SavedForLaterListFragment["items"][number]["product"]) {
+function selectItemEvent(item: SavedForLaterListFragment["items"][number]["product"] | undefined, index: number) {
   if (!item) {
     return;
   }
 
-  analytics("selectItem", item as Product, listProperties.value);
+  analytics("selectItem", item as Product, { ...listProperties.value, index });
 }
 </script>
 

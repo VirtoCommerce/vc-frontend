@@ -19,3 +19,9 @@ export function getProductRoute(
   const prefix = basePath?.replace(/\/$/, "") ?? "";
   return `${prefix}/${productSlug}`;
 }
+
+/** Zero-based position of a product in a list reported to analytics, `undefined` when it is not in the list */
+export function getProductListIndex(products: { id: string }[], productId: string): number | undefined {
+  const index = products.findIndex(({ id }) => id === productId);
+  return index === -1 ? undefined : index;
+}

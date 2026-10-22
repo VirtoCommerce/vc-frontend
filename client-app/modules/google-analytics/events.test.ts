@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { CustomerOrderType, OrderLineItemType, Product } from "@/core/api/graphql/types";
+import type { CustomerOrderType, LineItemType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 
 const hoisted = vi.hoisted(() => ({
   currentCurrencyRef: { value: { code: "USD" } },
@@ -190,6 +190,29 @@ describe("google-analytics events", () => {
       expect(item.currency).toBe("EUR");
       expect(item.item_list_id).toBe("category_printers_page_1");
       expect(item.item_list_name).toBe('Category "Printers" (page 1)');
+    });
+
+    it("gives the selected item its position in the list, not the event", async () => {
+      const { events } = await import("./events");
+
+      void events.selectItem!(buildProduct({ code: "SKU-C" }), { item_list_id: "category_printers_page_1", index: 2 });
+
+      const [, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(payload.items[0].index).toBe(2);
+      expect(payload).not.toHaveProperty("index");
+      expect(payload.item_list_id).toBe("category_printers_page_1");
+    });
+
+    it("gives a selected cart line its position too", async () => {
+      const { events } = await import("./events");
+
+      const lineItem = { ...buildOrderLineItem({ sku: "SKU-L" }), productId: "P-1" } as unknown as LineItemType;
+      void events.selectItem!(lineItem, { item_list_id: "cart", index: 1 });
+
+      const [, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(payload.items[0].item_id).toBe("SKU-L");
+      expect(payload.items[0].index).toBe(1);
+      expect(payload).not.toHaveProperty("index");
     });
   });
 

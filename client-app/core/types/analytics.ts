@@ -10,7 +10,10 @@ import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
 
 export interface IBasicAnalyticsEventMap {
   viewItemList: [items: { code: string }[], params?: EventParamsType & ListPropertiesType];
-  selectItem: [item: Product | LineItemType, params?: EventParamsType & ListPropertiesType];
+  selectItem: [
+    item: Product | LineItemType,
+    params?: EventParamsType & ListPropertiesType & SelectItemParamsAdditionalType,
+  ];
   viewItem: [item: Product, params?: EventParamsType];
   addItemToWishList: [item: Product, params?: EventParamsType];
   addItemToCart: [
@@ -45,6 +48,10 @@ export type AddToCartParamsAdditionalType = {
   source_route?: string;
   source_block?: string;
   search_term?: string;
+};
+export type SelectItemParamsAdditionalType = {
+  /** Zero-based position of the item in the list it was selected from, as reported in that list's `viewItemList` */
+  index?: number;
 };
 export type LoginParamsAdditionalType = { errors?: string; success?: boolean };
 export type SignUpParamsAdditionalType = { type?: string; errors?: string; success?: boolean };
