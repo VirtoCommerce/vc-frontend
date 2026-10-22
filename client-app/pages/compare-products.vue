@@ -26,7 +26,7 @@
 
       <div class="compare-products__actions">
         <VcButton
-          class="hidden md:inline-flex print:hidden"
+          class="compare-products__clear-all"
           variant="outline"
           size="sm"
           :disabled="isEmpty"
@@ -37,7 +37,7 @@
         </VcButton>
 
         <VcButton
-          class="md:hidden"
+          class="compare-products__clear-all-icon"
           variant="outline"
           size="sm"
           :disabled="isEmpty"
@@ -306,6 +306,22 @@ onUnmounted(() => {
 
   &__actions {
     @apply flex gap-2;
+
+    @media print {
+      @apply hidden;
+    }
+  }
+
+  &__clear-all {
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
+  }
+
+  &__clear-all-icon {
+    @media (min-width: theme("screens.md")) {
+      @apply hidden;
+    }
   }
 
   &__empty-state,
