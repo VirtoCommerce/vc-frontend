@@ -134,11 +134,14 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
   }
 
   const rounded = Math.round(percent);
+  // The locale's percent and sign ("+12%", "+12 %" in German); a change that rounds to zero carries no sign.
+  const text = globals.i18n.global.n(rounded / 100, { style: "percent", signDisplay: "exceptZero" });
+
   if (rounded > 0) {
-    return { text: `+${rounded}%`, tone: "positive", icon: "chevron-up" };
+    return { text, tone: "positive", icon: "chevron-up" };
   }
   if (rounded < 0) {
-    return { text: `${rounded}%`, tone: "negative", icon: "chevron-down" };
+    return { text, tone: "negative", icon: "chevron-down" };
   }
-  return { text: "0%", tone: "neutral", icon: "minus" };
+  return { text, tone: "neutral", icon: "minus" };
 }

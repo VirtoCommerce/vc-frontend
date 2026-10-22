@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { globals } from "@/core/globals";
 import { buildStatisticsWindows, formatSignedPercent, formatStatCount, formatStatMoney } from "./statistics";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
@@ -196,5 +197,16 @@ describe("formatSignedPercent", () => {
   // Rounds to zero, so it must not read as a rise or a fall.
   it("reads a change that rounds to zero as no change", () => {
     expect(formatSignedPercent(0.4)).toEqual({ text: "0%", tone: "neutral", icon: "minus" });
+  });
+
+  // Not glued by hand: German puts a no-break space before the percent sign.
+  it("writes the sign and the percent the way the locale does", () => {
+    globals.i18n.global.locale.value = "de-DE";
+
+    try {
+      expect(formatSignedPercent(12.4)?.text).toBe("+12\u00a0%");
+    } finally {
+      globals.i18n.global.locale.value = "en-US";
+    }
   });
 });
