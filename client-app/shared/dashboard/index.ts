@@ -15,15 +15,7 @@ export { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "./docum
 export { getBlock, getBlockRegistry, registerBlock, unregisterBlock } from "./registry";
 export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "./settings";
 export { buildStatCards, statBlocks, statCardState, statDataNeeds } from "./stat-cards";
-export {
-  buildStatisticsWindows,
-  eod,
-  formatSignedPercent,
-  formatStatCount,
-  formatStatMoney,
-  iso,
-  local,
-} from "./statistics";
+export { buildStatisticsWindows, formatSignedPercent, formatStatCount, formatStatMoney } from "./statistics";
 export type { ILayoutBlockChromeType } from "./composables/useBlockChrome";
 export type { IStatCardDefType, StatCardDataType, StatNeedResultType, StatQueryStateType } from "./stat-cards";
 export type { SignedPercentType, StatisticsWindowsType } from "./statistics";

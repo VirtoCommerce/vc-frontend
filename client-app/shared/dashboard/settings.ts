@@ -2,6 +2,7 @@
 // backend stores (VCST-5649). Pure, like document.ts — reading is where the validation and
 // fallback rules live, so it is the part worth testing. `settings.value` is a scalar only, which is
 // why the status-tab selection is flattened into one sibling key per unchecked rule.
+import { clamp } from "lodash-es";
 import { SETTING_HIDDEN_TAB_PREFIX, SETTING_MAX_ROWS } from "./constants";
 import type {
   BlockSettingsType,
@@ -12,7 +13,8 @@ import type {
   SavedLayoutSettingType,
 } from "./types";
 
-const EMPTY_SETTINGS: BlockSettingsType = { hiddenTabs: [] };
+/** A block with nothing saved: no tab hidden, the row cap at its default. */
+export const EMPTY_SETTINGS: BlockSettingsType = { hiddenTabs: [] };
 
 function declaredSettings(block: BlockType): readonly BlockSettingType[] {
   return ("settings" in block ? block.settings : undefined) ?? [];
@@ -32,7 +34,8 @@ function meansHidden(value: unknown): boolean {
   return value === false || value === "false";
 }
 
-function clampRows(value: unknown, setting: MaxRowsSettingType): number {
+/** A row count as stored or typed, truncated; `undefined` for anything that is not one. */
+export function parseRows(value: unknown): number | undefined {
   // The type gate is load-bearing: `Number` maps `null` to 0 and `true` to 1, so without it a value
   // that means nothing here would clamp to the minimum and look deliberate. Past it, `Number` rather
   // than `parseInt`, so a string that is not entirely numeric ("5 rows") falls back instead of
@@ -40,10 +43,13 @@ function clampRows(value: unknown, setting: MaxRowsSettingType): number {
   const numeric = typeof value === "number" || (typeof value === "string" && value.trim() !== "");
   const parsed = numeric ? Math.trunc(Number(value)) : Number.NaN;
 
-  if (!Number.isFinite(parsed)) {
-    return setting.default;
-  }
-  return Math.min(Math.max(parsed, setting.min), setting.max);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function clampRows(value: unknown, setting: MaxRowsSettingType): number {
+  const parsed = parseRows(value);
+
+  return parsed === undefined ? setting.default : clamp(parsed, setting.min, setting.max);
 }
 
 /**

@@ -39,13 +39,7 @@ export function orderStatisticsFlags(needs: ReadonlySet<AccountStatNeedType>) {
  * would select nothing and the round trip would return only the currency code.
  */
 export function needsOrderStatistics(needs: ReadonlySet<AccountStatNeedType>): boolean {
-  return (
-    needs.has("week") ||
-    needs.has("mtd") ||
-    needs.has("monthOverMonth") ||
-    needs.has("ytd") ||
-    needs.has("yearOverYear")
-  );
+  return [...needs].some((need) => need !== "averageOrderValue");
 }
 
 /**
@@ -100,26 +94,37 @@ export function accountCardData(
     };
   }
 
-  const week = statistics?.week;
-  const mtd = statistics?.mtd;
+  // An "orders placed" card: the period's count and total, and the count against the previous period.
+  function ordersPlaced(
+    period: OrderStatisticsType["week"] | undefined,
+    countChangePercent: number | null | undefined,
+    vsKey: string,
+  ): StatCardDataType {
+    return {
+      value: formatStatCount(period?.count),
+      sub: withExcluded(formatStatMoney(period?.total), period?.excludedCount),
+      ...delta(countChangePercent, vsKey),
+    };
+  }
+
   const ytd = statistics?.ytd;
 
   return {
-    orders_placed_week: {
-      value: formatStatCount(week?.count),
-      sub: withExcluded(formatStatMoney(week?.total), week?.excludedCount),
-      ...delta(statistics?.weekOverWeek?.countChangePercent, "shared.account.dashboard.vs_last_week"),
-    },
-    orders_placed_mtd: {
-      value: formatStatCount(mtd?.count),
-      sub: withExcluded(formatStatMoney(mtd?.total), mtd?.excludedCount),
-      ...delta(statistics?.monthOverMonth?.countChangePercent, "shared.account.dashboard.vs_last_month"),
-    },
-    orders_placed_ytd: {
-      value: formatStatCount(ytd?.count),
-      sub: withExcluded(formatStatMoney(ytd?.total), ytd?.excludedCount),
-      ...delta(statistics?.yearOverYear?.countChangePercent, "shared.account.dashboard.vs_last_year"),
-    },
+    orders_placed_week: ordersPlaced(
+      statistics?.week,
+      statistics?.weekOverWeek?.countChangePercent,
+      "shared.account.dashboard.vs_last_week",
+    ),
+    orders_placed_mtd: ordersPlaced(
+      statistics?.mtd,
+      statistics?.monthOverMonth?.countChangePercent,
+      "shared.account.dashboard.vs_last_month",
+    ),
+    orders_placed_ytd: ordersPlaced(
+      ytd,
+      statistics?.yearOverYear?.countChangePercent,
+      "shared.account.dashboard.vs_last_year",
+    ),
     avg_order_value: {
       value: formatStatMoney(ytd?.average),
       sub: withExcluded(t("shared.account.dashboard.per_order"), ytd?.excludedCount),

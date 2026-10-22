@@ -23,7 +23,7 @@
       @announce="$emit('announce', $event)"
     >
       <template #default="{ id }">
-        <VcStatCard v-if="cardOf(id)" v-bind="cardProps(id)">
+        <VcStatCard v-if="propsById.get(id)" v-bind="propsById.get(id)">
           <template v-if="editing" #leading>
             <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
             <span class="layout-stats__handle" aria-hidden="true">
@@ -58,8 +58,8 @@
         @announce="$emit('announce', $event)"
       >
         <template #default="{ id }">
-          <VcStatCard v-if="cardOf(id)" v-bind="cardProps(id)">
-            <template v-if="editing" #leading>
+          <VcStatCard v-if="propsById.get(id)" v-bind="propsById.get(id)">
+            <template #leading>
               <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
               <span class="layout-stats__handle" aria-hidden="true">
                 <VcIcon name="switch-vertical" :size="16" />
@@ -101,30 +101,26 @@ const { t } = useI18n();
 // draggable from visible to hidden and back.
 const group = computed(() => `layout-stats-${props.scope}`);
 
-// Keyed lookup rather than a find per card: the row re-renders on every drag step.
-const byKey = computed(() => new Map(props.cards.map((card) => [card.key, card])));
-
-const cardOf = (id: string) => byKey.value.get(id);
+// Keyed by id and built once per cards change, not per lookup: the row re-renders on every drag step. The
+// template's `v-if` skips an id with no card.
+const propsById = computed(() => new Map(props.cards.map((card) => [card.key, cardProps(card)])));
 
 // Explicit, not spread: `key` and `labelKey` are not VcStatCard props and would leak onto its root.
-// Total return keeps the label and value strings; the template's `v-if` skips an unknown id.
-function cardProps(id: string) {
-  const card = cardOf(id);
-
+function cardProps(card: StatCardType) {
   return {
-    label: card ? t(card.labelKey) : id,
-    value: card?.value ?? "",
-    valueSuffix: card?.valueSuffix,
-    icon: card?.icon ?? "",
-    color: card?.color,
-    sub: card?.sub,
-    delta: card?.delta,
-    deltaTone: card?.deltaTone,
-    deltaIcon: card?.deltaIcon,
+    label: t(card.labelKey),
+    value: card.value,
+    valueSuffix: card.valueSuffix,
+    icon: card.icon,
+    color: card.color,
+    sub: card.sub,
+    delta: card.delta,
+    deltaTone: card.deltaTone,
+    deltaIcon: card.deltaIcon,
     // Per card, not per row: each is fed by exactly one statistics query (VCST-5586), so a slow or
     // failed query must only mark its own cards.
-    loading: card?.loading,
-    errorText: card?.failed ? t("shared.dashboard.stats.load_failed") : "",
+    loading: card.loading,
+    errorText: card.failed ? t("shared.dashboard.stats.load_failed") : "",
   };
 }
 </script>

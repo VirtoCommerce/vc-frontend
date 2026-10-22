@@ -32,7 +32,12 @@ vi.mock("@/core/api/graphql/orders/queries/getOrderStatistics", () => ({
     return { result: query.result, loading: query.loading, error: query.error, onError: vi.fn() };
   },
 }));
-vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US" } }));
+vi.mock("@/core/globals", async () => {
+  const { createI18n: createAppI18n } = await import("@/i18n");
+  return {
+    globals: { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", i18n: createAppI18n("en-US", "USD") },
+  };
+});
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", async (importOriginal) => ({
   ...(await importOriginal<typeof import("vue-i18n")>()),

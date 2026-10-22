@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 import { buildStatisticsWindows, formatSignedPercent, formatStatCount, formatStatMoney } from "./statistics";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
-vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US", currencyCode: "USD" } }));
+vi.mock("@/core/globals", async () => {
+  const { createI18n } = await import("@/i18n");
+  return { globals: { cultureName: "en-US", currencyCode: "USD", i18n: createI18n("en-US", "USD") } };
+});
 
 // The windows are the user's calendar days expressed as UTC instants, so every expectation is built with
 // local-time constructors too — that keeps the suite meaningful in whatever zone it runs in (CI, a dev box

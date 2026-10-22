@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { reconcileLayout } from "../../document";
 import { getBlockRegistry } from "../../registry";
-import type { LayoutRegionIdType } from "../../types";
 
 interface IProps {
   scope: string;
@@ -31,18 +31,15 @@ const props = defineProps<IProps>();
 // One count for all: the real widget renders as many rows as its list has entries.
 const BLOCK_ROWS = 5;
 
-// From the registry: the saved arrangement is exactly what is not known yet.
-const blocksIn = (region: LayoutRegionIdType) =>
-  getBlockRegistry(props.scope)
-    .filter((block) => block.region === region && !block.defaultHidden)
-    .map((block) => block.id);
+// A never-saved layout's arrangement: the saved one is exactly what is not known yet.
+const defaults = computed(() => reconcileLayout(null, getBlockRegistry(props.scope)).regions);
 
-const statCount = computed(() => blocksIn("statistics").length);
+const statCount = computed(() => defaults.value.statistics.visible.length);
 
 const columns = computed(() =>
   [
-    { name: "main", blocks: blocksIn("mainLeft") },
-    { name: "aside", blocks: blocksIn("mainRight") },
+    { name: "main", blocks: defaults.value.mainLeft.visible },
+    { name: "aside", blocks: defaults.value.mainRight.visible },
   ].filter((column) => column.blocks.length > 0),
 );
 </script>

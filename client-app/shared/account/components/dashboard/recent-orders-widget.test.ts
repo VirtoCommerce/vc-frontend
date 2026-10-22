@@ -11,7 +11,12 @@ import type { ILayoutBlockChromeType } from "@/shared/dashboard";
 const getOrders = vi.hoisted(() => vi.fn());
 
 vi.mock("@/core/api/graphql/orders/queries/getOrders", () => ({ getOrders }));
-vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName: "en-US", currencyCode: "USD" } }));
+vi.mock("@/core/globals", async () => {
+  const { createI18n } = await import("@/i18n");
+  return {
+    globals: { storeId: "B2B-store", cultureName: "en-US", currencyCode: "USD", i18n: createI18n("en-US", "USD") },
+  };
+});
 vi.mock("@/core/utilities", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/core/utilities")>()),
   Logger: { error: vi.fn(), warn: vi.fn(), debug: vi.fn() },

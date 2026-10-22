@@ -184,10 +184,10 @@ const {
 // The only component that knows both the draft and the registry, so blocks resolve their own slice of
 // each through this.
 provideLayoutSettings({
-  valuesOf: settingsOf,
-  savedValuesOf: persistedSettingsOf,
+  settingsOf,
+  persistedSettingsOf,
   maxRowsOf: (id) => maxRowsSetting(getBlock(props.layout.scope, id)),
-  update: updateSettings,
+  updateSettings,
 });
 
 // Registry props (e.g. `filterable` on orders) plus the page's, so each region stays one generic

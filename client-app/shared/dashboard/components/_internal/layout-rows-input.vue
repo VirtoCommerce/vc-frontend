@@ -17,8 +17,10 @@
 </template>
 
 <script setup lang="ts">
+import { clamp as clampTo } from "lodash-es";
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { parseRows } from "../../settings";
 import type { MaxRowsSettingType } from "../../types";
 
 interface IProps {
@@ -55,14 +57,12 @@ watch(
 // In-range values commit as typed; out-of-range ones wait for blur, so a typo is corrected rather
 // than silently accepted.
 function commit(clamp = false): void {
-  const raw = String(draft.value ?? "");
-  const parsed = Math.trunc(Number(raw));
-  const valid = Number.isFinite(parsed) && raw.trim() !== "";
+  const parsed = parseRows(draft.value);
 
-  if (valid && parsed >= props.setting.min && parsed <= props.setting.max) {
+  if (parsed !== undefined && parsed >= props.setting.min && parsed <= props.setting.max) {
     emit("update:modelValue", parsed);
   } else if (clamp) {
-    const corrected = valid ? Math.min(Math.max(parsed, props.setting.min), props.setting.max) : props.modelValue;
+    const corrected = parsed === undefined ? props.modelValue : clampTo(parsed, props.setting.min, props.setting.max);
     draft.value = corrected;
     emit("update:modelValue", corrected);
   }

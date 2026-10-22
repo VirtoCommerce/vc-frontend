@@ -1,4 +1,3 @@
-import { useMemoize } from "@vueuse/core";
 import { globals } from "@/core/globals";
 import type { MoneyType } from "@/core/api/graphql/types";
 
@@ -34,14 +33,14 @@ export type StatisticsWindowsType = {
 
 // Local-time counterpart of Date.UTC: the instant at a wall-clock moment in the user's zone, with the same
 // over/underflow normalization (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
-export const local = (year: number, month: number, day: number, hours = 0, minutes = 0, seconds = 0, ms = 0): number =>
+const local = (year: number, month: number, day: number, hours = 0, minutes = 0, seconds = 0, ms = 0): number =>
   new Date(year, month, day, hours, minutes, seconds, ms).getTime();
 
 // End of a day on the user's clock — the inclusive upper bound every "to" window uses.
-export const eod = (year: number, month: number, day: number): number => local(year, month, day, 23, 59, 59, 999);
+const eod = (year: number, month: number, day: number): number => local(year, month, day, 23, 59, 59, 999);
 
 // Every bound leaves here as a UTC instant — only *where* the user's day starts differs from UTC's.
-export const iso = (ms: number): string => new Date(ms).toISOString();
+const iso = (ms: number): string => new Date(ms).toISOString();
 
 export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindowsType {
   const year = now.getFullYear();
@@ -98,11 +97,10 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
 // matching fallbacks; one that sends none assumes the backend converted to the same currency.
 const EMPTY_STAT_VALUE = "0";
 
-// Built once per culture: a feed formats a count per row and per badge (the Sales Rep Hub's activity surfaces).
-const statCountFormatterFor = useMemoize((cultureName: string) => new Intl.NumberFormat(cultureName));
-
+// The app's `decimal` format, as every count on the storefront; vue-i18n keeps one formatter per locale, so a
+// feed that formats a count per row (the Sales Rep Hub's activity surfaces) builds none.
 export function formatStatCount(value?: number | null): string {
-  return statCountFormatterFor(globals.cultureName).format(value ?? 0);
+  return globals.i18n.global.n(value ?? 0, "decimal");
 }
 
 // Client-side currency formatting follows <VcTotalDisplay>, so an absent amount reads as a currency

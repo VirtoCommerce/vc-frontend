@@ -110,9 +110,7 @@ interface IProps {
   title?: string;
 }
 
-withDefaults(defineProps<IProps>(), {
-  title: undefined,
-});
+defineProps<IProps>();
 
 type StatusTermType = { term: string; label: string; count: number };
 

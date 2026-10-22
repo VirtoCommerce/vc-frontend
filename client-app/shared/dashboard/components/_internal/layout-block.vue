@@ -24,7 +24,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLayoutSettings } from "../../composables/_internal/useLayoutSettings";
 import { provideBlockChrome } from "../../composables/useBlockChrome";
-import type { BlockSettingsType } from "../../types";
+import { EMPTY_SETTINGS } from "../../settings";
 
 interface IProps {
   blockId: string;
@@ -46,8 +46,6 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
-
-const NO_SETTINGS: BlockSettingsType = { hiddenTabs: [] };
 
 const { t } = useI18n();
 
@@ -80,10 +78,10 @@ provideBlockChrome({
   handleKeydown: (event: KeyboardEvent) => emit("handleKeydown", event),
   handleBlur: () => emit("handleBlur"),
   editing: computed(() => Boolean(props.editing)),
-  settings: computed(() => layoutSettings?.valuesOf(props.blockId) ?? NO_SETTINGS),
-  savedSettings: computed(() => layoutSettings?.savedValuesOf(props.blockId) ?? NO_SETTINGS),
+  settings: computed(() => layoutSettings?.settingsOf(props.blockId) ?? EMPTY_SETTINGS),
+  savedSettings: computed(() => layoutSettings?.persistedSettingsOf(props.blockId) ?? EMPTY_SETTINGS),
   maxRows: computed(() => layoutSettings?.maxRowsOf(props.blockId)),
-  updateSettings: (patch) => layoutSettings?.update(props.blockId, patch),
+  updateSettings: (patch) => layoutSettings?.updateSettings(props.blockId, patch),
 });
 </script>
 

@@ -65,10 +65,10 @@ function mountConfigurableBlock(options: {
   // that confuses the two pass.
   const savedValues = options.savedValues ?? values;
   const settings: ILayoutSettingsType = {
-    valuesOf: () => values,
-    savedValuesOf: () => savedValues,
+    settingsOf: () => values,
+    persistedSettingsOf: () => savedValues,
     maxRowsOf: () => (options.configurable === false ? undefined : MAX_ROWS),
-    update,
+    updateSettings: update,
   };
 
   const wrapper = mount(Surface, {

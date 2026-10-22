@@ -1,4 +1,4 @@
-import { nextTick, readonly, ref } from "vue";
+import { nextTick, ref } from "vue";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType } from "../../types";
 
 interface IUseKeyboardSortOptions {
@@ -166,5 +166,5 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     originIndex.value = -1;
   }
 
-  return { grabbedId: readonly(grabbedId), isGrabbed, onKeydown, onBlur, release };
+  return { isGrabbed, onKeydown, onBlur, release };
 }

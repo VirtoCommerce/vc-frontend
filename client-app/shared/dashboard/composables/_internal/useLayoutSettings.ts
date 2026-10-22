@@ -7,12 +7,12 @@ import type { BlockSettingsType, MaxRowsSettingType } from "../../types";
 import type { InjectionKey } from "vue";
 
 export interface ILayoutSettingsType {
-  valuesOf: (blockId: string) => BlockSettingsType;
+  settingsOf: (blockId: string) => BlockSettingsType;
   /** The saved values, ignoring the draft — what a widget fetches with, so typing does not refetch. */
-  savedValuesOf: (blockId: string) => BlockSettingsType;
+  persistedSettingsOf: (blockId: string) => BlockSettingsType;
   /** The descriptor, not the value — the rows input needs its own block's bounds. */
   maxRowsOf: (blockId: string) => MaxRowsSettingType | undefined;
-  update: (blockId: string, patch: Partial<BlockSettingsType>) => void;
+  updateSettings: (blockId: string, patch: Partial<BlockSettingsType>) => void;
 }
 
 const LAYOUT_SETTINGS = Symbol("layoutSettings") as InjectionKey<ILayoutSettingsType>;

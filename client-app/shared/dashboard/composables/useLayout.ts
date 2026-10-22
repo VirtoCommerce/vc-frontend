@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash-es";
 import { computed, readonly, ref, shallowRef } from "vue";
 // Subpaths, not the `account` barrel: this file is a facade export (client-app/core-api), and a barrel would drag
 // every account operation into its graph.
@@ -7,6 +8,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../document";
 import { getBlockRegistry } from "../registry";
+import { EMPTY_SETTINGS } from "../settings";
 import type {
   BlockSettingsType,
   LayoutControllerOptionsType,
@@ -15,21 +17,6 @@ import type {
   LayoutStateType,
   SavedLayoutType,
 } from "../types";
-
-const EMPTY_SETTINGS: BlockSettingsType = { hiddenTabs: [] };
-
-function cloneState(state: LayoutStateType): LayoutStateType {
-  return {
-    regions: {
-      statistics: { visible: [...state.regions.statistics.visible], hidden: [...state.regions.statistics.hidden] },
-      mainLeft: { visible: [...state.regions.mainLeft.visible], hidden: [...state.regions.mainLeft.hidden] },
-      mainRight: { visible: [...state.regions.mainRight.visible], hidden: [...state.regions.mainRight.hidden] },
-    },
-    settings: Object.fromEntries(
-      Object.entries(state.settings).map(([id, values]) => [id, { ...values, hiddenTabs: [...values.hiddenTabs] }]),
-    ),
-  };
-}
 
 /**
  * One dashboard's layout over whatever stores it: `load` reads the saved document (at once), `save` replaces it, and
@@ -127,7 +114,7 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
       return;
     }
     saveFailed.value = false;
-    draft.value = cloneState(persisted.value);
+    draft.value = cloneDeep(persisted.value);
   }
 
   function cancel(): void {

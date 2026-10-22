@@ -1,15 +1,24 @@
 import { nextTick } from "vue";
 
+/** After the next render, focuses the first element any of the selectors finds, in the order given. */
+function focusFirst(selectors: readonly string[], options?: FocusOptions): void {
+  void nextTick(() => {
+    for (const selector of selectors) {
+      const target = document.querySelector<HTMLElement>(selector);
+      if (target) {
+        target.focus(options);
+        return;
+      }
+    }
+  });
+}
+
 /**
  * Edit mode ends with the bar unmounting, taking focus with it. With every block hidden the toggle is gone
  * too, and the empty state's Edit layout button stands in for it — the two never render together.
  */
 export function focusEditToggle(): void {
-  void nextTick(() => {
-    document
-      .querySelector<HTMLElement>("[data-layout-edit-toggle], [data-layout-empty-edit]")
-      ?.focus({ preventScroll: true });
-  });
+  focusFirst(["[data-layout-edit-toggle], [data-layout-empty-edit]"], { preventScroll: true });
 }
 
 /**
@@ -18,9 +27,7 @@ export function focusEditToggle(): void {
  * so it comes into view if the user had scrolled.
  */
 export function focusSurfaceStart(): void {
-  void nextTick(() => {
-    document.querySelector<HTMLElement>("[data-layout-surface]")?.focus();
-  });
+  focusFirst(["[data-layout-surface]"]);
 }
 
 /**
@@ -28,9 +35,7 @@ export function focusSurfaceStart(): void {
  * No `preventScroll`: a failed restore mounts the edit bar above where Restore was, possibly off screen.
  */
 export function focusSaveButton(): void {
-  void nextTick(() => {
-    document.querySelector<HTMLElement>("[data-layout-save]")?.focus();
-  });
+  focusFirst(["[data-layout-save]"]);
 }
 
 /**
@@ -39,19 +44,12 @@ export function focusSaveButton(): void {
  * a pointer drop lands here too.
  */
 export function focusBlockControl(id: string): void {
-  void nextTick(() => {
-    const selectors = [
+  focusFirst(
+    [
       `[data-block-id="${id}"] .layout-widget__handle`,
       `[data-block-id="${id}"][role="button"]`,
       `[data-restore-id="${id}"]`,
-    ];
-
-    for (const selector of selectors) {
-      const control = document.querySelector<HTMLElement>(selector);
-      if (control) {
-        control.focus({ preventScroll: true });
-        return;
-      }
-    }
-  });
+    ],
+    { preventScroll: true },
+  );
 }
