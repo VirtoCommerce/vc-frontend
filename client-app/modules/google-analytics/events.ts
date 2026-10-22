@@ -3,6 +3,7 @@ import { useCurrency } from "@/core/composables/useCurrency";
 import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
+import { deferLogin } from "./pending-login";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
 import type { ConfiguredPriceType } from "./types";
 import type { Product, VariationType } from "@/core/api/graphql/types";
@@ -264,6 +265,12 @@ export const events: TrackerEventsType = {
   },
 
   login(method, params) {
+    // A failed attempt stays on the page and is the signed-out visitor's; a success is sent by the page it lands on.
+    if (params?.success) {
+      deferLogin(method, params);
+      return;
+    }
+
     sendEvent("login", {
       ...params,
       method,

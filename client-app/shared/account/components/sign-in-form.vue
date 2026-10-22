@@ -131,17 +131,17 @@ const rememberMe = ref(false);
 
 const { errors, loading, signIn, resetErrors } = useSignMeIn();
 
+// One login event per attempt. A wrong password both throws and fills `errors`, whose codes say more than the
+// thrown message; a throw without them still failed, so it never falls through to a success.
 const onSubmit = handleSubmit(async () => {
+  let thrown: Error | undefined;
+
   try {
     await authorize(email.value, password.value);
     await signIn();
   } catch (err) {
-    const error = err instanceof Error ? err : new Error(String(err));
-    Logger.error("SignInForm", error);
-    analytics("login", "password", {
-      success: false,
-      errors: error?.message,
-    });
+    thrown = err instanceof Error ? err : new Error(String(err));
+    Logger.error("SignInForm", thrown);
   }
 
   if (errors.value?.length) {
@@ -149,6 +149,11 @@ const onSubmit = handleSubmit(async () => {
       success: false,
       errors: errors.value.map((error) => `${error.code}: ${error.description}`).join(", "),
     });
+    return;
+  }
+
+  if (thrown) {
+    analytics("login", "password", { success: false, errors: thrown.message });
     return;
   }
 
