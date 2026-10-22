@@ -409,7 +409,6 @@ function selectItemEvent(item: LineItemType | undefined): void {
   analytics("selectItem", item, {
     item_list_id: "cart",
     item_list_name: t("pages.cart.title"),
-    // view_cart reports the lines in this order
     index: getProductListIndex(cart.value?.items ?? [], item.id),
   });
 }

@@ -142,7 +142,6 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
 
-// The products reported in the list's view_item_list: a selected product's position is its position there
 let reportedProducts: { id: string }[] = [];
 
 function selectItemEvent(item: Product | undefined): void {

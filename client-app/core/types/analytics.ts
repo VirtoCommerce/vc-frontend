@@ -50,7 +50,6 @@ export type AddToCartParamsAdditionalType = {
   search_term?: string;
 };
 export type SelectItemParamsAdditionalType = {
-  /** Zero-based position of the item in the list it was selected from, as reported in that list's `viewItemList` */
   index?: number;
 };
 export type LoginParamsAdditionalType = { errors?: string; success?: boolean };

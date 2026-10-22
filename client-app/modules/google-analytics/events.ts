@@ -36,7 +36,6 @@ export const events: TrackerEventsType = {
   },
 
   selectItem(item, params) {
-    // `index` belongs to the item: GA4 has no event-level index for select_item
     const { index, ...restParams } = params ?? {};
     const gtagItem =
       item && typeof item === "object" && "productId" in item

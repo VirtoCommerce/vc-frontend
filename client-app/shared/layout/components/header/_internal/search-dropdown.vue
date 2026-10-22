@@ -389,7 +389,6 @@ function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
 }
 
 function handleFocusOut(event: FocusEvent) {
-  // vue-tsc types relatedTarget as EventTarget, which contains() does not accept; the lint-staged autofix drops the cast
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   if (!dropdownElement.value?.contains(event.relatedTarget as Node)) {
     emit("hide");

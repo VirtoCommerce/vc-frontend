@@ -437,8 +437,6 @@ const hideViewModeSelector = computed(() => {
   return !!props.viewMode && viewModes.includes(props.viewMode);
 });
 
-// Where each loaded product was reported: with infinite scroll a product stays on screen after later pages load,
-// and its select_item must name the page list and the position its view_item_list reported
 const reportedPositions = new Map<string, { page: number; index: number }>();
 
 // A lookup ignores `q`, so analytics report the scanned code as its term.

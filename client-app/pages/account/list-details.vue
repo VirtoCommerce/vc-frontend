@@ -459,7 +459,6 @@ watchEffect(async () => {
 // Reported once per list: saving from the Rename or Share dialog reassigns `list`, which would otherwise send a
 // second impression for the same items with no navigation in between.
 let reportedListId: string | undefined;
-// A selected product's position is its position in that impression
 let reportedProducts: { id: string }[] = [];
 
 watchEffect(() => {

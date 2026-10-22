@@ -345,7 +345,6 @@ async function canChangeRoute(to: RouteLocationNormalized): Promise<boolean> {
   return to.name === "NoAccess" || !savedForLaterList.value || !isDirty.value || (await openSaveChangesModal());
 }
 
-// The products reported in the list's view_item_list: a selected product's position is its position there
 let reportedProducts: { id: string }[] = [];
 
 function selectItemEvent(item: Product | undefined): void {
