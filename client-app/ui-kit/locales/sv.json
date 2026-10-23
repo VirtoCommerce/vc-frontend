@@ -37,7 +37,9 @@
       "nav_previous": "Föregående",
       "nav_next": "Nästa",
       "nav_up": "Upp",
-      "nav_down": "Ner"
+      "nav_down": "Ner",
+      "select_item": "Välj {name}",
+      "select_all_items": "Välj alla artiklar"
     },
     "calendar": {
       "aria_label": "Kalender",

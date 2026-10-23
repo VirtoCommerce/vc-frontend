@@ -5,7 +5,7 @@
       <div v-if="withHeader" class="vc-line-items__head">
         <VcCheckbox
           v-if="selectable"
-          :name="$t('ui_kit.labels.toggle_vendor_select')"
+          :aria-label="$t('ui_kit.accessibility.select_all_items')"
           :model-value="isAllItemsSelected"
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
