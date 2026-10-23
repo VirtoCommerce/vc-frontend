@@ -15,7 +15,8 @@
   h4,
   h5,
   h6 {
-    font-family: var(--vc-font-family-heading, inherit);
+    @apply font-heading;
+
     font-weight: var(--vc-heading-font-weight, inherit);
     font-style: var(--vc-heading-font-style, inherit);
     text-transform: var(--vc-heading-text-transform, inherit);

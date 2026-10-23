@@ -221,8 +221,8 @@ module.exports = {
     screens: BREAKPOINTS,
     fontFamily: {
       lato: ["Lato", "sans-serif"],
-      base: vcToken("font-family-base", "Lato, sans-serif"),
-      heading: vcToken("font-family-heading", vcToken("font-family-base", "Lato, sans-serif")),
+      base: vcToken("base-font-family", "Lato, sans-serif"),
+      heading: vcToken("heading-font-family", "inherit"),
     },
 
     fontSize: tokenizeFontSizes({

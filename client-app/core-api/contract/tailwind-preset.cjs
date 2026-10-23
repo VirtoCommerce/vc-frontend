@@ -1116,8 +1116,8 @@ const preset = {
         "Lato",
         "sans-serif"
       ],
-      "base": "var(--vc-font-family-base, Lato, sans-serif)",
-      "heading": "var(--vc-font-family-heading, var(--vc-font-family-base, Lato, sans-serif))"
+      "base": "var(--vc-base-font-family, Lato, sans-serif)",
+      "heading": "var(--vc-heading-font-family, inherit)"
     },
     "fontSize": {
       "xxs": [
