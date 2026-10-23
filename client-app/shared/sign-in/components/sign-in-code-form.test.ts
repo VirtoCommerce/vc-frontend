@@ -89,6 +89,16 @@ describe("SignInCodeForm", () => {
     expect(wrapper.find(".sign-in-code-input--error").exists()).toBe(true);
   });
 
+  // An error above the code input would push the input down while the customer is typing.
+  it("shows the errors below the code input", () => {
+    const wrapper = mountForm({ errors: [{ code: "invalid_code", description: "That code didn't work." }] });
+
+    const codeInput = wrapper.find('[data-test-id="test-code-input"]').element;
+    const errorAlert = wrapper.find('[data-test-id="test-error-alert"]').element;
+
+    expect(codeInput.compareDocumentPosition(errorAlert) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("emits resend", async () => {
     const wrapper = mountForm();
 
@@ -112,7 +122,7 @@ describe("SignInCodeForm", () => {
     expect(resendButton.text()).toBe("shared.sign_in.sign_in_code_form.resend_button");
   });
 
-  it("clears the code and announces the message on reset", async () => {
+  it("clears the code, and shows and announces the message on reset", async () => {
     const wrapper = mountForm();
     await typeCode(wrapper, "123");
 
@@ -121,5 +131,12 @@ describe("SignInCodeForm", () => {
 
     expect((wrapper.find('[data-test-id="test-code-input"]').element as HTMLInputElement).value).toBe("");
     expect(wrapper.find('[aria-live="polite"]').text()).toBe("Code sent again.");
+    expect(wrapper.find('[data-test-id="test-notice"]').text()).toBe("Code sent again.");
+  });
+
+  it("shows no message until one is set", () => {
+    const wrapper = mountForm();
+
+    expect(wrapper.find('[data-test-id="test-notice"]').exists()).toBe(false);
   });
 });

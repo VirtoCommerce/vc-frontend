@@ -1,5 +1,25 @@
 <template>
   <form class="sign-in-code-form" @submit.prevent="onSubmit">
+    <p class="sign-in-code-form__subtitle" :data-test-id="`${idPrefix}-subtitle`">
+      {{ subtitle }}
+    </p>
+
+    <label class="sign-in-code-form__label" :for="inputId">
+      {{ $t("shared.sign_in.sign_in_code_form.code_label") }}
+    </label>
+
+    <SignInCodeInput
+      ref="codeInputRef"
+      v-model="code"
+      :input-id="inputId"
+      :test-id="`${idPrefix}-code-input`"
+      :length="CODE_LENGTH"
+      :error="hasError"
+      :busy="loading"
+      :described-by="hasError ? `${errorId} ${hintId}` : hintId"
+      @update:model-value="onCodeChange"
+    />
+
     <div :id="errorId" role="alert">
       <VcAlert
         v-for="error in errors"
@@ -22,28 +42,12 @@
       </VcAlert>
     </div>
 
-    <p class="sign-in-code-form__subtitle" :data-test-id="`${idPrefix}-subtitle`">
-      {{ subtitle }}
-    </p>
-
-    <label class="sign-in-code-form__label" :for="inputId">
-      {{ $t("shared.sign_in.sign_in_code_form.code_label") }}
-    </label>
-
-    <SignInCodeInput
-      ref="codeInputRef"
-      v-model="code"
-      :input-id="inputId"
-      :test-id="`${idPrefix}-code-input`"
-      :length="CODE_LENGTH"
-      :error="hasError"
-      :busy="loading"
-      :described-by="hasError ? `${errorId} ${hintId}` : hintId"
-      @update:model-value="onCodeChange"
-    />
-
     <p :id="hintId" class="sign-in-code-form__hint">
       {{ $t("shared.sign_in.sign_in_code_form.paste_hint") }}
+    </p>
+
+    <p v-if="liveMessage" class="sign-in-code-form__notice" aria-hidden="true" :data-test-id="`${idPrefix}-notice`">
+      {{ liveMessage }}
     </p>
 
     <VcButton
@@ -188,7 +192,7 @@ defineExpose({ reset });
   @apply text-start;
 
   &__error {
-    @apply mb-4;
+    @apply mb-2;
   }
 
   &__subtitle {
@@ -203,6 +207,10 @@ defineExpose({ reset });
     @apply mt-2 text-sm text-neutral-500;
   }
 
+  &__notice {
+    @apply mt-2 text-sm font-medium text-success-700;
+  }
+
   &__submit {
     @apply mb-4 mt-6;
   }
@@ -212,7 +220,7 @@ defineExpose({ reset });
   }
 
   &__link {
-    @apply text-sm font-bold text-[--link-color];
+    @apply inline-flex min-h-6 items-center text-sm font-bold text-[--link-color];
 
     &:hover {
       @apply text-[--link-hover-color];
