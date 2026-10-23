@@ -27,7 +27,7 @@ function reportStylesFailure(error: unknown): void {
   Logger.error("Failed to load the design styles.", error);
 }
 
-/** Not awaited: fonts swap in when they arrive (`display=swap`), so they never hold back the mount. */
+/** Fire and forget: the mount never waits for a design's fonts. */
 export function loadDesignFonts(design: DesignType): void {
   DESIGN_FONTS[design]?.forEach((href) => {
     const link = document.createElement("link");

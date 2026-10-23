@@ -25,7 +25,8 @@ const tokenizeFontSizes = (scale: Record<string, FontSizeType>) =>
     ]),
   );
 
-// One token per shadow part (`--vc-shadow-<key>-<n>`), so Tailwind still derives `--tw-shadow-colored`.
+// One token per part: Tailwind derives `--tw-shadow-colored` from each part's fallback, so
+// `shadow-<colour>` keeps classic geometry.
 const tokenizeShadows = (scale: Record<string, string[]>) =>
   Object.fromEntries(
     Object.entries(scale).map(([key, parts]) => [

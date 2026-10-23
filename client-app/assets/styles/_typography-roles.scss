@@ -1,7 +1,6 @@
-// Shared typography roles for both preflights (app and Storybook), so they cannot drift.
-// Mixins only — a rule here would be emitted once per consumer. Include inside `@layer base`,
-// after `@tailwind base`: the heading rule overrides Tailwind's `font-weight: inherit`.
-// Every fallback keeps today's computed value; a design sets the role tokens (README).
+// Typography roles shared by the app and Storybook preflights. A mixin, because a top-level rule
+// in a `@use`d file lands outside every layer, above the layer order. Include it in `@layer base`
+// after `@tailwind base`, so the heading rule overrides its `font-weight: inherit`.
 
 @mixin typography-roles {
   html,

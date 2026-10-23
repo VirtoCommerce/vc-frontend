@@ -141,7 +141,6 @@ describe("design", () => {
     });
 
     it("resolves without waiting for the soft fonts", async () => {
-      // No font link ever fires load or error here: an awaited font would hang this test.
       await expect(loadDesignStyles("soft")).resolves.toBeUndefined();
       expect(fontLinks()).toHaveLength(1);
     });
