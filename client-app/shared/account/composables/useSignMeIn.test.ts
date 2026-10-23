@@ -1,19 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSignMeIn } from "./useSignMeIn";
 
-const h = vi.hoisted(() => ({
-  loadMe: vi.fn<() => Promise<unknown> | false>(),
-  refetchMe: vi.fn<() => Promise<unknown>>(),
-}));
+const h = await vi.hoisted(async () => {
+  const { ref } = await import("vue");
+  return {
+    loadMe: vi.fn<() => Promise<unknown> | false>(),
+    refetchMe: vi.fn<() => Promise<unknown>>(),
+    me: ref<{ me?: { id: string } }>(),
+    emitBroadcast: vi.fn(),
+  };
+});
 
 vi.mock("@vue/apollo-composable", () => ({
   useMutation: () => ({ mutate: vi.fn() }),
 }));
 
-vi.mock("@/core/api/graphql", async () => {
-  const { ref } = await import("vue");
-  return { useGetMeQuery: () => ({ result: ref(), load: h.loadMe, refetch: h.refetchMe }) };
-});
+vi.mock("@/core/api/graphql", () => ({
+  useGetMeQuery: () => ({ result: h.me, load: h.loadMe, refetch: h.refetchMe }),
+}));
 
 vi.mock("@/core/composables/useAuth", async () => {
   const { ref } = await import("vue");
@@ -34,7 +38,7 @@ vi.mock("@/core/globals", () => ({
 }));
 
 vi.mock("@/shared/broadcast", () => ({
-  useBroadcast: () => ({ emit: vi.fn() }),
+  useBroadcast: () => ({ emit: h.emitBroadcast }),
   openReturnUrl: "openReturnUrl",
   TabsType: { ALL: "ALL" },
 }));
@@ -47,6 +51,8 @@ vi.mock("@/shared/cart/composables", async () => {
 beforeEach(() => {
   h.loadMe.mockReset();
   h.refetchMe.mockReset().mockResolvedValue(undefined);
+  h.emitBroadcast.mockReset();
+  h.me.value = { me: { id: "user-1" } };
 });
 
 describe("useSignMeIn", () => {
@@ -69,5 +75,24 @@ describe("useSignMeIn", () => {
     await signIn();
 
     expect(h.refetchMe).not.toHaveBeenCalled();
+  });
+
+  // The user query may answer with the user and an error in a secondary field; that still completes the sign-in.
+  it("completes the sign-in when the user is loaded", async () => {
+    h.loadMe.mockReturnValue(Promise.resolve());
+    const { signIn } = useSignMeIn();
+
+    await signIn();
+
+    expect(h.emitBroadcast).toHaveBeenCalledOnce();
+  });
+
+  it("rejects when the user can't be loaded", async () => {
+    h.loadMe.mockReturnValue(Promise.resolve());
+    h.me.value = undefined;
+    const { signIn } = useSignMeIn();
+
+    await expect(signIn()).rejects.toThrow();
+    expect(h.emitBroadcast).not.toHaveBeenCalled();
   });
 });
