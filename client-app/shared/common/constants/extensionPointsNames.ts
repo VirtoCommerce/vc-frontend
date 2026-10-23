@@ -25,6 +25,8 @@ const CUSTOM_EXTENSION_NAMES = {
   },
   productPage: {
     sidebarButton: "sidebar-button",
+    /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
+    purchaseOptions: "purchase-options",
     variationItemButton: "variation-item-button",
   },
   paymentPage: {
@@ -38,6 +40,12 @@ const CUSTOM_EXTENSION_NAMES = {
   },
   sharedList: {
     provenanceNote: "provenance-note",
+  },
+  cartLineItem: {
+    details: "details",
+  },
+  checkoutReview: {
+    beforePlaceOrder: "before-place-order",
   },
 } as const;
 

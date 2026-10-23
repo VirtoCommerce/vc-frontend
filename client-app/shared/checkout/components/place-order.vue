@@ -9,11 +9,13 @@ import { computed } from "vue";
 import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables/useCheckout";
+import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
 import { usePayment } from "@/shared/payment/composables";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 
 const { hasOnlyUnselectedLineItems } = useFullCart();
 const { canPayFromCart, isValidCheckout, createOrderFromCart } = useCheckout();
+const { canPlaceOrder } = useCheckoutGuards();
 const { isCanFinalizePayment } = usePayment();
 const { isAuthenticated } = useUser();
 
@@ -21,6 +23,7 @@ const isDisabled = computed(() => {
   return (
     hasOnlyUnselectedLineItems.value ||
     !isValidCheckout.value ||
+    !canPlaceOrder.value ||
     (isAuthenticated.value && canPayFromCart.value && !isCanFinalizePayment.value)
   );
 });

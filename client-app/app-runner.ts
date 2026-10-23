@@ -36,6 +36,7 @@ import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
+import { init as initProductSubscriptions } from "@/modules/product-subscriptions";
 import { init as initPunchout } from "@/modules/punchout";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
@@ -266,6 +267,7 @@ export default async () => {
   void initializeHotjar();
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
+  void initProductSubscriptions(router, i18n);
   void initSalesRep(router, i18n);
   void initReturns(router, i18n);
   void initSkyflow(router, i18n);

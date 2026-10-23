@@ -106,12 +106,15 @@ interface IProps {
 
 const { t } = useI18n();
 
+// Starts from the bound model, so a parent can prefill the card (re-mount the form to apply a later change).
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- a one-time snapshot of the initial values is intended
+const initialModel = props.modelValue;
 const initialValues: BankCardType = {
-  number: "",
-  cardholderName: "",
-  month: "",
-  year: "",
-  securityCode: "",
+  number: initialModel?.number ?? "",
+  cardholderName: initialModel?.cardholderName ?? "",
+  month: initialModel?.month ?? "",
+  year: initialModel?.year ?? "",
+  securityCode: initialModel?.securityCode ?? "",
 };
 
 const cardMaskOptions = { mask: "#### #### #### #### ###" };

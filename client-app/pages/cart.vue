@@ -114,6 +114,8 @@
 
           <BillingDetailsSection :cart="cart" />
 
+          <ExtensionPointList category="checkoutReview" :condition-params="cart" :cart="cart" class="mt-5" />
+
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
 

@@ -89,6 +89,11 @@ const independentModules: ModuleType[] = [
     requiredCommonFragments: [`${core.apiPath}/catalog/fragments/availabilityData.graphql`],
   },
   {
+    name: "ProductSubscriptions",
+    apiPath: "client-app/modules/product-subscriptions/api/graphql",
+    schemaPath: `${backendUrl}/graphql/product-subscription`,
+  },
+  {
     name: "SalesRep",
     apiPath: "client-app/modules/sales-rep/api/graphql",
     schemaPath: `${backendUrl}/graphql/sales-rep`,

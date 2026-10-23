@@ -1,0 +1,7 @@
+#import "../../fragments/productSubscriptionFields.graphql"
+
+mutation SkipProductSubscription($command: InputProductSubscriptionId!) {
+  skipProductSubscription(command: $command) {
+    ...productSubscriptionFields
+  }
+}

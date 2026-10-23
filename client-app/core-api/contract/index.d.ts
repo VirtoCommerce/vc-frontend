@@ -2933,6 +2933,46 @@ type CurrencyGroupType<T> = {
     currencyCode: string;
     items: T[];
 };
+type PreparedLineItemType = {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    inStockQuantity?: number;
+    listPrice?: MoneyType;
+    actualPrice?: MoneyType;
+    extendedPrice?: MoneyType;
+    quantity?: number;
+    deleted?: boolean;
+    route?: RouteLocationRaw;
+    properties?: Property[];
+    minQuantity?: number;
+    maxQuantity?: number;
+    packSize?: number;
+    availabilityData?: AvailabilityData;
+    productType?: string;
+    sku?: string;
+    productId?: string;
+    countInCart?: number;
+    isConfigurable?: boolean;
+    hasVariations?: boolean;
+    variations?: VariationType[];
+    configurationItems?: {
+        id: string;
+        name?: string;
+        customText?: string;
+        type: string;
+        extendedPrice?: MoneyType;
+        files?: Array<{
+            name: string;
+        } | null> | null;
+        configurationSection?: {
+            name?: string | null;
+        } | null;
+    }[];
+    showPlacedPrice?: boolean;
+    listTotal?: MoneyType;
+    product?: Product;
+};
 
 type AccountNavigationSectionType = {
     id: string;
@@ -4546,6 +4586,15 @@ type ExtensionCategoryMapType = {
     cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
         paymentTypeName: string;
     }) => boolean>;
+    /** Under each cart line item (`shared/cart/components/cart-line-items.vue`). A provider decides from the line whether it has anything to show. */
+    cartLineItem: ExtensionEntryType<{
+        lineItem: PreparedLineItemType;
+        readonly?: boolean;
+    }, never, (lineItem: PreparedLineItemType) => boolean>;
+    /** The checkout review step, above the order summary (`pages/checkout/review.vue`). */
+    checkoutReview: ExtensionEntryType<{
+        cart?: CartType;
+    }, never, (cart?: CartType) => boolean>;
     /** The order details page. A provider decides from the order whether it has anything to offer. */
     orderDetails: ExtensionEntryType<{
         order?: CustomerOrderType;
@@ -4619,6 +4668,8 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly productPage: {
         readonly sidebarButton: "sidebar-button";
+        /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
+        readonly purchaseOptions: "purchase-options";
         readonly variationItemButton: "variation-item-button";
     };
     readonly paymentPage: {
@@ -4632,6 +4683,12 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
+    };
+    readonly cartLineItem: {
+        readonly details: "details";
+    };
+    readonly checkoutReview: {
+        readonly beforePlaceOrder: "before-place-order";
     };
 };
 declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;

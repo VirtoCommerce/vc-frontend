@@ -55,6 +55,13 @@
     </template>
 
     <template #after-content="{ item }">
+      <ExtensionPointList
+        category="cartLineItem"
+        :condition-params="item"
+        :line-item="item"
+        :readonly="readonly || disabled"
+      />
+
       <ConfigurationItems
         v-if="item.isConfigurable"
         :configuration-items="item.configurationItems"
