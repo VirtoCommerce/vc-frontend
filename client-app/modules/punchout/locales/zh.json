@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Punchout 模式"
+    "mode_label": "Punchout 模式",
+    "create_requisition": "创建采购申请",
+    "errors": {
+      "create_requisition_failed": "无法创建采购申请，请重试。",
+      "session_not_found": "未找到 Punchout 会话。请返回采购系统并开始新的会话。",
+      "session_expired": "Punchout 会话已过期。请返回采购系统并开始新的会话。",
+      "store_not_configured": "此商店未设置 Punchout。请联系商店管理员。",
+      "configuration_error": "Punchout 连接配置不正确。请联系商店管理员。",
+      "message_error": "无法为您的采购系统准备采购申请。请联系商店管理员。",
+      "cart_not_found": "未找到购物车。请刷新页面并检查购物车。",
+      "cart_is_empty": "请在购物车中至少选择一件商品以创建采购申请。",
+      "session_returned": "采购申请已发送。"
+    }
   }
 }
