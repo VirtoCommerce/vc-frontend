@@ -12,7 +12,8 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :for-id="triggerId" :required="required" :error="error">
+    <!-- A slot trigger is a div, which a <label for> cannot name, so the label keeps its asterisk audible. -->
+    <VcLabel v-if="label" :for-id="hasSlotTrigger() ? undefined : triggerId" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
@@ -31,7 +32,7 @@
     >
       <template #trigger="{ open, toggle, close }">
         <div
-          v-if="$slots.selected || $slots.placeholder"
+          v-if="hasSlotTrigger()"
           :id="triggerId"
           ref="triggerElement"
           tabindex="0"
@@ -42,7 +43,6 @@
           :aria-controls="isShown ? listboxId : undefined"
           :aria-activedescendant="activeDescendantId"
           :aria-invalid="error || undefined"
-          :aria-required="required || undefined"
           :aria-disabled="disabled || undefined"
           :aria-describedby="detailsId"
           class="vc-select__button"
@@ -74,7 +74,6 @@
             'aria-controls': isShown ? listboxId : null,
             'aria-activedescendant': activeDescendantId ?? null,
             'aria-invalid': error ? 'true' : null,
-            'aria-required': required ? 'true' : null,
             'aria-autocomplete': autocomplete ? 'list' : null,
             'aria-describedby': detailsId,
           }"
@@ -172,7 +171,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { isEqual, union } from "lodash-es";
-import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
+import { computed, nextTick, ref, useSlots, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
@@ -182,6 +181,10 @@ interface IProps {
   modelValue?: object | string | Array<object | string>;
   label?: string;
   ariaLabel?: string;
+  /**
+   * Draws the label's asterisk and exposes `aria-required` on the input trigger. A `selected`/`placeholder` slot
+   * trigger is a `role="button"`, which cannot carry it, so there only the label's asterisk shows it. No native validation.
+   */
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
@@ -223,6 +226,10 @@ provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? fals
 const { t } = useI18n();
 const componentId = useComponentId("select");
 const triggerId = componentId + "-trigger";
+
+const slots = useSlots();
+// A function, not a computed: slots are not reactive, so the check has to run on every render.
+const hasSlotTrigger = () => !!(slots.selected || slots.placeholder);
 const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");

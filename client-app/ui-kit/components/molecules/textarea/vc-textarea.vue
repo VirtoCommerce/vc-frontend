@@ -57,6 +57,7 @@ interface IProps {
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
+  /** Draws the label's asterisk and sets native `required` on the textarea. */
   required?: boolean;
   name?: string;
   label?: string;

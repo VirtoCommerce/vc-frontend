@@ -71,43 +71,33 @@ const SlottedHost = defineComponent({
   `,
 });
 
+// VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
+// on the host.
+const KIT_COMPONENTS = {
+  VcButton,
+  VcCheckbox,
+  VcDropdownMenu,
+  VcIcon,
+  VcInput,
+  VcInputDetails,
+  VcLabel,
+  VcMenuItem,
+  VcPopover,
+  VcScrollbar,
+  VcTooltip,
+};
+
 const createWrapper = createWrapperFactory(mount, Host, {
   attachTo: document.body,
   global: {
-    // VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
-    // on the host.
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
+    components: KIT_COMPONENTS,
   },
 });
 
 const createSlottedWrapper = createWrapperFactory(mount, SlottedHost, {
   attachTo: document.body,
   global: {
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
+    components: KIT_COMPONENTS,
   },
 });
 
@@ -422,4 +412,41 @@ describe("VcSelect inside a dialog popover", () => {
       expect(dialogIsOpen(wrapper)).toBe(true);
     },
   );
+});
+
+const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
+  attachTo: document.body,
+  props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true },
+  global: {
+    components: KIT_COMPONENTS,
+  },
+});
+
+describe("VcSelect required", () => {
+  it("binds the label to the input trigger, which carries aria-required", () => {
+    const wrapper = createSelectWrapper();
+    const label = wrapper.get(".vc-label");
+    const input = wrapper.get("input");
+
+    expect(label.attributes("for")).toBe(input.attributes("id"));
+    expect(input.attributes("aria-required")).toBe("true");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+  });
+
+  it.each([
+    ["placeholder", { placeholder: "Select" }, ""],
+    ["selected", { selected: "Picked" }, "Pickup"],
+  ])("keeps the asterisk audible for a %s-slot trigger, which a label cannot name", (_, slots, modelValue) => {
+    const wrapper = createSelectWrapper({
+      props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true, modelValue },
+      slots,
+    });
+    const label = wrapper.get(".vc-label");
+
+    expect(wrapper.find(".vc-select__button").exists()).toBe(true);
+    // role="button" does not allow aria-required.
+    expect(wrapper.get(".vc-select__button").attributes("aria-required")).toBeUndefined();
+    expect(label.element.tagName).toBe("DIV");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBeUndefined();
+  });
 });
