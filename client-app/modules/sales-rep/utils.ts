@@ -140,6 +140,15 @@ export function formatStatCount(value?: number | null): string {
   return new Intl.NumberFormat(globals.cultureName).format(value ?? 0);
 }
 
+// Up to two letters for an initials avatar: the first character of the first two words.
+export function nameInitials(fullName: string): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: fullName is typed as string
+  const words = fullName.split(/\s+/).filter(Boolean).slice(0, 2);
+
+  // Code points, not UTF-16 units: an astral first character would otherwise yield a lone surrogate.
+  return words.map((word) => [...word][0].toUpperCase()).join("");
+}
+
 // Client-side currency formatting follows <VcTotalDisplay>, so an absent amount reads as a currency
 // zero rather than a bare one — except before globals are bootstrapped, when there is no currency to
 // format with and a plain 0 is the honest answer.

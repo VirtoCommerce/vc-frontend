@@ -10,7 +10,12 @@
 
     <div v-else-if="coupons.length">
       <div class="promotion-coupons__wrapper">
-        <CouponItem v-for="coupon in coupons" :key="coupon.id" :coupon="coupon" />
+        <component
+          :is="isMobile ? CouponRecordCard : CouponItem"
+          v-for="coupon in coupons"
+          :key="coupon.id"
+          :coupon="coupon"
+        />
       </div>
 
       <VcPagination
@@ -26,10 +31,13 @@
 </template>
 
 <script setup lang="ts">
-import { CouponItem, usePromotionCoupons } from "@/shared/account";
+import { useBreakpoints } from "@vueuse/core";
+import { CouponItem, CouponRecordCard, usePromotionCoupons } from "@/shared/account";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import CouponItemSkeleton from "@/shared/account/components/coupon-item-skeleton.vue";
 
 const { loading, coupons, page, pagesCount } = usePromotionCoupons();
+const isMobile = useBreakpoints(BREAKPOINTS).smaller("lg");
 </script>
 
 <style lang="scss">

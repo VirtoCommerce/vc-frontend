@@ -47,6 +47,7 @@ export { default as VcProductVendor } from "./product-vendor/vc-product-vendor.v
 export { default as VcProductsGrid } from "./products-grid/vc-products-grid.vue";
 export { default as VcRangeCalendar } from "./calendar/vc-range-calendar.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
+export { default as VcRecordCard } from "./record-card/vc-record-card.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcShape } from "./shape/vc-shape.vue";
 export { default as VcSlider } from "./slider/vc-slider.vue";

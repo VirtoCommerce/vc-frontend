@@ -142,6 +142,11 @@ withDefaults(defineProps<IProps>(), {
       }
 
       &--list #{$wrapperSelector} {
+        // Compact row: a control on the right of the price, like the quantity stepper.
+        @container (width < theme("containers.2xl")) {
+          @apply justify-self-end max-w-full;
+        }
+
         @container (min-width: theme("containers.sm")) {
           @apply w-60;
         }

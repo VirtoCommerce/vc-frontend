@@ -59,6 +59,8 @@
         "returnable": "返品可能数",
         "quantity": "返品数"
       },
+      "ordered_count": "注文数: {count}",
+      "returnable_count": "返品可能数: {count}",
       "quantity_for": "{name} の返品数",
       "continue": "次へ"
     },
@@ -96,7 +98,8 @@
         "date": "日付",
         "status": "ステータス",
         "quantity": "数量"
-      }
+      },
+      "items_count": "商品なし | {count} 点 | {count} 点"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "申請数",
       "approved": "承認数"
     },
+    "requested_count": "申請数: {count}",
+    "approved_count": "承認数: {count}",
     "table_description": "返品する商品"
   },
   "return_cancel": {

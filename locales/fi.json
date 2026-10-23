@@ -178,7 +178,8 @@
       "other": "Muu",
       "vendor_name": "Toimittaja: {name}",
       "not_available": "Ei saatavilla",
-      "product_reviews": "Tuotearvostelut"
+      "product_reviews": "Tuotearvostelut",
+      "default": "Oletus"
     },
     "prefixes": {
       "please": "Ole hyvä",
@@ -1027,7 +1028,8 @@
         "remove_list_button": "Poista lista",
         "make_private_button": "Tee yksityiseksi",
         "share_button": "Jaa",
-        "last_modified_label": "Viimeksi muokattu: {date}"
+        "last_modified_label": "Viimeksi muokattu: {date}",
+        "items_count": "Ei tuotteita | {count} tuote | {count} tuotetta"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
@@ -1350,7 +1352,6 @@
         "order_number_label": "Tilausnumero",
         "purchase_number_label": "Ostotilaus",
         "buyer_name_label": "Ostajan nimi",
-        "payment_type_label": "Maksutapa",
         "status_label": "@:common.labels.status",
         "invoice_label": "Lasku",
         "date_label": "@:common.labels.date",

@@ -76,7 +76,7 @@
         </template>
       </VcEmptyView>
 
-      <VcWidget v-else size="lg">
+      <VcWidget v-else size="lg" mobile-flat>
         <template #default-container>
           <VcTable
             :loading="loading"
@@ -87,49 +87,24 @@
             :skeleton-rows="itemsPerPage"
             :description="$t('returns.meta.table_description')"
             mobile-breakpoint="lg"
+            mobile-cards
             @row-click="goToReturn"
             @header-click="applySorting"
             @page-changed="changePage"
           >
             <template #mobile-item="{ item }">
-              <button
-                type="button"
-                class="returns-list__mobile-item"
-                @click="goToReturn(item)"
-                @keyup.enter="goToReturn(item)"
+              <VcRecordCard
+                :title="item.number"
+                :to="getReturnRoute(item)"
+                :description="$d(new Date(item.createdDate))"
+                :meta="getReturnMeta(item)"
               >
-                <div class="returns-list__mobile-cell">
-                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.number") }}</span>
-
-                  <span class="returns-list__mobile-value font-black">{{ item.number }}</span>
-                </div>
-
-                <div class="returns-list__mobile-cell">
-                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.date") }}</span>
-
-                  <span class="returns-list__mobile-value">{{ $d(new Date(item.createdDate)) }}</span>
-                </div>
-
-                <div v-if="isOrganizationScope" class="returns-list__mobile-cell">
-                  <span class="returns-list__mobile-label">{{ $t("common.labels.buyer_name") }}</span>
-
-                  <span class="returns-list__mobile-value">{{ item.customerName }}</span>
-                </div>
-
-                <div class="returns-list__mobile-cell">
-                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.status") }}</span>
-
-                  <span class="returns-list__mobile-value">{{
-                    statusLabel(item.status, item.statusDisplayValue)
-                  }}</span>
-                </div>
-
-                <div class="returns-list__mobile-cell">
-                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.quantity") }}</span>
-
-                  <span class="returns-list__mobile-value">{{ item.itemsQuantity }}</span>
-                </div>
-              </button>
+                <template #status>
+                  <VcChip :color="getStatusColor(item.status)" variant="outline" size="sm" rounded nowrap>
+                    {{ statusLabel(item.status, item.statusDisplayValue) }}
+                  </VcChip>
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn id="number" v-slot="{ item }" :title="$t('returns.list.columns.number')" sortable>
@@ -192,7 +167,9 @@ import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatus
 import { useReturns } from "@/modules/returns/composables/useReturns";
 import { BUYER_COLUMN_ID, RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
 import { useUser } from "@/shared/account/composables/useUser";
+import type { ReturnListItemFragment } from "@/modules/returns/api/graphql/types";
 import type { ReturnsFilterDataType } from "@/modules/returns/types";
+import type { RouteLocationRaw } from "vue-router";
 import ReturnsFilters from "@/modules/returns/components/returns-filters.vue";
 
 type ChipType = { id: string; label: string; field: keyof ReturnsFilterDataType; value?: string };
@@ -200,6 +177,19 @@ type ChipType = { id: string; label: string; field: keyof ReturnsFilterDataType;
 type ReturnListItemType = {
   id: string;
   availableActions?: { name: string; isAvailable: boolean }[];
+};
+
+const STATUS_COLORS: Partial<Record<string, VcChipColorType>> = {
+  Draft: "neutral",
+  Requested: "info",
+  New: "info",
+  Processing: "info",
+  PartiallyApproved: "warning",
+  Approved: "success",
+  Completed: "success",
+  Rejected: "danger",
+  Cancelled: "neutral",
+  Canceled: "neutral",
 };
 
 const { t, d } = useI18n();
@@ -300,14 +290,35 @@ function changePage(newPage: number): void {
 }
 
 // Routed by the server's own action list, so the transition table stays in the module.
-function goToReturn(payload: ReturnListItemType): void {
+function getReturnRoute(payload: ReturnListItemType): RouteLocationRaw {
   const editable = payload.availableActions?.some((action) => action.name === RETURN_ACTION.EDIT && action.isAvailable);
 
-  void router.push(
-    editable
-      ? { name: "EditReturn", params: { returnId: payload.id } }
-      : { name: "Return", params: { returnId: payload.id } },
-  );
+  return editable
+    ? { name: "EditReturn", params: { returnId: payload.id } }
+    : { name: "Return", params: { returnId: payload.id } };
+}
+
+function goToReturn(payload: ReturnListItemType): void {
+  void router.push(getReturnRoute(payload));
+}
+
+function getStatusColor(status?: string): VcChipColorType {
+  return (status && STATUS_COLORS[status]) || "neutral";
+}
+
+function getReturnMeta(item: ReturnListItemFragment): VcRecordCardMetaItemType[] {
+  const meta: VcRecordCardMetaItemType[] = [];
+
+  if (isOrganizationScope.value && item.customerName) {
+    meta.push({ icon: "user", text: item.customerName });
+  }
+
+  meta.push({
+    icon: "package",
+    text: t("returns.list.items_count", { count: item.itemsQuantity }, item.itemsQuantity),
+  });
+
+  return meta;
 }
 
 // The keyword also arrives from the URL, on a shared link or the back button.
@@ -372,22 +383,6 @@ watch(keyword, (value) => {
 
   &__status-col {
     @apply w-36;
-  }
-
-  &__mobile-item {
-    @apply grid w-full cursor-pointer appearance-none grid-cols-2 gap-y-4 border-b border-neutral-200 p-6 text-left;
-  }
-
-  &__mobile-cell {
-    @apply flex flex-col;
-  }
-
-  &__mobile-label {
-    @apply text-sm text-neutral-600;
-  }
-
-  &__mobile-value {
-    @apply overflow-hidden text-ellipsis pr-4;
   }
 }
 </style>

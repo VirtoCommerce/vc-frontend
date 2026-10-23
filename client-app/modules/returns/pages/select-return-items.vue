@@ -40,44 +40,34 @@
           <VcTable
             :items="items"
             :description="$t('returns.select_items.table_description')"
+            class="select-return-items__lines"
             hide-default-footer
             mobile-breakpoint="lg"
+            mobile-cards
           >
             <template #mobile-item="{ item }">
-              <div class="select-return-items__card">
-                <div :class="{ 'text-neutral-600': !item.isReturnable }">{{ item.name }}</div>
+              <VcRecordCard :title="item.name" :description="getItemCaption(item)" :meta="getItemMeta(item)">
+                <template v-if="item.imageUrl" #lead>
+                  <ReturnItemImage :src="item.imageUrl" />
+                </template>
 
-                <div class="text-sm text-neutral-600">
-                  {{ [item.sku, item.measureUnit].filter(Boolean).join(" · ") }}
-                </div>
+                <template v-if="item.ineligibilityReason || item.isReturnable" #default>
+                  <div v-if="item.ineligibilityReason" class="select-return-items__reason">
+                    {{ codeText("ineligibility", item.ineligibilityReason) }}
+                  </div>
 
-                <div v-if="item.ineligibilityReason" class="text-sm text-warning-700">
-                  {{ codeText("ineligibility", item.ineligibilityReason) }}
-                </div>
+                  <div v-if="item.isReturnable" class="select-return-items__quantity">
+                    <span>{{ $t("returns.select_items.columns.quantity") }}</span>
 
-                <div class="select-return-items__card-row">
-                  <span class="text-sm text-neutral-600">{{ $t("returns.select_items.columns.ordered") }}</span>
-
-                  <span>{{ item.orderedQuantity }}</span>
-                </div>
-
-                <div class="select-return-items__card-row">
-                  <span class="text-sm text-neutral-600">{{ $t("returns.select_items.columns.returnable") }}</span>
-
-                  <span>{{ item.returnableQuantity }}</span>
-                </div>
-
-                <div v-if="item.isReturnable" class="select-return-items__card-row">
-                  <span class="text-sm text-neutral-600">{{ $t("returns.select_items.columns.quantity") }}</span>
-
-                  <ReturnQuantityInput
-                    :model-value="quantities[item.orderLineItemId] ?? 0"
-                    :max="item.returnableQuantity"
-                    :label="$t('returns.select_items.quantity_for', { name: item.name })"
-                    @update:model-value="setQuantity(item, $event)"
-                  />
-                </div>
-              </div>
+                    <ReturnQuantityInput
+                      :model-value="quantities[item.orderLineItemId] ?? 0"
+                      :max="item.returnableQuantity"
+                      :label="$t('returns.select_items.quantity_for', { name: item.name })"
+                      @update:model-value="setQuantity(item, $event)"
+                    />
+                  </div>
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn id="item" v-slot="{ item }" :title="$t('returns.select_items.columns.item')">
@@ -161,6 +151,8 @@ import { useReturnErrors } from "@/modules/returns/composables/useReturnErrors";
 import { useReturnPolicy } from "@/modules/returns/composables/useReturnPolicy";
 import { useReturnableItems } from "@/modules/returns/composables/useReturnableItems";
 import { BackButtonInHeader } from "@/shared/layout";
+import type { ReturnableItemType } from "@/modules/returns/api/graphql/types";
+import ReturnItemImage from "@/modules/returns/components/return-item-image.vue";
 import ReturnQuantityInput from "@/modules/returns/components/return-quantity-input.vue";
 
 interface IProps {
@@ -203,6 +195,17 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 const isMobile = breakpoints.smaller("lg");
 
+function getItemCaption(item: ReturnableItemType): string {
+  return [item.sku, item.measureUnit].filter(Boolean).join(" · ");
+}
+
+function getItemMeta(item: ReturnableItemType): VcRecordCardMetaItemType[] {
+  return [
+    { icon: "package", text: t("returns.select_items.ordered_count", { count: item.orderedQuantity }) },
+    { icon: "undo-2", text: t("returns.select_items.returnable_count", { count: item.returnableQuantity }) },
+  ];
+}
+
 async function onContinue(): Promise<void> {
   const draft = await createDraft();
 
@@ -214,11 +217,18 @@ async function onContinue(): Promise<void> {
 
 <style lang="scss">
 .select-return-items {
-  &__card {
-    @apply flex flex-col gap-1 border-b border-neutral-200 p-6;
+  // Keeps the mobile cards off the edges of the widget, between the select-all row and the summary row.
+  &__lines {
+    @media (width < theme("screens.lg")) {
+      @apply m-4;
+    }
   }
 
-  &__card-row {
+  &__reason {
+    @apply text-warning-700;
+  }
+
+  &__quantity {
     @apply mt-2 flex items-center justify-between gap-3;
   }
 }

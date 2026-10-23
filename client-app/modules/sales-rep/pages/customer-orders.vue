@@ -81,7 +81,7 @@
         </template>
       </VcEmptyView>
 
-      <VcWidget v-else size="lg">
+      <VcWidget v-else size="lg" mobile-flat>
         <template #default-container>
           <!-- Header clicks map to the index fields the backend sorts on; both reverse. -->
           <VcTable
@@ -92,25 +92,22 @@
             :skeleton-rows="PAGE_SIZE"
             :sort="sortInfo"
             mobile-breakpoint="lg"
+            mobile-cards
             @page-changed="changePage"
             @header-click="applySort"
           >
             <template #mobile-item="{ item }">
-              <div class="customer-orders__mobile-item">
-                <div class="customer-orders__mobile-row">
-                  <VcLink class="customer-orders__order-link" :to="orderRoute(item)">
-                    {{ item.number }}
-                  </VcLink>
-
-                  <span class="customer-orders__mobile-total">{{ item.total }}</span>
-                </div>
-
-                <div v-if="!hasCustomer" class="customer-orders__mobile-sub">{{ item.organizationName }}</div>
-
-                <div class="customer-orders__mobile-sub">{{ $d(item.createdDate, "short") }}</div>
-
-                <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
-              </div>
+              <VcRecordCard
+                :title="item.number"
+                :to="orderRoute(item)"
+                :description="$d(item.createdDate, 'short')"
+                :metric="item.total"
+                :meta="getOrderMeta(item)"
+              >
+                <template #status>
+                  <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
@@ -337,6 +334,11 @@ function orderRoute(item: SalesRepCustomerOrderRowType): RouteLocationRaw {
   return salesRepOrderRoute(item, props.organizationId);
 }
 
+// One customer's list already names it in the heading.
+function getOrderMeta(item: SalesRepCustomerOrderRowType): VcRecordCardMetaItemType[] {
+  return !hasCustomer.value && item.organizationName ? [{ icon: "building-2", text: item.organizationName }] : [];
+}
+
 function applyKeyword(): void {
   keyword.value = localKeyword.value.trim();
   page.value = 1;
@@ -403,22 +405,6 @@ const breadcrumbs = useBreadcrumbs(() => {
   // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
   &__value {
     @apply whitespace-nowrap;
-  }
-
-  &__mobile-item {
-    @apply flex flex-col gap-1 border-b px-5 py-4;
-  }
-
-  &__mobile-row {
-    @apply flex items-center justify-between gap-2 font-bold;
-  }
-
-  &__mobile-total {
-    @apply shrink-0 whitespace-nowrap;
-  }
-
-  &__mobile-sub {
-    @apply text-sm text-neutral-600;
   }
 }
 </style>

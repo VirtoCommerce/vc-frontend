@@ -178,7 +178,8 @@
       "other": "Andere",
       "vendor_name": "Anbieter: {name}",
       "not_available": "N/V",
-      "product_reviews": "Produktbewertungen"
+      "product_reviews": "Produktbewertungen",
+      "default": "Standard"
     },
     "prefixes": {
       "please": "Bitte",
@@ -1027,7 +1028,8 @@
         "remove_list_button": "Liste entfernen",
         "make_private_button": "Privat machen",
         "share_button": "Teilen",
-        "last_modified_label": "Zuletzt geändert: {date}"
+        "last_modified_label": "Zuletzt geändert: {date}",
+        "items_count": "Keine Artikel | {count} Artikel | {count} Artikel"
       },
       "list_details": {
         "add_all_to_cart_button": "Alles in den Warenkorb",
@@ -1350,7 +1352,6 @@
         "order_number_label": "Bestellnummer",
         "purchase_number_label": "Einkaufsbestellung",
         "buyer_name_label": "Käufername",
-        "payment_type_label": "Zahlungsart",
         "status_label": "@:common.labels.status",
         "invoice_label": "Rechnung",
         "date_label": "@:common.labels.date",

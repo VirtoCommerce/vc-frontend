@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { nameInitials } from "../utils";
 
 interface IProps {
   organizationName: string;
@@ -33,15 +34,7 @@ watch(
   },
 );
 
-const initials = computed(() =>
-  props.organizationName
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    // Code points, not UTF-16 units: an astral first character would otherwise yield a lone surrogate.
-    .map((word) => [...word][0].toUpperCase())
-    .join(""),
-);
+const initials = computed(() => nameInitials(props.organizationName));
 </script>
 
 <style lang="scss">

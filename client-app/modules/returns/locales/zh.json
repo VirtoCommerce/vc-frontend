@@ -59,6 +59,8 @@
         "returnable": "可退数量",
         "quantity": "退货数量"
       },
+      "ordered_count": "已订购：{count}",
+      "returnable_count": "可退数量：{count}",
       "quantity_for": "{name} 的退货数量",
       "continue": "继续"
     },
@@ -96,7 +98,8 @@
         "date": "日期",
         "status": "状态",
         "quantity": "数量"
-      }
+      },
+      "items_count": "无商品 | {count} 件商品 | {count} 件商品"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "申请数量",
       "approved": "批准数量"
     },
+    "requested_count": "申请数量：{count}",
+    "approved_count": "批准数量：{count}",
     "table_description": "退货商品"
   },
   "return_cancel": {

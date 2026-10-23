@@ -1,5 +1,23 @@
 <template>
+  <VcMenuItem
+    v-if="menuItem"
+    color="secondary"
+    :active="localWishlistStatus"
+    :disabled="!isAuthenticated"
+    :title="ariaLabel"
+    nowrap
+    data-test-id="add-to-list-menu-item"
+    @click="onMenuItemClick"
+  >
+    <template #prepend>
+      <VcIcon name="heart" />
+    </template>
+
+    <span>{{ menuItemLabel }}</span>
+  </VcMenuItem>
+
   <VcProductActionsButton
+    v-else
     data-test-id="add-to-list-button"
     color="danger"
     :icon-size="iconSize"
@@ -21,10 +39,18 @@ import { useModal } from "@/shared/modal";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";
 import type { Product } from "@/core/api/graphql/types";
 
+interface IEmits {
+  (event: "click"): void;
+}
+
 interface IProps {
   product: Product;
   iconSize?: VcIconSizeType;
+  /** Renders the action as a `VcMenuItem` for a ⋮ menu. */
+  menuItem?: boolean;
 }
+
+const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
@@ -45,15 +71,18 @@ watch(
   { immediate: true },
 );
 
-const ariaLabel = computed<string>(() => {
-  if (!isAuthenticated.value) {
-    return t("common.messages.wishlists_available_for_authorized");
-  }
+const menuItemLabel = computed<string>(() =>
+  localWishlistStatus.value ? t("pages.catalog.in_the_list_tooltip") : t("pages.catalog.add_to_wishlist_tooltip"),
+);
 
-  return localWishlistStatus.value
-    ? t("pages.catalog.in_the_list_tooltip")
-    : t("pages.catalog.add_to_wishlist_tooltip");
-});
+const ariaLabel = computed<string>(() =>
+  isAuthenticated.value ? menuItemLabel.value : t("common.messages.wishlists_available_for_authorized"),
+);
+
+function onMenuItemClick(): void {
+  emit("click");
+  openAddToListModal();
+}
 
 function openAddToListModal() {
   if (!isAuthenticated.value) {

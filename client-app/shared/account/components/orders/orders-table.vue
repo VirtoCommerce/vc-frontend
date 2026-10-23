@@ -9,6 +9,7 @@
     :description="$t('pages.account.orders.meta.table_description')"
     :bordered="bordered"
     mobile-breakpoint="lg"
+    mobile-cards
     class="orders-table"
     @header-click="emit('headerClick', $event)"
     @page-changed="emit('pageChanged', $event)"

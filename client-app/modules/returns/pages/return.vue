@@ -84,27 +84,39 @@
           <VcTable
             :items="items"
             :description="$t('return_details.table_description')"
+            class="return-details__items"
             hide-default-footer
             mobile-breakpoint="lg"
+            mobile-cards
           >
             <template #mobile-item="{ item }">
-              <div class="return-details__card">
-                <ReturnItemSummary :item="item" @download="onDownload" />
+              <VcRecordCard :title="item.name" :description="getItemCaption(item)" :meta="getItemMeta(item)">
+                <template v-if="item.imageUrl" #lead>
+                  <ReturnItemImage :src="item.imageUrl" />
+                </template>
 
-                <div class="return-details__card-row">
-                  <span class="text-sm text-neutral-600">{{ $t("return_details.columns.requested") }}</span>
+                <template v-if="hasItemDetails(item)" #default>
+                  <div v-if="item.reasonComment">{{ item.reasonComment }}</div>
 
-                  <span>{{ item.quantity }}</span>
-                </div>
+                  <div v-if="item.rejectReason" class="return-details__reject">
+                    <div>{{ $t("return_details.reject_reason") }}</div>
 
-                <div class="return-details__card-row">
-                  <span class="text-sm text-neutral-600">{{ $t("return_details.columns.approved") }}</span>
+                    <div class="return-details__reject-reason">{{ item.rejectReason }}</div>
+                  </div>
 
-                  <span v-if="!isDecided(item.itemState)" class="text-neutral-600">&mdash;</span>
+                  <ul v-if="item.files.length" class="return-details__files">
+                    <li v-for="file in item.files" :key="file.url">
+                      <VcFile :file="file" @download="onDownload(file)" />
+                    </li>
+                  </ul>
+                </template>
 
-                  <span v-else>{{ item.approvedQuantity }}</span>
-                </div>
-              </div>
+                <template v-if="isDecided(item.itemState)" #status>
+                  <VcChip :color="getItemStateColor(item.itemState)" variant="outline" size="sm" rounded nowrap>
+                    {{ statusLabel(item.itemState) }}
+                  </VcChip>
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn id="item" v-slot="{ item }" :title="$t('returns.select_items.columns.item')">
@@ -149,11 +161,14 @@ import { downloadFile } from "@/shared/files";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import CancelReturnModal from "@/modules/returns/components/cancel-return-modal.vue";
+import ReturnItemImage from "@/modules/returns/components/return-item-image.vue";
 import ReturnItemSummary from "@/modules/returns/components/return-item-summary.vue";
 
 interface IProps {
   returnId: string;
 }
+
+type ReturnItemType = (typeof items.value)[number];
 
 const props = defineProps<IProps>();
 
@@ -202,6 +217,30 @@ function isDecided(itemState: string | undefined): boolean {
   return itemState === "Approved" || itemState === "Rejected";
 }
 
+function getItemStateColor(itemState: string | undefined): VcChipColorType {
+  return itemState === "Approved" ? "success" : "danger";
+}
+
+function getItemCaption(item: ReturnItemType): string {
+  return [item.sku, item.measureUnit].filter(Boolean).join(" · ");
+}
+
+function hasItemDetails(item: ReturnItemType): boolean {
+  return !!item.reasonComment || !!item.rejectReason || item.files.length > 0;
+}
+
+function getItemMeta(item: ReturnItemType): VcRecordCardMetaItemType[] {
+  const meta: VcRecordCardMetaItemType[] = [
+    { icon: "package", text: t("return_details.requested_count", { count: item.quantity }) },
+  ];
+
+  if (isDecided(item.itemState)) {
+    meta.push({ icon: "check", text: t("return_details.approved_count", { count: item.approvedQuantity }) });
+  }
+
+  return meta;
+}
+
 function openCancelModal(): void {
   openModal({
     component: CancelReturnModal,
@@ -227,12 +266,23 @@ const isMobile = breakpoints.smaller("lg");
 
 <style lang="scss">
 .return-details {
-  &__card {
-    @apply flex flex-col gap-1 border-b border-neutral-200 p-6;
+  // Keeps the mobile cards off the edges of the titled "Items" widget.
+  &__items {
+    @media (width < theme("screens.lg")) {
+      @apply m-4;
+    }
   }
 
-  &__card-row {
-    @apply mt-2 flex items-center justify-between gap-3;
+  &__reject {
+    @apply mt-1;
+  }
+
+  &__reject-reason {
+    @apply text-danger-700;
+  }
+
+  &__files {
+    @apply mt-2 flex flex-col gap-1;
   }
 }
 </style>

@@ -6,6 +6,7 @@
         :icon="icon ?? quoteStatus?.icon"
         :color="quoteStatus?.color || defaultColor"
         :truncate="truncate"
+        :size="size"
         rounded
       >
         <span>{{ displayValue || status }}</span>
@@ -28,10 +29,12 @@ interface IProps {
   displayValue?: string;
   icon?: string;
   truncate?: boolean;
+  size?: VcChipSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   truncate: true,
+  size: "md",
 });
 
 const { themeContext } = useThemeContext();

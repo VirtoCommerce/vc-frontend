@@ -230,7 +230,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <VcWidget v-else size="lg">
+    <VcWidget v-else size="lg" mobile-flat>
       <template #default-container>
         <VcTable
           :loading="contactsLoading"
@@ -241,6 +241,7 @@
           :page="page"
           :description="$t('pages.company.members.meta.table_description')"
           mobile-breakpoint="lg"
+          mobile-cards
           @header-click="applySorting"
           @page-changed="changePage"
         >
@@ -281,28 +282,18 @@
           </template>
 
           <template #mobile-item="{ item }">
-            <div class="flex items-center border-b px-5">
-              <div class="grow py-4.5 [word-break:break-word]">
-                <div>
-                  <b>{{ item.fullName }}</b>
-                </div>
-
-                <div class="truncate text-sm" :title="item.extended.roles.map((r) => r.name).join(', ')">
-                  {{ item.extended.roles.map((r) => r.name).join(", ") }}
-                </div>
-              </div>
-
-              <div class="py-4.5 pr-3">
-                <MemberStatus :status="getDisplayStatus(item)" />
-              </div>
-
-              <div v-if="canManageMembers" class="w-7 flex-none">
+            <VcRecordCard
+              :title="item.fullName"
+              :initials="getInitials(item)"
+              :description="item.extended.emails[0]"
+              :meta="getMemberMeta(item)"
+            >
+              <template v-if="canManageMembers && canShowDropdownFor(item)" #actions>
                 <MembersDropdownMenu
-                  v-if="canShowDropdownFor(item)"
                   :contact-status="getDisplayStatus(item)"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(item)"
-                  placement="left-start"
+                  compact
                   @edit="openEditCustomerRoleModal(item)"
                   @remove="openDeleteModal(item)"
                   @lock-or-unlock="openLockOrUnlockModal(item, $event)"
@@ -310,8 +301,12 @@
                   @revoke-invite="openRevokeInviteModal(item)"
                   @resend-invite="handleResendInvite(item)"
                 />
-              </div>
-            </div>
+              </template>
+
+              <template #status>
+                <MemberStatus :status="getDisplayStatus(item)" chip />
+              </template>
+            </VcRecordCard>
           </template>
 
           <template #page-limit-message>
@@ -332,7 +327,7 @@ import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { PlatformPermissions, XApiPermissions } from "@/core/enums";
-import { getFilterExpressionFromFacets } from "@/core/utilities";
+import { getFilterExpressionFromFacets, toCSV } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
 import {
@@ -425,6 +420,23 @@ function canShowDropdownFor(contact: ExtendedContactType): boolean {
 
 function getDisplayStatus(contact: ExtendedContactType): string | undefined {
   return contact.isLockedInOrganization ? ContactStatus.Locked : (contact.statusInOrganization ?? contact.status);
+}
+
+function getInitials(contact: ExtendedContactType): string {
+  const name = toCSV([contact.firstName, contact.lastName], " ") || contact.fullName;
+
+  return (name ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => [...word][0].toUpperCase())
+    .join("");
+}
+
+function getMemberMeta(contact: ExtendedContactType): VcRecordCardMetaItemType[] {
+  const roles = toCSV(contact.extended.roles.map((role) => role.name));
+
+  return roles ? [{ icon: "shield-check", text: roles }] : [];
 }
 
 const columns = computed<VcTableColumnType[]>(() => {

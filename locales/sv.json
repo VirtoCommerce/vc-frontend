@@ -178,7 +178,8 @@
       "other": "Övrigt",
       "vendor_name": "Leverantör: {name}",
       "not_available": "Ej tillgänglig",
-      "product_reviews": "Produktrecensioner"
+      "product_reviews": "Produktrecensioner",
+      "default": "Standard"
     },
     "prefixes": {
       "please": "Vänligen",
@@ -1027,7 +1028,8 @@
         "remove_list_button": "Ta bort lista",
         "make_private_button": "Gör privat",
         "share_button": "Dela",
-        "last_modified_label": "Senast ändrad: {date}"
+        "last_modified_label": "Senast ändrad: {date}",
+        "items_count": "Inga artiklar | {count} artikel | {count} artiklar"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
@@ -1350,7 +1352,6 @@
         "order_number_label": "Beställningsnummer",
         "purchase_number_label": "Inköpsorder",
         "buyer_name_label": "Köparens namn",
-        "payment_type_label": "Betalningstyp",
         "status_label": "@:common.labels.status",
         "invoice_label": "Faktura",
         "date_label": "@:common.labels.date",

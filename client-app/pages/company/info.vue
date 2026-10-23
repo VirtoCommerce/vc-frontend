@@ -140,82 +140,34 @@
             :sort="sort"
             bordered
             mobile-breakpoint="lg"
+            mobile-cards
             @header-click="applySorting"
             @page-changed="onPageChange"
           >
             <template #mobile-item="{ item }">
-              <div class="relative mb-3 flex items-start rounded-[--vc-radius] border px-3.5 py-4 last:mb-0">
-                <div class="grow space-y-2.5 pe-2">
-                  <div>
-                    <div class="mb-1 flex gap-1 empty:hidden">
-                      <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
-                        <VcIcon name="apply" />
+              <VcRecordCard
+                :title="toCSV([item.line1, item.line2])"
+                :description="toCSV([item.city, item.regionName, item.countryName, item.postalCode])"
+                :meta="getCompanyAddressMeta(item)"
+              >
+                <template v-if="canEditOrganization" #actions>
+                  <AddressDropdownMenu
+                    :address="item"
+                    compact
+                    @delete="openDeleteAddressModal(item)"
+                    @edit="openAddOrUpdateCompanyAddressModal(item)"
+                    @toggle-favorite="toggleFavoriteAddress(item.isFavorite, item.id)"
+                  />
+                </template>
 
-                        <span>{{ $t("pages.company.info.labels.default") }}</span>
-                      </VcBadge>
+                <template v-if="item.isDefault" #status>
+                  <VcBadge color="warning" variant="outline" size="sm" rounded nowrap>
+                    <VcIcon name="star" />
 
-                      <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
-                        <VcIcon name="whishlist" />
-
-                        <span>{{ $t("pages.company.info.labels.favorite") }}</span>
-                      </VcBadge>
-                    </div>
-
-                    <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
-                      {{ $t("pages.company.info.labels.address") }}
-                    </div>
-
-                    <div class="text-sm font-bold text-neutral-950">
-                      <span>{{ item.line1 }}</span>
-
-                      <template v-if="item.city">, {{ item.city }}</template>
-
-                      <template v-if="item.regionName">, {{ item.regionName }}</template>
-                    </div>
-                  </div>
-
-                  <div v-if="item.description">
-                    <div class="mb-0.5 text-xs text-neutral">
-                      {{ $t("pages.company.info.labels.description") }}
-                    </div>
-
-                    <div class="text-sm text-neutral-950">
-                      {{ item.description }}
-                    </div>
-                  </div>
-
-                  <div class="flex">
-                    <div class="w-1/2 pe-2">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.zip") }}
-                      </div>
-
-                      <div class="text-sm text-neutral-950">
-                        {{ item.postalCode }}
-                      </div>
-                    </div>
-
-                    <div class="w-1/2 ps-2">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.country") }}
-                      </div>
-
-                      <div class="text-sm text-neutral-950">
-                        {{ item.countryName }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <AddressDropdownMenu
-                  v-if="canEditOrganization"
-                  :address="item"
-                  placement="left-start"
-                  @delete="openDeleteAddressModal(item)"
-                  @edit="openAddOrUpdateCompanyAddressModal(item)"
-                  @toggle-favorite="toggleFavoriteAddress(item.isFavorite, item.id)"
-                />
-              </div>
+                    <span>{{ $t("pages.company.info.labels.default") }}</span>
+                  </VcBadge>
+                </template>
+              </VcRecordCard>
             </template>
 
             <template #desktop-body>
@@ -300,6 +252,7 @@ import { useI18n } from "vue-i18n";
 import { string } from "yup";
 import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
+import { toCSV } from "@/core/utilities";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import {
   AddOrUpdateCompanyAddressModal,
@@ -419,6 +372,20 @@ const logoRequirements = computed(() =>
 );
 
 const uploadingOrganizationLogo = computed(() => files.value[0].status === "uploading");
+
+function getCompanyAddressMeta(address: MemberAddressType): VcRecordCardMetaItemType[] {
+  const items: VcRecordCardMetaItemType[] = [];
+
+  if (address.description) {
+    items.push({ icon: "tag", text: address.description });
+  }
+
+  if (address.phone) {
+    items.push({ icon: "phone", text: address.phone });
+  }
+
+  return items;
+}
 
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });

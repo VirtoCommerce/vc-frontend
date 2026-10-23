@@ -178,7 +178,8 @@
       "other": "其他",
       "vendor_name": "供应商: {name}",
       "not_available": "不可用",
-      "product_reviews": "商品评论"
+      "product_reviews": "商品评论",
+      "default": "默认"
     },
     "prefixes": {
       "please": "请",
@@ -1027,7 +1028,8 @@
         "remove_list_button": "删除列表",
         "make_private_button": "设为私人",
         "share_button": "分享",
-        "last_modified_label": "最后修改：{date}"
+        "last_modified_label": "最后修改：{date}",
+        "items_count": "无商品 | {count} 件商品 | {count} 件商品"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
@@ -1350,7 +1352,6 @@
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
         "buyer_name_label": "买方姓名",
-        "payment_type_label": "支付方式",
         "status_label": "@:common.labels.status",
         "invoice_label": "发票",
         "date_label": "@:common.labels.date",

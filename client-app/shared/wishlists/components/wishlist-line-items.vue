@@ -80,17 +80,19 @@
             @update:model-value="changeItemQuantity(item, $event)"
             @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
             @update:validation="setValidationStatus(item, $event)"
-          >
-            <InStock
-              :is-in-stock="item.availabilityData?.isInStock"
-              :is-available="!item.deleted"
-              :quantity="item.availabilityData?.availableQuantity"
-              :is-digital="item.productType === ProductType.Digital"
-            />
-
-            <CountInCart :product-id="item.productId" />
-          </VcAddToCart>
+          />
         </div>
+
+        <template v-if="hasAddToCart(item)" #badges>
+          <InStock
+            :is-in-stock="item.availabilityData?.isInStock"
+            :is-available="!item.deleted"
+            :quantity="item.availabilityData?.availableQuantity"
+            :is-digital="item.productType === ProductType.Digital"
+          />
+
+          <CountInCart :product-id="item.productId" />
+        </template>
 
         <template #after>
           <VcAlert v-if="item.deleted" color="danger" size="sm" variant="outline-dark" icon>
@@ -143,7 +145,7 @@ interface IProps {
 }
 
 const emit = defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   pendingItems: () => ({}),
   editable: true,
   addableToCart: false,
@@ -158,6 +160,10 @@ const itemDefaultSlotWidth = computed<string>(() => {
   const maxSlotWidth = Math.max(...(itemDefaultSlot.value?.map((el) => el.clientWidth) || [0]));
   return maxSlotWidth ? `${maxSlotWidth}px` : "";
 });
+
+function hasAddToCart(item: PreparedLineItemType): boolean {
+  return (props.editable || props.addableToCart) && !item.deleted && !item.isConfigurable && !item.hasVariations;
+}
 
 function addToCartDisabled(item: PreparedLineItemType) {
   if (item.actualPrice?.amount === 0 || item.listPrice?.amount === 0) {
