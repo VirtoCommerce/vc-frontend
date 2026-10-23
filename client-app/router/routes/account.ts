@@ -7,6 +7,7 @@ import type { RouteRecordRaw } from "vue-router";
 const Dashboard = () => import("@/pages/account/dashboard.vue");
 const Profile = () => import("@/pages/account/profile.vue");
 const ChangePassword = () => import("@/pages/account/change-password.vue");
+const Security = () => import("@/pages/account/security.vue");
 const Addresses = () => import("@/pages/account/addresses.vue");
 const Orders = () => import("@/pages/account/orders.vue");
 const OrderDetails = () => import("@/pages/account/order-details.vue");
@@ -19,6 +20,7 @@ const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
   { path: "change-password", name: "ChangePasswordAccount", component: ChangePassword },
+  { path: "security", name: "Security", component: Security },
   { path: "profile", name: "Profile", component: Profile },
   {
     path: "addresses",

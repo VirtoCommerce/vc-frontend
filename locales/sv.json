@@ -285,7 +285,8 @@
       "company_members": "Företagsmedlemmar",
       "contact_administrator": "kontakta webbplatsadministratören",
       "skip_to_main_content": "Hoppa till huvudinnehåll",
-      "skip_to_footer": "Hoppa till sidfot"
+      "skip_to_footer": "Hoppa till sidfot",
+      "security": "Säkerhet"
     },
     "titles": {
       "all_actions": "Alla åtgärder",
@@ -378,7 +379,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Sparat till senare",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +496,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1464,6 +1467,21 @@
       "promotion_coupons": {
         "title": "Alla kuponger & kampanjer",
         "no_lists": "Du har inga kuponger eller kampanjer"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Inga nycklar",
+        "unnamed_key": "Namnlös nyckel",
+        "created": "Skapad {date}",
+        "changed": "Ändrad {date}",
+        "rename_modal": {
+          "title": "Byt namn på nyckel",
+          "name_label": "Namn"
+        },
+        "delete_modal": {
+          "title": "Ta bort nyckel",
+          "message": "Du kommer inte längre att kunna logga in med den här nyckeln."
+        }
       }
     },
     "company": {
@@ -1803,7 +1821,11 @@
     "PasswordRequiresNonAlphanumeric": "Lösenordet måste innehålla minst ett icke-alfanumeriskt tecken",
     "PasswordRequiresUpper": "Lösenordet måste innehålla minst en stor bokstav ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Lösenordet måste använda olika tecken",
-    "RecentPasswordUsed": "Du har använt detta lösenord tidigare. Vänligen skapa ett annat."
+    "RecentPasswordUsed": "Du har använt detta lösenord tidigare. Vänligen skapa ett annat.",
+    "user_not_editable": "Den här användaren kan inte redigeras",
+    "sign_in_key_not_found": "Inloggningsnyckeln hittades inte",
+    "last_sign_in_key": "Den sista inloggningsnyckeln kan inte tas bort",
+    "operation_not_supported": "Den här åtgärden stöds inte"
   },
   "password_tips": {
     "title": "Tips för att skapa ett starkt lösenord:",
