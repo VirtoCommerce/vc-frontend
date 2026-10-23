@@ -173,7 +173,8 @@ const message = computed(() => {
     case "Ordered":
       return t("product_subscriptions.renewal.messages.ordered");
     case "PaymentActionRequired":
-      return t("product_subscriptions.renewal.messages.action");
+      // The renewal says why: 3-D Secure, or no card on file to charge.
+      return r.lastErrorMessage || t("product_subscriptions.renewal.messages.action");
     case "RetryScheduled":
       return r.nextAttemptDate
         ? t("product_subscriptions.renewal.messages.retry", { date: d(new Date(r.nextAttemptDate), "short") })
