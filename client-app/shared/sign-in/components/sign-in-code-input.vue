@@ -145,7 +145,7 @@ defineExpose({ focus });
   }
 
   &__cell {
-    @apply flex h-14 items-center justify-center rounded-md border border-neutral-300 bg-additional-50 text-lg font-semibold tabular-nums;
+    @apply flex h-14 items-center justify-center rounded-md border border-neutral-500 bg-additional-50 text-lg font-semibold tabular-nums;
   }
 
   &--focused &__cell--active {
