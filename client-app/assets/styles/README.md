@@ -209,16 +209,13 @@ itself.
 
 - **A role:** a rule or token `--vc-<role>-<property>` whose fallback is a scale token or today's
   value, so classic computes the same; add it to `_typography-roles.scss` when bare elements use it.
-  A family role is also a `fontFamily` key in `tailwind.config.ts`, so it needs
-  `yarn build:core-types` and the regenerated `client-app/core-api/contract/tailwind-preset.cjs`
-  committed, plus the facade version bump in `client-app/core-api/package.json`
-  (`yarn validate:core-types` catches a miss).
+  A family role is also a `fontFamily` key in `tailwind.config.ts`: run `yarn build:core-types`
+  and commit everything it changes; `yarn validate:core-types` checks the result.
 - **A component token:** `--vc-<component>-<property>: var(<role or scale token>, <value>)` in
   the component, in that component's task.
 - **A scale:** wrap the Tailwind key in `tailwind.config.ts` with `vcToken` (or `tokenizeScale`),
-  keeping today's value as the fallback, then run `yarn build:core-types` and commit the preset,
-  plus the `client-app/core-api/package.json` version bump the script makes when the facade differs
-  from the merge base with `origin/dev` and the version still equals the one at that merge base. Existing tokens do not change.
+  keeping today's value as the fallback, then run `yarn build:core-types` and commit everything it
+  changes; `yarn validate:core-types` checks the result. Existing tokens do not change.
 - Arbitrary values (`rounded-[3px]`, `text-[--x]`) bypass the scale and stay literal.
 
 ---
