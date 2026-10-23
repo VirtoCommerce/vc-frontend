@@ -13,6 +13,7 @@ fragment renewalFields on SubscriptionRenewal {
   shippingTotal
   taxTotal
   orderId
+  storedPaymentMethodId
   orderNumber
   attemptCount
   nextAttemptDate

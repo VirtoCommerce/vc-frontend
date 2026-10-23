@@ -139,6 +139,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { authorizePayment, initializePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
 import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
@@ -172,6 +173,7 @@ const SUBSCRIPTION_FLAG_MAX_AGE_MS = 2 * 60 * 60 * 1000;
 const order = toRef(props, "order");
 
 const { t } = useI18n();
+const route = useRoute();
 const { activeMethods, fetch: fetchSavedMethods } = useSavedPaymentMethods();
 
 const loading = ref(false);
@@ -308,7 +310,12 @@ function decline3ds() {
 
 onMounted(async () => {
   void fetchSavedMethods().then(() => {
-    const preferred = savedMethods.value.find((x) => x.isDefault) ?? savedMethods.value[0];
+    // A renewal link names the card the bank challenged, so the customer confirms with that card.
+    const requested = typeof route.query.card === "string" ? route.query.card : undefined;
+    const preferred =
+      savedMethods.value.find((x) => x.id === requested) ??
+      savedMethods.value.find((x) => x.isDefault) ??
+      savedMethods.value[0];
     if (preferred) {
       selected.value = preferred.id;
     }

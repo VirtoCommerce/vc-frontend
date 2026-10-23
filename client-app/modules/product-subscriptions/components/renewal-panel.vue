@@ -70,7 +70,11 @@
         <VcButton
           v-if="renewal.requiresPaymentAction && renewal.orderId"
           size="sm"
-          :to="{ name: 'OrderPayment', params: { orderId: renewal.orderId } }"
+          :to="{
+            name: 'OrderPayment',
+            params: { orderId: renewal.orderId },
+            query: renewal.storedPaymentMethodId ? { card: renewal.storedPaymentMethodId } : undefined,
+          }"
           data-test-id="renewal-confirm-payment"
         >
           {{ $t("product_subscriptions.renewal.confirm_payment") }}
