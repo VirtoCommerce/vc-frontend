@@ -39,6 +39,9 @@ const CUSTOM_EXTENSION_NAMES = {
   sharedList: {
     provenanceNote: "provenance-note",
   },
+  checkout: {
+    placeOrder: "place-order",
+  },
 } as const;
 
 export const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES = merge(
