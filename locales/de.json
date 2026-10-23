@@ -285,7 +285,8 @@
       "company_members": "Firmenmitglieder",
       "contact_administrator": "den Administrator der Website kontaktieren",
       "skip_to_main_content": "Zum Hauptinhalt springen",
-      "skip_to_footer": "Zum Footer springen"
+      "skip_to_footer": "Zum Footer springen",
+      "security": "Sicherheit"
     },
     "titles": {
       "all_actions": "Alle Aktionen",
@@ -378,7 +379,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Für später gespeichert",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +496,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1464,6 +1467,21 @@
       "promotion_coupons": {
         "title": "Alle Gutscheine & Aktionen",
         "no_lists": "Sie haben keine Gutscheine oder Aktionen"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Keine Schlüssel",
+        "unnamed_key": "Unbenannter Schlüssel",
+        "created": "Erstellt am {date}",
+        "changed": "Geändert am {date}",
+        "rename_modal": {
+          "title": "Schlüssel umbenennen",
+          "name_label": "Name"
+        },
+        "delete_modal": {
+          "title": "Schlüssel löschen",
+          "message": "Sie können sich mit diesem Schlüssel nicht mehr anmelden."
+        }
       }
     },
     "company": {
@@ -1803,7 +1821,11 @@
     "PasswordRequiresNonAlphanumeric": "Passwörter müssen mindestens ein nicht-alphanumerisches Zeichen enthalten",
     "PasswordRequiresUpper": "Passwörter müssen mindestens einen Großbuchstaben ('A'-'Z') enthalten",
     "PasswordRequiresUniqueChars": "Passwörter müssen verschiedene Zeichen verwenden",
-    "RecentPasswordUsed": "Sie haben dieses Passwort in der Vergangenheit verwendet. Bitte erstellen Sie ein anderes."
+    "RecentPasswordUsed": "Sie haben dieses Passwort in der Vergangenheit verwendet. Bitte erstellen Sie ein anderes.",
+    "user_not_editable": "Dieser Benutzer kann nicht bearbeitet werden",
+    "sign_in_key_not_found": "Der Anmeldeschlüssel wurde nicht gefunden",
+    "last_sign_in_key": "Der letzte Anmeldeschlüssel kann nicht entfernt werden",
+    "operation_not_supported": "Dieser Vorgang wird nicht unterstützt"
   },
   "password_tips": {
     "title": "Tipps zur Erstellung eines starken Passworts:",

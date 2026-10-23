@@ -285,7 +285,8 @@
       "company_members": "公司成员",
       "contact_administrator": "联系网站管理员",
       "skip_to_main_content": "跳至主要内容",
-      "skip_to_footer": "跳至页脚"
+      "skip_to_footer": "跳至页脚",
+      "security": "安全"
     },
     "titles": {
       "all_actions": "所有操作",
@@ -378,7 +379,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "稍后保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +496,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1464,6 +1467,21 @@
       "promotion_coupons": {
         "title": "所有优惠券与促销",
         "no_lists": "您目前没有任何优惠券或促销活动"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "没有密钥",
+        "unnamed_key": "未命名的密钥",
+        "created": "创建于 {date}",
+        "changed": "更改于 {date}",
+        "rename_modal": {
+          "title": "重命名密钥",
+          "name_label": "名称"
+        },
+        "delete_modal": {
+          "title": "删除密钥",
+          "message": "您将无法再使用此密钥登录。"
+        }
       }
     },
     "company": {
@@ -1803,7 +1821,11 @@
     "PasswordRequiresNonAlphanumeric": "密码必须至少包含一个非字母数字字符",
     "PasswordRequiresUpper": "密码必须至少包含一个大写字母（'A'-'Z'）",
     "PasswordRequiresUniqueChars": "密码必须使用不同的字符",
-    "RecentPasswordUsed": "您已使用过此密码。请创建另一个。"
+    "RecentPasswordUsed": "您已使用过此密码。请创建另一个。",
+    "user_not_editable": "无法编辑此用户",
+    "sign_in_key_not_found": "未找到登录密钥",
+    "last_sign_in_key": "无法删除最后一个登录密钥",
+    "operation_not_supported": "不支持此操作"
   },
   "password_tips": {
     "title": "创建强密码的提示：",

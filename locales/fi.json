@@ -285,7 +285,8 @@
       "company_members": "Yrityksen jäsenet",
       "contact_administrator": "ota yhteyttä sivuston ylläpitäjään",
       "skip_to_main_content": "Siirry pääsisältöön",
-      "skip_to_footer": "Siirry alatunnisteeseen"
+      "skip_to_footer": "Siirry alatunnisteeseen",
+      "security": "Turvallisuus"
     },
     "titles": {
       "all_actions": "Kaikki toiminnot",
@@ -378,7 +379,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Tallessa myöhempää varten",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +496,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1464,6 +1467,21 @@
       "promotion_coupons": {
         "title": "Kaikki kupongit ja tarjoukset",
         "no_lists": "Sinulla ei ole kuponkeja tai tarjouksia"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Ei avaimia",
+        "unnamed_key": "Nimetön avain",
+        "created": "Luotu {date}",
+        "changed": "Muutettu {date}",
+        "rename_modal": {
+          "title": "Nimeä avain uudelleen",
+          "name_label": "Nimi"
+        },
+        "delete_modal": {
+          "title": "Poista avain",
+          "message": "Et voi enää kirjautua sisään tällä avaimella."
+        }
       }
     },
     "company": {
@@ -1803,7 +1821,11 @@
     "PasswordRequiresNonAlphanumeric": "Salasanassa on oltava vähintään yksi ei-alfanumeerinen merkki",
     "PasswordRequiresUpper": "Salasanassa on oltava vähintään yksi iso kirjain ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Salasanassa on käytettävä erilaisia merkkejä",
-    "RecentPasswordUsed": "Olet käyttänyt tätä salasanaa aiemmin. Luo uusi salasana."
+    "RecentPasswordUsed": "Olet käyttänyt tätä salasanaa aiemmin. Luo uusi salasana.",
+    "user_not_editable": "Tätä käyttäjää ei voi muokata",
+    "sign_in_key_not_found": "Kirjautumisavainta ei löytynyt",
+    "last_sign_in_key": "Viimeistä kirjautumisavainta ei voi poistaa",
+    "operation_not_supported": "Tätä toimintoa ei tueta"
   },
   "password_tips": {
     "title": "Vinkkejä vahvan salasanan luomiseen:",

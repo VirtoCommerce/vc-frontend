@@ -20,8 +20,8 @@ describe("register", () => {
 });
 
 describe("registerContribution", () => {
-  it("takes only a category that declared a contributed shape — today, mobileMenu", () => {
-    expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"mobileMenu">();
+  it("takes only a category that declared a contributed shape — today, mobileMenu and signInMethods", () => {
+    expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"mobileMenu" | "signInMethods">();
 
     registerContribution("mobileMenu", "name", { use: () => ({ count: 1 }) });
 

@@ -285,7 +285,8 @@
       "company_members": "Membros da Empresa",
       "contact_administrator": "contate o administrador do site",
       "skip_to_main_content": "Ir para o conteúdo principal",
-      "skip_to_footer": "Ir para o rodapé"
+      "skip_to_footer": "Ir para o rodapé",
+      "security": "Segurança"
     },
     "titles": {
       "all_actions": "Todas as ações",
@@ -378,7 +379,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardados para mais tarde",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +496,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1464,6 +1467,21 @@
       "promotion_coupons": {
         "title": "Todos os cupons e promoções",
         "no_lists": "Você não tem cupons ou promoções"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Nenhuma chave",
+        "unnamed_key": "Chave sem nome",
+        "created": "Criada em {date}",
+        "changed": "Alterada em {date}",
+        "rename_modal": {
+          "title": "Renomear chave",
+          "name_label": "Nome"
+        },
+        "delete_modal": {
+          "title": "Excluir chave",
+          "message": "Você não poderá mais entrar com esta chave."
+        }
       }
     },
     "company": {
@@ -1803,7 +1821,11 @@
     "PasswordRequiresNonAlphanumeric": "As senhas devem ter pelo menos um caractere não alfanumérico",
     "PasswordRequiresUpper": "As senhas devem ter pelo menos uma letra maiúscula ('A'-'Z')",
     "PasswordRequiresUniqueChars": "As senhas devem usar caracteres diferentes",
-    "RecentPasswordUsed": "Você já usou essa senha no passado. Por favor, crie outra."
+    "RecentPasswordUsed": "Você já usou essa senha no passado. Por favor, crie outra.",
+    "user_not_editable": "Este usuário não pode ser editado",
+    "sign_in_key_not_found": "A chave de login não foi encontrada",
+    "last_sign_in_key": "A última chave de login não pode ser removida",
+    "operation_not_supported": "Esta operação não é suportada"
   },
   "password_tips": {
     "title": "Dicas para criar uma senha forte:",

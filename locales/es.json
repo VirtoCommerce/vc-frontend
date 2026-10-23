@@ -285,7 +285,8 @@
       "company_members": "Miembros de la empresa",
       "contact_administrator": "contacta al administrador del sitio",
       "skip_to_main_content": "Ir al contenido principal",
-      "skip_to_footer": "Ir al pie de página"
+      "skip_to_footer": "Ir al pie de página",
+      "security": "Seguridad"
     },
     "titles": {
       "all_actions": "Todas las acciones",
@@ -378,7 +379,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardado para más tarde",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +496,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1464,6 +1467,21 @@
       "promotion_coupons": {
         "title": "Todos los cupones y promociones",
         "no_lists": "No tienes cupones ni promociones"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "No hay claves",
+        "unnamed_key": "Clave sin nombre",
+        "created": "Creada el {date}",
+        "changed": "Modificada el {date}",
+        "rename_modal": {
+          "title": "Cambiar el nombre de la clave",
+          "name_label": "Nombre"
+        },
+        "delete_modal": {
+          "title": "Eliminar clave",
+          "message": "Ya no podrá iniciar sesión con esta clave."
+        }
       }
     },
     "company": {
@@ -1803,7 +1821,11 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Please create another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please create another one.",
+    "user_not_editable": "Este usuario no se puede editar",
+    "sign_in_key_not_found": "No se encontró la clave de inicio de sesión",
+    "last_sign_in_key": "No se puede eliminar la última clave de inicio de sesión",
+    "operation_not_supported": "Esta operación no es compatible"
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",
