@@ -185,7 +185,8 @@ itself.
 - **heading**: bare `h1`–`h6` use `font-heading` and read `--vc-heading-font-weight`,
   `--vc-heading-font-style`, `--vc-heading-text-transform` and `--vc-heading-letter-spacing`.
   Every heading token, `--vc-heading-font-family` included, falls back to `inherit`, so
-  `font-heading` and a bare heading resolve alike. Utilities and component styles still win over
+  `font-heading` and a bare heading resolve to the same font family; weight, style, case and
+  spacing come only from the h1–h6 rule. Utilities and component styles still win over
   the heading rule. A component with a heading face (a price, a title) uses `font-heading` or a
   component token that ends at the role.
 - Italic and text case have no Tailwind scale, so they exist only as role tokens.
@@ -208,12 +209,15 @@ itself.
 
 - **A role:** a rule or token `--vc-<role>-<property>` whose fallback is a scale token or today's
   value, so classic computes the same; add it to `_typography-roles.scss` when bare elements use it.
+  A family role is also a `fontFamily` key in `tailwind.config.ts`, so it needs
+  `yarn build:core-types` and the regenerated `client-app/core-api/contract/tailwind-preset.cjs`
+  committed (`yarn validate:core-types` catches a miss).
 - **A component token:** `--vc-<component>-<property>: var(<role or scale token>, <value>)` in
   the component, in that component's task.
 - **A scale:** wrap the Tailwind key in `tailwind.config.ts` with `vcToken` (or `tokenizeScale`),
   keeping today's value as the fallback, then run `yarn build:core-types` and commit the preset,
-  plus the `package.json` version bump the script makes when the facade changed since the last
-  release. Existing tokens do not change.
+  plus the `package.json` version bump the script makes when the facade differs from the merge
+  base with `origin/dev` and the version still equals dev's. Existing tokens do not change.
 - Arbitrary values (`rounded-[3px]`, `text-[--x]`) bypass the scale and stay literal.
 
 ---
