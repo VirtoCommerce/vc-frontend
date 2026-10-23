@@ -53,7 +53,6 @@ export type SkyflowCardType = {
   cardScheme?: Maybe<Scalars['String']['output']>;
   cardType?: Maybe<Scalars['String']['output']>;
   cardholderName?: Maybe<Scalars['String']['output']>;
-  cvv?: Maybe<Scalars['String']['output']>;
   expiryMonth?: Maybe<Scalars['String']['output']>;
   expiryYear?: Maybe<Scalars['String']['output']>;
   skyflowId: Scalars['String']['output'];
