@@ -1,2 +1,24 @@
 // Hook tokens app blocks read but no element sets, under `html[data-design="soft"]`.
 // No colour tokens: colour belongs to presets.
+//
+// Shape and typography scale and role tokens (README, "Shape and typography tokens") also live
+// here: Tailwind defines them for both sides. Soft values wait for the designer; each family
+// below is a placeholder until they land.
+//
+// html[data-design="soft"] {
+//   Radius:          --vc-radius-<sm|default|md|lg|xl|2xl|3xl>
+//   Shadow:          --vc-shadow-<key>-<part>, e.g. --vc-shadow-md-1, --vc-shadow-md-2; colour stays
+//                    rgb(from var(--color-additional-950) r g b / <alpha>)
+//   Font family:     --vc-font-family-base: Inter, system-ui, sans-serif;
+//                    --vc-font-family-heading: Geologica, system-ui, sans-serif;
+//   Font size:       --vc-font-size-<xxs|xs|sm|base|lg|xl|2xl…8xl>
+//   Line height:     --vc-line-height-<xxs…8xl> (bundled with font size), --vc-line-height-<3…10|none|tight…loose>
+//   Font weight:     --vc-font-weight-<thin…black>
+//   Letter spacing:  --vc-letter-spacing-<tighter…widest>
+//   Heading role:    --vc-heading-font-weight, --vc-heading-font-style, --vc-heading-text-transform,
+//                    --vc-heading-letter-spacing
+// }
+//
+// html.dark[data-design="soft"] {
+//   Shadow:          --vc-shadow-<key>-<part> (dark geometry and alpha)
+// }
