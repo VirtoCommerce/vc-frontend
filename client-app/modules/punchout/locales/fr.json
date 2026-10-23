@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Mode punchout"
+    "mode_label": "Mode punchout",
+    "create_requisition": "Créer une demande d'achat",
+    "errors": {
+      "create_requisition_failed": "Impossible de créer la demande d'achat. Veuillez réessayer.",
+      "session_not_found": "Votre session punchout est introuvable. Retournez dans votre système d’achat et démarrez une nouvelle session.",
+      "session_expired": "Votre session punchout a expiré. Retournez dans votre système d’achat et démarrez une nouvelle session.",
+      "store_not_configured": "Le punchout n’est pas configuré pour cette boutique. Veuillez contacter l’administrateur de la boutique.",
+      "configuration_error": "La connexion punchout n’est pas configurée correctement. Veuillez contacter l’administrateur de la boutique.",
+      "message_error": "La demande d’achat n’a pas pu être préparée pour votre système d’achat. Veuillez contacter l’administrateur de la boutique.",
+      "cart_not_found": "Votre panier est introuvable. Rechargez la page et vérifiez votre panier.",
+      "cart_is_empty": "Sélectionnez au moins un article dans votre panier pour créer une demande d’achat.",
+      "session_returned": "Demande d’achat déjà envoyée."
+    }
   }
 }
