@@ -1,3 +1,8 @@
 // Hook tokens app blocks read but no element sets, under `html[data-design="soft"]`.
 // No colour tokens: colour belongs to presets.
 // Soft scale and role tokens go here too (README, "Shape and typography tokens").
+
+html[data-design="soft"] {
+  --vc-base-font-family: Inter, sans-serif;
+  --vc-heading-font-family: Geologica, sans-serif;
+}
