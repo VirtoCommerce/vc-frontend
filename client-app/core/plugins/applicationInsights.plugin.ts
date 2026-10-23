@@ -7,10 +7,17 @@ import {
 } from "../constants/modules";
 import type { App, Plugin } from "vue";
 import type { Router } from "vue-router";
-import type { AppInsightsPluginOptions } from "vue3-application-insights";
+import type { AppInsightsPluginOptions, useAppInsights } from "vue3-application-insights";
 
 export interface IApplicationInsightsPluginOptions {
   router?: Router;
+}
+
+let appInsightsInstance: ReturnType<typeof useAppInsights> | undefined;
+
+/** For code outside component setup (e.g. Apollo links), where `useAppInsights` has nothing to inject from. */
+export function getAppInsights(): ReturnType<typeof useAppInsights> | undefined {
+  return appInsightsInstance;
 }
 
 export const applicationInsightsPlugin: Plugin<[IApplicationInsightsPluginOptions?]> = {
@@ -30,6 +37,9 @@ export const applicationInsightsPlugin: Plugin<[IApplicationInsightsPluginOption
           router: pluginOptions?.router,
           trackAppErrors: true,
           trackInitialPageView: true,
+          onLoaded: (instance) => {
+            appInsightsInstance = instance;
+          },
         };
 
         app.use(AppInsightsPlugin, options);
