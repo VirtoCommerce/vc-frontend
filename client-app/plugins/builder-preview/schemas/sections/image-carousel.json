@@ -1,0 +1,52 @@
+{
+  "name": "Image carousel",
+  "icon": "image",
+  "displayField": "title",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "images",
+      "label": "Images",
+      "type": "images",
+      "multiple": true,
+      "tab": "Content"
+    },
+    {
+      "id": "height",
+      "label": "Slide height",
+      "type": "select",
+      "tab": "Content",
+      "default": "auto",
+      "options": [
+        {
+          "label": "Auto",
+          "value": "auto"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        }
+      ]
+    }
+  ]
+}
