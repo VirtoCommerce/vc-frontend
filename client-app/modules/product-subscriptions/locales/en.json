@@ -26,7 +26,7 @@
       "Ordered": "Processing",
       "PaymentActionRequired": "Confirm payment",
       "RetryScheduled": "Payment retry",
-      "Authorized": "Paid",
+      "Authorized": "Confirmed",
       "Completed": "Delivered",
       "Failed": "Payment failed",
       "Skipped": "Skipped"
@@ -126,7 +126,7 @@
         "action": "Your bank asked you to confirm the payment.",
         "retry": "The card was declined. We'll try again on {date}.",
         "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Paid. It will be charged when the order ships.",
+        "authorized": "Your card is approved. It's charged when the order ships.",
         "completed": "Shipped and paid.",
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",

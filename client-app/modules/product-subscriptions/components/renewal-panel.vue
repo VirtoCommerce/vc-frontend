@@ -24,7 +24,7 @@
     </VcAlert>
 
     <VcAlert
-      v-else-if="renewal.lastErrorMessage && isProblem"
+      v-else-if="renewal.lastErrorMessage && renewal.state === 'Failed'"
       color="danger"
       size="sm"
       variant="soft"
@@ -140,7 +140,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { t, d } = useI18n();
 
-const isProblem = computed(() => ["Failed", "RetryScheduled", "PaymentActionRequired"].includes(props.renewal.state));
 const total = computed(() => props.renewal.orderTotal ?? props.renewal.notifiedTotal ?? props.renewal.previewTotal);
 
 const tone = computed(() => {
@@ -165,7 +164,7 @@ const message = computed(() => {
       return t("product_subscriptions.renewal.messages.action");
     case "RetryScheduled":
       return r.nextAttemptDate
-        ? t("product_subscriptions.renewal.messages.retry", { date: d(new Date(r.nextAttemptDate), "long") })
+        ? t("product_subscriptions.renewal.messages.retry", { date: d(new Date(r.nextAttemptDate), "short") })
         : t("product_subscriptions.renewal.messages.retry_soon");
     case "Authorized":
       return t("product_subscriptions.renewal.messages.authorized");

@@ -74,6 +74,25 @@
 
       <div class="subscription-details__grid">
         <div class="subscription-details__main">
+          <!-- Placed deliveries that still need the customer (payment to confirm, retry, failed) -->
+          <VcWidget
+            v-if="attentionRenewals.length"
+            :title="$t('product_subscriptions.list.needs_attention')"
+            prepend-icon="exclamation-circle"
+            size="lg"
+            data-test-id="subscription-attention"
+          >
+            <div class="flex flex-col gap-3">
+              <RenewalPanel
+                v-for="renewal in attentionRenewals"
+                :key="renewal.id"
+                :renewal="renewal"
+                :busy="renewalBusy"
+                @action="onRenewalAction"
+              />
+            </div>
+          </VcWidget>
+
           <!-- Next delivery -->
           <VcWidget
             v-if="subscription.status !== 'Cancelled'"
@@ -101,9 +120,9 @@
 
             <p v-else class="text-sm text-neutral-600">{{ $t("product_subscriptions.details.no_next") }}</p>
 
-            <div v-if="subscription.canSkip || subscription.canOrderNow" class="subscription-details__quick">
+            <div v-if="subscription.canSkip || canOrderNow" class="subscription-details__quick">
               <VcButton
-                v-if="subscription.canOrderNow"
+                v-if="canOrderNow"
                 size="sm"
                 prepend-icon="lightning-bolt"
                 :loading="busy === 'orderNow'"
@@ -138,7 +157,7 @@
               <VcInput
                 v-model.number="form.quantity"
                 type="number"
-                :min="quantityRules.minQuantity"
+                :min="quantityMin"
                 :max="quantityRules.maxQuantity ?? 9999"
                 :step="quantityRules.packSize"
                 :label="$t('product_subscriptions.details.quantity')"
@@ -253,11 +272,7 @@
                 <dt>{{ $t("product_subscriptions.details.ships_to") }}</dt>
 
                 <dd>
-                  {{ subscription.shippingAddress.firstName }} {{ subscription.shippingAddress.lastName }}<br />
-
-                  {{ subscription.shippingAddress.line1 }}<br />
-                  {{ subscription.shippingAddress.city }} {{ subscription.shippingAddress.regionName }}
-                  {{ subscription.shippingAddress.postalCode }}
+                  <span v-for="line in addressLines" :key="line" class="block">{{ line }}</span>
                 </dd>
               </template>
 
@@ -339,13 +354,19 @@
       </div>
 
       <template #actions="{ close }">
-        <VcButton variant="outline" color="neutral" @click="close">{{
-          $t("product_subscriptions.common.back")
-        }}</VcButton>
+        <div class="subscription-details__modal-actions">
+          <VcButton class="max-sm:w-full" variant="outline" color="neutral" @click="close">{{
+            $t("product_subscriptions.common.back")
+          }}</VcButton>
 
-        <VcButton :loading="busy === 'pause'" data-test-id="subscription-pause-confirm" @click="pause">{{
-          $t("product_subscriptions.pause.confirm")
-        }}</VcButton>
+          <VcButton
+            class="max-sm:w-full"
+            :loading="busy === 'pause'"
+            data-test-id="subscription-pause-confirm"
+            @click="pause"
+            >{{ $t("product_subscriptions.pause.confirm") }}</VcButton
+          >
+        </div>
       </template>
     </VcModal>
 
@@ -371,17 +392,20 @@
       />
 
       <template #actions="{ close }">
-        <VcButton variant="outline" color="neutral" @click="close">{{
-          $t("product_subscriptions.cancel.keep")
-        }}</VcButton>
+        <div class="subscription-details__modal-actions">
+          <VcButton class="max-sm:w-full" variant="outline" color="neutral" @click="close">{{
+            $t("product_subscriptions.cancel.keep")
+          }}</VcButton>
 
-        <VcButton
-          color="danger"
-          :loading="busy === 'cancel'"
-          data-test-id="subscription-cancel-confirm"
-          @click="cancel"
-          >{{ $t("product_subscriptions.cancel.confirm") }}</VcButton
-        >
+          <VcButton
+            class="max-sm:w-full"
+            color="danger"
+            :loading="busy === 'cancel'"
+            data-test-id="subscription-cancel-confirm"
+            @click="cancel"
+            >{{ $t("product_subscriptions.cancel.confirm") }}</VcButton
+          >
+        </div>
       </template>
     </VcModal>
 
@@ -396,13 +420,19 @@
       <p class="text-sm">{{ $t("product_subscriptions.order_now.text") }}</p>
 
       <template #actions="{ close }">
-        <VcButton variant="outline" color="neutral" @click="close">{{
-          $t("product_subscriptions.common.back")
-        }}</VcButton>
+        <div class="subscription-details__modal-actions">
+          <VcButton class="max-sm:w-full" variant="outline" color="neutral" @click="close">{{
+            $t("product_subscriptions.common.back")
+          }}</VcButton>
 
-        <VcButton :loading="busy === 'orderNow'" data-test-id="subscription-order-now-confirm" @click="orderNow">{{
-          $t("product_subscriptions.order_now.confirm")
-        }}</VcButton>
+          <VcButton
+            class="max-sm:w-full"
+            :loading="busy === 'orderNow'"
+            data-test-id="subscription-order-now-confirm"
+            @click="orderNow"
+            >{{ $t("product_subscriptions.order_now.confirm") }}</VcButton
+          >
+        </div>
       </template>
     </VcModal>
   </div>
@@ -459,6 +489,15 @@ const busy = ref<string>();
 const renewalBusy = ref<string>();
 const subscription = ref<SubscriptionType>();
 const history = ref<RenewalFieldsFragment[]>([]);
+const attentionRenewals = ref<RenewalFieldsFragment[]>([]);
+const ATTENTION_STATES = ["ReviewRequired", "PaymentActionRequired", "RetryScheduled", "Failed"];
+
+// A placed order still waiting for its payment must finish before another one can be placed.
+const canOrderNow = computed(
+  () =>
+    !!subscription.value?.canOrderNow &&
+    !attentionRenewals.value.some((x) => ["Ordered", "PaymentActionRequired", "RetryScheduled"].includes(x.state)),
+);
 const showPause = ref(false);
 const showCancel = ref(false);
 const confirmAction = ref<"orderNow">();
@@ -526,9 +565,31 @@ const cancelReasons = computed(() =>
   })),
 );
 
+const addressLines = computed(() => {
+  const a = subscription.value?.shippingAddress;
+  if (!a) {
+    return [];
+  }
+
+  const region = [a.regionName, a.postalCode].filter(Boolean).join(" ");
+  return [
+    [a.firstName, a.lastName].filter(Boolean).join(" "),
+    a.line1,
+    a.line2,
+    [a.city, region].filter(Boolean).join(", "),
+  ].filter((x): x is string => !!x);
+});
+
 const quantityRules = computed(
   () => subscription.value?.quantityRules ?? { packSize: 1, minQuantity: 1, maxQuantity: null },
 );
+
+// The browser counts `step` from `min`, so min must itself be a multiple of the pack size.
+const quantityMin = computed(() => {
+  const { packSize, minQuantity } = quantityRules.value;
+  const min = Math.max(1, minQuantity);
+  return packSize > 1 ? Math.ceil(min / packSize) * packSize : min;
+});
 
 const quantityHint = computed(() =>
   quantityRules.value.packSize > 1
@@ -537,11 +598,11 @@ const quantityHint = computed(() =>
 );
 
 const quantityError = computed<string | undefined>(() => {
-  const { packSize, minQuantity, maxQuantity } = quantityRules.value;
+  const { packSize, maxQuantity } = quantityRules.value;
   const quantity = Number(form.quantity);
 
-  if (!Number.isInteger(quantity) || quantity < Math.max(1, minQuantity)) {
-    return t("product_subscriptions.details.quantity_min", { min: Math.max(1, minQuantity) });
+  if (!Number.isInteger(quantity) || quantity < quantityMin.value) {
+    return t("product_subscriptions.details.quantity_min", { min: quantityMin.value });
   }
   if (maxQuantity && quantity > maxQuantity) {
     return t("product_subscriptions.details.quantity_max", { max: maxQuantity });
@@ -586,7 +647,11 @@ async function load() {
       getSubscriptionRenewals({ subscriptionId: props.subscriptionId, first: 20, sort: "ScheduledDate:desc" }),
     ]);
     subscription.value = result ?? undefined;
-    history.value = (renewals?.items ?? []).filter((x) => x.id !== result?.currentRenewal?.id);
+    const items = (renewals?.items ?? []).filter((x) => x.id !== result?.currentRenewal?.id);
+    attentionRenewals.value = items.filter(
+      (x) => ATTENTION_STATES.includes(x.state) && (x.state !== "Failed" || x.canRetryPayment),
+    );
+    history.value = items.filter((x) => !attentionRenewals.value.some((y) => y.id === x.id));
     resetForm();
   } catch (e) {
     Logger.error("subscription-details.load", e);
@@ -679,8 +744,6 @@ async function cancel() {
   }
 }
 
-const ATTENTION_STATES = ["ReviewRequired", "PaymentActionRequired", "RetryScheduled", "Failed"];
-
 async function orderNow() {
   busy.value = "orderNow";
   try {
@@ -759,6 +822,10 @@ onMounted(() => {
 
 <style lang="scss">
 .subscription-details {
+  &__modal-actions {
+    @apply flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end;
+  }
+
   @apply flex flex-col gap-5;
 
   &__hero {
