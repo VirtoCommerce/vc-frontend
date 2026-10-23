@@ -890,4 +890,91 @@
   --vc-alert-tonal-danger-border:    var(--color-vc-border-tonal-danger,        var(--color-danger-500));
   --vc-alert-tonal-danger-text:      var(--color-vc-text-tonal-danger,          var(--color-danger-800));
   --vc-alert-tonal-danger-icon:      var(--color-vc-icon-tonal-danger,          var(--color-danger-700));
+
+  // ============================================================
+  // VcTileButton — solid shares VcButton's `--color-vc-*` keys and fallbacks, so a solid
+  // tile next to a solid button matches. Outline takes no `--color-vc-*-outline-*` keys:
+  // they tint the border and text, while the tile keeps both neutral and tints only the icon.
+  // ============================================================
+  // VcTileButton — solid
+  --vc-tile-button-solid-primary-bg:       var(--color-vc-background-solid-primary,      var(--color-primary-500));
+  --vc-tile-button-solid-primary-border:   var(--color-vc-border-solid-primary,          var(--color-primary-500));
+  --vc-tile-button-solid-primary-text:     var(--color-vc-text-solid-primary,            var(--color-additional-50));
+  --vc-tile-button-solid-primary-icon:     var(--color-vc-icon-solid-primary,            currentColor);
+
+  --vc-tile-button-solid-secondary-bg:     var(--color-vc-background-solid-secondary,    var(--color-secondary-500));
+  --vc-tile-button-solid-secondary-border: var(--color-vc-border-solid-secondary,        var(--color-secondary-500));
+  --vc-tile-button-solid-secondary-text:   var(--color-vc-text-solid-secondary,          var(--color-additional-50));
+  --vc-tile-button-solid-secondary-icon:   var(--color-vc-icon-solid-secondary,          currentColor);
+
+  --vc-tile-button-solid-accent-bg:        var(--color-vc-background-solid-accent,       var(--color-accent-500));
+  --vc-tile-button-solid-accent-border:    var(--color-vc-border-solid-accent,           var(--color-accent-500));
+  --vc-tile-button-solid-accent-text:      var(--color-vc-text-solid-accent,             var(--color-additional-50));
+  --vc-tile-button-solid-accent-icon:      var(--color-vc-icon-solid-accent,             currentColor);
+
+  --vc-tile-button-solid-neutral-bg:       var(--color-vc-background-solid-neutral,      var(--color-neutral-500));
+  --vc-tile-button-solid-neutral-border:   var(--color-vc-border-solid-neutral,          var(--color-neutral-500));
+  --vc-tile-button-solid-neutral-text:     var(--color-vc-text-solid-neutral,            var(--color-additional-50));
+  --vc-tile-button-solid-neutral-icon:     var(--color-vc-icon-solid-neutral,            currentColor);
+
+  --vc-tile-button-solid-warning-bg:       var(--color-vc-background-solid-warning,      var(--color-warning-500));
+  --vc-tile-button-solid-warning-border:   var(--color-vc-border-solid-warning,          var(--color-warning-500));
+  --vc-tile-button-solid-warning-text:     var(--color-vc-text-solid-warning,            var(--color-warning-900));
+  --vc-tile-button-solid-warning-icon:     var(--color-vc-icon-solid-warning,            currentColor);
+
+  --vc-tile-button-solid-danger-bg:        var(--color-vc-background-solid-danger,       var(--color-danger-500));
+  --vc-tile-button-solid-danger-border:    var(--color-vc-border-solid-danger,           var(--color-danger-500));
+  --vc-tile-button-solid-danger-text:      var(--color-vc-text-solid-danger,             var(--color-additional-50));
+  --vc-tile-button-solid-danger-icon:      var(--color-vc-icon-solid-danger,             currentColor);
+
+  --vc-tile-button-solid-success-bg:       var(--color-vc-background-solid-success,      var(--color-success-500));
+  --vc-tile-button-solid-success-border:   var(--color-vc-border-solid-success,          var(--color-success-500));
+  --vc-tile-button-solid-success-text:     var(--color-vc-text-solid-success,            var(--color-additional-50));
+  --vc-tile-button-solid-success-icon:     var(--color-vc-icon-solid-success,            currentColor);
+
+  --vc-tile-button-solid-info-bg:          var(--color-vc-background-solid-info,         var(--color-info-500));
+  --vc-tile-button-solid-info-border:      var(--color-vc-border-solid-info,             var(--color-info-500));
+  --vc-tile-button-solid-info-text:        var(--color-vc-text-solid-info,               var(--color-additional-50));
+  --vc-tile-button-solid-info-icon:        var(--color-vc-icon-solid-info,               currentColor);
+
+  // VcTileButton — outline
+  --vc-tile-button-outline-primary-bg:       var(--color-additional-50);
+  --vc-tile-button-outline-primary-border:   var(--color-neutral-200);
+  --vc-tile-button-outline-primary-text:     var(--color-neutral-700);
+  --vc-tile-button-outline-primary-icon:     var(--color-primary-500);
+
+  --vc-tile-button-outline-secondary-bg:     var(--color-additional-50);
+  --vc-tile-button-outline-secondary-border: var(--color-neutral-200);
+  --vc-tile-button-outline-secondary-text:   var(--color-neutral-700);
+  --vc-tile-button-outline-secondary-icon:   var(--color-secondary-500);
+
+  --vc-tile-button-outline-accent-bg:        var(--color-additional-50);
+  --vc-tile-button-outline-accent-border:    var(--color-neutral-200);
+  --vc-tile-button-outline-accent-text:      var(--color-neutral-700);
+  --vc-tile-button-outline-accent-icon:      var(--color-accent-500);
+
+  --vc-tile-button-outline-neutral-bg:       var(--color-additional-50);
+  --vc-tile-button-outline-neutral-border:   var(--color-neutral-200);
+  --vc-tile-button-outline-neutral-text:     var(--color-neutral-700);
+  --vc-tile-button-outline-neutral-icon:     var(--color-neutral-500);
+
+  --vc-tile-button-outline-warning-bg:       var(--color-additional-50);
+  --vc-tile-button-outline-warning-border:   var(--color-neutral-200);
+  --vc-tile-button-outline-warning-text:     var(--color-neutral-700);
+  --vc-tile-button-outline-warning-icon:     var(--color-warning-500);
+
+  --vc-tile-button-outline-danger-bg:        var(--color-additional-50);
+  --vc-tile-button-outline-danger-border:    var(--color-neutral-200);
+  --vc-tile-button-outline-danger-text:      var(--color-neutral-700);
+  --vc-tile-button-outline-danger-icon:      var(--color-danger-500);
+
+  --vc-tile-button-outline-success-bg:       var(--color-additional-50);
+  --vc-tile-button-outline-success-border:   var(--color-neutral-200);
+  --vc-tile-button-outline-success-text:     var(--color-neutral-700);
+  --vc-tile-button-outline-success-icon:     var(--color-success-500);
+
+  --vc-tile-button-outline-info-bg:          var(--color-additional-50);
+  --vc-tile-button-outline-info-border:      var(--color-neutral-200);
+  --vc-tile-button-outline-info-text:        var(--color-neutral-700);
+  --vc-tile-button-outline-info-icon:        var(--color-info-500);
 }
