@@ -525,7 +525,12 @@
           "duplicate_email_login_attempt": "Flere kontoer bruker denne e-postadressen.",
           "lockout_disabled": "Denne kontoen kan ikke logge på med en kode.",
           "invalid_code": "Denne koden fungerte ikke.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Påloggingsøkten er utløpt. Logg på igjen.",
+          "code_attempts_exceeded": "For mange feil koder. Vent noen minutter og logg på igjen.",
+          "mfa_provider_not_available": "Vi kan ikke sende en påloggingskode til denne kontoen. Kontakt administratoren din.",
+          "two_factor_unavailable": "Denne kontoen krever et ekstra påloggingstrinn, men det er ikke tilgjengelig. Kontakt administratoren.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +550,14 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Verifiseringen lyktes, men byttet til kundekontoen mislyktes. Prøv igjen.",
-          "generic": "Noe gikk galt. Prøv igjen."
+          "generic": "Noe gikk galt. Prøv igjen.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required"
         }
       },
       "forgot_password_form": {
@@ -632,12 +644,7 @@
         "verify": {
           "header": "Sjekk e-posten din",
           "subtitle": "Vi sendte en kode til {email}.",
-          "code_label": "Kode",
-          "paste_hint": "Skriv inn eller lim inn koden. På mobil trykker du på den over tastaturet.",
-          "submit_button": "Logg inn",
-          "resend_button": "Send kode på nytt",
-          "use_different_email_link": "Bruk en annen e-post",
-          "live_resent": "Ny kode sendt."
+          "use_different_email_link": "Bruk en annen e-post"
         },
         "locked": {
           "title": "For mange mislykkede forsøk",
@@ -653,6 +660,19 @@
           "password_button": "Logg inn med passord",
           "back_link": "Tilbake til innlogging"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Skriv inn påloggingskoden",
+        "subtitle": "Vi har sendt en kode til {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Kode",
+        "paste_hint": "Skriv inn eller lim inn koden. På mobil trykker du på den over tastaturet.",
+        "submit_button": "Logg inn",
+        "resend_button": "Send kode på nytt",
+        "resend_countdown": "Send koden på nytt om {seconds} s",
+        "live_resent": "Ny kode sendt."
       }
     },
     "company": {
