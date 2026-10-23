@@ -34,6 +34,7 @@ describe("loadDesignStyles with failing chunks", () => {
     vi.resetModules();
     vi.clearAllMocks();
     loadedStyles.length = 0;
+    document.head.querySelectorAll("link[data-design-fonts]").forEach((link) => link.remove());
   });
 
   it("resolves, still loads the other chunk and claims the very error it caught", async () => {

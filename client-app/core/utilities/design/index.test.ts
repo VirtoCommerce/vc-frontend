@@ -1,10 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getDesign, resolveDesign, setDesignAttribute, setPresetAttribute } from "./index";
+import { DESIGN_FONTS } from "@/core/constants/design";
+import { Logger } from "@/core/utilities/logger";
+import { getDesign, loadDesignFonts, resolveDesign, setDesignAttribute, setPresetAttribute } from "./index";
 import type { DesignType } from "@/core/constants/design";
 
 const settings = vi.hoisted((): { value: Record<string, unknown> } => ({ value: {} }));
 const kitLoaded = vi.fn();
 const appLoaded = vi.fn();
+
+const fontLinks = () => document.head.querySelectorAll<HTMLLinkElement>("link[data-design-fonts]");
 
 vi.mock("@/config/settings_data.json", () => ({
   default: {
@@ -20,6 +24,8 @@ describe("design", () => {
     settings.value = {};
     delete document.documentElement.dataset.design;
     delete document.documentElement.dataset.preset;
+    fontLinks().forEach((link) => link.remove());
+    vi.restoreAllMocks();
   });
 
   describe("resolveDesign", () => {
@@ -65,6 +71,34 @@ describe("design", () => {
     });
   });
 
+  describe("loadDesignFonts", () => {
+    it("appends no stylesheet for classic", () => {
+      loadDesignFonts("classic");
+
+      expect(fontLinks()).toHaveLength(0);
+    });
+
+    it("appends exactly one font stylesheet for soft", () => {
+      loadDesignFonts("soft");
+
+      const links = [...fontLinks()];
+
+      expect(links.map((link) => link.href)).toEqual(DESIGN_FONTS.soft);
+      expect(links.every((link) => link.rel === "stylesheet")).toBe(true);
+      expect(links).toHaveLength(1);
+    });
+
+    it("warns with the href when a font stylesheet fails to load", () => {
+      const warn = vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
+      loadDesignFonts("soft");
+
+      const [link] = fontLinks();
+      link.dispatchEvent(new Event("error"));
+
+      expect(warn).toHaveBeenCalledExactlyOnceWith(expect.any(String), link.href);
+    });
+  });
+
   describe("loadDesignStyles", () => {
     async function loadDesignStyles(design: DesignType): Promise<void> {
       const module = await import("./index");
@@ -92,11 +126,23 @@ describe("design", () => {
       expect(appLoaded).not.toHaveBeenCalled();
     });
 
-    it("loads the kit and the app soft styles for soft", async () => {
+    it("downloads no fonts for classic", async () => {
+      await loadDesignStyles("classic");
+
+      expect(fontLinks()).toHaveLength(0);
+    });
+
+    it("loads the kit and the app soft styles and the soft fonts for soft", async () => {
       await loadDesignStyles("soft");
 
       expect(kitLoaded).toHaveBeenCalledOnce();
       expect(appLoaded).toHaveBeenCalledOnce();
+      expect(fontLinks()).toHaveLength(1);
+    });
+
+    it("resolves without waiting for the soft fonts", async () => {
+      await expect(loadDesignStyles("soft")).resolves.toBeUndefined();
+      expect(fontLinks()).toHaveLength(1);
     });
   });
 });

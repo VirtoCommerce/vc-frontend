@@ -44,8 +44,8 @@ and the design never changes the preset.
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); soft hook tokens (`soft/_tokens.scss` on both sides). No soft colour tokens |
-| `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the focus ring), the number-input and `::-ms-reveal` rules |
+| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); soft hook tokens (`soft/_tokens.scss` on both sides), soft scale and role tokens (app side). No soft colour tokens |
+| `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
 | `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss`, `_print-kit.scss` |
@@ -131,6 +131,92 @@ never downloads them). Everything sits inside `@media screen`, so print keeps th
 - **BEM, not utilities.** A soft rule can never beat a Tailwind utility in a template. Every element
   a soft file overrides must be BEM with no utility for that property, including utilities passed
   onto kit components. Convert such an element in that component's design task.
+
+---
+
+## Shape and typography tokens
+
+A design changes radii, shadows and type through tokens, never through templates. Three tiers,
+each falling back to the one below and ending at today's value:
+
+```
+component  --vc-button-radius            (per component, added in its own task)
+   ↓ var(…, role or scale)
+role       --vc-base-font-family, --vc-heading-font-style …
+   ↓ var(…, scale)                       (only where a role maps to a step)
+scale      --vc-radius-md, --vc-font-size-sm …   ← read by the Tailwind utilities
+   ↓ var(…, literal)
+literal    today's value: the fallback in tailwind.config.ts (typed there or taken from
+           Tailwind's defaultTheme) or in a role rule
+```
+
+**Classic sets no scale or role token**, except `--vc-radius`. Their values exist only as `var()`
+fallbacks, so classic output does not change and a design sets only what differs.
+
+`--vc-radius` (the default control radius) predates the tiers. Classic sets it to a literal on
+`:root` in `main.scss`, components read it directly, and it is not chained to a scale step:
+setting `--vc-radius-*` does not move it. A design that changes control radii sets `--vc-radius`
+itself.
+
+### Naming
+
+- **Scale: `--vc-<property>-<tailwind key>`**, the key spelled as in Tailwind, lower case,
+  `DEFAULT` → `default`: `--vc-radius-<k>`, `--vc-shadow-<k>-<n>` (one token per shadow part, from
+  1), `--vc-font-size-<k>`, `--vc-line-height-<k>`, `--vc-font-weight-<k>`,
+  `--vc-letter-spacing-<k>`. `--vc-line-height-<k>` holds both the line height bundled with a font
+  size (`xxs`…`8xl`) and the `leading-*` keys (`3`…`10`, `none`, `tight`…); never add a t-shirt key
+  to `lineHeight`.
+- To drop a shadow part a design does not need, set it to `0 0 #0000`, never `none`: `none` is
+  invalid inside a shadow list and voids the whole `box-shadow`, rings included.
+- `shadow-<colour>` utilities keep classic geometry in every design: Tailwind builds
+  `--tw-shadow-colored` from each part's fallback, not from the token.
+- **Role and component: `--vc-<owner>-<property>`**: `--vc-base-font-family`,
+  `--vc-heading-font-family`, `--vc-heading-text-transform`, `--vc-button-radius`. The only
+  exception is the older `--vc-radius`, a bare property name.
+- **Font family** has roles only (`base`, `heading`, also the utilities `font-base` and
+  `font-heading`), no primitive tokens named after a font. `font-lato` stays a literal Lato for
+  places that must stay classic (print).
+
+### Roles
+
+`_typography-roles.scss` is shared by the app and Storybook preflights:
+
+- **base**: `html` uses `font-base` (`--vc-base-font-family`, falling back to Lato).
+- **heading**: bare `h1`–`h6` use `font-heading` and read `--vc-heading-font-weight`,
+  `--vc-heading-font-style`, `--vc-heading-text-transform` and `--vc-heading-letter-spacing`.
+  Every heading token, `--vc-heading-font-family` included, falls back to `inherit`, so
+  `font-heading` and a bare heading resolve to the same font family; weight, style, case and
+  spacing come only from the h1–h6 rule. Utilities and component styles still win over
+  the heading rule. A component with a heading face (a price, a title) uses `font-heading` or a
+  component token that ends at the role.
+- Italic and text case have no Tailwind scale, so they exist only as role tokens.
+
+### Where a design's value goes
+
+- **Soft:** scale and role tokens on `html[data-design="soft"]` in
+  `client-app/assets/styles/soft/_tokens.scss`; dark shadows under
+  `html.dark[data-design="soft"]` in the same file. A shadow keeps its step's colour: black
+  `rgb(0 0 0 / …)` for the default `shadow` step (from Tailwind's defaultTheme),
+  `rgb(from var(--color-additional-950) …)` for the others. Soft changes geometry and alpha,
+  never colour.
+- **Fonts:** a design's families load from `DESIGN_FONTS` (`core/constants/design.ts`), only for
+  that design. The stylesheet link is not awaited, so fonts never hold back the mount. Classic
+  requests nothing new.
+- **Fork:** set any token on `:root` in `_custom.scss`; it is unlayered, so it beats our `theme`
+  layer in every design. A fork loads its own fonts in its `index.html`. Presets stay colour-only.
+
+### Adding a token
+
+- **A role:** a rule or token `--vc-<role>-<property>` whose fallback is a scale token or today's
+  value, so classic computes the same; add it to `_typography-roles.scss` when bare elements use it.
+  A family role is also a `fontFamily` key in `tailwind.config.ts`: run `yarn build:core-types`
+  and commit everything it changes; `yarn validate:core-types` checks the result.
+- **A component token:** `--vc-<component>-<property>: var(<role or scale token>, <value>)` in
+  the component, in that component's task.
+- **A scale:** wrap the Tailwind key in `tailwind.config.ts` with `vcToken` (or `tokenizeScale`),
+  keeping today's value as the fallback, then run `yarn build:core-types` and commit everything it
+  changes; `yarn validate:core-types` checks the result. Existing tokens do not change.
+- Arbitrary values (`rounded-[3px]`, `text-[--x]`) bypass the scale and stay literal.
 
 ---
 

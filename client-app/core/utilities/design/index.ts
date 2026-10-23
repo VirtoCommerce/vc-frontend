@@ -1,5 +1,5 @@
 import settingsData from "@/config/settings_data.json";
-import { DESIGNS } from "@/core/constants/design";
+import { DESIGN_FONTS, DESIGNS } from "@/core/constants/design";
 import { Logger } from "@/core/utilities/logger";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import type { DesignType } from "@/core/constants/design";
@@ -27,6 +27,18 @@ function reportStylesFailure(error: unknown): void {
   Logger.error("Failed to load the design styles.", error);
 }
 
+/** Fire and forget: the mount never waits for a design's fonts. */
+export function loadDesignFonts(design: DesignType): void {
+  DESIGN_FONTS[design]?.forEach((href) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.dataset.designFonts = "";
+    link.addEventListener("error", () => Logger.warn("Failed to load the design fonts.", href), { once: true });
+    document.head.append(link);
+  });
+}
+
 /**
  * Classic ships with the app; any other design's styles are a lazy chunk it alone downloads.
  * Never rejects: a missing chunk leaves the app booting with what did load.
@@ -35,6 +47,8 @@ export async function loadDesignStyles(design: DesignType): Promise<void> {
   if (design !== DESIGNS.soft) {
     return;
   }
+
+  loadDesignFonts(design);
 
   await Promise.all([
     import("@/ui-kit/styles/soft/index.scss").catch(reportStylesFailure),
