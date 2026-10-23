@@ -138,9 +138,12 @@
               <VcInput
                 v-model.number="form.quantity"
                 type="number"
-                :min="1"
-                :max="9999"
+                :min="quantityRules.minQuantity"
+                :max="quantityRules.maxQuantity ?? 9999"
+                :step="quantityRules.packSize"
                 :label="$t('product_subscriptions.details.quantity')"
+                :message="quantityError ?? quantityHint"
+                :error="!!quantityError"
                 name="quantity"
                 data-test-id="subscription-quantity"
               />
@@ -177,7 +180,7 @@
               <div class="subscription-details__form-actions">
                 <VcButton
                   type="submit"
-                  :disabled="!isDirty"
+                  :disabled="!isDirty || !!quantityError"
                   :loading="busy === 'save'"
                   data-test-id="subscription-save"
                 >
@@ -409,6 +412,7 @@
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import {
@@ -522,6 +526,32 @@ const cancelReasons = computed(() =>
   })),
 );
 
+const quantityRules = computed(
+  () => subscription.value?.quantityRules ?? { packSize: 1, minQuantity: 1, maxQuantity: null },
+);
+
+const quantityHint = computed(() =>
+  quantityRules.value.packSize > 1
+    ? t("product_subscriptions.details.quantity_pack", { packSize: quantityRules.value.packSize })
+    : undefined,
+);
+
+const quantityError = computed<string | undefined>(() => {
+  const { packSize, minQuantity, maxQuantity } = quantityRules.value;
+  const quantity = Number(form.quantity);
+
+  if (!Number.isInteger(quantity) || quantity < Math.max(1, minQuantity)) {
+    return t("product_subscriptions.details.quantity_min", { min: Math.max(1, minQuantity) });
+  }
+  if (maxQuantity && quantity > maxQuantity) {
+    return t("product_subscriptions.details.quantity_max", { max: maxQuantity });
+  }
+  if (packSize > 1 && quantity % packSize !== 0) {
+    return t("product_subscriptions.details.quantity_pack", { packSize });
+  }
+  return undefined;
+});
+
 const isDirty = computed(() => {
   const s = subscription.value;
   if (!s) {
@@ -569,11 +599,15 @@ async function execute(key: string, action: () => Promise<unknown>, successText:
   busy.value = key;
   try {
     await action();
-    notifications.success({ text: successText });
+    notifications.success({ duration: DEFAULT_NOTIFICATION_DURATION, single: true, text: successText });
     await load();
     return true;
   } catch (e) {
-    notifications.error({ text: errorMessage(e, t("product_subscriptions.errors.generic")) });
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+    });
     return false;
   } finally {
     busy.value = undefined;
@@ -591,7 +625,7 @@ function run(action: "skip" | "resume") {
 
 async function save() {
   const s = subscription.value;
-  if (!s || !isDirty.value) {
+  if (!s || !isDirty.value || quantityError.value) {
     return;
   }
 
@@ -645,14 +679,37 @@ async function cancel() {
   }
 }
 
+const ATTENTION_STATES = ["ReviewRequired", "PaymentActionRequired", "RetryScheduled", "Failed"];
+
 async function orderNow() {
-  const ok = await execute(
-    "orderNow",
-    () => orderProductSubscriptionNow({ subscriptionId: props.subscriptionId }),
-    t("product_subscriptions.details.ordered"),
-  );
-  if (ok) {
+  busy.value = "orderNow";
+  try {
+    const renewal = await orderProductSubscriptionNow({ subscriptionId: props.subscriptionId });
     confirmAction.value = undefined;
+
+    if (renewal && ATTENTION_STATES.includes(renewal.state)) {
+      notifications.warning({
+        duration: DEFAULT_NOTIFICATION_DURATION,
+        single: true,
+        text: t("product_subscriptions.details.order_needs_attention"),
+      });
+    } else {
+      notifications.success({
+        duration: DEFAULT_NOTIFICATION_DURATION,
+        single: true,
+        text: t("product_subscriptions.details.ordered"),
+      });
+    }
+
+    await load();
+  } catch (e) {
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+    });
+  } finally {
+    busy.value = undefined;
   }
 }
 
@@ -675,10 +732,18 @@ async function onRenewalAction({
     }
 
     const messageKeys = { accept: "accepted", retry: "retried", skip: "skipped" } as const;
-    notifications.success({ text: t(`product_subscriptions.renewal.${messageKeys[action]}`) });
+    notifications.success({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: t(`product_subscriptions.renewal.${messageKeys[action]}`),
+    });
     await load();
   } catch (e) {
-    notifications.error({ text: errorMessage(e, t("product_subscriptions.errors.generic")) });
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+    });
   } finally {
     renewalBusy.value = undefined;
   }

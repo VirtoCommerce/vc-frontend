@@ -174,7 +174,11 @@
       "paused_done": "Subscription paused.",
       "cancelled_done": "Subscription cancelled. You won't be charged again.",
       "saved": "Changes saved.",
-      "ordered": "Order placed."
+      "ordered": "Order placed.",
+      "order_needs_attention": "We couldn't place the order yet. See the delivery above for what's needed.",
+      "quantity_pack": "Sold in packs of {packSize}.",
+      "quantity_min": "The minimum quantity is {min}.",
+      "quantity_max": "The maximum quantity is {max}."
     },
     "pause": {
       "title": "Pause subscription",

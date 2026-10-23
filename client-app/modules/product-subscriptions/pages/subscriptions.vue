@@ -160,6 +160,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import {
@@ -249,18 +250,34 @@ async function onRenewalAction({
     const command = { renewalId: renewal.id };
     if (action === "accept") {
       await acceptSubscriptionRenewal(command);
-      notifications.success({ text: t("product_subscriptions.renewal.accepted") });
+      notifications.success({
+        duration: DEFAULT_NOTIFICATION_DURATION,
+        single: true,
+        text: t("product_subscriptions.renewal.accepted"),
+      });
     } else if (action === "retry") {
       await retrySubscriptionRenewalPayment(command);
-      notifications.success({ text: t("product_subscriptions.renewal.retried") });
+      notifications.success({
+        duration: DEFAULT_NOTIFICATION_DURATION,
+        single: true,
+        text: t("product_subscriptions.renewal.retried"),
+      });
     } else {
       await skipSubscriptionRenewal(command);
-      notifications.success({ text: t("product_subscriptions.renewal.skipped") });
+      notifications.success({
+        duration: DEFAULT_NOTIFICATION_DURATION,
+        single: true,
+        text: t("product_subscriptions.renewal.skipped"),
+      });
     }
 
     await load();
   } catch (e) {
-    notifications.error({ text: errorMessage(e, t("product_subscriptions.errors.generic")) });
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+    });
   } finally {
     busy[renewal.id] = undefined;
   }

@@ -10,6 +10,11 @@ fragment productSubscriptionFields on ProductSubscription {
   productName
   imageUrl
   quantity
+  quantityRules {
+    packSize
+    minQuantity
+    maxQuantity
+  }
   planId
   planName
   intervalUnit

@@ -168,6 +168,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useNotifications } from "@/shared/notification";
 import { addSavedPaymentMethod } from "../api/graphql";
@@ -229,7 +230,11 @@ async function addCard(threeDsCompleted: boolean) {
       ],
     });
 
-    notifications.success({ text: t("product_subscriptions.payment_methods.added") });
+    notifications.success({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: t("product_subscriptions.payment_methods.added"),
+    });
     card.value = { cardholderName: "", number: "", month: "", year: "", securityCode: "" };
     cardFormKey.value++;
     await fetch();
@@ -250,7 +255,11 @@ async function makeDefault(id: string) {
   try {
     await setDefault(id);
   } catch (e) {
-    notifications.error({ text: errorMessage(e, t("product_subscriptions.errors.generic")) });
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+    });
   } finally {
     busy.value = undefined;
   }
@@ -264,10 +273,18 @@ async function remove() {
   busy.value = "remove";
   try {
     await removeMethod(toRemove.value);
-    notifications.success({ text: t("product_subscriptions.payment_methods.removed") });
+    notifications.success({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: t("product_subscriptions.payment_methods.removed"),
+    });
     toRemove.value = undefined;
   } catch (e) {
-    notifications.error({ text: errorMessage(e, t("product_subscriptions.errors.generic")) });
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      single: true,
+      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+    });
     toRemove.value = undefined;
   } finally {
     busy.value = undefined;
