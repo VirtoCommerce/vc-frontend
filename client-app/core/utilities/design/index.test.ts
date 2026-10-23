@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DESIGN_FONTS } from "@/core/constants/design";
+import { Logger } from "@/core/utilities/logger";
 import { getDesign, loadDesignFonts, resolveDesign, setDesignAttribute, setPresetAttribute } from "./index";
 import type { DesignType } from "@/core/constants/design";
 
@@ -24,6 +25,7 @@ describe("design", () => {
     delete document.documentElement.dataset.design;
     delete document.documentElement.dataset.preset;
     fontLinks().forEach((link) => link.remove());
+    vi.restoreAllMocks();
   });
 
   describe("resolveDesign", () => {
@@ -86,10 +88,14 @@ describe("design", () => {
       expect(links).toHaveLength(1);
     });
 
-    it("does not throw when a font stylesheet fails to load", () => {
+    it("warns with the href when a font stylesheet fails to load", () => {
+      const warn = vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
       loadDesignFonts("soft");
 
-      expect(() => fontLinks()[0].dispatchEvent(new Event("error"))).not.toThrow();
+      const [link] = fontLinks();
+      link.dispatchEvent(new Event("error"));
+
+      expect(warn).toHaveBeenCalledExactlyOnceWith(expect.any(String), link.href);
     });
   });
 
