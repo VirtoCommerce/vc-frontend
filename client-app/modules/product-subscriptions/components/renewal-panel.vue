@@ -159,7 +159,15 @@ const message = computed(() => {
   switch (r.state) {
     case "Scheduled":
     case "Notified":
-      return t("product_subscriptions.renewal.messages.notified", { cutoff: d(new Date(r.cutoffDate), "long") });
+      return t("product_subscriptions.renewal.messages.notified", {
+        cutoff: d(new Date(r.cutoffDate), {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        }),
+      });
     case "ReviewRequired":
       return t("product_subscriptions.renewal.messages.review");
     case "Ordered":

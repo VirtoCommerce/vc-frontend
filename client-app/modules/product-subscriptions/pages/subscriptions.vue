@@ -198,11 +198,17 @@ const busy = reactive<Record<string, string | undefined>>({});
 const attentionStates = ["ReviewRequired", "PaymentActionRequired", "RetryScheduled", "Failed"];
 
 const attentionRenewals = computed(() => renewals.value.filter((x) => attentionStates.includes(x.state)));
-const upcomingRenewals = computed(() =>
-  renewals.value.filter(
-    (x) => !attentionStates.includes(x.state) && ["Scheduled", "Notified", "Ordered", "Authorized"].includes(x.state),
-  ),
-);
+// Deliveries the customer can still change first (soonest first), then orders already on their way.
+const upcomingRenewals = computed(() => {
+  const changeable = ["Scheduled", "Notified"];
+  const rank = (state: string) => (changeable.includes(state) ? 0 : 1);
+  return renewals.value
+    .filter((x) => !attentionStates.includes(x.state) && [...changeable, "Ordered", "Authorized"].includes(x.state))
+    .sort(
+      (a, b) =>
+        rank(a.state) - rank(b.state) || new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime(),
+    );
+});
 
 const visibleSubscriptions = computed(() => {
   const statuses = tabs.find((x) => x.id === activeTab.value)?.statuses ?? [];
