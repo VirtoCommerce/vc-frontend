@@ -226,9 +226,10 @@ function selectedLast4(): string | undefined {
   return card.value.number.replace(/\D/g, "").slice(-4);
 }
 
+// Mirrors the mock provider: it challenges 3220 on every customer-present payment, and a saved 3184 as well.
 function needs3ds(): boolean {
   const last4 = selectedLast4();
-  return selected.value === NEW_CARD ? last4 === THREE_DS_ON_SAVE_LAST4 : last4 === THREE_DS_ON_RENEWAL_LAST4;
+  return last4 === THREE_DS_ON_SAVE_LAST4 || (selected.value !== NEW_CARD && last4 === THREE_DS_ON_RENEWAL_LAST4);
 }
 
 function buildParameters(threeDsCompleted: boolean): { key: string; value: string }[] {
