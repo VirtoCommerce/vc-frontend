@@ -141,16 +141,22 @@ each falling back to the one below and ending at today's value:
 
 ```
 component  --vc-button-radius            (per component, added in its own task)
-   ↓ var(…, role)
-role       --vc-radius, --vc-font-family-base, --vc-heading-font-style …
-   ↓ var(…, scale)                       (where a role maps to a step)
+   ↓ var(…, role or scale)
+role       --vc-base-font-family, --vc-heading-font-style …
+   ↓ var(…, scale)                       (only where a role maps to a step)
 scale      --vc-radius-md, --vc-font-size-sm …   ← read by the Tailwind utilities
    ↓ var(…, literal)
-literal    today's value, written once as the fallback in tailwind.config.ts or a role rule
+literal    today's value: the fallback in tailwind.config.ts (typed there or taken from
+           Tailwind's defaultTheme) or in a role rule
 ```
 
-**Classic sets no token.** Its values exist only as `var()` fallbacks, so classic output does not
-change and a design sets only what differs.
+**Classic sets no scale or role token**, except `--vc-radius`. Their values exist only as `var()`
+fallbacks, so classic output does not change and a design sets only what differs.
+
+`--vc-radius` (the default control radius) predates the tiers. Classic sets it to a literal on
+`:root` in `main.scss`, components read it directly, and it is not chained to a scale step:
+setting `--vc-radius-*` does not move it. A design that changes control radii sets `--vc-radius`
+itself.
 
 ### Naming
 
@@ -160,32 +166,41 @@ change and a design sets only what differs.
   `--vc-letter-spacing-<k>`. `--vc-line-height-<k>` holds both the line height bundled with a font
   size (`xxs`…`8xl`) and the `leading-*` keys (`3`…`10`, `none`, `tight`…); never add a t-shirt key
   to `lineHeight`.
-- **Role and component: `--vc-<owner>-<property>`**: `--vc-heading-text-transform`,
-  `--vc-button-radius`.
-- **Font family: `--vc-font-family-<role>`** (`base`, `heading`), also the utilities `font-base`
-  and `font-heading`. Families have roles only, no primitive tokens named after a font.
-  `font-lato` stays a literal Lato for places that must stay classic (print).
-- `--vc-radius` is the role "default control radius" and stays a literal, not chained to a step.
+- To drop a shadow part a design does not need, set it to `0 0 #0000`, never `none`: `none` is
+  invalid inside a shadow list and voids the whole `box-shadow`, rings included.
+- `shadow-<colour>` utilities keep classic geometry in every design: Tailwind builds
+  `--tw-shadow-colored` from each part's fallback, not from the token.
+- **Role and component: `--vc-<owner>-<property>`**: `--vc-base-font-family`,
+  `--vc-heading-font-family`, `--vc-heading-text-transform`, `--vc-button-radius`. The only
+  exception is the older `--vc-radius`, a bare property name.
+- **Font family** has roles only (`base`, `heading`, also the utilities `font-base` and
+  `font-heading`), no primitive tokens named after a font. `font-lato` stays a literal Lato for
+  places that must stay classic (print).
 
 ### Roles
 
 `_typography-roles.scss` is shared by the app and Storybook preflights:
 
-- **base**: `html` uses `font-base`.
-- **heading**: bare `h1`–`h6` read `--vc-font-family-heading`, `--vc-heading-font-weight`,
-  `--vc-heading-font-style`, `--vc-heading-text-transform` and `--vc-heading-letter-spacing`, each
-  falling back to `inherit`. Utilities and component styles still win over it. A component with
-  a heading face (a price, a title) uses `font-heading` or a component token that ends at the role.
+- **base**: `html` uses `font-base` (`--vc-base-font-family`, falling back to Lato).
+- **heading**: bare `h1`–`h6` use `font-heading` and read `--vc-heading-font-weight`,
+  `--vc-heading-font-style`, `--vc-heading-text-transform` and `--vc-heading-letter-spacing`.
+  Every heading token, `--vc-heading-font-family` included, falls back to `inherit`, so
+  `font-heading` and a bare heading resolve alike. Utilities and component styles still win over
+  the heading rule. A component with a heading face (a price, a title) uses `font-heading` or a
+  component token that ends at the role.
 - Italic and text case have no Tailwind scale, so they exist only as role tokens.
 
 ### Where a design's value goes
 
 - **Soft:** scale and role tokens on `html[data-design="soft"]` in
   `client-app/assets/styles/soft/_tokens.scss`; dark shadows under
-  `html.dark[data-design="soft"]` in the same file. A shadow keeps
-  `rgb(from var(--color-additional-950) …)`: soft changes geometry and alpha, never colour.
+  `html.dark[data-design="soft"]` in the same file. A shadow keeps its step's colour: black
+  `rgb(0 0 0 / …)` for the default `shadow` step (from Tailwind's defaultTheme),
+  `rgb(from var(--color-additional-950) …)` for the others. Soft changes geometry and alpha,
+  never colour.
 - **Fonts:** a design's families load from `DESIGN_FONTS` (`core/constants/design.ts`), only for
-  that design, and never hold back the mount (`display=swap`). Classic requests nothing new.
+  that design. The stylesheet link is not awaited, so fonts never hold back the mount. Classic
+  requests nothing new.
 - **Fork:** set any token on `:root` in `_custom.scss`; it is unlayered, so it beats our `theme`
   layer in every design. A fork loads its own fonts in its `index.html`. Presets stay colour-only.
 
@@ -196,8 +211,9 @@ change and a design sets only what differs.
 - **A component token:** `--vc-<component>-<property>: var(<role or scale token>, <value>)` in
   the component, in that component's task.
 - **A scale:** wrap the Tailwind key in `tailwind.config.ts` with `vcToken` (or `tokenizeScale`),
-  keeping today's value as the fallback, then run `yarn build:core-types` and commit the preset.
-  Existing tokens do not change.
+  keeping today's value as the fallback, then run `yarn build:core-types` and commit the preset,
+  plus the `package.json` version bump the script makes when the facade changed since the last
+  release. Existing tokens do not change.
 - Arbitrary values (`rounded-[3px]`, `text-[--x]`) bypass the scale and stay literal.
 
 ---
