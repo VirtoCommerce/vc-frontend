@@ -13,7 +13,9 @@
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
       <div v-if="view.isCompleted" class="mission-card__done" aria-hidden="true">
-        <VcIcon name="circle-check" :size="56" />
+        <span class="mission-card__check">
+          <VcIcon name="circle-check" :size="56" />
+        </span>
       </div>
 
       <div class="mission-card__badges">
@@ -128,6 +130,11 @@ function openMission(): void {
     @apply absolute inset-0 flex items-center justify-center text-additional-50;
 
     background: rgb(from theme("colors.success.600") r g b / 0.55);
+  }
+
+  // An opaque disc keeps the check at 3:1 whatever banner art shows through the scrim.
+  &__check {
+    @apply flex size-16 items-center justify-center rounded-full bg-success-600;
   }
 
   &__badges {
