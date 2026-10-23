@@ -139,15 +139,16 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
     @apply mb-3 flex flex-col gap-1 text-sm text-neutral-800;
 
     li {
-      @apply flex flex-wrap items-baseline gap-x-2;
+      @apply flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2;
     }
   }
 
   &__interval {
     @apply text-neutral-600;
 
+    // The separator only makes sense on one line; on phones the frequency goes below the name.
     &::before {
-      @apply mr-2 content-['·'];
+      @apply hidden sm:mr-2 sm:inline sm:content-['·'];
     }
   }
 
