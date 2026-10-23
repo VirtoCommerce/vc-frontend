@@ -183,8 +183,13 @@ watch(
   { immediate: true },
 );
 
+// The core adds the line optimistically (random id, empty sku) before the server answers; only the saved line can carry a choice.
+function isSavedLine(item: { sku?: string | null } | undefined): boolean {
+  return !!item?.sku;
+}
+
 async function syncCartLine(): Promise<void> {
-  if (!offer.value || !lineItem.value || !isAuthenticated.value) {
+  if (!offer.value || !lineItem.value || !isSavedLine(lineItem.value) || !isAuthenticated.value) {
     return;
   }
 
