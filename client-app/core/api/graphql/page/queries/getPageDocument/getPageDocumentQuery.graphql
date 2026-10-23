@@ -4,5 +4,10 @@ query getPageDocument($id: String!) {
     source
     permalink
     content
+    cultureName
+    alternates {
+      cultureName
+      permalink
+    }
   }
 }
