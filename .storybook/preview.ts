@@ -3,6 +3,7 @@ import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
 import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
+import { setPresetAttribute } from "../client-app/core/utilities/design";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
@@ -16,8 +17,7 @@ import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
-import "../client-app/assets/styles/_ui-kit-tokens.scss";
-import "../client-app/assets/styles/_dark.scss";
+import "../storybook-styles/main.scss";
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
@@ -166,6 +166,7 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
       currentStyleElement.textContent = css;
       document.head.prepend(currentStyleElement);
       currentPresetName = presetName;
+      setPresetAttribute(presetName);
     }
   } catch (error) {
     // eslint-disable-next-line no-console

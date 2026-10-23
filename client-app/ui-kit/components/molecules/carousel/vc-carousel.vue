@@ -8,7 +8,7 @@
         v-bind="attrs"
         v-on="listeners"
       >
-        <SwiperSlide v-for="(slide, index) in slides" :key="index" class="!h-auto">
+        <SwiperSlide v-for="(slide, index) in slides" :key="index" class="h-auto">
           <slot name="slide" v-bind="{ slide, index }">
             {{ slide }}
           </slot>

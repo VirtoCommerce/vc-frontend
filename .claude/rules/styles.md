@@ -44,9 +44,12 @@ catches anything, so everything below is review-only. Severity guide: breaks the
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
    - New global tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss` (UI-kit tokens) or `main.scss`.
-   - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`,
-     registered in `_dark.scss`. Print fixes: `assets/styles/print/...`, registered in `_print.scss`.
-     A new file that is not registered there is dead.
+   - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
+     Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
+     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: kit files in
+     `assets/styles/print/...` are registered in `_print-kit.scss` (`vc.kit`); app-level print rules go in
+     `_print-app.scss` (`vc.app`). A new file that is not registered is dead; one registered in the wrong
+     file lands in the wrong cascade layer.
    - Never `html.dark` / `.dark` selectors inside an SFC (there are none today).
 5. Shared transitions come from `assets/styles/helpers/_transitions.scss`: `fade`, `slide-fade-{left,right,top,bottom}`,
    `scale`, `shake`, `list` (tunable via `--transition-duration`, `--list-transform`). Don't redefine them per component.
@@ -238,7 +241,6 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 ## Legacy — don't flag, don't copy
 
 - Utility-only templates, `print:hidden` and `max-lg:` in them.
-- Existing `!important` and template `!mt-*` utilities — don't copy, don't extend.
 - `<style scoped>` blocks; plain CSS with px sizes.
 - `vc-`-prefixed blocks outside the UI kit.
 - `.vc-typography--variant--h1` overrides outside the kit.

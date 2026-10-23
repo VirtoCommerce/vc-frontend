@@ -222,7 +222,9 @@ const failed = computed(() => Boolean(error.value));
   }
 
   &__thumb-img {
-    @apply size-full object-contain;
+    --vc-image-object-fit: contain;
+
+    @apply size-full;
   }
 
   &__product-text {

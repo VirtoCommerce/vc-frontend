@@ -106,6 +106,11 @@ provideBlockChrome({
       @apply cursor-grabbing;
     }
 
+    // The global ring sits in a lower layer than `--editing`'s outline.
+    &:focus-visible {
+      @include focus-ring;
+    }
+
     // Self-sufficient: useKeyboardSort moves the card and restores focus a tick later,
     // so the ring must not depend on `:focus-visible`. The grab itself reads from
     // `--grabbed` (opacity + shadow), which is why no second ring is needed here.

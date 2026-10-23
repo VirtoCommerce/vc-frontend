@@ -25,6 +25,10 @@
     @apply gap-4 w-[13rem];
   }
 
+  &__button--desktop.vc-button {
+    @apply hidden;
+  }
+
   &__removable {
     @apply hidden;
   }

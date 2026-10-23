@@ -96,14 +96,14 @@
           </VcProperty>
         </div>
 
-        <VcProductPrice
-          v-if="withPrice"
-          class="vc-line-item__price"
-          :list-price="listPrice"
-          :actual-price="showPlacedPrice ? actualPrice : listPrice"
-          :disabled="disabled"
-          align="end"
-        />
+        <div v-if="withPrice" class="vc-line-item__price">
+          <VcProductPrice
+            :list-price="listPrice"
+            :actual-price="showPlacedPrice ? actualPrice : listPrice"
+            :disabled="disabled"
+            align="end"
+          />
+        </div>
 
         <div class="vc-line-item__mobile-row">
           <div class="vc-line-item__slot">
@@ -300,7 +300,9 @@ watchEffect(() => {
   }
 
   &__img {
-    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center;
+    --vc-image-object-fit: contain;
+
+    @apply shrink-0 size-16 rounded-[--vc-radius] border;
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;
@@ -397,12 +399,10 @@ watchEffect(() => {
   }
 
   &__property-price {
+    --vc-product-price-line-height: 1.5;
+
     @container (width > theme("containers.4xl")) {
       @apply hidden;
-    }
-
-    * {
-      @apply leading-[inherit] #{!important};
     }
   }
 
@@ -410,7 +410,7 @@ watchEffect(() => {
     --vc-product-price-font-size: theme(fontSize.sm);
 
     @container (width <= theme("containers.4xl")) {
-      @apply hidden #{!important};
+      @apply hidden;
     }
 
     @container (width > theme("containers.4xl")) {
@@ -496,7 +496,7 @@ watchEffect(() => {
     @apply shrink-0;
 
     @container (width <= theme("containers.2xl")) {
-      @apply top-0.5 right-0.5 absolute #{!important};
+      @apply top-0.5 right-0.5 absolute;
     }
 
     @container (width > theme("containers.2xl")) {

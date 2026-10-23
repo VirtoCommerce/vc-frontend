@@ -168,7 +168,7 @@ defineExpose({ close });
 
     #{$mobileFullscreen} & {
       @media (max-width: theme("screens.md")) {
-        @apply h-full max-h-full max-w-full #{!important};
+        @apply h-full max-h-full max-w-full;
 
         & > .vc-dialog {
           @apply max-h-full h-full rounded-none;

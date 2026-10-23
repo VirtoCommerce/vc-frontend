@@ -414,7 +414,9 @@ function formatSize(bytes: number): string {
   }
 
   &__featured-img {
-    @apply max-h-64 w-full object-contain;
+    --vc-image-object-fit: contain;
+
+    @apply max-h-64 w-full;
   }
 
   &__featured-icon {
@@ -505,7 +507,9 @@ function formatSize(bytes: number): string {
   }
 
   &__preview-img {
-    @apply size-full object-cover;
+    --vc-image-object-fit: cover;
+
+    @apply size-full;
   }
 
   &__preview-icon {

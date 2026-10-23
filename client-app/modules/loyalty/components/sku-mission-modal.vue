@@ -409,7 +409,7 @@ async function addProductsToCart(close: () => void) {
     }
 
     @media (min-width: theme("screens.md")) {
-      @apply min-w-32 flex-none;
+      @apply flex-none;
     }
   }
 }

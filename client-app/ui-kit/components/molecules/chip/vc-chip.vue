@@ -186,7 +186,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   }
 
   &--nowrap:not(#{$truncate}) {
-    @apply w-auto whitespace-nowrap #{!important};
+    @apply w-auto whitespace-nowrap;
   }
 
   &--rounded {
