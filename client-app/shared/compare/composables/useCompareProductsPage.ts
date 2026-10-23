@@ -10,7 +10,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getPropertiesGroupedByName, Logger } from "@/core/utilities";
+import { getProductListIndex, getPropertiesGroupedByName, Logger } from "@/core/utilities";
 import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
@@ -469,7 +469,13 @@ export function useCompareProductsPage() {
   }));
 
   function selectItemEvent(product: Product) {
-    analytics("selectItem", product, compareProductsListProperties.value);
+    analytics("selectItem", product, {
+      ...compareProductsListProperties.value,
+      index: getProductListIndex(
+        selectedCategoryProducts.value.map((item) => item.product),
+        product.id,
+      ),
+    });
   }
 
   // selectedCategoryProducts also recomputes (new array reference) once configuredLineItemsByLocalId

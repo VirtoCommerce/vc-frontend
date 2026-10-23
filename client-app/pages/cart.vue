@@ -237,6 +237,7 @@ import { recentlyBrowsed } from "@/core/api/graphql";
 import { useAnalytics, useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, MODULE_XAPI_KEYS, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
+import { getProductListIndex } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
@@ -412,6 +413,7 @@ function selectItemEvent(item: LineItemType | undefined): void {
   analytics("selectItem", item, {
     item_list_id: "cart",
     item_list_name: t("pages.cart.title"),
+    index: getProductListIndex(cart.value?.items ?? [], item.id),
   });
 }
 
