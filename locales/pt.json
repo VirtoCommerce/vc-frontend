@@ -526,10 +526,10 @@
           "lockout_disabled": "Esta conta não pode entrar com um código.",
           "invalid_code": "Este código não funcionou.",
           "missing_parameter": "@:common.messages.something_went_wrong",
-          "invalid_two_factor_token": "A sua sessão de início de sessão expirou. Inicie sessão novamente.",
-          "code_attempts_exceeded": "Demasiados códigos incorretos. Aguarde alguns minutos e inicie sessão novamente.",
-          "mfa_provider_not_available": "Não é possível enviar um código de acesso para esta conta. Contacte o seu administrador.",
-          "two_factor_unavailable": "Esta conta exige uma segunda etapa de início de sessão, mas ela não está disponível. Entre em contato com o administrador.",
+          "invalid_two_factor_token": "Sua sessão de login expirou. Faça login novamente.",
+          "code_attempts_exceeded": "Muitos códigos incorretos. Aguarde alguns minutos e faça login novamente.",
+          "mfa_provider_not_available": "Não é possível enviar um código de acesso para esta conta. Entre em contato com o administrador.",
+          "two_factor_unavailable": "Esta conta exige uma segunda etapa de login, mas ela não está disponível. Entre em contato com o administrador.",
           "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
@@ -662,8 +662,8 @@
         }
       },
       "mfa_verify_form": {
-        "header": "Introduza o código de acesso",
-        "subtitle": "Enviámos um código para {destination}.",
+        "header": "Digite o código de acesso",
+        "subtitle": "Enviamos um código para {destination}.",
         "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
       },
       "sign_in_code_form": {

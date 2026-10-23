@@ -154,10 +154,6 @@ export function useImpersonate() {
   async function impersonateAuthenticated(targetUserId: string): Promise<void> {
     errors.value = [];
     await requestImpersonateToken(targetUserId);
-
-    if (step.value !== "success") {
-      throw new Error("The impersonation failed after the sign-in code was accepted");
-    }
   }
 
   const { operator } = useUser();

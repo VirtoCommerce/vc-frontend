@@ -43,12 +43,21 @@ vi.mock("@/shared/sign-in/components/mfa-verify-form.vue", () => ({
 
 const stubs = {
   VcAlert: { template: `<div data-test-id="impersonate-error"><slot /></div>` },
-  VcInput: { props: ["modelValue"], template: `<input />` },
+  VcInput: {
+    props: ["modelValue"],
+    setup(_props: unknown, { expose }: { expose: (exposed: Record<string, unknown>) => void }) {
+      const inputElement = ref<HTMLInputElement | null>(null);
+      expose({ inputElement });
+      return { inputElement };
+    },
+    template: `<input ref="inputElement" />`,
+  },
   VcButton: { template: `<button><slot /></button>` },
 };
 
-function mountForm() {
+function mountForm(options: { attachTo?: HTMLElement } = {}) {
   return mount(ImpersonateForm, {
+    ...options,
     props: { targetUserId: "target-user" },
     global: {
       mocks: { $t: (key: string) => key },
@@ -112,7 +121,10 @@ describe("ImpersonateForm", () => {
 
   it("rejects the verified code when the impersonation fails, so the operator's tokens are discarded", async () => {
     requireSecondFactor();
-    impersonateAuthenticated.mockRejectedValue(new Error("impersonation failed"));
+    impersonateAuthenticated.mockImplementation(() => {
+      step.value = "idle";
+      return Promise.resolve();
+    });
 
     const wrapper = mountForm();
 
@@ -140,5 +152,20 @@ describe("ImpersonateForm", () => {
     await flushPromises();
 
     expect(failTwoFactor).toHaveBeenCalledWith(error);
+  });
+
+  it("moves the focus to the email field when the code step fails", async () => {
+    requireSecondFactor();
+    failTwoFactor.mockImplementation(() => {
+      twoFactorChallenge.value = undefined;
+    });
+
+    const wrapper = mountForm({ attachTo: document.body });
+    wrapper.findComponent({ name: "MfaVerifyForm" }).vm.$emit("failed", { code: "invalid_two_factor_token" });
+    await flushPromises();
+
+    expect(document.activeElement).toBe(wrapper.find('input[name="email"]').element);
+
+    wrapper.unmount();
   });
 });

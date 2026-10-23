@@ -19,7 +19,7 @@
       :back-label="$t('shared.account.impersonate_form.cancel_button')"
       :track-analytics="false"
       @back="onCancel"
-      @failed="failTwoFactor"
+      @failed="onTwoFactorFailed"
     />
 
     <form v-else class="impersonate-form__form" @submit="onSubmit">
@@ -36,6 +36,7 @@
       </VcAlert>
 
       <VcInput
+        ref="emailInput"
         v-model.trim="email"
         name="email"
         class="impersonate-form__field"
@@ -86,7 +87,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { computed, watch } from "vue";
+import { computed, nextTick, useTemplateRef, watch } from "vue";
 import { object, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { useImpersonate } from "@/shared/account/composables";
@@ -128,6 +129,8 @@ const { impersonate, impersonateAuthenticated, loading, step, errors, twoFactorC
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
 
+const emailInput = useTemplateRef<{ inputElement: HTMLInputElement | null }>("emailInput");
+
 const translatedErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
   return list
@@ -145,7 +148,19 @@ const onSubmit = handleSubmit(async () => {
 
 async function onTwoFactorVerified(): Promise<void> {
   await impersonateAuthenticated(props.targetUserId);
+
+  if (step.value !== "success") {
+    throw new Error("The impersonation failed after the sign-in code was accepted");
+  }
+
   emit("success");
+}
+
+async function onTwoFactorFailed(error: IdentityErrorType): Promise<void> {
+  failTwoFactor(error);
+
+  await nextTick();
+  emailInput.value?.inputElement?.focus();
 }
 
 function onCancel(): void {

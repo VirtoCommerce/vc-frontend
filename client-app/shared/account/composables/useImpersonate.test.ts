@@ -345,7 +345,7 @@ describe("useImpersonate", () => {
     expect(errors.value).toEqual([{ code: "invalid_two_factor_token" }]);
   });
 
-  it("stays on the code step while the impersonation completes, and rejects once that fails", async () => {
+  it("stays on the code step while the impersonation completes, and ends idle once that fails", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
 
@@ -371,7 +371,7 @@ describe("useImpersonate", () => {
     }));
     setFailedImpersonateResponse(fetchState);
 
-    await expect(impersonateAuthenticated("target-user")).rejects.toThrow();
+    await expect(impersonateAuthenticated("target-user")).resolves.toBeUndefined();
 
     expect(twoFactorChallengeWhileImpersonating).toBeDefined();
     expect(step.value).toBe("idle");
@@ -393,7 +393,7 @@ describe("useImpersonate", () => {
     const { impersonate, impersonateAuthenticated, failTwoFactor, step, errors, twoFactorChallenge } = useImpersonate();
 
     await impersonate("support@acme.com", "secret", "target-user");
-    await expect(impersonateAuthenticated("target-user")).rejects.toThrow();
+    await expect(impersonateAuthenticated("target-user")).resolves.toBeUndefined();
     failTwoFactor({ description: "common.messages.something_went_wrong" });
 
     expect(step.value).toBe("idle");
