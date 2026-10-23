@@ -59,6 +59,8 @@
         "returnable": "Devolvível",
         "quantity": "Quantidade"
       },
+      "ordered_count": "Pedido: {count}",
+      "returnable_count": "Devolvível: {count}",
       "quantity_for": "Quantidade a devolver de {name}",
       "continue": "Continuar"
     },
@@ -96,7 +98,8 @@
         "date": "Data",
         "status": "Estado",
         "quantity": "Qtd."
-      }
+      },
+      "items_count": "Sem itens | {count} item | {count} itens"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Solicitado",
       "approved": "Aprovado"
     },
+    "requested_count": "Solicitado: {count}",
+    "approved_count": "Aprovado: {count}",
     "table_description": "artigos devolvidos"
   },
   "return_cancel": {

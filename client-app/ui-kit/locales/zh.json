@@ -67,11 +67,13 @@
       "unavailable_date": "此日期不可用"
     },
     "labels": {
+      "actions": "操作",
       "not_available": "不可用",
       "price_per_item": "单价",
       "product": "产品",
       "product_quantity": "产品数量",
       "properties": "属性",
+      "quantity_times": "{quantity} ×",
       "subtotal": "小计",
       "toggle_vendor_select": "切换供应商选择",
       "total": "总计",

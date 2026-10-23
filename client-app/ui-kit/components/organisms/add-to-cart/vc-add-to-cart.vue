@@ -269,7 +269,7 @@ watchEffect(async () => {
 
       &--list {
         #{$self} {
-          @apply mt-3;
+          @apply w-48 justify-self-end;
 
           @container (min-width: theme("containers.sm")) {
             @apply w-60;

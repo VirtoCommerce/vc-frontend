@@ -7,6 +7,7 @@
     with-price
     with-total
     with-subtotal
+    readonly
     :subtotal-currency-code="subtotalCurrencyCode"
   >
     <template #titles>

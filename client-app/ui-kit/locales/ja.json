@@ -67,11 +67,13 @@
       "unavailable_date": "この日付は利用できません"
     },
     "labels": {
+      "actions": "アクション",
       "not_available": "N/A",
       "price_per_item": "単価",
       "product": "商品",
       "product_quantity": "商品数量",
       "properties": "プロパティ",
+      "quantity_times": "{quantity} ×",
       "subtotal": "小計",
       "toggle_vendor_select": "ベンダー選択を切り替え",
       "total": "合計",

@@ -59,11 +59,13 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
 
   &--size {
     &--xs {
-      --size: 1rem;
+      --size: var(--vc-badge-size, 1rem);
       --vc-icon-size: 0.5rem;
       --gap: 0.25rem;
 
       @apply pb-px px-[0.188rem] text-xxs/[1];
+
+      font-size: var(--vc-badge-font-size, theme("fontSize.xxs"));
 
       &--dot {
         @apply size-1.5;
@@ -71,11 +73,13 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
     }
 
     &--sm {
-      --size: 1.125rem;
+      --size: var(--vc-badge-size, 1.125rem);
       --vc-icon-size: 0.75rem;
       --gap: 0.25rem;
 
       @apply px-[0.188rem] text-xs/[1.2];
+
+      font-size: var(--vc-badge-font-size, theme("fontSize.xs"));
 
       &--dot {
         @apply size-2;
@@ -83,11 +87,13 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
     }
 
     &--md {
-      --size: 1.375rem;
+      --size: var(--vc-badge-size, 1.375rem);
       --vc-icon-size: 0.875rem;
       --gap: 0.375rem;
 
       @apply px-1 text-sm/[1.2];
+
+      font-size: var(--vc-badge-font-size, theme("fontSize.sm"));
 
       &--dot {
         @apply size-2.5;
@@ -95,11 +101,13 @@ const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant)
     }
 
     &--lg {
-      --size: 1.625rem;
+      --size: var(--vc-badge-size, 1.625rem);
       --vc-icon-size: 1rem;
       --gap: 0.375rem;
 
       @apply px-1 text-base/[1.25];
+
+      font-size: var(--vc-badge-font-size, theme("fontSize.base"));
 
       &--dot {
         @apply size-3;

@@ -59,6 +59,8 @@
         "returnable": "Palautettavissa",
         "quantity": "Määrä"
       },
+      "ordered_count": "Tilattu: {count}",
+      "returnable_count": "Palautettavissa: {count}",
       "quantity_for": "Palautusmäärä tuotteelle {name}",
       "continue": "Jatka"
     },
@@ -96,7 +98,8 @@
         "date": "Päivämäärä",
         "status": "Tila",
         "quantity": "Määrä"
-      }
+      },
+      "items_count": "Ei tuotteita | {count} tuote | {count} tuotetta"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Pyydetty",
       "approved": "Hyväksytty"
     },
+    "requested_count": "Pyydetty: {count}",
+    "approved_count": "Hyväksytty: {count}",
     "table_description": "palautetut tuotteet"
   },
   "return_cancel": {

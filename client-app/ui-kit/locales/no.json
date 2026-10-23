@@ -67,11 +67,13 @@
       "unavailable_date": "Denne datoen er ikke tilgjengelig"
     },
     "labels": {
+      "actions": "Handlinger",
       "not_available": "Ikke tilgjengelig",
       "price_per_item": "Pris per enhet",
       "product": "Produkt",
       "product_quantity": "Produktantall",
       "properties": "Egenskaper",
+      "quantity_times": "{quantity} ×",
       "subtotal": "Delsum",
       "toggle_vendor_select": "Veksle leverandørvalg",
       "total": "Totalt",

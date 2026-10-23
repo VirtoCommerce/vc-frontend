@@ -128,13 +128,15 @@ const isInteractive = computed(
 );
 provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
+const linkRel = computed(() => (props.target === "_blank" ? "noopener noreferrer" : undefined));
+
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target, tabindex: 0 };
+    return { to: props.to, target: props.target, rel: linkRel.value, tabindex: 0 };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target, tabindex: 0 };
+    return { href: props.externalLink, target: props.target, rel: linkRel.value, tabindex: 0 };
   }
 
   if (innerTag.value === "button") {

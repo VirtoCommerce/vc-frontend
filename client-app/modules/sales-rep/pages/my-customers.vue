@@ -60,7 +60,7 @@
         </template>
       </VcEmptyView>
 
-      <VcWidget v-else size="md">
+      <VcWidget v-else size="md" mobile-flat>
         <template #default-container>
           <!-- Sorting maps each header to a named backend rule; all three customer rules reverse on a second click. -->
           <VcTable
@@ -71,57 +71,55 @@
             :row-class="rowClass"
             :sort="sortInfo"
             mobile-breakpoint="lg"
+            mobile-cards
             @page-changed="changePage"
             @header-click="applySort"
           >
             <template #mobile-item="{ item }">
-              <div class="my-customers__mobile-item">
-                <div class="my-customers__mobile-body">
-                  <div class="my-customers__mobile-main">
-                    <VcLink
-                      class="my-customers__customer my-customers__customer--mobile"
-                      :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
-                    >
-                      {{ item.organizationName }}
-                    </VcLink>
-
-                    <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
-
-                    <span class="my-customers__mobile-sub">
-                      {{ t("sales_rep.my_customers.table.ytd") }}: {{ item.ytdTotal }}
-                    </span>
-
-                    <!-- Mobile has no column header, so caption the last-order link — a bare date/#number reads as an unlabeled link. -->
-                    <div v-if="item.lastOrder" class="my-customers__mobile-order">
-                      <span class="my-customers__mobile-caption">{{
-                        t("sales_rep.my_customers.table.last_order")
-                      }}</span>
-
-                      <span class="my-customers__mobile-sub">
-                        {{ $d(item.lastOrder.createdDate) }} ·
-                        <VcLink
-                          class="my-customers__order"
-                          :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {{ orderLabel(item.lastOrder.number) }}
-                        </VcLink>
-                      </span>
-                    </div>
-                  </div>
-
-                  <VcButton
-                    class="my-customers__mobile-action"
-                    size="sm"
-                    variant="outline"
-                    prepend-icon="mail"
-                    @click="openCommunication(item)"
+              <VcRecordCard
+                :title="item.organizationName"
+                :initials="nameInitials(item.organizationName)"
+                :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
+                :description="item.location"
+                :metric="item.ytdTotal"
+                :meta="getCustomerMeta(item)"
+              >
+                <template #menu="{ close }">
+                  <VcMenuItem
+                    color="secondary"
+                    nowrap
+                    @click="
+                      close();
+                      openCommunication(item);
+                    "
                   >
-                    {{ t("sales_rep.communication.action") }}
-                  </VcButton>
-                </div>
-              </div>
+                    <template #prepend>
+                      <VcIcon name="mail" />
+                    </template>
+
+                    <span>{{ t("sales_rep.communication.action") }}</span>
+                  </VcMenuItem>
+
+                  <VcMenuItem
+                    v-if="item.lastOrder"
+                    :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.lastOrder.id } }"
+                    target="_blank"
+                    color="secondary"
+                    nowrap
+                    @click="close()"
+                  >
+                    <template #prepend>
+                      <VcIcon name="receipt" />
+                    </template>
+
+                    <span>{{ t("sales_rep.my_customers.table.last_order") }}</span>
+
+                    <template #append>
+                      {{ orderLabel(item.lastOrder.number) }}
+                    </template>
+                  </VcMenuItem>
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn
@@ -225,11 +223,11 @@ import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
-import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
-import { formatStatCount, selectableFilterRules } from "../utils";
+import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
+import { formatStatCount, nameInitials, selectableFilterRules } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
-const { t } = useI18n();
+const { t, d } = useI18n();
 const { openModal } = useModal();
 const { loading, error, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
 
@@ -263,6 +261,21 @@ watch(
 
 function orderLabel(number: string): string {
   return `#${number}`;
+}
+
+function getCustomerMeta(item: SalesRepCustomerType): VcRecordCardMetaItemType[] {
+  const meta: VcRecordCardMetaItemType[] = [
+    {
+      icon: "receipt",
+      text: t("sales_rep.my_customers.table.orders_count", { count: formatStatCount(item.ytdCount) }, item.ytdCount),
+    },
+  ];
+
+  if (item.lastOrder) {
+    meta.push({ icon: "calendar-clock", text: d(item.lastOrder.createdDate) });
+  }
+
+  return meta;
 }
 
 // Broadcast to all members of the customer's org — reuses the shared modal shell (VCST-5310).
@@ -329,10 +342,6 @@ function changePage(newPage: number): void {
 
   &__customer {
     @apply text-[--link-color] hover:underline;
-
-    &--mobile {
-      @apply font-bold;
-    }
   }
 
   &__location {
@@ -349,47 +358,6 @@ function changePage(newPage: number): void {
 
   &__order {
     @apply text-sm text-neutral-500 hover:text-[--link-color] hover:underline;
-  }
-
-  &__mobile-item {
-    @apply border-b px-5 py-4.5 [word-break:break-word];
-
-    // The card is its own query container, so the body can lay the action beside the content once the card is wide enough (≈ tablets / iPad mini).
-    container-type: inline-size;
-  }
-
-  // Stacked on narrow cards; splits into content + action once the card has room (see the container query above).
-  &__mobile-body {
-    @apply flex flex-col gap-3;
-
-    @container (min-width: theme("containers.md")) {
-      @apply flex-row items-start justify-between gap-4;
-    }
-  }
-
-  &__mobile-main {
-    @apply flex min-w-0 flex-col gap-1;
-  }
-
-  &__mobile-order {
-    @apply flex flex-col;
-  }
-
-  // Label the last-order block; on desktop the column header does this job, but the mobile card has no header.
-  &__mobile-caption {
-    @apply text-sm font-medium;
-  }
-
-  &__mobile-sub {
-    @apply text-sm;
-  }
-
-  &__mobile-action {
-    @apply self-start;
-
-    @container (min-width: theme("containers.md")) {
-      @apply shrink-0;
-    }
   }
 }
 </style>

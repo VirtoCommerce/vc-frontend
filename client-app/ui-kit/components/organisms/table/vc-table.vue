@@ -6,7 +6,10 @@
     </div>
 
     <!-- Mobile table view -->
-    <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
+    <div
+      v-if="isMobile && $slots['mobile-item']"
+      :class="['vc-table__mobile', { 'vc-table__mobile--cards': mobileCards }]"
+    >
       <!-- Mobile skeleton view -->
       <slot v-if="loading" name="mobile-skeleton">
         <!-- Default mobile skeleton template -->
@@ -357,6 +360,8 @@ const props = withDefaults(
     skeletonRows?: number;
     bordered?: boolean;
     mobileBordered?: boolean;
+    /** Renders mobile items as a stack of separate cards (e.g. `VcRecordCard`) with a gap and no outer border. */
+    mobileCards?: boolean;
     scrollable?: boolean;
     /**
      * Makes the table header sticky. When used without `maxHeight`, the header
@@ -1092,6 +1097,7 @@ watch(
 
 <style lang="scss">
 .vc-table {
+  $mobileCards: "";
   $headSticky: "";
 
   @mixin column-align {
@@ -1153,10 +1159,20 @@ watch(
     border-style: solid;
     border-width: var(--mobile-border-width);
     border-radius: var(--mobile-radius);
+
+    &--cards {
+      $mobileCards: &;
+
+      @apply flex flex-col gap-[var(--vc-table-mobile-cards-gap,0.75rem)] border-0;
+    }
   }
 
   &__mobile-skeleton {
     @apply grid grid-cols-2 gap-4 border-b border-neutral-200 p-6;
+
+    #{$mobileCards} & {
+      @apply rounded-[--radius] border bg-additional-50 p-3.5;
+    }
   }
 
   &__mobile-skeleton-block {

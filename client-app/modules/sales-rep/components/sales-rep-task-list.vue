@@ -6,32 +6,37 @@
     :pages="pages"
     :page="page"
     mobile-breakpoint="lg"
+    mobile-cards
     @page-changed="$emit('update:page', $event)"
   >
     <template #mobile-item="{ item }">
-      <div class="sales-rep-task-list__mobile-item">
-        <!-- Same label the desktop control carries: without it the only accessible name is the task title,
-             which names the row but not what activating it does (QA A-17). -->
-        <button
-          type="button"
-          :class="titleClass(item)"
-          :title="item.name"
-          :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
-          @click="$emit('edit', item)"
-        >
-          <span class="sales-rep-task-list__name">{{ item.name }}</span>
-        </button>
+      <VcRecordCard :meta="metas.get(item.id)">
+        <template #title>
+          <!-- Same label the desktop control carries: without it the only accessible name is the task title,
+               which names the row but not what activating it does (QA A-17). -->
+          <button
+            type="button"
+            :class="titleClass(item)"
+            :title="item.name"
+            :aria-label="t('sales_rep.tasks.table.edit_aria', { name: item.name })"
+            @click="$emit('edit', item)"
+          >
+            <span class="sales-rep-task-list__name">{{ item.name }}</span>
+          </button>
+        </template>
 
-        <span v-if="sublines.get(item.id)" class="sales-rep-task-list__meta">{{ sublines.get(item.id) }}</span>
+        <template v-if="item.description" #description>
+          <span :title="item.description" class="sales-rep-task-list__notes">{{ item.description }}</span>
+        </template>
 
-        <SalesRepTaskStatus :status="item.status" />
+        <template v-if="hasAction(item)" #default>
+          <SalesRepTaskAction :task="item" :disabled="busy" @toggle="$emit('toggle', item)" />
+        </template>
 
-        <p v-if="item.description" :title="item.description" class="sales-rep-task-list__notes">
-          {{ item.description }}
-        </p>
-
-        <SalesRepTaskAction :task="item" :disabled="busy" @toggle="$emit('toggle', item)" />
-      </div>
+        <template #status>
+          <SalesRepTaskStatus :status="item.status" />
+        </template>
+      </VcRecordCard>
     </template>
 
     <VcTableColumn id="task" :title="t('sales_rep.tasks.table.task')">
@@ -102,6 +107,23 @@ const { t, d } = useI18n();
 // Resolved once per row rather than per template read: each one formats a date through Intl.
 const sublines = computed(() => new Map(props.tasks.map((task) => [task.id, taskSubline(task, t, d)])));
 
+const metas = computed(
+  () =>
+    new Map(
+      props.tasks.map((task) => {
+        const subline = sublines.value.get(task.id);
+        const meta: VcRecordCardMetaItemType[] = subline ? [{ icon: "calendar", text: subline }] : [];
+
+        return [task.id, meta];
+      }),
+    ),
+);
+
+// SalesRepTaskAction renders nothing for a canceled task; an empty card section would still take up a gap.
+function hasAction(task: SalesRepTaskType): boolean {
+  return task.status !== "canceled";
+}
+
 function titleClass(task: SalesRepTaskType) {
   return [
     "sales-rep-task-list__title-button",
@@ -114,6 +136,11 @@ function titleClass(task: SalesRepTaskType) {
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-task-list {
   @apply pb-3;
+
+  // Room around the mobile cards inside the tasks widget.
+  @media (width < theme("screens.lg")) {
+    @apply p-4;
+  }
 
   // Fixed layout, so a long note can no longer size its own column and squeeze the task title beside it.
   // Only the two content-shaped columns are measured — a chip and an action — and the remainder is split
@@ -161,10 +188,6 @@ function titleClass(task: SalesRepTaskType) {
     // Clamped like the title: notes are free text up to 1000 characters, and one long note otherwise sets
     // the height of its whole row. The full text stays in the title attribute.
     @apply line-clamp-2 text-sm text-neutral-600 [word-break:break-word];
-  }
-
-  &__mobile-item {
-    @apply flex flex-col items-start gap-1.5 border-b px-5 py-4.5;
   }
 }
 </style>

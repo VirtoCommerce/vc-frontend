@@ -69,6 +69,7 @@
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
             :show-placed-price="item.showPlacedPrice"
+            :quantity="readonly ? item.quantity : undefined"
             :data-product-sku="item.sku"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
@@ -94,6 +95,14 @@
 
             <template #after-title>
               <slot name="after-title" v-bind="{ item }" />
+            </template>
+
+            <template v-if="$slots.badges" #badges>
+              <slot name="badges" v-bind="{ item }" />
+            </template>
+
+            <template v-if="$slots.menu" #menu="{ close }">
+              <slot name="menu" v-bind="{ item, close }" />
             </template>
           </VcLineItem>
         </slot>
@@ -298,7 +307,7 @@ watchEffect(() => {
   }
 
   &__body {
-    @apply flex flex-col gap-4;
+    @apply flex flex-col gap-3;
 
     @container (width > theme("containers.2xl")) {
       @apply gap-0 space-y-0 divide-y;

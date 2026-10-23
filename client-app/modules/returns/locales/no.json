@@ -59,6 +59,8 @@
         "returnable": "Returnerbar",
         "quantity": "Antall"
       },
+      "ordered_count": "Bestilt: {count}",
+      "returnable_count": "Returnerbar: {count}",
       "quantity_for": "Returantall for {name}",
       "continue": "Fortsett"
     },
@@ -96,7 +98,8 @@
         "date": "Dato",
         "status": "Status",
         "quantity": "Antall"
-      }
+      },
+      "items_count": "Ingen varer | {count} vare | {count} varer"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Forespurt",
       "approved": "Godkjent"
     },
+    "requested_count": "Forespurt: {count}",
+    "approved_count": "Godkjent: {count}",
     "table_description": "returnerte varer"
   },
   "return_cancel": {

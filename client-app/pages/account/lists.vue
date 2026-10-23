@@ -27,13 +27,14 @@
 
     <!-- Lists / Skeletons -->
     <div v-if="loading || lists.length" class="lists__container">
-      <div class="lists__items">
+      <div class="lists__items" :class="{ 'lists__items--cards': isMobile }">
         <template v-if="loading">
           <WishlistCardSkeleton v-for="item in 10" :key="item" />
         </template>
 
         <template v-else>
-          <WishlistCard
+          <component
+            :is="isMobile ? WishlistRecordCard : WishlistCard"
             v-for="list in lists"
             :key="list.id"
             :list="list"
@@ -57,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
@@ -70,13 +72,16 @@ import {
   useWishlists,
   WishlistCard,
   WishlistCardSkeleton,
+  WishlistRecordCard,
 } from "@/shared/wishlists";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const { loading, lists, fetchWishlists } = useWishlists();
+const isMobile = useBreakpoints(BREAKPOINTS).smaller("lg");
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
@@ -164,6 +169,11 @@ void fetchWishlists();
 
     @container (min-width: theme("containers.xl")) {
       @apply grid grid-cols-[fit-content(40%)_minmax(0,1fr)_auto_auto_auto] gap-y-2.5 space-y-0;
+    }
+
+    // Record cards are not subgrid rows: keep them stacked whatever the container width.
+    &--cards {
+      @apply flex flex-col gap-3 space-y-0;
     }
   }
 }

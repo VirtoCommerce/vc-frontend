@@ -59,6 +59,8 @@
         "returnable": "Restituibile",
         "quantity": "Quantità"
       },
+      "ordered_count": "Ordinato: {count}",
+      "returnable_count": "Restituibile: {count}",
       "quantity_for": "Quantità da restituire per {name}",
       "continue": "Continua"
     },
@@ -96,7 +98,8 @@
         "date": "Data",
         "status": "Stato",
         "quantity": "Qtà"
-      }
+      },
+      "items_count": "Nessun articolo | {count} articolo | {count} articoli"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Richiesto",
       "approved": "Approvato"
     },
+    "requested_count": "Richiesto: {count}",
+    "approved_count": "Approvato: {count}",
     "table_description": "articoli resi"
   },
   "return_cancel": {

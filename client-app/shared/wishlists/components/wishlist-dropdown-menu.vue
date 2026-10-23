@@ -5,13 +5,13 @@
         ref="triggerButton"
         data-test-id="wishlist-card-menu-button"
         :aria-label="$t('common.labels.actions')"
-        icon
+        :icon="compact ? 'ellipsis-vertical' : true"
         color="secondary"
-        variant="outline"
+        :variant="compact ? 'ghost' : 'outline'"
         size="xs"
         v-bind="triggerProps"
       >
-        <VcIcon name="cog" variant="solid" />
+        <VcIcon v-if="!compact" name="cog" variant="solid" />
       </VcButton>
     </template>
 
@@ -83,6 +83,8 @@ interface IProps {
   shareable?: boolean;
   /** Removing a list is the owner's call: a co-member of an organization list may write it but not delete it. */
   removable?: boolean;
+  /** Ghost ⋮ trigger for record cards instead of the outlined settings button. */
+  compact?: boolean;
 }
 
 defineEmits<IEmits>();

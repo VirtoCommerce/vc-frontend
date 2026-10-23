@@ -1,5 +1,17 @@
 <template>
-  <div class="flex items-center gap-1.5">
+  <VcChip
+    v-if="chip"
+    :color="isPrivate ? 'neutral' : 'success'"
+    :icon="isPrivate ? 'lock' : 'users'"
+    variant="outline"
+    size="sm"
+    rounded
+    nowrap
+  >
+    {{ statusText }}
+  </VcChip>
+
+  <div v-else class="flex items-center gap-1.5">
     <template v-if="sharingSetting.scope === WishlistScopeType.Private">
       <VcIcon :size="16" class="text-info-700" name="lock-closed" />
 
@@ -27,6 +39,8 @@ import type { SharingSettingType } from "@/core/api/graphql/types";
 
 interface IProps {
   sharingSetting: SharingSettingType;
+  /** Renders the status as an outlined chip (record cards). */
+  chip?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -50,7 +64,11 @@ const statusKey = computed(() => {
     : "shared.wishlists.status.shared_with_me";
 });
 
+const isPrivate = computed(() => props.sharingSetting.scope === WishlistScopeType.Private);
+
 // The count is always passed, zero included: a named `count` is what picks the plural form, and `t(key)` without it
 // resolves to the singular, so a scope left with no recipients would otherwise read "Shared with 1 customer".
-const statusText = computed(() => t(statusKey.value, { count: recipientCount.value }));
+const statusText = computed(() =>
+  isPrivate.value ? t("shared.wishlists.status.private") : t(statusKey.value, { count: recipientCount.value }),
+);
 </script>

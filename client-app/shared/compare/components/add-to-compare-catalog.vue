@@ -1,5 +1,21 @@
 <template>
+  <VcMenuItem
+    v-if="menuItem"
+    color="secondary"
+    :active="isInCompareList"
+    nowrap
+    data-test-id="add-to-compare-menu-item"
+    @click="onMenuItemClick"
+  >
+    <template #prepend>
+      <VcIcon name="compare" />
+    </template>
+
+    <span>{{ tooltipText }}</span>
+  </VcMenuItem>
+
   <VcProductActionsButton
+    v-else
     icon="compare"
     :icon-size="iconSize"
     :active="isInCompareList"
@@ -18,10 +34,18 @@ import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configura
 import { useCompareProducts } from "../composables/useCompareProducts";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
 
+interface IEmits {
+  (event: "click"): void;
+}
+
 interface IProps {
   product: Product;
   iconSize?: VcIconSizeType;
+  /** Renders the action as a `VcMenuItem` for a ⋮ menu. */
+  menuItem?: boolean;
 }
+
+const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
@@ -45,6 +69,11 @@ const tooltipText = computed(() =>
     ? t("shared.compare.add_to_compare.tooltips.remove")
     : t("shared.compare.add_to_compare.tooltips.add"),
 );
+
+function onMenuItemClick(): void {
+  emit("click");
+  toggle();
+}
 
 function toggle() {
   if (isInCompareList.value) {

@@ -49,7 +49,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <VcWidget v-else size="lg">
+    <VcWidget v-else size="lg" mobile-flat>
       <template #default-container>
         <VcTable
           :loading="loading"
@@ -59,6 +59,7 @@
           :pages="pages"
           :page="page"
           mobile-breakpoint="lg"
+          mobile-cards
           @header-click="applySorting"
           @page-changed="changePage"
         >
@@ -73,13 +74,12 @@
           </template>
 
           <template #mobile-item="{ item }">
-            <div class="sales-reps__mobile-item">
-              <b>{{ item.name }}</b>
-
-              <span class="sales-reps__mobile-sub">{{ item.email }}</span>
-
-              <span class="sales-reps__mobile-sub">{{ item.phone }}</span>
-            </div>
+            <VcRecordCard
+              :title="item.name"
+              :initials="nameInitials(item.name)"
+              :description="item.email"
+              :meta="getRepMeta(item)"
+            />
           </template>
         </VcTable>
       </template>
@@ -91,7 +91,8 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesReps } from "../composables/useSalesReps";
-import type { SalesRepSortColumnType } from "../types";
+import { nameInitials } from "../utils";
+import type { SalesRepSortColumnType, SalesRepType } from "../types";
 
 const { t } = useI18n();
 const { loading, error, keyword, sort, page, pages, items } = useSalesReps();
@@ -110,6 +111,10 @@ const columns = computed(() => [
   { id: "email", title: t("sales_rep.table.email") },
   { id: "phone", title: t("sales_rep.table.phone") },
 ]);
+
+function getRepMeta(rep: SalesRepType): VcRecordCardMetaItemType[] {
+  return rep.phone ? [{ icon: "phone", text: rep.phone }] : [];
+}
 
 function applyKeyword(): void {
   keyword.value = localKeyword.value.trim();
@@ -157,14 +162,6 @@ function changePage(newPage: number): void {
     // Equal thirds, each capped and truncated so a long value (e.g. fullName)
     // ellipsizes with a `:title` tooltip instead of overflowing and pushing the other cells.
     @apply w-1/3 max-w-52 truncate px-4 py-2.5;
-  }
-
-  &__mobile-item {
-    @apply flex flex-col gap-1 border-b px-5 py-4.5 [word-break:break-word];
-  }
-
-  &__mobile-sub {
-    @apply text-sm;
   }
 }
 </style>

@@ -3,13 +3,13 @@
     <template #trigger="{ triggerProps }">
       <VcButton
         :aria-label="$t('common.labels.actions')"
-        icon
+        :icon="compact ? 'ellipsis-vertical' : true"
         color="secondary"
-        variant="outline"
+        :variant="compact ? 'ghost' : 'outline'"
         size="xs"
         v-bind="triggerProps"
       >
-        <VcIcon name="cog" variant="solid" />
+        <VcIcon v-if="!compact" name="cog" variant="solid" />
       </VcButton>
     </template>
 
@@ -60,6 +60,8 @@ interface IEmit {
 export interface IProps {
   address: MemberAddressType;
   placement?: VcDropdownMenuPlacementType;
+  /** Ghost ⋮ trigger for record cards instead of the outlined settings button. */
+  compact?: boolean;
 }
 
 const emit = defineEmits<IEmit>();

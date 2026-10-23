@@ -23,7 +23,7 @@
       </template>
 
       <template #default-container>
-        <div class="pb-1.5">
+        <div class="pb-1.5 max-lg:px-4 max-lg:pb-4">
           <VcEmptyView
             v-if="!loading && !orders.length"
             :text="$t('pages.account.orders.no_orders_message')"

@@ -26,7 +26,16 @@
 
       &--list {
         #{$self} {
-          @apply hidden;
+          @container (width < theme("containers.2xl")) {
+            --vc-property-columns: auto auto;
+            --vc-property-dots-display: none;
+
+            @apply mt-0.5 flex min-w-0 flex-wrap gap-x-3 gap-y-0.5;
+          }
+
+          @container (min-width: theme("containers.2xl")) {
+            @apply hidden;
+          }
 
           @container (min-width: theme("containers.4xl")) {
             @apply block mt-0 ms-3 w-60;

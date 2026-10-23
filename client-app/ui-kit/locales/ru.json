@@ -67,11 +67,13 @@
       "unavailable_date": "Эта дата недоступна"
     },
     "labels": {
+      "actions": "Действия",
       "not_available": "Н/Д",
       "price_per_item": "Цена за единицу",
       "product": "Продукт",
       "product_quantity": "Количество продукта",
       "properties": "Свойства",
+      "quantity_times": "{quantity} ×",
       "subtotal": "Промежуточный итог",
       "toggle_vendor_select": "Переключить выбор поставщика",
       "total": "Итого",

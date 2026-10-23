@@ -59,6 +59,8 @@
         "returnable": "Можно вернуть",
         "quantity": "Количество"
       },
+      "ordered_count": "Заказано: {count}",
+      "returnable_count": "Можно вернуть: {count}",
       "quantity_for": "Количество к возврату для «{name}»",
       "continue": "Продолжить"
     },
@@ -96,7 +98,8 @@
         "date": "Дата",
         "status": "Статус",
         "quantity": "Кол-во"
-      }
+      },
+      "items_count": "Нет товаров | {count} товар | {count} товара | {count} товаров"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Запрошено",
       "approved": "Одобрено"
     },
+    "requested_count": "Запрошено: {count}",
+    "approved_count": "Одобрено: {count}",
     "table_description": "возвращаемые товары"
   },
   "return_cancel": {

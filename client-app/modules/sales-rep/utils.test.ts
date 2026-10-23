@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
-import { buildStatisticsWindows, formatStatCount, formatStatMoney, salesRepOrderRoute } from "./utils";
+import { buildStatisticsWindows, formatStatCount, formatStatMoney, nameInitials, salesRepOrderRoute } from "./utils";
 import type { SalesRepCustomerOrderRowType } from "./types";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
@@ -153,6 +153,22 @@ describe("formatStatCount", () => {
   it("keeps a real zero and small counts unchanged", () => {
     expect(formatStatCount(0)).toBe("0");
     expect(formatStatCount(7)).toBe("7");
+  });
+});
+
+describe("nameInitials", () => {
+  it("takes the upper-cased first letter of the first two words", () => {
+    expect(nameInitials("acme global trading")).toBe("AG");
+    expect(nameInitials("  Jane   Doe ")).toBe("JD");
+  });
+
+  it("returns one letter for a single word and nothing for an empty name", () => {
+    expect(nameInitials("Acme")).toBe("A");
+    expect(nameInitials("")).toBe("");
+  });
+
+  it("keeps an astral first character whole", () => {
+    expect(nameInitials("😀 Corp")).toBe("😀C");
   });
 });
 

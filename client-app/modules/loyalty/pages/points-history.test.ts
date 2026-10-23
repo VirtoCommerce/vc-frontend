@@ -43,6 +43,7 @@ const createWrapper = createWrapperFactory(mount, PointsHistory, {
     renderStubDefaultSlot: false,
     stubs: {
       VcTypography: true,
+      VcRecordCard: { name: "VcRecordCard", props: ["title"], template: "<div />" },
       VcWidget: { template: '<div><slot name="default-container" /></div>' },
       // Rendered rather than stubbed away: the assertion is about the text the Operation cell carries,
       // and both the desktop row and the mobile card read it from the same getOperation() helper.
@@ -69,7 +70,7 @@ const desktopOperations = (wrapper: ReturnType<typeof createWrapper>) =>
   wrapper.findAll("tbody.desktop tr").map((row) => row.findAll("td")[0].text());
 
 const mobileOperations = (wrapper: ReturnType<typeof createWrapper>) =>
-  wrapper.findAll(".mobile > div").map((card) => card.findAll("span")[1].text());
+  wrapper.findAllComponents({ name: "VcRecordCard" }).map((card) => card.props("title"));
 
 beforeEach(() => {
   state.historyLogs.value = [];

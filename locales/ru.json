@@ -178,7 +178,8 @@
       "other": "Другое",
       "vendor_name": "Поставщик: {name}",
       "not_available": "Н/Д",
-      "product_reviews": "Отзывы о товаре"
+      "product_reviews": "Отзывы о товаре",
+      "default": "По умолчанию"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -1027,7 +1028,8 @@
         "remove_list_button": "Удалить список",
         "make_private_button": "Сделать приватным",
         "share_button": "Поделиться",
-        "last_modified_label": "Последнее изменение: {date}"
+        "last_modified_label": "Последнее изменение: {date}",
+        "items_count": "Нет товаров | {count} товар | {count} товара | {count} товаров"
       },
       "list_details": {
         "add_all_to_cart_button": "Добавить все в корзину",
@@ -1350,7 +1352,6 @@
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
         "buyer_name_label": "Имя покупателя",
-        "payment_type_label": "Способ оплаты",
         "status_label": "@:common.labels.status",
         "invoice_label": "Счет",
         "date_label": "@:common.labels.date",

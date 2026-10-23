@@ -48,7 +48,7 @@
       </VcSwitch>
     </div>
 
-    <VcWidget size="lg" class="mt-4 lg:mt-5">
+    <VcWidget size="lg" class="mt-4 lg:mt-5" mobile-flat>
       <template #default-container>
         <VcEmptyView
           v-if="totalCount === 0 && !loading"
@@ -56,8 +56,12 @@
           icon="outline-notifications"
         />
 
-        <div v-else class="p-3 lg:p-6">
-          <div class="divide-y rounded-[--vc-radius] border empty:hidden">
+        <div v-else class="lg:p-6">
+          <div v-if="isMobile" class="flex flex-col gap-3">
+            <PushMessageCard v-for="item in items" :key="item.id" :push-message="item" />
+          </div>
+
+          <div v-else class="divide-y rounded-[--vc-radius] border empty:hidden">
             <PushMessage
               v-for="item in items"
               :key="item.id"
@@ -73,7 +77,7 @@
             v-if="items.length && pages > 1"
             :page="page"
             :pages="Math.min(pages, PAGE_LIMIT)"
-            class="mt-6"
+            class="mt-3 lg:mt-6"
             @update:page="changePage"
           />
         </div>
@@ -83,14 +87,18 @@
 </template>
 
 <script setup lang="ts">
-import { useLocalStorage } from "@vueuse/core";
+import { useBreakpoints, useLocalStorage } from "@vueuse/core";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
+import PushMessageCard from "../components/push-message-card.vue";
 import PushMessage from "../components/push-message.vue";
 import { usePushMessages } from "../composables/usePushMessages";
 const { t } = useI18n();
+
+const isMobile = useBreakpoints(BREAKPOINTS).smaller("lg");
 
 const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_history", false);
 
