@@ -2,47 +2,49 @@
   <div class="purchase-options">
     <template v-if="offer">
       <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
-        <label class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'once' }">
+        <div class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'once' }">
           <VcRadioButton
             v-model="mode"
             value="once"
             name="purchase-mode"
             size="sm"
+            class="purchase-options__radio"
             data-test-id="purchase-option-once"
-          />
+          >
+            <span class="purchase-options__choice-body">
+              <span class="purchase-options__choice-title">{{
+                $t("product_subscriptions.purchase_options.one_time")
+              }}</span>
 
-          <span class="purchase-options__choice-body">
-            <span class="purchase-options__choice-title">{{
-              $t("product_subscriptions.purchase_options.one_time")
-            }}</span>
+              <span class="purchase-options__choice-price">{{ formatMoney(basePrice, currency) }}</span>
+            </span>
+          </VcRadioButton>
+        </div>
 
-            <span class="purchase-options__choice-price">{{ formatMoney(basePrice, currency) }}</span>
-          </span>
-        </label>
-
-        <label class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'subscribe' }">
+        <div class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'subscribe' }">
           <VcRadioButton
             v-model="mode"
             value="subscribe"
             name="purchase-mode"
             size="sm"
+            class="purchase-options__radio"
             data-test-id="purchase-option-subscribe"
-          />
+          >
+            <span class="purchase-options__choice-body">
+              <span class="purchase-options__choice-title">
+                {{ $t("product_subscriptions.purchase_options.subscribe") }}
+                <VcBadge v-if="savings" color="success" size="sm" variant="soft" rounded>{{ savings }}</VcBadge>
+              </span>
 
-          <span class="purchase-options__choice-body">
-            <span class="purchase-options__choice-title">
-              {{ $t("product_subscriptions.purchase_options.subscribe") }}
-              <VcBadge v-if="savings" color="success" size="sm" variant="soft" rounded>{{ savings }}</VcBadge>
+              <span class="purchase-options__choice-price">
+                {{ formatMoney(subscribePrice, currency) }}
+                <s v-if="subscribePrice < basePrice" class="purchase-options__strike">{{
+                  formatMoney(basePrice, currency)
+                }}</s>
+              </span>
             </span>
-
-            <span class="purchase-options__choice-price">
-              {{ formatMoney(subscribePrice, currency) }}
-              <s v-if="subscribePrice < basePrice" class="purchase-options__strike">{{
-                formatMoney(basePrice, currency)
-              }}</s>
-            </span>
-          </span>
-        </label>
+          </VcRadioButton>
+        </div>
       </fieldset>
 
       <div v-if="mode === 'subscribe'" class="purchase-options__subscribe">
@@ -78,11 +80,10 @@
       <CountInCart :product-id="product.id" />
     </AddToCartSimple>
 
-    <p
+    <output
       v-if="offer && lineItem && syncState"
       class="purchase-options__status"
       :class="`purchase-options__status--${syncState}`"
-      role="status"
     >
       <VcIcon :name="syncState === 'error' ? 'exclamation-circle' : 'refresh'" size="xs" />
 
@@ -97,7 +98,7 @@
       </span>
 
       <span v-else>{{ $t("product_subscriptions.purchase_options.in_cart_once") }}</span>
-    </p>
+    </output>
   </div>
 </template>
 
@@ -236,7 +237,7 @@ onMounted(() => {
   }
 
   &__choice {
-    @apply flex cursor-pointer items-start gap-3 rounded-lg border border-neutral-200 bg-additional-50 p-3 transition-colors;
+    @apply rounded-lg border border-neutral-200 bg-additional-50 transition-colors;
 
     &:hover {
       @apply border-primary-300;
@@ -244,6 +245,19 @@ onMounted(() => {
 
     &--active {
       @apply border-primary bg-primary-50;
+    }
+  }
+
+  // the radio's own label fills the card, so the whole card selects the option
+  &__radio {
+    @apply w-full;
+
+    .vc-radio-button__container {
+      @apply w-full items-start gap-3 p-3;
+    }
+
+    .vc-radio-button__label {
+      @apply flex min-w-0 grow;
     }
   }
 

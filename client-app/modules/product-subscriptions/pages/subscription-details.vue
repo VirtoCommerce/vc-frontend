@@ -347,10 +347,16 @@
       <p class="mb-4 text-sm">{{ $t("product_subscriptions.pause.text") }}</p>
 
       <div class="flex flex-col gap-2">
-        <label v-for="option in pauseOptions" :key="option.id" class="subscription-details__pause-option">
-          <VcRadioButton v-model="pauseChoice" :value="option.id" name="pause" size="sm" />
-          {{ option.label }}
-        </label>
+        <div v-for="option in pauseOptions" :key="option.id" class="subscription-details__pause-option">
+          <VcRadioButton
+            v-model="pauseChoice"
+            :value="option.id"
+            :label="option.label"
+            name="pause"
+            size="sm"
+            class="subscription-details__pause-radio"
+          />
+        </div>
       </div>
 
       <template #actions="{ close }">
@@ -886,7 +892,16 @@ onMounted(() => {
   }
 
   &__pause-option {
-    @apply flex cursor-pointer items-center gap-3 rounded-md border border-neutral-200 p-3 text-sm;
+    @apply rounded-md border border-neutral-200 text-sm;
+  }
+
+  // the radio's own label fills the option, so the whole option selects it
+  &__pause-radio {
+    @apply w-full;
+
+    .vc-radio-button__container {
+      @apply w-full items-center gap-3 p-3;
+    }
   }
 }
 </style>

@@ -10,36 +10,45 @@
       <div v-if="savedMethods.length" class="mock-card-payment__saved">
         <VcLabel>{{ $t("product_subscriptions.mock_payment.pay_with") }}</VcLabel>
 
-        <label
+        <div
           v-for="method in savedMethods"
           :key="method.id"
           class="mock-card-payment__option"
           :class="{ 'mock-card-payment__option--active': selected === method.id }"
         >
-          <VcRadioButton v-model="selected" :value="method.id" name="mock-card" size="sm" />
+          <VcRadioButton
+            v-model="selected"
+            :value="method.id"
+            name="mock-card"
+            size="sm"
+            class="mock-card-payment__radio"
+          >
+            <VcIcon name="credit-card" size="sm" />
 
-          <VcIcon name="credit-card" size="sm" />
+            <span class="mock-card-payment__option-text">
+              {{ cardLabel(method.brand, method.last4) }}
+              <span class="text-neutral-500">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
+            </span>
 
-          <span class="mock-card-payment__option-text">
-            {{ cardLabel(method.brand, method.last4) }}
-            <span class="text-neutral-500">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
-          </span>
+            <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
+              $t("product_subscriptions.payment_methods.default")
+            }}</VcBadge>
+          </VcRadioButton>
+        </div>
 
-          <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
-            $t("product_subscriptions.payment_methods.default")
-          }}</VcBadge>
-        </label>
+        <div class="mock-card-payment__option" :class="{ 'mock-card-payment__option--active': selected === NEW_CARD }">
+          <VcRadioButton
+            v-model="selected"
+            :value="NEW_CARD"
+            name="mock-card"
+            size="sm"
+            class="mock-card-payment__radio"
+          >
+            <VcIcon name="plus" size="sm" />
 
-        <label
-          class="mock-card-payment__option"
-          :class="{ 'mock-card-payment__option--active': selected === NEW_CARD }"
-        >
-          <VcRadioButton v-model="selected" :value="NEW_CARD" name="mock-card" size="sm" />
-
-          <VcIcon name="plus" size="sm" />
-
-          <span class="mock-card-payment__option-text">{{ $t("product_subscriptions.mock_payment.new_card") }}</span>
-        </label>
+            <span class="mock-card-payment__option-text">{{ $t("product_subscriptions.mock_payment.new_card") }}</span>
+          </VcRadioButton>
+        </div>
       </div>
 
       <div v-if="selected === NEW_CARD" class="mock-card-payment__new">
@@ -345,10 +354,23 @@ onMounted(async () => {
   }
 
   &__option {
-    @apply flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-200 p-3 text-sm;
+    @apply rounded-lg border border-neutral-200 text-sm;
 
     &--active {
       @apply border-primary bg-primary-50;
+    }
+  }
+
+  // the radio's own label fills the card, so the whole card selects the option
+  &__radio {
+    @apply w-full;
+
+    .vc-radio-button__container {
+      @apply w-full items-center gap-3 p-3;
+    }
+
+    .vc-radio-button__label {
+      @apply flex min-w-0 grow items-center gap-3;
     }
   }
 
