@@ -40,7 +40,7 @@ export type InputCancelProductSubscription = {
 
 export type InputChangeProductSubscription = {
   intervalCount?: InputMaybe<Scalars['Int']['input']>;
-  intervalUnit?: InputMaybe<Scalars['String']['input']>;
+  intervalUnit?: InputMaybe<SubscriptionIntervalUnit>;
   nextOrderDate?: InputMaybe<Scalars['DateTime']['input']>;
   quantity?: InputMaybe<Scalars['Int']['input']>;
   savedPaymentMethodId?: InputMaybe<Scalars['String']['input']>;
@@ -75,7 +75,7 @@ export type InputSavedPaymentMethodId = {
 export type InputSetCartItemSubscription = {
   cartId: Scalars['String']['input'];
   intervalCount: Scalars['Int']['input'];
-  intervalUnit: Scalars['String']['input'];
+  intervalUnit: SubscriptionIntervalUnit;
   lineItemId: Scalars['String']['input'];
   planId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
@@ -205,7 +205,7 @@ export type ProductSubscription = {
   createdDate: Scalars['DateTime']['output'];
   currency?: Maybe<Scalars['String']['output']>;
   currentRenewal?: Maybe<SubscriptionRenewal>;
-  discountType: Scalars['String']['output'];
+  discountType: SubscriptionDiscountType;
   discountValue: Scalars['Decimal']['output'];
   id: Scalars['String']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
@@ -213,7 +213,7 @@ export type ProductSubscription = {
   initialOrderNumber?: Maybe<Scalars['String']['output']>;
   intervalCount: Scalars['Int']['output'];
   intervalLabel: Scalars['String']['output'];
-  intervalUnit: Scalars['String']['output'];
+  intervalUnit: SubscriptionIntervalUnit;
   lastOrderDate?: Maybe<Scalars['DateTime']['output']>;
   lastOrderId?: Maybe<Scalars['String']['output']>;
   lastOrderNumber?: Maybe<Scalars['String']['output']>;
@@ -237,7 +237,7 @@ export type ProductSubscription = {
   skipCount: Scalars['Int']['output'];
   sku?: Maybe<Scalars['String']['output']>;
   startDate: Scalars['DateTime']['output'];
-  /** PendingActivation, Active, Paused, PastDue, Cancelled */
+  /** PendingActivation, Active, Paused, PastDue or Cancelled. A string, not an enum: a solution can add its own statuses. */
   status: Scalars['String']['output'];
   storeId: Scalars['String']['output'];
   storedPaymentMethodId?: Maybe<Scalars['String']['output']>;
@@ -384,11 +384,18 @@ export type SubscriptionCartItem = {
   id: Scalars['String']['output'];
   intervalCount: Scalars['Int']['output'];
   intervalLabel: Scalars['String']['output'];
-  intervalUnit: Scalars['String']['output'];
+  intervalUnit: SubscriptionIntervalUnit;
   lineItemId: Scalars['String']['output'];
   planId: Scalars['String']['output'];
   productId: Scalars['String']['output'];
 };
+
+/** How a subscription plan discounts the price: no discount, a percent, or a fixed amount per item. */
+export enum SubscriptionDiscountType {
+  FixedAmount = 'FIXED_AMOUNT',
+  None = 'NONE',
+  Percent = 'PERCENT'
+}
 
 /** A delivery frequency offered for a product, e.g. every 2 weeks. */
 export type SubscriptionInterval = {
@@ -397,15 +404,21 @@ export type SubscriptionInterval = {
   /** Preselected frequency */
   isDefault: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
-  /** Day, Week, Month or Year */
-  unit: Scalars['String']['output'];
+  unit: SubscriptionIntervalUnit;
 };
+
+/** The unit of a delivery frequency: every N days, weeks, months or years. */
+export enum SubscriptionIntervalUnit {
+  Day = 'DAY',
+  Month = 'MONTH',
+  Week = 'WEEK',
+  Year = 'YEAR'
+}
 
 /** Subscribe & Save offer for a product. */
 export type SubscriptionOffer = {
   description?: Maybe<Scalars['String']['output']>;
-  /** None, Percent or FixedAmount */
-  discountType: Scalars['String']['output'];
+  discountType: SubscriptionDiscountType;
   discountValue: Scalars['Decimal']['output'];
   intervals: Array<SubscriptionInterval>;
   planId: Scalars['String']['output'];
@@ -482,15 +495,15 @@ export type SubscriptionTerms = {
   version: Scalars['String']['output'];
 };
 
-export type ProductSubscriptionFieldsFragment = { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } };
+export type ProductSubscriptionFieldsFragment = { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } };
 
 export type RenewalFieldsFragment = { id: string, number: string, state: string, scheduledDate: any, cutoffDate: any, isManual: boolean, currency?: string, previewTotal: number, notifiedTotal?: number, orderTotal?: number, discountTotal: number, shippingTotal: number, taxTotal: number, orderId?: string, storedPaymentMethodId?: string, orderNumber?: string, attemptCount: number, nextAttemptDate?: any, lastErrorMessage?: string, reviewReason?: string, canSkip: boolean, canAcceptReview: boolean, canRetryPayment: boolean, requiresPaymentAction: boolean, items: Array<{ subscriptionId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, listPrice: number, discountAmount: number, total: number, isAvailable: boolean, isExcluded: boolean, message?: string }> };
 
 export type SavedPaymentMethodFieldsFragment = { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any };
 
-export type SubscriptionCartItemFieldsFragment = { id: string, cartId: string, lineItemId: string, productId: string, planId: string, intervalUnit: string, intervalCount: number, intervalLabel: string };
+export type SubscriptionCartItemFieldsFragment = { id: string, cartId: string, lineItemId: string, productId: string, planId: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string };
 
-export type SubscriptionIntervalFieldsFragment = { unit: string, count: number, isDefault: boolean, label: string };
+export type SubscriptionIntervalFieldsFragment = { unit: SubscriptionIntervalUnit, count: number, isDefault: boolean, label: string };
 
 export type AcceptSubscriptionRenewalMutationVariables = Exact<{
   command: InputSubscriptionRenewalId;
@@ -518,14 +531,14 @@ export type CancelProductSubscriptionMutationVariables = Exact<{
 }>;
 
 
-export type CancelProductSubscriptionMutation = { cancelProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
+export type CancelProductSubscriptionMutation = { cancelProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
 
 export type ChangeProductSubscriptionMutationVariables = Exact<{
   command: InputChangeProductSubscription;
 }>;
 
 
-export type ChangeProductSubscriptionMutation = { changeProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
+export type ChangeProductSubscriptionMutation = { changeProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
 
 export type OrderProductSubscriptionNowMutationVariables = Exact<{
   command: InputProductSubscriptionId;
@@ -539,7 +552,7 @@ export type PauseProductSubscriptionMutationVariables = Exact<{
 }>;
 
 
-export type PauseProductSubscriptionMutation = { pauseProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
+export type PauseProductSubscriptionMutation = { pauseProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
 
 export type RemoveCartItemSubscriptionMutationVariables = Exact<{
   command: InputRemoveCartItemSubscription;
@@ -560,7 +573,7 @@ export type ResumeProductSubscriptionMutationVariables = Exact<{
 }>;
 
 
-export type ResumeProductSubscriptionMutation = { resumeProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
+export type ResumeProductSubscriptionMutation = { resumeProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
 
 export type RetrySubscriptionRenewalPaymentMutationVariables = Exact<{
   command: InputSubscriptionRenewalId;
@@ -574,7 +587,7 @@ export type SetCartItemSubscriptionMutationVariables = Exact<{
 }>;
 
 
-export type SetCartItemSubscriptionMutation = { setCartItemSubscription?: { id: string, cartId: string, lineItemId: string, productId: string, planId: string, intervalUnit: string, intervalCount: number, intervalLabel: string } };
+export type SetCartItemSubscriptionMutation = { setCartItemSubscription?: { id: string, cartId: string, lineItemId: string, productId: string, planId: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string } };
 
 export type SetDefaultSavedPaymentMethodMutationVariables = Exact<{
   command: InputSavedPaymentMethodId;
@@ -588,7 +601,7 @@ export type SkipProductSubscriptionMutationVariables = Exact<{
 }>;
 
 
-export type SkipProductSubscriptionMutation = { skipProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
+export type SkipProductSubscriptionMutation = { skipProductSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
 
 export type SkipSubscriptionRenewalMutationVariables = Exact<{
   command: InputSubscriptionRenewalId;
@@ -602,14 +615,14 @@ export type GetCartSubscriptionItemsQueryVariables = Exact<{
 }>;
 
 
-export type GetCartSubscriptionItemsQuery = { cartSubscriptionItems: Array<{ id: string, cartId: string, lineItemId: string, productId: string, planId: string, intervalUnit: string, intervalCount: number, intervalLabel: string }> };
+export type GetCartSubscriptionItemsQuery = { cartSubscriptionItems: Array<{ id: string, cartId: string, lineItemId: string, productId: string, planId: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string }> };
 
 export type GetProductSubscriptionQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetProductSubscriptionQuery = { productSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, availableIntervals: Array<{ unit: string, count: number, isDefault: boolean, label: string }>, currentRenewal?: { id: string, number: string, state: string, scheduledDate: any, cutoffDate: any, isManual: boolean, currency?: string, previewTotal: number, notifiedTotal?: number, orderTotal?: number, discountTotal: number, shippingTotal: number, taxTotal: number, orderId?: string, storedPaymentMethodId?: string, orderNumber?: string, attemptCount: number, nextAttemptDate?: any, lastErrorMessage?: string, reviewReason?: string, canSkip: boolean, canAcceptReview: boolean, canRetryPayment: boolean, requiresPaymentAction: boolean, items: Array<{ subscriptionId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, listPrice: number, discountAmount: number, total: number, isAvailable: boolean, isExcluded: boolean, message?: string }> }, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
+export type GetProductSubscriptionQuery = { productSubscription?: { id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, availableIntervals: Array<{ unit: SubscriptionIntervalUnit, count: number, isDefault: boolean, label: string }>, currentRenewal?: { id: string, number: string, state: string, scheduledDate: any, cutoffDate: any, isManual: boolean, currency?: string, previewTotal: number, notifiedTotal?: number, orderTotal?: number, discountTotal: number, shippingTotal: number, taxTotal: number, orderId?: string, storedPaymentMethodId?: string, orderNumber?: string, attemptCount: number, nextAttemptDate?: any, lastErrorMessage?: string, reviewReason?: string, canSkip: boolean, canAcceptReview: boolean, canRetryPayment: boolean, requiresPaymentAction: boolean, items: Array<{ subscriptionId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, listPrice: number, discountAmount: number, total: number, isAvailable: boolean, isExcluded: boolean, message?: string }> }, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } } };
 
 export type GetProductSubscriptionsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
@@ -621,7 +634,7 @@ export type GetProductSubscriptionsQueryVariables = Exact<{
 }>;
 
 
-export type GetProductSubscriptionsQuery = { productSubscriptions?: { totalCount?: number, items?: Array<{ id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: string, intervalCount: number, intervalLabel: string, discountType: string, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } }> } };
+export type GetProductSubscriptionsQuery = { productSubscriptions?: { totalCount?: number, items?: Array<{ id: string, number: string, status: string, storeId: string, productId: string, sku?: string, productName?: string, imageUrl?: string, quantity: number, planId?: string, planName?: string, intervalUnit: SubscriptionIntervalUnit, intervalCount: number, intervalLabel: string, discountType: SubscriptionDiscountType, discountValue: number, startDate: any, nextOrderDate: any, pausedUntil?: any, skipCount: number, cancelledDate?: any, cancelReason?: string, currency?: string, storedPaymentMethodId?: string, lastOrderId?: string, lastOrderNumber?: string, lastOrderDate?: any, initialOrderId?: string, initialOrderNumber?: string, ordersCount: number, referencePrice?: number, createdDate: any, canSkip: boolean, canPause: boolean, canResume: boolean, canCancel: boolean, canOrderNow: boolean, canChange: boolean, quantityRules: { packSize: number, minQuantity: number, maxQuantity?: number }, shippingAddress?: { firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, postalCode?: string, regionName?: string, countryCode?: string }, savedPaymentMethod?: { id: string, paymentMethodCode: string, brand?: string, last4?: string, expirationMonth?: number, expirationYear?: number, cardholderName?: string, status: string, isDefault: boolean, isExpired: boolean, createdDate: any } }> } };
 
 export type GetSavedPaymentMethodsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
@@ -636,7 +649,7 @@ export type GetSubscriptionOffersQueryVariables = Exact<{
 }>;
 
 
-export type GetSubscriptionOffersQuery = { subscriptionOffers: Array<{ productId: string, planId: string, planName: string, description?: string, discountType: string, discountValue: number, intervals: Array<{ unit: string, count: number, isDefault: boolean, label: string }> }> };
+export type GetSubscriptionOffersQuery = { subscriptionOffers: Array<{ productId: string, planId: string, planName: string, description?: string, discountType: SubscriptionDiscountType, discountValue: number, intervals: Array<{ unit: SubscriptionIntervalUnit, count: number, isDefault: boolean, label: string }> }> };
 
 export type GetSubscriptionRenewalsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];

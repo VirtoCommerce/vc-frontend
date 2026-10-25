@@ -1,4 +1,5 @@
 import { globals } from "@/core/globals";
+import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import type { Composer } from "vue-i18n";
 
 type TranslateType = Composer["t"];
@@ -20,36 +21,37 @@ export function intervalLabel(
   unit: string | null | undefined,
   count: number | null | undefined,
 ): string {
-  const normalizedUnit = (unit || "Month").toLowerCase();
+  // Translation keys are the lower-case unit: "MONTH" -> intervals.month.
+  const normalizedUnit = (unit || SubscriptionIntervalUnit.Month).toLowerCase();
   const normalizedCount = count && count > 0 ? count : 1;
   return t(`product_subscriptions.intervals.${normalizedUnit}`, { count: normalizedCount }, normalizedCount);
 }
 
 export function discountLabel(
   t: TranslateType,
-  discountType: string | null | undefined,
+  discountType: SubscriptionDiscountType | null | undefined,
   discountValue: number | null | undefined,
   currency?: string | null,
 ): string | undefined {
-  if (!discountValue || discountType === "None") {
+  if (!discountValue || discountType === SubscriptionDiscountType.None) {
     return undefined;
   }
 
-  return discountType === "Percent"
+  return discountType === SubscriptionDiscountType.Percent
     ? t("product_subscriptions.discount.percent", { value: discountValue })
     : t("product_subscriptions.discount.amount", { value: formatMoney(discountValue, currency) });
 }
 
 export function applyDiscount(
   price: number,
-  discountType: string | null | undefined,
+  discountType: SubscriptionDiscountType | null | undefined,
   discountValue: number | null | undefined,
 ): number {
-  if (!discountValue || discountType === "None") {
+  if (!discountValue || discountType === SubscriptionDiscountType.None) {
     return price;
   }
 
-  if (discountType === "Percent") {
+  if (discountType === SubscriptionDiscountType.Percent) {
     const discount = Math.round(price * Math.min(Math.max(discountValue, 0), 100)) / 100;
     return Math.max(0, Math.round((price - discount) * 100) / 100);
   }
@@ -57,13 +59,13 @@ export function applyDiscount(
   return Math.max(0, price - Math.min(price, discountValue));
 }
 
-export function intervalKey(unit: string, count: number): string {
+export function intervalKey(unit: SubscriptionIntervalUnit, count: number): string {
   return `${unit}:${count}`;
 }
 
-export function parseIntervalKey(key: string): { unit: string; count: number } {
+export function parseIntervalKey(key: string): { unit: SubscriptionIntervalUnit; count: number } {
   const [unit, count] = key.split(":");
-  return { unit, count: Number(count) || 1 };
+  return { unit: unit as SubscriptionIntervalUnit, count: Number(count) || 1 };
 }
 
 const STATUS_COLORS: Record<string, VcMainColorType> = {

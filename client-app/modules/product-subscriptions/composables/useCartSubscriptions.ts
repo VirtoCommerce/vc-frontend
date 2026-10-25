@@ -5,7 +5,7 @@ import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { getCartSubscriptionItems, removeCartItemSubscription, setCartItemSubscription } from "../api/graphql";
-import type { SubscriptionCartItemFieldsFragment } from "../api/graphql/types";
+import type { SubscriptionCartItemFieldsFragment, SubscriptionIntervalUnit } from "../api/graphql/types";
 
 function _useCartSubscriptions() {
   const { cart } = useShortCart();
@@ -39,7 +39,12 @@ function _useCartSubscriptions() {
     }
   }
 
-  async function setSubscription(lineItemId: string, planId: string, intervalUnit: string, intervalCount: number) {
+  async function setSubscription(
+    lineItemId: string,
+    planId: string,
+    intervalUnit: SubscriptionIntervalUnit,
+    intervalCount: number,
+  ) {
     if (!cartId.value || !globals.storeId) {
       return;
     }
