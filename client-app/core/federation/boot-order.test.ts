@@ -116,6 +116,7 @@ vi.mock("@/modules/customer-reviews", () => ({ init: vi.fn() }));
 vi.mock("@/modules/google-analytics", () => ({ init: vi.fn() }));
 vi.mock("@/modules/loyalty", () => ({ init: vi.fn() }));
 vi.mock("@/modules/news", () => ({ init: vi.fn() }));
+vi.mock("@/modules/product-subscriptions", () => ({ init: vi.fn() }));
 vi.mock("@/modules/purchase-requests", () => ({ initialize: vi.fn() }));
 vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
 vi.mock("@/modules/quotes", () => ({ init: vi.fn() }));
