@@ -1,5 +1,7 @@
 <template>
-  <ProceedTo :disabled="isDisabled" @click="createOrderFromCart">
+  <ExtensionPoint v-if="isExternalCheckout" :name="EXTENSION_NAMES.checkout.placeOrder" category="checkout" />
+
+  <ProceedTo v-else :disabled="isDisabled" @click="createOrderFromCart">
     {{ $t("common.buttons.place_order") }}
   </ProceedTo>
 </template>
@@ -10,6 +12,8 @@ import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
+import { useExternalCheckout } from "@/shared/checkout/composables/useExternalCheckout";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { usePayment } from "@/shared/payment/composables";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 
@@ -18,6 +22,7 @@ const { canPayFromCart, isValidCheckout, createOrderFromCart } = useCheckout();
 const { canPlaceOrder } = useCheckoutGuards();
 const { isCanFinalizePayment } = usePayment();
 const { isAuthenticated } = useUser();
+const { isExternalCheckout } = useExternalCheckout();
 
 const isDisabled = computed(() => {
   return (

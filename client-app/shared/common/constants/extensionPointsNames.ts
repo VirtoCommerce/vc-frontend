@@ -47,6 +47,9 @@ const CUSTOM_EXTENSION_NAMES = {
   checkoutReview: {
     beforePlaceOrder: "before-place-order",
   },
+  checkout: {
+    placeOrder: "place-order",
+  },
 } as const;
 
 export const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES = merge(
