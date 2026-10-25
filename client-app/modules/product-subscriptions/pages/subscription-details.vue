@@ -467,7 +467,7 @@ import {
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
 import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
-import { PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
+import { ATTENTION_RENEWAL_STATES, PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
 import {
   cardLabel,
   discountLabel,
@@ -496,7 +496,6 @@ const renewalBusy = ref<string>();
 const subscription = ref<SubscriptionType>();
 const history = ref<RenewalFieldsFragment[]>([]);
 const attentionRenewals = ref<RenewalFieldsFragment[]>([]);
-const ATTENTION_STATES = ["ReviewRequired", "PaymentActionRequired", "RetryScheduled", "Failed"];
 
 // A placed order still waiting for its payment must finish before another one can be placed.
 const canOrderNow = computed(
@@ -655,7 +654,7 @@ async function load() {
     subscription.value = result ?? undefined;
     const items = (renewals?.items ?? []).filter((x) => x.id !== result?.currentRenewal?.id);
     attentionRenewals.value = items.filter(
-      (x) => ATTENTION_STATES.includes(x.state) && (x.state !== "Failed" || x.canRetryPayment),
+      (x) => ATTENTION_RENEWAL_STATES.has(x.state) && (x.state !== "Failed" || x.canRetryPayment),
     );
     history.value = items.filter((x) => !attentionRenewals.value.some((y) => y.id === x.id));
     resetForm();
@@ -756,7 +755,7 @@ async function orderNow() {
     const renewal = await orderProductSubscriptionNow({ subscriptionId: props.subscriptionId });
     confirmAction.value = undefined;
 
-    if (renewal && ATTENTION_STATES.includes(renewal.state)) {
+    if (renewal && ATTENTION_RENEWAL_STATES.has(renewal.state)) {
       notifications.warning({
         duration: DEFAULT_NOTIFICATION_DURATION,
         single: true,

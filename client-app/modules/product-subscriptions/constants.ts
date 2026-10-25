@@ -21,6 +21,14 @@ export const THREE_DS_ON_RENEWAL_LAST4 = "3184";
 /** Session flag set when the customer accepted subscription terms at checkout; read by the payment step. */
 export const SUBSCRIPTION_CHECKOUT_STORAGE_KEY = "vc-product-subscription-checkout";
 
+/** Renewal states that need the customer: shown under "Needs your attention". */
+export const ATTENTION_RENEWAL_STATES: ReadonlySet<string> = new Set([
+  "ReviewRequired",
+  "PaymentActionRequired",
+  "RetryScheduled",
+  "Failed",
+]);
+
 export const SUBSCRIPTIONS_ROUTE_NAME = "ProductSubscriptions";
 export const SUBSCRIPTION_DETAILS_ROUTE_NAME = "ProductSubscriptionDetails";
 export const PAYMENT_METHODS_ROUTE_NAME = "SavedPaymentMethods";

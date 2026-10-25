@@ -172,7 +172,7 @@ import {
 } from "../api/graphql";
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
-import { PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
+import { ATTENTION_RENEWAL_STATES, PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
 import { discountLabel, errorMessage, intervalLabel } from "../utils";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
 
@@ -195,15 +195,16 @@ const subscriptions = ref<ProductSubscriptionFieldsFragment[]>([]);
 const renewals = ref<RenewalFieldsFragment[]>([]);
 const busy = reactive<Record<string, string | undefined>>({});
 
-const attentionStates = ["ReviewRequired", "PaymentActionRequired", "RetryScheduled", "Failed"];
+// Deliveries the customer can still change, and those already ordered.
+const CHANGEABLE_STATES: ReadonlySet<string> = new Set(["Scheduled", "Notified"]);
+const UPCOMING_STATES: ReadonlySet<string> = new Set([...CHANGEABLE_STATES, "Ordered", "Authorized"]);
 
-const attentionRenewals = computed(() => renewals.value.filter((x) => attentionStates.includes(x.state)));
+const attentionRenewals = computed(() => renewals.value.filter((x) => ATTENTION_RENEWAL_STATES.has(x.state)));
 // Deliveries the customer can still change first (soonest first), then orders already on their way.
 const upcomingRenewals = computed(() => {
-  const changeable = ["Scheduled", "Notified"];
-  const rank = (state: string) => (changeable.includes(state) ? 0 : 1);
+  const rank = (state: string) => (CHANGEABLE_STATES.has(state) ? 0 : 1);
   return renewals.value
-    .filter((x) => !attentionStates.includes(x.state) && [...changeable, "Ordered", "Authorized"].includes(x.state))
+    .filter((x) => !ATTENTION_RENEWAL_STATES.has(x.state) && UPCOMING_STATES.has(x.state))
     .sort(
       (a, b) =>
         rank(a.state) - rank(b.state) || new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime(),
