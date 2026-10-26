@@ -66,6 +66,7 @@
         :saved-for-later-list="savedForLaterList"
         :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
+        @select-item="selectSavedForLaterItem"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
@@ -109,12 +110,12 @@
         />
 
         <!-- Sections for single page checkout -->
-        <template v-if="!$cfg.checkout_multistep_enabled">
-          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
+        <template v-if="isSinglePageCheckout">
+          <ShippingDetailsSection v-if="isShippingSectionVisible" class="mt-5" />
 
-          <BillingDetailsSection :cart="cart" />
+          <BillingDetailsSection v-if="isPaymentSectionVisible" :cart="cart" />
 
-          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
+          <OrderCommentSection v-if="isCommentSectionVisible" v-model:comment="comment" class="mt-5" />
         </template>
 
         <CartForLater
@@ -122,6 +123,7 @@
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
+          @select-item="selectSavedForLaterItem"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
@@ -137,7 +139,7 @@
               <LoyaltyValidationAlert class="mt-4" />
 
               <ProceedTo
-                v-if="$cfg.checkout_multistep_enabled"
+                v-if="!isSinglePageCheckout"
                 :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="checkout-button"
@@ -148,7 +150,7 @@
 
               <PlaceOrder data-test-id="place-order-button" v-else class="mt-4" />
 
-              <template v-if="!$cfg.checkout_multistep_enabled">
+              <template v-if="isSinglePageCheckout">
                 <transition name="slide-fade-top" mode="out-in" appear>
                   <VcAlert
                     v-show="isShowIncompleteDataWarning"
@@ -215,7 +217,7 @@
           </div>
 
           <ProceedTo
-            v-if="$cfg.checkout_multistep_enabled"
+            v-if="!isSinglePageCheckout"
             :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
             class="!mt-2"
@@ -234,14 +236,16 @@
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useAnalytics, useBreadcrumbs, usePageHead, useThemeContext } from "@/core/composables";
+import { useAnalytics, useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, MODULE_XAPI_KEYS, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
+import { getProductListIndex } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
+import { useSavedForLaterAnalytics } from "@/shared/cart/composables/useSavedForLaterAnalytics";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -250,6 +254,7 @@ import {
   ProceedTo,
   ShippingDetailsSection,
   useCheckout,
+  useCheckoutSections,
 } from "@/shared/checkout";
 import type { CartTotalType, LineItemType, Product } from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
@@ -269,7 +274,6 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
-const { themeContext } = useThemeContext();
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
@@ -315,9 +319,15 @@ const {
   moveFromSavedForLater,
   moveFromSavedForLaterOverflowed,
   getSavedForLater,
+  availableItems: availableSavedForLaterItems,
   hasAvailableItems: hasAvailableSavedForLaterItems,
   loading: saveForLaterLoading,
 } = useSavedForLater();
+
+const { selectItem: selectSavedForLaterItem } = useSavedForLaterAnalytics(
+  availableSavedForLaterItems,
+  () => !!shouldHide("cart-for-later"),
+);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -337,6 +347,7 @@ const analyticsLastSentPaymentCode = ref<string | undefined>();
 
 const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
+let reportedLines: { id: string }[] = [];
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 
@@ -348,16 +359,20 @@ const otherCartTotals = computed(
     ) ?? [],
 );
 
+const {
+  isSinglePageCheckout,
+  isShippingSectionVisible,
+  isPaymentSectionVisible,
+  isCommentSectionVisible,
+  hasIncompleteSections: isShowIncompleteDataWarning,
+} = useCheckoutSections();
+
 // On single-page checkout, initialize() fires AddOrUpdateCartShipment/Payment on mount.
 // Block user-initiated cart writes until it settles, so a faster mutation (clear cart,
 // save for later) can't be overwritten by a late, stale shipment/payment response.
 const cartMutationsLocked = computed(() => {
-  return !themeContext.value?.settings?.checkout_multistep_enabled && !checkoutInitialized.value;
+  return isSinglePageCheckout.value && !checkoutInitialized.value;
 });
-
-const isShowIncompleteDataWarning = computed(
-  () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
-);
 
 async function handleRemoveItems(itemIds: string[]): Promise<void> {
   const cartBeforeRemove = cart.value!;
@@ -408,6 +423,7 @@ function selectItemEvent(item: LineItemType | undefined): void {
   analytics("selectItem", item, {
     item_list_id: "cart",
     item_list_name: t("pages.cart.title"),
+    index: getProductListIndex(reportedLines, item.id),
   });
 }
 
@@ -418,12 +434,7 @@ function shouldHide(id: string) {
 watch(
   [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption, isCartUpdating],
   () => {
-    if (
-      themeContext.value?.settings?.checkout_multistep_enabled ||
-      !cart.value ||
-      !isValidShipment.value ||
-      isCartUpdating.value
-    ) {
+    if (!isSinglePageCheckout.value || !cart.value || !isValidShipment.value || isCartUpdating.value) {
       return;
     }
 
@@ -440,7 +451,7 @@ watch(
 watch(
   [() => isValidPayment.value, () => payment.value?.paymentGatewayCode],
   () => {
-    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidPayment.value) {
+    if (!isSinglePageCheckout.value || !cart.value || !isValidPayment.value) {
       return;
     }
 
@@ -469,10 +480,11 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
+    reportedLines = [...cart.value.items];
     analytics("viewCart", cart.value);
   }
 
-  if (!themeContext.value?.settings?.checkout_multistep_enabled) {
+  if (isSinglePageCheckout.value) {
     await initialize();
   }
 

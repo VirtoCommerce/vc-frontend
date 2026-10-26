@@ -525,7 +525,12 @@
           "duplicate_email_login_attempt": "Useat tilit käyttävät tätä sähköpostiosoitetta.",
           "lockout_disabled": "Tällä tilillä ei voi kirjautua sisään koodilla.",
           "invalid_code": "Tämä koodi ei toiminut.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Kirjautumisistuntosi on vanhentunut. Kirjaudu uudelleen.",
+          "code_attempts_exceeded": "Liian monta virheellistä koodia. Odota muutama minuutti ja kirjaudu uudelleen.",
+          "mfa_provider_not_available": "Tälle tilille ei voi lähettää kirjautumiskoodia. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_unavailable": "Tämä tili vaatii toisen kirjautumisvaiheen, mutta se ei ole käytettävissä. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +550,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
-          "generic": "Jotain meni pieleen. Yritä uudelleen."
+          "generic": "Jotain meni pieleen. Yritä uudelleen.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -651,12 +665,7 @@
         "verify": {
           "header": "Tarkista sähköpostisi",
           "subtitle": "Lähetimme koodin osoitteeseen {email}.",
-          "code_label": "Koodi",
-          "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
-          "submit_button": "Kirjaudu sisään",
-          "resend_button": "Lähetä koodi uudelleen",
-          "use_different_email_link": "Käytä toista sähköpostiosoitetta",
-          "live_resent": "Uusi koodi lähetetty."
+          "use_different_email_link": "Käytä toista sähköpostiosoitetta"
         },
         "locked": {
           "title": "Liian monta epäonnistunutta yritystä",
@@ -672,6 +681,19 @@
           "password_button": "Kirjaudu salasanalla",
           "back_link": "Takaisin kirjautumiseen"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Syötä kirjautumiskoodi",
+        "subtitle": "Lähetimme koodin osoitteeseen {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Koodi",
+        "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
+        "submit_button": "Kirjaudu sisään",
+        "resend_button": "Lähetä koodi uudelleen",
+        "resend_countdown": "Lähetä koodi uudelleen {seconds} s kuluttua",
+        "live_resent": "Uusi koodi lähetetty."
       }
     },
     "company": {

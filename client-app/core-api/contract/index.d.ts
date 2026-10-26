@@ -4554,6 +4554,8 @@ type ExtensionCategoryMapType = {
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
     }, never, (sharingSetting?: SharingSettingType) => boolean>;
+    /** The cart and checkout review steps. A provider decides on its own state whether it takes over. */
+    checkout: ExtensionEntryType<never, never, () => boolean>;
 };
 /** The parameter a category's `condition` accepts. */
 type ConditionParamType<C extends keyof ExtensionCategoryMapType> = NonNullable<ExtensionCategoryMapType[C]["condition"]> extends (parameter: infer P) => boolean ? P : unknown;
@@ -4632,6 +4634,9 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
+    };
+    readonly checkout: {
+        readonly placeOrder: "place-order";
     };
 };
 declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;
