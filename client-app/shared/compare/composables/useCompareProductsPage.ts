@@ -468,8 +468,8 @@ export function useCompareProductsPage() {
     item_list_name: t("pages.compare.title"),
   }));
 
-  function selectItemEvent(product: Product) {
-    analytics("selectItem", product, compareProductsListProperties.value);
+  function selectItemEvent(product: Product, index?: number) {
+    analytics("selectItem", product, { ...compareProductsListProperties.value, index });
   }
 
   // selectedCategoryProducts also recomputes (new array reference) once configuredLineItemsByLocalId
