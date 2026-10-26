@@ -50,7 +50,7 @@
     "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "check:icon-parity": "yarn precheck && vite-node scripts/check-icon-parity.ts",
-    "check:soft-styles": "yarn precheck && vite-node scripts/check-soft-styles.ts",
+    "check:designs": "yarn precheck && vite-node scripts/check-designs.ts",
     "check:css-layers": "yarn precheck && vite-node scripts/check-css-layers.ts"
   },
   "dependencies": {

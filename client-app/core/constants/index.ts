@@ -1,5 +1,4 @@
 export * from "./brands";
-export * from "./design";
 export * from "./environment";
 export * from "./images";
 export * from "./line-items";

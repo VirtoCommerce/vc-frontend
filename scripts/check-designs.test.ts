@@ -290,6 +290,20 @@ ${loads("dark")}  }
       expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
     });
 
+    it("ignores hidden files in a design folder, its blocks/ and its dark/", async () => {
+      const result = await checkDesigns(
+        designs({
+          "soft/index.scss": wiring("soft", ["_tokens.scss"]),
+          "soft/_tokens.scss": `${SOFT} { --vc-radius: 1rem; }`,
+          "soft/.DS_Store": "",
+          "soft/blocks/.gitkeep": "",
+          "soft/dark/.DS_Store": "",
+        }),
+      );
+
+      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
+    });
+
     it.each(["classic", "My-Brand", "2brand"])("rejects the folder name %s", async (name) => {
       const errors = await check({ [`${name}/_tokens.scss`]: `html[data-design="${name}"] { --vc-radius: 1rem; }` });
 

@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { globSync } from "glob";
 import postcss from "postcss";
 import postcssScss from "postcss-scss";
 import selectorParser from "postcss-selector-parser";
@@ -747,8 +748,11 @@ function checkWiring(index: Root, indexFile: string, design: string, checked: IC
   return errors;
 }
 
+/** A hidden entry (`.DS_Store`, `.gitkeep`) is the system's or git's, not part of the design. */
 function entriesOf(dir: string): Dirent[] {
-  return readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => !entry.name.startsWith("."))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function blockFiles(dir: string, errors: string[]): string[] {
@@ -857,6 +861,13 @@ async function checkFolder(dir: string, blocks: Set<string>, errors: string[]): 
   return sources.length + 1;
 }
 
+function designFolders(designsDir: string): string[] {
+  return readdirSync(designsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b));
+}
+
 export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions): Promise<IDesignCheckResult> {
   // readdirSync would throw a bare ENOENT; this names the folder the check expected.
   if (!existsSync(designsDir)) {
@@ -868,12 +879,9 @@ export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions)
   }
 
   const blocks = sourceBlocks(sources);
+  const folders = designFolders(designsDir);
   const errors: string[] = [];
   let fileCount = 0;
-  const folders = readdirSync(designsDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort((a, b) => a.localeCompare(b));
 
   for (const folder of folders) {
     fileCount += await checkFolder(path.join(designsDir, folder), blocks, errors);
@@ -881,4 +889,32 @@ export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions)
 
   // A problem in a file that index.scss loads is reported once, at the line that wrote it.
   return { errors: [...new Set(errors)], designCount: folders.length, fileCount };
+}
+
+async function main(): Promise<void> {
+  const { errors, designCount, fileCount } = await checkDesigns({
+    designsDir: "client-app/designs",
+    sources: globSync("client-app/**/*.{vue,scss}", {
+      ignore: [
+        "client-app/designs/**",
+        "client-app/assets/styles/{dark,print}/**",
+        "client-app/assets/styles/_custom.scss",
+      ],
+    }),
+  });
+
+  if (errors.length) {
+    console.error(`Design check failed (${errors.length}):\n  ${errors.join("\n  ")}`);
+    process.exit(1);
+  }
+
+  console.log(`Design check passed: ${designCount} designs, ${fileCount} files.`);
+}
+
+// vite-node leaves the script out of process.argv, so a test import is told apart by vitest's flag.
+if (!process.env.VITEST) {
+  main().catch((error: unknown) => {
+    console.error(error);
+    process.exit(1);
+  });
 }

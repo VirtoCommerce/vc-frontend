@@ -21,7 +21,6 @@ and the design never changes the preset.
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
 @layer vc.vendor, vc.kit, vc.app, vc.design, vc.print;
-@layer vc.design.kit, vc.design.app;
 ```
 
 - The first declaration a page sees fixes the order; an identical re-declaration is a no-op. So
@@ -44,14 +43,13 @@ and the design never changes the preset.
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); soft hook tokens (`soft/_tokens.scss` on both sides). No soft colour tokens |
+| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). No colour tokens in a design |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
 | `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss` |
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
-| `vc.design.kit` | soft files of ui-kit blocks: `client-app/ui-kit/styles/soft/` |
-| `vc.design.app` | soft files of app blocks: `client-app/assets/styles/soft/` |
+| `vc.design` | a design's block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by its `index.scss` |
 | `vc.print` | `_print.scss`; every component's print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
@@ -84,11 +82,14 @@ copy of the order statements; an identical re-declaration changes nothing.
 ### Entry stylesheets
 
 Each is layered by hand and starts with `@use "layers"`: `preflight.scss`, `vendors.scss`,
-`main.scss` (loaded by `App.vue`), both `soft/index.scss`, and in Storybook
+`main.scss` (loaded by `App.vue`), and in Storybook
 `storybook-styles/preflight.scss`, `main.scss` and `swiper.scss` (`utilities.scss` stays
 unlayered). A new entry follows the same pattern: `@use "layers"` first, then each part with
 `@include meta.load-css(…)` inside its `@layer` block. Swiper is loaded with a plain
 `@import … layer(vc.vendor)` (`vendors/_swiper.scss`).
+
+A design's `index.scss` (`client-app/designs/<name>/`) loads after the entries, so it does not
+restate the order: it only puts its files in `@layer theme` and `@layer vc.design`.
 
 ---
 

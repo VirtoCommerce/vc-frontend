@@ -3035,12 +3035,6 @@ interface ISocialSharingService {
     url_template: string;
 }
 
-declare const DESIGNS: {
-    readonly classic: "classic";
-    readonly soft: "soft";
-};
-type DesignType = keyof typeof DESIGNS;
-
 declare const DESKTOP_MENU_MODES: {
     readonly fullscreen: "fullscreen";
     readonly horizontal: "horizontal";
@@ -3438,7 +3432,7 @@ interface IThemeConfigSettings {
     header_menu_link_list?: string;
     desktop_menu_mode?: DesktopMenuModeType;
     icon_variant?: "solid" | "outline";
-    design?: DesignType;
+    design?: string;
     products_menu_link_list?: string;
     footer_menu_link_list?: string;
     image_thumbnails_enabled?: boolean;
