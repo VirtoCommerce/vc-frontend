@@ -389,8 +389,7 @@ function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
 }
 
 function handleFocusOut(event: FocusEvent) {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  if (!dropdownElement.value?.contains(event.relatedTarget as Node)) {
+  if (!(event.relatedTarget instanceof Node && dropdownElement.value?.contains(event.relatedTarget))) {
     emit("hide");
   }
 }

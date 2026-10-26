@@ -39,7 +39,11 @@ export const events: TrackerEventsType = {
     const { index, ...restParams } = params ?? {};
     const gtagItem =
       item && typeof item === "object" && "productId" in item
-        ? lineItemToGtagItem(item, index)
+        ? {
+            ...lineItemToGtagItem(item, index),
+            item_list_id: params?.item_list_id,
+            item_list_name: params?.item_list_name,
+          }
         : productToGtagItem(item, index, {
             itemListId: params?.item_list_id,
             itemListName: params?.item_list_name,

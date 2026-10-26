@@ -207,11 +207,13 @@ describe("google-analytics events", () => {
       const { events } = await import("./events");
 
       const lineItem = { ...buildOrderLineItem({ sku: "SKU-L" }), productId: "P-1" } as unknown as LineItemType;
-      void events.selectItem!(lineItem, { item_list_id: "cart", index: 1 });
+      void events.selectItem!(lineItem, { item_list_id: "cart", item_list_name: "Cart", index: 1 });
 
       const [, payload] = hoisted.sendEventMock.mock.calls[0];
       expect(payload.items[0].item_id).toBe("SKU-L");
       expect(payload.items[0].index).toBe(1);
+      expect(payload.items[0].item_list_id).toBe("cart");
+      expect(payload.items[0].item_list_name).toBe("Cart");
       expect(payload).not.toHaveProperty("index");
     });
   });

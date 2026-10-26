@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, ref } from "vue";
+import { computed, toRef, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { ROUTES } from "@/router/routes/constants";
@@ -67,8 +67,8 @@ const availableItems = computed(() => savedForLaterList.value?.items.filter((ite
 const visibleItems = computed(() => availableItems.value.slice(0, maxVisibleItems.value));
 
 const listProperties = computed(() => ({
-  item_list_id: "recently_browsed_products",
-  item_list_name: t("pages.cart.recently_browsed_products"),
+  item_list_id: "saved_for_later",
+  item_list_name: t("pages.cart.saved_for_later"),
 }));
 
 const { analytics } = useAnalytics();
@@ -81,6 +81,28 @@ function selectItemEvent(item: SavedForLaterListFragment["items"][number]["produ
 
   analytics("selectItem", item as Product, { ...listProperties.value, index });
 }
+
+// Moving a line to or from the cart refetches the list, so only a changed set of lines is a new impression
+let reportedSignature: string | undefined;
+
+watch(
+  availableItems,
+  (items) => {
+    const signature = items.map((item) => item.id).join(",");
+
+    if (!items.length || signature === reportedSignature) {
+      return;
+    }
+    reportedSignature = signature;
+
+    analytics(
+      "viewItemList",
+      items.map((item) => item.product as Product),
+      listProperties.value,
+    );
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">

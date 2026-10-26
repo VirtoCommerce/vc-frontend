@@ -338,6 +338,7 @@ const analyticsLastSentPaymentCode = ref<string | undefined>();
 
 const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
+let reportedLines: { id: string }[] = [];
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 
@@ -409,7 +410,7 @@ function selectItemEvent(item: LineItemType | undefined): void {
   analytics("selectItem", item, {
     item_list_id: "cart",
     item_list_name: t("pages.cart.title"),
-    index: getProductListIndex(cart.value?.items ?? [], item.id),
+    index: getProductListIndex(reportedLines, item.id),
   });
 }
 
@@ -471,6 +472,7 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
+    reportedLines = [...cart.value.items];
     analytics("viewCart", cart.value);
   }
 
