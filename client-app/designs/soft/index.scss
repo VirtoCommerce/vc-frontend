@@ -1,13 +1,1 @@
 @use "sass:meta";
-
-@layer theme {
-  @include meta.load-css("tokens");
-}
-
-@layer vc.design {
-  html[data-design="soft"] {
-  }
-
-  html.dark[data-design="soft"] {
-  }
-}

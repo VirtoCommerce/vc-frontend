@@ -127,7 +127,8 @@ client-app/designs/
 
 ### Wiring
 
-Every design's `index.scss` is this file with its own name. Add one line per block file:
+Every design's `index.scss` is this file with its own name and one line per file the design has; a
+`@layer` or `html` block with no line is left out:
 
 ```scss
 @use "sass:meta";
@@ -184,9 +185,9 @@ never restates print. Token values apply in print too.
 ### Make your own design
 
 1. Pick a name, e.g. `mybrand`, and create the folder `client-app/designs/mybrand/` (copy
-   `designs/soft/` as a start, then replace `soft` with `mybrand` in its `index.scss` and
-   `_tokens.scss`).
-2. In `_tokens.scss`, set the tokens that differ from classic:
+   `designs/soft/` as a start: an `index.scss` that loads no file).
+2. Add `_tokens.scss` with the tokens that differ from classic, and load it in `index.scss`
+   ([Wiring](#wiring)):
    ```scss
    html[data-design="mybrand"] {
      --vc-radius: 0;

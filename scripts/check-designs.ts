@@ -913,8 +913,5 @@ async function main(): Promise<void> {
 
 // vite-node leaves the script out of process.argv, so a test import is told apart by vitest's flag.
 if (!process.env.VITEST) {
-  main().catch((error: unknown) => {
-    console.error(error);
-    process.exit(1);
-  });
+  await main();
 }
