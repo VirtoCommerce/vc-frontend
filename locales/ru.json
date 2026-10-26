@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Отложено",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Способы оплаты"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Способы оплаты"
         }
       },
       "change_password_form": {
@@ -1018,6 +1020,36 @@
           "missing_link": "Ссылка для перенаправления отсутствует",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Оплатить картой",
+        "new_card": "Использовать новую карту",
+        "save_card": "Сохранить эту карту для будущих платежей",
+        "save_card_required": "В этой покупке есть подписка, поэтому карта будет надёжно сохранена для её оплаты. Её можно сменить в любое время.",
+        "default": "По умолчанию",
+        "expired": "Истёк срок",
+        "needs_update": "Требует обновления",
+        "expires": "Действует до {date}",
+        "page_title": "Способы оплаты",
+        "page_subtitle": "Карты, сохранённые для быстрой оплаты и подписок. Мы никогда не храним полный номер карты.",
+        "empty": "Сохранённых карт пока нет.",
+        "make_default": "Сделать основной",
+        "remove": "Удалить",
+        "remove_title": "Удалить эту карту?",
+        "remove_text": "Карта будет удалена из вашего аккаунта и у платёжного провайдера.",
+        "removed": "Карта удалена.",
+        "add_title": "Добавить карту",
+        "add": "Сохранить карту",
+        "added": "Карта сохранена.",
+        "set_default": "Использовать как основную карту",
+        "billing_title": "Платёжный адрес карты",
+        "billing_hint": "Банк проверяет его при сохранении карты.",
+        "address": "Улица и дом",
+        "city": "Город",
+        "state": "Регион",
+        "zip": "Почтовый индекс",
+        "form_unavailable": "Сейчас сохранить карту не удаётся. Попробуйте позже.",
+        "error": "Что-то пошло не так. Попробуйте ещё раз."
       }
     },
     "wishlists": {

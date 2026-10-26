@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Zapisane na później",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Metody płatności"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Metody płatności"
         }
       },
       "change_password_form": {
@@ -1018,6 +1020,36 @@
           "missing_link": "Brakuje linku przekierowującego",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Zapłać kartą",
+        "new_card": "Użyj nowej karty",
+        "save_card": "Zapisz tę kartę do przyszłych płatności",
+        "save_card_required": "Ten zakup obejmuje subskrypcję, dlatego karta jest bezpiecznie zapisywana, aby za nią płacić. Możesz ją zmienić w dowolnym momencie.",
+        "default": "Domyślna",
+        "expired": "Wygasła",
+        "needs_update": "Wymaga aktualizacji",
+        "expires": "Ważna do {date}",
+        "page_title": "Metody płatności",
+        "page_subtitle": "Karty zapisane do szybszych płatności i subskrypcji. Nigdy nie przechowujemy pełnego numeru karty.",
+        "empty": "Brak zapisanych kart.",
+        "make_default": "Ustaw jako domyślną",
+        "remove": "Usuń",
+        "remove_title": "Usunąć tę kartę?",
+        "remove_text": "Karta zostanie usunięta z Twojego konta i u operatora płatności.",
+        "removed": "Karta usunięta.",
+        "add_title": "Dodaj kartę",
+        "add": "Zapisz kartę",
+        "added": "Karta zapisana.",
+        "set_default": "Używaj jako mojej domyślnej karty",
+        "billing_title": "Adres rozliczeniowy karty",
+        "billing_hint": "Bank sprawdza go podczas zapisywania karty.",
+        "address": "Ulica i numer",
+        "city": "Miasto",
+        "state": "Województwo",
+        "zip": "Kod pocztowy",
+        "form_unavailable": "Obecnie nie można zapisywać kart. Spróbuj ponownie później.",
+        "error": "Coś poszło nie tak. Spróbuj ponownie."
       }
     },
     "wishlists": {

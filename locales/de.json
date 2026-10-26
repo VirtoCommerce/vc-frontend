@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Für später gespeichert",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Zahlungsmethoden"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Zahlungsmethoden"
         }
       },
       "change_password_form": {
@@ -1018,6 +1020,36 @@
           "missing_link": "Weiterleitungslink fehlt",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Bezahlen mit",
+        "new_card": "Neue Karte verwenden",
+        "save_card": "Diese Karte für künftige Zahlungen speichern",
+        "save_card_required": "Dieser Einkauf enthält ein Abonnement, daher wird die Karte sicher gespeichert, um es zu bezahlen. Sie können sie jederzeit ändern.",
+        "default": "Standard",
+        "expired": "Abgelaufen",
+        "needs_update": "Aktualisierung nötig",
+        "expires": "Gültig bis {date}",
+        "page_title": "Zahlungsmethoden",
+        "page_subtitle": "Gespeicherte Karten für schnelleres Bezahlen und Abonnements. Wir speichern niemals Ihre vollständige Kartennummer.",
+        "empty": "Noch keine gespeicherten Karten.",
+        "make_default": "Als Standard festlegen",
+        "remove": "Entfernen",
+        "remove_title": "Diese Karte entfernen?",
+        "remove_text": "Die Karte wird aus Ihrem Konto und beim Zahlungsanbieter gelöscht.",
+        "removed": "Karte entfernt.",
+        "add_title": "Karte hinzufügen",
+        "add": "Karte speichern",
+        "added": "Karte gespeichert.",
+        "set_default": "Als meine Standardkarte verwenden",
+        "billing_title": "Rechnungsadresse der Karte",
+        "billing_hint": "Ihre Bank prüft sie beim Speichern der Karte.",
+        "address": "Straße und Hausnummer",
+        "city": "Ort",
+        "state": "Bundesland",
+        "zip": "Postleitzahl",
+        "form_unavailable": "Karten können derzeit nicht gespeichert werden. Bitte versuchen Sie es später erneut.",
+        "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
       }
     },
     "wishlists": {

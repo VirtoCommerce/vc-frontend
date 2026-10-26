@@ -50,4 +50,5 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   checkoutReview: {},
   sharedList: {},
   checkout: {},
+  addCardForm: {},
 };

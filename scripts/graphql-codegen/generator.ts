@@ -89,6 +89,12 @@ const independentModules: ModuleType[] = [
     requiredCommonFragments: [`${core.apiPath}/catalog/fragments/availabilityData.graphql`],
   },
   {
+    // Customers' saved cards live in x-cart's schema; the storefront's card forms and account page use them.
+    name: "SavedPaymentMethods",
+    apiPath: "client-app/shared/payment/api/graphql",
+    schemaPath: `${backendUrl}/graphql/cart`,
+  },
+  {
     name: "ProductSubscriptions",
     apiPath: "client-app/modules/product-subscriptions/api/graphql",
     schemaPath: `${backendUrl}/graphql/product-subscription`,

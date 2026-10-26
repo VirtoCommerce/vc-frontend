@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Salvati per dopo",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Metodi di pagamento"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Metodi di pagamento"
         }
       },
       "change_password_form": {
@@ -1018,6 +1020,36 @@
           "missing_link": "Link di reindirizzamento mancante",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Paga con",
+        "new_card": "Usa una nuova carta",
+        "save_card": "Salva questa carta per i pagamenti futuri",
+        "save_card_required": "Questo acquisto include un abbonamento, quindi la carta viene salvata in modo sicuro per pagarlo. Puoi cambiarla in qualsiasi momento.",
+        "default": "Predefinita",
+        "expired": "Scaduta",
+        "needs_update": "Da aggiornare",
+        "expires": "Scade il {date}",
+        "page_title": "Metodi di pagamento",
+        "page_subtitle": "Carte salvate per pagare più velocemente e per gli abbonamenti. Non salviamo mai il numero completo della carta.",
+        "empty": "Ancora nessuna carta salvata.",
+        "make_default": "Imposta come predefinita",
+        "remove": "Rimuovi",
+        "remove_title": "Rimuovere questa carta?",
+        "remove_text": "La carta viene eliminata dal tuo account e presso il fornitore di pagamento.",
+        "removed": "Carta rimossa.",
+        "add_title": "Aggiungi una carta",
+        "add": "Salva carta",
+        "added": "Carta salvata.",
+        "set_default": "Usa come carta predefinita",
+        "billing_title": "Indirizzo di fatturazione della carta",
+        "billing_hint": "La tua banca lo verifica quando la carta viene salvata.",
+        "address": "Indirizzo",
+        "city": "Città",
+        "state": "Provincia",
+        "zip": "CAP",
+        "form_unavailable": "Al momento non è possibile salvare carte. Riprova più tardi.",
+        "error": "Qualcosa è andato storto. Riprova."
       }
     },
     "wishlists": {

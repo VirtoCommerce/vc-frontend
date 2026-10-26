@@ -1,0 +1,7 @@
+#import "../../fragments/savedPaymentMethodFields.graphql"
+
+mutation SetDefaultSavedPaymentMethod($command: InputSavedPaymentMethodId!) {
+  setDefaultSavedPaymentMethod(command: $command) {
+    ...savedPaymentMethodFields
+  }
+}

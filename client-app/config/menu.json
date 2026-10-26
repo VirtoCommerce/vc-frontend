@@ -131,6 +131,15 @@
             "priority": 20
           },
           {
+            "id": "payment-methods",
+            "route": {
+              "name": "PaymentMethods"
+            },
+            "title": "shared.account.navigation.links.payment_methods",
+            "icon": "credit-card",
+            "priority": 22
+          },
+          {
             "id": "changePasswordAccount",
             "route": {
               "name": "ChangePasswordAccount"
@@ -283,6 +292,15 @@
             "title": "shared.layout.header.mobile.account_menu.addresses",
             "icon": "source-environment",
             "priority": 20
+          },
+          {
+            "id": "payment-methods",
+            "route": {
+              "name": "PaymentMethods"
+            },
+            "title": "shared.layout.header.mobile.account_menu.payment_methods",
+            "icon": "credit-card",
+            "priority": 22
           },
           {
             "route": {

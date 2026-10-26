@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardados para mais tarde",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Métodos de pagamento"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Métodos de pagamento"
         }
       },
       "change_password_form": {
@@ -1018,6 +1020,36 @@
           "missing_link": "O link de redirecionamento está ausente",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Pagar com",
+        "new_card": "Usar um novo cartão",
+        "save_card": "Guardar este cartão para pagamentos futuros",
+        "save_card_required": "Esta compra inclui uma assinatura, por isso o cartão é guardado com segurança para pagá-la. Pode alterá-lo a qualquer momento.",
+        "default": "Predefinido",
+        "expired": "Expirado",
+        "needs_update": "Precisa de atualização",
+        "expires": "Expira em {date}",
+        "page_title": "Métodos de pagamento",
+        "page_subtitle": "Cartões guardados para pagamentos mais rápidos e assinaturas. Nunca guardamos o número completo do seu cartão.",
+        "empty": "Ainda não há cartões guardados.",
+        "make_default": "Definir como predefinido",
+        "remove": "Remover",
+        "remove_title": "Remover este cartão?",
+        "remove_text": "O cartão é eliminado da sua conta e no fornecedor de pagamentos.",
+        "removed": "Cartão removido.",
+        "add_title": "Adicionar um cartão",
+        "add": "Guardar cartão",
+        "added": "Cartão guardado.",
+        "set_default": "Usar como o meu cartão predefinido",
+        "billing_title": "Morada de faturação do cartão",
+        "billing_hint": "O seu banco verifica-a quando o cartão é guardado.",
+        "address": "Morada",
+        "city": "Cidade",
+        "state": "Estado",
+        "zip": "Código postal",
+        "form_unavailable": "Não é possível guardar cartões neste momento. Tente novamente mais tarde.",
+        "error": "Algo correu mal. Tente novamente."
       }
     },
     "wishlists": {
