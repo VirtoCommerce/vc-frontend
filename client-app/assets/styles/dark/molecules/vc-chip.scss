@@ -10,16 +10,6 @@
     info: 400,
     warning: 400,
   );
-  $solid-hover: (
-    primary: 300,
-    secondary: 400,
-    accent: 400,
-    neutral: 400,
-    success: 500,
-    danger: 500,
-    info: 500,
-    warning: 500,
-  );
 
   // Compound `&.vc-chip--solid--#{$color}` keeps the (0,3,0) specificity of the
   // `[class*=]` selector it replaces.
@@ -36,14 +26,14 @@
     }
   }
 
-  @each $color, $shade in $solid-hover {
+  @each $color, $shade in $solid-bg {
     &--solid--#{$color}.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-      // Darken the rest colour. Fallback stays the `$solid-hover` shade: presets without
-      // the override key have hover shades brighter than their dark rest fill.
+      // Lift the rest colour toward white: on a dark panel a darker hover reads as a dip,
+      // and mixing from the rest key keeps hover in step with any preset override.
       --bg-color: color-mix(
         in srgb,
         var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
-        black 8%
+        white 14%
       );
       --border-color: var(--bg-color);
     }
@@ -55,11 +45,11 @@
       --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-        // Derive from the rest colour (white, not black): dark ramps are not monotonic.
+        // Lift the rest colour toward white (dark ramps are not monotonic, so never step to -200).
         --bg-color: color-mix(
           in srgb,
-          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-200)),
-          white 8%
+          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100)),
+          white 10%
         );
         --border-color: var(--bg-color);
       }
@@ -82,8 +72,8 @@
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: color-mix(
           in srgb,
-          var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-200)),
-          white 8%
+          var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100)),
+          white 10%
         );
       }
     }

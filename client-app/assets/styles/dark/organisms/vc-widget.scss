@@ -1,0 +1,4 @@
+.vc-widget {
+  // Elevation in dark = lighter surface + the widget's own hairline; the drop shadow adds nothing.
+  @apply shadow-none;
+}

@@ -3,6 +3,7 @@ import { computed, shallowRef } from "vue";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
+import { useDarkMode } from "./useDarkMode";
 import { useThemeContext } from "./useThemeContext";
 import type { WhiteLabelingSettingsType } from "@/core/api/graphql/types";
 
@@ -43,11 +44,22 @@ function _useWhiteLabeling() {
     }
   }
 
+  const { isDark } = useDarkMode();
+
+  const logoUrl = computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image);
+  const secondaryLogoUrl = computed(
+    () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
+  );
+  // An organization logo must not be swapped for the theme's inverted logo of another brand.
+  const invertedLogoUrl = computed(() =>
+    whiteLabelingSettings.value?.logoUrl ? whiteLabelingSettings.value.secondaryLogoUrl : secondaryLogoUrl.value,
+  );
+
   return {
-    logoUrl: computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image),
-    secondaryLogoUrl: computed(
-      () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
-    ),
+    logoUrl,
+    secondaryLogoUrl,
+    /** Logo for the header: the inverted (secondary) logo in dark mode when there is one, otherwise `logoUrl`. */
+    headerLogoUrl: computed(() => (isDark.value && invertedLogoUrl.value) || logoUrl.value),
     footerLinks: computed(() =>
       whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item)),
     ),

@@ -1,0 +1,10 @@
+.vc-product-card {
+  // A drop shadow is black on near-black here and separates nothing: the hairline carries the edge.
+  &--border {
+    @apply border-neutral-200 shadow-none;
+
+    &:hover {
+      @apply border-neutral-300 shadow-none;
+    }
+  }
+}

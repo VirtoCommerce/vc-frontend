@@ -29,7 +29,7 @@
             </button>
 
             <router-link :to="$context.settings.default_return_url ?? '/'">
-              <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
+              <VcImage :src="headerLogoUrl" :alt="$context.storeName" class="h-8" lazy />
             </router-link>
           </div>
           <!-- endregion Left slot -->
@@ -144,7 +144,7 @@ const { searchBarVisible, toggleSearchBar } = useSearchBar();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
-const { logoUrl } = useWhiteLabeling();
+const { headerLogoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

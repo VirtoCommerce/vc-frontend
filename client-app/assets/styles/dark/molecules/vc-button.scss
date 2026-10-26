@@ -10,16 +10,6 @@
     info: 400,
     warning: 400,
   );
-  $solid-hover: (
-    primary: 300,
-    secondary: 400,
-    accent: 400,
-    neutral: 400,
-    success: 500,
-    danger: 500,
-    info: 500,
-    warning: 500,
-  );
   $loading: "";
   $disabled: "";
 
@@ -51,14 +41,14 @@
     }
   }
 
-  @each $color, $shade in $solid-hover {
+  @each $color, $shade in $solid-bg {
     &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      // Darken the rest colour. Fallback stays the `$solid-hover` shade: presets without
-      // the override key have hover shades brighter than their dark rest fill.
+      // Lift the rest colour toward white: on a dark panel a darker hover reads as a dip,
+      // and mixing from the rest key keeps hover in step with any preset override.
       --bg-color: color-mix(
         in srgb,
         var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
-        black 8%
+        white 14%
       );
       --border-color: var(--bg-color);
     }
@@ -103,11 +93,11 @@
 
   @each $color in $colors {
     &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      // Derive from the rest colour (white, not black): dark ramps are not monotonic.
+      // Lift the rest colour toward white (dark ramps are not monotonic, so never step to -200).
       --bg-color: color-mix(
         in srgb,
-        var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-200)),
-        white 8%
+        var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100)),
+        white 10%
       );
     }
   }
@@ -121,8 +111,8 @@
       &:hover:not(#{$loading}, #{$disabled}) {
         --bg-color: color-mix(
           in srgb,
-          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-200)),
-          white 8%
+          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100)),
+          white 10%
         );
         --border-color: var(--bg-color);
       }

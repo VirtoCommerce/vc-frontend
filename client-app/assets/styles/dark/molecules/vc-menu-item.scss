@@ -14,11 +14,11 @@
     @each $color in $colors {
       &--color--#{$color} {
         &:hover {
-          @apply bg-[--color-#{$color}-100];
+          @apply bg-[--color-#{$color}-200];
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          @apply bg-[--color-#{$color}-200];
         }
       }
     }
