@@ -295,6 +295,37 @@ describe("useProducts", () => {
       ]);
     });
 
+    it("returns only the page it added, not the accumulated list", async () => {
+      const { fetchProducts, fetchMoreProducts, products } = useProducts();
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product1" }, { id: "product2" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product3" }, { id: "product4" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      const result = await fetchMoreProducts({ page: 2, itemsPerPage: 2 });
+
+      expect(result).toEqual({ items: [{ id: "product3" }, { id: "product4" }], totalCount: 10 });
+      expect(products.value).toHaveLength(4);
+    });
+
     it("should handle API errors gracefully during fetchMoreProducts", async () => {
       const errorMessage = "API Error";
       mockData.searchProducts.mockRejectedValueOnce(new Error(errorMessage));

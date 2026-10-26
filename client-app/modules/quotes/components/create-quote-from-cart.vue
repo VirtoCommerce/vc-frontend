@@ -1,5 +1,5 @@
 <template>
-  <VcWidget v-if="isAuthenticated" :title="$t('quotes.cart_widget.title')" class="print:hidden">
+  <VcWidget v-if="isAuthenticated && !isExternalCheckout" :title="$t('quotes.cart_widget.title')" class="print:hidden">
     <p class="mb-5 text-xs font-normal text-neutral-500">
       {{ $t("quotes.cart_widget.quote_request_hint") }}
     </p>
@@ -19,6 +19,7 @@ import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { CartDeletedProductsModal, useFullCart } from "@/shared/cart";
+import { useExternalCheckout } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { CreateQuoteFromCartDocument } from "../api/graphql/types";
@@ -44,6 +45,8 @@ const { mutate: createQuoteFromCart } = useMutation(CreateQuoteFromCartDocument,
   refetchQueries: () => filterActiveQueryNames(client, [OperationNames.Query.GetFullCart]),
 });
 const { isAuthenticated } = useUser();
+// The order is placed outside the store, so a store quote would lead nowhere
+const { isExternalCheckout } = useExternalCheckout();
 
 async function createQuote(): Promise<void> {
   if (cartContainsDeletedProducts.value) {
