@@ -210,7 +210,7 @@
                   $t("product_subscriptions.details.reset")
                 }}</VcButton>
 
-                <router-link :to="{ name: PAYMENT_METHODS_ROUTE_NAME }" class="text-sm text-primary hover:underline">
+                <router-link :to="{ name: ROUTES.PAYMENT_METHODS.NAME }" class="text-sm text-primary hover:underline">
                   {{ $t("product_subscriptions.details.manage_cards") }}
                 </router-link>
               </div>
@@ -450,7 +450,9 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useNotifications } from "@/shared/notification";
+import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
 import {
   acceptSubscriptionRenewal,
   cancelProductSubscription,
@@ -466,8 +468,7 @@ import {
 } from "../api/graphql";
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
-import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
-import { ATTENTION_RENEWAL_STATES, PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
+import { ATTENTION_RENEWAL_STATES, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
 import {
   cardLabel,
   discountLabel,

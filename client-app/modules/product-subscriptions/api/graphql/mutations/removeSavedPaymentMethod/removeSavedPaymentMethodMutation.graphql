@@ -1,7 +1,0 @@
-#import "../../fragments/savedPaymentMethodFields.graphql"
-
-mutation RemoveSavedPaymentMethod($command: InputSavedPaymentMethodId!) {
-  removeSavedPaymentMethod(command: $command) {
-    ...savedPaymentMethodFields
-  }
-}

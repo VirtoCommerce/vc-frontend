@@ -1,8 +1,7 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions",
-      "payment_methods": "Payment methods"
+      "subscriptions": "Subscriptions"
     },
     "intervals": {
       "day": "Every day | Every {count} days",
@@ -69,8 +68,6 @@
     },
     "mock_payment": {
       "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "pay_with": "Pay with",
-      "new_card": "Use a new card",
       "test_cards": "Test cards",
       "cards": {
         "success": "Always approved",
@@ -210,22 +207,6 @@
       "title": "Order now?",
       "text": "We'll place an order for this subscription right away and charge your saved card. Your schedule restarts from today.",
       "confirm": "Order now"
-    },
-    "payment_methods": {
-      "title": "Payment methods",
-      "subtitle": "Cards saved for subscriptions and faster checkout. We never store your full card number.",
-      "empty": "No saved cards yet.",
-      "default": "Default",
-      "expires": "Expires {date}",
-      "make_default": "Make default",
-      "remove": "Remove",
-      "remove_title": "Remove this card?",
-      "remove_text": "Subscriptions paid with this card need another card first.",
-      "removed": "Card removed.",
-      "add_title": "Add a card",
-      "add": "Save card",
-      "added": "Card saved.",
-      "set_default": "Use as my default card"
     }
   }
 }

@@ -7,49 +7,7 @@
     <VcAlert v-if="initError" color="danger" size="sm" variant="soft" icon>{{ initError }}</VcAlert>
 
     <template v-else>
-      <div v-if="savedMethods.length" class="mock-card-payment__saved">
-        <VcLabel>{{ $t("product_subscriptions.mock_payment.pay_with") }}</VcLabel>
-
-        <div
-          v-for="method in savedMethods"
-          :key="method.id"
-          class="mock-card-payment__option"
-          :class="{ 'mock-card-payment__option--active': selected === method.id }"
-        >
-          <VcRadioButton
-            v-model="selected"
-            :value="method.id"
-            name="mock-card"
-            size="sm"
-            class="mock-card-payment__radio"
-          >
-            <VcIcon name="credit-card" size="sm" />
-
-            <span class="mock-card-payment__option-text">
-              {{ cardLabel(method.brand, method.last4) }}
-              <span class="text-neutral-500">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
-            </span>
-
-            <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
-              $t("product_subscriptions.payment_methods.default")
-            }}</VcBadge>
-          </VcRadioButton>
-        </div>
-
-        <div class="mock-card-payment__option" :class="{ 'mock-card-payment__option--active': selected === NEW_CARD }">
-          <VcRadioButton
-            v-model="selected"
-            :value="NEW_CARD"
-            name="mock-card"
-            size="sm"
-            class="mock-card-payment__radio"
-          >
-            <VcIcon name="plus" size="sm" />
-
-            <span class="mock-card-payment__option-text">{{ $t("product_subscriptions.mock_payment.new_card") }}</span>
-          </VcRadioButton>
-        </div>
-      </div>
+      <SavedCardPicker v-model="selected" :methods="savedMethods" :new-card-value="NEW_CARD" name="mock-card" />
 
       <div v-if="selected === NEW_CARD" class="mock-card-payment__new">
         <BankCardForm
@@ -151,18 +109,14 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { authorizePayment, initializePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
-import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
-import {
-  MOCK_PAYMENT_CODE,
-  MOCK_TEST_CARDS,
-  SUBSCRIPTION_CHECKOUT_STORAGE_KEY,
-  THREE_DS_ON_RENEWAL_LAST4,
-  THREE_DS_ON_SAVE_LAST4,
-} from "../constants";
-import { cardLabel, formatMoney } from "../utils";
+import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
+import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
+import { MOCK_PAYMENT_CODE, MOCK_TEST_CARDS, THREE_DS_ON_RENEWAL_LAST4, THREE_DS_ON_SAVE_LAST4 } from "../constants";
+import { formatMoney } from "../utils";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
+import SavedCardPicker from "@/shared/payment/components/saved-card-picker.vue";
 
 interface IProps {
   order: CustomerOrderType;
@@ -177,13 +131,13 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const NEW_CARD = "new";
-const SUBSCRIPTION_FLAG_MAX_AGE_MS = 2 * 60 * 60 * 1000;
 
 const order = toRef(props, "order");
 
 const { t } = useI18n();
 const route = useRoute();
-const { activeMethods, fetch: fetchSavedMethods } = useSavedPaymentMethods();
+const { methodsFor, fetch: fetchSavedMethods } = useSavedPaymentMethods();
+const cardSaving = useCardSavingRequirement();
 
 const loading = ref(false);
 const initError = ref<string>();
@@ -196,26 +150,12 @@ const cardFormKey = ref(0);
 const saveCard = ref(true);
 const showThreeDs = ref(false);
 
-const subscriptionCheckout = readSubscriptionFlag();
+const subscriptionCheckout = cardSaving.read();
 const requiresSavedCard = computed(() => !!subscriptionCheckout);
 
-const savedMethods = computed(() => activeMethods.value.filter((x) => x.paymentMethodCode === MOCK_PAYMENT_CODE));
+const savedMethods = computed(() => methodsFor(MOCK_PAYMENT_CODE));
 const payment = computed(() => order.value.inPayments?.[0]);
 const canPay = computed(() => !loading.value && !!payment.value && (selected.value !== NEW_CARD || cardValid.value));
-
-function readSubscriptionFlag(): { consentId?: string; acceptedAt: number } | undefined {
-  try {
-    const raw = sessionStorage.getItem(SUBSCRIPTION_CHECKOUT_STORAGE_KEY);
-    if (!raw) {
-      return undefined;
-    }
-
-    const value = JSON.parse(raw) as { consentId?: string; acceptedAt: number };
-    return Date.now() - value.acceptedAt < SUBSCRIPTION_FLAG_MAX_AGE_MS ? value : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 function useTestCard(number: string) {
   card.value = {
@@ -280,7 +220,7 @@ async function authorize(threeDsCompleted: boolean): Promise<void> {
     });
 
     if (result.isSuccess) {
-      sessionStorage.removeItem(SUBSCRIPTION_CHECKOUT_STORAGE_KEY);
+      cardSaving.clear();
       emit("success");
       return;
     }
@@ -349,35 +289,6 @@ onMounted(async () => {
 
 <style lang="scss">
 .mock-card-payment {
-  &__saved {
-    @apply mb-4 flex flex-col gap-2;
-  }
-
-  &__option {
-    @apply rounded-lg border border-neutral-200 text-sm;
-
-    &--active {
-      @apply border-primary bg-primary-50;
-    }
-  }
-
-  // the radio's own label fills the card, so the whole card selects the option
-  &__radio {
-    @apply w-full;
-
-    .vc-radio-button__container {
-      @apply w-full items-center gap-3 p-3;
-    }
-
-    .vc-radio-button__label {
-      @apply flex min-w-0 grow items-center gap-3;
-    }
-  }
-
-  &__option-text {
-    @apply flex grow flex-wrap items-center gap-x-2;
-  }
-
   &__test-cards {
     @apply mt-4 flex flex-col gap-2;
   }

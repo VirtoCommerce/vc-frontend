@@ -46,9 +46,9 @@ import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
+import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useCartSubscriptions } from "../composables/useCartSubscriptions";
-import { SUBSCRIPTION_CHECKOUT_STORAGE_KEY } from "../constants";
 import { errorMessage, intervalLabel } from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
@@ -61,6 +61,8 @@ const { t } = useI18n();
 const cart = computed(() => props.cart);
 const { items, hasSubscriptionItems, refresh } = useCartSubscriptions();
 const { registerGuard, unregisterGuard } = useCheckoutGuards();
+// Subscriptions are paid with the checkout's card, so accepting the terms makes the card form save it with the consent.
+const cardSaving = useCardSavingRequirement();
 
 const terms = ref<GetSubscriptionTermsQuery["subscriptionTerms"]>();
 const accepted = ref(false);
@@ -77,7 +79,7 @@ async function onToggle(value: boolean) {
 
   if (!value) {
     accepted.value = false;
-    sessionStorage.removeItem(SUBSCRIPTION_CHECKOUT_STORAGE_KEY);
+    cardSaving.clear();
     return;
   }
 
@@ -95,10 +97,7 @@ async function onToggle(value: boolean) {
     });
 
     accepted.value = true;
-    sessionStorage.setItem(
-      SUBSCRIPTION_CHECKOUT_STORAGE_KEY,
-      JSON.stringify({ consentId, cartId: cart.value.id, acceptedAt: Date.now() }),
-    );
+    cardSaving.require(consentId);
   } catch (e) {
     accepted.value = false;
     error.value = errorMessage(e, t("product_subscriptions.errors.generic"));

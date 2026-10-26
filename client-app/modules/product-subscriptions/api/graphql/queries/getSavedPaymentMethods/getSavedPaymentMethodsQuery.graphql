@@ -1,7 +1,0 @@
-#import "../../fragments/savedPaymentMethodFields.graphql"
-
-query GetSavedPaymentMethods($storeId: String!) {
-  savedPaymentMethods(storeId: $storeId) {
-    ...savedPaymentMethodFields
-  }
-}

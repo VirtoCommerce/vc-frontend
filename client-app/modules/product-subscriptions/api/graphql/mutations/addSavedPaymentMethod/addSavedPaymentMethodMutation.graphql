@@ -1,7 +1,0 @@
-#import "../../fragments/savedPaymentMethodFields.graphql"
-
-mutation AddSavedPaymentMethod($command: InputAddSavedPaymentMethod!) {
-  addSavedPaymentMethod(command: $command) {
-    ...savedPaymentMethodFields
-  }
-}

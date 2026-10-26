@@ -7,8 +7,8 @@
         <p class="subscriptions-page__subtitle">{{ $t("product_subscriptions.list.subtitle") }}</p>
       </div>
 
-      <VcButton variant="outline" size="sm" prepend-icon="credit-card" :to="{ name: PAYMENT_METHODS_ROUTE_NAME }">
-        {{ $t("product_subscriptions.payment_methods.title") }}
+      <VcButton variant="outline" size="sm" prepend-icon="credit-card" :to="{ name: ROUTES.PAYMENT_METHODS.NAME }">
+        {{ $t("shared.payment.saved_cards.page_title") }}
       </VcButton>
     </div>
 
@@ -162,6 +162,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useNotifications } from "@/shared/notification";
 import {
   acceptSubscriptionRenewal,
@@ -172,7 +173,7 @@ import {
 } from "../api/graphql";
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
-import { ATTENTION_RENEWAL_STATES, PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
+import { ATTENTION_RENEWAL_STATES, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
 import { discountLabel, errorMessage, intervalLabel } from "../utils";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
 
