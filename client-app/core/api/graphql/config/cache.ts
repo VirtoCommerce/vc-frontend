@@ -64,6 +64,11 @@ export const hostTypePolicies: TypePolicies = {
   MoneyType: {
     merge: false,
   },
+  // No id, and the account dashboard re-reads it with another set of periods whenever its visible cards change:
+  // merging keeps the periods already read instead of dropping them.
+  OrderStatistics: {
+    merge: true,
+  },
   PaymentMethodType: {
     keyFields: ["code"],
   },

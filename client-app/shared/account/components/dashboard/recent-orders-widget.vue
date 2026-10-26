@@ -90,13 +90,15 @@
 
 <script setup lang="ts">
 import { computed, ref, shallowRef, watch } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { getOrders } from "@/core/api/graphql/orders";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { RECENT_ORDERS_DEFAULT_ROWS, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { SortDirection } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
-import { Logger } from "@/core/utilities";
+import { escapeFilterSyntaxValue, Logger } from "@/core/utilities";
 import { formatStatCount, useBlockChrome } from "@/shared/dashboard";
 import { useOrderNavigation } from "../../composables/useOrderNavigation";
 // The pure filter builder only: the composable in the same file keeps the Orders page's filter state.
@@ -141,17 +143,26 @@ const failed = ref(false);
 let latest = 0;
 
 // Index-backed like the Orders page: a new order shows once indexed, and cancelled ones are listed (cards skip them).
+// The current store's orders only, as the cards count them and as the Sales Rep Hub lists them; the Orders page
+// behind "All orders" keeps every store.
 async function load(): Promise<void> {
   const request = ++latest;
   loading.value = true;
 
   try {
-    const response = await getOrders({
-      first: rowLimit.value,
-      sort: SORT,
-      filter: getFilterExpression("", { statuses: status.value ? [status.value] : [], customerNames: [] }),
-      facet: STATUS_ORDERS_FACET_NAME,
-    });
+    const storeTerm = `storeid:"${escapeFilterSyntaxValue(globals.storeId)}"`;
+    const statusTerms = getFilterExpression("", { statuses: status.value ? [status.value] : [], customerNames: [] });
+
+    // The widget names its own failure, as the cards do, so the app-wide error notification stays quiet.
+    const response = await getOrders(
+      {
+        first: rowLimit.value,
+        sort: SORT,
+        filter: [storeTerm, statusTerms].filter(Boolean).join(" "),
+        facet: STATUS_ORDERS_FACET_NAME,
+      },
+      SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+    );
 
     // A later chip or a saved row cap owns the widget now.
     if (request !== latest) {

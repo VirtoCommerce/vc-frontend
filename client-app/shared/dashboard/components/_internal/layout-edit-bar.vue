@@ -64,7 +64,7 @@ const { t } = useI18n();
   }
 
   &__keys {
-    @apply block text-neutral-500;
+    @apply block text-neutral-600;
   }
 
   &__actions {

@@ -35,7 +35,7 @@
     </LayoutRegion>
 
     <template v-if="editing">
-      <div :id="`${scope}-parked-stats`" class="layout-stats__label layout-stats__label--parked">
+      <div :id="`${scope}-parked-stats`" class="layout-stats__label">
         <VcIcon name="eye-off" :size="14" />
         {{ t("shared.dashboard.hidden_stats") }}
       </div>
@@ -140,10 +140,6 @@ function cardProps(card: StatCardType) {
 
   &__label {
     @apply mt-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;
-
-    &--parked {
-      @apply text-neutral-400;
-    }
   }
 
   // Decorative only — the card itself is the control. The widget's `prepend` slot paints it in the card's

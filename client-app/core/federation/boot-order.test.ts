@@ -54,6 +54,8 @@ vi.mock("@/shared/account", () => ({
     checkPermissions: vi.fn(() => true),
   }),
 }));
+// Imported by its own path, so the barrel mock above does not cover it; the real module reaches the GraphQL client.
+vi.mock("@/shared/account/dashboard-blocks", () => ({ registerAccountDashboardBlocks: vi.fn() }));
 
 const LANGUAGES = {
   currentLanguage: ref({ cultureName: "en-US" }),

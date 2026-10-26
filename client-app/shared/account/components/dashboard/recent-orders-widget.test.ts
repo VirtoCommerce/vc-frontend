@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, ref } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { provideBlockChrome } from "@/shared/dashboard";
 import { VcTabSwitch } from "@/ui-kit/components/molecules";
 import { facets as ordersPageFacets } from "../../composables/useUserOrders";
@@ -112,14 +113,17 @@ afterEach(() => {
 });
 
 describe("RecentOrdersWidget", () => {
-  it("lists the user's orders newest first, faceted by status, as many as the saved row cap", async () => {
+  it("lists the user's orders in the current store newest first, faceted by status, as many as the saved row cap", async () => {
     savedRows.value = 3;
 
     const wrapper = mountWidget();
     await flushPromises();
 
     expect(getOrders).toHaveBeenCalledTimes(1);
-    expect(getOrders).toHaveBeenCalledWith({ first: 3, sort: "createdDate:desc", filter: "", facet: "status" });
+    expect(getOrders).toHaveBeenCalledWith(
+      { first: 3, sort: "createdDate:desc", filter: 'storeid:"B2B-store"', facet: "status" },
+      SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+    );
     expect(wrapper.findComponent(OrdersTable).props()).toMatchObject({
       orders: [order("1"), order("2", "Processing")],
       orderScope: "private",
@@ -131,7 +135,7 @@ describe("RecentOrdersWidget", () => {
     mountWidget(false);
     await flushPromises();
 
-    expect(getOrders).toHaveBeenCalledWith(expect.objectContaining({ first: 5 }));
+    expect(getOrders).toHaveBeenCalledWith(expect.objectContaining({ first: 5 }), SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT);
   });
 
   // The cap is a query variable, applied when the layout is saved — a saved change refetches.
@@ -142,7 +146,10 @@ describe("RecentOrdersWidget", () => {
     savedRows.value = 10;
     await flushPromises();
 
-    expect(getOrders).toHaveBeenLastCalledWith(expect.objectContaining({ first: 10 }));
+    expect(getOrders).toHaveBeenLastCalledWith(
+      expect.objectContaining({ first: 10 }),
+      SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+    );
   });
 
   it("offers a chip per status the orders carry, after the baseline, with grouped counts", async () => {
@@ -185,12 +192,16 @@ describe("RecentOrdersWidget", () => {
     await wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button")[2].trigger("click");
     await flushPromises();
     expect(getOrders).toHaveBeenLastCalledWith(
-      expect.objectContaining({ filter: 'status:"Processing"', facet: "status" }),
+      expect.objectContaining({ filter: 'storeid:"B2B-store" status:"Processing"', facet: "status" }),
+      SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
     );
 
     await wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button")[0].trigger("click");
     await flushPromises();
-    expect(getOrders).toHaveBeenLastCalledWith(expect.objectContaining({ filter: "" }));
+    expect(getOrders).toHaveBeenLastCalledWith(
+      expect.objectContaining({ filter: 'storeid:"B2B-store"' }),
+      SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+    );
   });
 
   // A user who never ordered gets the way to the catalog, as the dashboard always offered.
@@ -218,12 +229,14 @@ describe("RecentOrdersWidget", () => {
     expect(wrapper.find(".empty-view .cta").exists()).toBe(false);
   });
 
-  it("replaces the list with an error when the orders cannot be read", async () => {
+  // The widget names its own failure, so the app-wide error notification stays quiet, as it does for the cards.
+  it("replaces the list with an error when the orders cannot be read, without the app's error notification", async () => {
     getOrders.mockRejectedValue(new Error("network"));
 
     const wrapper = mountWidget();
     await flushPromises();
 
+    expect(getOrders).toHaveBeenCalledWith(expect.anything(), SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT);
     expect(wrapper.find(".empty-view").attributes("data-variant")).toBe("error");
     expect(wrapper.find(".empty-view").text()).toBe("shared.account.dashboard.recent_orders.load_failed");
     expect(wrapper.findComponent(OrdersTable).exists()).toBe(false);
