@@ -66,6 +66,7 @@
         :saved-for-later-list="savedForLaterList"
         :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
+        @select-item="selectSavedForLaterItem"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
@@ -122,6 +123,7 @@
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
+          @select-item="selectSavedForLaterItem"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
@@ -243,6 +245,7 @@ import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
+import { useSavedForLaterAnalytics } from "@/shared/cart/composables/useSavedForLaterAnalytics";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -316,9 +319,15 @@ const {
   moveFromSavedForLater,
   moveFromSavedForLaterOverflowed,
   getSavedForLater,
+  availableItems: availableSavedForLaterItems,
   hasAvailableItems: hasAvailableSavedForLaterItems,
   loading: saveForLaterLoading,
 } = useSavedForLater();
+
+const { selectItem: selectSavedForLaterItem } = useSavedForLaterAnalytics(
+  availableSavedForLaterItems,
+  () => !!shouldHide("cart-for-later"),
+);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",

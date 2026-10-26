@@ -1,20 +1,7 @@
 import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { nextTick } from "vue";
+import { describe, expect, it } from "vitest";
 import CartForLater from "./cart-for-later.vue";
 import type { SavedForLaterListFragment } from "@/core/api/graphql/types";
-
-const analytics = vi.hoisted(() => vi.fn());
-
-vi.mock("@/core/composables/useAnalytics", () => ({
-  useAnalytics: () => ({ analytics }),
-}));
-
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({ t: (key: string) => key }),
-}));
-
-const LIST_PROPERTIES = { item_list_id: "saved_for_later", item_list_name: "pages.cart.saved_for_later" };
 
 function savedForLaterList(productIds: string[]): SavedForLaterListFragment {
   return {
@@ -40,32 +27,12 @@ function mountWidget(list: SavedForLaterListFragment) {
   });
 }
 
-describe("CartForLater analytics", () => {
-  beforeEach(() => {
-    analytics.mockClear();
-  });
-
-  it("reports its own list and sends a selected product with its position in it", () => {
+describe("CartForLater", () => {
+  it("emits a clicked product with its position in the list", () => {
     const wrapper = mountWidget(savedForLaterList(["p", "q"]));
 
     wrapper.findAllComponents({ name: "CartItemForLater" })[1].vm.$emit("linkClick");
 
-    expect(analytics.mock.calls).toEqual([
-      ["viewItemList", [{ id: "p" }, { id: "q" }], LIST_PROPERTIES],
-      ["selectItem", { id: "q" }, { ...LIST_PROPERTIES, index: 1 }],
-    ]);
-  });
-
-  it("reports the list again only when its lines change", async () => {
-    const wrapper = mountWidget(savedForLaterList(["p", "q"]));
-
-    await wrapper.setProps({ savedForLaterList: savedForLaterList(["p", "q"]) });
-    await wrapper.setProps({ savedForLaterList: savedForLaterList(["q"]) });
-    await nextTick();
-
-    expect(analytics.mock.calls).toEqual([
-      ["viewItemList", [{ id: "p" }, { id: "q" }], LIST_PROPERTIES],
-      ["viewItemList", [{ id: "q" }], LIST_PROPERTIES],
-    ]);
+    expect(wrapper.emitted("selectItem")).toEqual([[{ id: "q" }, 1]]);
   });
 });
