@@ -5,6 +5,7 @@
         :model-value="modelValue"
         :value="product.id"
         :name="name"
+        :aria-label="product.name"
         @input="$emit('input', quantity ?? 1)"
       />
 
