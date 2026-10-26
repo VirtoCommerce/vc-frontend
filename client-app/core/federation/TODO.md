@@ -5,16 +5,12 @@ _Checked against `dev` on 2026-10-14._
 
 ## Releasing sales-rep as a plugin
 
-- [ ] **Release `vc-module-sales-rep`** with the plugin (un-draft vc-module-sales-rep#13), and check its package
-      with `yarn check:plugin-module … --artifact`.
+- [ ] **Check the released SalesRep package** (3.1014.0) with `yarn check:plugin-module … --artifact`.
 - [ ] **`/modules → platform` route on every environment** that runs the theme (S6).
-- [ ] **Release notes**: MF is a preview; the backend floors (`BACKEND_REQUIREMENTS`), the `/modules` route, the
-      build-time switch, and that an installed plugin runs with the storefront's full rights. With a SalesRep that
-      ships no plugin and the default `sales_rep_builtin_enabled: false`, the Sales Rep Hub and the buyers' Sales
-      reps page are gone.
+- [ ] **Release notes**: the built-in Sales Rep Hub and its `sales_rep_builtin_enabled` setting are gone, so the hub
+      and the buyers' Sales reps page need SalesRep 3.1014.0 or later; the bundle cost of the MF host; MF is a
+      preview, and an installed plugin runs with the storefront's full rights.
 - [ ] **The module's own README**: a "Storefront plugin" section that links the scenarios.
-- [ ] **Delete `client-app/modules/sales-rep`** once QA signs the plugin off, with its `sales_rep_builtin_enabled`
-      theme setting and its `independentModules` entry in `scripts/graphql-codegen/generator.ts`.
 - [ ] **E2E smoke** in vc-testing-module: the plugin loads, a rep sees the hub menu.
 - [ ] **Backend:** any SalesRep version crashes a platform running `ASPNETCORE_ENVIRONMENT=Development`
       (`ValidateOnBuild` rejects a scoped resolver in a singleton). Every local platform hits it.
