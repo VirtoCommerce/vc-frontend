@@ -1,5 +1,35 @@
 <template>
   <div class="purchase-options">
+    <AddToCartSimple :product="product">
+      <InStock
+        :is-in-stock="product.availabilityData?.isInStock"
+        :is-digital="product.productType === 'Digital'"
+        :quantity="product.availabilityData?.availableQuantity"
+      />
+
+      <CountInCart :product-id="product.id" />
+    </AddToCartSimple>
+
+    <output
+      v-if="offer && lineItem && syncState"
+      class="purchase-options__status"
+      :class="`purchase-options__status--${syncState}`"
+    >
+      <VcIcon :name="syncState === 'error' ? 'exclamation-circle' : 'refresh'" size="xs" />
+
+      <span v-if="syncState === 'error'">{{ syncError }}</span>
+
+      <span v-else-if="activeSubscription">
+        {{
+          $t("product_subscriptions.purchase_options.in_cart_subscription", {
+            interval: intervalLabel($t, activeSubscription.intervalUnit, activeSubscription.intervalCount),
+          })
+        }}
+      </span>
+
+      <span v-else>{{ $t("product_subscriptions.purchase_options.in_cart_once") }}</span>
+    </output>
+
     <template v-if="offer">
       <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
         <div class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'once' }">
@@ -69,36 +99,6 @@
         </VcAlert>
       </div>
     </template>
-
-    <AddToCartSimple :product="product">
-      <InStock
-        :is-in-stock="product.availabilityData?.isInStock"
-        :is-digital="product.productType === 'Digital'"
-        :quantity="product.availabilityData?.availableQuantity"
-      />
-
-      <CountInCart :product-id="product.id" />
-    </AddToCartSimple>
-
-    <output
-      v-if="offer && lineItem && syncState"
-      class="purchase-options__status"
-      :class="`purchase-options__status--${syncState}`"
-    >
-      <VcIcon :name="syncState === 'error' ? 'exclamation-circle' : 'refresh'" size="xs" />
-
-      <span v-if="syncState === 'error'">{{ syncError }}</span>
-
-      <span v-else-if="activeSubscription">
-        {{
-          $t("product_subscriptions.purchase_options.in_cart_subscription", {
-            interval: intervalLabel($t, activeSubscription.intervalUnit, activeSubscription.intervalCount),
-          })
-        }}
-      </span>
-
-      <span v-else>{{ $t("product_subscriptions.purchase_options.in_cart_once") }}</span>
-    </output>
   </div>
 </template>
 
