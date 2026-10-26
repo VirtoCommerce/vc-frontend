@@ -63,7 +63,7 @@ pre-release of the facade branch ([facade README §5](../../../core-api/README.m
    checked. It publishes `core-v<version>-alpha.<run>.<branch>`.
 2. **Pin it in the plugin.** 📁 `StorefrontApp`: point `@vc-frontend/core` at the alpha's tarball, set
    `requiredHostVersion` to `^<alpha version>`, then `yarn install`. 📁 `vc-frontend`:
-   `yarn check:plugin-module <*.Web>` ✅.
+   `yarn check:plugin-module <*.Web>` ✅, with one ⚠️ for the alpha pin.
 3. **Push the plugin's branch.** The module's PR build packs the plugin into its PR package.
 4. **Deploy the storefront from the facade PR** to the environment: its PR build, not `dev`. A storefront from `dev`
    provides the older facade, and gate 1 skips the plugin without a word.

@@ -1077,7 +1077,8 @@ if (pinnedReleaseIsMissing()) {
       "   @vue/test-utils helpers with a private-property mismatch):\n" +
       "     (host)   yarn core:yalc-push\n" +
       "     (plugin) npx yalc add @vc-frontend/core && yarn install\n" +
-      "   Restore the pinned tarball URL before committing.",
+      "   Restore the pinned tarball URL before committing. If the plugin's CI or a QA environment needs the\n" +
+      "   facade before its release, pin an alpha pre-release of the facade branch (core-api/README.md §5).",
   );
 }
 
