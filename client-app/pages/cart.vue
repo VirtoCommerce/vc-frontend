@@ -66,6 +66,7 @@
         :saved-for-later-list="savedForLaterList"
         :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
+        @select-item="selectSavedForLaterItem"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
@@ -124,6 +125,7 @@
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
+          @select-item="selectSavedForLaterItem"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
@@ -239,11 +241,13 @@ import { recentlyBrowsed } from "@/core/api/graphql";
 import { useAnalytics, useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, MODULE_XAPI_KEYS, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
+import { getProductListIndex } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
+import { useSavedForLaterAnalytics } from "@/shared/cart/composables/useSavedForLaterAnalytics";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -317,9 +321,15 @@ const {
   moveFromSavedForLater,
   moveFromSavedForLaterOverflowed,
   getSavedForLater,
+  availableItems: availableSavedForLaterItems,
   hasAvailableItems: hasAvailableSavedForLaterItems,
   loading: saveForLaterLoading,
 } = useSavedForLater();
+
+const { selectItem: selectSavedForLaterItem } = useSavedForLaterAnalytics(
+  availableSavedForLaterItems,
+  () => !!shouldHide("cart-for-later"),
+);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -339,6 +349,7 @@ const analyticsLastSentPaymentCode = ref<string | undefined>();
 
 const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
+let reportedLines: { id: string }[] = [];
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 
@@ -414,6 +425,7 @@ function selectItemEvent(item: LineItemType | undefined): void {
   analytics("selectItem", item, {
     item_list_id: "cart",
     item_list_name: t("pages.cart.title"),
+    index: getProductListIndex(reportedLines, item.id),
   });
 }
 
@@ -470,6 +482,7 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
+    reportedLines = [...cart.value.items];
     analytics("viewCart", cart.value);
   }
 
