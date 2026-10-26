@@ -13,6 +13,7 @@ contribution the host renders, or a component only when its look is the contract
  (export + contract)                (core-v<version>)  deployed with it      released with the new pin
                                                                               │
              develop the plugin against the unreleased facade with yalc ◀────┘ (S2.3)
+             build or deploy it before the release against an alpha of the PR branch (step 6)
 ```
 
 > ⚠️ If the plugin reaches an environment **before** a storefront with the new facade, gate 1 skips it there, and
