@@ -594,7 +594,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
 
   updateCurrentPage(pageNumber);
 
-  await fetchMoreProducts({
+  const { items } = await fetchMoreProducts({
     ...searchParams.value,
     page: currentPage.value,
   });
@@ -602,7 +602,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  analytics("viewItemList", products.value, categoryListProperties.value);
+  analytics("viewItemList", items, categoryListProperties.value);
 
   if (searchTerm.value) {
     trackViewSearchResults();

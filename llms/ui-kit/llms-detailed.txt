@@ -453,6 +453,23 @@
 - Types: vc-product-actions-button.types.d.ts
 - Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/product-actions-button/vc-product-actions-button.stories.ts)
 
+**VcTileButton** (`client-app/ui-kit/components/molecules/tile-button/vc-tile-button.vue`)
+- Props:
+  - icon?: string (icon above the label)
+  - variant?: "solid" | "outline" (default: "solid") — solid fills the tile with color; outline keeps a neutral surface and paints only the icon
+  - color?: VcMainColorType (default: "primary")
+  - disabled?: boolean (renders a disabled <button>, even with to / externalLink)
+  - to?: RouteLocationRaw | null (router-link navigation)
+  - externalLink?: string (external URL)
+  - target?: "_self" | "_blank" (for to / externalLink; "_blank" adds rel="noopener noreferrer")
+- Slots: default (label), icon (replaces the icon prop's VcIcon; --vc-icon-size / --vc-icon-color still apply to a VcIcon placed there)
+- Events: click (MouseEvent)
+- Features: square-ish action tile with the icon over the label, for grids of quick actions; grows with a long label (pair with `auto-rows-fr` to keep rows equal); `title` / `aria-label` fall through to the control
+- CSS vars: --vc-tile-button-radius, --vc-tile-button-min-height, --vc-tile-button-icon-size, --vc-tile-button-{solid|outline}-{color}-{bg|border|text|icon}
+- Types: vc-tile-button.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/tile-button/vc-tile-button.stories.ts)
+- Usage: `<VcTileButton icon="mail" variant="outline" @click="openCommunication">{{ $t("...") }}</VcTileButton>`
+
 ### DISPLAY
 
 **VcAlert** (`client-app/ui-kit/components/molecules/alert/vc-alert.vue`)
@@ -521,6 +538,26 @@
 - Props: height, lines
 - Features: shimmer animation, customizable
 - Types: vc-widget-skeleton.types.d.ts
+
+**VcStatWidget** (`client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue`)
+- Props:
+  - label: string (required, already localized)
+  - value?: string (pre-formatted; without it, or when blank, the card shows a dash; never wraps mid-figure, so give the card a cell at least as wide as its figure: flex-wrap, or grid with `auto` columns — `grid-cols-N` (minmax(0, 1fr)) can squeeze a long figure past the border)
+  - icon?: string
+  - color?: VcMainColorType (default: "neutral") — accent bar, icon and prepend color
+  - valueSuffix?: string (de-emphasized unit after the value, e.g. "items")
+  - description?: string (secondary line under the value)
+  - delta?: string
+  - deltaColor?: VcMainColorType (default: "neutral") — e.g. "success" for growth, "danger" for a drop
+  - deltaIcon?: string
+  - loading?: boolean (dash placeholder + loader overlay; outranks errorText)
+  - errorText?: string (a non-blank value is the error state; hides the figures)
+- Slots: prepend (added before the icon, not instead of it; painted in the accent color — e.g. a drag handle)
+- Features: KPI/metric card; equal heights and value baselines across a row when the cards are the row's flex items and labels fit in two lines (when a wrapper is the flex item, give the card `class="h-full"` or make the wrapper `grid`); loading and error announced, with the metric's label, through one always-mounted <output> live region
+- CSS vars: --vc-stat-widget-bg-color, --vc-stat-widget-border-color, --vc-stat-widget-radius
+- Types: vc-stat-widget.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.stories.ts)
+- Usage: `<VcStatWidget label="Revenue MTD" value="$41,200.00" icon="cash" color="info" delta="+4%" delta-color="success" delta-icon="chevron-up" />`
 
 ### NAVIGATION
 

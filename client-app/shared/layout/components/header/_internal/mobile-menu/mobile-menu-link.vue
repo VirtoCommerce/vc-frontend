@@ -12,7 +12,7 @@
           :name="link.icon"
           :size="32"
           :class="[
-            isLink && (isActive || isExactActive)
+            isLink && isHighlighted(isActive, isExactActive)
               ? 'text-[--mobile-menu-icon-active-color]'
               : 'text-[--mobile-menu-icon-color]',
           ]"
@@ -22,7 +22,7 @@
       <span
         :class="[
           'line-clamp-3 break-words',
-          isLink && !isExternalLink && (isActive || isExactActive)
+          isLink && !isExternalLink && isHighlighted(isActive, isExactActive)
             ? 'text-[--mobile-menu-link-active-color]'
             : 'text-[--mobile-menu-link-color]',
         ]"
@@ -41,7 +41,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getLinkAttr } from "@/core/utilities";
+import { useRoute } from "vue-router";
+import { getLinkAttr, isMenuLinkActive } from "@/core/utilities";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { NavigationFailure } from "vue-router";
 
@@ -62,8 +63,15 @@ const props = withDefaults(defineProps<IProps>(), {
   formatTextFunction: (text: string | undefined) => text ?? "",
 });
 
+const route = useRoute();
+
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route || !!props.link.isCatalogItem);
+
+// The same rule as the account rail.
+function isHighlighted(isActive: boolean, isExactActive: boolean): boolean {
+  return isMenuLinkActive(props.link, route, isActive || isExactActive);
+}
 
 function click(navigate: () => Promise<void | NavigationFailure>) {
   if (isParent.value) {
