@@ -57,7 +57,8 @@ Before claiming a component lacks a prop, slot, event or token, open its source:
 ### Customising appearance
 9. **Never change a kit component's look locally — by any route.** No selectors for `.vc-*` classes in a non-kit
    `<style>` (`.vc-widget__header-container`, `.vc-table__cell`, `.vc-line-item__name`, `.vc-tab-switch--checked &`,
-   `:deep(.vc-*)`; the one exception is a design's `blocks/` and `dark/` files), no kit-internal classes on your own
+   `:deep(.vc-*)`; the exceptions are `client-app/assets/styles/` and a design's
+   `client-app/designs/<name>/blocks/` and `dark/` files), no kit-internal classes on your own
    markup (`<VcIcon class="vc-chip__icon">`), and no restyle
    without a selector either: a class on `<VcX>` setting a property VcX owns, `!important`, inline `style`/`:style`,
    a private variable landing on its root, DOM edits from JS. These break on every kit refactor and fight client

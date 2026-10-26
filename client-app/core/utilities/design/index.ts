@@ -39,7 +39,7 @@ export function getDesign(): string {
 
   if (IS_DEVELOPMENT && typeof value === "string" && value !== "" && value !== design) {
     Logger.warn(
-      `Unknown design "${value}": there is no client-app/designs/${value}/index.scss, so the storefront uses classic.`,
+      `Unknown design "${value}": no folder in client-app/designs/ with an index.scss has exactly this name, so the storefront uses classic.`,
     );
   }
 

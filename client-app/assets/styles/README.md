@@ -70,8 +70,8 @@ any component, design, dark or print rule; a Tailwind utility in a template alwa
 fork CSS keeps working against utilities as before; plugin stylesheets beat our layered components.
 
 `!important` inverts across layers: a layered `!important` beats an unlayered one, so a fork's
-`!important` cannot override one inside a layer (swiper's and nouislider's in `vc.vendor`). Never add
-`!important` to our styles.
+unlayered `!important` (`_custom.scss`) cannot override one inside a layer (swiper's and
+nouislider's in `vc.vendor`). Never add `!important` to our styles.
 
 ### Component styles are layered for you
 
@@ -148,7 +148,8 @@ Every design's `index.scss` is this file with its own name and one line per file
 }
 ```
 
-The design name appears in `_tokens.scss` and `index.scss` only.
+The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet,
+like soft today, keeps one comment line in `index.scss` instead.
 
 ### Two ways a design changes the look
 
@@ -159,8 +160,10 @@ The design name appears in `_tokens.scss` and `index.scss` only.
    elements and modifiers directly.
 
 A token an element sets on itself (`--vc-button-radius` on `.vc-input` and `.vc-date-range-input`) is
-overridden on that element's block, not on `html`: in the design's `blocks/vc-input.scss`, or on
-`.vc-input` in `_custom.scss`.
+overridden on that element's block, not on `html`: in the design's `blocks/<block>.scss`
+(`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
+dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
+and `--vc-dropdown-menu-radius` instead, on `html` as usual.
 
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
@@ -240,7 +243,7 @@ are in `scripts/check-designs.test.ts`.
 | `index.scss` and `_tokens.scss` write the folder's name in `data-design` | `data-design="soft"` in `mybrand/` |
 | `_tokens.scss` sets only custom properties, only on `html[data-design="<name>"]` or `html.dark[data-design="<name>"]` | `:root { … }`, `html[data-design="<name>"] .x { … }`, `margin: 0` |
 | No colour tokens: no custom property whose name contains `color` or `bg` or ends in `-text`, `-border` or `-icon` (Tailwind's `--tw-shadow-colored` excepted) | `--vc-x-bg`, `--vc-button-solid-primary-text`, `@apply ring-primary-500` |
-| Block and dark files set no colour. In `color`, `fill`, `stroke` and every `…-color` property the only values are `transparent`, `currentColor`, `inherit`, `initial`, `unset`, `revert`, `revert-layer`, `none`, `auto` and `#0000`. The shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` hold no named, hex or functional colour (`rgb()`, `oklch()`, `color-mix()`, …) and no `var()` of a colour token. No property but a custom one holds a gradient with a colour in it (a direction-only `@apply bg-gradient-to-r` is not one). Tailwind's gradient stops and colour opacities (`--tw-gradient-from`, `--tw-gradient-to`, `--tw-{bg,text,border,divide,placeholder,ring}-opacity`) count as colours; its shadow and ring geometry (`@apply shadow-md`, `@apply ring-2`) does not | `color: red`, `border-top-color: red`, `background: red`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `background: var(--color-primary-500)`, `background-image: linear-gradient(red, blue)`, `@apply text-primary-500`, `@apply bg-opacity-50`, `@apply from-primary-500` |
+| Block and dark files set no colour. In `color`, `fill`, `stroke` and every `…-color` property the only values are `transparent`, `currentColor`, `inherit`, `initial`, `unset`, `revert`, `revert-layer`, `none`, `auto` and `#0000`. The shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` hold no named, hex (except `#0000`) or functional colour (`rgb()`, `oklch()`, `color-mix()`, …) and no `var()` of a colour token. No property but a custom one holds a gradient with a colour in it (a direction-only `@apply bg-gradient-to-r` is not one). Tailwind's gradient stops and colour opacities (`--tw-gradient-from`, `--tw-gradient-to`, `--tw-{bg,text,border,divide,placeholder,ring}-opacity`) count as colours; its shadow and ring geometry (`@apply shadow-md`, `@apply ring-2`) does not | `color: red`, `border-top-color: red`, `background: red`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `background: var(--color-primary-500)`, `background-image: linear-gradient(red, blue)`, `@apply text-primary-500`, `@apply bg-opacity-50`, `@apply from-primary-500` |
 | A block or dark file names no `html` and no `[data-design]` | `html .footer-links` |
 | A block or dark file names no `.dark`: it is on `<html>`, so below the design's `html` it never matches; dark rules go in `dark/<block>.scss`, where `index.scss` adds `.dark` | `.dark .footer-links`, `.dark &` |
 | No `@apply` variant that styles an ancestor or sibling (`group-*`, `peer-*`): it puts a selector before `html[data-design]` and never matches; write the rule out | `@apply group-hover:underline`, `@apply peer-checked:underline` |

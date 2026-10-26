@@ -86,12 +86,12 @@ describe("design", () => {
       expect(getDesign()).toBe("classic");
     });
 
-    it("warns once in development for a design without an index.scss", async () => {
+    it("warns once in development for a name that matches a design only when case is ignored", async () => {
       settings.value = { design: "Soft" };
 
       expect((await importDesign(true)).getDesign()).toBe("classic");
       expect(warn).toHaveBeenCalledExactlyOnceWith(
-        expect.stringContaining('"Soft": there is no client-app/designs/Soft/index.scss'),
+        expect.stringContaining('"Soft": no folder in client-app/designs/ with an index.scss has exactly this name'),
       );
     });
 

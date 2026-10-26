@@ -869,7 +869,7 @@ function designFolders(designsDir: string): string[] {
 }
 
 export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions): Promise<IDesignCheckResult> {
-  // readdirSync would throw a bare ENOENT; this names the folder the check expected.
+  // A moved folder is reported as a check failure, not as readdirSync's ENOENT stack trace.
   if (!existsSync(designsDir)) {
     return {
       errors: [`${designsDir} is missing; the designs are not where this check looks`],
