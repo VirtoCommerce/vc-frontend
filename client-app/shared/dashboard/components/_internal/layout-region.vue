@@ -207,8 +207,9 @@ watch(
     box-shadow: 0 0 0 var(--layout-zone-band) var(--color-neutral-50);
   }
 
+  // The hint also sits on the hidden-stats hatching: neutral-500 drops below 4.5:1 on its darker stripe.
   &__empty {
-    @apply flex min-h-24 basis-full items-center justify-center text-center text-sm text-neutral-400;
+    @apply flex min-h-24 basis-full items-center justify-center text-center text-sm text-neutral-600;
   }
 
   // Not a `v-if`: Sortable moves a card in mid-drag, so `entries` only changes on drop.

@@ -148,9 +148,10 @@ function cardProps(card: StatCardType) {
     @apply -me-0.5 inline-flex;
   }
 
-  // Hatching marks the zone as set aside; the cards in it stay rendered and draggable.
+  // Hatching marks the zone as set aside, and grayscale mutes the parked cards without dimming their
+  // text: 85% is the lowest opacity that keeps it at 4.5:1.
   &__parked-zone {
-    @apply opacity-70;
+    @apply opacity-85 grayscale;
 
     background: repeating-linear-gradient(
       45deg,
