@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Отложено",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Способы оплаты"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Способы оплаты"
         }
       },
       "change_password_form": {
@@ -525,7 +527,12 @@
           "duplicate_email_login_attempt": "Этот адрес электронной почты используют несколько аккаунтов.",
           "lockout_disabled": "Этот аккаунт не может входить по коду.",
           "invalid_code": "Этот код не подошёл.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Время на вход истекло. Войдите снова.",
+          "code_attempts_exceeded": "Слишком много неверных кодов. Подождите несколько минут и войдите снова.",
+          "mfa_provider_not_available": "Не удаётся отправить код для входа на этот аккаунт. Обратитесь к администратору.",
+          "two_factor_unavailable": "Для этого аккаунта нужен второй шаг входа, но он недоступен. Обратитесь к администратору.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +552,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Проверка пройдена, но переключение на аккаунт клиента не удалось. Попробуйте ещё раз.",
-          "generic": "Что-то пошло не так. Попробуйте ещё раз."
+          "generic": "Что-то пошло не так. Попробуйте ещё раз.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +648,7 @@
         "verify": {
           "header": "Проверьте почту",
           "subtitle": "Мы отправили код на {email}.",
-          "code_label": "Код",
-          "paste_hint": "Введите или вставьте код. На телефоне нажмите на него над клавиатурой.",
-          "submit_button": "Войти",
-          "resend_button": "Отправить код повторно",
-          "use_different_email_link": "Использовать другой email",
-          "live_resent": "Отправлен новый код."
+          "use_different_email_link": "Использовать другой email"
         },
         "locked": {
           "title": "Слишком много неудачных попыток",
@@ -653,6 +664,19 @@
           "password_button": "Войти по паролю",
           "back_link": "Назад ко входу"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Введите код для входа",
+        "subtitle": "Мы отправили код на {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Код",
+        "paste_hint": "Введите или вставьте код. На телефоне нажмите на него над клавиатурой.",
+        "submit_button": "Войти",
+        "resend_button": "Отправить код повторно",
+        "resend_countdown": "Отправить код повторно через {seconds} с",
+        "live_resent": "Отправлен новый код."
       }
     },
     "company": {
@@ -1018,6 +1042,36 @@
           "missing_link": "Ссылка для перенаправления отсутствует",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Оплатить картой",
+        "new_card": "Использовать новую карту",
+        "save_card": "Сохранить эту карту для будущих платежей",
+        "save_card_required": "В этой покупке есть подписка, поэтому карта будет надёжно сохранена для её оплаты. Её можно сменить в любое время.",
+        "default": "По умолчанию",
+        "expired": "Истёк срок",
+        "needs_update": "Требует обновления",
+        "expires": "Действует до {date}",
+        "page_title": "Способы оплаты",
+        "page_subtitle": "Карты, сохранённые для быстрой оплаты и подписок. Мы никогда не храним полный номер карты.",
+        "empty": "Сохранённых карт пока нет.",
+        "make_default": "Сделать основной",
+        "remove": "Удалить",
+        "remove_title": "Удалить эту карту?",
+        "remove_text": "Карта будет удалена из вашего аккаунта и у платёжного провайдера.",
+        "removed": "Карта удалена.",
+        "add_title": "Добавить карту",
+        "add": "Сохранить карту",
+        "added": "Карта сохранена.",
+        "set_default": "Использовать как основную карту",
+        "billing_title": "Платёжный адрес карты",
+        "billing_hint": "Банк проверяет его при сохранении карты.",
+        "address": "Улица и дом",
+        "city": "Город",
+        "state": "Регион",
+        "zip": "Почтовый индекс",
+        "form_unavailable": "Сейчас сохранить карту не удаётся. Попробуйте позже.",
+        "error": "Что-то пошло не так. Попробуйте ещё раз."
       }
     },
     "wishlists": {

@@ -210,7 +210,7 @@
                   $t("product_subscriptions.details.reset")
                 }}</VcButton>
 
-                <router-link :to="{ name: PAYMENT_METHODS_ROUTE_NAME }" class="text-sm text-primary hover:underline">
+                <router-link :to="{ name: ROUTES.PAYMENT_METHODS.NAME }" class="text-sm text-primary hover:underline">
                   {{ $t("product_subscriptions.details.manage_cards") }}
                 </router-link>
               </div>
@@ -237,7 +237,7 @@
                   {{ renewal.orderNumber }}
                 </router-link>
 
-                <span class="ml-auto font-bold">{{
+                <span class="ms-auto font-bold">{{
                   formatMoney(renewal.orderTotal ?? renewal.previewTotal, renewal.currency)
                 }}</span>
               </li>
@@ -450,7 +450,9 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useNotifications } from "@/shared/notification";
+import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
 import {
   acceptSubscriptionRenewal,
   cancelProductSubscription,
@@ -466,12 +468,11 @@ import {
 } from "../api/graphql";
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
-import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
-import { ATTENTION_RENEWAL_STATES, PAYMENT_METHODS_ROUTE_NAME, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
+import { ATTENTION_RENEWAL_STATES, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
 import {
   cardLabel,
   discountLabel,
-  errorMessage,
+  subscriptionErrorMessage,
   formatMoney,
   intervalKey,
   intervalLabel,
@@ -498,10 +499,13 @@ const history = ref<RenewalFieldsFragment[]>([]);
 const attentionRenewals = ref<RenewalFieldsFragment[]>([]);
 
 // A placed order still waiting for its payment must finish before another one can be placed.
+const ORDER_NOW_BLOCKING_STATES = new Set(["Ordered", "PaymentActionRequired", "RetryScheduled"]);
 const canOrderNow = computed(
   () =>
     !!subscription.value?.canOrderNow &&
-    !attentionRenewals.value.some((x) => ["Ordered", "PaymentActionRequired", "RetryScheduled"].includes(x.state)),
+    ![subscription.value?.currentRenewal, ...attentionRenewals.value, ...history.value].some(
+      (x) => !!x && ORDER_NOW_BLOCKING_STATES.has(x.state),
+    ),
 );
 const showPause = ref(false);
 const showCancel = ref(false);
@@ -545,14 +549,15 @@ const cardItems = computed(() => {
   return items;
 });
 
+// UTC days, like the server: the earliest next delivery is tomorrow in UTC, whatever the shopper's time zone.
 const minDate = computed(() => {
   const date = new Date();
-  date.setDate(date.getDate() + 1);
+  date.setUTCDate(date.getUTCDate() + 1);
   return toDateInputValue(date);
 });
 const maxDate = computed(() => {
   const date = new Date();
-  date.setFullYear(date.getFullYear() + 1);
+  date.setUTCFullYear(date.getUTCFullYear() + 1);
   return toDateInputValue(date);
 });
 
@@ -605,6 +610,11 @@ const quantityHint = computed(() =>
 const quantityError = computed<string | undefined>(() => {
   const { packSize, maxQuantity } = quantityRules.value;
   const quantity = Number(form.quantity);
+
+  // The rules apply to a new quantity only: the server checks it only when it changes.
+  if (quantity === subscription.value?.quantity) {
+    return undefined;
+  }
 
   if (!Number.isInteger(quantity) || quantity < quantityMin.value) {
     return t("product_subscriptions.details.quantity_min", { min: quantityMin.value });
@@ -676,7 +686,7 @@ async function execute(key: string, action: () => Promise<unknown>, successText:
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       single: true,
-      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+      text: subscriptionErrorMessage(e, t),
     });
     return false;
   } finally {
@@ -707,7 +717,7 @@ async function save() {
     intervalCount: unit !== s.intervalUnit || count !== s.intervalCount ? count : undefined,
     nextOrderDate:
       s.status !== "Paused" && form.nextOrderDate && form.nextOrderDate !== toDateInputValue(s.nextOrderDate)
-        ? new Date(`${form.nextOrderDate}T12:00:00`).toISOString()
+        ? `${form.nextOrderDate}T12:00:00Z`
         : undefined,
     savedPaymentMethodId:
       form.savedPaymentMethodId && form.savedPaymentMethodId !== s.storedPaymentMethodId
@@ -738,7 +748,8 @@ async function pause() {
 }
 
 async function cancel() {
-  const reason = cancelReasons.value.find((x) => x.id === cancelReason.value)?.label;
+  // The reason's id, not its translated text, so the store can group reasons whatever the shopper's language.
+  const reason = cancelReasons.value.find((x) => x.id === cancelReason.value)?.id;
   const ok = await execute(
     "cancel",
     () => cancelProductSubscription({ subscriptionId: props.subscriptionId, reason }),
@@ -774,7 +785,7 @@ async function orderNow() {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       single: true,
-      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+      text: subscriptionErrorMessage(e, t),
     });
   } finally {
     busy.value = undefined;
@@ -810,7 +821,7 @@ async function onRenewalAction({
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       single: true,
-      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+      text: subscriptionErrorMessage(e, t),
     });
   } finally {
     renewalBusy.value = undefined;
@@ -828,7 +839,11 @@ onMounted(() => {
 <style lang="scss">
 .subscription-details {
   &__modal-actions {
-    @apply flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end;
+    @apply flex w-full flex-col-reverse gap-3;
+
+    @media (width >= theme("screens.sm")) {
+      @apply flex-row justify-end;
+    }
   }
 
   @apply flex flex-col gap-5;
@@ -838,15 +853,27 @@ onMounted(() => {
   }
 
   &__image {
-    @apply size-20 shrink-0 rounded-lg border border-neutral-100 bg-additional-50 object-contain md:size-24;
+    @apply size-20 shrink-0 rounded-lg border border-neutral-100 bg-additional-50 object-contain;
+
+    @media (width >= theme("screens.md")) {
+      @apply size-24;
+    }
   }
 
   &__title {
-    @apply mt-1 text-xl md:text-2xl;
+    @apply mt-1 text-xl;
+
+    @media (width >= theme("screens.md")) {
+      @apply text-2xl;
+    }
   }
 
   &__grid {
-    @apply grid gap-5 lg:grid-cols-[1fr_20rem];
+    @apply grid gap-5;
+
+    @media (width >= theme("screens.lg")) {
+      @apply grid-cols-[1fr_20rem];
+    }
   }
 
   &__main,
@@ -863,11 +890,19 @@ onMounted(() => {
   }
 
   &__form {
-    @apply grid gap-4 sm:grid-cols-2;
+    @apply grid gap-4;
+
+    @media (width >= theme("screens.sm")) {
+      @apply grid-cols-2;
+    }
   }
 
   &__form-actions {
-    @apply flex flex-wrap items-center gap-3 sm:col-span-2;
+    @apply flex flex-wrap items-center gap-3;
+
+    @media (width >= theme("screens.sm")) {
+      @apply col-span-2;
+    }
   }
 
   &__history {
@@ -886,7 +921,7 @@ onMounted(() => {
     }
 
     dd {
-      @apply text-right font-bold text-neutral-900;
+      @apply text-end font-bold text-neutral-900;
     }
   }
 

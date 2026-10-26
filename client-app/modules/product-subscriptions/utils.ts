@@ -1,4 +1,5 @@
 import { globals } from "@/core/globals";
+import { Logger } from "@/core/utilities";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import type { Composer } from "vue-i18n";
 
@@ -90,6 +91,7 @@ export function statusColor(status: string | null | undefined): VcMainColorType 
   return (status && STATUS_COLORS[status]) || "neutral";
 }
 
+/** The date's UTC day as a date input value ("YYYY-MM-DD"): the server counts delivery days in UTC. */
 export function toDateInputValue(date: string | Date | null | undefined): string | undefined {
   if (!date) {
     return undefined;
@@ -100,20 +102,24 @@ export function toDateInputValue(date: string | Date | null | undefined): string
     return undefined;
   }
 
-  const month = String(value.getMonth() + 1).padStart(2, "0");
-  const day = String(value.getDate()).padStart(2, "0");
-  return `${value.getFullYear()}-${month}-${day}`;
+  const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(value.getUTCDate()).padStart(2, "0");
+  return `${value.getUTCFullYear()}-${month}-${day}`;
 }
 
 export function cardLabel(brand?: string | null, last4?: string | null): string {
   return `${brand || "Card"} •••• ${last4 ?? "????"}`;
 }
 
-export function errorMessage(error: unknown, fallback: string): string {
-  const graphQLErrors = (error as { graphQLErrors?: { message?: string }[] })?.graphQLErrors;
-  if (graphQLErrors?.length && graphQLErrors[0]?.message) {
-    return graphQLErrors[0].message;
-  }
-
-  return fallback;
+/**
+ * What a shopper is told when a subscription action fails: a translated message. The server's own message is in English
+ * and meant for logs, so it is logged here instead of shown.
+ */
+export function subscriptionErrorMessage(
+  error: unknown,
+  t: TranslateType,
+  key = "product_subscriptions.errors.generic",
+): string {
+  Logger.warn("product-subscriptions", error);
+  return t(key);
 }

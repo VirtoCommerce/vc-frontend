@@ -250,7 +250,11 @@ function emitAction(action: "accept" | "retry" | "skip") {
   }
 
   &__footer {
-    @apply flex flex-col gap-3 border-t border-neutral-200 pt-3 sm:flex-row sm:items-center sm:justify-between;
+    @apply flex flex-col gap-3 border-t border-neutral-200 pt-3;
+
+    @media (width >= theme("screens.sm")) {
+      @apply flex-row items-center justify-between;
+    }
   }
 
   &__total {

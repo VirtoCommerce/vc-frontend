@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Für später gespeichert",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Zahlungsmethoden"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Zahlungsmethoden"
         }
       },
       "change_password_form": {
@@ -525,7 +527,12 @@
           "duplicate_email_login_attempt": "Mehrere Konten verwenden diese E-Mail-Adresse.",
           "lockout_disabled": "Dieses Konto kann sich nicht mit einem Code anmelden.",
           "invalid_code": "Dieser Code hat nicht funktioniert.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Ihre Anmeldesitzung ist abgelaufen. Melden Sie sich erneut an.",
+          "code_attempts_exceeded": "Zu viele falsche Codes. Warten Sie einige Minuten und melden Sie sich erneut an.",
+          "mfa_provider_not_available": "Wir können an dieses Konto keinen Anmeldecode senden. Bitte wenden Sie sich an Ihren Administrator.",
+          "two_factor_unavailable": "Für dieses Konto ist ein zweiter Anmeldeschritt erforderlich, der jedoch nicht verfügbar ist. Wenden Sie sich an Ihren Administrator.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +552,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Überprüfung erfolgreich, aber der Wechsel zum Kundenkonto ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
-          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +648,7 @@
         "verify": {
           "header": "Prüfen Sie Ihre E-Mails",
           "subtitle": "Wir haben einen Code an {email} gesendet.",
-          "code_label": "Code",
-          "paste_hint": "Geben Sie den Code ein oder fügen Sie ihn ein. Auf dem Smartphone tippen Sie ihn über der Tastatur an.",
-          "submit_button": "Anmelden",
-          "resend_button": "Code erneut senden",
-          "use_different_email_link": "Andere E-Mail-Adresse verwenden",
-          "live_resent": "Neuer Code gesendet."
+          "use_different_email_link": "Andere E-Mail-Adresse verwenden"
         },
         "locked": {
           "title": "Zu viele fehlgeschlagene Versuche",
@@ -653,6 +664,19 @@
           "password_button": "Mit Passwort anmelden",
           "back_link": "Zurück zur Anmeldung"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Anmeldecode eingeben",
+        "subtitle": "Wir haben einen Code an {destination} gesendet.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Code",
+        "paste_hint": "Geben Sie den Code ein oder fügen Sie ihn ein. Auf dem Smartphone tippen Sie ihn über der Tastatur an.",
+        "submit_button": "Anmelden",
+        "resend_button": "Code erneut senden",
+        "resend_countdown": "Code erneut senden in {seconds} s",
+        "live_resent": "Neuer Code gesendet."
       }
     },
     "company": {
@@ -1018,6 +1042,36 @@
           "missing_link": "Weiterleitungslink fehlt",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Bezahlen mit",
+        "new_card": "Neue Karte verwenden",
+        "save_card": "Diese Karte für künftige Zahlungen speichern",
+        "save_card_required": "Dieser Einkauf enthält ein Abonnement, daher wird die Karte sicher gespeichert, um es zu bezahlen. Sie können sie jederzeit ändern.",
+        "default": "Standard",
+        "expired": "Abgelaufen",
+        "needs_update": "Aktualisierung nötig",
+        "expires": "Gültig bis {date}",
+        "page_title": "Zahlungsmethoden",
+        "page_subtitle": "Gespeicherte Karten für schnelleres Bezahlen und Abonnements. Wir speichern niemals Ihre vollständige Kartennummer.",
+        "empty": "Noch keine gespeicherten Karten.",
+        "make_default": "Als Standard festlegen",
+        "remove": "Entfernen",
+        "remove_title": "Diese Karte entfernen?",
+        "remove_text": "Die Karte wird aus Ihrem Konto und beim Zahlungsanbieter gelöscht.",
+        "removed": "Karte entfernt.",
+        "add_title": "Karte hinzufügen",
+        "add": "Karte speichern",
+        "added": "Karte gespeichert.",
+        "set_default": "Als meine Standardkarte verwenden",
+        "billing_title": "Rechnungsadresse der Karte",
+        "billing_hint": "Ihre Bank prüft sie beim Speichern der Karte.",
+        "address": "Straße und Hausnummer",
+        "city": "Ort",
+        "state": "Bundesland",
+        "zip": "Postleitzahl",
+        "form_unavailable": "Karten können derzeit nicht gespeichert werden. Bitte versuchen Sie es später erneut.",
+        "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
       }
     },
     "wishlists": {

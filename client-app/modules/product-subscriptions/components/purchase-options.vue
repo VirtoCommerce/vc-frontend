@@ -38,6 +38,7 @@
             value="once"
             name="purchase-mode"
             size="sm"
+            :disabled="isSaving"
             class="purchase-options__radio"
             data-test-id="purchase-option-once"
           >
@@ -57,6 +58,7 @@
             value="subscribe"
             name="purchase-mode"
             size="sm"
+            :disabled="isSaving"
             class="purchase-options__radio"
             data-test-id="purchase-option-subscribe"
           >
@@ -85,6 +87,7 @@
           text-field="label"
           value-field="key"
           size="sm"
+          :disabled="isSaving"
           data-test-id="purchase-option-frequency"
         />
 
@@ -107,12 +110,12 @@ import { computed, onMounted, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
-import { useCartSubscriptions } from "../composables/useCartSubscriptions";
+import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
 import {
   applyDiscount,
   discountLabel,
-  errorMessage,
+  subscriptionErrorMessage,
   formatMoney,
   intervalKey,
   intervalLabel,
@@ -134,13 +137,15 @@ const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const { cart } = useShortCart();
 const { loadOffers, getOffer } = useSubscriptionOffers();
-const { byLineItemId, setSubscription, removeSubscription } = useCartSubscriptions();
+const { byLineItemId, setSubscription, removeSubscription } = useDefaultCartSubscriptions();
 
 const offer = getOffer(product.value.id);
 const mode = ref<"once" | "subscribe">("once");
 const selectedInterval = ref<string>();
 const syncState = ref<"ok" | "saving" | "error">();
 const syncError = ref<string>();
+// While a change is saved the choice is locked: a second click would race the first request.
+const isSaving = computed(() => syncState.value === "saving");
 
 const currency = computed(() => product.value.price?.actual?.currency?.code);
 const basePrice = computed(() => product.value.price?.actual?.amount ?? 0);
@@ -176,7 +181,7 @@ watch(
 watch(
   activeSubscription,
   (value) => {
-    if (value) {
+    if (value && !isSaving.value) {
       mode.value = "subscribe";
       selectedInterval.value = intervalKey(value.intervalUnit, value.intervalCount);
     }
@@ -216,7 +221,7 @@ async function syncCartLine(): Promise<void> {
     syncError.value = undefined;
   } catch (e) {
     syncState.value = "error";
-    syncError.value = errorMessage(e, t("product_subscriptions.errors.generic"));
+    syncError.value = subscriptionErrorMessage(e, t);
   }
 }
 
@@ -274,7 +279,7 @@ onMounted(() => {
   }
 
   &__strike {
-    @apply ml-1 text-xs font-normal text-neutral-500;
+    @apply ms-1 text-xs font-normal text-neutral-500;
   }
 
   &__subscribe {

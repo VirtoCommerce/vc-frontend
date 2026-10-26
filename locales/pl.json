@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Zapisane na później",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Metody płatności"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Metody płatności"
         }
       },
       "change_password_form": {
@@ -525,7 +527,12 @@
           "duplicate_email_login_attempt": "Kilka kont używa tego adresu e-mail.",
           "lockout_disabled": "To konto nie może logować się za pomocą kodu.",
           "invalid_code": "Ten kod nie zadziałał.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Sesja logowania wygasła. Zaloguj się ponownie.",
+          "code_attempts_exceeded": "Zbyt wiele nieprawidłowych kodów. Odczekaj kilka minut i zaloguj się ponownie.",
+          "mfa_provider_not_available": "Nie możemy wysłać kodu logowania na to konto. Skontaktuj się z administratorem.",
+          "two_factor_unavailable": "To konto wymaga drugiego kroku logowania, ale jest on niedostępny. Skontaktuj się z administratorem.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +552,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Weryfikacja powiodła się, ale przełączenie na konto klienta nie powiodło się. Spróbuj ponownie.",
-          "generic": "Coś poszło nie tak. Spróbuj ponownie."
+          "generic": "Coś poszło nie tak. Spróbuj ponownie.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +648,7 @@
         "verify": {
           "header": "Sprawdź swoją pocztę e-mail",
           "subtitle": "Wysłaliśmy kod na adres {email}.",
-          "code_label": "Kod",
-          "paste_hint": "Wpisz lub wklej kod. Na telefonie dotknij go nad klawiaturą.",
-          "submit_button": "Zaloguj się",
-          "resend_button": "Wyślij kod ponownie",
-          "use_different_email_link": "Użyj innego adresu e-mail",
-          "live_resent": "Wysłano nowy kod."
+          "use_different_email_link": "Użyj innego adresu e-mail"
         },
         "locked": {
           "title": "Zbyt wiele nieudanych prób",
@@ -653,6 +664,19 @@
           "password_button": "Zaloguj się hasłem",
           "back_link": "Powrót do logowania"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Wprowadź kod logowania",
+        "subtitle": "Wysłaliśmy kod na adres {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Kod",
+        "paste_hint": "Wpisz lub wklej kod. Na telefonie dotknij go nad klawiaturą.",
+        "submit_button": "Zaloguj się",
+        "resend_button": "Wyślij kod ponownie",
+        "resend_countdown": "Wyślij kod ponownie za {seconds} s",
+        "live_resent": "Wysłano nowy kod."
       }
     },
     "company": {
@@ -1018,6 +1042,36 @@
           "missing_link": "Brakuje linku przekierowującego",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Zapłać kartą",
+        "new_card": "Użyj nowej karty",
+        "save_card": "Zapisz tę kartę do przyszłych płatności",
+        "save_card_required": "Ten zakup obejmuje subskrypcję, dlatego karta jest bezpiecznie zapisywana, aby za nią płacić. Możesz ją zmienić w dowolnym momencie.",
+        "default": "Domyślna",
+        "expired": "Wygasła",
+        "needs_update": "Wymaga aktualizacji",
+        "expires": "Ważna do {date}",
+        "page_title": "Metody płatności",
+        "page_subtitle": "Karty zapisane do szybszych płatności i subskrypcji. Nigdy nie przechowujemy pełnego numeru karty.",
+        "empty": "Brak zapisanych kart.",
+        "make_default": "Ustaw jako domyślną",
+        "remove": "Usuń",
+        "remove_title": "Usunąć tę kartę?",
+        "remove_text": "Karta zostanie usunięta z Twojego konta i u operatora płatności.",
+        "removed": "Karta usunięta.",
+        "add_title": "Dodaj kartę",
+        "add": "Zapisz kartę",
+        "added": "Karta zapisana.",
+        "set_default": "Używaj jako mojej domyślnej karty",
+        "billing_title": "Adres rozliczeniowy karty",
+        "billing_hint": "Bank sprawdza go podczas zapisywania karty.",
+        "address": "Ulica i numer",
+        "city": "Miasto",
+        "state": "Województwo",
+        "zip": "Kod pocztowy",
+        "form_unavailable": "Obecnie nie można zapisywać kart. Spróbuj ponownie później.",
+        "error": "Coś poszło nie tak. Spróbuj ponownie."
       }
     },
     "wishlists": {

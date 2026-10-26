@@ -131,6 +131,10 @@ export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+// Blocks Place order until a plugin's own condition holds (a terms checkbox it renders, a required choice). Every
+// registered guard must allow the order; unregister the guard when the plugin's block leaves the page.
+export { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
+export type { CheckoutGuardType } from "@/shared/checkout/composables/useCheckoutGuards";
 // What the sharing modal hands a scope's `onSaved`, and the shape a scope's element must expose
 // for the modal to read it.
 export type {

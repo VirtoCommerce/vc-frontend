@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "稍后保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "支付方式"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "支付方式"
         }
       },
       "change_password_form": {
@@ -525,7 +527,12 @@
           "duplicate_email_login_attempt": "多个账户使用此电子邮件。",
           "lockout_disabled": "此账户无法使用验证码登录。",
           "invalid_code": "该验证码无法使用。",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "您的登录会话已过期，请重新登录。",
+          "code_attempts_exceeded": "错误的验证码过多，请等待几分钟后重新登录。",
+          "mfa_provider_not_available": "无法向此账户发送登录验证码，请联系您的管理员。",
+          "two_factor_unavailable": "此账户需要第二步登录验证，但该功能不可用。请联系管理员。",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +552,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
-          "generic": "出错了。请重试。"
+          "generic": "出错了。请重试。",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +648,7 @@
         "verify": {
           "header": "查看您的邮箱",
           "subtitle": "我们已向 {email} 发送了验证码。",
-          "code_label": "验证码",
-          "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
-          "submit_button": "登录",
-          "resend_button": "重新发送验证码",
-          "use_different_email_link": "使用其他邮箱",
-          "live_resent": "已发送新验证码。"
+          "use_different_email_link": "使用其他邮箱"
         },
         "locked": {
           "title": "失败尝试次数过多",
@@ -653,6 +664,19 @@
           "password_button": "使用密码登录",
           "back_link": "返回登录"
         }
+      },
+      "mfa_verify_form": {
+        "header": "输入登录验证码",
+        "subtitle": "我们已将验证码发送至 {destination}。",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "验证码",
+        "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
+        "submit_button": "登录",
+        "resend_button": "重新发送验证码",
+        "resend_countdown": "{seconds} 秒后可重新发送验证码",
+        "live_resent": "已发送新验证码。"
       }
     },
     "company": {
@@ -1018,6 +1042,36 @@
           "missing_link": "重定向链接缺失",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "支付方式",
+        "new_card": "使用新卡",
+        "save_card": "保存此卡以便日后付款",
+        "save_card_required": "此次购买包含订阅，因此将安全保存该卡用于支付订阅。您可以随时更换。",
+        "default": "默认",
+        "expired": "已过期",
+        "needs_update": "需要更新",
+        "expires": "有效期至 {date}",
+        "page_title": "支付方式",
+        "page_subtitle": "为加快结账和订阅而保存的卡。我们从不保存完整的卡号。",
+        "empty": "还没有保存的卡。",
+        "make_default": "设为默认",
+        "remove": "删除",
+        "remove_title": "删除此卡？",
+        "remove_text": "该卡将从您的账户和支付服务商处删除。",
+        "removed": "卡已删除。",
+        "add_title": "添加卡",
+        "add": "保存卡",
+        "added": "卡已保存。",
+        "set_default": "用作我的默认卡",
+        "billing_title": "卡的账单地址",
+        "billing_hint": "保存卡时银行会进行核验。",
+        "address": "街道地址",
+        "city": "城市",
+        "state": "州/省",
+        "zip": "邮政编码",
+        "form_unavailable": "目前无法保存卡。请稍后再试。",
+        "error": "出现问题。请重试。"
       }
     },
     "wishlists": {

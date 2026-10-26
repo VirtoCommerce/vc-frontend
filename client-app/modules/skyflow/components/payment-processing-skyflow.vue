@@ -209,10 +209,6 @@ function selectSkyflowCard(skyflowCard: {
 
 let skyflowClient: Skyflow,
   skyflowTableName: string,
-  // Server-issued token that binds one-time records (a card the shopper does not save, a transient CVV)
-  // to the current payment. The backend rejects ownerless records and deletes one-time records after a
-  // successful authorization.
-  paymentSessionToken: string | undefined,
   fullCardCollector: ComposableContainer,
   cvvCollector: ComposableContainer | null,
   cvvElement: ComposableElement | null;
@@ -429,13 +425,13 @@ async function initCvvForm() {
   const savedCardScheme = selectedSkyflowCard.value?.cardScheme ?? selectedSkyflowCard.value?.cardType;
   const { placeholder: savedCvvPlaceholder } = getCvvValidation(savedCardScheme);
 
-  // No skyflowID is bound here on purpose: the CVV must never be written into the saved card record.
-  // collect() inserts a separate one-time CVV record (transient TTL column) bound to the payment session;
-  // the backend uses it for the current authorization only and deletes it afterwards.
   const CVV = container.create(
     {
       table: skyflowTableName,
       column: "cvv",
+      // Bind the saved card's record id at element creation so collect() issues a PUT (update)
+      // on the existing record. Without skyflowID, collect() inserts a new bare-CVV record (POST).
+      skyflowID: selectedSkyflowCard.value?.skyflowId,
       ...cvvOnlyCollectStyles,
       placeholder: savedCvvPlaceholder,
       label: t("shared.payment.bank_card_form.security_code_label"),
@@ -469,22 +465,14 @@ function clearCvv() {
   cvvCollectorStatus.value.ready = false;
 }
 
-/**
- * Collects the CVV of a saved card into a separate one-time vault record bound to the current payment session.
- * @returns the Skyflow id of the CVV record, or undefined when the CVV was not collected.
- */
-async function collectTransientCvv(): Promise<string | undefined> {
-  if (!cvvCollector || !cvvElement || !paymentSessionToken) {
-    return undefined;
+async function updateCvvInVault(): Promise<void> {
+  if (!cvvCollector || !cvvElement) {
+    return;
   }
 
-  const res = (await cvvCollector.collect({
-    additionalFields: getPaymentSessionRecords(),
-  })) as IInsertResponse;
-
-  const cvvSkyflowId: unknown = res?.records?.find((el) => el.fields)?.fields?.skyflow_id;
-
-  return typeof cvvSkyflowId === "string" && cvvSkyflowId ? cvvSkyflowId : undefined;
+  // The record id (skyflowID) is bound to the CVV element at creation in initCvvForm,
+  // so collect() updates the existing card record rather than inserting a new one.
+  await cvvCollector.collect();
 }
 // CVV only END
 
@@ -521,7 +509,6 @@ async function initPayment(): Promise<boolean> {
     }
 
     skyflowTableName = getParameter(publicParameters, "tableName");
-    paymentSessionToken = findParameter(publicParameters, "paymentSessionToken");
 
     skyflowClient = Skyflow.init({
       vaultID: getParameter(publicParameters, "vaultID"),
@@ -539,8 +526,8 @@ async function initPayment(): Promise<boolean> {
   }
 }
 
-function getUserIdRecords(userId: string | undefined): IInsertRecordInput | undefined {
-  if (!userId) {
+function getAdditionalRecords(): IInsertRecordInput | undefined {
+  if (!isAuthenticated.value || !saveCreditCard.value) {
     return;
   }
 
@@ -549,25 +536,11 @@ function getUserIdRecords(userId: string | undefined): IInsertRecordInput | unde
       {
         table: skyflowTableName,
         fields: {
-          user_id: userId,
+          user_id: user.value.id,
         },
       },
     ],
   };
-}
-
-function getPaymentSessionRecords(): IInsertRecordInput | undefined {
-  return getUserIdRecords(paymentSessionToken);
-}
-
-function getAdditionalRecords(): IInsertRecordInput | undefined {
-  // A card the shopper chose to save is owned by the user; any other card is a one-time record
-  // bound to the current payment session.
-  if (isAuthenticated.value && saveCreditCard.value) {
-    return getUserIdRecords(user.value.id);
-  }
-
-  return getPaymentSessionRecords();
 }
 
 async function pay(
@@ -628,28 +601,19 @@ async function payWithSavedCreditCard(
       return null;
     }
 
-    const parameters: InputKeyValueType[] = [
-      {
-        key: "skyflow_id",
-        value: selectedSkyflowCard.value.skyflowId,
-      },
-    ];
-
     if (isSavedCardCvvRequired.value) {
-      const cvvSkyflowId = await collectTransientCvv();
-
-      if (!cvvSkyflowId) {
-        emit("fail");
-        return null;
-      }
-
-      parameters.push({
-        key: "cvv_skyflow_id",
-        value: cvvSkyflowId,
-      });
+      await updateCvvInVault();
     }
 
-    return await pay(parameters, orderToPay);
+    return await pay(
+      [
+        {
+          key: "skyflow_id",
+          value: selectedSkyflowCard.value.skyflowId,
+        },
+      ],
+      orderToPay,
+    );
   } finally {
     loading.value = false;
   }
@@ -730,10 +694,6 @@ function getParameter(data: KeyValueType[], key: string): string {
   }
 
   return param.value;
-}
-
-function findParameter(data: KeyValueType[], key: string): string | undefined {
-  return data.find((el) => el.key === key)?.value || undefined;
 }
 
 function objectToKeyValue(object: { [key: string]: string }): KeyValueType[] {

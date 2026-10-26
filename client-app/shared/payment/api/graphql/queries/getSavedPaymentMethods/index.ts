@@ -3,6 +3,7 @@ import { globals } from "@/core/globals";
 import { GetSavedPaymentMethodsDocument } from "../../types";
 import type { GetSavedPaymentMethodsQuery } from "../../types";
 
+/** The signed-in customer's saved cards in the current store. */
 export async function getSavedPaymentMethods(): Promise<GetSavedPaymentMethodsQuery["savedPaymentMethods"]> {
   const { data } = await graphqlClient.query({
     query: GetSavedPaymentMethodsDocument,

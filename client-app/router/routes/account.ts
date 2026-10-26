@@ -15,6 +15,7 @@ const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
 const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
+const PaymentMethods = () => import("@/pages/account/payment-methods.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -75,6 +76,7 @@ export const accountRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  { path: ROUTES.PAYMENT_METHODS.PATH, name: ROUTES.PAYMENT_METHODS.NAME, component: PaymentMethods },
   {
     path: ROUTES.PROMOTION_COUPONS.PATH,
     name: ROUTES.PROMOTION_COUPONS.NAME,

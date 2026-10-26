@@ -1,7 +1,7 @@
 import { computed, shallowRef, toValue } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
-type CheckoutGuardType = {
+export type CheckoutGuardType = {
   /** True when the order can be placed as far as this guard is concerned. */
   canPlaceOrder: MaybeRefOrGetter<boolean>;
 };

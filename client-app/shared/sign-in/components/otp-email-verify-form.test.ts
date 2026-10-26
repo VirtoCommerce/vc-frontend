@@ -2,10 +2,11 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref } from "vue";
 import OtpEmailVerifyForm from "./otp-email-verify-form.vue";
-import type { IOtpRequestResponse, IOtpVerifyResponse } from "@/shared/sign-in/composables/useOtpSignIn";
+import type { ICodeSignInResponse } from "@/shared/sign-in/composables/useCodeSignIn";
+import type { IOtpRequestResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
 const loading = ref(false);
-const verifyCode = vi.fn<(email: string, code: string) => Promise<IOtpVerifyResponse | undefined>>();
+const verifyCode = vi.fn<(email: string, code: string) => Promise<ICodeSignInResponse | undefined>>();
 const requestCode = vi.fn<(email: string) => Promise<IOtpRequestResponse | undefined>>();
 const signInErrors = ref<{ code?: string; description: string }[] | undefined>();
 const resetSignInErrors = vi.fn(() => {
@@ -95,7 +96,7 @@ describe("OtpEmailVerifyForm", () => {
   });
 
   it("sends the code only once while it is being verified", async () => {
-    let finishVerify: (result: IOtpVerifyResponse) => void = () => {};
+    let finishVerify: (result: ICodeSignInResponse) => void = () => {};
     verifyCode.mockImplementation(() => {
       loading.value = true;
       return new Promise((resolve) => {
@@ -138,7 +139,7 @@ describe("OtpEmailVerifyForm", () => {
     await typeCode(wrapper, "000000");
 
     expect(wrapper.findAll('[role="alert"]').map((alert) => alert.text())).toEqual(["The code is invalid."]);
-    expect(wrapper.find(".otp-email-verify-form__field--error").exists()).toBe(true);
+    expect(wrapper.find(".sign-in-code-input--error").exists()).toBe(true);
   });
 
   it("clears a rejected code so the next keystroke cannot resubmit it", async () => {
@@ -186,7 +187,7 @@ describe("OtpEmailVerifyForm", () => {
     expect(codeInput(wrapper).attributes("aria-describedby")).toBe("otp-email-code-error otp-email-hint");
   });
 
-  it.each<[string, IOtpVerifyResponse | undefined]>([
+  it.each<[string, ICodeSignInResponse | undefined]>([
     ["OTP is disabled", { succeeded: false, error: { code: "otp_disabled" } }],
     [
       "the account is locked",
@@ -242,9 +243,7 @@ describe("OtpEmailVerifyForm", () => {
     await flushPromises();
 
     expect((codeInput(wrapper).element as HTMLInputElement).value).toBe("");
-    expect(wrapper.find("[aria-live='polite']").text()).toBe(
-      "shared.sign_in.otp_email_sign_in_form.verify.live_resent",
-    );
+    expect(wrapper.find("[aria-live='polite']").text()).toBe("shared.sign_in.sign_in_code_form.live_resent");
   });
 
   it.each<[string, IOtpRequestResponse | undefined]>([
@@ -290,5 +289,14 @@ describe("OtpEmailVerifyForm", () => {
 
     wrapper.unmount();
     container.remove();
+  });
+
+  it("emits useDifferentEmail from the back link", async () => {
+    const wrapper = mountForm();
+    const backButton = wrapper.find('[data-test-id="otp-email-back-button"]');
+    await backButton.trigger("click");
+
+    expect(backButton.text()).toBe("shared.sign_in.otp_email_sign_in_form.verify.use_different_email_link");
+    expect(wrapper.emitted("useDifferentEmail")).toHaveLength(1);
   });
 });

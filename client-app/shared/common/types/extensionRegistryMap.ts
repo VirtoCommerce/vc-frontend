@@ -77,6 +77,15 @@ export type ExtensionCategoryMapType = {
     never,
     ({ paymentTypeName }: { paymentTypeName: string }) => boolean
   >;
+  /**
+   * The add-card form on the account's payment methods page (`pages/account/payment-methods.vue`), per payment method that
+   * can save cards; registered under the payment method's code. The component emits `added` when the card is saved.
+   */
+  addCardForm: ExtensionEntryType<
+    { paymentMethodCode: string; setDefault: boolean },
+    never,
+    (paymentMethodCode: string) => boolean
+  >;
   /** Under each cart line item (`shared/cart/components/cart-line-items.vue`). A provider decides from the line whether it has anything to show. */
   cartLineItem: ExtensionEntryType<
     { lineItem: PreparedLineItemType; readonly?: boolean },

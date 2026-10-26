@@ -378,7 +378,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Enregistré pour plus tard",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Moyens de paiement"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +495,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Moyens de paiement"
         }
       },
       "change_password_form": {
@@ -525,7 +527,12 @@
           "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
           "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",
           "invalid_code": "Ce code n'a pas fonctionné.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Votre session de connexion a expiré. Connectez-vous à nouveau.",
+          "code_attempts_exceeded": "Trop de codes incorrects. Patientez quelques minutes, puis reconnectez-vous.",
+          "mfa_provider_not_available": "Nous ne pouvons pas envoyer de code de connexion à ce compte. Veuillez contacter votre administrateur.",
+          "two_factor_unavailable": "Ce compte exige une deuxième étape de connexion, mais elle n'est pas disponible. Contactez votre administrateur.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +552,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Vérification réussie, mais le basculement vers le compte client a échoué. Veuillez réessayer.",
-          "generic": "Une erreur s'est produite. Veuillez réessayer."
+          "generic": "Une erreur s'est produite. Veuillez réessayer.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +648,7 @@
         "verify": {
           "header": "Consultez votre e-mail",
           "subtitle": "Nous avons envoyé un code à {email}.",
-          "code_label": "Code",
-          "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
-          "submit_button": "Se connecter",
-          "resend_button": "Renvoyer le code",
-          "use_different_email_link": "Utiliser une autre adresse e-mail",
-          "live_resent": "Nouveau code envoyé."
+          "use_different_email_link": "Utiliser une autre adresse e-mail"
         },
         "locked": {
           "title": "Trop de tentatives échouées",
@@ -653,6 +664,19 @@
           "password_button": "Se connecter avec un mot de passe",
           "back_link": "Retour à la connexion"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Saisissez le code de connexion",
+        "subtitle": "Nous avons envoyé un code à {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Code",
+        "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
+        "submit_button": "Se connecter",
+        "resend_button": "Renvoyer le code",
+        "resend_countdown": "Renvoyer le code dans {seconds} s",
+        "live_resent": "Nouveau code envoyé."
       }
     },
     "company": {
@@ -1018,6 +1042,36 @@
           "missing_link": "Le lien de redirection est manquant",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Payer avec",
+        "new_card": "Utiliser une nouvelle carte",
+        "save_card": "Enregistrer cette carte pour les prochains paiements",
+        "save_card_required": "Cet achat comprend un abonnement : la carte est donc enregistrée en toute sécurité pour le payer. Vous pouvez la changer à tout moment.",
+        "default": "Par défaut",
+        "expired": "Expirée",
+        "needs_update": "À mettre à jour",
+        "expires": "Expire le {date}",
+        "page_title": "Moyens de paiement",
+        "page_subtitle": "Cartes enregistrées pour payer plus vite et pour vos abonnements. Nous n'enregistrons jamais le numéro complet de votre carte.",
+        "empty": "Aucune carte enregistrée pour l'instant.",
+        "make_default": "Définir par défaut",
+        "remove": "Supprimer",
+        "remove_title": "Supprimer cette carte ?",
+        "remove_text": "La carte est supprimée de votre compte et chez le prestataire de paiement.",
+        "removed": "Carte supprimée.",
+        "add_title": "Ajouter une carte",
+        "add": "Enregistrer la carte",
+        "added": "Carte enregistrée.",
+        "set_default": "Utiliser comme carte par défaut",
+        "billing_title": "Adresse de facturation de la carte",
+        "billing_hint": "Votre banque la vérifie lors de l'enregistrement de la carte.",
+        "address": "Adresse",
+        "city": "Ville",
+        "state": "État",
+        "zip": "Code postal",
+        "form_unavailable": "Les cartes ne peuvent pas être enregistrées pour le moment. Veuillez réessayer plus tard.",
+        "error": "Une erreur s'est produite. Veuillez réessayer."
       }
     },
     "wishlists": {

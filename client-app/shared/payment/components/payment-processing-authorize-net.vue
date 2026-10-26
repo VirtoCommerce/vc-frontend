@@ -6,25 +6,50 @@
 
   <!-- Bank card form -->
   <div v-else-if="initialized">
-    <div class="flex flex-col xl:flex-row">
-      <BankCardForm
-        v-model="bankCardData"
-        v-model:valid="isValidBankCard"
-        :errors="bankCardErrors"
-        :disabled="loading"
-        class="xl:w-2/3"
-        @submit="() => !hidePaymentButton && sendPaymentData()"
-      />
+    <SavedCardPicker
+      v-model="selectedCard"
+      :methods="savedCards"
+      :new-card-value="NEW_CARD"
+      :disabled="loading"
+      name="authorize-net-card"
+    />
 
-      <CardLabels class="mt-5" />
-    </div>
+    <template v-if="selectedCard === NEW_CARD">
+      <div class="flex flex-col xl:flex-row">
+        <BankCardForm
+          v-model="bankCardData"
+          v-model:valid="isValidBankCard"
+          :errors="bankCardErrors"
+          :disabled="loading"
+          class="xl:w-2/3"
+          @submit="() => !hidePaymentButton && sendPaymentData()"
+        />
+
+        <CardLabels class="mt-5" />
+      </div>
+
+      <template v-if="canSaveCard">
+        <VcCheckbox
+          v-model="saveCard"
+          :disabled="!!cardSavingRequirement || loading"
+          class="mt-4"
+          test-id="authorize-net-save-card"
+        >
+          {{ $t("shared.payment.saved_cards.save_card") }}
+        </VcCheckbox>
+
+        <p v-if="cardSavingRequirement" class="mt-1 text-xs text-neutral-600">
+          {{ $t("shared.payment.saved_cards.save_card_required") }}
+        </p>
+      </template>
+    </template>
 
     <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
       <PaymentPolicies />
 
       <VcButton
         v-if="!hidePaymentButton"
-        :disabled="!isValidBankCard || disabled"
+        :disabled="!canPay || disabled"
         :loading="loading"
         class="flex-1 md:order-first md:flex-none"
         data-test-id="pay-now-button"
@@ -41,15 +66,19 @@
 
 <script setup lang="ts">
 import { clone } from "lodash-es";
-import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializeCartPayment, initializePayment } from "@/core/api/graphql";
+import { authorizePayment, initializeCartPayment, initializePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { Logger } from "@/core/utilities";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
 import { PaymentActionType } from "@/shared/payment/types";
 import { usePayment } from "../composables";
+import { useCardSavingRequirement } from "../composables/useCardSavingRequirement";
+import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
 import PaymentPolicies from "./payment-policies.vue";
+import SavedCardPicker from "./saved-card-picker.vue";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
 import type {
   AuthorizePaymentResultType,
@@ -64,6 +93,10 @@ import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 const emit = defineEmits<IPaymentMethodEmits>();
 const props = defineProps<IPaymentMethodParameters>();
+
+/** Saved cards can only pay through the payment method that saved them. */
+const PAYMENT_METHOD_CODE = "AuthorizeNetPaymentMethod";
+const NEW_CARD = "new";
 
 const emptyBankCardData: BankCardType = {
   cardholderName: "",
@@ -80,6 +113,8 @@ const loading = ref(false);
 const isValidBankCard = ref(false);
 const bankCardData = ref<BankCardType>(clone(emptyBankCardData));
 const bankCardErrors = ref<BankCardErrorsType>({});
+const selectedCard = ref(NEW_CARD);
+const saveCard = ref(false);
 
 // Guards against late async init completing after the component was torn down
 // (e.g. the shopper switched payment method while Accept.js was still loading).
@@ -91,8 +126,38 @@ const clientKey = computed<string>(() => parameters.value.find(({ key }) => key 
 
 const { analytics } = useAnalytics();
 const { t } = useI18n();
+const { isAuthenticated } = useUser();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
 const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
+const { fetch: fetchSavedCards, methodsFor } = useSavedPaymentMethods();
+const cardSaving = useCardSavingRequirement();
+
+// Read once, for what this form pays: the requirement covers only the cart it was given for, or the order placed from it.
+const { cart: paidCart, order: paidOrder } = toRefs(props);
+const cardSavingRequirement = cardSaving.read({ cart: paidCart.value, order: paidOrder.value });
+
+/** Only a signed-in customer has an account to keep cards in. */
+const canSaveCard = computed(() => isAuthenticated.value);
+const savedCards = computed(() => (isAuthenticated.value ? methodsFor(PAYMENT_METHOD_CODE) : []));
+const isSavedCardSelected = computed(() => selectedCard.value !== NEW_CARD);
+const canPay = computed(() => isSavedCardSelected.value || isValidBankCard.value);
+
+/** Sent with the payment nonce: the payment method saves the card when the payment is approved. */
+const cardSavingParameters = computed<KeyValueType[]>(() => {
+  if (!canSaveCard.value) {
+    return [];
+  }
+
+  // said out loud, so an earlier "save it" for this order isn't sent again on a retry
+  if (!(saveCard.value || cardSavingRequirement)) {
+    return [{ key: "storeForFutureUse", value: "false" }];
+  }
+
+  return [
+    { key: "storeForFutureUse", value: "true" },
+    { key: "consentId", value: cardSavingRequirement?.consentId ?? "" },
+  ];
+});
 
 async function initializeByCartOrOrder(): Promise<InitializePaymentResultType | InitializeCartPaymentResultType> {
   if (props.cart && props.payment) {
@@ -112,9 +177,28 @@ async function initializeByCartOrOrder(): Promise<InitializePaymentResultType | 
   throw new Error("Authorize.Net payment requires either cart+payment or order context");
 }
 
+async function initSavedCards() {
+  if (!isAuthenticated.value) {
+    return;
+  }
+
+  await fetchSavedCards();
+
+  // A link to pay an order can name the card to use (e.g. a renewal the bank declined); otherwise the default card.
+  const requested = new URLSearchParams(window.location.search).get("card");
+  const cards = savedCards.value;
+  const preferred = cards.find((x) => x.id === requested) ?? cards.find((x) => x.isDefault) ?? cards[0];
+  if (preferred) {
+    selectedCard.value = preferred.id;
+  }
+}
+
 async function initPayment() {
   try {
-    const { isSuccess, paymentActionType, publicParameters = [], errorMessage = "" } = await initializeByCartOrOrder();
+    const [{ isSuccess, paymentActionType, publicParameters = [], errorMessage = "" }] = await Promise.all([
+      initializeByCartOrOrder(),
+      initSavedCards(),
+    ]);
 
     if (paymentActionType !== PaymentActionType[PaymentActionType.PreparedForm]) {
       initializationError.value = t("shared.payment.authorize_net.errors.incorrect_payment_method");
@@ -188,6 +272,23 @@ function showErrors(messages: Accept.Message[]) {
   });
 }
 
+function onPaid(order: CustomerOrderType, result: AuthorizePaymentResultType, isCartFinalization: boolean) {
+  if (result.isSuccess) {
+    cardSaving.clear();
+    emit("success");
+
+    /**
+     * Send Google Analytics purchase event.
+     * Skip for cart finalization — the order is created and tracked by the checkout flow.
+     */
+    if (!isCartFinalization) {
+      analytics("purchase", order);
+    }
+  } else {
+    emit("fail", result.errorMessage);
+  }
+}
+
 async function pay(
   opaqueData: Accept.OpaqueData,
   orderToPay: CustomerOrderType | null = null,
@@ -202,21 +303,28 @@ async function pay(
     inPayments: [{ id: paymentId }],
   } = order;
 
-  const result = await sendOpaqueData({ orderId, paymentId, opaqueData });
+  const result = await sendOpaqueData({
+    orderId,
+    paymentId,
+    opaqueData,
+    additionalParameters: cardSavingParameters.value,
+  });
+  onPaid(order, result, !!orderToPay);
 
-  if (result.isSuccess) {
-    emit("success");
+  return result;
+}
 
-    /**
-     * Send Google Analytics purchase event.
-     * Skip for cart finalization — the order is created and tracked by the checkout flow.
-     */
-    if (!orderToPay) {
-      analytics("purchase", order);
-    }
-  } else {
-    emit("fail", result.errorMessage);
-  }
+/** Pays with the chosen saved card; the server checks that it is the customer's and still active. */
+async function payWithSavedCard(
+  order: CustomerOrderType,
+  isCartFinalization: boolean,
+): Promise<AuthorizePaymentResultType> {
+  const result = await authorizePayment({
+    orderId: order.id,
+    paymentId: order.inPayments[0].id,
+    parameters: [{ key: "storedPaymentMethodId", value: selectedCard.value }],
+  });
+  onPaid(order, result, isCartFinalization);
 
   return result;
 }
@@ -251,13 +359,17 @@ async function sendPaymentData(
   orderToPay: CustomerOrderType | null = null,
 ): Promise<AuthorizePaymentResultType | null> {
   const order = orderToPay ?? props.order;
-  if (!isValidBankCard.value || !order) {
+  if (!canPay.value || !order) {
     return null;
   }
 
   loading.value = true;
 
   try {
+    if (isSavedCardSelected.value) {
+      return await payWithSavedCard(order, !!orderToPay);
+    }
+
     const opaqueData = await tokenize();
 
     // No opaque data means a field-level validation error was shown inline — let the
@@ -296,7 +408,7 @@ onUnmounted(() => {
 });
 
 watch(
-  isValidBankCard,
+  canPay,
   (isValid) => {
     if (isValid) {
       setCardDataValid();
