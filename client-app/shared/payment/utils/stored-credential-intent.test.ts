@@ -53,13 +53,10 @@ describe("withStoredCredentialIntent", () => {
     ]);
   });
 
-  it("falls back to a module's requirement that the card be saved", () => {
-    useCardSavingRequirement().require("consent-9");
+  it("leaves a module's requirement to the payment forms of its own cart", () => {
+    useCardSavingRequirement().require("consent-9", "cart-1");
 
-    expect(withStoredCredentialIntent("order-1", [])).toEqual([
-      { key: "storeForFutureUse", value: "true" },
-      { key: "consentId", value: "consent-9" },
-    ]);
+    expect(withStoredCredentialIntent("order-1", [])).toEqual([]);
   });
 
   it("forgets the choice once the order is paid", () => {

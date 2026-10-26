@@ -26,7 +26,7 @@
           class="add-card-authorize-net__address"
           :label="$t('shared.payment.saved_cards.address')"
           required
-          autocomplete="billing street-address"
+          autocomplete="address-line1"
           :disabled="adding"
           test-id="authorize-net-billing-address"
         />
@@ -34,7 +34,7 @@
         <VcInput
           v-model="billing.city"
           :label="$t('shared.payment.saved_cards.city')"
-          autocomplete="billing address-level2"
+          autocomplete="address-level2"
           :disabled="adding"
           test-id="authorize-net-billing-city"
         />
@@ -42,7 +42,7 @@
         <VcInput
           v-model="billing.state"
           :label="$t('shared.payment.saved_cards.state')"
-          autocomplete="billing address-level1"
+          autocomplete="address-level1"
           :disabled="adding"
           test-id="authorize-net-billing-state"
         />
@@ -51,7 +51,7 @@
           v-model="billing.zip"
           :label="$t('shared.payment.saved_cards.zip')"
           required
-          autocomplete="billing postal-code"
+          autocomplete="postal-code"
           :disabled="adding"
           test-id="authorize-net-billing-zip"
         />

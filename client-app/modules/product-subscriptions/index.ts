@@ -5,21 +5,13 @@ import { useUser } from "@/shared/account/composables";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames.ts";
 import { loadModuleLocale } from "../utils";
-import {
-  ENABLED_KEY,
-  MOCK_PAYMENT_TYPE_NAME,
-  MODULE_ID,
-  SUBSCRIPTION_DETAILS_ROUTE_NAME,
-  SUBSCRIPTIONS_ROUTE_NAME,
-} from "./constants";
+import { ENABLED_KEY, MOCK_PAYMENT_TYPE_NAME, MODULE_ID } from "./constants";
+import { menuItems } from "./menu";
+import { routes } from "./routes";
 import type { Product } from "@/core/api/graphql/types";
-import type { MenuType, PreparedLineItemType } from "@/core/types";
+import type { PreparedLineItemType } from "@/core/types";
 import type { I18n } from "@/i18n";
-import type { DeepPartial } from "utility-types";
-import type { Router, RouteRecordRaw } from "vue-router";
-
-const Subscriptions = () => import("./pages/subscriptions.vue");
-const SubscriptionDetails = () => import("./pages/subscription-details.vue");
+import type { Router } from "vue-router";
 
 const PurchaseOptions = defineAsyncComponent(() => import("./components/purchase-options.vue"));
 const CartLineSubscription = defineAsyncComponent(() => import("./components/cart-line-subscription.vue"));
@@ -30,35 +22,6 @@ const AddCardMock = defineAsyncComponent(() => import("./components/add-card-moc
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { register } = useExtensionRegistry();
 const { mergeMenuSchema } = useNavigations();
-
-const routes: RouteRecordRaw[] = [
-  {
-    path: "subscriptions",
-    children: [
-      { path: "", name: SUBSCRIPTIONS_ROUTE_NAME, component: Subscriptions },
-      { path: ":subscriptionId", name: SUBSCRIPTION_DETAILS_ROUTE_NAME, component: SubscriptionDetails, props: true },
-    ],
-  },
-];
-
-const subscriptionsLink = {
-  id: "product-subscriptions",
-  route: { name: SUBSCRIPTIONS_ROUTE_NAME },
-  title: "product_subscriptions.navigation.subscriptions",
-  icon: "refresh",
-  priority: 25,
-};
-
-const menuItems: DeepPartial<MenuType> = {
-  header: {
-    desktop: {
-      purchasing: { children: [subscriptionsLink] },
-    },
-    mobile: {
-      purchasing: { children: [subscriptionsLink] },
-    },
-  },
-};
 
 function isMockPayment({ paymentTypeName }: { paymentTypeName: string }) {
   return paymentTypeName === MOCK_PAYMENT_TYPE_NAME;

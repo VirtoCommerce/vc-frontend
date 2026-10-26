@@ -66,7 +66,7 @@
 
 <script setup lang="ts">
 import { clone } from "lodash-es";
-import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { authorizePayment, initializeCartPayment, initializePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables/useAnalytics";
@@ -132,8 +132,9 @@ const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePa
 const { fetch: fetchSavedCards, methodsFor } = useSavedPaymentMethods();
 const cardSaving = useCardSavingRequirement();
 
-// Read once: the requirement belongs to the checkout this form was opened for.
-const cardSavingRequirement = cardSaving.read();
+// Read once, for what this form pays: the requirement covers only the cart it was given for, or the order placed from it.
+const { cart: paidCart, order: paidOrder } = toRefs(props);
+const cardSavingRequirement = cardSaving.read({ cart: paidCart.value, order: paidOrder.value });
 
 /** Only a signed-in customer has an account to keep cards in. */
 const canSaveCard = computed(() => isAuthenticated.value);

@@ -1,4 +1,3 @@
-import { useCardSavingRequirement } from "../composables/useCardSavingRequirement";
 import type { InputKeyValueType } from "@/core/api/graphql/types";
 
 /** Payment parameters the platform reads to save a card or pay with a saved one (Payment module StoredCredentialParameterNames). */
@@ -83,9 +82,8 @@ export function forgetStoredCredentialIntent(orderId: string): void {
 }
 
 /**
- * The parameters of an order's authorization with the card choice added back when the call itself doesn't carry it:
- * first what was remembered for the order, then a module's requirement that the card be saved (useCardSavingRequirement).
- * A call that already carries any card choice is sent as it is.
+ * The parameters of an order's authorization with the card choice remembered for that order added back when the call
+ * itself doesn't carry it. A call that already carries any card choice is sent as it is.
  */
 export function withStoredCredentialIntent(
   orderId: string | null | undefined,
@@ -98,16 +96,10 @@ export function withStoredCredentialIntent(
     return result;
   }
 
-  const remembered = readIntent(orderId);
-  const requirement = useCardSavingRequirement().read();
-  const fallback: IntentParametersType =
-    remembered ??
-    (requirement
-      ? { storeForFutureUse: "true", ...(requirement.consentId ? { consentId: requirement.consentId } : {}) }
-      : {});
+  const remembered = readIntent(orderId) ?? {};
 
   for (const key of INTENT_KEYS) {
-    const value = fallback[key];
+    const value = remembered[key];
     if (value) {
       result.push({ key, value });
     }

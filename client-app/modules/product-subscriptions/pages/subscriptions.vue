@@ -50,21 +50,22 @@
 
     <VcWidget size="lg">
       <template #default-container>
-        <div class="subscriptions-page__tabs" role="tablist">
-          <button
+        <div class="subscriptions-page__tabs" role="group" :aria-label="$t('product_subscriptions.list.tabs_label')">
+          <VcTabSwitch
             v-for="tab in tabs"
             :key="tab.id"
-            type="button"
-            role="tab"
-            class="subscriptions-page__tab"
-            :class="{ 'subscriptions-page__tab--active': activeTab === tab.id }"
-            :aria-selected="activeTab === tab.id"
+            :model-value="activeTab"
+            :value="tab.id"
+            name="subscriptions-status"
+            size="sm"
             :data-test-id="`subscriptions-tab-${tab.id}`"
-            @click="activeTab = tab.id"
+            @change="activeTab = tab.id"
           >
-            {{ $t(`product_subscriptions.list.tabs.${tab.id}`) }}
-            <span class="subscriptions-page__tab-count">{{ countFor(tab.id) }}</span>
-          </button>
+            <span class="subscriptions-page__tab-label">
+              {{ $t(`product_subscriptions.list.tabs.${tab.id}`) }}
+              <span class="subscriptions-page__tab-count">{{ countFor(tab.id) }}</span>
+            </span>
+          </VcTabSwitch>
         </div>
 
         <VcLoaderOverlay v-if="loading && !subscriptions.length" />
@@ -174,7 +175,7 @@ import {
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
 import { ATTENTION_RENEWAL_STATES, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
-import { discountLabel, errorMessage, intervalLabel } from "../utils";
+import { discountLabel, subscriptionErrorMessage, intervalLabel } from "../utils";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
 
 type TabType = "active" | "paused" | "cancelled";
@@ -284,7 +285,7 @@ async function onRenewalAction({
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       single: true,
-      text: errorMessage(e, t("product_subscriptions.errors.generic")),
+      text: subscriptionErrorMessage(e, t),
     });
   } finally {
     busy[renewal.id] = undefined;
@@ -299,7 +300,11 @@ onMounted(load);
   @apply flex flex-col gap-5;
 
   &__header {
-    @apply flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between;
+    @apply flex flex-col gap-3;
+
+    @media (width >= theme("screens.sm")) {
+      @apply flex-row items-start justify-between;
+    }
   }
 
   &__subtitle {
@@ -315,23 +320,23 @@ onMounted(load);
   }
 
   &__renewals {
-    @apply grid gap-3 lg:grid-cols-2;
+    @apply grid gap-3;
+
+    @media (width >= theme("screens.lg")) {
+      @apply grid-cols-2;
+    }
   }
 
   &__tabs {
-    @apply flex gap-1 overflow-x-auto border-b border-neutral-200 px-3 pt-2 md:px-5;
+    @apply flex gap-2 overflow-x-auto border-b border-neutral-200 px-3 py-3;
+
+    @media (width >= theme("screens.md")) {
+      @apply px-5;
+    }
   }
 
-  &__tab {
-    @apply flex shrink-0 items-center gap-2 border-b-2 border-transparent px-3 py-3 text-sm font-bold text-neutral-600 transition-colors;
-
-    &:hover {
-      @apply text-neutral-900;
-    }
-
-    &--active {
-      @apply border-primary text-primary;
-    }
+  &__tab-label {
+    @apply flex items-center gap-2;
   }
 
   &__tab-count {
@@ -344,7 +349,11 @@ onMounted(load);
 }
 
 .subscription-row {
-  @apply flex items-center gap-3 px-3 py-4 transition-colors md:px-5;
+  @apply flex items-center gap-3 px-3 py-4 transition-colors;
+
+  @media (width >= theme("screens.md")) {
+    @apply px-5;
+  }
 
   &:hover,
   &:focus-visible {
@@ -360,11 +369,19 @@ onMounted(load);
   }
 
   &__title {
-    @apply line-clamp-2 text-sm font-bold text-neutral-900 md:text-base;
+    @apply line-clamp-2 text-sm font-bold text-neutral-900;
+
+    @media (width >= theme("screens.md")) {
+      @apply text-base;
+    }
   }
 
   &__meta {
-    @apply mt-1 flex flex-wrap gap-x-1 text-xs text-neutral-600 md:text-sm;
+    @apply mt-1 flex flex-wrap gap-x-1 text-xs text-neutral-600;
+
+    @media (width >= theme("screens.md")) {
+      @apply text-sm;
+    }
   }
 
   &__side {
@@ -376,7 +393,11 @@ onMounted(load);
   }
 
   &__chevron {
-    @apply hidden shrink-0 text-neutral-400 sm:block;
+    @apply hidden shrink-0 text-neutral-400;
+
+    @media (width >= theme("screens.sm")) {
+      @apply block;
+    }
   }
 }
 </style>

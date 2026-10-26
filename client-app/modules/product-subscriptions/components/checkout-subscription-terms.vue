@@ -1,42 +1,60 @@
 <template>
   <VcWidget
-    v-if="hasSubscriptionItems"
+    v-if="hasSubscriptionItems || failed"
     :title="$t('product_subscriptions.checkout.title')"
     prepend-icon="refresh"
     size="lg"
     class="checkout-subscription-terms"
     data-test-id="checkout-subscription-terms"
   >
-    <ul class="checkout-subscription-terms__items">
-      <li v-for="item in subscribedLines" :key="item.lineItemId">
-        <strong>{{ item.name }}</strong>
+    <VcAlert v-if="failed" color="danger" size="sm" variant="soft" icon>
+      {{ $t("product_subscriptions.checkout.items_failed") }}
 
-        <span class="checkout-subscription-terms__interval">{{
-          intervalLabel($t, item.intervalUnit, item.intervalCount)
-        }}</span>
-      </li>
-    </ul>
+      <VcButton size="xs" variant="outline" class="checkout-subscription-terms__retry" @click="refresh">
+        {{ $t("product_subscriptions.checkout.retry") }}
+      </VcButton>
+    </VcAlert>
 
-    <div class="checkout-subscription-terms__text">
-      <VcLoader v-if="!terms" size="sm" />
+    <template v-else>
+      <ul class="checkout-subscription-terms__items">
+        <li v-for="item in subscribedLines" :key="item.lineItemId">
+          <strong>{{ item.name }}</strong>
 
-      <p v-else>{{ terms.text }}</p>
-    </div>
+          <span class="checkout-subscription-terms__interval">{{
+            intervalLabel($t, item.intervalUnit, item.intervalCount)
+          }}</span>
+        </li>
+      </ul>
 
-    <VcCheckbox
-      :model-value="accepted"
-      :disabled="saving || !terms"
-      test-id="checkout-subscription-terms-checkbox"
-      @update:model-value="onToggle"
-    >
-      {{ $t("product_subscriptions.checkout.agree") }}
-    </VcCheckbox>
+      <div class="checkout-subscription-terms__text">
+        <VcAlert v-if="termsFailed" color="danger" size="sm" variant="soft" icon>
+          {{ $t("product_subscriptions.checkout.terms_failed") }}
 
-    <p v-if="!accepted" class="checkout-subscription-terms__required">
-      {{ $t("product_subscriptions.checkout.required") }}
-    </p>
+          <VcButton size="xs" variant="outline" class="checkout-subscription-terms__retry" @click="loadTerms">
+            {{ $t("product_subscriptions.checkout.retry") }}
+          </VcButton>
+        </VcAlert>
 
-    <VcAlert v-if="error" color="danger" size="sm" variant="soft" icon class="mt-3">{{ error }}</VcAlert>
+        <VcLoader v-else-if="!terms" size="sm" />
+
+        <p v-else>{{ terms.text }}</p>
+      </div>
+
+      <VcCheckbox
+        :model-value="accepted"
+        :disabled="saving || !terms"
+        test-id="checkout-subscription-terms-checkbox"
+        @update:model-value="onToggle"
+      >
+        {{ $t("product_subscriptions.checkout.agree") }}
+      </VcCheckbox>
+
+      <p v-if="!accepted" class="checkout-subscription-terms__required">
+        {{ $t("product_subscriptions.checkout.required") }}
+      </p>
+
+      <VcAlert v-if="error" color="danger" size="sm" variant="soft" icon class="mt-3">{{ error }}</VcAlert>
+    </template>
   </VcWidget>
 </template>
 
@@ -49,7 +67,7 @@ import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuar
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useCartSubscriptions } from "../composables/useCartSubscriptions";
-import { errorMessage, intervalLabel } from "../utils";
+import { intervalLabel, subscriptionErrorMessage } from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
 
@@ -59,20 +77,31 @@ const GUARD_ID = "product-subscription-terms";
 
 const { t } = useI18n();
 const cart = computed(() => props.cart);
-const { items, hasSubscriptionItems, refresh } = useCartSubscriptions();
+const { subscribedItems, hasSubscriptionItems, loading, failed, refresh } = useCartSubscriptions(cart);
 const { registerGuard, unregisterGuard } = useCheckoutGuards();
 // Subscriptions are paid with the checkout's card, so accepting the terms makes the card form save it with the consent.
 const cardSaving = useCardSavingRequirement();
 
 const terms = ref<GetSubscriptionTermsQuery["subscriptionTerms"]>();
+const termsFailed = ref(false);
 const accepted = ref(false);
 const saving = ref(false);
 const error = ref<string>();
 
 const subscribedLines = computed(() => {
   const lines = new Map((cart.value?.items ?? []).map((x) => [x.id, x]));
-  return items.value.filter((x) => lines.has(x.lineItemId)).map((x) => ({ ...x, name: lines.get(x.lineItemId)?.name }));
+  return subscribedItems.value.map((x) => ({ ...x, name: lines.get(x.lineItemId)?.name }));
 });
+
+async function loadTerms(): Promise<void> {
+  termsFailed.value = false;
+  try {
+    terms.value = await getSubscriptionTerms();
+  } catch (e) {
+    Logger.error("checkout-subscription-terms.loadTerms", e);
+    termsFailed.value = true;
+  }
+}
 
 async function onToggle(value: boolean) {
   error.value = undefined;
@@ -97,34 +126,31 @@ async function onToggle(value: boolean) {
     });
 
     accepted.value = true;
-    cardSaving.require(consentId);
+    cardSaving.require(consentId, cart.value.id);
   } catch (e) {
     accepted.value = false;
-    error.value = errorMessage(e, t("product_subscriptions.errors.generic"));
+    error.value = subscriptionErrorMessage(e, t);
   } finally {
     saving.value = false;
   }
 }
 
-watch(
-  hasSubscriptionItems,
-  (has) => {
-    if (has) {
-      registerGuard(GUARD_ID, { canPlaceOrder: () => accepted.value });
-    } else {
-      unregisterGuard(GUARD_ID);
-    }
-  },
-  { immediate: true },
-);
-
-onMounted(async () => {
-  void refresh();
-  try {
-    terms.value = await getSubscriptionTerms();
-  } catch (e) {
-    Logger.error("checkout-subscription-terms", e);
+// A cart that no longer has subscription lines needs no consent, and its card no longer has to be saved.
+watch(hasSubscriptionItems, (has) => {
+  if (!has && accepted.value) {
+    accepted.value = false;
+    cardSaving.clear();
   }
+});
+
+// Registered for as long as the review shows: the order waits until the cart's subscriptions are known, and the
+// terms are accepted when there are any. A failed load keeps it blocked until the retry succeeds.
+onMounted(() => {
+  registerGuard(GUARD_ID, {
+    canPlaceOrder: () => !loading.value && !failed.value && (!hasSubscriptionItems.value || accepted.value),
+  });
+  void refresh();
+  void loadTerms();
 });
 
 onUnmounted(() => unregisterGuard(GUARD_ID));
@@ -138,7 +164,11 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
     @apply mb-3 flex flex-col gap-1 text-sm text-neutral-800;
 
     li {
-      @apply flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2;
+      @apply flex flex-col;
+
+      @media (width >= theme("screens.sm")) {
+        @apply flex-row flex-wrap items-baseline gap-x-2;
+      }
     }
   }
 
@@ -147,7 +177,11 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
 
     // The separator only makes sense on one line; on phones the frequency goes below the name.
     &::before {
-      @apply hidden sm:mr-2 sm:inline sm:content-['·'];
+      @apply hidden;
+
+      @media (width >= theme("screens.sm")) {
+        @apply me-2 inline content-['·'];
+      }
     }
   }
 
@@ -157,6 +191,10 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
 
   &__required {
     @apply mt-2 text-xs text-warning-700;
+  }
+
+  &__retry {
+    @apply mt-2;
   }
 }
 </style>

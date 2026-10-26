@@ -14,17 +14,18 @@
     />
 
     <div class="mt-3 flex flex-wrap gap-2">
-      <button
+      <VcButton
         v-for="testCard in MOCK_TEST_CARDS"
         :key="testCard.number"
-        type="button"
-        class="add-card-mock__chip"
+        size="xs"
+        variant="outline"
+        color="neutral"
         @click="useTestCard(testCard.number)"
       >
-        <span class="font-mono">•••• {{ testCard.number.slice(-4) }}</span>
+        <span class="add-card-mock__chip-number">•••• {{ testCard.number.slice(-4) }}</span>
 
         <span>{{ $t(`product_subscriptions.mock_payment.cards.${testCard.key}`) }}</span>
-      </button>
+      </VcButton>
     </div>
 
     <VcAlert v-if="addError" color="danger" size="sm" variant="soft" icon class="mt-3" role="alert">{{
@@ -75,7 +76,7 @@ import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { addSavedPaymentMethod } from "@/shared/payment/api/graphql";
 import { MOCK_PAYMENT_CODE, MOCK_TEST_CARDS } from "../constants";
-import { errorMessage } from "../utils";
+import { subscriptionErrorMessage } from "../utils";
 import type { BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
 
@@ -141,7 +142,7 @@ async function addCard(threeDsCompleted: boolean) {
     if (code === "AUTHENTICATION_REQUIRED" && !threeDsCompleted) {
       showThreeDs.value = true;
     } else {
-      addError.value = errorMessage(e, t("product_subscriptions.errors.generic"));
+      addError.value = subscriptionErrorMessage(e, t);
     }
   } finally {
     adding.value = false;
@@ -151,13 +152,8 @@ async function addCard(threeDsCompleted: boolean) {
 
 <style lang="scss">
 .add-card-mock {
-  &__chip {
-    @apply flex items-center gap-2 rounded-full border border-neutral-300 bg-additional-50 px-3 py-1 text-xs text-neutral-800;
-
-    &:hover,
-    &:focus-visible {
-      @apply border-primary bg-primary-50;
-    }
+  &__chip-number {
+    @apply me-1 font-mono;
   }
 }
 </style>

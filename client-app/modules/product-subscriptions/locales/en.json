@@ -64,7 +64,10 @@
     "checkout": {
       "title": "Your subscription",
       "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order."
+      "required": "Please accept the terms to place your order.",
+      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
+      "terms_failed": "We couldn't load the subscription terms.",
+      "retry": "Try again"
     },
     "mock_payment": {
       "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
@@ -103,7 +106,8 @@
         "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
         "paused": "No paused subscriptions.",
         "cancelled": "No cancelled subscriptions."
-      }
+      },
+      "tabs_label": "Subscription status"
     },
     "renewal": {
       "total": "Total",

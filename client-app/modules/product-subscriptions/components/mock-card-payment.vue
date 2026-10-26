@@ -25,18 +25,19 @@
           }}</span>
 
           <div class="mock-card-payment__chips">
-            <button
+            <VcButton
               v-for="testCard in MOCK_TEST_CARDS"
               :key="testCard.number"
-              type="button"
-              class="mock-card-payment__chip"
+              size="xs"
+              variant="outline"
+              color="neutral"
               :data-test-id="`mock-test-card-${testCard.key}`"
               @click="useTestCard(testCard.number)"
             >
-              <span class="font-mono">•••• {{ testCard.number.slice(-4) }}</span>
+              <span class="mock-card-payment__chip-number">•••• {{ testCard.number.slice(-4) }}</span>
 
               <span>{{ $t(`product_subscriptions.mock_payment.cards.${testCard.key}`) }}</span>
-            </button>
+            </VcButton>
           </div>
         </div>
 
@@ -150,7 +151,8 @@ const cardFormKey = ref(0);
 const saveCard = ref(true);
 const showThreeDs = ref(false);
 
-const subscriptionCheckout = cardSaving.read();
+// Only for the order placed from the cart whose subscription terms were accepted.
+const subscriptionCheckout = cardSaving.read({ order: order.value });
 const requiresSavedCard = computed(() => !!subscriptionCheckout);
 
 const savedMethods = computed(() => methodsFor(MOCK_PAYMENT_CODE));
@@ -297,13 +299,8 @@ onMounted(async () => {
     @apply flex flex-wrap gap-2;
   }
 
-  &__chip {
-    @apply flex items-center gap-2 rounded-full border border-neutral-300 bg-additional-50 px-3 py-1 text-xs text-neutral-800 transition-colors;
-
-    &:hover,
-    &:focus-visible {
-      @apply border-primary bg-primary-50;
-    }
+  &__chip-number {
+    @apply me-1 font-mono;
   }
 }
 </style>
