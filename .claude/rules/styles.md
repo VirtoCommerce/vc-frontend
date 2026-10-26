@@ -14,7 +14,7 @@ override**? A style that only looks right in the default light preset is a bug. 
 | Our habit | What the client gets |
 |---|---|
 | A literal colour | They switch the preset; this screen keeps our colour |
-| `!important` | They need `!important` too to override it |
+| `!important` | Their `!important` in `_custom.scss` or any unlayered CSS loses to it |
 | Long selectors (nesting over other blocks, `:has()`, tag/id chains) | Their one-class override loses |
 | A hardcoded value where a token exists | They can't reach it without editing our file |
 | A kit component restyled locally | Their `--vc-<component>-…` change doesn't reach this screen |
@@ -26,7 +26,8 @@ us; renaming or removing a BEM class or token is a breaking change (alias the to
 list it under Breaking changes in the PR). Check visual changes in Storybook's preset + dark toolbar
 (`client-app/assets/presets/index.ts`: 7 presets, each with a `.dark.json`).
 
-Nothing lints SCSS (no stylelint). Only the Sass/Tailwind compile in `yarn build`
+`yarn lint` does not parse SCSS; `yarn check:designs` and `yarn check:css-layers` check design folders and layer
+names (`client-app/assets/styles/README.md`, "Checks"). Beyond them, only the Sass/Tailwind compile in `yarn build`
 catches anything, so everything below is review-only. Severity guide: breaks the build or renders visibly wrong
 (in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
 
@@ -46,10 +47,10 @@ catches anything, so everything below is review-only. Severity guide: breaks the
    - New global tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss` (UI-kit tokens) or `main.scss`.
    - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
      Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
-     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: kit files in
-     `assets/styles/print/...` are registered in `_print-kit.scss` (`vc.kit`); app-level print rules go in
-     `_print-app.scss` (`vc.app`). A new file that is not registered is dead; one registered in the wrong
-     file lands in the wrong cascade layer.
+     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: files in `assets/styles/print/...`
+     are registered in `_print.scss` (layer `vc.print`); a component's top-level print-only `@media` lands in
+     `vc.print` automatically. A new file that is not registered is dead; one registered in the wrong file lands
+     in the wrong cascade layer.
    - Never `html.dark` / `.dark` selectors inside an SFC (there are none today).
 5. Shared transitions come from `assets/styles/helpers/_transitions.scss`: `fade`, `slide-fade-{left,right,top,bottom}`,
    `scale`, `shake`, `list` (tunable via `--transition-duration`, `--list-transform`). Don't redefine them per component.
