@@ -23,8 +23,4 @@ export type ConnectTokenResponseType = {
   error?: string;
   token_type?: string;
   lockoutSecondsRemaining?: number;
-  twoFactorToken?: string;
-  provider?: string;
-  providers?: Array<TwoFactorProviderType>;
-  resendSecondsRemaining?: number;
-};
+} & Partial<TwoFactorChallengeType>;

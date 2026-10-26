@@ -98,22 +98,18 @@ function _useAuth() {
     }
   }
 
-  async function authorize(username: string, password: string): Promise<void> {
-    const { storeId } = globals;
+  async function requestToken(grantParams: Record<string, string>, userName: string): Promise<void> {
+    const params = new URLSearchParams({ scope: "offline_access", ...grantParams });
 
-    const params = new URLSearchParams({
-      grant_type: "password",
-      scope: "offline_access",
-      storeId,
-      username,
-      password,
-    });
-
-    setLastSelectedOrganization(params, username);
+    setLastSelectedOrganization(params, userName);
 
     getTokenParams.value = params;
 
     await (getTokenRequest = getToken(true));
+  }
+
+  async function authorize(username: string, password: string): Promise<void> {
+    await requestToken({ grant_type: "password", storeId: globals.storeId, username, password }, username);
   }
 
   //  Signs in with a custom grant.  Existing state is replaced completely.
@@ -147,19 +143,7 @@ function _useAuth() {
   }
 
   async function otpSignIn({ email, code, storeId }: { email: string; code: string; storeId: string }): Promise<void> {
-    const params = new URLSearchParams({
-      grant_type: "otp_email",
-      scope: "offline_access",
-      storeId,
-      email,
-      code,
-    });
-
-    setLastSelectedOrganization(params, email);
-
-    getTokenParams.value = params;
-
-    await (getTokenRequest = getToken(true));
+    await requestToken({ grant_type: "otp_email", storeId, email, code }, email);
   }
 
   async function mfaSignIn({
@@ -173,19 +157,7 @@ function _useAuth() {
     code: string;
     storeId: string;
   }): Promise<void> {
-    const params = new URLSearchParams({
-      grant_type: "mfa",
-      scope: "offline_access",
-      storeId,
-      two_factor_token: twoFactorToken,
-      code,
-    });
-
-    setLastSelectedOrganization(params, email);
-
-    getTokenParams.value = params;
-
-    await (getTokenRequest = getToken(true));
+    await requestToken({ grant_type: "mfa", storeId, two_factor_token: twoFactorToken, code }, email);
   }
 
   async function refresh(organizationId?: string) {

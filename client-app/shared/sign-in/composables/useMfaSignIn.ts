@@ -9,9 +9,7 @@ import type { ConnectTokenResponseType } from "@/core/types";
 export type MfaResendResponseType = ICodeSignInResponse &
   Pick<ConnectTokenResponseType, "twoFactorToken" | "provider" | "providers" | "resendSecondsRemaining">;
 
-interface IMfaErrorEmits {
-  (event: "failed", error: IdentityErrorType): void;
-}
+type MfaFailedEmitType = (event: "failed", error: IdentityErrorType) => void;
 
 interface IVerifyCodeOptions {
   onVerified: () => Promise<unknown>;
@@ -41,7 +39,7 @@ export function useMfaSignIn() {
     });
   }
 
-  function handleError(result: ICodeSignInResponse | undefined, emit: IMfaErrorEmits) {
+  function handleError(result: ICodeSignInResponse | undefined, emit: MfaFailedEmitType) {
     const error = result?.error;
     const isWrongCode = error?.code === IdentityErrors.INVALID_CODE;
 

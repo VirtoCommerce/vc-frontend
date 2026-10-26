@@ -98,7 +98,7 @@ function onPaste(event: ClipboardEvent): void {
 
   event.preventDefault();
 
-  const standaloneCode = new RegExp(`(?<!\\d)\\d{${props.length}}(?!\\d)`).exec(pasted)?.[0];
+  const standaloneCode = new RegExp(String.raw`(?<!\d)\d{${props.length}}(?!\d)`).exec(pasted)?.[0];
   code.value = standaloneCode ?? pasted;
 }
 

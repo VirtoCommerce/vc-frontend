@@ -45,6 +45,31 @@ describe("useAuth", () => {
     tokenResponse.value = null;
   });
 
+  describe("authorize", () => {
+    it("requests a token with the password grant", async () => {
+      const { authorize } = await getUseAuth();
+
+      await authorize("buyer@acme.com", "secret");
+
+      expect(Object.fromEntries(tokenParams.value!.value!)).toEqual({
+        grant_type: "password",
+        scope: "offline_access",
+        storeId: "store-1",
+        username: "buyer@acme.com",
+        password: "secret",
+      });
+    });
+
+    it("signs in to the organization last selected for this user name", async () => {
+      localStorage.setItem("organization-id-buyer@acme.com", "org-b");
+      const { authorize } = await getUseAuth();
+
+      await authorize("buyer@acme.com", "secret");
+
+      expect(tokenParams.value!.value!.get("organization_id")).toBe("org-b");
+    });
+  });
+
   describe("otpSignIn", () => {
     it("requests a token with the otp_email grant", async () => {
       const { otpSignIn } = await getUseAuth();
