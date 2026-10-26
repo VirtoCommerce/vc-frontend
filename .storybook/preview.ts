@@ -3,6 +3,7 @@ import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
 import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
+import { CLASSIC_DESIGN, DESIGN_NAMES, resolveDesign, setDesignAttribute } from "../client-app/core/utilities/design";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
@@ -17,6 +18,8 @@ import type { Preview } from "@storybook/vue3-vite";
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
 import "../storybook-styles/main.scss";
+
+import.meta.glob("../client-app/designs/*/index.scss", { eager: true });
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
@@ -88,6 +91,11 @@ setThemeContext({
 // List of available theme presets
 const PRESETS = Object.keys(presets);
 type PresetNameType = keyof typeof presets;
+
+function toolbarTitle(name: string): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: name is a typed string parameter
+  return name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, " ");
+}
 
 let currentStyleElement: HTMLStyleElement | null = null;
 let currentPresetName: PresetNameType | null = null;
@@ -224,11 +232,16 @@ const preview: Preview = {
       toolbar: {
         title: "Theme preset",
         icon: "paintbrush",
-        items: PRESETS.map((preset) => ({
-          value: preset,
-          // eslint-disable-next-line sonarjs/null-dereference -- preset from Object.keys is always a string
-          title: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/-/g, " "),
-        })),
+        items: PRESETS.map((preset) => ({ value: preset, title: toolbarTitle(preset) })),
+        dynamicTitle: true,
+      },
+    },
+    design: {
+      description: "Select design",
+      toolbar: {
+        title: "Design",
+        icon: "component",
+        items: [CLASSIC_DESIGN, ...DESIGN_NAMES].map((design) => ({ value: design, title: toolbarTitle(design) })),
         dynamicTitle: true,
       },
     },
@@ -236,6 +249,7 @@ const preview: Preview = {
   initialGlobals: {
     darkMode: "light",
     themePreset: "default",
+    design: CLASSIC_DESIGN,
   },
   parameters: {
     controls: {
@@ -270,6 +284,7 @@ const preview: Preview = {
       }
 
       applyDarkMode(darkMode);
+      setDesignAttribute(resolveDesign(context.globals.design));
 
       return story();
     },
