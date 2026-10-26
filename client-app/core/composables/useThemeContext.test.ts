@@ -320,7 +320,6 @@ describe("useThemeContext - preset loading functions", () => {
   afterEach(() => {
     vi.clearAllMocks();
     globalThis.fetch = originalFetch;
-    delete document.documentElement.dataset.preset;
     hoisted.settings = {};
   });
 
@@ -485,12 +484,11 @@ describe("useThemeContext - preset loading functions", () => {
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
       expect(globalThis.fetch).not.toHaveBeenCalled();
-      expect(document.documentElement.dataset.preset).toBe("coffee");
     });
 
-    it("writes the resolved file name, not the requested name, to data-preset", async () => {
+    it("resolves the requested preset name to its file name", async () => {
       const { useThemeContext } = await importComposable();
-      const { setThemeContext, addPresetToThemeContext } = useThemeContext();
+      const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
 
       globalThis.fetch = vi.fn();
 
@@ -502,7 +500,24 @@ describe("useThemeContext - preset loading functions", () => {
 
       await addPresetToThemeContext("Coffee");
 
-      expect(document.documentElement.dataset.preset).toBe("coffee");
+      expect(themeContext.value.activePresetName).toBe("coffee");
+    });
+
+    it("leaves <html> without a data-preset attribute", async () => {
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, addPresetToThemeContext } = useThemeContext();
+
+      globalThis.fetch = vi.fn();
+
+      setThemeContext({
+        id: "test-store",
+        name: "Test Store",
+        settings: {},
+      } as unknown as StoreResponseType);
+
+      await addPresetToThemeContext("coffee");
+
+      expect(document.documentElement.hasAttribute("data-preset")).toBe(false);
     });
 
     it("falls back to current preset when requested preset is not found", async () => {
@@ -525,8 +540,8 @@ describe("useThemeContext - preset loading functions", () => {
 
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#default");
+      expect(themeContext.value.activePresetName).toBe("default");
       expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/non-existent-preset.json");
-      expect(document.documentElement.dataset.preset).toBe("default");
     });
 
     it("falls back to default preset when both requested and current presets are not found", async () => {

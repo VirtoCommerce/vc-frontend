@@ -1,13 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  byDesignName,
-  DESIGN_NAMES,
-  getDesign,
-  loadDesignStyles,
-  resolveDesign,
-  setDesignAttribute,
-  setPresetAttribute,
-} from "./index";
+import { byDesignName, DESIGN_NAMES, getDesign, loadDesignStyles, resolveDesign, setDesignAttribute } from "./index";
 
 const settings = vi.hoisted((): { value: Record<string, unknown> } => ({ value: {} }));
 const warn = vi.hoisted(() => vi.fn());
@@ -38,7 +30,6 @@ describe("design", () => {
   afterEach(() => {
     settings.value = {};
     delete document.documentElement.dataset.design;
-    delete document.documentElement.dataset.preset;
     vi.doUnmock("@/core/constants/environment");
     vi.doUnmock("@/designs/soft/index.scss");
   });
@@ -132,13 +123,6 @@ describe("design", () => {
       setDesignAttribute(design);
 
       expect(document.documentElement.getAttribute("data-design")).toBe(design);
-    });
-
-    it("writes data-preset on <html> and replaces the previous value", () => {
-      setPresetAttribute("coffee");
-      setPresetAttribute("red");
-
-      expect(document.documentElement.getAttribute("data-preset")).toBe("red");
     });
   });
 

@@ -7,9 +7,8 @@ writes outside a layer beats all of them.
 
 The storefront ships two designs from one markup: `classic` (default) and `soft`. The `design`
 setting in `client-app/config/settings_data.json` picks one; `app-runner.ts` writes it to
-`<html data-design="…">` before the app mounts, and the active colour preset to
-`<html data-preset="…">`. The design switches styles only: markup and `Vc*` props never change,
-and the design never changes the preset.
+`<html data-design="…">` before the app mounts. The design switches styles only: markup and `Vc*`
+props never change, and the design never changes the preset.
 
 ---
 

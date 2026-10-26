@@ -50,10 +50,6 @@ export function setDesignAttribute(design: string): void {
   document.documentElement.dataset.design = design;
 }
 
-export function setPresetAttribute(presetName: string): void {
-  document.documentElement.dataset.preset = presetName;
-}
-
 function reportStylesFailure(error: unknown): void {
   ignoreChunkLoadFailure(error);
   Logger.error("Failed to load the design styles.", error);
