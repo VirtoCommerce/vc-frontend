@@ -290,7 +290,8 @@ async function focusPanel(): Promise<void> {
     return;
   }
 
-  floating.value.focus();
+  // preventScroll: a reopened panel is still at its stale hidden position, and scrolling to it strands it there.
+  floating.value.focus({ preventScroll: true });
 }
 
 async function returnFocusToTrigger(): Promise<void> {
