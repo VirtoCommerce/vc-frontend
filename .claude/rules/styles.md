@@ -54,7 +54,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 ## 2. BEM naming and structure
 
 6. **One block per component, named after the file**: `points-balance.vue` → `.points-balance`. A page in
-   `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.sales-rep-calendar`). If block and file
+   `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.<m>-calendar`). If block and file
    diverge, rename the file, not the block. A second top-level block in one `<style>` means the second part is
    its own component. Vue `<transition>` classes (`.x-enter-from`) are fine. Also extract a component when an
    element needs elements of its own (`&__select-all-text`, `&__select-all-icon` → `select-all.vue`), when the root
