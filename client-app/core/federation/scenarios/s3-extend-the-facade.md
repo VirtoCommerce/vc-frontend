@@ -42,6 +42,8 @@ contribution the host renders, or a component only when its look is the contract
 4. **Verify, because no PR check does it for you:** 📁 `vc-frontend`: `yarn validate:core-types`.
 5. **Commit together** `index.ts`, the `contract/` files and `core-api/package.json`. Open the PR.
 6. Meanwhile, develop the plugin against your checkout with yalc ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
+   To build or deploy it before the merge (its CI, a QA environment), publish an alpha of the branch
+   ([facade README §5](../../../core-api/README.md#5-releasing)).
 7. **After the merge, release the facade.** Run the _Core Facade Release_ workflow from `dev`. It publishes
    `core-v<version>`.
 8. **Pin the release in the plugin.** 📁 `StorefrontApp`: `yalc remove @vc-frontend/core`, point
@@ -59,7 +61,8 @@ page or widget shows on that environment: `--env` does not see gate 1.
 1. **Two facade PRs can take the same version.** Merge `dev` before `build:core-types`, and again before merging.
 2. **A changed prop on an exported component is breaking, yet the bump stays a patch:** the check compares export
    names only. Bump by hand (`yarn bump:core minor`).
-3. **Never delete a `core-v*` release or tag.** Every plugin pinned to it stops installing.
+3. **Never delete a stable `core-v*` release or tag.** Every plugin pinned to it stops installing. Alphas are deleted
+   by the next stable release, so never merge a plugin pinned to one.
 
 ---
 
