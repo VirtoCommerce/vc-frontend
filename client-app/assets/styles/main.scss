@@ -23,13 +23,15 @@
     scroll-padding-top: var(--vc-app-header-height, 0px);
   }
 
-  @include meta.load-css("print-app");
   @include meta.load-css("dark-app");
 }
 
 @layer vc.kit {
-  @include meta.load-css("print-kit");
   @include meta.load-css("dark-kit");
+}
+
+@layer vc.print {
+  @include meta.load-css("print");
 }
 
 /* Use for custom themes only */

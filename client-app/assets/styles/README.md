@@ -2,7 +2,7 @@
 
 This folder holds the storefront's global stylesheets and the **cascade-layer order** every
 stylesheet in the app is sorted into. Layers decide who wins *before* specificity does: our
-component styles sit in low layers, design and preset rules in higher ones, and anything a fork
+component styles sit in low layers, design and print rules in higher ones, and anything a fork
 writes outside a layer beats all of them.
 
 The storefront ships two designs from one markup: `classic` (default) and `soft`. The `design`
@@ -20,7 +20,7 @@ and the design never changes the preset.
 ```css
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
-@layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset;
+@layer vc.vendor, vc.kit, vc.app, vc.design, vc.print;
 @layer vc.design.kit, vc.design.app;
 ```
 
@@ -48,11 +48,11 @@ and the design never changes the preset.
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
-| `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss`, `_print-kit.scss` |
-| `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss`, `_print-app.scss` |
+| `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss` |
+| `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
 | `vc.design.kit` | soft files of ui-kit blocks: `client-app/ui-kit/styles/soft/` |
 | `vc.design.app` | soft files of app blocks: `client-app/assets/styles/soft/` |
-| `vc.preset` | reserved for small per-preset fixes on `html[data-preset="…"]`; empty so far |
+| `vc.print` | `_print.scss`; every component's print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
 | `utilities` | declared, empty on Tailwind 3 |
@@ -73,7 +73,9 @@ CSS keeps working against utilities as before.
 ### Component styles are layered for you
 
 `postcss.sfc-layers.cjs` (registered in `postcss.config.cjs`, after `tailwindcss`) wraps every
-Vue SFC `<style>` module: `client-app/ui-kit/**` → `vc.kit`, every other component → `vc.app`. It
+Vue SFC `<style>` module: `client-app/ui-kit/**` → `vc.kit`, every other component → `vc.app`.
+A top-level `@media` whose every comma-separated query starts with `print` or `only print` goes to
+`vc.print` instead, so it beats every design rule in print; `@media screen, print` stays put. It
 hoists `@charset`/`@import`, restates the `_layers.scss` order in front of each module (a component
 chunk can load before the entry CSS, as in the federation build), and skips `App.vue` and every
 `.scss`/`.css` entry. **Never hand-wrap an SFC style in `@layer`.** Each SFC module carries one
@@ -192,7 +194,6 @@ A fork that edited one of these merges its change into the new place, in the new
 | Before | Now |
 | --- | --- |
 | `_dark.scss` | `_dark-kit.scss` (`html.dark` rules, kit dark files; `vc.kit`) and `_dark-app.scss` (`dark/shared/**`; `vc.app`) |
-| `_print.scss` | `_print-kit.scss` (kit print files; `vc.kit`) and `_print-app.scss` (`html`/`body`/`#app` rules; `vc.app`) |
 | `@import … layer(nouislider)` in `nouislider.layer.css` | `layer(vc.vendor)` |
 | `@use "swiper/css…"` in `vendors/_swiper.scss` | `@import "swiper/css…" layer(vc.vendor);` |
 | `.storybook/preview.ts` importing `_ui-kit-tokens.scss` and `_dark.scss` | one import of `storybook-styles/main.scss` |
