@@ -527,7 +527,12 @@
           "duplicate_email_login_attempt": "Flera konton använder den här e-postadressen.",
           "lockout_disabled": "Det här kontot kan inte logga in med en kod.",
           "invalid_code": "Den här koden fungerade inte.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Din inloggningssession har gått ut. Logga in igen.",
+          "code_attempts_exceeded": "För många felaktiga koder. Vänta några minuter och logga in igen.",
+          "mfa_provider_not_available": "Vi kan inte skicka en inloggningskod till det här kontot. Kontakta din administratör.",
+          "two_factor_unavailable": "Det här kontot kräver ett andra inloggningssteg, men det är inte tillgängligt. Kontakta administratören.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -547,7 +552,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Verifiering lyckades, men växling till kundkontot misslyckades. Försök igen.",
-          "generic": "Något gick fel. Försök igen."
+          "generic": "Något gick fel. Försök igen.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -634,12 +648,7 @@
         "verify": {
           "header": "Kolla din e-post",
           "subtitle": "Vi skickade en kod till {email}.",
-          "code_label": "Kod",
-          "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
-          "submit_button": "Logga in",
-          "resend_button": "Skicka koden igen",
-          "use_different_email_link": "Använd en annan e-postadress",
-          "live_resent": "Ny kod skickad."
+          "use_different_email_link": "Använd en annan e-postadress"
         },
         "locked": {
           "title": "För många misslyckade försök",
@@ -655,6 +664,19 @@
           "password_button": "Logga in med lösenord",
           "back_link": "Tillbaka till inloggningen"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Ange inloggningskoden",
+        "subtitle": "Vi har skickat en kod till {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Kod",
+        "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
+        "submit_button": "Logga in",
+        "resend_button": "Skicka koden igen",
+        "resend_countdown": "Skicka koden igen om {seconds} s",
+        "live_resent": "Ny kod skickad."
       }
     },
     "company": {
