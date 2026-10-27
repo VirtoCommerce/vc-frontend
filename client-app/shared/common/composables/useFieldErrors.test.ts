@@ -60,6 +60,18 @@ describe("useFieldErrors", () => {
       expect(messages).toEqual({ lastName: "common.messages.invalid_value" });
     });
 
+    // An input shows one message: the first of its failed rules, as with vee-validate's own errors
+    it("keeps the first message when an input fails two rules", () => {
+      const { showSaveErrors } = useFieldErrors();
+
+      const messages = showSaveErrors(
+        apolloError(invalid("lastName", "InvalidCharacters"), invalid("lastName", "HtmlTagsNotAllowed")),
+        ["lastName"],
+      );
+
+      expect(messages).toEqual({ lastName: "common.messages.invalid_characters" });
+    });
+
     // E.g. a phone set in the admin that the profile form has no input for: still reported, never silent
     it("shows a toast for a rejected field the form has no input for", () => {
       const { showSaveErrors } = useFieldErrors();
@@ -101,6 +113,14 @@ describe("useFieldErrors", () => {
       expect(getErrorNotification([{ field: "addresses[2].lastName" }]).text).toBe("common.messages.invalid_addresses");
       expect(getErrorNotification([{ field: "name" }]).text).toBe("common.messages.invalid_data");
       expect(getErrorNotification([]).text).toBe("common.messages.something_went_wrong");
+    });
+
+    it("names addresses when any of the rejected fields is an address field", () => {
+      const { getErrorNotification } = useFieldErrors();
+
+      const notification = getErrorNotification([{ field: "addresses[0].city" }, { field: "name" }]);
+
+      expect(notification.text).toBe("common.messages.invalid_addresses");
     });
   });
 });
