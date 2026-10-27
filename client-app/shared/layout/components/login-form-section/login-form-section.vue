@@ -14,10 +14,10 @@
         />
 
         <template v-else>
-          <SignInForm grow-buttons />
+          <SignInForm grow-buttons @step-changed="passwordStep = $event" />
 
           <button
-            v-if="hasOtpEmailAuthentication"
+            v-if="showSwitchToOtpLink"
             type="button"
             class="mt-4 block text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
             data-test-id="otp-email-switch-to-otp-link"
@@ -69,7 +69,6 @@ import { SignInForm, useUser } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
-import { OtpStep } from "@/shared/sign-in/enums";
 import { getImageUrl } from "@/ui-kit/utilities";
 import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 
@@ -78,7 +77,8 @@ const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
 const { hasPasswordAuthentication } = useIdentityProviders();
 const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
-const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
+const { showOtpEmailForm, showSwitchToOtpLink, otpStep, passwordStep, stepHeader, switchToOtp, switchToPassword } =
+  useOtpSignInMode(hasOtpEmailAuthentication);
 
 const bgImage = computed(() =>
   themeContext.value.settings.homepage_background_image
@@ -86,11 +86,7 @@ const bgImage = computed(() =>
     : "none",
 );
 
-const sectionTitle = computed(() =>
-  showOtpEmailForm.value && otpStep.value === OtpStep.Verify
-    ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
-    : t("pages.home.sign_in_form_title"),
-);
+const sectionTitle = computed(() => stepHeader.value ?? t("pages.home.sign_in_form_title"));
 </script>
 
 <style scoped>

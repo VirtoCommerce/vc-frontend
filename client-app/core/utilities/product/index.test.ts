@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getProductRoute } from "./index";
+import { getProductListIndex, getProductRoute } from "./index";
 
 describe("getProductRoute", () => {
   describe("when productSlug is provided", () => {
@@ -54,5 +54,18 @@ describe("getProductRoute", () => {
       const result = getProductRoute("product-123", undefined, "/loyalty-catalog/");
       expect(result).toEqual({ name: "LoyaltyProduct", params: { productId: "product-123" } });
     });
+  });
+});
+
+describe("getProductListIndex", () => {
+  const PRODUCTS = [{ id: "a" }, { id: "b" }, { id: "c" }];
+
+  it("returns the zero-based position of the product in the list", () => {
+    expect(getProductListIndex(PRODUCTS, "a")).toBe(0);
+    expect(getProductListIndex(PRODUCTS, "c")).toBe(2);
+  });
+
+  it("returns undefined for a product that is not in the list", () => {
+    expect(getProductListIndex(PRODUCTS, "x")).toBeUndefined();
   });
 });
