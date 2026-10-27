@@ -292,7 +292,7 @@ describe("VcPopover", () => {
 
       await open(wrapper);
 
-      expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+      expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
     });
 
     it("keeps the focus a consumer placed inside the panel before the panel could take it", async () => {
