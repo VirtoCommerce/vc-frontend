@@ -209,6 +209,48 @@ export type { CustomerOrderType } from "@/core/api/graphql/types";
 // Already reachable through the list-sharing types; exported so a plugin can name it.
 export type { SharingTargetType } from "@/core/api/graphql/types";
 
+// Dashboard layout engine (VCST-6078). A dashboard page owns a layout controller (`useLayout(scope)`), hands it
+// to `<LayoutSurface>` and shapes its statistics queries from the same object (`useStatDataNeeds`); its blocks
+// join drag-and-drop, hiding and persistence through `registerBlock(scope, block)` and render inside
+// `<LayoutWidget>`. The Sales Rep Hub plugin runs its dashboards on this engine instead of carrying a copy.
+// Direct file paths, not the `shared/dashboard` barrel (same reason as the composables above), and nothing
+// from its `_internal/` folders: the surface and the widget are the two components whose look is the contract.
+export { default as LayoutSurface } from "@/shared/dashboard/components/layout-surface.vue";
+export { default as LayoutWidget } from "@/shared/dashboard/components/layout-widget.vue";
+export { useLayout } from "@/shared/dashboard/composables/useLayout";
+export { useBlockChrome } from "@/shared/dashboard/composables/useBlockChrome";
+export { useStatDataNeeds } from "@/shared/dashboard/composables/useStatDataNeeds";
+export { registerBlock, unregisterBlock } from "@/shared/dashboard/registry";
+export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "@/shared/dashboard/settings";
+export { buildStatCards, statBlocks, statDataNeeds } from "@/shared/dashboard/stat-cards";
+export {
+  buildStatisticsWindows,
+  formatSignedPercent,
+  formatStatCount,
+  formatStatMoney,
+} from "@/shared/dashboard/statistics";
+export { MIN_ROWS } from "@/shared/dashboard/constants";
+export type { ILayoutBlockChromeType } from "@/shared/dashboard/composables/useBlockChrome";
+export type {
+  IStatCardDefType,
+  StatCardDataType,
+  StatNeedResultType,
+  StatQueryStateType,
+} from "@/shared/dashboard/stat-cards";
+export type { SignedPercentType, StatisticsWindowsType } from "@/shared/dashboard/statistics";
+export type {
+  BlockSettingsType,
+  BlockSettingType,
+  BlockType,
+  IStatBlock,
+  IWidgetBlock,
+  LayoutControllerType,
+  LayoutRegionIdType,
+  LayoutVisibilityType,
+  MaxRowsSettingType,
+  StatCardType,
+  StatDataNeedsType,
+} from "@/shared/dashboard/types";
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 export const CORE_VERSION: string = version;
