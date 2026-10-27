@@ -3099,6 +3099,16 @@ type ChangeWishlistPayloadType = CreateWishlistPayloadType & {
     message?: string;
 };
 
+type TwoFactorProviderType = {
+    name: string;
+    destination?: string;
+};
+type TwoFactorChallengeType = {
+    twoFactorToken: string;
+    provider?: string;
+    providers?: Array<TwoFactorProviderType>;
+    resendSecondsRemaining?: number;
+};
 type IdentityErrorType = {
     code?: string;
     description?: string;
@@ -3111,7 +3121,7 @@ type ConnectTokenResponseType = {
     error?: string;
     token_type?: string;
     lockoutSecondsRemaining?: number;
-};
+} & Partial<TwoFactorChallengeType>;
 
 interface ICurrency {
     code: string;
@@ -5716,7 +5726,10 @@ interface IBasicAnalyticsEventMap {
     viewItemList: [items: {
         code: string;
     }[], params?: EventParamsType & ListPropertiesType];
-    selectItem: [item: Product | LineItemType, params?: EventParamsType & ListPropertiesType];
+    selectItem: [
+        item: Product | LineItemType,
+        params?: EventParamsType & ListPropertiesType & SelectItemParamsAdditionalType
+    ];
     viewItem: [item: Product, params?: EventParamsType];
     addItemToWishList: [item: Product, params?: EventParamsType];
     addItemToCart: [
@@ -5748,6 +5761,9 @@ type AddToCartParamsAdditionalType = {
     source_route?: string;
     source_block?: string;
     search_term?: string;
+};
+type SelectItemParamsAdditionalType = {
+    index?: number;
 };
 type LoginParamsAdditionalType = {
     errors?: string;
@@ -5808,6 +5824,7 @@ declare function _useAuth(): {
     }[] | undefined>;
     resetErrors: () => void;
     lockoutSecondsRemaining: vue.ComputedRef<number | undefined>;
+    twoFactorChallenge: vue.ComputedRef<TwoFactorChallengeType | undefined>;
     isAuthorizing: Readonly<vue.ShallowRef<boolean>>;
     authorize: (username: string, password: string) => Promise<void>;
     authorizeWithGrant: (params: URLSearchParams) => Promise<ConnectTokenResponseType | null>;
@@ -5817,8 +5834,15 @@ declare function _useAuth(): {
         code: string;
         storeId: string;
     }) => Promise<void>;
+    mfaSignIn: ({ email, twoFactorToken, code, storeId, }: {
+        email: string;
+        twoFactorToken: string;
+        code: string;
+        storeId: string;
+    }) => Promise<void>;
     refresh: (organizationId?: string) => Promise<void>;
     unauthorize: () => Promise<void>;
+    revokeTokens: () => Promise<void>;
     resetTokens: () => void;
     setTokenType: (type: string) => void;
     setAccessToken: (token: string) => void;
@@ -6083,7 +6107,7 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_NAMES, _default$6 as IdentityProvider, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$7 as OrderStatus, _default$2 as OrderSummary, PlatformPermissions, QueryParamName, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$y as VcAlert, _default$J as VcBadge, _default$I as VcBreadcrumbs, _default$x as VcButton, _default$w as VcCalendar, _default$H as VcCheckbox, _default$G as VcCheckboxGroup, _default$v as VcChip, _default$g as VcDatePicker, _default$f as VcDateRangePicker, _default$u as VcDialog, _default$t as VcDialogContent, _default$s as VcDialogFooter, _default$r as VcDialogHeader, _default$q as VcEmptyView, _default$F as VcIcon, _default$E as VcImage, _default$p as VcInput, _default$D as VcInputDetails, _default$C as VcLabel, _default$8 as VcLayout, _default$B as VcLink, _default$o as VcLoaderOverlay, _default$A as VcMarkdownRender, _default$n as VcMenuItem, _default$e as VcModal, _default$d as VcPagination, _default$m as VcPopover, _default$l as VcRating, _default$k as VcSelect, _default$j as VcTabSwitch, _default$c as VcTable, _default$b as VcTableColumn, _default$i as VcTextarea, _default$z as VcTooltip, _default$h as VcTypography, _default$a as VcWidget, _default$9 as VcWidgetSkeleton, _default as VendorName, XApiPermissions, apolloClient, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
+export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$6 as IdentityProvider, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$7 as OrderStatus, _default$2 as OrderSummary, PlatformPermissions, QueryParamName, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$y as VcAlert, _default$J as VcBadge, _default$I as VcBreadcrumbs, _default$x as VcButton, _default$w as VcCalendar, _default$H as VcCheckbox, _default$G as VcCheckboxGroup, _default$v as VcChip, _default$g as VcDatePicker, _default$f as VcDateRangePicker, _default$u as VcDialog, _default$t as VcDialogContent, _default$s as VcDialogFooter, _default$r as VcDialogHeader, _default$q as VcEmptyView, _default$F as VcIcon, _default$E as VcImage, _default$p as VcInput, _default$D as VcInputDetails, _default$C as VcLabel, _default$8 as VcLayout, _default$B as VcLink, _default$o as VcLoaderOverlay, _default$A as VcMarkdownRender, _default$n as VcMenuItem, _default$e as VcModal, _default$d as VcPagination, _default$m as VcPopover, _default$l as VcRating, _default$k as VcSelect, _default$j as VcTabSwitch, _default$c as VcTable, _default$b as VcTableColumn, _default$i as VcTextarea, _default$z as VcTooltip, _default$h as VcTypography, _default$a as VcWidget, _default$9 as VcWidgetSkeleton, _default as VendorName, XApiPermissions, apolloClient, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useRouteQueryParam, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
 export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
