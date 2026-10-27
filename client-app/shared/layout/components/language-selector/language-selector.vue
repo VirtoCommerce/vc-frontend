@@ -52,6 +52,7 @@
 import { getSlugInfo } from "@/core/api/graphql/slugInfo/queries/getSlugInfo";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
+import { safeDecode } from "@/core/utilities/common";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
@@ -77,9 +78,14 @@ async function select(cultureName: string) {
   const slugInfo = await getSlugInfo({ permalink, cultureName });
 
   if (!slugInfo?.entityInfo) {
+    const slug = getUrlWithoutLocale(location.pathname).slice(1);
+    // The current page may itself be shown through this fallback; keep the culture that owns the slug.
+    const isShownThroughFallback =
+      !!previousCultureSlug.value?.cultureName && safeDecode(previousCultureSlug.value.slug) === safeDecode(slug);
+
     previousCultureSlug.value = {
-      cultureName: currentLanguage.value?.cultureName,
-      slug: getUrlWithoutLocale(location.pathname).slice(1),
+      cultureName: isShownThroughFallback ? previousCultureSlug.value.cultureName : currentLanguage.value?.cultureName,
+      slug,
     };
   } else {
     previousCultureSlug.value = {
