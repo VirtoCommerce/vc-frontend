@@ -83,7 +83,7 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
-export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";

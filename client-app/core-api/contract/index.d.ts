@@ -4903,6 +4903,23 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
 };
 declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;
+declare const EXTENSION_CATEGORIES: {
+    readonly headerMenu: "headerMenu";
+    readonly mobileMenu: "mobileMenu";
+    readonly accountMenu: "accountMenu";
+    readonly mobileHeader: "mobileHeader";
+    readonly topHeaderStatus: "topHeaderStatus";
+    readonly productCard: "productCard";
+    readonly productPage: "productPage";
+    readonly paymentPage: "paymentPage";
+    readonly orderPaymentPage: "orderPaymentPage";
+    readonly cartPayment: "cartPayment";
+    readonly orderDetails: "orderDetails";
+    readonly sharedList: "sharedList";
+    readonly checkout: "checkout";
+    readonly identityProviders: "identityProviders";
+    readonly signInMethods: "signInMethods";
+};
 
 type NamedCategoryType = keyof typeof EXTENSION_NAMES;
 type SlotNameType<C extends ExtensionCategoryType> = C extends NamedCategoryType ? (typeof EXTENSION_NAMES)[C][keyof (typeof EXTENSION_NAMES)[C]] : string;
