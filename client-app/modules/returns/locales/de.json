@@ -59,6 +59,8 @@
         "returnable": "Retournierbar",
         "quantity": "Menge"
       },
+      "ordered_count": "Bestellt: {count}",
+      "returnable_count": "Retournierbar: {count}",
       "quantity_for": "Rücksendemenge für {name}",
       "continue": "Weiter"
     },
@@ -96,7 +98,8 @@
         "date": "Datum",
         "status": "Status",
         "quantity": "Menge"
-      }
+      },
+      "items_count": "Keine Artikel | {count} Artikel | {count} Artikel"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Angefragt",
       "approved": "Genehmigt"
     },
+    "requested_count": "Angefragt: {count}",
+    "approved_count": "Genehmigt: {count}",
     "table_description": "zurückgesendete Artikel"
   },
   "return_cancel": {

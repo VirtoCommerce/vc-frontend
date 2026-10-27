@@ -38,13 +38,16 @@ defineProps<IProps>();
     --value-color: var(--color-neutral-500);
   }
 
-  @apply grid grid-cols-[auto_1fr_auto] gap-1 items-end text-[length:var(--font-size)] leading-[1.5];
+  // `--vc-property-columns` / `--vc-property-dots-display` let a compact host lay properties out inline.
+  @apply grid grid-cols-[var(--vc-property-columns,auto_1fr_auto)] gap-1 items-end text-[length:var(--font-size)] leading-[1.5];
 
   &__label {
     @apply min-w-0 truncate text-[--label-color];
   }
 
   &__dots {
+    display: var(--vc-property-dots-display, block);
+
     @apply mb-[3px] border-b border-dotted border-neutral-200;
   }
 

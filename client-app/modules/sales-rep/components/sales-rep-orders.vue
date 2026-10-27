@@ -57,33 +57,22 @@
             :skeleton-rows="rowLimit"
             :sort="sortInfo"
             mobile-breakpoint="lg"
+            mobile-cards
             @header-click="applySort"
           >
             <template #mobile-item="{ item }">
-              <div class="sales-rep-orders__mobile-item">
-                <div class="sales-rep-orders__mobile-row">
-                  <VcLink
-                    class="sales-rep-orders__order-link"
-                    :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ item.number }}
-                  </VcLink>
-
-                  <span class="sales-rep-orders__mobile-total">{{ item.total }}</span>
-                </div>
-
-                <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
-
-                <div class="sales-rep-orders__mobile-sub">
-                  <span>{{ $d(item.createdDate, "short") }}</span>
-
-                  <template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
-                </div>
-
-                <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
-              </div>
+              <VcRecordCard
+                :title="item.number"
+                :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
+                target="_blank"
+                :description="$d(item.createdDate, 'short')"
+                :metric="item.total"
+                :meta="getOrderMeta(item)"
+              >
+                <template #status>
+                  <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
@@ -167,6 +156,7 @@ import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import SalesRepRuleToggles from "./sales-rep-rule-toggles.vue";
+import type { SalesRepOrderRowType } from "../types";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
@@ -276,6 +266,15 @@ const { orders, loading, error } = useSalesRepOrders({
 });
 
 const failed = computed(() => Boolean(error.value));
+
+// Across customers the customer names the order; within one, the item count is what tells orders apart.
+function getOrderMeta(item: SalesRepOrderRowType): VcRecordCardMetaItemType[] {
+  if (isCrossCustomer.value) {
+    return item.organizationName ? [{ icon: "building-2", text: item.organizationName }] : [];
+  }
+
+  return [{ icon: "package", text: t("sales_rep.orders.items_count", { count: item.itemsCount }) }];
+}
 </script>
 
 <style lang="scss">
@@ -296,6 +295,11 @@ const failed = computed(() => Boolean(error.value));
 
   &__content {
     @apply px-1.5 pb-3 pt-1;
+
+    // Room around the mobile cards inside the dashboard widget.
+    @media (width < theme("screens.lg")) {
+      @apply px-4 pb-4 pt-3;
+    }
   }
 
   &__all-link {
@@ -309,26 +313,6 @@ const failed = computed(() => Boolean(error.value));
   // VcTable breaks cell text at any character; a long order number would otherwise split these values mid-word.
   &__value {
     @apply whitespace-nowrap;
-  }
-
-  &__mobile-item {
-    @apply flex flex-col gap-1 border-b px-5 py-4;
-  }
-
-  &__mobile-row {
-    @apply flex items-center justify-between gap-2 font-bold;
-  }
-
-  &__mobile-total {
-    @apply shrink-0 whitespace-nowrap;
-  }
-
-  &__mobile-customer {
-    @apply font-medium;
-  }
-
-  &__mobile-sub {
-    @apply text-sm text-neutral-600;
   }
 }
 </style>

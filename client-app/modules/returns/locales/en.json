@@ -59,6 +59,8 @@
         "returnable": "Returnable",
         "quantity": "Return qty"
       },
+      "ordered_count": "Ordered: {count}",
+      "returnable_count": "Returnable: {count}",
       "quantity_for": "Return quantity for {name}",
       "continue": "Continue"
     },
@@ -96,7 +98,8 @@
         "date": "Date",
         "status": "Status",
         "quantity": "Qty"
-      }
+      },
+      "items_count": "No items | {count} item | {count} items"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Requested",
       "approved": "Approved"
     },
+    "requested_count": "Requested: {count}",
+    "approved_count": "Approved: {count}",
     "table_description": "returned items"
   },
   "return_cancel": {

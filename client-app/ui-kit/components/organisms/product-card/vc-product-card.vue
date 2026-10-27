@@ -19,6 +19,25 @@
 
         <slot />
       </div>
+
+      <div v-if="viewMode === 'list' && $slots.menu" class="vc-product-card__menu">
+        <VcDropdownMenu placement="bottom-end">
+          <template #trigger="{ triggerProps }">
+            <VcButton
+              :aria-label="menuLabel || $t('ui_kit.labels.actions')"
+              icon="ellipsis-vertical"
+              color="secondary"
+              variant="ghost"
+              size="xs"
+              v-bind="triggerProps"
+            />
+          </template>
+
+          <template #content="{ close }">
+            <slot name="menu" :close="close" />
+          </template>
+        </VcDropdownMenu>
+      </div>
     </div>
 
     <slot name="expanded-content" />
@@ -27,17 +46,31 @@
 
 <script setup lang="ts">
 import { useTemplateRef, onMounted } from "vue";
+import { usePopoverHostTeleport } from "@/ui-kit/composables";
 
 export interface IProps {
   viewMode?: "grid" | "list" | "item";
   background?: boolean;
   border?: boolean;
+  /** Accessible name of the ⋮ menu button (list view). */
+  menuLabel?: string;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   viewMode: "grid",
   background: true,
 });
+
+defineSlots<{
+  default?: () => unknown;
+  media?: () => unknown;
+  "expanded-content"?: () => unknown;
+  /** `VcMenuItem`s of the ⋮ menu shown in the compact list view (secondary actions: add to list, compare). */
+  menu?: (scope: { close: () => void }) => unknown;
+}>();
+
+// List view: the ⋮ menu floats in the app-level popover host; rendered in place it is sized by the narrow menu column.
+usePopoverHostTeleport(() => props.viewMode === "list");
 
 const media = useTemplateRef("media");
 const content = useTemplateRef("content");
@@ -81,6 +114,7 @@ onMounted(() => {
 
   --bg: var(--vc-product-card-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-product-card-radius, var(--vc-radius, 0.5rem));
+  --menu-icon-size: var(--vc-product-card-menu-icon-size, 1.25rem);
 
   @apply @container;
 
@@ -146,40 +180,59 @@ onMounted(() => {
     #{$list} & {
       @apply grid items-center;
 
+      // Compact product row: thumbnail + identity on top, price and control under a divider.
       @container (width < theme("containers.2xl")) {
         grid-template-areas:
-          "media title"
-          "media vendor"
-          "media price"
-          "media add-to-cart";
-        grid-auto-rows: min-content min-content min-content min-content;
-        grid-auto-columns: min-content 1fr;
+          "media title title menu"
+          "media vendor vendor vendor"
+          "media properties properties properties"
+          "divider divider divider divider"
+          "price price add-to-cart add-to-cart"
+          "meta meta meta meta";
+        grid-template-columns: min-content minmax(0, 1fr) auto auto;
+        grid-auto-rows: min-content;
+
+        // The divider row between identity and price/control; nothing to divide on an identity-only row.
+        &::after {
+          @apply my-3 border-t border-neutral-200;
+
+          content: "";
+          grid-area: divider;
+        }
+
+        &#{$hasTitleOnly},
+        &#{$hasTitleVendorOnly} {
+          &::after {
+            @apply hidden;
+          }
+        }
 
         &#{$hasTitleOnly} {
-          grid-template-areas: "media title";
+          grid-template-areas: "media title title menu";
           grid-auto-rows: 1fr;
         }
 
         &#{$hasTitleVendorOnly} {
           grid-template-areas:
-            "media title"
-            "media vendor";
+            "media title title menu"
+            "media vendor vendor vendor";
           grid-auto-rows: 1fr 1fr;
         }
 
         &#{$hasTitlePriceOnly} {
           grid-template-areas:
-            "media title"
-            "media price";
-          grid-auto-rows: 1fr 1fr;
+            "media title title menu"
+            "divider divider divider divider"
+            "price price price price";
         }
 
         &#{$hasTitleAddToCartOnly},
         &#{$hasTitleProductButtonOnly} {
           grid-template-areas:
-            "media title"
-            "media add-to-cart";
-          grid-auto-rows: min-content min-content;
+            "media title title menu"
+            "divider divider divider divider"
+            "add-to-cart add-to-cart add-to-cart add-to-cart"
+            "meta meta meta meta";
         }
       }
 
@@ -298,6 +351,18 @@ onMounted(() => {
 
   &__content {
     @apply contents;
+  }
+
+  &__menu {
+    --vc-button-icon-size: var(--menu-icon-size);
+
+    @apply relative z-[2] -mt-1 -me-1.5 ms-2 self-start;
+
+    grid-area: menu;
+
+    @container (min-width: theme("containers.2xl")) {
+      @apply hidden;
+    }
   }
 
   &__expander {

@@ -67,11 +67,13 @@
       "unavailable_date": "Tämä päivämäärä ei ole saatavilla"
     },
     "labels": {
+      "actions": "Toiminnot",
       "not_available": "Ei saatavilla",
       "price_per_item": "Hinta per tuote",
       "product": "Tuote",
       "product_quantity": "Tuotteen määrä",
       "properties": "Ominaisuudet",
+      "quantity_times": "{quantity} ×",
       "subtotal": "Välisumma",
       "toggle_vendor_select": "Avaa/sulje myyjän valinta",
       "total": "Yhteensä",

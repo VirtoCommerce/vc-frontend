@@ -178,7 +178,8 @@
       "other": "Annet",
       "vendor_name": "Leverandør: {name}",
       "not_available": "Ikke tilgjengelig",
-      "product_reviews": "Produktomtaler"
+      "product_reviews": "Produktomtaler",
+      "default": "Standard"
     },
     "prefixes": {
       "please": "Vennligst",
@@ -1054,7 +1055,8 @@
         "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
         "share_button": "Del",
-        "last_modified_label": "Sist endret: {date}"
+        "last_modified_label": "Sist endret: {date}",
+        "items_count": "Ingen varer | {count} vare | {count} varer"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
@@ -1377,7 +1379,6 @@
         "order_number_label": "Bestillingsnummer",
         "purchase_number_label": "Innkjøpsordre",
         "buyer_name_label": "Kjøpers navn",
-        "payment_type_label": "Betalingstype",
         "status_label": "@:common.labels.status",
         "invoice_label": "Faktura",
         "date_label": "@:common.labels.date",

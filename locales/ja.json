@@ -178,7 +178,8 @@
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
       "not_available": "N/A",
-      "product_reviews": "商品レビュー"
+      "product_reviews": "商品レビュー",
+      "default": "既定"
     },
     "prefixes": {
       "please": "お願いします",
@@ -1054,7 +1055,8 @@
         "remove_list_button": "リストを削除",
         "make_private_button": "Make private",
         "share_button": "Share",
-        "last_modified_label": "Last modified: {date}"
+        "last_modified_label": "Last modified: {date}",
+        "items_count": "商品なし | {count} 点 | {count} 点"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
@@ -1377,7 +1379,6 @@
         "order_number_label": "注文番号",
         "purchase_number_label": "発注番号",
         "buyer_name_label": "購入者名",
-        "payment_type_label": "支払い方法",
         "status_label": "@:common.labels.status",
         "invoice_label": "請求書",
         "date_label": "@:common.labels.date",

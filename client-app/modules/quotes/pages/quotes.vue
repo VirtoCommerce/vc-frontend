@@ -49,7 +49,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <VcWidget v-else size="lg">
+    <VcWidget v-else size="lg" mobile-flat>
       <template #default-container>
         <VcTable
           :loading="fetching"
@@ -59,52 +59,24 @@
           :pages="pages"
           :page="page"
           :description="$t('quotes.meta.table_description')"
+          mobile-breakpoint="lg"
+          mobile-cards
           @item-click="goToQuoteDetails"
           @header-click="applySorting"
           @page-changed="changePage"
         >
-          <template #mobile-item="itemData">
-            <button
-              type="button"
-              class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
-              tabindex="0"
-              @click="goToQuoteDetails(itemData.item)"
-              @keyup.enter="goToQuoteDetails(itemData.item)"
+          <template #mobile-item="{ item }">
+            <VcRecordCard
+              :title="item.number"
+              :external-link="getQuoteRoute(item).href"
+              :target="quoteLinkTarget"
+              :description="$d(item.createdDate)"
+              :metric="item.totals?.grandTotalInclTax?.formattedAmount"
             >
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.quote_number_label") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
-                  {{ itemData.item.number }}
-                </span>
-              </div>
-
-              <div class="flex flex-col items-end justify-center">
-                <QuoteStatus :status="itemData.item.status" />
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.date_label") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis">
-                  {{ $d(itemData.item?.createdDate) }}
-                </span>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.total_label") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis font-black">
-                  {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
-                </span>
-              </div>
-            </button>
+              <template #status>
+                <QuoteStatus :status="item.status" size="sm" />
+              </template>
+            </VcRecordCard>
           </template>
 
           <template #desktop-body>
@@ -153,6 +125,7 @@ import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
 import type { ISortInfo } from "@/core/types";
+import type { RouteLocationResolved } from "vue-router";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -162,6 +135,7 @@ usePageHead({
 });
 
 const { browserTarget } = useBrowserTarget();
+const quoteLinkTarget = computed(() => (browserTarget.value === BrowserTargetType.BLANK ? "_blank" : undefined));
 
 const { quotes, fetching, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);
@@ -200,9 +174,14 @@ async function changePage(newPage: number): Promise<void> {
   await fetchQuotes();
 }
 
-function goToQuoteDetails(payload: { id: string; status?: string }): void {
+function getQuoteRoute(payload: { id: string; status?: string }): RouteLocationResolved {
   const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
-  const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
+
+  return router.resolve({ name: pathName, params: { quoteId: payload.id } });
+}
+
+function goToQuoteDetails(payload: { id: string; status?: string }): void {
+  const quoteRoute = getQuoteRoute(payload);
 
   if (browserTarget.value === BrowserTargetType.BLANK) {
     window.open(quoteRoute.href, "_blank")!.focus();

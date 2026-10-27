@@ -178,7 +178,8 @@
       "other": "Autre",
       "vendor_name": "Fournisseur: {name}",
       "not_available": "N/A",
-      "product_reviews": "Avis sur le produit"
+      "product_reviews": "Avis sur le produit",
+      "default": "Par défaut"
     },
     "prefixes": {
       "please": "S'il vous plaît",
@@ -1054,7 +1055,8 @@
         "remove_list_button": "Supprimer la liste",
         "make_private_button": "Rendre privé",
         "share_button": "Partager",
-        "last_modified_label": "Dernière modification : {date}"
+        "last_modified_label": "Dernière modification : {date}",
+        "items_count": "Aucun article | {count} article | {count} articles"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",
@@ -1377,7 +1379,6 @@
         "order_number_label": "Numéro de commande",
         "purchase_number_label": "Numéro de commande d'achat",
         "buyer_name_label": "Nom de l'acheteur",
-        "payment_type_label": "Mode de paiement",
         "status_label": "@:common.labels.status",
         "invoice_label": "Facture",
         "date_label": "@:common.labels.date",

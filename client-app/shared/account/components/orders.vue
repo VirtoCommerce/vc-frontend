@@ -93,7 +93,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <VcWidget v-else size="lg">
+    <VcWidget v-else size="lg" mobile-flat>
       <template #default-container>
         <OrdersTable
           :loading="ordersLoading"

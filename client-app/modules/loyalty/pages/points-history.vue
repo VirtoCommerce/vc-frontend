@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <VcWidget size="lg">
+    <VcWidget size="lg" mobile-flat>
       <template #default-container>
         <VcTable
           :loading="historyLoading"
@@ -21,46 +21,24 @@
           :page="page"
           :hide-default-footer="false"
           mobile-breakpoint="lg"
+          mobile-cards
           @page-changed="changePage"
         >
-          <template #mobile-item="itemData">
-            <div
-              class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
-            >
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.operation") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
-                  {{ getOperation(itemData.item) }}
-                </span>
-              </div>
-
-              <div class="flex flex-col items-end justify-center">
-                {{ getOperationType(itemData.item) }}
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.date") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis">
-                  {{ $d(itemData.item?.createdDate) }}
-                </span>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.amount") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis font-black">
-                  {{ itemData.item?.amount }}
-                </span>
-              </div>
-            </div>
+          <template #mobile-item="{ item }">
+            <VcRecordCard :title="getOperation(item)" :description="$d(item.createdDate)" :metric="item.amount">
+              <template v-if="item.operationType" #status>
+                <VcChip
+                  :color="isRedeemed(item) ? 'warning' : 'success'"
+                  :icon="isRedeemed(item) ? 'minus' : 'plus'"
+                  variant="outline"
+                  size="sm"
+                  rounded
+                  nowrap
+                >
+                  {{ getOperationType(item) }}
+                </VcChip>
+              </template>
+            </VcRecordCard>
           </template>
 
           <template #desktop-body>
@@ -141,8 +119,12 @@ function getOperation(log: LoyaltyOperationLog) {
   return log.object?.type;
 }
 
+function isRedeemed(log: LoyaltyOperationLog): boolean {
+  return log.operationType === REDEEMED_OPERATION;
+}
+
 function getOperationType(log: LoyaltyOperationLog) {
-  if (log.operationType === REDEEMED_OPERATION) {
+  if (isRedeemed(log)) {
     return t("loyalty.points-history.redeemed");
   }
 

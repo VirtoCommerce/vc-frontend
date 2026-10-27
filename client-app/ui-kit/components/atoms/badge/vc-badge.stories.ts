@@ -146,6 +146,20 @@ export const OnlyIcon: StoryObj = {
   render: renderTemplate('<VcBadge v-bind="args"><VcIcon name="fire" /></VcBadge>'),
 };
 
+/** `--vc-badge-size` and `--vc-badge-font-size` override the box and text size of any size step (initials avatar). */
+export const CustomSize: StoryObj = {
+  args: {
+    color: "accent",
+    variant: "soft",
+    size: "lg",
+    rounded: true,
+    square: true,
+  },
+  render: renderTemplate(
+    '<VcBadge v-bind="args" style="--vc-badge-size: 2rem; --vc-badge-font-size: 0.75rem">DO</VcBadge>',
+  ),
+};
+
 export const Dot: StoryObj = {
   render: renderTemplate(`<VcBadge />`),
 };

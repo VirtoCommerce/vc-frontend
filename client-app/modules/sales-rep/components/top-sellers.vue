@@ -39,23 +39,26 @@
             :skeleton-rows="rowLimit"
             :sort="sortInfo"
             mobile-breakpoint="lg"
+            mobile-cards
             @header-click="applySort"
           >
             <template #mobile-item="{ item }">
-              <div class="top-sellers__mobile-item">
-                <span class="top-sellers__rank">{{ item.rank }}</span>
+              <VcRecordCard
+                :title="item.name"
+                :to="getProductRoute(item.productId)"
+                target="_blank"
+                :description="item.sku"
+                :metric="item.revenue"
+                :meta="getSellerMeta(item)"
+              >
+                <template #lead>
+                  <span class="top-sellers__thumb">
+                    <VcImage v-if="item.imageUrl" :src="item.imageUrl" alt="" class="top-sellers__thumb-img" />
 
-                <VcLink
-                  :to="getProductRoute(item.productId)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="top-sellers__name"
-                >
-                  {{ item.name }}
-                </VcLink>
-
-                <span class="top-sellers__sub">{{ item.sku }} · {{ item.units }} · {{ item.revenue }}</span>
-              </div>
+                    <VcIcon v-else name="cube" />
+                  </span>
+                </template>
+              </VcRecordCard>
             </template>
 
             <VcTableColumn
@@ -133,6 +136,7 @@ import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
+import type { SalesRepTopSellerRowType } from "../types";
 
 interface IProps {
   // Widget heading (the caller decides the wording).
@@ -189,6 +193,13 @@ const { items, loading, error } = useSalesRepTopSellers({
 });
 
 const failed = computed(() => Boolean(error.value));
+
+function getSellerMeta(item: SalesRepTopSellerRowType): VcRecordCardMetaItemType[] {
+  return [
+    { icon: "hash", text: String(item.rank) },
+    { icon: "package", text: t("sales_rep.top_sellers.units_count", { count: item.units }) },
+  ];
+}
 </script>
 
 <style lang="scss">
@@ -209,6 +220,11 @@ const failed = computed(() => Boolean(error.value));
 
   &__content {
     @apply px-1.5 pb-3 pt-1;
+
+    // Room around the mobile cards inside the dashboard widget.
+    @media (width < theme("screens.lg")) {
+      @apply px-4 pb-4 pt-3;
+    }
   }
 
   &__product {
@@ -237,17 +253,9 @@ const failed = computed(() => Boolean(error.value));
     @apply text-sm text-neutral-500;
   }
 
-  &__rank {
-    @apply font-bold;
-  }
-
   // VcTable breaks cell text at any character; a long product name would otherwise split the numbers mid-digit.
   &__number {
     @apply whitespace-nowrap;
-  }
-
-  &__mobile-item {
-    @apply flex flex-col gap-1 border-b px-5 py-4;
   }
 }
 </style>

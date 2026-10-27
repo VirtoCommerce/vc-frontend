@@ -25,7 +25,7 @@
       </template>
     </VcEmptyView>
 
-    <VcWidget v-else size="lg">
+    <VcWidget v-else size="lg" mobile-flat>
       <template #default-container>
         <!-- View Table -->
         <VcTable
@@ -36,61 +36,36 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.account.addresses.meta.table_description')"
+          mobile-breakpoint="lg"
+          mobile-cards
           @page-changed="onPageChange"
           @header-click="applySorting"
         >
-          <template #mobile-item="itemData">
-            <div class="relative grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.recipient_name") }}
-                </span>
+          <template #mobile-item="{ item }">
+            <VcRecordCard :title="toCSV([item.firstName, item.lastName], ' ')" :meta="getAddressMeta(item)">
+              <template #description>
+                <span class="block">{{ toCSV([item.line1, item.line2]) }}</span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
-                  {{ itemData.item.firstName }} {{ itemData.item.lastName }}
-                </span>
-              </div>
+                <span class="block">{{ toCSV([item.city, item.regionName, item.countryCode, item.postalCode]) }}</span>
+              </template>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.address") }}
-                </span>
+              <template #actions>
+                <AddressDropdownMenu
+                  :address="item"
+                  compact
+                  @edit="openAddOrUpdateAddressModal(item)"
+                  @delete="removeAddress(item)"
+                />
+              </template>
 
-                <span class="overflow-hidden text-ellipsis">
-                  {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
-                  {{ itemData.item.line1 }}
-                  {{ itemData.item.postalCode }}
-                </span>
-              </div>
+              <template v-if="item.isDefault" #status>
+                <VcBadge color="warning" variant="outline" size="sm" rounded nowrap>
+                  <VcIcon name="star" />
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.phone") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis pr-4">
-                  {{ itemData.item.phone }}
-                </span>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.email") }}
-                </span>
-
-                <span class="overflow-hidden text-ellipsis">
-                  {{ itemData.item.email }}
-                </span>
-              </div>
-
-              <AddressDropdownMenu
-                class="absolute right-4 top-3"
-                :address="itemData.item"
-                placement="left-start"
-                @edit="openAddOrUpdateAddressModal(itemData.item)"
-                @delete="removeAddress(itemData.item)"
-              />
-            </div>
+                  <span>{{ $t("common.labels.default") }}</span>
+                </VcBadge>
+              </template>
+            </VcRecordCard>
           </template>
 
           <template #desktop-body>
@@ -132,6 +107,7 @@ import { useI18n } from "vue-i18n";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
+import { toCSV } from "@/core/utilities";
 import { AddressDropdownMenu, useCustomerAddresses } from "@/shared/account";
 import { ADDRESS_FORM_FIELD_NAMES, useFieldErrors } from "@/shared/common";
 import { useModal } from "@/shared/modal";
@@ -183,6 +159,22 @@ const columns = computed<VcTableColumnType[]>(() => [
     sortable: true,
   },
 ]);
+
+function getAddressMeta(address: MemberAddressFieldsFragment): VcRecordCardMetaItemType[] {
+  const meta: VcRecordCardMetaItemType[] = [];
+
+  if (address.organization) {
+    meta.push({ icon: "building-2", text: address.organization });
+  } else if (address.email) {
+    meta.push({ icon: "mail", text: address.email });
+  }
+
+  if (address.phone) {
+    meta.push({ icon: "phone", text: address.phone });
+  }
+
+  return meta;
+}
 
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });

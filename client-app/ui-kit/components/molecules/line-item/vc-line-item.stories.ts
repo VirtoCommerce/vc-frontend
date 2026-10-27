@@ -110,3 +110,56 @@ export const QuantityInput: StoryType = {
     </VcLineItem>`,
   }),
 };
+
+/** Compact row (narrow container): availability chips on the meta line with the total, extra actions in ⋮. */
+export const BadgesAndMenu: StoryType = {
+  args: {
+    ...basicArgs,
+    withImage: true,
+    withProperties: true,
+    withPrice: true,
+    withTotal: true,
+    selectable: true,
+    removable: true,
+  },
+  render: (args) => ({
+    components: { VcLineItem, VcAddToCart },
+    setup: () => ({ args }),
+    template: `<div class="max-w-sm"><VcLineItem v-bind="args">
+      <VcAddToCart hide-button />
+
+      <template #badges>
+        <VcBadge color="success" variant="outline" rounded>In stock</VcBadge>
+      </template>
+
+      <template #menu="{ close }">
+        <VcMenuItem color="secondary" @click="close">
+          <template #prepend>
+            <VcIcon name="bookmark" />
+          </template>
+
+          <span>Save for later</span>
+        </VcMenuItem>
+      </template>
+    </VcLineItem></div>`,
+  }),
+};
+
+/** Read-only line (order): the compact row shows `quantity × price` and the line total. */
+export const ReadonlyQuantity: StoryType = {
+  args: {
+    ...basicArgs,
+    withImage: true,
+    withProperties: true,
+    withPrice: true,
+    withTotal: true,
+    quantity: 2,
+  },
+  render: (args) => ({
+    components: { VcLineItem, VcAddToCart },
+    setup: () => ({ args }),
+    template: `<div class="max-w-sm"><VcLineItem v-bind="args">
+      <VcAddToCart :model-value="2" hide-button disabled />
+    </VcLineItem></div>`,
+  }),
+};

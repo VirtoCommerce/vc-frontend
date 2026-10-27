@@ -67,11 +67,13 @@
       "unavailable_date": "Esta fecha no está disponible"
     },
     "labels": {
+      "actions": "Acciones",
       "not_available": "N/D",
       "price_per_item": "Precio por artículo",
       "product": "Producto",
       "product_quantity": "Cantidad de producto",
       "properties": "Propiedades",
+      "quantity_times": "{quantity} ×",
       "subtotal": "Subtotal",
       "toggle_vendor_select": "Alternar selección de proveedor",
       "total": "Total",

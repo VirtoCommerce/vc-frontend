@@ -85,6 +85,9 @@ function createWrapper(tasks: SalesRepTaskType[], busy = false) {
         VcTable: VcTableStub,
         VcTableColumn: VcTableColumnStub,
         SalesRepTaskStatus: true,
+        VcRecordCard: {
+          template: '<div><slot name="title" /><slot name="description" /><slot /><slot name="status" /></div>',
+        },
         SalesRepTaskAction: {
           props: ["task", "disabled"],
           emits: ["toggle"],

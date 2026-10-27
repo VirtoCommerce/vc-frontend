@@ -67,11 +67,13 @@
       "unavailable_date": "Detta datum är inte tillgängligt"
     },
     "labels": {
+      "actions": "Åtgärder",
       "not_available": "Ej tillgänglig",
       "price_per_item": "Pris per enhet",
       "product": "Produkt",
       "product_quantity": "Produktantal",
       "properties": "Egenskaper",
+      "quantity_times": "{quantity} ×",
       "subtotal": "Delsumma",
       "toggle_vendor_select": "Växla leverantörsval",
       "total": "Totalt",

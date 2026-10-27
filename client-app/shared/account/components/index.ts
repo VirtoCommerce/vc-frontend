@@ -2,6 +2,7 @@ export { default as AccountShell } from "./account-shell.vue";
 export { default as AddressDropdownMenu } from "./address-dropdown-menu.vue";
 export { default as ChangePasswordForm } from "./change-password-form.vue";
 export { default as CouponItem } from "./coupon-item.vue";
+export { default as CouponRecordCard } from "./coupon-record-card.vue";
 export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
 export { default as ImpersonateForm } from "./impersonate-form.vue";
 export { default as OrderLineItems } from "./order-line-items.vue";

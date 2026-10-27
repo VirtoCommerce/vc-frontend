@@ -67,11 +67,13 @@
       "unavailable_date": "This date is unavailable"
     },
     "labels": {
+      "actions": "Actions",
       "not_available": "N/A",
       "price_per_item": "Price per item",
       "product": "Product",
       "product_quantity": "Product quantity",
       "properties": "Properties",
+      "quantity_times": "{quantity} ×",
       "subtotal": "Subtotal",
       "toggle_vendor_select": "Toggle vendor select",
       "total": "Total",

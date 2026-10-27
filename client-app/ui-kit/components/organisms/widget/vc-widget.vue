@@ -8,6 +8,7 @@
         'vc-widget--collapsed': _collapsed,
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
+        'vc-widget--mobile-flat': mobileFlat,
       },
     ]"
   >
@@ -84,6 +85,8 @@ interface IProps {
   shadow?: boolean;
   border?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
+  /** Below `lg` drops the frame (border, radius, shadow, background) and the `VcContainer` breakout, so a card list inside sits on the page. Padding stays: use `#default-container` for edge-to-edge content. */
+  mobileFlat?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -196,6 +199,19 @@ watchEffect(() => {
 
   &--no-border {
     @apply border-none shadow-none;
+  }
+
+  &--mobile-flat {
+    @media (width < theme("screens.lg")) {
+      --bg-color: transparent;
+
+      @apply rounded-none border-none shadow-none;
+
+      // Cancels the full-bleed breakout the block applies inside VcContainer.
+      .vc-container & {
+        @apply mx-0;
+      }
+    }
   }
 
   &__header-container {

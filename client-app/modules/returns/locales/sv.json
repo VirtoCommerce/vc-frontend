@@ -59,6 +59,8 @@
         "returnable": "Returnerbar",
         "quantity": "Antal"
       },
+      "ordered_count": "Beställt: {count}",
+      "returnable_count": "Returnerbar: {count}",
       "quantity_for": "Returantal för {name}",
       "continue": "Fortsätt"
     },
@@ -96,7 +98,8 @@
         "date": "Datum",
         "status": "Status",
         "quantity": "Antal"
-      }
+      },
+      "items_count": "Inga artiklar | {count} artikel | {count} artiklar"
     }
   },
   "return_details": {
@@ -115,6 +118,8 @@
       "requested": "Begärt",
       "approved": "Godkänt"
     },
+    "requested_count": "Begärt: {count}",
+    "approved_count": "Godkänt: {count}",
     "table_description": "returnerade varor"
   },
   "return_cancel": {

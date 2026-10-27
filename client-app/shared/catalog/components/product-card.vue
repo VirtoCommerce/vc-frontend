@@ -25,6 +25,7 @@
       </VcProductImage>
 
       <VcProductActions
+        class="product-card__actions"
         :direction="viewMode === 'grid' ? 'vertical' : 'horizontal'"
         :with-background="viewMode === 'grid'"
       >
@@ -122,6 +123,12 @@
 
       <CountInCart :product-id="product.id" :currency="product.price.currency" />
     </AddToCartSimple>
+
+    <template v-if="viewMode === 'list'" #menu="{ close }">
+      <AddToList :product="product" menu-item @click="close" />
+
+      <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" menu-item @click="close" />
+    </template>
 
     <template v-if="viewMode === 'list'" #expanded-content>
       <div v-show="isExpanded" class="product-card__variants-wrapper">
@@ -306,6 +313,15 @@ const variationsCount = computed(() =>
 
   &--list {
     $list: &;
+  }
+
+  &__actions {
+    // Compact list rows keep these actions in the ⋮ menu.
+    #{$list} & {
+      @container (width < theme("containers.2xl")) {
+        @apply hidden;
+      }
+    }
   }
 
   &__variations-button {

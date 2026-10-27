@@ -244,10 +244,32 @@ watch(
 
       &--list {
         #{$wrapperSelector} {
-          @apply mt-3 w-full max-w-60;
+          // Compact row: the input sits in the control cell, the availability chips on the meta line below.
+          // A box-less element can't answer size queries, so it stops being a container for its children.
+          @container (width < theme("containers.2xl")) {
+            @apply contents;
+
+            container-type: normal;
+          }
 
           @container (min-width: theme("containers.2xl")) {
             @apply mt-0 ms-3 w-[10.625rem] max-w-none;
+          }
+        }
+
+        #{$wrapperSelector} > #{$self}__input {
+          @container (width < theme("containers.2xl")) {
+            @apply w-32 justify-self-end;
+
+            grid-area: add-to-cart;
+          }
+        }
+
+        #{$wrapperSelector} > #{$self}__badges {
+          @container (width < theme("containers.2xl")) {
+            @apply mt-3 pt-2.5 border-t border-dashed border-neutral-200;
+
+            grid-area: meta;
           }
         }
       }

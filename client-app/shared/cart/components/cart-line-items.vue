@@ -43,15 +43,16 @@
         :aria="getQuantityAria(item.id)"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
+    </template>
 
-      <div v-if="item.availabilityData?.isInStock" class="mt-2 text-center">
-        <InStock
-          :is-in-stock="item.availabilityData?.isInStock"
-          :is-available="!item.deleted"
-          :quantity="item.availabilityData?.availableQuantity"
-          :is-digital="item.productType === ProductType.Digital"
-        />
-      </div>
+    <template #badges="{ item }">
+      <InStock
+        v-if="item.availabilityData?.isInStock"
+        :is-in-stock="item.availabilityData?.isInStock"
+        :is-available="!item.deleted"
+        :quantity="item.availabilityData?.availableQuantity"
+        :is-digital="item.productType === ProductType.Digital"
+      />
     </template>
 
     <template #after-content="{ item }">
@@ -81,14 +82,15 @@
       </div>
     </template>
 
-    <template #after-image="{ item }">
+    <template #menu="{ item, close }">
       <CartItemActions
-        icons
+        menu-item
         :saveable-for-later="!hideControls?.includes('save-for-later')"
-        :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
-        data-test-id="cart-item-actions-after-image"
-        @save-for-later="$emit('saveForLater', [item.id])"
+        @save-for-later="
+          close();
+          $emit('saveForLater', [item.id]);
+        "
       />
     </template>
 

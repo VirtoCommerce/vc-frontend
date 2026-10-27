@@ -124,7 +124,7 @@ defineProps<IProps>();
           @container (width < theme("containers.2xl")) {
             --vc-product-price-font-size: theme("fontSize.base");
 
-            @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
+            @apply self-center flex-row items-center gap-x-1.5 flex-wrap;
           }
 
           @container (min-width: theme("containers.2xl")) {

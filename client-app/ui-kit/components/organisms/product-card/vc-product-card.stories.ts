@@ -1208,3 +1208,42 @@ export const ListTitleVendorPriceProductButton: StoryType = {
     },
   },
 };
+
+/** Compact list row (narrow container): secondary actions in the ⋮ menu, availability chips under the stepper line. */
+export const ListMenu: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  // The ⋮ menu floats in the app-level popover host, as in the storefront.
+  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
+  render: renderCard(`
+    <div class="max-w-sm">
+      <VcProductCard v-bind="args">
+        <VcProductImage v-bind="image" />
+
+        <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
+
+        <VcProductProperties>
+          <VcProperty label="SKU">IP16-128-BLK</VcProperty>
+          <VcProperty label="Brand">Apple</VcProperty>
+        </VcProductProperties>
+
+        <VcProductPrice v-bind="price" />
+
+        <VcQuantityStepper :model-value="1">
+          <VcChip v-bind="chip1">1230</VcChip>
+        </VcQuantityStepper>
+
+        <template #menu="{ close }">
+          <VcMenuItem color="secondary" @click="close">
+            <template #prepend>
+              <VcIcon name="heart" />
+            </template>
+
+            <span>Add to list</span>
+          </VcMenuItem>
+        </template>
+      </VcProductCard>
+    </div>
+  `),
+};
