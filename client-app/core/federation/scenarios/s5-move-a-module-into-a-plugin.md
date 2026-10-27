@@ -18,7 +18,8 @@ Pick the scaffold flags the module needs: `--with-i18n`, `--with-apollo`, `--wit
    ([S3](./s3-extend-the-facade.md)) or a small copy inside the plugin. This list is the real size of the port.
 
 2. **Extend and release the facade** for what is missing (S3). Meanwhile, work against it with yalc
-   ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
+   ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)), and against an alpha pre-release of
+   the facade branch where CI or QA needs it (S3 step 6).
 3. **Move the code** into `StorefrontApp/src/`: components, composables, pages, locales, GraphQL documents. Change
    each `@/…` import to `@vc-frontend/core`. Test helpers come from `@vc-frontend/core/testing`. A spec that mocks
    several host paths needs one `vi.mock("@vc-frontend/core", …)` holding them all: two mocks of the same path

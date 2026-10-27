@@ -30,6 +30,7 @@ import {
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type { UserType } from "@/core/api/graphql/account/queries/getMe";
+import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -173,7 +174,10 @@ export function _useUser() {
     }
   }
 
-  async function updateUser(personalData: UserPersonalDataType): Promise<void> {
+  async function updateUser(
+    personalData: UserPersonalDataType,
+    context?: ErrorNotificationsContextType,
+  ): Promise<void> {
     if (!user.value?.contact) {
       return;
     }
@@ -181,11 +185,14 @@ export function _useUser() {
     try {
       loading.value = true;
 
-      await updateContact({
-        ...personalData,
-        selectedAddressId: user.value.contact.selectedAddressId,
-        id: user.value.contact.id,
-      });
+      await updateContact(
+        {
+          ...personalData,
+          selectedAddressId: user.value.contact.selectedAddressId,
+          id: user.value.contact.id,
+        },
+        context,
+      );
 
       await fetchUser({ withBroadcast: true });
     } catch (e) {
