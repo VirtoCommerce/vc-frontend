@@ -7,7 +7,7 @@
     <ExtensionPoint
       v-for="signInMethod in extendedSignInMethods"
       :key="signInMethod.name"
-      category="signInMethods"
+      :category="EXTENSION_CATEGORIES.signInMethods"
       :name="signInMethod.name"
     >
       <template #default="{ extensionProps }">
@@ -79,6 +79,7 @@ import { usePageHead } from "@/core/composables";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useSignInMethods } from "@/shared/account";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
 import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
 import type { GetSignInMethodsQuery, SignInKeyType } from "@/core/api/graphql/types";
@@ -99,7 +100,7 @@ const extendedSignInMethods = computed(() =>
   signInMethods.value.filter(
     (signInMethod) =>
       themeContext.value.storeSettings.authenticationTypes.includes(signInMethod.name) &&
-      getContribution("signInMethods", signInMethod.name),
+      getContribution(EXTENSION_CATEGORIES.signInMethods, signInMethod.name),
   ),
 );
 

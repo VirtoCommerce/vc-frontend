@@ -2,9 +2,9 @@ import { computed } from "vue";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { heldPolicyOf } from "@/core/federation/contributions/declare";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
 
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
-const IDENTITY_PROVIDERS_CATEGORY = "identityProviders";
 
 const BUILT_IN_PROVIDERS = new Set(
   Object.keys(import.meta.glob("../components/*-provider.vue")).map((path) =>
@@ -40,8 +40,8 @@ export function useIdentityProviders() {
   function hasButton(type: string): boolean {
     return (
       BUILT_IN_PROVIDERS.has(type.toLowerCase()) ||
-      isRegistered(IDENTITY_PROVIDERS_CATEGORY, type) ||
-      heldPolicyOf(IDENTITY_PROVIDERS_CATEGORY, type) !== undefined
+      isRegistered(EXTENSION_CATEGORIES.identityProviders, type) ||
+      heldPolicyOf(EXTENSION_CATEGORIES.identityProviders, type) !== undefined
     );
   }
 

@@ -3,7 +3,7 @@
     <ExtensionPoint
       v-for="providerName in providers"
       :key="providerName"
-      category="identityProviders"
+      :category="EXTENSION_CATEGORIES.identityProviders"
       :name="providerName"
       :return-url="returnUrl"
     >
@@ -16,6 +16,7 @@
 import { useMemoize } from "@vueuse/core";
 import { defineAsyncComponent } from "vue";
 import { Logger } from "@/core/utilities";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
 import type { Component } from "vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
