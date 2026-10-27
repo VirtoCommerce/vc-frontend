@@ -133,14 +133,13 @@ import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts"
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { AddressDropdownMenu, useCustomerAddresses } from "@/shared/account";
-import { useFieldErrors } from "@/shared/common";
+import { ADDRESS_FORM_FIELD_NAMES, useFieldErrors } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
-// The inputs of the address dialog. The page saves one address, so the server names its fields addresses[0].<name>
-const ADDRESS_FIELD_NAMES = ["firstName", "lastName", "email", "phone", "city", "line1", "line2"];
+// The page saves one address, so the server names its fields addresses[0].<name>
 const ADDRESS_FIELD_PREFIX = "addresses[0].";
 
 const { t } = useI18n();
@@ -207,7 +206,7 @@ function openAddOrUpdateAddressModal(address?: MemberAddressFieldsFragment): voi
             SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
           );
         } catch (e) {
-          serverErrors.value = showSaveErrors(e, ADDRESS_FIELD_NAMES, ADDRESS_FIELD_PREFIX);
+          serverErrors.value = showSaveErrors(e, ADDRESS_FORM_FIELD_NAMES, ADDRESS_FIELD_PREFIX);
           return;
         }
 
