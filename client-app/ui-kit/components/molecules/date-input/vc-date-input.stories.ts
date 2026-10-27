@@ -250,7 +250,8 @@ export const Required: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "Required label indicator (red asterisk) rendered by VcLabel.",
+        story:
+          "Adds the required indicator (red asterisk) rendered by VcLabel and `aria-required` on the input. No native browser validation — enforce the actual requirement with vee-validate/your form schema.",
       },
       source: {
         code: `<VcDateInput v-model="value" label="Date" required />`,
