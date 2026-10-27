@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { computed, nextTick, ref } from "vue";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { computed, nextTick, ref, toValue } from "vue";
 import { useShipToLocation } from "./useShipToLocation";
 import type { AnyAddressType } from "@/core/types";
-import type { ComputedRef } from "vue";
+import type { ComputedRef, MaybeRefOrGetter } from "vue";
 
 // Use vi.hoisted() to properly hoist mock functions
 const openModalMock = vi.hoisted(() => vi.fn());
@@ -70,13 +70,13 @@ vi.mock("@vueuse/core", async () => {
     // one address query; that sharing (never disposed outside a component context) would leak
     // state across `it()` blocks here, so tests exercise the raw, unshared factory instead.
     createSharedComposable: <T extends (...args: never[]) => unknown>(fn: T) => fn,
-    useLocalStorage: <T>(key: string, initialValue: T) =>
+    useLocalStorage: <T>(key: MaybeRefOrGetter<string>, initialValue: T) =>
       computed({
         get() {
-          return getLocalStorageValue(key) ?? initialValue;
+          return getLocalStorageValue(toValue(key)) ?? initialValue;
         },
         set(value: T) {
-          setLocalStorageValue(key, value as [AnyAddressType] | string | null);
+          setLocalStorageValue(toValue(key), value as [AnyAddressType] | string | null);
         },
       }),
   };
@@ -284,6 +284,8 @@ describe("useShipToLocation composable", () => {
     organizationAddressesLoading.value = false;
     personalPage.value = 1;
     organizationPage.value = 1;
+    personalPages.value = 1;
+    organizationPages.value = 1;
     personalTotalCount.value = 1;
     organizationTotalCount.value = 1;
     personalKeyword.value = "";
@@ -522,10 +524,12 @@ describe("useShipToLocation composable", () => {
     });
 
     it("handles corporate-limited user with local address correctly", async () => {
-      // For corporate-limited user
+      // Corporate-limited user whose organization has no addresses
       isAuthenticated.value = true;
       isCorporateMember.value = true;
       checkPermissionsMock.mockReturnValue(false);
+      organizationAddresses.value = [];
+      organizationTotalCount.value = 0;
 
       // Use a local address that doesn't exist in organization addresses
       const localAddress: AnyAddressType = {
@@ -591,18 +595,25 @@ describe("useShipToLocation composable", () => {
       expect(selectedAddress.value).toEqual(resolvedAddress);
     });
 
-    it("does not enable the dedicated ids lookup while the main page is still loading, even if the address isn't in it yet", async () => {
-      // On first mount, accountAddresses is empty before the main paginated query resolves -
-      // without the loading guard this would spuriously enable the ids lookup even though the
-      // address may well turn out to be on page 1 once the response arrives.
+    it("keeps the ids lookup enabled while the address list is loading another page", async () => {
       isAuthenticated.value = true;
       isCorporateMember.value = false;
       user.value.contact!.selectedAddressId = "addr1";
-      personalAddresses.value = [];
-      personalAddressesLoading.value = true;
 
       useShipToLocation();
+      expect(personalSelectedAddressQueryEnabled?.value).toBe(true);
+
+      personalAddresses.value = [];
+      personalAddressesLoading.value = true;
       await nextTick();
+
+      expect(personalSelectedAddressQueryEnabled?.value).toBe(true);
+    });
+
+    it("disables the ids lookup when no address is selected", () => {
+      user.value.contact!.selectedAddressId = "";
+
+      useShipToLocation();
 
       expect(personalSelectedAddressQueryEnabled?.value).toBe(false);
     });
@@ -618,6 +629,35 @@ describe("useShipToLocation composable", () => {
       await nextTick();
 
       expect(organizationSelectedAddressQueryEnabled?.value).toBe(true);
+    });
+
+    it("resolves the selected organization address via the organization ids lookup", async () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(true);
+      user.value.contact!.selectedAddressId = "orgAddrOnAnotherPage";
+
+      const resolvedAddress: AnyAddressType = { id: "orgAddrOnAnotherPage", line1: "Org Address From Another Page" };
+      selectedOrganizationAddressResult.value = { currentOrganizationAddresses: { items: [resolvedAddress] } };
+      selectedPersonalAddressResult.value = {
+        currentCustomerAddresses: { items: [{ id: "orgAddrOnAnotherPage", line1: "Wrong Source" }] },
+      };
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toEqual(resolvedAddress);
+    });
+
+    it("ignores an ids lookup result that belongs to another address", async () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(true);
+      user.value.contact!.selectedAddressId = "orgAddrOnAnotherPage";
+      selectedOrganizationAddressResult.value = { currentOrganizationAddresses: { items: [{ id: "staleAddr" }] } };
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toBeUndefined();
     });
 
     it("falls back to the cart's delivery address when the ids lookup hasn't resolved yet", async () => {
@@ -898,6 +938,64 @@ describe("useShipToLocation composable", () => {
     });
   });
 
+  describe("Adding a new address", () => {
+    const newAddress: AnyAddressType = {
+      line1: "New Address",
+      line2: "",
+      city: "City",
+      regionName: "Region",
+      countryName: "Country",
+      postalCode: "0000",
+    };
+
+    it.each([
+      { userType: "personal", isCorporate: false, mutationMock: addOrUpdatePersonalAddressesMock },
+      { userType: "corporate", isCorporate: true, mutationMock: addOrUpdateOrganizationAddressesMock },
+    ])("selects the address by the id the server returned ($userType)", async ({ isCorporate, mutationMock }) => {
+      isCorporateMember.value = isCorporate;
+      checkPermissionsMock.mockReturnValue(true);
+      mutationMock.mockResolvedValueOnce([
+        { ...newAddress, id: "otherId", line1: "Other Address" },
+        {
+          ...newAddress,
+          id: "serverId",
+          addressType: 3,
+          regionName: "Region Name From Server",
+          line2: null,
+          isDefault: false,
+          isFavorite: false,
+          __typename: "MemberAddressType",
+          // The generated type has no null, but the server sends null for empty fields
+        },
+      ]);
+
+      const { openAddOrUpdateAddressModal } = useShipToLocation();
+      openAddOrUpdateAddressModal();
+      const modalOptions = openModalMock.mock.calls[0][0] as IModalOptions;
+      await modalOptions.props.onResult({ ...newAddress });
+
+      expect(updateContactMock).toHaveBeenCalledWith(expect.objectContaining({ selectedAddressId: "serverId" }));
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: expect.objectContaining({ id: "serverId" }) as AnyAddressType,
+      });
+    });
+
+    it("leaves the id empty when the server response has no matching address", async () => {
+      addOrUpdatePersonalAddressesMock.mockResolvedValueOnce([{ ...newAddress, id: "otherId", line1: "Other" }]);
+
+      const { openAddOrUpdateAddressModal } = useShipToLocation();
+      openAddOrUpdateAddressModal();
+      const modalOptions = openModalMock.mock.calls[0][0] as IModalOptions;
+      await modalOptions.props.onResult({ ...newAddress });
+
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: expect.objectContaining({ id: undefined }) as AnyAddressType,
+      });
+    });
+  });
+
   describe("Loading State", () => {
     it("computes loading value based on user and addresses loading states", async () => {
       const { loading } = useShipToLocation();
@@ -910,9 +1008,14 @@ describe("useShipToLocation composable", () => {
       await nextTick();
       expect(loading.value).toBe(true);
       personalAddressesLoading.value = false;
-      organizationAddressesLoading.value = true;
       await nextTick();
-      expect(loading.value).toBe(true);
+      expect(loading.value).toBe(false);
+    });
+
+    it("ignores the loading state of the other user type's address list", () => {
+      const { loading } = useShipToLocation();
+      organizationAddressesLoading.value = true;
+      expect(loading.value).toBe(false);
     });
   });
 
@@ -946,6 +1049,7 @@ describe("useShipToLocation composable", () => {
       isCorporateMember.value = true;
       checkPermissionsMock.mockReturnValue(false);
       organizationAddresses.value = [];
+      organizationTotalCount.value = 0;
 
       const localAddress = {
         id: "localAddr1",
@@ -1104,6 +1208,148 @@ describe("useShipToLocation composable", () => {
 
       // For anonymous users, accountAddresses should return the local addresses
       expect(accountAddresses.value).toEqual(localAddresses);
+    });
+  });
+  describe("Search", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("applies the search to the server keyword after the debounce and resets the page", async () => {
+      personalPage.value = 3;
+      const { search, isSearchPending } = useShipToLocation();
+
+      search.value = "main";
+      await nextTick();
+
+      expect(isSearchPending.value).toBe(true);
+      expect(personalKeyword.value).toBe("");
+
+      await vi.advanceTimersByTimeAsync(300);
+
+      expect(personalKeyword.value).toBe("main");
+      expect(personalPage.value).toBe(1);
+      expect(isSearchPending.value).toBe(false);
+    });
+
+    it("treats a cleared (undefined) search box as an empty keyword", async () => {
+      personalKeyword.value = "main";
+      const { search, isSearchPending } = useShipToLocation();
+
+      search.value = undefined;
+      await vi.advanceTimersByTimeAsync(300);
+
+      expect(personalKeyword.value).toBe("");
+      expect(isSearchPending.value).toBe(false);
+    });
+
+    it("keeps the address count independent of a search with no results", async () => {
+      personalTotalCount.value = 10;
+      const { addressesCount } = useShipToLocation();
+
+      personalKeyword.value = "zzz";
+      personalAddresses.value = [];
+      personalTotalCount.value = 0;
+      await nextTick();
+
+      expect(addressesCount.value).toBe(10);
+    });
+
+    it("applies the search and pagination to the organization address book for a corporate user", async () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(true);
+      organizationPage.value = 3;
+      organizationPages.value = 4;
+
+      const { search, page, pages } = useShipToLocation();
+
+      expect(page.value).toBe(3);
+      expect(pages.value).toBe(4);
+
+      search.value = "main";
+      await vi.advanceTimersByTimeAsync(300);
+
+      expect(organizationKeyword.value).toBe("main");
+      expect(organizationPage.value).toBe(1);
+      expect(personalKeyword.value).toBe("");
+
+      page.value = 2;
+
+      expect(organizationPage.value).toBe(2);
+      expect(personalPage.value).toBe(1);
+    });
+
+    it("does not take the address count from a list that is still loading", async () => {
+      personalTotalCount.value = 10;
+      const { addressesCount } = useShipToLocation();
+
+      personalAddressesLoading.value = true;
+      personalTotalCount.value = 0;
+      await nextTick();
+
+      expect(addressesCount.value).toBe(10);
+
+      personalTotalCount.value = 12;
+      personalAddressesLoading.value = false;
+      await nextTick();
+
+      expect(addressesCount.value).toBe(12);
+    });
+
+    it("keeps a corporate-limited user on organization addresses after a search with no results", async () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      organizationTotalCount.value = 10;
+      user.value.contact!.selectedAddressId = "orgAddr1";
+      setLocalStorageValue("local_ship_to_addresses_user1", [{ id: "local-1", line1: "Local" }]);
+
+      const { accountAddresses, canAddNewAddress, isPaginated, selectedAddress } = useShipToLocation();
+      expect(selectedAddress.value).toEqual(organizationAddresses.value[0]);
+
+      organizationKeyword.value = "zzz";
+      organizationAddresses.value = [];
+      organizationTotalCount.value = 0;
+      await nextTick();
+
+      expect(isPaginated.value).toBe(true);
+      expect(accountAddresses.value).toEqual([]);
+      expect(canAddNewAddress.value).toBe(false);
+      expect(organizationSelectedAddressQueryEnabled?.value).toBe(true);
+    });
+
+    it("lets a corporate-limited user add local addresses only when the organization has none", () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      organizationAddresses.value = [];
+      organizationTotalCount.value = 0;
+
+      const { canAddNewAddress, isPaginated } = useShipToLocation();
+
+      expect(isPaginated.value).toBe(false);
+      expect(canAddNewAddress.value).toBe(true);
+    });
+  });
+
+  describe("Local storage keys", () => {
+    it("follows the current user after sign-in", async () => {
+      isAuthenticated.value = false;
+      setLocalStorageValue("local_ship_to_addresses_anonymous", [{ id: "anon1" }]);
+
+      const { accountAddresses } = useShipToLocation();
+      expect(accountAddresses.value).toEqual([{ id: "anon1" }]);
+
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      organizationAddresses.value = [];
+      organizationTotalCount.value = 0;
+      await nextTick();
+
+      expect(accountAddresses.value).toEqual([]);
     });
   });
 });

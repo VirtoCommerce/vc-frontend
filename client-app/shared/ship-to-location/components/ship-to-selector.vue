@@ -125,9 +125,7 @@
             </template>
           </VcDialogContent>
 
-          <VcDialogFooter
-            v-if="isPaginated ? pages > 1 : hasAddresses && !filter && allAddresses.length > MAX_ADDRESSES_NUMBER"
-          >
+          <VcDialogFooter v-if="showFooter">
             <template #container>
               <div class="ship-to-selector__foot">
                 <VcPagination
@@ -171,10 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
-import { XApiPermissions } from "@/core/enums";
-import { useUser } from "@/shared/account";
+import { computed, ref } from "vue";
 import { AddressLine } from "@/shared/common";
 import { MAX_ADDRESSES_NUMBER, useShipToLocation } from "../composables";
 
@@ -184,31 +179,26 @@ interface IProps {
 
 defineProps<IProps>();
 
-const SEARCH_DEBOUNCE_IN_MS = 300;
-
-const filter = ref<string | undefined>("");
 const isSeeMore = ref(false);
 
 const {
   accountAddresses: allAddresses,
+  addressesCount,
+  canAddNewAddress,
   loading,
   selectedAddress,
-  organizationsAddresses,
   isPaginated,
   page,
   pages,
-  totalCount,
-  keyword,
+  search: filter,
+  isSearchPending: isServerSearchPending,
   selectAddress,
   getLocalFilteredAddresses,
   openAddOrUpdateAddressModal,
 } = useShipToLocation();
 
-const { checkPermissions, isCorporateMember } = useUser();
-
-// When server-paginated (PERSONAL / CORPORATE with org access), allAddresses is already the
-// current page/search result - render it directly. Otherwise (ANONYMOUS / CORPORATE_LIMITED
-// fallback) it's the full small local-storage list, filtered/sliced client-side.
+// Paginated: allAddresses is already the server page/search result. Otherwise it's the small
+// local-storage list, filtered/sliced here.
 const addresses = computed(() => {
   if (isPaginated.value) {
     return allAddresses.value;
@@ -223,39 +213,17 @@ const addresses = computed(() => {
 
 const hasAddresses = computed(() => addresses.value.length > 0);
 
-// filter (the search box) updates instantly; keyword (the server-side filter that allAddresses/
-// totalCount are actually scoped to) only catches up once the debounce below fires and its query
-// resolves. Treat that window, plus the request itself, as pending - hasAnyAddresses/showSearch/the
-// loader below must not react to totalCount while it's still scoped to a stale keyword, or clearing
-// a zero-result search would collapse the popover/search field before the real total comes back.
-const isSearchPending = computed(() => (isPaginated.value && (filter.value ?? "") !== keyword.value) || loading.value);
+const isSearchPending = computed(() => isPaginated.value && isServerSearchPending.value);
 
-// Based on the true total, not the current (possibly filtered) view, so an empty search result
-// doesn't hide the whole dropdown behind the "add new address" button.
-const hasAnyAddresses = computed(() =>
-  isPaginated.value ? totalCount.value > 0 || !!filter.value || isSearchPending.value : allAddresses.value.length > 0,
+const hasAnyAddresses = computed(() => addressesCount.value > 0);
+
+const showSearch = computed(() => !!filter.value || addressesCount.value > MAX_ADDRESSES_NUMBER);
+
+const showFooter = computed(() =>
+  isPaginated.value
+    ? pages.value > 1
+    : hasAddresses.value && !filter.value && allAddresses.value.length > MAX_ADDRESSES_NUMBER,
 );
-
-const showSearch = computed(
-  () =>
-    !!filter.value ||
-    (isPaginated.value
-      ? totalCount.value > MAX_ADDRESSES_NUMBER || isSearchPending.value
-      : allAddresses.value.length > MAX_ADDRESSES_NUMBER),
-);
-
-const canAddNewAddress = computed(
-  () =>
-    !isCorporateMember.value ||
-    checkPermissions(XApiPermissions.CanEditOrganization) ||
-    (!checkPermissions(XApiPermissions.CanEditOrganization) && organizationsAddresses.value.length === 0),
-);
-
-const applyKeyword = useDebounceFn((value: string | undefined) => {
-  keyword.value = value ?? "";
-}, SEARCH_DEBOUNCE_IN_MS);
-
-watch(filter, applyKeyword);
 </script>
 
 <style lang="scss">

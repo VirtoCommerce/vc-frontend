@@ -268,7 +268,9 @@ const canSubmit = computed<boolean>(() => {
   return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
 });
 
-const userHasAddresses = computed<boolean>(() => !!accountAddresses.value.length);
+const userHasAddresses = computed<boolean>(() =>
+  isCorporateMember.value ? organizationAddressesTotalCount.value > 0 : personalAddressesTotalCount.value > 0,
+);
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
@@ -302,10 +304,6 @@ async function editComment(): Promise<void> {
   commentValid.value = result.valid;
 }
 
-function accountAddressExists(address: AnyAddressType): boolean {
-  return accountAddresses.value.some((item) => isEqualAddresses(item, address));
-}
-
 function onRemoveItem(itemId: string): void {
   remove(quote.value!.items, ({ id }) => id === itemId);
 }
@@ -337,12 +335,8 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
         setQuoteAddress(quoteAddress);
         closeModal();
 
-        // Save address in account
+        // Save address in account; the backend skips it if the same address already exists
         const addressToSave = { ...updatedAddress, addressType: AddressType.BillingAndShipping };
-
-        if (accountAddressExists(addressToSave)) {
-          return;
-        }
 
         if (isCorporateMember.value) {
           await addOrUpdateOrganizationAddresses([addressToSave]);
@@ -366,10 +360,12 @@ function openSelectAddressModal(addressType: AddressType): void {
   openModal({
     component: SelectAddressModal,
     props: {
+      // addresses, loading and totalCount are passed as refs on purpose: the modal re-renders on page change
       addresses: accountAddresses,
       currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
       paginationMode: "server",
+      pageSize: ADDRESSES_PER_PAGE,
       loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
       totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
       onPageChange(newPage: number) {
