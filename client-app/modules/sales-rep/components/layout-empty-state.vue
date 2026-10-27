@@ -69,6 +69,14 @@ const { t } = useI18n();
 .layout-empty-state {
   @apply mx-auto max-w-xl;
 
+  &__art {
+    @apply max-w-full;
+
+    svg {
+      @apply h-auto max-w-full;
+    }
+  }
+
   &__title {
     @apply pt-3 [word-break:break-word];
   }
