@@ -100,8 +100,8 @@
 </template>
 
 <script setup lang="ts">
-import { useId } from "vue";
 import { VendorName } from "@/shared/common";
+import { useComponentId } from "@/ui-kit/composables";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { CurrencyGroupType, VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
@@ -135,7 +135,7 @@ withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const groupId = useId();
+const groupId = useComponentId("products-section");
 
 function getVendorHeadingId(index: number) {
   return `${groupId}-vendor-${index}`;

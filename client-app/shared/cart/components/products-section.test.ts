@@ -1,9 +1,11 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
+import { defineComponent, h } from "vue";
 import { createI18n } from "vue-i18n";
 import { VcChip } from "@/ui-kit/components/molecules";
 import ProductsSection from "./products-section.vue";
 import type { LineItemType } from "@/core/api/graphql/types";
+import type { DOMWrapper } from "@vue/test-utils";
 
 const items = [{ id: "line-1" }, { id: "line-2" }] as LineItemType[];
 
@@ -23,9 +25,13 @@ const global = {
   },
 };
 
+function headingSelector(group: DOMWrapper<Element>) {
+  return `[id='${group.attributes("aria-labelledby")}']`;
+}
+
 function describeGroups(wrapper: ReturnType<typeof mount>) {
   return wrapper.findAll("fieldset, [role='group']").map((group) => ({
-    name: wrapper.find(`[id='${group.attributes("aria-labelledby")}']`).text(),
+    name: wrapper.find(headingSelector(group)).text(),
     containsList: group.find("cart-line-items-stub").exists(),
   }));
 }
@@ -49,6 +55,23 @@ describe("ProductsSection groups", () => {
       { name: "common.labels.vendor_name:Globex", containsList: true },
       { name: "common.labels.products_in_currency:EUR", containsList: true },
     ]);
+  });
+
+  it("names each group after its own heading when the page shows two sections", () => {
+    const section = (vendorName: string) =>
+      h(ProductsSection, {
+        grouped: true,
+        itemsGroupedByVendor: [{ vendor: { id: vendorName, name: vendorName }, items }],
+        otherCurrencyGroups: [{ currencyCode: "EUR", items }],
+      });
+    const wrapper = mount(defineComponent({ setup: () => () => [section("Acme"), section("Globex")] }), { global });
+
+    const groups = wrapper.findAll("fieldset").map((group) => {
+      const heading = headingSelector(group);
+      return { elementsWithId: wrapper.findAll(heading).length, headingInGroup: group.find(heading).exists() };
+    });
+
+    expect(groups).toEqual(Array.from({ length: 4 }, () => ({ elementsWithId: 1, headingInGroup: true })));
   });
 
   it("keeps the ungrouped list out of any group", () => {
