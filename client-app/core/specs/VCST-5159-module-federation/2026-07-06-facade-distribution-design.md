@@ -39,9 +39,9 @@ Add a `files` field so `npm pack` carries only the distributables:
 
 ### 2. New workflow — `.github/workflows/core-facade-release.yml`
 
-**Trigger: manual `workflow_dispatch`; one boolean input, `prerelease`** (the version is
-single-sourced from `core-api/package.json`; there is nothing for a human to type). Stable
-releases run only from `dev`. Steps:
+**Trigger: manual `workflow_dispatch`, no inputs** (the version is single-sourced from
+`core-api/package.json`; there is nothing for a human to type). The branch picks the kind
+of release: `dev` publishes a stable one, any other branch an alpha pre-release. Steps:
 
 1. Checkout + install + `yarn build:core-types` — regenerating the contract fails on
    drift, so a stale committed contract cannot be released.
@@ -60,10 +60,10 @@ https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-fron
 
 `yarn.lock` in the consuming plugin records the tarball checksum → tamper-evident pin.
 
-**Pre-releases** (`prerelease` checked, VCST-6526): a plugin PR that needs an unmerged
+**Pre-releases** (any branch but `dev`, VCST-6526): a plugin PR that needs an unmerged
 facade change can still build in CI and deploy to QA.
 
-- Any branch. Version `<CORE_VERSION>-alpha.<run number>.<branch slug>`, stamped only into
+- Any branch but `dev`. Version `<CORE_VERSION>-alpha.<run number>.<branch slug>`, stamped only into
   the packed `package.json`; tag `core-v<that version>`; a GitHub pre-release with
   `--latest=false`.
 - Refused when `core-v<CORE_VERSION>` already exists: the alpha would sort below it.

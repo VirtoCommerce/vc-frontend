@@ -9,8 +9,10 @@
 # contract version instead. Never delete stable core-v* releases: a deleted release is the
 # only way a plugin's pin can break.
 #
-# With `prerelease` checked, any branch can publish a GitHub pre-release of its contract
-# version, core-v<V>-alpha.<run>.<branch>, so a plugin PR can build and deploy against a
+# The branch picks the kind of release. Stable core-v* releases come only from dev: one
+# from a feature branch would permanently occupy that contract version with unmerged code.
+# Any other branch publishes a GitHub pre-release of its contract version,
+# core-v<V>-alpha.<run>.<branch>, so a plugin PR can build and deploy against a
 # facade that is not on dev yet. Nothing is committed: the suffix exists only in the packed
 # package.json. Pre-releases are temporary — the stable release of <V> (or any later version)
 # deletes them, so a plugin must move its pin to a stable release before it merges.
@@ -19,13 +21,10 @@
 # client-app/core/specs/VCST-5159-module-federation/2026-07-06-facade-distribution-design.md.
 name: Core Facade Release
 
+run-name: ${{ github.ref == 'refs/heads/dev' && '@vc-frontend/core stable release from dev' || format('@vc-frontend/core alpha from {0}', github.ref_name) }}
+
 on:
   workflow_dispatch:
-    inputs:
-      prerelease:
-        description: 'Publish an alpha pre-release from the selected branch (deleted once its version is released)'
-        type: boolean
-        default: false
 
 jobs:
   release:
@@ -36,7 +35,7 @@ jobs:
       contents: write # create the core-v* tag + release (and delete superseded pre-releases) with the built-in GITHUB_TOKEN
     env:
       FORCE_COLOR: true
-      PRERELEASE: ${{ inputs.prerelease }}
+      PRERELEASE: ${{ github.ref != 'refs/heads/dev' }}
     steps:
       - name: Set up Node 22
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
@@ -52,15 +51,6 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
-
-      # Immutable core-v* releases must only ever be minted from the default branch —
-      # a release from a feature branch would permanently occupy that contract version
-      # with unmerged code. A pre-release occupies only its own alpha tag, so any branch may cut one.
-      - name: Fail unless run from dev
-        if: ${{ !inputs.prerelease && github.ref != 'refs/heads/dev' }}
-        run: |
-          echo "::error::Core facade releases must be dispatched from the dev branch (got ${GITHUB_REF})."
-          exit 1
 
       - name: Read contract version
         id: core
@@ -92,7 +82,7 @@ jobs:
       # release would delete it at once. A branch that changed the facade has a bumped version
       # (yarn build:core-types); one that did not has nothing to pre-release.
       - name: Fail if the pre-release base version is already released
-        if: ${{ inputs.prerelease }}
+        if: env.PRERELEASE == 'true'
         env:
           BASE: ${{ steps.core.outputs.base }}
         run: |
@@ -148,7 +138,7 @@ jobs:
 
       # After the drift check, which judges the committed version. Only the packed copy carries the suffix.
       - name: Stamp the pre-release version
-        if: ${{ inputs.prerelease }}
+        if: env.PRERELEASE == 'true'
         working-directory: client-app/core-api
         env:
           VERSION: ${{ steps.core.outputs.version }}
@@ -201,7 +191,7 @@ jobs:
       # of a later version (a parallel branch ahead of this release) stay. The release is already
       # out, so a failed delete only warns.
       - name: Delete superseded facade pre-releases
-        if: ${{ !inputs.prerelease }}
+        if: env.PRERELEASE == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.core.outputs.version }}
