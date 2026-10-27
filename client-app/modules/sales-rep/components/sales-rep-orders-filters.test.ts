@@ -3,10 +3,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { VcDropdownMenu, VcInput, VcMenuItem, VcSelect } from "@/ui-kit/components/molecules";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import SalesRepOrdersFilters from "./sales-rep-orders-filters.vue";
-import type { Plugin } from "vue";
 
 const isPhone = ref(false);
 const askedBreakpoints: string[] = [];
@@ -56,7 +54,7 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
       },
       VcSelect: {
         name: "VcSelect",
-        props: ["modelValue", "items"],
+        props: ["modelValue", "items", "valueField", "textField"],
         emits: ["update:modelValue", "change"],
         template: "<div />",
       },
@@ -358,44 +356,32 @@ describe("SalesRepOrdersFilters — the date range field", () => {
 });
 
 describe("SalesRepOrdersFilters — the Created date field", () => {
-  // The real select, so the field's text and the active option are VcSelect's own, not a stub's.
-  const createWrapperWithSelect = (plugins: Plugin[] = []) =>
-    createWrapper({
-      global: {
-        plugins,
-        components: { VcDropdownMenu, VcInput, VcMenuItem, VcSelect },
-        stubs: { VcSelect: false, VcScrollbar: { template: "<ul><slot /></ul>" } },
-      },
-    });
+  // VcSelect resolves the selected item as the one whose value-field equals the model, so an id keeps it live.
+  it("hands the select the range id and value-field, before and after a pick", async () => {
+    const wrapper = createWrapper();
 
-  const fieldText = (wrapper: WrapperType) => (wrapper.get(".vc-select input").element as HTMLInputElement).value;
-  const options = (wrapper: WrapperType) => wrapper.findAll('[role="option"]');
-  const activeOptions = (wrapper: WrapperType) =>
-    options(wrapper)
-      .filter((option) => option.attributes("aria-selected") === "true")
-      .map((option) => option.text());
+    expect(rangeSelect(wrapper).props()).toMatchObject({ valueField: "id", modelValue: "custom" });
 
-  it("labels the field from the live items, so a module locale that loads late still reaches it", async () => {
+    rangeSelect(wrapper).vm.$emit("update:modelValue", "lastWeek");
+    rangeSelect(wrapper).vm.$emit("change", "lastWeek");
+    await nextTick();
+
+    expect(rangeSelect(wrapper).props("modelValue")).toBe("lastWeek");
+  });
+
+  it("keeps the select on live items, so a module locale that loads late reaches the selected label", async () => {
     const i18n = createI18n({ legacy: false, locale: "en", messages: {}, missingWarn: false, fallbackWarn: false });
-    const wrapper = createWrapperWithSelect([i18n]);
+    const wrapper = createWrapper({ global: { plugins: [i18n] } });
+    const customDate = (label: string) => expect.objectContaining({ id: "custom", label });
 
-    expect(fieldText(wrapper)).toBe("sales_rep.customer_orders.filters.custom_date");
+    expect(rangeSelect(wrapper).props("items")).toContainEqual(
+      customDate("sales_rep.customer_orders.filters.custom_date"),
+    );
 
     i18n.global.setLocaleMessage("en", { sales_rep: { customer_orders: { filters: { custom_date: "Custom date" } } } });
     await nextTick();
 
-    expect(fieldText(wrapper)).toBe("Custom date");
-  });
-
-  it("marks the selected range active, before and after a pick", async () => {
-    const wrapper = createWrapperWithSelect();
-
-    expect(activeOptions(wrapper)).toEqual(["sales_rep.customer_orders.filters.custom_date"]);
-
-    const lastWeek = options(wrapper).find((option) => option.text() === "sales_rep.customer_orders.filters.last_week");
-    await lastWeek!.trigger("click");
-
-    expect(activeOptions(wrapper)).toEqual(["sales_rep.customer_orders.filters.last_week"]);
-    expect(fieldText(wrapper)).toBe("sales_rep.customer_orders.filters.last_week");
+    expect(rangeSelect(wrapper).props()).toMatchObject({ valueField: "id", textField: "label", modelValue: "custom" });
+    expect(rangeSelect(wrapper).props("items")).toContainEqual(customDate("Custom date"));
   });
 });

@@ -223,7 +223,7 @@ const isEmpty = computed(() => {
 
 const isDirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(appliedFilter.value));
 
-function applyRange(id: RangeType["id"]): void {
+function applyRange(id?: RangeType["id"]): void {
   const range = ranges.value.find((item) => item.id === id);
 
   if (!range || range.id === CUSTOM_RANGE_ID) {
