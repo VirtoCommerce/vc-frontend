@@ -4,7 +4,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { coerce, gte, minVersion, subset, validRange } from "semver";
+import { coerce, gte, minVersion, prerelease, subset, validRange } from "semver";
 import { BACKEND_REQUIREMENTS } from "./backend-requirements.mjs";
 import { gitIn } from "./git.mjs";
 
@@ -236,6 +236,18 @@ function checkFacadePin(appDir, pkg) {
       ),
     ];
   }
+  const alphaPin = prerelease(pinned)
+    ? [
+        warn(
+          `@vc-frontend/core is pinned to the pre-release ${pinned}, which the next stable facade release deletes`,
+          "Before the plugin merges, pin the stable core-v<version> release and set requiredHostVersion to ^<version>.",
+        ),
+      ]
+    : [];
+  return [...checkRequiredHostVersion(range, pinned), ...alphaPin];
+}
+
+function checkRequiredHostVersion(range, pinned) {
   if (!range || !validRange(range)) {
     return [
       fail(
