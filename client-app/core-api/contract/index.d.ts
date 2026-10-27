@@ -5293,7 +5293,7 @@ declare function _useUser(): {
     fetchUser: (options?: {
         withBroadcast?: boolean;
     }) => Promise<void>;
-    updateUser: (personalData: UserPersonalDataType) => Promise<void>;
+    updateUser: (personalData: UserPersonalDataType, context?: ErrorNotificationsContextType) => Promise<void>;
     confirmEmail: (payload: InputConfirmEmailType) => Promise<CustomIdentityResultType>;
     registerUser: (payload: SignMeUpType) => Promise<AccountCreationResultType>;
     registerOrganization: (payload: RegisterOrganizationType) => Promise<AccountCreationResultType>;
@@ -5596,7 +5596,7 @@ interface INotification {
     /**
      * @default solid
      */
-    variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+    variant?: "solid" | "solid-light" | "outline" | "outline-dark" | "tonal";
     /**
      * in milliseconds
      */
