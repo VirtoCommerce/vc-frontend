@@ -39,7 +39,7 @@ export function useFieldErrors() {
   function getErrorNotification(fieldErrors: FieldValidationErrorType[]): INotification {
     return {
       duration: DEFAULT_NOTIFICATION_DURATION,
-      variant: "outline-dark",
+      variant: "tonal",
       group: "GenericError",
       singleInGroup: true,
       text: getErrorNotificationText(fieldErrors),

@@ -5349,7 +5349,7 @@ interface INotification {
     /**
      * @default solid
      */
-    variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+    variant?: "solid" | "solid-light" | "outline" | "outline-dark" | "tonal";
     /**
      * in milliseconds
      */
