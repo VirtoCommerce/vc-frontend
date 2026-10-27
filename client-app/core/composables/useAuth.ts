@@ -2,9 +2,10 @@ import { createGlobalState, useLocalStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
+import { IdentityErrors } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
-import type { ConnectTokenResponseType } from "../types";
+import type { ConnectTokenResponseType, TwoFactorChallengeType } from "../types";
 import type { AfterFetchContext } from "@vueuse/core";
 
 function _useAuth() {
@@ -33,6 +34,19 @@ function _useAuth() {
 
   const errors = computed(() => data.value?.errors);
   const lockoutSecondsRemaining = computed(() => data.value?.lockoutSecondsRemaining);
+  const twoFactorChallenge = computed<TwoFactorChallengeType | undefined>(() => {
+    const twoFactorToken = data.value?.twoFactorToken;
+    const isTwoFactorRequired = errors.value?.some((error) => error.code === IdentityErrors.TWO_FACTOR_REQUIRED);
+
+    return isTwoFactorRequired && twoFactorToken
+      ? {
+          twoFactorToken,
+          provider: data.value?.provider,
+          providers: data.value?.providers,
+          resendSecondsRemaining: data.value?.resendSecondsRemaining,
+        }
+      : undefined;
+  });
 
   function resetErrors() {
     data.value = null;
@@ -76,26 +90,26 @@ function _useAuth() {
     return context;
   }
 
-  async function authorize(username: string, password: string): Promise<void> {
-    const { storeId } = globals;
-
-    const params = new URLSearchParams({
-      grant_type: "password",
-      scope: "offline_access",
-      storeId,
-      username,
-      password,
-    });
-
-    const organizationId = localStorage.getItem(`organization-id-${username}`);
+  function setLastSelectedOrganization(params: URLSearchParams, userName: string): void {
+    const organizationId = localStorage.getItem(`organization-id-${userName}`);
 
     if (organizationId) {
       params.set("organization_id", organizationId);
     }
+  }
+
+  async function requestToken(grantParams: Record<string, string>, userName: string): Promise<void> {
+    const params = new URLSearchParams({ scope: "offline_access", ...grantParams });
+
+    setLastSelectedOrganization(params, userName);
 
     getTokenParams.value = params;
 
     await (getTokenRequest = getToken(true));
+  }
+
+  async function authorize(username: string, password: string): Promise<void> {
+    await requestToken({ grant_type: "password", storeId: globals.storeId, username, password }, username);
   }
 
   //  Signs in with a custom grant.  Existing state is replaced completely.
@@ -129,23 +143,21 @@ function _useAuth() {
   }
 
   async function otpSignIn({ email, code, storeId }: { email: string; code: string; storeId: string }): Promise<void> {
-    const params = new URLSearchParams({
-      grant_type: "otp_email",
-      scope: "offline_access",
-      storeId,
-      email,
-      code,
-    });
+    await requestToken({ grant_type: "otp_email", storeId, email, code }, email);
+  }
 
-    const organizationId = localStorage.getItem(`organization-id-${email}`);
-
-    if (organizationId) {
-      params.set("organization_id", organizationId);
-    }
-
-    getTokenParams.value = params;
-
-    await (getTokenRequest = getToken(true));
+  async function mfaSignIn({
+    email,
+    twoFactorToken,
+    code,
+    storeId,
+  }: {
+    email: string;
+    twoFactorToken: string;
+    code: string;
+    storeId: string;
+  }): Promise<void> {
+    await requestToken({ grant_type: "mfa", storeId, two_factor_token: twoFactorToken, code }, email);
   }
 
   async function refresh(organizationId?: string) {
@@ -174,6 +186,10 @@ function _useAuth() {
 
   async function unauthorize() {
     await broadcast.emit(userBeforeUnauthorizeEvent, undefined, TabsType.CURRENT);
+    await revokeTokens();
+  }
+
+  async function revokeTokens() {
     await useFetch("/revoke/token").post();
     state.value = { ...INITIAL_STATE };
   }
@@ -213,13 +229,16 @@ function _useAuth() {
     errors,
     resetErrors,
     lockoutSecondsRemaining,
+    twoFactorChallenge,
     isAuthorizing,
     authorize,
     authorizeWithGrant,
     externalSignInCallback,
     otpSignIn,
+    mfaSignIn,
     refresh,
     unauthorize,
+    revokeTokens,
     resetTokens,
 
     setTokenType,
