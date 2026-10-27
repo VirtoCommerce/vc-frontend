@@ -3,6 +3,7 @@ import { useCurrency } from "@/core/composables/useCurrency";
 import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
+import { deferLogin } from "./pending-login";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
 import type { ConfiguredPriceType } from "./types";
 import type { Product, VariationType } from "@/core/api/graphql/types";
@@ -35,10 +36,21 @@ export const events: TrackerEventsType = {
   },
 
   selectItem(item, params) {
+    const { index, ...restParams } = params ?? {};
     const gtagItem =
-      item && typeof item === "object" && "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+      item && typeof item === "object" && "productId" in item
+        ? {
+            ...lineItemToGtagItem(item, index),
+            item_list_id: params?.item_list_id,
+            item_list_name: params?.item_list_name,
+          }
+        : productToGtagItem(item, index, {
+            itemListId: params?.item_list_id,
+            itemListName: params?.item_list_name,
+            currency: currentCurrency.value?.code,
+          });
     sendEvent("select_item", {
-      ...params,
+      ...restParams,
       items: [gtagItem],
     });
   },
@@ -48,7 +60,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: item.price?.actual?.amount,
-      items: [productToGtagItem(item)],
+      items: [productToGtagItem(item, undefined, { currency: currencyCode })],
     });
   },
 
@@ -57,7 +69,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: item.price?.actual?.amount,
-      items: [productToGtagItem(item)],
+      items: [productToGtagItem(item, undefined, { currency: currencyCode })],
     });
   },
 
@@ -264,6 +276,12 @@ export const events: TrackerEventsType = {
   },
 
   login(method, params) {
+    // A failed attempt stays on the page and is the signed-out visitor's; a success is sent by the page it lands on.
+    if (params?.success) {
+      deferLogin(method, params);
+      return;
+    }
+
     sendEvent("login", {
       ...params,
       method,

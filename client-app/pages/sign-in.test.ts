@@ -14,7 +14,7 @@ vi.mock("@/core/composables", () => ({
 }));
 
 vi.mock("@/shared/account", () => ({
-  SignInForm: { name: "SignInForm", template: "<form />" },
+  SignInForm: { name: "SignInForm", emits: ["stepChanged"], template: "<form />" },
 }));
 
 vi.mock("@/shared/sign-in/composables/useOtpEmailAuthentication", () => ({
@@ -126,6 +126,22 @@ describe("sign-in page", () => {
     await wrapper.findComponent({ name: "OtpEmailSignInForm" }).vm.$emit("stepChanged", "verify");
 
     expect(wrapper.find(".sign-in__title").text()).toBe("shared.sign_in.otp_email_sign_in_form.verify.header");
+  });
+
+  it("titles the page with the code header and hides the switch to OTP while the password sign-in asks for the second factor", async () => {
+    hasOtpEmailAuthentication.value = true;
+
+    const wrapper = await mountPage();
+    await wrapper.findComponent({ name: "OtpEmailSignInForm" }).vm.$emit("switchToPassword");
+    expect(wrapper.find('[data-test-id="otp-email-switch-to-otp-link"]').exists()).toBe(true);
+
+    await wrapper.findComponent({ name: "SignInForm" }).vm.$emit("stepChanged", "two-factor");
+    expect(wrapper.find('[data-test-id="otp-email-switch-to-otp-link"]').exists()).toBe(false);
+    expect(wrapper.find(".sign-in__title").text()).toBe("shared.sign_in.mfa_verify_form.header");
+
+    await wrapper.findComponent({ name: "SignInForm" }).vm.$emit("stepChanged", "password");
+    expect(wrapper.find('[data-test-id="otp-email-switch-to-otp-link"]').exists()).toBe(true);
+    expect(wrapper.find(".sign-in__title").text()).toBe("pages.sign_in.header");
   });
 
   it("switches from OTP to the password form and back", async () => {

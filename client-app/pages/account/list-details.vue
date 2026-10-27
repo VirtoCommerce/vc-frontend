@@ -140,7 +140,7 @@ import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { prepareLineItem, Logger } from "@/core/utilities";
+import { getProductListIndex, prepareLineItem, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
@@ -410,7 +410,10 @@ function selectItemEvent(item: Product | undefined): void {
     return;
   }
 
-  analytics("selectItem", item, wishlistListProperties.value);
+  analytics("selectItem", item, {
+    ...wishlistListProperties.value,
+    index: getProductListIndex(reportedProducts, item.id),
+  });
 }
 
 async function buyNow() {
@@ -456,6 +459,7 @@ watchEffect(async () => {
 // Reported once per list: saving from the Rename or Share dialog reassigns `list`, which would otherwise send a
 // second impression for the same items with no navigation in between.
 let reportedListId: string | undefined;
+let reportedProducts: { id: string }[] = [];
 
 watchEffect(() => {
   const items = list.value?.items
@@ -465,6 +469,7 @@ watchEffect(() => {
 
   if (items?.length && list.value?.id !== reportedListId) {
     reportedListId = list.value?.id;
+    reportedProducts = items;
     analytics("viewItemList", items, wishlistListProperties.value);
   }
 });
