@@ -1,22 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { GraphQLErrorCode } from "@/core/api/graphql/enums";
+import { graphqlErrorEvent, TabsType, unhandledErrorEvent } from "@/shared/broadcast";
 import { useFieldErrors } from "./useFieldErrors";
+import type { GraphQLFormattedError } from "graphql";
 
-const h = vi.hoisted(() => ({ notifyError: vi.fn() }));
+const h = vi.hoisted(() => ({ emit: vi.fn() }));
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
-vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: h.notifyError }) }));
+// The global error toasts listen to these events, see broadcast.ts
+vi.mock("@/shared/broadcast", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/shared/broadcast")>()),
+  useBroadcast: () => ({ emit: h.emit }),
+}));
 
-// What Apollo rejects with when the server returns one error per failed rule
-function apolloError(...extensions: Record<string, unknown>[]): unknown {
-  return { graphQLErrors: extensions.map((item) => ({ message: "message", extensions: item })) };
+function graphQLError(extensions: Record<string, unknown>): GraphQLFormattedError {
+  return { message: "message", extensions };
 }
 
-function invalid(field: string, errorCode = "InvalidCharacters"): Record<string, unknown> {
-  return { code: "VALIDATION", field, errorCode };
+function invalid(field: string, errorCode = "InvalidCharacters"): GraphQLFormattedError {
+  return graphQLError({ code: "VALIDATION", field, errorCode });
+}
+
+// What Apollo rejects with when the server returns one error per failed rule
+function apolloError(...graphQLErrors: GraphQLFormattedError[]): unknown {
+  return { graphQLErrors, networkError: null };
 }
 
 beforeEach(() => {
-  h.notifyError.mockReset();
+  h.emit.mockReset();
 });
 
 describe("useFieldErrors", () => {
@@ -34,7 +45,7 @@ describe("useFieldErrors", () => {
         lastName: "common.messages.html_tags_not_allowed",
         email: "common.messages.email_is_not_correct",
       });
-      expect(h.notifyError).not.toHaveBeenCalled();
+      expect(h.emit).not.toHaveBeenCalled();
     });
 
     // A page that saves one address gets its failures as addresses[0].<input name>
@@ -48,7 +59,7 @@ describe("useFieldErrors", () => {
       );
 
       expect(messages).toEqual({ city: "common.messages.unsafe_content" });
-      expect(h.notifyError).not.toHaveBeenCalled();
+      expect(h.emit).not.toHaveBeenCalled();
     });
 
     // The server's own text is English only, so an unknown rule gets the generic field message
@@ -73,35 +84,68 @@ describe("useFieldErrors", () => {
     });
 
     // E.g. a phone set in the admin that the profile form has no input for: still reported, never silent
-    it("shows a toast for a rejected field the form has no input for", () => {
+    it("sends a rejected field the form has no input for to the global error toast", () => {
       const { showSaveErrors } = useFieldErrors();
+      const phone = invalid("phones[0]");
 
-      const messages = showSaveErrors(apolloError(invalid("lastName"), invalid("phones[0]")), ["lastName"]);
+      const messages = showSaveErrors(apolloError(invalid("lastName"), phone), ["lastName"]);
 
       expect(messages).toEqual({ lastName: "common.messages.invalid_characters" });
-      expect(h.notifyError).toHaveBeenCalledOnce();
-      expect(h.notifyError).toHaveBeenCalledWith(expect.objectContaining({ text: "common.messages.invalid_data" }));
+      expect(h.emit.mock.calls).toEqual([[graphqlErrorEvent, [phone], TabsType.ALL]]);
     });
 
-    it("says that addresses were rejected when an address field has no input", () => {
+    it("sends a field of another address to the global error toast", () => {
       const { showSaveErrors } = useFieldErrors();
+      const otherAddress = invalid("addresses[1].firstName");
 
-      showSaveErrors(apolloError(invalid("addresses[1].firstName")), ["firstName"], "addresses[0].");
-
-      expect(h.notifyError).toHaveBeenCalledWith(
-        expect.objectContaining({ text: "common.messages.invalid_addresses" }),
-      );
-    });
-
-    it("shows the generic toast for a failure that isn't rejected input", () => {
-      const { showSaveErrors } = useFieldErrors();
-
-      const messages = showSaveErrors(new Error("Failed to fetch"), ["firstName"]);
+      const messages = showSaveErrors(apolloError(otherAddress), ["firstName"], "addresses[0].");
 
       expect(messages).toEqual({});
-      expect(h.notifyError).toHaveBeenCalledWith(
-        expect.objectContaining({ text: "common.messages.something_went_wrong" }),
-      );
+      expect(h.emit.mock.calls).toEqual([[graphqlErrorEvent, [otherAddress], TabsType.ALL]]);
+    });
+
+    // E.g. a VALIDATION error from an older backend, which doesn't name the field
+    it("sends an error that isn't rejected input to the global error toast", () => {
+      const { showSaveErrors } = useFieldErrors();
+      const validation = graphQLError({ code: GraphQLErrorCode.Validation });
+
+      showSaveErrors(apolloError(validation), ["firstName"]);
+
+      expect(h.emit.mock.calls).toEqual([[graphqlErrorEvent, [validation], TabsType.ALL]]);
+    });
+
+    // The unhandled error toast offers "Report a problem" only when it gets the error
+    it("shows the unhandled error toast with the network error", () => {
+      const { showSaveErrors } = useFieldErrors();
+
+      showSaveErrors({ graphQLErrors: [], networkError: new TypeError("Failed to fetch") }, ["firstName"]);
+
+      expect(h.emit.mock.calls).toEqual([
+        [unhandledErrorEvent, expect.stringContaining("Failed to fetch"), TabsType.ALL],
+      ]);
+    });
+
+    it("shows the unhandled error toast with the server error", () => {
+      const { showSaveErrors } = useFieldErrors();
+      const unhandled = graphQLError({ code: GraphQLErrorCode.Unhandled });
+
+      showSaveErrors(apolloError(unhandled), ["firstName"]);
+
+      expect(h.emit.mock.calls).toEqual([[unhandledErrorEvent, JSON.stringify([unhandled]), TabsType.ALL]]);
+    });
+
+    // The error link has already redirected to sign-in, the no-access page, the blocked page or the password change
+    it.each([
+      GraphQLErrorCode.Unauthorized,
+      GraphQLErrorCode.Forbidden,
+      GraphQLErrorCode.UserLocked,
+      GraphQLErrorCode.PasswordExpired,
+    ])("shows nothing for %s", (code) => {
+      const { showSaveErrors } = useFieldErrors();
+
+      showSaveErrors(apolloError(graphQLError({ code })), ["firstName"]);
+
+      expect(h.emit).not.toHaveBeenCalled();
     });
   });
 

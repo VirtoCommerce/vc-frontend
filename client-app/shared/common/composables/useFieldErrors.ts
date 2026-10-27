@@ -1,10 +1,14 @@
 import { useI18n } from "vue-i18n";
-import { getFieldValidationErrors } from "@/core/api/graphql/utils";
+import { errorHandler, ServerError } from "@/core/api/common";
+import { GraphQLErrorCode } from "@/core/api/graphql/enums";
+import { getFieldValidationErrors, hasErrorCode, toServerError } from "@/core/api/graphql/utils";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
-import { useNotifications } from "@/shared/notification";
+import { serializeError } from "@/core/utilities";
+import { graphqlErrorEvent, TabsType, useBroadcast } from "@/shared/broadcast";
 import type { FieldValidationErrorType } from "@/core/types";
 import type { INotification } from "@/shared/notification";
 import type { ApolloError } from "@apollo/client/core";
+import type { GraphQLFormattedError } from "graphql";
 
 const ADDRESSES_FIELD_PREFIX = "addresses[";
 
@@ -17,7 +21,7 @@ const FIELD_ERROR_MESSAGE_KEYS = new Map<string, string>([
 
 export function useFieldErrors() {
   const { t } = useI18n();
-  const notifications = useNotifications();
+  const broadcast = useBroadcast();
 
   function getFieldErrorMessage(errorCode?: string): string {
     return t(FIELD_ERROR_MESSAGE_KEYS.get(errorCode ?? "") ?? "common.messages.invalid_value");
@@ -48,25 +52,37 @@ export function useFieldErrors() {
 
   /**
    * Shows a rejected save. Returns the messages for the inputs the form has, keyed by input name (the error's
-   * field path without `fieldPrefix`); everything else goes into one error toast.
+   * field path without `fieldPrefix`); every other error gets the global error toast, as on any other page.
    */
   function showSaveErrors(error: unknown, fieldNames: readonly string[], fieldPrefix = ""): Record<string, string> {
-    const fieldErrors = getFieldValidationErrors((error as ApolloError | undefined)?.graphQLErrors);
+    const { networkError, graphQLErrors = [] } = (error ?? {}) as Partial<ApolloError>;
     const messages: Record<string, string> = {};
-    const otherFieldErrors: FieldValidationErrorType[] = [];
+    const otherErrors: GraphQLFormattedError[] = [];
 
-    for (const fieldError of fieldErrors) {
-      const name = fieldError.field.slice(fieldPrefix.length);
+    for (const graphQLError of graphQLErrors) {
+      const fieldError = getFieldValidationErrors([graphQLError]).at(0);
+      const name = fieldError?.field.slice(fieldPrefix.length) ?? "";
 
-      if (fieldError.field.startsWith(fieldPrefix) && fieldNames.includes(name)) {
+      if (fieldError?.field.startsWith(fieldPrefix) && fieldNames.includes(name)) {
         messages[name] ??= getFieldErrorMessage(fieldError.errorCode);
       } else {
-        otherFieldErrors.push(fieldError);
+        otherErrors.push(graphQLError);
       }
     }
 
-    if (!fieldErrors.length || otherFieldErrors.length) {
-      notifications.error(getErrorNotification(otherFieldErrors));
+    // The toasts the error link shows when a request doesn't suppress them. It has already run the redirects
+    // (sign-in, no access, locked user, expired password), which can't be suppressed.
+    const serverError = toServerError(networkError, otherErrors);
+
+    if (serverError === ServerError.Unhandled) {
+      errorHandler(serverError, JSON.stringify(networkError ? serializeError(networkError) : otherErrors));
+    } else if (
+      !serverError &&
+      otherErrors.length &&
+      !hasErrorCode(otherErrors, GraphQLErrorCode.UserLocked) &&
+      !hasErrorCode(otherErrors, GraphQLErrorCode.PasswordExpired)
+    ) {
+      void broadcast.emit(graphqlErrorEvent, otherErrors, TabsType.ALL);
     }
 
     return messages;
