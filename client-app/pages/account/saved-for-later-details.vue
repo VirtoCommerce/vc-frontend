@@ -106,7 +106,7 @@ import { updateWishlistItems } from "@/core/api/graphql/account";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { PAGE_LIMIT } from "@/core/constants";
-import { prepareLineItem, Logger } from "@/core/utilities";
+import { getProductListIndex, prepareLineItem, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -345,12 +345,17 @@ async function canChangeRoute(to: RouteLocationNormalized): Promise<boolean> {
   return to.name === "NoAccess" || !savedForLaterList.value || !isDirty.value || (await openSaveChangesModal());
 }
 
+let reportedProducts: { id: string }[] = [];
+
 function selectItemEvent(item: Product | undefined): void {
   if (!item) {
     return;
   }
 
-  analytics("selectItem", item, savedForLaterListProperties.value);
+  analytics("selectItem", item, {
+    ...savedForLaterListProperties.value,
+    index: getProductListIndex(reportedProducts, item.id),
+  });
 }
 
 async function buyNow() {
@@ -393,6 +398,7 @@ onMounted(async () => {
     .filter(Boolean);
 
   if (items?.length) {
+    reportedProducts = items;
     analytics("viewItemList", items, savedForLaterListProperties.value);
   }
 });

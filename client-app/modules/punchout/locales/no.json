@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Punchout-modus"
+    "mode_label": "Punchout-modus",
+    "create_requisition": "Opprett innkjøpsforespørsel",
+    "errors": {
+      "create_requisition_failed": "Kunne ikke opprette innkjøpsforespørselen. Prøv igjen.",
+      "session_not_found": "Punchout-økten ble ikke funnet. Gå tilbake til innkjøpssystemet og start en ny økt.",
+      "session_expired": "Punchout-økten er utløpt. Gå tilbake til innkjøpssystemet og start en ny økt.",
+      "store_not_configured": "Punchout er ikke satt opp for denne butikken. Kontakt butikkadministratoren.",
+      "configuration_error": "Punchout-tilkoblingen er ikke riktig konfigurert. Kontakt butikkadministratoren.",
+      "message_error": "Innkjøpsforespørselen kunne ikke klargjøres for innkjøpssystemet. Kontakt butikkadministratoren.",
+      "cart_not_found": "Handlekurven ble ikke funnet. Last inn siden på nytt og sjekk handlekurven.",
+      "cart_is_empty": "Velg minst én vare i handlekurven for å opprette en innkjøpsforespørsel.",
+      "session_returned": "Innkjøpsforespørselen er allerede sendt."
+    }
   }
 }
