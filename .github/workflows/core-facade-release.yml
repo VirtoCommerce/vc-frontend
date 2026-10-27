@@ -6,13 +6,26 @@
 # Manual-only by design: the contract version bumps automatically on facade changes
 # (yarn build:core-types), but a human decides when a version becomes consumable.
 # Releases are immutable — re-running for an already-released version fails; bump the
-# contract version instead. Never delete core-v* releases: a deleted release is the only
-# way a plugin's pin can break. See client-app/core-api/README.md and
+# contract version instead. Never delete stable core-v* releases: a deleted release is the
+# only way a plugin's pin can break.
+#
+# With `prerelease` checked, any branch can publish a GitHub pre-release of its contract
+# version, core-v<V>-alpha.<run>.<branch>, so a plugin PR can build and deploy against a
+# facade that is not on dev yet. Nothing is committed: the suffix exists only in the packed
+# package.json. Pre-releases are temporary — the stable release of <V> (or any later version)
+# deletes them, so a plugin must move its pin to a stable release before it merges.
+#
+# See client-app/core-api/README.md and
 # client-app/core/specs/VCST-5159-module-federation/2026-07-06-facade-distribution-design.md.
 name: Core Facade Release
 
 on:
   workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Publish an alpha pre-release from the selected branch (deleted once its version is released)'
+        type: boolean
+        default: false
 
 jobs:
   release:
@@ -20,9 +33,10 @@ jobs:
     if: (github.repository_id == '296335982' || vars.VC_RELEASE == 'true')
     runs-on: ubuntu-latest
     permissions:
-      contents: write # create the core-v* tag + release with the built-in GITHUB_TOKEN
+      contents: write # create the core-v* tag + release (and delete superseded pre-releases) with the built-in GITHUB_TOKEN
     env:
       FORCE_COLOR: true
+      PRERELEASE: ${{ inputs.prerelease }}
     steps:
       - name: Set up Node 22
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
@@ -41,9 +55,9 @@ jobs:
 
       # Immutable core-v* releases must only ever be minted from the default branch —
       # a release from a feature branch would permanently occupy that contract version
-      # with unmerged code.
+      # with unmerged code. A pre-release occupies only its own alpha tag, so any branch may cut one.
       - name: Fail unless run from dev
-        if: github.ref != 'refs/heads/dev'
+        if: ${{ !inputs.prerelease && github.ref != 'refs/heads/dev' }}
         run: |
           echo "::error::Core facade releases must be dispatched from the dev branch (got ${GITHUB_REF})."
           exit 1
@@ -51,16 +65,46 @@ jobs:
       - name: Read contract version
         id: core
         run: |
-          version=$(jq -r .version client-app/core-api/package.json)
+          base=$(jq -r .version client-app/core-api/package.json)
+          version=$base
+          if [ "$PRERELEASE" = "true" ]; then
+            # alpha.<run number> keeps alphas ordered (numeric identifiers compare numerically);
+            # the branch's last path segment says where it came from.
+            slug=$(printf '%s' "${GITHUB_REF_NAME##*/}" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^0-9a-z-]/-/g' | cut -c1-40 | sed -e 's/-*$//')
+            # An all-digit identifier must not have a leading zero; a letter makes it alphanumeric.
+            case "$slug" in *[!0-9]*) ;; ?*) slug="b$slug" ;; esac
+            version="$base-alpha.$GITHUB_RUN_NUMBER${slug:+.$slug}"
+          fi
           # Own-repo input, but $GITHUB_OUTPUT is newline-delimited — reject anything
           # that is not a plain semver string before it can smuggle extra output lines.
           if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
-            echo "::error::client-app/core-api/package.json version \"$version\" is not a valid semver string."
+            echo "::error::Facade version \"$version\" is not a valid semver string."
             exit 1
           fi
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=core-v$version" >> "$GITHUB_OUTPUT"
-          echo "tarball=vc-frontend-core-$version.tgz" >> "$GITHUB_OUTPUT"
+          {
+            echo "base=$base"
+            echo "version=$version"
+            echo "tag=core-v$version"
+            echo "tarball=vc-frontend-core-$version.tgz"
+          } >> "$GITHUB_OUTPUT"
+
+      # An alpha of an already-released version sorts BELOW that release, and the next stable
+      # release would delete it at once. A branch that changed the facade has a bumped version
+      # (yarn build:core-types); one that did not has nothing to pre-release.
+      - name: Fail if the pre-release base version is already released
+        if: ${{ inputs.prerelease }}
+        env:
+          BASE: ${{ steps.core.outputs.base }}
+        run: |
+          if ! printf '%s' "$BASE" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::A pre-release needs a plain X.Y.Z contract version to suffix, got \"$BASE\"."
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/core-v$BASE" > /dev/null 2>&1; then
+            echo "::error::core-v$BASE is already released. Change the facade and run yarn build:core-types" \
+              "(it bumps the version), or bump it with yarn bump:core, then commit and re-run."
+            exit 1
+          fi
 
       # Releases are immutable: the plugin-side pin (URL + lockfile checksum) must never
       # change meaning. A new contract means a new CORE_VERSION, not a re-release.
@@ -102,6 +146,16 @@ jobs:
         run: |
           yarn validate:core-types
 
+      # After the drift check, which judges the committed version. Only the packed copy carries the suffix.
+      - name: Stamp the pre-release version
+        if: ${{ inputs.prerelease }}
+        working-directory: client-app/core-api
+        env:
+          VERSION: ${{ steps.core.outputs.version }}
+        run: |
+          jq --arg v "$VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
       - name: Pack the facade tarball
         working-directory: client-app/core-api
         run: |
@@ -113,10 +167,17 @@ jobs:
           VERSION: ${{ steps.core.outputs.version }}
           TAG: ${{ steps.core.outputs.tag }}
           TARBALL: ${{ steps.core.outputs.tarball }}
+          BASE: ${{ steps.core.outputs.base }}
         run: |
           {
             echo "Type contract + federation config of the storefront host facade, for Module Federation plugin builds."
             echo
+            if [ "$PRERELEASE" = "true" ]; then
+              echo "> [!WARNING]"
+              echo "> Pre-release from \`$GITHUB_REF_NAME\` @ \`${GITHUB_SHA:0:9}\`. It is deleted when \`core-v${BASE}\` or a later version is released:"
+              echo "> pin a stable release before the plugin merges."
+              echo
+            fi
             echo "Pin it in a plugin's package.json:"
             echo
             echo '```json'
@@ -133,4 +194,34 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "@vc-frontend/core $VERSION" \
             --latest=false \
+            --prerelease="$PRERELEASE" \
             --notes-file release-notes.md
+
+      # A stable release supersedes every alpha below it: its own and older versions' ones. Alphas
+      # of a later version (a parallel branch ahead of this release) stay. The release is already
+      # out, so a failed delete only warns.
+      - name: Delete superseded facade pre-releases
+        if: ${{ !inputs.prerelease }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.core.outputs.version }}
+        run: |
+          if ! tags=$(gh release list --repo "$GITHUB_REPOSITORY" --limit 1000 --json tagName,isPrerelease \
+            --jq '.[] | select(.isPrerelease and (.tagName | startswith("core-v"))) | .tagName'); then
+            echo "::warning::Could not list releases; superseded facade pre-releases were not deleted."
+            exit 0
+          fi
+          superseded=$(printf '%s\n' "$tags" | node -e '
+            const { lt, prerelease, valid } = require("semver");
+            const lines = require("fs").readFileSync(0, "utf8").split("\n").filter(Boolean);
+            for (const tag of lines) {
+              const v = tag.slice("core-v".length);
+              if (valid(v) && prerelease(v) && lt(v, process.env.VERSION)) console.log(tag);
+            }')
+          for tag in $superseded; do
+            if gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes; then
+              echo "Deleted $tag"
+            else
+              echo "::warning::Could not delete pre-release $tag."
+            fi
+          done
