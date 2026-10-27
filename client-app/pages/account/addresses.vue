@@ -191,15 +191,19 @@ function onPageChange(newPage: number): void {
 
 function openAddOrUpdateAddressModal(address?: MemberAddressFieldsFragment): void {
   const serverErrors = ref<Record<string, string>>();
+  // Disabled while saving, so the server's messages land on the values it rejected
+  const saving = ref(false);
 
   openModal({
     component: AddOrUpdateAddressModal,
     props: {
       address,
-      loading: addressesLoading,
+      loading: computed(() => addressesLoading.value || saving.value),
       serverErrors,
 
       async onResult(updatedAddress: MemberAddressFieldsFragment) {
+        saving.value = true;
+
         try {
           await addOrUpdateAddresses(
             [{ ...updatedAddress, addressType: AddressType.BillingAndShipping }],
@@ -208,6 +212,8 @@ function openAddOrUpdateAddressModal(address?: MemberAddressFieldsFragment): voi
         } catch (e) {
           serverErrors.value = showSaveErrors(e, ADDRESS_FORM_FIELD_NAMES, ADDRESS_FIELD_PREFIX);
           return;
+        } finally {
+          saving.value = false;
         }
 
         closeModal();
