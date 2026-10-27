@@ -1,9 +1,12 @@
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
+import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { VcDropdownMenu, VcInput, VcMenuItem, VcSelect } from "@/ui-kit/components/molecules";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import SalesRepOrdersFilters from "./sales-rep-orders-filters.vue";
+import type { Plugin } from "vue";
 
 const isPhone = ref(false);
 const askedBreakpoints: string[] = [];
@@ -27,6 +30,7 @@ vi.mock("@vueuse/core", async (importOriginal) => {
 
 afterEach(() => {
   isPhone.value = false;
+  vi.useRealTimers();
 });
 
 const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
@@ -122,14 +126,11 @@ describe("SalesRepOrdersFilters", () => {
   });
 
   it("fills both bounds from a preset range", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 4, 8, 10, 30));
     const wrapper = createWrapper();
 
-    rangeSelect(wrapper).vm.$emit("change", {
-      id: "lastWeek",
-      label: "Last week",
-      startDate: "2026-05-01",
-      endDate: "2026-05-08",
-    });
+    rangeSelect(wrapper).vm.$emit("change", "lastWeek");
     await nextTick();
 
     await applyButton(wrapper).trigger("click");
@@ -203,12 +204,7 @@ describe("SalesRepOrdersFilters", () => {
     const wrapper = createWrapper();
 
     rangePicker(wrapper).vm.$emit("update:valid", false);
-    rangeSelect(wrapper).vm.$emit("change", {
-      id: "lastWeek",
-      label: "Last week",
-      startDate: "2026-05-01",
-      endDate: "2026-05-08",
-    });
+    rangeSelect(wrapper).vm.$emit("change", "lastWeek");
     await nextTick();
 
     expect(applyButton(wrapper).attributes("disabled")).toBeUndefined();
@@ -327,5 +323,48 @@ describe("SalesRepOrdersFilters — the date range field", () => {
       layout: "combined",
       label: "sales_rep.customer_orders.filters.date_range",
     });
+  });
+});
+
+describe("SalesRepOrdersFilters — the Created date field", () => {
+  // The real select, so the field's text and the active option are VcSelect's own, not a stub's.
+  const createWrapperWithSelect = (plugins: Plugin[] = []) =>
+    createWrapper({
+      global: {
+        plugins,
+        components: { VcDropdownMenu, VcInput, VcMenuItem, VcSelect },
+        stubs: { VcSelect: false, VcScrollbar: { template: "<ul><slot /></ul>" } },
+      },
+    });
+
+  const fieldText = (wrapper: WrapperType) => (wrapper.get(".vc-select input").element as HTMLInputElement).value;
+  const options = (wrapper: WrapperType) => wrapper.findAll('[role="option"]');
+  const activeOptions = (wrapper: WrapperType) =>
+    options(wrapper)
+      .filter((option) => option.attributes("aria-selected") === "true")
+      .map((option) => option.text());
+
+  it("labels the field from the live items, so a module locale that loads late still reaches it", async () => {
+    const i18n = createI18n({ legacy: false, locale: "en", messages: {}, missingWarn: false, fallbackWarn: false });
+    const wrapper = createWrapperWithSelect([i18n]);
+
+    expect(fieldText(wrapper)).toBe("sales_rep.customer_orders.filters.custom_date");
+
+    i18n.global.setLocaleMessage("en", { sales_rep: { customer_orders: { filters: { custom_date: "Custom date" } } } });
+    await nextTick();
+
+    expect(fieldText(wrapper)).toBe("Custom date");
+  });
+
+  it("marks the selected range active, before and after a pick", async () => {
+    const wrapper = createWrapperWithSelect();
+
+    expect(activeOptions(wrapper)).toEqual(["sales_rep.customer_orders.filters.custom_date"]);
+
+    const lastWeek = options(wrapper).find((option) => option.text() === "sales_rep.customer_orders.filters.last_week");
+    await lastWeek!.trigger("click");
+
+    expect(activeOptions(wrapper)).toEqual(["sales_rep.customer_orders.filters.last_week"]);
+    expect(fieldText(wrapper)).toBe("sales_rep.customer_orders.filters.last_week");
   });
 });

@@ -28,16 +28,17 @@
           <VcDialogContent>
             <div class="sales-rep-orders-filters__content">
               <VcSelect
-                v-model="selectedRange"
+                v-model="selectedRangeId"
                 :label="t('sales_rep.customer_orders.filters.created_date')"
                 :items="ranges"
                 text-field="label"
+                value-field="id"
                 enable-teleport
                 @change="applyRange"
               />
 
               <VcDateRangePicker
-                v-if="selectedRange.id === CUSTOM_RANGE_ID"
+                v-if="selectedRangeId === CUSTOM_RANGE_ID"
                 v-model="draftRange"
                 class="sales-rep-orders-filters__range"
                 :layout="rangeLayout"
@@ -189,7 +190,8 @@ const ranges = computed<RangeType[]>(() => {
 
 const draft = ref<SalesRepOrdersFilterDataType>(emptyFilter());
 const appliedFilter = ref<SalesRepOrdersFilterDataType>(emptyFilter());
-const selectedRange = ref<RangeType>(ranges.value[0]);
+// An id, not the item: the item's label is a t() snapshot, and the module locale loads after setup.
+const selectedRangeId = ref<RangeType["id"]>(CUSTOM_RANGE_ID);
 
 // Same split as the account orders filter: two labelled fields on desktop, one combined field on a phone.
 const isMobile = useBreakpoints(BREAKPOINTS).smaller("sm");
@@ -221,8 +223,10 @@ const isEmpty = computed(() => {
 
 const isDirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(appliedFilter.value));
 
-function applyRange(range: RangeType): void {
-  if (range.id === CUSTOM_RANGE_ID) {
+function applyRange(id: RangeType["id"]): void {
+  const range = ranges.value.find((item) => item.id === id);
+
+  if (!range || range.id === CUSTOM_RANGE_ID) {
     draft.value.startDate = undefined;
     draft.value.endDate = undefined;
     return;
@@ -242,7 +246,7 @@ function apply(): void {
 function reset(): void {
   draft.value = emptyFilter();
   appliedFilter.value = emptyFilter();
-  selectedRange.value = ranges.value[0];
+  selectedRangeId.value = CUSTOM_RANGE_ID;
   emit("change", appliedFilter.value);
 }
 
@@ -258,7 +262,7 @@ watch(
     draft.value = cloneFilter(value);
 
     if (!value.startDate && !value.endDate) {
-      selectedRange.value = ranges.value[0];
+      selectedRangeId.value = CUSTOM_RANGE_ID;
     }
   },
   { deep: true },
