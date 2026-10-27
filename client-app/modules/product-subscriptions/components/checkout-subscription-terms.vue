@@ -16,6 +16,18 @@
     </VcAlert>
 
     <template v-else>
+      <VcAlert
+        v-if="showNoPaymentMethod"
+        color="warning"
+        size="sm"
+        variant="soft"
+        icon
+        class="checkout-subscription-terms__notice"
+        data-test-id="checkout-subscription-no-payment-method"
+      >
+        {{ $t("product_subscriptions.checkout.no_payment_method") }}
+      </VcAlert>
+
       <ul class="checkout-subscription-terms__items">
         <li v-for="item in subscribedLines" :key="item.lineItemId">
           <strong>{{ item.name }}</strong>
@@ -63,11 +75,12 @@ import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { useFullCart } from "@/shared/cart/composables";
 import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useCartSubscriptions } from "../composables/useCartSubscriptions";
-import { intervalLabel, subscriptionErrorMessage } from "../utils";
+import { intervalLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
 
@@ -79,6 +92,11 @@ const { t } = useI18n();
 const cart = computed(() => props.cart);
 const { subscribedItems, hasSubscriptionItems, loading, failed, refresh } = useCartSubscriptions(cart);
 const { registerGuard, unregisterGuard } = useCheckoutGuards();
+// The payment list only offers methods that can save a card for a subscription cart; when none can, say why it's empty.
+const { availablePaymentMethods } = useFullCart();
+const showNoPaymentMethod = computed(() =>
+  needsCardPaymentMethodNotice(hasSubscriptionItems.value, availablePaymentMethods.value),
+);
 // Subscriptions are paid with the checkout's card, so accepting the terms makes the card form save it with the consent.
 const cardSaving = useCardSavingRequirement();
 
@@ -195,6 +213,10 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
 
   &__retry {
     @apply mt-2;
+  }
+
+  &__notice {
+    @apply mb-3;
   }
 }
 </style>

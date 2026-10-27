@@ -1,6 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
-import { applyDiscount, intervalKey, intervalLabel, parseIntervalKey, toDateInputValue } from "./utils";
+import {
+  applyDiscount,
+  intervalKey,
+  intervalLabel,
+  needsCardPaymentMethodNotice,
+  parseIntervalKey,
+  toDateInputValue,
+} from "./utils";
 
 describe("toDateInputValue", () => {
   it("gives the UTC day, as the server counts delivery days", () => {
@@ -56,5 +63,18 @@ describe("intervalKey / parseIntervalKey", () => {
       unit: SubscriptionIntervalUnit.Month,
       count: 3,
     });
+  });
+});
+
+// A subscription cart is offered only payment methods that can save a card; with none, the shopper is told why.
+describe("needsCardPaymentMethodNotice", () => {
+  it("is needed when a subscription cart has no payment method", () => {
+    expect(needsCardPaymentMethodNotice(true, [])).toBe(true);
+    expect(needsCardPaymentMethodNotice(true, undefined)).toBe(true);
+  });
+
+  it("isn't needed when a method is offered or the cart has no subscription", () => {
+    expect(needsCardPaymentMethodNotice(true, [{ code: "MockStoredCardPaymentMethod" }])).toBe(false);
+    expect(needsCardPaymentMethodNotice(false, [])).toBe(false);
   });
 });

@@ -123,3 +123,14 @@ export function subscriptionErrorMessage(
   Logger.warn("product-subscriptions", error);
   return t(key);
 }
+
+/**
+ * Whether the shopper must be told that the cart's subscriptions need a payment method that can save a card: the cart
+ * has subscription lines and the store offers no such method for it, so the payment list is empty.
+ */
+export function needsCardPaymentMethodNotice(
+  hasSubscriptionItems: boolean,
+  paymentMethods: unknown[] | null | undefined,
+): boolean {
+  return hasSubscriptionItems && !paymentMethods?.length;
+}
