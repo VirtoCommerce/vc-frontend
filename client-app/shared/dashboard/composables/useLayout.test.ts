@@ -458,6 +458,34 @@ describe("createLayoutController: the save", () => {
     expect(editing.value).toBe(true);
     // Not until the stored document is known again: a second save must not replace what nobody has seen.
     expect(canEdit.value).toBe(false);
+    await expect(saveLayout()).resolves.toBe(false);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+
+  // The page-load read is older than any save made since, so the re-read replaces the last save only when it lands.
+  it("keeps the last save while the document is read again, then takes the stored one", async () => {
+    const { startEdit, setHidden, save: saveLayout, cancel, hiddenIn } = await readController();
+    startEdit();
+    setHidden("side", true);
+    await expect(saveLayout()).resolves.toBe(true);
+
+    let land: (saved: SavedLayoutType | null) => void = () => {};
+    load.mockReturnValue(
+      new Promise<SavedLayoutType | null>((resolve) => {
+        land = resolve;
+      }),
+    );
+    save.mockResolvedValueOnce({ regions: [] });
+    startEdit();
+    setHidden("extra", true);
+    await expect(saveLayout()).resolves.toBe(false);
+
+    cancel();
+    expect(hiddenIn("mainRight")).toEqual(["side"]);
+
+    land(asStored(save.mock.calls[1][0]));
+    await flushPromises();
+    expect(hiddenIn("mainRight")).toEqual(["side", "extra"]);
   });
 
   it("survives a second read that fails", async () => {

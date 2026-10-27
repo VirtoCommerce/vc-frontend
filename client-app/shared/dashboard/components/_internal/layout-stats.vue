@@ -1,6 +1,6 @@
 <template>
   <div class="layout-stats">
-    <div v-if="editing" :id="`${scope}-visible-stats`" class="layout-stats__label">
+    <div v-if="editing" :id="`${componentId}-visible`" class="layout-stats__label">
       {{ t("shared.dashboard.visible_stats") }}
     </div>
 
@@ -8,7 +8,7 @@
          both zones name their cards "Reorder {title}", so the zone is all that tells them apart. -->
     <LayoutRegion
       :role="editing ? 'group' : undefined"
-      :aria-labelledby="editing ? `${scope}-visible-stats` : undefined"
+      :aria-labelledby="editing ? `${componentId}-visible` : undefined"
       :scope="scope"
       :entries="visible"
       orientation="horizontal"
@@ -35,14 +35,14 @@
     </LayoutRegion>
 
     <template v-if="editing">
-      <div :id="`${scope}-parked-stats`" class="layout-stats__label">
+      <div :id="`${componentId}-parked`" class="layout-stats__label">
         <VcIcon name="eye-off" :size="14" />
         {{ t("shared.dashboard.hidden_stats") }}
       </div>
 
       <LayoutRegion
         role="group"
-        :aria-labelledby="`${scope}-parked-stats`"
+        :aria-labelledby="`${componentId}-parked`"
         class="layout-stats__parked-zone"
         :scope="scope"
         :entries="hidden"
@@ -75,6 +75,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { useComponentId } from "@/ui-kit/composables";
 import LayoutRegion from "./layout-region.vue";
 import type { KeyboardSortSignalType, StatCardType, StatDeltaToneType } from "../../types";
 
@@ -96,6 +97,8 @@ interface IEmits {
 defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { t } = useI18n();
+// Per instance, not per scope: two surfaces of one dashboard on a page would otherwise label each other's zones.
+const componentId = useComponentId("layout-stats");
 
 // One group name per surface, shared by both zones — that shared name is what makes a card
 // draggable from visible to hidden and back.

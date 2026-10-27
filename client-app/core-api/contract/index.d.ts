@@ -5761,7 +5761,8 @@ type LayoutControllerType = {
     loading: Readonly<Ref<boolean>>;
     saving: Readonly<Ref<boolean>>;
     editing: Readonly<Ref<boolean>>;
-    /** False while loading and after a failed read — a save replaces the whole document. */
+    /** False while the document is read (at load, or again after a save it disagreed with) and after a failed read —
+     * a save replaces the whole document, so `save` is refused then too. */
     canEdit: Readonly<Ref<boolean>>;
     loadFailed: Readonly<Ref<boolean>>;
     saveFailed: Readonly<Ref<boolean>>;
@@ -5873,6 +5874,10 @@ type __VLS_WithSlots<T, S> = T & {
  * The signed-in user's layout of one dashboard, as the backend stores it: `createLayoutController` over the `layout`
  * and `saveLayout` operations, for the current store, reconciled against the blocks registered under `scope`. The
  * page creates it and hands it to `<LayoutSurface :layout>`.
+ *
+ * `scope` is a letter, then letters and digits, 64 at most — the format `registerBlock` checks. The backend keys the
+ * document by it and by the store id (letters, digits, `-` and `_`, as the store module requires); a scope outside
+ * that format reads as never saved, and every save fails.
  */
 declare function useLayout(scope: string): LayoutControllerType;
 
@@ -5971,15 +5976,19 @@ declare function useStatDataNeeds<TNeed extends string>(layout: LayoutVisibility
  * Adds a block to a dashboard; the dashboard (`scope`) is created by its first block. Rules for a contributor:
  * - register synchronously in the module's `init()`, which runs before the app mounts, so a dashboard's first
  *   render (its skeleton included) already knows every block;
- * - prefix the id with the module's name: ids are persisted as `block.type`, so two modules registering the
- *   same id into one dashboard collide in every saved document;
+ * - a scope is a letter, then letters and digits, 64 at most (`salesRepDashboard`); a block id is letters, digits,
+ *   `-` and `_`, 64 at most. The backend keys the saved document by both, so a dot or a space in either makes the
+ *   dashboard read as never saved and every save fail;
+ * - on another module's dashboard, prefix the id with your module's name, without a dot (`acmeOrders`): ids are
+ *   persisted as `block.type` and compared ignoring case, so two modules registering the same id into one
+ *   dashboard collide in every saved document;
  * - pick `order` in multiples of 10, so a later block can slot in between.
  *
  * A block registered only while its feature is on (a setting, a permission, an optional module) is unknown to
  * a layout saved while it is off: that save drops the block's position, hidden flag and settings, and once
  * registered again the block comes back at its defaults, at the end of its region.
  *
- * A second block with a taken id is ignored with a warning.
+ * A block with a key outside these formats, or with an id already taken in any case, is ignored with a warning.
  */
 declare function registerBlock(scope: string, block: BlockType): void;
 /** Removes a block from a dashboard. A saved document that names it keeps working: reconciliation drops it. */

@@ -84,7 +84,8 @@ export type LayoutControllerType = {
   loading: Readonly<Ref<boolean>>;
   saving: Readonly<Ref<boolean>>;
   editing: Readonly<Ref<boolean>>;
-  /** False while loading and after a failed read — a save replaces the whole document. */
+  /** False while the document is read (at load, or again after a save it disagreed with) and after a failed read —
+   * a save replaces the whole document, so `save` is refused then too. */
   canEdit: Readonly<Ref<boolean>>;
   loadFailed: Readonly<Ref<boolean>>;
   saveFailed: Readonly<Ref<boolean>>;

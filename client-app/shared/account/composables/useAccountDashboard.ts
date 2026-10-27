@@ -76,7 +76,8 @@ export function accountCardData(
       { count: formatStatCount(excludedCount) },
       excludedCount,
     );
-    return `${text} · ${note}`;
+    // One message rather than two joined here, so a language can reorder them or use its own separator.
+    return t("shared.account.dashboard.sub_with_excluded", { sub: text, note });
   }
 
   // Order COUNT is what every card compares on. No delta at all when the previous period had none: the backend

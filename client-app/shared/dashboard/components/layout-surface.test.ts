@@ -174,6 +174,20 @@ describe("LayoutSurface edit-button placement", () => {
     expect(wrapper.find(".layout-edit-button").exists()).toBe(true);
     expect(wrapper.find(".layout-surface__main-col .layout-edit-button").exists()).toBe(false);
   });
+
+  // A toggle states its state once: a changing label on top of `aria-pressed` reads it out twice.
+  it("keeps its label in edit mode and reports the mode through aria-pressed", async () => {
+    const wrapper = mountSurface(createFakeLayout(SCOPE));
+    await flushPromises();
+    const toggle = () => wrapper.get("[data-layout-edit-toggle]");
+    expect(toggle().attributes("aria-pressed")).toBe("false");
+
+    await toggle().trigger("click");
+    await flushPromises();
+
+    expect(toggle().text()).toBe("shared.dashboard.edit");
+    expect(toggle().attributes("aria-pressed")).toBe("true");
+  });
 });
 
 describe("LayoutSurface while saving", () => {

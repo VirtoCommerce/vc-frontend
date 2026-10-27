@@ -9,7 +9,6 @@ export default defineConfig((env) =>
     defineConfig({
       test: {
         environment: "jsdom",
-        setupFiles: ["./vitest.setup.ts"],
         exclude: [...configDefaults.exclude, "client-app/e2e/*", "**/.claude/**"],
         root: fileURLToPath(new URL("./", import.meta.url)),
         // Without an explicit tsconfig, vitest spawns `tsc --noEmit` from the repo root with no

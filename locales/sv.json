@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} vs förra månaden",
         "vs_last_year": "{delta} vs förra året",
         "excluded_orders": "{count} beställning i en annan valuta ingår inte | {count} beställningar i andra valutor ingår inte",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "Mina senaste beställningar",
           "view_all": "Alla beställningar",
@@ -1237,7 +1238,7 @@
         "cancelled": "Flytt av {title} avbruten.",
         "parked": "{title} dold.",
         "restored": "{title} visas.",
-        "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
+        "max_rows": "Max rader för {title}, mellan {min} och {max}"
       },
       "stats": {
         "load_failed": "Kunde inte läsas in"

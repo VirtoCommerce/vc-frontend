@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} vs mois dernier",
         "vs_last_year": "{delta} vs année dernière",
         "excluded_orders": "{count} commande dans une autre devise non incluse | {count} commandes dans d'autres devises non incluses",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "Mes commandes récentes",
           "view_all": "Toutes les commandes",
@@ -1237,7 +1238,7 @@
         "cancelled": "Déplacement de {title} annulé.",
         "parked": "{title} masqué.",
         "restored": "{title} affiché.",
-        "max_rows": "Nombre de lignes max affiché par {title}, entre {min} et {max}"
+        "max_rows": "Nombre de lignes max pour {title}, entre {min} et {max}"
       },
       "stats": {
         "load_failed": "Échec du chargement"

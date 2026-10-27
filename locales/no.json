@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} vs forrige måned",
         "vs_last_year": "{delta} vs i fjor",
         "excluded_orders": "{count} bestilling i en annen valuta er ikke inkludert | {count} bestillinger i andre valutaer er ikke inkludert",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "Mine nylige bestillinger",
           "view_all": "Alle bestillinger",
@@ -1237,7 +1238,7 @@
         "cancelled": "Flytting av {title} avbrutt.",
         "parked": "{title} skjult.",
         "restored": "{title} vist.",
-        "max_rows": "Maksimalt antall rader vist av {title}, mellom {min} og {max}"
+        "max_rows": "Maks. rader for {title}, mellom {min} og {max}"
       },
       "stats": {
         "load_failed": "Kunne ikke laste"

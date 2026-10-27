@@ -79,6 +79,27 @@ describe("block registry", () => {
     expect(Logger.warn).toHaveBeenCalledWith(expect.stringContaining('"taken"'));
   });
 
+  // The backend compares block ids ignoring case, so a layout holding both would fail every save.
+  it("treats an id that differs only in case as taken", () => {
+    registerBlock("registrySpecG", widget("orders"));
+    registerBlock("registrySpecG", widget("Orders"));
+
+    expect(getBlockRegistry("registrySpecG").map((block) => block.id)).toEqual(["orders"]);
+  });
+
+  // Outside the backend's formats a layout reads back as never saved, and every save of it fails validation.
+  it.each([
+    ["a block id with a dot", "registrySpecH", "acme.orders"],
+    ["a block id with a space", "registrySpecH", "acme orders"],
+    ["a scope with a dash", "registry-spec", "orders"],
+    ["a scope starting with a digit", "1registrySpec", "orders"],
+  ])("ignores %s, and warns about it", (_label, scope, id) => {
+    registerBlock(scope, widget(id));
+
+    expect(getBlockRegistry(scope)).toEqual([]);
+    expect(Logger.warn).toHaveBeenCalledWith(expect.stringContaining(`"${id}" on "${scope}"`));
+  });
+
   it("unregisters a block, and leaves the rest of the dashboard alone", () => {
     registerBlock("registrySpecE", widget("keep"));
     registerBlock("registrySpecE", widget("drop"));

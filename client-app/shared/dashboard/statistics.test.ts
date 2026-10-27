@@ -8,25 +8,40 @@ vi.mock("@/core/globals", async () => {
   return { globals: { cultureName: "en-US", currencyCode: "USD", i18n: createI18n("en-US", "USD") } };
 });
 
+// CI runs in UTC, where the user's midnight is UTC's, so windows built on UTC boundaries would pass there too. New
+// York is behind UTC and keeps DST, which also puts the fall-back case below on a real transition. Each spec file
+// runs in its own worker process, so the zone stays in this file.
+process.env.TZ = "America/New_York";
+
 // The windows are the user's calendar days expressed as UTC instants, so every expectation is built with
-// local-time constructors too — that keeps the suite meaningful in whatever zone it runs in (CI, a dev box
-// at UTC−5, a user at UTC+3) instead of only passing at UTC.
+// local-time constructors too.
 const localIso = (year: number, month: number, day: number, h = 0, min = 0, s = 0, ms = 0): string =>
   new Date(year, month, day, h, min, s, ms).toISOString();
 
 describe("buildStatisticsWindows", () => {
-  it("clamps the previous-month window to the current month start when the day overflows the previous month", () => {
-    // Mar 31: "Feb 31" doesn't exist, so the matched position normalizes forward into March and would
-    // overlap the current MTD window.
+  // Without the zone, nothing below could tell the user's midnight from UTC's.
+  it("runs in a zone behind UTC", () => {
+    expect(new Date(2025, 0, 15).getTimezoneOffset()).toBe(300);
+  });
+
+  it("ends the previous-month window on that month's last day when it lacks today's day", () => {
+    // Mar 31: "Feb 31" doesn't exist; normalized, it would run into March, up to the current window's start.
     const now = new Date(2025, 2, 31, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
     expect(w.mtdFrom).toBe(localIso(2025, 2, 1));
     expect(w.prevFrom).toBe(localIso(2025, 1, 1));
-    // Clamped to the month start (== mtdFrom); without the clamp it would land on Mar 3.
-    expect(w.prevTo).toBe(localIso(2025, 2, 1));
-    // The previous window must never reach into the current period.
-    expect(new Date(w.prevTo).getTime()).toBeLessThanOrEqual(new Date(w.mtdFrom).getTime());
+    // Both windows include their bounds, so an order placed at the stroke of Mar 1 must count in March only.
+    expect(w.prevTo).toBe(localIso(2025, 1, 28, 23, 59, 59, 999));
+    expect(new Date(w.prevTo).getTime()).toBeLessThan(new Date(w.mtdFrom).getTime());
+  });
+
+  it("ends last year's window on Feb 28 when today is Feb 29", () => {
+    // 2028 is a leap year and 2027 is not: "Feb 29, 2027" would normalize to Mar 1, a day past the same position.
+    const w = buildStatisticsWindows(new Date(2028, 1, 29, 12, 0, 0));
+
+    expect(w.lastYearFrom).toBe(localIso(2027, 0, 1));
+    expect(w.lastYearTo).toBe(localIso(2027, 1, 28, 23, 59, 59, 999));
   });
 
   it("matches the previous-month window to the same day of that month (no clamp) mid-month", () => {
@@ -197,6 +212,15 @@ describe("formatSignedPercent", () => {
   // Rounds to zero, so it must not read as a rise or a fall.
   it("reads a change that rounds to zero as no change", () => {
     expect(formatSignedPercent(0.4)).toEqual({ text: "0%", tone: "neutral", icon: "minus" });
+    expect(formatSignedPercent(-0.4)).toEqual({ text: "0%", tone: "neutral", icon: "minus" });
+  });
+
+  // The backend sends the change unrounded, so halves are common: 8 → 9 orders is +12.5 %, 8 → 7 is −12.5 %.
+  it("rounds a fall and a rise of the same size to the same figure", () => {
+    expect(formatSignedPercent(12.5)?.text).toBe("+13%");
+    expect(formatSignedPercent(-12.5)?.text).toBe("-13%");
+    expect(formatSignedPercent(0.5)).toEqual({ text: "+1%", tone: "positive", icon: "chevron-up" });
+    expect(formatSignedPercent(-0.5)).toEqual({ text: "-1%", tone: "negative", icon: "chevron-down" });
   });
 
   // Not glued by hand: German puts a no-break space before the percent sign.

@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} vs last month",
         "vs_last_year": "{delta} vs last year",
         "excluded_orders": "{count} order in another currency not included | {count} orders in other currencies not included",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "My recent orders",
           "view_all": "All orders",
@@ -1237,7 +1238,7 @@
         "cancelled": "Move of {title} cancelled.",
         "parked": "{title} hidden.",
         "restored": "{title} shown.",
-        "max_rows": "Maximum rows shown by {title}, between {min} and {max}"
+        "max_rows": "Max rows for {title}, between {min} and {max}"
       },
       "stats": {
         "load_failed": "Couldn't load"

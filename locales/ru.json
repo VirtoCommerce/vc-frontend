@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} к прошлому месяцу",
         "vs_last_year": "{delta} к прошлому году",
         "excluded_orders": "Не учтено {count} заказов в других валютах | Не учтён {count} заказ в другой валюте | Не учтены {count} заказа в других валютах | Не учтено {count} заказов в других валютах",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "Мои последние заказы",
           "view_all": "Все заказы",
@@ -1237,7 +1238,7 @@
         "cancelled": "Перемещение «{title}» отменено.",
         "parked": "«{title}» скрыт.",
         "restored": "«{title}» показан.",
-        "max_rows": "Максимальное количество строк, отображаемых {title}, от {min} до {max}"
+        "max_rows": "Макс. строк для {title}, от {min} до {max}"
       },
       "stats": {
         "load_failed": "Не удалось загрузить"

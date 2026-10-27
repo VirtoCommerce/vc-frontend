@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} vs poprzedni miesiąc",
         "vs_last_year": "{delta} vs poprzedni rok",
         "excluded_orders": "Nie uwzględniono {count} zamówień w innych walutach | Nie uwzględniono {count} zamówienia w innej walucie | Nie uwzględniono {count} zamówień w innych walutach | Nie uwzględniono {count} zamówień w innych walutach",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "Moje ostatnie zamówienia",
           "view_all": "Wszystkie zamówienia",
@@ -1237,7 +1238,7 @@
         "cancelled": "Anulowano przenoszenie {title}.",
         "parked": "Ukryto {title}.",
         "restored": "Pokazano {title}.",
-        "max_rows": "Maksymalna liczba wierszy wyświetlanych przez {title}, od {min} do {max}"
+        "max_rows": "Maks. wierszy dla {title}, od {min} do {max}"
       },
       "stats": {
         "load_failed": "Nie udało się wczytać"

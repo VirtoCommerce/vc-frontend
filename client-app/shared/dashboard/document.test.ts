@@ -228,7 +228,17 @@ describe("serializeLayout", () => {
 
 // Two ways an echo can lie: omit blocks, or return them all with the wrong `hidden`.
 describe("echoMatchesSentBlocks", () => {
-  const sent = serializeLayout(reconcileLayout(null, registry), "dashboard", registry);
+  // `orders` sends a row cap and two hidden tabs: with fewer than two settings, an echo's order could not differ.
+  const configured = doc([
+    "orders",
+    false,
+    [
+      { key: "maxRows", value: 3 },
+      { key: "tab.New", value: false },
+      { key: "tab.Paid", value: false },
+    ],
+  ]);
+  const sent = serializeLayout(reconcileLayout(configured, registry), "dashboard", registry);
 
   it("accepts an echo carrying every block that was sent", () => {
     expect(echoMatchesSentBlocks(sent as unknown as SavedLayoutType, sent)).toBe(true);

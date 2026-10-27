@@ -3,7 +3,7 @@ import type { StatDeltaToneType } from "./types";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 // ISO date windows shared by the statistics ops: current bounds end at the END of the user's current day
-// (see `nowIso`), previous-period windows at the same calendar position one period back (see `matched`).
+// (see `nowIso`), previous-period windows at the same calendar position one period back (see `sameDayIn`).
 //
 // Day/week/month/year boundaries are the USER'S calendar, not UTC's. The widgets have to agree with the
 // order lists next to them, and those render `createdDate` through `$d()` — i.e. in the browser's zone. On
@@ -40,6 +40,9 @@ const local = (year: number, month: number, day: number, hours = 0, minutes = 0,
 // End of a day on the user's clock — the inclusive upper bound every "to" window uses.
 const eod = (year: number, month: number, day: number): number => local(year, month, day, 23, 59, 59, 999);
 
+// The number of days in a month; `month` normalizes like `local`'s (−1 → the previous December).
+const daysIn = (year: number, month: number): number => new Date(year, month + 1, 0).getDate();
+
 // Every bound leaves here as a UTC instant — only *where* the user's day starts differs from UTC's.
 const iso = (ms: number): string => new Date(ms).toISOString();
 
@@ -70,23 +73,26 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   // A baseline window ends at the same calendar position one period back (Apr 9 → Mar 9, end of day), so
   // "vs last X" compares equal spans. Calendar move rather than `prevStart + elapsed`: a DST transition in
   // either period skews an elapsed millisecond span by an hour, and at 23:59:59.999 that rolls the bound
-  // onto the next day. Clamped to the current period's start so a day-of-month overflow (Mar 31 → "Feb 31",
-  // which normalizes to Mar 3) can't reach into the current window and double count.
-  const matched = (prevEnd: number, currentStart: number): string => iso(Math.min(prevEnd, currentStart));
+  // onto the next day. A day the target month lacks is clamped to its last day (Mar 31 → Feb 28, Feb 29 → Feb 28
+  // a year back): normalized, it would run into the next month, and on Mar 30–31 up to the current window's start,
+  // which both windows include.
+  const sameDayIn = (targetYear: number, targetMonth: number): string =>
+    iso(eod(targetYear, targetMonth, Math.min(day, daysIn(targetYear, targetMonth))));
 
   return {
     mtdFrom: iso(monthStart),
     mtdTo: nowIso,
     prevFrom: iso(prevMonthStart),
-    prevTo: matched(eod(year, month - 1, day), monthStart),
+    prevTo: sameDayIn(year, month - 1),
     ytdFrom: iso(yearStart),
     ytdTo: nowIso,
     lastYearFrom: iso(prevYearStart),
-    lastYearTo: matched(eod(year - 1, month, day), yearStart),
+    lastYearTo: sameDayIn(year - 1, month),
     weekFrom: iso(weekStart),
     weekTo: nowIso,
     prevWeekFrom: iso(prevWeekStart),
-    prevWeekTo: matched(eod(year, month, day - 7), weekStart),
+    // A week back is always a real day, and always before this week's Monday.
+    prevWeekTo: iso(eod(year, month, day - 7)),
     recentFrom: iso(recentStart),
     recentTo: nowIso,
   };
@@ -133,7 +139,9 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
     return undefined;
   }
 
-  const rounded = Math.round(percent);
+  // Half away from zero, so a fall reads like a rise of the same size: `Math.round` alone takes −12.5 to −12 but
+  // 12.5 to 13, and the backend sends the change unrounded.
+  const rounded = Math.sign(percent) * Math.round(Math.abs(percent));
   // The locale's percent and sign ("+12%", "+12 %" in German); a change that rounds to zero carries no sign.
   const text = globals.i18n.global.n(rounded / 100, { style: "percent", signDisplay: "exceptZero" });
 

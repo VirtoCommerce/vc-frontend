@@ -648,6 +648,7 @@
         "vs_last_month": "{delta} vs viime kuu",
         "vs_last_year": "{delta} vs viime vuosi",
         "excluded_orders": "{count} tilaus muussa valuutassa ei mukana | {count} tilausta muissa valuutoissa ei mukana",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "Omat viimeisimmät tilaukset",
           "view_all": "Kaikki tilaukset",
@@ -1237,7 +1238,7 @@
         "cancelled": "Kohteen {title} siirto peruutettu.",
         "parked": "{title} piilotettu.",
         "restored": "{title} näytetään.",
-        "max_rows": "Näytettävien rivien enimmäismäärä kohteessa {title}, välillä {min} ja {max}"
+        "max_rows": "Maksimirivit kohteessa {title}, välillä {min} ja {max}"
       },
       "stats": {
         "load_failed": "Lataus epäonnistui"

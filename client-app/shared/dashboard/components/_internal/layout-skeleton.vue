@@ -62,7 +62,11 @@ const columns = computed(() =>
   }
 
   &__row {
-    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
+    @apply flex flex-col gap-5;
+
+    @media (width >= theme("screens.xl")) {
+      @apply flex-row items-start;
+    }
   }
 
   &__main {
@@ -70,7 +74,11 @@ const columns = computed(() =>
   }
 
   &__aside {
-    @apply flex min-w-0 flex-col gap-5 xl:w-[22rem] xl:shrink-0;
+    @apply flex min-w-0 flex-col gap-5;
+
+    @media (width >= theme("screens.xl")) {
+      @apply w-[22rem] shrink-0;
+    }
   }
 
   // Wraps like layout-region--horizontal; the card pulses on its own.

@@ -68,3 +68,14 @@ describe("layout announcements", () => {
     });
   });
 });
+
+// The rows field shows a short label and is named by a longer one. A voice command says what is on screen, so the
+// name must begin with it (WCAG 2.5.3).
+describe("the rows field's name", () => {
+  it.each(Object.keys(LOCALE_MESSAGES))("starts with its visible label in %s", (locale) => {
+    const dashboard = (LOCALE_MESSAGES[locale] as { shared: { dashboard: Record<string, unknown> } }).shared.dashboard;
+    const name = (dashboard.a11y as Record<string, string>).max_rows;
+
+    expect(name.startsWith(dashboard.max_rows as string)).toBe(true);
+  });
+});

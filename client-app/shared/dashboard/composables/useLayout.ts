@@ -64,6 +64,9 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
       .load()
       .then((saved) => {
         loaded.value = saved ?? null;
+        // Only now, not when the read starts: until the stored document is known, `persisted` keeps the last
+        // save rather than falling back to the page-load read, which is older than it.
+        savedState.value = undefined;
         readFailed.value = false;
       })
       .catch((error: unknown) => {
@@ -190,8 +193,6 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
       // correct it. So the stored document is read again, and the failure is one the user can retry.
       if (!echoMatchesSentBlocks(stored, command)) {
         Logger.error(`[layout] saving the "${scope}" layout echoed a document that disagrees with what was sent`);
-        // Cleared so `persisted` reads the re-read rather than a stale echo.
-        savedState.value = undefined;
         read();
         return false;
       }
@@ -208,12 +209,15 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
   }
 
   // `saving`, not just `draft`: the draft is only cleared once the first save resolves, so anything holding a
-  // reference could otherwise fire a second full-document replace mid-flight.
+  // reference could otherwise fire a second full-document replace mid-flight. `canEdit` too: while the stored
+  // document is read again after a save it disagreed with, a save would replace what nobody has seen.
   async function save(): Promise<boolean> {
-    if (!draft.value || saving.value) {
+    if (!draft.value || saving.value || !canEdit.value) {
       return false;
     }
 
+    // Cleared first, so a second failure in a row is a change the page announces again.
+    saveFailed.value = false;
     // A failure keeps edit mode and the draft — the user's arrangement is not thrown away on a failed write.
     const saved = await persist(draft.value);
     saveFailed.value = !saved;
@@ -271,6 +275,10 @@ export function createLayoutController(options: LayoutControllerOptionsType): La
  * The signed-in user's layout of one dashboard, as the backend stores it: `createLayoutController` over the `layout`
  * and `saveLayout` operations, for the current store, reconciled against the blocks registered under `scope`. The
  * page creates it and hands it to `<LayoutSurface :layout>`.
+ *
+ * `scope` is a letter, then letters and digits, 64 at most — the format `registerBlock` checks. The backend keys the
+ * document by it and by the store id (letters, digits, `-` and `_`, as the store module requires); a scope outside
+ * that format reads as never saved, and every save fails.
  */
 export function useLayout(scope: string): LayoutControllerType {
   const { storeId } = globals;

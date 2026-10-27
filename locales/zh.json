@@ -648,6 +648,7 @@
         "vs_last_month": "较上月 {delta}",
         "vs_last_year": "较去年 {delta}",
         "excluded_orders": "未计入 {count} 笔其他币种的订单",
+        "sub_with_excluded": "{sub} · {note}",
         "recent_orders": {
           "title": "我的最近订单",
           "view_all": "所有订单",
@@ -1237,7 +1238,7 @@
         "cancelled": "已取消移动 {title}。",
         "parked": "已隐藏 {title}。",
         "restored": "已显示 {title}。",
-        "max_rows": "{title}显示的最大行数，范围在{min}到{max}之间"
+        "max_rows": "最大行数：{title}，范围在{min}到{max}之间"
       },
       "stats": {
         "load_failed": "加载失败"

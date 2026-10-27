@@ -24,6 +24,7 @@
       <LayoutEditBar
         v-if="editing"
         :saving="saving"
+        :save-disabled="!canEdit"
         :failed="saveFailed"
         @save="save"
         @cancel="cancel"
@@ -206,7 +207,11 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), ...props.blockProps });
 
   // Single column through tablet; the rail splits off only at xl. layout-skeleton.vue matches.
   &__row {
-    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
+    @apply flex flex-col gap-5;
+
+    @media (width >= theme("screens.xl")) {
+      @apply flex-row items-start;
+    }
   }
 
   // Left column plus the desktop edit button; LayoutRegion supplies its own stacking.
@@ -219,7 +224,11 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), ...props.blockProps });
   }
 
   &__aside {
-    @apply min-w-0 xl:w-[22rem] xl:shrink-0;
+    @apply min-w-0;
+
+    @media (width >= theme("screens.xl")) {
+      @apply w-[22rem] shrink-0;
+    }
   }
 
   // Visually hidden, but announced. Keyboard sorting is silent without it.

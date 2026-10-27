@@ -2,6 +2,8 @@
   <!-- Wrapped so the button keeps its intrinsic width inside a stretching flex column; classed so a
        project can restyle it without reaching for the button inside. -->
   <div class="layout-edit-button">
+    <!-- A toggle keeps its label: `aria-pressed` carries the state, and the edit bar already reads
+         "Editing layout" on screen. -->
     <VcButton
       size="xs"
       color="primary"
@@ -11,7 +13,7 @@
       :aria-pressed="editing"
       @click="$emit('toggle')"
     >
-      {{ editing ? t("shared.dashboard.editing") : t("shared.dashboard.edit") }}
+      {{ t("shared.dashboard.edit") }}
     </VcButton>
   </div>
 </template>

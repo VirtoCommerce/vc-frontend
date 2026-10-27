@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePreferredReducedMotion } from "@vueuse/core";
 import Sortable from "sortablejs";
 import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
 import { useBlockTitle } from "../../composables/_internal/useBlockTitle";
@@ -64,6 +65,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { titleOf } = useBlockTitle(() => props.scope);
 const container = useTemplateRef<HTMLElement>("container");
+const motion = usePreferredReducedMotion();
 
 /**
  * Undo SortableJS's DOM edit so state drives the re-render. The re-insert is not optional: leaving the
@@ -117,9 +119,14 @@ onMounted(() => {
     preventOnFilter: false,
     // Otherwise the empty-zone hint counts as an item and the indices stop matching `props.entries`.
     draggable: ".layout-block",
-    animation: 150,
+    // The blocks sliding aside is motion a user who asked for less doesn't need: the drop still lands.
+    animation: motion.value === "reduce" ? 0 : 150,
     ghostClass: "sortable-ghost",
     dragClass: "sortable-drag",
+    // A touch drag moves a `position: fixed` copy of the block, by default inside this list. Under a `filter` — the
+    // hidden-stats tray's grayscale — that copy is placed against the list, not the screen, so it lands away from
+    // the finger.
+    fallbackOnBody: true,
     disabled: !props.editing,
 
     // SortableJS defaults to `delay: 0` and preventDefaults every touchmove once a tap registers, so

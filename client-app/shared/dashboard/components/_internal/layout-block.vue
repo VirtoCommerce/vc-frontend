@@ -93,7 +93,11 @@ provideBlockChrome({
 
   // Outline, not border, so the box model is untouched.
   &--editing {
-    @apply rounded-[--vc-radius] outline-dashed outline-1 outline-offset-2 outline-neutral-300 transition-opacity;
+    @apply rounded-[--vc-radius] outline-dashed outline-1 outline-offset-2 outline-neutral-300;
+
+    @media (prefers-reduced-motion: no-preference) {
+      @apply transition-opacity;
+    }
   }
 
   // Stat cards: the card itself is the handle.

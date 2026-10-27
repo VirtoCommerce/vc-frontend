@@ -141,7 +141,11 @@ describe("the order statistics query", () => {
   // Every card shows its own failure, so the query must not also toast.
   it("fails without the global error toast", async () => {
     provideApolloClient(
-      new ApolloClient({ link: ApolloLink.from([errorHandlerLink, failingLink]), cache: new InMemoryCache() }),
+      new ApolloClient({
+        link: ApolloLink.from([errorHandlerLink, failingLink]),
+        cache: new InMemoryCache(),
+        devtools: { enabled: false },
+      }),
     );
     const owner = effectScope();
     const { error } = owner.run(() => useGetOrderStatisticsQuery(ref(STATISTICS_VARIABLES), ref(true)))!;
@@ -162,6 +166,7 @@ describe("the order statistics query", () => {
           return new Observable(() => {});
         }),
         cache: new InMemoryCache(),
+        devtools: { enabled: false },
       }),
     );
     const owner = effectScope();

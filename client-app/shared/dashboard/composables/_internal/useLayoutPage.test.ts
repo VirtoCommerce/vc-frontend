@@ -97,6 +97,29 @@ describe("useLayoutPage", () => {
     expect(page.message.value).toContain("shared.dashboard.save_failed");
   });
 
+  // The page reacts to the failure flag changing, so a flag left on by the first failure kept the second silent,
+  // with focus on <body>, where `inert` had dropped it.
+  it("announces a second failed save in a row and returns focus to Save again", async () => {
+    renderChrome();
+    const { layout, page } = await withPage();
+    page.startEdit();
+
+    layout.failNextSave.value = true;
+    await page.save();
+    await nextTick();
+    const first = page.message.value;
+    (document.activeElement as HTMLElement).blur();
+
+    layout.failNextSave.value = true;
+    await page.save();
+    await nextTick();
+    await nextTick();
+
+    expect(page.message.value).not.toBe(first);
+    expect(page.message.value).toContain("shared.dashboard.save_failed");
+    expect(activeMarker()).toBe("layoutSave");
+  });
+
   // Both widget columns share one tray, so a page reads them as a single list.
   it("gathers hidden widgets from both columns", async () => {
     const { page } = await withPage();

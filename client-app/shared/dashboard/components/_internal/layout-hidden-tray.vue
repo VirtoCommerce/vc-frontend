@@ -62,7 +62,11 @@ const { titleOf } = useBlockTitle(() => props.scope);
     // The kit's own hook, rather than a rule aimed at `.vc-icon` from outside it.
     --vc-icon-color: var(--color-primary-500);
 
-    @apply flex items-center gap-2 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 px-2.5 py-1.5 text-sm font-semibold text-neutral-900 transition-colors;
+    @apply flex items-center gap-2 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 px-2.5 py-1.5 text-sm font-semibold text-neutral-900;
+
+    @media (prefers-reduced-motion: no-preference) {
+      @apply transition-colors;
+    }
 
     &:hover {
       @apply border-primary-500 text-primary-500;

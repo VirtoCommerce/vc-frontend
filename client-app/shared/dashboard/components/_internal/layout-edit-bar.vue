@@ -20,7 +20,15 @@
         {{ t("shared.dashboard.cancel") }}
       </VcButton>
 
-      <VcButton size="sm" prepend-icon="save" data-layout-save :loading="saving" @click="$emit('save')">
+      <!-- Disabled while the stored document is read again after a save it disagreed with. -->
+      <VcButton
+        size="sm"
+        prepend-icon="save"
+        data-layout-save
+        :loading="saving"
+        :disabled="saveDisabled"
+        @click="$emit('save')"
+      >
         {{ t("shared.dashboard.save") }}
       </VcButton>
     </div>
@@ -37,6 +45,7 @@ import { useI18n } from "vue-i18n";
 
 interface IProps {
   saving?: boolean;
+  saveDisabled?: boolean;
   failed?: boolean;
 }
 
@@ -68,7 +77,11 @@ const { t } = useI18n();
   }
 
   &__actions {
-    @apply flex flex-none items-center gap-2 md:ms-auto;
+    @apply flex flex-none items-center gap-2;
+
+    @media (width >= theme("screens.md")) {
+      @apply ms-auto;
+    }
   }
 
   &__error {
