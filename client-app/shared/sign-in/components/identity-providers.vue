@@ -7,7 +7,11 @@
       :name="providerName"
       :return-url="returnUrl"
     >
-      <component :is="loadProviderComponent(providerName)" :return-url="returnUrl" />
+      <component
+        :is="loadProviderComponent(providerName)"
+        v-if="isBuiltInProvider(providerName)"
+        :return-url="returnUrl"
+      />
     </ExtensionPoint>
   </div>
 </template>
@@ -17,6 +21,7 @@ import { useMemoize } from "@vueuse/core";
 import { defineAsyncComponent } from "vue";
 import { Logger } from "@/core/utilities";
 import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
+import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import type { Component } from "vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
@@ -26,6 +31,8 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+const { isBuiltInProvider } = useIdentityProviders();
 
 const loadProviderComponent = useMemoize(
   (providerName: string): Component =>

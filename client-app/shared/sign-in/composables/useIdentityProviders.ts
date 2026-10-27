@@ -39,10 +39,14 @@ export function useIdentityProviders() {
 
   function hasButton(type: string): boolean {
     return (
-      BUILT_IN_PROVIDERS.has(type.toLowerCase()) ||
+      isBuiltInProvider(type) ||
       isRegistered(EXTENSION_CATEGORIES.identityProviders, type) ||
       heldPolicyOf(EXTENSION_CATEGORIES.identityProviders, type) !== undefined
     );
+  }
+
+  function isBuiltInProvider(type: string): boolean {
+    return BUILT_IN_PROVIDERS.has(type.toLowerCase());
   }
 
   return {
@@ -50,5 +54,6 @@ export function useIdentityProviders() {
     hasIdentityProviders,
     hasPasswordAuthentication,
     hasOnlyIdentityProviders,
+    isBuiltInProvider,
   };
 }
