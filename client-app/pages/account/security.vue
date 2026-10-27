@@ -76,6 +76,7 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useSignInMethods } from "@/shared/account";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { useModal } from "@/shared/modal";
@@ -88,13 +89,18 @@ type SignInMethodType = NonNullable<GetSignInMethodsQuery["signInMethods"]>[numb
 
 const { t, d } = useI18n();
 const { openModal } = useModal();
+const { themeContext } = useThemeContext();
 const { getContribution } = useExtensionRegistry();
 const { signInMethods, loading, renaming, deleting, refetch, renameKey, deleteKey } = useSignInMethods();
 
 usePageHead({ title: computed(() => t("pages.account.security.title")) });
 
 const extendedSignInMethods = computed(() =>
-  signInMethods.value.filter((signInMethod) => getContribution("signInMethods", signInMethod.name)),
+  signInMethods.value.filter(
+    (signInMethod) =>
+      themeContext.value.storeSettings.authenticationTypes.includes(signInMethod.name) &&
+      getContribution("signInMethods", signInMethod.name),
+  ),
 );
 
 function getTitle(signInMethod: SignInMethodType, contribution?: SignInMethodContributionType): string {
