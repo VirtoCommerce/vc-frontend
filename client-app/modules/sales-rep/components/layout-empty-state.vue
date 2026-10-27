@@ -67,7 +67,7 @@ const { t } = useI18n();
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .layout-empty-state {
-  @apply mx-auto max-w-xl;
+  @apply mx-auto w-full max-w-xl;
 
   &__art {
     @apply w-[14.75rem] max-w-full;
