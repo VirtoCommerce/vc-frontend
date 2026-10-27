@@ -76,7 +76,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     in this file for another component's block or elements. A parent places a child through the class on the
     child's root (a BEM mix, `class="parent__child"`) — layout only: margin, flex, grid, width, order. The child's
     look changes only through its props and its public CSS variables (`--vc-<component>-…` for kit components).
-11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`stat-widget--success`). A modifier bound in the
+11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`product-card--list`). A modifier bound in the
     template but styled nowhere is dead (`nit`); an element class with no rule is fine (it's a hook).
 12. Class binding: static block/element class + object for modifiers —
     `class="x__item" :class="{ 'x__item--active': isActive }"`. A template literal (`` :class="`x--${tone}`" ``)

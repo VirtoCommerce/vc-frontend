@@ -13,6 +13,8 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
 
+const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
+
 /**
  * An import ban for `no-restricted-syntax`. Its options are REPLACED per matching flat-config block,
  * not merged, so a block that sets the rule must list every selector that should apply to its files.
@@ -22,8 +24,6 @@ import vueParser from "vue-eslint-parser";
  * its can match one - and a type-only import is exactly the coupling that breaks when a module moves
  * to its own repository.
  */
-const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
-
 const NO_HOST_INTERNAL_IMPORT = {
   selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/_internal/]`,
   message:

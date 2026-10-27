@@ -37,8 +37,10 @@ Pick the scaffold flags the module needs: `--with-i18n`, `--with-apollo`, `--wit
    `scripts/graphql-codegen/generator.ts`; the plugin generates its own types (`yarn generate:graphql-types` in
    `StorefrontApp`, from `/graphql/<plugin-name>`; if the module's scope has another name, change `schema` in
    `codegen.ts`).
-7. **Switch over in one storefront release:** stop calling the module's `init` from the host. Running both duplicates
-   the feature's menu links. Keep the in-repo module behind a temporary theme setting until QA signs the plugin off,
+7. **Switch over in one storefront release:** stop calling the module's `init` from the host. Running both lets the
+   in-repo copy win: it registers first, so the plugin's routes, account sections and extension-registry entries with
+   the same names are refused or ignored, and only menu links merged through `mergeMenuSchema` appear twice. Keep the
+   in-repo module behind a temporary theme setting until QA signs the plugin off,
    then delete it. Every environment the release reaches needs the module version that ships the plugin
    ([S6](./s6-enable-on-an-environment.md)), or the feature disappears.
 
