@@ -80,7 +80,12 @@ import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuar
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useCartSubscriptions } from "../composables/useCartSubscriptions";
-import { intervalLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
+import {
+  intervalLabel,
+  needsCardPaymentMethodNotice,
+  shouldWithdrawCardSaving,
+  subscriptionErrorMessage,
+} from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
 
@@ -153,10 +158,20 @@ async function onToggle(value: boolean) {
   }
 }
 
-// A cart that no longer has subscription lines needs no consent, and its card no longer has to be saved.
-watch(hasSubscriptionItems, (has) => {
-  if (!has && accepted.value) {
-    accepted.value = false;
+// A cart that no longer has subscription lines needs no consent, and its card no longer has to be saved, unless the
+// lines left because they were ordered: placing the order refetches the cart before its payment form reads the consent.
+watch(subscribedItems, (items, previous) => {
+  if (items.length || !accepted.value) {
+    return;
+  }
+
+  accepted.value = false;
+  if (
+    shouldWithdrawCardSaving(
+      (previous ?? []).map((x) => x.lineItemId),
+      cart.value?.items,
+    )
+  ) {
     cardSaving.clear();
   }
 });

@@ -134,3 +134,16 @@ export function needsCardPaymentMethodNotice(
 ): boolean {
   return hasSubscriptionItems && !paymentMethods?.length;
 }
+
+/**
+ * Whether accepted terms no longer need the card saved, once the cart has no subscription lines left: the lines that
+ * were subscribed are still in the cart, so the shopper turned them one-time or left them out of checkout. Lines that
+ * left the cart were ordered, and the order's payment still needs the card saved with the consent.
+ */
+export function shouldWithdrawCardSaving(
+  previousLineIds: string[],
+  cartItems: { id: string }[] | null | undefined,
+): boolean {
+  const lineIds = new Set((cartItems ?? []).map((item) => item.id));
+  return previousLineIds.some((id) => lineIds.has(id));
+}
