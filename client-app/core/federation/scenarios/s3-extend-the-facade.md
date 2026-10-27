@@ -59,8 +59,8 @@ The plugin's PR has to build in CI, or QA has to see it, while the facade PR is 
 pre-release of the facade branch ([facade README §5](../../../core-api/README.md#5-releasing)) instead of a yalc link:
 
 1. **Publish the alpha.** 📁 `vc-frontend`, on the facade branch: merge `dev` (the workflow file comes from the
-   branch, and older ones lack the input), then run _Core Facade Release_ from that branch with **prerelease**
-   checked. It publishes `core-v<version>-alpha.<run>.<branch>`.
+   branch, and older ones refuse to run outside `dev`), then run _Core Facade Release_ from that branch. Off `dev` it
+   always publishes an alpha, `core-v<version>-alpha.<run>.<branch>`.
 2. **Pin it in the plugin.** 📁 `StorefrontApp`: point `@vc-frontend/core` at the alpha's tarball, set
    `requiredHostVersion` to `^<alpha version>`, then `yarn install`. 📁 `vc-frontend`:
    `yarn check:plugin-module <*.Web>` ✅, with one ⚠️ for the alpha pin.
