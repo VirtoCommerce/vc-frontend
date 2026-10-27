@@ -418,7 +418,7 @@ const logoRequirements = computed(() =>
   fileRequirements(fileOptions.value.allowedExtensions, fileOptions.value.maxFileSize, fileOptions.value.maxFileCount),
 );
 
-const uploadingOrganizationLogo = computed(() => files.value[0].status === "uploading");
+const uploadingOrganizationLogo = computed(() => files.value[0]?.status === "uploading");
 
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
