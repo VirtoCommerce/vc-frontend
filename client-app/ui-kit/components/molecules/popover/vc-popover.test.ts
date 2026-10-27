@@ -286,7 +286,6 @@ describe("VcPopover", () => {
       expect(document.activeElement).toBe(wrapper.get(".vc-popover__body").element);
     });
 
-    // A reopened panel still sits where autoUpdate left its hidden box, so a focus scroll strands it there.
     it("takes focus without scrolling the page to the panel", async () => {
       const wrapper = createDialogWrapper();
       const focus = vi.spyOn(wrapper.get(".vc-popover__body").element as HTMLElement, "focus");

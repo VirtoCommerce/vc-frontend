@@ -290,7 +290,7 @@ async function focusPanel(): Promise<void> {
     return;
   }
 
-  // preventScroll: a reopened panel is still at its stale hidden position, and scrolling to it strands it there.
+  // preventScroll: the panel is focused before it is positioned, so a plain focus() would scroll the page to its stale spot.
   floating.value.focus({ preventScroll: true });
 }
 
