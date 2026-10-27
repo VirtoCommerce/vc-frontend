@@ -229,7 +229,10 @@ const triggerId = componentId + "-trigger";
 
 const slots = useSlots();
 // A function, not a computed: slots are not reactive, so the check has to run on every render.
-const hasSlotTrigger = () => !!(slots.selected || slots.placeholder);
+function hasSlotTrigger(): boolean {
+  return !!(slots.selected || slots.placeholder);
+}
+
 const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");
