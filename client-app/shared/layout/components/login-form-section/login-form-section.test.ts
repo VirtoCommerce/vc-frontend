@@ -16,7 +16,7 @@ vi.mock("@/core/composables/useAuth", () => ({
 }));
 
 vi.mock("@/shared/account", () => ({
-  SignInForm: { name: "SignInForm", template: "<form />" },
+  SignInForm: { name: "SignInForm", emits: ["stepChanged"], template: "<form />" },
   useUser: () => ({ isAuthenticated: ref(false) }),
 }));
 
@@ -88,6 +88,16 @@ describe("LoginFormSection", () => {
     await otpForm(wrapper).vm.$emit("stepChanged", "verify");
 
     expect(wrapper.find(".title").text()).toBe("shared.sign_in.otp_email_sign_in_form.verify.header");
+  });
+
+  it("titles the section with the code header and hides the switch to OTP while the password sign-in asks for the second factor", async () => {
+    const wrapper = mountSection();
+    await otpForm(wrapper).vm.$emit("switchToPassword");
+    expect(wrapper.find(switchToOtpLink).exists()).toBe(true);
+
+    await wrapper.findComponent({ name: "SignInForm" }).vm.$emit("stepChanged", "two-factor");
+    expect(wrapper.find(switchToOtpLink).exists()).toBe(false);
+    expect(wrapper.find(".title").text()).toBe("shared.sign_in.mfa_verify_form.header");
   });
 
   it("switches to the password form and back to OTP", async () => {

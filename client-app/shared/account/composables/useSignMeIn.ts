@@ -16,7 +16,7 @@ export function useSignMeIn() {
   const { errors: authErrors, resetErrors: resetAuthErrors } = useAuth();
   const broadcast = useBroadcast();
   const { cart } = useShortCart();
-  const { result: me, load: getMe } = useGetMeQuery();
+  const { result: me, load: loadMe, refetch: refetchMe } = useGetMeQuery();
   const { mutate: mergeCart } = useMutation(MergeCartDocument);
   const { unpinLocale, removeLocaleFromUrl } = useLanguages();
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
@@ -32,53 +32,56 @@ export function useSignMeIn() {
       removeLocaleFromUrl();
 
       // get user that will be applied after reload.
-      await getMe();
+      const firstLoad = loadMe();
+      await (firstLoad === false ? refetchMe() : firstLoad);
+
+      if (!me.value?.me) {
+        throw new Error("The signed-in user could not be loaded");
+      }
 
       const currencyCode = me.value?.me?.contact?.currencyCode;
 
-      if (me.value?.me) {
-        if (cart.value?.id && cart.value.items?.length) {
-          if (currencyCode && currencyCode !== currentCurrencyCode) {
-            await clearCurrencyCart({
-              command: { userId: me.value.me.id, currencyCode: currentCurrencyCode, storeId, cultureName },
-              skipQuery: false,
-            });
-          }
+      if (cart.value?.id && cart.value.items?.length) {
+        if (currencyCode && currencyCode !== currentCurrencyCode) {
+          await clearCurrencyCart({
+            command: { userId: me.value.me.id, currencyCode: currentCurrencyCode, storeId, cultureName },
+            skipQuery: false,
+          });
+        }
 
-          // Ensure that the currency of the cart (secondCartId) matches the provided currencyCode
-          await mergeCart({
+        // Ensure that the currency of the cart (secondCartId) matches the provided currencyCode
+        await mergeCart({
+          command: {
+            userId: me.value.me.id,
+            secondCartId: cart.value.id,
+            storeId,
+            cultureName,
+            currencyCode: currentCurrencyCode,
+          },
+        });
+
+        if (currencyCode && currencyCode !== currentCurrencyCode) {
+          await changeCartCurrency({
             command: {
               userId: me.value.me.id,
-              secondCartId: cart.value.id,
+              newCurrencyCode: currencyCode,
               storeId,
               cultureName,
               currencyCode: currentCurrencyCode,
             },
           });
-
-          if (currencyCode && currencyCode !== currentCurrencyCode) {
-            await changeCartCurrency({
-              command: {
-                userId: me.value.me.id,
-                newCurrencyCode: currencyCode,
-                storeId,
-                cultureName,
-                currencyCode: currentCurrencyCode,
-              },
-            });
-          }
         }
+      }
 
-        const contactCurrency = supportedCurrencies.value.find((item) => item.code === currencyCode);
-        if (contactCurrency) {
-          saveCurrencyCode(contactCurrency.code, false);
-        }
+      const contactCurrency = supportedCurrencies.value.find((item) => item.code === currencyCode);
+      if (contactCurrency) {
+        saveCurrencyCode(contactCurrency.code, false);
       }
 
       void broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
     },
     null,
-    { immediate: false },
+    { immediate: false, throwError: true },
   );
 
   const errors = ref<IdentityErrorType[]>();
