@@ -15,7 +15,7 @@ export function useSignInMethods() {
   const notifications = useNotifications();
   const { translate } = useErrorsTranslator<IdentityErrorType>("identity_error");
 
-  const { result, loading } = useGetSignInMethodsQuery();
+  const { result, loading, refetch } = useGetSignInMethodsQuery();
   const { mutate: renameMutation, loading: renaming } = useRenameSignInKeyMutation();
   const { mutate: deleteMutation, loading: deleting } = useDeleteSignInKeyMutation();
 
@@ -35,7 +35,6 @@ export function useSignInMethods() {
       return true;
     } catch (e) {
       Logger.error(`${useSignInMethods.name}.${renameKey.name}`, e);
-      showError();
 
       return false;
     }
@@ -54,7 +53,6 @@ export function useSignInMethods() {
       return true;
     } catch (e) {
       Logger.error(`${useSignInMethods.name}.${deleteKey.name}`, e);
-      showError();
 
       return false;
     }
@@ -73,6 +71,7 @@ export function useSignInMethods() {
     loading,
     renaming,
     deleting,
+    refetch,
     renameKey,
     deleteKey,
   };

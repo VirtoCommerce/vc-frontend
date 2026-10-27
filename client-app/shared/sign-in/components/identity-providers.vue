@@ -1,11 +1,14 @@
 <template>
   <div class="identity-providers">
-    <component
-      :is="getComponent('identityProviders', providerName) ?? loadProviderComponent(providerName)"
+    <ExtensionPoint
       v-for="providerName in providers"
       :key="providerName"
+      category="identityProviders"
+      :name="providerName"
       :return-url="returnUrl"
-    />
+    >
+      <component :is="loadProviderComponent(providerName)" :return-url="returnUrl" />
+    </ExtensionPoint>
   </div>
 </template>
 
@@ -13,8 +16,8 @@
 import { useMemoize } from "@vueuse/core";
 import { defineAsyncComponent } from "vue";
 import { Logger } from "@/core/utilities";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
+import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 interface IProps {
   providers: string[];
@@ -22,8 +25,6 @@ interface IProps {
 }
 
 defineProps<IProps>();
-
-const { getComponent } = useExtensionRegistry();
 
 const loadProviderComponent = useMemoize(
   (providerName: string): Component =>

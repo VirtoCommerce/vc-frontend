@@ -3,7 +3,7 @@
   "PlatformVersion": "3.1083.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
   "PlatformImageTag": "3.1083.0",
-  "PlatformAssetUrl": "https://vc3prerelease.blob.core.windows.net/packages/VirtoCommerce.Platform.3.1090.0-alpha.13452-vcst-6121-passkeys.zip",
+  "PlatformAssetUrl": "https://vc3prerelease.blob.core.windows.net/packages/VirtoCommerce.Platform.3.1091.0-alpha.13460-vcst-6121-passkeys.zip",
   "Sources": [
     {
       "Name": "AzureBlob",
@@ -12,7 +12,7 @@
       "Modules": [
         {
           "Id": "VirtoCommerce.XFrontend",
-          "BlobName": "VirtoCommerce.XFrontend_3.1008.0-alpha.60-vcst-6121-passkeys.zip"
+          "BlobName": "VirtoCommerce.XFrontend_3.1008.0-alpha.64-vcst-6121-passkeys.zip"
         }
       ]
     },

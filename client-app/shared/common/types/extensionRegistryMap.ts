@@ -91,7 +91,7 @@ export type ExtensionCategoryMapType = {
   /** The sign-in buttons, keyed by the authentication type. */
   identityProviders: ExtensionEntryType;
   /** The account security page, keyed by the sign-in method name. */
-  signInMethods: ExtensionEntryType<never, SignInMethodContributionType>;
+  signInMethods: DecorateEntryType<SignInMethodContributionType>;
 };
 
 /** The parameter a category's `condition` accepts. */

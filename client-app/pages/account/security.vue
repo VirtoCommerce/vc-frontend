@@ -17,7 +17,7 @@
               prepend-icon="plus"
               size="sm"
               :loading="toValue(extensionProps.creating)"
-              @click="extensionProps.createKey"
+              @click="createKey(extensionProps)"
             >
               {{ toValue(extensionProps.createKeyText) }}
             </VcButton>
@@ -87,9 +87,9 @@ import RenameSignInKeyModal from "@/shared/account/components/rename-sign-in-key
 type SignInMethodType = NonNullable<GetSignInMethodsQuery["signInMethods"]>[number];
 
 const { t, d } = useI18n();
-const { openModal, closeModal } = useModal();
+const { openModal } = useModal();
 const { getContribution } = useExtensionRegistry();
-const { signInMethods, loading, renaming, deleting, renameKey, deleteKey } = useSignInMethods();
+const { signInMethods, loading, renaming, deleting, refetch, renameKey, deleteKey } = useSignInMethods();
 
 usePageHead({ title: computed(() => t("pages.account.security.title")) });
 
@@ -101,29 +101,38 @@ function getTitle(signInMethod: SignInMethodType, contribution?: SignInMethodCon
   return toValue(contribution?.title) || signInMethod.displayName || signInMethod.name;
 }
 
+async function createKey(contribution: SignInMethodContributionType): Promise<void> {
+  await contribution.createKey?.();
+  await refetch();
+}
+
 function getKeyDetails(key: SignInKeyType, contribution?: SignInMethodContributionType): string {
   const details = [...(contribution?.getKeyDetails?.(key) ?? [])];
 
   if (key.createdDate) {
-    details.push(
-      t("pages.account.security.created", {
-        date: d(key.createdDate, { dateStyle: "short", timeStyle: "short" }),
-      }),
-    );
+    details.push(t("pages.account.security.created", { date: formatDate(key.createdDate) }));
+  }
+
+  if (key.modifiedDate) {
+    details.push(t("pages.account.security.changed", { date: formatDate(key.modifiedDate) }));
   }
 
   return details.join(" · ");
 }
 
+function formatDate(date: string): string {
+  return d(date, { dateStyle: "short", timeStyle: "short" });
+}
+
 function openRenameModal(signInMethod: SignInMethodType, key: SignInKeyType): void {
-  openModal({
+  const closeRenameModal = openModal({
     component: RenameSignInKeyModal,
     props: {
       initialName: key.name,
       loading: renaming,
       async onSave(name: string) {
         if (await renameKey(signInMethod.name, key.id, name)) {
-          closeModal();
+          closeRenameModal();
         }
       },
     },
@@ -131,7 +140,7 @@ function openRenameModal(signInMethod: SignInMethodType, key: SignInKeyType): vo
 }
 
 function openDeleteModal(signInMethod: SignInMethodType, key: SignInKeyType): void {
-  openModal({
+  const closeDeleteModal = openModal({
     component: VcConfirmationModal,
     props: {
       loading: deleting,
@@ -141,7 +150,7 @@ function openDeleteModal(signInMethod: SignInMethodType, key: SignInKeyType): vo
       text: t("pages.account.security.delete_modal.message"),
       async onConfirm() {
         await deleteKey(signInMethod.name, key.id);
-        closeModal();
+        closeDeleteModal();
       },
     },
   });
