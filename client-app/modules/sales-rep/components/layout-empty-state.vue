@@ -70,11 +70,7 @@ const { t } = useI18n();
   @apply mx-auto max-w-xl;
 
   &__art {
-    @apply max-w-full;
-
-    svg {
-      @apply h-auto max-w-full;
-    }
+    @apply w-[14.75rem] max-w-full;
   }
 
   &__title {

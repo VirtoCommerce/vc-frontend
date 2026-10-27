@@ -1,4 +1,4 @@
-<svg width="236" height="168" display="block" viewBox="0 0 236 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg display="block" viewBox="0 0 236 168" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Colours are theme tokens, so this only follows presets and dark mode when inlined (`?raw`), not as an <img>. -->
   <rect x="6" y="8" width="224" height="152" rx="15" fill="var(--color-secondary-200)" />
   <rect x="6.5" y="8.5" width="223" height="151" rx="14.5" stroke="var(--color-secondary-100)" />
