@@ -248,6 +248,30 @@ describe("SalesRepOrdersFilters", () => {
     expect(statuses(wrapper).props("modelValue")).toEqual([]);
   });
 
+  it("falls back to a custom range keeping the other bound when one date chip of a preset is removed", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 4, 8, 10, 30));
+    const wrapper = createWrapper();
+    const lastWeek = { statuses: [], customerNames: [], startDate: "2026-05-01", endDate: "2026-05-08" };
+
+    rangeSelect(wrapper).vm.$emit("update:modelValue", "lastWeek");
+    rangeSelect(wrapper).vm.$emit("change", "lastWeek");
+    await nextTick();
+    await applyButton(wrapper).trigger("click");
+
+    expect(lastChange(wrapper)).toEqual(lastWeek);
+
+    await wrapper.setProps({ applied: lastWeek });
+
+    expect(rangeSelect(wrapper).props("modelValue")).toBe("lastWeek");
+    expect(rangePicker(wrapper).exists()).toBe(false);
+
+    await wrapper.setProps({ applied: { ...lastWeek, startDate: undefined } });
+
+    expect(rangeSelect(wrapper).props("modelValue")).toBe("custom");
+    expect(rangePicker(wrapper).props("modelValue")).toEqual({ start: undefined, end: "2026-05-08" });
+  });
+
   it("offers a customer group only where the page passes customers", async () => {
     const wrapper = createWrapper();
     const groups = () => wrapper.findAll(".sales-rep-orders-filters__statuses");

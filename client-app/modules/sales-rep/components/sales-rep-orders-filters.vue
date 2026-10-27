@@ -261,7 +261,9 @@ watch(
     appliedFilter.value = cloneFilter(value);
     draft.value = cloneFilter(value);
 
-    if (!value.startDate && !value.endDate) {
+    const range = ranges.value.find((item) => item.id === selectedRangeId.value);
+
+    if (range?.startDate !== value.startDate || range?.endDate !== value.endDate) {
       selectedRangeId.value = CUSTOM_RANGE_ID;
     }
   },
