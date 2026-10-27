@@ -1,5 +1,5 @@
-import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import { localDayKey, localDayKeyToIso } from "../tasks";
 import SalesRepTaskModal from "./sales-rep-task-modal.vue";
@@ -41,6 +41,9 @@ vi.mock("@/shared/modal", () => ({ useModal: () => modal }));
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key, d: () => "Oct 15", n: String, locale: { value: "en" } }),
 }));
+
+// A wrapper left mounted re-renders under the next test's mount, whose stubs differ.
+enableAutoUnmount(afterEach);
 
 const closeMock = vi.hoisted(() => vi.fn());
 
@@ -99,8 +102,7 @@ function createWrapper(props: Record<string, unknown> = {}, { realFields = false
       components: realFields
         ? { VcButton, VcCalendar, VcDateInput, VcDatePicker, VcInput, VcInputDetails, VcLabel, VcPopover }
         : { VcButton },
-      directives: { "html-safe": {}, maska: {} },
-      mocks: { $t: (key: string) => key },
+      directives: { "html-safe": {} },
     },
   });
 }
@@ -308,12 +310,19 @@ describe("SalesRepTaskModal edit", () => {
 
 describe("SalesRepTaskModal accessibility", () => {
   it("marks the required controls as required, not just with an asterisk", async () => {
+    // The real VcDatePicker teleports into the app's popover host, which must exist before the mount.
+    const popoverHost = document.createElement("div");
+    popoverHost.id = "popover-host";
+    document.body.appendChild(popoverHost);
     const wrapper = createWrapper({ defaultDay: "2026-10-15" }, { realFields: true });
     await flushPromises();
 
     const input = (key: string) => wrapper.get(`input[aria-label$="${key}"]`);
     expect(input("name_label").attributes("aria-required")).toBe("true");
     expect(input("due_date_label").attributes("aria-required")).toBe("true");
+
+    wrapper.unmount();
+    popoverHost.remove();
   });
 
   // Product decision over QA A-18 (advisory): Save is disabled until the form is valid. The requirement is
