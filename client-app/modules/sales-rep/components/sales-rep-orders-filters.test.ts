@@ -248,29 +248,36 @@ describe("SalesRepOrdersFilters", () => {
     expect(statuses(wrapper).props("modelValue")).toEqual([]);
   });
 
-  it("falls back to a custom range keeping the other bound when one date chip of a preset is removed", async () => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date(2026, 4, 8, 10, 30));
-    const wrapper = createWrapper();
-    const lastWeek = { statuses: [], customerNames: [], startDate: "2026-05-01", endDate: "2026-05-08" };
+  const appliedLastWeek = { statuses: [], customerNames: [], startDate: "2026-05-01", endDate: "2026-05-08" };
 
-    rangeSelect(wrapper).vm.$emit("update:modelValue", "lastWeek");
-    rangeSelect(wrapper).vm.$emit("change", "lastWeek");
-    await nextTick();
-    await applyButton(wrapper).trigger("click");
+  it.each([
+    ["start", { ...appliedLastWeek, startDate: undefined }, { start: undefined, end: "2026-05-08" }],
+    ["end", { ...appliedLastWeek, endDate: undefined }, { start: "2026-05-01", end: undefined }],
+  ])(
+    "falls back to a custom range that keeps the other bound when a preset's %s chip is removed",
+    async (_bound, applied, keptRange) => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date(2026, 4, 8, 10, 30));
+      const wrapper = createWrapper();
 
-    expect(lastChange(wrapper)).toEqual(lastWeek);
+      rangeSelect(wrapper).vm.$emit("update:modelValue", "lastWeek");
+      rangeSelect(wrapper).vm.$emit("change", "lastWeek");
+      await nextTick();
+      await applyButton(wrapper).trigger("click");
 
-    await wrapper.setProps({ applied: lastWeek });
+      expect(lastChange(wrapper)).toEqual(appliedLastWeek);
 
-    expect(rangeSelect(wrapper).props("modelValue")).toBe("lastWeek");
-    expect(rangePicker(wrapper).exists()).toBe(false);
+      await wrapper.setProps({ applied: appliedLastWeek });
 
-    await wrapper.setProps({ applied: { ...lastWeek, startDate: undefined } });
+      expect(rangeSelect(wrapper).props("modelValue")).toBe("lastWeek");
+      expect(rangePicker(wrapper).exists()).toBe(false);
 
-    expect(rangeSelect(wrapper).props("modelValue")).toBe("custom");
-    expect(rangePicker(wrapper).props("modelValue")).toEqual({ start: undefined, end: "2026-05-08" });
-  });
+      await wrapper.setProps({ applied });
+
+      expect(rangeSelect(wrapper).props("modelValue")).toBe("custom");
+      expect(rangePicker(wrapper).props("modelValue")).toEqual(keptRange);
+    },
+  );
 
   it("offers a customer group only where the page passes customers", async () => {
     const wrapper = createWrapper();

@@ -190,7 +190,7 @@ const ranges = computed<RangeType[]>(() => {
 
 const draft = ref<SalesRepOrdersFilterDataType>(emptyFilter());
 const appliedFilter = ref<SalesRepOrdersFilterDataType>(emptyFilter());
-// An id, not the item: the item's label is a t() snapshot, and the module locale loads after setup.
+// An id, not the item: the item's label is a t() snapshot, and the module locale can load after setup.
 const selectedRangeId = ref<RangeType["id"]>(CUSTOM_RANGE_ID);
 
 // Same split as the account orders filter: two labelled fields on desktop, one combined field on a phone.
