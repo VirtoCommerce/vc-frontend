@@ -41,7 +41,8 @@ Add a `files` field so `npm pack` carries only the distributables:
 
 **Trigger: manual `workflow_dispatch`, no inputs** (the version is single-sourced from
 `core-api/package.json`; there is nothing for a human to type). The branch picks the kind
-of release: `dev` publishes a stable one, any other branch an alpha pre-release. Steps:
+of release: the repo's default branch (`dev`) publishes a stable one, any other branch an alpha
+pre-release. Steps:
 
 1. Checkout + install + `yarn build:core-types` — regenerating the contract fails on
    drift, so a stale committed contract cannot be released.

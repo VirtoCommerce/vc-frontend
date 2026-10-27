@@ -78,7 +78,7 @@ Never edit `contract/` by hand. The output is deterministic, so its diff in a PR
 
 ## 5. Releasing
 
-1. Run the **Core Facade Release** workflow from `dev`. It validates, packs this folder and publishes the tarball
+1. Run the **Core Facade Release** workflow from `dev`, the default branch. It validates, packs this folder and publishes the tarball
    as a GitHub Release on tag `core-v<version>`. Plugins pin its URL:
    `https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<version>/vc-frontend-core-<version>.tgz`.
 2. It refuses a version whose release or tag already exists: a new contract needs a new version. It runs only in
@@ -87,7 +87,7 @@ Never edit `contract/` by hand. The output is deterministic, so its diff in a PR
 4. Before a release exists, plugins link the local facade with yalc: `yarn core:yalc-push`
    ([S2.3](../core/federation/scenarios/s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
 5. **A plugin PR that must build or deploy before the facade reaches `dev`** (its CI, a QA environment): run the
-   workflow from the facade branch. From any branch but `dev` it publishes a GitHub pre-release
+   workflow from the facade branch. From any branch but the default one it publishes a GitHub pre-release
    `core-v<version>-alpha.<run>.<branch>`, never a stable release; pin its tarball URL and set `requiredHostVersion` to `^<that version>`. The
    host has to be a theme build of the same branch. The branch's version must not be released yet.
 6. **Alphas are temporary.** The stable release of `<version>`, or of any later one, deletes every alpha below it.
