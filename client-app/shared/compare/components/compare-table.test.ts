@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import CompareTable from "./compare-table.vue";
 import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
@@ -29,22 +29,25 @@ vi.mock("../composables", () => ({
   }),
 }));
 
-// isCompact derives from useElementBounding's headerRowTop against useCssVar's app header height —
-// both real layout reads jsdom can't produce. Mocked as one shared, real ref so tests can flip
+// isCompact derives from useElementBounding's anchor top (and useElementSize's header row height)
+// against useCssVar's app header height — real layout reads jsdom can't produce. Mocked as one shared, real ref so tests can flip
 // isCompact deterministically (and reactively — a live watch on it is what's under test) just by
-// moving headerRowTop below/above the (fixed at 0) header height.
+// moving headerRowAnchorTop below/above the (fixed at 0) header height.
 vi.mock("@vueuse/core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@vueuse/core")>();
   const { ref: vueRef } = await import("vue");
-  const headerRowTop = vueRef(100); // > appHeaderHeight (0) + 1, i.e. not compact by default
+  const headerRowAnchorTop = vueRef(100); // > appHeaderHeight (0) + 1, i.e. not compact by default
+  const headerRowHeight = vueRef(0);
   const isMobile = vueRef(false);
 
   return {
     ...actual,
     useBreakpoints: () => ({ smaller: () => isMobile }),
-    useElementBounding: () => ({ top: headerRowTop, update: vi.fn() }),
+    useElementBounding: () => ({ top: headerRowAnchorTop, update: vi.fn() }),
+    useElementSize: () => ({ width: vueRef(0), height: headerRowHeight }),
     useCssVar: () => vueRef("0"),
-    __headerRowTop: headerRowTop,
+    __headerRowAnchorTop: headerRowAnchorTop,
+    __headerRowHeight: headerRowHeight,
     __isMobile: isMobile,
   };
 });
@@ -98,8 +101,23 @@ function product(id: string): ICompareDisplayProduct {
 }
 
 async function setCompact(compact: boolean) {
-  const vueuseCore = (await import("@vueuse/core")) as unknown as { __headerRowTop: { value: number } };
-  vueuseCore.__headerRowTop.value = compact ? 0 : 100;
+  await setHeaderRowAnchorTop(compact ? 0 : 100);
+}
+
+async function vueuseMock() {
+  return (await import("@vueuse/core")) as unknown as {
+    __headerRowAnchorTop: { value: number };
+    __headerRowHeight: { value: number };
+    __isMobile: { value: boolean };
+  };
+}
+
+async function setHeaderRowAnchorTop(top: number) {
+  (await vueuseMock()).__headerRowAnchorTop.value = top;
+}
+
+async function setHeaderRowHeight(height: number) {
+  (await vueuseMock()).__headerRowHeight.value = height;
 }
 
 function row(key: string, values: string[]): ICompareTableRow {
@@ -132,12 +150,24 @@ function mountTable(props: { products?: ICompareDisplayProduct[] } = {}) {
 }
 
 async function setMobile(mobile: boolean) {
-  const vueuseCore = (await import("@vueuse/core")) as unknown as { __isMobile: { value: boolean } };
-  vueuseCore.__isMobile.value = mobile;
+  (await vueuseMock()).__isMobile.value = mobile;
 }
+
+// jsdom lays nothing out, so scrollHeight is 0 unless a test gives the page room to scroll.
+function setRoomBelow(room: number) {
+  Object.defineProperty(document.documentElement, "scrollHeight", {
+    configurable: true,
+    value: window.innerHeight + window.scrollY + room,
+  });
+}
+
+beforeEach(() => {
+  setRoomBelow(10_000);
+});
 
 afterEach(async () => {
   await setCompact(false);
+  await setHeaderRowHeight(0);
   await setMobile(false);
   tableRows.value = [];
 });
@@ -344,6 +374,70 @@ describe("CompareTable — selectItem", () => {
     wrapper.findAllComponents({ name: "VcProductTitle" })[1].vm.$emit("click");
 
     expect(wrapper.emitted("selectItem")).toEqual([[products[1].product, 1]]);
+
+    wrapper.unmount();
+  });
+});
+
+describe("CompareTable — compact threshold", () => {
+  const FULL_HEIGHT = 300;
+
+  it("keeps the full header row when the page has too little room below to absorb compacting", async () => {
+    setRoomBelow(FULL_HEIGHT - 1);
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await setHeaderRowHeight(FULL_HEIGHT);
+    await nextTick();
+
+    await setCompact(true);
+    await nextTick();
+
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(0);
+
+    wrapper.unmount();
+  });
+
+  it("stays compact once the page shrinks under the scroll, and leaves it as soon as the row unsticks", async () => {
+    setRoomBelow(FULL_HEIGHT);
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await setHeaderRowHeight(FULL_HEIGHT);
+    await nextTick();
+
+    await setCompact(true);
+    await nextTick();
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(2);
+
+    setRoomBelow(0);
+    await setHeaderRowAnchorTop(1);
+    await nextTick();
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(2);
+
+    await setHeaderRowAnchorTop(2);
+    await nextTick();
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(0);
+
+    wrapper.unmount();
+  });
+
+  it("needs only the room the compact row actually frees once its height is measured", async () => {
+    const COMPACT_HEIGHT = 100;
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await setHeaderRowHeight(FULL_HEIGHT);
+    await nextTick();
+
+    await setCompact(true);
+    await nextTick();
+    await setHeaderRowHeight(COMPACT_HEIGHT);
+    await nextTick();
+    await setCompact(false);
+    await nextTick();
+    await setHeaderRowHeight(FULL_HEIGHT);
+    await nextTick();
+
+    setRoomBelow(FULL_HEIGHT - COMPACT_HEIGHT);
+    await setCompact(true);
+    await nextTick();
+
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(2);
 
     wrapper.unmount();
   });
