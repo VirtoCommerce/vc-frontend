@@ -12,6 +12,10 @@ const BUILT_IN_PROVIDERS = new Set(
   ),
 );
 
+export function isBuiltInProvider(type: string): boolean {
+  return BUILT_IN_PROVIDERS.has(type.toLowerCase());
+}
+
 export function useIdentityProviders() {
   const { themeContext } = useThemeContext();
   const { isRegistered } = useExtensionRegistry();
@@ -45,15 +49,10 @@ export function useIdentityProviders() {
     );
   }
 
-  function isBuiltInProvider(type: string): boolean {
-    return BUILT_IN_PROVIDERS.has(type.toLowerCase());
-  }
-
   return {
     identityProviders,
     hasIdentityProviders,
     hasPasswordAuthentication,
     hasOnlyIdentityProviders,
-    isBuiltInProvider,
   };
 }
