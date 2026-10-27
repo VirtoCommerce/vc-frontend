@@ -414,9 +414,11 @@ describe("VcSelect inside a dialog popover", () => {
   );
 });
 
+const requiredSelectProps = { items: ["Pickup", "Courier"], label: "Shipping method", required: true };
+
 const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
   attachTo: document.body,
-  props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true },
+  props: requiredSelectProps,
   global: {
     components: KIT_COMPONENTS,
   },
@@ -437,10 +439,7 @@ describe("VcSelect required", () => {
     ["placeholder", { placeholder: "Select" }, ""],
     ["selected", { selected: "Picked" }, "Pickup"],
   ])("keeps the asterisk audible for a %s-slot trigger, which a label cannot name", (_, slots, modelValue) => {
-    const wrapper = createSelectWrapper({
-      props: { items: ["Pickup", "Courier"], label: "Shipping method", required: true, modelValue },
-      slots,
-    });
+    const wrapper = createSelectWrapper({ props: { ...requiredSelectProps, modelValue }, slots });
     const label = wrapper.get(".vc-label");
 
     expect(wrapper.find(".vc-select__button").exists()).toBe(true);
