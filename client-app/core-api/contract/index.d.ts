@@ -5854,13 +5854,16 @@ declare const useAuth: typeof _useAuth;
 declare function useSignMeIn(): {
     errors: vue.Ref<IdentityErrorType$1[] | undefined, IdentityErrorType$1[] | undefined>;
     loading: vue.Ref<boolean, boolean>;
-    signIn: (delay?: number) => Promise<void | null | undefined>;
+    signIn: (options?: {
+        returnUrl?: string;
+    }) => Promise<void>;
     resetErrors: () => void;
 };
 
 interface IProps$6 {
     text: string;
     icon: string;
+    loading?: boolean;
 }
 declare const __VLS_export$6: vue.DefineComponent<IProps$6, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     signIn: () => any;
