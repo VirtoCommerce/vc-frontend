@@ -1,5 +1,5 @@
-import type { CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
-import type { ExtendedMenuLinkType } from "@/core/types";
+import type { CartType, CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
+import type { ExtendedMenuLinkType, PreparedLineItemType } from "@/core/types";
 import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
@@ -77,6 +77,23 @@ export type ExtensionCategoryMapType = {
     never,
     ({ paymentTypeName }: { paymentTypeName: string }) => boolean
   >;
+  /**
+   * The add-card form on the account's payment methods page (`pages/account/payment-methods.vue`), per payment method that
+   * can save cards; registered under the payment method's code. The component emits `added` when the card is saved.
+   */
+  addCardForm: ExtensionEntryType<
+    { paymentMethodCode: string; setDefault: boolean },
+    never,
+    (paymentMethodCode: string) => boolean
+  >;
+  /** Under each cart line item (`shared/cart/components/cart-line-items.vue`). A provider decides from the line whether it has anything to show. */
+  cartLineItem: ExtensionEntryType<
+    { lineItem: PreparedLineItemType; readonly?: boolean },
+    never,
+    (lineItem: PreparedLineItemType) => boolean
+  >;
+  /** The checkout review step, above the order summary (`pages/checkout/review.vue`). */
+  checkoutReview: ExtensionEntryType<{ cart?: CartType }, never, (cart?: CartType) => boolean>;
   /** The order details page. A provider decides from the order whether it has anything to offer. */
   orderDetails: ExtensionEntryType<{ order?: CustomerOrderType }, never, (order?: CustomerOrderType) => boolean>;
   /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */

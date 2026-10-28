@@ -383,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Saved for later",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Payment methods"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +500,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Payment methods"
         }
       },
       "change_password_form": {
@@ -1045,6 +1047,36 @@
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Pay with",
+        "new_card": "Use a new card",
+        "save_card": "Save this card for future payments",
+        "save_card_required": "This purchase includes a subscription, so the card is saved securely to pay for it. You can change it any time.",
+        "default": "Default",
+        "expired": "Expired",
+        "needs_update": "Needs update",
+        "expires": "Expires {date}",
+        "page_title": "Payment methods",
+        "page_subtitle": "Cards saved for faster checkout and subscriptions. We never store your full card number.",
+        "empty": "No saved cards yet.",
+        "make_default": "Make default",
+        "remove": "Remove",
+        "remove_title": "Remove this card?",
+        "remove_text": "The card is deleted from your account and at the payment provider.",
+        "removed": "Card removed.",
+        "add_title": "Add a card",
+        "add": "Save card",
+        "added": "Card saved.",
+        "set_default": "Use as my default card",
+        "billing_title": "Billing address of the card",
+        "billing_hint": "Your bank checks it when the card is saved.",
+        "address": "Street address",
+        "city": "City",
+        "state": "State",
+        "zip": "ZIP code",
+        "form_unavailable": "Cards can't be saved right now. Please try again later.",
+        "error": "Something went wrong. Please try again."
       }
     },
     "wishlists": {

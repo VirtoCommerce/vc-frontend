@@ -1,0 +1,10 @@
+fragment subscriptionCartItemFields on SubscriptionCartItem {
+  id
+  cartId
+  lineItemId
+  productId
+  planId
+  intervalUnit
+  intervalCount
+  intervalLabel
+}

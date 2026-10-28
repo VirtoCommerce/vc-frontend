@@ -1,0 +1,60 @@
+#import "./savedPaymentMethodFields.graphql"
+
+fragment productSubscriptionFields on ProductSubscription {
+  id
+  number
+  status
+  storeId
+  productId
+  sku
+  productName
+  imageUrl
+  quantity
+  quantityRules {
+    packSize
+    minQuantity
+    maxQuantity
+  }
+  planId
+  planName
+  intervalUnit
+  intervalCount
+  intervalLabel
+  discountType
+  discountValue
+  startDate
+  nextOrderDate
+  pausedUntil
+  skipCount
+  cancelledDate
+  cancelReason
+  currency
+  storedPaymentMethodId
+  lastOrderId
+  lastOrderNumber
+  lastOrderDate
+  initialOrderId
+  initialOrderNumber
+  ordersCount
+  referencePrice
+  createdDate
+  canSkip
+  canPause
+  canResume
+  canCancel
+  canOrderNow
+  canChange
+  shippingAddress {
+    firstName
+    lastName
+    line1
+    line2
+    city
+    postalCode
+    regionName
+    countryCode
+  }
+  savedPaymentMethod {
+    ...savedPaymentMethodFields
+  }
+}

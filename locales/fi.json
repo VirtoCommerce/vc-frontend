@@ -383,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Tallessa myöhempää varten",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Maksutavat"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +500,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Maksutavat"
         }
       },
       "change_password_form": {
@@ -1045,6 +1047,36 @@
           "missing_link": "Uudelleenohjauslinkki puuttuu",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Maksa kortilla",
+        "new_card": "Käytä uutta korttia",
+        "save_card": "Tallenna tämä kortti tulevia maksuja varten",
+        "save_card_required": "Tähän ostokseen sisältyy tilaus, joten kortti tallennetaan turvallisesti sen maksamista varten. Voit vaihtaa sen milloin tahansa.",
+        "default": "Oletus",
+        "expired": "Vanhentunut",
+        "needs_update": "Päivitettävä",
+        "expires": "Voimassa {date} asti",
+        "page_title": "Maksutavat",
+        "page_subtitle": "Tallennetut kortit nopeampaa maksamista ja tilauksia varten. Emme koskaan tallenna koko kortin numeroa.",
+        "empty": "Ei vielä tallennettuja kortteja.",
+        "make_default": "Aseta oletukseksi",
+        "remove": "Poista",
+        "remove_title": "Poistetaanko tämä kortti?",
+        "remove_text": "Kortti poistetaan tililtäsi ja maksupalvelusta.",
+        "removed": "Kortti poistettu.",
+        "add_title": "Lisää kortti",
+        "add": "Tallenna kortti",
+        "added": "Kortti tallennettu.",
+        "set_default": "Käytä oletuskorttinani",
+        "billing_title": "Kortin laskutusosoite",
+        "billing_hint": "Pankkisi tarkistaa sen, kun kortti tallennetaan.",
+        "address": "Katuosoite",
+        "city": "Kaupunki",
+        "state": "Osavaltio",
+        "zip": "Postinumero",
+        "form_unavailable": "Kortteja ei voi tallentaa juuri nyt. Yritä myöhemmin uudelleen.",
+        "error": "Jokin meni vikaan. Yritä uudelleen."
       }
     },
     "wishlists": {

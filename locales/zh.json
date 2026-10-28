@@ -383,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "稍后保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "支付方式"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +500,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "支付方式"
         }
       },
       "change_password_form": {
@@ -1045,6 +1047,36 @@
           "missing_link": "重定向链接缺失",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "支付方式",
+        "new_card": "使用新卡",
+        "save_card": "保存此卡以便日后付款",
+        "save_card_required": "此次购买包含订阅，因此将安全保存该卡用于支付订阅。您可以随时更换。",
+        "default": "默认",
+        "expired": "已过期",
+        "needs_update": "需要更新",
+        "expires": "有效期至 {date}",
+        "page_title": "支付方式",
+        "page_subtitle": "为加快结账和订阅而保存的卡。我们从不保存完整的卡号。",
+        "empty": "还没有保存的卡。",
+        "make_default": "设为默认",
+        "remove": "删除",
+        "remove_title": "删除此卡？",
+        "remove_text": "该卡将从您的账户和支付服务商处删除。",
+        "removed": "卡已删除。",
+        "add_title": "添加卡",
+        "add": "保存卡",
+        "added": "卡已保存。",
+        "set_default": "用作我的默认卡",
+        "billing_title": "卡的账单地址",
+        "billing_hint": "保存卡时银行会进行核验。",
+        "address": "街道地址",
+        "city": "城市",
+        "state": "州/省",
+        "zip": "邮政编码",
+        "form_unavailable": "目前无法保存卡。请稍后再试。",
+        "error": "出现问题。请重试。"
       }
     },
     "wishlists": {

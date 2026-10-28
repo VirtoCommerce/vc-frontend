@@ -1,0 +1,217 @@
+{
+  "product_subscriptions": {
+    "navigation": {
+      "subscriptions": "Subscriptions"
+    },
+    "intervals": {
+      "day": "Every day | Every {count} days",
+      "week": "Every week | Every {count} weeks",
+      "month": "Every month | Every {count} months",
+      "year": "Every year | Every {count} years"
+    },
+    "discount": {
+      "percent": "Save {value}%",
+      "amount": "Save {value}"
+    },
+    "statuses": {
+      "PendingActivation": "Starting",
+      "Active": "Active",
+      "Paused": "Paused",
+      "PastDue": "Payment needed",
+      "Cancelled": "Cancelled",
+      "Scheduled": "Scheduled",
+      "Notified": "Upcoming",
+      "ReviewRequired": "Needs review",
+      "Ordered": "Processing",
+      "PaymentActionRequired": "Confirm payment",
+      "RetryScheduled": "Payment retry",
+      "Authorized": "Confirmed",
+      "Completed": "Delivered",
+      "Failed": "Payment failed",
+      "Skipped": "Skipped"
+    },
+    "card_status": {
+      "Active": "Active",
+      "NeedsUpdate": "Needs update",
+      "Expired": "Expired",
+      "Revoked": "Removed"
+    },
+    "common": {
+      "qty": "Qty {quantity}",
+      "next": "Next: {date}",
+      "paused": "Paused",
+      "paused_until": "Paused until {date}",
+      "cancelled_on": "Cancelled {date}",
+      "back": "Back"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "purchase_options": {
+      "title": "Purchase options",
+      "one_time": "One-time purchase",
+      "subscribe": "Subscribe & Save",
+      "deliver": "Deliver",
+      "benefit_reminder": "We email you before every delivery. No surprise charges.",
+      "benefit_cancel": "Skip, pause or cancel any time.",
+      "sign_in_required": "Sign in to subscribe.",
+      "in_cart_subscription": "In your cart as a subscription · {interval}",
+      "in_cart_once": "In your cart as a one-time purchase"
+    },
+    "cart": {
+      "subscribe": "Subscribe & Save"
+    },
+    "checkout": {
+      "title": "Your subscription",
+      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
+      "required": "Please accept the terms to place your order.",
+      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
+      "terms_failed": "We couldn't load the subscription terms.",
+      "retry": "Try again",
+      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+    },
+    "mock_payment": {
+      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
+      "test_cards": "Test cards",
+      "cards": {
+        "success": "Always approved",
+        "three_ds_on_save": "3-D Secure at checkout",
+        "three_ds_on_renewal": "3-D Secure on renewals",
+        "insufficient_funds": "Renewals: insufficient funds",
+        "expired": "Expired card",
+        "recurring_cancelled": "Renewals: recurring cancelled"
+      },
+      "save_card": "Save this card for future payments",
+      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
+      "pay": "Pay {amount}",
+      "declined": "The payment was declined. Try another card.",
+      "three_ds_title": "Confirm with your bank",
+      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
+      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
+      "three_ds_approve": "Approve",
+      "three_ds_decline": "Decline",
+      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+    },
+    "list": {
+      "title": "Subscriptions",
+      "subtitle": "Your regular deliveries. Skip, pause or change them any time.",
+      "needs_attention": "Needs your attention",
+      "upcoming": "Upcoming deliveries",
+      "browse": "Browse products",
+      "tabs": {
+        "active": "Active",
+        "paused": "Paused",
+        "cancelled": "Cancelled"
+      },
+      "empty": {
+        "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
+        "paused": "No paused subscriptions.",
+        "cancelled": "No cancelled subscriptions."
+      },
+      "tabs_label": "Subscription status"
+    },
+    "renewal": {
+      "total": "Total",
+      "excluded": "Not included in this delivery",
+      "confirm_payment": "Confirm payment",
+      "accept": "Confirm delivery",
+      "retry": "Retry payment",
+      "skip": "Skip this delivery",
+      "view_order": "Order {number}",
+      "accepted": "Delivery confirmed.",
+      "retried": "Payment retried.",
+      "skipped": "Delivery skipped.",
+      "messages": {
+        "notified": "You can change or skip this delivery until {cutoff}.",
+        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
+        "ordered": "Your order is placed and the payment is being processed.",
+        "action": "Your bank asked you to confirm the payment.",
+        "retry": "The card was declined. We'll try again on {date}.",
+        "retry_soon": "The card was declined. We'll try again shortly.",
+        "authorized": "Your card is approved. It's charged when the order ships.",
+        "completed": "Shipped and paid.",
+        "failed": "We couldn't charge your card. Choose another card, then retry.",
+        "skipped": "This delivery was skipped.",
+        "cancelled": "This delivery was cancelled."
+      }
+    },
+    "details": {
+      "meta_title": "Subscription",
+      "back": "All subscriptions",
+      "not_found": "This subscription was not found.",
+      "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
+      "pending": "Your subscription starts as soon as the first payment is confirmed.",
+      "paused": "This subscription is paused. No deliveries or charges until you resume it.",
+      "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
+      "cancelled": "Cancelled {date}. You won't be charged again.",
+      "next_delivery": "Next delivery",
+      "next_hint": "We'll email you a reminder with the price a few days before.",
+      "no_next": "No upcoming deliveries.",
+      "order_now": "Order now",
+      "skip_next": "Skip next delivery",
+      "manage": "Change subscription",
+      "quantity": "Quantity",
+      "frequency": "Frequency",
+      "next_date": "Next delivery date",
+      "payment_card": "Pay with",
+      "choose_card": "Choose a card",
+      "manage_cards": "Manage cards",
+      "save": "Save changes",
+      "reset": "Reset",
+      "history": "Delivery history",
+      "no_history": "No deliveries yet besides your first order.",
+      "summary": "Details",
+      "started": "Started",
+      "deliveries": "Orders",
+      "price": "Price per item",
+      "paid_with": "Paid with",
+      "ships_to": "Ships to",
+      "first_order": "First order",
+      "actions": "Subscription",
+      "resume": "Resume",
+      "pause": "Pause",
+      "cancel": "Cancel subscription",
+      "skipped": "Next delivery skipped.",
+      "resumed": "Subscription resumed.",
+      "paused_done": "Subscription paused.",
+      "cancelled_done": "Subscription cancelled. You won't be charged again.",
+      "saved": "Changes saved.",
+      "ordered": "Order placed.",
+      "order_needs_attention": "We couldn't place the order yet. See the delivery above for what's needed.",
+      "quantity_pack": "Sold in packs of {packSize}.",
+      "quantity_min": "The minimum quantity is {min}.",
+      "quantity_max": "The maximum quantity is {max}."
+    },
+    "pause": {
+      "title": "Pause subscription",
+      "text": "No deliveries or charges while paused.",
+      "confirm": "Pause",
+      "options": {
+        "2w": "For 2 weeks",
+        "4w": "For 4 weeks",
+        "8w": "For 8 weeks",
+        "open": "Until I resume it"
+      }
+    },
+    "cancel": {
+      "title": "Cancel subscription?",
+      "text": "You won't be charged for this subscription again. Already placed orders aren't affected.",
+      "reason": "Why are you cancelling?",
+      "reason_optional": "Optional",
+      "keep": "Keep subscription",
+      "confirm": "Cancel subscription",
+      "reasons": {
+        "too_much": "I have too much",
+        "too_often": "Deliveries are too frequent",
+        "not_needed": "I don't need it anymore",
+        "price": "The price is too high",
+        "other": "Other reason"
+      }
+    },
+    "order_now": {
+      "title": "Order now?",
+      "text": "We'll place an order for this subscription right away and charge your saved card. Your schedule restarts from today.",
+      "confirm": "Order now"
+    }
+  }
+}

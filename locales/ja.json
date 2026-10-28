@@ -383,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "後で保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "お支払い方法"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +500,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "お支払い方法"
         }
       },
       "change_password_form": {
@@ -1045,6 +1047,36 @@
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "支払い方法",
+        "new_card": "新しいカードを使用",
+        "save_card": "今後の支払いのためにこのカードを保存する",
+        "save_card_required": "この購入には定期購入が含まれているため、その支払いのためにカードが安全に保存されます。いつでも変更できます。",
+        "default": "デフォルト",
+        "expired": "有効期限切れ",
+        "needs_update": "更新が必要",
+        "expires": "有効期限 {date}",
+        "page_title": "お支払い方法",
+        "page_subtitle": "すばやいお支払いと定期購入のために保存されたカードです。カード番号全体を保存することはありません。",
+        "empty": "保存されたカードはまだありません。",
+        "make_default": "デフォルトに設定",
+        "remove": "削除",
+        "remove_title": "このカードを削除しますか？",
+        "remove_text": "カードはアカウントと決済代行会社から削除されます。",
+        "removed": "カードを削除しました。",
+        "add_title": "カードを追加",
+        "add": "カードを保存",
+        "added": "カードを保存しました。",
+        "set_default": "デフォルトのカードとして使用",
+        "billing_title": "カードの請求先住所",
+        "billing_hint": "カードの保存時に銀行が確認します。",
+        "address": "番地",
+        "city": "市区町村",
+        "state": "都道府県",
+        "zip": "郵便番号",
+        "form_unavailable": "現在カードを保存できません。後でもう一度お試しください。",
+        "error": "問題が発生しました。もう一度お試しください。"
       }
     },
     "wishlists": {

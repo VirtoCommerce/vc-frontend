@@ -46,6 +46,9 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   orderPaymentPage: {},
   orderDetails: {},
   cartPayment: {},
+  cartLineItem: {},
+  checkoutReview: {},
   sharedList: {},
   checkout: {},
+  addCardForm: {},
 };
