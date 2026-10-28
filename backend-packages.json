@@ -15,16 +15,8 @@
           "BlobName": "VirtoCommerce.XFrontend_3.1008.0-alpha.64-vcst-6121-passkeys.zip"
         },
         {
-          "Id": "VirtoCommerce.Pages",
-          "BlobName": "VirtoCommerce.Pages_3.1011.0-pr-23-e50f.zip"
-        },
-        {
           "Id": "VirtoCommerce.PageBuilderModule",
           "BlobName": "VirtoCommerce.PageBuilderModule_3.1039.0-pr-175-3d2f.zip"
-        },
-        {
-          "Id": "VirtoCommerce.XCMS",
-          "BlobName": "VirtoCommerce.XCMS_3.1009.0-pr-27-a8d6.zip"
         }
       ]
     },
@@ -367,6 +359,14 @@
         {
           "Id": "VirtoCommerce.SalesRep",
           "Version": "3.1014.0"
+        },
+        {
+          "Id": "VirtoCommerce.Pages",
+          "Version": "3.1012.0"
+        },
+        {
+          "Id": "VirtoCommerce.XCMS",
+          "Version": "3.1009.0"
         }
       ]
     }
