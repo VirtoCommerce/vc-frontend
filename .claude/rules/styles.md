@@ -186,8 +186,8 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     `font-black`. `font-thin|extralight|light|medium|semibold|extrabold` fall back to a synthesized or neighbouring
     weight → finding (the 12 existing `font-medium` are legacy). Never name a family in a component (print styles
     may use `font-lato`, as the styles README allows): the page font comes from the `base` role, headings from
-    `heading` (`font-heading`). Soft's families and weights are in `DESIGN_FONTS`
-    (`client-app/core/constants/design.ts`).
+    `heading` (`font-heading`). Soft's families and weights are in `client-app/designs/soft/design.ts` (a fork's
+    replacement list: `client-app/designs/custom-fonts.ts`).
 34. Sizes from the theme scale only: `xxs` 10 · `xs` 12 · `sm` 14 · `base` 16 · `lg` 18 · `xl` 20 · `2xl` 24 ·
     `3xl` 30 · `4xl` 36 · `5xl` 48 … Each size carries its line-height; override with `text-sm/[1rem]` or
     `leading-*` when needed. `text-[13px]`, `text-[0.8rem]` and other off-scale sizes are findings.

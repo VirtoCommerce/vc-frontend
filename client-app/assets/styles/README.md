@@ -106,6 +106,7 @@ A design is a folder in `client-app/designs/`:
 ```text
 client-app/designs/
   <name>/             # one folder per design; ours is soft
+    design.ts         # export const design = { fonts: ["https://…"] }: its font stylesheet URLs
     _tokens.scss      # html[data-design="<name>"] { token values }
     index.scss        # the wiring, the same in every design (below)
     blocks/           # one file per BEM block, named after it
@@ -189,7 +190,8 @@ never restates print. Token values apply in print too.
 
 1. Pick a name, e.g. `mybrand`, and create the folder `client-app/designs/mybrand/` (copy
    `designs/soft/` as a start: an `index.scss` that loads no file).
-2. Add `_tokens.scss` with the tokens that differ from classic, and load it in `index.scss`
+2. In `design.ts`, list your font stylesheet URLs (or leave the list empty).
+3. Add `_tokens.scss` with the tokens that differ from classic, and load it in `index.scss`
    ([Wiring](#wiring)):
    ```scss
    html[data-design="mybrand"] {
@@ -197,11 +199,11 @@ never restates print. Token values apply in print too.
      --vc-button-radius: 2rem;
    }
    ```
-3. When no token covers what you need, add `blocks/<block>.scss` and write the block's styles as in
+4. When no token covers what you need, add `blocks/<block>.scss` and write the block's styles as in
    the component, loading nothing outside the design's folder; dark values go in `dark/<block>.scss`.
    Add each file to `index.scss` ([Wiring](#wiring)).
-4. Turn it on: `"design": "mybrand"` in `client-app/config/settings_data.json`.
-5. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`).
+5. Turn it on: `"design": "mybrand"` in `client-app/config/settings_data.json`.
+6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`).
 
 ### Customise a design
 
@@ -214,7 +216,8 @@ never restates print. Token values apply in print too.
 3. No token for it? Write the rule in `_custom.scss` under the design:
    `html[data-design="soft"] .footer-links__title { text-transform: none; }`. It wins over the
    component in every state, so add each state you need.
-4. Never edit our components or the folders of our designs: your change would conflict with every
+4. Other fonts for a design: set them in `client-app/designs/custom-fonts.ts`.
+5. Never edit our components or the folders of our designs: your change would conflict with every
    update.
 
 For the core team, customising our own design = editing its folder; prefer adding a token to the
@@ -287,8 +290,8 @@ itself.
   `rgb(0 0 0 / …)` for the default `shadow` step (from Tailwind's defaultTheme),
   `rgb(from var(--color-additional-950) …)` for the others. Soft changes geometry and alpha,
   never colour.
-- **Fonts:** a design's families load from `DESIGN_FONTS` (`core/constants/design.ts`), only for
-  that design. The stylesheet link is not awaited, so fonts never hold back the mount. Classic
+- **Fonts:** a design's families load from its `client-app/designs/<name>/design.ts` (a fork's
+  replacement list: `client-app/designs/custom-fonts.ts`), only for that design. The stylesheet link is not awaited, so fonts never hold back the mount. Classic
   requests nothing new.
 - **Fork:** set any token on `:root` in `_custom.scss`; it is unlayered, so it beats our `theme`
   layer in every design. A fork loads its own fonts in its `index.html`. Presets stay colour-only.
