@@ -38,7 +38,7 @@
               </VcLabel>
 
               <div v-if="!fileOptions.unavailable" class="mt-2 text-xxs text-neutral">
-                {{ logoRequirements }}
+                {{ fileRequirements(fileOptions.allowedExtensions, fileOptions.maxFileSize, fileOptions.maxFileCount) }}
               </div>
             </div>
 
@@ -311,7 +311,7 @@ import { useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { VcConfirmationModal } from "@/ui-kit/components";
-import { fileRequirements } from "@/ui-kit/utilities";
+import { fileRequirements, isUploadingFile } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -414,11 +414,7 @@ const columns = computed<VcTableColumnType[]>(() => {
   return result;
 });
 
-const logoRequirements = computed(() =>
-  fileRequirements(fileOptions.value.allowedExtensions, fileOptions.value.maxFileSize, fileOptions.value.maxFileCount),
-);
-
-const uploadingOrganizationLogo = computed(() => files.value[0]?.status === "uploading");
+const uploadingOrganizationLogo = computed(() => files.value.some(isUploadingFile));
 
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
@@ -532,7 +528,7 @@ async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
-  newLogoUrl.value = uploadedFiles.value[0].url;
+  newLogoUrl.value = uploadedFiles.value[0]?.url ?? newLogoUrl.value;
 }
 
 async function onRemoveFiles() {
