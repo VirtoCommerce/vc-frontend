@@ -30,7 +30,7 @@
       required
       :message="validationErrors.email"
       :error="!!validationErrors.email"
-      autocomplete="email"
+      autocomplete="email webauthn"
       test-id-input="otp-email-email-input"
     />
 

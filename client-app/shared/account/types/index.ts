@@ -1,4 +1,5 @@
-import type { FacetTermType } from "@/core/api/graphql/types";
+import type { FacetTermType, SignInKeyType } from "@/core/api/graphql/types";
+import type { MaybeRefOrGetter } from "vue";
 
 export enum RegistrationKind {
   personal = "personal",
@@ -65,4 +66,15 @@ export type OrderScopeType = "private" | "organization";
 export type OrderFacetType = {
   name: string;
   items: FacetTermType[];
+};
+
+export type SignInMethodContributionType = {
+  title?: MaybeRefOrGetter<string>;
+  description?: MaybeRefOrGetter<string>;
+  noKeysText?: MaybeRefOrGetter<string>;
+  createKeyText?: MaybeRefOrGetter<string>;
+  creating?: MaybeRefOrGetter<boolean>;
+  createKey?: () => Promise<void>;
+  getKeyIcon?: (key: SignInKeyType) => string;
+  getKeyDetails?: (key: SignInKeyType) => string[];
 };

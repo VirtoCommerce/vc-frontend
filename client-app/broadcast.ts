@@ -152,8 +152,8 @@ export function setupBroadcastGlobalListeners() {
       ...notification,
     });
   });
-  on(openReturnUrl, () => {
-    location.href = toSameOriginPath(getReturnUrl());
+  on(openReturnUrl, (returnUrl) => {
+    location.href = toSameOriginPath(typeof returnUrl === "string" ? returnUrl : getReturnUrl());
   });
 
   on(forbiddenEvent, () => {
