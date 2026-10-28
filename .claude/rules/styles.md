@@ -44,7 +44,8 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 4. Global files:
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
-   - New global tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss` (UI-kit tokens) or `main.scss`.
+   - New colour tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss`; shape and typography tokens follow the
+     styles README ("Shape and typography tokens"), where classic sets none but `--vc-radius`.
    - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
      Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
      `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: files in `assets/styles/print/...`
@@ -186,8 +187,8 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     `font-black`. `font-thin|extralight|light|medium|semibold|extrabold` fall back to a synthesized or neighbouring
     weight → finding (the 12 existing `font-medium` are legacy). Never name a family in a component (print styles
     may use `font-lato`, as the styles README allows): the page font comes from the `base` role, headings from
-    `heading` (`font-heading`). Soft's families and weights are in `client-app/designs/soft/design.ts` (a fork's
-    replacement list: `client-app/designs/custom-fonts.ts`).
+    `heading` (`font-heading`). A design's font stylesheets are listed in its `client-app/designs/<name>/design.ts`
+    (a fork's replacement list: `client-app/designs/custom-fonts.ts`).
 34. Sizes from the theme scale only: `xxs` 10 · `xs` 12 · `sm` 14 · `base` 16 · `lg` 18 · `xl` 20 · `2xl` 24 ·
     `3xl` 30 · `4xl` 36 · `5xl` 48 … Each size carries its line-height; override with `text-sm/[1rem]` or
     `leading-*` when needed. `text-[13px]`, `text-[0.8rem]` and other off-scale sizes are findings.

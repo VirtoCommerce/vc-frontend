@@ -192,8 +192,8 @@ never restates print. Token values apply in print too.
    `designs/soft/` as a start and replace `soft` with your name in its `index.scss` and
    `_tokens.scss`).
 2. In `design.ts`, list your font stylesheet URLs (or leave the list empty).
-3. Add `_tokens.scss` with the tokens that differ from classic, and load it in `index.scss`
-   ([Wiring](#wiring)):
+3. Add `_tokens.scss` with the tokens from the [token table](#token-table) that differ from
+   classic, and load it in `index.scss` ([Wiring](#wiring)):
    ```scss
    html[data-design="mybrand"] {
      --vc-radius: 0;
@@ -208,8 +208,9 @@ never restates print. Token values apply in print too.
 
 ### Customise a design
 
-1. Find the token for what you want to change: a `--vc-*` custom property the component reads in its
-   `<style>`, such as `var(--vc-button-radius, …)` in `vc-button.vue`.
+1. Find the token for what you want to change in the [token table](#token-table). Not there? Look
+   for a `--vc-*` custom property the component reads in its `<style>`, such as
+   `var(--vc-button-icon-size, …)` in `vc-button.vue`.
 2. Set it in `client-app/assets/styles/_custom.scss`:
    - every design: `:root { --vc-button-radius: 4px; }`
    - one design: `html[data-design="soft"] { --vc-button-radius: 4px; }`
@@ -245,7 +246,7 @@ literal    today's value: the fallback in tailwind.config.ts (typed there or tak
 **Classic sets no scale or role token**, except `--vc-radius`. Their values exist only as `var()`
 fallbacks, so classic output does not change and a design sets only what differs.
 
-`--vc-radius` (the default control radius) predates the tiers. Classic sets it to a literal on
+`--vc-radius` (the default control radius) predates the tiers. Classic sets it to `0.5rem` on
 `:root` in `main.scss`, components read it directly, and it is not chained to a scale step:
 setting `--vc-radius-*` does not move it. A design that changes control radii sets `--vc-radius`
 itself.
@@ -265,6 +266,8 @@ itself.
 - **Role and component: `--vc-<owner>-<property>`**: `--vc-base-font-family`,
   `--vc-heading-font-family`, `--vc-heading-text-transform`, `--vc-button-radius`. The only
   exception is the older `--vc-radius`, a bare property name.
+- **App block: `--<block>-<property>`**, without `vc-`, which marks the ui-kit:
+  `--badges-wrapper-radius`.
 - **Font family** has roles only (`base`, `heading`, also the utilities `font-base` and
   `font-heading`), no primitive tokens named after a font. `font-lato` stays a literal Lato for
   places that must stay classic (print).
@@ -283,19 +286,78 @@ itself.
   component token that ends at the role.
 - Italic and text case have no Tailwind scale, so they exist only as role tokens.
 
+### Token table
+
+This table lists every shape and typography token the styles read. Colour tokens are not here:
+colours come from the preset. `scripts/design-token-table.test.ts` fails when the code reads a token
+this table does not list, or the table lists one the code does not read.
+
+| Token | What it changes | Classic value |
+| --- | --- | --- |
+| `--vc-radius` | The default control radius; most component radius tokens below fall back to it | `0.5rem`, on `:root` in `main.scss` |
+| `--vc-radius-<key>` | The `rounded-<key>` utilities (`rounded` for `default`); `rounded-none` and `rounded-full` have no token | `sm` 0.125rem · `default` 0.25rem · `md` 0.375rem · `lg` 0.5rem · `xl` 0.75rem · `2xl` 1rem · `3xl` 1.5rem |
+| `--vc-shadow-<key>-<n>` | Part `<n>` (from 1) of the `shadow-<key>` utility (`shadow` for `default`). Parts: `default` 2 · `0` 2 · `sm` 1 · `md` 2 · `lg` 2 · `xl` 2 · `2xl` 1 · `inner` 1 | That part of `boxShadow.<key>` in `tailwind.config.ts`; `default` is Tailwind's own `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)` |
+| `--vc-font-size-<key>` | The font size of `text-<key>` | `xxs` 0.625rem · `xs` 0.75rem · `sm` 0.875rem · `base` 1rem · `lg` 1.125rem · `xl` 1.25rem · `2xl` 1.5rem · `3xl` 1.875rem · `4xl` 2.25rem · `5xl` 3rem · `6xl` 3.75rem · `7xl` 4.5rem · `8xl` 6rem |
+| `--vc-line-height-<key>` | The line height `text-<key>` sets (`xxs`…`8xl`), and the `leading-<key>` utilities | `xxs` 0.75rem · `xs` 0.875rem · `sm` 1.125rem · `base` 1.25rem · `lg` 1.375rem · `xl` 1.75rem · `2xl` 2rem · `3xl` 2.25rem · `4xl` 2.5rem · `5xl` 3rem · `6xl` 3.75rem · `7xl` 4.5rem · `8xl` 6rem; `3` 0.75rem to `10` 2.5rem in 0.25rem steps · `none` 1 · `tight` 1.25 · `snug` 1.375 · `normal` 1.5 · `relaxed` 1.625 · `loose` 2 |
+| `--vc-font-weight-<key>` | The `font-<key>` weight utilities | `thin` 100 · `extralight` 200 · `light` 300 · `normal` 400 · `medium` 500 · `semibold` 600 · `bold` 700 · `extrabold` 800 · `black` 900 |
+| `--vc-letter-spacing-<key>` | The `tracking-<key>` utilities | `tighter` -0.05em · `tight` -0.025em · `normal` 0em · `wide` 0.025em · `wider` 0.05em · `widest` 0.1em |
+| `--vc-base-font-family` | The page font: `html` and the `font-base` utility | `Lato, sans-serif` |
+| `--vc-heading-font-family` | The font of bare `h1`–`h6` and the `font-heading` utility | `inherit` |
+| `--vc-heading-font-weight` | The weight of bare `h1`–`h6` | `inherit` |
+| `--vc-heading-font-style` | Italic or upright bare `h1`–`h6` | `inherit` |
+| `--vc-heading-text-transform` | The letter case of bare `h1`–`h6` | `inherit` |
+| `--vc-heading-letter-spacing` | The letter spacing of bare `h1`–`h6` | `inherit` |
+| `--vc-alert-radius` | VcAlert corners | `var(--vc-radius)` |
+| `--vc-badge-radius` | VcBadge corners | `var(--vc-radius)` |
+| `--vc-button-radius` | VcButton corners. VcInput and VcDateRangeInput set it on themselves for their buttons (see [Two ways a design changes the look](#two-ways-a-design-changes-the-look)) | `var(--vc-radius)` |
+| `--vc-button-text-transform` | VcButton letter case | `none` |
+| `--vc-calendar-radius` | VcCalendar corners | `var(--vc-radius)` |
+| `--vc-calendar-day-radius` | VcCalendar day cell corners | `var(--vc-radius)` |
+| `--vc-chip-radius` | VcChip corners | `var(--vc-radius)` |
+| `--vc-dialog-radius` | VcDialog corners | `var(--vc-radius)` |
+| `--vc-dropdown-menu-radius` | VcDropdownMenu corners | `var(--vc-radius)` |
+| `--vc-file-picker-radius` | VcFilePicker corners | `var(--vc-radius)` |
+| `--vc-file-uploader-radius` | VcFileUploader corners | `var(--vc-radius)` |
+| `--vc-input-radius` | VcInput and VcDateRangeInput corners | `var(--vc-radius)` |
+| `--vc-markdown-render-radius` | VcMarkdownRender corners | `var(--vc-radius)` |
+| `--vc-popover-radius` | VcPopover corners. VcTooltip and VcDropdownMenu set it on their popover | `var(--vc-radius)` |
+| `--vc-product-card-radius` | VcProductCard corners | `var(--vc-radius)` |
+| `--vc-product-image-radius` | VcProductImage corners | `var(--vc-radius)` |
+| `--vc-product-price-font-size` | VcProductPrice font size | `var(--vc-font-size-base)`; its size modifiers set their own |
+| `--vc-product-price-line-height` | VcProductPrice line height | `1.335` |
+| `--vc-product-title-font-size` | VcProductTitle font size | Not set: the inherited size; `var(--vc-font-size-sm)` inside VcProductCard |
+| `--vc-property-font-size` | VcProperty font size | `0.75rem` |
+| `--vc-range-calendar-radius` | VcRangeCalendar corners | `var(--vc-calendar-radius)` |
+| `--vc-range-calendar-day-radius` | VcRangeCalendar day cell corners | `var(--vc-calendar-day-radius)` |
+| `--vc-select-radius` | VcSelect corners | `var(--vc-radius)` |
+| `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
+| `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
+| `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |
+| `--vc-textarea-radius` | VcTextarea corners | `var(--vc-radius)` |
+| `--vc-tile-button-radius` | VcTileButton corners | `var(--vc-radius)` |
+| `--vc-tooltip-radius` | VcTooltip corners | `var(--vc-radius)` |
+| `--vc-typography-font-size` | VcTypography font size | Not set: each `variant` sets its own |
+| `--vc-typography-font-weight` | VcTypography weight | Not set: 700 for `h1`–`h6`, 400 for `base` |
+| `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
+| `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |
+| `--vc-widget-radius` | VcWidget corners | `var(--vc-radius)` |
+| `--vc-image-gallery-radius` | Product image gallery: the corners of the images and thumbnails (`shared/catalog/components/image-gallery.vue`) | `var(--vc-radius)` |
+| `--badges-wrapper-radius` | Product badges: the bottom-right corner of their wrapper (`shared/catalog/components/badges-wrapper.vue`) | `calc(var(--vc-radius) + 2px)` |
+
 ### Where a design's value goes
 
-- **Soft:** scale and role tokens on `html[data-design="soft"]` in
-  `client-app/designs/soft/_tokens.scss`; dark shadows under
-  `html.dark[data-design="soft"]` in the same file. A shadow keeps its step's colour: black
-  `rgb(0 0 0 / …)` for the default `shadow` step (from Tailwind's defaultTheme),
-  `rgb(from var(--color-additional-950) …)` for the others. Soft changes geometry and alpha,
-  never colour.
-- **Fonts:** a design's families load from its `client-app/designs/<name>/design.ts` (a fork's
-  replacement list: `client-app/designs/custom-fonts.ts`), only for that design. The stylesheet link is not awaited, so fonts never hold back the mount. Classic
-  requests nothing new.
-- **Fork:** set any token on `:root` in `_custom.scss`; it is unlayered, so it beats our `theme`
-  layer in every design. A fork loads its own fonts in its `index.html`. Presets stay colour-only.
+- **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
+  `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
+  same file. Which token changes what: the [token table](#token-table).
+- **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
+  Tailwind's defaultTheme), `rgb(from var(--color-additional-950) …)` for the others. A design
+  changes geometry and alpha, never colour.
+- **Fonts:** a design lists its font stylesheet URLs in its `client-app/designs/<name>/design.ts`;
+  they load only while that design is on. The link is not awaited, so fonts never hold back the
+  mount. Classic's Lato is linked in `index.html`.
+- **Fork:** set token values in `_custom.scss` ([Customise a design](#customise-a-design)); it is
+  unlayered, so it beats our `theme` layer in every design. To load other fonts for a design, list
+  them in `client-app/designs/custom-fonts.ts`. Presets stay colour-only.
 
 ### Adding a token
 
@@ -309,6 +371,8 @@ itself.
   keeping today's value as the fallback, then run `yarn build:core-types` and commit everything it
   changes; `yarn validate:core-types` checks the result. Existing tokens do not change.
 - Arbitrary values (`rounded-[3px]`, `text-[--x]`) bypass the scale and stay literal.
+- Every new shape or typography token gets its row in the [token table](#token-table):
+  `scripts/design-token-table.test.ts` fails until it has one.
 
 ---
 
