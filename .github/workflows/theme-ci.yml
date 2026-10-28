@@ -25,7 +25,8 @@ concurrency:
 jobs:
   sonar:
     # Same gate as ci. Outside vc-frontend it also needs SONAR_PROJECT_KEY, which ci's "Check per-repository settings" step reports when missing.
-    if: ${{ (github.repository_id == '296335982' || (vars.VC_CI == 'true' && vars.SONAR_PROJECT_KEY != '')) &&
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
+         (github.repository_id == '296335982' || vars.SONAR_PROJECT_KEY != '') &&
          github.actor != 'dependabot[bot]' &&
          (github.event.pull_request.head.repo.full_name == github.repository ||
          github.event.pull_request.head.repo.full_name == '') }}
