@@ -3,13 +3,18 @@
   "PlatformVersion": "3.1083.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
   "PlatformImageTag": "3.1083.0",
-  "PlatformAssetUrl": "",
+  "PlatformAssetUrl": "https://vc3prerelease.blob.core.windows.net/packages/VirtoCommerce.Platform.3.1091.0-alpha.13460-vcst-6121-passkeys.zip",
   "Sources": [
     {
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
+      "Modules": [
+        {
+          "Id": "VirtoCommerce.XFrontend",
+          "BlobName": "VirtoCommerce.XFrontend_3.1008.0-alpha.64-vcst-6121-passkeys.zip"
+        }
+      ]
     },
     {
       "Name": "GithubReleases",
@@ -262,10 +267,6 @@
         {
           "Id": "VirtoCommerce.XCatalog",
           "Version": "3.1023.0"
-        },
-        {
-          "Id": "VirtoCommerce.XFrontend",
-          "Version": "3.1007.0"
         },
         {
           "Id": "VirtoCommerce.CustomerReviews",
