@@ -69,7 +69,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install
+          yarn install --mode=skip-build
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e # master
