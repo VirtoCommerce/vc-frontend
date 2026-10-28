@@ -51,10 +51,18 @@ jobs:
         run: |
           yarn install --mode=skip-build
 
+      - name: Read project version
+        id: version
+        run: |
+          echo "version=$(jq -er .version package.json)" >> "$GITHUB_OUTPUT"
+
+      # The project's new code is "previous version": without sonar.projectVersion the baseline never moves and years of code count as new.
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
         with:
-          args: ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
+          args: >-
+            -Dsonar.projectVersion=${{ steps.version.outputs.version }}
+            ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
