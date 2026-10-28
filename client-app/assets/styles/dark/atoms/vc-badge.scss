@@ -44,6 +44,11 @@ $solid-bg: (
     --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
   }
 
+  // Light tonal badges sit on -50; in dark -50 is too close to the panel, so they keep -100.
+  .vc-badge--tonal--#{$color} {
+    --bg-color: var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100));
+  }
+
   .vc-badge--surface--#{$color} {
     --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
   }
