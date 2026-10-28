@@ -1,3 +1,5 @@
+import { OperationNames } from "@/core/api/graphql/types";
+import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import { graphqlClient } from "../../../client";
 import removeAddressFromFavoritesMutation from "./removeAddressFromFavoritesMutation.graphql";
 import type {
@@ -13,5 +15,7 @@ export async function removeAddressFromFavorites(addressId: string): Promise<voi
         addressId,
       },
     },
+    // The header ship-to and checkout lists are sorted by favorites too.
+    refetchQueries: () => filterActiveQueryNames(graphqlClient, [OperationNames.Query.GetCurrentOrganizationAddresses]),
   });
 }

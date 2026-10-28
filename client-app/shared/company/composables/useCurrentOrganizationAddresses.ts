@@ -38,7 +38,7 @@ export function useCurrentOrganizationAddresses(
     keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables, queryEnabled);
+  const { result, loading } = useGetCurrentOrganizationAddressesQuery(variables, queryEnabled);
 
   const addresses = computed(() => result.value?.currentOrganizationAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentOrganizationAddresses?.totalCount ?? 0);
@@ -54,7 +54,6 @@ export function useCurrentOrganizationAddresses(
 
     try {
       const updatedAddresses = await updateMemberAddresses(toValue(organizationId), inputAddresses);
-      void refetch();
       return updatedAddresses;
     } catch (e) {
       Logger.error(`${useCurrentOrganizationAddresses.name}.${addOrUpdateAddresses.name}`, e);
@@ -71,7 +70,6 @@ export function useCurrentOrganizationAddresses(
 
     try {
       await deleteMemberAddresses(inputAddresses, toValue(organizationId));
-      void refetch();
     } catch (e) {
       Logger.error(`${useCurrentOrganizationAddresses.name}.${removeAddresses.name}`, e);
       throw e;
@@ -85,8 +83,6 @@ export function useCurrentOrganizationAddresses(
       Logger.error(`${useCurrentOrganizationAddresses.name}.${addAddressToFavorite.name}`, e);
       throw e;
     }
-
-    void refetch();
   }
 
   async function removeAddressFromFavorite(addressId: string): Promise<void> {
@@ -96,8 +92,6 @@ export function useCurrentOrganizationAddresses(
       Logger.error(`${useCurrentOrganizationAddresses.name}.${removeAddressFromFavorite.name}`, e);
       throw e;
     }
-
-    void refetch();
   }
 
   return {
