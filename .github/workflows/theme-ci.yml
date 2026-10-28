@@ -255,7 +255,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Build Info to Jira
-        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && !cancelled() }}
         id: push_build_info_to_jira
         uses: VirtoCommerce/jira-upload-build-info@master
         with:
