@@ -829,14 +829,24 @@ async function checkFolder(dir: string, blocks: Set<string>, errors: string[]): 
   ];
   const checked: ICheckedFileType[] = [];
 
-  for (const source of sources) {
+  const compiled = await Promise.all(
+    sources.map(async (source) => {
+      const compileErrors: string[] = [];
+      const css = await compileOrReport(source.file, dir, compileErrors);
+
+      return { css, compileErrors };
+    }),
+  );
+
+  for (const [position, source] of sources.entries()) {
     const block = path.basename(source.file, ".scss");
+    const { css, compileErrors } = compiled[position];
 
     if (source.kind !== "tokens" && !blocks.has(block)) {
       errors.push(`${source.file}  .${block} is not a block of any component`);
     }
 
-    const css = await compileOrReport(source.file, dir, errors);
+    errors.push(...compileErrors);
 
     if (css) {
       const result = checkCompiledFile(css, source.file, source.kind, design, blocks);
@@ -883,8 +893,18 @@ export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions)
   const errors: string[] = [];
   let fileCount = 0;
 
-  for (const folder of folders) {
-    fileCount += await checkFolder(path.join(designsDir, folder), blocks, errors);
+  const results = await Promise.all(
+    folders.map(async (folder) => {
+      const folderErrors: string[] = [];
+      const count = await checkFolder(path.join(designsDir, folder), blocks, folderErrors);
+
+      return { count, folderErrors };
+    }),
+  );
+
+  for (const { count, folderErrors } of results) {
+    fileCount += count;
+    errors.push(...folderErrors);
   }
 
   // A problem in a file that index.scss loads is reported once, at the line that wrote it.
