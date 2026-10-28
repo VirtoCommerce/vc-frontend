@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Nur Benutzer, die das Produkt gekauft haben, können eine Bewertung hinterlassen.",
     "DUPLICATE_REVIEW": "Der Benutzer hat bereits eine Bewertung für dieses Produkt hinterlassen.",
     "INVALID_RATING": "Die Bewertung sollte im Bereich von 1 bis 5 liegen.",
-    "REVIEW_IS_EMPTY": "Die Eigenschaft 'Bewertung' muss ausgefüllt sein."
+    "REVIEW_IS_EMPTY": "Die Eigenschaft 'Bewertung' muss ausgefüllt sein.",
+    "ENTITY_ID_IS_EMPTY": "Die Produkt-ID muss angegeben werden."
   }
 }

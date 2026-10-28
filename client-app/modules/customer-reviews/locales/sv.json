@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Endast användare som har köpt produkten kan lämna en recension.",
     "DUPLICATE_REVIEW": "Användaren har redan lämnat en recension för denna produkt.",
     "INVALID_RATING": "Betyget ska vara i intervallet 1 till 5.",
-    "REVIEW_IS_EMPTY": "Fältet 'Recension' måste fyllas i."
+    "REVIEW_IS_EMPTY": "Fältet 'Recension' måste fyllas i.",
+    "ENTITY_ID_IS_EMPTY": "Produkt-ID måste anges."
   }
 }

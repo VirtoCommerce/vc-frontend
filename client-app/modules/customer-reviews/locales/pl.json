@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Tylko użytkownicy, którzy kupili produkt, mogą zostawić recenzję.",
     "DUPLICATE_REVIEW": "Użytkownik już zostawił recenzję dla tego produktu.",
     "INVALID_RATING": "Ocena powinna być w zakresie od 1 do 5.",
-    "REVIEW_IS_EMPTY": "Pole 'Opinia' musi być wypełnione."
+    "REVIEW_IS_EMPTY": "Pole 'Opinia' musi być wypełnione.",
+    "ENTITY_ID_IS_EMPTY": "Należy podać identyfikator produktu."
   }
 }

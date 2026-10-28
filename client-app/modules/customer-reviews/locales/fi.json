@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Vain tuotteen ostaneet käyttäjät voivat jättää arvostelun.",
     "DUPLICATE_REVIEW": "Käyttäjä on jo jättänyt arvostelun tälle tuotteelle.",
     "INVALID_RATING": "Arvosanan tulee olla välillä 1–5.",
-    "REVIEW_IS_EMPTY": "Kenttä 'Arvostelu' on täytettävä."
+    "REVIEW_IS_EMPTY": "Kenttä 'Arvostelu' on täytettävä.",
+    "ENTITY_ID_IS_EMPTY": "Tuotetunnus on määritettävä."
   }
 }

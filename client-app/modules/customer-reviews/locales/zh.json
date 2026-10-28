@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "只有购买过产品的用户才能留下评论。",
     "DUPLICATE_REVIEW": "用户已对该产品留下评论。",
     "INVALID_RATING": "评分应在1到5之间。",
-    "REVIEW_IS_EMPTY": "“反馈”字段必须填写。"
+    "REVIEW_IS_EMPTY": "“反馈”字段必须填写。",
+    "ENTITY_ID_IS_EMPTY": "必须指定产品 ID。"
   }
 }

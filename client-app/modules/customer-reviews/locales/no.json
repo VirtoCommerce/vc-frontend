@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Bare brukere som har kjøpt produktet kan gi en vurdering.",
     "DUPLICATE_REVIEW": "Brukeren har allerede gitt en vurdering for dette produktet.",
     "INVALID_RATING": "Vurderingen må være i området fra 1 til 5.",
-    "REVIEW_IS_EMPTY": "Feltet 'Vurdering' må fylles ut."
+    "REVIEW_IS_EMPTY": "Feltet 'Vurdering' må fylles ut.",
+    "ENTITY_ID_IS_EMPTY": "Produkt-ID må angis."
   }
 }

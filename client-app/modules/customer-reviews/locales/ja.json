@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "購入したユーザーのみレビューを残せます。",
     "DUPLICATE_REVIEW": "この商品には既にレビューを残しています。",
     "INVALID_RATING": "評価は1から5の範囲である必要があります。",
-    "REVIEW_IS_EMPTY": "「フィードバック」フィールドを入力してください。"
+    "REVIEW_IS_EMPTY": "「フィードバック」フィールドを入力してください。",
+    "ENTITY_ID_IS_EMPTY": "商品IDを指定してください。"
   }
 }

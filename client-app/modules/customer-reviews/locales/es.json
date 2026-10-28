@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Solo los usuarios que han comprado el producto pueden dejar una reseña.",
     "DUPLICATE_REVIEW": "El usuario ya ha dejado una reseña para este producto.",
     "INVALID_RATING": "La calificación debe estar entre 1 y 5.",
-    "REVIEW_IS_EMPTY": "La propiedad 'Comentario' debe estar llena."
+    "REVIEW_IS_EMPTY": "La propiedad 'Comentario' debe estar llena.",
+    "ENTITY_ID_IS_EMPTY": "Se debe especificar el ID del producto."
   }
 }

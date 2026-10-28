@@ -21,6 +21,7 @@
     "PRODUCT_MUST_BE_PURCHASED": "Apenas usuários que compraram o produto podem deixar uma avaliação.",
     "DUPLICATE_REVIEW": "O usuário já deixou uma avaliação para este produto.",
     "INVALID_RATING": "A avaliação deve estar entre 1 e 5.",
-    "REVIEW_IS_EMPTY": "A propriedade 'Feedback' deve ser preenchida."
+    "REVIEW_IS_EMPTY": "A propriedade 'Feedback' deve ser preenchida.",
+    "ENTITY_ID_IS_EMPTY": "O ID do produto deve ser informado."
   }
 }
