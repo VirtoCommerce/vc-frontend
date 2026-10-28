@@ -72,14 +72,18 @@ const model = defineModel<string>({ required: true });
   &__option {
     @apply rounded-lg border border-neutral-200 text-sm;
 
+    // Selection is accent, not primary: primary stays with the action (Pay).
     &--active {
-      @apply border-primary bg-primary-50;
+      @apply border-accent bg-accent-50;
     }
   }
 
   // the radio's own label fills the card, so the whole card selects the option
   &__radio {
     @apply w-full;
+
+    // the checked marker follows the card: accent, not the primary default
+    --vc-radio-button-base-color: var(--color-accent-500);
 
     .vc-radio-button__container {
       @apply w-full items-center gap-3 p-3;
