@@ -20,7 +20,7 @@ Rules are in [rules.ts](./rules.ts).
 
 | Event | Trigger | Markup |
 | --- | --- | --- |
-| `selectItem` | click on `product-link` | inside a `product-card`, inside a `product-list` |
+| `selectItem` | click on `product-link` | inside a `product-card`, inside a `product-list`; the params carry the card's `index` in that list |
 | `viewItemList` | `product-list` appears | the products array bound to the list with `v-track-item`; without one, items are collected from its `product-card` descendants |
 | `viewItem` | `product-details` appears | the product is bound with `v-track-item` |
 
@@ -86,7 +86,7 @@ Argument sources:
 
 - `item`: the object bound with `v-track-item`. `fallback` builds it from attributes when nothing is bound.
 - `attr`: one `data-*` attribute (`attr: "listId"` reads `data-list-id`), `type: "number"` casts it.
-- `object`: an object assembled from several attributes; keys may be dot paths (`"price.actual.amount"`).
+- `object`: an object assembled from several attributes; keys may be dot paths (`"price.actual.amount"`). A field may be a position instead of an attribute: `index: { position: "product-card" }` is the zero-based place of the card around the clicked element in the scope's list. It is the card's item's place in the array bound to the scope; without one, the card's place among the scope's own `product-card`s in DOM order (nested lists excluded). In that DOM-order case a card that resolves no item still counts, while `collect` skips it, so give every card an item or `data-product-*` attributes. A position alone never builds the object: at least one attribute must resolve.
 - `collect`: the array bound with `v-track-item` to the scope element itself; without one, an array of `item`s from all descendants with the given `data-vc-track`. Bind the array when the list renders only part of its products (a short grid or a carousel at a narrow width), otherwise every resize that changes the rendered cards resends the list.
 
 Every source accepts `from` (closest ancestor with this `data-vc-track`) and `optional`. When a required argument resolves to nothing, the event is skipped.

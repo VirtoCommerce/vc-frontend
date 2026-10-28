@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
+      "invalid_characters": "Contains invalid characters",
+      "html_tags_not_allowed": "HTML tags are not allowed",
+      "unsafe_content": "Contains content that is not allowed",
+      "invalid_addresses": "Some of the addresses are not valid",
+      "invalid_data": "Some of the entered data is not valid",
       "invalid_user_id_or_token": "User ID or token is invalid.",
       "product_no_longer_available": "No longer available",
       "item_quantity_required_field": "Item quantity value cannot be empty",
@@ -285,7 +290,8 @@
       "company_members": "Company members",
       "contact_administrator": "contact the site administrator",
       "skip_to_main_content": "Skip to main content",
-      "skip_to_footer": "Skip to footer"
+      "skip_to_footer": "Skip to footer",
+      "security": "Security"
     },
     "titles": {
       "all_actions": "All actions",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Saved for later",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +533,12 @@
           "duplicate_email_login_attempt": "Several accounts use this email.",
           "lockout_disabled": "This account can't sign in with a code.",
           "invalid_code": "That code didn't work.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Your sign-in session has expired. Sign in again.",
+          "code_attempts_exceeded": "Too many incorrect codes. Wait a few minutes and sign in again.",
+          "mfa_provider_not_available": "We can't send a sign-in code to this account. Please contact your administrator.",
+          "two_factor_unavailable": "This account requires a second sign-in step, but it is not available. Contact your administrator.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +558,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Verification succeeded, but switching to the customer account failed. Please try again.",
-          "generic": "Something went wrong. Please try again."
+          "generic": "Something went wrong. Please try again.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +654,7 @@
         "verify": {
           "header": "Check your email",
           "subtitle": "We sent a code to {email}.",
-          "code_label": "Code",
-          "paste_hint": "Enter or paste the code. On mobile, tap it above your keyboard.",
-          "submit_button": "Sign in",
-          "resend_button": "Resend code",
-          "use_different_email_link": "Use a different email",
-          "live_resent": "New code sent."
+          "use_different_email_link": "Use a different email"
         },
         "locked": {
           "title": "Too many failed attempts",
@@ -653,6 +670,19 @@
           "password_button": "Sign in with a password",
           "back_link": "Back to sign in"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Enter the sign-in code",
+        "subtitle": "We sent a code to {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Code",
+        "paste_hint": "Enter or paste the code. On mobile, tap it above your keyboard.",
+        "submit_button": "Sign in",
+        "resend_button": "Resend code",
+        "resend_countdown": "Resend code in {seconds} s",
+        "live_resent": "New code sent."
       }
     },
     "company": {
@@ -1464,6 +1494,21 @@
       "promotion_coupons": {
         "title": "All coupons & promotions",
         "no_lists": "You don't have any coupons or promotions"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "No keys",
+        "unnamed_key": "Unnamed key",
+        "created": "Created {date}",
+        "changed": "Changed {date}",
+        "rename_modal": {
+          "title": "Rename key",
+          "name_label": "Name"
+        },
+        "delete_modal": {
+          "title": "Delete key",
+          "message": "You will no longer be able to sign in with this key."
+        }
       }
     },
     "company": {
@@ -1803,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Please create another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please create another one.",
+    "user_not_editable": "This user cannot be edited",
+    "sign_in_key_not_found": "The sign-in key was not found",
+    "last_sign_in_key": "The last sign-in key cannot be removed",
+    "operation_not_supported": "This operation is not supported"
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",

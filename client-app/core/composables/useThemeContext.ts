@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 import { presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
 import { presetNameToFileName } from "@/core/utilities";
-import { resolveDesign, setPresetAttribute } from "@/core/utilities/design";
+import { resolveDesign } from "@/core/utilities/design";
 import { IS_DEVELOPMENT } from "../constants";
 import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
@@ -105,7 +105,6 @@ function _useThemeContext() {
     if (preset) {
       themeContext.value.preset = preset;
       themeContext.value.activePresetName = resolvedName;
-      setPresetAttribute(resolvedName);
     } else {
       throw new Error("Missing preset");
     }

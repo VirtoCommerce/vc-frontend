@@ -3,5 +3,4 @@
 // `utilities` is a Tailwind directive, not a layer.
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
-@layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset;
-@layer vc.design.kit, vc.design.app;
+@layer vc.vendor, vc.kit, vc.app, vc.design, vc.print;

@@ -4,7 +4,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { coerce, gte, minVersion, subset, validRange } from "semver";
+import { coerce, gte, minVersion, prerelease, subset, validRange } from "semver";
 import { BACKEND_REQUIREMENTS } from "./backend-requirements.mjs";
 import { gitIn } from "./git.mjs";
 
@@ -51,9 +51,10 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\vite\bin\vite.js')" />
     <!-- Through corepack, for the yarn that package.json pins: a runner's global yarn is 1.x, and corepack enable
          needs write access to Node's own folder. -->
-    <Exec Command="corepack yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="corepack yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="corepack yarn build" WorkingDirectory="$(StorefrontAppDir)" />
+    <!-- yarn writes UTF-8; without StdOutEncoding MSBuild reads it in the console's OEM code page and garbles the log. -->
+    <Exec Command="corepack yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" StdOutEncoding="utf-8" />
+    <Exec Command="corepack yarn type-check" WorkingDirectory="$(StorefrontAppDir)" StdOutEncoding="utf-8" />
+    <Exec Command="corepack yarn build" WorkingDirectory="$(StorefrontAppDir)" StdOutEncoding="utf-8" />
   </Target>
   <Target Name="PublishStorefrontPlugin" AfterTargets="Publish" DependsOnTargets="BuildStorefrontPlugin" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <ItemGroup>
@@ -236,6 +237,18 @@ function checkFacadePin(appDir, pkg) {
       ),
     ];
   }
+  const alphaPin = prerelease(pinned)
+    ? [
+        warn(
+          `@vc-frontend/core is pinned to the pre-release ${pinned}, which the next stable facade release deletes`,
+          "Before the plugin merges, pin the stable core-v<version> release and set requiredHostVersion to ^<version>.",
+        ),
+      ]
+    : [];
+  return [...checkRequiredHostVersion(range, pinned), ...alphaPin];
+}
+
+function checkRequiredHostVersion(range, pinned) {
   if (!range || !validRange(range)) {
     return [
       fail(

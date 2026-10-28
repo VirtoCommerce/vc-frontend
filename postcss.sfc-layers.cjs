@@ -3,11 +3,13 @@ const path = require("node:path");
 
 /**
  * Puts every Vue SFC style module into its cascade layer: `client-app/ui-kit/**` → `vc.kit`,
- * every other component → `vc.app`. Entry stylesheets, and App.vue that loads main.scss,
- * are layered by hand, so they are never touched here.
+ * every other component → `vc.app`, and a top-level print-only `@media` of either → `vc.print`.
+ * Entry stylesheets, and App.vue that loads main.scss, are layered by hand, so they are never
+ * touched here.
  */
 const SFC_STYLE_QUERY = /\?vue&type=style/;
 const HOISTED_AT_RULES = new Set(["charset", "import"]);
+const PRINT_QUERY = /^\s*(only\s+)?print\b/i;
 
 const LAYERS_FILE = path.join(__dirname, "client-app/assets/styles/_layers.scss");
 
@@ -50,6 +52,13 @@ function layerOrder() {
   return cached.order;
 }
 
+/** A `@media` whose every comma-separated query is `print` or `only print`, with or without features. */
+function isPrintOnly(node) {
+  return (
+    node.type === "atrule" && node.name === "media" && node.params.split(",").every((query) => PRINT_QUERY.test(query))
+  );
+}
+
 const sfcLayers = () => ({
   postcssPlugin: "vc-sfc-layers",
   Once(root, { result, AtRule }) {
@@ -66,15 +75,35 @@ const sfcLayers = () => ({
     }
 
     const nodes = root.nodes.filter((node) => node.type !== "atrule" || !HOISTED_AT_RULES.has(node.name));
+    const print = [];
+    const rest = [];
 
-    if (!nodes.length) {
+    for (const node of nodes) {
+      if (isPrintOnly(node)) {
+        print.push(node);
+      } else {
+        rest.push(node);
+      }
+    }
+
+    const layers = [];
+
+    // `append` moves the nodes; the constructor's `nodes` option would clone them.
+    if (rest.some((node) => node.type !== "comment")) {
+      const params = file.includes("/client-app/ui-kit/") ? "vc.kit" : "vc.app";
+
+      layers.push(new AtRule({ name: "layer", params }).append(rest));
+    }
+
+    if (print.length) {
+      layers.push(new AtRule({ name: "layer", params: "vc.print" }).append(print));
+    }
+
+    if (!layers.length) {
       return;
     }
 
-    const layer = new AtRule({ name: "layer", params: file.includes("/client-app/ui-kit/") ? "vc.kit" : "vc.app" });
-
-    // `append` moves the nodes; the constructor's `nodes` option would clone them.
-    root.append(...layerOrder().map((params) => new AtRule({ name: "layer", params })), layer.append(nodes));
+    root.append(...layerOrder().map((params) => new AtRule({ name: "layer", params })), ...layers);
     // So the dev server rebuilds the module when the order changes.
     result.messages.push({ type: "dependency", plugin: "vc-sfc-layers", file: LAYERS_FILE, parent: id });
   },

@@ -1,9 +1,8 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
-import { filterActiveQueryNames } from "@/core/api/graphql";
+import { filterActiveQueryNames, getFieldValidationErrors } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
 import { useReturnUrl, useSupportReports } from "@/core/composables";
-import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { buildRedirectUrl, toSameOriginPath } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
@@ -23,8 +22,10 @@ import {
   graphqlErrorEvent,
   dataChangedEvent,
 } from "@/shared/broadcast";
+import { useFieldErrors } from "@/shared/common";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
+import type { GraphQLFormattedError } from "graphql";
 
 let installed = false;
 
@@ -45,6 +46,7 @@ export function setupBroadcastGlobalListeners() {
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
+  const { getErrorNotification } = useFieldErrors();
 
   function createReportButton(error: unknown): NotificationCustomButtonType {
     return {
@@ -106,17 +108,14 @@ export function setupBroadcastGlobalListeners() {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query });
     }
   });
-  on(graphqlErrorEvent, (error) => {
-    const notification: INotification = {
-      duration: DEFAULT_NOTIFICATION_DURATION,
-      variant: "outline-dark",
-      group: "GenericError",
-      singleInGroup: true,
-      text: t("common.messages.something_went_wrong"),
-    };
+  on(graphqlErrorEvent, (errors) => {
+    const graphQLErrors = errors as GraphQLFormattedError[];
+    const fieldErrors = getFieldValidationErrors(graphQLErrors);
+    const notification = getErrorNotification(fieldErrors);
 
-    if (error) {
-      notification.button = createReportButton(error);
+    // Rejected input is for the user to correct; any other error is a problem to report
+    if (fieldErrors.length < graphQLErrors.length) {
+      notification.button = createReportButton(graphQLErrors);
     }
 
     notifications.error({
@@ -153,8 +152,8 @@ export function setupBroadcastGlobalListeners() {
       ...notification,
     });
   });
-  on(openReturnUrl, () => {
-    location.href = toSameOriginPath(getReturnUrl());
+  on(openReturnUrl, (returnUrl) => {
+    location.href = toSameOriginPath(typeof returnUrl === "string" ? returnUrl : getReturnUrl());
   });
 
   on(forbiddenEvent, () => {

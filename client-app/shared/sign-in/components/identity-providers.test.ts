@@ -1,5 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { defineComponent } from "vue";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import IdentityProviders from "./identity-providers.vue";
 
 vi.mock("@/core/globals", () => ({
@@ -75,5 +77,16 @@ describe("identity-providers", () => {
     await buttons[0].trigger("click");
 
     expect(new URL(String(assign.mock.calls[0][0])).searchParams.get("authenticationType")).toBe("AzureAD");
+  });
+
+  it("renders a registered provider instead of the built-in one", async () => {
+    useExtensionRegistry().register("identityProviders", "GoogleSSO", {
+      component: defineComponent({ template: `<span class="registered-provider" />` }),
+    });
+
+    const wrapper = await mountProviders(["GoogleSSO"]);
+
+    expect(wrapper.find(".registered-provider").exists()).toBe(true);
+    expect(wrapper.find("button").exists()).toBe(false);
   });
 });

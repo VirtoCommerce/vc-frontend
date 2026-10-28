@@ -14,7 +14,7 @@ override**? A style that only looks right in the default light preset is a bug. 
 | Our habit | What the client gets |
 |---|---|
 | A literal colour | They switch the preset; this screen keeps our colour |
-| `!important` | They need `!important` too to override it |
+| `!important` | Their `!important` in `_custom.scss` or any unlayered CSS loses to it |
 | Long selectors (nesting over other blocks, `:has()`, tag/id chains) | Their one-class override loses |
 | A hardcoded value where a token exists | They can't reach it without editing our file |
 | A kit component restyled locally | Their `--vc-<component>-…` change doesn't reach this screen |
@@ -26,7 +26,8 @@ us; renaming or removing a BEM class or token is a breaking change (alias the to
 list it under Breaking changes in the PR). Check visual changes in Storybook's preset + dark toolbar
 (`client-app/assets/presets/index.ts`: 7 presets, each with a `.dark.json`).
 
-Nothing lints SCSS (no stylelint). Only the Sass/Tailwind compile in `yarn build`
+`yarn lint` does not parse SCSS; `yarn check:designs` and `yarn check:css-layers` check design folders and layer
+names (`client-app/assets/styles/README.md`, "Checks"). Beyond them, only the Sass/Tailwind compile in `yarn build`
 catches anything, so everything below is review-only. Severity guide: breaks the build or renders visibly wrong
 (in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
 
@@ -46,10 +47,10 @@ catches anything, so everything below is review-only. Severity guide: breaks the
    - New global tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss` (UI-kit tokens) or `main.scss`.
    - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
      Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
-     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: kit files in
-     `assets/styles/print/...` are registered in `_print-kit.scss` (`vc.kit`); app-level print rules go in
-     `_print-app.scss` (`vc.app`). A new file that is not registered is dead; one registered in the wrong
-     file lands in the wrong cascade layer.
+     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: files in `assets/styles/print/...`
+     are registered in `_print.scss` (layer `vc.print`); a component's top-level print-only `@media` lands in
+     `vc.print` automatically. A new file that is not registered is dead; one registered in the wrong file lands
+     in the wrong cascade layer.
    - Never `html.dark` / `.dark` selectors inside an SFC (there are none today).
 5. Shared transitions come from `assets/styles/helpers/_transitions.scss`: `fade`, `slide-fade-{left,right,top,bottom}`,
    `scale`, `shake`, `list` (tunable via `--transition-duration`, `--list-transform`). Don't redefine them per component.
@@ -57,7 +58,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 ## 2. BEM naming and structure
 
 6. **One block per component, named after the file**: `points-balance.vue` → `.points-balance`. A page in
-   `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.sales-rep-calendar`). If block and file
+   `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.<m>-calendar`). If block and file
    diverge, rename the file, not the block. A second top-level block in one `<style>` means the second part is
    its own component. Vue `<transition>` classes (`.x-enter-from`) are fine. Also extract a component when an
    element needs elements of its own (`&__select-all-text`, `&__select-all-icon` → `select-all.vue`), when the root
@@ -79,7 +80,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     in this file for another component's block or elements. A parent places a child through the class on the
     child's root (a BEM mix, `class="parent__child"`) — layout only: margin, flex, grid, width, order. The child's
     look changes only through its props and its public CSS variables (`--vc-<component>-…` for kit components).
-11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`stat-widget--success`). A modifier bound in the
+11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`product-card--list`). A modifier bound in the
     template but styled nowhere is dead (`nit`); an element class with no rule is fine (it's a hook).
 12. Class binding: static block/element class + object for modifiers —
     `class="x__item" :class="{ 'x__item--active': isActive }"`. A template literal (`` :class="`x--${tone}`" ``)

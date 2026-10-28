@@ -2,14 +2,13 @@
 
 This folder holds the storefront's global stylesheets and the **cascade-layer order** every
 stylesheet in the app is sorted into. Layers decide who wins *before* specificity does: our
-component styles sit in low layers, design and preset rules in higher ones, and anything a fork
+component styles sit in low layers, design and print rules in higher ones, and anything a fork
 writes outside a layer beats all of them.
 
 The storefront ships two designs from one markup: `classic` (default) and `soft`. The `design`
 setting in `client-app/config/settings_data.json` picks one; `app-runner.ts` writes it to
-`<html data-design="…">` before the app mounts, and the active colour preset to
-`<html data-preset="…">`. The design switches styles only: markup and `Vc*` props never change,
-and the design never changes the preset.
+`<html data-design="…">` before the app mounts. The design switches styles only: markup and `Vc*`
+props never change, and the design never changes the preset.
 
 ---
 
@@ -20,8 +19,7 @@ and the design never changes the preset.
 ```css
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
-@layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset;
-@layer vc.design.kit, vc.design.app;
+@layer vc.vendor, vc.kit, vc.app, vc.design, vc.print;
 ```
 
 - The first declaration a page sees fixes the order; an identical re-declaration is a no-op. So
@@ -44,15 +42,14 @@ and the design never changes the preset.
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); soft hook tokens (`soft/_tokens.scss` on both sides), soft scale and role tokens (app side). No soft colour tokens |
+| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). No colour tokens in a design |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
-| `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss`, `_print-kit.scss` |
-| `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss`, `_print-app.scss` |
-| `vc.design.kit` | soft files of ui-kit blocks: `client-app/ui-kit/styles/soft/` |
-| `vc.design.app` | soft files of app blocks: `client-app/assets/styles/soft/` |
-| `vc.preset` | reserved for small per-preset fixes on `html[data-preset="…"]`; empty so far |
+| `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss` |
+| `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
+| `vc.design` | a design's block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by its `index.scss` |
+| `vc.print` | `_print.scss`; every component's top-level print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
 | `utilities` | declared, empty on Tailwind 3 |
@@ -65,72 +62,163 @@ Element-level dark token remaps stay with their dark files (`vc.kit` / `vc.app`)
 - the Tailwind utilities;
 - the runtime preset `<style id="vc-theme-variables">` from `core/plugins/config.plugin.ts`: its
   `--color-*` names overlap with none of our declarations;
-- third-party runtime CSS (Builder SDK, Google Maps, tw-elements).
+- third-party runtime CSS (Builder SDK, Google Maps, tw-elements);
+- plugin stylesheets, until they move into `plugins`.
 
-Unlayered CSS beats every layer, so a Tailwind utility in a template always wins over BEM, and fork
-CSS keeps working against utilities as before.
+Unlayered CSS beats every layer, whatever its specificity. So one class in `_custom.scss` overrides
+any component, design, dark or print rule; a Tailwind utility in a template always wins over BEM, and
+fork CSS keeps working against utilities as before; plugin stylesheets beat our layered components.
+
+`!important` inverts across layers: a layered `!important` beats an unlayered one, so a fork's
+unlayered `!important` (`_custom.scss`) cannot override one inside a layer (swiper's and
+nouislider's in `vc.vendor`). Never add `!important` to our styles.
 
 ### Component styles are layered for you
 
 `postcss.sfc-layers.cjs` (registered in `postcss.config.cjs`, after `tailwindcss`) wraps every
-Vue SFC `<style>` module: `client-app/ui-kit/**` → `vc.kit`, every other component → `vc.app`. It
-hoists `@charset`/`@import`, restates the `_layers.scss` order in front of each module (a component
-chunk can load before the entry CSS, as in the federation build), and skips `App.vue` and every
-`.scss`/`.css` entry. **Never hand-wrap an SFC style in `@layer`.** Each SFC module carries one
+Vue SFC `<style>` module: `client-app/ui-kit/**` → `vc.kit`, every other component → `vc.app`.
+A top-level `@media` whose every comma-separated query starts with `print` or `only print` goes to
+`vc.print` instead, so it beats every design rule in print; `@media screen, print` stays put. The
+plugin hoists `@charset`/`@import`, restates the `_layers.scss` order in front of each module (a
+component chunk can load before the entry CSS, as in the federation build), and skips `App.vue` and
+every `.scss`/`.css` entry. **Never hand-wrap an SFC style in `@layer`.** Each SFC module carries one
 copy of the order statements; an identical re-declaration changes nothing.
 
 ### Entry stylesheets
 
 Each is layered by hand and starts with `@use "layers"`: `preflight.scss`, `vendors.scss`,
-`main.scss` (loaded by `App.vue`), both `soft/index.scss`, and in Storybook
+`main.scss` (loaded by `App.vue`), and in Storybook
 `storybook-styles/preflight.scss`, `main.scss` and `swiper.scss` (`utilities.scss` stays
 unlayered). A new entry follows the same pattern: `@use "layers"` first, then each part with
 `@include meta.load-css(…)` inside its `@layer` block. Swiper is loaded with a plain
 `@import … layer(vc.vendor)` (`vendors/_swiper.scss`).
 
+A design's `index.scss` (`client-app/designs/<name>/`) does not restate the order: the preflight
+`<link>` in `index.html` (`.storybook/preview-head.html` in Storybook) declares it before any design
+CSS runs, so `index.scss` only puts its files in `@layer theme` and `@layer vc.design`.
+
 ---
 
-## The soft design
+## Designs
 
-Two directories, each with an `index.scss` entry loaded only when `design` is `soft` (classic
-never downloads them). Everything sits inside `@media screen`, so print keeps the classic rules.
+A design is a folder in `client-app/designs/`:
 
-| Directory | Blocks | Layer |
-| --- | --- | --- |
-| `client-app/ui-kit/styles/soft/` | ui-kit blocks | `vc.design.kit` |
-| `client-app/assets/styles/soft/` | app blocks | `vc.design.app` |
+```text
+client-app/designs/
+  <name>/             # one folder per design; ours is soft
+    _tokens.scss      # html[data-design="<name>"] { token values }
+    index.scss        # the wiring, the same in every design (below)
+    blocks/           # one file per BEM block, named after it
+      vc-button.scss
+      footer-links.scss
+    dark/             # the same blocks' dark values, same file names
+      footer-links.scss
+```
 
-- **One BEM block per file, file name = block name**; folders mirror the component structure, like
-  `dark/`. Add each file to its side's `index.scss` with `@include meta.load-css(…)` inside
-  `@media screen { @layer vc.design.kit { … } }` (`vc.design.app` on the app side).
-- **BEM SCSS as in any component:** nest under the soft prefix and capture states with `$x: &`,
-  as rule 13 of `.claude/rules/styles.md` describes; the check reads the compiled selectors. A
-  capture holds the soft prefix, so compound it on the block (`&--disabled:not(#{$loading})`); read
-  as an ancestor (`#{$x} &`) it repeats the prefix and never matches. For an element under a block
-  state, nest the element in the state: `&--disabled { .vc-button__icon { … } }`. Typing the block
-  name again here is the one exception to rule 13: its `#{$x} &__icon` form repeats the soft prefix.
-- **Selector:** `html[data-design="soft"] .block__el`. Dark soft goes in the same file under
-  `html.dark[data-design="soft"]`: a soft rule beats the base block's dark rules too, so each soft
-  file restates its own dark values.
-- **Restate every state.** A soft rule sits above the component's layer and beats every state of
-  the base rule (hover, disabled, active, modifiers, dark), so a soft file that changes a property
-  also declares it for every state of the block that changes it. Print is untouched: soft is
-  screen only.
-- **Tokens:** a soft value goes where the base resolves it.
-  - The base reads a hook token that no element sets (`--vc-tooltip-radius`,
-    `--vc-dropdown-menu-radius`): set it on `html[data-design="soft"]` in that side's
-    `_tokens.scss`.
-  - An element sets the token itself (`--vc-button-radius` on `.vc-input` and
-    `.vc-date-range-input`): override it on the same selector, in the soft file of the block whose
-    stylesheet sets it. Elsewhere the same token can still be a hook in `_tokens.scss`.
-- **No colour tokens.** Colour belongs to presets.
-- No `opacity` / `transform` / `transition` on elements that carry a Vue `<Transition>` class, such
-  as the `.fade-*` helpers used by VcLoaderOverlay and VcPopupSidebar.
-- **A soft file restyles only its own block.** The element each rule styles is its block or one of
-  its elements, and it names no other block of either side outside `:not()`.
-- **BEM, not utilities.** A soft rule can never beat a Tailwind utility in a template. Every element
-  a soft file overrides must be BEM with no utility for that property, including utilities passed
-  onto kit components. Convert such an element in that component's design task.
+- The folder name is the design name: the value of `design` in `client-app/config/settings_data.json`,
+  read at build time.
+- Classic has no folder: it is the components' own styles and the token defaults. A design sets only
+  what differs from classic.
+- The app finds designs by folder (`client-app/core/utilities/design/index.ts`); nothing lists their
+  names. An unknown `design` logs a warning in development and falls back to classic. The storefront
+  downloads only the active design's styles; classic downloads none.
+- `blocks/` and `dark/` hold files directly; the file name is the block's class (`vc-button.scss` for
+  `.vc-button`).
+
+### Wiring
+
+Every design's `index.scss` is this file with its own name and one line per file the design has; a
+`@layer` or `html` block with no line is left out:
+
+```scss
+@use "sass:meta";
+
+@layer theme {
+  @include meta.load-css("tokens");
+}
+
+@layer vc.design {
+  html[data-design="soft"] {
+    @include meta.load-css("blocks/footer-links");
+  }
+
+  html.dark[data-design="soft"] {
+    @include meta.load-css("dark/footer-links");
+  }
+}
+```
+
+The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet,
+like soft today, keeps one comment line in `index.scss` instead.
+
+### Two ways a design changes the look
+
+1. **Tokens** (`_tokens.scss`): the custom properties the components read, such as `--vc-radius` and
+   `--vc-button-radius`. First choice: if the component already reads a token for the value, set the
+   token.
+2. **Block files** (`blocks/`, `dark/`): when no token covers it, the design restyles the block's BEM
+   elements and modifiers directly.
+
+A token an element sets on itself (`--vc-button-radius` on `.vc-input` and `.vc-date-range-input`) is
+overridden on that element's block, not on `html`: in the design's `blocks/<block>.scss`
+(`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
+dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
+and `--vc-dropdown-menu-radius` instead, on `html` as usual.
+
+A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
+captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
+nothing outside its own design folder (a component may `@use "@/ui-kit/styles/focus-ring"`, a design
+file may not). `index.scss` puts `html[data-design="…"]` (`html.dark[data-design="…"]` for `dark/`) in
+front of every selector.
+
+The rules for block files:
+
+- A block file restyles only its own block (its block and its elements and modifiers).
+- Its rules win over the component in every state, so write each state that should look different
+  too (hover, disabled, active, modifiers).
+- Dark values go in `dark/<block>.scss`; they win over the component's dark styles.
+- An element a design restyles must be styled with BEM in the template, not utilities: a utility in
+  the template always wins.
+- No colours: colours come from the preset.
+- Don't set `opacity`, `transform` or `transition` on elements that carry a Vue `<Transition>` class.
+
+Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
+never restates print. Token values apply in print too.
+
+### Make your own design
+
+1. Pick a name, e.g. `mybrand`, and create the folder `client-app/designs/mybrand/` (copy
+   `designs/soft/` as a start: an `index.scss` that loads no file).
+2. Add `_tokens.scss` with the tokens that differ from classic, and load it in `index.scss`
+   ([Wiring](#wiring)):
+   ```scss
+   html[data-design="mybrand"] {
+     --vc-radius: 0;
+     --vc-button-radius: 2rem;
+   }
+   ```
+3. When no token covers what you need, add `blocks/<block>.scss` and write the block's styles as in
+   the component, loading nothing outside the design's folder; dark values go in `dark/<block>.scss`.
+   Add each file to `index.scss` ([Wiring](#wiring)).
+4. Turn it on: `"design": "mybrand"` in `client-app/config/settings_data.json`.
+5. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`).
+
+### Customise a design
+
+1. Find the token for what you want to change: a `--vc-*` custom property the component reads in its
+   `<style>`, such as `var(--vc-button-radius, …)` in `vc-button.vue`.
+2. Set it in `client-app/assets/styles/_custom.scss`:
+   - every design: `:root { --vc-button-radius: 4px; }`
+   - one design: `html[data-design="soft"] { --vc-button-radius: 4px; }`
+   - one design in dark: `html.dark[data-design="soft"] { … }`
+3. No token for it? Write the rule in `_custom.scss` under the design:
+   `html[data-design="soft"] .footer-links__title { text-transform: none; }`. It wins over the
+   component in every state, so add each state you need.
+4. Never edit our components or the folders of our designs: your change would conflict with every
+   update.
+
+For the core team, customising our own design = editing its folder; prefer adding a token to the
+component (in that component's task) over a block file when several designs will need the same knob.
 
 ---
 
@@ -223,62 +311,54 @@ itself.
 ## Checks
 
 ```bash
-yarn check:soft-styles   # soft files, compiled with Sass: block naming, side, no colour tokens (no build needed)
+yarn check:designs                    # every folder in client-app/designs/, a fork's too (no build needed)
 yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/, lazy chunks too)
 ```
 
-- `scripts/check-soft-styles.ts` compiles every `.scss` file in each side's `soft/`, hidden ones
-  too, with Sass and checks the CSS it emits, so nesting, `$x: &` captures, interpolation,
-  `@extend` and mixins are read as Sass resolves them. A problem is reported at the source line
-  that wrote it. Each rule below is covered by tests.
+`scripts/check-designs.ts` compiles every `.scss` file of each design with Sass and Tailwind, as the
+build does, and checks the CSS it emits, so nesting, `$x: &` captures and `@apply` are read as they
+ship. A problem is reported at the source line that wrote it, except a file `index.scss` loads out
+of its place: that is reported once, at the file's `meta.load-css` line in `index.scss`. The tests
+are in `scripts/check-designs.test.ts`.
 
-  | Rule | Rejected | Why |
-  |---|---|---|
-  | `soft/**/<name>.scss`: `<name>` is a block of that side (a component file of that name, or the leading class of a rule outside any other rule), `_tokens`, `index` or another `_partial` | any other name; an app file named after a kit block | blocks are per side |
-  | each side's `soft/index.scss` exists | a missing entry | otherwise a moved folder passes with nothing checked |
-  | a soft file loads only `.scss` files of its side's `soft/`, `sass:` modules and `client-app/assets/styles/_layers.scss` (`@use`, `@forward`, `@import`, `meta.load-css`) | any other stylesheet, or a path that matches several files | the check reads only the files it compiles |
-  | every rule a block file emits starts with `html[data-design="soft"]` (`.dark` allowed), and names `html` nowhere else outside a pseudo-class | any other start; `html` in a later compound, as a capture read as an ancestor (`#{$x} &`) writes it | soft rules apply only under the switch; `html` below the root never matches |
-  | its last compound, the element it styles, has a class `.<block>`, `.<block>__*` or `.<block>--*` | `.<block> button`, `.<block> > *`, `.x:has(.<block>)` | a soft file restyles its own block |
-  | it names no other block of either side outside `:not()`; `[class="…"]` and `[class~="…"]` count as classes, also with the `i` flag | another block, also as an ancestor or in `:has()`; `[class]` by presence, `^=`, `*=`, `$=` or `\|=` | components never restyle each other |
-  | `_tokens.scss` rules target `html[data-design="soft"]` itself | anything below `<html>` | tokens are hooks on `<html>` |
-  | `index.scss` and other partials emit only rules a block file or `_tokens.scss` emits, as that file emits them (`meta.load-css` of the file) | a rule of their own, a mixin's rules, a loaded file nested under a selector | rules live in block files, where they are checked |
-  | the side's `soft/index.scss` ships each block file's rules inside `@media screen > @layer vc.design.kit` (`vc.design.app`) and the `_tokens.scss` rules inside `@media screen > @layer theme`, and loads every block file and `_tokens.scss` that emits rules; below these two wrappers a block keeps its own `@media`, `@supports` and `@container` (only the outer two are checked, so one the entry adds inside the layer passes too) | another outer wrapper or none (`@use` of a block file emits it unlayered), the other side's layer, `@media print`, an `@layer` below the side's layer; a file whose rules it does not ship | soft is screen only and sits in its layer; an unloaded file never ships |
-  | no custom property whose name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`, read with escapes resolved | such a property | colour belongs to presets; the kit names its public colour tokens so (its private `--loader-border-r` and `--row-hover-shade` are not caught) |
-  | at-rules in the emitted CSS: `@media`, `@supports`, `@container`, `@layer`, `@starting-style` | any other, e.g. `@apply`, `@keyframes`, `@import`, `@scope`, `@property` | they ship CSS the check does not read; `@apply` variants add selectors |
+| Rule | Rejected |
+| --- | --- |
+| The folder name is lower case (`a-z`, `0-9`, `-`), starts with a letter and is not `classic` | `My-Brand`, `2brand`, `classic` |
+| The folder holds only what the [tree](#designs) shows; dotfiles (`.DS_Store`, `.gitkeep`) are ignored | `extra.scss`, a `notes/` folder |
+| `blocks/` and `dark/` hold `.scss` files directly, each named after a block of a component | `blocks/layout/footer-links.scss`, `blocks/notes.md`, `blocks/nothing.scss` |
+| `index.scss` and `_tokens.scss` write the folder's name in `data-design` | `data-design="soft"` in `mybrand/` |
+| `_tokens.scss` sets only custom properties, only on `html[data-design="<name>"]` or `html.dark[data-design="<name>"]` | `:root { … }`, `html[data-design="<name>"] .x { … }`, `margin: 0` |
+| No colour tokens: no custom property whose name contains `color` or `bg` or ends in `-text`, `-border` or `-icon` (Tailwind's `--tw-shadow-colored` excepted) | `--vc-x-bg`, `--vc-button-solid-primary-text`, `@apply ring-primary-500` |
+| Block and dark files set no colour. In `color`, `fill`, `stroke` and every `…-color` property the only values are `transparent`, `currentColor`, `inherit`, `initial`, `unset`, `revert`, `revert-layer`, `none`, `auto` and `#0000`. The shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` hold no named, hex (except `#0000`) or functional colour (`rgb()`, `oklch()`, `color-mix()`, …) and no `var()` of a colour token. No property but a custom one holds a gradient with a colour in it (a direction-only `@apply bg-gradient-to-r` is not one). Tailwind's gradient stops and colour opacities (`--tw-gradient-from`, `--tw-gradient-to`, `--tw-{bg,text,border,divide,placeholder,ring}-opacity`) count as colours; its shadow and ring geometry (`@apply shadow-md`, `@apply ring-2`) does not | `color: red`, `border-top-color: red`, `background: red`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `background: var(--color-primary-500)`, `background-image: linear-gradient(red, blue)`, `@apply text-primary-500`, `@apply bg-opacity-50`, `@apply from-primary-500` |
+| A block or dark file names no `html` and no `[data-design]` | `html .footer-links` |
+| A block or dark file names no `.dark`: it is on `<html>`, so below the design's `html` it never matches; dark rules go in `dark/<block>.scss`, where `index.scss` adds `.dark` | `.dark .footer-links`, `.dark &` |
+| No `@apply` variant that styles an ancestor or sibling (`group-*`, `peer-*`): it puts a selector before `html[data-design]` and never matches; write the rule out | `@apply group-hover:underline`, `@apply peer-checked:underline` |
+| Every rule of a block or dark file styles its block: its last compound has `.<block>`, `.<block>__*` or `.<block>--*` | `.footer-links a`, `.footer-links > *` |
+| It names no other block outside `:not()`; `[class="…"]` and `[class~="…"]` count as classes | `.footer-links:has(.vc-button)` in `footer-links.scss` |
+| It matches no `[class]` by presence, prefix or substring | `[class]`, `[class^="x"]`, `[class*="x"]` |
+| A design file loads only `.scss` files of its own folder and `sass:` modules | `@use "@/ui-kit/styles/focus-ring"`, `@use "../../x"`, a path that matches several files |
+| Its CSS holds no at-rule but `@media`, `@supports`, `@container` and `@starting-style` (and, in `index.scss`, the top-level `@layer` blocks) | `@keyframes`, `@layer`, `@import`, `@scope`, `@property` |
+| `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix |
 
-  Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`,
-  and `*-move`) and state classes (`is-*`, `has-*`) are never blocks, so a block file may use them
-  on its own elements: `html[data-design="soft"] .vc-popover.is-visible`.
+Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`, and
+`*-move`) and state classes (`is-*`, `has-*`) are not blocks, so a block file may use them on its own
+elements: `.mobile-menu.is-visible` in `mobile-menu.scss`.
 
-- `scripts/check-css-layers.ts` (built CSS in `dist/`): every layer name is declared in
-  `_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
-  declared layer, and its names follow the declared order per parent.
+`scripts/check-css-layers.ts` (built CSS in `dist/`): every layer name is declared in
+`_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
+declared layer, and its names follow the declared order per parent.
 
 Both run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
 
 ---
 
-## Overriding in a fork
-
-- **`_custom.scss` and your own unlayered CSS beat every layer**, whatever its specificity. One
-  class is enough to override any component, dark or print rule.
-- To compete by specificity with our app styles instead, put your rule in their layer:
-  `@layer vc.app { … }`.
-- **Tailwind utilities** in templates are unlayered and still beat our layers.
-- **`!important` inverts across layers**: a layered `!important` beats an unlayered one. A fork's
-  `!important` cannot override an `!important` inside a layer: swiper's and nouislider's in
-  `vc.vendor`. Never add `!important` to our layered styles.
-- **Plugin stylesheets** stay unlayered until they move into `plugins`, so for now they beat our
-  layered components.
-
-### Files that moved
+## Files that moved
 
 A fork that edited one of these merges its change into the new place, in the new layer:
 
 | Before | Now |
 | --- | --- |
 | `_dark.scss` | `_dark-kit.scss` (`html.dark` rules, kit dark files; `vc.kit`) and `_dark-app.scss` (`dark/shared/**`; `vc.app`) |
-| `_print.scss` | `_print-kit.scss` (kit print files; `vc.kit`) and `_print-app.scss` (`html`/`body`/`#app` rules; `vc.app`) |
 | `@import … layer(nouislider)` in `nouislider.layer.css` | `layer(vc.vendor)` |
 | `@use "swiper/css…"` in `vendors/_swiper.scss` | `@import "swiper/css…" layer(vc.vendor);` |
 | `.storybook/preview.ts` importing `_ui-kit-tokens.scss` and `_dark.scss` | one import of `storybook-styles/main.scss` |

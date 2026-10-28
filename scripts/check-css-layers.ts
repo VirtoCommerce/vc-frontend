@@ -26,7 +26,7 @@ function parentOf(name: string): string {
   return name.split(".").slice(0, -1).join(".");
 }
 
-/** Every name with its ancestors (`vc.design.kit` also declares `vc` and `vc.design`), in order. */
+/** Every name with its ancestors (`vc.kit` also declares `vc`), in order. */
 function withAncestors(name: string): string[] {
   const parts = name.split(".");
 

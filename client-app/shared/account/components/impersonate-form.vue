@@ -11,6 +11,17 @@
       {{ $t("shared.account.impersonate_form.success") }}
     </VcAlert>
 
+    <MfaVerifyForm
+      v-else-if="twoFactorChallenge"
+      :email="email"
+      :challenge="twoFactorChallenge"
+      :on-verified="onTwoFactorVerified"
+      :back-label="$t('shared.account.impersonate_form.cancel_button')"
+      :track-analytics="false"
+      @back="onCancel"
+      @failed="onTwoFactorFailed"
+    />
+
     <form v-else class="impersonate-form__form" @submit="onSubmit">
       <VcAlert
         v-for="(message, index) in translatedErrors"
@@ -25,6 +36,7 @@
       </VcAlert>
 
       <VcInput
+        ref="emailInput"
         v-model.trim="email"
         name="email"
         class="impersonate-form__field"
@@ -75,11 +87,12 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { computed, watch } from "vue";
+import { computed, nextTick, useTemplateRef, watch } from "vue";
 import { object, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { useImpersonate } from "@/shared/account/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
+import MfaVerifyForm from "@/shared/sign-in/components/mfa-verify-form.vue";
 
 interface IEmits {
   (event: "success"): void;
@@ -111,9 +124,12 @@ const {
 const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 
-const { impersonate, loading, step, errors, resetState } = useImpersonate();
+const { impersonate, impersonateAuthenticated, loading, step, errors, twoFactorChallenge, resetState, failTwoFactor } =
+  useImpersonate();
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
+
+const emailInput = useTemplateRef<{ inputElement: HTMLInputElement | null }>("emailInput");
 
 const translatedErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
@@ -129,6 +145,23 @@ const onSubmit = handleSubmit(async () => {
     emit("success");
   }
 });
+
+async function onTwoFactorVerified(): Promise<void> {
+  await impersonateAuthenticated(props.targetUserId);
+
+  if (step.value !== "success") {
+    throw new Error("The impersonation failed after the sign-in code was accepted");
+  }
+
+  emit("success");
+}
+
+async function onTwoFactorFailed(error: IdentityErrorType): Promise<void> {
+  failTwoFactor(error);
+
+  await nextTick();
+  emailInput.value?.inputElement?.focus();
+}
 
 function onCancel(): void {
   emit("cancel");

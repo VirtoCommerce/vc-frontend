@@ -23,9 +23,45 @@ function run(from: string, css = CSS): string {
 }
 
 describe("postcss.sfc-layers", () => {
-  it("puts a ui-kit SFC style into vc.kit", () => {
+  it("puts a ui-kit SFC style into vc.kit and its print-only media into vc.print", () => {
     expect(run(`${ROOT}/ui-kit/components/atoms/a/vc-a.vue?vue&type=style&index=0&lang.scss`)).toBe(
-      `@charset"utf-8";@import"a.css";${ORDER}@layervc.kit{.x{color:red;}@mediaprint{.y{margin:0;}}}`,
+      `@charset"utf-8";@import"a.css";${ORDER}@layervc.kit{.x{color:red;}}@layervc.print{@mediaprint{.y{margin:0;}}}`,
+    );
+  });
+
+  it("puts an app SFC's print-only media into vc.print", () => {
+    expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`)).toContain(
+      "@layervc.app{.x{color:red;}}@layervc.print{@mediaprint{.y{margin:0;}}}",
+    );
+  });
+
+  it("keeps a media query that is not print-only in the component's layer", () => {
+    const css = ".x{a:b} @media screen, print {.y{a:b}} @media only print and (min-width: 1px) {.z{a:b}}";
+    expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`, css)).toContain(
+      "@layervc.app{.x{a:b}@mediascreen,print{.y{a:b}}}@layervc.print{@mediaonlyprintand(min-width:1px){.z{a:b}}}",
+    );
+  });
+
+  it("matches print case-insensitively and leaves a negated print query in the component's layer", () => {
+    const css =
+      "@media PRINT {.a{a:b}} @media not print {.b{a:b}} @media print, only print and (min-width:1px) {.c{a:b}}";
+    expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`, css)).toContain(
+      "@layervc.app{@medianotprint{.b{a:b}}}@layervc.print{@mediaPRINT{.a{a:b}}@mediaprint,onlyprintand(min-width:1px){.c{a:b}}}",
+    );
+  });
+
+  it.each(["@media print{.y{a:b}}", "/* x */ @media print{.y{a:b}}"])(
+    "adds no component layer when an SFC holds only print rules: %j",
+    (css) => {
+      const out = run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`, css);
+      expect(out).not.toContain("@layervc.app{");
+      expect(out).toContain("@layervc.print{@mediaprint{.y{a:b}}}");
+    },
+  );
+
+  it("keeps a comment with the component's rules", () => {
+    expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`, "/* x */ .x{a:b}")).toContain(
+      "@layervc.app{/*x*/.x{a:b}}",
     );
   });
 
@@ -37,6 +73,7 @@ describe("postcss.sfc-layers", () => {
 
   it("restates the declared layer order right before its layer, so a chunk loaded first cannot reorder it", () => {
     expect(ORDER).toContain("@layertheme,base,plugins-vendor,vc,components,plugins,utilities;");
+    expect(ORDER).toContain("@layervc.vendor,vc.kit,vc.app,vc.design,vc.print;");
     expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`)).toContain(`${ORDER}@layervc.app{`);
   });
 
@@ -49,8 +86,11 @@ describe("postcss.sfc-layers", () => {
     expect(run(`${ROOT}/assets/styles/main.scss`)).toBe(CSS.replaceAll(/\s+/g, ""));
   });
 
-  it("adds no empty layer when there is nothing to wrap", () => {
-    expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.css`, '@import "a.css";')).toBe('@import"a.css";');
+  it.each([
+    ['@import "a.css";', '@import"a.css";'],
+    ['@import "a.css"; /* x */', '@import"a.css";/*x*/'],
+  ])("adds no empty layer when there is nothing to wrap: %j", (css, expected) => {
+    expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.css`, css)).toBe(expected);
   });
 
   it("fails loudly, naming the file, when the layer order cannot be read", () => {
