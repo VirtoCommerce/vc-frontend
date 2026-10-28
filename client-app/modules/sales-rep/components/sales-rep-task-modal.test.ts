@@ -1,9 +1,15 @@
-import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import { localDayKey, localDayKeyToIso } from "../tasks";
 import SalesRepTaskModal from "./sales-rep-task-modal.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcCalendar from "@/ui-kit/components/molecules/calendar/vc-calendar.vue";
+import VcDateInput from "@/ui-kit/components/molecules/date-input/vc-date-input.vue";
+import VcInput from "@/ui-kit/components/molecules/input/vc-input.vue";
+import VcPopover from "@/ui-kit/components/molecules/popover/vc-popover.vue";
+import VcDatePicker from "@/ui-kit/components/organisms/date-picker/vc-date-picker.vue";
 
 const mutations = await vi.hoisted(async () => {
   const { ref } = await import("vue");
@@ -32,7 +38,12 @@ vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ success: st
 
 const modal = vi.hoisted(() => ({ openModal: vi.fn(), closeModal: vi.fn(), closeConfirmation: vi.fn() }));
 vi.mock("@/shared/modal", () => ({ useModal: () => modal }));
-vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key, d: () => "Oct 15", n: String }) }));
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({ t: (key: string) => key, d: () => "Oct 15", n: String, locale: { value: "en" } }),
+}));
+
+// A wrapper left mounted re-renders under the next test's mount, whose stubs differ.
+enableAutoUnmount(afterEach);
 
 const closeMock = vi.hoisted(() => vi.fn());
 
@@ -45,18 +56,11 @@ const VcModalStub = {
 
 // One stub for every field: they differ only in which value they carry, and the label identifies them.
 const FieldStub = {
-  props: ["modelValue", "label", "items", "clearable", "maxLength", "aria"],
+  props: ["modelValue", "label", "items", "clearable", "maxLength"],
   emits: ["update:modelValue"],
-  computed: {
-    // Read through a computed so the template needs no nested quotes.
-    ariaRequired(): unknown {
-      return (this as unknown as { aria?: Record<string, unknown> }).aria?.["aria-required"];
-    },
-  },
   template:
     '<input class="field" :data-label="label" :value="modelValue"' +
     ' :data-clearable="String(!!clearable)" :data-max-length="maxLength"' +
-    ' :data-aria-required="ariaRequired"' +
     " @input=\"$emit('update:modelValue', $event.target.value)\" />",
 };
 
@@ -80,21 +84,25 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
 
 // Plain mount (not createWrapperFactory): this file mocks the vue-i18n module, and the shared factory's
 // defaults build a real i18n plugin from it.
-function createWrapper(props: Record<string, unknown> = {}) {
+// `realFields` mounts the real VcInput and VcDatePicker: only they turn `required` into `aria-required`.
+function createWrapper(props: Record<string, unknown> = {}, { realFields = false } = {}) {
   return mount(SalesRepTaskModal, {
     props,
     global: {
       renderStubDefaultSlot: false,
       stubs: {
         VcModal: VcModalStub,
-        VcInput: FieldStub,
-        VcDatePicker: FieldStub,
+        ...(realFields ? {} : { VcInput: FieldStub, VcDatePicker: FieldStub }),
         VcSelect: FieldStub,
         VcTextarea: FieldStub,
         VcIcon: true,
+        VcTooltip: true,
       },
       // Real buttons: the actions are genuine <button>s the tests click, and Save reads its own disabled state.
-      components: { VcButton },
+      components: realFields
+        ? { VcButton, VcCalendar, VcDateInput, VcDatePicker, VcInput, VcInputDetails, VcLabel, VcPopover }
+        : { VcButton },
+      directives: { "html-safe": {} },
     },
   });
 }
@@ -301,13 +309,20 @@ describe("SalesRepTaskModal edit", () => {
 });
 
 describe("SalesRepTaskModal accessibility", () => {
-  // `required` only draws VcLabel's asterisk — it reaches neither the control nor assistive tech, so the
-  // requirement was exposed by no route at all (QA A-7).
-  it("marks the required controls as required, not just with an asterisk", () => {
-    const wrapper = createWrapper({ defaultDay: "2026-10-15" });
+  it("marks the required controls as required, not just with an asterisk", async () => {
+    // The real VcDatePicker teleports into the app's popover host, which must exist before the mount.
+    const popoverHost = document.createElement("div");
+    popoverHost.id = "popover-host";
+    document.body.appendChild(popoverHost);
+    const wrapper = createWrapper({ defaultDay: "2026-10-15" }, { realFields: true });
+    await flushPromises();
 
-    expect(field(wrapper, "name_label").attributes("data-aria-required")).toBe("true");
-    expect(field(wrapper, "due_date_label").attributes("data-aria-required")).toBe("true");
+    const input = (key: string) => wrapper.get(`input[aria-label$="${key}"]`);
+    expect(input("name_label").attributes("aria-required")).toBe("true");
+    expect(input("due_date_label").attributes("aria-required")).toBe("true");
+
+    wrapper.unmount();
+    popoverHost.remove();
   });
 
   // Product decision over QA A-18 (advisory): Save is disabled until the form is valid. The requirement is

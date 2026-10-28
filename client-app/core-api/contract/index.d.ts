@@ -198,6 +198,10 @@ declare const _default$C: typeof __VLS_export$C;
 interface IProps$x {
     required?: boolean;
     error?: boolean;
+    /**
+     * Renders a `<label for>` bound to this id instead of a `<div>`. A bound label hides the required asterisk from
+     * assistive tech, so the control must expose `required` or `aria-required` itself.
+     */
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
@@ -2791,6 +2795,7 @@ interface IProps$m {
     autocomplete?: string;
     readonly?: boolean;
     disabled?: boolean;
+    /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
     required?: boolean;
     name?: string;
     ariaLabel?: string;
@@ -3719,6 +3724,10 @@ interface IProps$h {
     modelValue?: object | string | Array<object | string>;
     label?: string;
     ariaLabel?: string;
+    /**
+     * Draws the label's asterisk and exposes `aria-required` on the input trigger. A `selected`/`placeholder` slot
+     * trigger is a `role="button"`, which cannot carry it, so there only the label's asterisk shows it. No native validation.
+     */
     required?: boolean;
     disabled?: boolean;
     readonly?: boolean;
@@ -3836,6 +3845,7 @@ interface IProps$g {
     autocomplete?: string;
     readonly?: boolean;
     disabled?: boolean;
+    /** Draws the label's asterisk and sets native `required` on the textarea. */
     required?: boolean;
     name?: string;
     label?: string;
@@ -3895,6 +3905,7 @@ interface IProps$e {
     name?: string;
     disabled?: boolean;
     readonly?: boolean;
+    /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
     required?: boolean;
     message?: string;
     error?: boolean;
