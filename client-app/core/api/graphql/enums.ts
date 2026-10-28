@@ -4,4 +4,5 @@ export enum GraphQLErrorCode {
   Unhandled = "",
   UserLocked = "UserLocked",
   PasswordExpired = "PasswordExpired",
+  Validation = "VALIDATION",
 }

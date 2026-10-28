@@ -1,6 +1,0 @@
-query SalesRepDocumentCategories($keyword: String) {
-  salesRepDocumentCategories(keyword: $keyword) {
-    name
-    count
-  }
-}

@@ -1,0 +1,17 @@
+query GetSignInMethods {
+  signInMethods {
+    kind
+    name
+    displayName
+    canCreateKey
+    canRenameKey
+    canDeleteKey
+    keys {
+      id
+      name
+      createdDate
+      modifiedDate
+      state
+    }
+  }
+}

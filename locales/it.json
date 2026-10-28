@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Questo articolo non può essere acquistato",
       "item_is_out_of_stock": "Questo articolo è esaurito",
       "invalid_value": "Valore non valido",
+      "invalid_characters": "Contiene caratteri non validi",
+      "html_tags_not_allowed": "I tag HTML non sono consentiti",
+      "unsafe_content": "Contiene contenuti non consentiti",
+      "invalid_addresses": "Alcuni indirizzi non sono validi",
+      "invalid_data": "Alcuni dei dati inseriti non sono validi",
       "invalid_user_id_or_token": "ID utente o token non valido.",
       "product_no_longer_available": "Non più disponibile",
       "item_quantity_required_field": "Il valore della quantità dell'articolo non può essere vuoto",
@@ -285,7 +290,8 @@
       "company_members": "Membri azienda",
       "contact_administrator": "contatta l'amministratore del sito",
       "skip_to_main_content": "Vai al contenuto principale",
-      "skip_to_footer": "Vai al piè di pagina"
+      "skip_to_footer": "Vai al piè di pagina",
+      "security": "Sicurezza"
     },
     "titles": {
       "all_actions": "Tutte le azioni",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Salvati per dopo",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1486,6 +1494,21 @@
       "promotion_coupons": {
         "title": "Tutti i coupon e le promozioni",
         "no_lists": "Non hai coupon o promozioni"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Nessuna chiave",
+        "unnamed_key": "Chiave senza nome",
+        "created": "Creata il {date}",
+        "changed": "Modificata il {date}",
+        "rename_modal": {
+          "title": "Rinomina chiave",
+          "name_label": "Nome"
+        },
+        "delete_modal": {
+          "title": "Elimina chiave",
+          "message": "Non potrai più accedere con questa chiave."
+        }
       }
     },
     "company": {
@@ -1825,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Le password devono avere almeno un carattere non alfanumerico",
     "PasswordRequiresUpper": "Le password devono avere almeno una lettera maiuscola ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Le password devono utilizzare caratteri diversi",
-    "RecentPasswordUsed": "Hai usato questa password in passato. Creane un'altra."
+    "RecentPasswordUsed": "Hai usato questa password in passato. Creane un'altra.",
+    "user_not_editable": "Questo utente non può essere modificato",
+    "sign_in_key_not_found": "Chiave di accesso non trovata",
+    "last_sign_in_key": "Impossibile rimuovere l'ultima chiave di accesso",
+    "operation_not_supported": "Questa operazione non è supportata"
   },
   "password_tips": {
     "title": "Suggerimenti per creare una password sicura:",
