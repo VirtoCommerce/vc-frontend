@@ -120,7 +120,6 @@ vi.mock("@/modules/purchase-requests", () => ({ initialize: vi.fn() }));
 vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
 vi.mock("@/modules/quotes", () => ({ init: vi.fn() }));
 vi.mock("@/modules/returns", () => ({ init: vi.fn() }));
-vi.mock("@/modules/sales-rep", () => ({ init: vi.fn() }));
 vi.mock("@/modules/skyflow", () => ({ init: vi.fn() }));
 vi.mock("@/modules/punchout", () => ({ init: vi.fn() }));
 vi.mock("@/plugins/builder-io-preview/utils", () => ({ isPreviewMode: () => false }));

@@ -956,10 +956,11 @@ const readText = (file) => toLf(readFileSync(file, "utf8"));
 /**
  * The newest published contract tag, or "" when nothing has been released yet (or tags were not
  * fetched). This is what a plugin actually installs, so it — not the base branch — is the baseline
- * the RELEASE check has to judge a version level against.
+ * the RELEASE check has to judge a version level against. Pre-release tags (`core-v<V>-alpha.*`)
+ * are skipped: they are temporary, and a merge can make one reachable from the base branch.
  */
 function lastReleasedContractTag() {
-  const described = git(["describe", "--tags", "--match", "core-v*", "--abbrev=0"]);
+  const described = git(["describe", "--tags", "--match", "core-v*", "--exclude", "core-v*-*", "--abbrev=0"]);
   return described.status === 0 ? described.stdout.trim() : "";
 }
 

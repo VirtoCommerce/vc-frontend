@@ -176,6 +176,8 @@ interface IProps {
   withDescriptionField?: boolean;
   withPersonalInfo?: boolean;
   countries?: CountryType[];
+  /** Messages by field name for inputs the server rejected on save; each one clears when its input is edited. */
+  serverErrors?: Partial<Record<keyof MemberAddressType, string>>;
 }
 
 const emit = defineEmits<IEmits>();
@@ -315,5 +317,14 @@ watch(
     resetForm({ values: modelValue });
   },
   { deep: true, immediate: true },
+);
+
+watch(
+  () => props.serverErrors,
+  (serverErrors) => {
+    if (serverErrors) {
+      setErrors(serverErrors);
+    }
+  },
 );
 </script>
