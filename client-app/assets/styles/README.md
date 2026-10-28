@@ -149,8 +149,8 @@ Every design's `index.scss` is this file with its own name and one line per file
 }
 ```
 
-The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet,
-like soft today, keeps one comment line in `index.scss` instead.
+The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet
+keeps one comment line in `index.scss` instead.
 
 ### Two ways a design changes the look
 
@@ -189,7 +189,8 @@ never restates print. Token values apply in print too.
 ### Make your own design
 
 1. Pick a name, e.g. `mybrand`, and create the folder `client-app/designs/mybrand/` (copy
-   `designs/soft/` as a start: an `index.scss` that loads no file).
+   `designs/soft/` as a start and replace `soft` with your name in its `index.scss` and
+   `_tokens.scss`).
 2. In `design.ts`, list your font stylesheet URLs (or leave the list empty).
 3. Add `_tokens.scss` with the tokens that differ from classic, and load it in `index.scss`
    ([Wiring](#wiring)):
@@ -285,7 +286,7 @@ itself.
 ### Where a design's value goes
 
 - **Soft:** scale and role tokens on `html[data-design="soft"]` in
-  `client-app/assets/styles/soft/_tokens.scss`; dark shadows under
+  `client-app/designs/soft/_tokens.scss`; dark shadows under
   `html.dark[data-design="soft"]` in the same file. A shadow keeps its step's colour: black
   `rgb(0 0 0 / …)` for the default `shadow` step (from Tailwind's defaultTheme),
   `rgb(from var(--color-additional-950) …)` for the others. Soft changes geometry and alpha,
