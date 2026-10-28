@@ -5,15 +5,16 @@
            there (rather than duplicated) so there's one tabs/differ instance and one activeTab. -->
       <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
 
-      <!-- Marks where the sticky header row sits in the flow; measured instead of the row itself. -->
-      <div ref="headerRowAnchor" class="compare-table__header-row-anchor"></div>
+      <!-- Marks where the sticky header row sits in the flow. The row itself isn't measured: useElementBounding
+           re-reads its target on a resize or a class/style change, and compacting changes both. -->
+      <div ref="headerRowAnchorRef" class="compare-table__header-row-anchor"></div>
 
       <!-- An overflow-x wrapper would trap thead's page sticky, so thead and tbody scroll separately (synced in script). -->
       <table class="compare-table__table" :aria-label="t('pages.compare.title')">
         <thead
           ref="headerRowRef"
           class="compare-table__header-row"
-          :class="{ 'compare-table__header-row--stuck': isCompact }"
+          :class="{ 'compare-table__header-row--stuck': isStuck }"
           tabindex="-1"
         >
           <tr class="compare-table__header-inner">
@@ -372,7 +373,7 @@ const activeTab = ref("all");
 const bodyScrollRef = ref<HTMLElement | null>(null);
 const mobileTabsBarRef = ref<HTMLElement | null>(null);
 const headerRowRef = ref<HTMLElement | null>(null);
-const headerRowAnchorRef = useTemplateRef<HTMLElement>("headerRowAnchor");
+const headerRowAnchorRef = useTemplateRef<HTMLElement>("headerRowAnchorRef");
 const rowDescriptionIdPrefix = useId();
 
 // Kept live by VcHeader/MobileHeader — the app header's exact current height (it's shorter on
@@ -388,14 +389,10 @@ const { top: headerRowAnchorTop, update: updateHeaderRowAnchorBounding } = useEl
 const { height: headerRowHeight } = useElementSize(headerRowRef);
 const compactHeaderRowHeight = ref(0);
 
-watch(headerRowHeight, (height) => {
-  if (isCompact.value) {
-    compactHeaderRowHeight.value = height;
-  }
-});
+const isStuck = computed(() => !isMobile.value && headerRowAnchorTop.value <= appHeaderHeight.value + 1);
 
 const isCompact = computed<boolean>((wasCompact) => {
-  if (isMobile.value || headerRowAnchorTop.value > appHeaderHeight.value + 1) {
+  if (!isStuck.value) {
     return false;
   }
 
@@ -403,13 +400,23 @@ const isCompact = computed<boolean>((wasCompact) => {
     return true;
   }
 
-  // Compacting shortens the page by the height the row loses. With less room than that below the
-  // viewport, the browser pulls the scroll back up, un-compacting the row again, forever. The row
-  // is in its full layout here; until the compact height is first measured, all of it counts as lost.
+  // Compacting shortens the page by the height the row loses, and the browser pulls the scroll back
+  // up by whatever the room below can't absorb. If that pulls the anchor back under the threshold,
+  // the row un-compacts and the page grows again, forever; the distance already scrolled past the
+  // threshold absorbs that much of the pull-back. The row is in its full layout here; until the
+  // compact height is first measured, all of it counts as lost, so pages with less room keep the
+  // full row.
   const lostHeight = headerRowHeight.value - compactHeaderRowHeight.value;
   const roomBelow = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+  const pastThreshold = appHeaderHeight.value - headerRowAnchorTop.value;
 
-  return roomBelow >= lostHeight;
+  return roomBelow + pastThreshold >= lostHeight;
+});
+
+watch(headerRowHeight, (height) => {
+  if (isCompact.value) {
+    compactHeaderRowHeight.value = height;
+  }
 });
 
 watch(appHeaderHeight, () => updateHeaderRowAnchorBounding());
