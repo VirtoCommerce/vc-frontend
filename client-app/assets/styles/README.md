@@ -330,6 +330,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-range-calendar-radius` | VcRangeCalendar corners | `var(--vc-calendar-radius)` |
 | `--vc-range-calendar-day-radius` | VcRangeCalendar day cell corners | `var(--vc-calendar-day-radius)` |
 | `--vc-select-radius` | VcSelect corners | `var(--vc-radius)` |
+| `--vc-shape-radius` | VcShape corners; they show once `--vc-shape-mask-image` is `none` | `0` |
 | `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
 | `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
 | `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |

@@ -42,6 +42,10 @@ const props = withDefaults(defineProps<IProps>(), {
   --icon-right: var(--vc-composite-shape-icon-right, auto);
   --icon-bottom: var(--vc-composite-shape-icon-bottom, auto);
 
+  // `initial` drops a design's shape tokens, so both shapes keep VcShape's own polygon.
+  --vc-shape-mask-image: initial;
+  --vc-shape-radius: initial;
+
   @apply relative size-[--size];
 
   &__image {
