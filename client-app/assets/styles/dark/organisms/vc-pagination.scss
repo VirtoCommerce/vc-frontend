@@ -4,4 +4,8 @@
   // the inactive pages' fill, so the chip's contrast against its siblings equals its own text
   // contrast. Against the page background it is measured separately — 7.28:1 at worst (coffee).
   --page-active-bg: var(--vc-pagination-page-active-bg, var(--color-primary-700));
+  // The inverted neutral-200 ring is about 1.1:1 on a dark surface, so the ring is the light ink at 16% instead;
+  // primary-200 inverts to a dull dark step, so the hover ring would fade instead of light up.
+  --page-border-color: var(--vc-pagination-page-border-color, rgb(from var(--color-additional-950) r g b / 0.16));
+  --page-hover-border-color: var(--vc-pagination-page-hover-border-color, var(--color-primary-500));
 }

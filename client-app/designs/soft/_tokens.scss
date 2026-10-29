@@ -3,6 +3,12 @@ html[data-design="soft"] {
   --vc-base-font-family: Inter, sans-serif;
   --vc-heading-font-family: Geologica, sans-serif;
 
+  // VcPagination
+  --vc-pagination-pages-gap: 0.5rem;
+  --vc-pagination-page-radius: 9999px;
+  --vc-pagination-page-border-width: 1px;
+  --vc-pagination-ellipsis-muted: 1;
+
   // VcShape
   --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
 

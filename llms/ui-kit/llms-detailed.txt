@@ -901,6 +901,7 @@ Base container component for displaying product cards with three adaptive layout
   - compact?: boolean - compact mode (icon-only buttons)
 - Emits: update:page (number)
 - Features: scroll to top on page change, ellipsis for many pages, responsive wrapping, compact mode
+- CSS vars: --vc-pagination-page-active-bg, --vc-pagination-page-active-text, --vc-pagination-pages-gap (default 0), --vc-pagination-page-radius (default the theme's `rounded`), --vc-pagination-page-border-width (default 0, no ring), --vc-pagination-page-border-color, --vc-pagination-page-hover-border-color, --vc-pagination-ellipsis-muted (0 or 1, default 0; 1 greys the ellipsis to neutral-400)
 - Types: vc-pagination.types.d.ts
 - **Real Usage Pattern:**
 

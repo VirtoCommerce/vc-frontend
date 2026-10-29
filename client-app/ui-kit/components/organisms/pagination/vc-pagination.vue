@@ -168,6 +168,9 @@ const setPage = (page: number) => {
   // Override the two knobs as a pair: the ink default follows the palette and flips in dark.
   --page-active-bg: var(--vc-pagination-page-active-bg, theme("colors.primary.500"));
   --page-active-text: var(--vc-pagination-page-active-text, theme("colors.additional.50"));
+  // The ring's colours live here because a design may not set colour: it only gives the ring a width.
+  --page-border-color: var(--vc-pagination-page-border-color, theme("colors.neutral.200"));
+  --page-hover-border-color: var(--vc-pagination-page-hover-border-color, theme("colors.primary.200"));
 
   @apply flex max-w-full;
 
@@ -188,7 +191,7 @@ const setPage = (page: number) => {
   }
 
   &__pages {
-    @apply order-2 flex justify-center;
+    @apply order-2 flex justify-center gap-[var(--vc-pagination-pages-gap,0)];
 
     #{$wrapped} & {
       @apply flex-wrap;
@@ -196,7 +199,11 @@ const setPage = (page: number) => {
   }
 
   &__page {
-    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded text-xs font-bold;
+    --radius: var(--vc-pagination-page-radius, theme("borderRadius.DEFAULT"));
+    --border-color: var(--page-border-color);
+
+    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded-[--radius] text-xs font-bold
+      border-[length:var(--vc-pagination-page-border-width,0)] border-solid border-[color:var(--border-color)];
 
     &[type="button"] {
       @apply bg-additional-50 text-neutral-950;
@@ -208,10 +215,14 @@ const setPage = (page: number) => {
     }
 
     &:hover {
+      --border-color: var(--page-hover-border-color);
+
       @apply bg-primary-50;
     }
 
     &--active {
+      --border-color: var(--page-active-bg);
+
       @apply pointer-events-none;
 
       background-color: var(--page-active-bg);
@@ -219,7 +230,14 @@ const setPage = (page: number) => {
     }
 
     &--ellipsis {
-      @apply pointer-events-none;
+      @apply pointer-events-none border-0;
+
+      // A design may not set colour, so it only switches the muted ink on: 0 keeps the inherited text, 1 is neutral-400.
+      color: color-mix(
+        in srgb,
+        theme("colors.neutral.400") calc(var(--vc-pagination-ellipsis-muted, 0) * 100%),
+        currentColor
+      );
     }
   }
 
