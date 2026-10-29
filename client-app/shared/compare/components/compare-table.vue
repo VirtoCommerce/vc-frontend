@@ -6,7 +6,7 @@
       <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
 
       <!-- Marks where the sticky header row sits in the flow. The row itself isn't measured: useElementBounding
-           re-reads its target on a resize or a class/style change, and compacting changes both. -->
+           re-reads its target on a resize or a class/style change; sticking changes its class, compacting its size. -->
       <div ref="headerRowAnchorRef" class="compare-table__header-row-anchor"></div>
 
       <!-- An overflow-x wrapper would trap thead's page sticky, so thead and tbody scroll separately (synced in script). -->
@@ -382,7 +382,8 @@ const appHeaderHeightVar = useCssVar("--vc-app-header-height", undefined, { obse
 const appHeaderHeight = computed(() => Number.parseFloat(appHeaderHeightVar.value ?? "0") || 0);
 
 // The row's sticky `top` mirrors appHeaderHeight (see style block), so once the anchor has scrolled
-// up to meet it, position: sticky has pinned the row in place — that's what "compact" reacts to.
+// up to meet it, position: sticky has pinned the row in place — that's what isStuck tracks, and the
+// row compacts only while stuck and only when the page has room for it (see isCompact).
 // Below md the row still sticks, but always in its full (non-compact) layout — there's no
 // space to gain from compacting it there since it's already the single-column mobile layout.
 const { top: headerRowAnchorTop, update: updateHeaderRowAnchorBounding } = useElementBounding(headerRowAnchorRef);
