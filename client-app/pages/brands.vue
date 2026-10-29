@@ -345,7 +345,7 @@ watch(activeNavItem, (newActiveNavItem) => {
   }
 
   &__link {
-    @apply inline-block max-w-full text-additional-950 truncate;
+    @apply inline-block max-w-full text-neutral-950 truncate;
 
     &:hover {
       @apply text-[--link-hover-color];

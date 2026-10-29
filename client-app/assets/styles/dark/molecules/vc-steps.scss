@@ -1,0 +1,23 @@
+.vc-steps {
+  $itemActive: "";
+  $itemDisabled: "";
+
+  &__item {
+    &--active {
+      $itemActive: &;
+    }
+
+    &--disabled {
+      $itemDisabled: &;
+    }
+  }
+
+  // The pending disc (neutral-400) is a mid surface step in dark; the panel-coloured digit on it is ~2.6:1.
+  &__icon {
+    @apply text-neutral-950;
+
+    #{$itemActive}:not(#{$itemDisabled}) & {
+      @apply text-additional-950;
+    }
+  }
+}
