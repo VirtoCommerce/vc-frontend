@@ -1,7 +1,7 @@
 import { computed, ref, watch } from "vue";
 import { VcBadge, VcCheckbox } from "@/ui-kit/components/atoms";
 import { BREAKPOINTS } from "@/ui-kit/constants";
-import { VcTable, VcTableColumn } from "..";
+import { VcTable, VcTableColumn, VcWidget } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const breakpointOptions = ["none", ...Object.keys(BREAKPOINTS)] as const;
@@ -428,6 +428,103 @@ async function onPageChange(newPage: number) {
       },
     },
   },
+};
+
+// 4b. StrongColumn
+export const StrongColumn: StoryType = {
+  args: {
+    items: sampleItems,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => ({ args }),
+    template: `
+      <VcTable :items="args.items">
+        <VcTableColumn id="name" title="Name" strong v-slot="{ item }">{{ item.name }}</VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: "`strong` marks the column that identifies the row, such as an order number: its cells are bold.",
+      },
+    },
+  },
+};
+
+// 4c. InWidget
+export const InWidget: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 5,
+    page: 1,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcWidget },
+    setup: () => {
+      const page = ref(args.page);
+      return { args, page };
+    },
+    template: `
+      <VcWidget title="Members">
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="page"
+          bordered
+          class="[--vc-table-footer-padding:1.25rem_0.25rem_0.25rem]"
+          @page-changed="page = $event"
+        >
+          <VcTableColumn id="name" title="Name" strong v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+          <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
+        </VcTable>
+      </VcWidget>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A table inside a widget keeps the widget's padding and its own border. The pager sits below the border, so `--vc-table-footer-padding` brings it closer.",
+      },
+    },
+  },
+};
+
+// The design is one attribute on <html>, so the Docs page, which renders every story at once, cannot show soft.
+export const SoftDesign: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 5,
+    page: 1,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => {
+      const page = ref(args.page);
+      return { args, page };
+    },
+    template: `
+      <VcTable :items="args.items" :pages="args.pages" :page="page" @page-changed="page = $event">
+        <VcTableColumn id="name" title="Name" strong v-slot="{ item }">{{ item.name }}</VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
+        <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">{{ item.status }}</VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  globals: { design: "soft" },
+  tags: ["!autodocs"],
+};
+
+export const SoftDesignInWidget: StoryType = {
+  ...InWidget,
+  globals: { design: "soft" },
+  tags: ["!autodocs"],
 };
 
 // 5. ColumnAlignment

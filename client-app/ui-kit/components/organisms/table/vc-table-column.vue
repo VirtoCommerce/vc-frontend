@@ -53,6 +53,8 @@ interface IProps {
   sortable?: boolean;
   /** Text alignment within the column */
   align?: VcTableAlignType;
+  /** Marks the column that identifies the row (an order number, a name): its cells are bold and stay in the darkest text colour when a design mutes the rest. */
+  strong?: boolean;
   /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
   width?: string;
   /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
@@ -74,6 +76,7 @@ const columnData = computed<VcTableColumnType>(() => ({
   title: props.title,
   sortable: props.sortable,
   align: props.align,
+  strong: props.strong,
   classes: attrs.class ? normalizeClass(attrs.class) : undefined,
   width: props.width,
   fixed: props.fixed,

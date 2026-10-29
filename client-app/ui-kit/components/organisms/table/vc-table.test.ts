@@ -44,7 +44,7 @@ const createWrapper = createWrapperFactory(shallowMount, VcTable, {
  */
 async function mountWithSlots(options: {
   items?: VcTableItemType[];
-  columns?: Array<{ id: string; title: string }>;
+  columns?: Array<{ id: string; title: string; strong?: boolean }>;
   rowClass?:
     string | Record<string, boolean> | ((item: VcTableItemType, index: number) => string | Record<string, boolean>);
   rowStyle?:
@@ -69,7 +69,7 @@ async function mountWithSlots(options: {
         cols.map((col) =>
           h(
             VcTableColumn,
-            { id: col.id, title: col.title },
+            { id: col.id, title: col.title, strong: col.strong },
             {
               default: ({ item }: { item: VcTableItemType }) => {
                 const value = item[col.id];
@@ -244,7 +244,7 @@ describe("resolvedRowClass", () => {
     const wrapper = await mountWithSlots({ items });
     const row = wrapper.find(".vc-table__row");
 
-    expect(row.classes()).not.toContain("cursor-pointer");
+    expect(row.classes()).not.toContain("vc-table__row--clickable");
   });
 
   it("applies string rowClass", async () => {
@@ -276,14 +276,14 @@ describe("resolvedRowClass", () => {
     expect(rows[1].classes()).toContain("other");
   });
 
-  it("adds cursor-pointer when @row-click listener is bound", async () => {
+  it("adds the clickable modifier when @row-click listener is bound", async () => {
     const wrapper = await mountWithSlots({ items, onRowClick: () => {} });
     const row = wrapper.find(".vc-table__row");
 
-    expect(row.classes()).toContain("cursor-pointer");
+    expect(row.classes()).toContain("vc-table__row--clickable");
   });
 
-  it("combines rowClass and cursor-pointer", async () => {
+  it("combines rowClass and the clickable modifier", async () => {
     const wrapper = await mountWithSlots({
       items,
       rowClass: "custom",
@@ -292,7 +292,31 @@ describe("resolvedRowClass", () => {
     const row = wrapper.find(".vc-table__row");
 
     expect(row.classes()).toContain("custom");
-    expect(row.classes()).toContain("cursor-pointer");
+    expect(row.classes()).toContain("vc-table__row--clickable");
+  });
+});
+
+// ─── 3b. strong column ──────────────────────────────────────
+
+describe("strong column", () => {
+  it("marks the cells of a strong column only", async () => {
+    const wrapper = await mountWithSlots({
+      items,
+      columns: [
+        { id: "id", title: "ID", strong: true },
+        { id: "name", title: "Name" },
+      ],
+    });
+    const [idCell, nameCell] = wrapper.findAll("tbody tr")[0].findAll("td");
+
+    expect(idCell.classes()).toContain("vc-table__cell--strong");
+    expect(nameCell.classes()).not.toContain("vc-table__cell--strong");
+  });
+
+  it("marks no cell when no column is strong", async () => {
+    const wrapper = await mountWithSlots({ items });
+
+    expect(wrapper.findAll("tbody td").some((cell) => cell.classes("vc-table__cell--strong"))).toBe(false);
   });
 });
 
@@ -2134,7 +2158,7 @@ describe("built-in header — selection cell accessible name", () => {
 
     expect(selectionCell.find(".checkbox-stub").exists()).toBe(false);
     // The docs tell consumers to mirror this, so an empty cell here would make them wrong.
-    expect(selectionCell.find(".sr-only").text()).toBe("ui_kit.table.selection_column");
+    expect(selectionCell.text()).toBe("ui_kit.table.selection_column");
   });
 
   it("labels the multiple-mode selection cell through the checkbox instead", async () => {
@@ -2142,7 +2166,7 @@ describe("built-in header — selection cell accessible name", () => {
 
     const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
 
-    expect(selectionCell.find(".sr-only").exists()).toBe(false);
+    expect(selectionCell.text()).toBe("");
     expect(selectionCell.find(".checkbox-stub").attributes("aria-label")).toBe("ui_kit.table.select_all");
   });
 });

@@ -9,6 +9,12 @@ declare global {
     title?: string;
     sortable?: boolean;
     align?: VcTableAlignType;
+    /**
+     * Marks the column that identifies the row: its cells are bold and stay in the darkest text colour when a design
+     * mutes the rest. Applies to the cells VcTable renders from `VcTableColumn` slots; `#desktop-item` and
+     * `#desktop-body` render their own cells.
+     */
+    strong?: boolean;
     classes?: string;
     /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;
