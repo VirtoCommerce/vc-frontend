@@ -69,7 +69,8 @@ const broadcast = useBroadcast();
 
 async function select(cultureName: string) {
   pinLocale(cultureName);
-  const permalink = location.pathname.slice(1);
+  // Without the current locale prefix: slug resolvers match the permalink itself (e.g. "veelgestelde-vragen", not "nl/veelgestelde-vragen").
+  const permalink = getUrlWithoutLocale(location.pathname).slice(1);
 
   if (cultureName === currentLanguage.value?.cultureName) {
     return;
@@ -78,14 +79,13 @@ async function select(cultureName: string) {
   const slugInfo = await getSlugInfo({ permalink, cultureName });
 
   if (!slugInfo?.entityInfo) {
-    const slug = getUrlWithoutLocale(location.pathname).slice(1);
     // The current page may itself be shown through this fallback; keep the culture that owns the slug.
     const isShownThroughFallback =
-      !!previousCultureSlug.value?.cultureName && safeDecode(previousCultureSlug.value.slug) === safeDecode(slug);
+      !!previousCultureSlug.value?.cultureName && safeDecode(previousCultureSlug.value.slug) === safeDecode(permalink);
 
     previousCultureSlug.value = {
       cultureName: isShownThroughFallback ? previousCultureSlug.value.cultureName : currentLanguage.value?.cultureName,
-      slug,
+      slug: permalink,
     };
   } else {
     previousCultureSlug.value = {

@@ -210,7 +210,7 @@
         },
         {
           "Id": "VirtoCommerce.Pages",
-          "Version": "3.1010.0"
+          "Version": "3.1012.0"
         },
         {
           "Id": "VirtoCommerce.Pricing",
@@ -250,7 +250,7 @@
         },
         {
           "Id": "VirtoCommerce.XCMS",
-          "Version": "3.1008.0"
+          "Version": "3.1009.0"
         },
         {
           "Id": "VirtoCommerce.Marketing",
@@ -310,7 +310,7 @@
         },
         {
           "Id": "VirtoCommerce.PageBuilderModule",
-          "Version": "3.1038.0"
+          "Version": "3.1040.0"
         },
         {
           "Id": "VirtoCommerce.ImageTools",
