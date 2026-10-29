@@ -204,7 +204,9 @@ never restates print. Token values apply in print too.
    the component, loading nothing outside the design's folder; dark values go in `dark/<block>.scss`.
    Add each file to `index.scss` ([Wiring](#wiring)).
 5. Turn it on: `"design": "mybrand"` in `client-app/config/settings_data.json`.
-6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`).
+6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`); any story or Docs page opens in a design when you append `&globals=design:<name>` to its URL, for example `?path=/docs/components-organisms-vcwidget--docs&globals=design:soft`.
+   A component has one story set: the Design toolbar or the URL global shows it in any design, so no
+   story is written per design and none pins a design.
 
 ### Customise a design
 
@@ -353,7 +355,8 @@ this table does not list, or the table lists one the code does not read.
 
 - **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
   `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
-  same file. Which token changes what: the [token table](#token-table).
+  same file. Which token changes what: the [token table](#token-table). A value that changes with
+  the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
 - **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
   Tailwind's defaultTheme), `rgb(from var(--color-additional-950) …)` for the others. A design
   changes geometry and alpha, never colour.

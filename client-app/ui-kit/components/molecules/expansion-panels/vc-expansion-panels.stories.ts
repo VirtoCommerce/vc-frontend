@@ -23,19 +23,19 @@ export const Basic: StoryType = {
     setup: () => ({ args }),
     template: `<VcExpansionPanels class="flex flex-col gap-y-4" v-bind="args">
       <VcExpansionPanel title="Shipping information">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           We offer free standard shipping on all orders over $50. Delivery typically takes 3–5 business days.
           Express shipping is available at checkout for an additional fee.
         </p>
       </VcExpansionPanel>
       <VcExpansionPanel title="Returns & exchanges">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           Items can be returned within 30 days of purchase in their original condition.
           Start a return from your order history page and we will send a prepaid shipping label.
         </p>
       </VcExpansionPanel>
       <VcExpansionPanel title="Product care">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           Machine wash cold with like colors. Tumble dry on low heat.
           Do not bleach. Iron on low if needed.
         </p>
@@ -48,13 +48,13 @@ export const Basic: StoryType = {
         code: `
           <VcExpansionPanels class="flex flex-col gap-y-4">
             <VcExpansionPanel title="Shipping information">
-              <p class="text-sm text-neutral-600">...</p>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
             <VcExpansionPanel title="Returns & exchanges">
-              <p class="text-sm text-neutral-600">...</p>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
             <VcExpansionPanel title="Product care">
-              <p class="text-sm text-neutral-600">...</p>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
           </VcExpansionPanels>
         `,
@@ -71,19 +71,19 @@ export const Multiple: StoryType = {
     setup: () => ({ args }),
     template: `<VcExpansionPanels class="flex flex-col gap-y-4" v-bind="args">
       <VcExpansionPanel title="Shipping information" :expanded="true">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           We offer free standard shipping on all orders over $50. Delivery typically takes 3–5 business days.
           Express shipping is available at checkout for an additional fee.
         </p>
       </VcExpansionPanel>
       <VcExpansionPanel title="Returns & exchanges" :expanded="true">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           Items can be returned within 30 days of purchase in their original condition.
           Start a return from your order history page and we will send a prepaid shipping label.
         </p>
       </VcExpansionPanel>
       <VcExpansionPanel title="Product care">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           Machine wash cold with like colors. Tumble dry on low heat.
           Do not bleach. Iron on low if needed.
         </p>
@@ -95,14 +95,14 @@ export const Multiple: StoryType = {
       source: {
         code: `
           <VcExpansionPanels class="flex flex-col gap-y-4" multiple>
-            <VcExpansionPanel title="Shipping information" :expanded="true">
-              <p class="text-sm text-neutral-600">...</p>
+            <VcExpansionPanel title="Shipping information" expanded>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
-            <VcExpansionPanel title="Returns & exchanges" :expanded="true">
-              <p class="text-sm text-neutral-600">...</p>
+            <VcExpansionPanel title="Returns & exchanges" expanded>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
             <VcExpansionPanel title="Product care">
-              <p class="text-sm text-neutral-600">...</p>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
           </VcExpansionPanels>
         `,
@@ -116,19 +116,19 @@ export const SingleExpanded: StoryType = {
     setup: () => ({ args }),
     template: `<VcExpansionPanels class="flex flex-col gap-y-4" v-bind="args">
       <VcExpansionPanel title="Shipping information" :expanded="true">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           We offer free standard shipping on all orders over $50. Delivery typically takes 3–5 business days.
           Express shipping is available at checkout for an additional fee.
         </p>
       </VcExpansionPanel>
       <VcExpansionPanel title="Returns & exchanges">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           Items can be returned within 30 days of purchase in their original condition.
           Start a return from your order history page and we will send a prepaid shipping label.
         </p>
       </VcExpansionPanel>
       <VcExpansionPanel title="Product care">
-        <p class="text-sm text-neutral-600 leading-relaxed">
+        <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600 leading-relaxed">
           Machine wash cold with like colors. Tumble dry on low heat.
           Do not bleach. Iron on low if needed.
         </p>
@@ -140,14 +140,14 @@ export const SingleExpanded: StoryType = {
       source: {
         code: `
           <VcExpansionPanels class="flex flex-col gap-y-4">
-            <VcExpansionPanel title="Shipping information" :expanded="true">
-              <p class="text-sm text-neutral-600">...</p>
+            <VcExpansionPanel title="Shipping information" expanded>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
             <VcExpansionPanel title="Returns & exchanges">
-              <p class="text-sm text-neutral-600">...</p>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
             <VcExpansionPanel title="Product care">
-              <p class="text-sm text-neutral-600">...</p>
+              <p class="px-4 pt-4 pb-5 sm:px-6 text-sm text-neutral-600">...</p>
             </VcExpansionPanel>
           </VcExpansionPanels>
         `,
