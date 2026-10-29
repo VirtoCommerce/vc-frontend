@@ -1,46 +1,51 @@
 <template>
-  <div
-    :class="[
-      'vc-widget-skeleton',
-      `vc-widget-skeleton--size--${size}`,
-      {
-        'vc-widget-skeleton--no-shadow': noShadow,
-      },
-    ]"
-  >
-    <div v-if="head || $slots.header || $slots['header-container']" class="vc-widget-skeleton__header-container">
-      <slot name="header-container">
-        <div class="vc-widget-skeleton__header">
-          <slot name="header">
-            <div></div>
-          </slot>
-        </div>
-      </slot>
-    </div>
+  <VcWidget :size="size" :shadow="!noShadow" :class="['vc-widget-skeleton', `vc-widget-skeleton--size--${size}`]">
+    <template v-if="$slots['header-container']" #header-container>
+      <div class="vc-widget-skeleton__header-container">
+        <slot name="header-container" />
+      </div>
+    </template>
 
-    <div class="vc-widget-skeleton__slot-container">
-      <slot name="default-container">
-        <div class="vc-widget-skeleton__slot">
-          <slot>
-            <div v-for="i in [1, 2, 3, 4, 5]" :key="i"></div>
-          </slot>
-        </div>
-      </slot>
-    </div>
+    <template v-else-if="head || $slots.header" #header>
+      <div class="vc-widget-skeleton__header">
+        <slot name="header">
+          <div></div>
+        </slot>
+      </div>
+    </template>
 
-    <div v-if="foot || $slots.footer || $slots['footer-container']" class="vc-widget-skeleton__footer-container">
-      <slot name="footer-container">
-        <div class="vc-widget-skeleton__footer">
-          <slot name="footer">
-            <div></div>
-          </slot>
-        </div>
-      </slot>
-    </div>
-  </div>
+    <template v-if="$slots['default-container']" #default-container>
+      <div class="vc-widget-skeleton__slot-container">
+        <slot name="default-container" />
+      </div>
+    </template>
+
+    <template v-else #default>
+      <div class="vc-widget-skeleton__slot">
+        <slot>
+          <div v-for="i in [1, 2, 3, 4, 5]" :key="i"></div>
+        </slot>
+      </div>
+    </template>
+
+    <template v-if="$slots['footer-container']" #footer-container>
+      <div class="vc-widget-skeleton__footer-container">
+        <slot name="footer-container" />
+      </div>
+    </template>
+
+    <template v-else-if="foot || $slots.footer" #footer>
+      <div class="vc-widget-skeleton__footer">
+        <slot name="footer">
+          <div></div>
+        </slot>
+      </div>
+    </template>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
+/** Renders a VcWidget; its frame props and classes pass through. */
 interface IProps {
   head?: boolean;
   foot?: boolean;
@@ -55,49 +60,28 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-widget-skeleton {
-  $sizeLG: "";
-
-  @apply relative border border-neutral-100 bg-additional-50 rounded divide-y shadow-md animate-pulse;
+  @apply animate-pulse;
 
   &--size {
     &--xs {
-      --p-x: theme("padding.4");
-      --header-p-y: theme("padding[2.5]");
       --placeholder-h: 1.125rem;
     }
 
     &--sm {
-      --p-x: theme("padding.4");
-      --header-p-y: theme("padding.3");
       --placeholder-h: 1.375rem;
     }
 
     &--md {
-      --p-x: theme("padding.6");
-      --header-p-y: theme("padding.3");
       --placeholder-h: 1.625rem;
     }
 
     &--lg {
-      $sizeLG: &;
-
-      --p-x: theme("padding.5");
-      --header-p-y: theme("padding.4");
       --placeholder-h: 2.625rem;
-
-      @apply divide-none;
-
-      @media (min-width: theme("screens.lg")) {
-        --p-x: theme("padding.7");
-      }
     }
   }
 
-  &--no-shadow {
-    @apply shadow-none;
-  }
-
-  &__header-container {
+  &__header-container,
+  &__header {
     *:not(:has(*)) {
       @apply h-[--placeholder-h] rounded bg-neutral-100;
 
@@ -108,10 +92,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__header {
-    @apply flex items-start gap-2 px-[--p-x] py-[--header-p-y];
+    @apply flex grow items-center gap-2;
   }
 
-  &__slot-container {
+  &__slot-container,
+  &__slot {
     *:not(:has(*)) {
       @apply mb-2 h-4 rounded bg-neutral-100 last:mb-0;
 
@@ -139,21 +124,8 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &__slot {
-    @apply pt-4 pb-5 px-[--p-x];
-
-    #{$sizeLG} & {
-      @apply pt-0;
-    }
-
-    *:first-child > & {
-      #{$sizeLG} & {
-        @apply pt-5;
-      }
-    }
-  }
-
-  &__footer-container {
+  &__footer-container,
+  &__footer {
     *:not(:has(*)) {
       @apply h-4 rounded bg-neutral-100;
 
@@ -161,10 +133,6 @@ withDefaults(defineProps<IProps>(), {
         @apply w-1/3;
       }
     }
-  }
-
-  &__footer {
-    @apply py-4 px-[--p-x];
   }
 }
 </style>

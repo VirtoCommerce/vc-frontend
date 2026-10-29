@@ -128,3 +128,25 @@ export const FooterContainerSlot: StoryType = {
     </template>
   </VcWidgetSkeleton>`),
 };
+
+export const WithWidget: StoryType = {
+  render: renderSkeleton(`<div class="space-y-6">
+    <div v-for="size in ['xs', 'sm', 'md', 'lg']" :key="size" class="grid items-start gap-4 lg:grid-cols-3">
+      <VcWidgetSkeleton :size="size" head foot />
+
+      <VcWidget v-for="icon in ['', 'academic-cap']" :key="icon" :size="size" :title="'Size ' + size" :prepend-icon="icon">
+        <div v-for="i in [1, 2, 3, 4, 5]" :key="i" class="h-4 mb-2 last:mb-0">Widget text</div>
+
+        <template #footer>Footer text</template>
+      </VcWidget>
+    </div>
+  </div>`),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A skeleton is the VcWidget of its size: radius, insets and header height match a loaded widget with a title. A prepend icon taller than the title line makes the loaded header taller where the header hugs its content.",
+      },
+    },
+  },
+};
