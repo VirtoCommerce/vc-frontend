@@ -6,6 +6,28 @@ const SIZES = ["xs", "sm", "md", "lg"];
 const meta: Meta<typeof VcWidget> = {
   title: "Components/Organisms/VcWidget",
   component: VcWidget,
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A plate with an optional header, a body and a footer. A theme or a design restyles it through these CSS variables:",
+          "",
+          "| Variable | Classic value |",
+          "| --- | --- |",
+          "| `--vc-widget-radius` | `var(--vc-radius)`, 0.5rem |",
+          "| `--vc-widget-border-width` | 1px; a length, so `0px` rather than `0` |",
+          "| `--vc-widget-border-color` | neutral-200 |",
+          "| `--vc-widget-divide-color` | the border colour |",
+          "| `--vc-widget-bg-color` | additional-50 |",
+          "| `--vc-widget-shadow` | the `shadow-md` parts |",
+          "| `--vc-widget-padding-x` | xs, sm 1rem · md 1rem, 1.5rem from `sm` · lg 1rem, 1.75rem from `lg` |",
+          "| `--vc-widget-title-font-weight` | `var(--vc-heading-font-weight)`, else 700 |",
+          "| `--vc-widget-title-text-transform` | `var(--vc-heading-text-transform)`, else uppercase |",
+          "| `--vc-widget-title-letter-spacing` | `var(--vc-heading-letter-spacing)`, else inherited |",
+        ].join("\n"),
+      },
+    },
+  },
   argTypes: {
     size: {
       control: "inline-radio",
@@ -200,4 +222,32 @@ export const HeaderFooterOnly: StoryType = {
 
     <template #footer>Footer text</template>
   </VcWidget>`),
+};
+
+export const Seamless: StoryType = {
+  render: renderWidget(`<VcWidget title="Account" size="lg">
+    <div class="space-y-6">
+      <VcWidget title="Orders" size="sm" seamless>
+        <ul class="space-y-2">
+          <li>Order history</li>
+          <li>Returns</li>
+        </ul>
+      </VcWidget>
+
+      <VcWidget title="Company" size="sm" seamless>
+        <ul class="space-y-2">
+          <li>Company info</li>
+          <li>Members</li>
+        </ul>
+      </VcWidget>
+    </div>
+  </VcWidget>`),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`seamless` draws no plate and no inline padding, so a widget inside another card lines its rows up with that card's heading.",
+      },
+    },
+  },
 };

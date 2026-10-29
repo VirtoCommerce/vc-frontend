@@ -511,7 +511,7 @@
 - Events: copied
 - Features: clipboard API, tooltip feedback, success animation
 
-**VcWidget** (`client-app/ui-kit/components/molecules/widget/vc-widget.vue`)
+**VcWidget** (`client-app/ui-kit/components/organisms/widget/vc-widget.vue`)
 - Props:
   - title?: string
   - prependIcon?: string
@@ -521,6 +521,7 @@
   - collapsed?: boolean
   - shadow?: boolean (default: true)
   - border?: boolean (default: true)
+  - seamless?: boolean (draws no plate: border, background, shadow, radius, dividers and inline padding go; header and vertical spacing stay)
 - Emits: toggleCollapse (boolean)
 - Slots:
   - default-container (receives {collapsible, collapsed})
@@ -533,7 +534,7 @@
   - footer-container
   - footer
 - Features: header with actions, collapsible behavior, custom sizing, shadow/border control
-- Types: vc-widget.types.d.ts
+- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (default the per-size ladder), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
 
 **VcWidgetSkeleton** (`molecules/widget-skeleton/vc-widget-skeleton.vue`)
 - Props: height, lines
