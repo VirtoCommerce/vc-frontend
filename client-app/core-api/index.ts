@@ -83,7 +83,7 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
-export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
@@ -139,6 +139,14 @@ export type {
   WishlistSharingScopePayloadType,
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+export { useThemeContext } from "@/core/composables/useThemeContext";
+export { useAnalytics } from "@/core/composables/useAnalytics";
+export { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
+export { useAuth } from "@/core/composables/useAuth";
+export { useSignMeIn } from "@/shared/account/composables/useSignMeIn";
+export { default as IdentityProvider } from "@/shared/sign-in/components/identity-provider.vue";
+export type { SignInMethodContributionType } from "@/shared/account/types";
+export type { IdentityErrorType, SignInKeyType } from "@/core/api/graphql/types";
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
