@@ -54,7 +54,6 @@ function addToCart(): void {
     .split(",")
     .map((part) => part.trim())
     .join(",")
-    .trim()
     .split(/\s+/);
 
   if (!items.every((item) => ITEM_PATTERN.test(item))) {
