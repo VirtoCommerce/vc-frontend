@@ -52,15 +52,6 @@ A plugin can:
 1. The stock theme ships `"module_federation_enabled": true` in `client-app/config/settings_data.json`.
 2. To build a storefront without it, set it to `false` and rebuild. That build has no federation code, so no plugin
    loads.
-3. `sales_rep_builtin_enabled` (same file, ships `false`, temporary) runs the Sales Rep Hub built into the theme
-   instead of its plugin. It is read at build time too, so one build decides for every environment it goes to:
-
-   | Installed SalesRep | `false` (default)                                                       | `true`                  |
-   | ------------------ | ----------------------------------------------------------------------- | ----------------------- |
-   | ships the plugin   | the plugin's hub                                                        | the hub registers twice |
-   | ships no plugin    | **no hub, and buyers lose the Sales reps page**, with no error anywhere | the built-in hub        |
-
-   **Planned:** no released SalesRep ships the plugin yet ([TODO](./TODO.md)).
 
 > ⚠️ Only a literal `true` turns it on. A missing key, `"true"` or `1` all mean **off**.
 >
@@ -275,7 +266,6 @@ Step by step, with every console message: [scenario S7](./scenarios/s7-missing-o
 | Setting                          | Where                                  | Read at    |
 | -------------------------------- | -------------------------------------- | ---------- |
 | `module_federation_enabled`      | `client-app/config/settings_data.json` | build time |
-| `sales_rep_builtin_enabled`      | `client-app/config/settings_data.json` | build time |
 | `APP_MODULES_FEDERATION_REMOTES` | environment                            | build time |
 
 **Files:**

@@ -54,7 +54,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
 ## 2. BEM naming and structure
 
 6. **One block per component, named after the file**: `points-balance.vue` → `.points-balance`. A page in
-   `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.sales-rep-calendar`). If block and file
+   `modules/<m>/pages/` may prefix the module (`calendar.vue` → `.<m>-calendar`). If block and file
    diverge, rename the file, not the block. A second top-level block in one `<style>` means the second part is
    its own component. Vue `<transition>` classes (`.x-enter-from`) are fine. Also extract a component when an
    element needs elements of its own (`&__select-all-text`, `&__select-all-icon` → `select-all.vue`), when the root
@@ -76,7 +76,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     in this file for another component's block or elements. A parent places a child through the class on the
     child's root (a BEM mix, `class="parent__child"`) — layout only: margin, flex, grid, width, order. The child's
     look changes only through its props and its public CSS variables (`--vc-<component>-…` for kit components).
-11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`stat-widget--success`). A modifier bound in the
+11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`product-card--list`). A modifier bound in the
     template but styled nowhere is dead (`nit`); an element class with no rule is fine (it's a hook).
 12. Class binding: static block/element class + object for modifiers —
     `class="x__item" :class="{ 'x__item--active': isActive }"`. A template literal (`` :class="`x--${tone}`" ``)

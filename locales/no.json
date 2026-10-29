@@ -290,7 +290,8 @@
       "company_members": "Bedriftsmedlemmer",
       "contact_administrator": "kontakt nettstedets administrator",
       "skip_to_main_content": "Hopp til hovedinnhold",
-      "skip_to_footer": "Hopp til bunntekst"
+      "skip_to_footer": "Hopp til bunntekst",
+      "security": "Sikkerhet"
     },
     "titles": {
       "all_actions": "Alle handlinger",
@@ -383,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Lagret til senere",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1491,6 +1494,21 @@
       "promotion_coupons": {
         "title": "Alle kuponger og kampanjer",
         "no_lists": "Du har ingen kuponger eller kampanjer"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Ingen nøkler",
+        "unnamed_key": "Nøkkel uten navn",
+        "created": "Opprettet {date}",
+        "changed": "Endret {date}",
+        "rename_modal": {
+          "title": "Gi nøkkelen nytt navn",
+          "name_label": "Navn"
+        },
+        "delete_modal": {
+          "title": "Slett nøkkel",
+          "message": "Du kan ikke lenger logge på med denne nøkkelen."
+        }
       }
     },
     "company": {
@@ -1830,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Passordet må inneholde minst ett ikke-alfanumerisk tegn",
     "PasswordRequiresUpper": "Passordet må inneholde minst én stor bokstav ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passordet må bruke ulike tegn",
-    "RecentPasswordUsed": "Du har brukt dette passordet tidligere. Vennligst opprett et nytt."
+    "RecentPasswordUsed": "Du har brukt dette passordet tidligere. Vennligst opprett et nytt.",
+    "user_not_editable": "Denne brukeren kan ikke redigeres",
+    "sign_in_key_not_found": "Påloggingsnøkkelen ble ikke funnet",
+    "last_sign_in_key": "Den siste påloggingsnøkkelen kan ikke fjernes",
+    "operation_not_supported": "Denne handlingen støttes ikke"
   },
   "password_tips": {
     "title": "Tips for å lage et sterkt passord:",

@@ -8,7 +8,7 @@ const { register, registerContribution } = useExtensionRegistry();
 const Widget = defineComponent({ template: "<span />" });
 
 describe("register", () => {
-  it("takes a component for any category, and refuses a contribution", () => {
+  it("takes a component for any category but a decorate-only one, and refuses a contribution", () => {
     expectTypeOf(register).parameter(0).toEqualTypeOf<ExtensionCategoryType>();
 
     register("accountMenu", "name", { component: Widget });
@@ -16,12 +16,15 @@ describe("register", () => {
 
     // @ts-expect-error -- a contribution goes through registerContribution
     register("mobileMenu", "name", { use: () => ({ count: 1 }) });
+
+    // @ts-expect-error -- signInMethods renders only contributions, so a component would never show
+    register("signInMethods", "name", { component: Widget });
   });
 });
 
 describe("registerContribution", () => {
-  it("takes only a category that declared a contributed shape — today, mobileMenu", () => {
-    expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"mobileMenu">();
+  it("takes only a category that declared a contributed shape — today, mobileMenu and signInMethods", () => {
+    expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"mobileMenu" | "signInMethods">();
 
     registerContribution("mobileMenu", "name", { use: () => ({ count: 1 }) });
 

@@ -26,7 +26,12 @@
       <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled src="" />
     </video>
 
+    <label for="barcode-scanner-file-input" class="barcode-scanner-modal__input-label">
+      {{ $t("shared.layout.search_bar.barcode_detector.browse") }}
+    </label>
+
     <input
+      id="barcode-scanner-file-input"
       ref="fileInputRef"
       type="file"
       class="barcode-scanner-modal__input"
@@ -207,6 +212,7 @@ onBeforeUnmount(() => {
     @apply h-60 w-full #{!important};
   }
 
+  &__input-label,
   &__input {
     @apply hidden;
   }
