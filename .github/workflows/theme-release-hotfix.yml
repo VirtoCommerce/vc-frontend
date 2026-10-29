@@ -83,11 +83,7 @@ jobs:
         run: |
           yarn build
 
-      - name: Unit Tests
-        run: |
-          yarn test:unit --run
-
-      - name: Typing Tests
+      - name: Unit and Typing Tests
         run: |
           yarn test:typing --run
 
