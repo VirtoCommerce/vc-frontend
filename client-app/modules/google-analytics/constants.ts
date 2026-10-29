@@ -8,4 +8,4 @@ export const GOOGLE_ANALYTICS_SETTINGS_MAPPING = {
   "GoogleAnalytics4.GtmContainerId": "gtmContainerId",
 } as const;
 
-export const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
+export { canUseDOM } from "@/core/utilities/analytics/environment";

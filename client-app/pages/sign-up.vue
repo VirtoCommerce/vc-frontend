@@ -154,7 +154,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useDebounceFn } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { reactive, ref, nextTick } from "vue";
+import { reactive, ref, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
@@ -310,5 +310,9 @@ const onSubmit = handleSubmit(async (data) => {
       }
     });
   }
+});
+
+onMounted(() => {
+  analytics("formOpen", "sign_up", { type: registrationKind.value });
 });
 </script>

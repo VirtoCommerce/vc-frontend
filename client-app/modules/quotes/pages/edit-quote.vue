@@ -119,11 +119,12 @@ import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
 import { string } from "yup";
-import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useAnalytics, useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, isEqualAddresses } from "@/core/utilities";
+import { getAnalyticsErrorCode } from "@/core/utilities/analytics/errors";
 import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
@@ -148,6 +149,7 @@ const props = defineProps<IProps>();
 
 const router = useRouter();
 const { t } = useI18n();
+const { analytics } = useAnalytics();
 const { openModal, closeModal } = useModal();
 const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
@@ -178,6 +180,7 @@ const {
 } = useUserQuote();
 
 const DEFAULT_QUOTE_FILES_SCOPE = "quote-attachments";
+const QUOTE_REQUEST_FORM_NAME = "quote_request";
 const { getSettingValue } = useModuleSettings(MODULE_ID);
 const quoteFilesScope = getSettingValue(FILE_UPLOAD_SCOPE_NAME);
 
@@ -206,6 +209,8 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const originalQuote = ref<QuoteType>();
+// `fetchQuote` runs on every change of its inputs; the form is opened once.
+let isFormOpenReported = false;
 const billingAddressEqualsShipping = ref<boolean>(true);
 const comment = ref<string>();
 const commentValid = ref(true);
@@ -426,11 +431,33 @@ async function saveChanges(): Promise<void> {
 }
 
 async function submit(): Promise<void> {
+  const quoteId = quote.value!.id;
+
   if (canSaveChanges.value) {
-    await saveChanges();
+    try {
+      await saveChanges();
+    } catch (e) {
+      analytics("formSubmit", QUOTE_REQUEST_FORM_NAME, {
+        quote_id: quoteId,
+        success: false,
+        errors: getAnalyticsErrorCode(e),
+      });
+      throw e;
+    }
   }
 
-  await submitQuote(quote.value!.id, comment.value || "");
+  try {
+    await submitQuote(quoteId, comment.value || "");
+  } catch (e) {
+    analytics("formSubmit", QUOTE_REQUEST_FORM_NAME, {
+      quote_id: quoteId,
+      success: false,
+      errors: getAnalyticsErrorCode(e),
+    });
+    throw e;
+  }
+
+  analytics("formSubmit", QUOTE_REQUEST_FORM_NAME, { quote_id: quoteId, success: true });
 
   void router.replace({ name: "Quotes" });
 }
@@ -472,6 +499,11 @@ watchEffect(async () => {
   originalQuote.value = cloneDeep(quote.value);
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
+
+  if (quote.value?.status === "Draft" && !isFormOpenReported) {
+    isFormOpenReported = true;
+    analytics("formOpen", QUOTE_REQUEST_FORM_NAME, { quote_id: quote.value.id });
+  }
 });
 
 async function canChangeRoute(): Promise<boolean> {

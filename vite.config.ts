@@ -16,7 +16,7 @@ const graphql = graphqlImport.default ?? graphqlImport;
 // `vendor` chunk so they stay in their own lazy chunks. `@module-federation/*` is reached
 // only through the switch-gated dynamic import in app-runner, so deferring it keeps the MF
 // runtime out of a `module_federation_enabled: false` eager bundle entirely.
-const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
+const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation", "posthog-js"];
 
 // Everything else from node_modules goes to a single shared eager `vendor` chunk.
 function getVendorChunk(id = ""): string | undefined {
