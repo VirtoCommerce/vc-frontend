@@ -188,16 +188,18 @@ never restates print. Token values apply in print too.
 
 ### Make your own design
 
-1. Pick a name, e.g. `mybrand`, and create the folder `client-app/designs/mybrand/` (copy
-   `designs/soft/` as a start and replace `soft` with your name in its `index.scss` and
-   `_tokens.scss`).
-2. In `design.ts`, list your font stylesheet URLs (or leave the list empty).
-3. Add `_tokens.scss` with the tokens from the [token table](#token-table) that differ from
-   classic, and load it in `index.scss` ([Wiring](#wiring)):
+1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`
+   and replace `soft` with your name in the copy's `_tokens.scss`. In the copy, delete the
+   `blocks/` and `dark/` files and the `@layer vc.design` block that loads them in `index.scss`.
+2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).
+3. Edit `_tokens.scss` (already loaded in `index.scss`, see [Wiring](#wiring)): replace soft's
+   values with yours and set only the tokens from the [token table](#token-table) that differ from
+   classic. Point the font-family tokens at your fonts, or delete both to keep classic's Lato:
    ```scss
    html[data-design="mybrand"] {
-     --vc-radius: 0;
+     --vc-radius: 0px;
      --vc-button-radius: 2rem;
+     --vc-base-font-family: "Brand Sans", sans-serif;
    }
    ```
 4. When no token covers what you need, add `blocks/<block>.scss` and write the block's styles as in
@@ -216,8 +218,8 @@ never restates print. Token values apply in print too.
    - one design: `html[data-design="soft"] { --vc-button-radius: 4px; }`
    - one design in dark: `html.dark[data-design="soft"] { … }`
 3. No token for it? Write the rule in `_custom.scss` under the design:
-   `html[data-design="soft"] .footer-links__title { text-transform: none; }`. It wins over the
-   component in every state, so add each state you need.
+   `html[data-design="soft"] .account-navigation-item__title { text-transform: uppercase; }`.
+   It wins over the component in every state, so add each state you need.
 4. Other fonts for a design: set them in `client-app/designs/custom-fonts.ts`.
 5. Never edit our components or the folders of our designs: your change would conflict with every
    update.
@@ -289,7 +291,8 @@ itself.
 ### Token table
 
 This table lists every shape and typography token the styles read. Colour tokens are not here:
-colours come from the preset. `scripts/design-token-table.test.ts` fails when the code reads a token
+colours come from the preset. `scripts/design-token-table.test.ts` fails when `tailwind.config.ts`
+or a `.vue` or `.scss` file under `client-app/` (outside `designs/`, tests and stories) reads a token
 this table does not list, or the table lists one the code does not read.
 
 | Token | What it changes | Classic value |
@@ -310,7 +313,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-alert-radius` | VcAlert corners | `var(--vc-radius)` |
 | `--vc-badge-radius` | VcBadge corners | `var(--vc-radius)` |
 | `--vc-button-radius` | VcButton corners. VcInput and VcDateRangeInput set it on themselves for their buttons (see [Two ways a design changes the look](#two-ways-a-design-changes-the-look)) | `var(--vc-radius)` |
-| `--vc-button-text-transform` | VcButton letter case | `none` |
+| `--vc-button-text-transform` | VcButton letter case (sizes `sm`, `md`, `lg`; `xxs` and `xs` ignore it) | `none` |
 | `--vc-calendar-radius` | VcCalendar corners | `var(--vc-radius)` |
 | `--vc-calendar-day-radius` | VcCalendar day cell corners | `var(--vc-radius)` |
 | `--vc-chip-radius` | VcChip corners | `var(--vc-radius)` |
