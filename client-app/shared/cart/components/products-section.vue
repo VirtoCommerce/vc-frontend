@@ -135,14 +135,14 @@ withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const groupId = useComponentId("products-section");
+const componentId = useComponentId("products-section");
 
 function getVendorHeadingId(index: number) {
-  return `${groupId}-vendor-${index}`;
+  return `${componentId}-vendor-${index}`;
 }
 
 function getCurrencyHeadingId(currencyCode: string) {
-  return `${groupId}-currency-${currencyCode}`;
+  return `${componentId}-currency-${currencyCode}`;
 }
 </script>
 
