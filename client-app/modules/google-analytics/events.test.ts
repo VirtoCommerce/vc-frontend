@@ -302,4 +302,26 @@ describe("google-analytics events", () => {
       expect(hoisted.deferLoginMock).not.toHaveBeenCalled();
     });
   });
+
+  describe("forms", () => {
+    it("names the form on form_open", async () => {
+      const { events } = await import("./events");
+
+      void events.formOpen!("quote_request", { quote_id: "q-1" });
+
+      expect(hoisted.sendEventMock).toHaveBeenCalledWith("form_open", { form_name: "quote_request", quote_id: "q-1" });
+    });
+
+    it("carries the outcome on form_submit", async () => {
+      const { events } = await import("./events");
+
+      void events.formSubmit!("sign_up", { success: false, errors: "DuplicateEmail" });
+
+      expect(hoisted.sendEventMock).toHaveBeenCalledWith("form_submit", {
+        form_name: "sign_up",
+        success: false,
+        errors: "DuplicateEmail",
+      });
+    });
+  });
 });

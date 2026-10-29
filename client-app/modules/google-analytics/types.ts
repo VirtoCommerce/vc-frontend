@@ -5,6 +5,8 @@ import type {
 } from "./utils";
 import type { TrackerEventsType } from "client-app/core/types/analytics";
 
+export type { ConfiguredPriceType } from "@/core/utilities/analytics/items";
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   interface Window {
@@ -21,8 +23,6 @@ export type ExtendEventsType = ({
   productToGtagItem: typeof productToGtagItemFunction;
   lineItemToGtagItem: typeof lineItemToGtagItemFunction;
 }) => TrackerEventsType;
-
-export type ConfiguredPriceType = { list: number; actual: number };
 
 export type InitOptionsType = {
   extendEvents?: ExtendEventsType;

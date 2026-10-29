@@ -82,6 +82,7 @@
     "marked": "^18.0.7",
     "maska": "^3.2.0",
     "nouislider": "^15.8.1",
+    "posthog-js": "^1.438.13",
     "reka-ui": "~2.9.10",
     "semver": "^7.8.5",
     "skyflow-js": "2.7.9",

@@ -5719,7 +5719,14 @@ declare function _useThemeContext(): {
 };
 declare const useThemeContext: typeof _useThemeContext;
 
+type FormSubmitParamsAdditionalType = {
+    success?: boolean;
+    errors?: string;
+};
 interface ICustomAnalyticsEventMap {
+    /** A form the visitor started on (a page or a modal), named by the feature: `quote_request`, `sign_up`. */
+    formOpen: [formName: string, params?: EventParamsType];
+    formSubmit: [formName: string, params?: EventParamsType & FormSubmitParamsAdditionalType];
 }
 
 interface IBasicAnalyticsEventMap {

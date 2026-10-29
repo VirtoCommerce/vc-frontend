@@ -36,6 +36,7 @@ import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
+import { init as initPostHog } from "@/modules/posthog";
 import { init as initPunchout } from "@/modules/punchout";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
@@ -262,6 +263,7 @@ export default async () => {
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
+  void initPostHog(router);
   void initializeHotjar();
   void initNews(router, i18n);
   void initLoyalty(router, i18n);

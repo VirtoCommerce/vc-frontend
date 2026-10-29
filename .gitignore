@@ -79,6 +79,7 @@ dist-ssr
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/implement/
+!.claude/skills/posthog/
 .claude/**/*.local.*
 .serena
 

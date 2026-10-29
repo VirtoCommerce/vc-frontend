@@ -117,7 +117,11 @@ await initMyAnalytics();
 3. **Development Mode**: Use the `IS_DEVELOPMENT` flag to disable tracking in development.
 4. **Testing**: Write unit tests for your analytics module and event handlers.
 
-### Example: Google Analytics Module
+### Examples: Google Analytics and PostHog modules
 
 The Google Analytics module demonstrates a complete implementation.
 For more details, refer to the Google Analytics module [implementation](/client-app/modules/google-analytics/index.ts) and [documentation](/client-app/modules/google-analytics/README.md) in the codebase.
+
+The [PostHog module](/client-app/modules/posthog/README.md) is a second provider on the same bus: it adds page views
+and customer identity on top of the shared events. Both share the item mappers and the pending-login helper in
+`core/utilities/analytics/`.
