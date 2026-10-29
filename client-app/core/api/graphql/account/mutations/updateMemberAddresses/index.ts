@@ -1,6 +1,5 @@
-import { OperationNames } from "@/core/api/graphql/types";
-import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import { graphqlClient } from "../../../client";
+import { refetchAddressBooks } from "../refetchAddressBooks";
 import mutationDocument from "./updateMemberAddressesMutation.graphql";
 import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
 import type {
@@ -24,13 +23,9 @@ export async function updateMemberAddresses(
       },
     },
     context,
-    // Every mounted address list (account page, header ship-to, checkout) shows the same address book.
-    refetchQueries: () =>
-      filterActiveQueryNames(graphqlClient, [
-        OperationNames.Query.GetCurrentUserAddresses,
-        OperationNames.Query.GetCurrentOrganizationAddresses,
-      ]),
   });
+
+  refetchAddressBooks();
 
   return data?.updateMemberAddresses?.addresses?.items ?? [];
 }

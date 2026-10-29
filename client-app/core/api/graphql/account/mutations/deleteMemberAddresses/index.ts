@@ -1,6 +1,5 @@
-import { OperationNames } from "@/core/api/graphql/types";
-import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import { graphqlClient } from "../../../client";
+import { refetchAddressBooks } from "../refetchAddressBooks";
 import mutationDocument from "./deleteMemberAddressesMutation.graphql";
 import type {
   DeleteMemberAddressesMutation,
@@ -21,13 +20,9 @@ export async function deleteMemberAddresses(
         addresses,
       },
     },
-    // Every mounted address list (account page, header ship-to, checkout) shows the same address book.
-    refetchQueries: () =>
-      filterActiveQueryNames(graphqlClient, [
-        OperationNames.Query.GetCurrentUserAddresses,
-        OperationNames.Query.GetCurrentOrganizationAddresses,
-      ]),
   });
+
+  refetchAddressBooks();
 
   return data?.deleteMemberAddresses?.addresses?.items ?? [];
 }
