@@ -87,6 +87,15 @@ describe("useSignMeIn", () => {
     expect(h.emitBroadcast).toHaveBeenCalledOnce();
   });
 
+  it("opens the given return URL after the sign-in", async () => {
+    h.loadMe.mockReturnValue(Promise.resolve());
+    const { signIn } = useSignMeIn();
+
+    await signIn({ returnUrl: "/account/impersonate/user-2" });
+
+    expect(h.emitBroadcast).toHaveBeenCalledWith("openReturnUrl", "/account/impersonate/user-2", "ALL");
+  });
+
   it("rejects when the user can't be loaded", async () => {
     h.loadMe.mockReturnValue(Promise.resolve());
     h.me.value = undefined;

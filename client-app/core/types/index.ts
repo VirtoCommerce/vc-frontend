@@ -6,6 +6,7 @@ export * from "./create-wishlist-payload";
 export * from "./currency";
 export * from "./date-filter-type";
 export * from "./facet";
+export * from "./field-validation-error";
 export * from "./language";
 export * from "./line-items";
 export * from "./menu";

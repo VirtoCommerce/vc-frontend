@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Этот товар нельзя приобрести",
       "item_is_out_of_stock": "Этот товар отсутствует на складе",
       "invalid_value": "Неверное значение",
+      "invalid_characters": "Содержит недопустимые символы",
+      "html_tags_not_allowed": "HTML-теги не допускаются",
+      "unsafe_content": "Содержит недопустимое содержимое",
+      "invalid_addresses": "Некоторые адреса указаны неверно",
+      "invalid_data": "Некоторые из введённых данных неверны",
       "invalid_user_id_or_token": "ID пользователя или токен недействительны",
       "product_no_longer_available": "Больше недоступен",
       "item_quantity_required_field": "Значение количества товара не может быть пустым",
@@ -285,7 +290,8 @@
       "company_members": "Сотрудники компании",
       "contact_administrator": "свяжитесь с администратором сайта",
       "skip_to_main_content": "Перейти к основному содержанию",
-      "skip_to_footer": "Перейти к подвалу"
+      "skip_to_footer": "Перейти к подвалу",
+      "security": "Безопасность"
     },
     "titles": {
       "all_actions": "Все действия",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Отложено",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1486,6 +1494,21 @@
       "promotion_coupons": {
         "title": "Все купоны и акции",
         "no_lists": "У вас нет купонов или акций"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Ключей нет",
+        "unnamed_key": "Ключ без названия",
+        "created": "Создан {date}",
+        "changed": "Изменён {date}",
+        "rename_modal": {
+          "title": "Переименовать ключ",
+          "name_label": "Название"
+        },
+        "delete_modal": {
+          "title": "Удалить ключ",
+          "message": "Вы больше не сможете входить с помощью этого ключа."
+        }
       }
     },
     "company": {
@@ -1825,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Пароли должны содержать как минимум один неалфавитный символ",
     "PasswordRequiresUpper": "Пароли должны содержать как минимум одну заглавную букву ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Пароли должны содержать разные символы",
-    "RecentPasswordUsed": "Этот пароль вы уже использовали ранее. Пожалуйста, создайте другой."
+    "RecentPasswordUsed": "Этот пароль вы уже использовали ранее. Пожалуйста, создайте другой.",
+    "user_not_editable": "Этого пользователя нельзя изменить",
+    "sign_in_key_not_found": "Ключ входа не найден",
+    "last_sign_in_key": "Нельзя удалить последний ключ входа",
+    "operation_not_supported": "Эта операция не поддерживается"
   },
   "password_tips": {
     "title": "Советы по созданию надежного пароля:",
