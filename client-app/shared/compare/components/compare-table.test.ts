@@ -31,24 +31,26 @@ vi.mock("../composables", () => ({
 
 // isCompact derives from useElementBounding's anchor top, useElementSize's header row height and
 // useCssVar's app header height — real layout reads jsdom can't produce. They're mocked as shared,
-// real refs, so tests drive isCompact reactively by moving the anchor across the (fixed at 0) app
-// header height, setting the row height and, through setRoomBelow, the room below the viewport.
+// real refs, so tests drive isCompact reactively by moving the anchor across the app header height
+// (0 unless a test sets it), setting the row height and, through setRoomBelow, the room below the viewport.
 vi.mock("@vueuse/core", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@vueuse/core")>();
   const { ref: vueRef } = await import("vue");
   const headerRowAnchorTop = vueRef(100); // > appHeaderHeight (0) + 1, i.e. not compact by default
   const headerRowHeight = vueRef(0);
   const isMobile = vueRef(false);
+  const appHeaderHeight = vueRef("0");
 
   return {
     ...actual,
     useBreakpoints: () => ({ smaller: () => isMobile }),
     useElementBounding: vi.fn(() => ({ top: headerRowAnchorTop, update: vi.fn() })),
     useElementSize: vi.fn(() => ({ width: vueRef(0), height: headerRowHeight })),
-    useCssVar: () => vueRef("0"),
+    useCssVar: () => appHeaderHeight,
     __headerRowAnchorTop: headerRowAnchorTop,
     __headerRowHeight: headerRowHeight,
     __isMobile: isMobile,
+    __appHeaderHeight: appHeaderHeight,
   };
 });
 
@@ -109,6 +111,7 @@ async function vueuseMock() {
     __headerRowAnchorTop: { value: number };
     __headerRowHeight: { value: number };
     __isMobile: { value: boolean };
+    __appHeaderHeight: { value: string };
   };
 }
 
@@ -118,6 +121,10 @@ async function setHeaderRowAnchorTop(top: number) {
 
 async function setHeaderRowHeight(height: number) {
   (await vueuseMock()).__headerRowHeight.value = height;
+}
+
+async function setAppHeaderHeight(height: number) {
+  (await vueuseMock()).__appHeaderHeight.value = `${height}px`;
 }
 
 function row(key: string, values: string[]): ICompareTableRow {
@@ -168,6 +175,7 @@ beforeEach(() => {
 afterEach(async () => {
   await setCompact(false);
   await setHeaderRowHeight(0);
+  await setAppHeaderHeight(0);
   await setMobile(false);
   tableRows.value = [];
 });
@@ -461,6 +469,22 @@ describe("CompareTable — compact threshold", () => {
       wrapper.unmount();
     },
   );
+
+  it("measures the distance past the threshold from the app header's bottom edge", async () => {
+    await setHeaderRowAnchorTop(200);
+    await setAppHeaderHeight(100);
+    setRoomBelow(100);
+    const wrapper = mountTable({ products: [product("p1"), product("p2")] });
+    await setHeaderRowHeight(FULL_HEIGHT);
+    await nextTick();
+
+    await setHeaderRowAnchorTop(-100);
+    await nextTick();
+
+    expect(wrapper.findAll(".compare-table__product--compact")).toHaveLength(2);
+
+    wrapper.unmount();
+  });
 
   it("keeps the stuck styling on a full row that has too little room to compact", async () => {
     setRoomBelow(FULL_HEIGHT - 1);
