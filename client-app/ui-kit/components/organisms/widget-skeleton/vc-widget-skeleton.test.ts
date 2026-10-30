@@ -33,6 +33,33 @@ describe("VcWidgetSkeleton", () => {
     expect(wrapper.classes()).toEqual(expect.arrayContaining(["vc-widget--no-border", "h-full"]));
   });
 
+  it("renders no title text from a title", () => {
+    const wrapper = mountSkeleton({}, { title: "Orders" });
+
+    expect(wrapper.text()).toBe("");
+    expect(wrapper.find(".vc-widget__header-container").exists()).toBe(false);
+  });
+
+  it("keeps the widget's title and icons off the widget", () => {
+    const wrapper = mountSkeleton(
+      { head: true },
+      { title: "Orders", "prepend-icon": "academic-cap", appendIcon: "star" },
+    );
+
+    expect(wrapper.findComponent(VcWidget).props()).toMatchObject({
+      title: undefined,
+      prependIcon: undefined,
+      appendIcon: undefined,
+    });
+  });
+
+  it("passes collapsed through to the widget", () => {
+    const wrapper = mountSkeleton({ head: true }, { collapsed: true });
+
+    expect(wrapper.classes()).toContain("vc-widget--collapsed");
+    expect(wrapper.find<HTMLElement>(".vc-widget__slot-container").element.style.display).toBe("none");
+  });
+
   it("draws the header and footer placeholders only with head and foot", () => {
     const plain = mountSkeleton();
     const full = mountSkeleton({ head: true, foot: true });

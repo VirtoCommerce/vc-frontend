@@ -539,7 +539,7 @@
 **VcWidgetSkeleton** (`client-app/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue`)
 - Props: head?: boolean, foot?: boolean, noShadow?: boolean, size?: "xs" | "sm" | "md" | "lg" (default: "md")
 - Slots: header-container, header, default-container, default, footer-container, footer (their leaf elements become placeholder bars)
-- Features: renders a VcWidget of its size, so radius, insets and header height match the loaded widget in every design; VcWidget props and classes pass through; pulse animation
+- Features: renders a VcWidget of its size, so radius, insets and header height match the loaded widget in every design; VcWidget frame props (collapsed, border, …), classes and listeners pass through, its title, prependIcon and appendIcon do not (a placeholder renders no real content); pulse animation
 
 **VcStatWidget** (`client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue`)
 - Props:

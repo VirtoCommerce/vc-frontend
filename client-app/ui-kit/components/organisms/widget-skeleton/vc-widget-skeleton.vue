@@ -1,5 +1,10 @@
 <template>
-  <VcWidget :size="size" :shadow="!noShadow" :class="['vc-widget-skeleton', `vc-widget-skeleton--size--${size}`]">
+  <VcWidget
+    :size="size"
+    :shadow="!noShadow"
+    :class="['vc-widget-skeleton', `vc-widget-skeleton--size--${size}`]"
+    v-bind="widgetAttrs"
+  >
     <template v-if="$slots['header-container']" #header-container>
       <div class="vc-widget-skeleton__header-container">
         <slot name="header-container" />
@@ -45,7 +50,10 @@
 </template>
 
 <script setup lang="ts">
-/** Renders a VcWidget; its frame props and classes pass through. */
+import { omitBy } from "lodash-es";
+import { camelize, computed, useAttrs } from "vue";
+
+/** Renders a VcWidget; its frame props, classes and listeners pass through, its title and icons do not. */
 interface IProps {
   head?: boolean;
   foot?: boolean;
@@ -53,9 +61,18 @@ interface IProps {
   size?: "xs" | "sm" | "md" | "lg";
 }
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 withDefaults(defineProps<IProps>(), {
   size: "md",
 });
+
+const WIDGET_CONTENT_PROPS = ["title", "prependIcon", "appendIcon"];
+
+const attrs = useAttrs();
+const widgetAttrs = computed(() => omitBy(attrs, (_, name) => WIDGET_CONTENT_PROPS.includes(camelize(name))));
 </script>
 
 <style lang="scss">
