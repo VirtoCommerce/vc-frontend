@@ -92,7 +92,11 @@
             :label="$t('ui_kit.labels.price_per_item')"
             :disabled="disabled"
           >
-            <VcProductPrice :list-price="actualPrice || listPrice" :disabled="disabled" truncate />
+            <VcProductPrice
+              :list-price="showPlacedPrice ? actualPrice || listPrice : listPrice"
+              :disabled="disabled"
+              truncate
+            />
           </VcProperty>
         </div>
 
