@@ -1,14 +1,13 @@
 .vc-widget {
-  $lg: "";
-
   // Small widgets (filters, side menus) keep the classic inset: `initial` drops the token.
   &--size--xs,
   &--size--sm {
     --vc-widget-padding-x: initial;
   }
 
+  // Set on the lg root, so a widget nested in it keeps its own title size.
   &--size--lg {
-    $lg: &;
+    --title-text: theme("fontSize.base");
   }
 
   // Short plates take the smaller radius, so they never turn into pills.
@@ -21,11 +20,5 @@
   // A plate without its shadow keeps a light edge.
   &--no-shadow {
     --vc-widget-border-width: 1px;
-  }
-
-  &__title {
-    #{$lg} & {
-      font-size: theme("fontSize.base");
-    }
   }
 }
