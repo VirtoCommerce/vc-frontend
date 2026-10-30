@@ -144,7 +144,7 @@ const widgetAttrs = computed(() => omitBy(attrs, (_, name) => WIDGET_CONTENT_PRO
   &__footer-container,
   &__footer {
     *:not(:has(*)) {
-      @apply h-4 rounded bg-neutral-100;
+      @apply h-5 rounded bg-neutral-100;
 
       &:not([class*="w-"]) {
         @apply w-1/3;
