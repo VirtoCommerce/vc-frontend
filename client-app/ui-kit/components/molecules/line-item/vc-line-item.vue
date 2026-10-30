@@ -21,7 +21,7 @@
         v-if="selectable"
         v-model="isSelected"
         class="vc-line-item__checkbox"
-        :name="$t('ui_kit.labels.toggle_vendor_select')"
+        :aria-label="$t('ui_kit.accessibility.select_item', { name })"
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
