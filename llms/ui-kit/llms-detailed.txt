@@ -933,6 +933,8 @@ Base container component for displaying product cards with three adaptive layout
   - footer (custom footer)
   - page-limit-message
 - Features: sortable columns, auto pagination, responsive mobile/desktop views, loading skeleton, empty states
+- VcTableColumn `strong?: boolean` - marks the column that identifies the row: its cells are bold and stay in the darkest text colour when a design mutes the rest (VcTableColumn slots only; `#desktop-item` / `#desktop-body` render their own cells)
+- CSS vars: --vc-table-radius, --vc-table-max-height, --vc-table-sticky-offset, --vc-table-selected-bg-color, --vc-table-row-hover-bg-color, --vc-table-title-font-size (default text-sm), --vc-table-title-line-height (default 1.125rem), --vc-table-title-muted (0 or 1, default 0; 1 greys the header to neutral-700), --vc-table-cell-muted (0 or 1, default 0; 1 greys the body text to neutral-800), --vc-table-footer-padding (default 2.5rem 0.75rem, from md 2.5rem 1.25rem 1.25rem)
 - **Real Usage Pattern:**
 
 ---

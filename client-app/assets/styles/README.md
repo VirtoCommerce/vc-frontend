@@ -342,6 +342,8 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
 | `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
 | `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |
+| `--vc-table-title-font-size` | VcTable header font size | `var(--vc-font-size-sm)`, 0.875rem |
+| `--vc-table-title-line-height` | VcTable header line height | `var(--vc-line-height-sm)`, 1.125rem |
 | `--vc-textarea-radius` | VcTextarea corners | `var(--vc-radius)` |
 | `--vc-tile-button-radius` | VcTileButton corners | `var(--vc-radius)` |
 | `--vc-tooltip-radius` | VcTooltip corners | `var(--vc-radius)` |

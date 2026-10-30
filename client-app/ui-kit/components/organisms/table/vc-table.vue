@@ -75,7 +75,7 @@
                   @change="toggleSelectAll"
                 />
 
-                <span v-else class="sr-only">{{ $t("ui_kit.table.selection_column") }}</span>
+                <span v-else class="vc-table__selection-label">{{ $t("ui_kit.table.selection_column") }}</span>
               </th>
 
               <th
@@ -198,7 +198,10 @@
             :ref="(el) => setRowRef(el as Element | null, rowIndex)"
             :class="[
               'vc-table__row',
-              { 'vc-table__row--selected': selectionEnabled && isRowSelected(item, rowIndex) },
+              {
+                'vc-table__row--selected': selectionEnabled && isRowSelected(item, rowIndex),
+                'vc-table__row--clickable': hasRowClickListener,
+              },
               resolvedRowClass(item, rowIndex),
             ]"
             :style="resolvedRowStyle(item, rowIndex)"
@@ -255,6 +258,7 @@
               :class="[
                 'vc-table__cell',
                 `vc-table__cell--align--${column.align ?? 'left'}`,
+                { 'vc-table__cell--strong': column.strong },
                 getColumnFixedClasses(column, 'vc-table__cell'),
                 column.classes,
               ]"
@@ -739,18 +743,12 @@ onUpdated(() => {
 });
 
 // Resolve row class from VcTable prop
-function resolvedRowClass(item: T, index: number): unknown[] | undefined {
-  let rowClassValue: unknown;
-  if (props.rowClass) {
-    rowClassValue = typeof props.rowClass === "function" ? props.rowClass(item, index) : props.rowClass;
-  }
-  const clickClass = hasRowClickListener.value ? "cursor-pointer" : undefined;
-
-  if (!rowClassValue && !clickClass) {
-    return undefined;
+function resolvedRowClass(item: T, index: number): string | Record<string, boolean> | undefined {
+  if (typeof props.rowClass === "function") {
+    return props.rowClass(item, index);
   }
 
-  return [rowClassValue, clickClass];
+  return props.rowClass;
 }
 
 // Resolve row style from VcTable prop
@@ -1192,6 +1190,10 @@ watch(
     @apply sr-only;
   }
 
+  &__selection-label {
+    @apply sr-only;
+  }
+
   &__head {
     @apply border-b border-neutral-200;
 
@@ -1211,7 +1213,13 @@ watch(
   }
 
   &__title {
-    @apply px-4 py-1 h-10 font-bold;
+    --font-size: var(--vc-table-title-font-size, theme("fontSize.sm[0]"));
+    --line-height: var(--vc-table-title-line-height, theme("fontSize.sm[1].lineHeight"));
+
+    @apply px-4 py-1 h-10 font-bold text-[length:var(--font-size)] leading-[var(--line-height)];
+
+    // A design may not set colour, so it only switches the muted ink on: 0 keeps the inherited text, 1 is neutral-700.
+    color: color-mix(in srgb, theme("colors.neutral.700") calc(var(--vc-table-title-muted, 0) * 100%), currentColor);
 
     @include column-align;
 
@@ -1228,6 +1236,9 @@ watch(
 
   &__body {
     word-break: break-word;
+    // The same switch as the title's, to neutral-800. On the body rather than the cells, so rows rendered by
+    // `#desktop-item` / `#desktop-body` mute too and a colour set on a row still reaches its cells.
+    color: color-mix(in srgb, theme("colors.neutral.800") calc(var(--vc-table-cell-muted, 0) * 100%), currentColor);
 
     &:first-child {
       tr:first-child {
@@ -1274,6 +1285,10 @@ watch(
         background-color: var(--selected-bg-color);
       }
     }
+
+    &--clickable {
+      @apply cursor-pointer;
+    }
   }
 
   &__skeleton {
@@ -1304,6 +1319,13 @@ watch(
     @apply px-4 py-3;
 
     @include column-align;
+
+    &--strong {
+      @apply font-bold;
+
+      // Keeps the row's colour; when the body is muted, the same switch lifts this cell back to neutral-950.
+      color: color-mix(in srgb, theme("colors.neutral.950") calc(var(--vc-table-cell-muted, 0) * 100%), currentColor);
+    }
 
     &--fixed {
       @apply bg-additional-50;
@@ -1374,7 +1396,14 @@ watch(
   }
 
   &__footer {
-    @apply px-3 py-10 empty:hidden md:px-5 md:pb-5;
+    --padding: theme("spacing.10") theme("spacing.3");
+
+    // One token for the whole box: a table set inside a widget needs other padding on every side.
+    @apply p-[var(--vc-table-footer-padding,var(--padding))] empty:hidden;
+
+    @media (width >= theme("screens.md")) {
+      --padding: theme("spacing.10") theme("spacing.5") theme("spacing.5");
+    }
   }
 
   &__page-limit-message {
