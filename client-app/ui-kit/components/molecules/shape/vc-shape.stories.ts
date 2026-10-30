@@ -19,11 +19,30 @@ const renderShape = (template: string) => (args: Record<string, unknown>) => ({
   template,
 });
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape />
+        `,
+      },
+    },
+  },
+};
 
 export const Icon: StoryType = {
   args: {
     icon: "adjustments",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape icon="adjustments" />
+        `,
+      },
+    },
   },
 };
 
@@ -32,12 +51,30 @@ export const Large: StoryType = {
     icon: "adjustments",
     size: "100px",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape icon="adjustments" size="100px" />
+        `,
+      },
+    },
+  },
 };
 
 export const Image: StoryType = {
   args: {
     img: "main-banner.webp",
     size: "300px",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape img="main-banner.webp" size="300px" />
+        `,
+      },
+    },
   },
 };
 
@@ -47,6 +84,15 @@ export const ImageIcon: StoryType = {
     size: "300px",
     icon: "adjustments",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape img="main-banner.webp" size="300px" icon="adjustments" />
+        `,
+      },
+    },
+  },
 };
 
 export const Mask: StoryType = {
@@ -54,6 +100,15 @@ export const Mask: StoryType = {
     img: "/static/images/home/main-banner.webp",
     size: "300px",
     mask: "academic-cap",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape img="/static/images/home/main-banner.webp" size="300px" mask="academic-cap" />
+        `,
+      },
+    },
   },
 };
 
@@ -65,6 +120,17 @@ export const RatingHalf: StoryType = {
   render: renderShape(`<VcShape v-bind="args">
     <div class="absolute left-0 top-0 bottom-0 w-1/2 bg-primary"></div>
   </VcShape>`),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape mask="whishlist" size="100px">
+            <div class="absolute left-0 top-0 bottom-0 w-1/2 bg-primary"></div>
+          </VcShape>
+        `,
+      },
+    },
+  },
 };
 
 export const RatingQuarter: StoryType = {
@@ -75,4 +141,15 @@ export const RatingQuarter: StoryType = {
   render: renderShape(`<VcShape v-bind="args">
     <div class="absolute left-0 top-0 bottom-0 w-3/12 bg-primary"></div>
   </VcShape>`),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcShape mask="whishlist" size="100px">
+            <div class="absolute left-0 top-0 bottom-0 w-3/12 bg-primary"></div>
+          </VcShape>
+        `,
+      },
+    },
+  },
 };

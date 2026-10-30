@@ -149,6 +149,10 @@ Every design's `index.scss` is this file with its own name and one line per file
 }
 ```
 
+Inside each `html` block, kit component blocks (`vc-*`) load first, then app blocks, the same order as
+`vc.kit` before `vc.app`: at equal specificity the later rule wins, so an app block on a kit
+component's root (`footer-links` on a VcWidget) beats that component's block.
+
 The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet
 keeps one comment line in `index.scss` instead.
 
@@ -206,7 +210,9 @@ never restates print. Token values apply in print too.
    the component, loading nothing outside the design's folder; dark values go in `dark/<block>.scss`.
    Add each file to `index.scss` ([Wiring](#wiring)).
 5. Turn it on: `"design": "mybrand"` in `client-app/config/settings_data.json`.
-6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`).
+6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`); any story or Docs page opens in a design when you append `&globals=design:<name>` to its URL, for example `?path=/docs/components-organisms-vcwidget--docs&globals=design:soft`.
+   A component has one story set: the Design toolbar or the URL global shows it in any design, so no
+   story is written per design and none pins a design.
 
 ### Customise a design
 
@@ -344,6 +350,10 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
 | `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |
 | `--vc-widget-radius` | VcWidget corners | `var(--vc-radius)` |
+| `--vc-widget-shadow` | VcWidget shadow | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
+| `--vc-widget-title-font-weight` | VcWidget title weight | `var(--vc-heading-font-weight, var(--vc-font-weight-bold))`, 700 |
+| `--vc-widget-title-letter-spacing` | VcWidget title letter spacing | `var(--vc-heading-letter-spacing)`, else inherited |
+| `--vc-widget-title-text-transform` | VcWidget title letter case | `var(--vc-heading-text-transform, uppercase)` |
 | `--vc-image-gallery-radius` | Product image gallery: the corners of the images and thumbnails (`shared/catalog/components/image-gallery.vue`) | `var(--vc-radius)` |
 | `--badges-wrapper-radius` | Product badges: the bottom-right corner of their wrapper (`shared/catalog/components/badges-wrapper.vue`) | `calc(var(--vc-radius) + 2px)` |
 
@@ -351,7 +361,8 @@ this table does not list, or the table lists one the code does not read.
 
 - **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
   `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
-  same file. Which token changes what: the [token table](#token-table).
+  same file. Which token changes what: the [token table](#token-table). A value that changes with
+  the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
 - **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
   Tailwind's defaultTheme), `rgb(from var(--color-additional-950) …)` for the others. A design
   changes geometry and alpha, never colour.
