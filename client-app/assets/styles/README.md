@@ -149,6 +149,10 @@ Every design's `index.scss` is this file with its own name and one line per file
 }
 ```
 
+Inside each `html` block, kit component blocks (`vc-*`) load first, then app blocks, the same order as
+`vc.kit` before `vc.app`: at equal specificity the later rule wins, so an app block on a kit
+component's root (`footer-links` on a VcWidget) beats that component's block.
+
 The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet
 keeps one comment line in `index.scss` instead.
 
