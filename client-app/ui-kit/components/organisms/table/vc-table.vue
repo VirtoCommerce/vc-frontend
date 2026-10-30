@@ -1213,8 +1213,8 @@ watch(
   }
 
   &__title {
-    --font-size: var(--vc-table-title-font-size, theme("fontSize.sm"));
-    --line-height: var(--vc-table-title-line-height, 1.125rem);
+    --font-size: var(--vc-table-title-font-size, theme("fontSize.sm[0]"));
+    --line-height: var(--vc-table-title-line-height, theme("fontSize.sm[1].lineHeight"));
 
     @apply px-4 py-1 h-10 font-bold text-[length:var(--font-size)] leading-[var(--line-height)];
 
