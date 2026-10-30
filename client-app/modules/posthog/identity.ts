@@ -12,6 +12,17 @@ export const PERSON_PROPERTY_NAMES = {
   sessionKind: "session_kind",
 } as const;
 
+/**
+ * Also sent on every event: a person property holds only the latest session, so an impersonated session could not
+ * be told from the customer's own ones once they sign in next.
+ */
+export function buildSessionProperties(identity: CustomerIdentityType): Record<string, string | boolean> {
+  return {
+    [PERSON_PROPERTY_NAMES.sessionKind]: identity.sessionKind,
+    [PERSON_PROPERTY_NAMES.isSalesRep]: identity.isSalesRep,
+  };
+}
+
 export function buildPersonProperties(identity: CustomerIdentityType): Record<string, string | boolean> {
   return {
     [PERSON_PROPERTY_NAMES.contactId]: identity.contactId ?? "",
@@ -37,9 +48,13 @@ export function applyIdentity(): void {
 
   if (identity) {
     client.identify(identity.userId, buildPersonProperties(identity));
+    client.register(buildSessionProperties(identity));
 
     if (identity.organizationId) {
       client.group(ORGANIZATION_GROUP_TYPE, identity.organizationId);
+    } else {
+      // `group` persists as a super property; a user without an organization must not inherit the previous one's.
+      client.resetGroups();
     }
 
     rememberIdentified(true);

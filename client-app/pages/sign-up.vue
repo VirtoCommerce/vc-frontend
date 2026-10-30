@@ -167,6 +167,9 @@ const router = useRouter();
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
+const SIGN_UP_FORM_NAME = "sign_up";
+const VALIDATION_ERROR_CODE = "VALIDATION";
+
 const { t } = useI18n();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
@@ -245,74 +248,90 @@ const emailValidationDebounced = useDebounceFn(async (value: string, resolve: (v
   resolve(emailValidationData.isUnique);
 }, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 
-const onSubmit = handleSubmit(async (data) => {
-  let result: AccountCreationResultType;
+const onSubmit = handleSubmit(
+  async (data) => {
+    let result: AccountCreationResultType;
 
-  commonErrors.value = [];
+    commonErrors.value = [];
 
-  if (registrationKind.value === RegistrationKind.personal) {
-    result = await registerUser({
-      email: data.email.trim(),
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      userName: data.email.trim(),
-      password: data.password,
-    });
-  } else {
-    result = await registerOrganization({
-      organizationName: data.organizationName?.trim(),
-      email: data.email.trim(),
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      userName: data.email.trim(),
-      password: data.password,
-    });
-  }
+    if (registrationKind.value === RegistrationKind.personal) {
+      result = await registerUser({
+        email: data.email.trim(),
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        userName: data.email.trim(),
+        password: data.password,
+      });
+    } else {
+      result = await registerOrganization({
+        organizationName: data.organizationName?.trim(),
+        email: data.email.trim(),
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        userName: data.email.trim(),
+        password: data.password,
+      });
+    }
 
-  if (result.succeeded) {
-    analytics("signUp", "form", {
-      type: registrationKind.value,
-      success: true,
-    });
-    void router.push({ name: "Welcome" });
-  } else if (result.errors?.length) {
-    analytics("signUp", "form", {
+    if (result.succeeded) {
+      analytics("signUp", "form", {
+        type: registrationKind.value,
+        success: true,
+      });
+      analytics("formSubmit", SIGN_UP_FORM_NAME, { type: registrationKind.value, success: true });
+      void router.push({ name: "Welcome" });
+    } else if (result.errors?.length) {
+      analytics("signUp", "form", {
+        type: registrationKind.value,
+        success: false,
+        errors: result.errors.map((error) => `${error.code}: ${error.description}`).join(", "),
+      });
+      analytics("formSubmit", SIGN_UP_FORM_NAME, {
+        type: registrationKind.value,
+        success: false,
+        errors: result.errors.map((error) => error.code).join(", "),
+      });
+
+      result.errors.forEach((error) => {
+        const errorDescription = translate(error);
+
+        switch (error.code) {
+          case "PasswordTooShort":
+          case "PasswordRequiresLower":
+          case "PasswordRequiresUpper":
+          case "PasswordRequiresUniqueChars":
+          case "PasswordRequiresDigit":
+          case "PasswordRequiresNonAlphanumeric":
+          case "RecentPasswordUsed":
+          case "InvalidPasswordHasherCompatibilityMode":
+          case "InvalidPasswordHasherIterationCount":
+            setFieldError("password", errorDescription);
+            break;
+
+          case "DuplicateEmail":
+          case "InvalidEmail":
+            setFieldError("email", errorDescription);
+            break;
+
+          default:
+            if (errorDescription) {
+              commonErrors.value.push(errorDescription);
+            }
+        }
+      });
+    }
+  },
+  // Client-side validation stops the request, which `signUp` never sees; the form funnel still gets the attempt.
+  () => {
+    analytics("formSubmit", SIGN_UP_FORM_NAME, {
       type: registrationKind.value,
       success: false,
-      errors: result.errors.map((error) => `${error.code}: ${error.description}`).join(", "),
+      errors: VALIDATION_ERROR_CODE,
     });
-
-    result.errors.forEach((error) => {
-      const errorDescription = translate(error);
-
-      switch (error.code) {
-        case "PasswordTooShort":
-        case "PasswordRequiresLower":
-        case "PasswordRequiresUpper":
-        case "PasswordRequiresUniqueChars":
-        case "PasswordRequiresDigit":
-        case "PasswordRequiresNonAlphanumeric":
-        case "RecentPasswordUsed":
-        case "InvalidPasswordHasherCompatibilityMode":
-        case "InvalidPasswordHasherIterationCount":
-          setFieldError("password", errorDescription);
-          break;
-
-        case "DuplicateEmail":
-        case "InvalidEmail":
-          setFieldError("email", errorDescription);
-          break;
-
-        default:
-          if (errorDescription) {
-            commonErrors.value.push(errorDescription);
-          }
-      }
-    });
-  }
-});
+  },
+);
 
 onMounted(() => {
-  analytics("formOpen", "sign_up", { type: registrationKind.value });
+  analytics("formOpen", SIGN_UP_FORM_NAME, { type: registrationKind.value });
 });
 </script>

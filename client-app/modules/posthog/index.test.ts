@@ -26,6 +26,8 @@ const hoisted = vi.hoisted(() => {
       capture: vi.fn(),
       identify: vi.fn(),
       group: vi.fn(),
+      register: vi.fn(),
+      resetGroups: vi.fn(),
       reset: vi.fn(),
     },
     failSdkImport: false,
@@ -82,7 +84,7 @@ vi.mock("@/shared/account", async () => {
 vi.mock("./events", () => ({ events: { viewItem: () => undefined } }));
 
 const { init } = await import("./index");
-const { setClient } = await import("./client");
+const { capture, setClient } = await import("./client");
 const { deferLogin } = await import("./pending-login");
 
 const SIGNED_IN: FakeUserType = {
@@ -255,6 +257,23 @@ describe("posthog init", () => {
     expect(hoisted.addTrackerMock).not.toHaveBeenCalled();
   });
 
+  // The tracker is on the bus before the SDK chunk resolves, so a form opened by the first render is not lost.
+  it("sends events captured before the SDK is ready, after identifying", async () => {
+    let pending!: Promise<void>;
+    scope.run(() => {
+      pending = init(buildRouter());
+    });
+    capture("form_open", { form_name: "sign_up" });
+    await pending;
+
+    expect(hoisted.posthog.capture).toHaveBeenCalledWith("form_open", { form_name: "sign_up" });
+    const formOpenOrder =
+      hoisted.posthog.capture.mock.invocationCallOrder[
+        hoisted.posthog.capture.mock.calls.findIndex(([name]) => name === "form_open")
+      ];
+    expect(hoisted.posthog.identify.mock.invocationCallOrder[0]).toBeLessThan(formOpenOrder);
+  });
+
   it("degrades to no tracking when the SDK chunk fails to load", async () => {
     hoisted.failSdkImport = true;
 
@@ -265,6 +284,25 @@ describe("posthog init", () => {
     }
 
     expect(hoisted.posthog.init).not.toHaveBeenCalled();
-    expect(hoisted.addTrackerMock).not.toHaveBeenCalled();
+    expect(hoisted.posthog.capture).not.toHaveBeenCalled();
+    // Registered before the chunk was awaited; from now on its captures are dropped, not queued.
+    expect(hoisted.addTrackerMock).toHaveBeenCalledTimes(1);
+    expect(() => capture("view_item")).not.toThrow();
+    setClient(hoisted.posthog as unknown as Parameters<typeof setClient>[0]);
+    const { flushPendingCaptures } = await import("./client");
+    flushPendingCaptures();
+    expect(hoisted.posthog.capture).not.toHaveBeenCalled();
+  });
+
+  // Navigations during the SDK load are page views too; the hook goes up with the tracker, not after the chunk.
+  it("hooks the router before the SDK chunk resolves", async () => {
+    const router = buildRouter();
+    let pending!: Promise<void>;
+    scope.run(() => {
+      pending = init(router);
+    });
+    await Promise.resolve();
+    expect(router.afterEach).toHaveBeenCalledTimes(1);
+    await pending;
   });
 });
