@@ -2361,7 +2361,14 @@ export type InputCreateOrganizationType = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InputCreatePasskeyType = {
+  credential: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputCreateSalesRepTask = {
+  /** Organization id of a customer the caller serves - the customer the task is about. Null or empty means none. */
+  customerId?: InputMaybe<Scalars['String']['input']>;
   /** Free-text notes. Null or empty clears it. */
   description?: InputMaybe<Scalars['String']['input']>;
   /** When the task is due. Required on create; null on update clears it. */
@@ -3310,6 +3317,8 @@ export type InputUpdateRoleType = {
 };
 
 export type InputUpdateSalesRepTask = {
+  /** Organization id of a customer the caller serves. Null or empty removes the link, except one to a customer the caller no longer serves, which reads back as null and is kept. A task linked to another kind of record keeps that link and cannot take a customer. */
+  customerId?: InputMaybe<Scalars['String']['input']>;
   /** Free-text notes. Null or empty clears it. */
   description?: InputMaybe<Scalars['String']['input']>;
   /** When the task is due. Required on create; null on update clears it. */
@@ -3860,6 +3869,7 @@ export type Mutations = {
   createContact?: Maybe<ContactType>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
+  createPasskey?: Maybe<IdentityResultType>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
   createReturn?: Maybe<ReturnType>;
@@ -4225,6 +4235,11 @@ export type MutationsCreateOrderFromCartArgs = {
 
 export type MutationsCreateOrganizationArgs = {
   command: InputCreateOrganizationType;
+};
+
+
+export type MutationsCreatePasskeyArgs = {
+  command: InputCreatePasskeyType;
 };
 
 
@@ -5170,6 +5185,15 @@ export type PageContextResponseType = {
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
 };
 
+export type PageDocumentAlternateType = {
+  /** Language of the translation */
+  cultureName: Scalars['String']['output'];
+  /** Page document id of the translation */
+  id: Scalars['String']['output'];
+  /** Permalink of the translation */
+  permalink: Scalars['String']['output'];
+};
+
 /** A connection from an object to a list of objects of type `PageDocument`. */
 export type PageDocumentConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -5191,7 +5215,11 @@ export type PageDocumentEdge = {
 };
 
 export type PageDocumentType = {
+  /** Published versions of the page in the store languages, one per language. Each page runs its own search: do not select it in page lists */
+  alternates: Array<PageDocumentAlternateType>;
   content: Scalars['String']['output'];
+  /** Page language */
+  cultureName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   /** Page permalink */
   permalink?: Maybe<Scalars['String']['output']>;
@@ -6086,6 +6114,8 @@ export type Query = {
   pageDocument?: Maybe<PageDocumentType>;
   pageDocuments?: Maybe<PageDocumentConnection>;
   pages?: Maybe<PageConnection>;
+  passkeyCreationOptions?: Maybe<Scalars['String']['output']>;
+  passkeyRequestOptions?: Maybe<Scalars['String']['output']>;
   paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
   pickupLocations?: Maybe<PickupLocationConnection>;
@@ -6112,11 +6142,14 @@ export type Query = {
   returnableItems?: Maybe<Array<Maybe<ReturnableItemType>>>;
   returns?: Maybe<ReturnConnection>;
   role?: Maybe<RoleType>;
+  salesRepActivities?: Maybe<SalesRepActivityConnection>;
   salesRepCartFilterRules?: Maybe<Array<Maybe<SalesRepCartFilterRule>>>;
   salesRepCustomer?: Maybe<SalesRepCustomerDetails>;
+  salesRepCustomerActivitySummary?: Maybe<SalesRepCustomerActivitySummary>;
   salesRepCustomerCartStatistics?: Maybe<CustomerCartStatistics>;
   salesRepCustomerCounts?: Maybe<SalesRepCustomerCounts>;
   salesRepCustomerFilterRules?: Maybe<Array<Maybe<SalesRepCustomerFilterRule>>>;
+  salesRepCustomerInsights?: Maybe<SalesRepCustomerInsights>;
   salesRepCustomerOrder?: Maybe<CustomerOrderType>;
   salesRepCustomerOrderStatistics?: Maybe<CustomerOrderStatistics>;
   salesRepCustomerOrders?: Maybe<CustomerOrderConnection>;
@@ -6852,6 +6885,17 @@ export type QueryRoleArgs = {
 };
 
 
+export type QuerySalesRepActivitiesArgs = {
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QuerySalesRepCartFilterRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -6860,6 +6904,14 @@ export type QuerySalesRepCartFilterRulesArgs = {
 
 export type QuerySalesRepCustomerArgs = {
   organizationId: Scalars['String']['input'];
+};
+
+
+export type QuerySalesRepCustomerActivitySummaryArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  organizationId: Scalars['String']['input'];
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6879,6 +6931,14 @@ export type QuerySalesRepCustomerCountsArgs = {
 
 export type QuerySalesRepCustomerFilterRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepCustomerInsightsArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -7566,6 +7626,70 @@ export type RoleType = {
   permissions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
+export type SalesRepActivityCategoryCount = {
+  /** Activity category (orders, customers, searches, productViews, logins). */
+  category: Scalars['String']['output'];
+  /** Events in this category for the applied filters. An analytics row stands for every event in its hour bucket, so this can exceed the rows the category lists; totalCount counts rows. */
+  count: Scalars['Int']['output'];
+};
+
+export type SalesRepActivityConnection = {
+  /** Per-category totals for the applied filters (zero counts included). */
+  categoryCounts: Array<SalesRepActivityCategoryCount>;
+  /** Whether tracked storefront activity is measured for this store right now. False means the searches, product views and sign-in counts are zero because nothing is being measured, not because the customer was inactive. */
+  isAnalyticsAvailable: Scalars['Boolean']['output'];
+  /** The requested activity page, newest first. */
+  items: Array<SalesRepActivityEvent>;
+  /** Activity rows matching the filters across all requested categories: what a pager pages. categoryCounts count events instead. */
+  totalCount: Scalars['Int']['output'];
+};
+
+export type SalesRepActivityEvent = {
+  /** Activity category: orders | customers | searches | productViews | logins. */
+  category: Scalars['String']['output'];
+  /** Number of occurrences this row aggregates (>1 for analytics hour-buckets). */
+  count?: Maybe<Scalars['Int']['output']>;
+  /** When the activity happened (UTC). Hour-precision rows carry the hour-bucket start. */
+  occurredAt: Scalars['DateTime']['output'];
+  /** Order id (orderPlaced rows). */
+  orderId?: Maybe<Scalars['String']['output']>;
+  /** Human-readable order number (orderPlaced rows). */
+  orderNumber?: Maybe<Scalars['String']['output']>;
+  orderStatus?: Maybe<Scalars['String']['output']>;
+  orderStatusDisplayValue?: Maybe<Scalars['String']['output']>;
+  /** Order grand total (orderPlaced rows). */
+  orderTotal?: Maybe<MoneyType>;
+  /** Organization (customer) id the activity belongs to. */
+  organizationId?: Maybe<Scalars['String']['output']>;
+  /** Organization (customer) name. */
+  organizationName?: Maybe<Scalars['String']['output']>;
+  /** Timestamp precision: exact | hour. */
+  precision: Scalars['String']['output'];
+  /** Product code as tracked by analytics (productView rows). */
+  productCode?: Maybe<Scalars['String']['output']>;
+  /** Resolved product id (productView rows; null when the code no longer matches a product). */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Product image URL (productView rows; null when unresolved). */
+  productImageUrl?: Maybe<Scalars['String']['output']>;
+  /** Product name (productView rows; resolved from the catalog, falling back to the tracked name). */
+  productName?: Maybe<Scalars['String']['output']>;
+  /** Searched phrase (search rows). */
+  searchTerm?: Maybe<Scalars['String']['output']>;
+  /** Activity type: orderPlaced | customerAssigned | search | productView | login. */
+  type: Scalars['String']['output'];
+};
+
+export type SalesRepActivityProduct = {
+  /** Product code as tracked by analytics; always present, even when the product could not be resolved. */
+  code: Scalars['String']['output'];
+  /** Product image URL (null when unresolved). */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  /** Product name (resolved from the catalog, falling back to the tracked name). */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Resolved product id (null when the code no longer matches a product). */
+  productId?: Maybe<Scalars['String']['output']>;
+};
+
 export type SalesRepAddress = {
   /** Address type. */
   addressType?: Maybe<Scalars['Int']['output']>;
@@ -7611,6 +7735,21 @@ export type SalesRepAddress = {
   regionName?: Maybe<Scalars['String']['output']>;
   /** Zip. */
   zip?: Maybe<Scalars['String']['output']>;
+};
+
+export type SalesRepBrowsedProduct = {
+  /** Product image URL (null when unresolved). */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  /** Latest tracked view, as the UTC start of an analytics hour bucket; null under sort 'count' — the aggregate rows carry no dates. */
+  lastViewedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Product name (resolved from the catalog, falling back to the tracked name). */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Resolved product id (null when the code no longer matches a product). */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Product code (SKU) as tracked by analytics. */
+  sku?: Maybe<Scalars['String']['output']>;
+  /** Number of tracked views of the product in the period. */
+  viewCount: Scalars['Int']['output'];
 };
 
 export type SalesRepCartFilterRule = {
@@ -7700,6 +7839,25 @@ export type SalesRepCustomerOrderStatisticsArgs = {
   to?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
+export type SalesRepCustomerActivitySummary = {
+  /** When the organization was created (from the database, not analytics). */
+  createdOn?: Maybe<Scalars['DateTime']['output']>;
+  /** Whether the analytics figures beside this are measurements. False means zero/null for want of a source, not for want of activity; createdOn is unaffected. */
+  isAnalyticsAvailable: Scalars['Boolean']['output'];
+  /** Most recently searched phrase (null when analytics is unavailable or has no data). */
+  lastSearchTerm?: Maybe<Scalars['String']['output']>;
+  /** When lastSearchTerm was searched, as the UTC start of an analytics hour bucket; null with it. */
+  lastSearchedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** When lastViewedProduct was viewed, as the UTC start of an analytics hour bucket; null with it. */
+  lastViewedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Most recently viewed product (null when analytics is unavailable or has no data). */
+  lastViewedProduct?: Maybe<SalesRepActivityProduct>;
+  /** Last tracked storefront login, as the UTC start of an analytics hour bucket; null when analytics is unavailable or has no data. */
+  lastWebLogin?: Maybe<Scalars['DateTime']['output']>;
+  /** Number of tracked storefront logins in the period, or ever without one (0 when analytics is unavailable). */
+  visitsCount: Scalars['Int']['output'];
+};
+
 /** A connection from an object to a list of objects of type `SalesRepCustomer`. */
 export type SalesRepCustomerConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -7783,6 +7941,27 @@ export type SalesRepCustomerFilterRule = {
   localizedName?: Maybe<Scalars['String']['output']>;
   /** Stable segment id — send it back in the salesRepCustomers / salesRepCustomerCounts 'filter' argument. */
   name: Scalars['String']['output'];
+};
+
+export type SalesRepCustomerInsights = {
+  /** Products the customer's users viewed, resolved from the tracked product codes. Sort 'date' aggregates a bounded page of the newest 200 hour buckets — older activity is not counted. */
+  browsedProducts: Array<SalesRepBrowsedProduct>;
+  /** Whether the collections beside this are measurements: false means they are empty for want of a source, not for want of activity. Always reflects configuration, and a selected collection whose read fails turns it false as well. Asked on its own, with no collection selected, it reports configuration only — no read is made merely to test one. */
+  isAnalyticsAvailable: Scalars['Boolean']['output'];
+  /** Search phrases the customer's users looked for. Counts only the 'search' event ('view_search_results' describes the same action and would double-count it). Sort 'date' aggregates a bounded page of the newest 200 hour buckets — older activity is not counted. */
+  searchTerms: Array<SalesRepSearchTerm>;
+};
+
+
+export type SalesRepCustomerInsightsBrowsedProductsArgs = {
+  sort?: InputMaybe<Scalars['String']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type SalesRepCustomerInsightsSearchTermsArgs = {
+  sort?: InputMaybe<Scalars['String']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type SalesRepCustomerSortRule = {
@@ -7947,6 +8126,15 @@ export type SalesRepOrderSortRule = {
   supportsDirection: Scalars['Boolean']['output'];
 };
 
+export type SalesRepSearchTerm = {
+  /** Number of tracked searches for the phrase in the period. */
+  count: Scalars['Int']['output'];
+  /** Latest tracked search, as the UTC start of an analytics hour bucket; null under sort 'count' — the aggregate rows carry no dates. */
+  lastSearchedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The searched phrase. */
+  term: Scalars['String']['output'];
+};
+
 export type SalesRepStatisticsPeriodInput = {
   /** Inclusive lower bound of the period (null = no lower bound). */
   from?: InputMaybe<Scalars['DateTime']['input']>;
@@ -7959,6 +8147,10 @@ export type SalesRepTask = {
   completed?: Maybe<Scalars['Boolean']['output']>;
   /** When the task was created. */
   createdDate: Scalars['DateTime']['output'];
+  /** Organization id of the customer the task is about. Null when there is none, or once the caller no longer serves that customer. */
+  customerId?: Maybe<Scalars['String']['output']>;
+  /** Name of that customer, under the same rule as customerId. */
+  customerName?: Maybe<Scalars['String']['output']>;
   /** Free-text notes. */
   description?: Maybe<Scalars['String']['output']>;
   /** When the task is due, as an instant. */
@@ -8102,15 +8294,15 @@ export type SendPasswordResetEmailCommandType = {
 };
 
 export type SeoInfo = {
-  id: Scalars['String']['output'];
+  id?: Maybe<Scalars['String']['output']>;
   imageAltDescription?: Maybe<Scalars['String']['output']>;
   isActive: Scalars['Boolean']['output'];
   languageCode?: Maybe<Scalars['String']['output']>;
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaKeywords?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
-  objectId: Scalars['String']['output'];
-  objectType: Scalars['String']['output'];
+  objectId?: Maybe<Scalars['String']['output']>;
+  objectType?: Maybe<Scalars['String']['output']>;
   outline?: Maybe<Scalars['String']['output']>;
   pageTitle?: Maybe<Scalars['String']['output']>;
   semanticUrl: Scalars['String']['output'];
@@ -9641,7 +9833,7 @@ export type RangeFacetFragment = { name: string, label: string, ranges: Array<{ 
 
 export type ShortOrderFieldsFragment = { id: string, number: string, createdDate: any, status?: string, statusDisplayValue?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, showPlacedPrice: boolean, quantity: number, sku: string, outerId?: string, currency: { code: string, symbol: string }, listTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id: string, slug?: string }, properties: Array<{ name: string, colorCode?: string, value?: string | number | boolean | null, valueDisplayOrder?: number, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number, group?: { id: string, name?: string, displayOrder?: number, description?: string } }> }, extendedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, placedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discounts: Array<{ promotionId?: string, promotionName?: string }>, vendor?: { id: string, name: string, rating?: { value: number, reviewCount: number } }, configurationItems?: Array<{ id: string, name?: string, customText?: string, type: string, files?: Array<{ name: string, url: string }> }> }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, promotionName?: string, amount: { amount: number, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingSubTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, total: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, orderTotals?: Array<{ isDefaultTotalCurrency: boolean, total: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }> };
 
-export type SlugInfoResponseTypeFieldsFragment = { redirectUrl?: string, entityInfo?: { id: string, isActive: boolean, languageCode?: string, objectId: string, objectType: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string, outline?: string } };
+export type SlugInfoResponseTypeFieldsFragment = { redirectUrl?: string, entityInfo?: { id?: string, isActive: boolean, languageCode?: string, objectId?: string, objectType?: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string, outline?: string } };
 
 export type StoreResponseTypeFieldsFragment = { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: number, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: number, customFormatting?: string, englishName: string, cultureName: string }>, settings: { authenticationTypes: Array<string>, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, environmentName: string, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string, defaultSelectedForCheckout: boolean, passwordRequirements?: { requireLowercase: boolean, requireUppercase: boolean, requireDigit: boolean, requiredLength: number, requiredUniqueChars: number, requireNonAlphanumeric: boolean }, modules: Array<{ moduleId: string, settings: Array<{ name: string, value?: string | number | boolean | null }> }> } };
 
@@ -9867,7 +10059,7 @@ export type GetPageDocumentQueryVariables = Exact<{
 }>;
 
 
-export type GetPageDocumentQuery = { pageDocument?: { id: string, source?: string, permalink?: string, content: string } };
+export type GetPageDocumentQuery = { pageDocument?: { id: string, source?: string, permalink?: string, content: string, cultureName?: string, alternates: Array<{ cultureName: string, permalink: string }> } };
 
 export type GetPreviewBuilderPageQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
@@ -9887,7 +10079,7 @@ export type GetPageContextQueryVariables = Exact<{
 }>;
 
 
-export type GetPageContextQuery = { pageContext?: { user?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string>, isAdministrator: boolean, passwordExpired: boolean, passwordExpiryInDays?: number, forcePasswordChange?: boolean, lockedState?: boolean, contact?: { id: string, firstName: string, lastName: string, fullName: string, organizationId?: string, defaultLanguage?: string, currencyCode?: string, selectedAddressId?: string, organization?: { id: string, name?: string, isLockedForCurrentUser?: boolean }, organizations?: { totalCount?: number } }, operator?: { userName: string, contact?: { fullName: string } }, roles?: Array<{ name: string }> }, store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: number, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: number, customFormatting?: string, englishName: string, cultureName: string }>, settings: { authenticationTypes: Array<string>, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, environmentName: string, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string, defaultSelectedForCheckout: boolean, passwordRequirements?: { requireLowercase: boolean, requireUppercase: boolean, requireDigit: boolean, requiredLength: number, requiredUniqueChars: number, requireNonAlphanumeric: boolean }, modules: Array<{ moduleId: string, settings: Array<{ name: string, value?: string | number | boolean | null }> }> } }, slugInfo?: { redirectUrl?: string, entityInfo?: { id: string, isActive: boolean, languageCode?: string, objectId: string, objectType: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string, outline?: string } }, whiteLabelingSettings?: { logoUrl?: string, secondaryLogoUrl?: string, themePresetName?: string, isOrganizationLogoUploaded?: boolean, favicons?: Array<{ rel?: string, type?: string, sizes?: string, href?: string }>, mainMenuLinks?: Array<{ title: string, url: string, priority: number, childItems: Array<{ title: string, url: string, priority: number }> }>, footerLinks?: Array<{ title: string, url: string, priority: number, childItems: Array<{ title: string, url: string, priority: number }> }> } } };
+export type GetPageContextQuery = { pageContext?: { user?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string>, isAdministrator: boolean, passwordExpired: boolean, passwordExpiryInDays?: number, forcePasswordChange?: boolean, lockedState?: boolean, contact?: { id: string, firstName: string, lastName: string, fullName: string, organizationId?: string, defaultLanguage?: string, currencyCode?: string, selectedAddressId?: string, organization?: { id: string, name?: string, isLockedForCurrentUser?: boolean }, organizations?: { totalCount?: number } }, operator?: { userName: string, contact?: { fullName: string } }, roles?: Array<{ name: string }> }, store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: number, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: number, customFormatting?: string, englishName: string, cultureName: string }>, settings: { authenticationTypes: Array<string>, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, environmentName: string, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string, defaultSelectedForCheckout: boolean, passwordRequirements?: { requireLowercase: boolean, requireUppercase: boolean, requireDigit: boolean, requiredLength: number, requiredUniqueChars: number, requireNonAlphanumeric: boolean }, modules: Array<{ moduleId: string, settings: Array<{ name: string, value?: string | number | boolean | null }> }> } }, slugInfo?: { redirectUrl?: string, entityInfo?: { id?: string, isActive: boolean, languageCode?: string, objectId?: string, objectType?: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string, outline?: string } }, whiteLabelingSettings?: { logoUrl?: string, secondaryLogoUrl?: string, themePresetName?: string, isOrganizationLogoUploaded?: boolean, favicons?: Array<{ rel?: string, type?: string, sizes?: string, href?: string }>, mainMenuLinks?: Array<{ title: string, url: string, priority: number, childItems: Array<{ title: string, url: string, priority: number }> }>, footerLinks?: Array<{ title: string, url: string, priority: number, childItems: Array<{ title: string, url: string, priority: number }> }> } } };
 
 export type AuthorizePaymentMutationVariables = Exact<{
   command: InputAuthorizePaymentType;
@@ -9918,7 +10110,7 @@ export type GetSlugInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetSlugInfoQuery = { slugInfo?: { redirectUrl?: string, entityInfo?: { id: string, isActive: boolean, languageCode?: string, objectId: string, objectType: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string, outline?: string } } };
+export type GetSlugInfoQuery = { slugInfo?: { redirectUrl?: string, entityInfo?: { id?: string, isActive: boolean, languageCode?: string, objectId?: string, objectType?: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string, outline?: string } } };
 
 export type GetStoreQueryVariables = Exact<{
   domain: Scalars['String']['input'];
@@ -10094,7 +10286,7 @@ export const GetOrganizationAddressesDocument = {"kind":"Document","definitions"
 export const GetOrganizationContactRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationContactRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contactRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationContactRolesQuery, GetOrganizationContactRolesQueryVariables>;
 export const GetOrganizationContactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationContacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleIds"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"statuses"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchPhrase"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"statuses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"statuses"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"emails"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusInOrganization"}},{"kind":"Field","name":{"kind":"Name","value":"isLockedInOrganization"}},{"kind":"Field","name":{"kind":"Name","value":"rolesInOrganization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"securityAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationContactsQuery, GetOrganizationContactsQueryVariables>;
 export const GetPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"relativeUrl"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<GetPageQuery, GetPageQueryVariables>;
-export const GetPageDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPageDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"permalink"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<GetPageDocumentQuery, GetPageDocumentQueryVariables>;
+export const GetPageDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPageDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"permalink"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"cultureName"}},{"kind":"Field","name":{"kind":"Name","value":"alternates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cultureName"}},{"kind":"Field","name":{"kind":"Name","value":"permalink"}}]}}]}}]}}]} as unknown as DocumentNode<GetPageDocumentQuery, GetPageDocumentQueryVariables>;
 export const GetPreviewBuilderPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPreviewBuilderPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builderPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<GetPreviewBuilderPageQuery, GetPreviewBuilderPageQueryVariables>;
 export const GetPageContextDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPageContext"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"domain"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"permalink"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageContext"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"domain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"domain"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"permalink"},"value":{"kind":"Variable","name":{"kind":"Name","value":"permalink"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"userTypeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"store"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"storeResponseTypeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slugInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"slugInfoResponseTypeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"whiteLabelingSettings"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"gate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"module"},"value":{"kind":"StringValue","value":"VirtoCommerce.WhiteLabeling","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"whiteLabelingFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"organizationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isLockedForCurrentUser"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"allLanguageFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LanguageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isInvariant"}},{"kind":"Field","name":{"kind":"Name","value":"cultureName"}},{"kind":"Field","name":{"kind":"Name","value":"nativeName"}},{"kind":"Field","name":{"kind":"Name","value":"threeLetterLanguageName"}},{"kind":"Field","name":{"kind":"Name","value":"twoLetterLanguageName"}},{"kind":"Field","name":{"kind":"Name","value":"twoLetterRegionName"}},{"kind":"Field","name":{"kind":"Name","value":"threeLetterRegionName"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"allCurrencyFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"exchangeRate"}},{"kind":"Field","name":{"kind":"Name","value":"customFormatting"}},{"kind":"Field","name":{"kind":"Name","value":"englishName"}},{"kind":"Field","name":{"kind":"Name","value":"cultureName"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"userTypeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memberId"}},{"kind":"Field","name":{"kind":"Name","value":"userName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailConfirmed"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"}},{"kind":"Field","name":{"kind":"Name","value":"isAdministrator"}},{"kind":"Field","name":{"kind":"Name","value":"passwordExpired"}},{"kind":"Field","name":{"kind":"Name","value":"passwordExpiryInDays"}},{"kind":"Field","name":{"kind":"Name","value":"forcePasswordChange"}},{"kind":"Field","name":{"kind":"Name","value":"lockedState"}},{"kind":"Field","name":{"kind":"Name","value":"contact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"organizationId"}},{"kind":"Field","name":{"kind":"Name","value":"defaultLanguage"}},{"kind":"Field","name":{"kind":"Name","value":"currencyCode"}},{"kind":"Field","name":{"kind":"Name","value":"selectedAddressId"}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"organizationFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organizations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"operator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userName"}},{"kind":"Field","name":{"kind":"Name","value":"contact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fullName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"storeResponseTypeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StoreResponseType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"storeId"}},{"kind":"Field","name":{"kind":"Name","value":"storeName"}},{"kind":"Field","name":{"kind":"Name","value":"catalogId"}},{"kind":"Field","name":{"kind":"Name","value":"storeUrl"}},{"kind":"Field","name":{"kind":"Name","value":"defaultLanguage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allLanguageFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availableLanguages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allLanguageFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"defaultCurrency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allCurrencyFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availableCurrencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allCurrencyFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"settings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authenticationTypes"}},{"kind":"Field","name":{"kind":"Name","value":"subscriptionEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"taxCalculationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"anonymousUsersAllowed"}},{"kind":"Field","name":{"kind":"Name","value":"environmentName"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerificationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerificationRequired"}},{"kind":"Field","name":{"kind":"Name","value":"createAnonymousOrderEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"seoLinkType"}},{"kind":"Field","name":{"kind":"Name","value":"defaultSelectedForCheckout"}},{"kind":"Field","name":{"kind":"Name","value":"passwordRequirements"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requireLowercase"}},{"kind":"Field","name":{"kind":"Name","value":"requireUppercase"}},{"kind":"Field","name":{"kind":"Name","value":"requireDigit"}},{"kind":"Field","name":{"kind":"Name","value":"requiredLength"}},{"kind":"Field","name":{"kind":"Name","value":"requiredUniqueChars"}},{"kind":"Field","name":{"kind":"Name","value":"requireNonAlphanumeric"}}]}},{"kind":"Field","name":{"kind":"Name","value":"modules"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"moduleId"}},{"kind":"Field","name":{"kind":"Name","value":"settings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"slugInfoResponseTypeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SlugInfoResponseType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"entityInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"languageCode"}},{"kind":"Field","name":{"kind":"Name","value":"objectId"}},{"kind":"Field","name":{"kind":"Name","value":"objectType"}},{"kind":"Field","name":{"kind":"Name","value":"semanticUrl"}},{"kind":"Field","name":{"kind":"Name","value":"metaDescription"}},{"kind":"Field","name":{"kind":"Name","value":"metaKeywords"}},{"kind":"Field","name":{"kind":"Name","value":"pageTitle"}},{"kind":"Field","name":{"kind":"Name","value":"outline"}}]}},{"kind":"Field","name":{"kind":"Name","value":"redirectUrl"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"whiteLabelingFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WhiteLabelingSettingsType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"secondaryLogoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"themePresetName"}},{"kind":"Field","name":{"kind":"Name","value":"isOrganizationLogoUploaded"}},{"kind":"Field","name":{"kind":"Name","value":"favicons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rel"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sizes"}},{"kind":"Field","name":{"kind":"Name","value":"href"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mainMenuLinks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"childItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"footerLinks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"childItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}}]}}]}}]} as unknown as DocumentNode<GetPageContextQuery, GetPageContextQueryVariables>;
 export const AuthorizePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthorizePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputAuthorizePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authorizePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]}}]} as unknown as DocumentNode<AuthorizePaymentMutation, AuthorizePaymentMutationVariables>;
