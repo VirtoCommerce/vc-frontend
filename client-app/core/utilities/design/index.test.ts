@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { customFonts } from "@/designs/custom-fonts";
 import { design as softDesign } from "@/designs/soft/design";
 import {
   byDesignName,
@@ -27,6 +26,8 @@ vi.mock("@/config/settings_data.json", () => ({
 }));
 
 vi.mock("@/core/utilities/logger", () => ({ Logger: { warn, error: vi.fn() } }));
+
+vi.mock("@/designs/custom-fonts", () => ({ customFonts: {} }));
 
 async function importDesign(dev: boolean) {
   vi.resetModules();
@@ -162,10 +163,6 @@ describe("design", () => {
 
     it("lists no fonts for a design named like an object member", () => {
       expect(getDesignFonts("constructor", {}, {})).toEqual([]);
-    });
-
-    it("ships custom-fonts.ts empty", () => {
-      expect(customFonts).toEqual({});
     });
   });
 

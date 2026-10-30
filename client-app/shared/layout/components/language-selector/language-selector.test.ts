@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, ref } from "vue";
 import LanguageSelector from "./language-selector.vue";
 import VcImage from "@/ui-kit/components/atoms/image/vc-image.vue";
@@ -8,14 +8,23 @@ const en = { cultureName: "en-US", twoLetterLanguageName: "en", nativeName: "Eng
 const de = { cultureName: "de-DE", twoLetterLanguageName: "de", nativeName: "Deutsch (Deutschland)" };
 const pl = { cultureName: "pl-PL", twoLetterLanguageName: "pl", nativeName: "polski (Polska)" };
 
+const { getSlugInfo, currentLanguage, previousCultureSlug } = vi.hoisted(() => ({
+  getSlugInfo: vi.fn(),
+  currentLanguage: {
+    value: { cultureName: "en-US", twoLetterLanguageName: "en", nativeName: "English (United States)" },
+  },
+  previousCultureSlug: { value: { cultureName: "", slug: "" } },
+}));
+
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({
     supportedLanguages: ref([en, de, pl]),
-    currentLanguage: ref(en),
+    currentLanguage: ref(currentLanguage.value),
     pinLocale: vi.fn(),
     removeLocaleFromUrl: vi.fn(),
-    previousCultureSlug: ref({ cultureName: "", slug: "" }),
-    getUrlWithoutLocale: (path: string) => path,
+    previousCultureSlug,
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
+    getUrlWithoutLocale: (path: string) => path.replace(/^\/(de|pl)(?=\/|$)/, "") || "/",
   }),
 }));
 
@@ -23,7 +32,7 @@ vi.mock("@/core/composables", () => ({
   useThemeContext: () => ({ themeContext: ref(undefined) }),
 }));
 
-vi.mock("@/core/api/graphql/slugInfo/queries/getSlugInfo", () => ({ getSlugInfo: vi.fn() }));
+vi.mock("@/core/api/graphql/slugInfo/queries/getSlugInfo", () => ({ getSlugInfo }));
 
 vi.mock("@/shared/broadcast", () => ({
   dataChangedEvent: "data-changed",
@@ -70,5 +79,52 @@ describe("LanguageSelector", () => {
 
     expect(german.find("img").attributes("alt")).not.toContain("English");
     expect(german.text()).toContain("Deutsch");
+  });
+
+  describe("select", () => {
+    const reload = vi.fn();
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      currentLanguage.value = de;
+      previousCultureSlug.value = { cultureName: "", slug: "" };
+      vi.stubGlobal("location", { pathname: "/de/haeufige-fragen", reload });
+    });
+
+    afterEach(() => {
+      currentLanguage.value = en;
+      vi.unstubAllGlobals();
+    });
+
+    async function selectLanguage(cultureName: string) {
+      await mountSelector().find(`[data-culture-name="${cultureName}"]`).trigger("click");
+      await flushPromises();
+    }
+
+    it("looks up the translation by the permalink without the current locale prefix", async () => {
+      getSlugInfo.mockResolvedValue({ entityInfo: { id: "faq" } });
+
+      await selectLanguage("en-US");
+
+      expect(getSlugInfo).toHaveBeenCalledWith({ permalink: "haeufige-fragen", cultureName: "en-US" });
+      expect(previousCultureSlug.value).toEqual({ cultureName: "", slug: "" });
+      expect(reload).toHaveBeenCalled();
+    });
+
+    it("does nothing when the current language is selected", async () => {
+      await selectLanguage("de-DE");
+
+      expect(getSlugInfo).not.toHaveBeenCalled();
+      expect(reload).not.toHaveBeenCalled();
+    });
+
+    it("remembers the current language and permalink when the page has no translation", async () => {
+      getSlugInfo.mockResolvedValue({ entityInfo: null });
+
+      await selectLanguage("en-US");
+
+      expect(previousCultureSlug.value).toEqual({ cultureName: "de-DE", slug: "haeufige-fragen" });
+      expect(reload).toHaveBeenCalled();
+    });
   });
 });
