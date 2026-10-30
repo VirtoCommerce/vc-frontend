@@ -18,6 +18,10 @@ type ChallengeType = {
 
 type ErrorResultType = { errorCode?: string; errorDescription?: string };
 
+function toResendAvailableAt(seconds?: number | null): number | undefined {
+  return seconds ? Date.now() + seconds * 1000 : undefined;
+}
+
 /**
  * Reads and changes the MFA mode of the current user or of their organization in the current store.
  * Every change is confirmed with a code: requestCode sends it, confirm passes it with the change.
@@ -50,10 +54,6 @@ export function useMfaSettings(
         description: result?.errorDescription ?? undefined,
       },
     ];
-  }
-
-  function toResendAvailableAt(seconds?: number | null): number | undefined {
-    return seconds ? Date.now() + seconds * 1000 : undefined;
   }
 
   async function fetchSettings(): Promise<void> {
