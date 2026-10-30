@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Autenticazione a due fattori",
+      "not_required": "Per accedere basta la tua password.",
+      "required_by": {
+        "User": "L'hai attivata tu: a ogni accesso ti inviamo un codice a {destination}.",
+        "Administrator": "L'amministratore l'ha attivata per il tuo account: a ogni accesso ti inviamo un codice a {destination}.",
+        "Organization": "La tua azienda la richiede: a ogni accesso ti inviamo un codice a {destination}.",
+        "Store": "Il negozio la richiede: a ogni accesso ti inviamo un codice a {destination}.",
+        "Global": "Il negozio la richiede: a ogni accesso ti inviamo un codice a {destination}."
+      }
+    },
+    "organization": {
+      "title": "Autenticazione a due fattori per l'azienda",
+      "modes": {
+        "Off": "Non richiesta: ogni membro decide autonomamente.",
+        "Enabled": "Richiesta per tutti i membri dell'azienda: a ogni accesso ricevono un codice via e-mail.",
+        "Required": "Richiesta dall'amministratore per tutti i membri dell'azienda."
+      }
+    },
+    "status": {
+      "on": "Attivata",
+      "off": "Disattivata"
+    },
+    "buttons": {
+      "turn_on": "Attiva",
+      "turn_off": "Disattiva",
+      "cancel": "Annulla",
+      "confirm": "Conferma"
+    },
+    "code": {
+      "subtitle_turn_on": "Per attivare l'autenticazione a due fattori, inserisci il codice che abbiamo inviato a {destination}.",
+      "subtitle_turn_off": "Per disattivare l'autenticazione a due fattori, inserisci il codice che abbiamo inviato a {destination}."
+    },
+    "hints": {
+      "admin_managed": "L'autenticazione a due fattori è gestita dall'amministratore del negozio.",
+      "locked": "Impostata dall'amministratore: non puoi disattivarla.",
+      "organization": "La tua azienda l'ha attivata per tutti i suoi membri, quindi non puoi modificarla qui."
+    },
+    "messages": {
+      "confirm_email": "Conferma la tua e-mail per attivare l'autenticazione a due fattori.",
+      "turned_on": "L'autenticazione a due fattori è attivata.",
+      "turned_off": "L'autenticazione a due fattori è disattivata."
+    }
+  }
+}

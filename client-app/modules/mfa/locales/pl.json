@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Uwierzytelnianie dwuskładnikowe",
+      "not_required": "Do zalogowania wystarczy samo hasło.",
+      "required_by": {
+        "User": "Włączone przez Ciebie: przy każdym logowaniu wysyłamy kod na adres {destination}.",
+        "Administrator": "Administrator włączył je dla Twojego konta: przy każdym logowaniu wysyłamy kod na adres {destination}.",
+        "Organization": "Wymaga go Twoja firma: przy każdym logowaniu wysyłamy kod na adres {destination}.",
+        "Store": "Wymaga go sklep: przy każdym logowaniu wysyłamy kod na adres {destination}.",
+        "Global": "Wymaga go sklep: przy każdym logowaniu wysyłamy kod na adres {destination}."
+      }
+    },
+    "organization": {
+      "title": "Uwierzytelnianie dwuskładnikowe dla firmy",
+      "modes": {
+        "Off": "Niewymagane: każdy członek decyduje sam.",
+        "Enabled": "Wymagane dla wszystkich członków firmy: przy każdym logowaniu otrzymują kod na swój adres e-mail.",
+        "Required": "Wymagane przez administratora dla wszystkich członków firmy."
+      }
+    },
+    "status": {
+      "on": "Włączone",
+      "off": "Wyłączone"
+    },
+    "buttons": {
+      "turn_on": "Włącz",
+      "turn_off": "Wyłącz",
+      "cancel": "Anuluj",
+      "confirm": "Potwierdź"
+    },
+    "code": {
+      "subtitle_turn_on": "Aby włączyć uwierzytelnianie dwuskładnikowe, wprowadź kod wysłany na adres {destination}.",
+      "subtitle_turn_off": "Aby wyłączyć uwierzytelnianie dwuskładnikowe, wprowadź kod wysłany na adres {destination}."
+    },
+    "hints": {
+      "admin_managed": "Uwierzytelnianiem dwuskładnikowym zarządza administrator sklepu.",
+      "locked": "Ustawione przez administratora: nie możesz go wyłączyć.",
+      "organization": "Twoja firma włączyła je dla wszystkich swoich członków, więc nie możesz go tutaj zmienić."
+    },
+    "messages": {
+      "confirm_email": "Potwierdź swój adres e-mail, aby włączyć uwierzytelnianie dwuskładnikowe.",
+      "turned_on": "Uwierzytelnianie dwuskładnikowe jest włączone.",
+      "turned_off": "Uwierzytelnianie dwuskładnikowe jest wyłączone."
+    }
+  }
+}

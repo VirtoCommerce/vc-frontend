@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Autenticação de dois fatores",
+      "not_required": "Para entrar, basta a sua senha.",
+      "required_by": {
+        "User": "Você a ativou: enviamos um código para {destination} sempre que você entra.",
+        "Administrator": "O administrador a ativou para sua conta: enviamos um código para {destination} sempre que você entra.",
+        "Organization": "Sua empresa a exige: enviamos um código para {destination} sempre que você entra.",
+        "Store": "A loja a exige: enviamos um código para {destination} sempre que você entra.",
+        "Global": "A loja a exige: enviamos um código para {destination} sempre que você entra."
+      }
+    },
+    "organization": {
+      "title": "Autenticação de dois fatores para a empresa",
+      "modes": {
+        "Off": "Não obrigatória: cada membro decide por si.",
+        "Enabled": "Obrigatória para todos os membros da empresa: um código é enviado ao e-mail deles sempre que entram.",
+        "Required": "Exigida pelo administrador para todos os membros da empresa."
+      }
+    },
+    "status": {
+      "on": "Ativada",
+      "off": "Desativada"
+    },
+    "buttons": {
+      "turn_on": "Ativar",
+      "turn_off": "Desativar",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    },
+    "code": {
+      "subtitle_turn_on": "Para ativar a autenticação de dois fatores, digite o código que enviamos para {destination}.",
+      "subtitle_turn_off": "Para desativar a autenticação de dois fatores, digite o código que enviamos para {destination}."
+    },
+    "hints": {
+      "admin_managed": "O administrador da loja gerencia a autenticação de dois fatores.",
+      "locked": "Definida pelo administrador: você não pode desativá-la.",
+      "organization": "Sua empresa a ativou para todos os membros, então você não pode alterá-la aqui."
+    },
+    "messages": {
+      "confirm_email": "Confirme seu e-mail para ativar a autenticação de dois fatores.",
+      "turned_on": "A autenticação de dois fatores está ativada.",
+      "turned_off": "A autenticação de dois fatores está desativada."
+    }
+  }
+}

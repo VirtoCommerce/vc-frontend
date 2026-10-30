@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Two-factor authentication",
+      "not_required": "Signing in needs only your password.",
+      "required_by": {
+        "User": "You turned it on: we send a code to {destination} every time you sign in.",
+        "Administrator": "The administrator turned it on for your account: we send a code to {destination} every time you sign in.",
+        "Organization": "Your company requires it: we send a code to {destination} every time you sign in.",
+        "Store": "The store requires it: we send a code to {destination} every time you sign in.",
+        "Global": "The store requires it: we send a code to {destination} every time you sign in."
+      }
+    },
+    "organization": {
+      "title": "Two-factor authentication for the company",
+      "modes": {
+        "Off": "Not required: each member decides for themselves.",
+        "Enabled": "Required for all company members: a code is sent to their email every time they sign in.",
+        "Required": "Required for all company members by the administrator."
+      }
+    },
+    "status": {
+      "on": "On",
+      "off": "Off"
+    },
+    "buttons": {
+      "turn_on": "Turn on",
+      "turn_off": "Turn off",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "code": {
+      "subtitle_turn_on": "To turn on two-factor authentication, enter the code we sent to {destination}.",
+      "subtitle_turn_off": "To turn off two-factor authentication, enter the code we sent to {destination}."
+    },
+    "hints": {
+      "admin_managed": "The store administrator manages two-factor authentication.",
+      "locked": "Set by the administrator: you can't turn it off.",
+      "organization": "Your company turned it on for all its members, so you can't change it here."
+    },
+    "messages": {
+      "confirm_email": "Confirm your email to turn on two-factor authentication.",
+      "turned_on": "Two-factor authentication is on.",
+      "turned_off": "Two-factor authentication is off."
+    }
+  }
+}

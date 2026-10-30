@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Zwei-Faktor-Authentifizierung",
+      "not_required": "Für die Anmeldung ist nur Ihr Passwort erforderlich.",
+      "required_by": {
+        "User": "Sie haben sie aktiviert: Wir senden bei jeder Anmeldung einen Code an {destination}.",
+        "Administrator": "Der Administrator hat sie für Ihr Konto aktiviert: Wir senden bei jeder Anmeldung einen Code an {destination}.",
+        "Organization": "Ihr Unternehmen verlangt sie: Wir senden bei jeder Anmeldung einen Code an {destination}.",
+        "Store": "Der Shop verlangt sie: Wir senden bei jeder Anmeldung einen Code an {destination}.",
+        "Global": "Der Shop verlangt sie: Wir senden bei jeder Anmeldung einen Code an {destination}."
+      }
+    },
+    "organization": {
+      "title": "Zwei-Faktor-Authentifizierung für das Unternehmen",
+      "modes": {
+        "Off": "Nicht erforderlich: Jedes Mitglied entscheidet selbst.",
+        "Enabled": "Für alle Unternehmensmitglieder erforderlich: Bei jeder Anmeldung wird ein Code an ihre E-Mail-Adresse gesendet.",
+        "Required": "Vom Administrator für alle Unternehmensmitglieder vorgeschrieben."
+      }
+    },
+    "status": {
+      "on": "Aktiviert",
+      "off": "Deaktiviert"
+    },
+    "buttons": {
+      "turn_on": "Aktivieren",
+      "turn_off": "Deaktivieren",
+      "cancel": "Abbrechen",
+      "confirm": "Bestätigen"
+    },
+    "code": {
+      "subtitle_turn_on": "Um die Zwei-Faktor-Authentifizierung zu aktivieren, geben Sie den Code ein, den wir an {destination} gesendet haben.",
+      "subtitle_turn_off": "Um die Zwei-Faktor-Authentifizierung zu deaktivieren, geben Sie den Code ein, den wir an {destination} gesendet haben."
+    },
+    "hints": {
+      "admin_managed": "Die Zwei-Faktor-Authentifizierung wird vom Shop-Administrator verwaltet.",
+      "locked": "Vom Administrator festgelegt: Sie können sie nicht deaktivieren.",
+      "organization": "Ihr Unternehmen hat sie für alle Mitglieder aktiviert, daher können Sie dies hier nicht ändern."
+    },
+    "messages": {
+      "confirm_email": "Bestätigen Sie Ihre E-Mail-Adresse, um die Zwei-Faktor-Authentifizierung zu aktivieren.",
+      "turned_on": "Die Zwei-Faktor-Authentifizierung ist aktiviert.",
+      "turned_off": "Die Zwei-Faktor-Authentifizierung ist deaktiviert."
+    }
+  }
+}

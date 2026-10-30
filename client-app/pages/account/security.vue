@@ -69,6 +69,8 @@
         </VcWidget>
       </template>
     </ExtensionPoint>
+
+    <MfaSettingsWidget scope="user" />
   </div>
 </template>
 
@@ -77,6 +79,7 @@ import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { MfaSettingsWidget } from "@/modules/mfa";
 import { useSignInMethods } from "@/shared/account";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
