@@ -11,6 +11,13 @@
     $lg: &;
   }
 
+  // Short plates take the smaller radius, so they never turn into pills.
+  &--size--xs,
+  &--size--sm,
+  &--collapsed {
+    --vc-widget-radius: var(--vc-radius);
+  }
+
   // A plate without its shadow keeps a light edge.
   &--no-shadow {
     --vc-widget-border-width: 1px;
