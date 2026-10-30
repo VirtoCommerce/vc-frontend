@@ -197,8 +197,10 @@ never restates print. Token values apply in print too.
    `blocks/` and `dark/` files and the `@layer vc.design` block that loads them in `index.scss`.
 2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).
 3. Edit `_tokens.scss` (already loaded in `index.scss`, see [Wiring](#wiring)): replace soft's
-   values with yours and set only the tokens from the [token table](#token-table) that differ from
-   classic. Point the font-family tokens at your fonts, or delete both to keep classic's Lato:
+   values with yours and set only the tokens that differ from classic: those from the
+   [token table](#token-table) or, like soft's `--vc-widget-padding-x`, another `--vc-*` property a
+   component reads in its `<style>`. Point the font-family tokens at your fonts, or delete both to
+   keep classic's Lato:
    ```scss
    html[data-design="mybrand"] {
      --vc-radius: 0px;
