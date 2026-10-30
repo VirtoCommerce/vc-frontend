@@ -32,7 +32,7 @@ const DEFAULT_CURRENCY = "USD";
 
 const docsTheme = create({
   base: "light",
-  fontBase: "Lato, sans-serif",
+  fontBase: "var(--vc-base-font-family, Lato, sans-serif)",
 });
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
