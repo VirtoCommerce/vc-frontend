@@ -36,8 +36,9 @@ Before claiming a component lacks a prop, slot, event or token, open its source:
 2. `Vc*` components are globally registered: don't import them for template use (importing for
    `InstanceType<typeof VcX>` or `h()` is fine).
 3. **Deprecated in new code** *(eslint warn)*: `VcLineItemProperty`, `VcPriceDisplayCatalog`,
-   `VcItemPriceCatalog`, `VcDateSelector`; variant values `solid-light` → `soft`, `no-border` → `surface`,
-   `no-background` → `ghost`, `outline-dark` → `tonal`. Canonical variants `solid | outline | soft | surface | ghost | tonal`;
+   `VcItemPriceCatalog`, `VcExpansionPanel`, `VcExpansionPanels`, `VcDateSelector`; variant values
+   `solid-light` → `soft`, `no-border` → `surface`, `no-background` → `ghost`, `outline-dark` → `tonal`.
+   Canonical variants `solid | outline | soft | surface | ghost | tonal`;
    colours `primary secondary neutral accent info success warning danger`. A deprecated value prints a console
    warning — a new one in the diff is a finding even when it renders.
 
