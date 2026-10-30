@@ -6,6 +6,8 @@ import { pathToFileURL } from "node:url";
 
 const STYLE_FILE = /\.(vue|scss|css)$/;
 const KIT_OR_GLOBAL_STYLES = /(^|\/)client-app\/(ui-kit|assets\/styles)\//;
+// A design's block and dark files; nested ones fail check:designs, so they stay guarded.
+const DESIGN_BLOCK_STYLES = /(^|\/)client-app\/designs\/[^/]+\/(blocks|dark)\/[^/]+$/;
 const STYLE_BLOCK = /<style[^>]*>([\s\S]*?)<\/style>/g;
 const VC_SELECTOR = /\.vc-[\w-]+/;
 const APPLY = /@apply\s([^;]+)/g;
@@ -33,7 +35,7 @@ export function check(toolInput, readCurrent) {
     return "`!important` is forbidden in every form (styles.md §18). Fix the conflict at its cause: kit props / `--vc-<component>-…` tokens, or selector order. If that isn't possible, ask the developer.";
   }
   if (getAdded(before.vcSelectors, after.vcSelectors).length) {
-    return "No `.vc-*` selectors outside the UI kit (ui-kit.md §9). Use the component's props/slots or its `--vc-<component>-…` tokens; if neither fits, tell the developer instead of working around it.";
+    return "No `.vc-*` selectors outside the UI kit, `client-app/assets/styles/` and a design's `client-app/designs/<name>/blocks/` and `dark/` files (ui-kit.md §9). Use the component's props/slots or its `--vc-<component>-…` tokens; if neither fits, tell the developer instead of working around it.";
   }
   return null;
 }
@@ -65,7 +67,10 @@ function findViolations(file, text) {
       ...getLines(text).filter((line) => line.includes("!important")),
       ...classLists.flatMap((list) => list.split(/\s+/)).filter((name) => IMPORTANT_UTILITY.test(name)),
     ],
-    vcSelectors: KIT_OR_GLOBAL_STYLES.test(file) ? [] : getLines(styles).filter((line) => VC_SELECTOR.test(line)),
+    vcSelectors:
+      KIT_OR_GLOBAL_STYLES.test(file) || DESIGN_BLOCK_STYLES.test(file)
+        ? []
+        : getLines(styles).filter((line) => VC_SELECTOR.test(line)),
   };
 }
 

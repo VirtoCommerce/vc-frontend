@@ -23,7 +23,7 @@ const meta: Meta<typeof VcProductTitle> = {
   },
   render: (args) => ({
     setup: () => ({ args }),
-    template: '<VcProductTitle class="text-sm" v-bind="args" />',
+    template: '<VcProductTitle class="[--vc-product-title-font-size:theme(fontSize.sm)]" v-bind="args" />',
   }),
 };
 
@@ -34,7 +34,7 @@ export const Basic: StoryType = {
   parameters: {
     docs: {
       source: {
-        code: `<VcProductTitle title="Product title" class="text-sm" />`,
+        code: `<VcProductTitle title="Product title" class="[--vc-product-title-font-size:theme(fontSize.sm)]" />`,
       },
     },
   },
@@ -47,7 +47,7 @@ export const Link: StoryType = {
   parameters: {
     docs: {
       source: {
-        code: `<VcProductTitle title="Product title" to="/some/link" class="text-sm" />`,
+        code: `<VcProductTitle title="Product title" to="/some/link" class="[--vc-product-title-font-size:theme(fontSize.sm)]" />`,
       },
     },
   },
@@ -61,7 +61,7 @@ export const Disabled: StoryType = {
   parameters: {
     docs: {
       source: {
-        code: `<VcProductTitle title="Product title" to="/some/link" disabled class="text-sm" />`,
+        code: `<VcProductTitle title="Product title" to="/some/link" disabled class="[--vc-product-title-font-size:theme(fontSize.sm)]" />`,
       },
     },
   },
@@ -72,27 +72,27 @@ export const RouterNavigation: StoryType = {
     template: `
     <div class="space-y-4 p-6">
       <h2 class="text-xl font-bold">Router Navigation Test</h2>
-      <p class="text-gray-600">Click the product titles below to test navigation:</p>
+      <p class="text-neutral-600">Click the product titles below to test navigation:</p>
 
       <div class="space-y-3">
-        <VcProductTitle to="/some/link" class="text-lg">
+        <VcProductTitle to="/some/link" class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Product Title with Link
         </VcProductTitle>
-        <VcProductTitle to="/catalog" class="text-lg">
+        <VcProductTitle to="/catalog" class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Catalog Product
         </VcProductTitle>
-        <VcProductTitle to="/product/123" class="text-lg">
+        <VcProductTitle to="/product/123" class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Product #123
         </VcProductTitle>
-        <VcProductTitle to="/nonexistent" class="text-lg">
+        <VcProductTitle to="/nonexistent" class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Non-existent Product
         </VcProductTitle>
-        <VcProductTitle disabled class="text-lg text-gray-400">
+        <VcProductTitle disabled class="[--vc-product-title-font-size:theme(fontSize.lg)]">
           Disabled Product Title
         </VcProductTitle>
       </div>
 
-      <div class="mt-6 p-4 bg-gray-100 rounded">
+      <div class="mt-6 p-4 bg-neutral-100 rounded">
         <h3 class="font-semibold mb-2">Current URL:</h3>
         <code class="text-sm">{{ $route.path }}</code>
       </div>
@@ -103,10 +103,10 @@ export const RouterNavigation: StoryType = {
     docs: {
       source: {
         code: `
-          <VcProductTitle to="/some/link" class="text-lg">Product Title with Link</VcProductTitle>
-          <VcProductTitle to="/catalog" class="text-lg">Catalog Product</VcProductTitle>
-          <VcProductTitle to="/product/123" class="text-lg">Product #123</VcProductTitle>
-          <VcProductTitle disabled class="text-lg text-gray-400">Disabled Product Title</VcProductTitle>
+          <VcProductTitle to="/some/link" class="[--vc-product-title-font-size:theme(fontSize.lg)]">Product Title with Link</VcProductTitle>
+          <VcProductTitle to="/catalog" class="[--vc-product-title-font-size:theme(fontSize.lg)]">Catalog Product</VcProductTitle>
+          <VcProductTitle to="/product/123" class="[--vc-product-title-font-size:theme(fontSize.lg)]">Product #123</VcProductTitle>
+          <VcProductTitle disabled class="[--vc-product-title-font-size:theme(fontSize.lg)]">Disabled Product Title</VcProductTitle>
         `,
       },
     },
@@ -116,12 +116,13 @@ export const RouterNavigation: StoryType = {
 export const Responsive: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
-    template: '<VcProductTitle class="text-lg md:text-sm" v-bind="args">Product title</VcProductTitle>',
+    template:
+      '<VcProductTitle class="[--vc-product-title-font-size:theme(fontSize.lg)] md:[--vc-product-title-font-size:theme(fontSize.sm)]" v-bind="args">Product title</VcProductTitle>',
   }),
   parameters: {
     docs: {
       source: {
-        code: `<VcProductTitle title="Product title" class="text-lg md:text-sm" />`,
+        code: `<VcProductTitle title="Product title" class="[--vc-product-title-font-size:theme(fontSize.lg)] md:[--vc-product-title-font-size:theme(fontSize.sm)]" />`,
       },
     },
   },

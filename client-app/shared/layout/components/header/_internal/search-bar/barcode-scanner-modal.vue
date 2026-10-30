@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
   }
 
   &__skeleton-inner {
-    @apply h-60 w-full #{!important};
+    @apply h-60 w-full;
   }
 
   &__input-label,

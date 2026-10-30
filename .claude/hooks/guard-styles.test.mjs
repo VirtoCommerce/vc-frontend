@@ -54,6 +54,31 @@ test("blocks .vc-* selectors in styles outside the kit, allows them inside", () 
   );
 });
 
+test("allows .vc-* in a design's block and dark files, nowhere else in designs", () => {
+  const style = (css) => `<style lang="scss">\n${css}\n</style>`;
+  assert.equal(edit("client-app/designs/soft/blocks/vc-button.scss", ".vc-button {"), null);
+  assert.equal(edit("client-app/designs/soft/dark/vc-button.scss", "html.dark .vc-button {"), null);
+  assert.equal(edit(".claude/worktrees/w/client-app/designs/soft/blocks/vc-button.scss", ".vc-button {"), null);
+  assert.equal(
+    check(
+      { file_path: "C:\\repo\\client-app\\designs\\soft\\dark\\vc-button.scss", old_string: "", new_string: ".vc-x {" },
+      () => "",
+    ),
+    null,
+  );
+  assert.ok(edit("client-app/designs/soft/index.scss", ".vc-button {"));
+  assert.ok(edit("client-app/designs/soft/_tokens.scss", ".vc-button {"));
+  assert.ok(edit("client-app/designs/soft/blocks/nested/x.scss", ".vc-button {"));
+  assert.ok(edit("client-app/designs/blocks/vc-button.scss", ".vc-button {"));
+  assert.ok(edit("client-app/shared/x.scss", ".vc-button {"));
+  assert.ok(write("client-app/shared/x.vue", style("  .vc-button {")));
+});
+
+test("blocks !important in a design's block file", () => {
+  assert.ok(edit("client-app/designs/soft/blocks/vc-button.scss", "  color: red !important;"));
+  assert.ok(edit("client-app/designs/soft/dark/vc-button.scss", "  @apply flex !mt-4;"));
+});
+
 test("passes .vc-* outside <style>", () => {
   assert.equal(edit("client-app/shared/a.vue", 'el.querySelector(".a .vc-widget")'), null);
   assert.equal(edit("client-app/shared/a.vue", "<!-- see .vc-widget -->"), null);

@@ -22,12 +22,7 @@
           :order="order"
         />
 
-        <VcButton
-          v-if="showReorderButton"
-          :loading="loadingAddItemsToCart"
-          class="min-w-[8.5rem]"
-          @click="reorderItems"
-        >
+        <VcButton v-if="showReorderButton" :loading="loadingAddItemsToCart" @click="reorderItems">
           {{ $t("common.buttons.reorder_all") }}
         </VcButton>
       </div>

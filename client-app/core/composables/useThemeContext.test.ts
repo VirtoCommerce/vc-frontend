@@ -101,6 +101,7 @@ const hoisted = vi.hoisted(() => {
   return {
     dynamicPresetsCache,
     mockPreset,
+    settings: {},
   };
 });
 
@@ -296,7 +297,9 @@ vi.mock("@/assets/presets", () => ({
 vi.mock("@/config/settings_data.json", () => ({
   default: {
     current: "default",
-    settings: {},
+    get settings() {
+      return hoisted.settings;
+    },
   },
 }));
 
@@ -317,6 +320,23 @@ describe("useThemeContext - preset loading functions", () => {
   afterEach(() => {
     vi.clearAllMocks();
     globalThis.fetch = originalFetch;
+    hoisted.settings = {};
+  });
+
+  describe("setThemeContext", () => {
+    it.each([
+      ["soft", "soft"],
+      ["Soft", "classic"],
+      [undefined, "classic"],
+    ])("hands the design %j on as %j, as <html data-design> gets it", async (design, expected) => {
+      hoisted.settings = { design };
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, themeContext } = useThemeContext();
+
+      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
+
+      expect(themeContext.value.settings.design).toBe(expected);
+    });
   });
 
   describe("getPredefinedPreset", () => {
@@ -466,6 +486,40 @@ describe("useThemeContext - preset loading functions", () => {
       expect(globalThis.fetch).not.toHaveBeenCalled();
     });
 
+    it("resolves the requested preset name to its file name", async () => {
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
+
+      globalThis.fetch = vi.fn();
+
+      setThemeContext({
+        id: "test-store",
+        name: "Test Store",
+        settings: {},
+      } as unknown as StoreResponseType);
+
+      await addPresetToThemeContext("Coffee");
+
+      expect(themeContext.value.activePresetName).toBe("coffee");
+    });
+
+    it("leaves <html> without a data-preset attribute", async () => {
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, addPresetToThemeContext } = useThemeContext();
+
+      globalThis.fetch = vi.fn();
+
+      setThemeContext({
+        id: "test-store",
+        name: "Test Store",
+        settings: {},
+      } as unknown as StoreResponseType);
+
+      await addPresetToThemeContext("coffee");
+
+      expect(document.documentElement.hasAttribute("data-preset")).toBe(false);
+    });
+
     it("falls back to current preset when requested preset is not found", async () => {
       const { useThemeContext } = await importComposable();
       const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
@@ -486,6 +540,7 @@ describe("useThemeContext - preset loading functions", () => {
 
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#default");
+      expect(themeContext.value.activePresetName).toBe("default");
       expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/non-existent-preset.json");
     });
 

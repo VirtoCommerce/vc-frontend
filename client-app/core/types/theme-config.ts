@@ -399,6 +399,7 @@ export interface IThemeConfigSettings {
   header_menu_link_list?: string;
   desktop_menu_mode?: DesktopMenuModeType;
   icon_variant?: "solid" | "outline";
+  design?: string;
   products_menu_link_list?: string;
   footer_menu_link_list?: string;
   image_thumbnails_enabled?: boolean;
