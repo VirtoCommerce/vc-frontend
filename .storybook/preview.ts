@@ -3,7 +3,13 @@ import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
 import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
-import { CLASSIC_DESIGN, DESIGN_NAMES, resolveDesign, setDesignAttribute } from "../client-app/core/utilities/design";
+import {
+  CLASSIC_DESIGN,
+  DESIGN_NAMES,
+  loadDesignFonts,
+  resolveDesign,
+  setDesignAttribute,
+} from "../client-app/core/utilities/design";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
@@ -100,6 +106,7 @@ function toolbarTitle(name: string): string {
 let currentStyleElement: HTMLStyleElement | null = null;
 let currentPresetName: PresetNameType | null = null;
 let loadingPreset: PresetNameType | null = null;
+let currentDesign: string | null = null;
 let i18nConfigured = false;
 
 // Enable for debugging: track DOM changes (only in dev mode)
@@ -284,7 +291,14 @@ const preview: Preview = {
       }
 
       applyDarkMode(darkMode);
-      setDesignAttribute(resolveDesign(context.globals.design));
+
+      const design = resolveDesign(context.globals.design);
+      setDesignAttribute(design);
+
+      if (design !== currentDesign) {
+        currentDesign = design;
+        loadDesignFonts(design);
+      }
 
       return story();
     },
