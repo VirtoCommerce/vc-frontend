@@ -11,6 +11,11 @@
     $lg: &;
   }
 
+  // A plate without its shadow keeps a light edge.
+  &--no-shadow {
+    --vc-widget-border-width: 1px;
+  }
+
   &__title {
     #{$lg} & {
       font-size: theme("fontSize.base");
