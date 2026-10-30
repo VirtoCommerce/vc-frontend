@@ -684,7 +684,7 @@
 
 **VcShape** (`client-app/ui-kit/components/molecules/shape/vc-shape.vue`)
 - Props: size?: string, icon?: string, iconColor?: string, bgColor?: string, img?: string, mask?: string (an icon name used as the mask; wins over --vc-shape-mask-image)
-- CSS vars: --vc-shape-size, --vc-shape-bg-color, --vc-shape-color, --vc-shape-mask-image (default the polygon; `none` drops the mask), --vc-shape-radius (default 0; shows once the mask image is none)
+- CSS vars: --vc-shape-size, --vc-shape-bg-color, --vc-shape-color, --vc-shape-mask-image (default the polygon; a disc is `url("@/ui-kit/icons/solid/circle-mask.svg")`, the icon `mask="circle-mask"` uses; `none` drops the mask)
 - Features: icon or image in a masked tile
 
 **VcCompositeShape** (`client-app/ui-kit/components/molecules/composite-shape/vc-composite-shape.vue`)

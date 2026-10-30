@@ -4,8 +4,7 @@ html[data-design="soft"] {
   --vc-heading-font-family: Geologica, sans-serif;
 
   // VcShape
-  --vc-shape-mask-image: none;
-  --vc-shape-radius: 9999px;
+  --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
 
   // VcWidget
   --vc-widget-radius: 1.375rem;
