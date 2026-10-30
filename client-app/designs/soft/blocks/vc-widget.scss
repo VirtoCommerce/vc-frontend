@@ -1,0 +1,19 @@
+.vc-widget {
+  $lg: "";
+
+  // Small widgets (filters, side menus) keep the classic inset: `initial` drops the token.
+  &--size--xs,
+  &--size--sm {
+    --vc-widget-padding-x: initial;
+  }
+
+  &--size--lg {
+    $lg: &;
+  }
+
+  &__title {
+    #{$lg} & {
+      font-size: theme("fontSize.base");
+    }
+  }
+}

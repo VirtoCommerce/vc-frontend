@@ -511,7 +511,7 @@
 - Events: copied
 - Features: clipboard API, tooltip feedback, success animation
 
-**VcWidget** (`client-app/ui-kit/components/molecules/widget/vc-widget.vue`)
+**VcWidget** (`client-app/ui-kit/components/organisms/widget/vc-widget.vue`)
 - Props:
   - title?: string
   - prependIcon?: string
@@ -521,6 +521,7 @@
   - collapsed?: boolean
   - shadow?: boolean (default: true)
   - border?: boolean (default: true)
+  - seamless?: boolean (draws no plate: border, background, shadow, radius, dividers and inline padding go; header and vertical spacing stay)
 - Emits: toggleCollapse (boolean)
 - Slots:
   - default-container (receives {collapsible, collapsed})
@@ -533,12 +534,12 @@
   - footer-container
   - footer
 - Features: header with actions, collapsible behavior, custom sizing, shadow/border control
-- Types: vc-widget.types.d.ts
+- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (default the per-size ladder), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
 
-**VcWidgetSkeleton** (`molecules/widget-skeleton/vc-widget-skeleton.vue`)
-- Props: height, lines
-- Features: shimmer animation, customizable
-- Types: vc-widget-skeleton.types.d.ts
+**VcWidgetSkeleton** (`client-app/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue`)
+- Props: head?: boolean, foot?: boolean, noShadow?: boolean, size?: "xs" | "sm" | "md" | "lg" (default: "md")
+- Slots: header-container, header, default-container, default, footer-container, footer (their leaf elements become placeholder bars)
+- Features: renders a VcWidget of its size, so radius, insets and header height match the loaded widget in every design; VcWidget frame props (collapsed, border, …), classes and listeners pass through, its title, prependIcon, appendIcon and collapsible do not (a placeholder renders no real content and never takes focus or toggles; collapsed still passes); pulse animation
 
 **VcStatWidget** (`client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue`)
 - Props:
@@ -682,9 +683,9 @@
 ### CONTENT
 
 **VcShape** (`client-app/ui-kit/components/molecules/shape/vc-shape.vue`)
-- Props: type (circle/square/triangle/etc), size, color
-- Features: decorative shapes, size/color variants
-- Types: vc-shape.types.d.ts
+- Props: size?: string, icon?: string, iconColor?: string, bgColor?: string, img?: string, mask?: string (an icon name used as the mask; wins over --vc-shape-mask-image)
+- CSS vars: --vc-shape-size, --vc-shape-bg-color, --vc-shape-color, --vc-shape-mask-image (default the polygon; a disc is `url("@/ui-kit/icons/solid/circle-mask.svg")`, the icon `mask="circle-mask"` uses; `none` drops the mask)
+- Features: icon or image in a masked tile
 
 **VcCompositeShape** (`client-app/ui-kit/components/molecules/composite-shape/vc-composite-shape.vue`)
 - Props: shapes (array), layout
@@ -900,6 +901,7 @@ Base container component for displaying product cards with three adaptive layout
   - compact?: boolean - compact mode (icon-only buttons)
 - Emits: update:page (number)
 - Features: scroll to top on page change, ellipsis for many pages, responsive wrapping, compact mode
+- CSS vars: --vc-pagination-page-active-bg, --vc-pagination-page-active-text, --vc-pagination-pages-gap (default 0), --vc-pagination-page-radius (default the theme's `rounded`), --vc-pagination-page-border-width (default 0, no ring), --vc-pagination-page-border-color, --vc-pagination-page-hover-border-color, --vc-pagination-ellipsis-muted (0 or 1, default 0; 1 greys the ellipsis to neutral-400)
 - Types: vc-pagination.types.d.ts
 - **Real Usage Pattern:**
 

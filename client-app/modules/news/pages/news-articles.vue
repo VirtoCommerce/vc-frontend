@@ -50,7 +50,9 @@
 
     <div v-else>
       <div v-if="loading" class="news-articles__grid">
-        <VcWidgetSkeleton v-for="i in 8" :key="i" head size="lg" />
+        <VcWidgetSkeleton v-for="i in ARTICLES_PER_PAGE" :key="i">
+          <div v-for="line in 8" :key="line" />
+        </VcWidgetSkeleton>
       </div>
 
       <div v-if="!loading && newsArticles?.length" class="news-articles__grid">

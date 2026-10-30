@@ -35,6 +35,7 @@ module.exports = {
           "(^|/)types([.]ts$|/)", // type barrels and types/ folders
           "(^|/)models/[^/]+Type[.]ts$", // page-builder type/model definitions
           "(^|/)public/", // static assets served by URL (e.g. service workers)
+          "^client-app/designs/[^/]+/design[.]ts$", // design folders, loaded by import.meta.glob
         ],
       },
       to: {},
