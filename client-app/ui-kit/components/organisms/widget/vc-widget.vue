@@ -259,6 +259,16 @@ watchEffect(() => {
     letter-spacing: var(--vc-widget-title-letter-spacing, var(--vc-heading-letter-spacing, inherit));
   }
 
+  &__slot-container {
+    &:first-child {
+      @apply rounded-t-[--inner-radius];
+    }
+
+    &:last-child {
+      @apply rounded-b-[--inner-radius];
+    }
+  }
+
   &__slot {
     @apply pt-4 pb-5 px-[--p-x] empty:hidden;
   }
