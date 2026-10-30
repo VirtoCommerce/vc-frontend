@@ -60,6 +60,20 @@ describe("VcWidgetSkeleton", () => {
     expect(wrapper.find<HTMLElement>(".vc-widget__slot-container").element.style.display).toBe("none");
   });
 
+  it("keeps a collapsible widget's button and class off the skeleton", () => {
+    const wrapper = mountSkeleton({ head: true }, { collapsible: true });
+
+    expect(wrapper.find("button").exists()).toBe(false);
+    expect(wrapper.classes()).not.toContain("vc-widget--collapsible");
+  });
+
+  it("still hides the body of a skeleton given collapsible and collapsed", () => {
+    const wrapper = mountSkeleton({ head: true }, { collapsible: true, collapsed: true });
+
+    expect(wrapper.find("button").exists()).toBe(false);
+    expect(wrapper.find<HTMLElement>(".vc-widget__slot-container").element.style.display).toBe("none");
+  });
+
   it("draws the header and footer placeholders only with head and foot", () => {
     const plain = mountSkeleton();
     const full = mountSkeleton({ head: true, foot: true });

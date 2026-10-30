@@ -53,7 +53,7 @@
 import { omitBy } from "lodash-es";
 import { camelize, computed, useAttrs } from "vue";
 
-/** Renders a VcWidget; its frame props, classes and listeners pass through, its title and icons do not. */
+/** Renders a VcWidget; its frame props, classes and listeners pass through, its title, icons and collapsible do not. */
 interface IProps {
   head?: boolean;
   foot?: boolean;
@@ -69,7 +69,7 @@ withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const WIDGET_CONTENT_PROPS = ["title", "prependIcon", "appendIcon"];
+const WIDGET_CONTENT_PROPS = ["title", "prependIcon", "appendIcon", "collapsible"];
 
 const attrs = useAttrs();
 const widgetAttrs = computed(() => omitBy(attrs, (_, name) => WIDGET_CONTENT_PROPS.includes(camelize(name))));
