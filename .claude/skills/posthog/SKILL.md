@@ -25,7 +25,8 @@ component never talks to PostHog directly: it calls `analytics("<event>", …)` 
 - `distinct_id` = **platform user id** (`useUser().user.value.id`). The backend module sends `order_created`,
   `order_paid`, `order_cancelled`, `user_registered`, `user_logged_in`, `quote_requested` under the same id.
 - Group type `organization`, key = organization id. No names, emails or addresses in any property — ids only.
-- Person properties: `contact_id`, `organization_id`, `is_sales_rep`, `session_kind` (`self | impersonated | anonymous`).
+- Person properties: `contact_id`, `organization_id`, `is_sales_rep`, `session_kind` (`self | impersonated | anonymous`);
+  `session_kind` and `is_sales_rep` are also super properties on every event (filter impersonated sessions there).
 - Shared property names: `store_id`, `order_id`, `order_number`, `currency`, `total`, `items_count`, `item_ids`,
   `item_skus`, `organization_id`, `quote_id`, `form_name`.
 - Event names are GA4's, snake_case. A new event is named for the fact (`form_open`), never for the UI (`button_click`).

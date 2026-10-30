@@ -7,8 +7,9 @@ import { canUseDOM } from "@/core/utilities/analytics/environment";
 import { lineItemToAnalyticsItem, productToAnalyticsItem } from "@/core/utilities/analytics/items";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { useUser } from "@/shared/account";
-import { capture, setClient } from "./client";
+import { capture, flushPendingCaptures, markUnavailable, setClient } from "./client";
 import { DEBUG_PREFIX, DEFAULT_API_HOST, MODULE_ID, POSTHOG_SETTINGS_MAPPING, TRACKER_NAME } from "./constants";
+import { events } from "./events";
 import { applyIdentity, identityKey } from "./identity";
 import { trackPageViews } from "./page-views";
 import { sendPendingLogin } from "./pending-login";
@@ -25,12 +26,32 @@ export async function init(router: Router, { extendEvents }: InitOptionsType = {
     return;
   }
 
-  let posthog: PostHog;
-  try {
-    ({ default: posthog } = await import("posthog-js"));
-  } catch (e) {
-    ignoreChunkLoadFailure(e);
-    Logger.error(DEBUG_PREFIX, "SDK load failed", e);
+  // The SDK chunk is the slow part. The tracker and the router hook go up before it lands — captures are kept in
+  // `client` until then — so events and page views of the first render are not lost on a direct page load.
+  const sdkPromise: Promise<PostHog | undefined> = import("posthog-js")
+    .then((sdk) => sdk.default)
+    .catch((e: unknown) => {
+      ignoreChunkLoadFailure(e);
+      Logger.error(DEBUG_PREFIX, "SDK load failed", e);
+      return undefined;
+    });
+
+  const { addTracker } = useAnalytics();
+  addTracker({
+    meta: {
+      name: TRACKER_NAME,
+    },
+    events: {
+      ...events,
+      ...extendEvents?.({ capture, productToAnalyticsItem, lineItemToAnalyticsItem }),
+    },
+  });
+
+  trackPageViews(router);
+
+  const posthog = await sdkPromise;
+  if (!posthog) {
+    markUnavailable();
     return;
   }
 
@@ -53,20 +74,7 @@ export async function init(router: Router, { extendEvents }: InitOptionsType = {
   // Immediate, so the first page view and a pending login go out under this page's identity. Watched after that:
   // `setUser` replaces the user in place when another tab signs in.
   watch(identityKey, applyIdentity, { immediate: true });
-
-  const { addTracker } = useAnalytics();
-  const { events } = await import("./events");
-  addTracker({
-    meta: {
-      name: TRACKER_NAME,
-    },
-    events: {
-      ...events,
-      ...extendEvents?.({ capture, productToAnalyticsItem, lineItemToAnalyticsItem }),
-    },
-  });
-
-  trackPageViews(router);
+  flushPendingCaptures();
 
   // Last, after the identity above: the new user's, when this is the page a sign-in landed on.
   const { isAuthenticated } = useUser();

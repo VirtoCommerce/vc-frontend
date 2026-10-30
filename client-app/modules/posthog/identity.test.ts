@@ -12,6 +12,8 @@ const hoisted = vi.hoisted(() => ({
   client: {
     identify: vi.fn(),
     group: vi.fn(),
+    register: vi.fn(),
+    resetGroups: vi.fn(),
     reset: vi.fn(),
   },
   hasClient: true,
@@ -91,6 +93,8 @@ describe("applyIdentity", () => {
     hoisted.hasClient = true;
     hoisted.client.identify.mockReset();
     hoisted.client.group.mockReset();
+    hoisted.client.register.mockReset();
+    hoisted.client.resetGroups.mockReset();
     hoisted.client.reset.mockReset();
     localStorage.clear();
   });
@@ -122,6 +126,27 @@ describe("applyIdentity", () => {
   });
 
   // Free text, and it can be a person's name (a sole trader's company).
+  // Session properties ride on every event: a person property keeps only the latest session, so an impersonated
+  // visit could not be told apart from the customer's own ones afterwards.
+  it("registers the session kind and the sales-rep flag as super properties", () => {
+    signIn({ ...CONTACT, operator: { userName: "rep@acme.test" }, permissions: ["sales-rep:access"] });
+
+    applyIdentity();
+
+    expect(hoisted.client.register).toHaveBeenCalledWith({
+      [PERSON_PROPERTY_NAMES.sessionKind]: "impersonated",
+      [PERSON_PROPERTY_NAMES.isSalesRep]: true,
+    });
+  });
+
+  it("clears the groups for a customer without an organization", () => {
+    signIn({ id: "user-2", contact: { id: "contact-2" } });
+
+    applyIdentity();
+
+    expect(hoisted.client.resetGroups).toHaveBeenCalledTimes(1);
+  });
+
   it("does not send the organization name", () => {
     signIn(CONTACT);
 

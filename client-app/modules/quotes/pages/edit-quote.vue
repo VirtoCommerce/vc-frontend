@@ -209,8 +209,8 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const originalQuote = ref<QuoteType>();
-// `fetchQuote` runs on every change of its inputs; the form is opened once.
-let isFormOpenReported = false;
+// `fetchQuote` runs on every change of its inputs; the form is opened once per quote.
+let formOpenReportedQuoteId: string | undefined;
 const billingAddressEqualsShipping = ref<boolean>(true);
 const comment = ref<string>();
 const commentValid = ref(true);
@@ -431,7 +431,10 @@ async function saveChanges(): Promise<void> {
 }
 
 async function submit(): Promise<void> {
-  const quoteId = quote.value!.id;
+  if (!quote.value) {
+    return;
+  }
+  const quoteId = quote.value.id;
 
   if (canSaveChanges.value) {
     try {
@@ -500,8 +503,8 @@ watchEffect(async () => {
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 
-  if (quote.value?.status === "Draft" && !isFormOpenReported) {
-    isFormOpenReported = true;
+  if (quote.value?.status === "Draft" && formOpenReportedQuoteId !== quote.value.id) {
+    formOpenReportedQuoteId = quote.value.id;
     analytics("formOpen", QUOTE_REQUEST_FORM_NAME, { quote_id: quote.value.id });
   }
 });
