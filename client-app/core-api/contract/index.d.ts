@@ -31,9 +31,9 @@ interface IProps$F {
     square?: boolean;
     maxWidth?: string;
 }
-declare var __VLS_1$9: {};
+declare var __VLS_1$8: {};
 type __VLS_Slots$p = {} & {
-    default?: (props: typeof __VLS_1$9) => any;
+    default?: (props: typeof __VLS_1$8) => any;
 };
 declare const __VLS_base$p: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$F> & Readonly<{}>, {
     size: VcBadgeSizeType;
@@ -117,9 +117,9 @@ type CheckboxGroupValueType = string | number | object;
 interface IProps$C {
     modelValue?: (string | number | object)[];
 }
-declare var __VLS_1$8: {};
+declare var __VLS_1$7: {};
 type __VLS_Slots$n = {} & {
-    default?: (props: typeof __VLS_1$8) => any;
+    default?: (props: typeof __VLS_1$7) => any;
 };
 declare const __VLS_base$n: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: CheckboxGroupValueType[]) => any;
@@ -2576,14 +2576,14 @@ declare var __VLS_9$2: {
     };
     tooltipId: string;
 };
-declare var __VLS_12$1: {};
-declare var __VLS_15: {};
+declare var __VLS_12$2: {};
+declare var __VLS_15$1: {};
 type __VLS_Slots$k = {} & {
     default?: (props: typeof __VLS_9$2) => any;
 } & {
-    trigger?: (props: typeof __VLS_12$1) => any;
+    trigger?: (props: typeof __VLS_12$2) => any;
 } & {
-    content?: (props: typeof __VLS_15) => any;
+    content?: (props: typeof __VLS_15$1) => any;
 };
 declare const __VLS_base$k: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     shown: (isShown: boolean) => any;
@@ -2613,11 +2613,11 @@ interface IProps$u {
     shadow?: boolean;
     closable?: boolean;
 }
-declare var __VLS_1$7: {};
+declare var __VLS_1$6: {};
 declare var __VLS_8$5: {};
 declare var __VLS_10$2: {};
 type __VLS_Slots$j = {} & {
-    'main-icon'?: (props: typeof __VLS_1$7) => any;
+    'main-icon'?: (props: typeof __VLS_1$6) => any;
 } & {
     default?: (props: typeof __VLS_8$5) => any;
 } & {
@@ -2861,9 +2861,9 @@ interface IProps$q {
     autoFocus?: boolean;
     trapFocus?: boolean;
 }
-declare var __VLS_1$6: {};
+declare var __VLS_1$5: {};
 type __VLS_Slots$f = {} & {
-    default?: (props: typeof __VLS_1$6) => any;
+    default?: (props: typeof __VLS_1$5) => any;
 };
 declare const __VLS_base$f: vue.DefineComponent<IProps$q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$q> & Readonly<{}>, {
     size: VcDialogSizeType;
@@ -2900,12 +2900,12 @@ type __VLS_WithSlots$e<T, S> = T & {
     };
 };
 
-declare var __VLS_1$5: {};
-declare var __VLS_3$3: {};
+declare var __VLS_1$4: {};
+declare var __VLS_3$2: {};
 type __VLS_Slots$d = {} & {
-    container?: (props: typeof __VLS_1$5) => any;
+    container?: (props: typeof __VLS_1$4) => any;
 } & {
-    default?: (props: typeof __VLS_3$3) => any;
+    default?: (props: typeof __VLS_3$2) => any;
 };
 declare const __VLS_base$d: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
@@ -2927,10 +2927,10 @@ interface IProps$o {
     closable?: boolean;
     size?: VcDialogSizeType;
 }
-declare var __VLS_1$4: {};
+declare var __VLS_1$3: {};
 declare var __VLS_8$3: {};
 type __VLS_Slots$c = {} & {
-    main?: (props: typeof __VLS_1$4) => any;
+    main?: (props: typeof __VLS_1$3) => any;
 } & {
     default?: (props: typeof __VLS_8$3) => any;
 };
@@ -2956,11 +2956,11 @@ interface IProp {
     icon?: string;
     variant?: VcEmptyViewVariantType;
 }
-declare var __VLS_1$3: {};
+declare var __VLS_1$2: {};
 declare var __VLS_8$2: {};
 declare var __VLS_10: {};
 type __VLS_Slots$b = {} & {
-    icon?: (props: typeof __VLS_1$3) => any;
+    icon?: (props: typeof __VLS_1$2) => any;
 } & {
     default?: (props: typeof __VLS_8$2) => any;
 } & {
@@ -3740,9 +3740,9 @@ interface IProps$m {
     fixedSpinner?: boolean;
     noBg?: boolean;
 }
-declare var __VLS_12: {};
+declare var __VLS_12$1: {};
 type __VLS_Slots$a = {} & {
-    default?: (props: typeof __VLS_12) => any;
+    default?: (props: typeof __VLS_12$1) => any;
 };
 declare const __VLS_base$a: vue.DefineComponent<IProps$m, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$m> & Readonly<{}>, {
     visible: boolean;
@@ -3776,13 +3776,13 @@ interface IProps$l {
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};
-declare var __VLS_21: {};
+declare var __VLS_21$1: {};
 type __VLS_Slots$9 = {} & {
     prepend?: (props: typeof __VLS_17) => any;
 } & {
     default?: (props: typeof __VLS_19) => any;
 } & {
-    append?: (props: typeof __VLS_21) => any;
+    append?: (props: typeof __VLS_21$1) => any;
 };
 declare const __VLS_base$9: vue.DefineComponent<IProps$l, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
@@ -3850,7 +3850,7 @@ type HaspopupTokenType = Exclude<VcPopoverRoleType, "tooltip">;
 declare function open(): void;
 declare function close$2(): void;
 declare function toggle(): void;
-declare var __VLS_1$2: {
+declare var __VLS_1$1: {
     open: typeof open;
     close: typeof close$2;
     toggle: typeof toggle;
@@ -3868,7 +3868,7 @@ declare var __VLS_1$2: {
         role: "button";
     };
 };
-declare var __VLS_3$2: {
+declare var __VLS_3$1: {
     open: typeof open;
     close: typeof close$2;
     toggle: typeof toggle;
@@ -3879,15 +3879,15 @@ declare var __VLS_3$2: {
         "aria-controls": string | undefined;
     };
 };
-declare var __VLS_11$2: {
+declare var __VLS_11$1: {
     close: typeof close$2;
 };
 type __VLS_Slots$8 = {} & {
-    default?: (props: typeof __VLS_1$2) => any;
+    default?: (props: typeof __VLS_1$1) => any;
 } & {
-    trigger?: (props: typeof __VLS_3$2) => any;
+    trigger?: (props: typeof __VLS_3$1) => any;
 } & {
-    content?: (props: typeof __VLS_11$2) => any;
+    content?: (props: typeof __VLS_11$1) => any;
 };
 declare const __VLS_base$8: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     toggle: (value: boolean) => any;
@@ -3963,7 +3963,7 @@ declare var __VLS_16: {
     item: any;
     error: boolean;
 };
-declare var __VLS_18: {
+declare var __VLS_18$1: {
     error: boolean;
 };
 declare var __VLS_76: {
@@ -3973,7 +3973,7 @@ declare var __VLS_76: {
 type __VLS_Slots$7 = {} & {
     selected?: (props: typeof __VLS_16) => any;
 } & {
-    placeholder?: (props: typeof __VLS_18) => any;
+    placeholder?: (props: typeof __VLS_18$1) => any;
 } & {
     item?: (props: typeof __VLS_76) => any;
 };
@@ -4558,12 +4558,18 @@ interface IProps$a {
     shadow?: boolean;
     border?: boolean;
     size?: "xs" | "sm" | "md" | "lg";
+    /**
+     * Draws no plate (border, background, shadow, radius, dividers) and no inline padding, so the shell around it
+     * (another widget, a sidebar card) owns them; header and vertical spacing stay. Below `md` it also stays inside
+     * VcContainer's padding.
+     */
+    seamless?: boolean;
 }
 declare var __VLS_9$1: {
     collapsible: boolean;
     collapsed: boolean;
 };
-declare var __VLS_11$1: {
+declare var __VLS_11: {
     collapsible: boolean;
     collapsed: boolean;
 };
@@ -4580,7 +4586,7 @@ declare var __VLS_40: {};
 type __VLS_Slots$4 = {} & {
     'header-container'?: (props: typeof __VLS_9$1) => any;
 } & {
-    header?: (props: typeof __VLS_11$1) => any;
+    header?: (props: typeof __VLS_11) => any;
 } & {
     prepend?: (props: typeof __VLS_13) => any;
 } & {
@@ -4614,30 +4620,31 @@ type __VLS_WithSlots$4<T, S> = T & {
     };
 };
 
+/** Renders a VcWidget; its frame props, classes and listeners pass through, its title, icons and collapsible do not. */
 interface IProps$9 {
     head?: boolean;
     foot?: boolean;
     noShadow?: boolean;
     size?: "xs" | "sm" | "md" | "lg";
 }
-declare var __VLS_1$1: {};
-declare var __VLS_3$1: {};
-declare var __VLS_5$1: {};
-declare var __VLS_7: {};
 declare var __VLS_9: {};
-declare var __VLS_11: {};
+declare var __VLS_12: {};
+declare var __VLS_15: {};
+declare var __VLS_18: {};
+declare var __VLS_21: {};
+declare var __VLS_24: {};
 type __VLS_Slots$3 = {} & {
-    'header-container'?: (props: typeof __VLS_1$1) => any;
+    'header-container'?: (props: typeof __VLS_9) => any;
 } & {
-    header?: (props: typeof __VLS_3$1) => any;
+    header?: (props: typeof __VLS_12) => any;
 } & {
-    'default-container'?: (props: typeof __VLS_5$1) => any;
+    'default-container'?: (props: typeof __VLS_15) => any;
 } & {
-    default?: (props: typeof __VLS_7) => any;
+    default?: (props: typeof __VLS_18) => any;
 } & {
-    'footer-container'?: (props: typeof __VLS_9) => any;
+    'footer-container'?: (props: typeof __VLS_21) => any;
 } & {
-    footer?: (props: typeof __VLS_11) => any;
+    footer?: (props: typeof __VLS_24) => any;
 };
 declare const __VLS_base$3: vue.DefineComponent<IProps$9, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$9> & Readonly<{}>, {
     size: "xs" | "sm" | "md" | "lg";
