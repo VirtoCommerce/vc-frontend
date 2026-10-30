@@ -4,6 +4,11 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const meta: Meta<typeof VcExpansionPanel> = {
   title: "Components/Molecules/VcExpansionPanel",
   component: VcExpansionPanel,
+  tags: ["deprecated"],
+  parameters: {
+    deprecated:
+      "Use VcWidget with `collapsible` instead. Props and slots map as: `expanded` to `collapsed` (inverted), `#icon` to `#prepend`, `#header-content` to `#title`, default slot to `#default-container`.",
+  },
   argTypes: {
     title: {
       control: "text",

@@ -4,6 +4,11 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const meta: Meta<typeof VcExpansionPanels> = {
   title: "Components/Molecules/VcExpansionPanels",
   component: VcExpansionPanels,
+  tags: ["deprecated"],
+  parameters: {
+    deprecated:
+      "Use VcWidget with `collapsible` instead. The group keeps one panel open at a time unless `multiple` is set; with VcWidget, control each `collapsed` state yourself.",
+  },
   argTypes: {
     multiple: {
       control: "boolean",
