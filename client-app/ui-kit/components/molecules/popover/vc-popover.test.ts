@@ -1,5 +1,5 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcPopover } from "@/ui-kit/components/molecules";
@@ -284,6 +284,15 @@ describe("VcPopover", () => {
       await open(wrapper);
 
       expect(document.activeElement).toBe(wrapper.get(".vc-popover__body").element);
+    });
+
+    it("takes focus without scrolling the page to the panel", async () => {
+      const wrapper = createDialogWrapper();
+      const focus = vi.spyOn(wrapper.get(".vc-popover__body").element as HTMLElement, "focus");
+
+      await open(wrapper);
+
+      expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
     });
 
     it("keeps the focus a consumer placed inside the panel before the panel could take it", async () => {
