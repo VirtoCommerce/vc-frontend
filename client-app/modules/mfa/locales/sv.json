@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Tvåfaktorsautentisering",
+      "not_required": "Du behöver bara ditt lösenord för att logga in.",
+      "required_by": {
+        "User": "Du har aktiverat den: vi skickar en kod till {destination} varje gång du loggar in.",
+        "Administrator": "Administratören har aktiverat den för ditt konto: vi skickar en kod till {destination} varje gång du loggar in.",
+        "Organization": "Ditt företag kräver den: vi skickar en kod till {destination} varje gång du loggar in.",
+        "Store": "Butiken kräver den: vi skickar en kod till {destination} varje gång du loggar in.",
+        "Global": "Butiken kräver den: vi skickar en kod till {destination} varje gång du loggar in."
+      }
+    },
+    "organization": {
+      "title": "Tvåfaktorsautentisering för företaget",
+      "modes": {
+        "Off": "Krävs inte: varje medlem bestämmer själv.",
+        "Enabled": "Krävs för alla företagsmedlemmar: en kod skickas till deras e-post varje gång de loggar in.",
+        "Required": "Krävs av administratören för alla företagsmedlemmar."
+      }
+    },
+    "status": {
+      "on": "På",
+      "off": "Av"
+    },
+    "buttons": {
+      "turn_on": "Aktivera",
+      "turn_off": "Inaktivera",
+      "cancel": "Avbryt",
+      "confirm": "Bekräfta"
+    },
+    "code": {
+      "subtitle_turn_on": "Ange koden som vi skickade till {destination} för att aktivera tvåfaktorsautentisering.",
+      "subtitle_turn_off": "Ange koden som vi skickade till {destination} för att inaktivera tvåfaktorsautentisering."
+    },
+    "hints": {
+      "admin_managed": "Butiksadministratören hanterar tvåfaktorsautentiseringen.",
+      "locked": "Inställd av administratören: du kan inte inaktivera den.",
+      "organization": "Ditt företag har aktiverat den för alla sina medlemmar, så du kan inte ändra den här."
+    },
+    "messages": {
+      "confirm_email": "Bekräfta din e-post för att aktivera tvåfaktorsautentisering.",
+      "turned_on": "Tvåfaktorsautentisering är aktiverad.",
+      "turned_off": "Tvåfaktorsautentisering är inaktiverad."
+    }
+  }
+}

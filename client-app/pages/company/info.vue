@@ -98,6 +98,8 @@
         </VcWidget>
       </div>
 
+      <MfaSettingsWidget v-if="canManageOrganizationMfa" scope="organization" />
+
       <!-- Content block -->
       <VcWidget size="lg">
         <div v-if="addresses.length || loadingAddresses" class="mb-4 flex flex-row items-center justify-between gap-3">
@@ -300,6 +302,7 @@ import { useI18n } from "vue-i18n";
 import { string } from "yup";
 import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
+import { MfaSettingsWidget, MFA_PERMISSIONS } from "@/modules/mfa";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import {
   AddOrUpdateCompanyAddressModal,
@@ -368,6 +371,7 @@ const {
 
 const organizationId = computed<string>(() => organization.value!.id);
 const canEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const canManageOrganizationMfa = computed<boolean>(() => checkPermissions(MFA_PERMISSIONS.manageOrganizationMfa));
 
 const columns = computed<VcTableColumnType[]>(() => {
   const result: VcTableColumnType[] = [

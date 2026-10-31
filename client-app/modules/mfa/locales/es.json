@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Autenticación de dos factores",
+      "not_required": "Para iniciar sesión solo necesitas tu contraseña.",
+      "required_by": {
+        "User": "La activaste tú: te enviamos un código a {destination} cada vez que inicias sesión.",
+        "Administrator": "El administrador la activó para tu cuenta: te enviamos un código a {destination} cada vez que inicias sesión.",
+        "Organization": "Tu empresa la exige: te enviamos un código a {destination} cada vez que inicias sesión.",
+        "Store": "La tienda la exige: te enviamos un código a {destination} cada vez que inicias sesión.",
+        "Global": "La tienda la exige: te enviamos un código a {destination} cada vez que inicias sesión."
+      }
+    },
+    "organization": {
+      "title": "Autenticación de dos factores para la empresa",
+      "modes": {
+        "Off": "No obligatoria: cada miembro decide por sí mismo.",
+        "Enabled": "Obligatoria para todos los miembros de la empresa: cada vez que inician sesión, reciben un código en su correo.",
+        "Required": "Obligatoria para todos los miembros de la empresa por decisión del administrador."
+      }
+    },
+    "status": {
+      "on": "Activada",
+      "off": "Desactivada"
+    },
+    "buttons": {
+      "turn_on": "Activar",
+      "turn_off": "Desactivar",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    },
+    "code": {
+      "subtitle_turn_on": "Para activar la autenticación de dos factores, introduce el código que enviamos a {destination}.",
+      "subtitle_turn_off": "Para desactivar la autenticación de dos factores, introduce el código que enviamos a {destination}."
+    },
+    "hints": {
+      "admin_managed": "El administrador de la tienda gestiona la autenticación de dos factores.",
+      "locked": "Configurada por el administrador: no puedes desactivarla.",
+      "organization": "Tu empresa la activó para todos sus miembros, así que no puedes cambiarla aquí."
+    },
+    "messages": {
+      "confirm_email": "Confirma tu correo electrónico para activar la autenticación de dos factores.",
+      "turned_on": "La autenticación de dos factores está activada.",
+      "turned_off": "La autenticación de dos factores está desactivada."
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "双重身份验证",
+      "not_required": "登录只需要密码。",
+      "required_by": {
+        "User": "您已开启：每次登录时，我们都会向 {destination} 发送验证码。",
+        "Administrator": "管理员已为您的账户开启：每次登录时，我们都会向 {destination} 发送验证码。",
+        "Organization": "您的公司要求开启：每次登录时，我们都会向 {destination} 发送验证码。",
+        "Store": "商店要求开启：每次登录时，我们都会向 {destination} 发送验证码。",
+        "Global": "商店要求开启：每次登录时，我们都会向 {destination} 发送验证码。"
+      }
+    },
+    "organization": {
+      "title": "公司的双重身份验证",
+      "modes": {
+        "Off": "非必需：每位成员自行决定。",
+        "Enabled": "所有公司成员必须使用：每次登录时，验证码都会发送到其电子邮件。",
+        "Required": "管理员要求所有公司成员必须使用。"
+      }
+    },
+    "status": {
+      "on": "已开启",
+      "off": "已关闭"
+    },
+    "buttons": {
+      "turn_on": "开启",
+      "turn_off": "关闭",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "code": {
+      "subtitle_turn_on": "要开启双重身份验证，请输入我们发送至 {destination} 的验证码。",
+      "subtitle_turn_off": "要关闭双重身份验证，请输入我们发送至 {destination} 的验证码。"
+    },
+    "hints": {
+      "admin_managed": "双重身份验证由商店管理员管理。",
+      "locked": "由管理员设置：您无法将其关闭。",
+      "organization": "您的公司已为所有成员开启，因此您无法在此更改。"
+    },
+    "messages": {
+      "confirm_email": "请确认您的电子邮件以开启双重身份验证。",
+      "turned_on": "双重身份验证已开启。",
+      "turned_off": "双重身份验证已关闭。"
+    }
+  }
+}

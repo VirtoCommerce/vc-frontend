@@ -58,7 +58,7 @@
       full-width
       :data-test-id="`${idPrefix}-sign-in-button`"
     >
-      {{ $t("shared.sign_in.sign_in_code_form.submit_button") }}
+      {{ submitLabel || $t("shared.sign_in.sign_in_code_form.submit_button") }}
     </VcButton>
 
     <div class="sign-in-code-form__footer">
@@ -106,6 +106,7 @@ interface IProps {
   idPrefix: string;
   subtitle: string;
   backLabel: string;
+  submitLabel?: string;
   loading?: boolean;
   errors?: IdentityErrorType[];
   resendAvailableAt?: number;
@@ -120,6 +121,7 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
+  submitLabel: undefined,
   loading: false,
   errors: undefined,
   resendAvailableAt: undefined,

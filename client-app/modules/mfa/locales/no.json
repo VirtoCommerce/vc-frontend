@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Tofaktorautentisering",
+      "not_required": "Du trenger bare passordet ditt for å logge inn.",
+      "required_by": {
+        "User": "Du har slått den på: vi sender en kode til {destination} hver gang du logger inn.",
+        "Administrator": "Administratoren har slått den på for kontoen din: vi sender en kode til {destination} hver gang du logger inn.",
+        "Organization": "Bedriften din krever den: vi sender en kode til {destination} hver gang du logger inn.",
+        "Store": "Butikken krever den: vi sender en kode til {destination} hver gang du logger inn.",
+        "Global": "Butikken krever den: vi sender en kode til {destination} hver gang du logger inn."
+      }
+    },
+    "organization": {
+      "title": "Tofaktorautentisering for bedriften",
+      "modes": {
+        "Off": "Ikke påkrevd: hvert medlem bestemmer selv.",
+        "Enabled": "Påkrevd for alle bedriftsmedlemmer: en kode sendes til e-posten deres hver gang de logger inn.",
+        "Required": "Påkrevd av administratoren for alle bedriftsmedlemmer."
+      }
+    },
+    "status": {
+      "on": "På",
+      "off": "Av"
+    },
+    "buttons": {
+      "turn_on": "Slå på",
+      "turn_off": "Slå av",
+      "cancel": "Avbryt",
+      "confirm": "Bekreft"
+    },
+    "code": {
+      "subtitle_turn_on": "For å slå på tofaktorautentisering, skriv inn koden vi sendte til {destination}.",
+      "subtitle_turn_off": "For å slå av tofaktorautentisering, skriv inn koden vi sendte til {destination}."
+    },
+    "hints": {
+      "admin_managed": "Butikkadministratoren administrerer tofaktorautentisering.",
+      "locked": "Satt av administratoren: du kan ikke slå den av.",
+      "organization": "Bedriften din har slått den på for alle medlemmene sine, så du kan ikke endre den her."
+    },
+    "messages": {
+      "confirm_email": "Bekreft e-postadressen din for å slå på tofaktorautentisering.",
+      "turned_on": "Tofaktorautentisering er slått på.",
+      "turned_off": "Tofaktorautentisering er slått av."
+    }
+  }
+}

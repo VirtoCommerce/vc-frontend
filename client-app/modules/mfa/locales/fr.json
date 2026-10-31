@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Authentification à deux facteurs",
+      "not_required": "La connexion ne nécessite que votre mot de passe.",
+      "required_by": {
+        "User": "Vous l'avez activée : nous envoyons un code à {destination} à chaque connexion.",
+        "Administrator": "L'administrateur l'a activée pour votre compte : nous envoyons un code à {destination} à chaque connexion.",
+        "Organization": "Votre entreprise l'exige : nous envoyons un code à {destination} à chaque connexion.",
+        "Store": "La boutique l'exige : nous envoyons un code à {destination} à chaque connexion.",
+        "Global": "La boutique l'exige : nous envoyons un code à {destination} à chaque connexion."
+      }
+    },
+    "organization": {
+      "title": "Authentification à deux facteurs pour l'entreprise",
+      "modes": {
+        "Off": "Non exigée : chaque membre décide pour lui-même.",
+        "Enabled": "Exigée pour tous les membres de l'entreprise : un code est envoyé à leur e-mail à chaque connexion.",
+        "Required": "Exigée par l'administrateur pour tous les membres de l'entreprise."
+      }
+    },
+    "status": {
+      "on": "Activée",
+      "off": "Désactivée"
+    },
+    "buttons": {
+      "turn_on": "Activer",
+      "turn_off": "Désactiver",
+      "cancel": "Annuler",
+      "confirm": "Confirmer"
+    },
+    "code": {
+      "subtitle_turn_on": "Pour activer l'authentification à deux facteurs, saisissez le code envoyé à {destination}.",
+      "subtitle_turn_off": "Pour désactiver l'authentification à deux facteurs, saisissez le code envoyé à {destination}."
+    },
+    "hints": {
+      "admin_managed": "L'administrateur de la boutique gère l'authentification à deux facteurs.",
+      "locked": "Définie par l'administrateur : vous ne pouvez pas la désactiver.",
+      "organization": "Votre entreprise l'a activée pour tous ses membres, vous ne pouvez donc pas la modifier ici."
+    },
+    "messages": {
+      "confirm_email": "Confirmez votre e-mail pour activer l'authentification à deux facteurs.",
+      "turned_on": "L'authentification à deux facteurs est activée.",
+      "turned_off": "L'authentification à deux facteurs est désactivée."
+    }
+  }
+}

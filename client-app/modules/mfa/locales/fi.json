@@ -1,0 +1,47 @@
+{
+  "mfa": {
+    "user": {
+      "title": "Kaksivaiheinen tunnistautuminen",
+      "not_required": "Kirjautumiseen tarvitaan vain salasanasi.",
+      "required_by": {
+        "User": "Otit sen käyttöön: lähetämme koodin osoitteeseen {destination} aina, kun kirjaudut sisään.",
+        "Administrator": "Järjestelmänvalvoja otti sen käyttöön tilillesi: lähetämme koodin osoitteeseen {destination} aina, kun kirjaudut sisään.",
+        "Organization": "Yrityksesi vaatii sitä: lähetämme koodin osoitteeseen {destination} aina, kun kirjaudut sisään.",
+        "Store": "Kauppa vaatii sitä: lähetämme koodin osoitteeseen {destination} aina, kun kirjaudut sisään.",
+        "Global": "Kauppa vaatii sitä: lähetämme koodin osoitteeseen {destination} aina, kun kirjaudut sisään."
+      }
+    },
+    "organization": {
+      "title": "Yrityksen kaksivaiheinen tunnistautuminen",
+      "modes": {
+        "Off": "Ei pakollinen: jokainen jäsen päättää itse.",
+        "Enabled": "Pakollinen kaikille yrityksen jäsenille: heidän sähköpostiinsa lähetetään koodi aina, kun he kirjautuvat sisään.",
+        "Required": "Järjestelmänvalvoja on asettanut sen pakolliseksi kaikille yrityksen jäsenille."
+      }
+    },
+    "status": {
+      "on": "Käytössä",
+      "off": "Pois käytöstä"
+    },
+    "buttons": {
+      "turn_on": "Ota käyttöön",
+      "turn_off": "Poista käytöstä",
+      "cancel": "Peruuta",
+      "confirm": "Vahvista"
+    },
+    "code": {
+      "subtitle_turn_on": "Ota kaksivaiheinen tunnistautuminen käyttöön syöttämällä koodi, jonka lähetimme osoitteeseen {destination}.",
+      "subtitle_turn_off": "Poista kaksivaiheinen tunnistautuminen käytöstä syöttämällä koodi, jonka lähetimme osoitteeseen {destination}."
+    },
+    "hints": {
+      "admin_managed": "Kaupan ylläpitäjä hallitsee kaksivaiheista tunnistautumista.",
+      "locked": "Järjestelmänvalvojan asettama: et voi poistaa sitä käytöstä.",
+      "organization": "Yrityksesi on ottanut sen käyttöön kaikille jäsenilleen, joten et voi muuttaa sitä täällä."
+    },
+    "messages": {
+      "confirm_email": "Vahvista sähköpostiosoitteesi, jotta voit ottaa kaksivaiheisen tunnistautumisen käyttöön.",
+      "turned_on": "Kaksivaiheinen tunnistautuminen on käytössä.",
+      "turned_off": "Kaksivaiheinen tunnistautuminen on pois käytöstä."
+    }
+  }
+}
